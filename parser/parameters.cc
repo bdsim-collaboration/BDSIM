@@ -79,7 +79,8 @@ void Parameters::flush() {
   ks = 0; ksset = 0;
 
   gradient = 0; gradientset = 0;
-    
+  materialThickness = 0; materialThicknessset = 0;
+  
   knlset = 0; kslset=0;
 
   knl.erase(knl.begin(),knl.end());
@@ -168,7 +169,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!outerDiameterset)      {outerDiameter = e.outerDiameter; outerDiameterset = 1;}
 
   if(!gradientset) { gradient = e.gradient; gradientset = 1; }
-
+  if(!materialThicknessset) { materialThickness = e.materialThickness; materialThicknessset = 1; }
+  
   if(!tiltset) { tilt = e.tilt; tiltset = 1; }
   if(!offsetXset) { offsetX = e.offsetX; offsetXset = 1; }
   if(!offsetYset) { offsetY = e.offsetY; offsetYset = 1; }
@@ -239,6 +241,7 @@ void Parameters::set_value(std::string property, double value )
   // azimuthal angle
   if(property=="psi")  {psi = value; psiset = 1; return;} // 3rd  angle
   if(property=="gradient")  {gradient = value; gradientset = 1; return;} // rf voltage
+  if(property=="materialThickness")  {materialThickness = value; materialThicknessset = 1; return;} // degrader thickness
   if(property=="precisionRegion") { precisionRegion = (int)value; precisionRegionset = 1; return;}
   if(property=="A") {A = value; Aset = 1; return;}  // mass number
   if(property=="Z") {Z = value; Zset = 1; return;}  // atomic number

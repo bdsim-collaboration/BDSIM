@@ -80,7 +80,8 @@ struct Parameters {
   ///which precision physics region the element is in (0 = none)
   int precisionRegion; int precisionRegionset;
 
-  double gradient; int gradientset;
+  double gradient; int gradientset; ///< for rf cavities
+  double materialThickness; int materialThicknessset; ///< for degrader
 
   double xsize, ysize; int xsizeset, ysizeset; ///< aperture (or laser spotsize for laser)
   double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;

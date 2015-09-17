@@ -123,7 +123,8 @@ void Element::flush() {
   theta = 0;
 
   gradient = 0;
-
+  materialThickness = 0;
+  
   bias = "";
   
   // new aperture model
@@ -208,6 +209,7 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "offsetX") return offsetX;
   if(property_name == "offsetY") return offsetY;
   if(property_name == "gradient") return gradient;
+  if(property_name == "materialThickness") return materialThickness;
 
   if(property_name == "A") return A;
   if(property_name == "Z") return Z;
