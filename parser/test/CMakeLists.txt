@@ -12,3 +12,11 @@ set_tests_properties(gmad-reservedvar PROPERTIES WILL_FAIL 1)
 # try to use a reserved function
 add_test(gmad-reservedfunction ${gmadBinary} reservedfunction.gmad)
 set_tests_properties(gmad-reservedfunction PROPERTIES WILL_FAIL 1)
+
+# element with no options
+add_test(gmad-elementnoargs ${gmadBinary} elementnoargs.gmad)
+set_tests_properties(gmad-elementnoargs PROPERTIES WILL_FAIL 1)
+
+# try to overwrite a variable
+add_test(gmad-overwritevariable ${gmadBinary} overwritevariable.gmad)
+set_tests_properties(gmad-overwritevariable PROPERTIES WILL_FAIL 1)
