@@ -45,14 +45,24 @@ add_flex_bison_dependency(SCANNER PARSER)
 add_library(gmad STATIC gmad.cc getEnv.cc element.cc
 elementtype.cc options.cc parameters.cc tunnel.cc physicsbiasing.cc 
 ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc
+elementtype.cc options.cc parameters.cc tunnel.cc
+physicsbiasing.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
 	message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
 	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc
-elementtype.cc options.cc parameters.cc tunnel.cc
-physicsbiasing.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_executable(gmadexec parser.cc)
+set_target_properties(gmadexec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VERSION})
+target_link_libraries(gmadexec gmad)
 
-bdsim_install_targets(gmad gmadShared)
+bdsim_install_targets(gmadexec gmad gmadShared)
+
+# set binary name for testing usage
+get_target_property(binaryname gmadexec OUTPUT_NAME)
+set(gmadBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
+
+# add tests
+add_subdirectory(test)

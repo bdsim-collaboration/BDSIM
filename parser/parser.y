@@ -1,7 +1,5 @@
 /*
    bison grammar for the gmad parser
-   Ilya Agapov, Steve Malton 2005-2007
-   bdsim v.0.4
 */
 
 %{
@@ -17,7 +15,7 @@
 
   namespace GMAD {
     extern int line_num;
-    extern char* yyfilename;
+    extern std::string yyfilename;
   
     const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
     const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
@@ -119,8 +117,6 @@ atomic_stmt :
 		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
 	      }
 ;
-
-
 
 decl : VARIABLE ':' marker
        {
@@ -418,6 +414,13 @@ decl : VARIABLE ':' marker
 	     add_xsecbias(xsecbias);
            }
        }
+      | VARIABLE ':' error_noparams
+      {
+	if(execute)
+	  {
+	    yyerror("ERROR: Element needs parameters");
+	  }
+      }
 ;
 
 marker : MARKER ;
@@ -446,6 +449,32 @@ matdef : MATERIAL ',' parameters ;
 atom : ATOM ',' parameters ;
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
+
+error_noparams : DRIFT;
+               | RF;
+               | SBEND;
+               | RBEND;
+               | VKICK;
+               | HKICK;
+               | QUADRUPOLE;
+               | SEXTUPOLE;
+               | OCTUPOLE;
+               | DECAPOLE;
+               | MULTIPOLE;
+               | SOLENOID;
+               | ECOL;
+               | MUSPOILER;
+               | RCOL;
+               | LASER;
+               | SCREEN;
+               | AWAKESCREEN;
+               | TRANSFORM3D;
+               | ELEMENT;
+               | MATERIAL;
+               | ATOM;
+               | TUNNEL;
+               | XSECBIAS;
+
 extension : VARIABLE ',' parameters
             {
 	      if(execute)
@@ -707,8 +736,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     }
 	   else
 	     {
-	       printf("vector dimensions do not match");
-	       exit(1);
+	       yyerror("ERROR: vector dimensions do not match");
 	     }
          } 
        // boolean stuff
@@ -730,8 +758,10 @@ assignment :  VARIABLE '=' aexpr
 		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
 		if(execute)
 		  {
-		    if($1->is_reserved)
-		      std::cout << $1->name << " is reserved" << std::endl;
+		    if($1->is_reserved) {
+		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		      yyerror(errorstring.c_str());
+		    }
 		    else
 		      {
 			$1->value = $3; $$=$1;       
@@ -1018,6 +1048,13 @@ command : STOP             { if(execute) quit(); }
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
+        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
+	      }
+          }
 	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
@@ -1054,13 +1091,6 @@ command : STOP             { if(execute) quit(); }
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
 		add_xsecbias(xsecbias);
-	      }
-          }
-        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
         | DUMP ',' sample_options //  options for beam dump 
@@ -1140,8 +1170,8 @@ csample_options : VARIABLE '=' aexpr
 			if( $1->name == "r") params.r = $3;
 			else if ($1->name == "l") params.l = $3;
 			else {
-			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  yyerror(errorstring.c_str());
 			}
 		      }
 		  }   
@@ -1163,8 +1193,8 @@ csample_options : VARIABLE '=' aexpr
 			if( $1->name == "r") params.r = $3;
 			else if ($1->name == "l") params.l = $3;
 			else {
-			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  yyerror(errorstring.c_str());
 			}
 		      }
 
@@ -1297,7 +1327,8 @@ beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d (might not be exact!), file %s \nsymbol '%s' unexpected\n",s, line_num, yyfilename, yytext);
+  std::cout << s << " at line " << GMAD::line_num << " (might not be exact!), file " << yyfilename << std::endl;
+  std::cout << "symbol '" << yytext << "' unexpected" << std::endl;
   exit(1);
 }
 

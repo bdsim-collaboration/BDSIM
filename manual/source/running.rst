@@ -32,11 +32,6 @@ The angular brackets should not be used.
 | --ngenerate=N              | the number of primary events to simulate     |
 |                            | overrides the ngenerate option in input file |
 +----------------------------+----------------------------------------------+
-| --outline=<file>           | print geometry info to <file>                |
-+----------------------------+----------------------------------------------+
-| --outline_type=<fmt>       | type of outline format                       |
-|                            | where fmt = optics | survey                  |
-+----------------------------+----------------------------------------------+
 | --output=<fmt>             | output format "root", "ascii" (default),     |
 |                            | "combined" or "none"                         |
 +----------------------------+----------------------------------------------+
@@ -47,6 +42,8 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --seedstate=<file>         | file containing CLHEP::Random seed state     |
 |                            | NB \- this overrides other seed value        |
++----------------------------+----------------------------------------------+
+| --survey=<file>            | print survey info to <file>                  |
 +----------------------------+----------------------------------------------+
 | --verbose                  | display general parameters before run        |
 +----------------------------+----------------------------------------------+

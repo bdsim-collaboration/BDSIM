@@ -310,6 +310,8 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
+  # add 'make doxygen' to ctest
+  add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------
@@ -341,6 +343,11 @@ add_library(bdsim ${bdsim_sources})
 # This module sets up installation:
 include(bdsim_install)
 
+# enable Testing with ctest
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
+
 add_subdirectory( parser )
 
 add_executable(bdsimexec bdsim.cc)
@@ -364,6 +371,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)
 endif()
 
+# set binary name for testing usage
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
@@ -381,10 +389,7 @@ add_subdirectory(vis)
 # Utils directory
 add_subdirectory(utils)
 
-# Testing:
-enable_testing()
-include(CTest)
-include(bdsim_test_macros)
+# For testing
 add_subdirectory(examples)
 add_subdirectory(test)
 
