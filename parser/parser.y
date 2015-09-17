@@ -410,7 +410,6 @@ decl : VARIABLE ':' marker
 	if(execute)
 	  {
 	    yyerror("ERROR: Element needs parameters");
-	    exit(1);
 	  }
       }
 ;
@@ -727,8 +726,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	     }
 	   else
 	     {
-	       printf("vector dimensions do not match");
-	       exit(1);
+	       yyerror("ERROR: vector dimensions do not match");
 	     }
          } 
        // boolean stuff
@@ -751,8 +749,8 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    if($1->is_reserved) {
-		      std::cout << "ERROR: " << $1->name << " is reserved" << std::endl;
-		      exit(1);
+		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		      yyerror(errorstring.c_str());
 		    }
 		    else
 		      {
@@ -1040,6 +1038,13 @@ command : STOP             { if(execute) quit(); }
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
+        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
+	      }
+          }
 	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
@@ -1076,13 +1081,6 @@ command : STOP             { if(execute) quit(); }
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
 		add_xsecbias(xsecbias);
-	      }
-          }
-        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
         | DUMP ',' sample_options //  options for beam dump 
@@ -1162,8 +1160,8 @@ csample_options : VARIABLE '=' aexpr
 			if( $1->name == "r") params.r = $3;
 			else if ($1->name == "l") params.l = $3;
 			else {
-			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  yyerror(errorstring.c_str());
 			}
 		      }
 		  }   
@@ -1185,8 +1183,8 @@ csample_options : VARIABLE '=' aexpr
 			if( $1->name == "r") params.r = $3;
 			else if ($1->name == "l") params.l = $3;
 			else {
-			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  yyerror(errorstring.c_str());
 			}
 		      }
 
