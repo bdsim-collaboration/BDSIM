@@ -33,7 +33,7 @@ Examples::
 
    x = 1;
    y = 2.5-x;
-   z = sin(x) + log(y) -8e5;
+   z = sin(x) + log(y) - 8e5;
 
 
 Coordinates & Units
