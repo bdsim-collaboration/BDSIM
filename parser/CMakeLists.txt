@@ -59,3 +59,10 @@ set_target_properties(gmadexec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VER
 target_link_libraries(gmadexec gmad)
 
 bdsim_install_targets(gmadexec gmad gmadShared)
+
+# set binary name for testing usage
+get_target_property(binaryname gmadexec OUTPUT_NAME)
+set(gmadBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
+
+# add tests
+add_subdirectory(test)
