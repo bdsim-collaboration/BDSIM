@@ -21,7 +21,7 @@ BDSLWCalorimeter::BDSLWCalorimeter(G4String         name,
   itsBeampipeLogicalVolume(nullptr),itsInnerBPLogicalVolume(nullptr),itsPhysiInner(nullptr),
   itsPhysiComp(nullptr),itsLWCalLogicalVolume(nullptr),itsBeampipeUserLimits(nullptr),
   itsBPFieldMgr(nullptr),itsBPTube(nullptr),itsInnerBPTube(nullptr),itsLWCal(nullptr),
-  itsPhysiLWCal(nullptr)
+  itsPhysiLWCal(nullptr),itsBeampipe(nullptr)
 {;}
 
 void BDSLWCalorimeter::Build()
@@ -80,13 +80,13 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 
 void BDSLWCalorimeter::BuildBeampipe()
 {
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+  itsBeampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength,
 							    beamPipeInfo);
 
   G4PVPlacement* beampipePV = new G4PVPlacement(0,                                 // rotation
 						(G4ThreeVector)0,                  // position
-						beampipe->GetContainerLogicalVolume(), // its logical volume
+						itsBeampipe->GetContainerLogicalVolume(), // its logical volume
 						name +"_beampipe_pv",              // its name
 						containerLogicalVolume,            // its mother  volume
 						false,		                   // no boolean operation
@@ -95,17 +95,17 @@ void BDSLWCalorimeter::BuildBeampipe()
 
   RegisterPhysicalVolume(beampipePV);
 
-  InheritExtents(beampipe);
+  InheritExtents(itsBeampipe);
 }
 
 std::vector<G4LogicalVolume*> BDSLWCalorimeter::GetAllSensitiveVolumes() const
 {
-  if (!beampipe)
+  if (!itsBeampipe)
     {return BDSGeometryComponent::GetAllSensitiveVolumes();}
   else
     {
       std::vector<G4LogicalVolume*> result;
-      for (auto i : beampipe->GetAllSensitiveVolumes())
+      for (auto i : itsBeampipe->GetAllSensitiveVolumes())
 	{result.push_back(i);}
       for (auto i : BDSGeometryComponent::GetAllSensitiveVolumes())
 	{result.push_back(i);}
@@ -116,5 +116,5 @@ std::vector<G4LogicalVolume*> BDSLWCalorimeter::GetAllSensitiveVolumes() const
 
 BDSLWCalorimeter::~BDSLWCalorimeter()
 {
-  delete beampipe;
+  delete itsBeampipe;
 }

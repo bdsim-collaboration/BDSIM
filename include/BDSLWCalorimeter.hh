@@ -50,7 +50,7 @@ private:
   G4Box*  itsLWCal;
   G4VPhysicalVolume* itsPhysiLWCal;
 
-  BDSBeamPipe* beampipe;
+  BDSBeamPipe* itsBeampipe;
 };
 
 #endif
