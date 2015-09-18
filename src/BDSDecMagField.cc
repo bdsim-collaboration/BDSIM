@@ -1,5 +1,4 @@
 #include "BDSDecMagField.hh"
-#include "BDSGlobalConstants.hh" 
 
 BDSDecMagField::BDSDecMagField(G4double aBQuadPrime):
   itsBQuadPrime(aBQuadPrime)

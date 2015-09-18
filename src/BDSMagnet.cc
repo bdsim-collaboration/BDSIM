@@ -27,7 +27,6 @@
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleOuterMagField.hh"
-#include "BDSUtilities.hh"
 
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,

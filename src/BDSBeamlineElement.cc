@@ -73,6 +73,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationMiddle;
   delete referenceRotationEnd;
   delete placementTransform;
+  delete readOutPlacementTransform;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)

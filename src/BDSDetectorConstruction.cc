@@ -534,7 +534,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4VPhysicalVolume* tunnelReadOutWorldPV = BDSAcceleratorModel::Instance()->GetTunnelReadOutWorldPV();
       G4VSensitiveDetector* tunnelSDRO        = BDSSDManager::Instance()->GetTunnelOnAxisSDRO();
       BDSBeamline* tunnel                     = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
-      BDSBeamline::iterator tunnelIt            = tunnel->begin();
+      BDSBeamline::iterator tunnelIt          = tunnel->begin();
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
 	  BDSAcceleratorComponent* thecurrentitem = (*tunnelIt)->GetAcceleratorComponent();

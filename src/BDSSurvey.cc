@@ -16,7 +16,7 @@ using std::setw;
 
 BDSSurvey::BDSSurvey(G4String filename)
 {
-  G4cout << "Generating Survey: " << filename << " ..." << G4endl;
+  G4cout << __METHOD_NAME__ << "Generating Survey: " << filename << " ..." << G4endl;
 
   survey.open(filename);
 }

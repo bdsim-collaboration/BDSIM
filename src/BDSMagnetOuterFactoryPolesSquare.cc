@@ -5,11 +5,11 @@
 #include "BDSMagnetOuter.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "BDSMagnetColours.hh"
 
 #include "globals.hh"
 
 #include "G4Box.hh"
+#include "G4Colour.hh"
 #include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
