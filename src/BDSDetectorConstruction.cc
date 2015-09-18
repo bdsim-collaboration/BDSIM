@@ -210,7 +210,10 @@ void BDSDetectorConstruction::BuildBeamline()
 	}
     }
 
-  if (survey) survey->WriteSummary(beamline);
+  if (survey) {
+    survey->WriteSummary(beamline);
+    delete survey;
+  }
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
@@ -616,7 +619,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // Second for tunnel
 
 #endif
-  return;
 }
 
 void BDSDetectorConstruction::InitialiseGFlash()
