@@ -18,10 +18,7 @@ BDSLWCalorimeter::BDSLWCalorimeter(G4String         name,
 				   BDSBeamPipeInfo* beamPipeInfo,
 				   G4int            precisionRegion):
   BDSAcceleratorComponent(name, length, 0, "lwcalorimeter", precisionRegion, beamPipeInfo),
-  itsBeampipeLogicalVolume(nullptr),itsInnerBPLogicalVolume(nullptr),itsPhysiInner(nullptr),
-  itsPhysiComp(nullptr),itsLWCalLogicalVolume(nullptr),itsBeampipeUserLimits(nullptr),
-  itsBPFieldMgr(nullptr),itsBPTube(nullptr),itsInnerBPTube(nullptr),itsLWCal(nullptr),
-  itsPhysiLWCal(nullptr),itsBeampipe(nullptr)
+  lwCalLogicalVolume(nullptr),lwCal(nullptr),physiLWCal(nullptr),beampipe(nullptr)
 {;}
 
 void BDSLWCalorimeter::Build()
@@ -56,37 +53,37 @@ void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 void BDSLWCalorimeter::BuildCal(G4double aLength)
 {
   // build the Calorimeter
-  itsLWCal=new G4Box(name + "_lw_cal_solid",
-		     BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
-		     BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
-		     aLength/2);
-  RegisterSolid(itsLWCal);
-  itsLWCalLogicalVolume=new G4LogicalVolume(itsLWCal,
-					    BDSMaterials::Instance()->GetMaterial("LeadTungstate"),
-					    name + "_lw_cal_lv");
-  RegisterLogicalVolume(itsLWCalLogicalVolume);
-  itsPhysiLWCal = new G4PVPlacement(0,                       // rotation
-				    G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
-				    itsLWCalLogicalVolume,   // its logical volume
-				    name +"_lw_cal_pv",	     // its name
-				    containerLogicalVolume,  // its mother  volume
-				    false,		     // no boolean operation
-				    0,                       // copy number
-				    checkOverlaps);
-  RegisterPhysicalVolume(itsPhysiLWCal);
+  lwCal=new G4Box(name + "_lw_cal_solid",
+		  BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
+		  BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
+		  aLength/2);
+  RegisterSolid(lwCal);
+  lwCalLogicalVolume=new G4LogicalVolume(lwCal,
+					 BDSMaterials::Instance()->GetMaterial("LeadTungstate"),
+					 name + "_lw_cal_lv");
+  RegisterLogicalVolume(lwCalLogicalVolume);
+  physiLWCal = new G4PVPlacement(0,                       // rotation
+				 G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
+				 lwCalLogicalVolume,   // its logical volume
+				 name +"_lw_cal_pv",	     // its name
+				 containerLogicalVolume,  // its mother  volume
+				 false,		     // no boolean operation
+				 0,                       // copy number
+				 checkOverlaps);
+  RegisterPhysicalVolume(physiLWCal);
   
-  itsLWCalLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetLWCalorimeterSD());    
+  lwCalLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetLWCalorimeterSD());    
 }
 
 void BDSLWCalorimeter::BuildBeampipe()
 {
-  itsBeampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength,
 							    beamPipeInfo);
 
   G4PVPlacement* beampipePV = new G4PVPlacement(0,                                 // rotation
 						(G4ThreeVector)0,                  // position
-						itsBeampipe->GetContainerLogicalVolume(), // its logical volume
+						beampipe->GetContainerLogicalVolume(), // its logical volume
 						name +"_beampipe_pv",              // its name
 						containerLogicalVolume,            // its mother  volume
 						false,		                   // no boolean operation
@@ -95,17 +92,17 @@ void BDSLWCalorimeter::BuildBeampipe()
 
   RegisterPhysicalVolume(beampipePV);
 
-  InheritExtents(itsBeampipe);
+  InheritExtents(beampipe);
 }
 
 std::vector<G4LogicalVolume*> BDSLWCalorimeter::GetAllSensitiveVolumes() const
 {
-  if (!itsBeampipe)
+  if (!beampipe)
     {return BDSGeometryComponent::GetAllSensitiveVolumes();}
   else
     {
       std::vector<G4LogicalVolume*> result;
-      for (auto i : itsBeampipe->GetAllSensitiveVolumes())
+      for (auto i : beampipe->GetAllSensitiveVolumes())
 	{result.push_back(i);}
       for (auto i : BDSGeometryComponent::GetAllSensitiveVolumes())
 	{result.push_back(i);}
@@ -116,5 +113,5 @@ std::vector<G4LogicalVolume*> BDSLWCalorimeter::GetAllSensitiveVolumes() const
 
 BDSLWCalorimeter::~BDSLWCalorimeter()
 {
-  delete itsBeampipe;
+  delete beampipe;
 }
