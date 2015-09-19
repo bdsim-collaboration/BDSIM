@@ -54,7 +54,7 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   //E_z = eFieldMax*J_0(k_r*r) * cos(frequency t)
   Bfield[3] = 0.0; //EField only along z-axis
   Bfield[4] = 0.0; //Efield only along z-axis
-  Bfield[5] = eFieldMax*cos(Point[3]);
+  Bfield[5] = eFieldMax*cos(frequency*Point[3]);
   //Bfield[5] = eFieldMax;
   }
 
