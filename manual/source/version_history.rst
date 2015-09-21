@@ -4,8 +4,14 @@ V0.8.develop - 2015 / ?? / ??
 New Features
 ------------
 
+* Decapole magnet
+* Robdsim analysis package
+* Tracking tester
+
 Bug fixes
 ---------
+
+* Output survey updated and fixed (issue #60)
 
 Geometry
 ^^^^^^^^
@@ -19,26 +25,30 @@ Geometry
 * Fixed bug where the read out coordinates would also be offset by the offset
   of the element.
 * Reduced dupliation in magnet outer factories.
-* Fixed overlaps in rbend geometry.
-
+* Fixed overlaps in rbend geometry (issue #64)
+  
 Physics
 ^^^^^^^
+
+* Physics biasing
 
 Parser
 ^^^^^^
 
 * Occasional material parser segfault fixed (issue #25)
+* Improved syntax checking and not ignore unknown keywords (issue #71)
 
 Tracking
 ^^^^^^^^
 
 * Introduced a separate auxiliary G4Navigator to avoid accidentally moving
   the particle during tracking when querying global to local transforms.
-
   
 General
 ^^^^^^^
 
+* Check for Geant4 environment variables (issue #62)
+* Consistent policy for overwriting output files (issue #65)
 
 V0.8 - 2015 / 08 / 10
 =====================
