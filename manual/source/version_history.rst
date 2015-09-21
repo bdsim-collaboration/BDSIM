@@ -4,14 +4,13 @@ V0.8.develop - 2015 / ?? / ??
 New Features
 ------------
 
+* Physics biasing
 * Decapole magnet
 * Robdsim analysis package
 * Tracking tester
 
 Bug fixes
 ---------
-
-* Output survey updated and fixed (issue #60)
 
 Geometry
 ^^^^^^^^
@@ -30,8 +29,6 @@ Geometry
 Physics
 ^^^^^^^
 
-* Physics biasing
-
 Parser
 ^^^^^^
 
@@ -47,6 +44,7 @@ Tracking
 General
 ^^^^^^^
 
+* Output survey updated and fixed (issue #60)
 * Check for Geant4 environment variables (issue #62)
 * Consistent policy for overwriting output files (issue #65)
 
