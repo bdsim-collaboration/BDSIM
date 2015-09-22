@@ -94,11 +94,6 @@ public:
   G4String GetParameterValueString(G4String spec, G4String name) const;
   ///@}
 
-  /// BDSComponentFactory creates BDSAcceleratorComponents
-  friend class BDSComponentFactory;
-  friend class BDSLine;
-  friend class BDSDetectorConstruction;
-  
   ///@{ This function should be revisited given recent changes (v0.7)
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
@@ -110,12 +105,12 @@ public:
   /// Get the number of times this component has been copied.
   G4int GetCopyNumber()const;
 
-protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
   /// can't be in constructor as calls virtual methods
   virtual void Initialise();
   
+protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
   /// apart from the container volume. The overridden Build() function can however, call
   /// make use of this function to call BuildContainerLogicalVolume() by calling
