@@ -1,6 +1,9 @@
 simple_testing(simpleMachine "--file=sm.gmad" ${OVERLAP_CHECK})
 
 # additional arguments testing
+# all output formats
+set(TESTING_ARGS --output=combined)
+simple_testing(simpleMachineASCII "--file=sm.gmad" "")
 # print help
 simple_testing(help "--help" "")
 # print list of materials
