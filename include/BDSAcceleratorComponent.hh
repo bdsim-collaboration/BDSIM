@@ -104,11 +104,11 @@ public:
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
   ///@}
 
-  /// Increment (+1) the number of times this component has been placed (ie another copy used).
-  void  IncrementNTimesPlaced();
+  /// Increment (+1) the number of times this component has been copied.
+  void  IncrementCopyNumber();
 
-  /// Get the number of times this component has been placed.
-  G4int GetNTimesPlaced();
+  /// Get the number of times this component has been copied.
+  G4int GetCopyNumber()const;
 
 protected:
   /// initialise method
@@ -139,9 +139,6 @@ protected:
   const G4String   type;
   ///@}
   
-  /// Record of how many times this component has been placed (ie copies used).
-  G4int nTimesPlaced;
-
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
@@ -192,6 +189,8 @@ private:
   /// This check protects against duplicate initialisation and therefore the potential
   /// memory leaks that would ensue.
   G4bool initialised;
+  /// Record of how many times this component has been copied.
+  G4int copyNumber;
 };
 
 inline G4String BDSAcceleratorComponent::GetName() const
@@ -221,11 +220,11 @@ inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes() const
 {return itsGFlashVolumes;}
 
-inline void BDSAcceleratorComponent::IncrementNTimesPlaced()
-{nTimesPlaced++;}
+inline void BDSAcceleratorComponent::IncrementCopyNumber()
+{copyNumber++;}
 
-inline G4int BDSAcceleratorComponent::GetNTimesPlaced()
-{return nTimesPlaced;}
+inline G4int BDSAcceleratorComponent::GetCopyNumber()const
+{return copyNumber;}
 
 inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
 {return readOutLV;}
