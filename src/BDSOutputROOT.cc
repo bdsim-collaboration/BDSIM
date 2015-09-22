@@ -271,7 +271,10 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   TTree* sTree=(TTree*)gDirectory->Get(Name);
-  if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
+  if(!sTree) {
+    G4String errorString = "BDSOutputROOT: ROOT Sampler " + Name + " not found!";
+    G4Exception(errorString.c_str(), "-1", FatalException, "");
+  }
   E0          = InitTotalEnergy/ CLHEP::GeV;
   x0          = InitX          / CLHEP::m;
   y0          = InitY          / CLHEP::m;
