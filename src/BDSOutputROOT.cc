@@ -116,7 +116,7 @@ void BDSOutputROOT::Init()
     }
   }
   
-  G4cout<<"Setting up new file: "<<filename<<G4endl;
+  G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler tree
