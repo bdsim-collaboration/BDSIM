@@ -100,9 +100,12 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
-  G4int nSampler    = theTrack->GetVolume()->GetCopyNo()+1;
-  G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDS::StringFromInt(nSampler);
-  SampName = SampName.substr(0,SampName.find("_pv_1"));
+  G4int nSampler    = theTrack->GetVolume()->GetCopyNo();
+  G4String SampName = theTrack->GetVolume()->GetName();
+  // for now remove copy number so sampler name has no knowledge of the copy number
+  // only one sampler per copied element (will be fixed in the future)
+  std::string removeEnd = "_" + std::to_string(nSampler) + "_pv";
+  SampName = SampName.substr(0,SampName.find(removeEnd));
   
   G4int    PDGtype = theTrack->GetDefinition()->GetPDGEncoding();
   G4String pName   = theTrack->GetDefinition()->GetParticleName();
