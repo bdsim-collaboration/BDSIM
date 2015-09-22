@@ -537,7 +537,7 @@ double property_lookup(FastList<Element>& el_list, std::string element_name, std
   std::list<struct Element>::const_iterator iterEnd = el_list.end();
 
   if(it == iterEnd) {
-    std::cerr << "parser.h> Error: unknown element \"" << element_name << "\". Returning 0." << std::endl; 
+    std::cerr << "parser.h> Error: unknown element \"" << element_name << "\"." << std::endl; 
     exit(1);
   }
 

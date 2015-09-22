@@ -215,7 +215,7 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "T") return temper;
   if(property_name == "P") return pressure;
 
-  std::cerr << "parser.h> Error: unknown property \"" << property_name << "\". Returning 0." << std::endl; 
+  std::cerr << "parser.h> Error: unknown property \"" << property_name << "\"." << std::endl; 
   exit(1);
   //what about property_lookup for attributes of type string, like material?
 }

@@ -1,0 +1,6 @@
+d1: drift, l=0.5*m;
+
+stop;
+
+! should not execute this line
+d1: drift
