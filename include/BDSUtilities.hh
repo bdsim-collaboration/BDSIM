@@ -53,11 +53,6 @@ namespace BDS {
   G4bool IsFinite(const G4double& variable);
   G4bool IsFinite(const G4ThreeVector& variable);
 
-  /// Integer to string representation
-  G4String StringFromInt(G4int anInt);
-  /// Single digit to string representation
-  G4String StringFromDigit(G4int anInt);
-
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
   void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unkown");

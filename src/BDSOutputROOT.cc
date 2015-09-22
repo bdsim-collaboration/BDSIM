@@ -9,6 +9,8 @@
 #include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
 
+#include <string>
+
 BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG
@@ -98,7 +100,7 @@ void BDSOutputROOT::Init()
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
   if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
-    basefilename += "_" + BDS::StringFromInt(outputFileNumber);
+    basefilename += "_" + std::to_string(outputFileNumber);
   }
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
