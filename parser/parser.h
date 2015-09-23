@@ -40,6 +40,7 @@ extern int yylex();
 namespace GMAD {
 
 extern const int ECHO_GRAMMAR;
+extern const int PEDANTIC;
 
 const int MAX_EXPAND_ITERATIONS = 50;
 
@@ -95,6 +96,8 @@ void add_xsecbias(PhysicsBiasing& xsecbias);
 double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
+/// copy properties from Element into params, returns element type as integer, returs _NONE if not found
+int copy_element_to_params(std::string elementName, struct Parameters& params);
 
 // parser functions
 int add_func(std::string name, double (*func)(double));
@@ -431,6 +434,29 @@ void add_element_temp(std::string name, int number, bool pushfront, ElementType 
       tmp_list.push_back(e);
     }
   }
+}
+
+int copy_element_to_params(std::string elementName, struct Parameters& params)
+{
+  int type;
+#ifdef BDSDEBUG
+  std::cout << "newinstance : VARIABLE -- " << elementName << std::endl;
+#endif
+  std::list<struct Element>::iterator it = element_list.find(elementName);
+  std::list<struct Element>::iterator iterEnd = element_list.end();
+  if(it == iterEnd)
+    {
+      std::cout << "type " << elementName << " has not been defined" << std::endl;
+      if (PEDANTIC) exit(1);
+      type = static_cast<int>(ElementType::_NONE);
+    }
+  else
+    {
+      // inherit properties from the base type
+      type = static_cast<int>((*it).type);
+      params.inherit_properties(*it);
+    }
+  return type;
 }
 
 // ******************************************************

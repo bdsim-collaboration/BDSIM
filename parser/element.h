@@ -22,7 +22,7 @@ struct Element {
   std::string name;
 
   double l; ///< length in metres
-  double ks;
+  double ks; ///< solenoid
   double k0; ///< dipole
   double k1; ///< quadrupole
   double k2; ///< sextupole
@@ -47,7 +47,7 @@ struct Element {
 
   double tilt; ///< tilt
   double xsize, ysize; ///< collimator aperture or laser spotsize for laser
-  double r; ///<radius, i.e cylindrical sampler
+  double r; ///< radius, i.e cylindrical sampler
   double B; ///< magnetic field
   double phiAngleIn; ///< incoming bending angle for element
   double phiAngleOut; ///< outgoing bending angle for element

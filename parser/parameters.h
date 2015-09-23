@@ -16,7 +16,7 @@ namespace GMAD {
    * The booleans are needed for inheritance and extension of already created Elements.
    * The class is a singleton.
    *
-   * @author I. Agapov
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> (based on I. Agapov)
    */
 
   struct Parameters : public Element {
