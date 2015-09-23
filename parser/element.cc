@@ -240,38 +240,39 @@ void Element::set(const struct Parameters& params,std::string nameIn, ElementTyp
 
 void Element::set(const struct Parameters& params)
 {
-  l = params.l;
+  // checks on setting of parameters needs to be done to allow for extension of already set Elements
+  if(params.lset) l = params.l;
 
   //new aperture model
-  aper1 = params.aper1;
-  aper2 = params.aper2;
-  aper3 = params.aper3;
-  aper4 = params.aper4;
-  apertureType = params.apertureType;
-  beampipeMaterial = params.beampipeMaterial;
+  if(params.aper1set) aper1 = params.aper1;
+  if(params.aper2set) aper2 = params.aper2;
+  if(params.aper3set) aper3 = params.aper3;
+  if(params.aper4set) aper4 = params.aper4;
+  if(params.apertureTypeset) apertureType = params.apertureType;
+  if(params.beampipeMaterialset) beampipeMaterial = params.beampipeMaterial;
 
   //magnet geometry
-  outerDiameter = params.outerDiameter;
-  outerMaterial = params.outerMaterial;
-  magnetGeometryType = params.magnetGeometryType;
+  if(params.outerDiameterset) outerDiameter = params.outerDiameter;
+  if(params.outerMaterialset) outerMaterial = params.outerMaterial;
+  if(params.magnetGeometryTypeset) magnetGeometryType = params.magnetGeometryType;
   
-  xsize = params.xsize;
-  ysize = params.ysize;
-  material = params.material;  
-  precisionRegion = params.precisionRegion;
+  if(params.xsizeset) xsize = params.xsize;
+  if(params.ysizeset) ysize = params.ysize;
+  if(params.materialset) material = params.material;  
+  if(params.precisionRegionset) precisionRegion = params.precisionRegion;
 
-  offsetX = params.offsetX;
-  offsetY = params.offsetY;
+  if(params.offsetXset) offsetX = params.offsetX;
+  if(params.offsetYset) offsetY = params.offsetY;
   // end of common parameters
 
   // specific parameters
 
   // for transform3ds, lasers and for tracker
-  xdir = params.xdir;
-  ydir = params.ydir;
-  zdir = params.zdir;
+  if(params.xdirset) xdir = params.xdir;
+  if(params.ydirset) ydir = params.ydir;
+  if(params.zdirset) zdir = params.zdir;
 
-  bias = params.bias;
+  if(params.biasset) bias = params.bias;
   
   // BLM
   if(params.blmLocZset)
@@ -289,85 +290,75 @@ void Element::set(const struct Parameters& params)
   if(params.beampipeThicknessset)
     beampipeThickness = params.beampipeThickness;
   // RF
-  gradient = params.gradient;
+  if(params.gradientset)
+    gradient = params.gradient;
   // SBend, RBend, (Awake)Screen
-  angle = params.angle;
+  if(params.angle)
+    angle = params.angle;
   // SBend, RBend, HKick, VKick, Quad
-  k1 = params.k1;
+  if(params.k1set)
+    k1 = params.k1;
   // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
-  B = params.B;
+  if(params.Bset)
+    B = params.B;
   // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
   if(params.tiltset) tilt = params.tilt;
   // Quad
-  spec = params.spec;
+  if(params.specset) spec = params.spec;
   // Sext
-  if(params.k2set) {
-    if (type==ElementType::_SEXTUPOLE) k2 = params.k2;
-    else {
-      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
+  if(params.k2set && type==ElementType::_SEXTUPOLE) k2 = params.k2;
   // Octupole
-  if(params.k3set) {
-    if (type==ElementType::_OCTUPOLE) k3 = params.k3;
-    else {
-      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
+  if(params.k3set && type==ElementType::_OCTUPOLE) k3 = params.k3;
   // Decapole
-  if(params.k4set) {
-    if (type==ElementType::_DECAPOLE) k4 = params.k4;
-    else {
-      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
+  if(params.k4set && type==ElementType::_DECAPOLE) k4 = params.k4;
+  
   // Multipole
   if(params.knlset)
     knl = params.knl;
   if(params.kslset)
     ksl = params.ksl;
   // Solenoid
-  ks = params.ks;
+  if(params.ksset) ks = params.ks;
   // Laser
-  waveLength = params.waveLength;
+  if(params.waveLengthset) waveLength = params.waveLength;
   // Element, Tunnel
-  geometryFile = params.geometryFile;
+  if(params.geometryFileset) geometryFile = params.geometryFile;
   // Element
-  bmapFile = params.bmapFile;
+  if(params.bmapFileset) bmapFile = params.bmapFile;
   if(params.bmapZOffsetset)
     bmapZOffset = params.bmapZOffset;
   // Transform3D
-  theta = params.theta;
-  phi = params.phi;
-  psi = params.psi;
+  if(params.thetaset) theta = params.theta;
+  if(params.phiset)   phi = params.phi;
+  if(params.psiset)   psi = params.psi;
   // (Awake) Screen
-  tscint = params.tscint;
-  scintmaterial = params.scintmaterial;
+  if(params.tscintset) tscint = params.tscint;
+  if(params.scintmaterialset) scintmaterial = params.scintmaterial;
   // Screen
-  airmaterial = params.airmaterial;
+  if(params.airmaterialset) airmaterial = params.airmaterial;
   // AwakeScreen
-  twindow = params.twindow;
-  windowmaterial = params.windowmaterial;
+  if(params.twindowset) twindow = params.twindow;
+  if(params.windowmaterialset) windowmaterial = params.windowmaterial;
 
   // overwriting of other parameters or specific printing
   switch(type) {
 
   case ElementType::_MATERIAL:
-    A = params.A;
-    Z = params.Z;
-    density = params.density;
-    temper = params.temper;
-    pressure = params.pressure;
-    state = params.state;
-    components = params.components;
-    componentsWeights = params.componentsWeights;
-    componentsFractions = params.componentsFractions;
+    if(params.Aset) A = params.A;
+    if(params.Zset) Z = params.Z;
+    if(params.densityset) density = params.density;
+    if(params.temperset) temper = params.temper;
+    if(params.pressureset) pressure = params.pressure;
+    if(params.stateset) state = params.state;
+    if(params.componentsset) components = params.components;
+    if(params.componentsWeightsset) componentsWeights = params.componentsWeights;
+    if(params.componentsFractionsset) componentsFractions = params.componentsFractions;
     break;
     
   case ElementType::_ATOM:
-    A = params.A;
-    Z = params.Z;
-    symbol = params.symbol;
+    if(params.Aset) A = params.A;
+    if(params.Zset) Z = params.Z;
+    if(params.symbolset) symbol = params.symbol;
     break;
     
   case ElementType::_AWAKESCREEN:
