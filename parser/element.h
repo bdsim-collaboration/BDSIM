@@ -9,6 +9,8 @@ namespace GMAD {
 
 enum class ElementType;
 
+struct Parameters;
+ 
 /**
  * @brief Element class
  * 
@@ -84,6 +86,9 @@ struct Element {
   /// only for properties with type int/double!
   double property_lookup(std::string property_name)const;
 
+  /// set method from Parameters structure
+  void set(const struct Parameters& params,std::string nameIn, ElementType typeIn, std::list<struct Element> *lst);
+  
   /// constructor
   Element();
 };

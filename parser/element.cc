@@ -1,5 +1,6 @@
 #include "element.h"
 #include "elementtype.h"
+#include "parameters.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -215,7 +216,158 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "T") return temper;
   if(property_name == "P") return pressure;
 
-  std::cerr << "parser.h> Error: unknown property \"" << property_name << "\"." << std::endl; 
+  std::cerr << "element.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl; 
   exit(1);
   //what about property_lookup for attributes of type string, like material?
+}
+
+void Element::set(const struct Parameters& params,std::string nameIn, ElementType typeIn, std::list<struct Element> *lstIn)
+{
+  type = typeIn;
+  // common parameters for all elements
+  name = nameIn;
+  l = params.l;
+
+  //new aperture model
+  aper1 = params.aper1;
+  aper2 = params.aper2;
+  aper3 = params.aper3;
+  aper4 = params.aper4;
+  apertureType = params.apertureType;
+  beampipeMaterial = params.beampipeMaterial;
+
+  //magnet geometry
+  outerDiameter = params.outerDiameter;
+  outerMaterial = params.outerMaterial;
+  magnetGeometryType = params.magnetGeometryType;
+  
+  xsize = params.xsize;
+  ysize = params.ysize;
+  material = params.material;  
+  precisionRegion = params.precisionRegion;
+
+  offsetX = params.offsetX;
+  offsetY = params.offsetY;
+  // end of common parameters
+
+  // specific parameters
+  // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
+
+  // for transform3ds, lasers and for tracker
+  xdir = params.xdir;
+  ydir = params.ydir;
+  zdir = params.zdir;
+
+  bias = params.bias;
+  
+  // BLM
+  if(params.blmLocZset)
+    blmLocZ = params.blmLocZ;
+  if(params.blmLocThetaset)
+    blmLocTheta = params.blmLocTheta;
+
+  // Drift
+  if(params.phiAngleInset)
+    phiAngleIn = params.phiAngleIn;
+  if(params.phiAngleOutset)
+    phiAngleOut = params.phiAngleOut;
+
+  // Drift, Drift
+  if(params.beampipeThicknessset)
+    beampipeThickness = params.beampipeThickness;
+  // RF
+  gradient = params.gradient;
+  // SBend, RBend, (Awake)Screen
+  angle = params.angle;
+  // SBend, RBend, HKick, VKick, Quad
+  k1 = params.k1;
+  // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
+  B = params.B;
+  // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
+  if(params.tiltset) tilt = params.tilt;
+  // Quad
+  spec = params.spec;
+  // Sext
+  if(params.k2set) {
+    if (type==ElementType::_SEXTUPOLE) k2 = params.k2;
+    else {
+      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
+    }
+  }
+  // Octupole
+  if(params.k3set) {
+    if (type==ElementType::_OCTUPOLE) k3 = params.k3;
+    else {
+      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
+    }
+  }
+  // Decapole
+  if(params.k4set) {
+    if (type==ElementType::_DECAPOLE) k4 = params.k4;
+    else {
+      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
+    }
+  }
+  // Multipole
+  if(params.knlset)
+    knl = params.knl;
+  if(params.kslset)
+    ksl = params.ksl;
+  // Solenoid
+  ks = params.ks;
+  // Laser
+  waveLength = params.waveLength;
+  // Element, Tunnel
+  geometryFile = params.geometry;
+  // Element
+  bmapFile = params.bmap;
+  if(params.bmapZOffsetset)
+    bmapZOffset = params.bmapZOffset;
+  // Transform3D
+  theta = params.theta;
+  phi = params.phi;
+  psi = params.psi;
+  // (Awake) Screen
+  tscint = params.tscint;
+  scintmaterial = params.scintmaterial;
+  // Screen
+  airmaterial = params.airmaterial;
+  // AwakeScreen
+  twindow = params.twindow;
+  windowmaterial = params.windowmaterial;
+
+  // overwriting of other parameters or specific printing
+  switch(type) {
+
+  case ElementType::_LINE:
+  case ElementType::_REV_LINE:
+    lst = lstIn;
+    break;
+
+  case ElementType::_MATERIAL:
+    A = params.A;
+    Z = params.Z;
+    density = params.density;
+    temper = params.temper;
+    pressure = params.pressure;
+    state = params.state;
+    components = params.components;
+    componentsWeights = params.componentsWeights;
+    componentsFractions = params.componentsFractions;
+    break;
+    
+  case ElementType::_ATOM:
+    A = params.A;
+    Z = params.Z;
+    symbol = params.symbol;
+    break;
+    
+  case ElementType::_AWAKESCREEN:
+    std::cout << "scintmaterial: " << scintmaterial << " " <<  params.scintmaterial << std::endl;
+    std::cout << "windowmaterial: " << windowmaterial << " " <<  params.windowmaterial << std::endl;
+    break;
+
+  default:
+    break;
+  }
 }

@@ -118,157 +118,22 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
 #endif
 
   struct Element e;
-  
-  e.type = type;
-  // common parameters for all elements
-  e.name = name;
-  e.lst = nullptr;
-  e.l = params.l;
+  e.set(params,name,type,lst);
 
-  //new aperture model
-  e.aper1 = params.aper1;
-  e.aper2 = params.aper2;
-  e.aper3 = params.aper3;
-  e.aper4 = params.aper4;
-  e.apertureType = params.apertureType;
-  e.beampipeMaterial = params.beampipeMaterial;
-
-  //magnet geometry
-  e.outerDiameter = params.outerDiameter;
-  e.outerMaterial = params.outerMaterial;
-  e.magnetGeometryType = params.magnetGeometryType;
-  
-  e.xsize = params.xsize;
-  e.ysize = params.ysize;
-  e.material = params.material;  
-  e.precisionRegion = params.precisionRegion;
-
-  e.offsetX = params.offsetX;
-  e.offsetY = params.offsetY;
-  // end of common parameters
-
-  // specific parameters
-  // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
-
-  // for transform3ds, lasers and for tracker
-  e.xdir = params.xdir;
-  e.ydir = params.ydir;
-  e.zdir = params.zdir;
-
-  e.bias = params.bias;
-  
-  // BLM
-  if(params.blmLocZset)
-    e.blmLocZ = params.blmLocZ;
-  if(params.blmLocThetaset)
-    e.blmLocTheta = params.blmLocTheta;
-
-  // Drift
-  if(params.phiAngleInset)
-    e.phiAngleIn = params.phiAngleIn;
-  if(params.phiAngleOutset)
-    e.phiAngleOut = params.phiAngleOut;
-
-  // Drift, Drift
-  if(params.beampipeThicknessset)
-    e.beampipeThickness = params.beampipeThickness;
-  // RF
-  e.gradient = params.gradient;
-  // SBend, RBend, (Awake)Screen
-  e.angle = params.angle;
-  // SBend, RBend, HKick, VKick, Quad
-  e.k1 = params.k1;
-  // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
-  e.B = params.B;
-  // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
-  if(params.tiltset) e.tilt = params.tilt;
-  // Quad
-  e.spec = params.spec;
-  // Sext
-  if(params.k2set) {
-    if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
-    else {
-      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Octupole
-  if(params.k3set) {
-    if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
-    else {
-      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Decapole
-  if(params.k4set) {
-    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
-    else {
-      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Multipole
-  if(params.knlset)
-    e.knl = params.knl;
-  if(params.kslset)
-    e.ksl = params.ksl;
-  // Solenoid
-  e.ks = params.ks;
-  // Laser
-  e.waveLength = params.waveLength;
-  // Element, Tunnel
-  e.geometryFile = params.geometry;
-  // Element
-  e.bmapFile = params.bmap;
-  if(params.bmapZOffsetset)
-    e.bmapZOffset = params.bmapZOffset;
-  // Transform3D
-  e.theta = params.theta;
-  e.phi = params.phi;
-  e.psi = params.psi;
-  // (Awake) Screen
-  e.tscint = params.tscint;
-  e.scintmaterial = params.scintmaterial;
-  // Screen
-  e.airmaterial = params.airmaterial;
-  // AwakeScreen
-  e.twindow = params.twindow;
-  e.windowmaterial = params.windowmaterial;
-
-  // overwriting of other parameters or specific printing
   switch(type) {
 
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    e.lst = lst;
-    break;
-
   case ElementType::_MATERIAL:
-    e.A = params.A;
-    e.Z = params.Z;
-    e.density = params.density;
-    e.temper = params.temper;
-    e.pressure = params.pressure;
-    e.state = params.state;
-    e.components = params.components;
-    e.componentsWeights = params.componentsWeights;
-    e.componentsFractions = params.componentsFractions;
     material_list.push_back(e);
     return 0;
 
   case ElementType::_ATOM:
-    e.A = params.A;
-    e.Z = params.Z;
-    e.symbol = params.symbol;
-    atom_list.push_back(e);
-    return 0;
-
-  case ElementType::_AWAKESCREEN:
-    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
-    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
-    break;
+   atom_list.push_back(e);
+   return 0;
 
   default:
     break;
   }
+  
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
 
