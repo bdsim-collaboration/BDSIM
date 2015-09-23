@@ -244,6 +244,7 @@ void Element::set(const struct Parameters& params)
   if(params.lset) l = params.l;
 
   //new aperture model
+  if(params.beampipeThicknessset) beampipeThickness = params.beampipeThickness;
   if(params.aper1set) aper1 = params.aper1;
   if(params.aper2set) aper2 = params.aper2;
   if(params.aper3set) aper3 = params.aper3;
@@ -252,9 +253,9 @@ void Element::set(const struct Parameters& params)
   if(params.beampipeMaterialset) beampipeMaterial = params.beampipeMaterial;
 
   //magnet geometry
+  if(params.magnetGeometryTypeset) magnetGeometryType = params.magnetGeometryType;
   if(params.outerDiameterset) outerDiameter = params.outerDiameter;
   if(params.outerMaterialset) outerMaterial = params.outerMaterial;
-  if(params.magnetGeometryTypeset) magnetGeometryType = params.magnetGeometryType;
   
   if(params.xsizeset) xsize = params.xsize;
   if(params.ysizeset) ysize = params.ysize;
@@ -286,16 +287,16 @@ void Element::set(const struct Parameters& params)
   if(params.phiAngleOutset)
     phiAngleOut = params.phiAngleOut;
 
-  // Drift, Drift
-  if(params.beampipeThicknessset)
-    beampipeThickness = params.beampipeThickness;
   // RF
   if(params.gradientset)
     gradient = params.gradient;
   // SBend, RBend, (Awake)Screen
   if(params.angle)
     angle = params.angle;
-  // SBend, RBend, HKick, VKick, Quad
+  // SBend, RBend, HKick, VKick
+  if(params.k0set)
+    k0 = params.k0;
+  // Quad
   if(params.k1set)
     k1 = params.k1;
   // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
@@ -339,7 +340,9 @@ void Element::set(const struct Parameters& params)
   // AwakeScreen
   if(params.twindowset) twindow = params.twindow;
   if(params.windowmaterialset) windowmaterial = params.windowmaterial;
-
+  // Sampler
+  if(params.rset) r = params.r;
+  
   // overwriting of other parameters or specific printing
   switch(type) {
 
