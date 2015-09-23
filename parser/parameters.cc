@@ -11,7 +11,7 @@
 
 using namespace GMAD;
 
-Parameters::Parameters():Element() {
+Parameters::Parameters() {
   flush();
 }
 
@@ -85,8 +85,6 @@ void Parameters::inherit_properties(struct Element& e)
   // this is used for the inheritance / newinstance mechanism
   
   if(!lset) { l = e.l; lset = 1; }
-  if(!bmapZOffsetset) { bmapZOffset = e.bmapZOffset; bmapZOffsetset = 1; }
-  if(!Bset) { B = e.B; Bset = 1; }
   if(!ksset) { ks = e.ks; ksset = 1; }
   if(!k0set) { k0 = e.k0; k0set = 1; }
   if(!k1set) { k1 = e.k1; k1set = 1; }
@@ -94,37 +92,6 @@ void Parameters::inherit_properties(struct Element& e)
   if(!k3set) { k3 = e.k3; k3set = 1; }
   if(!k4set) { k4 = e.k4; k4set = 1; }
   if(!angleset) { angle = e.angle; angleset = 1; }
-  if(!phiAngleInset) { phiAngleIn = e.phiAngleIn; phiAngleInset = 1; }
-  if(!phiAngleOutset) { phiAngleOut = e.phiAngleOut; phiAngleOutset = 1; }
-  if(!xsizeset) { xsize = e.xsize; xsizeset = 1; }
-  if(!ysizeset) { ysize = e.ysize; ysizeset = 1; }
- 
-  if(!xdirset) { xdir = e.xdir; xdirset = 1; }
-  if(!ydirset) { ydir = e.ydir; ydirset = 1; }
-  if(!zdirset) { zdir = e.zdir; zdirset = 1; }
-  if(!waveLength) { waveLength = e.waveLength; waveLengthset = 1; }
-  if(!phiset) { phi = e.phi; phiset = 1; }
-  if(!psiset) { psi = e.psi; psiset = 1; }
-  if(!thetaset) { theta = e.theta; thetaset = 1; }
-
-  if(!tscintset) { tscint = e.tscint; tscintset = 1; }
-  if(!twindowset) { twindow = e.twindow; twindowset = 1; }
-
-  //materials
-  if(!Aset) { A = e.A; Aset = 1; }
-  if(!Zset) { Z = e.Z; Zset = 1; }
-  if(!densityset) { density = e.density; densityset = 1; }
-  if(!temperset) { temper = e.temper; temperset = 1; }
-  if(!pressureset) { pressure = e.pressure; pressureset = 1; }
-  if(!stateset) { state = e.state; stateset = 1; }
-  if(!symbolset) { symbol = e.symbol; symbolset = 1; }
-  if(!componentsset) 
-    { components = e.components; componentsset = 1; }
-  if(!componentsWeightsset) 
-    { componentsWeights = e.componentsWeights; componentsWeightsset = 1; }
-  if(!componentsFractionsset) 
-    { componentsFractions = e.componentsFractions; componentsFractionsset = 1; }
-
   // aperture model
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
   if(!aper1set) { aper1 = e.aper1; aper1set = 1;}
@@ -139,26 +106,59 @@ void Parameters::inherit_properties(struct Element& e)
   if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = 1;}
   if(!outerDiameterset)      {outerDiameter = e.outerDiameter; outerDiameterset = 1;}
 
-  if(!gradientset) { gradient = e.gradient; gradientset = 1; }
-
   if(!tiltset) { tilt = e.tilt; tiltset = 1; }
+  if(!xsizeset) { xsize = e.xsize; xsizeset = 1; }
+  if(!ysizeset) { ysize = e.ysize; ysizeset = 1; }
+  if(!rset) { r = e.r; rset = 1; }
+  if(!Bset) { B = e.B; Bset = 1; }
+  if(!phiAngleInset) { phiAngleIn = e.phiAngleIn; phiAngleInset = 1; }
+  if(!phiAngleOutset) { phiAngleOut = e.phiAngleOut; phiAngleOutset = 1; }
   if(!offsetXset) { offsetX = e.offsetX; offsetXset = 1; }
   if(!offsetYset) { offsetY = e.offsetY; offsetYset = 1; }
+  if(!tscintset) { tscint = e.tscint; tscintset = 1; }
+  if(!twindowset) { twindow = e.twindow; twindowset = 1; }
+  if(!bmapZOffsetset) { bmapZOffset = e.bmapZOffset; bmapZOffsetset = 1; }
+  if(!xdirset) { xdir = e.xdir; xdirset = 1; }
+  if(!ydirset) { ydir = e.ydir; ydirset = 1; }
+  if(!zdirset) { zdir = e.zdir; zdirset = 1; }
+  if(!waveLength) { waveLength = e.waveLength; waveLengthset = 1; }
+  if(!gradientset) { gradient = e.gradient; gradientset = 1; }
+  if(!phiset) { phi = e.phi; phiset = 1; }
+  if(!psiset) { psi = e.psi; psiset = 1; }
+  if(!thetaset) { theta = e.theta; thetaset = 1; }
+
+
   if(!knlset) { knl = e.knl; knlset = 1; }
   if(!kslset) { ksl = e.ksl; kslset = 1; }
-  // physics biasing
-  if(!biasset) {bias = e.bias; biasset = 1; }
   //beam loss monitor locations
   if(!blmLocZset) { blmLocZ = e.blmLocZ; blmLocZset = 1; }
   if(!blmLocThetaset) { blmLocTheta = e.blmLocTheta; blmLocThetaset = 1; }
 
-  if(!specset) { spec = e.spec; specset = 1; }
-  if(!materialset) { material = e.spec; materialset = 1; }
-  if(!scintmaterialset) { scintmaterial = e.spec; scintmaterialset = 1; }
-  if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
-  if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
+  // physics biasing
+  if(!biasset) {bias = e.bias; biasset = 1; }
   if(!precisionRegionset) { precisionRegion = e.precisionRegion; precisionRegionset = 1; }
+  //materials
+  if(!Aset) { A = e.A; Aset = 1; }
+  if(!Zset) { Z = e.Z; Zset = 1; }
+  if(!densityset) { density = e.density; densityset = 1; }
+  if(!temperset) { temper = e.temper; temperset = 1; }
+  if(!pressureset) { pressure = e.pressure; pressureset = 1; }
+  if(!stateset) { state = e.state; stateset = 1; }
+  if(!symbolset) { symbol = e.symbol; symbolset = 1; }
+  if(!componentsset) 
+    { components = e.components; componentsset = 1; }
+  if(!componentsFractionsset) 
+    { componentsFractions = e.componentsFractions; componentsFractionsset = 1; }
+  if(!componentsWeightsset) 
+    { componentsWeights = e.componentsWeights; componentsWeightsset = 1; }
 
+  if(!geometryFileset) { geometryFile = e.geometryFile; geometryFileset = 1; }
+  if(!bmapFileset) { bmapFile = e.bmapFile; bmapFileset = 1; }
+  if(!materialset) { material = e.material; materialset = 1; }
+  if(!windowmaterialset) { windowmaterial = e.windowmaterial; windowmaterialset = 1; }
+  if(!scintmaterialset) { scintmaterial = e.scintmaterial; scintmaterialset = 1; }
+  if(!airmaterialset) { airmaterial = e.airmaterial; airmaterialset = 1; }
+  if(!specset) { spec = e.spec; specset = 1; }
 }
 
 void Parameters::set_value(std::string property, double value )
