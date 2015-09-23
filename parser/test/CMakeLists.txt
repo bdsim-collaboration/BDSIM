@@ -58,3 +58,11 @@ add_test(gmad-testAccessElement ${gmadBinary} accesselement.gmad)
 # test access element
 add_test(gmad-testAccessElementOutsiderange ${gmadBinary} accesselementoutsiderange.gmad)
 set_tests_properties(gmad-testAccessElementOutsiderange PROPERTIES WILL_FAIL 1)
+
+# test inheritance declaration
+add_test(gmad-inherit ${gmadBinary} inherit.gmad)
+set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
+
+# test extension
+add_test(gmad-extend ${gmadBinary} extend.gmad)
+set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.2)
