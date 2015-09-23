@@ -11,106 +11,78 @@
 
 using namespace GMAD;
 
-Parameters::Parameters() {
+Parameters::Parameters():Element() {
   flush();
 }
 
 void Parameters::flush() {
-  l=0; lset = 0;
-  bmapZOffset = 0; bmapZOffsetset=0;
-  r = 0; rset = 0;
-  tscint = 0.0003; tscintset = 0;
-  twindow = 0; twindowset = 0;
+  Element::flush();
+  lset = false;
+  ksset = false;
+  k0set = false;
+  k1set = false;
+  k2set = false;
+  k3set = false;
+  k4set = false;
+  angleset = false;
+  beampipeThicknessset = false;
+  aper1set = false;
+  aper2set = false;
+  aper3set = false;
+  aper4set = false;
+  apertureTypeset = false;
+  beampipeMaterialset = false;
+  magnetGeometryTypeset = false;
+  outerMaterialset      = false;
+  outerDiameterset      = false;
+  tiltset = false;
+  xsizeset = false;
+  ysizeset = false;
+  rset = false;
+  Bset  = false;
+  phiAngleInset = false;
+  phiAngleOutset = false;
+  offsetXset = false;
+  offsetYset = false;
+  tscintset = false;
+  twindowset = false;
+  bmapZOffsetset=false;
+  xdirset = false;
+  ydirset = false;
+  zdirset = false; 
+  waveLengthset = false; 
+  gradientset = false;
+  phiset = false;
+  thetaset = false;
+  psiset = false;
+  knlset = false, kslset=false;
+  blmLocZset = false;  blmLocThetaset = false;
+  biasset = false;
+  precisionRegionset = false;
 
-  // materials' parameters
-  A = 0; Aset = 0; //g*mol^-1
-  Z = 0; Zset = 0; 
-  density = 0; densityset = 0; //g*cm-3
-  temper = 300; temperset = 0; //kelvin
-  pressure = 1; pressureset = 0; //atm
-  state = "solid"; stateset = 0; // "solid", "liquid", or "gas"
-  symbol = ""; symbolset = 0;
-  componentsset = 0; componentsFractionsset = 0; componentsWeightsset = 0;
-  components.erase(components.begin(),components.end());
-  componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
-  componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
-
-  angle = 0; angleset = 0;
-  phiAngleIn = 0; phiAngleInset = 0;
-  phiAngleOut = 0; phiAngleOutset = 0;
-  xsize = 0; xsizeset = 0;
-  ysize = 0; ysizeset = 0;
-  xdir = 0; xdirset = 0;
-  ydir = 0; ydirset = 0;
-  zdir = 0; zdirset = 0; 
-  waveLength = 0; waveLengthset = 0; 
-
-  phi = 0; phiset = 0;
-  theta = 0; thetaset = 0;
-  psi = 0; psiset = 0;
-
-  precisionRegion = 0; precisionRegionset = 0;
-
-  beampipeThickness = 0; beampipeThicknessset = 0;
-
-  tilt = 0; tiltset = 0;
-  offsetX = 0; offsetXset = 0;
-  offsetY = 0; offsetYset = 0;
-
-  // new aperture model
-  aper1 = 0; aper1set = 0;
-  aper2 = 0; aper2set = 0;
-  aper3 = 0; aper3set = 0;
-  aper4 = 0; aper4set = 0;
-  apertureType=""; apertureTypeset = 0;
-  beampipeMaterial = ""; beampipeMaterialset = 0;
-
-  // magnet geometry
-  magnetGeometryType = ""; magnetGeometryTypeset = 0;
-  outerMaterial      = ""; outerMaterialset      = 0;
-  outerDiameter      = 0;  outerDiameterset      = 0;
-
-  B  = 0; Bset  = 0;
-  k0 = 0; k0set = 0;
-  k1 = 0; k1set = 0;
-  k2 = 0; k2set = 0;
-  k3 = 0; k3set = 0;
-  k4 = 0; k4set = 0;
-  ks = 0; ksset = 0;
-
-  gradient = 0; gradientset = 0;
-    
-  knlset = 0; kslset=0;
-
-  knl.erase(knl.begin(),knl.end());
-  ksl.erase(ksl.begin(),ksl.end());
-
-  biasset = 0;
+  Aset = false;
+  Zset = false;
+  densityset = false;
+  temperset = false;
+  pressureset = false;
+  stateset = false;
+  symbolset = false;
+  componentsset = false; componentsFractionsset = false; componentsWeightsset = false;
   
-  //Beam loss monitor locations
-  blmLocZset = 0;  blmLocThetaset = 0;
-  blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
-  blmLocTheta.erase(blmLocTheta.begin(), blmLocTheta.end());
-
-  //precisionRegion
-  precisionRegion = 0; precisionRegionset=0;
-
-  geometry = "";  geomset = 0;
-
-  bmap = ""; bmapset = 0;
-
-  material = ""; materialset = 0;
-  scintmaterial = ""; scintmaterialset = 0;
-  windowmaterial = "vacuum"; windowmaterialset = 0;
-  airmaterial = ""; airmaterialset = 0;
-  spec = ""; specset = 0;
-  at = 0.0; atset = 0;
+  geometryFileset = false;
+  bmapFileset = false;
+  materialset = false;
+  scintmaterialset = false;
+  windowmaterialset = false;
+  airmaterialset = false;
+  specset = false;
 }
 
 void Parameters::inherit_properties(struct Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
+  // this is used for the inheritance / newinstance mechanism
   
   if(!lset) { l = e.l; lset = 1; }
   if(!bmapZOffsetset) { bmapZOffset = e.bmapZOffset; bmapZOffsetset = 1; }
@@ -246,7 +218,6 @@ void Parameters::set_value(std::string property, double value )
   if(property=="T") {temper = value; temperset = 1; return;}  // temperature
   if(property=="P") {pressure = value; pressureset = 1; return;}  // pressure
   if(property=="waveLength") {waveLength = value; waveLengthset = 1; return;}
-  if(property=="at") {at = value; atset = 1; return;}  //position of an element within a sequence
   if(property=="tscint") { tscint = value; tscintset = 1; return;} // thickness for a scintillator screen 
   if(property=="twindow") { twindow = value; twindowset = 1; return;} // thickness for a scintillator screen window 
   // not implemented mad parameters will be ignored
@@ -271,14 +242,14 @@ void Parameters::set_value(std::string property, std::string value )
 
   if(property=="geometry") 
     {
-      geomset = 1;
-      geometry = value;
+      geometryFileset = 1;
+      geometryFile = value;
       return;
     } 
   if(property=="bmap") 
     {
-      bmapset = 1;
-      bmap = value;
+      bmapFileset = 1;
+      bmapFile = value;
       return;
     }
   if(property=="type") 

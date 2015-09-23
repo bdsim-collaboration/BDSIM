@@ -66,8 +66,6 @@ void Element::print(int & ident)const{
   case ElementType::_ELEMENT:
     printf("\ngeometry file : %s\n",geometryFile.c_str());
     printf("B map file : %s\n",bmapFile.c_str());
-    //printf("E map driver : %s\n",geometryFile);
-    //printf("E map file : %s\n",geometryFile);
     break;
     
   case ElementType::_SCREEN:
@@ -99,9 +97,9 @@ void Element::print(int & ident)const{
 }
 
 void Element::flush() {
+  type = ElementType::_NONE;
+  name = "";
   l = 0;
-  bmapZOffset = 0;
-  B = 0;
   ks = 0;
   k0 = 0;
   k1 = 0;
@@ -109,24 +107,7 @@ void Element::flush() {
   k3 = 0;
   k4 = 0;
   angle = 0;
-  xsize = 0;
-  ysize = 0;
-  r = 0;
-  phiAngleIn = 0;
-  phiAngleOut = 0;
-  tscint = 0;
-  twindow = 0;
-  tilt = 0;
-  offsetX = 0;
-  offsetY = 0;
-  phi = 0;
-  psi = 0;
-  theta = 0;
 
-  gradient = 0;
-
-  bias = "";
-  
   // new aperture model
   beampipeThickness = 0;
   aper1 = 0;
@@ -141,14 +122,34 @@ void Element::flush() {
   outerMaterial = "";
   outerDiameter = 0;
   
-  waveLength = 0;
-
+  tilt = 0;
+  xsize = 0;
+  ysize = 0;
+  r = 0;
+  B = 0;
+  phiAngleIn = 0;
+  phiAngleOut = 0;
+  offsetX = 0;
+  offsetY = 0;
+  tscint = 0.0003;
+  twindow = 0;
+  bmapZOffset = 0;
   xdir = 0;
   ydir = 0;
   zdir = 0;
+  waveLength = 0;
+  gradient = 0;
+  phi = 0;
+  theta = 0;
+  psi = 0;
 
-  name = "";
-  type = ElementType::_NONE;
+  knl.erase(knl.begin(),knl.end());
+  ksl.erase(ksl.begin(),ksl.end());
+  blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
+  blmLocTheta.erase(blmLocTheta.begin(), blmLocTheta.end());
+
+  bias = "";
+  
   precisionRegion = 0;
 
   A = 0;
@@ -156,22 +157,20 @@ void Element::flush() {
   density = 0;      //g*cm-3
   temper = 300;     //kelvin
   pressure = 0;     //atm
-  state = "";  //allowed values: "solid", "liquid", "gas"
+  state = "solid";  //allowed values: "solid", "liquid", "gas"
+  symbol = "";
 
-  /*  
-      knl = std::list<double>(0);
-      ksl = std::list<double>(0);
-      
-      geometryFile
-      bmapFile
-      material;
-  */
+  components.erase(components.begin(),components.end());
+  componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
+  componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
 
+  geometryFile ="";
+  bmapFile = "";
+  material="";  
+  windowmaterial = "vacuum";
   scintmaterial = "";
-  windowmaterial = "";
-  spec = "";
-  material="";
   airmaterial="";
+  spec = "";
 }
 
 double Element::property_lookup(std::string property_name)const{
@@ -332,9 +331,9 @@ void Element::set(const struct Parameters& params)
   // Laser
   waveLength = params.waveLength;
   // Element, Tunnel
-  geometryFile = params.geometry;
+  geometryFile = params.geometryFile;
   // Element
-  bmapFile = params.bmap;
+  bmapFile = params.bmapFile;
   if(params.bmapZOffsetset)
     bmapZOffset = params.bmapZOffset;
   // Transform3D
