@@ -226,6 +226,21 @@ void Element::set(const struct Parameters& params,std::string nameIn, ElementTyp
   type = typeIn;
   // common parameters for all elements
   name = nameIn;
+  switch(type) {
+
+  case ElementType::_LINE:
+  case ElementType::_REV_LINE:
+    lst = lstIn;
+    break;
+  default:
+    break;
+  }
+  
+  set(params);
+}
+
+void Element::set(const struct Parameters& params)
+{
   l = params.l;
 
   //new aperture model
@@ -251,7 +266,6 @@ void Element::set(const struct Parameters& params,std::string nameIn, ElementTyp
   // end of common parameters
 
   // specific parameters
-  // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
 
   // for transform3ds, lasers and for tracker
   xdir = params.xdir;
@@ -338,11 +352,6 @@ void Element::set(const struct Parameters& params,std::string nameIn, ElementTyp
 
   // overwriting of other parameters or specific printing
   switch(type) {
-
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    lst = lstIn;
-    break;
 
   case ElementType::_MATERIAL:
     A = params.A;
