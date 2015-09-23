@@ -35,7 +35,7 @@ struct Element {
   double aper1;
   double aper2;
   double aper3;
-  double aper4; // new aperture model
+  double aper4;
   std::string apertureType;
   std::string beampipeMaterial;
   ///@}

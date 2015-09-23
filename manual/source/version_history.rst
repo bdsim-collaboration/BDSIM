@@ -34,6 +34,7 @@ Parser
 
 * Occasional material parser segfault fixed (issue #25)
 * Improved syntax checking and not ignore unknown keywords (issue #71)
+* Element extension fixed (issue #87)
 
 Tracking
 ^^^^^^^^
