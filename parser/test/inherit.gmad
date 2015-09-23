@@ -3,10 +3,13 @@ d1: drift, l=0.5*m, phi=0.05;
 ! inherit and extend/ alter properties
 d2: d1, aper=0.1*m, l=0.2*m;
 
+! inherit
+d3: d2;
+
 length1  = d1[l];
 length2  = d2[l];
 aperture = d2[aper];
-phi      = d2[phi];
+phi      = d3[phi];
 
 print, length1;
 print, length2;

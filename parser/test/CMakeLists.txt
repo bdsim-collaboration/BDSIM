@@ -65,4 +65,4 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 
 # test extension
 add_test(gmad-extend ${gmadBinary} extend.gmad)
-set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.2)
+set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
