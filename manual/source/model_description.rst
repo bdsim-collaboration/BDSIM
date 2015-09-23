@@ -162,6 +162,23 @@ The following elements may be defined
 
 These are detailed in the following sections.
 
+Simple example, extend and copy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Example::
+
+  d1: drift, l=5*m;
+
+This defines a drift element with name `d1` and a length of 5 metres. The definition can later be changed or extended with::
+
+  d1: l=3*m, aper=0.1*m;
+
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+
+  d2: d1, l=2*m;
+
+Element `d2` is a drift with the properties of `d1` and a length of 2 metres. Note that if `d1` is changed again, `d2` will **not** change.
+
 Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
