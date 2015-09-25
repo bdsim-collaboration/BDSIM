@@ -12,7 +12,6 @@ BDSPillBoxField::BDSPillBoxField(G4double eFieldMaxIn,
 				 G4double frequencyIn,
 				 G4double phaseIn)
 {
-  frequency = 2.405*CLHEP::c_light/cavityRadius;
   eFieldMax = eFieldMaxIn;
   //PillBoxNavigator = new G4Navigator();
   frequency = frequencyIn;
@@ -28,7 +27,6 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
 {
   G4ThreeVector LocalR;  //Vector to hold the local coordinates
   G4ThreeVector GlobalR; //Vector to hold the global coordinates
-
   //Initializing GlobalR.  (GetFieldValue is given global coordinates)
   GlobalR.setX(Point[0]); 
   GlobalR.setY(Point[1]);
@@ -45,7 +43,6 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   //double B_theta = -(eFieldMax/CLHEP::c_light)*sin(CLHEP::pi*CLHEP::c_light*pow(Point[0]*Point[0]+Point[1]*Point[1],0.5)/(2*cavityRadius))*(sin(frequency*Point[3]));
   //double B_theta = -(eFieldMax/CLHEP::c_light)*sin(CLHEP::pi*CLHEP::c_light*pow(LocalR.x()*LocalR.x()+LocalR.y()*LocalR.y(),0.5)/(2*cavityRadius));//*(sin(frequency*Point[3]));
 
-
   //Bfield[0] = B_theta*sin(theta);
   Bfield[0] = 0.0 ;//eFieldMax*cos(Point[3]);
   //Bfield[1] = B_theta*cos(theta);
@@ -54,7 +51,7 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   //E_z = eFieldMax*J_0(k_r*r) * cos(frequency t)
   Bfield[3] = 0.0; //EField only along z-axis
   Bfield[4] = 0.0; //Efield only along z-axis
-  Bfield[5] = eFieldMax*cos(frequency*Point[3]);
+  Bfield[5] = eFieldMax*cos(frequency*Point[3]+phase);
   //Bfield[5] = eFieldMax;
   }
 

@@ -10,6 +10,7 @@
 class BDSCavityRF: public BDSCavity
 {//I should have different constructors for static vs RF?
 public:
+
   BDSCavityRF(G4String name, 
 	      G4double length,
 	      G4String type, 
@@ -19,7 +20,8 @@ public:
 	      G4double irisRadius,
 	      G4double thickness,
 	      G4double frequency,
-	      G4double phase
+	      G4double phase,
+	      G4String cavityModel
 	      );
 
   virtual void Build(); //Builds geometry and vacuum, and builds and attaches field to vacuum

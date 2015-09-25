@@ -13,7 +13,6 @@
 #include "G4EqMagElectricField.hh"
 #include "G4ClassicalRK4.hh"
 
-
 BDSCavityRF::BDSCavityRF(G4String name, 
 			 G4double length,
 			 G4String type,  //??
@@ -23,17 +22,19 @@ BDSCavityRF::BDSCavityRF(G4String name,
 			 G4double irisRadiusIn, //radius at ends (assuming equal..)
 			 G4double thicknessIn,
 			 G4double frequencyIn,
-			 G4double phaseIn
+			 G4double phaseIn,
+			 G4String cavityModelIn
 			 ):
-    BDSCavity(name, length, type, cavityMaterialIn, vacuumMaterialIn, cavityRadiusIn, irisRadiusIn, thicknessIn)
+  BDSCavity(name, length, type, cavityMaterialIn, vacuumMaterialIn, cavityRadiusIn, irisRadiusIn, thicknessIn, cavityModelIn)
 {
-  frequency = frequencyIn;
+  frequency = 100*CLHEP::megahertz;
   phase = phaseIn;
-    }
+}
 
  void BDSCavityRF::BuildField()
 {
-  G4double eFieldMax = 16 * CLHEP::megavolt / CLHEP::m; //--------------REMOVE HARDCODED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  G4double eFieldMax = - 160 * CLHEP::megavolt / CLHEP::m; //--------------REMOVE HARDCODED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  frequency = 100*CLHEP::megahertz;
   itsField = new BDSPillBoxField(eFieldMax,
 				 cavityRadius,
 				 frequency,
@@ -73,8 +74,14 @@ void BDSCavityRF::AttachField()
 
 void BDSCavityRF::Build()
 {
-  BuildEllipticalCavityGeometry();
-  //BuildPillBoxCavityGeometry();
+  if (type=="elliptical") {
+    BuildEllipticalCavityGeometry();
+  } else if (type=="rectangular" || type=="pillbox") {
+    BuildPillBoxCavityGeometry();
+  } else {
+    std::cout << "type is not known: " << type << std::endl;
+    exit(1);
+  }
   BDSAcceleratorComponent::Build();
   BuildField();
   AttachField();

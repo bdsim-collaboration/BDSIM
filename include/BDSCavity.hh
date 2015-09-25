@@ -28,11 +28,12 @@ public:
 	    G4Material* vacuumMaterial,
 	    G4double cavityRadius, //Largest radial distance from z axis
 	    G4double irisRadius, //radius at ends
-	    G4double thickness 
+	    G4double thickness,
+	    G4String cavityModel
 	    );
   
 
-private:
+protected:
   BDSCavity();
   
 protected:
@@ -66,6 +67,7 @@ protected:
   G4double cavityRadius;      //largest value of r from z.
   G4double irisRadius;         //radius of the iris (aperture).
   G4double thickness;          //thickness.  Constant thickness.  Any deviation is an artifact.
+  G4String cavityModel; ///< cavity model name
   
   //members for fields
   //How many of these do I actually need?  Some are used simply for immediately initializing something
