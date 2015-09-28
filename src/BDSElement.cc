@@ -161,7 +161,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       BuildMagField(true);
     }else if(bFormat=="XY"){
-      itsMagField = new BDSXYMagField(bFile);
+      itsMagField = new BDSMagFieldXY(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
 
       // build the magnetic field manager and transportation
@@ -181,7 +181,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     LCDD->Construct(containerLogicalVolume);
     RegisterSensitiveVolume(containerLogicalVolume);
     if(bFormat=="XY"){
-      itsMagField = new BDSXYMagField(bFile);
+      itsMagField = new BDSMagFieldXY(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
 
       // build the magnetic field manager and transportation
@@ -240,7 +240,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
       
       BuildMagField(true);
     } else if(bFormat=="XY"){
-      itsMagField = new BDSXYMagField(bFile);
+      itsMagField = new BDSMagFieldXY(bFile);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       
       // build the magnetic field manager and transportation

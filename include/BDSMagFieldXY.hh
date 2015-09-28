@@ -1,17 +1,14 @@
-/* BDSIM code.
-
-*/
-
 #include "G4ElectroMagneticField.hh"
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 #include <vector>
 
-#ifndef BDSXYMagField_h
-#define BDSXYMagField_h
+#ifndef BDSMAGFIELDXY_H
+#define BDSMAGFIELDXY_H
 
-struct XYFieldRecord {
+struct XYFieldRecord
+{
   G4double x;
   G4double y;
   G4double Bx;
@@ -19,15 +16,13 @@ struct XYFieldRecord {
   G4double Bz;
 };
 
-class BDSXYMagField : public BDSMagField
+class BDSMagFieldXY: public BDSMagFieldMesh
 {
 public:
-
   // mandatory members
-
-  BDSXYMagField(G4String fname);
+  BDSMagFieldXY(G4String fname);
   
-  ~BDSXYMagField();
+  ~BDSMagFieldXY();
 
   G4bool DoesFieldChangeEnergy() const;
 
@@ -41,7 +36,7 @@ public:
 
   G4int ReadFile(G4String fname);
 
-  void Prepare(G4VPhysicalVolume *referenceVolume);
+  virtual void Prepare(G4VPhysicalVolume *referenceVolume);
 
   void SetBx(G4int i,G4int j,G4double val);
   void SetBy(G4int i,G4int j,G4double val);
@@ -66,5 +61,22 @@ public:
   
 };
 
+inline void BDSMagFieldXY::SetBx(int i,int j,double val)
+{Bx[i][j] = val;}
+
+inline void BDSMagFieldXY::SetBy(int i,int j,double val)
+{By[i][j] = val;}
+
+inline void BDSMagFieldXY::SetBz(int i,int j,double val)
+{Bz[i][j] = val;}
+
+inline G4double BDSMagFieldXY::GetBx(int i,int j)
+{return Bx[i][j];}
+
+inline G4double BDSMagFieldXY::GetBy(int i,int j)
+{return By[i][j];}
+
+inline G4double BDSMagFieldXY::GetBz(int i,int j)
+{return Bz[i][j];}
 
 #endif
