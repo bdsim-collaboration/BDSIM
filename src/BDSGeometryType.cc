@@ -9,19 +9,19 @@
 template<>
 std::map<BDSGeometryType, std::string>* BDSGeometryType::dictionary =
   new std::map<BDSGeometryType, std::string> ({
-   {BDSGeometryType::3d,    "3d"},
-   {BDSGeometryType::xy,    "xy"},
-   {BDSGeometryType::mokka, "mokka"},
-   {BDSGeometryType::lcdd,  "lcdd"},
+   {BDSGeometryType::threed, "threed"},
+   {BDSGeometryType::xy,     "xy"},
+   {BDSGeometryType::mokka,  "mokka"},
+   {BDSGeometryType::lcdd,   "lcdd"},
 });	
 
-BDSGeometryType BDS::DetermineBeamPipeType(G4String geometryType)
+BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
 {
   std::map<G4String, BDSGeometryType> types;
-  types["3d"]    = BDSGeometryType::3d;
-  types["xy"]    = BDSGeometryType::xy;
-  types["mokka"] = BDSGeometryType::mokka;
-  types["lcdd"]  = BDSGeometryType::lcdd;
+  types["threed"] = BDSGeometryType::threed;
+  types["xy"]     = BDSGeometryType::xy;
+  types["mokka"]  = BDSGeometryType::mokka;
+  types["lcdd"]   = BDSGeometryType::lcdd;
 
   geometryType.toLower();
 
