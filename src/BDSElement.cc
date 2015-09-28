@@ -154,10 +154,10 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
     // attach magnetic field if present
     if(bFormat=="3D"){
 #ifdef BDSDEBUG
-      G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
+      G4cout << "BDSElement.cc> Making BDSMagField3D..." << G4endl;
 #endif
       
-      itsMagField = new BDS3DMagField(bFile, itsBmapZOffset);
+      itsMagField = new BDSMagField3D(bFile, bFieldOffset);
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       BuildMagField(true);
     }else if(bFormat=="XY"){
@@ -233,9 +233,9 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 
     if(bFormat=="3D"){
 #ifdef BDSDEBUG
-      G4cout << "BDSElement.cc> Making BDS3DMagField..." << G4endl;
+      G4cout << "BDSElement.cc> Making BDSMagField3D..." << G4endl;
 #endif
-      itsMagField = new BDS3DMagField(bFile, 0);
+      itsMagField = new BDSMagField3D(bFile, G4ThreeVector(0,0,0));
       itsCachedMagField = new G4CachedMagneticField(itsMagField, 1*CLHEP::um);
       
       BuildMagField(true);
