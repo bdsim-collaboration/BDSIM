@@ -52,8 +52,10 @@ private:
   G4MagIntegratorStepper* magIntegratorStepper;
 
   /// Chord manager
-  G4ChordFinder* chordFinder;
+  G4ChordFinder*  chordFinder;
 
   /// Field manager
   G4FieldManager* fieldManager;
 };
+
+#endif

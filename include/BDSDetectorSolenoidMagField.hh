@@ -29,4 +29,4 @@ private:
   G4double itsBIn, itsBOut, itsRadiusIn, itsRadiusOut, itsZMin, itsZMax;
 };
 
-#endif /* BDSDETECTORSOLENOIDMAGFIELD */
+#endif

@@ -1,9 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 02.12.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSElement.hh"
 
 #include "BDS3DMagField.hh"

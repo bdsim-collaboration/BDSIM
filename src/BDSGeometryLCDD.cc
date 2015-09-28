@@ -1,23 +1,25 @@
 #ifdef USE_LCDD
-#include "BDSGlobalConstants.hh" 
-#include "BDSGeometryLCDD.hh"
+
 #include "G4Box.hh"
 #include "G4Colour.hh"
-#include "G4Tubs.hh"
 #include "G4Cons.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
-#include "G4VisAttributes.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
+#include "G4TessellatedSolid.hh"
+#include "G4Tubs.hh"
+#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
+
+#include "BDSDetectorSolenoidMagField.hh"
+#include "BDSGeometryLCDD.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSDetectorSolenoidMagField.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4TessellatedSolid.hh"
-#include "G4UniformMagField.hh"
 
 #include <cstdlib>
 #include <cstring>
