@@ -99,6 +99,8 @@ void Element::print(int & ident)const{
 
 void Element::flush() {
   l = 0;
+  bmapXOffset = 0;
+  bmapYOffset = 0;
   bmapZOffset = 0;
   B = 0;
   ks = 0;
@@ -175,6 +177,8 @@ void Element::flush() {
 
 double Element::property_lookup(std::string property_name)const{
   if(property_name == "l") return l;
+  if(property_name == "bmapXOffset") return bmapXOffset;
+  if(property_name == "bmapYOffset") return bmapYOffset;
   if(property_name == "bmapZOffset") return bmapZOffset;
   if(property_name == "B") return B;
   if(property_name == "ks") return ks;

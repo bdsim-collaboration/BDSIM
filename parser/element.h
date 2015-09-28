@@ -35,7 +35,8 @@ struct Element {
 
   double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
   double offsetX, offsetY;
-  double tscint, twindow, bmapZOffset; 
+  double tscint, twindow;
+  double bmapXOffset, bmapYOffset, bmapZOffset; 
   double xdir, ydir, zdir, waveLength; ///< for laser wire and 3d transforms
   double gradient; ///< for rf cavities
   double phi, theta, psi; ///< for 3d transforms
