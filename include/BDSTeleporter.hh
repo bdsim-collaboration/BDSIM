@@ -1,5 +1,5 @@
-#ifndef BDSTeleporter_h
-#define BDSTeleporter_h 1
+#ifndef BDSTELEPORTER_H
+#define BDSTELEPORTER_H
 
 #include "BDSTeleporterStepper.hh"
 #include "G4ChordFinder.hh"

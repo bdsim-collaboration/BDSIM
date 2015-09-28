@@ -1,5 +1,5 @@
-#ifndef BDSMagFieldSQL_h
-#define BDSMagFieldSQL_h 
+#ifndef BDSMAGFIELDSQL_H
+#define BDSMAGFIELDSQL_H 
 
 #include <fstream>
 #include <iostream>

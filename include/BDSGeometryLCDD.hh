@@ -1,17 +1,7 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 13.04.2005
-*/
-
 #ifdef USE_LCDD
 
-#ifndef BDSGeometryLCDD_h
-#define BDSGeometryLCDD_h 1
+#ifndef BDSGEOMETRYLCDD_H
+#define BDSGEOMETRYLCDD_H
 
 #include "globals.hh"
 #include "BDSMaterials.hh"
