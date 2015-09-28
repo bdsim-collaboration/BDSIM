@@ -666,13 +666,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 	     << _element.name << "\"" << G4endl;
       exit(1);
     }
-  
+
+  G4ThreeVector bFieldOffset = G4ThreeVector(_element.bmapXOffset * CLHEP::m,
+					     _element.bmapYOffset * CLHEP::m,
+					     _element.bmapZOffset * CLHEP::m);
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name = " << _element.name
 	 << " l = " << _element.l << "m"
 	 << " outerDiameter = "  << _element.outerDiameter << "m"
-	 << " bmapZOffset = "	 << _element.bmapZOffset * CLHEP::m << "mm"
+	 << " B Field Offset = " << bFieldOffset << " m"
 	 << " precision region " << _element.precisionRegion
 	 << G4endl;
 #endif
@@ -682,8 +685,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 _element.outerDiameter * CLHEP::m,
 			 _element.geometryFile,
 			 _element.bmapFile,
-			 _element.bmapZOffset * CLHEP::m
-			  ));
+			 bFieldOffset));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()

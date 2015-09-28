@@ -36,21 +36,21 @@
 
 #include <vector>
 
-BDSElement::BDSElement(G4String name,
-		       G4double length,
-		       G4double outerDiameterIn,
-		       G4String geometry,
-		       G4String bmap,
-		       G4double bmapZOffset):
+BDSElement::BDSElement(G4String      name,
+		       G4double      length,
+		       G4double      outerDiameterIn,
+		       G4String      geometry,
+		       G4String      bmap,
+		       G4ThreeVector bFieldOffsetIn):
   BDSAcceleratorComponent(name, length, 0, "element"),
   outerDiameter(outerDiameterIn),
   itsGeometry(geometry), itsBmap(bmap),
+  bFieldOffset(bFieldOffsetIn),
   fChordFinder(nullptr), itsFStepper(nullptr), itsFEquation(nullptr), itsEqRhs(nullptr), 
   itsMagField(nullptr), itsCachedMagField(nullptr), itsUniformMagField(nullptr)
 {
   itsFieldVolName="";
   itsFieldIsUniform=false;
-  itsBmapZOffset = bmapZOffset;
 
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.

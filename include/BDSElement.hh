@@ -13,6 +13,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4Mag_EqRhs.hh"
+#include "G4ThreeVector.hh"
 #include "G4UniformMagField.hh"
 
 /**
@@ -30,7 +31,7 @@ public:
 	     G4double      outerDiameterIn,
 	     G4String      geometry,
 	     G4String      bmap,
-	     G4double      aBmapZOffset);
+	     G4ThreeVector bFieldOffsetIn);
   ~BDSElement();
 
   // creates a field mesh in global coordinates in case it is given by map
@@ -66,6 +67,9 @@ private:
   
   G4String itsGeometry;
   G4String itsBmap;
+
+  /// Displacement of b field coordinates from geometry coordinates
+  G4ThreeVector bFieldOffset;
 
   G4String itsFieldVolName;
   G4bool itsFieldIsUniform;
