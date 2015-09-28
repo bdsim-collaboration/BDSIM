@@ -301,7 +301,7 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
     G4cout << "BDSElement.cc> Building magnetic field..." << G4endl;
 #endif
     itsEqRhs = new G4Mag_UsualEqRhs(itsCachedMagField);
-    if( (itsMagField->GetHasUniformField())&!(itsMagField->GetHasNPoleFields() || itsMagField->GetHasFieldMap())){
+    if( (itsMagField->HasUniformField())&!(itsMagField->HasNPoleFields() || itsMagField->HasFieldMap())){
       itsFStepper = new G4NystromRK4(itsEqRhs); 
     } else {
       itsFStepper = new G4NystromRK4(itsEqRhs);
