@@ -22,7 +22,7 @@ class BDSMagFieldObjects
 public:
   /// A magnetic field is required to build the required objects to manage
   /// and use it.
-  BDSMagFieldObjects(G4MagneticField*        magneticField,
+  BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
 		     G4EquationOfMotion*     equationOfMotionIn,
 		     G4MagIntegratorStepper* magIntegratorStepperIn,
 		     G4ChordFinder*          chordFinderIn,
@@ -32,7 +32,8 @@ public:
   /// for convenience. The field manager uses delta intersection, epsilon min / max,
   /// and delta one step from BDSGlobalConstants as defaults for field propagation
   /// accuracy.
-  BDSMagFieldObjects(G4MagneticField*        magneticField,
+  BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
+		     G4EquationOfMotion*     equationOfMotionIn,
 		     G4MagIntegratorStepper* magIntegratorStepperIn);
 
   /// Destructor deletes all objects apart from the magnetic field
@@ -44,6 +45,9 @@ private:
 
   /// Private copy constructor to avoid shallow pointer copy and possible double deletion
   BDSMagFieldObjects(const BDSMagFieldObjects& other);
+
+  /// Reference to magnetic field this instance is based on (doesn't own it)
+  G4MagneticField* magneticField;
   
   /// Equation of motion, typically G4Mag_UsualEqRhs instance
   G4EquationOfMotion* equationOfMotion;

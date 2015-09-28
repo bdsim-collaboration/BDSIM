@@ -3,25 +3,27 @@
 
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
+#include "G4MagneticField.hh"
 
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
-class G4MagneticField;
 
-BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticField,
+BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
 				       G4EquationOfMotion*     equationOfMotionIn,
 				       G4MagIntegratorStepper* magIntegratorStepperIn,
 				       G4ChordFinder*          chordFinderIn,
 				       G4FieldManager*         fieldManagerIn):
+  magneticField(magneticFieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn),
-  chordManager(chordManagerIn),
+  chordFinder(chordFinderIn),
   fieldManager(fieldManagerIn)
 {;}
 
-BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticField,
+BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
 				       G4EquationOfMotion*     equationOfMotionIn,
 				       G4MagIntegratorStepper* magIntegratorStepperIn):
+  magneticField(magneticFieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn)
 {
@@ -40,6 +42,7 @@ BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticField,
 
 BDSMagFieldObjects::~BDSMagFieldObjects()
 {
+  // this doesn't own magneticField
   delete fieldManager;
   delete chordFinder;
   delete magIntegratorStepper;
