@@ -26,7 +26,7 @@ void BDSDetectorSolenoidMagField::GetFieldValue(const G4double Point[4],
 { 
   G4ThreeVector     GlobalR      = G4ThreeVector(Point[0], Point[1], Point[2]);
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     LocalR       =GlobalAffine.TransformPoint(GlobalR); 
+  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
 
   Bfield[0] = 0;
   Bfield[1] = 0;
