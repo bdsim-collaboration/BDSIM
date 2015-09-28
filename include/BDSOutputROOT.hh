@@ -55,7 +55,7 @@ public:
 			    G4double weight,
 			    G4int    PDGType, 
 			    G4int    nEvent, 
-			    G4int    turnsTaken);
+			    G4int    turnsTaken) override;
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;

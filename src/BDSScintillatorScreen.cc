@@ -8,7 +8,6 @@ Work in progress.
 #include "BDSMaterials.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSUtilities.hh"
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -19,6 +18,7 @@ Work in progress.
 #include "G4LogicalBorderSurface.hh"
 
 #include <map>
+#include <string>
 
 BDSScintillatorScreen::BDSScintillatorScreen(G4String name,
 					     G4double tScint,
@@ -87,7 +87,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   _scoringPlaneName=name+tmp;
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
   G4String ident="_camera";
-  _samplerName = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_scoringPlaneName);
+  _samplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName);
   
   //Build and place the volume...
   itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",chordLength/2.0,_yLength/2.0,_scoringPlaneThickness/2.0);
@@ -116,7 +116,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   _screenScoringPlaneName=name+tmp;
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
   G4String ident="_camera";
-  _screenSamplerName = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName);
+  _screenSamplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_screenScoringPlaneName);
   
   //Build and place the volume...
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
@@ -152,7 +152,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
 
 
   int nThisSampler= BDSSampler::GetNSamplers() + 1;
-  _screenSamplerName = ("Sampler_"+BDS::StringFromInt(nThisSampler)+"_"+name);
+  _screenSamplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+name);
   
   //Build and place the volume...
   itsScintillatorLayerPhys=  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(0,0,dispZ),itsScintillatorLayerLog,_screenSamplerName.c_str(),

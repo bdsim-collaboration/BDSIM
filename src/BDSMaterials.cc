@@ -26,7 +26,7 @@
 #include "parser/options.h"
 
 namespace GMAD {
-  extern GMAD::Options options;
+  extern Options options;
   extern std::list<struct Element>  material_list;
   extern std::list<struct Element>  atom_list;
 }

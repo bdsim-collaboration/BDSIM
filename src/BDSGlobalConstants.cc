@@ -17,7 +17,7 @@
 #include "G4VisAttributes.hh"
 
 namespace GMAD {
-  extern GMAD::Options options;
+  extern Options options;
 }
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;

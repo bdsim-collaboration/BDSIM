@@ -344,6 +344,8 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
+.. _Troubleshooting:
+
 Troubleshooting
 ===============
 
@@ -375,8 +377,7 @@ please contact us (see :ref:`support-section`).
      VRML2FILE (VRML2FILE)
      gMocrenFile (gMocrenFile)
    
-   If your favourite is not there check that Geant4 is correctly compiled with those
-   graphics system.
+   If your favourite is not there check that Geant4 is correctly compiled with that graphics system.
 
 2) Error from OpenGL::
      

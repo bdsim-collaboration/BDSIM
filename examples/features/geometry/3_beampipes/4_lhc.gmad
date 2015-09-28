@@ -1,0 +1,10 @@
+d1: drift, l=1*m, apertureType="lhc", aper1=2.202*cm, aper2=1.714*cm, aper3=2.202*cm, beampipeThickness=1*mm;
+endoftheline: marker;
+
+l1: line = (d1, endoftheline);
+
+use, period = l1;
+
+sample, range=endoftheline;
+
+include options.gmad;

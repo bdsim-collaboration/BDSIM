@@ -5,6 +5,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -14,6 +15,7 @@
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
+#include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
@@ -153,6 +155,14 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
 
+  const BDSExecOptions* execOptions = BDSExecOptions::Instance();
+  // Write survey file here since has access to both element and beamline
+  BDSSurvey* survey = nullptr;
+  if(execOptions->GetSurvey()) {
+    survey = new BDSSurvey(execOptions->GetSurveyFilename());
+    survey->WriteHeader();
+  }
+  
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(auto element : GMAD::beamline_list)
     {
@@ -164,14 +174,15 @@ void BDSDetectorConstruction::BuildBeamline()
       if(temp)
 	{
 	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(element);
-	  beamline->AddComponent(temp, tiltOffset);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset);
+	  if (survey) survey->Write(addedComponents, element);
 	}
     }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (BDSExecOptions::Instance()->GetCircular())
+  if (execOptions->GetCircular())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
@@ -181,16 +192,28 @@ void BDSDetectorConstruction::BuildBeamline()
       if (terminator)
         {
 	  terminator->Initialise();
-	  beamline->AddComponent(terminator);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(terminator);
+	  if (survey) {
+	    GMAD::Element element = GMAD::Element(); // dummy element
+	    survey->Write(addedComponents, element);
+	  }
 	}
       BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter();
       if (teleporter)
 	{
 	  teleporter->Initialise();
-	  beamline->AddComponent(teleporter);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(teleporter);
+	  if (survey) {
+	    GMAD::Element element = GMAD::Element(); // dummy element
+	    survey->Write(addedComponents, element);
+	  }
 	}
     }
-  
+
+  if (survey) {
+    survey->WriteSummary(beamline);
+    delete survey;
+  }
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
@@ -203,7 +226,6 @@ void BDSDetectorConstruction::BuildBeamline()
   G4cout << *BDSAcceleratorComponentRegistry::Instance();
 #endif
  
-  
   if (beamline->empty())
     {
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
@@ -420,7 +442,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
 
       // get the placement details from the beamline component
-      G4int nCopy         = 0;
+      G4int nCopy          = thecurrentitem->GetCopyNumber();
       // reference rotation and position for the read out volume
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       G4Transform3D*    pt = (*it)->GetPlacementTransform();
@@ -515,7 +537,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4VPhysicalVolume* tunnelReadOutWorldPV = BDSAcceleratorModel::Instance()->GetTunnelReadOutWorldPV();
       G4VSensitiveDetector* tunnelSDRO        = BDSSDManager::Instance()->GetTunnelOnAxisSDRO();
       BDSBeamline* tunnel                     = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
-      BDSBeamline::iterator tunnelIt            = tunnel->begin();
+      BDSBeamline::iterator tunnelIt          = tunnel->begin();
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
 	  BDSAcceleratorComponent* thecurrentitem = (*tunnelIt)->GetAcceleratorComponent();
@@ -597,7 +619,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // Second for tunnel
 
 #endif
-  return;
 }
 
 void BDSDetectorConstruction::InitialiseGFlash()

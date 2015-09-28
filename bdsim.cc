@@ -26,20 +26,19 @@
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
-#include "BDSGeometryInterface.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
+#include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSPhysicsList.hh"
-#include "BDSModularPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
+#include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
+#include "BDSRunManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
-#include "BDSRandom.hh" // for random number generator from CLHEP
-#include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
@@ -52,7 +51,7 @@ BDSOutputBase* bdsOutput=nullptr;         // output interface
 //=======================================================
 
 namespace GMAD {
-  extern GMAD::Options options;
+  extern Options options;
 }
 
 int main(int argc,char** argv)
@@ -260,14 +259,6 @@ int main(int argc,char** argv)
   // and then the BDSIM process somehow doesn't get killed
   // signal(SIGINT,  &BDS::HandleAborts); // interrupts
   
-  // Write survey file
-  if(execOptions->GetOutline()) {
-#ifdef BDSDEBUG 
-    G4cout<<"contructing geometry interface"<<G4endl;
-#endif
-    BDSGeometryInterface BDSGI(execOptions->GetOutlineFilename());
-  }
-
   if(!execOptions->GetBatch())   // Interactive mode
     {
       BDSVisManager visManager;

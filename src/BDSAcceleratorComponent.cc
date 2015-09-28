@@ -34,12 +34,12 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
-  nTimesPlaced(0),
   angle(angleIn),
   precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
   readOutLV(nullptr),
-  acceleratorVacuumLV(nullptr)
+  acceleratorVacuumLV(nullptr),
+  copyNumber(-1) // -1 initialisation since it will be incremented when placed 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;

@@ -33,7 +33,7 @@ Examples::
 
    x = 1;
    y = 2.5-x;
-   z = sin(x) + log(y) -8e5;
+   z = sin(x) + log(y) - 8e5;
 
 
 Coordinates & Units
@@ -161,6 +161,23 @@ The following elements may be defined
 .. TODO add screen, awakescreen
 
 These are detailed in the following sections.
+
+Simple example, extend and copy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Example::
+
+  d1: drift, l=5*m;
+
+This defines a drift element with name `d1` and a length of 5 metres. The definition can later be changed or extended with::
+
+  d1: l=3*m, aper=0.1*m;
+
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+
+  d2: d1, l=2*m;
+
+Element `d2` is a drift with the properties of `d1` and a length of 2 metres. Note that if `d1` is changed again, `d2` will **not** change.
 
 Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -585,6 +602,8 @@ Examples::
 
    rcolrot: transform3d, psi=pi/2;
 
+.. _element:
+   
 element
 ^^^^^^^
 
@@ -602,7 +621,7 @@ parameter         description                      default     required
 ================  ===============================  ==========  ===========
 
 `geometry` and `bmap` require the input string to be of the format `format:filename`, where
-`format` is the geometry format being used (`gdml` | `mokka`) and filename is the filename of
+`format` is the geometry format being used (`gdml` | `gmad` | `mokka`) and filename is the filename of
 the geometry file.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
@@ -616,6 +635,7 @@ Examples::
    detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
    detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
 
+For specific details on the geometry format, see :ref:`appendix2_geometry`
 
 marker
 ^^^^^^
@@ -690,7 +710,7 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
 
-MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
+.. MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
 --------------------------

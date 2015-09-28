@@ -273,17 +273,20 @@ void BDSRBend::PlaceComponents()
     }
 
   // no if(placeBeamPipe) here as custom procedure and rbend has different construction
-  G4ThreeVector outerOffset    = outer->GetPlacementOffset();
-  G4ThreeVector beamPipeOffset = GetPlacementOffset() + magnetOuterOffset + outerOffset;
-  G4PVPlacement* pipePV = new G4PVPlacement(0,
-					    beamPipeOffset,
-					    beampipe->GetContainerLogicalVolume(),   // logical volume
-					    name+"_beampipe_pv",                     // name
-					    containerLogicalVolume,                  // mother volume
-					    false,	                             // no boolean operation
-					    0,                                       // copy number
-					    checkOverlaps);
-  RegisterPhysicalVolume(pipePV);
+  if (outer)
+    {
+      G4ThreeVector outerOffset    = outer->GetPlacementOffset();
+      G4ThreeVector beamPipeOffset = GetPlacementOffset() + magnetOuterOffset + outerOffset;
+      G4PVPlacement* pipePV = new G4PVPlacement(0,
+						beamPipeOffset,
+						beampipe->GetContainerLogicalVolume(),   // logical volume
+						name+"_beampipe_pv",                     // name
+						containerLogicalVolume,                  // mother volume
+						false,	                                 // no boolean operation
+						0,                                       // copy number
+						checkOverlaps);
+      RegisterPhysicalVolume(pipePV);
+    }
 
   if (bpLastBit)
     {
