@@ -25,7 +25,7 @@ BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
 
   geometryType.toLower();
 
-  BDSGeometryType* result = types.find(geometryType);
+  auto result = types.find(geometryType);
   if ( result == types.end() )
     {
       // it's not a valid key
@@ -34,8 +34,8 @@ BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
     }
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "determined aperture type to be " << *result << G4endl;
+  G4cout << __METHOD_NAME__ << "determined geometry type to be " << result->second << G4endl;
 #endif
-  return *result;
+  return result->second;
 }
 
