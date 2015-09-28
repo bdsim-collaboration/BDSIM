@@ -129,7 +129,7 @@ G4bool BDSGeometryLCDD::GetFieldIsUniform(){
   return itsFieldIsUniform;
 }
 
-BDSMagField* BDSGeometryLCDD::GetField()
+BDSMagFieldMesh* BDSGeometryLCDD::GetField()
 {
   return itsMagField;
 }
@@ -208,9 +208,9 @@ void BDSGeometryLCDD::parseDoc()
      }
    if((!itsMagField) && (!itsUniformMagField)){
 #ifdef BDSDEBUG
-     G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagField" << G4endl;
+     G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagFieldMesh" << G4endl;
 #endif
-     itsMagField = new BDSMagField();
+     itsMagField = new BDSMagFieldMesh();
    }
 
    xmlFreeDoc(doc);

@@ -1,10 +1,13 @@
 #ifndef BDSMAGFIELDFACTORY_H
 #define BDSMAGFIELDFACTORY_H
 
-#include "globals.hh"
-#include "BDSBmapFormat.hh"
+#include "BDSBType.hh"
 #include "BDSGeometry.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
+
+#include "globals.hh" // geant4 globals / types
+
+class BDSGeometry;
 
 class BDSMagFieldFactory
 {

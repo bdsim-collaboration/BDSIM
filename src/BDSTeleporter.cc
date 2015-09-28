@@ -4,7 +4,7 @@
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 #include "BDSTeleporterStepper.hh"
 
 #include "G4Box.hh" 
@@ -57,7 +57,7 @@ void BDSTeleporter::BuildBPFieldAndStepper()
   G4cout << "BDSTeleporter Build Stepper & Field " << G4endl;
 #endif
   // set up the magnetic field and stepper
-  itsMagField = new BDSMagField(); //Zero magnetic field.
+  itsMagField = new BDSMagFieldMesh(); //Zero magnetic field.
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
   itsStepper  = new BDSTeleporterStepper(itsEqRhs);
 }
