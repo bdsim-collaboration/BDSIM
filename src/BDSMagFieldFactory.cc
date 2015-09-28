@@ -1,9 +1,12 @@
 #include "BDSMagFieldFactory.hh"
 #include "BDSExecOptions.hh"
-#include "BDSXYMagField.hh"
-#include "BDS3DMagField.hh"
+#include "BDSBType.hh"
+#include "BDSMagFieldMesh.hh"
+#include "BDSMagFieldXY.hh"
+#include "BDSMagField3D.hh"
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
+#include "BDSGeometryType.hh"
 #include "BDSMagFieldSQL.hh"
 #include "G4UniformMagField.hh"
 #include "BDSDebug.hh"
@@ -11,97 +14,104 @@
 
 BDSMagFieldFactory::BDSMagFieldFactory()
 {
-  bFormat = new BDSBmapFormat();
-  cacheLength = 1*CLHEP::um;
-}
-BDSMagFieldFactory::~BDSMagFieldFactory()
-{
-  delete bFormat;
+  formatAndFilePath = "";
+  offset            = G4ThreeVector(0,0,0);
+  format            = BDSBType::zero;
+  fileName          = "";
+  geometry          = nullptr;
+  cacheLength       = 1*CLHEP::um;
 }
 
-BDSMagField* BDSMagFieldFactory::BuildMagneticField(G4String     bmapIn,
-						    G4double     bmapZOffsetIn,
-						    BDSGeometry* geometryIn,
-						    G4double     bmapXOffsetIn)
-{
-  bmap        = bmapIn;
-  bmapZOffset = bmapZOffsetIn;
-  geometry    = geometryIn;
-  bmapXOffset = bmapXOffsetIn;
+BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndFilePathIn,
+							G4ThreeVector offsetIn,
+							BDSGeometry*  geometryIn)
   
-  parseFormatAndFilename();
-  if (bFormat->compare("3D"))
+{
+  formatAndFilePath = formatAndFilePathIn;
+  offset            = offsetIn;
+  geometry          = geometryIn;
+  
+  ParseFormatAndFilename();
+  
+  if (format == BDSBType::threed)
+    {return BuildMagField3D();}
+  
+  else if (format == BDSBType::xy)
+    {return BuildMagFieldXY();}
+  
+  else if (format == BDSBType::zero)
     {
-      G4cout <<  __METHOD_NAME__ << " - building 3D mag field... " << G4endl;
-      return Build3DMagField();
-    } 
-  else if (bFormat->compare("XY"))
-    {
-      return BuildXYMagField();
-    }
-  else if (bFormat->compare("none"))
-    {
-    if(geom)
+    if(geometry)
       {
-	if (geom->format()->compare(new BDSGeometryFormat("lcdd")))
-	  {return BuildLCDDMagField();}
+	if (geometry->format() == BDSGeometryType::lcdd)
+	  {return BuildMagFieldLCDD();}
       }
     }
-  else if (bFormat->compare("mokka") || bFormat->compare("none"))
+  
+  else if (format == BDSBType::mokka || format == BDSBType::zero)
     {
-      if(geom)
+      if(geometry)
 	{
-	  if (geom->format()->compare(new BDSGeometryFormat("mokka")))
-	    {return BuildSQLMagField();}
+	  if (geometry->format() == BDSGeometryType::mokka)
+	    {return BuildMagFieldSQL();}
 	}
+    }
+  return nullptr;
+}
+
+void BDSMagFieldFactory::ParseFormatAndFilename()
+{
+  G4String s = G4String(formatAndFilePath); // shortcut
+  if(!s.empty())
+    {
+      std::size_t found = s.find(":");
+      if (found == std::string::npos)
+	{
+	  G4cerr << __METHOD_NAME__ << "ERROR: invalid B Field specifier \""
+		 << s << "\" - missing \":\"" << G4endl;
+	  exit(1);
+	}
+      else
+	{
+	  G4String formatName = s.substr(0,found);
+	  format    = BDS::DetermineBType(formatName);
+	  // TO BE FIXED - this only works with bdsim path
+	  fileName  = BDSExecOptions::Instance()->GetBDSIMPATH();
+	  fileName += s.substr(found+1); // get everything after ":"
+	  
+#ifdef BDSDEBUG
+	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
+	G4cout << __METHOD_NAME__ << "file:   " << fileName << G4endl;
+#endif
+      }
+    }
+}
+
+BDSMagFieldMesh* BDSMagFieldFactory::BuildMagFieldXY()
+{return new BDSMagFieldXY(fileName);}
+
+BDSMagFieldMesh* BDSMagFieldFactory::BuildMagField3D()
+{return new BDSMagField3D(fileName, offset);}
+
+BDSMagFieldMesh* BDSMagFieldFactory::BuildMagFieldSQL()
+{
+  if(geometry->hasFields() || !fileName.empty())
+    {
+      // Check for field file or volumes with fields
+      // as there may be cases where there are no formats given
+      // in gmad file but fields might be set to volumes in SQL files
+      return new BDSMagFieldSQL(fileName,
+				geometry->length(),
+				geometry->quadVolBgrad(),
+				geometry->sextVolBgrad(),
+				geometry->octVolBgrad(),
+				geometry->uniformFieldVolField(),
+				geometry->nPoleField(),
+				geometry->hasUniformField());
     }
   else
     {return nullptr;}
 }
 
-void BDSMagFieldFactory::parseFormatAndFilename(){
-  if(bmap != ""){
-    G4int pos = bmap.find(":");
-    if(pos<0) {
-      G4cerr<<"WARNING: invalid B map reference format : "<<bmap<<G4endl;
-    }
-    else {
-      _bFormat->spec(bmap.substr(0,pos));
-      _bFile = BDSExecOptions::Instance()->GetBDSIMPATH() + bmap.substr(pos+1,bmap.length() - pos); 
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - bmap file is " << _bFile << G4endl;
-#endif
-    }
-  }
-}
-
-BDSMagField* BDSMagFieldFactory::buildXYMagField(){
-  return new BDSXYMagField(_bFile);
-}
-
-BDSMagField* BDSMagFieldFactory::build3DMagField(){
-  return new BDS3DMagField(_bFile, bmapZOffset, bmapXOffset);
-}
-
-BDSMagField* BDSMagFieldFactory::buildSQLMagField(){
-  if(_geom->hasFields() || _bFile!=""){
-    // Check for field file or volumes with fields
-    // as there may be cases where there are no bFormats given
-    // in gmad file but fields might be set to volumes in SQL files
-    return new BDSMagFieldSQL(_bFile,_geom->length(),
-			      _geom->quadVolBgrad(),
-			      _geom->sextVolBgrad(),
-			      _geom->octVolBgrad(),
-			      _geom->uniformFieldVolField(),
-			      _geom->nPoleField(),
-			      _geom->hasUniformField());
-  }
-  else return buildZeroMagField();
-}
-
-BDSMagField* BDSMagFieldFactory::buildLCDDMagField()
-{return (BDSMagField*)(geometry->field());}
-
-BDSMagField* BDSMagFieldFactory::buildZeroMagField(){
-  return new BDSMagField(); //Zero magnetic field.
-}
+BDSMagFieldMesh* BDSMagFieldFactory::BuildMagFieldLCDD()
+{return (BDSMagFieldMesh*)(geometry->field());}

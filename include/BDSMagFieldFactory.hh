@@ -15,26 +15,27 @@ public:
   BDSMagFieldFactory();
   ~BDSMagFieldFactory();
   
-  BDSMagField* BuildMagneticField(G4String bmap         = "",
-				  G4double bmapZOffset  = 0,
-				  BDSGeometry* geometry = nullptr,
-				  G4double bmapXOffset  = 0);
+  BDSMagFieldMesh* BuildMagneticField(G4String      formatAndFilePathIn,
+				      G4ThreeVector offsetIn   = G4ThreeVector(0,0,0),
+				      BDSGeometry*  geometryIn = nullptr);
  
 private:
-  G4String       bmap;
-  G4String       bFile;
-  BDSBmapFormat* bFormat;
-  BDSGeometry*   geom;
-  G4double       bmapZOffset;
-  G4double       bmapXOffset;
-  G4double       cacheLength;
+  
+  G4String      formatAndFilePath;
+  G4ThreeVector offset;
+  BDSBType      format;
+  G4String      fileName;
+  BDSGeometry*  geometry;
+  G4double      cacheLength;
 
-  void parseFormatAndFilename();
+  /// Splits the G4String member variable formatAndName on the ":" character.
+  /// Whatever is before is taken as the fromat string and whatever is after is
+  /// taken as the filepath.
+  void ParseFormatAndFilename();
 
-  BDSMagField* Build3DMagField();
-  BDSMagField* BuildXYMagField();
-  BDSMagField* BuildLCDDMagField();
-  BDSMagField* BuildSQLMagField();
-  BDSMagField* BuildZeroMagField();
+  BDSMagFieldMesh* BuildMagField3D();
+  BDSMagFieldMesh* BuildMagFieldXY();
+  BDSMagFieldMesh* BuildMagFieldLCDD();
+  BDSMagFieldMesh* BuildMagFieldSQL();
 };
 #endif
