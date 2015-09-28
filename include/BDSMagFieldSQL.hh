@@ -16,9 +16,9 @@
 #include "G4TouchableHistoryHandle.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 
-class BDSMagFieldSQL: public BDSMagField, public BDSAuxiliaryNavigator
+class BDSMagFieldSQL: public BDSMagFieldMesh, public BDSAuxiliaryNavigator
 {
 public:  // with description
 

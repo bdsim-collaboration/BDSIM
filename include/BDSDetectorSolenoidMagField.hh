@@ -5,14 +5,14 @@
 #include "G4MagneticField.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 
 /**
  * @brief This class descibes an inner and an outer solenoid field. 
- * Derived from BDSQuadMagField.cc
+ * Developed from BDSQuadMagField.cc
  */
 
-class BDSDetectorSolenoidMagField: public BDSMagField, public BDSAuxiliaryNavigator
+class BDSDetectorSolenoidMagField: public BDSMagFieldMesh, public BDSAuxiliaryNavigator
 {
 public: 
   BDSDetectorSolenoidMagField(G4double BIn,

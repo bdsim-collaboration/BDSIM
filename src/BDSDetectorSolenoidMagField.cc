@@ -1,4 +1,5 @@
 #include "BDSDetectorSolenoidMagField.hh"
+#include "BDSMagFieldMesh.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"

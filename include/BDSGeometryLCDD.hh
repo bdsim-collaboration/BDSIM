@@ -26,7 +26,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4TriangularFacet.hh"
 #include "G4QuadrangularFacet.hh"
@@ -77,7 +77,7 @@ public:
   void parsePHYSVOL(xmlNodePtr cur, G4String volume_name);
   void parseFIELDS(xmlNodePtr cur);
 
-  BDSMagField* GetField();
+  BDSMagFieldMesh* GetField();
   G4UniformMagField* GetUniformField();
   G4bool GetFieldIsUniform();
 
@@ -143,7 +143,7 @@ private:
   G4double visRed, visGreen, visBlue;
 
   //The magnetic field
-  BDSMagField* itsMagField;
+  BDSMagFieldMesh* itsMagField;
   G4UniformMagField* itsUniformMagField;
 
 protected:

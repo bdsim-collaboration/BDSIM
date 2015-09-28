@@ -5,7 +5,7 @@
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
 #include "G4MagIntegratorStepper.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "BDSBeamline.hh"
 
@@ -20,7 +20,7 @@ protected:
   G4ChordFinder*          itsChordFinder;
   G4FieldManager*         itsFieldManager;
   G4MagIntegratorStepper* itsStepper;
-  BDSMagField*            itsMagField;
+  BDSMagFieldMesh*            itsMagField;
   G4Mag_UsualEqRhs*       itsEqRhs;
 
 private:

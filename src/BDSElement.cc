@@ -1,23 +1,26 @@
 #include "BDSElement.hh"
 
-#include "BDS3DMagField.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagFieldSQL.hh"
 #include "BDSUtilities.hh"
-#include "BDSXYMagField.hh"
+
 #include "G4Box.hh"
-#include "G4Tubs.hh"
-#include "G4Torus.hh"
-#include "G4Trd.hh"
-#include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
+#include "BDSMagFieldXY.hh"
+#include "BDSMagField3D.hh"
+#include "G4Mag_UsualEqRhs.hh"
+#include "G4NystromRK4.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4Torus.hh"
+#include "G4ThreeVector.hh"
+#include "G4Trd.hh"
+#include "G4Tubs.hh"
+#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
-#include "G4Mag_UsualEqRhs.hh"
-
-#include "G4NystromRK4.hh"
 
 // geometry drivers
 #include "ggmad.hh"

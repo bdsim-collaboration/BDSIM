@@ -4,7 +4,7 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMaterials.hh"
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 
 #include "G4CachedMagneticField.hh"
 #include "G4ChordFinder.hh"
@@ -75,10 +75,10 @@ private:
   G4EqMagElectricField* itsFEquation;
   G4Mag_UsualEqRhs* itsEqRhs;
 
-  BDSMagField *itsMagField;
+  BDSMagFieldMesh *itsMagField;
   G4CachedMagneticField *itsCachedMagField;
   G4UniformMagField *itsUniformMagField;
-  G4double itsBmapZOffset;
+  
   // Volume to align incoming beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_in_volume;
