@@ -33,7 +33,8 @@ namespace GMAD {
     bool outerDiameterset;
     bool tiltset,xsizeset,ysizeset,rset,Bset, phiAngleInset, phiAngleOutset;
     bool offsetXset, offsetYset;
-    bool tscintset, twindowset, bmapZOffsetset; 
+    bool tscintset, twindowset;
+    bool bmapXOffsetset, bmapYOffsetset, bmapZOffsetset; 
     bool xdirset, ydirset, zdirset, waveLengthset;
     bool gradientset;
     bool phiset, thetaset, psiset;

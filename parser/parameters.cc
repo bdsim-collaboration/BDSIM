@@ -46,6 +46,8 @@ void Parameters::flush() {
   offsetYset = false;
   tscintset = false;
   twindowset = false;
+  bmapXOffsetset=false;
+  bmapYOffsetset=false;
   bmapZOffsetset=false;
   xdirset = false;
   ydirset = false;
@@ -117,6 +119,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!offsetYset) { offsetY = e.offsetY; offsetYset = true; }
   if(!tscintset) { tscint = e.tscint; tscintset = true; }
   if(!twindowset) { twindow = e.twindow; twindowset = true; }
+  if(!bmapXOffsetset) { bmapXOffset = e.bmapXOffset; bmapXOffsetset = true; }
+  if(!bmapYOffsetset) { bmapYOffset = e.bmapYOffset; bmapYOffsetset = true; }
   if(!bmapZOffsetset) { bmapZOffset = e.bmapZOffset; bmapZOffsetset = true; }
   if(!xdirset) { xdir = e.xdir; xdirset = true; }
   if(!ydirset) { ydir = e.ydir; ydirset = true; }
@@ -168,6 +172,8 @@ void Parameters::set_value(std::string property, double value )
 #endif
 
   if(property=="l") { l = value; lset = true; return;} // length
+  if(property=="bmapXOffset") { bmapXOffset = value; bmapXOffsetset = true; return;} // field map x offset
+  if(property=="bmapYOffset") { bmapYOffset = value; bmapYOffsetset = true; return;} // field map y offset
   if(property=="bmapZOffset") { bmapZOffset = value; bmapZOffsetset = true; return;} // field map z offset
   if(property=="B") { B = value; Bset = true; return;} // dipole field
   if(property=="ks") { ks = value; ksset = true; return;} // solenoid strength
