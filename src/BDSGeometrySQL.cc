@@ -47,11 +47,7 @@ BDSGeometrySQL::BDSGeometrySQL(G4String filePath):
   ifs.open(filePath.c_str());
   
   if(!ifs)
-    {
-      G4String exceptionString = "Unable to load SQL database file: " + filePath;
-      G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-      exit(1);
-    }
+    {G4cout << "Unable to load SQL database file: " << filePath << G4endl; exit(1);}
   
   hasFields = false;
   nPoleField = 0;
