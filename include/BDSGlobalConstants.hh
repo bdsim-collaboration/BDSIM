@@ -1,7 +1,6 @@
 #ifndef BDSGlobalConstants_h
 #define BDSGlobalConstants_h 
 
-#include <deque>
 #include <map>
 
 #include "G4ThreeVector.hh"
@@ -199,17 +198,9 @@ public:
   G4int    GetEventNumberOffset() const;
   G4FieldManager* GetZeroFieldManager() const;
 
-  // G4bool   GetUseSynchPrimaryGen() const;
-  // G4double GetSynchPrimaryAngle() const;
-  // G4double GetSynchPrimaryLength() const;
-
   // AI : for placet synchronization
   void     setWaitingForDump(G4bool flag);
   G4bool   getWaitingForDump() const;
-  G4bool   getDumping() const;
-  G4bool   getReading() const;
-  void     setReadFromStack(G4bool flag);
-  G4bool   getReadFromStack() const;
   G4int    GetTurnsTaken() const;
   void     IncrementTurnNumber();
   void     ResetTurnNumber();
@@ -229,10 +220,6 @@ public:
   BDSParticle GetInitialPoint() const;
   void SetInitialPoint(BDSParticle& particle);
   
-  std::deque<BDSParticle> holdingQueue;
-  std::deque<BDSParticle> outputQueue;
-  std::deque<BDSParticle> transformedQueue;
-
 private:
 
   G4UniformMagField* zeroMagField;
@@ -271,7 +258,6 @@ private:
   BDSMagnetGeometryType itsMagnetGeometryType;
   G4String itsOuterMaterialName;
   G4double itsOuterDiameter;
-  //G4double itsComponentBoxSize;
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   
@@ -395,9 +381,6 @@ private:
   G4String itsVacuumMaterial;            //vacuum inside beampipe
   G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
   G4bool   isWaitingForDump;
-  G4bool   isDumping;
-  G4bool   isReading;
-  G4bool   isReadFromStack;
   G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
   
   ///@{ Turn Control
@@ -410,7 +393,7 @@ private:
   ///@}
   /// beamline length in mm
   G4double itsSMax;
-  /// initial particle
+  /// initial particle for production of sampler hit
   BDSParticle itsInitialPoint;
 
   // private set methods
@@ -779,18 +762,6 @@ inline void BDSGlobalConstants::setWaitingForDump(G4bool flag)
 
 inline G4bool BDSGlobalConstants::getWaitingForDump() const 
 {return isWaitingForDump;}
-
-inline G4bool BDSGlobalConstants::getDumping() const
-{return isDumping;}
-
-inline G4bool BDSGlobalConstants::getReading() const
-{return isReading;}
-
-inline void BDSGlobalConstants::setReadFromStack(G4bool flag)
-{isReadFromStack = flag;}
-
-inline G4bool BDSGlobalConstants::getReadFromStack() const
-{return isReadFromStack;}
 
 inline G4AffineTransform BDSGlobalConstants::GetDumpTransform() const
 {return itsDumpTransform;}
