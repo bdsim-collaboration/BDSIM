@@ -77,7 +77,6 @@ void BDSElement::PlaceComponents()
   geometry->Construct(containerLogicalVolume);
 
   RegisterSensitiveVolume(geometry->GetSensitiveComponents());
-  RegisterPhysicalVolume(geometry->GetMultiplePhysicalVolumes());
   
   for(G4int id=0; id<(G4int)geometry->GetGFlashComponents().size(); id++){
     SetGFlashVolumes(geometry->GetGFlashComponents()[id]);
