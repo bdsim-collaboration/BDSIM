@@ -1,9 +1,10 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
-#include "BDSGeometryGMad.hh"
+#include "BDSGeometryGMAD.hh"
 
 #include "BDSMaterials.hh"
 
+#include "globals.hh" // geant4 types / globals
 #include "G4Box.hh"
 #include "G4Cons.hh"
 #include "G4LogicalVolume.hh"
@@ -14,18 +15,23 @@
 #include "G4VPhysicalVolume.hh"
 
 
-BDSGeometryGMad::BDSGeometryGMad(G4String file)
+BDSGeometryGMAD::BDSGeometryGMAD(G4String file)
 {
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "> reading file : " << file << G4endl;
+#endif
   inputf.open(file);
   if(!inputf.good()) {G4cerr<<"ggmad driver: error opening input file "<<file<<G4endl; exit(1);}
 }
 
-void BDSGeometryGMad::Error()
+void BDSGeometryGMAD::Error()
 {G4cout << "ggmad: error in file format" << G4endl;}
 
-void BDSGeometryGMad::Construct(G4LogicalVolume *marker)
+void BDSGeometryGMAD::Construct(G4LogicalVolume *marker)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   
   G4String token;
   G4String token1;
@@ -326,7 +332,7 @@ void BDSGeometryGMad::Construct(G4LogicalVolume *marker)
 }
 
 
-G4String BDSGeometryGMad::GetWord()
+G4String BDSGeometryGMAD::GetWord()
 {
   G4String str="";
   char c = 'a';
@@ -357,7 +363,7 @@ G4String BDSGeometryGMad::GetWord()
 
 }
 
-void BDSGeometryGMad::GetParameter(G4double& x, G4String name, G4String lastToken)
+void BDSGeometryGMAD::GetParameter(G4double& x, G4String name, G4String lastToken)
 {
   G4String token;
 
@@ -372,7 +378,7 @@ void BDSGeometryGMad::GetParameter(G4double& x, G4String name, G4String lastToke
     }
 }
 
-void BDSGeometryGMad::GetParameter(G4String& lval, G4String name, G4String lastToken)
+void BDSGeometryGMAD::GetParameter(G4String& lval, G4String name, G4String lastToken)
 {
   G4String token;
 

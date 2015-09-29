@@ -13,10 +13,10 @@
  *
  **/
 
-class BDSGeometryGMad: public BDSGeometry
+class BDSGeometryGMAD: public BDSGeometry
 {
 public:
-  BDSGeometryGMad(G4String);
+  BDSGeometryGMAD(G4String);
   virtual void Construct(G4LogicalVolume *marker);
 
 private:

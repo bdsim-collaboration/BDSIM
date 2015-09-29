@@ -38,7 +38,7 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
   switch(format.underlying())
     {
     case BDSGeometryType::gmad:
-      {return BuildGmad(fileName); break;}
+      {return BuildGMAD(fileName); break;}
       
 #ifdef USE_LCDD
     case BDSGeometryType::lcdd:
@@ -62,8 +62,8 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
     }
 }
 
-BDSGeometry* BDSGeometryFactory::BuildGmad(G4String fileName)
-{return new BDSGeometryGMad(fileName);}
+BDSGeometry* BDSGeometryFactory::BuildGMAD(G4String fileName)
+{return new BDSGeometryGMAD(fileName);}
 
 #ifdef USE_LCDD
 BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)

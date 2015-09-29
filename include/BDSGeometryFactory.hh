@@ -14,7 +14,7 @@ public:
   BDSGeometry* BuildGeometry(G4String formatAndFilePath);
  
 private:
-  BDSGeometry* BuildGmad(G4String fileName);
+  BDSGeometry* BuildGMAD(G4String fileName);
   
 #ifdef USE_LCDD
   BDSGeometry* BuildLCDD(G4String fileName);
