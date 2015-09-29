@@ -43,7 +43,7 @@ public:
 			G4State  state, 
 			G4double temp, 
 			G4double pressure,
-			std::list<std::string> components,
+			std::list<G4String> components,
 			std::list<Type> componentsFractions);
   ///@}
 

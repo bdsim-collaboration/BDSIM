@@ -953,15 +953,18 @@ void BDSMaterials::AddMaterial(G4String aName,
   }
 }
 
-template <typename Type> void BDSMaterials::AddMaterial(
-G4String aName, G4double itsDensity, G4State itsState,
-G4double itsTemp, G4double itsPressure,
-std::list<std::string> itsComponents, std::list<Type> itsComponentsFractions)
+template <typename Type> void BDSMaterials::AddMaterial(G4String aName,
+							G4double itsDensity,
+							G4State  itsState,
+							G4double itsTemp,
+							G4double itsPressure,
+							std::list<G4String> itsComponents,
+							std::list<Type>     itsComponentsFractions)
 {
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
 		(G4int)itsComponents.size(),itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  std::list<std::string>::iterator sIter;
+  std::list<G4String>::iterator sIter;
   typename std::list<Type>::iterator dIter;
   for(sIter = itsComponents.begin(), dIter = itsComponentsFractions.begin();
       sIter != itsComponents.end();
@@ -1273,6 +1276,9 @@ void BDSMaterials::PrepareRequiredMaterials()
 	     << "ncomponents= " << it.components.size() << " "
 	     << G4endl;
 #endif
+      std::list<G4String> tempComponents;
+      for (auto jt : it.components)
+	{tempComponents.push_back(G4String(jt));}
 
       if(it.componentsWeights.size()==it.components.size()) {
 	
@@ -1281,7 +1287,7 @@ void BDSMaterials::PrepareRequiredMaterials()
 		    (G4State)itsState,
 		    (G4double)it.temper,
 		    (G4double)it.pressure,
-		    (std::list<std::string>)it.components,
+		    tempComponents,
 		    (std::list<G4int>)it.componentsWeights);
       }
       else if(it.componentsFractions.size()==it.components.size()) {
@@ -1291,7 +1297,7 @@ void BDSMaterials::PrepareRequiredMaterials()
 		    itsState,
 		    it.temper,
 		    it.pressure,
-		    it.components,
+		    tempComponents,
 		    it.componentsFractions);
       }
       else {
