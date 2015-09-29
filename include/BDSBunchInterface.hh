@@ -34,10 +34,6 @@ protected :
 
 public : 
   BDSBunchInterface();
-  BDSBunchInterface(G4double sigmaT, G4double sigmaE); 
-  BDSBunchInterface(G4double X0,     G4double Y0,     G4double Z0, G4double T0,
-		    G4double Xp0,    G4double Yp0,    G4double Zp0, 
-		    G4double sigmaT, G4double sigmaE);
   virtual ~BDSBunchInterface();
   virtual void SetOptions(GMAD::Options& opt); 
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

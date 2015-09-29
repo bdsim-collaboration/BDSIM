@@ -11,24 +11,6 @@ BDSBunchEShell::BDSBunchEShell() :
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
 }
 
-BDSBunchEShell::BDSBunchEShell(G4double shellXIn, G4double shellXpIn,
-			       G4double shellYIn, G4double shellYpIn,
-			       G4double shellXWidthIn, G4double shellXpWidthIn,
-			       G4double shellYWidthIn, G4double shellYpWidthIn,
-			       G4double X0In,     G4double Y0In,       G4double Z0In,   G4double T0In, 
-			       G4double Xp0In,    G4double Yp0In,      G4double Zp0In,			     
-			       G4double sigmaTIn, G4double sigmaEIn) :
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn), 
-  shellX(shellXIn), shellXp(shellXpIn), shellY(shellYIn), shellYp(shellYpIn),
-  shellXWidth(shellXWidthIn), shellXpWidth(shellXpWidthIn), 
-  shellYWidth(shellYWidthIn), shellYpWidth(shellYpWidthIn)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine()); 
-}
-
 BDSBunchEShell::~BDSBunchEShell() 
 {
   delete FlatGen;

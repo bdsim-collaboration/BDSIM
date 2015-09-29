@@ -30,17 +30,6 @@ BDSBunchInterface::BDSBunchInterface():
   Xp0(0.0), Yp0(0.0), Zp0(0.0), sigmaT(0.0), sigmaE(0.0)
 {}
 
-BDSBunchInterface::BDSBunchInterface(G4double sigmaTIn, G4double sigmaEIn):
-  X0(0.0), Y0(0.0), Z0(0.0), T0(0.0), Xp0(0.0), Yp0(0.0), Zp0(0.0), sigmaT(sigmaTIn), sigmaE(sigmaEIn)
-{;}
-
-BDSBunchInterface::BDSBunchInterface(G4double X0In, G4double Y0In, G4double Z0In, G4double T0In,
-				     G4double Xp0In, G4double Yp0In, G4double Zp0In, 
-				     G4double sigmaTIn, G4double sigmaEIn): 
-  X0(X0In), Y0(Y0In), Z0(Z0In), T0(T0In), 
-  Xp0(Xp0In), Yp0(Yp0In), Zp0(Zp0In), sigmaT(sigmaTIn), sigmaE(sigmaEIn)
-{}
-
 BDSBunchInterface::~BDSBunchInterface()
 {;}
 
