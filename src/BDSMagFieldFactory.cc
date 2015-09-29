@@ -14,7 +14,6 @@
 
 BDSMagFieldFactory::BDSMagFieldFactory()
 {
-  formatAndFilePath = "";
   offset            = G4ThreeVector(0,0,0);
   format            = BDSBType::zero;
   fileName          = "";
@@ -22,16 +21,17 @@ BDSMagFieldFactory::BDSMagFieldFactory()
   cacheLength       = 1*CLHEP::um;
 }
 
-BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndFilePathIn,
+BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndFilePath,
 							G4ThreeVector offsetIn,
 							BDSGeometry*  geometryIn)
   
 {
-  formatAndFilePath = formatAndFilePathIn;
   offset            = offsetIn;
   geometry          = geometryIn;
-  
-  ParseFormatAndFilename();
+
+  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
+  fileName = BDS::GetFullPath(ff.first);
+  format   = BDS::DetermineBType(ff.second);
   
   if (format == BDSBType::threed)
     {return BuildMagField3D();}
@@ -57,34 +57,6 @@ BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndF
 	}
     }
   return nullptr;
-}
-
-void BDSMagFieldFactory::ParseFormatAndFilename()
-{
-  G4String s = G4String(formatAndFilePath); // shortcut
-  if(!s.empty())
-    {
-      std::size_t found = s.find(":");
-      if (found == std::string::npos)
-	{
-	  G4cerr << __METHOD_NAME__ << "ERROR: invalid B Field specifier \""
-		 << s << "\" - missing \":\"" << G4endl;
-	  exit(1);
-	}
-      else
-	{
-	  G4String formatName = s.substr(0,found);
-	  format    = BDS::DetermineBType(formatName);
-	  // TO BE FIXED - this only works with bdsim path
-	  fileName  = BDSExecOptions::Instance()->GetBDSIMPATH();
-	  fileName += s.substr(found+1); // get everything after ":"
-	  
-#ifdef BDSDEBUG
-	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
-	G4cout << __METHOD_NAME__ << "file:   " << fileName << G4endl;
-#endif
-      }
-    }
 }
 
 BDSMagFieldMesh* BDSMagFieldFactory::BuildMagFieldXY()

@@ -15,13 +15,12 @@ public:
   BDSMagFieldFactory();
   ~BDSMagFieldFactory();
   
-  BDSMagFieldMesh* BuildMagneticField(G4String      formatAndFilePathIn,
+  BDSMagFieldMesh* BuildMagneticField(G4String      formatAndFilePath,
 				      G4ThreeVector offsetIn   = G4ThreeVector(0,0,0),
 				      BDSGeometry*  geometryIn = nullptr);
  
 private:
   
-  G4String      formatAndFilePath;
   G4ThreeVector offset;
   BDSBType      format;
   G4String      fileName;
