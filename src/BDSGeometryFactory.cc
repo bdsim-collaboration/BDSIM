@@ -21,11 +21,10 @@
 class BDSGeometry;
 
 BDSGeometryFactory::BDSGeometryFactory()
-{
-  fileName = "";
-}
+{;}
 
-BDSGeometryFactory::~BDSGeometryFactory(){}
+BDSGeometryFactory::~BDSGeometryFactory()
+{;}
 
 BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 {
@@ -34,24 +33,24 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 #endif
   
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
-  fileName = BDS::GetFullPath(ff.first);
-  BDSGeometryType format = BDS::DetermineGeometryType(ff.second);
+  G4String fileName = BDS::GetFullPath(ff.second);
+  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
 
   switch(format.underlying())
     {/*
     case BDSGeometryType::gmad:
-      {return BuildGmad(); break;}
+      {return BuildGmad(fileName); break;}
 #ifdef USE_LCDD
     case BDSGeometryType::lcdd:
-      {return BuildLCDD(); break;}
+      {return BuildLCDD(fileName); break;}
 #endif
      */
     case BDSGeometryType::mokka:
-      {return BuildMokka(); break;}
+      {return BuildMokka(fileName); break;}
 
 #ifdef USE_GDML
     case BDSGeometryType::gdml:
-      {return BuildGDML(); break;}
+      {return BuildGDML(fileName); break;}
 #endif
       
     default:
@@ -63,19 +62,19 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
     }
 }
 /*
-BDSGeometry* BDSGeometryFactory::BuildGmad()
+BDSGeometry* BDSGeometryFactory::BuildGmad(G4String fileName)
 {return new GGmadDriver(fileName);}
 
 #ifdef USE_LCDD
-BDSGeometry* BDSGeometryFactory::BuildLCDD()
+BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
 {return new BDSGeometryLCDD(fileName);}
 #endif
 */
-BDSGeometry* BDSGeometryFactory::BuildMokka()
+BDSGeometry* BDSGeometryFactory::BuildMokka(G4String fileName)
 {return new BDSGeometrySQL(fileName);}
 
 #ifdef USE_GDML
-BDSGeometry* BDSGeometryFactory::BuildGDML()
+BDSGeometry* BDSGeometryFactory::BuildGDML(G4String fileName)
 {return new BDSGeometryGDML(fileName);}
 #endif
 
