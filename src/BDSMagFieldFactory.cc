@@ -47,7 +47,7 @@ BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndF
     {
     if(geometry)
       {
-	if (geometry->format() == BDSGeometryType::lcdd)
+	if (geometry->Format() == BDSGeometryType::lcdd)
 	  {return BuildMagFieldLCDD();}
       }
     }
@@ -57,7 +57,7 @@ BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndF
     {
       if(geometry)
 	{
-	  if (geometry->format() == BDSGeometryType::mokka)
+	  if (geometry->Format() == BDSGeometryType::mokka)
 	    {return BuildMagFieldSQL();}
 	}
     }
@@ -72,23 +72,23 @@ BDSMagFieldMesh* BDSMagFieldFactory::BuildMagField3D()
 
 BDSMagFieldMesh* BDSMagFieldFactory::BuildMagFieldSQL()
 {
-  if(geometry->hasFields() || !fileName.empty())
+  if(geometry->HasFields() || !fileName.empty())
     {
       // Check for field file or volumes with fields
       // as there may be cases where there are no formats given
       // in gmad file but fields might be set to volumes in SQL files
       return new BDSMagFieldSQL(fileName,
-				geometry->length(),
-				geometry->quadVolBgrad(),
-				geometry->sextVolBgrad(),
-				geometry->octVolBgrad(),
-				geometry->uniformFieldVolField(),
-				geometry->nPoleField(),
-				geometry->hasUniformField());
+				geometry->Length(),
+				geometry->QuadVolBgrad(),
+				geometry->SextVolBgrad(),
+				geometry->OctVolBgrad(),
+				geometry->UniformFieldVolField(),
+				geometry->NPoleField(),
+				geometry->HasUniformField());
     }
   else
     {return nullptr;}
 }
 
 BDSMagFieldMesh* BDSMagFieldFactory::BuildMagFieldLCDD()
-{return (BDSMagFieldMesh*)(geometry->field());}
+{return (BDSMagFieldMesh*)(geometry->Field());}

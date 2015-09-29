@@ -41,38 +41,38 @@ private:
   /// Copy of the containing directory fo the main file. SQL main file
   /// typically only contains relative file paths to that main file.
   G4String containingDir;
-  G4int _NVariables;
-  G4double _VisRed; 
-  G4double _VisGreen;
-  G4double _VisBlue;
-  G4double _VisAlpha;
-  G4String _VisType;
-  G4String _Material;
-  G4String _TableName;
-  G4String _Name;
+  G4int NVariables;
+  G4double VisRed; 
+  G4double VisGreen;
+  G4double VisBlue;
+  G4double VisAlpha;
+  G4String VisType;
+  G4String Material;
+  G4String TableName;
+  G4String Name;
 
-  G4double _PosX;
-  G4double _PosY;
-  G4double _PosZ;
-  G4double _RotPsi;
-  G4double _RotTheta;
-  G4double _RotPhi;
-  G4double _K1,_K2,_K3,_K4;
-  G4String _PARENTNAME;
-  G4String _InheritStyle;
-  G4String _Parameterisation;
-  G4String _MagType;
-  G4int _align_in;
-  G4int _align_out;
-  G4int _SetSensitive;
-  G4int _PrecisionRegion;
-  G4int _ApproximationRegion;
-  G4double _FieldX, _FieldY, _FieldZ;
+  G4double PosX;
+  G4double PosY;
+  G4double PosZ;
+  G4double RotPsi;
+  G4double RotTheta;
+  G4double RotPhi;
+  G4double K1,K2,K3,K4;
+  G4String PARENTNAME;
+  G4String InheritStyle;
+  G4String Parameterisation;
+  G4String MagType;
+  G4int align_in;
+  G4int align_out;
+  G4int SetSensitive;
+  G4int PrecisionRegion;
+  G4int ApproximationRegion;
+  G4double FieldX, FieldY, FieldZ;
 
-  G4double _lengthUserLimit;
+  G4double lengthUserLimit;
 
-  G4Region* _precisionRegionSQL;
-  G4Region* _approximationRegionSQL;
+  G4Region* precisionRegionSQL;
+  G4Region* approximationRegionSQL;
 
   void BuildSQLObjects(G4String file);
   void SetCommonParams(BDSMySQLTable*,G4int);
