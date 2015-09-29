@@ -330,6 +330,10 @@ void Element::set(const struct Parameters& params)
   if(params.geometryFileset) geometryFile = params.geometryFile;
   // Element
   if(params.bmapFileset) bmapFile = params.bmapFile;
+  if(params.bmapXOffsetset)
+    bmapXOffset = params.bmapXOffset;
+  if(params.bmapYOffsetset)
+    bmapYOffset = params.bmapYOffset;
   if(params.bmapZOffsetset)
     bmapZOffset = params.bmapZOffset;
   // Transform3D
