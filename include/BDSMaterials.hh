@@ -1,18 +1,13 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Added Get method to enable access to materials by passing a string
-*/
-#ifndef BDSMaterials_h
-#define BDSMaterials_h 1
+#ifndef BDSMATERIALS_H
+#define BDSMATERIALS_H
 
 #include <map>
 #include <list>
 
 #include "globals.hh"
 #include "G4Material.hh"
+
+class G4MaterialPropertiesTable;
 
 class BDSMaterials
 {
@@ -33,7 +28,7 @@ public:
       @param[in] temp     in kelvin
       @param[in] pressure in atm
   */ 
-  void AddMaterial(G4Material* aMaterial,G4String aName);
+  void AddMaterial(G4Material* aMaterial, G4String aName);
   void AddMaterial(G4String aName,
 		   G4double Z,
 		   G4double A,
