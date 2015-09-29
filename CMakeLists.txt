@@ -282,11 +282,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ## set compiler flags
 # warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
-# suppress some warnings from CLHEP 2.2 (to be checked from time to time if still necessary)
-# for clang versions 3.6 and higher
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND CLANG_VERSION_STRING VERSION_GREATER 3.5)
-  set(WFLAGS "${WFLAGS} -Wno-absolute-value")
-endif()
 
 # cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")

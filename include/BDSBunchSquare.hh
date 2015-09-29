@@ -21,11 +21,6 @@ protected :
 
 public: 
   BDSBunchSquare(); 
-  BDSBunchSquare(G4double envelopeX , G4double envelopeY,
-		 G4double envelopeXp, G4double envelopeYp,
-		 G4double envelopeT , G4double envelopeE,
-		 G4double X0,         G4double Y0,         G4double Z0,   G4double T0, 
-		 G4double Xp0,        G4double Yp0,        G4double Zp0);
   ~BDSBunchSquare(); 
   void SetOptions(GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

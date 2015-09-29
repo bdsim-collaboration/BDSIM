@@ -164,8 +164,6 @@ Options::Options()
   storeNeutronTrajectories = false;
   storeTrajectory          = false;
   
-  fifo                     = "";
-
   // circular options
   nturns                   = 1;
 
@@ -431,8 +429,6 @@ void Options::set_value(std::string name, std::string value )
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; }
 
-  // options for external code interfaces
-  if(name == "fifo") { fifo = value; return; }
   std::cerr << "Error: parser.h> unknown option \"" << name << "\" with value " << value  << std::endl; 
   exit(1);
 }

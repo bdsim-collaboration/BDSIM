@@ -196,14 +196,6 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  isDumping = false;
-  isReading = false;
-  isReadFromStack = false;
-  itsFifo = opt.fifo;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
-  G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
-#endif
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();

@@ -6,6 +6,8 @@ simple_testing(Component-Decapole "--file=decaTest.gmad" "")
 
 simple_testing(Component-Drift "--file=driftTest.gmad" "")
 
+simple_testing(Component-Dump "--file=dumpTest.gmad" "")
+
 simple_testing(Component-ECollimator "--file=ecolTest.gmad" "")
 
 simple_testing(Component-GDML "--file=gdmlTest.gmad" "")
