@@ -36,14 +36,15 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
 
   switch(format.underlying())
-    {/*
+    {
     case BDSGeometryType::gmad:
       {return BuildGmad(fileName); break;}
+      
 #ifdef USE_LCDD
     case BDSGeometryType::lcdd:
       {return BuildLCDD(fileName); break;}
 #endif
-     */
+
     case BDSGeometryType::mokka:
       {return BuildMokka(fileName); break;}
 
@@ -60,15 +61,15 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
       break;
     }
 }
-/*
+
 BDSGeometry* BDSGeometryFactory::BuildGmad(G4String fileName)
-{return new GGmadDriver(fileName);}
+{return new BDSGeometryGMad(fileName);}
 
 #ifdef USE_LCDD
 BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
 {return new BDSGeometryLCDD(fileName);}
 #endif
-*/
+
 BDSGeometry* BDSGeometryFactory::BuildMokka(G4String fileName)
 {return new BDSGeometrySQL(fileName);}
 
