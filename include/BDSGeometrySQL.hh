@@ -1,34 +1,27 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
+#ifndef BDSGEOMETRYSQL_H
+#define BDSGEOMETRYSQL_H
 
+#include "BDSGeometry.hh"
+#include "BDSMaterials.hh"
+#include "BDSMySQLTable.hh"
 
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 13.04.2005
-*/
-
-
-#ifndef BDSGeometrySQL_h
-#define BDSGeometrySQL_h 1
+#include "globals.hh" // geant4 globals / types
+#include "G4LogicalVolume.hh"
+#include "G4Region.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include <fstream>
-#include <list>
 #include <vector>
 
-#include "globals.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VisAttributes.hh"
-#include "G4UserLimits.hh"
-#include "BDSMySQLTable.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4Region.hh"
-
-class BDSGeometrySQL
+class BDSGeometrySQL: public BDSGeometry
 {
 public:
-  BDSGeometrySQL(G4String DBfile, G4double markerlength,G4LogicalVolume *marker);
+  BDSGeometrySQL(G4String filePath);
   ~BDSGeometrySQL();
+
+  virtual void Construct(G4LogicalVolume* containerLogicalVolume);
 
   // For List of uniform fields for volumes
   std::list<G4ThreeVector> UniformField;
@@ -41,25 +34,13 @@ public:
   std::list<G4String> Sextvol;
   std::list<G4double> OctBgrad;
   std::list<G4String> Octvol;
-
-  std::map<G4String, G4ThreeVector> UniformFieldVolField;
-  std::map<G4String, G4double> QuadVolBgrad;
-  std::map<G4String, G4double> SextVolBgrad;
-  std::map<G4String, G4double> OctVolBgrad;
-
-  G4VPhysicalVolume* align_in_volume;
-  G4VPhysicalVolume* align_out_volume;
-  std::vector<G4LogicalVolume*> SensitiveComponents;
-  std::vector<G4LogicalVolume*> itsGFlashComponents;
-
-  std::vector<G4LogicalVolume*> VOL_LIST;
-  G4bool HasFields;
-  G4int nPoleField;
-  G4bool HasUniformField;
   
-  std::vector<G4LogicalVolume*> GetGFlashComponents();
+  std::vector<G4LogicalVolume*> VOL_LIST;
 
 private:
+  /// Copy of the containing directory fo the main file. SQL main file
+  /// typically only contains relative file paths to that main file.
+  G4String containingDir;
   G4int _NVariables;
   G4double _VisRed; 
   G4double _VisGreen;
@@ -93,7 +74,6 @@ private:
   G4Region* _precisionRegionSQL;
   G4Region* _approximationRegionSQL;
 
-  void Construct();
   void BuildSQLObjects(G4String file);
   void SetCommonParams(BDSMySQLTable*,G4int);
   void SetPlacementParams(BDSMySQLTable*,G4int);
@@ -110,26 +90,17 @@ private:
   G4LogicalVolume* BuildSampler(BDSMySQLTable* aSQLTable, G4int k);
   G4LogicalVolume* BuildTube(BDSMySQLTable* aSQLTable, G4int k);
   G4LogicalVolume* BuildEllipticalTube(BDSMySQLTable* aSQLTable, G4int k);
-  G4LogicalVolume* BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k);
+  //G4LogicalVolume* BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k);
   G4RotationMatrix* RotateComponent(G4double psi,
 				    G4double phi,
 				    G4double theta);
   G4RotationMatrix* rotateComponent;
   void PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4LogicalVolume*> VOL_LIST);
 
-  G4double itsMarkerLength;
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
-  //  BDSMagFieldSQL* itsMagField;
-  //  BDSSamplerSD* SensDet;
-
-  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
-
-protected:
 };
 
-inline  std::vector<G4LogicalVolume*> BDSGeometrySQL::GetGFlashComponents()
-{return itsGFlashComponents;}
 
 #endif
