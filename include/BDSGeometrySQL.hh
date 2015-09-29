@@ -38,9 +38,6 @@ public:
   std::vector<G4LogicalVolume*> VOL_LIST;
 
 private:
-  /// Copy of the containing directory fo the main file. SQL main file
-  /// typically only contains relative file paths to that main file.
-  G4String containingDir;
   G4int NVariables;
   G4double VisRed; 
   G4double VisGreen;

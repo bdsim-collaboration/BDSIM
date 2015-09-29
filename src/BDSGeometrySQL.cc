@@ -40,10 +40,8 @@ BDSGeometrySQL::BDSGeometrySQL(G4String filePath):
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "loading SQL file: " << filePath << G4endl;
+  G4cout << __METHOD_NAME__ << "containing directory: " << ContainingDir() << G4endl;
 #endif
-  // store the relative directory
-  containingDir = BDS::GetFullPath(filePath,true); // strip of the file name effictively
-  
   // open the file
   ifs.open(filePath.c_str());
   

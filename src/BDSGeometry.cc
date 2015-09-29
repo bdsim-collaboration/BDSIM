@@ -1,5 +1,6 @@
 #include "BDSGeometry.hh"
 #include "BDSGeometryType.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 
@@ -14,13 +15,7 @@ BDSGeometry::BDSGeometry(BDSGeometryType formatIn, G4String fileIn):
   format(formatIn),
   file(fileIn)
 {
-  Init();
-}
-
-BDSGeometry::BDSGeometry(G4String formatIn, G4String fileIn):
-  file(fileIn)
-{
-  format = BDS::DetermineGeometryType(formatIn);
+  containingDir = BDS::GetFullPath(fileIn,true); // strip of the file name effictively
   Init();
 }
 

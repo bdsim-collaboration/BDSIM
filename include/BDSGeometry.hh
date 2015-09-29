@@ -36,6 +36,7 @@ public:
   G4VPhysicalVolume* GetAlignInVolume()  const;
   BDSGeometryType    Format()            const;
   G4String           File()              const;
+  G4String           ContainingDir()     const;
   G4bool             HasFields()         const;
   G4int              NPoleField()        const;
   G4bool             HasUniformField()   const;
@@ -71,6 +72,7 @@ protected:
 private:
   BDSGeometryType format;
   G4String        file;
+  G4String        containingDir;
 };
 
 inline void BDSGeometry::SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol)
@@ -123,5 +125,8 @@ inline BDSGeometryType BDSGeometry::Format() const
 
 inline G4String BDSGeometry::File() const
 {return file;}
+
+inline G4String BDSGeometry::ContainingDir() const
+{return containingDir;}
 
 #endif
