@@ -199,8 +199,6 @@ struct Options
   bool     stopSecondaries;
   bool     stopTracks;
 
-  std::string fifo; ///< fifo for BDSIM-placet
-  
   /// Ring parameters
   int      nturns;
 

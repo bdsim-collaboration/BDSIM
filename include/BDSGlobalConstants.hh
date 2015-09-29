@@ -210,7 +210,6 @@ public:
   G4bool   getReading() const;
   void     setReadFromStack(G4bool flag);
   G4bool   getReadFromStack() const;
-  G4String GetFifo() const;
   G4int    GetTurnsTaken() const;
   void     IncrementTurnNumber();
   void     ResetTurnNumber();
@@ -230,10 +229,6 @@ public:
   BDSParticle GetInitialPoint() const;
   void SetInitialPoint(BDSParticle& particle);
   
-  // SPM : temp filestream for placet to read and write
-  //  std::ofstream fileDump;
-  // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
-
   std::deque<BDSParticle> holdingQueue;
   std::deque<BDSParticle> outputQueue;
   std::deque<BDSParticle> transformedQueue;
@@ -403,7 +398,6 @@ private:
   G4bool   isDumping;
   G4bool   isReading;
   G4bool   isReadFromStack;
-  G4String itsFifo; // fifo for BDSIM-placet
   G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
   
   ///@{ Turn Control
@@ -797,9 +791,6 @@ inline void BDSGlobalConstants::setReadFromStack(G4bool flag)
 
 inline G4bool BDSGlobalConstants::getReadFromStack() const
 {return isReadFromStack;}
-
-inline G4String BDSGlobalConstants::GetFifo() const
-{return itsFifo;}
 
 inline G4AffineTransform BDSGlobalConstants::GetDumpTransform() const
 {return itsDumpTransform;}
