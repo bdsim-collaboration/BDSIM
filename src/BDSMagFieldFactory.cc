@@ -18,6 +18,9 @@
 
 BDSMagFieldFactory::BDSMagFieldFactory()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   offset            = G4ThreeVector(0,0,0);
   format            = BDSBType::zero;
   fileName          = "";
@@ -30,6 +33,9 @@ BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndF
 							BDSGeometry*  geometryIn)
   
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   offset            = offsetIn;
   geometry          = geometryIn;
 

@@ -29,6 +29,10 @@ BDSGeometryFactory::~BDSGeometryFactory(){}
 
 BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "format and path: " << formatAndFilePath << G4endl;
+#endif
+  
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
   fileName = BDS::GetFullPath(ff.first);
   BDSGeometryType format = BDS::DetermineGeometryType(ff.second);

@@ -76,6 +76,9 @@ std::string BDS::GetBDSIMExecPath()
 
 G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << fileName << " strip name off?: " << excludeNameFromPath << G4endl;
+#endif
   //Return fullPath of a file:
   //mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
   // 1) if absolute path (starting with a slash) return that
@@ -114,6 +117,9 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // add filename if not excluded
   if (!excludeNameFromPath)
     {fullPath += inputFilename;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "determined full path to be: " << fullPath << G4endl;
+#endif
   return fullPath;
 }
 
@@ -198,6 +204,9 @@ G4bool BDS::Geant4EnvironmentIsSet()
 
 std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << formatAndPath << G4endl;
+#endif
   if(!formatAndPath.empty())
     {
       std::size_t found = formatAndPath.find(":");

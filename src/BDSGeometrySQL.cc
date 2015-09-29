@@ -108,7 +108,7 @@ void BDSGeometrySQL::Construct(G4LogicalVolume* containerLogicalVolume)
 void BDSGeometrySQL::BuildSQLObjects(G4String file)
 {
 #ifdef BDSDEBUG
-  G4cout << "BDSGeometrySQL::BuildSQLObjects Loading file " << file << G4endl;
+  G4cout << "BDSGeometrySQL::BuildSQLObjects> loading single file " << file << G4endl;
 #endif
 
   BDSMySQLWrapper sql(file);
