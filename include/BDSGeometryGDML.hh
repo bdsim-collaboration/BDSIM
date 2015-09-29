@@ -1,20 +1,18 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 13.04.2005
-*/
-
 #ifdef USE_GDML
 
-#ifndef BDSGeometryGDML_h
-#define BDSGeometryGDML_h 1
-#include "G4LogicalVolume.hh"
+#ifndef BDSGEOMETRYGDML_H
+#define BDSGEOMETRYGDML_H
 
-class BDSGeometryGDML {
+#include "BDSGeometry.hh"
+
+#include "globals.hh" // geant4 types / globals
+
+#include <vector>
+
+class G4LogicalVolume;
+
+class BDSGeometryGDML: public BDSGeometry
+{
 public:
   BDSGeometryGDML(G4String GMDLfile);
   ~BDSGeometryGDML();

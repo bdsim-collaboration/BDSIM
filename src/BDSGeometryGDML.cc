@@ -11,14 +11,18 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):markerVol(nullptr),gdmlWorld(nullptr){
+BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):
+  markerVol(nullptr),
+  gdmlWorld(nullptr)
+{
   GDMLfile = GDMLfileIn;
 }
 
-BDSGeometryGDML::~BDSGeometryGDML(){
-}
+BDSGeometryGDML::~BDSGeometryGDML()
+{;}
 
-void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
+void BDSGeometryGDML::Construct(G4LogicalVolume *marker)
+{
   markerVol = marker;
   G4GDMLParser *parser = new G4GDMLParser();
   parser->Read(GDMLfile);

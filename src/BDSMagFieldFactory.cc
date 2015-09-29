@@ -1,16 +1,20 @@
-#include "BDSMagFieldFactory.hh"
-#include "BDSExecOptions.hh"
 #include "BDSBType.hh"
-#include "BDSMagFieldMesh.hh"
-#include "BDSMagFieldXY.hh"
-#include "BDSMagField3D.hh"
+#include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
+#include "BDSMagFieldFactory.hh"
+#include "BDSMagFieldMesh.hh"
 #include "BDSMagFieldSQL.hh"
+#include "BDSMagFieldXY.hh"
+#include "BDSMagField3D.hh"
+#include "BDSUtilities.hh"
+
 #include "G4UniformMagField.hh"
-#include "BDSDebug.hh"
+
 #include <typeinfo>
+#include <utility>
 
 BDSMagFieldFactory::BDSMagFieldFactory()
 {
@@ -47,7 +51,8 @@ BDSMagFieldMesh* BDSMagFieldFactory::BuildMagneticField(G4String      formatAndF
 	  {return BuildMagFieldLCDD();}
       }
     }
-  
+
+  // this logic seems unclear
   else if (format == BDSBType::mokka || format == BDSBType::zero)
     {
       if(geometry)
