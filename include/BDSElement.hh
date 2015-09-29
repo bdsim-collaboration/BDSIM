@@ -23,6 +23,8 @@
  *
  */
 
+class BDSGeometry;
+
 class BDSElement: public BDSAcceleratorComponent
 {
 public:
@@ -31,12 +33,15 @@ public:
 	     G4double      outerDiameterIn,
 	     G4String      geometry,
 	     G4String      bmap,
-	     G4ThreeVector bFieldOffsetIn);
+	     G4ThreeVector bMapOffsetIn);
   ~BDSElement();
 
-  // creates a field mesh in global coordinates in case it is given by map
-  void PrepareField(G4VPhysicalVolume *referenceVolume);
+  /// Creates a field mesh in global coordinates in case it is given by map
+  //void PrepareField(G4VPhysicalVolume *referenceVolume);
 
+  /// Rotates and positions the marker volume before it is placed in
+  /// BDSDetectorConstruction. It aligns the marker volume so that the
+  /// the beamline goes through the specified daugther volume (e.g. for mokka)
   void AlignComponent(G4ThreeVector& TargetPos, 
 		      G4RotationMatrix *TargetRot,
 		      G4RotationMatrix& globalRotation,
@@ -58,37 +63,30 @@ private:
   virtual void BuildContainerLogicalVolume();
 
   /// Load the geometry and place the components inside the container logical volume.
-  void PlaceComponents(G4String geometry, G4String bmap);
+  void PlaceComponents();
 
   /// Build the magnetic field
-  void BuildMagField(G4bool forceToAllDaughters=false);
+  //void BuildMagField(G4bool forceToAllDaughters = false);
 
   G4double outerDiameter;
-  
-  G4String itsGeometry;
-  G4String itsBmap;
+  G4String geometryFileName;
+  G4String bMapFileName;
 
   /// Displacement of b field coordinates from geometry coordinates
-  G4ThreeVector bFieldOffset;
+  G4ThreeVector bMapOffset;
 
   G4String itsFieldVolName;
-  G4bool itsFieldIsUniform;
-  G4ChordFinder* fChordFinder;
+  //G4CachedMagneticField *itsCachedMagField;
 
-  G4MagIntegratorStepper* itsFStepper;
-  G4EqMagElectricField* itsFEquation;
-  G4Mag_UsualEqRhs* itsEqRhs;
-
-  BDSMagFieldMesh *itsMagField;
-  G4CachedMagneticField *itsCachedMagField;
-  G4UniformMagField *itsUniformMagField;
-  
   // Volume to align incoming beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_in_volume;
   // Volume to align outgoing beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_out_volume;
+
+
+  BDSGeometry* geometry;
 };
 
 
