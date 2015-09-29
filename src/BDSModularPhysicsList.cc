@@ -166,10 +166,12 @@ void BDSModularPhysicsList::Register()
 void BDSModularPhysicsList::SetCuts()
 {
   if(verbose || debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
+    {G4cout << __METHOD_NAME__ << G4endl;}
+
+  BDSGlobalConstants* globalConsts = BDSGlobalConstants::Instance();
 
   G4VUserPhysicsList::SetCuts();  
-  G4double defaultRangeCut  = BDSGlobalConstants::Instance()->GetDefaultRangeCut(); 
+  G4double defaultRangeCut  = globalConsts->GetDefaultRangeCut(); 
   SetDefaultCutValue(defaultRangeCut);
   SetCutsWithDefault();   
 
@@ -177,10 +179,10 @@ void BDSModularPhysicsList::SetCuts()
   G4cout << __METHOD_NAME__ << "Default production range cut (mm)   " << defaultRangeCut   << G4endl;
 #endif
 
-  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
-  G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
-  G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();  
+  G4double prodCutPhotons   = globalConsts->GetProdCutPhotons();
+  G4double prodCutElectrons = globalConsts->GetProdCutElectrons();
+  G4double prodCutPositrons = globalConsts->GetProdCutPositrons();
+  G4double prodCutHadrons   = globalConsts->GetProdCutHadrons();  
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
