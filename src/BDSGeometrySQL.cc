@@ -87,14 +87,14 @@ void BDSGeometrySQL::Construct(G4LogicalVolume* containerLogicalVolume)
   itsMarkerVol = containerLogicalVolume;
   length=((G4Box*)itsMarkerVol->GetSolid())->GetZHalfLength()*2.0;
   VOL_LIST.push_back(itsMarkerVol);
-  G4String file;
+  G4String fileListLine;
   char buffer[1000];
-  while (ifs>>file)
+  while (ifs >> fileListLine)
     {
-      if(file.contains("#"))
-	{ifs.getline(buffer,1000);}
+      if(fileListLine.contains("#"))
+	{ifs.getline(buffer,1000);} // a comment or info line - store it
       else
-	{BuildSQLObjects(containingDir.c_str() + file);}
+	{BuildSQLObjects((ContainingDir()).c_str() + fileListLine);} // a line with file to be parsed
     }
   
   // Close Geomlist file
