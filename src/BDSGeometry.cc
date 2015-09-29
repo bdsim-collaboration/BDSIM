@@ -1,22 +1,36 @@
 #include "BDSGeometry.hh"
+#include "BDSGeometryType.hh"
 
-BDSGeometry::BDSGeometry(){
-  init();
+#include "globals.hh" // geant4 globals / types
+
+BDSGeometry::BDSGeometry()
+{
+  format = BDSGeometryType::gdml;
+  file   = "";
+  Init();
+}
+
+BDSGeometry::BDSGeometry(BDSGeometryType formatIn, G4String fileIn):
+  format(formatIn),
+  file(fileIn)
+{
+  Init();
+}
+
+BDSGeometry::BDSGeometry(G4String formatIn, G4String fileIn):
+  file(fileIn)
+{
+  format = BDS::DetermineGeometryType(formatIn);
+  Init();
 }
 
 BDSGeometry::~BDSGeometry()
-{;}
+{;} // doesn't seem to own anything
 
-BDSGeometry::BDSGeometry(BDSGeometryType format, G4String file):
-  _format(format),
-  _file(file)
+void BDSGeometry::Init()
 {
-  _align_in_volume = nullptr;
-  _align_out_volume = nullptr;
-  _length=0;
-  _field = nullptr;
-}
-
-G4String BDSGeometry::file() const{
-  return _file;
+  alignInVolume  = nullptr;
+  alignOutVolume = nullptr;
+  length         = 0;
+  field          = nullptr;
 }
