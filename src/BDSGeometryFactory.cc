@@ -1,10 +1,9 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSGeometryGMad.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
-
-#include "ggmad.hh"
 
 #include "globals.hh" // geant4 types / globals
 

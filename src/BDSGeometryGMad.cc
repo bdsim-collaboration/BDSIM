@@ -1,6 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
-#include "ggmad.hh"
+#include "BDSGeometryGMad.hh"
 
 #include "BDSMaterials.hh"
 
@@ -14,14 +14,17 @@
 #include "G4VPhysicalVolume.hh"
 
 
-GGmadDriver::GGmadDriver(G4String file)
+BDSGeometryGMad::BDSGeometryGMad(G4String file)
 {
-  G4cout << __METHOD_NAME__ << "reading file: " << file << G4endl;
+  G4cout << __METHOD_NAME__ << "> reading file : " << file << G4endl;
   inputf.open(file);
   if(!inputf.good()) {G4cerr<<"ggmad driver: error opening input file "<<file<<G4endl; exit(1);}
 }
 
-void GGmadDriver::Construct(G4LogicalVolume *marker)
+void BDSGeometryGMad::Error()
+{G4cout << "ggmad: error in file format" << G4endl;}
+
+void BDSGeometryGMad::Construct(G4LogicalVolume *marker)
 {
   
   G4String token;
@@ -32,37 +35,46 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
   G4double x1=0, x2=0, y1=0, y2=0;
   G4double phi=0, theta=0, psi=0; // Euler angles - for rotation of components
   G4String material;
+  // G4double FieldX, FieldY, FieldZ;
+  // FieldX = FieldY = FieldZ = 0.0;
 
   G4Material *theMaterial;
+  G4Box *aBox;
+  G4Tubs *aTubs;
+  G4Cons *aCons;
+  //G4Trap *aTrap;
+  G4Trd *aTrd;
+
   G4LogicalVolume *lvol;
 
   G4VisAttributes *visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
   visAttr->SetForceSolid(true);
+						 
 
   G4int count = 0;
 
   while (inputf.good())
     {
-      token = getWord();
+      token = GetWord();
  
       if(token=="Box") {
-	if(getWord() == "{")
+	if(GetWord() == "{")
 	  {
 	    
-	    while((token = getWord()))
+	    while((token = GetWord()))
 	      {
 		if (token == "}") break;
 		
-		getParameter(x0,"x0",token); // origin
-		getParameter(y0,"y0",token);
-		getParameter(z0,"z0",token);
-		getParameter(x,"x",token); //half lengths
-		getParameter(y,"y",token);
-		getParameter(z,"z",token);
-		getParameter(phi,"phi",token);
-		getParameter(theta,"theta",token);
-		getParameter(psi,"psi",token);
-		getParameter(material,"material",token);
+		GetParameter(x0,"x0",token); // origin
+		GetParameter(y0,"y0",token);
+		GetParameter(z0,"z0",token);
+		GetParameter(x,"x",token); //half lengths
+		GetParameter(y,"y",token);
+		GetParameter(z,"z",token);
+		GetParameter(phi,"phi",token);
+		GetParameter(theta,"theta",token);
+		GetParameter(psi,"psi",token);
+		GetParameter(material,"material",token);
 	      }
 
 	    //create Box
@@ -73,10 +85,10 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    G4cout<<"creating box : "<<x0<<"  "<<y0<<" "<<z0<<G4endl;
 
 
-	    G4Box* aBox = new G4Box("aBox" + G4String(count),
-				    x,   // half x
-				    y, // half y
-				    z ); // half z
+	    aBox = new G4Box("aBox" + G4String(count),
+			     x,   // half x
+			     y, // half y
+			     z ); // half z
 	    
 	    lvol = new G4LogicalVolume(aBox,
 			theMaterial,
@@ -101,30 +113,30 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
 	    count++;
 
-	  } else error();
+	  } else Error();
 	
       }// G4Box
 
       if(token=="Tubs") {
-	if(getWord() == "{")
+	if(GetWord() == "{")
 	  {
 	    
-	    while((token = getWord()))
+	    while((token = GetWord()))
 	      {
 		if (token == "}") break;
 		
-		getParameter(x0,"x0",token); // origin
-		getParameter(y0,"y0",token);
-		getParameter(z0,"z0",token);
-		getParameter(rmin,"rmin",token); //half lengths
-		getParameter(rmax,"rmax",token);
-		getParameter(z,"z",token);
-		getParameter(phi0,"phi0",token);
-		getParameter(dphi,"dphi",token);
-		getParameter(phi,"phi",token);
-		getParameter(theta,"theta",token);
-		getParameter(psi,"psi",token);
-		getParameter(material,"material",token);
+		GetParameter(x0,"x0",token); // origin
+		GetParameter(y0,"y0",token);
+		GetParameter(z0,"z0",token);
+		GetParameter(rmin,"rmin",token); //half lengths
+		GetParameter(rmax,"rmax",token);
+		GetParameter(z,"z",token);
+		GetParameter(phi0,"phi0",token);
+		GetParameter(dphi,"dphi",token);
+		GetParameter(phi,"phi",token);
+		GetParameter(theta,"theta",token);
+		GetParameter(psi,"psi",token);
+		GetParameter(material,"material",token);
 	      }
 	    
 	    //create Box
@@ -138,12 +150,12 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    phi0 = 0;
 	    dphi = 360; // degrees
 	    
-	    G4Tubs* aTubs = new G4Tubs("aTubs" + G4String(count),
-				       rmin,   // inner R
-				       rmax, // outer R
-				       z, //z
-				       phi0,//phi 0 
-				       CLHEP::twopi * dphi / 360  ); //delta phi
+	    aTubs = new G4Tubs("aTubs" + G4String(count),
+			       rmin,   // inner R
+			       rmax, // outer R
+			       z, //z
+			       phi0,//phi 0 
+			       CLHEP::twopi * dphi / 360  ); //delta phi
 	    
 	    lvol = new G4LogicalVolume(aTubs,
 				       theMaterial,
@@ -169,31 +181,31 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    
 	    count++;
 	    
-	  } else error();
+	  } else Error();
       }
 
       if(token=="Cons") {
-	if(getWord() == "{")
+	if(GetWord() == "{")
 	  {
 	    
-	    while((token = getWord()))
+	    while((token = GetWord()))
 	      {
 		if (token == "}") break;
 		
-		getParameter(x0,"x0",token); // origin
-		getParameter(y0,"y0",token);
-		getParameter(z0,"z0",token);
-		getParameter(rmin,"rmin1",token); //half lengths
-		getParameter(rmax,"rmax1",token);
-		getParameter(rmin2,"rmin2",token); //half lengths
-		getParameter(rmax2,"rmax2",token);
-		getParameter(z,"z",token);
-		getParameter(phi0,"phi0",token);
-		getParameter(dphi,"dphi",token);
-		getParameter(phi,"phi",token);
-		getParameter(theta,"theta",token);
-		getParameter(psi,"psi",token);
-		getParameter(material,"material",token);
+		GetParameter(x0,"x0",token); // origin
+		GetParameter(y0,"y0",token);
+		GetParameter(z0,"z0",token);
+		GetParameter(rmin,"rmin1",token); //half lengths
+		GetParameter(rmax,"rmax1",token);
+		GetParameter(rmin2,"rmin2",token); //half lengths
+		GetParameter(rmax2,"rmax2",token);
+		GetParameter(z,"z",token);
+		GetParameter(phi0,"phi0",token);
+		GetParameter(dphi,"dphi",token);
+		GetParameter(phi,"phi",token);
+		GetParameter(theta,"theta",token);
+		GetParameter(psi,"psi",token);
+		GetParameter(material,"material",token);
 	      }
 	    
 	    //create Box
@@ -208,14 +220,14 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    phi0 = 0;
 	    dphi = 360; // degrees
 	    
-	    G4Cons* aCons = new G4Cons("aCons" + G4String(count),
-				       rmin,   // inner R
-				       rmax,
-				       rmin2,
-				       rmax2,
-				       z, //z
-				       phi0,//phi 0 
-				       CLHEP::twopi * dphi / 360  ); //delta phi
+	    aCons = new G4Cons("aCons" + G4String(count),
+			       rmin,   // inner R
+			       rmax,
+			       rmin2,
+			       rmax2,
+			       z, //z
+			       phi0,//phi 0 
+			       CLHEP::twopi * dphi / 360  ); //delta phi
 	    
 	    lvol = new G4LogicalVolume(aCons,
 				       theMaterial,
@@ -243,28 +255,28 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    
 	    count++;
 	    
-	  } else error();
+	  } else Error();
       }
       if(token=="Trd") {   // trapezoid
-	if(getWord() == "{")
+	if(GetWord() == "{")
 	  {
 	    
-	    while((token = getWord()))
+	    while((token = GetWord()))
 	      {
 		if (token == "}") break;
 		
-		getParameter(x0,"x0",token); // origin
-		getParameter(y0,"y0",token);
-		getParameter(z0,"z0",token);
-		getParameter(x1,"x1",token); //half length at wider side
-		getParameter(x2,"x2",token); //half length at narrow side
-		getParameter(y1,"y1",token); //half lengths
-		getParameter(y2,"y2",token); //half lengths
-		getParameter(z,"z",token);
-		getParameter(phi,"phi",token);
-		getParameter(theta,"theta",token);
-		getParameter(psi,"psi",token);
-		getParameter(material,"material",token);
+		GetParameter(x0,"x0",token); // origin
+		GetParameter(y0,"y0",token);
+		GetParameter(z0,"z0",token);
+		GetParameter(x1,"x1",token); //half length at wider side
+		GetParameter(x2,"x2",token); //half length at narrow side
+		GetParameter(y1,"y1",token); //half lengths
+		GetParameter(y2,"y2",token); //half lengths
+		GetParameter(z,"z",token);
+		GetParameter(phi,"phi",token);
+		GetParameter(theta,"theta",token);
+		GetParameter(psi,"psi",token);
+		GetParameter(material,"material",token);
 	      }
 	    
 	    //create Box
@@ -276,10 +288,10 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 		  z<<" "<<y<<" "<<x1<<" "<<x2<<G4endl;
 	    
 	    
-	    G4Trd* aTrd = new G4Trd("aTrd" + G4String(count),
-				    x1,x2,   // inner R
-				    y1,y2,
-				    z);
+	    aTrd = new G4Trd("aTrd" + G4String(count),
+			     x1,x2,   // inner R
+			     y1,y2,
+			     z);
 	    
 	    lvol = new G4LogicalVolume(aTrd,
 				       theMaterial,
@@ -305,7 +317,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	    
 	    count++;
 	    
-	  } else error();
+	  } else Error();
       }
     }
 
@@ -314,15 +326,14 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 }
 
 
-G4String GGmadDriver::getWord()
+G4String BDSGeometryGMad::GetWord()
 {
-
   G4String str="";
   char c = 'a';
 
-  while (inputf.good())     // loop while extraction from file is possible
+  while (inputf.good())// loop while extraction from file is possible
   {
-    inputf.get(c);       // get character from file
+    inputf.get(c);// get character from file
 
     // return char tokens 
     if(c=='=') return G4String(c);
@@ -346,31 +357,31 @@ G4String GGmadDriver::getWord()
 
 }
 
-void GGmadDriver::getParameter(G4double& x, G4String name, G4String lastToken)
+void BDSGeometryGMad::GetParameter(G4double& x, G4String name, G4String lastToken)
 {
   G4String token;
 
   if(lastToken == name)
     {
-      token = getWord();
+      token = GetWord();
       if(token == "=")
 	{
-	  token = getWord();
-	  x = strtod(token.c_str(),nullptr);
+	  token = GetWord();
+	  x = strtod(token.c_str(),NULL);
 	}
     }
 }
 
-void GGmadDriver::getParameter(G4String& lval, G4String name, G4String lastToken)
+void BDSGeometryGMad::GetParameter(G4String& lval, G4String name, G4String lastToken)
 {
   G4String token;
 
   if(lastToken == name)
     {
-      token = getWord();
+      token = GetWord();
       if(token == "=")
 	{
-	  token = getWord();
+	  token = GetWord();
 	  lval = token;
 	}
     }
