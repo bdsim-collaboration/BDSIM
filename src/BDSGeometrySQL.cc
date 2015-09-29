@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGeometrySQL.hh"
+#include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMySQLWrapper.hh"
@@ -34,7 +35,7 @@
 #include <vector>
 
 BDSGeometrySQL::BDSGeometrySQL(G4String filePath):
-  BDSGeometry("mokka", filePath),
+  BDSGeometry(BDSGeometryType::mokka, filePath),
   rotateComponent(nullptr),
   itsMarkerVol(nullptr)
 {
