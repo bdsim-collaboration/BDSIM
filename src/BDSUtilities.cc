@@ -190,7 +190,32 @@ G4bool BDS::Geant4EnvironmentIsSet()
 	  G4cout << " - found" << G4endl;
 #endif
 	}
-
     }
   return result;
+}
+
+std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
+{
+  if(!formatAndPath.empty())
+    {
+      std::size_t found = formatAndPath.find(":");
+      if (found == std::string::npos)
+	{
+	  G4cerr << __METHOD_NAME__ << "invalid specifier \""
+		 << formatAndPath << "\"" << G4endl;
+	  G4cerr << "Missing \":\" to separate format and file path" << G4endl;
+	  exit(1);
+	}
+      else
+	{
+	  G4String format   = formatAndPath.substr(0,found);
+	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
+#ifdef BDSDEBUG
+	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
+	G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
+#endif
+	return std::make_pair(format,filePath);
+	}
+    }
+  return std::make_pair("","");
 }

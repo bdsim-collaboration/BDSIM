@@ -6,6 +6,7 @@
 #include "G4ThreeVector.hh"
 
 #include <string>
+#include <utility>
 
 
 /**
@@ -59,6 +60,10 @@ namespace BDS {
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();
+
+  /// Split a format and file path string around the ":" character. This format
+  /// is used for geometry and field maps
+  std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
 }
 
 
