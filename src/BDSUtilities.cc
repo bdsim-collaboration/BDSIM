@@ -12,9 +12,10 @@
 #include <functional>
 #include <iostream>
 #include <limits>
-
 #include <signal.h>
 #include <unistd.h>
+#include <utility>
+
 #ifdef __APPLE__
 #include <mach-o/dyld.h> // for executable path
 #endif
@@ -58,20 +59,18 @@ std::string BDS::GetBDSIMExecPath()
 #ifdef __linux__
   // get path from /proc/self/exe
   ssize_t len = ::readlink("/proc/self/exe", path, sizeof(path) - 1);
-  if (len != -1) {
-    path[len] = '\0';
-  }
+  if (len != -1)
+    {path[len] = '\0';}
 #elif __APPLE__
   uint32_t size = sizeof(path);
   if (_NSGetExecutablePath(path, &size) != 0)
-    std::cout << "buffer too small; need size " << size << std::endl;
+    {std::cout << "buffer too small; need size " << size << std::endl;}
 #endif
   std::string bdsimPath(path);
   // remove executable from path
   std::string::size_type found = bdsimPath.rfind("/"); // find the last '/'
-  if (found != std::string::npos){
-    bdsimPath = bdsimPath.substr(0,found+1); // the path is the bit before that, including the '/'
-  }
+  if (found != std::string::npos)
+    {bdsimPath = bdsimPath.substr(0,found+1);} // the path is the bit before that, including the '/'
   return bdsimPath;
 }
 
@@ -90,28 +89,31 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // split input into path and filename
   G4String inputFilepath, inputFilename;
   G4String::size_type found = fileName.rfind("/"); // find the last '/'
-  if (found != G4String::npos){
-    inputFilepath = fileName.substr(0,found); // the path is the bit before that
-    inputFilename = fileName.substr(found); // the rest
-  } else {
-    // no slash, only filename
-    inputFilepath = "";
-    inputFilename = fileName;
-  }
+  if (found != G4String::npos)
+    {
+      inputFilepath = fileName.substr(0,found); // the path is the bit before that
+      inputFilename = fileName.substr(found); // the rest
+    }
+  else
+    {
+      // no slash, only filename
+      inputFilepath = "";
+      inputFilename = fileName;
+    }
   
   // need to know whether it's an absolute or relative path
-  if ((fileName.substr(0,1)) == "/"){
-    fullPath = inputFilepath;
-  } else {
-    // the main file has a relative path or just the file name, add bdsimpath
-    fullPath = BDSExecOptions::Instance()->GetBDSIMPATH() + "/" + inputFilepath;
-  }
+  if ((fileName.substr(0,1)) == "/")
+    {fullPath = inputFilepath;}
+  else
+    {
+      // the main file has a relative path or just the file name, add bdsimpath
+      fullPath = BDSExecOptions::Instance()->GetBDSIMPATH() + "/" + inputFilepath;
+    }
   // add additional slash just to be safe
   fullPath += "/";
   // add filename if not excluded
-  if (!excludeNameFromPath) {
-    fullPath += inputFilename;
-  }
+  if (!excludeNameFromPath)
+    {fullPath += inputFilename;}
   return fullPath;
 }
 
