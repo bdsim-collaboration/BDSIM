@@ -18,14 +18,16 @@ Written by G.A. Blair
 Currently maintained and developed by
 Stewart Boogert       <stewart.boogert@rhul.ac.uk>
 Lawrence Deacon       <ucaplde@ucl.ac.uk>
-Regina Kwee-Hinzmann  <rkwee@cern.ch>
+Regina Kwee-Hinzmann  <regina.kwee@rhul.ac.uk>
 Hector Garcia Morales <hector.garciamorales@rhul.ac.uk>
 Laurie Nevay          <laurie.nevay@rhul.ac.uk>
+Will Shields          <william.shields.2010@live.rhul.ac.uk>
 Jochem Snuverink      <jochem.snuverink@rhul.ac.uk>
 
 History
 ==================
 
+v0.8 : 10.08.15
 v0.7 : 30.06.15
 v0.65: 10.04.15
 v0.64: 16.02.15
@@ -81,7 +83,7 @@ to see the full list of options:
 
 
 Some input examples are available in ./examples/ directory. 
-For more details consult documentation
+For more details consult documentation on http://www.pp.rhul.ac.uk/bdsim/manual/
 
 Directories
 ===================
