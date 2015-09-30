@@ -594,9 +594,8 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       tempcur = tempcur->next;
 	     }
 
-	     std::list<G4String>::iterator stIter;
-
 #ifdef BDSDEBUG
+	     std::list<G4String>::iterator stIter;
 	     for(stIter = components.begin();
 	     	 stIter!= components.end();
 	     	 stIter++){
