@@ -93,7 +93,7 @@ int main(int argc,char** argv)
 
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (execOptions->SetSeedState()) //optionally load the seed state from file
+  if (execOptions->SetSeedState()) //optionally load the seed state from file (separate from seed)
     {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
   if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
     {BDSRandom::WriteSeedState();} //write the current state once set / loaded
