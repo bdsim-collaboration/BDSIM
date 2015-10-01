@@ -1,6 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
-#include "BDSGeometryGMad.hh"
+#include "BDSGeometryGMAD.hh"
 
 #include "BDSMaterials.hh"
 
