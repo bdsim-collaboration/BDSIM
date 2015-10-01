@@ -40,8 +40,9 @@ public:
 		      G4double weightIn          = 1,    // weight
 		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
-		      G4int    eventNoIn         = 0);   // event number
-
+		      G4int    eventNoIn         = 0,    // event number
+		      G4double stepLengthIn      = 0);
+  
   ~BDSEnergyCounterHit();
   
   inline void* operator new(size_t) ;
@@ -63,6 +64,7 @@ public:
   inline G4bool   GetPrecisionRegion() const;
   inline G4int    GetTurnsTaken()      const;
   inline G4int    GetEventNo()         const;
+  inline G4double GetStepLength()      const;
   
 private:
   /// Private default constructor (not implemented) as the constructor
@@ -87,6 +89,7 @@ private:
   G4bool   precisionRegion; //Whether or not the hit is in the precision region
   G4int    turnsTaken;
   G4int    eventNo;
+  G4double stepLength;
 };
 
 inline G4int    BDSEnergyCounterHit::GetCopyNumber() const
@@ -136,6 +139,9 @@ inline G4int    BDSEnergyCounterHit::GetTurnsTaken() const
 
 inline G4int    BDSEnergyCounterHit::GetEventNo() const
 {return eventNo;}
+
+inline G4double BDSEnergyCounterHit::GetStepLength() const
+{return stepLength;}
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
 {

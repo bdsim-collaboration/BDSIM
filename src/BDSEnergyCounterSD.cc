@@ -170,8 +170,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 						       weight, 
 						       precisionRegion,
 						       turnstaken,
-						       event_number
-						       );
+						       eventnumber,
+						       stepLength);
+  
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
   
@@ -229,6 +230,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   y = poslocal.y();
   z = poslocal.z();
 
+  stepLength = 0; // no step length available for a 'spot'
+
   // get the s coordinate (central s + local z)
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume);
   if (theInfo)
@@ -274,8 +277,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       weight, 
 						       0,
 						       turnstaken,
-						       event_number
-						       );
+						       eventnumber,
+						       stepLength);
+  
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
   
