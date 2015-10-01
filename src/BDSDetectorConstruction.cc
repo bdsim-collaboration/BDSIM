@@ -490,22 +490,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 								     thecurrentitem->GetPrecisionRegion());
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true); // true = it's a read out volume
 	}
-      /*
-      else
-        {
-	  
-	  // It doesn't have a read out volume, so register the same info with all logical volumes
-	  // the current BDSAcceleratorComponent  contains as any of them could be requested
-	  // by BDSEnergyCounterSD
-	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-								     name,
-								     (*it)->GetSPositionMiddle());
-	  BDSPVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
-	  BDSPVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
-	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
-	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
-	}
-      */
       
       //this does nothing by default - only used by BDSElement
       //looks like it could just be done in its construction rather than
