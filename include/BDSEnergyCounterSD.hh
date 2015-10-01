@@ -42,9 +42,19 @@ private:
   BDSEnergyCounterHitsCollection* primaryCounterCollection;
   G4int    HCIDe;
   G4int    HCIDp;
+
+  ///@{ per hit variable
   G4double enrg;
+  G4double weight;
   G4double X,Y,Z,S; // global coordinates
   G4double x,y,z;   // local coordinates
+  G4double stepLength;
+  G4bool   precisionRegion;
+  G4int    ptype;
+  G4String volName;
+  G4int    turnstaken;
+  G4int    eventnumber;
+  ///@}
 };
 
 inline G4String BDSEnergyCounterSD::GetName()

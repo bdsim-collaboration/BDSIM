@@ -28,13 +28,20 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    HCIDe(-1),
    HCIDp(-1),
    enrg(0.0),
+   weight(0.0),
    X(0.0),
    Y(0.0),
    Z(0.0),
    S(0.0),
    x(0.0),
    y(0.0),
-   z(0.0)
+   z(0.0),
+   stepLength(0.0),
+   precisionRegion(false),
+   ptype(0),
+   volName(""),
+   turnstaken(0),
+   eventnumber(0)
 {
   verbose = BDSExecOptions::Instance()->GetVerbose();
   itsName = name;
@@ -114,36 +121,38 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   y = posafterlocal.y();
   z = posafterlocal.z();
 
-  // get the s coordinate (central s + local z)
+  stepLength = (posafter - posbefore).mag(); 
+
+  // get the s coordinate (central s + local z), and precision info
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
-  S = -1000; // unphysical default value to allow easy identification in output
   if (theInfo)
-    {S = theInfo->GetSPos() + z;}
+    {
+      S = theInfo->GetSPos() + z;
+      precisionRegion = theInfo->GetPrecisionRegion();
+    }
+  else
+    {
+      S = -1000; // unphysical default value to allow easy identification in output
+      precisionRegion = false;
+    }
   
-  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
       G4cout << "BDSEnergyCounterSD: Current Volume: " 
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
-	     << "\tEvent:  " << event_number 
+	     << "\tEvent:  " << eventnumber 
 	     << "\tEnergy: " << enrg/CLHEP::GeV 
 	     << "GeV\tPosition: " << S/CLHEP::m <<" m"<< G4endl;
     }
   
-  G4double weight = aStep->GetTrack()->GetWeight();
+  weight = aStep->GetTrack()->GetWeight();
   if (weight == 0)
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
-  G4int    ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
-  G4String volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();
-  G4String regionName = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetLogicalVolume()->GetRegion()->GetName();
-  
-  G4bool precisionRegion = false;
-  if (regionName.contains((G4String)"precisionRegion"))
-    {precisionRegion=true;}
-  //G4bool precisionRegion = get this info from the logical volume in future
-  
-  G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+  volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
+  turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   
   //create hits and put in hits collection of the event
   //do analysis / output in end of event action
@@ -222,30 +231,33 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 
   // get the s coordinate (central s + local z)
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume);
-  G4double sCentral = -1000;
   if (theInfo)
-    {sCentral = theInfo->GetSPos();}
-  S = sCentral + z;
+     {
+      S = theInfo->GetSPos() + z;
+      precisionRegion = theInfo->GetPrecisionRegion();
+    }
+  else
+    {
+      S = -1000; // unphysical default value to allow easy identification in output
+      precisionRegion = false;
+    }
   
-  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();  
+  weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
+  if (weight == 0)
+    {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   
+  ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
+  turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+
   if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
     {
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
-	     << " Event: "    << event_number 
+	     << " Event: "    << eventnumber 
 	     << " Energy: "   << enrg/CLHEP::GeV << " GeV"
 	     << " Position: " << S/CLHEP::m   << " m" 
 	     << G4endl;
     }
-  
-  G4double weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
-  if (weight == 0){
-    G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl;
-    exit(1);
-  }
-  int ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
-
-  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   
   // see explanation in other processhits function
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
