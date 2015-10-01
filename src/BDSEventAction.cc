@@ -159,18 +159,20 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
+      BDSHistogram1D* generalELoss    = analMan->GetHistogram(2);
+      BDSHistogram1D* perElementELoss = analMan->GetHistogram(5);
+      
       bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
       //bin hits in histograms
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
-	  G4double s      = (*energyCounterHits)[i]->GetS()/CLHEP::m;
-	  G4double energy = (*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV;
-	  G4double weight = (*energyCounterHits)[i]->GetWeight();
-	  G4double weightedEnergy = energy*weight;
-	  //general eloss histo
-	  analMan->Fill1DHistogram(2, s, weightedEnergy);
-	  //per element eloss histo
-	  analMan->Fill1DHistogram(5, s, weightedEnergy);
+	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
+	  G4double s      = hit.GetS()/CLHEP::m;
+	  G4double energy = hit.GetEnergy()/CLHEP::GeV;
+	  G4double weight = hit.GetWeight();
+	  G4double weightedEnergy = energy * weight;
+	  generalELoss->Fill(s, weightedEnergy);
+	  perElementELoss->Fill(s, weightedEnergy);
 	}
     }
 
