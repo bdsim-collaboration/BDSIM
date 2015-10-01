@@ -28,7 +28,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 G4int            precisionRegionIn,
+						 G4bool           precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),

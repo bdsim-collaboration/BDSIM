@@ -176,6 +176,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   // if it both didn't exist and has been constructed
   if (element)
     {
+      element->SetPrecisionRegion(_element.precisionRegion);
       element->Initialise();
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(element);
     }

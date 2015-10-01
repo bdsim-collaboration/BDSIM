@@ -54,7 +54,7 @@ public:
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  G4int            precisionRegion = 0,
+			  G4bool           precisionRegion = 0,
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr);
   
   virtual ~BDSAcceleratorComponent();
@@ -65,8 +65,11 @@ public:
   /// Get a string describing the type of the component
   G4String GetType() const;
 
-  /// 0 = no precision region, 1 = precision region 1, 2 = precision region 2.
-  G4int GetPrecisionRegion() const;
+  /// Whether precision output is to be recorded for this component
+  G4bool GetPrecisionRegion() const;
+
+  /// Set whether precision output should be recorded for this component
+  void   SetPrecisionRegion(G4bool precisionRegionIn);
 
   /// Access beam pipe information
   BDSBeamPipeInfo* GetBeamPipeInfo() const;
@@ -137,7 +140,7 @@ protected:
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
-  G4int            precisionRegion;
+  G4bool           precisionRegion;
   BDSBeamPipeInfo* beamPipeInfo;
   ///@}
 
@@ -203,8 +206,11 @@ inline G4double BDSAcceleratorComponent::GetAngle() const
 inline G4String BDSAcceleratorComponent::GetType() const
 {return type;}
 
-inline G4int BDSAcceleratorComponent::GetPrecisionRegion() const
+inline G4bool BDSAcceleratorComponent::GetPrecisionRegion() const
 {return precisionRegion;}
+
+inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
+{precisionRegion = precisionRegionIn;}
 
 inline BDSBeamPipeInfo* BDSAcceleratorComponent::GetBeamPipeInfo() const
 {return beamPipeInfo;}

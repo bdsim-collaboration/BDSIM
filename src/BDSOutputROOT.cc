@@ -214,6 +214,7 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("y",          &y,          "y/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("z",          &z,          "z/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("E",          &E,          "E/F"); // (GeV)
+  PrecisionRegionEnergyLossTree->Branch("stepLength", &stepLength, "stepLength/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("weight",     &weight,     "weight/F");
   PrecisionRegionEnergyLossTree->Branch("partID",     &part,       "partID/I");
   PrecisionRegionEnergyLossTree->Branch("volumeName", &volumeName, "volumeName/C");
@@ -490,6 +491,7 @@ void BDSOutputROOT::FillHit(BDSEnergyCounterHit* hit)
   y          = hit->Gety()/CLHEP::m;
   z          = hit->Getz()/CLHEP::m;
   E          = hit->GetEnergy()/CLHEP::GeV;
+  stepLength = hit->GetStepLength()/CLHEP::m;
   weight     = hit->GetWeight();
   part       = hit->GetPartID();
   turnnumber = hit->GetTurnsTaken();
@@ -509,12 +511,15 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       FillHit(hit);
       EnergyLossTree->Fill();
       
-      if(hit->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	//name - convert to char array for root
-	G4String temp = hit->GetName();
-	strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
-	PrecisionRegionEnergyLossTree->Fill();
-      }
+      if(hit->GetPrecisionRegion())
+	{
+	  //Only the precision region fills this tree, preserving every hit, its position and weight,
+	  //instead of summing weighted energy in each beam line component.
+	  //name - convert to char array for root
+	  G4String temp = hit->GetName();
+	  strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
+	  PrecisionRegionEnergyLossTree->Fill();
+	}
     }
 }
 
