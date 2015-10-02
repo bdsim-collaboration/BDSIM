@@ -9,8 +9,8 @@
 #include <utility>
 #include "globals.hh"
 
-BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
-  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
+BDSHistogram1D::BDSHistogram1D(G4double xminIn, G4double xmaxIn, G4int nbinsIn, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0),xmin(xminIn),xmax(xmaxIn),nbins(nbinsIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
@@ -31,12 +31,13 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   
   //underflow bin
   underflow = new BDSBin(DBL_MIN,xmin);
-  
+  // this constructor generates equidistant bins
+  equidistantBins = true;
   // reserve size for speed optimisation
   bins.reserve(nbins);
 
   // calculate binwidth
-  G4double binwidth = (xmax - xmin) / (G4double)nbins;
+  binwidth = (xmax - xmin) / (G4double)nbins;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
 	 << " S min : "    << xmin 
@@ -70,16 +71,21 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
   G4cout << __METHOD_NAME__ << "xmin: " << binEdges.front() << ", xmax: " << binEdges.back() << ", nbins: " << binEdges.size() << G4endl;
 #endif
+  nbins = binEdges.size()-1; // -1 (for extra edge)
   // reserve size for speed optimisation
-  bins.reserve(binEdges.size()-1); // -1 (for extra edge)
+  bins.reserve(nbins);
   
   // prepare iterators
   std::vector<double>::iterator iter, end;
   iter = binEdges.begin();
   end = binEdges.end();
-  
+
+  // this constructor generates equidistant bins
+  equidistantBins = false;
+ 
   //underflow bin
-  underflow = new BDSBin(DBL_MIN,*iter);
+  xmin = *iter;
+  underflow = new BDSBin(DBL_MIN,xmin);
   
   BDSBin* tempbin    = nullptr;
   G4double binstart  = 0;
@@ -105,8 +111,12 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
     }
   // else just underflow and overflow
   // overflow bin
-  overflow = new BDSBin(binEdges.back(),DBL_MAX);
+  xmax = binEdges.back();
+  overflow = new BDSBin(xmax,DBL_MAX);
 
+  // calculate average binwidth
+  binwidth = (xmax - xmin) / (G4double)nbins;
+  
   //initialise iterators
   first();
 }
@@ -202,24 +212,33 @@ size_t BDSHistogram1D::GetNBins() const
 G4int BDSHistogram1D::GetNEntries() const
 {return entries;}
 
-void BDSHistogram1D::Fill(G4double x)
-{
-  Fill(x,1.0); // fill with weigth = 1
-  entries++;
-}
-
 void BDSHistogram1D::Fill(G4double x, G4double weight)
 {
-  //iterate through vector and check if x in bin range
-  if (underflow->InRange(x))
-    {(*underflow)+=1; return;}
-  if (overflow->InRange(x))
-    {(*overflow)+=1; return;}
-  for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
+  if (equidistantBins)
     {
-      if ((*i)->InRange(x))
-	{ (*(*i)) += weight; break;}
+      // floor since vector position starts at 0
+      int binNr = std::floor( (x - xmin) / binwidth );
+      if (binNr < 0) (*underflow) += weight;
+      else if (binNr >= nbins) (*overflow) += weight;
+      else {
+	(*bins[binNr])+= weight;
+      }
     }
+  else
+    {
+      // TODO: binary search
+      //iterate through vector and check if x in bin range
+      if (underflow->InRange(x))
+	{(*underflow)+=1;}
+      if (overflow->InRange(x))
+	{(*overflow)+=1;}
+      for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
+	{
+	  if ((*i)->InRange(x))
+	    { (*(*i)) += weight; break;}
+	}
+    }
+
   entries++;
 }
 

@@ -16,6 +16,7 @@
 class BDSHistogram1D
 {
 public:
+  /// constructor for equidistant bins
   BDSHistogram1D(G4double xmin,
 		 G4double xmax,
 		 G4int    nbins,
@@ -23,6 +24,7 @@ public:
 		 G4String titleIn="histogram",
 		 G4String xlabelIn="",
 		 G4String ylabelIn="");
+  /// constructor for user-defined bin widths
   BDSHistogram1D(std::vector<G4double> binEdges,
 		 G4String name="histogram",
 		 G4String titleIn="histogram",
@@ -31,8 +33,10 @@ public:
   ~BDSHistogram1D();
   
   void                                        Empty();
-  void                                        Fill(G4double x);
-  void                                        Fill(G4double x, G4double weight);
+  /// Fill method single number
+  void                                        Fill(G4double x, G4double weight=1.0);
+  /// Fill over a range, weight get equally distributed over bin lengths
+  void                                        Fill(std::pair<G4double,G4double> range, G4double weight=1.0);
   std::vector<BDSBin*>                        GetBins() const;
   std::vector<G4double>                       GetBinValues() const;
   std::vector<std::pair<G4double, G4double> > GetBinXMeansAndTotals() const;
@@ -75,8 +79,17 @@ private:
   G4String title;
   G4String xlabel;
   G4String ylabel;
+  /// number of entries  
   G4int    entries;
-				  
+  /// equidistant binning
+  G4bool   equidistantBins;
+
+  /// helper variables for cpu speedup
+  G4double xmin;
+  G4double xmax;
+  G4double nbins;
+  G4double binwidth;
+  
   std::vector<BDSBin*>::const_iterator _iterBins;
 };
 
