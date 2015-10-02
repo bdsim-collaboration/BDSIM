@@ -212,33 +212,96 @@ size_t BDSHistogram1D::GetNBins() const
 G4int BDSHistogram1D::GetNEntries() const
 {return entries;}
 
-void BDSHistogram1D::Fill(G4double x, G4double weight)
+int BDSHistogram1D::GetBinNumber(G4double x) const
 {
+  // floor since vector position starts at 0
+  return std::floor( (x - xmin) / binwidth );
+}
+
+BDSBin* BDSHistogram1D::GetBin(G4int binNumber) const
+{
+  if (binNumber < 0) return underflow;
+  else if (binNumber >= nbins) return overflow;
+  return bins[binNumber];
+}
+
+BDSBin* BDSHistogram1D::GetBin(G4double x) const
+{
+  BDSBin* bin = nullptr;
   if (equidistantBins)
     {
-      // floor since vector position starts at 0
-      int binNr = std::floor( (x - xmin) / binwidth );
-      if (binNr < 0) (*underflow) += weight;
-      else if (binNr >= nbins) (*overflow) += weight;
-      else {
-	(*bins[binNr])+= weight;
-      }
+      int binNr = GetBinNumber(x);
+      bin = GetBin(binNr);
     }
   else
     {
       // TODO: binary search
       //iterate through vector and check if x in bin range
       if (underflow->InRange(x))
-	{(*underflow)+=weight;}
-      if (overflow->InRange(x))
-	{(*overflow)+=weight;}
-      for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
+	{bin = underflow;}
+      else if (overflow->InRange(x))
+	{bin = overflow;}
+      for (std::vector<BDSBin*>::const_iterator i = bins.begin(); i != bins.end(); ++i)
 	{
 	  if ((*i)->InRange(x))
-	    { (*(*i)) += weight; break;}
+	    { bin = (*i); break;}
 	}
     }
+  return bin;
+}
+  
+void BDSHistogram1D::Fill(G4double x, G4double weight)
+{
+  BDSBin* bin = GetBin(x);
+  *bin += weight;
 
+  entries++;
+}
+
+void BDSHistogram1D::Fill(std::pair<G4double,G4double> range, G4double weight)
+{
+  G4double lower = range.first;
+  G4double upper = range.second;
+
+  // swap if in reverse order
+  if (upper < lower) {
+    std::swap(lower,upper);
+  }
+
+  int binNrLower = GetBinNumber(lower);
+  BDSBin* binLower = GetBin(binNrLower);
+  // check if upper end in same bin and if so fill
+  // this is done instead of directly looking up upperbin and comparing bins
+  // since presumably faster than bin lookup so only a little wasteful if not true and faster if true
+  if (binLower->InRange(upper))
+    {
+      *binLower += weight;
+    }
+  else
+    {
+      int binNrUpper = GetBinNumber(upper);
+      BDSBin* binUpper = GetBin(binNrUpper);
+      // fill each bin with the weight of bin-distance / distance
+      G4double distance = upper - lower;
+      // fill lower and upper bin first
+      if (binNrLower < 0) {
+	G4double binLength = (binLower->GetUpperEdge() - lower);
+	*binLower += weight * binLength / distance;
+	// set to -1 for for-loop
+	binNrLower = -1;
+      }
+      if (binNrUpper >= nbins) {
+	G4double binLength = (upper - binUpper->GetLowerEdge());
+	*binUpper += weight * binLength / distance;
+	// set to nbins for for-loop
+	binNrUpper = nbins;
+      }
+      // rest of bins: always in bins vector and fill over full width
+      for (int i = binNrLower+1; i<binNrUpper-1; i++) {
+	*bins[i] += weight * bins[i]->GetLength() / distance;
+      }
+    }
+  
   entries++;
 }
 

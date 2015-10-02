@@ -68,12 +68,20 @@ public:
   
 private:
   BDSHistogram1D();
+  /// returns bin number in vector for value x
+  /// smaller than 0 means underflow, larger or equal than nbins means overflow
+  /// only accurate if equidistantBins = true, otherwise indication
+  int GetBinNumber(G4double value)const;
+  /// get Bin corresponding to value
+  BDSBin* GetBin(G4double value)const;
+  /// get Bin corresponding to binnumber
+  BDSBin* GetBin(G4int binNumber)const;
   
   /// vector of bins
-  /// 1st bin is underflow bin always
-  /// last bin is overflow bin always
   std::vector<BDSBin*> bins;
+  /// overflow bin
   BDSBin*  overflow;
+  /// underflow bin
   BDSBin*  underflow;
   G4String name;
   G4String title;
