@@ -229,9 +229,9 @@ void BDSHistogram1D::Fill(G4double x, G4double weight)
       // TODO: binary search
       //iterate through vector and check if x in bin range
       if (underflow->InRange(x))
-	{(*underflow)+=1;}
+	{(*underflow)+=weight;}
       if (overflow->InRange(x))
-	{(*overflow)+=1;}
+	{(*overflow)+=weight;}
       for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
 	{
 	  if ((*i)->InRange(x))
