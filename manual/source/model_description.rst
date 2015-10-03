@@ -1232,10 +1232,14 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositronsP                | precision production cuts for positrons               |
 +----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | standard overall production cuts for protons          |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtonsP                  | precision production cuts for protons                 |
++----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
 | defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 0.7 mm) [m]                              |
+|                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
 | gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
 |                                  | muon process                                          |
