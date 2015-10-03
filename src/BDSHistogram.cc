@@ -86,16 +86,14 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   //underflow bin
   xmin = *iter;
   underflow = new BDSBin(DBL_MIN,xmin);
-  
+
   BDSBin* tempbin    = nullptr;
-  G4double binstart  = 0;
-  G4double binfinish = 0;
   if (binEdges.size() >= 2)
     {
       for (iter = binEdges.begin(); iter != (end-1); ++iter)
 	{
-	  binstart  = *iter;
-	  binfinish = *(iter+1);
+	  G4double binstart  = *iter;
+	  G4double binfinish = *(iter+1);
 	  if ((binfinish - binstart) > 1e-6)
 	    { //only add a bin if it's a finite width
 	      tempbin = new BDSBin(*iter,*(iter+1));
@@ -114,6 +112,8 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
   xmax = binEdges.back();
   overflow = new BDSBin(xmax,DBL_MAX);
 
+  // set number of bins
+  nbins = bins.size();
   // calculate average binwidth
   binwidth = (xmax - xmin) / (G4double)nbins;
   
@@ -207,7 +207,7 @@ BDSBin* BDSHistogram1D::GetLastBin() const
 {return bins.back();}
 
 size_t BDSHistogram1D::GetNBins() const
-{return bins.size();}
+{return nbins;}
 
 G4int BDSHistogram1D::GetNEntries() const
 {return entries;}
