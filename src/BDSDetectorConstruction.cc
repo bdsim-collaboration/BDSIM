@@ -147,7 +147,7 @@ void BDSDetectorConstruction::InitialiseRegions()
   precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
   precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
   precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutHadronsP(),  "proton");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutProtonsP(),  "proton");
   precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 

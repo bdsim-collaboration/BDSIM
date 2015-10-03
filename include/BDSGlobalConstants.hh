@@ -147,17 +147,17 @@ public:
   G4double GetProdCutPhotons()   const;
   G4double GetProdCutElectrons() const;
   G4double GetProdCutPositrons() const;
-  G4double GetProdCutHadrons()   const;
+  G4double GetProdCutProtons()   const;
   
   G4double GetProdCutPhotonsP()   const;
   G4double GetProdCutElectronsP() const; 
   G4double GetProdCutPositronsP() const;
-  G4double GetProdCutHadronsP()   const;
+  G4double GetProdCutProtonsP()   const;
 
   G4double GetProdCutPhotonsA()   const;
   G4double GetProdCutElectronsA() const; 
   G4double GetProdCutPositronsA() const;
-  G4double GetProdCutHadronsA()   const;
+  G4double GetProdCutProtonsA()   const;
   ///@}
   
   ///@{ Physical processes etc.
@@ -309,8 +309,9 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4double itsProdCutHadrons;
-  G4double itsProdCutHadronsP;
+  G4double itsProdCutProtons;
+  G4double itsProdCutProtonsP;
+  G4double itsProdCutProtonsA;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -624,11 +625,14 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsP() const
 inline G4double BDSGlobalConstants::GetProdCutPositronsA() const 
 {return itsProdCutPositronsA;}
 
-inline G4double BDSGlobalConstants::GetProdCutHadrons() const 
-{return itsProdCutHadrons;}
+inline G4double BDSGlobalConstants::GetProdCutProtons() const 
+{return itsProdCutProtons;}
 
-inline G4double BDSGlobalConstants::GetProdCutHadronsP() const 
-{return itsProdCutHadronsP;}
+inline G4double BDSGlobalConstants::GetProdCutProtonsP() const 
+{return itsProdCutProtonsP;}
+
+inline G4double BDSGlobalConstants::GetProdCutProtonsA() const 
+{return itsProdCutProtonsA;}
 
 inline G4String BDSGlobalConstants::GetPhysListName() const
 {return itsPhysListName;}

@@ -132,8 +132,10 @@ Options::Options()
   prodCutPositrons         = 1e-3;
   prodCutPositronsP        = 1e-3;
   prodCutPositronsA        = 1e-3;
-  prodCutHadrons           = 1e-3;
-  prodCutHadronsP          = 1e-3;
+  prodCutProtons           = 1e-3;
+  prodCutProtonsP          = 1e-3;
+  prodCutProtonsA          = 1e-3;
+  prodCutHadrons           = prodCutProtons;
 
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
@@ -361,8 +363,14 @@ void Options::set_value(std::string name, double value )
   if(name == "prodCutPositrons" )        {prodCutPositrons = value; return; }
   if(name == "prodCutPositronsP" )       {prodCutPositronsP = value; return; }
   if(name == "prodCutPositronsA" )       {prodCutPositronsA = value; return; }
-  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; }
-  if(name == "prodCutHadronsP" )         {prodCutHadronsP = value; return; } 
+  if(name == "prodCutProtons" )          {prodCutProtons  = value; return; }
+  if(name == "prodCutProtonsP" )         {prodCutProtonsP = value; return; }
+  if(name == "prodCutProtonsA" )         {prodCutProtonsA = value; return; }
+  if(name == "prodCutHadrons" )
+    {
+      std::cout << "Warning: \"prodCutHadrons\" is deprecated in favour of \"prodCutProtons\"" << std::endl;
+      prodCutProtons = value; return;
+    }
   
   // twiss parameters
   if(name == "betx" ) { betx = value; return; }
