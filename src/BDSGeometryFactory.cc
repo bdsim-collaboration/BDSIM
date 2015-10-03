@@ -1,7 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGeometryFactory.hh"
-#include "BDSGeometryGMad.hh"
+#include "BDSGeometryGMAD.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
 
