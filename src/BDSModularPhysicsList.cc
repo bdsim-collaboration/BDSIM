@@ -197,9 +197,12 @@ void BDSModularPhysicsList::SetCuts()
   SetCutValue(prodCutPositrons,"e+");
   SetCutValue(prodCutProtons,  "proton");
 
-  // Looping over specific particles?
-  //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  //G4ParticleTable::G4PTblDicIterator* particleIterator = particleTable->GetIterator();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "list of all constructed particles by physics lists" << G4endl;
+  for (auto particle : *G4ParticleTable::fDictionary)
+    {G4cout << particle.second->GetParticleName() << " ";}
+  G4cout << G4endl;
+#endif
   
   DumpCutValuesTable(); 
 }  
