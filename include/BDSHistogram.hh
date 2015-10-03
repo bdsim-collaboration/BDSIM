@@ -71,7 +71,7 @@ private:
   /// returns bin number in vector for value x
   /// smaller than 0 means underflow, larger or equal than nbins means overflow
   /// only accurate if equidistantBins = true, otherwise indication
-  int GetBinNumber(G4double value)const;
+  G4int GetBinNumber(G4double value)const;
   /// get Bin corresponding to value
   BDSBin* GetBin(G4double value)const;
   /// get Bin corresponding to binnumber
