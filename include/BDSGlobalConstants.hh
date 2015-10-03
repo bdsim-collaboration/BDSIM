@@ -1,16 +1,17 @@
-#ifndef BDSGlobalConstants_h
-#define BDSGlobalConstants_h 
+#ifndef BDSGLOBALCONSTANTS_H
+#define BDSGLOBALCONSTANTS_H 
 
-#include <map>
-
-#include "G4ThreeVector.hh"
-#include "G4String.hh"
-#include "G4AffineTransform.hh"
 
 #include "BDSBeamPipeType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
+
+#include "G4ThreeVector.hh"
+#include "G4String.hh"
+#include "G4AffineTransform.hh"
+
+#include <map>
 
 class G4FieldManager;
 class G4LogicalVolume;
@@ -140,22 +141,24 @@ public:
   G4double GetChordStepMinimum() const;
   ///@}
   
-  ///@{ Threshold and Production cuts
+  ///@{ Threshold and Production cuts accessor
   G4double GetThresholdCutCharged() const;
   G4double GetThresholdCutPhotons() const;
   
-  G4double GetProdCutPhotons() const;
+  G4double GetProdCutPhotons()   const;
   G4double GetProdCutElectrons() const;
   G4double GetProdCutPositrons() const;
-
-  G4double GetProdCutPhotonsP() const;
-  G4double GetProdCutPhotonsA() const;
-  G4double GetProdCutElectronsP() const;
-  G4double GetProdCutElectronsA() const;
+  G4double GetProdCutProtons()   const;
+  
+  G4double GetProdCutPhotonsP()   const;
+  G4double GetProdCutElectronsP() const; 
   G4double GetProdCutPositronsP() const;
-  G4double GetProdCutPositronsA() const;
+  G4double GetProdCutProtonsP()   const;
 
-  G4double GetProdCutHadrons() const;
+  G4double GetProdCutPhotonsA()   const;
+  G4double GetProdCutElectronsA() const; 
+  G4double GetProdCutPositronsA() const;
+  G4double GetProdCutProtonsA()   const;
   ///@}
   
   ///@{ Physical processes etc.
@@ -307,7 +310,9 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4double itsProdCutHadrons;
+  G4double itsProdCutProtons;
+  G4double itsProdCutProtonsP;
+  G4double itsProdCutProtonsA;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -621,8 +626,14 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsP() const
 inline G4double BDSGlobalConstants::GetProdCutPositronsA() const 
 {return itsProdCutPositronsA;}
 
-inline G4double BDSGlobalConstants::GetProdCutHadrons() const 
-{return itsProdCutHadrons;}
+inline G4double BDSGlobalConstants::GetProdCutProtons() const 
+{return itsProdCutProtons;}
+
+inline G4double BDSGlobalConstants::GetProdCutProtonsP() const 
+{return itsProdCutProtonsP;}
+
+inline G4double BDSGlobalConstants::GetProdCutProtonsA() const 
+{return itsProdCutProtonsA;}
 
 inline G4String BDSGlobalConstants::GetPhysListName() const
 {return itsPhysListName;}

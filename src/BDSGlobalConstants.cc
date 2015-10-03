@@ -54,7 +54,7 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
-  itsParticleName=G4String(opt.particleName);
+  itsParticleName = G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
   if (itsBeamTotalEnergy == 0)
     {
@@ -125,7 +125,9 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
   itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
   itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
-  itsProdCutHadrons      = opt.prodCutHadrons      * CLHEP::m;
+  itsProdCutProtons      = opt.prodCutProtons      * CLHEP::m;
+  itsProdCutProtonsP     = opt.prodCutProtonsP     * CLHEP::m;
+  itsProdCutProtonsA     = opt.prodCutProtonsA     * CLHEP::m;
   
   // tracking accuracy
   itsDeltaChord          = opt.deltaChord          * CLHEP::m;

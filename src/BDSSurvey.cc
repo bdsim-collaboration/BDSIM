@@ -64,9 +64,8 @@ void BDSSurvey::WriteHeader()
 
 void BDSSurvey::Write(std::vector<BDSBeamlineElement*> components, GMAD::Element& element)
 {
-  for (auto beamlineElement : components) {
-    Write(beamlineElement, element);
-  }
+  for (auto beamlineElement : components)
+    {Write(beamlineElement, element);}
 }
 
 void BDSSurvey::Write(BDSBeamlineElement* beamlineElement, GMAD::Element& element)
@@ -74,14 +73,14 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement, GMAD::Element& elemen
   BDSAcceleratorComponent* acceleratorComponent = beamlineElement->GetAcceleratorComponent();
 
   G4RotationMatrix* rm = beamlineElement->GetRotationMiddle();
-  G4double phi   = rm->getPhi();
-  G4double theta = rm->getTheta();
-  G4double psi   = rm->getPsi();
+  G4double phi         = rm->getPhi();
+  G4double theta       = rm->getTheta();
+  G4double psi         = rm->getPsi();
       
-  G4double sStart    = beamlineElement->GetSPositionStart() /CLHEP::m;
-  G4double sMiddle   = beamlineElement->GetSPositionMiddle()/CLHEP::m;
-  G4double sEnd      = beamlineElement->GetSPositionEnd()   /CLHEP::m;
-  G4ThreeVector pos  = beamlineElement->GetPositionMiddle();
+  G4double sStart      = beamlineElement->GetSPositionStart() /CLHEP::m;
+  G4double sMiddle     = beamlineElement->GetSPositionMiddle()/CLHEP::m;
+  G4double sEnd        = beamlineElement->GetSPositionEnd()   /CLHEP::m;
+  G4ThreeVector pos    = beamlineElement->GetPositionMiddle();
 
   BDSBeamPipeInfo* beamPipeInfo = acceleratorComponent->GetBeamPipeInfo();
   

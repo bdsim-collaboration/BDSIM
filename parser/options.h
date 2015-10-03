@@ -164,8 +164,10 @@ struct Options
   double   prodCutPositrons;
   double   prodCutPositronsP;
   double   prodCutPositronsA;
-
-  double   prodCutHadrons;  
+  double   prodCutProtons;
+  double   prodCutProtonsP;
+  double   prodCutProtonsA;
+  double   prodCutHadrons; // for backwards compatability
 
   /// Tracking related parameters 
   double   maximumTrackingTime; ///< maximum tracking time per volume [s]

@@ -265,9 +265,7 @@ int main(int argc,char** argv)
       visManager.StartSession(argc,argv);
     }
   else           // Batch mode
-    { 
-      runManager->BeamOn(globalConstants->GetNumberToGenerate());
-    }
+    {runManager->BeamOn(globalConstants->GetNumberToGenerate());}
 
   //
   // job termination

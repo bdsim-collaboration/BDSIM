@@ -136,18 +136,19 @@ void BDSDetectorConstruction::InitialiseRegions()
   // gas region
   gasRegion   = new G4Region("gasRegion");
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"gamma");
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"e-");
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"e+");
   gasRegion->SetProductionCuts(theGasProductionCuts);
 
   // precision region
   precisionRegion = new G4Region("precisionRegion");
-  G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),"gamma");
-  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
-  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
-  precisionRegion->SetProductionCuts(theProductionCuts);
+  G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutProtonsP(),  "proton");
+  precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 
 void BDSDetectorConstruction::BuildBeamline()
@@ -158,10 +159,11 @@ void BDSDetectorConstruction::BuildBeamline()
   const BDSExecOptions* execOptions = BDSExecOptions::Instance();
   // Write survey file here since has access to both element and beamline
   BDSSurvey* survey = nullptr;
-  if(execOptions->GetSurvey()) {
-    survey = new BDSSurvey(execOptions->GetSurveyFilename());
-    survey->WriteHeader();
-  }
+  if(execOptions->GetSurvey())
+    {
+      survey = new BDSSurvey(execOptions->GetSurveyFilename());
+      survey->WriteHeader();
+    }
   
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(auto element : GMAD::beamline_list)
@@ -193,20 +195,22 @@ void BDSDetectorConstruction::BuildBeamline()
         {
 	  terminator->Initialise();
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(terminator);
-	  if (survey) {
-	    GMAD::Element element = GMAD::Element(); // dummy element
-	    survey->Write(addedComponents, element);
-	  }
+	  if (survey)
+	    {
+	      GMAD::Element element = GMAD::Element(); // dummy element
+	      survey->Write(addedComponents, element);
+	    }
 	}
       BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter();
       if (teleporter)
 	{
 	  teleporter->Initialise();
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(teleporter);
-	  if (survey) {
-	    GMAD::Element element = GMAD::Element(); // dummy element
-	    survey->Write(addedComponents, element);
-	  }
+	  if (survey)
+	    {
+	      GMAD::Element element = GMAD::Element(); // dummy element
+	      survey->Write(addedComponents, element);
+	    }
 	}
     }
 
