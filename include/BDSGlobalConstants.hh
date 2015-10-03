@@ -1,16 +1,17 @@
-#ifndef BDSGlobalConstants_h
-#define BDSGlobalConstants_h 
+#ifndef BDSGLOBALCONSTANTS_H
+#define BDSGLOBALCONSTANTS_H 
 
-#include <map>
-
-#include "G4ThreeVector.hh"
-#include "G4String.hh"
-#include "G4AffineTransform.hh"
 
 #include "BDSBeamPipeType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
+
+#include "G4ThreeVector.hh"
+#include "G4String.hh"
+#include "G4AffineTransform.hh"
+
+#include <map>
 
 class G4FieldManager;
 class G4LogicalVolume;
