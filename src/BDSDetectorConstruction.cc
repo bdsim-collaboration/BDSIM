@@ -144,9 +144,10 @@ void BDSDetectorConstruction::InitialiseRegions()
   // precision region
   precisionRegion = new G4Region("precisionRegion");
   G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),"gamma");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
   precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
   precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutHadronsP(),  "proton");
   precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 
