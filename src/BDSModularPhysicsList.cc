@@ -26,7 +26,7 @@
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #endif
 
-//Note: transportation process is constructed by default with classes derive from G4VModularPhysicsList
+//Note: transportation process is constructed by default with classes that derive from G4VModularPhysicsList
 
 BDSModularPhysicsList::BDSModularPhysicsList():
   G4VModularPhysicsList(),

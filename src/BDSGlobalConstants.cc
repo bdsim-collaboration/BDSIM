@@ -54,7 +54,7 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
-  itsParticleName=G4String(opt.particleName);
+  itsParticleName = G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
   if (itsBeamTotalEnergy == 0)
     {
