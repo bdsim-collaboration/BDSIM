@@ -140,22 +140,24 @@ public:
   G4double GetChordStepMinimum() const;
   ///@}
   
-  ///@{ Threshold and Production cuts
+  ///@{ Threshold and Production cuts accessor
   G4double GetThresholdCutCharged() const;
   G4double GetThresholdCutPhotons() const;
   
-  G4double GetProdCutPhotons() const;
+  G4double GetProdCutPhotons()   const;
   G4double GetProdCutElectrons() const;
   G4double GetProdCutPositrons() const;
-
-  G4double GetProdCutPhotonsP() const;
-  G4double GetProdCutPhotonsA() const;
-  G4double GetProdCutElectronsP() const;
-  G4double GetProdCutElectronsA() const;
+  G4double GetProdCutHadrons()   const;
+  
+  G4double GetProdCutPhotonsP()   const;
+  G4double GetProdCutElectronsP() const; 
   G4double GetProdCutPositronsP() const;
-  G4double GetProdCutPositronsA() const;
+  G4double GetProdCutHadronsP()   const;
 
-  G4double GetProdCutHadrons() const;
+  G4double GetProdCutPhotonsA()   const;
+  G4double GetProdCutElectronsA() const; 
+  G4double GetProdCutPositronsA() const;
+  G4double GetProdCutHadronsA()   const;
   ///@}
   
   ///@{ Physical processes etc.
@@ -308,6 +310,7 @@ private:
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
   G4double itsProdCutHadrons;
+  G4double itsProdCutHadronsP;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -623,6 +626,9 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsA() const
 
 inline G4double BDSGlobalConstants::GetProdCutHadrons() const 
 {return itsProdCutHadrons;}
+
+inline G4double BDSGlobalConstants::GetProdCutHadronsP() const 
+{return itsProdCutHadronsP;}
 
 inline G4String BDSGlobalConstants::GetPhysListName() const
 {return itsPhysListName;}

@@ -99,9 +99,9 @@ Options::Options()
   samplerDiameter     = 5; // m
 
   // beam loss monitors geometry
-  blmRad              = 0.05;
-  blmLength           = 0.18;
-  sensitiveBLMs               = 1;
+  blmRad                   = 0.05;
+  blmLength                = 0.18;
+  sensitiveBLMs            = 1;
 
   // physics processes
   gammaToMuFe              = 1;
@@ -122,17 +122,18 @@ Options::Options()
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
-  defaultRangeCut          = 7e-4;
-  prodCutPhotons           = 7e-4;
-  prodCutPhotonsP          = 7e-4;
-  prodCutPhotonsA          = 1;
-  prodCutElectrons         = 7e-4;
-  prodCutElectronsP        = 7e-4;
-  prodCutElectronsA        = 1;
-  prodCutPositrons         = 7e-4;
-  prodCutPositronsP        = 7e-4;
-  prodCutPositronsA        = 1;
+  defaultRangeCut          = 1e-3;
+  prodCutPhotons           = 1e-3;
+  prodCutPhotonsP          = 1e-3;
+  prodCutPhotonsA          = 1e-3;
+  prodCutElectrons         = 1e-3;
+  prodCutElectronsP        = 1e-3;
+  prodCutElectronsA        = 1e-3;
+  prodCutPositrons         = 1e-3;
+  prodCutPositronsP        = 1e-3;
+  prodCutPositronsA        = 1e-3;
   prodCutHadrons           = 1e-3;
+  prodCutHadronsP          = 1e-3;
 
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
@@ -360,7 +361,8 @@ void Options::set_value(std::string name, double value )
   if(name == "prodCutPositrons" )        {prodCutPositrons = value; return; }
   if(name == "prodCutPositronsP" )       {prodCutPositronsP = value; return; }
   if(name == "prodCutPositronsA" )       {prodCutPositronsA = value; return; }
-  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; } 
+  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; }
+  if(name == "prodCutHadronsP" )         {prodCutHadronsP = value; return; } 
   
   // twiss parameters
   if(name == "betx" ) { betx = value; return; }

@@ -31,7 +31,7 @@
 #include <cstring>
 
 BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength, G4LogicalVolume *marker):
-  rotateComponent(nullptr),itsMarkerLength(markerlength),itsMarkerVol(marker)
+  rotateComponent(nullptr), itsMarkerLength(markerlength), itsMarkerVol(marker)
 {
   VOL_LIST.push_back(itsMarkerVol);
 #ifdef BDSDEBUG
