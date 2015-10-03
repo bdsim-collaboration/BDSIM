@@ -5,8 +5,10 @@
 #include "G4OpticalPhysics.hh"
 #include "G4VPhysicsConstructor.hh"
 #include "BDSCutsAndLimits.hh"
+#include "BDSGlobalConstants.hh"
 
 #include <vector>
+
 
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
@@ -41,6 +43,8 @@ private:
   void Register();
   G4String physListName;
 
+  /// Keep a local reference to global constants to avoid getting it all the time
+  BDSGlobalConstants* globals;
 
   //Physics constructor loaders.
   void LoadEm();			  

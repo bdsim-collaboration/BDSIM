@@ -55,6 +55,8 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   DumpCutValuesTable(100);
 
   verbose = BDSExecOptions::Instance()->GetVerbose();
+
+  globals = BDSGlobalConstants::Instance();
 }
 
 
@@ -170,7 +172,7 @@ void BDSModularPhysicsList::SetCuts()
     G4cout << __METHOD_NAME__ << G4endl;
 
   G4VUserPhysicsList::SetCuts();  
-  G4double defaultRangeCut  = BDSGlobalConstants::Instance()->GetDefaultRangeCut(); 
+  G4double defaultRangeCut  = globals->GetDefaultRangeCut(); 
   SetDefaultCutValue(defaultRangeCut);
   SetCutsWithDefault();   
 
@@ -178,10 +180,10 @@ void BDSModularPhysicsList::SetCuts()
   G4cout << __METHOD_NAME__ << "Default production range cut (mm)   " << defaultRangeCut   << G4endl;
 #endif
 
-  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
-  G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
-  G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  G4double prodCutHadrons   = BDSGlobalConstants::Instance()->GetProdCutHadrons();  
+  G4double prodCutPhotons   = globals->GetProdCutPhotons();
+  G4double prodCutElectrons = globals->GetProdCutElectrons();
+  G4double prodCutPositrons = globals->GetProdCutPositrons();
+  G4double prodCutHadrons   = globals->GetProdCutHadrons();  
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
@@ -189,12 +191,11 @@ void BDSModularPhysicsList::SetCuts()
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
   G4cout << __METHOD_NAME__ << "Hadron production range cut (mm)   " << prodCutHadrons<< G4endl;
 #endif
-
-  // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
-  SetCutValue(prodCutPhotons,"gamma");
+  
+  SetCutValue(prodCutPhotons,  "gamma");
   SetCutValue(prodCutElectrons,"e-");
   SetCutValue(prodCutPositrons,"e+");
-  SetCutValue(prodCutHadrons,"proton");
+  SetCutValue(prodCutHadrons,  "proton");
 
   // Looping over specific particles?
   //G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -208,43 +209,36 @@ void BDSModularPhysicsList::SetParticleDefinition()
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
 
+  // apparently this pointer needs to be updated here otherwise BDSGlobalCosntants gets
+  // a bad access abort on member variables
+  globals = BDSGlobalConstants::Instance();
+  
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->
-							FindParticle(BDSGlobalConstants::Instance()->GetParticleName()) );  
+  globals->SetParticleDefinition(particleTable->FindParticle(globals->GetParticleName()));  
   
-  if(!BDSGlobalConstants::Instance()->GetParticleDefinition()) 
-    {
-      G4Exception("Particle not found, quitting!", "-1", FatalException, "");
-      exit(1);
-    }
+  if(!globals->GetParticleDefinition()) 
+    {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
   
   // set kinetic beam parameters other than total energy
-  BDSGlobalConstants::Instance()->SetBeamMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-
-						       pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
-  
-  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
-						       BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
-  
-  BDSGlobalConstants::Instance()->SetParticleMomentum(sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
-							   pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
-  
-  BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->GetParticleTotalEnergy() - 
-							   BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
+  globals->SetBeamMomentum(sqrt(pow(globals->GetBeamTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetBeamKineticEnergy(globals->GetBeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+  globals->SetParticleMomentum(sqrt(pow(globals->GetParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetParticleKineticEnergy(globals->GetParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 
-	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName()<<G4endl;
+	 << globals->GetParticleDefinition()->GetParticleName()<<G4endl;
   G4cout << __METHOD_NAME__ << "Mass : " 
-	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
+	 << globals->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Charge : " 
-	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
+	 << globals->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
-	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
 void BDSModularPhysicsList::LoadEm()
@@ -322,7 +316,7 @@ void BDSModularPhysicsList::LoadSynchRad()
       constructors.push_back(synchRadPhysics);		  
     }
   // Switch on BDSGlobalConstants::SetSynchRadOn() to keep BDSPhysicsListCompatibility
-  BDSGlobalConstants::Instance()->SetSynchRadOn(true);
+  globals->SetSynchRadOn(true);
 }							  
 							  
 void BDSModularPhysicsList::LoadMuon()
