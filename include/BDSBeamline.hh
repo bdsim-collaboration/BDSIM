@@ -20,9 +20,9 @@ class BDSTiltOffset;
  * rotations with respect to the start of the beamline as well as their s
  * position in curvilinear coordinates.
  * 
- * Note, this is note a singleton as geometry hierarchy can be introduced
+ * Note, this is not a singleton as geometry hierarchy can be introduced
  * by placing beamline components inside parent volumes and therefore creating
- * a new beamline of parents.
+ * a new beamline of parents. It can also be used to create multiple beam lines.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
