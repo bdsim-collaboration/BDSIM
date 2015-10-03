@@ -25,7 +25,8 @@ public:
 		      G4double XIn               = 0,    // global x
 		      G4double YIn               = 0,    // global y
 		      G4double ZIn               = 0,    // global x
-		      G4double SIn               = 0,    // s coordinate
+		      G4double SBeforeIn         = 0,    // s of pre step coordinate
+		      G4double SAfterIn          = 0,    // s of post step coordinate
 		      G4double xIn               = 0,    // local x
 		      G4double yIn               = 0,    // local y
 		      G4double zIn               = 0,    // local z
@@ -48,7 +49,9 @@ public:
   inline G4double GetX()               const; 
   inline G4double GetY()               const;
   inline G4double GetZ()               const;
-  inline G4double GetS()               const;
+  inline G4double GetS()               const; ///< returns average s position
+  inline G4double GetSBefore()         const;
+  inline G4double GetSAfter()          const;
   inline G4double Getx()               const; 
   inline G4double Gety()               const;
   inline G4double Getz()               const; 
@@ -68,19 +71,21 @@ private:
 
   G4int    copyNumber;
   G4double energy;
-  // global coordinates
+  /// global coordinates
   G4double X;
   G4double Y;
   G4double Z;
-  G4double S;
-  // local coordinates
+  /// s coordinate of pre step and post step point
+  G4double SBefore;
+  G4double SAfter;
+  /// local coordinates
   G4double x;
   G4double y;
   G4double z;
   G4String name;
   G4int    partID;
   G4double weight;
-  G4bool   precisionRegion; //Whether or not the hit is in the precision region
+  G4bool   precisionRegion; ///< Whether or not the hit is in the precision region
   G4int    turnsTaken;
   G4int    eventNo;
   G4double stepLength;
@@ -105,7 +110,13 @@ inline G4double BDSEnergyCounterHit::GetZ() const
 {return Z;}
 
 inline G4double BDSEnergyCounterHit::GetS() const
-{return S;}
+{return (SAfter + SBefore)/2.;}
+
+inline G4double BDSEnergyCounterHit::GetSAfter() const
+{return SAfter;}
+
+inline G4double BDSEnergyCounterHit::GetSBefore() const
+{return SBefore;}
 
 inline G4double BDSEnergyCounterHit::Getx() const
 {return x;}
