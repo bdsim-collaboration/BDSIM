@@ -118,15 +118,15 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
   itsProdCutPhotons      = opt.prodCutPhotons      * CLHEP::m;
   itsProdCutPhotonsP     = opt.prodCutPhotonsP     * CLHEP::m;
-  itsProdCutPhotonsP     = opt.prodCutPhotonsA     * CLHEP::m;
+  itsProdCutPhotonsA     = opt.prodCutPhotonsA     * CLHEP::m;
   itsProdCutElectrons    = opt.prodCutElectrons    * CLHEP::m;
   itsProdCutElectronsP   = opt.prodCutElectronsP   * CLHEP::m;
-  itsProdCutElectronsP   = opt.prodCutElectronsA   * CLHEP::m;
+  itsProdCutElectronsA   = opt.prodCutElectronsA   * CLHEP::m;
   itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
   itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
-  itsProdCutPositronsP   = opt.prodCutPositronsA   * CLHEP::m;
+  itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
   itsProdCutHadrons      = opt.prodCutHadrons      * CLHEP::m;
-  itsProdCutHadrons      = opt.prodCutHadronsP     * CLHEP::m;
+  itsProdCutHadronsP     = opt.prodCutHadronsP     * CLHEP::m;
   
   // tracking accuracy
   itsDeltaChord          = opt.deltaChord          * CLHEP::m;
