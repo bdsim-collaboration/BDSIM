@@ -30,17 +30,21 @@
 
 BDSModularPhysicsList::BDSModularPhysicsList():
   G4VModularPhysicsList(),
-  _physListName(BDSGlobalConstants::Instance()->GetPhysListName())
+  physListName(BDSGlobalConstants::Instance()->GetPhysListName())
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  
   SetVerboseLevel(1);
-  _emPhysics=nullptr;
-  _hadronicPhysics=nullptr;
-  _muonPhysics=nullptr;
-  _opticalPhysics=nullptr;
-  _decayPhysics=nullptr;
-  _paramPhysics=nullptr;
-  _synchRadPhysics=nullptr;
-  _cutsAndLimits=nullptr;
+  emPhysics       = nullptr;
+  hadronicPhysics = nullptr;
+  muonPhysics     = nullptr;
+  opticalPhysics  = nullptr;
+  decayPhysics    = nullptr;
+  paramPhysics    = nullptr;
+  synchRadPhysics = nullptr;
+  cutsAndLimits   = nullptr;
   
   ParsePhysicsList();
   ConfigurePhysics();
@@ -63,56 +67,55 @@ void BDSModularPhysicsList::Print()
 //Parse the physicsList option
 void BDSModularPhysicsList::ParsePhysicsList()
 {
-  if(_physListName.contains((G4String)"em")){
-    if(_physListName.contains((G4String)"emlow")){
-      LoadEmLow();
-    } else       
-      LoadEm();
-  }
+  if(physListName.contains((G4String)"em"))
+    {
+      if(physListName.contains((G4String)"emlow"))
+	{LoadEmLow();}
+      else       
+	{LoadEm();}
+    }
   
   //Hadronic
-  if(_physListName.contains((G4String)"hadronic")){
-    if(!_emPhysics){
-      LoadEm();
+  if(physListName.contains((G4String)"hadronic"))
+    {
+      if(!emPhysics)
+	{LoadEm();}
+      if(physListName.contains((G4String)"hadronichp"))
+	{LoadHadronicHP();}
+      else
+	{LoadHadronic();}
     }
-    if(_physListName.contains((G4String)"hadronichp")){
-      LoadHadronicHP();
-    }else{
-      LoadHadronic();
-    }
-  }
   
   //Synchrotron radiation
-  if(_physListName.contains((G4String)"synchrad")){
-    if(!_emPhysics){
-      LoadEm();
-    }
+  if(physListName.contains((G4String)"synchrad"))
+    {
+    if(!emPhysics)
+      {LoadEm();}
     LoadSynchRad();
-  }
+    }
 
   //Cross section biased muon production
-  if(_physListName.contains((G4String)"muon")){
-    //Must construct em physics first
-    if(!_emPhysics){
-      LoadEm();
+  if(physListName.contains((G4String)"muon"))
+    {
+      //Must construct em physics first
+      if(!emPhysics)
+	{LoadEm();}
+      if(!hadronicPhysics)
+	{LoadHadronic();}
+      LoadMuon();
     }
-    if(!_hadronicPhysics){
-      LoadHadronic();
-    }
-    LoadMuon();
-  }
 
-  if(_physListName.contains((G4String)"optical")){
-    //Optical
-    LoadOptical();
-  }
+  if(physListName.contains((G4String)"optical"))
+    {LoadOptical();} //Optical
+  
   //Decay - constructed by default if hadronic or em are constructed, 
   //unless "nodecay"
-  if(_hadronicPhysics || _emPhysics){
-    if(!_physListName.contains((G4String)"nodecay")){
-      LoadDecay();
-    }
+  if(hadronicPhysics || emPhysics)
+    {
+      if(!physListName.contains((G4String)"nodecay"))
+	{LoadDecay();}
   }
+  
   //Always load cuts and limits.
   LoadCutsAndLimits();
 }
@@ -133,34 +136,32 @@ void BDSModularPhysicsList::ConfigurePhysics()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(_opticalPhysics){ ConfigureOptical();}
+  if(opticalPhysics)
+    {ConfigureOptical();}
 }
 
 void BDSModularPhysicsList::ConfigureOptical()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if (!_opticalPhysics) return;
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  _opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
-  _opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
-  _opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
-  _opticalPhysics->Configure(kRayleigh,      globals->GetTurnOnRayleighScattering()); ///< Rayleigh scattering process index                        
-  _opticalPhysics->Configure(kMieHG,         globals->GetTurnOnMieScattering());      ///< Mie scattering process index                             
-  _opticalPhysics->Configure(kBoundary,      globals->GetTurnOnOpticalSurface());     ///< Boundary process index                                   
-  _opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
-// _opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
-  _opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
+  if (!opticalPhysics) return;
+  opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
+  opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
+  opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
+  opticalPhysics->Configure(kRayleigh,      globals->GetTurnOnRayleighScattering()); ///< Rayleigh scattering process index                        
+  opticalPhysics->Configure(kMieHG,         globals->GetTurnOnMieScattering());      ///< Mie scattering process index                             
+  opticalPhysics->Configure(kBoundary,      globals->GetTurnOnOpticalSurface());     ///< Boundary process index                                   
+  opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
+// opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
+  opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
 }
 
 void BDSModularPhysicsList::Register()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  std::vector<G4VPhysicsConstructor*>::iterator it;
-  for(it = _constructors.begin(); it != _constructors.end(); it++){
-    RegisterPhysics(*it);
-  }
+  for(auto physics : constructors)
+    {RegisterPhysics(physics);}
 }
 
 void BDSModularPhysicsList::SetCuts()
@@ -250,70 +251,76 @@ void BDSModularPhysicsList::LoadEm()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_emPhysics){
-    _emPhysics = new G4EmStandardPhysics();		  
-    _constructors.push_back(_emPhysics);			  
-    LoadParameterisationPhysics();	
-  }		  
+  if(!emPhysics)
+    {
+      emPhysics = new G4EmStandardPhysics();		  
+      constructors.push_back(emPhysics);			  
+      LoadParameterisationPhysics();	
+    }	  
 }							  
 							  
 void BDSModularPhysicsList::LoadEmLow()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;			  
-  if(!_emPhysics){
-    _emPhysics = new G4EmPenelopePhysics();		  
-    _constructors.push_back(_emPhysics);			  
-    LoadParameterisationPhysics();			  
-  }
+  if(!emPhysics)
+    {
+      emPhysics = new G4EmPenelopePhysics();		  
+      constructors.push_back(emPhysics);			  
+      LoadParameterisationPhysics();			  
+    }
 }							  
 							  
 void BDSModularPhysicsList::LoadParameterisationPhysics()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_paramPhysics){
-    _paramPhysics = new BDSParameterisationPhysics();	  
-    _constructors.push_back(_paramPhysics);		  
-  }
+  if(!paramPhysics)
+    {
+      paramPhysics = new BDSParameterisationPhysics();	  
+      constructors.push_back(paramPhysics);		  
+    }
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronic()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_hadronicPhysics){
+  if(!hadronicPhysics)
+    {
 #if G4VERSION_NUMBER < 1000
-    _hadronicPhysics = new HadronPhysicsQGSP_BERT();
+      hadronicPhysics = new HadronPhysicsQGSP_BERT();
 #else
-    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT();
+      hadronicPhysics = new G4HadronPhysicsQGSP_BERT();
 #endif
-    _constructors.push_back(_hadronicPhysics);		  
-  }
+      constructors.push_back(hadronicPhysics);		  
+    }
 }							  
 							  
 void BDSModularPhysicsList::LoadHadronicHP()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_hadronicPhysics){
+  if(!hadronicPhysics)
+    {
 #if G4VERSION_NUMBER < 1000
-    _hadronicPhysics = new HadronPhysicsQGSP_BERT_HP();
+      hadronicPhysics = new HadronPhysicsQGSP_BERT_HP();
 #else
-    _hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();
+      hadronicPhysics = new G4HadronPhysicsQGSP_BERT_HP();
 #endif
-    _constructors.push_back(_hadronicPhysics);		  
-  }
+      constructors.push_back(hadronicPhysics);		  
+    }
 }							  
 							  
 void BDSModularPhysicsList::LoadSynchRad()
 {		    
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_synchRadPhysics){
-    _synchRadPhysics = new BDSSynchRadPhysics();		  
-    _constructors.push_back(_synchRadPhysics);		  
-  }
+  if(!synchRadPhysics)
+    {
+      synchRadPhysics = new BDSSynchRadPhysics();		  
+      constructors.push_back(synchRadPhysics);		  
+    }
   // Switch on BDSGlobalConstants::SetSynchRadOn() to keep BDSPhysicsListCompatibility
   BDSGlobalConstants::Instance()->SetSynchRadOn(true);
 }							  
@@ -322,30 +329,33 @@ void BDSModularPhysicsList::LoadMuon()
 {			  
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_muonPhysics){
-    _muonPhysics = new BDSMuonPhysics();			  
-    _constructors.push_back(_muonPhysics);		  
-  }
+  if(!muonPhysics)
+    {
+      muonPhysics = new BDSMuonPhysics();			  
+      constructors.push_back(muonPhysics);		  
+    }
 }							  
 							  
 void BDSModularPhysicsList::LoadOptical()
 {
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_opticalPhysics){
-    _opticalPhysics = new G4OpticalPhysics();		  
-    _constructors.push_back(_opticalPhysics);		  
-  }
+  if(!opticalPhysics)
+    {
+      opticalPhysics = new G4OpticalPhysics();		  
+      constructors.push_back(opticalPhysics);		  
+    }
 }							  
 							  
 void BDSModularPhysicsList::LoadDecay()
 {			  
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_decayPhysics){
-    _decayPhysics = new G4DecayPhysics();			  
-    _constructors.push_back(_decayPhysics);		  
-  }
+  if(!decayPhysics)
+    {
+      decayPhysics = new G4DecayPhysics();			  
+      constructors.push_back(decayPhysics);		  
+    }
 }                                                         
 
 void BDSModularPhysicsList::LoadCutsAndLimits()
@@ -354,8 +364,9 @@ void BDSModularPhysicsList::LoadCutsAndLimits()
     G4cout << __METHOD_NAME__ << G4endl;
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
-  if(!_cutsAndLimits){
-    _cutsAndLimits = new BDSCutsAndLimits();			  
-    _constructors.push_back(_cutsAndLimits);		  
-  }
+  if(!cutsAndLimits)
+    {
+      cutsAndLimits = new BDSCutsAndLimits();			  
+      constructors.push_back(cutsAndLimits);		  
+    }
 }                                                         

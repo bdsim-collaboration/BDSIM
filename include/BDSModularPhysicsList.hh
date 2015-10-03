@@ -26,20 +26,21 @@ private:
   
   void SetParticleDefinition();
   void ConstructMinimumParticleSet();
-  G4VPhysicsConstructor* _emPhysics;
-  G4VPhysicsConstructor* _hadronicPhysics;
-  G4VPhysicsConstructor* _muonPhysics;
-  G4OpticalPhysics*      _opticalPhysics;
-  G4VPhysicsConstructor* _decayPhysics;
-  G4VPhysicsConstructor* _paramPhysics;
-  G4VPhysicsConstructor* _synchRadPhysics;
-  G4VPhysicsConstructor* _cutsAndLimits;
-  std::vector<G4VPhysicsConstructor*> _constructors;
+  G4VPhysicsConstructor* emPhysics;
+  G4VPhysicsConstructor* hadronicPhysics;
+  G4VPhysicsConstructor* muonPhysics;
+  G4OpticalPhysics*      opticalPhysics;
+  G4VPhysicsConstructor* decayPhysics;
+  G4VPhysicsConstructor* paramPhysics;
+  G4VPhysicsConstructor* synchRadPhysics;
+  G4VPhysicsConstructor* cutsAndLimits;
+  std::vector<G4VPhysicsConstructor*> constructors;
   void ParsePhysicsList();
   void ConfigurePhysics();
   void ConfigureOptical();
   void Register();
-  G4String _physListName;
+  G4String physListName;
+
 
   //Physics constructor loaders.
   void LoadEm();			  
