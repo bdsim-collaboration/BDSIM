@@ -189,7 +189,7 @@ void BDSModularPhysicsList::SetCuts()
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
-  G4cout << __METHOD_NAME__ << "Proton production range cut (mm)   " << prodCutHadrons<< G4endl;
+  G4cout << __METHOD_NAME__ << "Proton production range cut (mm)   " << prodCutProtons<< G4endl;
 #endif
   
   SetCutValue(prodCutPhotons,  "gamma");
