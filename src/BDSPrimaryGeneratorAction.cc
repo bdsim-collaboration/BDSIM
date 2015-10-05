@@ -28,14 +28,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   particleGun->SetParticleTime(0);
 }
 
-//===================================================
-
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
-{
-  delete particleGun;
-}
-
-//===================================================
+{delete particleGun;}
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
