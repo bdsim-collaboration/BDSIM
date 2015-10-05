@@ -501,6 +501,9 @@ void BDSDetectorConstruction::ComponentPlacement()
       thecurrentitem->PrepareField(elementPV);
     }
 
+
+  G4Transform3D trans = beamline->GetGlobalEuclideanTransform(beamline->GetTotalArcLength()*0.1234567);
+
   // place the tunnel segments & supports if they're built
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {

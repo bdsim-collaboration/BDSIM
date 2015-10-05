@@ -1,6 +1,7 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include "BDSDebug.hh"
 #include "BDSAcceleratorComponent.hh"
@@ -11,6 +12,7 @@
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
 
+#include <algorithm>
 #include <iterator>
 #include <ostream>
 #include <utility>  // for std::pair
@@ -332,6 +334,9 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   // append it to the beam line
   beamline.push_back(element);
 
+  // register the s position at the end for curvlinear transform
+  sEnd.push_back(sPositionEnd);
+
   // register it by name
   RegisterElement(element);
 
@@ -442,10 +447,49 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
 {
   G4ThreeVector mEA;
   for (int i=0; i<3; i++)
-    {
-      mEA[i] = std::max(std::abs(maximumExtentPositive[i]), std::abs(maximumExtentNegative[i]));
-    }
+    {mEA[i] = std::max(std::abs(maximumExtentPositive[i]), std::abs(maximumExtentNegative[i]));}
   return mEA;
+}
+
+G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y)
+{
+  // check if s is in the range of the beamline
+  if (s > totalArcLength)
+    {
+      G4cout << __METHOD_NAME__
+	     << "s position \"" << s << "\" is beyond length of accelerator" << G4endl;
+      exit(1);
+    }
+
+  // find element that s position belongs to
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
+  G4int index = lower - sEnd.begin(); // subtract iterators to get index
+  BDSBeamlineElement* element = beamline[index];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << "S position requested: " << s     << G4endl;
+  G4cout << "Index:                " << index << G4endl;
+  G4cout << "Element: " << *element << G4endl;
+#endif
+  // interpolate along z/s within volume to get global point
+  // use element mid rotation matrix to calculate x,y offset in local coords
+  G4double dS = s - element->GetSPositionMiddle(); // difference from middle
+  // difference from centre of element to point in local coords)
+  G4ThreeVector dLocal = G4ThreeVector(x,y,dS);
+#ifdef BDSDEBUG
+  G4cout << "Local offset from middle: " << dLocal << G4endl;
+#endif
+  G4RotationMatrix* rotMiddle = element->GetReferenceRotationMiddle();
+  G4ThreeVector globalPos = element->GetReferencePositionMiddle() + dLocal.transform(*rotMiddle);
+  
+  // construct transform3d from global position and rotation matrix
+  G4Transform3D result = G4Transform3D(*rotMiddle, globalPos);
+
+#ifdef BDSDEBUG
+  G4cout << "Global offset from middle: " << dLocal    << G4endl;
+  G4cout << "Global position:           " << globalPos << G4endl;
+#endif
+  return result;
 }
 
 void BDSBeamline::RegisterElement(BDSBeamlineElement* element)

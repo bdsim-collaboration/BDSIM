@@ -2,6 +2,9 @@
 #define BDSBEAMLINE_H
 
 #include "globals.hh" // geant4 globals / types
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include "BDSBeamlineElement.hh"
 
@@ -55,7 +58,8 @@ public:
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   /// Returns vector of components added
-  std::vector<BDSBeamlineElement*> AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
+  std::vector<BDSBeamlineElement*> AddComponent(BDSAcceleratorComponent* component,
+						BDSTiltOffset* tiltOffset = nullptr);
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component
@@ -104,6 +108,13 @@ public:
   /// Get the maximum extent absolute in each dimension
   G4ThreeVector GetMaximumExtentAbsolute() const;
 
+  /// Get the local to global transform for curvilinear coordinates
+  /// to global coordinates. 0,0 transverse position by default.
+  G4Transform3D GetGlobalEuclideanTransform(G4double s,
+					    G4double x = 0,
+					    G4double y = 0);
+
+  ///@{ iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
   iterator       begin()       {return beamline.begin();}
@@ -111,6 +122,7 @@ public:
   const_iterator begin() const {return beamline.begin();}
   const_iterator end()   const {return beamline.end();}
   G4bool         empty() const {return beamline.empty();}
+  ///@}
   
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
@@ -156,6 +168,12 @@ private:
   /// name. This would result in a particularly large number of volumes
   /// and may not always be unique.
   std::map<G4String, BDSBeamlineElement*> components;
+
+  /// Vector of s coordinates at the end of each element. This is intended
+  /// so that an iterator pointing to the s position will be the correct
+  /// index for the beamline element in the main BDSBeamlineVector element.
+  /// This is filled in order so it's sorted by design.
+  std::vector<G4double> sEnd;
   
   /// assignment and copy constructor not implemented nor used
   BDSBeamline& operator=(const BDSBeamline&);
