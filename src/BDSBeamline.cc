@@ -458,7 +458,8 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
     {
       G4cout << __METHOD_NAME__
 	     << "s position \"" << s << "\" is beyond length of accelerator" << G4endl;
-      exit(1);
+      G4cout << "Returning 0 transform" << G4endl;
+      return G4Transform3D();
     }
 
   // find element that s position belongs to
