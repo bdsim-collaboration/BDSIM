@@ -31,7 +31,7 @@ Options::Options()
   ffact                 = 1.0;
   beamEnergy            = 0.0;
   
-  X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
+  X0 = 0.0, Y0 = 0.0, Z0 = 0.0, S0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
   T0 = 0.0;
   E0 = 0.0;
@@ -204,6 +204,7 @@ void Options::set_value(std::string name, double value )
   if(name == "X0" )    {X0  = value; return;}
   if(name == "Y0" )    {Y0  = value; return;}
   if(name == "Z0" )    {Z0  = value; return;}
+  if(name == "S0" )    {S0  = value; return;}
   if(name == "T0" )    {T0  = value; return;}
   if(name == "Xp0" )   {Xp0 = value; return;}
   if(name == "Yp0" )   {Yp0 = value; return;}

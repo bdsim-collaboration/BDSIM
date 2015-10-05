@@ -42,7 +42,7 @@ struct Options
   double beamEnergy;
 
   /// initial beam centroid
-  double X0, Y0, Z0;
+  double X0, Y0, Z0, S0;
   double Xp0, Yp0, Zp0;
   double T0;
   double E0;
