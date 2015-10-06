@@ -484,29 +484,24 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4double chordLength = component->GetChordLength();
   G4double dS          = s - element->GetSPositionMiddle();
   G4double localZ      = dS * (chordLength / arcLength);
+  G4double angle       = component->GetAngle();
+  G4RotationMatrix rotation;
   G4RotationMatrix* rotMiddle = element->GetReferenceRotationMiddle();
-  G4RotationMatrix rotation   = G4RotationMatrix(*rotMiddle); // copy it as default
   // find offset of point from centre of volume - 2 methods
-  G4double angle = component->GetAngle();
-
   if (BDS::IsFinite(angle))
     {
-      G4cout << "angle is " << angle << G4endl;
       // finite bend angle - interpolate position and angle along arc due to change in angle
       // local unit z at start of element
       G4ThreeVector localUnitY = G4ThreeVector(0,1,0);
       localUnitY.transform(*(element->GetReferenceRotationStart()));
-      G4double partialAngle = angle * (dS / arcLength);
-      rotation.rotate(partialAngle, localUnitY);
-
-      dx = localZ*tan(partialAngle);
+      // linearly interpolate angle -> angle * (s from beginning into component)/arcLength
+      G4double partialAngle = angle * std::fabs(( (0.5*arcLength + dS) / arcLength));
+      rotation = G4RotationMatrix(*(element->GetReferenceRotationStart())); // start rotation
+      rotation.rotate(partialAngle, localUnitY); // rotate it by the partial angle about local Y
+      dx = localZ*tan(partialAngle); // calculate difference of arc from chord at that point
     }
-
-  // else -> no need to do anything
-  // no bend angle - interpolate along chord length (simpler)
-  // interpolate along z/s within volume to get global point
-  // use element mid rotation matrix to calculate x,y offset in local coords
-  // no shift from chord so dx,dy = 0
+  else
+    {rotation = G4RotationMatrix(*rotMiddle);}
 
   // note, magnets only bend in local x so no need to add dy as always 0
   G4ThreeVector dLocal    = G4ThreeVector(x + dx, y /*+ dy*/, localZ);
