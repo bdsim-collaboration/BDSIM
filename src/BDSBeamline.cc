@@ -472,23 +472,55 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4cout << "Index:                " << index << G4endl;
   G4cout << "Element: " << *element << G4endl;
 #endif
+
+  G4double dx = 0;
+  // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
+
+  // difference from centre of element to point in local coords)
+  // difference in s from centre, normalised to arcLengh and scaled to chordLength
+  // as s is really arc length but we must place effectively in chord length coordinates
+  BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
+  G4double arcLength   = component->GetArcLength();
+  G4double chordLength = component->GetChordLength();
+  G4double dS          = s - element->GetSPositionMiddle();
+  G4double localZ      = dS * (chordLength / arcLength);
+  G4RotationMatrix* rotMiddle = element->GetReferenceRotationMiddle();
+  G4RotationMatrix rotation   = G4RotationMatrix(*rotMiddle); // copy it as default
+  // find offset of point from centre of volume - 2 methods
+  G4double angle = component->GetAngle();
+
+  if (BDS::IsFinite(angle))
+    {
+      G4cout << "angle is " << angle << G4endl;
+      // finite bend angle - interpolate position and angle along arc due to change in angle
+      // local unit z at start of element
+      G4ThreeVector localUnitY = G4ThreeVector(0,1,0);
+      localUnitY.transform(*(element->GetReferenceRotationStart()));
+      G4double partialAngle = angle * (dS / arcLength);
+      rotation.rotate(partialAngle, localUnitY);
+
+      dx = localZ*tan(partialAngle);
+    }
+
+  // else -> no need to do anything
+  // no bend angle - interpolate along chord length (simpler)
   // interpolate along z/s within volume to get global point
   // use element mid rotation matrix to calculate x,y offset in local coords
-  G4double dS = s - element->GetSPositionMiddle(); // difference from middle
-  // difference from centre of element to point in local coords)
-  G4ThreeVector dLocal = G4ThreeVector(x,y,dS);
+  // no shift from chord so dx,dy = 0
+
+  // note, magnets only bend in local x so no need to add dy as always 0
+  G4ThreeVector dLocal    = G4ThreeVector(x + dx, y /*+ dy*/, localZ);
 #ifdef BDSDEBUG
   G4cout << "Local offset from middle: " << dLocal << G4endl;
 #endif
-  G4RotationMatrix* rotMiddle = element->GetReferenceRotationMiddle();
+  // note, rotaiton middle is the as the coordinate frame of the g4 solid
   G4ThreeVector globalPos = element->GetReferencePositionMiddle() + dLocal.transform(*rotMiddle);
-  
   // construct transform3d from global position and rotation matrix
-  G4Transform3D result = G4Transform3D(*rotMiddle, globalPos);
-
+  G4Transform3D result    = G4Transform3D(rotation, globalPos);
+  
 #ifdef BDSDEBUG
   G4cout << "Global offset from middle: " << dLocal    << G4endl;
-  G4cout << "Global position:           " << globalPos << G4endl;
+  G4cout << "Resultant global position: " << globalPos << G4endl;
 #endif
   return result;
 }
