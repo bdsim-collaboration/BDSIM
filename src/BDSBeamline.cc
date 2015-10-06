@@ -485,7 +485,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   G4double dS          = s - element->GetSPositionMiddle();
   G4double localZ      = dS * (chordLength / arcLength);
   G4double angle       = component->GetAngle();
-  G4RotationMatrix rotation;
+  G4RotationMatrix rotation; // will be interpolated rotation
   G4RotationMatrix* rotMiddle = element->GetReferenceRotationMiddle();
   // find offset of point from centre of volume - 2 methods
   if (BDS::IsFinite(angle))
@@ -508,7 +508,7 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
 #ifdef BDSDEBUG
   G4cout << "Local offset from middle: " << dLocal << G4endl;
 #endif
-  // note, rotaiton middle is the as the coordinate frame of the g4 solid
+  // note, rotation middle is also the same as the coordinate frame of the g4 solid
   G4ThreeVector globalPos = element->GetReferencePositionMiddle() + dLocal.transform(*rotMiddle);
   // construct transform3d from global position and rotation matrix
   G4Transform3D result    = G4Transform3D(rotation, globalPos);
