@@ -22,5 +22,7 @@ if (MADX_FOUND AND USE_ROOT AND USE_ROBDSIM AND PY_ROOT_NUMPY AND PY_PYBDSIM AND
   tracking_test(3_TrackingTest_QUADRUPOLE --filepath=3_quadrupole/QUAD.madx)
   # 4_sextupole
   tracking_test(4_TrackingTest_SEXTUPOLE --filepath=4_sextupole/SEXT.madx)
+  # 5_dba
+  tracking_test(5_TrackingTest_DBA --filepath=5_dba/DBA.madx)
 endif()
 
