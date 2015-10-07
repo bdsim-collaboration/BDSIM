@@ -1,10 +1,10 @@
 d1: drift, l=1*m;
 d2: drift, l=5*m;
-sb1: sbend, l=5*m, angle=pi/2, outerDiameter=0.4*m;
-sb2: sbend, l=5*m, angle=-pi/2, outerDiameter=0.4*m;
+sb1: sbend, l=5*m, angle=1*mrad, outerDiameter=0.4*m;
+sb2: sbend, l=5*m, angle=-0.758493*mrad, outerDiameter=0.4*m;
 m1: marker;
 
-l1: line=(d1,sb1,d2,m1);
+l1: line=(d1,sb1,d2,sb2,d1,m1);
 use, period=l1;
 
 sample, range=m1;
@@ -12,7 +12,7 @@ sample, range=m1;
 beam, particle="e-",
       energy=1*GeV,
       distrType="reference",
-      S0 = 7.6*m;
+      S0 = 12.6*m;
 
 option, physicsList="em_standard",
 	ngenerate=1;
