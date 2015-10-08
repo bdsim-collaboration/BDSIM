@@ -27,7 +27,7 @@
     */
 
     int execute = 1;
-    int element_count = 1; // for samplers , ranges etc.
+    int element_count = -1; // for samplers , ranges etc. -1 means add to all
   }
 %}
 
@@ -997,8 +997,8 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler($3->name,$3->name, element_count);
-		element_count = 1;
+		add_sampler("Sampler_"+$3->name,$3->name, element_count);
+		element_count = -1;
 		params.flush();
 	      }
           }
@@ -1008,8 +1008,8 @@ command : STOP             { if(execute) quit(); }
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
 //SPM		add_csampler("sampler",$3->name, element_count,params.l, params.r);
-		add_csampler($3->name,$3->name, element_count,params.l, params.r);
-		element_count = 1;
+		add_csampler("CSampler_"+$3->name,$3->name, element_count,params.l, params.r);
+		element_count = -1;
 		params.flush();
 	      }
           }
@@ -1034,8 +1034,8 @@ command : STOP             { if(execute) quit(); }
             if(execute)                                       
               {                                               
                 if(ECHO_GRAMMAR) printf("command -> DUMP\n"); 
-                add_dump($3->name,$3->name, element_count);     
-                element_count = 1;                            
+                add_dump("Dump_"+$3->name,$3->name, element_count);     
+                element_count = -1;                            
                 params.flush();                               
               }                                               
           }                                                   

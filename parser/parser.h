@@ -321,12 +321,26 @@ int expand_line(std::string name, std::string start, std::string end)
    /// add element to beamline
    void add_element(struct Element& e, std::string before, int before_count)
    {
-     std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-     if (it==beamline_list.end()) {
-       std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-       exit(1);
-     }
-     beamline_list.insert(it,e);
+     // if before_count equal to -1 add to all element instances
+     if (before_count==-1)
+       {
+	 auto itPair = beamline_list.equal_range(before);
+	 if (itPair.first==itPair.second) {
+	   std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
+	   exit(1);
+	 }
+	 for (auto it = itPair.first; it!= itPair.second; ++it) 
+	   {beamline_list.insert(it->second,e);}
+       }
+     else
+       {
+	 auto it = beamline_list.find(before,before_count);
+	 if (it==beamline_list.end()) {
+	   std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+	   exit(1);
+	 }
+	 beamline_list.insert(it,e);
+       }
    }
  }
  
