@@ -805,7 +805,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
   return (new BDSDegrader(_element.name,
 			  _element.l*CLHEP::m,
 			  _element.outerDiameter*CLHEP::m,
-			  _element.material));
+			  _element.material,
+              5,100,100,
+              _element.materialThickness*CLHEP::m));
 
 }
 

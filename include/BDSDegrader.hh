@@ -22,10 +22,10 @@ public:
                 G4double   length,
                 G4double   outerDiameter,
                 G4String   degraderMaterial,
-                G4int      numberWedges     = 5,
-                G4double   wedgeHeight      = 100,
-                G4double   degraderHeight   = 100,
-                G4double   materialThickness= 30);
+                G4int      numberWedges,
+                G4double   wedgeHeight,
+                G4double   degraderHeight,
+                G4double   materialThickness);
     ~BDSDegrader();
     
 
