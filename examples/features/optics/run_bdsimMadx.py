@@ -57,6 +57,10 @@ def Main():
     parser.add_option('-v','--verbose',   action='store_true',dest="verbose",                  default=False)
 
     options,args = parser.parse_args()
+
+    if args:
+        print "ERROR when parsing, leftover arguments", args
+        raise SystemExit
     
     if options.clean:    
         Clean(options.filepath)
