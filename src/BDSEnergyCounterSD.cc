@@ -32,7 +32,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    X(0.0),
    Y(0.0),
    Z(0.0),
-   S(0.0),
+   SBefore(0.0),
+   SAfter(0.0),
    x(0.0),
    y(0.0),
    z(0.0),
@@ -112,6 +113,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   // use the second point as the point of energy deposition
   // originally this was the mean of the pre and post step points, but
   // that appears to give uneven energy deposition about volume edges.
+  // this also gave edge effects
+  // now store both SAfter (post step point) and SBefore (pre step point)
   // global
   X = posafter.x();
   Y = posafter.y();
@@ -127,12 +130,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
   if (theInfo)
     {
-      S = theInfo->GetSPos() + z;
+      SAfter  = theInfo->GetSPos() + z;
+      SBefore = theInfo->GetSPos() + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
     }
   else
     {
-      S = -1000; // unphysical default value to allow easy identification in output
+      SAfter  = -1000; // unphysical default value to allow easy identification in output
+      SBefore = -1000;
       precisionRegion = false;
     }
   
@@ -144,7 +149,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
 	     << "\tEvent:  " << eventnumber 
 	     << "\tEnergy: " << enrg/CLHEP::GeV 
-	     << "GeV\tPosition: " << S/CLHEP::m <<" m"<< G4endl;
+	     << "GeV\tPosition: " << SAfter/CLHEP::m <<" m"<< G4endl;
     }
   
   weight = aStep->GetTrack()->GetWeight();
@@ -161,7 +166,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 						       X,
 						       Y,
 						       Z,
-						       S,
+						       SBefore,
+						       SAfter,
 						       x,
 						       y,
 						       z,
@@ -235,13 +241,15 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   // get the s coordinate (central s + local z)
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume);
   if (theInfo)
-     {
-      S = theInfo->GetSPos() + z;
+    {
+      SAfter  = theInfo->GetSPos() + z; 
+      SBefore = theInfo->GetSPos() + z; // no pre/post step for spot
       precisionRegion = theInfo->GetPrecisionRegion();
     }
   else
     {
-      S = -1000; // unphysical default value to allow easy identification in output
+      SAfter  = -1000; // unphysical default value to allow easy identification in output
+      SBefore = -1000;
       precisionRegion = false;
     }
   
@@ -258,7 +266,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
 	     << " Event: "    << eventnumber 
 	     << " Energy: "   << enrg/CLHEP::GeV << " GeV"
-	     << " Position: " << S/CLHEP::m   << " m" 
+	     << " Position: " << SAfter/CLHEP::m   << " m" 
 	     << G4endl;
     }
   
@@ -268,7 +276,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       X,
 						       Y,
 						       Z,
-						       S,
+						       SBefore,
+						       SAfter,
 						       x,
 						       y,
 						       z,

@@ -167,12 +167,13 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
 	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
-	  G4double s      = hit.GetS()/CLHEP::m;
-	  G4double energy = hit.GetEnergy()/CLHEP::GeV;
-	  G4double weight = hit.GetWeight();
+	  G4double sBefore = hit.GetSBefore()/CLHEP::m;
+	  G4double sAfter  = hit.GetSAfter()/CLHEP::m;
+	  G4double energy  = hit.GetEnergy()/CLHEP::GeV;
+	  G4double weight  = hit.GetWeight();
 	  G4double weightedEnergy = energy * weight;
-	  generalELoss->Fill(s, weightedEnergy);
-	  perElementELoss->Fill(s, weightedEnergy);
+	  generalELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
+	  perElementELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
 	}
     }
 
@@ -188,14 +189,16 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {
 	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-	      G4double hitS  = thePrimaryHit->GetS()/CLHEP::m;
-	      G4double lossS = thePrimaryLoss->GetS()/CLHEP::m;
+	      G4double hitSBefore  = thePrimaryHit->GetSBefore()/CLHEP::m;
+	      G4double hitSAfter   = thePrimaryHit->GetSAfter()/CLHEP::m;
+	      G4double lossSBefore = thePrimaryLoss->GetSBefore()/CLHEP::m;
+	      G4double lossSAfter  = thePrimaryLoss->GetSAfter()/CLHEP::m;
 	      // general histos
-	      analMan->Fill1DHistogram(0, hitS);
-	      analMan->Fill1DHistogram(1, lossS);
+	      analMan->Fill1DHistogram(0, std::make_pair(hitSBefore,hitSAfter));
+	      analMan->Fill1DHistogram(1, std::make_pair(lossSBefore,lossSAfter));
 	      // per element histos
-	      analMan->Fill1DHistogram(3, hitS);
-	      analMan->Fill1DHistogram(4, lossS);
+	      analMan->Fill1DHistogram(3, std::make_pair(hitSBefore,hitSAfter));
+	      analMan->Fill1DHistogram(4, std::make_pair(lossSBefore,lossSAfter));
 	    }
 	}
     }

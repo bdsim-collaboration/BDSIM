@@ -105,7 +105,7 @@ Useful Commands
 ---------------
 
 * :code:`print;` prints all elements
-* :code:`print, line;` prints all elements in line
+* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
 * :code:`stop;` or `return;` exists parser

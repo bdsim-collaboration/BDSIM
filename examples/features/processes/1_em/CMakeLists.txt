@@ -9,10 +9,10 @@ set(TESTING_ARGS --outfile=electron_250GeV_tungsten)
 simple_testing(Electron_250Gev_tungsten_LONG "--file=electron_250GeV_tungsten.gmad" "")
 
 if(USE_ROBDSIM)
-    robdsimTest(electron_250GeV_copper)
-    robdsimTest(electron_250GeV_stainless)
-    robdsimTest(electron_250GeV_titanium)
-    robdsimTest(electron_250GeV_tungsten)
+    robdsimTest(Electron_250GeV_copper_LONG)
+    robdsimTest(Electron_250GeV_stainless_LONG)
+    robdsimTest(Electron_250GeV_titanium_LONG)
+    robdsimTest(Electron_250GeV_tungsten_LONG)
 endif()
 
 # short tests

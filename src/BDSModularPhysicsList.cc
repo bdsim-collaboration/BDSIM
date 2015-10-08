@@ -35,6 +35,9 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+
+  verbose = BDSExecOptions::Instance()->GetVerbose();
+  globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);
   emPhysics       = nullptr;
@@ -53,10 +56,6 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetParticleDefinition();
   SetCuts();
   DumpCutValuesTable(100);
-
-  verbose = BDSExecOptions::Instance()->GetVerbose();
-
-  globals = BDSGlobalConstants::Instance();
 }
 
 
@@ -212,10 +211,6 @@ void BDSModularPhysicsList::SetParticleDefinition()
   if(verbose || debug) 
     G4cout << __METHOD_NAME__ << G4endl;
 
-  // apparently this pointer needs to be updated here otherwise BDSGlobalCosntants gets
-  // a bad access abort on member variables
-  globals = BDSGlobalConstants::Instance();
-  
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   globals->SetParticleDefinition(particleTable->FindParticle(globals->GetParticleName()));  

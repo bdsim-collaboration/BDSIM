@@ -8,7 +8,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4double XIn, 
 					 G4double YIn, 
 					 G4double ZIn,
-					 G4double SIn,
+					 G4double SBeforeIn,
+					 G4double SAfterIn,
 					 G4double xIn,
 					 G4double yIn,
 					 G4double zIn,
@@ -24,7 +25,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   X(XIn),
   Y(YIn),
   Z(ZIn),
-  S(SIn),
+  SBefore(SBeforeIn),
+  SAfter(SAfterIn),
   x(xIn),
   y(yIn),
   z(zIn),
@@ -47,7 +49,7 @@ BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* h
   G4int indexofHit = -1;
   for (G4int i = 0; i < hc->entries(); ++i)
     {
-      spos = (*hc)[i]->GetS();
+      spos = (*hc)[i]->GetSBefore();
       if (spos < sposMin) {
 	sposMin = spos; //keep for testing
 	indexofHit = i; //record which hit it was
@@ -67,7 +69,7 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
   G4int indexofHit = -1;
   for (G4int i = 0; i < hc->entries(); ++i)
     {
-      spos = (*hc)[i]->GetS();
+      spos = (*hc)[i]->GetSAfter();
       if (spos > sposMax) {
 	sposMax = spos; //keep for testing
 	indexofHit = i; //record which hit it was

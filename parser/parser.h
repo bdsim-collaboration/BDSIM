@@ -316,6 +316,34 @@ int expand_line(std::string name, std::string start, std::string end)
   return 0;
 }
 
+// anonymous namespace for helper function
+ namespace {
+   /// add element to beamline
+   void add_element(struct Element& e, std::string before, int before_count)
+   {
+     // if before_count equal to -1 add to all element instances
+     if (before_count==-1)
+       {
+	 auto itPair = beamline_list.equal_range(before);
+	 if (itPair.first==itPair.second) {
+	   std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
+	   exit(1);
+	 }
+	 for (auto it = itPair.first; it!= itPair.second; ++it) 
+	   {beamline_list.insert(it->second,e);}
+       }
+     else
+       {
+	 auto it = beamline_list.find(before,before_count);
+	 if (it==beamline_list.end()) {
+	   std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+	   exit(1);
+	 }
+	 beamline_list.insert(it,e);
+       }
+   }
+ }
+ 
 void add_sampler(std::string name, std::string before, int before_count)
 {
 #ifdef BDSDEBUG 
@@ -327,12 +355,8 @@ void add_sampler(std::string name, std::string before, int before_count)
   e.name = name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, before, before_count);
 }
 
 void add_csampler(std::string name, std::string before, int before_count, double length, double rad)
@@ -348,12 +372,8 @@ void add_csampler(std::string name, std::string before, int before_count, double
   e.name = name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, before, before_count);
 }
 
 void add_dump(std::string name, std::string before, int before_count)
@@ -367,12 +387,8 @@ void add_dump(std::string name, std::string before, int before_count)
   e.name = name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, before, before_count);
 }
 
 void add_tunnel(Tunnel& tunnel)
