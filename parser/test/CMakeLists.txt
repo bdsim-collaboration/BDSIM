@@ -25,6 +25,10 @@ set_tests_properties(gmad-nosemicolon PROPERTIES WILL_FAIL 1)
 add_test(gmad-undefinedElement ${gmadBinary} undefinedelement.gmad)
 set_tests_properties(gmad-undefinedElement PROPERTIES WILL_FAIL 1)
 
+# duplicate name
+add_test(gmad-duplicateName ${gmadBinary} duplicateName.gmad)
+set_tests_properties(gmad-duplicateName PROPERTIES WILL_FAIL 1)
+
 # add sampler to undefined element
 add_test(gmad-addSamplerUndefinedElement ${gmadBinary} addSamplerUndefinedElement.gmad)
 set_tests_properties(gmad-addSamplerUndefinedElement PROPERTIES WILL_FAIL 1)
