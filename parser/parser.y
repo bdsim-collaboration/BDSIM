@@ -997,7 +997,7 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler("Sampler_"+$3->name,$3->name, element_count);
+		add_sampler($3->name, element_count);
 		element_count = -1;
 		params.flush();
 	      }
@@ -1007,11 +1007,20 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-//SPM		add_csampler("sampler",$3->name, element_count,params.l, params.r);
-		add_csampler("CSampler_"+$3->name,$3->name, element_count,params.l, params.r);
+		add_csampler($3->name, element_count,params.l, params.r);
 		element_count = -1;
 		params.flush();
 	      }
+          }
+        | DUMP ',' sample_options //  options for beam dump
+          {
+            if(execute)
+              {
+                if(ECHO_GRAMMAR) printf("command -> DUMP\n");
+                add_dump($3->name, element_count);
+                element_count = -1;
+                params.flush();
+              }
           }
         | TUNNEL ',' tunnel_options // tunnel
           {
@@ -1029,16 +1038,6 @@ command : STOP             { if(execute) quit(); }
 		add_xsecbias(xsecbias);
 	      }
           }
-        | DUMP ',' sample_options //  options for beam dump 
-          {                                                   
-            if(execute)                                       
-              {                                               
-                if(ECHO_GRAMMAR) printf("command -> DUMP\n"); 
-                add_dump("Dump_"+$3->name,$3->name, element_count);     
-                element_count = -1;                            
-                params.flush();                               
-              }                                               
-          }                                                   
 
 //| PRINTF '(' fmt ')' { if(execute) printf($3,$5); }
 ;
