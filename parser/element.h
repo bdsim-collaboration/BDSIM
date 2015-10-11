@@ -40,6 +40,9 @@ struct Element {
   double xdir, ydir, zdir, waveLength; ///< for laser wire and 3d transforms
   double gradient; ///< for rf cavities
   double phi, theta, psi; ///< for 3d transforms
+  double numberWedges; ///< for degrader
+  double wedgeHeight; ///< for degrader
+  double degraderHeight; ///< for degrader
   double materialThickness; ///< for degrader
 
   std::list<double> knl;

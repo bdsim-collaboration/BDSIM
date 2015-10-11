@@ -176,6 +176,12 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
   e.gradient = params.gradient;
   // Degrader
   e.materialThickness = params.materialThickness;
+  // Degrader
+  e.numberWedges = params.numberWedges;
+  // Degrader
+  e.wedgeHeight = params.wedgeHeight;
+  // Degrader
+  e.degraderHeight = params.degraderHeight;
   // SBend, RBend, (Awake)Screen
   e.angle = params.angle;
   // SBend, RBend, HKick, VKick, Quad

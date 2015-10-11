@@ -81,6 +81,9 @@ struct Parameters {
   int precisionRegion; int precisionRegionset;
 
   double gradient; int gradientset; ///< for rf cavities
+  double numberWedges; int numberWedgesset; ///< for degrader
+  double wedgeHeight; int wedgeHeightset; ///< for degrader
+  double degraderHeight; int degraderHeightset; ///< for degrader
   double materialThickness; int materialThicknessset; ///< for degrader
 
   double xsize, ysize; int xsizeset, ysizeset; ///< aperture (or laser spotsize for laser)

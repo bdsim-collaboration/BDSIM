@@ -806,7 +806,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 			  _element.l*CLHEP::m,
 			  _element.outerDiameter*CLHEP::m,
 			  _element.material,
-              5,100,100,
+              _element.numberWedges,
+              _element.wedgeHeight*CLHEP::m,
+              _element.degraderHeight*CLHEP::m,
               _element.materialThickness*CLHEP::m));
 
 }

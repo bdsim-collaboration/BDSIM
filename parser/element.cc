@@ -123,6 +123,9 @@ void Element::flush() {
   theta = 0;
 
   gradient = 0;
+  numberWedges = 0;
+  wedgeHeight = 0;
+  degraderHeight = 0;
   materialThickness = 0;
   
   bias = "";
@@ -209,8 +212,10 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "offsetX") return offsetX;
   if(property_name == "offsetY") return offsetY;
   if(property_name == "gradient") return gradient;
+  if(property_name == "numberWedges") return numberWedges;
+  if(property_name == "wedgeHeight") return wedgeHeight;
+  if(property_name == "degraderHeight") return degraderHeight;
   if(property_name == "materialThickness") return materialThickness;
-
   if(property_name == "A") return A;
   if(property_name == "Z") return Z;
   if(property_name == "density") return density;
