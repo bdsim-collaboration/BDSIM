@@ -42,6 +42,22 @@ protected:
     G4double degraderHeight;
     G4double materialThickness;
     
+    bool isOdd( G4int integer )
+    {
+        if ( integer % 2 != 0 )
+        return true;
+        else
+        return false;
+    }
+
+    bool isEven( G4int integer )
+    {
+        if ( integer % 2 == 0 )
+        return true;
+        else
+        return false;
+    }
+    
 };
 
 #endif

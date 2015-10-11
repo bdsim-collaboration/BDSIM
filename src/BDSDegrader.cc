@@ -13,6 +13,7 @@
 #include "G4ExtrudedSolid.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include <vector>
 
 BDSDegrader::BDSDegrader (G4String   name, 
                     G4double   length,
@@ -63,45 +64,117 @@ void BDSDegrader::Build()
     
   wedgeBasewidth = chordLength/numberWedges - lengthSafety; 
     
-  //Full wedge 
-  std::vector<G4TwoVector> fullWedgeSide;  //vertex co-ordinates
-  fullWedgeSide.push_back( G4TwoVector(0, wedgeBasewidth*0.5) );
-  fullWedgeSide.push_back( G4TwoVector(wedgeHeight, 0) );
-  fullWedgeSide.push_back( G4TwoVector(0, -0.5 *wedgeBasewidth) );
-     
-  G4ExtrudedSolid* fullWedge = new G4ExtrudedSolid(name + "_fullwedge_solid",
-                                                    fullWedgeSide,
-                                                    degraderHeight*0.5,
-                                                    G4TwoVector(),1, G4TwoVector(), 1);
+  G4double maxzoffset = numberWedges*wedgeBasewidth * 0.5;
     
-  RegisterSolid(fullWedge);
-    
-  G4LogicalVolume* fullWedgeLV = new G4LogicalVolume(fullWedge,                 // solid
-                                                      material,                 // material
-                                                      name + "_fullwedge_lv");  // name 
-  RegisterLogicalVolume(fullWedgeLV);
-    
-    
-    
-  //Half wedge 
-  std::vector<G4TwoVector> halfWedgeSide; //vertex co-ordinates
-  halfWedgeSide.push_back( G4TwoVector(0, wedgeBasewidth*0.5) );
-  halfWedgeSide.push_back( G4TwoVector(wedgeHeight, 0) );
-  halfWedgeSide.push_back( G4TwoVector(0, 0) );
-    
-  G4ExtrudedSolid* halfWedge = new G4ExtrudedSolid(name + "_halfwedge_solid",
-                                                    halfWedgeSide,
-                                                    degraderHeight*0.5,
-                                                    G4TwoVector(),1, G4TwoVector(), 1);
-    
-  RegisterSolid(halfWedge);
-    
-  G4LogicalVolume* halfWedgeLV = new G4LogicalVolume(halfWedge,                 // solid
-                                                      material,                 // material
-                                                      name + "_halfwedge_lv");  // name     
-  RegisterLogicalVolume(halfWedgeLV);
+  std::vector<G4TwoVector> rightWedgeSide; //vertex co-ordinates
+  std::vector<G4TwoVector> leftWedgeSide;  //vertex co-ordinates
+
+  // Case for even number of wedges
+  if (isEven(numberWedges)){
+      for(G4int i=0; i < (numberWedges+1); i++){
+          if(isEven(i)){
+              if(i==0){                     //First half wedge
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
+              }
+              else if(i==numberWedges){     //Last half Wedge
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+              }
+              else{                         //RHS full wedge(s)
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
+              }
+          }
+          else if(isOdd(i)){                //LHS full wedge(s)
+              leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
+              leftWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+              leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
+          }
+      }
+      //Vertices of base part of RHS component for connecting all RHS wedges
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight,-1.0*maxzoffset));
+
+      //Vertices of base part of LHS component for connecting all LHS wedges
+      leftWedgeSide.push_back( G4TwoVector(0, maxzoffset));
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, -1.0*maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(0, -1.0*maxzoffset));
+  }
+  // Case for odd number of wedges.
+  else if (isOdd(numberWedges)){
+      for(G4int i=0; i < (numberWedges+1); i++){
+          if(isEven(i)){
+              if(i==0){     //RHS half wedge
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
+              }
+              else{         //RHS full wedge(s)
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
+              }
+          }
+          else if(isOdd(i)){
+              if(i==numberWedges){      //LHS half wedge
+                  leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
+                  leftWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+              }
+              else{                     //LHS full wedge(s)
+                  leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
+                  leftWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
+              }
+          }
+      }
+       //Vertices of base part of RHS component for connecting all RHS wedges
+      rightWedgeSide.push_back( G4TwoVector(0, maxzoffset));
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight,-1.0*maxzoffset));
+      
+      //Vertices of base part of LHS component for connecting all LHS wedges
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, -1.0*maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(0, -1.0*maxzoffset));
+      
+
+  }
 
   
+  // Left wedge Solid and logical Volume
+  G4ExtrudedSolid* leftWedge = new G4ExtrudedSolid(name + "_leftwedge_solid",
+                                                    leftWedgeSide,
+                                                    degraderHeight*0.5,
+                                                    G4TwoVector(),1, G4TwoVector(), 1);
+    
+  RegisterSolid(leftWedge);
+    
+  G4LogicalVolume* leftWedgeLV = new G4LogicalVolume(leftWedge,               // solid
+                                                    material,                 // material
+                                                    name + "_leftwedge_lv");  // name
+  RegisterLogicalVolume(leftWedgeLV);
+  
+    
+  // Right wedge Solid and logical Volume
+  G4ExtrudedSolid* rightWedge = new G4ExtrudedSolid(name + "_rightwedge_solid",
+                                                    rightWedgeSide,
+                                                    degraderHeight*0.5,
+                                                    G4TwoVector(),1, G4TwoVector(), 1);
+      
+  RegisterSolid(rightWedge);
+      
+  G4LogicalVolume* rightWedgeLV = new G4LogicalVolume(rightWedge,             // solid
+                                                    material,                 // material
+                                                    name + "_rightwedge_lv"); // name
+  RegisterLogicalVolume(rightWedgeLV);
+  
+
   //Angle between hypotenuse and height (in the triangular wedge face)
   G4double theta = atan(wedgeBasewidth / (2.0*wedgeHeight));       
     
@@ -109,112 +182,61 @@ void BDSDegrader::Build()
   G4double overlap = (materialThickness/numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
   
   //Offsets for wedge overlap
-  G4double xoffsetLeft = overlap * -0.5;
-  G4double xoffsetRight = overlap * 0.5;
-
-  //Wedge positions
-  G4double zoffsetRightFullPos = wedgeBasewidth*0.5 + 0.5*lengthSafety;
-  G4double zoffsetRightHalfPos = wedgeBasewidth*0.5 + 2.0*wedgeBasewidth + 2.5*lengthSafety;
-  G4double zoffsetRightFullNeg = -1.0*wedgeBasewidth - 0.5*wedgeBasewidth - 1.5*lengthSafety;
-
-  G4double zoffsetLeftFullPos = wedgeBasewidth*0.5 + 1.0*wedgeBasewidth + 1.5*lengthSafety;
-  G4double zoffsetLeftFullNeg = wedgeBasewidth*-0.5 - 0.5*lengthSafety;
-  G4double zoffsetLeftHalfNeg = -2.0*wedgeBasewidth - 0.5*wedgeBasewidth - 2.5*lengthSafety;    
+  G4double xoffsetLeft = overlap * 0.5;
+  G4double xoffsetRight = overlap * -0.5;
     
-
+ 
   //Rotation  of wedges. Left taken to be +VE x direction, right is -VE x direction.
   G4RotationMatrix* rightRot = new G4RotationMatrix;  
   rightRot->rotateX(M_PI/2.0);  
   RegisterRotationMatrix(rightRot);
 
   G4RotationMatrix* leftRot = new G4RotationMatrix;  
-  leftRot->rotateX(M_PI/2.0);
+  leftRot->rotateX(M_PI/-2.0);
   leftRot->rotateZ(M_PI);
   RegisterRotationMatrix(leftRot);
 
     
   //Wedge color
   G4VisAttributes* degraderVisAttr = new G4VisAttributes(G4Colour(0.625,0.625,0.625));
-  halfWedgeLV->SetVisAttributes(degraderVisAttr);
-  fullWedgeLV->SetVisAttributes(degraderVisAttr);
+  leftWedgeLV->SetVisAttributes(degraderVisAttr);
+  rightWedgeLV->SetVisAttributes(degraderVisAttr);
 
   RegisterVisAttributes(degraderVisAttr);
     
+    
 
   //Translation of individual wedge components
-  G4ThreeVector transLeftFullPos(xoffsetLeft, 0, zoffsetLeftFullPos);
-  G4ThreeVector transLeftFullNeg(xoffsetLeft, 0, zoffsetLeftFullNeg);
-  G4ThreeVector transLeftHalfNeg(xoffsetLeft, 0, zoffsetLeftHalfNeg);
-
-  G4ThreeVector transRightFullPos(xoffsetRight, 0, zoffsetRightFullPos);
-  G4ThreeVector transRightHalfPos(xoffsetRight, 0, zoffsetRightHalfPos);
-  G4ThreeVector transRightFullNeg(xoffsetRight, 0, zoffsetRightFullNeg);
-
+  G4ThreeVector rightwedgepos(xoffsetLeft, 0, 0);
+  G4ThreeVector leftwedgepos(xoffsetRight, 0, 0);
+  
     
   //Placement of individual wedge components
-  G4PVPlacement* leftFullPosPV = new G4PVPlacement(leftRot,           // rotation
-                                            transLeftFullPos,         // position
-                                            fullWedgeLV,              // its logical volume
-                                            name + "_leftfullpos_pv", // its name
-                                            containerLogicalVolume,   // its mother  volume
-                                            false,                    // no boolean operation
-                                            0,                        // copy number  
+  G4PVPlacement* leftwedgePV = new G4PVPlacement(leftRot,           // rotation
+                                            leftwedgepos,           // position
+                                            leftWedgeLV,            // its logical volume
+                                            name + "_leftwedge_pv", // its name
+                                            containerLogicalVolume, // its mother  volume
+                                            false,                  // no boolean operation
+                                            0,                      // copy number
                                             checkOverlaps);
 
-  G4PVPlacement* leftFullNegPV = new G4PVPlacement(leftRot,           // rotation
-                                            transLeftFullNeg,         // position
-                                            fullWedgeLV,              // its logical volume
-                                            name + "_leftfullneg_pv", // its name
-                                            containerLogicalVolume,   // its mother  volume
-                                            false,                    // no boolean operation
-                                            0,                        // copy number  
-                                            checkOverlaps);
-    
-  G4PVPlacement* leftHalfNegPV = new G4PVPlacement(leftRot,           // rotation
-                                            transLeftHalfNeg,         // position
-                                            halfWedgeLV,              // its logical volume
-                                            name + "_lefthalfneg_pv", // its name
-                                            containerLogicalVolume,   // its mother  volume
-                                            false,                    // no boolean operation
-                                            0,                        // copy number  
-                                            checkOverlaps);
-    
+
     
         
-  G4PVPlacement* rightFullPosPV = new G4PVPlacement(rightRot,         // rotation
-                                            transRightFullPos,        // position
-                                            fullWedgeLV,              // its logical volume
-                                            name + "_rightfullpos_pv",// its name
-                                            containerLogicalVolume,   // its mother  volume
-                                            false,                    // no boolean operation
-                                            0,                        // copy number  
+  G4PVPlacement* rightwedgePV = new G4PVPlacement(rightRot,         // rotation
+                                            rightwedgepos,          // position
+                                            rightWedgeLV,           // its logical volume
+                                            name + "_rightwedge_pv",// its name
+                                            containerLogicalVolume, // its mother  volume
+                                            false,                  // no boolean operation
+                                            0,                      // copy number
                                             checkOverlaps);
     
-  G4PVPlacement* rightHalfPosPV = new G4PVPlacement(rightRot,         // rotation
-                                            transRightHalfPos,        // position
-                                            halfWedgeLV,              // its logical volume
-                                            name + "_righthalfpos_pv",// its name
-                                            containerLogicalVolume,   // its mother  volume
-                                            false,                    // no boolean operation
-                                            0,                        // copy number  
-                                            checkOverlaps);
+
     
-  G4PVPlacement* rightFullNegPV = new G4PVPlacement(rightRot,         // rotation
-                                            transRightFullNeg,        // position
-                                            fullWedgeLV,              // its logical volume
-                                            name + "_rightfullneg_pv",// its name
-                                            containerLogicalVolume,   // its mother  volume
-                                            false,                    // no boolean operation
-                                            0,                        // copy number  
-                                            checkOverlaps);
+  RegisterPhysicalVolume(leftwedgePV);
     
-    
-  RegisterPhysicalVolume(leftFullPosPV);
-  RegisterPhysicalVolume(leftFullNegPV);
-  RegisterPhysicalVolume(leftHalfNegPV);
-    
-  RegisterPhysicalVolume(rightFullPosPV);
-  RegisterPhysicalVolume(rightHalfPosPV);
-  RegisterPhysicalVolume(rightFullNegPV);
+  RegisterPhysicalVolume(rightwedgePV);
 
 }
