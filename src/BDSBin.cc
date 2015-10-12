@@ -12,6 +12,7 @@ BDSBin::BDSBin(G4double inXmin, G4double inXmax)
   xmin  = inXmin;
   xmax  = inXmax;
   xmean = (xmax + xmin)/2.0;
+  length= xmax - xmin;
   /* // this creates a lot of output!
 #ifdef BDSDEBUG
   G4cout << "New bin -> xmin: " << std::setw(7) << xmin 
@@ -29,7 +30,7 @@ BDSBin BDSBin::operator+= (const G4double& weight)
   return *this;
 }
 
-bool BDSBin::InRange(G4double x)
+bool BDSBin::InRange(G4double x) const
 {
   if ( x >= xmin && x < xmax)
     {return true;}

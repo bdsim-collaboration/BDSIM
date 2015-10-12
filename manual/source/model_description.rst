@@ -105,7 +105,7 @@ Useful Commands
 ---------------
 
 * :code:`print;` prints all elements
-* :code:`print, line;` prints all elements in line
+* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
 * :code:`stop;` or `return;` exists parser
@@ -161,6 +161,23 @@ The following elements may be defined
 .. TODO add screen, awakescreen
 
 These are detailed in the following sections.
+
+Simple example, extend and copy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Example::
+
+  d1: drift, l=5*m;
+
+This defines a drift element with name `d1` and a length of 5 metres. The definition can later be changed or extended with::
+
+  d1: l=3*m, aper=0.1*m;
+
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+
+  d2: d1, l=2*m;
+
+Element `d2` is a drift with the properties of `d1` and a length of 2 metres. Note that if `d1` is changed again, `d2` will **not** change.
 
 Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -693,7 +710,7 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
 
-MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
+.. MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
 --------------------------
@@ -1215,10 +1232,14 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositronsP                | precision production cuts for positrons               |
 +----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | standard overall production cuts for protons          |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtonsP                  | precision production cuts for protons                 |
++----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
 | defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 0.7 mm) [m]                              |
+|                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
 | gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
 |                                  | muon process                                          |

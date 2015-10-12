@@ -59,7 +59,7 @@ int main(int argc,char** argv)
   // print header
   G4cout<<"bdsim : version 0.8.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
-  G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
+  G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
   /* Initialize executable command line options reader object */
@@ -93,7 +93,7 @@ int main(int argc,char** argv)
 
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (execOptions->SetSeedState()) //optionally load the seed state from file
+  if (execOptions->SetSeedState()) //optionally load the seed state from file (separate from seed)
     {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
   if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
     {BDSRandom::WriteSeedState();} //write the current state once set / loaded
@@ -265,9 +265,7 @@ int main(int argc,char** argv)
       visManager.StartSession(argc,argv);
     }
   else           // Batch mode
-    { 
-      runManager->BeamOn(globalConstants->GetNumberToGenerate());
-    }
+    {runManager->BeamOn(globalConstants->GetNumberToGenerate());}
 
   //
   // job termination

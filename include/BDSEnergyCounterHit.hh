@@ -1,11 +1,5 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSEnergyCounterHit_h
-#define BDSEnergyCounterHit_h 1
+#ifndef BDSENERGYCOUNTERHIT_H
+#define BDSENERGYCOUNTERHIT_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
@@ -31,7 +25,8 @@ public:
 		      G4double XIn               = 0,    // global x
 		      G4double YIn               = 0,    // global y
 		      G4double ZIn               = 0,    // global x
-		      G4double SIn               = 0,    // s coordinate
+		      G4double SBeforeIn         = 0,    // s of pre step coordinate
+		      G4double SAfterIn          = 0,    // s of post step coordinate
 		      G4double xIn               = 0,    // local x
 		      G4double yIn               = 0,    // local y
 		      G4double zIn               = 0,    // local z
@@ -40,8 +35,9 @@ public:
 		      G4double weightIn          = 1,    // weight
 		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
-		      G4int    eventNoIn         = 0);   // event number
-
+		      G4int    eventNoIn         = 0,    // event number
+		      G4double stepLengthIn      = 0);
+  
   ~BDSEnergyCounterHit();
   
   inline void* operator new(size_t) ;
@@ -53,7 +49,9 @@ public:
   inline G4double GetX()               const; 
   inline G4double GetY()               const;
   inline G4double GetZ()               const;
-  inline G4double GetS()               const;
+  inline G4double GetS()               const; ///< returns average s position
+  inline G4double GetSBefore()         const;
+  inline G4double GetSAfter()          const;
   inline G4double Getx()               const; 
   inline G4double Gety()               const;
   inline G4double Getz()               const; 
@@ -63,6 +61,7 @@ public:
   inline G4bool   GetPrecisionRegion() const;
   inline G4int    GetTurnsTaken()      const;
   inline G4int    GetEventNo()         const;
+  inline G4double GetStepLength()      const;
   
 private:
   /// Private default constructor (not implemented) as the constructor
@@ -72,21 +71,24 @@ private:
 
   G4int    copyNumber;
   G4double energy;
-  // global coordinates
+  /// global coordinates
   G4double X;
   G4double Y;
   G4double Z;
-  G4double S;
-  // local coordinates
+  /// s coordinate of pre step and post step point
+  G4double SBefore;
+  G4double SAfter;
+  /// local coordinates
   G4double x;
   G4double y;
   G4double z;
   G4String name;
   G4int    partID;
   G4double weight;
-  G4bool   precisionRegion; //Whether or not the hit is in the precision region
+  G4bool   precisionRegion; ///< Whether or not the hit is in the precision region
   G4int    turnsTaken;
   G4int    eventNo;
+  G4double stepLength;
 };
 
 inline G4int    BDSEnergyCounterHit::GetCopyNumber() const
@@ -108,7 +110,13 @@ inline G4double BDSEnergyCounterHit::GetZ() const
 {return Z;}
 
 inline G4double BDSEnergyCounterHit::GetS() const
-{return S;}
+{return (SAfter + SBefore)/2.;}
+
+inline G4double BDSEnergyCounterHit::GetSAfter() const
+{return SAfter;}
+
+inline G4double BDSEnergyCounterHit::GetSBefore() const
+{return SBefore;}
 
 inline G4double BDSEnergyCounterHit::Getx() const
 {return x;}
@@ -136,6 +144,9 @@ inline G4int    BDSEnergyCounterHit::GetTurnsTaken() const
 
 inline G4int    BDSEnergyCounterHit::GetEventNo() const
 {return eventNo;}
+
+inline G4double BDSEnergyCounterHit::GetStepLength() const
+{return stepLength;}
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
 {

@@ -18,10 +18,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <regex>
-#include <sstream>
 #include <string>
 #include <vector>
-#
+
 BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
   : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
   

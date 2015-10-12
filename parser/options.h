@@ -42,7 +42,7 @@ struct Options
   double beamEnergy;
 
   /// initial beam centroid
-  double X0, Y0, Z0;
+  double X0, Y0, Z0, S0;
   double Xp0, Yp0, Zp0;
   double T0;
   double E0;
@@ -164,8 +164,10 @@ struct Options
   double   prodCutPositrons;
   double   prodCutPositronsP;
   double   prodCutPositronsA;
-
-  double   prodCutHadrons;  
+  double   prodCutProtons;
+  double   prodCutProtonsP;
+  double   prodCutProtonsA;
+  double   prodCutHadrons; // for backwards compatability
 
   /// Tracking related parameters 
   double   maximumTrackingTime; ///< maximum tracking time per volume [s]
@@ -199,8 +201,6 @@ struct Options
   bool     stopSecondaries;
   bool     stopTracks;
 
-  std::string fifo; ///< fifo for BDSIM-placet
-  
   /// Ring parameters
   int      nturns;
 

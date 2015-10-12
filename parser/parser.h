@@ -40,6 +40,7 @@ extern int yylex();
 namespace GMAD {
 
 extern const int ECHO_GRAMMAR;
+extern const int PEDANTIC;
 
 const int MAX_EXPAND_ITERATIONS = 50;
 
@@ -83,11 +84,11 @@ void quit();
 int write_table(const struct Parameters& pars,std::string name, ElementType type, std::list<struct Element> *lst=nullptr);
 int expand_line(std::string name, std::string start, std::string end);
 /// insert a sampler into beamline_list
-void add_sampler(std::string name, std::string before, int before_count);
+void add_sampler(std::string name, int before_count);
 /// insert a cylindrical sampler into beamline_list
-void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
+void add_csampler(std::string name, int before_count, double length, double rad);
 /// insert a beam dumper into beamline_list
-void add_dump(std::string name, std::string before, int before_count);
+void add_dump(std::string name, int before_count);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
 /// insert xsecbias
@@ -95,6 +96,8 @@ void add_xsecbias(PhysicsBiasing& xsecbias);
 double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name);
 /// add element to temporary element sequence tmp_list
 void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
+/// copy properties from Element into params, returns element type as integer, returs _NONE if not found
+int copy_element_to_params(std::string elementName, struct Parameters& params);
 
 // parser functions
 int add_func(std::string name, double (*func)(double));
@@ -118,165 +121,22 @@ int write_table(const struct Parameters& params,std::string name, ElementType ty
 #endif
 
   struct Element e;
-  
-  e.type = type;
-  // common parameters for all elements
-  e.name = name;
-  e.lst = nullptr;
-  e.l = params.l;
+  e.set(params,name,type,lst);
 
-  //new aperture model
-  e.aper1 = params.aper1;
-  e.aper2 = params.aper2;
-  e.aper3 = params.aper3;
-  e.aper4 = params.aper4;
-  e.apertureType = params.apertureType;
-  e.beampipeMaterial = params.beampipeMaterial;
-
-  //magnet geometry
-  e.outerDiameter = params.outerDiameter;
-  e.outerMaterial = params.outerMaterial;
-  e.magnetGeometryType = params.magnetGeometryType;
-  
-  e.xsize = params.xsize;
-  e.ysize = params.ysize;
-  e.material = params.material;  
-  e.precisionRegion = params.precisionRegion;
-
-  e.offsetX = params.offsetX;
-  e.offsetY = params.offsetY;
-  // end of common parameters
-
-  // specific parameters
-  // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
-
-  // for transform3ds, lasers and for tracker
-  e.xdir = params.xdir;
-  e.ydir = params.ydir;
-  e.zdir = params.zdir;
-
-  e.bias = params.bias;
-  
-  // BLM
-  if(params.blmLocZset)
-    e.blmLocZ = params.blmLocZ;
-  if(params.blmLocThetaset)
-    e.blmLocTheta = params.blmLocTheta;
-
-  // Drift
-  if(params.phiAngleInset)
-    e.phiAngleIn = params.phiAngleIn;
-  if(params.phiAngleOutset)
-    e.phiAngleOut = params.phiAngleOut;
-
-  // Drift, Drift
-  if(params.beampipeThicknessset)
-    e.beampipeThickness = params.beampipeThickness;
-  // RF
-  e.gradient = params.gradient;
-  // Degrader
-  e.materialThickness = params.materialThickness;
-  // Degrader
-  e.numberWedges = params.numberWedges;
-  // Degrader
-  e.wedgeHeight = params.wedgeHeight;
-  // Degrader
-  e.degraderHeight = params.degraderHeight;
-  // SBend, RBend, (Awake)Screen
-  e.angle = params.angle;
-  // SBend, RBend, HKick, VKick, Quad
-  e.k1 = params.k1;
-  // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
-  e.B = params.B;
-  // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
-  if(params.tiltset) e.tilt = params.tilt;
-  // Quad
-  e.spec = params.spec;
-  // Sext
-  if(params.k2set) {
-    if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
-    else {
-      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Octupole
-  if(params.k3set) {
-    if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
-    else {
-      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Decapole
-  if(params.k4set) {
-    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
-    else {
-      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Multipole
-  if(params.knlset)
-    e.knl = params.knl;
-  if(params.kslset)
-    e.ksl = params.ksl;
-  // Solenoid
-  e.ks = params.ks;
-  // Laser
-  e.waveLength = params.waveLength;
-  // Element, Tunnel
-  e.geometryFile = params.geometry;
-  // Element
-  e.bmapFile = params.bmap;
-  if(params.bmapZOffsetset)
-    e.bmapZOffset = params.bmapZOffset;
-  // Transform3D
-  e.theta = params.theta;
-  e.phi = params.phi;
-  e.psi = params.psi;
-  // (Awake) Screen
-  e.tscint = params.tscint;
-  e.scintmaterial = params.scintmaterial;
-  // Screen
-  e.airmaterial = params.airmaterial;
-  // AwakeScreen
-  e.twindow = params.twindow;
-  e.windowmaterial = params.windowmaterial;
-
-  // overwriting of other parameters or specific printing
   switch(type) {
 
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    e.lst = lst;
-    break;
-
   case ElementType::_MATERIAL:
-    e.A = params.A;
-    e.Z = params.Z;
-    e.density = params.density;
-    e.temper = params.temper;
-    e.pressure = params.pressure;
-    e.state = params.state;
-    e.components = params.components;
-    e.componentsWeights = params.componentsWeights;
-    e.componentsFractions = params.componentsFractions;
     material_list.push_back(e);
     return 0;
 
   case ElementType::_ATOM:
-    e.A = params.A;
-    e.Z = params.Z;
-    e.symbol = params.symbol;
-    atom_list.push_back(e);
-    return 0;
-
-  case ElementType::_AWAKESCREEN:
-    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
-    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
-    break;
+   atom_list.push_back(e);
+   return 0;
 
   default:
     break;
   }
+  
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
 
@@ -456,63 +316,85 @@ int expand_line(std::string name, std::string start, std::string end)
   return 0;
 }
 
-void add_sampler(std::string name, std::string before, int before_count)
+// anonymous namespace for helper function
+ namespace {
+   /// add element to beamline
+   void add_element(struct Element& e, std::string before, int before_count)
+   {
+     // if before_count equal to -1 add to all element instances
+     if (before_count==-1)
+       {
+	 auto itPair = beamline_list.equal_range(before);
+	 if (itPair.first==itPair.second) {
+	   std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
+	   exit(1);
+	 }
+	 for (auto it = itPair.first; it!= itPair.second; ++it) 
+	   {beamline_list.insert(it->second,e);}
+       }
+     else
+       {
+	 auto it = beamline_list.find(before,before_count);
+	 if (it==beamline_list.end()) {
+	   std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+	   exit(1);
+	 }
+	 beamline_list.insert(it,e);
+       }
+   }
+ }
+ 
+void add_sampler(std::string name, int before_count)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting sampler before "<<name;
+  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<std::endl;
 #endif
 
   struct Element e;
   e.type = ElementType::_SAMPLER;
-  e.name = name;
+  e.name = "Sampler_" + name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, name, before_count);
 }
 
-void add_csampler(std::string name, std::string before, int before_count, double length, double rad)
+void add_csampler(std::string name, int before_count, double length, double rad)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting csampler before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting csampler before "<<name;
+  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<std::endl;
 #endif
 
   struct Element e;
   e.type = ElementType::_CSAMPLER;
   e.l = length;
   e.r = rad;
-  e.name = name;
+  e.name = "CSampler_" + name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, name, before_count);
 }
 
-void add_dump(std::string name, std::string before, int before_count)
+void add_dump(std::string name, int before_count)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting dump before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting dump before "<<name;
+  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<std::endl;
 #endif
 
   struct Element e;
   e.type = ElementType::_DUMP;
-  e.name = name;
+  e.name = "Dump_" + name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, name, before_count);
 }
 
 void add_tunnel(Tunnel& tunnel)
@@ -545,7 +427,7 @@ double property_lookup(FastList<Element>& el_list, std::string element_name, std
   std::list<struct Element>::const_iterator iterEnd = el_list.end();
 
   if(it == iterEnd) {
-    std::cerr << "parser.h> Error: unknown element \"" << element_name << "\". Returning 0." << std::endl; 
+    std::cerr << "parser.h> Error: unknown element \"" << element_name << "\"." << std::endl; 
     exit(1);
   }
 
@@ -574,6 +456,29 @@ void add_element_temp(std::string name, int number, bool pushfront, ElementType 
       tmp_list.push_back(e);
     }
   }
+}
+
+int copy_element_to_params(std::string elementName, struct Parameters& params)
+{
+  int type;
+#ifdef BDSDEBUG
+  std::cout << "newinstance : VARIABLE -- " << elementName << std::endl;
+#endif
+  std::list<struct Element>::iterator it = element_list.find(elementName);
+  std::list<struct Element>::iterator iterEnd = element_list.end();
+  if(it == iterEnd)
+    {
+      std::cout << "type " << elementName << " has not been defined" << std::endl;
+      if (PEDANTIC) exit(1);
+      type = static_cast<int>(ElementType::_NONE);
+    }
+  else
+    {
+      // inherit properties from the base type
+      type = static_cast<int>((*it).type);
+      params.inherit_properties(*it);
+    }
+  return type;
 }
 
 // ******************************************************

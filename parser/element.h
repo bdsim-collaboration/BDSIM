@@ -9,6 +9,8 @@ namespace GMAD {
 
 enum class ElementType;
 
+struct Parameters;
+ 
 /**
  * @brief Element class
  * 
@@ -17,27 +19,47 @@ enum class ElementType;
 
 struct Element {
   ElementType type; ///< element enum
-  int precisionRegion;
   std::string name;
 
-  double l; ///< l in metres
-  double ks,k0,k1,k2,k3,k4,angle;
+  double l; ///< length in metres
+  double ks; ///< solenoid
+  double k0; ///< dipole
+  double k1; ///< quadrupole
+  double k2; ///< sextupole
+  double k3; ///< octupole
+  double k4; ///< decapole
+  double angle; ///< bending angle
 
-  // beampipe information
+  ///@{ beampipe information, new aperture model
   double beampipeThickness;
-  double aper1, aper2, aper3, aper4; // new aperture model
+  double aper1;
+  double aper2;
+  double aper3;
+  double aper4;
   std::string apertureType;
   std::string beampipeMaterial;
-
+  ///@}
+  
   // magnet geometry
   std::string magnetGeometryType;
   std::string outerMaterial;
   double outerDiameter;
 
-  double tilt,xsize,ysize,r,B, phiAngleIn, phiAngleOut;
-  double offsetX, offsetY;
-  double tscint, twindow, bmapZOffset; 
-  double xdir, ydir, zdir, waveLength; ///< for laser wire and 3d transforms
+  double tilt; ///< tilt
+  double xsize, ysize; ///< collimator aperture or laser spotsize for laser
+  double r; ///< radius, i.e cylindrical sampler
+  double B; ///< magnetic field
+  double phiAngleIn; ///< incoming bending angle for element
+  double phiAngleOut; ///< outgoing bending angle for element
+  double offsetX; ///< offset X
+  double offsetY; ///< offset Y
+  double tscint; ///<thickness of scintillating part of screen
+  double twindow; ///<thickness of window
+  double bmapZOffset; ///< offset of the field map magnet field
+  double xdir;
+  double ydir;
+  double zdir;
+  double waveLength; ///< for laser wire and 3d transforms
   double gradient; ///< for rf cavities
   double phi, theta, psi; ///< for 3d transforms
   double numberWedges; ///< for degrader
@@ -45,28 +67,32 @@ struct Element {
   double degraderHeight; ///< for degrader
   double materialThickness; ///< for degrader
 
-  std::list<double> knl;
-  std::list<double> ksl;
+  std::list<double> knl; ///< multipole expansion coefficients
+  std::list<double> ksl; ///< skew multipole expansion
 
-  ///List of beam loss monitor locations
+  ///@{List of beam loss monitor locations
   std::list<double> blmLocZ;
   std::list<double> blmLocTheta;
-
+  ///@}
+  
   /// physics biasing process
   std::string bias;
   
-  /// material properties
-  double A; 
+  int precisionRegion; ///which precision physics region the element is in (0 = none)
+
+  ///@{ material properties
+  double A; ///< g*mol^-1
   double Z; 
-  double density; 
-  double temper;
-  double pressure;
-  std::string state;
+  double density; ///< g*cm-3 
+  double temper; ///< kelvin
+  double pressure; ///< atm
+  std::string state; ///< "solid", "liquid", or "gas"
   std::string symbol;
   std::list<std::string> components;
   std::list<double> componentsFractions;
   std::list<int> componentsWeights;
-
+  ///@}
+  
   std::string geometryFile;
   std::string bmapFile;
   std::string material;
@@ -88,6 +114,11 @@ struct Element {
   /// only for properties with type int/double!
   double property_lookup(std::string property_name)const;
 
+  ///@{ set method from Parameters structure
+  void set(const struct Parameters& params);
+  void set(const struct Parameters& params,std::string nameIn, ElementType typeIn, std::list<struct Element> *lst);
+  ///@}
+  
   /// constructor
   Element();
 };

@@ -46,7 +46,6 @@
 #include "parser/elementtype.h"
 
 #include <cmath>
-#include <sstream>
 #include <string>
 
 #ifdef BDSDEBUG
@@ -179,6 +178,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   // if it both didn't exist and has been constructed
   if (element)
     {
+      element->SetPrecisionRegion(_element.precisionRegion);
       element->Initialise();
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(element);
     }
@@ -316,9 +316,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
   // prepare one name for all that makes sense
-  std::stringstream name;
-  name << _element.name << "_1_of_" << nSbends;
-  std::string thename = name.str();
+  std::string thename = _element.name + "_1_of_" + std::to_string(nSbends);
   //calculate their angle and length
   double semiangle  = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;

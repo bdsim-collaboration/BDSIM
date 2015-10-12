@@ -23,7 +23,7 @@ void BDSSampler::AddExternalSampler(G4String name) { nSamplers++; outputNames.pu
 
 BDSSampler::BDSSampler(G4String name,
 		       G4double length):
-  BDSAcceleratorComponent("Sampler_"+name, length, 0, "sampler")
+  BDSAcceleratorComponent(name, length, 0, "sampler")
 {
   nThisSampler= nSamplers + 1;
   nSamplers++;

@@ -27,7 +27,7 @@
     */
 
     int execute = 1;
-    int element_count = 1; // for samplers , ranges etc.
+    int element_count = -1; // for samplers , ranges etc. -1 means add to all
   }
 %}
 
@@ -66,7 +66,6 @@
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
-%type <ival> extension
 %type <ival> newinstance
 %type <symp> sample_options
 %type <symp> csample_options
@@ -328,19 +327,6 @@ decl : VARIABLE ':' marker
 	     tmp_list.clear();
 	   }
        }
-     | VARIABLE ':' extension
-       {
-	 if(execute)
-	   {
-	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
-	     if(type != ElementType::_NONE)
-	       {
-		 write_table(params,$1->name,type);
-	       }
-	     params.flush();
-	   }
-       }
      | VARIABLE ':' newinstance
        {
          if(execute)
@@ -354,7 +340,7 @@ decl : VARIABLE ':' marker
 	     params.flush();
 	   }
        }
-       | VARIABLE ',' parameters
+       | VARIABLE ':' parameters
        {
 	 if(execute)
 	   {
@@ -363,19 +349,13 @@ decl : VARIABLE ':' marker
 	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
-		 std::cout << "type " << $1->name << " has not been defined" << std::endl;
+		 std::cout << "element " << $1->name << " has not been defined" << std::endl;
 		 if (PEDANTIC) exit(1);
 	       }
 	     else
 	       {
-		 // inherit properties from the base type
-		 params.inherit_properties(*it);
-	       }
-		
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << (*it).type << std::endl;
-	     if((*it).type != ElementType::_NONE)
-	       {
-		 write_table(params,$1->name,(*it).type);
+		 // add and overwrite properties if set
+		 (*it).set(params);
 	       }
 	     params.flush();
 	   }
@@ -475,51 +455,17 @@ error_noparams : DRIFT;
                | TUNNEL;
                | XSECBIAS;
 
-extension : VARIABLE ',' parameters
+newinstance : VARIABLE ',' parameters
             {
-	      if(execute)
-		{	 
-		  if(ECHO_GRAMMAR) std::cout << "extension : VARIABLE parameters   -- " << $1->name << std::endl;
-		  std::list<struct Element>::iterator it = element_list.find($1->name);
-		  std::list<struct Element>::iterator iterEnd = element_list.end();
-		  if(it == iterEnd)
-		    {
-		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
-		      if (PEDANTIC) exit(1);
-		      $$ = static_cast<int>(ElementType::_NONE);
-		    }
-		  else
-		    {
-		      // inherit properties from the base type
-		      $$ = static_cast<int>((*it).type);
-		      params.inherit_properties(*it);
-		    }
-		  
-		}
+	      if(execute) {
+		$$ = copy_element_to_params($1->name,params);
+	      }
 	    }
-;
-
-newinstance : VARIABLE 
-            {
-	      if(execute)
-		{	 
-		  std::cout << "newinstance : VARIABLE -- " << $1->name << std::endl;
-		  std::list<struct Element>::iterator it = element_list.find($1->name);
-		  std::list<struct Element>::iterator iterEnd = element_list.end();
-		  if(it == iterEnd)
-		    {
-		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
-		      if (PEDANTIC) exit(1);
-		      $$ = static_cast<int>(ElementType::_NONE);
-		    }
-		  else
-		    {
-		      // inherit properties from the base type
-		      $$ = static_cast<int>((*it).type);
-		      params.inherit_properties(*it);
-		    }
-		  
-		}
+            | VARIABLE
+	    {
+	      if(execute) {
+		$$ = copy_element_to_params($1->name,params);
+	      }
 	    }
 ;
 
@@ -1061,8 +1007,8 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler($3->name,$3->name, element_count);
-		element_count = 1;
+		add_sampler($3->name, element_count);
+		element_count = -1;
 		params.flush();
 	      }
           }
@@ -1071,11 +1017,20 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-//SPM		add_csampler("sampler",$3->name, element_count,params.l, params.r);
-		add_csampler($3->name,$3->name, element_count,params.l, params.r);
-		element_count = 1;
+		add_csampler($3->name, element_count,params.l, params.r);
+		element_count = -1;
 		params.flush();
 	      }
+          }
+        | DUMP ',' sample_options //  options for beam dump
+          {
+            if(execute)
+              {
+                if(ECHO_GRAMMAR) printf("command -> DUMP\n");
+                add_dump($3->name, element_count);
+                element_count = -1;
+                params.flush();
+              }
           }
         | TUNNEL ',' tunnel_options // tunnel
           {
@@ -1093,16 +1048,6 @@ command : STOP             { if(execute) quit(); }
 		add_xsecbias(xsecbias);
 	      }
           }
-        | DUMP ',' sample_options //  options for beam dump 
-          {                                                   
-            if(execute)                                       
-              {                                               
-                if(ECHO_GRAMMAR) printf("command -> DUMP\n"); 
-                add_dump($3->name,$3->name, element_count);     
-                element_count = 1;                            
-                params.flush();                               
-              }                                               
-          }                                                   
 
 //| PRINTF '(' fmt ')' { if(execute) printf($3,$5); }
 ;

@@ -28,18 +28,18 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 G4int            precisionRegionIn,
+						 G4bool           precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
-  nTimesPlaced(0),
   angle(angleIn),
   precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
   readOutLV(nullptr),
-  acceleratorVacuumLV(nullptr)
+  acceleratorVacuumLV(nullptr),
+  copyNumber(-1) // -1 initialisation since it will be incremented when placed 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;

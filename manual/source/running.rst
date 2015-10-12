@@ -55,8 +55,8 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --vis_debug                | display all volumes in visualiser            |
 +----------------------------+----------------------------------------------+
-| --vis_mac=<file>           | file with the visualisation macro script     |
-|                            | default provided by BDSIM openGL (OGLSQt))   |
+| --vis_mac=<file>           | file with the visualisation macro script,    |
+|                            | default provided by BDSIM: openGL (OGLSQt))  |
 +----------------------------+----------------------------------------------+
 
 BDSIM can be run in one of two ways, `interactively`_, or `in batch mode`_, which

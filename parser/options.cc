@@ -31,7 +31,7 @@ Options::Options()
   ffact                 = 1.0;
   beamEnergy            = 0.0;
   
-  X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
+  X0 = 0.0, Y0 = 0.0, Z0 = 0.0, S0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
   T0 = 0.0;
   E0 = 0.0;
@@ -99,9 +99,9 @@ Options::Options()
   samplerDiameter     = 5; // m
 
   // beam loss monitors geometry
-  blmRad              = 0.05;
-  blmLength           = 0.18;
-  sensitiveBLMs               = 1;
+  blmRad                   = 0.05;
+  blmLength                = 0.18;
+  sensitiveBLMs            = 1;
 
   // physics processes
   gammaToMuFe              = 1;
@@ -122,17 +122,20 @@ Options::Options()
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
-  defaultRangeCut          = 7e-4;
-  prodCutPhotons           = 7e-4;
-  prodCutPhotonsP          = 7e-4;
-  prodCutPhotonsA          = 1;
-  prodCutElectrons         = 7e-4;
-  prodCutElectronsP        = 7e-4;
-  prodCutElectronsA        = 1;
-  prodCutPositrons         = 7e-4;
-  prodCutPositronsP        = 7e-4;
-  prodCutPositronsA        = 1;
-  prodCutHadrons           = 1e-3;
+  defaultRangeCut          = 1e-3;
+  prodCutPhotons           = 1e-3;
+  prodCutPhotonsP          = 1e-3;
+  prodCutPhotonsA          = 1e-3;
+  prodCutElectrons         = 1e-3;
+  prodCutElectronsP        = 1e-3;
+  prodCutElectronsA        = 1e-3;
+  prodCutPositrons         = 1e-3;
+  prodCutPositronsP        = 1e-3;
+  prodCutPositronsA        = 1e-3;
+  prodCutProtons           = 1e-3;
+  prodCutProtonsP          = 1e-3;
+  prodCutProtonsA          = 1e-3;
+  prodCutHadrons           = prodCutProtons;
 
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
@@ -164,8 +167,6 @@ Options::Options()
   storeNeutronTrajectories = false;
   storeTrajectory          = false;
   
-  fifo                     = "";
-
   // circular options
   nturns                   = 1;
 
@@ -203,6 +204,7 @@ void Options::set_value(std::string name, double value )
   if(name == "X0" )    {X0  = value; return;}
   if(name == "Y0" )    {Y0  = value; return;}
   if(name == "Z0" )    {Z0  = value; return;}
+  if(name == "S0" )    {S0  = value; return;}
   if(name == "T0" )    {T0  = value; return;}
   if(name == "Xp0" )   {Xp0 = value; return;}
   if(name == "Yp0" )   {Yp0 = value; return;}
@@ -362,7 +364,14 @@ void Options::set_value(std::string name, double value )
   if(name == "prodCutPositrons" )        {prodCutPositrons = value; return; }
   if(name == "prodCutPositronsP" )       {prodCutPositronsP = value; return; }
   if(name == "prodCutPositronsA" )       {prodCutPositronsA = value; return; }
-  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; } 
+  if(name == "prodCutProtons" )          {prodCutProtons  = value; return; }
+  if(name == "prodCutProtonsP" )         {prodCutProtonsP = value; return; }
+  if(name == "prodCutProtonsA" )         {prodCutProtonsA = value; return; }
+  if(name == "prodCutHadrons" )
+    {
+      std::cout << "Warning: \"prodCutHadrons\" is deprecated in favour of \"prodCutProtons\"" << std::endl;
+      prodCutProtons = value; return;
+    }
   
   // twiss parameters
   if(name == "betx" ) { betx = value; return; }
@@ -431,8 +440,6 @@ void Options::set_value(std::string name, std::string value )
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; }
 
-  // options for external code interfaces
-  if(name == "fifo") { fifo = value; return; }
   std::cerr << "Error: parser.h> unknown option \"" << name << "\" with value " << value  << std::endl; 
   exit(1);
 }

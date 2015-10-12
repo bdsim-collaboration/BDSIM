@@ -9,6 +9,8 @@
 #include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
 
+#include <string>
+
 BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG
@@ -98,7 +100,7 @@ void BDSOutputROOT::Init()
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
   if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
-    basefilename += "_" + BDS::StringFromInt(outputFileNumber);
+    basefilename += "_" + std::to_string(outputFileNumber);
   }
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
@@ -114,7 +116,7 @@ void BDSOutputROOT::Init()
     }
   }
   
-  G4cout<<"Setting up new file: "<<filename<<G4endl;
+  G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler tree
@@ -212,6 +214,7 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("y",          &y,          "y/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("z",          &z,          "z/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("E",          &E,          "E/F"); // (GeV)
+  PrecisionRegionEnergyLossTree->Branch("stepLength", &stepLength, "stepLength/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("weight",     &weight,     "weight/F");
   PrecisionRegionEnergyLossTree->Branch("partID",     &part,       "partID/I");
   PrecisionRegionEnergyLossTree->Branch("volumeName", &volumeName, "volumeName/C");
@@ -271,7 +274,10 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   TTree* sTree=(TTree*)gDirectory->Get(Name);
-  if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
+  if(!sTree) {
+    G4String errorString = "BDSOutputROOT: ROOT Sampler " + Name + " not found!";
+    G4Exception(errorString.c_str(), "-1", FatalException, "");
+  }
   E0          = InitTotalEnergy/ CLHEP::GeV;
   x0          = InitX          / CLHEP::m;
   y0          = InitY          / CLHEP::m;
@@ -485,6 +491,7 @@ void BDSOutputROOT::FillHit(BDSEnergyCounterHit* hit)
   y          = hit->Gety()/CLHEP::m;
   z          = hit->Getz()/CLHEP::m;
   E          = hit->GetEnergy()/CLHEP::GeV;
+  stepLength = hit->GetStepLength()/CLHEP::m;
   weight     = hit->GetWeight();
   part       = hit->GetPartID();
   turnnumber = hit->GetTurnsTaken();
@@ -504,12 +511,15 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       FillHit(hit);
       EnergyLossTree->Fill();
       
-      if(hit->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	//name - convert to char array for root
-	G4String temp = hit->GetName();
-	strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
-	PrecisionRegionEnergyLossTree->Fill();
-      }
+      if(hit->GetPrecisionRegion())
+	{
+	  //Only the precision region fills this tree, preserving every hit, its position and weight,
+	  //instead of summing weighted energy in each beam line component.
+	  //name - convert to char array for root
+	  G4String temp = hit->GetName();
+	  strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
+	  PrecisionRegionEnergyLossTree->Fill();
+	}
     }
 }
 

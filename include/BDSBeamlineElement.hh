@@ -49,6 +49,7 @@ public:
   inline BDSAcceleratorComponent* GetAcceleratorComponent()      const;
   inline G4String                 GetName()                      const;
   inline G4String                 GetPlacementName()             const;
+  inline G4int                    GetCopyNo()                    const;
   inline G4LogicalVolume*         GetContainerLogicalVolume()    const;
   inline G4ThreeVector            GetPositionStart()             const;
   inline G4ThreeVector            GetPositionMiddle()            const;
@@ -89,6 +90,8 @@ private:
   /// the BDSAcceleratorComponent has been placed (increments the accelerator
   /// component placement counter).
   G4String          placementName;
+  /// identification number of AcceleratorComponent (0 for first volume of given type)
+  G4int             copyNumber;
   
   ///@{ Global coordinates for the start, middle and end of this beamline element
   G4ThreeVector     positionStart;
@@ -141,6 +144,9 @@ inline G4String                 BDSBeamlineElement::GetName() const
 
 inline G4String                 BDSBeamlineElement::GetPlacementName() const
 {return placementName;}
+
+inline G4int                    BDSBeamlineElement::GetCopyNo() const
+{return copyNumber;}
 
 inline G4LogicalVolume*         BDSBeamlineElement::GetContainerLogicalVolume() const
 {return component->GetContainerLogicalVolume();}

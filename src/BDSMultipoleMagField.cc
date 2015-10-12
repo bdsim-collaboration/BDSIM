@@ -5,9 +5,7 @@
 #include "G4AffineTransform.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ThreeVector.hh"
-#include "G4TransportationManager.hh"
 
-#include <iterator>
 #include <list>
 
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
@@ -43,7 +41,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   bs = ks;
   std::list<G4double>::iterator it;
   std::list<G4double>::iterator its;
-  int n(0);
+  int n = 0;
   for(it=bn.begin(), its=bs.begin();it!=bn.end();it++, its++)
     {
       n++;

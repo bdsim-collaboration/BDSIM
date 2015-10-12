@@ -54,7 +54,7 @@ public:
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  G4int            precisionRegion = 0,
+			  G4bool           precisionRegion = 0,
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr);
   
   virtual ~BDSAcceleratorComponent();
@@ -65,8 +65,11 @@ public:
   /// Get a string describing the type of the component
   G4String GetType() const;
 
-  /// 0 = no precision region, 1 = precision region 1, 2 = precision region 2.
-  G4int GetPrecisionRegion() const;
+  /// Whether precision output is to be recorded for this component
+  G4bool GetPrecisionRegion() const;
+
+  /// Set whether precision output should be recorded for this component
+  void   SetPrecisionRegion(G4bool precisionRegionIn);
 
   /// Access beam pipe information
   BDSBeamPipeInfo* GetBeamPipeInfo() const;
@@ -94,28 +97,23 @@ public:
   G4String GetParameterValueString(G4String spec, G4String name) const;
   ///@}
 
-  /// BDSComponentFactory creates BDSAcceleratorComponents
-  friend class BDSComponentFactory;
-  friend class BDSLine;
-  friend class BDSDetectorConstruction;
-  
   ///@{ This function should be revisited given recent changes (v0.7)
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
   std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
   ///@}
 
-  /// Increment (+1) the number of times this component has been placed (ie another copy used).
-  void  IncrementNTimesPlaced();
+  /// Increment (+1) the number of times this component has been copied.
+  void  IncrementCopyNumber();
 
-  /// Get the number of times this component has been placed.
-  G4int GetNTimesPlaced();
+  /// Get the number of times this component has been copied.
+  G4int GetCopyNumber()const;
 
-protected:
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
   /// can't be in constructor as calls virtual methods
   virtual void Initialise();
   
+protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
   /// apart from the container volume. The overridden Build() function can however, call
   /// make use of this function to call BuildContainerLogicalVolume() by calling
@@ -139,13 +137,10 @@ protected:
   const G4String   type;
   ///@}
   
-  /// Record of how many times this component has been placed (ie copies used).
-  G4int nTimesPlaced;
-
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
-  G4int            precisionRegion;
+  G4bool           precisionRegion;
   BDSBeamPipeInfo* beamPipeInfo;
   ///@}
 
@@ -192,6 +187,8 @@ private:
   /// This check protects against duplicate initialisation and therefore the potential
   /// memory leaks that would ensue.
   G4bool initialised;
+  /// Record of how many times this component has been copied.
+  G4int copyNumber;
 };
 
 inline G4String BDSAcceleratorComponent::GetName() const
@@ -209,8 +206,11 @@ inline G4double BDSAcceleratorComponent::GetAngle() const
 inline G4String BDSAcceleratorComponent::GetType() const
 {return type;}
 
-inline G4int BDSAcceleratorComponent::GetPrecisionRegion() const
+inline G4bool BDSAcceleratorComponent::GetPrecisionRegion() const
 {return precisionRegion;}
+
+inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
+{precisionRegion = precisionRegionIn;}
 
 inline BDSBeamPipeInfo* BDSAcceleratorComponent::GetBeamPipeInfo() const
 {return beamPipeInfo;}
@@ -221,11 +221,11 @@ inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes() const
 {return itsGFlashVolumes;}
 
-inline void BDSAcceleratorComponent::IncrementNTimesPlaced()
-{nTimesPlaced++;}
+inline void BDSAcceleratorComponent::IncrementCopyNumber()
+{copyNumber++;}
 
-inline G4int BDSAcceleratorComponent::GetNTimesPlaced()
-{return nTimesPlaced;}
+inline G4int BDSAcceleratorComponent::GetCopyNumber()const
+{return copyNumber;}
 
 inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
 {return readOutLV;}

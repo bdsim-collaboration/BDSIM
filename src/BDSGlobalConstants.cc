@@ -54,7 +54,7 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
-  itsParticleName=G4String(opt.particleName);
+  itsParticleName = G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
   if (itsBeamTotalEnergy == 0)
     {
@@ -125,7 +125,9 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
   itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
   itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
-  itsProdCutHadrons      = opt.prodCutHadrons      * CLHEP::m;
+  itsProdCutProtons      = opt.prodCutProtons      * CLHEP::m;
+  itsProdCutProtonsP     = opt.prodCutProtonsP     * CLHEP::m;
+  itsProdCutProtonsA     = opt.prodCutProtonsA     * CLHEP::m;
   
   // tracking accuracy
   itsDeltaChord          = opt.deltaChord          * CLHEP::m;
@@ -196,14 +198,6 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  isDumping = false;
-  isReading = false;
-  isReadFromStack = false;
-  itsFifo = opt.fifo;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
-  G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
-#endif
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();

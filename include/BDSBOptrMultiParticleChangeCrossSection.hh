@@ -18,15 +18,15 @@ public:
   
   void AddParticle(G4String particleName);
   void SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary);
-  void StartTracking( const G4Track* track );
+  void StartTracking( const G4Track* track ) override;
 
 private: 
   virtual G4VBiasingOperation* ProposeOccurenceBiasingOperation(const G4Track*                   track,
-								const G4BiasingProcessInterface* callingProcess);
+								const G4BiasingProcessInterface* callingProcess) override;
   // -- Methods not used:
-  virtual G4VBiasingOperation* ProposeFinalStateBiasingOperation(const G4Track*, const G4BiasingProcessInterface*)
+  virtual G4VBiasingOperation* ProposeFinalStateBiasingOperation(const G4Track*, const G4BiasingProcessInterface*) override
   {return 0;}
-  virtual G4VBiasingOperation* ProposeNonPhysicsBiasingOperation(const G4Track*, const G4BiasingProcessInterface*)
+  virtual G4VBiasingOperation* ProposeNonPhysicsBiasingOperation(const G4Track*, const G4BiasingProcessInterface*) override
   {return 0;}
   virtual void OperationApplied(const G4BiasingProcessInterface* callingProcess,
 				G4BiasingAppliedCase             biasingCase,

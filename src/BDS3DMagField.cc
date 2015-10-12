@@ -1,4 +1,6 @@
 //Based on the Geant4 example examples/advanced/purging_magnet/src/PurgMagTabulatedField3D.cc
+#include <cmath>
+#include <fstream>
 #include <iostream>
 
 #include "BDSGlobalConstants.hh"

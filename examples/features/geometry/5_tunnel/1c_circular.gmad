@@ -1,0 +1,3 @@
+include 1_long_straight.gmad;
+
+option, tunnelType="circular";
