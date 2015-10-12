@@ -16,18 +16,18 @@
 
 BDSKicker::BDSKicker(G4String            name,
 		     G4double            length,
-		     G4double            bField,
-		     G4double            bGrad,
-		     G4double            angle,
-		     G4bool              verticalKicker,
+		     G4double            bFieldIn,
+		     G4double            bGradIn,
+		     G4double            kickAngle,
+		     G4bool              verticalKickerIn,
 		     BDSBeamPipeInfo*    beamPipeInfo,
 		     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::hkicker, name, length,
 	    beamPipeInfo, magnetOuterInfo),
-  itsBField(bField),
-  itsBGrad(bGrad),
-  itsKickAngle(angle),
-  isVerticalKicker(verticalKicker)
+  bField(bFieldIn),
+  bGrad(bGradIn),
+  kickAngle(kickAngle),
+  verticalKicker(verticalKickerIn)
 {
   if (verticalKicker)
     {magnetType = BDSMagnetType::vkicker;}
@@ -68,7 +68,7 @@ void BDSKicker::BuildBeampipe()
   // still represents horizontal
 
   G4double kickerAper1, kickerAper2;
-  if (isVerticalKicker)
+  if (verticalKicker)
     {
       kickerAper1 = beamPipeInfo->aper2; //vertical is rotated in the end during placement
       kickerAper2 = beamPipeInfo->aper1; //so build aperture otherway - sway 1,2 - x,y
@@ -99,7 +99,7 @@ void BDSKicker::BuildBeampipe()
   // if it's a vertical kicker, rotate the beam pipe by 90 degrees
   // this also rotates the dipole stepper in the vacuum volume
   G4RotationMatrix* kickerRotation = new G4RotationMatrix();
-  if (isVerticalKicker)
+  if (verticalKicker)
     {kickerRotation->rotateZ(CLHEP::pi*0.5);}
   RegisterRotationMatrix(kickerRotation);
 
@@ -115,25 +115,27 @@ void BDSKicker::BuildBeampipe()
   RegisterPhysicalVolume(pipePV);
   
   // record extent of geometry
-  if (isVerticalKicker){
-    SetExtentX(beampipe->GetExtentY());
-    SetExtentY(beampipe->GetExtentX());
-  }
-  else {
-    SetExtentX(beampipe->GetExtentX());
-    SetExtentY(beampipe->GetExtentY());
-  }
+  if (verticalKicker)
+    {
+      SetExtentX(beampipe->GetExtentY());
+      SetExtentY(beampipe->GetExtentX());
+    }
+  else
+    {
+      SetExtentX(beampipe->GetExtentX());
+      SetExtentY(beampipe->GetExtentY());
+    }
   SetExtentZ(beampipe->GetExtentZ());
 } 
 
 void BDSKicker::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,itsBField,0.);
-  itsMagField = new BDSSbendMagField(Bfield,chordLength,itsKickAngle);
+  G4ThreeVector vectorBField(0.,bField,0.);
+  itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   BDSDipoleStepper* stepper = new BDSDipoleStepper(itsEqRhs);
-  stepper->SetBField(itsBField);
-  stepper->SetBGrad(itsBGrad);
+  stepper->SetBField(bField);
+  stepper->SetBGrad(bGrad);
   itsStepper = stepper; // assigned to base class pointer
 }
