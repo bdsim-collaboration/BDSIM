@@ -8,7 +8,6 @@
 #include "G4ThreeVector.hh"
 
 #include <ostream>
-#include <sstream>
 
 BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            positionStartIn,
@@ -46,10 +45,11 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   G4cout << G4endl;
 #endif
 
-  /// increase copy number
+  /// increase copy number (starts at -1)
   componentIn->IncrementCopyNumber();
+  copyNumber = componentIn->GetCopyNumber();
   /// placement name (starting at 0)
-  placementName = componentIn->GetName() + "_" + std::to_string(componentIn->GetCopyNumber());
+  placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;

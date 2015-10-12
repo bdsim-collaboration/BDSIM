@@ -48,7 +48,6 @@
 #include <iterator>
 #include <list>
 #include <map>
-#include <sstream>
 #include <vector>
 
 #ifdef BDSDEBUG
@@ -446,7 +445,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
 
       // get the placement details from the beamline component
-      G4int nCopy          = thecurrentitem->GetCopyNumber();
+      G4int nCopy          = (*it)->GetCopyNo();
       // reference rotation and position for the read out volume
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       G4Transform3D*    pt = (*it)->GetPlacementTransform();
