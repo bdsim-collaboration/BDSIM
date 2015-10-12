@@ -43,8 +43,7 @@ public:
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) override;
   /// write primary hit
-  virtual void WritePrimary(G4String samplerName, 
-			    G4double totalEnergy,
+  virtual void WritePrimary(G4double totalEnergy,
 			    G4double x0,
 			    G4double y0,
 			    G4double z0,
@@ -66,9 +65,8 @@ private:
 
   void Init(); ///< output initialisation
 
-  void BuildSamplerTree(G4String name);
+  TTree* BuildSamplerTree(G4String name); ///< build sampler TTree
   TFile* theRootOutputFile;
-  //  TTree *theLWCalorimeterTree;
   
   TTree* PrecisionRegionEnergyLossTree;
   TTree* EnergyLossTree;
@@ -99,8 +97,9 @@ private:
 
   /// fill members so that trees can be written
   void FillHit(BDSEnergyCounterHit* hit);
- 
-  void WriteRootHit(G4String Name, 
+
+  /// write hit to TTree with index TTreeindex
+  void WriteRootHit(G4String Name,
 		    G4double InitTotalenergy, 
 		    G4double InitX, 
 		    G4double InitY, 

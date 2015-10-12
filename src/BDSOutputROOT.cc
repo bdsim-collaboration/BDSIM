@@ -30,7 +30,7 @@ BDSOutputROOT::~BDSOutputROOT()
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
-void BDSOutputROOT::BuildSamplerTree(G4String name)
+TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -89,6 +89,8 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
   SamplerTree->Branch("trackID",    &track_id,   "trackID/I");
   SamplerTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
   SamplerTree->Branch("process",    &process);
+
+  return SamplerTree;
 }
 
 void BDSOutputROOT::Init()
@@ -327,8 +329,7 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   sTree->Fill();
 }
 
-void BDSOutputROOT::WritePrimary(G4String samplerName, 
-				 G4double totalEnergy,
+void BDSOutputROOT::WritePrimary(G4double totalEnergy,
 				 G4double x0,
 				 G4double y0,
 				 G4double z0,
@@ -344,7 +345,7 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  WriteRootHit(samplerName, 
+  WriteRootHit("Primaries",
 	       totalEnergy, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
