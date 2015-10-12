@@ -18,7 +18,7 @@
 //
 
 //=================================================================
-
+#define BDSDEBUG 1
 #include <list>
 #include <map>
 #include <vector>

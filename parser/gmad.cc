@@ -15,7 +15,7 @@
 #include <map>
 #include <string>
 #include <cstring>
-
+#define BDSDEBUG 1
 extern struct Parameters params;
 
 extern int yyparse();
@@ -88,6 +88,11 @@ void init()
 
 int gmad_parser(FILE *f)
 {
+
+#ifdef BDSDEBUG
+  std::cout << "gmad_parser>" << std::endl;
+#endif
+
   init();
 
   yyin=f; 
@@ -107,6 +112,7 @@ int gmad_parser(FILE *f)
 
   // clear temporary stuff
 
+  /*
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> clearing temporary lists" << std::endl;
 #endif
@@ -117,14 +123,24 @@ int gmad_parser(FILE *f)
     delete (*it).second;
   }
   symtab_map.clear();
+  */
+
+  //#ifdef BDSDEBUG
+  //#  std::cout << "gmad_parser> closing f" << std::endl;
+  //#endif
+
+  //  fclose(f);
+
+  //#ifdef BDSDEBUG
+  //  std::cout << "gmad_parser> closed f" << std::endl;
+  //#endif
+
 
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> finished" << std::endl;
 #endif
 
-  fclose(f);
-
-  return 0;
+    return 0;
 }
 
 int gmad_parser(std::string name)

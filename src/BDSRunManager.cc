@@ -11,7 +11,7 @@
 //
 // SPM: Altered BeamOn function to account for Placet synchronisation
 //
-
+#define BDSDEBUG 1
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
@@ -31,7 +31,13 @@ BDSRunManager* BDSRunManager::GetRunManager() {
 }
 
 BDSRunManager::BDSRunManager() { 
+#ifdef BDSDEBUG
+  std::cout << __FUNCTION__ << std::endl;
+#endif
   fRunManager = this;
+#ifdef BDSDEBUG
+  std::cout << __FUNCTION__ << "> end." << std::endl;
+#endif
 }
 
 BDSRunManager::~BDSRunManager(){
