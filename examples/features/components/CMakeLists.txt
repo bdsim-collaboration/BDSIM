@@ -4,6 +4,8 @@ simple_testing(Component-CSampler "--file=csamplerTest.gmad" ${OVERLAP_CHECK})
  
 simple_testing(Component-Decapole "--file=decaTest.gmad" ${OVERLAP_CHECK})
 
+simple_testing(Component-Degrader "--file=degraderTest.gmad" ${OVERLAP_CHECK})
+
 simple_testing(Component-Drift "--file=driftTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Dump "--file=dumpTest.gmad" ${OVERLAP_CHECK})
@@ -43,5 +45,3 @@ simple_testing(Component-Solenoid "--file=soleTest.gmad" ${OVERLAP_CHECK})
 simple_testing(Component-Tunnel "--file=tunnelTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-VKick "--file=vkickTest.gmad" ${OVERLAP_CHECK})
-
-simple_testing(Component-Degrader "--file=degraderTest.gmad" ${OVERLAP_CHECK})
