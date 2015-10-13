@@ -24,8 +24,7 @@
 #include "getEnv.h"
 #include <unistd.h>
 
-#ifndef YY_BUF_SIZE
-#define YY_BUF_SIZE 1000000
+#define YY_BUF_SIZE 10000000
 #endif
 const int maxfilenamelength = 200;
 
