@@ -16,7 +16,7 @@
 //     x  x   2002 by Blair
 //
 //
-
+//
 
 #include <list>
 #include <sstream>
