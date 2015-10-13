@@ -121,12 +121,16 @@ void BDSOutputROOT::Init()
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
-  // Build sampler tree
+  // Build sampler trees and store in samplerTrees
+  samplerTrees.reserve(BDSSampler::GetNSamplers()+BDSSamplerCylinder::GetNSamplers()+1);
+  
   G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
-  BuildSamplerTree(primariesSamplerName);
+  TTree* sampler = BuildSamplerTree(primariesSamplerName);
+  // primaries is the first
+  samplerTrees.push_back(sampler);
   for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
     {
 #ifdef BDSDEBUG
@@ -136,12 +140,14 @@ void BDSOutputROOT::Init()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
-      BuildSamplerTree(name);
+      sampler = BuildSamplerTree(name);
+      samplerTrees.push_back(sampler);
     }
   for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
     {
       G4String name=BDSSamplerCylinder::outputNames[i];
-      BuildSamplerTree(name);
+      sampler = BuildSamplerTree(name);
+      samplerTrees.push_back(sampler);
     }
 
   if(globalConstants->GetStoreTrajectory() || globalConstants->GetStoreMuonTrajectories() || globalConstants->GetStoreNeutronTrajectories()) 
@@ -224,7 +230,7 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("eventNo",    &eventno,    "eventNo/I");
 }
 
-void BDSOutputROOT::WriteRootHit(G4String Name, 
+void BDSOutputROOT::WriteRootHit(TTree*   Tree, 
 				 G4double InitTotalEnergy, 
 				 G4double InitX, 
 				 G4double InitY, 
@@ -272,14 +278,7 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4int    TurnsTaken,
 				 G4String Process)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  TTree* sTree=(TTree*)gDirectory->Get(Name);
-  if(!sTree) {
-    G4String errorString = "BDSOutputROOT: ROOT Sampler " + Name + " not found!";
-    G4Exception(errorString.c_str(), "-1", FatalException, "");
-  }
+  sTree = tree;
   E0          = InitTotalEnergy/ CLHEP::GeV;
   x0          = InitX          / CLHEP::m;
   y0          = InitY          / CLHEP::m;
@@ -345,7 +344,7 @@ void BDSOutputROOT::WritePrimary(G4double totalEnergy,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  WriteRootHit("Primaries",
+  WriteRootHit(samplerTrees[0], // Primaries is the first Sampler
 	       totalEnergy, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
@@ -384,7 +383,32 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 #ifdef BDSDEBUG
       G4cout << "Writing hit to sampler " << name << G4endl;
 #endif
-      WriteRootHit(name,
+      // convert name to index (done for speedup)
+      
+      int treeIndex = 1; // start at 1, since primaries has 0
+      if (name.substr(0,8) == "Sampler_") { // sampler
+	
+      }
+      else if (name.substr(0,9) == "CSampler_") {
+	treeIndex += BDSSampler::nSamplers; // samplers are first in vector
+      }
+
+      // get TTreeIndex from name
+      //      int ttreeIndex = 0;
+      // check if cylindrical sampler (goes after)
+
+      if ( treeIndex >= samplerTrees.size() ) {
+	G4cout << __METHOD_NAME__ << "ERROR index larger than size" << G4endl;
+	exit(1);
+      }
+      // if unknown search by name
+      TTree* tree=(TTree*)gDirectory->Get(Name);
+      if(!sTree) {
+	G4String errorString = "BDSOutputROOT: ROOT Sampler " + Name + " not found!";
+	G4Exception(errorString.c_str(), "-1", FatalException, "");
+      }
+
+      WriteRootHit(tree,
 		   (*hc)[i]->GetInitTotalEnergy(),
 		   (*hc)[i]->GetInitX(),
 		   (*hc)[i]->GetInitY(),

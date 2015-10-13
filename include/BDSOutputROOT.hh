@@ -76,6 +76,9 @@ private:
 
   TH2F*  tunnelHitsHisto;
 
+  /// vector of Sampler trees
+  std::vector<TTree*> samplerTrees;
+  
   // members for writing to TTrees
   float x0=0.0,xp0=0.0,y0=0.0,yp0=0.0,z0=0.0,zp0=0.0,E0=0.0,t0=0.0;
   float x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
@@ -98,8 +101,8 @@ private:
   /// fill members so that trees can be written
   void FillHit(BDSEnergyCounterHit* hit);
 
-  /// write hit to TTree with index TTreeindex
-  void WriteRootHit(G4String Name,
+  /// write hit to TTree
+  void WriteRootHit(TTree*   Tree,
 		    G4double InitTotalenergy, 
 		    G4double InitX, 
 		    G4double InitY, 
