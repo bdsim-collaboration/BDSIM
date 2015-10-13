@@ -6,7 +6,7 @@ Obtaining  BDSIM
 ================
 
 BDSIM may be obtained either from the BDSIM website from the GIT repository
-(https://www.bitbucket.org/stewartboogert/bdsim). The user must compile it on
+(https://www.bitbucket.org/jairhul/bdsim). The user must compile it on
 their system and must have Geant4 already present (or access to AFS).
 
 ..  _from-git-repository:
@@ -16,7 +16,7 @@ From the GIT Repository
 
 To download the source from the git repository, use the command::
 
-  git clone https://bitbucket.org/stewartboogert/bdsim
+  git clone https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
 and documentation is provided. To obtain the python utilities that come with BDSIM,
