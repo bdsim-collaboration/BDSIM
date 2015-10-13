@@ -2,27 +2,7 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 
-#include "G4Version.hh"
-
 #include "CLHEP/Random/Random.h"
-
-// add keyword ThreadLocal for versions 10
-#if G4VERSION_NUMBER > 999
-G4ThreadLocal
-#endif
-BDSRunManager* BDSRunManager::fRunManager = nullptr;
-
-BDSRunManager* BDSRunManager::GetRunManager() { 
-  return fRunManager; 
-}
-
-BDSRunManager::BDSRunManager():G4RunManager() { 
-  fRunManager = this;
-}
-
-BDSRunManager::~BDSRunManager(){
-  fRunManager = nullptr;
-}
 
 void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 {
