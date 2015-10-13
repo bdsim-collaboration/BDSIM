@@ -32,8 +32,12 @@ set(TESTING_ARGS --verbose)
 simple_testing(simpleMachineVerbose "--file=sm.gmad" "")
 # verbose event
 set(TESTING_ARGS --verbose_event)
-simple_testing(SimpleMachineVerboseEvent "--file=sm.gmad" "")
+simple_testing(simpleMachineVerboseEvent "--file=sm.gmad" "")
 # verbose step
 set(TESTING_ARGS --verbose_step)
-simple_testing(SimpleMachineVerboseStep "--file=sm.gmad" "")
+simple_testing(simpleMachineVerboseStep "--file=sm.gmad" "")
+# verbose levels
+set(TESTING_ARGS "--verbose_G4run=5 --verbose_G4event=5 --verbose_G4tracking=5 --verbose_G4stepping=5")
+simple_testing(simpleMachineVerboseLevels "--file=sm.gmad" "")
+
 
