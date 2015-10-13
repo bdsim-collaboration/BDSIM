@@ -329,6 +329,11 @@ void Element::set(const struct Parameters& params)
     ksl = params.ksl;
   // Solenoid
   if(params.ksset) ks = params.ks;
+  // Degrader
+  if(params.numberWedgesset)      numberWedges      = params.numberWedges;
+  if(params.wedgeHeightset)       wedgeHeight       = params.wedgeHeight;
+  if(params.degraderHeightset)    degraderHeight    = params.degraderHeight;
+  if(params.materialThicknessset) materialThickness = params.materialThickness;
   // Laser
   if(params.waveLengthset) waveLength = params.waveLength;
   // Element, Tunnel

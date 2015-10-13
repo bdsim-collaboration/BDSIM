@@ -131,7 +131,10 @@ void Parameters::inherit_properties(struct Element& e)
   if(!phiset) { phi = e.phi; phiset = true; }
   if(!psiset) { psi = e.psi; psiset = true; }
   if(!thetaset) { theta = e.theta; thetaset = true; }
-
+  if(!numberWedgesset) { numberWedges = e.numberWedges; numberWedgesset = true; }
+  if(!wedgeHeightset) { wedgeHeight = e.wedgeHeight; wedgeHeightset = true; }
+  if(!degraderHeightset) {degraderHeight = e.degraderHeight; degraderHeightset = true; }
+  if(!materialThicknessset) {materialThickness = e.materialThickness; materialThicknessset = true; }
 
   if(!knlset) { knl = e.knl; knlset = true; }
   if(!kslset) { ksl = e.ksl; kslset = true; }
@@ -226,7 +229,7 @@ void Parameters::set_value(std::string property, double value )
   if(property=="tscint") { tscint = value; tscintset = true; return;} // thickness for a scintillator screen 
   if(property=="twindow") { twindow = value; twindowset = true; return;} // thickness for a scintillator screen window 
 
-  if(property=="numberWedges")      {numberWedges = value; numberWedgesset = true; return;} // number of degrader wedges
+  if(property=="numberWedges")      {numberWedges = (int)value; numberWedgesset = true; return;} // number of degrader wedges
   if(property=="wedgeHeight")       {wedgeHeight = value; wedgeHeightset = true; return;} // degrader wedge height
   if(property=="degraderHeight")    {degraderHeight = value; degraderHeightset = true; return;} // degrader element height
   if(property=="materialThickness") {materialThickness = value; materialThicknessset = true; return;} // degrader thickness
