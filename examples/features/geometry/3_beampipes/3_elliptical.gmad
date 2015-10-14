@@ -1,4 +1,4 @@
-d1: drift, l=1*m, apertureType="elliptical", aper1=3*cm, aper2=5*cm, beampipeThickness=4*mm;
+d1: drift, l=0.2*m, apertureType="elliptical", aper1=3*cm, aper2=5*cm, beampipeThickness=4*mm;
 endoftheline: marker;
 
 l1: line = (d1, endoftheline);
