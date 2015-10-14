@@ -382,7 +382,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
       try
 	{
 	  unsigned int treeIndex = std::stoul(samplerNumber);
-	  if (treeIndex > samplerTrees.size()) {
+	  if (treeIndex < samplerTrees.size()) {
 	    tree = samplerTrees[treeIndex];
 	  }
 	}
