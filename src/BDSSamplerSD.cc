@@ -105,14 +105,15 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   // remove end part "_pv"
   G4String removeEnd = "_pv";
   SampName = SampName.substr(0,SampName.find(removeEnd));
-  
+
   G4int    PDGtype = theTrack->GetDefinition()->GetPDGEncoding();
   G4String pName   = theTrack->GetDefinition()->GetParticleName();
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "BDSSamplerSD> Particle name: " << pName << G4endl;  
-  G4cout << __METHOD_NAME__ << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
-  G4cout << __METHOD_NAME__ << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
+  G4cout << __METHOD_NAME__ << "Sampler name: " << SampName << G4endl;
+  G4cout << __METHOD_NAME__ << "Particle name: " << pName << G4endl;  
+  G4cout << __METHOD_NAME__ << "PDG encoding: " << PDGtype << G4endl;  
+  G4cout << __METHOD_NAME__ << "TrackID: " << TrackID << G4endl;  
 #endif
   
   G4ThreeVector vtx               = theTrack->GetVertexPosition();
