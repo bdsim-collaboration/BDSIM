@@ -3,8 +3,7 @@
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
+#include "BDSSamplerBase.hh"
 #include "BDSTrajectory.hh"
 #include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
@@ -122,7 +121,7 @@ void BDSOutputROOT::Init()
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler trees and store in samplerTrees
-  samplerTrees.reserve(BDSSampler::GetNSamplers()+BDSSamplerCylinder::GetNSamplers()+1);
+  samplerTrees.reserve(BDSSamplerBase::GetNSamplers()+1);
   
   G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
@@ -131,21 +130,15 @@ void BDSOutputROOT::Init()
   TTree* sampler = BuildSamplerTree(primariesSamplerName);
   // primaries is the first
   samplerTrees.push_back(sampler);
-  for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
+  for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
-      G4String name=BDSSampler::outputNames[i];
+      G4String name=BDSSamplerBase::outputNames[i];
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
-      sampler = BuildSamplerTree(name);
-      samplerTrees.push_back(sampler);
-    }
-  for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
-    {
-      G4String name=BDSSamplerCylinder::outputNames[i];
       sampler = BuildSamplerTree(name);
       samplerTrees.push_back(sampler);
     }
@@ -382,30 +375,29 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 #ifdef BDSDEBUG
       G4cout << "Writing hit to sampler " << name << G4endl;
 #endif
-      // convert name to index (done for speedup)
-      
-      unsigned int treeIndex = 1; // start at 1, since primaries has 0
-      if (name.substr(0,8) == "Sampler_") { // sampler
-	
-      }
-      else if (name.substr(0,9) == "CSampler_") {
-	treeIndex += BDSSampler::GetNSamplers(); // samplers are first in vector
-      }
+      // convert name to tree (done for speedup)
+      TTree* tree = nullptr;
+      G4String samplerNumber = name.substr(name.find_last_of("_"),std::string::npos);
+      // try to convert to int, std::stoul can throw invalid argument
+      try
+	{
+	  unsigned int treeIndex = std::stoul(samplerNumber);
+	  if (treeIndex > samplerTrees.size()) {
+	    tree = samplerTrees[treeIndex];
+	  }
+	}
+      catch (std::invalid_argument) {} // do nothing
 
-      // get TTreeIndex from name
-      //      int ttreeIndex = 0;
-      // check if cylindrical sampler (goes after)
-
-      if ( treeIndex >= samplerTrees.size() ) {
-	G4cout << __METHOD_NAME__ << "ERROR index larger than size" << G4endl;
-	exit(1);
-      }
-      // if unknown search by name
-      TTree* tree=(TTree*)gDirectory->Get(name);
-      if(!tree) {
-	G4String errorString = "BDSOutputROOT: ROOT Sampler " + name + " not found!";
-	G4Exception(errorString.c_str(), "-1", FatalException, "");
-      }
+      // if it did not work then
+      // get tree from name
+      if (!tree)
+	{
+	  tree=(TTree*)gDirectory->Get(name);
+	  if(!tree) {
+	    G4String errorString = "BDSOutputROOT: ROOT Sampler " + name + " not found!";
+	    G4Exception(errorString.c_str(), "-1", FatalException, "");
+	  }
+	}
 
       WriteRootHit(tree,
 		   (*hc)[i]->GetInitTotalEnergy(),
