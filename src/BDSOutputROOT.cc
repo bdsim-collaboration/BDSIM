@@ -136,6 +136,8 @@ void BDSOutputROOT::Init()
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
       G4String name=BDSSamplerBase::outputNames[i];
+      // remove sampler number:
+      name = name.substr(0,name.find_last_of("_"));
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
