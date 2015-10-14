@@ -377,16 +377,17 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 #endif
       // convert name to tree (done for speedup)
       TTree* tree = nullptr;
-      G4String samplerNumber = name.substr(name.find_last_of("_"),std::string::npos);
       // try to convert to int, std::stoul can throw invalid argument
       try
 	{
+	  G4String samplerNumber = name.substr(name.find_last_of("_")+1,std::string::npos);
 	  unsigned int treeIndex = std::stoul(samplerNumber);
 	  if (treeIndex < samplerTrees.size()) {
 	    tree = samplerTrees[treeIndex];
 	  }
 	}
-      catch (std::invalid_argument) {} // do nothing
+      catch (std::invalid_argument) {} // for std::stoul, do nothing
+      catch (std::out_of_range) {} // for string::substr, do nothing
 
       // if it did not work then
       // get tree from name
