@@ -17,7 +17,7 @@ public:
 
 
   /// access for external classes to sensitive detector
-  virtual BDSSamplerSD* GetSensitiveDetector() override final;
+  virtual BDSSamplerSD* GetSensitiveDetector()const override final;
   
 private:
   virtual void BuildContainerLogicalVolume() override final;

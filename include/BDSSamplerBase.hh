@@ -26,11 +26,13 @@ public:
   static std::vector <G4String> outputNames;
 
   /// access for external classes to sensitive detector
-  virtual BDSSamplerSD* GetSensitiveDetector()=0;
+  virtual BDSSamplerSD* GetSensitiveDetector()const=0;
 
   /// get SamplerId
-  G4int getSamplerNumber() {return nThisSampler;}
-  
+  G4int GetSamplerNumber()const {return nThisSampler;}
+  /// get OutputName
+  G4String GetOutputName()const {return outputNames[nThisSampler];}
+
 protected:
   /// build container volume
   virtual void BuildContainerLogicalVolume();

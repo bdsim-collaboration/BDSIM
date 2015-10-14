@@ -14,9 +14,7 @@ BDSSamplerCylinder::BDSSamplerCylinder(G4String name,
 		 length,
 		 "samplercylinder"),
   radius(radiusIn)
-{
-  BDSSamplerBase::outputNames.push_back(GetName() + "_cylinder" );
-}
+{}
 
 void BDSSamplerCylinder::BuildContainerLogicalVolume()
 {
@@ -35,7 +33,7 @@ void BDSSamplerCylinder::BuildContainerLogicalVolume()
   BDSSamplerBase::BuildContainerLogicalVolume();
 }
 
-BDSSamplerSD* BDSSamplerCylinder::GetSensitiveDetector()
+BDSSamplerSD* BDSSamplerCylinder::GetSensitiveDetector()const
 {
   return BDSSDManager::Instance()->GetSamplerCylinderSD();
 }

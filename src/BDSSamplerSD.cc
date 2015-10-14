@@ -100,8 +100,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
-  G4int nSampler    = theTrack->GetVolume()->GetCopyNo();
+  //  G4int nSampler    = theTrack->GetVolume()->GetCopyNo();
   G4String SampName = theTrack->GetVolume()->GetName();
+  // remove end part "_pv"
+  G4String removeEnd = "_pv";
+  SampName = SampName.substr(0,SampName.find(removeEnd));
   
   G4int    PDGtype = theTrack->GetDefinition()->GetPDGEncoding();
   G4String pName   = theTrack->GetDefinition()->GetParticleName();

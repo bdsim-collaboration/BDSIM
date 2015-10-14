@@ -20,11 +20,12 @@ BDSSamplerBase::BDSSamplerBase(G4String name,
 			       G4String type):
   BDSAcceleratorComponent(name, length, 0, type)
 {
-  nThisSampler= nSamplers + 1;
+  nThisSampler= nSamplers + 1; // start count at 1 (important for BDSOutputROOT)
   nSamplers++;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Nsamplers " << nSamplers << G4endl;
 #endif
+  outputNames.push_back(GetName() + "_" + std::to_string(nThisSampler));
 }
 
 void BDSSamplerBase::BuildContainerLogicalVolume()

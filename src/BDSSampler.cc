@@ -12,9 +12,7 @@
 BDSSampler::BDSSampler(G4String name,
 		       G4double length):
   BDSSamplerBase(name, length, "sampler")
-{
-  BDSSampler::outputNames.push_back(GetName());
-}
+{}
 
 void BDSSampler::BuildContainerLogicalVolume()
 {
@@ -35,7 +33,7 @@ void BDSSampler::BuildContainerLogicalVolume()
   BDSSamplerBase::BuildContainerLogicalVolume();
 }
 
-BDSSamplerSD* BDSSampler::GetSensitiveDetector()
+BDSSamplerSD* BDSSampler::GetSensitiveDetector()const
 {
   return BDSSDManager::Instance()->GetSamplerPlaneSD();
 }
