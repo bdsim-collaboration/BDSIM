@@ -31,7 +31,8 @@ public:
   /// get SamplerId
   G4int GetSamplerNumber()const {return nThisSampler;}
   /// get OutputName
-  G4String GetOutputName()const {return outputNames[nThisSampler];}
+  // -1 since count starts at 1
+  G4String GetOutputName()const {return outputNames[nThisSampler-1];}
 
 protected:
   /// build container volume
@@ -42,7 +43,7 @@ private:
   /// set vis attributes and sensitive detector
   void SetVisAttributes();
   
-  /// id of sampler
+  /// id of sampler (count starts at 1)
   G4int nThisSampler;
   /// number of total Samplers
   static G4int nSamplers;
