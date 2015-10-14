@@ -278,7 +278,6 @@ void BDSOutputROOT::WriteRootHit(TTree*   Tree,
 				 G4int    TurnsTaken,
 				 G4String Process)
 {
-  sTree = tree;
   E0          = InitTotalEnergy/ CLHEP::GeV;
   x0          = InitX          / CLHEP::m;
   y0          = InitY          / CLHEP::m;
@@ -325,7 +324,7 @@ void BDSOutputROOT::WriteRootHit(TTree*   Tree,
   track_id    = TrackID;
   turnnumber  = TurnsTaken;
   process     = Process;
-  sTree->Fill();
+  Tree->Fill();
 }
 
 void BDSOutputROOT::WritePrimary(G4double totalEnergy,
@@ -385,12 +384,12 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 #endif
       // convert name to index (done for speedup)
       
-      int treeIndex = 1; // start at 1, since primaries has 0
+      unsigned int treeIndex = 1; // start at 1, since primaries has 0
       if (name.substr(0,8) == "Sampler_") { // sampler
 	
       }
       else if (name.substr(0,9) == "CSampler_") {
-	treeIndex += BDSSampler::nSamplers; // samplers are first in vector
+	treeIndex += BDSSampler::GetNSamplers(); // samplers are first in vector
       }
 
       // get TTreeIndex from name
@@ -402,9 +401,9 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 	exit(1);
       }
       // if unknown search by name
-      TTree* tree=(TTree*)gDirectory->Get(Name);
-      if(!sTree) {
-	G4String errorString = "BDSOutputROOT: ROOT Sampler " + Name + " not found!";
+      TTree* tree=(TTree*)gDirectory->Get(name);
+      if(!tree) {
+	G4String errorString = "BDSOutputROOT: ROOT Sampler " + name + " not found!";
 	G4Exception(errorString.c_str(), "-1", FatalException, "");
       }
 
