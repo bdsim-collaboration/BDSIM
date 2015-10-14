@@ -1,44 +1,27 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 5.3.2005
-   Copyright (c) 2005 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSSAMPLERCYLINDER_H
+#define BDSSAMPLERCYLINDER_H
 
-#ifndef BDSSamplerCylinder_h
-#define BDSSamplerCylinder_h
+#include "BDSSamplerBase.hh"
 
-#include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSSamplerSD.hh"
+class BDSSamplerSD;
 
-class BDSSamplerCylinder :public BDSAcceleratorComponent
+/** 
+ * Cylindrical sampler class
+ */
+
+class BDSSamplerCylinder :public BDSSamplerBase
 {
 public:
-  BDSSamplerCylinder(G4String aName,G4double aLength, G4double aRadius);
-  ~BDSSamplerCylinder();
-
-  /// returns current number of cylindrical samplers
-  static int GetNSamplers();
-  /// method to add sampler independent of beamline
-  static void AddExternalSampler(G4String outputName);
-
-  /// names of samplers for output
-  static std::vector <G4String> outputNames;
+  BDSSamplerCylinder(G4String name,G4double length, G4double radiusIn);
 
   /// access for external classes to sensitive detector
-  static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
+  virtual BDSSamplerSD* GetSensitiveDetector()const override final;
 
 private:
-  virtual void BuildContainerLogicalVolume();
+  virtual void BuildContainerLogicalVolume() override final;
 
-  G4double itsRadius;
-
-  /// id of sampler
-  int nThisSampler;
-  /// number of total Samplers
-  static int nSamplers;
-  /// pointer to sensitive detector, only one for all cylindrical samplers
-  static BDSSamplerSD* SensitiveDetector;
+  /// radius of cylindrical sampler
+  G4double radius;
 };
 
 #endif

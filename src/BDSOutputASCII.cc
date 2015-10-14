@@ -170,8 +170,7 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile,
   outfile->flags(ff);
 }
 
-void BDSOutputASCII::WritePrimary(G4String /*samplerName*/,
-				  G4double E,
+void BDSOutputASCII::WritePrimary(G4double E,
 				  G4double x0,
 				  G4double y0,
 				  G4double z0,

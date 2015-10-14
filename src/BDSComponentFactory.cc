@@ -88,7 +88,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   G4cout << __METHOD_NAME__ << "named: \"" << _element.name << "\"" << G4endl;  
 #endif
   // check if the component already exists and return that
-  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name)) 
+  // do check for output elements since reliant on unique name
+  if (_element.type != ElementType::_SAMPLER &&
+      _element.type != ElementType::_CSAMPLER &&
+      _element.type != ElementType::_DUMP &&
+      BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name))
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;

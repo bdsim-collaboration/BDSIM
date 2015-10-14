@@ -1,6 +1,7 @@
 #include "BDSBeamlineElement.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSSamplerBase.hh"
 #include "BDSDebug.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -47,10 +48,20 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 
   /// increase copy number (starts at -1)
   componentIn->IncrementCopyNumber();
-  copyNumber = componentIn->GetCopyNumber();
-  /// placement name (starting at 0)
-  placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
 
+  /// use output name for samplers so that it can be quickly identified for output
+  BDSSamplerBase* sampler = dynamic_cast<BDSSamplerBase*>(componentIn);
+  if (sampler)
+    {
+      placementName = sampler->GetOutputName();
+    }
+  else 
+    {
+      copyNumber = componentIn->GetCopyNumber();
+      /// placement name (starting at 0)
+      placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
+    }
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
 #endif
