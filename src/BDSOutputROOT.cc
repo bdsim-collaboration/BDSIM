@@ -121,6 +121,8 @@ void BDSOutputROOT::Init()
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler trees and store in samplerTrees
+  // clear (for the case of multiple output files)
+  samplerTrees.clear();
   samplerTrees.reserve(BDSSamplerBase::GetNSamplers()+1);
   
   G4String primariesSamplerName="Primaries";
