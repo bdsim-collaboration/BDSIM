@@ -7,7 +7,7 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
 
-#define DEBUG 1
+
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {

@@ -74,7 +74,7 @@
 #include "parser/gmad.h"  // GMAD parser
 #include "parser/options.h"
 
-#define BDSDEBUG 1
+
 
 //=======================================================
 // Global variables 

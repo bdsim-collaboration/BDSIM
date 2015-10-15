@@ -32,7 +32,7 @@
 #include <vector>
 
 #include "G4SDManager.hh"
-#define DEBUG 1
+
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
   :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(NULL),
    itsType(type)

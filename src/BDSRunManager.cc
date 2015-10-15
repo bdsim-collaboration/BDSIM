@@ -11,7 +11,7 @@
 //
 // SPM: Altered BeamOn function to account for Placet synchronisation
 //
-#define BDSDEBUG 1
+
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSExecOptions.hh"
