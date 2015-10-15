@@ -34,7 +34,7 @@ def Run(filepath,nparticles,verbose):
     l.Clean()
 
     # convert madx tfs into gmad and ptc lattice, run the simulation for each
-    l.Run()
+    l.Run("@CMAKE_BINARY_DIR@/bdsim", "@MADX_EXECUTABLE@")
 
     # load and compare the tracking output from both simualtions
     l.Compare(addPrimaries=False)                                
