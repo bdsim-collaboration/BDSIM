@@ -47,8 +47,8 @@ EXTRALIBS += -lPackaging
 endif
 
 ifneq ($(ROOTSYS),)
-ROOTLIBS=`$(ROOTSYS)/bin/root-config --libs`
-ROOTCFLAGS=`$(ROOTSYS)/bin/root-config --cflags`
+ROOTLIBS=`root-config --libs`
+ROOTCFLAGS=`root-config --cflags | sed 's@-stdlib=libc++@-std=c++11@g'`
 endif
 
 LDLIBS3 += $(ROOTLIBS) 

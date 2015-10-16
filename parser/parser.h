@@ -30,7 +30,7 @@
 #include "gmad.h"
 #include "options.h"
 #include "parameters.h"
-#define BDSDEBUG 1
+
 int yyerror(const char *);
 
 extern FILE* yyin;
@@ -761,12 +761,21 @@ void add_sampler(char *name, char *before, int before_count)
   e.name = name;
   e.lst = NULL;
 
+#ifdef BDSDEBUG 
+  std::cout<< " parser.h: iterating through beamline list" <<std::endl;
+#endif
+
   std::list<struct Element>::iterator it = beamline_list.find(std::string(before),before_count);
   if (it==beamline_list.end()) {
     std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
     exit(1);
   }
   beamline_list.insert(it,e);
+
+
+#ifdef BDSDEBUG 
+  std::cout<< " parser.h: finished adding sampler." <<std::endl;
+#endif
 }
 
 // insert a cylindrical sampler into beamline_list
