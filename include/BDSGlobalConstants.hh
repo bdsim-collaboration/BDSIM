@@ -22,13 +22,8 @@ class G4VisAttributes;
 class G4VPhysicalVolume;
 
 namespace GMAD {
-  struct Options;
+  class Options;
 }
-
-struct strCmp {
-  G4bool operator()( const G4String s1, const G4String s2 ) const {
-    return strcmp(s1,s2) < 0;}
-};
 
 /**
  * @brief a class that holds global options and constants
@@ -91,7 +86,6 @@ public:
   G4double GetAnnihiToMuFe() const;
   G4double GetEeToHadronsFe() const;
   G4bool   GetSampleDistRandomly() const;
-  G4bool   GetGeometryBias() const;
   G4bool   GetUseEMLPB() const;
   G4bool   GetUseHadLPB() const;
   ///@{ Booleans determining which types of components are sensitive
@@ -255,7 +249,6 @@ private:
   G4double itsAnnihiToMuFe;
   G4double itsEeToHadronsFe;
   G4bool   itsSampleDistRandomly;
-  G4bool   itsGeometryBias;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
   G4double itsMinimumEpsilonStep;
@@ -322,6 +315,11 @@ private:
   G4int    itsSynchMeanFreeFactor;
   G4int    itsSynchPhotonMultiplicity;
   // test map container for laserwire parameters - Steve
+  struct strCmp {
+    G4bool operator()( const G4String s1, const G4String s2 ) const {
+      return strcmp(s1,s2) < 0;}
+  };
+
   std::map<const G4String, G4double, strCmp> lwWavelength;
   std::map<const G4String, G4ThreeVector, strCmp> lwDirection;
   G4double itsLaserwireWavelength;
@@ -548,9 +546,6 @@ inline G4double BDSGlobalConstants::TunnelOffsetX() const
 
 inline G4double BDSGlobalConstants::TunnelOffsetY() const
 {return tunnelOffsetY;}
-
-inline G4bool BDSGlobalConstants::GetGeometryBias() const
-{return itsGeometryBias;}
 
 //Beam loss monitors
 

@@ -45,7 +45,6 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
 
   itsSampleDistRandomly = true;
-  itsGeometryBias = opt.geometryBias;
   
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
