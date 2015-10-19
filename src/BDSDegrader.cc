@@ -4,6 +4,8 @@
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
+#include "BDSDebug.hh"
+
 #include "G4VSolid.hh"
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
