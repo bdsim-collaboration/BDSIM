@@ -1244,28 +1244,7 @@ option_parameters : VARIABLE '=' aexpr ',' option_parameters
 		    }
 ;
 
-beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		  }   
-                | VARIABLE '=' aexpr
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		  }   
-                | VARIABLE '=' STR ',' beam_parameters
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		    free($3);
-		  }   
-                | VARIABLE '=' STR
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		    free($3);
-		  }   
+beam_parameters : option_parameters
 ;
 
 %%
