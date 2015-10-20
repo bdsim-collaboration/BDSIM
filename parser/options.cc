@@ -1,9 +1,6 @@
 #include "options.h"
 
-#include <cstdlib>
-#include <iomanip>
 #include <iostream>
-#include <string>
 
 using namespace GMAD;
 
