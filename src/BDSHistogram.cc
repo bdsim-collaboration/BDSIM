@@ -64,7 +64,7 @@ BDSHistogram1D::BDSHistogram1D(G4double xminIn, G4double xmaxIn, G4int nbinsIn, 
   first();
 }
 
-BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+BDSHistogram1D::BDSHistogram1D(std::vector<G4double> binEdges, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
   name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
 {
 #ifdef BDSDEBUG

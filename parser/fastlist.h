@@ -7,18 +7,17 @@
 #include <map>
 #include <string>
 
-/**
- * @brief List with Efficient Lookup
- * 
- * This class keeps a list of elements
- * It has efficient lookup on an element's name (log n) by having a multimap 
- *
- * Used for beamline
- *
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
- */
-
 namespace GMAD {
+  /**
+   * @brief List with Efficient Lookup
+   * 
+   * This class keeps a list of elements
+   * It has efficient lookup on an element's name (log n) by having a multimap 
+   *
+   * Used for beamline
+   *
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   */
   template<typename T>
     class FastList {
 

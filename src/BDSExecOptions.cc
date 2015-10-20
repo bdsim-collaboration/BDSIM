@@ -82,9 +82,9 @@ BDSExecOptions::~BDSExecOptions() {
   _instance = nullptr;
 }
 
-/** <Parse the command line options>
- * @param command line input number of variables
- * @param array of char* of the input parameters
+/** Parse the command line options
+ * @param[in] argc command line input number of variables
+ * @param[in] argv array of char* of the input parameters
  */
 void BDSExecOptions::Parse(int argc, char **argv) {
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },

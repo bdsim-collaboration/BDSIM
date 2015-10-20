@@ -8,15 +8,14 @@
 
 #include "published.h"
 
-/**
- * @brief Options class
- * 
- * options passed with option and beam command
- *
- * @author I. Agapov
- */
-
 namespace GMAD {
+  /**
+   * @brief Options class
+   * 
+   * options passed with option and beam command
+   *
+   * @author I. Agapov
+   */
   class Options : public Published<Options>
   {
   public:
