@@ -63,10 +63,10 @@ namespace GMAD {
     bool airmaterialset;
     bool specset;
 
-	bool numberWedgesset;
-	bool wedgeHeightset;
-	bool degraderHeightset;
-	bool materialThicknessset;
+    bool numberWedgesset;
+    bool wedgeHeightset;
+    bool degraderHeightset;
+    bool materialThicknessset;
 
     //// reset the parameters to defaults
     void flush();
