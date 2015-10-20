@@ -21,11 +21,11 @@ public:
     BDSDegrader(G4String name, 
                 G4double   length,
                 G4double   outerDiameter,
-                G4String   degraderMaterial,
-                G4int      numberWedges,
-                G4double   wedgeHeight,
-                G4double   degraderHeight,
-                G4double   materialThickness);
+                G4String   degraderMaterial     = "carbon",
+                G4int      numberWedges         = 1,
+                G4double   wedgeLength          = 1,
+                G4double   degraderHeight       = 1,
+                G4double   materialThickness    = 1);
     ~BDSDegrader();
     
 
@@ -38,7 +38,7 @@ protected:
     G4String degraderMaterial;
     G4int numberWedges;
     G4double wedgeBasewidth;
-    G4double wedgeHeight;
+    G4double wedgeLength;
     G4double degraderHeight;
     G4double materialThickness;
     
