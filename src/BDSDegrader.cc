@@ -60,7 +60,7 @@ void BDSDegrader::BuildContainerLogicalVolume()
 
   if (degraderHeight > (0.5*outerDiameter))
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"wedgeHeight\" must be greater than 0.5 times \"outerDiameter\"" <<  G4endl;
+        G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be greater than 0.5 times \"outerDiameter\"" <<  G4endl;
         exit(1);
     }
     
