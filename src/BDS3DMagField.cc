@@ -6,6 +6,9 @@
 #include <boost/progress.hpp>
 #include "BDSProgressBar.hh"
 
+#define BDSDEBUG 1
+#define DEBUG_INTERPOLATING_FIELD 1
+
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffset ) 
   :fZoffset(zOffset),fXoffset(xOffset),fYoffset(0),invertX(false),invertY(false),invertZ(false)
 {    
@@ -157,6 +160,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   G4cout << "translation y = " << translation[1]/CLHEP::cm << " cm" << G4endl;
   G4cout << "translation z = " << translation[2]/CLHEP::cm << " cm" << G4endl;
   G4cout << "fZOffset = " << fZoffset/CLHEP::cm << " cm" << G4endl;
+  G4cout << "fXOffset = " << fXoffset/CLHEP::cm << " cm" << G4endl;
   G4cout << "local x       = " << local[0]/CLHEP::cm << " cm" << G4endl;
   G4cout << "local y       = " << local[1]/CLHEP::cm << " cm" << G4endl;
   G4cout << "local z       = " << local[2]/CLHEP::cm << " cm" << G4endl;

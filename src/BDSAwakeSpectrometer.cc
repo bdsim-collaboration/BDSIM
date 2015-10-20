@@ -549,7 +549,6 @@ void BDSAwakeSpectrometer::Build(){
       BuildScreen();
       BuildCamera();	
       CalculateLengths();
-      //      BuildMagnet();
       BuildMarkerLogicalVolume();
       /*
       if(_vacChambType==2){
@@ -558,7 +557,7 @@ void BDSAwakeSpectrometer::Build(){
       BuildVacuumChamber1();
       }
       */
-      //      BuildScreenScoringPlane();
+      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
@@ -710,6 +709,7 @@ void BDSAwakeSpectrometer::BuildVacuumChamber1(){
 
 
   G4VSolid* vacuumSolid = new G4Box("vacuumSolid",_vacInnerWidth/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
+
 
   G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
 

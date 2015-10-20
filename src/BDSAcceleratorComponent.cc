@@ -42,6 +42,10 @@
 #include "G4Transform3D.hh"
 #include "BDSMagFieldFactory.hh"
 #include "G4NystromRK4.hh"
+#include "G4SimpleRunge.hh"
+#include "G4HelixSimpleRunge.hh"
+#include "G4HelixImplicitEuler.hh"
+#include "G4HelixExplicitEuler.hh"
 
 typedef std::map<G4String,int> LogVolCountMap;
 LogVolCountMap* LogVolCount = new LogVolCountMap();
@@ -606,13 +610,16 @@ void BDSAcceleratorComponent::BuildBmapFieldAndStepper()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " - building magnetic field...." << G4endl;
+  G4cout << __METHOD_NAME__ << " itsBmapZOffset = " << itsBmapZOffset << G4endl;
+  G4cout << __METHOD_NAME__ << " itsBmapXOffset = " << itsBmapXOffset << G4endl;
 #endif
 
   BDSMagFieldFactory* bFact = new BDSMagFieldFactory();
   itsMagField = bFact->buildMagField(itsBmap, itsBmapZOffset, _geom, itsBmapXOffset);
     
   itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper = new G4NystromRK4(itsEqRhs);
+  //  itsStepper = new G4NystromRK4(itsEqRhs);
+  itsStepper = new G4SimpleRunge(itsEqRhs);
 
   if(itsStepper && itsMagField){
     BuildFieldMgr(itsStepper, itsMagField);
