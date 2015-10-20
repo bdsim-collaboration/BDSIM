@@ -110,7 +110,7 @@ void Element::flush() {
   
   // degrader
   numberWedges = 0;
-  wedgeHeight = 0;
+  wedgeLength = 0;
   degraderHeight = 0;
   materialThickness = 0;
 
@@ -215,7 +215,7 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "offsetY") return offsetY;
   if(property_name == "gradient") return gradient;
   if(property_name == "numberWedges") return numberWedges;
-  if(property_name == "wedgeHeight") return wedgeHeight;
+  if(property_name == "wedgeLength") return wedgeLength;
   if(property_name == "degraderHeight") return degraderHeight;
   if(property_name == "materialThickness") return materialThickness;
   if(property_name == "A") return A;
@@ -331,7 +331,7 @@ void Element::set(const struct Parameters& params)
   if(params.ksset) ks = params.ks;
   // Degrader
   if(params.numberWedgesset)      numberWedges      = params.numberWedges;
-  if(params.wedgeHeightset)       wedgeHeight       = params.wedgeHeight;
+  if(params.wedgeLengthset)       wedgeLength       = params.wedgeLength;
   if(params.degraderHeightset)    degraderHeight    = params.degraderHeight;
   if(params.materialThicknessset) materialThickness = params.materialThickness;
   // Laser

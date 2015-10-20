@@ -22,14 +22,14 @@ BDSDegrader::BDSDegrader (G4String   name,
                     G4double   outerDiameterIn,
                     G4String   degraderMaterialIn,
                     G4int      numberWedgesIn,
-                    G4double   wedgeHeightIn,
+                    G4double   wedgeLengthIn,
                     G4double   degraderHeightIn,
                     G4double   materialThicknessIn):
 BDSAcceleratorComponent(name, length, 0, "degrader"),
     outerDiameter(outerDiameterIn),
     degraderMaterial(degraderMaterialIn),
     numberWedges(numberWedgesIn),
-    wedgeHeight(wedgeHeightIn),
+    wedgeLength(wedgeLengthIn),
     degraderHeight(degraderHeightIn),
     materialThickness(materialThicknessIn)
 {;}
@@ -52,9 +52,9 @@ void BDSDegrader::BuildContainerLogicalVolume()
         exit(1);
     }
     
-  if (wedgeHeight <= 0)
+  if (wedgeLength <= 0)
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"wedgeHeight\" is not defined or must be greater than 0" <<  G4endl;
+        G4cerr << __METHOD_NAME__ << "Error: option \"wedgeLength\" is not defined or must be greater than 0" <<  G4endl;
         exit(1);
     }
 
@@ -96,34 +96,34 @@ void BDSDegrader::Build()
           if(isEven(i)){
               if(i==0){                     //First half wedge
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
-                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
               }
               else if(i==numberWedges){     //Last half Wedge
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
-                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
               }
               else{                         //RHS full wedge(s)
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
-                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
               }
           }
           else if(isOdd(i)){                //LHS full wedge(s)
               leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
-              leftWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+              leftWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
               leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
           }
       }
       //Vertices of base part of RHS component for connecting all RHS wedges
-      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
-      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight,-1.0*maxzoffset));
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, maxzoffset) );
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength,-1.0*maxzoffset));
 
       //Vertices of base part of LHS component for connecting all LHS wedges
       leftWedgeSide.push_back( G4TwoVector(0, maxzoffset));
-      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
-      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, -1.0*maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, -1.0*maxzoffset) );
       leftWedgeSide.push_back( G4TwoVector(0, -1.0*maxzoffset));
   }
   // Case for odd number of wedges.
@@ -132,36 +132,36 @@ void BDSDegrader::Build()
           if(isEven(i)){
               if(i==0){     //RHS half wedge
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
-                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
               }
               else{         //RHS full wedge(s)
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
-                  rightWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  rightWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   rightWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
               }
           }
           else if(isOdd(i)){
               if(i==numberWedges){      //LHS half wedge
                   leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
-                  leftWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  leftWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
               }
               else{                     //LHS full wedge(s)
                   leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i-0.5)*wedgeBasewidth) );
-                  leftWedgeSide.push_back( G4TwoVector(wedgeHeight, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
+                  leftWedgeSide.push_back( G4TwoVector(wedgeLength, (-1.0*maxzoffset) + (i*wedgeBasewidth)) );
                   leftWedgeSide.push_back( G4TwoVector(0, (-1.0*maxzoffset) + (i+0.5)*wedgeBasewidth) );
               }
           }
       }
        //Vertices of base part of RHS component for connecting all RHS wedges
       rightWedgeSide.push_back( G4TwoVector(0, maxzoffset));
-      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
-      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight,-1.0*maxzoffset));
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, maxzoffset) );
+      rightWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength,-1.0*maxzoffset));
       
       //Vertices of base part of LHS component for connecting all LHS wedges
-      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, maxzoffset) );
-      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeHeight, -1.0*maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, maxzoffset) );
+      leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, -1.0*maxzoffset) );
       leftWedgeSide.push_back( G4TwoVector(0, -1.0*maxzoffset));
       
 
@@ -197,7 +197,7 @@ void BDSDegrader::Build()
   
 
   //Angle between hypotenuse and height (in the triangular wedge face)
-  G4double theta = atan(wedgeBasewidth / (2.0*wedgeHeight));       
+  G4double theta = atan(wedgeBasewidth / (2.0*wedgeLength));       
     
   //Overlap distance of wedges
   G4double overlap = (materialThickness/numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));

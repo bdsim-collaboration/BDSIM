@@ -63,7 +63,7 @@ struct Element {
   double gradient; ///< for rf cavities
   double phi, theta, psi; ///< for 3d transforms
   int numberWedges; ///< for degrader
-  double wedgeHeight; ///< for degrader
+  double wedgeLength; ///< for degrader
   double degraderHeight; ///< for degrader
   double materialThickness; ///< for degrader
 

@@ -64,7 +64,7 @@ namespace GMAD {
     bool specset;
 
     bool numberWedgesset;
-    bool wedgeHeightset;
+    bool wedgeLengthset;
     bool degraderHeightset;
     bool materialThicknessset;
 
