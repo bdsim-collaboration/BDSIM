@@ -27,7 +27,6 @@
 
 #ifdef G4VIS_USE
 #include "BDSVisManager.hh"
-#include "G4BlineTracer.hh"
 #endif
 
 #ifdef G4UI_USE
@@ -319,7 +318,6 @@ int main(int argc,char** argv) {
   if(!BDSExecOptions::Instance()->GetBatch())   // Interactive mode
     {
       //Magnet field line visualisation
-      G4BlineTracer* blineTracer = new G4BlineTracer();
       std::cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<std::endl;
       G4UIsession* session=0;
       G4VisManager* visManager=0;

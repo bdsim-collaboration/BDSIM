@@ -6,8 +6,6 @@
 #include <boost/progress.hpp>
 #include "BDSProgressBar.hh"
 
-#define BDSDEBUG 1
-#define DEBUG_INTERPOLATING_FIELD 1
 
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffset ) 
   :fZoffset(zOffset),fXoffset(xOffset),fYoffset(0),invertX(false),invertY(false),invertZ(false)
