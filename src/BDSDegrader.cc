@@ -4,6 +4,8 @@
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
+#include "BDSDebug.hh"
+
 #include "G4VSolid.hh"
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
@@ -37,11 +39,30 @@ BDSDegrader::~BDSDegrader()
 
 void BDSDegrader::BuildContainerLogicalVolume()
 {
-  //WRONG G4Box* containerSolid = 
-  // containerSolid = new G4Boxsjfdlkdsjfl
-  // build solid - G4Box or G4Tubs - called containerSolid
-  // build logical volume - use BDSGlobalConstants::Instance()->GetEmptyMaterial()
-  // should be called containerLV
+  //Input Checks
+  if (outerDiameter <= 0)
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
+        exit(1);
+    }
+    
+  if (numberWedges < 1)
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"numberWedges\" is not defined or must be greater than 0" <<  G4endl;
+        exit(1);
+    }
+    
+  if (wedgeHeight <= 0)
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"wedgeHeight\" is not defined or must be greater than 0" <<  G4endl;
+        exit(1);
+    }
+
+  if (degraderHeight > (0.5*outerDiameter))
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"wedgeHeight\" must be greater than 0.5 times \"outerDiameter\"" <<  G4endl;
+        exit(1);
+    }
     
   containerSolid = new G4Box(name + "_container_solid",
                                 outerDiameter*0.5,
