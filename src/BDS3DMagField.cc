@@ -7,6 +7,7 @@
 #include "BDSProgressBar.hh"
 
 
+
 BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffset ) 
   :fZoffset(zOffset),fXoffset(xOffset),fYoffset(0),invertX(false),invertY(false),invertZ(false)
 {    
@@ -133,7 +134,7 @@ BDS3DMagField::BDS3DMagField( const char* filename, double zOffset, double xOffs
 void BDS3DMagField::GetFieldValue(const double point[4],
 				      double *Bfield ) const
 {
-#ifdef BDSDEBUG
+#ifdef BDSDEBUG2
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
@@ -149,7 +150,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   local[2] = point[2] + translation[2] - fZoffset;
   local *= Rotation();
 
-#ifdef BDSDEBUG
+#ifdef BDSDEBUG2
   G4cout <<  "BDS3DMagField::GetFieldValue" << G4endl;
   G4cout << "point x       = " << point[0]/CLHEP::cm << " cm" << G4endl;
   G4cout << "point y       = " << point[1]/CLHEP::cm << " cm" << G4endl;
@@ -170,7 +171,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   //Mirror in x=0 plane and z=0 plane
   /*
   if( local[0] < 0 ){
-#ifdef BDSDEBUG
+#ifdef BDSDEBUG2
     G4cout << "x = " << local[0]/cm << " cm. Mirroring in x=0 plane." << G4endl;
 #endif
     local[0] *= -1;
@@ -179,7 +180,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
   }
 
   if( local[2] <0 ){
-#ifdef BDSDEBUG
+#ifdef BDSDEBUG2
     G4cout << "z = " << local[2]/cm << " cm. Mirroring in z=0 plane." << G4endl;
 #endif
     local[2] *= -1;
@@ -270,7 +271,7 @@ void BDS3DMagField::GetFieldValue(const double point[4],
 #endif
   }
 
-#ifdef BDSDEBUG
+#ifdef BDSDEBUG2
   G4cout << "Bfield x,y,z = " << 
     Bfield[0]/_fieldUnit << " " <<
     Bfield[1]/_fieldUnit << " " <<

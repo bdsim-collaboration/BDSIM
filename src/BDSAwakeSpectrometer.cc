@@ -109,9 +109,11 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
 		 0,
 		 _poleStartZ+itsYokeSize.z()/2.0
 		 );
+
   //The field map centre corresponds with the pole centre.
-  itsBmapZOffset=itsPolePos.z();
-  itsBmapXOffset=itsPolePos.x();
+  //  itsBmapZOffset=(-itsLength/2.0 + 62.733*CLHEP::cm)*0.5;
+  itsBmapZOffset=0.5*itsPolePos.z();
+  itsBmapXOffset=0.5*itsPolePos.x();
 
 
   //The position of the yoke relative to the marker volume
