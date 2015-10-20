@@ -49,7 +49,7 @@ std::list<std::string> _tmpstring;
 
 /// globals
 struct Parameters params;
-struct Options options;
+class Options options;
 //struct Element element;
 struct Tunnel tunnel;
 class PhysicsBiasing xsecbias;
