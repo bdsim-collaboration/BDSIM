@@ -273,10 +273,11 @@ void BDSRBend::PlaceComponents()
     }
 
   // no if(placeBeamPipe) here as custom procedure and rbend has different construction
-  if (outer)
+  if (beampipe)
     {
-      G4ThreeVector outerOffset    = outer->GetPlacementOffset();
-      G4ThreeVector beamPipeOffset = GetPlacementOffset() + magnetOuterOffset + outerOffset;
+      // offset in container is offset suggested by beam pipe component (if asymmetrical) +
+      // magnet offset due to rbend geometry
+      G4ThreeVector beamPipeOffset = beampipe->GetPlacementOffset() + magnetOuterOffset;
       G4PVPlacement* pipePV = new G4PVPlacement(0,
 						beamPipeOffset,
 						beampipe->GetContainerLogicalVolume(),   // logical volume
