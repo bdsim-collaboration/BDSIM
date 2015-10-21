@@ -1,7 +1,4 @@
-option, ngenerate=1,
-!	physicsList="QGSP_BERT",
-!	physicsList="hadronic_standard",
-	physicsList="em_standard",
+option,	physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=0.5*cm,
 	outerDiameter=2.0*m,
@@ -10,6 +7,9 @@ option, ngenerate=1,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
 	checkOverlaps=1;
+
+!to show only the beampipe
+option, magnetGeometryType="none";
 
 beam, particle="proton",
       energy=10.0*GeV,

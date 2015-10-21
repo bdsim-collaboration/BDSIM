@@ -1256,18 +1256,18 @@ as their value.
 | LPBFraction                      | the fraction of electromagnetic process in which      |
 |                                  | lead particle biasing is used ( 0 < LPBFraction < 1)  |
 +----------------------------------+-------------------------------------------------------+
-| trajCutGTZ                       | global z position cut (minimum) for storing           |
-|                                  | trajectories                                          |
+| **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
-+----------------------------------+-------------------------------------------------------+
-| Output Parameters                | Function                                              |
-+----------------------------------+-------------------------------------------------------+
-| storeTrajectory                  | whether to store trajectories in the output           |
+| storeTrajectories                | whether to store trajectories in the output           |
 +----------------------------------+-------------------------------------------------------+
 | storeMuonTrajectories            | whether to store muon trajectories in the output      |
 +----------------------------------+-------------------------------------------------------+
 | storeNeutronTrajectories         | whether to store neutron trajectories in the output   |
++----------------------------------+-------------------------------------------------------+
+| trajCutGTZ                       | global z position cut (minimum) for storing           |
+|                                  | trajectories                                          |
++----------------------------------+-------------------------------------------------------+
+| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
 +----------------------------------+-------------------------------------------------------+
 | nperfile                         | number of evens to record per output file             |
 +----------------------------------+-------------------------------------------------------+
@@ -1281,7 +1281,7 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used. This also specifies the particle species and **reference energy**, which is the
+used [#beamcommandnote]_. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic field of dipole magnets
 if only the `angle` parameter has been specified.
@@ -1896,3 +1896,5 @@ can be set to the precision region by setting the attribute *precisionRegion* eq
 			use more than once in a *line*, then output will only be from the first
 			occurrence of that element in the sequence. This will be addressed in future
 			releases.
+.. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
+		      The distinction is kept for clarity, and this might be changed in the future.
