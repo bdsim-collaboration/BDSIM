@@ -101,6 +101,9 @@ namespace GMAD {
     std::string outerMaterialName;
     double      outerDiameter;
 
+    /// geometry debug
+    bool        dontSplitSBends;
+    
     int         includeIronMagFields;
 
     /// default beampipe parameters

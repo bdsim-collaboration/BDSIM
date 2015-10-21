@@ -58,6 +58,10 @@ Options::Options()
   magnetGeometryType   = "cylindrical";
   outerMaterialName    = "iron";
   outerDiameter        = 0.2;
+
+  // geometry debugging
+  dontSplitSBends      = false; // always split sbends into smaller chunks by default
+  
   includeIronMagFields = 0;
   sensitiveBeamlineComponents = 1;
   
@@ -295,6 +299,7 @@ void Options::PublishMembers()
   publish("aper4",&Options::aper4);
   publish("beampipeMaterial",&Options::beampipeMaterial);
   publish("vacuumMaterial",&Options::vacMaterial);
+  publish("dontSplitSBends", &Options::dontSplitSBends);
 
   // tunnel options
   publish("buildTunnel",&Options::buildTunnel);

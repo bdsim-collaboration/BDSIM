@@ -315,7 +315,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
   if (nSbends==0) nSbends = 1; // can happen in case angle = 0
-  //nSbends = 1;   //use for debugging
+  if (BDSGlobalConstants::Instance()->DontSplitSBends())
+    {nSbends = 1;}   //use for debugging
+      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif

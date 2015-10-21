@@ -87,6 +87,8 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
 
+  dontSplitSBends       = opt.dontSplitSBends;
+
   // tunnel
   buildTunnel            = opt.buildTunnel;
   buildTunnelStraight    = opt.buildTunnelStraight;

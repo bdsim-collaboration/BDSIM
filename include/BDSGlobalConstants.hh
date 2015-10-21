@@ -100,7 +100,9 @@ public:
   G4String GetOuterMaterialName() const;
   G4double GetOuterDiameter() const;
   G4double GetMagnetPoleSize() const;
-  G4double GetMagnetPoleRadius() const; 
+  G4double GetMagnetPoleRadius() const;
+
+  G4bool   DontSplitSBends() const;
 
   ///@{ Tunnel
   G4bool         BuildTunnel()         const;
@@ -265,6 +267,10 @@ private:
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   ///@}
+
+  /// A debug option to NOT split sbends into multiple sections
+  G4bool   dontSplitSBends;
+  
   ///@{ Tunnel model
   G4bool         buildTunnel;
   G4bool         buildTunnelStraight;
@@ -522,6 +528,9 @@ inline G4String BDSGlobalConstants::GetOuterMaterialName() const
 
 inline G4double BDSGlobalConstants::GetOuterDiameter() const
 {return itsOuterDiameter;}
+
+inline G4bool   BDSGlobalConstants::DontSplitSBends() const
+{return dontSplitSBends;}
 
 inline G4double BDSGlobalConstants::GetComponentBoxSize() const
 {return itsOuterDiameter;}
