@@ -68,7 +68,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
   straightSectionLength       = straightSectionChord / (cos(0.5*fabs(angle)));
   // increase container radius to account for magnet outer geometry offset
   // container axis is chord axis between entry and exit points
-  containerRadius             += fabs(magnetXShift);
+  containerRadius             += fabs(magnetXShift)*1.001; // 1% margin due to calculations
 
   G4double in_z = cos(0.5*fabs(angle)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(0.5*fabs(angle));
