@@ -219,6 +219,7 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "wedgeLength") return wedgeLength;
   if(property_name == "degraderHeight") return degraderHeight;
   if(property_name == "materialThickness") return materialThickness;
+  if(property_name == "degraderOffset") return degraderOffset;
   if(property_name == "A") return A;
   if(property_name == "Z") return Z;
   if(property_name == "density") return density;
@@ -335,6 +336,7 @@ void Element::set(const struct Parameters& params)
   if(params.wedgeLengthset)       wedgeLength       = params.wedgeLength;
   if(params.degraderHeightset)    degraderHeight    = params.degraderHeight;
   if(params.materialThicknessset) materialThickness = params.materialThickness;
+  if(params.degraderOffset)       degraderOffset    = params.degraderOffset;
   // Laser
   if(params.waveLengthset) waveLength = params.waveLength;
   // Element, Tunnel
