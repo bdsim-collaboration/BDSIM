@@ -2,7 +2,6 @@
 #define _BDS_TRAJECTORY_HH__
 
 #include "G4Trajectory.hh"
-#include "BDSTrajectoryPoint.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
