@@ -57,6 +57,7 @@ private:
   BDSAcceleratorComponent* CreateRectangularCollimator();
   BDSAcceleratorComponent* CreateEllipticalCollimator();
   BDSAcceleratorComponent* CreateMuSpoiler();
+  BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateAwakeScreen();
@@ -65,12 +66,19 @@ private:
   /// Testing function
   G4bool HasSufficientMinimumLength(GMAD::Element& element);
   
-  ///@{ Utility function to prepare beampipe
+  ///@{ Utility function to prepare model info
   G4Material*         PrepareBeamPipeMaterial(GMAD::Element& element);
   G4Material*         PrepareVacuumMaterial(GMAD::Element& element);
   BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element& element);
   G4double            PrepareOuterDiameter(GMAD::Element& element);
   BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element& element);
   ///@}
+
+  /// Utility function to check if the combination of outer diameter, angle and length
+  /// will result in overlapping entrance and exit faces and therefore whether to abort.
+  void CheckBendLengthAngleWidthCombo(G4double chordLength,
+				      G4double angle,
+				      G4double outerDiameter,
+				      G4String name = "not given");
 };
 #endif

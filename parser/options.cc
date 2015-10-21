@@ -1,9 +1,6 @@
 #include "options.h"
 
-#include <cstdlib>
-#include <iomanip>
 #include <iostream>
-#include <string>
 
 using namespace GMAD;
 
@@ -31,7 +28,7 @@ Options::Options()
   ffact                 = 1.0;
   beamEnergy            = 0.0;
   
-  X0 = 0.0, Y0 = 0.0, Z0 = 0.0;
+  X0 = 0.0, Y0 = 0.0, Z0 = 0.0, S0 = 0.0;
   Xp0 = 0.0, Yp0 = 0.0, Zp0 = 0.0;
   T0 = 0.0;
   E0 = 0.0;
@@ -56,12 +53,15 @@ Options::Options()
   // general geometrical prameters
   checkOverlaps           = 0;
   xsize=0.0, ysize=0.0;
-  geometryBias            = 0;
 
   // magnet geometry
   magnetGeometryType   = "cylindrical";
   outerMaterialName    = "iron";
   outerDiameter        = 0.2;
+
+  // geometry debugging
+  dontSplitSBends      = false; // always split sbends into smaller chunks by default
+  
   includeIronMagFields = 0;
   sensitiveBeamlineComponents = 1;
   
@@ -99,9 +99,9 @@ Options::Options()
   samplerDiameter     = 5; // m
 
   // beam loss monitors geometry
-  blmRad              = 0.05;
-  blmLength           = 0.18;
-  sensitiveBLMs               = 1;
+  blmRad                   = 0.05;
+  blmLength                = 0.18;
+  sensitiveBLMs            = 1;
 
   // physics processes
   gammaToMuFe              = 1;
@@ -122,17 +122,19 @@ Options::Options()
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
-  defaultRangeCut          = 7e-4;
-  prodCutPhotons           = 7e-4;
-  prodCutPhotonsP          = 7e-4;
-  prodCutPhotonsA          = 1;
-  prodCutElectrons         = 7e-4;
-  prodCutElectronsP        = 7e-4;
-  prodCutElectronsA        = 1;
-  prodCutPositrons         = 7e-4;
-  prodCutPositronsP        = 7e-4;
-  prodCutPositronsA        = 1;
-  prodCutHadrons           = 1e-3;
+  defaultRangeCut          = 1e-3;
+  prodCutPhotons           = 1e-3;
+  prodCutPhotonsP          = 1e-3;
+  prodCutPhotonsA          = 1e-3;
+  prodCutElectrons         = 1e-3;
+  prodCutElectronsP        = 1e-3;
+  prodCutElectronsA        = 1e-3;
+  prodCutPositrons         = 1e-3;
+  prodCutPositronsP        = 1e-3;
+  prodCutPositronsA        = 1e-3;
+  prodCutProtons           = 1e-3;
+  prodCutProtonsP          = 1e-3;
+  prodCutProtonsA          = 1e-3;
 
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
@@ -159,8 +161,8 @@ Options::Options()
   elossHistoBinWidth       = 1.0; // m
   elossHistoTransBinWidth  = 0.1;
   storeMuonTrajectories    = false;
-  trajCutGTZ               = 0.0;
-  trajCutLTR               = 0.0;
+  trajCutGTZ               = 0.0;  // minimum z position
+  trajCutLTR               = 1e12; // maximum radius in mm, so large default value
   storeNeutronTrajectories = false;
   storeTrajectory          = false;
   
@@ -168,6 +170,230 @@ Options::Options()
   nturns                   = 1;
 
   printModuloFraction      = 0.1;
+
+  PublishMembers();
+}
+
+void Options::PublishMembers()
+{
+  // options which influence the tracking
+  publish("physicsList",&Options::physicsList);
+  publish("modularPhysicsListsOn",&Options::modularPhysicsListsOn);
+
+  // options for the "beam" command
+  publish("particle",&Options::particleName);
+
+  publish("distrType",&Options::distribType);
+  publish("xDistrType",&Options::xDistribType);
+  publish("yDistrType",&Options::yDistribType);
+  publish("zDistrType",&Options::zDistribType);
+  publish("distrFile",&Options::distribFile);
+  publish("distrFileFormat",&Options::distribFileFormat);
+  publish("ngenerate",&Options::numberToGenerate);
+  publish("nlinesIgnore",&Options::nlinesIgnore);
+
+  publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
+  publish("elossHistoTransBinWidth",&Options::elossHistoTransBinWidth);
+  publish("defaultRangeCut",&Options::defaultRangeCut);
+  publish("ffact",&Options::ffact);
+  publish("bv",   &Options::ffact); // MadX naming
+
+  publish("energy",&Options::beamEnergy);
+
+  publish("X0",&Options::X0);
+  publish("Y0",&Options::Y0);
+  publish("Z0",&Options::Z0);
+  publish("S0",&Options::S0);
+  publish("Xp0",&Options::Xp0);
+  publish("Yp0",&Options::Yp0);
+  publish("Zp0",&Options::Zp0);
+  publish("T0",&Options::T0);
+  publish("E0",&Options::E0);
+  publish("sigmaT",&Options::sigmaT);
+  publish("betx",&Options::betx);
+  publish("bety",&Options::bety);
+  publish("alfx",&Options::alfx);
+  publish("alfy",&Options::alfy);
+  publish("emitx",&Options::emitx);
+  publish("emity",&Options::emity);
+  
+  // options for beam distrType="gauss"
+  publish("sigmaX",&Options::sigmaX);
+  publish("sigmaXp",&Options::sigmaXp);
+  publish("sigmaY",&Options::sigmaY);
+  publish("sigmaYp",&Options::sigmaYp);
+
+  // options for beam distrType="square" or distrType="circle"
+  publish("envelopeX",&Options::envelopeX);
+  publish("envelopeXp",&Options::envelopeXp);
+  publish("envelopeY",&Options::envelopeY);
+  publish("envelopeYp",&Options::envelopeYp);
+  publish("envelopeT",&Options::envelopeT);
+  publish("envelopeE",&Options::envelopeE);
+  publish("envelopeR",&Options::envelopeR);
+  publish("envelopeRp",&Options::envelopeRp);
+
+  // options for beam distrType="gaussmatrix"
+  publish("sigma11",&Options::sigma11);
+  publish("sigma12",&Options::sigma12);
+  publish("sigma13",&Options::sigma13);
+  publish("sigma14",&Options::sigma14);
+  publish("sigma15",&Options::sigma15);
+  publish("sigma16",&Options::sigma16);
+  publish("sigma22",&Options::sigma22);
+  publish("sigma23",&Options::sigma23);
+  publish("sigma24",&Options::sigma24);
+  publish("sigma25",&Options::sigma25);
+  publish("sigma26",&Options::sigma26);
+  publish("sigma33",&Options::sigma33);
+  publish("sigma34",&Options::sigma34);
+  publish("sigma35",&Options::sigma35);
+  publish("sigma36",&Options::sigma36);
+  publish("sigma44",&Options::sigma44);
+  publish("sigma45",&Options::sigma45);
+  publish("sigma46",&Options::sigma46);
+  publish("sigma55",&Options::sigma55);
+  publish("sigma56",&Options::sigma56);
+  publish("sigma66",&Options::sigma66);
+
+  // options for beam distrType="eshell"
+  publish("shellX",&Options::shellX);
+  publish("shellXp",&Options::shellXp);
+  publish("shellY",&Options::shellY);
+  publish("shellYp",&Options::shellYp);
+  publish("shellXWidth",&Options::shellXWidth);
+  publish("shellXpWidth",&Options::shellXpWidth);
+  publish("shellYWidth",&Options::shellYWidth);
+  publish("shellYpWidth",&Options::shellYpWidth);
+
+  // options for beam distrType="ring"
+  publish("Rmin",&Options::Rmin);
+  publish("Rmax",&Options::Rmax);
+
+  // options for beam distrType="halo"
+  publish("haloPSWeightParameter",&Options::haloPSWeightParameter);
+  publish("haloPSWeightFunction",&Options::haloPSWeightFunction);
+
+  publish("sigmaE",&Options::sigmaE);
+
+  publish("doPlanckScattering",&Options::doPlanckScattering);
+  publish("checkOverlaps",&Options::checkOverlaps);
+  publish("nperfile",&Options::numberOfEventsPerNtuple);
+  publish("eventNumberOffset",&Options::eventNumberOffset);
+  publish("vacuumPressure",&Options::vacuumPressure);
+  publish("planckScatterFe",&Options::planckScatterFe);
+  publish("xsize",&Options::xsize);
+  publish("ysize",&Options::ysize);
+  // options which influence the geometry
+  publish("magnetGeometryType",&Options::magnetGeometryType);
+  publish("outerMaterial",&Options::outerMaterialName);
+  publish("outerDiameter",&Options::outerDiameter);
+  publish("boxSize",      &Options::outerDiameter); // for backwards compatability
+  publish("includeIronMagFields",&Options::includeIronMagFields);
+  publish("beampipeRadius",&Options::beampipeRadius);
+  publish("beampipeThickness",&Options::beampipeThickness);
+  publish("apertureType",&Options::apertureType);
+  publish("aper1",&Options::aper1);
+  publish("aper2",&Options::aper2);
+  publish("aper3",&Options::aper3);
+  publish("aper4",&Options::aper4);
+  publish("beampipeMaterial",&Options::beampipeMaterial);
+  publish("vacuumMaterial",&Options::vacMaterial);
+  publish("dontSplitSBends", &Options::dontSplitSBends);
+
+  // tunnel options
+  publish("buildTunnel",&Options::buildTunnel);
+  publish("buildTunnelStraight",&Options::buildTunnelStraight);
+  publish("tunnelType",&Options::tunnelType);
+  publish("tunnelThickness",&Options::tunnelThickness);
+  publish("tunnelSoilThickness",&Options::tunnelSoilThickness);
+  publish("tunnelMaterial",&Options::tunnelMaterial);
+  publish("soilMaterial",&Options::soilMaterial);
+  publish("buildTunnelFloor",&Options::buildTunnelFloor);
+  publish("tunnelFloorOffset",&Options::tunnelFloorOffset);
+  publish("tunnelAper1", &Options::tunnelAper1);
+  publish("tunnelAper2", &Options::tunnelAper2);
+  publish("tunnelRadius",&Options::tunnelAper1); // for backwards compatability
+  publish("tunnelSensitive",&Options::tunnelSensitive);
+  publish("tunnelVisible",&Options::tunnelVisible);
+  publish("showTunnel",&Options::tunnelVisible); // for backwards compatability
+  
+  publish("tunnelOffsetX",&Options::tunnelOffsetX);
+  publish("tunnelOffsetY",&Options::tunnelOffsetY);
+
+  publish("samplerDiameter",&Options::samplerDiameter);
+  
+  // options for beam loss monitor geometry
+  publish("blmRad",&Options::blmRad);
+  publish("blmLength",&Options::blmLength);
+
+  publish("gammaToMuFe",&Options::gammaToMuFe);
+  publish("annihiToMuFe",&Options::annihiToMuFe);
+  publish("eeToHadronsFe",&Options::eeToHadronsFe);
+  publish("scintYieldFactor",&Options::scintYieldFactor);
+  publish("useEMLPB",&Options::useEMLPB);
+  publish("useHadLPB",&Options::useHadLPB);
+
+  publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
+  publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
+  publish("sensitiveBLMs",&Options::sensitiveBLMs);
+  publish("LPBFraction",&Options::LPBFraction);
+
+  publish("thresholdCutCharged",&Options::thresholdCutCharged);
+  publish("thresholdCutPhotons",&Options::thresholdCutPhotons);
+
+  publish("prodCutPhotons",&Options::prodCutPhotons);
+  publish("prodCutPhotonsP",&Options::prodCutPhotonsP);
+  publish("prodCutPhotonsA",&Options::prodCutPhotonsA);
+  publish("prodCutElectrons",&Options::prodCutElectrons);
+  publish("prodCutElectronsP",&Options::prodCutElectronsP);
+  publish("prodCutElectronsA",&Options::prodCutElectronsA);
+  publish("prodCutPositrons",&Options::prodCutPositrons);
+  publish("prodCutPositronsP",&Options::prodCutPositronsP);
+  publish("prodCutPositronsA",&Options::prodCutPositronsA);
+  publish("prodCutProtons",&Options::prodCutProtons);
+  publish("prodCutHadrons",&Options::prodCutProtons); // backwards compatability
+  publish("prodCutProtonsP",&Options::prodCutProtonsP);
+  publish("prodCutProtonsA",&Options::prodCutProtonsA);
+
+  // options which influence tracking 
+  publish("maximumTrackingTime",&Options::maximumTrackingTime);
+  publish("deltaChord",&Options::deltaChord);
+  publish("chordStepMinimum",&Options::chordStepMinimum);
+  publish("deltaIntersection",&Options::deltaIntersection);
+  publish("minimumEpsilonStep",&Options::minimumEpsilonStep);
+  publish("maximumEpsilonStep",&Options::maximumEpsilonStep);
+  publish("deltaOneStep",&Options::deltaOneStep);
+
+  // physics processes
+  publish("turnOnCerenkov",&Options::turnOnCerenkov);
+  publish("turnOnOpticalAbsorption",&Options::turnOnOpticalAbsorption);
+  publish("turnOnMieScattering",&Options::turnOnMieScattering);
+  publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);
+  publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
+  publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
+
+  publish("synchRadOn",&Options::synchRadOn);
+  publish("decayOn",&Options::decayOn);
+  publish("srTrackPhotons",&Options::synchTrackPhotons);
+  publish("srLowX",&Options::synchLowX);
+  publish("srLowGamE",&Options::synchLowGamE);
+  publish("srMultiplicity",&Options::synchPhotonMultiplicity);
+  publish("srMeanFreeFactor",&Options::synchMeanFreeFactor);
+  publish("lengthSafety",&Options::lengthSafety);
+  publish("randomSeed",&Options::randomSeed);
+  publish("storeMuonTrajectory",&Options::storeMuonTrajectories);
+  publish("storeMuonTrajectories",&Options::storeMuonTrajectories);
+  publish("trajCutGTZ",&Options::trajCutGTZ);
+  publish("trajCutLTR",&Options::trajCutLTR);
+  publish("storeNeutronTrajectory",&Options::storeNeutronTrajectories);
+  publish("storeNeutronTrajectories",&Options::storeNeutronTrajectories);
+  publish("storeTrajectory",&Options::storeTrajectory);
+  publish("storeTrajectories",&Options::storeTrajectory);
+  publish("stopSecondaries",&Options::stopSecondaries);
+  publish("stopTracks",&Options::stopTracks);
+  publish("nturns",&Options::nturns);
+  publish("printModuloFraction",&Options::printModuloFraction);
 }
 
 void Options::print() const
@@ -184,251 +410,4 @@ void Options::print() const
   std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering <<std::endl;
   std::cout<<"Optical surface on    : " << turnOnOpticalSurface <<std::endl;
   std::cout<<"Birks saturation on   : " << turnOnBirksSaturation <<std::endl;
-}
-
-void Options::set_value(std::string name, double value )
-{
-#ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
-#endif
-  // numeric options for the "beam" command
-  if(name == "elossHistoBinWidth")      {elossHistoBinWidth = value; return;}
-  if(name == "elossHistotransBinWidth") {elossHistoTransBinWidth = value; return;}
-  if(name == "defaultRangeCut")         {defaultRangeCut = value; return;}
-  if(name == "ffact")  {ffact = value; return;}
-  if(name == "bv")     {ffact = value; return;} // MadX naming
-  if(name == "energy") {beamEnergy = value; return;}
-  if(name == "X0" )    {X0  = value; return;}
-  if(name == "Y0" )    {Y0  = value; return;}
-  if(name == "Z0" )    {Z0  = value; return;}
-  if(name == "T0" )    {T0  = value; return;}
-  if(name == "Xp0" )   {Xp0 = value; return;}
-  if(name == "Yp0" )   {Yp0 = value; return;}
-  if(name == "Zp0" )   {Zp0 = value; return;}
-  if(name == "E0")     {E0  = value; return;}
-
-  if(name == "sigmaT" ) {sigmaT = value; return;}
-  if(name == "sigmaE" ) {sigmaE = value; return;}
-
-  // options for beam distrType="gauss"
-  if(name == "sigmaX" )  {sigmaX = value; return;}
-  if(name == "sigmaY" )  {sigmaY = value; return;}
-  if(name == "sigmaXp" ) {sigmaXp = value; return;}
-  if(name == "sigmaYp" ) {sigmaYp = value; return;}
-
-  // options for beam distrType="square" or distrType="circle"
-  if(name == "envelopeX"  ) { envelopeX  = value; return; }
-  if(name == "envelopeY"  ) { envelopeY  = value; return; }
-  if(name == "envelopeXp" ) { envelopeXp = value; return; }
-  if(name == "envelopeYp" ) { envelopeYp = value; return; }
-  if(name == "envelopeT"  ) { envelopeT  = value; return; }
-  if(name == "envelopeE"  ) { envelopeE  = value; return; }
-  if(name == "envelopeR"  ) { envelopeR  = value; return; }
-  if(name == "envelopeRp" ) { envelopeRp = value; return; }
-
-  // options for beam distrType="gaussmatrix"
-  if(name == "sigma11" ) { sigma11 = value; return; }
-  if(name == "sigma12" ) { sigma12 = value; return; }
-  if(name == "sigma13" ) { sigma13 = value; return; }
-  if(name == "sigma14" ) { sigma14 = value; return; }
-  if(name == "sigma15" ) { sigma15 = value; return; }
-  if(name == "sigma16" ) { sigma16 = value; return; }
-
-  if(name == "sigma22" ) { sigma22 = value; return; }
-  if(name == "sigma23" ) { sigma23 = value; return; }
-  if(name == "sigma24" ) { sigma24 = value; return; }
-  if(name == "sigma25" ) { sigma25 = value; return; }
-  if(name == "sigma26" ) { sigma26 = value; return; }
-
-  if(name == "sigma33" ) { sigma33 = value; return; }
-  if(name == "sigma34" ) { sigma34 = value; return; }
-  if(name == "sigma35" ) { sigma35 = value; return; }
-  if(name == "sigma36" ) { sigma36 = value; return; }
-
-  if(name == "sigma44" ) { sigma44 = value; return; }
-  if(name == "sigma45" ) { sigma45 = value; return; }
-  if(name == "sigma46" ) { sigma46 = value; return; }
-
-  if(name == "sigma55" ) { sigma55 = value; return; }
-  if(name == "sigma56" ) { sigma56 = value; return; }
-
-  if(name == "sigma66" ) { sigma66 = value; return; }
-    
-  // options for beam distrType="eshell"
-  if(name == "shellX"  ) { shellX  = value; return; }
-  if(name == "shellY"  ) { shellY  = value; return; }
-  if(name == "shellXp" ) { shellXp = value; return; }
-  if(name == "shellYp" ) { shellYp = value; return; }
-  if(name == "shellXWidth" ) { shellXWidth  = value; return;}
-  if(name == "shellXpWidth") { shellXpWidth = value; return;}
-  if(name == "shellYWidth" ) { shellYWidth  = value; return;}
-  if(name == "shellYpWidth") { shellYpWidth = value; return;}
-
-  // options for beam distrType="ring"
-  if(name == "Rmin" ) { Rmin = value; return; }
-  if(name == "Rmax" ) { Rmax = value; return; }
-
-  // options for beam distrType="halo"
-  if(name == "haloPSWeightParameter") {haloPSWeightParameter= value; return;}
-  
-  // numeric options for the"option" command
-
-  // options for beam loss monitor geometry
-  if(name == "blmRad" )            {blmRad    = value; return; }
-  if(name == "blmLength" )         {blmLength = value; return; }
-
-  // options which influence the geometry
-  if(name == "outerDiameter" )     {outerDiameter     = value; return;}
-  if(name == "boxSize")            {outerDiameter     = value; return;} // for backwards compatability
-  if(name == "beampipeThickness" ) {beampipeThickness = value; return;}
-  if(name == "beampipeRadius" )    {beampipeRadius    = value; return;}
-  if(name == "aper1" )             {aper1             = value; return;}
-  if(name == "aper2" )             {aper2             = value; return;}
-  if(name == "aper3" )             {aper3             = value; return;}
-  if(name == "aper4" )             {aper4             = value; return;}
-
-  if(name == "samplerDiameter" )     {samplerDiameter = value;       return; }
-  
-  if(name == "includeIronMagFields") {includeIronMagFields = (int)value; return;} 
-
-  // tunnel options
-  if(name == "buildTunnel")          {buildTunnel         = (bool)value; return;}
-  if(name == "buildTunnelStraight")  {buildTunnelStraight = (bool)value; return;}
-  if(name == "tunnelThickness" )     {tunnelThickness     = value;       return;}
-  if(name == "tunnelSoilThickness" ) {tunnelSoilThickness = value;       return;}
-  if(name == "buildTunnelFloor")     {buildTunnelFloor    = (bool)value; return;}
-  if(name == "tunnelFloorOffset" )   {tunnelFloorOffset   = value;       return;}
-  if(name == "tunnelAper1")          {tunnelAper1         = value;       return;}
-  if(name == "tunnelAper2")          {tunnelAper2         = value;       return;}
-  if(name == "tunnelRadius" )        {tunnelAper1         = value;       return;} // for backwards compatability
-  if(name == "showTunnel")           {tunnelVisible       = (bool)value; return;} // for backwards compatability
-  if(name == "tunnelVisible")        {tunnelVisible       = (bool)value; return;}
-  if(name == "tunnelSensitive")      {tunnelSensitive     = (bool)value; return;}
-  if(name == "tunnelOffsetX" )       {tunnelOffsetX       = value;       return;}
-  if(name == "tunnelOffsetY" )       {tunnelOffsetY       = value;       return;}
-  
-  // geometry biasing
-  if(name == "geometryBias") {geometryBias = (int)value; return;}
-
-  // options which influence tracking 
-  if(name == "maximumTrackingTime") {maximumTrackingTime = value; return;}
-  if(name == "deltaChord") { deltaChord = value; return; }
-  if(name == "deltaIntersection") { deltaIntersection = value; return; }
-  if(name == "chordStepMinimum") { chordStepMinimum = value; return; }
-  if(name == "lengthSafety") { lengthSafety = value; return; }
-  if(name == "minimumEpsilonStep" ) { minimumEpsilonStep = value; return; }
-  if(name == "maximumEpsilonStep" ) { maximumEpsilonStep = value; return; }
-  if(name == "deltaOneStep" ) { deltaOneStep = value; return; }
-
-  // physics processes
-  if(name == "modularPhysicsListsOn")    {modularPhysicsListsOn = (int)value; return;}
-  if(name == "synchRadOn")               {synchRadOn=(int)value; return;}
-  if(name == "decayOn")                  {decayOn = (int)value; return;}
-  if(name == "turnOnCerenkov")           {turnOnCerenkov = (int)value; return;}
-  if(name == "turnOnOpticalAbsorption")  {turnOnOpticalAbsorption = (int)value; return;}
-  if(name == "turnOnMieScattering")      {turnOnMieScattering = (int)value; return;}
-  if(name == "turnOnRayleighScattering") {turnOnRayleighScattering = (int)value; return;}
-  if(name == "turnOnOpticalSurface")     {turnOnOpticalSurface = (int)value; return;}
-  if(name == "turnOnBirksSaturation")    {turnOnBirksSaturation = (int)value; return;}
-  if(name == "srTrackPhotons")           {synchTrackPhotons = (int)value; return;}
-  if(name == "useEMLPB")                 {useEMLPB = (int)value; return; }
-  if(name == "useHadLPB")                {useHadLPB = (int)value; return; }
-  if(name == "sensitiveBeamlineComponents"){sensitiveBeamlineComponents = (int)value; return; }
-  if(name == "sensitiveBeamPipe")        {sensitiveBeamPipe = (int)value; return; }
-  if(name == "sensitiveBLMs")            {sensitiveBLMs = (int)value; return; }
-  if(name == "LPBFraction")              {LPBFraction = value; return; }
-  if(name == "annihiToMuFe")             {annihiToMuFe = value; return; }
-  if(name == "gammaToMuFe")              {gammaToMuFe = value; return; }
-  if(name == "scintYieldFactor")         {scintYieldFactor = value; return; }
-  if(name == "eeToHadronsFe")            {eeToHadronsFe = value; return; }
-  if(name == "thresholdCutCharged" )     {thresholdCutCharged = value; return; }
-  if(name == "thresholdCutPhotons" )     {thresholdCutPhotons = value; return; }
-  if(name == "vacuumPressure")           {vacuumPressure = value; return; }
-  if(name == "planckScatterFe")          {planckScatterFe = value; return; }
-  if(name == "stopSecondaries")          {stopSecondaries = (bool) value; return; } 
-  if(name == "stopTracks")               {stopTracks = (bool) value; return; } 
-  if(name == "srLowX")                   {synchLowX = value; return; }
-  if(name == "srLowGamE")                {synchLowGamE = value; return; }
-  if(name == "srMultiplicity")           {synchPhotonMultiplicity = (int) value; return; }
-  if(name == "srMeanFreeFactor")         {synchMeanFreeFactor = (int) value; return; }
-  if(name == "prodCutPhotons" )          {prodCutPhotons = value; return; }
-  if(name == "prodCutPhotonsP" )         {prodCutPhotonsP = value; return; }
-  if(name == "prodCutPhotonsA" )         {prodCutPhotonsA = value; return; }
-  if(name == "prodCutElectrons" )        {prodCutElectrons = value; return; }
-  if(name == "prodCutElectronsP" )       {prodCutElectronsP = value; return; }
-  if(name == "prodCutElectronsA" )       {prodCutElectronsA = value; return; }
-  if(name == "prodCutPositrons" )        {prodCutPositrons = value; return; }
-  if(name == "prodCutPositronsP" )       {prodCutPositronsP = value; return; }
-  if(name == "prodCutPositronsA" )       {prodCutPositronsA = value; return; }
-  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; } 
-  
-  // twiss parameters
-  if(name == "betx" ) { betx = value; return; }
-  if(name == "bety" ) { bety = value; return; }
-  if(name == "alfx" ) { alfx = value; return; }
-  if(name == "alfy" ) { alfy = value; return; }
-  if(name == "emitx" ) { emitx = value; return; }
-  if(name == "emity" ) { emity = value; return; }
-  if(name == "doPlanckScattering" ) { doPlanckScattering = (int) value; return; }
-  if(name == "checkOverlaps" ) { checkOverlaps = (int) value; return; }
-
-  if(name == "storeTrajectory") { storeTrajectory = (int) value; return; } 
-  if(name == "storeTrajectories") { storeTrajectory = (int) value; return; } 
-  if(name == "storeMuonTrajectory") { storeMuonTrajectories = (int) value; return; } 
-  if(name == "storeMuonTrajectories") { storeMuonTrajectories = (int) value; return; } 
-  if(name == "trajCutGTZ") { trajCutGTZ = value; return; } 
-  if(name == "trajCutLTR") { trajCutLTR = value; return; } 
-
-  if(name == "storeNeutronTrajectory") { storeNeutronTrajectories = (int) value; return; } 
-  if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; }
-
-  // options for generation and storage
-  if(name == "randomSeed") { randomSeed = (int) value; return; }
-  if(name == "ngenerate" ) { numberToGenerate = (int)value; return; }
-  if(name == "nperfile" ) { numberOfEventsPerNtuple = (int)value; return; }
-  if(name == "eventNumberOffset" ) { eventNumberOffset = (int)value; return; }
-  if(name == "nlinesIgnore") { nlinesIgnore = (int) value; return; }
-
-  // option for rings
-  if(name=="nturns") {nturns = (int) value; return; }
-
-  if(name=="printModuloFraction") {printModuloFraction = value; return;}
-  
-  std::cerr << "parser> Error: unknown option \"" << name << "\" with value " << value << std::endl; 
-  exit(1);
-}
-
-void Options::set_value(std::string name, std::string value )
-{
-#ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
-#endif
-  // string options for the "beam" command
-  if(name == "particle")             {particleName = value; return;}
-  if(name == "distrType" )           {distribType  = value; return;}
-  if(name == "xDistrType" )          {xDistribType = value; return;}
-  if(name == "yDistrType" )          {yDistribType = value; return;}
-  if(name == "zDistrType" )          {zDistribType = value; return;}
-  if(name == "distrFile" )           {distribFile  = value; return;}
-  if(name == "distrFileFormat" )     {distribFileFormat    = value; return;}
-  if(name == "haloPSWeightFunction") {haloPSWeightFunction = value; return;}
-  
-  // string options for the "option" command
-  // options which influence the geometry
-  if(name == "magnetGeometryType" ){magnetGeometryType = value; return;}
-  if(name == "outerMaterial" )     {outerMaterialName  = value; return;}
-  if(name == "apertureType" )      {apertureType       = value; return;}
-  if(name == "beampipeMaterial" )  {beampipeMaterial   = value; return;}
-  if(name == "vacuumMaterial" )    {vacMaterial        = value; return;}
-
-  // tunnel options
-  if(name == "tunnelType")         {tunnelType         = value; return;}
-  if(name == "tunnelMaterial" )    {tunnelMaterial     = value; return;}
-  if(name == "soilMaterial" )      {soilMaterial       = value; return;}
-  
-  // options which influence the tracking
-  if(name == "physicsList" ) { physicsList = value; return; }
-
-  std::cerr << "Error: parser.h> unknown option \"" << name << "\" with value " << value  << std::endl; 
-  exit(1);
 }

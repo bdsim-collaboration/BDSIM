@@ -10,8 +10,6 @@
 
 #include "globals.hh"
 
-#include <sstream>
-
 BDSTunnelBuilder::BDSTunnelBuilder()
 {
   displacementTolerance = 50 * CLHEP::cm;    // maximum displacemenet of beamline before split
@@ -188,8 +186,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
       if (breakIt || isEnd || nextItemIsSampler)
 	{
 	  // work out tunnel parameters
-	  std::stringstream name;
-	  name << "tunnel_" << nTunnelSections;
+	  std::string name = "tunnel_" + std::to_string(nTunnelSections);
 
 	  // calculate start central point of tunnel
 	  G4ThreeVector startPoint         = (*startElement)->GetReferencePositionStart();
@@ -288,7 +285,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 #endif
 	      
 	      tunnelSection = tf->CreateTunnelSectionAngled(defaultModel->type,          // type
-							    name.str(),                  // name
+							    name,                        // name
 							    segmentLength,               // length
 							    inputFace,                   // input face normal
 							    outputFace,                  // output face normal
@@ -306,7 +303,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  else
 	    { // straight section
 	      tunnelSection = tf->CreateTunnelSection(defaultModel->type,          // type
-						      name.str(),                  // name
+						      name,                        // name
 						      segmentLength,               // length
 						      defaultModel->thickness,     // thickness
 						      defaultModel->soilThickness, // soil thickness

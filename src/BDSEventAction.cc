@@ -8,6 +8,7 @@
 #include "BDSRunManager.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "BDSTunnelHit.hh"
 
 #include "globals.hh"                  // geant4 types / globals
@@ -36,11 +37,8 @@ BDSEventAction::BDSEventAction():
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   primaryCounterCollID(-1),
-  tunnelCollID(-1),
-  traj(nullptr),
-  trajEndPoint(nullptr)
+  tunnelCollID(-1)
 { 
-  verbose            = BDSExecOptions::Instance()->GetVerbose();
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   isBatch            = BDSExecOptions::Instance()->GetBatch();
@@ -159,18 +157,21 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
+      BDSHistogram1D* generalELoss    = analMan->GetHistogram(2);
+      BDSHistogram1D* perElementELoss = analMan->GetHistogram(5);
+      
       bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
       //bin hits in histograms
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
-	  G4double s      = (*energyCounterHits)[i]->GetS()/CLHEP::m;
-	  G4double energy = (*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV;
-	  G4double weight = (*energyCounterHits)[i]->GetWeight();
-	  G4double weightedEnergy = energy*weight;
-	  //general eloss histo
-	  analMan->Fill1DHistogram(2, s, weightedEnergy);
-	  //per element eloss histo
-	  analMan->Fill1DHistogram(5, s, weightedEnergy);
+	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
+	  G4double sBefore = hit.GetSBefore()/CLHEP::m;
+	  G4double sAfter  = hit.GetSAfter()/CLHEP::m;
+	  G4double energy  = hit.GetEnergy()/CLHEP::GeV;
+	  G4double weight  = hit.GetWeight();
+	  G4double weightedEnergy = energy * weight;
+	  generalELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
+	  perElementELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
 	}
     }
 
@@ -186,14 +187,16 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {
 	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-	      G4double hitS  = thePrimaryHit->GetS()/CLHEP::m;
-	      G4double lossS = thePrimaryLoss->GetS()/CLHEP::m;
+	      G4double hitSBefore  = thePrimaryHit->GetSBefore()/CLHEP::m;
+	      G4double hitSAfter   = thePrimaryHit->GetSAfter()/CLHEP::m;
+	      G4double lossSBefore = thePrimaryLoss->GetSBefore()/CLHEP::m;
+	      G4double lossSAfter  = thePrimaryLoss->GetSAfter()/CLHEP::m;
 	      // general histos
-	      analMan->Fill1DHistogram(0, hitS);
-	      analMan->Fill1DHistogram(1, lossS);
+	      analMan->Fill1DHistogram(0, std::make_pair(hitSBefore,hitSAfter));
+	      analMan->Fill1DHistogram(1, std::make_pair(lossSBefore,lossSAfter));
 	      // per element histos
-	      analMan->Fill1DHistogram(3, hitS);
-	      analMan->Fill1DHistogram(4, lossS);
+	      analMan->Fill1DHistogram(3, std::make_pair(hitSBefore,hitSAfter));
+	      analMan->Fill1DHistogram(4, std::make_pair(lossSBefore,lossSAfter));
 	    }
 	}
     }
@@ -236,11 +239,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // Save interesting trajectories
-  traj = nullptr;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
      BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
      BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories())
     {
+      std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
       G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
 #endif
@@ -250,22 +253,23 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       // clear out trajectories that don't reach point x
       for(auto iT1 = trajVec->begin(); iT1 < trajVec->end(); iT1++)
 	{
-	  traj=(BDSTrajectory*)(*iT1);
-	  trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
-	  trajEndPointThreeVector = trajEndPoint->GetPosition();
+	  BDSTrajectory* traj=(BDSTrajectory*)(*iT1);
+	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
+	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
 	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m > BDSGlobalConstants::Instance()->GetTrajCutGTZ();
 	  G4double radius   = sqrt(pow(trajEndPointThreeVector.x()/CLHEP::m, 2) + pow(trajEndPointThreeVector.y()/CLHEP::m, 2));
 	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->GetTrajCutLTR();
 	  if (greaterThanZInteresting && withinRInteresting)
 	    {interestingTrajectories.push_back(traj);}
 	}
+    
+      //Output interesting trajectories
+      if(interestingTrajectories.size() > 0)
+	{
+	  bdsOutput->WriteTrajectory(interestingTrajectories);
+	  interestingTrajectories.clear();
+	}
     }
-    //Output interesting trajectories
-    if(interestingTrajectories.size() > 0)
-      {
-	bdsOutput->WriteTrajectory(interestingTrajectories);
-	interestingTrajectories.clear();
-      }
     
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
@@ -292,7 +296,6 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4String           samplerName     = "Primaries";
   G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
-  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
+  bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

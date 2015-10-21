@@ -6,7 +6,8 @@
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
 
-class BDSBunchSixTrack : public BDSBunchInterface { 
+class BDSBunchSixTrack: public BDSBunchInterface
+{ 
 private: 
   G4int    nPart;
   G4String fileName;

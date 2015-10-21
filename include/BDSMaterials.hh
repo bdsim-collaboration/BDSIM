@@ -19,7 +19,6 @@ public:
   /// converts parser material list
   void PrepareRequiredMaterials();
 
-  ///@{
   /** Add materials
       @param[in] Z        atomic number
       @param[in] A        mole mass in g/mole
@@ -37,6 +36,12 @@ public:
 		   G4double temp, 
 		   G4double pressure);
 
+  /** Add materials
+      @param[in] density  in g/cm3
+      @param[in] state    solid/gas
+      @param[in] temp     in kelvin
+      @param[in] pressure in atm
+  */
   template <typename Type> void AddMaterial(
 			G4String aName, 
 			G4double density, 
@@ -45,7 +50,6 @@ public:
 			G4double pressure,
 			std::list<G4String> components,
 			std::list<Type> componentsFractions);
-  ///@}
 
   void AddElement(G4Element* aElement,G4String aName);
   void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);

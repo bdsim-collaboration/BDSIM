@@ -43,8 +43,7 @@ public:
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) override;
   /// write primary hit
-  virtual void WritePrimary(G4String samplerName, 
-			    G4double totalEnergy,
+  virtual void WritePrimary(G4double totalEnergy,
 			    G4double x0,
 			    G4double y0,
 			    G4double z0,
@@ -66,9 +65,8 @@ private:
 
   void Init(); ///< output initialisation
 
-  void BuildSamplerTree(G4String name);
+  TTree* BuildSamplerTree(G4String name); ///< build sampler TTree
   TFile* theRootOutputFile;
-  //  TTree *theLWCalorimeterTree;
   
   TTree* PrecisionRegionEnergyLossTree;
   TTree* EnergyLossTree;
@@ -78,6 +76,9 @@ private:
 
   TH2F*  tunnelHitsHisto;
 
+  /// vector of Sampler trees
+  std::vector<TTree*> samplerTrees;
+  
   // members for writing to TTrees
   float x0=0.0,xp0=0.0,y0=0.0,yp0=0.0,z0=0.0,zp0=0.0,E0=0.0,t0=0.0;
   float x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
@@ -87,7 +88,7 @@ private:
   /// local parameters
   float x=0.0,xp=0.0,y=0.0,yp=0.0,z=0.0,zp=0.0,E=0.0,t=0.0;
   /// global parameters
-  float X=0.0,Xp=0.0,Y=0.0,Yp=0.0,Z=0.0,Zp=0.0,S=0.0,weight=0.0;
+  float X=0.0,Xp=0.0,Y=0.0,Yp=0.0,Z=0.0,Zp=0.0,S=0.0,weight=0.0,stepLength=0.0;
   /// PDG id, event number, parentID, trackID, turn number
   int part=-1,eventno=-1, pID=-1, track_id=-1, turnnumber=-1;
   
@@ -99,8 +100,9 @@ private:
 
   /// fill members so that trees can be written
   void FillHit(BDSEnergyCounterHit* hit);
- 
-  void WriteRootHit(G4String Name, 
+
+  /// write hit to TTree
+  void WriteRootHit(TTree*   Tree,
 		    G4double InitTotalenergy, 
 		    G4double InitX, 
 		    G4double InitY, 

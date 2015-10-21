@@ -128,14 +128,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 					  yokeFinishRadiusY,                // y half width
 					  1.5 * outerLength); // z half width - long for unambiguous intersection
   
-  G4CutTubs* angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
-					     0,                           // inner radius
-					     angledFaceRadius,            // outer radius
-					     outerLength,                 // half length - must fit within container
-					     0,                           // rotation start angle
-					     CLHEP::twopi,                // rotation sweep angle
-					     inputface,                   // input face normal
-					     outputface);                 // output face normal
+  G4VSolid* angledFaceSolid = nullptr;
+  if (BDS::IsFinite(angle))
+    {
+      angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
+				      0,                           // inner radius
+				      angledFaceRadius,            // outer radius
+				      outerLength,                 // half length - must fit within container
+				      0,                           // rotation start angle
+				      CLHEP::twopi,                // rotation sweep angle
+				      inputface,                   // input face normal
+				      outputface);                 // output face normal
+    }
+  else
+    {
+      angledFaceSolid = new G4Tubs(name + "_angled_face_solid", // name
+				   0,                           // inner radius
+				   angledFaceRadius,            // outer radius
+				   outerLength,                 // half length - must fit within container
+				   0,                           // rotation start angle
+				   CLHEP::twopi);               // rotation sweep angle
+    }
   allSolids.push_back(containerSquareSolid);
   allSolids.push_back(angledFaceSolid);
 
@@ -163,14 +176,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 				       contRX,                          // x half width
 				       contRY,                          // y half width
 				       containerLength); // z half width - long for unambiguous intersection
-  G4CutTubs* magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
-						   0,                           // inner radius
-						   angledFaceRadius,            // outer radius
-						   containerLength*0.5,         // half length - must fit within container
-						   0,                           // rotation start angle
-						   CLHEP::twopi,                // rotation sweep angle
-						   inputface,                   // input face normal
-						   outputface);                 // output face normal
+  G4VSolid* magnetAngledFaceSolid = nullptr;
+  if (BDS::IsFinite(angle))
+    {
+      magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
+					    0,                           // inner radius
+					    angledFaceRadius,            // outer radius
+					    containerLength*0.5,         // half length - must fit within container
+					    0,                           // rotation start angle
+					    CLHEP::twopi,                // rotation sweep angle
+					    inputface,                   // input face normal
+					    outputface);                 // output face normal
+    }
+  else
+    {
+      magnetAngledFaceSolid = new G4Tubs(name + "_angled_face_solid", // name
+					 0,                           // inner radius
+					 angledFaceRadius,            // outer radius
+					 containerLength*0.5,         // half length - must fit within container
+					 0,                           // rotation start angle
+					 CLHEP::twopi);               // rotation sweep angle
+    }
   allSolids.push_back(magnetContSqSolid);
   allSolids.push_back(magnetAngledFaceSolid);
   magnetContainerSolid = new G4IntersectionSolid(name + "_magnet_container_solid", // name
@@ -179,11 +205,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 
   G4double contRZ = 0.5*length;
   BDSMagnetOuter* magnetContainer = new BDSMagnetOuter(magnetContainerSolid,
-								   NULL,
-								   std::make_pair(-contRX,contRX),
-								   std::make_pair(-contRY,contRY),
-							     std::make_pair(-contRZ,contRZ),
-							     NULL);
+						       nullptr,
+						       std::make_pair(-contRX,contRX),
+						       std::make_pair(-contRY,contRY),
+						       std::make_pair(-contRZ,contRZ),
+						       nullptr);
   
   G4Box* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 			       yokeFinishRadius - lengthSafety,           // x half width

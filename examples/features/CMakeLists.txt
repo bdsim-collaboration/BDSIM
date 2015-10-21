@@ -1,6 +1,7 @@
 add_subdirectory(components)
 add_subdirectory(geometry)
 add_subdirectory(optics)
+add_subdirectory(options)
 add_subdirectory(processes)
 add_subdirectory(processes_old)
 add_subdirectory(visualisation)

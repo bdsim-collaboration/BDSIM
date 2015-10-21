@@ -49,7 +49,7 @@ std::list<std::string> _tmpstring;
 
 /// globals
 struct Parameters params;
-struct Options options;
+class Options options;
 //struct Element element;
 struct Tunnel tunnel;
 class PhysicsBiasing xsecbias;
@@ -84,11 +84,11 @@ void quit();
 int write_table(const struct Parameters& pars,std::string name, ElementType type, std::list<struct Element> *lst=nullptr);
 int expand_line(std::string name, std::string start, std::string end);
 /// insert a sampler into beamline_list
-void add_sampler(std::string name, std::string before, int before_count);
+void add_sampler(std::string name, int before_count);
 /// insert a cylindrical sampler into beamline_list
-void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
+void add_csampler(std::string name, int before_count, double length, double rad);
 /// insert a beam dumper into beamline_list
-void add_dump(std::string name, std::string before, int before_count);
+void add_dump(std::string name, int before_count);
 /// insert tunnel
 void add_tunnel(Tunnel& tunnel);
 /// insert xsecbias
@@ -316,63 +316,85 @@ int expand_line(std::string name, std::string start, std::string end)
   return 0;
 }
 
-void add_sampler(std::string name, std::string before, int before_count)
+// anonymous namespace for helper function
+ namespace {
+   /// add element to beamline
+   void add_element(struct Element& e, std::string before, int before_count)
+   {
+     // if before_count equal to -1 add to all element instances
+     if (before_count==-1)
+       {
+	 auto itPair = beamline_list.equal_range(before);
+	 if (itPair.first==itPair.second) {
+	   std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
+	   exit(1);
+	 }
+	 for (auto it = itPair.first; it!= itPair.second; ++it) 
+	   {beamline_list.insert(it->second,e);}
+       }
+     else
+       {
+	 auto it = beamline_list.find(before,before_count);
+	 if (it==beamline_list.end()) {
+	   std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+	   exit(1);
+	 }
+	 beamline_list.insert(it,e);
+       }
+   }
+ }
+ 
+void add_sampler(std::string name, int before_count)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting sampler before "<<name;
+  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<std::endl;
 #endif
 
   struct Element e;
   e.type = ElementType::_SAMPLER;
-  e.name = name;
+  e.name = "Sampler_" + name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, name, before_count);
 }
 
-void add_csampler(std::string name, std::string before, int before_count, double length, double rad)
+void add_csampler(std::string name, int before_count, double length, double rad)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting csampler before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting csampler before "<<name;
+  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<std::endl;
 #endif
 
   struct Element e;
   e.type = ElementType::_CSAMPLER;
   e.l = length;
   e.r = rad;
-  e.name = name;
+  e.name = "CSampler_" + name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, name, before_count);
 }
 
-void add_dump(std::string name, std::string before, int before_count)
+void add_dump(std::string name, int before_count)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting dump before "<<before<<"["<<before_count<<"]"<<std::endl;
+  std::cout<<"inserting dump before "<<name;
+  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<std::endl;
 #endif
 
   struct Element e;
   e.type = ElementType::_DUMP;
-  e.name = name;
+  e.name = "Dump_" + name;
   e.lst = nullptr;
 
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
+  // add element to beamline
+  add_element(e, name, before_count);
 }
 
 void add_tunnel(Tunnel& tunnel)

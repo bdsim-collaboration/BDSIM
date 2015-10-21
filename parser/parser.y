@@ -27,7 +27,7 @@
     */
 
     int execute = 1;
-    int element_count = 1; // for samplers , ranges etc.
+    int element_count = -1; // for samplers , ranges etc. -1 means add to all
   }
 %}
 
@@ -35,7 +35,7 @@
 
 %union{
   double dval;
-  int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
+  int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
   char *str;
   struct Array *array;
@@ -54,7 +54,7 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
+%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
 %token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
@@ -255,6 +255,15 @@ decl : VARIABLE ':' marker
 	     params.flush();
 	   }
        }
+     | VARIABLE ':' degrader
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DEGRADER);
+	     params.flush();
+	   }
+       }
      | VARIABLE ':' element
        {
 	 if(execute)
@@ -409,6 +418,7 @@ multipole : MULTIPOLE ',' parameters ;
 solenoid : SOLENOID ',' parameters ;
 ecol : ECOL ',' parameters ;
 muspoiler : MUSPOILER ',' parameters ;
+degrader : DEGRADER ',' parameters ;
 rcol : RCOL ',' parameters ;
 laser : LASER ',' parameters ;
 screen : SCREEN ',' parameters ;
@@ -997,8 +1007,8 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler($3->name,$3->name, element_count);
-		element_count = 1;
+		add_sampler($3->name, element_count);
+		element_count = -1;
 		params.flush();
 	      }
           }
@@ -1007,11 +1017,20 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-//SPM		add_csampler("sampler",$3->name, element_count,params.l, params.r);
-		add_csampler($3->name,$3->name, element_count,params.l, params.r);
-		element_count = 1;
+		add_csampler($3->name, element_count,params.l, params.r);
+		element_count = -1;
 		params.flush();
 	      }
+          }
+        | DUMP ',' sample_options //  options for beam dump
+          {
+            if(execute)
+              {
+                if(ECHO_GRAMMAR) printf("command -> DUMP\n");
+                add_dump($3->name, element_count);
+                element_count = -1;
+                params.flush();
+              }
           }
         | TUNNEL ',' tunnel_options // tunnel
           {
@@ -1029,16 +1048,6 @@ command : STOP             { if(execute) quit(); }
 		add_xsecbias(xsecbias);
 	      }
           }
-        | DUMP ',' sample_options //  options for beam dump 
-          {                                                   
-            if(execute)                                       
-              {                                               
-                if(ECHO_GRAMMAR) printf("command -> DUMP\n"); 
-                add_dump($3->name,$3->name, element_count);     
-                element_count = 1;                            
-                params.flush();                               
-              }                                               
-          }                                                   
 
 //| PRINTF '(' fmt ')' { if(execute) printf($3,$5); }
 ;
@@ -1235,28 +1244,8 @@ option_parameters : VARIABLE '=' aexpr ',' option_parameters
 		    }
 ;
 
-beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		  }   
-                | VARIABLE '=' aexpr
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		  }   
-                | VARIABLE '=' STR ',' beam_parameters
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		    free($3);
-		  }   
-                | VARIABLE '=' STR
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		    free($3);
-		  }   
+// beam_parameter same as option_parameters, might change in future
+beam_parameters : option_parameters
 ;
 
 %%

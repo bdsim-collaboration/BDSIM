@@ -7,18 +7,17 @@
 #include <map>
 #include <string>
 
-/**
- * @brief List with Efficient Lookup
- * 
- * This class keeps a list of elements
- * It has efficient lookup on an element's name (log n) by having a multimap 
- *
- * Used for beamline
- *
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
- */
-
 namespace GMAD {
+  /**
+   * @brief List with Efficient Lookup
+   * 
+   * This class keeps a list of elements
+   * It has efficient lookup on an element's name (log n) by having a multimap 
+   *
+   * Used for beamline
+   *
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   */
   template<typename T>
     class FastList {
 
@@ -26,9 +25,9 @@ namespace GMAD {
     /// for ease of reading
     // chosen not to distinguish between non-const and const cases
     //    template<typename T>
-    using FastListIterator = typename std::list<T>::iterator;
-    typedef typename std::multimap<std::string, FastListIterator>::iterator FastMapIterator;
-
+    using FastListIterator    = typename std::list<T>::iterator;
+    using FastMapIterator     = typename std::multimap<std::string, FastListIterator>::iterator;
+    using FastMapIteratorPair = std::pair<FastMapIterator,FastMapIterator>;
     ///@{
     /// insert options (classic list inserts):
     /// inputiterator templated to account for reverse iterators
@@ -40,7 +39,7 @@ namespace GMAD {
     /// insert element at end of list
     /// option to check for unique element name (exits in case name is not unique), false by default
     void push_back(T& el, bool unique=false);
-  
+
     /// size of list
     int size()const;
     /// empty lists
@@ -54,9 +53,10 @@ namespace GMAD {
     FastListIterator begin();
     FastListIterator end();
 
-    /// lookup method, returns iterator of list pointing to element with name
-    // TOOD: better list of iterators?
+    /// lookup method, returns iterator of list pointing to element with name and occurence number count
     FastListIterator find(std::string name,unsigned int count=1);
+    /// lookup method, returns pair of iterators of list pointing (similar to std::multimap::equal_range)
+    std::pair<FastMapIterator,FastMapIterator> equal_range(std::string name);
 
     /// print method
     void print(int ident=0);
@@ -162,6 +162,11 @@ namespace GMAD {
   }
 
   template <typename T>
+    typename FastList<T>::FastMapIteratorPair FastList<T>::equal_range(std::string name) {
+    return itsMap.equal_range(name);
+  }
+
+  template <typename T>
     typename FastList<T>::FastListIterator FastList<T>::find(std::string name,unsigned int count) {
     if (count==1) {
       FastMapIterator emit = itsMap.find(name);
@@ -169,7 +174,7 @@ namespace GMAD {
       return (*emit).second;
     } else {
       // if count > 1
-      std::pair<FastMapIterator,FastMapIterator> ret = itsMap.equal_range(name);
+      FastMapIteratorPair ret = itsMap.equal_range(name);
       unsigned int i=1;
       for (FastMapIterator emit = ret.first; emit!=ret.second; ++emit, i++) {
 	if (i==count) {

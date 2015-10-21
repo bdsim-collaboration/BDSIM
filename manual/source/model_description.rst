@@ -105,10 +105,11 @@ Useful Commands
 ---------------
 
 * :code:`print;` prints all elements
-* :code:`print, line;` prints all elements in line
+* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`stop;` or `return;` exists parser
+* :code:`length = d1[l];` way to access properties of elements, in this case length of element d1.
+* :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
 
 Lattice Description
@@ -151,6 +152,7 @@ The following elements may be defined
 * `rf`_
 * `rcol`_
 * `ecol`_
+* `degrader`_
 * `muspoiler`_
 * `solenoid`_
 * `laser`_
@@ -513,6 +515,41 @@ ecol
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
 half axes respectively.
+
+
+degrader
+^^^^^^^^
+
+.. figure:: figures/degrader.png
+        :width: 40%
+        :align: right
+
+`degrader` defines an interleaved pyramidal degrader which decreases the beam's energy.
+
+===================    =======================================  ==========  ===========
+parameter              description                              default     required
+`l`                    length [m]                               0           yes
+`numberWedges`         number of degrader wedges                1           yes
+`wedgeLength`          degrader wedge length [m]                0           yes
+`degraderHeight`       degrader height [m]                      0           yes
+`materialThickness`    amount of material seen by the beam [m]  0           yes/no*
+`degraderOffset`       horizontal offset of both wedge sets     0           yes/no*
+`material`             degrader material                        Carbon      yes
+`outerDiameter`        outer full width [m]                     global      no
+===================    =======================================  ==========  ===========
+
+.. note:: ``*`` Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
+            position, and consequently the total material thickness the beam can propagate through. If both are
+            specified, `degraderOffset` will be ignored.
+
+            When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
+            When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
+            triangle.
+
+Examples::
+
+    DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
+    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
 
 muspoiler
 ^^^^^^^^^
@@ -1232,10 +1269,14 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositronsP                | precision production cuts for positrons               |
 +----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | standard overall production cuts for protons          |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtonsP                  | precision production cuts for protons                 |
++----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
 | defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 0.7 mm) [m]                              |
+|                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
 | gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
 |                                  | muon process                                          |
@@ -1252,18 +1293,18 @@ as their value.
 | LPBFraction                      | the fraction of electromagnetic process in which      |
 |                                  | lead particle biasing is used ( 0 < LPBFraction < 1)  |
 +----------------------------------+-------------------------------------------------------+
-| trajCutGTZ                       | global z position cut (minimum) for storing           |
-|                                  | trajectories                                          |
+| **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
-+----------------------------------+-------------------------------------------------------+
-| Output Parameters                | Function                                              |
-+----------------------------------+-------------------------------------------------------+
-| storeTrajectory                  | whether to store trajectories in the output           |
+| storeTrajectories                | whether to store trajectories in the output           |
 +----------------------------------+-------------------------------------------------------+
 | storeMuonTrajectories            | whether to store muon trajectories in the output      |
 +----------------------------------+-------------------------------------------------------+
 | storeNeutronTrajectories         | whether to store neutron trajectories in the output   |
++----------------------------------+-------------------------------------------------------+
+| trajCutGTZ                       | global z position cut (minimum) for storing           |
+|                                  | trajectories                                          |
++----------------------------------+-------------------------------------------------------+
+| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
 +----------------------------------+-------------------------------------------------------+
 | nperfile                         | number of evens to record per output file             |
 +----------------------------------+-------------------------------------------------------+
@@ -1277,7 +1318,7 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used. This also specifies the particle species and **reference energy**, which is the
+used [#beamcommandnote]_. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic field of dipole magnets
 if only the `angle` parameter has been specified.
@@ -1348,7 +1389,7 @@ Gaussian with respect to the reference trajectory.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Xp0`                            | Horizontal canonical momentum                         | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
-| `Yp0`                            | Vertical canonicla momentum                           | 0        |
+| `Yp0`                            | Vertical canonical momentum                           | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
 
 Examples::
@@ -1892,3 +1933,5 @@ can be set to the precision region by setting the attribute *precisionRegion* eq
 			use more than once in a *line*, then output will only be from the first
 			occurrence of that element in the sequence. This will be addressed in future
 			releases.
+.. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
+		      The distinction is kept for clarity, and this might be changed in the future.

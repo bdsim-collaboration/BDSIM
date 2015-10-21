@@ -336,7 +336,9 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* contCylSolid = new G4EllipticalTube(nameIn + "_vacuum_ellipsoid",                 // name
 						aper3In + beamPipeThicknessIn + lengthSafety, // horizontal semi-axis
 						aper4In + beamPipeThicknessIn + lengthSafety, // vertical semi-axis
-						lengthIn*0.5);                                // half length
+						lengthIn*1.1);                                // length
+  // length both long and different from next solid for unamibiguous intersection
+  
   //vacuum box solid (rectangular cross-section)
   G4VSolid* contRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				      aper1In + beamPipeThicknessIn + lengthSafety, // x half width

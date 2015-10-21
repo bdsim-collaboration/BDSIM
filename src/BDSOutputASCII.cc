@@ -39,13 +39,11 @@ BDSOutputASCII::BDSOutputASCII()
 	{
 	  if (nTimeAppended > 0)
 	    {basefilename = basefilename.substr(0, basefilename.size()-3);}
-	  std::stringstream ss;
-	  ss << basefilename << "_";
+	  basefilename += "_";
 	  // if smaller than 10 add leading 0
 	  if (nTimeAppended < 10)
-	    {ss << 0;}
-	  ss << nTimeAppended;
-	  basefilename = ss.str();
+	    {basefilename += std::to_string(0);}
+	  basefilename += std::to_string(nTimeAppended);
 	  nTimeAppended += 1;
 	}
     }
@@ -172,8 +170,7 @@ void BDSOutputASCII::WriteAsciiHit(std::ofstream* outfile,
   outfile->flags(ff);
 }
 
-void BDSOutputASCII::WritePrimary(G4String /*samplerName*/,
-				  G4double E,
+void BDSOutputASCII::WritePrimary(G4double E,
 				  G4double x0,
 				  G4double y0,
 				  G4double z0,

@@ -68,7 +68,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
   straightSectionLength       = straightSectionChord / (cos(0.5*fabs(angle)));
   // increase container radius to account for magnet outer geometry offset
   // container axis is chord axis between entry and exit points
-  containerRadius             += fabs(magnetXShift);
+  containerRadius             += fabs(magnetXShift)*1.001; // 1% margin due to calculations
 
   G4double in_z = cos(0.5*fabs(angle)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(0.5*fabs(angle));
@@ -204,7 +204,7 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
 
-  G4double extentX = beampipe->GetExtentX().second + fabs(magnetOuterOffset.x());
+  G4double extentX = (beampipe->GetExtentX().second / cos(angle)) + fabs(magnetOuterOffset.x());
   SetExtentX(-extentX, extentX);
   SetExtentY(beampipe->GetExtentY());
   SetExtentZ(-chordLength*0.5,chordLength*0.5);
@@ -216,10 +216,12 @@ void BDSRBend::BuildContainerLogicalVolume()
     {
       // update container solid to hold all the beampipe segments as there's no outer
       // and the default way won't suffice for rbend's unique geometry
-      G4double smallContainerRadius = extentX.second; // +ve extent - updated by build beam pipe
+      // +ve extent - updated by build beam pipe
+      G4double smallContainerRadius = extentX.second;
+      
       containerSolid = new G4CutTubs(name + "_container_solid", // name
 				     0,                         // inner radius
-				     smallContainerRadius,      // outer radius
+				     smallContainerRadius,           // outer radius
 				     chordLength*0.5,           // half length
 				     0,                         // start angle
 				     CLHEP::twopi,              // sweep angle
@@ -273,10 +275,11 @@ void BDSRBend::PlaceComponents()
     }
 
   // no if(placeBeamPipe) here as custom procedure and rbend has different construction
-  if (outer)
+  if (beampipe)
     {
-      G4ThreeVector outerOffset    = outer->GetPlacementOffset();
-      G4ThreeVector beamPipeOffset = GetPlacementOffset() + magnetOuterOffset + outerOffset;
+      // offset in container is offset suggested by beam pipe component (if asymmetrical) +
+      // magnet offset due to rbend geometry
+      G4ThreeVector beamPipeOffset = beampipe->GetPlacementOffset() + magnetOuterOffset;
       G4PVPlacement* pipePV = new G4PVPlacement(0,
 						beamPipeOffset,
 						beampipe->GetContainerLogicalVolume(),   // logical volume

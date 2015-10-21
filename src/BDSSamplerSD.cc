@@ -6,7 +6,6 @@
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
-#include "BDSTrajectoryPoint.hh"
 #include "BDSUtilities.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
@@ -100,20 +99,20 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
-  G4int nSampler    = theTrack->GetVolume()->GetCopyNo();
+  //  G4int nSampler    = theTrack->GetVolume()->GetCopyNo();
   G4String SampName = theTrack->GetVolume()->GetName();
-  // for now remove copy number so sampler name has no knowledge of the copy number
-  // only one sampler per copied element (will be fixed in the future)
-  std::string removeEnd = "_" + std::to_string(nSampler) + "_pv";
+  // remove end part "_pv"
+  G4String removeEnd = "_pv";
   SampName = SampName.substr(0,SampName.find(removeEnd));
-  
+
   G4int    PDGtype = theTrack->GetDefinition()->GetPDGEncoding();
   G4String pName   = theTrack->GetDefinition()->GetParticleName();
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "BDSSamplerSD> Particle name: " << pName << G4endl;  
-  G4cout << __METHOD_NAME__ << "BDSSamplerSD> PDG encoding: " << PDGtype << G4endl;  
-  G4cout << __METHOD_NAME__ << "BDSSamplerSD> TrackID: " << TrackID << G4endl;  
+  G4cout << __METHOD_NAME__ << "Sampler name: " << SampName << G4endl;
+  G4cout << __METHOD_NAME__ << "Particle name: " << pName << G4endl;  
+  G4cout << __METHOD_NAME__ << "PDG encoding: " << PDGtype << G4endl;  
+  G4cout << __METHOD_NAME__ << "TrackID: " << TrackID << G4endl;  
 #endif
   
   G4ThreeVector vtx               = theTrack->GetVertexPosition();

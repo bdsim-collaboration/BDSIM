@@ -616,9 +616,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 
   lengthUserLimit = length*0.5;
   
-  aSamplerVol->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  BDSSampler::AddExternalSampler(std::to_string(BDSSampler::GetNSamplers())+"_"+Name+"_1");
+  BDSSamplerBase::AddExternalSampler(std::to_string(BDSSamplerBase::GetNSamplers())+"_"+_Name+"_1");
   
   return aSamplerVol;
 }

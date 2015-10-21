@@ -201,6 +201,11 @@ void BDSMaterials::Initialise()
     (name="copper"        , density=  8.96 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
   tmpMaterial->AddElement(elements["Cu"],1);
   materials[name] = tmpMaterial; 
+    
+  tmpMaterial = new G4Material
+    (name="carbon"        , density=  1.88 *CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["C"],1);
+  materials[name] = tmpMaterial; 
 
   tmpMaterial = new G4Material
     (name="graphite"      , density=  2.265*CLHEP::g/CLHEP::cm3, 1, kStateSolid);

@@ -61,6 +61,11 @@ protected :
   
 private :
   BDSExecOptions();
+
+  /** Parse the command line options
+   * @param[in] argc command line input number of variables
+   * @param[in] argv array of char* of the input parameters
+   */
   void Parse(int arcg, char **argv);
   /// Helper method to set the BDSIMPath correctly
   G4String GetPath(G4String filename);

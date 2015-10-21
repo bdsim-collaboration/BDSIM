@@ -1,4 +1,5 @@
 #ifdef USE_GDML
+#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSGeometryGDML.hh"
 #include "BDSMaterials.hh"
@@ -44,15 +45,20 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker)
     logicalVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
     sensitiveVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
   }
-  gdmlWorld->SetVisAttributes(visAtt);
+
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
   
   new G4PVPlacement(nullptr,
                     G4ThreeVector(0.,0.,0.),
                     gdmlWorld,
-                    gdmlWorld->GetName()+"_PhysiComp",
+                    gdmlWorld->GetName()+"_pv",
                     markerVol,
                     false,
-                    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 #endif
 

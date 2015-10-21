@@ -46,6 +46,8 @@ public:
 
   /// Fill a histogram
   void Fill1DHistogram(G4int histoIndex, G4double value, G4double weight=1.0);
+  /// Fill a histogram with a range
+  void Fill1DHistogram(G4int histoIndex, std::pair<G4double,G4double> range, G4double weight=1.0);
   
   /// Return number of histograms
   G4int NumberOfHistograms()const;

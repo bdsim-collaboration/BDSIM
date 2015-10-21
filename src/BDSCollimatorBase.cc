@@ -7,8 +7,9 @@
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"               
+#include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
+#include "G4UserLimits.hh"
 
 #include <map>
 
@@ -99,7 +100,10 @@ void BDSCollimatorBase::Build()
   RegisterVisAttributes(collimatorVisAttr);
 
 #ifndef NOUSERLIMITS
-  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  G4UserLimits* collimatorUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  collimatorUserLimits->SetMaxAllowedStep(chordLength * 0.5);
+  RegisterUserLimits(collimatorUserLimits);
+  collimatorLV->SetUserLimits(collimatorUserLimits);
 #endif
 
   // register with base class (BDSGeometryComponent)

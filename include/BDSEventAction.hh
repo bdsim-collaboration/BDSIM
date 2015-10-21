@@ -5,8 +5,6 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "BDSAnalysisManager.hh"
-#include "BDSTrajectory.hh"
-#include <list>
 #include <vector>
 
 class BDSEventAction : public G4UserEventAction
@@ -22,7 +20,6 @@ public:
     
 private:
   BDSAnalysisManager* analMan;
-  G4bool verbose;
   G4bool verboseEvent;
   G4int  verboseEventNumber;
   G4bool isBatch;
@@ -36,11 +33,6 @@ private:
   G4int tunnelCollID;        ///< collection ID for tunnel hits from tunnel read out geometry
   
   G4int printModulo;
-
-  BDSTrajectory* traj;
-  BDSTrajectoryPoint* trajEndPoint;
-  G4ThreeVector trajEndPointThreeVector;
-  std::vector<BDSTrajectory*> interestingTrajectories;
 };
 
 #endif

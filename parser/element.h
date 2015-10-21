@@ -63,6 +63,11 @@ struct Element {
   double waveLength; ///< for laser wire and 3d transforms
   double gradient; ///< for rf cavities
   double phi, theta, psi; ///< for 3d transforms
+  int numberWedges; ///< for degrader
+  double wedgeLength; ///< for degrader
+  double degraderHeight; ///< for degrader
+  double materialThickness; ///< for degrader
+  double degraderOffset; ///< for degrader
 
   std::list<double> knl; ///< multipole expansion coefficients
   std::list<double> ksl; ///< skew multipole expansion

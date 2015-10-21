@@ -4,6 +4,7 @@
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
+#include "BDSDegrader.hh"
 #include "BDSDrift.hh"
 #include "BDSDump.hh"
 #include "BDSElement.hh"
@@ -45,7 +46,6 @@
 #include "parser/elementtype.h"
 
 #include <cmath>
-#include <sstream>
 #include <string>
 
 #ifdef BDSDEBUG
@@ -88,7 +88,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   G4cout << __METHOD_NAME__ << "named: \"" << _element.name << "\"" << G4endl;  
 #endif
   // check if the component already exists and return that
-  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name)) 
+  // do check for output elements since reliant on unique name
+  if (_element.type != ElementType::_SAMPLER &&
+      _element.type != ElementType::_CSAMPLER &&
+      _element.type != ElementType::_DUMP &&
+      BDSAcceleratorComponentRegistry::Instance()->IsRegistered(_element.name))
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -138,7 +142,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case ElementType::_RCOL:
     element = CreateRectangularCollimator(); break; 
   case ElementType::_MUSPOILER:    
-    element = CreateMuSpoiler(); break; 
+    element = CreateMuSpoiler(); break;
+  case ElementType::_DEGRADER:
+    element = CreateDegrader(); break;
   case ElementType::_LASER:
     element = CreateLaser(); break; 
   case ElementType::_SCREEN:
@@ -176,6 +182,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   // if it both didn't exist and has been constructed
   if (element)
     {
+      element->SetPrecisionRegion(_element.precisionRegion);
       element->Initialise();
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(element);
     }
@@ -308,14 +315,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
   if (nSbends==0) nSbends = 1; // can happen in case angle = 0
-  //nSbends = 1;   //use for debugging
+  if (BDSGlobalConstants::Instance()->DontSplitSBends())
+    {nSbends = 1;}   //use for debugging
+      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
   // prepare one name for all that makes sense
-  std::stringstream name;
-  name << _element.name << "_1_of_" << nSbends;
-  std::string thename = name.str();
+  std::string thename = _element.name + "_1_of_" + std::to_string(nSbends);
   //calculate their angle and length
   double semiangle  = _element.angle / (double) nSbends;
   double semilength = length / (double) nSbends;
@@ -325,6 +332,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   BDSBeamPipeInfo*    bpInfo = PrepareBeamPipeInfo(_element);
   BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
 
+  CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
+  
   // prepare one sbend segment
   BDSSectorBend* oneBend = new BDSSectorBend(thename,
 					     semilength,
@@ -353,6 +362,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   G4double chordLength = _element.l*CLHEP::m;
   G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
   G4double magFieldLength = chordLength - (2.0*straightSectionChord);
+
+  CheckBendLengthAngleWidthCombo(chordLength, angle, 2*outerRadius, _element.name);
 
   // magnetic field
   // CHECK SIGNS OF B, B', ANGLE
@@ -778,12 +789,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
   G4cout << "---->creating muspoiler,"
 	 << " name = " << _element.name 
 	 << " length = " << _element.l
-	 << " B = " << _element.B
+	 << " B = " << _element.B*CLHEP::tesla << " m*T"
 	 << G4endl;
-#endif
-        
-#ifdef BDSDEBUG
-  G4cout << "BDSMuSpoiler: " << _element.name << " " << _element.l*CLHEP::m << " mm " << " " << _element.B*CLHEP::tesla << " MT " << G4endl;
 #endif
   
   return (new BDSMuSpoiler(_element.name,
@@ -791,6 +798,58 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 			   _element.B * CLHEP::tesla,
 			   PrepareBeamPipeInfo(_element),
 			   PrepareMagnetOuterInfo(_element)));
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
+{
+  if(!HasSufficientMinimumLength(_element))
+    {return nullptr;}
+
+#ifdef BDSDEBUG
+  G4cout << "---->creating degrader,"
+	 << " name = "   << _element.name
+	 << " length = " << _element.l
+	 << G4endl;
+#endif
+  
+
+  G4double degraderOffset;
+    
+  if ((_element.materialThickness <= 0) && (_element.degraderOffset <= 0))
+    {
+        G4cerr << __METHOD_NAME__ << "Error: Both \"materialThickness\" and \"degraderOffset\" are either undefined or <= 0" <<  G4endl;
+        exit(1);
+    }
+
+  if ((_element.materialThickness <= 0) && (_element.degraderOffset > 0))
+    {
+        degraderOffset = _element.degraderOffset*CLHEP::m;
+    }
+    
+  else
+    {
+        //Width of wedge base
+        G4double wedgeBasewidth = (_element.l*CLHEP::m /_element.numberWedges) - lengthSafety;
+        
+        //Angle between hypotenuse and height (in the triangular wedge face)
+        G4double theta = atan(wedgeBasewidth / (2.0*_element.wedgeLength*CLHEP::m));
+        
+        //Overlap distance of wedges
+        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
+
+        degraderOffset = overlap * -0.5;
+        
+    }
+    
+  return (new BDSDegrader(_element.name,
+			  _element.l*CLHEP::m,
+			  _element.outerDiameter*CLHEP::m,
+              _element.numberWedges,
+              _element.wedgeLength*CLHEP::m,
+              _element.degraderHeight*CLHEP::m,
+              degraderOffset,
+              _element.material));
+
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
@@ -1020,4 +1079,22 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element& element)
   G4double tilt    = element.tilt;
 
   return new BDSTiltOffset(xOffset, yOffset, tilt);
+}
+
+void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,
+							 G4double angle,
+							 G4double outerDiameter,
+							 G4String name)
+{
+  G4double radiusFromAngleLength =  std::abs(chordLength / angle); // s = r*theta -> r = s/theta
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
+#endif
+  if (outerDiameter > 2*radiusFromAngleLength)
+    {
+      G4cerr << "Error: the combination of length, angle and outerDiameter in element named \""
+	     << name
+	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
+      exit(1);
+    }
 }

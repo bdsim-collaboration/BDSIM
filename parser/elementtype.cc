@@ -63,8 +63,10 @@ std::string GMAD::typestr(ElementType type) {
     return "transform3d";
   case ElementType::_SCREEN :
     return "screen";
- case ElementType::_AWAKESCREEN :
+  case ElementType::_AWAKESCREEN :
     return "awakescreen";
+  case ElementType::_DEGRADER :
+    return "degrader";
   case ElementType::_TELEPORTER : 
     return "teleporter";
   case ElementType::_TERMINATOR :
