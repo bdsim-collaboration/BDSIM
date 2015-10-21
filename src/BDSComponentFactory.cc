@@ -804,6 +804,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 	 << G4endl;
 #endif
   
+
   G4double degraderOffset;
     
   if ((_element.materialThickness <= 0) && (_element.degraderOffset <= 0))
@@ -823,16 +824,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
         G4double wedgeBasewidth = (_element.l*CLHEP::m /_element.numberWedges) - lengthSafety;
         
         //Angle between hypotenuse and height (in the triangular wedge face)
-        G4double theta = atan(wedgeBasewidth / (2.0*_element.wedgeLength));
+        G4double theta = atan(wedgeBasewidth / (2.0*_element.wedgeLength*CLHEP::m));
         
         //Overlap distance of wedges
-        G4double overlap = (_element.materialThickness/_element.numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
+        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
 
-        degraderOffset = overlap * 0.5;
-
+        degraderOffset = overlap * -0.5;
+        
     }
-
-    std::cout << "Degrader offset" << degraderOffset << std::endl;
     
   return (new BDSDegrader(_element.name,
 			  _element.l*CLHEP::m,

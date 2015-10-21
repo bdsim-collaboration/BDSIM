@@ -94,7 +94,7 @@ void BDSDegrader::Build()
 {
   BDSAcceleratorComponent::Build();
     
-    std::cout << "BDSDegrader offset" << degraderOffset << std::endl;
+//    std::cout << "BDSDegrader offset" << degraderOffset << std::endl;
     
   G4Material* material = BDSMaterials::Instance()->GetMaterial(degraderMaterial);
     
@@ -211,8 +211,8 @@ void BDSDegrader::Build()
   RegisterLogicalVolume(rightWedgeLV);
   
   //Offsets for wedge overlap
-  G4double xoffsetLeft = degraderOffset;
-  G4double xoffsetRight = degraderOffset * -1.0;
+  G4double xoffsetLeft = degraderOffset * -1.0;
+  G4double xoffsetRight = degraderOffset;
     
   //Rotation  of wedges. Left taken to be +VE x direction, right is -VE x direction.
   G4RotationMatrix* rightRot = new G4RotationMatrix;  
