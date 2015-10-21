@@ -109,10 +109,11 @@ void Element::flush() {
   angle = 0;
   
   // degrader
-  numberWedges = 0;
+  numberWedges = 1;
   wedgeLength = 0;
   degraderHeight = 0;
   materialThickness = 0;
+  degraderOffset = 0;
 
   // new aperture model
   beampipeThickness = 0;

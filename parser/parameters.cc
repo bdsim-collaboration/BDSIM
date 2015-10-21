@@ -81,6 +81,7 @@ void Parameters::flush() {
   wedgeLengthset= false;
   degraderHeightset = false;
   materialThicknessset = false;
+  degraderOffsetset = false;
 }
 
 void Parameters::inherit_properties(struct Element& e)
@@ -135,6 +136,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!wedgeLengthset) { wedgeLength = e.wedgeLength; wedgeLengthset = true; }
   if(!degraderHeightset) {degraderHeight = e.degraderHeight; degraderHeightset = true; }
   if(!materialThicknessset) {materialThickness = e.materialThickness; materialThicknessset = true; }
+  if(!degraderOffsetset) {degraderOffset = e.degraderOffset; degraderOffsetset = true; }
 
   if(!knlset) { knl = e.knl; knlset = true; }
   if(!kslset) { ksl = e.ksl; kslset = true; }
@@ -233,7 +235,7 @@ void Parameters::set_value(std::string property, double value )
   if(property=="wedgeLength")       {wedgeLength = value; wedgeLengthset = true; return;} // degrader wedge height
   if(property=="degraderHeight")    {degraderHeight = value; degraderHeightset = true; return;} // degrader element height
   if(property=="materialThickness") {materialThickness = value; materialThicknessset = true; return;} // degrader thickness
-
+  if(property=="degraderOffset")    {degraderOffset = value; degraderOffsetset = true; return;} // degrader thickness
   // not implemented mad parameters will be ignored
   if(property=="e1") {return;}  // fringe field parameters
   if(property=="e2") {return;}

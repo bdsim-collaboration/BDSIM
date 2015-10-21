@@ -66,6 +66,7 @@ struct Element {
   double wedgeLength; ///< for degrader
   double degraderHeight; ///< for degrader
   double materialThickness; ///< for degrader
+  double degraderOffset; ///< for degrader
 
   std::list<double> knl; ///< multipole expansion coefficients
   std::list<double> ksl; ///< skew multipole expansion
