@@ -151,6 +151,7 @@ The following elements may be defined
 * `rf`_
 * `rcol`_
 * `ecol`_
+* `degrader`_
 * `muspoiler`_
 * `solenoid`_
 * `laser`_
@@ -513,6 +514,41 @@ ecol
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
 half axes respectively.
+
+
+degrader
+^^^^^^^^
+
+.. figure:: figures/degrader.png
+        :width: 40%
+        :align: right
+
+`degrader` defines an interleaved pyramidal degrader which decreases the beam's energy.
+
+===================    =======================================  ==========  ===========
+parameter              description                              default     required
+`l`                    length [m]                               0           yes
+`numberWedges`         number of degrader wedges                1           yes
+`wedgeLength`          degrader wedge length [m]                0           yes
+`degraderHeight`       degrader height [m]                      0           yes
+`materialThickness`    amount of material seen by the beam [m]  0           yes/no*
+`degraderOffset`       horizontal offset of both wedge sets     0           yes/no*
+`material`             degrader material                        Carbon      yes
+`outerDiameter`        outer full width [m]                     global      no
+===================    =======================================  ==========  ===========
+
+.. note:: ``*`` Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
+            position, and consequently the total material thickness the beam can propagate through. If both are
+            specified, `degraderOffset` will be ignored.
+
+            When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
+            When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
+            triangle.
+
+Examples::
+
+    DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
+    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
 
 muspoiler
 ^^^^^^^^^
