@@ -59,18 +59,25 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
+  if (!BDS::IsFinite(angle))
+    {
+      CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
+      return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
+				    BDSMagnetColours::Instance()->GetMagnetColour("sectorbend"));
+    }
+  
   G4int orientation   = BDS::CalculateOrientation(angle);
   G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
   G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
-
+  
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
   G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
   BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
 				  inputface, outputface);
-  
+    
   if (beamPipe->ContainerIsCircular())
     {
       //circular beampipe so we can simply use its radius
