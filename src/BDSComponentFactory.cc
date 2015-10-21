@@ -332,6 +332,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   BDSBeamPipeInfo*    bpInfo = PrepareBeamPipeInfo(_element);
   BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
 
+  CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
+  
   // prepare one sbend segment
   BDSSectorBend* oneBend = new BDSSectorBend(thename,
 					     semilength,
@@ -360,6 +362,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   G4double chordLength = _element.l*CLHEP::m;
   G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
   G4double magFieldLength = chordLength - (2.0*straightSectionChord);
+
+  CheckBendLengthAngleWidthCombo(chordLength, angle, 2*outerRadius, _element.name);
 
   // magnetic field
   // CHECK SIGNS OF B, B', ANGLE
@@ -1073,4 +1077,22 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element& element)
   G4double tilt    = element.tilt;
 
   return new BDSTiltOffset(xOffset, yOffset, tilt);
+}
+
+void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,
+							 G4double angle,
+							 G4double outerDiameter,
+							 G4String name)
+{
+  G4double radiusFromAngleLength =  std::abs(chordLength / angle); // s = r*theta -> r = s/theta
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
+#endif
+  if (outerDiameter > 2*radiusFromAngleLength)
+    {
+      G4cerr << "Error: the combination of length, angle and outerDiameter in element named \""
+	     << name
+	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
+      exit(1);
+    }
 }
