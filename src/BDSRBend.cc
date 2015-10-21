@@ -204,7 +204,7 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
 
-  G4double extentX = beampipe->GetExtentX().second + fabs(magnetOuterOffset.x());
+  G4double extentX = (beampipe->GetExtentX().second / cos(angle)) + fabs(magnetOuterOffset.x());
   SetExtentX(-extentX, extentX);
   SetExtentY(beampipe->GetExtentY());
   SetExtentZ(-chordLength*0.5,chordLength*0.5);
@@ -216,10 +216,12 @@ void BDSRBend::BuildContainerLogicalVolume()
     {
       // update container solid to hold all the beampipe segments as there's no outer
       // and the default way won't suffice for rbend's unique geometry
-      G4double smallContainerRadius = extentX.second; // +ve extent - updated by build beam pipe
+      // +ve extent - updated by build beam pipe
+      G4double smallContainerRadius = extentX.second;
+      
       containerSolid = new G4CutTubs(name + "_container_solid", // name
 				     0,                         // inner radius
-				     smallContainerRadius,      // outer radius
+				     smallContainerRadius,           // outer radius
 				     chordLength*0.5,           // half length
 				     0,                         // start angle
 				     CLHEP::twopi,              // sweep angle
