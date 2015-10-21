@@ -161,8 +161,8 @@ Options::Options()
   elossHistoBinWidth       = 1.0; // m
   elossHistoTransBinWidth  = 0.1;
   storeMuonTrajectories    = false;
-  trajCutGTZ               = 0.0;
-  trajCutLTR               = 0.0;
+  trajCutGTZ               = 0.0;  // minimum z position
+  trajCutLTR               = 1e12; // maximum radius in mm, so large default value
   storeNeutronTrajectories = false;
   storeTrajectory          = false;
   

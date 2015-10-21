@@ -35,7 +35,7 @@
 
 %union{
   double dval;
-  int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
+  int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
   char *str;
   struct Array *array;
@@ -1244,6 +1244,7 @@ option_parameters : VARIABLE '=' aexpr ',' option_parameters
 		    }
 ;
 
+// beam_parameter same as option_parameters, might change in future
 beam_parameters : option_parameters
 ;
 

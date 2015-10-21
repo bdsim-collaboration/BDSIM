@@ -805,15 +805,44 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 	 << " length = " << _element.l
 	 << G4endl;
 #endif
+  
 
+  G4double degraderOffset;
+    
+  if ((_element.materialThickness <= 0) && (_element.degraderOffset <= 0))
+    {
+        G4cerr << __METHOD_NAME__ << "Error: Both \"materialThickness\" and \"degraderOffset\" are either undefined or <= 0" <<  G4endl;
+        exit(1);
+    }
+
+  if ((_element.materialThickness <= 0) && (_element.degraderOffset > 0))
+    {
+        degraderOffset = _element.degraderOffset*CLHEP::m;
+    }
+    
+  else
+    {
+        //Width of wedge base
+        G4double wedgeBasewidth = (_element.l*CLHEP::m /_element.numberWedges) - lengthSafety;
+        
+        //Angle between hypotenuse and height (in the triangular wedge face)
+        G4double theta = atan(wedgeBasewidth / (2.0*_element.wedgeLength*CLHEP::m));
+        
+        //Overlap distance of wedges
+        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
+
+        degraderOffset = overlap * -0.5;
+        
+    }
+    
   return (new BDSDegrader(_element.name,
 			  _element.l*CLHEP::m,
 			  _element.outerDiameter*CLHEP::m,
-			  _element.material,
               _element.numberWedges,
               _element.wedgeLength*CLHEP::m,
               _element.degraderHeight*CLHEP::m,
-              _element.materialThickness*CLHEP::m));
+              degraderOffset,
+              _element.material));
 
 }
 

@@ -8,6 +8,7 @@
 #include "BDSRunManager.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "BDSTunnelHit.hh"
 
 #include "globals.hh"                  // geant4 types / globals
@@ -36,11 +37,8 @@ BDSEventAction::BDSEventAction():
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   primaryCounterCollID(-1),
-  tunnelCollID(-1),
-  traj(nullptr),
-  trajEndPoint(nullptr)
+  tunnelCollID(-1)
 { 
-  verbose            = BDSExecOptions::Instance()->GetVerbose();
   verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   isBatch            = BDSExecOptions::Instance()->GetBatch();
@@ -241,11 +239,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // Save interesting trajectories
-  traj = nullptr;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
      BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
      BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories())
     {
+      std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
       G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
 #endif
@@ -255,22 +253,23 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       // clear out trajectories that don't reach point x
       for(auto iT1 = trajVec->begin(); iT1 < trajVec->end(); iT1++)
 	{
-	  traj=(BDSTrajectory*)(*iT1);
-	  trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
-	  trajEndPointThreeVector = trajEndPoint->GetPosition();
+	  BDSTrajectory* traj=(BDSTrajectory*)(*iT1);
+	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
+	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
 	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m > BDSGlobalConstants::Instance()->GetTrajCutGTZ();
 	  G4double radius   = sqrt(pow(trajEndPointThreeVector.x()/CLHEP::m, 2) + pow(trajEndPointThreeVector.y()/CLHEP::m, 2));
 	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->GetTrajCutLTR();
 	  if (greaterThanZInteresting && withinRInteresting)
 	    {interestingTrajectories.push_back(traj);}
 	}
+    
+      //Output interesting trajectories
+      if(interestingTrajectories.size() > 0)
+	{
+	  bdsOutput->WriteTrajectory(interestingTrajectories);
+	  interestingTrajectories.clear();
+	}
     }
-    //Output interesting trajectories
-    if(interestingTrajectories.size() > 0)
-      {
-	bdsOutput->WriteTrajectory(interestingTrajectories);
-	interestingTrajectories.clear();
-      }
     
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;

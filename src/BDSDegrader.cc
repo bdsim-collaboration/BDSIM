@@ -20,18 +20,18 @@
 BDSDegrader::BDSDegrader (G4String   name, 
                     G4double   length,
                     G4double   outerDiameterIn,
-                    G4String   degraderMaterialIn,
                     G4int      numberWedgesIn,
                     G4double   wedgeLengthIn,
                     G4double   degraderHeightIn,
-                    G4double   materialThicknessIn):
+                    G4double   degraderOffsetIn,
+                    G4String   degraderMaterialIn ):
 BDSAcceleratorComponent(name, length, 0, "degrader"),
     outerDiameter(outerDiameterIn),
-    degraderMaterial(degraderMaterialIn),
     numberWedges(numberWedgesIn),
     wedgeLength(wedgeLengthIn),
     degraderHeight(degraderHeightIn),
-    materialThickness(materialThicknessIn)
+    degraderOffset(degraderOffsetIn),
+    degraderMaterial(degraderMaterialIn)
 {;}
 
 BDSDegrader::~BDSDegrader()
@@ -57,12 +57,25 @@ void BDSDegrader::BuildContainerLogicalVolume()
         G4cerr << __METHOD_NAME__ << "Error: option \"wedgeLength\" is not defined or must be greater than 0" <<  G4endl;
         exit(1);
     }
+    
+  if (degraderHeight <= 0)
+    {
+        G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" is not defined or must be greater than 0" <<  G4endl;
+        exit(1);
+    }
 
   if (degraderHeight > (0.5*outerDiameter))
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be greater than 0.5 times \"outerDiameter\"" <<  G4endl;
+        G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be less than 0.5 times \"outerDiameter\"" <<  G4endl;
         exit(1);
     }
+    
+  if (degraderMaterial == "")
+    {
+        degraderMaterial = "carbon";
+    }
+    
+    
     
   containerSolid = new G4Box(name + "_container_solid",
                                 outerDiameter*0.5,
@@ -81,9 +94,11 @@ void BDSDegrader::Build()
 {
   BDSAcceleratorComponent::Build();
     
+//    std::cout << "BDSDegrader offset" << degraderOffset << std::endl;
+    
   G4Material* material = BDSMaterials::Instance()->GetMaterial(degraderMaterial);
     
-  wedgeBasewidth = chordLength/numberWedges - lengthSafety; 
+  G4double wedgeBasewidth = chordLength/numberWedges - lengthSafety;
     
   G4double maxzoffset = numberWedges*wedgeBasewidth * 0.5;
     
@@ -195,18 +210,10 @@ void BDSDegrader::Build()
                                                     name + "_rightwedge_lv"); // name
   RegisterLogicalVolume(rightWedgeLV);
   
-
-  //Angle between hypotenuse and height (in the triangular wedge face)
-  G4double theta = atan(wedgeBasewidth / (2.0*wedgeLength));       
-    
-  //Overlap distance of wedges
-  G4double overlap = (materialThickness/numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
-  
   //Offsets for wedge overlap
-  G4double xoffsetLeft = overlap * 0.5;
-  G4double xoffsetRight = overlap * -0.5;
+  G4double xoffsetLeft = degraderOffset * -1.0;
+  G4double xoffsetRight = degraderOffset;
     
- 
   //Rotation  of wedges. Left taken to be +VE x direction, right is -VE x direction.
   G4RotationMatrix* rightRot = new G4RotationMatrix;  
   rightRot->rotateX(M_PI/2.0);  

@@ -21,11 +21,11 @@ public:
     BDSDegrader(G4String name, 
                 G4double   length,
                 G4double   outerDiameter,
-                G4String   degraderMaterial     = "carbon",
-                G4int      numberWedges         = 1,
-                G4double   wedgeLength          = 1,
-                G4double   degraderHeight       = 1,
-                G4double   materialThickness    = 1);
+                G4int      numberWedges,
+                G4double   wedgeLength,
+                G4double   degraderHeight,
+                G4double   degraderOffset,
+                G4String   degraderMaterial     = "carbon");
     ~BDSDegrader();
     
 
@@ -35,12 +35,13 @@ protected:
     void BuildContainerLogicalVolume();
     
     G4double outerDiameter;
-    G4String degraderMaterial;
     G4int numberWedges;
     G4double wedgeBasewidth;
     G4double wedgeLength;
     G4double degraderHeight;
-    G4double materialThickness;
+    G4double degraderOffset;
+    G4String degraderMaterial;
+
     
     bool isOdd( G4int integer )
     {

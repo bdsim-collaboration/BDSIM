@@ -140,6 +140,21 @@ void BDSOutputROOT::Init()
       G4String name=BDSSamplerBase::outputNames[i];
       // remove sampler number:
       name = name.substr(0,name.find_last_of("_"));
+
+      // check if tree already exist (name has to be unique)
+      TTree* tree=(TTree*)gDirectory->Get(name);
+      // if exist add number and increase, start counting at 2
+      if(tree) {
+	int count = 2;
+	G4String uniqueName;
+	while (tree) {
+	  uniqueName = name + "_" + std::to_string(count);
+	  tree=(TTree*)gDirectory->Get(uniqueName);
+	  count++;
+	}
+	name = uniqueName;
+      }
+
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
@@ -371,7 +386,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 {
   G4String name;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " hc->entries() = " << hc->entries() << G4endl;
+  G4cout << __METHOD_NAME__ << "Number of hits " << hc->entries() << G4endl;
 #endif
   for (G4int i=0; i<hc->entries(); i++)
     {
@@ -379,7 +394,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 #ifdef BDSDEBUG
       G4cout << "Writing hit to sampler " << name << G4endl;
 #endif
-      // convert name to tree (done for speedup)
+      // convert name to tree
       TTree* tree = nullptr;
       // try to convert to int, std::stoul can throw invalid argument
       try
@@ -395,6 +410,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 
       // if it did not work then
       // get tree from name
+      // this will not work for multiple samplers attached to elements with same name
       if (!tree)
 	{
 	  tree=(TTree*)gDirectory->Get(name);
