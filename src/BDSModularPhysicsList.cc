@@ -170,8 +170,6 @@ void BDSModularPhysicsList::SetCuts()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
-  BDSGlobalConstants* globalConsts = BDSGlobalConstants::Instance();
-
   G4VUserPhysicsList::SetCuts();  
   G4double defaultRangeCut  = globals->GetDefaultRangeCut(); 
   SetDefaultCutValue(defaultRangeCut);
