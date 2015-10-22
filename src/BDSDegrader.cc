@@ -1,6 +1,8 @@
-#include "BDSAcceleratorComponent.hh"
-#include "BDSGlobalConstants.hh" 
 #include "BDSDegrader.hh"
+
+#include "BDSAcceleratorComponent.hh"
+#include "BDSColours.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
@@ -226,7 +228,7 @@ void BDSDegrader::Build()
 
     
   //Wedge color
-  G4VisAttributes* degraderVisAttr = new G4VisAttributes(G4Colour(0.625,0.625,0.625));
+  G4VisAttributes* degraderVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("degrader"));
   leftWedgeLV->SetVisAttributes(degraderVisAttr);
   rightWedgeLV->SetVisAttributes(degraderVisAttr);
 

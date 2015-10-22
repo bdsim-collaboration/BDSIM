@@ -6,18 +6,24 @@
 
 #include <map>
 
+/**
+ * @brief Colour class that holds all colours used in BDSIM
+ */
+
 class BDSColours
 {
 public:
-  static BDSColours* Instance(); /// singleton pattern
+  static BDSColours* Instance(); ///< singleton pattern
 
   ~BDSColours();
 
-  G4Colour* GetColour(G4String type);
-  G4Colour* GetMagnetColour(G4int magnetOrder);
+  /// Get colour from name
+  G4Colour* GetColour(G4String type) const;
+  /// Get colour from magnet order (1=dipole, 2=quadrupole, etc.)
+  G4Colour* GetMagnetColour(G4int magnetOrder) const;
 
 private:
-  BDSColours(); //private constructor as singleton
+  BDSColours(); ///< Private constructor as singleton
   static BDSColours* _instance;
 
   /// A map of the magnet name for which order it is, which
