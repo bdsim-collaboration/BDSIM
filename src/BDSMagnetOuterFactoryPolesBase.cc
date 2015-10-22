@@ -1,9 +1,9 @@
 #include "BDSMagnetOuterFactoryPolesBase.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagnetColours.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
 #include "BDSMaterials.hh"
@@ -260,7 +260,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 					  angledFaceSolid);
     }
 
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(1); /*order = 1*/
+  G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(1); /*order = 1*/
   
   BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
 
@@ -487,7 +487,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   CalculatePoleAndYoke(outerDiameter, beamPipe, order);
   CreatePoleSolid(name, length, order);
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
+  G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
   PlaceComponents(name, order); //returns vector of PVs
@@ -832,7 +832,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
     {magnetType = "hkicker";}
 
   // yoke and pole
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(magnetType);
+  G4Colour* magnetColour = BDSColours::Instance()->GetColour(magnetType);
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
   allVisAttributes.push_back(outerVisAttr);
@@ -841,7 +841,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
   poleLV->SetVisAttributes(outerVisAttr);
 
   // coil
-  G4Colour* coilColour  = BDSMagnetColours::Instance()->GetMagnetColour("coil");
+  G4Colour* coilColour  = BDSColours::Instance()->GetColour("coil");
   G4VisAttributes* coilVisAttr = new G4VisAttributes(*coilColour);
   coilVisAttr->SetVisibility(true);
   allVisAttributes.push_back(coilVisAttr);

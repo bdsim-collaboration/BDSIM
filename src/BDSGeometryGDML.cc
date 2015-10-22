@@ -1,9 +1,9 @@
 #ifdef USE_GDML
+#include "BDSColours.hh"
 #include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSGeometryGDML.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "BDSMagnetColours.hh"
 
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
@@ -29,10 +29,10 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
   
   gdmlWorld = parser->GetWorldVolume()->GetLogicalVolume();
 
-  G4VisAttributes* visAtt = new G4VisAttributes(*BDSMagnetColours::Instance()->GetMagnetColour("gdml"));
+  G4VisAttributes* visAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
   visAtt->SetVisibility(false);
 
-  G4VisAttributes* visAtt2 = new G4VisAttributes(*BDSMagnetColours::Instance()->GetMagnetColour("gdml"));
+  G4VisAttributes* visAtt2 = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
   visAtt2->SetVisibility(true);
 
   for (int i=0; i<gdmlWorld->GetNoDaughters(); i++){

@@ -1,25 +1,25 @@
-#include "BDSMagnetColours.hh"
+#include "BDSColours.hh"
 
 #include "globals.hh"            // geant4 types / globals
 #include <map>
 #include "G4Colour.hh"
 
 
-BDSMagnetColours* BDSMagnetColours::_instance = nullptr;
+BDSColours* BDSColours::_instance = nullptr;
 
-BDSMagnetColours* BDSMagnetColours::Instance()
+BDSColours* BDSColours::Instance()
 {
   if (_instance == nullptr)
-    {_instance = new BDSMagnetColours();}
+    {_instance = new BDSColours();}
   return _instance;
 }
 
-BDSMagnetColours::~BDSMagnetColours()
+BDSColours::~BDSColours()
 {
   _instance = nullptr;
 }
 
-BDSMagnetColours::BDSMagnetColours()
+BDSColours::BDSColours()
 {
   magnetName[1] = "sectorbend";
   magnetName[2] = "quadrupole";
@@ -44,19 +44,19 @@ BDSMagnetColours::BDSMagnetColours()
   colours["gdml"]             = new G4Colour(0.4  , 0.2,   0.0);   // poo brown
 }
 
-G4Colour* BDSMagnetColours::GetMagnetColour(G4String magnetTypeName)
+G4Colour* BDSColours::GetColour(G4String type)
 {
-  if (colours.find(magnetTypeName) == colours.end())
+  if (colours.find(type) == colours.end())
     {// colour not found
       return colours["default"];
     }
   else
     {// colour must therefore exist
-      return colours[magnetTypeName];
+      return colours[type];
     }
 }
 
-G4Colour* BDSMagnetColours::GetMagnetColour(G4int magnetOrder)
+G4Colour* BDSColours::GetMagnetColour(G4int magnetOrder)
 {
   if (magnetOrder < 1)
     { // too low order
