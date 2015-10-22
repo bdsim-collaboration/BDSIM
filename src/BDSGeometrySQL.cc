@@ -7,6 +7,7 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
+#include "BDSSDManager.hh"
 //#include "BDSPCLTube.hh"
 #include "BDSUtilities.hh"
 
@@ -180,7 +181,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   if(Name=="") Name = TableName+std::to_string(k);
   Name = itsMarkerVol->GetName()+"_"+Name;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << Name << G4endl;
+  G4cout << __METHOD_NAME__ << " k = " << k << ", Name = " << Name << G4endl;
 #endif
 }
 
@@ -249,7 +250,7 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
       if(Name=="") Name = TableName+std::to_string(k);
       Name = itsMarkerVol->GetName()+"_"+Name;
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << Name << G4endl;
+      G4cout << __METHOD_NAME__ << " k = " << k << ", Name = " << Name << G4endl;
 #endif
 }
 
@@ -618,7 +619,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
   
   aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  BDSSamplerBase::AddExternalSampler(std::to_string(BDSSamplerBase::GetNSamplers())+"_"+_Name+"_1");
+  BDSSamplerBase::AddExternalSampler(std::to_string(BDSSamplerBase::GetNSamplers())+"_"+Name+"_1");
   
   return aSamplerVol;
 }
