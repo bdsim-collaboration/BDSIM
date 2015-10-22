@@ -1,10 +1,5 @@
 #include "BDSColours.hh"
 
-#include "globals.hh"            // geant4 types / globals
-#include <map>
-#include "G4Colour.hh"
-
-
 BDSColours* BDSColours::_instance = nullptr;
 
 BDSColours* BDSColours::Instance()
@@ -46,13 +41,14 @@ BDSColours::BDSColours()
 
 G4Colour* BDSColours::GetColour(G4String type)
 {
-  if (colours.find(type) == colours.end())
+  auto it = colours.find(type);
+  if (it == colours.end())
     {// colour not found
       return colours["default"];
     }
   else
     {// colour must therefore exist
-      return colours[type];
+      return it->second;
     }
 }
 
