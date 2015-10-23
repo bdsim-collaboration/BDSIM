@@ -56,8 +56,8 @@
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
-%token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
-%token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
+%token ALL PERIOD XSECBIAS TUNNEL MATERIAL ATOM
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE BETA0 DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr
@@ -1001,7 +1001,6 @@ command : STOP             { if(execute) quit(); }
 		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
 	      }
           }
-	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
@@ -1048,8 +1047,6 @@ command : STOP             { if(execute) quit(); }
 		add_xsecbias(xsecbias);
 	      }
           }
-
-//| PRINTF '(' fmt ')' { if(execute) printf($3,$5); }
 ;
 
 use_parameters :  VARIABLE
@@ -1093,17 +1090,20 @@ use_parameters :  VARIABLE
 sample_options: RANGE '=' VARIABLE
                 {
 		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << std::endl;
-		  {
-		    if(execute) $$ = $3;
-		  }
+		  if(execute) $$ = $3;
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
                   if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << " [" << $5 << "]" << std::endl;
-		  {
-		    if(execute) { $$ = $3; element_count = (int)$5; }
-		  }
+		  if(execute) { $$ = $3; element_count = (int)$5; }
                 }
+              | ALL
+	        {
+		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
+		  // -2: convention to add to all elements
+		  // empty name so that element name can be attached
+		  if(execute) { $$->name = ""; element_count = -2; }
+	        }
 ;
 
 csample_options : VARIABLE '=' aexpr

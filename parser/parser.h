@@ -321,8 +321,24 @@ int expand_line(std::string name, std::string start, std::string end)
    /// add element to beamline
    void add_element(struct Element& e, std::string before, int before_count)
    {
+     // if before_count equal to -2 add to all elements regardless of name
+     // typically used for output elements
+     if (before_count==-2)
+       {
+	 std::string origName = e.name;
+	 for (auto it=beamline_list.begin(); it!=beamline_list.end(); it++) {
+	   // skip LINEs
+	   if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
+	     {continue;}
+	   // add element name to name
+	   e.name += it->name;
+	   beamline_list.insert(it,e);
+	   // reset name
+	   e.name = origName;
+	 }
+       }
      // if before_count equal to -1 add to all element instances
-     if (before_count==-1)
+     else if (before_count==-1)
        {
 	 auto itPair = beamline_list.equal_range(before);
 	 if (itPair.first==itPair.second) {

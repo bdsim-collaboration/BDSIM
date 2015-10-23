@@ -63,6 +63,7 @@ namespace GMAD {
 
   private:
     /// the element list
+    /// a list is chosen since insertion is fast and iterators are not invalidated
     typename std::list<T> itsList;
     /// multimap for name lookup
     std::multimap<std::string, FastListIterator> itsMap;

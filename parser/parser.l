@@ -106,6 +106,7 @@ atom { return ATOM; }
 
 line { return LINE; } 
 
+all { return ALL; }
 period { return PERIOD; }
 range { return RANGE; }
 
