@@ -190,7 +190,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSampler()
 {
-  return (new BDSSampler(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
+  return (new BDSSampler(_element.name));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()

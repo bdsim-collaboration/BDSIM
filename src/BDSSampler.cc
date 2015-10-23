@@ -12,9 +12,8 @@
 G4Box* BDSSampler::containerSolidSampler = nullptr;
 G4LogicalVolume* BDSSampler::containerLogicalVolumeSampler = nullptr;
 
-BDSSampler::BDSSampler(G4String name,
-		       G4double length):
-  BDSSamplerBase(name, length, "sampler")
+BDSSampler::BDSSampler(G4String name):
+  BDSSamplerBase(name, BDSGlobalConstants::Instance()->GetSamplerLength(), "sampler")
 {}
 
 void BDSSampler::BuildContainerLogicalVolume()
@@ -22,11 +21,11 @@ void BDSSampler::BuildContainerLogicalVolume()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
 
   if(!containerSolidSampler)
     {
+      G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+      G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
       containerSolid = containerSolidSampler = new G4Box("Sampler_solid",
 							 samplerDiameter,
 							 samplerDiameter,

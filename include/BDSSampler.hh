@@ -14,9 +14,7 @@ class G4LogicalVolume;
 class BDSSampler : public BDSSamplerBase
 {
 public:
-  BDSSampler(G4String name,
-	     G4double length);
-
+  BDSSampler(G4String name);
 
   /// access for external classes to sensitive detector
   virtual BDSSamplerSD* GetSensitiveDetector()const override final;
