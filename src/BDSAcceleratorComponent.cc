@@ -618,8 +618,8 @@ void BDSAcceleratorComponent::BuildBmapFieldAndStepper()
   itsMagField = bFact->buildMagField(itsBmap, itsBmapZOffset, _geom, itsBmapXOffset);
     
   itsEqRhs = new G4Mag_UsualEqRhs(itsMagField);
-  //  itsStepper = new G4NystromRK4(itsEqRhs);
-  itsStepper = new G4HelixImplicitEuler(itsEqRhs);
+  itsStepper = new G4NystromRK4(itsEqRhs);
+  //itsStepper = new G4HelixImplicitEuler(itsEqRhs);
 
   if(itsStepper && itsMagField){
     BuildFieldMgr(itsStepper, itsMagField);
