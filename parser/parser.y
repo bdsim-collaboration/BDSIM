@@ -54,7 +54,7 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER DEGRADER
+%token SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
 %token ALL PERIOD XSECBIAS TUNNEL MATERIAL ATOM
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
@@ -317,16 +317,6 @@ decl : VARIABLE ':' marker
 	     tmp_list.clear();
 	   }
        }     
-     | VARIABLE ':' sequence
-       {
-	 if(execute)
-	   {
-	     // copy tmp_list to params
-	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
-	     // clean list
-	     tmp_list.clear();
-	   }
-       }
      | VARIABLE ':' newinstance
        {
          if(execute)
@@ -510,14 +500,6 @@ line : LINE '=' '(' element_seq ')'
 line : LINE '=' '-' '(' rev_element_seq ')'
 ;
 
-//sequence : SEQUENCE ',' params ',' '(' element_seq ')'
-//;
-
-//sequence : SEQUENCE ',' params ',' '-' '(' rev_element_seq ')'
-//;
-
-sequence : SEQUENCE '=' '(' seq_element_seq ')' ;
-
 element_seq : 
             | VARIABLE ',' element_seq
               {
@@ -585,33 +567,6 @@ rev_element_seq :
             | '-' VARIABLE
               {
 		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
-	      }
-;
-
-seq_element_seq : 
-            | VARIABLE ',' seq_element_seq
-              {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
-	      }
-            | VARIABLE '*' NUMBER ',' seq_element_seq
-              {
-		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
-	      }
-            | NUMBER '*' VARIABLE ',' seq_element_seq
-              {
-		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
-	      }
-            | VARIABLE 
-              {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
-	      }
-           | VARIABLE '*' NUMBER 
-              {
-		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
-	      }
-            | NUMBER '*' VARIABLE 
-              {
-		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
 	      }
 ;
 
