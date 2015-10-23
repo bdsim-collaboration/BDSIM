@@ -57,7 +57,7 @@
 %token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
 %token ALL PERIOD XSECBIAS TUNNEL MATERIAL ATOM
-%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE BETA0 DUMP
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr
@@ -994,13 +994,6 @@ command : STOP             { if(execute) quit(); }
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
-        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
-	      }
-          }
         | SAMPLE ',' sample_options 
           {
 	    if(execute)

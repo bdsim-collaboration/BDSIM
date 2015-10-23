@@ -121,13 +121,13 @@ include   BEGIN(incl);  //reserved commands
 
 beam { return BEAM; }
 option { return OPTION; }
+beta0 { return OPTION; }  // beta0 is a synonym of option
 print { return PRINT; }
 "return" { return STOP; }
 stop {return STOP;}
 use { return USE; }
 sample { return SAMPLE; }
 csample { return CSAMPLE; }
-beta0 { return BETA0; } 
 dump  { return DUMP; }
 
 \"[^"]*\" {
