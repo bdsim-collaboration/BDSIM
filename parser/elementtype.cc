@@ -49,8 +49,6 @@ std::string GMAD::typestr(ElementType type) {
     return "sampler";
   case ElementType::_CSAMPLER:
     return "csampler";
-  case ElementType::_TUNNEL:
-    return "tunnel";
   case ElementType::_MATERIAL:
     return "material";
   case ElementType::_ATOM:
@@ -67,10 +65,6 @@ std::string GMAD::typestr(ElementType type) {
     return "awakescreen";
   case ElementType::_DEGRADER :
     return "degrader";
-  case ElementType::_TELEPORTER : 
-    return "teleporter";
-  case ElementType::_TERMINATOR :
-    return "terminator";
   default:
     return "none";
   }

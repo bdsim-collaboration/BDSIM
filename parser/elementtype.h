@@ -36,12 +36,9 @@ enum class ElementType {
   _SAMPLER     = 41,
   _CSAMPLER    = 42,
   _DUMP        = 43,
-  _TUNNEL      = 52,
   _TRANSFORM3D = 61,
   _MUSPOILER   = 62,
   _DEGRADER    = 63,
-  _TELEPORTER  = 98,
-  _TERMINATOR  = 99
 };
 
 /// conversion from enum to string

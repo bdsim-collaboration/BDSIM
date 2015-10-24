@@ -2,8 +2,6 @@
 #include "BDSTunnelInfo.hh"
 #include "BDSTunnelType.hh"
 
-class G4Material;
-
 BDSTunnelInfo::BDSTunnelInfo(BDSTunnelType typeIn,
 			     G4double      thicknessIn,
 			     G4double      soilThicknessIn,
