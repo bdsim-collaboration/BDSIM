@@ -583,11 +583,15 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // apply biases
   for (i = registry->begin(); i != registry->end(); ++i)
     {    
+      // individual components 
+      G4cout << i->first << " " << i->second->GetName() << G4endl;
+      
+      
       // Accelerator vacuum 
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
       if(vacuumLV) 
 	{
-	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();      
+	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
 	  eg->AddParticle("proton");
 	  eg->AttachTo(vacuumLV);
 	}
