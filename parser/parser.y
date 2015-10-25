@@ -54,10 +54,10 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER DEGRADER
+%token SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
-%token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
-%token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
+%token ALL PERIOD XSECBIAS TUNNEL MATERIAL ATOM
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr
@@ -317,16 +317,6 @@ decl : VARIABLE ':' marker
 	     tmp_list.clear();
 	   }
        }     
-     | VARIABLE ':' sequence
-       {
-	 if(execute)
-	   {
-	     // copy tmp_list to params
-	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
-	     // clean list
-	     tmp_list.clear();
-	   }
-       }
      | VARIABLE ':' newinstance
        {
          if(execute)
@@ -510,14 +500,6 @@ line : LINE '=' '(' element_seq ')'
 line : LINE '=' '-' '(' rev_element_seq ')'
 ;
 
-//sequence : SEQUENCE ',' params ',' '(' element_seq ')'
-//;
-
-//sequence : SEQUENCE ',' params ',' '-' '(' rev_element_seq ')'
-//;
-
-sequence : SEQUENCE '=' '(' seq_element_seq ')' ;
-
 element_seq : 
             | VARIABLE ',' element_seq
               {
@@ -585,33 +567,6 @@ rev_element_seq :
             | '-' VARIABLE
               {
 		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
-	      }
-;
-
-seq_element_seq : 
-            | VARIABLE ',' seq_element_seq
-              {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
-	      }
-            | VARIABLE '*' NUMBER ',' seq_element_seq
-              {
-		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
-	      }
-            | NUMBER '*' VARIABLE ',' seq_element_seq
-              {
-		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
-	      }
-            | VARIABLE 
-              {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
-	      }
-           | VARIABLE '*' NUMBER 
-              {
-		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
-	      }
-            | NUMBER '*' VARIABLE 
-              {
-		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
 	      }
 ;
 
@@ -994,14 +949,6 @@ command : STOP             { if(execute) quit(); }
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
-        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
-	      }
-          }
-	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
@@ -1048,8 +995,6 @@ command : STOP             { if(execute) quit(); }
 		add_xsecbias(xsecbias);
 	      }
           }
-
-//| PRINTF '(' fmt ')' { if(execute) printf($3,$5); }
 ;
 
 use_parameters :  VARIABLE
@@ -1093,17 +1038,20 @@ use_parameters :  VARIABLE
 sample_options: RANGE '=' VARIABLE
                 {
 		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << std::endl;
-		  {
-		    if(execute) $$ = $3;
-		  }
+		  if(execute) $$ = $3;
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
                   if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << " [" << $5 << "]" << std::endl;
-		  {
-		    if(execute) { $$ = $3; element_count = (int)$5; }
-		  }
+		  if(execute) { $$ = $3; element_count = (int)$5; }
                 }
+              | ALL
+	        {
+		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
+		  // -2: convention to add to all elements
+		  // empty name so that element name can be attached
+		  if(execute) { $$->name = ""; element_count = -2; }
+	        }
 ;
 
 csample_options : VARIABLE '=' aexpr

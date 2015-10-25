@@ -1,5 +1,6 @@
 #include "BDSBeamPipeFactoryBase.hh"
 
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
@@ -7,7 +8,6 @@
 #include "BDSUtilities.hh"            // for calculateorientation
 
 #include "globals.hh"                 // geant4 globals / types
-#include "G4Colour.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
@@ -141,7 +141,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // VISUAL ATTRIBUTES
   // set visual attributes
   // beampipe
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Color(0.4,0.4,0.4));
+  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(pipeVisAttr);

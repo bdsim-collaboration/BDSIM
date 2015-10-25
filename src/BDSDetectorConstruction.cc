@@ -27,7 +27,6 @@
 #include "parser/physicsbiasing.h"
 
 #include "G4Box.hh"
-#include "G4Colour.hh"
 #include "G4Electron.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"

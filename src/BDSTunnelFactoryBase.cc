@@ -1,15 +1,15 @@
 #include "BDSTunnelFactoryBase.hh"
 
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"          // for vis debug flag
-#include "BDSMaterials.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
 #include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
 
 #include "globals.hh"                 // geant4 globals / types
-#include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -221,7 +221,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
   // on the factory which shouldn't happen - so waste a little memory just now on visattrs
   
   // tunnel & floor - a nice grey
-  G4VisAttributes* tunnelVisAttr = new G4VisAttributes(G4Colour(0.545, 0.533, 0.470));
+  G4VisAttributes* tunnelVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("tunnel"));
   if (visible)
     {tunnelVisAttr->SetVisibility(true);}
   tunnelVisAttr->SetForceLineSegmentsPerCircle(100);
@@ -229,7 +229,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
   visAttributesToBeRegistered.push_back(tunnelVisAttr);
   if (floorLV)
     {
-      G4VisAttributes* floorVisAttr = new G4VisAttributes(G4Colour(0.5, 0.5, 0.45));
+      G4VisAttributes* floorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("tunnelfloor"));
       if (visible)
 	{floorVisAttr->SetVisibility(true);}
       floorVisAttr->SetForceLineSegmentsPerCircle(100);
@@ -239,7 +239,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
   // soil - brown
   if (soilLV)
     {
-      G4VisAttributes* soilVisAttr = new G4VisAttributes(G4Colour(0.545, 0.353, 0, 0.4));
+      G4VisAttributes* soilVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("soil"));
       if (visible)
 	{soilVisAttr->SetVisibility(true);}
       soilVisAttr->SetForceLineSegmentsPerCircle(50);

@@ -153,10 +153,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
     element = CreateAwakeScreen(); break; 
   case ElementType::_TRANSFORM3D:
     element = CreateTransform3D(); break;
-  case ElementType::_TELEPORTER:
-    element = CreateTeleporter(); break;
-  case ElementType::_TERMINATOR:
-    element = CreateTerminator(); break;
 
     // common types, but nothing to do here
   case ElementType::_MARKER:
@@ -164,9 +160,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case ElementType::_REV_LINE:
   case ElementType::_MATERIAL:
   case ElementType::_ATOM:
-  case ElementType::_SEQUENCE:
-  case ElementType::_TUNNEL:
-  case ElementType::_COLLIMATOR:
     element = nullptr;
     break;
   default:
@@ -192,7 +185,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSampler()
 {
-  return (new BDSSampler(_element.name, BDSGlobalConstants::Instance()->GetSamplerLength()));
+  return (new BDSSampler(_element.name));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()

@@ -321,13 +321,8 @@ private:
   G4int    itsSynchMeanFreeFactor;
   G4int    itsSynchPhotonMultiplicity;
   // test map container for laserwire parameters - Steve
-  struct strCmp {
-    G4bool operator()( const G4String s1, const G4String s2 ) const {
-      return strcmp(s1,s2) < 0;}
-  };
-
-  std::map<const G4String, G4double, strCmp> lwWavelength;
-  std::map<const G4String, G4ThreeVector, strCmp> lwDirection;
+  std::map<const G4String, G4double> lwWavelength;
+  std::map<const G4String, G4ThreeVector> lwDirection;
   G4double itsLaserwireWavelength;
   G4ThreeVector itsLaserwireDir;
   G4bool   itsLaserwireTrackPhotons;

@@ -90,7 +90,7 @@ void BDSElement::PlaceComponents()
   G4cout << __METHOD_NAME__ << " - setting lcdd vis attributes." << G4endl;
   if(geom->format()->spec()==(G4String)"lcdd") {
     //Make marker visible (temp debug)
-    G4VisAttributes* VisAttLCDD = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+    G4VisAttributes* VisAttLCDD = new G4VisAttributes(*BDSColours::Instance()->GetColour("warning"));
     VisAttLCDD->SetForceSolid(true);  
     VisAttLCDD->SetVisibility(false);
     itsMarkerLogicalVolume->SetVisAttributes(VisAttLCDD);

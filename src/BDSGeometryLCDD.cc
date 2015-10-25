@@ -280,7 +280,7 @@ void BDSGeometryLCDD::parseVIS(xmlNodePtr cur)
 	{
 	  R = parseDblChar(xmlGetProp(cur,(const xmlChar*)"R"));
 	  G = parseDblChar(xmlGetProp(cur,(const xmlChar*)"G"));
-	  B = parseDblChar(xmlGetProp(cur,(const xmlChar*)"R"));
+	  B = parseDblChar(xmlGetProp(cur,(const xmlChar*)"B"));
 	  alpha = parseDblChar(xmlGetProp(cur,(const xmlChar*)"alpha"));
 
 	}
@@ -760,7 +760,7 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
 
       if(visref==""){ //Default vis settings
       G4VisAttributes* VisAtt = 
-       new G4VisAttributes(G4Colour(1., 1., 1.));
+       new G4VisAttributes(*BDSColours::Instance()->GetColour("default"));
       VisAtt->SetForceWireframe(true);
       alogvol->SetVisAttributes(VisAtt);
       }

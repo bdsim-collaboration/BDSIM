@@ -16,8 +16,8 @@ class G4Material;
  */
 
 struct BDSTunnelInfo {
-  /// default constructor
-  BDSTunnelInfo();
+  /// default constructor, not needed
+  BDSTunnelInfo() = delete;
 
   /// extra constructor to assign all members at once
   BDSTunnelInfo(BDSTunnelType typeIn,

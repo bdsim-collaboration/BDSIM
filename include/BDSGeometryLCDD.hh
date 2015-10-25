@@ -3,7 +3,7 @@
 #ifndef BDSGEOMETRYLCDD_H
 #define BDSGEOMETRYLCDD_H
 
-
+#include "BDSColours.hh"
 #include "BDSGeometry.hh"
 #include "BDSMaterials.hh"
 
@@ -258,7 +258,7 @@ inline G4VisAttributes* BDSGeometryLCDD::GetVisByName(G4String name)
     {
       G4cout << "Couldn't find visref: " << name<<G4endl;
       G4cout << "Using default Vis settings" << G4endl;
-      return new G4VisAttributes(G4Colour(1.0,1.0,1.0));
+      return new G4VisAttributes(*BDSColours::Instance()->GetColour("warning"));
     } 
   
   return VIS_LIST[ID].value;

@@ -53,6 +53,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   BDSSamplerBase* sampler = dynamic_cast<BDSSamplerBase*>(componentIn);
   if (sampler)
     {
+      copyNumber = 0;
       placementName = sampler->GetOutputName();
     }
   else 

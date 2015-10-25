@@ -1,5 +1,5 @@
 include ATF2lat_BX10BY1m.gmad;
-all  : line = (atfdr, ext, ff, post);
+atf  : line = (atfdr, ext, ff, post);
 atf2 : line = (iex,ext,ff,post);
 use ,period=atf2;
 

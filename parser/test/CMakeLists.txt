@@ -72,6 +72,10 @@ set_tests_properties(gmad-testAccessElementOutsiderange PROPERTIES WILL_FAIL 1)
 add_test(gmad-testAddSampler ${gmadBinary} addsampler.gmad)
 set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d)
 
+# test add all samplers
+add_test(gmad-testAddAllSamplers ${gmadBinary} addallsamplers.gmad)
+set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d2)
+
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)
 set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)

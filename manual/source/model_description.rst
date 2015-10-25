@@ -1052,10 +1052,10 @@ Samplers - Output
 Normally, the only output BDSIM would produce is the various particle loss histograms,
 as well as the coordinates of energy deposition hits. To observe the particles at a
 point in the beam lattice a `sampler` can be used. Samplers are attached to an already
-defined element and record all the particles passing through a plane at the entrance
+defined element and record all the particles passing through a plane at the *entrance*
 to that element. They are defined using the following syntax::
 
-  sample, range=<element_name>
+  sample, range=<element_name>;
 
 where `element_name` is the name of the element you wish to sample. Depending on the
 output format chosen, the element name may be recorded in the output (ROOT output only).
@@ -1071,7 +1071,16 @@ a marker, place it in the sequence and then define a sampler that uses that mark
 
   sample, range=endoftheline;
 
-.. note:: Samplers **can only** be defined **after** the main sequences has been defined
+When an element is defined multiple times in the line, samplers will be attached to all instances.
+If you wish to sample only one specific instance, the following syntax can be used::
+
+  sample, range=<element_name>[index];
+
+To attach samplers to all elements::
+
+  sample, all;
+
+.. note:: Samplers **can only** be defined **after** the main sequence has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
 
@@ -1172,7 +1181,7 @@ Multiple options can be defined at once using the following syntax::
 options in BDSIM
 ^^^^^^^^^^^^^^^^ 
 
-Below is a full list of all options in BDSIM. If the option is boolean, 1 or 0 can be used
+Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
 as their value.
 
 +----------------------------------+-------------------------------------------------------+

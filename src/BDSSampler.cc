@@ -9,9 +9,11 @@
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 
-BDSSampler::BDSSampler(G4String name,
-		       G4double length):
-  BDSSamplerBase(name, length, "sampler")
+G4Box* BDSSampler::containerSolidSampler = nullptr;
+G4LogicalVolume* BDSSampler::containerLogicalVolumeSampler = nullptr;
+
+BDSSampler::BDSSampler(G4String name):
+  BDSSamplerBase(name, BDSGlobalConstants::Instance()->GetSamplerLength(), "sampler")
 {}
 
 void BDSSampler::BuildContainerLogicalVolume()
@@ -19,18 +21,27 @@ void BDSSampler::BuildContainerLogicalVolume()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5; 
-  containerSolid = new G4Box(name + "_solid",
-			     samplerDiameter,
-			     samplerDiameter,
-			     chordLength*0.5);
-  containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name);
 
-  // set user limits, vis attributes and sensitive detector
-  BDSSamplerBase::BuildContainerLogicalVolume();
+  if(!containerSolidSampler)
+    {
+      G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+      G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+      containerSolid = containerSolidSampler = new G4Box("Sampler_solid",
+							 samplerDiameter,
+							 samplerDiameter,
+							 chordLength*0.5);
+      containerLogicalVolume = containerLogicalVolumeSampler = new G4LogicalVolume(containerSolidSampler,
+										   emptyMaterial,
+										   "Sampler");
+
+      // set user limits, vis attributes and sensitive detector
+      BDSSamplerBase::BuildContainerLogicalVolume();
+    }
+  else
+    {
+      containerSolid = containerSolidSampler;
+      containerLogicalVolume = containerLogicalVolumeSampler;
+    }
 }
 
 BDSSamplerSD* BDSSampler::GetSensitiveDetector()const

@@ -2,23 +2,6 @@
 #include "BDSTunnelInfo.hh"
 #include "BDSTunnelType.hh"
 
-class G4Material;
-
-BDSTunnelInfo::BDSTunnelInfo()
-{
-  type          = BDSTunnelType::circular;
-  thickness     = 0.0;
-  soilThickness = 0.0;
-  material      = nullptr;
-  soilMaterial  = nullptr;
-  buildFloor    = false;
-  floorOffset   = 0.0;
-  aper1         = 0.0;
-  aper2         = 0.0;
-  sensitive     = false;
-  visible       = true;
-}
-
 BDSTunnelInfo::BDSTunnelInfo(BDSTunnelType typeIn,
 			     G4double      thicknessIn,
 			     G4double      soilThicknessIn,

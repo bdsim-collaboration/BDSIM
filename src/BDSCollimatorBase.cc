@@ -1,6 +1,8 @@
+#include "BDSCollimatorBase.hh"
+
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSCollimatorBase.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 
@@ -94,8 +96,7 @@ void BDSCollimatorBase::Build()
 						      material,                 // material
 						      name + "_collimator_lv"); // name
 
-  // set colour to dark green
-  G4VisAttributes* collimatorVisAttr = new G4VisAttributes(G4Colour(0.3,0.4,0.2));
+  G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("collimator"));
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
 

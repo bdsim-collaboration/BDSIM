@@ -7,6 +7,7 @@
 
 #include "globals.hh" // geant4 types / globals
 
+#include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
