@@ -59,6 +59,7 @@ bool debug = false;
 
 namespace GMAD {
   extern FastList<Element> beamline_list;
+  extern FastList<PhysicsBiasing> xsecbias_list;
 }
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
@@ -583,30 +584,38 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // apply biases
   for (i = registry->begin(); i != registry->end(); ++i)
     {    
-      // individual components 
-      G4cout << i->first << " " << i->second->GetName() << G4endl;
-      
-      
-      // Accelerator vacuum 
-      G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-      if(vacuumLV) 
-	{
-	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-	  eg->AddParticle("proton");
+      GMAD::Element e         = *GMAD::beamline_list.find(i->first);
+      std::list<std::string> biasList = e.biasList;
+
+      G4cout << __METHOD_NAME__ << " element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;
+
+      // loop over all physics biasing
+      for(auto bs = biasList.begin();bs != biasList.end(); ++bs) {
+	GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
+
+	G4cout << __METHOD_NAME__ << " bias loop " << *bs << " " << pb.particle << " " << pb.process << G4endl; 
+
+	BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+	eg->AddParticle(pb.particle);
+	
+	// loop through all processes 
+	for(unsigned int p = 0; p < pb.processList.size(); ++p) {
+	  G4cout << __METHOD_NAME__ << " process loop " 
+		 << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
+	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
+	}
+	
+	// Accelerator vacuum 
+	G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
+	if(vacuumLV) {
 	  eg->AttachTo(vacuumLV);
 	}
-
-      // Accelerator material
-      auto lvs = i->second->GetAllLogicalVolumes();
-      for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi)
-	{
-	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-	  eg->AddParticle("e-");
-	  eg->AddParticle("e+"); 
-	  eg->AddParticle("gamma");
-	  eg->AddParticle("proton");
-	  eg->AttachTo(*lvsi);
-	}
+	// Accelerator material
+	auto lvs = i->second->GetAllLogicalVolumes();
+	for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi) {
+	  eg->AttachTo(*lvsi);	  
+	}	
+      }
     }  
 
   // Second for tunnel
