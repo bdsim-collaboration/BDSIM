@@ -26,10 +26,11 @@ namespace GMAD {
     std::string particle;
     /// geant4 process: single string, but can have multiple processes separated with a space
     std::string process;
+    std::vector<std::string> processList;
     /// factors corresponding to process
-    std::list<double> factor;
+    std::vector<double> factor;
     /// flag which particles are biased
-    std::list<PhysicsBiasingType> flag;
+    std::vector<PhysicsBiasingType> flag;
     /// logical volumes where biasing is attached to
     std::string logicalVolumes;
     
