@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 using namespace GMAD;
@@ -273,7 +274,15 @@ void Element::set(const struct Parameters& params)
   if(params.ydirset) ydir = params.ydir;
   if(params.zdirset) zdir = params.zdir;
 
-  if(params.biasset) bias = params.bias;
+  if(params.biasset) {
+    bias = params.bias;
+    // split bias into tokens 
+    std::stringstream ss(bias);
+    std::string tok;
+    while(ss >> tok) {
+      biasList.push_back(tok);
+    }
+  }
   
   // BLM
   if(params.blmLocZset)
