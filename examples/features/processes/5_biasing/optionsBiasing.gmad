@@ -6,6 +6,8 @@ beam,  particle="proton",
        Xp0=0.0,
        Yp0=0.0;
 
-biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3;
+option,modularPhysicsListsOn=1;
+option,physicsList="em";
 
-biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2};
+biasDef1: xsecBias, particle="e-", proc="msc eIoni eBrem CoulombScat", xsecfact={10,10,10,10}, flag={1,1,1,1};
+biasDef2: xsecBias, particle="e+", proc="msc eIoni eBrem annihil CoulombScat", xsecfact={10,10,10,10,10}, flag={1,1,1,1,1};
