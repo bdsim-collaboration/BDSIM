@@ -13,6 +13,46 @@ struct Array {
   std::vector<double> data;
 
   // helper methods
+  void set_vector(std::vector<double>& dst) 
+  {
+    for(unsigned int i=0; i< data.size();i++){
+      dst.push_back(data[i]);
+#ifdef BDSDEBUG 
+      std::cout << data[i] << " ";
+#endif
+    }
+#ifdef BDSDEBUG 
+    std::cout << std::endl;
+#endif
+  }
+
+  void set_vector(std::vector<std::string>& dst)
+  {
+    for(unsigned int i=0; i< symbols.size();i++){
+      dst.push_back(symbols[i]);
+#ifdef BDSDEBUG 
+      std::cout << symbols[i] << " ";
+#endif
+    }
+#ifdef BDSDEBUG 
+    std::cout << std::endl;
+#endif
+  }
+
+  void set_vector(std::vector<int>& dst)
+  {
+    for(unsigned int i=0; i< data.size();i++){
+      dst.push_back((int)(data[i]));
+#ifdef BDSDEBUG 
+      std::cout << (int)(data[i]) << " ";
+#endif
+    }
+#ifdef BDSDEBUG 
+    std::cout << std::endl;
+#endif
+  }
+
+
   void set_vector(std::list<double>& dst)
   {
     for(unsigned int i=0; i< data.size();i++){
