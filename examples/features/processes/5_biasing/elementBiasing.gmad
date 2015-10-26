@@ -1,6 +1,7 @@
 include optionsBiasing.gmad
 
 q1 : quadrupole, l=1*m, material="Iron", bias="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
+! q1 : quadrupole, l=1*m, material="Iron"; ! uses the process biasDef1 and biasDef2
 
 beamLine: line = (q1); !defines the beam line
 use, period=beamLine; !Chooses the beam line to use
