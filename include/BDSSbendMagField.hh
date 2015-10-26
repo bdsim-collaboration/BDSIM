@@ -26,11 +26,6 @@ public:
   G4double GetLocalRadius() const;
 
 private:
-  /// Rotate the field vector to global coordinates using an example point. This gives
-  /// a G4AffineTransform and the rotation (only) from this is used to rotate the field
-  /// vector to global coordinates.
-  void TransformFieldToGlobal(const G4double point[4]);
-  
   /// The vector of the field. This constructed in local coordinates and the first time
   /// the field is queried, the auxiliary navigator (through inheritance) is used to
   /// transform the vector to global coordinates.
