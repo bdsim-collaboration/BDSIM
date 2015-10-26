@@ -73,7 +73,8 @@ struct Element {
   
   /// physics biasing process
   std::string bias;
-  
+  std::list<std::string> biasList;
+ 
   int precisionRegion; ///which precision physics region the element is in (0 = none)
 
   ///@{ material properties
