@@ -20,7 +20,8 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
   : G4VBiasingOperator(name), fSetup(true), particleName(particleNameIn)
 {
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
-  
+  //  fParticleToBias = G4Electron::ElectronDefinition();  
+
   if ( fParticleToBias == nullptr ) {
     G4ExceptionDescription ed;
     ed << "Particle `" << particleName << "' not found !" << G4endl;
@@ -75,8 +76,8 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
 
   for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
     const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
-    G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;
     if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
+      G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;    
       fXSScale[wrapperProcess]      = bias;
       fPrimaryScale[wrapperProcess] = iPrimary;
     }
