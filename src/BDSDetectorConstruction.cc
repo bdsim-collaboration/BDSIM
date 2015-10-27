@@ -215,10 +215,11 @@ void BDSDetectorConstruction::BuildBeamline()
 	}
     }
 
-  if (survey) {
-    survey->WriteSummary(beamline);
-    delete survey;
-  }
+  if (survey)
+    {
+      survey->WriteSummary(beamline);
+      delete survey;
+    }
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
@@ -575,9 +576,9 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
   if(debug)
-    G4cout << __METHOD_NAME__ << registry << G4endl;
+    {G4cout << __METHOD_NAME__ << registry << G4endl;}
 
-  // registry is a map, so iterator has first and second members for key and value respectively
+  // Registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
 
   // apply biases
@@ -586,46 +587,47 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       GMAD::Element e         = *GMAD::beamline_list.find(i->first);
       std::list<std::string> biasList = e.biasList;
       if(debug) 
-	G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;
+	{G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;}
 
       // loop over all physics biasing
-      for(auto bs = biasList.begin();bs != biasList.end(); ++bs) {
-	GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
+      for(auto bs = biasList.begin();bs != biasList.end(); ++bs)
+	{
+	  GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
 	
-	if(debug)
-	  G4cout << __METHOD_NAME__ << "bias loop>" << *bs << " " << pb.particle << " " << pb.process << " " << pb.logicalVolumes << G4endl; 
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "bias loop>" << *bs << " " << pb.particle << " " << pb.process << " " << pb.logicalVolumes << G4endl;}
 
-	BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-	eg->AddParticle(pb.particle);
+	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+	  eg->AddParticle(pb.particle);
 	
- 	// loop through all processes 
-	for(unsigned int p = 0; p < pb.processList.size(); ++p) {
-	  if(debug) {
-	    G4cout << __METHOD_NAME__ << " process loop " 
-		   << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
-	  }
-	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
-	}
+	  // loop through all processes 
+	  for(unsigned int p = 0; p < pb.processList.size(); ++p)
+	    {
+	      if(debug)
+		{
+		  G4cout << __METHOD_NAME__ << " process loop " 
+			 << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
+		}
+	      eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
+	    }
 	
 	// Accelerator vacuum 
 	G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
 	G4cout << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
-	if(vacuumLV) {
-	  eg->AttachTo(vacuumLV);
-	}
+	if(vacuumLV)
+	  {eg->AttachTo(vacuumLV);}
 
 	// Accelerator material
 	auto lvl = i->second->GetAllLogicalVolumes();
 	G4cout << "all logical volumes " << lvl.size() << G4endl;	  
-	for (auto acceleratorLVIter = lvl.begin(); acceleratorLVIter != lvl.end(); ++acceleratorLVIter) {
-	  G4cout << "all logical volumes " << *acceleratorLVIter << " " << (*acceleratorLVIter)->GetName() << G4endl;	  
-	  if(*acceleratorLVIter != vacuumLV) { 
-	    eg->AttachTo(*acceleratorLVIter);
-	  }	
+	for (auto acceleratorLVIter = lvl.begin(); acceleratorLVIter != lvl.end(); ++acceleratorLVIter)
+	  {
+	    G4cout << "all logical volumes " << *acceleratorLVIter << " " << (*acceleratorLVIter)->GetName() << G4endl;	  
+	    if(*acceleratorLVIter != vacuumLV)
+	      {eg->AttachTo(*acceleratorLVIter);}	
+	  }
 	}
-      }
     }
-
 #endif
 }
 
