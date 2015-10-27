@@ -22,6 +22,8 @@
 #include "G4GenericBiasingPhysics.hh"
 #endif
 
+#include "G4Electron.hh"
+
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
@@ -211,7 +213,13 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
 #endif
+
   runManager->Initialize();
+
+  //
+  // Build Physics bias, only after G4RunManager::Initialize()
+  //
+  detector->BuildPhysicsBias();
 
   //
   // set verbosity levels
