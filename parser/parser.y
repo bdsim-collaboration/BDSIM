@@ -1050,7 +1050,8 @@ sample_options: RANGE '=' VARIABLE
 		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
 		  // -2: convention to add to all elements
 		  // empty name so that element name can be attached
-		  if(execute) { $$->name = ""; element_count = -2; }
+		  // create variable name with empty string
+		  if(execute) { $$ = symlook(""); element_count = -2; }
 	        }
 ;
 
