@@ -12,7 +12,13 @@
 
 BDSBOptrMultiParticleChangeCrossSection::BDSBOptrMultiParticleChangeCrossSection()
   : G4VBiasingOperator("NotSureWhatToCallThis")
-{}
+{
+#ifdef BDSDEBUG
+  debug = true;
+#else
+  debug = false;
+#endif
+}
 
 BDSBOptrMultiParticleChangeCrossSection::~BDSBOptrMultiParticleChangeCrossSection() 
 {}
@@ -37,7 +43,8 @@ void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
 
 void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary) 
 {
-  G4cout << __METHOD_NAME__ << particleName << " " << process << " " << dBias << " " << iPrimary << G4endl;
+  if(debug) 
+    G4cout << __METHOD_NAME__ << particleName << " " << process << " " << dBias << " " << iPrimary << G4endl;
   const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   if(particle == nullptr) {
     G4ExceptionDescription ed;

@@ -27,6 +27,14 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
     ed << "Particle `" << particleName << "' not found !" << G4endl;
     G4Exception("BDSBOptrChangeCrossSection(...)","BDSIM",JustWarning,ed);
   }
+
+#ifdef BDSDEBUG
+  debug = true;
+#else
+  debug = false;
+#endif
+
+
 }
 
 BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
@@ -40,7 +48,8 @@ BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
 
 void BDSBOptrChangeCrossSection::StartRun()
 {
-  G4cout << __METHOD_NAME__ << G4endl;
+  if(debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   // --------------
   // -- Setup stage:
   // ---------------
@@ -50,7 +59,8 @@ void BDSBOptrChangeCrossSection::StartRun()
     const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
     const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
 
-    G4cout << __METHOD_NAME__ << processManager << " " << sharedData << G4endl;
+    if(debug)
+      G4cout << __METHOD_NAME__ << processManager << " " << sharedData << G4endl;
     if (sharedData) {
       // -- sharedData tested, as is can happen a user attaches an operator to a
       // -- volume but without defined BiasingProcessInterface processes.
@@ -67,17 +77,21 @@ void BDSBOptrChangeCrossSection::StartRun()
 }
 
 void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4int iPrimary) {
-  G4cout << "BDSBOptrChangeCrossSection::SetBias> " << processName << " " << bias << " " << iPrimary << G4endl;
+
+  if(debug)
+    G4cout << __METHOD_NAME__ << processName << " " << bias << " " << iPrimary << G4endl;
   
   const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
   const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
 
-  G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
+  if(debug)
+    G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
 
   for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
     const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
     if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
-      G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;    
+      if(debug)
+	G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;    
       fXSScale[wrapperProcess]      = bias;
       fPrimaryScale[wrapperProcess] = iPrimary;
     }
