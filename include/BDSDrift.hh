@@ -18,19 +18,11 @@ public:
 	   G4int            precisionRegion = 0);
   ~BDSDrift();
 
-  /// Access all sensitive volumes belonging to this component including those
-  /// of the pipe object
-  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
-
 protected:
   void Build();
 
-
 private:
   void BuildContainerLogicalVolume(){;}; // to fulfill bdsacceleratorcomponent requirements
-
-  /// The piece of beam pipe for the drift.
-  BDSBeamPipe* pipe;
 };
 
 #endif
