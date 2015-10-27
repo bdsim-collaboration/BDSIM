@@ -100,10 +100,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   ComponentPlacement();
 
   // implement bias operations on all volumes 
-  BuildPhysicsBias();
+  // BuildPhysicsBias();
 
   // free the parser list - an extern
-  GMAD::beamline_list.erase();
+  //  GMAD::beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -569,9 +569,12 @@ void BDSDetectorConstruction::ComponentPlacement()
 
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
+  G4cout << __METHOD_NAME__ << G4endl;
 #if G4VERSION_NUMBER > 1009
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
+  G4cout << __METHOD_NAME__ << registry << G4endl;
+
   // registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
 
@@ -583,7 +586,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
  
   // apply biases
   for (i = registry->begin(); i != registry->end(); ++i)
-    {    
+    { 
       GMAD::Element e         = *GMAD::beamline_list.find(i->first);
       std::list<std::string> biasList = e.biasList;
 
@@ -593,12 +596,12 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       for(auto bs = biasList.begin();bs != biasList.end(); ++bs) {
 	GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
 
-	G4cout << __METHOD_NAME__ << " bias loop " << *bs << " " << pb.particle << " " << pb.process << G4endl; 
+	G4cout << __METHOD_NAME__ << " bias loop " << *bs << " " << pb.particle << " " << pb.process << " " << pb.logicalVolumes << G4endl; 
 
 	BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
 	eg->AddParticle(pb.particle);
 	
-	// loop through all processes 
+ 	// loop through all processes 
 	for(unsigned int p = 0; p < pb.processList.size(); ++p) {
 	  G4cout << __METHOD_NAME__ << " process loop " 
 		 << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
