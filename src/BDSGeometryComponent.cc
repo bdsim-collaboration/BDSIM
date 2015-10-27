@@ -47,6 +47,9 @@ BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
 
 BDSGeometryComponent::~BDSGeometryComponent()
 {
+  for (auto daughter : allDaughters)
+    {delete daughter;}
+  
   std::vector<G4VSolid*>::iterator itS = allSolids.begin();
   for (; itS != allSolids.end(); ++itS)
     {delete (*itS);}
@@ -77,6 +80,12 @@ void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent
   SetExtentX(anotherComponent->GetExtentX());
   SetExtentY(anotherComponent->GetExtentY());
   SetExtentZ(anotherComponent->GetExtentZ());
+}
+
+void BDSGeometryComponent::RegisterDaughter(BDSGeometryComponent* anotherComponent)
+{
+  if (std::find(allDaughters.begin(), allDaughters.end(), anotherComponent) == allDaughters.end())
+    {allDaughters.push_back(anotherComponent);}
 }
 
 void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)
@@ -345,4 +354,25 @@ void BDSGeometryComponent::InheritObjects(BDSGeometryComponent* component)
   RegisterUserLimits(component->GetAllUserLimits());
 }
 
+std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes() const
+{
+  std::vector<G4LogicalVolume*> result(allLogicalVolumes);
+  for (auto it : allDaughters)
+    {
+      auto dLVs = it->GetAllLogicalVolumes();
+      result.insert(result.end(), dLVs.begin(), dLVs.end());
+    }
+  return result;
+}
+
+std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result(allSensitiveVolumes);
+  for (auto it : allDaughters)
+    {
+      auto dSVs = it->GetAllSensitiveVolumes();
+      result.insert(result.end(), dSVs.begin(), dSVs.end());
+    }
+  return result;
+}
 
