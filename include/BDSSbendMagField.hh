@@ -30,9 +30,6 @@ private:
   /// the field is queried, the auxiliary navigator (through inheritance) is used to
   /// transform the vector to global coordinates.
   G4ThreeVector field;
-
-  /// A record of whether the field vector has been transformed to global coordinates.
-  G4bool fieldTransformed;
   
   /// Radius of curvature.
   G4double localRadius;

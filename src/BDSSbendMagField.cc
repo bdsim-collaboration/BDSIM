@@ -11,8 +11,7 @@
 BDSSbendMagField::BDSSbendMagField(G4ThreeVector fieldIn,
 				   const G4double length,
 				   const G4double angle):
-  field(fieldIn),
-  fieldTransformed(false)
+  field(fieldIn)
 {
   if (BDS::IsFinite(angle))
     {
