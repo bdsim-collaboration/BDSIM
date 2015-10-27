@@ -54,7 +54,7 @@
 #ifdef BDSDEBUG
 bool debug = true;
 #else
-bool debug = true;
+bool debug = false;
 #endif
 
 namespace GMAD {
