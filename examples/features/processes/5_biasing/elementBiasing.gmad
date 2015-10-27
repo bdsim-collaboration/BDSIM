@@ -1,11 +1,13 @@
 include optionsBiasing.gmad
 
-biasDef1: xsecBias, particle="e-", proc="msc eIoni eBrem CoulombScat", xsecfact={10,10,10,10}, flag={1,1,1,1};
-biasDef2: xsecBias, particle="e+", proc="msc eIoni eBrem annihil CoulombScat", xsecfact={10,10,10,10,10}, flag={1,1,1,1,1};
+biasDef0: xsecBias, particle="e-", proc="msc eIoni eBrem CoulombScat", xsecfact={10,10,10,10}, flag={1,1,1,1}, logicalVolumes="componentAll";
+biasDef1: xsecBias, particle="e-", proc="msc eIoni eBrem CoulombScat", xsecfact={10,10,10,10}, flag={1,1,1,1}, logicalVolumes="componentMaterial";
+biasDef2: xsecBias, particle="e+", proc="msc eIoni eBrem annihil CoulombScat", xsecfact={10,10,10,10,10}, flag={1,1,1,1,1}, logicalVolumes="componentMaterial";
+biasDef3: xsecBias, particle="e-", proc="msc eIoni eBrem CoulombScat", xsecfact={10,10,10,10}, flag={1,1,1,1}, logicalVolumes="componentVacuum";
 
-d1 : drift, l=1*m;
+d1 : drift, l=1*m, bias="biasDef0";
 q1 : quadrupole, l=1*m, material="Iron", bias="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
-d2 : drift, l=1*m;
+d2 : drift, l=1*m, bias="biasDef3";
 
 beamLine: line = (d1,q1,d2); !defines the beam line
 use, period=beamLine; !Chooses the beam line to use
