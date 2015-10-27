@@ -8,6 +8,3 @@ beam,  particle="proton",
 
 option,modularPhysicsListsOn=1;
 option,physicsList="em";
-
-biasDef1: xsecBias, particle="e-", proc="msc eIoni eBrem CoulombScat", xsecfact={10,10,10,10}, flag={1,1,1,1};
-biasDef2: xsecBias, particle="e+", proc="msc eIoni eBrem annihil CoulombScat", xsecfact={10,10,10,10,10}, flag={1,1,1,1,1};
