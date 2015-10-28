@@ -204,6 +204,12 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
 
+  RegisterDaughter(bpFirstBit);
+  RegisterDaughter(beampipe);
+  RegisterDaughter(bpLastBit);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+
   G4double extentX = beampipe->GetExtentX().second + fabs(magnetOuterOffset.x());
   SetExtentX(-extentX, extentX);
   SetExtentY(beampipe->GetExtentY());
