@@ -176,6 +176,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   // if it both didn't exist and has been constructed
   if (element)
     {
+      element->SetBiasVacuumList(_element.biasVacuumList);
+      element->SetBiasMaterialList(_element.biasMaterialList);
       element->SetPrecisionRegion(_element.precisionRegion);
       element->Initialise();
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(element);
@@ -334,6 +336,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 					     bPrime,
 					     bpInfo,
 					     moInfo);
+
+  oneBend->SetBiasVacuumList(_element.biasVacuumList);
+  oneBend->SetBiasMaterialList(_element.biasMaterialList);
   // create a line of this sbend repeatedly
   for (int i = 0; i < nSbends; ++i)
     {sbendline->AddComponent(oneBend);}
