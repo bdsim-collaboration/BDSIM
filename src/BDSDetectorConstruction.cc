@@ -54,7 +54,7 @@
 #ifdef BDSDEBUG
 bool debug = true;
 #else
-bool debug = false;
+bool debug = true;
 #endif
 
 namespace GMAD {
@@ -590,14 +590,14 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;}
 
       // loop over all physics biasing
+      BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
       for(auto bs = biasList.begin();bs != biasList.end(); ++bs)
 	{
 	  GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
 	
 	  if(debug)
 	    {G4cout << __METHOD_NAME__ << "bias loop>" << *bs << " " << pb.particle << " " << pb.process << " " << pb.logicalVolumes << G4endl;}
-
-	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+	 
 	  eg->AddParticle(pb.particle);
 	
 	  // loop through all processes 
@@ -610,24 +610,24 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 		}
 	      eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
 	    }
-	
-	// Accelerator vacuum 
-	G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-	G4cout << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
-	if(vacuumLV)
-	  {eg->AttachTo(vacuumLV);}
-
-	// Accelerator material
-	auto lvl = i->second->GetAllLogicalVolumes();
-	G4cout << "all logical volumes " << lvl.size() << G4endl;	  
-	for (auto acceleratorLVIter = lvl.begin(); acceleratorLVIter != lvl.end(); ++acceleratorLVIter)
-	  {
-	    G4cout << "all logical volumes " << *acceleratorLVIter << " " << (*acceleratorLVIter)->GetName() << G4endl;	  
-	    if(*acceleratorLVIter != vacuumLV)
-	      {eg->AttachTo(*acceleratorLVIter);}	
-	  }
+	}
+      // Accelerator vacuum 
+      G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
+      G4cout << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
+      if(vacuumLV)
+	{eg->AttachTo(vacuumLV);}
+      
+      // Accelerator material
+      auto lvl = i->second->GetAllLogicalVolumes();
+      G4cout << "all logical volumes " << lvl.size() << G4endl;	  
+      for (auto acceleratorLVIter = lvl.begin(); acceleratorLVIter != lvl.end(); ++acceleratorLVIter)
+	{
+	  if(*acceleratorLVIter != vacuumLV)
+	    G4cout << "all logical volumes " << *acceleratorLVIter << " " << (*acceleratorLVIter)->GetName() << G4endl;
+	  {eg->AttachTo(*acceleratorLVIter);}	
 	}
     }
+
 #endif
 }
 
