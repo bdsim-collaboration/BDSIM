@@ -25,6 +25,10 @@ public:
 
   virtual void GetFieldValue(const G4double Point[4],G4double *Bfield ) const;
 
+  //Set the 'lower left'=pmin and 'upper right'pmax corners of the box containing the field, in local 
+  //coordinates - for use in BDSUniformMagField. Does nothing by default.
+  virtual void SetFieldExtent(const G4ThreeVector& pmin, const G4ThreeVector& pmax);
+
   // create a field mesh in the global coordinates after the placement is known
   virtual void Prepare(G4VPhysicalVolume *referenceVolume);
 

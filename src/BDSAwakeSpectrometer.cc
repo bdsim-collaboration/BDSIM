@@ -19,16 +19,19 @@ AWAKE spectrometer.
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
+#include "G4NystromRK4.hh"
 
 #include "G4Trap.hh"
 //#include "BDSOutputBase.hh"
+#include "BDSDipoleStepper.hh"
+#include "BDSUniformMagField.hh"
 
 typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
-
+#define DEBUG 1
 //============================================================
-BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm):
-  BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm):
+  BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _BField(BField), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -337,7 +340,33 @@ void BDSAwakeSpectrometer::PlaceYoke(){
 		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 
-void BDSAwakeSpectrometer::BuildField(){}
+void BDSAwakeSpectrometer::BuildBPFieldAndStepper(){
+  // set up the magnetic field and stepper
+  G4cout << __METHOD_NAME__ << " - Bfield = " << _BField << G4endl;
+  itsMagField=new BDSUniformMagField(G4ThreeVector(0,-_BField,0));
+  G4ThreeVector pmin;
+  //Set the extent of the magnetic field to within the magnet pole region.
+  itsMagField->SetFieldExtent(itsPolePos-itsPoleSize/2.0, itsPolePos+itsPoleSize/2.0);
+  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
+  itsStepper = new G4NystromRK4(itsEqRhs);
+  /*
+  itsStepper = new BDSDipoleStepper(itsEqRhs);
+  */
+  //  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
+
+  /*
+  BDSDipoleStepper* dipoleStepper = (BDSDipoleStepper*)itsStepper;
+  dipoleStepper->SetBField(-_BField); // note the - sign...
+  dipoleStepper->SetBGrad(0);
+  */
+}
+
+void BDSAwakeSpectrometer::SetBPFieldMgr(){
+  BuildFieldMgr(itsStepper, itsMagField);
+  itsMarkerLogicalVolume->SetFieldManager(itsFieldMgr,true);
+}
+
+
 void BDSAwakeSpectrometer::BuildVacuumChamber(){
   _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
 				    itsLength,

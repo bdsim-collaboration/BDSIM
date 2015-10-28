@@ -389,7 +389,9 @@ void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume *referenceVolume)
   // creates a field mesh in the reference frame of a physical volume
   // from  b-field map value list 
   // has to be called after the component is placed in the geometry
+  G4cout << __METHOD_NAME__ << " - " << GetName() << G4endl;
   if(itsMagField!=NULL) {
+    G4cout << " - preparing field." << G4endl;
     itsMagField->Prepare(referenceVolume);
   } 
 }

@@ -553,6 +553,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
   case _AWAKESPECTROMETER:
     e.type = _AWAKESPECTROMETER;
     e.l = params.l;
+    e.B = params.B;
     e.screenEndZ = params.screenEndZ;
     e.poleStartZ = params.poleStartZ;
     e.scintmaterial = std::string(params.scintmaterial);

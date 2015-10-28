@@ -9,6 +9,7 @@
 #include "G4RotationMatrix.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4UniformMagField.hh"
+#include "G4ThreeVector.hh"
 #include "BDSMagField.hh"
 
 #ifndef BDSUniformMagField_h
@@ -22,8 +23,21 @@ public:
   // mandatory members
   ~BDSUniformMagField();
 
-  // create a field mesh in the global coordinates after the placement is known
+  //Ovverride the GetFieldValue
+  virtual void GetFieldValue(const G4double yTrack[4], G4double *MagField) const;
   virtual void Prepare(G4VPhysicalVolume *referenceVolume);
+
+  G4ThreeVector pmin() const;
+
+  //Set the 'lower left'=pmin and 'upper right'pmax corners of the box containing the field, in local 
+  //coordinates.
+  virtual void SetFieldExtent(const G4ThreeVector& pmin, const G4ThreeVector& pmax);
+  
+private:
+  void Defaults();
+
+  G4ThreeVector _pmin;
+  G4ThreeVector _pmax;
 };
 
 

@@ -27,7 +27,7 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd);
+  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double BField, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd);
   virtual ~BDSAwakeSpectrometer();
 
 protected:
@@ -45,7 +45,8 @@ private:
   void PlacePoles();
   void BuildCoils();
   void PlaceCoils();
-  void BuildField();
+  virtual void BuildBPFieldAndStepper(); 
+  virtual void SetBPFieldMgr(); 
   void BuildVacuumChamber();
   void PlaceVacuumChamber();
   //To build the camera...
@@ -200,6 +201,8 @@ private:
   G4double _screenCentreZ;
   G4double _screenCentreX;
   BDS3DMagField* _magField;
+  //Y component of the B field.
+  G4double _BField;
 };
 
 #endif

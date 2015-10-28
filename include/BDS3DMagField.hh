@@ -27,7 +27,7 @@ class BDS3DMagField : public BDSMagField
   
 public:
   BDS3DMagField(const char* filename, double zOffset, double xOffset );
-  void  GetFieldValue( const  double Point[4],
+  virtual void  GetFieldValue( const  double Point[4],
 		       double *Bfield          ) const;
   virtual void Prepare(G4VPhysicalVolume *referenceVolume);
 };
