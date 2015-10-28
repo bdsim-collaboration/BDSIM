@@ -584,7 +584,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // apply biases
   for (i = registry->begin(); i != registry->end(); ++i)
     { 
-      GMAD::Element e         = *GMAD::beamline_list.find(i->first);
+      GMAD::Element& e                = *GMAD::beamline_list.find(i->first);
       std::list<std::string> biasList = e.biasList;
       if(debug) 
 	{G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;}
@@ -593,10 +593,10 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
       for(auto bs = biasList.begin();bs != biasList.end(); ++bs)
 	{
-	  GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
+	  GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(*bs,1);
 	
 	  if(debug)
-	    {G4cout << __METHOD_NAME__ << "bias loop>" << *bs << " " << pb.particle << " " << pb.process << " " << pb.logicalVolumes << G4endl;}
+	    {G4cout << __METHOD_NAME__ << "bias loop>" << *bs << " " << pb.particle << " " << pb.process << G4endl;}
 	 
 	  eg->AddParticle(pb.particle);
 	
