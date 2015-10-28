@@ -144,10 +144,10 @@ void Element::flush() {
   theta = 0;
   psi = 0;
 
-  knl.erase(knl.begin(),knl.end());
-  ksl.erase(ksl.begin(),ksl.end());
-  blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
-  blmLocTheta.erase(blmLocTheta.begin(), blmLocTheta.end());
+  knl.clear();
+  ksl.clear();
+  blmLocZ.clear();
+  blmLocTheta.clear();
 
   bias = ""; biasMaterial=""; biasVacuum="";
   biasMaterialList.clear();
@@ -163,9 +163,9 @@ void Element::flush() {
   state = "solid";  //allowed values: "solid", "liquid", "gas"
   symbol = "";
 
-  components.erase(components.begin(),components.end());
-  componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
-  componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
+  components.clear();
+  componentsFractions.clear();
+  componentsWeights.clear();
 
   geometryFile ="";
   bmapFile = "";
