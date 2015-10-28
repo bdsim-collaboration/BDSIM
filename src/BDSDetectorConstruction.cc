@@ -568,6 +568,33 @@ void BDSDetectorConstruction::ComponentPlacement()
   G4cout.precision(G4precision);
 }
 
+BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSection(std::list<std::string>& biasList)const
+{
+  // loop over all physics biasing
+  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+  for(std::string& bs : biasList)
+    {
+      GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(bs);
+      
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "bias loop>" << bs << " " << pb.particle << " " << pb.process << G4endl;}
+      
+      eg->AddParticle(pb.particle);
+      
+      // loop through all processes
+      for(unsigned int p = 0; p < pb.processList.size(); ++p)
+	{
+	  if(debug)
+	    {
+	      G4cout << __METHOD_NAME__ << " process loop "
+		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
+	    }
+	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
+	}
+    }
+  return eg;
+}
+
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
   if(debug) 
@@ -590,27 +617,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;}
 
       // loop over all physics biasing
-      BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-      for(std::string& bs : biasList)
-	{
-	  GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(bs);
-	
-	  if(debug)
-	    {G4cout << __METHOD_NAME__ << "bias loop>" << bs << " " << pb.particle << " " << pb.process << G4endl;}
-	 
-	  eg->AddParticle(pb.particle);
-	
-	  // loop through all processes 
-	  for(unsigned int p = 0; p < pb.processList.size(); ++p)
-	    {
-	      if(debug)
-		{
-		  G4cout << __METHOD_NAME__ << " process loop " 
-			 << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
-		}
-	      eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
-	    }
-	}
+      BDSBOptrMultiParticleChangeCrossSection *eg = BuildCrossSection(biasList);
+
       // Accelerator vacuum 
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
       G4cout << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
