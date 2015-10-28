@@ -1,6 +1,5 @@
 # find MadX quietly
 find_package(MadX QUIET)
-# should perhaps also check for pybdsim and root_numpy
 #find_package(PythonLibs)
 find_package(PythonInterp QUIET)
 
