@@ -149,7 +149,9 @@ void Element::flush() {
   blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
   blmLocTheta.erase(blmLocTheta.begin(), blmLocTheta.end());
 
-  bias = "";
+  bias = ""; biasMaterial=""; biasVacuum="";
+  biasMaterialList.clear();
+  biasVacuumList.clear();
   
   precisionRegion = 0;
 
@@ -274,13 +276,35 @@ void Element::set(const struct Parameters& params)
   if(params.ydirset) ydir = params.ydir;
   if(params.zdirset) zdir = params.zdir;
 
+  // bias
   if(params.biasset) {
     bias = params.bias;
-    // split bias into tokens 
+    // split bias into tokens and add to both material and vacuum
     std::stringstream ss(bias);
     std::string tok;
     while(ss >> tok) {
-      biasList.push_back(tok);
+      biasMaterialList.push_back(tok);
+      biasVacuumList.push_back(tok);
+    }
+  }
+
+  if(params.biasMaterialset) {
+    biasMaterial = params.biasMaterial;
+    // split material bias into tokens
+    std::stringstream ss(biasMaterial);
+    std::string tok;
+    while(ss >> tok) {
+      biasMaterialList.push_back(tok);
+    }
+  }
+
+  if(params.biasVacuumset) {
+    biasVacuum = params.biasVacuum;
+    // split vacuum bias into tokens 
+    std::stringstream ss(biasVacuum);
+    std::string tok;
+    while(ss >> tok) {
+      biasVacuumList.push_back(tok);
     }
   }
   

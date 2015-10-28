@@ -67,6 +67,12 @@ private:
 
   /// Function that creates physics biasing cross section
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSection(std::list<std::string>& biasList) const;
+  
+#ifdef BDSDEBUG
+  bool debug = true;
+#else
+  bool debug = false;
+#endif
 
   G4bool verbose;
   G4bool checkOverlaps;
