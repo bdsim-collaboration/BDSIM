@@ -1,5 +1,5 @@
-#ifndef __BDSACCELERATORCOMPONENT_H
-#define __BDSACCELERATORCOMPONENT_H
+#ifndef BDSACCELERATORCOMPONENT_H
+#define BDSACCELERATORCOMPONENT_H
 
 #include "G4LogicalVolume.hh"
 #include "globals.hh"          // geant4 globals / types
