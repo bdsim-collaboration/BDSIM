@@ -47,6 +47,7 @@ struct Element {
 
   double tilt; ///< tilt
   double xsize, ysize; ///< collimator aperture or laser spotsize for laser
+  double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
   double r; ///< radius, i.e cylindrical sampler
   double B; ///< magnetic field
   double phiAngleIn; ///< incoming bending angle for element

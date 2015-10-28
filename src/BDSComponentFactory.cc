@@ -746,6 +746,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      _element.outerDiameter*CLHEP::m,
 				      _element.xsize*CLHEP::m,
 				      _element.ysize*CLHEP::m,
+                      _element.xsizeOut*CLHEP::m,
+                      _element.ysizeOut*CLHEP::m,
 				      _element.material);
 }
 
@@ -768,7 +770,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     _element.outerDiameter*CLHEP::m,
 				     _element.xsize*CLHEP::m,
 				     _element.ysize*CLHEP::m,
-				     _element.material);
+                     _element.xsizeOut*CLHEP::m,
+                     _element.ysizeOut*CLHEP::m,
+                     _element.material);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()

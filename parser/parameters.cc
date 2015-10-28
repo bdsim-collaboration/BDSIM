@@ -38,6 +38,8 @@ void Parameters::flush() {
   tiltset = false;
   xsizeset = false;
   ysizeset = false;
+  xsizeOutset = false;
+  ysizeOutset = false;
   rset = false;
   Bset  = false;
   phiAngleInset = false;
@@ -115,6 +117,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!tiltset) { tilt = e.tilt; tiltset = true; }
   if(!xsizeset) { xsize = e.xsize; xsizeset = true; }
   if(!ysizeset) { ysize = e.ysize; ysizeset = true; }
+  if(!xsizeOutset) { xsizeOut = e.xsizeOut; xsizeOutset = true; }
+  if(!ysizeOutset) { ysizeOut = e.ysizeOut; ysizeOutset = true; }
   if(!rset) { r = e.r; rset = true; }
   if(!Bset) { B = e.B; Bset = true; }
   if(!phiAngleInset) { phiAngleIn = e.phiAngleIn; phiAngleInset = true; }
@@ -210,6 +214,8 @@ void Parameters::set_value(std::string property, double value )
     { outerDiameter = 2 * value; outerDiameterset = true; return;}
   if(property=="xsize") { xsize = value; xsizeset = true; return;}
   if(property=="ysize") { ysize = value; ysizeset = true; return;}
+  if(property=="xsizeOut") { xsizeOut = value; xsizeOutset = true; return;}
+  if(property=="ysizeOut") { ysizeOut = value; ysizeOutset = true; return;}
   if(property=="tilt") { tilt = value; tiltset = true; return;}
   if(property=="offsetX") { offsetX = value; offsetXset = true; return;}
   if(property=="offsetY") { offsetX = value; offsetYset = true; return;}

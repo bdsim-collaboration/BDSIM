@@ -10,10 +10,12 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double outerDiameter,
 						   G4double xAperture,
 						   G4double yAperture,
+                           G4double xOutAperture,
+                           G4double yOutAperture,
 						   G4String collimatorMaterial,
 						   G4String vacuumMaterial):
   BDSCollimatorBase(name, length, outerDiameter, "rcol",
-		    xAperture, yAperture,
+		    xAperture, yAperture,xOutAperture, yOutAperture,
 		    collimatorMaterial,
 		    vacuumMaterial)
 {;}

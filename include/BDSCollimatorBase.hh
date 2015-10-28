@@ -21,6 +21,8 @@ public:
 		    G4String type,
 		    G4double xApertureIn = 0,
 		    G4double yApertureIn = 0,
+            G4double xOutApertureIn = 0,
+            G4double yOutApertureIn = 0,
 		    G4String collimatorMaterial = "copper",
 		    G4String vacuumMaterial     = "vacuum");
   ~BDSCollimatorBase();
@@ -44,6 +46,8 @@ protected:
   G4double outerDiameter;
   G4double xAperture;
   G4double yAperture;
+  G4double xOutAperture;
+  G4double yOutAperture;
   G4String collimatorMaterial;
   G4String vacuumMaterial;
 

@@ -132,6 +132,8 @@ void Element::flush() {
   tilt = 0;
   xsize = 0;
   ysize = 0;
+  xsizeOut = 0;
+  ysizeOut = 0;
   r = 0;
   B = 0;
   phiAngleIn = 0;
@@ -204,6 +206,8 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "outR") return 0.5*outerDiameter;
   if(property_name == "xsize") return xsize;
   if(property_name == "ysize") return ysize;
+  if(property_name == "xsizeOut") return xsizeOut;
+  if(property_name == "ysizeOut") return ysizeOut;
   if(property_name == "xdir") return xdir;
   if(property_name == "ydir") return ydir;
   if(property_name == "zdir") return zdir;
@@ -270,6 +274,8 @@ void Element::set(const struct Parameters& params)
   
   if(params.xsizeset) xsize = params.xsize;
   if(params.ysizeset) ysize = params.ysize;
+  if(params.xsizeOutset) xsizeOut = params.xsizeOut;
+  if(params.ysizeOutset) ysizeOut = params.ysizeOut;
   if(params.materialset) material = params.material;  
   if(params.precisionRegionset) precisionRegion = params.precisionRegion;
 
