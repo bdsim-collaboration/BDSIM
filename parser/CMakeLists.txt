@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6.4)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-find_package(BISON REQUIRED)
+find_package(BISON 2.4 REQUIRED)
 find_package(FLEX REQUIRED)
 
 # Suppress policy CMP0042 warning (as of cmake 3.0.0)
