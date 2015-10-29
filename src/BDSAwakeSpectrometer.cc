@@ -50,7 +50,7 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
   //Initialise geometry pointers.
   itsCoilLog=NULL;
   //Gap between the pole faces.
-  itsPoleAperture=80*CLHEP::mm;
+  itsPoleAperture=65*CLHEP::mm;
   //Gap between the coil faces.
   itsCoilAperture=180*CLHEP::mm;
   //Part of pole extending below coil
@@ -346,7 +346,7 @@ void BDSAwakeSpectrometer::BuildBPFieldAndStepper(){
   itsMagField=new BDSUniformMagField(G4ThreeVector(0,-_BField,0));
   G4ThreeVector pmin;
   //Set the extent of the magnetic field to within the magnet pole region.
-  itsMagField->SetFieldExtent(itsPolePos-itsPoleSize/2.0, itsPolePos+itsPoleSize/2.0);
+  itsMagField->SetFieldExtent(itsPolePos-itsAperture2Size/2.0, itsPolePos+itsAperture2Size/2.0);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   itsStepper = new G4NystromRK4(itsEqRhs);
   /*
