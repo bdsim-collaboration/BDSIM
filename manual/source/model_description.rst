@@ -84,6 +84,7 @@ rad         1
 mrad        :math:`10^{-3}`
 urad        :math:`10^{-6}`
 clight      :math:`2.99792458 \times 10^{8}`
+km          :math:`10^{3}`
 m           1
 cm          :math:`10^{-2}`
 mm          :math:`10^{-3}`
