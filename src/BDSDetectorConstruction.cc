@@ -571,7 +571,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(bs);
       
       if(debug)
-	{G4cout << __METHOD_NAME__ << "bias loop> " << bs << " " << pb.particle << " " << pb.process << G4endl;}
+	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
       
       eg->AddParticle(pb.particle);
       
@@ -580,7 +580,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 	{
 	  if(debug)
 	    {
-	      G4cout << __METHOD_NAME__ << " process loop "
+	      G4cout << __METHOD_NAME__ << "Process loop "
 		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
 	    }
 	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
@@ -597,7 +597,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
   if(debug)
-    {G4cout << __METHOD_NAME__ << registry << G4endl;}
+    {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
 
   // Registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
@@ -605,10 +605,6 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // apply per element biases
   for (i = registry->begin(); i != registry->end(); ++i)
     { 
-      //      GMAD::Element& e = *GMAD::beamline_list.find(i->first);
-      //      if(debug) 
-      //       	{G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << i->second->GetBiasVacuumList() << " " << i->second->GetBiasMaterialList() << G4endl;}
-
       // Accelerator vacuum 
       std::list<std::string> bvl = i->second->GetBiasVacuumList();
       BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSectionBias(bvl);
@@ -626,7 +622,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       for (auto acceleratorLVIter : lvl)
 	{
 	  if(acceleratorLVIter != vacuumLV) {
-	    if(debug) G4cout << __METHOD_NAME__ << "all logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;
+	    if(debug) G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;
 	    egMaterial->AttachTo(acceleratorLVIter);
 	  }
 	}
