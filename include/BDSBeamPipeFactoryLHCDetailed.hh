@@ -102,38 +102,38 @@ private:
   G4PVPlacement*   coolingPipeTopPV;
   G4PVPlacement*   coolingPipeBottomPV;
 
-  /// parameters that control the design
+  /// Parameters that control the design
   G4double coldBoreThickness;
   G4double coolingPipeThickness;
   G4double coolingPipeRadius;
   G4double copperSkinThickness;
 
-  /// calculated parameters below here
+  /// Calculated parameters below here
   /// vacuum volume
   G4double vacRadius, vacBoxX, vacBoxY;
   
-  /// copper skin geometrical parameters
+  /// Copper skin geometrical parameters
   G4double cuInnerRadius, cuInnerBoxX, cuInnerBoxY;
   G4double cuOuterRadius, cuOuterBoxX, cuOuterBoxY;
 
-  /// beam screen geometrical parameters
+  /// Beam screen geometrical parameters
   G4double bsInnerRadius, bsInnerBoxX, bsInnerBoxY;
   G4double bsOuterRadius, bsOuterBoxX, bsOuterBoxY;
   
-  /// cold bore geometrical parameters
+  /// Cold bore geometrical parameters
   G4double cbInnerRadius, cbOuterRadius;
 
-  /// container geometrical parameters
+  /// Container geometrical parameters
   G4double containerRadius;
   
-  /// general length variable (to avoid mistakes)
+  /// General length variable (to avoid mistakes)
   G4double vacHalfLength;
   G4double halfLength;
 
-  /// cooling pipe geometrical parameters
+  /// Cooling pipe geometrical parameters
   G4double coolingPipeOffset;
 
-  /// whether given the aperture parameters the pipe is square on the sides and round at the top
+  /// Whether given the aperture parameters the pipe is square on the sides and round at the top
   /// - the 'vertical'.
   G4bool verticalOrientation;
 
