@@ -88,6 +88,8 @@ void BDSMagnet::BuildBeampipe()
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
 
+  RegisterDaughter(beampipe);
+
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }
 
@@ -211,7 +213,8 @@ void BDSMagnet::BuildOuter()
       // set the main offset of the whole magnet which is placed w.r.t. the
       // zero coordinate of the container solid
       SetPlacementOffset(contOffset);
-      
+
+      RegisterDaughter(outer);
       InheritExtents(container); // update extents
       outer->ClearMagnetContainer();
     }
@@ -327,28 +330,8 @@ void BDSMagnet::PlaceComponents()
     }
 }
 
-std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
-{
-  std::vector<G4LogicalVolume*> result;
-  for (auto it : allSensitiveVolumes)
-    {result.push_back(it);}
-  if (beampipe)
-    {
-      for (auto it : beampipe->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-  if (outer)
-    {
-      for (auto it : outer->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-  return result;
-}
-
 BDSMagnet::~BDSMagnet()
 {
-  delete beampipe;
-  delete outer;
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

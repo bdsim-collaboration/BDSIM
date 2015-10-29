@@ -22,6 +22,8 @@
 #include "G4GenericBiasingPhysics.hh"
 #endif
 
+#include "G4Electron.hh"
+
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
@@ -123,7 +125,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
   if(GMAD::options.modularPhysicsListsOn) {
-    BDSModularPhysicsList *physList = new BDSModularPhysicsList;
+    BDSModularPhysicsList *physList = new BDSModularPhysicsList();
     /* Biasing */
 #if G4VERSION_NUMBER > 999
     G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
@@ -136,7 +138,7 @@ int main(int argc,char** argv)
     runManager->SetUserInitialization(physList);
   }
   else { 
-    BDSPhysicsList        *physList = new BDSPhysicsList;  
+    BDSPhysicsList        *physList = new BDSPhysicsList();  
     runManager->SetUserInitialization(physList);
   }
 
@@ -211,7 +213,13 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
 #endif
+
   runManager->Initialize();
+
+  //
+  // Build Physics bias, only after G4RunManager::Initialize()
+  //
+  detector->BuildPhysicsBias();
 
   //
   // set verbosity levels

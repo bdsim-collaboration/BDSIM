@@ -41,7 +41,7 @@ namespace GMAD {
     bool kslset;
     bool blmLocZset;
     bool blmLocThetaset;
-    bool biasset;
+    bool biasset,biasMaterialset,biasVacuumset;
     bool precisionRegionset;
     
     bool Aset; 

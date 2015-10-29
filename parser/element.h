@@ -77,9 +77,16 @@ struct Element {
   std::list<double> blmLocTheta;
   ///@}
   
-  /// physics biasing process
+  ///@{ temporary string for bias setting
   std::string bias;
-  
+  std::string biasMaterial;
+  std::string biasVacuum;
+  ///@}
+  /// physics biasing list for the material
+  std::list<std::string> biasMaterialList;
+  /// physics biasing list for the vacuum
+  std::list<std::string> biasVacuumList;
+ 
   int precisionRegion; ///which precision physics region the element is in (0 = none)
 
   ///@{ material properties

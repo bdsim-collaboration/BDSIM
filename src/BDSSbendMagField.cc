@@ -11,8 +11,7 @@
 BDSSbendMagField::BDSSbendMagField(G4ThreeVector fieldIn,
 				   const G4double length,
 				   const G4double angle):
-  field(fieldIn),
-  fieldTransformed(false)
+  field(fieldIn)
 {
   if (BDS::IsFinite(angle))
     {
@@ -45,11 +44,6 @@ BDSSbendMagField::~BDSSbendMagField()
 void BDSSbendMagField::GetFieldValue(const G4double point[4],
 				     G4double* bField) const
 {
-  /* // if constness wasn't enforced
-  if (!fieldTransformed)
-    {TransformFieldToGlobal(point);}
-  */
-
   G4ThreeVector pointVector(point[0], point[1], point[2]);
   auxNavigator->LocateGlobalPointAndSetup(pointVector);
   G4AffineTransform globalAffine = auxNavigator->GetGlobalToLocalTransform();
@@ -65,20 +59,3 @@ void BDSSbendMagField::GetFieldValue(const G4double point[4],
   bField[2] = globalField[2];
   bField[3] = 0;
 }
-
-void BDSSbendMagField::TransformFieldToGlobal(const G4double point[4])
-{
-  G4ThreeVector pointVector(point[0], point[1], point[2]);
-  auxNavigator->LocateGlobalPointAndSetup(pointVector);
-  G4AffineTransform globalAffine = auxNavigator->GetGlobalToLocalTransform();
-  // apply the rotation only to the field
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "field before: " << field << G4endl;
-#endif
-  globalAffine.ApplyAxisTransform(field);
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "field after: " << field << G4endl;
-#endif
-  fieldTransformed = true;
-}
-

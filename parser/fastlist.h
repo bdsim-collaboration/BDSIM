@@ -53,7 +53,8 @@ namespace GMAD {
     FastListIterator begin();
     FastListIterator end();
 
-    /// lookup method, returns iterator of list pointing to element with name and occurence number count
+    /// lookup method, returns iterator of list pointing to element with name
+    /// second argument is instance number, default first instance
     FastListIterator find(std::string name,unsigned int count=1);
     /// lookup method, returns pair of iterators of list pointing (similar to std::multimap::equal_range)
     std::pair<FastMapIterator,FastMapIterator> equal_range(std::string name);

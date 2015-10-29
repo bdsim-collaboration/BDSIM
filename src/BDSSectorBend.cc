@@ -131,4 +131,8 @@ void BDSSectorBend::BuildBeampipe()
 					 beamPipeInfo->beamPipeThickness,
 					 beamPipeInfo->beamPipeMaterial);
     }
+
+  RegisterDaughter(beampipe);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }

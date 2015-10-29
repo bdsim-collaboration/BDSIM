@@ -1,5 +1,5 @@
-#ifndef __BDSACCELERATORCOMPONENT_H
-#define __BDSACCELERATORCOMPONENT_H
+#ifndef BDSACCELERATORCOMPONENT_H
+#define BDSACCELERATORCOMPONENT_H
 
 #include "G4LogicalVolume.hh"
 #include "globals.hh"          // geant4 globals / types
@@ -8,6 +8,8 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh" 
 
+#include <list>
+#include <string>
 #include <vector>
 
 /**
@@ -112,6 +114,14 @@ public:
   /// checks if marker logical volume already exists and builds new one if not
   /// can't be in constructor as calls virtual methods
   virtual void Initialise();
+
+  /// Copy the bias list to this element
+  void SetBiasVacuumList(std::list<std::string> biasVacuumListIn);
+  void SetBiasMaterialList(std::list<std::string> biasMaterialListIn);
+
+  /// Access the bias list copied from parser
+  std::list<std::string> GetBiasVacuumList();
+  std::list<std::string> GetBiasMaterialList();
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -189,6 +199,10 @@ private:
   G4bool initialised;
   /// Record of how many times this component has been copied.
   G4int copyNumber;
+
+  /// Copy of bias list from parser for this particlar element
+  std::list<std::string> biasVacuumList;
+  std::list<std::string> biasMaterialList;
 };
 
 inline G4String BDSAcceleratorComponent::GetName() const
@@ -271,5 +285,17 @@ inline  G4String BDSAcceleratorComponent::GetParameterValueString(G4String spec,
     }
   return value;
 }
+
+inline void BDSAcceleratorComponent::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
+{biasVacuumList = biasVacuumListIn;}
+
+inline std::list<std::string> BDSAcceleratorComponent::GetBiasVacuumList()
+{return biasVacuumList;}
+
+inline void BDSAcceleratorComponent::SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
+{biasMaterialList = biasMaterialListIn;}
+
+inline std::list<std::string> BDSAcceleratorComponent::GetBiasMaterialList()
+{return biasMaterialList;}
 
 #endif

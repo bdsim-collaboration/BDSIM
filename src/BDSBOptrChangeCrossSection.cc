@@ -13,17 +13,28 @@
 #include "G4ParticleTable.hh"
 #include "G4VProcess.hh"
 
+#include "BDSDebug.hh"
+
 BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 						       G4String name)
   : G4VBiasingOperator(name), fSetup(true), particleName(particleNameIn)
 {
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
-  
+  //  fParticleToBias = G4Electron::ElectronDefinition();  
+
   if ( fParticleToBias == nullptr ) {
     G4ExceptionDescription ed;
     ed << "Particle `" << particleName << "' not found !" << G4endl;
     G4Exception("BDSBOptrChangeCrossSection(...)","BDSIM",JustWarning,ed);
   }
+
+#ifdef BDSDEBUG
+  debug = true;
+#else
+  debug = false;
+#endif
+
+
 }
 
 BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
@@ -37,6 +48,8 @@ BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
 
 void BDSBOptrChangeCrossSection::StartRun()
 {
+  if(debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
   // --------------
   // -- Setup stage:
   // ---------------
@@ -45,6 +58,9 @@ void BDSBOptrChangeCrossSection::StartRun()
   if(fSetup) {
     const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
     const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
+
+    if(debug)
+      G4cout << __METHOD_NAME__ << processManager << " " << sharedData << G4endl;
     if (sharedData) {
       // -- sharedData tested, as is can happen a user attaches an operator to a
       // -- volume but without defined BiasingProcessInterface processes.
@@ -61,15 +77,25 @@ void BDSBOptrChangeCrossSection::StartRun()
 }
 
 void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4int iPrimary) {
-    const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
-    const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
-    for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
-      const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
-      if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
-	fXSScale[wrapperProcess]      = bias;
-	fPrimaryScale[wrapperProcess] = iPrimary;
-      }
+
+  if(debug)
+    G4cout << __METHOD_NAME__ << processName << " " << bias << " " << iPrimary << G4endl;
+  
+  const G4ProcessManager*           processManager = fParticleToBias->GetProcessManager();
+  const G4BiasingProcessSharedData* sharedData     = G4BiasingProcessInterface::GetSharedData(processManager);
+
+  if(debug)
+    G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
+
+  for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++) {
+    const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
+    if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName()) { 
+      if(debug)
+	G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;    
+      fXSScale[wrapperProcess]      = bias;
+      fPrimaryScale[wrapperProcess] = iPrimary;
     }
+  }
 }
 
 G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*                   track, 
@@ -115,26 +141,9 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
 
   // -- check for only scaling primary
-  if ( fPrimaryScale[callingProcess] == 1 && track->GetParentID() != 0 ) return nullptr;
+  if ( fPrimaryScale[callingProcess] == 2 && track->GetParentID() != 0 ) return nullptr;
+  if ( fPrimaryScale[callingProcess] == 3 && track->GetParentID() == 0 ) return nullptr;
   XStransformation = fXSScale[callingProcess];
-
-#if 0
-  if(callingProcess->GetWrappedProcess()->GetProcessName() == "AnnihiToMuPair" || 
-     //     callingProcess->GetWrappedProcess()->GetProcessName() == "ee2hadr" || 
-     //     callingProcess->GetWrappedProcess()->GetProcessName() == "annihil" || 
-     callingProcess->GetWrappedProcess()->GetProcessName() == "GammaToMuPair" ) {
-    //    G4cout << callingProcess->GetWrappedProcess()->GetProcessName() << G4endl;
-    XStransformation = 1e5;
-  }
-#endif
-
-#if 0
-  if(callingProcess->GetWrappedProcess()->GetProcessName() == "protonInelastic" && track->GetParentID() == 0) {
-    //    G4cout << analogXS << G4endl;
-    XStransformation = 1e13;
-  }
-#endif
-
 
   // STB Just return the operation before the multiple sampling check
   operation->SetBiasedCrossSection( XStransformation * analogXS );
