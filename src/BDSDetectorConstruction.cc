@@ -566,7 +566,9 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
   BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
   for(std::string& bs : biasList)
     {
-      GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(bs);
+      auto it = GMAD::xsecbias_list.find(bs);
+      if (it==GMAD::xsecbias_list.end()) continue;
+      GMAD::PhysicsBiasing& pb = *it;
       
       if(debug)
 	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
@@ -609,8 +611,10 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	G4cout << "not valid vacuum pointer" << G4endl;
 	continue;
       }
-      
-      GMAD::Element& e = *GMAD::beamline_list.find(i->first);
+
+      auto it = GMAD::beamline_list.find(i->first);
+      if (it==GMAD::beamline_list.end()) continue;
+      GMAD::Element& e = *it;
       if(debug) 
 	{G4cout << __METHOD_NAME__ << "Element loop : " <<  i->first << " " << i->second->GetName() << " " << e.bias << " " << e.biasMaterial << " " << e.biasVacuum << G4endl;}
 
