@@ -60,7 +60,6 @@ void BDSMagField::GetFieldValue(const G4double[4],G4double *Bfield ) const
 }
 
 void BDSMagField::checkPrepared() const{
-  G4cout << __METHOD_NAME__ << " - _isPrepared = " << _isPrepared << G4endl;
   //Field must be prepared!
   if(!_isPrepared){
     G4String exceptionString = __METHOD_NAME__ + "- field has not been prepared. Rotation not set. Aborting.";
