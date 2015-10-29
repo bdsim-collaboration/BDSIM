@@ -39,14 +39,6 @@ BDSRBend::BDSRBend(G4String            name,
   CalculateLengths(length);
 }
 
-BDSRBend::~BDSRBend()
-{
-  if (bpFirstBit) // may not have been constructed
-    {delete bpFirstBit;}
-  if (bpLastBit) // may not have been constructed
-    {delete bpLastBit;}
-}
-
 void BDSRBend::CalculateLengths(G4double aLength)
 {
   //full length along chord - just its length in case of rbend
