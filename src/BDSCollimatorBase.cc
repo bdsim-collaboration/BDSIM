@@ -123,16 +123,15 @@ void BDSCollimatorBase::Build()
   RegisterVisAttributes(collimatorVisAttr);
 
   //Rotation for tapered collimator
-  G4RotationMatrix* colRotate = new G4RotationMatrix;
+  G4RotationMatrix* colRotate;
+  RegisterRotationMatrix(colRotate);
   if (tapered && isOutLarger)
     {
+      colRotate = new G4RotationMatrix;
       colRotate->rotateX(M_PI);
-      RegisterRotationMatrix(colRotate);
     }
   else
-    {
-      colRotate = 0;
-    }
+    {colRotate = nullptr;}
 
 
 #ifndef NOUSERLIMITS
