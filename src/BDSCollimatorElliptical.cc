@@ -44,17 +44,20 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
     {
       G4double zmax = chordLength * (xOutAperture + xAperture) / xAperture;
 
+      G4double xhalf = 0.5 * (xOutAperture + xAperture);
+      G4double yhalf = 0.5 * (yOutAperture + yAperture);
+
       innerSolid  = new G4EllipticalCone(name + "_inner_solid",    // name
-                                         xAperture / zmax,         // Major axis of largest ellipse
-                                         yAperture / zmax,         // Minor axis of largest ellipse
-                                         chordLength,              // Height of cone
-                                         zmax);                    // cut. Not sure what this actually does.
+                                         xhalf / zmax,             // Major axis of largest ellipse
+                                         yhalf / zmax,             // Minor axis of largest ellipse
+                                         zmax,                     // Height of cone
+                                         zmax);   // Cut.
     
-      vacuumSolid = new G4EllipticalCone(name + "_inner_solid",         // name
-                                         xAperture/zmax - lengthSafety, // Major axis of largest ellipse
-                                         yAperture/zmax - lengthSafety, // Minor axis of largest ellipse
-                                         chordLength - lengthSafety,    // Height of cone
-                                         zmax - lengthSafety);          // cut. Not sure what this actually does.
+      vacuumSolid = new G4EllipticalCone(name + "_inner_solid",             // name
+                                         xhalf/zmax- lengthSafety,          // Major axis of largest ellipse
+                                         yhalf/zmax - lengthSafety,         // Minor axis of largest ellipse
+                                         zmax,                              // Height of cone
+                                         chordLength*0.5 - lengthSafety);   // Cut.
     }
   else
     {

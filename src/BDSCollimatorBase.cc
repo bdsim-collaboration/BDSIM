@@ -52,7 +52,19 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
       G4cout << __METHOD_NAME__ << "Warning - no material set for collimator - using copper" << G4endl;
       collimatorMaterial = "Copper";
     }
-
+    
+  if(BDS::IsFinite(xOutAperture) && (xAperture <= 0))
+    {
+      G4cout << __METHOD_NAME__ << "Warning - no entrance aperture set for collimator - exit aperture parameters will be ignored" << G4endl;
+    }
+  if(BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture) && BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture))
+    {
+      if((xOutAperture / yOutAperture) != (xAperture / yAperture))
+        {
+          G4cout << __METHOD_NAME__ << "Warning - X/Y half axes ratio at entrance and exit apertures are not equal" << G4endl;
+        }
+    }
+  
   collimatorSolid = nullptr;
   innerSolid      = nullptr;
   vacuumSolid     = nullptr;
@@ -84,11 +96,11 @@ void BDSCollimatorBase::Build()
                chordLength * 0.5   - lengthSafety);
   RegisterSolid(outerSolid);
   
-  // only do subtraction if aperture actually set
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
   G4bool tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
   G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
 
+  // only do subtraction if aperture actually set
   if(buildVacuumAndAperture)
     {
       BuildInnerCollimator();
@@ -111,16 +123,17 @@ void BDSCollimatorBase::Build()
   RegisterVisAttributes(collimatorVisAttr);
 
   //Rotation for tapered collimator
-  G4RotationMatrix* colrotate = new G4RotationMatrix;
+  G4RotationMatrix* colRotate = new G4RotationMatrix;
   if (tapered && isOutLarger)
     {
-      colrotate->rotateX(M_PI);
-      RegisterRotationMatrix(colrotate);
+      colRotate->rotateX(M_PI);
+      RegisterRotationMatrix(colRotate);
     }
   else
     {
-      colrotate = 0;
+      colRotate = 0;
     }
+
 
 #ifndef NOUSERLIMITS
   G4UserLimits* collimatorUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
@@ -133,7 +146,7 @@ void BDSCollimatorBase::Build()
   RegisterLogicalVolume(collimatorLV);
   RegisterSensitiveVolume(collimatorLV);
 
-  G4PVPlacement* collPV = new G4PVPlacement(colrotate,   // rotation
+  G4PVPlacement* collPV = new G4PVPlacement(colRotate,   // rotation
 					    (G4ThreeVector)0,        // position
 					    collimatorLV,            // its logical volume
 					    name + "_collimator_pv", // its name
@@ -158,7 +171,7 @@ void BDSCollimatorBase::Build()
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
 
-      G4PVPlacement* vacPV = new G4PVPlacement(colrotate,                       // rotation
+      G4PVPlacement* vacPV = new G4PVPlacement(colRotate,                       // rotation
 					       (G4ThreeVector)0,        // position
 					       vacuumLV,                // its logical volume
 					       name + "_vacuum_pv",     // its name
