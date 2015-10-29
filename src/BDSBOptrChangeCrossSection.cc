@@ -137,8 +137,13 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   
   // -- fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
+  if (!operation) {
+    G4cout << __METHOD_NAME__ << "ERROR: Process not known: " << G4endl;
+    callingProcess->DumpInfo();
+    exit(1);
+  }
   // -- get the operation that was proposed to the process in the previous step:
-  G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
+  // G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
 
   // -- check for only scaling primary
   if ( fPrimaryScale[callingProcess] == 2 && track->GetParentID() != 0 ) return nullptr;
@@ -149,7 +154,10 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   operation->SetBiasedCrossSection( XStransformation * analogXS );
   operation->Sample();
   return operation;
-    
+
+  // unused code
+  /*
+  
   // -- now setup the operation to be returned to the process: this
   // -- consists in setting the biased cross-section, and in asking
   // -- the operation to sample its exponential interaction law.
@@ -193,6 +201,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
     }
   }
   return operation;  
+  */
 }
 
 void BDSBOptrChangeCrossSection::OperationApplied(const G4BiasingProcessInterface*           callingProcess, 
