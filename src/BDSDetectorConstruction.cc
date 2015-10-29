@@ -611,10 +611,12 @@ void BDSDetectorConstruction::BuildPhysicsBias()
     {
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
       // Skip over registered components that dont have a vacuum
-      if(!vacuumLV) {
-	G4cout << "not valid vacuum pointer" << G4endl;
-	continue;
-      }
+      if(!vacuumLV)
+	{
+	  if (debug)
+	    {G4cout << "not valid vacuum pointer" << G4endl;}
+	  continue;
+	}
 
       auto it = GMAD::beamline_list.find(i->first);
       if (it==GMAD::beamline_list.end()) continue;
@@ -624,17 +626,21 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
       // Accelerator vacuum 
       BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSection(e.biasVacuumList);
-      if(debug) G4cout << __METHOD_NAME__ << "Vacuum logical volume: " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "Vacuum logical volume: " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
+      
       egVacuum->AttachTo(vacuumLV);
       
       // Accelerator material
       BDSBOptrMultiParticleChangeCrossSection *egMaterial = BuildCrossSection(e.biasMaterialList);
       auto lvl = i->second->GetAllLogicalVolumes();
-      if(debug) G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;	  
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;}
       for (auto acceleratorLVIter : lvl)
 	{
 	  if(acceleratorLVIter != vacuumLV) {
-	    if(debug) G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;
+	    if(debug)
+	      {G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;}
 	    egMaterial->AttachTo(acceleratorLVIter);
 	  }
 	}
