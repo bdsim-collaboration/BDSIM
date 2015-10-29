@@ -265,7 +265,7 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
 						      vacRectSolid);                 // solid 2
   //prepare angled face large cylinder for intersection get angled faces
   //we can actually use this for the beampipe too later on - whew
-  G4double angledFaceRadius = (std::max(std::max(aper1In,aper2In),std::max(aper3In,aper4In)) + beamPipeThicknessIn) * 4;
+  G4double angledFaceRadius = (std::max(std::max(aper1In,aper2In),std::max(aper3In,aper4In)) + beamPipeThicknessIn) * 1.1;
   G4VSolid* vacuumAngledSolid = new G4CutTubs(nameIn + "_pipe_angled_faces",     // name
 					      0,                                 // inner radius
 					      angledFaceRadius,                  // outer radius
