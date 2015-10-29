@@ -130,8 +130,13 @@ private:
   G4double vacHalfLength;
   G4double halfLength;
 
-  // cooling pipe geometrical parameters
-  G4double coolingPipeYOffset;
+  /// cooling pipe geometrical parameters
+  G4double coolingPipeOffset;
+
+  /// whether given the aperture parameters the pipe is square on the sides and round at the top
+  /// - the 'vertical'.
+  G4bool verticalOrientation;
+  
 };
   
 #endif

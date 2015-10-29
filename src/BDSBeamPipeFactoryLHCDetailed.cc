@@ -39,7 +39,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
   coldBoreThickness         = 1.5*CLHEP::mm;
   coolingPipeThickness      = 0.53*CLHEP::mm;
   coolingPipeRadius         = 3.7*CLHEP::mm*0.5; // will be overwritten if needs be to fit inside beampipe
-  coolingPipeYOffset        = 0.0;  //initialised only
+  coolingPipeOffset         = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
   CleanUp();
 }
@@ -83,7 +83,7 @@ void BDSBeamPipeFactoryLHCDetailed::InitialiseGeometricalParameters()
   vacHalfLength = 0;
   halfLength = 0;
   
-  coolingPipeYOffset = 0;
+  coolingPipeOffset = 0;
 }
 
 
@@ -131,7 +131,16 @@ void BDSBeamPipeFactoryLHCDetailed::CalculateGeometricalParameters(G4double aper
   halfLength      = length*0.5 - 1*CLHEP::um; 
 
   // cooling pipe geometrical parameters
-  coolingPipeYOffset = bsOuterBoxY + coolingPipeRadius + coolingPipeThickness + 1*CLHEP::um;
+  if (aper1 > aper2)
+    {
+      coolingPipeOffset = bsOuterBoxY + coolingPipeRadius + coolingPipeThickness + 1*CLHEP::um;
+      verticalOrientation = false;
+    }
+  else
+    {
+      coolingPipeOffset = bsOuterBoxX + coolingPipeRadius + coolingPipeThickness + 1*CLHEP::um;
+      verticalOrientation = true;
+    }
 }
   
 
@@ -473,12 +482,22 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 			       false,                        // no boolean operation
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
-  
-  G4ThreeVector* coolingPipeTopPosition    = new G4ThreeVector(0,coolingPipeYOffset,0);
-  G4ThreeVector* coolingPipeBottomPosition = new G4ThreeVector(0,-coolingPipeYOffset,0);
+
+  G4ThreeVector coolingPipeTopPosition;
+  G4ThreeVector coolingPipeBottomPosition;
+  if (!verticalOrientation)
+    { // horizontal shape -> vertical displacement for pipes
+      coolingPipeTopPosition    = G4ThreeVector(0,coolingPipeOffset,0);
+      coolingPipeBottomPosition = G4ThreeVector(0,-coolingPipeOffset,0);
+    }
+  else
+    { // vertical shape -> horizontal displacement for pipes
+      coolingPipeTopPosition    = G4ThreeVector(coolingPipeOffset,0,0);
+      coolingPipeBottomPosition = G4ThreeVector(-coolingPipeOffset,0,0);
+    }
   
   coolingPipeTopPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-				       *coolingPipeTopPosition,      // position
+				       coolingPipeTopPosition,       // position
 				       coolingPipeLV,                // lv to be placed
 				       name + "_cooling_pipe_top_pv",// name
 				       containerLV,                  // mother lv to be place in
@@ -487,14 +506,14 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 				       checkOverlaps);               // whether to check overlaps
 
   coolingPipeBottomPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-					  *coolingPipeBottomPosition,   // position
+					  coolingPipeBottomPosition,    // position
 					  coolingPipeLV,                // lv to be placed
 					  name + "_cooling_pipe_bottom_pv", // name
 					  containerLV,                  // mother lv to be place in
 					  false,                        // no boolean operation
 					  0,                            // copy number
 					  checkOverlaps);               // whether to check overlaps
-
+  
   allPhysicalVolumes.push_back(copperSkinPV);
   allPhysicalVolumes.push_back(screenPV);
   allPhysicalVolumes.push_back(coolingPipeTopPV);
