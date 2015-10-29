@@ -136,6 +136,9 @@ private:
   /// whether given the aperture parameters the pipe is square on the sides and round at the top
   /// - the 'vertical'.
   G4bool verticalOrientation;
+
+  /// Whether to build the cooling pipes on either side
+  G4bool buildCoolingPipe;
   
 };
   
