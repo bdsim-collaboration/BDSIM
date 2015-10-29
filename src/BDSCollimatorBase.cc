@@ -124,11 +124,11 @@ void BDSCollimatorBase::Build()
 
   //Rotation for tapered collimator
   G4RotationMatrix* colRotate;
-  RegisterRotationMatrix(colRotate);
   if (tapered && isOutLarger)
     {
       colRotate = new G4RotationMatrix;
       colRotate->rotateX(M_PI);
+      RegisterRotationMatrix(colRotate);
     }
   else
     {colRotate = nullptr;}
