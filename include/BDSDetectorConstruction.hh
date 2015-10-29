@@ -7,13 +7,16 @@
 
 #include "G4Region.hh"
 
+#include <list>
+#include <string>
+
 //GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
 
-
+class BDSBOptrMultiParticleChangeCrossSection;
 class G4Box;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
@@ -61,6 +64,15 @@ private:
   
   /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
+
+  /// Function that creates physics biasing cross section
+  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSection(std::list<std::string>& biasList) const;
+  
+#ifdef BDSDEBUG
+  bool debug = true;
+#else
+  bool debug = false;
+#endif
 
   G4bool verbose;
   G4bool checkOverlaps;

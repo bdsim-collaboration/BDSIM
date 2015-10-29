@@ -31,8 +31,6 @@ namespace GMAD {
     std::vector<double> factor;
     /// flag which particles are biased
     std::vector<PhysicsBiasingType> flag;
-    /// logical volumes where biasing is attached to
-    std::string logicalVolumes;
     
     /// constructor
     PhysicsBiasing();

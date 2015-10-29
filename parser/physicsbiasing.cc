@@ -80,7 +80,6 @@ void PhysicsBiasing::set_value(std::string property, std::string value )
 #endif
 
   if (property=="name")           {name = value; return;}
-  if (property=="logicalVolumes") {logicalVolumes = value; return;}
   if (property=="particle")       {particle = value; return;}
   if (property=="proc")           {
     process = value; 

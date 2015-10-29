@@ -55,7 +55,7 @@ namespace GMAD {
     FastListIterator end();
 
     /// lookup method, returns iterator of list pointing to element with name
-    // TOOD: better list of iterators?
+    /// second argument is instance number, default first instance
     FastListIterator find(std::string name,unsigned int count=1);
 
     /// print method

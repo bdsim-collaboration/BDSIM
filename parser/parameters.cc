@@ -57,7 +57,7 @@ void Parameters::flush() {
   psiset = false;
   knlset = false, kslset=false;
   blmLocZset = false;  blmLocThetaset = false;
-  biasset = false;
+  biasset = false, biasMaterialset = false, biasVacuumset = false;
   precisionRegionset = false;
 
   Aset = false;
@@ -136,6 +136,8 @@ void Parameters::inherit_properties(struct Element& e)
 
   // physics biasing
   if(!biasset) {bias = e.bias; biasset = true; }
+  if(!biasMaterialset) {biasMaterial = e.biasMaterial; biasMaterialset = true; }
+  if(!biasVacuumset) {biasVacuum = e.biasVacuum; biasVacuumset = true; }
   if(!precisionRegionset) { precisionRegion = e.precisionRegion; precisionRegionset = true; }
   //materials
   if(!Aset) { A = e.A; Aset = true; }
@@ -330,7 +332,19 @@ void Parameters::set_value(std::string property, std::string value )
       bias = value;
       return;
     }
-  
+  if(property=="biasMaterial")
+    {
+      biasMaterialset = true;
+      biasMaterial = value;
+      return;
+    }
+  if(property=="biasVacuum")
+    {
+      biasVacuumset = true;
+      biasVacuum = value;
+      return;
+    }
+
   std::cerr << "Error: parser> unknown parameter option \"" << property << "\" with value " << value  << std::endl;
   exit(1);
 }

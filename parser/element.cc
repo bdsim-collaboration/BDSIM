@@ -144,12 +144,14 @@ void Element::flush() {
   theta = 0;
   psi = 0;
 
-  knl.erase(knl.begin(),knl.end());
-  ksl.erase(ksl.begin(),ksl.end());
-  blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
-  blmLocTheta.erase(blmLocTheta.begin(), blmLocTheta.end());
+  knl.clear();
+  ksl.clear();
+  blmLocZ.clear();
+  blmLocTheta.clear();
 
-  bias = "";
+  bias = ""; biasMaterial=""; biasVacuum="";
+  biasMaterialList.clear();
+  biasVacuumList.clear();
   
   precisionRegion = 0;
 
@@ -161,9 +163,9 @@ void Element::flush() {
   state = "solid";  //allowed values: "solid", "liquid", "gas"
   symbol = "";
 
-  components.erase(components.begin(),components.end());
-  componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
-  componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
+  components.clear();
+  componentsFractions.clear();
+  componentsWeights.clear();
 
   geometryFile ="";
   bmapFile = "";
@@ -274,13 +276,35 @@ void Element::set(const struct Parameters& params)
   if(params.ydirset) ydir = params.ydir;
   if(params.zdirset) zdir = params.zdir;
 
+  // bias
   if(params.biasset) {
     bias = params.bias;
-    // split bias into tokens 
+    // split bias into tokens and add to both material and vacuum
     std::stringstream ss(bias);
     std::string tok;
     while(ss >> tok) {
-      biasList.push_back(tok);
+      biasMaterialList.push_back(tok);
+      biasVacuumList.push_back(tok);
+    }
+  }
+
+  if(params.biasMaterialset) {
+    biasMaterial = params.biasMaterial;
+    // split material bias into tokens
+    std::stringstream ss(biasMaterial);
+    std::string tok;
+    while(ss >> tok) {
+      biasMaterialList.push_back(tok);
+    }
+  }
+
+  if(params.biasVacuumset) {
+    biasVacuum = params.biasVacuum;
+    // split vacuum bias into tokens 
+    std::stringstream ss(biasVacuum);
+    std::string tok;
+    while(ss >> tok) {
+      biasVacuumList.push_back(tok);
     }
   }
   

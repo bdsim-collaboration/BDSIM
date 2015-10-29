@@ -51,12 +51,6 @@
 #include <sstream>
 #include <vector>
 
-#ifdef BDSDEBUG
-bool debug = true;
-#else
-bool debug = true;
-#endif
-
 namespace GMAD {
   extern FastList<Element> beamline_list;
   extern FastList<PhysicsBiasing> xsecbias_list;
@@ -568,6 +562,33 @@ void BDSDetectorConstruction::ComponentPlacement()
   G4cout.precision(G4precision);
 }
 
+BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSection(std::list<std::string>& biasList)const
+{
+  // loop over all physics biasing
+  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+  for(std::string& bs : biasList)
+    {
+      GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(bs);
+      
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "bias loop> " << bs << " " << pb.particle << " " << pb.process << G4endl;}
+      
+      eg->AddParticle(pb.particle);
+      
+      // loop through all processes
+      for(unsigned int p = 0; p < pb.processList.size(); ++p)
+	{
+	  if(debug)
+	    {
+	      G4cout << __METHOD_NAME__ << " process loop "
+		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
+	    }
+	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
+	}
+    }
+  return eg;
+}
+
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
   if(debug) 
@@ -576,7 +597,7 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
   if(debug)
-    {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
+    {G4cout << __METHOD_NAME__ << registry << G4endl;}
 
   // Registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
@@ -584,72 +605,27 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // apply biases
   for (i = registry->begin(); i != registry->end(); ++i)
     { 
-      GMAD::Element e         = *GMAD::beamline_list.find(i->first);
-      std::list<std::string> biasList = e.biasList;
+      GMAD::Element& e = *GMAD::beamline_list.find(i->first);
       if(debug) 
-	{G4cout << __METHOD_NAME__ << "Element loop : " <<  i->first << " " << i->second->GetName() << " " << e.bias << G4endl;}
-     
-      // loop over all physics biasing
-      BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-      for(auto bs = biasList.begin();bs != biasList.end(); ++bs)
-	{
-	  GMAD::PhysicsBiasing pb = *GMAD::xsecbias_list.find(*bs,1);
-	
-	  if(debug)
-	    {G4cout << __METHOD_NAME__ << "bias loop : " << *bs << " " << pb.particle << " " << pb.process << " " << pb.logicalVolumes << G4endl;}
-	 
-	  eg->AddParticle(pb.particle);
-	
-	  // loop through all processes 
-	  for(unsigned int p = 0; p < pb.processList.size(); ++p)
-	    {
-	      if(debug)
-		{
-		  G4cout << __METHOD_NAME__ << "Process loop : " 
-			 << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
-		}
-	      eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
-	    }
-	}
+	{G4cout << __METHOD_NAME__ << "element loop " <<  i->first << " " << i->second->GetName() << " " << e.bias << " " << e.biasMaterial << " " << e.biasVacuum << G4endl;}
 
       // Accelerator vacuum 
-      //      if(pb.logicalVolumes == "componentVacuum" || pb.logicalVolumes == "componentAll") 
-      
-
-
+      BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSection(e.biasVacuumList);
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-
-      // Skip over registered components that dont have a vacuum
-      if(!vacuumLV) {
-	G4cout << "not valid vacuum pointer" << G4endl;
-	continue;
-      }
-
-      if(1)
-	{
-	if(debug) 
-	  {G4cout << __METHOD_NAME__ << "Getting Vacuum logical volume : " << vacuumLV << G4endl;}
-
-	if(debug) 
-	  {G4cout << __METHOD_NAME__ << "Vacuum logical volume : " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
-	if(vacuumLV)
-	  {eg->AttachTo(vacuumLV);}
-	}
-          
+      if(debug) G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
+      if(vacuumLV)
+	{egVacuum->AttachTo(vacuumLV);}
+      
       // Accelerator material
-      //      if(pb.logicalVolumes == "componentMaterial" || pb.logicalVolumes == "componentAll") 
-      if(1)
+      BDSBOptrMultiParticleChangeCrossSection *egMaterial = BuildCrossSection(e.biasMaterialList);
+      auto lvl = i->second->GetAllLogicalVolumes();
+      if(debug) G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;	  
+      for (auto acceleratorLVIter : lvl)
 	{
-	  auto lvl = i->second->GetAllLogicalVolumes();
-	  if(debug)
-	    G4cout << __METHOD_NAME__ << "All logical volumes " << lvl.size() << G4endl;	  
-	  for (auto acceleratorLVIter = lvl.begin(); acceleratorLVIter != lvl.end(); ++acceleratorLVIter)
-	    {
-	      if(*acceleratorLVIter != vacuumLV)
-		if(debug)
-		  G4cout << __METHOD_NAME__ << "All logical volumes : " << *acceleratorLVIter << " " << (*acceleratorLVIter)->GetName() << G4endl;
-	      {eg->AttachTo(*acceleratorLVIter);}	
-	    }
+	  if(acceleratorLVIter != vacuumLV) {
+	    if(debug) G4cout << __METHOD_NAME__ << "all logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;
+	    egMaterial->AttachTo(acceleratorLVIter);
+	  }
 	}
     }
 
