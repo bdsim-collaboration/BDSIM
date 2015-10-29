@@ -108,7 +108,7 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
 
   //the position of the magnet centre relative to the marker volume.
   itsPolePos.set(
-		 13*CLHEP::cm,
+		 0*13*CLHEP::cm,
 		 0,
 		 _poleStartZ+itsYokeSize.z()/2.0
 		 );
