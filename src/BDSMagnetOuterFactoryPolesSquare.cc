@@ -262,7 +262,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     (G4ThreeVector)0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name

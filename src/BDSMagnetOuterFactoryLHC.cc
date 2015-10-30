@@ -828,7 +828,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   allLogicalVolumes.push_back(yokeLV); // register locally
 
   // yoke placement
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -857,7 +857,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 										    beamPipeMaterial); // beampipe material
   
   secondBPLV = secondBP->GetContainerLogicalVolume();
-  secondBPPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				 dipolePosition,               // position
 				 secondBPLV,                   // lv to be placed
 				 name + "_second_beampipe_pv", // name
@@ -1453,7 +1453,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allLogicalVolumes.push_back(yokeLV); // register locally
 
   // yoke placement
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -1480,7 +1480,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 									 beamPipeMaterial); // beampipe material
   
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
-  G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						dipolePosition,               // position
 						secondBPLV,                   // lv to be placed
 						name + "_second_beampipe_pv", // name

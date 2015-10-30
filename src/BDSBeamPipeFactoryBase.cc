@@ -182,7 +182,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
   
-  vacuumPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			       (G4ThreeVector)0,             // position
 			       vacuumLV,                     // lv to be placed
 			       nameIn + "_vacuum_pv",        // name
@@ -191,7 +191,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
   
-  beamPipePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  beamPipePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				 (G4ThreeVector)0,             // position
 				 beamPipeLV,                   // lv to be placed
 				 nameIn + "_beampipe_pv",      // name
