@@ -2,13 +2,8 @@
 #define BDSCollimator_h 
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
 
 class G4VSolid;
 
@@ -21,8 +16,8 @@ public:
 		    G4String type,
 		    G4double xApertureIn = 0,
 		    G4double yApertureIn = 0,
-            G4double xOutApertureIn = 0,
-            G4double yOutApertureIn = 0,
+		    G4double xOutApertureIn = 0,
+		    G4double yOutApertureIn = 0,
 		    G4String collimatorMaterial = "copper",
 		    G4String vacuumMaterial     = "vacuum");
   ~BDSCollimatorBase();

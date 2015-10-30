@@ -2,12 +2,7 @@
 #define BDSDEGRADER_H
 
 #include "globals.hh"
-#include "G4VSolid.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4LogicalVolume.hh"
 #include "BDSAcceleratorComponent.hh"
-
-class G4VSolid;
 
 /**
  * @brief A class for a degrader. Based upon wedge design used in the PSI medical accelerator.
