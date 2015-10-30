@@ -835,7 +835,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
         G4double theta = atan(wedgeBasewidth / (2.0*_element.wedgeLength*CLHEP::m));
         
         //Overlap distance of wedges
-        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
+        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(CLHEP::pi/2.0 - theta) / sin(theta));
 
         degraderOffset = overlap * -0.5;
         

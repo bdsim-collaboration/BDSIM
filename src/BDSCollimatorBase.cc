@@ -126,7 +126,7 @@ void BDSCollimatorBase::Build()
   G4RotationMatrix* colRotate = new G4RotationMatrix;
   if (tapered && isOutLarger)
     {
-      colRotate->rotateX(M_PI);
+      colRotate->rotateX(CLHEP::pi);
       RegisterRotationMatrix(colRotate);
     }
   else
