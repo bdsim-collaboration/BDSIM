@@ -62,7 +62,7 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 					 BDSMaterials::Instance()->GetMaterial("LeadTungstate"),
 					 name + "_lw_cal_lv");
   RegisterLogicalVolume(lwCalLogicalVolume);
-  physiLWCal = new G4PVPlacement(0,                       // rotation
+  physiLWCal = new G4PVPlacement(nullptr,                       // rotation
 				 G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
 				 lwCalLogicalVolume,   // its logical volume
 				 name +"_lw_cal_pv",	     // its name
@@ -81,7 +81,7 @@ void BDSLWCalorimeter::BuildBeampipe()
 							    chordLength,
 							    beamPipeInfo);
 
-  G4PVPlacement* beampipePV = new G4PVPlacement(0,                                 // rotation
+  G4PVPlacement* beampipePV = new G4PVPlacement(nullptr,                                 // rotation
 						(G4ThreeVector)0,                  // position
 						beampipe->GetContainerLogicalVolume(), // its logical volume
 						name +"_beampipe_pv",              // its name

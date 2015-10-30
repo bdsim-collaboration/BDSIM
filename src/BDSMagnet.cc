@@ -299,7 +299,7 @@ void BDSMagnet::PlaceComponents()
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
-      G4PVPlacement* beamPipePV = new G4PVPlacement(0,                       // rotation
+      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                       // rotation
 						    beamPipeOffset,          // position in container
 						    beampipe->GetContainerLogicalVolume(),  // its logical volume
 						    name + "_beampipe_pv",   // its name
@@ -317,7 +317,7 @@ void BDSMagnet::PlaceComponents()
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                      // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                      // rotation
 						       outerOffset,            // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",       // its name

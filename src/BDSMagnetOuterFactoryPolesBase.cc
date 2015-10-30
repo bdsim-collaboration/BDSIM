@@ -280,7 +280,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 
   if (buildPoles)
     {
-      G4PVPlacement* topPolePV = new G4PVPlacement(0,                           // rotation
+      G4PVPlacement* topPolePV = new G4PVPlacement(nullptr,                           // rotation
 						   G4ThreeVector(0,poleDisp,0), // position
 						   poleLV,                      // logical volume
 						   name + "_top_pole_pv",       // name
@@ -289,7 +289,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 						   0,                           // copy number
 						   checkOverlaps);              // check overlaps
       
-      G4PVPlacement* botPolePV = new G4PVPlacement(0,                            // rotation
+      G4PVPlacement* botPolePV = new G4PVPlacement(nullptr,                            // rotation
 						   G4ThreeVector(0,-poleDisp,0), // position
 						   poleLV,                       // logical volume
 						   name + "_bottom_pole_pv",     // name

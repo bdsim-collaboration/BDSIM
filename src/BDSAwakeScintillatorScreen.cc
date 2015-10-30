@@ -430,7 +430,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
   G4VSolid* mylarWindowSolid = new G4Box("mylarWindowSolid",_vacMylarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
   G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(mylarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_MYLAR"), "mylarWindowLog",0,0,0);
 
-  new G4PVPlacement(0, 
+  new G4PVPlacement(nullptr, 
 		    G4ThreeVector(_vacWidth1/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
 		    vacuumWindowLog, 
 		    "awakeScreenVacuumWindowPV", 
@@ -440,7 +440,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    checkOverlaps
 		    );
   
-  new G4PVPlacement(0, 
+  new G4PVPlacement(nullptr, 
 		    G4ThreeVector((_vacKevlarThickness+_vacMylarThickness)/2.0 - _vacKevlarThickness/2.0,0,0), 
 		    kevlarWindowLog, 
 		    "awakeScreenKevlarVacuumWindowPV", 
@@ -450,7 +450,7 @@ void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
 		    checkOverlaps
 		    );
 
-  new G4PVPlacement(0, 
+  new G4PVPlacement(nullptr, 
 		    G4ThreeVector(-(_vacKevlarThickness+_vacMylarThickness)/2.0 + _vacMylarThickness/2.0,0,0), 
 		    mylarWindowLog, 
 		    "awakeScreenMylarVacuumWindowPV", 

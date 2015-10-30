@@ -65,7 +65,7 @@ void BDSCCDChip::buildPixels(){
       pos.setX(offset.x()+i*_pixel->size().x());
       pos.setY(offset.y()-j*_pixel->size().y());
       
-      new G4PVPlacement(0,
+      new G4PVPlacement(nullptr,
 			pos,
 			_pixel->log(),
 			name,
