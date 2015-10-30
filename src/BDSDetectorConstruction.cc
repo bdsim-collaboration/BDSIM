@@ -560,7 +560,7 @@ void BDSDetectorConstruction::ComponentPlacement()
   G4cout.precision(G4precision);
 }
 
-BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSection(std::list<std::string>& biasList)const
+BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(std::list<std::string>& biasList)const
 {
 #if G4VERSION_NUMBER > 1009
   // loop over all physics biasing
@@ -606,33 +606,21 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   // Registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
 
-  // apply biases
+  // apply per element biases
   for (i = registry->begin(); i != registry->end(); ++i)
-    {
-      G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-      // Skip over registered components that dont have a vacuum
-      if(!vacuumLV)
-	{
-	  if (debug)
-	    {G4cout << "not valid vacuum pointer" << G4endl;}
-	  continue;
-	}
-
-      auto it = GMAD::beamline_list.find(i->first);
-      if (it==GMAD::beamline_list.end()) continue;
-      GMAD::Element& e = *it;
-      if(debug) 
-	{G4cout << __METHOD_NAME__ << "Element loop : " <<  i->first << " " << i->second->GetName() << " " << e.bias << " " << e.biasMaterial << " " << e.biasVacuum << G4endl;}
-
+    { 
       // Accelerator vacuum 
-      BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSection(e.biasVacuumList);
-      if(debug)
-	{G4cout << __METHOD_NAME__ << "Vacuum logical volume: " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
-      
-      egVacuum->AttachTo(vacuumLV);
+      std::list<std::string> bvl = i->second->GetBiasVacuumList();
+      BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSectionBias(bvl);
+      G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
+      if(vacuumLV) {
+	if(debug) G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
+	{egVacuum->AttachTo(vacuumLV);}
+      }
       
       // Accelerator material
-      BDSBOptrMultiParticleChangeCrossSection *egMaterial = BuildCrossSection(e.biasMaterialList);
+      std::list<std::string> bml = i->second->GetBiasMaterialList();
+      BDSBOptrMultiParticleChangeCrossSection *egMaterial = BuildCrossSectionBias(bml);
       auto lvl = i->second->GetAllLogicalVolumes();
       if(debug)
 	{G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;}
@@ -645,6 +633,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	  }
 	}
     }
+
+  // apply range or complete biases
 
 #endif
 }

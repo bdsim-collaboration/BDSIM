@@ -91,9 +91,9 @@ void BDSCollimatorBase::Build()
   
   // now build the collimator
   G4VSolid* outerSolid = new G4Box(name + "_outer_solid",
-  			   outerDiameter * 0.5 - lengthSafety,
-			   outerDiameter * 0.5 - lengthSafety,
-               chordLength * 0.5   - lengthSafety);
+				   outerDiameter * 0.5 - lengthSafety,
+				   outerDiameter * 0.5 - lengthSafety,
+				   chordLength * 0.5   - lengthSafety);
   RegisterSolid(outerSolid);
   
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
@@ -123,16 +123,15 @@ void BDSCollimatorBase::Build()
   RegisterVisAttributes(collimatorVisAttr);
 
   //Rotation for tapered collimator
-  G4RotationMatrix* colRotate = new G4RotationMatrix;
+  G4RotationMatrix* colRotate;
   if (tapered && isOutLarger)
     {
+      colRotate = new G4RotationMatrix;
       colRotate->rotateX(CLHEP::pi);
       RegisterRotationMatrix(colRotate);
     }
   else
-    {
-      colRotate = 0;
-    }
+    {colRotate = nullptr;}
 
 
 #ifndef NOUSERLIMITS
@@ -146,13 +145,13 @@ void BDSCollimatorBase::Build()
   RegisterLogicalVolume(collimatorLV);
   RegisterSensitiveVolume(collimatorLV);
 
-  G4PVPlacement* collPV = new G4PVPlacement(colRotate,   // rotation
+  G4PVPlacement* collPV = new G4PVPlacement(colRotate,               // rotation
 					    (G4ThreeVector)0,        // position
 					    collimatorLV,            // its logical volume
 					    name + "_collimator_pv", // its name
 					    containerLogicalVolume,  // its mother  volume
-					    false,		             // no boolean operation
-					    0,		                 // copy number
+					    false,		     // no boolean operation
+					    0,		             // copy number
 					    checkOverlaps);
 
   RegisterPhysicalVolume(collPV);

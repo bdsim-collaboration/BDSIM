@@ -66,7 +66,7 @@ private:
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 
   /// Function that creates physics biasing cross section
-  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSection(std::list<std::string>& biasList) const;
+  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(std::list<std::string>& biasList) const;
   
 #ifdef BDSDEBUG
   bool debug = true;
