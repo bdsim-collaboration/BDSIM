@@ -3,6 +3,9 @@
 
 #include "BDSCollimatorBase.hh"
 
+/**
+ * @brief A class for a rectangular collimator.
+ */
 class BDSCollimatorRectangular: public BDSCollimatorBase
 {
 public:

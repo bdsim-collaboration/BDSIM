@@ -7,6 +7,9 @@
 
 class G4VSolid;
 
+/**
+ * @brief Base class for collimators.
+ */
 class BDSCollimatorBase :public BDSAcceleratorComponent
 {
 public:
@@ -32,18 +35,25 @@ protected:
   /// to subtract from the mass and the vacuum is placed inside it all
   virtual void BuildInnerCollimator() = 0;
 
-  // Geometrical objects:
+  ///@{ Geometrical objects:
   G4VSolid* collimatorSolid;
 
   G4VSolid* innerSolid;
   G4VSolid* vacuumSolid;
-
+  ///@}
+  /// Outer diameter
   G4double outerDiameter;
+  /// Aperture at entrance in x dimension
   G4double xAperture;
+  /// Aperture at entrance in y dimension
   G4double yAperture;
+  /// Aperture at exit in x dimension
   G4double xOutAperture;
+  /// Aperture at exit in y dimension
   G4double yOutAperture;
+  /// Material
   G4String collimatorMaterial;
+  /// Vacuum material
   G4String vacuumMaterial;
 
 };

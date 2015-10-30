@@ -5,6 +5,9 @@
 
 #include "globals.hh" // geant4 globals / types
 
+/**
+ * @brief A class for an elliptical collimator.
+ */
 class BDSCollimatorElliptical: public BDSCollimatorBase
 {
 public:
