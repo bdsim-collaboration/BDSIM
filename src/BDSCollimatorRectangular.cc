@@ -1,8 +1,10 @@
 #include "BDSCollimatorRectangular.hh"
 #include "BDSCollimatorBase.hh"
 
+#include "BDSUtilities.hh"
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
+#include "G4Trd.hh"
 #include "G4VSolid.hh"
 
 BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
@@ -10,8 +12,8 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double outerDiameter,
 						   G4double xAperture,
 						   G4double yAperture,
-						   G4double xOutAperture,
-						   G4double yOutAperture,
+                           G4double xOutAperture,
+                           G4double yOutAperture,
 						   G4String collimatorMaterial,
 						   G4String vacuumMaterial):
   BDSCollimatorBase(name, length, outerDiameter, "rcol",
@@ -22,16 +24,50 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 
 void BDSCollimatorRectangular::BuildInnerCollimator()
 {
-  innerSolid  = new G4Box(name + "_inner_solid",    // name
-			  xAperture,                // x half width
-			  yAperture,                // y half width
-			  chordLength);             // z half length
-  // z half length long for unambiguous subtraction
+  G4bool tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
+  G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
+  
+  // Swap variables around if exit size is large than entrance size
+  // Needed due to rotation required in tapered elliptical collimator
+  if(tapered && isOutLarger)
+    {
+        std::swap(xAperture,xOutAperture);
+        std::swap(yAperture,yOutAperture);
+    }
 
-  vacuumSolid = new G4Box(name + "_vacuum_solid",   // name
-			  xAperture - lengthSafety, // x half width
-			  yAperture - lengthSafety, // y half width
-			  chordLength*0.5);         // z half length
+  if(tapered)
+    {
+      // Make subtracted volume longer than the solid volume
+      G4double newLength = chordLength + 2e9*lengthSafety;
+      
+      innerSolid  = new G4Trd(name + "_inner_solid",    // name
+                              xAperture,                // X entrance half length
+                              xOutAperture,             // X exit half length
+                              yAperture,                // Y entrance half length
+                              yOutAperture,             // Y exit half length
+                              newLength*0.5);           // Z half length
+    
+      vacuumSolid = new G4Trd(name + "_inner_solid",                   // name
+                              xAperture - lengthSafety,                // X entrance half length
+                              xOutAperture - lengthSafety,             // X exit half length
+                              yAperture - lengthSafety,                // Y entrance half length
+                              yOutAperture - lengthSafety,             // Y exit half length
+                              chordLength*0.5 - lengthSafety);         // Z half length
+    }
+  else
+    {
+      innerSolid  = new G4Box(name + "_inner_solid",    // name
+                              xAperture,                // x half width
+                              yAperture,                // y half width
+                              chordLength);             // z half length
+    // z half length long for unambiguous subtraction
+
+      vacuumSolid = new G4Box(name + "_vacuum_solid",   // name
+                              xAperture - lengthSafety, // x half width
+                              yAperture - lengthSafety, // y half width
+                              chordLength*0.5);         // z half length
+    }
+    
   RegisterSolid(innerSolid);
   RegisterSolid(vacuumSolid);
 }
