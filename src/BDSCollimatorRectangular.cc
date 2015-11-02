@@ -6,6 +6,7 @@
 #include "G4Box.hh"
 #include "G4Trd.hh"
 #include "G4VSolid.hh"
+#include <iomanip>
 
 BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double length,
@@ -38,14 +39,21 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
   if(tapered)
     {
       // Make subtracted volume longer than the solid volume
-      G4double newLength = chordLength + 2e9*lengthSafety;
+      G4double newLength = chordLength*0.5 + 2*lengthSafetyLarge;
+
+      G4double xGradient = std::abs((xAperture - xOutAperture)) / chordLength;
+      G4double yGradient = std::abs((yAperture - yOutAperture)) / chordLength;
+      
+      G4double deltam = 0.1 * chordLength;
+      G4double deltax = xGradient * deltam;
+      G4double deltay = yGradient * deltam;
       
       innerSolid  = new G4Trd(name + "_inner_solid",    // name
-                              xAperture,                // X entrance half length
-                              xOutAperture,             // X exit half length
-                              yAperture,                // Y entrance half length
-                              yOutAperture,             // Y exit half length
-                              newLength*0.5);           // Z half length
+                              xAperture + deltax,                // X entrance half length
+                              xOutAperture - deltax,             // X exit half length
+                              yAperture + deltay,                // Y entrance half length
+                              yOutAperture - deltay,             // Y exit half length
+                              (chordLength + deltam) * 0.5);           // Z half length
     
       vacuumSolid = new G4Trd(name + "_inner_solid",                   // name
                               xAperture - lengthSafety,                // X entrance half length
