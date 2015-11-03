@@ -66,7 +66,7 @@ void BDSKicker::BuildBeampipe()
 {
   BDSBeamPipeFactory* fac = BDSBeamPipeFactory::Instance();
   beampipe = fac->CreateBeamPipe(name,
-				 chordLength,
+				 chordLength - lengthSafety,
 				 beamPipeInfo);
   
   RegisterDaughter(beampipe);
