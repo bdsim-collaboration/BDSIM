@@ -125,7 +125,7 @@ void BDSBeamPipeFactoryCircular::TestInputParameters(G4Material*&  vacuumMateria
   BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
 
   if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
+    {aper1In = BDSGlobalConstants::Instance()->GetAper1();}
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the

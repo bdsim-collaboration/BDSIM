@@ -118,7 +118,6 @@ public:
   ///@}
   
   ///@{ Beampipe
-  G4double GetBeamPipeRadius() const;
   G4double GetAper1() const;
   G4double GetAper2() const;
   G4double GetAper3() const;
@@ -287,7 +286,6 @@ private:
   G4double itsBlmRad;
   G4double itsBlmLength;
   ///@}
-  G4double itsBeamPipeRadius;
   G4double itsAper1;
   G4double itsAper2;
   G4double itsAper3;
@@ -558,9 +556,6 @@ inline G4double BDSGlobalConstants::GetBlmRad() const
 
 inline G4double BDSGlobalConstants::GetBlmLength() const
 {return itsBlmLength;}
-
-inline G4double BDSGlobalConstants::GetBeamPipeRadius() const
-{return itsBeamPipeRadius;}
 
 inline G4double BDSGlobalConstants::GetAper1() const
 {return itsAper1;}

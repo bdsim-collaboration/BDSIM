@@ -68,22 +68,22 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   //Fraction of events with leading particle biasing.
 
   //beampipe
-  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
   itsAper1 = opt.aper1*CLHEP::m;
   itsAper2 = opt.aper2*CLHEP::m;
   itsAper3 = opt.aper3*CLHEP::m;
   itsAper4 = opt.aper4*CLHEP::m;
   // note beampipetype already done before these checks! at top of this function
-  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  BDS::CheckApertureInfo(itsApertureType,itsAper1,itsAper2,itsAper3,itsAper4);
   
   itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
 
   // magnet geometry
   itsOuterDiameter = opt.outerDiameter * CLHEP::m;
-  if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsBeamPipeRadius)){
-    G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
-    exit(1);
-  }
+  if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsAper1))
+    {
+      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"aper1\" + \"beamPipeThickness\") " << G4endl;
+      exit(1);
+    }
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
 

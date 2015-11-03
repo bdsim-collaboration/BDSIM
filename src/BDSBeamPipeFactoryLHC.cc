@@ -197,7 +197,7 @@ void BDSBeamPipeFactoryLHC::TestInputParameters(G4Material*&  vacuumMaterialIn, 
   BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
 
   if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
+    {aper1In = BDSGlobalConstants::Instance()->GetAper1();}
 
   if (aper2In < 1e-10)
     {aper2In = BDSGlobalConstants::Instance()->GetAper2();}
