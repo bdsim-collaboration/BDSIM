@@ -1034,9 +1034,9 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo;
   if (element.apertureType == "")
-    info->beamPipeType = BDSGlobalConstants::Instance()->GetApertureType();
+    {info->beamPipeType = BDSGlobalConstants::Instance()->GetApertureType();}
   else 
-    info->beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);
+    {info->beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);}
 
   // note even if aperN in the element is 0 (ie unset), we should use
   // the default aperture model from global constants (already in metres)
