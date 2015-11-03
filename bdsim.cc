@@ -49,7 +49,7 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=nullptr;         // output interface
+BDSOutputBase* bdsOutput=nullptr;     // output interface
 //=======================================================
 
 namespace GMAD {
@@ -241,40 +241,33 @@ int main(int argc,char** argv)
       BDSGeometryWriter geometrywriter;
       geometrywriter.ExportGeometry(execOptions->GetExportType(),
 				    execOptions->GetExportFileName());
-      // clean up before exiting
-      G4GeometryManager::GetInstance()->OpenGeometry();
-      delete BDSAcceleratorModel::Instance();
-      delete execOptions;
-      delete globalConstants;
-      delete BDSMaterials::Instance();
-      delete runManager;
-      delete bdsBunch;
-      return 0;
     }
-  
-  // set default output formats:
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif
-  bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
-  G4cout.precision(10);
-
-  // catch aborts to close output stream/file. perhaps not all are needed.
-  signal(SIGABRT, &BDS::HandleAborts); // aborts
-  signal(SIGTERM, &BDS::HandleAborts); // termination requests
-  signal(SIGSEGV, &BDS::HandleAborts); // segfaults
-  // no interrupts since ctest sends an interrupt signal when interrupted
-  // and then the BDSIM process somehow doesn't get killed
-  // signal(SIGINT,  &BDS::HandleAborts); // interrupts
-  
-  if(!execOptions->GetBatch())   // Interactive mode
+  else
     {
-      BDSVisManager visManager;
-      visManager.StartSession(argc,argv);
+      // set default output formats:
+#ifdef BDSDEBUG
+      G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif
+      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      G4cout.precision(10);
+      
+      // catch aborts to close output stream/file. perhaps not all are needed.
+      signal(SIGABRT, &BDS::HandleAborts); // aborts
+      signal(SIGTERM, &BDS::HandleAborts); // termination requests
+      signal(SIGSEGV, &BDS::HandleAborts); // segfaults
+      // no interrupts since ctest sends an interrupt signal when interrupted
+      // and then the BDSIM process somehow doesn't get killed
+      // signal(SIGINT,  &BDS::HandleAborts); // interrupts
+  
+      if(!execOptions->GetBatch())   // Interactive mode
+	{
+	  BDSVisManager visManager;
+	  visManager.StartSession(argc,argv);
+	}
+      else           // Batch mode
+	{runManager->BeamOn(globalConstants->GetNumberToGenerate());}
     }
-  else           // Batch mode
-    {runManager->BeamOn(globalConstants->GetNumberToGenerate());}
-
+  
   //
   // job termination
   //
