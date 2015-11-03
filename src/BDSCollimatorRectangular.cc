@@ -51,14 +51,14 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
                               xOutAperture - deltax,             // X exit half length
                               yAperture + deltay,                // Y entrance half length
                               yOutAperture - deltay,             // Y exit half length
-                              (chordLength + deltam) * 0.5);           // Z half length
+                              (chordLength + 2*deltam) * 0.5);           // Z half length
     
       vacuumSolid = new G4Trd(name + "_vacuum_solid",                  // name
-                              xAperture - lengthSafety,                // X entrance half length
-                              xOutAperture - lengthSafety,             // X exit half length
-                              yAperture - lengthSafety,                // Y entrance half length
-                              yOutAperture - lengthSafety,             // Y exit half length
-                              chordLength*0.5 - lengthSafety);         // Z half length
+                              xAperture - lengthSafetyLarge,                // X entrance half length
+                              xOutAperture - lengthSafetyLarge,             // X exit half length
+                              yAperture - lengthSafetyLarge,                // Y entrance half length
+                              yOutAperture - lengthSafetyLarge,             // Y exit half length
+                              chordLength*0.5 - lengthSafetyLarge);         // Z half length
     }
   else
     {
