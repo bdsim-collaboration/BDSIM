@@ -30,10 +30,17 @@ typedef std::map<G4String,G4LogicalVolume*> LogVolMap;
 extern LogVolMap* LogVol;
 #define DEBUG 1
 //============================================================
-BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm):
+BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm, G4String spec=""):
   BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _BField(BField), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
-  _vacChambType=2;
+  try{
+    _vacuumChamberType=getParameterValueInt(spec,"vacuumChamberType");
+  } catch(boost::bad_lexical_cast&){
+    //If the cast fails, set vacuum chamber type to 1
+    _vacuumChamberType=1;
+  }
+
+
   //Set as part of precision region (for energy loss monitoring)
   itsPrecisionRegion=1;
 
@@ -368,23 +375,34 @@ void BDSAwakeSpectrometer::SetBPFieldMgr(){
 
 
 void BDSAwakeSpectrometer::BuildVacuumChamber(){
-  _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
-				    itsLength,
-				    _poleStartZ,
-				    _screenEndZ-std::abs(cos(_screenAngle)*_totalThickness),
-				    _screenWidth,
-				    _screenAngle,
-				    _vacInnerWidth,
-				    _vacInnerHeight,
-				    _vacThickness);
-  
+  switch(_vacuumChamberType){
+  case 0:
+    _vacChamb=NULL;
+  case 1:
+    _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
+				      itsLength,
+				      _poleStartZ,
+				      _screenEndZ-std::abs(cos(_screenAngle)*_totalThickness),
+				      _screenWidth,
+				      _screenAngle,
+				      _vacInnerWidth,
+				      _vacInnerHeight,
+				      _vacThickness);
+    break;
+  default:
+    G4String exceptionString = (G4String)"vacuumChamberType: " + _vacuumChamberType + (G4String)" unknown.";
+    G4Exception(exceptionString.c_str(), "-1", FatalErrorInArgument, "");
+  }
 }
 
+
 void BDSAwakeSpectrometer::PlaceVacuumChamber(){
-  if(!_vacChamb){
-    BuildVacuumChamber();
+  if(_vacuumChamberType!=0){
+    if(!_vacChamb){
+      BuildVacuumChamber();
+    }
+    _vacChamb->Place(itsMarkerLogicalVolume);
   }
-  _vacChamb->Place(itsMarkerLogicalVolume);
 }
 
 void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
@@ -581,13 +599,6 @@ void BDSAwakeSpectrometer::Build(){
       BuildCamera();	
       CalculateLengths();
       BuildMarkerLogicalVolume();
-      /*
-      if(_vacChambType==2){
-	BuildVacuumChamber2();
-      } else {
-      BuildVacuumChamber1();
-      }
-      */
       BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
@@ -730,169 +741,6 @@ void BDSAwakeSpectrometer::BuildMarkerLogicalVolume(){
   itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
 #endif
 }
-
-void BDSAwakeSpectrometer::BuildVacuumChamber1(){
-
-
-  G4VSolid* vacuumOuterSolid = new G4Box("vacuumSolid",_vacWidth1/2.0,
-					 _vacHeight/2.0, 
-					 _vacLength/2.0);
-
-
-  G4VSolid* vacuumSolid = new G4Box("vacuumSolid",_vacInnerWidth/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
-
-
-  G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
-
-  new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(_vacDispX1,0,0), 
-		    vacuumOuterLog, 
-		    "awakeScreenOuterVacuumPV", 
-		    itsMarkerLogicalVolume, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-
-  G4LogicalVolume* vacuumLog = new G4LogicalVolume(vacuumSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumLog",0,0,0);
-
- 
-  new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(_vacThickness/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
-		    vacuumLog, 
-		    "awakeScreenVacuumPV", 
-		    vacuumOuterLog, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
- 
-
-  G4VSolid* vacuumWindowSolid = new G4Box("vacuumWindowSolid",(_vacMylarThickness+_vacKevlarThickness)/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
-  G4LogicalVolume* vacuumWindowLog = new G4LogicalVolume(vacuumWindowSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumWindowLog",0,0,0);
-
-  G4VSolid* kevlarWindowSolid = new G4Box("kevlarWindowSolid",_vacKevlarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
-  G4LogicalVolume* kevlarWindowLog = new G4LogicalVolume(kevlarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_KEVLAR"), "kevlarWindowLog",0,0,0);
-
-  G4VSolid* mylarWindowSolid = new G4Box("mylarWindowSolid",_vacMylarThickness/2.0, _vacInnerHeight/2.0, _vacLength/2.0);
-  G4LogicalVolume* mylarWindowLog = new G4LogicalVolume(mylarWindowSolid, BDSMaterials::Instance()->GetMaterial("G4_MYLAR"), "mylarWindowLog",0,0,0);
-
-  new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(_vacWidth1/2.0-(_vacMylarThickness+_vacKevlarThickness)/2.0,0,0), 
-		    vacuumWindowLog, 
-		    "awakeScreenVacuumWindowPV", 
-		    vacuumOuterLog, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-  
-  new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector((_vacKevlarThickness+_vacMylarThickness)/2.0 - _vacKevlarThickness/2.0,0,0), 
-		    kevlarWindowLog, 
-		    "awakeScreenKevlarVacuumWindowPV", 
-		    vacuumWindowLog, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-
-  new G4PVPlacement(new G4RotationMatrix(), 
-		    G4ThreeVector(-(_vacKevlarThickness+_vacMylarThickness)/2.0 + _vacMylarThickness/2.0,0,0), 
-		    mylarWindowLog, 
-		    "awakeScreenMylarVacuumWindowPV", 
-		    vacuumWindowLog, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-
-  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4,0.5));
-  vacVisAttributes->SetForceWireframe(true);
-  vacVisAttributes->SetVisibility(true);
-  vacuumOuterLog->SetVisAttributes(vacVisAttributes);
-
-  G4VisAttributes* winVisAttributes=new G4VisAttributes(G4Colour(1.0,0.0,0.0,0.5));
-  winVisAttributes->SetForceSolid(true);
-  winVisAttributes->SetVisibility(true);
-  vacuumWindowLog->SetVisAttributes(winVisAttributes);
-
-
-
-}
-
-void BDSAwakeSpectrometer::BuildVacuumChamber2(){
-
-
-
-  G4VSolid* vacuumOuterSolid = new G4Trap("vacuumOuterSolid",
-					  _vacWidth2/2.0,
-					  1.0*(-acos(0.0)+atan(2.0)),
-					  0,
-					  _vacThickness/2.0,
-					  1e-30,1e-30,
-					  0,
-					  _vacThickness/2.0,
-					  _vacWidth2/2.0, _vacWidth2/2.0,
-					  0);
-
-  G4VSolid* vacuumInnerSolid = new G4Trap("vacuumInnerSolid",
-					  _vacWidth2/2.0,
-					  1.0*(-acos(0.0)+atan(2.0)),
-					  0,
-					  _vacInnerHeight/2.0,
-					  1e-30,1e-30,
-					  0,
-					  _vacInnerHeight/2.0,
-					  _vacWidth2/2.0, _vacWidth2/2.0,
-					  0);
-
-
-  G4LogicalVolume* vacuumOuterLog = new G4LogicalVolume(vacuumOuterSolid, BDSMaterials::Instance()->GetMaterial("iron"), "vacuumOuterLog",0,0,0);
-
-  G4LogicalVolume* vacuumInnerLog = new G4LogicalVolume(vacuumInnerSolid, BDSMaterials::Instance()->GetMaterial("vacuum"), "vacuumInnerLog",0,0,0);
-
-  _vacRotationMatrix->rotateY(CLHEP::pi);
-
-  new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(_vacDispX2,(_vacHeight+_vacThickness)/2.0,_vacDispZ2), 
-		    vacuumOuterLog, 
-		    "awakeScreenUpperVacuumPV", 
-		    itsMarkerLogicalVolume, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-
-  new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(_vacDispX2,-(_vacHeight+_vacThickness)/2.0,_vacDispZ2), 
-		    vacuumOuterLog, 
-		    "awakeScreenLowerVacuumPV", 
-		    itsMarkerLogicalVolume, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-
-  new G4PVPlacement(_vacRotationMatrix, 
-		    G4ThreeVector(_vacDispX2,0,_vacDispZ2), 
-		    vacuumInnerLog, 
-		    "awakeScreenInnerVacuumPV", 
-		    itsMarkerLogicalVolume, 
-		    false, 
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps()
-		    );
-
-
-  G4VisAttributes* vacVisAttributes=new G4VisAttributes(G4Colour(0.3,0.0,0.4,0.5));
-  vacVisAttributes->SetForceWireframe(true);
-  vacVisAttributes->SetVisibility(true);
-  vacuumOuterLog->SetVisAttributes(vacVisAttributes);
-  vacuumInnerLog->SetVisAttributes(vacVisAttributes);
-
-}
-
 
 BDSAwakeSpectrometer::~BDSAwakeSpectrometer()
 {

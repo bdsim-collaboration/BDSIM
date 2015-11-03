@@ -1414,7 +1414,7 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeSpectrometer(){
 	       << "scintmaterial = " << _element.scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3,  _element.bmapFile, _element.B,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3));
+	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3,  _element.bmapFile, _element.B,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3, _element.spec));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

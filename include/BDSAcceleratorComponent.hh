@@ -32,6 +32,7 @@
 #include <cstring>
 #include <list>
 #include <vector> 
+#include "boost/lexical_cast.hpp"
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "globals.hh"
@@ -135,7 +136,11 @@ public:
   // get parameter value from the specification string
 
   G4double getParameterValue(G4String spec, G4String name) const;
+  G4double getParameterValueDouble(G4String spec, G4String name) const;
   G4String getParameterValueString(G4String spec, G4String name) const;
+  G4bool getParameterValueBool(G4String spec, G4String name) const;
+  G4int getParameterValueInt(G4String spec, G4String name) const;
+
 
   /// BDSComponentFactory creates BDSAcceleratorComponents
   friend class BDSComponentFactory;
@@ -506,33 +511,47 @@ inline G4double BDSAcceleratorComponent::GetZOffset()
 inline G4double BDSAcceleratorComponent::GetTilt()
 {return itsTilt;}
 
-
+//For backwards compatibility.
 inline  G4double BDSAcceleratorComponent::getParameterValue(G4String spec, G4String name) const
 {
-  G4double value = 0;
-
-  std::string delimiters = "&";
-  std::string param = name + "=";
-
-  int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      
-      int pos2 = spec.find("&",pos);
-      int pos3 = spec.length();
-      int tend = pos2 < 0 ? pos3 : pos2; 
-      int llen = tend - pos - param.length();
-      
-      std::string val = spec.substr(pos + param.length(), llen);
-      
-      value = atof(val.c_str());
-
-  }
-
-  return value;
-
+  return getParameterValueDouble(spec, name);
 }
 
+//Get a value of type double form the spec string.
+inline  G4double BDSAcceleratorComponent::getParameterValueDouble(G4String spec, G4String name) const
+{
+  try{
+    return  boost::lexical_cast<G4double>(getParameterValueString(spec,name).c_str());
+  }catch(boost::bad_lexical_cast& e){
+    throw e;
+  }
+  return 0;
+}
+
+//Get a value of type bool form the spec string.
+inline  G4bool BDSAcceleratorComponent::getParameterValueBool(G4String spec, G4String name) const
+{
+  try{
+    return  boost::lexical_cast<G4bool>(getParameterValueString(spec,name).c_str());
+  }catch(boost::bad_lexical_cast& e){
+    throw e;
+  }
+  return false;
+}
+
+//Get a value of type int form the spec string.
+inline  G4int BDSAcceleratorComponent::getParameterValueInt(G4String spec, G4String name) const
+{
+  try{
+    return  boost::lexical_cast<G4int>(getParameterValueString(spec,name).c_str());
+  }catch(boost::bad_lexical_cast& e){
+    throw e;
+  }
+  return 0;
+}
+
+
+//Get a value of type string from the spec string (all other types derived from this).
 inline  G4String BDSAcceleratorComponent::getParameterValueString(G4String spec, G4String name) const
 {
   G4String value = "";

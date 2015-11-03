@@ -27,7 +27,7 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double BField, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd);
+  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double BField, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd, G4String spec);
   virtual ~BDSAwakeSpectrometer();
 
 protected:
@@ -57,9 +57,6 @@ private:
   void PlaceScreen();
   //To build the tunnel...
   void BuildAwakeSpectrometerTunnel();
-  //To build the vacuum chamber...
-  void BuildVacuumChamber1();
-  void BuildVacuumChamber2();
   virtual void SetVisAttributes();
   virtual void BuildMarkerLogicalVolume();
   void BuildCameraScoringPlane();
@@ -148,7 +145,7 @@ private:
 
   //Vacuum chamber dimensions
   BDSSpectrVacChamb* _vacChamb;
-  G4int _vacChambType;
+  G4int _vacuumChamberType;
   G4double _vacWindowHeight;
   G4double _vacMylarThickness;
   G4double _vacKevlarThickness;

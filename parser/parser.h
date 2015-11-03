@@ -564,6 +564,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.twindow = params.twindow;
     e.windowmaterial = std::string(params.windowmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
+    e.spec = std::string(params.spec); 
     break;
 
   default:
