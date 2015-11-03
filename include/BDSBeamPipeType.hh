@@ -11,6 +11,8 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
+struct BDSBeamPipeInfo;
+
 struct beampipetypes_def {
   enum type { circular, rectangular, elliptical, lhc, lhcdetailed, rectellipse, racetrack};
 };
@@ -29,6 +31,19 @@ namespace BDS {
 			 G4double& aper3,
 			 G4double& aper4);
 
+  /// Function to check relevant aperture values are set based on a preassembled BDSBeamPipeInfo instance
+  void CheckApertureInfo(BDSBeamPipeInfo*& info);
+
+
+  /// Function to check whether a parameter is set (using BDSUtilities BDS::IsFinite() ). If the
+  /// accompanying G4bool setAper1 (for example) is true, the parameter will be checked for
+  /// being set. All parameters required to be checked are checked and appropriate warnings
+  /// printed before exiting if any fail that test.
+  void CheckRequiredParametersSet(G4double& aper1, G4bool setAper1,
+				  G4double& aper2, G4bool setAper2,
+				  G4double& aper3, G4bool setAper3,
+				  G4double& aper4, G4bool setAper4);
+  
   /// aperture info check for circular aperture
   void InfoOKForCircular(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4);
 

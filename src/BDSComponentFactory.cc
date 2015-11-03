@@ -1060,12 +1060,17 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
     {info->aper4 = BDSGlobalConstants::Instance()->GetAper4();}
   else
     {info->aper4 = element.aper4*CLHEP::m;}
-  
-  info->vacuumMaterial    = PrepareVacuumMaterial(element);
-  info->beamPipeThickness = element.beampipeThickness*CLHEP::m;
-  if (info->beamPipeThickness < 1e-10)
+  // beampipeThickness
+  if (element.beampipeThickness == 0)
     {info->beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-  info->beamPipeMaterial  = PrepareBeamPipeMaterial(element);
+  else
+    {info->beamPipeThickness = element.beampipeThickness*CLHEP::m;}
+  
+  info->vacuumMaterial   = PrepareVacuumMaterial(element);
+  info->beamPipeMaterial = PrepareBeamPipeMaterial(element);
+
+  BDS::CheckApertureInfo(info);
+  
   return info;
 }
 

@@ -1,3 +1,4 @@
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSDebug.hh"
@@ -47,6 +48,15 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   return returnValue;
 }
 
+void BDS::CheckApertureInfo(BDSBeamPipeInfo*& info)
+{
+  CheckApertureInfo(info->beamPipeType,
+		    info->aper1,
+		    info->aper2,
+		    info->aper3,
+		    info->aper4);
+}
+
 void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn,
 			    G4double& aper1,
 			    G4double& aper2,
@@ -71,60 +81,58 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn,
     {InfoOKForCircular(aper1,aper2,aper3,aper4);}
 }
 
-void BDS::InfoOKForCircular(G4double& aper1, G4double& /*aper2*/, G4double& /*aper3*/, G4double& /*aper4*/)
+void BDS::CheckRequiredParametersSet(G4double& aper1, G4bool setAper1,
+				     G4double& aper2, G4bool setAper2,
+				     G4double& aper3, G4bool setAper3,
+				     G4double& aper4, G4bool setAper4)
 {
-  if (aper1 == 0)
+  G4bool shouldExit = false;
+  if (setAper1)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"beampipeRadius\" or \"aper1\" must be greater than 0 for all aperture types" << G4endl;
-      exit(1);
+      if (!BDS::IsFinite(aper1))
+	{G4cerr << "\"aper1\" not set, but required to be" << G4endl; shouldExit = true;}
     }
+
+  if (setAper2)
+    {
+      if (!BDS::IsFinite(aper2))
+	{G4cerr << "\"aper2\" not set, but required to be" << G4endl; shouldExit = true;}
+    }
+
+  if (setAper3)
+    {
+      if (!BDS::IsFinite(aper3))
+	{G4cerr << "\"aper3\" not set, but required to be" << G4endl; shouldExit = true;}
+    }
+
+  if (setAper4)
+    {
+      if (!BDS::IsFinite(aper4))
+	{G4cerr << "\"aper4\" not set, but required to be" << G4endl; shouldExit = true;}
+    }
+
+  if (shouldExit)
+    {exit(1);}
+}
+
+void BDS::InfoOKForCircular(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
+{
+  CheckRequiredParametersSet(aper1, true, aper2, false, aper3, false, aper4, false);
 }
 
 void BDS::InfoOKForElliptical(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
-  // can actually use the same checks for rectangular as two parameter
-  InfoOKForRectangular(aper1,aper2,aper3,aper4);
+  CheckRequiredParametersSet(aper1, true, aper2, true, aper3, false, aper4, false);
 }
 
 void BDS::InfoOKForRectangular(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
-  // basic circular checks first - require at least one parameter for a square beam pipe
-  InfoOKForCircular(aper1,aper2,aper3,aper4);
-
-  if ((aper2 == 0) && (aper1 > 0))
-    {
-      // note if aper1 is > 0 so must beampipe radius or they share a value from circular checks
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper2\" not set for rectangular aperture model" << G4endl;
-      exit(1);
-      //aper2 = aper1;
-    }
-
-  if ((aper2 > 0) && (aper1 == 0))
-    {
-      // aper2 set but not aper1 - copy it to aper1
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper2\" set but \"aper1\" not set for rectangular aperture model" << G4endl;
-      exit(1);
-      //aper1 = aper2;
-    }
+  CheckRequiredParametersSet(aper1, true, aper2, true, aper3, false, aper4, false);
 }
 
 void BDS::InfoOKForLHC(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
-  InfoOKForCircular(aper1,aper2,aper3,aper4);
-
-  if (aper2 == 0)
-    {
-      // aper2 isn't set
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper2\" not set for lhc aperture model" << G4endl;
-      exit(1);
-    }
-
-  if (aper3 == 0)
-    {
-      // aper3 isn't set
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper3\" not set for lhc aperture model" << G4endl;
-      exit(1);
-    }
+  CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, false);
 
   if ((aper3 > aper1) and (aper2 < aper3))
     {
@@ -146,8 +154,10 @@ void BDS::InfoOKForLHCDetailed(G4double& aper1, G4double& aper2, G4double& aper3
 
 void BDS::InfoOKForRectEllipse(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
-  // basic checks
-  InfoOKForCircular(aper1,aper2,aper3,aper4);
+  CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, true);
+
+  // TBC
+  
   /*
   //treat rectangle as point coordinates.  If this point is inside ellipse,
   //rectangle is too small -> error should just use elliptical aperture
@@ -167,12 +177,5 @@ void BDS::InfoOKForRectEllipse(G4double& aper1, G4double& aper2, G4double& aper3
 
 void BDS::InfoOKForRaceTrack(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
-  InfoOKForCircular(aper1, aper2, aper3, aper4);
-  InfoOKForRectangular(aper1, aper2, aper3, aper4);
-
-  if (!BDS::IsFinite(aper3))
-    {
-      G4cerr << __METHOD_NAME__ << "WARNING - \"aper3\" is not set - radius of curvature must be finite for racetrack aperture model" << G4endl;
-      exit(1);
-    }
+  CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, false);
 }
