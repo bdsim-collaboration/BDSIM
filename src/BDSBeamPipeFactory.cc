@@ -7,6 +7,7 @@
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
+#include "BDSBeamPipeFactoryRaceTrack.hh"
 #include "BDSBeamPipeFactoryRectEllipse.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
@@ -32,7 +33,6 @@ BDSBeamPipeFactory::~BDSBeamPipeFactory()
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
 {
   switch(type.underlying()){
-
   case BDSBeamPipeType::circular:
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "circular beampipe factory" << G4endl;
@@ -68,6 +68,12 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
     G4cout << __METHOD_NAME__ << "rectangular ellipse beampipe factory" << G4endl;
 #endif
     return BDSBeamPipeFactoryRectEllipse::Instance();
+    break;
+  case BDSBeamPipeType::racetrack:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "racetrack beampipe factory" << G4endl;
+#endif
+    return BDSBeamPipeFactoryRaceTrack::Instance();
     break;
   default:
 #ifdef BDSDEBUG
