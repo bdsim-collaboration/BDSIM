@@ -39,8 +39,6 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
   if(tapered)
     {
       // Make subtracted volume longer than the solid volume
-      G4double newLength = chordLength*0.5 + 2*lengthSafetyLarge;
-
       G4double xGradient = std::abs((xAperture - xOutAperture)) / chordLength;
       G4double yGradient = std::abs((yAperture - yOutAperture)) / chordLength;
       

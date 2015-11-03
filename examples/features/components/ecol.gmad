@@ -1,6 +1,9 @@
 d1: drift, l=0.5;
-col2 : ecol,l=0.4*m, xsize=2*mm, ysize=1*mm, material="G4_W";
+col1 : ecol,l=0.4*m, xsize=2*mm, ysize=1*mm, material="G4_W";
 d2: drift, l=0.5;
+col2 : ecol,l=0.4*m, xsize=2*mm, ysize=1*mm, material="G4_W", xsizeOut=4*mm, ysizeOut=2*mm;
+d3: drift, l=0.5;
 
-lat : line = (d1,col2,d2);
-com : line = (col2);
+lat : line = (d1,col1,d2,col2,d3);
+com : line = (col1);
+com2: line = (col2);
