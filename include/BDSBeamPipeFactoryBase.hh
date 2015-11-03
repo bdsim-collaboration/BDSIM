@@ -131,7 +131,12 @@ protected:
   virtual void          PlaceComponents(G4String nameIn);
 
 protected:
+  /// A local copy of global length safety variable
   G4double         lengthSafety;
+
+  /// 1um safety that can be used for larger transverse safety
+  G4double         lengthSafetyLarge;
+  
   G4bool           checkOverlaps;
   G4double         maxStepFactor;
   G4double         nSegmentsPerCircle; // for visualisation improvement

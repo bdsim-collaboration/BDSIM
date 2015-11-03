@@ -18,6 +18,7 @@
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
   lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  lengthSafetyLarge         = 1*CLHEP::um;
   checkOverlaps             = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   maxStepFactor             = 0.5; // fraction of length for maximum step size
   nSegmentsPerCircle        = 50;
