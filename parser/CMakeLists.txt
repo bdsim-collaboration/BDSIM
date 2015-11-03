@@ -39,15 +39,18 @@ endif()
 flex_target(SCANNER parser.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.cc)
 add_flex_bison_dependency(SCANNER PARSER)
 
-# You can also use file globbing, but that can cause confusion
-# when we have old makefiles and cmake next to each other.
-# Reason is old makefiles creates parser.cc/lex.yy.cc in source folder..
-add_library(gmad STATIC gmad.cc getEnv.cc element.cc
-elementtype.cc options.cc parameters.cc tunnel.cc physicsbiasing.cc 
-${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
-add_library(gmadShared SHARED gmad.cc getEnv.cc element.cc
-elementtype.cc options.cc parameters.cc tunnel.cc
-physicsbiasing.cc ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# glob parser sources
+file(GLOB GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+# remove parser main
+list(REMOVE_ITEM GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/parser.cc)
+if($ENV{VERBOSE})
+  message(STATUS "GMAD parser sources ${GMAD_PARSER_SOURCES}")
+endif()
+
+add_library(gmad STATIC ${GMAD_PARSER_SOURCES}
+  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
+  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
 	message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 

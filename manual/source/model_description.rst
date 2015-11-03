@@ -487,23 +487,33 @@ rcol
 `rcol` defines a rectangular collimator. The aperture is rectangular and the eternal
 volume is square.
 
-================  ============================  ==========  ===========
-parameter         description                   default     required
-`l`               length [m]                    0           yes
-`xsize`           horizontal half aperture [m]  0           yes
-`ysize`           vertical half aperture [m]    0           yes
-`material`        outer material                Iron        no
-`outerDiameter`   outer full width [m]          global      no
-================  ============================  ==========  ===========
+================  =================================  ==========  ===========
+parameter         description                        default     required
+`l`               length [m]                         0           yes
+`xsize`           horizontal half aperture [m]       0           yes
+`ysize`           vertical half aperture [m]         0           yes
+`xsizeOut`        horizontal exit half aperture [m]  0           no
+`ysizeOut`        vertical exit half aperture [m]    0           no
+`material`        outer material                     Iron        no
+`outerDiameter`   outer full width [m]               global      no
+================  =================================  ==========  ===========
 
 .. note:: `rcol` and `ecol` do not currently implement tilt, so if an angled collimator
 	  is required, a `transform3d` should before and afterwards in the sequence to
 	  rotate the coordinate frame before and afterwards. See `transform3d`_ for further
 	  details and examples.
 
+	  The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
+	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
+
+
 Examples::
 
+   ! Standard
    TCP15: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm;
+
+   ! Tapered
+   TCP16: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm, xsizeOut=208*um, ysizeOut=10*cm;
 
 
 ecol
@@ -515,7 +525,8 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half axes respectively.
+half axes respectively. When tapered, the ratio between the horizontal and vertical half
+axes of the entrance aperture must be the same ratio for the exit aperture.
 
 
 degrader

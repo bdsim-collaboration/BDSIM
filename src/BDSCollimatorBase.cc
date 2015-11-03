@@ -46,7 +46,15 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
 	     << name << "\"" << G4endl;
       exit(1);
     }
-
+    
+  if ( (xOutAperture > 0.5*outerDiameter) || (yOutAperture > 0.5*outerDiameter) )
+    {
+      G4cerr << __METHOD_NAME__ << "half aperture exit bigger than diameter!" << G4endl;
+      G4cerr << "Outer diameter is " << outerDiameter << " mm for component named: \""
+	     << name << "\"" << G4endl;
+      exit(1);
+    }
+    
   if (collimatorMaterialIn == "")
     {
       G4cout << __METHOD_NAME__ << "Warning - no material set for collimator - using copper" << G4endl;

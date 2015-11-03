@@ -31,13 +31,8 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
   // Swap variables around if exit size is large than entrance size
   if(tapered && isOutLarger)
     {
-        G4double temp = xAperture;
-        xAperture = xOutAperture;
-        xOutAperture = temp;
-        
-        temp = yAperture;
-        yAperture = yOutAperture;
-        yOutAperture = temp;
+        std::swap(xAperture,xOutAperture);
+        std::swap(yAperture,yOutAperture);
     }
   
   if(tapered)
@@ -53,7 +48,7 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
                                          zmax,                     // Height of cone
                                          zmax);   // Cut.
     
-      vacuumSolid = new G4EllipticalCone(name + "_inner_solid",             // name
+      vacuumSolid = new G4EllipticalCone(name + "_vacuum_solid",            // name
                                          xhalf/zmax- lengthSafety,          // Major axis of largest ellipse
                                          yhalf/zmax - lengthSafety,         // Minor axis of largest ellipse
                                          zmax,                              // Height of cone

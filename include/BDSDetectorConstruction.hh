@@ -6,6 +6,7 @@
 #include "globals.hh"
 
 #include "G4Region.hh"
+#include "G4Version.hh"
 
 #include <list>
 #include <string>
@@ -16,13 +17,16 @@
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
 
-class BDSBOptrMultiParticleChangeCrossSection;
 class G4Box;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4UniformMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
+
+#if G4VERSION_NUMBER > 1009
+class BDSBOptrMultiParticleChangeCrossSection;
+#endif
 
 class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
@@ -65,9 +69,11 @@ private:
   /// Function to add the volume to the gflash parameterisation model
   void SetGFlashOnVolume(G4LogicalVolume* volume);
 
+#if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(std::list<std::string>& biasList) const;
-  
+#endif
+
 #ifdef BDSDEBUG
   bool debug = true;
 #else
