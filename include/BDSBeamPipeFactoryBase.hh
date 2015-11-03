@@ -110,10 +110,6 @@ protected:
   /// Calculate input and output normal vector
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
 							G4double angleOutIn);
-
-  void TestInputParameters(G4Material*& vacuumMaterialIn,
-			   G4double&    beamPipeThicknessIn,
-			   G4Material*& beamPipeMaterialIn);
   
   // methods called by CommonConstruction, can be implmented by derived classes
   

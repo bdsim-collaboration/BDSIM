@@ -47,16 +47,6 @@ private:
 			      G4double beamPipeThickness,
 			      G4int    pointsPerTwoPi = 40);
 
-  /// Test the input parameters to see if they make sense.  
-  /// Overloaded (required) from BDSBeamPipeFactoryPoints.  
-  virtual void TestInputParameters(G4Material*& vacuumMaterial,
-				   G4double&    beamPipeThickness,
-				   G4Material*& beamPipeMaterial,
-				   G4double&    aper1In,
-				   G4double&    aper2In,
-				   G4double&    aper3In,
-				   G4double&    aper4In);
-
   /// Calculate the radius of the solid used for intersection for angled faces.
   virtual G4double CalculateIntersectionRadius(G4double aper1,
 					       G4double aper2,
