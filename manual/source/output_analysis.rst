@@ -12,7 +12,7 @@ To use the ROOT analysis (and the Python interface)::
    export PATH=$PATH:$ROBDSIM
    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (Linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
-   export PYTHON_PATH=$PYTHON_PATH:$ROBDSIM
+   export PYTHONPATH=$PYTHONPATH:$ROBDSIM
    
 Note that several ROOT analysis output (output of robdsimAnal) files can be combined into one file with the command::
 
