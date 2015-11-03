@@ -104,27 +104,6 @@ void BDSBeamPipeFactoryRaceTrack::GeneratePoints(G4double aper1,
   GenerateRaceTrack(containerSubtractionEdge, contSub1, contSub2, contSub3, pointsPerTwoPi);
 }
 
-/// test input parameters - if not set use global defaults for this simulation
-void BDSBeamPipeFactoryRaceTrack::TestInputParameters(G4Material*& vacuumMaterial,
-						      G4double&    beamPipeThickness,
-						      G4Material*& beamPipeMaterial,
-						      G4double&    aper1In,
-						      G4double&    aper2In,
-						      G4double&    aper3In,
-						      G4double&    /*aper4In*/)
-{
-  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterial,beamPipeThickness,beamPipeMaterial);
-
-  if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetAper1();}
-
-  if (aper2In < 1e-10)
-    {aper2In = BDSGlobalConstants::Instance()->GetAper2();}
-
-  if (aper3In < 1e-10)
-    {aper3In = BDSGlobalConstants::Instance()->GetAper3();}
-}
-
 G4double BDSBeamPipeFactoryRaceTrack::CalculateIntersectionRadius(G4double aper1,
 								  G4double aper2,
 								  G4double aper3,

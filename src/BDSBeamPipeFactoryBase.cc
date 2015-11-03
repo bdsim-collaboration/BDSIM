@@ -73,20 +73,6 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::CreateBeamPipeAngledOut(G4String    nameIn,
 {
   return CreateBeamPipeAngledInOut(nameIn,lengthIn,0,angleOutIn,aper1,aper2,aper3,aper4,vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
 }
-
-void BDSBeamPipeFactoryBase::TestInputParameters(G4Material*&  vacuumMaterialIn,
-						 G4double&     beamPipeThicknessIn,
-						 G4Material*&  beamPipeMaterialIn)
-{
-  if (!vacuumMaterialIn)
-    {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
-
-  if (beamPipeThicknessIn < 1e-10)
-    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-
-  if (!beamPipeMaterialIn)
-    {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
-}
   
 void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* vacuumMaterialIn,

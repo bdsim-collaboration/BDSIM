@@ -17,7 +17,7 @@ BDSLaserWire::BDSLaserWire(G4String      name,
 
 void BDSLaserWire::BuildContainerLogicalVolume()
 {
-  G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetBeamPipeRadius();
+  G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetAper1();
   containerSolid = new G4Box(name +"_container_solid",
 			     beamPipeRadius,
 			     beamPipeRadius,

@@ -66,10 +66,9 @@ Options::Options()
   sensitiveBeamlineComponents = 1;
   
   // beam pipe / aperture
-  beampipeRadius       = 0.05;
   beampipeThickness    = 0.005;
   apertureType         = "circular";
-  aper1                = 0.0;
+  aper1                = 0.05; // also beampipeRadius
   aper2                = 0.0;
   aper3                = 0.0;
   aper4                = 0.0;
@@ -290,7 +289,7 @@ void Options::PublishMembers()
   publish("outerDiameter",&Options::outerDiameter);
   publish("boxSize",      &Options::outerDiameter); // for backwards compatability
   publish("includeIronMagFields",&Options::includeIronMagFields);
-  publish("beampipeRadius",&Options::beampipeRadius);
+  publish("beampipeRadius",&Options::aper1);
   publish("beampipeThickness",&Options::beampipeThickness);
   publish("apertureType",&Options::apertureType);
   publish("aper1",&Options::aper1);

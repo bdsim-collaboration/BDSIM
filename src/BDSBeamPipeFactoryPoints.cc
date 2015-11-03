@@ -169,10 +169,7 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String    nameIn,       
 #endif
   // clean up after last usage
   CleanUp();
-
-  // test input parameters
-  TestInputParameters(vacuumMaterialIn, beamPipeThicknessIn, beamPipeMaterialIn, aper1In, aper2In, aper3In, aper4In);
-
+  
   // generate extruded solid edges - provided by derived class
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
 
@@ -202,10 +199,7 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipeAngledInOut(G4String    nam
 #endif
   // clean up after last usage
   CleanUp();
-
-  // test input parameters
-  TestInputParameters(vacuumMaterialIn, beamPipeThicknessIn, beamPipeMaterialIn, aper1In, aper2In, aper3In, aper4In);
-
+  
   // generate extruded solid edges - provided by derived class
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
   
