@@ -63,6 +63,9 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn,
 			    G4double& aper3,
 			    G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   if (beamPipeTypeIn == BDSBeamPipeType::circular)
     {InfoOKForCircular(aper1,aper2,aper3,aper4);}
   if (beamPipeTypeIn == BDSBeamPipeType::elliptical)
@@ -86,6 +89,13 @@ void BDS::CheckRequiredParametersSet(G4double& aper1, G4bool setAper1,
 				     G4double& aper3, G4bool setAper3,
 				     G4double& aper4, G4bool setAper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << "aper1: " << aper1 << " check it? " << setAper1 << G4endl;
+  G4cout << "aper2: " << aper2 << " check it? " << setAper2 << G4endl;
+  G4cout << "aper3: " << aper3 << " check it? " << setAper3 << G4endl;
+  G4cout << "aper4: " << aper4 << " check it? " << setAper4 << G4endl;
+#endif
   G4bool shouldExit = false;
   if (setAper1)
     {
@@ -117,21 +127,33 @@ void BDS::CheckRequiredParametersSet(G4double& aper1, G4bool setAper1,
 
 void BDS::InfoOKForCircular(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CheckRequiredParametersSet(aper1, true, aper2, false, aper3, false, aper4, false);
 }
 
 void BDS::InfoOKForElliptical(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CheckRequiredParametersSet(aper1, true, aper2, true, aper3, false, aper4, false);
 }
 
 void BDS::InfoOKForRectangular(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CheckRequiredParametersSet(aper1, true, aper2, true, aper3, false, aper4, false);
 }
 
 void BDS::InfoOKForLHC(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, false);
 
   if ((aper3 > aper1) and (aper2 < aper3))
@@ -149,11 +171,17 @@ void BDS::InfoOKForLHC(G4double& aper1, G4double& aper2, G4double& aper3, G4doub
 
 void BDS::InfoOKForLHCDetailed(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   InfoOKForLHC(aper1,aper2,aper3,aper4);
 }
 
 void BDS::InfoOKForRectEllipse(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, true);
 
   // TBC
@@ -177,5 +205,8 @@ void BDS::InfoOKForRectEllipse(G4double& aper1, G4double& aper2, G4double& aper3
 
 void BDS::InfoOKForRaceTrack(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, false);
 }
