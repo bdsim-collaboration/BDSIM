@@ -80,3 +80,16 @@ How to run::
 
 .. figure:: 6_rectellipse.png
 	    :width: 40%
+
+7_racetrack.gmad
+----------------
+
+A small section of beam pipe with a MADX racetrack aperture style. This is
+a rectangle with circularly rounded edges.
+
+How to run::
+
+  bdsim --file=7_racetrack.gmad
+
+.. figure:: 7_racetrack.png
+	    :width: 40%

@@ -4,3 +4,4 @@ simple_testing(3_beampipe_elliptical "--file=3_elliptical.gmad" ${OVERLAP_CHECK}
 simple_testing(4_beampipe_lhc "--file=4_lhc.gmad" ${OVERLAP_CHECK})
 simple_testing(5_beampipe_lhcdetailed "--file=5_lhcdetailed.gmad" ${OVERLAP_CHECK})
 simple_testing(6_beampipe_rectellipse "--file=6_rectellipse.gmad" ${OVERLAP_CHECK})
+simple_testing(7_beampipe_racetrack "--file=7_racetrack.gmad" ${OVERLAP_CHECK})

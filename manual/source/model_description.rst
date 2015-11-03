@@ -732,12 +732,12 @@ are degenerate.
 | `rectellipse`     | 4            | x half width of   | y half width of | x semi-axis   | y semi-axis   |
 |                   |              | rectangle         | rectangle       | of ellipse    | of ellipse    |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-
+| `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
+|                   |              | of circle         | of circle       | circular part |               |
++-------------------+--------------+-------------------+-----------------+---------------+---------------+
 ..
   to be completed in code before being added to the manual
-  | `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
-  |                   |              | of circle         | of circle       | circular part |               |
-  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
+
   | `octagon`         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
   +-------------------+--------------+-------------------+-----------------+---------------+---------------+
 
@@ -747,8 +747,6 @@ Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
-
-.. MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
 --------------------------
