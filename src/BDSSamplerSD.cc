@@ -7,7 +7,6 @@
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPoint.hh"
-#include "BDSUtilities.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Track.hh"
