@@ -3,7 +3,6 @@
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
-#include "G4UniformMagField.hh"
 #include "globals.hh"
 
 #include <limits>
