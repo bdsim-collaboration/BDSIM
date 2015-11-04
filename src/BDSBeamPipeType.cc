@@ -18,7 +18,8 @@ std::map<BDSBeamPipeType, std::string>* BDSBeamPipeType::dictionary =
    {BDSBeamPipeType::lhcdetailed,"lhcdetailed"},
    {BDSBeamPipeType::rectangular,"rectangular"},
    {BDSBeamPipeType::rectellipse,"rectellipse"},
-   {BDSBeamPipeType::racetrack,  "racetrack"}
+   {BDSBeamPipeType::racetrack,  "racetrack"},
+   {BDSBeamPipeType::octagonal,  "octagonal"}
 });	
 
 BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
@@ -31,6 +32,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   types["lhcdetailed"] = BDSBeamPipeType::lhcdetailed;
   types["rectellipse"] = BDSBeamPipeType::rectellipse;
   types["racetrack"]   = BDSBeamPipeType::racetrack;
+  types["octagonal"]   = BDSBeamPipeType::octagonal;
 
   apertureType.toLower();
 
@@ -80,6 +82,8 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn,
     {InfoOKForRectEllipse(aper1,aper2,aper3,aper4);}
   if (beamPipeTypeIn == BDSBeamPipeType::racetrack)
     {InfoOKForRaceTrack(aper1,aper2,aper3,aper4);}
+  if (beamPipeTypeIn == BDSBeamPipeType::octagonal)
+    {InfoOKForOctagonal(aper1,aper2,aper3,aper4);}
   else
     {InfoOKForCircular(aper1,aper2,aper3,aper4);}
 }
@@ -209,4 +213,17 @@ void BDS::InfoOKForRaceTrack(G4double& aper1, G4double& aper2, G4double& aper3, 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, false);
+}
+
+void BDS::InfoOKForOctagonal(G4double& aper1, G4double& aper2, G4double& aper3, G4double& aper4)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  CheckRequiredParametersSet(aper1, true, aper2, true, aper3, true, aper4, true);
+
+  if (aper3 >= aper1)
+    {G4cerr << "aper3 is >= aper1 - invalid for an octagonal aperture"; exit(1);}
+  if (aper4 >= aper2)
+    {G4cerr << "aper4 is >= aper2 - invalid for an octagonal aperture"; exit(1);}
 }
