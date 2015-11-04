@@ -139,7 +139,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
   // -- get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
-
+  
   // -- check for only scaling primary
   if ( fPrimaryScale[callingProcess] == 2 && track->GetParentID() != 0 ) return nullptr;
   if ( fPrimaryScale[callingProcess] == 3 && track->GetParentID() == 0 ) return nullptr;
@@ -148,7 +148,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // STB Just return the operation before the multiple sampling check
   operation->SetBiasedCrossSection( XStransformation * analogXS );
   operation->Sample();
-  return operation;
+  //  return operation;
     
   // -- now setup the operation to be returned to the process: this
   // -- consists in setting the biased cross-section, and in asking
