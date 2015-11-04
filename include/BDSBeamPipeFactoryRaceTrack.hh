@@ -54,18 +54,6 @@ private:
 					       G4double aper4,
 					       G4double beamPipeThickness);
 
-  void AppendPoint(std::vector<G4TwoVector>& vec,
-		   G4double x,
-		   G4double y);
-
-  void AppendAngle(std::vector<G4TwoVector>& vec,
-		   G4double startAngle,
-		   G4double finishAngle,
-		   G4double radius,
-		   G4int    nPoints = 10,
-		   G4double xOffset = 0,
-		   G4double yOffset = 0);
-
   void GenerateRaceTrack(std::vector<G4TwoVector>& vec,
 			 G4double x,
 			 G4double y,

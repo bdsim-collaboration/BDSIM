@@ -78,6 +78,18 @@ public:
   /// Clear member vectors and run base class clean up to clear pointers between runs
   virtual void CleanUp();
 
+  void AppendPoint(std::vector<G4TwoVector>& vec,
+		   G4double x,
+		   G4double y);
+
+  void AppendAngle(std::vector<G4TwoVector>& vec,
+		   G4double startAngle,
+		   G4double finishAngle,
+		   G4double radius,
+		   G4int    nPoints = 10,
+		   G4double xOffset = 0,
+		   G4double yOffset = 0);
+
 protected:
   /// Vector of x,y coordinates for vacuum extruded solid edge.
   std::vector<G4TwoVector> vacuumEdge;

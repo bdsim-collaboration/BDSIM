@@ -7,8 +7,7 @@
 #include "globals.hh"                 // geant4 globals / types
 #include "G4TwoVector.hh"
 
-#include <cmath>                      // sin, cos, fabs
-#include <utility>                    // for std::pair
+#include <cmath>
 
 
 BDSBeamPipeFactoryRaceTrack* BDSBeamPipeFactoryRaceTrack::_instance = nullptr;
@@ -26,38 +25,6 @@ BDSBeamPipeFactoryRaceTrack::BDSBeamPipeFactoryRaceTrack()
 BDSBeamPipeFactoryRaceTrack::~BDSBeamPipeFactoryRaceTrack()
 {
   _instance = nullptr;
-}
-
-void BDSBeamPipeFactoryRaceTrack::AppendPoint(std::vector<G4TwoVector>& vec,
-					      G4double x,
-					      G4double y)
-{
-  vec.push_back(G4TwoVector(x,y));
-}
-
-void BDSBeamPipeFactoryRaceTrack::AppendAngle(std::vector<G4TwoVector>& vec,
-					      G4double startAngle,
-					      G4double finishAngle,
-					      G4double radius,
-					      G4int    nPoints,
-					      G4double xOffset,
-					      G4double yOffset)
-{
-  G4double diff = finishAngle - startAngle;
-  G4double delta = diff / (G4double)nPoints;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "start angle:  " << startAngle  << G4endl;
-  G4cout << __METHOD_NAME__ << "finish angle: " << finishAngle << G4endl;
-  G4cout << __METHOD_NAME__ << "# of points:  " << nPoints     << G4endl;
-  G4cout << __METHOD_NAME__ << "diff angle:   " << diff        << G4endl;
-  G4cout << __METHOD_NAME__ << "delta angle:  " << delta       << G4endl;
-#endif
-  for (G4double ang = startAngle; ang < finishAngle; ang += delta)
-    { // l for local
-      G4double xl = xOffset + radius*sin(ang);
-      G4double yl = yOffset + radius*cos(ang);
-      AppendPoint(vec, xl, yl);
-    }
 }
 
 void BDSBeamPipeFactoryRaceTrack::GenerateRaceTrack(std::vector<G4TwoVector>& vec,
