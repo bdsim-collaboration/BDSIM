@@ -746,11 +746,9 @@ are degenerate.
 | `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
 |                   |              | of circle         | of circle       | circular part |               |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-..
-  to be completed in code before being added to the manual
-
-  | `octagon`         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
-  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
+| `octagonal`       | 4            | x half width      | y half width    | x point of    | y point of    |
+|                   |              |                   |                 | start of edge | start of edge |
++-------------------+--------------+-------------------+-----------------+---------------+---------------+
 
 These parameters can be set with the *option* command as the default parameters
 and also on a per element basis, that overrides the defaults for that specific element.
