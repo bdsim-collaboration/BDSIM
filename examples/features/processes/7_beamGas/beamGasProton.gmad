@@ -24,7 +24,7 @@ option, vacuumMaterial="bpgas"; !Sets the beam pipe vacuum material to bpgas
 
 dd=20.0*m;
 
-myPipe1 : drift, l=dd; 
+myPipe1 : drift, l=dd, biasVacuum="protonPrimaryVacuum"; 
 myPipe2 : drift, l=dd;
 myPipe3 : drift, l=dd;
 myPipe4 : drift, l=dd;
