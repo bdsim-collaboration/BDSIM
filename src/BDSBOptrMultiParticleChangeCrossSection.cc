@@ -39,6 +39,7 @@ void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
   BDSBOptrChangeCrossSection* optr = new BDSBOptrChangeCrossSection(particleName,particleName);
   fParticlesToBias.push_back(particle);
   fBOptrForParticle[particle] = optr;
+  optr->StartRun();
 }
 
 void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary) 
