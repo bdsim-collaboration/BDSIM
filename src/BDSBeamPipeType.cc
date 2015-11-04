@@ -68,24 +68,35 @@ void BDS::CheckApertureInfo(BDSBeamPipeType beamPipeTypeIn,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (beamPipeTypeIn == BDSBeamPipeType::circular)
-    {InfoOKForCircular(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::elliptical)
-    {InfoOKForElliptical(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::rectangular)
-    {InfoOKForRectangular(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::lhc)
-    {InfoOKForLHC(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::lhcdetailed)
-    {InfoOKForLHCDetailed(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::rectellipse)
-    {InfoOKForRectEllipse(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::racetrack)
-    {InfoOKForRaceTrack(aper1,aper2,aper3,aper4);}
-  if (beamPipeTypeIn == BDSBeamPipeType::octagonal)
-    {InfoOKForOctagonal(aper1,aper2,aper3,aper4);}
-  else
-    {InfoOKForCircular(aper1,aper2,aper3,aper4);}
+  switch (beamPipeTypeIn.underlying())
+    {
+    case BDSBeamPipeType::circular:
+      InfoOKForCircular(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::elliptical:
+      InfoOKForElliptical(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::rectangular:
+      InfoOKForRectangular(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::lhc:
+      InfoOKForLHC(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::lhcdetailed:
+      InfoOKForLHCDetailed(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::rectellipse:
+      InfoOKForRectEllipse(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::racetrack:
+      InfoOKForRaceTrack(aper1,aper2,aper3,aper4);
+      break;
+    case BDSBeamPipeType::octagonal:
+      InfoOKForOctagonal(aper1,aper2,aper3,aper4);
+      break;
+    default:
+      InfoOKForCircular(aper1,aper2,aper3,aper4);
+    }
 }
 
 void BDS::CheckRequiredParametersSet(G4double& aper1, G4bool setAper1,
