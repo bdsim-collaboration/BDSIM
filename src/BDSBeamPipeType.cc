@@ -39,7 +39,12 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   if ( types.find(apertureType) == types.end() )
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << " " << apertureType << " is not a valid apertureType" << G4endl;
+      G4cerr << __METHOD_NAME__ << " " << apertureType << "is not a valid apertureType" << G4endl;
+
+      G4cout << "Available geometry types are:" << G4endl;
+      std::map<G4String, BDSBeamPipeType>::iterator it = types.begin();
+      for (; it != types.end(); ++it)
+	{G4cout << "\"" << (*it).first << "\"" << G4endl;}
       exit(1);
     }
 
