@@ -32,6 +32,7 @@ void Parameters::flush() {
   aper4set = false;
   apertureTypeset = false;
   beampipeMaterialset = false;
+  vacuumMaterialset   = false;
   magnetGeometryTypeset = false;
   outerMaterialset      = false;
   outerDiameterset      = false;
@@ -108,7 +109,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!aper4set) { aper4 = e.aper4; aper4set = true;}
   if(!apertureTypeset) { apertureType = e.apertureType; apertureTypeset = true;}
   if(!beampipeMaterialset) { beampipeMaterial = e.beampipeMaterial; beampipeMaterialset = true;}
-
+  if(!vacuumMaterialset)   { vacuumMaterial   = e.vacuumMaterial; vacuumMaterialset = true;}
+  
   // magnet geometry
   if(!magnetGeometryTypeset) {magnetGeometryType = e.magnetGeometryType; magnetGeometryTypeset = true;}
   if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = true;}
