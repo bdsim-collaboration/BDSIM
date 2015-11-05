@@ -6,7 +6,7 @@
 #include "G4Material.hh"
 
 /**
- * @brief Holder struct of all information required to
+ * @brief Holder class for all information required to
  * create a beam pipe. This reduces the number of argument
  * to all magnet constructors plus aggregates common tasks
  * in the component factory.
@@ -14,9 +14,10 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct BDSBeamPipeInfo {
-  /// default constructor
-  BDSBeamPipeInfo();
+class BDSBeamPipeInfo
+{
+public:
+
 
   /// extra constructor to assign all members at once
   BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,

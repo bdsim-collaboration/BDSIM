@@ -8,7 +8,7 @@
 
 #include <list>
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSMultipole: public BDSMagnet

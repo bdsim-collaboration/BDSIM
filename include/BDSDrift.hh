@@ -5,9 +5,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-class BDSBeamPipe;
-
-struct BDSBeamPipeInfo;
+class BDSBeamPipeInfo;
 
 class BDSDrift: public BDSAcceleratorComponent
 {
