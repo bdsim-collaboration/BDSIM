@@ -84,9 +84,10 @@ int main(int argc,char** argv)
   GMAD::gmad_parser(execOptions->GetInputFilename());
 
   //
-  // parse options and explicitly initialise materials and global constants
+  // parse options, explicitly initialise materials and global constants and construct required materials
   //
-  BDSMaterials::Instance();
+  BDSMaterials::Instance()->PrepareRequiredMaterials();
+  
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   //
