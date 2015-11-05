@@ -20,14 +20,17 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-namespace GMAD {
+class BDSBeamPipeInfo;
+
+namespace GMAD
+{
   class Options;
 }
 
 /**
- * @brief a class that holds global options and constants
+ * @brief A class that holds global options and constants.
  * 
- * singleton pattern
+ * Singleton pattern
  */
 class BDSGlobalConstants 
 {
