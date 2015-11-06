@@ -1,5 +1,5 @@
-V0.8.develop - 2015 / ?? / ??
-=============================
+V0.9 - 2015 / 11 / 09
+=====================
 
 New Features
 ------------
@@ -25,6 +25,10 @@ Geometry
   of the element.
 * Reduced dupliation in magnet outer factories.
 * Fixed overlaps in rbend geometry (issue #64)
+* Increase tolerance for sector bends (issue #73)
+* Protect against zero angle sector bends (issue #74)
+* Fixed overlaps in GDML geometry (issue #81)
+* Geometry fixes (issues #76, 94, 95)
   
 Physics
 ^^^^^^^
@@ -41,13 +45,18 @@ Tracking
 
 * Introduced a separate auxiliary G4Navigator to avoid accidentally moving
   the particle during tracking when querying global to local transforms.
+* Transform for curvilinear coordinates to global coordinates
+  so primaries in those coordinates can be injected from anywhere (issue #63)
+* Dipole uses local coordinates and can bend in any direction (issue #78)
   
 General
 ^^^^^^^
 
+* Samplers can be attached to occurrence of a duplicated element (issue #47)
 * Output survey updated and fixed (issue #60)
 * Check for Geant4 environment variables (issue #62)
 * Consistent policy for overwriting output files (issue #65)
+* Improve memory and cpu for output writing (issue #86)
 
 V0.8 - 2015 / 08 / 10
 =====================
