@@ -137,8 +137,8 @@ void Element::flush() {
   ysizeOut = 0;
   r = 0;
   B = 0;
-  phiAngleIn = 0;
-  phiAngleOut = 0;
+  e1 = 0;
+  e2 = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
@@ -196,8 +196,8 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "k3") return k3;
   if(property_name == "k4") return k4;
   if(property_name == "angle") return angle;
-  if(property_name == "phiAngleIn") return phiAngleIn;
-  if(property_name == "phiAngleOut") return phiAngleOut;
+  if(property_name == "e1") return e1;
+  if(property_name == "e2") return e2;
   if(property_name == "beampipeThickness") return beampipeThickness;
   if(property_name == "aper") return aper1;
   if(property_name == "aper1") return aper1;
@@ -331,18 +331,16 @@ void Element::set(const struct Parameters& params)
   if(params.blmLocThetaset)
     blmLocTheta = params.blmLocTheta;
 
-  // Drift
-  if(params.phiAngleInset)
-    phiAngleIn = params.phiAngleIn;
-  if(params.phiAngleOutset)
-    phiAngleOut = params.phiAngleOut;
-
   // RF
   if(params.gradientset)
     gradient = params.gradient;
   // SBend, RBend, (Awake)Screen
   if(params.angle)
     angle = params.angle;
+  if(params.e1)
+    e1 = params.e1;
+  if(params.e2)
+    e2 = params.e2;
   // SBend, RBend, HKick, VKick
   if(params.k0set)
     k0 = params.k0;

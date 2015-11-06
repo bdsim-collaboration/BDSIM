@@ -50,8 +50,8 @@ struct Element {
   double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
   double r; ///< radius, i.e cylindrical sampler
   double B; ///< magnetic field
-  double phiAngleIn; ///< incoming bending angle for element
-  double phiAngleOut; ///< outgoing bending angle for element
+  double e1; ///< input pole face rotation for bends
+  double e2; ///< output pole face rotation for bends
   double offsetX; ///< offset X
   double offsetY; ///< offset Y
   double tscint; ///<thickness of scintillating part of screen

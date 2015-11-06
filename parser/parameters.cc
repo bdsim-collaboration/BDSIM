@@ -42,8 +42,8 @@ void Parameters::flush() {
   ysizeOutset = false;
   rset = false;
   Bset  = false;
-  phiAngleInset = false;
-  phiAngleOutset = false;
+  e1set = false;
+  e2set = false;
   offsetXset = false;
   offsetYset = false;
   tscintset = false;
@@ -121,8 +121,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!ysizeOutset) { ysizeOut = e.ysizeOut; ysizeOutset = true; }
   if(!rset) { r = e.r; rset = true; }
   if(!Bset) { B = e.B; Bset = true; }
-  if(!phiAngleInset) { phiAngleIn = e.phiAngleIn; phiAngleInset = true; }
-  if(!phiAngleOutset) { phiAngleOut = e.phiAngleOut; phiAngleOutset = true; }
+  if(!e1set) { e1 = e.e1; e1set = true; }
+  if(!e2set) { e2 = e.e2; e2set = true; }
   if(!offsetXset) { offsetX = e.offsetX; offsetXset = true; }
   if(!offsetYset) { offsetY = e.offsetY; offsetYset = true; }
   if(!tscintset) { tscint = e.tscint; tscintset = true; }
@@ -193,8 +193,8 @@ void Parameters::set_value(std::string property, double value )
   if(property=="k3") { k3 = value; k3set = true; return;} // octupole coef.
   if(property=="k4") { k4 = value; k4set = true; return;} // decapole coef.
   if(property=="angle") { angle = value; angleset = true; return;} // dipole bending angle
-  if(property=="phiAngleIn") { phiAngleIn = value; phiAngleInset = true; return;} // element incoming angle
-  if(property=="phiAngleOut") { phiAngleOut = value; phiAngleOutset = true; return;} // element outgoing angle
+  if(property=="e1") {e1 = value; e1set = true; return;}
+  if(property=="e2") {e2 = value; e2set = true; return;}
   if(property=="beampipeThickness")
     { beampipeThickness = value; beampipeThicknessset = true; return;}
   
@@ -245,9 +245,7 @@ void Parameters::set_value(std::string property, double value )
   if(property=="materialThickness") {materialThickness = value; materialThicknessset = true; return;} // degrader thickness
   if(property=="degraderOffset")    {degraderOffset = value; degraderOffsetset = true; return;} // degrader thickness
   // not implemented mad parameters will be ignored
-  if(property=="e1") {return;}  // fringe field parameters
-  if(property=="e2") {return;}
-  if(property=="fint") {return;}
+  if(property=="fint") {return;} // fringe field parameters
   if(property=="fintx") {return;}
   if(property=="hgap") {return;}
   if(property=="harmon") {return;} // rf cavity

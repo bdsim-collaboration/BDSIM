@@ -31,7 +31,7 @@ namespace GMAD {
     bool magnetGeometryTypeset;
     bool outerMaterialset;
     bool outerDiameterset;
-    bool tiltset,xsizeset,ysizeset,xsizeOutset,ysizeOutset,rset,Bset, phiAngleInset, phiAngleOutset;
+    bool tiltset,xsizeset,ysizeset,xsizeOutset,ysizeOutset,rset,Bset, e1set, e2set;
     bool offsetXset, offsetYset;
     bool tscintset, twindowset, bmapZOffsetset; 
     bool xdirset, ydirset, zdirset, waveLengthset;
