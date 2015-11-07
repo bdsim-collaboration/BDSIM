@@ -9,7 +9,7 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4UniformElectricField.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSRfCavity: public BDSMagnet

@@ -5,9 +5,7 @@
 
 #include "BDSMagnet.hh"
 
-#include <list>
-
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSSextupole: public BDSMagnet

@@ -72,9 +72,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
   if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
   
-  // prepare materials for this run
-  BDSMaterials::Instance()->PrepareRequiredMaterials();
-
   // construct regions
   InitialiseRegions();
   

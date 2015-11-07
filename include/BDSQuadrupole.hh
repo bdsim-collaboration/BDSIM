@@ -4,7 +4,7 @@
 #include "globals.hh"
 #include "BDSMagnet.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSQuadrupole: public BDSMagnet
