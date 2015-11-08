@@ -37,6 +37,7 @@ struct Element {
   double aper4;
   std::string apertureType;
   std::string beampipeMaterial;
+  std::string vacuumMaterial;
   ///@}
   
   // magnet geometry
@@ -46,6 +47,7 @@ struct Element {
 
   double tilt; ///< tilt
   double xsize, ysize; ///< collimator aperture or laser spotsize for laser
+  double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
   double r; ///< radius, i.e cylindrical sampler
   double B; ///< magnetic field
   double phiAngleIn; ///< incoming bending angle for element
@@ -77,9 +79,16 @@ struct Element {
   std::list<double> blmLocTheta;
   ///@}
   
-  /// physics biasing process
+  ///@{ temporary string for bias setting
   std::string bias;
-  
+  std::string biasMaterial;
+  std::string biasVacuum;
+  ///@}
+  /// physics biasing list for the material
+  std::list<std::string> biasMaterialList;
+  /// physics biasing list for the vacuum
+  std::list<std::string> biasVacuumList;
+ 
   int precisionRegion; ///which precision physics region the element is in (0 = none)
 
   ///@{ material properties

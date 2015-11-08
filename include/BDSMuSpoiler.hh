@@ -5,7 +5,7 @@
 #include "BDSMagnet.hh"
 #include "BDSMuSpoilerMagField.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSMuSpoiler: public BDSMagnet

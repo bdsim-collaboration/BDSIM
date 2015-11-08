@@ -28,10 +28,11 @@ namespace GMAD {
     bool aper1set, aper2set, aper3set, aper4set;
     bool apertureTypeset;
     bool beampipeMaterialset;
+    bool vacuumMaterialset;
     bool magnetGeometryTypeset;
     bool outerMaterialset;
     bool outerDiameterset;
-    bool tiltset,xsizeset,ysizeset,rset,Bset, phiAngleInset, phiAngleOutset;
+    bool tiltset,xsizeset,ysizeset,xsizeOutset,ysizeOutset,rset,Bset, phiAngleInset, phiAngleOutset;
     bool offsetXset, offsetYset;
     bool tscintset, twindowset;
     bool bmapXOffsetset, bmapYOffsetset, bmapZOffsetset; 
@@ -42,7 +43,7 @@ namespace GMAD {
     bool kslset;
     bool blmLocZset;
     bool blmLocThetaset;
-    bool biasset;
+    bool biasset,biasMaterialset,biasVacuumset;
     bool precisionRegionset;
     
     bool Aset; 

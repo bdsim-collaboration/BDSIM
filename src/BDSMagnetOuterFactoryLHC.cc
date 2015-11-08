@@ -1,6 +1,7 @@
 #include "BDSMagnetOuterFactoryLHC.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSColours.hh"
@@ -315,7 +316,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
       coil1InnerLV->SetVisAttributes(coilVisAtt);
       coil2InnerLV->SetVisAttributes(coilVisAtt);
 
-      coil1InnerPV = new G4PVPlacement(0,                      // rotation
+      coil1InnerPV = new G4PVPlacement(nullptr,                      // rotation
 				       -dipolePosition,        // position
 				       coil1InnerLV,           // its logical volume
 				       name+"_coil1_inner_pv", // its name
@@ -323,7 +324,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				       false,                  // no boolean operation
 				       0, 
 				       checkOverlaps);
-      coil2InnerPV = new G4PVPlacement(0,                      // rotation
+      coil2InnerPV = new G4PVPlacement(nullptr,                      // rotation
 				       -dipolePosition,        // position
 				       coil2InnerLV,           // its logical volume
 				       name+"_coil2_inner_pv", // its name
@@ -365,7 +366,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
       collar1PoleTopInnerLV->SetVisAttributes(collarVisAtt);
       collar1PoleBottomInnerLV->SetVisAttributes(collarVisAtt);
 
-      collar1PoleTopInnerPV = new G4PVPlacement(0,                          // rotation
+      collar1PoleTopInnerPV = new G4PVPlacement(nullptr,                          // rotation
 						-dipolePosition,            // position
 						collar1PoleTopInnerLV,      // its logical volume
 						name+"_collar1_pole_top_inner_pv",// its name
@@ -373,7 +374,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						false,                      // no boolean operation
 						0,
 						checkOverlaps);
-      collar1PoleBottomInnerPV = new G4PVPlacement(0,                          // rotation
+      collar1PoleBottomInnerPV = new G4PVPlacement(nullptr,                          // rotation
 						   -dipolePosition,            // position
 						   collar1PoleBottomInnerLV,   // its logical volume
 						   name+"_collar1_pole_top_inner_pv",// its name
@@ -419,7 +420,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
       coil2OuterLV->SetVisAttributes(coilVisAtt);
 
       
-      coil1OuterPV = new G4PVPlacement(0,                      // rotation
+      coil1OuterPV = new G4PVPlacement(nullptr,                      // rotation
 				       -dipolePosition,        // position
 				       coil1OuterLV,           // its logical volume
 				       name+"_coil1_outer_pv", // its name
@@ -427,7 +428,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				       false,                  // no boolean operation
 				       0, 
 				       checkOverlaps);
-      coil2OuterPV = new G4PVPlacement(0,                      // rotation
+      coil2OuterPV = new G4PVPlacement(nullptr,                      // rotation
 				       -dipolePosition,        // position
 				       coil2OuterLV,           // its logical volume
 				       name+"_coil2_outer_pv", // its name
@@ -470,7 +471,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
       collar1PoleTopOuterLV->SetVisAttributes(collarVisAtt);
       collar1PoleBottomOuterLV->SetVisAttributes(collarVisAtt);
       
-      collar1PoleTopOuterPV = new G4PVPlacement(0,                                // rotation
+      collar1PoleTopOuterPV = new G4PVPlacement(nullptr,                                // rotation
 						-dipolePosition,                  // position
 						collar1PoleTopOuterLV,            // its logical volume
 						name+"_collar1_pole_top_inner_pv",// its name
@@ -478,7 +479,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						false,                            // no boolean operation
 						0,
 						checkOverlaps);
-      collar1PoleBottomOuterPV = new G4PVPlacement(0,                                // rotation
+      collar1PoleBottomOuterPV = new G4PVPlacement(nullptr,                                // rotation
 						   -dipolePosition,                  // position
 						   collar1PoleBottomOuterLV,         // its logical volume
 						   name+"_collar1_pole_top_inner_pv",// its name
@@ -558,7 +559,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 
   
   // coil placement  
-  coil3InnerPV = new G4PVPlacement(0,                      // rotation
+  coil3InnerPV = new G4PVPlacement(nullptr,                      // rotation
 				   dipolePosition,         // position
 				   coil3InnerLV,           // its logical volume
 				   name+"_coil3_inner_pv", // its name
@@ -566,7 +567,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				   false,                  // no boolean operation
 				   0, 
 				   checkOverlaps);
-  coil3OuterPV = new G4PVPlacement(0,                      // rotation
+  coil3OuterPV = new G4PVPlacement(nullptr,                      // rotation
 				   dipolePosition,         // position
 				   coil3OuterLV,           // its logical volume
 				   name+"_coil3_outer_pv", // its name
@@ -574,7 +575,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				   false,                  // no boolean operation
 				   0, 
 				   checkOverlaps);
-  coil4InnerPV = new G4PVPlacement(0,                      // rotation
+  coil4InnerPV = new G4PVPlacement(nullptr,                      // rotation
 				   dipolePosition,         // position
 				   coil4InnerLV,           // its logical volume
 				   name+"_coil4_inner_pv", // its name
@@ -582,7 +583,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				   false,                  // no boolean operation
 				   0, 
 				   checkOverlaps);
-  coil4OuterPV = new G4PVPlacement(0,                      // rotation
+  coil4OuterPV = new G4PVPlacement(nullptr,                      // rotation
 				   dipolePosition,         // position
 				   coil4OuterLV,           // its logical volume
 				   name+"_coil4_outer_pv", // its name
@@ -660,7 +661,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   allLogicalVolumes.push_back(collar2PoleBottomOuterLV);
   
   // collar pole placement
-  collar2PoleTopInnerPV = new G4PVPlacement(0,                                // rotation
+  collar2PoleTopInnerPV = new G4PVPlacement(nullptr,                                // rotation
 					    dipolePosition,                   // position
 					    collar2PoleTopInnerLV,            // its logical volume
 					    name+"_collar2_pole_top_inner_pv",// its name
@@ -668,7 +669,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					    false,                            // no boolean operation
 					    0,
 					    checkOverlaps);
-  collar2PoleTopOuterPV = new G4PVPlacement(0,                                // rotation
+  collar2PoleTopOuterPV = new G4PVPlacement(nullptr,                                // rotation
 					    dipolePosition,                   // position
 					    collar2PoleTopOuterLV,            // its logical volume
 					    name+"_collar2_pole_top_inner_pv",// its name
@@ -676,7 +677,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					    false,                            // no boolean operation
 					    0,
 					    checkOverlaps);
-  collar2PoleBottomInnerPV = new G4PVPlacement(0,                                // rotation
+  collar2PoleBottomInnerPV = new G4PVPlacement(nullptr,                                // rotation
 					       dipolePosition,                   // position
 					       collar2PoleBottomInnerLV,         // its logical volume
 					       name+"_collar2_pole_top_inner_pv",// its name
@@ -684,7 +685,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					       false,                            // no boolean operation
 					       0,
 					       checkOverlaps);
-  collar2PoleBottomOuterPV = new G4PVPlacement(0,                                // rotation
+  collar2PoleBottomOuterPV = new G4PVPlacement(nullptr,                                // rotation
 					       dipolePosition,                   // position
 					       collar2PoleBottomOuterLV,         // its logical volume
 					       name+"_collar2_pole_top_inner_pv",// its name
@@ -773,7 +774,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 
   allLogicalVolumes.push_back(collarsLV); // register locally
   
-  collarsPV = new G4PVPlacement(0,                  // rotation
+  collarsPV = new G4PVPlacement(nullptr,                  // rotation
 			       dipolePosition,     // position
 			       collarsLV,          // its logical volume
 			       name+"_collars_pv", // its name
@@ -828,7 +829,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   allLogicalVolumes.push_back(yokeLV); // register locally
 
   // yoke placement
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -837,11 +838,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     0,                            // copy number
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
-  
-  G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
-  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
-  G4Material* vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
+  G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
+  
   //use beampipe factories to create another beampipe (note no magnetic field for now...)  
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
 										    name,
@@ -857,7 +858,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 										    beamPipeMaterial); // beampipe material
   
   secondBPLV = secondBP->GetContainerLogicalVolume();
-  secondBPPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				 dipolePosition,               // position
 				 secondBPLV,                   // lv to be placed
 				 name + "_second_beampipe_pv", // name
@@ -1173,7 +1174,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       allLogicalVolumes.push_back(pole1LV);
 
       // coil placements
-      coil1PV = new G4PVPlacement(0,                  // rotation
+      coil1PV = new G4PVPlacement(nullptr,                  // rotation
 				  -dipolePosition,    // position
 				  coil1LV,            // logical volume
 				  name + "_coil1_pv", // name
@@ -1211,7 +1212,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       allPhysicalVolumes.push_back(coil4PV);
 
       // pole placements
-      pole1PV = new G4PVPlacement(0,                  // rotation
+      pole1PV = new G4PVPlacement(nullptr,                  // rotation
 				  -dipolePosition,    // position
 				  pole1LV,            // logical volume
 				  name + "_pole1_pv", // name
@@ -1278,7 +1279,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allLogicalVolumes.push_back(pole2LV);
   
   // fixed coil placements
-  coil5PV = new G4PVPlacement(0,                  // rotation
+  coil5PV = new G4PVPlacement(nullptr,                  // rotation
 			      dipolePosition,     // position
 			      coil2LV,            // logical volume
 			      name + "_coil5_pv", // name
@@ -1316,7 +1317,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(coil8PV);
   
   // fixed pole placements
-  pole5PV = new G4PVPlacement(0,                  // rotation
+  pole5PV = new G4PVPlacement(nullptr,                  // rotation
 			      dipolePosition,    // position
 			      pole2LV,            // logical volume
 			      name + "_pole5_pv", // name
@@ -1399,7 +1400,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   collarsLV->SetVisAttributes(collarVisAtt);
   allLogicalVolumes.push_back(collarsLV); 
 
-  G4PVPlacement* collarPV = new G4PVPlacement(0,                  // rotation
+  G4PVPlacement* collarPV = new G4PVPlacement(nullptr,                  // rotation
 					      dipolePosition,     // position
 					      collarsLV,          // its logical volume
 					      name+"_collars_pv", // its name
@@ -1453,7 +1454,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allLogicalVolumes.push_back(yokeLV); // register locally
 
   // yoke placement
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     G4ThreeVector(0,0,0),         // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -1463,9 +1464,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
 
-  G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
-  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
-  G4Material* vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
+  G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
@@ -1480,7 +1481,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 									 beamPipeMaterial); // beampipe material
   
   G4LogicalVolume* secondBPLV = secondBP->GetContainerLogicalVolume();
-  G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						dipolePosition,               // position
 						secondBPLV,                   // lv to be placed
 						name + "_second_beampipe_pv", // name

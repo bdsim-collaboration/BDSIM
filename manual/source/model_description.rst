@@ -84,6 +84,7 @@ rad         1
 mrad        :math:`10^{-3}`
 urad        :math:`10^{-6}`
 clight      :math:`2.99792458 \times 10^{8}`
+km          :math:`10^{3}`
 m           1
 cm          :math:`10^{-2}`
 mm          :math:`10^{-3}`
@@ -486,23 +487,33 @@ rcol
 `rcol` defines a rectangular collimator. The aperture is rectangular and the eternal
 volume is square.
 
-================  ============================  ==========  ===========
-parameter         description                   default     required
-`l`               length [m]                    0           yes
-`xsize`           horizontal half aperture [m]  0           yes
-`ysize`           vertical half aperture [m]    0           yes
-`material`        outer material                Iron        no
-`outerDiameter`   outer full width [m]          global      no
-================  ============================  ==========  ===========
+================  =================================  ==========  ===========
+parameter         description                        default     required
+`l`               length [m]                         0           yes
+`xsize`           horizontal half aperture [m]       0           yes
+`ysize`           vertical half aperture [m]         0           yes
+`xsizeOut`        horizontal exit half aperture [m]  0           no
+`ysizeOut`        vertical exit half aperture [m]    0           no
+`material`        outer material                     Iron        no
+`outerDiameter`   outer full width [m]               global      no
+================  =================================  ==========  ===========
 
 .. note:: `rcol` and `ecol` do not currently implement tilt, so if an angled collimator
 	  is required, a `transform3d` should before and afterwards in the sequence to
 	  rotate the coordinate frame before and afterwards. See `transform3d`_ for further
 	  details and examples.
 
+	  The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
+	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
+
+
 Examples::
 
+   ! Standard
    TCP15: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm;
+
+   ! Tapered
+   TCP16: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm, xsizeOut=208*um, ysizeOut=10*cm;
 
 
 ecol
@@ -514,7 +525,8 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half axes respectively.
+half axes respectively. When tapered, the ratio between the horizontal and vertical half
+axes of the entrance aperture must be the same ratio for the exit aperture.
 
 
 degrader
@@ -731,14 +743,12 @@ are degenerate.
 | `rectellipse`     | 4            | x half width of   | y half width of | x semi-axis   | y semi-axis   |
 |                   |              | rectangle         | rectangle       | of ellipse    | of ellipse    |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-
-..
-  to be completed in code before being added to the manual
-  | `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
-  |                   |              | of circle         | of circle       | circular part |               |
-  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-  | `octagon`         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
-  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
+| `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
+|                   |              | of circle         | of circle       | circular part |               |
++-------------------+--------------+-------------------+-----------------+---------------+---------------+
+| `octagonal`       | 4            | x half width      | y half width    | x point of    | y point of    |
+|                   |              |                   |                 | start of edge | start of edge |
++-------------------+--------------+-------------------+-----------------+---------------+---------------+
 
 These parameters can be set with the *option* command as the default parameters
 and also on a per element basis, that overrides the defaults for that specific element.
@@ -746,8 +756,6 @@ Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
-
-.. MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
 --------------------------

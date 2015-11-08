@@ -107,7 +107,6 @@ namespace GMAD {
     int         includeIronMagFields;
 
     /// default beampipe parameters
-    double      beampipeRadius;
     double      beampipeThickness;
     std::string apertureType;
     double      aper1;

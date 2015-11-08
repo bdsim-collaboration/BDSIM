@@ -64,6 +64,7 @@ void init()
 
   add_var("Tesla",1.0,reserved);
 
+  add_var("km" ,1e3 ,reserved);
   add_var("m"  ,1.0 ,reserved);
   add_var("cm" ,1e-2,reserved);
   add_var("mm" ,1e-3,reserved);

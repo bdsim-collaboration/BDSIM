@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 using namespace GMAD;
@@ -126,6 +127,7 @@ void Element::flush() {
   aper4 = 0;
   apertureType = "";
   beampipeMaterial = "";
+  vacuumMaterial = "";
 
   // magnet geometry
   magnetGeometryType  = "";
@@ -135,6 +137,8 @@ void Element::flush() {
   tilt = 0;
   xsize = 0;
   ysize = 0;
+  xsizeOut = 0;
+  ysizeOut = 0;
   r = 0;
   B = 0;
   phiAngleIn = 0;
@@ -152,12 +156,14 @@ void Element::flush() {
   theta = 0;
   psi = 0;
 
-  knl.erase(knl.begin(),knl.end());
-  ksl.erase(ksl.begin(),ksl.end());
-  blmLocZ.erase(blmLocZ.begin(), blmLocZ.end());
-  blmLocTheta.erase(blmLocTheta.begin(), blmLocTheta.end());
+  knl.clear();
+  ksl.clear();
+  blmLocZ.clear();
+  blmLocTheta.clear();
 
-  bias = "";
+  bias = ""; biasMaterial=""; biasVacuum="";
+  biasMaterialList.clear();
+  biasVacuumList.clear();
   
   precisionRegion = 0;
 
@@ -169,9 +175,9 @@ void Element::flush() {
   state = "solid";  //allowed values: "solid", "liquid", "gas"
   symbol = "";
 
-  components.erase(components.begin(),components.end());
-  componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
-  componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
+  components.clear();
+  componentsFractions.clear();
+  componentsWeights.clear();
 
   geometryFile ="";
   bmapFile = "";
@@ -208,6 +214,8 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "outR") return 0.5*outerDiameter;
   if(property_name == "xsize") return xsize;
   if(property_name == "ysize") return ysize;
+  if(property_name == "xsizeOut") return xsizeOut;
+  if(property_name == "ysizeOut") return ysizeOut;
   if(property_name == "xdir") return xdir;
   if(property_name == "ydir") return ydir;
   if(property_name == "zdir") return zdir;
@@ -266,6 +274,7 @@ void Element::set(const struct Parameters& params)
   if(params.aper4set) aper4 = params.aper4;
   if(params.apertureTypeset) apertureType = params.apertureType;
   if(params.beampipeMaterialset) beampipeMaterial = params.beampipeMaterial;
+  if(params.vacuumMaterialset) vacuumMaterial = params.vacuumMaterial;
 
   //magnet geometry
   if(params.magnetGeometryTypeset) magnetGeometryType = params.magnetGeometryType;
@@ -274,6 +283,8 @@ void Element::set(const struct Parameters& params)
   
   if(params.xsizeset) xsize = params.xsize;
   if(params.ysizeset) ysize = params.ysize;
+  if(params.xsizeOutset) xsizeOut = params.xsizeOut;
+  if(params.ysizeOutset) ysizeOut = params.ysizeOut;
   if(params.materialset) material = params.material;  
   if(params.precisionRegionset) precisionRegion = params.precisionRegion;
 
@@ -288,7 +299,37 @@ void Element::set(const struct Parameters& params)
   if(params.ydirset) ydir = params.ydir;
   if(params.zdirset) zdir = params.zdir;
 
-  if(params.biasset) bias = params.bias;
+  // bias
+  if(params.biasset) {
+    bias = params.bias;
+    // split bias into tokens and add to both material and vacuum
+    std::stringstream ss(bias);
+    std::string tok;
+    while(ss >> tok) {
+      biasMaterialList.push_back(tok);
+      biasVacuumList.push_back(tok);
+    }
+  }
+
+  if(params.biasMaterialset) {
+    biasMaterial = params.biasMaterial;
+    // split material bias into tokens
+    std::stringstream ss(biasMaterial);
+    std::string tok;
+    while(ss >> tok) {
+      biasMaterialList.push_back(tok);
+    }
+  }
+
+  if(params.biasVacuumset) {
+    biasVacuum = params.biasVacuum;
+    // split vacuum bias into tokens 
+    std::stringstream ss(biasVacuum);
+    std::string tok;
+    while(ss >> tok) {
+      biasVacuumList.push_back(tok);
+    }
+  }
   
   // BLM
   if(params.blmLocZset)

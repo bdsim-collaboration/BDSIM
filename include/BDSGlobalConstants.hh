@@ -1,12 +1,11 @@
 #ifndef BDSGLOBALCONSTANTS_H
 #define BDSGLOBALCONSTANTS_H 
 
-
-#include "BDSBeamPipeType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
 
+#include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
@@ -21,14 +20,17 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-namespace GMAD {
+class BDSBeamPipeInfo;
+
+namespace GMAD
+{
   class Options;
 }
 
 /**
- * @brief a class that holds global options and constants
+ * @brief A class that holds global options and constants.
  * 
- * singleton pattern
+ * Singleton pattern
  */
 class BDSGlobalConstants 
 {
@@ -93,8 +95,11 @@ public:
   G4bool   GetSensitiveBeamPipe() const;
   G4bool   GetSensitiveBLMs() const;
   ///@}
+
+  BDSBeamPipeInfo* GetDefaultBeamPipeModel() const;
   
   G4double GetComponentBoxSize() const;
+  
   /// Magnet geometry variable
   BDSMagnetGeometryType GetMagnetGeometryType() const;
   G4String GetOuterMaterialName() const;
@@ -117,14 +122,6 @@ public:
   G4double GetBlmLength() const;
   ///@}
   
-  ///@{ Beampipe
-  G4double GetBeamPipeRadius() const;
-  G4double GetAper1() const;
-  G4double GetAper2() const;
-  G4double GetAper3() const;
-  G4double GetAper4() const;
-  G4double GetBeamPipeThickness() const; 
-  ///@}
   
   ///@{ Sampler
   G4double GetSamplerDiameter() const;
@@ -268,6 +265,9 @@ private:
   G4double itsMagnetPoleRadius;
   ///@}
 
+  /// Default beam pipe model information
+  BDSBeamPipeInfo* defaultBeamPipeModel;
+
   /// A debug option to NOT split sbends into multiple sections
   G4bool   dontSplitSBends;
   
@@ -287,12 +287,6 @@ private:
   G4double itsBlmRad;
   G4double itsBlmLength;
   ///@}
-  G4double itsBeamPipeRadius;
-  G4double itsAper1;
-  G4double itsAper2;
-  G4double itsAper3;
-  G4double itsAper4;
-  G4double itsBeamPipeThickness;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -377,8 +371,7 @@ public:
 
   G4double GetLWCalWidth() const;
   G4double GetLWCalOffset() const;
-  BDSBeamPipeType GetApertureType() const;
-  G4String GetBeamPipeMaterialName() const;
+
   G4String GetVacuumMaterial() const;
   G4String GetEmptyMaterial() const;
 
@@ -390,8 +383,7 @@ public:
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
-  BDSBeamPipeType itsApertureType;    ///<aperture model to use by default
-  G4String itsBeamPipeMaterial;       ///<beampipe material
+  
   G4String itsVacuumMaterial;         ///<vacuum inside beampipe
   G4String itsEmptyMaterial;          ///<empty material for e.g. marker volumes
   G4bool   isWaitingForDump;
@@ -515,6 +507,9 @@ inline  G4bool BDSGlobalConstants::GetSensitiveBeamPipe() const
 inline  G4bool BDSGlobalConstants::GetSensitiveBLMs() const
 {return itsSensitiveBLMs;}
 
+inline  BDSBeamPipeInfo* BDSGlobalConstants::GetDefaultBeamPipeModel() const
+{return defaultBeamPipeModel;}  
+
 inline BDSMagnetGeometryType BDSGlobalConstants::GetMagnetGeometryType() const
 {return itsMagnetGeometryType;}
 
@@ -558,24 +553,6 @@ inline G4double BDSGlobalConstants::GetBlmRad() const
 
 inline G4double BDSGlobalConstants::GetBlmLength() const
 {return itsBlmLength;}
-
-inline G4double BDSGlobalConstants::GetBeamPipeRadius() const
-{return itsBeamPipeRadius;}
-
-inline G4double BDSGlobalConstants::GetAper1() const
-{return itsAper1;}
-
-inline G4double BDSGlobalConstants::GetAper2() const
-{return itsAper2;}
-
-inline G4double BDSGlobalConstants::GetAper3() const
-{return itsAper3;}
-
-inline G4double BDSGlobalConstants::GetAper4() const
-{return itsAper4;}
-
-inline G4double BDSGlobalConstants::GetBeamPipeThickness() const 
-{return itsBeamPipeThickness;}
 
 inline G4double BDSGlobalConstants::GetSamplerDiameter() const 
 {return itsSamplerDiameter;}
@@ -744,12 +721,6 @@ inline  G4double BDSGlobalConstants::GetLWCalWidth() const
 
 inline  G4double BDSGlobalConstants::GetLWCalOffset() const
 {return itsLWCalOffset;}
-
-inline BDSBeamPipeType BDSGlobalConstants::GetApertureType() const
-{return itsApertureType;}
-
-inline G4String BDSGlobalConstants::GetBeamPipeMaterialName() const
-{return itsBeamPipeMaterial;}
 
 inline G4String BDSGlobalConstants::GetVacuumMaterial() const
 {return itsVacuumMaterial;}

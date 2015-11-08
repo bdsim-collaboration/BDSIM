@@ -39,14 +39,6 @@ BDSRBend::BDSRBend(G4String            name,
   CalculateLengths(length);
 }
 
-BDSRBend::~BDSRBend()
-{
-  if (bpFirstBit) // may not have been constructed
-    {delete bpFirstBit;}
-  if (bpLastBit) // may not have been constructed
-    {delete bpLastBit;}
-}
-
 void BDSRBend::CalculateLengths(G4double aLength)
 {
   //full length along chord - just its length in case of rbend
@@ -204,6 +196,12 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
 
+  RegisterDaughter(bpFirstBit);
+  RegisterDaughter(beampipe);
+  RegisterDaughter(bpLastBit);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+
   G4double extentX = (beampipe->GetExtentX().second / cos(angle)) + fabs(magnetOuterOffset.x());
   SetExtentX(-extentX, extentX);
   SetExtentY(beampipe->GetExtentY());
@@ -280,7 +278,7 @@ void BDSRBend::PlaceComponents()
       // offset in container is offset suggested by beam pipe component (if asymmetrical) +
       // magnet offset due to rbend geometry
       G4ThreeVector beamPipeOffset = beampipe->GetPlacementOffset() + magnetOuterOffset;
-      G4PVPlacement* pipePV = new G4PVPlacement(0,
+      G4PVPlacement* pipePV = new G4PVPlacement(nullptr,
 						beamPipeOffset,
 						beampipe->GetContainerLogicalVolume(),   // logical volume
 						name+"_beampipe_pv",                     // name
@@ -308,7 +306,7 @@ void BDSRBend::PlaceComponents()
       G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                           // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                           // rotation
 						       placementOffset,             // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",            // its name

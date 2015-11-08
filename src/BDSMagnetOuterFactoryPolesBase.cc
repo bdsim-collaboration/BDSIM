@@ -267,7 +267,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     (G4ThreeVector)0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -280,7 +280,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 
   if (buildPoles)
     {
-      G4PVPlacement* topPolePV = new G4PVPlacement(0,                           // rotation
+      G4PVPlacement* topPolePV = new G4PVPlacement(nullptr,                           // rotation
 						   G4ThreeVector(0,poleDisp,0), // position
 						   poleLV,                      // logical volume
 						   name + "_top_pole_pv",       // name
@@ -289,7 +289,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 						   0,                           // copy number
 						   checkOverlaps);              // check overlaps
       
-      G4PVPlacement* botPolePV = new G4PVPlacement(0,                            // rotation
+      G4PVPlacement* botPolePV = new G4PVPlacement(nullptr,                            // rotation
 						   G4ThreeVector(0,-poleDisp,0), // position
 						   poleLV,                       // logical volume
 						   name + "_bottom_pole_pv",     // name
@@ -678,7 +678,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     (G4ThreeVector)0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -867,7 +867,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 #endif
 
   // place components
-  yokePV       = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV       = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				   yokeTranslation,              // position
 				   yokeLV,                       // lv to be placed
 				   name + "_yoke_pv",            // name
@@ -876,7 +876,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 				   0,                            // copy number
 				   checkOverlaps);
 
-  G4PVPlacement* poleLowerPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* poleLowerPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 lowerPoleTranslation,         // position
 						 poleLV,                       // lv to be placed
 						 name + "_lower_pole_pv",      // name
@@ -885,7 +885,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 						 0,                            // copy number
 						 checkOverlaps);
 
-  G4PVPlacement* poleUpperPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* poleUpperPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 upperPoleTranslation,         // position
 						 poleLV,                       // lv to be placed
 						 name + "_upper_pole_pv",      // name
@@ -894,7 +894,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 						 0,                            // copy number
 						 checkOverlaps);
 
-  G4PVPlacement* coilOuterPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* coilOuterPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 outerCoilTranslation,         // position
 						 coilLV,                       // lv to be placed
 						 name + "_outer_coil_pv",      // name
@@ -903,7 +903,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 						 0,                            // copy number
 						 checkOverlaps);
 
-  G4PVPlacement* coilInnerPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* coilInnerPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 innerCoilTranslation,         // position
 						 coilLV,                       // lv to be placed
 						 name + "_inner_coil_pv",      // name

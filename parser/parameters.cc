@@ -32,12 +32,15 @@ void Parameters::flush() {
   aper4set = false;
   apertureTypeset = false;
   beampipeMaterialset = false;
+  vacuumMaterialset   = false;
   magnetGeometryTypeset = false;
   outerMaterialset      = false;
   outerDiameterset      = false;
   tiltset = false;
   xsizeset = false;
   ysizeset = false;
+  xsizeOutset = false;
+  ysizeOutset = false;
   rset = false;
   Bset  = false;
   phiAngleInset = false;
@@ -59,7 +62,7 @@ void Parameters::flush() {
   psiset = false;
   knlset = false, kslset=false;
   blmLocZset = false;  blmLocThetaset = false;
-  biasset = false;
+  biasset = false, biasMaterialset = false, biasVacuumset = false;
   precisionRegionset = false;
 
   Aset = false;
@@ -108,7 +111,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!aper4set) { aper4 = e.aper4; aper4set = true;}
   if(!apertureTypeset) { apertureType = e.apertureType; apertureTypeset = true;}
   if(!beampipeMaterialset) { beampipeMaterial = e.beampipeMaterial; beampipeMaterialset = true;}
-
+  if(!vacuumMaterialset)   { vacuumMaterial   = e.vacuumMaterial; vacuumMaterialset = true;}
+  
   // magnet geometry
   if(!magnetGeometryTypeset) {magnetGeometryType = e.magnetGeometryType; magnetGeometryTypeset = true;}
   if(!outerMaterialset)      {outerMaterial      = e.outerMaterial;      outerMaterialset = true;}
@@ -117,6 +121,8 @@ void Parameters::inherit_properties(struct Element& e)
   if(!tiltset) { tilt = e.tilt; tiltset = true; }
   if(!xsizeset) { xsize = e.xsize; xsizeset = true; }
   if(!ysizeset) { ysize = e.ysize; ysizeset = true; }
+  if(!xsizeOutset) { xsizeOut = e.xsizeOut; xsizeOutset = true; }
+  if(!ysizeOutset) { ysizeOut = e.ysizeOut; ysizeOutset = true; }
   if(!rset) { r = e.r; rset = true; }
   if(!Bset) { B = e.B; Bset = true; }
   if(!phiAngleInset) { phiAngleIn = e.phiAngleIn; phiAngleInset = true; }
@@ -150,6 +156,8 @@ void Parameters::inherit_properties(struct Element& e)
 
   // physics biasing
   if(!biasset) {bias = e.bias; biasset = true; }
+  if(!biasMaterialset) {biasMaterial = e.biasMaterial; biasMaterialset = true; }
+  if(!biasVacuumset) {biasVacuum = e.biasVacuum; biasVacuumset = true; }
   if(!precisionRegionset) { precisionRegion = e.precisionRegion; precisionRegionset = true; }
   //materials
   if(!Aset) { A = e.A; Aset = true; }
@@ -216,6 +224,8 @@ void Parameters::set_value(std::string property, double value )
     { outerDiameter = 2 * value; outerDiameterset = true; return;}
   if(property=="xsize") { xsize = value; xsizeset = true; return;}
   if(property=="ysize") { ysize = value; ysizeset = true; return;}
+  if(property=="xsizeOut") { xsizeOut = value; xsizeOutset = true; return;}
+  if(property=="ysizeOut") { ysizeOut = value; ysizeOutset = true; return;}
   if(property=="tilt") { tilt = value; tiltset = true; return;}
   if(property=="offsetX") { offsetX = value; offsetXset = true; return;}
   if(property=="offsetY") { offsetX = value; offsetYset = true; return;}
@@ -352,7 +362,19 @@ void Parameters::set_value(std::string property, std::string value )
       bias = value;
       return;
     }
-  
+  if(property=="biasMaterial")
+    {
+      biasMaterialset = true;
+      biasMaterial = value;
+      return;
+    }
+  if(property=="biasVacuum")
+    {
+      biasVacuumset = true;
+      biasVacuum = value;
+      return;
+    }
+
   std::cerr << "Error: parser> unknown parameter option \"" << property << "\" with value " << value  << std::endl;
   exit(1);
 }

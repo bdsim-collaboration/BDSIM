@@ -22,6 +22,8 @@
 #include "G4GenericBiasingPhysics.hh"
 #endif
 
+#include "G4Electron.hh"
+
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
@@ -47,7 +49,7 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=nullptr;         // output interface
+BDSOutputBase* bdsOutput=nullptr;     // output interface
 //=======================================================
 
 namespace GMAD {
@@ -82,9 +84,10 @@ int main(int argc,char** argv)
   GMAD::gmad_parser(execOptions->GetInputFilename());
 
   //
-  // parse options and explicitly initialise materials and global constants
+  // parse options, explicitly initialise materials and global constants and construct required materials
   //
-  BDSMaterials::Instance();
+  BDSMaterials::Instance()->PrepareRequiredMaterials();
+  
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   //
@@ -123,7 +126,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
   if(GMAD::options.modularPhysicsListsOn) {
-    BDSModularPhysicsList *physList = new BDSModularPhysicsList;
+    BDSModularPhysicsList *physList = new BDSModularPhysicsList();
     /* Biasing */
 #if G4VERSION_NUMBER > 999
     G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
@@ -136,7 +139,7 @@ int main(int argc,char** argv)
     runManager->SetUserInitialization(physList);
   }
   else { 
-    BDSPhysicsList        *physList = new BDSPhysicsList;  
+    BDSPhysicsList        *physList = new BDSPhysicsList();  
     runManager->SetUserInitialization(physList);
   }
 
@@ -211,7 +214,13 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
 #endif
+
   runManager->Initialize();
+
+  //
+  // Build Physics bias, only after G4RunManager::Initialize()
+  //
+  detector->BuildPhysicsBias();
 
   //
   // set verbosity levels
@@ -233,40 +242,33 @@ int main(int argc,char** argv)
       BDSGeometryWriter geometrywriter;
       geometrywriter.ExportGeometry(execOptions->GetExportType(),
 				    execOptions->GetExportFileName());
-      // clean up before exiting
-      G4GeometryManager::GetInstance()->OpenGeometry();
-      delete BDSAcceleratorModel::Instance();
-      delete execOptions;
-      delete globalConstants;
-      delete BDSMaterials::Instance();
-      delete runManager;
-      delete bdsBunch;
-      return 0;
     }
-  
-  // set default output formats:
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif
-  bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
-  G4cout.precision(10);
-
-  // catch aborts to close output stream/file. perhaps not all are needed.
-  signal(SIGABRT, &BDS::HandleAborts); // aborts
-  signal(SIGTERM, &BDS::HandleAborts); // termination requests
-  signal(SIGSEGV, &BDS::HandleAborts); // segfaults
-  // no interrupts since ctest sends an interrupt signal when interrupted
-  // and then the BDSIM process somehow doesn't get killed
-  // signal(SIGINT,  &BDS::HandleAborts); // interrupts
-  
-  if(!execOptions->GetBatch())   // Interactive mode
+  else
     {
-      BDSVisManager visManager;
-      visManager.StartSession(argc,argv);
+      // set default output formats:
+#ifdef BDSDEBUG
+      G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif
+      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      G4cout.precision(10);
+      
+      // catch aborts to close output stream/file. perhaps not all are needed.
+      signal(SIGABRT, &BDS::HandleAborts); // aborts
+      signal(SIGTERM, &BDS::HandleAborts); // termination requests
+      signal(SIGSEGV, &BDS::HandleAborts); // segfaults
+      // no interrupts since ctest sends an interrupt signal when interrupted
+      // and then the BDSIM process somehow doesn't get killed
+      // signal(SIGINT,  &BDS::HandleAborts); // interrupts
+  
+      if(!execOptions->GetBatch())   // Interactive mode
+	{
+	  BDSVisManager visManager;
+	  visManager.StartSession(argc,argv);
+	}
+      else           // Batch mode
+	{runManager->BeamOn(globalConstants->GetNumberToGenerate());}
     }
-  else           // Batch mode
-    {runManager->BeamOn(globalConstants->GetNumberToGenerate());}
-
+  
   //
   // job termination
   //

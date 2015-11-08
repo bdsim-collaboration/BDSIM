@@ -120,15 +120,12 @@ void BDSSectorBend::BuildBeampipe()
     }
   else
     {
-      beampipe = factory->CreateBeamPipe(beamPipeInfo->beamPipeType,
-					 name,
+      beampipe = factory->CreateBeamPipe(name,
 					 chordLength - lengthSafety,
-					 beamPipeInfo->aper1,
-					 beamPipeInfo->aper2,
-					 beamPipeInfo->aper3,
-					 beamPipeInfo->aper4,
-					 beamPipeInfo->vacuumMaterial,
-					 beamPipeInfo->beamPipeThickness,
-					 beamPipeInfo->beamPipeMaterial);
+					 beamPipeInfo);
     }
+
+  RegisterDaughter(beampipe);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }

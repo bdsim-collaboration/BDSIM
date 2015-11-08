@@ -18,6 +18,7 @@
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
   lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  lengthSafetyLarge         = 1*CLHEP::um;
   checkOverlaps             = BDSGlobalConstants::Instance()->GetCheckOverlaps();
   maxStepFactor             = 0.5; // fraction of length for maximum step size
   nSegmentsPerCircle        = 50;
@@ -71,20 +72,6 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::CreateBeamPipeAngledOut(G4String    nameIn,
 							     G4Material* beamPipeMaterialIn)
 {
   return CreateBeamPipeAngledInOut(nameIn,lengthIn,0,angleOutIn,aper1,aper2,aper3,aper4,vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-}
-
-void BDSBeamPipeFactoryBase::TestInputParameters(G4Material*&  vacuumMaterialIn,
-						 G4double&     beamPipeThicknessIn,
-						 G4Material*&  beamPipeMaterialIn)
-{
-  if (!vacuumMaterialIn)
-    {vacuumMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
-
-  if (beamPipeThicknessIn < 1e-10)
-    {beamPipeThicknessIn = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-
-  if (!beamPipeMaterialIn)
-    {beamPipeMaterialIn = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetBeamPipeMaterialName());}
 }
   
 void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
@@ -182,7 +169,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
   
-  vacuumPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			       (G4ThreeVector)0,             // position
 			       vacuumLV,                     // lv to be placed
 			       nameIn + "_vacuum_pv",        // name
@@ -191,7 +178,7 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
   
-  beamPipePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  beamPipePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				 (G4ThreeVector)0,             // position
 				 beamPipeLV,                   // lv to be placed
 				 nameIn + "_beampipe_pv",      // name

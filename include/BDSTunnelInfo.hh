@@ -15,7 +15,8 @@ class G4Material;
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct BDSTunnelInfo {
+struct BDSTunnelInfo
+{
   /// default constructor, not needed
   BDSTunnelInfo() = delete;
 

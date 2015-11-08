@@ -218,12 +218,12 @@ void BDSDegrader::Build()
     
   //Rotation  of wedges. Left taken to be +VE x direction, right is -VE x direction.
   G4RotationMatrix* rightRot = new G4RotationMatrix;  
-  rightRot->rotateX(M_PI/2.0);  
+  rightRot->rotateX(CLHEP::pi/2.0);  
   RegisterRotationMatrix(rightRot);
 
   G4RotationMatrix* leftRot = new G4RotationMatrix;  
-  leftRot->rotateX(M_PI/-2.0);
-  leftRot->rotateZ(M_PI);
+  leftRot->rotateX(CLHEP::pi/-2.0);
+  leftRot->rotateZ(CLHEP::pi);
   RegisterRotationMatrix(leftRot);
 
     

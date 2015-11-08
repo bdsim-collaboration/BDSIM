@@ -632,7 +632,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	   if($2->data.size() == $4->data.size())
 	     {
 	       $$ = 0;
-	       for(int i=0;i<$2->data.size();i++)
+	       for(unsigned int i=0;i<$2->data.size();i++)
 		 $$ += $2->data[i] * $4->data[i];
 	     }
 	   else
@@ -687,7 +687,7 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(int i=0;i<$3->data.size();i++)
+		    for(unsigned int i=0;i<$3->data.size();i++)
 		      $1->array.push_back($3->data[i]);
 		    $$ = $1;
 		    $3->data.clear();
@@ -1050,7 +1050,8 @@ sample_options: RANGE '=' VARIABLE
 		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
 		  // -2: convention to add to all elements
 		  // empty name so that element name can be attached
-		  if(execute) { $$->name = ""; element_count = -2; }
+		  // create variable name with empty string
+		  if(execute) { $$ = symlook(""); element_count = -2; }
 	        }
 ;
 

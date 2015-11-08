@@ -175,6 +175,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   // if it both didn't exist and has been constructed
   if (element)
     {
+      element->SetBiasVacuumList(_element.biasVacuumList);
+      element->SetBiasMaterialList(_element.biasMaterialList);
       element->SetPrecisionRegion(_element.precisionRegion);
       element->Initialise();
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(element);
@@ -335,6 +337,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 					     bPrime,
 					     bpInfo,
 					     moInfo);
+
+  oneBend->SetBiasVacuumList(_element.biasVacuumList);
+  oneBend->SetBiasMaterialList(_element.biasMaterialList);
   // create a line of this sbend repeatedly
   for (int i = 0; i < nSbends; ++i)
     {sbendline->AddComponent(oneBend);}
@@ -748,6 +753,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      _element.outerDiameter*CLHEP::m,
 				      _element.xsize*CLHEP::m,
 				      _element.ysize*CLHEP::m,
+                      _element.xsizeOut*CLHEP::m,
+                      _element.ysizeOut*CLHEP::m,
 				      _element.material);
 }
 
@@ -770,7 +777,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     _element.outerDiameter*CLHEP::m,
 				     _element.xsize*CLHEP::m,
 				     _element.ysize*CLHEP::m,
-				     _element.material);
+                     _element.xsizeOut*CLHEP::m,
+                     _element.ysizeOut*CLHEP::m,
+                     _element.material);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
@@ -828,7 +837,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
         G4double theta = atan(wedgeBasewidth / (2.0*_element.wedgeLength*CLHEP::m));
         
         //Overlap distance of wedges
-        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(M_PI/2.0 - theta) / sin(theta));
+        G4double overlap = (_element.materialThickness*CLHEP::m/_element.numberWedges - wedgeBasewidth) * (sin(CLHEP::pi/2.0 - theta) / sin(theta));
 
         degraderOffset = overlap * -0.5;
         
@@ -961,26 +970,6 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element& element)
     {return true;}
 }
 
-G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
-{
-  G4Material* beamPipeMaterial;
-  if(element.beampipeMaterial == "")
-    {
-      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
-      beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
-    }
-  else
-    { beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
-  return beamPipeMaterial;
-}
-
-G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
-{
-  //in future do something relating to what's set in the element
-  //also make some setting available in element
-  return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-}
-
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
@@ -1025,40 +1014,16 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element& element)
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
-  BDSBeamPipeInfo* info = new BDSBeamPipeInfo;
-  if (element.apertureType == "")
-    info->beamPipeType = BDSGlobalConstants::Instance()->GetApertureType();
-  else 
-    info->beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);
-
-  // note even if aperN in the element is 0 (ie unset), we should use
-  // the default aperture model from global constants (already in metres)
-  // aper1
-  if (element.aper1 == 0)
-    {info->aper1 = BDSGlobalConstants::Instance()->GetAper1();}
-  else
-    {info->aper1 = element.aper1*CLHEP::m;}
-  // aper2
-  if (element.aper2 == 0)
-    {info->aper2 = BDSGlobalConstants::Instance()->GetAper2();}
-  else
-    {info->aper2 = element.aper2*CLHEP::m;}
-  // aper3
-  if (element.aper3 == 0)
-    {info->aper3 = BDSGlobalConstants::Instance()->GetAper3();}
-  else
-    {info->aper3 = element.aper3*CLHEP::m;}
-  // aper4
-  if (element.aper4 == 0)
-    {info->aper4 = BDSGlobalConstants::Instance()->GetAper4();}
-  else
-    {info->aper4 = element.aper4*CLHEP::m;}
-  
-  info->vacuumMaterial    = PrepareVacuumMaterial(element);
-  info->beamPipeThickness = element.beampipeThickness*CLHEP::m;
-  if (info->beamPipeThickness < 1e-10)
-    {info->beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-  info->beamPipeMaterial  = PrepareBeamPipeMaterial(element);
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
+					      element.apertureType,
+					      element.aper1 * CLHEP::m,
+					      element.aper2 * CLHEP::m,
+					      element.aper3 * CLHEP::m,
+					      element.aper4 * CLHEP::m,
+					      element.vacuumMaterial,
+					      element.beampipeThickness * CLHEP::m,
+					      element.beampipeMaterial);  
   return info;
 }
 

@@ -1,9 +1,9 @@
 #ifndef BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 #define BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 
-// this class uses classes from Geant4 10.0
+// this class uses classes from Geant4 10.0 and is dependent on BDSBOptChangeCrossSection which needs 10.1
 #include "G4Version.hh"
-#if G4VERSION_NUMBER > 999
+#if G4VERSION_NUMBER > 1009
 
 #include "G4VBiasingOperator.hh"
 class BDSBOptrChangeCrossSection;
@@ -42,6 +42,8 @@ private:
 
   // -- count number of biased interations for current track:
   G4int fnInteractions = 0;  
+
+  G4bool debug;
 };
 
 #endif

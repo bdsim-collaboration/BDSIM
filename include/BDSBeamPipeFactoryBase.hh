@@ -110,10 +110,6 @@ protected:
   /// Calculate input and output normal vector
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
 							G4double angleOutIn);
-
-  void TestInputParameters(G4Material*& vacuumMaterialIn,
-			   G4double&    beamPipeThicknessIn,
-			   G4Material*& beamPipeMaterialIn);
   
   // methods called by CommonConstruction, can be implmented by derived classes
   
@@ -131,7 +127,12 @@ protected:
   virtual void          PlaceComponents(G4String nameIn);
 
 protected:
+  /// A local copy of global length safety variable
   G4double         lengthSafety;
+
+  /// 1um safety that can be used for larger transverse safety
+  G4double         lengthSafetyLarge;
+  
   G4bool           checkOverlaps;
   G4double         maxStepFactor;
   G4double         nSegmentsPerCircle; // for visualisation improvement
