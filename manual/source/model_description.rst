@@ -722,14 +722,14 @@ syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
 
 The magnet geometry is controlled by the following parameters.
 
-.. note:: These are all specified using the `option` command.
+.. note:: These can all be specified using the `option` command as well as on a per element basis.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | parameter             | description                                                  | default       | required  |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
 |                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
-|                       | `polesfacetcrop`, `lhcleft` and `lhcright`                   |               |           |
+|                       | `polesfacetcrop`, `lhcleft`, `lhcright` and `none`           |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerDiameter`       | **full** horizontal width of the magnet (m)                  | 1 m           | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
@@ -758,7 +758,16 @@ Example::
 
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request` and this can be added - it is a relatively simple processes.
-	  
+
+No Magnet Outer Geometry - "`none`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+No geometry for the magnet outer part is built at all and nothing is place in the model. This results
+in only a beam pipe with the correct fields being provided.
+
+.. image:: figures/none_beamline.png
+	   :width: 60%
+	   :align: center
 
 Cylindrical (Default) - "`cylindrical`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
