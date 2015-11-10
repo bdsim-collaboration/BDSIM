@@ -159,18 +159,21 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
+      BDSHistogram1D* generalELoss    = analMan->GetHistogram(2);
+      BDSHistogram1D* perElementELoss = analMan->GetHistogram(5);
+      
       bdsOutput->WriteEnergyLoss(energyCounterHits); // write hits
       //bin hits in histograms
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
-	  G4double s      = (*energyCounterHits)[i]->GetS()/CLHEP::m;
-	  G4double energy = (*energyCounterHits)[i]->GetEnergy()/CLHEP::GeV;
-	  G4double weight = (*energyCounterHits)[i]->GetWeight();
-	  G4double weightedEnergy = energy*weight;
-	  //general eloss histo
-	  analMan->Fill1DHistogram(2, s, weightedEnergy);
-	  //per element eloss histo
-	  analMan->Fill1DHistogram(5, s, weightedEnergy);
+	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
+	  G4double sBefore = hit.GetSBefore()/CLHEP::m;
+	  G4double sAfter  = hit.GetSAfter()/CLHEP::m;
+	  G4double energy  = hit.GetEnergy()/CLHEP::GeV;
+	  G4double weight  = hit.GetWeight();
+	  G4double weightedEnergy = energy * weight;
+	  generalELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
+	  perElementELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
 	}
     }
 
@@ -186,14 +189,16 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {
 	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-	      G4double hitS  = thePrimaryHit->GetS()/CLHEP::m;
-	      G4double lossS = thePrimaryLoss->GetS()/CLHEP::m;
+	      G4double hitSBefore  = thePrimaryHit->GetSBefore()/CLHEP::m;
+	      G4double hitSAfter   = thePrimaryHit->GetSAfter()/CLHEP::m;
+	      G4double lossSBefore = thePrimaryLoss->GetSBefore()/CLHEP::m;
+	      G4double lossSAfter  = thePrimaryLoss->GetSAfter()/CLHEP::m;
 	      // general histos
-	      analMan->Fill1DHistogram(0, hitS);
-	      analMan->Fill1DHistogram(1, lossS);
+	      analMan->Fill1DHistogram(0, std::make_pair(hitSBefore,hitSAfter));
+	      analMan->Fill1DHistogram(1, std::make_pair(lossSBefore,lossSAfter));
 	      // per element histos
-	      analMan->Fill1DHistogram(3, hitS);
-	      analMan->Fill1DHistogram(4, lossS);
+	      analMan->Fill1DHistogram(3, std::make_pair(hitSBefore,hitSAfter));
+	      analMan->Fill1DHistogram(4, std::make_pair(lossSBefore,lossSAfter));
 	    }
 	}
     }
@@ -230,11 +235,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(!isBatch)
     {
 #ifdef BDSDEBUG 
-      G4cout<<"BDSEventAction : drawing"<<G4endl;
+      G4cout << __METHOD_NAME__ << "drawing the event"<<G4endl;
 #endif
       evt->Draw();
     }
-    
+  
   // Save interesting trajectories
   traj = nullptr;
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
@@ -292,7 +297,7 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4String           samplerName     = "primaries";
+  G4String           samplerName     = "Primaries";
   G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
   bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

@@ -1,38 +1,36 @@
-#include "BDSDrift.hh"
-
-#include "globals.hh" // geant4 globals / types
-#include "G4Material.hh"
-
-#include <list>
-
 #include "BDSAcceleratorComponent.hh"
-#include "BDSGlobalConstants.hh" 
+#include "BDSDrift.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 
-BDSDrift::BDSDrift (G4String         name, 
-		    G4double         length,
-		    BDSBeamPipeInfo* beamPipeInfoIn):
-  BDSAcceleratorComponent(name, length, 0, "drift")
-{
-  beamPipeInfo = beamPipeInfoIn;
-}
+#include "globals.hh" // geant4 globals / types
+
+BDSDrift::BDSDrift(G4String         name, 
+		   G4double         length,
+		   BDSBeamPipeInfo* beamPipeInfo,
+		   G4int            precisionRegion):
+  BDSAcceleratorComponent(name, length, 0, "drift", precisionRegion, beamPipeInfo)
+{;}
+
+BDSDrift::~BDSDrift()
+{;}
 
 void BDSDrift::Build()
-{  
-  BDSBeamPipe* pipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-								     chordLength,
-								     beamPipeInfo);
+{
+  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+  BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
+					      chordLength,
+					      beamPipeInfo);
 
-  // register logical volumes using geometry component base class
-  InheritObjects(pipe);
+  RegisterDaughter(pipe);
   
+  // make the beam pipe container, this object's container
   containerLogicalVolume = pipe->GetContainerLogicalVolume();
   containerSolid         = pipe->GetContainerSolid();
 
-  // Set extents
-  SetExtentX(pipe->GetExtentX());
-  SetExtentY(pipe->GetExtentY());
-  SetExtentZ(pipe->GetExtentZ());
+  SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
+
+  // update extents
+  InheritExtents(pipe);
 }

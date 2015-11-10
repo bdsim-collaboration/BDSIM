@@ -1,3 +1,78 @@
+V0.9 - 2015 / 11 / 10
+=====================
+
+New Features
+------------
+
+* Physics biasing with ability to change cross-section for individual particles
+  and processes as well as attach to a variety of objects
+* Decapole magnet
+* Robdsim analysis package as separate executable for testing
+* Tracking tester
+* Improved C++11 use and iterator implementation across containers
+* Fill histogram with energy hit over a range covering several bins
+* Introduced a separate auxiliary G4Navigator to avoid accidentally moving
+  the particle during tracking when querying global to local transforms
+* Transform for curvilinear coordinates to global coordinates
+  so primaries in those coordinates can be injected from anywhere (issue #63)
+* Parser put in GMAD namespace
+* New executable options for writing out geometry coordinates as built by BDSIM
+* Magnets now have tightly fitting invisible container volumes as opposed to
+  large boxes before
+* Changed return type of magnet outer geometry factories to new BDSMagnetOuter
+  class. This is because the container contruction is now delegated to the
+  magnet outer factory for tight fitting container volumes.
+* Extended examples and tests
+* Move entirely to Geant4 visualisation manager supporting all available visualisers
+  available with the local Geant4 installation
+
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+
+* Fixed bug where the read out coordinates would also be offset by the offset
+  of the element
+* Fixed overlaps in read out geometry
+* Reduced dupliation in magnet outer factories
+* Fixed overlaps in rbend geometry (issue #64)
+* Increase tolerance for sector bends (issue #73)
+* Protect against zero angle sector bends (issue #74)
+* Fixed overlaps in GDML geometry (issue #81)
+* Geometry fixes (issues #76, 94, 95)
+  
+Physics
+^^^^^^^
+
+Parser
+^^^^^^
+
+* Occasional material parser segfault fixed (issue #25)
+* Improved syntax checking and not ignore unknown keywords (issue #71)
+* Element extension fixed (issue #87)
+
+Tracking
+^^^^^^^^
+
+* Dipole uses local coordinates and can bend in any direction (issue #78)
+  
+General
+^^^^^^^
+
+* Samplers can be attached to occurrence of a duplicated element (issue #47)
+* Output survey updated and fixed (issue #60)
+* Check for Geant4 environment variables (issue #62)
+* Consistent policy for overwriting output files (issue #65)
+* Improve memory and cpu for output writing (issue #86)
+
+Utilities
+---------
+* pymadx v0.2
+* pybdsim v0.3
+* pymad8 v0.2
+* robdsim v0.3
+
 V0.8 - 2015 / 08 / 10
 =====================
 
@@ -9,7 +84,7 @@ New Features
 * C++11 adopted (required)
 * `stopSecondaries` option
 * Remove dependency on boost (issue #57)
-* Restructured examles directory - top level contains only full machines
+* Restructured examples directory - top level contains only full machines
   and subdirectories contain features.
 * Example documentation in manual and in place beside each example with
   example screenshots
@@ -64,7 +139,7 @@ Output
 ^^^^^^
 * Change all transverse output units to **metres** - manual updated accordingly
 * Change `z` in ASCII output to **global Z** instead of local z.
-* Recorded energy in output is now unweighted but energy recorded in convenince
+* Recorded energy in output is now unweighted but energy recorded in convenience
   energy loss histogram is. Could have lead to double weighting previously
 * Fix for global coordinates being written out as local coordinates in ROOT
   output
@@ -74,7 +149,6 @@ Parser
 ^^^^^^
 * Return error if superfluous arguments are present (issue #56)
 * Make parser more robust against duplicate element names (issue #43)
-* Increase parser buffer to 1Mb
 * Fixed warnings about compiling c as c++ being deprecated behaviour
   
 General
@@ -83,7 +157,6 @@ General
 * Fix for boundary effects of energy deposition (issue #52)
 * Fix large memory leak for events with large number of particles - was due to
   accumulation of BDSTrajectory objects
-* Coverity fixes for missing, and superfluous headers & variables
 
 
 V0.702 2015 / 07 / 28 - Hotfix
@@ -94,7 +167,7 @@ V0.702 2015 / 07 / 28 - Hotfix
 V0.701 2015 / 07 / 02 - Hotfix
 ==============================
 
-* Fix for global X coordinate not written to output for energy depostion
+* Fix for global X coordinate not written to output for energy deposition
 
 V0.7 - 2015 / 06 / 30
 =====================
@@ -122,7 +195,7 @@ Bug fixes
 * Fix syntax error in parser on windows end of line character (issue #40).
 * Follow user paths properly (issue #24).
 * Parser can end on commented line (issue #41).
-* Introduction of more flexible and weigthed halo bunch distribution.
+* Introduction of more flexible and weighted halo bunch distribution.
 * Significant tidy of BDSAcceleratorComponent base class and derived classes.
 * Fix LHC magnet geometry overlaps and improve efficiency as well as more flexible with different beam pipes.
 * New BDSBeamline class used for component placement consistently in code.
@@ -133,7 +206,7 @@ V0.65 - 2015 / 04 / 10
 * New base class for any geometrical object BDSGeometryComponent.
 * New interchangeable beam pipes with 6 possible beam pipe shapes.
 * New sensitive detector manager to hold single instance of sd classes.
-* Introduction of G4Galatic material for 'empty' volumes rather than beam pipe vacuum.
+* Introduction of G4Galactic material for 'empty' volumes rather than beam pipe vacuum.
 * Possibility to write to multiple output formats at once.
 * Extensive removal of unnecessary headers throughout.
 * Updated python utilities.

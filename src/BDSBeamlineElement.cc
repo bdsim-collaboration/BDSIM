@@ -46,21 +46,18 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   G4cout << G4endl;
 #endif
 
-  if (componentIn->GetNTimesPlaced() < 1)
-    {placementName = componentIn->GetName();}
-  else
-    {
-      std::stringstream namestream;
-      namestream << componentIn->GetName() << "_" << componentIn->GetNTimesPlaced();
-      placementName = namestream.str();
-    }
-  componentIn->IncrementNTimesPlaced();
+  /// increase copy number
+  componentIn->IncrementCopyNumber();
+  /// placement name (starting at 0)
+  placementName = componentIn->GetName() + "_" + std::to_string(componentIn->GetCopyNumber());
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
 #endif
 
   // create the placement transform from supplied rotation matrices and vector
-  placementTransform = new G4Transform3D(*rotationMiddle, positionMiddle);
+  placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
+  readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()
@@ -72,6 +69,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationMiddle;
   delete referenceRotationEnd;
   delete placementTransform;
+  delete readOutPlacementTransform;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)

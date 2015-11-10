@@ -8,9 +8,18 @@
 
 #include "gmad.h"
 
+using namespace GMAD;
+
 int main(int argc, char *argv[])
 {
-  std::cout<<std::endl;
-  if(argc<2) return -1;
+  if(argc<2) {
+    std::cout << "GMAD parser needs an input file" << std::endl;
+    return 1;
+  }
+  if(argc>2) {
+    std::cout << "GMAD parser needs only one input file" << std::endl;
+    return 1;
+  }
   gmad_parser(argv[1]);
+  return 0;
 }

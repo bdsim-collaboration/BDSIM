@@ -20,23 +20,27 @@ class BDSTiltOffset;
  * rotations with respect to the start of the beamline as well as their s
  * position in curvilinear coordinates.
  * 
- * Note, this is note a singleton as geometry hierarchy can be introduced
+ * Note, this is not a singleton as geometry hierarchy can be introduced
  * by placing beamline components inside parent volumes and therefore creating
- * a new beamline of parents.
+ * a new beamline of parents. It can also be used to create multiple beam lines.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
 /// Forward declaration for iterator so it can appear at the top
 class BDSBeamline;
-
 class BDSLine;
 class BDSTransform3D;
 
-/// Iterator for beamline
-typedef std::vector<BDSBeamlineElement*>::const_iterator BDSBeamlineIterator;
+class BDSBeamline
+{
+private:
+  /// Typedefs up first so we can declare public iterators.
+  typedef std::vector<BDSBeamlineElement*> BeamlineVector;
 
-class BDSBeamline{
+  /// Vector of beam line elements - the data.
+  BeamlineVector beamline;
+  
 public:
   /// Versatile basic constructor that allows a finite poition and rotation to be applied
   /// at the beginning of the beamline in global coordinates. Rembmer the maximum
@@ -50,7 +54,8 @@ public:
   /// Add a component, but check to see if it can be dynamically upcast to a line
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
-  void AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
+  /// Returns vector of components added
+  std::vector<BDSBeamlineElement*> AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component
@@ -88,7 +93,7 @@ public:
   inline G4double     GetTotalArcLength() const;
 
   /// Get the number of elements
-  std::vector<BDSBeamlineElement*>::size_type size() const;
+  BeamlineVector::size_type size() const {return beamline.size();}
 
   /// Get the maximum positive extent in all dimensions  
   G4ThreeVector GetMaximumExtentPositive() const;
@@ -99,22 +104,20 @@ public:
   /// Get the maximum extent absolute in each dimension
   G4ThreeVector GetMaximumExtentAbsolute() const;
 
+  typedef BeamlineVector::iterator       iterator;
+  typedef BeamlineVector::const_iterator const_iterator;
+  iterator       begin()       {return beamline.begin();}
+  iterator       end()         {return beamline.end();}
+  const_iterator begin() const {return beamline.begin();}
+  const_iterator end()   const {return beamline.end();}
+  G4bool         empty() const {return beamline.empty();}
+  
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
   BDSBeamlineElement* front() const;
   /// Return a reference to the last element
   BDSBeamlineElement* back()  const;
-  /// Return iterator to the beginning
-  inline std::vector<BDSBeamlineElement*>::iterator begin();
-  /// Return iterator to the end
-  inline std::vector<BDSBeamlineElement*>::iterator end();
-  /// Return iterator to the beginning
-  inline std::vector<BDSBeamlineElement*>::const_iterator begin() const;
-  /// Return iterator to the end
-  inline std::vector<BDSBeamlineElement*>::const_iterator end()   const;
-  /// Return whether the beamline is empty or not
-  inline G4bool empty() const;
-
+  
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
 
@@ -125,13 +128,12 @@ public:
 private:
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
-  void AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
+  /// Returns pointer to component added
+  BDSBeamlineElement* AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
 
   /// Register the fully created element to a map of names vs element pointers. Used to
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
-
-  std::vector<BDSBeamlineElement*> beamline; ///< Beamline vector - the data
 
   G4double totalChordLength;
   G4double totalArcLength;
@@ -172,9 +174,6 @@ inline G4double BDSBeamline::GetTotalChordLength() const
 inline G4double BDSBeamline::GetTotalArcLength() const
 {return totalArcLength;}
 
-inline std::vector<BDSBeamlineElement*>::size_type BDSBeamline::size() const
-{return beamline.size();}
-
 inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive() const
 {return maximumExtentPositive;}
 
@@ -186,20 +185,5 @@ inline BDSBeamlineElement* BDSBeamline::front() const
 
 inline BDSBeamlineElement* BDSBeamline::back() const
 {return beamline.back();}
-
-inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::begin()
-{return beamline.begin();}
-
-inline std::vector<BDSBeamlineElement*>::iterator BDSBeamline::end()
-{return beamline.end();}
-
-inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::begin() const
-{return beamline.begin();}
-
-inline std::vector<BDSBeamlineElement*>::const_iterator BDSBeamline::end() const
-{return beamline.end();}
-
-inline G4bool BDSBeamline::empty() const
-{return beamline.empty();}
 
 #endif

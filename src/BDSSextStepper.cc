@@ -1,35 +1,18 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 25.12.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-// This code implementation is the intellectual property of
-// the GEANT4 collaboration.
-//
-// By copying, distributing or modifying the Program (or any work
-// based on the Program) you indicate your acceptance of this statement,
-// and all its terms.
-//
-// $Id: BDSSextStepper.cc,v 1.5 2007/11/14 12:57:06 malton Exp $
-// GEANT4 tag $Name:  $
-//
-#include "BDSSextStepper.hh"
 #include "BDSDebug.hh"
-#include "G4Navigator.hh"
+#include "BDSSextStepper.hh"
+
+#include "G4AffineTransform.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4TransportationManager.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSSextStepper::BDSSextStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
-                                      // position & velocity
-    itsBDblPrime(0.0), itsDist(0.0)
-{
-  fPtrMagEqOfMot = EqRhs;
-}
-
+BDSSextStepper::BDSSextStepper(G4Mag_EqRhs* eqRHS):
+  G4MagIntegratorStepper(eqRHS, 6),
+  fPtrMagEqOfMot(eqRHS),
+  itsBDblPrime(0.0),
+  itsDist(0.0)
+{;}
 
 void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
                                    G4ThreeVector,
@@ -44,7 +27,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
   G4double InitMag=v0.mag();
   G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
-
+  /*
 #ifdef BDSDEBUG  
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << "kappa                 : " << kappa << G4endl;
@@ -56,10 +39,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
 
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
 
-  G4Navigator* SextNavigator=
-    G4TransportationManager::GetTransportationManager()->
-    GetNavigatorForTracking();
-  G4String VolName = SextNavigator->LocateGlobalPointAndSetup(GlobalPosition)->GetName();
+  G4String VolName = auxNavigator->LocateGlobalPointAndSetup(GlobalPosition)->GetName();
 
   G4cout << "BDSSextStepper: " << VolName << G4endl
 	 << " step= " << h/CLHEP::m << " m" << G4endl
@@ -75,7 +55,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
          << G4endl 
          << G4endl;
 #endif 
-
+  */
    if(fabs(kappa)<1.e-12)
      {
        G4ThreeVector positionMove  = (h/InitMag) * v0;
@@ -91,19 +71,12 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        itsDist=0;
      }
    else 
-     {      
-       G4Navigator* SextNavigator=
-	 G4TransportationManager::GetTransportationManager()->
-	 GetNavigatorForTracking();
+     {       
+       G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
+       G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
        
-       G4AffineTransform LocalAffine=SextNavigator->
-	 GetLocalToGlobalTransform();
-       
-       G4AffineTransform GlobalAffine=SextNavigator->
-	 GetGlobalToLocalTransform();
        G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
        G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
-       
        
        G4double x0=LocalR.x(); 
        G4double y0=LocalR.y();
@@ -153,8 +126,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
                dy/=ScaleFac;
                dz/=ScaleFac;
 	     }
-
-	 
+	   
            LocalR.setX(LocalR.x()+dx);
            LocalR.setY(LocalR.y()+dy);
            LocalR.setZ(LocalR.z()+dz);

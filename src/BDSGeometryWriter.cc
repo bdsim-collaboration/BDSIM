@@ -1,25 +1,15 @@
 #include "BDSDebug.hh"
 #include "BDSGeometryWriter.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4GDMLParser.hh"
+#include "G4FileUtilities.hh"
 #include "G4TransportationManager.hh"
 
 class G4VPhysicalVolume;
 
-BDSGeometryWriter* BDSGeometryWriter::_instance = 0;
-
-BDSGeometryWriter* BDSGeometryWriter::Instance()
-{
-  if (_instance == 0)
-    {_instance = new BDSGeometryWriter();}
-  return _instance;
-}
-
-BDSGeometryWriter::~BDSGeometryWriter()
-{
-  _instance = 0;
-}
+BDSGeometryWriter::~BDSGeometryWriter(){}
 
 BDSGeometryWriter::BDSGeometryWriter()
 {
@@ -40,6 +30,12 @@ void BDSGeometryWriter::WriteToGDML(G4String           outputFileName,
 {
   if (!volume)
     {volume = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume();}
-  G4GDMLParser* parser = new G4GDMLParser();
-  parser->Write(outputFileName, volume, true);
+  // gdml parser throws exception if file exists. Delete file in that case
+  if (BDS::FileExists(outputFileName)) {
+    G4FileUtilities fileUtilities;
+    fileUtilities.DeleteFile(outputFileName, "");
+  }
+  
+  G4GDMLParser parser;
+  parser.Write(outputFileName, volume, true);
 }

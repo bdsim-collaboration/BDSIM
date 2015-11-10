@@ -1,8 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
 #include "BDSGlobalConstants.hh" 
 #include "BDSSpoiler.hh"
 #include "BDSMaterials.hh"
@@ -71,6 +66,7 @@ void BDSSpoiler::BuildInnerSpoiler()
   
   RegisterLogicalVolume(itsSolidLogVol);
   RegisterLogicalVolume(itsInnerLogVol);
+  SetAcceleratorVacuumLogicalVolume(itsInnerLogVol);
   RegisterPhysicalVolume(itsPhysiComp2);
   
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents())

@@ -10,25 +10,12 @@ BDSBunchRing::BDSBunchRing():
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
 }
 
-BDSBunchRing::BDSBunchRing(G4double rMinIn,   G4double rMaxIn,
-			   G4double X0In,     G4double Y0In,       G4double Z0In,   G4double T0In, 
-			   G4double Xp0In,    G4double Yp0In,      G4double Zp0In,			     
-			   G4double sigmaTIn, G4double sigmaEIn) :
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn),
-  rMin(rMinIn), rMax(rMaxIn)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
-}
-
 BDSBunchRing::~BDSBunchRing()
 {
   delete FlatGen;
 }
 
-void BDSBunchRing::SetOptions(struct Options& opt)
+void BDSBunchRing::SetOptions(GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

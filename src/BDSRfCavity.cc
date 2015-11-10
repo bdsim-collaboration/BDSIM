@@ -9,11 +9,11 @@
 
 #include "G4ExplicitEuler.hh"
 
-BDSRfCavity::BDSRfCavity(G4String           name,
-			 G4double           length,
-			 G4double           grad,
-			 BDSBeamPipeInfo*   beamPipeInfo,
-			 BDSMagnetOuterInfo magnetOuterInfo):
+BDSRfCavity::BDSRfCavity(G4String            name,
+			 G4double            length,
+			 G4double            grad,
+			 BDSBeamPipeInfo*    beamPipeInfo,
+			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rfcavity, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   gradient(grad)

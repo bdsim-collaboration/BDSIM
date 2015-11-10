@@ -16,7 +16,8 @@ BDSSamplerHit::BDSSamplerHit(G4String    aName,
 			     G4int       ParentID,
 			     G4int       TrackID,
 			     G4int       TurnsTaken,
-			     G4String    sampType):
+			     G4String    sampType,
+			     G4String    process):
   itsName(aName),
   itsInit(init),
   itsProd(prod),
@@ -30,7 +31,8 @@ BDSSamplerHit::BDSSamplerHit(G4String    aName,
   itsParentID(ParentID),
   itsTrackID(TrackID),
   itsTurnsTaken(TurnsTaken),
-  itsSampType(sampType)
+  itsSampType(sampType),
+  itsProcess(process)
 {;}
 
 BDSSamplerHit::~BDSSamplerHit()

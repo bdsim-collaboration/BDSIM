@@ -1,4 +1,7 @@
 add_subdirectory(1_em)
 add_subdirectory(2_hadronic)
 add_subdirectory(3_sr)
-add_subdirectory(6_beamGas)
+add_subdirectory(4_optical)
+add_subdirectory(5_biasing)
+add_subdirectory(6_muon)
+add_subdirectory(7_beamGas)

@@ -1,11 +1,12 @@
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-set(TESTING_ARGS "--batch")
 simple_testing(Component-CSampler "--file=csamplerTest.gmad" "")
  
 simple_testing(Component-Decapole "--file=decaTest.gmad" "")
 
 simple_testing(Component-Drift "--file=driftTest.gmad" "")
+
+simple_testing(Component-Dump "--file=dumpTest.gmad" "")
 
 simple_testing(Component-ECollimator "--file=ecolTest.gmad" "")
 
@@ -39,6 +40,6 @@ simple_testing(Component-Sextupole "--file=sextTest.gmad" "")
 
 simple_testing(Component-Solenoid "--file=soleTest.gmad" "")
 
-simple_testing(Component-Tunnel "--file=tunnelTest.gmad" "")
+simple_testing(Component-Tunnel "--file=tunnelTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-VKick "--file=vkickTest.gmad" "")

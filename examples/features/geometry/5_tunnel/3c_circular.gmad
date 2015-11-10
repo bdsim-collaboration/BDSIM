@@ -1,0 +1,3 @@
+include 3_initial_bend.gmad;
+
+option, tunnelType="circular";

@@ -1,11 +1,5 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSEnergyCounterSD_h
-#define BDSEnergyCounterSD_h 1
+#ifndef BDSENERGYCOUNTERSD_H
+#define BDSENERGYCOUNTERSD_H
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSEnergyCounterHit.hh"
@@ -42,9 +36,19 @@ private:
   BDSEnergyCounterHitsCollection* primaryCounterCollection;
   G4int    HCIDe;
   G4int    HCIDp;
+
+  ///@{ per hit variable
   G4double enrg;
-  G4double X,Y,Z,S; // global coordinates
+  G4double weight;
+  G4double X,Y,Z,SBefore,SAfter; // global coordinates
   G4double x,y,z;   // local coordinates
+  G4double stepLength;
+  G4bool   precisionRegion;
+  G4int    ptype;
+  G4String volName;
+  G4int    turnstaken;
+  G4int    eventnumber;
+  ///@}
 };
 
 inline G4String BDSEnergyCounterSD::GetName()

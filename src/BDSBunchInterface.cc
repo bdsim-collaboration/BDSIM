@@ -30,21 +30,10 @@ BDSBunchInterface::BDSBunchInterface():
   Xp0(0.0), Yp0(0.0), Zp0(0.0), sigmaT(0.0), sigmaE(0.0)
 {}
 
-BDSBunchInterface::BDSBunchInterface(G4double sigmaTIn, G4double sigmaEIn):
-  X0(0.0), Y0(0.0), Z0(0.0), T0(0.0), Xp0(0.0), Yp0(0.0), Zp0(0.0), sigmaT(sigmaTIn), sigmaE(sigmaEIn)
-{;}
-
-BDSBunchInterface::BDSBunchInterface(G4double X0In, G4double Y0In, G4double Z0In, G4double T0In,
-				     G4double Xp0In, G4double Yp0In, G4double Zp0In, 
-				     G4double sigmaTIn, G4double sigmaEIn): 
-  X0(X0In), Y0(Y0In), Z0(Z0In), T0(T0In), 
-  Xp0(Xp0In), Yp0(Yp0In), Zp0(Zp0In), sigmaT(sigmaTIn), sigmaE(sigmaEIn)
-{}
-
 BDSBunchInterface::~BDSBunchInterface()
 {;}
 
-void BDSBunchInterface::SetOptions(struct Options& opt)
+void BDSBunchInterface::SetOptions(GMAD::Options& opt)
 {
   X0 = opt.X0;
   Y0 = opt.Y0;
@@ -86,7 +75,8 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
     G4cout << sigma << G4endl;
     G4cout << __METHOD_NAME__ << "adding a small error to zero diagonal elements" << G4endl;
 
-    double small_error = 1e-20;
+    // very small number especially for time, since the sigma goes with the square
+    double small_error = 1e-50;
     
     for (int i=0; i<6; i++) {
       if (sigma[i][i]==0) {
@@ -112,7 +102,14 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
       }
     }
   }
- 
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "mean "  << G4endl
+	 << mu    << G4endl
+	 << __METHOD_NAME__ << "sigma " << G4endl
+	 << sigma << G4endl;
+#endif
+  
   return new CLHEP::RandMultiGauss(anEngine,mu,sigma); 
 }
 

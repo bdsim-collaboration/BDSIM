@@ -17,7 +17,7 @@ int BDSDump::nDumps=0;
 BDSDump::BDSDump (G4String name, G4double length):
   BDSAcceleratorComponent(name, length, 0, "dump")
 {
-  //SetName("Dump_"+BDS::StringFromInt(nDumps)+"_"+itsName);
+  //SetName("Dump_"+std::to_string(nDumps)+"_"+itsName);
   ++nDumps;
   //BDSRoot->SetDumpNumber(nDumps);
 }
@@ -40,6 +40,7 @@ void BDSDump::BuildContainerLogicalVolume()
   itsOuterUserLimits->SetMaxAllowedStep(chordLength);
   itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
   containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
+  RegisterUserLimits(itsOuterUserLimits);
 #endif
   // Sensitive Detector:
   if(nDumps==0)

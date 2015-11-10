@@ -17,29 +17,37 @@
 macro(_run_test test_name args)
     # If loop can be removed when we no longer support cmake 2.6...
     if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
-       add_test(NAME ${test_name} COMMAND ${binary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
+       add_test(NAME ${test_name} COMMAND ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
     else()
-       add_test(${test_name} ${binary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
+       add_test(${test_name} ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
     endif()
     unset(TESTING_ARGS)
 endmacro()
 
 # A simple macro which runs a script and looks for some defined
-# string in std. out:
+# string in stdout and fails if found:
 macro(simple_testing test_name script expression)
     _run_test(${test_name} "${script}")
     if(NOT "${expression}" STREQUAL "")
-        set_tests_properties(${test_name} PROPERTIES PASS_REGULAR_EXPRESSION "${expression}")
+        set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "${expression}")
     endif()
 endmacro()
 
+# a macro that adds a simple test
+# and then add a second test that compares two files
+# (e.g. an output file and a reference file)
 macro(compare_test test_name script file1 file2)
-    simple_testing("${test_name}" "${script}" "")
-    find_package(PythonInterp REQUIRED)
-    add_test(${test_name}_CheckOutput ${PYTHON_EXECUTABLE}
+   simple_testing("${test_name}" "${script}" "")
+   find_package(PythonInterp)
+   if (PYTHONINTERP_FOUND)
+       add_test(${test_name}_CheckOutput ${PYTHON_EXECUTABLE}
        ${CMAKE_SOURCE_DIR}/cmake/compare_files.py
        ${file1} ${file2})
-    set_tests_properties(${test_name}_CheckOutput PROPERTIES DEPENDS ${test_name})
+   else()
+       add_test(${test_name}_CheckOutput ${CMAKE_COMMAND} -E compare_files ${file1} ${file2})
+   endif()
+   # this test depends on the running of the original test
+   set_tests_properties(${test_name}_CheckOutput PROPERTIES DEPENDS ${test_name})
 endmacro()
 
 macro(unit_test test_name binary)
@@ -50,3 +58,14 @@ macro(unit_test test_name binary)
     add_test(${test_name} ${binary})
   endif()
 endmacro()
+
+# macro for tracking tester
+macro(tracking_test test_name args)
+    # If loop can be removed when we no longer support cmake 2.6...
+    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
+       add_test(NAME ${test_name} COMMAND ./run_bdsimMadx.py ${args})
+    else()
+       add_test(${test_name} ./run_bdsimMadx.py ${args})
+    endif()
+endmacro()
+

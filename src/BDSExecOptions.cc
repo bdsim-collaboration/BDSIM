@@ -11,10 +11,10 @@
 
 #include "parser/getEnv.h"
 
-BDSExecOptions* BDSExecOptions::_instance=0;
+BDSExecOptions* BDSExecOptions::_instance=nullptr;
 
 const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     _instance = new BDSExecOptions(argc, argv);
     return _instance;
   } else {
@@ -24,7 +24,7 @@ const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
 }
 
 const BDSExecOptions* BDSExecOptions::Instance(){
-  if(_instance==0) {
+  if(_instance==nullptr) {
     G4Exception("BDSExecOptions::Instance was not initialised. Initialize first with BDSExecOptions::Instance(int argc, char **argv).", "-1", FatalException, "");
     return nullptr;
   } else 
@@ -36,10 +36,10 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   visMacroFilename    = "";
   visDebug            = false;
   outputFilename      = "output";
+  outputFilenameSet   = false;
   outputFormat        = BDSOutputFormat::ascii;
-  outline             = false;
-  outlineFilename     = "outline.dat";
-  outlineFormat       = "";
+  survey              = false;
+  surveyFilename      = "survey.dat";
 
   gflash      = false;
   gflashemax  = 10000;
@@ -79,7 +79,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
 }
 
 BDSExecOptions::~BDSExecOptions() {
-  _instance = 0;
+  _instance = nullptr;
 }
 
 /** <Parse the command line options>
@@ -88,8 +88,6 @@ BDSExecOptions::~BDSExecOptions() {
  */
 void BDSExecOptions::Parse(int argc, char **argv) {
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },
-					{ "outline", 1, 0, 0 },
-					{ "outline_type", 1, 0, 0 },
 					{ "verbose", 0, 0, 0 },
 					{ "verbose_step", 0, 0, 0 },
 					{ "verbose_event", 0, 0, 0 },
@@ -111,6 +109,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "circular", 0, 0, 0},
 					{ "seed", 1, 0, 0},
 					{ "seedstate",1,0,0},
+					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0},
 					{ "exportgeometryto", 1, 0, 0},
 					{ 0, 0, 0, 0 }};
@@ -178,14 +177,11 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       }
       if( !strcmp(optionName , "outfile") ) {
 	outputFilename=optarg;
+	outputFilenameSet=true;
       }
-      if( !strcmp(optionName , "outline") ) {
-	outlineFilename = optarg; 
-	outline=true;
-      }
-      if( !strcmp(optionName , "outline_type") ) {
-	outlineFormat = optarg; 
-	outline=true;  // can't have outline type without turning on outline!
+      if( !strcmp(optionName , "survey") ) {
+	surveyFilename = optarg; 
+	survey=true;
       }
       if( !strcmp(optionName , "file") ) {
 	inputFilename=optarg;
@@ -275,9 +271,6 @@ void BDSExecOptions::Usage()const {
 	<<"--gflashemin=N            : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
 	<<"--help                    : display this message"<<G4endl
 	<<"--materials               : list materials included in bdsim by default"<<G4endl
-	<<"--outline=<file>          : print geometry info to <file>"<<G4endl
-	<<"--outline_type=<fmt>      : type of outline format"<<G4endl
-	<<"                            where fmt = optics | survey"<<G4endl
 	<<"--output=<fmt>            : output format (root|ascii|combined|none), default ascii"<<G4endl
 	<<"--outfile=<file>          : output file name. Will be appended with _N"<<G4endl
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
@@ -285,6 +278,7 @@ void BDSExecOptions::Usage()const {
 	<<"                            option in the input gmad file" << G4endl
         <<"--seed=N                  : the seed to use for the random number generator" <<G4endl
 	<<"--seedstate=<file>        : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl
+	<<"--survey=<file>           : print survey info to <file>"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl
 	<<"--verbose_event           : display information for every event "<<G4endl
 	<<"--verbose_event_num=N     : display tracking information for event number N"<<G4endl
@@ -307,12 +301,12 @@ void BDSExecOptions::Print()const
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << gflashemin          << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << gflashemax          << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " ngnerate: "            << std::setw(15) << nGenerate           << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " outline: "             << std::setw(15) << outline             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFilename: "      << std::setw(15) << outputFilename      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " outlineFilename: "     << std::setw(15) << outlineFilename     << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << survey   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFilename: "      << std::setw(15) << surveyFilename   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << verbose             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEvent: "        << std::setw(15) << verboseEvent        << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  

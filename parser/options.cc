@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+using namespace GMAD;
+
 Options::Options()
 {
   // Default Values for Options
@@ -97,9 +99,9 @@ Options::Options()
   samplerDiameter     = 5; // m
 
   // beam loss monitors geometry
-  blmRad              = 0.05;
-  blmLength           = 0.18;
-  sensitiveBLMs               = 1;
+  blmRad                   = 0.05;
+  blmLength                = 0.18;
+  sensitiveBLMs            = 1;
 
   // physics processes
   gammaToMuFe              = 1;
@@ -120,17 +122,20 @@ Options::Options()
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
-  defaultRangeCut          = 7e-4;
-  prodCutPhotons           = 7e-4;
-  prodCutPhotonsP          = 7e-4;
-  prodCutPhotonsA          = 1;
-  prodCutElectrons         = 7e-4;
-  prodCutElectronsP        = 7e-4;
-  prodCutElectronsA        = 1;
-  prodCutPositrons         = 7e-4;
-  prodCutPositronsP        = 7e-4;
-  prodCutPositronsA        = 1;
-  prodCutHadrons           = 1e-3;
+  defaultRangeCut          = 1e-3;
+  prodCutPhotons           = 1e-3;
+  prodCutPhotonsP          = 1e-3;
+  prodCutPhotonsA          = 1e-3;
+  prodCutElectrons         = 1e-3;
+  prodCutElectronsP        = 1e-3;
+  prodCutElectronsA        = 1e-3;
+  prodCutPositrons         = 1e-3;
+  prodCutPositronsP        = 1e-3;
+  prodCutPositronsA        = 1e-3;
+  prodCutProtons           = 1e-3;
+  prodCutProtonsP          = 1e-3;
+  prodCutProtonsA          = 1e-3;
+  prodCutHadrons           = prodCutProtons;
 
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
@@ -141,6 +146,8 @@ Options::Options()
   minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
   maximumEpsilonStep       = 1e-3;    // default value in Geant4, old value 1e-7
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
+  stopTracks               = false;
+  stopSecondaries          = false;
 
   // synchrotron radiation
   synchRadOn               = 0;
@@ -154,18 +161,12 @@ Options::Options()
   numberOfEventsPerNtuple  = 0;
   elossHistoBinWidth       = 1.0; // m
   elossHistoTransBinWidth  = 0.1;
-  storeMuonTrajectories    = 0;
+  storeMuonTrajectories    = false;
   trajCutGTZ               = 0.0;
   trajCutLTR               = 0.0;
-  storeNeutronTrajectories = 0;
-  storeTrajectory          = 0;
-  stopTracks               = 0;
-
-  fifo                     = "";
-  refvolume                = "";
-  refcopyno                = 0;
-  useTimer                 = 0;
-
+  storeNeutronTrajectories = false;
+  storeTrajectory          = false;
+  
   // circular options
   nturns                   = 1;
 
@@ -343,11 +344,12 @@ void Options::set_value(std::string name, double value )
   if(name == "gammaToMuFe")              {gammaToMuFe = value; return; }
   if(name == "scintYieldFactor")         {scintYieldFactor = value; return; }
   if(name == "eeToHadronsFe")            {eeToHadronsFe = value; return; }
-  if(name == "thresholdCutCharged" )     {thresholdCutCharged = (double)value; return; }
-  if(name == "thresholdCutPhotons" )     {thresholdCutPhotons = (double)value; return; }
-  if(name == "vacuumPressure")           {vacuumPressure = (double)value; return; }
-  if(name == "planckScatterFe")          {planckScatterFe = (double)value; return; }
-  if(name == "stopTracks")               {stopTracks = (int) value; return; } 
+  if(name == "thresholdCutCharged" )     {thresholdCutCharged = value; return; }
+  if(name == "thresholdCutPhotons" )     {thresholdCutPhotons = value; return; }
+  if(name == "vacuumPressure")           {vacuumPressure = value; return; }
+  if(name == "planckScatterFe")          {planckScatterFe = value; return; }
+  if(name == "stopSecondaries")          {stopSecondaries = (bool) value; return; } 
+  if(name == "stopTracks")               {stopTracks = (bool) value; return; } 
   if(name == "srLowX")                   {synchLowX = value; return; }
   if(name == "srLowGamE")                {synchLowGamE = value; return; }
   if(name == "srMultiplicity")           {synchPhotonMultiplicity = (int) value; return; }
@@ -361,7 +363,14 @@ void Options::set_value(std::string name, double value )
   if(name == "prodCutPositrons" )        {prodCutPositrons = value; return; }
   if(name == "prodCutPositronsP" )       {prodCutPositronsP = value; return; }
   if(name == "prodCutPositronsA" )       {prodCutPositronsA = value; return; }
-  if(name == "prodCutHadrons" )          {prodCutHadrons = value; return; } 
+  if(name == "prodCutProtons" )          {prodCutProtons  = value; return; }
+  if(name == "prodCutProtonsP" )         {prodCutProtonsP = value; return; }
+  if(name == "prodCutProtonsA" )         {prodCutProtonsA = value; return; }
+  if(name == "prodCutHadrons" )
+    {
+      std::cout << "Warning: \"prodCutHadrons\" is deprecated in favour of \"prodCutProtons\"" << std::endl;
+      prodCutProtons = value; return;
+    }
   
   // twiss parameters
   if(name == "betx" ) { betx = value; return; }
@@ -377,8 +386,8 @@ void Options::set_value(std::string name, double value )
   if(name == "storeTrajectories") { storeTrajectory = (int) value; return; } 
   if(name == "storeMuonTrajectory") { storeMuonTrajectories = (int) value; return; } 
   if(name == "storeMuonTrajectories") { storeMuonTrajectories = (int) value; return; } 
-  if(name == "trajCutGTZ") { trajCutGTZ = (double) value; return; } 
-  if(name == "trajCutLTR") { trajCutLTR = (double) value; return; } 
+  if(name == "trajCutGTZ") { trajCutGTZ = value; return; } 
+  if(name == "trajCutLTR") { trajCutLTR = value; return; } 
 
   if(name == "storeNeutronTrajectory") { storeNeutronTrajectories = (int) value; return; } 
   if(name == "storeNeutronTrajectories") { storeNeutronTrajectories = (int) value; return; }
@@ -390,13 +399,10 @@ void Options::set_value(std::string name, double value )
   if(name == "eventNumberOffset" ) { eventNumberOffset = (int)value; return; }
   if(name == "nlinesIgnore") { nlinesIgnore = (int) value; return; }
 
-  // options for neutrons
-  if(name=="refcopyno") { refcopyno = (int) value; return; }
-  
   // option for rings
   if(name=="nturns") {nturns = (int) value; return; }
 
-  if(name=="printModuloFraction") {printModuloFraction = (double)value; return;}
+  if(name=="printModuloFraction") {printModuloFraction = value; return;}
   
   std::cerr << "parser> Error: unknown option \"" << name << "\" with value " << value << std::endl; 
   exit(1);
@@ -433,9 +439,6 @@ void Options::set_value(std::string name, std::string value )
   // options which influence the tracking
   if(name == "physicsList" ) { physicsList = value; return; }
 
-  // options for external code interfaces
-  if(name == "fifo") { fifo = value; return; }
-  if(name == "refvolume") { refvolume = value; return; }
   std::cerr << "Error: parser.h> unknown option \"" << name << "\" with value " << value  << std::endl; 
   exit(1);
 }

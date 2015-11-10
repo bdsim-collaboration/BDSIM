@@ -40,7 +40,9 @@ public:
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn,
 		       G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
-  ~BDSGeometryComponent();
+  /// Copy constructor
+  BDSGeometryComponent(BDSGeometryComponent& component);
+  virtual ~BDSGeometryComponent();
 
   /// Get the name from the container logical volume
   G4String          GetName() const;
@@ -73,6 +75,13 @@ public:
   void SetExtentX(std::pair<G4double, G4double> extentXIn); ///< set the extent in local x
   void SetExtentY(std::pair<G4double, G4double> extentYIn); ///< set the extent in local y
   void SetExtentZ(std::pair<G4double, G4double> extentZIn); ///< set the extent in local z
+
+  /// Update the extents of this object with those of another object
+  void InheritExtents(BDSGeometryComponent* anotherComponent);
+
+  /// Register another geometry component as belonging to this one. This component will
+  /// then own and delete it as necessary.
+  void RegisterDaughter(BDSGeometryComponent* anotherComponent);
   
   /// Register a solid as belonging to this geometry component, which then becomes responsible
   /// for it. Note, the container solid given in the constructor is automatically registered.
@@ -131,6 +140,9 @@ public:
   /// from factories are made to belong to an object.
   void InheritObjects(BDSGeometryComponent* component);
 
+  /// Access all daughter components
+  std::vector<BDSGeometryComponent*> GetAllDaughters() const;
+  
   /// Access all solids belonging to this component
   std::vector<G4VSolid*>          GetAllSolids() const;
 
@@ -138,7 +150,7 @@ public:
   std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
-  std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
+  virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
 
   /// Access all physical volumes belonging to this component
   std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes() const;
@@ -153,8 +165,6 @@ public:
   std::vector<G4UserLimits*>      GetAllUserLimits() const;
 
 protected:
-  /// Copy constructor
-  BDSGeometryComponent(BDSGeometryComponent& component);
   
   G4VSolid*                 containerSolid;
   G4LogicalVolume*          containerLogicalVolume;
@@ -162,6 +172,9 @@ protected:
   std::pair<G4double, G4double> extentY;
   std::pair<G4double, G4double> extentZ;
 
+  /// registry of all daughter geometry components
+  std::vector<BDSGeometryComponent*> allDaughters;
+  
   /// registry of all solids belonging to this component
   std::vector<G4VSolid*> allSolids;
   
@@ -237,14 +250,11 @@ inline  void BDSGeometryComponent::SetExtentY(std::pair<G4double, G4double> exte
 inline  void BDSGeometryComponent::SetExtentZ(std::pair<G4double, G4double> extentZIn)
 {extentZ = extentZIn;}
 
+inline std::vector<BDSGeometryComponent*> BDSGeometryComponent::GetAllDaughters() const
+{return allDaughters;}
+
 inline std::vector<G4VSolid*> BDSGeometryComponent::GetAllSolids() const
 {return allSolids;}
-
-inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes() const
-{return allLogicalVolumes;}
-
-inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
-{return allSensitiveVolumes;}
 
 inline std::vector<G4VPhysicalVolume*> BDSGeometryComponent::GetAllPhysicalVolumes() const
 {return allPhysicalVolumes;}

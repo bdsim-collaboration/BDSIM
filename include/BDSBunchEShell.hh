@@ -24,15 +24,8 @@ protected :
 
 public: 
   BDSBunchEShell();  
-  BDSBunchEShell(G4double shellX,  G4double shellXp,
-		 G4double shellY,  G4double shellYp,
-		 G4double shellXWidthIn, G4double shellXpWidthIn,
-		 G4double shellYWidthIn, G4double shellYpWidthIn,
-		 G4double X0,      G4double Y0,      G4double Z0,   G4double T0, 
-		 G4double Xp0,     G4double Yp0,     G4double Zp0,
-		 G4double sigmaT,  G4double sigmaE);
   ~BDSBunchEShell(); 
-  void SetOptions(struct Options& opt);
+  void SetOptions(GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);

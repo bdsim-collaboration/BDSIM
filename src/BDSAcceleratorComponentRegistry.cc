@@ -4,13 +4,14 @@
 
 #include <ostream>
 #include <iomanip>
+#include <stdexcept>
 
 
-BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = 0;
+BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = nullptr;
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSAcceleratorComponentRegistry();}
   return _instance;
 }
@@ -20,10 +21,10 @@ BDSAcceleratorComponentRegistry::BDSAcceleratorComponentRegistry()
 
 BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
 {
-  std::map<G4String,BDSAcceleratorComponent*>::iterator i = registry.begin();
+  iterator i = registry.begin();
   for (; i != registry.end(); ++i)
     {delete i->second;}
-  _instance = 0;
+  _instance = nullptr;
 }
 
 void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component)
@@ -44,7 +45,7 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       // register the line object itself
       registry[component->GetName()] = component;
       // now add all the components of the line individually using this very function
-      for (BDSLine::BDSLineIterator i = line->begin(); i != line->end(); ++i)
+      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
 	{RegisterComponent(*i);}
     }
   else
@@ -68,7 +69,7 @@ G4bool BDSAcceleratorComponentRegistry::IsRegistered(G4String name)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(G4String) named \"" << name << "\" -> ";
 #endif
-  std::map<G4String, BDSAcceleratorComponent*>::iterator search = registry.find(name);
+  iterator search = registry.find(name);
   if (search == registry.end())
     {
 #ifdef BDSDEBUG
@@ -90,13 +91,13 @@ BDSAcceleratorComponent* BDSAcceleratorComponentRegistry::GetComponent(G4String 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  if (!IsRegistered(name))
+  try
+    {return registry.at(name);}
+  catch (const std::out_of_range& /*oor*/)
     {
       G4cerr << __METHOD_NAME__ << "unkown component named: \"" << name << "\"" << G4endl;
-      exit(1);
+      return nullptr;
     }
-  else
-    {return registry[name];}
 }  
 
 std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r)
@@ -104,7 +105,7 @@ std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry con
   // save flags since std::left changes the stream
   std::ios_base::fmtflags ff = out.flags();
   out << "Accelerator Component Registry:" << G4endl;
-  std::map<G4String, BDSAcceleratorComponent*>::const_iterator it = r.registry.begin();
+  BDSAcceleratorComponentRegistry::const_iterator it = r.registry.begin();
   for (; it != r.registry.end(); ++it)
     {out << std::left << std::setw(15) << it->second->GetType() << " \"" << it->first << "\"" << G4endl;;}
   // reset flags

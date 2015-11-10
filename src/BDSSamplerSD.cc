@@ -1,12 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed Samplers to account for plane and cylinder types (GABs code)
-*/
-
 #include "BDSGlobalConstants.hh" 
 #include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
@@ -16,7 +7,6 @@
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTrajectoryPoint.hh"
-#include "BDSUtilities.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Track.hh"
@@ -109,9 +99,12 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   nEvent+=BDSGlobalConstants::Instance()->GetEventNumberOffset();
   
-  G4int nSampler    = theTrack->GetVolume()->GetCopyNo()+1;
-  G4String SampName = theTrack->GetVolume()->GetName()+"_"+BDS::StringFromInt(nSampler);
-  SampName = SampName.substr(0,SampName.find("_pv_1"));
+  G4int nSampler    = theTrack->GetVolume()->GetCopyNo();
+  G4String SampName = theTrack->GetVolume()->GetName();
+  // for now remove copy number so sampler name has no knowledge of the copy number
+  // only one sampler per copied element (will be fixed in the future)
+  std::string removeEnd = "_" + std::to_string(nSampler) + "_pv";
+  SampName = SampName.substr(0,SampName.find(removeEnd));
   
   G4int    PDGtype = theTrack->GetDefinition()->GetPDGEncoding();
   G4String pName   = theTrack->GetDefinition()->GetParticleName();
@@ -128,7 +121,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4ThreeVector momDirLastScatter = bdsTraj->GetMomDirAtLastScatter(theTrack);
   G4double timeLastScatter        = bdsTraj->GetTimeAtLastScatter(theTrack);
   G4double energyLastScatter      = bdsTraj->GetEnergyAtLastScatter(theTrack);
-  G4double vertexEnergy = theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
+  G4double vertexEnergy           = theTrack->GetVertexKineticEnergy() + theTrack->GetParticleDefinition()->GetPDGMass();
   G4double vertexTime             = bdsTraj->GetTimeAtVertex(theTrack);
 
   // store production/scatter point
@@ -142,6 +135,11 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 
   G4double weight = theTrack->GetWeight();
  
+  // process that creating the particle
+  G4String process = "";
+  if(theTrack->GetCreatorProcess()) 
+    process = theTrack->GetCreatorProcess()->GetProcessName();
+  
   BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
 					    BDSGlobalConstants::Instance()->GetInitialPoint(),
 					    production,
@@ -155,7 +153,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 					    ParentID, 
 					    TrackID,
 					    turnstaken,
-					    itsType);
+					    itsType,
+					    process);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;

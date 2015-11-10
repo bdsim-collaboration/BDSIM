@@ -1,6 +1,14 @@
+#include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+
 #include <algorithm>
 #include <cctype>
+#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -11,8 +19,6 @@
 #include <mach-o/dyld.h> // for executable path
 #endif
 
-#include "BDSExecOptions.hh"
-#include "BDSRunManager.hh"
 
 G4bool BDS::non_alpha::operator()(char c)
 {
@@ -37,6 +43,12 @@ G4int BDS::CalculateOrientation(G4double angle)
   else
     {orientation = -1;}
   return orientation;
+}
+
+G4bool BDS::FileExists(G4String fileName)
+{
+  std::ifstream infile(fileName.c_str());
+  return infile.good();
 }
 
 std::string BDS::GetBDSIMExecPath()
@@ -129,39 +141,15 @@ G4bool BDS::IsFinite(const G4double& variable)
     {return false;}
 }
 
-// a robust compiler-invariant method to convert from integer to G4String
-G4String BDS::StringFromInt(G4int N)
+G4bool BDS::IsFinite(const G4ThreeVector& variable)
 {
-  if (N==0) return "0";
-  G4int nLocal=N, nDigit=0, nMax=1;
-  do { nDigit++;
-      nMax*=10;} while(N > nMax-1);
-  nMax/=10;
-  G4String Cnum;
-  do {Cnum+=BDS::StringFromDigit(nLocal/nMax);
-      nLocal-= nLocal/nMax * nMax;
-      nMax/=10;}   while(nMax>1);
-  if(nMax!=0)Cnum+=BDS::StringFromDigit(nLocal/nMax);
-  return Cnum;
-}
-
-// a robust compiler-invariant method to convert from digit to G4String
-G4String BDS::StringFromDigit(G4int N) 
-{
-  if(N<0 || N>9)
-    G4Exception("Invalid Digit in BDS::StringFromDigit", "-1", FatalException, "");
-  G4String Cnum;
-  if(N==0)Cnum="0";
-  else if(N==1)Cnum="1";
-  else if(N==2)Cnum="2";
-  else if(N==3)Cnum="3";
-  else if(N==4)Cnum="4";
-  else if(N==5)Cnum="5";
-  else if(N==6)Cnum="6";
-  else if(N==7)Cnum="7";
-  else if(N==8)Cnum="8";
-  else if(N==9)Cnum="9"; 
-  return Cnum;
+  G4bool resultX = BDS::IsFinite(variable.x());
+  G4bool resultY = BDS::IsFinite(variable.y());
+  G4bool resultZ = BDS::IsFinite(variable.z());
+  if (resultX || resultY || resultZ)
+    {return true;}
+  else
+    {return false;}
 }
 
 void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
@@ -170,4 +158,39 @@ void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
   G4cout << "unit x -> " << G4ThreeVector(1,0,0).transform(*rm) << G4endl;
   G4cout << "unit y -> " << G4ThreeVector(0,1,0).transform(*rm) << G4endl;
   G4cout << "unit z -> " << G4ThreeVector(0,0,1).transform(*rm) << G4endl;
+}
+
+G4bool BDS::Geant4EnvironmentIsSet()
+{
+  std::vector<G4String> variables = {//"G4ABLADATA",
+				     "G4NEUTRONHPDATA",
+				     "G4RADIOACTIVEDATA",
+				     "G4LEDATA",
+				     "G4NEUTRONXSDATA",
+				     "G4REALSURFACEDATA",
+				     "G4LEVELGAMMADATA",
+				     "G4PIIDATA",
+				     "G4SAIDXSDATA"};
+
+  G4bool result = true;
+  for (auto it = variables.begin(); it != variables.end(); ++it)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "testing for variable: " << *it;
+#endif
+      const char* env_p = std::getenv( (*it).c_str() );
+      if (!env_p)
+	{
+	  result = false;
+#ifdef BDSDEBUG
+	  G4cout << " - not found" << G4endl;
+	}
+      else
+	{
+	  G4cout << " - found" << G4endl;
+#endif
+	}
+
+    }
+  return result;
 }

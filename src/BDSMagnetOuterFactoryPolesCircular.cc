@@ -1,15 +1,15 @@
 #include "BDSMagnetOuterFactoryPolesCircular.hh"
 
-BDSMagnetOuterFactoryPolesCircular* BDSMagnetOuterFactoryPolesCircular::_instance = 0;
+BDSMagnetOuterFactoryPolesCircular* BDSMagnetOuterFactoryPolesCircular::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesCircular* BDSMagnetOuterFactoryPolesCircular::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {_instance = new BDSMagnetOuterFactoryPolesCircular();}
   return _instance;
 }
 
 BDSMagnetOuterFactoryPolesCircular::~BDSMagnetOuterFactoryPolesCircular()
 {
-  _instance = 0;
+  _instance = nullptr;
 }

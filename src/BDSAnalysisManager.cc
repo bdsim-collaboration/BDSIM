@@ -5,11 +5,11 @@
 
 #include <vector>
 
-BDSAnalysisManager* BDSAnalysisManager::_instance = 0;
+BDSAnalysisManager* BDSAnalysisManager::_instance = nullptr;
 
 BDSAnalysisManager* BDSAnalysisManager::Instance()
 {
-  if (_instance == 0)
+  if (_instance == nullptr)
     {
       _instance = new BDSAnalysisManager();
     }
@@ -75,6 +75,12 @@ void BDSAnalysisManager::Fill1DHistogram(G4int histoIndex, G4double value, G4dou
 {
   CheckHistogramIndex(histoIndex);
   histograms1d[histoIndex]->Fill(value,weight);
+}
+
+void BDSAnalysisManager::Fill1DHistogram(G4int histoIndex, std::pair<G4double,G4double> range, G4double weight)
+{
+  CheckHistogramIndex(histoIndex);
+  histograms1d[histoIndex]->Fill(range,weight);
 }
 
 G4int BDSAnalysisManager::NumberOfHistograms()const{return histograms1d.size();}

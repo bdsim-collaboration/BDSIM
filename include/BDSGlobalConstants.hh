@@ -1,17 +1,17 @@
-#ifndef BDSGlobalConstants_h
-#define BDSGlobalConstants_h 
+#ifndef BDSGLOBALCONSTANTS_H
+#define BDSGLOBALCONSTANTS_H 
 
-#include <deque>
-#include <map>
-
-#include "G4ThreeVector.hh"
-#include "G4String.hh"
-#include "G4AffineTransform.hh"
 
 #include "BDSBeamPipeType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
+
+#include "G4ThreeVector.hh"
+#include "G4String.hh"
+#include "G4AffineTransform.hh"
+
+#include <map>
 
 class G4FieldManager;
 class G4LogicalVolume;
@@ -21,7 +21,9 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-struct Options;
+namespace GMAD {
+  struct Options;
+}
 
 struct strCmp {
   G4bool operator()( const G4String s1, const G4String s2 ) const {
@@ -37,13 +39,13 @@ class BDSGlobalConstants
 {
 
 protected:
-  BDSGlobalConstants(struct Options&);
+  BDSGlobalConstants(GMAD::Options&);
 
 private:
   static BDSGlobalConstants* _instance;
 
 public:
-   /// access method 
+   /// Access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
 
@@ -63,10 +65,10 @@ public:
 
   G4double GetLPBFraction() const;
   G4double GetElossHistoBinWidth() const;
-  G4double GetElossHistoTransBinWidth() const; //The transverse (x,y) bin width
+  G4double GetElossHistoTransBinWidth() const; ///< The transverse (x,y) bin width
   G4double GetDefaultRangeCut() const;
 
-  /// magnetic field switch flag
+  /// Magnetic field switch flag
   G4double GetFFact() const;
 
   G4double GetBeamKineticEnergy() const;
@@ -92,66 +94,74 @@ public:
   G4bool   GetGeometryBias() const;
   G4bool   GetUseEMLPB() const;
   G4bool   GetUseHadLPB() const;
-  // Booleans determining which types of components are sensitive
+  ///@{ Booleans determining which types of components are sensitive
   G4bool   GetSensitiveComponents() const;
   G4bool   GetSensitiveBeamPipe() const;
   G4bool   GetSensitiveBLMs() const;
-
-  // Magnet geometry variable
+  ///@}
+  
   G4double GetComponentBoxSize() const;
+  /// Magnet geometry variable
   BDSMagnetGeometryType GetMagnetGeometryType() const;
   G4String GetOuterMaterialName() const;
   G4double GetOuterDiameter() const;
   G4double GetMagnetPoleSize() const;
   G4double GetMagnetPoleRadius() const; 
 
-  /// tunnel
+  ///@{ Tunnel
   G4bool         BuildTunnel()         const;
   G4bool         BuildTunnelStraight() const;
   BDSTunnelInfo* TunnelInfo()          const;
   G4double       TunnelOffsetX()       const;
   G4double       TunnelOffsetY()       const;
-
-  // Beam loss monitors
+  ///@}
+  
+  ///@{ Beam loss monitors
   G4double GetBlmRad() const;
   G4double GetBlmLength() const;
-
-  /// Beampipe
+  ///@}
+  
+  ///@{ Beampipe
   G4double GetBeamPipeRadius() const;
   G4double GetAper1() const;
   G4double GetAper2() const;
   G4double GetAper3() const;
   G4double GetAper4() const;
   G4double GetBeamPipeThickness() const; 
-
-  /// Sampler
+  ///@}
+  
+  ///@{ Sampler
   G4double GetSamplerDiameter() const;
   G4double GetSamplerLength() const;
-
-  /// Chord stepping
+  ///@}
+  
+  ///@{ Chord stepping
   G4double GetDeltaIntersection() const;
   G4double GetDeltaChord() const;
   G4double GetChordStepMinimum() const;
-
-  /// Threshold and Production cuts
+  ///@}
+  
+  ///@{ Threshold and Production cuts accessor
   G4double GetThresholdCutCharged() const;
   G4double GetThresholdCutPhotons() const;
-
-  G4double GetProdCutPhotons() const;
+  
+  G4double GetProdCutPhotons()   const;
   G4double GetProdCutElectrons() const;
   G4double GetProdCutPositrons() const;
-
-  G4double GetProdCutPhotonsP() const;
-  G4double GetProdCutPhotonsA() const;
-  G4double GetProdCutElectronsP() const;
-  G4double GetProdCutElectronsA() const;
+  G4double GetProdCutProtons()   const;
+  
+  G4double GetProdCutPhotonsP()   const;
+  G4double GetProdCutElectronsP() const; 
   G4double GetProdCutPositronsP() const;
+  G4double GetProdCutProtonsP()   const;
+
+  G4double GetProdCutPhotonsA()   const;
+  G4double GetProdCutElectronsA() const; 
   G4double GetProdCutPositronsA() const;
-
-  G4double GetProdCutHadrons() const;
-
-  // Physical processes etc.
-
+  G4double GetProdCutProtonsA()   const;
+  ///@}
+  
+  ///@{ Physical processes etc.
   G4String GetPhysListName() const;
   G4bool   GetSynchRadOn() const;
   void     SetSynchRadOn(G4bool);
@@ -161,6 +171,7 @@ public:
   G4double GetSynchLowGamE() const;
   G4int    GetSynchPhotonMultiplicity() const;
   G4int    GetSynchMeanFreeFactor() const;
+  ///@}
   G4double GetLaserwireWavelength() const;
   G4ThreeVector GetLaserwireDir() const;
 
@@ -186,8 +197,8 @@ public:
   G4bool   GetStoreNeutronTrajectories() const;
   G4bool   GetStoreTrajectory() const;
   G4bool   GetIncludeIronMagFields() const;
+  G4bool   GetStopSecondaries() const;
   G4bool   GetStopTracks() const;
-  G4bool stopTracks; // kill tracks after interactions
 
   G4double GetLengthSafety() const;
   G4long   GetRandomSeed() const;
@@ -197,18 +208,9 @@ public:
   G4int    GetEventNumberOffset() const;
   G4FieldManager* GetZeroFieldManager() const;
 
-  // G4bool   GetUseSynchPrimaryGen() const;
-  // G4double GetSynchPrimaryAngle() const;
-  // G4double GetSynchPrimaryLength() const;
-
   // AI : for placet synchronization
   void     setWaitingForDump(G4bool flag);
   G4bool   getWaitingForDump() const;
-  G4bool   getDumping() const;
-  G4bool   getReading() const;
-  void     setReadFromStack(G4bool flag);
-  G4bool   getReadFromStack() const;
-  G4String GetFifo() const;
   G4int    GetTurnsTaken() const;
   void     IncrementTurnNumber();
   void     ResetTurnNumber();
@@ -224,18 +226,10 @@ public:
   void          SetTeleporterLength(G4double newteleporterlength);
   G4double      GetTeleporterLength() const;
   
-  /// initial particle
+  ///@{ Initial particle
   BDSParticle GetInitialPoint() const;
   void SetInitialPoint(BDSParticle& particle);
-  
-  // SPM : temp filestream for placet to read and write
-  //  std::ofstream fileDump;
-  // ifstream fileRead; replaced with FILE* fifo in code for consistency with Placet. SPM
-
-  std::deque<BDSParticle> holdingQueue;
-  std::deque<BDSParticle> outputQueue;
-  std::deque<BDSParticle> transformedQueue;
-
+  ///@}
 private:
 
   G4UniformMagField* zeroMagField;
@@ -247,12 +241,13 @@ private:
   /// similar to BV flag in MadX
   G4double itsFFact;
 
-  // initial bunch parameters
+  ///@{ Initial bunch parameters
   G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
-  /// reference beam energy
+  ///@}
+  /// Reference beam energy
   G4double itsBeamTotalEnergy, itsBeamMomentum, itsBeamKineticEnergy;
-  /// particle energy
+  /// Particle energy
   G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
   G4double itsPlanckScatterFe;
@@ -267,29 +262,32 @@ private:
   G4double itsMaximumEpsilonStep;
   G4double itsMaxTime;
   G4double itsDeltaOneStep;
-
-  // magnet geometry
+  G4bool   stopTracks; ///< kill tracks after interactions
+  G4bool   stopSecondaries; ///< kill secondaries
+  
+  ///@{ Magnet geometry
   BDSMagnetGeometryType itsMagnetGeometryType;
   G4String itsOuterMaterialName;
   G4double itsOuterDiameter;
-  //G4double itsComponentBoxSize;
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
-  
-  // tunnel model
+  ///@}
+  ///@{ Tunnel model
   G4bool         buildTunnel;
   G4bool         buildTunnelStraight;
   BDSTunnelInfo* tunnelInfo;
   G4double       tunnelOffsetX;
   G4double       tunnelOffsetY;
-  
-  //Booleans determining which types of components are sensitive
+  ///@}
+  ///@{ Booleans determining which types of components are sensitive
   G4bool   itsSensitiveComponents;
   G4bool   itsSensitiveBeamPipe;
   G4bool   itsSensitiveBLMs;
-  //Beam loss monitor geometry
+  ///@}
+  ///@{ Beam loss monitor geometry
   G4double itsBlmRad;
   G4double itsBlmLength;
+  ///@}
   G4double itsBeamPipeRadius;
   G4double itsAper1;
   G4double itsAper2;
@@ -312,7 +310,9 @@ private:
   G4double itsProdCutPositrons;
   G4double itsProdCutPositronsP;
   G4double itsProdCutPositronsA;
-  G4double itsProdCutHadrons;
+  G4double itsProdCutProtons;
+  G4double itsProdCutProtonsP;
+  G4double itsProdCutProtonsA;
   G4String itsPhysListName;
   G4bool   itsSynchRadOn;
   G4bool   itsDecayOn;
@@ -349,7 +349,7 @@ private:
   G4int    itsNumberOfEventsPerNtuple;
   G4int    itsEventNumberOffset;
   G4FieldManager* itsZeroFieldManager;
-  // rotation
+  /// rotation
   void InitRotationMatrices();
 
   G4RotationMatrix* _RotY90;
@@ -391,16 +391,12 @@ public:
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
-  BDSBeamPipeType itsApertureType;       //aperture model to use by default
-  G4String itsBeamPipeMaterial;          //beampipe material
-  G4String itsVacuumMaterial;            //vacuum inside beampipe
-  G4String itsEmptyMaterial;             //empty material for e.g. marker volumes
+  BDSBeamPipeType itsApertureType;    ///<aperture model to use by default
+  G4String itsBeamPipeMaterial;       ///<beampipe material
+  G4String itsVacuumMaterial;         ///<vacuum inside beampipe
+  G4String itsEmptyMaterial;          ///<empty material for e.g. marker volumes
   G4bool   isWaitingForDump;
-  G4bool   isDumping;
-  G4bool   isReading;
-  G4bool   isReadFromStack;
-  G4String itsFifo; // fifo for BDSIM-placet
-  G4AffineTransform itsDumpTransform; //transform of frame from start to current dump element
+  G4AffineTransform itsDumpTransform; ///<transform of frame from start to current dump element
   
   ///@{ Turn Control
   G4int    itsTurnsTaken;
@@ -410,9 +406,9 @@ private:
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
   ///@}
-  /// beamline length in mm
+  /// Beamline length in mm
   G4double itsSMax;
-  /// initial particle
+  /// initial particle for production of sampler hit
   BDSParticle itsInitialPoint;
 
   // private set methods
@@ -630,8 +626,14 @@ inline G4double BDSGlobalConstants::GetProdCutPositronsP() const
 inline G4double BDSGlobalConstants::GetProdCutPositronsA() const 
 {return itsProdCutPositronsA;}
 
-inline G4double BDSGlobalConstants::GetProdCutHadrons() const 
-{return itsProdCutHadrons;}
+inline G4double BDSGlobalConstants::GetProdCutProtons() const 
+{return itsProdCutProtons;}
+
+inline G4double BDSGlobalConstants::GetProdCutProtonsP() const 
+{return itsProdCutProtonsP;}
+
+inline G4double BDSGlobalConstants::GetProdCutProtonsA() const 
+{return itsProdCutProtonsA;}
 
 inline G4String BDSGlobalConstants::GetPhysListName() const
 {return itsPhysListName;}
@@ -714,6 +716,9 @@ inline G4bool BDSGlobalConstants::GetStoreNeutronTrajectories() const
 inline G4bool BDSGlobalConstants::GetStoreTrajectory() const
 {return itsStoreTrajectory;}
 
+inline G4bool BDSGlobalConstants::GetStopSecondaries() const
+{return stopSecondaries;}
+
 inline G4bool BDSGlobalConstants::GetStopTracks() const
 {return stopTracks;}
 
@@ -778,21 +783,6 @@ inline void BDSGlobalConstants::setWaitingForDump(G4bool flag)
 
 inline G4bool BDSGlobalConstants::getWaitingForDump() const 
 {return isWaitingForDump;}
-
-inline G4bool BDSGlobalConstants::getDumping() const
-{return isDumping;}
-
-inline G4bool BDSGlobalConstants::getReading() const
-{return isReading;}
-
-inline void BDSGlobalConstants::setReadFromStack(G4bool flag)
-{isReadFromStack = flag;}
-
-inline G4bool BDSGlobalConstants::getReadFromStack() const
-{return isReadFromStack;}
-
-inline G4String BDSGlobalConstants::GetFifo() const
-{return itsFifo;}
 
 inline G4AffineTransform BDSGlobalConstants::GetDumpTransform() const
 {return itsDumpTransform;}

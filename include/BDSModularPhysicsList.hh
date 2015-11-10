@@ -5,8 +5,10 @@
 #include "G4OpticalPhysics.hh"
 #include "G4VPhysicsConstructor.hh"
 #include "BDSCutsAndLimits.hh"
+#include "BDSGlobalConstants.hh"
 
 #include <vector>
+
 
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
@@ -17,22 +19,32 @@ public:
   virtual void SetCuts();
 
 private:
+  G4bool verbose;
+#ifdef BDSDEBUG 
+  bool debug = true;
+#else 
+  bool debug = false;
+#endif
+  
   void SetParticleDefinition();
   void ConstructMinimumParticleSet();
-  G4VPhysicsConstructor* _emPhysics;
-  G4VPhysicsConstructor* _hadronicPhysics;
-  G4VPhysicsConstructor* _muonPhysics;
-  G4OpticalPhysics*      _opticalPhysics;
-  G4VPhysicsConstructor* _decayPhysics;
-  G4VPhysicsConstructor* _paramPhysics;
-  G4VPhysicsConstructor* _synchRadPhysics;
-  G4VPhysicsConstructor* _cutsAndLimits;
-  std::vector<G4VPhysicsConstructor*> _constructors;
+  G4VPhysicsConstructor* emPhysics;
+  G4VPhysicsConstructor* hadronicPhysics;
+  G4VPhysicsConstructor* muonPhysics;
+  G4OpticalPhysics*      opticalPhysics;
+  G4VPhysicsConstructor* decayPhysics;
+  G4VPhysicsConstructor* paramPhysics;
+  G4VPhysicsConstructor* synchRadPhysics;
+  G4VPhysicsConstructor* cutsAndLimits;
+  std::vector<G4VPhysicsConstructor*> constructors;
   void ParsePhysicsList();
   void ConfigurePhysics();
   void ConfigureOptical();
   void Register();
-  G4String _physListName;
+  G4String physListName;
+
+  /// Keep a local reference to global constants to avoid getting it all the time
+  BDSGlobalConstants* globals;
 
   //Physics constructor loaders.
   void LoadEm();			  

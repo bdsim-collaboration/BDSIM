@@ -1,0 +1,10 @@
+beam,  particle="proton",
+       energy= 6.5*GeV,
+       distrType="reference",
+       X0=0.0*mm,
+       Y0=0.0*mm,
+       Xp0=0.0,
+       Yp0=0.0;
+
+option,modularPhysicsListsOn=1;
+option,physicsList="em";

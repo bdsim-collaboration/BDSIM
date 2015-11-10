@@ -5,6 +5,15 @@
 
 #include <map>
 
+template<>
+std::map<BDSOutputFormat,std::string>* BDSOutputFormat::dictionary=
+  new std::map<BDSOutputFormat,std::string>
+  ({{BDSOutputFormat::none,"none"}
+    ,{BDSOutputFormat::ascii,"ASCII"}
+    ,{BDSOutputFormat::root,"ROOT"}
+    ,{BDSOutputFormat::combined,"combined"}});
+
+
 BDSOutputFormat BDS::DetermineOutputFormat(G4String outputFormat)
 {
   std::map<G4String, BDSOutputFormat> formats;

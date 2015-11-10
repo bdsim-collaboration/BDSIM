@@ -29,15 +29,23 @@ private:
   BDSMagnetOuterFactoryPolesFacet(){;}; 
   static BDSMagnetOuterFactoryPolesFacet* _instance;
 
+  /// Override the Poles Factory Base method to account for poles square being square
+  /// and the usage of outerDiameter really being the radius of the rotated box. OuterDiameter
+  /// etc therefore need to be reduced by 1/sqrt(2).
+  virtual void CalculatePoleAndYoke(G4double     outerDiameter,
+				    BDSBeamPipe* beamPipe,
+				    G4double     order);
+  
   /// Create pole for magnet of order N where npoles = Nx2
   virtual void CreatePoleSolid(G4String      name,                 // name
 			       G4double      length,               // length [mm]
 			       G4int         order);               // Nx2 poles
   
   /// Create yoke that connects poles and container to put them in
-  virtual void CreateYokeAndContainerSolid(G4String      name,
-					   G4double      length,
-					   G4int         order);
+  virtual void CreateYokeAndContainerSolid(G4String name,
+					   G4double length,
+					   G4int    order,
+					   G4double magnetContainerRadius);
   
 };
 

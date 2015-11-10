@@ -16,18 +16,20 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-extern Options options;
+namespace GMAD {
+  extern Options options;
+}
 
-BDSGlobalConstants* BDSGlobalConstants::_instance = 0;
+BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
-  if(_instance==0)
-    {_instance = new BDSGlobalConstants(options);}
+  if(_instance==nullptr)
+    {_instance = new BDSGlobalConstants(GMAD::options);}
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),
@@ -52,7 +54,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
-  itsParticleName=G4String(opt.particleName);
+  itsParticleName = G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
   if (itsBeamTotalEnergy == 0)
     {
@@ -123,7 +125,9 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
   itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
   itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
-  itsProdCutHadrons      = opt.prodCutHadrons      * CLHEP::m;
+  itsProdCutProtons      = opt.prodCutProtons      * CLHEP::m;
+  itsProdCutProtonsP     = opt.prodCutProtonsP     * CLHEP::m;
+  itsProdCutProtonsA     = opt.prodCutProtonsA     * CLHEP::m;
   
   // tracking accuracy
   itsDeltaChord          = opt.deltaChord          * CLHEP::m;
@@ -186,6 +190,7 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsStoreNeutronTrajectories = opt.storeNeutronTrajectories;
   itsStoreTrajectory = opt.storeTrajectory;
   //G4cout<<"STOREA TRAJ = "<< itsStoreTrajectory<<G4endl;
+  stopSecondaries = opt.stopSecondaries;
   stopTracks = opt.stopTracks; 
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
@@ -193,14 +198,6 @@ BDSGlobalConstants::BDSGlobalConstants(struct Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  isDumping = false;
-  isReading = false;
-  isReadFromStack = false;
-  itsFifo = opt.fifo;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
-  G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
-#endif
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
@@ -294,5 +291,5 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
-  _instance = 0;
+  _instance = nullptr;
 }

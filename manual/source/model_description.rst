@@ -33,13 +33,13 @@ Examples::
 
    x = 1;
    y = 2.5-x;
-   z = sin(x) + log(y) -8e5;
+   z = sin(x) + log(y) - 8e5;
 
 
 Coordinates & Units
 -------------------
 
-In Geant4, global euclidean coordinates are used for tracking purposes, however,
+In Geant4, global Euclidean coordinates are used for tracking purposes, however,
 in describing a lattice with BDSIM, curvilinear coordinates are used as is common with
 accelerators (X,Y,S).
 
@@ -131,7 +131,7 @@ Lattice Elements
 
 Any element in BDSIM is described with the following pattern::
 
-  type: name, parameter=value, parameter="string";
+  name: type, parameter=value, parameter="string";
 
 .. note:: Notice the ':', the inverted commas for a string parameter and that each
 	  functional line must end with a semi-colon. Spaces will be ignored
@@ -158,7 +158,26 @@ The following elements may be defined
 * `element`_
 * `marker`_
 
+.. TODO add screen, awakescreen
+
 These are detailed in the following sections.
+
+Simple example, extend and copy
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Example::
+
+  d1: drift, l=5*m;
+
+This defines a drift element with name `d1` and a length of 5 metres. The definition can later be changed or extended with::
+
+  d1: l=3*m, aper=0.1*m;
+
+Note the omission of the type `drift`. This will change the length of `d1` to 3 metres and set the aperture to 10 centimetres. An element can also be defined by copying an existing element::
+
+  d2: d1, l=2*m;
+
+Element `d2` is a drift with the properties of `d1` and a length of 2 metres. Note that if `d1` is changed again, `d2` will **not** change.
 
 Magnet Strength Polarity
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -190,7 +209,7 @@ drift
 
 ================  ===================  ==========  =========
 parameter         description          default     required
-`l`               length [m]           0.1         yes
+`l`               length [m]           0           yes
 `vacuumMaterial`  the vacuum material  vacuum      no
                   to use, can be user
 		  defined
@@ -220,7 +239,7 @@ of the element volume and doesn't protrude into the previous and next elements.
 
 ================  =====================  ==========  ===========
 parameter         description            default     required
-`l`               length [m]             0.1         yes
+`l`               length [m]             0           yes
 `angle`           angle [rad]            0           yes, or `B`
 `B`               magnetic field [T]     0           yes
 `material`        magnet outer material  Iron        no
@@ -260,7 +279,7 @@ into 5 co-joined `sbend` magnets.
 
 ================  =====================  ==========  ===========
 parameter         description            default     required
-`l`               length [m]             0.1         yes
+`l`               length [m]             0           yes
 `angle`           angle [rad]            0           yes, or `B`
 `B`               magnetic field [T]     0           yes
 `material`        magnet outer material  Iron        no
@@ -285,14 +304,12 @@ quadrupole
 	    :align: right
 
 `quadrupole` defines a quadrupole magnet. The strength parameter `k1` is defined as
-:math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`. `ks1` specifies a skew quadrupole
-component as with `k1` but rotated by 45 degrees.
+:math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k1`              quadrupole coefficient       0           yes
-`ks1`             skew quadrupole coefficient  0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -313,14 +330,12 @@ sextupole
 	    :align: right
 
 `sextupole` defines a sextupole magnet. The strength parameter `k2` is defined as
-:math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`. `ks2` specifies a skew sextupole
-component as with `k2` but rotated by 30 degrees.
+:math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k2`              sextupole coefficient        0           yes
-`ks2`             skew sextupole coefficient   0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -341,14 +356,12 @@ octupole
 	    :align: right
 
 `octupole` defines an octupole magnet. The strength parameter `k3` is defined as
-:math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`. `ks3` specifies a skew octupole
-component as with `k3` but rotated by 15 degrees.
+:math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k3`              octupole coefficient         0           yes
-`ks3`             skew octupole coefficient    0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -359,20 +372,19 @@ parameter         description                  default     required
 Examples::
 
    oct4b: octupole, l=0.3*m, k3=32.9;
-		    
+
 decapole
 ^^^^^^^^
-.. warning:: To be completed - not yet implemented
+
+.. TODO: add picture
 
 `decapole` defines a decapole magnet. The strength parameter `k4` is defined as
-:math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`. `k43` specifies a skew decapole
-component as with `k4` but rotated by 7.5 degrees.
+:math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
+`l`               length [m]                   0           yes
 `k4`              decapole coefficient         0           yes
-`ks4`             skew decapole coefficient    0           no
 `material`        magnet outer material        Iron        no
 ================  ===========================  ==========  ===========
 
@@ -382,13 +394,26 @@ parameter         description                  default     required
 
 Examples::
 
-   MXDEC3: decapole, l=0.3*m, k3=32.9;
-  
+   MXDEC3: decapole, l=0.3*m, k4=32.9;
 
 multipole
 ^^^^^^^^^
 
-`multipole` defines a general multipole magnet.
+.. TODO: add picture
+
+`multipole` defines a general multipole magnet. The strength parameter
+`knl` is a list defined as
+:math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
+starting with the quadrupole component.
+The skew strength parameter `ksl` is a list representing the skew coefficients.  
+   
+================  ===========================  ==========  ===========
+parameter         description                  default     required
+`l`               length [m]                   0           yes
+`knl`             list of normal coefficients  0           no
+`ksl`             list of skew coefficients    0           no
+`material`        magnet outer material        Iron        no
+================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -396,12 +421,14 @@ multipole
   
 Examples::
 
-   **To be completed**
+   OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
 
 vkick
 ^^^^^
 
-`vkick` defines a vertical dipole magnet and has the same parameters as `sbend`.
+.. TODO: add picture
+
+`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -413,7 +440,9 @@ Examples::
 hkick
 ^^^^^
 
-`hkick` defines a horizontal dipole magnet and has the same parameters as `sbend`.
+.. TODO: add picture
+
+`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -425,12 +454,14 @@ Examples::
 rf
 ^^^^
 
-`rf` defines an rf cavity
+.. TODO: add picture
+
+`rf` or `rfcavity` defines an rf cavity
 
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
-`l`               length [m]                   0.1         yes
-`gradient`        field gradient [MV/m]         0           yes
+`l`               length [m]                   0           yes
+`gradient`        field gradient [MV/m]        0           yes
 `material`        outer material               Iron        no
 ================  ===========================  ==========  ===========
 
@@ -455,7 +486,7 @@ volume is square.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
+`l`               length [m]                    0           yes
 `xsize`           horizontal half aperture [m]  0           yes
 `ysize`           vertical half aperture [m]    0           yes
 `material`        outer material                Iron        no
@@ -495,8 +526,8 @@ a beam pipe in the middle. There is no magnetic field in the beam pipe.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
-`B`               magnetic field [T]            1           yes
+`l`               length [m]                    0           yes
+`B`               magnetic field [T]            0           yes
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
@@ -515,7 +546,7 @@ defined as :math:`ks =`.
 
 ================  ============================  ==========  ===========
 parameter         description                   default     required
-`l`               length [m]                    0.1         yes
+`l`               length [m]                    0           yes
 `ks`              solenoid strength [ ]         0           yes
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
@@ -536,7 +567,7 @@ of photons.
 
 ================  =================================================  ==========  ===========
 parameter         description                                        default     required
-`l`               length of drift section [m]                        0.1         yes
+`l`               length of drift section [m]                        0           yes
 `x`, `y`, `z`     components of laser direction vector (normalised)  (1,0,0)     yes
 `waveLength`      laser wavelength [m]                               532*nm      yes
 ================  =================================================  ==========  ===========
@@ -571,6 +602,8 @@ Examples::
 
    rcolrot: transform3d, psi=pi/2;
 
+.. _element:
+   
 element
 ^^^^^^^
 
@@ -588,13 +621,13 @@ parameter         description                      default     required
 ================  ===============================  ==========  ===========
 
 `geometry` and `bmap` require the input string to be of the format `format:filename`, where
-`format` is the geometry format being used (`gdml` | `mokka`) and filename is the filename of
+`format` is the geometry format being used (`gdml` | `gmad` | `mokka`) and filename is the filename of
 the geometry file.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken as the length
 	  will be the length of the component inserted in the beamline.  If this is much larger
-	  than the size requried for the geometry, the beam may be mismatched into the rest of
+	  than the size required for the geometry, the beam may be mismatched into the rest of
 	  the accelerator. A common practice is to add a picometre to the length of the geometry.
 
 Examples::
@@ -602,6 +635,7 @@ Examples::
    detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
    detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
 
+For specific details on the geometry format, see :ref:`appendix2_geometry`
 
 marker
 ^^^^^^
@@ -676,7 +710,7 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
 
-MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
+.. MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
 --------------------------
@@ -688,14 +722,14 @@ syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
 
 The magnet geometry is controlled by the following parameters.
 
-.. note:: These are all specified using the `option` command.
+.. note:: These can all be specified using the `option` command as well as on a per element basis.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | parameter             | description                                                  | default       | required  |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
 |                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
-|                       | `polesfacetcrop`, `lhcleft` and `lhcright`                   |               |           |
+|                       | `polesfacetcrop`, `lhcleft`, `lhcright` and `none`           |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerDiameter`       | **full** horizontal width of the magnet (m)                  | 1 m           | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
@@ -711,7 +745,7 @@ Example::
 .. versionadded:: 0.7
 
 		  `magnetGeometryType` parameter allows different generic magnet geometry
-		  libraries to be used. Before, only cyclindrical geometry was available.
+		  libraries to be used. Before, only cylindrical geometry was available.
 		  Examples of other geometry types are described below.
 
 .. deprecated:: 0.65
@@ -724,7 +758,16 @@ Example::
 
 .. note:: Should a custom selection of various magnet styles be required for your simulation, please
 	  contact us (see :ref:`feature-request` and this can be added - it is a relatively simple processes.
-	  
+
+No Magnet Outer Geometry - "`none`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+No geometry for the magnet outer part is built at all and nothing is place in the model. This results
+in only a beam pipe with the correct fields being provided.
+
+.. image:: figures/none_beamline.png
+	   :width: 60%
+	   :align: center
 
 Cylindrical (Default) - "`cylindrical`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -786,7 +829,7 @@ Poles Square - "`polessquare`"
 
 This magnet geometry has again, individual poles according to the order of the magnet but the
 yoke is an upright square section to which the poles are attached. This geometry behaves in the
-same wasy as `polescircular` with regard to the beam pipe size.
+same way as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
@@ -812,7 +855,7 @@ Poles Faceted - "`polesfacet`"
 
 This magnet geometry is much like `polessquare`, however the yoke is such that the pole always
 joins at a flat piece of yoke and not in a corner. This geometry behaves in the
-same wasy as `polescircular` with regard to the beam pipe size.
+same way as `polescircular` with regard to the beam pipe size.
 
 .. versionadded:: 0.7
 
@@ -904,7 +947,7 @@ and rotations. Every component can be displaced transversely and rotated along t
 
 .. note:: Components that have a finite angle (rbend and sbend) will only respond to vertical offsets as
 	  horizontal offsets and rotations may lead to overlapping geometry. This limitation will be addressed
-	  in posible future releases, but necessitates significant changes to the geometry construction.
+	  in possible future releases, but necessitates significant changes to the geometry construction.
 
 .. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
 	  
@@ -1132,7 +1175,10 @@ as their value.
 | thresholdCutPhotons              | the minimum energy above which to simulate photons -  |
 |                                  | any below this energy will be killed                  |
 +----------------------------------+-------------------------------------------------------+
-| stopTracks                       | whether to track secondaries or not (default = 1)     |
+| stopSecondaries                  | whether to stop secondaries or not (default = false)  |
++----------------------------------+-------------------------------------------------------+
+| stopTracks                       | whether to stop tracks after                          |
+|                                  | interaction (default = false)                         |
 +----------------------------------+-------------------------------------------------------+
 | circular                         | whether the accelerator is circular or not            |
 +----------------------------------+-------------------------------------------------------+
@@ -1140,7 +1186,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | diameter of samplers (default 8 m) [m]                |
+| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
@@ -1195,10 +1241,14 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositronsP                | precision production cuts for positrons               |
 +----------------------------------+-------------------------------------------------------+
+| prodCutProtons                   | standard overall production cuts for protons          |
++----------------------------------+-------------------------------------------------------+
+| prodCutProtonsP                  | precision production cuts for protons                 |
++----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
 | defaultRangeCut                  | the default predicted range at which a particle is    |
-|                                  | cut (default 0.7 mm) [m]                              |
+|                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
 | gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
 |                                  | muon process                                          |
@@ -1275,7 +1325,7 @@ Beam Distributions
 The following beam distributions are available in BDSIM
 
 - `reference`_
-- `gaussMatrix`_
+- `gaussmatrix`_
 - `gauss`_
 - `gausstwiss`_
 - `circle`_
@@ -1328,9 +1378,9 @@ Generates a beam with all coordinates 0 at the nominal energy.::
 	X0 = 100*um,
 	Y0 = 3.5*um;
 
-Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizonally and 3.5 :math:`\mu\mathrm{m}` vertically.
+Generate a particle with an offset of 100 :math:`\mu\mathrm{m}` horizontally and 3.5 :math:`\mu\mathrm{m}` vertically.
 
-gaussMatrix
+gaussmatrix
 ^^^^^^^^^^^
 
 Uses the :math:`N` dimensional gaussian generator from `CLHEP`, `CLHEP::RandMultiGauss`. The generator
@@ -1348,7 +1398,7 @@ Examples::
 
    beam, particle = "e-",
          energy = 10*GeV,
-	 distrType = "reference",
+	 distrType = "gaussmatrix",
 	 sigma11 = 100*um,
 	 sigma22 = 3*um,
 	 sigma33 = 50*um,
@@ -1362,7 +1412,7 @@ Examples::
 gauss
 ^^^^^
 
-Uses the `gaussMatrix`_ beam generator but with simplified input parameters opposed to a complete 
+Uses the `gaussmatrix`_ beam generator but with simplified input parameters opposed to a complete 
 beam sigma matrix. This beam distribution has a diagonal :math:`\sigma`-matrix and does not allow for 
 correlations between phase space coordinates, so 
 
@@ -1393,7 +1443,7 @@ correlations between phase space coordinates, so
 +----------------------------------+-------------------------------------------------------+
 
 
-gaussTwiss
+gausstwiss
 ^^^^^^^^^^
 
 The beam parameters are defined by the usual :math:`\alpha`, :math:`\beta` and :math:`\gamma` from which
@@ -1509,7 +1559,7 @@ Defines an elliptical annulus in phase space in each dimension that's uncorrelat
 
 halo
 ^^^^
-The halo distrubtion is effectively a flat phase space with the central beam core removed at 
+The halo distribution is effectively a flat phase space with the central beam core removed at 
 :math:`\epsilon_{\rm core}`. The beam core is defined using the standard twiss parameters described 
 previously. The implicit general form of a rotated ellipse is  
 
@@ -1550,11 +1600,11 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `alfy`                           | Vertical alpha function                                                     |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeX`                      | Horitontal position maximum [m]                                             |
+| `envelopeX`                      | Horizontal position maximum [m]                                             |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `envelopeY`                      | Vertical position maximum [m]                                               |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `envelopeXp`                     | Horitontal angle maximum [m]                                                |
+| `envelopeXp`                     | Horizontal angle maximum [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `envelopeYp`                     | Vertical angle maximum [m]                                                  |
 +----------------------------------+-----------------------------------------------------------------------------+
@@ -1660,8 +1710,6 @@ Output from MAD-X PTC used as input for BDSIM.
 | `distrFile`                      | PTC output file                                       |
 +----------------------------------+-------------------------------------------------------+
 
-
-
 Tunnel Geometry
 ---------------
 
@@ -1730,12 +1778,117 @@ The soil around the tunnel is typically symmetric with the `tunnelSoilThickness`
 the larger of the horizontal and vertical tunnel dimensions.
 		    
 .. note:: Construction of the tunnel geometry may fail in particular cases of different beam lines.
-	  Beam lines with very strong bends ( > 0.5 rad ) over a few metres may cause overlapping
+	  Beam lines with very strong bends ( > 0.5 rad) over a few metres may cause overlapping
 	  geometry. In future, it will be possible to override the automatic algorithm between
 	  certain elements in the beamline, but for now such situations must be avoided.
 
-	  
-   
+
+Material and Atoms
+------------------
+
+Materials and atoms can be added via the parser, just like lattice elements.
+
+If the material is composed by a single element, it can be defined using the **matdef** command with the following syntax::
+
+  materialname : matdef, Z=<int>, A=<double>, density=<double>, T=<double>, P=<double>, state=<char*>;
+
+=========  ========================== =============
+parameter  description                default
+Z          atomic number
+A          mass number [g/mol]
+density    density in [g/cm3]
+T          temperature in [K]         300
+P          pressure [atm]             1
+state      "solid", "liquid" or "gas" "solid"
+=========  ========================== =============
+
+Example::
+  
+  iron : matdef, Z=26, A=55.845, density=7.87;
+  
+If the material is made up by several components, first of all each of them must be specified with the **atom** keyword::
+  
+  elementname : atom, Z=<int>, A=<double>, symbol=<char*>;
+       
+=========  =====================
+parameter  description               
+Z          atomic number
+A          mass number [g/mol]
+symbol     atom symbol
+=========  =====================
+
+The compound material can be specified in two manners:
+
+**1.** If the number of atoms of each component in material unit is known, the following syntax can be used::
+
+   <material> : matdef, density=<double>, T=<double>, P=<double>,
+                state=<char*>, components=<[list<char*>]>,
+                componentsWeights=<{list<int>}>;
+
+================= ===================================================
+parameter         description               
+density           density in [g/cm3]
+components        list of symbols for material components
+componentsWeights number of atoms for each component in material unit
+================= ===================================================
+
+Example::
+  
+  niobium : atom, symbol="Nb", Z=41, A=92.906;
+  titanium : atom, symbol="Ti", Z=22, A=47.867;
+  NbTi : matdef, density=5.6, T=4.0, components=["Nb","Ti"], componentsWeights={1,1};
+
+**2.** On the other hand, if the mass fraction of each component is known, the following syntax can be used::
+     
+   <material> : matdef, density=<double>, T=<double>, P=<double>,
+                state=<char*>, components=<[list<char*>]>,
+                componentsFractions=<{list<double>}>;
+		  
+=================== ================================================
+parameter           description               
+components          list of symbols for material components
+componentsFractions mass fraction of each component in material unit
+=================== ================================================
+
+Example::
+  
+  samarium : atom, symbol="Sm", Z=62, A=150.4;
+  cobalt : atom, symbol="Co", Z=27, A=58.93;
+  SmCo : matdef, density=8.4, T=300.0, components=["Sm","Co"], componentFractions = {0.338,0.662};
+
+The second syntax can be used also to define materials which are composed by other materials (and not by atoms).
+Nb: Square brackets are required for the list of element symbols, curly brackets for the list of weights or fractions.
+
+Physics Biasing
+---------------
+
+A physics biasing process can be defined with the keyword **xsecbias**.
+
+.. note:: This only works with Geant4 version 10.1 or higher.
+
+=================== ================================================
+parameter           description               
+name                biasing process name
+particle            particle that will be biased
+proc                process(es) to be biased
+flag                flag which particles are biased for the process(es)
+                    (1=all, 2=primaries, 3=secondaries)
+xsecfact            biasing factor(s) for the process(es)
+logicalVolumes      logical volumes that the biasing process will
+                    be attached to (work in progress).
+                    Currently always attached to both vacuum
+		    and accelerator material
+=================== ================================================
+
+Example::
+
+  biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3, logicalVolumes="acceleratorVacuum";
+  biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2}, logicalVolumes="acceleratorMaterial";
+
+The process can also be attached to a specific element::
+
+  q1 : quadrupole, l=1*m, material="Iron", bias="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
+  
 Regions
 -------
 
@@ -1743,6 +1896,8 @@ In Geant4 it is possible to drive different *regions* each with their own produc
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
 can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
+
+.. TODO region example missing
 
 .. rubric:: Footnotes
 

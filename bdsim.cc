@@ -1,27 +1,11 @@
 //  
 //   BDSIM, (C) 2001-2015
 //   
-//   version 0.8
+//   version 0.9
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
 #include "BDSGlobalConstants.hh" //  global parameters
-
-#include "G4UIterminal.hh"
-#ifdef G4UI_USE_TCSH
-#include "G4UItcsh.hh"
-#endif
-
-#ifdef G4VIS_USE
-#include "G4VisExecutive.hh"
-#endif
-
-#ifdef G4UI_USE
-#ifdef G4VIS_USE
-#include "G4UImanager.hh"        // G4 session managers
-#endif
-#include "G4UIExecutive.hh"
-#endif
 
 #include <cstdlib>      // standard headers 
 #include <cstdio>
@@ -32,27 +16,33 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
-#include "G4TrajectoryDrawByCharge.hh"
+
+#include "G4Version.hh"
+#if G4VERSION_NUMBER > 999
+#include "G4GenericBiasingPhysics.hh"
+#endif
+
+#include "G4Electron.hh"
 
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
-#include "BDSGeometryInterface.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
+#include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
 #include "BDSPhysicsList.hh"
-#include "BDSModularPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
+#include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
+#include "BDSRunManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
-#include "BDSRandom.hh" // for random number generator from CLHEP
-#include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
+#include "BDSVisManager.hh"
 
 #include "parser/gmad.h"  // GMAD parser
 #include "parser/options.h"
@@ -62,20 +52,26 @@
 BDSOutputBase* bdsOutput=nullptr;         // output interface
 //=======================================================
 
-extern Options options;
+namespace GMAD {
+  extern Options options;
+}
 
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.8"<<G4endl;
+  G4cout<<"bdsim : version 0.9"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
-  G4cout<<"        http://www.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BdSim"<<G4endl;
+  G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
-  
+
   /* Initialize executable command line options reader object */
   const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
   execOptions->Print();
   
+  // check geant4 exists in the current environment
+  if (!BDS::Geant4EnvironmentIsSet())
+    {G4cout << "No Geant4 environmental variables found - please source geant4.sh environment" << G4endl; exit(1);}
+
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
 #endif  
@@ -85,7 +81,7 @@ int main(int argc,char** argv)
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  gmad_parser(execOptions->GetInputFilename());
+  GMAD::gmad_parser(execOptions->GetInputFilename());
 
   //
   // parse options and explicitly initialise materials and global constants
@@ -99,7 +95,7 @@ int main(int argc,char** argv)
 
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (execOptions->SetSeedState()) //optionally load the seed state from file
+  if (execOptions->SetSeedState()) //optionally load the seed state from file (separate from seed)
     {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
   if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
     {BDSRandom::WriteSeedState();} //write the current state once set / loaded
@@ -111,7 +107,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(options);
+  bdsBunch->SetOptions(GMAD::options);
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -128,26 +124,31 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(options.modularPhysicsListsOn) {
-    BDSModularPhysicsList *physList = new BDSModularPhysicsList;
+  if(GMAD::options.modularPhysicsListsOn) {
+    BDSModularPhysicsList *physList = new BDSModularPhysicsList();
+    /* Biasing */
+#if G4VERSION_NUMBER > 999
+    G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
+    physBias->Bias("e-");
+    physBias->Bias("e+");
+    physBias->Bias("gamma");
+    physBias->Bias("proton");
+    physList->RegisterPhysics(physBias);
+#endif
     runManager->SetUserInitialization(physList);
   }
   else { 
-    BDSPhysicsList        *physList=new BDSPhysicsList;  
+    BDSPhysicsList        *physList = new BDSPhysicsList();  
     runManager->SetUserInitialization(physList);
   }
-  
-#ifdef BDSDEBUG 
-  G4cout<< __FUNCTION__ << "> User init phys list"<<G4endl;
-#endif
 
   // Set the geometry tolerance
-  static G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
+  G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance() << " mm " 
+	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
 	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
-	 << theGeometryTolerance->GetRadialTolerance()  << " mm" << G4endl;
+	 << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m" << G4endl;
 #endif
   // This sets the tolerances for the geometry (1e-11 times this value)
   // Note, this doesn't actually have any affect on the size of the geometry,
@@ -212,7 +213,13 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
 #endif
+
   runManager->Initialize();
+
+  //
+  // Build Physics bias, only after G4RunManager::Initialize()
+  //
+  detector->BuildPhysicsBias();
 
   //
   // set verbosity levels
@@ -231,8 +238,9 @@ int main(int argc,char** argv)
 
   if (execOptions->ExportGeometry())
     {
-      BDSGeometryWriter::Instance()->ExportGeometry(execOptions->GetExportType(),
-						    execOptions->GetExportFileName());
+      BDSGeometryWriter geometrywriter;
+      geometrywriter.ExportGeometry(execOptions->GetExportType(),
+				    execOptions->GetExportFileName());
       // clean up before exiting
       G4GeometryManager::GetInstance()->OpenGeometry();
       delete BDSAcceleratorModel::Instance();
@@ -255,123 +263,17 @@ int main(int argc,char** argv)
   signal(SIGABRT, &BDS::HandleAborts); // aborts
   signal(SIGTERM, &BDS::HandleAborts); // termination requests
   signal(SIGSEGV, &BDS::HandleAborts); // segfaults
-  signal(SIGINT,  &BDS::HandleAborts); // interrupts
+  // no interrupts since ctest sends an interrupt signal when interrupted
+  // and then the BDSIM process somehow doesn't get killed
+  // signal(SIGINT,  &BDS::HandleAborts); // interrupts
   
-  // Write survey file
-  if(execOptions->GetOutline()) {
-#ifdef BDSDEBUG 
-    G4cout<<"contructing geometry interface"<<G4endl;
-#endif
-    BDSGeometryInterface* BDSGI = new BDSGeometryInterface(execOptions->GetOutlineFilename());
-
-#ifdef BDSDEBUG 
-    G4cout << __FUNCTION__ << "> Writing survey file"<<G4endl;
-#endif
-    if(execOptions->GetOutlineFormat()=="survey") BDSGI->Survey();
-    else if(execOptions->GetOutlineFormat()=="optics") BDSGI->Optics();
-    else {
-      G4cout << __FUNCTION__ << "> Outlineformat " << execOptions->GetOutlineFormat() << "is not known! exiting." << G4endl;
-      exit(1);
-    }
-  }
-
   if(!execOptions->GetBatch())   // Interactive mode
     {
-      G4UIsession* session=0;
-#ifdef G4UI_USE_TCSH
-      session = new G4UIterminal(new G4UItcsh);
-#else
-      session = new G4UIterminal();
-#endif
-
-#ifdef G4VIS_USE
-#ifdef BDSDEBUG 
-      G4cout<< __FUNCTION__ << "> Initializing Visualisation Manager"<<G4endl;
-#endif
-      // Initialize visualisation
-      G4VisManager* visManager = new G4VisExecutive;
-      // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
-      // G4VisManager* visManager = new G4VisExecutive("Quiet");
-      visManager->Initialize();
-      
-      G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
-      visManager->RegisterModel(trajModel1);
-      visManager->SelectTrajectoryModel(trajModel1->Name());
-#endif
- 
-#ifdef G4UI_USE
-      G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
-#ifdef G4VIS_USE
-      // get the pointer to the User Interface manager 
-      G4UImanager* UIManager = G4UImanager::GetUIpointer();
-
-      std::string bdsimPath = BDS::GetBDSIMExecPath();
-      // difference between local build and install build:
-      std::string visPath;
-      std::string localPath = bdsimPath + "vis/vis.mac";
-      std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
-      
-      if (FILE *file = fopen(localPath.c_str(), "r")) {
-	fclose(file);
-	visPath = bdsimPath + "vis/";
-      } else if (FILE *file = fopen(installPath.c_str(), "r")) {
-	fclose(file);
-	visPath = bdsimPath + "../share/BDSIM/vis/";
-      } else {
-	G4cout << __FUNCTION__ << "> ERROR: default visualisation file could not be found!" << G4endl;
-      }
-
-      // check if visualisation file is present and readable
-      std::string visMacroName = execOptions->GetVisMacroFilename();
-      bool useDefault = false;
-      // if not set use default visualisation file
-      if (visMacroName.empty()) useDefault = true;
-      G4String visMacroFilename = BDS::GetFullPath(visMacroName);
-      if (!useDefault) {
-	FILE* file = nullptr;
-	// first relative to main path:
-	file = fopen(visMacroFilename.c_str(), "r");
-	if (file) {
-	  fclose(file);
-	} else {
-	  // if not present use a default one (OGLSQt or DAWNFILE)
-	  G4cout << __FUNCTION__ << "> WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
-	  useDefault = true;
-	}
-      }
-      if (useDefault) {
-#ifdef G4VIS_USE_OPENGLQT
-	visMacroFilename = visPath + "vis.mac";
-#else
-	visMacroFilename = visPath + "dawnfile.mac";
-#endif
-      }
-      // execute visualisation file
-      UIManager->ApplyCommand("/control/execute " + visMacroFilename);
-
-      // add default gui
-      if (session2->IsGUI()) {
-	// Add icons
-	std::string iconMacroFilename = visPath + "icons.mac";
-	UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
-	// add menus
-	std::string guiMacroFilename  = visPath + "gui.mac";
-	UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
-	// add run icon:
-	std::string runButtonFilename = visPath + "run.png";
-	UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
-      }
-#endif
-      session2->SessionStart();
-      delete session2;
-#endif
-      delete session;
-
+      BDSVisManager visManager;
+      visManager.StartSession(argc,argv);
     }
   else           // Batch mode
-    { 
-      runManager->BeamOn(globalConstants->GetNumberToGenerate());
-    }
+    {runManager->BeamOn(globalConstants->GetNumberToGenerate());}
 
   //
   // job termination

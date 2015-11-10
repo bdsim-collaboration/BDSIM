@@ -4,6 +4,18 @@
 
 #include <map>
 
+// dictionary for BDSTunnelType
+template<>
+std::map<BDSTunnelType, std::string>* BDSTunnelType::dictionary =
+  new std::map<BDSTunnelType, std::string> ({
+   {BDSTunnelType::circular,       "circular"},
+   {BDSTunnelType::elliptical,     "elliptical"},
+   {BDSTunnelType::square,         "square"},
+   {BDSTunnelType::rectangular,    "rectangular"},
+   {BDSTunnelType::rectaboveground,"rectaboveground"},
+   {BDSTunnelType::ilc,            "ilc"}
+});
+      
 BDSTunnelType BDS::DetermineTunnelType(G4String tunnelType)
 {
   std::map<G4String, BDSTunnelType> types;

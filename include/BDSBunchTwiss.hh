@@ -31,15 +31,8 @@ private :
 
 public : 
   BDSBunchTwiss();
-  BDSBunchTwiss(G4double betaX,  G4double betaY, 
-		G4double alphaX, G4double alphaY,
-		G4double emitX,  G4double emitY,
-		G4double X0,     G4double Y0,    G4double Z0,   G4double T0, 
-		G4double Xp0,    G4double Yp0,   G4double Zp0,
-		G4double sigmaT, G4double sigmaE); 
-
   ~BDSBunchTwiss();
-  void SetOptions(struct Options &opt); 
+  void SetOptions(GMAD::Options &opt); 
   void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

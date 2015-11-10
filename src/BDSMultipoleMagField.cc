@@ -1,15 +1,15 @@
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSMultipoleMagField.hh"
 
-#include "G4Navigator.hh"
+#include "G4AffineTransform.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4TransportationManager.hh"
-#include "BDSDebug.hh"
+#include "G4ThreeVector.hh"
+
+#include <list>
 
 BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
 {
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
@@ -28,9 +28,9 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
 #ifdef BDSDEBUG 
-    G4cout<<"beam charge="<<charge<<"e"<<G4endl;
-    G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
-    G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
+  G4cout<<"beam charge="<<charge<<"e"<<G4endl;
+  G4cout<<"beam momentum="<<momentum<<"GeV/c"<<G4endl;
+  G4cout<<"rigidity="<<brho/(CLHEP::tesla*CLHEP::m)<<"T*m"<<G4endl;
 #endif
 
   // convert strengths Kn from BDSIM units (m^-n) to Geant4 internal units
@@ -41,7 +41,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   bs = ks;
   std::list<G4double>::iterator it;
   std::list<G4double>::iterator its;
-  int n(0);
+  int n = 0;
   for(it=bn.begin(), its=bs.begin();it!=bn.end();it++, its++)
     {
       n++;
@@ -86,8 +86,8 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
 
 BDSMultipoleMagField::~BDSMultipoleMagField(){}
 
-void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
-		       G4double *Bfield ) const
+void BDSMultipoleMagField::GetFieldValue(const G4double *Point,
+					 G4double *Bfield ) const
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -97,15 +97,12 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
 #endif
 
   // convert global to local coordinates
-  G4Navigator* MulNavigator=
-    G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
-  
   G4ThreeVector LocalR, GlobalR, LocalBField;
   
   GlobalR.setX(Point[0]);
   GlobalR.setY(Point[1]);
   GlobalR.setZ(Point[2]);
-  G4AffineTransform GlobalAffine=MulNavigator->GetGlobalToLocalTransform();
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   LocalR=GlobalAffine.TransformPoint(GlobalR); 
 
 #ifdef BDSDEBUG
@@ -175,7 +172,7 @@ void BDSMultipoleMagField::GetFieldValue( const G4double *Point,
   //
   // convert B field to global coordinate system
   //
-  G4AffineTransform LocalAffine = MulNavigator->GetLocalToGlobalTransform();
+  G4AffineTransform LocalAffine = auxNavigator->GetLocalToGlobalTransform();
   G4ThreeVector GlobalBField = LocalAffine.TransformAxis(LocalBField);
 
   // currently BDSRK4Stepper - unlike the other steppers like BDSSextStepper -

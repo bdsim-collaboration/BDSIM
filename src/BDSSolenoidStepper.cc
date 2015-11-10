@@ -1,22 +1,19 @@
-#include "BDSSolenoidStepper.hh"
 #include "BDSDebug.hh"
+#include "BDSSolenoidStepper.hh"
 
-#include "G4ThreeVector.hh"
-#include "G4TransportationManager.hh"
-#include "G4Navigator.hh"
 #include "G4AffineTransform.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs *EqRhs)
-  : G4MagIntegratorStepper(EqRhs,6),  // integrate over 6 variables only !!
-                                      // position & velocity
-    itsBField(0.0), itsDist(0.0), nvar(6)
+BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs* eqRHS):
+  G4MagIntegratorStepper(eqRHS, 6),
+  fPtrMagEqOfMot(eqRHS),
+  itsBField(0.0), itsDist(0.0), nvar(6)
 {
-  fPtrMagEqOfMot    = EqRhs;
-  SolenoidNavigator = new G4Navigator();
-  backupStepper     = new G4ClassicalRK4(EqRhs,6);
+  backupStepper = new G4ClassicalRK4(eqRHS, 6);
 }
 
 void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
@@ -50,12 +47,10 @@ void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
 #endif
   
   // setup our own navigator for calculating transforms
-  SolenoidNavigator->SetWorldVolume(G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()); 
-  SolenoidNavigator->LocateGlobalPointAndSetup(GlobalR);
+  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
 
   // get the transform
-  G4AffineTransform GlobalAffine = SolenoidNavigator->
-    GetGlobalToLocalTransform();
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   
   G4ThreeVector LocalR  = GlobalAffine.TransformPoint(GlobalR); 
   G4ThreeVector LocalRp = GlobalAffine.TransformAxis(InitMomDir);
@@ -217,8 +212,7 @@ void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
 	     << G4endl; 
 #endif
       
-      G4AffineTransform LocalAffine = SolenoidNavigator-> 
-	GetLocalToGlobalTransform();
+      G4AffineTransform LocalAffine = auxNavigator->GetLocalToGlobalTransform();
       
       GlobalR = LocalAffine.TransformPoint(LocalR); 
       GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);

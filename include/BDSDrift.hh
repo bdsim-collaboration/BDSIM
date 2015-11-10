@@ -5,15 +5,18 @@
 
 #include "BDSAcceleratorComponent.hh"
 
+class BDSBeamPipe;
+
 struct BDSBeamPipeInfo;
 
 class BDSDrift: public BDSAcceleratorComponent
 {
 public:
-  BDSDrift(G4String         nameIn, 
-	   G4double         lengthIn,
-	   BDSBeamPipeInfo* beamPipeInfoIn);
-  ~BDSDrift(){;};
+  BDSDrift(G4String         name, 
+	   G4double         length,
+	   BDSBeamPipeInfo* beamPipeInfo,
+	   G4int            precisionRegion = 0);
+  ~BDSDrift();
 
 protected:
   void Build();

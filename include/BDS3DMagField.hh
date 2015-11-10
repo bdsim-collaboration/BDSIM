@@ -1,17 +1,10 @@
 //Based on the Geant4 example examples/advanced/purging_magnet/src/PurgMagTabulatedField3D.cc
-//#include "G4MagneticField.hh"
 #include "G4ios.hh"
 #include "BDSMagField.hh"
 
-#include <fstream>
 #include <vector>
-#include <cmath>
 
-class BDS3DMagField
-#ifndef STANDALONE
-// : public G4MagneticField
-  : public BDSMagField
-#endif
+class BDS3DMagField : public BDSMagField
 {
   
   // Storage space for the table

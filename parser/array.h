@@ -7,15 +7,15 @@
 #include <vector>
 
 // representation of arrays used in tokens
+namespace GMAD {
 struct Array {
-  std::vector<char*> symbols;
-  double *data;
-  int size;
+  std::vector<std::string> symbols;
+  std::vector<double> data;
 
   // helper methods
-  void set_vector(std::list<double>& dst)
+  void set_vector(std::vector<double>& dst) 
   {
-    for(int i=0; i< size;i++){
+    for(unsigned int i=0; i< data.size();i++){
       dst.push_back(data[i]);
 #ifdef BDSDEBUG 
       std::cout << data[i] << " ";
@@ -26,9 +26,9 @@ struct Array {
 #endif
   }
 
-  void set_vector(std::list<char*>& dst)
+  void set_vector(std::vector<std::string>& dst)
   {
-    for(int i=0; i< size;i++){
+    for(unsigned int i=0; i< symbols.size();i++){
       dst.push_back(symbols[i]);
 #ifdef BDSDEBUG 
       std::cout << symbols[i] << " ";
@@ -39,12 +39,26 @@ struct Array {
 #endif
   }
 
-  void set_vector(std::list<const char*>& dst)
+  void set_vector(std::vector<int>& dst)
   {
-    for(int i=0; i< size;i++){
-      dst.push_back(symbols[i]);
+    for(unsigned int i=0; i< data.size();i++){
+      dst.push_back((int)(data[i]));
 #ifdef BDSDEBUG 
-      std::cout << symbols[i] << " ";
+      std::cout << (int)(data[i]) << " ";
+#endif
+    }
+#ifdef BDSDEBUG 
+    std::cout << std::endl;
+#endif
+  }
+
+
+  void set_vector(std::list<double>& dst)
+  {
+    for(unsigned int i=0; i< data.size();i++){
+      dst.push_back(data[i]);
+#ifdef BDSDEBUG 
+      std::cout << data[i] << " ";
 #endif
     }
 #ifdef BDSDEBUG 
@@ -54,10 +68,10 @@ struct Array {
 
   void set_vector(std::list<std::string>& dst)
   {
-    for(int i=0; i< size;i++){
-      dst.push_back((std::string)symbols[i]);
+    for(unsigned int i=0; i< symbols.size();i++){
+      dst.push_back(symbols[i]);
 #ifdef BDSDEBUG 
-      std::cout << (std::string)symbols[i] << " ";
+      std::cout << symbols[i] << " ";
 #endif
     }
 #ifdef BDSDEBUG 
@@ -67,7 +81,7 @@ struct Array {
 
   void set_vector(std::list<int>& dst)
   {
-    for(int i=0; i< size;i++){
+    for(unsigned int i=0; i< data.size();i++){
       dst.push_back((int)(data[i]));
 #ifdef BDSDEBUG 
       std::cout << (int)(data[i]) << " ";
@@ -78,5 +92,6 @@ struct Array {
 #endif
   }
 };
+}
 
 #endif
