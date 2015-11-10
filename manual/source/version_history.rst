@@ -1,4 +1,4 @@
-V0.9 - 2015 / 11 / 09
+V0.9 - 2015 / 11 / 10
 =====================
 
 New Features
@@ -66,6 +66,12 @@ General
 * Consistent policy for overwriting output files (issue #65)
 * Improve memory and cpu for output writing (issue #86)
 
+Utilities
+---------
+* pymadx v0.2
+* pybdsim v0.3
+* pymad8 v0.2
+* robdsim v0.3
 
 V0.8 - 2015 / 08 / 10
 =====================
