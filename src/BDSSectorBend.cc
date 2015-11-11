@@ -22,12 +22,17 @@ BDSSectorBend::BDSSectorBend(G4String            name,
 			     G4double            angleIn,
 			     G4double            bField,
 			     G4double            bGrad,
+			     G4double            e1in,
+			     G4double            e2in,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
 	    beamPipeInfo, magnetOuterInfo),
-  itsBField(bField),itsBGrad(bGrad)
+  itsBField(bField),itsBGrad(bGrad),e1(e1in),e2(e2in)
 {
+  //G4cout << "e1 " << e1 << G4endl;
+  //G4cout << "e2 " << e2 << G4endl;
+  
   /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
   /// - this results in a wrongly chord length
   angle       = angleIn;
@@ -45,6 +50,26 @@ BDSSectorBend::BDSSectorBend(G4String            name,
     }
   else
     {chordLength = arcLength;}
+  if (fabs(e1) > (0.5*CLHEP::halfpi))
+    {
+      G4cerr << __METHOD_NAME__ << "Aperture e1 is greater than pi/4" << G4endl;
+      exit(1);
+    }
+  if (fabs(e2) > (0.5*CLHEP::halfpi))
+    {
+      G4cerr << __METHOD_NAME__ << "Aperture e2 is greater than pi/4" << G4endl;
+      exit(1);
+    }
+  //
+  if (e1 == 0)
+    {
+      e1 = -angle*0.5;
+    }
+  if (e2 == 0)
+    {
+      e2 = -angle*0.5;
+    }
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
   G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
@@ -103,13 +128,15 @@ void BDSSectorBend::BuildBeampipe()
   G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
 #endif
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+
   if (BDS::IsFinite(angle))
     {
+      //G4cout << "oldangle" << -angle*0.5 << G4endl;
       beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
 						    name,
 						    chordLength - lengthSafety,
-						    -angle*0.5,
-						    -angle*0.5,
+						    e1,//-angle*0.5,
+						    e2,//-angle*0.5,
 						    beamPipeInfo->aper1,
 						    beamPipeInfo->aper2,
 						    beamPipeInfo->aper3,

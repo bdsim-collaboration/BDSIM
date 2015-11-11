@@ -312,7 +312,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if (nSbends==0) nSbends = 1; // can happen in case angle = 0
   if (BDSGlobalConstants::Instance()->DontSplitSBends())
     {nSbends = 1;}   //use for debugging
-      
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
@@ -329,20 +328,49 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
   
+  G4double startangle   = -0.5*_element.angle/(nSbends) + _element.e1;
+  G4double endangle     = -0.5*_element.angle/(nSbends) + _element.e2;
+  G4double deltaangle   = fabs((startangle - endangle))/ (nSbends+1);
+
+  //std::cout << "e1 " << _element.e1 << std::endl;
+  //std::cout << "e2 " << _element.e2 << std::endl;
+  //std::cout << "startangle " << startangle << std::endl;
+  //std::cout << "endangle " << endangle << std::endl;
+  //std::cout << "deltaangle " <<deltaangle << std::endl;
+
   // prepare one sbend segment
-  BDSSectorBend* oneBend = new BDSSectorBend(thename,
+  // create a line of this sbend repeatedly
+  G4double anglein = 0;
+  G4double angleout = 0;
+  for (int i = 0; i < nSbends; ++i){
+    if (i==0){
+        anglein = startangle;
+        angleout = -semiangle*0.5;}
+    else if (i==(nSbends-1)){
+        anglein=-semiangle*0.5;
+        angleout = endangle;}
+    else{
+        //anglein = -startangle + (i)*deltaangle;
+        //angleout = -startangle + (i+1)*deltaangle;
+        anglein = -semiangle*0.5;
+        angleout = -semiangle*0.5;}
+    //thename = _element.name + "_"+std::to_string(i)+"_of_" + std::to_string(nSbends);
+
+    G4cout << "thename" << thename <<G4endl;
+    BDSSectorBend* oneBend = new BDSSectorBend(thename,
 					     semilength,
 					     semiangle,
 					     bField,
 					     bPrime,
+                         anglein,
+                         angleout,
 					     bpInfo,
 					     moInfo);
 
-  oneBend->SetBiasVacuumList(_element.biasVacuumList);
-  oneBend->SetBiasMaterialList(_element.biasMaterialList);
-  // create a line of this sbend repeatedly
-  for (int i = 0; i < nSbends; ++i)
-    {sbendline->AddComponent(oneBend);}
+    oneBend->SetBiasVacuumList(_element.biasVacuumList);
+    oneBend->SetBiasMaterialList(_element.biasMaterialList);
+  
+    sbendline->AddComponent(oneBend);}
   return sbendline;
 }
 
