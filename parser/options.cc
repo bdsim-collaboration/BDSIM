@@ -16,7 +16,7 @@ Options::Options()
 
   // beam options
   particleName          = "";
-  distribType           = "";
+  distribType           = "reference";
   xDistribType          = ""; 
   yDistribType          = "";
   zDistribType          = "";

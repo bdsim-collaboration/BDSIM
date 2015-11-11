@@ -15,6 +15,11 @@
 
 class BDSTiltOffset;
 
+/// Forward declaration for iterator so it can appear at the top
+class BDSBeamline;
+class BDSLine;
+class BDSTransform3D;
+
 /**
  * @brief A vector of BDSBeamlineElement instances - a beamline.
  * 
@@ -29,11 +34,6 @@ class BDSTiltOffset;
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
-
-/// Forward declaration for iterator so it can appear at the top
-class BDSBeamline;
-class BDSLine;
-class BDSTransform3D;
 
 class BDSBeamline
 {

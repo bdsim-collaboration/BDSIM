@@ -5,7 +5,7 @@
 
 #include "BDSMagnet.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSBeamPipe;

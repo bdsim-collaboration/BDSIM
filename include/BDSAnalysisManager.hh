@@ -6,12 +6,9 @@
 #include <vector>
 
 /**
- * @brief Analysis interface class. Create, store and access
- * histograms.
+ * @brief Analysis interface class. Create, store and access histograms.
  * 
- * singleton pattern
- * 
- * This is conceptually based on the Geant4 AnalysisManager classes,
+ * Singleton pattern. This is conceptually based on the Geant4 AnalysisManager classes,
  * however this does not inherit it nor adhere strictly to it. The
  * purpose of this class is only to deal with histograms. The Geant4
  * AnalysisManagers are based on an output format.  Here this will 

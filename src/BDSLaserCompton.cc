@@ -12,13 +12,12 @@
 #include "G4Gamma.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
-BDSLaserCompton::BDSLaserCompton(const G4String& processName)
-  :  G4VDiscreteProcess(processName),//isInitialised(false),
-     itsLaserEnergy(0.0)
+BDSLaserCompton::BDSLaserCompton(const G4String& processName):
+  G4VDiscreteProcess(processName),//isInitialised(false),
+  itsLaserEnergy(0.0)
 {
-  itsLaserWavelength=BDSGlobalConstants::Instance()->GetLaserwireWavelength();
-  itsLaserDirection=BDSGlobalConstants::Instance()->GetLaserwireDir();
-
+  itsLaserWavelength = BDSGlobalConstants::Instance()->GetLaserwireWavelength();
+  itsLaserDirection  = BDSGlobalConstants::Instance()->GetLaserwireDir();
 
   //	if(itsLaserWavelength<=0.)
   //	 {G4Exception("BDSLaserCompton: Invalid Wavelength");}
@@ -29,12 +28,10 @@ BDSLaserCompton::BDSLaserCompton(const G4String& processName)
   itsComptonEngine=new BDSComptonEngine();
 } 
 
- 
 BDSLaserCompton::~BDSLaserCompton()
 {
   delete itsComptonEngine;
 }
-
 
 G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
 						 const G4Step& stepData)

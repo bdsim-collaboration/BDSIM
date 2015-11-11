@@ -38,6 +38,7 @@ struct Element {
   double aper4;
   std::string apertureType;
   std::string beampipeMaterial;
+  std::string vacuumMaterial;
   ///@}
   
   // magnet geometry

@@ -6,7 +6,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Material.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSOctupole: public BDSMagnet

@@ -20,7 +20,7 @@ G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
-struct BDSBeamPipeInfo;
+class BDSBeamPipeInfo;
 
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 

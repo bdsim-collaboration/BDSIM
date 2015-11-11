@@ -12,7 +12,10 @@ class G4LogicalVolume;
 class G4VSolid;
 
 /**
- * @brief A class that is mostly BDSGeometryComponent but with the 
+ * @brief An object for both the returned magnet outer body but also a
+ * tight fitting container for the whole magnet.
+ * 
+ * Mostly BDSGeometryComponent but with the 
  * addition of a suggested container volume for the whole magnet body
  * as the magnet outer section is typically the outside of the magnet
  * and only the magnet factory knows its true shape and can make a well

@@ -11,7 +11,19 @@
 
 class BDSTiltOffset;
 
-class BDSComponentFactory{
+/**
+ * @brief Factory to produce all types of BDSAcceleratorComponent s.
+ * 
+ * Loops over the beam line list from the parser and creates the appropriate
+ * object (that inherits BDSAcceleratorComponent) and returns it. Will return
+ * nullptr if invalid type or nothing to be constructed for that particular type.
+ * Basic calculations on field strength and angle as well as basic parameter validity
+ * (zero length?) are done here.
+ * 
+ */
+
+class BDSComponentFactory
+{
 public:
   BDSComponentFactory();
   ~BDSComponentFactory();
@@ -67,8 +79,6 @@ private:
   G4bool HasSufficientMinimumLength(GMAD::Element& element);
   
   ///@{ Utility function to prepare model info
-  G4Material*         PrepareBeamPipeMaterial(GMAD::Element& element);
-  G4Material*         PrepareVacuumMaterial(GMAD::Element& element);
   BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element& element);
   G4double            PrepareOuterDiameter(GMAD::Element& element);
   BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element& element);

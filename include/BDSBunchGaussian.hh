@@ -1,5 +1,5 @@
-#ifndef BDSBunchGaussian_h
-#define BDSBunchGaussian_h 
+#ifndef BDSBUNCHGAUSSIAN_H
+#define BDSBUNCHGAUSSIAN_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -7,8 +7,14 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-class BDSBunchGaussian : public BDSBunchInterface {
- 
+/**
+ * @brief A 6D Gaussian distribution.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchGaussian: public BDSBunchInterface
+{ 
 protected : 
   G4double sigmaX;
   G4double sigmaY;

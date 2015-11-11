@@ -1,5 +1,5 @@
-#ifndef BDSBunchRing_h
-#define BDSBunchRing_h 
+#ifndef BDSBUNCHRING_H
+#define BDSBUNCHRING_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -8,7 +8,15 @@ namespace CLHEP {
   class RandFlat;
 }
 
-class BDSBunchRing : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that produces an uncorrelated random
+ * uniform distribution along a circle in phase space.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchRing: public BDSBunchInterface
+{ 
 protected : 
   G4double rMin;
   G4double rMax;
