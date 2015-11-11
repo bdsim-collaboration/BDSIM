@@ -1,11 +1,17 @@
-#ifndef BDSBunchUserFile_h
-#define BDSBunchUserFile_h 
+#ifndef BDSBUNCHUSERFILE_H
+#define BDSBUNCHUSERFILE_H 
 
 #include "BDSBunchInterface.hh"
 #include <fstream>
 #include <list>
 
-class BDSBunchUserFile : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that reads a user specified column file.
+ * 
+ */
+
+class BDSBunchUserFile: public BDSBunchInterface
+{ 
 private:
   void ParseFileFormat();
   void OpenBunchFile();

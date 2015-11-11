@@ -1,5 +1,5 @@
-#ifndef BDSBunchEShell_h
-#define BDSBunchEShell_h 
+#ifndef BDSBUNCHESHELL_H
+#define BDSBUNCHESHELL_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -8,8 +8,14 @@ namespace CLHEP {
   class RandFlat;
 }
 
-class BDSBunchEShell : public BDSBunchInterface { 
+/**
+ * @brief An uncorrelated uniform random distribution within an elliptical shell.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
 
+class BDSBunchEShell: public BDSBunchInterface
+{
 protected : 
   G4double shellX;
   G4double shellXp;

@@ -13,6 +13,7 @@
 /**
  * @brief A class that holds a fully constructed BDSAcceleratorComponent
  * as well as any information relevant to its position within the beamline.
+ *
  * For example, position information as curvilinear s position coordinate
  * as these are only defined with respect to the components position in the 
  * beamline / lattice.

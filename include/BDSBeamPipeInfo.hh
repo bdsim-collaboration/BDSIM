@@ -7,8 +7,9 @@
 class G4Material;
 
 /**
- * @brief Holder class for all information required to
- * create a beam pipe. This reduces the number of argument
+ * @brief Holder class for all information required to describe a beam pipe model. 
+ * 
+ * This reduces the number of argument
  * to all magnet constructors plus aggregates common tasks
  * in the component factory.
  * 

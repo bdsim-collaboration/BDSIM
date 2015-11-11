@@ -7,8 +7,14 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-class BDSBunchTwiss : public BDSBunchInterface {
+/**
+ * @brief A bunch distribution according to the twiss parameterisation.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
 
+class BDSBunchTwiss: public BDSBunchInterface
+{
 private : 
   /* Twiss parameters */
   G4double betaX;

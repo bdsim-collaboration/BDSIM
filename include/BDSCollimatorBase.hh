@@ -8,9 +8,12 @@
 class G4VSolid;
 
 /**
- * @brief Base class for collimators.
+ * @brief Base class for collimators with common construction
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
-class BDSCollimatorBase :public BDSAcceleratorComponent
+
+class BDSCollimatorBase: public BDSAcceleratorComponent
 {
 public:
   BDSCollimatorBase(G4String name,

@@ -14,7 +14,14 @@ namespace CLHEP {
 
 class BDSBeamline;
 
-class BDSBunchInterface { 
+/**
+ * @brief The base class for bunch distribution generators.
+ *
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchInterface
+{ 
 protected : 
   ///@{ Centre of distributions
   G4double X0;
