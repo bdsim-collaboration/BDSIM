@@ -1,49 +1,54 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
+#ifndef BDSSAMPLERSD_H
+#define BDSSAMPLERSD_H
 
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed Samplers to account for plane and cylinder types (GABs code)
-*/
-
-#ifndef BDSSamplerSD_h
-#define BDSSamplerSD_h 1
-
-#include "G4VSensitiveDetector.hh"
 #include "BDSSamplerHit.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4VSensitiveDetector.hh"
 
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
-class BDSSamplerSD : public G4VSensitiveDetector
-{
-  
+/**
+ * @brief The sensitive detector class that provides sensitivity to BDSSampler instances.
+ * It creates BDSSamplerHit instances for each particle impact on a sampler this SD is
+ * attached to.
+ * 
+ * Written and edited by many authors over time.
+ */
+
+class BDSSamplerSD: public G4VSensitiveDetector
+{ 
 public:
+  /// Construct a sampler with name and type (plane/cylinder). Optionally, the primariesOnly
+  /// flag is whether to only record primary hits in this sampler.
   BDSSamplerSD(G4String name, G4String type);
   ~BDSSamplerSD();
-  
-  void SetType(G4String aType);
-  
-  virtual void Initialize(G4HCofThisEvent*HCE);
-  virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
+
+  /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
+  /// the hits collection of this event (HCE).
+  virtual void Initialize(G4HCofThisEvent* HCE);
+
+  /// Overriden from G4VSensitiveDetector.  Creates hit instances and appends them to the
+  /// hits collection.
+  virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
+
+  /// Hits collection ID - an integer look up for the hits collection
+  /// provided by G4SDManager (a registry) that is given to the
+  /// G4HCofThisEvent (Hits collection of the event).
   int itsHCID;
   
 private:
+  /// The hits collection for this sensitive detector class that's owned
   BDSSamplerHitsCollection *SamplerCollection;
-  // G4bool StoreHit;
-  // G4int nStepsInSampler;
-  // G4int maxNStepsInSampler;
-  
+
+  /// A string describing whether it's a plane or cylindrical sampler.
   G4String itsType;
+
+  /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;
-  //G4int    itsHCID;
-
 };
-
-inline void BDSSamplerSD::SetType(G4String aType)
-{itsType=aType;}
 
 #endif
 
