@@ -12,6 +12,7 @@ class G4TouchableHistory;
 
 /**
  * @brief The sensitive detector class that provides sensitivity to BDSSampler instances.
+ *
  * It creates BDSSamplerHit instances for each particle impact on a sampler this SD is
  * attached to.
  * 

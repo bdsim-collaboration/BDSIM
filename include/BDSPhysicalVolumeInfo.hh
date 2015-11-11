@@ -6,7 +6,9 @@
 
 /**
  * @brief A class holding any information pertaining to a particular physical
- * volume in a BDSIM geant4 model.  Currently, this is used for the name and
+ * volume in a BDSIM geant4 model.  
+ * 
+ * Currently, this is used for the name and
  * s position coordinate, but can be extended to store any other pertinent 
  * information.
  * 
