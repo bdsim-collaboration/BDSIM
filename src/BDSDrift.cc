@@ -8,8 +8,8 @@
 
 BDSDrift::BDSDrift(G4String         name, 
 		   G4double         length,
-           G4double         e1in,
-           G4double         e2in,
+		   G4double         e1in,
+		   G4double         e2in,
 		   BDSBeamPipeInfo* beamPipeInfo,
 		   G4int            precisionRegion):
   BDSAcceleratorComponent(name, length, 0, "drift", precisionRegion, beamPipeInfo),e1(e1in),e2(e2in)
