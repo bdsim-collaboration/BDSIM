@@ -124,6 +124,7 @@ void Element::flush() {
   aper4 = 0;
   apertureType = "";
   beampipeMaterial = "";
+  vacuumMaterial = "";
 
   // magnet geometry
   magnetGeometryType  = "";
@@ -269,6 +270,7 @@ void Element::set(const struct Parameters& params)
   if(params.aper4set) aper4 = params.aper4;
   if(params.apertureTypeset) apertureType = params.apertureType;
   if(params.beampipeMaterialset) beampipeMaterial = params.beampipeMaterial;
+  if(params.vacuumMaterialset) vacuumMaterial = params.vacuumMaterial;
 
   //magnet geometry
   if(params.magnetGeometryTypeset) magnetGeometryType = params.magnetGeometryType;

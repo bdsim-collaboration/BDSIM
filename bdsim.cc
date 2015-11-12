@@ -1,7 +1,7 @@
 //  
 //   BDSIM, (C) 2001-2015
 //   
-//   version 0.8
+//   version 0.9.develop
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
@@ -59,7 +59,7 @@ namespace GMAD {
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.8.develop"<<G4endl;
+  G4cout<<"bdsim : version 0.9.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
@@ -84,9 +84,10 @@ int main(int argc,char** argv)
   GMAD::gmad_parser(execOptions->GetInputFilename());
 
   //
-  // parse options and explicitly initialise materials and global constants
+  // parse options, explicitly initialise materials and global constants and construct required materials
   //
-  BDSMaterials::Instance();
+  BDSMaterials::Instance()->PrepareRequiredMaterials();
+  
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   //

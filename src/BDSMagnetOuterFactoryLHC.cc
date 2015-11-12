@@ -1,6 +1,7 @@
 #include "BDSMagnetOuterFactoryLHC.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSColours.hh"
@@ -837,11 +838,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     0,                            // copy number
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
-  
-  G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
-  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
-  G4Material* vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
 
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
+  G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
+  
   //use beampipe factories to create another beampipe (note no magnetic field for now...)  
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
 										    name,
@@ -1463,9 +1464,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			     checkOverlaps);
   allPhysicalVolumes.push_back(yokePV);
 
-  G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
-  G4Material* beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
-  G4Material* vacuumMaterial   = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  G4Material* beamPipeMaterial = defaultModel->beamPipeMaterial;
+  G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,

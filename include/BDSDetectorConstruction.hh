@@ -28,6 +28,17 @@ class G4VSensitiveDetector;
 class BDSBOptrMultiParticleChangeCrossSection;
 #endif
 
+/**
+ * @brief Class that constructs a Geant4 model of an accelerator.
+ *
+ * Mandatory class that must be supplied for a valid Geant4 simulation.
+ * As construction is based on user input (via the parser) for a potentially
+ * large number of items, the construction process is factorised into key steps
+ * with member functions and makes use of factories for components and tunnel segments.
+ * 
+ * Maintained by Laurie Nevay & Jochem Snuverink
+ */
+
 class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:

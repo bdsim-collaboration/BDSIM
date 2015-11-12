@@ -1,13 +1,30 @@
-V0.8.develop - 2015 / ?? / ??
-=============================
+V0.9 - 2015 / 11 / 10
+=====================
 
 New Features
 ------------
 
-* Physics biasing
+* Physics biasing with ability to change cross-section for individual particles
+  and processes as well as attach to a variety of objects
 * Decapole magnet
-* Robdsim analysis package
+* Robdsim analysis package as separate executable for testing
 * Tracking tester
+* Improved C++11 use and iterator implementation across containers
+* Fill histogram with energy hit over a range covering several bins
+* Introduced a separate auxiliary G4Navigator to avoid accidentally moving
+  the particle during tracking when querying global to local transforms
+* Transform for curvilinear coordinates to global coordinates
+  so primaries in those coordinates can be injected from anywhere (issue #63)
+* Parser put in GMAD namespace
+* New executable options for writing out geometry coordinates as built by BDSIM
+* Magnets now have tightly fitting invisible container volumes as opposed to
+  large boxes before
+* Changed return type of magnet outer geometry factories to new BDSMagnetOuter
+  class. This is because the container contruction is now delegated to the
+  magnet outer factory for tight fitting container volumes.
+* Extended examples and tests
+* Move entirely to Geant4 visualisation manager supporting all available visualisers
+  available with the local Geant4 installation
 
 Bug fixes
 ---------
@@ -15,16 +32,15 @@ Bug fixes
 Geometry
 ^^^^^^^^
 
-* Magnets now have tightly fitting invisible container volumes as opposed to
-  large boxes before.
-* Changed return type of magnet outer geometry factories to new BDSMagnetOuter
-  class. This is because the container contruction is now delegated to the
-  magnet outer factory for tight fitting container volumes.
-* Extended examples and tests.
 * Fixed bug where the read out coordinates would also be offset by the offset
-  of the element.
-* Reduced dupliation in magnet outer factories.
+  of the element
+* Fixed overlaps in read out geometry
+* Reduced dupliation in magnet outer factories
 * Fixed overlaps in rbend geometry (issue #64)
+* Increase tolerance for sector bends (issue #73)
+* Protect against zero angle sector bends (issue #74)
+* Fixed overlaps in GDML geometry (issue #81)
+* Geometry fixes (issues #76, 94, 95)
   
 Physics
 ^^^^^^^
@@ -39,15 +55,23 @@ Parser
 Tracking
 ^^^^^^^^
 
-* Introduced a separate auxiliary G4Navigator to avoid accidentally moving
-  the particle during tracking when querying global to local transforms.
+* Dipole uses local coordinates and can bend in any direction (issue #78)
   
 General
 ^^^^^^^
 
+* Samplers can be attached to occurrence of a duplicated element (issue #47)
 * Output survey updated and fixed (issue #60)
 * Check for Geant4 environment variables (issue #62)
 * Consistent policy for overwriting output files (issue #65)
+* Improve memory and cpu for output writing (issue #86)
+
+Utilities
+---------
+* pymadx v0.2
+* pybdsim v0.3
+* pymad8 v0.2
+* robdsim v0.3
 
 V0.8 - 2015 / 08 / 10
 =====================

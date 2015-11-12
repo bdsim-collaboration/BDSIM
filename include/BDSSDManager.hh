@@ -10,7 +10,9 @@ class BDSTunnelSD;
 
 /**
  * @brief A singleton class that holds all required sensitive
- * detector class instances.  Each sensitive detector class
+ * detector class instances.  
+ * 
+ * Each sensitive detector class
  * need only be instantiated once and attached to the relevant
  * volume. More factorised geometry construction will mean
  * SDs will be assigned in construction and not in detector

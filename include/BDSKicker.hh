@@ -7,7 +7,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Material.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSKicker: public BDSMagnet
@@ -28,7 +28,7 @@ protected:
 
 private:
   G4double bField;
-  G4double bGrad;
+  //G4double bGrad;
   G4double kickAngle;
   G4bool   verticalKicker;
 

@@ -9,8 +9,11 @@
 
 #include <vector>
 
+class G4Material;
+
 /**
- * @brief Factory for racetrack aperture model beampipes.
+ * @brief Factory for beam pipes defined by a series of x,y points that
+ * are extruded.
  * 
  * This is a pure virtual class that provides common functionality
  * for aperture models derived from a series of points transversely.
@@ -22,8 +25,6 @@
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
-
-class G4Material;
 
 class BDSBeamPipeFactoryPoints: public BDSBeamPipeFactoryBase
 {

@@ -998,26 +998,6 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element& element)
     {return true;}
 }
 
-G4Material* BDSComponentFactory::PrepareBeamPipeMaterial(Element& element)
-{
-  G4Material* beamPipeMaterial;
-  if(element.beampipeMaterial == "")
-    {
-      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetBeamPipeMaterialName();
-      beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
-    }
-  else
-    { beamPipeMaterial = BDSMaterials::Instance()->GetMaterial(element.beampipeMaterial); }
-  return beamPipeMaterial;
-}
-
-G4Material* BDSComponentFactory::PrepareVacuumMaterial(Element& /*element*/)
-{
-  //in future do something relating to what's set in the element
-  //also make some setting available in element
-  return BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());
-}
-
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
@@ -1062,45 +1042,16 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element& element)
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element& element)
 {
-  BDSBeamPipeInfo* info = new BDSBeamPipeInfo;
-  if (element.apertureType == "")
-    {info->beamPipeType = BDSGlobalConstants::Instance()->GetApertureType();}
-  else 
-    {info->beamPipeType = BDS::DetermineBeamPipeType(element.apertureType);}
-
-  // note even if aperN in the element is 0 (ie unset), we should use
-  // the default aperture model from global constants (already in metres)
-  // aper1
-  if (element.aper1 == 0)
-    {info->aper1 = BDSGlobalConstants::Instance()->GetAper1();}
-  else
-    {info->aper1 = element.aper1*CLHEP::m;}
-  // aper2
-  if (element.aper2 == 0)
-    {info->aper2 = BDSGlobalConstants::Instance()->GetAper2();}
-  else
-    {info->aper2 = element.aper2*CLHEP::m;}
-  // aper3
-  if (element.aper3 == 0)
-    {info->aper3 = BDSGlobalConstants::Instance()->GetAper3();}
-  else
-    {info->aper3 = element.aper3*CLHEP::m;}
-  // aper4
-  if (element.aper4 == 0)
-    {info->aper4 = BDSGlobalConstants::Instance()->GetAper4();}
-  else
-    {info->aper4 = element.aper4*CLHEP::m;}
-  // beampipeThickness
-  if (element.beampipeThickness == 0)
-    {info->beamPipeThickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();}
-  else
-    {info->beamPipeThickness = element.beampipeThickness*CLHEP::m;}
-  
-  info->vacuumMaterial   = PrepareVacuumMaterial(element);
-  info->beamPipeMaterial = PrepareBeamPipeMaterial(element);
-
-  BDS::CheckApertureInfo(info);
-  
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
+					      element.apertureType,
+					      element.aper1 * CLHEP::m,
+					      element.aper2 * CLHEP::m,
+					      element.aper3 * CLHEP::m,
+					      element.aper4 * CLHEP::m,
+					      element.vacuumMaterial,
+					      element.beampipeThickness * CLHEP::m,
+					      element.beampipeMaterial);  
   return info;
 }
 

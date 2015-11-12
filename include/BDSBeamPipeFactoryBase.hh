@@ -12,7 +12,7 @@ class G4UserLimits;
 class G4VSolid;
 
 /**
- * @brief abstract base class for beampipe factory classes
+ * @brief Abstract base class for beampipe factory classes.
  * 
  * Abstract base class that defines the interface of each factory
  * to build any type of beampipe required. There are four general

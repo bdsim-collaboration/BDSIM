@@ -8,14 +8,17 @@ class G4Material;
 
 /**
  * @brief Holder struct of all information required to
- * create a section of tunnel. This reduces the number of 
+ * create a section of tunnel. 
+ *
+ * This reduces the number of 
  * arguments to all constructors plus aggregates common tasks
  * in the component factory.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct BDSTunnelInfo {
+struct BDSTunnelInfo
+{
   /// default constructor, not needed
   BDSTunnelInfo() = delete;
 

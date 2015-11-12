@@ -28,6 +28,7 @@ namespace GMAD {
     bool aper1set, aper2set, aper3set, aper4set;
     bool apertureTypeset;
     bool beampipeMaterialset;
+    bool vacuumMaterialset;
     bool magnetGeometryTypeset;
     bool outerMaterialset;
     bool outerDiameterset;
