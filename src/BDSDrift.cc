@@ -8,9 +8,11 @@
 
 BDSDrift::BDSDrift(G4String         name, 
 		   G4double         length,
+           G4double         e1in,
+           G4double         e2in,
 		   BDSBeamPipeInfo* beamPipeInfo,
 		   G4int            precisionRegion):
-  BDSAcceleratorComponent(name, length, 0, "drift", precisionRegion, beamPipeInfo)
+  BDSAcceleratorComponent(name, length, 0, "drift", precisionRegion, beamPipeInfo),e1(e1in),e2(e2in)
 {;}
 
 BDSDrift::~BDSDrift()
@@ -19,9 +21,41 @@ BDSDrift::~BDSDrift()
 void BDSDrift::Build()
 {
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
-					      chordLength,
-					      beamPipeInfo);
+  BDSBeamPipe* pipe;
+  if (e1 != 0)
+    {
+      pipe = factory->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
+                                        name,
+                                        chordLength,
+                                        e1,
+                                        beamPipeInfo->aper1,
+                                        beamPipeInfo->aper2,
+                                        beamPipeInfo->aper3,
+                                        beamPipeInfo->aper4,
+                                        beamPipeInfo->vacuumMaterial,
+                                        beamPipeInfo->beamPipeThickness,
+                                        beamPipeInfo->beamPipeMaterial);
+    }
+  else if (e2 != 0)
+    {
+      pipe = factory->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,
+                                        name,
+                                        chordLength,
+                                        e2,
+                                        beamPipeInfo->aper1,
+                                        beamPipeInfo->aper2,
+                                        beamPipeInfo->aper3,
+                                        beamPipeInfo->aper4,
+                                        beamPipeInfo->vacuumMaterial,
+                                        beamPipeInfo->beamPipeThickness,
+                                        beamPipeInfo->beamPipeMaterial);
+    }
+  else
+    {
+      pipe = factory->CreateBeamPipe(name,
+                                        chordLength,
+                                        beamPipeInfo);
+    }
 
   RegisterDaughter(pipe);
   

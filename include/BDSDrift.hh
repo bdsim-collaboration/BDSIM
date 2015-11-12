@@ -14,6 +14,8 @@ class BDSDrift: public BDSAcceleratorComponent
 public:
   BDSDrift(G4String         name, 
 	   G4double         length,
+	   G4double         e1,
+	   G4double         e2,
 	   BDSBeamPipeInfo* beamPipeInfo,
 	   G4int            precisionRegion = 0);
   ~BDSDrift();
@@ -23,6 +25,8 @@ protected:
 
 private:
   void BuildContainerLogicalVolume(){;}; // to fulfill bdsacceleratorcomponent requirements
+  G4double e1;
+  G4double e2;
 };
 
 #endif

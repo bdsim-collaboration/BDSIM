@@ -243,6 +243,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
   
   return (new BDSDrift( _element.name,
 			_element.l*CLHEP::m,
+			_element.e1*CLHEP::rad,
+			_element.e2*CLHEP::rad,
 			PrepareBeamPipeInfo(_element) ));
 }
 
@@ -330,7 +332,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   
   G4double startangle   = -0.5*_element.angle/(nSbends) + _element.e1;
   G4double endangle     = -0.5*_element.angle/(nSbends) + _element.e2;
-  G4double deltaangle   = fabs((startangle - endangle))/ (nSbends+1);
+  //G4double deltaangle   = fabs((startangle - endangle))/ (nSbends+1);
 
   //std::cout << "e1 " << _element.e1 << std::endl;
   //std::cout << "e2 " << _element.e2 << std::endl;
@@ -354,9 +356,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
         //angleout = -startangle + (i+1)*deltaangle;
         anglein = -semiangle*0.5;
         angleout = -semiangle*0.5;}
+    
     //thename = _element.name + "_"+std::to_string(i)+"_of_" + std::to_string(nSbends);
 
-    G4cout << "thename" << thename <<G4endl;
     BDSSectorBend* oneBend = new BDSSectorBend(thename,
 					     semilength,
 					     semiangle,
