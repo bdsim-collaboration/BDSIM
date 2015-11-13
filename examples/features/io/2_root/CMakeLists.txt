@@ -1,1 +1,2 @@
-simple_testing(IO_ROOT "--file=fodoRing.gmad --output=root --batch --circular" "")
+set(TESTING_ARGS --output=root --circular)
+simple_testing(IO_ROOT "--file=fodoRing.gmad" "")
