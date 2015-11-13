@@ -52,44 +52,48 @@ void BDSOutputROOTEvent::Init()
 }
   
 /// write sampler hit collection
-void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection*) {};
+void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection*) {}
 
 /// write energy deposition hits
-void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection*) {};
+void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection*) {}
 
 /// write where primaries stop being primaries
-void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* ploss) {};
+void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* // ploss
+					  ) {}
 
 /// write where primaries impact
-void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* phits) {};
+void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* // phits
+					 ) {}
 
 /// write tunnel hits
-void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits) {};
+void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* // tunnelHits
+					 ) {}
 
 /// write a trajectory 
-void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) {};
+void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &// TrajVec
+					 ) {}
 
 /// write primary hit
-void BDSOutputROOTEvent::WritePrimary(G4double E,
-				      G4double x0,
-				      G4double y0,
-				      G4double z0,
-				      G4double xp,
-				      G4double yp,
-				      G4double zp,
-				      G4double t,
-				      G4double weight,
-				      G4int    PDGType, 
-				      G4int    nEvent, 
-				      G4int    TurnsTaken) {};
+void BDSOutputROOTEvent::WritePrimary(G4double /*E*/,
+				      G4double /*x0*/,
+				      G4double /*y0*/,
+				      G4double /*z0*/,
+				      G4double /*xp*/,
+				      G4double /*yp*/,
+				      G4double /*zp*/,
+				      G4double /*t*/,
+				      G4double /*weight*/,
+				      G4int    /*PDGType*/,
+				      G4int    /*nEvent*/,
+				      G4int    /*TurnsTaken*/) {}
 
 /// write a histgoram
-void BDSOutputROOTEvent::WriteHistogram(BDSHistogram1D* histogramIn) {};
+void BDSOutputROOTEvent::WriteHistogram(BDSHistogram1D* /*histogramIn*/) {}
 
 /// write and close and open new file
-void BDSOutputROOTEvent::Commit() {};
+void BDSOutputROOTEvent::Commit() {}
 
 /// write and close the file
-void BDSOutputROOTEvent::Write() {};
+void BDSOutputROOTEvent::Write() {}
 
 #endif
