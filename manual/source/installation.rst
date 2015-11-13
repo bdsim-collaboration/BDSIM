@@ -297,6 +297,7 @@ modifying the CMake configuration as generally described in
 
   > ccmake .
 
+Make sure GEANT4_BUILD_MULTITHREADED is off since this is currently not supported.
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. Geant4 can then
 be compiled ::
