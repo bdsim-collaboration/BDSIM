@@ -73,8 +73,8 @@ TRKFactory::TRKFactory(GMAD::Options& options)
   placement = NULL;//new TRKPlacement();
 
   //pull out info from options
-  strategy        = setStrategyEnum(options.trackingType);
-  aperturetype    = setApertureEnum(options.apertureType);
+  strategy        = SetStrategyEnum(options.trackingType);
+  aperturetype    = SetApertureEnum(options.apertureType);
   beampiperadius  = options.aper1;
   trackingsteps   = options.trackingSteps;
   defaultaperture = new TRKApertureCircular(beampiperadius);
@@ -97,7 +97,7 @@ std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)
   return out;
 }
 
-TRK::Strategy TRKFactory::setStrategyEnum(std::string sIn)
+TRK::Strategy TRKFactory::SetStrategyEnum(std::string sIn)
 {
   if (sIn == "thin") {return TRK::THIN;}
   else if (sIn == "thinsymplectic") {return TRK::THINSYMPLECTIC;}
@@ -109,7 +109,7 @@ TRK::Strategy TRKFactory::setStrategyEnum(std::string sIn)
   }
 }
 
-TRKStrategy* TRKFactory::createStrategy()
+TRKStrategy* TRKFactory::CreateStrategy()
 {
   switch(strategy)
     {
@@ -126,7 +126,7 @@ TRKStrategy* TRKFactory::createStrategy()
     }
 }
 
-TRK::Aperture TRKFactory::setApertureEnum(std::string aIn)
+TRK::Aperture TRKFactory::SetApertureEnum(std::string aIn)
 {
   if (aIn == "circular")         {return TRK::CIRCULAR;}
   else if (aIn == "rectangular") {return TRK::RECTANGULAR;}
@@ -137,7 +137,7 @@ TRK::Aperture TRKFactory::setApertureEnum(std::string aIn)
   }
 }
 
-TRKAperture* TRKFactory::createAperture(GMAD::Element& element)
+TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
 {
   //this is annoyingly complex because of the poor implementation of aperture
   //in bdsim.  this is made to allow both general form and individual elements
@@ -168,13 +168,13 @@ TRKAperture* TRKFactory::createAperture(GMAD::Element& element)
   */
 }
 
-TRKLine* TRKFactory::createLine(GMAD::FastList<GMAD::Element>& beamline_list)
+TRKLine* TRKFactory::CreateLine(GMAD::FastList<GMAD::Element>& beamline_list)
 {
   TRKLine* line = new TRKLine("beamline",circular);
   
   for(auto it : beamline_list)
     {
-      TRKElement* element = createElement(it);
+      TRKElement* element = CreateElement(it);
       if (element)
 	{
 	  line->AddElement(element);
@@ -188,51 +188,51 @@ TRKLine* TRKFactory::createLine(GMAD::FastList<GMAD::Element>& beamline_list)
 }
 
 
-TRKElement* TRKFactory::createElement(GMAD::Element& element)
+TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
 {
   TRKElement* trkelement = NULL;
   switch (element.type)
     {
     case GMAD::ElementType::_LINE:
-      trkelement = createLine(element);
+      trkelement = CreateLine(element);
       break;
     case GMAD::ElementType::_DRIFT:
-      trkelement = createDrift(element);
+      trkelement = CreateDrift(element);
       break;
     case GMAD::ElementType::_SBEND:
-      trkelement = createSBend(element);
+      trkelement = CreateSBend(element);
       break;
     case GMAD::ElementType::_RBEND:
-      trkelement = createRBend(element);;
+      trkelement = CreateRBend(element);;
       break;
     case GMAD::ElementType::_QUAD:
-      trkelement = createQuadrupole(element);
+      trkelement = CreateQuadrupole(element);
       break;
     case GMAD::ElementType::_SEXTUPOLE:
-      trkelement = createSextupole(element);
+      trkelement = CreateSextupole(element);
       break;
     case GMAD::ElementType::_OCTUPOLE:
-      trkelement = createOctupole(element);
+      trkelement = CreateOctupole(element);
       break;
     // case GMAD::ElementType::_DECAPOLE:
-    //   trkelement = createDecapole(element);
+    //   trkelement = CreateDecapole(element);
     //    break;
     case GMAD::ElementType::_SOLENOID:
-      trkelement = createSolenoid(element);
+      trkelement = CreateSolenoid(element);
       break;
     case GMAD::ElementType::_MULT:
       //TEMPORARY
-      trkelement = createDrift(element);
+      trkelement = CreateDrift(element);
       break;
     case GMAD::ElementType::_ELEMENT:
       //TEMPORARY
-      trkelement = createDrift(element);
+      trkelement = CreateDrift(element);
       break;
     case GMAD::ElementType::_SAMPLER:
-      trkelement = createSampler(element);
+      trkelement = CreateSampler(element);
       break;
     case GMAD::ElementType::_RCOL:
-      trkelement = createDrift(element);
+      trkelement = CreateDrift(element);
       break;
     case GMAD::ElementType::_TRANSFORM3D:
       //TEMPORARY
@@ -240,7 +240,7 @@ TRKElement* TRKFactory::createElement(GMAD::Element& element)
       break;
     case GMAD::ElementType::_VKICK:
     case GMAD::ElementType::_HKICK:
-      trkelement = createDipole(element);
+      trkelement = CreateDipole(element);
       break;
     default:
       trkelement = NULL;
@@ -253,12 +253,12 @@ TRKElement* TRKFactory::createElement(GMAD::Element& element)
   */
 
   if (trkelement)
-    {addCommonProperties(trkelement,element);}
+    {AddCommonProperties(trkelement,element);}
 
   return trkelement;
 }
 
-void TRKFactory::addCommonProperties(TRKElement* trkelement, GMAD::Element& element)
+void TRKFactory::AddCommonProperties(TRKElement* trkelement, GMAD::Element& element)
 {
   // offset and tilt
   //  if (element.phi!=0.0 || element.theta!=0.0 || element.psi!=0.0) {
@@ -269,7 +269,7 @@ void TRKFactory::addCommonProperties(TRKElement* trkelement, GMAD::Element& elem
     {trkelement->SetOffset(element.xdir, element.ydir);}
 }
 
-TRKElement* TRKFactory::createLine(GMAD::Element& /*element*/)
+TRKElement* TRKFactory::CreateLine(GMAD::Element& /*element*/)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << std::endl;
@@ -278,35 +278,35 @@ TRKElement* TRKFactory::createLine(GMAD::Element& /*element*/)
   return NULL;
 }
 
-TRKElement* TRKFactory::createDrift(GMAD::Element& element)
+TRKElement* TRKFactory::CreateDrift(GMAD::Element& element)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKDrift(element.name,
 		      element.l,
 		      aperture,
 		      placement);
 }
 
-TRKElement* TRKFactory::createDipole(GMAD::Element& /*element*/)
+TRKElement* TRKFactory::CreateDipole(GMAD::Element& /*element*/)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
   // bfield , see componentfactory and bdskicker.cc
   // strength (bprime)
-  //TRKAperture* aperture = createAperture(element);
+  //TRKAperture* aperture = CreateAperture(element);
   return NULL;
 }
 
-TRKElement* TRKFactory::createQuadrupole(GMAD::Element& element)
+TRKElement* TRKFactory::CreateQuadrupole(GMAD::Element& element)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKQuadrupole(element.k1,
 			   element.name,
 			   element.l,
@@ -314,13 +314,13 @@ TRKElement* TRKFactory::createQuadrupole(GMAD::Element& element)
 			   placement);
 }
 
-TRKElement* TRKFactory::createSextupole(GMAD::Element& element)
+TRKElement* TRKFactory::CreateSextupole(GMAD::Element& element)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
   double bPrime = - brho * (element.k2 / CLHEP::m3); // to be checked
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKSextupole(bPrime,
 			  element.name,
 			  element.l,
@@ -328,13 +328,13 @@ TRKElement* TRKFactory::createSextupole(GMAD::Element& element)
 			  placement);
 }
 
-TRKElement* TRKFactory::createOctupole(GMAD::Element& element)
+TRKElement* TRKFactory::CreateOctupole(GMAD::Element& element)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
   double bPrime = - brho * (element.k3 / CLHEP::m2 / CLHEP::m2); // to be checked
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKOctupole(bPrime,
 			 element.name,
 			 element.l,
@@ -342,16 +342,16 @@ TRKElement* TRKFactory::createOctupole(GMAD::Element& element)
 			 placement);
 }
 
-TRKElement* TRKFactory::createDecapole(GMAD::Element& /*element*/)
+TRKElement* TRKFactory::CreateDecapole(GMAD::Element& /*element*/)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
 #endif
-  //TRKAperture* aperture = createAperture(element);
+  //TRKAperture* aperture = CreateAperture(element);
   return NULL;
 }
 
-TRKElement* TRKFactory::createSolenoid(GMAD::Element& element)
+TRKElement* TRKFactory::CreateSolenoid(GMAD::Element& element)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
@@ -371,7 +371,7 @@ TRKElement* TRKFactory::createSolenoid(GMAD::Element& element)
     //    element.B = bField/CLHEP::tesla;
   }
 
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKSolenoid(bField,
 			 element.name,
 			 element.l,
@@ -379,7 +379,7 @@ TRKElement* TRKFactory::createSolenoid(GMAD::Element& element)
 			 placement);
 }
 
-TRKElement* TRKFactory::createSBend(GMAD::Element& element)
+TRKElement* TRKFactory::CreateSBend(GMAD::Element& element)
 {
   #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
@@ -396,7 +396,7 @@ TRKElement* TRKFactory::createSBend(GMAD::Element& element)
     angle = element.angle;
   }
   
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKSBend(angle,
       element.name,
       element.l,
@@ -404,13 +404,13 @@ TRKElement* TRKFactory::createSBend(GMAD::Element& element)
       placement);
 }
 
-TRKElement* TRKFactory::createRBend(GMAD::Element& element)
+TRKElement* TRKFactory::CreateRBend(GMAD::Element& element)
 {
   #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;
   #endif
   
-  TRKAperture* aperture = createAperture(element);
+  TRKAperture* aperture = CreateAperture(element);
   return new TRKRBend(element.angle,
       element.name,
       element.l,
@@ -418,7 +418,7 @@ TRKElement* TRKFactory::createRBend(GMAD::Element& element)
       placement);
 }
 
-TRKElement* TRKFactory::createSampler(GMAD::Element& element)
+TRKElement* TRKFactory::CreateSampler(GMAD::Element& element)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__;

@@ -47,8 +47,8 @@ int main (int argc, char** argv){
   
   //build beamline
   TRKFactory* factory   = new TRKFactory(GMAD::options);
-  TRKLine* beamline     = factory->createLine(GMAD::beamline_list);
-  TRKStrategy* strategy = factory->createStrategy();
+  TRKLine* beamline     = factory->CreateLine(GMAD::beamline_list);
+  TRKStrategy* strategy = factory->CreateStrategy();
 
   //build tracker
   TRKTracker tracker(beamline,strategy,GMAD::options);

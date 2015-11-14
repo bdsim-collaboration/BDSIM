@@ -1,5 +1,5 @@
-#ifndef TRKFactory_h
-#define TRKFactory_h 1
+#ifndef TRKFactory_H
+#define TRKFactory_H
 
 #include "TRKElement.hh"
 #include "TRK.hh"
@@ -25,36 +25,35 @@ class TRKFactory {
  public:
   TRKFactory(GMAD::Options& options);
 
-  TRKLine*     createLine(GMAD::FastList<GMAD::Element>& beamline_list);
-  TRKStrategy* createStrategy();
+  TRKLine*     CreateLine(GMAD::FastList<GMAD::Element>& beamline_list);
+  TRKStrategy* CreateStrategy();
 
   friend std::ostream& operator<< (std::ostream& out, const TRKFactory &factory);
 
 private:
-  TRK::Strategy setStrategyEnum(std::string sIn);
-  TRK::Aperture setApertureEnum(std::string aIn);
+  TRK::Strategy SetStrategyEnum(std::string sIn);
+  TRK::Aperture SetApertureEnum(std::string aIn);
   
-  TRKAperture* createAperture(GMAD::Element& element);
-  
-  TRKElement* createElement(GMAD::Element& element);
+  TRKAperture* CreateAperture(GMAD::Element& element);
+  TRKElement*  CreateElement(GMAD::Element& element);
 
-  TRKElement* createLine(GMAD::Element& element);
-  TRKElement* createDrift(GMAD::Element& element);
-  TRKElement* createSBend(GMAD::Element& element);
-  TRKElement* createRBend(GMAD::Element& element);
-  TRKElement* createDipole(GMAD::Element& element);
-  TRKElement* createQuadrupole(GMAD::Element& element);
-  TRKElement* createSextupole(GMAD::Element& element);
-  TRKElement* createOctupole(GMAD::Element& element);
-  TRKElement* createDecapole(GMAD::Element& element);
-  TRKElement* createSolenoid(GMAD::Element& element);
-  //TRKElement* createMultipole(GMAD::Element& element);
-  //TRKElement* createGmadElement(GMAD::Element& element);
-  TRKElement* createSampler(GMAD::Element& element);
-  //TRKElement* createTransform3D(GMAD::Element& element);
+  TRKElement* CreateLine(GMAD::Element& element);
+  TRKElement* CreateDrift(GMAD::Element& element);
+  TRKElement* CreateSBend(GMAD::Element& element);
+  TRKElement* CreateRBend(GMAD::Element& element);
+  TRKElement* CreateDipole(GMAD::Element& element);
+  TRKElement* CreateQuadrupole(GMAD::Element& element);
+  TRKElement* CreateSextupole(GMAD::Element& element);
+  TRKElement* CreateOctupole(GMAD::Element& element);
+  TRKElement* CreateDecapole(GMAD::Element& element);
+  TRKElement* CreateSolenoid(GMAD::Element& element);
+  //TRKElement* CreateMultipole(GMAD::Element& element);
+  //TRKElement* CreateGmadElement(GMAD::Element& element);
+  TRKElement* CreateSampler(GMAD::Element& element);
+  //TRKElement* CreateTransform3D(GMAD::Element& element);
 
   /// set common properties
-  void addCommonProperties(TRKElement* trkel, GMAD::Element& el);
+  void AddCommonProperties(TRKElement* trkel, GMAD::Element& el);
 
   /// particle properties
   int charge;
