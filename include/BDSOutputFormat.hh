@@ -5,7 +5,7 @@
 #include "globals.hh" // geant4 types / globals
 
 struct outputformats_def {
-  enum type {none, ascii, root, combined};
+  enum type {none, ascii, root, rootevent, combined};
 };
 
 typedef BDSTypeSafeEnum<outputformats_def, int> BDSOutputFormat;
