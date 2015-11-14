@@ -207,11 +207,11 @@ namespace GMAD {
     /// Ring parameters
     int      nturns;
 
-	/// Tracking parameters
-	std::string trackingType;
-	int         trackingSteps;
-	bool        dontUseAperture;
-
+    /// Tracking parameters
+    std::string trackingType;
+    int         trackingSteps;
+    bool        dontUseAperture;
+    
     double   printModuloFraction;
 
     /// print some properties

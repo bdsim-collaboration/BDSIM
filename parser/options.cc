@@ -76,7 +76,6 @@ Options::Options()
   vacMaterial          = "Vacuum";
   vacuumPressure       = 1e-12;
   sensitiveBeamPipe    = 1;
-  dontUseAperture      = false;
 
   // tunnel options
   buildTunnel         = false;
@@ -147,8 +146,11 @@ Options::Options()
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
-  trackingType = "hybrid";
-  trackingSteps = 1;
+
+  // tracker options
+  trackingType             = "hybrid";
+  trackingSteps            = 1;
+  dontUseAperture          = false;
 
   // synchrotron radiation
   synchRadOn               = 0;
@@ -399,7 +401,8 @@ void Options::PublishMembers()
   publish("printModuloFraction",&Options::printModuloFraction);
 
   // tracker
-  publish("trackingSteps", &Options::trackingSteps);
+  publish("trackingType",    &Options::trackingType);
+  publish("trackingSteps",   &Options::trackingSteps);
   publish("dontUseAperture", &Options::dontUseAperture);
 }
 
