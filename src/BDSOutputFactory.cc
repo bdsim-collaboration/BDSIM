@@ -5,6 +5,7 @@
 #include "BDSOutputASCII.hh"
 #include "BDSOutputNone.hh"
 #include "BDSOutputROOT.hh"
+#include "BDSOutputROOTEvent.hh"
 #include "BDSOutputVector.hh"
 
 #include "BDSDebug.hh"
@@ -39,6 +40,10 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
     G4cout << __METHOD_NAME__ << "using ASCII by default" << G4endl;
     return new BDSOutputASCII();
 #endif
+    }
+  else if (format == BDSOutputFormat::rootevent) 
+    {
+      return new BDSOutputROOTEvent();
     }
   else
     {return new BDSOutputNone();} // absolute default - should not reach this

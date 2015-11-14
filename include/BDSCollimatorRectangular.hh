@@ -3,6 +3,9 @@
 
 #include "BDSCollimatorBase.hh"
 
+/**
+ * @brief A class for a rectangular collimator.
+ */
 class BDSCollimatorRectangular: public BDSCollimatorBase
 {
 public:
@@ -11,6 +14,8 @@ public:
 			   G4double outerDiameter,
 			   G4double xApertureIn        = 0,
 			   G4double yApertureIn        = 0,
+			   G4double xOutApertureIn     = 0,
+			   G4double yOutApertureIn     = 0,
 			   G4String collimatorMaterial = "copper",
 			   G4String vacuumMaterial     = "vacuum");
   ~BDSCollimatorRectangular(){;};

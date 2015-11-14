@@ -15,5 +15,5 @@ option,physicsList="hadronic";
 ! 2 : primary 
 ! 3 : secondary 
 
-protonPrimaryVacuum: xsecBias, particle="proton", proc="protonInelastic", xsecfact={1e13}, flag={2}, logicalVolumes="acceleratorVacuum";
+protonPrimaryVacuum: xsecBias, particle="proton", proc="protonInelastic", xsecfact={1e13}, flag={2};
 

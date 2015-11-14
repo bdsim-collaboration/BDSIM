@@ -1,0 +1,3 @@
+include 7_long_arc.gmad;
+
+option, tunnelType="rectaboveground";

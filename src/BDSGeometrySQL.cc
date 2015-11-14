@@ -23,14 +23,16 @@
 #include "BDSMaterials.hh"
 #include "BDSPCLTube.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSSampler.hh"
+#include "BDSSamplerBase.hh"
+#include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
+#include <string>
 #include <vector>
 #include <cstdlib>
 #include <cstring>
 
 BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength, G4LogicalVolume *marker):
-  rotateComponent(nullptr),itsMarkerLength(markerlength),itsMarkerVol(marker)
+  rotateComponent(nullptr), itsMarkerLength(markerlength), itsMarkerVol(marker)
 {
   VOL_LIST.push_back(itsMarkerVol);
 #ifdef BDSDEBUG
@@ -166,8 +168,8 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
     _ApproximationRegion = aSQLTable->GetVariable("APPROXIMATIONREGION")->GetIntValue(k);
   if(aSQLTable->GetVariable("NAME")!=nullptr)
     _Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
-  if(_Name=="_SQL") _Name = _TableName+BDS::StringFromInt(k) + "_SQL";
-  if(_Name=="") _Name = _TableName+BDS::StringFromInt(k);
+  if(_Name=="_SQL") _Name = _TableName+std::to_string(k) + "_SQL";
+  if(_Name=="") _Name = _TableName+std::to_string(k);
   _Name = itsMarkerVol->GetName()+"_"+_Name;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << _Name << G4endl;
@@ -232,8 +234,8 @@ void BDSGeometrySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k){
       _PARENTNAME=itsMarkerVol->GetName()+"_"+_PARENTNAME;
       if(aSQLTable->GetVariable("NAME")!=nullptr)
 	_Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
-      if(_Name=="_SQL") _Name = _TableName+BDS::StringFromInt(k) + "_SQL";
-      if(_Name=="") _Name = _TableName+BDS::StringFromInt(k);
+      if(_Name=="_SQL") _Name = _TableName+std::to_string(k) + "_SQL";
+      if(_Name=="") _Name = _TableName+std::to_string(k);
       _Name = itsMarkerVol->GetName()+"_"+_Name;
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " k = " << k << ", _Name = " << _Name << G4endl;
@@ -386,9 +388,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k
       
   for(G4int planenum=0; planenum<numZplanes; planenum++)
     {
-      G4String rInner_ID = "RINNER" + BDS::StringFromInt(planenum+1);
-      G4String rOuter_ID = "ROUTER" + BDS::StringFromInt(planenum+1);
-      G4String zPos_ID = "PLANEPOS" + BDS::StringFromInt(planenum+1);
+      G4String rInner_ID = "RINNER" + std::to_string(planenum+1);
+      G4String rOuter_ID = "ROUTER" + std::to_string(planenum+1);
+      G4String zPos_ID = "PLANEPOS" + std::to_string(planenum+1);
       
       if(aSQLTable->GetVariable(rInner_ID)!=nullptr)
 	rInner[planenum] = aSQLTable->GetVariable(rInner_ID)->GetDblValue(k);
@@ -580,7 +582,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
       aSQLTable->GetVariable("NAME")->SetStrValue(k,_Name+"_SQL");
       _Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
     }
-  if(_Name=="_SQL") _Name = _TableName+BDS::StringFromInt(k)+"_SQL";
+  if(_Name=="_SQL") _Name = _TableName+std::to_string(k)+"_SQL";
   // make sure that each name is unique!
   _Name = itsMarkerVol->GetName()+"_"+_Name;
      
@@ -600,9 +602,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 
   _lengthUserLimit = length*0.5;
   
-  aSamplerVol->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  BDSSampler::AddExternalSampler(BDS::StringFromInt(BDSSampler::GetNSamplers())+"_"+_Name+"_1");
+  BDSSamplerBase::AddExternalSampler(std::to_string(BDSSamplerBase::GetNSamplers())+"_"+_Name+"_1");
   
   return aSamplerVol;
 }
@@ -705,7 +707,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k)
   aperYUp = 50.*CLHEP::mm;
   aperYDown = 200.*CLHEP::mm;
   aperDy = 0.*CLHEP::mm;
-  thickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
+  thickness = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->beamPipeThickness;
   length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=nullptr)

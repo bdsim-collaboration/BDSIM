@@ -30,9 +30,6 @@ public:
   inline G4String        GetOutputFilename() const       {return outputFilename;}
   inline G4bool          GetOutputFilenameSet() const    {return outputFilenameSet;}
   inline BDSOutputFormat GetOutputFormat() const         {return outputFormat;}
-  inline G4bool          GetOutline() const              {return outline;}
-  inline G4String        GetOutlineFilename() const      {return outlineFilename;}
-  inline G4String        GetOutlineFormat() const        {return outlineFormat;}
   inline G4bool          GetGFlash() const               {return gflash;}
   inline G4double        GetGFlashEMax() const           {return gflashemax;}
   inline G4double        GetGFlashEMin() const           {return gflashemin;}  
@@ -53,6 +50,8 @@ public:
   inline G4String        GetSeedStateFilename() const    {return seedStateFilename;}
   inline G4int           GetNGenerate() const            {return nGenerate;}
   inline G4bool          ExportGeometry() const          {return exportGeometry;}
+  inline G4bool          GetSurvey() const               {return survey;}
+  inline G4String        GetSurveyFilename() const       {return surveyFilename;}
   inline G4String        GetExportType() const           {return exportType;}
   inline G4String        GetExportFileName() const       {return exportFileName;}
 
@@ -62,6 +61,11 @@ protected :
   
 private :
   BDSExecOptions();
+
+  /** Parse the command line options
+   * @param[in] argc command line input number of variables
+   * @param[in] argv array of char* of the input parameters
+   */
   void Parse(int arcg, char **argv);
   /// Helper method to set the BDSIMPath correctly
   G4String GetPath(G4String filename);
@@ -76,10 +80,9 @@ private :
   BDSOutputFormat outputFormat;
   ///@}
   
-  ///@{ Parameter for outline format (optics or survey)
-  G4bool          outline;
-  G4String        outlineFilename;
-  G4String        outlineFormat;
+  ///@{ Parameter for survey
+  G4bool          survey;
+  G4String        surveyFilename;
   ///@}
   
   ///@{ Parameter for gflash shower parameterisation

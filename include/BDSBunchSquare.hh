@@ -1,5 +1,5 @@
-#ifndef BDSBunchSquare_h
-#define BDSBunchSquare_h 
+#ifndef BDSBUNCHSQUARE_H
+#define BDSBUNCHSQUARE_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -8,7 +8,15 @@ namespace CLHEP {
   class RandFlat;
 }
 
-class BDSBunchSquare : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that produces an uncorrelated uniform
+ * random distribution within a square in phase space.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchSquare: public BDSBunchInterface
+{ 
 protected : 
   G4double envelopeX; 
   G4double envelopeY;
@@ -21,11 +29,6 @@ protected :
 
 public: 
   BDSBunchSquare(); 
-  BDSBunchSquare(G4double envelopeX , G4double envelopeY,
-		 G4double envelopeXp, G4double envelopeYp,
-		 G4double envelopeT , G4double envelopeE,
-		 G4double X0,         G4double Y0,         G4double Z0,   G4double T0, 
-		 G4double Xp0,        G4double Yp0,        G4double Zp0);
   ~BDSBunchSquare(); 
   void SetOptions(GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

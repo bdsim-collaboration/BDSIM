@@ -9,29 +9,27 @@ namespace GMAD {
   struct Array;
 }
 
-/**
- * @brief Physics biasing class for parser
- * 
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
- */
-
 namespace GMAD {
   enum class PhysicsBiasingType {ALL=1,PRIMARY=2,SECONDARY=3};
   
+  /**
+   * @brief Physics biasing class for parser
+   * 
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   */
   class PhysicsBiasing {
-   
+    
   public:
     std::string name; ///< name
     /// particle name
     std::string particle;
     /// geant4 process: single string, but can have multiple processes separated with a space
     std::string process;
+    std::vector<std::string> processList;
     /// factors corresponding to process
-    std::list<double> factor;
+    std::vector<double> factor;
     /// flag which particles are biased
-    std::list<PhysicsBiasingType> flag;
-    /// logical volumes where biasing is attached to
-    std::string logicalVolumes;
+    std::vector<PhysicsBiasingType> flag;
     
     /// constructor
     PhysicsBiasing();

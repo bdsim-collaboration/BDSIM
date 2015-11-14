@@ -152,41 +152,6 @@ G4bool BDS::IsFinite(const G4ThreeVector& variable)
     {return false;}
 }
 
-// a robust compiler-invariant method to convert from integer to G4String
-G4String BDS::StringFromInt(G4int N)
-{
-  if (N==0) return "0";
-  G4int nLocal=N, nDigit=0, nMax=1;
-  do { nDigit++;
-      nMax*=10;} while(N > nMax-1);
-  nMax/=10;
-  G4String Cnum;
-  do {Cnum+=BDS::StringFromDigit(nLocal/nMax);
-      nLocal-= nLocal/nMax * nMax;
-      nMax/=10;}   while(nMax>1);
-  if(nMax!=0)Cnum+=BDS::StringFromDigit(nLocal/nMax);
-  return Cnum;
-}
-
-// a robust compiler-invariant method to convert from digit to G4String
-G4String BDS::StringFromDigit(G4int N) 
-{
-  if(N<0 || N>9)
-    G4Exception("Invalid Digit in BDS::StringFromDigit", "-1", FatalException, "");
-  G4String Cnum;
-  if(N==0)Cnum="0";
-  else if(N==1)Cnum="1";
-  else if(N==2)Cnum="2";
-  else if(N==3)Cnum="3";
-  else if(N==4)Cnum="4";
-  else if(N==5)Cnum="5";
-  else if(N==6)Cnum="6";
-  else if(N==7)Cnum="7";
-  else if(N==8)Cnum="8";
-  else if(N==9)Cnum="9"; 
-  return Cnum;
-}
-
 void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 {
   G4cout << "Rotation matrix - reference: \"" << keyName << "\"" << *rm << G4endl;

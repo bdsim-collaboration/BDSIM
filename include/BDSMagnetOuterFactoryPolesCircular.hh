@@ -6,8 +6,6 @@
 #include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-//#include "G4Colour.hh"
-//#include "G4Material.hh"
 #include "G4VSolid.hh"
 
 /**

@@ -31,7 +31,7 @@ public:
   /// write a trajectory
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &){}
   /// write primary hit
-  virtual void WritePrimary(G4String,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
+  virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
 

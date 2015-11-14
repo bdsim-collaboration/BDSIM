@@ -3,11 +3,12 @@
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
+#include "BDSSamplerBase.hh"
 #include "BDSTrajectory.hh"
 #include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
+
+#include <string>
 
 BDSOutputROOT::BDSOutputROOT()
 {
@@ -28,7 +29,7 @@ BDSOutputROOT::~BDSOutputROOT()
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
-void BDSOutputROOT::BuildSamplerTree(G4String name)
+TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -87,6 +88,8 @@ void BDSOutputROOT::BuildSamplerTree(G4String name)
   SamplerTree->Branch("trackID",    &track_id,   "trackID/I");
   SamplerTree->Branch("turnnumber", &turnnumber, "turnnumber/I");
   SamplerTree->Branch("process",    &process);
+
+  return SamplerTree;
 }
 
 void BDSOutputROOT::Init()
@@ -97,9 +100,8 @@ void BDSOutputROOT::Init()
   G4String basefilename = execOptions->GetOutputFilename();
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple) {
-    basefilename += "_" + BDS::StringFromInt(outputFileNumber);
-  }
+  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple)
+    {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
@@ -114,30 +116,49 @@ void BDSOutputROOT::Init()
     }
   }
   
-  G4cout<<"Setting up new file: "<<filename<<G4endl;
+  G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
 
-  // Build sampler tree
+  // Build sampler trees and store in samplerTrees
+  // clear (for the case of multiple output files)
+  samplerTrees.clear();
+  samplerTrees.reserve(BDSSamplerBase::GetNSamplers()+1);
+  
   G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " building sampler tree named: " << primariesSamplerName << G4endl;
 #endif
-  BuildSamplerTree(primariesSamplerName);
-  for(G4int i=0;i<BDSSampler::GetNSamplers();i++)
+  TTree* sampler = BuildSamplerTree(primariesSamplerName);
+  // primaries is the first
+  samplerTrees.push_back(sampler);
+  for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
-      G4String name=BDSSampler::outputNames[i];
+      G4String name=BDSSamplerBase::outputNames[i];
+      // remove sampler number:
+      name = name.substr(0,name.find_last_of("_"));
+
+      // check if tree already exist (name has to be unique)
+      TTree* tree=(TTree*)gDirectory->Get(name);
+      // if exist add number and increase, start counting at 2
+      if(tree) {
+	int count = 2;
+	G4String uniqueName;
+	while (tree) {
+	  uniqueName = name + "_" + std::to_string(count);
+	  tree=(TTree*)gDirectory->Get(uniqueName);
+	  count++;
+	}
+	name = uniqueName;
+      }
+
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
 #endif
-      BuildSamplerTree(name);
-    }
-  for(G4int i=0;i<BDSSamplerCylinder::GetNSamplers();i++)
-    {
-      G4String name=BDSSamplerCylinder::outputNames[i];
-      BuildSamplerTree(name);
+      sampler = BuildSamplerTree(name);
+      samplerTrees.push_back(sampler);
     }
 
   if(globalConstants->GetStoreTrajectory() || globalConstants->GetStoreMuonTrajectories() || globalConstants->GetStoreNeutronTrajectories()) 
@@ -212,6 +233,7 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("y",          &y,          "y/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("z",          &z,          "z/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("E",          &E,          "E/F"); // (GeV)
+  PrecisionRegionEnergyLossTree->Branch("stepLength", &stepLength, "stepLength/F"); // (m)
   PrecisionRegionEnergyLossTree->Branch("weight",     &weight,     "weight/F");
   PrecisionRegionEnergyLossTree->Branch("partID",     &part,       "partID/I");
   PrecisionRegionEnergyLossTree->Branch("volumeName", &volumeName, "volumeName/C");
@@ -219,7 +241,7 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("eventNo",    &eventno,    "eventNo/I");
 }
 
-void BDSOutputROOT::WriteRootHit(G4String Name, 
+void BDSOutputROOT::WriteRootHit(TTree*   Tree, 
 				 G4double InitTotalEnergy, 
 				 G4double InitX, 
 				 G4double InitY, 
@@ -267,11 +289,6 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
 				 G4int    TurnsTaken,
 				 G4String Process)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  TTree* sTree=(TTree*)gDirectory->Get(Name);
-  if(!sTree) G4Exception("BDSOutputROOT: ROOT Sampler not found!", "-1", FatalException, "");
   E0          = InitTotalEnergy/ CLHEP::GeV;
   x0          = InitX          / CLHEP::m;
   y0          = InitY          / CLHEP::m;
@@ -318,11 +335,10 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   track_id    = TrackID;
   turnnumber  = TurnsTaken;
   process     = Process;
-  sTree->Fill();
+  Tree->Fill();
 }
 
-void BDSOutputROOT::WritePrimary(G4String samplerName, 
-				 G4double totalEnergy,
+void BDSOutputROOT::WritePrimary(G4double totalEnergy,
 				 G4double x0,
 				 G4double y0,
 				 G4double z0,
@@ -338,7 +354,7 @@ void BDSOutputROOT::WritePrimary(G4String samplerName,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  WriteRootHit(samplerName, 
+  WriteRootHit(samplerTrees[0], // Primaries is the first Sampler
 	       totalEnergy, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
@@ -369,7 +385,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 {
   G4String name;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " hc->entries() = " << hc->entries() << G4endl;
+  G4cout << __METHOD_NAME__ << "Number of hits " << hc->entries() << G4endl;
 #endif
   for (G4int i=0; i<hc->entries(); i++)
     {
@@ -377,7 +393,33 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 #ifdef BDSDEBUG
       G4cout << "Writing hit to sampler " << name << G4endl;
 #endif
-      WriteRootHit(name,
+      // convert name to tree
+      TTree* tree = nullptr;
+      // try to convert to int, std::stoul can throw invalid argument
+      try
+	{
+	  G4String samplerNumber = name.substr(name.find_last_of("_")+1,std::string::npos);
+	  unsigned int treeIndex = std::stoul(samplerNumber);
+	  if (treeIndex < samplerTrees.size()) {
+	    tree = samplerTrees[treeIndex];
+	  }
+	}
+      catch (std::invalid_argument) {} // for std::stoul, do nothing
+      catch (std::out_of_range) {} // for string::substr, do nothing
+
+      // if it did not work then
+      // get tree from name
+      // this will not work for multiple samplers attached to elements with same name
+      if (!tree)
+	{
+	  tree=(TTree*)gDirectory->Get(name);
+	  if(!tree) {
+	    G4String errorString = "BDSOutputROOT: ROOT Sampler " + name + " not found!";
+	    G4Exception(errorString.c_str(), "-1", FatalException, "");
+	  }
+	}
+
+      WriteRootHit(tree,
 		   (*hc)[i]->GetInitTotalEnergy(),
 		   (*hc)[i]->GetInitX(),
 		   (*hc)[i]->GetInitY(),
@@ -485,6 +527,7 @@ void BDSOutputROOT::FillHit(BDSEnergyCounterHit* hit)
   y          = hit->Gety()/CLHEP::m;
   z          = hit->Getz()/CLHEP::m;
   E          = hit->GetEnergy()/CLHEP::GeV;
+  stepLength = hit->GetStepLength()/CLHEP::m;
   weight     = hit->GetWeight();
   part       = hit->GetPartID();
   turnnumber = hit->GetTurnsTaken();
@@ -504,12 +547,15 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
       FillHit(hit);
       EnergyLossTree->Fill();
       
-      if(hit->GetPrecisionRegion()){ //Only the precision region fills this tree, preserving every hit, its position and weight, instead of summing weighted energy in each beam line component.
-	//name - convert to char array for root
-	G4String temp = hit->GetName();
-	strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
-	PrecisionRegionEnergyLossTree->Fill();
-      }
+      if(hit->GetPrecisionRegion())
+	{
+	  //Only the precision region fills this tree, preserving every hit, its position and weight,
+	  //instead of summing weighted energy in each beam line component.
+	  //name - convert to char array for root
+	  G4String temp = hit->GetName();
+	  strncpy(volumeName,temp.c_str(),sizeof(volumeName)-1);
+	  PrecisionRegionEnergyLossTree->Fill();
+	}
     }
 }
 

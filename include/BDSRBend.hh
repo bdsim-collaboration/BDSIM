@@ -5,7 +5,7 @@
 
 #include "BDSMagnet.hh"
 
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSBeamPipe;
@@ -20,7 +20,6 @@ public:
 	   G4double            angle,
 	   BDSBeamPipeInfo*    beamPipeInfo,
 	   BDSMagnetOuterInfo* magnetOuterInfo);
-  ~BDSRBend();
 
   /// Access all sensitive volumes belonging to this component including those
   /// of the custom beam pipe

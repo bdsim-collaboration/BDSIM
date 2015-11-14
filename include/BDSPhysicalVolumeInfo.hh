@@ -6,7 +6,9 @@
 
 /**
  * @brief A class holding any information pertaining to a particular physical
- * volume in a BDSIM geant4 model.  Currently, this is used for the name and
+ * volume in a BDSIM geant4 model.  
+ * 
+ * Currently, this is used for the name and
  * s position coordinate, but can be extended to store any other pertinent 
  * information.
  * 
@@ -19,7 +21,8 @@ public:
   BDSPhysicalVolumeInfo(G4double SPosAtMiddleOfElement);
   BDSPhysicalVolumeInfo(G4String nameIn,
 			G4String placementNameIn,
-			G4double sPosIn);
+			G4double sPosIn,
+			G4bool   precisionRegionIn = false);
   ~BDSPhysicalVolumeInfo();
 
   /// output stream
@@ -49,12 +52,24 @@ public:
   void SetSPos(G4double SPosIn)
   {spos = SPosIn;}
 
+  /// Get whether this volume is one to produce precision output as well as normal.
+  G4bool GetPrecisionRegion()
+  {return precisionRegion;}
+
+  /// Set whether this volume is one to produce precision output as well as normal.
+  void   SetProducePrecisionOutput(G4bool precisionRegionIn)
+  {precisionRegion = precisionRegionIn;}
+  
 private:
   BDSPhysicalVolumeInfo();
 
   G4String name;
   G4String placementName;
   G4double spos;
+
+  /// Whether this volume is in the precision region and the
+  /// high precision output should be used for it
+  G4bool   precisionRegion;
 
 };
 

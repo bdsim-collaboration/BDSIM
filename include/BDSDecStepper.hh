@@ -1,5 +1,5 @@
-#ifndef BDSDECSTEPPER_HH
-#define BDSDECSTEPPER_HH
+#ifndef BDSDECSTEPPER_H
+#define BDSDECSTEPPER_H
 
 #include "BDSAuxiliaryNavigator.hh"
 
@@ -8,8 +8,13 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-class BDSDecStepper:
-  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
+/**
+ * @brief Integrator for Decapolar field.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
+
+class BDSDecStepper: public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
   BDSDecStepper(G4Mag_EqRhs *EqRhs);

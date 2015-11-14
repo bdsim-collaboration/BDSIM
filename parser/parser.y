@@ -1,7 +1,5 @@
 /*
    bison grammar for the gmad parser
-   Ilya Agapov, Steve Malton 2005-2007
-   bdsim v.0.4
 */
 
 %{
@@ -17,7 +15,7 @@
 
   namespace GMAD {
     extern int line_num;
-    extern char* yyfilename;
+    extern std::string yyfilename;
   
     const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
     const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
@@ -29,7 +27,7 @@
     */
 
     int execute = 1;
-    int element_count = 1; // for samplers , ranges etc.
+    int element_count = -1; // for samplers , ranges etc. -1 means add to all
   }
 %}
 
@@ -37,7 +35,7 @@
 
 %union{
   double dval;
-  int ival; // ElementType, but underlying type as not possible to have enum class in union, rely on static_casts
+  int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
   char *str;
   struct Array *array;
@@ -56,10 +54,10 @@
 %token <symp> VARIABLE VECVAR FUNC 
 %token <str> STR
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID RCOL ECOL LINE SEQUENCE LASER TRANSFORM3D MUSPOILER
+%token SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
-%token PERIOD XSECBIAS TUNNEL MATERIAL ATOM
-%token BEAM OPTION PRINT RANGE STOP USE VALUE ECHO PRINTF SAMPLE CSAMPLE BETA0 TWISS DUMP
+%token ALL PERIOD XSECBIAS TUNNEL MATERIAL ATOM
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr
@@ -68,7 +66,6 @@
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
-%type <ival> extension
 %type <ival> newinstance
 %type <symp> sample_options
 %type <symp> csample_options
@@ -119,8 +116,6 @@ atomic_stmt :
 		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
 	      }
 ;
-
-
 
 decl : VARIABLE ':' marker
        {
@@ -260,6 +255,15 @@ decl : VARIABLE ':' marker
 	     params.flush();
 	   }
        }
+     | VARIABLE ':' degrader
+       {
+	 if(execute)
+	   {
+	     // check parameters and write into element table
+	     write_table(params,$1->name,ElementType::_DEGRADER);
+	     params.flush();
+	   }
+       }
      | VARIABLE ':' element
        {
 	 if(execute)
@@ -313,29 +317,6 @@ decl : VARIABLE ':' marker
 	     tmp_list.clear();
 	   }
        }     
-     | VARIABLE ':' sequence
-       {
-	 if(execute)
-	   {
-	     // copy tmp_list to params
-	     write_table(params,$1->name,ElementType::_SEQUENCE,new std::list<struct Element>(tmp_list));
-	     // clean list
-	     tmp_list.clear();
-	   }
-       }
-     | VARIABLE ':' extension
-       {
-	 if(execute)
-	   {
-	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
-	     if(type != ElementType::_NONE)
-	       {
-		 write_table(params,$1->name,type);
-	       }
-	     params.flush();
-	   }
-       }
      | VARIABLE ':' newinstance
        {
          if(execute)
@@ -349,7 +330,7 @@ decl : VARIABLE ':' marker
 	     params.flush();
 	   }
        }
-       | VARIABLE ',' parameters
+       | VARIABLE ':' parameters
        {
 	 if(execute)
 	   {
@@ -358,19 +339,13 @@ decl : VARIABLE ':' marker
 	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
-		 std::cout << "type " << $1->name << " has not been defined" << std::endl;
+		 std::cout << "element " << $1->name << " has not been defined" << std::endl;
 		 if (PEDANTIC) exit(1);
 	       }
 	     else
 	       {
-		 // inherit properties from the base type
-		 params.inherit_properties(*it);
-	       }
-		
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << (*it).type << std::endl;
-	     if((*it).type != ElementType::_NONE)
-	       {
-		 write_table(params,$1->name,(*it).type);
+		 // add and overwrite properties if set
+		 (*it).set(params);
 	       }
 	     params.flush();
 	   }
@@ -409,6 +384,13 @@ decl : VARIABLE ':' marker
 	     add_xsecbias(xsecbias);
            }
        }
+      | VARIABLE ':' error_noparams
+      {
+	if(execute)
+	  {
+	    yyerror("ERROR: Element needs parameters");
+	  }
+      }
 ;
 
 marker : MARKER ;
@@ -426,6 +408,7 @@ multipole : MULTIPOLE ',' parameters ;
 solenoid : SOLENOID ',' parameters ;
 ecol : ECOL ',' parameters ;
 muspoiler : MUSPOILER ',' parameters ;
+degrader : DEGRADER ',' parameters ;
 rcol : RCOL ',' parameters ;
 laser : LASER ',' parameters ;
 screen : SCREEN ',' parameters ;
@@ -436,51 +419,43 @@ matdef : MATERIAL ',' parameters ;
 atom : ATOM ',' parameters ;
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
-extension : VARIABLE ',' parameters
-            {
-	      if(execute)
-		{	 
-		  if(ECHO_GRAMMAR) std::cout << "extension : VARIABLE parameters   -- " << $1->name << std::endl;
-		  std::list<struct Element>::iterator it = element_list.find($1->name);
-		  std::list<struct Element>::iterator iterEnd = element_list.end();
-		  if(it == iterEnd)
-		    {
-		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
-		      if (PEDANTIC) exit(1);
-		      $$ = static_cast<int>(ElementType::_NONE);
-		    }
-		  else
-		    {
-		      // inherit properties from the base type
-		      $$ = static_cast<int>((*it).type);
-		      params.inherit_properties(*it);
-		    }
-		  
-		}
-	    }
-;
 
-newinstance : VARIABLE 
+error_noparams : DRIFT;
+               | RF;
+               | SBEND;
+               | RBEND;
+               | VKICK;
+               | HKICK;
+               | QUADRUPOLE;
+               | SEXTUPOLE;
+               | OCTUPOLE;
+               | DECAPOLE;
+               | MULTIPOLE;
+               | SOLENOID;
+               | ECOL;
+               | MUSPOILER;
+               | RCOL;
+               | LASER;
+               | SCREEN;
+               | AWAKESCREEN;
+               | TRANSFORM3D;
+               | ELEMENT;
+               | MATERIAL;
+               | ATOM;
+               | TUNNEL;
+               | XSECBIAS;
+
+newinstance : VARIABLE ',' parameters
             {
-	      if(execute)
-		{	 
-		  std::cout << "newinstance : VARIABLE -- " << $1->name << std::endl;
-		  std::list<struct Element>::iterator it = element_list.find($1->name);
-		  std::list<struct Element>::iterator iterEnd = element_list.end();
-		  if(it == iterEnd)
-		    {
-		      std::cout << "type " << $1->name << " has not been defined" << std::endl;
-		      if (PEDANTIC) exit(1);
-		      $$ = static_cast<int>(ElementType::_NONE);
-		    }
-		  else
-		    {
-		      // inherit properties from the base type
-		      $$ = static_cast<int>((*it).type);
-		      params.inherit_properties(*it);
-		    }
-		  
-		}
+	      if(execute) {
+		$$ = copy_element_to_params($1->name,params);
+	      }
+	    }
+            | VARIABLE
+	    {
+	      if(execute) {
+		$$ = copy_element_to_params($1->name,params);
+	      }
 	    }
 ;
 
@@ -524,14 +499,6 @@ line : LINE '=' '(' element_seq ')'
 
 line : LINE '=' '-' '(' rev_element_seq ')'
 ;
-
-//sequence : SEQUENCE ',' params ',' '(' element_seq ')'
-//;
-
-//sequence : SEQUENCE ',' params ',' '-' '(' rev_element_seq ')'
-//;
-
-sequence : SEQUENCE '=' '(' seq_element_seq ')' ;
 
 element_seq : 
             | VARIABLE ',' element_seq
@@ -603,33 +570,6 @@ rev_element_seq :
 	      }
 ;
 
-seq_element_seq : 
-            | VARIABLE ',' seq_element_seq
-              {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
-	      }
-            | VARIABLE '*' NUMBER ',' seq_element_seq
-              {
-		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
-	      }
-            | NUMBER '*' VARIABLE ',' seq_element_seq
-              {
-		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
-	      }
-            | VARIABLE 
-              {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_SEQUENCE);
-	      }
-           | VARIABLE '*' NUMBER 
-              {
-		if(execute) add_element_temp($1->name, int($3), true, ElementType::_SEQUENCE);
-	      }
-            | NUMBER '*' VARIABLE 
-              {
-		if(execute) add_element_temp($3->name, int($1), true, ElementType::_SEQUENCE);
-	      }
-;
-
 expr : aexpr 
        { // check type ??
 	 if(ECHO_GRAMMAR) printf("expr -> aexpr\n");
@@ -692,13 +632,12 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	   if($2->data.size() == $4->data.size())
 	     {
 	       $$ = 0;
-	       for(int i=0;i<$2->data.size();i++)
+	       for(unsigned int i=0;i<$2->data.size();i++)
 		 $$ += $2->data[i] * $4->data[i];
 	     }
 	   else
 	     {
-	       printf("vector dimensions do not match");
-	       exit(1);
+	       yyerror("ERROR: vector dimensions do not match");
 	     }
          } 
        // boolean stuff
@@ -720,8 +659,10 @@ assignment :  VARIABLE '=' aexpr
 		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
 		if(execute)
 		  {
-		    if($1->is_reserved)
-		      std::cout << $1->name << " is reserved" << std::endl;
+		    if($1->is_reserved) {
+		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		      yyerror(errorstring.c_str());
+		    }
 		    else
 		      {
 			$1->value = $3; $$=$1;       
@@ -746,7 +687,7 @@ assignment :  VARIABLE '=' aexpr
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(int i=0;i<$3->data.size();i++)
+		    for(unsigned int i=0;i<$3->data.size();i++)
 		      $1->array.push_back($3->data[i]);
 		    $$ = $1;
 		    $3->data.clear();
@@ -1008,14 +949,13 @@ command : STOP             { if(execute) quit(); }
 	  }
         | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
         | OPTION  ',' option_parameters
-	| ECHO STR { if(execute) {printf("%s\n",$2);} free($2); }
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler($3->name,$3->name, element_count);
-		element_count = 1;
+		add_sampler($3->name, element_count);
+		element_count = -1;
 		params.flush();
 	      }
           }
@@ -1024,11 +964,20 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-//SPM		add_csampler("sampler",$3->name, element_count,params.l, params.r);
-		add_csampler($3->name,$3->name, element_count,params.l, params.r);
-		element_count = 1;
+		add_csampler($3->name, element_count,params.l, params.r);
+		element_count = -1;
 		params.flush();
 	      }
+          }
+        | DUMP ',' sample_options //  options for beam dump
+          {
+            if(execute)
+              {
+                if(ECHO_GRAMMAR) printf("command -> DUMP\n");
+                add_dump($3->name, element_count);
+                element_count = -1;
+                params.flush();
+              }
           }
         | TUNNEL ',' tunnel_options // tunnel
           {
@@ -1046,25 +995,6 @@ command : STOP             { if(execute) quit(); }
 		add_xsecbias(xsecbias);
 	      }
           }
-        | BETA0 ',' option_parameters // beta 0 (is a synonym of option, for clarity)
-          {
-	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> BETA0\n");
-	      }
-          }
-        | DUMP ',' sample_options //  options for beam dump 
-          {                                                   
-            if(execute)                                       
-              {                                               
-                if(ECHO_GRAMMAR) printf("command -> DUMP\n"); 
-                add_dump($3->name,$3->name, element_count);     
-                element_count = 1;                            
-                params.flush();                               
-              }                                               
-          }                                                   
-
-//| PRINTF '(' fmt ')' { if(execute) printf($3,$5); }
 ;
 
 use_parameters :  VARIABLE
@@ -1108,17 +1038,21 @@ use_parameters :  VARIABLE
 sample_options: RANGE '=' VARIABLE
                 {
 		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << std::endl;
-		  {
-		    if(execute) $$ = $3;
-		  }
+		  if(execute) $$ = $3;
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
                   if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << " [" << $5 << "]" << std::endl;
-		  {
-		    if(execute) { $$ = $3; element_count = (int)$5; }
-		  }
+		  if(execute) { $$ = $3; element_count = (int)$5; }
                 }
+              | ALL
+	        {
+		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
+		  // -2: convention to add to all elements
+		  // empty name so that element name can be attached
+		  // create variable name with empty string
+		  if(execute) { $$ = symlook(""); element_count = -2; }
+	        }
 ;
 
 csample_options : VARIABLE '=' aexpr
@@ -1130,8 +1064,8 @@ csample_options : VARIABLE '=' aexpr
 			if( $1->name == "r") params.r = $3;
 			else if ($1->name == "l") params.l = $3;
 			else {
-			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  yyerror(errorstring.c_str());
 			}
 		      }
 		  }   
@@ -1153,8 +1087,8 @@ csample_options : VARIABLE '=' aexpr
 			if( $1->name == "r") params.r = $3;
 			else if ($1->name == "l") params.l = $3;
 			else {
-			  std::cout << "Warning : CSAMPLER: unknown parameter : \"" << $1->name << "\"" << std::endl;
-			  exit(1);
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  yyerror(errorstring.c_str());
 			}
 		      }
 
@@ -1259,35 +1193,16 @@ option_parameters : VARIABLE '=' aexpr ',' option_parameters
 		    }
 ;
 
-beam_parameters : VARIABLE '=' aexpr ',' beam_parameters
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		  }   
-                | VARIABLE '=' aexpr
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		  }   
-                | VARIABLE '=' STR ',' beam_parameters
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		    free($3);
-		  }   
-                | VARIABLE '=' STR
-                  {
-		    if(execute)
-		      options.set_value($1->name,$3);
-		    free($3);
-		  }   
+// beam_parameter same as option_parameters, might change in future
+beam_parameters : option_parameters
 ;
 
 %%
 
 int yyerror(const char *s)
 {
-  printf("%s at line %d (might not be exact!), file %s \nsymbol '%s' unexpected\n",s, line_num, yyfilename, yytext);
+  std::cout << s << " at line " << GMAD::line_num << " (might not be exact!), file " << yyfilename << std::endl;
+  std::cout << "symbol '" << yytext << "' unexpected" << std::endl;
   exit(1);
 }
 

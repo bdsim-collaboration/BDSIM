@@ -1,0 +1,10 @@
+! Fri, 13 Nov 2015 13:02:40 +0000
+! pybdsim.Builder Lattice 
+! number of elements = 540
+! total length       = 200.0 m
+
+include fodoRing_components.gmad;
+include fodoRing_sequence.gmad;
+include fodoRing_beam.gmad;
+include fodoRing_options.gmad;
+sample, all;

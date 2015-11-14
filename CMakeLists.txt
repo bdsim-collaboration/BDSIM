@@ -4,7 +4,7 @@ project(BDSIM)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 8 )
+set( BDSIM_MINOR_VERSION 9 )
 set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -243,6 +243,11 @@ if (Geant4_FOUND)
       include(${Geant4_USE_FILE})
       message(STATUS "Geant4 Definitions: ${Geant4_DEFINITIONS}")
 
+      # We don't support multithreading for now
+      if ("${Geant4_DEFINITIONS}" MATCHES "G4MULTITHREADED")
+	message(FATAL_ERROR "Currently Geant4 builds with multithreading are not supported at the moment! Please build Geant4 with multithreading off. Exiting")
+      endif()
+      
       if($ENV{VERBOSE})
         message(STATUS "Geant4_INCLUDE_DIRS: ${Geant4_INCLUDE_DIRS}")
         message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
@@ -282,11 +287,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ## set compiler flags
 # warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
-# suppress some warnings from CLHEP 2.2 (to be checked from time to time if still necessary)
-# for clang versions 3.6 and higher
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND CLANG_VERSION_STRING VERSION_GREATER 3.5)
-  set(WFLAGS "${WFLAGS} -Wno-absolute-value")
-endif()
 
 # cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
@@ -310,6 +310,8 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
+  # add 'make doxygen' to ctest
+  add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------
@@ -341,6 +343,11 @@ add_library(bdsim ${bdsim_sources})
 # This module sets up installation:
 include(bdsim_install)
 
+# enable Testing with ctest
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
+
 add_subdirectory( parser )
 
 add_subdirectory( tracker )
@@ -366,6 +373,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)
 endif()
 
+# set binary name for testing usage
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
@@ -383,10 +391,7 @@ add_subdirectory(vis)
 # Utils directory
 add_subdirectory(utils)
 
-# Testing:
-enable_testing()
-include(CTest)
-include(bdsim_test_macros)
+# For testing
 add_subdirectory(examples)
 add_subdirectory(test)
 

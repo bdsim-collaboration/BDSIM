@@ -36,7 +36,7 @@ private:
   G4bool                                                                 fSetup;
   G4String                                                               particleName;
   const G4ParticleDefinition*                                            fParticleToBias; 
-  
+  G4bool debug;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "BDSBeamlineElement.hh"
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSSamplerBase.hh"
 #include "BDSDebug.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -8,7 +9,6 @@
 #include "G4ThreeVector.hh"
 
 #include <ostream>
-#include <sstream>
 
 BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            positionStartIn,
@@ -46,15 +46,23 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   G4cout << G4endl;
 #endif
 
-  if (componentIn->GetNTimesPlaced() < 1)
-    {placementName = componentIn->GetName();}
-  else
+  /// increase copy number (starts at -1)
+  componentIn->IncrementCopyNumber();
+
+  /// use output name for samplers so that it can be quickly identified for output
+  BDSSamplerBase* sampler = dynamic_cast<BDSSamplerBase*>(componentIn);
+  if (sampler)
     {
-      std::stringstream namestream;
-      namestream << componentIn->GetName() << "_" << componentIn->GetNTimesPlaced();
-      placementName = namestream.str();
+      copyNumber = 0;
+      placementName = sampler->GetOutputName();
     }
-  componentIn->IncrementNTimesPlaced();
+  else 
+    {
+      copyNumber = componentIn->GetCopyNumber();
+      /// placement name (starting at 0)
+      placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
+    }
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
 #endif
@@ -73,6 +81,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationMiddle;
   delete referenceRotationEnd;
   delete placementTransform;
+  delete readOutPlacementTransform;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)

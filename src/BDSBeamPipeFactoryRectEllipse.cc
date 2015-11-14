@@ -55,9 +55,6 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,  
   // clean up after last usage
   CleanUp();
   
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In,aper4In);
-
   // build the solids
   //vacuum cylindrical solid (circular cross-section)
   G4VSolid* vacCylSolid = new G4EllipticalTube(nameIn + "_vacuum_ellipsoid", // name
@@ -164,9 +161,6 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipeAngledInOut(G4String  
   // clean up after last usage
   CleanUp();
   
-   // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In,aper4In);
-
   std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
@@ -180,34 +174,6 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipeAngledInOut(G4String  
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, width, height);
 }
 
-/// functions below here are private to this particular factory
-
-/// test input parameters - if not set use global defaults for this simulation
-void BDSBeamPipeFactoryRectEllipse::TestInputParameters(G4Material*&  vacuumMaterialIn,     // reference to a pointer
-							G4double&     beamPipeThicknessIn,
-							G4Material*&  beamPipeMaterialIn,
-							G4double&     aper1In,
-							G4double&     aper2In,
-							G4double&     aper3In,
-							G4double&     aper4In)
-{
-    BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-
-  if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
-
-  if (aper2In < 1e-10)
-    {aper2In = BDSGlobalConstants::Instance()->GetAper2();}
-
-  if (aper3In < 1e-10)
-    {aper3In = BDSGlobalConstants::Instance()->GetAper3();}
-
-  if (aper4In < 1e-10)
-    {aper4In = BDSGlobalConstants::Instance()->GetAper4();}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
 BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    nameIn,
 								    G4Material* vacuumMaterialIn,
 								    G4Material* beamPipeMaterialIn,
@@ -265,7 +231,7 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
 						      vacRectSolid);                 // solid 2
   //prepare angled face large cylinder for intersection get angled faces
   //we can actually use this for the beampipe too later on - whew
-  G4double angledFaceRadius = (std::max(std::max(aper1In,aper2In),std::max(aper3In,aper4In)) + beamPipeThicknessIn) * 4;
+  G4double angledFaceRadius = (std::max(std::max(aper1In,aper2In),std::max(aper3In,aper4In)) + beamPipeThicknessIn) * 1.1;
   G4VSolid* vacuumAngledSolid = new G4CutTubs(nameIn + "_pipe_angled_faces",     // name
 					      0,                                 // inner radius
 					      angledFaceRadius,                  // outer radius
@@ -336,7 +302,9 @@ void BDSBeamPipeFactoryRectEllipse::CreateGeneralAngledSolids(G4String      name
   G4VSolid* contCylSolid = new G4EllipticalTube(nameIn + "_vacuum_ellipsoid",                 // name
 						aper3In + beamPipeThicknessIn + lengthSafety, // horizontal semi-axis
 						aper4In + beamPipeThicknessIn + lengthSafety, // vertical semi-axis
-						lengthIn*0.5);                                // half length
+						lengthIn*1.1);                                // length
+  // length both long and different from next solid for unamibiguous intersection
+  
   //vacuum box solid (rectangular cross-section)
   G4VSolid* contRectSolid = new G4Box(nameIn + "_vacuum_box", // name
 				      aper1In + beamPipeThicknessIn + lengthSafety, // x half width

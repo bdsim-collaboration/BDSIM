@@ -58,3 +58,14 @@ macro(unit_test test_name binary)
     add_test(${test_name} ${binary})
   endif()
 endmacro()
+
+# macro for tracking tester
+macro(tracking_test test_name args)
+    # If loop can be removed when we no longer support cmake 2.6...
+    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
+       add_test(NAME ${test_name} COMMAND ./run_bdsimMadx.py ${args})
+    else()
+       add_test(${test_name} ./run_bdsimMadx.py ${args})
+    endif()
+endmacro()
+

@@ -1,12 +1,19 @@
-#ifndef BDSBunchSixTrack_h
-#define BDSBunchSixTrack_h
+#ifndef BDSBUNCHSIXTRACK_H
+#define BDSBUNCHSIXTRACK_H
 
 #include <vector>
 
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
 
-class BDSBunchSixTrack : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that reads a SixTrack hits file.
+ * 
+ * @author Regina Kwee-Hinzmann <Regina.Kwee@rhul.ac.uk>
+ */
+
+class BDSBunchSixTrack: public BDSBunchInterface
+{ 
 private: 
   G4int    nPart;
   G4String fileName;

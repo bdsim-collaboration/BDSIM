@@ -55,7 +55,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 				       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
 				       name+"_inner");
   
-  itsPhysiComp2 = new G4PVPlacement(0,                // no rotation
+  itsPhysiComp2 = new G4PVPlacement(nullptr,                // no rotation
 				    (G4ThreeVector)0, // position
 				    itsInnerLogVol,   // logical volume
 				    name+"_combined", // name
@@ -72,7 +72,7 @@ void BDSSpoiler::BuildInnerSpoiler()
   if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
     {RegisterSensitiveVolume(itsSolidLogVol);}
   
-  itsPhysiComp = new G4PVPlacement(0,                      // no rotation
+  itsPhysiComp = new G4PVPlacement(nullptr,                      // no rotation
 				   (G4ThreeVector)0,       // its position
 				   itsSolidLogVol,         // its logical volume
 				   name+"_solid",	      // its name

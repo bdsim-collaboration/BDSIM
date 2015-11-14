@@ -6,12 +6,9 @@
 #include <vector>
 
 /**
- * @brief Analysis interface class. Create, store and access
- * histograms.
+ * @brief Analysis interface class. Create, store and access histograms.
  * 
- * singleton pattern
- * 
- * This is conceptually based on the Geant4 AnalysisManager classes,
+ * Singleton pattern. This is conceptually based on the Geant4 AnalysisManager classes,
  * however this does not inherit it nor adhere strictly to it. The
  * purpose of this class is only to deal with histograms. The Geant4
  * AnalysisManagers are based on an output format.  Here this will 
@@ -46,6 +43,8 @@ public:
 
   /// Fill a histogram
   void Fill1DHistogram(G4int histoIndex, G4double value, G4double weight=1.0);
+  /// Fill a histogram with a range
+  void Fill1DHistogram(G4int histoIndex, std::pair<G4double,G4double> range, G4double weight=1.0);
   
   /// Return number of histograms
   G4int NumberOfHistograms()const;

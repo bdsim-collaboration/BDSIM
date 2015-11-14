@@ -2,56 +2,52 @@
 #define __ARRAY_H
 
 #include <iostream>
-#include <list>
 #include <string>
 #include <vector>
 
-// representation of arrays used in tokens
 namespace GMAD {
-struct Array {
-  std::vector<std::string> symbols;
-  std::vector<double> data;
+  /**
+   * @brief Representation of arrays used in tokens
+   *
+   * Used for both std::string and double
+   */
 
-  // helper methods
-  void set_vector(std::list<double>& dst)
-  {
-    for(unsigned int i=0; i< data.size();i++){
-      dst.push_back(data[i]);
+  struct Array {
+    std::vector<std::string> symbols;
+    std::vector<double> data;
+
+    // helper methods
+
+    // copy symbols into STL string containers
+    template<template <typename, typename> class Container>
+      void set_vector(Container<std::string, std::allocator<std::string>>& dst)
+    {
+      for(std::string symbol : symbols){
+	dst.push_back(symbol);
 #ifdef BDSDEBUG 
-      std::cout << data[i] << " ";
+	std::cout << symbol << " ";
+#endif
+      }
+#ifdef BDSDEBUG 
+      std::cout << std::endl;
 #endif
     }
-#ifdef BDSDEBUG 
-    std::cout << std::endl;
-#endif
-  }
 
-  void set_vector(std::list<std::string>& dst)
-  {
-    for(unsigned int i=0; i< symbols.size();i++){
-      dst.push_back(symbols[i]);
+    // copy data into STL numerical containers
+    template<typename T, template <typename, typename> class Container>
+      void set_vector(Container<T, std::allocator<T>>& dst) 
+    {
+      for(auto value : data){
+	dst.push_back((T)value);
 #ifdef BDSDEBUG 
-      std::cout << symbols[i] << " ";
+	std::cout << (T)value << " ";
+#endif
+      }
+#ifdef BDSDEBUG 
+      std::cout << std::endl;
 #endif
     }
-#ifdef BDSDEBUG 
-    std::cout << std::endl;
-#endif
-  }
-
-  void set_vector(std::list<int>& dst)
-  {
-    for(unsigned int i=0; i< data.size();i++){
-      dst.push_back((int)(data[i]));
-#ifdef BDSDEBUG 
-      std::cout << (int)(data[i]) << " ";
-#endif
-    }
-#ifdef BDSDEBUG 
-    std::cout << std::endl;
-#endif
-  }
-};
+  };
 }
 
 #endif

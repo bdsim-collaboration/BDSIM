@@ -1,9 +1,9 @@
 #include "BDSMagnetOuterFactoryPolesBase.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagnetColours.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
 #include "BDSMaterials.hh"
@@ -128,14 +128,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 					  yokeFinishRadiusY,                // y half width
 					  1.5 * outerLength); // z half width - long for unambiguous intersection
   
-  G4CutTubs* angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
-					     0,                           // inner radius
-					     angledFaceRadius,            // outer radius
-					     outerLength,                 // half length - must fit within container
-					     0,                           // rotation start angle
-					     CLHEP::twopi,                // rotation sweep angle
-					     inputface,                   // input face normal
-					     outputface);                 // output face normal
+  G4VSolid* angledFaceSolid = nullptr;
+  if (BDS::IsFinite(angle))
+    {
+      angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
+				      0,                           // inner radius
+				      angledFaceRadius,            // outer radius
+				      outerLength,                 // half length - must fit within container
+				      0,                           // rotation start angle
+				      CLHEP::twopi,                // rotation sweep angle
+				      inputface,                   // input face normal
+				      outputface);                 // output face normal
+    }
+  else
+    {
+      angledFaceSolid = new G4Tubs(name + "_angled_face_solid", // name
+				   0,                           // inner radius
+				   angledFaceRadius,            // outer radius
+				   outerLength,                 // half length - must fit within container
+				   0,                           // rotation start angle
+				   CLHEP::twopi);               // rotation sweep angle
+    }
   allSolids.push_back(containerSquareSolid);
   allSolids.push_back(angledFaceSolid);
 
@@ -163,14 +176,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 				       contRX,                          // x half width
 				       contRY,                          // y half width
 				       containerLength); // z half width - long for unambiguous intersection
-  G4CutTubs* magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
-						   0,                           // inner radius
-						   angledFaceRadius,            // outer radius
-						   containerLength*0.5,         // half length - must fit within container
-						   0,                           // rotation start angle
-						   CLHEP::twopi,                // rotation sweep angle
-						   inputface,                   // input face normal
-						   outputface);                 // output face normal
+  G4VSolid* magnetAngledFaceSolid = nullptr;
+  if (BDS::IsFinite(angle))
+    {
+      magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
+					    0,                           // inner radius
+					    angledFaceRadius,            // outer radius
+					    containerLength*0.5,         // half length - must fit within container
+					    0,                           // rotation start angle
+					    CLHEP::twopi,                // rotation sweep angle
+					    inputface,                   // input face normal
+					    outputface);                 // output face normal
+    }
+  else
+    {
+      magnetAngledFaceSolid = new G4Tubs(name + "_angled_face_solid", // name
+					 0,                           // inner radius
+					 angledFaceRadius,            // outer radius
+					 containerLength*0.5,         // half length - must fit within container
+					 0,                           // rotation start angle
+					 CLHEP::twopi);               // rotation sweep angle
+    }
   allSolids.push_back(magnetContSqSolid);
   allSolids.push_back(magnetAngledFaceSolid);
   magnetContainerSolid = new G4IntersectionSolid(name + "_magnet_container_solid", // name
@@ -179,11 +205,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 
   G4double contRZ = 0.5*length;
   BDSMagnetOuter* magnetContainer = new BDSMagnetOuter(magnetContainerSolid,
-								   NULL,
-								   std::make_pair(-contRX,contRX),
-								   std::make_pair(-contRY,contRY),
-							     std::make_pair(-contRZ,contRZ),
-							     NULL);
+						       nullptr,
+						       std::make_pair(-contRX,contRX),
+						       std::make_pair(-contRY,contRY),
+						       std::make_pair(-contRZ,contRZ),
+						       nullptr);
   
   G4Box* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 			       yokeFinishRadius - lengthSafety,           // x half width
@@ -234,14 +260,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 					  angledFaceSolid);
     }
 
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(1); /*order = 1*/
+  G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(1); /*order = 1*/
   
   BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
 
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     (G4ThreeVector)0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -254,7 +280,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 
   if (buildPoles)
     {
-      G4PVPlacement* topPolePV = new G4PVPlacement(0,                           // rotation
+      G4PVPlacement* topPolePV = new G4PVPlacement(nullptr,                           // rotation
 						   G4ThreeVector(0,poleDisp,0), // position
 						   poleLV,                      // logical volume
 						   name + "_top_pole_pv",       // name
@@ -263,7 +289,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 						   0,                           // copy number
 						   checkOverlaps);              // check overlaps
       
-      G4PVPlacement* botPolePV = new G4PVPlacement(0,                            // rotation
+      G4PVPlacement* botPolePV = new G4PVPlacement(nullptr,                            // rotation
 						   G4ThreeVector(0,-poleDisp,0), // position
 						   poleLV,                       // logical volume
 						   name + "_bottom_pole_pv",     // name
@@ -461,7 +487,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   CalculatePoleAndYoke(outerDiameter, beamPipe, order);
   CreatePoleSolid(name, length, order);
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(order);
+  G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
   PlaceComponents(name, order); //returns vector of PVs
@@ -652,7 +678,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     (G4ThreeVector)0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
@@ -806,7 +832,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
     {magnetType = "hkicker";}
 
   // yoke and pole
-  G4Colour* magnetColour = BDSMagnetColours::Instance()->GetMagnetColour(magnetType);
+  G4Colour* magnetColour = BDSColours::Instance()->GetColour(magnetType);
   G4VisAttributes* outerVisAttr = new G4VisAttributes(*magnetColour);
   outerVisAttr->SetVisibility(true);
   allVisAttributes.push_back(outerVisAttr);
@@ -815,7 +841,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
   poleLV->SetVisAttributes(outerVisAttr);
 
   // coil
-  G4Colour* coilColour  = BDSMagnetColours::Instance()->GetMagnetColour("coil");
+  G4Colour* coilColour  = BDSColours::Instance()->GetColour("coil");
   G4VisAttributes* coilVisAttr = new G4VisAttributes(*coilColour);
   coilVisAttr->SetVisibility(true);
   allVisAttributes.push_back(coilVisAttr);
@@ -841,7 +867,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 #endif
 
   // place components
-  yokePV       = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV       = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				   yokeTranslation,              // position
 				   yokeLV,                       // lv to be placed
 				   name + "_yoke_pv",            // name
@@ -850,7 +876,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 				   0,                            // copy number
 				   checkOverlaps);
 
-  G4PVPlacement* poleLowerPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* poleLowerPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 lowerPoleTranslation,         // position
 						 poleLV,                       // lv to be placed
 						 name + "_lower_pole_pv",      // name
@@ -859,7 +885,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 						 0,                            // copy number
 						 checkOverlaps);
 
-  G4PVPlacement* poleUpperPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* poleUpperPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 upperPoleTranslation,         // position
 						 poleLV,                       // lv to be placed
 						 name + "_upper_pole_pv",      // name
@@ -868,7 +894,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 						 0,                            // copy number
 						 checkOverlaps);
 
-  G4PVPlacement* coilOuterPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* coilOuterPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 outerCoilTranslation,         // position
 						 coilLV,                       // lv to be placed
 						 name + "_outer_coil_pv",      // name
@@ -877,7 +903,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 						 0,                            // copy number
 						 checkOverlaps);
 
-  G4PVPlacement* coilInnerPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  G4PVPlacement* coilInnerPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 innerCoilTranslation,         // position
 						 coilLV,                       // lv to be placed
 						 name + "_inner_coil_pv",      // name

@@ -61,17 +61,11 @@ private:
   BDSBeamPipeFactoryRectEllipse(); ///< private default constructor - singleton pattern
   static BDSBeamPipeFactoryRectEllipse* _instance;
 
-  void TestInputParameters(G4Material*& vacuumMaterialIn,
-			   G4double&    beamPipeThicknessIn,
-			   G4Material*& beamPipeMaterialIn,
-			   G4double&    aper1In,
-			   G4double&    aper2In,
-			   G4double&    aper3In,
-			   G4double&    aper4In);
-
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
 
+  /// only the solids are unique, once we have those, the logical volumes and placement in the
+  /// container are the same.  group all this functionality together
   BDSBeamPipe* CommonFinalConstruction(G4String    nameIn,
 				       G4Material* vacuumMaterialIn,
 				       G4Material* beamPipeMaterialIn,

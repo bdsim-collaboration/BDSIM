@@ -95,6 +95,7 @@ screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
+degrader { return DEGRADER;}
 
 tunnel { return TUNNEL; }
 
@@ -105,6 +106,7 @@ atom { return ATOM; }
 
 line { return LINE; } 
 
+all { return ALL; }
 period { return PERIOD; }
 range { return RANGE; }
 
@@ -119,13 +121,13 @@ include   BEGIN(incl);  //reserved commands
 
 beam { return BEAM; }
 option { return OPTION; }
+beta0 { return OPTION; }  // beta0 is a synonym of option
 print { return PRINT; }
 "return" { return STOP; }
 stop {return STOP;}
 use { return USE; }
 sample { return SAMPLE; }
 csample { return CSAMPLE; }
-beta0 { return BETA0; } 
 dump  { return DUMP; }
 
 \"[^"]*\" {

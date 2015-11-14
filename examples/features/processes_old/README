@@ -1,3 +1,4 @@
 gasPipe         : Define vacuum gas example
 hadronicTarget  : Lead target with SQL  
+Laser-Wire      : Laserwire example
 rbendTarget     : Carbon foil target with SQL

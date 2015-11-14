@@ -1,8 +1,9 @@
 #ifdef USE_GDML
-#include "BDSGlobalConstants.hh"
+#include "BDSColours.hh"
+#include "BDSExecOptions.hh"
 #include "BDSGeometryGDML.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "BDSMagnetColours.hh"
 
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
@@ -11,7 +12,10 @@
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):markerVol(nullptr),gdmlWorld(nullptr){
+BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):
+  markerVol(nullptr),
+  gdmlWorld(nullptr)
+{
   GDMLfile = GDMLfileIn;
 }
 
@@ -25,10 +29,10 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
   
   gdmlWorld = parser->GetWorldVolume()->GetLogicalVolume();
 
-  G4VisAttributes* visAtt = new G4VisAttributes(*BDSMagnetColours::Instance()->GetMagnetColour("gdml"));
+  G4VisAttributes* visAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
   visAtt->SetVisibility(false);
 
-  G4VisAttributes* visAtt2 = new G4VisAttributes(*BDSMagnetColours::Instance()->GetMagnetColour("gdml"));
+  G4VisAttributes* visAtt2 = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
   visAtt2->SetVisibility(true);
 
   for (int i=0; i<gdmlWorld->GetNoDaughters(); i++){
@@ -40,15 +44,20 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
     logicalVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
     sensitiveVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
   }
-  gdmlWorld->SetVisAttributes(visAtt);
+
+  if (BDSExecOptions::Instance()->GetVisDebug())
+    {gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
+  else
+    {gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
   
   new G4PVPlacement(nullptr,
                     G4ThreeVector(0.,0.,0.),
                     gdmlWorld,
-                    gdmlWorld->GetName()+"_PhysiComp",
+                    gdmlWorld->GetName()+"_pv",
                     markerVol,
                     false,
-                    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                    0,
+		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
 }
 #endif
 

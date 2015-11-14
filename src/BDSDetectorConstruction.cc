@@ -5,6 +5,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
@@ -14,6 +15,7 @@
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSDManager.hh"
+#include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
@@ -25,7 +27,6 @@
 #include "parser/physicsbiasing.h"
 
 #include "G4Box.hh"
-#include "G4Colour.hh"
 #include "G4Electron.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
@@ -46,17 +47,11 @@
 #include <iterator>
 #include <list>
 #include <map>
-#include <sstream>
 #include <vector>
-
-#ifdef BDSDEBUG
-bool debug = true;
-#else
-bool debug = false;
-#endif
 
 namespace GMAD {
   extern FastList<Element> beamline_list;
+  extern FastList<PhysicsBiasing> xsecbias_list;
 }
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
@@ -77,9 +72,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
   if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
   
-  // prepare materials for this run
-  BDSMaterials::Instance()->PrepareRequiredMaterials();
-
   // construct regions
   InitialiseRegions();
   
@@ -97,10 +89,10 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   ComponentPlacement();
 
   // implement bias operations on all volumes 
-  BuildPhysicsBias();
+  // BuildPhysicsBias();
 
   // free the parser list - an extern
-  GMAD::beamline_list.erase();
+  //  GMAD::beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -134,18 +126,19 @@ void BDSDetectorConstruction::InitialiseRegions()
   // gas region
   gasRegion   = new G4Region("gasRegion");
   G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("gamma"));
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e-"));
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,G4ProductionCuts::GetIndex("e+"));
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"gamma");
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"e-");
+  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"e+");
   gasRegion->SetProductionCuts(theGasProductionCuts);
 
   // precision region
   precisionRegion = new G4Region("precisionRegion");
-  G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),"gamma");
-  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
-  theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
-  precisionRegion->SetProductionCuts(theProductionCuts);
+  G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutProtonsP(),  "proton");
+  precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 
 void BDSDetectorConstruction::BuildBeamline()
@@ -153,6 +146,15 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
 
+  const BDSExecOptions* execOptions = BDSExecOptions::Instance();
+  // Write survey file here since has access to both element and beamline
+  BDSSurvey* survey = nullptr;
+  if(execOptions->GetSurvey())
+    {
+      survey = new BDSSurvey(execOptions->GetSurveyFilename());
+      survey->WriteHeader();
+    }
+  
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
   for(auto element : GMAD::beamline_list)
     {
@@ -164,14 +166,15 @@ void BDSDetectorConstruction::BuildBeamline()
       if(temp)
 	{
 	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(element);
-	  beamline->AddComponent(temp, tiltOffset);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset);
+	  if (survey) survey->Write(addedComponents, element);
 	}
     }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (BDSExecOptions::Instance()->GetCircular())
+  if (execOptions->GetCircular())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
@@ -181,16 +184,31 @@ void BDSDetectorConstruction::BuildBeamline()
       if (terminator)
         {
 	  terminator->Initialise();
-	  beamline->AddComponent(terminator);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(terminator);
+	  if (survey)
+	    {
+	      GMAD::Element element = GMAD::Element(); // dummy element
+	      survey->Write(addedComponents, element);
+	    }
 	}
       BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter();
       if (teleporter)
 	{
 	  teleporter->Initialise();
-	  beamline->AddComponent(teleporter);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(teleporter);
+	  if (survey)
+	    {
+	      GMAD::Element element = GMAD::Element(); // dummy element
+	      survey->Write(addedComponents, element);
+	    }
 	}
     }
-  
+
+  if (survey)
+    {
+      survey->WriteSummary(beamline);
+      delete survey;
+    }
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
@@ -203,7 +221,6 @@ void BDSDetectorConstruction::BuildBeamline()
   G4cout << *BDSAcceleratorComponentRegistry::Instance();
 #endif
  
-  
   if (beamline->empty())
     {
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
@@ -420,7 +437,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
 
       // get the placement details from the beamline component
-      G4int nCopy         = 0;
+      G4int nCopy          = (*it)->GetCopyNo();
       // reference rotation and position for the read out volume
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       G4Transform3D*    pt = (*it)->GetPlacementTransform();
@@ -464,25 +481,10 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
 								     readOutPVName,
-								     (*it)->GetSPositionMiddle());
+								     (*it)->GetSPositionMiddle(),
+								     thecurrentitem->GetPrecisionRegion());
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true); // true = it's a read out volume
 	}
-      /*
-      else
-        {
-	  
-	  // It doesn't have a read out volume, so register the same info with all logical volumes
-	  // the current BDSAcceleratorComponent  contains as any of them could be requested
-	  // by BDSEnergyCounterSD
-	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-								     name,
-								     (*it)->GetSPositionMiddle());
-	  BDSPVIterator elementLVIterator = thecurrentitem->GetAllLogicalVolumes().begin();
-	  BDSPVIterator elementLVEnd      = thecurrentitem->GetAllLogicalVolumes().end();
-	  for (; elementLVIterator != elementLVEnd; ++elementLVIterator)
-	    {BDSLogicalVolumeInfoRegistry::Instance()->RegisterInfo(*elementLVIterator, theinfo);}
-	}
-      */
       
       //this does nothing by default - only used by BDSElement
       //looks like it could just be done in its construction rather than
@@ -515,7 +517,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4VPhysicalVolume* tunnelReadOutWorldPV = BDSAcceleratorModel::Instance()->GetTunnelReadOutWorldPV();
       G4VSensitiveDetector* tunnelSDRO        = BDSSDManager::Instance()->GetTunnelOnAxisSDRO();
       BDSBeamline* tunnel                     = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
-      BDSBeamline::iterator tunnelIt            = tunnel->begin();
+      BDSBeamline::iterator tunnelIt          = tunnel->begin();
       for(; tunnelIt != tunnel->end(); ++tunnelIt)
 	{
 	  BDSAcceleratorComponent* thecurrentitem = (*tunnelIt)->GetAcceleratorComponent();
@@ -555,49 +557,81 @@ void BDSDetectorConstruction::ComponentPlacement()
   G4cout.precision(G4precision);
 }
 
+#if G4VERSION_NUMBER > 1009
+BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(std::list<std::string>& biasList)const
+{
+  // loop over all physics biasing
+  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
+  for(std::string& bs : biasList)
+    {
+      auto it = GMAD::xsecbias_list.find(bs);
+      if (it==GMAD::xsecbias_list.end()) continue;
+      GMAD::PhysicsBiasing& pb = *it;
+      
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
+      
+      eg->AddParticle(pb.particle);
+      
+      // loop through all processes
+      for(unsigned int p = 0; p < pb.processList.size(); ++p)
+	{
+	  if(debug)
+	    {
+	      G4cout << __METHOD_NAME__ << "Process loop "
+		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
+	    }
+	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
+	}
+    }
+  return eg;
+}
+#endif
+
 void BDSDetectorConstruction::BuildPhysicsBias() 
 {
+  if(debug) 
+    G4cout << __METHOD_NAME__ << G4endl;
 #if G4VERSION_NUMBER > 1009
 
   BDSAcceleratorComponentRegistry* registry = BDSAcceleratorComponentRegistry::Instance();
-  // registry is a map, so iterator has first and second members for key and value respectively
+  if(debug)
+    {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
+
+  // Registry is a map, so iterator has first and second members for key and value respectively
   BDSAcceleratorComponentRegistry::iterator i;
 
-  // loop over xsec biases and find if any apply globally 
-  // BDSBOptrMultiParticleChangeCrossSection* vacuumBias   = nullptr;
-  // BDSBOptrMultiParticleChangeCrossSection* materialBias = nullptr;
-  // BDSBOptrMultiParticleChangeCrossSection* tunnelBias   = nullptr;
-  
- 
-  // apply biases
+  // apply per element biases
   for (i = registry->begin(); i != registry->end(); ++i)
-    {    
+    { 
       // Accelerator vacuum 
+      std::list<std::string> bvl = i->second->GetBiasVacuumList();
+      BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSectionBias(bvl);
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-      if(vacuumLV) 
-	{
-	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();      
-	  eg->AddParticle("proton");
-	  eg->AttachTo(vacuumLV);
-	}
-
+      if(vacuumLV) {
+	if(debug) G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
+	{egVacuum->AttachTo(vacuumLV);}
+      }
+      
       // Accelerator material
-      auto lvs = i->second->GetAllLogicalVolumes();
-      for (auto lvsi = lvs.begin(); lvsi != lvs.end(); ++lvsi)
+      std::list<std::string> bml = i->second->GetBiasMaterialList();
+      BDSBOptrMultiParticleChangeCrossSection *egMaterial = BuildCrossSectionBias(bml);
+      auto lvl = i->second->GetAllLogicalVolumes();
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;}
+      for (auto acceleratorLVIter : lvl)
 	{
-	  BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
-	  eg->AddParticle("e-");
-	  eg->AddParticle("e+"); 
-	  eg->AddParticle("gamma");
-	  eg->AddParticle("proton");
-	  eg->AttachTo(*lvsi);
+	  if(acceleratorLVIter != vacuumLV) {
+	    if(debug)
+	      {G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;}
+	    egMaterial->AttachTo(acceleratorLVIter);
+	  }
 	}
-    }  
+    }
 
-  // Second for tunnel
+  // apply range or complete biases
 
 #endif
-  return;
 }
 
 void BDSDetectorConstruction::InitialiseGFlash()

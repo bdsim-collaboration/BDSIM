@@ -79,8 +79,7 @@ void BDSOutputVector::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
     {output[i]->WriteTrajectory(TrajVec);}
 }
 
-void BDSOutputVector::WritePrimary(G4String samplerName, 
-				   G4double E,
+void BDSOutputVector::WritePrimary(G4double E,
 				   G4double x0,
 				   G4double y0,
 				   G4double z0,
@@ -97,7 +96,7 @@ void BDSOutputVector::WritePrimary(G4String samplerName,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->WritePrimary(samplerName,E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);}
+    {output[i]->WritePrimary(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);}
 }
 
 void BDSOutputVector::WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary)

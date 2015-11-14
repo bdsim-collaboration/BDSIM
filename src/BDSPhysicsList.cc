@@ -598,22 +598,26 @@ void BDSPhysicsList::SetCuts()
   G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
   G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
   G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
+  G4double prodCutProtons   = BDSGlobalConstants::Instance()->GetProdCutProtons();  
   
-  G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
+  G4cout << __METHOD_NAME__ << "Photon   production range cut (mm) " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
+  G4cout << __METHOD_NAME__ << "Proton   production range cut (mm) " << prodCutProtons   << G4endl;
 
-  // BDSIM's default range cuts (0.7mm) are different from geant4 defaults (1mm) so always set.
-  SetCutValue(prodCutPhotons,"gamma");
+  // always non-zero, so always set!
+  SetCutValue(prodCutPhotons,  "gamma");
   SetCutValue(prodCutElectrons,"e-");
   SetCutValue(prodCutPositrons,"e+");
+  SetCutValue(prodCutProtons,  "proton");
   
   DumpCutValuesTable();
 }
 
 // particular physics process constructors
 
-void BDSPhysicsList::ConstructEM(){
+void BDSPhysicsList::ConstructEM()
+{
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

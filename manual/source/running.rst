@@ -8,13 +8,13 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --file=<file>              | specify the input gmad file                  |
 +----------------------------+----------------------------------------------+
-| --output=<fmt>             | output format "root", "ascii" (default) or   |
-|                            | "combined"                                   |
+| --batch                    | batch mode - no graphics                     |
 +----------------------------+----------------------------------------------+
-| --outfile=<file>           | output file name. Will be appended with _N   |
-|                            | where N = 0, 1, 2, 3...                      |
+| --circular                 | assume circular machine - turn control       |
 +----------------------------+----------------------------------------------+
-| --vis\_mac=<file>          | visualization macro script, default vis.mac  |
+| --exportgeometryto=<file>  | export the geometry to a file                |
+|                            | extension determines format                  |
+|                            | where possible extensions are ("gdml")       |
 +----------------------------+----------------------------------------------+
 | --gflash=<N>               | whether or not to turn on gFlash fast shower |
 |                            | parameterisation.                            |
@@ -27,6 +27,24 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --help                     | display this message.                        |
 +----------------------------+----------------------------------------------+
+| --materials                | list materials included in BDSIM by default  |
++----------------------------+----------------------------------------------+
+| --ngenerate=N              | the number of primary events to simulate     |
+|                            | overrides the ngenerate option in input file |
++----------------------------+----------------------------------------------+
+| --output=<fmt>             | output format "root", "ascii" (default),     |
+|                            | "combined" or "none"                         |
++----------------------------+----------------------------------------------+
+| --outfile=<file>           | output file name. Will be appended with _N   |
+|                            | where N = 0, 1, 2, 3...                      |
++----------------------------+----------------------------------------------+
+| --seed=<N>                 | seed for the random number generator         |
++----------------------------+----------------------------------------------+
+| --seedstate=<file>         | file containing CLHEP::Random seed state     |
+|                            | NB \- this overrides other seed value        |
++----------------------------+----------------------------------------------+
+| --survey=<file>            | print survey info to <file>                  |
++----------------------------+----------------------------------------------+
 | --verbose                  | display general parameters before run        |
 +----------------------------+----------------------------------------------+
 | --verbose\_event           | display information for every event          |
@@ -35,21 +53,10 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --verbose\_event\_num=<N>  | display tracking information for event N     |
 +----------------------------+----------------------------------------------+
-| --batch                    | batch mode - no graphics                     |
+| --vis_debug                | display all volumes in visualiser            |
 +----------------------------+----------------------------------------------+
-| --outline=<file>           | print geometry / optics info to <file>       |
-+----------------------------+----------------------------------------------+
-| --outline_type=<fmt>       | type of outline format where fmt is one of   |
-|                            | "optics" or "survey"                         |
-+----------------------------+----------------------------------------------+
-| --materials                | list materials included in BDSIM by default  |
-+----------------------------+----------------------------------------------+
-| --circular                 | assume circular machine - turn control       |
-+----------------------------+----------------------------------------------+
-| --seed=<N>                 | seed for the random number generator         |
-+----------------------------+----------------------------------------------+
-| --seedstate=<file>         | file containing CLHEP::Random seed state     |
-|                            | NB \- this overrides other seed value        |
+| --vis_mac=<file>           | file with the visualisation macro script,    |
+|                            | default provided by BDSIM: openGL (OGLSQt))  |
 +----------------------------+----------------------------------------------+
 
 BDSIM can be run in one of two ways, `interactively`_, or `in batch mode`_, which
@@ -76,7 +83,7 @@ Features:
 * no events run without user input
 
 To execute BDSIM in interactive mode, the user must simply not use the :code:`--batch` command.
-The user must also specify a macro file using the :code:`--vis_mac` option above otherwise, BDSIM
+The user can also specify a macro file using the :code:`--vis_mac` option above otherwise, BDSIM
 will look for "vis.mac" in the current working directory. If not found, BDSIM will use its own
 default visualisation settings (typically: Qt visualiser, extra convenient buttons). Once
 executed a window such as this will appear (depending on the visualiser you use).

@@ -6,7 +6,7 @@ Obtaining  BDSIM
 ================
 
 BDSIM may be obtained either from the BDSIM website from the GIT repository
-(https://www.bitbucket.org/stewartboogert/bdsim). The user must compile it on
+(https://www.bitbucket.org/jairhul/bdsim). The user must compile it on
 their system and must have Geant4 already present (or access to AFS).
 
 ..  _from-git-repository:
@@ -16,7 +16,7 @@ From the GIT Repository
 
 To download the source from the git repository, use the command::
 
-  git clone https://bitbucket.org/stewartboogert/bdsim
+  git clone https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
 and documentation is provided. To obtain the python utilities that come with BDSIM,
@@ -38,7 +38,7 @@ Requirements
 
 Optional dependencies
   
-6) `ROOT`_ framework for binary data output
+6) `ROOT`_ framework for output analysis
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -51,7 +51,7 @@ available. You can test this in a terminal with::
 If these do not exists, please source the Geant4 environmental script
 before installing BDSIM and each time before using BDSIM. It is common
 to add this to your ``.bashrc`` or profile so that it's loaded automatically
-every time.::
+every time::
 
   source path/to/geant4/installation/bin/geant4.sh
 
@@ -63,12 +63,62 @@ Setting Up
 
 The following sections detail the setup process for different operating systems.
 
+- `Mac OSX`_
+- `Linux`_
+- `Linux with AFS Access`_
+
 Mac OSX
 -------
 
 We recommend obtaining `required packages <Requirements>`_ using `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
+
+After this, `Building`_ can be started.
+
+Linux
+-----
+
+Install the `required packages <Requirements>`_ preferably with a
+package manager.
+
+For Scientific Linux 5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
+Older version of Geant4 can be downloaded from their
+`archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
+For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.1.  
+
+After this, `Building`_ can be started.
+
+Linux with AFS Access
+---------------------
+
+When the machine has AFS connection, the latest stable release binary is available::
+
+   /afs/cern.ch/user/j/jsnuveri/public/bdsim
+
+Before using the binary you must source the geant4 setup::
+
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
+
+When compiling BDSIM from source, the dependent packages like Geant4 can
+be taken from AFS and don't need to be compiled and installed locally. The same
+compiler version needs to be used for BDSIM as the one that was used for Geant4.
+The following scripts must be sourced before using CMake.  
+
+For the versions 0.61 and onwards::
+
+  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
+  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
+
+For version 0.6 and older::
+  
+  source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
+  source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
+
+After this, `Building`_ can be started.
+  
+Building
+--------
 
 Once ready, make a directory **outside** the BDSIM source directory to build
 BDSIM in::
@@ -99,14 +149,14 @@ This typically produces the following output, which is slightly different on eac
   -- Check for working CXX compiler: /usr/bin/c++ -- works
   -- Detecting CXX compiler ABI info
   -- Detecting CXX compiler ABI info - done
-  -- Configuring BDSIM 0.65
+  -- Configuring BDSIM 0.8
   -- Build Type RelWithDebInfo
   -- Compiler supports C++11
   -- Looking for CLHEP... - found
+  -- Found CLHEP 2.2.0.5 in /opt/local/lib/CLHEP-2.2.0.5/../../include
   -- Looking for ROOT...
-  -- Found ROOT 5.34/26 in /opt/local/libexec/root5
+  -- Found ROOT 5.34/32 in /opt/local/libexec/root5
   -- ROOT support ON
-  -- Looking for XercesC... - found
   -- GDML support ON
   -- Looking for XML2... - found
   -- LCDD support ON
@@ -116,10 +166,16 @@ This typically produces the following output, which is slightly different on eac
      -DG4VIS_USE;-DG4UI_USE_TCSH;-DG4INTY_USE_XT;-DG4VIS_USE_RAYTRACERX;
      -DG4INTY_USE_QT;-DG4UI_USE_QT;-DG4VIS_USE_OPENGLQT;-DG4UI_USE_XM;
      -DG4VIS_USE_OPENGLXM;-DG4VIS_USE_OPENGLX;-DG4VIS_USE_OPENGL
-  -- G4_VERSION: 10.0.2
+  -- G4_VERSION: 10.1.1
   -- Found Doxygen: /opt/local/bin/doxygen (found version "1.8.9.1") 
-  -- Found BISON: /opt/local/bin/bison (found version "2.7.12-4996") 
+  -- Found BISON: /opt/local/bin/bison (found version "3.0.4") 
   -- Found FLEX: /opt/local/bin/flex (found version "2.5.37") 
+  -- Configuring ROBDSIM 0.3.develop
+  -- Build Type RelWithDebInfo
+  -- Compiler supports C++11
+  -- Looking for ROOT...
+  -- Found ROOT 5.34/32 in /opt/local/libexec/root5
+  -- Found Sphinx: /opt/local/bin/sphinx-build-2.7
   -- Configuring done
   -- Generating done
   -- Build files have been written to: /Users/nevay/physics/reps/bdsim-build
@@ -133,97 +189,22 @@ You can then compile BDSIM with::
 
   > make
 
-BDSIM can then be installed for access from anywhere on the system with::
+BDSIM can then be installed (default directory /usr/local) for access from anywhere on the system with::
   
   > sudo make install
 
 To change the installation directory, see `Configuring the BDSIM Build with CMake`_.
 From any directory on your computer, ``bdsim`` should be available.
 
-.. note:: This step is not strictly necessary. It is possible to simply create an alias to the
+.. note:: This step is not strictly necessary. It is possible to create an alias to the
 	  executable ``bdsim`` that exists in the build directory in your shell profile. This
 	  is common practice for developers who may wish to have a debug build of the code as
 	  well as the normal release build.
 
 From the build directory you can verify your installation using a series of tests
-included with BDSIM. ::
+included with BDSIM (excluding long tests)::
 
   > ctest -E LONG
-
-
-Scientific Linux
-----------------
-
-Install the `required packages <Requirements>`_ preferably with a
-package manager.
-
-For SL5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
-Older version of Geant4 can be downloaded from their
-`archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
-For SL6, we recommend the latest version of Geant4, currently 4.10.1.  
-Once ready, make a directory **outside** the BDSIM source directory to build
-BDSIM in::
-
-  > ls
-  bdsim
-  > mkdir bdsim-build
-  > ls
-  bdsim          bdsim-build
-
-It is important that the build directory be outside the source directory as otherwise
-trouble may be encountered when receiving further updates from the git repository.
-From this directory use the following CMake command to configure the BDSIM
-installation::
-
-  > cd bdsim-build
-  > cmake ../bdsim
-
-You can then compile BDSIM with::
-
-  > make
-
-BDSIM can then be installed for access from anywhere on the system with::
-  
-  > sudo make install
-
-.. note:: This step is not stictly necessary. It is possible to simply create an alias to the
-	  executable ``bdsim`` that exists in the build directory in your shell profile. This
-	  is common practice for developers who may wish to have a debug build of the code as
-	  well as the normal release build.
-	  
-To change the installation directory, see `Configuring the BDSIM Build with CMake`_
-From any directory on your computer, ``bdsim`` should be available.  From the build directory
-you can verify your installation using a series of tests included with BDSIM.::
-
-  > ctest -E LONG
-
-Linux with AFS Access
----------------------
-
-When the machine has AFS connection, the latest stable release binary is available::
-
-   /afs/cern.ch/user/j/jsnuveri/public/bdsim
-
-Before using the binary you must source the geant4 setup::
-
-   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
-
-When compiling BDSIM from source, the dependent packages like Geant4 can
-be taken from AFS and don't need to be compiled and installed locally. The same
-compiler version needs to be used for BDSIM as the one that was used for Geant4.
-The following scripts must be sourced before using CMake.  
-
-For the versions 0.61 and onwards::
-
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
-
-For version 0.6 and older::
-  
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
-
-After this, the installation procedure for `Scientific Linux`_ should be followed.
 
 
 Configuring the BDSIM Build with CMake
@@ -316,6 +297,7 @@ modifying the CMake configuration as generally described in
 
   > ccmake .
 
+Make sure GEANT4_BUILD_MULTITHREADED is off since this is currently not supported.
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. Geant4 can then
 be compiled ::
@@ -343,6 +325,8 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
   > source path/to/geant4.10.04-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
+
+.. _Troubleshooting:
 
 Troubleshooting
 ===============
@@ -375,8 +359,7 @@ please contact us (see :ref:`support-section`).
      VRML2FILE (VRML2FILE)
      gMocrenFile (gMocrenFile)
    
-   If your favourite is not there check that Geant4 is correctly compiled with those
-   graphics system.
+   If your favourite is not there check that Geant4 is correctly compiled with that graphics system.
 
 2) Error from OpenGL::
      

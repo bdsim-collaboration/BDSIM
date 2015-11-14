@@ -27,7 +27,6 @@
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleOuterMagField.hh"
-#include "BDSUtilities.hh"
 
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,
@@ -88,6 +87,8 @@ void BDSMagnet::BuildBeampipe()
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
+
+  RegisterDaughter(beampipe);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }
@@ -212,7 +213,8 @@ void BDSMagnet::BuildOuter()
       // set the main offset of the whole magnet which is placed w.r.t. the
       // zero coordinate of the container solid
       SetPlacementOffset(contOffset);
-      
+
+      RegisterDaughter(outer);
       InheritExtents(container); // update extents
       outer->ClearMagnetContainer();
     }
@@ -297,7 +299,7 @@ void BDSMagnet::PlaceComponents()
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
-      G4PVPlacement* beamPipePV = new G4PVPlacement(0,                       // rotation
+      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                       // rotation
 						    beamPipeOffset,          // position in container
 						    beampipe->GetContainerLogicalVolume(),  // its logical volume
 						    name + "_beampipe_pv",   // its name
@@ -315,7 +317,7 @@ void BDSMagnet::PlaceComponents()
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                      // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                      // rotation
 						       outerOffset,            // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",       // its name
@@ -328,28 +330,8 @@ void BDSMagnet::PlaceComponents()
     }
 }
 
-std::vector<G4LogicalVolume*> BDSMagnet::GetAllSensitiveVolumes() const
-{
-  std::vector<G4LogicalVolume*> result;
-  for (auto it : allSensitiveVolumes)
-    {result.push_back(it);}
-  if (beampipe)
-    {
-      for (auto it : beampipe->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-  if (outer)
-    {
-      for (auto it : outer->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-  return result;
-}
-
 BDSMagnet::~BDSMagnet()
 {
-  delete beampipe;
-  delete outer;
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

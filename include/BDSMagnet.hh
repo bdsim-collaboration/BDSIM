@@ -18,8 +18,9 @@
 #include "G4UserLimits.hh"
 
 /**
- * @brief Abstract base class that implements features common to all magnets. This
- * includes the general construction pattern using the magnet outer geometry factories
+ * @brief Abstract base class that implements features common to all magnets. 
+ *
+ * This includes the general construction pattern using the magnet outer geometry factories
  * and the field related objects and attaching them to the necessary volumes. Each derived
  * class must implement BuildBPFieldAndStepper() which constructs the field objects that
  * are later attached to the vacuum volume.
@@ -39,10 +40,6 @@ public:
 	    BDSMagnetOuterInfo* magnetOuterInfo);
   
   virtual ~BDSMagnet();
-
-  /// Access all sensitive volumes belonging to this component including
-  /// those belonging to the beam pipe
-  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
 private:
   /// build and set field manager and chord finder

@@ -64,6 +64,7 @@ void init()
 
   add_var("Tesla",1.0,reserved);
 
+  add_var("km" ,1e3 ,reserved);
   add_var("m"  ,1.0 ,reserved);
   add_var("cm" ,1e-2,reserved);
   add_var("mm" ,1e-3,reserved);
@@ -150,47 +151,47 @@ int GMAD::gmad_parser(std::string name)
 }
 
 
-/** Python interface **/ 
-int GmadParser_c(char *name) 
+/** Python interface, need to match pybdsim/Gmad.py **/ 
+int GMAD::GmadParser_c(char *name) 
 {
   gmad_parser(std::string(name));
   return 0;
 }
 
-int GetNelements() 
+int GMAD::GetNelements() 
 {
   return beamline_list.size();
 }  
 
-const char* GetName(int i) 
+const char* GMAD::GetName(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return (it->name).c_str();
 }
 
-int GetType(int i) 
+int GMAD::GetType(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return static_cast<int>(it->type);
 }
 
-double GetLength(int i) 
+double GMAD::GetLength(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->l;
 }
 
-double GetAngle(int i) 
+double GMAD::GetAngle(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->angle;  
 }
 
-double* GetKs(int i)
+double* GMAD::GetKs(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
@@ -204,21 +205,21 @@ double* GetKs(int i)
   return result;
 }
 
-double GetAper1(int i) 
+double GMAD::GetAper1(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->aper1;
 }
 
-double GetAper2(int i) 
+double GMAD::GetAper2(int i) 
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);
   return it->aper2;
 }
 
-double GetBeampipeThickness(int i)
+double GMAD::GetBeampipeThickness(int i)
 {
   std::list<Element>::iterator it = beamline_list.begin();
   std::advance(it, i);

@@ -1,0 +1,16 @@
+d1:  drift, l=0.1*m;
+sb1: sbend, l=3*m, angle=pi/4;
+sb2: sbend, l=3*m, angle=-pi/4;
+t1:  transform3d, psi=pi/2;
+t2: transform3d, psi=-pi/2;
+
+
+l1: line = (d1, t1, sb1, t2, sb2);
+
+use, l1;
+
+option, physicsList="standard";
+
+beam, particle="e-",
+      energy=3*GeV,
+      distrType="reference";

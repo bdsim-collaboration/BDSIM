@@ -4,7 +4,7 @@
 
 #include "parser/options.h"
 
-#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSTunnelInfo.hh"
@@ -17,7 +17,7 @@
 #include "G4VisAttributes.hh"
 
 namespace GMAD {
-  extern GMAD::Options options;
+  extern Options options;
 }
 
 BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
@@ -39,13 +39,10 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
 {
   printModuloFraction   = opt.printModuloFraction;
   itsPhysListName       = opt.physicsList;
-  itsBeamPipeMaterial   = opt.beampipeMaterial;
-  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
 
   itsSampleDistRandomly = true;
-  itsGeometryBias = opt.geometryBias;
   
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
@@ -54,7 +51,7 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
   itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
   itsFFact=opt.ffact;
-  itsParticleName=G4String(opt.particleName);
+  itsParticleName = G4String(opt.particleName);
   itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
   if (itsBeamTotalEnergy == 0)
     {
@@ -69,24 +66,26 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   //Fraction of events with leading particle biasing.
 
   //beampipe
-  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
-  itsAper1 = opt.aper1*CLHEP::m;
-  itsAper2 = opt.aper2*CLHEP::m;
-  itsAper3 = opt.aper3*CLHEP::m;
-  itsAper4 = opt.aper4*CLHEP::m;
-  // note beampipetype already done before these checks! at top of this function
-  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  defaultBeamPipeModel = new BDSBeamPipeInfo(opt.apertureType,
+					     opt.aper1 * CLHEP::m,
+					     opt.aper2 * CLHEP::m,
+					     opt.aper3 * CLHEP::m,
+					     opt.aper4 * CLHEP::m,
+					     opt.vacMaterial,
+					     opt.beampipeThickness * CLHEP::m,
+					     opt.beampipeMaterial);
   
-  itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
-
   // magnet geometry
   itsOuterDiameter = opt.outerDiameter * CLHEP::m;
-  if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsBeamPipeRadius)){
-    G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
-    exit(1);
-  }
+  if (itsOuterDiameter < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
+    {
+      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"aper1\" + \"beamPipeThickness\") " << G4endl;
+      exit(1);
+    }
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
+
+  dontSplitSBends       = opt.dontSplitSBends;
 
   // tunnel
   buildTunnel            = opt.buildTunnel;
@@ -125,7 +124,9 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
   itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
   itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
-  itsProdCutHadrons      = opt.prodCutHadrons      * CLHEP::m;
+  itsProdCutProtons      = opt.prodCutProtons      * CLHEP::m;
+  itsProdCutProtonsP     = opt.prodCutProtonsP     * CLHEP::m;
+  itsProdCutProtonsA     = opt.prodCutProtonsA     * CLHEP::m;
   
   // tracking accuracy
   itsDeltaChord          = opt.deltaChord          * CLHEP::m;
@@ -197,14 +198,6 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  isDumping = false;
-  isReading = false;
-  isReadFromStack = false;
-  itsFifo = opt.fifo;
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "itsFifo = " << itsFifo << G4endl;
-  G4cout << __METHOD_NAME__ << "GetFifo() = " << GetFifo() << G4endl;
-#endif
   itsIncludeIronMagFields = opt.includeIronMagFields;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();

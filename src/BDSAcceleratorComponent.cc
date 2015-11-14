@@ -20,7 +20,7 @@ G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
-struct BDSBeamPipeInfo;
+class BDSBeamPipeInfo;
 
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -28,18 +28,18 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 G4int            precisionRegionIn,
+						 G4bool           precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
-  nTimesPlaced(0),
   angle(angleIn),
   precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
   readOutLV(nullptr),
-  acceleratorVacuumLV(nullptr)
+  acceleratorVacuumLV(nullptr),
+  copyNumber(-1) // -1 initialisation since it will be incremented when placed 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
@@ -142,7 +142,9 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   else
     {
       // angle is finite!
-      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle); // s = r*theta -> r = s/theta
+      // factor of 0.95 here is arbitrary tolerance as g4 cut tubs seems to fail
+      // with cutting entranace / exit planes close to limit.  
+      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle) * 0.95; // s = r*theta -> r = s/theta
       roRadius = std::min(roRadiusFromSampler,roRadiusFromAngleLength);
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler

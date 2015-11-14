@@ -3,8 +3,13 @@
 
 #include "G4Navigator.hh"
 
+class G4VPhysicalVolume;
+
 /**
- * @brief All BDSIM steppers and magnetic fields require the ability 
+ * @brief Extra G4Navigator object common to all steppers to get coordinate
+ * transforms.
+ * 
+ * All BDSIM steppers and magnetic fields require the ability 
  * to convert from global to local coordinates. The prescribed method 
  * to do this is by using a G4Navigator instance. There is of course the 
  * main navigator for tracking, but requesting information on a global
@@ -25,8 +30,6 @@
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
-
-class G4VPhysicalVolume;
 
 class BDSAuxiliaryNavigator
 {
