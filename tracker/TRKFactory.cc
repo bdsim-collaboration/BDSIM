@@ -103,10 +103,11 @@ TRK::Strategy TRKFactory::SetStrategyEnum(std::string sIn)
   else if (sIn == "thinsymplectic") {return TRK::THINSYMPLECTIC;}
   else if (sIn == "thick") {return TRK::THICK;}
   else if (sIn == "hybrid") {return TRK::HYBRID;}
-  else {
-    std::cout << "Unknown strategy " << sIn << std::endl;
-    exit(1);
-  }
+  else
+    {
+      std::cout << "Unknown strategy " << sIn << std::endl;
+      exit(1);
+    }
 }
 
 TRKStrategy* TRKFactory::CreateStrategy()
@@ -128,13 +129,14 @@ TRKStrategy* TRKFactory::CreateStrategy()
 
 TRK::Aperture TRKFactory::SetApertureEnum(std::string aIn)
 {
-  if (aIn == "circular")         {return TRK::CIRCULAR;}
+  if      (aIn == "circular")    {return TRK::CIRCULAR;}
   else if (aIn == "rectangular") {return TRK::RECTANGULAR;}
   else if (aIn == "ellipsoidal") {return TRK::ELLIPSOIDAL;}
-  else {
-    std::cout << "Unknown aperture type " << aIn << std::endl;
-    exit(1);
-  }
+  else
+    {
+      std::cout << "Unknown aperture type " << aIn << std::endl;
+      exit(1);
+    }
 }
 
 TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
