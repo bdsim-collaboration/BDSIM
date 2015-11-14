@@ -1,12 +1,19 @@
-#ifndef BDSBunchPtc_h
-#define BDSBunchPtc_h
+#ifndef BDSBUNCHPTC_H
+#define BDSBUNCHPTC_H
 
 #include <vector>
 
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
 
-class BDSBunchPtc : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that reads a PTC inrays file.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchPtc: public BDSBunchInterface
+{ 
 private: 
   G4int    nRays;
   G4String fileName;

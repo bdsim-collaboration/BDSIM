@@ -14,6 +14,7 @@
 
 /**
  * @brief Abstract class that represents a component of an accelerator.
+ *
  * It must be constructed with a name, length (arc), angle it
  * induces (x,z plane in the local coordinates of the component) in 
  * the reference trajectory and a string

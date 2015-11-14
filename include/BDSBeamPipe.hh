@@ -10,8 +10,10 @@
 
 /**
  * @brief A holder class for all information required for a
- * piece of beampipe.  This does not implement the construction
- * of the beampipe. 
+ * piece of beampipe.  
+ * 
+ * This does not implement the construction of the beampipe but merely
+ * holds all relevant objects and information. 
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
@@ -29,8 +31,8 @@ public:
 	      G4VSolid*                 containerSubtractionSolidIn,
 	      G4LogicalVolume*          vacuumLVIn,
 	      G4bool                    containerIsCircularIn = false,
-	      G4double                  containerRadiusIn = 0.0
-	      );
+	      G4double                  containerRadiusIn = 0.0);
+  
   virtual ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
 
   /// Access a solid for beampipe subtraction - note this is typically longer

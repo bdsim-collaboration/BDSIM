@@ -9,10 +9,11 @@
 #include "BDSBin.hh"
 
 /**
- * @brief a 1d-histogram class
+ * @brief a 1D histogram class
  * 
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
+
 class BDSHistogram1D
 {
 public:

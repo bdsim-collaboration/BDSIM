@@ -4,7 +4,7 @@ project(BDSIM)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 8 )
+set( BDSIM_MINOR_VERSION 9 )
 set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -243,6 +243,11 @@ if (Geant4_FOUND)
       include(${Geant4_USE_FILE})
       message(STATUS "Geant4 Definitions: ${Geant4_DEFINITIONS}")
 
+      # We don't support multithreading for now
+      if ("${Geant4_DEFINITIONS}" MATCHES "G4MULTITHREADED")
+	message(FATAL_ERROR "Currently Geant4 builds with multithreading are not supported at the moment! Please build Geant4 with multithreading off. Exiting")
+      endif()
+      
       if($ENV{VERBOSE})
         message(STATUS "Geant4_INCLUDE_DIRS: ${Geant4_INCLUDE_DIRS}")
         message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")

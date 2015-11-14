@@ -10,6 +10,12 @@
 #include "G4Material.hh"
 #include "G4VSolid.hh"
 
+/**
+ * @brief Factory that produces cylindrical magnet geometry.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
+
 class BDSMagnetOuterFactoryCylindrical: public BDSMagnetOuterFactoryBase
 {
 public:

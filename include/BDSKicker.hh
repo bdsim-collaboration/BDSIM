@@ -28,7 +28,7 @@ protected:
 
 private:
   G4double bField;
-  G4double bGrad;
+  //G4double bGrad;
   G4double kickAngle;
   G4bool   verticalKicker;
 

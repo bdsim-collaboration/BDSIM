@@ -11,6 +11,7 @@ std::map<BDSOutputFormat,std::string>* BDSOutputFormat::dictionary=
   ({{BDSOutputFormat::none,"none"}
     ,{BDSOutputFormat::ascii,"ASCII"}
     ,{BDSOutputFormat::root,"ROOT"}
+    ,{BDSOutputFormat::rootevent,"ROOTEVENT"}
     ,{BDSOutputFormat::combined,"combined"}});
 
 
@@ -20,6 +21,7 @@ BDSOutputFormat BDS::DetermineOutputFormat(G4String outputFormat)
   formats["none"]     = BDSOutputFormat::none;
   formats["ascii"]    = BDSOutputFormat::ascii;
   formats["root"]     = BDSOutputFormat::root;
+  formats["rootevent"]= BDSOutputFormat::rootevent;
   formats["combined"] = BDSOutputFormat::combined;
 
   outputFormat.toLower();

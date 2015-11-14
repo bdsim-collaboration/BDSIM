@@ -1,22 +1,24 @@
 #ifndef BDSACCELERATORCOMPONENTREGISTRY_H
 #define BDSACCELERATORCOMPONENTREGISTRY_H
 
-/**
- * @brief A registry of constructed BDSAcceleratorComponent instances that
- * can be searched. Uses an std::map rather than unordered map as although 
- * slower to access (less often and only at construction), a map is faster 
- * for iterating than an unordered map, which will be required to apply 
- * wrapper physics processes - relatively common.
- * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
- */
-
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
 
 #include <iterator>
 #include <map>
+
+/**
+ * @brief A registry of constructed BDSAcceleratorComponent instances that
+ * can be searched. 
+ * 
+ * Uses an std::map rather than unordered map as although 
+ * slower to access (less often and only at construction), a map is faster 
+ * for iterating than an unordered map, which will be required to apply 
+ * wrapper physics processes - relatively common.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
 
 class BDSAcceleratorComponentRegistry
 {

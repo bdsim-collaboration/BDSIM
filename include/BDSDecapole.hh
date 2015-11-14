@@ -8,6 +8,12 @@
 class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
+/**
+ * @brief Decapole magnet.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
+
 class BDSDecapole: public BDSMagnet
 {
 public:

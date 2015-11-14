@@ -24,9 +24,11 @@
 
 #include "G4SDManager.hh"
 
-BDSSamplerSD::BDSSamplerSD(G4String name, G4String type)
-  :G4VSensitiveDetector(name),itsHCID(-1),SamplerCollection(nullptr),
-   itsType(type)
+BDSSamplerSD::BDSSamplerSD(G4String name, G4String type):
+  G4VSensitiveDetector(name),
+  itsHCID(-1),
+  SamplerCollection(nullptr),
+  itsType(type)
 {
   itsCollectionName="Sampler_"+type;
   collectionName.insert(itsCollectionName);
@@ -41,22 +43,23 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
 
   // Record id for use in EventAction to save time
-  if (itsHCID < 0){
-    itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
+  if (itsHCID < 0)
+    {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
   HCE->AddHitsCollection(itsHCID,SamplerCollection);
 }
 
-G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
+G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4Track* theTrack         = aStep->GetTrack();
   BDSTrajectory* bdsTraj    = new BDSTrajectory(theTrack);
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   
   //Do not store hit if the particle is not on the boundary 
-  if(preStepPoint->GetStepStatus()!=fGeomBoundary) {
-    delete bdsTraj;
-    return false;
-  }
+  if(preStepPoint->GetStepStatus()!=fGeomBoundary)
+    {
+      delete bdsTraj;
+      return false;
+    }
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
   //unique ID of track's mother
@@ -109,10 +112,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4String pName   = theTrack->GetDefinition()->GetParticleName();
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Sampler name: " << SampName << G4endl;
-  G4cout << __METHOD_NAME__ << "Particle name: " << pName << G4endl;  
-  G4cout << __METHOD_NAME__ << "PDG encoding: " << PDGtype << G4endl;  
-  G4cout << __METHOD_NAME__ << "TrackID: " << TrackID << G4endl;  
+  G4cout << __METHOD_NAME__ << "Sampler name:  " << SampName << G4endl;
+  G4cout << __METHOD_NAME__ << "Particle name: " << pName    << G4endl;  
+  G4cout << __METHOD_NAME__ << "PDG encoding:  " << PDGtype  << G4endl;  
+  G4cout << __METHOD_NAME__ << "TrackID:       " << TrackID  << G4endl;  
 #endif
   
   G4ThreeVector vtx               = theTrack->GetVertexPosition();
@@ -138,7 +141,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   // process that creating the particle
   G4String process = "";
   if(theTrack->GetCreatorProcess()) 
-    process = theTrack->GetCreatorProcess()->GetProcessName();
+    {process = theTrack->GetCreatorProcess()->GetProcessName();}
   
   BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
 					    BDSGlobalConstants::Instance()->GetInitialPoint(),

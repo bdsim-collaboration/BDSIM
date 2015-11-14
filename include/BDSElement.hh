@@ -17,7 +17,9 @@
 #include "G4UniformMagField.hh"
 
 /**
- * @brief A class that allows any arbritary geometry and magnetic field map to be used
+ * @brief A class for a generic piece of external geometry.
+ * 
+ * Allows any arbritary geometry and magnetic field map to be used
  * as an accelerator component in the beamline. Geometry and magnetic fields are imported
  * from an external file (each) and can be specified in various formats.
  *

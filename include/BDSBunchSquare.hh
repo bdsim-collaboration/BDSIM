@@ -1,5 +1,5 @@
-#ifndef BDSBunchSquare_h
-#define BDSBunchSquare_h 
+#ifndef BDSBUNCHSQUARE_H
+#define BDSBUNCHSQUARE_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -8,7 +8,15 @@ namespace CLHEP {
   class RandFlat;
 }
 
-class BDSBunchSquare : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that produces an uncorrelated uniform
+ * random distribution within a square in phase space.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchSquare: public BDSBunchInterface
+{ 
 protected : 
   G4double envelopeX; 
   G4double envelopeY;
