@@ -63,6 +63,10 @@ public:
 
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
+
+  /// write tracker bunch
+  virtual void WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* /*bunch*/, bool /*primary=false*/) {};
+  virtual void WriteTrackerPrimaryLoss(TRKBunch* /*lostBunch*/, int /*turnsTaken*/) {};
   
   /// write and close and open new file
   virtual void Commit();

@@ -37,7 +37,7 @@ private:
   int population;
   std::vector <TRKParticle> bunch;
   
-  void Populate(struct GMAD::Options& opt); /// populate particles using options and random number generator
+  void Populate(GMAD::Options& opt); /// populate particles using options and random number generator
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 };
 

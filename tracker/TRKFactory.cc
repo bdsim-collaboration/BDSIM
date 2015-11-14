@@ -71,18 +71,18 @@ TRKFactory::TRKFactory(GMAD::Options& options)
   
   /// start placement, could be updated after every new element
   placement = NULL;//new TRKPlacement();
-  /// circular flag? //not available from Options, as command line option!
-  // could use GC.nturns instead!
-  //  bool circular = options.
 
   //pull out info from options
   strategy        = setStrategyEnum(options.trackingType);
   aperturetype    = setApertureEnum(options.apertureType);
-  beampiperadius  = options.beampipeRadius;
+  beampiperadius  = options.aper1;
   trackingsteps   = options.trackingSteps;
   defaultaperture = new TRKApertureCircular(beampiperadius);
   dontuseaperture = options.dontUseAperture;
-  circular        = options.circular;
+  if (options.nturns > 1)
+    {circular = true;}
+  else
+    {circular = false;}
 }
 
 std::ostream& operator<< (std::ostream& out, const TRKFactory& factory)

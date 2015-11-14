@@ -17,20 +17,20 @@
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds milliseconds;
 
-TRKTracker::TRKTracker(TRKLine* lineIn, TRKStrategy* strategyIn, GMAD::Options& options):line(lineIn),strategy(strategyIn)
+TRKTracker::TRKTracker(TRKLine*       lineIn,
+		       TRKStrategy*   strategyIn,
+		       GMAD::Options& options):
+  line(lineIn), strategy(strategyIn)
 {
   dontuseaperture = options.dontUseAperture;
-  if (options.circular)
-    { maxTurns = std::abs(options.nturns);}
-  else 
-    { maxTurns = 1;}
+  maxTurns = std::abs(options.nturns);
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "number of turns to take: " << maxTurns << std::endl;
 #endif
 }
 
-TRKTracker::~TRKTracker() {
-}
+TRKTracker::~TRKTracker()
+{}
 
 void TRKTracker::Track(TRKBunch* bunch) 
 {
@@ -75,10 +75,10 @@ void TRKTracker::Track(TRKBunch* bunch)
     }// end of turns iteration
     
     
-    Clock::time_point tEnd = Clock::now();
-    milliseconds timeDiff = std::chrono::duration_cast<milliseconds>(tEnd-tStart);
-    
-    std::cout << "Time taken: " << timeDiff.count() << "ms" << std::endl;
+  Clock::time_point tEnd = Clock::now();
+  milliseconds timeDiff = std::chrono::duration_cast<milliseconds>(tEnd-tStart);
+  
+  std::cout << "Time taken: " << timeDiff.count() << "ms" << std::endl;
     
   std::cout << "All turns completed" << std::endl
 	    << "Thank you for using BDSIM Tracker" << std::endl;

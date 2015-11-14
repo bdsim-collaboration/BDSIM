@@ -172,7 +172,6 @@ Options::Options()
   
   // circular options
   nturns                   = 1;
-  circular                 = false;
 
   printModuloFraction      = 0.1;
 
