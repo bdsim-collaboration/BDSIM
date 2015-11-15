@@ -608,10 +608,12 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       std::list<std::string> bvl = i->second->GetBiasVacuumList();
       BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSectionBias(bvl);
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-      if(vacuumLV) {
-	if(debug) G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
-	{egVacuum->AttachTo(vacuumLV);}
-      }
+      if(vacuumLV)
+	{
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
+	  {egVacuum->AttachTo(vacuumLV);}
+	}
       
       // Accelerator material
       std::list<std::string> bml = i->second->GetBiasMaterialList();
@@ -621,16 +623,18 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	{G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;}
       for (auto acceleratorLVIter : lvl)
 	{
-	  if(acceleratorLVIter != vacuumLV) {
-	    if(debug)
-	      {G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;}
-	    egMaterial->AttachTo(acceleratorLVIter);
-	  }
+	  if(acceleratorLVIter != vacuumLV)
+	    {
+	      if(debug)
+		{
+		  G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter
+			<< " " << (acceleratorLVIter)->GetName() << G4endl;
+		}
+	      egMaterial->AttachTo(acceleratorLVIter);
+	    }
 	}
     }
-
   // apply range or complete biases
-
 #endif
 }
 
