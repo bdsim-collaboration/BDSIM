@@ -98,20 +98,23 @@ void BDSMagnet::BuildBPFieldMgr()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  itsChordFinder = new G4ChordFinder(itsMagField,
-				     BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-				     itsStepper);
-
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  itsBPFieldMgr = new G4FieldManager();
-  itsBPFieldMgr->SetDetectorField(itsMagField);
-  itsBPFieldMgr->SetChordFinder(itsChordFinder);
-
-  // these options are always non-zero so always set them
-  itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  if (itsMagField && itsEqRhs && itsStepper)
+    {
+      itsChordFinder = new G4ChordFinder(itsMagField,
+					 BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+					 itsStepper);
+      
+      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+      itsBPFieldMgr = new G4FieldManager();
+      itsBPFieldMgr->SetDetectorField(itsMagField);
+      itsBPFieldMgr->SetChordFinder(itsChordFinder);
+      
+      // these options are always non-zero so always set them
+      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+    }
 }
 
 void BDSMagnet::AttachFieldToBeamPipe()
