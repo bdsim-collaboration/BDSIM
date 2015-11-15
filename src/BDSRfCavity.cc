@@ -57,5 +57,5 @@ BDSRfCavity::~BDSRfCavity()
 {
   delete eField;
   delete equation;
-  delete intgrDriver;
+  //delete intgrDriver; seems to be deleted by itsChordFinder in BDSMagnet
 }
