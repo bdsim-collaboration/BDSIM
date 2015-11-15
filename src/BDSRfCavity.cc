@@ -24,7 +24,11 @@ BDSRfCavity::BDSRfCavity(G4String            name,
 }
 
 void BDSRfCavity::BuildBPFieldMgr()
-{;}
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "empty implementation due to e field instead of B" << G4endl;
+#endif
+}
 
 void BDSRfCavity::BuildBPFieldAndStepper()
 {
