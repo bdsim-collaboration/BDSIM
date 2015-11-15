@@ -1,13 +1,19 @@
-#include "BDSGlobalConstants.hh" 
-
 #include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSRfCavity.hh"
+
+#include "globals.hh"
+#include "G4ChordFinder.hh"
+#include "G4EqMagElectricField.hh"
+#include "G4ExplicitEuler.hh"
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
+#include "G4MagIntegratorDriver.hh"
+#include "G4UniformElectricField.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include "G4MagIntegratorDriver.hh"
-
-#include "G4ExplicitEuler.hh"
+struct BDSMagnetOuterInfo;
 
 BDSRfCavity::BDSRfCavity(G4String            name,
 			 G4double            length,
