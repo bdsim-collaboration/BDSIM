@@ -25,7 +25,7 @@ extern "C" {
   int    GmadParser_c(char *name);
 
   /* Interface to extern beamline_list */
-  int          GetNelements();            // Length of list
+  int          GetNElements();            // Length of list
   int          GetType(int);              // Type of element 
   const char*  GetName(int);              // Name of element
   double       GetLength(int);            // Length of element

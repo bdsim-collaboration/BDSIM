@@ -158,7 +158,7 @@ int GMAD::GmadParser_c(char *name)
   return 0;
 }
 
-int GMAD::GetNelements() 
+int GMAD::GetNElements() 
 {
   return beamline_list.size();
 }  
