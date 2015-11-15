@@ -1,5 +1,5 @@
 d1: drift, l=0.5;
-sf2 : sextupole, l=0.5*m , k2 = 0.5;
+sf1 : sextupole, l=0.5*m , k2 = 0.5;
 d2: drift, l=0.5;
 sf2 : sextupole, l=0.5*m , k2 = 0.0;
 
