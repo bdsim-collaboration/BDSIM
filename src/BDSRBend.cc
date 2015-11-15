@@ -111,19 +111,21 @@ void BDSRBend::BuildBPFieldAndStepper()
   G4ThreeVector Bfield(0.,bField,0.);
   G4double arclength;
   if (BDS::IsFinite(angle))
-    {arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));}
+    {
+      arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
+#endif
+      itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
+      itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
+  
+      BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
+      dipoleStepper->SetBField(bField);
+      dipoleStepper->SetBGrad(bGrad);
+      itsStepper = dipoleStepper;
+    }
   else
     {arclength = magFieldLength;}
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
-#endif
-  itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
-  
-  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-  dipoleStepper->SetBField(bField);
-  dipoleStepper->SetBGrad(bGrad);
-  itsStepper = dipoleStepper;
 }
 
 void BDSRBend::BuildOuter()
