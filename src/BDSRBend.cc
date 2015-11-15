@@ -171,6 +171,7 @@ void BDSRBend::BuildBeampipe()
 									   beamPipeInfo->vacuumMaterial,
 									   beamPipeInfo->beamPipeThickness,
 									   beamPipeInfo->beamPipeMaterial);
+      RegisterDaughter(bpFirstBit);
       
       bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
 									 name,
@@ -183,6 +184,7 @@ void BDSRBend::BuildBeampipe()
 									 beamPipeInfo->vacuumMaterial,
 									 beamPipeInfo->beamPipeThickness,
 									 beamPipeInfo->beamPipeMaterial);
+      RegisterDaughter(bpLastBit);
     }
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -195,10 +197,8 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->vacuumMaterial,
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
-
-  RegisterDaughter(bpFirstBit);
+  
   RegisterDaughter(beampipe);
-  RegisterDaughter(bpLastBit);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 
