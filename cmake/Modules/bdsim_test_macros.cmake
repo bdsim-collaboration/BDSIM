@@ -14,20 +14,25 @@
 #  Run a binary which does unit testing. Only require that the binary returns 0
 #  to define success or failure.
 
-macro(_run_test test_name args)
-    # If loop can be removed when we no longer support cmake 2.6...
-    if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
-       add_test(NAME ${test_name} COMMAND ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
-    else()
-       add_test(${test_name} ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
-    endif()
-    unset(TESTING_ARGS)
+macro(_run_test test_name input_args)
+  # convert input arguments into a cmake list to separate
+  set(args ${input_args})
+  separate_arguments(args)
+
+  # If loop can be removed when we no longer support cmake 2.6...
+  if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
+    add_test(NAME ${test_name} COMMAND ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
+  else()
+    add_test(${test_name} ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
+  endif()
+  # unset TESTING_ARGS so only used for this test
+  unset(TESTING_ARGS)
 endmacro()
 
 # A simple macro which runs a script and looks for some defined
 # string in stdout and fails if found:
-macro(simple_testing test_name script expression)
-    _run_test(${test_name} "${script}")
+macro(simple_testing test_name args expression)
+    _run_test(${test_name} ${args})
     if(NOT "${expression}" STREQUAL "")
         set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "${expression}")
     endif()
@@ -37,7 +42,7 @@ endmacro()
 # and then add a second test that compares two files
 # (e.g. an output file and a reference file)
 macro(compare_test test_name script file1 file2)
-   simple_testing("${test_name}" "${script}" "")
+   simple_testing("${test_name}" ${script} "")
    find_package(PythonInterp)
    if (PYTHONINTERP_FOUND)
        add_test(${test_name}_CheckOutput ${PYTHON_EXECUTABLE}
