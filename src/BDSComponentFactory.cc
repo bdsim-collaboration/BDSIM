@@ -265,6 +265,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
   
+  if (fabs(_element.e1) > (0.5*CLHEP::halfpi))
+    {
+      G4cerr << __METHOD_NAME__ << "Poleface angle e1 is greater than pi/4" << G4endl;
+      exit(1);
+    }
+  if (fabs(_element.e2) > (0.5*CLHEP::halfpi))
+    {
+      G4cerr << __METHOD_NAME__ << "Poleface angle e2 is greater than pi/4" << G4endl;
+      exit(1);
+    }
+  
   // arc length
   G4double length = _element.l*CLHEP::m;
   G4double magFieldLength = length;
@@ -314,6 +325,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if (nSbends==0) nSbends = 1; // can happen in case angle = 0
   if (BDSGlobalConstants::Instance()->DontSplitSBends())
     {nSbends = 1;}   //use for debugging
+  if (nSbends % 2 == 0){   //Always have odd number of poles for poleface rotations
+    nSbends += 1;
+    }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
@@ -330,32 +344,35 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
   
-  G4double startangle   = -0.5*_element.angle/(nSbends) + _element.e1;
-  G4double endangle     = -0.5*_element.angle/(nSbends) + _element.e2;
-  //G4double deltaangle   = fabs((startangle - endangle))/ (nSbends+1);
-
-  //std::cout << "e1 " << _element.e1 << std::endl;
-  //std::cout << "e2 " << _element.e2 << std::endl;
-  //std::cout << "startangle " << startangle << std::endl;
-  //std::cout << "endangle " << endangle << std::endl;
-  //std::cout << "deltaangle " <<deltaangle << std::endl;
+  G4double startangle = -0.5*_element.angle/(nSbends) - _element.e1;
+  //G4double endangle   = -0.5*_element.angle/(nSbends) - _element.e2;
+  G4double deltastart = 0;
+  G4double deltaend   = 0;
+  G4double anglein    = 0;
+  G4double angleout   = 0;
 
   // prepare one sbend segment
   // create a line of this sbend repeatedly
-  G4double anglein = 0;
-  G4double angleout = 0;
+
   for (int i = 0; i < nSbends; ++i){
-    if (i==0){
-        anglein = startangle;
-        angleout = -semiangle*0.5;}
-    else if (i==(nSbends-1)){
-        anglein=-semiangle*0.5;
-        angleout = endangle;}
-    else{
-        //anglein = -startangle + (i)*deltaangle;
-        //angleout = -startangle + (i+1)*deltaangle;
-        anglein = -semiangle*0.5;
-        angleout = -semiangle*0.5;}
+    if (_element.e1 != 0){
+        deltastart = -_element.e1/(0.5*(nSbends-1));}
+      
+    if (_element.e2 != 0){
+        deltaend = -_element.e2/(0.5*(nSbends-1));}
+    
+    //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
+    if (i == 0.5*(nSbends-1)){
+        anglein = -0.5*_element.angle/(nSbends);
+        angleout = -0.5*_element.angle/(nSbends);}
+    else if (i < 0.5*(nSbends-1)){
+        anglein = startangle - (i*deltastart);
+        angleout = -0.5*_element.angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
+        }
+    else if (i > 0.5*(nSbends-1)){
+        anglein  = -0.5*_element.angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
+        angleout = -0.5*_element.angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
+        }
     
     //thename = _element.name + "_"+std::to_string(i)+"_of_" + std::to_string(nSbends);
 
@@ -364,8 +381,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 					     semiangle,
 					     bField,
 					     bPrime,
-                         anglein,
-                         angleout,
+					     anglein,
+					     angleout,
 					     bpInfo,
 					     moInfo);
 

@@ -50,25 +50,6 @@ BDSSectorBend::BDSSectorBend(G4String            name,
     }
   else
     {chordLength = arcLength;}
-  if (fabs(e1) > (0.5*CLHEP::halfpi))
-    {
-      G4cerr << __METHOD_NAME__ << "Aperture e1 is greater than pi/4" << G4endl;
-      exit(1);
-    }
-  if (fabs(e2) > (0.5*CLHEP::halfpi))
-    {
-      G4cerr << __METHOD_NAME__ << "Aperture e2 is greater than pi/4" << G4endl;
-      exit(1);
-    }
-  //
-  if (e1 == 0)
-    {
-      e1 = -angle*0.5;
-    }
-  if (e2 == 0)
-    {
-      e2 = -angle*0.5;
-    }
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
@@ -131,12 +112,11 @@ void BDSSectorBend::BuildBeampipe()
 
   if (BDS::IsFinite(angle))
     {
-      //G4cout << "oldangle" << -angle*0.5 << G4endl;
       beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
 						    name,
 						    chordLength - lengthSafety,
-						    e1,//-angle*0.5,
-						    e2,//-angle*0.5,
+						    e1,
+						    e2,
 						    beamPipeInfo->aper1,
 						    beamPipeInfo->aper2,
 						    beamPipeInfo->aper3,
