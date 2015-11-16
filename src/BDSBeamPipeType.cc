@@ -29,6 +29,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   types["elliptical"]  = BDSBeamPipeType::elliptical;
   types["rectangular"] = BDSBeamPipeType::rectangular;
   types["lhc"]         = BDSBeamPipeType::lhc;
+  types["lhcscreen"]   = BDSBeamPipeType::lhc; // shortcut for madx compatability
   types["lhcdetailed"] = BDSBeamPipeType::lhcdetailed;
   types["rectellipse"] = BDSBeamPipeType::rectellipse;
   types["racetrack"]   = BDSBeamPipeType::racetrack;
