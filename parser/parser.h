@@ -322,20 +322,33 @@ int expand_line(std::string name, std::string start, std::string end)
    void add_element(struct Element& e, std::string before, int before_count)
    {
      // if before_count equal to -2 add to all elements regardless of name
-     // typically used for output elements
+     // typically used for output elements like samplers
+     // skip first element and add one at the end
      if (before_count==-2)
        {
 	 std::string origName = e.name;
+	 // flag to see if first element has already been skipped
+	 bool skip = false;
 	 for (auto it=beamline_list.begin(); it!=beamline_list.end(); it++) {
 	   // skip LINEs
 	   if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
 	     {continue;}
+	   // skip first real element
+	   if (skip == false) {
+	     skip=true;
+	     continue;
+	   }
 	   // add element name to name
 	   e.name += it->name;
 	   beamline_list.insert(it,e);
 	   // reset name
 	   e.name = origName;
 	 }
+	 // add final element
+	 e.name += "end";
+	 beamline_list.push_back(e);
+	 // reset name (not really needed)
+	 e.name = origName;
        }
      // if before_count equal to -1 add to all element instances
      else if (before_count==-1)
