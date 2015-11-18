@@ -58,18 +58,18 @@ BDSComponentFactory::BDSComponentFactory()
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
   //
   // charge (in e units)
-  _charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
+  charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   // momentum (in GeV/c)
 
-  _momentum = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
+  G4double momentum = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
   // rigidity (in T*m)
-  _brho = BDSGlobalConstants::Instance()->GetFFact()*( _momentum / 0.299792458);
+  brho = BDSGlobalConstants::Instance()->GetFFact()*( momentum / 0.299792458);
   
   // rigidity (in Geant4 units)
-  _brho *= (CLHEP::tesla*CLHEP::m);
+  brho *= (CLHEP::tesla*CLHEP::m);
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "<< fabs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 #endif
 }
 
@@ -313,7 +313,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // magnetic field
   // MAD conventions:
   // 1) a positive bend angle represents a bend to the right, i.e.
-  // towards negative x values (even for negative _charges??)
+  // towards negative x values (even for negative charges??)
   // 2) a positive K1 = 1/|Brho| dBy/dx means horizontal focusing of
   // positive charges
   // CHECK SIGNS 
@@ -322,7 +322,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if(element->B != 0)
     {
       bField = element->B * CLHEP::tesla;
-      G4double rho = _brho/bField;
+      G4double rho = brho/bField;
       //    element->angle  = - 2.0*asin(magFieldLength/2.0/rho);
       element->angle  = - magFieldLength/rho;
 #ifdef BDSDEBUG
@@ -332,10 +332,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   else
     {
       element->angle *= -1;
-      //    bField = - 2 * _brho * sin(element->angle/2.0) / magFieldLength;
+      //    bField = - 2 * brho * sin(element->angle/2.0) / magFieldLength;
       // charge in e units
       // multiply once more with ffact to not flip fields in bends
-      bField = - _brho * element->angle/magFieldLength * _charge * BDSGlobalConstants::Instance()->GetFFact();
+      bField = - brho * element->angle/magFieldLength * charge * BDSGlobalConstants::Instance()->GetFFact();
       element->B = bField/CLHEP::tesla;
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "B calculated from angle (" << element->angle << ") : " << bField << G4endl;
@@ -344,7 +344,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
+  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
   //calculate number of sbends to split parent into
   //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
@@ -473,7 +473,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   if(element->B != 0){
   // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
     bField = element->B * CLHEP::tesla;
-    G4double rho = _brho/bField;
+    G4double rho = brho/bField;
     //element->angle  = - bField * length / brho;
     element->angle  = - 2.0*asin(magFieldLength/2.0/rho);
 #ifdef BDSDEBUG
@@ -493,7 +493,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
     // B = Brho/rho = Brho/(arc length/angle)
     // charge in e units
     // multiply once more with ffact to not flip fields in bends
-    bField = - _brho * element->angle / arclength * _charge * BDSGlobalConstants::Instance()->GetFFact();
+    bField = - brho * element->angle / arclength * charge * BDSGlobalConstants::Instance()->GetFFact();
     element->B = bField/CLHEP::tesla;
 #ifdef BDSDEBUG
     G4cout << "calculated field from angle - angle,field = " << element->angle << " " << element->B << G4endl;
@@ -502,7 +502,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
+  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,
@@ -525,19 +525,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   if(element->B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
     bField = element->B * CLHEP::tesla;
-    element->angle  = -bField * length / _brho;
+    element->angle  = -bField * length / brho;
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
     // charge in e units
     // multiply once more with ffact to not flip fields in kicks defined with angle
-    bField = - _brho * element->angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
+    bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
     element->B = bField/CLHEP::tesla;
   }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
+  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
   // LN I think we should build it anyway and the stepper should deal
   // with this - ie so we still have the outer geometry
@@ -576,18 +576,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   if(element->B != 0){
     // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
     bField = element->B * CLHEP::tesla;
-    element->angle  = -bField * length / _brho;
+    element->angle  = -bField * length / brho;
   }
   else{
     // B = Brho/rho = Brho/(arc length/angle)
     // charge in e units
     // multiply once more with ffact to not flip fields in kicks
-    bField = - _brho * element->angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
+    bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact();
     element->B = bField/CLHEP::tesla;
   }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
+  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
   // LN I think we should build it anyway and the stepper should deal
   // with this - ie so we still have the outer geometry
@@ -624,7 +624,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
   // magnetic field
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
+  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
   return (new BDSQuadrupole( element->name,
 			     element->l * CLHEP::m,
@@ -641,14 +641,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
   // magnetic field 
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
-  G4double bDoublePrime = - _brho * (element->k2 / CLHEP::m3);
+  G4double bDoublePrime = - brho * (element->k2 / CLHEP::m3);
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Sextupole,"
 	 << " name= " << element->name
 	 << " l= " << element->l << "m"
 	 << " k2= " << element->k2 << "m^-3"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " brho= " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " material= " << element->outerMaterial
 	 << G4endl;
@@ -669,14 +669,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
   // magnetic field  
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   // brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
-  G4double bTriplePrime = - _brho * (element->k3 / (CLHEP::m3*CLHEP::m));
+  G4double bTriplePrime = - brho * (element->k3 / (CLHEP::m3*CLHEP::m));
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Octupole,"
 	 << " name= " << element->name
 	 << " l= " << element->l << "m"
 	 << " k3= " << element->k3 << "m^-4"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " brho= " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " material= " << element->outerMaterial
 	 << G4endl;
@@ -697,14 +697,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
   // magnetic field  
   // B''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
   // brho is in Geant4 units, but k4 is not -> multiply k4 by m^-5
-  G4double bQuadruplePrime = - _brho * (element->k4 / (CLHEP::m3*CLHEP::m2));
+  G4double bQuadruplePrime = - brho * (element->k4 / (CLHEP::m3*CLHEP::m2));
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Decapole,"
 	 << " name= " << element->name
 	 << " l= " << element->l << "m"
 	 << " k4= " << element->k4 << "m^-5"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " brho= " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''''= " << bQuadruplePrime/(CLHEP::tesla/CLHEP::m3*CLHEP::m) << "T/m^4"
 	 << " material= " << element->outerMaterial
 	 << G4endl;
@@ -811,10 +811,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   G4double bField;
   if(element->B != 0) {
     bField = element->B * CLHEP::tesla;
-    element->ks  = (bField/_brho) / CLHEP::m;
+    element->ks  = (bField/brho) / CLHEP::m;
   }
   else {
-    bField = (element->ks/CLHEP::m) * _brho;
+    bField = (element->ks/CLHEP::m) * brho;
     element->B = bField/CLHEP::tesla;
   }
   
@@ -823,7 +823,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 	 << " name = " << element->name
 	 << " l = " << element->l << " m,"
 	 << " ks = " << element->ks << " m^-1,"
-	 << " brho = " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m,"
+	 << " brho = " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m,"
 	 << " B = " << bField/CLHEP::tesla << " T,"
 	 << " material = \"" << element->outerMaterial << "\""
 	 << G4endl;

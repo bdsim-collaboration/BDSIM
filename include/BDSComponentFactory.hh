@@ -41,9 +41,12 @@ public:
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element* element);
  
 private:
+  /// length safety from global constants
   G4double lengthSafety;
-  
-  G4double _charge, _momentum, _brho;
+  /// charge from global constants
+  G4double charge;
+  /// rigidity in T*m for beam particles
+  G4double brho;
   
   /// element for storing instead of passing around
   GMAD::Element* element;
