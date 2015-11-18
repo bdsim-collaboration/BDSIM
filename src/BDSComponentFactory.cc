@@ -48,17 +48,10 @@
 #include <cmath>
 #include <string>
 
-#ifdef BDSDEBUG
-bool debug1 = true;
-#else
-bool debug1 = false;
-#endif
-
 using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory()
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
   lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
   //
   // compute magnetic rigidity brho
@@ -75,7 +68,9 @@ BDSComponentFactory::BDSComponentFactory()
   // rigidity (in Geant4 units)
   _brho *= (CLHEP::tesla*CLHEP::m);
 
-  if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+#endif
 }
 
 BDSComponentFactory::~BDSComponentFactory()

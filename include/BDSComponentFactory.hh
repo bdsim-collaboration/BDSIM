@@ -41,15 +41,10 @@ public:
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element& element);
  
 private:
-  G4bool   verbose;
-
   G4double lengthSafety;
   
   G4double _charge, _momentum, _brho;
   
-  std::list<GMAD::Element>::iterator _elementIter, _previousElementIter, _nextElementIter;
-  /// beamline
-  std::list<BDSAcceleratorComponent*> itsBeamline;
   /// element for storing instead of passing around
   GMAD::Element _element;
   
