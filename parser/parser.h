@@ -60,20 +60,25 @@ FastList<Element> element_list;
 // temporary list
 std::list<struct Element> tmp_list;
 
+// beamline
 FastList<Element> beamline_list;
+// list of parser defined materials
 std::list<struct Element>  material_list;
+// list of parser defined atoms
 std::list<struct Element>  atom_list;
+// list of parser defined tunnels
 std::vector<struct Tunnel> tunnel_list;
+// list of parser defined cross section biasing objects
 FastList<PhysicsBiasing> xsecbias_list;
 
 std::string current_line;
 std::string current_start;
 std::string current_end;
 
-//struct symtab *symtab; 
+// parser symbol map
 std::map<std::string, struct symtab*> symtab_map;
-
-extern struct symtab * symlook(std::string s);
+// function that creates a parser symbol and adds it to the symbol map
+extern struct symtab * symcreate(std::string s);
 
 // ***********************
 // functions declaration *
@@ -514,17 +519,16 @@ int copy_element_to_params(std::string elementName, struct Parameters& params)
 // parser functions
 // ******************************************************
 
-
 int add_func(std::string name, double (*func)(double))
 {
-  struct symtab *sp=symlook(name);
+  struct symtab *sp=symcreate(name);
   sp->funcptr=func;
   return 0;
 }
 
 int add_var(std::string name, double value, int is_reserved)
 {
-  struct symtab *sp=symlook(name);
+  struct symtab *sp=symcreate(name);
   sp->value=value;
   sp->is_reserved = is_reserved;
   return 0;

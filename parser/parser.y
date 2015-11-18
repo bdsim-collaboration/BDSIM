@@ -1051,7 +1051,7 @@ sample_options: RANGE '=' VARIABLE
 		  // -2: convention to add to all elements
 		  // empty name so that element name can be attached
 		  // create variable name with empty string
-		  if(execute) { $$ = symlook(""); element_count = -2; }
+		  if(execute) { $$ = symcreate(""); element_count = -2; }
 	        }
 ;
 

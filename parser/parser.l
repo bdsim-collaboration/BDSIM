@@ -36,6 +36,7 @@ using namespace GMAD;
 
 namespace GMAD {
 
+struct symtab * symcreate(std::string s);
 struct symtab * symlook(std::string s);
 extern std::map<std::string, struct symtab*> symtab_map;
 
@@ -146,15 +147,22 @@ dump  { return DUMP; }
 ":="    { return '=';}  // alternative assignment 
 
 [a-zA-Z#][A-Za-z0-9_#.]* {
-     struct symtab *sp = symlook(std::string(yytext));
+     std::string var(yytext);
+     struct symtab *sp = symlook(var);
+     if (!sp) {
+       sp = symcreate(var);
+       yylval.symp=sp;
+       return VARIABLE;
+     }
      yylval.symp=sp;
-     if(sp->funcptr)
+     if(sp->funcptr) {
        return FUNC;
-     else 
-     if(sp->type == symtab::symtabtype::_ARRAY)
-       return VECVAR;
-     else
-       return VARIABLE; 
+     } else { 
+       if(sp->type == symtab::symtabtype::_ARRAY)
+         return VECVAR;
+       else
+         return VARIABLE;
+     }
 }
 .    { return yytext[0]; } // return characters like * and /
 
@@ -244,19 +252,26 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 
 %%
 
-
-struct symtab * GMAD::symlook(std::string s)
+/// create new parser symbol
+struct symtab * GMAD::symcreate(std::string s)
 {
   std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {
-     return (*it).second;
-  } else {
-    struct symtab* sp = new symtab(s);
-    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
-     return (*(ret.first)).second;
+     std::cerr << "ERROR Variable " << s << " is already defined!" << std::endl;
+     exit(1);
   }
 
-  yyerror("too many symbols");
-  exit(1);
+  struct symtab* sp = new symtab(s);
+  std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
+  return (*(ret.first)).second;
 }
 
+/// look up parser symbol
+struct symtab * GMAD::symlook(std::string s)
+{
+  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
+  if (it==symtab_map.end()) {
+    return nullptr;
+  } 
+  return (*it).second;
+}
