@@ -148,21 +148,20 @@ dump  { return DUMP; }
 
 [a-zA-Z#][A-Za-z0-9_#.]* {
      std::string var(yytext);
+     // look up variable if defined and array or function
+     // else create string (also if in the lookup map(!))
      struct symtab *sp = symlook(var);
-     if (!sp) {
-       sp = symcreate(var);
+     if (sp) {
        yylval.symp=sp;
-       return VARIABLE;
-     }
-     yylval.symp=sp;
-     if(sp->funcptr) {
-       return FUNC;
-     } else { 
-       if(sp->type == symtab::symtabtype::_ARRAY)
+       if(sp->funcptr) {
+         return FUNC;
+       } else if(sp->type == symtab::symtabtype::_ARRAY) {
          return VECVAR;
-       else
-         return VARIABLE;
+       }
      }
+     std::string* name = new std::string(var);
+     yylval.name = name;
+     return VARIABLE;
 }
 .    { return yytext[0]; } // return characters like * and /
 

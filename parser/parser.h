@@ -86,7 +86,7 @@ extern struct symtab * symcreate(std::string s);
 
 void quit();
 /// method that transfers parameters to element properties
-int write_table(const struct Parameters& pars,std::string name, ElementType type, std::list<struct Element> *lst=nullptr);
+int write_table(const struct Parameters& pars,std::string* name, ElementType type, std::list<struct Element> *lst=nullptr);
 int expand_line(std::string name, std::string start, std::string end);
 /// insert a sampler into beamline_list
 void add_sampler(std::string name, int before_count);
@@ -118,15 +118,15 @@ void quit()
   exit(0);
 }
 
-int write_table(const struct Parameters& params,std::string name, ElementType type, std::list<struct Element> *lst)
+int write_table(const struct Parameters& params,std::string* name, ElementType type, std::list<struct Element> *lst)
 {
-  if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << name << " : " << type << std::endl;
+  if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *name << " : " << type << std::endl;
 #ifdef BDSDEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, typestr(type).c_str(), params.lset);
 #endif
 
   struct Element e;
-  e.set(params,name,type,lst);
+  e.set(params,*name,type,lst);
 
   switch(type) {
 

@@ -8,12 +8,15 @@
 #include "parser.h"
 #include "sym_table.h"
 #include "elementtype.h"
+#include <string>
   
   using namespace GMAD;
 
   extern char* yytext;
 
   namespace GMAD {
+    // function that looks up a parser symbol
+    extern struct symtab * symlook(std::string s);
     extern int line_num;
     extern std::string yyfilename;
   
@@ -38,6 +41,7 @@
   int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
   char *str;
+  std::string* name;
   struct Array *array;
 }
 
@@ -51,7 +55,8 @@
 %nonassoc UPLUS
 
 %token <dval> NUMBER
-%token <symp> VARIABLE VECVAR FUNC 
+%token <symp> VECVAR FUNC 
+%token <name> VARIABLE
 %token <str> STR
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
@@ -62,15 +67,15 @@
 
 %type <dval> aexpr
 %type <dval> expr
-%type <symp> assignment
+%type <symp> assignment symdecl
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
 %type <ival> newinstance
-%type <symp> sample_options
-%type <symp> csample_options
-%type <symp> tunnel_options
-%type <symp> xsecbias_options
+%type <name> sample_options
+%type <name> csample_options
+%type <name> tunnel_options
+%type <name> xsecbias_options
 
 /* printout format for debug output */
 /*
@@ -121,225 +126,249 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)  {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_MARKER);
+	   write_table(params,$1,ElementType::_MARKER);
 	   params.flush();
 	 }
+	 delete $1;
        }
      | VARIABLE ':' drift
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_DRIFT);
+	   write_table(params,$1,ElementType::_DRIFT);
 	   params.flush();
 	 }
+	 delete $1;
        }
      | VARIABLE ':' rf
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_RF);
+	   write_table(params,$1,ElementType::_RF);
 	   params.flush();
 	 }
+	 delete $1;
        } 
      | VARIABLE ':' sbend
        {  
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_SBEND);
+	   write_table(params,$1,ElementType::_SBEND);
 	   params.flush();
 	 }
+	 delete $1;
        }
      | VARIABLE ':' rbend
        {
          if(execute) {
            // check parameters and write into element table
-           write_table(params,$1->name,ElementType::_RBEND);
+           write_table(params,$1,ElementType::_RBEND);
            params.flush();
          }
+	 delete $1;
        }
 
     | VARIABLE ':' vkick
        {  
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_VKICK);
+	   write_table(params,$1,ElementType::_VKICK);
 	   params.flush();
 	 }
+	 delete $1;
        }
     | VARIABLE ':' hkick
        {  
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_HKICK);
+	   write_table(params,$1,ElementType::_HKICK);
 	   params.flush();
 	 }
+	 delete $1;
        }
      | VARIABLE ':' quad
        {
 	 if(execute)       
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_QUAD);
+	     write_table(params,$1,ElementType::_QUAD);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' sextupole
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_SEXTUPOLE);
+	     write_table(params,$1,ElementType::_SEXTUPOLE);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' octupole
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_OCTUPOLE);
+	     write_table(params,$1,ElementType::_OCTUPOLE);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' decapole
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_DECAPOLE);
+	     write_table(params,$1,ElementType::_DECAPOLE);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' multipole
        {
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_MULT);
+	     write_table(params,$1,ElementType::_MULT);
 	     params.flush();	 
 	   }
+	 delete $1;
        }
      | VARIABLE ':' solenoid
        {
 	 if(execute)       
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_SOLENOID);
+	     write_table(params,$1,ElementType::_SOLENOID);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' rcol
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_RCOL);
+	     write_table(params,$1,ElementType::_RCOL);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' ecol
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_ECOL);
+	     write_table(params,$1,ElementType::_ECOL);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' muspoiler
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_MUSPOILER);
+	     write_table(params,$1,ElementType::_MUSPOILER);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' degrader
        {
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_DEGRADER);
+	     write_table(params,$1,ElementType::_DEGRADER);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' element
        {
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_ELEMENT);
+	     write_table(params,$1,ElementType::_ELEMENT);
 	     params.flush();	 
 	   }
+	 delete $1;
        }
      | VARIABLE ':' laser
        {
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_LASER);
+	     write_table(params,$1,ElementType::_LASER);
 	     params.flush();	 
 	   }
+	 delete $1;
        }
      | VARIABLE ':' screen
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_SCREEN);
+	   write_table(params,$1,ElementType::_SCREEN);
 	   params.flush();
 	 }
+	 delete $1;
        }
      | VARIABLE ':' awakescreen
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1->name,ElementType::_AWAKESCREEN);
+	   write_table(params,$1,ElementType::_AWAKESCREEN);
 	   params.flush();
 	 }
+	 delete $1;
        }
      | VARIABLE ':' transform3d
        {
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1->name,ElementType::_TRANSFORM3D);
+	     write_table(params,$1,ElementType::_TRANSFORM3D);
 	     params.flush();	 
 	   }
+	 delete $1;
        }
      | VARIABLE ':' line 
        {
 	 if(execute)
 	   {
 	     // copy tmp_list to params
-	     write_table(params,$1->name,ElementType::_LINE,new std::list<struct Element>(tmp_list));
+	     write_table(params,$1,ElementType::_LINE,new std::list<struct Element>(tmp_list));
 	     // clean list
 	     tmp_list.clear();
 	   }
+	 delete $1;
        }     
      | VARIABLE ':' newinstance
        {
          if(execute)
 	   {
 	     ElementType type = static_cast<ElementType>($3);
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << $1->name << " : " << type << std::endl;
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << *($1) << " : " << type << std::endl;
 	     if(type != ElementType::_NONE)
 	       {
-		 write_table(params,$1->name,type);
+		 write_table(params,$1,type);
 	       }
 	     params.flush();
 	   }
+	 delete $1;
        }
        | VARIABLE ':' parameters
        {
 	 if(execute)
 	   {
-	     if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << $1->name << std::endl;
-	     std::list<struct Element>::iterator it = element_list.find($1->name);
+	     if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << *($1) << std::endl;
+	     std::list<struct Element>::iterator it = element_list.find(*($1));
 	     std::list<struct Element>::iterator iterEnd = element_list.end();
 	     if(it == iterEnd)
 	       {
-		 std::cout << "element " << $1->name << " has not been defined" << std::endl;
+		 std::cout << "element " << *($1) << " has not been defined" << std::endl;
 		 if (PEDANTIC) exit(1);
 	       }
 	     else
@@ -349,40 +378,45 @@ decl : VARIABLE ':' marker
 	       }
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' matdef
        {
 	 if(execute)
 	   {
-	     write_table(params,$1->name,ElementType::_MATERIAL);
+	     write_table(params,$1,ElementType::_MATERIAL);
 	     params.flush();
 	   }
+	 delete $1;
        }
      | VARIABLE ':' atom
        {
          if(execute)
            {
-             write_table(params,$1->name,ElementType::_ATOM);
+             write_table(params,$1,ElementType::_ATOM);
              params.flush();
            }
+	 delete $1;
        }
      | VARIABLE ':' tunnel
        {
          if(execute)
            {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : tunnel" << std::endl;
-	     tunnel.set_value("name",$1->name);
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : tunnel" << std::endl;
+	     tunnel.set_value("name",*($1));
 	     add_tunnel(tunnel);
            }
+	 delete $1;
        }
      | VARIABLE ':' xsecbias
        {
          if(execute)
            {
-	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << $1->name << " : xsecbias" << std::endl;
-	     xsecbias.set_value("name",$1->name);
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
+	     xsecbias.set_value("name",*($1));
 	     add_xsecbias(xsecbias);
            }
+	 delete $1;
        }
       | VARIABLE ':' error_noparams
       {
@@ -390,6 +424,7 @@ decl : VARIABLE ':' marker
 	  {
 	    yyerror("ERROR: Element needs parameters");
 	  }
+	delete $1;
       }
 ;
 
@@ -448,49 +483,57 @@ error_noparams : DRIFT;
 newinstance : VARIABLE ',' parameters
             {
 	      if(execute) {
-		$$ = copy_element_to_params($1->name,params);
+		$$ = copy_element_to_params(*($1),params);
 	      }
+	      delete $1;
 	    }
             | VARIABLE
 	    {
 	      if(execute) {
-		$$ = copy_element_to_params($1->name,params);
+		$$ = copy_element_to_params(*($1),params);
 	      }
+	      delete $1;
 	    }
 ;
 
 parameters: VARIABLE '=' aexpr ',' parameters
             {
 	      if(execute)
-		params.set_value($1->name,$3);
+		params.set_value(*($1),$3);
+	      delete $1;
 	    }
           | VARIABLE '=' aexpr
             {
 	      if(execute)
-		params.set_value($1->name,$3);
+		params.set_value(*($1),$3);
+	      delete $1;
 	    }
           | VARIABLE '=' vecexpr ',' parameters
             {
 	      if(execute) 
-		params.set_value($1->name,$3);
+		params.set_value(*($1),$3);
+	      delete $1;
 	    }
           | VARIABLE '=' vecexpr
             {
 	      if(execute) 
-		params.set_value($1->name,$3);
+		params.set_value(*($1),$3);
+	      delete $1;
 	    }
           | VARIABLE '=' STR ',' parameters
             {
 	      if(execute) {
-		params.set_value($1->name,$3);
+		params.set_value(*($1),$3);
 	      }
+	      delete $1;
 	      free($3);
 	    }
           | VARIABLE '=' STR
             {
 	      if(execute) {
-		params.set_value($1->name,$3);
+		params.set_value(*($1),$3);
 	      }
+	      delete $1;
 	      free($3);
 	    }
 
@@ -503,70 +546,86 @@ line : LINE '=' '-' '(' rev_element_seq ')'
 element_seq : 
             | VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_LINE);
+		if(execute) add_element_temp(*($1), 1, true, ElementType::_LINE);
+		delete $1;
 	      }
             | VARIABLE '*' NUMBER ',' element_seq
               {
-		if(execute) add_element_temp($1->name, (int)$3, true, ElementType::_LINE);
+		if(execute) add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
+		delete $1;
 	      }
             | NUMBER '*' VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp($3->name, (int)$1, true, ElementType::_LINE);
+		if(execute) add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
+		delete $3;
 	      }
             | VARIABLE
               {
-		if(execute) add_element_temp($1->name, 1, true, ElementType::_LINE);
+		if(execute) add_element_temp(*($1), 1, true, ElementType::_LINE);
+		delete $1;
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute) add_element_temp($1->name, (int)$3, true, ElementType::_LINE);
+		if(execute) add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
+		delete $1;
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute) add_element_temp($3->name, (int)$1, true, ElementType::_LINE);
+		if(execute) add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
+		delete $3;
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp($2->name, 1, true, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
+		delete $2;
 	      }
             | '-' VARIABLE
               {
-		if(execute) add_element_temp($2->name, 1, true, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
+		delete $2;
 	      }
 ;
 
 rev_element_seq : 
             | VARIABLE ',' rev_element_seq 
               {
-		if(execute) add_element_temp($1->name, 1, false, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
+		delete $1;
 	      }
             | VARIABLE '*' NUMBER ',' rev_element_seq
               {
-		if(execute) add_element_temp($1->name, int($3), false, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
+		delete $1;
 	      }
             | NUMBER '*' VARIABLE ',' rev_element_seq
               {
-		if(execute) add_element_temp($3->name, int($1), false, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
+		delete $3;
 	      }
             | VARIABLE
               {
-		if(execute) add_element_temp($1->name, 1, false, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
+		delete $1;
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute) add_element_temp($1->name, int($3), false, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
+		delete $1;
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute) add_element_temp($3->name, int($1), false, ElementType::_REV_LINE);
+		if(execute) add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
+		delete $3;
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
+		if(execute) add_element_temp((*$2), 1, false, ElementType::_LINE);
+		delete $2;
 	      }
             | '-' VARIABLE
               {
-		if(execute) add_element_temp($2->name, 1, false, ElementType::_LINE);
+		if(execute) add_element_temp((*$2), 1, false, ElementType::_LINE);
+		delete $2;
 	      }
 ;
 
@@ -613,11 +672,16 @@ expr : aexpr
 ;
 
 aexpr :  NUMBER               { $$ = $1;                         }
-       | VARIABLE             
-         { 
-	   //check type ??
-	   $$ = $1->value;        
-          } 
+      | VARIABLE
+      {
+	struct symtab *sp = symlook(*($1));
+	if (!sp) {
+	  std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
+	  yyerror(errorstring.c_str());
+	}
+	$$ = sp->value;
+	delete $1;
+      }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
@@ -649,12 +713,30 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
         | VARIABLE '[' VARIABLE ']' 
           { 
-	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << $1->name << " [ " << $3->name << " ]" << std::endl; 
-	    $$ = property_lookup(element_list,$1->name,$3->name);
+	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
+	    $$ = property_lookup(element_list,*($1),*($3));
+	    delete $1;
+	    delete $3;
 	  }// element attributes
- ; 
+; 
 
-assignment :  VARIABLE '=' aexpr  
+symdecl : VARIABLE '='
+        {
+	  if(execute)
+	    {
+	      struct symtab *sp = symlook(*($1));
+	      if (!sp) {
+		sp = symcreate(*($1));
+	      } else {
+		std::cout << "WARNING redefinition of variable " << sp->name << " with old value: " << sp->value << std::endl;
+	      }
+	      $$ = sp;
+	    }
+	  delete $1;
+	}
+;
+
+assignment :  symdecl aexpr  
               {
 		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
 		if(execute)
@@ -665,20 +747,20 @@ assignment :  VARIABLE '=' aexpr
 		    }
 		    else
 		      {
-			$1->value = $3; $$=$1;       
+			$1->value = $2; $$=$1;       
 		      }
 		  }
 	      }
-           |  VARIABLE '=' vecexpr
+           |  symdecl vecexpr
               {
 		if(execute)
 		  {
 		    $1->array.clear();
-		    for(unsigned int i=0;i<$3->data.size();i++)
-		      $1->array.push_back($3->data[i]);
+		    for(unsigned int i=0;i<$2->data.size();i++)
+		      $1->array.push_back($2->data[i]);
 		    $1->type = symtab::symtabtype::_ARRAY;
 		    $$ = $1;
-		    $3->data.clear();
+		    $2->data.clear();
 		  }
               }
 
@@ -928,11 +1010,18 @@ command : STOP             { if(execute) quit(); }
         | PRINT ',' LINE   { if(execute) beamline_list.print(); }
         | PRINT ',' OPTION { if(execute) options.print(); }
 //        | PRINT ',' OPTION ',' VARIABLE { if(execute) options.print($5->name);}
-        | PRINT ',' VARIABLE 
+        | PRINT ',' VARIABLE
           {
 	    if(execute) {
-	      printf("\t%s = %.10g\n",$3->name.c_str(),$3->value);
+	      struct symtab *sp = symlook(*($3));
+	      if (!sp) {
+		std::cout << "Variable " << *($3) << "not defined!" << std::endl;
+	      }
+	      else {
+		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
+	      }
 	    }
+	    delete $3;
 	  } 
         | PRINT ',' VECVAR
           {
@@ -954,7 +1043,7 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler($3->name, element_count);
+		add_sampler(*($3), element_count);
 		element_count = -1;
 		params.flush();
 	      }
@@ -964,7 +1053,7 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-		add_csampler($3->name, element_count,params.l, params.r);
+		add_csampler(*($3), element_count,params.l, params.r);
 		element_count = -1;
 		params.flush();
 	      }
@@ -974,7 +1063,7 @@ command : STOP             { if(execute) quit(); }
             if(execute)
               {
                 if(ECHO_GRAMMAR) printf("command -> DUMP\n");
-                add_dump($3->name, element_count);
+                add_dump(*($3), element_count);
                 element_count = -1;
                 params.flush();
               }
@@ -1001,102 +1090,109 @@ use_parameters :  VARIABLE
                   {
 		    if(execute)
 		      {
-			char * cstr = new char [$1->name.length()+1];
-			std::strcpy (cstr, $1->name.c_str());
+			char * cstr = new char [$1->length()+1];
+			std::strcpy (cstr, (*$1).c_str());
 			$$ = cstr;
-			current_line = $1->name;
+			current_line = (*$1);
 			current_start = "";
 			current_end = "";
 		      }
+		    delete $1;
                   }
 		| PERIOD '=' VARIABLE
                   {
 		    if(execute)
 		      {
-			char * cstr = new char [$3->name.length()+1];
-			std::strcpy (cstr, $3->name.c_str());
+			char * cstr = new char [$3->length()+1];
+			std::strcpy (cstr, (*$3).c_str());
 			$$ = cstr;
-			current_line = $3->name;
+			current_line = *($3);
 			current_start = "";
 			current_end = "";
 		      }
+		    delete $3;
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
                   {
 		    if(execute)
 		      {
-			char * cstr = new char [$3->name.length()+1];
-			std::strcpy (cstr, $3->name.c_str());
+			char * cstr = new char [$3->length()+1];
+			std::strcpy (cstr, (*$3).c_str());
 			$$ = cstr;
-			current_line = $3->name;
-			current_start = $7->name;
-			current_end = $9->name;
+			current_line = *($3);
+			current_start = *($7);
+			current_end = *($9);
 		      }
+		    delete $3, $7, $9;
 		  }
 ;
 
 sample_options: RANGE '=' VARIABLE
                 {
-		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << std::endl;
+		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << std::endl;
 		  if(execute) $$ = $3;
+		  delete $3;
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
-                  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << $3->name << " [" << $5 << "]" << std::endl;
+                  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << " [" << $5 << "]" << std::endl;
 		  if(execute) { $$ = $3; element_count = (int)$5; }
+		  delete $3;
                 }
               | ALL
 	        {
 		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
 		  // -2: convention to add to all elements
 		  // empty name so that element name can be attached
-		  // create variable name with empty string
-		  if(execute) { $$ = symcreate(""); element_count = -2; }
+		  if(execute) { $$ = new std::string(""); element_count = -2; }
 	        }
 ;
 
 csample_options : VARIABLE '=' aexpr
                   {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << $1->name << " = " << $3 << std::endl;
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( $1->name == "r") params.r = $3;
-			else if ($1->name == "l") params.l = $3;
+			if( (*$1) == "r") params.r = $3;
+			else if ((*$1) == "l") params.l = $3;
 			else {
-			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + (*$1) + "\"\n";
 			  yyerror(errorstring.c_str());
 			}
 		      }
+		    delete $1;
 		  }   
                 | VARIABLE '=' STR
                   {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << (*$1) << " = " << $3 << std::endl;
 		    /* if(execute) */
 		    /*   { */
-		    /* 	;//options.set_value($1->name,string($3)); */
+		    /* 	;//options.set_value((*$1),string($3)); */
 		    /*   } */
+		    delete $1;
 		    free($3);
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << $1->name << " = " << $3 << std::endl;
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    
 		    if(execute)
 		      {
-			if( $1->name == "r") params.r = $3;
-			else if ($1->name == "l") params.l = $3;
+			if( (*$1) == "r") params.r = $3;
+			else if ((*$1) == "l") params.l = $3;
 			else {
-			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + $1->name + "\"\n";
+			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + (*$1) + "\"\n";
 			  yyerror(errorstring.c_str());
 			}
 		      }
-
+		    delete $1;
 		  }   
                 | VARIABLE '=' STR ',' csample_options
                   {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << $1->name << " = " << $3 << std::endl;
-		    // if(execute) //options.set_value($1->name,string($3));
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << (*$1) << " = " << $3 << std::endl;
+		    // if(execute) //options.set_value((*$1),string($3));
+		    delete $1;
 		    free($3);
 		  }   
                 | sample_options ',' csample_options
@@ -1114,23 +1210,27 @@ csample_options : VARIABLE '=' aexpr
 tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value($1->name,$3);
+			tunnel.set_value((*$1),$3);
+		      delete $1;
 		    }
                  | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			tunnel.set_value($1->name,$3);
+			tunnel.set_value((*$1),$3);
+		      delete $1;
 		    }
                  | VARIABLE '=' STR ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value($1->name,$3);
+			tunnel.set_value((*$1),$3);
+		      delete $1;
 		      free($3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			tunnel.set_value($1->name,$3);
+			tunnel.set_value((*$1),$3);
+		      delete $1;
 		      free($3);
 		    }
 ;
@@ -1138,57 +1238,67 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
 xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
                     {
 		      if(execute)
-			xsecbias.set_value($1->name,$3);
+			xsecbias.set_value((*$1),$3);
+		      delete $1;
 		    }
                  | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			xsecbias.set_value($1->name,$3);
+			xsecbias.set_value((*$1),$3);
+		      delete $1;
 		    }
                  | VARIABLE '=' STR ',' xsecbias_options
                     {
 		      if(execute)
-			xsecbias.set_value($1->name,$3);
+			xsecbias.set_value((*$1),$3);
+		      delete $1;
 		      free($3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			xsecbias.set_value($1->name,$3);
+			xsecbias.set_value((*$1),$3);
+		      delete $1;
 		      free($3);
 		    }
                  | VARIABLE '=' vecexpr ',' xsecbias_options
 		    {
 		      if(execute)
-			xsecbias.set_value($1->name,$3);
+			xsecbias.set_value((*$1),$3);
+		      delete $1;
 		    }
                  | VARIABLE '=' vecexpr
 		    {
 		      if(execute)
-			xsecbias.set_value($1->name,$3);
+			xsecbias.set_value((*$1),$3);
+		      delete $1;
 		    }
 ;
 
 option_parameters : VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
-			options.set_value($1->name,$3);
+			options.set_value((*$1),$3);
+		      delete $1;
 		    }   
                   | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			options.set_value($1->name,$3);
+			options.set_value((*$1),$3);
+		      delete $1;
 		    } 
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			options.set_value($1->name,$3);
+			options.set_value((*$1),$3);
+		      delete $1;
 		      free($3);
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			options.set_value($1->name,$3);
+			options.set_value((*$1),$3);
+		      delete $1;
 		      free($3);
 		    }
 ;
