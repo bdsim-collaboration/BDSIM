@@ -37,9 +37,9 @@ set_tests_properties(gmad-addSamplerUndefinedElement PROPERTIES WILL_FAIL 1)
 add_test(gmad-elementnoargs ${gmadBinary} elementnoargs.gmad)
 set_tests_properties(gmad-elementnoargs PROPERTIES WILL_FAIL 1)
 
-# try to overwrite a variable
-add_test(gmad-overwriteVariable ${gmadBinary} overwritevariable.gmad)
-set_tests_properties(gmad-overwriteVariable PROPERTIES WILL_FAIL 1)
+# try to overwrite an element
+add_test(gmad-overwriteElement ${gmadBinary} overwriteElement.gmad)
+set_tests_properties(gmad-overwriteElement PROPERTIES WILL_FAIL 1)
 
 ##########################
 ### Test Functionality ###
