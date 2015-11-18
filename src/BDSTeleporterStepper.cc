@@ -47,7 +47,7 @@ void BDSTeleporterStepper::Stepper(const G4double yIn[],
   G4cout << __METHOD_NAME__ << "turnstaken: " << turnstaken << G4endl;
 #endif
   //if (turnstaken != turnnumberrecord.back())
-  if (1 == 1)
+  if (turnstaken > 0)
     {
       //do the adjustment
       //register this turn
