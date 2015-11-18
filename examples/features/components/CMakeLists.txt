@@ -30,6 +30,8 @@ simple_testing(Component-QuadrupoleOffset "--file=quadOffsetTest.gmad" ${OVERLAP
 
 simple_testing(Component-RBend "--file=rbenTest.gmad" ${OVERLAP_CHECK})
 
+simple_testing(Component-RBendPoleFace "--file=rbenPoleFaceTest.gmad" ${OVERLAP_CHECK})
+
 simple_testing(Component-RCollimator "--file=rcolTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-RF "--file=rfTest.gmad" ${OVERLAP_CHECK})
@@ -37,6 +39,8 @@ simple_testing(Component-RF "--file=rfTest.gmad" ${OVERLAP_CHECK})
 simple_testing(Component-Sampler "--file=samplerTest.gmad" ${OVERLAP_CHECK})
  
 simple_testing(Component-SBend "--file=sbenTest.gmad" ${OVERLAP_CHECK})
+
+simple_testing(Component-SBendPoleFace "--file=sbenPoleFaceTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Sextupole "--file=sextTest.gmad" ${OVERLAP_CHECK})
 
