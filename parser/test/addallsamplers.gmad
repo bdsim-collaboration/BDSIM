@@ -6,6 +6,7 @@ b1: line=(d1,d2,d1);
 use, b1;
 
 ! add samplers before all elements
+! skip first element, and add a sampler at the end
 sample, all;
 
 print, line;
