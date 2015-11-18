@@ -74,14 +74,11 @@ void BDSTeleporter::BuildBPFieldMgr(G4MagIntegratorStepper* stepper,
   itsFieldManager = new G4FieldManager();
   itsFieldManager->SetDetectorField(field);
   itsFieldManager->SetChordFinder(itsChordFinder);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
-    {itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
-    {itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());}
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
-    {itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
-  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-    {itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
+  // set limits for field (always non zero, so always set)
+  itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
 void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
