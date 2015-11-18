@@ -774,7 +774,7 @@ inline void  BDSGlobalConstants::IncrementTurnNumber()
 {itsTurnsTaken += 1;}
 
 inline void  BDSGlobalConstants::ResetTurnNumber()
-{itsTurnsTaken = 1;}
+{itsTurnsTaken = 0;}
 
 inline G4int BDSGlobalConstants::GetTurnsToTake() const
 {return itsTurnsToTake;}
