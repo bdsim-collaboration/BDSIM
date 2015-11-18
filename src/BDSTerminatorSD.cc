@@ -70,7 +70,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
     }
 #ifdef BDSDEBUG
   else
-    {G4cout << __METHOD_NAME__ << "Secondary particle - not incrementing turn number" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "not incrementing turn number" << G4endl;}
 #endif
   return true;
 }
