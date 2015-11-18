@@ -25,12 +25,15 @@ BDSRBend::BDSRBend(G4String            name,
 		   G4double            bFieldIn,
 		   G4double            bGradIn,
 		   G4double            angleIn,
+		   G4double            e1In,
+		   G4double            e2In,
 		   BDSBeamPipeInfo*    beamPipeInfo,
 		   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   bField(bFieldIn),
   bGrad(bGradIn),
+  e1(e1In), e2(e2In),
   bpFirstBit(nullptr),
   bpLastBit(nullptr)
 {

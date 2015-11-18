@@ -240,8 +240,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 #endif
 
   // Match poleface from previous and next element (minus sign!)
-  double e1 = (prevElement) ? ( -prevElement->e2 * CLHEP::rad ) : 0.0;
-  double e2 = (nextElement) ? ( -nextElement->e1 * CLHEP::rad ) : 0.0;
+  double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+  double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
   
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
@@ -503,12 +503,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
-
+  
+  G4double anglein    = element->e1*CLHEP::rad;
+  G4double angleout   = element->e2*CLHEP::rad;
+  
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,
 			bField,
 			bPrime,
 			element->angle,
+			anglein,
+			angleout,
 			PrepareBeamPipeInfo(element),
 			PrepareMagnetOuterInfo(element)));
 }
