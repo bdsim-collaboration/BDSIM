@@ -29,8 +29,8 @@ public:
   ~BDSComponentFactory();
 
   /// Create component from parser Element
-  // Iterator since lookup to previous and next Element is needed for construction
-  BDSAcceleratorComponent* CreateComponent(std::list<GMAD::Element>::iterator elementIterator);
+  /// Pointers to next and previous Element for lookup
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn, GMAD::Element* prevElementIn, GMAD::Element* nextElementIn);
 
   // for each of them - special cases need only for ring logic
   /// Public creation method for ring logic
@@ -38,7 +38,7 @@ public:
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTeleporter();
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(GMAD::Element& element);
+  BDSTiltOffset*           CreateTiltOffset(GMAD::Element* element);
  
 private:
   G4double lengthSafety;
@@ -46,7 +46,11 @@ private:
   G4double _charge, _momentum, _brho;
   
   /// element for storing instead of passing around
-  GMAD::Element _element;
+  GMAD::Element* element;
+  /// element access to previous element (can be nullptr)
+  GMAD::Element* prevElement;
+  /// element access to previous element (can be nullptr)
+  GMAD::Element* nextElement;
   
   BDSAcceleratorComponent* CreateSampler();
   BDSAcceleratorComponent* CreateCSampler();
@@ -74,12 +78,12 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
 
   /// Testing function
-  G4bool HasSufficientMinimumLength(GMAD::Element& element);
+  G4bool HasSufficientMinimumLength(GMAD::Element* element);
   
   ///@{ Utility function to prepare model info
-  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element& element);
-  G4double            PrepareOuterDiameter(GMAD::Element& element);
-  BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element& element);
+  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element* element);
+  G4double            PrepareOuterDiameter(GMAD::Element* element);
+  BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element* element);
   ///@}
 
   /// Utility function to check if the combination of outer diameter, angle and length

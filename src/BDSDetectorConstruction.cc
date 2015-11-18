@@ -161,11 +161,23 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << (*elementIt).name << G4endl;
 #endif
+
+      // next and previous element
+      GMAD::Element* prevElement = nullptr;
+      GMAD::Element* nextElement = nullptr;
+      // check if valid
+      if (elementIt!=GMAD::beamline_list.begin()) {
+	// access to previous element without changing the iterator
+	prevElement = &(*std::prev(elementIt));
+      }
+      if (elementIt!=GMAD::beamline_list.end()) {
+	nextElement = &(*std::next(elementIt));
+      }
       
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(elementIt);
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
 	{
-	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(*elementIt);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset);
 	  if (survey) survey->Write(addedComponents, *elementIt);
 	}
