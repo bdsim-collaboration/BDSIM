@@ -108,7 +108,7 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 { 
   delete precisionRegion;
 
-  // glash stuff
+  // gflash stuff
   gFlashRegion.clear();
   delete theHitMaker;
   delete theParticleBounds;
@@ -156,18 +156,18 @@ void BDSDetectorConstruction::BuildBeamline()
     }
   
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(auto element : GMAD::beamline_list)
+  for(auto elementIt = GMAD::beamline_list.begin(); elementIt!=GMAD::beamline_list.end(); ++elementIt)
     {
 #ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << (element).name << G4endl;
+      G4cout << "BDSDetectorConstruction creating component " << (*elementIt).name << G4endl;
 #endif
       
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(element);
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(elementIt);
       if(temp)
 	{
-	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(element);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(*elementIt);
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset);
-	  if (survey) survey->Write(addedComponents, element);
+	  if (survey) survey->Write(addedComponents, *elementIt);
 	}
     }
 

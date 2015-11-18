@@ -29,10 +29,13 @@ public:
   ~BDSComponentFactory();
 
   /// Create component from parser Element
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element& element);
+  // Iterator since lookup to previous and next Element is needed for construction
+  BDSAcceleratorComponent* CreateComponent(std::list<GMAD::Element>::iterator elementIterator);
 
   // for each of them - special cases need only for ring logic
+  /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
+  /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTeleporter();
   /// Create the tilt and offset information object by inspecting the parser element
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element& element);

@@ -81,9 +81,9 @@ BDSComponentFactory::BDSComponentFactory()
 BDSComponentFactory::~BDSComponentFactory()
 {;}
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn)
+BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(std::list<GMAD::Element>::iterator elementIterator)
 {
-  _element = elementIn;
+  _element = *elementIterator;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << _element.name << "\"" << G4endl;  
 #endif
@@ -267,12 +267,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   
   if (fabs(_element.e1) > (0.5*CLHEP::halfpi))
     {
-      G4cerr << __METHOD_NAME__ << "Poleface angle e1 is greater than pi/4" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Poleface angle e1 " << _element.e1 << " is greater than pi/4" << G4endl;
       exit(1);
     }
   if (fabs(_element.e2) > (0.5*CLHEP::halfpi))
     {
-      G4cerr << __METHOD_NAME__ << "Poleface angle e2 is greater than pi/4" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Poleface angle e2 " << _element.e2 << " is greater than pi/4" << G4endl;
       exit(1);
     }
   
