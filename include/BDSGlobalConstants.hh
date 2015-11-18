@@ -204,9 +204,16 @@ public:
   // AI : for placet synchronization
   void     setWaitingForDump(G4bool flag);
   G4bool   getWaitingForDump() const;
+
+  /// This is the number of complete turns already completed. Starts at 0 and
+  /// increments to 1 after 1 complete turn.
   G4int    GetTurnsTaken() const;
   void     IncrementTurnNumber();
+
+  /// Reset turn number to 0.
   void     ResetTurnNumber();
+
+  /// Get the number of complete turns that should be simulated.
   G4int    GetTurnsToTake() const;
 
   G4AffineTransform GetDumpTransform() const;
