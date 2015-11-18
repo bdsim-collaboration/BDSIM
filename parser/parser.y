@@ -74,8 +74,6 @@
 %type <ival> newinstance
 %type <name> sample_options
 %type <name> csample_options
-%type <name> tunnel_options
-%type <name> xsecbias_options
 
 /* printout format for debug output */
 /*
@@ -1047,6 +1045,7 @@ command : STOP             { if(execute) quit(); }
 		element_count = -1;
 		params.flush();
 	      }
+	    delete $3;
           }
         | CSAMPLE ',' csample_options // cylindrical sampler
           {
@@ -1057,6 +1056,7 @@ command : STOP             { if(execute) quit(); }
 		element_count = -1;
 		params.flush();
 	      }
+	    delete $3;
           }
         | DUMP ',' sample_options //  options for beam dump
           {
@@ -1067,6 +1067,7 @@ command : STOP             { if(execute) quit(); }
                 element_count = -1;
                 params.flush();
               }
+	    delete $3;
           }
         | TUNNEL ',' tunnel_options // tunnel
           {
@@ -1131,13 +1132,11 @@ sample_options: RANGE '=' VARIABLE
                 {
 		  if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << std::endl;
 		  if(execute) $$ = $3;
-		  delete $3;
                 }
               | RANGE '=' VARIABLE '[' NUMBER ']'
                 {
                   if(ECHO_GRAMMAR) std::cout << "sample_opt : RANGE =  " << *($3) << " [" << $5 << "]" << std::endl;
 		  if(execute) { $$ = $3; element_count = (int)$5; }
-		  delete $3;
                 }
               | ALL
 	        {
@@ -1163,16 +1162,6 @@ csample_options : VARIABLE '=' aexpr
 		      }
 		    delete $1;
 		  }   
-                | VARIABLE '=' STR
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << (*$1) << " = " << $3 << std::endl;
-		    /* if(execute) */
-		    /*   { */
-		    /* 	;//options.set_value((*$1),string($3)); */
-		    /*   } */
-		    delete $1;
-		    free($3);
-		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
@@ -1187,13 +1176,6 @@ csample_options : VARIABLE '=' aexpr
 			}
 		      }
 		    delete $1;
-		  }   
-                | VARIABLE '=' STR ',' csample_options
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> " << (*$1) << " = " << $3 << std::endl;
-		    // if(execute) //options.set_value((*$1),string($3));
-		    delete $1;
-		    free($3);
 		  }   
                 | sample_options ',' csample_options
                   {
