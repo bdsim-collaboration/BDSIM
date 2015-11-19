@@ -960,7 +960,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element& element)
       G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
-             << " l = " << _element.l*CLHEP::m << "m"
+             << " l = " << _element.l*CLHEP::um << "um"
              << G4endl;
       return false;
     }
