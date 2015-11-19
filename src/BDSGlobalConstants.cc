@@ -202,7 +202,7 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
-  itsTurnsTaken = 0; //counting from 1
+  itsTurnsTaken = 0;
   if(opt.nturns < 1)
     itsTurnsToTake = 1;
   else

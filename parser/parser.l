@@ -36,8 +36,10 @@ using namespace GMAD;
 
 namespace GMAD {
 
+struct symtab * symcreate(std::string s);
 struct symtab * symlook(std::string s);
 extern std::map<std::string, struct symtab*> symtab_map;
+extern std::vector<std::string*> var_list;
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
@@ -135,26 +137,32 @@ dump  { return DUMP; }
 
   // copy string without quotes, 
   // memory needs to be allocated
-  // strndup allocates memory with malloc 
-  // strndup will add an end of string character
-  // memory needs to be freed with free()
-  // see e.g. http://linux.die.net/man/3/strdup
-  yylval.str = strndup(yytext+1,strlen(yytext)-2);
+  yylval.str = new std::string(yytext+1,strlen(yytext)-2);
+  // add string to variable vector for deletion afterwards
+  var_list.push_back(yylval.str);
   return STR;
 }
 
 ":="    { return '=';}  // alternative assignment 
 
 [a-zA-Z#][A-Za-z0-9_#.]* {
-     struct symtab *sp = symlook(std::string(yytext));
-     yylval.symp=sp;
-     if(sp->funcptr)
-       return FUNC;
-     else 
-     if(sp->type == symtab::symtabtype::_ARRAY)
-       return VECVAR;
-     else
-       return VARIABLE; 
+     std::string var(yytext);
+     // look up variable if defined and array or function
+     // else create string (also if in the lookup map(!))
+     struct symtab *sp = symlook(var);
+     if (sp) {
+       yylval.symp=sp;
+       if(sp->funcptr) {
+         return FUNC;
+       } else if(sp->type == symtab::symtabtype::_ARRAY) {
+         return VECVAR;
+       }
+     }
+     std::string* name = new std::string(var);
+     // add string to variable vector for deletion afterwards
+     var_list.push_back(name); 
+     yylval.str = name;
+     return VARIABLE;
 }
 .    { return yytext[0]; } // return characters like * and /
 
@@ -244,19 +252,26 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 
 %%
 
-
-struct symtab * GMAD::symlook(std::string s)
+/// create new parser symbol
+struct symtab * GMAD::symcreate(std::string s)
 {
   std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {
-     return (*it).second;
-  } else {
-    struct symtab* sp = new symtab(s);
-    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
-     return (*(ret.first)).second;
+     std::cerr << "ERROR Variable " << s << " is already defined!" << std::endl;
+     exit(1);
   }
 
-  yyerror("too many symbols");
-  exit(1);
+  struct symtab* sp = new symtab(s);
+  std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
+  return (*(ret.first)).second;
 }
 
+/// look up parser symbol
+struct symtab * GMAD::symlook(std::string s)
+{
+  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
+  if (it==symtab_map.end()) {
+    return nullptr;
+  } 
+  return (*it).second;
+}
