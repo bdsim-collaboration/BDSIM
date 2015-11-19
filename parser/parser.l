@@ -39,6 +39,7 @@ namespace GMAD {
 struct symtab * symcreate(std::string s);
 struct symtab * symlook(std::string s);
 extern std::map<std::string, struct symtab*> symtab_map;
+extern std::vector<std::string*> var_list;
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
@@ -136,11 +137,9 @@ dump  { return DUMP; }
 
   // copy string without quotes, 
   // memory needs to be allocated
-  // strndup allocates memory with malloc 
-  // strndup will add an end of string character
-  // memory needs to be freed with free()
-  // see e.g. http://linux.die.net/man/3/strdup
-  yylval.str = strndup(yytext+1,strlen(yytext)-2);
+  yylval.str = new std::string(yytext+1,strlen(yytext)-2);
+  // add string to variable vector for deletion afterwards
+  var_list.push_back(yylval.str);
   return STR;
 }
 
@@ -160,7 +159,9 @@ dump  { return DUMP; }
        }
      }
      std::string* name = new std::string(var);
-     yylval.name = name;
+     // add string to variable vector for deletion afterwards
+     var_list.push_back(name); 
+     yylval.str = name;
      return VARIABLE;
 }
 .    { return yytext[0]; } // return characters like * and /

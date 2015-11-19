@@ -31,7 +31,7 @@ namespace GMAD
       /// Set member with name of class instance to value.
       /// Throws std::runtime_error if not found
       void set(C* instance, const std::string& name, double value);
-      void set(C* instance, const std::string& name, const char* value);
+      void set(C* instance, const std::string& name, const std::string& value);
       ///@}
       
       /// Define AttributeMap of string and class member pointer
@@ -87,7 +87,7 @@ namespace GMAD
     }
 
   template<typename C>
-    void Published<C>::set(C* instance, const std::string& name, const char* value)
+    void Published<C>::set(C* instance, const std::string& name, const std::string& value)
     {
       try {
 	std::string C::* mp = member<std::string>(name);

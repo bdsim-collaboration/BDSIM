@@ -40,8 +40,7 @@
   double dval;
   int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
-  char *str;
-  std::string* name;
+  std::string* str;
   struct Array *array;
 }
 
@@ -55,9 +54,8 @@
 %nonassoc UPLUS
 
 %token <dval> NUMBER
-%token <symp> VECVAR FUNC 
-%token <name> VARIABLE
-%token <str> STR
+%token <symp> VECVAR FUNC
+%token <str> STR VARIABLE
 %token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token VKICK HKICK
@@ -72,8 +70,8 @@
 %type <array> vectnum vectstr
 %type <str> use_parameters
 %type <ival> newinstance
-%type <name> sample_options
-%type <name> csample_options
+%type <str> sample_options
+%type <str> csample_options
 
 /* printout format for debug output */
 /*
@@ -127,7 +125,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_MARKER);
 	   params.flush();
 	 }
-	 delete $1;
        }
      | VARIABLE ':' drift
        {
@@ -136,7 +133,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_DRIFT);
 	   params.flush();
 	 }
-	 delete $1;
        }
      | VARIABLE ':' rf
        {
@@ -145,7 +141,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_RF);
 	   params.flush();
 	 }
-	 delete $1;
        } 
      | VARIABLE ':' sbend
        {  
@@ -154,7 +149,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_SBEND);
 	   params.flush();
 	 }
-	 delete $1;
        }
      | VARIABLE ':' rbend
        {
@@ -163,7 +157,6 @@ decl : VARIABLE ':' marker
            write_table(params,$1,ElementType::_RBEND);
            params.flush();
          }
-	 delete $1;
        }
 
     | VARIABLE ':' vkick
@@ -173,7 +166,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_VKICK);
 	   params.flush();
 	 }
-	 delete $1;
        }
     | VARIABLE ':' hkick
        {  
@@ -182,7 +174,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_HKICK);
 	   params.flush();
 	 }
-	 delete $1;
        }
      | VARIABLE ':' quad
        {
@@ -192,7 +183,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_QUAD);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' sextupole
        {
@@ -202,7 +192,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_SEXTUPOLE);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' octupole
        {
@@ -212,7 +201,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_OCTUPOLE);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' decapole
        {
@@ -222,7 +210,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_DECAPOLE);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' multipole
        {
@@ -232,7 +219,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_MULT);
 	     params.flush();	 
 	   }
-	 delete $1;
        }
      | VARIABLE ':' solenoid
        {
@@ -242,7 +228,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_SOLENOID);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' rcol
        {
@@ -252,7 +237,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_RCOL);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' ecol
        {
@@ -262,7 +246,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_ECOL);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' muspoiler
        {
@@ -272,7 +255,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_MUSPOILER);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' degrader
        {
@@ -282,7 +264,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_DEGRADER);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' element
        {
@@ -292,7 +273,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_ELEMENT);
 	     params.flush();	 
 	   }
-	 delete $1;
        }
      | VARIABLE ':' laser
        {
@@ -302,7 +282,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_LASER);
 	     params.flush();	 
 	   }
-	 delete $1;
        }
      | VARIABLE ':' screen
        {
@@ -311,7 +290,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_SCREEN);
 	   params.flush();
 	 }
-	 delete $1;
        }
      | VARIABLE ':' awakescreen
        {
@@ -320,7 +298,6 @@ decl : VARIABLE ':' marker
 	   write_table(params,$1,ElementType::_AWAKESCREEN);
 	   params.flush();
 	 }
-	 delete $1;
        }
      | VARIABLE ':' transform3d
        {
@@ -330,7 +307,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_TRANSFORM3D);
 	     params.flush();	 
 	   }
-	 delete $1;
        }
      | VARIABLE ':' line 
        {
@@ -341,7 +317,6 @@ decl : VARIABLE ':' marker
 	     // clean list
 	     tmp_list.clear();
 	   }
-	 delete $1;
        }     
      | VARIABLE ':' newinstance
        {
@@ -355,7 +330,6 @@ decl : VARIABLE ':' marker
 	       }
 	     params.flush();
 	   }
-	 delete $1;
        }
        | VARIABLE ':' parameters
        {
@@ -376,7 +350,6 @@ decl : VARIABLE ':' marker
 	       }
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' matdef
        {
@@ -385,7 +358,6 @@ decl : VARIABLE ':' marker
 	     write_table(params,$1,ElementType::_MATERIAL);
 	     params.flush();
 	   }
-	 delete $1;
        }
      | VARIABLE ':' atom
        {
@@ -394,7 +366,6 @@ decl : VARIABLE ':' marker
              write_table(params,$1,ElementType::_ATOM);
              params.flush();
            }
-	 delete $1;
        }
      | VARIABLE ':' tunnel
        {
@@ -404,7 +375,6 @@ decl : VARIABLE ':' marker
 	     tunnel.set_value("name",*($1));
 	     add_tunnel(tunnel);
            }
-	 delete $1;
        }
      | VARIABLE ':' xsecbias
        {
@@ -414,7 +384,6 @@ decl : VARIABLE ':' marker
 	     xsecbias.set_value("name",*($1));
 	     add_xsecbias(xsecbias);
            }
-	 delete $1;
        }
       | VARIABLE ':' error_noparams
       {
@@ -422,7 +391,6 @@ decl : VARIABLE ':' marker
 	  {
 	    yyerror("ERROR: Element needs parameters");
 	  }
-	delete $1;
       }
 ;
 
@@ -483,14 +451,12 @@ newinstance : VARIABLE ',' parameters
 	      if(execute) {
 		$$ = copy_element_to_params(*($1),params);
 	      }
-	      delete $1;
 	    }
             | VARIABLE
 	    {
 	      if(execute) {
 		$$ = copy_element_to_params(*($1),params);
 	      }
-	      delete $1;
 	    }
 ;
 
@@ -498,41 +464,33 @@ parameters: VARIABLE '=' aexpr ',' parameters
             {
 	      if(execute)
 		params.set_value(*($1),$3);
-	      delete $1;
 	    }
           | VARIABLE '=' aexpr
             {
 	      if(execute)
 		params.set_value(*($1),$3);
-	      delete $1;
 	    }
           | VARIABLE '=' vecexpr ',' parameters
             {
 	      if(execute) 
 		params.set_value(*($1),$3);
-	      delete $1;
 	    }
           | VARIABLE '=' vecexpr
             {
 	      if(execute) 
 		params.set_value(*($1),$3);
-	      delete $1;
 	    }
           | VARIABLE '=' STR ',' parameters
             {
 	      if(execute) {
-		params.set_value(*($1),$3);
+		params.set_value(*($1),*$3);
 	      }
-	      delete $1;
-	      free($3);
 	    }
           | VARIABLE '=' STR
             {
 	      if(execute) {
-		params.set_value(*($1),$3);
+		params.set_value(*($1),*$3);
 	      }
-	      delete $1;
-	      free($3);
 	    }
 
 line : LINE '=' '(' element_seq ')'
@@ -545,42 +503,34 @@ element_seq :
             | VARIABLE ',' element_seq
               {
 		if(execute) add_element_temp(*($1), 1, true, ElementType::_LINE);
-		delete $1;
 	      }
             | VARIABLE '*' NUMBER ',' element_seq
               {
 		if(execute) add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
-		delete $1;
 	      }
             | NUMBER '*' VARIABLE ',' element_seq
               {
 		if(execute) add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
-		delete $3;
 	      }
             | VARIABLE
               {
 		if(execute) add_element_temp(*($1), 1, true, ElementType::_LINE);
-		delete $1;
 	      }
            | VARIABLE '*' NUMBER
               {
 		if(execute) add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
-		delete $1;
 	      }
             | NUMBER '*' VARIABLE
               {
 		if(execute) add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
-		delete $3;
 	      }
             | '-' VARIABLE ',' element_seq
               {
 		if(execute) add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
-		delete $2;
 	      }
             | '-' VARIABLE
               {
 		if(execute) add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
-		delete $2;
 	      }
 ;
 
@@ -588,42 +538,34 @@ rev_element_seq :
             | VARIABLE ',' rev_element_seq 
               {
 		if(execute) add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
-		delete $1;
 	      }
             | VARIABLE '*' NUMBER ',' rev_element_seq
               {
 		if(execute) add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
-		delete $1;
 	      }
             | NUMBER '*' VARIABLE ',' rev_element_seq
               {
 		if(execute) add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
-		delete $3;
 	      }
             | VARIABLE
               {
 		if(execute) add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
-		delete $1;
 	      }
            | VARIABLE '*' NUMBER
               {
 		if(execute) add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
-		delete $1;
 	      }
             | NUMBER '*' VARIABLE
               {
 		if(execute) add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
-		delete $3;
 	      }
             | '-' VARIABLE ',' element_seq
               {
 		if(execute) add_element_temp((*$2), 1, false, ElementType::_LINE);
-		delete $2;
 	      }
             | '-' VARIABLE
               {
 		if(execute) add_element_temp((*$2), 1, false, ElementType::_LINE);
-		delete $2;
 	      }
 ;
 
@@ -678,7 +620,6 @@ aexpr :  NUMBER               { $$ = $1;                         }
 	  yyerror(errorstring.c_str());
 	}
 	$$ = sp->value;
-	delete $1;
       }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
@@ -713,8 +654,6 @@ aexpr :  NUMBER               { $$ = $1;                         }
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
 	    $$ = property_lookup(element_list,*($1),*($3));
-	    delete $1;
-	    delete $3;
 	  }// element attributes
 ; 
 
@@ -730,7 +669,6 @@ symdecl : VARIABLE '='
 	      }
 	      $$ = sp;
 	    }
-	  delete $1;
 	}
 ;
 
@@ -991,14 +929,12 @@ numbers : aexpr ',' numbers
 letters : STR ',' letters
           {
             if(execute)
-              _tmpstring.push_front($1);
-	    free($1);
+              _tmpstring.push_front(*$1);
           }
 	| STR
          {
            if(execute)
-             _tmpstring.push_front($1);
-	   free($1);
+             _tmpstring.push_front(*$1);
          }
 ;
 
@@ -1019,7 +955,6 @@ command : STOP             { if(execute) quit(); }
 		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
 	      }
 	    }
-	    delete $3;
 	  } 
         | PRINT ',' VECVAR
           {
@@ -1045,7 +980,6 @@ command : STOP             { if(execute) quit(); }
 		element_count = -1;
 		params.flush();
 	      }
-	    delete $3;
           }
         | CSAMPLE ',' csample_options // cylindrical sampler
           {
@@ -1056,7 +990,6 @@ command : STOP             { if(execute) quit(); }
 		element_count = -1;
 		params.flush();
 	      }
-	    delete $3;
           }
         | DUMP ',' sample_options //  options for beam dump
           {
@@ -1067,7 +1000,6 @@ command : STOP             { if(execute) quit(); }
                 element_count = -1;
                 params.flush();
               }
-	    delete $3;
           }
         | TUNNEL ',' tunnel_options // tunnel
           {
@@ -1091,40 +1023,31 @@ use_parameters :  VARIABLE
                   {
 		    if(execute)
 		      {
-			char * cstr = new char [$1->length()+1];
-			std::strcpy (cstr, (*$1).c_str());
-			$$ = cstr;
+			$$ = $1;
 			current_line = (*$1);
 			current_start = "";
 			current_end = "";
 		      }
-		    delete $1;
                   }
 		| PERIOD '=' VARIABLE
                   {
 		    if(execute)
 		      {
-			char * cstr = new char [$3->length()+1];
-			std::strcpy (cstr, (*$3).c_str());
-			$$ = cstr;
+			$$ = $3;
 			current_line = *($3);
 			current_start = "";
 			current_end = "";
 		      }
-		    delete $3;
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
                   {
 		    if(execute)
 		      {
-			char * cstr = new char [$3->length()+1];
-			std::strcpy (cstr, (*$3).c_str());
-			$$ = cstr;
+			$$ = $3;
 			current_line = *($3);
 			current_start = *($7);
 			current_end = *($9);
 		      }
-		    delete $3, $7, $9;
 		  }
 ;
 
@@ -1160,7 +1083,6 @@ csample_options : VARIABLE '=' aexpr
 			  yyerror(errorstring.c_str());
 			}
 		      }
-		    delete $1;
 		  }   
                 | VARIABLE '=' aexpr ',' csample_options
                   {
@@ -1175,7 +1097,6 @@ csample_options : VARIABLE '=' aexpr
 			  yyerror(errorstring.c_str());
 			}
 		      }
-		    delete $1;
 		  }   
                 | sample_options ',' csample_options
                   {
@@ -1193,95 +1114,75 @@ tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                     {
 		      if(execute)
 			tunnel.set_value((*$1),$3);
-		      delete $1;
 		    }
                  | VARIABLE '=' aexpr
                     {
 		      if(execute)
 			tunnel.set_value((*$1),$3);
-		      delete $1;
 		    }
                  | VARIABLE '=' STR ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value((*$1),$3);
-		      delete $1;
-		      free($3);
+			tunnel.set_value(*$1,*$3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			tunnel.set_value((*$1),$3);
-		      delete $1;
-		      free($3);
+			tunnel.set_value(*$1,*$3);
 		    }
 ;
 
 xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
                     {
 		      if(execute)
-			xsecbias.set_value((*$1),$3);
-		      delete $1;
+			xsecbias.set_value(*$1,$3);
 		    }
                  | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			xsecbias.set_value((*$1),$3);
-		      delete $1;
+			xsecbias.set_value(*$1,$3);
 		    }
                  | VARIABLE '=' STR ',' xsecbias_options
                     {
 		      if(execute)
-			xsecbias.set_value((*$1),$3);
-		      delete $1;
-		      free($3);
+			xsecbias.set_value(*$1,*$3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			xsecbias.set_value((*$1),$3);
-		      delete $1;
-		      free($3);
+			xsecbias.set_value(*$1,*$3);
 		    }
                  | VARIABLE '=' vecexpr ',' xsecbias_options
 		    {
 		      if(execute)
-			xsecbias.set_value((*$1),$3);
-		      delete $1;
+			xsecbias.set_value(*$1,$3);
 		    }
                  | VARIABLE '=' vecexpr
 		    {
 		      if(execute)
-			xsecbias.set_value((*$1),$3);
-		      delete $1;
+			xsecbias.set_value(*$1,$3);
 		    }
 ;
 
 option_parameters : VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
-			options.set_value((*$1),$3);
-		      delete $1;
+			options.set_value(*$1,$3);
 		    }   
                   | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			options.set_value((*$1),$3);
-		      delete $1;
+			options.set_value(*$1,$3);
 		    } 
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			options.set_value((*$1),$3);
-		      delete $1;
-		      free($3);
+			options.set_value(*$1,*$3);
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			options.set_value((*$1),$3);
-		      delete $1;
-		      free($3);
+			options.set_value(*$1,*$3);
 		    }
 ;
 

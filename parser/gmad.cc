@@ -16,6 +16,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <vector>
 
 using namespace GMAD;
 
@@ -29,6 +30,7 @@ namespace GMAD {
   extern FastList<Element> element_list;
   extern std::list<struct Element> tmp_list;
   extern std::map<std::string, struct symtab*> symtab_map;
+  extern std::vector<std::string*> var_list;
 }
 
 extern int yyparse();
@@ -121,6 +123,8 @@ int GMAD::gmad_parser(FILE *f)
     delete (*it).second;
   }
   symtab_map.clear();
+  for(auto it : var_list)
+    {delete it;}
 
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> finished" << std::endl;
