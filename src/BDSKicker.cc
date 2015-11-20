@@ -31,7 +31,7 @@ BDSKicker::BDSKicker(G4String            name,
   kickAngle(kickAngle)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << (*BDSMagnetType::dictionary)[type] << ", angle: " << kickAngle << G4endl;
+  G4cout << __METHOD_NAME__ << type << ", angle: " << kickAngle << G4endl;
 #endif
 }
 
