@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include <cmath>
+
 #include "array.h"
 #include "sym_table.h"
 
@@ -101,18 +103,18 @@ void Parser::Initialise()
 {
   const int reserved = 1;
   // embedded arithmetical functions
-  add_func("sqrt",sqrt);
-  add_func("cos",cos);
-  add_func("sin",sin);
-  add_func("exp",exp);
-  add_func("log",log); 
-  add_func("tan",tan);
-  add_func("asin",asin); 
-  add_func("acos",acos);
-  add_func("atan",atan);
-  add_func("abs",fabs);
+  add_func("sqrt",std::sqrt);
+  add_func("cos",std::cos);
+  add_func("sin",std::sin);
+  add_func("exp",std::exp);
+  add_func("log",std::log);
+  add_func("tan",std::tan);
+  add_func("asin",std::asin);
+  add_func("acos",std::acos);
+  add_func("atan",std::atan);
+  add_func("abs",std::abs);
  
-  add_var("pi",4.0*atan(1),reserved);
+  add_var("pi",4.0*std::atan(1),reserved);
 
   add_var("TeV",1e+3,reserved);
   add_var("GeV",1.0 ,reserved);

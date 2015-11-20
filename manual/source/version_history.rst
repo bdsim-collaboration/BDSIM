@@ -1,3 +1,41 @@
+V0.91 - 2015 / 11 / ??
+======================
+
+New Features
+------------
+
+* Parser warns for redefined variable, and exits for usage of undeclared variables (issue #98)
+
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+  
+Physics
+^^^^^^^
+
+Parser
+^^^^^^
+
+* Parser reorganised to c++ class structure (issue #77)
+* Command line options more flexible (issue #105)
+  
+Tracking
+^^^^^^^^
+  
+General
+^^^^^^^
+
+* Add CMake protection against Geant4 built with multithreading on (issue #103)
+
+Utilities
+---------
+* pymadx v?
+* pybdsim v?
+* pymad8 v?
+* robdsim v?
+
 V0.9 - 2015 / 11 / 10
 =====================
 
