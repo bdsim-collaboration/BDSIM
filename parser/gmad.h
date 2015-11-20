@@ -1,25 +1,12 @@
 /*
  * GMAD interface 
  * I. Agapov 2005-2006
- * bdsim v.0.3
  *
- * modification history:
  */
-
 #ifndef _GMAD_H
 #define _GMAD_H
 
-#include <cstdio>
-#include <string>
-
 namespace GMAD {
-  enum class ElementType;
-
-  // parse the input file and construct beamline_list and options 
-  int gmad_parser(FILE *f);
-
-  int gmad_parser(std::string name);
-
   /** Python interface **/ 
   extern "C" {   
     int    GmadParser_c(char *name);

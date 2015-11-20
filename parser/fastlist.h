@@ -23,9 +23,9 @@ namespace GMAD {
 
   public:
     /// for ease of reading
-    // chosen not to distinguish between non-const and const cases
     //    template<typename T>
     using FastListIterator    = typename std::list<T>::iterator;
+    using FastListConstIterator    = typename std::list<T>::const_iterator;
     using FastMapIterator     = typename std::multimap<std::string, FastListIterator>::iterator;
     using FastMapIteratorPair = std::pair<FastMapIterator,FastMapIterator>;
     ///@{
@@ -47,12 +47,17 @@ namespace GMAD {
     ///@{ erase elements
     void erase();
     FastListIterator erase (FastListIterator position);
-    FastListIterator erase (FastListIterator first, FastListIterator last);
+    FastListIterator erase (FastListIterator first, FastListConstIterator last);
     ///@}
-    /// begin/end iterator:
+    ///@{ non-const begin/end iterator:
     FastListIterator begin();
     FastListIterator end();
-
+    ///@}
+    ///@{ const begin/end iterator:
+    FastListConstIterator begin()const;
+    FastListConstIterator end()const;
+    ///@}
+    
     /// lookup method, returns iterator of list pointing to element with name
     /// second argument is instance number, default first instance
     FastListIterator find(std::string name,unsigned int count=1);
@@ -144,7 +149,7 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastListIterator FastList<T>::erase(FastListIterator first, FastListIterator last) {
+    typename FastList<T>::FastListIterator FastList<T>::erase(FastListIterator first, FastListConstIterator last) {
     FastListIterator it=first;
     while (it!=last) {
       // erase one by one
@@ -160,6 +165,16 @@ namespace GMAD {
 
   template <typename T>
     typename FastList<T>::FastListIterator FastList<T>::end() {
+    return itsList.end();
+  }
+
+  template <typename T>
+    typename FastList<T>::FastListConstIterator FastList<T>::begin()const {
+    return itsList.begin();
+  }
+
+  template <typename T>
+    typename FastList<T>::FastListConstIterator FastList<T>::end()const {
     return itsList.end();
   }
 

@@ -1,6 +1,7 @@
 #include "element.h"
 #include "elementtype.h"
 #include "parameters.h"
+#include "parser.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,15 +11,11 @@
 
 using namespace GMAD;
 
-namespace GMAD {
-  extern std::string current_line;
-}
-
 namespace {
   // helper method
   void print(std::list<struct Element> l, int ident=0)
   {
-    if(ident == 0) std::cout << "using line " << current_line << std::endl;
+    if(ident == 0) std::cout << "using line " << Parser::Instance()->current_line << std::endl;
   
     for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
       {
