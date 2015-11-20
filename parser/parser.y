@@ -41,7 +41,7 @@
   int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
   std::string* str;
-  struct Array *array;
+  GMAD::Array *array;
 }
 
 /* more debug output can be added with %debug" */
@@ -600,7 +600,7 @@ expr : aexpr
 aexpr  :  NUMBER               { $$ = $1;                         }
        |  VARIABLE
        {
-	 struct symtab *sp = Parser::Instance()->symlook(*($1));
+	 symtab *sp = Parser::Instance()->symlook(*($1));
 	 if (!sp) {
 	   std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
 	   yyerror(errorstring.c_str());
@@ -647,7 +647,7 @@ symdecl : VARIABLE '='
         {
 	  if(execute)
 	    {
-	      struct symtab *sp = Parser::Instance()->symlook(*($1));
+	      symtab *sp = Parser::Instance()->symlook(*($1));
 	      if (!sp) {
 		sp = Parser::Instance()->symcreate(*($1));
 	      } else {
@@ -703,7 +703,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      std::list<double>::iterator it;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
@@ -715,7 +715,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      $$->data = $1->data;
 	      // erase data in vect
 	      $1->data.clear();
@@ -725,7 +725,7 @@ vecexpr :   VECVAR
 	{
 	  if(execute)
 	  {
-	    $$ = new struct Array;
+	    $$ = new Array;
 	    $$->symbols = $1->symbols;
 	    $1->symbols.clear();
 	  }
@@ -735,7 +735,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -751,7 +751,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -767,7 +767,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $1->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -783,7 +783,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $1->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -798,7 +798,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $1->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -813,7 +813,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -828,7 +828,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -843,7 +843,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -916,7 +916,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | PRINT ',' VARIABLE
           {
 	    if(execute) {
-	      struct symtab *sp = Parser::Instance()->symlook(*($3));
+	      symtab *sp = Parser::Instance()->symlook(*($3));
 	      if (!sp) {
 		std::cout << "Variable " << *($3) << "not defined!" << std::endl;
 	      }

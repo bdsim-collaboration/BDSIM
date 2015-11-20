@@ -124,8 +124,8 @@ namespace GMAD {
     double property_lookup(std::string property_name)const;
 
     ///@{ set method from Parameters structure
-    void set(const struct Parameters& params);
-    void set(const struct Parameters& params,std::string nameIn, ElementType typeIn);
+    void set(const Parameters& params);
+    void set(const Parameters& params,std::string nameIn, ElementType typeIn);
     ///@}
   
     /// constructor
