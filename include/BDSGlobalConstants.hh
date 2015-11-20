@@ -36,7 +36,7 @@ class BDSGlobalConstants
 {
 
 protected:
-  BDSGlobalConstants(GMAD::Options&);
+  BDSGlobalConstants(const GMAD::Options&);
 
 private:
   static BDSGlobalConstants* _instance;

@@ -18,7 +18,7 @@ BDSBunchHalo::~BDSBunchHalo()
   delete FlatGen; 
 }
 
-void  BDSBunchHalo::SetOptions(GMAD::Options &opt)
+void  BDSBunchHalo::SetOptions(const GMAD::Options& opt)
 {
   BDSBunchInterface::SetOptions(opt);
   SetBetaX(opt.betx);

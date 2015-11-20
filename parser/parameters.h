@@ -75,7 +75,7 @@ namespace GMAD {
 
     /// copy parameters into temporary buffer params from element e
     /// parameters already set in params have priority and are not overridden
-    void inherit_properties(struct Element& e);
+    void inherit_properties(Element& e);
 
     /// print multipole expansion array
     void print()const;

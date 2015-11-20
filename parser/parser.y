@@ -8,6 +8,8 @@
 #include "parser.h"
 #include "sym_table.h"
 #include "elementtype.h"
+#include <cstring>
+#include <iostream>
 #include <string>
   
   using namespace GMAD;
@@ -15,12 +17,10 @@
   extern char* yytext;
 
   namespace GMAD {
-    // function that looks up a parser symbol
-    extern struct symtab * symlook(std::string s);
+    // pointer to global parser object
     extern int line_num;
     extern std::string yyfilename;
   
-    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
     const int ECHO_GRAMMAR = 0; ///< print grammar rule expansion (for debugging)
     const int INTERACTIVE = 0; ///< print output of commands (like in interactive mode)
     /* for more debug with parser:
@@ -41,7 +41,7 @@
   int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::symtab *symp;
   std::string* str;
-  struct Array *array;
+  GMAD::Array *array;
 }
 
 /* more debug output can be added with %debug" */
@@ -122,40 +122,40 @@ decl : VARIABLE ':' marker
        {
 	 if(execute)  {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_MARKER);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_MARKER);
+	   Parser::Instance()->ClearParams();
 	 }
        }
      | VARIABLE ':' drift
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_DRIFT);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_DRIFT);
+	   Parser::Instance()->ClearParams();
 	 }
        }
      | VARIABLE ':' rf
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_RF);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_RF);
+	   Parser::Instance()->ClearParams();
 	 }
        } 
      | VARIABLE ':' sbend
        {  
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_SBEND);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_SBEND);
+	   Parser::Instance()->ClearParams();
 	 }
        }
      | VARIABLE ':' rbend
        {
          if(execute) {
            // check parameters and write into element table
-           write_table(params,$1,ElementType::_RBEND);
-           params.flush();
+           Parser::Instance()->write_table($1,ElementType::_RBEND);
+           Parser::Instance()->ClearParams();
          }
        }
 
@@ -163,16 +163,16 @@ decl : VARIABLE ':' marker
        {  
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_VKICK);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_VKICK);
+	   Parser::Instance()->ClearParams();
 	 }
        }
     | VARIABLE ':' hkick
        {  
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_HKICK);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_HKICK);
+	   Parser::Instance()->ClearParams();
 	 }
        }
      | VARIABLE ':' quad
@@ -180,8 +180,8 @@ decl : VARIABLE ':' marker
 	 if(execute)       
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_QUAD);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_QUAD);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' sextupole
@@ -189,8 +189,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_SEXTUPOLE);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_SEXTUPOLE);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' octupole
@@ -198,8 +198,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_OCTUPOLE);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_OCTUPOLE);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' decapole
@@ -207,8 +207,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_DECAPOLE);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_DECAPOLE);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' multipole
@@ -216,8 +216,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_MULT);
-	     params.flush();	 
+	     Parser::Instance()->write_table($1,ElementType::_MULT);
+	     Parser::Instance()->ClearParams();	 
 	   }
        }
      | VARIABLE ':' solenoid
@@ -225,8 +225,8 @@ decl : VARIABLE ':' marker
 	 if(execute)       
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_SOLENOID);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_SOLENOID);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' rcol
@@ -234,8 +234,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_RCOL);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_RCOL);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' ecol
@@ -243,8 +243,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_ECOL);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_ECOL);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' muspoiler
@@ -252,8 +252,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_MUSPOILER);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_MUSPOILER);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' degrader
@@ -261,8 +261,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_DEGRADER);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_DEGRADER);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' element
@@ -270,8 +270,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_ELEMENT);
-	     params.flush();	 
+	     Parser::Instance()->write_table($1,ElementType::_ELEMENT);
+	     Parser::Instance()->ClearParams();	 
 	   }
        }
      | VARIABLE ':' laser
@@ -279,24 +279,24 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_LASER);
-	     params.flush();	 
+	     Parser::Instance()->write_table($1,ElementType::_LASER);
+	     Parser::Instance()->ClearParams();	 
 	   }
        }
      | VARIABLE ':' screen
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_SCREEN);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_SCREEN);
+	   Parser::Instance()->ClearParams();
 	 }
        }
      | VARIABLE ':' awakescreen
        {
 	 if(execute) {
 	   // check parameters and write into element table
-	   write_table(params,$1,ElementType::_AWAKESCREEN);
-	   params.flush();
+	   Parser::Instance()->write_table($1,ElementType::_AWAKESCREEN);
+	   Parser::Instance()->ClearParams();
 	 }
        }
      | VARIABLE ':' transform3d
@@ -304,8 +304,8 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {	 
 	     // check parameters and write into element table
-	     write_table(params,$1,ElementType::_TRANSFORM3D);
-	     params.flush();	 
+	     Parser::Instance()->write_table($1,ElementType::_TRANSFORM3D);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' line 
@@ -313,11 +313,9 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     // copy tmp_list to params
-	     write_table(params,$1,ElementType::_LINE,new std::list<struct Element>(tmp_list));
-	     // clean list
-	     tmp_list.clear();
+	     Parser::Instance()->write_table($1,ElementType::_LINE,true);
 	   }
-       }     
+       }
      | VARIABLE ':' newinstance
        {
          if(execute)
@@ -326,9 +324,9 @@ decl : VARIABLE ':' marker
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE : VARIABLE, " << *($1) << " : " << type << std::endl;
 	     if(type != ElementType::_NONE)
 	       {
-		 write_table(params,$1,type);
+		 Parser::Instance()->write_table($1,type);
 	       }
-	     params.flush();
+	     Parser::Instance()->ClearParams();
 	   }
        }
        | VARIABLE ':' parameters
@@ -336,35 +334,23 @@ decl : VARIABLE ':' marker
 	 if(execute)
 	   {
 	     if(ECHO_GRAMMAR) std::cout << "edit : VARIABLE parameters   -- " << *($1) << std::endl;
-	     std::list<struct Element>::iterator it = element_list.find(*($1));
-	     std::list<struct Element>::iterator iterEnd = element_list.end();
-	     if(it == iterEnd)
-	       {
-		 std::cout << "element " << *($1) << " has not been defined" << std::endl;
-		 if (PEDANTIC) exit(1);
-	       }
-	     else
-	       {
-		 // add and overwrite properties if set
-		 (*it).set(params);
-	       }
-	     params.flush();
+	     Parser::Instance()->OverwriteElement(*$1);
 	   }
        }
      | VARIABLE ':' matdef
        {
 	 if(execute)
 	   {
-	     write_table(params,$1,ElementType::_MATERIAL);
-	     params.flush();
+	     Parser::Instance()->write_table($1,ElementType::_MATERIAL);
+	     Parser::Instance()->ClearParams();
 	   }
        }
      | VARIABLE ':' atom
        {
          if(execute)
            {
-             write_table(params,$1,ElementType::_ATOM);
-             params.flush();
+             Parser::Instance()->write_table($1,ElementType::_ATOM);
+             Parser::Instance()->ClearParams();
            }
        }
      | VARIABLE ':' tunnel
@@ -372,8 +358,8 @@ decl : VARIABLE ':' marker
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : tunnel" << std::endl;
-	     tunnel.set_value("name",*($1));
-	     add_tunnel(tunnel);
+	     Parser::Instance()->SetTunnelValue("name",*($1));
+	     Parser::Instance()->add_tunnel();
            }
        }
      | VARIABLE ':' xsecbias
@@ -381,8 +367,8 @@ decl : VARIABLE ':' marker
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
-	     xsecbias.set_value("name",*($1));
-	     add_xsecbias(xsecbias);
+	     Parser::Instance()->SetPhysicsBiasValue("name",*($1));
+	     Parser::Instance()->add_xsecbias();
            }
        }
       | VARIABLE ':' error_noparams
@@ -449,13 +435,13 @@ error_noparams : DRIFT;
 newinstance : VARIABLE ',' parameters
             {
 	      if(execute) {
-		$$ = copy_element_to_params(*($1),params);
+		$$ = Parser::Instance()->copy_element_to_params(*$1);
 	      }
 	    }
             | VARIABLE
 	    {
 	      if(execute) {
-		$$ = copy_element_to_params(*($1),params);
+		$$ = Parser::Instance()->copy_element_to_params(*$1);
 	      }
 	    }
 ;
@@ -463,33 +449,33 @@ newinstance : VARIABLE ',' parameters
 parameters: VARIABLE '=' aexpr ',' parameters
             {
 	      if(execute)
-		params.set_value(*($1),$3);
+		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
           | VARIABLE '=' aexpr
             {
 	      if(execute)
-		params.set_value(*($1),$3);
+		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
           | VARIABLE '=' vecexpr ',' parameters
             {
 	      if(execute) 
-		params.set_value(*($1),$3);
+		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
           | VARIABLE '=' vecexpr
             {
 	      if(execute) 
-		params.set_value(*($1),$3);
+		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
           | VARIABLE '=' STR ',' parameters
             {
 	      if(execute) {
-		params.set_value(*($1),*$3);
+		Parser::Instance()->SetParameterValue(*($1),*$3);
 	      }
 	    }
           | VARIABLE '=' STR
             {
 	      if(execute) {
-		params.set_value(*($1),*$3);
+		Parser::Instance()->SetParameterValue(*($1),*$3);
 	      }
 	    }
 
@@ -502,70 +488,70 @@ line : LINE '=' '-' '(' rev_element_seq ')'
 element_seq : 
             | VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp(*($1), 1, true, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), 1, true, ElementType::_LINE);
 	      }
             | VARIABLE '*' NUMBER ',' element_seq
               {
-		if(execute) add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
 	      }
             | NUMBER '*' VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
 	      }
             | VARIABLE
               {
-		if(execute) add_element_temp(*($1), 1, true, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), 1, true, ElementType::_LINE);
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute) add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute) add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
 	      }
             | '-' VARIABLE
               {
-		if(execute) add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
 	      }
 ;
 
 rev_element_seq : 
             | VARIABLE ',' rev_element_seq 
               {
-		if(execute) add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
 	      }
             | VARIABLE '*' NUMBER ',' rev_element_seq
               {
-		if(execute) add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
 	      }
             | NUMBER '*' VARIABLE ',' rev_element_seq
               {
-		if(execute) add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
 	      }
             | VARIABLE
               {
-		if(execute) add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
 	      }
            | VARIABLE '*' NUMBER
               {
-		if(execute) add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
 	      }
             | NUMBER '*' VARIABLE
               {
-		if(execute) add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
+		if(execute) Parser::Instance()->add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
 	      }
             | '-' VARIABLE ',' element_seq
               {
-		if(execute) add_element_temp((*$2), 1, false, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
 	      }
             | '-' VARIABLE
               {
-		if(execute) add_element_temp((*$2), 1, false, ElementType::_LINE);
+		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
 	      }
 ;
 
@@ -611,16 +597,16 @@ expr : aexpr
        }
 ;
 
-aexpr :  NUMBER               { $$ = $1;                         }
-      | VARIABLE
-      {
-	struct symtab *sp = symlook(*($1));
-	if (!sp) {
-	  std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
-	  yyerror(errorstring.c_str());
-	}
-	$$ = sp->value;
-      }
+aexpr  :  NUMBER               { $$ = $1;                         }
+       |  VARIABLE
+       {
+	 symtab *sp = Parser::Instance()->symlook(*($1));
+	 if (!sp) {
+	   std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
+	   yyerror(errorstring.c_str());
+	 }
+	 $$ = sp->value;
+       }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
@@ -629,7 +615,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
        | aexpr '^' aexpr      { $$ = pow($1,$3);                 }
        | '-' aexpr  %prec UMINUS { $$ = -$2; }
        | '+' aexpr  %prec UPLUS { $$ = $2; }
-       | '(' aexpr ')'         { $$ = $2;                         }
+       | '(' aexpr ')'         { $$ = $2;                        }
        | '<' vecexpr ',' vecexpr '>' // scalar product
          {
 	   if($2->data.size() == $4->data.size())
@@ -653,7 +639,7 @@ aexpr :  NUMBER               { $$ = $1;                         }
         | VARIABLE '[' VARIABLE ']' 
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
-	    $$ = property_lookup(element_list,*($1),*($3));
+	    $$ = Parser::Instance()->property_lookup(Parser::Instance()->GetElements(),*($1),*($3));
 	  }// element attributes
 ; 
 
@@ -661,9 +647,9 @@ symdecl : VARIABLE '='
         {
 	  if(execute)
 	    {
-	      struct symtab *sp = symlook(*($1));
+	      symtab *sp = Parser::Instance()->symlook(*($1));
 	      if (!sp) {
-		sp = symcreate(*($1));
+		sp = Parser::Instance()->symcreate(*($1));
 	      } else {
 		std::cout << "WARNING redefinition of variable " << sp->name << " with old value: " << sp->value << std::endl;
 	      }
@@ -717,7 +703,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      std::list<double>::iterator it;
 	      for(it=$1->array.begin();it!=$1->array.end();it++)
 		{
@@ -729,7 +715,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      $$->data = $1->data;
 	      // erase data in vect
 	      $1->data.clear();
@@ -739,7 +725,7 @@ vecexpr :   VECVAR
 	{
 	  if(execute)
 	  {
-	    $$ = new struct Array;
+	    $$ = new Array;
 	    $$->symbols = $1->symbols;
 	    $1->symbols.clear();
 	  }
@@ -749,7 +735,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -765,7 +751,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -781,7 +767,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $1->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -797,7 +783,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $1->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -812,7 +798,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $1->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -827,7 +813,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -842,7 +828,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -857,7 +843,7 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new struct Array;
+	      $$ = new Array;
 	      unsigned int size = $3->data.size();
 	      $$->data.resize(size);
 	      for(unsigned int i=0;i<size;i++)
@@ -878,21 +864,9 @@ vectnum : vectnumexec
 	  {
 	    if(execute)
 	      {
-	        //printf("matched vector of size %d\n",_tmparray.size());
-	        $$ = new struct Array;
-	        std::list<double>::iterator it;
-	        for(it=_tmparray.begin();it!=_tmparray.end();it++)
-		  {
-		    $$->data.push_back(*it);
-		  }
-    	        _tmparray.clear();
-
-	        std::list<std::string>::iterator lIter;
-	        for(lIter = _tmpstring.begin(); lIter != _tmpstring.end(); lIter++)
-		  {
-		    $$->symbols.push_back(*lIter);
-		  }
-	        _tmpstring.clear();
+	        $$ = new Array;
+	        Parser::Instance()->FillArray($$);
+	        Parser::Instance()->FillString($$);		
 	      }
 	  }
 ;
@@ -905,49 +879,44 @@ vectstr : vectstrexec
 	{
 	  if(execute)
 	  {
-	    $$ = new struct Array;
-	    std::list<std::string>::iterator iter;
-	    for(iter = _tmpstring.begin(); iter != _tmpstring.end(); iter++)
-	      $$->symbols.push_back(*iter);
-
-	    _tmpstring.clear();
+	    $$ = new Array;
+	    Parser::Instance()->FillString($$);
 	  }
 	}
 
 numbers : aexpr ',' numbers 
           {
 	    if(execute)
-	      _tmparray.push_front($1);
+	      Parser::Instance()->Store($1);
           } 
        | aexpr
          {
 	   if(execute)
-	     _tmparray.push_front($1);
+	     Parser::Instance()->Store($1);
         }
 ;
 
 letters : STR ',' letters
           {
             if(execute)
-              _tmpstring.push_front(*$1);
+              Parser::Instance()->Store(*$1);
           }
 	| STR
          {
            if(execute)
-             _tmpstring.push_front(*$1);
+             Parser::Instance()->Store(*$1);
          }
 ;
 
-command : STOP             { if(execute) quit(); }
+command : STOP             { if(execute) Parser::Instance()->quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) element_list.print(); }
-        | PRINT ',' LINE   { if(execute) beamline_list.print(); }
-        | PRINT ',' OPTION { if(execute) options.print(); }
-//        | PRINT ',' OPTION ',' VARIABLE { if(execute) options.print($5->name);}
+        | PRINT            { if(execute) Parser::Instance()->GetElements().print(); }
+        | PRINT ',' LINE   { if(execute) Parser::Instance()->GetBeamline().print(); }
+        | PRINT ',' OPTION { if(execute) Parser::Instance()->GetOptions().print(); }
         | PRINT ',' VARIABLE
           {
 	    if(execute) {
-	      struct symtab *sp = symlook(*($3));
+	      symtab *sp = Parser::Instance()->symlook(*($3));
 	      if (!sp) {
 		std::cout << "Variable " << *($3) << "not defined!" << std::endl;
 	      }
@@ -969,16 +938,16 @@ command : STOP             { if(execute) quit(); }
 		printf("} \n");
 	      } 
 	  }
-        | USE ',' use_parameters { if(execute) expand_line(current_line,current_start, current_end);}
+        | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		add_sampler(*($3), element_count);
+		Parser::Instance()->add_sampler(*($3), element_count);
 		element_count = -1;
-		params.flush();
+		Parser::Instance()->ClearParams();
 	      }
           }
         | CSAMPLE ',' csample_options // cylindrical sampler
@@ -986,9 +955,9 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-		add_csampler(*($3), element_count,params.l, params.r);
+		Parser::Instance()->add_csampler(*($3), element_count);
 		element_count = -1;
-		params.flush();
+		Parser::Instance()->ClearParams();
 	      }
           }
         | DUMP ',' sample_options //  options for beam dump
@@ -996,9 +965,9 @@ command : STOP             { if(execute) quit(); }
             if(execute)
               {
                 if(ECHO_GRAMMAR) printf("command -> DUMP\n");
-                add_dump(*($3), element_count);
+                Parser::Instance()->add_dump(*($3), element_count);
                 element_count = -1;
-                params.flush();
+                Parser::Instance()->ClearParams();
               }
           }
         | TUNNEL ',' tunnel_options // tunnel
@@ -1006,7 +975,7 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
-		add_tunnel(tunnel);
+		Parser::Instance()->add_tunnel();
 	      }
           }
         | XSECBIAS ',' xsecbias_options // xsecbias
@@ -1014,7 +983,7 @@ command : STOP             { if(execute) quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
-		add_xsecbias(xsecbias);
+		Parser::Instance()->add_xsecbias();
 	      }
           }
 ;
@@ -1024,9 +993,9 @@ use_parameters :  VARIABLE
 		    if(execute)
 		      {
 			$$ = $1;
-			current_line = (*$1);
-			current_start = "";
-			current_end = "";
+			Parser::Instance()->current_line = (*$1);
+			Parser::Instance()->current_start = "";
+			Parser::Instance()->current_end = "";
 		      }
                   }
 		| PERIOD '=' VARIABLE
@@ -1034,9 +1003,9 @@ use_parameters :  VARIABLE
 		    if(execute)
 		      {
 			$$ = $3;
-			current_line = *($3);
-			current_start = "";
-			current_end = "";
+			Parser::Instance()->current_line = *($3);
+			Parser::Instance()->current_start = "";
+			Parser::Instance()->current_end = "";
 		      }
                   }
                 | PERIOD '=' VARIABLE ',' RANGE '=' VARIABLE '/' VARIABLE
@@ -1044,9 +1013,9 @@ use_parameters :  VARIABLE
 		    if(execute)
 		      {
 			$$ = $3;
-			current_line = *($3);
-			current_start = *($7);
-			current_end = *($9);
+			Parser::Instance()->current_line = *($3);
+			Parser::Instance()->current_start = *($7);
+			Parser::Instance()->current_end = *($9);
 		      }
 		  }
 ;
@@ -1073,31 +1042,15 @@ sample_options: RANGE '=' VARIABLE
 csample_options : VARIABLE '=' aexpr
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
-		    
 		    if(execute)
-		      {
-			if( (*$1) == "r") params.r = $3;
-			else if ((*$1) == "l") params.l = $3;
-			else {
-			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + (*$1) + "\"\n";
-			  yyerror(errorstring.c_str());
-			}
-		      }
-		  }   
+		      Parser::Instance()->SetParameterValue(*($1),$3);
+		  }
                 | VARIABLE '=' aexpr ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
-		    
 		    if(execute)
-		      {
-			if( (*$1) == "r") params.r = $3;
-			else if ((*$1) == "l") params.l = $3;
-			else {
-			  std::string errorstring = "Warning : CSAMPLER: unknown parameter : \"" + (*$1) + "\"\n";
-			  yyerror(errorstring.c_str());
-			}
-		      }
-		  }   
+		      Parser::Instance()->SetParameterValue(*($1),$3);
+		  }
                 | sample_options ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt, csopt\n");
@@ -1113,76 +1066,76 @@ csample_options : VARIABLE '=' aexpr
 tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value((*$1),$3);
+			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
                  | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			tunnel.set_value((*$1),$3);
+			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
                  | VARIABLE '=' STR ',' tunnel_options
                     {
 		      if(execute)
-			tunnel.set_value(*$1,*$3);
+			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			tunnel.set_value(*$1,*$3);
+			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
 ;
 
 xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
                     {
 		      if(execute)
-			xsecbias.set_value(*$1,$3);
+			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
                  | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			xsecbias.set_value(*$1,$3);
+			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
                  | VARIABLE '=' STR ',' xsecbias_options
                     {
 		      if(execute)
-			xsecbias.set_value(*$1,*$3);
+			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
 		    }
                  | VARIABLE '=' STR
                     {
 		      if(execute)
-			xsecbias.set_value(*$1,*$3);
+			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
 		    }
                  | VARIABLE '=' vecexpr ',' xsecbias_options
 		    {
 		      if(execute)
-			xsecbias.set_value(*$1,$3);
+			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
                  | VARIABLE '=' vecexpr
 		    {
 		      if(execute)
-			xsecbias.set_value(*$1,$3);
+			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
 ;
 
 option_parameters : VARIABLE '=' aexpr ',' option_parameters
                     {
 		      if(execute)
-			options.set_value(*$1,$3);
+			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    }   
                   | VARIABLE '=' aexpr
                     {
 		      if(execute)
-			options.set_value(*$1,$3);
+			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    } 
                   | VARIABLE '=' STR ',' option_parameters
                     {
 		      if(execute)
-			options.set_value(*$1,*$3);
+			Parser::Instance()->SetOptionsValue(*$1,*$3);
 		    }   
                   | VARIABLE '=' STR
                     {
 		      if(execute)
-			options.set_value(*$1,*$3);
+			Parser::Instance()->SetOptionsValue(*$1,*$3);
 		    }
 ;
 
