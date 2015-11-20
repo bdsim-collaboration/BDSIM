@@ -55,7 +55,7 @@ protected :
 public : 
   BDSBunchInterface();
   virtual ~BDSBunchInterface();
-  virtual void SetOptions(GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt);
 
   /// Each derived class can override this default method of reference
   /// position. If S0 > 0 or derived class changes member bool 'curvilinear'
