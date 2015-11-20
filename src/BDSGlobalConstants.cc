@@ -3,6 +3,7 @@
 #include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
+#include "parser/parser.h"
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
@@ -16,20 +17,16 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-namespace GMAD {
-  extern Options options;
-}
-
 BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(_instance==nullptr)
-    {_instance = new BDSGlobalConstants(GMAD::options);}
+    {_instance = new BDSGlobalConstants(GMAD::Parser::Instance()->GetOptions());}
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),

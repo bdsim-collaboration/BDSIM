@@ -7,18 +7,12 @@
 #include "G4Proton.hh"
 
 // GMAD parser
-#include "parser/gmad.h"  
 #include "parser/options.h"
+#include "parser/parser.h"
 
 #include "BDSBunch.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
-
-namespace GMAD {
-  extern Options options;
-}
-
-using GMAD::options;
 
 int main(int argc,char** argv) {
   BDSBunch bdsBunch;
@@ -30,8 +24,9 @@ int main(int argc,char** argv) {
 
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  GMAD::gmad_parser(execOptions->GetInputFilename());
-
+  GMAD::Parser* parser = GMAD::Parser::Instance(execOptions->GetInputFilename());
+  const GMAD::Options& options = parser->GetOptions();
+  
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   // Print options for distrib type 
