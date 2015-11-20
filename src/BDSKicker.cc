@@ -20,21 +20,15 @@
 BDSKicker::BDSKicker(G4String            name,
 		     G4double            length,
 		     G4double            bFieldIn,
-		     G4double            /*bGradIn*/,
 		     G4double            kickAngle,
-		     G4bool              verticalKickerIn,
+		     BDSMagnetType       type,
 		     BDSBeamPipeInfo*    beamPipeInfo,
 		     BDSMagnetOuterInfo* magnetOuterInfo):
-  BDSMagnet(BDSMagnetType::hkicker, name, length,
+  BDSMagnet(type, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   bField(bFieldIn),
-  /*bGrad(bGradIn),*/
-  kickAngle(kickAngle),
-  verticalKicker(verticalKickerIn)
-{
-  if (verticalKicker)
-    {magnetType = BDSMagnetType::vkicker;}
-}
+  kickAngle(kickAngle)
+{;}
 
 void BDSKicker::Build()
 {
@@ -99,7 +93,7 @@ void BDSKicker::BuildBPFieldAndStepper()
       // set up the magnetic field and stepper
       // set magnetic field direction dependingon whether it's a vertical kicker or not
       G4ThreeVector vectorBField;
-      if (verticalKicker)
+      if (type == BDSMagnetType::vkicker)
 	{vectorBField = G4ThreeVector(-bField, 0, 0);}
       else
 	{vectorBField = G4ThreeVector(0, bField, 0);}
