@@ -115,6 +115,7 @@ namespace GMAD {
     void FillArray(Array*);
     void FillString(Array*);
     ///@}
+    /// Reset parameters
     void ClearParams();
     /// Set parameter value
     template <typename T>
@@ -125,6 +126,7 @@ namespace GMAD {
     /// Set physics biasing value
     template <typename T>
       void SetPhysicsBiasValue(std::string property, T value);
+    /// Set options value
     template <typename T>
       void SetOptionsValue(std::string property, T value);
     /// Overwrite element with current parameters
@@ -153,11 +155,14 @@ namespace GMAD {
     // *****************
     // Private members *
     // *****************
+    /// maximum number of nested lines
     const int MAX_EXPAND_ITERATIONS = 50;
     const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
 
-    std::list<double> tmparray;  // for reading of arrays
+    ///@{ temporary list for reading of arrays in parser
+    std::list<double> tmparray;
     std::list<std::string> tmpstring;
+    ///@}
     
     /// Parameters to copy to Element
     Parameters params;
