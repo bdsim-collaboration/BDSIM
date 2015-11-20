@@ -456,18 +456,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   
   // magnetic field
   G4double bField;
-  if(_element.B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = _element.B * CLHEP::tesla;
-    _element.angle  = -bField * length / _brho;
-  }
-  else{
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in kicks
-    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
-    _element.B = bField/CLHEP::tesla;
-  }
+  if(_element.B != 0)
+    {
+      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+      bField = _element.B * CLHEP::tesla;
+      _element.angle  = -bField * length / _brho;
+    }
+  else
+    {
+      // B = Brho/rho = Brho/(arc length/angle)
+      // charge in e units
+      // multiply once more with ffact to not flip fields in kicks
+      bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
+      _element.B = bField/CLHEP::tesla;
+    }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
