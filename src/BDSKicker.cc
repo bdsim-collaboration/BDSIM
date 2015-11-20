@@ -112,9 +112,6 @@ void BDSKicker::BuildBPFieldAndStepper()
 	itsStepper = stepper; // assigned to base class pointer
       */
       
-      // Use general G4 stepper for uniform field as field is specified along
-      // x for vkicker and not rotated and BDSDipoleStepper only works in the
-      // horizontal plane.
       itsStepper = new G4HelixExplicitEuler(itsEqRhs);
     }
 }
