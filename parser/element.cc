@@ -1,6 +1,7 @@
 #include "element.h"
 #include "elementtype.h"
 #include "parameters.h"
+#include "parser.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,17 +11,13 @@
 
 using namespace GMAD;
 
-namespace GMAD {
-  extern std::string current_line;
-}
-
 namespace {
   // helper method
-  void print(std::list<struct Element> l, int ident=0)
+  void print(std::list<Element> l, int ident=0)
   {
-    if(ident == 0) std::cout << "using line " << current_line << std::endl;
+    if(ident == 0) std::cout << "using line " << Parser::Instance()->current_line << std::endl;
   
-    for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
+    for(std::list<Element>::iterator it=l.begin();it!=l.end();it++)
       {
 	(*it).print(ident);
       }
@@ -197,6 +194,7 @@ double Element::property_lookup(std::string property_name)const{
   if(property_name == "k3") return k3;
   if(property_name == "k4") return k4;
   if(property_name == "angle") return angle;
+  if(property_name == "r") return r;
   if(property_name == "phiAngleIn") return phiAngleIn;
   if(property_name == "phiAngleOut") return phiAngleOut;
   if(property_name == "beampipeThickness") return beampipeThickness;
@@ -239,25 +237,16 @@ double Element::property_lookup(std::string property_name)const{
   //what about property_lookup for attributes of type string, like material?
 }
 
-void Element::set(const struct Parameters& params,std::string nameIn, ElementType typeIn, std::list<struct Element> *lstIn)
+void Element::set(const Parameters& params,std::string nameIn, ElementType typeIn)
 {
-  type = typeIn;
   // common parameters for all elements
+  type = typeIn;
   name = nameIn;
-  switch(type) {
-
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    lst = lstIn;
-    break;
-  default:
-    break;
-  }
   
   set(params);
 }
 
-void Element::set(const struct Parameters& params)
+void Element::set(const Parameters& params)
 {
   // checks on setting of parameters needs to be done to allow for extension of already set Elements
   if(params.lset) l = params.l;

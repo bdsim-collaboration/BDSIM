@@ -38,7 +38,7 @@ BDSBunchInterface::BDSBunchInterface():
 BDSBunchInterface::~BDSBunchInterface()
 {;}
 
-void BDSBunchInterface::SetOptions(GMAD::Options& opt)
+void BDSBunchInterface::SetOptions(const GMAD::Options& opt)
 {
   X0 = opt.X0;
   Y0 = opt.Y0;

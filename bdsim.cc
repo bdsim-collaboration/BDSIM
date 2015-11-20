@@ -45,16 +45,12 @@
 #include "BDSVisManager.hh"
 
 #include "parser/gmad.h"  // GMAD parser
-#include "parser/options.h"
+#include "parser/parser.h"
 
 //=======================================================
 // Global variables 
 BDSOutputBase* bdsOutput=nullptr;     // output interface
 //=======================================================
-
-namespace GMAD {
-  extern Options options;
-}
 
 int main(int argc,char** argv)
 {
@@ -81,7 +77,7 @@ int main(int argc,char** argv)
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  GMAD::gmad_parser(execOptions->GetInputFilename());
+  GMAD::Parser::Instance(execOptions->GetInputFilename());
 
   //
   // parse options, explicitly initialise materials and global constants and construct required materials
@@ -108,7 +104,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(GMAD::options);
+  bdsBunch->SetOptions(GMAD::Parser::Instance()->GetOptions());
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -125,7 +121,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(GMAD::options.modularPhysicsListsOn) {
+  if(GMAD::Parser::Instance()->GetOptions().modularPhysicsListsOn) {
     BDSModularPhysicsList *physList = new BDSModularPhysicsList();
     /* Biasing */
 #if G4VERSION_NUMBER > 999

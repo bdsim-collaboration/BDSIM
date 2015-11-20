@@ -22,9 +22,7 @@
 #include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
-#include "parser/element.h"
-#include "parser/fastlist.h"
-#include "parser/physicsbiasing.h"
+#include "parser/parser.h"
 
 #include "G4Box.hh"
 #include "G4Electron.hh"
@@ -48,11 +46,6 @@
 #include <list>
 #include <map>
 #include <vector>
-
-namespace GMAD {
-  extern FastList<Element> beamline_list;
-  extern FastList<PhysicsBiasing> xsecbias_list;
-}
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
@@ -90,9 +83,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // implement bias operations on all volumes 
   // BuildPhysicsBias();
-
-  // free the parser list - an extern
-  //  GMAD::beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -156,7 +146,7 @@ void BDSDetectorConstruction::BuildBeamline()
     }
   
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(auto element : GMAD::beamline_list)
+  for(auto element : GMAD::Parser::Instance()->GetBeamline())
     {
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << (element).name << G4endl;
@@ -212,7 +202,7 @@ void BDSDetectorConstruction::BuildBeamline()
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::beamline_list.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::Parser::Instance()->GetBeamline().size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
 
@@ -564,9 +554,9 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
   BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
   for(std::string& bs : biasList)
     {
-      auto it = GMAD::xsecbias_list.find(bs);
-      if (it==GMAD::xsecbias_list.end()) continue;
-      GMAD::PhysicsBiasing& pb = *it;
+      auto it = GMAD::Parser::Instance()->GetBiasing().find(bs);
+      if (it==GMAD::Parser::Instance()->GetBiasing().end()) continue;
+      const GMAD::PhysicsBiasing& pb = *it;
       
       if(debug)
 	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
