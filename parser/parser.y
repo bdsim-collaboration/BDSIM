@@ -8,6 +8,7 @@
 #include "parser.h"
 #include "sym_table.h"
 #include "elementtype.h"
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -612,7 +613,7 @@ aexpr  :  NUMBER               { $$ = $1;                         }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
        | aexpr '*' aexpr      { $$ = $1 * $3;                    }
        | aexpr '/' aexpr      { $$ = $1 / $3;                    }
-       | aexpr '^' aexpr      { $$ = pow($1,$3);                 }
+       | aexpr '^' aexpr      { $$ = std::pow($1,$3);            }
        | '-' aexpr  %prec UMINUS { $$ = -$2; }
        | '+' aexpr  %prec UPLUS { $$ = $2; }
        | '(' aexpr ')'         { $$ = $2;                        }
