@@ -22,6 +22,7 @@
 #include <iostream>
 #include "parser.h"
 #include "parser.tab.hh"
+#include "sym_table.h"
 #include "getEnv.h"
 #include <unistd.h>
 
@@ -32,6 +33,7 @@
 
 using namespace GMAD;
 
+extern FILE* yyin;
 extern int yyerror(const char *);
 
 namespace GMAD {
@@ -134,7 +136,7 @@ dump  { return DUMP; }
   // memory needs to be allocated
   yylval.str = new std::string(yytext+1,strlen(yytext)-2);
   // add string to variable vector for deletion afterwards
-  Parser::Instance()->var_list.push_back(yylval.str);
+  Parser::Instance()->AddVariable(yylval.str);
   return STR;
 }
 
@@ -155,7 +157,7 @@ dump  { return DUMP; }
      }
      std::string* name = new std::string(var);
      // add string to variable vector for deletion afterwards
-     Parser::Instance()->var_list.push_back(name); 
+     Parser::Instance()->AddVariable(name); 
      yylval.str = name;
      return VARIABLE;
 }

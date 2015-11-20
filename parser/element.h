@@ -125,7 +125,7 @@ namespace GMAD {
 
     ///@{ set method from Parameters structure
     void set(const struct Parameters& params);
-    void set(const struct Parameters& params,std::string nameIn, ElementType typeIn, std::list<struct Element> *lst);
+    void set(const struct Parameters& params,std::string nameIn, ElementType typeIn);
     ///@}
   
     /// constructor

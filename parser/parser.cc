@@ -1,5 +1,8 @@
 #include "parser.h"
 
+#include "array.h"
+#include "sym_table.h"
+
 using namespace GMAD;
 
 namespace GMAD {
@@ -171,13 +174,18 @@ const std::list<Element>& Parser::GetAtoms()const
   return atom_list;
 }
 
+const FastList<Element>& Parser::GetElements()const
+{
+  return element_list;
+}
+
 void Parser::quit()
 {
   printf("parsing complete...\n");
   exit(0);
 }
 
-int Parser::write_table(std::string* name, ElementType type, std::list<struct Element> *lst)
+void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *name << " : " << type << std::endl;
 #ifdef BDSDEBUG 
@@ -185,17 +193,21 @@ int Parser::write_table(std::string* name, ElementType type, std::list<struct El
 #endif
 
   struct Element e;
-  e.set(params,*name,type,lst);
+  e.set(params,*name,type);
+  if (isLine)
+    {
+      e.lst = new std::list<struct Element>(tmp_list);
+      // clean list
+      tmp_list.clear();
+    }
 
   switch(type) {
 
   case ElementType::_MATERIAL:
     material_list.push_back(e);
-    return 0;
 
   case ElementType::_ATOM:
     atom_list.push_back(e);
-    return 0;
 
   default:
     break;
@@ -203,24 +215,21 @@ int Parser::write_table(std::string* name, ElementType type, std::list<struct El
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
-
-  return 0;
 }
 
-int Parser::expand_line(std::string name, std::string start, std::string end)
+void Parser::expand_line(std::string name, std::string start, std::string end)
 {
   std::list<struct Element>::const_iterator iterEnd = element_list.end();
-  std::list<struct Element>::iterator it;
   
-  struct Element e;
-  it = element_list.find(name);
-
-  if (it==iterEnd) {
-    std::cout << "line '" << name << "' not found" << std::endl;
-    return 1;
+  std::list<struct Element>::const_iterator itName = element_list.find(name);
+  
+  if (itName==iterEnd) {
+    std::cerr << "ERROR: line '" << name << "' not found" << std::endl;
+    exit(1);
   }
-  if((*it).type != ElementType::_LINE && (*it).type != ElementType::_REV_LINE ) {
-    std::cout << "'" << name << "' is not a line" << std::endl;
+  if((*itName).type != ElementType::_LINE && (*itName).type != ElementType::_REV_LINE ) {
+    std::cerr << "'ERROR" << name << "' is not a line" << std::endl;
+    exit(1);
   }
 
   // delete the previous beamline
@@ -229,7 +238,8 @@ int Parser::expand_line(std::string name, std::string start, std::string end)
   
   // expand the desired beamline
   
-  e.type = (*it).type;
+  struct Element e;
+  e.type = (*itName).type;
   e.name = name;
   e.l = 0;
   e.lst = nullptr;
@@ -239,19 +249,19 @@ int Parser::expand_line(std::string name, std::string start, std::string end)
 #ifdef BDSDEBUG 
   std::cout << "expanding line " << name << ", range = " << start << end << std::endl;
 #endif
-  if(!(*it).lst) return 0; //list empty
+  if(!(*itName).lst) return; //list empty
     
   // first expand the whole range 
-  std::list<struct Element>::iterator sit = (*it).lst->begin();
-  std::list<struct Element>::iterator eit = (*it).lst->end();
+  std::list<struct Element>::iterator sit = (*itName).lst->begin();
+  std::list<struct Element>::iterator eit = (*itName).lst->end();
   
   // copy the list into the resulting list
-  switch((*it).type){
+  switch((*itName).type){
   case ElementType::_LINE:
     beamline_list.insert(beamline_list.end(),sit,eit);
     break;
   case ElementType::_REV_LINE:
-    beamline_list.insert(beamline_list.end(),(*it).lst->rbegin(),(*it).lst->rend());
+    beamline_list.insert(beamline_list.end(),(*itName).lst->rbegin(),(*itName).lst->rend());
     break;
   default:
     beamline_list.insert(beamline_list.end(),sit,eit);
@@ -268,7 +278,7 @@ int Parser::expand_line(std::string name, std::string start, std::string end)
     {
       is_expanded = true;
       // start at second element
-      it = ++beamline_list.begin();
+      std::list<struct Element>::iterator it = ++beamline_list.begin();
       for(;it!=beamline_list.end();it++)
 	{
 #ifdef BDSDEBUG 
@@ -366,21 +376,18 @@ int Parser::expand_line(std::string name, std::string start, std::string end)
   
   if( !end.empty()) // determine the end element
     {
-      std::list<struct Element>::iterator endIt = beamline_list.find(std::string(end));
+      std::list<struct Element>::const_iterator endIt = beamline_list.find(std::string(end));
       
       if(end == "#e") endIt = beamline_list.end();
       
       beamline_list.erase(++endIt,beamline_list.end());
     }
   
-  
   // insert the tunnel if present
   
-  it = element_list.find("tunnel");
-  if(it!=iterEnd)
-    beamline_list.push_back(*it);
-  
-  return 0;
+  std::list<struct Element>::iterator itTunnel = element_list.find("tunnel");
+  if(itTunnel!=iterEnd)
+    beamline_list.push_back(*itTunnel);
 }
 
 void Parser::add_element(struct Element& e, std::string before, int before_count)
@@ -453,7 +460,7 @@ void Parser::add_sampler(std::string name, int before_count)
   add_element(e, name, before_count);
 }
 
-void Parser::add_csampler(std::string name, int before_count, double length, double rad)
+void Parser::add_csampler(std::string name, int before_count)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting csampler before "<<name;
@@ -463,8 +470,8 @@ void Parser::add_csampler(std::string name, int before_count, double length, dou
 
   struct Element e;
   e.type = ElementType::_CSAMPLER;
-  e.l = length;
-  e.r = rad;
+  e.l = params.l;
+  e.r = params.r;
   e.name = "CSampler_" + name;
   e.lst = nullptr;
 
@@ -489,7 +496,7 @@ void Parser::add_dump(std::string name, int before_count)
   add_element(e, name, before_count);
 }
 
-void Parser::add_tunnel(Tunnel& tunnel)
+void Parser::add_tunnel()
 {
   // copy from global
   struct Tunnel t(tunnel);
@@ -501,7 +508,7 @@ void Parser::add_tunnel(Tunnel& tunnel)
   tunnel_list.push_back(t);
 }
 
-void Parser::add_xsecbias(PhysicsBiasing& xsecbias)
+void Parser::add_xsecbias()
 {
   // copy from global
   PhysicsBiasing b(xsecbias);
@@ -513,9 +520,9 @@ void Parser::add_xsecbias(PhysicsBiasing& xsecbias)
   xsecbias_list.push_back(b);
 }
  
-double Parser::property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name)
+double Parser::property_lookup(const FastList<Element>& el_list, std::string element_name, std::string property_name)
 {
-  std::list<struct Element>::iterator it = el_list.find(element_name);
+  std::list<struct Element>::const_iterator it = el_list.find(element_name);
   std::list<struct Element>::const_iterator iterEnd = el_list.end();
 
   if(it == iterEnd) {
@@ -608,4 +615,59 @@ struct symtab * Parser::symlook(std::string s)
     return nullptr;
   } 
   return (*it).second;
+}
+
+void Parser::Store(double value)
+{
+  tmparray.push_front(value);
+}
+
+void Parser::Store(std::string name)
+{
+  tmpstring.push_front(name);
+}
+
+void Parser::FillArray(Array* array)
+{
+  for(double value : tmparray)
+    {
+      array->data.push_back(value);
+    }
+  tmparray.clear();
+}
+
+void Parser::FillString(Array* array)
+{  
+  for(std::string name : tmpstring)
+    {
+      array->symbols.push_back(name);
+    }
+  tmpstring.clear();
+}
+
+void Parser::ClearParams()
+{
+  params.flush();
+}
+
+void Parser::OverwriteElement(std::string elementName)
+{
+  std::list<struct Element>::iterator it = element_list.find(elementName);
+  std::list<struct Element>::const_iterator iterEnd = element_list.end();
+  if(it == iterEnd)
+    {
+      std::cout << "element " << elementName << " has not been defined" << std::endl;
+      if (PEDANTIC) exit(1);
+    }
+  else
+    {
+      // add and overwrite properties if set
+      (*it).set(params);
+    }
+  ClearParams();
+}
+
+void Parser::AddVariable(std::string* name)
+{
+  var_list.push_back(name);
 }

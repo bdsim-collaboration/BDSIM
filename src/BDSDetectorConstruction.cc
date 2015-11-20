@@ -202,7 +202,7 @@ void BDSDetectorConstruction::BuildBeamline()
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::Parser::Instance()->beamline_list.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::Parser::Instance()->GetBeamline().size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
 
@@ -554,8 +554,8 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
   BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
   for(std::string& bs : biasList)
     {
-      auto it = GMAD::Parser::Instance()->xsecbias_list.find(bs);
-      if (it==GMAD::Parser::Instance()->xsecbias_list.end()) continue;
+      auto it = GMAD::Parser::Instance()->GetBiasing().find(bs);
+      if (it==GMAD::Parser::Instance()->GetBiasing().end()) continue;
       const GMAD::PhysicsBiasing& pb = *it;
       
       if(debug)
