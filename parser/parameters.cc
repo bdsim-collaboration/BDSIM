@@ -220,6 +220,7 @@ void Parameters::set_value(std::string property, double value )
   if(property=="ysize") { ysize = value; ysizeset = true; return;}
   if(property=="xsizeOut") { xsizeOut = value; xsizeOutset = true; return;}
   if(property=="ysizeOut") { ysizeOut = value; ysizeOutset = true; return;}
+  if(property=="r") { r = value; rset = true; return;} // cyl. sampler radius
   if(property=="tilt") { tilt = value; tiltset = true; return;}
   if(property=="offsetX") { offsetX = value; offsetXset = true; return;}
   if(property=="offsetY") { offsetX = value; offsetYset = true; return;}
