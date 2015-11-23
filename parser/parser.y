@@ -40,7 +40,7 @@
 %union{
   double dval;
   int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
-  GMAD::symtab *symp;
+  GMAD::Symtab *symp;
   std::string* str;
   GMAD::Array *array;
 }
@@ -570,10 +570,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE)
-	       for(int i=0;i<$1->data.size();i++)
-		 {
-		   printf(" %.10g ",$1->data[i]);
-		 }
+	       {$1->Print();}
 	     $$ = 0;
 	   } 
        }
@@ -583,15 +580,7 @@ expr : aexpr
 	 if(execute)
 	   {
 	     if(INTERACTIVE) {
-	       if($1->type == symtab::symtabtype::_ARRAY)
-		 {
-		   for(std::list<double>::iterator it = $1->array.begin();
-		       it!=$1->array.end();it++)
-		     printf ("\t%.10g", (*it));
-		   printf("\n");
-		 }
-	       else
-		 printf ("\t%.10g\n", $1->value);
+	       $1->Print();
 	     } 
 	     $$=0;
 	   }
@@ -601,7 +590,7 @@ expr : aexpr
 aexpr  :  NUMBER               { $$ = $1;                         }
        |  VARIABLE
        {
-	 symtab *sp = Parser::Instance()->symlook(*($1));
+	 Symtab *sp = Parser::Instance()->symlook(*($1));
 	 if (!sp) {
 	   std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
 	   yyerror(errorstring.c_str());
@@ -619,16 +608,7 @@ aexpr  :  NUMBER               { $$ = $1;                         }
        | '(' aexpr ')'         { $$ = $2;                        }
        | '<' vecexpr ',' vecexpr '>' // scalar product
          {
-	   if($2->data.size() == $4->data.size())
-	     {
-	       $$ = 0;
-	       for(unsigned int i=0;i<$2->data.size();i++)
-		 $$ += $2->data[i] * $4->data[i];
-	     }
-	   else
-	     {
-	       yyerror("ERROR: vector dimensions do not match");
-	     }
+	   $$ = $2->Product($4);
          } 
        // boolean stuff
         | aexpr '<' aexpr { $$ = ($1 < $3 )? 1 : 0; } 
@@ -648,7 +628,7 @@ symdecl : VARIABLE '='
         {
 	  if(execute)
 	    {
-	      symtab *sp = Parser::Instance()->symlook(*($1));
+	      Symtab *sp = Parser::Instance()->symlook(*($1));
 	      if (!sp) {
 		sp = Parser::Instance()->symcreate(*($1));
 	      } else {
@@ -678,12 +658,8 @@ assignment :  symdecl aexpr
               {
 		if(execute)
 		  {
-		    $1->array.clear();
-		    for(unsigned int i=0;i<$2->data.size();i++)
-		      $1->array.push_back($2->data[i]);
-		    $1->type = symtab::symtabtype::_ARRAY;
-		    $$ = $1;
-		    $2->data.clear();
+		    $1->Set($2);
+		    $$=$1;
 		  }
               }
 
@@ -691,11 +667,8 @@ assignment :  symdecl aexpr
               {
 		if(execute)
 		  {
-		    $1->array.clear();
-		    for(unsigned int i=0;i<$3->data.size();i++)
-		      $1->array.push_back($3->data[i]);
-		    $$ = $1;
-		    $3->data.clear();
+		    $1->Set($3);
+		    $$=$1;
 		  }
               }
 ;
@@ -704,31 +677,21 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      std::list<double>::iterator it;
-	      for(it=$1->array.begin();it!=$1->array.end();it++)
-		{
-		  $$->data.push_back(*it);
-		}
+	      $$ = new Array($1);
 	    }
         } 
         | vectnum
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      $$->data = $1->data;
-	      // erase data in vect
-	      $1->data.clear();
+	      $$ = $1;
 	    }
 	}
        | vectstr
 	{
 	  if(execute)
 	  {
-	    $$ = new Array;
-	    $$->symbols = $1->symbols;
-	    $1->symbols.clear();
+	    $$ = $1;
 	  }
 	}
 
@@ -736,126 +699,66 @@ vecexpr :   VECVAR
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $1->data[i] + $3->data[i];
-		}
-	      // erase data in vect
-	      $1->data.clear();
-	      $3->data.clear();
+	      $$ = Array::Add($1,$3);
 	    }
         }
       | vecexpr '-' vecexpr
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      unsigned int size = ($1->data.size() < $3->data.size() )? $1->data.size() : $3->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $1->data[i] - $3->data[i];
-		}
-	      // erase data in vect
-	      $1->data.clear();
-	      $3->data.clear();
+	      $$ = Array::Subtract($1,$3);
 	    }
 	}
        | vecexpr '+' aexpr
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      unsigned int size = $1->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $1->data[i] + $3;
-		}
-	      // erase data in vect
-	      $1->data.clear();
-	    }
-	}
-
-      | vecexpr '*' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = new Array;
-	      unsigned int size = $1->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $1->data[i] * $3;
-		}
-	      // erase data in vect
-	      $1->data.clear();
-	    }
-	}
-      | vecexpr '/' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = new Array;
-	      unsigned int size = $1->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $1->data[i] / $3;
-		}
-	      // erase data in vect
-	      $1->data.clear();
+	      $$ = Array::Add($1,$3);
 	    }
 	}
        | aexpr '+' vecexpr
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      unsigned int size = $3->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $3->data[i] + $1;
-		}
-	      // erase data in vect
-	      $3->data.clear();
+	      $$ = Array::Add($3,$1);
 	    }
 	}
-       | aexpr '-' vecexpr
+      | vecexpr '*' aexpr
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      unsigned int size = $3->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $3->data[i] - $1;
-		}
-	      // erase data in vect
-	      $3->data.clear();
+	      $$ = Array::Multiply($1,$3);
 	    }
 	}
       | aexpr '*' vecexpr
         {
 	  if(execute)
 	    {
-	      $$ = new Array;
-	      unsigned int size = $3->data.size();
-	      $$->data.resize(size);
-	      for(unsigned int i=0;i<size;i++)
-		{
-		  $$->data[i] = $1 * $3->data[i];
-		}
-	      // erase data in vect
-	      $3->data.clear();
+	      $$ = Array::Multiply($3,$1);
 	    }
 	}
-
+      | vecexpr '/' aexpr
+        {
+	  if(execute)
+	    {
+	      $$ = Array::Divide($1,$3);
+	    }
+	}
+       | vecexpr '-' aexpr
+        {
+	  if(execute)
+	    {
+	      $$ = Array::Subtract($1,$3);
+	    }
+	}
+       | aexpr '-' vecexpr
+        {
+	  if(execute)
+	    {
+	      Array* a = Array::Multiply($3,-1);
+	      $$ = Array::Add(a,$1);
+	    }
+	}
 ;
 
 vectnumexec : '{' numbers '}'
@@ -917,7 +820,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | PRINT ',' VARIABLE
           {
 	    if(execute) {
-	      symtab *sp = Parser::Instance()->symlook(*($3));
+	      Symtab *sp = Parser::Instance()->symlook(*($3));
 	      if (!sp) {
 		std::cout << "Variable " << *($3) << "not defined!" << std::endl;
 	      }
@@ -925,18 +828,12 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
 	      }
 	    }
-	  } 
+	  }
         | PRINT ',' VECVAR
-          {
+	  {
 	    if(execute)
 	      {
-		printf("\t%s = {",$3->name.c_str());
-		std::list<double>::iterator it;
-		for(it=$3->array.begin();it!=$3->array.end();it++)
-		  {
-		    printf(" %.10g ",(*it));
-		  }
-		printf("} \n");
+	        $3->Print();
 	      } 
 	  }
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}

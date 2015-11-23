@@ -22,8 +22,8 @@ extern int yylex();
 namespace GMAD {
   extern const int ECHO_GRAMMAR;
 
-  struct Array;
-  struct symtab;
+  class Array;
+  class Symtab;
   /**
    * @brief Parser class
    * 
@@ -99,10 +99,10 @@ namespace GMAD {
     int copy_element_to_params(std::string elementName);
 
     /// create new parser symbol
-    symtab * symcreate(std::string s);
+    Symtab * symcreate(std::string s);
 
     /// look up parser symbol
-    symtab * symlook(std::string s);
+    Symtab * symlook(std::string s);
 
     /// Return list of all defined elements
     const FastList<Element>& GetElements() const;
@@ -192,7 +192,7 @@ namespace GMAD {
     FastList<PhysicsBiasing> xsecbias_list;
     
     /// Parser symbol map
-    std::map<std::string, symtab*> symtab_map;
+    std::map<std::string, Symtab*> symtab_map;
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
   };

@@ -383,49 +383,42 @@ void Parameters::set_value(std::string property, Array* value)
     {
       knlset = true;
       value->set_vector(knl);
-      value->data.clear();
       return;
     } 
   if(property=="ksl") 
     {
       kslset = true;
       value->set_vector(ksl);
-      value->data.clear();
       return;
     }
   if(property=="blmLocZ") 
     {
       blmLocZset = true;
       value->set_vector(blmLocZ);
-      value->data.clear();
       return;
     }
   if(property=="blmLocTheta") 
     {
       blmLocThetaset = true;
       value->set_vector(blmLocTheta);
-      value->data.clear();
       return;
     }
   if(property=="components")
     {
       componentsset = true;
       value->set_vector(components);
-      value->symbols.clear();
       return;
     } 
   if(property=="componentsWeights")
     {
       componentsWeightsset = true;
       value->set_vector(componentsWeights);
-      value->data.clear();
       return;
     }
   if(property=="componentsFractions")
     {
       componentsFractionsset = true;
       value->set_vector(componentsFractions);
-      value->data.clear();
       return;
     }
 

@@ -84,7 +84,7 @@ void Parser::ParseFile(FILE *f)
 #endif
   element_list.clear();
   tmp_list.clear();
-  std::map<std::string,symtab*>::iterator it;
+  std::map<std::string,Symtab*>::iterator it;
   for(it=symtab_map.begin();it!=symtab_map.end();++it) {
     delete (*it).second;
   }
@@ -579,35 +579,35 @@ int Parser::copy_element_to_params(std::string elementName)
 
 int Parser::add_func(std::string name, double (*func)(double))
 {
-  symtab *sp=symcreate(name);
+  Symtab *sp=symcreate(name);
   sp->funcptr=func;
   return 0;
 }
 
 int Parser::add_var(std::string name, double value, int is_reserved)
 {
-  symtab *sp=symcreate(name);
+  Symtab *sp=symcreate(name);
   sp->value=value;
   sp->is_reserved = is_reserved;
   return 0;
 }
 
-symtab * Parser::symcreate(std::string s)
+Symtab * Parser::symcreate(std::string s)
 {
-  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
+  std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
   if (it!=symtab_map.end()) {
     std::cerr << "ERROR Variable " << s << " is already defined!" << std::endl;
     exit(1);
   }
     
-  symtab* sp = new symtab(s);
-  std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
+  Symtab* sp = new Symtab(s);
+  std::pair<std::map<std::string,Symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
   return (*(ret.first)).second;
 }
   
-symtab * Parser::symlook(std::string s)
+Symtab * Parser::symlook(std::string s)
 {
-  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
+  std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
   if (it==symtab_map.end()) {
     return nullptr;
   } 

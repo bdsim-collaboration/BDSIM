@@ -51,7 +51,7 @@ void Tunnel::print()const
 	    << std::endl;
 }
 
-void Tunnel::set_value(std::string property, double value )
+void Tunnel::set_value(std::string property, double value)
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;

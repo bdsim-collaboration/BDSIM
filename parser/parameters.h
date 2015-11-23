@@ -7,7 +7,7 @@
 
 namespace GMAD {
 
-  struct Array;
+  class Array;
 
   /**
    * @brief Parameters - Element class with booleans

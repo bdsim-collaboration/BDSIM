@@ -146,12 +146,12 @@ dump  { return DUMP; }
      std::string var(yytext);
      // look up variable if defined and array or function
      // else create string (also if in the lookup map(!))
-     struct symtab *sp = Parser::Instance()->symlook(var);
+     Symtab *sp = Parser::Instance()->symlook(var);
      if (sp) {
        yylval.symp=sp;
        if(sp->funcptr) {
          return FUNC;
-       } else if(sp->type == symtab::symtabtype::_ARRAY) {
+       } else if(sp->type == Symtab::symtabtype::_ARRAY) {
          return VECVAR;
        }
      }
