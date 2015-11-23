@@ -45,8 +45,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      outerDiameter,
 							   G4double      containerLength,
 							   G4double      angle,
-							   G4double      e1,
-							   G4double      e2,
+							   G4double      /*e1*/,
+							   G4double      /*e2*/,
 							   G4Material*   outerMaterial)
 
 {

@@ -32,9 +32,6 @@ BDSSectorBend::BDSSectorBend(G4String            name,
 	    beamPipeInfo, magnetOuterInfo),
   itsBField(bField),itsBGrad(bGrad),e1(e1in),e2(e2in)
 {
-  //G4cout << "e1 " << e1 << G4endl;
-  //G4cout << "e2 " << e2 << G4endl;
-  
   /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
   /// - this results in a wrongly chord length
   angle       = angleIn;
@@ -113,7 +110,7 @@ void BDSSectorBend::BuildOuter()
   G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
   BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType; 
   BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
-  G4double containerDiameter = 2*containerRadius;
+  //G4double containerDiameter = 2*containerRadius;
   
   outer = theFactory->CreateSectorBend(geometryType, name, chordLength, beampipe,
 					    outerDiameter, chordLength,

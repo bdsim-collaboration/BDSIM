@@ -48,7 +48,10 @@ void BDSRBend::CalculateLengths(G4double aLength)
   chordLength = aLength;
 
   orientation = BDS::CalculateOrientation(angle);
-
+  
+  e1=0; // Dummy line to remove compile warnings.
+  e2=0; // Dummy line to rmeove compile warnings.
+  
   // straightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
   // into the previous volume / outside the marker volume.  for zero angle, this is 0
