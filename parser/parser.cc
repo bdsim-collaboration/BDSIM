@@ -360,29 +360,24 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
   //
   // rule - from first occurence of 'start' till first 'end' coming after 'start'
   
-  
   if( !start.empty()) // determine the start element
     {
       std::list<Element>::const_iterator startIt = beamline_list.find(std::string(start));
       
-      if(startIt==beamline_list.end())
+      if(startIt!=beamline_list.end())
 	{
-	  startIt = beamline_list.begin();
+	  beamline_list.erase(beamline_list.begin(),startIt);
 	}
-      
-      if(start == "#s") startIt = beamline_list.begin(); 
-      
-      beamline_list.erase(beamline_list.begin(),startIt);
-      
     }
   
   if( !end.empty()) // determine the end element
     {
       std::list<Element>::const_iterator endIt = beamline_list.find(std::string(end));
       
-      if(end == "#e") endIt = beamline_list.end();
-      
-      beamline_list.erase(++endIt,beamline_list.end());
+      if(endIt!=beamline_list.end())
+	{
+	  beamline_list.erase(++endIt,beamline_list.end());
+	}
     }
   
   // insert the tunnel if present
