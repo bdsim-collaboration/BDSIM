@@ -14,6 +14,7 @@
 #include "G4HelixExplicitEuler.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
+#include "G4UniformMagField.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
@@ -99,22 +100,26 @@ void BDSKicker::BuildBPFieldAndStepper()
       // set magnetic field direction dependingon whether it's a vertical kicker or not
       G4ThreeVector vectorBField;
       if (magnetType == BDSMagnetType::vkicker)
-	{vectorBField = G4ThreeVector(-bField, 0, 0);}
+	{vectorBField = G4ThreeVector(-bField, 0, 0);} // vertical kicker
       else
-	{vectorBField = G4ThreeVector(0, bField, 0);}
-      
-      itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
+	{vectorBField = G4ThreeVector(0, bField, 0);} // must be horizontal kicker
+
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Name: " << name << " B: " << vectorBField << G4endl;
+      G4cout << __METHOD_NAME__ << "Kick angle: " << kickAngle << G4endl;
+#endif
+      itsMagField = new G4UniformMagField(vectorBField);
       itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
+      itsStepper = new G4HelixExplicitEuler(itsEqRhs);
+
+      // old way - problems with infinite loop for 0 strength in bds dipole stepper, and...
+      // this doesn't work in some particular cases (-ve kick angle vkicker mid lattice)
       /*
+	itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
 	BDSDipoleStepper* stepper = new BDSDipoleStepper(itsEqRhs);
 	stepper->SetBField(bField);
 	stepper->SetBGrad(bGrad);
 	itsStepper = stepper; // assigned to base class pointer
       */
-      
-      // Use general G4 stepper for uniform field as field is specified along
-      // x for vkicker and not rotated and BDSDipoleStepper only works in the
-      // horizontal plane.
-      itsStepper = new G4HelixExplicitEuler(itsEqRhs);
     }
 }
