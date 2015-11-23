@@ -29,7 +29,13 @@ class BDSTypeSafeEnum : public def
 {
   typedef inner type;
   inner val;
- 
+
+protected:
+  /// static map from to string (optional), needs to be defined explicitly
+  /// can be used for printing (in << operator)
+  // pointer used since static memory possibly doesn't know size of map at creation
+  static std::map<BDSTypeSafeEnum<def,inner>,std::string>* dictionary;
+  
 public:
  
   BDSTypeSafeEnum() : val() {}
@@ -37,10 +43,11 @@ public:
   /// return underlying value (can be used in switch statement)
   type underlying() const { return val; }
 
-  /// static map from to string (optional), needs to be defined explicitly
-  /// can be used for printing (in << operator)
-  // pointer used since static memory possibly doesn't know size of map at creation
-  static std::map<BDSTypeSafeEnum<def,inner>,std::string>* dictionary;
+  std::string ToString() const {
+    if (dictionary) {return (*dictionary)[val];}
+    // if no dictionary defined return empty string
+    return "";
+  }
   
   ///@{ operators for ordering
   friend bool operator == (const BDSTypeSafeEnum & lhs, const BDSTypeSafeEnum & rhs) { return lhs.val == rhs.val; }
@@ -52,7 +59,7 @@ public:
   ///@}
   /// stream operator, returns string from dictionary if defined, else underlying type (typically int)
   friend std::ostream& operator<< (std::ostream &out, const BDSTypeSafeEnum& a) {
-    if (dictionary) {out << (*dictionary)[a];}
+    if (dictionary) {out << a.ToString();}
     else {out << a.underlying();}
     return out;
   }

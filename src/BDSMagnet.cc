@@ -33,7 +33,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4double            length,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn):
-  BDSAcceleratorComponent(name, length, 0, (*BDSMagnetType::dictionary)[type]),
+  BDSAcceleratorComponent(name, length, 0, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
