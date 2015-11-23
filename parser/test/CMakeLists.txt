@@ -84,6 +84,10 @@ set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION Samp
 add_test(gmad-testAddAllSamplers ${gmadBinary} addallsamplers.gmad)
 set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d2)
 
+# test add samplers at all quadrupoles
+add_test(gmad-testAddQuadSamplers ${gmadBinary} addquadsamplers.gmad)
+set_tests_properties(gmad-testAddQuadSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_q2)
+
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)
 set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
