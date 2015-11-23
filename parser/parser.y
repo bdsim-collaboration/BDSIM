@@ -57,10 +57,11 @@
 %token <dval> NUMBER
 %token <symp> VECVAR FUNC
 %token <str> STR VARIABLE
-%token MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
-%token VKICK HKICK
-%token ALL PERIOD XSECBIAS TUNNEL MATERIAL ATOM
+%token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
+%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
+%token <ival> VKICK HKICK
+%token <ival> MATERIAL ATOM
+%token ALL PERIOD XSECBIAS TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -70,7 +71,7 @@
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
-%type <ival> newinstance
+%type <ival> component newinstance
 %type <str> sample_options
 %type <str> csample_options
 
@@ -119,195 +120,13 @@ atomic_stmt :
 	      }
 ;
 
-decl : VARIABLE ':' marker
+decl : VARIABLE ':' component
        {
 	 if(execute)  {
 	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_MARKER);
+	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
 	   Parser::Instance()->ClearParams();
 	 }
-       }
-     | VARIABLE ':' drift
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_DRIFT);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-     | VARIABLE ':' rf
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_RF);
-	   Parser::Instance()->ClearParams();
-	 }
-       } 
-     | VARIABLE ':' sbend
-       {  
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_SBEND);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-     | VARIABLE ':' rbend
-       {
-         if(execute) {
-           // check parameters and write into element table
-           Parser::Instance()->write_table($1,ElementType::_RBEND);
-           Parser::Instance()->ClearParams();
-         }
-       }
-
-    | VARIABLE ':' vkick
-       {  
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_VKICK);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-    | VARIABLE ':' hkick
-       {  
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_HKICK);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-     | VARIABLE ':' quad
-       {
-	 if(execute)       
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_QUAD);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' sextupole
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_SEXTUPOLE);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' octupole
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_OCTUPOLE);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' decapole
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_DECAPOLE);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' multipole
-       {
-	 if(execute)
-	   {	 
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_MULT);
-	     Parser::Instance()->ClearParams();	 
-	   }
-       }
-     | VARIABLE ':' solenoid
-       {
-	 if(execute)       
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_SOLENOID);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' rcol
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_RCOL);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' ecol
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_ECOL);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' muspoiler
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_MUSPOILER);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' degrader
-       {
-	 if(execute)
-	   {
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_DEGRADER);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' element
-       {
-	 if(execute)
-	   {	 
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_ELEMENT);
-	     Parser::Instance()->ClearParams();	 
-	   }
-       }
-     | VARIABLE ':' laser
-       {
-	 if(execute)
-	   {	 
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_LASER);
-	     Parser::Instance()->ClearParams();	 
-	   }
-       }
-     | VARIABLE ':' screen
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_SCREEN);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-     | VARIABLE ':' awakescreen
-       {
-	 if(execute) {
-	   // check parameters and write into element table
-	   Parser::Instance()->write_table($1,ElementType::_AWAKESCREEN);
-	   Parser::Instance()->ClearParams();
-	 }
-       }
-     | VARIABLE ':' transform3d
-       {
-	 if(execute)
-	   {	 
-	     // check parameters and write into element table
-	     Parser::Instance()->write_table($1,ElementType::_TRANSFORM3D);
-	     Parser::Instance()->ClearParams();
-	   }
        }
      | VARIABLE ':' line 
        {
@@ -338,22 +157,6 @@ decl : VARIABLE ':' marker
 	     Parser::Instance()->OverwriteElement(*$1);
 	   }
        }
-     | VARIABLE ':' matdef
-       {
-	 if(execute)
-	   {
-	     Parser::Instance()->write_table($1,ElementType::_MATERIAL);
-	     Parser::Instance()->ClearParams();
-	   }
-       }
-     | VARIABLE ':' atom
-       {
-         if(execute)
-           {
-             Parser::Instance()->write_table($1,ElementType::_ATOM);
-             Parser::Instance()->ClearParams();
-           }
-       }
      | VARIABLE ':' tunnel
        {
          if(execute)
@@ -381,30 +184,32 @@ decl : VARIABLE ':' marker
       }
 ;
 
-marker : MARKER ;
-drift : DRIFT ',' parameters ;
-rf : RF ',' parameters ;
-sbend : SBEND ',' parameters ;
-rbend : RBEND ',' parameters ;
-vkick : VKICK ',' parameters ;
-hkick : HKICK ',' parameters ;
-quad : QUADRUPOLE ',' parameters ;
-sextupole : SEXTUPOLE ',' parameters ;
-octupole : OCTUPOLE ',' parameters ;
-decapole : DECAPOLE ',' parameters ;
-multipole : MULTIPOLE ',' parameters ;
-solenoid : SOLENOID ',' parameters ;
-ecol : ECOL ',' parameters ;
-muspoiler : MUSPOILER ',' parameters ;
-degrader : DEGRADER ',' parameters ;
-rcol : RCOL ',' parameters ;
-laser : LASER ',' parameters ;
-screen : SCREEN ',' parameters ;
-awakescreen : AWAKESCREEN ',' parameters ;
-transform3d : TRANSFORM3D ',' parameters ;
-element : ELEMENT ',' parameters ;
-matdef : MATERIAL ',' parameters ;
-atom : ATOM ',' parameters ;
+component : MARKER                     {$$=static_cast<int>(ElementType::_MARKER);}
+          | DRIFT ',' parameters       {$$=static_cast<int>(ElementType::_DRIFT);}
+          | RF ',' parameters          {$$=static_cast<int>(ElementType::_RF);}
+          | SBEND ',' parameters       {$$=static_cast<int>(ElementType::_SBEND);}
+          | RBEND ',' parameters       {$$=static_cast<int>(ElementType::_RBEND);}
+          | VKICK ',' parameters       {$$=static_cast<int>(ElementType::_VKICK);}
+          | HKICK ',' parameters       {$$=static_cast<int>(ElementType::_HKICK);}
+          | QUADRUPOLE ',' parameters  {$$=static_cast<int>(ElementType::_QUAD);}
+          | SEXTUPOLE ',' parameters   {$$=static_cast<int>(ElementType::_SEXTUPOLE);}
+          | OCTUPOLE ',' parameters    {$$=static_cast<int>(ElementType::_OCTUPOLE);}
+          | DECAPOLE ',' parameters    {$$=static_cast<int>(ElementType::_DECAPOLE);}
+| MULTIPOLE ',' parameters             {$$=static_cast<int>(ElementType::_MULT);}
+          | SOLENOID ',' parameters    {$$=static_cast<int>(ElementType::_SOLENOID);}
+          | ECOL ',' parameters        {$$=static_cast<int>(ElementType::_ECOL);}
+          | RCOL ',' parameters        {$$=static_cast<int>(ElementType::_RCOL);}
+          | MUSPOILER ',' parameters   {$$=static_cast<int>(ElementType::_MUSPOILER);}
+          | DEGRADER ',' parameters    {$$=static_cast<int>(ElementType::_DEGRADER);}
+          | LASER ',' parameters       {$$=static_cast<int>(ElementType::_LASER);}
+          | SCREEN ',' parameters      {$$=static_cast<int>(ElementType::_SCREEN);}
+          | AWAKESCREEN ',' parameters {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
+          | TRANSFORM3D ',' parameters {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
+          | ELEMENT ',' parameters     {$$=static_cast<int>(ElementType::_ELEMENT);}
+          | MATERIAL ',' parameters    {$$=static_cast<int>(ElementType::_MATERIAL);}
+          | ATOM ',' parameters        {$$=static_cast<int>(ElementType::_ATOM);}
+;
+
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
 
