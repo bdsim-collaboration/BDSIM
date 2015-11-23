@@ -48,6 +48,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4double     outerDiameter,
 								   G4double     containerLength,
 								   G4double     angle,
+								   G4double     e1,
+								   G4double     e2,
 								   G4Material*  outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -67,10 +69,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
     }
   
   G4int orientation   = BDS::CalculateOrientation(angle);
-  G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
-  G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
+  G4double zcomponentIn = cos(e1); // calculate components of normal vectors (in the end mag(normal) = 1)
+  G4double xcomponentIn = sin(e1); // note full angle here as it's the exit angle
+  G4double zcomponentOut = cos(e2); // calculate components of normal vectors (in the end mag(normal) = 1)
+  G4double xcomponentOut = sin(e2); // note full angle here as it's the exit angle
+
+  G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponentIn, 0.0, -1.0*zcomponentIn);
+  G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponentOut, 0.0, zcomponentOut);
+  G4cout << "magnet inputface " << inputface << G4endl;
+  G4cout << "magnet outputface " << outputface << G4endl;
   
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
@@ -91,7 +98,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 				outputface);                 // output face normal
 
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
-      containerSolid = new G4CutTubs(name + "_contiainer_solid",       // name
+      containerSolid = new G4CutTubs(name + "_container_solid",       // name
 				     beamPipe->GetContainerRadius() + lengthSafety, // inner radius
 				     outerDiameter*0.5 + lengthSafety, // outer radius
 				     length*0.5,                       // half length

@@ -3,10 +3,12 @@
 
 #include "BDSSectorBend.hh"
 
+#include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
@@ -102,6 +104,35 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
 }
+
+void BDSSectorBend::BuildOuter()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
+  BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType; 
+  BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
+  G4double containerDiameter = 2*containerRadius;
+  
+  outer = theFactory->CreateSectorBend(geometryType, name, chordLength, beampipe,
+					    outerDiameter, chordLength,
+					    angle, e1, e2, outerMaterial);
+
+  if (outer)
+    {
+      BDSGeometryComponent* container = outer->GetMagnetContainer();
+      containerSolid    = container->GetContainerSolid()->Clone();
+      G4ThreeVector contOffset = container->GetPlacementOffset();
+      // set the main offset of the whole magnet which is placed w.r.t. the
+      // zero coordinate of the container solid
+      SetPlacementOffset(contOffset);
+
+      InheritExtents(container); // update extents
+      outer->ClearMagnetContainer(); // delete the magnet container as done with
+    }
+}
+
 
 void BDSSectorBend::BuildBeampipe()
 {

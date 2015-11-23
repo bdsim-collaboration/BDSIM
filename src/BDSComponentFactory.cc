@@ -243,6 +243,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
   double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
   double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
   
+  // Angle of rbend
+  double prevAngle = (prevElement) ? (prevElement->angle * CLHEP::rad ) : 0.0;
+  double nextangle = (nextElement) ? (nextElement->angle * CLHEP::rad ) : 0.0;
+  
+  if (nextElement->type == ElementType::_RBEND){
+    if (e2 == 0){
+      e2 = nextangle*0.5;}
+  }
+  if (prevElement->type == ElementType::_RBEND){
+    if (e1 == 0){
+      e1 = -prevAngle*0.5;}
+  }
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
 			e1,
@@ -374,8 +386,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
   
-  G4double startangle = -0.5*element->angle/(nSbends) - element->e1;
-  //G4double endangle   = -0.5*element->angle/(nSbends) - element->e2;
   G4double deltastart = 0;
   G4double deltaend   = 0;
   G4double anglein    = 0;
@@ -396,7 +406,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
         anglein = -0.5*element->angle/(nSbends);
         angleout = -0.5*element->angle/(nSbends);}
     else if (i < 0.5*(nSbends-1)){
-        anglein = startangle - (i*deltastart);
+        anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
         angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
         }
     else if (i > 0.5*(nSbends-1)){
@@ -427,6 +437,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
+    
+  if (fabs(element->e1) > (0.5*CLHEP::halfpi))
+    {
+      G4cerr << __METHOD_NAME__ << "Poleface angle e1 " << element->e1 << " is greater than pi/4" << G4endl;
+      exit(1);
+    }
+  if (fabs(element->e2) > (0.5*CLHEP::halfpi))
+    {
+      G4cerr << __METHOD_NAME__ << "Poleface angle e2 " << element->e2 << " is greater than pi/4" << G4endl;
+      exit(1);
+    }
 
   // require drift next to non-zero poleface or rbend with matching poleface
   if (BDS::IsFinite(element->e1) )

@@ -23,6 +23,8 @@ public:
 					   G4double     outerDiameter,         // full width
 					   G4double     containerLength,       // full length to make AccComp container
 					   G4double     angle,                 // full bend angle [rad]
+					   G4double     e1,                    // Poleface Rotation   
+					   G4double     e2,                    // Poleface Rotation
 					   G4Material*  outerMaterial = nullptr// material for outer volume
 					   );
 

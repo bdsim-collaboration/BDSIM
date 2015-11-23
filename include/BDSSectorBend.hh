@@ -35,6 +35,8 @@ private:
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe();
+  virtual void BuildOuter();
+
 };
 
 #endif

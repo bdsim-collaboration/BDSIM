@@ -97,13 +97,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetGeometryType ma
 							G4double      outerDiameter,
 							G4double      containerLength,
 							G4double      angle,
+							G4double      e1,
+							G4double      e2,
 							G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateSectorBend(name, length, beamPipe, outerDiameter, containerLength, angle, outerMaterial);
+  return factory->CreateSectorBend(name, length, beamPipe, outerDiameter, containerLength, angle, e1, e2, outerMaterial);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryType magnetType,

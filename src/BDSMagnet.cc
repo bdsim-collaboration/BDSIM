@@ -149,6 +149,7 @@ void BDSMagnet::BuildOuter()
   //build the right thing depending on the magnet type
   //saves basically the same function in each derived class
   // RBEND does its own thing by override this method so isn't here
+  // SBEND overrides this too.
   BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
   switch(magnetType.underlying())
     {
@@ -180,10 +181,10 @@ void BDSMagnet::BuildOuter()
       outer = theFactory->CreateRfCavity(geometryType,name,outerLength,beampipe,
 					 outerDiameter,chordLength,outerMaterial);
       break;
-    case BDSMagnetType::sectorbend:
+    /*case BDSMagnetType::sectorbend:
       outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
-					   outerDiameter,chordLength,angle,outerMaterial);
-      break;
+					   outerDiameter,chordLength,angle,e1,e2,outerMaterial);
+      break;*/
     case BDSMagnetType::sextupole:
       outer = theFactory->CreateSextupole(geometryType,name,outerLength,beampipe,
 					  outerDiameter,chordLength,outerMaterial);
