@@ -82,11 +82,11 @@ namespace GMAD {
     /// Remove sublines from beamline, expand all into one LINE
     void expand_line(std::string name, std::string start, std::string end);
     /// insert a sampler into beamline_list
-    void add_sampler(std::string name, int before_count);
+    void add_sampler(std::string name, int before_count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
-    void add_csampler(std::string name, int before_count);
+    void add_csampler(std::string name, int before_count, ElementType type);
     /// insert a beam dumper into beamline_list
-    void add_dump(std::string name, int before_count);
+    void add_dump(std::string name, int before_count, ElementType type);
     /// insert tunnel
     void add_tunnel();
     /// insert cross section bias
@@ -146,7 +146,7 @@ namespace GMAD {
     // *****************
     
     /// Add element to beamline
-    void add_element(Element& e, std::string before, int before_count);
+    void add_element(Element& e, std::string before, int before_count, ElementType type);
     /// Add function to parser
     int add_func(std::string name, double (*func)(double));
     /// Add reserved variable to parser

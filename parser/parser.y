@@ -32,6 +32,7 @@
 
     int execute = 1;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
+    ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
   }
 %}
 
@@ -71,7 +72,7 @@
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
-%type <ival> component newinstance
+%type <ival> component component_with_params newinstance
 %type <str> sample_options
 %type <str> csample_options
 
@@ -120,14 +121,23 @@ atomic_stmt :
 	      }
 ;
 
-decl : VARIABLE ':' component
+decl : VARIABLE ':' component_with_params
        {
-	 if(execute)  {
+	 if(execute) {
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
 	   Parser::Instance()->ClearParams();
 	 }
        }
+      | VARIABLE ':' MARKER
+       {
+	 if(execute) {
+	   // check parameters and write into element table
+	   Parser::Instance()->write_table($1,ElementType::_MARKER);
+	   Parser::Instance()->ClearParams();
+	 }
+       }
+
      | VARIABLE ':' line 
        {
 	 if(execute)
@@ -184,30 +194,31 @@ decl : VARIABLE ':' component
       }
 ;
 
-component : MARKER                     {$$=static_cast<int>(ElementType::_MARKER);}
-          | DRIFT ',' parameters       {$$=static_cast<int>(ElementType::_DRIFT);}
-          | RF ',' parameters          {$$=static_cast<int>(ElementType::_RF);}
-          | SBEND ',' parameters       {$$=static_cast<int>(ElementType::_SBEND);}
-          | RBEND ',' parameters       {$$=static_cast<int>(ElementType::_RBEND);}
-          | VKICK ',' parameters       {$$=static_cast<int>(ElementType::_VKICK);}
-          | HKICK ',' parameters       {$$=static_cast<int>(ElementType::_HKICK);}
-          | QUADRUPOLE ',' parameters  {$$=static_cast<int>(ElementType::_QUAD);}
-          | SEXTUPOLE ',' parameters   {$$=static_cast<int>(ElementType::_SEXTUPOLE);}
-          | OCTUPOLE ',' parameters    {$$=static_cast<int>(ElementType::_OCTUPOLE);}
-          | DECAPOLE ',' parameters    {$$=static_cast<int>(ElementType::_DECAPOLE);}
-| MULTIPOLE ',' parameters             {$$=static_cast<int>(ElementType::_MULT);}
-          | SOLENOID ',' parameters    {$$=static_cast<int>(ElementType::_SOLENOID);}
-          | ECOL ',' parameters        {$$=static_cast<int>(ElementType::_ECOL);}
-          | RCOL ',' parameters        {$$=static_cast<int>(ElementType::_RCOL);}
-          | MUSPOILER ',' parameters   {$$=static_cast<int>(ElementType::_MUSPOILER);}
-          | DEGRADER ',' parameters    {$$=static_cast<int>(ElementType::_DEGRADER);}
-          | LASER ',' parameters       {$$=static_cast<int>(ElementType::_LASER);}
-          | SCREEN ',' parameters      {$$=static_cast<int>(ElementType::_SCREEN);}
-          | AWAKESCREEN ',' parameters {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
-          | TRANSFORM3D ',' parameters {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
-          | ELEMENT ',' parameters     {$$=static_cast<int>(ElementType::_ELEMENT);}
-          | MATERIAL ',' parameters    {$$=static_cast<int>(ElementType::_MATERIAL);}
-          | ATOM ',' parameters        {$$=static_cast<int>(ElementType::_ATOM);}
+component_with_params : component ',' parameters
+
+component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
+          | RF          {$$=static_cast<int>(ElementType::_RF);}
+          | SBEND       {$$=static_cast<int>(ElementType::_SBEND);}
+          | RBEND       {$$=static_cast<int>(ElementType::_RBEND);}
+          | VKICK       {$$=static_cast<int>(ElementType::_VKICK);}
+          | HKICK       {$$=static_cast<int>(ElementType::_HKICK);}
+          | QUADRUPOLE  {$$=static_cast<int>(ElementType::_QUAD);}
+          | SEXTUPOLE   {$$=static_cast<int>(ElementType::_SEXTUPOLE);}
+          | OCTUPOLE    {$$=static_cast<int>(ElementType::_OCTUPOLE);}
+          | DECAPOLE    {$$=static_cast<int>(ElementType::_DECAPOLE);}
+          | MULTIPOLE   {$$=static_cast<int>(ElementType::_MULT);}
+          | SOLENOID    {$$=static_cast<int>(ElementType::_SOLENOID);}
+          | ECOL        {$$=static_cast<int>(ElementType::_ECOL);}
+          | RCOL        {$$=static_cast<int>(ElementType::_RCOL);}
+          | MUSPOILER   {$$=static_cast<int>(ElementType::_MUSPOILER);}
+          | DEGRADER    {$$=static_cast<int>(ElementType::_DEGRADER);}
+          | LASER       {$$=static_cast<int>(ElementType::_LASER);}
+          | SCREEN      {$$=static_cast<int>(ElementType::_SCREEN);}
+          | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
+          | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
+          | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
+          | MATERIAL    {$$=static_cast<int>(ElementType::_MATERIAL);}
+          | ATOM        {$$=static_cast<int>(ElementType::_ATOM);}
 ;
 
 tunnel : TUNNEL ',' tunnel_options ;
@@ -648,7 +659,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
-		Parser::Instance()->add_sampler(*($3), element_count);
+		Parser::Instance()->add_sampler(*($3), element_count, element_type);
 		element_count = -1;
 		Parser::Instance()->ClearParams();
 	      }
@@ -658,7 +669,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
-		Parser::Instance()->add_csampler(*($3), element_count);
+		Parser::Instance()->add_csampler(*($3), element_count, element_type);
 		element_count = -1;
 		Parser::Instance()->ClearParams();
 	      }
@@ -668,7 +679,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
             if(execute)
               {
                 if(ECHO_GRAMMAR) printf("command -> DUMP\n");
-                Parser::Instance()->add_dump(*($3), element_count);
+                Parser::Instance()->add_dump(*($3), element_count, element_type);
                 element_count = -1;
                 Parser::Instance()->ClearParams();
               }
@@ -735,10 +746,24 @@ sample_options: RANGE '=' VARIABLE
                 }
               | ALL
 	        {
-		  if(ECHO_GRAMMAR) std::cout << "sample, all" << std::endl;
+		  if(ECHO_GRAMMAR) std::cout << "sample_opt, all" << std::endl;
 		  // -2: convention to add to all elements
 		  // empty name so that element name can be attached
-		  if(execute) { $$ = new std::string(""); element_count = -2; }
+		  if(execute)
+                  {
+                    $$ = new std::string("");
+		    element_count = -2;
+		    element_type=ElementType::_NONE;
+	          }
+	        }
+	      | component
+		{
+	          if(ECHO_GRAMMAR) std::cout << "sample_opt, all " << typestr(static_cast<ElementType>($1)) << std::endl;
+	          if(execute) {
+	             element_type = static_cast<ElementType>($1);
+		     element_count = -2;
+		     $$ = new std::string("");
+	          }
 	        }
 ;
 

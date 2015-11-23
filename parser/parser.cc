@@ -387,7 +387,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
     beamline_list.push_back(*itTunnel);
 }
 
-void Parser::add_element(Element& e, std::string before, int before_count)
+void Parser::add_element(Element& e, std::string before, int before_count, ElementType type)
 {
   // if before_count equal to -2 add to all elements regardless of name
   // typically used for output elements like samplers
@@ -406,15 +406,23 @@ void Parser::add_element(Element& e, std::string before, int before_count)
 	  skip=true;
 	  continue;
 	}
+	// skip all elements of type not equal to NONE
+	if (type != ElementType::_NONE && type != (*it).type) {
+	  continue;
+	}
+	
 	// add element name to name
 	e.name += it->name;
 	beamline_list.insert(it,e);
 	// reset name
 	e.name = origName;
       }
-      // add final element
-      e.name += "end";
-      beamline_list.push_back(e);
+      // if add sampler to all also add to final element
+      if (type == ElementType::_NONE) {
+	// add final element
+	e.name += "end";
+	beamline_list.push_back(e);
+      }
       // reset name (not really needed)
       e.name = origName;
     }
@@ -440,7 +448,7 @@ void Parser::add_element(Element& e, std::string before, int before_count)
     }
 }
  
-void Parser::add_sampler(std::string name, int before_count)
+void Parser::add_sampler(std::string name, int before_count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler before "<<name;
@@ -454,10 +462,10 @@ void Parser::add_sampler(std::string name, int before_count)
   e.lst = nullptr;
 
   // add element to beamline
-  add_element(e, name, before_count);
+  add_element(e, name, before_count, type);
 }
 
-void Parser::add_csampler(std::string name, int before_count)
+void Parser::add_csampler(std::string name, int before_count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting csampler before "<<name;
@@ -473,10 +481,10 @@ void Parser::add_csampler(std::string name, int before_count)
   e.lst = nullptr;
 
   // add element to beamline
-  add_element(e, name, before_count);
+  add_element(e, name, before_count, type);
 }
 
-void Parser::add_dump(std::string name, int before_count)
+void Parser::add_dump(std::string name, int before_count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting dump before "<<name;
@@ -490,7 +498,7 @@ void Parser::add_dump(std::string name, int before_count)
   e.lst = nullptr;
 
   // add element to beamline
-  add_element(e, name, before_count);
+  add_element(e, name, before_count, type);
 }
 
 void Parser::add_tunnel()

@@ -1093,10 +1093,18 @@ If you wish to sample only one specific instance, the following syntax can be us
 
   sample, range=<element_name>[index];
 
-To attach samplers to all elements::
+To attach samplers to all elements (except the first one)::
 
   sample, all;
 
+And to attach samplers before all elements of a specific type::
+
+  sample, <type>;
+
+e.g.::
+
+  sample, quadrupole;
+  
 .. note:: Samplers **can only** be defined **after** the main sequence has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
