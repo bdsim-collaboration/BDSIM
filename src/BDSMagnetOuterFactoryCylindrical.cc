@@ -76,8 +76,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 
   G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponentIn, 0.0, -1.0*zcomponentIn);
   G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponentOut, 0.0, zcomponentOut);
-  G4cout << "magnet inputface " << inputface << G4endl;
-  G4cout << "magnet outputface " << outputface << G4endl;
   
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
