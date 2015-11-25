@@ -1,5 +1,6 @@
 #include "BDSExecOptions.hh"
 
+#include <cstdlib>
 #include <iomanip>
 #include <unistd.h>
 
@@ -8,6 +9,7 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
 
@@ -115,7 +117,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
   const char* optionName;
   // return code
   int c;
- 
+  // number conversion check
+  bool conversion = true;
   for(;;) {
     OptionIndex = 0;
   
@@ -125,7 +128,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
     
     if ( c == -1 ) // end of options list
       break;
-    
+
     switch (c) {
     case '?': // unrecognised option
       G4cout << "invalid option for command " << argv[0] << G4endl << G4endl << G4endl;
@@ -139,83 +142,84 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	Usage();
 	exit(0);
       }
-      if( !strcmp(optionName , "batch") ) {
+      else if( !strcmp(optionName , "batch") ) {
 	batch = true;
       }
-      if( !strcmp(optionName , "verbose") ) {
+      else if( !strcmp(optionName , "verbose") ) {
 	verbose = true; 
       }
-      if( !strcmp(optionName , "verbose_step") ) {
+      else if( !strcmp(optionName , "verbose_step") ) {
 	verboseStep = true; 
 	// we shouldn't have verbose steps without verbose events etc.
 	verboseEvent = true;
       }
-      if( !strcmp(optionName , "verbose_event") ) {
+      else if( !strcmp(optionName , "verbose_event") ) {
 	verboseEvent = true; 
       }
-      if( !strcmp(optionName , "verbose_event_num") ){
-	verboseEventNumber = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_event_num") ){
+	conversion = BDS::IsInteger(optarg,verboseEventNumber);
       }
-      if( !strcmp(optionName , "verbose_G4run") ) {
-	verboseRunLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4run") ) {
+	conversion = BDS::IsInteger(optarg,verboseRunLevel);
       }
-      if( !strcmp(optionName , "verbose_G4event") ) {
-	verboseEventLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4event") ) {
+	conversion = BDS::IsInteger(optarg,verboseEventLevel);
       }
-      if( !strcmp(optionName , "verbose_G4tracking") )  {
-	verboseTrackingLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4tracking") )  {
+	conversion = BDS::IsInteger(optarg,verboseTrackingLevel);
       }
-      if( !strcmp(optionName , "verbose_G4stepping") ) {
-	verboseSteppingLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4stepping") ) {
+	conversion = BDS::IsInteger(optarg,verboseSteppingLevel);
       }
-      if( !strcmp(optionName , "output") ) {
+      else if( !strcmp(optionName , "output") ) {
 	outputFormat = BDS::DetermineOutputFormat(optarg);
       }
-      if( !strcmp(optionName , "outfile") ) {
+      else if( !strcmp(optionName , "outfile") ) {
 	outputFilename=optarg;
 	outputFilenameSet=true;
       }
-      if( !strcmp(optionName , "survey") ) {
+      else if( !strcmp(optionName , "survey") ) {
 	surveyFilename = optarg; 
 	survey=true;
       }
-      if( !strcmp(optionName , "file") ) {
+      else if( !strcmp(optionName , "file") ) {
 	inputFilename=optarg;
       }
-      if( !strcmp(optionName , "vis_debug") ) {
+      else if( !strcmp(optionName , "vis_debug") ) {
 	visDebug = true;
       }
-      if( !strcmp(optionName , "vis_mac") ) {
+      else if( !strcmp(optionName , "vis_mac") ) {
 	visMacroFilename=optarg;
       }
-      if( !strcmp(optionName , "gflash") ) {
+      else if( !strcmp(optionName , "gflash") ) {
 	gflash = true;
       }
-      if( !strcmp(optionName , "gflashemax") ) {
-	gflashemax = atof(optarg);
+      else if( !strcmp(optionName , "gflashemax") ) {
+	conversion = BDS::IsNumber(optarg,gflashemax);
       }
-      if( !strcmp(optionName , "gflashemin") ) {
-	gflashemin = atof(optarg);
+      else if( !strcmp(optionName , "gflashemin") ) {
+	conversion = BDS::IsNumber(optarg,gflashemin);
       }
-      if( !strcmp(optionName, "materials") ) {
+      else if( !strcmp(optionName, "materials") ) {
 	BDSMaterials::ListMaterials();
+	// return after printing material list
 	exit(0);
       }
-      if( !strcmp(optionName, "circular")  ) {
+      else if( !strcmp(optionName, "circular")  ) {
 	circular = true;
       }
-      if( !strcmp(optionName, "seed")  ){
-	seed = atoi(optarg);
+      else if( !strcmp(optionName, "seed")  ){
+	conversion = BDS::IsInteger(optarg,seed);
 	setSeed = true;
       }
-      if( !strcmp(optionName, "seedstate") ){
+      else if( !strcmp(optionName, "seedstate") ){
 	seedStateFilename = optarg;
 	setSeedState = true;
       }
-      if( !strcmp(optionName, "ngenerate") ){
-	nGenerate = atof(optarg);
+      else if( !strcmp(optionName, "ngenerate") ){
+	conversion = BDS::IsInteger(optarg,nGenerate);
       }
-      if( !strcmp(optionName, "exportgeometryto") ){
+      else if( !strcmp(optionName, "exportgeometryto") ){
 	std::string fn = optarg;
 	if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
 	  {
@@ -225,13 +229,20 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	else
 	  {
 	    // remember if you extend this to do it also in the usage print out
-	    G4cerr << __METHOD_NAME__ << "unkonwn geometry format \""
+	    G4cerr << __METHOD_NAME__ << "Unknown geometry format \""
 		   << fn.substr(fn.find_last_of(".") + 1) << "\"\n"
 		   << "Please specify a valid filename extension - options are: \"gdml\"" << G4endl;
 	    exit(1);
 	  }
 	exportGeometry = true;
       }
+
+      if (conversion == false) {
+	// conversion from character string to number went wrong, exit
+	G4cerr << __METHOD_NAME__ << "Conversion to number (or integer) went wrong for \"" << optionName << "\" with value: \"" << optarg << "\"" << G4endl;
+	exit(1);
+      }
+
       break;
       
     default:
