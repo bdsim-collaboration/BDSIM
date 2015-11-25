@@ -36,51 +36,15 @@ TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
 #endif
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
-  SamplerTree->Branch("E0",  &E0,  "E0/F" ); // (GeV)
-  SamplerTree->Branch("x0",  &x0,  "x0/F" ); // (m)
-  SamplerTree->Branch("y0",  &y0,  "y0/F" ); // (m)
-  SamplerTree->Branch("z0",  &z0,  "z0/F" ); // (m)
-  SamplerTree->Branch("xp0", &xp0, "xp0/F"); // (rad)
-  SamplerTree->Branch("yp0", &yp0, "yp0/F"); // (rad)
-  SamplerTree->Branch("zp0", &zp0, "zp0/F"); // (rad)
-  SamplerTree->Branch("t0",  &t0,  "t0/F" ); // (ns)
-
-  SamplerTree->Branch("E_prod",  &E_prod,  "E_prod/F" ); // (GeV)
-  SamplerTree->Branch("x_prod",  &x_prod,  "x_prod/F" ); // (m)
-  SamplerTree->Branch("y_prod",  &y_prod,  "y_prod/F" ); // (m)
-  SamplerTree->Branch("z_prod",  &z_prod,  "z_prod/F" ); // (m)
-  SamplerTree->Branch("xp_prod", &xp_prod, "xp_prod/F"); // (rad)
-  SamplerTree->Branch("yp_prod", &yp_prod, "yp_prod/F"); // (rad)
-  SamplerTree->Branch("zp_prod", &zp_prod, "zp_prod/F"); // (rad)
-  SamplerTree->Branch("t_prod",  &t_prod,  "t_prod/F" ); // (ns)
-
-  SamplerTree->Branch("E_lastScat",  &E_lastScat,  "E_lastScat/F");  // (GeV)
-  SamplerTree->Branch("x_lastScat",  &x_lastScat,  "x_lastScat/F");  // (m)
-  SamplerTree->Branch("y_lastScat",  &y_lastScat,  "y_lastScat/F");  // (m)
-  SamplerTree->Branch("z_lastScat",  &z_lastScat,  "z_lastScat/F");  // (m)
-  SamplerTree->Branch("xp_lastScat", &xp_lastScat, "xp_lastScat/F"); // (rad)
-  SamplerTree->Branch("yp_lastScat", &yp_lastScat, "yp_lastScat/F"); // (rad)
-  SamplerTree->Branch("zp_lastScat", &zp_lastScat, "zp_lastScat/F"); // (rad)
-  SamplerTree->Branch("t_lastScat",  &t_lastScat,  "t_lastScat/F");  // (ns)
-  
-  SamplerTree->Branch("E",  &E,  "E/F");  // (GeV)
-  SamplerTree->Branch("x",  &x,  "x/F");  // (m)
-  SamplerTree->Branch("y",  &y,  "y/F");  // (m)
-  SamplerTree->Branch("z",  &z,  "z/F");  // (m)
-  SamplerTree->Branch("xp", &xp, "xp/F"); // (rad)
-  SamplerTree->Branch("yp", &yp, "yp/F"); // (rad)
-  SamplerTree->Branch("zp", &zp, "zp/F"); // (rad)
-  SamplerTree->Branch("t",  &t,  "t/F");  // (ns)
-  
-  SamplerTree->Branch("X",  &X,  "X/F");  // (m)
-  SamplerTree->Branch("Y",  &Y,  "Y/F");  // (m)
-  SamplerTree->Branch("Z",  &Z,  "Z/F");  // (m)
-  SamplerTree->Branch("Xp", &Xp, "Xp/F"); // (rad)
-  SamplerTree->Branch("Yp", &Yp, "Yp/F"); // (rad)
-  SamplerTree->Branch("Zp", &Zp, "Zp/F"); // (rad)
- 
-  SamplerTree->Branch("S",  &S,   "S/F"); // (m)
-  
+  SamplerTree->Branch("E",          &E,          "E/F");  // (GeV)
+  SamplerTree->Branch("x",          &x,          "x/F");  // (m)
+  SamplerTree->Branch("y",          &y,          "y/F");  // (m)
+  SamplerTree->Branch("z",          &z,          "z/F");  // (m)
+  SamplerTree->Branch("xp",         &xp,         "xp/F"); // (rad)
+  SamplerTree->Branch("yp",         &yp,         "yp/F"); // (rad)
+  SamplerTree->Branch("zp",         &zp,         "zp/F"); // (rad)
+  SamplerTree->Branch("t",          &t,          "t/F");  // (ns)
+  SamplerTree->Branch("S",          &S,          "S/F");  // (m)
   SamplerTree->Branch("weight",     &weight,     "weight/F");
   SamplerTree->Branch("partID",     &part,       "partID/I");
   SamplerTree->Branch("nEvent",     &eventno,    "nEvent/I");
@@ -105,19 +69,21 @@ void BDSOutputROOT::Init()
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
-  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch()) {
-    // check if file exists
-    int nTimeAppended = 1;
-    while (BDS::FileExists(filename)) {
-      // if exists remove trailing .root
-      filename = basefilename + "-" + std::to_string(nTimeAppended);
-      filename += ".root";
-      nTimeAppended +=1;
+  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch())
+    {
+      // check if file exists
+      int nTimeAppended = 1;
+      while (BDS::FileExists(filename))
+	{
+	  // if exists remove trailing .root
+	  filename = basefilename + "-" + std::to_string(nTimeAppended);
+	  filename += ".root";
+	  nTimeAppended +=1;
+	}
     }
-  }
   
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
-  theRootOutputFile=new TFile(filename,"RECREATE", "BDS output file");
+  theRootOutputFile = new TFile(filename,"RECREATE", "BDS output file");
 
   // Build sampler trees and store in samplerTrees
   // clear (for the case of multiple output files)
@@ -136,23 +102,25 @@ void BDSOutputROOT::Init()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
-      G4String name=BDSSamplerBase::outputNames[i];
+      G4String name = BDSSamplerBase::outputNames[i];
       // remove sampler number:
       name = name.substr(0,name.find_last_of("_"));
 
       // check if tree already exist (name has to be unique)
-      TTree* tree=(TTree*)gDirectory->Get(name);
+      TTree* tree = (TTree*)gDirectory->Get(name);
       // if exist add number and increase, start counting at 2
-      if(tree) {
-	int count = 2;
-	G4String uniqueName;
-	while (tree) {
-	  uniqueName = name + "_" + std::to_string(count);
-	  tree=(TTree*)gDirectory->Get(uniqueName);
-	  count++;
+      if(tree)
+	{
+	  int count = 2;
+	  G4String uniqueName;
+	  while (tree)
+	    {
+	      uniqueName = name + "_" + std::to_string(count);
+	      tree=(TTree*)gDirectory->Get(uniqueName);
+	      count++;
+	    }
+	  name = uniqueName;
 	}
-	name = uniqueName;
-      }
 
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
@@ -241,101 +209,69 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("eventNo",    &eventno,    "eventNo/I");
 }
 
-void BDSOutputROOT::WriteRootHit(TTree*   Tree, 
-				 G4double InitTotalEnergy, 
-				 G4double InitX, 
-				 G4double InitY, 
-				 G4double InitZ, 
-				 G4double InitXPrime, 
-				 G4double InitYPrime, 
-				 G4double InitZPrime, 
-				 G4double InitT, 
-				 G4double ProdTotalEnergy, 
-				 G4double ProdX, 
-				 G4double ProdY, 
-				 G4double ProdZ, 
-				 G4double ProdXPrime, 
-				 G4double ProdYPrime, 
-				 G4double ProdZPrime, 
-				 G4double ProdT, 
-				 G4double LastScatTotalEnergy, 
-				 G4double LastScatX, 
-				 G4double LastScatY, 
-				 G4double LastScatZ, 
-				 G4double LastScatXPrime, 
-				 G4double LastScatYPrime, 
-				 G4double LastScatZPrime, 
-				 G4double LastScatT, 
-				 G4double TotalEnergy, 
-				 G4double LocalX, 
-				 G4double LocalY, 
-				 G4double LocalZ, 
-				 G4double LocalXPrime, 
-				 G4double LocalYPrime, 
-				 G4double LocalZPrime, 
-				 G4double GlobalT, 
-				 G4double GlobalX, 
-				 G4double GlobalY, 
-				 G4double GlobalZ, 
-				 G4double GlobalXPrime, 
-				 G4double GlobalYPrime, 
-				 G4double GlobalZPrime, 
-				 G4double GlobalS, 
-				 G4double Weight, 
-				 G4int    PDGtype, 
-				 G4int    EventNo, 
-				 G4int    ParentID,
-				 G4int    TrackID, 
-				 G4int    TurnsTaken,
-				 G4String Process)
+void BDSOutputROOT::WriteRootHit(TTree*   Tree,
+				 G4double totalEnergy,
+				 G4double xIn,
+				 G4double yIn,
+				 G4double zIn,
+				 G4double xPrime,
+				 G4double yPrime,
+				 G4double zPrime,
+				 G4double tIn,
+				 G4double sIn,
+				 G4double weightIn,
+				 G4int    PDGtype,
+				 G4int    eventNoIn,
+				 G4int    parentID,
+				 G4int    trackIDIn,
+				 G4int    turnsTakenIn,
+				 G4String processIn,
+				 G4bool   fillTree)
 {
-  E0          = InitTotalEnergy/ CLHEP::GeV;
-  x0          = InitX          / CLHEP::m;
-  y0          = InitY          / CLHEP::m;
-  z0          = InitZ          / CLHEP::m;
-  xp0         = InitXPrime     / CLHEP::radian;
-  yp0         = InitYPrime     / CLHEP::radian;
-  zp0         = InitZPrime     / CLHEP::radian;
-  t0          = InitT          / CLHEP::ns;
-  E_prod      = ProdTotalEnergy/ CLHEP::GeV;
-  x_prod      = ProdX          / CLHEP::m;
-  y_prod      = ProdY          / CLHEP::m;
-  z_prod      = ProdZ          / CLHEP::m;
-  xp_prod     = ProdXPrime     / CLHEP::radian;
-  yp_prod     = ProdYPrime     / CLHEP::radian;
-  zp_prod     = ProdZPrime     / CLHEP::radian;
-  t_prod      = ProdT          / CLHEP::ns;
-  E_lastScat  = LastScatTotalEnergy/ CLHEP::GeV;
-  x_lastScat  = LastScatX      / CLHEP::m;
-  y_lastScat  = LastScatY      / CLHEP::m;
-  z_lastScat  = LastScatZ      / CLHEP::m;
-  xp_lastScat = LastScatXPrime / CLHEP::radian;
-  yp_lastScat = LastScatYPrime / CLHEP::radian;
-  zp_lastScat = LastScatZPrime / CLHEP::radian;
-  t_lastScat  = LastScatT      / CLHEP::ns;
-  E           = TotalEnergy    / CLHEP::GeV;
-  x           = LocalX         / CLHEP::m;
-  y           = LocalY         / CLHEP::m;
-  z           = LocalZ         / CLHEP::m;
-  xp          = LocalXPrime    / CLHEP::radian;
-  yp          = LocalYPrime    / CLHEP::radian;
-  zp          = LocalZPrime    / CLHEP::radian;
-  t           = GlobalT        / CLHEP::ns;
-  X           = GlobalX        / CLHEP::m;
-  Y           = GlobalY        / CLHEP::m;
-  Z           = GlobalZ        / CLHEP::m;
-  Xp          = GlobalXPrime   / CLHEP::radian;
-  Yp          = GlobalYPrime   / CLHEP::radian;
-  Zp          = GlobalZPrime   / CLHEP::radian;
-  S           = GlobalS        / CLHEP::m;
-  weight      = Weight;
+  E           = totalEnergy / CLHEP::GeV;
+  x           = xIn         / CLHEP::m;
+  y           = yIn         / CLHEP::m;
+  z           = zIn         / CLHEP::m;
+  xp          = xPrime      / CLHEP::radian;
+  yp          = yPrime      / CLHEP::radian;
+  zp          = zPrime      / CLHEP::radian;
+  T           = tIn         / CLHEP::ns;
+  S           = sIn         / CLHEP::m;
+  weight      = weightIn;
   part        = PDGtype; 
-  eventno     = EventNo; 
-  pID         = ParentID; 
-  track_id    = TrackID;
-  turnnumber  = TurnsTaken;
-  process     = Process;
-  Tree->Fill();
+  eventno     = eventNoIn; 
+  pID         = parentID; 
+  track_id    = trackIDIn;
+  turnnumber  = turnsTakenIn;
+  process     = processIn;
+
+  if (fillTree)
+    {Tree->Fill();}
+}
+
+void BDSOutputROOT::WriteRootHit(TTree*         tree,
+				 BDSSamplerHit* hit,
+				 G4bool         fillTree)
+{
+  E           = hit->GetTotalEnergy() / CLHEP::GeV;
+  x           = hit->GetX()           / CLHEP::m;
+  y           = hit->GetY()           / CLHEP::m;
+  z           = hit->GetZ()           / CLHEP::m;
+  xp          = hit->GetXPrime()      / CLHEP::radian;
+  yp          = hit->GetYPrime()      / CLHEP::radian;
+  zp          = hit->GetZPrime()      / CLHEP::radian;
+  T           = hit->GetT()           / CLHEP::ns;
+  S           = hit->GetS()           / CLHEP::m;
+  weight      = hit->GetWeight();
+  part        = hit->GetPDGtype();
+  eventno     = hit->GetEventNo();
+  pID         = hit->GetParentID();
+  track_id    = hit->GetTrackID();
+  turnnumber  = hit->GetTurnsTaken();
+  process     = hit->GetProcess();
+
+  if (fillTree)
+    {tree->Fill();}
 }
 
 void BDSOutputROOT::WritePrimary(G4double totalEnergy,
@@ -358,20 +294,7 @@ void BDSOutputROOT::WritePrimary(G4double totalEnergy,
 	       totalEnergy, 
 	       x0, y0, z0, 
 	       xp, yp, zp, 
-	       t, 
-	       totalEnergy, 
-	       x0, y0, z0, 
-	       xp, yp, zp, 
-	       t, 
-	       totalEnergy, 
-	       x0, y0, z0, 
-	       xp, yp, zp, 
-	       t, 
-	       totalEnergy, 
-	       x0, y0, z0, 
-	       xp, yp, zp, 
-	       t, 
-	       0,0,0,0,0,0,0,
+	       t,/*s=*/0.0,
 	       weight, 
 	       PDGType, 
 	       nEvent, 
@@ -400,9 +323,8 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 	{
 	  G4String samplerNumber = name.substr(name.find_last_of("_")+1,std::string::npos);
 	  unsigned int treeIndex = std::stoul(samplerNumber);
-	  if (treeIndex < samplerTrees.size()) {
-	    tree = samplerTrees[treeIndex];
-	  }
+	  if (treeIndex < samplerTrees.size())
+	    {tree = samplerTrees[treeIndex];}
 	}
       catch (std::invalid_argument) {} // for std::stoul, do nothing
       catch (std::out_of_range) {} // for string::substr, do nothing
@@ -412,64 +334,18 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
       // this will not work for multiple samplers attached to elements with same name
       if (!tree)
 	{
-	  tree=(TTree*)gDirectory->Get(name);
-	  if(!tree) {
-	    G4String errorString = "BDSOutputROOT: ROOT Sampler " + name + " not found!";
-	    G4Exception(errorString.c_str(), "-1", FatalException, "");
-	  }
+	  tree = (TTree*)gDirectory->Get(name);
+	  if(!tree)
+	    {
+	      G4String errorString = "BDSOutputROOT: ROOT Sampler " + name + " not found!";
+	      G4Exception(errorString.c_str(), "-1", FatalException, "");
+	    }
 	}
 
-      WriteRootHit(tree,
-		   (*hc)[i]->GetInitTotalEnergy(),
-		   (*hc)[i]->GetInitX(),
-		   (*hc)[i]->GetInitY(),
-		   (*hc)[i]->GetInitZ(),
-		   (*hc)[i]->GetInitXPrime(),
-		   (*hc)[i]->GetInitYPrime(),
-		   (*hc)[i]->GetInitZPrime(),
-		   (*hc)[i]->GetInitT(),
-		   (*hc)[i]->GetProdTotalEnergy(),
-		   (*hc)[i]->GetProdX(),
-		   (*hc)[i]->GetProdY(),
-		   (*hc)[i]->GetProdZ(),
-		   (*hc)[i]->GetProdXPrime(),
-		   (*hc)[i]->GetProdYPrime(),
-		   (*hc)[i]->GetProdZPrime(),
-		   (*hc)[i]->GetProdT(),
-		   (*hc)[i]->GetLastScatTotalEnergy(),
-		   (*hc)[i]->GetLastScatX(),
-		   (*hc)[i]->GetLastScatY(),
-		   (*hc)[i]->GetLastScatZ(),
-		   (*hc)[i]->GetLastScatXPrime(),
-		   (*hc)[i]->GetLastScatYPrime(),
-		   (*hc)[i]->GetLastScatZPrime(),
-		   (*hc)[i]->GetLastScatT(),
-		   (*hc)[i]->GetTotalEnergy(),
-		   (*hc)[i]->GetX(),
-		   (*hc)[i]->GetY(),
-		   (*hc)[i]->GetZ(),
-		   (*hc)[i]->GetXPrime(),
-		   (*hc)[i]->GetYPrime(),
-		   (*hc)[i]->GetZPrime(),
-		   (*hc)[i]->GetT(),
-		   (*hc)[i]->GetGlobalX(),
-		   (*hc)[i]->GetGlobalY(),
-		   (*hc)[i]->GetGlobalZ(),
-		   (*hc)[i]->GetGlobalXPrime(),
-		   (*hc)[i]->GetGlobalYPrime(),
-		   (*hc)[i]->GetGlobalZPrime(),
-		   (*hc)[i]->GetS(),
-		   (*hc)[i]->GetWeight(),
-		   (*hc)[i]->GetPDGtype(), 
-		   (*hc)[i]->GetEventNo(), 
-		   (*hc)[i]->GetParentID(), 
-		   (*hc)[i]->GetTrackID(),
-		   (*hc)[i]->GetTurnsTaken(),
-		   (*hc)[i]->GetProcess());
+      WriteRootHit(tree, (*hc)[i]);
     }
 }
 
-/// write a trajectory to file
 void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
 {
 #ifdef BDSDEBUG
@@ -481,7 +357,7 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   
   if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
-  for(auto iT=TrajVec.begin();iT<TrajVec.end();iT++)
+  for(auto iT = TrajVec.begin(); iT<TrajVec.end(); iT++)
     {
       G4Trajectory* Traj=(G4Trajectory*)(*iT);
 	  
