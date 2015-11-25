@@ -7,7 +7,6 @@
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
 #include "G4FieldManager.hh"

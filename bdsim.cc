@@ -44,8 +44,7 @@
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
-#include "parser/gmad.h"  // GMAD parser
-#include "parser/parser.h"
+#include "parser/parser.h" // GMAD parser
 
 //=======================================================
 // Global variables 
