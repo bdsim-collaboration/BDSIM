@@ -18,7 +18,8 @@ macro(_run_test test_name input_args)
   # convert input arguments into a cmake list to separate
   set(args ${input_args})
   separate_arguments(args)
-
+  set(TESTING_ARGS ${TESTING_ARGS})
+  separate_arguments(TESTING_ARGS)
   # If loop can be removed when we no longer support cmake 2.6...
   if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
     add_test(NAME ${test_name} COMMAND ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
