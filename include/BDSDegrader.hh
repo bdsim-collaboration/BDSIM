@@ -31,7 +31,6 @@ protected:
     
     G4double outerDiameter;
     G4int numberWedges;
-    G4double wedgeBasewidth;
     G4double wedgeLength;
     G4double degraderHeight;
     G4double degraderOffset;
