@@ -207,10 +207,12 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
 
   case ElementType::_MATERIAL:
     material_list.push_back(e);
-
+    return;
+    
   case ElementType::_ATOM:
     atom_list.push_back(e);
-
+    return;
+    
   default:
     break;
   }
