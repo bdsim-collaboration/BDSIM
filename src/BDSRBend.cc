@@ -44,7 +44,8 @@ void BDSRBend::CalculateLengths(G4double aLength)
   //full length along chord - just its length in case of rbend
   chordLength = aLength;
 
-  orientation = BDS::CalculateOrientation(angle);
+  // orientation of shifts - depends on angle - calculations use absolute value of angle for safety
+  G4int orientation = BDS::CalculateOrientation(angle);
 
   // straightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
