@@ -283,6 +283,7 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
+  delete defaultBeamPipeModel;
   delete itsZeroFieldManager;
   delete zeroMagField;
   delete tunnelInfo;
