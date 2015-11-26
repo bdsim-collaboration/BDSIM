@@ -17,14 +17,11 @@
 
 #include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"
+#include "BDSParser.hh"
 #include "G4NistManager.hh"
 
 #include <list>
 #include <map>
-
-#include "parser/element.h"
-#include "parser/options.h"
-#include "parser/parser.h"
 
 BDSMaterials* BDSMaterials::_instance = nullptr;
 
@@ -878,7 +875,7 @@ void BDSMaterials::Initialise()
 
   //Default vacuum (same composition as residual vacuum in warm sections of LHC).
   // can be overridden by vacMaterial option
-  G4double vacpressure=GMAD::Parser::Instance()->GetOptions().vacuumPressure*CLHEP::bar;
+  G4double vacpressure=BDSParser::Instance()->GetOptions().vacuumPressure*CLHEP::bar;
   density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
@@ -1211,7 +1208,7 @@ void BDSMaterials::PrepareRequiredMaterials()
   // convert the parsed atom list to list of Geant4 G4Elements
   
   if (verbose || debug) G4cout << "parsing the atom list..."<< G4endl;
-  for(auto it : GMAD::Parser::Instance()->GetAtoms())
+  for(auto it : BDSParser::Instance()->GetAtoms())
   {
 #ifdef BDSDEBUG
     G4cout << "---->adding Atom, "
@@ -1224,11 +1221,11 @@ void BDSMaterials::PrepareRequiredMaterials()
 
     AddElement(it.name,it.symbol,it.Z,it.A);
   }
-  if (verbose || debug) G4cout << "size of atom list: "<< GMAD::Parser::Instance()->GetAtoms().size() << G4endl;
+  if (verbose || debug) G4cout << "size of atom list: "<< BDSParser::Instance()->GetAtoms().size() << G4endl;
   
   // convert the parsed material list to list of Geant4 G4Materials
   if (verbose || debug) G4cout << "parsing the material list..."<< G4endl;
-  for(auto it : GMAD::Parser::Instance()->GetMaterials())
+  for(auto it : BDSParser::Instance()->GetMaterials())
   {
     G4State itsState;
     if      (it.state=="solid")  itsState = kStateSolid;
@@ -1304,5 +1301,5 @@ void BDSMaterials::PrepareRequiredMaterials()
       exit(1);
     }
   }
-  if (verbose || debug) G4cout << "size of material list: "<< GMAD::Parser::Instance()->GetMaterials().size() << G4endl;
+  if (verbose || debug) G4cout << "size of material list: "<< BDSParser::Instance()->GetMaterials().size() << G4endl;
 }

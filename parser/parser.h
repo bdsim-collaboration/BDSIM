@@ -42,20 +42,7 @@ namespace GMAD {
     /// Access method
     static Parser* Instance();
     /// Destructor
-    ~Parser();
-
-    // Public reading methods, all const
-    
-    /// Return options
-    const Options& GetOptions()const;
-    /// Return beamline
-    const FastList<Element>& GetBeamline()const;
-    /// Return biasing list
-    const FastList<PhysicsBiasing>& GetBiasing()const;
-    /// Return material list
-    const std::list<Element>& GetMaterials()const;
-    /// Return atom list
-    const std::list<Element>& GetAtoms()const;
+    virtual ~Parser();
 
   protected:
     /// Constructor from filename
@@ -90,7 +77,7 @@ namespace GMAD {
     /// insert cross section bias
     void add_xsecbias();
     /// access property of Element with element_name
-    double property_lookup(const FastList<Element>& el_list, std::string element_name, std::string property_name);
+    double property_lookup(std::string element_name, std::string property_name);
     /// add element to temporary element sequence tmp_list
     void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
     /// copy properties from Element into params, returns element type as integer, returs _NONE if not found
@@ -101,9 +88,6 @@ namespace GMAD {
 
     /// look up parser symbol
     Symtab * symlook(std::string s);
-
-    /// Return list of all defined elements
-    const FastList<Element>& GetElements() const;
 
     ///@{ Add value to front of temporary list
     void Store(double value);
@@ -131,12 +115,19 @@ namespace GMAD {
     void OverwriteElement(std::string elementName);
     /// Add variable memory to variable list for memory management
     void AddVariable(std::string* name);
+    ///@{ Print methods
+    void PrintBeamline()const;
+    void PrintElements()const;
+    void PrintOptions()const;
+    ///@}
     
     ///@{ Name of beamline
     std::string current_line;
     std::string current_start;
     std::string current_end;
     ///@}
+    /// Beamline Access (for pybdsim)
+    const FastList<Element>& GetBeamline()const;
     
   private:
     // *****************
@@ -161,7 +152,9 @@ namespace GMAD {
     std::list<double> tmparray;
     std::list<std::string> tmpstring;
     ///@}
-    
+
+    // protected implementation (for inheritance to BDSParser - hackish)
+  protected:
     /// Parameters to copy to Element
     Parameters params;
     /// General options

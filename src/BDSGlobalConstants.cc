@@ -2,12 +2,10 @@
 
 #include "BDSGlobalConstants.hh"
 
-#include "parser/options.h"
-#include "parser/parser.h"
-
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
@@ -22,7 +20,7 @@ BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(_instance==nullptr)
-    {_instance = new BDSGlobalConstants(GMAD::Parser::Instance()->GetOptions());}
+    {_instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
   return _instance;
 }
 

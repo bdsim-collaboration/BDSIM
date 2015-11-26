@@ -11,6 +11,7 @@
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
@@ -21,8 +22,6 @@
 #include "BDSTunnelSD.hh"
 #include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
-
-#include "parser/parser.h"
 
 #include "G4Box.hh"
 #include "G4Electron.hh"
@@ -146,7 +145,7 @@ void BDSDetectorConstruction::BuildBeamline()
     }
   
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(auto element : GMAD::Parser::Instance()->GetBeamline())
+  for(auto element : BDSParser::Instance()->GetBeamline())
     {
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << (element).name << G4endl;
@@ -202,7 +201,7 @@ void BDSDetectorConstruction::BuildBeamline()
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::Parser::Instance()->GetBeamline().size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< BDSParser::Instance()->GetBeamline().size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
 
@@ -554,8 +553,8 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
   BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
   for(std::string& bs : biasList)
     {
-      auto it = GMAD::Parser::Instance()->GetBiasing().find(bs);
-      if (it==GMAD::Parser::Instance()->GetBiasing().end()) continue;
+      auto it = BDSParser::Instance()->GetBiasing().find(bs);
+      if (it==BDSParser::Instance()->GetBiasing().end()) continue;
       const GMAD::PhysicsBiasing& pb = *it;
       
       if(debug)

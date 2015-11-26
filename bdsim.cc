@@ -33,6 +33,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParser.hh" // Parser
 #include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -43,8 +44,6 @@
 #include "BDSUserTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
-
-#include "parser/parser.h" // GMAD parser
 
 //=======================================================
 // Global variables 
@@ -76,7 +75,7 @@ int main(int argc,char** argv)
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  GMAD::Parser::Instance(execOptions->GetInputFilename());
+  BDSParser::Instance(execOptions->GetInputFilename());
 
   //
   // parse options, explicitly initialise materials and global constants and construct required materials
@@ -103,7 +102,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(GMAD::Parser::Instance()->GetOptions());
+  bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -120,7 +119,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(GMAD::Parser::Instance()->GetOptions().modularPhysicsListsOn) {
+  if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn) {
     BDSModularPhysicsList *physList = new BDSModularPhysicsList();
     /* Biasing */
 #if G4VERSION_NUMBER > 999
@@ -285,7 +284,7 @@ int main(int argc,char** argv)
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
-  delete GMAD::Parser::Instance();
+  delete BDSParser::Instance();
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
