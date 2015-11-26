@@ -20,8 +20,6 @@ int yyerror(const char *);
 extern int yylex();
 
 namespace GMAD {
-  extern const int ECHO_GRAMMAR;
-
   class Array;
   class Symtab;
   /**

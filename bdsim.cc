@@ -285,7 +285,7 @@ int main(int argc,char** argv)
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
-
+  delete GMAD::Parser::Instance();
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif

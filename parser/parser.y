@@ -18,7 +18,6 @@
   extern char* yytext;
 
   namespace GMAD {
-    // pointer to global parser object
     extern int line_num;
     extern std::string yyfilename;
   
@@ -124,6 +123,7 @@ atomic_stmt :
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
+	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << $3 << std::endl;
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
 	   Parser::Instance()->ClearParams();
@@ -132,6 +132,7 @@ decl : VARIABLE ':' component_with_params
       | VARIABLE ':' MARKER
        {
 	 if(execute) {
+	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << ElementType::_MARKER << std::endl;
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,ElementType::_MARKER);
 	   Parser::Instance()->ClearParams();

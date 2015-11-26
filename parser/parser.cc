@@ -189,7 +189,6 @@ void Parser::quit()
 
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
-  if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *name << " : " << type << std::endl;
 #ifdef BDSDEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, typestr(type).c_str(), params.lset);
 #endif
