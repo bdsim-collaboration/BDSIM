@@ -243,18 +243,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
   double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
   double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
   
-  // Angle of rbend
-  double prevAngle = (prevElement) ? (prevElement->angle * CLHEP::rad ) : 0.0;
-  double nextangle = (nextElement) ? (nextElement->angle * CLHEP::rad ) : 0.0;
-  
-  if (nextElement->type == ElementType::_RBEND){
-    if (e2 == 0){
-      e2 = nextangle*0.5;}
-  }
-  if (prevElement->type == ElementType::_RBEND){
-    if (e1 == 0){
-      e1 = -prevAngle*0.5;}
-  }
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
 			e1,

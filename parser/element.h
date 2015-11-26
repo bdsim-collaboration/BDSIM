@@ -120,6 +120,8 @@ struct Element {
   /// flush method
   void flush();
 
+  /// check if element is of a special type
+  bool isSpecial()const;
   /// property lookup by name (slow method)
   /// only for properties with type int/double!
   double property_lookup(std::string property_name)const;

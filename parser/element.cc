@@ -31,6 +31,23 @@ Element::Element():lst(nullptr) {
   flush();
 }
 
+bool Element::isSpecial()const {
+  bool isSpecial = false;
+
+  if (type == ElementType::_SAMPLER ||
+      type == ElementType::_CSAMPLER ||
+      type == ElementType::_DUMP ||
+      type == ElementType::_TRANSFORM3D ||
+      type == ElementType::_MARKER ||
+      type == ElementType::_LINE ||
+      type == ElementType::_REV_LINE ||
+      type == ElementType::_MATERIAL ||
+      type == ElementType::_ATOM)
+    {isSpecial = true;}
+
+  return isSpecial;
+}
+
 void Element::print(int & ident)const{
   for(int i=0;i<ident;i++)
     printf("--");

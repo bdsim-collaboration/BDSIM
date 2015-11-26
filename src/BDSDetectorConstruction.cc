@@ -162,17 +162,30 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << "BDSDetectorConstruction creating component " << (*elementIt).name << G4endl;
 #endif
 
-      // next and previous element
+      // next and previous element, but ignore samplers or other special elements
       GMAD::Element* prevElement = nullptr;
+      auto prevIt = elementIt;
+      while (prevIt!=GMAD::beamline_list.begin())
+	{
+	  --prevIt;
+	  if (prevIt->isSpecial() == false)
+	    {
+	      prevElement = &(*prevIt);
+	      break;
+	    }
+	}
+
       GMAD::Element* nextElement = nullptr;
-      // check if valid
-      if (elementIt!=GMAD::beamline_list.begin()) {
-	// access to previous element without changing the iterator
-	prevElement = &(*std::prev(elementIt));
-      }
-      if (elementIt!=GMAD::beamline_list.end()) {
-	nextElement = &(*std::next(elementIt));
-      }
+      auto nextIt = elementIt;
+      while (nextIt!=GMAD::beamline_list.begin())
+	{
+	  ++nextIt;
+	  if (nextIt->isSpecial() == false)
+	    {
+	      nextElement = &(*nextIt);
+	      break;
+	    }
+	}
       
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
