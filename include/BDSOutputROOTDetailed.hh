@@ -41,7 +41,7 @@ public:
 			    G4double weight,
 			    G4int    PDGType, 
 			    G4int    nEvent, 
-			    G4int    turnsTaken) override;
+			    G4int    turnsTaken);
 
 private:
 

@@ -18,6 +18,9 @@ BDSOutputROOTDetailed::BDSOutputROOTDetailed()
 #endif
 }
 
+BDSOutputROOTDetailed::~BDSOutputROOTDetailed()
+{;}
+
 TTree* BDSOutputROOTDetailed::BuildSamplerTree(G4String name)
 {
 #ifdef BDSDEBUG
