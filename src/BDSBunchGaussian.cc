@@ -20,7 +20,7 @@ BDSBunchGaussian::~BDSBunchGaussian()
   delete GaussMultiGen;
 }
 
-void BDSBunchGaussian::SetOptions(GMAD::Options& opt)
+void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

@@ -1,6 +1,5 @@
 #include "BDSRunManager.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "CLHEP/Random/Random.h"
 

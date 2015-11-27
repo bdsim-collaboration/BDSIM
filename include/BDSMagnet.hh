@@ -40,11 +40,7 @@ public:
 	    BDSMagnetOuterInfo* magnetOuterInfo);
   
   virtual ~BDSMagnet();
-
-private:
-  /// build and set field manager and chord finder
-  void BuildBPFieldMgr();
-
+  
 protected:
   /// Overridden method of BDSAcceleratorComponent to not only build container, but
   /// first construct field objects. After using BDSAcceleratorComponent::Build() to
@@ -57,6 +53,9 @@ protected:
   /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
   /// by derived classes as required - such as RBend.
   virtual void BuildBeampipe();
+
+  /// build and set field manager and chord finder
+  virtual void BuildBPFieldMgr();
 
   /// Attach the inner magnetic field to the beam pipe vacuum volume.
   void AttachFieldToBeamPipe();

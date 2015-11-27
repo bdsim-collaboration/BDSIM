@@ -37,9 +37,17 @@ set_tests_properties(gmad-addSamplerUndefinedElement PROPERTIES WILL_FAIL 1)
 add_test(gmad-elementnoargs ${gmadBinary} elementnoargs.gmad)
 set_tests_properties(gmad-elementnoargs PROPERTIES WILL_FAIL 1)
 
+# try to overwrite an element
+add_test(gmad-overwriteElement ${gmadBinary} overwriteElement.gmad)
+set_tests_properties(gmad-overwriteElement PROPERTIES WILL_FAIL 1)
+
 # try to overwrite a variable
-add_test(gmad-overwriteVariable ${gmadBinary} overwritevariable.gmad)
-set_tests_properties(gmad-overwriteVariable PROPERTIES WILL_FAIL 1)
+add_test(gmad-overwriteVariable ${gmadBinary} overwriteVariable.gmad)
+set_tests_properties(gmad-overwriteVariable PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
+
+# try to use an undeclared variable
+add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
+set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
 
 ##########################
 ### Test Functionality ###
@@ -76,6 +84,10 @@ set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION Samp
 add_test(gmad-testAddAllSamplers ${gmadBinary} addallsamplers.gmad)
 set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d2)
 
+# test add samplers at all quadrupoles
+add_test(gmad-testAddQuadSamplers ${gmadBinary} addquadsamplers.gmad)
+set_tests_properties(gmad-testAddQuadSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_q2)
+
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)
 set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
@@ -83,3 +95,8 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 # test extension
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
+
+# test arrays
+add_test(gmad-array ${gmadBinary} array.gmad)
+set_tests_properties(gmad-array PROPERTIES PASS_REGULAR_EXPRESSION 32)
+add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)

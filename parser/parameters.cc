@@ -87,7 +87,7 @@ void Parameters::flush() {
   degraderOffsetset = false;
 }
 
-void Parameters::inherit_properties(struct Element& e)
+void Parameters::inherit_properties(Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
@@ -220,6 +220,7 @@ void Parameters::set_value(std::string property, double value )
   if(property=="ysize") { ysize = value; ysizeset = true; return;}
   if(property=="xsizeOut") { xsizeOut = value; xsizeOutset = true; return;}
   if(property=="ysizeOut") { ysizeOut = value; ysizeOutset = true; return;}
+  if(property=="r") { r = value; rset = true; return;} // cyl. sampler radius
   if(property=="tilt") { tilt = value; tiltset = true; return;}
   if(property=="offsetX") { offsetX = value; offsetXset = true; return;}
   if(property=="offsetY") { offsetX = value; offsetYset = true; return;}
@@ -274,12 +275,6 @@ void Parameters::set_value(std::string property, std::string value )
     {
       bmapFileset = true;
       bmapFile = value;
-      return;
-    }
-  if(property=="type") 
-    {
-      printf("Warning : type parameter is currently ignored\n");
-      //ignore the "type attribute for the moment"
       return;
     }
   if(property=="outerMaterial") 
@@ -380,60 +375,45 @@ void Parameters::set_value(std::string property, Array* value)
     {
       knlset = true;
       value->set_vector(knl);
-      value->data.clear();
       return;
     } 
   if(property=="ksl") 
     {
       kslset = true;
       value->set_vector(ksl);
-      value->data.clear();
       return;
     }
   if(property=="blmLocZ") 
     {
       blmLocZset = true;
       value->set_vector(blmLocZ);
-      value->data.clear();
       return;
     }
   if(property=="blmLocTheta") 
     {
       blmLocThetaset = true;
       value->set_vector(blmLocTheta);
-      value->data.clear();
       return;
     }
   if(property=="components")
     {
       componentsset = true;
       value->set_vector(components);
-      value->symbols.clear();
       return;
     } 
   if(property=="componentsWeights")
     {
       componentsWeightsset = true;
       value->set_vector(componentsWeights);
-      value->data.clear();
       return;
     }
   if(property=="componentsFractions")
     {
       componentsFractionsset = true;
       value->set_vector(componentsFractions);
-      value->data.clear();
       return;
     }
 
   std::cerr << "Error: parser> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
   exit(1);
-}
-
-void Parameters::print()const{
-  printf("printing parameters:\n");
-  std::list<double>::const_iterator it;
-  for(it = knl.begin();it!=knl.end();++it)
-    printf(" %f ", (*it));
-  printf("\n");
 }

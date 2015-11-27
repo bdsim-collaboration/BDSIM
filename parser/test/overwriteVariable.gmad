@@ -1,0 +1,6 @@
+a = 1;
+
+! should give warning that variable is redefined
+a = 3;
+
+print, a;

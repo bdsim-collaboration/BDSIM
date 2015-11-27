@@ -24,11 +24,16 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
 #endif
 }
 
-void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
-					 G4ThreeVector /*Bfld*/,
-					 G4double  h,
-					 G4double  yOut[])
-{
+void BDSTeleporterStepper::Stepper(const G4double yIn[],
+				   const G4double[],
+				   const G4double h,
+				   G4double yOut[],
+				   G4double yErr[])
+{  
+  //const G4int nvar = 6 ;
+  G4int i;
+  for(i=0;i<nvar;i++) yErr[i]=0;
+  
   // FOR NOW - do it to everything every time
   //           will likely only take one step...
   // keep a record of the turn number for this particle
@@ -36,13 +41,13 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   // hasn't been shifted already - ie its turn number
   // won't have been registered in the vector member
   // turnnumberrecord
-  
-#ifdef BDSDEBUG
+
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "turnstaken: " << turnstaken << G4endl;
 #endif
   //if (turnstaken != turnnumberrecord.back())
-  if (1 == 1)
+  if (turnstaken > 0)
     {
       //do the adjustment
       //register this turn
@@ -74,7 +79,7 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
   G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
   G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
-  int G4precision    = G4cout.precision();
+  std::ios_base::fmtflags ff = G4cout.flags(); // save cout flags
   G4cout.precision(10);
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << "h (step length) " << h   /CLHEP::m << G4endl;
@@ -82,21 +87,8 @@ void BDSTeleporterStepper::AdvanceHelix( const G4double  yIn[],
   G4cout << "Input px,py,pz  " << inB /CLHEP::m << G4endl;
   G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
   G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
-  G4cout.precision(G4precision);
+  G4cout.flags(ff); // reset cout flags
 #endif
-}
-
-void BDSTeleporterStepper::Stepper( const G4double yInput[],
-				    const G4double[],
-				    const G4double hstep,
-				    G4double yOut[],
-				    G4double yErr[])
-{  
-  //const G4int nvar = 6 ;
-  G4int i;
-  for(i=0;i<nvar;i++) yErr[i]=0;
-  
-  AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
 }
 
 BDSTeleporterStepper::~BDSTeleporterStepper()

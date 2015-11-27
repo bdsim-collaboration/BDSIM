@@ -14,7 +14,7 @@ struct BDSMagnetOuterInfo;
 
 class BDSRfCavity: public BDSMagnet
 {
-  public:
+public:
   BDSRfCavity(G4String            name,
 	      G4double            length,
 	      G4double            grad,
@@ -22,8 +22,7 @@ class BDSRfCavity: public BDSMagnet
 	      BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSRfCavity();
   
-  private:
-
+private:
   virtual void BuildBPFieldAndStepper();
 
   /// Override this function from BDSMagnet to prevent it from
@@ -38,7 +37,6 @@ class BDSRfCavity: public BDSMagnet
   G4UniformElectricField* eField;
   G4EqMagElectricField*   equation;
   G4MagInt_Driver*        intgrDriver;
-
 };
 
 #endif

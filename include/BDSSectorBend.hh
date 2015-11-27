@@ -29,9 +29,6 @@ private:
   G4double e1;
   G4double e2;
   
-  /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
-  G4int orientation;
-
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe();

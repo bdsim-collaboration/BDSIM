@@ -106,7 +106,7 @@ void BDSBunchPtc::LoadPtcFile()
   return;
 }
 
-void BDSBunchPtc::SetOptions(GMAD::Options& opt)
+void BDSBunchPtc::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;

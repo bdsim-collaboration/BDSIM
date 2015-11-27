@@ -4,9 +4,26 @@
 Output
 ======
 
-Output from BDSIM can be in various formats. Details about each one are listed
-below in `output format differences`_.  As a general guideline, the following
-naming conventions are used:
+Output from BDSIM can be in various formats.
+
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| Format            | Syntax                | Description                                                                |
++===================+=======================+============================================================================+
+| None              | --output=none         | No output is written                                                       |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ASCII             | --output=ascii        | A series of text files in a folder are written                             |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ROOT              | --output=root         | A root file with a tree for each sampler is written                        |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ROOT (detailed)   | --output=rootdetailed | Similar to the above ROOT format but with extra variables for more detail  |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ROOT (per event)  | --output=rootevent    | A root file with a per event structure format                              |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| Multiple          | --output=combined     | All formats written at once                                                |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+
+Details about each one are listed below in `output format differences`_.
+As a general guideline, the following naming conventions are used:
 
 ========== ================
 Short Name Meaning

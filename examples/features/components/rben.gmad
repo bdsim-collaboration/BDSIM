@@ -1,6 +1,7 @@
 d1: drift, l=0.5;
 rb1 : rbend, l=0.5*m, angle = 0.01;
 d2: drift, l=0.5;
+rb2 : rbend, l=0.5*m, angle = 0.0;
 
-lat : line = (d1,rb1,d2);
-com : line = (rb1);
+lat : line = (d1,rb1,d2,rb2);
+com : line = (rb1,rb2);

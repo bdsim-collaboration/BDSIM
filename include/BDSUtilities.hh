@@ -49,10 +49,17 @@ namespace BDS {
   /// Main goal is to close output stream / files.
   void HandleAborts(int signal_number);
 
-  /// Determine whether a parameter is finite
+  ///@{ Determine whether a parameter is finite
   G4bool IsFinite(const G4double& variable);
   G4bool IsFinite(const G4ThreeVector& variable);
+  ///@}
 
+  /// Check if character array is an integer, and returns the integer by reference
+  G4bool IsInteger(const char* s, int& convertedInteger);
+  
+  /// Check if character array is an integer, and returns the double by reference
+  G4bool IsNumber(const char* s, double& convertedNumber);
+  
   /// Print out details of a rotation matrix - the matrix itself, unit vectors.
   /// Optional keyname to identify in output stream
   void PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName = "unkown");

@@ -1,6 +1,7 @@
 d1: drift, l=0.5;
-of : octupole, l=0.5*m , k3 = 0.5 , tilt = 0.01;
+of1 : octupole, l=0.5*m , k3 = 0.5;
 d2: drift, l=0.5;
+of2 : octupole, l=0.5*m , k3 = 0.0;
 
-lat : line = (d1,of,d2);
-com : line = (of);
+lat : line = (d1,of1,d2,of2);
+com : line = (of1,of2);

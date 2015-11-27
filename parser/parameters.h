@@ -7,7 +7,7 @@
 
 namespace GMAD {
 
-  struct Array;
+  class Array;
 
   /**
    * @brief Parameters - Element class with booleans
@@ -75,10 +75,7 @@ namespace GMAD {
 
     /// copy parameters into temporary buffer params from element e
     /// parameters already set in params have priority and are not overridden
-    void inherit_properties(struct Element& e);
-
-    /// print multipole expansion array
-    void print()const;
+    void inherit_properties(Element& e);
 
     /// set methods by property name, numeric values
     void set_value(std::string property, double value);

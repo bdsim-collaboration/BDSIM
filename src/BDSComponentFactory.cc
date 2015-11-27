@@ -37,6 +37,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSUtilities.hh"
 
@@ -551,31 +552,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
-
-  // LN I think we should build it anyway and the stepper should deal
-  // with this - ie so we still have the outer geometry
-  /*
-  if( fabs(element->angle) < 1.e-7 * CLHEP::rad ) {
-    G4cerr << "---->NOT creating Hkick,"
-	   << " name= " << element->name
-	   << ", TOO SMALL ANGLE"
-	   << " angle= " << element->angle << "rad"
-	   << ": REPLACED WITH Drift,"
-	   << " l= " << length/CLHEP::m << "m"
-	   << " aper= " << aper/CLHEP::m << "
-	   << G4endl;
-    return createDrift();
-  }
-  */
-  return (new BDSKicker( element->name,
-			 element->l * CLHEP::m,
-			 bField,
-			 bPrime,
-			 element->angle,
-			 false,   // it's a horizontal kicker
-			 PrepareBeamPipeInfo(element),
-			 PrepareMagnetOuterInfo(element)));
+  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  
+  return (new BDSKicker(element->name,
+			element->l * CLHEP::m,
+			bField,
+			element->angle,
+			BDSMagnetType::hkicker,
+			PrepareBeamPipeInfo(element),
+			PrepareMagnetOuterInfo(element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
@@ -601,33 +586,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - brho * (element->k1 / CLHEP::m2);
-
-  // LN I think we should build it anyway and the stepper should deal
-  // with this - ie so we still have the outer geometry
-  /*
-  if( fabs(element->angle) < 1.e-7 * CLHEP::rad ) {
-    G4cerr << "---->NOT creating Vkick,"
-	   << " name= " << element->name
-	   << ", TOO SMALL ANGLE"
-	   << " angle= " << element->angle << "rad"
-	   << ": REPLACED WITH Drift,"
-	   << " l= " << element->l << "m"
-	   << " aper= " << aper/CLHEP::m << "
-	   << G4endl;
-
-    return CreateDrift();
-  }
-  */
-  return (new BDSKicker( element->name,
-			 element->l * CLHEP::m,
-			 bField,
-			 bPrime,
-			 element->angle,
-			 true,   // it's a vertical kicker
-			 PrepareBeamPipeInfo(element),
-			 PrepareMagnetOuterInfo(element)
-			 ));
+  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  
+  return (new BDSKicker(element->name,
+			element->l * CLHEP::m,
+			bField,
+			element->angle,
+			BDSMagnetType::vkicker,
+			PrepareBeamPipeInfo(element),
+			PrepareMagnetOuterInfo(element)
+			));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -1078,7 +1046,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
       G4cerr << "---->NOT creating element, "
              << " name = " << element->name
              << ", LENGTH TOO SHORT:"
-             << " l = " << element->l*CLHEP::m << "m"
+             << " l = " << _element.l*CLHEP::um << "um"
              << G4endl;
       return false;
     }

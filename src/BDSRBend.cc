@@ -47,6 +47,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
   //full length along chord - just its length in case of rbend
   chordLength = aLength;
 
+  // orientation of shifts - depends on angle - calculations use absolute value of angle for safety
   orientation = BDS::CalculateOrientation(angle);
   
   e1=0; // Dummy line to remove compile warnings.
@@ -117,19 +118,21 @@ void BDSRBend::BuildBPFieldAndStepper()
   G4ThreeVector Bfield(0.,bField,0.);
   G4double arclength;
   if (BDS::IsFinite(angle))
-    {arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));}
+    {
+      arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
+#endif
+      itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
+      itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
+  
+      BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
+      dipoleStepper->SetBField(bField);
+      dipoleStepper->SetBGrad(bGrad);
+      itsStepper = dipoleStepper;
+    }
   else
     {arclength = magFieldLength;}
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
-#endif
-  itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
-  
-  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-  dipoleStepper->SetBField(bField);
-  dipoleStepper->SetBGrad(bGrad);
-  itsStepper = dipoleStepper;
 }
 
 void BDSRBend::BuildOuter()
@@ -177,6 +180,7 @@ void BDSRBend::BuildBeampipe()
 									   beamPipeInfo->vacuumMaterial,
 									   beamPipeInfo->beamPipeThickness,
 									   beamPipeInfo->beamPipeMaterial);
+      RegisterDaughter(bpFirstBit);
       
       bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
 									 name,
@@ -189,6 +193,7 @@ void BDSRBend::BuildBeampipe()
 									 beamPipeInfo->vacuumMaterial,
 									 beamPipeInfo->beamPipeThickness,
 									 beamPipeInfo->beamPipeMaterial);
+      RegisterDaughter(bpLastBit);
     }
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -201,10 +206,8 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->vacuumMaterial,
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
-
-  RegisterDaughter(bpFirstBit);
+  
   RegisterDaughter(beampipe);
-  RegisterDaughter(bpLastBit);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 
@@ -323,31 +326,4 @@ void BDSRBend::PlaceComponents()
 
       RegisterPhysicalVolume(magnetOuterPV);
     }
-}
-
-
-std::vector<G4LogicalVolume*> BDSRBend::GetAllSensitiveVolumes() const
-{
-  std::vector<G4LogicalVolume*> result;
-  for (auto it : allSensitiveVolumes)
-    {result.push_back(it);}
-
-  if (beampipe)
-    {
-      for (auto it : beampipe->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-
-  if (bpFirstBit)
-    {
-      for (auto it : bpFirstBit->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-
-  if (bpLastBit)
-    {
-      for (auto it : bpLastBit->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-  return result;
 }
