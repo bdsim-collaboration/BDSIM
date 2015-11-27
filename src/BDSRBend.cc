@@ -48,7 +48,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
   chordLength = aLength;
 
   // orientation of shifts - depends on angle - calculations use absolute value of angle for safety
-  orientation = BDS::CalculateOrientation(angle);
+  G4int orientation = BDS::CalculateOrientation(angle);
   
   e1=0; // Dummy line to remove compile warnings.
   e2=0; // Dummy line to rmeove compile warnings.

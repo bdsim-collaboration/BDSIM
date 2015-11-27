@@ -39,9 +39,6 @@ private:
   /// x shift for magnet and beampipe from chord
   G4double magnetXShift;
 
-  /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
-  G4int orientation;
-
   /// radius of magnet body
   G4double outerRadius;
 
