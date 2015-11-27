@@ -1128,7 +1128,6 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4HadronElastic.hh"
 #include "G4NeutronRadCapture.hh"
 #endif
-#include "G4LFission.hh"
 
 #if G4VERSION_NUMBER < 1000
 #include "G4LEPionPlusInelastic.hh"
@@ -1155,7 +1154,6 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4LEAntiOmegaMinusInelastic.hh"
 #else
 #include "G4CascadeInterface.hh"
-#include "G4BinaryLightIonReaction.hh"
 #endif
 
 // -- generator models

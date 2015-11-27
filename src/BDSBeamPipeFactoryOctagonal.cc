@@ -1,8 +1,7 @@
-#include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipeFactoryOctagonal.hh"
 
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSBeamPipeFactoryPoints.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4TwoVector.hh"

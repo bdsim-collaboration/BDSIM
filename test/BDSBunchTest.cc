@@ -6,12 +6,9 @@
 #include "G4Electron.hh"
 #include "G4Proton.hh"
 
-// GMAD parser
-#include "parser/options.h"
-#include "parser/parser.h"
-
 #include "BDSBunch.hh"
 #include "BDSExecOptions.hh"
+#include "BDSParser.hh"
 #include "BDSGlobalConstants.hh"
 
 int main(int argc,char** argv) {
@@ -24,7 +21,7 @@ int main(int argc,char** argv) {
 
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  GMAD::Parser* parser = GMAD::Parser::Instance(execOptions->GetInputFilename());
+  BDSParser* parser = BDSParser::Instance(execOptions->GetInputFilename());
   const GMAD::Options& options = parser->GetOptions();
   
   BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();

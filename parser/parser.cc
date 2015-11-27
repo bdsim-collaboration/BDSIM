@@ -151,36 +151,6 @@ void Parser::Initialise()
   params.flush();
 }
 
-const Options& Parser::GetOptions()const
-{
-  return options;
-}
-
-const FastList<Element>& Parser::GetBeamline()const
-{
-  return beamline_list;
-}
-
-const FastList<PhysicsBiasing>& Parser::GetBiasing()const
-{
-  return xsecbias_list;
-}
-
-const std::list<Element>& Parser::GetMaterials()const
-{
-  return material_list;
-}
-
-const std::list<Element>& Parser::GetAtoms()const
-{
-  return atom_list;
-}
-
-const FastList<Element>& Parser::GetElements()const
-{
-  return element_list;
-}
-
 void Parser::quit()
 {
   printf("parsing complete...\n");
@@ -189,7 +159,6 @@ void Parser::quit()
 
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
-  if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *name << " : " << type << std::endl;
 #ifdef BDSDEBUG 
   printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, typestr(type).c_str(), params.lset);
 #endif
@@ -207,10 +176,12 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
 
   case ElementType::_MATERIAL:
     material_list.push_back(e);
-
+    return;
+    
   case ElementType::_ATOM:
     atom_list.push_back(e);
-
+    return;
+    
   default:
     break;
   }
@@ -525,10 +496,10 @@ void Parser::add_xsecbias()
   xsecbias_list.push_back(b);
 }
  
-double Parser::property_lookup(const FastList<Element>& el_list, std::string element_name, std::string property_name)
+double Parser::property_lookup(std::string element_name, std::string property_name)
 {
-  std::list<Element>::const_iterator it = el_list.find(element_name);
-  std::list<Element>::const_iterator iterEnd = el_list.end();
+  std::list<Element>::const_iterator it = element_list.find(element_name);
+  std::list<Element>::const_iterator iterEnd = element_list.end();
 
   if(it == iterEnd) {
     std::cerr << "parser.h> Error: unknown element \"" << element_name << "\"." << std::endl; 
@@ -675,4 +646,24 @@ void Parser::OverwriteElement(std::string elementName)
 void Parser::AddVariable(std::string* name)
 {
   var_list.push_back(name);
+}
+
+void Parser::PrintBeamline()const
+{
+  beamline_list.print();
+}
+
+void Parser::PrintElements()const
+{
+  element_list.print();
+}
+
+void Parser::PrintOptions()const
+{
+  options.print();
+}
+
+const FastList<Element>& Parser::GetBeamline()const
+{
+  return beamline_list;
 }

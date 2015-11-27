@@ -3,7 +3,6 @@
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
 
-#include "G4Point3D.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 

@@ -18,7 +18,6 @@
   extern char* yytext;
 
   namespace GMAD {
-    // pointer to global parser object
     extern int line_num;
     extern std::string yyfilename;
   
@@ -124,6 +123,7 @@ atomic_stmt :
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
+	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << $3 << std::endl;
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
 	   Parser::Instance()->ClearParams();
@@ -132,6 +132,7 @@ decl : VARIABLE ':' component_with_params
       | VARIABLE ':' MARKER
        {
 	 if(execute) {
+	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << ElementType::_MARKER << std::endl;
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,ElementType::_MARKER);
 	   Parser::Instance()->ClearParams();
@@ -436,7 +437,7 @@ aexpr  :  NUMBER               { $$ = $1;                         }
         | VARIABLE '[' VARIABLE ']' 
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
-	    $$ = Parser::Instance()->property_lookup(Parser::Instance()->GetElements(),*($1),*($3));
+	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
 	  }// element attributes
 ; 
 
@@ -630,9 +631,9 @@ letters : STR ',' letters
 
 command : STOP             { if(execute) Parser::Instance()->quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) Parser::Instance()->GetElements().print(); }
-        | PRINT ',' LINE   { if(execute) Parser::Instance()->GetBeamline().print(); }
-        | PRINT ',' OPTION { if(execute) Parser::Instance()->GetOptions().print(); }
+        | PRINT            { if(execute) Parser::Instance()->PrintElements(); }
+        | PRINT ',' LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
+        | PRINT ',' OPTION { if(execute) Parser::Instance()->PrintOptions(); }
         | PRINT ',' VARIABLE
           {
 	    if(execute) {
