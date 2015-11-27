@@ -45,29 +45,29 @@ namespace GMAD {
     std::string outerMaterial;
     double outerDiameter;
 
-  double tilt; ///< tilt
-  double xsize, ysize; ///< collimator aperture or laser spotsize for laser
-  double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
-  double r; ///< radius, i.e cylindrical sampler
-  double B; ///< magnetic field
-  double e1; ///< input pole face rotation for bends
-  double e2; ///< output pole face rotation for bends
-  double offsetX; ///< offset X
-  double offsetY; ///< offset Y
-  double tscint; ///<thickness of scintillating part of screen
-  double twindow; ///<thickness of window
-  double bmapZOffset; ///< offset of the field map magnet field
-  double xdir;
-  double ydir;
-  double zdir;
-  double waveLength; ///< for laser wire and 3d transforms
-  double gradient; ///< for rf cavities
-  double phi, theta, psi; ///< for 3d transforms
-  int numberWedges; ///< for degrader
-  double wedgeLength; ///< for degrader
-  double degraderHeight; ///< for degrader
-  double materialThickness; ///< for degrader
-  double degraderOffset; ///< for degrader
+    double tilt; ///< tilt
+    double xsize, ysize; ///< collimator aperture or laser spotsize for laser
+    double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
+    double r; ///< radius, i.e cylindrical sampler
+    double B; ///< magnetic field
+    double e1; ///< input pole face rotation for bends
+    double e2; ///< output pole face rotation for bends
+    double offsetX; ///< offset X
+    double offsetY; ///< offset Y
+    double tscint; ///<thickness of scintillating part of screen
+    double twindow; ///<thickness of window
+    double bmapZOffset; ///< offset of the field map magnet field
+    double xdir;
+    double ydir;
+    double zdir;
+    double waveLength; ///< for laser wire and 3d transforms
+    double gradient; ///< for rf cavities
+    double phi, theta, psi; ///< for 3d transforms
+    int numberWedges; ///< for degrader
+    double wedgeLength; ///< for degrader
+    double degraderHeight; ///< for degrader
+    double materialThickness; ///< for degrader
+    double degraderOffset; ///< for degrader
 
     std::list<double> knl; ///< multipole expansion coefficients
     std::list<double> ksl; ///< skew multipole expansion
@@ -119,11 +119,11 @@ namespace GMAD {
     /// flush method
     void flush();
 
-  /// check if element is of a special type
-  bool isSpecial()const;
-  /// property lookup by name (slow method)
-  /// only for properties with type int/double!
-  double property_lookup(std::string property_name)const;
+    /// check if element is of a special type
+    bool isSpecial()const;
+    /// property lookup by name (slow method)
+    /// only for properties with type int/double!
+    double property_lookup(std::string property_name)const;
 
     ///@{ set method from Parameters structure
     void set(const Parameters& params);
