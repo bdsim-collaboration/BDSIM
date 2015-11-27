@@ -157,7 +157,7 @@ void BDSDetectorConstruction::BuildBeamline()
       // next and previous element, but ignore samplers or other special elements
       GMAD::Element* prevElement = nullptr;
       auto prevIt = elementIt;
-      while (prevIt != beamLine.end())
+      while (prevIt != beamLine.begin())
 	{
 	  --prevIt;
 	  if (prevIt->isSpecial() == false)
@@ -169,14 +169,15 @@ void BDSDetectorConstruction::BuildBeamline()
 
       GMAD::Element* nextElement = nullptr;
       auto nextIt = elementIt;
-      while (nextIt != beamLine.begin())
+      ++nextIt;
+      while (nextIt != beamLine.end())
 	{
-	  ++nextIt;
 	  if (nextIt->isSpecial() == false)
 	    {
 	      nextElement = &(*nextIt);
 	      break;
 	    }
+	  ++nextIt;
 	}
       
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
