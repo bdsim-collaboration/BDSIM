@@ -192,7 +192,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  itsIncludeIronMagFields = opt.includeIronMagFields;
+  //itsIncludeIronMagFields = opt.includeIronMagFields;
+  itsIncludeIronMagFields = false;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
