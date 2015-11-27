@@ -191,7 +191,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSampler()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()
 {
-  if( element->l < 1.E-4 ) element->l = 1.0 ;
+  if( element->l < 1.E-4 )
+    {element->l = 1.0;}
   return (new BDSSamplerCylinder( element->name,
 				  element->l * CLHEP::m,
 				  element->r * CLHEP::m ));
@@ -355,10 +356,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   int nSbends = (int) ceil(std::sqrt(std::abs(length*element->angle/2/aperturePrecision)));
   if (nSbends==0) nSbends = 1; // can happen in case angle = 0
   if (BDSGlobalConstants::Instance()->DontSplitSBends())
-    {nSbends = 1;}   //use for debugging
-  if (nSbends % 2 == 0){   //Always have odd number of poles for poleface rotations
-    nSbends += 1;
-    }
+    {nSbends = 1;}  // use for debugging
+  if (nSbends % 2 == 0)
+    {nSbends += 1;} // always have odd number of poles for poleface rotations
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
@@ -383,42 +383,47 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // prepare one sbend segment
   // create a line of this sbend repeatedly
 
-  for (int i = 0; i < nSbends; ++i){
-    if (element->e1 != 0){
-        deltastart = -element->e1/(0.5*(nSbends-1));}
+  for (int i = 0; i < nSbends; ++i)
+    {
+      if (element->e1 != 0)
+	{deltastart = -element->e1/(0.5*(nSbends-1));}
+      if (element->e2 != 0)
+	{deltaend = -element->e2/(0.5*(nSbends-1));}
       
-    if (element->e2 != 0){
-        deltaend = -element->e2/(0.5*(nSbends-1));}
-    
-    //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
-    if (i == 0.5*(nSbends-1)){
-        anglein = -0.5*element->angle/(nSbends);
-        angleout = -0.5*element->angle/(nSbends);}
-    else if (i < 0.5*(nSbends-1)){
-        anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
-        angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
-        }
-    else if (i > 0.5*(nSbends-1)){
-        anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
-        angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
-        }
-    
-    //thename = element->name + "_"+std::to_string(i)+"_of_" + std::to_string(nSbends);
-
-    BDSSectorBend* oneBend = new BDSSectorBend(thename,
-					     semilength,
-					     semiangle,
-					     bField,
-					     bPrime,
-					     anglein,
-					     angleout,
-					     bpInfo,
-					     moInfo);
-
-    oneBend->SetBiasVacuumList(element->biasVacuumList);
-    oneBend->SetBiasMaterialList(element->biasMaterialList);
-  
-    sbendline->AddComponent(oneBend);}
+      //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
+      if (i == 0.5*(nSbends-1))
+	{
+	  anglein = -0.5*element->angle/(nSbends);
+	  angleout = -0.5*element->angle/(nSbends);
+	}
+      else if (i < 0.5*(nSbends-1))
+	{
+	  anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
+	  angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
+	}
+      else if (i > 0.5*(nSbends-1))
+	{
+	  anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
+	  angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
+	}
+      
+      //thename = element->name + "_"+std::to_string(i)+"_of_" + std::to_string(nSbends);
+      
+      BDSSectorBend* oneBend = new BDSSectorBend(thename,
+						 semilength,
+						 semiangle,
+						 bField,
+						 bPrime,
+						 anglein,
+						 angleout,
+						 bpInfo,
+						 moInfo);
+      
+      oneBend->SetBiasVacuumList(element->biasVacuumList);
+      oneBend->SetBiasMaterialList(element->biasMaterialList);
+      
+      sbendline->AddComponent(oneBend);
+    }
   return sbendline;
 }
 
@@ -480,35 +485,36 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // magnetic field
   // CHECK SIGNS OF B, B', ANGLE
   G4double bField;
-  if(element->B != 0){
-  // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = element->B * CLHEP::tesla;
-    G4double rho = brho/bField;
-    //element->angle  = - bField * length / brho;
-    element->angle  = - 2.0*asin(magFieldLength/2.0/rho);
+  if(element->B != 0)
+    {
+      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+      bField = element->B * CLHEP::tesla;
+      G4double rho = brho/bField;
+      //element->angle  = - bField * length / brho;
+      element->angle  = - 2.0*asin(magFieldLength/2.0/rho);
 #ifdef BDSDEBUG
-    G4cout << "calculated angle from field - now " << element->angle << G4endl;
+      G4cout << "calculated angle from field - now " << element->angle << G4endl;
 #endif
-  }
-  else{
-    element->angle *= -1;
-    // arc length = radius*angle
-    //            = (geometrical length/(2.0*sin(angle/2))*angle
-    G4double arclength;
-    if (BDS::IsFinite(element->angle)) {
-      arclength = 0.5*magFieldLength * fabs(element->angle) / sin(fabs(element->angle)*0.5);
-    } else {
-      arclength = magFieldLength;
     }
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in bends
-    bField = - brho * element->angle / arclength * charge * BDSGlobalConstants::Instance()->GetFFact();
-    element->B = bField/CLHEP::tesla;
+  else
+    {
+      element->angle *= -1;
+      // arc length = radius*angle
+      //            = (geometrical length/(2.0*sin(angle/2))*angle
+      G4double arclength;
+      if (BDS::IsFinite(element->angle))
+	{arclength = 0.5*magFieldLength * fabs(element->angle) / sin(fabs(element->angle)*0.5);}
+      else
+	{arclength = magFieldLength;}
+      // B = Brho/rho = Brho/(arc length/angle)
+      // charge in e units
+      // multiply once more with ffact to not flip fields in bends
+      bField = - brho * element->angle / arclength * charge * BDSGlobalConstants::Instance()->GetFFact();
+      element->B = bField/CLHEP::tesla;
 #ifdef BDSDEBUG
-    G4cout << "calculated field from angle - angle,field = " << element->angle << " " << element->B << G4endl;
+      G4cout << "calculated field from angle - angle,field = " << element->angle << " " << element->B << G4endl;
 #endif
-  }
+    }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
@@ -537,22 +543,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   
   // magnetic field
   G4double bField;
-  if(element->B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = element->B * CLHEP::tesla;
-    element->angle  = -bField * length / brho;
-  }
-  else{
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in kicks defined with angle
-    bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
-    element->B = bField/CLHEP::tesla;
-  }
+  if(element->B != 0)
+    {
+      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+      bField = element->B * CLHEP::tesla;
+      element->angle  = -bField * length / brho;
+    }
+  else
+    {
+      // B = Brho/rho = Brho/(arc length/angle)
+      // charge in e units
+      // multiply once more with ffact to not flip fields in kicks defined with angle
+      bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
+      element->B = bField/CLHEP::tesla;
+    }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  //G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
   
   return (new BDSKicker(element->name,
 			element->l * CLHEP::m,
@@ -572,21 +580,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   
   // magnetic field
   G4double bField;
-  if(element->B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = element->B * CLHEP::tesla;
-    element->angle  = -bField * length / brho;
-  }
-  else{
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in kicks
-    bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact();
-    element->B = bField/CLHEP::tesla;
-  }
+  if(element->B != 0)
+    {
+      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+      bField = element->B * CLHEP::tesla;
+      element->angle  = -bField * length / brho;
+    }
+  else
+    {
+      // B = Brho/rho = Brho/(arc length/angle)
+      // charge in e units
+      // multiply once more with ffact to not flip fields in kicks
+      bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact();
+      element->B = bField/CLHEP::tesla;
+    }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  //G4double bPrime = - _brho * (element->k1 / CLHEP::m2);
   
   return (new BDSKicker(element->name,
 			element->l * CLHEP::m,
@@ -791,14 +801,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
-  if(element->B != 0) {
-    bField = element->B * CLHEP::tesla;
-    element->ks  = (bField/brho) / CLHEP::m;
-  }
-  else {
-    bField = (element->ks/CLHEP::m) * brho;
-    element->B = bField/CLHEP::tesla;
-  }
+  if(element->B != 0)
+    {
+      bField = element->B * CLHEP::tesla;
+      element->ks  = (bField/brho) / CLHEP::m;
+    }
+  else
+    {
+      bField = (element->ks/CLHEP::m) * brho;
+      element->B = bField/CLHEP::tesla;
+    }
   
 #ifdef BDSDEBUG 
   G4cout << "---->creating Solenoid,"
@@ -1046,7 +1058,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
       G4cerr << "---->NOT creating element, "
              << " name = " << element->name
              << ", LENGTH TOO SHORT:"
-             << " l = " << _element.l*CLHEP::um << "um"
+             << " l = " << element->l*CLHEP::um << "um"
              << G4endl;
       return false;
     }
