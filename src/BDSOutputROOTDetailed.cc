@@ -16,6 +16,7 @@ BDSOutputROOTDetailed::BDSOutputROOTDetailed()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format ROOT detailed"<<G4endl;
 #endif
+  Init(); // activate the output
 }
 
 BDSOutputROOTDetailed::~BDSOutputROOTDetailed()
@@ -27,7 +28,7 @@ TTree* BDSOutputROOTDetailed::BuildSamplerTree(G4String name)
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
-  TTree* SamplerTree = BDSOutputROOT::BuildSamplerTree(name);
+  TTree* SamplerTree = BDSOutputROOTBase::BuildSamplerTreeBasic(name);
   
   SamplerTree->Branch("E0",  &E0,  "E0/F" ); // (GeV)
   SamplerTree->Branch("x0",  &x0,  "x0/F" ); // (m)
@@ -66,7 +67,7 @@ TTree* BDSOutputROOTDetailed::BuildSamplerTree(G4String name)
   return SamplerTree;
 }
 
-void BDSOutputROOTDetailed::WriteRootHitDetailed(TTree*   Tree,
+void BDSOutputROOTDetailed::WriteRootHitDetailed(TTree*   tree,
 						 G4double InitTotalEnergy,
 						 G4double InitX,
 						 G4double InitY,
@@ -114,14 +115,14 @@ void BDSOutputROOTDetailed::WriteRootHitDetailed(TTree*   Tree,
 						 G4int    TurnsTaken,
 						 G4String Process)
 {
-  BDSOutputROOT::WriteRootHit(Tree,
-			      TotalEnergy,
-			      LocalX, LocalY, LocalZ,
-			      LocalXPrime, LocalYPrime, LocalZPrime,
-			      GlobalT, GlobalS,
-			      Weight, PDGtype,
-			      EventNo, ParentID, TrackID, TurnsTaken, Process,
-			      false); // don't fill tree yet
+  BDSOutputROOTBase::WriteRootHit(tree,
+				  TotalEnergy,
+				  LocalX, LocalY, LocalZ,
+				  LocalXPrime, LocalYPrime, LocalZPrime,
+				  GlobalT, GlobalS,
+				  Weight, PDGtype,
+				  EventNo, ParentID, TrackID, TurnsTaken, Process,
+				  false); // don't fill tree yet
   
   E0          = InitTotalEnergy/ CLHEP::GeV;
   x0          = InitX          / CLHEP::m;
@@ -147,14 +148,14 @@ void BDSOutputROOTDetailed::WriteRootHitDetailed(TTree*   Tree,
   yp_lastScat = LastScatYPrime / CLHEP::radian;
   zp_lastScat = LastScatZPrime / CLHEP::radian;
   t_lastScat  = LastScatT      / CLHEP::ns;
-
   X           = GlobalX        / CLHEP::m;
   Y           = GlobalY        / CLHEP::m;
   Z           = GlobalZ        / CLHEP::m;
   Xp          = GlobalXPrime   / CLHEP::radian;
   Yp          = GlobalYPrime   / CLHEP::radian;
   Zp          = GlobalZPrime   / CLHEP::radian;
-  
+
+  tree->Fill();  
 }
 
 
@@ -162,7 +163,7 @@ void BDSOutputROOTDetailed::WriteRootHit(TTree*         tree,
 					 BDSSamplerHit* hit,
 					 G4bool         fillTree)
 {
-  BDSOutputROOT::WriteRootHit(tree, hit, false); // don't fill the tree yet
+  BDSOutputROOTBase::WriteRootHit(tree, hit, false); // don't fill the tree yet
   
   E0          = hit->GetInitTotalEnergy();
   x0          = hit->GetInitX();

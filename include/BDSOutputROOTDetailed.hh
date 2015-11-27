@@ -22,7 +22,7 @@
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
 
-class BDSOutputROOTDetailed: public BDSOutputROOT
+class BDSOutputROOTDetailed: public BDSOutputROOTBase
 {
 public: 
 
@@ -43,10 +43,10 @@ public:
 			    G4int    nEvent, 
 			    G4int    turnsTaken);
 
-private:
 
   virtual TTree* BuildSamplerTree(G4String name);
   
+private:
   // members for writing to TTrees
   /// Extra Global members
   float Xp=0.0,Yp=0.0,Zp=0.0;
