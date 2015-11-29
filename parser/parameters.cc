@@ -279,12 +279,6 @@ void Parameters::set_value(std::string property, std::string value )
       bmapFile = value;
       return;
     }
-  if(property=="type") 
-    {
-      printf("Warning : type parameter is currently ignored\n");
-      //ignore the "type attribute for the moment"
-      return;
-    }
   if(property=="outerMaterial") 
     {
       outerMaterialset = true;
@@ -424,12 +418,4 @@ void Parameters::set_value(std::string property, Array* value)
 
   std::cerr << "Error: parser> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
   exit(1);
-}
-
-void Parameters::print()const{
-  printf("printing parameters:\n");
-  std::list<double>::const_iterator it;
-  for(it = knl.begin();it!=knl.end();++it)
-    printf(" %f ", (*it));
-  printf("\n");
 }

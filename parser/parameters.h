@@ -77,9 +77,6 @@ namespace GMAD {
     /// parameters already set in params have priority and are not overridden
     void inherit_properties(Element& e);
 
-    /// print multipole expansion array
-    void print()const;
-
     /// set methods by property name, numeric values
     void set_value(std::string property, double value);
     /// set methods by property name, string values
