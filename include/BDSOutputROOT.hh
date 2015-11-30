@@ -30,6 +30,8 @@ public:
   /// Build sampler TTree
   virtual TTree* BuildSamplerTree(G4String name);
 
+  void FillEvent() {};
+
 };
 
 #endif // USE_ROOT
