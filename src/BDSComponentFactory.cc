@@ -370,10 +370,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   //create Line to put them in
   BDSLine* sbendline = new BDSLine(element->name);
   //create sbends and put them in the line
-  BDSBeamPipeInfo*    bpInfo = PrepareBeamPipeInfo(element);
-  BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(element);
+  BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element);
 
-  CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
+  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
   
   G4double deltastart = 0;
   G4double deltaend   = 0;
@@ -407,8 +407,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 	  angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
 	}
       
-      //thename = element->name + "_"+std::to_string(i)+"_of_" + std::to_string(nSbends);
+      thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
       
+      BDSBeamPipeInfo*    localBeamPipeInfo    = new BDSBeamPipeInfo(*beamPipeInfo);
+      BDSMagnetOuterInfo* localMagnetOuterInfo = new BDSMagnetOuterInfo(*magnetOuterInfo);
       BDSSectorBend* oneBend = new BDSSectorBend(thename,
 						 semilength,
 						 semiangle,
@@ -416,8 +418,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 						 bPrime,
 						 anglein,
 						 angleout,
-						 bpInfo,
-						 moInfo);
+						 localBeamPipeInfo,
+						 localMagnetOuterInfo);
       
       oneBend->SetBiasVacuumList(element->biasVacuumList);
       oneBend->SetBiasMaterialList(element->biasMaterialList);
