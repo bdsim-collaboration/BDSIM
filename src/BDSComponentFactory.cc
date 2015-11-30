@@ -87,7 +87,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
   // check if the component already exists and return that
-  // do check for output elements since reliant on unique name
+  // don't use registry for output elements since reliant on unique name
   if (element->type != ElementType::_SAMPLER &&
       element->type != ElementType::_CSAMPLER &&
       element->type != ElementType::_DUMP &&

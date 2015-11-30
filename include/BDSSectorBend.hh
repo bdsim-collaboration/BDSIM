@@ -1,4 +1,3 @@
-
 #ifndef BDSSECTORBEND_H
 #define BDSSECTORBEND_H 
 
@@ -21,7 +20,7 @@ public:
 		G4double            e2in,
 		BDSBeamPipeInfo*    beamPipeInfo,
 		BDSMagnetOuterInfo* magnetOuterInfo);
-  ~BDSSectorBend(){;};
+  ~BDSSectorBend(){;}
 
 private:
   G4double itsBField;

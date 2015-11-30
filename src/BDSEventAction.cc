@@ -61,7 +61,7 @@ BDSEventAction::~BDSEventAction()
 void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " Processing begin of event action" << G4endl;
+  G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
   // get pointer to analysis manager
   analMan = BDSAnalysisManager::Instance();
@@ -70,7 +70,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   G4int event_number = evt->GetEventID();
   if (event_number%printModulo == 0)
     {G4cout << "\n---> Begin of event: " << event_number << G4endl;}
-  if(verboseEvent) G4cout << __METHOD_NAME__ << "event #"<<event_number<<G4endl ;
+  if(verboseEvent)
+    {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
   // get hit collection IDs for easy access
   G4SDManager* g4SDMan = G4SDManager::GetSDMpointer();
@@ -85,21 +86,21 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   if (useTunnel)
     {
       if(tunnelCollID < 0)
-	{tunnelCollID         = g4SDMan->GetCollectionID("tunnel_hits");} // defined in BDSSDManager.cc
+	{tunnelCollID = g4SDMan->GetCollectionID("tunnel_hits");} // defined in BDSSDManager.cc
     }
   //if (lWCalorimeterCollID<1) 
   //{lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");}
   FireLaserCompton=true;
    
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "begin of event action done"<<G4endl;
+  G4cout << __METHOD_NAME__ << "begin of event action done" << G4endl;
 #endif
 }
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
 #ifdef BDSDEBUG
-  G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "processing end of event action" << G4endl;
 #endif
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
@@ -107,7 +108,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Get event number information
   G4int event_number = evt->GetEventID();
   if(verboseEvent || verboseEventNumber == event_number)
-    {G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;}
+    {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
   
   // Record the primary vertex in output
   WritePrimaryVertex();
@@ -212,7 +213,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
+  G4cout << __METHOD_NAME__ << "finished writing energy loss" << G4endl;
 #endif
   
   // if events per ntuples not set (default 0) - only write out at end 
@@ -221,11 +222,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " writing events." << G4endl;
+      G4cout << __METHOD_NAME__ << "writing events" << G4endl;
 #endif      
       bdsOutput->Commit(); // write and open new file
 #ifdef BDSDEBUG
-      G4cout<<"done"<<G4endl;
+      G4cout << "done" << G4endl;
 #endif
     }
 
@@ -233,7 +234,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(!isBatch)
     {
 #ifdef BDSDEBUG 
-      G4cout << __METHOD_NAME__ << "drawing the event"<<G4endl;
+      G4cout << __METHOD_NAME__ << "drawing the event" << G4endl;
 #endif
       evt->Draw();
     }
@@ -245,7 +246,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
-      G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
+      G4cout << __METHOD_NAME__ << "storing trajectories" << G4endl;
 #endif
       G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
       if(!trajCont) return;
@@ -272,7 +273,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
     
 #ifdef BDSDEBUG 
- G4cout<<"BDSEventAction : end of event action done"<<G4endl;
+  G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
 #endif
 }
 
