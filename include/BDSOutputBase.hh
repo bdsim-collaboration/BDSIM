@@ -17,7 +17,7 @@ class BDSOutputBase
 public: 
   BDSOutputBase(); // default constructor
   //  BDSOutput(BDSOutputFormat format);
-  virtual ~BDSOutputBase(){};
+  virtual ~BDSOutputBase() {};
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
