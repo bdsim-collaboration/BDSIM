@@ -1,3 +1,8 @@
+#ifndef BDSOUTPUTROOTEVENTSAMPLER_H
+#define BDSOUTPUTROOTEVENTSAMPLER_H
+
+#ifdef USE_ROOT
+
 #include "TROOT.h"
 #include <vector>
 #ifndef __MAKECINT__ 
@@ -43,3 +48,6 @@ public:
 
   ClassDef(BDSOutputROOTEventSampler,1)
 };
+
+#endif
+#endif

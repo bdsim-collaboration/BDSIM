@@ -1,3 +1,5 @@
+#ifdef USE_ROOT
+
 #include "BDSOutputROOTEventSampler.hh"
 
 ClassImp(BDSOutputROOTEventSampler)
@@ -13,7 +15,7 @@ BDSOutputROOTEventSampler::BDSOutputROOTEventSampler(std::string samplerNameIn)
   this->Clear();
 }
 
-BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler() {};
+BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler() {}
 
 void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit) 
 {
@@ -67,3 +69,5 @@ void BDSOutputROOTEventSampler::Clear()
   this->turnNumber.clear();
   this->S = 0.0;  
 }
+
+#endif
