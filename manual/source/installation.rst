@@ -35,9 +35,6 @@ Requirements
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher
-
-Optional dependencies
-  
 6) `ROOT`_ framework for output analysis
 
 Note, even though installed, the Geant4 environmental variables must be
@@ -156,7 +153,6 @@ This typically produces the following output, which is slightly different on eac
   -- Found CLHEP 2.2.0.5 in /opt/local/lib/CLHEP-2.2.0.5/../../include
   -- Looking for ROOT...
   -- Found ROOT 5.34/32 in /opt/local/libexec/root5
-  -- ROOT support ON
   -- GDML support ON
   -- Looking for XML2... - found
   -- LCDD support ON

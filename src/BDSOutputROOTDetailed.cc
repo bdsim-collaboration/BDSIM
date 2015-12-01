@@ -1,4 +1,3 @@
-#ifdef USE_ROOT
 #include "BDSOutputROOT.hh"
 #include "BDSOutputROOTDetailed.hh"
 
@@ -243,5 +242,3 @@ void BDSOutputROOTDetailed::WritePrimary(G4double totalEnergy,
 		       turnsTaken,
 		       "");
 }
-
-#endif

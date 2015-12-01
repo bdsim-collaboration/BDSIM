@@ -1,8 +1,6 @@
 #ifndef BDSOUTPUTROOT_H
 #define BDSOUTPUTROOT_H
 
-#ifdef USE_ROOT
-
 #include "BDSOutputROOTBase.hh"
 #include "BDSTrajectory.hh"
 
@@ -34,5 +32,4 @@ public:
 
 };
 
-#endif // USE_ROOT
 #endif

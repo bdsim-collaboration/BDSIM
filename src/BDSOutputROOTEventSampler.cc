@@ -1,5 +1,3 @@
-#ifdef USE_ROOT
-
 #include "BDSOutputROOTEventSampler.hh"
 
 ClassImp(BDSOutputROOTEventSampler);
@@ -69,5 +67,3 @@ void BDSOutputROOTEventSampler::Clear()
   this->turnNumber.clear();
   this->S = 0.0;  
 }
-
-#endif

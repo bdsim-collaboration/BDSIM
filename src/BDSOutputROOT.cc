@@ -1,4 +1,3 @@
-#ifdef USE_ROOT
 #include "BDSOutputROOT.hh"
 #include "BDSOutputROOTBase.hh"
 
@@ -10,7 +9,7 @@
 #include "BDSHistogram.hh"
 
 #include <string>
-// #define BDSDEBUG
+
 BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG
@@ -29,5 +28,3 @@ TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
 #endif
   return BDSOutputROOTBase::BuildSamplerTreeBasic(name);
 }
-
-#endif

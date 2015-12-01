@@ -1,8 +1,6 @@
 #ifndef BDSOutputROOTEvent_h
 #define BDSOutputROOTEvent_h
 
-#ifdef USE_ROOT 
-
 #include "globals.hh"
 
 #include <map>
@@ -96,8 +94,5 @@ private:
 
   // energy hit structures 
 };
-
-
-#endif
 
 #endif

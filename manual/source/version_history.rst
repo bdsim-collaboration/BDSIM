@@ -6,7 +6,8 @@ New Features
 
 * Parser warns for redefined variable, and exits for usage of undeclared variables (issue #98)
 * Optional reduced number of variables in ROOT output - formats now "root" and "rootdetailed" (issue #107)
-
+* Forced dependency on ROOT
+  
 Bug fixes
 ---------
 

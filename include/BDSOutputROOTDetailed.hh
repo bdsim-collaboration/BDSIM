@@ -1,8 +1,6 @@
 #ifndef BDSOUTPUTROOTDETAILED_H
 #define BDSOUTPUTROOTDETAILED_H
 
-#ifdef USE_ROOT
-
 #include "BDSOutputROOT.hh"
 #include "BDSTrajectory.hh"
 
@@ -113,5 +111,4 @@ private:
 
 extern BDSOutputBase* bdsOutput;
 
-#endif // USE_ROOT
 #endif

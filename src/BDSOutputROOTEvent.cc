@@ -1,5 +1,3 @@
-#ifdef USE_ROOT
-
 #include "BDSOutputROOTEvent.hh"
 
 #include "BDSDebug.hh"
@@ -199,5 +197,3 @@ void BDSOutputROOTEvent::Clear()
   // loop over sampler map and clear vectors
   
 }
-
-#endif

@@ -1,4 +1,3 @@
-#ifdef USE_ROOT
 #include "BDSOutputROOTBase.hh"
 
 #include "BDSDebug.hh"
@@ -545,4 +544,3 @@ void BDSOutputROOTBase::Write()
     }
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }
-#endif
