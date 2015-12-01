@@ -426,6 +426,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       
       sbendline->AddComponent(oneBend);
     }
+
+  // clean up
+  delete beamPipeInfo;
+  delete magnetOuterInfo;
+  
   return sbendline;
 }
 
