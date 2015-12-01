@@ -87,20 +87,23 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
-  if (!tiltOffset) {tiltOffset  = new BDSTiltOffset();}
+  if (!tiltOffset)
+    {tiltOffset  = new BDSTiltOffset();}
   
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
+      for (auto component : *line)
 	{
-	  element = AddSingleComponent(*i, tiltOffset);
-	  if (element) addedComponents.push_back(element);
+	  element = AddSingleComponent(component, tiltOffset);
+	  if (element)
+	    {addedComponents.push_back(element);}
 	}
     }
   else
     {
       element = AddSingleComponent(component, tiltOffset);
-      if (element) addedComponents.push_back(element);
+      if (element)
+	{addedComponents.push_back(element);}
     }
   // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;

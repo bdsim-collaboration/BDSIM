@@ -66,6 +66,11 @@ namespace BDS {
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();
+    
+  ///@{ Get parameter value from the specification ('spec') string
+  G4double GetParameterValue      (const G4String spec, const G4String name);
+  G4String GetParameterValueString(const G4String spec, const G4String name);
+  ///@}
 }
 
 
