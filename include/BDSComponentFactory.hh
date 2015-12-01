@@ -12,9 +12,9 @@
 class BDSTiltOffset;
 
 /**
- * @brief Factory to produce all types of BDSAcceleratorComponent s.
+ * @brief Factory to produce all types of BDSAcceleratorComponents.
  * 
- * Loops over the beam line list from the parser and creates the appropriate
+ * Creates from a parser Element the appropriate
  * object (that inherits BDSAcceleratorComponent) and returns it. Will return
  * nullptr if invalid type or nothing to be constructed for that particular type.
  * Basic calculations on field strength and angle as well as basic parameter validity

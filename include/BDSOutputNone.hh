@@ -38,6 +38,7 @@ public:
   virtual void WriteTrackerBunch(G4String, TRKBunch*, bool){}
   virtual void WriteTrackerPrimaryLoss(TRKBunch*, int){}
   
+  virtual void FillEvent(){}///< fill event structure
   virtual void Commit(){}  ///< close the file
   virtual void Write(){}   ///< close and open new file
 };

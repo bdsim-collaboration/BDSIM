@@ -1,2 +1,3 @@
-set(TESTING_ARGS --output=rootevent --circular "")
-simple_testing(IO_ROOTEVENT "--file=fodoRing.gmad" "")
+if (USE_ROOT)
+  simple_testing(IO_ROOTEVENT "--file=fodoRing.gmad --output=rootevent --circular" "")
+endif()

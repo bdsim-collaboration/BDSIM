@@ -55,7 +55,7 @@ public:
 
   /// Access an already constructed component - will return null if no such component found.
   /// This is safe as this registry is primarily used by BDSComponentFactory which can return
-  /// NULL to BDSDetectorConstruction safely if an invalid component is requested.
+  /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.
   BDSAcceleratorComponent* GetComponent(G4String name);
 
   typedef RegistryMap::iterator       iterator;

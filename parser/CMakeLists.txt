@@ -42,7 +42,7 @@ add_flex_bison_dependency(SCANNER PARSER)
 # glob parser sources
 file(GLOB GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 # remove parser main
-list(REMOVE_ITEM GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/parser.cc)
+list(REMOVE_ITEM GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/gmad.cc)
 if($ENV{VERBOSE})
   message(STATUS "GMAD parser sources ${GMAD_PARSER_SOURCES}")
 endif()
@@ -57,7 +57,7 @@ if($ENV{VERBOSE})
 	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
-add_executable(gmadexec parser.cc)
+add_executable(gmadexec gmad.cc)
 set_target_properties(gmadexec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VERSION})
 target_link_libraries(gmadexec gmad)
 

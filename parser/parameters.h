@@ -1,13 +1,14 @@
 #ifndef __PARAMETERS_H
 #define __PARAMETERS_H
 
-#include <list>
 #include <string>
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include "array.h"
 #include "element.h"
 
 namespace GMAD {
-
-  struct Array;
 
   /**
    * @brief Parameters - Element class with booleans
@@ -21,75 +22,51 @@ namespace GMAD {
 
   struct Parameters : public Element {
 
-    ///@{ booleans for every Element member, except name and type, which can't be altered
-    bool lset;
-    bool ksset,k0set,k1set,k2set,k3set,k4set,angleset;
-    bool beampipeThicknessset;
-    bool aper1set, aper2set, aper3set, aper4set;
-    bool apertureTypeset;
-    bool beampipeMaterialset;
-    bool vacuumMaterialset;
-    bool magnetGeometryTypeset;
-    bool outerMaterialset;
-    bool outerDiameterset;
-    bool tiltset,xsizeset,ysizeset,xsizeOutset,ysizeOutset,rset,Bset, phiAngleInset, phiAngleOutset;
-    bool offsetXset, offsetYset;
-    bool tscintset, twindowset, bmapZOffsetset; 
-    bool xdirset, ydirset, zdirset, waveLengthset;
-    bool gradientset;
-    bool phiset, thetaset, psiset;
-    bool knlset;
-    bool kslset;
-    bool blmLocZset;
-    bool blmLocThetaset;
-    bool biasset,biasMaterialset,biasVacuumset;
-    bool precisionRegionset;
-    
-    bool Aset; 
-    bool Zset; 
-    bool densityset; 
-    bool temperset;
-    bool pressureset;
-    bool stateset;
-    bool symbolset;
-    bool componentsset;
-    bool componentsFractionsset;
-    bool componentsWeightsset;
+    /// Map that holds booleans for every member of element
+    std::map<std::string,bool> setMap;
 
-    bool geometryFileset;
-    bool bmapFileset;
-    bool materialset;
-    bool windowmaterialset;
-    bool scintmaterialset;
-    bool airmaterialset;
-    bool specset;
-
-    bool numberWedgesset;
-    bool wedgeLengthset;
-    bool degraderHeightset;
-    bool materialThicknessset;
-    bool degraderOffsetset;
-
-    //// reset the parameters to defaults
+    /// Reset the parameters to defaults and setMap
     void flush();
 
-    /// copy parameters into temporary buffer params from element e
-    /// parameters already set in params have priority and are not overridden
-    void inherit_properties(struct Element& e);
+    /// Copy parameters into temporary buffer params from element e
+    /// Parameters already set in params have priority and are not overridden
+    void inherit_properties(Element& e);
 
-    /// print multipole expansion array
-    void print()const;
-
-    /// set methods by property name, numeric values
-    void set_value(std::string property, double value);
-    /// set methods by property name, string values
-    void set_value(std::string property, std::string value);
-    /// set methods by property name, Array values
+    /// Set method by property name and value
+    template <typename T>
+    void set_value(std::string property, T value);
+    // Template overloading for Array pointers, to be merged into templated function
+    /// Set method for lists
     void set_value(std::string property, Array* value);
 
-    /// constructor
+    /// Constructor
     Parameters();
   };
+
+  template <typename T>
+    void Parameters::set_value(std::string property, T value)
+    {
+#ifdef BDSDEBUG
+      std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+#endif
+      // member method can throw runtime_error, catch and exit gracefully
+      try {
+	Published<Element>::set(this,property,value);
+      }
+      catch(std::runtime_error) {
+	// not implemented mad parameters will be ignored
+	if (property == "e1" || property == "e2" || property == "fint" || property == "fintx" ||
+	    property == "hgap" || property == "harmon" || property == "lag" || property == "volt")
+	  {return;}
+	
+	std::cerr << "Error: parser> unknown option \"" << property << "\" with value " << value  << std::endl;
+	exit(1);
+      }
+      // record property set
+      // property name can be different, so look up in alternate names
+      std::string publishedName = getPublishedName(property);
+      setMap.at(publishedName) = true;
+    }
 }
 
 #endif

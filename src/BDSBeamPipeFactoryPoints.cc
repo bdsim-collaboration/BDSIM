@@ -1,9 +1,7 @@
 #include "BDSBeamPipeFactoryPoints.hh"
-#include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipe.hh"
 
 #include "BDSDebug.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4CutTubs.hh"

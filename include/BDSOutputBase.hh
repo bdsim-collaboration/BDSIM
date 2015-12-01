@@ -19,7 +19,7 @@ class BDSOutputBase
 public: 
   BDSOutputBase(); // default constructor
   //  BDSOutput(BDSOutputFormat format);
-  virtual ~BDSOutputBase(){};
+  virtual ~BDSOutputBase() {};
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
@@ -60,6 +60,9 @@ public:
   virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false) = 0;
   virtual void WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken) = 0;
   
+  /// write a complete event
+  virtual void FillEvent() = 0;
+
   /// write and close and open new file
   virtual void Commit()=0;
   

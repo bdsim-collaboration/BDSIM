@@ -16,11 +16,11 @@ beam,  particle="e-",
 
 myCarbon: matdef, Z=6, A=12.0107, density=2.2, T=300, P=1, state="solid";
 
-carbonFoil: element, l=1.001*mm, geometry="mokka:sql/carbonFoilGeomlist.sql", outR=1*m;
-myField: element, l=1.01*m, geometry="mokka:sql/myFieldGeomlist.sql", outR=1*m;
+carbonFoil: element, l=1.001*mm, geometry="mokka:sql/carbonFoilGeomlist.sql", outerDiameter=2*m;
+myField: element, l=1.01*m, geometry="mokka:sql/myFieldGeomlist.sql", outerDiameter=2*m;
 
-rbend1: rbend, l=1, angle=0.392/10, outR=2*m;
-sbend1: sbend, l=1, angle=0.392/10, outR=2*m;
+rbend1: rbend, l=1, angle=0.392/10, outerDiameter=4*m;
+sbend1: sbend, l=1, angle=0.392/10, outerDiameter=4*m;
 
 lsca:=0.815;
 ft2m := 0.3048;

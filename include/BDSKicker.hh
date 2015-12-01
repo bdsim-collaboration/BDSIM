@@ -13,12 +13,12 @@ struct BDSMagnetOuterInfo;
 class BDSKicker: public BDSMagnet
 {
 public:
+  /// Constructor. "Type" represents whether it's a vertical or horizontal kicker.
   BDSKicker(G4String            name,
 	    G4double            length,
 	    G4double            bFieldIn,
-	    G4double            bGradIn,
 	    G4double            kickAngle,
-	    G4bool              verticalKickerIn,
+	    BDSMagnetType       type,
 	    BDSBeamPipeInfo*    beamPipeInfo,
 	    BDSMagnetOuterInfo* magnetOuterInfo);
   ~BDSKicker(){;};
@@ -28,9 +28,7 @@ protected:
 
 private:
   G4double bField;
-  //G4double bGrad;
   G4double kickAngle;
-  G4bool   verticalKicker;
 
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe(); // overload multipole base class method

@@ -1,7 +1,4 @@
-#include "parser/gmad.h"
 #include "parser/options.h"
-#include "parser/fastlist.h"
-#include "parser/element.h"
 
 #include "tracker/TRKBunch.hh"
 #include "tracker/TRKLine.hh"
@@ -12,14 +9,8 @@
 #include "BDSExecOptions.hh"
 #include "BDSOutputBase.hh"
 #include "BDSOutputFactory.hh"
+#include "BDSParser.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
-
-//Things from the parser
-namespace GMAD
-{
-  extern FastList<Element> beamline_list;
-  extern Options options;
-}
 
 //GLOBALS
 BDSOutputBase* trkOutput=NULL; //output interface
@@ -29,7 +20,8 @@ int main (int argc, char** argv){
   BDSExecOptions::Instance(argc,argv)->Print();
   
   //parse input
-  GMAD::gmad_parser(BDSExecOptions::Instance()->GetInputFilename());
+  BDSParser* parser = BDSParser::Instance(BDSExecOptions::Instance()->GetInputFilename());
+  const GMAD::Options& options = parser->GetOptions();
   
   //initialise output
   //trkOutput = BDSOutputFactory::Instance()->InitialiseOutput();
@@ -43,15 +35,15 @@ int main (int argc, char** argv){
   BDSRandom::WriteSeedState(); //write the current state once set / loaded
 
   //build bunch
-  TRKBunch* bunch       = new TRKBunch(GMAD::options);
+  TRKBunch* bunch       = new TRKBunch(options);
   
   //build beamline
-  TRKFactory* factory   = new TRKFactory(GMAD::options);
-  TRKLine* beamline     = factory->CreateLine(GMAD::beamline_list);
+  TRKFactory* factory   = new TRKFactory(options);
+  TRKLine* beamline     = factory->CreateLine(BDSParser::Instance()->GetBeamline());
   TRKStrategy* strategy = factory->CreateStrategy();
 
   //build tracker
-  TRKTracker tracker(beamline,strategy,GMAD::options);
+  TRKTracker tracker(beamline,strategy,options);
 
   //run tracking - all output through bdsim / samplers
   tracker.Track(bunch);

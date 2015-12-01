@@ -19,7 +19,7 @@ typedef std::chrono::milliseconds milliseconds;
 
 TRKTracker::TRKTracker(TRKLine*       lineIn,
 		       TRKStrategy*   strategyIn,
-		       GMAD::Options& options):
+		       const GMAD::Options& options):
   line(lineIn), strategy(strategyIn)
 {
   dontuseaperture = options.dontUseAperture;

@@ -20,7 +20,7 @@ BDSBunchComposite::~BDSBunchComposite()
   delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(GMAD::Options& opt)
+void BDSBunchComposite::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

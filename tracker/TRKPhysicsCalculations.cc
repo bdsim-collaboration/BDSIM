@@ -9,7 +9,7 @@
 #include <string>
 #include <iostream>
 
-void TRK::CalculateKineticEnergy(GMAD::Options& options)
+void TRK::CalculateKineticEnergy(const GMAD::Options& options)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << std::endl;

@@ -36,7 +36,7 @@ BDSSectorBend::BDSSectorBend(G4String            name,
       chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
       // prepare normal vectors for input and output planes
       // calculate components of normal vectors (in the end mag(normal) = 1)
-      orientation   = BDS::CalculateOrientation(angleIn);
+      G4int orientation   = BDS::CalculateOrientation(angleIn);
       G4double in_z = cos(0.5*fabs(angleIn)); 
       G4double in_x = sin(0.5*fabs(angleIn));
       inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);

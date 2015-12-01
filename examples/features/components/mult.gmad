@@ -1,6 +1,7 @@
 d1: drift, l=0.5;
 mul : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
 d2: drift, l=0.5;
+mul2 : multipole, l=0.5*m , knl={ 0,0,0 } , ksl={ 0,0,0 };
 
-lat : line = (d1,mul,d2);
-com : line = (mul);
+lat : line = (d1,mul,d2,mul2);
+com : line = (mul,mul2);

@@ -18,7 +18,7 @@ BDSBunch::~BDSBunch()
   delete bdsBunch;
 }
 
-void BDSBunch::SetOptions(GMAD::Options& opt)
+void BDSBunch::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

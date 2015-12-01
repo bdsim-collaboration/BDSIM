@@ -152,6 +152,32 @@ G4bool BDS::IsFinite(const G4ThreeVector& variable)
     {return false;}
 }
 
+G4bool BDS::IsInteger(const char* ch, int& convertedInteger)
+{
+  // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
+  // convert to string
+  std::string s(ch);
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  
+  char * p;
+  convertedInteger = std::strtol(ch, &p, 10);
+  
+  return (*p == 0);
+}
+
+G4bool BDS::IsNumber(const char* ch, double& convertedNumber)
+{
+  // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
+  // convert to string
+  std::string s(ch);
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  
+  char * p;
+  convertedNumber = std::strtod(ch, &p);
+  
+  return (*p == 0);
+}
+
 void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)
 {
   G4cout << "Rotation matrix - reference: \"" << keyName << "\"" << *rm << G4endl;

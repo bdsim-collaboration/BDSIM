@@ -7,13 +7,13 @@ template<>
 std::map<BDSMagnetType, std::string>* BDSMagnetType::dictionary =
   new std::map<BDSMagnetType, std::string> ({
   {BDSMagnetType::decapole,        "decapole"},
-  {BDSMagnetType::hkicker,         "hkicker"},
-  {BDSMagnetType::vkicker,         "vkicker"},
+  {BDSMagnetType::hkicker,         "hkick"},
+  {BDSMagnetType::vkicker,         "vkick"},
   {BDSMagnetType::muspoiler,       "muspoiler"},
   {BDSMagnetType::octupole,        "octupole"},
   {BDSMagnetType::quadrupole,      "quadrupole"},
-  {BDSMagnetType::sectorbend,      "sectorbend"},
-  {BDSMagnetType::rectangularbend, "rectangularbend"},
+  {BDSMagnetType::sectorbend,      "sbend"},
+  {BDSMagnetType::rectangularbend, "rbend"},
   {BDSMagnetType::rfcavity,        "rfcavity"},
   {BDSMagnetType::sextupole,       "sextupole"},
   {BDSMagnetType::solenoid,        "solenoid"},

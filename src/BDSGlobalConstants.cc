@@ -2,11 +2,10 @@
 
 #include "BDSGlobalConstants.hh"
 
-#include "parser/options.h"
-
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
@@ -16,20 +15,16 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-namespace GMAD {
-  extern Options options;
-}
-
 BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(_instance==nullptr)
-    {_instance = new BDSGlobalConstants(GMAD::options);}
+    {_instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),
@@ -198,12 +193,13 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  itsIncludeIronMagFields = opt.includeIronMagFields;
+  //itsIncludeIronMagFields = opt.includeIronMagFields;
+  itsIncludeIronMagFields = false;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
-  itsTurnsTaken = 1; //counting from 1
+  itsTurnsTaken = 0;
   if(opt.nturns < 1)
     {
       G4cout << "nturns < 1 - setting to 1" << G4endl;
@@ -290,6 +286,7 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
+  delete defaultBeamPipeModel;
   delete itsZeroFieldManager;
   delete zeroMagField;
   delete tunnelInfo;

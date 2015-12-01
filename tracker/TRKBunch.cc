@@ -17,7 +17,7 @@
 
 extern BDSOutputBase* trkOutput;
 
-TRKBunch::TRKBunch(GMAD::Options& opt)
+TRKBunch::TRKBunch(const GMAD::Options& opt)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -36,7 +36,7 @@ TRKBunch::TRKBunch(const std::vector<TRKParticle>& particleVectorIn)
   bunch = particleVectorIn;
 }
 
-void TRKBunch::Populate(GMAD::Options& opt)
+void TRKBunch::Populate(const GMAD::Options& opt)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Generating particles" << std::endl;

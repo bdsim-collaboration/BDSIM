@@ -1093,10 +1093,18 @@ If you wish to sample only one specific instance, the following syntax can be us
 
   sample, range=<element_name>[index];
 
-To attach samplers to all elements::
+To attach samplers to all elements (except the first one)::
 
   sample, all;
 
+And to attach samplers before all elements of a specific type::
+
+  sample, <type>;
+
+e.g.::
+
+  sample, quadrupole;
+  
 .. note:: Samplers **can only** be defined **after** the main sequence has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
@@ -1194,6 +1202,10 @@ Multiple options can be defined at once using the following syntax::
 
   option, <option1> = <value>,
           <option2> = <value>;
+
+.. note:: No options are required to be specified to run a BDSIM model.  Defaults will be used in
+	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
+	  radius as these will have a large impact on the outcome of the simulation.
 
 options in BDSIM
 ^^^^^^^^^^^^^^^^ 
@@ -1352,9 +1364,9 @@ if only the `angle` parameter has been specified.
 .. note:: A design energy can be specified and in addition, the central energy, of say
 	  a bunch with a Gaussian distribution, can be specified.
 
-The user must specify at least `energy`, `particle` and `distrType` (the distribution type).
-Additional parameters can be specified to detail in the input distribution. The beam is
-defined using the following syntax::
+The user **must** specify at least `energy` and the `particle` type. Other parameters, such
+as the beam distribution type, `distrType`, are optional and can be specified as described
+in the following sections. The beam is defined using the following syntax::
 
   beam, particle="proton",
         energy=4.0*TeV,

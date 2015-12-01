@@ -44,7 +44,7 @@
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
-TRKFactory::TRKFactory(GMAD::Options& options)
+TRKFactory::TRKFactory(const GMAD::Options& options)
 {
 #ifdef TRKDEBUG
   std::cout << __METHOD_NAME__ << "Initialisation" << std::endl;
@@ -170,7 +170,7 @@ TRKAperture* TRKFactory::CreateAperture(GMAD::Element& element)
   */
 }
 
-TRKLine* TRKFactory::CreateLine(GMAD::FastList<GMAD::Element>& beamline_list)
+TRKLine* TRKFactory::CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list)
 {
   TRKLine* line = new TRKLine("beamline",circular);
   

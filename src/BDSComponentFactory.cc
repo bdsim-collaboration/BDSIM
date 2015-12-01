@@ -37,6 +37,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSUtilities.hh"
 
@@ -418,46 +419,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   
   // magnetic field
   G4double bField;
-  if(_element.B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = _element.B * CLHEP::tesla;
-    _element.angle  = -bField * length / _brho;
-  }
-  else{
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in kicks defined with angle
-    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
-    _element.B = bField/CLHEP::tesla;
-  }
+  if(_element.B != 0)
+    {
+      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+      bField = _element.B * CLHEP::tesla;
+      _element.angle  = -bField * length / _brho;
+    }
+  else
+    {
+      // B = Brho/rho = Brho/(arc length/angle)
+      // charge in e units
+      // multiply once more with ffact to not flip fields in kicks defined with angle
+      bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
+      _element.B = bField/CLHEP::tesla;
+    }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-
-  // LN I think we should build it anyway and the stepper should deal
-  // with this - ie so we still have the outer geometry
-  /*
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    G4cerr << "---->NOT creating Hkick,"
-	   << " name= " << _element.name
-	   << ", TOO SMALL ANGLE"
-	   << " angle= " << _element.angle << "rad"
-	   << ": REPLACED WITH Drift,"
-	   << " l= " << length/CLHEP::m << "m"
-	   << " aper= " << aper/CLHEP::m << "
-	   << G4endl;
-    return createDrift();
-  }
-  */
-  return (new BDSKicker( _element.name,
-			 _element.l * CLHEP::m,
-			 bField,
-			 bPrime,
-			 _element.angle,
-			 false,   // it's a horizontal kicker
-			 PrepareBeamPipeInfo(_element),
-			 PrepareMagnetOuterInfo(_element)));
+  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  
+  return (new BDSKicker(_element.name,
+			_element.l * CLHEP::m,
+			bField,
+			_element.angle,
+			BDSMagnetType::hkicker,
+			PrepareBeamPipeInfo(_element),
+			PrepareMagnetOuterInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
@@ -469,47 +456,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   
   // magnetic field
   G4double bField;
-  if(_element.B != 0){
-    // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = _element.B * CLHEP::tesla;
-    _element.angle  = -bField * length / _brho;
-  }
-  else{
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in kicks
-    bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
-    _element.B = bField/CLHEP::tesla;
-  }
+  if(_element.B != 0)
+    {
+      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
+      bField = _element.B * CLHEP::tesla;
+      _element.angle  = -bField * length / _brho;
+    }
+  else
+    {
+      // B = Brho/rho = Brho/(arc length/angle)
+      // charge in e units
+      // multiply once more with ffact to not flip fields in kicks
+      bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
+      _element.B = bField/CLHEP::tesla;
+    }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-
-  // LN I think we should build it anyway and the stepper should deal
-  // with this - ie so we still have the outer geometry
-  /*
-  if( fabs(_element.angle) < 1.e-7 * CLHEP::rad ) {
-    G4cerr << "---->NOT creating Vkick,"
-	   << " name= " << _element.name
-	   << ", TOO SMALL ANGLE"
-	   << " angle= " << _element.angle << "rad"
-	   << ": REPLACED WITH Drift,"
-	   << " l= " << _element.l << "m"
-	   << " aper= " << aper/CLHEP::m << "
-	   << G4endl;
-
-    return CreateDrift();
-  }
-  */
-  return (new BDSKicker( _element.name,
-			 _element.l * CLHEP::m,
-			 bField,
-			 bPrime,
-			 _element.angle,
-			 true,   // it's a vertical kicker
-			 PrepareBeamPipeInfo(_element),
-			 PrepareMagnetOuterInfo(_element)
-			 ));
+  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  
+  return (new BDSKicker(_element.name,
+			_element.l * CLHEP::m,
+			bField,
+			_element.angle,
+			BDSMagnetType::vkicker,
+			PrepareBeamPipeInfo(_element),
+			PrepareMagnetOuterInfo(_element)
+			));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -960,7 +932,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element& element)
       G4cerr << "---->NOT creating element, "
              << " name = " << _element.name
              << ", LENGTH TOO SHORT:"
-             << " l = " << _element.l*CLHEP::m << "m"
+             << " l = " << _element.l*CLHEP::um << "um"
              << G4endl;
       return false;
     }

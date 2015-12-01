@@ -23,9 +23,9 @@ class TRKStrategy;
 
 class TRKFactory {
  public:
-  TRKFactory(GMAD::Options& options);
+  TRKFactory(const GMAD::Options& options);
 
-  TRKLine*     CreateLine(GMAD::FastList<GMAD::Element>& beamline_list);
+  TRKLine*     CreateLine(const GMAD::FastList<GMAD::Element>& beamline_list);
   TRKStrategy* CreateStrategy();
 
   friend std::ostream& operator<< (std::ostream& out, const TRKFactory &factory);

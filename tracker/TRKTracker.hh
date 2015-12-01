@@ -13,7 +13,7 @@ struct Options;
  */
 class TRKTracker {
 public :
-  TRKTracker(TRKLine* line, TRKStrategy* strategy, GMAD::Options& options);
+  TRKTracker(TRKLine* line, TRKStrategy* strategy, const GMAD::Options& options);
   ~TRKTracker();
   /// track bunch through beamline - main tracking loop
   void Track(TRKBunch* bunch);
