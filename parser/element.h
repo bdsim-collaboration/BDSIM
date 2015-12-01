@@ -2,7 +2,10 @@
 #define __ELEMENT_H
 
 #include <list>
+#include <map>
 #include <string>
+
+#include "published.h"
 
 namespace GMAD {
 
@@ -16,7 +19,7 @@ namespace GMAD {
    * @author I. Agapov
    */
 
-  struct Element {
+  struct Element : public Published<Element>{
     ElementType type; ///< element enum
     std::string name;
 
@@ -130,6 +133,16 @@ namespace GMAD {
   
     /// constructor
     Element();
+
+  private:
+    /// publish members so these can be looked up from parser
+    void PublishMembers();
+    /// map that translates between alternative parser names for members, could be made static
+    std::map<std::string,std::string> alternativeNames;
+
+  protected:
+    /// returns 'official' member name for property
+    std::string getPublishedName(std::string name)const;
   };
 }
  
