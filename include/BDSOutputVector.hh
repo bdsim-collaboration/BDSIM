@@ -45,6 +45,8 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
+  /// Fill event
+  virtual void FillEvent() {};
   /// write and close and open new file
   virtual void Commit();
   /// write and close the file

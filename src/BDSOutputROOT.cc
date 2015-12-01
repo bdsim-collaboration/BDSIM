@@ -10,7 +10,7 @@
 #include "BDSHistogram.hh"
 
 #include <string>
-
+// #define BDSDEBUG
 BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG

@@ -54,6 +54,8 @@ private:
   float x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
   float x_lastScat=0.0,xp_lastScat=0.0,y_lastScat=0.0,yp_lastScat=0.0,z_lastScat=0.0,zp_lastScat=0.0,E_lastScat=0.0,t_lastScat=0.0;
   
+  void FillEvent() {};
+
   /// write hit to TTree
   virtual void WriteRootHit(TTree*         tree,
 			    BDSSamplerHit* hit,

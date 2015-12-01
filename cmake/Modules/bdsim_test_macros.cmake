@@ -22,9 +22,9 @@ macro(_run_test test_name input_args)
   separate_arguments(TESTING_ARGS)
   # If loop can be removed when we no longer support cmake 2.6...
   if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_GREATER 2.7)
-    add_test(NAME ${test_name} COMMAND ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
+    add_test(NAME ${test_name} COMMAND ${bdsimBinary} ${TESTING_PERM_ARGS} ${args} ${TESTING_ARGS})
   else()
-    add_test(${test_name} ${bdsimBinary} ${args} ${TESTING_PERM_ARGS} ${TESTING_ARGS})
+    add_test(${test_name} ${bdsimBinary} ${TESTING_PERM_ARGS} ${args} ${TESTING_ARGS})
   endif()
   # unset TESTING_ARGS so only used for this test
   unset(TESTING_ARGS)

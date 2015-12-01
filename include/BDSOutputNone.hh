@@ -34,6 +34,7 @@ public:
   virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
+  virtual void FillEvent(){}///< fill event structure
   virtual void Commit(){}  ///< close the file
   virtual void Write(){}   ///< close and open new file
 };
