@@ -160,7 +160,7 @@ void Parser::quit()
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
 #ifdef BDSDEBUG 
-  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, typestr(type).c_str(), params.lset);
+  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s\n", params.k1, params.k2, params.k3, typestr(type).c_str());
 #endif
 
   Element e;
