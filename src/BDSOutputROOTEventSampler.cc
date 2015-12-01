@@ -1,6 +1,6 @@
 #include "BDSOutputROOTEventSampler.hh"
 
-ClassImp(BDSOutputROOTEventSampler);
+ClassImp(BDSOutputROOTEventSampler)
 
 BDSOutputROOTEventSampler::BDSOutputROOTEventSampler() {
   samplerName = "sampler";
