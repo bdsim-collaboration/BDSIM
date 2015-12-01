@@ -220,3 +220,45 @@ G4bool BDS::Geant4EnvironmentIsSet()
     }
   return result;
 }
+
+G4double BDS::GetParameterValue(const G4String spec, const G4String name)
+{
+  G4double value = 0;
+
+  std::string delimiters = "&";
+  std::string param = name + "=";
+
+  int pos = spec.find(param);
+  if( pos >= 0 )
+    {
+      int pos2 = spec.find("&",pos);
+      int pos3 = spec.length();
+      int tend = pos2 < 0 ? pos3 : pos2; 
+      int llen = tend - pos - param.length();
+      
+      std::string val = spec.substr(pos + param.length(), llen);
+      
+      value = atof(val.c_str());
+  }
+  return value;
+}
+
+G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
+{
+  G4String value = "";
+
+  std::string delimiters = "&";
+  std::string param = name + "=";
+
+  int pos = spec.find(param);
+  if( pos >= 0 )
+    {
+      int pos2 = spec.find("&",pos);
+      int pos3 = spec.length();
+      int tend = pos2 < 0 ? pos3 : pos2; 
+      int llen = tend - pos - param.length();
+      
+      value = spec.substr(pos + param.length(), llen);
+    }
+  return value;
+}
