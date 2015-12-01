@@ -36,7 +36,7 @@ cryoModule: element, l=12.4784*m, outerDiameter=12.5*m, geometry="mokka:cryo1_ge
 
 !gap3: element, l=0.8*m, geometry="mokka:cryo/cavity/gap3_geomlist.sql";
 
-rb1:sbend, l=0.5*m, angle = 2e-6, outR=1*m;
+rb1:sbend, l=0.5*m, angle = 2e-6, outerDiameter=2*m;
 
 !vrot: transform3d, psi=pi/2;
 !ivrot: transform3d, psi=-pi/2;
