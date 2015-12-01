@@ -1,3 +1,3 @@
-#ifdef __MAKECINT__
-#pragma link C++ BDSOutputROOTEventSampler;
+#ifdef __CINT__
+#pragma link C++ class BDSOutputROOTEventSampler;
 #endif
