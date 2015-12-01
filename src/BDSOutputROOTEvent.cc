@@ -8,8 +8,6 @@
 #include "BDSUtilities.hh"
 #include "BDSSamplerBase.hh"
 
-#define BDSDEBUG
-
 BDSOutputROOTEvent::BDSOutputROOTEvent() 
 {  
 #ifdef BDSDEBUG
