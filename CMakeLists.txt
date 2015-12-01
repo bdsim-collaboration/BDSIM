@@ -151,6 +151,21 @@ find_package(ROOT REQUIRED)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
+# Make Dictionaries
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
+file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
+# for loop over link definitions
+foreach(header ${linkHeaders})
+  # remove LinkDef.hh
+  string(FIND ${header} "LinkDef.hh" pos REVERSE)
+  string(FIND ${header} "/" dir REVERSE)
+  MATH(EXPR beginpos "${dir}+1")
+  MATH(EXPR length "${pos}-${beginpos}")
+  string(SUBSTRING ${header} ${beginpos} ${length} className)
+  #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
+  execute_process(COMMAND ${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header})
+endforeach()
+
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
@@ -283,9 +298,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
 
 if($ENV{VERBOSE})
-	message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
-	message(STATUS "CMAKE_C_FLAGS ${CMAKE_C_FLAGS}")
-	message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
+  message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
+  message(STATUS "CMAKE_C_FLAGS ${CMAKE_C_FLAGS}")
+  message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
 
 # add a target to generate API documentation with Doxygen
@@ -310,6 +325,7 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
+    ${CMAKE_CURRENT_BINARY_DIR}/root/*Dict.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
