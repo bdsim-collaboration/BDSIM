@@ -20,13 +20,15 @@ protected:
   std::vector<float> xp;
   std::vector<float> yp;
   std::vector<float> zp;
-  
+
+#if 0  
   std::vector<float> X;
   std::vector<float> Y;
   float              Z;
   std::vector<float> Xp;
   std::vector<float> Yp;
   std::vector<float> Zp;
+#endif 
   
   std::vector<float> weight;
   std::vector<int>   partID;
