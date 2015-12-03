@@ -6,13 +6,13 @@ ClassImp(BDSOutputROOTEventSampler)
 
 BDSOutputROOTEventSampler::BDSOutputROOTEventSampler() {
   samplerName = "sampler";
-  this->Clear();
+  this->Flush();
 }
 
 BDSOutputROOTEventSampler::BDSOutputROOTEventSampler(std::string samplerNameIn) 
 {
   samplerName = samplerNameIn;
-  this->Clear();
+  this->Flush();
 }
 
 BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler() {}
