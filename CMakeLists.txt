@@ -163,7 +163,11 @@ foreach(header ${linkHeaders})
   MATH(EXPR length "${pos}-${beginpos}")
   string(SUBSTRING ${header} ${beginpos} ${length} className)
   #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
-  execute_process(COMMAND ${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header})
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+    COMMAND ${ROOTCINT_EXECUTABLE}
+    ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+    )
 endforeach()
 
 # GDML (on by default)
