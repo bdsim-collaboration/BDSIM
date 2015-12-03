@@ -367,6 +367,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   //calculate their angle and length
   double semiangle  = element->angle / (double) nSbends;
   double semilength = length / (double) nSbends;
+
   //create Line to put them in
   BDSLine* sbendline = new BDSLine(element->name);
   //create sbends and put them in the line
@@ -385,28 +386,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   for (int i = 0; i < nSbends; ++i)
     {
+      //Calculate change in angle up to middle wedge
       if (element->e1 != 0)
-	{deltastart = -element->e1/(0.5*(nSbends-1));}
+        {deltastart = -element->e1/(0.5*(nSbends-1));}
       if (element->e2 != 0)
-	{deltaend = -element->e2/(0.5*(nSbends-1));}
+        {deltaend = -element->e2/(0.5*(nSbends-1));}
       
       //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
       if (i == 0.5*(nSbends-1))
-	{
-	  anglein = -0.5*element->angle/(nSbends);
-	  angleout = -0.5*element->angle/(nSbends);
-	}
+        {
+          anglein = -0.5*element->angle/(nSbends);
+          angleout = -0.5*element->angle/(nSbends);
+        }
       else if (i < 0.5*(nSbends-1))
-	{
-	  anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
-	  angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
-	}
+        {
+          anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
+          angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
+        }
       else if (i > 0.5*(nSbends-1))
-	{
-	  anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
-	  angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
-	}
-      
+        {
+          anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
+          angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
+        }
+
       thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
       
       BDSBeamPipeInfo*    localBeamPipeInfo    = new BDSBeamPipeInfo(*beamPipeInfo);

@@ -68,7 +68,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 				    BDSColours::Instance()->GetColour("sectorbend"));
     }
   
-  G4int orientation   = BDS::CalculateOrientation(angle);
   G4double zcomponentIn = cos(e1); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double xcomponentIn = sin(e1); // note full angle here as it's the exit angle
   G4double zcomponentOut = cos(e2); // calculate components of normal vectors (in the end mag(normal) = 1)
