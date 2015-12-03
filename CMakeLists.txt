@@ -168,6 +168,9 @@ foreach(header ${linkHeaders})
     COMMAND ${ROOTCINT_EXECUTABLE}
     ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
     )
+  # keep list of ROOT dictionaries
+  set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
+  set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
 endforeach()
 
 # GDML (on by default)
@@ -333,7 +336,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    ${CMAKE_CURRENT_BINARY_DIR}/root/*Dict.cc
     )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
@@ -349,7 +351,8 @@ endif()
 if($ENV{VERBOSE})
   message(STATUS "bdsim sources ${bdsim_sources}")
 endif()
-add_library(bdsim ${bdsim_sources})
+
+add_library(bdsim ${bdsim_sources} ${root_dicts})
 
 # This module sets up installation:
 include(bdsim_install)
@@ -391,7 +394,7 @@ set(libraries bdsim)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
-bdsim_install_headers(${headers})
+bdsim_install_headers(${headers} ${root_dicts_headers})
 
 # Visualisation directory
 add_subdirectory(vis)
