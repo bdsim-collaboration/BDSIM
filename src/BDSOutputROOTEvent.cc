@@ -197,7 +197,7 @@ void BDSOutputROOTEvent::Clear()
   // loop over sampler map and clear vectors
   for(int i=0;i<BDSSamplerBase::GetNSamplers();i++) {
     G4String name=BDSSamplerBase::outputNames[i];
-    samplerMap[name]->Clear();
+    samplerMap[name]->Flush();
   }  
   
 }

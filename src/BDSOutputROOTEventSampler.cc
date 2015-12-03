@@ -48,7 +48,7 @@ void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
 
 } 
   
-void BDSOutputROOTEventSampler::Clear() 
+void BDSOutputROOTEventSampler::Flush() 
 {
   this->n = 0;
   this->energy.clear();

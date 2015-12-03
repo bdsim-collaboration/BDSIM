@@ -44,7 +44,8 @@ public:
 #ifndef __MAKECINT__
   void Fill(BDSSamplerHit *hit);
 #endif
-  void Clear();
+  /// Clean Sampler
+  void Flush();
 
   ClassDef(BDSOutputROOTEventSampler,1);
 };
