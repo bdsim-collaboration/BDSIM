@@ -7,3 +7,7 @@ BDSOutputROOTEventModel::BDSOutputROOTEventModel() {
 
 BDSOutputROOTEventModel::~BDSOutputROOTEventModel() {
 }
+
+void BDSOutputROOTEventModel::Fill() {
+  
+}

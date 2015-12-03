@@ -16,7 +16,7 @@ protected:
 public:
   BDSOutputROOTEventLoss();
   ~BDSOutputROOTEventLoss();
-  void Fill();
+  virtual void Fill();
   void Flush();
 
   ClassDef(BDSOutputROOTEventLoss,1);

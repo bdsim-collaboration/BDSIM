@@ -52,15 +52,43 @@ void BDSOutputROOTEvent::Init()
   }
 
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
-  theRootOutputFile = new TFile(filename,"RECREATE", "BDS output file");
-  theRootOutputTree = new TTree("bdsim","BDS output tree");
+  // root file
+  theRootOutputFile    = new TFile(filename,"RECREATE", "BDS output file");
+  // options data tree
+  theOptionsOutputTree = new TTree("Options","BDSIM options");
+  // model data tree
+  theModelOutputTree   = new TTree("Model","BDSIM model");
+  // event data tree
+  theRootOutputTree    = new TTree("Event","BDSIM event");
 
+
+  //
+  // build options and write structure
+  //
+  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions();
+  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,1);
+  theOptionsOutput->Fill();
+  theOptionsOutputTree->Fill();
+
+  //
+  // build model and write structure
+  //
+  BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
+  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000,1);
+  theModelOutput->Fill();
+  theModelOutputTree->Fill();
+   
+ 
+  //
   // build primary structures
+  //
   primary = new BDSOutputROOTEventSampler("Primary");
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
 
+  //
   // build sampler structures 
+  //
   for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++) 
     { 
       G4String name=BDSSamplerBase::outputNames[i];
@@ -77,6 +105,20 @@ void BDSOutputROOTEvent::Init()
 
       G4cout << name << G4endl;      
     }
+
+  //
+  // Build loss and hit structures
+  // 
+  
+
+  //
+  // Build process structures
+  //
+  
+  //
+  // Build trajectory structures
+  // 
+
 }
   
 /// write sampler hit collection

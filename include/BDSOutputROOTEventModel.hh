@@ -1,11 +1,14 @@
 #ifndef BDSOUTPUTROOTEVENTMODEL_H
 #define BDSOUTPUTROOTEVENTMODEL_H
 
-#include "TObject.h"
-
 #include <vector>
 #include <string>
 
+#include "TObject.h"
+
+#ifndef __MAKECINT__
+#include "BDSAcceleratorModel.hh"
+#endif
 
 class BDSOutputROOTEventModel : public TObject {
 protected :
@@ -14,8 +17,10 @@ protected :
   
 public : 
   BDSOutputROOTEventModel();
-  ~BDSOutputROOTEventModel();  
-
+  ~BDSOutputROOTEventModel();
+#ifndef __MAKECINT__   
+  void Fill();
+#endif
   ClassDef(BDSOutputROOTEventModel,1);
 };
 
