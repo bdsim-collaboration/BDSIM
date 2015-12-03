@@ -17,6 +17,35 @@ BDSOutputROOTEventSampler::BDSOutputROOTEventSampler(std::string samplerNameIn)
 
 BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler() {}
 
+void BDSOutputROOTEventSampler::Fill(G4double E,
+				     G4double x0,
+				     G4double y0,
+				     G4double z0,
+				     G4double xp,
+				     G4double yp,
+				     G4double zp,
+				     G4double t,
+				     G4double weight,
+				     G4int    PDGType,
+				     G4int    nEvent,
+				     G4int    TurnsTaken) 
+{
+  this->n++;
+  this->z = z0             / CLHEP::m;
+  this->S = 0              / CLHEP::m;  
+  this->energy.push_back(E / CLHEP::GeV);
+  this->x.push_back(     x0/ CLHEP::m);
+  this->y.push_back(     y0/ CLHEP::m);
+  this->xp.push_back(    xp/ CLHEP::radian);
+  this->yp.push_back(    yp/ CLHEP::radian);
+  this->zp.push_back(    zp/ CLHEP::radian);
+  this->t.push_back(      t/ CLHEP::ns);
+  this->weight.push_back(weight);
+  this->partID.push_back(PDGType);
+  this->parentID.push_back(0);
+  this->turnNumber.push_back(TurnsTaken);   
+}
+
 void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit) 
 {
   // get single values
@@ -32,6 +61,8 @@ void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
   this->yp.push_back(hit->GetYPrime()           / CLHEP::radian);
   this->zp.push_back(hit->GetZPrime()           / CLHEP::radian);
   
+  this->t.push_back(hit->GetT()                 / CLHEP::ns);
+
 #if 0
   this->X.push_back(hit->GetGlobalX()           / CLHEP::m);
   this->Y.push_back(hit->GetGlobalY()           / CLHEP::m);

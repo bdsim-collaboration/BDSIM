@@ -87,7 +87,8 @@ private:
   // output tree
   TTree *theRootOutputTree;
 
-  // primary structures 
+  // primary structure 
+  BDSOutputROOTEventSampler *primary;
 
   // sampler structures 
   std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
