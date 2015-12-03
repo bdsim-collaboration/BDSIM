@@ -289,6 +289,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 ## set compiler flags
 # warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
+# for ROOT dictionaries
+set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
 
 # cmake flags
 set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
