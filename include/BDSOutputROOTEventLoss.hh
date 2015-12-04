@@ -11,7 +11,7 @@ protected:
   int                n;
   std::vector<float> energy;
   std::vector<float> S;
-  std::vector<float> weight;  
+  std::vector<float> weight;
 
 public:
   BDSOutputROOTEventLoss();
