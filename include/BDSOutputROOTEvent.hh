@@ -111,8 +111,10 @@ private:
 
   // energy loss
   BDSOutputROOTEventLoss *eloss;
-  // primary loss 
-  BDSOutputROOTEventLoss *ploss;
+  // primary first hit
+  BDSOutputROOTEventHit  *pFirstHit;
+  // primary final hit
+  BDSOutputROOTEventHit  *pLastHit;
   
   
 };

@@ -10,7 +10,7 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  this->Init(); 
+  this->Init();
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -108,9 +108,12 @@ void BDSOutputROOTEvent::Init()
   //
   // Build loss and hit structures
   // 
-  eloss = new BDSOutputROOTEventLoss();
-  ploss = new BDSOutputROOTEventLoss();
-
+  eloss     = new BDSOutputROOTEventLoss();
+  pFirstHit = new BDSOutputROOTEventHit();
+  pLastHit  = new BDSOutputROOTEventHit();
+  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eloss,32000,1);
+  theRootOutputTree->Branch("PrimaryFirstHit","BSOutputROOTEventHit",pFirstHit,32000,1);
+  theRootOutputTree->Branch("PrimaryLastHit","BDSOutputROOTEventHit",pLastHit,32000,1);
 
   //
   // Build process structures
@@ -245,5 +248,8 @@ void BDSOutputROOTEvent::Flush()
   for(auto i= samplerMap.begin() ; i != samplerMap.end() ;++i) {
     i->second->Flush();
   }  
-  
+  eloss->Flush();
+  pFirstHit->Flush();
+  pLastHit->Flush();
+
 }
