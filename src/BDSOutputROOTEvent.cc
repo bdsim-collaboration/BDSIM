@@ -113,7 +113,7 @@ void BDSOutputROOTEvent::Init()
   pLastHit  = new BDSOutputROOTEventHit();
   theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eloss,32000,1);
   theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,32000,2);
-  theRootOutputTree->Branch("PrimaryLastHit.","BDSOutputROOTEventHit",pLastHit,32000,3);
+  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 32000,2);
 
   //
   // Build process structures
