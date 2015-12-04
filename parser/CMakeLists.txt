@@ -18,9 +18,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG")
-endif()
-if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG --coverage")
 endif()
 
@@ -29,7 +30,7 @@ if($ENV{VERBOSE})
 endif()
 
 # compile BISON, with debug if in Debug mode
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug" OR ${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc
     COMPILE_FLAGS "-t")
 else ()

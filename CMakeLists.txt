@@ -19,7 +19,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 # Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
+       "Choose the type of build, options are: None Debug DebugOutput Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
        FORCE)
 endif()
 
@@ -27,6 +27,8 @@ message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
 
 # Compiler flags based on build type 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_definitions("-g -O0")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
     add_definitions("-g -O0 -DBDSDEBUG")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     if(NOT CMAKE_COMPILER_IS_GNUCXX)
