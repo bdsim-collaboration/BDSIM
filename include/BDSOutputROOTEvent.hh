@@ -82,7 +82,7 @@ public:
   virtual void Write();
 
   /// clear structures 
-  void Clear();
+  void Flush();
   
 private:
 

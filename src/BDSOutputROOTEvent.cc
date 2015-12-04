@@ -152,6 +152,8 @@ void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* // ploss
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+
 }
 
 /// write where primaries impact
@@ -215,7 +217,7 @@ void BDSOutputROOTEvent::FillEvent()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   theRootOutputTree->Fill();
-  this->Clear();
+  this->Flush();
   
 }
 
@@ -238,7 +240,7 @@ void BDSOutputROOTEvent::Write()
 #endif
 }
 
-void BDSOutputROOTEvent::Clear() 
+void BDSOutputROOTEvent::Flush()
 {
   // loop over sampler map and clear vectors
   for(auto i= samplerMap.begin() ; i != samplerMap.end() ;++i) {
