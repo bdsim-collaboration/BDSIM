@@ -100,7 +100,7 @@ void BDSOutputROOTEvent::Init()
       samplerMap[name] = new BDSOutputROOTEventSampler(name);
 
       // set tree branches 
-      theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[name],32000,1);
+      theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[name],4000,1);
 
       G4cout << name << G4endl;      
     }
@@ -111,9 +111,9 @@ void BDSOutputROOTEvent::Init()
   eloss     = new BDSOutputROOTEventLoss();
   pFirstHit = new BDSOutputROOTEventHit();
   pLastHit  = new BDSOutputROOTEventHit();
-  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eloss,32000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,32000,2);
-  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 32000,2);
+  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eloss,4000,1);
+  theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,4000,2);
+  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
 
   //
   // Build process structures
