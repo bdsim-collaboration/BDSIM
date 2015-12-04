@@ -300,8 +300,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
 # for ROOT dictionaries
+# stop warnings from Clang version (for versions 7 and greater)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
+  # get clang version
+  EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
+  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
+  if($ENV{VERBOSE})
+    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
+  endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
+    set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
+  endif()
 endif()
 
 # cmake flags
