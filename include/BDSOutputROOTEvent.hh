@@ -10,6 +10,8 @@
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventHit.hh"
 
 
 #include "TROOT.h"
@@ -108,9 +110,9 @@ private:
   std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
 
   // energy loss
-  BDSOutputEventLoss *eloss;
+  BDSOutputROOTEventLoss *eloss;
   // primary loss 
-  BDSOutputEventLoss *ploss;
+  BDSOutputROOTEventLoss *ploss;
   
   
 };
