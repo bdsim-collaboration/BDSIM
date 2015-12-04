@@ -5,12 +5,13 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
+#include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
+#include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
-#include "G4FieldManager.hh"
-#include "G4HelixExplicitEuler.hh"
+#include "G4ClassicalRK4.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4UniformMagField.hh"
@@ -31,7 +32,7 @@ BDSKicker::BDSKicker(G4String            name,
   kickAngle(kickAngle)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << type << ", angle: " << kickAngle << G4endl;
+  G4cout << __METHOD_NAME__ << type.ToString() << ", angle: " << kickAngle << G4endl;
 #endif
 }
 
@@ -63,35 +64,11 @@ void BDSKicker::Build()
     }
 }
 
-void BDSKicker::BuildBeampipe()
-{
-  BDSBeamPipeFactory* fac = BDSBeamPipeFactory::Instance();
-  beampipe = fac->CreateBeamPipe(name,
-				 chordLength - lengthSafety,
-				 beamPipeInfo);
-  
-  RegisterDaughter(beampipe);
-
-  // attach field to correct volume
-  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-
-  // place beampipe
-  G4PVPlacement* pipePV = new G4PVPlacement(nullptr,                               // rotation
-					    (G4ThreeVector)0,                      // at (0,0,0)
-					    beampipe->GetContainerLogicalVolume(), // its logical volume
-					    name + "_beampipe_pv",	           // its name
-					    containerLogicalVolume,                // its mother  volume
-					    false,                                 // no boolean operation
-					    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
-
-  RegisterPhysicalVolume(pipePV);
-  
-  // record extent of geometry
-  InheritExtents(beampipe);
-} 
-
 void BDSKicker::BuildBPFieldAndStepper()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // don't build field if angle is 0 as stepper intolerant of this and wast of memory and cpu
   if (BDS::IsFinite(kickAngle))
     {
@@ -104,21 +81,16 @@ void BDSKicker::BuildBPFieldAndStepper()
 	{vectorBField = G4ThreeVector(0, bField, 0);} // must be horizontal kicker
 
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "Name: " << name << " B: " << vectorBField << G4endl;
-      G4cout << __METHOD_NAME__ << "Kick angle: " << kickAngle << G4endl;
+      G4cout << __METHOD_NAME__ << "Name: " << name << ", type: " << magnetType.ToString() << G4endl;
+      G4cout << __METHOD_NAME__ << "Kick angle: " << kickAngle << " B: " << vectorBField << G4endl;
 #endif
-      itsMagField = new G4UniformMagField(vectorBField);
+      
+      itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
       itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-      itsStepper = new G4HelixExplicitEuler(itsEqRhs);
-
-      // old way - problems with infinite loop for 0 strength in bds dipole stepper, and...
-      // this doesn't work in some particular cases (-ve kick angle vkicker mid lattice)
-      /*
-	itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
-	BDSDipoleStepper* stepper = new BDSDipoleStepper(itsEqRhs);
-	stepper->SetBField(bField);
-	stepper->SetBGrad(bGrad);
-	itsStepper = stepper; // assigned to base class pointer
-      */
+      itsStepper  = new G4ClassicalRK4(itsEqRhs);
     }
+#ifdef BDSDEBUG
+  else
+    {G4cout << __METHOD_NAME__ << "kick angle isn't finite - not building field" << G4endl;}
+#endif
 }
