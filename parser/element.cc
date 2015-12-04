@@ -85,6 +85,7 @@ void Element::PublishMembers()
   publish("psi",&Element::psi);
   publish("gradient",&Element::gradient);
   publish("precisionRegion",&Element::precisionRegion);
+  publish("region",&Element::region);
   publish("A",&Element::A);
   publish("Z",&Element::Z);
   publish("density",&Element::density);
@@ -269,7 +270,8 @@ void Element::flush() {
   biasVacuumList.clear();
   
   precisionRegion = 0;
-
+  region = "";
+  
   A = 0;
   Z = 0;
   density = 0;      //g*cm-3

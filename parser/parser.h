@@ -12,6 +12,7 @@
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
+#include "region.h"
 #include "tunnel.h"
 
 /// parser error message, defined in parser.y
@@ -72,6 +73,8 @@ namespace GMAD {
     void add_csampler(std::string name, int before_count, ElementType type);
     /// insert a beam dumper into beamline_list
     void add_dump(std::string name, int before_count, ElementType type);
+    /// insert region
+    void add_region();
     /// insert tunnel
     void add_tunnel();
     /// insert cross section bias
@@ -102,6 +105,9 @@ namespace GMAD {
     /// Set parameter value
     template <typename T>
       void SetParameterValue(std::string property, T value);
+    /// Set region value
+    template <typename T>
+      void SetRegionValue(std::string property, T value);
     /// Set tunnel value
     template <typename T>
       void SetTunnelValue(std::string property, T value);
@@ -159,7 +165,8 @@ namespace GMAD {
     Parameters params;
     /// General options
     Options options;
-    
+    /// Region instance;
+    Region region;
     /// Tunnel instance
     Tunnel tunnel;
     /// PhysicsBiasing instance 
@@ -177,10 +184,14 @@ namespace GMAD {
     std::list<Element>  material_list;
     /// List of parser defined atoms
     std::list<Element>  atom_list;
+    /// List of parser defined regions
+    std::vector<Region> region_list;
     /// List of parser defined tunnels
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects
     FastList<PhysicsBiasing> xsecbias_list;
+    /// List of regions
+    
     
     /// Parser symbol map
     std::map<std::string, Symtab*> symtab_map;
@@ -192,6 +203,11 @@ namespace GMAD {
     void Parser::SetParameterValue(std::string property, T value)
     {
       params.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetRegionValue(std::string property, T value)
+    {
+      region.set_value(property, value);
     }
   template <typename T>
     void Parser::SetTunnelValue(std::string property, T value)

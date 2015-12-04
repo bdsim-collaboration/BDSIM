@@ -90,8 +90,9 @@ namespace GMAD {
     /// physics biasing list for the vacuum
     std::list<std::string> biasVacuumList;
  
-    int precisionRegion; ///which precision physics region the element is in (0 = none)
-
+    int precisionRegion; ///<which precision physics region the element is in (0 = none)
+    std::string region; ///< region with range cuts
+    
     ///@{ material properties
     double A; ///< g*mol^-1
     double Z; 
