@@ -109,7 +109,9 @@ void BDSOutputROOTEvent::Init()
   //
   // Build loss and hit structures
   // 
-  
+  eloss = new BDSOutputROOTEventLoss();
+  ploss = new BDSOutputROOTEventLoss();
+
 
   //
   // Build process structures
