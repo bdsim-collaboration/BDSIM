@@ -61,7 +61,7 @@
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
 %token <ival> MATERIAL ATOM
-%token ALL PERIOD XSECBIAS TUNNEL
+%token ALL PERIOD XSECBIAS REGION TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -177,6 +177,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->add_tunnel();
            }
        }
+     | VARIABLE ':' region
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : region" << std::endl;
+	     Parser::Instance()->SetRegionValue("name",*($1));
+	     Parser::Instance()->add_region();
+           }
+       }
      | VARIABLE ':' xsecbias
        {
          if(execute)
@@ -222,6 +231,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | ATOM        {$$=static_cast<int>(ElementType::_ATOM);}
 ;
 
+region : REGION ',' region_options ;
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
 
@@ -247,6 +257,7 @@ error_noparams : DRIFT;
                | ELEMENT;
                | MATERIAL;
                | ATOM;
+               | REGION;
                | TUNNEL;
                | XSECBIAS;
 
@@ -639,7 +650,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute) {
 	      Symtab *sp = Parser::Instance()->symlook(*($3));
 	      if (!sp) {
-		std::cout << "Variable " << *($3) << "not defined!" << std::endl;
+		std::cout << "Variable " << *($3) << " not defined!" << std::endl;
 	      }
 	      else {
 		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
@@ -691,6 +702,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
 		Parser::Instance()->add_tunnel();
+	      }
+          }
+        | REGION ',' region_options // region
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> REGION\n");
+		Parser::Instance()->add_region();
 	      }
           }
         | XSECBIAS ',' xsecbias_options // xsecbias
@@ -790,6 +809,28 @@ csample_options : VARIABLE '=' aexpr
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt\n");
 		    $$ = $1;
                   }
+;
+
+region_options : VARIABLE '=' aexpr ',' region_options
+                    {
+		      if(execute)
+			Parser::Instance()->SetRegionValue((*$1),$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			Parser::Instance()->SetRegionValue((*$1),$3);
+		    }
+                 | VARIABLE '=' STR ',' region_options
+                    {
+		      if(execute)
+			Parser::Instance()->SetRegionValue(*$1,*$3);
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			Parser::Instance()->SetRegionValue(*$1,*$3);
+		    }
 ;
 
 tunnel_options : VARIABLE '=' aexpr ',' tunnel_options

@@ -7,7 +7,7 @@ find_package(FLEX REQUIRED)
 
 # Suppress policy CMP0042 warning (as of cmake 3.0.0)
 if (${CMAKE_MAJOR_VERSION} GREATER 2)
-    cmake_policy(SET CMP0042 OLD)
+  cmake_policy(SET CMP0042 OLD)
 endif()
 
 # suppress warnings
@@ -18,22 +18,22 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG")
 endif()
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG --coverage")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DBDSDEBUG --coverage")
 endif()
 
 if($ENV{VERBOSE})
-	message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
+  message(STATUS "PARSER CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
 
 # compile BISON, with debug if in Debug mode
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc
-COMPILE_FLAGS "-t")
+  bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc
+    COMPILE_FLAGS "-t")
 else ()
-   bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc)
+  bison_target(PARSER parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.cc)
 endif()
 
 flex_target(SCANNER parser.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.cc)
@@ -53,8 +53,8 @@ add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
   ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
-	message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
-	message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
+  message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
+  message(STATUS "FLEX_SCANNER_OUTPUTS ${FLEX_SCANNER_OUTPUTS}")
 endif()
 
 add_executable(gmadexec gmad.cc)

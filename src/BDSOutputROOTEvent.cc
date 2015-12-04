@@ -56,9 +56,10 @@ void BDSOutputROOTEvent::Init()
   theRootOutputTree = new TTree("bdsim","BDS output tree");
 
   // build primary structures
-  
+  primary = new BDSOutputROOTEventSampler("Primary");
+  theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
+  samplerMap["Primary"] = primary;
 
-  
   // build sampler structures 
   for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++) 
     { 
@@ -137,22 +138,23 @@ void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &// TrajVec
 }
 
 /// write primary hit
-void BDSOutputROOTEvent::WritePrimary(G4double /*E*/,
-				      G4double /*x0*/,
-				      G4double /*y0*/,
-				      G4double /*z0*/,
-				      G4double /*xp*/,
-				      G4double /*yp*/,
-				      G4double /*zp*/,
-				      G4double /*t*/,
-				      G4double /*weight*/,
-				      G4int    /*PDGType*/,
-				      G4int    /*nEvent*/,
-				      G4int    /*TurnsTaken*/) 
+void BDSOutputROOTEvent::WritePrimary(G4double E,
+				      G4double x0,
+				      G4double y0,
+				      G4double z0,
+				      G4double xp,
+				      G4double yp,
+				      G4double zp,
+				      G4double t,
+				      G4double weight,
+				      G4int    PDGType,
+				      G4int    nEvent,
+				      G4int    TurnsTaken) 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  primary->Fill(E,x0,y0,z0,xp,yp,zp,t,weight,PDGType,nEvent,TurnsTaken);
 }
 
 /// write a histgoram
@@ -195,5 +197,8 @@ void BDSOutputROOTEvent::Write()
 void BDSOutputROOTEvent::Clear() 
 {
   // loop over sampler map and clear vectors
+  for(auto i= samplerMap.begin() ; i != samplerMap.end() ;++i) {
+    i->second->Flush();
+  }  
   
 }

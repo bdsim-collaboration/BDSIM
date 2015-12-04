@@ -53,3 +53,8 @@ const std::list<GMAD::Element>& BDSParser::GetAtoms()const
 {
   return atom_list;
 }
+
+const std::vector<GMAD::Region>& BDSParser::GetRegions()const
+{
+  return region_list;
+}

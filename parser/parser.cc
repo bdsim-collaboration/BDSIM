@@ -472,6 +472,18 @@ void Parser::add_dump(std::string name, int before_count, ElementType type)
   add_element(e, name, before_count, type);
 }
 
+void Parser::add_region()
+{
+  // copy from global
+  Region t(region);
+  // reset region
+  region.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  region_list.push_back(t);
+}
+
 void Parser::add_tunnel()
 {
   // copy from global

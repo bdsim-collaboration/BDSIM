@@ -96,6 +96,7 @@ transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
 
+cutsregion { return REGION; }
 tunnel { return TUNNEL; }
 
 xsecBias {return XSECBIAS; }
