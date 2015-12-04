@@ -2,7 +2,6 @@
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 #include "BDSSamplerBase.hh"
 
@@ -30,13 +29,13 @@ void BDSOutputROOTEvent::Init()
 
   // Base root file name 
   G4String basefilename = execOptions->GetOutputFilename();
-  basefilename = basefilename+"_event";
+  basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
   if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple)
     {basefilename += "_" + std::to_string(outputFileNumber);}
-  filename = basefilename + ".root";
+  filename = basefilename + std::string(".root");
 
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
@@ -45,7 +44,7 @@ void BDSOutputROOTEvent::Init()
     int nTimeAppended = 1;
     while (BDS::FileExists(filename)) {
       // if exists remove trailing .root
-      filename = basefilename + "-" + std::to_string(nTimeAppended);
+      filename = basefilename + std::string("-") + std::to_string(nTimeAppended);
       filename += ".root";
       nTimeAppended +=1;
     }
