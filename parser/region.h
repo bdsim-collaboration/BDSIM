@@ -1,5 +1,5 @@
-#ifndef __TUNNEL_H
-#define __TUNNEL_H
+#ifndef __REGION_H
+#define __REGION_H
 
 #include <iomanip>
 #include <iostream>
@@ -9,41 +9,24 @@
 
 namespace GMAD {
   /**
-   * @brief Tunnel class for parser
+   * @brief Region class for parser
    * 
    * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
    */
-  struct Tunnel: public Published<Tunnel> {
+  class Region : public Published<Region> {
+  public:
     std::string name; ///< name
-    /// geometry type
-    std::string type;
 
-    /// radius, aperture parameters
-    double   aper1;
-    double   aper2;
-    /// offset x and y
-    double   offsetX, offsetY;
-    /// tunnel geometry parameters
-    double   thickness;
-    double   soilThickness;
-    double   floorOffset;
+    double   prodCutPhotons;
+    double   prodCutElectrons;
+    double   prodCutPositrons;
+    double   prodCutHadrons;
 
-    /// visibility
-    int      visible;
-  
-    /// material
-    std::string material;
-    /// soil
-    std::string soilMaterial;
-
-    /// start and end element by name
-    std::string startElement, endElement;
-  
     /// constructor
-    Tunnel();
+    Region();
     /// reset
     void clear();
-    /// Publish members
+    /// publish members
     void PublishMembers();
     /// print some properties
     void print()const;
@@ -52,7 +35,7 @@ namespace GMAD {
       void set_value(std::string name, T value);
   };
   template <typename T>
-    void Tunnel::set_value(std::string name, T value)
+    void Region::set_value(std::string name, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;

@@ -31,7 +31,6 @@ private:
   G4double kickAngle;
 
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildBeampipe(); // overload multipole base class method
 
 };
 

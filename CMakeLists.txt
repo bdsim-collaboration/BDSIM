@@ -19,7 +19,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 # Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
+       "Choose the type of build, options are: None Debug DebugOutput Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
        FORCE)
 endif()
 
@@ -27,6 +27,8 @@ message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
 
 # Compiler flags based on build type 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_definitions("-g -O0")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
     add_definitions("-g -O0 -DBDSDEBUG")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     if(NOT CMAKE_COMPILER_IS_GNUCXX)
@@ -167,6 +169,7 @@ foreach(header ${linkHeaders})
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
     COMMAND ${ROOTCINT_EXECUTABLE}
     ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
     )
   # keep list of ROOT dictionaries
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
@@ -297,8 +300,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
 # for ROOT dictionaries
+# stop warnings from Clang version (for versions 7 and greater)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
+  # get clang version
+  EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
+  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
+  if($ENV{VERBOSE})
+    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
+  endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
+    set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
+  endif()
 endif()
 
 # cmake flags

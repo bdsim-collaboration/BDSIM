@@ -59,6 +59,7 @@ Parameters::Parameters() {
   setMap["blmLocZ"] = false;  setMap["blmLocTheta"] = false;
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["precisionRegion"] = false;
+  setMap["region"] = false;
 
   setMap["A"] = false;
   setMap["Z"] = false;
