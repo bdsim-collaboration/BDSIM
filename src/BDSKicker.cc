@@ -63,35 +63,11 @@ void BDSKicker::Build()
     }
 }
 
-void BDSKicker::BuildBeampipe()
-{
-  BDSBeamPipeFactory* fac = BDSBeamPipeFactory::Instance();
-  beampipe = fac->CreateBeamPipe(name,
-				 chordLength - lengthSafety,
-				 beamPipeInfo);
-  
-  RegisterDaughter(beampipe);
-
-  // attach field to correct volume
-  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-
-  // place beampipe
-  G4PVPlacement* pipePV = new G4PVPlacement(nullptr,                               // rotation
-					    (G4ThreeVector)0,                      // at (0,0,0)
-					    beampipe->GetContainerLogicalVolume(), // its logical volume
-					    name + "_beampipe_pv",	           // its name
-					    containerLogicalVolume,                // its mother  volume
-					    false,                                 // no boolean operation
-					    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
-
-  RegisterPhysicalVolume(pipePV);
-  
-  // record extent of geometry
-  InheritExtents(beampipe);
-} 
-
 void BDSKicker::BuildBPFieldAndStepper()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // don't build field if angle is 0 as stepper intolerant of this and wast of memory and cpu
   if (BDS::IsFinite(kickAngle))
     {
