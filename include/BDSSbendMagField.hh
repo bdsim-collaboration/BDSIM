@@ -13,7 +13,8 @@ public:
   /// finite, the local radius of curvature is calculated and used by 
   BDSSbendMagField(G4ThreeVector  fieldIn,
 		   const G4double aLength,
-		   const G4double aAngle  = 0);
+		   const G4double aAngle  = 0,
+		   G4bool debugIn = false);
   
 		       
   virtual ~BDSSbendMagField();
@@ -29,10 +30,14 @@ private:
   /// The vector of the field. This constructed in local coordinates and the first time
   /// the field is queried, the auxiliary navigator (through inheritance) is used to
   /// transform the vector to global coordinates.
-  G4ThreeVector field;
+  const G4ThreeVector field;
   
   /// Radius of curvature.
   G4double localRadius;
+
+  /// Selective debug flag per instance of this class - used by many different
+  /// accelerator components so need to discriminate.
+  G4bool debug;
 };
 
 inline G4double BDSSbendMagField::GetLocalRadius() const
