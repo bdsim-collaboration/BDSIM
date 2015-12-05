@@ -5,19 +5,28 @@
 
 #ifndef __MAKECINT__
 #include "BDSEnergyCounterHit.hh"
+#include "BDSTunnelHit.hh"
 #endif
 
 
 class BDSOutputROOTEventHit : public BDSOutputROOTEventLoss {
 
 protected:
+  /* local coordinates */
   std::vector<float> x;
   std::vector<float> y;
+
+  /* Global coordinates */
+  std::vector<float> X;
+  std::vector<float> Y;
+  std::vector<float> Z;
+
 public:
   BDSOutputROOTEventHit();
   virtual ~BDSOutputROOTEventHit();
 #ifndef __MAKECINT__
   virtual void Fill(BDSEnergyCounterHit *hit);
+  virtual void Fill(BDSTunnelHit *hit);
 #endif
   virtual void Flush();
   
