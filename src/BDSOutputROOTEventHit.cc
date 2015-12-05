@@ -27,6 +27,8 @@ void BDSOutputROOTEventHit::Fill(BDSTunnelHit *hit) // TODO Could we tidy the st
 {
   // Fill base class
   BDSOutputROOTEventLoss::Fill(hit);
+  this->x.push_back((float &&) (hit->Getx() / CLHEP::m));
+  this->y.push_back((float &&) (hit->Gety() / CLHEP::m));
   this->X.push_back((float &&) (hit->GetX() / CLHEP::m));
   this->Y.push_back((float &&) (hit->GetY() / CLHEP::m));
   this->Z.push_back((float &&) (hit->GetZ() / CLHEP::m));
