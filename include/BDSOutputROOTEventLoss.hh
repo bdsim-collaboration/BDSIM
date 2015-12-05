@@ -2,7 +2,8 @@
 #define BDSOUTPUTROOTEVENTLOSS_H
 
 #ifndef __MAKECINT__
-#include  "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSTunnelHit.hh"
 #endif
 
 #include "TObject.h"
@@ -22,6 +23,7 @@ public:
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __MAKECINT__
   void Fill(BDSEnergyCounterHit *hit);
+  void Fill(BDSTunnelHit *hit);
 #endif
   virtual void Flush();
 
