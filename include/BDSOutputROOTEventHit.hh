@@ -3,6 +3,11 @@
 
 #include "BDSOutputROOTEventLoss.hh"
 
+#ifndef __MAKECINT__
+#include "BDSEnergyCounterHit.hh"
+#endif
+
+
 class BDSOutputROOTEventHit : public BDSOutputROOTEventLoss {
 
 protected:
@@ -10,9 +15,11 @@ protected:
   std::vector<float> y;
 public:
   BDSOutputROOTEventHit();
-  ~BDSOutputROOTEventHit();
-  void Fill();
-  void Flush();
+  virtual ~BDSOutputROOTEventHit();
+#ifndef __MAKECINT__
+  virtual void Fill(BDSEnergyCounterHit *hit);
+#endif
+  virtual void Flush();
   
   ClassDef(BDSOutputROOTEventHit,1);
 };
