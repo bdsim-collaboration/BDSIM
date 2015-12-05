@@ -10,14 +10,14 @@
 #include "BDSAcceleratorModel.hh"
 #endif
 
-class BDSOutputROOTEventModel : public TObject {
+class BDSOutputROOTEventModel {
 protected :
   std::vector<std::string> name;
   std::vector<float>       length;
   
 public : 
   BDSOutputROOTEventModel();
-  ~BDSOutputROOTEventModel();
+  virtual ~BDSOutputROOTEventModel();
 #ifndef __MAKECINT__   
   void Fill();
 #endif

@@ -10,14 +10,14 @@
 #include "BDSGlobalConstants.hh"
 #endif
 
-class BDSOutputROOTEventOptions : public TObject {
+class BDSOutputROOTEventOptions {
 protected :
   std::vector<std::string> key;
   std::vector<float>       value;
   
 public : 
   BDSOutputROOTEventOptions();
-  ~BDSOutputROOTEventOptions();
+  virtual ~BDSOutputROOTEventOptions();
 #ifndef __MAKECINT__   
   void Fill();
 #endif

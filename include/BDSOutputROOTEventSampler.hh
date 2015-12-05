@@ -7,7 +7,7 @@
 #include "BDSSamplerHit.hh"
 #endif
 
-class BDSOutputROOTEventSampler : public TObject { 
+class BDSOutputROOTEventSampler {
   
 protected:
   std::string samplerName;
@@ -32,7 +32,7 @@ protected:
 public:
   BDSOutputROOTEventSampler();
   BDSOutputROOTEventSampler(std::string samplerNameIn);
-  ~BDSOutputROOTEventSampler();  
+  virtual ~BDSOutputROOTEventSampler();
 #ifndef __MAKECINT__
   void Fill(G4double E,
 	    G4double x0, G4double y0, G4double z0,
