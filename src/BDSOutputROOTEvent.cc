@@ -180,7 +180,7 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
   G4int n_hit = hc->entries();
   for(G4int i=0;i<n_hit;i++){
     BDSTunnelHit *hit = (*hc)[i];
-    //tHi->Fill(hit);
+    tHit->Fill(hit);
   }
 }
 
