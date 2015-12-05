@@ -10,7 +10,7 @@
 class BDSOutputROOTEventSampler {
   
 protected:
-  std::string samplerName;
+  std::string samplerName; //|| Don't split the header
   
   int                n;    
   std::vector<float> energy;
