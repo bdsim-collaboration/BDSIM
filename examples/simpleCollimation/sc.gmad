@@ -10,6 +10,7 @@ fodoCol: line = (d1,fq1, d2, dq1, d3);
 
 simpleCollimation: line = (fodoRaw,fodoCol);
 use,period=simpleCollimation;
+sample, all;
 
 option,
     ngenerate=1,
