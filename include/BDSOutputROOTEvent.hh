@@ -110,11 +110,13 @@ private:
   std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
 
   // energy loss
-  BDSOutputROOTEventLoss *eloss;
+  BDSOutputROOTEventLoss *eLoss;
   // primary first hit
   BDSOutputROOTEventHit  *pFirstHit;
   // primary final hit
   BDSOutputROOTEventHit  *pLastHit;
+  // tunnel hit
+  BDSOutputROOTEventHit  *tHit;
   
   
 };

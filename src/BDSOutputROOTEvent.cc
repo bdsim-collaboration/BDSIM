@@ -6,7 +6,7 @@
 #include "BDSSamplerBase.hh"
 
 BDSOutputROOTEvent::BDSOutputROOTEvent() 
-{  
+{
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
@@ -102,18 +102,19 @@ void BDSOutputROOTEvent::Init()
       // set tree branches 
       theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[name],4000,1);
 
-      G4cout << name << G4endl;      
     }
 
   //
   // Build loss and hit structures
   // 
-  eloss     = new BDSOutputROOTEventLoss();
+  eLoss     = new BDSOutputROOTEventLoss();
   pFirstHit = new BDSOutputROOTEventHit();
   pLastHit  = new BDSOutputROOTEventHit();
-  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eloss,4000,1);
+  tHit      = new BDSOutputROOTEventHit();
+  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
   theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
+  theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
 
   //
   // Build process structures
@@ -140,40 +141,47 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
 }
 
 /// write energy deposition hits
-void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection*) 
+void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-}
-
-/// write where primaries stop being primaries
-void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* // ploss
-					  ) 
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-
-
+  G4int n_hit = hc->entries();
+  for(G4int i=0;i<n_hit;i++){
+    BDSEnergyCounterHit *hit = (*hc)[i];
+    eLoss->Fill(hit);
+  }
 }
 
 /// write where primaries impact
-void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* // phits
-					 ) 
+void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* phit) // TODO WritePrimaryFirstHit
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+    pFirstHit->Fill(phit);
+}
+
+/// write where primaries stop being primaries
+void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* ploss) // TODO WritePrimaryLastHit)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ <<G4endl;
+#endif
+  pLastHit->Fill(ploss);
 }
 
 /// write tunnel hits
-void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* // tunnelHits
-					 ) 
+void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  G4int n_hit = hc->entries();
+  for(G4int i=0;i<n_hit;i++){
+    BDSTunnelHit *hit = (*hc)[i];
+    //tHi->Fill(hit);
+  }
 }
 
 /// write a trajectory 
@@ -248,8 +256,8 @@ void BDSOutputROOTEvent::Flush()
   for(auto i= samplerMap.begin() ; i != samplerMap.end() ;++i) {
     i->second->Flush();
   }  
-  eloss->Flush();
+  eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();
-
+  tHit->Flush();
 }
