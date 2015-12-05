@@ -11,7 +11,8 @@ fodoCol: line = (d1,fq1, d2, dq1, d3);
 simpleCollimation: line = (fodoRaw,fodoCol);
 use,period=simpleCollimation;
 
-option, ngenerate=1,	
+option,
+    ngenerate=1,
 	physicsList="em_standard",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=0.1*cm,
@@ -19,13 +20,15 @@ option, ngenerate=1,
 	defaultRangeCut=1*cm,	
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm;
+	prodCutPhotons=1*cm,
+    buildTunnel=1,
+	checkOverlaps=1;
 
 beam, particle="e-",
       energy=1.0*GeV,
       distrType="gausstwiss",
-      emitx=1e-9*m,
-      emity=1e-9*m,
+      emitx=1e-10*m,
+      emity=1e-10*m,
       betx=1e-6*m,
       bety=1e-6*m,
       alfx=0.0,
@@ -33,4 +36,3 @@ beam, particle="e-",
       X0=0.000,
       Y0=0.000;
 
-option, checkOverlaps=1;
