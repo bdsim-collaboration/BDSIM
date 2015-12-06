@@ -1,20 +1,18 @@
 #include "BDSCavity.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "globals.hh"
 
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4ThreeVector.hh"
-#include "G4Material.hh"
-#include "G4VisAttributes.hh"
-
-#include "G4GenericPolycone.hh"
-#include "G4Polycone.hh"
-#include "G4Tubs.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4UnionSolid.hh"
-
+#include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"
+#include "G4GenericPolycone.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Material.hh"
+#include "G4Polycone.hh"
+#include "G4PVPlacement.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
+#include "G4UnionSolid.hh"
+#include "G4VisAttributes.hh"
 
 #include <cmath>
 #include <vector>
@@ -33,8 +31,7 @@ BDSCavity::BDSCavity(G4String name, //Any others to add here?
 		     G4double cavityRadiusIn,
 		     G4double irisRadiusIn,
 		     G4double thicknessIn,
-		     G4String cavityModelIn
-		     ) : 
+		     G4String cavityModelIn): 
   BDSAcceleratorComponent(name, length, 0, type),
   cavityMaterial(cavityMaterialIn),
   vacuumMaterial(vacuumMaterialIn),
@@ -42,55 +39,47 @@ BDSCavity::BDSCavity(G4String name, //Any others to add here?
   irisRadius(irisRadiusIn),
   thickness(thicknessIn),
   cavityModel(cavityModelIn)
-{
-}
+{;}
 
 void BDSCavity::BuildField()
-{
-}
+{;}
 
 void BDSCavity::AttachField()
-{ 
-}
-
+{;}
 
 void BDSCavity::PlaceComponents()
 {
-  G4PVPlacement* vacuumPV = new G4PVPlacement(0, //Rotation
-					      G4ThreeVector(0,0,0), //Position
-					      vacuumLV,             //Logical Volume to be place
-					      name + "_vacuum_pv",  //placement name
-					      containerLogicalVolume,          //mother volume
-					      false,                //pMany unused
-					      0,                    //copy number
-					      checkOverlaps         //check overlaps
-					      );
+  G4PVPlacement* vacuumPV = new G4PVPlacement(nullptr,               //Rotation
+					      G4ThreeVector(0,0,0),  //Position
+					      vacuumLV,              //Logical Volume to be place
+					      name + "_vacuum_pv",   //placement name
+					      containerLogicalVolume,//mother volume
+					      false,                 //pMany unused
+					      0,                     //copy number
+					      checkOverlaps);        //check overlaps
   
   RegisterPhysicalVolume(vacuumPV);
   
-  G4PVPlacement* cavityPV = new G4PVPlacement(0, //Rotation
-					      G4ThreeVector(0,0,0), //Position
-					      cavityLV,             //Logical Volume to be place
-					      name + "_cavity_pv",  //placement name
-					      containerLogicalVolume,          //mother volume
-					      false,                //pMany unused
-					      0,                    //copy number
-					      checkOverlaps         //check overlaps
-					      );
+  G4PVPlacement* cavityPV = new G4PVPlacement(nullptr,               //Rotation
+					      G4ThreeVector(0,0,0),  //Position
+					      cavityLV,              //Logical Volume to be place
+					      name + "_cavity_pv",   //placement name
+					      containerLogicalVolume,//mother volume
+					      false,                 //pMany unused
+					      0,                     //copy number
+					      checkOverlaps);        //check overlaps
+  
   RegisterPhysicalVolume(cavityPV); 
-
-
 }
-
 
 void BDSCavity::BuildContainerLogicalVolume() 
 {
-  containerSolid = new G4Tubs(name + "_container_solid", //name
-			      0.0,                       //innerRadius
+  containerSolid = new G4Tubs(name + "_container_solid",       //name
+			      0.0,                             //innerRadius
 			      cavityRadius + thickness + lengthSafety, //outerRadius
-			      chordLength *0.5 + lengthSafety,           //half length
-			      0.0,                        //starting angle
-			      2.0*CLHEP::pi);               //spanning angle
+			      chordLength *0.5 + lengthSafety, //half length
+			      0.0,                             //starting angle
+			      2.0*CLHEP::pi);                  //spanning angle
 
   SetExtentX(-cavityRadius*0.5,cavityRadius*0.5);
   SetExtentY(-cavityRadius*0.5,cavityRadius*0.5);
@@ -100,7 +89,7 @@ void BDSCavity::BuildContainerLogicalVolume()
 					       emptyMaterial,
 					       name + "_container_lv");
 
-    }
+}
 
 void BDSCavity::BuildEllipticalCavityGeometry(/*G4double irisRSemiAxis, //iris ellipse vertical semiaxis.
 					      G4double irisZSemiAxis, //iris ellipse horizontal semiaxis
@@ -113,13 +102,15 @@ void BDSCavity::BuildEllipticalCavityGeometry(/*G4double irisRSemiAxis, //iris e
   // find right cavity model in vector of cavitymodels
   GMAD::CavityModel model;
   //= std::find(GMAD::cavitymodel_list.begin(), GMAD::cavitymodel_list.end(), cavityModel);
-  for (unsigned int i = 0; i< GMAD::cavitymodel_list.size(); i++) {
-    if (GMAD::cavitymodel_list[i].name == cavityModel) {
-      model = GMAD::cavitymodel_list[i];
-      G4cout << "cavitymodel found " << cavityModel << G4endl;
-      break;
+  for (unsigned int i = 0; i< GMAD::cavitymodel_list.size(); i++)
+    {
+      if (GMAD::cavitymodel_list[i].name == cavityModel)
+	{
+	  model = GMAD::cavitymodel_list[i];
+	  G4cout << "cavitymodel found " << cavityModel << G4endl;
+	  break;
+	}
     }
-  }
 
   model.print();
   
@@ -135,13 +126,13 @@ void BDSCavity::BuildEllipticalCavityGeometry(/*G4double irisRSemiAxis, //iris e
     G4double equatorRadius = cavityRadius;  //cavityRadius in SRF is the equator radius for clarity.
     
     //::::::::::::::::::::HARD CODED FOR THE TIME BEING:::::::::::::::::::::::::::::::::::::::::::::::
-    G4double irisRSemiAxis = model.irisVerticalAxis * CLHEP::m;
-    G4double irisZSemiAxis = model.irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
+    G4double irisRSemiAxis    = model.irisVerticalAxis * CLHEP::m;
+    G4double irisZSemiAxis    = model.irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
     G4double equatorRSemiAxis = model.equatorEllipseSemiAxis * CLHEP::m ;//equator ellipse vertical semiaxis
     G4double equatorZSemiAxis = model.equatorEllipseSemiAxis * CLHEP::m; //equator ellipse horizontal semiaxis
-    G4double tangentAngle = model.tangentLineAngle;
-    G4double irisRadius = model.irisRadius *CLHEP::m;
-    G4int noPoints = model.numberOfPoints;
+    G4double tangentAngle     = model.tangentLineAngle;
+    G4double irisRadius       = model.irisRadius *CLHEP::m;
+    G4int noPoints            = model.numberOfPoints;
 
     
     //    G4double irisRSemiAxis = 19 * CLHEP::mm ;  //iris ellipse vertical semiaxis.
