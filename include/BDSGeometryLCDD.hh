@@ -36,6 +36,7 @@
 #include <fstream>
 #include <vector>
 #include <map>
+#include "BDSColours.hh"
 #include "BDSMagField.hh"
 #include "G4TessellatedSolid.hh"
 #include "G4TriangularFacet.hh"
@@ -265,7 +266,7 @@ inline G4VisAttributes* BDSGeometryLCDD::GetVisByName(G4String name)
     {
       G4cout << "Couldn't find visref: " << name<<G4endl;
       G4cout << "Using default Vis settings" << G4endl;
-      return new G4VisAttributes(G4Colour(1.0,1.0,1.0));
+      return new G4VisAttributes(*BDSColours::Instance()->GetColour("warning"));
     } 
   
   return VIS_LIST[ID].value;

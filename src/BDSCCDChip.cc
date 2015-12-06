@@ -8,7 +8,6 @@
 #include "G4PVPlacement.hh"               
 #include "BDSDebug.hh"
 
-#include <map>
 #include "G4TwoVector.hh"
 #include "BDSMaterials.hh"
 
@@ -60,18 +59,16 @@ void BDSCCDChip::buildPixels(){
   offset.setY(_size.y()/2.0-_pixel->size().y()/2.0);
   pos.setZ(0);
   G4int copyNumber=0;
-  std::stringstream ss;
   for (int i=0; i<_nPixels.x(); i++){
     for(int j=0; j<_nPixels.y(); j++, copyNumber++){
-      ss.str("");
-      ss << _pixel->name().data() << "_phys_" << copyNumber;
+      std::string name = _pixel->name() + "_phys_" + std::to_string(copyNumber);
       pos.setX(offset.x()+i*_pixel->size().x());
       pos.setY(offset.y()-j*_pixel->size().y());
       
-      new G4PVPlacement(0,
+      new G4PVPlacement(nullptr,
 			pos,
 			_pixel->log(),
-			ss.str(),
+			name,
 			_log,
 			true,
 			copyNumber,

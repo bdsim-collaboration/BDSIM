@@ -34,25 +34,21 @@ void BDSMuSpoiler::BuildBPFieldAndStepper()
   return;
 }
 
-void BDSMuSpoiler::BuildOuterVolume()
+void BDSMuSpoiler::BuildOuterFieldManager(G4int    /*nPoles*/,
+					  G4double /*poleField*/,
+					  G4double /*phiOffset*/)
 {
-  BDSMagnet::BuildOuterVolume();
-
   // prepare and attach field
-  delete itsOuterMagField;
-  delete itsOuterFieldMgr;
   itsOuterMagField = new BDSMuSpoilerMagField(itsBField);
   itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0)
-    {itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());}
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>0)
-    {itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());}
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0)
-    {itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());}
-  //if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0)
-  //  {itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());}
-  if(outer)
-    {outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);}
+
+  // these options are always non-zero so always set them
+  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+
+  // NOTE this one was commented out - but no reason why - reinstated for v0.81
+  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
 }
 
 BDSMuSpoiler::~BDSMuSpoiler()

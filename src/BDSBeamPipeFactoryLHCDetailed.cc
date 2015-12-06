@@ -2,6 +2,7 @@
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSBeamPipe.hh"
 
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
@@ -9,7 +10,6 @@
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
-#include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
@@ -39,7 +39,7 @@ BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactor
   coldBoreThickness         = 1.5*CLHEP::mm;
   coolingPipeThickness      = 0.53*CLHEP::mm;
   coolingPipeRadius         = 3.7*CLHEP::mm*0.5; // will be overwritten if needs be to fit inside beampipe
-  coolingPipeYOffset        = 0.0;  //initialised only
+  coolingPipeOffset         = 0.0;  //initialised only
   copperSkinThickness       = 75*CLHEP::um;
   CleanUp();
 }
@@ -83,7 +83,9 @@ void BDSBeamPipeFactoryLHCDetailed::InitialiseGeometricalParameters()
   vacHalfLength = 0;
   halfLength = 0;
   
-  coolingPipeYOffset = 0;
+  coolingPipeOffset = 0;
+  verticalOrientation = true; // arbitrary, will be overwritten
+  buildCoolingPipe = true;
 }
 
 
@@ -129,9 +131,29 @@ void BDSBeamPipeFactoryLHCDetailed::CalculateGeometricalParameters(G4double aper
   // general length variable (to avoid mistakes)
   vacHalfLength   = length*0.5 - lengthSafety;
   halfLength      = length*0.5 - 1*CLHEP::um; 
-
+  
   // cooling pipe geometrical parameters
-  coolingPipeYOffset = bsOuterBoxY + coolingPipeRadius + coolingPipeThickness + 1*CLHEP::um;
+  G4double fullWidthOfCoolingPipe = coolingPipeRadius + coolingPipeThickness + 1*CLHEP::um;
+  if (aper1 > aper2)
+    {
+      coolingPipeOffset = bsOuterBoxY + fullWidthOfCoolingPipe;
+      verticalOrientation = false;
+    }
+  else
+    {
+      coolingPipeOffset = bsOuterBoxX + fullWidthOfCoolingPipe;
+      verticalOrientation = true;
+    }
+
+  G4double valueToCompare;
+  if (verticalOrientation)
+    {valueToCompare = bsOuterBoxX;}
+  else
+    {valueToCompare = bsInnerBoxY;}
+
+  G4double gapForCoolingPipe = std::abs(cbInnerRadius - valueToCompare);
+  if (gapForCoolingPipe < fullWidthOfCoolingPipe + 1*CLHEP::um)
+    {buildCoolingPipe = false;}
 }
   
 
@@ -153,9 +175,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,    
 
   // calculate geometrical parameters
   CalculateGeometricalParameters(aper1, aper2, aper3, beamPipeThickness, length);
-  
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterial,beamPipeThickness,beamPipeMaterial,aper1,aper2,aper3);
 
   // build the solids
   //vacuum cylindrical solid (circular cross-section)
@@ -268,15 +287,18 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,    
   allSolids.push_back(screenOuterRectSolid);
   allSolids.push_back(screenOuterSolid);
   allSolids.push_back(screenSolid);
-  
-  coolingPipeSolid = new G4Tubs(name + "_cooling_pipe_solid",           // name
-				coolingPipeRadius,                        // inner radius
-				coolingPipeRadius + coolingPipeThickness, // outer radius
-				halfLength,                               // half length
-				0,                                        // rotation start angle
-				CLHEP::twopi);                            // rotation finish angle
 
-  allSolids.push_back(coolingPipeSolid);
+  if (buildCoolingPipe)
+    {
+      coolingPipeSolid = new G4Tubs(name + "_cooling_pipe_solid",           // name
+				    coolingPipeRadius,                        // inner radius
+				    coolingPipeRadius + coolingPipeThickness, // outer radius
+				    halfLength,                               // half length
+				    0,                                        // rotation start angle
+				    CLHEP::twopi);                            // rotation finish angle
+
+      allSolids.push_back(coolingPipeSolid);
+    }
   
   // beampipe - ("coldbore") circular cross-section and sits outisde screen and cooling pipe
   beamPipeSolid = new G4Tubs(name + "_beampipe_solid",         // name
@@ -327,9 +349,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
   // calculate geometrical parameters
   CalculateGeometricalParameters(aper1, aper2, aper3, beamPipeThickness, length);
   
-   // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterial,beamPipeThickness,beamPipeMaterial,aper1,aper2,aper3);
-
   std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleIn, angleOut);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
@@ -339,30 +358,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
   return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial, length, containerRadius);
 }
 
-/// functions below here are private to this particular factory
-
-/// test input parameters - if not set use global defaults for this simulation
-void BDSBeamPipeFactoryLHCDetailed::TestInputParameters(G4Material*&  vacuumMaterial,   // reference to a pointer
-							G4double&     beamPipeThickness,
-							G4Material*&  beamPipeMaterial,
-							G4double&     aper1,
-							G4double&     aper2,
-							G4double&     aper3)
-{
-  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterial,beamPipeThickness,beamPipeMaterial);
-
-  if (aper1 < 1e-10)
-    {aper1 = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
-
-  if (aper2 < 1e-10)
-    {aper2 = BDSGlobalConstants::Instance()->GetAper2();}
-
-  if (aper3 < 1e-10)
-    {aper3 = BDSGlobalConstants::Instance()->GetAper3();}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    name,
 								    G4Material* vacuumMaterial,
 								    G4Material* beamPipeMaterial,
@@ -388,8 +383,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
   
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(screenLV);
-  aPipe->RegisterSensitiveVolume(coolingPipeLV);
   aPipe->RegisterSensitiveVolume(copperSkinLV);
+  if (buildCoolingPipe)
+    {aPipe->RegisterSensitiveVolume(coolingPipeLV);}
   
   return aPipe;
 }
@@ -411,13 +407,16 @@ void BDSBeamPipeFactoryLHCDetailed::BuildLogicalVolumes(G4String    name,
   screenLV      = new G4LogicalVolume(screenSolid,
 				      beamPipeMaterialIn,
 				      name + "_screen_lv");
-  
-  coolingPipeLV = new G4LogicalVolume(coolingPipeSolid,
-				      beamPipeMaterialIn,
-				      name + "_cooling_pipe_lv");
+
+  if (buildCoolingPipe)
+    {
+      coolingPipeLV = new G4LogicalVolume(coolingPipeSolid,
+					  beamPipeMaterialIn,
+					  name + "_cooling_pipe_lv");
+      allLogicalVolumes.push_back(coolingPipeLV);
+    }
   allLogicalVolumes.push_back(copperSkinLV);
   allLogicalVolumes.push_back(screenLV);
-  allLogicalVolumes.push_back(coolingPipeLV);
 }
 
 void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
@@ -425,20 +424,21 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
   BDSBeamPipeFactoryBase::SetVisAttributes();
 
   // copper skin
-  G4VisAttributes* cuVisAttr   = new G4VisAttributes(G4Colour(0.722, 0.525, 0.043));
+  G4VisAttributes* cuVisAttr   = new G4VisAttributes(*BDSColours::Instance()->GetColour("LHCcopperskin"));
   cuVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   cuVisAttr->SetVisibility(true);
   allVisAttributes.push_back(cuVisAttr);
   
   // beampipe
-  G4VisAttributes* pipeVisAttr = new G4VisAttributes(G4Colour(0.4,0.4,0.4));
+  G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
   allVisAttributes.push_back(pipeVisAttr);
 
   copperSkinLV->SetVisAttributes(cuVisAttr);
   screenLV->SetVisAttributes(pipeVisAttr);
-  coolingPipeLV->SetVisAttributes(pipeVisAttr);
+  if (buildCoolingPipe)
+    {coolingPipeLV->SetVisAttributes(pipeVisAttr);}
 }
 
 G4UserLimits* BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
@@ -446,7 +446,8 @@ G4UserLimits* BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
   G4UserLimits* beamPipeUserLimits = BDSBeamPipeFactoryBase::SetUserLimits(length);
   copperSkinLV->SetUserLimits(beamPipeUserLimits);
   screenLV->SetUserLimits(beamPipeUserLimits);
-  coolingPipeLV->SetUserLimits(beamPipeUserLimits);
+  if (buildCoolingPipe)
+    {coolingPipeLV->SetUserLimits(beamPipeUserLimits);}
   allUserLimits.push_back(beamPipeUserLimits);
   
   return beamPipeUserLimits;
@@ -456,7 +457,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 {
   BDSBeamPipeFactoryBase::PlaceComponents(name);
 
-  copperSkinPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  copperSkinPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 				   G4ThreeVector(0,0,0),         // position
 				   copperSkinLV,                 // lv to be placed
 				   name + "_copper_skin_pv",     // name
@@ -465,7 +466,7 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 				   0,                            // copy number
 				   checkOverlaps);               // whether to check overlaps
   
-  screenPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  screenPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			       (G4ThreeVector)0,             // position
 			       screenLV,                     // lv to be placed
 			       name + "_screen_pv",          // name
@@ -473,32 +474,46 @@ void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)
 			       false,                        // no boolean operation
 			       0,                            // copy number
 			       checkOverlaps);               // whether to check overlaps
-  
-  G4ThreeVector* coolingPipeTopPosition    = new G4ThreeVector(0,coolingPipeYOffset,0);
-  G4ThreeVector* coolingPipeBottomPosition = new G4ThreeVector(0,-coolingPipeYOffset,0);
-  
-  coolingPipeTopPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-				       *coolingPipeTopPosition,      // position
-				       coolingPipeLV,                // lv to be placed
-				       name + "_cooling_pipe_top_pv",// name
-				       containerLV,                  // mother lv to be place in
-				       false,                        // no boolean operation
-				       0,                            // copy number
-				       checkOverlaps);               // whether to check overlaps
-
-  coolingPipeBottomPV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
-					  *coolingPipeBottomPosition,   // position
-					  coolingPipeLV,                // lv to be placed
-					  name + "_cooling_pipe_bottom_pv", // name
-					  containerLV,                  // mother lv to be place in
-					  false,                        // no boolean operation
-					  0,                            // copy number
-					  checkOverlaps);               // whether to check overlaps
 
   allPhysicalVolumes.push_back(copperSkinPV);
   allPhysicalVolumes.push_back(screenPV);
-  allPhysicalVolumes.push_back(coolingPipeTopPV);
-  allPhysicalVolumes.push_back(coolingPipeBottomPV);
+  
+  if (buildCoolingPipe)
+    {
+      G4ThreeVector coolingPipeTopPosition;
+      G4ThreeVector coolingPipeBottomPosition;
+      if (!verticalOrientation)
+	{ // horizontal shape -> vertical displacement for pipes
+	  coolingPipeTopPosition    = G4ThreeVector(0,coolingPipeOffset,0);
+	  coolingPipeBottomPosition = G4ThreeVector(0,-coolingPipeOffset,0);
+	}
+      else
+	{ // vertical shape -> horizontal displacement for pipes
+	  coolingPipeTopPosition    = G4ThreeVector(coolingPipeOffset,0,0);
+	  coolingPipeBottomPosition = G4ThreeVector(-coolingPipeOffset,0,0);
+	}
+  
+      coolingPipeTopPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+					   coolingPipeTopPosition,       // position
+					   coolingPipeLV,                // lv to be placed
+					   name + "_cooling_pipe_top_pv",// name
+					   containerLV,                  // mother lv to be place in
+					   false,                        // no boolean operation
+					   0,                            // copy number
+					   checkOverlaps);               // whether to check overlaps
+
+      coolingPipeBottomPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+					      coolingPipeBottomPosition,    // position
+					      coolingPipeLV,                // lv to be placed
+					      name + "_cooling_pipe_bottom_pv", // name
+					      containerLV,                  // mother lv to be place in
+					      false,                        // no boolean operation
+					      0,                            // copy number
+					      checkOverlaps);               // whether to check overlaps
+
+      allPhysicalVolumes.push_back(coolingPipeTopPV);
+      allPhysicalVolumes.push_back(coolingPipeBottomPV);
+    }
 }
   
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
@@ -631,17 +646,20 @@ G4double BDSBeamPipeFactoryLHCDetailed::CreateGeneralAngledSolids(G4String      
   allSolids.push_back(screenOuterRectSolid);
   allSolids.push_back(screenOuterSolid);
   allSolids.push_back(screenSolid);
-  
-  coolingPipeSolid = new G4CutTubs(name + "_cooling_pipe_solid",             // name
-				   coolingPipeRadius,                        // inner radius
-				   coolingPipeRadius + coolingPipeThickness, // outer radius
-				   halfLength,                               // half length
-				   0,                                        // rotation start angle
-				   CLHEP::twopi,                             // rotation finish angle
-				   inputface,                                // input face normal
-				   outputface);                              // output face normal
 
-  allSolids.push_back(coolingPipeSolid);
+  if (buildCoolingPipe)
+    {
+      coolingPipeSolid = new G4CutTubs(name + "_cooling_pipe_solid",             // name
+				       coolingPipeRadius,                        // inner radius
+				       coolingPipeRadius + coolingPipeThickness, // outer radius
+				       halfLength,                               // half length
+				       0,                                        // rotation start angle
+				       CLHEP::twopi,                             // rotation finish angle
+				       inputface,                                // input face normal
+				       outputface);                              // output face normal
+      
+      allSolids.push_back(coolingPipeSolid);
+    }
   
   // beampipe - ("coldbore") circular cross-section and sits outisde screen and cooling pipe
   beamPipeSolid = new G4CutTubs(name + "_beampipe_solid", // name

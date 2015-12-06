@@ -11,25 +11,12 @@ BDSBunchCircle::BDSBunchCircle():
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
-BDSBunchCircle::BDSBunchCircle(G4double envelopeRIn, G4double envelopeRpIn,
-			       G4double envelopeTIn, G4double envelopeEIn,
-			       G4double X0In,        G4double Y0In,         G4double Z0In,   G4double T0In, 
-			       G4double Xp0In,       G4double Yp0In,        G4double Zp0In) : 
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,0.0,0.0),
-  envelopeR(envelopeRIn), envelopeRp(envelopeRpIn), envelopeT(envelopeTIn), envelopeE(envelopeEIn)
-{
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-}
-
 BDSBunchCircle::~BDSBunchCircle() 
 {
   delete FlatGen;
 }
 
-void BDSBunchCircle::SetOptions(GMAD::Options &opt)
+void BDSBunchCircle::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

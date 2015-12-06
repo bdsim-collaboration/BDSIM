@@ -4,7 +4,7 @@ project(BDSIM)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
-set( BDSIM_MINOR_VERSION 8 )
+set( BDSIM_MINOR_VERSION 9 )
 set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
@@ -19,7 +19,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 # Default build type (defines different sets of compiler flags)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
-       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
+       "Choose the type of build, options are: None Debug DebugOutput Release RelWithDebInfo MinSizeRel DebugProf DebugCoverage."
        FORCE)
 endif()
 
@@ -27,6 +27,8 @@ message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
 
 # Compiler flags based on build type 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_definitions("-g -O0")
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
     add_definitions("-g -O0 -DBDSDEBUG")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     if(NOT CMAKE_COMPILER_IS_GNUCXX)
@@ -147,22 +149,32 @@ elseif(USE_AFS)
     endif()
 endif()
 
-if(USE_ROOT)
-    find_package(ROOT REQUIRED)
-else()
-    # if not specifically assigned or false, still try to find ROOT
-    find_package(ROOT)
-endif()
-if(ROOT_FOUND)
-    option(USE_ROOT "Include ROOT support."  ON )
-else()
-    option(USE_ROOT "Include ROOT support."  OFF )
-endif()
-if(USE_ROOT)
-    add_definitions("-DUSE_ROOT")
-    include_directories(${ROOT_INCLUDE_DIR})
-    message(STATUS "ROOT support ON")
-endif()
+find_package(ROOT REQUIRED)
+# add ROOT include directory
+include_directories(${ROOT_INCLUDE_DIR})
+
+# Make Dictionaries
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
+file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
+# for loop over link definitions
+foreach(header ${linkHeaders})
+  # remove LinkDef.hh
+  string(FIND ${header} "LinkDef.hh" pos REVERSE)
+  string(FIND ${header} "/" dir REVERSE)
+  MATH(EXPR beginpos "${dir}+1")
+  MATH(EXPR length "${pos}-${beginpos}")
+  string(SUBSTRING ${header} ${beginpos} ${length} className)
+  #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+    COMMAND ${ROOTCINT_EXECUTABLE}
+    ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+    )
+  # keep list of ROOT dictionaries
+  set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
+  set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
+endforeach()
 
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
@@ -243,6 +255,11 @@ if (Geant4_FOUND)
       include(${Geant4_USE_FILE})
       message(STATUS "Geant4 Definitions: ${Geant4_DEFINITIONS}")
 
+      # We don't support multithreading for now
+      if ("${Geant4_DEFINITIONS}" MATCHES "G4MULTITHREADED")
+	message(FATAL_ERROR "Currently Geant4 builds with multithreading are not supported at the moment! Please build Geant4 with multithreading off. Exiting")
+      endif()
+      
       if($ENV{VERBOSE})
         message(STATUS "Geant4_INCLUDE_DIRS: ${Geant4_INCLUDE_DIRS}")
         message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
@@ -281,11 +298,19 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 ## set compiler flags
 # warning flags
-set(WFLAGS "-Wall -Wextra -pedantic -Wno-long-long -Wpointer-arith -Woverloaded-virtual")
-# suppress some warnings from CLHEP 2.2 (to be checked from time to time if still necessary)
-# for clang versions 3.6 and higher
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND CLANG_VERSION_STRING VERSION_GREATER 3.5)
-  set(WFLAGS "${WFLAGS} -Wno-absolute-value")
+set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
+# for ROOT dictionaries
+# stop warnings from Clang version (for versions 7 and greater)
+if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  # get clang version
+  EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
+  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
+  if($ENV{VERBOSE})
+    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
+  endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
+    set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
+  endif()
 endif()
 
 # cmake flags
@@ -296,9 +321,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
 
 if($ENV{VERBOSE})
-	message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
-	message(STATUS "CMAKE_C_FLAGS ${CMAKE_C_FLAGS}")
-	message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
+  message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
+  message(STATUS "CMAKE_C_FLAGS ${CMAKE_C_FLAGS}")
+  message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
 endif()
 
 # add a target to generate API documentation with Doxygen
@@ -310,6 +335,8 @@ if(DOXYGEN_FOUND)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
+  # add 'make doxygen' to ctest
+  add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------
@@ -328,18 +355,24 @@ endmacro()
 # source files
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_LCDD)
-       list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
+  list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
 endif()
 if(NOT USE_GDML)
-       list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
-endif()			
-if($ENV{VERBOSE})
-	message(STATUS "bdsim sources ${bdsim_sources}")
+  list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
-add_library(bdsim ${bdsim_sources})
+if($ENV{VERBOSE})
+  message(STATUS "bdsim sources ${bdsim_sources}")
+endif()
+
+add_library(bdsim ${bdsim_sources} ${root_dicts})
 
 # This module sets up installation:
 include(bdsim_install)
+
+# enable Testing with ctest
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
 
 add_subdirectory( parser )
 
@@ -351,10 +384,9 @@ target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 #link_directories(${Geant4_LIBRARY_DIR})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
-if(USE_ROOT)
-    target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
-    target_link_libraries(bdsim ${ROOT_LIBRARIES})
-endif()
+# link against ROOT
+target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
+target_link_libraries(bdsim ${ROOT_LIBRARIES})
 
 if(USE_LCDD)
     target_link_libraries(bdsim ${XML_LIBRARIES})
@@ -364,6 +396,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)
 endif()
 
+# set binary name for testing usage
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
@@ -373,7 +406,7 @@ set(libraries bdsim)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
-bdsim_install_headers(${headers})
+bdsim_install_headers(${headers} ${root_dicts_headers})
 
 # Visualisation directory
 add_subdirectory(vis)
@@ -381,10 +414,7 @@ add_subdirectory(vis)
 # Utils directory
 add_subdirectory(utils)
 
-# Testing:
-enable_testing()
-include(CTest)
-include(bdsim_test_macros)
+# For testing
 add_subdirectory(examples)
 add_subdirectory(test)
 

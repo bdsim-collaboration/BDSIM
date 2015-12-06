@@ -1,8 +1,114 @@
-V0.8.develop - 2015 / ?? / ??
-=============================
+V0.91 - 2015 / 11 / ??
+======================
 
 New Features
 ------------
+
+* New tests for file IO, coordinate transforms, aperture models, extra optical lattice patterns and general ring example.
+
+Geometry
+^^^^^^^^
+
+* Race track and octagonal aperture models introduced.
+* New wedged energy degrader component introduced.
+
+Output
+^^^^^^
+
+* Optional reduced number of variables in ROOT output - formats now "root" and "rootdetailed" (issue #107)
+* Forced dependency on ROOT
+
+Parser
+^^^^^^
+
+* Parser warns for redefined variable, and exits for usage of undeclared variables (issue #98)
+* Parser reorganised to c++ class structure (issue #77)
+* Command line options more flexible (issue #105)
+* Ability to define Geant4 regions as objects in parser.
+* Can attach samplers to all elements of one type, ie collimators.
+
+Physics
+^^^^^^^
+
+* Can attach biasing to any part of any element from parser.
+
+Tracking
+^^^^^^^^
+
+* Ability to start bunch from any S position along accelerator rather than just at beginning.
+  
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+
+* Fix for LHC detailed geometry when beam shield is rotated.
+* Consoldation and improvement of aperture parameter validity testing.
+* Fix for femtometre occasional overlaps in magnet outer geometry.
+* Fixed placement overlaps in rbend.
+* Fixed seg-fault with RfCavity at end of run.
+* Fixed crashes with zero angle sector bends.
+  
+Parser
+^^^^^^
+
+* Multiple command line arguments without space will now be recognised and highlited.
+
+Physics
+^^^^^^^
+
+* Made required version of Geant4 consistent across biasing code.
+  
+Tracking
+^^^^^^^^
+
+* Fields only constructed if non-zero strength used - avoids tracking errors for zero strength components.
+* Fixed several issues with vertical and horizontal kicker construction and tracking.
+* Broken external magnet fields disabled by default.
+* Circular turn counting bugs fixed
+* Particles no longer killed with circular flag on if starting slightly behind starting mid point.
+* Particles no longer stepped by teleporter at beginning of 1st turn if starting behind starting mid point.
+  
+General
+^^^^^^^
+
+* Add CMake protection against Geant4 built with multithreading on (issue #103)
+
+Utilities
+---------
+* pymadx v?
+* pybdsim v?
+* pymad8 v?
+* robdsim v?
+
+V0.9 - 2015 / 11 / 10
+=====================
+
+New Features
+------------
+
+* Physics biasing with ability to change cross-section for individual particles
+  and processes as well as attach to a variety of objects
+* Decapole magnet
+* Robdsim analysis package as separate executable for testing
+* Tracking tester
+* Improved C++11 use and iterator implementation across containers
+* Fill histogram with energy hit over a range covering several bins
+* Introduced a separate auxiliary G4Navigator to avoid accidentally moving
+  the particle during tracking when querying global to local transforms
+* Transform for curvilinear coordinates to global coordinates
+  so primaries in those coordinates can be injected from anywhere (issue #63)
+* Parser put in GMAD namespace
+* New executable options for writing out geometry coordinates as built by BDSIM
+* Magnets now have tightly fitting invisible container volumes as opposed to
+  large boxes before
+* Changed return type of magnet outer geometry factories to new BDSMagnetOuter
+  class. This is because the container contruction is now delegated to the
+  magnet outer factory for tight fitting container volumes.
+* Extended examples and tests
+* Move entirely to Geant4 visualisation manager supporting all available visualisers
+  available with the local Geant4 installation
 
 Bug fixes
 ---------
@@ -10,6 +116,16 @@ Bug fixes
 Geometry
 ^^^^^^^^
 
+* Fixed bug where the read out coordinates would also be offset by the offset
+  of the element
+* Fixed overlaps in read out geometry
+* Reduced dupliation in magnet outer factories
+* Fixed overlaps in rbend geometry (issue #64)
+* Increase tolerance for sector bends (issue #73)
+* Protect against zero angle sector bends (issue #74)
+* Fixed overlaps in GDML geometry (issue #81)
+* Geometry fixes (issues #76, 94, 95)
+  
 Physics
 ^^^^^^^
 
@@ -17,17 +133,29 @@ Parser
 ^^^^^^
 
 * Occasional material parser segfault fixed (issue #25)
+* Improved syntax checking and not ignore unknown keywords (issue #71)
+* Element extension fixed (issue #87)
 
 Tracking
 ^^^^^^^^
 
-* Introducted a separate auxilliary G4Navigator to avoid accidentally moving
-  the particle during tracking when querying global to local transforms.
-
+* Dipole uses local coordinates and can bend in any direction (issue #78)
   
 General
 ^^^^^^^
 
+* Samplers can be attached to occurrence of a duplicated element (issue #47)
+* Output survey updated and fixed (issue #60)
+* Check for Geant4 environment variables (issue #62)
+* Consistent policy for overwriting output files (issue #65)
+* Improve memory and cpu for output writing (issue #86)
+
+Utilities
+---------
+* pymadx v0.2
+* pybdsim v0.3
+* pymad8 v0.2
+* robdsim v0.3
 
 V0.8 - 2015 / 08 / 10
 =====================

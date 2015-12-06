@@ -22,7 +22,8 @@ else()
   find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5)
 endif()
 
-if(NOT ROOT_CONFIG_EXECUTABLE)
+if(NOT ROOT_CONFIG_EXECUTABLE OR
+    NOT EXISTS ${ROOT_CONFIG_EXECUTABLE}) # for broken symlinks
   set(ROOT_FOUND FALSE)
   MESSAGE(STATUS "root-config not found in PATH")
 

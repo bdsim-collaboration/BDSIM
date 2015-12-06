@@ -4,9 +4,26 @@
 Output
 ======
 
-Output from BDSIM can be in various formats. Details about each one are listed
-below in `output format differences`_.  As a general guideline, the following
-naming conventions are used:
+Output from BDSIM can be in various formats.
+
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| Format            | Syntax                | Description                                                                |
++===================+=======================+============================================================================+
+| None              | --output=none         | No output is written                                                       |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ASCII             | --output=ascii        | A series of text files in a folder are written                             |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ROOT              | --output=root         | A root file with a tree for each sampler is written                        |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ROOT (detailed)   | --output=rootdetailed | Similar to the above ROOT format but with extra variables for more detail  |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| ROOT (per event)  | --output=rootevent    | A root file with a per event structure format                              |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+| Multiple          | --output=combined     | All formats written at once                                                |
++-------------------+-----------------------+----------------------------------------------------------------------------+
+
+Details about each one are listed below in `output format differences`_.
+As a general guideline, the following naming conventions are used:
 
 ========== ================
 Short Name Meaning
@@ -41,7 +58,7 @@ ASCII Output
 ^^^^^^^^^^^^
 
 With ASCII output, a folder is created with the given output name. Inside this
-histograms and sampler output is produced in different text files.
+histograms and sampler output are produced in different text files.
 
 * Histograms are suffixed with :code:`.hist.txt.`
 * The file with only :code:`.txt` is the main output from all samplers
@@ -72,30 +89,30 @@ Samplers
 --------
 
 Samplers record the particle position at the start of each element.  The following
-coordinates are recorded:
+variables are recorded:
 
 =============== ============= ===================================
-Coordinate Name Units         Meaning
+Variable Name   Units         Meaning
 =============== ============= ===================================
 E0              GeV           Initial primary energy
-x0              :math:`m`     Initial primary global x position
-y0              :math:`m`     Initial primary global y position
-z0              :math:`m`     Initial primary global z position
+x0              m             Initial primary global x position
+y0              m             Initial primary global y position
+z0              m             Initial primary global z position
 xp0             rad           Initial primary global x' position
 yp0             rad           Initial primary global y' position
 zp0             rad           Initial primary global z' position
 t0              ns            Initial primary global time
 E               GeV           Total current energy
-x               :math:`m`     Local x position
-y               :math:`m`     Local y position
-z               :math:`m`     Local z position
+x               m             Local x position
+y               m             Local y position
+z               m             Local z position
 xp              rad           Local x' position
 yp              rad           Local y' position
 zp              rad           Local z' position
 t               ns            Time of flight
-X               :math:`m`     Global x position
-Y               :math:`m`     Global y position
-Z               :math:`m`     Global z position
+X               m             Global x position
+Y               m             Global y position
+Z               m             Global z position
 Xp              rad           Global x' position
 Yp              rad           Global y' position
 Zp              rad           Global z' position
@@ -124,6 +141,6 @@ in their own file / tree.
 	     start in front of the sampler, never pass through it and never be registered. For this
 	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
 	     confusion. The primary output (either separate file in ASCII or as a tree in root) records
-	     all primary corrdinates before they enter the tracking in the geometry, so it always
+	     all primary coordinates before they enter the tracking in the geometry, so it always
 	     contains all primary particles.
 	     

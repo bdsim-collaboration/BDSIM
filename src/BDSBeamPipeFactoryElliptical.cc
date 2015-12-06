@@ -15,7 +15,6 @@
 #include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
-#include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
@@ -55,9 +54,6 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,   
   // clean up after last usage
   CleanUp();
   
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In);
-
   // build the solids
   vacuumSolid   = new G4EllipticalTube(nameIn + "_vacuum_solid",       // name
 				       aper1In,                        // x half width
@@ -111,9 +107,6 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipeAngledInOut(G4String   
   // clean up after last usage
   CleanUp();
   
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In);
-
   std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
@@ -123,26 +116,6 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipeAngledInOut(G4String   
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn);
 }
 
-/// functions below here are private to this particular factory
-
-/// test input parameters - if not set use global defaults for this simulation
-void BDSBeamPipeFactoryElliptical::TestInputParameters(G4Material*&  vacuumMaterialIn,     // reference to a pointer
-						       G4double&     beamPipeThicknessIn,
-						       G4Material*&  beamPipeMaterialIn,
-						       G4double&     aper1In,
-						       G4double&     aper2In)
-{
-  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-
-  if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
-
-  if (aper2In < 1e-10)
-    {aper2In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    nameIn,
 								   G4Material* vacuumMaterialIn,
 								   G4Material* beamPipeMaterialIn,

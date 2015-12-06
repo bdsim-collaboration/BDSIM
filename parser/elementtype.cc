@@ -33,14 +33,12 @@ std::string GMAD::typestr(ElementType type) {
     return "solenoid";
   case ElementType::_ECOL : 
     return "ecol";
-  case ElementType::_MUSPOILER : 
-    return "muspoiler";
+  case ElementType::_RCOL : 
+    return "rcol";
   case ElementType::_VKICK :
     return "vkick";
   case ElementType::_HKICK :
     return "hkick";
-  case ElementType::_RCOL : 
-    return "rcol";
   case ElementType::_LINE :
     return "line";
   case ElementType::_REV_LINE :
@@ -49,8 +47,8 @@ std::string GMAD::typestr(ElementType type) {
     return "sampler";
   case ElementType::_CSAMPLER:
     return "csampler";
-  case ElementType::_TUNNEL:
-    return "tunnel";
+  case ElementType::_DUMP:
+    return "dump";
   case ElementType::_MATERIAL:
     return "material";
   case ElementType::_ATOM:
@@ -61,14 +59,14 @@ std::string GMAD::typestr(ElementType type) {
     return "element";
   case ElementType::_TRANSFORM3D :
     return "transform3d";
+  case ElementType::_MUSPOILER : 
+    return "muspoiler";
   case ElementType::_SCREEN :
     return "screen";
- case ElementType::_AWAKESCREEN :
+  case ElementType::_AWAKESCREEN :
     return "awakescreen";
-  case ElementType::_TELEPORTER : 
-    return "teleporter";
-  case ElementType::_TERMINATOR :
-    return "terminator";
+  case ElementType::_DEGRADER :
+    return "degrader";
   default:
     return "none";
   }

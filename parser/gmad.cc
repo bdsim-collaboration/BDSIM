@@ -4,200 +4,71 @@
  */
 
 #include "gmad.h"
-#include "element.h"
-#include "fastlist.h"
-#include "parameters.h"
-//#include "parser.h"
-#include "sym_table.h"
 
-#include <cmath>
-#include <cstdlib>
+#include "parser.h"
+
+#include <cstdio>
 #include <iostream>
-#include <list>
-#include <map>
-#include <string>
 
 using namespace GMAD;
 
-namespace GMAD {
-  extern struct Parameters params;
-  extern std::string yyfilename;
-  extern int add_func(std::string name, double (*func)(double));
-  extern int add_var(std::string name, double val,int is_reserved = 0);
-
-  extern FastList<Element> beamline_list;
-  extern FastList<Element> element_list;
-  extern std::list<struct Element> tmp_list;
-  extern std::map<std::string, struct symtab*> symtab_map;
-}
-
-extern int yyparse();
-extern FILE *yyin;
-
-// anonymous namespace
-namespace {
-void init()
+int main(int argc, char *argv[])
 {
-  const int reserved = 1;
-  // embedded arithmetical functions
-  add_func("sqrt",sqrt);
-  add_func("cos",cos);
-  add_func("sin",sin);
-  add_func("exp",exp);
-  add_func("log",log); 
-  add_func("tan",tan);
-  add_func("asin",asin); 
-  add_func("acos",acos);
-  add_func("atan",atan);
-  add_func("abs",fabs);
- 
-  add_var("pi",4.0*atan(1),reserved);
-
-  add_var("TeV",1e+3,reserved);
-  add_var("GeV",1.0 ,reserved);
-  add_var("MeV",1e-3,reserved);
-  add_var("keV",1e-6,reserved);
-  add_var("KeV",1e-6,reserved); // for compatibility
-  add_var("eV" ,1e-9,reserved);
-
-  add_var("MV",1.0,reserved);
-
-  add_var("Tesla",1.0,reserved);
-
-  add_var("m"  ,1.0 ,reserved);
-  add_var("cm" ,1e-2,reserved);
-  add_var("mm" ,1e-3,reserved);
-  add_var("um" ,1e-6,reserved);
-  add_var("mum",1e-6,reserved);
-  add_var("nm" ,1e-9,reserved);
-  add_var("pm" ,1e-12,reserved);
-
-  add_var("s"  ,1.0  ,reserved);
-  add_var("ms" ,1.e-3,reserved);
-  add_var("us" ,1.e-6,reserved);
-  add_var("ns" ,1.e-9,reserved);
-  add_var("ps" ,1.e-12,reserved);
-
-  add_var("Hz" ,1.0,  reserved);
-  add_var("kHz",1e+3, reserved);
-  add_var("MHz",1e+6, reserved);
-  add_var("GHz",1e+9, reserved);
-  
-  add_var("rad" ,1.0  ,reserved);
-  add_var("mrad",1.e-3,reserved);
-  add_var("urad",1.e-6,reserved);
-
-  add_var("clight",2.99792458e+8,reserved);
-
-  params.flush();
-
-}
-}
-
-int GMAD::gmad_parser(FILE *f)
-{
-  init();
-
-  yyin=f; 
-
-#ifdef BDSDEBUG
-  std::cout << "gmad_parser> beginning to parse file" << std::endl;
-#endif
-
-  while(!feof(yyin))
-    {
-      yyparse();
-    }
-
-#ifdef BDSDEBUG
-  std::cout << "gmad_parser> finished to parsing file" << std::endl;
-#endif
-
-  // clear temporary stuff
-
-#ifdef BDSDEBUG
-  std::cout << "gmad_parser> clearing temporary lists" << std::endl;
-#endif
-  element_list.clear();
-  tmp_list.clear();
-  std::map<std::string,symtab*>::iterator it;
-  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
-    delete (*it).second;
+  if(argc<2) {
+    std::cout << "GMAD parser needs an input file" << std::endl;
+    return 1;
   }
-  symtab_map.clear();
-
-#ifdef BDSDEBUG
-  std::cout << "gmad_parser> finished" << std::endl;
-#endif
-
-  fclose(f);
-
-  return 0;
-}
-
-int GMAD::gmad_parser(std::string name)
-{
-#ifdef BDSDEBUG
-  std::cout << "gmad_parser> opening file" << std::endl;
-#endif
-  FILE *f = fopen(name.c_str(),"r");
-
-  if(f==nullptr) {
-    std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
-    exit(1);
+  if(argc>2) {
+    std::cout << "GMAD parser needs only one input file" << std::endl;
+    return 1;
   }
-
-  yyfilename = std::string(name);
-
-  gmad_parser(f);
-
+  Parser::Instance(std::string(argv[1]));
   return 0;
 }
 
-
-/** Python interface **/ 
-int GmadParser_c(char *name) 
+/** Python interface, need to match pybdsim/Gmad.py **/ 
+int GMAD::GmadParser_c(char *name) 
 {
-  gmad_parser(std::string(name));
+  Parser::Instance(std::string(name));
   return 0;
 }
 
-int GetNelements() 
+int GMAD::GetNElements() 
 {
-  return beamline_list.size();
+  return Parser::Instance()->GetBeamline().size();
 }  
 
-const char* GetName(int i) 
+const char* GMAD::GetName(int i) 
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return (it->name).c_str();
 }
 
-int GetType(int i) 
+int GMAD::GetType(int i) 
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return static_cast<int>(it->type);
 }
 
-double GetLength(int i) 
+double GMAD::GetLength(int i) 
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->l;
 }
 
-double GetAngle(int i) 
+double GMAD::GetAngle(int i) 
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->angle;  
 }
 
-double* GetKs(int i)
+double* GMAD::GetKs(int i)
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   double* result = new double[6];
   result[0] = it->ks;
@@ -209,23 +80,23 @@ double* GetKs(int i)
   return result;
 }
 
-double GetAper1(int i) 
+double GMAD::GetAper1(int i) 
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->aper1;
 }
 
-double GetAper2(int i) 
+double GMAD::GetAper2(int i) 
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->aper2;
 }
 
-double GetBeampipeThickness(int i)
+double GMAD::GetBeampipeThickness(int i)
 {
-  std::list<Element>::iterator it = beamline_list.begin();
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->beampipeThickness;
 }

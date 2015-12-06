@@ -8,12 +8,8 @@ set(OVERLAP_CHECK "Overlap is detected")
 # always test in batch mode
 set(TESTING_PERM_ARGS --batch)
 
-# if ROOT output ROOT format, else none ASCII output is very large for some tests)
-if (USE_ROOT)
-   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
-else()
-   set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=none)
-endif()
+# ROOT output format by default
+set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
 
 add_subdirectory(ATF2)
 add_subdirectory(LHC)

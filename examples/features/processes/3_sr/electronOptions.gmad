@@ -12,9 +12,9 @@ option, beampipeRadius = 10 * cm,
 	prodCutPositrons=0.1*m,
 	defaultRangeCut=0.1*m;
 
-option,magnetGeometryType="none";
-option,apertureType="rectangular";
-option,aper2=15*cm;
+! option,magnetGeometryType="none";
+! option,apertureType="rectangular";
+! option,aper2=15*cm;
 
 option,modularPhysicsListsOn=1;
 option,physicsList="em synchrad";

@@ -1,5 +1,7 @@
 include electronOptions.gmad 
 
+option,	elossHistoBinWidth = 0.005;
+
 beam,  particle="e-",
        energy= 250*GeV,
        distrType="reference",
@@ -9,19 +11,19 @@ beam,  particle="e-",
        Yp0=0.0;
 
 myPipe1 : drift, l=0.01; 
-myPipe2 : drift, l=1.0;
 
-myCol1  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol2  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol3  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol4  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol5  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol6  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol7  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol8  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol9  : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
-myCol10 : rcol, l=0.05, xsize=0, ysize=0, material="Copper";
+mainCol: rcol, l=0.05, xsize=0, ysize=0, material="copper", precisionRegion=0, outerDiameter=0.05*m;
 
+myCol1: mainCol;
+myCol2: mainCol;
+myCol3: mainCol;
+myCol4: mainCol;
+myCol5: mainCol;
+myCol6: mainCol;
+myCol7: mainCol;
+myCol8: mainCol;
+myCol9: mainCol;
+myCol10: mainCol;
 
 sampler1: marker;
 sampler2: marker;

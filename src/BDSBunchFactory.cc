@@ -45,7 +45,7 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType)
   else if(distribType == "ptc") 
     bdsBunch = new BDSBunchPtc(); 
   else {
-    G4cerr << "distribType not found " << distribType << G4endl;
+    G4cerr << "distribType \"" << distribType << "\" not found" << G4endl;
     exit(1);
   }
   return bdsBunch;

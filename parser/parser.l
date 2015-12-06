@@ -20,8 +20,9 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
-#include "sym_table.h"
+#include "parser.h"
 #include "parser.tab.hh"
+#include "sym_table.h"
 #include "getEnv.h"
 #include <unistd.h>
 
@@ -30,14 +31,12 @@
 #define YY_NO_UNISTD_H 1
 #endif
 
-extern int yyerror(const char *s);
-
 using namespace GMAD;
 
-namespace GMAD {
+extern FILE* yyin;
+extern int yyerror(const char *);
 
-struct symtab * symlook(std::string s);
-extern std::map<std::string, struct symtab*> symtab_map;
+namespace GMAD {
 
 const int max_include_depth = 10;
 YY_BUFFER_STATE include_stack[max_include_depth];
@@ -95,7 +94,9 @@ screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
+degrader { return DEGRADER;}
 
+cutsregion { return REGION; }
 tunnel { return TUNNEL; }
 
 xsecBias {return XSECBIAS; }
@@ -105,8 +106,7 @@ atom { return ATOM; }
 
 line { return LINE; } 
 
-cavitymodel {return CAVITYMODEL; }
-
+all { return ALL; }
 period { return PERIOD; }
 range { return RANGE; }
 
@@ -121,13 +121,13 @@ include   BEGIN(incl);  //reserved commands
 
 beam { return BEAM; }
 option { return OPTION; }
+beta0 { return OPTION; }  // beta0 is a synonym of option
 print { return PRINT; }
 "return" { return STOP; }
 stop {return STOP;}
 use { return USE; }
 sample { return SAMPLE; }
 csample { return CSAMPLE; }
-beta0 { return BETA0; } 
 dump  { return DUMP; }
 
 \"[^"]*\" {
@@ -135,26 +135,32 @@ dump  { return DUMP; }
 
   // copy string without quotes, 
   // memory needs to be allocated
-  // strndup allocates memory with malloc 
-  // strndup will add an end of string character
-  // memory needs to be freed with free()
-  // see e.g. http://linux.die.net/man/3/strdup
-  yylval.str = strndup(yytext+1,strlen(yytext)-2);
+  yylval.str = new std::string(yytext+1,strlen(yytext)-2);
+  // add string to variable vector for deletion afterwards
+  Parser::Instance()->AddVariable(yylval.str);
   return STR;
 }
 
 ":="    { return '=';}  // alternative assignment 
 
 [a-zA-Z#][A-Za-z0-9_#.]* {
-     struct symtab *sp = symlook(std::string(yytext));
-     yylval.symp=sp;
-     if(sp->funcptr)
-       return FUNC;
-     else 
-     if(sp->type == symtab::symtabtype::_ARRAY)
-       return VECVAR;
-     else
-       return VARIABLE; 
+     std::string var(yytext);
+     // look up variable if defined and array or function
+     // else create string (also if in the lookup map(!))
+     Symtab *sp = Parser::Instance()->symlook(var);
+     if (sp) {
+       yylval.symp=sp;
+       if(sp->funcptr) {
+         return FUNC;
+       } else if(sp->type == Symtab::symtabtype::_ARRAY) {
+         return VECVAR;
+       }
+     }
+     std::string* name = new std::string(var);
+     // add string to variable vector for deletion afterwards
+     Parser::Instance()->AddVariable(name); 
+     yylval.str = name;
+     return VARIABLE;
 }
 .    { return yytext[0]; } // return characters like * and /
 
@@ -243,20 +249,3 @@ printf("parser> include filename is: %s \n",includefilename.c_str());
 \r\n line_num++; // windows line separator
 
 %%
-
-
-struct symtab * GMAD::symlook(std::string s)
-{
-  std::map<std::string,symtab*>::iterator it = symtab_map.find(s);
-  if (it!=symtab_map.end()) {
-     return (*it).second;
-  } else {
-    struct symtab* sp = new symtab(s);
-    std::pair<std::map<std::string,symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
-     return (*(ret.first)).second;
-  }
-
-  yyerror("too many symbols");
-  exit(1);
-}
-

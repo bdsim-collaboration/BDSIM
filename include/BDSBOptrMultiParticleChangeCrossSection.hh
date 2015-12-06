@@ -1,9 +1,9 @@
 #ifndef BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 #define BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 
-// this class uses classes from Geant4 10.0
+// this class uses classes from Geant4 10.0 and is dependent on BDSBOptChangeCrossSection which needs 10.1
 #include "G4Version.hh"
-#if G4VERSION_NUMBER > 999
+#if G4VERSION_NUMBER > 1009
 
 #include "G4VBiasingOperator.hh"
 class BDSBOptrChangeCrossSection;
@@ -18,15 +18,15 @@ public:
   
   void AddParticle(G4String particleName);
   void SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary);
-  void StartTracking( const G4Track* track );
+  void StartTracking( const G4Track* track ) override;
 
 private: 
   virtual G4VBiasingOperation* ProposeOccurenceBiasingOperation(const G4Track*                   track,
-								const G4BiasingProcessInterface* callingProcess);
+								const G4BiasingProcessInterface* callingProcess) override;
   // -- Methods not used:
-  virtual G4VBiasingOperation* ProposeFinalStateBiasingOperation(const G4Track*, const G4BiasingProcessInterface*)
+  virtual G4VBiasingOperation* ProposeFinalStateBiasingOperation(const G4Track*, const G4BiasingProcessInterface*) override
   {return 0;}
-  virtual G4VBiasingOperation* ProposeNonPhysicsBiasingOperation(const G4Track*, const G4BiasingProcessInterface*)
+  virtual G4VBiasingOperation* ProposeNonPhysicsBiasingOperation(const G4Track*, const G4BiasingProcessInterface*) override
   {return 0;}
   virtual void OperationApplied(const G4BiasingProcessInterface* callingProcess,
 				G4BiasingAppliedCase             biasingCase,
@@ -42,6 +42,8 @@ private:
 
   // -- count number of biased interations for current track:
   G4int fnInteractions = 0;  
+
+  G4bool debug;
 };
 
 #endif

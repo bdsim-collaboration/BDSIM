@@ -7,12 +7,8 @@
 #include <vector>
 
 class BDSBeamPipe;
-
 class G4Box;
-class G4FieldManager;
 class G4LogicalVolume;
-class G4Tubs;
-class G4UserLimits;
 class G4VPhysicalVolume;
 
 class BDSLWCalorimeter: public BDSAcceleratorComponent
@@ -31,13 +27,7 @@ public:
 protected:
   virtual void Build();
 
-  G4LogicalVolume* itsBeampipeLogicalVolume;
-  G4LogicalVolume* itsInnerBPLogicalVolume;
-  G4VPhysicalVolume* itsPhysiInner;
-  G4VPhysicalVolume* itsPhysiComp;
-  G4LogicalVolume* itsLWCalLogicalVolume;
-  G4UserLimits* itsBeampipeUserLimits;
-  G4FieldManager* itsBPFieldMgr;
+  G4LogicalVolume* lwCalLogicalVolume;
 
 private:
   virtual void SetVisAttributes();
@@ -45,10 +35,8 @@ private:
   void BuildBeampipe();
   void BuildCal(G4double aLength);
 
-  G4Tubs* itsBPTube;
-  G4Tubs* itsInnerBPTube;
-  G4Box*  itsLWCal;
-  G4VPhysicalVolume* itsPhysiLWCal;
+  G4Box*  lwCal;
+  G4VPhysicalVolume* physiLWCal;
 
   BDSBeamPipe* beampipe;
 };

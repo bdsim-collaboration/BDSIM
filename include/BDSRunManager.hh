@@ -11,26 +11,11 @@
 
 #include "G4RunManager.hh"
 
-#include "G4Event.hh"
-#include "G4EventManager.hh"
-#include "G4Version.hh"
 #include "globals.hh"
-#include  <vector>
 
 class BDSRunManager:public G4RunManager
 {
-private:
-  // add keyword ThreadLocal for versions 10
-#if G4VERSION_NUMBER > 999
-  G4ThreadLocal
-#endif
-  static BDSRunManager* fRunManager; // needed since singleton inheritance won't work
-
 public:
-  BDSRunManager();
-  virtual ~BDSRunManager();
-  static BDSRunManager* GetRunManager();
-  
   // override virtual methods
 
   /// For additional output

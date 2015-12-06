@@ -2,9 +2,8 @@
 #execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
 # add robdsim when submodule updated and has test macros
-if(USE_ROOT AND EXISTS
-${CMAKE_CURRENT_SOURCE_DIR}/robdsim/CMakeLists.txt AND EXISTS
-${CMAKE_CURRENT_SOURCE_DIR}/robdsim/cmake/robdsim_test_macros.cmake)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/robdsim/CMakeLists.txt AND
+    EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/robdsim/cmake/robdsim_test_macros.cmake)
    set(USE_ROBDSIM TRUE CACHE BOOL "Use submodule robdsim")
    add_subdirectory(robdsim)
    # hack to move dictionary files from robdsim to right place

@@ -1,14 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 28.12.2004
-   Copyright (c) 2004 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added GABs SynchGen code
-*/
-
-//==================================================================
-//==================================================================
 #include "BDSGlobalConstants.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSBunch.hh"
@@ -39,14 +28,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   particleGun->SetParticleTime(0);
 }
 
-//===================================================
-
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
-{
-  delete particleGun;
-}
-
-//===================================================
+{delete particleGun;}
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
@@ -83,15 +66,6 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 #endif
   anEvent->GetPrimaryVertex()->SetWeight(weight);
   
-  if(BDSGlobalConstants::Instance()->holdingQueue.size()!=0){
-    
-    //    anEvent->    GetTrack()->SetTrackID(outputParticle.trackID);
-    //    anEvent->    GetTrack()->SetParentID(outputParticle.parentID);
-    
-    BDSGlobalConstants::Instance()->holdingQueue.pop_front();
-    BDSGlobalConstants::Instance()->outputQueue.pop_front();
-  }
-
   G4double totalE = E+particleGun->GetParticleDefinition()->GetPDGMass();
 #ifdef BDSDEBUG
   G4cout

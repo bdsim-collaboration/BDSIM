@@ -55,9 +55,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipe(G4String    nameIn,          
    // clean up after last usage
   CleanUp();
   
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
-
   // build the solids
   //vacuum cylindrical solid (circular cross-section)
   G4VSolid* vacCylSolid = new G4Tubs(nameIn + "_vacuum_cylinder", // name
@@ -165,11 +162,8 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipeAngledInOut(G4String    nameIn
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-   // clean up after last usage
+  // clean up after last usage
   CleanUp();
-  
-   // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In,aper2In,aper3In);
 
   std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
@@ -184,30 +178,6 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipeAngledInOut(G4String    nameIn
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, width, height);
 }
 
-/// functions below here are private to this particular factory
-
-/// test input parameters - if not set use global defaults for this simulation
-void BDSBeamPipeFactoryLHC::TestInputParameters(G4Material*&  vacuumMaterialIn,     // reference to a pointer
-						G4double&     beamPipeThicknessIn,
-						G4Material*&  beamPipeMaterialIn,
-						G4double&     aper1In,
-						G4double&     aper2In,
-						G4double&     aper3In)
-{
-  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-
-  if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
-
-  if (aper2In < 1e-10)
-    {aper2In = BDSGlobalConstants::Instance()->GetAper2();}
-
-  if (aper3In < 1e-10)
-    {aper3In = BDSGlobalConstants::Instance()->GetAper3();}
-}
-
-/// only the solids are unique, once we have those, the logical volumes and placement in the
-/// container are the same.  group all this functionality together
 BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
 							    G4Material* vacuumMaterialIn,
 							    G4Material* beamPipeMaterialIn,

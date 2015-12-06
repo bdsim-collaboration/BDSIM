@@ -3,6 +3,9 @@
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
@@ -138,39 +141,41 @@ G4bool BDS::IsFinite(const G4double& variable)
     {return false;}
 }
 
-// a robust compiler-invariant method to convert from integer to G4String
-G4String BDS::StringFromInt(G4int N)
+G4bool BDS::IsFinite(const G4ThreeVector& variable)
 {
-  if (N==0) return "0";
-  G4int nLocal=N, nDigit=0, nMax=1;
-  do { nDigit++;
-      nMax*=10;} while(N > nMax-1);
-  nMax/=10;
-  G4String Cnum;
-  do {Cnum+=BDS::StringFromDigit(nLocal/nMax);
-      nLocal-= nLocal/nMax * nMax;
-      nMax/=10;}   while(nMax>1);
-  if(nMax!=0)Cnum+=BDS::StringFromDigit(nLocal/nMax);
-  return Cnum;
+  G4bool resultX = BDS::IsFinite(variable.x());
+  G4bool resultY = BDS::IsFinite(variable.y());
+  G4bool resultZ = BDS::IsFinite(variable.z());
+  if (resultX || resultY || resultZ)
+    {return true;}
+  else
+    {return false;}
 }
 
-// a robust compiler-invariant method to convert from digit to G4String
-G4String BDS::StringFromDigit(G4int N) 
+G4bool BDS::IsInteger(const char* ch, int& convertedInteger)
 {
-  if(N<0 || N>9)
-    G4Exception("Invalid Digit in BDS::StringFromDigit", "-1", FatalException, "");
-  G4String Cnum;
-  if(N==0)Cnum="0";
-  else if(N==1)Cnum="1";
-  else if(N==2)Cnum="2";
-  else if(N==3)Cnum="3";
-  else if(N==4)Cnum="4";
-  else if(N==5)Cnum="5";
-  else if(N==6)Cnum="6";
-  else if(N==7)Cnum="7";
-  else if(N==8)Cnum="8";
-  else if(N==9)Cnum="9"; 
-  return Cnum;
+  // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
+  // convert to string
+  std::string s(ch);
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  
+  char * p;
+  convertedInteger = std::strtol(ch, &p, 10);
+  
+  return (*p == 0);
+}
+
+G4bool BDS::IsNumber(const char* ch, double& convertedNumber)
+{
+  // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
+  // convert to string
+  std::string s(ch);
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  
+  char * p;
+  convertedNumber = std::strtod(ch, &p);
+  
+  return (*p == 0);
 }
 
 void BDS::PrintRotationMatrix(G4RotationMatrix* rm, G4String keyName)

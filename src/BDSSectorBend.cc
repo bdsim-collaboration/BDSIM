@@ -31,15 +31,20 @@ BDSSectorBend::BDSSectorBend(G4String            name,
   /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
   /// - this results in a wrongly chord length
   angle       = angleIn;
-  chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
-  // prepare normal vectors for input and output planes
-  // calculate components of normal vectors (in the end mag(normal) = 1)
-  orientation   = BDS::CalculateOrientation(angleIn);
-  G4double in_z = cos(0.5*fabs(angleIn)); 
-  G4double in_x = sin(0.5*fabs(angleIn));
-  inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
-  //-1 as pointing down in z for normal
-  outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
+  if (BDS::IsFinite(angle))
+    {
+      chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
+      // prepare normal vectors for input and output planes
+      // calculate components of normal vectors (in the end mag(normal) = 1)
+      G4int orientation   = BDS::CalculateOrientation(angleIn);
+      G4double in_z = cos(0.5*fabs(angleIn)); 
+      G4double in_x = sin(0.5*fabs(angleIn));
+      inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
+      //-1 as pointing down in z for normal
+      outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
+    }
+  else
+    {chordLength = arcLength;}
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
   G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
@@ -97,20 +102,30 @@ void BDSSectorBend::BuildBeampipe()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
 #endif
+  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+  if (BDS::IsFinite(angle))
+    {
+      beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
+						    name,
+						    chordLength - lengthSafety,
+						    -angle*0.5,
+						    -angle*0.5,
+						    beamPipeInfo->aper1,
+						    beamPipeInfo->aper2,
+						    beamPipeInfo->aper3,
+						    beamPipeInfo->aper4,
+						    beamPipeInfo->vacuumMaterial,
+						    beamPipeInfo->beamPipeThickness,
+						    beamPipeInfo->beamPipeMaterial);
+    }
+  else
+    {
+      beampipe = factory->CreateBeamPipe(name,
+					 chordLength - lengthSafety,
+					 beamPipeInfo);
+    }
 
-  beampipe =
-    BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-							      name,
-							      chordLength - lengthSafety,
-							      -angle*0.5,
-							      -angle*0.5,
-							      beamPipeInfo->aper1,
-							      beamPipeInfo->aper2,
-							      beamPipeInfo->aper3,
-							      beamPipeInfo->aper4,
-							      beamPipeInfo->vacuumMaterial,
-							      beamPipeInfo->beamPipeThickness,
-							      beamPipeInfo->beamPipeMaterial);
-  
-  BeamPipeCommonTasks(); //from BDSMagnet;
+  RegisterDaughter(beampipe);
+
+  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }
