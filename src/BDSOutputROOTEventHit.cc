@@ -40,6 +40,7 @@ void BDSOutputROOTEventHit::Flush() {
   BDSOutputROOTEventLoss::Flush();
   this->x.clear();
   this->y.clear();
+  this->z.clear();
   this->X.clear();
   this->Y.clear();
   this->Z.clear();

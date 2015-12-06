@@ -36,4 +36,5 @@ void BDSOutputROOTEventLoss::Flush()
   this->energy.clear();
   this->S.clear();
   this->weight.clear();
+  this->indexModel.clear();
 }
