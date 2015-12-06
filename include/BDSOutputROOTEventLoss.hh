@@ -13,10 +13,11 @@
 class BDSOutputROOTEventLoss {
 
 protected: 
-  int                n;
-  std::vector<float> energy;
-  std::vector<float> S;
-  std::vector<float> weight;
+  int                       n;
+  std::vector<float>        energy;
+  std::vector<float>        S;
+  std::vector<float>        weight;
+  std::vector<unsigned int> indexModel;
 
 public:
   BDSOutputROOTEventLoss();
