@@ -2,12 +2,14 @@
 
 ClassImp(BDSOutputROOTEventOptions);
 
-BDSOutputROOTEventOptions::BDSOutputROOTEventOptions() {
+BDSOutputROOTEventOptions::BDSOutputROOTEventOptions()
+{
 }
 
-BDSOutputROOTEventOptions::~BDSOutputROOTEventOptions() {
+BDSOutputROOTEventOptions::~BDSOutputROOTEventOptions()
+{
 }
 
-void BDSOutputROOTEventOptions::Fill() {
-  
+void BDSOutputROOTEventOptions::Fill()
+{
 }
