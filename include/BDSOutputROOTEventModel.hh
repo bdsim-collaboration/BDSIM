@@ -22,6 +22,12 @@ protected :
   std::vector<TRotation>   staRot;
   std::vector<TRotation>   midRot;
   std::vector<TRotation>   endRot;
+  std::vector<TVector3>    staRefPos;
+  std::vector<TVector3>    midRefPos;
+  std::vector<TVector3>    endRefPos;
+  std::vector<TRotation>   staRefRot;
+  std::vector<TRotation>   midRefRot;
+  std::vector<TRotation>   endRefRot;
 
 public :
   BDSOutputROOTEventModel();
