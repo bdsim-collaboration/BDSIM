@@ -17,17 +17,18 @@ BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
 {
   this->n++;
-  this->energy.push_back((float &&) (hit->GetEnergy() / CLHEP::GeV));
-  this->S.push_back((float &&) (hit->GetS() / CLHEP::m));
-  this->weight.push_back((float &&) hit->GetWeight());
+  this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
+  this->S.push_back     ( (float &&) (hit->GetS()      / CLHEP::m));
+  this->weight.push_back( (float &&)  hit->GetWeight());
+  G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
 }
 
 void BDSOutputROOTEventLoss::Fill(BDSTunnelHit *hit)
 {
   this->n++;
-  this->energy.push_back((float &&) (hit->GetEnergy() / CLHEP::GeV));
-  this->S.push_back((float &&) (hit->GetS() / CLHEP::m));
-  this->weight.push_back((float &&) hit->GetWeight());
+  this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
+  this->S.push_back     ( (float &&)      (hit->GetS() / CLHEP::m));
+  this->weight.push_back( (float &&) hit->GetWeight());
 }
 void BDSOutputROOTEventLoss::Flush()
 {
