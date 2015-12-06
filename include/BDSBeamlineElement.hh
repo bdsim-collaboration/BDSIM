@@ -91,6 +91,7 @@ private:
   /// the BDSAcceleratorComponent has been placed (increments the accelerator
   /// component placement counter).
   G4String          placementName;
+  
   /// identification number of AcceleratorComponent (0 for first volume of given type)
   G4int             copyNumber;
   
