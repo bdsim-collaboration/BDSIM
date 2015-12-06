@@ -19,8 +19,9 @@ void BDSOutputROOTEventHit::Fill(BDSEnergyCounterHit *hit)
 {
   // Fill base class
   BDSOutputROOTEventLoss::Fill(hit);
-  this->x.push_back((float &&) (hit->Getx() / CLHEP::m));
-  this->y.push_back((float &&) (hit->Gety() / CLHEP::m));
+  this->x.push_back( (float &&) (hit->Getx() / CLHEP::m));
+  this->y.push_back( (float &&) (hit->Gety() / CLHEP::m));
+  this->z.push_back( (float &&) (hit->Getz() / CLHEP::m));
 }
 
 void BDSOutputROOTEventHit::Fill(BDSTunnelHit *hit) // TODO Could we tidy the structure of BDSTunnelHit to be more similar to BDSEnergyCounterHit

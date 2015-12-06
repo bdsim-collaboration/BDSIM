@@ -15,6 +15,7 @@ protected:
   /* local coordinates */
   std::vector<float> x;
   std::vector<float> y;
+  std::vector<float> z;
 
   /* Global coordinates */
   std::vector<float> X;
