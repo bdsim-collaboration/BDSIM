@@ -2,7 +2,7 @@
 
 #include "CLHEP/Units/PhysicalConstants.h"
 
-ClassImp(BDSOutputROOTEventHit);
+ClassImp(BDSOutputROOTEventHit)
 
 BDSOutputROOTEventHit::BDSOutputROOTEventHit() : BDSOutputROOTEventLoss()
 {
