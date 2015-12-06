@@ -153,29 +153,6 @@ find_package(ROOT REQUIRED)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
-# Make Dictionaries
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
-file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
-# for loop over link definitions
-foreach(header ${linkHeaders})
-  # remove LinkDef.hh
-  string(FIND ${header} "LinkDef.hh" pos REVERSE)
-  string(FIND ${header} "/" dir REVERSE)
-  MATH(EXPR beginpos "${dir}+1")
-  MATH(EXPR length "${pos}-${beginpos}")
-  string(SUBSTRING ${header} ${beginpos} ${length} className)
-  #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
-    COMMAND ${ROOTCINT_EXECUTABLE}
-    ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    )
-  # keep list of ROOT dictionaries
-  set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
-  set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
-endforeach()
-
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
@@ -292,6 +269,30 @@ else()
   set(G4_MINOR_VERSION 9)
   set(G4_PATCH_LEVEL 9)
 endif()
+
+
+# Make Dictionaries
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
+file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
+# for loop over link definitions
+foreach(header ${linkHeaders})
+    # remove LinkDef.hh
+    string(FIND ${header} "LinkDef.hh" pos REVERSE)
+    string(FIND ${header} "/" dir REVERSE)
+    MATH(EXPR beginpos "${dir}+1")
+    MATH(EXPR length "${pos}-${beginpos}")
+    string(SUBSTRING ${header} ${beginpos} ${length} className)
+    #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
+    add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+            COMMAND ${ROOTCINT_EXECUTABLE}
+            ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc  -c -I${CLHEP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+    )
+    # keep list of ROOT dictionaries
+    set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
+    set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
+endforeach()
 
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
