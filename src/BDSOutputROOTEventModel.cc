@@ -19,7 +19,9 @@ void BDSOutputROOTEventModel::Fill()
   for(auto i = beamline->begin(); i != beamline->end(); ++i)
   {
     // Name
-    this->name.push_back((*i)->GetName());
+    this->componentName.push_back((*i)->GetName());
+    this->placementName.push_back((*i)->GetPlacementName());
+
     // Length
     this->length.push_back((float &&) (*i)->GetAcceleratorComponent()->GetArcLength());
 
@@ -63,6 +65,12 @@ void BDSOutputROOTEventModel::Fill()
     gr = (*i)->GetReferenceRotationEnd();
     rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
     this->endRot.push_back(rr);
+
+    // S positions
+    this->staS.push_back((float &&) (*i)->GetSPositionStart());
+    this->midS.push_back((float &&) (*i)->GetSPositionMiddle());
+    this->endS.push_back((float &&) (*i)->GetSPositionEnd());
+
 
   }
 }

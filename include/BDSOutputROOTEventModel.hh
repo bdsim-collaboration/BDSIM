@@ -14,7 +14,8 @@
 
 class BDSOutputROOTEventModel {
 protected :
-  std::vector<std::string> name;
+  std::vector<std::string> componentName;
+  std::vector<std::string> placementName;
   std::vector<float>       length;
   std::vector<TVector3>    staPos;
   std::vector<TVector3>    midPos;
@@ -28,6 +29,11 @@ protected :
   std::vector<TRotation>   staRefRot;
   std::vector<TRotation>   midRefRot;
   std::vector<TRotation>   endRefRot;
+  std::vector<float>       staS;
+  std::vector<float>       midS;
+  std::vector<float>       endS;
+
+
 
 public :
   BDSOutputROOTEventModel();
