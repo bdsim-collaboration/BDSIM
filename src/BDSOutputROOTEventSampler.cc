@@ -27,7 +27,7 @@ void BDSOutputROOTEventSampler::Fill(G4double E,
 				     G4double t,
 				     G4double weight,
 				     G4int    PDGType,
-				     G4int    nEvent,
+				     G4int    /*nEvent*/,
 				     G4int    TurnsTaken) 
 {
   this->n++;

@@ -1,6 +1,6 @@
 #include "BDSOutputROOTEventLoss.hh"
 
-ClassImp(BDSOutputROOTEventLoss);
+ClassImp(BDSOutputROOTEventLoss)
 
 BDSOutputROOTEventLoss::BDSOutputROOTEventLoss() {
 }
