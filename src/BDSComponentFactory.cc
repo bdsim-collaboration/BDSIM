@@ -266,48 +266,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-  /*return (new BDSRfCavity( _element.name,
-			   _element.l * CLHEP::m,
-			   _element.gradient,
-			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element)));
-  */
-  //  G4Material* cavityMaterial = BDSMaterials::Instance()->GetMaterial("copper");
-  G4Material* cavityMaterial = BDSMaterials::Instance()->GetMaterial(_element.material);
-  G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial("vacuum");
 
-  // G4double frequency = 100*CLHEP::megahertz;  //(100MHz)
-  // G4double phase = 0.0;
-
-  // find right cavity model in vector of cavitymodels
-  GMAD::CavityModel model;
-  //= std::find(GMAD::cavitymodel_list.begin(), GMAD::cavitymodel_list.end(), cavityModel);
-  for (unsigned int i = 0; i< GMAD::cavitymodel_list.size(); i++) {
-    if (GMAD::cavitymodel_list[i].name == _element.cavityModel) {
-      model = GMAD::cavitymodel_list[i];
-      G4cout << "cavitymodel found " << _element.cavityModel << G4endl;
-      break;
-    }
-  }
-
-  model.print();
-  
-  // interrogate cavity model:
-  // double equatorEllipseSemiAxis = model.equatorEllipseSemiAxis;
-  
-  return (new BDSCavityRF(_element.name,               //name
-			  _element.l*CLHEP::m, //4.71238898038469*CLHEP::m,   //length = l
-			  model.type,//"RFCavity",                  //type
-			  cavityMaterial,              //cavity material
-			  vacuumMaterial,              //vacuum material 
-			  model.equatorRadius*CLHEP::m, //103.3 *  CLHEP::mm, //cavity diameter?
-			  model.irisRadius*CLHEP::m,// 35.0 * CLHEP::mm , //iris radius
-			  model.thickness*CLHEP::m,//10* CLHEP::mm,  //thickness
-			  model.frequency,
-			  model.phase,
-			  model.name
-			  ));
+  return (new BDSCavityRF(_element.name,
+			  _element.l*CLHEP::m,
+			  _element.gradient,
+			  PrepareCavityModelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
