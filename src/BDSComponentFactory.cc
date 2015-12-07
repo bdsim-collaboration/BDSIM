@@ -35,11 +35,14 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSCavityInfo.hh"
+#include "BDSCavityType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSParser.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -83,10 +86,16 @@ BDSComponentFactory::BDSComponentFactory()
   _brho *= (CLHEP::tesla*CLHEP::m);
 
   if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+
+  // prepare rf cavity model info from parser
+  PrepareCavityModels();
 }
 
 BDSComponentFactory::~BDSComponentFactory()
-{;}
+{
+  for(auto info : cavityInfos)
+    {delete info.second;}
+}
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn)
 {
@@ -1065,6 +1074,52 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,
       G4cerr << "Error: the combination of length, angle and outerDiameter in element named \""
 	     << name
 	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
+      exit(1);
+    }
+}
+
+void BDSComponentFactory::PrepareCavityModels()
+{
+  for (auto model : BDSParser::Instance()->GetCavityModels())
+    {
+      auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
+				    nullptr, //construct without material as stored in element
+				    nullptr,
+				    model.frequency, // TBC - units
+				    model.phase,
+				    model.irisRadius*CLHEP::m,
+				    model.thickness*CLHEP::m,
+				    model.equatorRadius*CLHEP::m,
+				    model.halfCellLength*CLHEP::m,
+				    model.numberOfPoints,
+				    model.numberOfCells,
+				    model.equatorEllipseSemiAxis*CLHEP::m,
+				    model.irisHorizontalAxis*CLHEP::m,
+				    model.irisVerticalAxis*CLHEP::m,
+				    model.tangentLineAngle);
+      
+      cavityInfos[model.name] = info;
+    }
+}
+
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(const Element& element)
+{
+  // If the cavity model name (identifier) has been defined, return a *copy* of
+  // that model - so that the component will own that info object.
+  auto result = cavityInfos.find(element.cavityModel);
+  if (result != cavityInfos.end())
+    {
+      // ok to user compiler provided copy constructor as doesn't own materials
+      // which are the only pointers in this class
+      BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
+      // update materials in info with valid materials - only element has material info
+      info->material       = BDSMaterials::Instance()->GetMaterial(element.material);
+      info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element.vacuumMaterial);
+      return info;
+    }
+  else
+    {
+      G4cout << "Unknown cavity model identifier \"" << element.cavityModel << "\" - please define it" << G4endl;
       exit(1);
     }
 }
