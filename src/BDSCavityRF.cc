@@ -27,19 +27,25 @@ BDSCavityRF::BDSCavityRF(G4String name,
 			 ):
   BDSCavity(name, length, type, cavityMaterialIn, vacuumMaterialIn, cavityRadiusIn, irisRadiusIn, thicknessIn, cavityModelIn)
 {
-  frequency = 100*CLHEP::megahertz;
-  phase = phaseIn;
+  //frequency = 100*CLHEP::megahertz;
+  //phase = phaseIn;
 }
+
+BDSCavityRF::BDSCavityRF(G4String       name,
+			 G4double       length,
+			 G4double       fieldAmplitude,
+			 BDSCavityInfo* cavityInfo):
+  BDSCavity(name, length, fieldAmplitude, cavityInfo)
+{;}
 
  void BDSCavityRF::BuildField()
 {
-  G4double eFieldMax = - 160 * CLHEP::megavolt / CLHEP::m; //--------------REMOVE HARDCODED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  frequency = 100*CLHEP::megahertz;
-  itsField = new BDSPillBoxField(eFieldMax,
+  //G4double eFieldMax = - 160 * CLHEP::megavolt / CLHEP::m;
+  //frequency = 100*CLHEP::megahertz;
+  itsField = new BDSPillBoxField(fieldAmplitude,
 				 cavityRadius,
-				 frequency,
-				 phase
-				 );
+				 cavityInfo->frequency,
+				 cavityInfo->phase);
  }
 
 void BDSCavityRF::AttachField()
@@ -72,18 +78,4 @@ void BDSCavityRF::AttachField()
   
 }
 
-void BDSCavityRF::Build()
-{
-  if (type=="elliptical") {
-    BuildEllipticalCavityGeometry();
-  } else if (type=="rectangular" || type=="pillbox") {
-    BuildPillBoxCavityGeometry();
-  } else {
-    std::cout << "type is not known: " << type << std::endl;
-    exit(1);
-  }
-  BDSAcceleratorComponent::Build();
-  BuildField();
-  AttachField();
-  PlaceComponents();
-}
+
