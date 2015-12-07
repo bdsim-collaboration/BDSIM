@@ -31,6 +31,8 @@ void CavityModel::PublishMembers()
   publish("name",               &CavityModel::name);
   publish("type",               &CavityModel::type);
   publish("irisRadius",         &CavityModel::irisRadius);
+  publish("halfCellLength",     &CavityModel::halfCellLength);
+  publish("equatorEllipseSemiAxis",&CavityModel::equatorEllipseSemiAxis);
   publish("equatorRadius",      &CavityModel::equatorRadius);
   publish("irisHorizontalAxis", &CavityModel::irisHorizontalAxis);
   publish("irisVerticalAxis",   &CavityModel::irisVerticalAxis);
