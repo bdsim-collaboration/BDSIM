@@ -496,6 +496,18 @@ void Parser::add_tunnel()
   tunnel_list.push_back(t);
 }
 
+void Parser::add_cavitymodel()
+{
+  // copy from global
+  CavityModel c(cavitymodel);
+  // reset cavitymodel
+  cavitymodel.clear();
+#ifdef BDSDEBUG 
+  c.print();
+#endif
+  cavitymodel_list.push_back(c);
+}
+
 void Parser::add_xsecbias()
 {
   // copy from global

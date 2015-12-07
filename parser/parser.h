@@ -76,6 +76,8 @@ namespace GMAD {
     void add_dump(std::string name, int before_count, ElementType type);
     /// insert region
     void add_region();
+    /// insert cavity model
+    void add_cavitymodel();
     /// insert tunnel
     void add_tunnel();
     /// insert cross section bias

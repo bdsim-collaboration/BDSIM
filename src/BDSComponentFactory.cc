@@ -62,9 +62,6 @@ bool debug1 = false;
 
 using namespace GMAD;
 
-namespace GMAD {
-   extern std::vector<struct CavityModel> cavitymodel_list;
-}
 
 BDSComponentFactory::BDSComponentFactory()
 {

@@ -1,16 +1,20 @@
 #ifndef __CAVITYMODEL_H
 #define __CAVITYMODEL_H
 
+#include <iomanip>
+#include <iostream>
 #include <string>
 
-/**
- * @brief RF CavityModel class for parser
- * 
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
- */
+#include "published.h"
 
 namespace GMAD {
-  struct CavityModel {
+  /**
+   * @brief RF CavityModel class for parser
+   * 
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   */
+  class CavityModel: public Published<CavityModel> {
+  public:
     std::string name; ///< name
     /// geometry type
     std::string type;
@@ -44,14 +48,31 @@ namespace GMAD {
     CavityModel();
     /// reset
     void clear();
+    /// publish members
+    void PublishMembers();
     /// print some properties
     void print()const;
 
-    /// set methods by property name, numeric values
-    void set_value(std::string property, double value);
-    /// set methods by property name, string values
-    void set_value(std::string property, std::string value);
+    /// set methods by property name
+    template <typename T>
+      void set_value(std::string name, T value);
   };
+  template <typename T>
+    void CavityModel::set_value(std::string name, T value)
+    {
+#ifdef BDSDEBUG
+      std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+#endif
+      // member method can throw runtime_error, catch and exit gracefully
+      try {
+	set(this,name,value);
+      }
+      catch(std::runtime_error) {
+	std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value  << std::endl;
+	exit(1);
+      }
+    }
+  
 }
 
 #endif
