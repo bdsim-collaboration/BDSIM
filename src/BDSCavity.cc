@@ -1,5 +1,8 @@
-#include "BDSCavity.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSCavity.hh"
+#include "BDSCavityInfo.hh"
+#include "BDSCavityType.hh"
+#include "BDSParser.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"
@@ -17,11 +20,6 @@
 #include <cmath>
 #include <vector>
 
-#include "parser/cavitymodel.h"
-
-namespace GMAD {
-   extern std::vector<struct CavityModel> cavitymodel_list;
-}
 
 BDSCavity::BDSCavity(G4String name, //Any others to add here? 
 		     G4double length,
@@ -40,6 +38,44 @@ BDSCavity::BDSCavity(G4String name, //Any others to add here?
   thickness(thicknessIn),
   cavityModel(cavityModelIn)
 {;}
+
+BDSCavity::BDSCavity(G4String       name,
+		     G4double       length,
+		     G4double       fieldAmplitudeIn,
+		     BDSCavityInfo* cavityInfoIn):
+  BDSAcceleratorComponent(name, length, 0, "cavity_"+cavityInfoIn->cavityType.ToString()),
+  fieldAmplitude(fieldAmplitudeIn),
+  cavityInfo(cavityInfoIn)
+{;}
+
+BDSCavity::~BDSCavity()
+{
+  delete cavityInfo;
+}
+
+void BDSCavity::Build()
+{
+  switch(cavityInfo->cavityType.underlying())
+    {
+    case BDSCavityType::elliptical:
+      BuildEllipticalCavityGeometry();
+      break;
+    case BDSCavityType::rectangular:
+      BuildPillBoxCavityGeometry();
+      break;
+    case BDSCavityType::pillbox:
+      BuildPillBoxCavityGeometry();
+      break;
+    default:
+      BuildPillBoxCavityGeometry();
+      break;
+    }
+  
+  BDSAcceleratorComponent::Build();
+  BuildField();
+  AttachField();
+  PlaceComponents();
+}
 
 void BDSCavity::BuildField()
 {;}
@@ -98,22 +134,7 @@ void BDSCavity::BuildEllipticalCavityGeometry(/*G4double irisRSemiAxis, //iris e
 					      G4double tangentAngle, //Angle of line connecting ellipses to the vertical. Ought to be the common tangent with most negative gradient for reasonable output
 					      G4int noPoints //number of points forming each curved section.  Total points for single cavity cell will be 4*noPoints.
 					      */)
-{
-  // find right cavity model in vector of cavitymodels
-  GMAD::CavityModel model;
-  //= std::find(GMAD::cavitymodel_list.begin(), GMAD::cavitymodel_list.end(), cavityModel);
-  for (unsigned int i = 0; i< GMAD::cavitymodel_list.size(); i++)
-    {
-      if (GMAD::cavitymodel_list[i].name == cavityModel)
-	{
-	  model = GMAD::cavitymodel_list[i];
-	  G4cout << "cavitymodel found " << cavityModel << G4endl;
-	  break;
-	}
-    }
-
-  model.print();
-  
+{ 
     //irisRSemiAxis    --> Semi-axis of the iris ellipse perpendicular to the length of the cavity.
     //irisZSemiAxis    --> Semi-axis of the iris ellipse along the length of the cavity.
     //equatorRSemiAxis --> Semi-axis of the equator ellipse perpendicular to the length of the cavity.
@@ -126,13 +147,13 @@ void BDSCavity::BuildEllipticalCavityGeometry(/*G4double irisRSemiAxis, //iris e
     G4double equatorRadius = cavityRadius;  //cavityRadius in SRF is the equator radius for clarity.
     
     //::::::::::::::::::::HARD CODED FOR THE TIME BEING:::::::::::::::::::::::::::::::::::::::::::::::
-    G4double irisRSemiAxis    = model.irisVerticalAxis * CLHEP::m;
-    G4double irisZSemiAxis    = model.irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
-    G4double equatorRSemiAxis = model.equatorEllipseSemiAxis * CLHEP::m ;//equator ellipse vertical semiaxis
-    G4double equatorZSemiAxis = model.equatorEllipseSemiAxis * CLHEP::m; //equator ellipse horizontal semiaxis
-    G4double tangentAngle     = model.tangentLineAngle;
-    G4double irisRadius       = model.irisRadius *CLHEP::m;
-    G4int noPoints            = model.numberOfPoints;
+    G4double irisRSemiAxis    = cavityInfo->irisVerticalAxis * CLHEP::m;
+    G4double irisZSemiAxis    = cavityInfo->irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
+    G4double equatorRSemiAxis = cavityInfo->equatorEllipseSemiAxis * CLHEP::m ;//equator ellipse vertical semiaxis
+    G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis * CLHEP::m; //equator ellipse horizontal semiaxis
+    G4double tangentAngle     = cavityInfo->tangentLineAngle;
+    G4double irisRadius       = cavityInfo->irisRadius *CLHEP::m;
+    G4int noPoints            = cavityInfo->numberOfPoints;
 
     
     //    G4double irisRSemiAxis = 19 * CLHEP::mm ;  //iris ellipse vertical semiaxis.

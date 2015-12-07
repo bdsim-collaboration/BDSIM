@@ -1,13 +1,13 @@
-#ifndef BDSCavity_h
-#define BDSCavity_h
+#ifndef BDSCAVITY_H
+#define BDSCAVITY_H
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSCavityInfo.hh"
 
 #include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
-#include "globals.hh"
-
+#include "globals.hh" // geant4 globals / types
 
 //Field header files
 #include "G4FieldManager.hh"
@@ -17,7 +17,8 @@
 #include "G4ElectroMagneticField.hh"
 #include "G4EqMagElectricField.hh"
 
-//At the moment just considering getting shape and so on...  will have to edit later for field
+class G4Material;
+
 class BDSCavity: public BDSAcceleratorComponent
 {
 public:
@@ -29,27 +30,45 @@ public:
 	    G4double cavityRadius, //Largest radial distance from z axis
 	    G4double irisRadius, //radius at ends
 	    G4double thickness,
-	    G4String cavityModel
-	    );
-  
+	    G4String cavityModel);
+
+  BDSCavity(G4String       name,
+	    G4double       length,
+	    G4double       fieldAmplitude,
+	    BDSCavityInfo* cavityInfoIn);
+
+  ~BDSCavity();
 
 protected:
   BDSCavity();
-  
-protected:
 
-  virtual void BuildField(); //Creates field.  Currently hardcoded pillboxfield.
-  virtual void AttachField();  //attaches the created field to the vacuum logical volume
-  void PlaceComponents();    //initializes physical volumes
-  virtual void BuildContainerLogicalVolume(); //initializes logical volume in which everything else  is placed
+  /// Creates container solid and logical volume
+  virtual void BuildContainerLogicalVolume() override;
+
+  /// The full construction sequence that calls all methods in order
+  virtual void Build() override;
+  
+  /// Creates field objects - doesn't nothing by default and derived classes can override.
+  virtual void BuildField();
+
+  /// Attach the created field to the vacuum logical volume - only if field exists. Does
+  /// nothing by default as no field by default.
+  virtual void AttachField();
+
+  /// Places volumes in container
+  void PlaceComponents();
+
+  /// Build the geometry and the vacuum of this shape.
   void BuildEllipticalCavityGeometry(/*G4double irisYSemiAxis, //iris ellipse vertical semiaxis.
 				     G4double irisZSemiAxis, //iris ellipse horizontal semiaxis
 				     G4double equatorYSemiAxis, //equator ellipse vertical semiaxis
 				     G4double equatorZSemiAxis, //equator ellipse horizontal semiaxis
 				     G4double tangentAngle, //Angle of line connecting ellipses to the vertical.  Ought to be the common tangent with most negative gradient for reasonable output
 				     G4int noPoints //number of points forming each curved section.  Total points entire shape will be 4*nopoints.
-				     */);  //Builds the geometry and the vacuum of this shape.
-  void BuildPillBoxCavityGeometry();   //Builds the pillbox geometry and the vacuum to go indoors.
+				     */);  
+
+  /// Build the pillbox geometry and the vacuum to go indoors.
+  void BuildPillBoxCavityGeometry();   
 
   //Something here for N cells??
   
@@ -82,6 +101,8 @@ protected:
   // the error is within acceptable bounds
   //do instasntiated methods stay instantiated further up the inheritance chain??
 
+  G4double       fieldAmplitude;
+  BDSCavityInfo* cavityInfo;
   
 };
 
