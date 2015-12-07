@@ -58,3 +58,8 @@ const std::vector<GMAD::Region>& BDSParser::GetRegions()const
 {
   return region_list;
 }
+
+const std::vector<GMAD::CavityModel>& BDSParser::GetCavityModels()const
+{
+  return cavitymodel_list;
+}
