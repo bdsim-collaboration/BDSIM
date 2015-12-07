@@ -67,7 +67,7 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
-We recommend obtaining `required packages <Requirements>`_ using `MacPorts`_ package manager,
+We recommend obtaining `required packages`_ using `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
@@ -76,13 +76,13 @@ After this, `Building`_ can be started.
 Linux
 -----
 
-Install the `required packages <Requirements>`_ preferably with a
+Install the `required packages`_ preferably with a
 package manager.
 
 For Scientific Linux 5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
-For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.1.  
+For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.2.
 
 After this, `Building`_ can be started.
 
@@ -270,22 +270,22 @@ Geant4 Installation Guide
 -------------------------
 
 As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
-If not built with **MacPorts** then download the 4.10.01 version or an older version from the
+If not built with **MacPorts** then download the 4.10.2 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
-  > tar -xzf geant4.10.04.tar.gz
+  > tar -xzf geant4.10.2.tar.gz
   > ls
-  geant4.10.04
+  geant4.10.2
 
 Make a build and installation directory **outside** that directory ::
   
-  > mkdir geant4.10.04-build
-  > mkdir geant4.10.04-install
+  > mkdir geant4.10.2-build
+  > mkdir geant4.10.2-install
 
 Configure Geant4 using CMake ::
 
-  > cd geant4.10.04-build
-  > cmake ../geant4.10.04
+  > cd geant4.10.2-build
+  > cmake ../geant4.10.2
 
 At this point it's useful to define the installation directory for Geant4 by
 modifying the CMake configuration as generally described in
@@ -318,7 +318,7 @@ in a colder that requires ``sudo`` permissions such as ``/usr/local/``.
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM as this is required for the physics models of Geant4.  This can be done using ::
 
-  > source path/to/geant4.10.04-install/bin/geant4.sh
+  > source path/to/geant4.10.2-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
@@ -406,3 +406,5 @@ please contact us (see :ref:`support-section`).
 .. _Geant4: http://geant4.cern.ch/
 .. _Macports: http://www.macports.org/
 .. _ROOT: http://root.cern.ch/
+
+.. _`required packages`: `Requirements`_
