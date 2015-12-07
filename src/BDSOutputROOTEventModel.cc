@@ -1,6 +1,6 @@
 #include "BDSOutputROOTEventModel.hh"
 
-ClassImp(BDSOutputROOTEventModel);
+ClassImp(BDSOutputROOTEventModel)
 
 BDSOutputROOTEventModel::BDSOutputROOTEventModel() {
 }
