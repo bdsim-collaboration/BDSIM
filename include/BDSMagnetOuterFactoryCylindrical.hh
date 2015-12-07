@@ -43,6 +43,8 @@ public:
 						G4double     containerDiameter,     // full width to make AccComp contianer
 						G4double     containerLength,       // full length to make AccComp container
 						G4double     angle,                 // full bend angle [rad]
+						G4double     e1,
+						G4double     e2,
 						G4Material*  outerMaterial = nullptr// material for outer volume
 						);
   
@@ -140,6 +142,15 @@ private:
 			       BDSBeamPipe* beamPipe,              // beampipe
 			       G4double     magnetContainerLength, // magnet object container full length
 			       G4double     boxSize);              // full width
+
+  void CreateCylindricalSolidsAngled(G4String     name,                  // name
+			       G4double         length,                // full length
+			       BDSBeamPipe*     beamPipe,              // beampipe
+			       G4double         magnetContainerLength, // magnet object container full length
+			       G4double         boxSize,               // full width
+                               G4ThreeVector    inputface,             // Normal vector (for poleface implementation)
+                               G4ThreeVector    outputface);           // Normal vector (for poleface implementation)
+
 
   /// Only the solids are unique, once we have those, the logical volumes and placement in the
   /// container are the same.  Group all this functionality together

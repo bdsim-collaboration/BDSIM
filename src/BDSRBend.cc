@@ -50,9 +50,6 @@ void BDSRBend::CalculateLengths(G4double aLength)
   // orientation of shifts - depends on angle - calculations use absolute value of angle for safety
   G4int orientation = BDS::CalculateOrientation(angle);
   
-  e1=0; // Dummy line to remove compile warnings.
-  e2=0; // Dummy line to rmeove compile warnings.
-  
   // straightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
   // into the previous volume / outside the marker volume.  for zero angle, this is 0
@@ -147,7 +144,7 @@ void BDSRBend::BuildOuter()
   
   outer = theFactory->CreateRectangularBend(geometryType, name, magFieldLength, beampipe,
 					    outerDiameter, containerDiameter, chordLength,
-					    angle, outerMaterial);
+					    angle, e1, e2, outerMaterial);
 
   if (outer)
     {
