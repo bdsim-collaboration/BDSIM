@@ -17,7 +17,7 @@ class BDSOutputBase
 public: 
   BDSOutputBase(); // default constructor
   //  BDSOutput(BDSOutputFormat format);
-  virtual ~BDSOutputBase(){};
+  virtual ~BDSOutputBase() {};
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
@@ -38,8 +38,7 @@ public:
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) = 0;
   
   /// write primary hit
-  virtual void WritePrimary(G4String samplerName, 
-			    G4double E,
+  virtual void WritePrimary(G4double E,
 			    G4double x0,
 			    G4double y0,
 			    G4double z0,
@@ -55,6 +54,9 @@ public:
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
   
+  /// write a complete event
+  virtual void FillEvent() = 0;
+
   /// write and close and open new file
   virtual void Commit()=0;
   

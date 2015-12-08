@@ -78,6 +78,10 @@ public:
 
   /// Update the extents of this object with those of another object
   void InheritExtents(BDSGeometryComponent* anotherComponent);
+
+  /// Register another geometry component as belonging to this one. This component will
+  /// then own and delete it as necessary.
+  void RegisterDaughter(BDSGeometryComponent* anotherComponent);
   
   /// Register a solid as belonging to this geometry component, which then becomes responsible
   /// for it. Note, the container solid given in the constructor is automatically registered.
@@ -136,6 +140,9 @@ public:
   /// from factories are made to belong to an object.
   void InheritObjects(BDSGeometryComponent* component);
 
+  /// Access all daughter components
+  std::vector<BDSGeometryComponent*> GetAllDaughters() const;
+  
   /// Access all solids belonging to this component
   std::vector<G4VSolid*>          GetAllSolids() const;
 
@@ -165,6 +172,9 @@ protected:
   std::pair<G4double, G4double> extentY;
   std::pair<G4double, G4double> extentZ;
 
+  /// registry of all daughter geometry components
+  std::vector<BDSGeometryComponent*> allDaughters;
+  
   /// registry of all solids belonging to this component
   std::vector<G4VSolid*> allSolids;
   
@@ -240,14 +250,11 @@ inline  void BDSGeometryComponent::SetExtentY(std::pair<G4double, G4double> exte
 inline  void BDSGeometryComponent::SetExtentZ(std::pair<G4double, G4double> extentZIn)
 {extentZ = extentZIn;}
 
+inline std::vector<BDSGeometryComponent*> BDSGeometryComponent::GetAllDaughters() const
+{return allDaughters;}
+
 inline std::vector<G4VSolid*> BDSGeometryComponent::GetAllSolids() const
 {return allSolids;}
-
-inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes() const
-{return allLogicalVolumes;}
-
-inline std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
-{return allSensitiveVolumes;}
 
 inline std::vector<G4VPhysicalVolume*> BDSGeometryComponent::GetAllPhysicalVolumes() const
 {return allPhysicalVolumes;}

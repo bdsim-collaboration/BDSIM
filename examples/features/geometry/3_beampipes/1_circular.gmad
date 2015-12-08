@@ -1,27 +1,12 @@
-d1: drift, l=1*m;
+d1: drift, l=0.2*m;
+sb1: sbend, l=0.3*m, angle=0.1;
+
 endoftheline: marker;
 
-l1: line = (d1, endoftheline);
+l1: line = (d1, sb1, d1, endoftheline);
 
 use, period = l1;
 
 sample, range=endoftheline;
 
-option, ngenerate=1,
-!	physicsList="QGSP_BERT",
-!	physicsList="hadronic_standard",
-	physicsList="em_standard",
-	beampipeRadius=5.0*cm,
-	beampipeThickness=5*cm,
-	outerDiameter=2.0*m,
-	defaultRangeCut=1*cm,	
-	prodCutPositrons=1*cm,
-	prodCutElectrons=1*cm,
-	prodCutPhotons=1*cm;
-
-beam, particle="proton",
-      energy=10.0*GeV,
-      distrType="reference",
-      ngenerate=1,
-      X0=0.0,
-      Y0=0.0;
+include options.gmad

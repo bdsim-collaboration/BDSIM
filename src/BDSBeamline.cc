@@ -1,6 +1,7 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include "BDSDebug.hh"
 #include "BDSAcceleratorComponent.hh"
@@ -11,6 +12,7 @@
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
 
+#include <algorithm>
 #include <iterator>
 #include <ostream>
 #include <utility>  // for std::pair
@@ -80,23 +82,33 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
 {
+  std::vector<BDSBeamlineElement*> addedComponents;
+  BDSBeamlineElement* element = nullptr;
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset) {tiltOffset  = new BDSTiltOffset();}
   
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	{AddSingleComponent(*i, tiltOffset);}
+	{
+	  element = AddSingleComponent(*i, tiltOffset);
+	  if (element) addedComponents.push_back(element);
+	}
     }
   else
-    {AddSingleComponent(component, tiltOffset);}
+    {
+      element = AddSingleComponent(component, tiltOffset);
+      if (element) addedComponents.push_back(element);
+    }
   // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;
+  
+  return addedComponents;
 }
 
-void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -110,7 +122,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   if (BDSTransform3D* transform = dynamic_cast<BDSTransform3D*>(component))
     {
       ApplyTransform3D(transform);
-      return;
+      return nullptr;
     }
 
   // if it's not a transform3d instance, continue as normal
@@ -124,17 +136,21 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4ThreeVector offset   = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
   G4ThreeVector eP       = component->GetExtentPositive() + offset;
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
+  G4ThreeVector placementOffset   = component->GetPlacementOffset();
+  G4bool hasFinitePlacementOffset = BDS::IsFinite(placementOffset);
   
 #ifdef BDSDEBUG
-  G4cout << "chord length         " << length      << " mm"         << G4endl;
-  G4cout << "angle                " << angle       << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY " << *tiltOffset << " rad mm mm " << G4endl;
-  G4cout << "has finite length    " << hasFiniteLength              << G4endl;
-  G4cout << "has finite angle     " << hasFiniteAngle               << G4endl;
-  G4cout << "has finite tilt      " << hasFiniteTilt                << G4endl;
-  G4cout << "has finite offset    " << hasFiniteOffset              << G4endl;
-  G4cout << "extent positive      " << eP                           << G4endl;
-  G4cout << "extent negative      " << eN                           << G4endl;
+  G4cout << "chord length                " << length      << " mm"         << G4endl;
+  G4cout << "angle                       " << angle       << " rad"        << G4endl;
+  G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;
+  G4cout << "has finite length           " << hasFiniteLength              << G4endl;
+  G4cout << "has finite angle            " << hasFiniteAngle               << G4endl;
+  G4cout << "has finite tilt             " << hasFiniteTilt                << G4endl;
+  G4cout << "has finite offset           " << hasFiniteOffset              << G4endl;
+  G4cout << "extent positive             " << eP                           << G4endl;
+  G4cout << "extent negative             " << eN                           << G4endl;
+  G4cout << "object placement offset     " << placementOffset              << G4endl;
+  G4cout << "has finite placement offset " << hasFinitePlacementOffset     << G4endl;
 #endif
   
   // Calculate the reference placement rotation
@@ -171,7 +187,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
-  if (hasFiniteTilt && !hasFiniteAngle)
+  if (hasFiniteTilt  && !hasFiniteAngle)
     {
       G4double tilt = tiltOffset->GetTilt();
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
@@ -232,9 +248,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   
   // add the placement offset
   G4ThreeVector positionStart, positionMiddle, positionEnd;
-  if (hasFiniteOffset)
+  if (hasFiniteOffset || hasFinitePlacementOffset)
     {
-      if (hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
+      if (hasFiniteOffset && hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
 	{
 	  G4String name = component->GetName();
 	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
@@ -243,7 +259,8 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 	}
       // note the displacement is applied in the accelerator x and y frame so use
       // the reference rotation rather than the one with tilt already applied
-      G4ThreeVector displacement   = offset.transform(*referenceRotationMiddle);
+      G4ThreeVector total = offset + placementOffset;
+      G4ThreeVector displacement   = total.transform(*referenceRotationMiddle);
       positionStart  = referencePositionStart  + displacement;
       positionMiddle = referencePositionMiddle + displacement;
       positionEnd    = referencePositionEnd    + displacement;
@@ -317,6 +334,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   // append it to the beam line
   beamline.push_back(element);
 
+  // register the s position at the end for curvlinear transform
+  sEnd.push_back(sPositionEnd);
+
   // register it by name
   RegisterElement(element);
 
@@ -324,6 +344,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
   G4cout << *element;
   G4cout << __METHOD_NAME__ << "component added" << G4endl;
 #endif
+  return element;
 }
 
 void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
@@ -426,10 +447,77 @@ G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const
 {
   G4ThreeVector mEA;
   for (int i=0; i<3; i++)
-    {
-      mEA[i] = std::max(std::abs(maximumExtentPositive[i]), std::abs(maximumExtentNegative[i]));
-    }
+    {mEA[i] = std::max(std::abs(maximumExtentPositive[i]), std::abs(maximumExtentNegative[i]));}
   return mEA;
+}
+
+G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G4double y)
+{
+  // check if s is in the range of the beamline
+  if (s > totalArcLength)
+    {
+      G4cout << __METHOD_NAME__
+	     << "s position \"" << s << "\" is beyond length of accelerator" << G4endl;
+      G4cout << "Returning 0 transform" << G4endl;
+      return G4Transform3D();
+    }
+
+  // find element that s position belongs to
+  auto lower = std::lower_bound(sEnd.begin(), sEnd.end(), s);
+  G4int index = lower - sEnd.begin(); // subtract iterators to get index
+  BDSBeamlineElement* element = beamline[index];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << "S position requested: " << s     << G4endl;
+  G4cout << "Index:                " << index << G4endl;
+  G4cout << "Element: " << *element << G4endl;
+#endif
+
+  G4double dx = 0;
+  // G4double dy = 0; // currently magnets can only bend in local x so avoid extra calculation
+
+  // difference from centre of element to point in local coords)
+  // difference in s from centre, normalised to arcLengh and scaled to chordLength
+  // as s is really arc length but we must place effectively in chord length coordinates
+  BDSAcceleratorComponent* component = element->GetAcceleratorComponent();
+  G4double arcLength   = component->GetArcLength();
+  G4double chordLength = component->GetChordLength();
+  G4double dS          = s - element->GetSPositionMiddle();
+  G4double localZ      = dS * (chordLength / arcLength);
+  G4double angle       = component->GetAngle();
+  G4RotationMatrix rotation; // will be interpolated rotation
+  G4RotationMatrix* rotMiddle = element->GetReferenceRotationMiddle();
+  // find offset of point from centre of volume - 2 methods
+  if (BDS::IsFinite(angle))
+    {
+      // finite bend angle - interpolate position and angle along arc due to change in angle
+      // local unit z at start of element
+      G4ThreeVector localUnitY = G4ThreeVector(0,1,0);
+      localUnitY.transform(*(element->GetReferenceRotationStart()));
+      // linearly interpolate angle -> angle * (s from beginning into component)/arcLength
+      G4double partialAngle = angle * std::fabs(( (0.5*arcLength + dS) / arcLength));
+      rotation = G4RotationMatrix(*(element->GetReferenceRotationStart())); // start rotation
+      rotation.rotate(partialAngle, localUnitY); // rotate it by the partial angle about local Y
+      dx = localZ*tan(partialAngle); // calculate difference of arc from chord at that point
+    }
+  else
+    {rotation = G4RotationMatrix(*rotMiddle);}
+
+  // note, magnets only bend in local x so no need to add dy as always 0
+  G4ThreeVector dLocal    = G4ThreeVector(x + dx, y /*+ dy*/, localZ);
+#ifdef BDSDEBUG
+  G4cout << "Local offset from middle: " << dLocal << G4endl;
+#endif
+  // note, rotation middle is also the same as the coordinate frame of the g4 solid
+  G4ThreeVector globalPos = element->GetReferencePositionMiddle() + dLocal.transform(*rotMiddle);
+  // construct transform3d from global position and rotation matrix
+  G4Transform3D result    = G4Transform3D(rotation, globalPos);
+  
+#ifdef BDSDEBUG
+  G4cout << "Global offset from middle: " << dLocal    << G4endl;
+  G4cout << "Resultant global position: " << globalPos << G4endl;
+#endif
+  return result;
 }
 
 void BDSBeamline::RegisterElement(BDSBeamlineElement* element)

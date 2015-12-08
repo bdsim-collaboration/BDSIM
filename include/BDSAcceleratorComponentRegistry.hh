@@ -1,22 +1,24 @@
 #ifndef BDSACCELERATORCOMPONENTREGISTRY_H
 #define BDSACCELERATORCOMPONENTREGISTRY_H
 
-/**
- * @brief A registry of constructed BDSAcceleratorComponent instances that
- * can be searched. Uses an std::map rather than unordered map as although 
- * slower to access (less often and only at construction), a map is faster 
- * for iterating than an unordered map, which will be required to apply 
- * wrapper physics processes - relatively common.
- * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
- */
-
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
 
 #include <iterator>
 #include <map>
+
+/**
+ * @brief A registry of constructed BDSAcceleratorComponent instances that
+ * can be searched. 
+ * 
+ * Uses an std::map rather than unordered map as although 
+ * slower to access (less often and only at construction), a map is faster 
+ * for iterating than an unordered map, which will be required to apply 
+ * wrapper physics processes - relatively common.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
 
 class BDSAcceleratorComponentRegistry
 {
@@ -53,7 +55,7 @@ public:
 
   /// Access an already constructed component - will return null if no such component found.
   /// This is safe as this registry is primarily used by BDSComponentFactory which can return
-  /// NULL to BDSDetectorConstruction safely if an invalid component is requested.
+  /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.
   BDSAcceleratorComponent* GetComponent(G4String name);
 
   typedef RegistryMap::iterator       iterator;

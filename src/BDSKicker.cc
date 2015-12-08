@@ -1,36 +1,39 @@
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSKicker.hh"
 
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
+#include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
+#include "BDSUtilities.hh"
 
-#include "G4FieldManager.hh"
+#include "G4ClassicalRK4.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
+#include "G4UniformMagField.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
+
 BDSKicker::BDSKicker(G4String            name,
 		     G4double            length,
-		     G4double            bField,
-		     G4double            bGrad,
-		     G4double            angle,
-		     G4bool              verticalKicker,
+		     G4double            bFieldIn,
+		     G4double            kickAngle,
+		     BDSMagnetType       type,
 		     BDSBeamPipeInfo*    beamPipeInfo,
 		     BDSMagnetOuterInfo* magnetOuterInfo):
-  BDSMagnet(BDSMagnetType::hkicker, name, length,
+  BDSMagnet(type, name, length,
 	    beamPipeInfo, magnetOuterInfo),
-  itsBField(bField),
-  itsBGrad(bGrad),
-  itsKickAngle(angle),
-  isVerticalKicker(verticalKicker)
+  bField(bFieldIn),
+  kickAngle(kickAngle)
 {
-  if (verticalKicker)
-    {itsType = BDSMagnetType::vkicker;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << type.ToString() << ", angle: " << kickAngle << G4endl;
+#endif
 }
 
 void BDSKicker::Build()
@@ -61,79 +64,33 @@ void BDSKicker::Build()
     }
 }
 
-void BDSKicker::BuildBeampipe()
-{
-  // have to distinguish if it's a vertical or horizontal kicker
-  // but without rotating the aperture model - ie input parameters aper1
-  // still represents horizontal
-
-  G4double kickerAper1, kickerAper2;
-  if (isVerticalKicker)
-    {
-      kickerAper1 = beamPipeInfo->aper2; //vertical is rotated in the end during placement
-      kickerAper2 = beamPipeInfo->aper1; //so build aperture otherway - sway 1,2 - x,y
-    }
-  else
-    {
-      kickerAper1 = beamPipeInfo->aper1;
-      kickerAper2 = beamPipeInfo->aper2;
-    }
-
-  BDSBeamPipeFactory* fac = BDSBeamPipeFactory::Instance();
-  beampipe = fac->CreateBeamPipe(beamPipeInfo->beamPipeType,
-				 name,
-				 chordLength,
-				 kickerAper1,
-				 kickerAper2,
-				 beamPipeInfo->aper3,
-				 beamPipeInfo->aper4,
-				 beamPipeInfo->vacuumMaterial,
-				 beamPipeInfo->beamPipeThickness,
-				 beamPipeInfo->beamPipeMaterial);
-
-  //manually do BeamPipeCommonTasks here as rotation in placement can be different
-
-  // SET FIELD
-  beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-
-  // if it's a vertical kicker, rotate the beam pipe by 90 degrees
-  // this also rotates the dipole stepper in the vacuum volume
-  G4RotationMatrix* kickerRotation = new G4RotationMatrix();
-  if (isVerticalKicker)
-    {kickerRotation->rotateZ(CLHEP::pi*0.5);}
-  RegisterRotationMatrix(kickerRotation);
-
-  // place beampipe
-  G4PVPlacement* pipePV = new G4PVPlacement(kickerRotation,                        // rotation
-					    (G4ThreeVector)0,                      // at (0,0,0)
-					    beampipe->GetContainerLogicalVolume(), // its logical volume
-					    name + "_beampipe_pv",	          // its name
-					    containerLogicalVolume,                // its mother  volume
-					    false,                                 // no boolean operation
-					    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());// copy number
-
-  RegisterPhysicalVolume(pipePV);
-  
-  // record extent of geometry
-  if (isVerticalKicker){
-    SetExtentX(beampipe->GetExtentY());
-    SetExtentY(beampipe->GetExtentX());
-  }
-  else {
-    SetExtentX(beampipe->GetExtentX());
-    SetExtentY(beampipe->GetExtentY());
-  }
-  SetExtentZ(beampipe->GetExtentZ());
-} 
-
 void BDSKicker::BuildBPFieldAndStepper()
 {
-  // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,itsBField,0.);
-  itsMagField = new BDSSbendMagField(Bfield,chordLength,itsKickAngle);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
-  BDSDipoleStepper* stepper = new BDSDipoleStepper(itsEqRhs);
-  stepper->SetBField(itsBField);
-  stepper->SetBGrad(itsBGrad);
-  itsStepper = stepper; // assigned to base class pointer
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // don't build field if angle is 0 as stepper intolerant of this and wast of memory and cpu
+  if (BDS::IsFinite(kickAngle))
+    {
+      // set up the magnetic field and stepper
+      // set magnetic field direction dependingon whether it's a vertical kicker or not
+      G4ThreeVector vectorBField;
+      if (magnetType == BDSMagnetType::vkicker)
+	{vectorBField = G4ThreeVector(-bField, 0, 0);} // vertical kicker
+      else
+	{vectorBField = G4ThreeVector(0, bField, 0);} // must be horizontal kicker
+
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Name: " << name << ", type: " << magnetType.ToString() << G4endl;
+      G4cout << __METHOD_NAME__ << "Kick angle: " << kickAngle << " B: " << vectorBField << G4endl;
+#endif
+      
+      itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
+      itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
+      itsStepper  = new G4ClassicalRK4(itsEqRhs);
+    }
+#ifdef BDSDEBUG
+  else
+    {G4cout << __METHOD_NAME__ << "kick angle isn't finite - not building field" << G4endl;}
+#endif
 }

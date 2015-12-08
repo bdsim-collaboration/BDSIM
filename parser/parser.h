@@ -1,23 +1,6 @@
-/*
- *  parser.h
- *
- *    GMAD parser functions
- *    Ilya Agapov 2005-2006
- *    bdsim v.0.3
- */
-
 #ifndef __PARSER_H
 #define __PARSER_H
 
-#include "sym_table.h"
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <cmath>
-#include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -27,584 +10,233 @@
 #include "element.h"
 #include "fastlist.h"
 #include "elementtype.h"
-#include "gmad.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
+#include "region.h"
 #include "tunnel.h"
 
+/// parser error message, defined in parser.y
 int yyerror(const char *);
-
-extern FILE* yyin;
+/// declaration needed by bison
 extern int yylex();
 
 namespace GMAD {
-
-extern const int ECHO_GRAMMAR;
-
-const int MAX_EXPAND_ITERATIONS = 50;
-
-std::list<double> _tmparray;  // for reading of arrays
-std::list<std::string> _tmpstring;
-
-/// globals
-struct Parameters params;
-struct Options options;
-//struct Element element;
-struct Tunnel tunnel;
-struct CavityModel cavitymodel;
-class PhysicsBiasing xsecbias;
- 
-// list of all encountered elements
-FastList<Element> element_list;
-
-// temporary list
-std::list<struct Element> tmp_list;
-
-FastList<Element> beamline_list;
-std::list<struct Element>  material_list;
-std::list<struct Element>  atom_list;
-std::vector<struct Tunnel> tunnel_list;
-std::vector<struct CavityModel> cavitymodel_list;
-FastList<PhysicsBiasing> xsecbias_list;
-
-std::string current_line;
-std::string current_start;
-std::string current_end;
-
-//struct symtab *symtab; 
-std::map<std::string, struct symtab*> symtab_map;
-
-extern struct symtab * symlook(std::string s);
-
-// ***********************
-// functions declaration *
-// ***********************
-
-void quit();
-/// method that transfers parameters to element properties
-int write_table(const struct Parameters& pars,std::string name, ElementType type, std::list<struct Element> *lst=nullptr);
-int expand_line(std::string name, std::string start, std::string end);
-/// insert a sampler into beamline_list
-void add_sampler(std::string name, std::string before, int before_count);
-/// insert a cylindrical sampler into beamline_list
-void add_csampler(std::string name, std::string before, int before_count, double length, double rad);
-/// insert a beam dumper into beamline_list
-void add_dump(std::string name, std::string before, int before_count);
-/// insert tunnel
-void add_tunnel(Tunnel& tunnel);
-/// insert cavitymodel
-void add_cavitymodel(CavityModel& cavitymodel);
-/// insert xsecbias
-void add_xsecbias(PhysicsBiasing& xsecbias);
-double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name);
-/// add element to temporary element sequence tmp_list
-void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
-
-// parser functions
-int add_func(std::string name, double (*func)(double));
-int add_var(std::string name, double value, int is_reserved = 0);
-
-// **************************
-// functions implementation *
-// **************************
-
-void quit()
-{
-  printf("parsing complete...\n");
-  exit(0);
-}
-
-int write_table(const struct Parameters& params,std::string name, ElementType type, std::list<struct Element> *lst)
-{
-  if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << name << " : " << type << std::endl;
-#ifdef BDSDEBUG 
-  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s, lset = %d\n", params.k1, params.k2, params.k3, typestr(type).c_str(), params.lset);
-#endif
-
-  struct Element e;
+  class Array;
+  class Symtab;
+  /**
+   * @brief Parser class
+   * 
+   * Parser class that holds all objects and relevant methods
+   *
+   * Singleton pattern
+   *
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   */
   
-  e.type = type;
-  // common parameters for all elements
-  e.name = name;
-  e.lst = nullptr;
-  e.l = params.l;
+  class Parser
+  {
+  public:
+    /// No default constructor
+    Parser() = delete;
+    /// Constructor method
+    static Parser* Instance(std::string filename);
+    /// Access method
+    static Parser* Instance();
+    /// Destructor
+    virtual ~Parser();
 
-  //new aperture model
-  e.aper1 = params.aper1;
-  e.aper2 = params.aper2;
-  e.aper3 = params.aper3;
-  e.aper4 = params.aper4;
-  e.apertureType = params.apertureType;
-  e.beampipeMaterial = params.beampipeMaterial;
+  protected:
+    /// Constructor from filename
+    Parser(std::string filename);
+  private:
+    /// Instance
+    static Parser* instance;
+    /// Initialisation of parser functions and constants
+    void Initialise();
+    /// Parse the input file and construct beamline_list and options 
+    void ParseFile(FILE *f);
 
-  //magnet geometry
-  e.outerDiameter = params.outerDiameter;
-  e.outerMaterial = params.outerMaterial;
-  e.magnetGeometryType = params.magnetGeometryType;
-  
-  e.xsize = params.xsize;
-  e.ysize = params.ysize;
-  e.material = params.material;  
-  e.precisionRegion = params.precisionRegion;
+  public:
+    // ***********************
+    // Public Parser methods *
+    // ***********************
 
-  e.offsetX = params.offsetX;
-  e.offsetY = params.offsetY;
-  // end of common parameters
+    /// Exit method
+    void quit();
+    /// Method that transfers parameters to element properties
+    void write_table(std::string* name, ElementType type, bool isLine=false);
+    /// Remove sublines from beamline, expand all into one LINE
+    void expand_line(std::string name, std::string start, std::string end);
+    /// insert a sampler into beamline_list
+    void add_sampler(std::string name, int before_count, ElementType type);
+    /// insert a cylindrical sampler into beamline_list
+    void add_csampler(std::string name, int before_count, ElementType type);
+    /// insert a beam dumper into beamline_list
+    void add_dump(std::string name, int before_count, ElementType type);
+    /// insert region
+    void add_region();
+    /// insert cavity model
+    void add_cavitymodel();
+    /// insert tunnel
+    void add_tunnel();
+    /// insert cross section bias
+    void add_xsecbias();
+    /// access property of Element with element_name
+    double property_lookup(std::string element_name, std::string property_name);
+    /// add element to temporary element sequence tmp_list
+    void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
+    /// copy properties from Element into params, returns element type as integer, returs _NONE if not found
+    int copy_element_to_params(std::string elementName);
 
-  // specific parameters
-  // JS: perhaps add a printout warning in case it is not used doesn't match the element; how to do this systematically?
+    /// create new parser symbol
+    Symtab * symcreate(std::string s);
 
-  // for transform3ds, lasers and for tracker
-  e.xdir = params.xdir;
-  e.ydir = params.ydir;
-  e.zdir = params.zdir;
+    /// look up parser symbol
+    Symtab * symlook(std::string s);
 
-  e.bias = params.bias;
-  
-  // BLM
-  if(params.blmLocZset)
-    e.blmLocZ = params.blmLocZ;
-  if(params.blmLocThetaset)
-    e.blmLocTheta = params.blmLocTheta;
-
-  // Drift
-  if(params.phiAngleInset)
-    e.phiAngleIn = params.phiAngleIn;
-  if(params.phiAngleOutset)
-    e.phiAngleOut = params.phiAngleOut;
-
-  // Drift, Drift
-  if(params.beampipeThicknessset)
-    e.beampipeThickness = params.beampipeThickness;
-  // RF
-  e.gradient = params.gradient;
-  e.cavityModel = params.cavityModel;
-  // SBend, RBend, (Awake)Screen
-  e.angle = params.angle;
-  // SBend, RBend, HKick, VKick, Quad
-  e.k1 = params.k1;
-  // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
-  e.B = params.B;
-  // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
-  if(params.tiltset) e.tilt = params.tilt;
-  // Quad
-  e.spec = params.spec;
-  // Sext
-  if(params.k2set) {
-    if (type==ElementType::_SEXTUPOLE) e.k2 = params.k2;
-    else {
-      std::cout << "Warning: k2 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Octupole
-  if(params.k3set) {
-    if (type==ElementType::_OCTUPOLE) e.k3 = params.k3;
-    else {
-      std::cout << "Warning: k3 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Decapole
-  if(params.k4set) {
-    if (type==ElementType::_DECAPOLE) e.k4 = params.k4;
-    else {
-      std::cout << "Warning: k4 will not be set for element \"" << name << "\" of type " << type << std::endl;
-    }
-  }
-  // Multipole
-  if(params.knlset)
-    e.knl = params.knl;
-  if(params.kslset)
-    e.ksl = params.ksl;
-  // Solenoid
-  e.ks = params.ks;
-  // Laser
-  e.waveLength = params.waveLength;
-  // Element, Tunnel
-  e.geometryFile = params.geometry;
-  // Element
-  e.bmapFile = params.bmap;
-  if(params.bmapZOffsetset)
-    e.bmapZOffset = params.bmapZOffset;
-  // Transform3D
-  e.theta = params.theta;
-  e.phi = params.phi;
-  e.psi = params.psi;
-  // (Awake) Screen
-  e.tscint = params.tscint;
-  e.scintmaterial = params.scintmaterial;
-  // Screen
-  e.airmaterial = params.airmaterial;
-  // AwakeScreen
-  e.twindow = params.twindow;
-  e.windowmaterial = params.windowmaterial;
-
-  // overwriting of other parameters or specific printing
-  switch(type) {
-
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    e.lst = lst;
-    break;
-
-  case ElementType::_MATERIAL:
-    e.A = params.A;
-    e.Z = params.Z;
-    e.density = params.density;
-    e.temper = params.temper;
-    e.pressure = params.pressure;
-    e.state = params.state;
-    e.components = params.components;
-    e.componentsWeights = params.componentsWeights;
-    e.componentsFractions = params.componentsFractions;
-    material_list.push_back(e);
-    return 0;
-
-  case ElementType::_ATOM:
-    e.A = params.A;
-    e.Z = params.Z;
-    e.symbol = params.symbol;
-    atom_list.push_back(e);
-    return 0;
-
-  case ElementType::_AWAKESCREEN:
-    std::cout << "scintmaterial: " << e.scintmaterial << " " <<  params.scintmaterial << std::endl;
-    std::cout << "windowmaterial: " << e.windowmaterial << " " <<  params.windowmaterial << std::endl;
-    break;
-
-  default:
-    break;
-  }
-  // insert element with uniqueness requirement
-  element_list.push_back(e,true);
-
-  return 0;
-}
-
-int expand_line(std::string name, std::string start, std::string end)
-{
-  std::list<struct Element>::const_iterator iterEnd = element_list.end();
-  std::list<struct Element>::iterator it;
-  
-  struct Element e;
-  it = element_list.find(name);
-
-  if (it==iterEnd) {
-    std::cout << "line '" << name << "' not found" << std::endl;
-    return 1;
-  }
-  if((*it).type != ElementType::_LINE && (*it).type != ElementType::_REV_LINE ) {
-    std::cout << "'" << name << "' is not a line" << std::endl;
-  }
-
-  // delete the previous beamline
-  
-  beamline_list.clear();
-  
-  // expand the desired beamline
-  
-  e.type = (*it).type;
-  e.name = name;
-  e.l = 0;
-  e.lst = nullptr;
-  
-  beamline_list.push_back(e);
-
-#ifdef BDSDEBUG 
-  std::cout << "expanding line " << name << ", range = " << start << end << std::endl;
-#endif
-  if(!(*it).lst) return 0; //list empty
+    ///@{ Add value to front of temporary list
+    void Store(double value);
+    void Store(std::string name);
+    ///@}
+    ///@{ Fill array object from temporary list and clear temporary list
+    void FillArray(Array*);
+    void FillString(Array*);
+    ///@}
+    /// Reset parameters
+    void ClearParams();
+    /// Set parameter value
+    template <typename T>
+      void SetParameterValue(std::string property, T value);
+    /// Set region value
+    template <typename T>
+      void SetRegionValue(std::string property, T value);
+    /// Set tunnel value
+    template <typename T>
+      void SetTunnelValue(std::string property, T value);
+    /// Set physics biasing value
+    template <typename T>
+      void SetPhysicsBiasValue(std::string property, T value);
+    /// Set options value
+    template <typename T>
+      void SetOptionsValue(std::string property, T value);
+    /// Set options value
+    template <typename T>
+      void SetCavityModelValue(std::string property, T value);
+    /// Overwrite element with current parameters
+    void OverwriteElement(std::string elementName);
+    /// Add variable memory to variable list for memory management
+    void AddVariable(std::string* name);
+    ///@{ Print methods
+    void PrintBeamline()const;
+    void PrintElements()const;
+    void PrintOptions()const;
+    ///@}
     
-  // first expand the whole range 
-  std::list<struct Element>::iterator sit = (*it).lst->begin();
-  std::list<struct Element>::iterator eit = (*it).lst->end();
-  
-  // copy the list into the resulting list
-  switch((*it).type){
-  case ElementType::_LINE:
-    beamline_list.insert(beamline_list.end(),sit,eit);
-    break;
-  case ElementType::_REV_LINE:
-    beamline_list.insert(beamline_list.end(),(*it).lst->rbegin(),(*it).lst->rend());
-    break;
-  default:
-    beamline_list.insert(beamline_list.end(),sit,eit);
-  }
-  bool is_expanded = false;
-  
-  // insert material entries.
-  // TODO:::
-  
-  // parse starting from the second element until the list is expanded
-  int iteration = 0;
-  while(!is_expanded)
+    ///@{ Name of beamline
+    std::string current_line;
+    std::string current_start;
+    std::string current_end;
+    ///@}
+    /// Beamline Access (for pybdsim)
+    const FastList<Element>& GetBeamline()const;
+    
+  private:
+    // *****************
+    // Private methods *
+    // *****************
+    
+    /// Add element to beamline
+    void add_element(Element& e, std::string before, int before_count, ElementType type);
+    /// Add function to parser
+    int add_func(std::string name, double (*func)(double));
+    /// Add reserved variable to parser
+    int add_var(std::string name, double value, int is_reserved = 0);
+
+    // *****************
+    // Private members *
+    // *****************
+    /// maximum number of nested lines
+    const int MAX_EXPAND_ITERATIONS = 50;
+    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
+
+    ///@{ temporary list for reading of arrays in parser
+    std::list<double> tmparray;
+    std::list<std::string> tmpstring;
+    ///@}
+
+    // protected implementation (for inheritance to BDSParser - hackish)
+  protected:
+    /// Parameters to copy to Element
+    Parameters params;
+    /// General options
+    Options options;
+    /// Region instance;
+    Region region;
+    /// Tunnel instance
+    Tunnel tunnel;
+    /// PhysicsBiasing instance 
+    PhysicsBiasing xsecbias;
+    /// RF Cavity model instance
+    CavityModel cavitymodel;
+    
+    /// List of all encountered elements
+    FastList<Element> element_list;
+    
+    /// Temporary list
+    std::list<Element> tmp_list;
+    
+    /// Beamline
+    FastList<Element>   beamline_list;
+    /// List of parser defined materials
+    std::list<Element>  material_list;
+    /// List of parser defined atoms
+    std::list<Element>  atom_list;
+    /// List of parser defined regions
+    std::vector<Region> region_list;
+    /// List of parser defined tunnels
+    std::vector<Tunnel> tunnel_list;
+    /// List of parser defined cross section biasing objects
+    FastList<PhysicsBiasing> xsecbias_list;
+    /// List of parser defined rf cavity models
+    std::vector<CavityModel> cavitymodel_list;
+    
+    /// Parser symbol map
+    std::map<std::string, Symtab*> symtab_map;
+    /// Variable vector for memory storage
+    std::vector<std::string*> var_list;
+  };
+
+  template <typename T>
+    void Parser::SetParameterValue(std::string property, T value)
     {
-      is_expanded = true;
-      for(it = ++beamline_list.begin();it!=beamline_list.end();it++ )
-	{
-#ifdef BDSDEBUG 
-	  std::cout << (*it).name << " , " << (*it).type << std::endl;
-#endif
-	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)  // list - expand further	  
-	    {
-	      is_expanded = false;
-	      // lookup the line in main list
-	      std::list<struct Element>::iterator tmpit = element_list.find((*it).name);
-	      
-	      if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
-		
-#ifdef BDSDEBUG
-		printf("inserting sequence for %s - %s ...",(*it).name.c_str(),(*tmpit).name.c_str());
-#endif
-		if((*it).type == ElementType::_LINE)
-		  beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
-		else if((*it).type == ElementType::_REV_LINE){
-		  //iterate over list and invert any sublines contained within. SPM
-		  std::list<struct Element> tmpList;
-		  tmpList.insert(tmpList.end(),(*tmpit).lst->begin(),(*tmpit).lst->end());
-		  for(std::list<struct Element>::iterator itLineInverter = tmpList.begin();
-		      itLineInverter != tmpList.end(); itLineInverter++){
-		    if((*itLineInverter).type == ElementType::_LINE)
-		      (*itLineInverter).type = ElementType::_REV_LINE;
-		    else if ((*itLineInverter).type == ElementType::_REV_LINE)
-		      (*itLineInverter).type = ElementType::_LINE;
-		  }
-		  beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
-		}
-#ifdef BDSDEBUG
-		printf("inserted\n");
-#endif
-		
-		// delete the list pointer
-		beamline_list.erase(it--);
-		
-	      } else if ( tmpit != iterEnd ) // entry points to a scalar element type -
-		//transfer properties from the main list
-		{ 
-#ifdef BDSDEBUG 
-		  printf("keeping element...%s\n",(*it).name.c_str());
-#endif
-		  // copy properties
-		  //		  copy_properties(it,tmpit);
-		  // better use default assign operator:
-		  (*it) = (*tmpit);
-#ifdef BDSDEBUG 
-		  printf("done\n");
-#endif
-		  
-		} else  // element of undefined type
-		{
-		  std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << (*it).name << "\" has not been defined! " << std::endl;
-		  exit(1);
-		  // beamline_list.erase(it--);
-		}
-	      
-	    } else  // element - keep as it is 
-	    {
-	      // do nothing
-	    }
-	  
-	}
-      iteration++;
-      if( iteration > MAX_EXPAND_ITERATIONS )
-	{
-	  std::cerr << "Error : Line expansion of '" << name << "' seems to loop, " << std::endl
-		    << "possible recursive line definition, quitting" << std::endl;
-	  exit(1);
-	}
-    }// while
-  
-  
-  // leave only the desired range
-  //
-  // rule - from first occurence of 'start' till first 'end' coming after 'start'
-  
-  
-  if( !start.empty()) // determine the start element
+      params.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetRegionValue(std::string property, T value)
     {
-      sit = beamline_list.find(std::string(start));
-      
-      if(sit==beamline_list.end())
-	{
-	  sit = beamline_list.begin();
-	}
-      
-      if(start == "#s") sit = beamline_list.begin(); 
-      
-      beamline_list.erase(beamline_list.begin(),sit);
-      
+      region.set_value(property, value);
     }
-  
-  if( !end.empty()) // determine the end element
+  template <typename T>
+    void Parser::SetTunnelValue(std::string property, T value)
     {
-      eit = beamline_list.find(std::string(end));
-      
-      if(end == "#e") eit = beamline_list.end();
-      
-      beamline_list.erase(++eit,beamline_list.end());
+      tunnel.set_value(property, value);
     }
-  
-  
-  // insert the tunnel if present
-  
-  it = element_list.find("tunnel");
-  if(it!=iterEnd)
-    beamline_list.push_back(*it);
-  
-  return 0;
-}
-
-void add_sampler(std::string name, std::string before, int before_count)
-{
-#ifdef BDSDEBUG 
-  std::cout<<"inserting sampler before "<<before<<"["<<before_count<<"]"<<std::endl;
-#endif
-
-  struct Element e;
-  e.type = ElementType::_SAMPLER;
-  e.name = name;
-  e.lst = nullptr;
-
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
-}
-
-void add_csampler(std::string name, std::string before, int before_count, double length, double rad)
-{
-#ifdef BDSDEBUG 
-  std::cout<<"inserting csampler before "<<before<<"["<<before_count<<"]"<<std::endl;
-#endif
-
-  struct Element e;
-  e.type = ElementType::_CSAMPLER;
-  e.l = length;
-  e.r = rad;
-  e.name = name;
-  e.lst = nullptr;
-
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
-}
-
-void add_dump(std::string name, std::string before, int before_count)
-{
-#ifdef BDSDEBUG 
-  std::cout<<"inserting dump before "<<before<<"["<<before_count<<"]"<<std::endl;
-#endif
-
-  struct Element e;
-  e.type = ElementType::_DUMP;
-  e.name = name;
-  e.lst = nullptr;
-
-  std::list<struct Element>::iterator it = beamline_list.find(before,before_count);
-  if (it==beamline_list.end()) {
-    std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
-    exit(1);
-  }
-  beamline_list.insert(it,e);
-}
-
-void add_tunnel(Tunnel& tunnel)
-{
-  // copy from global
-  struct Tunnel t(tunnel);
-  // reset tunnel
-  tunnel.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  tunnel_list.push_back(t);
-}
-
-void add_cavitymodel(CavityModel& cavitymodel)
-{
-  // copy from global
-  struct CavityModel c(cavitymodel);
-  // reset cavitymodel
-  cavitymodel.clear();
-#ifdef BDSDEBUG 
-  c.print();
-#endif
-  cavitymodel_list.push_back(c);
-}
-
-void add_xsecbias(PhysicsBiasing& xsecbias)
-{
-  // copy from global
-  PhysicsBiasing b(xsecbias);
-  // reset xsecbias
-  xsecbias.clear();
-#ifdef BDSDEBUG 
-  b.print();
-#endif
-  xsecbias_list.push_back(b);
-}
- 
-double property_lookup(FastList<Element>& el_list, std::string element_name, std::string property_name)
-{
-  std::list<struct Element>::iterator it = el_list.find(element_name);
-  std::list<struct Element>::const_iterator iterEnd = el_list.end();
-
-  if(it == iterEnd) {
-    std::cerr << "parser.h> Error: unknown element \"" << element_name << "\". Returning 0." << std::endl; 
-    exit(1);
-  }
-
-  return (*it).property_lookup(property_name);
-}
-
-void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype)
-{
-#ifdef BDSDEBUG
-  std::cout << "matched sequence element, " << name;
-  if (number > 1) std::cout << " * " << number;
-  std::cout << std::endl;
-#endif
-  // add to temporary element sequence
-  struct Element e;
-  e.name = name;
-  e.type = linetype;
-  e.lst = nullptr;
-  if (pushfront) {
-    for(int i=0;i<number;i++) {
-      tmp_list.push_front(e);
+  template <typename T>
+    void Parser::SetPhysicsBiasValue(std::string property, T value)
+    {
+      xsecbias.set_value(property, value);
     }
-  }
-  else {
-    for(int i=0;i<number;i++) {
-      tmp_list.push_back(e);
+  template <typename T>
+    void Parser::SetOptionsValue(std::string property, T value)
+    {
+      options.set_value(property, value);
     }
-  }
+  template <typename T>
+    void Parser::SetCavityModelValue(std::string property, T value)
+    {
+      cavitymodel.set_value(property, value);
+    }
 }
 
-// ******************************************************
-// parser functions
-// ******************************************************
-
-
-int add_func(std::string name, double (*func)(double))
-{
-  struct symtab *sp=symlook(name);
-  sp->funcptr=func;
-  return 0;
-}
-
-int add_var(std::string name, double value, int is_reserved)
-{
-  struct symtab *sp=symlook(name);
-  sp->value=value;
-  sp->is_reserved = is_reserved;
-  return 0;
-}
-
-} // namespace
 #endif

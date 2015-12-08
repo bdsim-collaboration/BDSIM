@@ -70,7 +70,7 @@ void BDSCCDCamera::placeCavity(){
   placementVec.setX(0);
   placementVec.setY(0);
   placementVec.setZ(-_size.z()/2.0+_cavityLength/2.0);
-  new G4PVPlacement(0,
+  new G4PVPlacement(nullptr,
 		    placementVec,
 		    _cavityLog,
 		    _name+"_cavity_phys",
@@ -121,7 +121,7 @@ void BDSCCDCamera::placeObjectLens(){
   placementVec.setX(0);
   placementVec.setY(0);
   placementVec.setZ(-_cavityLength/2.0+_objectLens->centreThickness()/2.0);
-  new G4PVPlacement(0,
+  new G4PVPlacement(nullptr,
 		    placementVec,
 		    _objectLens->log(),
 		    _objectLens->name()+"_phys",
@@ -137,7 +137,7 @@ void BDSCCDCamera::placeImageLens(){
   placementVec.setX(0);
   placementVec.setY(0);
   placementVec.setZ(_cavityLength/2.0-_imageLens->centreThickness()/2.0-22.2*CLHEP::mm);
-  new G4PVPlacement(0,
+  new G4PVPlacement(nullptr,
 		    placementVec,
 		    _imageLens->log(),
 		    _imageLens->name()+"_phys",
@@ -153,7 +153,7 @@ void BDSCCDCamera::placeCCDChip(){
   placementVec.setX(0);
   placementVec.setY(0);
   placementVec.setZ(_cavityLength/2.0-_ccdChip->size().z()/2.0);
-  new G4PVPlacement(0,
+  new G4PVPlacement(nullptr,
 		    placementVec,
 		    _ccdChip->log(),
 		    _ccdChip->name()+"_phys",

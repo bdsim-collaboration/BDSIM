@@ -7,8 +7,9 @@
 
 /**
  * @brief Holder struct of all information required to
- * create the outer geometry of a magnet. This reduces 
- * the number of argument to all magnet constructors 
+ * create the outer geometry of a magnet. 
+ * 
+ * This reduces the number of argument to all magnet constructors 
  * plus aggregates common tasks in the component factory.
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>

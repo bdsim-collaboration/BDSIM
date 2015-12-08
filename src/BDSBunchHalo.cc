@@ -13,35 +13,12 @@ BDSBunchHalo::BDSBunchHalo():
   weightParameter=1.0;
 }
 
-BDSBunchHalo::BDSBunchHalo(G4double betaXIn,      G4double betaYIn, 
-			   G4double alphaXIn,     G4double alphaYIn,
-			   G4double emitXIn,      G4double emitYIn,
-			   G4double envelopeXIn,  G4double envelopeYIn,
-			   G4double envelopeXpIn, G4double envelopeYpIn,
-			   G4double X0In,         G4double Y0In,       G4double Z0In,   G4double T0In, 
-			   G4double Xp0In,        G4double Yp0In,      G4double Zp0In,			     
-			   G4double sigmaTIn,     G4double sigmaEIn):
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,sigmaTIn,sigmaEIn),
-  betaX(betaXIn), betaY(betaYIn), alphaX(alphaXIn), alphaY(alphaYIn),
-  emitX(emitXIn), emitY(emitYIn),   envelopeX(envelopeXIn), envelopeY(envelopeYIn),
-  envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn) 
-{
-  gammaX = 0.0;
-  gammaY = 0.0;
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-  weightParameter=1.0;
-}
-
 BDSBunchHalo::~BDSBunchHalo() 
 {
   delete FlatGen; 
 }
 
-void  BDSBunchHalo::SetOptions(GMAD::Options &opt)
+void  BDSBunchHalo::SetOptions(const GMAD::Options& opt)
 {
   BDSBunchInterface::SetOptions(opt);
   SetBetaX(opt.betx);

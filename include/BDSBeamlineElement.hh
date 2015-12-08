@@ -13,6 +13,7 @@
 /**
  * @brief A class that holds a fully constructed BDSAcceleratorComponent
  * as well as any information relevant to its position within the beamline.
+ *
  * For example, position information as curvilinear s position coordinate
  * as these are only defined with respect to the components position in the 
  * beamline / lattice.
@@ -46,26 +47,28 @@ public:
   ~BDSBeamlineElement();
   
   ///@{ Accessor
-  inline BDSAcceleratorComponent* GetAcceleratorComponent()    const;
-  inline G4String                 GetName()                    const;
-  inline G4String                 GetPlacementName()           const;
-  inline G4LogicalVolume*         GetContainerLogicalVolume()  const;
-  inline G4ThreeVector            GetPositionStart()           const;
-  inline G4ThreeVector            GetPositionMiddle()          const;
-  inline G4ThreeVector            GetPositionEnd()             const;
-  inline G4RotationMatrix*        GetRotationStart()           const;
-  inline G4RotationMatrix*        GetRotationMiddle()          const;
-  inline G4RotationMatrix*        GetRotationEnd()             const;
-  inline G4ThreeVector            GetReferencePositionStart()  const;
-  inline G4ThreeVector            GetReferencePositionMiddle() const;
-  inline G4ThreeVector            GetReferencePositionEnd()    const;
-  inline G4RotationMatrix*        GetReferenceRotationStart()  const;
-  inline G4RotationMatrix*        GetReferenceRotationMiddle() const;
-  inline G4RotationMatrix*        GetReferenceRotationEnd()    const;
-  inline G4double                 GetSPositionStart()          const;
-  inline G4double                 GetSPositionMiddle()         const;
-  inline G4double                 GetSPositionEnd()            const;
-  inline G4Transform3D*           GetPlacementTransform()      const;
+  inline BDSAcceleratorComponent* GetAcceleratorComponent()      const;
+  inline G4String                 GetName()                      const;
+  inline G4String                 GetPlacementName()             const;
+  inline G4int                    GetCopyNo()                    const;
+  inline G4LogicalVolume*         GetContainerLogicalVolume()    const;
+  inline G4ThreeVector            GetPositionStart()             const;
+  inline G4ThreeVector            GetPositionMiddle()            const;
+  inline G4ThreeVector            GetPositionEnd()               const;
+  inline G4RotationMatrix*        GetRotationStart()             const;
+  inline G4RotationMatrix*        GetRotationMiddle()            const;
+  inline G4RotationMatrix*        GetRotationEnd()               const;
+  inline G4ThreeVector            GetReferencePositionStart()    const;
+  inline G4ThreeVector            GetReferencePositionMiddle()   const;
+  inline G4ThreeVector            GetReferencePositionEnd()      const;
+  inline G4RotationMatrix*        GetReferenceRotationStart()    const;
+  inline G4RotationMatrix*        GetReferenceRotationMiddle()   const;
+  inline G4RotationMatrix*        GetReferenceRotationEnd()      const;
+  inline G4double                 GetSPositionStart()            const;
+  inline G4double                 GetSPositionMiddle()           const;
+  inline G4double                 GetSPositionEnd()              const;
+  inline G4Transform3D*           GetPlacementTransform()        const;
+  inline G4Transform3D*           GetReadOutPlacementTransform() const;
   ///@}
 
   ///@{ Reassign the end variable as required when applying a transform
@@ -88,6 +91,9 @@ private:
   /// the BDSAcceleratorComponent has been placed (increments the accelerator
   /// component placement counter).
   G4String          placementName;
+  
+  /// identification number of AcceleratorComponent (0 for first volume of given type)
+  G4int             copyNumber;
   
   ///@{ Global coordinates for the start, middle and end of this beamline element
   G4ThreeVector     positionStart;
@@ -124,6 +130,12 @@ private:
   /// Transform made from positionMiddle and rotationMiddle. By using them as
   /// a transform, the rotation matrix is the correct way around (inversion).
   G4Transform3D*    placementTransform;
+
+  /// Transform made from the referencePositionMiddle and referenceRottationMiddle.
+  /// The read out geometry should always align with the reference trajectory and
+  /// not the possibly offset position of the mass geometry, hence have a separate
+  /// transform for it.
+  G4Transform3D*    readOutPlacementTransform;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -134,6 +146,9 @@ inline G4String                 BDSBeamlineElement::GetName() const
 
 inline G4String                 BDSBeamlineElement::GetPlacementName() const
 {return placementName;}
+
+inline G4int                    BDSBeamlineElement::GetCopyNo() const
+{return copyNumber;}
 
 inline G4LogicalVolume*         BDSBeamlineElement::GetContainerLogicalVolume() const
 {return component->GetContainerLogicalVolume();}
@@ -185,5 +200,8 @@ inline G4double                 BDSBeamlineElement::GetSPositionEnd() const
 
 inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() const
 {return placementTransform;}
+
+inline G4Transform3D*           BDSBeamlineElement::GetReadOutPlacementTransform() const
+{return readOutPlacementTransform;}
 
 #endif

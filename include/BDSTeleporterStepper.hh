@@ -16,20 +16,15 @@ public:
   BDSTeleporterStepper(G4Mag_EqRhs *EqRhs);
   ~BDSTeleporterStepper();
   
-  void Stepper( const G4double y[],
-		const G4double dydx[],
-		const G4double h,
-		G4double yout[],
-		G4double yerr[]  );
+  void Stepper(const G4double y[],
+	       const G4double dydx[],
+	       const G4double h,
+	       G4double yout[],
+	       G4double yerr[]);
+  
   G4int    IntegratorOrder() const {return 2;}
   G4double DistChord()       const {return 0;}
   void     StepperName();
-
-protected:
-  void AdvanceHelix(const G4double yIn[],
-		    G4ThreeVector Bfld,
-		    G4double h,
-		    G4double yDrift[]);
 
 private:
   G4bool verboseStep;
@@ -41,6 +36,6 @@ private:
 };
 
 inline void BDSTeleporterStepper::StepperName()
-{G4cout<<"BDSTeleporterStepper"<<G4endl;}
+{G4cout << "BDSTeleporterStepper" << G4endl;}
 
 #endif

@@ -2,7 +2,8 @@
 #include "BDSBunchFactory.hh"
 #include "BDSDebug.hh"
 
-BDSBunch::BDSBunch() {
+BDSBunch::BDSBunch()
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -12,11 +13,13 @@ BDSBunch::BDSBunch() {
   bdsBunch    = new BDSBunchInterface(); 
 }
 
-BDSBunch::~BDSBunch() {
+BDSBunch::~BDSBunch()
+{
   delete bdsBunch;
 }
 
-void BDSBunch::SetOptions(GMAD::Options& opt) {
+void BDSBunch::SetOptions(const GMAD::Options& opt)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
@@ -33,7 +36,8 @@ void BDSBunch::SetOptions(GMAD::Options& opt) {
 
 void BDSBunch::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
-			       G4double& t , G4double&  E, G4double& weight) {
+			       G4double& t , G4double&  E, G4double& weight)
+{
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif

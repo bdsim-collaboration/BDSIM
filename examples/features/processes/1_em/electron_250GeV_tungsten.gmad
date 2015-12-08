@@ -1,5 +1,7 @@
 include electronOptions.gmad 
 
+option,	elossHistoBinWidth = 0.002;
+
 beam,  particle="e-",
        energy= 250*GeV,
        distrType="reference",

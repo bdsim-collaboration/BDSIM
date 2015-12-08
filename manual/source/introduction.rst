@@ -25,7 +25,7 @@ What BDSIM is not intended for
 * Long term tracking studies
 * Simulating collective effects
 * Lattice optical design and optimisation
-* A replacement for SixTrack
+* A replacement for tracking codes like SixTrack or PTC
 
 Example Applications
 --------------------
@@ -42,17 +42,17 @@ General Simulation Steps
 1) Create an text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file.
 2) Run BDSIM with core beam distribution for validation.
 3) Analyse data from 2) to reproduce optical functions of lattice as validation of a correct model
-4) Run BDSIM with desired input distribution either as a single instance or on a farm.
+4) Run BDSIM with desired input distribution and physics processes either as a single instance or on a farm.
 5) Analyse output data as desired.
 
 A Little More Detail
 ====================
 
 BDSIM uses **ASCII** text input with a syntax designed to be very similar to
-**MAD8** / **MADX**.  The user prepares a representation of the
+**MAD8** / **MADX**. The user prepares a representation of the
 accelerator lattice they wish
 to simulate by defining magnets or various accelerator components and the sequence
-they should appear in.  Additionally, the user may set options describing for
+they should appear in. Additionally, the user may set options describing for
 example, energy tracking cuts, which physics processes of importance and at which
 locations to record output.
 
@@ -60,7 +60,7 @@ BDSIM can then use the input file to simulate the passage of the desired number 
 particles and how they interact with the accelerator components themselves.
 Should a particle hit the beampipe, the physics processes of Geant4 will be used
 to calculate the interaction with the beampipe and and secondary particles that may
-be produced.  Particles are recorded at user specified 'sampling' planes and energy
+be produced. Particles are recorded at user specified 'sampling' planes and energy
 deposition through the accelerator is recorded in both discrete 'hits' and a
 histogram as a function of distance along the accelerator.
 

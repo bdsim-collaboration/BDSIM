@@ -31,7 +31,7 @@ void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
   //we don't actually use HCE here as we don't need to log any of the particle info
 }
 
-G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
+G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
   // feedback info but only every 10 turns to avoid slow down and output bloat
@@ -53,10 +53,11 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
   G4cout << __METHOD_NAME__ << "parentID:         " << parentID    << G4endl;
   G4cout << __METHOD_NAME__ << "track lenth (mm): " << trackLength << G4endl;
 #endif
-  if ((parentID == 0) && (trackLength > 1000))
+  if ((parentID == 0) && (trackLength > 1000) && aStep->GetPreStepPoint()->GetStepStatus() == fGeomBoundary)
     {
       // parentID == 0 -> primary particle - should only increment turn number for primaries
       // trackLength > 1000 (mm) -> not due to initial coordinate offset (at least 1 turn)
+      // pre step point status is on a geometry boundary -> particle just entering volume and not starting in middle
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Incrementing turn number " << G4endl;
       G4cout << __METHOD_NAME__ << "Primary particle - incrementing turn number" << G4endl;
@@ -70,7 +71,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step*aStep, G4TouchableHistory*)
     }
 #ifdef BDSDEBUG
   else
-    {G4cout << __METHOD_NAME__ << "Secondary particle - not incrementing turn number" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "not incrementing turn number" << G4endl;}
 #endif
   return true;
 }

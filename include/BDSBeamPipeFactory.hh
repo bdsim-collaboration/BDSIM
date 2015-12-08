@@ -9,6 +9,16 @@
 #include "globals.hh"           // geant4 globals / types
 #include "G4Material.hh"
 
+/**
+ * @brief The main interface for using the beam pipe factories. 
+ * 
+ * Each function in this class mirrors
+ * one in BDSBeamPipeFactoryBase but with the addition of a BDSBeamPipeType enum as an argument. This
+ * factory dispatches the call to the correct factory and should be the only one used by the caller.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
+
 class BDSBeamPipeFactory
 {
 public:

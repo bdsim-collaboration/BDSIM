@@ -47,29 +47,26 @@ BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
 
 BDSGeometryComponent::~BDSGeometryComponent()
 {
-  std::vector<G4VSolid*>::iterator itS = allSolids.begin();
-  for (; itS != allSolids.end(); ++itS)
-    {delete (*itS);}
+  for (auto daughter : allDaughters)
+    {delete daughter;}
 
-  std::vector<G4LogicalVolume*>::iterator itLV = allLogicalVolumes.begin();
-  for (; itLV != allLogicalVolumes.end(); ++itLV)
-    {delete (*itLV);}
+  for (auto solid : allSolids)
+    {delete solid;}
 
-  std::vector<G4VPhysicalVolume*>::iterator itPV = allPhysicalVolumes.begin();
-  for (; itPV != allPhysicalVolumes.end(); ++itPV)
-    {delete (*itPV);}
+  for (auto lv : allLogicalVolumes)
+    {delete lv;}
 
-  std::vector<G4RotationMatrix*>::iterator itRM = allRotationMatrices.begin();
-  for (; itRM != allRotationMatrices.end(); ++itRM)
-    {delete (*itRM);}
+  for (auto pv : allPhysicalVolumes)
+    {delete pv;}
 
-  std::vector<G4VisAttributes*>::iterator itVis = allVisAttributes.begin();
-  for (; itVis != allVisAttributes.end(); ++itVis)
-    {delete (*itVis);}
+  for (auto rm : allRotationMatrices)
+    {delete rm;}
 
-  std::vector<G4UserLimits*>::iterator itUL = allUserLimits.begin();
-  for (; itUL != allUserLimits.end(); ++itUL)
-    {delete (*itUL);}
+  for (auto vis : allVisAttributes)
+    {delete vis;}
+
+  for (auto ul : allUserLimits)
+    {delete ul;}
 }
 
 void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent)
@@ -77,6 +74,12 @@ void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent
   SetExtentX(anotherComponent->GetExtentX());
   SetExtentY(anotherComponent->GetExtentY());
   SetExtentZ(anotherComponent->GetExtentZ());
+}
+
+void BDSGeometryComponent::RegisterDaughter(BDSGeometryComponent* anotherComponent)
+{
+  if (std::find(allDaughters.begin(), allDaughters.end(), anotherComponent) == allDaughters.end())
+    {allDaughters.push_back(anotherComponent);}
 }
 
 void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)
@@ -108,9 +111,8 @@ void BDSGeometryComponent::RegisterSolid(G4VSolid* solid, G4bool internalCheck)
 
 void BDSGeometryComponent::RegisterSolid(std::vector<G4VSolid*> solids)
 {
-  std::vector<G4VSolid*>::iterator it = solids.begin();
-  for (; it != solids.end(); ++it)
-    {RegisterSolid(*it);}
+  for (auto solid : solids)
+    {RegisterSolid(solid);}
 }
 
 void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume, G4bool internalCheck)
@@ -147,9 +149,8 @@ void BDSGeometryComponent::RegisterLogicalVolume(G4LogicalVolume* logicalVolume,
 
 void BDSGeometryComponent::RegisterLogicalVolume(std::vector<G4LogicalVolume*> logicalVolumes)
 {
-  std::vector<G4LogicalVolume*>::iterator it = logicalVolumes.begin();
-  for (; it != logicalVolumes.end(); ++it)
-    {RegisterLogicalVolume(*it);}
+  for (auto lv : logicalVolumes)
+    {RegisterLogicalVolume(lv);}
 }
 
 void BDSGeometryComponent::RegisterPhysicalVolume(G4VPhysicalVolume* physicalVolume, G4bool internalCheck)
@@ -216,11 +217,9 @@ void BDSGeometryComponent::RegisterRotationMatrix(G4RotationMatrix* rotationMatr
 
 void BDSGeometryComponent::RegisterRotationMatrix(std::vector<G4RotationMatrix*> rotationMatrices)
 {
-  std::vector<G4RotationMatrix*>::iterator it = rotationMatrices.begin();
-  for (; it != rotationMatrices.end(); ++it)
-    {RegisterRotationMatrix(*it);}
+  for (auto rm : rotationMatrices)
+    {RegisterRotationMatrix(rm);}
 }
-
 
 void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVolume)
 {
@@ -259,11 +258,8 @@ void BDSGeometryComponent::RegisterSensitiveVolume(G4LogicalVolume* sensitiveVol
 
 void BDSGeometryComponent::RegisterSensitiveVolume(std::vector<G4LogicalVolume*> sensitiveVolumes)
 {
-  std::vector<G4LogicalVolume*>::iterator it = sensitiveVolumes.begin();
-  for (; it != sensitiveVolumes.end(); ++it)
-    {
-      RegisterSensitiveVolume(*it);
-    }
+  for (auto sv : sensitiveVolumes)
+    {RegisterSensitiveVolume(sv);}
 }
 
 void BDSGeometryComponent::RegisterVisAttributes(G4VisAttributes* visAttribute, G4bool internalCheck)
@@ -295,9 +291,8 @@ void BDSGeometryComponent::RegisterVisAttributes(G4VisAttributes* visAttribute, 
 
 void BDSGeometryComponent::RegisterVisAttributes(std::vector<G4VisAttributes*> visAttributes)
 {
-  std::vector<G4VisAttributes*>::iterator it = visAttributes.begin();
-  for (; it != visAttributes.end(); ++it)
-    {RegisterVisAttributes(*it);}
+  for (auto va : visAttributes)
+    {RegisterVisAttributes(va);}
 }
 
 void BDSGeometryComponent::RegisterUserLimits(G4UserLimits* userLimit, G4bool internalCheck)
@@ -329,9 +324,8 @@ void BDSGeometryComponent::RegisterUserLimits(G4UserLimits* userLimit, G4bool in
 
 void BDSGeometryComponent::RegisterUserLimits(std::vector<G4UserLimits*> userLimits)
 {
-  std::vector<G4UserLimits*>::iterator it = userLimits.begin();
-  for (; it != userLimits.end(); ++it)
-    {RegisterUserLimits(*it);}
+  for (auto ul : userLimits)
+    {RegisterUserLimits(ul);}
 }
 
 void BDSGeometryComponent::InheritObjects(BDSGeometryComponent* component)
@@ -345,4 +339,25 @@ void BDSGeometryComponent::InheritObjects(BDSGeometryComponent* component)
   RegisterUserLimits(component->GetAllUserLimits());
 }
 
+std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllLogicalVolumes() const
+{
+  std::vector<G4LogicalVolume*> result(allLogicalVolumes);
+  for (auto it : allDaughters)
+    {
+      auto dLVs = it->GetAllLogicalVolumes();
+      result.insert(result.end(), dLVs.begin(), dLVs.end());
+    }
+  return result;
+}
+
+std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() const
+{
+  std::vector<G4LogicalVolume*> result(allSensitiveVolumes);
+  for (auto it : allDaughters)
+    {
+      auto dSVs = it->GetAllSensitiveVolumes();
+      result.insert(result.end(), dSVs.begin(), dSVs.end());
+    }
+  return result;
+}
 

@@ -53,16 +53,11 @@ private:
   BDSBeamPipeFactoryLHCDetailed(); ///< private default constructor - singleton pattern
   static BDSBeamPipeFactoryLHCDetailed* _instance;
 
-  void TestInputParameters(G4Material*& vacuumMaterialIn,
-			   G4double&    beamPipeThicknessIn,
-			   G4Material*& beamPipeMaterialIn,
-			   G4double&    aper1In,
-			   G4double&    aper2In,
-			   G4double&    aper3In);
-
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
 
+  /// only the solids are unique, once we have those, the logical volumes and placement in the
+  /// container are the same.  group all this functionality together
   BDSBeamPipe* CommonFinalConstruction(G4String    name,
 				       G4Material* vacuumMaterial,
 				       G4Material* beamPipeMaterial,
@@ -102,36 +97,44 @@ private:
   G4PVPlacement*   coolingPipeTopPV;
   G4PVPlacement*   coolingPipeBottomPV;
 
-  // parameters that control the design
+  /// Parameters that control the design
   G4double coldBoreThickness;
   G4double coolingPipeThickness;
   G4double coolingPipeRadius;
   G4double copperSkinThickness;
 
-  // calculated parameters below here
-  // vacuum volume
+  /// Calculated parameters below here
+  /// vacuum volume
   G4double vacRadius, vacBoxX, vacBoxY;
   
-  // copper skin geometrical parameters
+  /// Copper skin geometrical parameters
   G4double cuInnerRadius, cuInnerBoxX, cuInnerBoxY;
   G4double cuOuterRadius, cuOuterBoxX, cuOuterBoxY;
 
-  // beam screen geometrical parameters
+  /// Beam screen geometrical parameters
   G4double bsInnerRadius, bsInnerBoxX, bsInnerBoxY;
   G4double bsOuterRadius, bsOuterBoxX, bsOuterBoxY;
   
-  // cold bore geometrical parameters
+  /// Cold bore geometrical parameters
   G4double cbInnerRadius, cbOuterRadius;
 
-  // container geometrical parameters
+  /// Container geometrical parameters
   G4double containerRadius;
   
-  // general length variable (to avoid mistakes)
+  /// General length variable (to avoid mistakes)
   G4double vacHalfLength;
   G4double halfLength;
 
-  // cooling pipe geometrical parameters
-  G4double coolingPipeYOffset;
+  /// Cooling pipe geometrical parameters
+  G4double coolingPipeOffset;
+
+  /// Whether given the aperture parameters the pipe is square on the sides and round at the top
+  /// - the 'vertical'.
+  G4bool verticalOrientation;
+
+  /// Whether to build the cooling pipes on either side
+  G4bool buildCoolingPipe;
+  
 };
   
 #endif

@@ -1,0 +1,19 @@
+option,	physicsList="em_standard",
+	beampipeRadius=5.0*cm,
+	beampipeThickness=0.5*cm,
+	outerDiameter=2.0*m,
+	defaultRangeCut=1*cm,	
+	prodCutPositrons=1*cm,
+	prodCutElectrons=1*cm,
+	prodCutPhotons=1*cm,
+	checkOverlaps=1;
+
+!to show only the beampipe
+option, magnetGeometryType="none";
+
+beam, particle="proton",
+      energy=10.0*GeV,
+      distrType="reference",
+      ngenerate=1,
+      X0=0.0,
+      Y0=0.0;

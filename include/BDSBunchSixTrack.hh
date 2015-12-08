@@ -1,12 +1,19 @@
-#ifndef BDSBunchSixTrack_h
-#define BDSBunchSixTrack_h
+#ifndef BDSBUNCHSIXTRACK_H
+#define BDSBUNCHSIXTRACK_H
 
 #include <vector>
 
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
 
-class BDSBunchSixTrack : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that reads a SixTrack hits file.
+ * 
+ * @author Regina Kwee-Hinzmann <Regina.Kwee@rhul.ac.uk>
+ */
+
+class BDSBunchSixTrack: public BDSBunchInterface
+{ 
 private: 
   G4int    nPart;
   G4String fileName;
@@ -19,7 +26,7 @@ public:
   BDSBunchSixTrack(G4String fileNameIn);
   ~BDSBunchSixTrack(); 
   void LoadSixTrackFile(); 
-  virtual void SetOptions(GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
                                G4double& xp, G4double& yp, G4double& zp,
                                G4double& t , G4double&  E, G4double& weight);

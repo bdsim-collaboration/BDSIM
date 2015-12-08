@@ -2,6 +2,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 #include "array.h"
 
@@ -14,11 +15,12 @@ void PhysicsBiasing::clear()
   name = "";
   particle = "";
   process = "";
+  processList.clear();
   factor.clear();
   flag.clear();
 }
 
-void PhysicsBiasing::print()const
+void PhysicsBiasing::print() const
 {
   std::cout << "physicsbiasing: " << std::endl
 	    << "name "     << name     << " " << std::endl
@@ -56,12 +58,10 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
     for (const auto& i : value->data) {
       flag.push_back(static_cast<PhysicsBiasingType>((int)i));
     }
-    value->data.clear();
     return;
   }
   if (property=="xsecfact") {
     value->set_vector(factor);
-    value->data.clear();
     return;
   }
   
@@ -78,9 +78,16 @@ void PhysicsBiasing::set_value(std::string property, std::string value )
 #endif
 
   if (property=="name")           {name = value; return;}
-  if (property=="logicalVolumes") {logicalVolumes = value; return;}
   if (property=="particle")       {particle = value; return;}
-  if (property=="proc")           {process = value; return;}
+  if (property=="proc")           {
+    process = value; 
+    std::stringstream ss(process);
+    std::string tok;
+    while(ss >> tok) {
+      processList.push_back(tok);
+    }    
+    return;
+  }
 
   std::cerr << "Error: parser> unknown physicsbiasing option \"" << property << "\" with value " << value << std::endl;
   exit(1);

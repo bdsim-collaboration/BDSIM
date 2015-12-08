@@ -1,12 +1,7 @@
 components      : components
+geometry        : geometry
+optics          : optics validation
+options         : specific options
 processes       : basic processes
-processes_old   : basic processes
-geometry        : geometry 
+processes_old   : old examples
 visualisation   : visualisation 
-
-3d              : 3d-transform example
-Fluka           : Fluka model descriptions
-GDML            : GDML description example
-ggmad           : Example of element with user-defined ggmad geometry 
-Laser-Wire      : Laserwire example
-Mokka           : International Linear Collider Detector 

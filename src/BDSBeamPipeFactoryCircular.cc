@@ -16,7 +16,7 @@
 #include "G4VSolid.hh"
 
 #include <cmath>
-#include <utility>                         // for std::pair
+#include <utility>               // for std::pair
 
 BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::_instance = nullptr;
 
@@ -27,9 +27,8 @@ BDSBeamPipeFactoryCircular* BDSBeamPipeFactoryCircular::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular():BDSBeamPipeFactoryBase()
-{
-}
+BDSBeamPipeFactoryCircular::BDSBeamPipeFactoryCircular()
+{;}
 
 BDSBeamPipeFactoryCircular::~BDSBeamPipeFactoryCircular()
 {
@@ -52,9 +51,6 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipe(G4String    nameIn,     
 #endif
    // clean up after last usage
   CleanUp();
-  
-  // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
   // build the solids
   vacuumSolid   = new G4Tubs(nameIn + "_vacuum_solid",      // name
@@ -100,9 +96,6 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
 #endif
    // clean up after last usage
   CleanUp();
-  
-   // test input parameters - set global options as default if not specified
-  TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn,aper1In);
 
   std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
@@ -113,20 +106,6 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
   CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn, inputface, outputface);
   
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, containerRadius);
-}
-
-/// functions below here are private to this particular factory
-
-/// test input parameters - if not set use global defaults for this simulation
-void BDSBeamPipeFactoryCircular::TestInputParameters(G4Material*&  vacuumMaterialIn,     // reference to a pointer
-						     G4double&     beamPipeThicknessIn,
-						     G4Material*&  beamPipeMaterialIn,
-						     G4double&     aper1In)
-{
-  BDSBeamPipeFactoryBase::TestInputParameters(vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-
-  if (aper1In < 1e-10)
-    {aper1In = BDSGlobalConstants::Instance()->GetBeamPipeRadius();}
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the

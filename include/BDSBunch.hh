@@ -8,9 +8,11 @@
 #include "parser/options.h"
 
 /**
- * @brief the particle generator
+ * @brief A delegator class for the BDSIM particle distribution generator.
  * 
- * This class generates the particles
+ * The user should instantiate this class only and set the options from the parser.
+ * This class generates new particle coordinates for each event based on the 
+ * GMAD::Options structure passed from the parser. 
  *
  * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
  */
@@ -28,7 +30,7 @@ protected:
 public:
   BDSBunch(); 
   ~BDSBunch(); 
-  void SetOptions(GMAD::Options& opt);
+  void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight); 

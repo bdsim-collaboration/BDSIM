@@ -74,7 +74,7 @@ BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume*
     {
       tunnelSearch = tunnelRegister.find(physicalVolume);
       if (tunnelSearch == tunnelRegister.end())
-	{return NULL;}
+	{return nullptr;}
       else
 	{return tunnelSearch->second;}
     }

@@ -6,8 +6,10 @@
 #include "G4VPhysicalVolume.hh"
 
 /**
- * @brief Class that generates readout geometry for tunnel 
- * sensitive detectors. A la Geant4, this would actually
+ * @brief Class that generates readout geometry for tunnel segments.
+ *
+ * 
+ * A la Geant4, this would actually
  * construct a 'parallel' (not to be confused with the G4ParallelWorld
  * class, which is unrelated) world separately and after the main
  * 'mass' world.  However, this is really quite inconvenient so both

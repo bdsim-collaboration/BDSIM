@@ -1,11 +1,17 @@
-#ifndef BDSBunchUserFile_h
-#define BDSBunchUserFile_h 
+#ifndef BDSBUNCHUSERFILE_H
+#define BDSBUNCHUSERFILE_H 
 
 #include "BDSBunchInterface.hh"
 #include <fstream>
 #include <list>
 
-class BDSBunchUserFile : public BDSBunchInterface { 
+/**
+ * @brief A bunch distribution that reads a user specified column file.
+ * 
+ */
+
+class BDSBunchUserFile: public BDSBunchInterface
+{ 
 private:
   void ParseFileFormat();
   void OpenBunchFile();
@@ -34,7 +40,7 @@ protected :
 public: 
   BDSBunchUserFile();
   ~BDSBunchUserFile();
-  virtual void SetOptions(GMAD::Options& opt);
+  virtual void SetOptions(const GMAD::Options& opt);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,
 			       G4double& t , G4double&  E, G4double& weight);  

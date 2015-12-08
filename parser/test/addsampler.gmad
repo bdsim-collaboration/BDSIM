@@ -1,0 +1,10 @@
+d: drift, l=0.5*m;
+
+b1: line=(d,d,d);
+
+use, b1;
+
+! add sampler before all drifts
+sample, range=d;
+
+print, line;

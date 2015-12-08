@@ -16,7 +16,7 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator()
 
 BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
 {
-  auxNavigator = nullptr;
+  // do not delete auxNavigator as required by other instances of BDSAuxiliaryNavigator
 }
 
 void BDSAuxiliaryNavigator::AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV)

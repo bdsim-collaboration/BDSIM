@@ -1,6 +1,7 @@
 d1: drift, l=0.5;
-sf : sextupole, l=0.5*m , k2 = 0.5 , tilt = 0.01;
+sf1 : sextupole, l=0.5*m , k2 = 0.5;
 d2: drift, l=0.5;
+sf2 : sextupole, l=0.5*m , k2 = 0.0;
 
-lat : line = (d1,sf,d2);
-com : line = (sf);
+lat : line = (d1,sf1,d2,sf2);
+com : line = (sf1,sf2);

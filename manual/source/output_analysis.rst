@@ -10,9 +10,9 @@ To use the ROOT analysis (and the Python interface)::
 
    export ROBDSIM=<bdsim-build-dir>/utils/robdsim
    export PATH=$PATH:$ROBDSIM
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (linux only)
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROBDSIM (Linux only)
    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$ROBDSIM (mac only)
-   export PYTHON_PATH=$PYTHON_PATH:$ROBDSIM
+   export PYTHONPATH=$PYTHONPATH:$ROBDSIM
    
 Note that several ROOT analysis output (output of robdsimAnal) files can be combined into one file with the command::
 
@@ -56,7 +56,7 @@ Converting ROOT trees as numpy arrays
 First root_numpy needs to be installed (from scratch)::
 
    wget https://pypi.python.org/packages/source/r/root_numpy/root_numpy-4.3.0.tar.gz
-   tar zxf root_numpy-4.3.0.tar.gz
+   tar -zxf root_numpy-4.3.0.tar.gz
    cd root_numpy-4.3.0
    python2.7 setup.py build 
    sudo python2.7 setup.py install

@@ -6,6 +6,12 @@
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
+/**
+ * @brief Decapole magnetic field.
+ * 
+ * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ */
+
 class BDSDecMagField: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:

@@ -1,29 +1,25 @@
-#include "BDSCavity.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "globals.hh"
+#include "BDSCavity.hh"
+#include "BDSCavityInfo.hh"
+#include "BDSCavityType.hh"
+#include "BDSParser.hh"
 
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4ThreeVector.hh"
-#include "G4Material.hh"
-#include "G4VisAttributes.hh"
-
-#include "G4GenericPolycone.hh"
-#include "G4Polycone.hh"
-#include "G4Tubs.hh"
-#include "G4SubtractionSolid.hh"
-#include "G4UnionSolid.hh"
-
+#include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"
+#include "G4GenericPolycone.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Material.hh"
+#include "G4Polycone.hh"
+#include "G4PVPlacement.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
+#include "G4UnionSolid.hh"
+#include "G4VisAttributes.hh"
 
 #include <cmath>
 #include <vector>
 
-#include "parser/cavitymodel.h"
-
-namespace GMAD {
-   extern std::vector<struct CavityModel> cavitymodel_list;
-}
 
 BDSCavity::BDSCavity(G4String name, //Any others to add here? 
 		     G4double length,
@@ -33,8 +29,7 @@ BDSCavity::BDSCavity(G4String name, //Any others to add here?
 		     G4double cavityRadiusIn,
 		     G4double irisRadiusIn,
 		     G4double thicknessIn,
-		     G4String cavityModelIn
-		     ) : 
+		     G4String cavityModelIn): 
   BDSAcceleratorComponent(name, length, 0, type),
   cavityMaterial(cavityMaterialIn),
   vacuumMaterial(vacuumMaterialIn),
@@ -42,55 +37,85 @@ BDSCavity::BDSCavity(G4String name, //Any others to add here?
   irisRadius(irisRadiusIn),
   thickness(thicknessIn),
   cavityModel(cavityModelIn)
+{;}
+
+BDSCavity::BDSCavity(G4String       name,
+		     G4double       length,
+		     G4double       fieldAmplitudeIn,
+		     BDSCavityInfo* cavityInfoIn):
+  BDSAcceleratorComponent(name, length, 0, "cavity_"+cavityInfoIn->cavityType.ToString()),
+  fieldAmplitude(fieldAmplitudeIn),
+  cavityInfo(cavityInfoIn)
+{;}
+
+BDSCavity::~BDSCavity()
 {
+  delete cavityInfo;
+}
+
+void BDSCavity::Build()
+{
+  switch(cavityInfo->cavityType.underlying())
+    {
+    case BDSCavityType::elliptical:
+      BuildEllipticalCavityGeometry();
+      break;
+    case BDSCavityType::rectangular:
+      BuildPillBoxCavityGeometry();
+      break;
+    case BDSCavityType::pillbox:
+      BuildPillBoxCavityGeometry();
+      break;
+    default:
+      BuildPillBoxCavityGeometry();
+      break;
+    }
+  
+  BDSAcceleratorComponent::Build();
+  BuildField();
+  AttachField();
+  PlaceComponents();
 }
 
 void BDSCavity::BuildField()
-{
-}
+{;}
 
 void BDSCavity::AttachField()
-{ 
-}
+{;}
 
-//Method for creating physical volumes of the cavity and its vacuum from logical volumes.
 void BDSCavity::PlaceComponents()
 {
-  G4PVPlacement* vacuumPV = new G4PVPlacement(0, //Rotation
-					      G4ThreeVector(0,0,0), //Position
-					      vacuumLV,             //Logical Volume to be place
-					      name + "_vacuum_pv",  //placement name
-					      containerLogicalVolume,          //mother volume
-					      false,                //pMany unused
-					      0,                    //copy number
-					      checkOverlaps         //check overlaps
-					      );
+  G4PVPlacement* vacuumPV = new G4PVPlacement(nullptr,               //Rotation
+					      G4ThreeVector(0,0,0),  //Position
+					      vacuumLV,              //Logical Volume to be place
+					      name + "_vacuum_pv",   //placement name
+					      containerLogicalVolume,//mother volume
+					      false,                 //pMany unused
+					      0,                     //copy number
+					      checkOverlaps);        //check overlaps
   
   RegisterPhysicalVolume(vacuumPV);
   
-  G4PVPlacement* cavityPV = new G4PVPlacement(0, //Rotation
-					      G4ThreeVector(0,0,0), //Position
-					      cavityLV,             //Logical Volume to be place
-					      name + "_cavity_pv",  //placement name
-					      containerLogicalVolume,          //mother volume
-					      false,                //pMany unused
-					      0,                    //copy number
-					      checkOverlaps         //check overlaps
-					      );
+  G4PVPlacement* cavityPV = new G4PVPlacement(nullptr,               //Rotation
+					      G4ThreeVector(0,0,0),  //Position
+					      cavityLV,              //Logical Volume to be place
+					      name + "_cavity_pv",   //placement name
+					      containerLogicalVolume,//mother volume
+					      false,                 //pMany unused
+					      0,                     //copy number
+					      checkOverlaps);        //check overlaps
+  
   RegisterPhysicalVolume(cavityPV); 
-
-
 }
-
 
 void BDSCavity::BuildContainerLogicalVolume() 
 {
-  containerSolid = new G4Tubs(name + "_container_solid", //name
-			      0.0,                       //innerRadius
+  containerSolid = new G4Tubs(name + "_container_solid",       //name
+			      0.0,                             //innerRadius
 			      cavityRadius + thickness + lengthSafety, //outerRadius
-			      chordLength *0.5 + lengthSafety,           //half length
-			      0.0,                        //starting angle
-			      2.0*CLHEP::pi);               //spanning angle
+			      chordLength *0.5 + lengthSafety, //half length
+			      0.0,                             //starting angle
+			      2.0*CLHEP::pi);                  //spanning angle
 
   SetExtentX(-cavityRadius*0.5,cavityRadius*0.5);
   SetExtentY(-cavityRadius*0.5,cavityRadius*0.5);
@@ -100,22 +125,10 @@ void BDSCavity::BuildContainerLogicalVolume()
 					       emptyMaterial,
 					       name + "_container_lv");
 
-    }
+}
 
 void BDSCavity::BuildEllipticalCavityGeometry()
 {
-  // find right cavity model in vector of cavitymodels
-  GMAD::CavityModel model;
-  //= std::find(GMAD::cavitymodel_list.begin(), GMAD::cavitymodel_list.end(), cavityModel);
-  for (unsigned int i = 0; i< GMAD::cavitymodel_list.size(); i++) {
-    if (GMAD::cavitymodel_list[i].name == cavityModel) {
-      model = GMAD::cavitymodel_list[i];
-      G4cout << "cavitymodel found " << cavityModel << G4endl;
-      break;
-    }
-  }
-  
-  model.print();
   //-----Elliptical Cavity Parameters-----
   //irisRSemiAxis    --> Semi-axis of the iris ellipse perpendicular to the length of the cavity.
   //irisZSemiAxis    --> Semi-axis of the iris ellipse along the length of the cavity.
@@ -126,17 +139,16 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //noPoints         --> Number of points used to define the shape.  This is divided up between the 3 constituent shapes, 1/4 in each iris ellipse and 1/2 in central dome.
   //length           --> Length of the cell.
   //equatorRadius    --> Radius at the equator.
-  G4double equatorRadius = cavityRadius;  //cavityRadius in SRF is the equator radius for clarity.
-    
-  G4double irisRSemiAxis = model.irisVerticalAxis * CLHEP::m;
-  G4double irisZSemiAxis = model.irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
-  G4double equatorRSemiAxis = model.equatorEllipseSemiAxis * CLHEP::m ;//equator ellipse vertical semiaxis
-  G4double equatorZSemiAxis = model.equatorEllipseSemiAxis * CLHEP::m; //equator ellipse horizontal semiaxis
-  G4double tangentAngle = model.tangentLineAngle;
-  G4double irisRadius = model.irisRadius *CLHEP::m;
-  G4int noPoints = model.numberOfPoints;
+  G4double equatorRadius = cavityRadius; // cavityRadius in SRF is the equator readius for cavity
+  
+  G4double irisRSemiAxis    = cavityInfo->irisVerticalAxis * CLHEP::m;
+  G4double irisZSemiAxis    = cavityInfo->irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
+  G4double equatorRSemiAxis = cavityInfo->equatorEllipseSemiAxis * CLHEP::m ;//equator ellipse vertical semiaxis
+  G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis * CLHEP::m; //equator ellipse horizontal semiaxis
+  G4double tangentAngle     = cavityInfo->tangentLineAngle;
+  G4double irisRadius       = cavityInfo->irisRadius *CLHEP::m;
+  G4int noPoints            = cavityInfo->numberOfPoints;
 
-    
   //Calculatecartesian coordinates (z, r) from parameters.
   //2D spherical coordinates, z along the beamline:
   G4double zi = chordLength/2;   //z coord of iris ellipse centre
@@ -144,7 +156,6 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double ze = 0.0;        //z coord of equator ellipse centre
   G4double re = equatorRadius - equatorRSemiAxis;  //r coord of equator ellipse centre.
   G4double m = tan(tangentAngle + 0.5*CLHEP::pi);  //gradient of line connecting the ellipses.  Add a pi/2 because angle is defined from the vertical, clockwise.
-       
    
   // gradient from tangentAngle.  Find the derivative of ellipses.  equate and solve for the parameter.
   G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));  //atan finds solution in the first quadrant.

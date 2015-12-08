@@ -9,8 +9,8 @@
 #include <utility>
 #include "globals.hh"
 
-BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
-  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
+BDSHistogram1D::BDSHistogram1D(G4double xminIn, G4double xmaxIn, G4int nbinsIn, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+  name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0),xmin(xminIn),xmax(xmaxIn),nbins(nbinsIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
@@ -31,12 +31,13 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   
   //underflow bin
   underflow = new BDSBin(DBL_MIN,xmin);
-  
+  // this constructor generates equidistant bins
+  equidistantBins = true;
   // reserve size for speed optimisation
   bins.reserve(nbins);
 
   // calculate binwidth
-  G4double binwidth = (xmax - xmin) / (G4double)nbins;
+  binwidth = (xmax - xmin) / (G4double)nbins;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
 	 << " S min : "    << xmin 
@@ -63,38 +64,43 @@ BDSHistogram1D::BDSHistogram1D(G4double xmin, G4double xmax, G4int nbins, G4Stri
   first();
 }
 
-BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
+BDSHistogram1D::BDSHistogram1D(std::vector<G4double> binEdges, G4String nameIn, G4String titleIn, G4String xlabelIn, G4String ylabelIn):
   name(nameIn),title(titleIn),xlabel(xlabelIn),ylabel(ylabelIn),entries(0)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "name: " << nameIn << ", title: " << titleIn << G4endl;
   G4cout << __METHOD_NAME__ << "xmin: " << binEdges.front() << ", xmax: " << binEdges.back() << ", nbins: " << binEdges.size() << G4endl;
 #endif
+  nbins = binEdges.size()-1; // -1 (for extra edge)
   // reserve size for speed optimisation
-  bins.reserve(binEdges.size()-1); // -1 (for extra edge)
+  bins.reserve(nbins);
   
   // prepare iterators
   std::vector<double>::iterator iter, end;
   iter = binEdges.begin();
   end = binEdges.end();
-  
+
+  // this constructor generates equidistant bins
+  equidistantBins = false;
+ 
   //underflow bin
-  underflow = new BDSBin(DBL_MIN,*iter);
-  
+  xmin = *iter;
+  underflow = new BDSBin(DBL_MIN,xmin);
+
   BDSBin* tempbin    = nullptr;
-  G4double binstart  = 0;
-  G4double binfinish = 0;
   if (binEdges.size() >= 2)
     {
+      G4double binstart = binEdges.front();
       for (iter = binEdges.begin(); iter != (end-1); ++iter)
 	{
-	  binstart  = *iter;
-	  binfinish = *(iter+1);
+	  G4double binfinish = *(iter+1);
 	  if ((binfinish - binstart) > 1e-6)
 	    { //only add a bin if it's a finite width
-	      tempbin = new BDSBin(*iter,*(iter+1));
+	      tempbin = new BDSBin(binstart,binfinish);
 	      bins.push_back(tempbin);
+	      binstart = binfinish;
 	    }
+	  // else do not update binstart to prevent empty space in histogram
 	}
     }
   else if (binEdges.size() == 1)
@@ -105,8 +111,14 @@ BDSHistogram1D::BDSHistogram1D(std::vector<double> binEdges, G4String nameIn, G4
     }
   // else just underflow and overflow
   // overflow bin
-  overflow = new BDSBin(binEdges.back(),DBL_MAX);
+  xmax = binEdges.back();
+  overflow = new BDSBin(xmax,DBL_MAX);
 
+  // set number of bins
+  nbins = bins.size();
+  // calculate average binwidth
+  binwidth = (xmax - xmin) / (G4double)nbins;
+  
   //initialise iterators
   first();
 }
@@ -197,29 +209,101 @@ BDSBin* BDSHistogram1D::GetLastBin() const
 {return bins.back();}
 
 size_t BDSHistogram1D::GetNBins() const
-{return bins.size();}
+{return nbins;}
 
 G4int BDSHistogram1D::GetNEntries() const
 {return entries;}
 
-void BDSHistogram1D::Fill(G4double x)
+G4int BDSHistogram1D::GetBinNumber(G4double x) const
 {
-  Fill(x,1.0); // fill with weigth = 1
+  G4int binNumber = nbins; // overflow bin
+  if (equidistantBins)
+    {
+      // floor since vector position starts at 0
+      binNumber = std::floor( (x - xmin) / binwidth );
+      // set maxima
+      if (binNumber < 0) binNumber = -1;
+      if (binNumber > nbins) binNumber = nbins;
+    }
+  else
+    {
+      // TODO: binary search
+      //iterate through vector and check if x in bin range
+      if (underflow->InRange(x))
+	{binNumber = -1;}
+      else if (overflow->InRange(x))
+	{binNumber = nbins;}
+      else
+	{
+	  for (int i = 0; i<nbins; ++i)
+	    {
+	      if (bins[i]->InRange(x))
+		{binNumber = i; break;}
+	    }
+	}
+    }
+  return binNumber;
+}
+
+BDSBin* BDSHistogram1D::GetBin(G4int binNumber) const
+{
+  if (binNumber < 0) return underflow;
+  else if (binNumber >= nbins) return overflow;
+  return bins[binNumber];
+}
+
+BDSBin* BDSHistogram1D::GetBin(G4double x) const
+{
+  G4int binNr = GetBinNumber(x);
+  return GetBin(binNr);
+}
+  
+void BDSHistogram1D::Fill(G4double x, G4double weight)
+{
+  BDSBin* bin = GetBin(x);
+  *bin += weight;
+
   entries++;
 }
 
-void BDSHistogram1D::Fill(G4double x, G4double weight)
+void BDSHistogram1D::Fill(std::pair<G4double,G4double> range, G4double weight)
 {
-  //iterate through vector and check if x in bin range
-  if (underflow->InRange(x))
-    {(*underflow)+=1; return;}
-  if (overflow->InRange(x))
-    {(*overflow)+=1; return;}
-  for (std::vector<BDSBin*>::iterator i = bins.begin(); i != bins.end(); ++i)
+  G4double lower = range.first;
+  G4double upper = range.second;
+
+  // swap if in reverse order
+  if (upper < lower) {
+    std::swap(lower,upper);
+  }
+
+  G4int binNrLower = GetBinNumber(lower);
+  BDSBin* binLower = GetBin(binNrLower);
+  // check if upper end in same bin and if so fill
+  // this is done instead of directly looking up upperbin and comparing bins
+  // since presumably faster than bin lookup so only a little wasteful if not true and faster if true
+  if (binLower->InRange(upper))
     {
-      if ((*i)->InRange(x))
-	{ (*(*i)) += weight; break;}
+      *binLower += weight;
     }
+  else
+    {
+      G4int binNrUpper = GetBinNumber(upper);
+      BDSBin* binUpper = GetBin(binNrUpper);
+      // fill each bin with the weight of bin-distance / distance
+      G4double distance = upper - lower;
+      // fill lower and upper bin first
+      G4double binLength = (binLower->GetUpperEdge() - lower);
+      *binLower += weight * binLength / distance;
+
+      binLength = (upper - binUpper->GetLowerEdge());
+      *binUpper += weight * binLength / distance;
+
+      // rest of bins: always in bins vector and fill over full width
+      for (G4int i = binNrLower+1; i<binNrUpper; i++) {
+	*bins[i] += weight * bins[i]->GetLength() / distance;
+      }
+    }
+  
   entries++;
 }
 
