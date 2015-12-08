@@ -1,11 +1,9 @@
 #include "BDSPillBoxField.hh"
-//#include "BDSAuxiliaryNavigator.hh"
 #include "G4Navigator.hh"
-#include "CLHEP/Units/PhysicalConstants.h" //speed of light
-//#include "CLHEP/GenericFunctions/Bessel.hh"
-#include <cmath>
+#include "CLHEP/Units/PhysicalConstants.h" 
 #include "globals.hh"
 #include "G4TransportationManager.hh"
+#include <cmath>
 
 BDSPillBoxField::BDSPillBoxField(G4double eFieldMaxIn,
 				 G4double cavityRadius,
@@ -13,7 +11,6 @@ BDSPillBoxField::BDSPillBoxField(G4double eFieldMaxIn,
 				 G4double phaseIn)
 {
   eFieldMax = eFieldMaxIn;
-  //PillBoxNavigator = new G4Navigator();
   frequency = frequencyIn;
   phase = phaseIn;
 }
@@ -22,7 +19,7 @@ G4bool BDSPillBoxField::DoesFieldChangeEnergy() const
 {
     return true;
 }
-//global to local transfomrations?  learn more about this...
+
 void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) const
 {
   G4ThreeVector LocalR;  //Vector to hold the local coordinates
@@ -32,27 +29,59 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   GlobalR.setY(Point[1]);
   GlobalR.setZ(Point[2]);
 
+
   auxNavigator->LocateGlobalPointAndSetup(GlobalR); //Give navigator global coordinates
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform(); //transform to local
   LocalR = GlobalAffine.TransformPoint(GlobalR);  //initialize LocalR with local coords
   
-    //No z-dependence because this is TM010
-  //We ignore the perturbation provided by the aperture
-  //double theta = atan2(LocalR.y(),LocalR.x()); //Angle between x and y for converting B_theta to cart.
-  //double B_theta = -(eFieldMax/CLHEP::c_light)*J_1()*sin(frequency*Point[3]);
-  //double B_theta = -(eFieldMax/CLHEP::c_light)*sin(CLHEP::pi*CLHEP::c_light*pow(Point[0]*Point[0]+Point[1]*Point[1],0.5)/(2*cavityRadius))*(sin(frequency*Point[3]));
-  //double B_theta = -(eFieldMax/CLHEP::c_light)*sin(CLHEP::pi*CLHEP::c_light*pow(LocalR.x()*LocalR.x()+LocalR.y()*LocalR.y(),0.5)/(2*cavityRadius));//*(sin(frequency*Point[3]));
+ 
+  G4RotationMatrix globalToLocalMatrix = auxNavigator->NetRotation();   //Matrix of Global to Local
+  G4RotationMatrix localToGlobalMatrix = globalToLocalMatrix.inverse();  //Find the inverse of this transform to be used later
+  G4double radialDistance = pow(LocalR.x()*LocalR.x() +  LocalR.y()*LocalR.y(),0.5);
 
-  //Bfield[0] = B_theta*sin(theta);
-  Bfield[0] = 0.0 ;//eFieldMax*cos(Point[3]);
-  //Bfield[1] = B_theta*cos(theta);
-  Bfield[1] = 0.0;
-  Bfield[2] = 0.0; //B Field has no z-component.
-  //E_z = eFieldMax*J_0(k_r*r) * cos(frequency t)
-  Bfield[3] = 0.0; //EField only along z-axis
-  Bfield[4] = 0.0; //Efield only along z-axis
-  Bfield[5] = eFieldMax*cos(frequency*Point[3]+phase);
-  //Bfield[5] = eFieldMax;
+  //Calculating the magnitudes of the Fields:
+
+  
+  //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J0 arg between 0 and 3 
+  double J0r = 0.999999999-2.249999879*pow((2.405*radialDistance/(3*cavityRadius)),2)+1.265623060*pow((2.405*radialDistance/(3*cavityRadius)),4)-0.316394552*pow((2.405*radialDistance/(3*cavityRadius)),6)+0.044460948*pow((2.405*radialDistance/(3*cavityRadius)),8)-0.003954479*pow((2.405*radialDistance/(3*cavityRadius)),10)+0.000212950*pow((2.405*radialDistance/(3*cavityRadius)),12); 
+
+  //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J1 arg between 0 and 3 
+  double J1r = (2.405*radialDistance/(3*cavityRadius))*(0.500000000-0.562499992*pow((2.405*radialDistance/(3*cavityRadius)),2)+0.210937377*pow((2.405*radialDistance/(3*cavityRadius)),4)-0.039550040*pow((2.405*radialDistance/(3*cavityRadius)),6)+0.004447331*pow((2.405*radialDistance/(3*cavityRadius)),8)-0.000330547*pow((2.405*radialDistance/(3*cavityRadius)),10)+0.000015525*pow((2.405*radialDistance/(3*cavityRadius)),12));
+
+  //|E|
+  G4double eMagnitude = eFieldMax*J0r*cos(frequency*Point[4]);
+  //|H|
+  G4double hMagnitude = (eFieldMax/(pow(CLHEP::mu0/CLHEP::epsilon0,0.5))*J1r*sin(frequency*Point[4]));
+
+
+  //Angle of the position vector.
+  G4double angle = atan2(LocalR.y(),LocalR.x()) + CLHEP::pi*0.5; //Add pi/2 so that the vector is perpendicular to position.
+
+  //normalization factor
+  G4double normalization = pow(tan(angle)*tan(angle)+1,0.5);
+
+  //Local B and E fields:
+  G4ThreeVector LocalB = G4ThreeVector(tan(angle)*hMagnitude/normalization, //x
+				       hMagnitude/normalization,            //y
+				       0);                                  //z
+
+  G4ThreeVector LocalE = G4ThreeVector(0,                                   //x
+				       0,                                   //y
+				       eMagnitude);                         //z
+
+  //Converting back to global coordinates:
+  G4ThreeVector GlobalB = localToGlobalMatrix*LocalB; //Multiply the localB field by the local2Global matrix to get back into global coordinates
+  G4ThreeVector GlobalE = localToGlobalMatrix*LocalE;
+  
+ 
+  //BField x, y, z
+  Bfield[0] = GlobalB.x();  
+  Bfield[1] = GlobalB.y();
+  Bfield[2] = GlobalB.z();
+  //EField x, y, z 
+  Bfield[3] = GlobalE.x();
+  Bfield[4] = GlobalE.y();
+  Bfield[5] = GlobalE.z();
   }
 
 BDSPillBoxField::~BDSPillBoxField()

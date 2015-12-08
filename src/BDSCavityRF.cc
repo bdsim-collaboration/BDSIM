@@ -27,14 +27,13 @@ BDSCavityRF::BDSCavityRF(G4String name,
 			 ):
   BDSCavity(name, length, type, cavityMaterialIn, vacuumMaterialIn, cavityRadiusIn, irisRadiusIn, thicknessIn, cavityModelIn)
 {
-  frequency = 100*CLHEP::megahertz;
+  frequency = frequencyIn;
   phase = phaseIn;
 }
 
  void BDSCavityRF::BuildField()
 {
   G4double eFieldMax = - 160 * CLHEP::megavolt / CLHEP::m; //--------------REMOVE HARDCODED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  frequency = 100*CLHEP::megahertz;
   itsField = new BDSPillBoxField(eFieldMax,
 				 cavityRadius,
 				 frequency,
@@ -51,7 +50,7 @@ void BDSCavityRF::AttachField()
 				       itsStepper, //Stepper
 				       itsStepper->GetNumberOfVariables() ); //nvar
 
-  itsChordFinder = new G4ChordFinder(itsIntgrDriver); //EM fields need to use integrator driver constructor.
+  itsChordFinder = new G4ChordFinder(itsIntgrDriver);  //EM fields need to use integrator driver constructor.
   itsFieldManager = new G4FieldManager();                      //Create field manager
 
   

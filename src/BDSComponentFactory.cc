@@ -265,9 +265,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   G4Material* cavityMaterial = BDSMaterials::Instance()->GetMaterial(_element.material);
   G4Material* vacuumMaterial = BDSMaterials::Instance()->GetMaterial("vacuum");
 
-  // G4double frequency = 100*CLHEP::megahertz;  //(100MHz)
-  // G4double phase = 0.0;
-
   // find right cavity model in vector of cavitymodels
   GMAD::CavityModel model;
   //= std::find(GMAD::cavitymodel_list.begin(), GMAD::cavitymodel_list.end(), cavityModel);
