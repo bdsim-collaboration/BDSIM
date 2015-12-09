@@ -126,7 +126,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   containerSubtractionSolid = new G4Tubs(nameIn + "_container_sub_solid",// name
 					 0,                              // inner radius
 					 containerRadiusIn,              // outer radius
-					 lengthIn*2,                     // full length for unambiguous subtraction
+					 lengthIn*4,                     // full length for unambiguous subtraction
 					 0,                              // rotation start angle
 					 CLHEP::twopi);                  // rotation finish angle
   
