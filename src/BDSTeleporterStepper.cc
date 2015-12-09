@@ -34,49 +34,47 @@ void BDSTeleporterStepper::Stepper(const G4double yIn[],
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "turnstaken: " << turnstaken << G4endl;
 #endif
-  //if (turnstaken != turnnumberrecord.back())
-  if (turnstaken > 0)
+  // has to have completed at least 1 turn and be going forwards
+  // must test for this to avoid backwards going particles getting stuck
+  if (turnstaken > 0 && yIn[5] > 0)
     {
-      //do the adjustment
-      //register this turn
-      //turnnumberrecord.push_back(turnstaken);
-      //G4cout << "registering this turn in teleporter" << G4endl;
-      // accelerator is built along z axis
-      // bends bend normally in x axis
-      // for a flat machine, the delta.y() should be <10^-9 ie rounding error 
       yOut[0] = yIn[0] - teleporterdelta.x();
       yOut[1] = yIn[1] - teleporterdelta.y();
-      yOut[2] = yIn[2] + h; // move it along the step length
+      yOut[2] = yIn[2] + h; // move it to end of teleporter
       yOut[3] = yIn[3];
       yOut[4] = yIn[4];
       yOut[5] = yIn[5];
     }
   else
     {
-      //move the particle along the step without affecting anything (ensure periodicity)
+      // move particle to other side without affecting anything
       yOut[0] = yIn[0];
       yOut[1] = yIn[1];
-      yOut[2] = yIn[2] + h;
+      if (yIn[5] > 0) // going forwards
+	{yOut[2] = yIn[2] + h;}
+      else // going backwards
+	{yOut[2] = yIn[2] - h;}
       yOut[3] = yIn[3];
       yOut[4] = yIn[4];
       yOut[5] = yIn[5];
     }
   
-#ifdef BDSDEBUG
-  G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
-  G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
-  G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
-  G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
-  std::ios_base::fmtflags ff = G4cout.flags(); // save cout flags
-  G4cout.precision(10);
-  G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << "h (step length) " << h   /CLHEP::m << G4endl;
-  G4cout << "Input x,y,z     " << inA /CLHEP::m << G4endl;
-  G4cout << "Input px,py,pz  " << inB /CLHEP::m << G4endl;
-  G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
-  G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
-  G4cout.flags(ff); // reset cout flags
-#endif
+  if (verboseStep)
+    {
+      G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
+      G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
+      G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
+      G4ThreeVector outB = G4ThreeVector(yOut[3],yOut[4],yOut[5]);
+      std::ios_base::fmtflags ff = G4cout.flags(); // save cout flags
+      G4cout.precision(10);
+      G4cout << __METHOD_NAME__ << G4endl;
+      G4cout << "h (step length) " << h   /CLHEP::m << G4endl;
+      G4cout << "Input x,y,z     " << inA /CLHEP::m << G4endl;
+      G4cout << "Input px,py,pz  " << inB /CLHEP::m << G4endl;
+      G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
+      G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
+      G4cout.flags(ff); // reset cout flags
+    }
 }
 
 BDSTeleporterStepper::~BDSTeleporterStepper()
