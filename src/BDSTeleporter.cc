@@ -28,8 +28,8 @@ BDSTeleporter::BDSTeleporter(G4String name,
 
 void BDSTeleporter::Build()
 {
-  BuildBPFieldAndStepper();   // create custom stepper
-  BuildBPFieldMgr(itsStepper,itsMagField);  // register it in a manager
+  BuildBPFieldAndStepper();         // create custom stepper
+  BuildBPFieldMgr();                // register it in a manager
   BDSAcceleratorComponent::Build(); // create container and attach stepper
 }
 
@@ -62,17 +62,16 @@ void BDSTeleporter::BuildBPFieldAndStepper()
   itsStepper  = new BDSTeleporterStepper(itsEqRhs);
 }
 
-void BDSTeleporter::BuildBPFieldMgr(G4MagIntegratorStepper* stepper,
-				    G4MagneticField* field)
+void BDSTeleporter::BuildBPFieldMgr()
 {
-  //this is all copied from BDSMagnet.cc although names tidied a bit
-  itsChordFinder = new G4ChordFinder(field,
-				     chordLength/CLHEP::m,
-				     stepper);
+  magIntDriver = new G4MagInt_Driver(chordLength, // set chord length as minimum step
+				     itsStepper,
+				     itsStepper->GetNumberOfVariables());
 
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  itsChordFinder = new G4ChordFinder(magIntDriver);
+  
   itsFieldManager = new G4FieldManager();
-  itsFieldManager->SetDetectorField(field);
+  itsFieldManager->SetDetectorField(itsMagField);
   itsFieldManager->SetChordFinder(itsChordFinder);
   // set limits for field (always non zero, so always set)
   itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
