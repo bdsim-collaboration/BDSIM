@@ -15,8 +15,6 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
   verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
   verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
   nvar               = 6;
-  //  turnnumberrecord.push_back((G4int)-1);
-  //  turnstaken         = 0;
   teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
 #ifdef BDSDEBUG
   verboseStep = true;
@@ -24,22 +22,13 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
 }
 
 void BDSTeleporterStepper::Stepper(const G4double yIn[],
-				   const G4double[],
+				   const G4double /*dxdy*/[],
 				   const G4double h,
 				   G4double yOut[],
 				   G4double yErr[])
-{  
-  //const G4int nvar = 6 ;
-  G4int i;
-  for(i=0;i<nvar;i++) yErr[i]=0;
-  
-  // FOR NOW - do it to everything every time
-  //           will likely only take one step...
-  // keep a record of the turn number for this particle
-  // only adjust its position if the particle on this turn
-  // hasn't been shifted already - ie its turn number
-  // won't have been registered in the vector member
-  // turnnumberrecord
+{
+  for(G4int i=0;i<nvar;i++)
+    {yErr[i]=0;}
 
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
 #ifdef BDSDEBUG
