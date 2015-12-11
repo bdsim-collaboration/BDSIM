@@ -17,7 +17,7 @@ protected:
   std::vector<float>        energy;
   std::vector<float>        S;
   std::vector<float>        weight;
-  std::vector<unsigned int> indexModel;
+  std::vector<unsigned int> modelID;
 
 public:
   BDSOutputROOTEventLoss();
