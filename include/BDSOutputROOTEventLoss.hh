@@ -17,7 +17,10 @@ protected:
   std::vector<float>        energy;
   std::vector<float>        S;
   std::vector<float>        weight;
+  /* geometry model */
   std::vector<unsigned int> modelID;
+  /* process */
+  std::vector<unsigned int> processID;
 
 public:
   BDSOutputROOTEventLoss();
