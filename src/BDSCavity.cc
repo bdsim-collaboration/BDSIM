@@ -46,7 +46,11 @@ BDSCavity::BDSCavity(G4String       name,
   BDSAcceleratorComponent(name, length, 0, "cavity_"+cavityInfoIn->cavityType.ToString()),
   fieldAmplitude(fieldAmplitudeIn),
   cavityInfo(cavityInfoIn)
-{;}
+{
+  cavityRadius = cavityInfo->equatorRadius;
+  thickness = cavityInfo->thickness;
+  irisRadius = cavityInfo->irisRadius;
+}
 
 BDSCavity::~BDSCavity()
 {
@@ -141,12 +145,12 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //equatorRadius    --> Radius at the equator.
   G4double equatorRadius = cavityRadius; // cavityRadius in SRF is the equator readius for cavity
   
-  G4double irisRSemiAxis    = cavityInfo->irisVerticalAxis * CLHEP::m;
-  G4double irisZSemiAxis    = cavityInfo->irisHorizontalAxis * CLHEP::m; //iris ellipse horizontal semiaxis
-  G4double equatorRSemiAxis = cavityInfo->equatorEllipseSemiAxis * CLHEP::m ;//equator ellipse vertical semiaxis
-  G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis * CLHEP::m; //equator ellipse horizontal semiaxis
+  G4double irisRSemiAxis    = cavityInfo->irisVerticalAxis;
+  G4double irisZSemiAxis    = cavityInfo->irisHorizontalAxis; //iris ellipse horizontal semiaxis
+  G4double equatorRSemiAxis = cavityInfo->equatorEllipseSemiAxis ;//equator ellipse vertical semiaxis
+  G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis; //equator ellipse horizontal semiaxis
   G4double tangentAngle     = cavityInfo->tangentLineAngle;
-  G4double irisRadius       = cavityInfo->irisRadius *CLHEP::m;
+  G4double irisRadius       = cavityInfo->irisRadius;
   G4int noPoints            = cavityInfo->numberOfPoints;
 
   //Calculatecartesian coordinates (z, r) from parameters.
@@ -255,7 +259,25 @@ void BDSCavity::BuildEllipticalCavityGeometry()
 	  rOuterCoord.push_back(+ thickness * pow( (gradientAt_i*gradientAt_i + 1), -0.5) + rInnerCoord[i]);
 	}
     };
+
+  //---Printing out things:---
+#ifdef BDSDEBUG    
+  G4cout << "Now printing the values of (zInnerCoord,rInnerCoord):" << G4endl;
+  G4cout << "Length of zInnerCoord = " << zInnerCoord.size() << G4endl;
+  G4cout << "Length of rInnerCoord = " << rInnerCoord.size() << G4endl;
+  for (G4int i = 0; i < zInnerCoord.size(); i++)
+    {
+      G4cout << "(" << zInnerCoord[i] << "," << rInnerCoord[i] << ")" << G4endl;
+    };
   
+  G4cout << "Now printing the values of (zOuterCoord,rOuterCoord):" << G4endl;
+  G4cout << "Length of zOuterCoord = " << zOuterCoord.size() << G4endl;
+  G4cout << "Length of rOuterCoord = " << rOuterCoord.size() << G4endl;
+  for (G4int i = 0; i < zOuterCoord.size(); i++)
+    {
+      G4cout << "(" << zOuterCoord[i] << "," << rOuterCoord[i] << ")" << G4endl;
+    };
+#endif
 
   //Array of inner r coordinates.  zeroes ensures the polycone will be solid.
   std::vector<G4double> solidArrayOuter(noPoints, 0.0); 
