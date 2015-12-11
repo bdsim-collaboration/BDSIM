@@ -50,6 +50,8 @@ BDSCavity::BDSCavity(G4String       name,
   cavityRadius = cavityInfo->equatorRadius;
   thickness = cavityInfo->thickness;
   irisRadius = cavityInfo->irisRadius;
+  vacuumMaterial = cavityInfo->vacuumMaterial;
+  cavityMaterial = cavityInfo->material;
 }
 
 BDSCavity::~BDSCavity()
