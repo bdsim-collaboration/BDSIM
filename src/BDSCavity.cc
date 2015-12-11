@@ -20,25 +20,6 @@
 #include <cmath>
 #include <vector>
 
-
-BDSCavity::BDSCavity(G4String name, //Any others to add here? 
-		     G4double length,
-		     G4String type,
-		     G4Material* cavityMaterialIn,
-		     G4Material* vacuumMaterialIn,
-		     G4double cavityRadiusIn,
-		     G4double irisRadiusIn,
-		     G4double thicknessIn,
-		     G4String cavityModelIn): 
-  BDSAcceleratorComponent(name, length, 0, type),
-  cavityMaterial(cavityMaterialIn),
-  vacuumMaterial(vacuumMaterialIn),
-  cavityRadius(cavityRadiusIn),
-  irisRadius(irisRadiusIn),
-  thickness(thicknessIn),
-  cavityModel(cavityModelIn)
-{;}
-
 BDSCavity::BDSCavity(G4String       name,
 		     G4double       length,
 		     G4double       fieldAmplitudeIn,
@@ -50,8 +31,6 @@ BDSCavity::BDSCavity(G4String       name,
   cavityRadius = cavityInfo->equatorRadius;
   thickness = cavityInfo->thickness;
   irisRadius = cavityInfo->irisRadius;
-  vacuumMaterial = cavityInfo->vacuumMaterial;
-  cavityMaterial = cavityInfo->material;
 }
 
 BDSCavity::~BDSCavity()
@@ -314,7 +293,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   
   //define the logical volume.
   cavityLV = new G4LogicalVolume(cavitySolid,            //solid
-				 cavityMaterial,         //material
+				 cavityInfo->material,   //material
 				 name + "_cavity_lv"     //name
 				 );                      
 
@@ -357,7 +336,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   
   //Initializing the logical volume
   vacuumLV = new G4LogicalVolume(vacuumSolid,           //solid
-				 vacuumMaterial,              //material
+				 cavityInfo->vacuumMaterial,//material
 				 name + "_vacuum_lv");
   //The following 3 lines define the visual attributes of the vacuum.  
   G4VisAttributes* vacuumVis = new G4VisAttributes(); //visattributes instance 
@@ -396,7 +375,7 @@ void BDSCavity::BuildPillBoxCavityGeometry()
 
   //Logical volume from cavity solid
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
-				 cavityMaterial,       // material
+				 cavityInfo->material, // material
 				 name + "_cavity_lv"); // name
 
   
@@ -428,7 +407,7 @@ void BDSCavity::BuildPillBoxCavityGeometry()
 
   //Logical volume from the solid.
   vacuumLV = new G4LogicalVolume(vacuumSolid,           //solid
-				 vacuumMaterial,        //material
+				 cavityInfo->vacuumMaterial, //material
 				 name + "_vacuum_lv");  //name
 
   //The following 4 lines define the visual attributes of the cavity

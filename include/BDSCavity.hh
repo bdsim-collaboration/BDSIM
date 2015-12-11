@@ -22,16 +22,6 @@ class G4Material;
 class BDSCavity: public BDSAcceleratorComponent
 {
 public:
-  BDSCavity(G4String name, 
-	    G4double length,
-	    G4String type, 
-	    G4Material* cavityMaterial,
-	    G4Material* vacuumMaterial,
-	    G4double cavityRadius, //Largest radial distance from z axis
-	    G4double irisRadius, //radius at ends
-	    G4double thickness,
-	    G4String cavityModel);
-
   BDSCavity(G4String       name,
 	    G4double       length,
 	    G4double       fieldAmplitude,
@@ -66,14 +56,10 @@ protected:
 
   G4LogicalVolume* cavityLV; //Set at same time as cavitySolid
   G4LogicalVolume* vacuumLV; //Set at same time as vacuumSolid
-
-  G4Material* cavityMaterial;  //The material the cavity is to be made out of
-  G4Material* vacuumMaterial;  //The material the vacuum is to be made of
  
   G4double cavityRadius;      //largest value of r from z.
   G4double irisRadius;         //radius of the iris (aperture).
   G4double thickness;          //thickness.  Constant thickness.  Any deviation is an artifact.
-  G4String cavityModel; ///< cavity model name
   
   G4int nvar = 8; //to integrate over position, momentum, energy and time (8)
   

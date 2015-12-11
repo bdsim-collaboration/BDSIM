@@ -12,19 +12,6 @@ class BDSCavityRF: public BDSCavity
 {
 public:
 
-  BDSCavityRF(G4String name, 
-	      G4double length,
-	      G4String type, 
-	      G4Material* cavityMaterial,
-	      G4Material* vacuumMaterial,
-	      G4double cavityRadius, //Largest r from z axis
-	      G4double irisRadius,
-	      G4double thickness,
-	      G4double frequency,
-	      G4double phase,
-	      G4String cavityModel
-	      );
-
   BDSCavityRF(G4String       name,
 	      G4double       length,
 	      G4double       fieldAmplitude,
