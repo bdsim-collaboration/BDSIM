@@ -117,13 +117,14 @@ void BDSOutputROOTEvent::Init()
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
 
   //
-  // Build process structures
+  // Build process/track structures
   //
   
   //
   // Build trajectory structures
   // 
-
+  traj = new BDSOutputROOTEventTrajectory();
+  theRootOutputTree->Branch("Trajector.","BDSOutputROOTEventTrajectory",traj,4000,2);
 }
   
 /// write sampler hit collection
@@ -260,4 +261,5 @@ void BDSOutputROOTEvent::Flush()
   pFirstHit->Flush();
   pLastHit->Flush();
   tHit->Flush();
+  traj->Flush();
 }

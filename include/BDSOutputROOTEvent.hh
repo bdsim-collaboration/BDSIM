@@ -12,6 +12,7 @@
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventHit.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
 
 
 #include "TROOT.h"
@@ -117,8 +118,8 @@ private:
   BDSOutputROOTEventHit  *pLastHit;
   // tunnel hit
   BDSOutputROOTEventHit  *tHit;
-  
-  
+  // trajectory
+  BDSOutputROOTEventTrajectory  *traj;
 };
 
 #endif
