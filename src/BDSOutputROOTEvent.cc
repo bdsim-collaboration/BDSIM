@@ -124,7 +124,7 @@ void BDSOutputROOTEvent::Init()
   // Build trajectory structures
   // 
   traj = new BDSOutputROOTEventTrajectory();
-  theRootOutputTree->Branch("Trajector.","BDSOutputROOTEventTrajectory",traj,4000,2);
+  theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
 }
   
 /// write sampler hit collection
@@ -186,12 +186,12 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
 }
 
 /// write a trajectory 
-void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &// TrajVec
-					 ) 
+void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  traj->Fill(trajVec);
 }
 
 /// write primary hit
