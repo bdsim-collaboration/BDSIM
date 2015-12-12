@@ -21,6 +21,7 @@ protected:
   std::vector<unsigned int> modelID;
   /* process */
   std::vector<unsigned int> processID;
+  std::vector<unsigned int> trackID;
 
 public:
   BDSOutputROOTEventLoss();
