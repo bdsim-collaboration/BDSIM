@@ -6,13 +6,11 @@
 #include <cmath>
 
 BDSPillBoxField::BDSPillBoxField(G4double eFieldMaxIn,
-				 G4double cavityRadius,
+				 G4double cavityRadiusIn,
 				 G4double frequencyIn,
-				 G4double phaseIn)
+				 G4double phaseIn):
+  eFieldMax(eFieldMaxIn),cavityRadius(cavityRadiusIn),frequency(frequencyIn),phase(phaseIn)
 {
-  eFieldMax = eFieldMaxIn;
-  frequency = frequencyIn;
-  phase = phaseIn;
 }
 
 G4bool BDSPillBoxField::DoesFieldChangeEnergy() const

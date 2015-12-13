@@ -18,10 +18,12 @@ public:
   virtual void GetFieldValue(const G4double Point[4],G4double *Bfield ) const ;
   
 protected:
-  G4double cavityRadius;
-  G4double frequency; //angular frequency
-  G4double phase;
+  /// Maximum field in MV/m
   G4double eFieldMax;
+  G4double cavityRadius;
+  /// angular frequency
+  G4double frequency;
+  G4double phase;
 private:
   //G4Navigator* PillBoxNavigator;
 };
