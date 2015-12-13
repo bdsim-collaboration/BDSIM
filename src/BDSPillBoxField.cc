@@ -47,9 +47,9 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   double J1r = (2.405*radialDistance/(3*cavityRadius))*(0.500000000-0.562499992*pow((2.405*radialDistance/(3*cavityRadius)),2)+0.210937377*pow((2.405*radialDistance/(3*cavityRadius)),4)-0.039550040*pow((2.405*radialDistance/(3*cavityRadius)),6)+0.004447331*pow((2.405*radialDistance/(3*cavityRadius)),8)-0.000330547*pow((2.405*radialDistance/(3*cavityRadius)),10)+0.000015525*pow((2.405*radialDistance/(3*cavityRadius)),12));
 
   //|E|
-  G4double eMagnitude = eFieldMax*J0r*cos(frequency*Point[4]);
+  G4double eMagnitude = eFieldMax*J0r*cos(frequency*Point[3]);
   //|H|
-  G4double hMagnitude = (eFieldMax/(pow(CLHEP::mu0/CLHEP::epsilon0,0.5))*J1r*sin(frequency*Point[4]));
+  G4double hMagnitude = (eFieldMax/(pow(CLHEP::mu0/CLHEP::epsilon0,0.5))*J1r*sin(frequency*Point[3]));
 
 
   //Angle of the position vector.
