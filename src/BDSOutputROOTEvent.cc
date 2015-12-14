@@ -99,7 +99,7 @@ void BDSOutputROOTEvent::Init()
       samplerMap[stripName] = new BDSOutputROOTEventSampler(stripName);
 
       // set tree branches 
-      theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[name],4000,1);
+      theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[stripName],4000,1);
 
     }
 
