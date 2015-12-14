@@ -93,11 +93,10 @@ void BDSOutputROOTEvent::Init()
       G4String name=BDSSamplerBase::outputNames[i];
 
       // remove sampler number
-      G4String stripName = name.substr(0,name.find_last_of("_"));
-      stripName = stripName.substr(8,100); // remove Sampler_
+      G4String stripName = name.substr(8,100); // remove Sampler_
       
       // create sampler structure
-      samplerMap[name] = new BDSOutputROOTEventSampler(name);
+      samplerMap[stripName] = new BDSOutputROOTEventSampler(stripName);
 
       // set tree branches 
       theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[name],4000,1);
@@ -135,9 +134,11 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
 
+  G4String stripName;
   for(int i=0;i<hc->entries();i++) {
+    stripName = (*hc)[i]->GetName().substr(8,100);
     //    G4cout << (*hc)[i]->GetName() << G4endl;
-    samplerMap[(*hc)[i]->GetName()]->Fill((*hc)[i]);
+    samplerMap[stripName]->Fill((*hc)[i]);
   }  
 }
 
