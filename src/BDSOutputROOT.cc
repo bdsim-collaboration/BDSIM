@@ -7,8 +7,6 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
 
-#define BDSDEBUG 1
-
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
   G4cout<<"output format ROOT"<<G4endl;
