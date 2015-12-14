@@ -28,8 +28,8 @@ BDSTeleporter::BDSTeleporter(G4String name,
 
 void BDSTeleporter::Build()
 {
-  BuildBPFieldAndStepper();   // create custom stepper
-  BuildBPFieldMgr(itsStepper,itsMagField);  // register it in a manager
+  BuildBPFieldAndStepper();         // create custom stepper
+  BuildBPFieldMgr();                // register it in a manager
   BDSAcceleratorComponent::Build(); // create container and attach stepper
 }
 
@@ -62,17 +62,16 @@ void BDSTeleporter::BuildBPFieldAndStepper()
   itsStepper  = new BDSTeleporterStepper(itsEqRhs);
 }
 
-void BDSTeleporter::BuildBPFieldMgr(G4MagIntegratorStepper* stepper,
-				    G4MagneticField* field)
+void BDSTeleporter::BuildBPFieldMgr()
 {
-  //this is all copied from BDSMagnet.cc although names tidied a bit
-  itsChordFinder = new G4ChordFinder(field,
-				     chordLength/CLHEP::m,
-				     stepper);
+  magIntDriver = new G4MagInt_Driver(chordLength, // set chord length as minimum step
+				     itsStepper,
+				     itsStepper->GetNumberOfVariables());
 
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  itsChordFinder = new G4ChordFinder(magIntDriver);
+  
   itsFieldManager = new G4FieldManager();
-  itsFieldManager->SetDetectorField(field);
+  itsFieldManager->SetDetectorField(itsMagField);
   itsFieldManager->SetChordFinder(itsChordFinder);
   // set limits for field (always non zero, so always set)
   itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
@@ -88,6 +87,7 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   G4ThreeVector lastitemposition   = thebeamline->back()->GetReferencePositionEnd();
   G4ThreeVector firstitemposition  = thebeamline->front()->GetReferencePositionStart();
   G4ThreeVector delta              = lastitemposition - firstitemposition;
+  
   G4cout << "Calculating Teleporter delta" << G4endl;
   G4cout << "Last item end position:       " << lastitemposition  << " mm" << G4endl;
   G4cout << "First item start position:    " << firstitemposition << " mm" << G4endl;
@@ -98,6 +98,12 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   // beamline is built along z and sbend deflects in x
   // setting length here ensures that length is always the z difference
   G4double teleporterLength       = fabs(delta.z());
+
+  // ensure there's no overlaps by reducing teleporter length by a few microns
+  // it's ok to adjust the teleporter length and not the delta used by the teleporter stepper
+  // as the stepper only uses 'h' the step length and not the delta.z component
+  if (teleporterLength > 4*CLHEP::um)
+    {teleporterLength -= 3*CLHEP::um;}
   G4cout << "Calculated teleporter length: " << teleporterLength << " mm" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterLength);
 }
