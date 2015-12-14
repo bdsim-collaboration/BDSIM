@@ -16,6 +16,8 @@
 #include "G4TouchableHistory.hh"
 #include "G4ios.hh"
 #include "G4ThreeVector.hh"
+#include "BDSPhysicalVolumeInfo.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "G4AffineTransform.hh"
 
@@ -47,7 +49,7 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
   HCE->AddHitsCollection(itsHCID,SamplerCollection);
 }
 
-G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH */)
 {
   G4Track* theTrack         = aStep->GetTrack();
   BDSTrajectory* bdsTraj    = new BDSTrajectory(theTrack);
@@ -85,7 +87,13 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4AffineTransform tf(preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform());
   //      const G4RotationMatrix Rot=tf.NetRotation();
   //      const G4ThreeVector Trans=-tf.NetTranslation();
-  
+
+  // As with BDSEnergyCounterSD??? TODO Check
+  G4VPhysicalVolume *theVolume = aStep->GetPostStepPoint()->GetPhysicalVolume();
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
+
+
+
   //Old method - works for standard Samplers, but not samplers within a deeper
   //hierarchy of volumes (e.g. Mokka built samplers)
   //const G4RotationMatrix* Rot=theTrack->GetVolume()->GetFrameRotation();
@@ -143,20 +151,21 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {process = theTrack->GetCreatorProcess()->GetProcessName();}
   
   BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
-					    BDSGlobalConstants::Instance()->GetInitialPoint(),
-					    production,
-					    lastScatter,
-					    local,
-					    global,
-					    s,
-					    weight,
-					    PDGtype,
-					    nEvent, 
-					    ParentID, 
-					    TrackID,
-					    turnstaken,
-					    itsType,
-					    process);
+                                            BDSGlobalConstants::Instance()->GetInitialPoint(),
+                                            production,
+                                            lastScatter,
+                                            local,
+                                            global,
+                                            s,
+                                            weight,
+                                            PDGtype,
+                                            nEvent,
+                                            ParentID,
+                                            TrackID,
+                                            turnstaken,
+                                            itsType,
+                                            process,
+                                            0 /*theInfo->GetBeamlineIndex()*/); // TODO Check with LN why this does not work for samplers
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;

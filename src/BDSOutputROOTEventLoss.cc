@@ -20,7 +20,9 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
   this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
   this->S.push_back     ( (float &&) (hit->GetS()      / CLHEP::m));
   this->weight.push_back( (float &&)  hit->GetWeight());
-  G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
+  this->modelID.push_back( hit->GetBeamlineIndex());
+
+//  G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
 }
 
 void BDSOutputROOTEventLoss::Fill(BDSTunnelHit *hit)

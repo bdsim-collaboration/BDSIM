@@ -25,6 +25,7 @@ protected:
   std::vector<float> weight;
   std::vector<int>   partID;
   std::vector<int>   parentID;
+	std::vector<int>   modelID;
   std::vector<int>   turnNumber;
   
   float              S;   // Will not need this when have global transforms
@@ -35,10 +36,11 @@ public:
   virtual ~BDSOutputROOTEventSampler();
 #ifndef __MAKECINT__
   void Fill(G4double E,
-	    G4double x0, G4double y0, G4double z0,
-	    G4double xp, G4double yp, G4double zp,
-	    G4double t,
-	    G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken);
+            G4double x0, G4double y0, G4double z0,
+            G4double xp, G4double yp, G4double zp,
+            G4double t,
+            G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
+            G4int beamlineIndex);
   void Fill(BDSSamplerHit *hit);
 #endif
   /// Clean Sampler
