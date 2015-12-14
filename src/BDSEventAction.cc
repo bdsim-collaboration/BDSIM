@@ -229,7 +229,9 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef BDSDEBUG
       G4cout<<"done"<<G4endl;
 #endif
-    }
+    } else {
+    bdsOutput->Write(); // write to file
+  }
 
   // needed to draw trajectories and hits:
   if(!isBatch) {

@@ -63,6 +63,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   // Write output
   if(BDSExecOptions::Instance()->GetBatch()) {  // Non-interactive mode
     bdsOutput->Write(); // write last file
+    bdsOutput->Close(); // close the file
   } else {
     bdsOutput->Commit(); // write and open new file
   }

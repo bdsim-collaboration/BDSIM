@@ -41,8 +41,10 @@ public:
 
   /// write and close and open new file
   virtual void Commit()=0;
-  /// write and close the file
+  /// write to the file
   virtual void Write()=0;
+  /// close the file
+  virtual void Close()=0;
 
 protected:
   /// current event number
