@@ -49,22 +49,22 @@ void BDSOutputROOTEventModel::Fill()
 
     // Reference orbit positions
     p = (*i)->GetReferencePositionStart();
-    this->staPos.push_back(TVector3(p.getX(),p.getY(),p.getZ()));
+    this->staRefPos.push_back(TVector3(p.getX(),p.getY(),p.getZ()));
     p = (*i)->GetReferencePositionMiddle();
-    this->midPos.push_back(TVector3(p.getX(),p.getY(),p.getZ()));
+    this->midRefPos.push_back(TVector3(p.getX(),p.getY(),p.getZ()));
     p = (*i)->GetReferencePositionEnd();
-    this->endPos.push_back(TVector3(p.getX(),p.getY(),p.getZ()));
+    this->endRefPos.push_back(TVector3(p.getX(),p.getY(),p.getZ()));
 
     // Reference orbit rotations
     gr = (*i)->GetReferenceRotationStart();
     rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
-    this->staRot.push_back(rr);
+    this->staRefRot.push_back(rr);
     gr = (*i)->GetReferenceRotationMiddle();
     rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
-    this->midRot.push_back(rr);
+    this->midRefRot.push_back(rr);
     gr = (*i)->GetReferenceRotationEnd();
     rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
-    this->endRot.push_back(rr);
+    this->endRefRot.push_back(rr);
 
     // S positions
     this->staS.push_back((float &&) (*i)->GetSPositionStart());
