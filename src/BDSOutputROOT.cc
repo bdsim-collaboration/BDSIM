@@ -266,6 +266,8 @@ void BDSOutputROOT::WriteRootHit(G4String Name,
   pID=ParentID; 
   track_id=TrackID;
   turnnumber=TurnsTaken;
+  //Apply a cut to off-axis optical photons.
+  //  if(
   sTree->Fill();
 }
 
