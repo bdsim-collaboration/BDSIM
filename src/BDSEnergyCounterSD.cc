@@ -49,6 +49,7 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
 {
   delete [] HitID;
+  delete BDSEnergyCounterCollection;
 }
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent*HCE)

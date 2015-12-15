@@ -109,7 +109,6 @@ void BDS_handle_aborts(int signal_number) {
 }
 
 int main(int argc,char** argv) {
-
   /* Initialize executable command line options reader object */
 #ifdef BDSDEBUG
   BDSExecOptions::Instance(argc,argv)->Print();

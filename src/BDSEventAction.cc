@@ -198,7 +198,10 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
       //      G4String name=(*iEC)->GetCollectionName(0);
       BDSEnergyCounter_HC=
 	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
-      if(BDSEnergyCounter_HC) {bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);}
+      if(BDSEnergyCounter_HC) {
+	bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
+	delete BDSEnergyCounter_HC;
+      }
     }
 
 #ifdef BDSDEBUG

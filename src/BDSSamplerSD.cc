@@ -81,6 +81,9 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   G4double energy = theTrack->GetKineticEnergy()+theTrack->GetDefinition()->GetPDGMass();
   //Turn Number
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();  
+
+  
+
   
   //current particle position (global)
   G4ThreeVector pos = theTrack->GetPosition();

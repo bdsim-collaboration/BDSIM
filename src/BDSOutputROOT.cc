@@ -377,6 +377,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetTurnsTaken()
 		   );
     }
+  delete hc;
 }
 
 /// write a trajectory to file
@@ -460,6 +461,7 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	PrecisionRegionEnergyLossTree->Fill();
       }
     }
+  delete hc;
 }
 
 void BDSOutputROOT::Commit()
