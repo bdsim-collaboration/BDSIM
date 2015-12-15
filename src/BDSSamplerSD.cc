@@ -140,6 +140,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
     BDSParticle referenceParticle(refPos,refDir,energy,t); //Just store the reference particle in this sampler.
     referenceParticle.SetS(s); 
     itsReferenceParticleMap[SampName]=referenceParticle;
+    delete bdsTraj;
     return false; //A hit was not stored, so return false.
   }else if(itsReferenceParticleMap.find(SampName)==itsReferenceParticleMap.end()){
     noReferenceParticle=true;
@@ -240,6 +241,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
 #endif
 
   //The hit was stored, so the return value is "true".
+  delete  bdsTraj;
   return true;
 }
 
