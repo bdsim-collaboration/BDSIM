@@ -599,7 +599,7 @@ void BDSAwakeSpectrometer::Build(){
       BuildCamera();	
       CalculateLengths();
       BuildMarkerLogicalVolume();
-      BuildScreenScoringPlane();
+      //      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
