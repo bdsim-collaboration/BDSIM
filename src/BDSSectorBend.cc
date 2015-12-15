@@ -138,7 +138,7 @@ void BDSSectorBend::BuildBeampipe()
 #endif
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
 
-  if (BDS::IsFinite(angle))
+  if (BDS::IsFinite(e1) && BDS::IsFinite(e2))
     {
       beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
 						    name,
@@ -152,6 +152,34 @@ void BDSSectorBend::BuildBeampipe()
 						    beamPipeInfo->vacuumMaterial,
 						    beamPipeInfo->beamPipeThickness,
 						    beamPipeInfo->beamPipeMaterial);
+    }
+  else if (BDS::IsFinite(e1))
+    {
+      beampipe = factory->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
+						 name,
+						 chordLength - lengthSafety,
+						 e1,
+						 beamPipeInfo->aper1,
+						 beamPipeInfo->aper2,
+						 beamPipeInfo->aper3,
+						 beamPipeInfo->aper4,
+						 beamPipeInfo->vacuumMaterial,
+						 beamPipeInfo->beamPipeThickness,
+						 beamPipeInfo->beamPipeMaterial);
+    }
+  else if (BDS::IsFinite(e2))
+    {
+      beampipe = factory->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,
+						  name,
+						  chordLength - lengthSafety,
+						  e2,
+						  beamPipeInfo->aper1,
+						  beamPipeInfo->aper2,
+						  beamPipeInfo->aper3,
+						  beamPipeInfo->aper4,
+						  beamPipeInfo->vacuumMaterial,
+						  beamPipeInfo->beamPipeThickness,
+						  beamPipeInfo->beamPipeMaterial);
     }
   else
     {

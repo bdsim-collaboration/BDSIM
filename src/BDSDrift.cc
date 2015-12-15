@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 
@@ -22,7 +23,22 @@ void BDSDrift::Build()
 {
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
   BDSBeamPipe* pipe;
-  if (e1 != 0)
+  if (BDS::IsFinite(e1) && BDS::IsFinite(e2))
+    {
+      pipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
+						name,
+						chordLength,
+						e1,
+						e2,
+						beamPipeInfo->aper1,
+						beamPipeInfo->aper2,
+						beamPipeInfo->aper3,
+						beamPipeInfo->aper4,
+						beamPipeInfo->vacuumMaterial,
+						beamPipeInfo->beamPipeThickness,
+						beamPipeInfo->beamPipeMaterial);
+    }
+  else if (BDS::IsFinite(e1))
     {
       pipe = factory->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
                                         name,
@@ -36,7 +52,7 @@ void BDSDrift::Build()
                                         beamPipeInfo->beamPipeThickness,
                                         beamPipeInfo->beamPipeMaterial);
     }
-  else if (e2 != 0)
+  else if (BDS::IsFinite(e2))
     {
       pipe = factory->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,
                                         name,

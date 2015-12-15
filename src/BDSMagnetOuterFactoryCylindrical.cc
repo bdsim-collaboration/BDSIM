@@ -61,26 +61,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
-  if (!BDS::IsFinite(angle))
-    {
-      CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
-      return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				    BDSColours::Instance()->GetColour("sectorbend"));
-    }
-    
   G4ThreeVector inputface;
   G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
-  if ((e1 == 0) && (e2==0))
+  //  std::cout << "angle, e1, e2 " << angle << " " << e1 << " " << e2 << std::endl;
+  if (!BDS::IsFinite(angle) && !BDS::IsFinite(e1) && !BDS::IsFinite(e2))
     {
-      G4int orientation   = BDS::CalculateOrientation(angle);
-      G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-      G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
-      inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
-      outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
-      
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
+      G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
+      BuildMagnetContainerSolidStraight(name, containerLength, magnetContainerRadius);
     }
   else
     {
@@ -93,14 +83,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
       outputface = G4ThreeVector(-1*xcomponentOut, 0.0, zcomponentOut);
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
-    }
     
-  // build the container for the whole magnet object - this outer diameter should be
-  // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
-  G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
-  BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
-				  inputface, outputface);
-
+      // build the container for the whole magnet object - this outer diameter should be
+      // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
+      G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
+      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
+				      inputface, outputface);
+    }
   return CommonFinalConstructor(name,length,outerDiameter,outerMaterial,
 				BDSColours::Instance()->GetColour("sectorbend"));
 }
