@@ -1,5 +1,5 @@
 d1: drift, l=0.5;
-sb1 : sbend, l=0.5*m, angle = 0.5;
+sb1 : sbend, l=0.5*m, angle = 0.1;
 d2: drift, l=0.5;
 sb2 : sbend, l=0.5*m, angle = 0.0;
 d3: drift, l=0.5;
