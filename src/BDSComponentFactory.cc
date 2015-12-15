@@ -241,7 +241,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 	 << G4endl;
 #endif
 
-  // Match poleface from previous and next element (minus sign!)
+  // Match poleface from previous and next element
   double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
   double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
   
@@ -353,7 +353,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
   double aperturePrecision = 1.0; // in mm
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
-  int nSbends = (int) ceil(std::sqrt(std::abs(length*element->angle/2/aperturePrecision)));
+  // add poleface rotations onto angle as absolute number (just to be safe)
+  double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
+  int nSbends = (int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
   if (nSbends==0) nSbends = 1; // can happen in case angle = 0
   if (BDSGlobalConstants::Instance()->DontSplitSBends())
     {nSbends = 1;}  // use for debugging
