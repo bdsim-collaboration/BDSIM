@@ -69,6 +69,7 @@ Tracking
 * Circular turn counting bugs fixed
 * Particles no longer killed with circular flag on if starting slightly behind starting mid point.
 * Particles no longer stepped by teleporter at beginning of 1st turn if starting behind starting mid point.
+* Fix teleporter tracking for backwards travelling particles that would get stuck in a loop.
   
 General
 ^^^^^^^
