@@ -42,9 +42,8 @@ public:
 			    G4int nEvent, 
 			    G4int TurnsTaken);
 
-  virtual void Commit();  /// write, close and open new file
-  virtual void Write();   
-  virtual void Close();   
+  virtual void Commit();  /// close the file
+  virtual void Write();   /// close and open new file
 
 private:
 
