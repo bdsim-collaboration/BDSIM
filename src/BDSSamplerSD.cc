@@ -64,13 +64,12 @@ G4bool BDSSamplerSD::ProcessHits(G4Step*aStep,G4TouchableHistory*)
   
   G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
-  //  // tmp - only store muons
-  //     G4String pName=theTrack->GetDefinition()->GetParticleName();
-  //    if(pName=="mu+"||pName=="mu-")
-  // 	{ // tm
+
   //Do not store hit if the particle is not on the boundary 
-  if(preStepPoint->GetStepStatus()!=fGeomBoundary) return false;
-  //Do not store hit if particle does not cross boundary on next step
+  if(preStepPoint->GetStepStatus()!=fGeomBoundary){
+    delete bdsTraj;
+    return false;
+  }
 
   //unique ID of track
   G4int TrackID = theTrack->GetTrackID();
