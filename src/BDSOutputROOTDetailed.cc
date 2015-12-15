@@ -2,10 +2,6 @@
 #include "BDSOutputROOTDetailed.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSSamplerBase.hh"
-#include "BDSTrajectory.hh"
-#include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
 
 #include <string>

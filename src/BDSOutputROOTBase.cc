@@ -19,6 +19,8 @@ BDSOutputROOTBase::BDSOutputROOTBase()
   EnergyLossTree                = nullptr;
   PrimaryHitsTree               = nullptr;
   PrimaryLossTree               = nullptr;
+  TunnelLossTree                = nullptr;
+  tunnelHitsHisto               = nullptr;
 }
 
 BDSOutputROOTBase::~BDSOutputROOTBase()
