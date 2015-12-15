@@ -48,6 +48,7 @@ public:
 private:
 
   void Init(); /// output initialisation
+  void Close(); /// output finalisation
 
   void BuildSamplerTree(G4String name);
   TFile* theRootOutputFile;
@@ -57,7 +58,8 @@ private:
   //  TH3F *EnergyLossHisto3d;
   TTree *PrecisionRegionEnergyLossTree;
   TTree *EnergyLossTree;
-  
+  TTree* TrajTree;  
+
   float x0,xp0,y0,yp0,z0,zp0,E0,t0;
   float x_prod,xp_prod,y_prod,yp_prod,z_prod,zp_prod,E_prod,t_prod;
   float x_lastScat,xp_lastScat,y_lastScat,yp_lastScat,z_lastScat,zp_lastScat,E_lastScat,t_lastScat;

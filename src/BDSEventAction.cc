@@ -41,7 +41,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
-
+#define BDSDEBUG 1
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
 
@@ -153,12 +153,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     G4cout << __METHOD_NAME__ << " - planar hits collection found. Writing hits." << G4endl;
 #endif
     bdsOutput->WriteHits(SampHC);
+    for(int i=0;i<SampHC->entries();i++){ 
+      //      delete (*SampHC)[i]; 
+    }
+    //    SampHC=NULL;
   } else {
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " - no planar hits collection found. Not writing hits." << G4endl;
 #endif
   }
-  SampHC=NULL;
   
   // are there any cylindrical samplers?
   // if so, record the hits
@@ -167,10 +170,16 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #endif
 
+ BDSSamplerHitsCollection*  SampHCCyl=NULL;
   if(SamplerCollID_cylin>=0)
-    SampHC = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(SamplerCollID_cylin));
+    SampHCCyl = (BDSSamplerHitsCollection*)(evt->GetHCofThisEvent()->GetHC(SamplerCollID_cylin));
 
-  if (SampHC)  bdsOutput->WriteHits(SampHC);
+  if (SampHCCyl) {
+    bdsOutput->WriteHits(SampHCCyl);
+    for(int i=0;i<SampHCCyl->entries();i++){ 
+      //      delete (*SampHCCyl)[i]; 
+    }
+  }
   
   // are there any Laser wire calorimeters?
   // TODO : check it !!! at present not writing LW stuff
@@ -200,7 +209,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 	(BDSEnergyCounterHitsCollection*)(evt->GetHCofThisEvent()->GetHC((*iEC)->itsHCID));
       if(BDSEnergyCounter_HC) {
 	bdsOutput->WriteEnergyLoss(BDSEnergyCounter_HC);
-	delete BDSEnergyCounter_HC;
       }
     }
 
@@ -217,22 +225,6 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished getting number of events per ntuple." << G4endl;
 #endif
-
-  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
-#endif
-
-      // notify the output about the event end
-      // this can be used for splitting output files etc.
-      
-      bdsOutput->Commit(); // write and open new file
-      
-#ifdef BDSDEBUG
-      G4cout<<"done"<<G4endl;
-#endif
-    }
 
   // needed to draw trajectories and hits:
   if(!isBatch) {
@@ -277,11 +269,33 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
     }
   }
 
+  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
+#endif
+
+      // notify the output about the event end
+      // this can be used for splitting output files etc.
+      
+      bdsOutput->Commit(); // write and open new file
+      
+#ifdef BDSDEBUG
+      G4cout<<"done"<<G4endl;
+#endif
+    }
+  
+  //Clearing memory
+  BDSSamplerHitAllocator.ResetStorage();
+  BDSEnergyCounterHitAllocator.ResetStorage();
+  bdsTrajectoryAllocator.ResetStorage();
+  bdsTrajectoryPointAllocator.ResetStorage();
+
   //clear out the remaining trajectories
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : deleting trajectories"<<G4endl;
 #endif
-  //  TrajCont->clearAndDestroy();
+  TrajCont->clearAndDestroy();
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;
 #endif

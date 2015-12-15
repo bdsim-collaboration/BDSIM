@@ -7,7 +7,7 @@
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
 
-
+#define BDSDEBUG 1
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
@@ -128,7 +128,7 @@ void BDSOutputROOT::Init()
   if(BDSGlobalConstants::Instance()->GetStoreTrajectory() || BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() || BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()) 
     // create a tree with trajectories
     {
-      TTree* TrajTree = new TTree("Trajectories", "Trajectories");
+      TrajTree = new TTree("Trajectories", "Trajectories");
       TrajTree->Branch("x",&x,"x/F"); // (mum)
       TrajTree->Branch("y",&y,"y/F"); // (mum)
       TrajTree->Branch("z",&z,"z/F"); // (m)
@@ -158,6 +158,33 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("partID",&part_el_p,"partID/I");
   PrecisionRegionEnergyLossTree->Branch("volumeName",&volumeName_el_p,"volumeName/C");
   PrecisionRegionEnergyLossTree->Branch("turnnumber",&turnnumber,"turnnumber/I");
+}
+
+//Close file and clear memory
+void BDSOutputROOT::Close(){
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - deleting EnergyLossHisto" << G4endl;
+#endif
+  if(EnergyLossHisto) delete EnergyLossHisto;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - deleting EnergyLossTree" << G4endl;
+#endif
+  
+  if(EnergyLossTree) delete EnergyLossTree;
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
+#endif
+      //Dump all other quantities to file...
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+      //      theRootOutputFile=NULL;
+      
+      if(PrecisionRegionEnergyLossTree) delete PrecisionRegionEnergyLossTree;
+    }
+  if(TrajTree) TrajTree->Delete();
 }
 
 void BDSOutputROOT::WriteRootHit(G4String Name, 
@@ -321,9 +348,6 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
   for (G4int i=0; i<hc->entries(); i++)
     {
       G4String name = (*hc)[i]->GetName();
-#ifdef BDSDEBUG
-      G4cout << "Writing hit to sampler " << name << G4endl;
-#endif
       WriteRootHit(name,
 		   (*hc)[i]->GetInitMom(),
 		   (*hc)[i]->GetInitX(),
@@ -377,7 +401,7 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
 		   (*hc)[i]->GetTurnsTaken()
 		   );
     }
-  delete hc;
+  //  delete hc;
 }
 
 /// write a trajectory to file
@@ -461,13 +485,16 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 	PrecisionRegionEnergyLossTree->Fill();
       }
     }
-  delete hc;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_END__ << G4endl;
+#endif
 }
 
 void BDSOutputROOT::Commit()
 {
   Write();
   outputFileNumber++;
+  Close();
   Init();
 }
 
@@ -487,7 +514,9 @@ void BDSOutputROOT::Write()
       theRootOutputFile->Close();
       delete theRootOutputFile;
       theRootOutputFile=NULL;
-    }
+      
+      //      if(PrecisionRegionEnergyLossTree) delete PrecisionRegionEnergyLossTree;
+     }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 #endif
