@@ -286,7 +286,7 @@ foreach(header ${linkHeaders})
     add_custom_command(
             OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
             COMMAND ${ROOTCINT_EXECUTABLE}
-            ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c -p -I/opt/geant4/4.10.1.p02/include/Geant4 ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+            ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c -p -I${Geant4_INCLUDE_DIR} -I${CLHEP_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
             DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
     )
     # keep list of ROOT dictionaries
@@ -365,7 +365,7 @@ if($ENV{VERBOSE})
   message(STATUS "bdsim sources ${bdsim_sources}")
 endif()
 
-add_library(bdsim ${bdsim_sources} ${root_dicts})
+add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
 # This module sets up installation:
 include(bdsim_install)
