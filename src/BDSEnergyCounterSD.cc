@@ -11,6 +11,7 @@
 #include "G4EventManager.hh"
 #include "G4ios.hh"
 #include "G4LogicalVolume.hh"
+#include "G4Navigator.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4RotationMatrix.hh"
 #include "G4SDManager.hh"
@@ -51,7 +52,16 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
-{;}
+{
+  delete auxilliaryNavigator;
+}
+
+void BDSEnergyCounterSD::SetUpAuxilliaryNavigator()
+{
+  // construct a G4Navigator with respect to the read out world
+  auxilliaryNavigator = new G4Navigator();
+  auxilliaryNavigator->SetWorldVolume(ROgeometry->GetROWorld());
+}
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
@@ -70,15 +80,15 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
   if(BDSGlobalConstants::Instance()->GetStopTracks())
-    enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
+    {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
   //see developer guide 6.2.2...
   else
-    enrg = aStep->GetTotalEnergyDeposit();
+    {enrg = aStep->GetTotalEnergyDeposit();}
 #ifdef BDSDEBUG
   G4cout << "BDSEnergyCounterSD> enrg = " << enrg << G4endl;
 #endif
@@ -96,7 +106,17 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
   if (readOutTH)
     {
       tf = readOutTH->GetHistory()->GetTopTransform();
-      theVolume = readOutTH->GetVolume();
+
+      G4StepPoint* preeP = aStep->GetPreStepPoint();
+      G4StepPoint* postP = aStep->GetPostStepPoint();
+      G4bool preeOnBound = (preeP->GetStepStatus() == fGeomBoundary);
+      G4bool postOnBound = (postP->GetStepStatus() == fGeomBoundary);
+      if (preeOnBound)
+	{theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup(postP->GetPosition());}
+      else if (postOnBound)
+	{theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup(preeP->GetPosition());}
+      else
+	{theVolume = readOutTH->GetVolume();}
     }
   else
     {
