@@ -1,23 +1,17 @@
 #ifndef BDSGLOBALCONSTANTS_H
 #define BDSGLOBALCONSTANTS_H 
 
-#ifndef __MAKECINT__
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
-#endif
 
 #include "globals.hh"
-
-#ifndef __MAKECINT__
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
-#endif
 
 #include <map>
 
-#ifndef __MAKECINT__
 class G4FieldManager;
 class G4LogicalVolume;
 class G4ParticleDefinition;
@@ -33,8 +27,6 @@ namespace GMAD
   class Options;
 }
 
-#endif
-
 /**
  * @brief A class that holds global options and constants.
  * 
@@ -44,20 +36,14 @@ class BDSGlobalConstants
 {
 
 protected:
-#ifndef __MAKECINT__
   BDSGlobalConstants(const GMAD::Options&);
-#endif
 
 private:
-#ifndef __MAKECINT__
   static BDSGlobalConstants* _instance;
-#endif
 
 public:
    /// Access method 
-#ifndef __MAKECINT__
   static BDSGlobalConstants* Instance();
-#endif
   ~BDSGlobalConstants();
 
   G4double GetPrintModuloFraction() const;
@@ -68,10 +54,9 @@ public:
   G4double GetMaximumEpsilonStep() const;
   G4double GetMaxTime() const;
   G4double GetDeltaOneStep() const;
-#ifndef __MAKECINT__
+
   G4ParticleDefinition* GetParticleDefinition() const;
   void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-#endif
   G4String GetParticleName() const;
   void     SetParticleName(G4String aParticleName);
 
@@ -111,16 +96,12 @@ public:
   G4bool   GetSensitiveBLMs() const;
   ///@}
 
-#ifndef __MAKECINT__
   BDSBeamPipeInfo* GetDefaultBeamPipeModel() const;
-#endif
   
   G4double GetComponentBoxSize() const;
   
   /// Magnet geometry variable
-#ifndef __MAKECINT__
   BDSMagnetGeometryType GetMagnetGeometryType() const;
-#endif
   G4String GetOuterMaterialName() const;
   G4double GetOuterDiameter() const;
   G4double GetMagnetPoleSize() const;
@@ -218,10 +199,7 @@ public:
   void     SetNumberToGenerate(G4int);
   G4int    GetNumberOfEventsPerNtuple() const;
   G4int    GetEventNumberOffset() const;
-
-#ifndef __MAKECINT__
   G4FieldManager* GetZeroFieldManager() const;
-#endif
 
   // AI : for placet synchronization
   void     setWaitingForDump(G4bool flag);
@@ -238,31 +216,23 @@ public:
   /// Get the number of complete turns that should be simulated.
   G4int    GetTurnsToTake() const;
 
-#ifndef __MAKECINT__
   G4AffineTransform GetDumpTransform() const;
   void              SetDumpTransform(G4AffineTransform tf);
-#endif
 
   G4double GetSMax() const;
   void     SetSMax(G4double);
-#ifndef __MAKECINT__
   G4ThreeVector GetTeleporterDelta() const;
   void          SetTeleporterDelta(G4ThreeVector newteleporterdelta);
-#endif
   void          SetTeleporterLength(G4double newteleporterlength);
   G4double      GetTeleporterLength() const;
   
   ///@{ Initial particle
-#ifndef __MAKECINT__
   BDSParticle GetInitialPoint() const;
   void SetInitialPoint(BDSParticle& particle);
-#endif
   ///@}
 private:
 
-#ifndef __MAKECINT__
   G4UniformMagField* zeroMagField;
-#endif
 
   G4double itsElossHistoBinWidth;
   G4double itsElossHistoTransBinWidth;
@@ -273,9 +243,7 @@ private:
 
   ///@{ Initial bunch parameters
   G4String itsParticleName;
-#ifndef __MAKECINT__
   G4ParticleDefinition* itsBeamParticleDefinition;
-#endif
   ///@}
   /// Reference beam energy
   G4double itsBeamTotalEnergy, itsBeamMomentum, itsBeamKineticEnergy;
@@ -297,9 +265,7 @@ private:
   G4bool   stopSecondaries; ///< kill secondaries
   
   ///@{ Magnet geometry
-#ifndef __MAKECINT__
   BDSMagnetGeometryType itsMagnetGeometryType;
-#endif
   G4String itsOuterMaterialName;
   G4double itsOuterDiameter;
   G4double itsMagnetPoleSize;
@@ -307,18 +273,15 @@ private:
   ///@}
 
   /// Default beam pipe model information
-#ifndef __MAKECINT__
   BDSBeamPipeInfo* defaultBeamPipeModel;
-#endif
+
   /// A debug option to NOT split sbends into multiple sections
   G4bool   dontSplitSBends;
   
   ///@{ Tunnel model
   G4bool         buildTunnel;
   G4bool         buildTunnelStraight;
-#ifndef __MAKECINT__
   BDSTunnelInfo* tunnelInfo;
-#endif
   G4double       tunnelOffsetX;
   G4double       tunnelOffsetY;
   ///@}
@@ -360,13 +323,9 @@ private:
   G4int    itsSynchPhotonMultiplicity;
   // test map container for laserwire parameters - Steve
   std::map<const G4String, G4double> lwWavelength;
-#ifndef __MAKECINT__
   std::map<const G4String, G4ThreeVector> lwDirection;
-#endif
   G4double itsLaserwireWavelength;
-#ifndef __MAKECINT__
   G4ThreeVector itsLaserwireDir;
-#endif
   G4bool   itsLaserwireTrackPhotons;
   G4bool   itsLaserwireTrackElectrons;
   G4bool   itsTurnOnCerenkov;
@@ -389,42 +348,33 @@ private:
   G4int    itsNumberToGenerate;
   G4int    itsNumberOfEventsPerNtuple;
   G4int    itsEventNumberOffset;
-#ifndef __MAKECINT__
   G4FieldManager* itsZeroFieldManager;
-#endif
   /// rotation
   void InitRotationMatrices();
 
-#ifndef __MAKECINT__
   G4RotationMatrix* _RotY90;
   G4RotationMatrix* _RotYM90;
   G4RotationMatrix* _RotX90;
   G4RotationMatrix* _RotXM90;
   G4RotationMatrix* _RotYM90X90;
   G4RotationMatrix* _RotYM90XM90;
-#endif
 
   void InitVisAttributes();
-#ifndef __MAKECINT__
   G4VisAttributes* invisibleVisAttr;
   G4VisAttributes* visibleDebugVisAttr;
-#endif
 
   void InitDefaultUserLimits();
-#ifndef __MAKECINT__
   G4UserLimits* defaultUserLimits;
-#endif
+
   G4double printModuloFraction;
 
 public:
-#ifndef __MAKECINT__
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
   G4RotationMatrix* RotX90() const;
   G4RotationMatrix* RotXM90() const;
   G4RotationMatrix* RotYM90X90() const;
   G4RotationMatrix* RotYM90XM90() const;
-#endif
 
   G4double GetLWCalWidth() const;
   G4double GetLWCalOffset() const;
@@ -432,12 +382,11 @@ public:
   G4String GetVacuumMaterial() const;
   G4String GetEmptyMaterial() const;
 
-#ifndef __MAKECINT__
   G4VisAttributes* GetInvisibleVisAttr() const;
   G4VisAttributes* GetVisibleDebugVisAttr() const;
 
   G4UserLimits* GetDefaultUserLimits() const;
-#endif
+  
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
@@ -445,26 +394,21 @@ private:
   G4String itsVacuumMaterial;         ///<vacuum inside beampipe
   G4String itsEmptyMaterial;          ///<empty material for e.g. marker volumes
   G4bool   isWaitingForDump;
-#ifndef __MAKECINT__
   G4AffineTransform itsDumpTransform; ///<transform of frame from start to current dump element
-#endif
-
+  
   ///@{ Turn Control
   G4int    itsTurnsTaken;
   G4int    itsTurnsToTake;
   ///@}
   ///@{ Teleporter offset corrections
-#ifndef __MAKECINT__
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
-#endif
   ///@}
   /// Beamline length in mm
   G4double itsSMax;
   /// initial particle for production of sampler hit
-#ifndef __MAKECINT__
   BDSParticle itsInitialPoint;
-#endif
+
   // private set methods
   void     SetLPBFraction(G4double val);
 
@@ -533,10 +477,9 @@ inline G4ParticleDefinition* BDSGlobalConstants::GetParticleDefinition() const
 inline G4String BDSGlobalConstants::GetParticleName() const
 {return itsParticleName;}
 
-#ifndef __MAKECINT__
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {itsBeamParticleDefinition = aBeamParticleDefinition;}
-#endif
+
 inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
 {itsParticleName = aParticleName;}
 
@@ -574,10 +517,8 @@ inline  G4bool BDSGlobalConstants::GetSensitiveBLMs() const
 inline  BDSBeamPipeInfo* BDSGlobalConstants::GetDefaultBeamPipeModel() const
 {return defaultBeamPipeModel;}  
 
-#ifndef __MAKECINT__
 inline BDSMagnetGeometryType BDSGlobalConstants::GetMagnetGeometryType() const
 {return itsMagnetGeometryType;}
-#endif
 
 inline G4String BDSGlobalConstants::GetOuterMaterialName() const
 {return itsOuterMaterialName;}
@@ -707,10 +648,8 @@ inline G4int BDSGlobalConstants::GetSynchMeanFreeFactor() const
 inline G4double BDSGlobalConstants::GetLaserwireWavelength() const
 {return itsLaserwireWavelength ;}
 
-#ifndef __MAKECINT__
 inline G4ThreeVector BDSGlobalConstants::GetLaserwireDir() const
 {return itsLaserwireDir ;}
-#endif
 
 inline G4bool BDSGlobalConstants::GetLaserwireTrackPhotons() const
 {return itsLaserwireTrackPhotons ;}
@@ -807,10 +746,8 @@ inline G4double BDSGlobalConstants::GetLaserwireWavelength(G4String aName) const
 {return lwWavelength.at(aName);}
 
 //for map of laserwire wavelengths
-#ifndef __MAKECINT__
 inline G4ThreeVector BDSGlobalConstants::GetLaserwireDir(G4String aName) const
 {return lwDirection.at(aName);}
-#endif
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}
@@ -824,13 +761,11 @@ inline void BDSGlobalConstants::setWaitingForDump(G4bool flag)
 inline G4bool BDSGlobalConstants::getWaitingForDump() const 
 {return isWaitingForDump;}
 
-#ifndef __MAKECINT__
 inline G4AffineTransform BDSGlobalConstants::GetDumpTransform() const
 {return itsDumpTransform;}
 
 inline void BDSGlobalConstants::SetDumpTransform(G4AffineTransform tf)
 {itsDumpTransform=tf;}
-#endif
 
 inline G4int BDSGlobalConstants::GetTurnsTaken() const
 {return itsTurnsTaken;}
@@ -850,13 +785,11 @@ inline G4double BDSGlobalConstants::GetSMax() const
 inline void BDSGlobalConstants::SetSMax(G4double smax)
 {itsSMax=smax;}
 
-#ifndef __MAKECINT__
 inline G4ThreeVector BDSGlobalConstants::GetTeleporterDelta() const
 {return teleporterdelta;}
 
 inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterdelta)
 {teleporterdelta = newteleporterdelta;}
-#endif
 
 inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength)
 {teleporterlength = newteleporterlength;}
@@ -879,13 +812,11 @@ inline G4double BDSGlobalConstants::GetParticleMomentum() const
 inline void BDSGlobalConstants::SetParticleMomentum(G4double val)
 {itsParticleMomentum = val;}
 
-#ifndef __MAKECINT__
 inline BDSParticle BDSGlobalConstants::GetInitialPoint() const
 {return itsInitialPoint;}
 
 inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
 {itsInitialPoint = particle;}
-#endif
 
 inline G4VisAttributes* BDSGlobalConstants::GetInvisibleVisAttr() const
 {return invisibleVisAttr;}
