@@ -449,35 +449,37 @@ void BDSDetectorConstruction::ComponentPlacement()
       // place read out volume in read out world - if this component has one
       G4PVPlacement* readOutPV = nullptr;
       if(readOutLV)
-      {
+	{
 #ifdef BDSDEBUG
-        G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
+	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
 #endif
-        G4String readOutPVName = name + "_ro_pv";
-        G4Transform3D *ropt = (*it)->GetReadOutPlacementTransform();
-        readOutPV = new G4PVPlacement(*ropt,                                  // placement transform
-                                      (*it)->GetPlacementName() + "_ro_pv", // name
-                                      readOutLV,                            // logical volume
-                                      readOutWorldPV,                       // mother  volume
-                                      false,                                // no boolean operation
-                                      nCopy,                                // copy number
-                                      checkOverlaps);                       // overlap checking
-
-        // Register the spos and other info of this elemnet.
-        // Used by energy counter sd to get spos of that logical volume at histogram time.
-        // If it has a readout volume, that'll be used for sensitivity so only need to register
-        // that. Should only register what we need to as used for every energy hit (many many many)
-
-        // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
-        BDSPhysicalVolumeInfo *theinfo = new BDSPhysicalVolumeInfo(name,
-                                                                   readOutPVName,
-                                                                   (*it)->GetSPositionMiddle(),
-                                                                   thecurrentitem->GetPrecisionRegion(), index);
-
-          BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
-          // true = it's a read out volume
-      }
-
+	  G4String readOutPVName = name + "_ro_pv";
+	  G4Transform3D* ropt = (*it)->GetReadOutPlacementTransform();
+	  readOutPV = new G4PVPlacement(*ropt,                                  // placement transform
+					(*it)->GetPlacementName() + "_ro_pv", // name
+					readOutLV,                            // logical volume
+					readOutWorldPV,                       // mother  volume
+					false,	                              // no boolean operation
+					nCopy,                                // copy number
+					checkOverlaps);                       // overlap checking
+	  
+	  // Register the spos and other info of this elemnet.
+	  // Used by energy counter sd to get spos of that logical volume at histogram time.
+	  // If it has a readout volume, that'll be used for sensitivity so only need to register
+	  // that. Should only register what we need to as used for every energy hit (many many many)
+	  
+	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
+	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
+								     readOutPVName,
+								     (*it)->GetSPositionMiddle(),
+								     thecurrentitem->GetPrecisionRegion());
+	  if (!dynamic_cast<BDSSampler*>(thecurrentitem))
+	    {
+	      BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
+	      // true = it's a read out volume
+	    }
+	}
+      
       if (dynamic_cast<BDSSampler*>(thecurrentitem))
 	{
 	  // fiddle the physical volume info registry since samplers don't use the read
@@ -487,7 +489,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 								     (*it)->GetSPositionMiddle(),
 								     thecurrentitem->GetPrecisionRegion(), index);
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(elementPV, theinfo, false);
-	  // false = it's NOT a read out volume
+	  // false = it's NOT a read out volume  
 	}
       
       //this does nothing by default - only used by BDSElement
