@@ -473,9 +473,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 								     readOutPVName,
 								     (*it)->GetSPositionMiddle(),
 								     thecurrentitem->GetPrecisionRegion());
-	  if (dynamic_cast<BDSSampler*>(thecurrentitem))
-	    {continue;}
-	  else
+	  if (!dynamic_cast<BDSSampler*>(thecurrentitem))
 	    {
 	      BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
 	      // true = it's a read out volume
