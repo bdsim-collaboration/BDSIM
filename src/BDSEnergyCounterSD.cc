@@ -178,7 +178,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOut
 						       turnstaken,
 						       eventnumber,
 						       stepLength,
-                   0 /*theInfo->GetBeamlineIndex() */);
+                   theInfo->GetBeamlineIndex());
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
@@ -289,7 +289,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       turnstaken,
 						       eventnumber,
 						       stepLength,
-                   0 /*theInfo->GetBeamlineIndex()*/);
+                   theInfo->GetBeamlineIndex());
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
