@@ -5,9 +5,7 @@
 
 #include "BDSMagnet.hh"
 
-#include <list>
-
-struct BDSBeamPipeInfo;
+class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
 class BDSSectorBend: public BDSMagnet
@@ -26,9 +24,6 @@ private:
   G4double itsBField;
   G4double itsBGrad;
   
-  /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
-  G4int orientation;
-
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe();

@@ -18,8 +18,9 @@
 #include "G4UserLimits.hh"
 
 /**
- * @brief Abstract base class that implements features common to all magnets. This
- * includes the general construction pattern using the magnet outer geometry factories
+ * @brief Abstract base class that implements features common to all magnets. 
+ *
+ * This includes the general construction pattern using the magnet outer geometry factories
  * and the field related objects and attaching them to the necessary volumes. Each derived
  * class must implement BuildBPFieldAndStepper() which constructs the field objects that
  * are later attached to the vacuum volume.
@@ -39,11 +40,7 @@ public:
 	    BDSMagnetOuterInfo* magnetOuterInfo);
   
   virtual ~BDSMagnet();
-
-private:
-  /// build and set field manager and chord finder
-  void BuildBPFieldMgr();
-
+  
 protected:
   /// Overridden method of BDSAcceleratorComponent to not only build container, but
   /// first construct field objects. After using BDSAcceleratorComponent::Build() to
@@ -56,6 +53,9 @@ protected:
   /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
   /// by derived classes as required - such as RBend.
   virtual void BuildBeampipe();
+
+  /// build and set field manager and chord finder
+  virtual void BuildBPFieldMgr();
 
   /// Attach the inner magnetic field to the beam pipe vacuum volume.
   void AttachFieldToBeamPipe();

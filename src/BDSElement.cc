@@ -176,7 +176,7 @@ void BDSElement::PlaceComponents(G4String geometry, G4String bmap)
 #ifdef USE_LCDD
     BDSGeometryLCDD *LCDD = new BDSGeometryLCDD(gFile);
     //Make marker visible (temp debug)
-    G4VisAttributes* VisAttLCDD = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+    G4VisAttributes* VisAttLCDD = new G4VisAttributes(*BDSColours::Instance()->GetColour("warning"));
     VisAttLCDD->SetForceSolid(true);  
     VisAttLCDD->SetVisibility(false);
     containerLogicalVolume->SetVisAttributes(VisAttLCDD);

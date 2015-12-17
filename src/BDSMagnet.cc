@@ -33,7 +33,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4double            length,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn):
-  BDSAcceleratorComponent(name, length, 0, (*BDSMagnetType::dictionary)[type]),
+  BDSAcceleratorComponent(name, length, 0, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
@@ -98,20 +98,23 @@ void BDSMagnet::BuildBPFieldMgr()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  itsChordFinder = new G4ChordFinder(itsMagField,
-				     BDSGlobalConstants::Instance()->GetChordStepMinimum(),
-				     itsStepper);
-
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  itsBPFieldMgr = new G4FieldManager();
-  itsBPFieldMgr->SetDetectorField(itsMagField);
-  itsBPFieldMgr->SetChordFinder(itsChordFinder);
-
-  // these options are always non-zero so always set them
-  itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  if (itsMagField && itsEqRhs && itsStepper)
+    {
+      itsChordFinder = new G4ChordFinder(itsMagField,
+					 BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+					 itsStepper);
+      
+      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+      itsBPFieldMgr = new G4FieldManager();
+      itsBPFieldMgr->SetDetectorField(itsMagField);
+      itsBPFieldMgr->SetChordFinder(itsChordFinder);
+      
+      // these options are always non-zero so always set them
+      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+    }
 }
 
 void BDSMagnet::AttachFieldToBeamPipe()
@@ -299,7 +302,7 @@ void BDSMagnet::PlaceComponents()
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
-      G4PVPlacement* beamPipePV = new G4PVPlacement(0,                       // rotation
+      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                       // rotation
 						    beamPipeOffset,          // position in container
 						    beampipe->GetContainerLogicalVolume(),  // its logical volume
 						    name + "_beampipe_pv",   // its name
@@ -317,7 +320,7 @@ void BDSMagnet::PlaceComponents()
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                      // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                      // rotation
 						       outerOffset,            // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",       // its name

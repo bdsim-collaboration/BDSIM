@@ -1,8 +1,9 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSScreenLayer.hh"
 #include "BDSMaterials.hh"
-#include "BDSSampler.hh"
+#include "BDSSamplerBase.hh"
 #include "BDSSamplerSD.hh"
+#include "BDSSDManager.hh"
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -170,8 +171,8 @@ void BDSScreenLayer::InternalMirror::compute(){
 void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
   G4String samplerName = _name + "_1";
 
-  _log->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
-  BDSSampler::AddExternalSampler(samplerName);
+  _log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  BDSSamplerBase::AddExternalSampler(samplerName);
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;

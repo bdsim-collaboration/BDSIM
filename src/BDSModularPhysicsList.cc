@@ -182,13 +182,13 @@ void BDSModularPhysicsList::SetCuts()
   G4double prodCutPhotons   = globals->GetProdCutPhotons();
   G4double prodCutElectrons = globals->GetProdCutElectrons();
   G4double prodCutPositrons = globals->GetProdCutPositrons();
-  G4double prodCutProtons   = globals->GetProdCutProtons();  
+  G4double prodCutProtons   = globals->GetProdCutProtons();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
   G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
-  G4cout << __METHOD_NAME__ << "Proton production range cut (mm)   " << prodCutProtons<< G4endl;
+  G4cout << __METHOD_NAME__ << "Proton production range cut (mm)   " << prodCutProtons   << G4endl;
 #endif
   
   SetCutValue(prodCutPhotons,  "gamma");

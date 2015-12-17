@@ -1,11 +1,11 @@
 #include "BDSMagnetOuterFactoryCylindrical.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagnetColours.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"                 // for calculateorientation
@@ -59,18 +59,25 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
+  if (!BDS::IsFinite(angle))
+    {
+      CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
+      return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
+				    BDSColours::Instance()->GetColour("sectorbend"));
+    }
+  
   G4int orientation   = BDS::CalculateOrientation(angle);
   G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
   G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
   G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
-
+  
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
   G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
   BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
 				  inputface, outputface);
-  
+    
   if (beamPipe->ContainerIsCircular())
     {
       //circular beampipe so we can simply use its radius
@@ -123,7 +130,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 					      beamPipe->GetContainerSubtractionSolid());
     }
   return CommonFinalConstructor(name,length,outerDiameter,outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("sectorbend"));
+				BDSColours::Instance()->GetColour("sectorbend"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String     name,
@@ -164,7 +171,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 				  inputface, outputface);
   
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("rectangularbend"));
+				BDSColours::Instance()->GetColour("rectangularbend"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateQuadrupole(G4String     name,
@@ -179,7 +186,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateQuadrupole(G4String     
 #endif
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("quadrupole"));
+				BDSColours::Instance()->GetColour("quadrupole"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSextupole(G4String     name,
@@ -191,7 +198,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSextupole(G4String     n
 {
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("sextupole"));
+				BDSColours::Instance()->GetColour("sextupole"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String     name,
@@ -206,7 +213,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String     na
 #endif
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("octupole"));
+				BDSColours::Instance()->GetColour("octupole"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String     name,
@@ -221,7 +228,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String     na
 #endif
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("decapole"));
+				BDSColours::Instance()->GetColour("decapole"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSolenoid(G4String     name,
@@ -233,7 +240,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSolenoid(G4String     na
 {
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("solenoid"));
+				BDSColours::Instance()->GetColour("solenoid"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMultipole(G4String     name,
@@ -248,7 +255,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMultipole(G4String     n
 #endif
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("multipole"));
+				BDSColours::Instance()->GetColour("multipole"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     name,
@@ -263,7 +270,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     na
 #endif
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("rfcavity"));
+				BDSColours::Instance()->GetColour("rfcavity"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     name,
@@ -278,7 +285,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     n
 #endif
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("muspoiler"));
+				BDSColours::Instance()->GetColour("muspoiler"));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name,
@@ -296,7 +303,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
   // have to retain it though for virtual base class compatability
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
-				BDSMagnetColours::Instance()->GetMagnetColour("hkicker"));
+				BDSColours::Instance()->GetColour("hkicker"));
 }
 
 /// functions below here are private to this particular factory
@@ -406,7 +413,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)0,         // no rotation
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			     (G4ThreeVector)0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name

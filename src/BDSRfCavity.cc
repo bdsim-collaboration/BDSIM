@@ -1,13 +1,19 @@
-#include "BDSGlobalConstants.hh" 
-
 #include "BDSBeamPipeInfo.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSRfCavity.hh"
+
+#include "globals.hh"
+#include "G4ChordFinder.hh"
+#include "G4EqMagElectricField.hh"
+#include "G4ExplicitEuler.hh"
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
+#include "G4MagIntegratorDriver.hh"
+#include "G4UniformElectricField.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include "G4MagIntegratorDriver.hh"
-
-#include "G4ExplicitEuler.hh"
+struct BDSMagnetOuterInfo;
 
 BDSRfCavity::BDSRfCavity(G4String            name,
 			 G4double            length,
@@ -24,7 +30,11 @@ BDSRfCavity::BDSRfCavity(G4String            name,
 }
 
 void BDSRfCavity::BuildBPFieldMgr()
-{;}
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "empty implementation due to e field instead of B" << G4endl;
+#endif
+}
 
 void BDSRfCavity::BuildBPFieldAndStepper()
 {
@@ -53,5 +63,5 @@ BDSRfCavity::~BDSRfCavity()
 {
   delete eField;
   delete equation;
-  delete intgrDriver;
+  //delete intgrDriver; seems to be deleted by itsChordFinder in BDSMagnet
 }

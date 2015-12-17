@@ -84,6 +84,7 @@ rad         1
 mrad        :math:`10^{-3}`
 urad        :math:`10^{-6}`
 clight      :math:`2.99792458 \times 10^{8}`
+km          :math:`10^{3}`
 m           1
 cm          :math:`10^{-2}`
 mm          :math:`10^{-3}`
@@ -105,10 +106,11 @@ Useful Commands
 ---------------
 
 * :code:`print;` prints all elements
-* :code:`print, line;` prints all elements in line
+* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`stop;` or `return;` exists parser
+* :code:`length = d1[l];` way to access properties of elements, in this case length of element d1.
+* :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
 
 Lattice Description
@@ -151,6 +153,7 @@ The following elements may be defined
 * `rf`_
 * `rcol`_
 * `ecol`_
+* `degrader`_
 * `muspoiler`_
 * `solenoid`_
 * `laser`_
@@ -484,23 +487,33 @@ rcol
 `rcol` defines a rectangular collimator. The aperture is rectangular and the eternal
 volume is square.
 
-================  ============================  ==========  ===========
-parameter         description                   default     required
-`l`               length [m]                    0           yes
-`xsize`           horizontal half aperture [m]  0           yes
-`ysize`           vertical half aperture [m]    0           yes
-`material`        outer material                Iron        no
-`outerDiameter`   outer full width [m]          global      no
-================  ============================  ==========  ===========
+================  =================================  ==========  ===========
+parameter         description                        default     required
+`l`               length [m]                         0           yes
+`xsize`           horizontal half aperture [m]       0           yes
+`ysize`           vertical half aperture [m]         0           yes
+`xsizeOut`        horizontal exit half aperture [m]  0           no
+`ysizeOut`        vertical exit half aperture [m]    0           no
+`material`        outer material                     Iron        no
+`outerDiameter`   outer full width [m]               global      no
+================  =================================  ==========  ===========
 
 .. note:: `rcol` and `ecol` do not currently implement tilt, so if an angled collimator
 	  is required, a `transform3d` should before and afterwards in the sequence to
 	  rotate the coordinate frame before and afterwards. See `transform3d`_ for further
 	  details and examples.
 
+	  The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
+	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
+
+
 Examples::
 
+   ! Standard
    TCP15: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm;
+
+   ! Tapered
+   TCP16: rcol, l=1.22*m, material="graphite", xsize=104*um, ysize=5*cm, xsizeOut=208*um, ysizeOut=10*cm;
 
 
 ecol
@@ -512,7 +525,43 @@ ecol
 
 `ecol` defines an elliptical collimator. This is exactly the same as `rcol` except that
 the aperture is elliptical and the `xsize` and `ysize` define the horizontal and vertical
-half axes respectively.
+half axes respectively. When tapered, the ratio between the horizontal and vertical half
+axes of the entrance aperture must be the same ratio for the exit aperture.
+
+
+degrader
+^^^^^^^^
+
+.. figure:: figures/degrader.png
+        :width: 40%
+        :align: right
+
+`degrader` defines an interleaved pyramidal degrader which decreases the beam's energy.
+
+===================    =======================================  ==========  ===========
+parameter              description                              default     required
+`l`                    length [m]                               0           yes
+`numberWedges`         number of degrader wedges                1           yes
+`wedgeLength`          degrader wedge length [m]                0           yes
+`degraderHeight`       degrader height [m]                      0           yes
+`materialThickness`    amount of material seen by the beam [m]  0           yes/no*
+`degraderOffset`       horizontal offset of both wedge sets     0           yes/no*
+`material`             degrader material                        Carbon      yes
+`outerDiameter`        outer full width [m]                     global      no
+===================    =======================================  ==========  ===========
+
+.. note:: ``*`` Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
+            position, and consequently the total material thickness the beam can propagate through. If both are
+            specified, `degraderOffset` will be ignored.
+
+            When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
+            When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
+            triangle.
+
+Examples::
+
+    DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
+    DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
 
 muspoiler
 ^^^^^^^^^
@@ -694,14 +743,12 @@ are degenerate.
 | `rectellipse`     | 4            | x half width of   | y half width of | x semi-axis   | y semi-axis   |
 |                   |              | rectangle         | rectangle       | of ellipse    | of ellipse    |
 +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-
-..
-  to be completed in code before being added to the manual
-  | `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
-  |                   |              | of circle         | of circle       | circular part |               |
-  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
-  | `octagon`         | 4            | x half width      | y half width    | angle 1 [rad] | angle 2 [rad] |
-  +-------------------+--------------+-------------------+-----------------+---------------+---------------+
+| `racetrack`       | 3            | horizontal offset | vertical offset | radius of     | NA            |
+|                   |              | of circle         | of circle       | circular part |               |
++-------------------+--------------+-------------------+-----------------+---------------+---------------+
+| `octagonal`       | 4            | x half width      | y half width    | x point of    | y point of    |
+|                   |              |                   |                 | start of edge | start of edge |
++-------------------+--------------+-------------------+-----------------+---------------+---------------+
 
 These parameters can be set with the *option* command as the default parameters
 and also on a per element basis, that overrides the defaults for that specific element.
@@ -709,8 +756,6 @@ Up to four parameters
 can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
-
-.. MADX `racetrack` and `octagon` are currently unavailable but will be completed shortly.
 
 Magnet Geometry Parameters
 --------------------------
@@ -1024,10 +1069,10 @@ Samplers - Output
 Normally, the only output BDSIM would produce is the various particle loss histograms,
 as well as the coordinates of energy deposition hits. To observe the particles at a
 point in the beam lattice a `sampler` can be used. Samplers are attached to an already
-defined element and record all the particles passing through a plane at the entrance
+defined element and record all the particles passing through a plane at the *entrance*
 to that element. They are defined using the following syntax::
 
-  sample, range=<element_name>
+  sample, range=<element_name>;
 
 where `element_name` is the name of the element you wish to sample. Depending on the
 output format chosen, the element name may be recorded in the output (ROOT output only).
@@ -1043,7 +1088,24 @@ a marker, place it in the sequence and then define a sampler that uses that mark
 
   sample, range=endoftheline;
 
-.. note:: Samplers **can only** be defined **after** the main sequences has been defined
+When an element is defined multiple times in the line, samplers will be attached to all instances.
+If you wish to sample only one specific instance, the following syntax can be used::
+
+  sample, range=<element_name>[index];
+
+To attach samplers to all elements (except the first one)::
+
+  sample, all;
+
+And to attach samplers before all elements of a specific type::
+
+  sample, <type>;
+
+e.g.::
+
+  sample, quadrupole;
+  
+.. note:: Samplers **can only** be defined **after** the main sequence has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
 
@@ -1141,10 +1203,14 @@ Multiple options can be defined at once using the following syntax::
   option, <option1> = <value>,
           <option2> = <value>;
 
+.. note:: No options are required to be specified to run a BDSIM model.  Defaults will be used in
+	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
+	  radius as these will have a large impact on the outcome of the simulation.
+
 options in BDSIM
 ^^^^^^^^^^^^^^^^ 
 
-Below is a full list of all options in BDSIM. If the option is boolean, 1 or 0 can be used
+Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
 as their value.
 
 +----------------------------------+-------------------------------------------------------+
@@ -1265,18 +1331,18 @@ as their value.
 | LPBFraction                      | the fraction of electromagnetic process in which      |
 |                                  | lead particle biasing is used ( 0 < LPBFraction < 1)  |
 +----------------------------------+-------------------------------------------------------+
-| trajCutGTZ                       | global z position cut (minimum) for storing           |
-|                                  | trajectories                                          |
+| **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
-+----------------------------------+-------------------------------------------------------+
-| Output Parameters                | Function                                              |
-+----------------------------------+-------------------------------------------------------+
-| storeTrajectory                  | whether to store trajectories in the output           |
+| storeTrajectories                | whether to store trajectories in the output           |
 +----------------------------------+-------------------------------------------------------+
 | storeMuonTrajectories            | whether to store muon trajectories in the output      |
 +----------------------------------+-------------------------------------------------------+
 | storeNeutronTrajectories         | whether to store neutron trajectories in the output   |
++----------------------------------+-------------------------------------------------------+
+| trajCutGTZ                       | global z position cut (minimum) for storing           |
+|                                  | trajectories                                          |
++----------------------------------+-------------------------------------------------------+
+| trajCutLTR                       | radius cut for storing trajectories (maximum)         |
 +----------------------------------+-------------------------------------------------------+
 | nperfile                         | number of evens to record per output file             |
 +----------------------------------+-------------------------------------------------------+
@@ -1290,7 +1356,7 @@ Beam Parameters
 ---------------
 
 To specify the input particle distribution to the accelerator model, the `beam` command is
-used. This also specifies the particle species and **reference energy**, which is the
+used [#beamcommandnote]_. This also specifies the particle species and **reference energy**, which is the
 design energy of the machine. This is used along with the particle species to calculate
 the momentum of the reference particle and therefore the magnetic field of dipole magnets
 if only the `angle` parameter has been specified.
@@ -1298,9 +1364,9 @@ if only the `angle` parameter has been specified.
 .. note:: A design energy can be specified and in addition, the central energy, of say
 	  a bunch with a Gaussian distribution, can be specified.
 
-The user must specify at least `energy`, `particle` and `distrType` (the distribution type).
-Additional parameters can be specified to detail in the input distribution. The beam is
-defined using the following syntax::
+The user **must** specify at least `energy` and the `particle` type. Other parameters, such
+as the beam distribution type, `distrType`, are optional and can be specified as described
+in the following sections. The beam is defined using the following syntax::
 
   beam, particle="proton",
         energy=4.0*TeV,
@@ -1361,7 +1427,7 @@ Gaussian with respect to the reference trajectory.
 +----------------------------------+-------------------------------------------------------+----------+
 | `Xp0`                            | Horizontal canonical momentum                         | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
-| `Yp0`                            | Vertical canonicla momentum                           | 0        |
+| `Yp0`                            | Vertical canonical momentum                           | 0        |
 +----------------------------------+-------------------------------------------------------+----------+
 
 Examples::
@@ -1905,3 +1971,5 @@ can be set to the precision region by setting the attribute *precisionRegion* eq
 			use more than once in a *line*, then output will only be from the first
 			occurrence of that element in the sequence. This will be addressed in future
 			releases.
+.. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
+		      The distinction is kept for clarity, and this might be changed in the future.

@@ -1,5 +1,5 @@
-#ifndef BDSBunchGaussian_h
-#define BDSBunchGaussian_h 
+#ifndef BDSBUNCHGAUSSIAN_H
+#define BDSBUNCHGAUSSIAN_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -7,8 +7,14 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-class BDSBunchGaussian : public BDSBunchInterface {
- 
+/**
+ * @brief A 6D Gaussian distribution.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchGaussian: public BDSBunchInterface
+{ 
 protected : 
   G4double sigmaX;
   G4double sigmaY;
@@ -24,7 +30,7 @@ protected :
 public :
   BDSBunchGaussian();
   ~BDSBunchGaussian();
-  void SetOptions(GMAD::Options& opt); 
+  void SetOptions(const GMAD::Options& opt); 
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  

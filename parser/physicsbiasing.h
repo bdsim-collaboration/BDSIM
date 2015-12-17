@@ -6,20 +6,19 @@
 #include <vector>
 
 namespace GMAD {
-  struct Array;
+  class Array;
 }
-
-/**
- * @brief Physics biasing class for parser
- * 
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
- */
 
 namespace GMAD {
   enum class PhysicsBiasingType {ALL=1,PRIMARY=2,SECONDARY=3};
   
+  /**
+   * @brief Physics biasing class for parser
+   * 
+   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   */
   class PhysicsBiasing {
-   
+    
   public:
     std::string name; ///< name
     /// particle name

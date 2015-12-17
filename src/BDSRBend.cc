@@ -44,7 +44,8 @@ void BDSRBend::CalculateLengths(G4double aLength)
   //full length along chord - just its length in case of rbend
   chordLength = aLength;
 
-  orientation = BDS::CalculateOrientation(angle);
+  // orientation of shifts - depends on angle - calculations use absolute value of angle for safety
+  G4int orientation = BDS::CalculateOrientation(angle);
 
   // straightSectionChord is the distance along the chord required to be used by a drift pipe so that
   // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
@@ -60,7 +61,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
   straightSectionLength       = straightSectionChord / (cos(0.5*fabs(angle)));
   // increase container radius to account for magnet outer geometry offset
   // container axis is chord axis between entry and exit points
-  containerRadius             += fabs(magnetXShift);
+  containerRadius             += fabs(magnetXShift)*1.001; // 1% margin due to calculations
 
   G4double in_z = cos(0.5*fabs(angle)); // calculate components of normal vectors (in the end mag(normal) = 1)
   G4double in_x = sin(0.5*fabs(angle));
@@ -111,19 +112,21 @@ void BDSRBend::BuildBPFieldAndStepper()
   G4ThreeVector Bfield(0.,bField,0.);
   G4double arclength;
   if (BDS::IsFinite(angle))
-    {arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));}
+    {
+      arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
+#endif
+      itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
+      itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
+  
+      BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
+      dipoleStepper->SetBField(bField);
+      dipoleStepper->SetBGrad(bGrad);
+      itsStepper = dipoleStepper;
+    }
   else
     {arclength = magFieldLength;}
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
-#endif
-  itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
-  
-  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-  dipoleStepper->SetBField(bField);
-  dipoleStepper->SetBGrad(bGrad);
-  itsStepper = dipoleStepper;
 }
 
 void BDSRBend::BuildOuter()
@@ -171,6 +174,7 @@ void BDSRBend::BuildBeampipe()
 									   beamPipeInfo->vacuumMaterial,
 									   beamPipeInfo->beamPipeThickness,
 									   beamPipeInfo->beamPipeMaterial);
+      RegisterDaughter(bpFirstBit);
       
       bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
 									 name,
@@ -183,6 +187,7 @@ void BDSRBend::BuildBeampipe()
 									 beamPipeInfo->vacuumMaterial,
 									 beamPipeInfo->beamPipeThickness,
 									 beamPipeInfo->beamPipeMaterial);
+      RegisterDaughter(bpLastBit);
     }
   
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
@@ -195,14 +200,12 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->vacuumMaterial,
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
-
-  RegisterDaughter(bpFirstBit);
+  
   RegisterDaughter(beampipe);
-  RegisterDaughter(bpLastBit);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 
-  G4double extentX = beampipe->GetExtentX().second + fabs(magnetOuterOffset.x());
+  G4double extentX = (beampipe->GetExtentX().second / cos(angle)) + fabs(magnetOuterOffset.x());
   SetExtentX(-extentX, extentX);
   SetExtentY(beampipe->GetExtentY());
   SetExtentZ(-chordLength*0.5,chordLength*0.5);
@@ -214,10 +217,12 @@ void BDSRBend::BuildContainerLogicalVolume()
     {
       // update container solid to hold all the beampipe segments as there's no outer
       // and the default way won't suffice for rbend's unique geometry
-      G4double smallContainerRadius = extentX.second; // +ve extent - updated by build beam pipe
+      // +ve extent - updated by build beam pipe
+      G4double smallContainerRadius = extentX.second;
+      
       containerSolid = new G4CutTubs(name + "_container_solid", // name
 				     0,                         // inner radius
-				     smallContainerRadius,      // outer radius
+				     smallContainerRadius,           // outer radius
 				     chordLength*0.5,           // half length
 				     0,                         // start angle
 				     CLHEP::twopi,              // sweep angle
@@ -271,11 +276,12 @@ void BDSRBend::PlaceComponents()
     }
 
   // no if(placeBeamPipe) here as custom procedure and rbend has different construction
-  if (outer)
+  if (beampipe)
     {
-      G4ThreeVector outerOffset    = outer->GetPlacementOffset();
-      G4ThreeVector beamPipeOffset = GetPlacementOffset() + magnetOuterOffset + outerOffset;
-      G4PVPlacement* pipePV = new G4PVPlacement(0,
+      // offset in container is offset suggested by beam pipe component (if asymmetrical) +
+      // magnet offset due to rbend geometry
+      G4ThreeVector beamPipeOffset = beampipe->GetPlacementOffset() + magnetOuterOffset;
+      G4PVPlacement* pipePV = new G4PVPlacement(nullptr,
 						beamPipeOffset,
 						beampipe->GetContainerLogicalVolume(),   // logical volume
 						name+"_beampipe_pv",                     // name
@@ -303,7 +309,7 @@ void BDSRBend::PlaceComponents()
       G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(0,                           // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                           // rotation
 						       placementOffset,             // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",            // its name
@@ -314,31 +320,4 @@ void BDSRBend::PlaceComponents()
 
       RegisterPhysicalVolume(magnetOuterPV);
     }
-}
-
-
-std::vector<G4LogicalVolume*> BDSRBend::GetAllSensitiveVolumes() const
-{
-  std::vector<G4LogicalVolume*> result;
-  for (auto it : allSensitiveVolumes)
-    {result.push_back(it);}
-
-  if (beampipe)
-    {
-      for (auto it : beampipe->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-
-  if (bpFirstBit)
-    {
-      for (auto it : bpFirstBit->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-
-  if (bpLastBit)
-    {
-      for (auto it : bpLastBit->GetAllSensitiveVolumes())
-	{result.push_back(it);}
-    }
-  return result;
 }

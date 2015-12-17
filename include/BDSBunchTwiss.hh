@@ -7,8 +7,14 @@
 #include "CLHEP/Matrix/SymMatrix.h"
 #include "CLHEP/RandomObjects/RandMultiGauss.h"
 
-class BDSBunchTwiss : public BDSBunchInterface {
+/**
+ * @brief A bunch distribution according to the twiss parameterisation.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
 
+class BDSBunchTwiss: public BDSBunchInterface
+{
 private : 
   /* Twiss parameters */
   G4double betaX;
@@ -32,7 +38,7 @@ private :
 public : 
   BDSBunchTwiss();
   ~BDSBunchTwiss();
-  void SetOptions(GMAD::Options &opt); 
+  void SetOptions(const GMAD::Options& opt); 
   void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

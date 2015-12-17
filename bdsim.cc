@@ -1,7 +1,7 @@
 //  
 //   BDSIM, (C) 2001-2015
 //   
-//   version 0.9
+//   version 0.91
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
@@ -33,6 +33,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParser.hh" // Parser
 #include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -44,22 +45,15 @@
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
-#include "parser/gmad.h"  // GMAD parser
-#include "parser/options.h"
-
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=nullptr;         // output interface
+BDSOutputBase* bdsOutput=nullptr;     // output interface
 //=======================================================
-
-namespace GMAD {
-  extern Options options;
-}
 
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.9"<<G4endl;
+  G4cout<<"bdsim : version 0.91"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
@@ -81,12 +75,13 @@ int main(int argc,char** argv)
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  GMAD::gmad_parser(execOptions->GetInputFilename());
+  BDSParser::Instance(execOptions->GetInputFilename());
 
   //
-  // parse options and explicitly initialise materials and global constants
+  // parse options, explicitly initialise materials and global constants and construct required materials
   //
-  BDSMaterials::Instance();
+  BDSMaterials::Instance()->PrepareRequiredMaterials();
+  
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   
   //
@@ -107,7 +102,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(GMAD::options);
+  bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -124,7 +119,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(GMAD::options.modularPhysicsListsOn) {
+  if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn) {
     BDSModularPhysicsList *physList = new BDSModularPhysicsList();
     /* Biasing */
 #if G4VERSION_NUMBER > 999
@@ -241,40 +236,33 @@ int main(int argc,char** argv)
       BDSGeometryWriter geometrywriter;
       geometrywriter.ExportGeometry(execOptions->GetExportType(),
 				    execOptions->GetExportFileName());
-      // clean up before exiting
-      G4GeometryManager::GetInstance()->OpenGeometry();
-      delete BDSAcceleratorModel::Instance();
-      delete execOptions;
-      delete globalConstants;
-      delete BDSMaterials::Instance();
-      delete runManager;
-      delete bdsBunch;
-      return 0;
     }
-  
-  // set default output formats:
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
-#endif
-  bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
-  G4cout.precision(10);
-
-  // catch aborts to close output stream/file. perhaps not all are needed.
-  signal(SIGABRT, &BDS::HandleAborts); // aborts
-  signal(SIGTERM, &BDS::HandleAborts); // termination requests
-  signal(SIGSEGV, &BDS::HandleAborts); // segfaults
-  // no interrupts since ctest sends an interrupt signal when interrupted
-  // and then the BDSIM process somehow doesn't get killed
-  // signal(SIGINT,  &BDS::HandleAborts); // interrupts
-  
-  if(!execOptions->GetBatch())   // Interactive mode
+  else
     {
-      BDSVisManager visManager;
-      visManager.StartSession(argc,argv);
+      // set default output formats:
+#ifdef BDSDEBUG
+      G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
+#endif
+      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      G4cout.precision(10);
+      
+      // catch aborts to close output stream/file. perhaps not all are needed.
+      signal(SIGABRT, &BDS::HandleAborts); // aborts
+      signal(SIGTERM, &BDS::HandleAborts); // termination requests
+      signal(SIGSEGV, &BDS::HandleAborts); // segfaults
+      // no interrupts since ctest sends an interrupt signal when interrupted
+      // and then the BDSIM process somehow doesn't get killed
+      // signal(SIGINT,  &BDS::HandleAborts); // interrupts
+  
+      if(!execOptions->GetBatch())   // Interactive mode
+	{
+	  BDSVisManager visManager;
+	  visManager.StartSession(argc,argv);
+	}
+      else           // Batch mode
+	{runManager->BeamOn(globalConstants->GetNumberToGenerate());}
     }
-  else           // Batch mode
-    {runManager->BeamOn(globalConstants->GetNumberToGenerate());}
-
+  
   //
   // job termination
   //
@@ -296,7 +284,7 @@ int main(int argc,char** argv)
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
-
+  delete BDSParser::Instance();
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif

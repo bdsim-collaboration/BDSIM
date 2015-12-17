@@ -1,5 +1,5 @@
-#ifndef BDSDipoleStepper_HH
-#define BDSDipoleStepper_HH
+#ifndef BDSDipoleStepper_H
+#define BDSDipoleStepper_H
 
 #include "BDSAuxiliaryNavigator.hh"
 
@@ -8,8 +8,13 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-class BDSDipoleStepper:
-  public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
+/**
+ * @brief Stepper that calculates trajectory througha uniform magnetic field.
+ * 
+ * Originally part of BDSIM by many authors.
+ */
+
+class BDSDipoleStepper: public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
   BDSDipoleStepper(G4Mag_EqRhs *EqRhs);

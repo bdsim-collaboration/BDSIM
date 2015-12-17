@@ -7,6 +7,7 @@
 
 #include "globals.hh" // geant4 types / globals
 
+#include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
@@ -129,6 +130,7 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  magnetContainerRadius += lengthSafetyLarge; // extra margin
   magnetContainerSolid = new G4CutTubs(name + "_container_solid",   // name
 				       0,                           // inner radius
 				       magnetContainerRadius,       // outer radius
@@ -151,6 +153,7 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  magnetContainerRadius += lengthSafetyLarge; // extra margin
   magnetContainerSolid = new G4Tubs(name + "_container_solid",   // name
 				    0,                           // inner radius
 				    magnetContainerRadius,       // outer radius

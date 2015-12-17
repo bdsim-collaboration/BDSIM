@@ -1,43 +1,32 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSSAMPLER_H
+#define BDSSAMPLER_H 
 
-#ifndef BDSSampler_h
-#define BDSSampler_h 
+#include "BDSSamplerBase.hh"
 
-#include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSSamplerSD.hh"
+class BDSSamplerSD;
+class G4Box;
+class G4LogicalVolume;
 
-class BDSSampler : public BDSAcceleratorComponent
+/** 
+ * Rectangular sampler class
+ */
+
+class BDSSampler : public BDSSamplerBase
 {
 public:
-  BDSSampler(G4String name,
-	     G4double length);
-  ~BDSSampler();
-
-  /// returns current number of samplers
-  static int GetNSamplers();
-  /// method to add sampler independent of beamline
-  static void AddExternalSampler(G4String outputName);
-
-  /// names of samplers for output
-  static std::vector <G4String> outputNames;
+  BDSSampler(G4String name);
 
   /// access for external classes to sensitive detector
-  static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
+  virtual BDSSamplerSD* GetSensitiveDetector()const override final;
   
 private:
-  virtual void BuildContainerLogicalVolume();
+  /// build container logical volume
+  virtual void BuildContainerLogicalVolume() override final;
 
-  /// id of sampler
-  int nThisSampler;
-  /// number of total Samplers
-  static int nSamplers;
-  /// pointer to sensitive detector, only one for all samplers
-  static BDSSamplerSD* SensitiveDetector;
+  /// static containerSolid (since same for every sampler)
+  static G4Box* containerSolidSampler;
+  /// static containerLogicalVolume (since same for every sampler)
+  static G4LogicalVolume* containerLogicalVolumeSampler;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "element.h"
 #include "elementtype.h"
 #include "parameters.h"
+#include "parser.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -10,17 +11,13 @@
 
 using namespace GMAD;
 
-namespace GMAD {
-  extern std::string current_line;
-}
-
 namespace {
   // helper method
-  void print(std::list<struct Element> l, int ident=0)
+  void print(std::list<Element> l, int ident=0)
   {
-    if(ident == 0) std::cout << "using line " << current_line << std::endl;
+    if(ident == 0) std::cout << "using line " << Parser::Instance()->current_line << std::endl;
   
-    for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
+    for(std::list<Element>::iterator it=l.begin();it!=l.end();it++)
       {
 	(*it).print(ident);
       }
@@ -29,6 +26,115 @@ namespace {
 
 Element::Element():lst(nullptr) {
   flush();
+
+  PublishMembers();
+}
+
+void Element::PublishMembers()
+{
+  publish("l",&Element::l);
+  publish("bmapZOffset",&Element::bmapZOffset);
+  publish("B",&Element::B);
+  publish("ks",&Element::ks);
+  publish("k0",&Element::k0);
+  publish("k1",&Element::k1);
+  publish("k2",&Element::k2);
+  publish("k3",&Element::k3);
+  publish("k4",&Element::k4);
+  publish("angle",&Element::angle);
+  publish("phiAngleIn",&Element::phiAngleIn);
+  publish("phiAngleOut",&Element::phiAngleOut);
+  publish("beampipeThickness",&Element::beampipeThickness);
+  publish("aper",&Element::aper1);
+  alternativeNames["aper"] = "aper1";
+  publish("aperture",&Element::aper1);
+  alternativeNames["aperture"] = "aper1";
+  publish("aper1",&Element::aper1);
+  publish("aperture1",&Element::aper1);
+  alternativeNames["aperture1"] = "aper1";
+  publish("aper2",&Element::aper2);
+  publish("aperture2",&Element::aper2);
+  alternativeNames["aperture2"] = "aper2";
+  publish("aper3",&Element::aper3);
+  publish("aperture3",&Element::aper3);
+  alternativeNames["aperture3"] = "aper3";
+  publish("aper4",&Element::aper4);
+  publish("aperture4",&Element::aper4);
+  alternativeNames["aperture4"] = "aper4";
+  publish("outerDiameter",&Element::outerDiameter);
+  //  publish("outR",2*&Element::outerDiameter);
+  publish("xsize",&Element::xsize);
+  publish("ysize",&Element::ysize);
+  publish("xsizeOut",&Element::xsizeOut);
+  publish("ysizeOut",&Element::ysizeOut);
+  publish("r",&Element::r);
+  publish("tilt",&Element::tilt);
+  publish("offsetX",&Element::offsetX);
+  publish("offsetY",&Element::offsetY);
+  publish("x",&Element::xdir);
+  alternativeNames["x"] = "xdir";
+  publish("y",&Element::ydir);
+  alternativeNames["y"] = "ydir";
+  publish("z",&Element::zdir);
+  alternativeNames["z"] = "zdir";
+  publish("xdir",&Element::xdir);
+  publish("ydir",&Element::ydir);
+  publish("zdir",&Element::zdir);
+  publish("phi",&Element::phi);
+  publish("theta",&Element::theta);
+  publish("psi",&Element::psi);
+  publish("gradient",&Element::gradient);
+  publish("precisionRegion",&Element::precisionRegion);
+  publish("region",&Element::region);
+  publish("A",&Element::A);
+  publish("Z",&Element::Z);
+  publish("density",&Element::density);
+  publish("T",&Element::temper);
+  publish("P",&Element::pressure);
+  publish("waveLength",&Element::waveLength);
+  publish("tscint",&Element::tscint);
+  publish("twindow",&Element::twindow);
+  publish("numberWedges",&Element::numberWedges);
+  publish("wedgeLength",&Element::wedgeLength);
+  publish("degraderHeight",&Element::degraderHeight);
+  publish("materialThickness",&Element::materialThickness);
+  publish("degraderOffset",&Element::degraderOffset);
+
+  publish("geometry",&Element::geometryFile);
+  publish("bmap",&Element::bmapFile);
+  publish("outerMaterial",&Element::outerMaterial);
+  publish("material",&Element::material);
+  publish("apertureType",&Element::apertureType);
+  publish("magnetGeometryType",&Element::magnetGeometryType);
+  publish("beampipeMaterial",&Element::beampipeMaterial);
+  publish("vacuumMaterial",&Element::vacuumMaterial);
+  publish("scintmaterial",&Element::scintmaterial);
+  publish("windowmaterial",&Element::windowmaterial);
+  publish("airmaterial",&Element::airmaterial);
+  publish("spec",&Element::spec);
+  publish("state",&Element::state);
+  publish("symbol",&Element::symbol);
+  publish("bias",&Element::bias);
+  publish("biasMaterial",&Element::biasMaterial);
+  publish("biasVacuum",&Element::biasVacuum);
+
+  publish("knl",&Element::knl);
+  publish("ksl",&Element::ksl);
+  publish("blmLocZ",&Element::blmLocZ);
+  publish("blmLocTheta",&Element::blmLocTheta);
+  publish("components",&Element::components);
+  publish("componentsWeights",&Element::componentsWeights);
+  publish("componentsFractions",&Element::componentsFractions);
+}
+
+std::string Element::getPublishedName(std::string name)const
+{
+  auto it = alternativeNames.find(name);
+  if (it != alternativeNames.end()) {
+    return it->second;
+  }
+  // if not found return name
+  return name;
 }
 
 void Element::print(int & ident)const{
@@ -108,6 +214,13 @@ void Element::flush() {
   k3 = 0;
   k4 = 0;
   angle = 0;
+  
+  // degrader
+  numberWedges = 1;
+  wedgeLength = 0;
+  degraderHeight = 0;
+  materialThickness = 0;
+  degraderOffset = 0;
 
   // new aperture model
   beampipeThickness = 0;
@@ -117,6 +230,7 @@ void Element::flush() {
   aper4 = 0;
   apertureType = "";
   beampipeMaterial = "";
+  vacuumMaterial = "";
 
   // magnet geometry
   magnetGeometryType  = "";
@@ -126,6 +240,8 @@ void Element::flush() {
   tilt = 0;
   xsize = 0;
   ysize = 0;
+  xsizeOut = 0;
+  ysizeOut = 0;
   r = 0;
   B = 0;
   phiAngleIn = 0;
@@ -154,7 +270,8 @@ void Element::flush() {
   biasVacuumList.clear();
   
   precisionRegion = 0;
-
+  region = "";
+  
   A = 0;
   Z = 0;
   density = 0;      //g*cm-3
@@ -177,232 +294,61 @@ void Element::flush() {
 }
 
 double Element::property_lookup(std::string property_name)const{
-  if(property_name == "l") return l;
-  if(property_name == "bmapZOffset") return bmapZOffset;
-  if(property_name == "B") return B;
-  if(property_name == "ks") return ks;
-  if(property_name == "k0") return k0;
-  if(property_name == "k1") return k1;
-  if(property_name == "k2") return k2;
-  if(property_name == "k3") return k3;
-  if(property_name == "k4") return k4;
-  if(property_name == "angle") return angle;
-  if(property_name == "phiAngleIn") return phiAngleIn;
-  if(property_name == "phiAngleOut") return phiAngleOut;
-  if(property_name == "beampipeThickness") return beampipeThickness;
-  if(property_name == "aper") return aper1;
-  if(property_name == "aper1") return aper1;
-  if(property_name == "aper2") return aper2;
-  if(property_name == "aper3") return aper3;
-  if(property_name == "aper4") return aper4;
-  if(property_name == "outerDiameter") return outerDiameter;
-  if(property_name == "boxSize") return outerDiameter;
   if(property_name == "outR") return 0.5*outerDiameter;
-  if(property_name == "xsize") return xsize;
-  if(property_name == "ysize") return ysize;
-  if(property_name == "xdir") return xdir;
-  if(property_name == "ydir") return ydir;
-  if(property_name == "zdir") return zdir;
-  if(property_name == "phi") return phi;
-  if(property_name == "psi") return psi;
-  if(property_name == "theta") return theta;
-  if(property_name == "waveLength") return waveLength;
-  if(property_name == "tilt") return tilt;
-  if(property_name == "offsetX") return offsetX;
-  if(property_name == "offsetY") return offsetY;
-  if(property_name == "gradient") return gradient;
 
-  if(property_name == "A") return A;
-  if(property_name == "Z") return Z;
-  if(property_name == "density") return density;
-  if(property_name == "T") return temper;
-  if(property_name == "P") return pressure;
-
-  std::cerr << "element.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl; 
-  exit(1);
-  //what about property_lookup for attributes of type string, like material?
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    std::cerr << "element.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl; 
+    exit(1);
+  }
+  return value;
 }
 
-void Element::set(const struct Parameters& params,std::string nameIn, ElementType typeIn, std::list<struct Element> *lstIn)
+void Element::set(const Parameters& params,std::string nameIn, ElementType typeIn)
 {
-  type = typeIn;
   // common parameters for all elements
+  type = typeIn;
   name = nameIn;
-  switch(type) {
-
-  case ElementType::_LINE:
-  case ElementType::_REV_LINE:
-    lst = lstIn;
-    break;
-  default:
-    break;
-  }
   
   set(params);
 }
 
-void Element::set(const struct Parameters& params)
+void Element::set(const Parameters& params)
 {
-  // checks on setting of parameters needs to be done to allow for extension of already set Elements
-  if(params.lset) l = params.l;
+  for (auto& i : params.setMap)
+    {
+      if(i.second == true)
+	{
+	  std::string property = i.first;
 
-  //new aperture model
-  if(params.beampipeThicknessset) beampipeThickness = params.beampipeThickness;
-  if(params.aper1set) aper1 = params.aper1;
-  if(params.aper2set) aper2 = params.aper2;
-  if(params.aper3set) aper3 = params.aper3;
-  if(params.aper4set) aper4 = params.aper4;
-  if(params.apertureTypeset) apertureType = params.apertureType;
-  if(params.beampipeMaterialset) beampipeMaterial = params.beampipeMaterial;
+	  Published<Element>::set(this,(Element*)&params,property);
 
-  //magnet geometry
-  if(params.magnetGeometryTypeset) magnetGeometryType = params.magnetGeometryType;
-  if(params.outerDiameterset) outerDiameter = params.outerDiameter;
-  if(params.outerMaterialset) outerMaterial = params.outerMaterial;
-  
-  if(params.xsizeset) xsize = params.xsize;
-  if(params.ysizeset) ysize = params.ysize;
-  if(params.materialset) material = params.material;  
-  if(params.precisionRegionset) precisionRegion = params.precisionRegion;
-
-  if(params.offsetXset) offsetX = params.offsetX;
-  if(params.offsetYset) offsetY = params.offsetY;
-  // end of common parameters
-
-  // specific parameters
-
-  // for transform3ds, lasers and for tracker
-  if(params.xdirset) xdir = params.xdir;
-  if(params.ydirset) ydir = params.ydir;
-  if(params.zdirset) zdir = params.zdir;
-
-  // bias
-  if(params.biasset) {
-    bias = params.bias;
-    // split bias into tokens and add to both material and vacuum
-    std::stringstream ss(bias);
-    std::string tok;
-    while(ss >> tok) {
-      biasMaterialList.push_back(tok);
-      biasVacuumList.push_back(tok);
+	  // split bias into tokens and add to both material and vacuum
+	  if (property == "bias")
+	    {
+	      std::stringstream ss(bias);
+	      std::string tok;
+	      while(ss >> tok)
+		{
+		  biasMaterialList.push_back(tok);
+		  biasVacuumList.push_back(tok);
+		}
+	    }
+	  else if (property == "biasMaterial")
+	    {
+	      std::stringstream ss(biasMaterial);
+	      std::string tok;
+	      while(ss >> tok) {biasMaterialList.push_back(tok);}
+	    }
+	  else if (property == "biasVacuum")
+	    {
+	      std::stringstream ss(biasVacuum);
+	      std::string tok;
+	      while(ss >> tok) {biasVacuumList.push_back(tok);}
+	    }
+	}
     }
-  }
-
-  if(params.biasMaterialset) {
-    biasMaterial = params.biasMaterial;
-    // split material bias into tokens
-    std::stringstream ss(biasMaterial);
-    std::string tok;
-    while(ss >> tok) {
-      biasMaterialList.push_back(tok);
-    }
-  }
-
-  if(params.biasVacuumset) {
-    biasVacuum = params.biasVacuum;
-    // split vacuum bias into tokens 
-    std::stringstream ss(biasVacuum);
-    std::string tok;
-    while(ss >> tok) {
-      biasVacuumList.push_back(tok);
-    }
-  }
-  
-  // BLM
-  if(params.blmLocZset)
-    blmLocZ = params.blmLocZ;
-  if(params.blmLocThetaset)
-    blmLocTheta = params.blmLocTheta;
-
-  // Drift
-  if(params.phiAngleInset)
-    phiAngleIn = params.phiAngleIn;
-  if(params.phiAngleOutset)
-    phiAngleOut = params.phiAngleOut;
-
-  // RF
-  if(params.gradientset)
-    gradient = params.gradient;
-  // SBend, RBend, (Awake)Screen
-  if(params.angle)
-    angle = params.angle;
-  // SBend, RBend, HKick, VKick
-  if(params.k0set)
-    k0 = params.k0;
-  // Quad
-  if(params.k1set)
-    k1 = params.k1;
-  // SBend, RBend, HKick, VKick, Solenoid, MuSpoiler
-  if(params.Bset)
-    B = params.B;
-  // SBend, RBend, HKick, VKick, Quad, Sext, Oct, Mult
-  if(params.tiltset) tilt = params.tilt;
-  // Quad
-  if(params.specset) spec = params.spec;
-  // Sext
-  if(params.k2set && type==ElementType::_SEXTUPOLE) k2 = params.k2;
-  // Octupole
-  if(params.k3set && type==ElementType::_OCTUPOLE) k3 = params.k3;
-  // Decapole
-  if(params.k4set && type==ElementType::_DECAPOLE) k4 = params.k4;
-  
-  // Multipole
-  if(params.knlset)
-    knl = params.knl;
-  if(params.kslset)
-    ksl = params.ksl;
-  // Solenoid
-  if(params.ksset) ks = params.ks;
-  // Laser
-  if(params.waveLengthset) waveLength = params.waveLength;
-  // Element, Tunnel
-  if(params.geometryFileset) geometryFile = params.geometryFile;
-  // Element
-  if(params.bmapFileset) bmapFile = params.bmapFile;
-  if(params.bmapZOffsetset)
-    bmapZOffset = params.bmapZOffset;
-  // Transform3D
-  if(params.thetaset) theta = params.theta;
-  if(params.phiset)   phi = params.phi;
-  if(params.psiset)   psi = params.psi;
-  // (Awake) Screen
-  if(params.tscintset) tscint = params.tscint;
-  if(params.scintmaterialset) scintmaterial = params.scintmaterial;
-  // Screen
-  if(params.airmaterialset) airmaterial = params.airmaterial;
-  // AwakeScreen
-  if(params.twindowset) twindow = params.twindow;
-  if(params.windowmaterialset) windowmaterial = params.windowmaterial;
-  // Sampler
-  if(params.rset) r = params.r;
-  
-  // overwriting of other parameters or specific printing
-  switch(type) {
-
-  case ElementType::_MATERIAL:
-    if(params.Aset) A = params.A;
-    if(params.Zset) Z = params.Z;
-    if(params.densityset) density = params.density;
-    if(params.temperset) temper = params.temper;
-    if(params.pressureset) pressure = params.pressure;
-    if(params.stateset) state = params.state;
-    if(params.componentsset) components = params.components;
-    if(params.componentsWeightsset) componentsWeights = params.componentsWeights;
-    if(params.componentsFractionsset) componentsFractions = params.componentsFractions;
-    break;
-    
-  case ElementType::_ATOM:
-    if(params.Aset) A = params.A;
-    if(params.Zset) Z = params.Z;
-    if(params.symbolset) symbol = params.symbol;
-    break;
-    
-  case ElementType::_AWAKESCREEN:
-    std::cout << "scintmaterial: " << scintmaterial << " " <<  params.scintmaterial << std::endl;
-    std::cout << "windowmaterial: " << windowmaterial << " " <<  params.windowmaterial << std::endl;
-    break;
-
-  default:
-    break;
-  }
 }

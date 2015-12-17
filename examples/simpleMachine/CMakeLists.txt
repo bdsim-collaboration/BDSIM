@@ -10,6 +10,12 @@ simple_testing(simpleMachineCombined "--file=sm.gmad" "")
 # no output formats
 set(TESTING_ARGS --output=none)
 simple_testing(simpleMachineNone "--file=sm.gmad" "")
+# root (reduced) output format
+set(TESTING_ARGS --output=root)
+simple_testing(simpleMachineROOT "--file=sm.gmad" "")
+# root detailed output format
+set(TESTING_ARGS --output=rootdetailed)
+simple_testing(simpleMachineROOTDetailed "--file=sm.gmad" "")
 # print help
 simple_testing(help "--help" "")
 # print list of materials
@@ -32,8 +38,12 @@ set(TESTING_ARGS --verbose)
 simple_testing(simpleMachineVerbose "--file=sm.gmad" "")
 # verbose event
 set(TESTING_ARGS --verbose_event)
-simple_testing(SimpleMachineVerboseEvent "--file=sm.gmad" "")
+simple_testing(simpleMachineVerboseEvent "--file=sm.gmad" "")
 # verbose step
 set(TESTING_ARGS --verbose_step)
-simple_testing(SimpleMachineVerboseStep "--file=sm.gmad" "")
+simple_testing(simpleMachineVerboseStep "--file=sm.gmad" "")
+# verbose levels
+set(TESTING_ARGS "--verbose_G4run=5 --verbose_G4event=5 --verbose_G4tracking=5 --verbose_G4stepping=5")
+simple_testing(simpleMachineVerboseLevels "--file=sm.gmad" "")
+
 

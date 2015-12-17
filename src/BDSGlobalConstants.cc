@@ -2,11 +2,10 @@
 
 #include "BDSGlobalConstants.hh"
 
-#include "parser/options.h"
-
-#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "G4Colour.hh"
@@ -16,20 +15,16 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-namespace GMAD {
-  extern Options options;
-}
-
 BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
   if(_instance==nullptr)
-    {_instance = new BDSGlobalConstants(GMAD::options);}
+    {_instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
   return _instance;
 }
 
-BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
+BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),
@@ -39,13 +34,10 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
 {
   printModuloFraction   = opt.printModuloFraction;
   itsPhysListName       = opt.physicsList;
-  itsBeamPipeMaterial   = opt.beampipeMaterial;
-  itsApertureType       = BDS::DetermineBeamPipeType(opt.apertureType);
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
 
   itsSampleDistRandomly = true;
-  itsGeometryBias = opt.geometryBias;
   
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
   itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
@@ -69,24 +61,26 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   //Fraction of events with leading particle biasing.
 
   //beampipe
-  itsBeamPipeRadius = opt.beampipeRadius * CLHEP::m;
-  itsAper1 = opt.aper1*CLHEP::m;
-  itsAper2 = opt.aper2*CLHEP::m;
-  itsAper3 = opt.aper3*CLHEP::m;
-  itsAper4 = opt.aper4*CLHEP::m;
-  // note beampipetype already done before these checks! at top of this function
-  BDS::CheckApertureInfo(itsApertureType,itsBeamPipeRadius,itsAper1,itsAper2,itsAper3,itsAper4);
+  defaultBeamPipeModel = new BDSBeamPipeInfo(opt.apertureType,
+					     opt.aper1 * CLHEP::m,
+					     opt.aper2 * CLHEP::m,
+					     opt.aper3 * CLHEP::m,
+					     opt.aper4 * CLHEP::m,
+					     opt.vacMaterial,
+					     opt.beampipeThickness * CLHEP::m,
+					     opt.beampipeMaterial);
   
-  itsBeamPipeThickness = opt.beampipeThickness * CLHEP::m;
-
   // magnet geometry
   itsOuterDiameter = opt.outerDiameter * CLHEP::m;
-  if (itsOuterDiameter < 2*(itsBeamPipeThickness + itsBeamPipeRadius)){
-    G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"beampipeRadius\" + \"beamPipeThickness\") " << G4endl;
-    exit(1);
-  }
+  if (itsOuterDiameter < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
+    {
+      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"aper1\" + \"beamPipeThickness\") " << G4endl;
+      exit(1);
+    }
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
   itsOuterMaterialName  = opt.outerMaterialName;
+
+  dontSplitSBends       = opt.dontSplitSBends;
 
   // tunnel
   buildTunnel            = opt.buildTunnel;
@@ -198,12 +192,13 @@ BDSGlobalConstants::BDSGlobalConstants(GMAD::Options& opt):
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
   isWaitingForDump = false;
-  itsIncludeIronMagFields = opt.includeIronMagFields;
+  //itsIncludeIronMagFields = opt.includeIronMagFields;
+  itsIncludeIronMagFields = false;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
-  itsTurnsTaken = 1; //counting from 1
+  itsTurnsTaken = 0;
   if(opt.nturns < 1)
     itsTurnsToTake = 1;
   else
@@ -287,6 +282,7 @@ G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
+  delete defaultBeamPipeModel;
   delete itsZeroFieldManager;
   delete zeroMagField;
   delete tunnelInfo;

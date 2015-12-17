@@ -6,9 +6,9 @@ Several python packages are provided to aid preparation and conversion
 of models to a from BDSIM's gmad format and are described the following
 sections.
 
-* `pybdsim`_ - conversion and building of input as well as ASCII data analysis
-* `pymadx`_  - file loader for MADX Tfs file format
-* `pymad8`_  - file loader for MAD8 file format
+* pybdsim - conversion and building of input as well as ASCII data analysis
+* pymadx  - file loader for MADX Tfs file format
+* pymad8  - file loader for MAD8 file format
 
 Installing Python Packages
 ==========================
@@ -29,8 +29,21 @@ from any location::
 >>> # no errors
 
 
-.. include:: pybdsim.rst
-	     
-.. include:: pymadx.rst
-	     
-.. include:: pymad8.rst
+Documentation
+=============
+
+In the following sections is individual documentatino for each python package.
+These are also available when using ipython by typing ? after any module or class.
+
+.. toctree::
+   :maxdepth: 2
+
+   pybdsim.rst
+   pymadx
+   pymad8
+
+
+
+
+   
+

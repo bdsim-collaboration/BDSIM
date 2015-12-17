@@ -1,3 +1,88 @@
+V0.91 - 2015 / 12 / 17
+======================
+
+New Features
+------------
+
+* New tests for file IO, coordinate transforms, aperture models, extra optical lattice patterns and general ring example.
+
+Geometry
+^^^^^^^^
+
+* Race track and octagonal aperture models introduced.
+* New wedged energy degrader component introduced.
+
+Output
+^^^^^^
+
+* Optional reduced number of variables in ROOT output - formats now "root" and "rootdetailed" (issue #107)
+* Forced dependency on ROOT
+
+Parser
+^^^^^^
+
+* Parser warns for redefined variable, and exits for usage of undeclared variables (issue #98)
+* Parser reorganised to c++ class structure (issue #77)
+* Command line options more flexible (issue #105)
+* Ability to define Geant4 regions as objects in parser.
+* Can attach samplers to all elements of one type, ie collimators.
+
+Physics
+^^^^^^^
+
+* Can attach biasing to any part of any element from parser.
+
+Tracking
+^^^^^^^^
+
+* Ability to start bunch from any S position along accelerator rather than just at beginning.
+  
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+
+* Fix for LHC detailed geometry when beam shield is rotated.
+* Consoldation and improvement of aperture parameter validity testing.
+* Fix for femtometre occasional overlaps in magnet outer geometry.
+* Fixed placement overlaps in rbend.
+* Fixed seg-fault with RfCavity at end of run.
+* Fixed crashes with zero angle sector bends.
+  
+Parser
+^^^^^^
+
+* Multiple command line arguments without space will now be recognised and highlited.
+
+Physics
+^^^^^^^
+
+* Made required version of Geant4 consistent across biasing code.
+  
+Tracking
+^^^^^^^^
+
+* Fields only constructed if non-zero strength used - avoids tracking errors for zero strength components.
+* Fixed several issues with vertical and horizontal kicker construction and tracking.
+* Broken external magnet fields disabled by default.
+* Circular turn counting bugs fixed
+* Particles no longer killed with circular flag on if starting slightly behind starting mid point.
+* Particles no longer stepped by teleporter at beginning of 1st turn if starting behind starting mid point.
+* Fix teleporter tracking for backwards travelling particles that would get stuck in a loop.
+  
+General
+^^^^^^^
+
+* Add CMake protection against Geant4 built with multithreading on (issue #103)
+
+Utilities
+---------
+* pymadx v0.3
+* pybdsim v0.4
+* pymad8 v0.2
+* robdsim v0.4
+
 V0.9 - 2015 / 11 / 10
 =====================
 

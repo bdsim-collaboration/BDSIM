@@ -8,7 +8,14 @@ namespace CLHEP {
   class RandFlat;
 }
 
-class BDSBunchCircle : public BDSBunchInterface { 
+/**
+ * @brief An uncorrelated uniform random distribution within a circle in each dimension.
+ * 
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
+
+class BDSBunchCircle: public BDSBunchInterface
+{
 protected : 
   G4double envelopeR; 
   G4double envelopeRp; 
@@ -20,7 +27,7 @@ protected :
 public: 
   BDSBunchCircle(); 
   ~BDSBunchCircle(); 
-  void SetOptions(GMAD::Options& opt);
+  void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  

@@ -1,8 +1,5 @@
 #include "tunnel.h"
 
-#include <iomanip>
-#include <iostream>
-
 using namespace GMAD;
 
 Tunnel::Tunnel():
@@ -10,7 +7,9 @@ Tunnel::Tunnel():
   offsetX(0.0),offsetY(0.0),
   thickness(0.0),soilThickness(0.0),
   floorOffset(0.0),visible(true)
-{;}
+{
+  PublishMembers();
+}
 
 void Tunnel::clear()
 {
@@ -32,6 +31,25 @@ void Tunnel::clear()
   endElement   = "";
 }
 
+void Tunnel::PublishMembers()
+{
+  publish("name",&Tunnel::name);
+  publish("type",&Tunnel::type);
+  publish("radius",&Tunnel::aper1);
+  publish("aper1",&Tunnel::aper1);
+  publish("aper2",&Tunnel::aper2);
+  publish("offsetX",&Tunnel::offsetX);
+  publish("offsetY",&Tunnel::offsetY);
+  publish("thickness",&Tunnel::thickness);
+  publish("soilThickness",&Tunnel::soilThickness);
+  publish("floorOffset",&Tunnel::floorOffset);
+  publish("visible",&Tunnel::visible);
+  publish("material",&Tunnel::material);
+  publish("soilMaterial",&Tunnel::soilMaterial);
+  publish("startElement",&Tunnel::startElement);
+  publish("endElement",&Tunnel::endElement);
+}
+
 void Tunnel::print()const
 {
   std::cout << "tunnel: "
@@ -49,40 +67,4 @@ void Tunnel::print()const
 	    << startElement  << " "
 	    << endElement
 	    << std::endl;
-}
-
-void Tunnel::set_value(std::string property, double value )
-{
-#ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
-#endif
-
-  if (property=="radius" || property == "aper1") {aper1 = value; return;}
-  if (property=="aper2")         {aper2 = value; return;}
-  if (property=="offsetX")       {offsetX = value; return;}
-  if (property=="offsetY")       {offsetY = value; return;}
-  if (property=="thickness")     {thickness = value; return;}
-  if (property=="soilThickness") {soilThickness = value; return;}
-  if (property=="floorOffset")   {floorOffset = value; return;}
-  if (property=="visible")       {visible = (bool)value; return;}
-  
-  std::cerr << "Error: parser> unknown tunnel option \"" << property << "\" with value " << value << std::endl; 
-  exit(1);
-}
-
-void Tunnel::set_value(std::string property, std::string value )
-{
-  #ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
-#endif
-
-  if (property=="name")         {name = value; return;}
-  if (property=="type")         {type = value; return;}
-  if (property=="material")     {material = value; return;}
-  if (property=="soilMaterial") {soilMaterial = value; return;}
-  if (property=="startElement") {startElement = value; return;}
-  if (property=="endElement")   {endElement = value; return;}
-
-  std::cerr << "Error: parser> unknown tunnel option \"" << property << "\" with value " << value << std::endl;
-  exit(1);
 }

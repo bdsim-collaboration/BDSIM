@@ -23,7 +23,8 @@
 #include "BDSMaterials.hh"
 #include "BDSPCLTube.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSSampler.hh"
+#include "BDSSamplerBase.hh"
+#include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
 #include <string>
 #include <vector>
@@ -601,9 +602,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
 
   _lengthUserLimit = length*0.5;
   
-  aSamplerVol->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  BDSSampler::AddExternalSampler(std::to_string(BDSSampler::GetNSamplers())+"_"+_Name+"_1");
+  BDSSamplerBase::AddExternalSampler(std::to_string(BDSSamplerBase::GetNSamplers())+"_"+_Name+"_1");
   
   return aSamplerVol;
 }
@@ -706,7 +707,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k)
   aperYUp = 50.*CLHEP::mm;
   aperYDown = 200.*CLHEP::mm;
   aperDy = 0.*CLHEP::mm;
-  thickness = BDSGlobalConstants::Instance()->GetBeamPipeThickness();
+  thickness = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->beamPipeThickness;
   length = 200.0*CLHEP::mm;
   
   if(aSQLTable->GetVariable("APERX")!=nullptr)

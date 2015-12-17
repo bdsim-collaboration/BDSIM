@@ -1,11 +1,3 @@
- 
-/** BDSIM, v0.1   
-
-Last modified 01.02.2006 by Ilya Agapov
-
-**/
-
-
 #ifndef BDSPhysicsList_h
 #define BDSPhysicsList_h
 

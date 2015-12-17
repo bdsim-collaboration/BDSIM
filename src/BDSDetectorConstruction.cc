@@ -11,6 +11,7 @@
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
@@ -22,12 +23,7 @@
 #include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
-#include "parser/element.h"
-#include "parser/fastlist.h"
-#include "parser/physicsbiasing.h"
-
 #include "G4Box.hh"
-#include "G4Colour.hh"
 #include "G4Electron.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
@@ -48,13 +44,7 @@
 #include <iterator>
 #include <list>
 #include <map>
-#include <sstream>
 #include <vector>
-
-namespace GMAD {
-  extern FastList<Element> beamline_list;
-  extern FastList<PhysicsBiasing> xsecbias_list;
-}
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
@@ -74,9 +64,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 {
   if (verbose || debug) G4cout << __METHOD_NAME__ << "starting accelerator geometry construction\n" << G4endl;
   
-  // prepare materials for this run
-  BDSMaterials::Instance()->PrepareRequiredMaterials();
-
   // construct regions
   InitialiseRegions();
   
@@ -95,9 +82,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // implement bias operations on all volumes 
   // BuildPhysicsBias();
-
-  // free the parser list - an extern
-  //  GMAD::beamline_list.erase();
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
@@ -161,7 +145,7 @@ void BDSDetectorConstruction::BuildBeamline()
     }
   
   if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  for(auto element : GMAD::beamline_list)
+  for(auto element : BDSParser::Instance()->GetBeamline())
     {
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << (element).name << G4endl;
@@ -217,7 +201,7 @@ void BDSDetectorConstruction::BuildBeamline()
   delete theComponentFactory;
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< GMAD::beamline_list.size() << G4endl;
+  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< BDSParser::Instance()->GetBeamline().size() << G4endl;
 #endif
   G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
 
@@ -442,7 +426,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
 
       // get the placement details from the beamline component
-      G4int nCopy          = thecurrentitem->GetCopyNumber();
+      G4int nCopy          = (*it)->GetCopyNo();
       // reference rotation and position for the read out volume
       G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
       G4Transform3D*    pt = (*it)->GetPlacementTransform();
@@ -569,7 +553,9 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
   BDSBOptrMultiParticleChangeCrossSection *eg = new BDSBOptrMultiParticleChangeCrossSection();
   for(std::string& bs : biasList)
     {
-      GMAD::PhysicsBiasing& pb = *GMAD::xsecbias_list.find(bs);
+      auto it = BDSParser::Instance()->GetBiasing().find(bs);
+      if (it==BDSParser::Instance()->GetBiasing().end()) continue;
+      const GMAD::PhysicsBiasing& pb = *it;
       
       if(debug)
 	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
@@ -611,27 +597,33 @@ void BDSDetectorConstruction::BuildPhysicsBias()
       std::list<std::string> bvl = i->second->GetBiasVacuumList();
       BDSBOptrMultiParticleChangeCrossSection *egVacuum = BuildCrossSectionBias(bvl);
       G4LogicalVolume* vacuumLV = i->second->GetAcceleratorVacuumLogicalVolume();
-      if(vacuumLV) {
-	if(debug) G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;
-	{egVacuum->AttachTo(vacuumLV);}
-      }
+      if(vacuumLV)
+	{
+	  if(debug)
+	    {G4cout << __METHOD_NAME__ << "vacuum " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
+	  {egVacuum->AttachTo(vacuumLV);}
+	}
       
       // Accelerator material
       std::list<std::string> bml = i->second->GetBiasMaterialList();
       BDSBOptrMultiParticleChangeCrossSection *egMaterial = BuildCrossSectionBias(bml);
       auto lvl = i->second->GetAllLogicalVolumes();
-      if(debug) G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;	  
+      if(debug)
+	{G4cout << __METHOD_NAME__ << "all logical volumes " << lvl.size() << G4endl;}
       for (auto acceleratorLVIter : lvl)
 	{
-	  if(acceleratorLVIter != vacuumLV) {
-	    if(debug) G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter << " " << (acceleratorLVIter)->GetName() << G4endl;
-	    egMaterial->AttachTo(acceleratorLVIter);
-	  }
+	  if(acceleratorLVIter != vacuumLV)
+	    {
+	      if(debug)
+		{
+		  G4cout << __METHOD_NAME__ << "All logical volumes " << acceleratorLVIter
+			<< " " << (acceleratorLVIter)->GetName() << G4endl;
+		}
+	      egMaterial->AttachTo(acceleratorLVIter);
+	    }
 	}
     }
-
   // apply range or complete biases
-
 #endif
 }
 

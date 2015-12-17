@@ -137,6 +137,11 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   
   // -- fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
+  if (!operation) {
+    G4cout << __METHOD_NAME__ << "ERROR: Process not known: " << G4endl;
+    callingProcess->DumpInfo();
+    exit(1);
+  }
   // -- get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
   
@@ -148,8 +153,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // STB Just return the operation before the multiple sampling check
   operation->SetBiasedCrossSection( XStransformation * analogXS );
   operation->Sample();
-  //  return operation;
-    
+
   // -- now setup the operation to be returned to the process: this
   // -- consists in setting the biased cross-section, and in asking
   // -- the operation to sample its exponential interaction law.

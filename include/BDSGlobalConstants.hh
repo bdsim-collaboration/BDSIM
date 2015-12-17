@@ -1,12 +1,11 @@
 #ifndef BDSGLOBALCONSTANTS_H
 #define BDSGLOBALCONSTANTS_H 
 
-
-#include "BDSBeamPipeType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
 
+#include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "G4String.hh"
 #include "G4AffineTransform.hh"
@@ -21,25 +20,23 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-namespace GMAD {
-  struct Options;
+class BDSBeamPipeInfo;
+
+namespace GMAD
+{
+  class Options;
 }
 
-struct strCmp {
-  G4bool operator()( const G4String s1, const G4String s2 ) const {
-    return strcmp(s1,s2) < 0;}
-};
-
 /**
- * @brief a class that holds global options and constants
+ * @brief A class that holds global options and constants.
  * 
- * singleton pattern
+ * Singleton pattern
  */
 class BDSGlobalConstants 
 {
 
 protected:
-  BDSGlobalConstants(GMAD::Options&);
+  BDSGlobalConstants(const GMAD::Options&);
 
 private:
   static BDSGlobalConstants* _instance;
@@ -91,7 +88,6 @@ public:
   G4double GetAnnihiToMuFe() const;
   G4double GetEeToHadronsFe() const;
   G4bool   GetSampleDistRandomly() const;
-  G4bool   GetGeometryBias() const;
   G4bool   GetUseEMLPB() const;
   G4bool   GetUseHadLPB() const;
   ///@{ Booleans determining which types of components are sensitive
@@ -99,14 +95,19 @@ public:
   G4bool   GetSensitiveBeamPipe() const;
   G4bool   GetSensitiveBLMs() const;
   ///@}
+
+  BDSBeamPipeInfo* GetDefaultBeamPipeModel() const;
   
   G4double GetComponentBoxSize() const;
+  
   /// Magnet geometry variable
   BDSMagnetGeometryType GetMagnetGeometryType() const;
   G4String GetOuterMaterialName() const;
   G4double GetOuterDiameter() const;
   G4double GetMagnetPoleSize() const;
-  G4double GetMagnetPoleRadius() const; 
+  G4double GetMagnetPoleRadius() const;
+
+  G4bool   DontSplitSBends() const;
 
   ///@{ Tunnel
   G4bool         BuildTunnel()         const;
@@ -121,14 +122,6 @@ public:
   G4double GetBlmLength() const;
   ///@}
   
-  ///@{ Beampipe
-  G4double GetBeamPipeRadius() const;
-  G4double GetAper1() const;
-  G4double GetAper2() const;
-  G4double GetAper3() const;
-  G4double GetAper4() const;
-  G4double GetBeamPipeThickness() const; 
-  ///@}
   
   ///@{ Sampler
   G4double GetSamplerDiameter() const;
@@ -211,9 +204,16 @@ public:
   // AI : for placet synchronization
   void     setWaitingForDump(G4bool flag);
   G4bool   getWaitingForDump() const;
+
+  /// This is the number of complete turns already completed. Starts at 0 and
+  /// increments to 1 after 1 complete turn.
   G4int    GetTurnsTaken() const;
   void     IncrementTurnNumber();
+
+  /// Reset turn number to 0.
   void     ResetTurnNumber();
+
+  /// Get the number of complete turns that should be simulated.
   G4int    GetTurnsToTake() const;
 
   G4AffineTransform GetDumpTransform() const;
@@ -255,7 +255,6 @@ private:
   G4double itsAnnihiToMuFe;
   G4double itsEeToHadronsFe;
   G4bool   itsSampleDistRandomly;
-  G4bool   itsGeometryBias;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
   G4double itsMinimumEpsilonStep;
@@ -272,6 +271,13 @@ private:
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   ///@}
+
+  /// Default beam pipe model information
+  BDSBeamPipeInfo* defaultBeamPipeModel;
+
+  /// A debug option to NOT split sbends into multiple sections
+  G4bool   dontSplitSBends;
+  
   ///@{ Tunnel model
   G4bool         buildTunnel;
   G4bool         buildTunnelStraight;
@@ -288,12 +294,6 @@ private:
   G4double itsBlmRad;
   G4double itsBlmLength;
   ///@}
-  G4double itsBeamPipeRadius;
-  G4double itsAper1;
-  G4double itsAper2;
-  G4double itsAper3;
-  G4double itsAper4;
-  G4double itsBeamPipeThickness;
   G4double itsSamplerDiameter;
   G4double itsSamplerLength;
   G4double itsDeltaIntersection;
@@ -322,8 +322,8 @@ private:
   G4int    itsSynchMeanFreeFactor;
   G4int    itsSynchPhotonMultiplicity;
   // test map container for laserwire parameters - Steve
-  std::map<const G4String, G4double, strCmp> lwWavelength;
-  std::map<const G4String, G4ThreeVector, strCmp> lwDirection;
+  std::map<const G4String, G4double> lwWavelength;
+  std::map<const G4String, G4ThreeVector> lwDirection;
   G4double itsLaserwireWavelength;
   G4ThreeVector itsLaserwireDir;
   G4bool   itsLaserwireTrackPhotons;
@@ -378,8 +378,7 @@ public:
 
   G4double GetLWCalWidth() const;
   G4double GetLWCalOffset() const;
-  BDSBeamPipeType GetApertureType() const;
-  G4String GetBeamPipeMaterialName() const;
+
   G4String GetVacuumMaterial() const;
   G4String GetEmptyMaterial() const;
 
@@ -391,8 +390,7 @@ public:
 private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
-  BDSBeamPipeType itsApertureType;    ///<aperture model to use by default
-  G4String itsBeamPipeMaterial;       ///<beampipe material
+  
   G4String itsVacuumMaterial;         ///<vacuum inside beampipe
   G4String itsEmptyMaterial;          ///<empty material for e.g. marker volumes
   G4bool   isWaitingForDump;
@@ -516,6 +514,9 @@ inline  G4bool BDSGlobalConstants::GetSensitiveBeamPipe() const
 inline  G4bool BDSGlobalConstants::GetSensitiveBLMs() const
 {return itsSensitiveBLMs;}
 
+inline  BDSBeamPipeInfo* BDSGlobalConstants::GetDefaultBeamPipeModel() const
+{return defaultBeamPipeModel;}  
+
 inline BDSMagnetGeometryType BDSGlobalConstants::GetMagnetGeometryType() const
 {return itsMagnetGeometryType;}
 
@@ -524,6 +525,9 @@ inline G4String BDSGlobalConstants::GetOuterMaterialName() const
 
 inline G4double BDSGlobalConstants::GetOuterDiameter() const
 {return itsOuterDiameter;}
+
+inline G4bool   BDSGlobalConstants::DontSplitSBends() const
+{return dontSplitSBends;}
 
 inline G4double BDSGlobalConstants::GetComponentBoxSize() const
 {return itsOuterDiameter;}
@@ -549,9 +553,6 @@ inline G4double BDSGlobalConstants::TunnelOffsetX() const
 inline G4double BDSGlobalConstants::TunnelOffsetY() const
 {return tunnelOffsetY;}
 
-inline G4bool BDSGlobalConstants::GetGeometryBias() const
-{return itsGeometryBias;}
-
 //Beam loss monitors
 
 inline G4double BDSGlobalConstants::GetBlmRad() const
@@ -559,24 +560,6 @@ inline G4double BDSGlobalConstants::GetBlmRad() const
 
 inline G4double BDSGlobalConstants::GetBlmLength() const
 {return itsBlmLength;}
-
-inline G4double BDSGlobalConstants::GetBeamPipeRadius() const
-{return itsBeamPipeRadius;}
-
-inline G4double BDSGlobalConstants::GetAper1() const
-{return itsAper1;}
-
-inline G4double BDSGlobalConstants::GetAper2() const
-{return itsAper2;}
-
-inline G4double BDSGlobalConstants::GetAper3() const
-{return itsAper3;}
-
-inline G4double BDSGlobalConstants::GetAper4() const
-{return itsAper4;}
-
-inline G4double BDSGlobalConstants::GetBeamPipeThickness() const 
-{return itsBeamPipeThickness;}
 
 inline G4double BDSGlobalConstants::GetSamplerDiameter() const 
 {return itsSamplerDiameter;}
@@ -746,12 +729,6 @@ inline  G4double BDSGlobalConstants::GetLWCalWidth() const
 inline  G4double BDSGlobalConstants::GetLWCalOffset() const
 {return itsLWCalOffset;}
 
-inline BDSBeamPipeType BDSGlobalConstants::GetApertureType() const
-{return itsApertureType;}
-
-inline G4String BDSGlobalConstants::GetBeamPipeMaterialName() const
-{return itsBeamPipeMaterial;}
-
 inline G4String BDSGlobalConstants::GetVacuumMaterial() const
 {return itsVacuumMaterial;}
 
@@ -797,7 +774,7 @@ inline void  BDSGlobalConstants::IncrementTurnNumber()
 {itsTurnsTaken += 1;}
 
 inline void  BDSGlobalConstants::ResetTurnNumber()
-{itsTurnsTaken = 1;}
+{itsTurnsTaken = 0;}
 
 inline G4int BDSGlobalConstants::GetTurnsToTake() const
 {return itsTurnsToTake;}

@@ -1,5 +1,5 @@
 #include "G4Version.hh"
-#if G4VERSION_NUMBER > 999
+#if G4VERSION_NUMBER > 1009 // consistent with BDSBOptChangeCrossSection
 
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 #include "G4BiasingProcessInterface.hh"

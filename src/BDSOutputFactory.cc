@@ -5,6 +5,8 @@
 #include "BDSOutputASCII.hh"
 #include "BDSOutputNone.hh"
 #include "BDSOutputROOT.hh"
+#include "BDSOutputROOTDetailed.hh"
+#include "BDSOutputROOTEvent.hh"
 #include "BDSOutputVector.hh"
 
 #include "BDSDebug.hh"
@@ -21,9 +23,7 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
     {
       BDSOutputVector* combinedOutput = new BDSOutputVector();
       combinedOutput->Add(new BDSOutputASCII());
-#ifdef USE_ROOT
       combinedOutput->Add(new BDSOutputROOT());
-#endif
       return combinedOutput;
     }
   
@@ -32,13 +32,15 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
   
   else if (format == BDSOutputFormat::root)
     {
-#ifdef USE_ROOT
     return new BDSOutputROOT();
-#else
-    G4cout << __METHOD_NAME__ << "warning: root output selected but BDSIM not built with root support" << G4endl;
-    G4cout << __METHOD_NAME__ << "using ASCII by default" << G4endl;
-    return new BDSOutputASCII();
-#endif
+    }
+  else if (format == BDSOutputFormat::rootdetailed) 
+    {
+      return new BDSOutputROOTDetailed();
+    }
+  else if (format == BDSOutputFormat::rootevent) 
+    {
+      return new BDSOutputROOTEvent();
     }
   else
     {return new BDSOutputNone();} // absolute default - should not reach this

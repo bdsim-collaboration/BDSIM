@@ -1,5 +1,5 @@
-#ifndef BDSBunchHalo_h
-#define BDSBunchHalo_h
+#ifndef BDSBUNCHHALO_H
+#define BDSBUNCHHALO_H
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -9,8 +9,14 @@ namespace CLHEP {
   class RandFlat;
 }
 
-class BDSBunchHalo : public BDSBunchInterface { 
+/**
+ * @brief A halo distribution based on both twiss parameters and sigmas.
+ *
+ * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ */
 
+class BDSBunchHalo: public BDSBunchInterface
+{
 private : 
   /* Twiss parameters */
   G4double betaX;
@@ -35,7 +41,7 @@ private :
 public : 
   BDSBunchHalo();
   ~BDSBunchHalo();
-  void SetOptions(GMAD::Options &opt);
+  virtual void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  

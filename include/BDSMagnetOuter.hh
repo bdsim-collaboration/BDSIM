@@ -12,7 +12,10 @@ class G4LogicalVolume;
 class G4VSolid;
 
 /**
- * @brief A class that is mostly BDSGeometryComponent but with the 
+ * @brief An object for both the returned magnet outer body but also a
+ * tight fitting container for the whole magnet.
+ * 
+ * Mostly BDSGeometryComponent but with the 
  * addition of a suggested container volume for the whole magnet body
  * as the magnet outer section is typically the outside of the magnet
  * and only the magnet factory knows its true shape and can make a well
@@ -36,7 +39,7 @@ public:
   virtual ~BDSMagnetOuter();
 
   /// Access the magnet container - a BDSGeometryComponent instance that has a suggested
-  /// container solid (NULL LV! - constructed from solid in BDSMagnet and saves doing it
+  /// container solid (null pointer LV! - constructed from solid in BDSMagnet and saves doing it
   /// repeatedly in factories) that would contain both the magnet outer section and the
   /// beam pipe - so a solid container. Use as a way to pass solid + extents
   BDSGeometryComponent* GetMagnetContainer() const;
