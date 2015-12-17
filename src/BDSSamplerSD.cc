@@ -165,7 +165,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
                                             turnstaken,
                                             itsType,
                                             process,
-                                            theInfo->GetBeamlineIndex()); // TODO Check with LN why this does not work for samplers
+                                            0 /*theInfo->GetBeamlineIndex() */); // TODO Check with LN why this does not work for samplers
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;

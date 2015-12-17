@@ -106,7 +106,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   if (readOutTH)
     {
       tf = readOutTH->GetHistory()->GetTopTransform();
-
       G4StepPoint* preeP = aStep->GetPreStepPoint();
       G4StepPoint* postP = aStep->GetPostStepPoint();
       G4bool preeOnBound = (preeP->GetStepStatus() == fGeomBoundary);
@@ -198,7 +197,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
 						       turnstaken,
 						       eventnumber,
 						       stepLength,
-                   theInfo->GetBeamlineIndex());
+                   0 /*theInfo->GetBeamlineIndex()*/);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
@@ -309,7 +308,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       turnstaken,
 						       eventnumber,
 						       stepLength,
-                   theInfo->GetBeamlineIndex());
+                   0 /* theInfo->GetBeamlineIndex()*/);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
