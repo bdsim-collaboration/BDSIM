@@ -132,7 +132,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis; //equator ellipse horizontal semiaxis
   G4double tangentAngle     = cavityInfo->tangentLineAngle;
   G4double irisRadius       = cavityInfo->irisRadius;
-  G4int noPoints            = cavityInfo->numberOfPoints;
+  unsigned int noPoints            = cavityInfo->numberOfPoints;
 
   //Calculatecartesian coordinates (z, r) from parameters.
   //2D spherical coordinates, z along the beamline:
@@ -173,13 +173,13 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //---Generating values for the parameters used to define the ellipse shapes---
     
   //Vector of parameter values for generating the iris ellipse.  This can then be reflected to find the iris ellipse on the other side.
-  for (G4int i = 0; i < noPoints/4; i++) //iris allocated one quarter of points.
+  for (unsigned int i = 0; i < noPoints/4; i++) //iris allocated one quarter of points.
     {
       irisParameter.push_back(1.5*CLHEP::pi + (1.5*CLHEP::pi - irisParameterTangentPoint )*i/((noPoints/4)-1));  
     };
 
   //Vector of parameter values for generating the equator ellipse
-  for (G4int i = 0; i < noPoints/2; i++) //equator ellipse allocated half of the points
+  for (unsigned int i = 0; i < noPoints/2; i++) //equator ellipse allocated half of the points
     {
       equatorParameter.push_back((CLHEP::pi - equatorParameterTangentPoint) - (CLHEP::pi - 2* equatorParameterTangentPoint)*i/((noPoints/2)-1)); 
     };
@@ -189,7 +189,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //---Geant requires the coordinates to be done in this (negative to positive)
   
   //-z iris ellipse:
-  for (G4int i = 0; i < noPoints/4; i++) //noPoints/4 because of the total noPoints, the iris ellipse in -z is allocated a quarter of points.
+  for (unsigned int i = 0; i < noPoints/4; i++) //noPoints/4 because of the total noPoints, the iris ellipse in -z is allocated a quarter of points.
     {
       if (i == 0) //An extra point at the very start for unambigious boolean subtraction later on.  Will not actually be part of the final geometry.
 	{
@@ -201,14 +201,14 @@ void BDSCavity::BuildEllipticalCavityGeometry()
     };
   
   //equator ellipse (middle):
-  for (G4int i = 0; i < noPoints/2; i++)  //central ellipse is allocated half the total points.  
+  for (unsigned int i = 0; i < noPoints/2; i++)  //central ellipse is allocated half the total points.  
     {
       zInnerCoord.push_back(ze + equatorZSemiAxis * cos(equatorParameter[i]));
       rInnerCoord.push_back(re + equatorRSemiAxis * sin(equatorParameter[i]));
     };
   
   //+z iris ellipse:
-  for (G4int i = 0; i < noPoints/4; i++)  //the +z iris ellipse is allocated noPoints/4.
+  for (unsigned int i = 0; i < noPoints/4; i++)  //the +z iris ellipse is allocated noPoints/4.
     {
       zInnerCoord.push_back(zi + irisZSemiAxis * cos(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));
       rInnerCoord.push_back(ri + irisRSemiAxis * sin(CLHEP::pi - irisParameter[noPoints/4 - 1 - i]));	 
@@ -223,7 +223,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //---Generating points for the entire outer cavity shape by using the inner cavity vector of coordinates---
   //This works by calculating the gradient at each point on the curve.  It then finds a unit vector pointing perpendicularly outwards from this point and multiplies
   //by the thickness.  This creates a second vector of points for the outer geometry.
-  for (G4int i = 1; i < zInnerCoord.size() - 1; i++)  //starting from 1 and ending at n-1 so that the coordinates used for the boolean subtraction are excluded.
+  for (unsigned int i = 1; i < zInnerCoord.size() - 1; i++)  //starting from 1 and ending at n-1 so that the coordinates used for the boolean subtraction are excluded.
     {
       G4double gradientAt_i = (rInnerCoord[i-1]-rInnerCoord[i+1])/(zInnerCoord[i-1]-zInnerCoord[i+1]); //calculate the gradient at point i
 
@@ -313,7 +313,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   zInnerCoord.pop_back();
   
   //Take lengthsafety from all r points and the end z points, to avoid overlap with the cavity.
-  for (G4int i = 0; i < noPoints; i++)
+  for (unsigned int i = 0; i < noPoints; i++)
     {
       rInnerCoord[i] = rInnerCoord[i] - lengthSafety;
       
