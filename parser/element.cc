@@ -112,6 +112,7 @@ void Element::PublishMembers()
   publish("windowmaterial",&Element::windowmaterial);
   publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
+  publish("cavityModel",&Element::cavityModel);
   publish("state",&Element::state);
   publish("symbol",&Element::symbol);
   publish("bias",&Element::bias);
@@ -291,6 +292,7 @@ void Element::flush() {
   scintmaterial = "";
   airmaterial="";
   spec = "";
+  cavityModel = "";
 }
 
 double Element::property_lookup(std::string property_name)const{

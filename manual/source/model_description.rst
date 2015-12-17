@@ -64,6 +64,7 @@ emittances                      [pi m mrad]
 density                         [g/cm :math:`^{3}` ] 
 temperature                     [K] (Kelvin)
 pressure                        [atm] (atmosphere)
+frequency                       [Hz] (Hertz)
 mass number                     [g/mol]
 ==============================  =========================
 
@@ -96,6 +97,10 @@ ms          :math:`10^{-3}`
 us          :math:`10^{-6}`
 ns          :math:`10^{-9}`
 ps          :math:`10^{-12}`
+Hz          1
+kHz         :math:`10^{3}`
+MHz         :math:`10^{6}`
+GHz         :math:`10^{9}`
 ==========  =================================
 
 For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD

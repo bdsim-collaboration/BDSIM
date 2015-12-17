@@ -96,9 +96,9 @@ transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
 
+cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
 tunnel { return TUNNEL; }
-
 xsecBias {return XSECBIAS; }
 
 matdef { return MATERIAL; }

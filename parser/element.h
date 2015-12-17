@@ -113,6 +113,7 @@ namespace GMAD {
     std::string scintmaterial;
     std::string airmaterial;
     std::string spec;  ///< arbitrary specification to pass to beamline builder
+    std::string cavityModel; ///< model for rf cavities
   
     /// in case the element is a list itself (line)
     std::list <Element> *lst;
