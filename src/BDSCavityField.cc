@@ -1,11 +1,11 @@
-#include "BDSPillBoxField.hh"
+#include "BDSCavityField.hh"
 #include "G4Navigator.hh"
 #include "CLHEP/Units/PhysicalConstants.h" 
 #include "globals.hh"
 #include "G4TransportationManager.hh"
 #include <cmath>
 
-BDSPillBoxField::BDSPillBoxField(G4double eFieldMaxIn,
+BDSCavityField::BDSCavityField(G4double eFieldMaxIn,
 				 G4double cavityRadiusIn,
 				 G4double frequencyIn,
 				 G4double phaseIn):
@@ -13,12 +13,12 @@ BDSPillBoxField::BDSPillBoxField(G4double eFieldMaxIn,
 {
 }
 
-G4bool BDSPillBoxField::DoesFieldChangeEnergy() const
+G4bool BDSCavityField::DoesFieldChangeEnergy() const
 {
     return true;
 }
 
-void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) const
+void BDSCavityField::GetFieldValue(const G4double Point[4],G4double *Bfield ) const
 {
   G4ThreeVector LocalR;  //Vector to hold the local coordinates
   G4ThreeVector GlobalR; //Vector to hold the global coordinates
@@ -82,6 +82,6 @@ void BDSPillBoxField::GetFieldValue(const G4double Point[4],G4double *Bfield ) c
   Bfield[5] = GlobalE.z();
   }
 
-BDSPillBoxField::~BDSPillBoxField()
+BDSCavityField::~BDSCavityField()
 {
 }

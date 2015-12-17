@@ -5,15 +5,15 @@
 
 
 
-class BDSPillBoxField:
+class BDSCavityField:
   public G4ElectroMagneticField, public BDSAuxiliaryNavigator
 {
 public:
-  BDSPillBoxField(G4double EFieldMax,
+  BDSCavityField(G4double EFieldMax,
 		  G4double cavityRadius,
 		  G4double frequency,
 		  G4double phase);
-  ~BDSPillBoxField();
+  ~BDSCavityField();
   virtual G4bool DoesFieldChangeEnergy() const;
   virtual void GetFieldValue(const G4double Point[4],G4double *Bfield ) const ;
   

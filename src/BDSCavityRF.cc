@@ -4,7 +4,7 @@
 
 #include "globals.hh"
 #include "G4Material.hh"
-#include "BDSPillBoxField.hh"
+#include "BDSCavityField.hh"
 #include "G4FieldManager.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ChordFinder.hh"
@@ -22,7 +22,7 @@ BDSCavityRF::BDSCavityRF(G4String       name,
 
  void BDSCavityRF::BuildField()
 {
-  itsField = new BDSPillBoxField(fieldAmplitude,
+  itsField = new BDSCavityField(fieldAmplitude,
 				 cavityRadius,
 				 cavityInfo->frequency,
 				 cavityInfo->phase);
