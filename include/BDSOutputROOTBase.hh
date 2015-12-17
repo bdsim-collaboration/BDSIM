@@ -4,8 +4,6 @@
 #include "BDSOutputBase.hh"
 #include "BDSTrajectory.hh"
 
-#include "TROOT.h"
-#include "TH1F.h"
 #include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"

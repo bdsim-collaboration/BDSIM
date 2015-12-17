@@ -2,7 +2,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSKicker.hh"
 
-#include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
@@ -14,7 +13,6 @@
 #include "G4ClassicalRK4.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4UniformMagField.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 

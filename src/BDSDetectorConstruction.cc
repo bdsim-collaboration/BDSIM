@@ -15,6 +15,7 @@
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
+#include "BDSSampler.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
@@ -436,14 +437,14 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4cout << "placement transform position: " << pt->getTranslation()  << G4endl;
       G4cout << "placement transform rotation: " << pt->getRotation()  << G4endl; 
 #endif
-      
-      G4PVPlacement* elementPV = new G4PVPlacement(*pt,                               // placement transform
-						   (*it)->GetPlacementName() + "_pv", // name
-						   elementLV,                         // logical volume
-						   worldPV,                           // mother  volume
-						   false,	                      // no boolean operation
-						   nCopy,                             // copy number
-						   checkOverlaps);                    // overlap checking
+      G4String placementName = (*it)->GetPlacementName() + "_pv";
+      G4PVPlacement* elementPV = new G4PVPlacement(*pt,              // placement transform
+						   placementName,    // name
+						   elementLV,        // logical volume
+						   worldPV,          // mother  volume
+						   false,	     // no boolean operation
+						   nCopy,            // copy number
+						   checkOverlaps);   // overlap checking
       
       // place read out volume in read out world - if this component has one
       G4PVPlacement* readOutPV = nullptr;
@@ -472,7 +473,23 @@ void BDSDetectorConstruction::ComponentPlacement()
 								     readOutPVName,
 								     (*it)->GetSPositionMiddle(),
 								     thecurrentitem->GetPrecisionRegion());
-	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true); // true = it's a read out volume
+	  if (!dynamic_cast<BDSSampler*>(thecurrentitem))
+	    {
+	      BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
+	      // true = it's a read out volume
+	    }
+	}
+      
+      if (dynamic_cast<BDSSampler*>(thecurrentitem))
+	{
+	  // fiddle the physical volume info registry since samplers don't use the read
+	  // out geometry.
+	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(placementName,
+								     name + "_ro_pv",
+								     (*it)->GetSPositionMiddle(),
+								     thecurrentitem->GetPrecisionRegion());
+	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(elementPV, theinfo, false);
+	  // false = it's NOT a read out volume  
 	}
       
       //this does nothing by default - only used by BDSElement

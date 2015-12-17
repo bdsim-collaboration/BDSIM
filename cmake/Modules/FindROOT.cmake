@@ -103,8 +103,13 @@ else()
 endif()
 
 #include(CMakeMacroParseArguments)
-find_program(ROOTCINT_EXECUTABLE rootcint PATHS $ENV{ROOTSYS}/bin)
-find_program(GENREFLEX_EXECUTABLE genreflex PATHS $ENV{ROOTSYS}/bin)
+find_program(ROOTCINT_EXECUTABLE rootcint PATHS ${ROOTSYS}/bin)
+if(NOT ROOTCINT_EXECUTABLE OR
+    NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
+  MESSAGE(FATAL_ERROR "rootcint not found")
+endif()
+
+find_program(GENREFLEX_EXECUTABLE genreflex PATHS ${ROOTSYS}/bin)
 find_package(GCCXML)
 # set as advanced variable
 mark_as_advanced(FORCE ROOTCINT_EXECUTABLE)
