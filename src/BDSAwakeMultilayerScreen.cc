@@ -32,11 +32,17 @@ BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
 void BDSAwakeMultilayerScreen::layers(){
   _gapWidth=0*1e-3*CLHEP::mm;
   _gapSpacing=1*CLHEP::mm;
+  thinVacuumLayer();
   preWindowSampler();
+  thinVacuumLayer();
   windowLayer();
+  thinAirLayer();
   postWindowSampler();
+  thinAirLayer();
   windowScreenGap();
+  thinAirLayer();
   preScreenSampler();
+  thinAirLayer();
   backLayer();
   substrateLayer();
   if(_firstLayerThickness>1e-9){
@@ -51,18 +57,25 @@ void BDSAwakeMultilayerScreen::layers(){
   frontScintillatorLayer1();
   frontScintillatorLayer2();
   frontLayer();
+  thinAirLayer();
   postScreenSampler();
+  thinAirLayer();
   G4cout << __METHOD_NAME__ << " - scint layers: " << _scintLayerCount << G4endl;
   G4cout << __METHOD_NAME__ << " - binder layers: " << _binderLayerCount << G4endl;
   build();
 }
 
-void BDSAwakeMultilayerScreen::sampler(G4String name){
-  G4int nThisSampler = BDSSampler::GetNSamplers()+1;
-  G4String samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + name;
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,"vacuum",0,0);
+void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bool bSampler){
+    G4String samplerName;
+  if(bSampler){
+    G4int nThisSampler = BDSSampler::GetNSamplers()+1;
+    samplerName = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler) + "_" + name;
+  } else {
+    samplerName=name;
+  }
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,material,0,0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
-  sl->sampler();
+  if(bSampler) sl->sampler();
   screenLayer(sl);
 }
 
@@ -82,6 +95,14 @@ void BDSAwakeMultilayerScreen::postScreenSampler(){
   sampler((G4String)"postScreenSampler");
 }
 
+void BDSAwakeMultilayerScreen::thinAirLayer(){
+  sampler((G4String)"thinAirLayer","air",false);
+}
+
+void BDSAwakeMultilayerScreen::thinVacuumLayer(){
+  sampler((G4String)"thinVacuumLayer","vacuum",false);
+}
+
 void BDSAwakeMultilayerScreen::windowLayer(){
   if(_windowThickness>0){
     BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),_windowThickness),(G4String)"windowLayer",_windowMaterial.data(),0,0);
@@ -89,6 +110,7 @@ void BDSAwakeMultilayerScreen::windowLayer(){
     screenLayer(sl);
   }
 }
+
 
 void BDSAwakeMultilayerScreen::windowScreenGap(){
   if(_windowScreenGap>0){

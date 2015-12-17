@@ -13,7 +13,9 @@ public:
 private:
   typedef BDSMultilayerScreen super;
   void layers();
-  void sampler(G4String name);
+  void sampler(G4String name, const char* material="air", G4bool bSampler=true);
+  void thinAirLayer();  
+  void thinVacuumLayer();  
   void preWindowSampler();
   void postWindowSampler();
   void windowScreenGap();
