@@ -90,7 +90,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
 
   // As with BDSEnergyCounterSD??? TODO Check
   G4VPhysicalVolume *theVolume = aStep->GetPostStepPoint()->GetPhysicalVolume();
-  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
+//  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
 
 
 

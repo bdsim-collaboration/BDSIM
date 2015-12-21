@@ -472,7 +472,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
 								     readOutPVName,
 								     (*it)->GetSPositionMiddle(),
-								     thecurrentitem->GetPrecisionRegion());
+								     thecurrentitem->GetPrecisionRegion(), index);
 	  if (!dynamic_cast<BDSSampler*>(thecurrentitem))
 	    {
 	      BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
