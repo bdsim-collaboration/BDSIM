@@ -33,7 +33,8 @@ const BDSExecOptions* BDSExecOptions::Instance(){
     return _instance;
 }
 
-BDSExecOptions::BDSExecOptions(int argc, char **argv){
+BDSExecOptions::BDSExecOptions(int argc, char **argv)
+{
   inputFilename       = "optics.mad";
   visMacroFilename    = "";
   visDebug            = false;
@@ -68,6 +69,8 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   // default is -1 so easy to test
   nGenerate         = -1;
 
+  generatePrimariesOnly = false;
+
   exportGeometry    = false;
   exportType        = "";
   exportFileName    = "none";
@@ -80,11 +83,13 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
 #endif
 }
 
-BDSExecOptions::~BDSExecOptions() {
+BDSExecOptions::~BDSExecOptions()
+{
   _instance = nullptr;
 }
 
-void BDSExecOptions::Parse(int argc, char **argv) {
+void BDSExecOptions::Parse(int argc, char **argv)
+{
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },
 					{ "verbose", 0, 0, 0 },
 					{ "verbose_step", 0, 0, 0 },
@@ -104,12 +109,13 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
-					{ "circular", 0, 0, 0},
-					{ "seed", 1, 0, 0},
-					{ "seedstate",1,0,0},
+					{ "circular", 0, 0, 0 },
+					{ "seed", 1, 0, 0 },
+					{ "seedstate",1,0,0 },
 					{ "survey", 1, 0, 0 },
-					{ "ngenerate", 1, 0, 0},
-					{ "exportgeometryto", 1, 0, 0},
+					{ "ngenerate", 1, 0, 0 },
+					{ "exportgeometryto", 1, 0, 0 },
+					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex  = 0;
@@ -219,6 +225,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
       else if( !strcmp(optionName, "ngenerate") ){
 	conversion = BDS::IsInteger(optarg,nGenerate);
       }
+      else if( !strcmp(optionName, "generatePrimariesOnly") )
+	{generatePrimariesOnly = true;}
       else if( !strcmp(optionName, "exportgeometryto") ){
 	std::string fn = optarg;
 	if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
@@ -273,6 +281,7 @@ void BDSExecOptions::Usage()const {
 	<<"--circular                : assume circular machine - turn control"<<G4endl
 	<<"--exportgeometryto=<file> : export the geometry to a file - extension determines format"<<G4endl
 	<<"                            where possible extensions are (\"gdml\")"<<G4endl
+	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
 	<<"--gflash                  : turn on gFlash fast shower parameterisation. Default false."<<G4endl
 	<<"--gflashemax=N            : maximum energy for gflash shower parameterisation in GeV. Default 10000."<<G4endl
 	<<"--gflashemin=N            : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
@@ -304,6 +313,7 @@ void BDSExecOptions::Print()const
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << exportFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " generatePrimariesOnly "<< std::setw(15) << generatePrimariesOnly << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflash: "              << std::setw(15) << gflash              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << gflashemin          << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << gflashemax          << G4endl;
@@ -312,8 +322,8 @@ void BDSExecOptions::Print()const
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << survey   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFilename: "      << std::setw(15) << surveyFilename   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << survey              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFilename: "      << std::setw(15) << surveyFilename      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << verbose             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEvent: "        << std::setw(15) << verboseEvent        << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  

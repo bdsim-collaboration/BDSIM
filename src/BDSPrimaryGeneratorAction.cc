@@ -81,5 +81,3 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   BDSParticle initialPoint(x0,y0,z0,xp,yp,zp,totalE,t,weight);
   BDSGlobalConstants::Instance()->SetInitialPoint(initialPoint);
 }
-
-//===================================================

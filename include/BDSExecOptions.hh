@@ -50,6 +50,7 @@ public:
   inline G4String        GetSeedStateFilename() const    {return seedStateFilename;}
   inline G4int           GetNGenerate() const            {return nGenerate;}
   inline G4bool          ExportGeometry() const          {return exportGeometry;}
+  inline G4bool          GeneratePrimariesOnly() const   {return generatePrimariesOnly;}
   inline G4bool          GetSurvey() const               {return survey;}
   inline G4String        GetSurveyFilename() const       {return surveyFilename;}
   inline G4String        GetExportType() const           {return exportType;}
@@ -114,6 +115,8 @@ private :
   G4String seedStateFilename; ///< The seed state filename
 
   G4int    nGenerate; ///< The number of primary events to simulate
+
+  G4bool   generatePrimariesOnly; ///< Whether to only generate primary coordinates and quit, or not.
 
   ///@{ Parameter for controlling geometry export
   G4bool   exportGeometry;

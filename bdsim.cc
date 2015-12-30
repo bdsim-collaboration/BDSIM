@@ -104,6 +104,22 @@ int main(int argc,char** argv)
   BDSBunch* bdsBunch = new BDSBunch();
   bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
   
+  if (execOptions->GeneratePrimariesOnly())
+    {
+      // output creation is duplicated below but with this if loop, we exit so ok.
+      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
+      for (G4int i = 0; i < globalConstants->GetNumberToGenerate(); i++)
+      {
+        bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
+        bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
+      }
+      delete bdsBunch;
+      delete bdsOutput;
+      exit(0);
+    }
+
+  
   //
   // construct mandatory run manager (the G4 kernel) and
   // set mandatory initialization classes

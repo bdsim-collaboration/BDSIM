@@ -16,6 +16,9 @@ The angular brackets should not be used.
 |                            | extension determines format                  |
 |                            | where possible extensions are ("gdml")       |
 +----------------------------+----------------------------------------------+
+| --generatePrimariesOnly    | generate primary particle coordinates only   |
+|                            | then exit without simulating anything        |
++----------------------------+----------------------------------------------+
 | --gflash=<N>               | whether or not to turn on gFlash fast shower |
 |                            | parameterisation.                            |
 +----------------------------+----------------------------------------------+
