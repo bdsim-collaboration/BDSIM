@@ -1,7 +1,7 @@
 //  
 //   BDSIM, (C) 2001-2015
 //   
-//   version 0.91
+//   version 0.9.develop
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
@@ -53,7 +53,7 @@ BDSOutputBase* bdsOutput=nullptr;     // output interface
 int main(int argc,char** argv)
 {
   // print header
-  G4cout<<"bdsim : version 0.91"<<G4endl;
+  G4cout<<"bdsim : version 0.9.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
