@@ -41,7 +41,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
-#define BDSDEBUG 1
+
 // #include "BDSLWCalorimeter.hh"
 // #include "BDSLWCalorimeterHit.hh"
 
