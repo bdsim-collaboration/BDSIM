@@ -22,7 +22,7 @@ Parser
 ^^^^^^
 
 * Parser warns for redefined variable, and exits for usage of undeclared variables (issue #98)
-* Parser reorganised to c++ class structure (issue #77)
+* Parser reorganised to C++ class structure (issue #77)
 * Command line options more flexible (issue #105)
 * Ability to define Geant4 regions as objects in parser.
 * Can attach samplers to all elements of one type, ie collimators.

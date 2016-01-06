@@ -689,7 +689,7 @@ Examples::
    detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
    detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
 
-For specific details on the geometry format, see :ref:`appendix2_geometry`
+For specific details on the geometry format, see :ref:`extendedgeometry`
 
 marker
 ^^^^^^
