@@ -1,5 +1,5 @@
-#ifndef __BDSPCLTUBE_H
-#define __BDSPCLTUBE_H
+#ifndef BDSPCLTUBE_H
+#define BDSPCLTUBE_H
 
 #include "G4VSolid.hh"
 

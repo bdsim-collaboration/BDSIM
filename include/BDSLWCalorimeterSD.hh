@@ -1,10 +1,5 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-#ifndef BDSLWCalorimeterSD_h
-#define BDSLWCalorimeterSD_h 1
+#ifndef BDSLWCALORIMETERSD_H
+#define BDSLWCALORIMETERSD_H
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSLWCalorimeterHit.hh"
@@ -13,9 +8,8 @@ class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
-class BDSLWCalorimeterSD : public G4VSensitiveDetector
+class BDSLWCalorimeterSD: public G4VSensitiveDetector
 {
-
 public:
   BDSLWCalorimeterSD(G4String name);
   ~BDSLWCalorimeterSD();

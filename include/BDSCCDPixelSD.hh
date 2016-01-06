@@ -1,5 +1,5 @@
-#ifndef BDSCCDPixelSD_h
-#define BDSCCDPixelSD_h 1
+#ifndef BDSCCDPIXELSD_H
+#define BDSCCDPIXELSD_H
 
 #include "G4VSensitiveDetector.hh"
 #include "BDSCCDPixelHit.hh"

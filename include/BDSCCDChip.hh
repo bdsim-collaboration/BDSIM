@@ -1,5 +1,5 @@
-#ifndef BDSCCDChip_h
-#define BDSCCDChip_h 
+#ifndef BDSCCDCHIP_H
+#define BDSCCDCHIP_H 
 
 #include "globals.hh"
 #include "BDSCCDPixel.hh"

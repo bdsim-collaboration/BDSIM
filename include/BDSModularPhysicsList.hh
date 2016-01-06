@@ -1,5 +1,5 @@
-#ifndef BDSModularPhysicsList_h
-#define BDSModularPhysicsList_h 1
+#ifndef BDSMODULARPHYSICSLIST_H
+#define BDSMODULARPHYSICSLIST_H
 
 #include "G4VModularPhysicsList.hh"
 #include "G4OpticalPhysics.hh"

@@ -1,17 +1,17 @@
-/* BDSIM code.    
-   Author: Stewart T. Boogert , Royal Holloway, Univ. of London.
-   Last modified 16.04.2013
-   Copyright (c) 2002 by BDSIM authors.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSExecOptions_h
-#define BDSExecOptions_h
+#ifndef BDSEXECOPTIONS_H
+#define BDSEXECOPTIONS_H
 
 #include <getopt.h>
 
 #include "G4String.hh"
 #include "G4Types.hh"
 #include "BDSOutputFormat.hh"
+
+/**
+ * @brief Executable option processing for BDSIM
+ *
+ * @author Stewart Boogert <stewart.boogert@rhul.ac.uk>
+ */
 
 class BDSExecOptions
 {

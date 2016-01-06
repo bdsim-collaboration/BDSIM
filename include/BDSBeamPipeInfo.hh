@@ -1,5 +1,5 @@
-#ifndef BDSBEAMPIPEINFO
-#define BDSBEAMPIPEINFO
+#ifndef BDSBEAMPIPEINFO_H
+#define BDSBEAMPIPEINFO_H
 
 #include "BDSBeamPipeType.hh"
 #include "globals.hh"         // geant4 types / globals

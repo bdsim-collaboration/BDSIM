@@ -1,5 +1,5 @@
-#ifndef BDSRandom_h
-#define BDSRandom_h 1
+#ifndef BDSRANDOM_H
+#define BDSRANDOM_H
 
 #include "globals.hh" //for G4string etc
 

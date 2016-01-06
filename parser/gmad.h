@@ -1,12 +1,8 @@
-/*
- * GMAD interface 
- * I. Agapov 2005-2006
- *
- */
-#ifndef _GMAD_H
-#define _GMAD_H
+#ifndef GMAD_H
+#define GMAD_H
 
-namespace GMAD {
+namespace GMAD
+{
   /** Python interface **/ 
   extern "C" {   
     int    GmadParser_c(char *name);

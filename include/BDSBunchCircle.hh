@@ -1,5 +1,5 @@
-#ifndef BDSBunchCircle_h
-#define BDSBunchCircle_h 
+#ifndef BDSBUNCHCIRCLE_H
+#define BDSBUNCHCIRCLE_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"

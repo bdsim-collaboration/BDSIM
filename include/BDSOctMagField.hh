@@ -1,5 +1,5 @@
-#ifndef BDSOCTMAGFIELD
-#define BDSOCTMAGFIELD
+#ifndef BDSOCTMAGFIELD_H
+#define BDSOCTMAGFIELD_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"

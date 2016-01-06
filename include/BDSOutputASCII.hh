@@ -1,5 +1,5 @@
-#ifndef BDSOutputASCII_h
-#define BDSOutputASCII_h 
+#ifndef BDSOUTPUTASCII_H
+#define BDSOUTPUTASCII_H 
 
 #include "BDSOutputBase.hh"
 

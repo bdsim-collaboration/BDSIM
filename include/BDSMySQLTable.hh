@@ -1,23 +1,11 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 12.10.2005
-*/
-
-
-#ifndef BDSMySQLTable_h
-#define BDSMySQLTable_h 1
+#ifndef BDSMYSQLTABLE_H
+#define BDSMYSQLTABLE_H
 
 #include "globals.hh"
 #include <vector>
 
 class BDSMySQLVariable
 {
-
 public:
   
   BDSMySQLVariable(G4String aVarName, G4String aVarType);

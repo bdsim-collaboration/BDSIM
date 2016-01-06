@@ -1,5 +1,5 @@
-#ifndef BDSCAVITYINFO
-#define BDSCAVITYINFO
+#ifndef BDSCAVITYINFO_H
+#define BDSCAVITYINFO_H
 
 #include "BDSCavityType.hh"
 #include "globals.hh"         // geant4 types / globals

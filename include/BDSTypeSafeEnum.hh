@@ -1,5 +1,5 @@
-#ifndef BDSTypeSafeEnum_h
-#define BDSTypeSafeEnum_h 
+#ifndef BDSTYPESAFEENUM_H
+#define BDSTYPESAFEENUM_H 
 
 #include <map>
 #include <ostream>

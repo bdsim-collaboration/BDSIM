@@ -1,5 +1,5 @@
-#ifndef BDSMultiFacetLayer_h
-#define BDSMultiFacetLayer_h 
+#ifndef BDSMULTIFACETLAYER_H
+#define BDSMULTIFACETLAYER_H 
 
 #include "globals.hh"
 
