@@ -1,8 +1,3 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 25.12.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
 #include "BDSSteppingAction.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
