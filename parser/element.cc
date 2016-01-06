@@ -33,7 +33,7 @@ Element::Element():lst(nullptr) {
 void Element::PublishMembers()
 {
   publish("l",&Element::l);
-  publish("bmapXOffset:,&Element::bmapXOffset);
+  publish("bmapXOffset",&Element::bmapXOffset);
   publish("bmapYOffset",&Element::bmapYOffset);
   publish("bmapZOffset",&Element::bmapZOffset);
   publish("B",&Element::B);

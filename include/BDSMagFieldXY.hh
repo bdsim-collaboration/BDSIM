@@ -1,7 +1,7 @@
 #ifndef BDSXYMAGFIELD_H
 #define BDSXYMAGFIELD_H
 
-#include "BDSMagField.hh"
+#include "BDSMagFieldMesh.hh"
 
 #include "globals.hh"
 #include "G4ElectroMagneticField.hh"
