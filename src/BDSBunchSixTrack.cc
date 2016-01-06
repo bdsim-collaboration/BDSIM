@@ -76,7 +76,7 @@ void BDSBunchSixTrack::LoadSixTrackFile()
   return;
 }
 
-void BDSBunchSixTrack::SetOptions(GMAD::Options& opt)
+void BDSBunchSixTrack::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << " " << opt.distribFile << G4endl;

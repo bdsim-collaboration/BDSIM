@@ -16,7 +16,7 @@ BDSBunchEShell::~BDSBunchEShell()
   delete FlatGen;
 }
 
-void BDSBunchEShell::SetOptions(GMAD::Options& opt)
+void BDSBunchEShell::SetOptions(const GMAD::Options& opt)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;

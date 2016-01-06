@@ -931,7 +931,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
   BDSMagnetOuter* kicker = new BDSMagnetOuter(containerSolid,
 					      containerLV,
 					      extX, extY, extZ,
-					      NULL, // TO BE COMPLETED!!!
+					      nullptr, // TO BE COMPLETED!!!
 					      containerTranslation);
   
   // register everything

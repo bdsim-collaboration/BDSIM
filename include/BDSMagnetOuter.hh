@@ -39,7 +39,7 @@ public:
   virtual ~BDSMagnetOuter();
 
   /// Access the magnet container - a BDSGeometryComponent instance that has a suggested
-  /// container solid (NULL LV! - constructed from solid in BDSMagnet and saves doing it
+  /// container solid (null pointer LV! - constructed from solid in BDSMagnet and saves doing it
   /// repeatedly in factories) that would contain both the magnet outer section and the
   /// beam pipe - so a solid container. Use as a way to pass solid + extents
   BDSGeometryComponent* GetMagnetContainer() const;

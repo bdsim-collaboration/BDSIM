@@ -33,6 +33,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParser.hh" // Parser
 #include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
@@ -44,17 +45,10 @@
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
-#include "parser/gmad.h"  // GMAD parser
-#include "parser/options.h"
-
 //=======================================================
 // Global variables 
 BDSOutputBase* bdsOutput=nullptr;     // output interface
 //=======================================================
-
-namespace GMAD {
-  extern Options options;
-}
 
 int main(int argc,char** argv)
 {
@@ -81,7 +75,7 @@ int main(int argc,char** argv)
   //
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
-  GMAD::gmad_parser(execOptions->GetInputFilename());
+  BDSParser::Instance(execOptions->GetInputFilename());
 
   //
   // parse options, explicitly initialise materials and global constants and construct required materials
@@ -108,7 +102,23 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
-  bdsBunch->SetOptions(GMAD::options);
+  bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
+  
+  if (execOptions->GeneratePrimariesOnly())
+    {
+      // output creation is duplicated below but with this if loop, we exit so ok.
+      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
+      for (G4int i = 0; i < globalConstants->GetNumberToGenerate(); i++)
+      {
+        bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
+        bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
+      }
+      delete bdsBunch;
+      delete bdsOutput;
+      exit(0);
+    }
+
   
   //
   // construct mandatory run manager (the G4 kernel) and
@@ -125,7 +135,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(GMAD::options.modularPhysicsListsOn) {
+  if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn) {
     BDSModularPhysicsList *physList = new BDSModularPhysicsList();
     /* Biasing */
 #if G4VERSION_NUMBER > 999
@@ -290,7 +300,7 @@ int main(int argc,char** argv)
   delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
-
+  delete BDSParser::Instance();
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif

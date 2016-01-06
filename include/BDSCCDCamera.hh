@@ -1,5 +1,5 @@
-#ifndef BDSCCDCamera_h
-#define BDSCCDCamera_h 
+#ifndef BDSCCDCAMERA_H
+#define BDSCCDCAMERA_H 
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"

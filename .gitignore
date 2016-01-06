@@ -14,6 +14,8 @@
 # Temporary editor files #
 ##########################
 *~
+# clion (jetbrains C++ ide)
+.idea  
 
 # Packages #
 ############

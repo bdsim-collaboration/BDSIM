@@ -1,17 +1,19 @@
-#ifndef BDSOutputROOTEvent_h
-#define BDSOutputROOTEvent_h
-
-#ifdef USE_ROOT 
+#ifndef BDSOUTPUTROOTEVENT_H
+#define BDSOUTPUTROOTEVENT_H
 
 #include "globals.hh"
 
+#include <map>
+
 #include "BDSOutputBase.hh"
+#include "BDSOutputROOTEventSampler.hh"
 
 #include "TROOT.h"
 #include "TH1F.h"
 #include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
+
 
 /**
  * @brief ROOT Event output class
@@ -63,26 +65,35 @@ public:
 
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
+
+  /// fill event structure
+  virtual void FillEvent();
   
   /// write and close and open new file
   virtual void Commit();
   
   /// write and close the file
   virtual void Write();
+
+  /// clear structures 
+  void Clear();
   
 private:
 
   void Init();
 
+  // output file
   TFile *theRootOutputFile;
-  // create primary structures 
-  // create sampler structures 
-  // create energy hit structures 
+  // output tree
+  TTree *theRootOutputTree;
+
+  // primary structure 
+  BDSOutputROOTEventSampler *primary;
+
+  // sampler structures 
+  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
+
+  // energy hit structures 
 };
-
-
-
-
-#endif
 
 #endif

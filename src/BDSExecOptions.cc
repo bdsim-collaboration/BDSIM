@@ -1,5 +1,6 @@
 #include "BDSExecOptions.hh"
 
+#include <cstdlib>
 #include <iomanip>
 #include <unistd.h>
 
@@ -8,6 +9,7 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
+#include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
 
@@ -31,7 +33,8 @@ const BDSExecOptions* BDSExecOptions::Instance(){
     return _instance;
 }
 
-BDSExecOptions::BDSExecOptions(int argc, char **argv){
+BDSExecOptions::BDSExecOptions(int argc, char **argv)
+{
   inputFilename       = "optics.mad";
   visMacroFilename    = "";
   visDebug            = false;
@@ -66,6 +69,8 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
   // default is -1 so easy to test
   nGenerate         = -1;
 
+  generatePrimariesOnly = false;
+
   exportGeometry    = false;
   exportType        = "";
   exportFileName    = "none";
@@ -78,11 +83,13 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv){
 #endif
 }
 
-BDSExecOptions::~BDSExecOptions() {
+BDSExecOptions::~BDSExecOptions()
+{
   _instance = nullptr;
 }
 
-void BDSExecOptions::Parse(int argc, char **argv) {
+void BDSExecOptions::Parse(int argc, char **argv)
+{
   static struct option LongOptions[] = {{ "help" , 0, 0, 0 },
 					{ "verbose", 0, 0, 0 },
 					{ "verbose_step", 0, 0, 0 },
@@ -102,12 +109,13 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 					{ "outfile", 1, 0, 0 },
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
-					{ "circular", 0, 0, 0},
-					{ "seed", 1, 0, 0},
-					{ "seedstate",1,0,0},
+					{ "circular", 0, 0, 0 },
+					{ "seed", 1, 0, 0 },
+					{ "seedstate",1,0,0 },
 					{ "survey", 1, 0, 0 },
-					{ "ngenerate", 1, 0, 0},
-					{ "exportgeometryto", 1, 0, 0},
+					{ "ngenerate", 1, 0, 0 },
+					{ "exportgeometryto", 1, 0, 0 },
+					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex  = 0;
@@ -115,7 +123,8 @@ void BDSExecOptions::Parse(int argc, char **argv) {
   const char* optionName;
   // return code
   int c;
- 
+  // number conversion check
+  bool conversion = true;
   for(;;) {
     OptionIndex = 0;
   
@@ -125,7 +134,7 @@ void BDSExecOptions::Parse(int argc, char **argv) {
     
     if ( c == -1 ) // end of options list
       break;
-    
+
     switch (c) {
     case '?': // unrecognised option
       G4cout << "invalid option for command " << argv[0] << G4endl << G4endl << G4endl;
@@ -139,83 +148,86 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	Usage();
 	exit(0);
       }
-      if( !strcmp(optionName , "batch") ) {
+      else if( !strcmp(optionName , "batch") ) {
 	batch = true;
       }
-      if( !strcmp(optionName , "verbose") ) {
+      else if( !strcmp(optionName , "verbose") ) {
 	verbose = true; 
       }
-      if( !strcmp(optionName , "verbose_step") ) {
+      else if( !strcmp(optionName , "verbose_step") ) {
 	verboseStep = true; 
 	// we shouldn't have verbose steps without verbose events etc.
 	verboseEvent = true;
       }
-      if( !strcmp(optionName , "verbose_event") ) {
+      else if( !strcmp(optionName , "verbose_event") ) {
 	verboseEvent = true; 
       }
-      if( !strcmp(optionName , "verbose_event_num") ){
-	verboseEventNumber = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_event_num") ){
+	conversion = BDS::IsInteger(optarg,verboseEventNumber);
       }
-      if( !strcmp(optionName , "verbose_G4run") ) {
-	verboseRunLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4run") ) {
+	conversion = BDS::IsInteger(optarg,verboseRunLevel);
       }
-      if( !strcmp(optionName , "verbose_G4event") ) {
-	verboseEventLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4event") ) {
+	conversion = BDS::IsInteger(optarg,verboseEventLevel);
       }
-      if( !strcmp(optionName , "verbose_G4tracking") )  {
-	verboseTrackingLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4tracking") )  {
+	conversion = BDS::IsInteger(optarg,verboseTrackingLevel);
       }
-      if( !strcmp(optionName , "verbose_G4stepping") ) {
-	verboseSteppingLevel = atoi(optarg);
+      else if( !strcmp(optionName , "verbose_G4stepping") ) {
+	conversion = BDS::IsInteger(optarg,verboseSteppingLevel);
       }
-      if( !strcmp(optionName , "output") ) {
+      else if( !strcmp(optionName , "output") ) {
 	outputFormat = BDS::DetermineOutputFormat(optarg);
       }
-      if( !strcmp(optionName , "outfile") ) {
+      else if( !strcmp(optionName , "outfile") ) {
 	outputFilename=optarg;
 	outputFilenameSet=true;
       }
-      if( !strcmp(optionName , "survey") ) {
+      else if( !strcmp(optionName , "survey") ) {
 	surveyFilename = optarg; 
 	survey=true;
       }
-      if( !strcmp(optionName , "file") ) {
+      else if( !strcmp(optionName , "file") ) {
 	inputFilename=optarg;
       }
-      if( !strcmp(optionName , "vis_debug") ) {
+      else if( !strcmp(optionName , "vis_debug") ) {
 	visDebug = true;
       }
-      if( !strcmp(optionName , "vis_mac") ) {
+      else if( !strcmp(optionName , "vis_mac") ) {
 	visMacroFilename=optarg;
       }
-      if( !strcmp(optionName , "gflash") ) {
+      else if( !strcmp(optionName , "gflash") ) {
 	gflash = true;
       }
-      if( !strcmp(optionName , "gflashemax") ) {
-	gflashemax = atof(optarg);
+      else if( !strcmp(optionName , "gflashemax") ) {
+	conversion = BDS::IsNumber(optarg,gflashemax);
       }
-      if( !strcmp(optionName , "gflashemin") ) {
-	gflashemin = atof(optarg);
+      else if( !strcmp(optionName , "gflashemin") ) {
+	conversion = BDS::IsNumber(optarg,gflashemin);
       }
-      if( !strcmp(optionName, "materials") ) {
+      else if( !strcmp(optionName, "materials") ) {
 	BDSMaterials::ListMaterials();
+	// return after printing material list
 	exit(0);
       }
-      if( !strcmp(optionName, "circular")  ) {
+      else if( !strcmp(optionName, "circular")  ) {
 	circular = true;
       }
-      if( !strcmp(optionName, "seed")  ){
-	seed = atoi(optarg);
+      else if( !strcmp(optionName, "seed")  ){
+	conversion = BDS::IsInteger(optarg,seed);
 	setSeed = true;
       }
-      if( !strcmp(optionName, "seedstate") ){
+      else if( !strcmp(optionName, "seedstate") ){
 	seedStateFilename = optarg;
 	setSeedState = true;
       }
-      if( !strcmp(optionName, "ngenerate") ){
-	nGenerate = atof(optarg);
+      else if( !strcmp(optionName, "ngenerate") ){
+	conversion = BDS::IsInteger(optarg,nGenerate);
       }
-      if( !strcmp(optionName, "exportgeometryto") ){
+      else if( !strcmp(optionName, "generatePrimariesOnly") )
+	{generatePrimariesOnly = true;}
+      else if( !strcmp(optionName, "exportgeometryto") ){
 	std::string fn = optarg;
 	if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
 	  {
@@ -225,13 +237,20 @@ void BDSExecOptions::Parse(int argc, char **argv) {
 	else
 	  {
 	    // remember if you extend this to do it also in the usage print out
-	    G4cerr << __METHOD_NAME__ << "unkonwn geometry format \""
+	    G4cerr << __METHOD_NAME__ << "Unknown geometry format \""
 		   << fn.substr(fn.find_last_of(".") + 1) << "\"\n"
 		   << "Please specify a valid filename extension - options are: \"gdml\"" << G4endl;
 	    exit(1);
 	  }
 	exportGeometry = true;
       }
+
+      if (conversion == false) {
+	// conversion from character string to number went wrong, exit
+	G4cerr << __METHOD_NAME__ << "Conversion to number (or integer) went wrong for \"" << optionName << "\" with value: \"" << optarg << "\"" << G4endl;
+	exit(1);
+      }
+
       break;
       
     default:
@@ -262,6 +281,7 @@ void BDSExecOptions::Usage()const {
 	<<"--circular                : assume circular machine - turn control"<<G4endl
 	<<"--exportgeometryto=<file> : export the geometry to a file - extension determines format"<<G4endl
 	<<"                            where possible extensions are (\"gdml\")"<<G4endl
+	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
 	<<"--gflash                  : turn on gFlash fast shower parameterisation. Default false."<<G4endl
 	<<"--gflashemax=N            : maximum energy for gflash shower parameterisation in GeV. Default 10000."<<G4endl
 	<<"--gflashemin=N            : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
@@ -293,6 +313,7 @@ void BDSExecOptions::Print()const
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << circular            << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << exportFileName      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " generatePrimariesOnly "<< std::setw(15) << generatePrimariesOnly << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflash: "              << std::setw(15) << gflash              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << gflashemin          << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << gflashemax          << G4endl;
@@ -301,8 +322,8 @@ void BDSExecOptions::Print()const
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << seed                << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << seedStateFilename   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << survey   << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFilename: "      << std::setw(15) << surveyFilename   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << survey              << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFilename: "      << std::setw(15) << surveyFilename      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << verbose             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEvent: "        << std::setw(15) << verboseEvent        << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << verboseStep         << G4endl;  

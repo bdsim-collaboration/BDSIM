@@ -1,0 +1,11 @@
+d1: drift, l=0.1*m;
+k1: vkick, l=0.1*m, angle=-0.1;
+k2: vkick, l=0.1*m, angle=0.1;
+
+l1: line=(k1,d1,k2,d1,k2,d1,k1,d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=2*GeV,
+      distrType="reference";

@@ -36,6 +36,17 @@ pybdsim.Builder module
 	       :undoc-members:
 	       :show-inheritance:
 
+pybdsim.Convert
+---------------
+
+.. automodule:: pybdsim.Convert
+		:members:
+		:undoc-members:
+
+.. automodule:: pybdsim.Convert._MadxTfs2Gmad
+		:members:
+
+
 pybdsim.Constants module
 ------------------------
 

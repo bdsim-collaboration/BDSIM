@@ -13,7 +13,6 @@
 #include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
-#include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs

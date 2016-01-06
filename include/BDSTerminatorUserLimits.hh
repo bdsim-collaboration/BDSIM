@@ -1,5 +1,5 @@
-#ifndef BDSTerminatorUserLimits_h
-#define BDSTerminatorUserLimits_h
+#ifndef BDSTERMINATORUSERLIMITS_H
+#define BDSTERMINATORUSERLIMITS_H
 
 #include "G4UserLimits.hh"
 #include "globals.hh"  // geant4 basic stl types

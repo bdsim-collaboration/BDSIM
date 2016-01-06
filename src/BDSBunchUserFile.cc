@@ -187,7 +187,7 @@ void BDSBunchUserFile::SetDistribFile(G4String filename){
   distribFile = BDS::GetFullPath(filename);
 }
 
-void BDSBunchUserFile::SetOptions(GMAD::Options &opt) {
+void BDSBunchUserFile::SetOptions(const GMAD::Options& opt) {
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile((G4String)opt.distribFile); 
   SetBunchFormat((G4String)opt.distribFileFormat); 

@@ -1,5 +1,5 @@
-#ifndef BDSTerminator_h
-#define BDSTerminator_h
+#ifndef BDSTERMINATOR_H
+#define BDSTERMINATOR_H
 
 #include "BDSAcceleratorComponent.hh"
 

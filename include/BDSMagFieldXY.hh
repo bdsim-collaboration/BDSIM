@@ -1,11 +1,14 @@
-#include "G4ElectroMagneticField.hh"
+#ifndef BDSXYMAGFIELD_H
+#define BDSXYMAGFIELD_H
+
+#include "BDSMagField.hh"
+
 #include "globals.hh"
+#include "G4ElectroMagneticField.hh"
 #include "G4RotationMatrix.hh"
-#include "BDSMagFieldMesh.hh"
+
 #include <vector>
 
-#ifndef BDSMAGFIELDXY_H
-#define BDSMAGFIELDXY_H
 
 struct XYFieldRecord
 {

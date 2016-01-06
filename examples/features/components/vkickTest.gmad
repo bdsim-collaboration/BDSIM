@@ -1,5 +1,10 @@
 include vkick.gmad;
 include options.gmad;
-include elec.gmad;
+
+! need 0,0 beam to test these properly
+
+beam, particle="e-",
+      energy=1.3*GeV,
+      distrType="reference";
 
 use, period=lat;

@@ -9,7 +9,14 @@ namespace GMAD {
       @brief Common header for the lexer and the parser 
       to share Symbol table for numeric variables and functions
   */
-  struct symtab {
+  class Array;
+  
+  class Symtab {
+    // TODO: needs better data protection
+  public:
+    /// Symtabs and arrays are kind of interchangeable
+    friend class Array;
+
     enum class symtabtype {
       _INT=0,
       _DOUBLE=1,
@@ -24,7 +31,11 @@ namespace GMAD {
     std::list<double> array;
     
     // constructors
-    explicit symtab(std::string s):is_reserved(0),type(symtabtype::_INT),name(s),funcptr(nullptr),value(0.0){}
+    explicit Symtab(std::string s):is_reserved(0),type(symtabtype::_INT),name(s),funcptr(nullptr),value(0.0){}
+    /// Set to Array value
+    void Set(Array*);
+    /// Print method
+    void Print();
   };
 }
 

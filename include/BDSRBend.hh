@@ -21,10 +21,6 @@ public:
 	   BDSBeamPipeInfo*    beamPipeInfo,
 	   BDSMagnetOuterInfo* magnetOuterInfo);
 
-  /// Access all sensitive volumes belonging to this component including those
-  /// of the custom beam pipe
-  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
-
 private:
   G4double bField;
   G4double bGrad;
@@ -38,9 +34,6 @@ private:
 
   /// x shift for magnet and beampipe from chord
   G4double magnetXShift;
-
-  /// orientation of shifts - depends on angle - calculations use absolute value of angle for safety
-  G4int orientation;
 
   /// radius of magnet body
   G4double outerRadius;

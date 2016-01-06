@@ -1,9 +1,10 @@
-#ifndef __BDS_CUTS_AND_LIMITS_HH_
-#define __BDS_CUTS_AND_LIMITS_HH_
+#ifndef BDSCUTSANDLIMITS_H
+#define BDSCUTSANDLIMITS_H
 
 #include "G4VPhysicsConstructor.hh"
 
-class BDSCutsAndLimits: public G4VPhysicsConstructor{
+class BDSCutsAndLimits: public G4VPhysicsConstructor
+{
 public:
   BDSCutsAndLimits();
   ~BDSCutsAndLimits();

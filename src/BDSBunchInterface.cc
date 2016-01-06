@@ -3,7 +3,6 @@
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
 
-#include "G4Point3D.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
@@ -22,9 +21,8 @@ namespace {
     CLHEP::HepSymMatrix D = S.similarityT(U);   // D = U.T() S U = Sdiag
     for (int i = 1; i <= S.num_row(); i++) {
       double s2 = D(i,i);
-      if ( s2 <= 0 ) {
-	return false;
-      }
+      if ( s2 <= 0 )
+	{return false;}
     }
     return true;
   }
@@ -39,7 +37,7 @@ BDSBunchInterface::BDSBunchInterface():
 BDSBunchInterface::~BDSBunchInterface()
 {;}
 
-void BDSBunchInterface::SetOptions(GMAD::Options& opt)
+void BDSBunchInterface::SetOptions(const GMAD::Options& opt)
 {
   X0 = opt.X0;
   Y0 = opt.Y0;
@@ -131,9 +129,8 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
     double small_error = 1e-50;
     
     for (int i=0; i<6; i++) {
-      if (sigma[i][i]==0) {
-	sigma[i][i] += small_error;
-      }
+      if (sigma[i][i]==0)
+	{sigma[i][i] += small_error;}
     }
     
     if (!isPositiveDefinite(sigma)) {
@@ -142,9 +139,8 @@ CLHEP::RandMultiGauss* BDSBunchInterface::CreateMultiGauss(CLHEP::HepRandomEngin
       G4cout << __METHOD_NAME__ << "adding a small error to all elements" << G4endl;
       for (int i=0; i<6; i++) {
 	for (int j=0; j<6; j++) {
-	  if (sigma[i][j]==0) {
-	    sigma[i][j] += small_error;
-	  }
+	  if (sigma[i][j]==0)
+	    {sigma[i][j] += small_error;}
 	}
       }
       if (!isPositiveDefinite(sigma)) {
@@ -173,9 +169,9 @@ G4double BDSBunchInterface::CalculateZp(G4double xp, G4double yp, G4double Zp0)c
     exit(1);
   }
   if (Zp0<0)
-    zp = -sqrt(1.-xp*xp -yp*yp);
+    {zp = -sqrt(1.-xp*xp -yp*yp);}
   else
-    zp = sqrt(1.-xp*xp -yp*yp);
+    {zp = sqrt(1.-xp*xp -yp*yp);}
 
   return zp;
 }

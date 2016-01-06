@@ -15,8 +15,8 @@ option, beampipeRadius = 15 * cm,
 ! beamline definiton
 
 mk : marker;
-qd : quadrupole,l=0.5*m, k1 = qdk1;
-qf : quadrupole,l=0.5*m, k1 = qfk1;
+qd : quadrupole,l=0.5*m, k1 = 0;
+qf : quadrupole,l=0.5*m, k1 = 0;
 d  : drift, l=2*m;
 dt : drift, l=3*m, tilt = pi/4;
 

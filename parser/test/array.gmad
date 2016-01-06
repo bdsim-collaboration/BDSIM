@@ -1,0 +1,30 @@
+a = [1,2,3];
+b = {4,5,6};
+
+! vector add
+a = a + b;
+print, a;
+! vector subtract
+a = a - b;
+print, a;
+! double multiply
+c = a * 2;
+print, c;
+c = 2 * c;
+print, c;
+c = c / 2;
+print, c;
+! double add / subtract
+c = c + 3;
+print, c;
+c = 3 + c;
+print, c;
+c = c - 3;
+print, c;
+c = 3 - c;
+print, c;
+
+! scalar product
+d = <a,b>;
+print, d;
+! should be 32

@@ -1,5 +1,5 @@
-#ifndef BDSDipoleStepper_H
-#define BDSDipoleStepper_H
+#ifndef BDSDIPOLESTEPPER_H
+#define BDSDIPOLESTEPPER_H
 
 #include "BDSAuxiliaryNavigator.hh"
 

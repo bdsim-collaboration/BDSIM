@@ -1,5 +1,5 @@
-#ifndef BDSQUADMAGFIELD
-#define BDSQUADMAGFIELD
+#ifndef BDSQUADMAGFIELD_H
+#define BDSQUADMAGFIELD_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"

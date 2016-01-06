@@ -1,5 +1,5 @@
-#ifndef __BDS_MUON_PHYSICS_HH_
-#define __BDS_MUON_PHYSICS_HH_
+#ifndef BDSMUONPHYSICS_H
+#define BDSMUONPHYSICS_H
 
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
@@ -15,7 +15,8 @@
 #include "BDSDebug.hh"
 
 
-class BDSMuonPhysics: public BDSXSBiasPhysics {
+class BDSMuonPhysics: public BDSXSBiasPhysics
+{
 public:
   BDSMuonPhysics();
   ~BDSMuonPhysics();

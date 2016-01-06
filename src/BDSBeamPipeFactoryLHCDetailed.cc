@@ -84,6 +84,7 @@ void BDSBeamPipeFactoryLHCDetailed::InitialiseGeometricalParameters()
   halfLength = 0;
   
   coolingPipeOffset = 0;
+  verticalOrientation = true; // arbitrary, will be overwritten
   buildCoolingPipe = true;
 }
 

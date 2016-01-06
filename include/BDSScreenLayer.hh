@@ -1,5 +1,5 @@
-#ifndef BDSScreenLayer_h
-#define BDSScreenLayer_h 
+#ifndef BDSSCREENLAYER_H
+#define BDSSCREENLAYER_H 
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"

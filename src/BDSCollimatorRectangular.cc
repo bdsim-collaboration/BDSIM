@@ -6,7 +6,6 @@
 #include "G4Box.hh"
 #include "G4Trd.hh"
 #include "G4VSolid.hh"
-#include <iomanip>
 
 BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double length,

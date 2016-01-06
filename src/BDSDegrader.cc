@@ -4,36 +4,34 @@
 #include "BDSColours.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
-#include "BDSUtilities.hh"
 
 #include "BDSDebug.hh"
 
-#include "G4VSolid.hh"
 #include "G4Box.hh"
-#include "G4VisAttributes.hh"
+#include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4SubtractionSolid.hh"
-#include "G4ExtrudedSolid.hh"
+#include "G4VisAttributes.hh"
+#include "G4VSolid.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include <vector>
 
 BDSDegrader::BDSDegrader (G4String   name, 
-                    G4double   length,
-                    G4double   outerDiameterIn,
-                    G4int      numberWedgesIn,
-                    G4double   wedgeLengthIn,
-                    G4double   degraderHeightIn,
-                    G4double   degraderOffsetIn,
-                    G4String   degraderMaterialIn ):
-BDSAcceleratorComponent(name, length, 0, "degrader"),
-    outerDiameter(outerDiameterIn),
-    numberWedges(numberWedgesIn),
-    wedgeLength(wedgeLengthIn),
-    degraderHeight(degraderHeightIn),
-    degraderOffset(degraderOffsetIn),
-    degraderMaterial(degraderMaterialIn)
+			  G4double   length,
+			  G4double   outerDiameterIn,
+			  G4int      numberWedgesIn,
+			  G4double   wedgeLengthIn,
+			  G4double   degraderHeightIn,
+			  G4double   degraderOffsetIn,
+			  G4String   degraderMaterialIn ):
+  BDSAcceleratorComponent(name, length, 0, "degrader"),
+  outerDiameter(outerDiameterIn),
+  numberWedges(numberWedgesIn),
+  wedgeLength(wedgeLengthIn),
+  degraderHeight(degraderHeightIn),
+  degraderOffset(degraderOffsetIn),
+  degraderMaterial(degraderMaterialIn)
 {;}
 
 BDSDegrader::~BDSDegrader()

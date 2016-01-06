@@ -1,6 +1,7 @@
 d1: drift, l=0.5;
 vk1 : vkick, l=0.5*m, angle = 0.01;
 d2: drift, l=0.5;
+vk2 : vkick, l=0.5*m, angle = 0.0;
 
-lat : line = (d1,vk1,d2);
+lat : line = (d1,vk1,d2,vk2);
 com : line = (hk1);

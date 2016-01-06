@@ -1,5 +1,5 @@
-#ifndef BDSBunchTwiss_h
-#define BDSBunchTwiss_h 
+#ifndef BDSBUNCHTWISS_H
+#define BDSBUNCHTWISS_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
@@ -38,7 +38,7 @@ private :
 public : 
   BDSBunchTwiss();
   ~BDSBunchTwiss();
-  void SetOptions(GMAD::Options &opt); 
+  void SetOptions(const GMAD::Options& opt); 
   void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

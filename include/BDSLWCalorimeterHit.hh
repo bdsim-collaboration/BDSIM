@@ -1,11 +1,5 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSLWCalorimeterHit_h
-#define BDSLWCalorimeterHit_h 1
+#ifndef BDSLWCALORIMETERHIT_H
+#define BDSLWCALORIMETERHIT_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"

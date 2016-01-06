@@ -58,12 +58,10 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
     for (const auto& i : value->data) {
       flag.push_back(static_cast<PhysicsBiasingType>((int)i));
     }
-    value->data.clear();
     return;
   }
   if (property=="xsecfact") {
     value->set_vector(factor);
-    value->data.clear();
     return;
   }
   

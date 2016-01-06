@@ -17,7 +17,7 @@ class BDSOutputBase
 public: 
   BDSOutputBase(); // default constructor
   //  BDSOutput(BDSOutputFormat format);
-  virtual ~BDSOutputBase(){};
+  virtual ~BDSOutputBase() {};
 
   /// write sampler hit collection
   virtual void WriteHits(BDSSamplerHitsCollection*) = 0;
@@ -54,6 +54,9 @@ public:
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
   
+  /// write a complete event
+  virtual void FillEvent() = 0;
+
   /// write and close and open new file
   virtual void Commit()=0;
   

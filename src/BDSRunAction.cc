@@ -71,14 +71,13 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   
   // Write output
   // write histograms to output - do this before potentially closing / opening new files
-  for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++) {
-    bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));
-  }
-  if(BDSExecOptions::Instance()->GetBatch()) {  // Non-interactive mode
-    bdsOutput->Write(); // write last file
-  } else {
-    bdsOutput->Commit(); // write and open new file
-  }
+  for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
+    {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
+  // Non-interactive mode
+  if(BDSExecOptions::Instance()->GetBatch())
+    {bdsOutput->Write();} // write last file
+  else
+    {bdsOutput->Commit();} // write and open new file
 
   // delete analysis manager
   delete BDSAnalysisManager::Instance();

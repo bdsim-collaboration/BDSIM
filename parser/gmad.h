@@ -1,40 +1,23 @@
-/*
- * GMAD interface 
- * I. Agapov 2005-2006
- * bdsim v.0.3
- *
- * modification history:
-*/
+#ifndef GMAD_H
+#define GMAD_H
 
-#ifndef _GMAD_H
-#define _GMAD_H
+namespace GMAD
+{
+  /** Python interface **/ 
+  extern "C" {   
+    int    GmadParser_c(char *name);
 
-#include <cstdio>
-#include <string>
+    /* Interface to extern beamline_list */
+    int          GetNElements();            // Length of list
+    int          GetType(int);              // Type of element 
+    const char*  GetName(int);              // Name of element
+    double       GetLength(int);            // Length of element
+    double       GetAngle(int);             // Angle of element
+    double*      GetKs(int);                // All magnetic ks
+    double       GetAper1(int);             // Aperture 1
+    double       GetAper2(int);             // Aperture 2
+    double       GetBeampipeThickness(int); // Beam Pipe Thickness
 
-namespace GMAD {
-enum class ElementType;
-
-// parse the input file and construct beamline_list and options 
-int gmad_parser(FILE *f);
-
-int gmad_parser(std::string name);
-
-/** Python interface **/ 
-extern "C" {   
-  int    GmadParser_c(char *name);
-
-  /* Interface to extern beamline_list */
-  int          GetNelements();            // Length of list
-  int          GetType(int);              // Type of element 
-  const char*  GetName(int);              // Name of element
-  double       GetLength(int);            // Length of element
-  double       GetAngle(int);             // Angle of element
-  double*      GetKs(int);                // All magnetic ks
-  double       GetAper1(int);             // Aperture 1
-  double       GetAper2(int);             // Aperture 2
-  double       GetBeampipeThickness(int); // Beam Pipe Thickness
-
-}
+  }
 }
 #endif

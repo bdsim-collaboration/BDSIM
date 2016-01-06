@@ -7,7 +7,6 @@
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
-#include "G4EllipticalCone.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"
@@ -23,8 +22,8 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
 				     G4String type,
 				     G4double xApertureIn,
 				     G4double yApertureIn,
-                     G4double xOutApertureIn,
-                     G4double yOutApertureIn,
+				     G4double xOutApertureIn,
+				     G4double yOutApertureIn,
 				     G4String collimatorMaterialIn,
 				     G4String vacuumMaterialIn):
   BDSAcceleratorComponent(name, length, 0, type),

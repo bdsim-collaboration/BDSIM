@@ -24,7 +24,7 @@
 
 BDSTunnelSD::BDSTunnelSD(G4String name)
   :G4VSensitiveDetector(name),
-   tunnelHitsCollection(NULL),
+   tunnelHitsCollection(nullptr),
    HCID(-1),
    energy(0.0),
    X(0.0),

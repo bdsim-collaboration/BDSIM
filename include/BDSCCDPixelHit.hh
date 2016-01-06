@@ -1,5 +1,5 @@
-#ifndef BDSCCDPixelHit_h
-#define BDSCCDPixelHit_h 1
+#ifndef BDSCCDPIXELHIT_H
+#define BDSCCDPIXELHIT_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"

@@ -270,6 +270,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  interestingTrajectories.clear();
 	}
     }
+
+  bdsOutput->FillEvent();
     
 #ifdef BDSDEBUG 
  G4cout<<"BDSEventAction : end of event action done"<<G4endl;

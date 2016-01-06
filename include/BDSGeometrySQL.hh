@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <vector>
+#include <list>
 
 class BDSGeometrySQL: public BDSGeometry
 {

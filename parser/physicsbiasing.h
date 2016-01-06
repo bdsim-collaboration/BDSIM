@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace GMAD {
-  struct Array;
+  class Array;
 }
 
 namespace GMAD {

@@ -1,0 +1,3 @@
+precisionR: cutsregion, prodCutPhotons=1*mm, prodCutHadrons=1*m;
+
+d1: drift, l=0.5*m, aper1=4*cm, region="precisionR";
