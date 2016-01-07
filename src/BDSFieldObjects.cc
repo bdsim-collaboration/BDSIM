@@ -1,5 +1,5 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSMagFieldObjects.hh"
+#include "BDSFieldObjects.hh"
 
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
@@ -8,11 +8,11 @@
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
 
-BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
-				       G4EquationOfMotion*     equationOfMotionIn,
-				       G4MagIntegratorStepper* magIntegratorStepperIn,
-				       G4ChordFinder*          chordFinderIn,
-				       G4FieldManager*         fieldManagerIn):
+BDSFieldObjects::BDSFieldObjects(G4MagneticField*        magneticFieldIn,
+                                    G4EquationOfMotion*     equationOfMotionIn,
+                                    G4MagIntegratorStepper* magIntegratorStepperIn,
+                                    G4ChordFinder*          chordFinderIn,
+                                    G4FieldManager*         fieldManagerIn):
   magneticField(magneticFieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn),
@@ -20,9 +20,9 @@ BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
   fieldManager(fieldManagerIn)
 {;}
 
-BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
-				       G4EquationOfMotion*     equationOfMotionIn,
-				       G4MagIntegratorStepper* magIntegratorStepperIn):
+BDSFieldObjects::BDSFieldObjects(G4MagneticField*        magneticFieldIn,
+                                    G4EquationOfMotion*     equationOfMotionIn,
+                                    G4MagIntegratorStepper* magIntegratorStepperIn):
   magneticField(magneticFieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn)
@@ -40,7 +40,7 @@ BDSMagFieldObjects::BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
   fieldManager->SetDeltaOneStep(globals->GetDeltaOneStep());
 }
 
-BDSMagFieldObjects::~BDSMagFieldObjects()
+BDSFieldObjects::~BDSFieldObjects()
 {
   // this doesn't own magneticField
   delete fieldManager;

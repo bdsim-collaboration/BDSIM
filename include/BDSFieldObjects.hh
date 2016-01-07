@@ -1,5 +1,5 @@
-#ifndef BDSMAGFIELDOBJECTS_H
-#define BDSMAGFIELDOBJECTS_H
+#ifndef BDSFIELDOBJECTS_H
+#define BDSFIELDOBJECTS_H
 
 /**
  * @brief A holder for all the Geant4 field related objects that
@@ -17,12 +17,12 @@ class G4FieldManager;
 class G4MagIntegratorStepper;
 class G4MagneticField;
 
-class BDSMagFieldObjects
+class BDSFieldObjects
 {
 public:
   /// A magnetic field is required to build the required objects to manage
   /// and use it.
-  BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
+  BDSFieldObjects(G4MagneticField*        magneticFieldIn,
 		     G4EquationOfMotion*     equationOfMotionIn,
 		     G4MagIntegratorStepper* magIntegratorStepperIn,
 		     G4ChordFinder*          chordFinderIn,
@@ -32,19 +32,19 @@ public:
   /// for convenience. The field manager uses delta intersection, epsilon min / max,
   /// and delta one step from BDSGlobalConstants as defaults for field propagation
   /// accuracy.
-  BDSMagFieldObjects(G4MagneticField*        magneticFieldIn,
+  BDSFieldObjects(G4MagneticField*        magneticFieldIn,
 		     G4EquationOfMotion*     equationOfMotionIn,
 		     G4MagIntegratorStepper* magIntegratorStepperIn);
 
   /// Destructor deletes all objects apart from the magnetic field
-  ~BDSMagFieldObjects();
+  ~BDSFieldObjects();
 
 private:
   /// Private default constructor to force use of non-default constructor
-  BDSMagFieldObjects();
+  BDSFieldObjects();
 
   /// Private copy constructor to avoid shallow pointer copy and possible double deletion
-  BDSMagFieldObjects(const BDSMagFieldObjects& other);
+  BDSFieldObjects(const BDSFieldObjects& other);
 
   /// Reference to magnetic field this instance is based on (doesn't own it)
   G4MagneticField* magneticField;
