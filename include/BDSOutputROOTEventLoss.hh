@@ -22,6 +22,7 @@ protected:
   /* process */
   std::vector<unsigned int> processID;
   std::vector<unsigned int> trackID;
+  std::vector<int>          geomFlag;
 
 public:
   BDSOutputROOTEventLoss();

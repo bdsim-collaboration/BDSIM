@@ -21,7 +21,7 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
   this->S.push_back     ( (float &&) (hit->GetS()      / CLHEP::m));
   this->weight.push_back( (float &&)  hit->GetWeight());
   this->modelID.push_back( hit->GetBeamlineIndex());
-
+  this->geomFlag.push_back(hit->GetGeomFlag());
 //  G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
 }
 
@@ -39,4 +39,5 @@ void BDSOutputROOTEventLoss::Flush()
   this->S.clear();
   this->weight.clear();
   this->modelID.clear();
+  this->geomFlag.clear();
 }

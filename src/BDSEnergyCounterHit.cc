@@ -20,7 +20,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4int    turnsTakenIn,
 					 G4int    eventNoIn,
 					 G4double stepLengthIn,
-           G4int    beamlineIndexIn):
+           G4int    beamlineIndexIn,
+                                         G4int geomFlagIn):
   copyNumber(nCopyIn),
   energy(energyIn),
   X(XIn),
@@ -38,7 +39,8 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn),
   stepLength(stepLengthIn),
-  beamlineIndex(beamlineIndexIn)
+  beamlineIndex(beamlineIndexIn),
+  geomFlag(geomFlagIn)
 {;}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()

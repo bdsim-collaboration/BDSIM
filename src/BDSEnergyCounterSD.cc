@@ -103,7 +103,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   // coordinates along beam line axis
   G4AffineTransform tf;
   G4VPhysicalVolume* theVolume;
-  G4bool bKeep = FALSE;
+  G4int geomFlag = -1;
   if (readOutTH)
   {
     tf = readOutTH->GetHistory()->GetTopTransform();
@@ -113,31 +113,32 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     G4bool postOnBound = (postP->GetStepStatus() == fGeomBoundary);
     if (preeOnBound)
     {
-      bKeep = TRUE;
+      geomFlag = 1;
       theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup(postP->GetPosition());
       tf = postP->GetTouchableHandle()->GetHistory()->GetTopTransform();
       if (postOnBound)
       {
-        bKeep = TRUE;
+        geomFlag = 2;
         theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup((preeP->GetPosition() + postP->GetPosition()) / 2.0);
         tf = preeP->GetTouchableHandle()->GetHistory()->GetTopTransform();
       }
     }
     else if (postOnBound)
     {
-      bKeep = TRUE;
+      geomFlag = 3;
       theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup(preeP->GetPosition());
       tf = preeP->GetTouchableHandle()->GetHistory()->GetTopTransform();
     }
     else
     {
-      bKeep = TRUE;
+      geomFlag = 4;
       theVolume = readOutTH->GetVolume();
       tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
     }
   }
   else
   {
+    geomFlag = 5;
     theVolume = aStep->GetPostStepPoint()->GetPhysicalVolume();
     tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
   }
@@ -170,7 +171,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
   if (theInfo)
     {
-      SAfter  = theInfo->GetSPos() + z;
+      SAfter  = theInfo->GetSPos() + posafterlocal.z();
       SBefore = theInfo->GetSPos() + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
     }
@@ -201,6 +202,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   
   //create hits and put in hits collection of the event
   //do analysis / output in end of event action
+
+  //G4cout << posbefore.getZ() << " " << SBefore << " " << " " << posafter.getZ() << " " << SAfter << G4endl;
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
                                                        enrg,
                                                        X,
@@ -210,6 +213,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
 //                                                       SAfter,
                                                        posbefore.getZ() + G4UniformRand()*(posafter.getZ()-posbefore.getZ()) /*SBefore*/,
                                                        posbefore.getZ() + G4UniformRand()*(posafter.getZ()-posbefore.getZ()) /*SAfter*/,
+//                                                       posbefore.getZ()  /*SBefore*/,
+//                                                       posafter.getZ()  /*SAfter*/,
 //                                                       SBefore+G4UniformRand()*(SAfter-SBefore),
 //                                                       SBefore+G4UniformRand()*(SAfter-SBefore),
                                                        x,
@@ -222,13 +227,11 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
                                                        turnstaken,
                                                        eventnumber,
                                                        stepLength,
-                                                       theInfo->GetBeamlineIndex());
+                                                       theInfo->GetBeamlineIndex(),
+                                                       geomFlag);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
-  if(bKeep)
-  {
-    energyCounterCollection->insert(ECHit);
-  }
+  energyCounterCollection->insert(ECHit);
   //record first scatter of primary if it exists
   if (aStep->GetTrack()->GetParentID() == 0)
     {
