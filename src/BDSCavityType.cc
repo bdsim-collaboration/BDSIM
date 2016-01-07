@@ -22,8 +22,9 @@ BDSCavityType BDS::DetermineCavityType(G4String cavityType)
   types["pillbox"]     = BDSCavityType::pillbox;
   
   cavityType.toLower();
-  
-  if (types.find(cavityType) == types.end())
+
+  auto result = types.find(cavityType);
+  if (result == types.end())
     {
       // it's not a valid key
       G4cout << __METHOD_NAME__ << "\"" << cavityType << "\" is not a valid cavity type" << G4endl;
@@ -32,10 +33,9 @@ BDSCavityType BDS::DetermineCavityType(G4String cavityType)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
-
-  BDSCavityType returnValue = types[cavityType];
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " determined cavity type to be " << returnValue << G4endl;
 #endif
-  return returnValue;
+  return result->second;
 }

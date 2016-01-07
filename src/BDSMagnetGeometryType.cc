@@ -31,20 +31,21 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
   types["lhcright"]          = BDSMagnetGeometryType::lhcright;
 
   geometryType.toLower();
-  
-  if (types.find(geometryType) == types.end())
+
+  auto result = types.find(geometryType);
+  if (result == types.end())
     {
       // it's not a valid key
       G4cout << __METHOD_NAME__ << "\"" << geometryType << "\" is not a valid geometry type" << G4endl;
-      G4cout << "Available geometry types are:" << G4endl;
+      
+      G4cout << "Available magnet geometry types are:" << G4endl;
       for (auto it : types)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
-
-  BDSMagnetGeometryType returnValue = types[geometryType];
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue << G4endl;
 #endif
-  return returnValue;
+  return result->second;
 }

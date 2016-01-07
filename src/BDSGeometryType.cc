@@ -34,6 +34,10 @@ BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
     {
       // it's not a valid key
       G4cerr << __METHOD_NAME__ << " " << geometryType << " is not a valid geometry type" << G4endl;
+      
+      G4cout << "Available geometry types are:" << G4endl;
+      for (auto it : types)
+	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
 
