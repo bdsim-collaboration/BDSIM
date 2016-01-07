@@ -129,6 +129,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;
   }
   
+
 #ifdef BDSDEBUG 
   G4cout<<"BDSEventAction : storing hits"<<G4endl;
 #endif
@@ -136,6 +137,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   //Record the primary events
   AddPrimaryHits();
+    
   
   // are there any planar samplers?
   // if so, record the hits for each sampler 
@@ -319,10 +321,13 @@ void BDSEventAction::AddPrimaryHits(){
   G4double t = primaryVertex->GetT0();
   G4double weight = primaryParticle->GetWeight();
   G4int PDGType=primaryParticle->GetPDGcode();
-  G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   G4String samplerName="primaries";
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
-  bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
+  G4int nEvent = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  //Dont record the primaries of the reference trajectory (nEvent=-1)
+  if(nEvent>=0){
+    bdsOutput->WritePrimary(samplerName, E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
+  }
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " finished" << G4endl;
