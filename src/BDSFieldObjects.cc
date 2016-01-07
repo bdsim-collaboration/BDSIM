@@ -8,32 +8,32 @@
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
 
-BDSFieldObjects::BDSFieldObjects(G4MagneticField*        magneticFieldIn,
-                                    G4EquationOfMotion*     equationOfMotionIn,
-                                    G4MagIntegratorStepper* magIntegratorStepperIn,
-                                    G4ChordFinder*          chordFinderIn,
-                                    G4FieldManager*         fieldManagerIn):
-  magneticField(magneticFieldIn),
+BDSFieldObjects::BDSFieldObjects(G4MagneticField*        fieldIn,
+				 G4EquationOfMotion*     equationOfMotionIn,
+				 G4MagIntegratorStepper* magIntegratorStepperIn,
+				 G4ChordFinder*          chordFinderIn,
+				 G4FieldManager*         fieldManagerIn):
+  field(fieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn),
   chordFinder(chordFinderIn),
   fieldManager(fieldManagerIn)
 {;}
 
-BDSFieldObjects::BDSFieldObjects(G4MagneticField*        magneticFieldIn,
-                                    G4EquationOfMotion*     equationOfMotionIn,
-                                    G4MagIntegratorStepper* magIntegratorStepperIn):
-  magneticField(magneticFieldIn),
+BDSFieldObjects::BDSFieldObjects(G4MagneticField*        fieldIn,
+				 G4EquationOfMotion*     equationOfMotionIn,
+				 G4MagIntegratorStepper* magIntegratorStepperIn):
+  field(fieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   
-  chordFinder = new G4ChordFinder(magneticField,
+  chordFinder = new G4ChordFinder(field,
 				  globals->GetChordStepMinimum(),
 				  magIntegratorStepper);
 
-  fieldManager = new G4FieldManager(magneticField, chordFinder);
+  fieldManager = new G4FieldManager(field, chordFinder);
   fieldManager->SetDeltaIntersection(globals->GetDeltaIntersection());
   fieldManager->SetMinimumEpsilonStep(globals->GetMinimumEpsilonStep());
   fieldManager->SetMaximumEpsilonStep(globals->GetMaximumEpsilonStep());
@@ -42,7 +42,7 @@ BDSFieldObjects::BDSFieldObjects(G4MagneticField*        magneticFieldIn,
 
 BDSFieldObjects::~BDSFieldObjects()
 {
-  // this doesn't own magneticField
+  delete field;
   delete fieldManager;
   delete chordFinder;
   delete magIntegratorStepper;

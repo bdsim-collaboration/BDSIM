@@ -15,26 +15,25 @@ class G4ChordFinder;
 class G4EquationOfMotion;
 class G4FieldManager;
 class G4MagIntegratorStepper;
-class G4MagneticField;
+class G4Field;
 
 class BDSFieldObjects
 {
 public:
-  /// A magnetic field is required to build the required objects to manage
-  /// and use it.
-  BDSFieldObjects(G4MagneticField*        magneticFieldIn,
-		     G4EquationOfMotion*     equationOfMotionIn,
-		     G4MagIntegratorStepper* magIntegratorStepperIn,
-		     G4ChordFinder*          chordFinderIn,
-		     G4FieldManager*         fieldManagerIn);
+  /// A field is required to build the required objects to manage and use it.
+  BDSFieldObjects(G4Field*                fieldIn,
+		  G4EquationOfMotion*     equationOfMotionIn,
+		  G4MagIntegratorStepper* magIntegratorStepperIn,
+		  G4ChordFinder*          chordFinderIn,
+		  G4FieldManager*         fieldManagerIn);
 
   /// Alternative constructor that constructs G4ChordFinder and G4FieldManager
   /// for convenience. The field manager uses delta intersection, epsilon min / max,
   /// and delta one step from BDSGlobalConstants as defaults for field propagation
   /// accuracy.
-  BDSFieldObjects(G4MagneticField*        magneticFieldIn,
-		     G4EquationOfMotion*     equationOfMotionIn,
-		     G4MagIntegratorStepper* magIntegratorStepperIn);
+  BDSFieldObjects(G4Field*                fieldIn,
+		  G4EquationOfMotion*     equationOfMotionIn,
+		  G4MagIntegratorStepper* magIntegratorStepperIn);
 
   /// Destructor deletes all objects apart from the magnetic field
   ~BDSFieldObjects();
@@ -46,8 +45,8 @@ private:
   /// Private copy constructor to avoid shallow pointer copy and possible double deletion
   BDSFieldObjects(const BDSFieldObjects& other);
 
-  /// Reference to magnetic field this instance is based on (doesn't own it)
-  G4MagneticField* magneticField;
+  /// Reference to field this instance is based on.
+  G4Field* field;
   
   /// Equation of motion, typically G4Mag_UsualEqRhs instance
   G4EquationOfMotion* equationOfMotion;
