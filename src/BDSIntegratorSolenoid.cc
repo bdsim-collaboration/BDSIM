@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSSolenoidStepper.hh"
+#include "BDSIntegratorSolenoid.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -8,7 +8,7 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs* eqRHS):
+BDSIntegratorSolenoid::BDSIntegratorSolenoid(G4Mag_EqRhs* eqRHS):
   G4MagIntegratorStepper(eqRHS, 6),
   fPtrMagEqOfMot(eqRHS),
   itsBField(0.0), itsDist(0.0), nvar(6)
@@ -16,7 +16,7 @@ BDSSolenoidStepper::BDSSolenoidStepper(G4Mag_EqRhs* eqRHS):
   backupStepper = new G4ClassicalRK4(eqRHS, 6);
 }
 
-void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
+void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 				      const G4double dydx[],
 				      G4ThreeVector  /*bField*/,
 				      G4double       h,
@@ -33,7 +33,7 @@ void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
   
 #ifdef BDSDEBUG
   G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
-  G4cout << "BDSSolenoidStepper: step = " << h/CLHEP::m << " m" << G4endl
+  G4cout << "BDSIntegratorSolenoid: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m   << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m   << " m"     << G4endl
          << " z  = " << yIn[2]/CLHEP::m   << " m"     << G4endl
@@ -202,7 +202,7 @@ void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
       LocalRp.setZ(zp1);
       
 #ifdef BDSDEBUG 
-      G4cout << "BDSSolenoidStepper: final point in local coordinates:" << G4endl
+      G4cout << "BDSIntegratorSolenoid: final point in local coordinates:" << G4endl
 	     << " x  = " << LocalR[0]/CLHEP::m << " m" << G4endl
 	     << " y  = " << LocalR[1]/CLHEP::m << " m" << G4endl
 	     << " z  = " << LocalR[2]/CLHEP::m << " m" << G4endl
@@ -239,7 +239,7 @@ void BDSSolenoidStepper::AdvanceHelix(const G4double yIn[],
 }
 
 
-void BDSSolenoidStepper::Stepper(const G4double yInput[],
+void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
 				 const G4double dydx[],
 				 const G4double hstep,
 				       G4double yOut[],
@@ -249,12 +249,12 @@ void BDSSolenoidStepper::Stepper(const G4double yInput[],
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
 }
 
-G4double BDSSolenoidStepper::DistChord()   const 
+G4double BDSIntegratorSolenoid::DistChord()   const 
 {
   return itsDist;
   // This is a class method that gives distance of Mid 
   //  from the Chord between the Initial and Final points.
 }
 
-BDSSolenoidStepper::~BDSSolenoidStepper()
+BDSIntegratorSolenoid::~BDSIntegratorSolenoid()
 {}

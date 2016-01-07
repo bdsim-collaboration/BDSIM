@@ -4,8 +4,8 @@
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSSolenoid.hh"
-#include "BDSSolenoidMagField.hh"
-#include "BDSSolenoidStepper.hh"
+#include "BDSFieldMagSolenoid.hh"
+#include "BDSIntegratorSolenoid.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
@@ -39,7 +39,7 @@ void BDSSolenoid::BuildBPFieldAndStepper()
   G4ThreeVector Bfield(0.,0.,itsBField);
   itsMagField = new G4UniformMagField(Bfield);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-  BDSSolenoidStepper* solenoidStepper = new BDSSolenoidStepper(itsEqRhs);
+  BDSIntegratorSolenoid* solenoidStepper = new BDSIntegratorSolenoid(itsEqRhs);
   solenoidStepper->SetBField(itsBField);
   itsStepper = solenoidStepper;
 }

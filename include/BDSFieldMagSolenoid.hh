@@ -1,16 +1,16 @@
-#ifndef BDSSOLENOIDMAGFIELD_H
-#define BDSSOLENOIDMAGFIELD_H
+#ifndef BDSFIELDMAGSOLENOID_H
+#define BDSFIELDMAGSOLENOID_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSSolenoidMagField: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagSolenoid: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
-  BDSSolenoidMagField(G4double aBField);
-  virtual ~BDSSolenoidMagField();
+  BDSFieldMagSolenoid(G4double aBField);
+  virtual ~BDSFieldMagSolenoid();
 
   /// Get Field Value (independent of position, since solenoid field is uniform)
   virtual void  GetFieldValue(const G4double* /*Point[4]*/,
@@ -22,7 +22,7 @@ private:
   G4double itsBField;
 };
 
-inline void BDSSolenoidMagField::SetBField(G4double aBField)
+inline void BDSFieldMagSolenoid::SetBField(G4double aBField)
 { itsBField = aBField; }
 
-#endif /* BDSSOLENOIDMAGFIELD */
+#endif

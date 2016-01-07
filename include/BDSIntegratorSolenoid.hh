@@ -1,5 +1,5 @@
-#ifndef BDSSOLENOIDSTEPPER_H
-#define BDSSOLENOIDSTEPPER_H
+#ifndef BDSINTEGRATORSOLENOID_H
+#define BDSINTEGRATORSOLENOID_H
 
 #include "BDSAuxiliaryNavigator.hh"
 
@@ -8,12 +8,12 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-class BDSSolenoidStepper:
+class BDSIntegratorSolenoid:
   public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
-  BDSSolenoidStepper(G4Mag_EqRhs *EqRhs);
-  ~BDSSolenoidStepper();
+  BDSIntegratorSolenoid(G4Mag_EqRhs *EqRhs);
+  ~BDSIntegratorSolenoid();
 
   void Stepper( const G4double y[],
 		const G4double dydx[],
@@ -53,14 +53,14 @@ private:
   //G4double pitch;
 };
 
-inline  void BDSSolenoidStepper::SetBField(G4double aBField)
+inline  void BDSIntegratorSolenoid::SetBField(G4double aBField)
 {itsBField=aBField;
 }
 
-inline G4double BDSSolenoidStepper::GetBField()
+inline G4double BDSIntegratorSolenoid::GetBField()
 {return itsBField;}
 
-inline void BDSSolenoidStepper::StepperName()
-{G4cout<<"BDSSolenoidStepper"<<G4endl;}
+inline void BDSIntegratorSolenoid::StepperName()
+{G4cout<<"BDSIntegratorSolenoid"<<G4endl;}
 
-#endif /* BDSSOLENOIDSTEPPER_HH */
+#endif
