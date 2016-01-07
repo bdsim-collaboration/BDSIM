@@ -2,6 +2,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldFactory.hh"
+#include "BDSFieldMagSolenoid.hh"
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
@@ -15,6 +16,14 @@
 
 #include <typeinfo>
 #include <utility>
+
+ // 1 field
+  // 2 equation of motion
+  // 3 integrator
+  // 4 chord finder
+  // 5 field manager
+  // 6 package it up
+
 
 BDSFieldFactory::BDSFieldFactory()
 {
@@ -89,21 +98,21 @@ BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
   switch (type)
     {
     case BDSFieldType::solenoid:
-      BuildFieldSolenoid(strengths,   nominalrigidity); break;
+      BuildSolenoid(strengths,   nominalrigidity); break;
     case BDSFieldType::dipole:
-      BuildFieldDipole(strengths,     nominalrigidity); break;
+      BuildDipole(strengths,     nominalrigidity); break;
     case BDSFieldType::quadrupole:
-      BuildFieldQuadrupole(strengths, nominalrigidity); break;
+      BuildQuadrupole(strengths, nominalrigidity); break;
     case BDSFieldType::sextupole:
-      BuildFieldSextupole(strengths,  nominalrigidity); break;
+      BuildSextupole(strengths,  nominalrigidity); break;
     case BDSFieldType::octupole:
-      BuildFieldOctupole(strengths,   nominalrigidity); break;
+      BuildOctupole(strengths,   nominalrigidity); break;
     case BDSFieldType::decapole:
-      BuildFieldDecapole(strengths,   nominalrigidity); break;
+      BuildDecapole(strengths,   nominalrigidity); break;
     case BDSFieldType::multipole:
-      BuildFieldMultipole(strengths,  nominalrigidity); break;
+      BuildMultipole(strengths,  nominalrigidity); break;
     case BDSFieldType::sbend:
-      BuildFieldSBend(strengths,      nominalrigidity); break;
+      BuildSBend(strengths,      nominalrigidity); break;
     default:
       G4cerr << __METHOD_NAME__ << "not an equation based field type" << G4endl;
       exit(1);
@@ -112,27 +121,22 @@ BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
   return completeField;
 }
 
-BDSFieldObjects* BDSFieldFactory::CommonFieldConstruction(G4Field* field,
-							  BDSIntegratorType integratorType)
-{
-  // 1 field
-  // 2 equation of motion
-  // 3 integrator
-  // 4 chord finder
-  // 5 field manager
-  // 6 package it up
-  
-  // 2 equation of motion
-  G4EquationOfMotion* eq = new G4Mag_UsualEqRhs(field);
-
-  // 3 integrator
-}
-
-void BDSFieldFactory::BuildFieldSolenoid(BDSMagnetStrength* strengths,
+void BDSFieldFactory::BuildFieldSolenoid(BDSMagnetStrength* strength,
 					 G4double           nominalRigidity)
 {
-  field = new BDSQuad
-  
+  field         = new BDSFieldMagSolenoid(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorSolenoid(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+}
+
+void BDSFieldFactory::BuildFieldDipole(BDSMagnetStrength* strength,
+				       G4double           nominalRigidity)
+{
+  field         = new BDSFieldMagSolenoid(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorSolenoid(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
 }
 
 BDSMagFieldMesh* BDSFieldFactory::BuildMagFieldXY()

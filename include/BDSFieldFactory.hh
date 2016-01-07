@@ -1,6 +1,7 @@
 #ifndef BDSFIELDFACTORY_H
 #define BDSFIELDFACTORY_H
 
+#include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGeometry.hh"
 #include "BDSMagFieldMesh.hh"
@@ -54,8 +55,18 @@ private:
 
   /// Variables to allow different functions to access different parts during construction
   G4Field*                field;
+  G4EquationOfMotion*     eqOfM;
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;
+
+  void BuildSolenoid(BDSMagnetStrength*   strength, G4double nominalRigidity);
+  void BuildDipole(BDSMagnetStrength*     strength, G4double nominalRigidity);
+  void BuildQuadrupole(BDSMagnetStrength* strength, G4double nominalRigidity);
+  void BuildSextupole(BDSMagnetStrength*  strength, G4double nominalRigidity);
+  void BuildOctupole(BDSMagnetStrength*   strength, G4double nominalRigidity);
+  void BuildDecapole(BDSMagnetStrength*   strength, G4double nominalRigidity);
+  void BuildMultipole(BDSMagnetStrength*  strength, G4double nominalRigidity);
+  void BuildSBend(BDSMagnetStrength*      strength, G4double nominalRigidity);
 
   /// Splits the G4String member variable formatAndName on the ":" character.
   /// Whatever is before is taken as the fromat string and whatever is after is
