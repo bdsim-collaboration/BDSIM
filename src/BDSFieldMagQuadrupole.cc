@@ -4,11 +4,11 @@
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"
 
-BDSQuadMagField::BDSQuadMagField(G4double aBGrad):
+BDSQuadMagField::BDSFieldMagQuadrupole(G4double aBGrad):
   itsBGrad(aBGrad)
 {;}
 
-BDSQuadMagField::~BDSQuadMagField()
+BDSQuadMagField::~BDSFieldMagQuadrupole()
 {;}
 
 void BDSQuadMagField::GetFieldValue( const G4double Point[4],
