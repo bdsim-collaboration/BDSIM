@@ -22,6 +22,6 @@ private:
 };
 
 inline void BDSFieldMagQuadrupole::SetBGrad(G4double aBGrad)
-{ itsBGrad = aBGrad; }
+{itsBGrad = aBGrad; }
 
 #endif
