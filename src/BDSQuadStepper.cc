@@ -23,8 +23,8 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
-  G4double InitPMag        = GlobalP.mag();
-  // quad strength k
+  G4double      InitPMag   = GlobalP.mag();
+  // quad strength k normalised to charge and momentum of this particle
   G4double kappa = - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
 
 #ifdef BDSDEBUG
