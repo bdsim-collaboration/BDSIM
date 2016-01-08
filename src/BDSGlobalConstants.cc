@@ -242,44 +242,6 @@ void BDSGlobalConstants::InitDefaultUserLimits()
   //user must set step length manually
 }
 
-void BDSGlobalConstants::InitRotationMatrices()
-{
-  _RotY90       = new G4RotationMatrix();
-  _RotYM90      = new G4RotationMatrix();
-  _RotX90       = new G4RotationMatrix();
-  _RotXM90      = new G4RotationMatrix();
-  _RotYM90X90   = new G4RotationMatrix();
-  _RotYM90XM90  = new G4RotationMatrix();
-  G4double pi_ov_2 = asin(1.);
-  _RotY90->rotateY(pi_ov_2);
-  _RotYM90->rotateY(-pi_ov_2);
-  _RotX90->rotateX(pi_ov_2);
-  _RotXM90->rotateX(-pi_ov_2);
-  _RotYM90X90->rotateY(-pi_ov_2);
-  _RotYM90X90->rotateX( pi_ov_2);
-  _RotYM90XM90->rotateY(-pi_ov_2);
-  _RotYM90XM90->rotateX(-pi_ov_2);
-}
-
-//Methods to get the rotation matrices
-G4RotationMatrix* BDSGlobalConstants::RotY90() const
-{return _RotY90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotYM90() const
-{return _RotYM90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotX90() const
-{return _RotX90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotXM90() const
-{return _RotXM90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotYM90X90() const
-{return _RotYM90X90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const
-{return _RotYM90XM90;}
-
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete defaultBeamPipeModel;
