@@ -16,7 +16,15 @@ class BDSGeometry;
  * 
  * Field objects are created according to a BDSFieldType and the associated
  * and required Geant4 objects to properly implement a field. These are packaged
- * together in one object. This factory does not own any of its products.
+ * together in one object. This factory does not own any of its products. Construction
+ * follows in this order:
+ *
+ * 1 field
+ * 2 equation of motion (based on field object)
+ * 3 integrator
+ * 4 chord finder
+ * 5 field manager
+ * 6 package it up
  * 
  * @author L. Deacon & L. Nevay
  */
@@ -36,8 +44,8 @@ public:
   /// Create a pure magnetic field as described by an equation, such as a quadupole or
   /// dipole field.  All associated objects are created and packaged together.
   BDSFieldObjects* BuildFieldEquation(BDSFieldType       type,
-				      BDSMagnetStrength* strengths,
-				      G4double           nominalrigidity);
+				      BDSMagnetStrength* strength,
+				      G4double           brho);
 
   /// Create a field from a mesh of coordinates with field 3 vectors. All associated
   /// objects are created and packaged together.
@@ -59,14 +67,19 @@ private:
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;
 
-  void BuildSolenoid(BDSMagnetStrength*   strength, G4double nominalRigidity);
-  void BuildDipole(BDSMagnetStrength*     strength, G4double nominalRigidity);
-  void BuildQuadrupole(BDSMagnetStrength* strength, G4double nominalRigidity);
-  void BuildSextupole(BDSMagnetStrength*  strength, G4double nominalRigidity);
-  void BuildOctupole(BDSMagnetStrength*   strength, G4double nominalRigidity);
-  void BuildDecapole(BDSMagnetStrength*   strength, G4double nominalRigidity);
-  void BuildMultipole(BDSMagnetStrength*  strength, G4double nominalRigidity);
+  /// Common construction of building field objects
+  void CommonConstructor();
 
+  ///@{ Delegate function to construct the specific classes
+  void BuildSolenoid(BDSMagnetStrength*   strength, G4double brho);
+  void BuildDipole(BDSMagnetStrength*     strength, G4double brho);
+  void BuildQuadrupole(BDSMagnetStrength* strength, G4double brho);
+  void BuildSextupole(BDSMagnetStrength*  strength, G4double brho);
+  void BuildOctupole(BDSMagnetStrength*   strength, G4double brho);
+  void BuildDecapole(BDSMagnetStrength*   strength, G4double brho);
+  void BuildMultipole(BDSMagnetStrength*  strength, G4double brho);
+  ///@}
+  
   /// Splits the G4String member variable formatAndName on the ":" character.
   /// Whatever is before is taken as the fromat string and whatever is after is
   /// taken as the filepath.

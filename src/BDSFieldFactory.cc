@@ -17,13 +17,6 @@
 #include <typeinfo>
 #include <utility>
 
- // 1 field
-  // 2 equation of motion
-  // 3 integrator
-  // 4 chord finder
-  // 5 field manager
-  // 6 package it up
-
 
 BDSFieldFactory::BDSFieldFactory()
 {
@@ -47,8 +40,8 @@ void BDSFieldType::CleanUp()
 }
 
 BDSMagFieldMesh* BDSFieldFactory::BuildMagneticField(G4String      formatAndFilePath,
-							G4ThreeVector offsetIn,
-							BDSGeometry*  geometryIn)
+						     G4ThreeVector offsetIn,
+						     BDSGeometry*  geometryIn)
   
 {
 #ifdef BDSDEBUG
@@ -89,8 +82,8 @@ BDSMagFieldMesh* BDSFieldFactory::BuildMagneticField(G4String      formatAndFile
 }
 
 BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
-						     BDSMagnetStrength* strengths,
-						     G4double           nominalrigidity)
+						     BDSMagnetStrength* strength,
+						     G4double           brho)
 {
   CleanUp();
   
@@ -98,19 +91,19 @@ BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
   switch (type)
     {
     case BDSFieldType::solenoid:
-      BuildSolenoid(strengths,   nominalrigidity); break;
+      BuildSolenoid(strength,   brho); break;
     case BDSFieldType::dipole:
-      BuildDipole(strengths,     nominalrigidity); break;
+      BuildDipole(strength,     brho); break;
     case BDSFieldType::quadrupole:
-      BuildQuadrupole(strengths, nominalrigidity); break;
+      BuildQuadrupole(strength, brho); break;
     case BDSFieldType::sextupole:
-      BuildSextupole(strengths,  nominalrigidity); break;
+      BuildSextupole(strength,  brho); break;
     case BDSFieldType::octupole:
-      BuildOctupole(strengths,   nominalrigidity); break;
+      BuildOctupole(strength,   brho); break;
     case BDSFieldType::decapole:
-      BuildDecapole(strengths,   nominalrigidity); break;
+      BuildDecapole(strength,   brho); break;
     case BDSFieldType::multipole:
-      BuildMultipole(strengths,  nominalrigidity); break;
+      BuildMultipole(strength,  brho); break;
     default:
       G4cerr << __METHOD_NAME__ << "not an equation based field type" << G4endl;
       exit(1);
@@ -119,67 +112,72 @@ BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
   return completeField;
 }
 
-void BDSFieldFactory::BuildFieldSolenoid(BDSMagnetStrength* strength,
-					 G4double           nominalRigidity)
+void BDSFieldObjects::CommonConstructor()
 {
-  field         = new BDSFieldMagSolenoid(strength, nominalRigidity);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSolenoid(strength, nominalRigidity);
   completeField = new BDSFieldObjects(field, eqOfM, integrator);
 }
 
-void BDSFieldFactory::BuildFieldDipole(BDSMagnetStrength* strength,
-				       G4double           nominalRigidity)
+void BDSFieldFactory::BuildSolenoid(BDSMagnetStrength* strength,
+				    G4double           brho)
 {
-  field         = new BDSFieldMagSBend(strength, nominalRigidity);
+  field         = new BDSFieldMagSolenoid(strength, brho);
   eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSolenoid(strength, nominalRigidity);
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  integrator    = new BDSIntegratorSolenoid(strength, brho);
+  CommonConstructor();
 }
 
-void BDSFieldFactory::BuildFieldQuadrupole(BDSMagnetStrength* strength,
-					   G4double           nominalRigidity)
+void BDSFieldFactory::BuildDipole(BDSMagnetStrength* strength,
+				  G4double           brho)
 {
-  field         = new BDSFieldMagQuadrupole(strength, nominalRigidity);
+  field         = new BDSFieldMagSBend(strength, brho);
   eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorQuadrupole(strength, nominalRigidity);
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  integrator    = new BDSIntegratorSolenoid(strength, brho);
+  CommonConstructor();
 }
 
-void BDSFieldFactory::BuildFieldSextupole(BDSMagnetStrength* strength,
-					  G4double           nominalRigidity)
+void BDSFieldFactory::BuildQuadrupole(BDSMagnetStrength* strength,
+				      G4double           brho)
 {
-  field         = new BDSFieldMagSextupole(strength, nominalRigidity);
+  field         = new BDSFieldMagQuadrupole(strength, brho);
   eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSextupole(strength, nominalRigidity);
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  integrator    = new BDSIntegratorQuadrupole(strength, brho);
+  CommonConstructor();
 }
 
-void BDSFieldFactory::BuildFieldOctupole(BDSMagnetStrength* strength,
-					 G4double           nominalRigidity)
+void BDSFieldFactory::BuildSextupole(BDSMagnetStrength* strength,
+					  G4double           brho)
 {
-  field         = new BDSFieldMagOctupole(strength, nominalRigidity);
+  field         = new BDSFieldMagSextupole(strength, brho);
   eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorOctupole(strength, nominalRigidity);
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  integrator    = new BDSIntegratorSextupole(strength, brho);
+  CommonConstructor();
 }
 
-void BDSFieldFactory::BuildFieldDecapole(BDSMagnetStrength* strength,
-					 G4double           nominalRigidity)
+void BDSFieldFactory::BuildOctupole(BDSMagnetStrength* strength,
+				    G4double           brho)
 {
-  field         = new BDSFieldMagDecapole(strength, nominalRigidity);
+  field         = new BDSFieldMagOctupole(strength, brho);
   eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorDecapole(strength, nominalRigidity);
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  integrator    = new BDSIntegratorOctupole(strength, brho);
+  CommonConstructor();
 }
 
-void BDSFieldFactory::BuildFieldMultipole(BDSMagnetStrength* strength,
-					  G4double           nominalRigidity)
+void BDSFieldFactory::BuildDecapole(BDSMagnetStrength* strength,
+				    G4double           brho)
 {
-  field         = new BDSFieldMagMultipole(strength, nominalRigidity);
+  field         = new BDSFieldMagDecapole(strength, brho);
   eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorMultipole(strength, nominalRigidity);
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  integrator    = new BDSIntegratorDecapole(strength, brho);
+  CommonConstructor();
+}
+
+void BDSFieldFactory::BuildMultipole(BDSMagnetStrength* strength,
+				     G4double           brho)
+{
+  field         = new BDSFieldMagMultipole(strength, brho);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorMultipole(strength, brho);
+  CommonConstructor();
 }
 
 BDSMagFieldMesh* BDSFieldFactory::BuildMagFieldXY()
