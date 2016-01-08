@@ -1,13 +1,13 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSSbendMagField.hh"
+#include "BDSFieldMagSBend.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
 
 #include <limits>
 
-BDSSbendMagField::BDSSbendMagField(G4ThreeVector fieldIn,
+BDSFieldMagSBend::BDSFieldMagSBend(G4ThreeVector fieldIn,
 				   const G4double length,
 				   const G4double angle,
 				   G4bool debugIn):
@@ -43,10 +43,10 @@ BDSSbendMagField::BDSSbendMagField(G4ThreeVector fieldIn,
     }
 }
 
-BDSSbendMagField::~BDSSbendMagField()
+BDSFieldMagSBend::~BDSFieldMagSBend()
 {}
 
-void BDSSbendMagField::GetFieldValue(const G4double point[4],
+void BDSFieldMagSBend::GetFieldValue(const G4double point[4],
 				     G4double* bField) const
 {
   G4ThreeVector pointVector(point[0], point[1], point[2]);

@@ -7,7 +7,7 @@
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSSbendMagField.hh"
+#include "BDSFieldMagSBend.hh"
 #include "BDSUtilities.hh"
 
 #include "G4ClassicalRK4.hh"
@@ -83,7 +83,7 @@ void BDSKicker::BuildBPFieldAndStepper()
       G4cout << __METHOD_NAME__ << "Kick angle: " << kickAngle << " B: " << vectorBField << G4endl;
 #endif
       
-      itsMagField = new BDSSbendMagField(vectorBField,chordLength,kickAngle);
+      itsMagField = new BDSFieldMagSBend(vectorBField,chordLength,kickAngle);
       itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
       itsStepper  = new G4ClassicalRK4(itsEqRhs);
     }

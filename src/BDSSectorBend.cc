@@ -8,7 +8,7 @@
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSSbendMagField.hh"
+#include "BDSFieldMagSBend.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
 
 #include "G4LogicalVolume.hh"
@@ -89,7 +89,7 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   // set up the magnetic field and stepper
   G4ThreeVector Bfield(0.,itsBField,0.);
   // B-Field constructed with arc length for radius of curvature
-  itsMagField = new BDSSbendMagField(Bfield,arcLength,angle);
+  itsMagField = new BDSFieldMagSBend(Bfield,arcLength,angle);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
   dipoleStepper->SetBField(itsBField);

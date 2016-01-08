@@ -10,7 +10,7 @@
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSSbendMagField.hh"
+#include "BDSFieldMagSBend.hh"
 #include "BDSUtilities.hh"
 
 #include "G4CutTubs.hh"
@@ -117,7 +117,7 @@ void BDSRBend::BuildBPFieldAndStepper()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
 #endif
-      itsMagField = new BDSSbendMagField(Bfield,arclength,angle);
+      itsMagField = new BDSFieldMagSBend(Bfield,arclength,angle);
       itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
   
       BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);

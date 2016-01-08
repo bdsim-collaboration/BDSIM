@@ -1,23 +1,23 @@
-#ifndef BDSSBENDFIELD_H
-#define BDSSBENDFIELD_H
+#ifndef BDSFIELDMAGSBEND_H
+#define BDSFIELDMAGSBEND_H
 
 #include "globals.hh"
 #include "G4MagneticField.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSSbendMagField: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagSBend: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
   /// A constant uniform field with value equal to 'field'. If angle is
   /// finite, the local radius of curvature is calculated and used by 
-  BDSSbendMagField(G4ThreeVector  fieldIn,
+  BDSFieldMagSBend(G4ThreeVector  fieldIn,
 		   const G4double aLength,
 		   const G4double aAngle  = 0,
 		   G4bool debugIn = false);
   
 		       
-  virtual ~BDSSbendMagField();
+  virtual ~BDSFieldMagSBend();
 
   /// The method Geant4 will use to access the field value
   virtual void  GetFieldValue(const G4double point[4],
@@ -40,7 +40,7 @@ private:
   G4bool debug;
 };
 
-inline G4double BDSSbendMagField::GetLocalRadius() const
+inline G4double BDSFieldMagSBend::GetLocalRadius() const
 {return localRadius;}
 
 #endif

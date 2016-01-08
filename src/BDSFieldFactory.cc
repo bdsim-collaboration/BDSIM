@@ -133,7 +133,7 @@ void BDSFieldFactory::BuildFieldSolenoid(BDSMagnetStrength* strength,
 void BDSFieldFactory::BuildFieldDipole(BDSMagnetStrength* strength,
 				       G4double           nominalRigidity)
 {
-  field         = new BDSFieldMagSolenoid(strength, nominalRigidity);
+  field         = new BDSFieldMagSBend(strength, nominalRigidity);
   eqOfM         = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorSolenoid(strength, nominalRigidity);
   completeField = new BDSFieldObjects(field, eqOfM, integrator);
