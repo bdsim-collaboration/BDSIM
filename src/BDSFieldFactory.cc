@@ -111,8 +111,6 @@ BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
       BuildDecapole(strengths,   nominalrigidity); break;
     case BDSFieldType::multipole:
       BuildMultipole(strengths,  nominalrigidity); break;
-    case BDSFieldType::sbend:
-      BuildSBend(strengths,      nominalrigidity); break;
     default:
       G4cerr << __METHOD_NAME__ << "not an equation based field type" << G4endl;
       exit(1);
@@ -136,6 +134,51 @@ void BDSFieldFactory::BuildFieldDipole(BDSMagnetStrength* strength,
   field         = new BDSFieldMagSBend(strength, nominalRigidity);
   eqOfM         = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorSolenoid(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+}
+
+void BDSFieldFactory::BuildFieldQuadrupole(BDSMagnetStrength* strength,
+					   G4double           nominalRigidity)
+{
+  field         = new BDSFieldMagQuadrupole(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorQuadrupole(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+}
+
+void BDSFieldFactory::BuildFieldSextupole(BDSMagnetStrength* strength,
+					  G4double           nominalRigidity)
+{
+  field         = new BDSFieldMagSextupole(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorSextupole(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+}
+
+void BDSFieldFactory::BuildFieldOctupole(BDSMagnetStrength* strength,
+					 G4double           nominalRigidity)
+{
+  field         = new BDSFieldMagOctupole(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorOctupole(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+}
+
+void BDSFieldFactory::BuildFieldDecapole(BDSMagnetStrength* strength,
+					 G4double           nominalRigidity)
+{
+  field         = new BDSFieldMagDecapole(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorDecapole(strength, nominalRigidity);
+  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+}
+
+void BDSFieldFactory::BuildFieldMultipole(BDSMagnetStrength* strength,
+					  G4double           nominalRigidity)
+{
+  field         = new BDSFieldMagMultipole(strength, nominalRigidity);
+  eqOfM         = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorMultipole(strength, nominalRigidity);
   completeField = new BDSFieldObjects(field, eqOfM, integrator);
 }
 

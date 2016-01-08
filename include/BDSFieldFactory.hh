@@ -66,7 +66,6 @@ private:
   void BuildOctupole(BDSMagnetStrength*   strength, G4double nominalRigidity);
   void BuildDecapole(BDSMagnetStrength*   strength, G4double nominalRigidity);
   void BuildMultipole(BDSMagnetStrength*  strength, G4double nominalRigidity);
-  void BuildSBend(BDSMagnetStrength*      strength, G4double nominalRigidity);
 
   /// Splits the G4String member variable formatAndName on the ":" character.
   /// Whatever is before is taken as the fromat string and whatever is after is
