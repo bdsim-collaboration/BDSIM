@@ -1,14 +1,14 @@
 #include "BDSGlobalConstants.hh" 
-#include "BDSSextMagField.hh"
+#include "BDSFieldMagSextupole.hh"
 
-BDSSextMagField::BDSSextMagField(G4double aBDblePrime):
+BDSFieldMagSextupole::BDSFieldMagSextupole(G4double aBDblePrime):
   itsBDblePrime(aBDblePrime)
 {;}
 
-BDSSextMagField::~BDSSextMagField()
+BDSFieldMagSextupole::~BDSFieldMagSextupole()
 {;}
 
-void BDSSextMagField::GetFieldValue(const G4double Point[4],
+void BDSFieldMagSextupole::GetFieldValue(const G4double Point[4],
 				    G4double *Bfield ) const
 {
   G4ThreeVector GlobalR(Point[0], Point[1], Point[2]);

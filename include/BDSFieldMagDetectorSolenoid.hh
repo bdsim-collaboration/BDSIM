@@ -1,5 +1,5 @@
-#ifndef BDSDETECTORSOLENOIDMAGFIELD_H
-#define BDSDETECTORSOLENOIDMAGFIELD_H
+#ifndef BDSFIELDMAGDETECTORSOLENOID_H
+#define BDSFIELDMAGDETECTORSOLENOID_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
@@ -12,16 +12,16 @@
  * Developed from BDSQuadMagField.cc
  */
 
-class BDSDetectorSolenoidMagField: public BDSMagFieldMesh, public BDSAuxiliaryNavigator
+class BDSFieldMagDetectorSolenoid: public BDSMagFieldMesh, public BDSAuxiliaryNavigator
 {
 public: 
-  BDSDetectorSolenoidMagField(G4double BIn,
+  BDSFieldMagDetectorSolenoid(G4double BIn,
 			      G4double Bout,
 			      G4double radiusIn,
 			      G4double radiusOut,
 			      G4double zMin,
 			      G4double zMax);
-  virtual ~BDSDetectorSolenoidMagField();
+  virtual ~BDSFieldMagDetectorSolenoid();
   
   virtual void  GetFieldValue( const G4double Point[4],
 			       G4double *Bfield ) const;

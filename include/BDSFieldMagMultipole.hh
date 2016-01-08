@@ -1,5 +1,5 @@
-#ifndef BDSMULTIPOLEMAGFIELD_H
-#define BDSMULTIPOLEMAGFIELD_H
+#ifndef BDSFIELDMAGMULTIPOLE_H
+#define BDSFIELDMAGMULTIPOLE_H
 
 #include <list>
 #include "G4Types.hh"
@@ -7,11 +7,11 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSMultipoleMagField: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagMultipole: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
-  BDSMultipoleMagField(std::list<G4double> knl, std::list<G4double> ksl);
-  virtual ~BDSMultipoleMagField();
+  BDSFieldMagMultipole(std::list<G4double> knl, std::list<G4double> ksl);
+  virtual ~BDSFieldMagMultipole();
 
   virtual void  GetFieldValue( const G4double *Point,
 			       G4double *Bfield ) const;

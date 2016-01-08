@@ -4,7 +4,7 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSOctupole.hh"
-#include "BDSOctMagField.hh"
+#include "BDSFieldMagOctupole.hh"
 #include "BDSOctStepper.hh"
 
 #include "G4FieldManager.hh"
@@ -52,7 +52,7 @@ void BDSOctupole::Build()
 void BDSOctupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField=new BDSOctMagField(itsBTriplePrime);
+  itsMagField=new BDSFieldMagOctupole(itsBTriplePrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
   BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);

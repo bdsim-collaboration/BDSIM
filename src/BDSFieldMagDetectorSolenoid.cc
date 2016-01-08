@@ -1,10 +1,10 @@
-#include "BDSDetectorSolenoidMagField.hh"
+#include "BDSFieldMagDetectorSolenoid.hh"
 #include "BDSMagFieldMesh.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"
 
-BDSDetectorSolenoidMagField::BDSDetectorSolenoidMagField(G4double BIn,
+BDSFieldMagDetectorSolenoid::BDSFieldMagDetectorSolenoid(G4double BIn,
 							 G4double BOut,
 							 G4double radiusIn,
 							 G4double radiusOut,
@@ -18,10 +18,10 @@ BDSDetectorSolenoidMagField::BDSDetectorSolenoidMagField(G4double BIn,
   itsZMax(zMax)
 {;}
 
-BDSDetectorSolenoidMagField::~BDSDetectorSolenoidMagField()
+BDSFieldMagDetectorSolenoid::~BDSFieldMagDetectorSolenoid()
 {;}
 
-void BDSDetectorSolenoidMagField::GetFieldValue(const G4double Point[4],
+void BDSFieldMagDetectorSolenoid::GetFieldValue(const G4double Point[4],
 						G4double *Bfield) const
 { 
   G4ThreeVector     GlobalR      = G4ThreeVector(Point[0], Point[1], Point[2]);
@@ -41,7 +41,8 @@ void BDSDetectorSolenoidMagField::GetFieldValue(const G4double Point[4],
 	{zField = itsBIn;}
       else if(localRad<itsRadiusOut)
 	{zField = itsBOut;}
-      else zField=0;
+      else
+	{zField=0;}
     }
   else
     {zField=0;}

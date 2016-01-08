@@ -1,16 +1,16 @@
-#ifndef BDSSEXTMAGFIELD_H
-#define BDSSEXTMAGFIELD_H
+#ifndef BDSFIELDMAGSEXTUPOLE_H
+#define BDSFIELDMAGSEXTUPOLE_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 
-class BDSSextMagField: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagSextupole: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
-  BDSSextMagField(G4double aBDblePrime);
-  virtual ~BDSSextMagField();
+  BDSFieldMagSextupole(G4double aBDblePrime);
+  virtual ~BDSFieldMagSextupole();
   
   virtual void  GetFieldValue(const G4double Point[4],
 			      G4double *Bfield) const;
@@ -21,7 +21,7 @@ private:
   G4double itsBDblePrime;
 };
 
-inline void BDSSextMagField::SetBDblPrime(G4double aBDblePrime)
+inline void BDSFieldMagSextupole::SetBDblPrime(G4double aBDblePrime)
 { itsBDblePrime = aBDblePrime; }
 
 #endif

@@ -1,13 +1,7 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDecapole.hh"
-#include "BDSDecMagField.hh"
+#include "BDSFieldMagDecapole.hh"
 #include "BDSDecStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
@@ -56,7 +50,7 @@ void BDSDecapole::Build() {
 void BDSDecapole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField=new BDSDecMagField(itsBQuadPrime);
+  itsMagField=new BDSFieldMagDecapole(itsBQuadPrime);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
   
   BDSDecStepper* decStepper=new BDSDecStepper(itsEqRhs);

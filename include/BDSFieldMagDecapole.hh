@@ -1,5 +1,5 @@
-#ifndef BDSDECMAGFIELD_H
-#define BDSDECMAGFIELD_H
+#ifndef BDSFIELDMAGDECAPOLE_H
+#define BDSFIELDMAGDECAPOLE_H
 
 #include "BDSAuxiliaryNavigator.hh"
 
@@ -12,11 +12,11 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-class BDSDecMagField: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagDecapole: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
-  BDSDecMagField(G4double aBQuadPrime);
-  virtual ~BDSDecMagField();
+  BDSFieldMagDecapole(G4double aBQuadPrime);
+  virtual ~BDSFieldMagDecapole();
 
   virtual void  GetFieldValue( const G4double Point[4],
 			       G4double *Bfield ) const;
@@ -25,7 +25,7 @@ private:
   G4double itsBQuadPrime;
 };
 
-inline void BDSDecMagField::SetBQuadPrime(G4double aBQuadPrime)
+inline void BDSFieldMagDecapole::SetBQuadPrime(G4double aBQuadPrime)
 { itsBQuadPrime = aBQuadPrime;}
 
-#endif /* BDSDECMAGFIELD */
+#endif

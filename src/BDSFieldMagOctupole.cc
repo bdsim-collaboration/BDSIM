@@ -1,17 +1,17 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSOctMagField.hh"
+#include "BDSFieldMagOctupole.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"
 
-BDSOctMagField::BDSOctMagField(G4double aBTrpPrime):
+BDSFieldMagOctupole::BDSFieldMagOctupole(G4double aBTrpPrime):
   itsBTrpPrime(aBTrpPrime)
 {;}
 
-BDSOctMagField::~BDSOctMagField()
+BDSFieldMagOctupole::~BDSFieldMagOctupole()
 {;}
 
-void BDSOctMagField::GetFieldValue(const G4double Point[4],
+void BDSFieldMagOctupole::GetFieldValue(const G4double Point[4],
 				   G4double *Bfield ) const
 {
   G4ThreeVector GlobalR(Point[0], Point[1], Point[2]);

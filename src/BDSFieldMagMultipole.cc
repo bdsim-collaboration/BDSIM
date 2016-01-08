@@ -1,6 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSMultipoleMagField.hh"
+#include "BDSFieldMagMultipole.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4ParticleDefinition.hh"
@@ -8,11 +8,11 @@
 
 #include <list>
 
-BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4double> ks)
+BDSFieldMagMultipole::BDSFieldMagMultipole(std::list<G4double> kn, std::list<G4double> ks)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout<<"Creating BDSMultipoleMagField"<<G4endl;
+  G4cout<<"Creating BDSFieldMagMultipole"<<G4endl;
   G4cout<<"size="<<kn.size()<<G4endl;
 #endif
 
@@ -84,9 +84,9 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   */
 }
 
-BDSMultipoleMagField::~BDSMultipoleMagField(){}
+BDSFieldMagMultipole::~BDSFieldMagMultipole(){}
 
-void BDSMultipoleMagField::GetFieldValue(const G4double *Point,
+void BDSFieldMagMultipole::GetFieldValue(const G4double *Point,
 					 G4double *Bfield ) const
 {
 #ifdef BDSDEBUG

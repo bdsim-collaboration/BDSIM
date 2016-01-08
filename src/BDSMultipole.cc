@@ -1,6 +1,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnet.hh"
-#include "BDSMultipoleMagField.hh"
+#include "BDSFieldMagMultipole.hh"
 #include "BDSMultipole.hh"
 
 #include "G4FieldManager.hh"
@@ -88,7 +88,7 @@ void BDSMultipole::CommonConstructor(std::list<G4double> akn, std::list<G4double
 void BDSMultipole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField = new BDSMultipoleMagField(kn,ks);
+  itsMagField = new BDSFieldMagMultipole(kn,ks);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
   itsStepper  = new G4SimpleRunge(itsEqRhs);
 }

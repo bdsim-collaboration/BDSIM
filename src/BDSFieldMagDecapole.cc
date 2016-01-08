@@ -1,13 +1,16 @@
-#include "BDSDecMagField.hh"
+#include "BDSFieldMagDecapole.hh"
 
-BDSDecMagField::BDSDecMagField(G4double aBQuadPrime):
+#include "globals.hh" // geant4 types / globals
+#include "G4AffineTransform.hh"
+
+BDSFieldMagDecapole::BDSFieldMagDecapole(G4double aBQuadPrime):
   itsBQuadPrime(aBQuadPrime)
 {;}
  
-BDSDecMagField::~BDSDecMagField()
+BDSFieldMagDecapole::~BDSFieldMagDecapole()
 {;}
 
-void BDSDecMagField::GetFieldValue(const G4double Point[4],
+void BDSFieldMagDecapole::GetFieldValue(const G4double Point[4],
 				   G4double *Bfield) const
 {
   G4ThreeVector     GlobalR      = G4ThreeVector(Point[0], Point[1], Point[2]);

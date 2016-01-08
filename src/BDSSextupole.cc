@@ -5,7 +5,7 @@
 #include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSSextMagField.hh"
+#include "BDSFieldMagSextupole.hh"
 #include "BDSSextStepper.hh"
 
 #include "G4FieldManager.hh"
@@ -55,7 +55,7 @@ void BDSSextupole::Build()
 void BDSSextupole::BuildBPFieldAndStepper()
 {
   // set up the magnetic field and stepper
-  itsMagField = new BDSSextMagField(1*itsBDblPrime);
+  itsMagField = new BDSFieldMagSextupole(1*itsBDblPrime);
   itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
 
   BDSSextStepper* sextStepper = new BDSSextStepper(itsEqRhs);
