@@ -1,27 +1,42 @@
 #ifndef BDSFIELDMAGSEXTUPOLE_H
 #define BDSFIELDMAGSEXTUPOLE_H
 
-#include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "globals.hh" // geant4 types / globals
 
-#include "BDSAuxiliaryNavigator.hh"
+#include "BDSFieldMagBase.hh"
 
-class BDSFieldMagSextupole: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSMagnetStrength;
+
+/**
+ * @brief Class that provides the magnetic strength in a sextupole.
+ * 
+ * The magnetic field is calculated from the sextupole strength parameter
+ * "k2" and a design rigidity (brho).
+ */
+
+class BDSFieldMagSextupole: public BDSFieldMagBase
 {
 public:
-  BDSFieldMagSextupole(G4double aBDblePrime);
-  virtual ~BDSFieldMagSextupole();
+  BDSFieldMagSextupole(const BDSMagnetStrength* strength,
+		       const G4double           brho);
   
-  virtual void  GetFieldValue(const G4double Point[4],
-			      G4double *Bfield) const;
+  virtual ~BDSFieldMagSextupole(){;}
   
-  void SetBDblPrime(G4double aBDblePrime);
+  virtual void  GetFieldValue(const G4double point[4],
+			      G4double* field) const;
   
 private:
-  G4double itsBDblePrime;
-};
+  /// Private default constructor to avoid usage.
+  BDSFieldMagSextupole(){;}
+  
+  /// B'' - second derivative of the magnetic field.
+  G4double bDoublePrime;
 
-inline void BDSFieldMagSextupole::SetBDblPrime(G4double aBDblePrime)
-{ itsBDblePrime = aBDblePrime; }
+  /// B'' / 3! cached for simplicity
+  G4double bTPNormed;
+  
+  /// bDoublePrime / 2 cached
+  G4double halfBDoublePrime;
+};
 
 #endif

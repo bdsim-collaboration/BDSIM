@@ -1,27 +1,38 @@
 #ifndef BDSFIELDMAGOCTUPOLE_H
 #define BDSFIELDMAGOCTUPOLE_H
 
-#include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "globals.hh" // geant4 types / globals
 
-#include "BDSAuxiliaryNavigator.hh"
+#include "BDSFieldMagBase.hh"
 
-class BDSFieldMagOctupole: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSMagnetStrength;
+
+/**
+ * @brief Class that provides the magnetic strength in an octupole.
+ * 
+ * The magnetic field is calculated from the octuupole strength parameter
+ * "k3" and a design rigidity (brho).
+ */
+
+class BDSFieldMagOctupole: public BDSFieldMagBase
 {
 public:
-  BDSFieldMagOctupole(G4double aBTrpPrime);
-  virtual ~BDSFieldMagOctupole();
-  
-  virtual void  GetFieldValue(const G4double Point[4],
-			      G4double *Bfield ) const;
-  
-  void SetBTrpPrime(G4double aBTrpPrime);
+  BDSFieldMagOctupole(const BDSMagnetStrength* strength,
+		      const G4double           brho);
+
+  ~BDSFieldMagOctupole(){;}
+
+  /// Overridden method from G4MagneticField - access the field from this octupole
+  /// at a given global set of coordinates. These are first converted to local coordinates
+  /// using the cached transform from BDSAuxiliaryNavigator.
+  virtual void GetFieldValue(const G4double point[4],
+			     G4double* field ) const;
   
 private:
-  G4double itsBTrpPrime;
-};
+  /// Private default constructor to force use of supplied constructor.
+  BDSFieldMagOctupole();
 
-inline void BDSFieldMagOctupole::SetBTrpPrime(G4double aBTrpPrime)
-{ itsBTrpPrime = aBTrpPrime;}
+  G4double bTriplePrime;
+};
 
 #endif

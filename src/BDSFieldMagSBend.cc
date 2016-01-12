@@ -1,12 +1,16 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSFieldMagSBend.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
+#include "G4AffineTransform.hh"
 
 #include <limits>
+#include <cmath>
 
+/*
 BDSFieldMagSBend::BDSFieldMagSBend(G4ThreeVector fieldIn,
 				   const G4double length,
 				   const G4double angle,
@@ -42,28 +46,32 @@ BDSFieldMagSBend::BDSFieldMagSBend(G4ThreeVector fieldIn,
 	}
     }
 }
+*/
 
-BDSFieldMagSBend::~BDSFieldMagSBend()
-{}
+BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength* strength,
+				   G4double           brho,
+				   G4ThreeVector      unitDirection)
+{
+  G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
+  G4double ffact  = BDSGlobalConstants::Instance()->GetFFact();
+  // note the direction of the bend shouldn't change with magnet flip with charge, hence
+  // the multiplacation by ffact
+  G4double bFieldMag = brho * (*strength)["angle"]/(*strength)["length"] * charge * ffact;
+  G4double unitMag   = unitDirection.mag();
+  if (!BDS::IsFinite(unitMag))
+    {localField = G4ThreeVector(0, bFieldMag, 0);}
+  else
+    {localField = bFieldMag * unitDirection.unit();}
+  // always normalise to ensure it's a unit vector
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B (local) = " << localBField << G4endl;
+#endif
+}
 
 void BDSFieldMagSBend::GetFieldValue(const G4double point[4],
-				     G4double* bField) const
+				     G4double* field) const
 {
-  G4ThreeVector pointVector(point[0], point[1], point[2]);
-  auxNavigator->LocateGlobalPointAndSetup(pointVector);
-  G4AffineTransform globalAffine = G4AffineTransform(auxNavigator->GetLocalToGlobalTransform());
-  G4ThreeVector     globalField  = G4ThreeVector(field); // copy global field first to preserve constness
-  globalAffine.ApplyAxisTransform(globalField); // modifies global field
-  if (debug)
-    {
-      G4cout << __METHOD_NAME__ << "local field:  " << field       << G4endl;
-      G4cout << __METHOD_NAME__ << "global field: " << globalField << G4endl;
-    }
-  
-  bField[0] = globalField[0];
-  bField[1] = globalField[1];
-  bField[2] = globalField[2];
-  bField[3] = 0;
-  bField[4] = 0;
-  bField[5] = 0;
+  ConvertToLocal(point);
+
+  OutputToGlobal(localField, field);
 }

@@ -1,29 +1,31 @@
-#include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 #include "BDSFieldMagQuadrupole.hh"
 
-#include "G4AffineTransform.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(G4double aBGrad):
-  itsBGrad(aBGrad)
-{;}
 
-BDSFieldMagQuadrupole::~BDSFieldMagQuadrupole()
-{;}
-
-void BDSFieldMagQuadrupole::GetFieldValue( const G4double Point[4],
-		       G4double *Bfield ) const
+BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(const BDSMagnetStrength* strength,
+					     const G4double           brho)
 {
-  G4ThreeVector GlobalR(Point[0], Point[1], Point[2]);
+  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
+  bPrime = brho * (*strength)["k1"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
+#endif
+}
+
+void BDSFieldMagQuadrupole::GetFieldValue(const G4double point[4],
+					  G4double* field) const
+{
+  G4ThreeVector localPosition = ConvertToLocal(point);
   
-  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
-  
-  Bfield[0] = LocalR.y()*itsBGrad;
-  Bfield[1] = LocalR.x()*itsBGrad;
-  Bfield[2] = 0;
-  // factor of 2 is actually 2-factorial.
+  G4ThreeVector localField;
+  localField[0] = localPosition.y() * bPrime; // B_x = B' * y;
+  localField[1] = localPosition.x() * bPrime; // B_y = B' * x;
+  localField[2] = 0;                          // B_z = 0
+
+  OutputToGlobal(localField, field);
 }
 
 

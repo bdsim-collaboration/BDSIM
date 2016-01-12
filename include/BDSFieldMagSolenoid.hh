@@ -6,23 +6,26 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 
+class BDSMagnetStrength;
+
 class BDSFieldMagSolenoid: public G4MagneticField, public BDSAuxiliaryNavigator
 {
 public:
-  BDSFieldMagSolenoid(G4double aBField);
-  virtual ~BDSFieldMagSolenoid();
+  BDSFieldMagSolenoid(BDSMagnetStrength* strength,
+		      G4double           brho);
+  
+  ~BDSFieldMagSolenoid(){;}
 
   /// Get Field Value (independent of position, since solenoid field is uniform)
-  virtual void  GetFieldValue(const G4double* /*Point[4]*/,
-			      G4double *Bfield) const;
-
-  void SetBField(G4double aBField);
+  virtual void  GetFieldValue(const G4double* point[4],
+			      G4double* field) const;
   
 private:
-  G4double itsBField;
-};
+  /// Private default constructor to ensure use of supplied constructor
+  BDSFieldMagSolenoid();
 
-inline void BDSFieldMagSolenoid::SetBField(G4double aBField)
-{ itsBField = aBField; }
+  /// The value of the uniform magnetic field in local coordinates.
+  G4ThreeVector localBField;
+};
 
 #endif

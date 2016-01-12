@@ -1,27 +1,37 @@
-#include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
 #include "BDSFieldMagSextupole.hh"
 
-BDSFieldMagSextupole::BDSFieldMagSextupole(G4double aBDblePrime):
-  itsBDblePrime(aBDblePrime)
-{;}
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 
-BDSFieldMagSextupole::~BDSFieldMagSextupole()
-{;}
+#include <cmath>
 
-void BDSFieldMagSextupole::GetFieldValue(const G4double Point[4],
-				    G4double *Bfield ) const
+BDSFieldMagSextupole::BDSFieldMagSextupole(const BDSMagnetStrength* strength,
+					   const G4double           brho)
 {
-  G4ThreeVector GlobalR(Point[0], Point[1], Point[2]);
+  // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
+  bDoublePrime     = brho * (*strength)["k2"];
+  halfBDoublePrime = bDoublePrime*0.5;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
+#endif
+}
 
-  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector LocalR = GlobalAffine.TransformPoint(GlobalR); 
+void BDSFieldMagSextupole::GetFieldValue(const G4double point[4],
+					 G4double* field) const
+{
+  G4ThreeVector localPosition = ConvertToLocal(point);
+  
+  // B_x = 2*x*y * (B''/2!)
+  // B_y = (x^2 - y^2) * (B''/2!)
+  // B_z = 0
 
-  Bfield[0]=2*LocalR.x()*LocalR.y()*itsBDblePrime/2;
-  Bfield[1]=(LocalR.x()*LocalR.x()-LocalR.y()*LocalR.y())*itsBDblePrime/2;
-  Bfield[2]=0;
+  G4ThreeVector localField;
+  localField[0] = localPosition.x() * localPosition.y() * bDoublePrime;
+  localField[1] = (pow(localPosition.x(),2) - pow(localPosition.y(),2)) * halfBDoublePrime;
+  localField[2] = 0;
 
-  // factor of 2 is actually 2-factorial.
+  OutputToGlobal(localField, field);
 }
 
 

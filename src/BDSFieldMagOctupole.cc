@@ -4,26 +4,38 @@
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"
 
-BDSFieldMagOctupole::BDSFieldMagOctupole(G4double aBTrpPrime):
-  itsBTrpPrime(aBTrpPrime)
-{;}
+#include <cmath>
 
-BDSFieldMagOctupole::~BDSFieldMagOctupole()
-{;}
-
-void BDSFieldMagOctupole::GetFieldValue(const G4double Point[4],
-				   G4double *Bfield ) const
+BDSFieldMagOctupole::BDSFieldMagOctupole(const BDSMagnetStrength* strength,
+					 const G4double           brho)
 {
-  G4ThreeVector GlobalR(Point[0], Point[1], Point[2]);
+  // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
+  bTriplePrime = brho * (*strength)["k3"];
+  bTPNormed    = bTriplePrime / 6.; 
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B''' = " << bTriplePrime << G4endl;
+#endif
+}
+
+void BDSFieldMagOctupole::GetFieldValue(const G4double point[4],
+					G4double* field) const
+{
+  G4ThreeVector localPosition = ConvertToLocal(point);
+
+  // B_x = (3x^2y - y^3) * (B'''/3!)
+  // B_y = (x^3-xy^2) * (B'''/3!)
+  // B_z = 0
+
+  //shortcuts
+  G4double x = localPosition.x();
+  G4double y = localPosition.y();
   
-  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
-  
-  Bfield[0] = (3*LocalR.x()*LocalR.x()*LocalR.y()-pow(LocalR.y(),3))*itsBTrpPrime/6.;
-  Bfield[1] = (pow(LocalR.x(),3)-LocalR.x()*LocalR.y()*LocalR.y())*itsBTrpPrime/6.;
-  Bfield[2] = 0;
-  // factor of 6 is actually 3-factorial.
+  G4ThreeVector localField;
+  localField[0] = (3 * pow(x,2) * y - pow(y,3)) * bTPNormed;
+  localField[1] = (pow(x,3) - x * pow(y,2)) * bTPNormed;
+  localField[2] = 0;
+
+  OutputToGlobal(localField, field);
 }
 
 

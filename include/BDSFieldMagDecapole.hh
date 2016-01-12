@@ -1,31 +1,42 @@
 #ifndef BDSFIELDMAGDECAPOLE_H
 #define BDSFIELDMAGDECAPOLE_H
 
-#include "BDSAuxiliaryNavigator.hh"
+#include "globals.hh" // geant4 types / globals
 
-#include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "BDSFieldMagBase.hh"
+
+class BDSMagnetStrength;
 
 /**
- * @brief Decapole magnetic field.
+ * @brief Class that provides the magnetic strength in a decapole.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * The magnetic field is calculated from the decapole strength parameter
+ * "k4" and a design rigidity (brho).
  */
 
-class BDSFieldMagDecapole: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagDecapole: public BDSFieldMagBase
 {
 public:
-  BDSFieldMagDecapole(G4double aBQuadPrime);
-  virtual ~BDSFieldMagDecapole();
+  BDSFieldMagDecapole(const BDSMagnetStrength* strength,
+		      const G4double           brho);
+  
+  ~BDSFieldMagDecapole(){;}
 
-  virtual void  GetFieldValue( const G4double Point[4],
-			       G4double *Bfield ) const;
-  void SetBQuadPrime(G4double aBQuadPrime);
+  /// Overridden method from G4MagneticField - access the field from this decapole
+  /// at a given global set of coordinates. These are first converted to local coordinates
+  /// using the cached transform from BDSAuxiliaryNavigator.
+  virtual void GetFieldValue(const G4double point[4],
+			     G4double* field) const;
+  
 private:
-  G4double itsBQuadPrime;
-};
+  /// Private default constructor to force use of supplied constructor.
+  BDSFieldMagDecapole();
 
-inline void BDSFieldMagDecapole::SetBQuadPrime(G4double aBQuadPrime)
-{ itsBQuadPrime = aBQuadPrime;}
+  /// B'''' - the fourth derivative of the magnetic field.
+  G4double bQuadruplePrime;
+
+  /// B'''' / 4!
+  G4double bQPNormed;
+};
 
 #endif

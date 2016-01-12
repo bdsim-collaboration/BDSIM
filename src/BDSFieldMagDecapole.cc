@@ -1,28 +1,41 @@
+#include "BDSDebug.hh"
 #include "BDSFieldMagDecapole.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4AffineTransform.hh"
+#include "G4ThreeVector.hh"
 
-BDSFieldMagDecapole::BDSFieldMagDecapole(G4double aBQuadPrime):
-  itsBQuadPrime(aBQuadPrime)
-{;}
- 
-BDSFieldMagDecapole::~BDSFieldMagDecapole()
-{;}
+#include <cmath>
 
-void BDSFieldMagDecapole::GetFieldValue(const G4double Point[4],
-				   G4double *Bfield) const
+BDSFieldMagDecapole::BDSFieldMagDecapole(const BDSMagnetStrength* strength,
+					 const G4double           brho)
 {
-  G4ThreeVector     GlobalR      = G4ThreeVector(Point[0], Point[1], Point[2]);
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
+  // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
+  bQuadruplePrime = brho * (*strength)["k4"];
+  bQPNormed       = bQuadruplePrime / 24.;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B'''' = " << bQuadruplePrime << G4endl;
+#endif
+}
 
-  Bfield[0]= 4*LocalR.x()*LocalR.y()*(LocalR.x()*LocalR.x()
-				      -LocalR.y()*LocalR.y())*itsBQuadPrime/24;
-  Bfield[1]=(pow(LocalR.x(),4)-6*LocalR.x()*LocalR.x()*LocalR.y()*LocalR.y()+
-	     pow(LocalR.y(),4))*itsBQuadPrime/24;
-  Bfield[2]=0;
-  // factor of 24 is actually 4-factorial.
+void BDSFieldMagDecapole::GetFieldValue(const G4double point[4],
+					G4double* field) const
+{
+  G4ThreeVector localPosition = ConvertToLocal(point);
+
+  // B_x = 4xy(x^2-y^2) * ( B''''/4!)
+  // B_y = (x^4 - 6x^2y^2 + y^4) * ( B''''/4!)
+  // B_z = 0
+  
+  //shortcuts
+  G4double x = localPosition.x();
+  G4double y = localPosition.y();
+
+  G4ThreeVector localField;
+  localField[0] = 4 * x * y * (pow(x,2)-pow(y,2)) * bQPNormed;
+  localField[1] = (pow(x,4) - 6 * pow(x,2) * pow(y,2) + pow(y,4)) * bQPNormed;
+  localField[2] = 0;
+
+  OutputToGlobal(localField, field);
 }
 
 
