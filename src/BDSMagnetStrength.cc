@@ -7,7 +7,7 @@
 #include <vector>
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
-  "k0",
+  "angle", "length",
   "k1", "k1s",
   "k2", "k2s",
   "k3", "k3s",
@@ -21,6 +21,12 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k11", "k11s",
   "k12", "k12s"
 };
+
+const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
+  "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12"};
+
+const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
+  "k1s", "k2s", "k3s", "k4s", "k5s", "k6s", "k7s", "k8s", "k9s", "k10s", "k11s", "k12s"};
 
 const G4double BDSMagnetStrength::zero     = 0.0;
 G4double       BDSMagnetStrength::variable = 0.0;
@@ -58,7 +64,7 @@ G4double& BDSMagnetStrength::operator[](const G4String key)
     }
   else
     {
-      G4cerr << "Invalide key \"" << key << G4endl;
+      G4cerr << "Invalid key \"" << key << G4endl;
       return variable;
     }
 }
@@ -69,9 +75,25 @@ const G4double& BDSMagnetStrength::operator[](G4String key) const
     {return GetValue(key);}
   else
     {
-      G4cerr << "Invalide key \"" << key << G4endl;
+      G4cerr << "Invalid key \"" << key << G4endl;
       return variable;
     }
+}
+
+std::vector<G4double> BDSMagnetStrength::NormalComponents() const
+{
+  std::vector<G4double> result;
+  for (auto key : normalComponentKeys)
+    {result.push_back(GetValue(key));}
+  return result;
+}
+
+std::vector<G4double> BDSMagnetStrength::SkewComponents() const
+{
+  std::vector<G4double> result;
+  for (auto key : skewComponentKeys)
+    {result.push_back(GetValue(key));}
+  return result;
 }
 
 G4bool BDSMagnetStrength::ValidKey(const G4String key) const

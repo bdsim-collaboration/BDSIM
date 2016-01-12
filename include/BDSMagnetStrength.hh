@@ -33,6 +33,18 @@ public:
   /// Accessors with array / map [] operator
   G4double& operator[](const G4String key);
   const G4double& operator[](G4String key) const;
+
+  /// Accessor for normal component keys
+  inline std::vector<G4String> NormalComponentKeys() const;
+
+  /// Accessor for skew component keys
+  inline std::vector<G4String> SkewComponentKeys() const;
+
+  /// Accessor for all normal components
+  std::vector<G4double> NormalComponents() const;
+
+  /// Accessor for all skew components
+  std::vector<G4double> SkewCompoents() const;
   
 private:
   /// A map containing the values for various magnet strengths. It only contains
@@ -50,12 +62,24 @@ private:
   /// Vector of the allowed strength parameters
   static const std::vector<G4String> keys;
 
+  /// Vector of the normal component strength parameters
+  static const std::vector<G4String> normalComponentKeys;
+
+  /// Vector of the normal component strength parameters
+  static const std::vector<G4String> skewComponentKeys;
+
   /// Keep a single copy of 0.0 as it needs to be returned as a reference not a value
   static const G4double zero;
 
   /// Dummy variable that can be overwritten
   static G4double variable;
 };
+
+inline std::vector<G4String> NormalComponentKeys() const
+{return normalComponentKeys;}
+
+inline std::vector<G4String> SkewComponentKeys() const
+{return skewComponentKeys;}
 
 
 #endif
