@@ -38,6 +38,14 @@ public:
   /// Destructor deletes all objects apart from the magnetic field
   ~BDSFieldObjects();
 
+  ///@{ Acessor.
+  inline G4Field*                GetField()            const;
+  inline G4EquationOfMotion*     GetEquationOfMotion() const;
+  inline G4MagIntegratorStepper* GetIntegrator()       const;
+  inline G4ChordFinder*          GetChordFinder()      const;
+  inline G4FieldManager*         GetFieldManager()     const;
+  ///@}
+  
 private:
   /// Private default constructor to force use of non-default constructor
   BDSFieldObjects();
@@ -60,5 +68,20 @@ private:
   /// Field manager
   G4FieldManager* fieldManager;
 };
+
+inline G4Field* BDSFieldObjects::GetField() const
+{return field;}
+
+inline G4EquationOfMotion* BDSFieldObjects::GetEquationOfMotion() const
+{return equationOfMotion;}
+
+inline G4MagIntegratorStepper* BDSFieldObjects::GetIntegrator() const
+{return magIntegratorStepper;}
+
+inline G4ChordFinder* BDSFieldObjects::GetChordFinder() const
+{return chordFinder;}
+
+inline G4FieldManager* BDSFieldObjects::GetFieldManager() const
+{return fieldManager;}
 
 #endif
