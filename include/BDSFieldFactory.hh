@@ -8,8 +8,14 @@
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include "G4EquationOfMotion.hh"
+#include "G4Field.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform.hh"
 
 class BDSGeometry;
+class BDSMagnetType;
 
 /**
  * @brief Factory that produces fields and their associated objects.
@@ -32,52 +38,68 @@ class BDSGeometry;
 class BDSFieldFactory
 {
 public:
-  BDSFieldFactory();
+  /// Public accessor method for singleton pattern.
+  static BDSFieldFactory* Instance();
+  
   ~BDSFieldFactory();
 
   /// Create a field based on a mesh of coordinates with field 3 vectors. This only
   /// produces the field object itself.
-  BDSMagFieldMesh* BuildMagneticField(G4String      formatAndFilePath,
-				      G4ThreeVector offsetIn   = G4ThreeVector(0,0,0),
-				      BDSGeometry*  geometryIn = nullptr);
+  BDSMagFieldMesh* CreateMagneticField(G4String      formatAndFilePath,
+				       G4ThreeVector offsetIn   = G4ThreeVector(0,0,0),
+				       BDSGeometry*  geometryIn = nullptr);
 
   /// Create a pure magnetic field as described by an equation, such as a quadupole or
   /// dipole field.  All associated objects are created and packaged together.
-  BDSFieldObjects* BuildFieldEquation(BDSFieldType       type,
-				      BDSMagnetStrength* strength,
-				      G4double           brho);
+  BDSFieldObjects* CreateFieldEquation(BDSFieldType       type,
+				       BDSMagnetStrength* strength,
+				       G4double           brho);
+
+  /// Create a pure magnetic field as described by an equation, such as a quadupole or
+  /// dipole field.  All associated objects are created and packaged together.
+  BDSFieldObjects* CreateFieldEquation(BDSMagnetType      type,
+				       BDSMagnetStrength* strength,
+				       G4double           brho);
 
   /// Create a field from a mesh of coordinates with field 3 vectors. All associated
   /// objects are created and packaged together.
-  BDSFieldObjects* BuildFieldMesh(BDSFieldType  type,
-				  G4String      filename,
-				  G4ThreeVector localOffset = G4ThreeVector(0,0,0),
-				  G4Transform*  transform = nullptr);
- 
-private:  
+  BDSFieldObjects* CreateFieldMesh(BDSFieldType  type,
+				   G4String      filename,
+				   G4ThreeVector localOffset = G4ThreeVector(0,0,0),
+				   G4Transform*  transform = nullptr);
+  
+private:
+  /// Private default constructor as singleton class.
+  BDSFieldFactory();
+
+  /// Instance - singleton patter
+  static BDSFieldFactory* instance;
+  
   G4ThreeVector offset;
   BDSFieldType  format;
   G4String      fileName;
   BDSGeometry*  geometry;
   G4double      cacheLength;
 
-  /// Variables to allow different functions to access different parts during construction
+  ///@{ Variable to allow different functions to access different parts during construction
   G4Field*                field;
-  G4EquationOfMotion*     eqOfM;
+  G4EquationOfMotion*     eqOfMotion;
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;
-
+  ///@}
+  
   /// Common construction of building field objects
   void CommonConstructor();
 
   ///@{ Delegate function to construct the specific classes
-  void BuildSolenoid(BDSMagnetStrength*   strength, G4double brho);
-  void BuildDipole(BDSMagnetStrength*     strength, G4double brho);
-  void BuildQuadrupole(BDSMagnetStrength* strength, G4double brho);
-  void BuildSextupole(BDSMagnetStrength*  strength, G4double brho);
-  void BuildOctupole(BDSMagnetStrength*   strength, G4double brho);
-  void BuildDecapole(BDSMagnetStrength*   strength, G4double brho);
-  void BuildMultipole(BDSMagnetStrength*  strength, G4double brho);
+  void CreateSolenoid(BDSMagnetStrength*   strength, G4double brho);
+  void CreateDipole(BDSMagnetStrength*     strength, G4double brho);
+  void CreateQuadrupole(BDSMagnetStrength* strength, G4double brho);
+  void CreateSextupole(BDSMagnetStrength*  strength, G4double brho);
+  void CreateOctupole(BDSMagnetStrength*   strength, G4double brho);
+  void CreateDecapole(BDSMagnetStrength*   strength, G4double brho);
+  void CreateMultipole(BDSMagnetStrength*  strength, G4double brho);
+  void CreateKicker(BDSMagnetStrength*  strength, G4double brho, G4bool isVertical);
   ///@}
   
   /// Splits the G4String member variable formatAndName on the ":" character.
@@ -89,9 +111,9 @@ private:
   /// to avoid mistaken contamination between uses of the factory
   void CleanUp();
 
-  BDSMagFieldMesh* BuildMagField3D();
-  BDSMagFieldMesh* BuildMagFieldXY();
-  BDSMagFieldMesh* BuildMagFieldLCDD();
-  BDSMagFieldMesh* BuildMagFieldSQL();
+  BDSMagFieldMesh* CreateMagField3D();
+  BDSMagFieldMesh* CreateMagFieldXY();
+  BDSMagFieldMesh* CreateMagFieldLCDD();
+  BDSMagFieldMesh* CreateMagFieldSQL();
 };
 #endif

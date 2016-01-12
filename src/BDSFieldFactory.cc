@@ -6,6 +6,16 @@
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
+#include "BDSFieldMagDecapole.hh"
+#include "BDSFieldMagDipole.hh"
+#include "BDSFieldMagMultipole.hh"
+#include "BDSFieldMagOctupole.hh"
+#include "BDSFieldMagQuadrupole.hh"
+#include "BDSFieldMagSextupole.hh"
+#include "BDSFieldMagSolenoid.hh"
+#include "BDSIntegratorDipole.hh"
+#include "BDSIntegratorQuadrupole.hh"
+#include "BDSIntegratorSolenoid.hh"
 #include "BDSMagFieldMesh.hh"
 #include "BDSMagFieldSQL.hh"
 #include "BDSMagFieldXY.hh"
@@ -17,6 +27,14 @@
 #include <typeinfo>
 #include <utility>
 
+BDSFieldFactory* BDSFieldFactory::instance = nullptr;
+
+BDSFieldFactory* BDSFieldFactory::Instance()
+{
+  if (instance == nullptr)
+    {instance = new BDSFieldFactory();}
+  return instance;
+}
 
 BDSFieldFactory::BDSFieldFactory()
 {
@@ -39,9 +57,9 @@ void BDSFieldType::CleanUp()
   completeField = nullptr;
 }
 
-BDSMagFieldMesh* BDSFieldFactory::BuildMagneticField(G4String      formatAndFilePath,
-						     G4ThreeVector offsetIn,
-						     BDSGeometry*  geometryIn)
+BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFilePath,
+						      G4ThreeVector offsetIn,
+						      BDSGeometry*  geometryIn)
   
 {
 #ifdef BDSDEBUG
@@ -55,17 +73,17 @@ BDSMagFieldMesh* BDSFieldFactory::BuildMagneticField(G4String      formatAndFile
   format   = BDS::DetermineBType(ff.second);
   
   if (format == BDSFieldType::threed)
-    {return BuildMagField3D();}
+    {return CreateMagField3D();}
   
   else if (format == BDSFieldType::xy)
-    {return BuildMagFieldXY();}
+    {return CreateMagFieldXY();}
   
   else if (format == BDSFieldType::zero)
     {
     if(geometry)
       {
 	if (geometry->Format() == BDSGeometryType::lcdd)
-	  {return BuildMagFieldLCDD();}
+	  {return CreateMagFieldLCDD();}
       }
     }
 
@@ -75,35 +93,40 @@ BDSMagFieldMesh* BDSFieldFactory::BuildMagneticField(G4String      formatAndFile
       if(geometry)
 	{
 	  if (geometry->Format() == BDSGeometryType::mokka)
-	    {return BuildMagFieldSQL();}
+	    {return CreateMagFieldSQL();}
 	}
     }
   return nullptr;
 }
 
-BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
-						     BDSMagnetStrength* strength,
-						     G4double           brho)
+BDSFieldObjects* BDSFieldFactory::CreateFieldEquation(BDSMagnetType      type,
+						      BDSMagnetStrength* strength,
+						      G4double           brho)
 {
   CleanUp();
   
   // switch on type and build correct field
   switch (type)
     {
-    case BDSFieldType::solenoid:
-      BuildSolenoid(strength,   brho); break;
-    case BDSFieldType::dipole:
-      BuildDipole(strength,     brho); break;
-    case BDSFieldType::quadrupole:
-      BuildQuadrupole(strength, brho); break;
-    case BDSFieldType::sextupole:
-      BuildSextupole(strength,  brho); break;
-    case BDSFieldType::octupole:
-      BuildOctupole(strength,   brho); break;
-    case BDSFieldType::decapole:
-      BuildDecapole(strength,   brho); break;
-    case BDSFieldType::multipole:
-      BuildMultipole(strength,  brho); break;
+    case BDSMagnetType::solenoid:
+      CreateSolenoid(strength,   brho); break;
+    case BDSMagnetType::sectorbend:
+    case BDSMagnetType::rectangularbend: // TBC need to think about length for this
+      CreateDipole(strength,     brho); break;
+    case BDSMagnetType::quadrupole:
+      CreateQuadrupole(strength, brho); break;
+    case BDSMagnetType::sextupole:
+      CreateSextupole(strength,  brho); break;
+    case BDSMagnetType::octupole:
+      CreateOctupole(strength,   brho); break;
+    case BDSMagnetType::decapole:
+      CreateDecapole(strength,   brho); break;
+    case BDSMagnetType::multipole:
+      CreateMultipole(strength,  brho); break;
+    case BDSMagnetType::vkick:
+      CreateKicker(strength, brho, true); break;
+    case BDSMagnetType::hkick:
+      CreateKicker(strength, brho, false); break;
     default:
       G4cerr << __METHOD_NAME__ << "not an equation based field type" << G4endl;
       exit(1);
@@ -111,82 +134,95 @@ BDSFieldObjects* BDSFieldFactory::BuildFieldEquation(BDSFieldType       type,
     }
   return completeField;
 }
-
+  
 void BDSFieldObjects::CommonConstructor()
 {
-  completeField = new BDSFieldObjects(field, eqOfM, integrator);
+  completeField = new BDSFieldObjects(field, eqOfMotion, integrator);
 }
 
-void BDSFieldFactory::BuildSolenoid(BDSMagnetStrength* strength,
-				    G4double           brho)
+void BDSFieldFactory::CreateSolenoid(BDSMagnetStrength* strength,
+				     G4double           brho)
 {
   field         = new BDSFieldMagSolenoid(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSolenoid(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorSolenoid(strength, brho, eqOfMotion);
   CommonConstructor();
 }
 
-void BDSFieldFactory::BuildDipole(BDSMagnetStrength* strength,
-				  G4double           brho)
+void BDSFieldFactory::CreateDipole(BDSMagnetStrength* strength,
+				   G4double           brho)
 {
   field         = new BDSFieldMagSBend(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSolenoid(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorDipole(strength, brho, eqOfMotion);
   CommonConstructor();
 }
 
-void BDSFieldFactory::BuildQuadrupole(BDSMagnetStrength* strength,
-				      G4double           brho)
+void BDSFieldFactory::CreateQuadrupole(BDSMagnetStrength* strength,
+				       G4double           brho)
 {
   field         = new BDSFieldMagQuadrupole(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorQuadrupole(strength, brho);
   CommonConstructor();
 }
 
-void BDSFieldFactory::BuildSextupole(BDSMagnetStrength* strength,
-					  G4double           brho)
+void BDSFieldFactory::CreateSextupole(BDSMagnetStrength* strength,
+				      G4double           brho)
 {
   field         = new BDSFieldMagSextupole(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorSextupole(strength, brho);
   CommonConstructor();
 }
 
-void BDSFieldFactory::BuildOctupole(BDSMagnetStrength* strength,
-				    G4double           brho)
+void BDSFieldFactory::CreateOctupole(BDSMagnetStrength* strength,
+				     G4double           brho)
 {
   field         = new BDSFieldMagOctupole(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorOctupole(strength, brho);
   CommonConstructor();
 }
 
-void BDSFieldFactory::BuildDecapole(BDSMagnetStrength* strength,
-				    G4double           brho)
+void BDSFieldFactory::CreateDecapole(BDSMagnetStrength* strength,
+				     G4double           brho)
 {
   field         = new BDSFieldMagDecapole(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorDecapole(strength, brho);
   CommonConstructor();
 }
 
-void BDSFieldFactory::BuildMultipole(BDSMagnetStrength* strength,
-				     G4double           brho)
+void BDSFieldFactory::CreateMultipole(BDSMagnetStrength* strength,
+				      G4double           brho)
 {
   field         = new BDSFieldMagMultipole(strength, brho);
-  eqOfM         = new G4Mag_UsualEqRhs(field);
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
   integrator    = new BDSIntegratorMultipole(strength, brho);
   CommonConstructor();
 }
 
-BDSMagFieldMesh* BDSFieldFactory::BuildMagFieldXY()
+void BDSFieldFactory::CreateKicker(BDSMagnetStrength* strength,
+				   G4double           brho,
+				   G4bool             isVertical)
+{
+  if (isVertical)
+    {field = new BDSFieldMagSBend(strength, brho, G4ThreeVector(-1,0,0));}
+  else
+    {field = new BDSFieldMagSBend(strength, brho);}
+  eqOfMotion    = new G4Mag_UsualEqRhs(field);
+  integrator    = new BDSIntegratorDipole(strength, brho);
+  CommonConstructor();
+}
+
+BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldXY()
 {return new BDSMagFieldXY(fileName);}
 
-BDSMagFieldMesh* BDSFieldFactory::BuildMagField3D()
+BDSMagFieldMesh* BDSFieldFactory::CreateMagField3D()
 {return new BDSMagField3D(fileName, offset);}
 
-BDSMagFieldMesh* BDSFieldFactory::BuildMagFieldSQL()
+BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldSQL()
 {
   if(geometry->HasFields() || !fileName.empty())
     {
@@ -206,5 +242,5 @@ BDSMagFieldMesh* BDSFieldFactory::BuildMagFieldSQL()
     {return nullptr;}
 }
 
-BDSMagFieldMesh* BDSFieldFactory::BuildMagFieldLCDD()
+BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldLCDD()
 {return (BDSMagFieldMesh*)(geometry->Field());}
