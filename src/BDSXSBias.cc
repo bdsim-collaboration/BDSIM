@@ -80,11 +80,11 @@ G4VParticleChange* BDSXSBias::PostStepDoIt(const G4Track& track,
     G4Track* secTrack[100];
     for (G4int i = 0; i < iNSec; i++) {
 #ifdef BDSDEBUG      
-      G4cout << "BDSXSBias::PostStepDoIt Correcting kinetic energy of pion" << G4endl;
+      //      G4cout << "BDSXSBias::PostStepDoIt Correcting kinetic energy of pion" << G4endl;
 #endif
       secTrack[i] = pChange->GetSecondary(i);
-      G4double EkCorrected = secTrack[i]->GetDynamicParticle()->GetKineticEnergy()/1000;
-      secTrack[i]->SetKineticEnergy(EkCorrected);
+      //      G4double EkCorrected = secTrack[i]->GetDynamicParticle()->GetKineticEnergy()/1000;
+      //      secTrack[i]->SetKineticEnergy(EkCorrected);
       secTrack[i]->SetWeight(ws);
 
     }
