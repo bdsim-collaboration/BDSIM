@@ -8,31 +8,36 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSIntegratorSolenoid::BDSIntegratorSolenoid(G4Mag_EqRhs* eqRHS):
-  G4MagIntegratorStepper(eqRHS, 6),
-  fPtrMagEqOfMot(eqRHS),
-  itsBField(0.0), itsDist(0.0), nvar(6)
+
+BDSIntegratorSolenoid::BDSIntegratorSolenoid(const BDSMagnetStrength* strength,
+					     const G4double           brho,
+					     const G4Mag_EqRhs*       eqRHSIn):
+  BDSIntegratorBase(eqRHS, 6),
+  distChord(0)
 {
-  backupStepper = new G4ClassicalRK4(eqRHS, 6);
+  bField = brho * (*strength)["ks"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B (local) = " << bField << G4endl;
+#endif
 }
 
 void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
-				      const G4double dydx[],
-				      G4ThreeVector  /*bField*/,
-				      G4double       h,
-				      G4double       yOut[],
-				      G4double       yErr[])
+					 const G4double dydx[],
+					 G4ThreeVector  /*bField*/,
+					 G4double       h,
+					 G4double       yOut[],
+					 G4double       yErr[])
 {
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
-  G4double      kappa      = - 0.5*fPtrMagEqOfMot->FCof()*itsBField/InitPMag;
+  G4double      kappa      = - 0.5*eqRHS->FCof()*bField/InitPMag;
   G4double      h2 = h*h;
   
 #ifdef BDSDEBUG
-  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
   G4cout << "BDSIntegratorSolenoid: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m   << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m   << " m"     << G4endl
@@ -41,19 +46,16 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
          << " py = " << yIn[4]/CLHEP::GeV << " GeV/c" << G4endl
          << " pz = " << yIn[5]/CLHEP::GeV << " GeV/c" << G4endl
          << " q  = " << charge/CLHEP::eplus << "e" << G4endl
-         << " Bz = " << itsBField/(CLHEP::tesla/CLHEP::m) << " T" << G4endl
+         << " Bz = " << bField/(CLHEP::tesla/CLHEP::m) << " T" << G4endl
          << " k  = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
-  
-  // setup our own navigator for calculating transforms
-  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
 
-  // get the transform
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
+  if (!initialised)
+    {InitialiseTransform(GlobalR);}
   
-  G4ThreeVector LocalR  = GlobalAffine.TransformPoint(GlobalR); 
-  G4ThreeVector LocalRp = GlobalAffine.TransformAxis(InitMomDir);
+  G4ThreeVector LocalR  = globalToLocal.TransformPoint(GlobalR); 
+  G4ThreeVector LocalRp = globalToLocal.TransformAxis(InitMomDir);
 
   G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
   
@@ -77,7 +79,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yErr[4] = 0;
       yErr[5] = 0;
 
-      itsDist=0;
+      distChord=0;
       return;
     }
   
@@ -122,7 +124,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yErr[4] = 0;
       yErr[5] = 0;
 
-      itsDist=0;
+      distChord=0;
       return;
     }
 
@@ -135,7 +137,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   BDSLocalRadiusOfCurvature=R;
   
   // chord distance (simple quadratic approx)
-  itsDist= h2/(8*R);
+  distChord= h2/(8*R);
 
   // check for paraxial approximation:
   if(fabs(zp0)>0.9)
@@ -240,21 +242,11 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 
 
 void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
-				 const G4double dydx[],
-				 const G4double hstep,
-				       G4double yOut[],
-				       G4double yErr[])
-{ 
+				    const G4double dydx[],
+				    const G4double hstep,
+				    G4double yOut[],
+				    G4double yErr[])
+{
   //simply perform one step here
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
 }
-
-G4double BDSIntegratorSolenoid::DistChord()   const 
-{
-  return itsDist;
-  // This is a class method that gives distance of Mid 
-  //  from the Chord between the Initial and Final points.
-}
-
-BDSIntegratorSolenoid::~BDSIntegratorSolenoid()
-{}

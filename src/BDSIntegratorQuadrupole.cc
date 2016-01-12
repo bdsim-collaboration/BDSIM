@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSQuadStepper.hh"
+#include "BDSIntegratorQuadrupole.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -8,16 +8,24 @@
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs* eqRHS):
-  G4MagIntegratorStepper(eqRHS, 6),
-  fPtrMagEqOfMot(eqRHS),
-  itsBGrad(0.0),itsDist(0.0)
-{;}
+BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(const BDSMagnetStrength* strength,
+						 const G4double           brho,
+						 const G4Mag_EqRhs*       eqRHSIn):
+  BDSIntegratorBase(eqRHS, 6),
+  distChord(0),
+  yInitial(0), yMidPoint(0), yFinal(0)
+{
+  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
+  bPrime = brho * (*strength)["k1"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
+#endif
+}
 
-void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
-				  G4ThreeVector /*bField*/,
-				  G4double        h,
-				  G4double        yQuad[])
+void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
+					   G4ThreeVector /*bField*/,
+					   G4double        h,
+					   G4double        yQuad[])
 {
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -25,11 +33,11 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
   // quad strength k normalised to charge and momentum of this particle
-  G4double kappa = - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
+  G4double kappa = - eqRHS->FCof()*bPrime/InitPMag;
 
 #ifdef BDSDEBUG
-  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
-  G4cout << "BDSQuadStepper: step = " << h/CLHEP::m << " m" << G4endl
+  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4cout << "BDSIntegratorQuadrupole: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m     << " m"     << G4endl
          << " z  = " << yIn[2]/CLHEP::m     << " m"     << G4endl
@@ -37,7 +45,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
          << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
          << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
          << " q  = " << charge/CLHEP::eplus << " e"     << G4endl
-         << " dBy/dx = " << itsBGrad/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
+         << " dBy/dx = " << bPrime/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
          << " k = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
@@ -55,7 +63,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
       yQuad[4] = GlobalP.y();
       yQuad[5] = GlobalP.z();
 
-      itsDist=0;
+      distChord=0;
       return;
     }
   
@@ -67,7 +75,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector     LocalRp      = GlobalAffine.TransformAxis(InitMomDir);
 
 #ifdef BDSDEBUG
-  G4cout << "BDSQuadStepper: initial point in local coordinates:" << G4endl
+  G4cout << "BDSIntegratorQuadrupole: initial point in local coordinates:" << G4endl
 	 << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
 	 << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
 	 << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
@@ -107,7 +115,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
       BDSLocalRadiusOfCurvature=R;
 
       // chord distance (simple quadratic approx)
-      itsDist= h2/(8*R);
+      distChord= h2/(8*R);
 
       // check for paraxial approximation:
       if(fabs(zp)>0.9)//&&(fabs(kappa)<1.e-6))
@@ -206,7 +214,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 	  maxCurv=max(maxCurv,fabs(quadY_end));
 	  maxCurv=max(maxCurv,fabs(quadZ_end));
 
-	  itsDist=maxCurv*h2/4.;
+	  distChord=maxCurv*h2/4.;
 	      
 	  // use the average:
 	  G4double quadX_av=(quadX+quadX_end)/2;
@@ -254,11 +262,11 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
   else //if curvature = 0 ...
     {
       LocalR += h*LocalRp;
-      itsDist=0.;
+      distChord=0.;
     }
 
 #ifdef BDSDEBUG 
-  G4cout << "BDSQuadStepper: final point in local coordinates:" << G4endl
+  G4cout << "BDSIntegratorQuadrupole: final point in local coordinates:" << G4endl
 	 << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
 	 << " y= " << LocalR[1]/CLHEP::m << "m" << G4endl
 	 << " z= " << LocalR[2]/CLHEP::m << "m" << G4endl
@@ -283,32 +291,34 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 }    
 
 
-void BDSQuadStepper::Stepper( const G4double yInput[],
-			      const G4double[],
-			      const G4double hstep,
-			      G4double yOut[],
-			      G4double yErr[]      )
-{  
-  const G4int nvar = 6 ;
-  G4int i;
-
-  const G4double *pIn = yInput+3;
+void BDSIntegratorQuadrupole::Stepper(const G4double     yInput[],
+				      const G4double[] /*bField*/,
+				      const G4double     hstep,
+				      G4double           yOut[],
+				      G4double           yErr[])
+{
+  const G4double *pIn   = yInput+3;
   G4ThreeVector GlobalP = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
-  G4double InitPMag = GlobalP.mag();
-  G4double kappa= - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
+  G4double InitPMag     = GlobalP.mag();
+  G4double kappa        = - eqRHS->FCof()*bPrime/InitPMag;
+
+  if (!initialised)
+    {InitialiseTransform(GlobalR);}
   
-  if(fabs(kappa)<1.e-6) //kappa is small - no error needed for paraxial treatment
+  if(fabs(kappa) < 1.e-6) //kappa is small - no error needed for paraxial treatment
     {
-      for(i=0;i<nvar;i++) yErr[i]=0;
+      for(G4int i = 0; i < nVariables; i++)
+	{yErr[i] = 0;}
       AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
     }
-  else   //need to compute errors for helical steps
+  else
     {
+      //need to compute errors for helical steps
       G4double yTemp[7], yIn[7];
       
       //  Saving yInput because yInput and yOut can be aliases for same array
-      
-      for(i=0;i<nvar;i++) yIn[i]=yInput[i];
+      for(G4int i = 0; i < nVariables; i++)
+	{yIn[i] = yInput[i];}
       
       // Do two half steps
       G4double h = hstep * 0.5; 
@@ -319,24 +329,15 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
       h = hstep ;
       AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
       
-      for(i=0;i<nvar;i++) {
-	yErr[i] = yOut[i] - yTemp[i] ;
-	// if error small, set error to 0
-	// this is done to prevent Geant4 going to smaller and smaller steps
-	// ideally use some of the global constants instead of hardcoding here
-	// could look at step size as well instead.
-	if (std::abs(yErr[i]) < 1e-7) yErr[i] = 0;
-      }
+      for(G4int i = 0; i < nVariables; i++)
+	{
+	  yErr[i] = yOut[i] - yTemp[i];
+	  // if error small, set error to 0
+	  // this is done to prevent Geant4 going to smaller and smaller steps
+	  // ideally use some of the global constants instead of hardcoding here
+	  // could look at step size as well instead.
+	  if (std::abs(yErr[i]) < 1e-7)
+	    {yErr[i] = 0;}
+	}
     }
 }
-
-G4double BDSQuadStepper::DistChord()   const 
-{
-  return itsDist;
-  // This is a class method that gives distance of Mid 
-  // from the Chord between the Initial and Final points.
-}
-
-BDSQuadStepper::~BDSQuadStepper()
-{}
-
