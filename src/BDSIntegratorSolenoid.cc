@@ -51,7 +51,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
          << G4endl; 
 #endif
 
-  if (!initialised)
+  if (Initialised())
     {InitialiseTransform(GlobalR);}
   
   G4ThreeVector LocalR  = globalToLocal.TransformPoint(GlobalR); 

@@ -302,7 +302,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double     yInput[],
   G4double InitPMag     = GlobalP.mag();
   G4double kappa        = - eqRHS->FCof()*bPrime/InitPMag;
 
-  if (!initialised)
+  if (Initialised())
     {InitialiseTransform(GlobalR);}
   
   if(fabs(kappa) < 1.e-6) //kappa is small - no error needed for paraxial treatment

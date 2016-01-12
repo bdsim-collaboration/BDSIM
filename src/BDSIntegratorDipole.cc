@@ -34,7 +34,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   //return;
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
 
-  if (!initialised)
+  if (Initialised())
     {InitialiseTransform(GlobalPosition);}
       
   G4double charge = (eqRHS->FCof())/CLHEP::c_light;

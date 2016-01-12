@@ -45,6 +45,9 @@ public:
 
   static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV);
 
+  /// Whether the transform has been initialised or not.
+  inline G4bool Initialised() const;
+
   /// Locate the supplied point the in the geometry and get and store
   /// the transform to that volume in the member variable. This function
   /// has to be const as it's called the first time in GetField which is
@@ -56,18 +59,20 @@ public:
 protected:
   /// Whether this instance has been intialised. If not store the transform
   /// this field requires and record as initialised so not repeated.
-  G4bool initialised;
+  G4bool* const initialised;
 
   /// Transform for this particular field depending on which part of the geometry
   /// it's attached to. This has to be a pointer as the Geant4 GetField function is
   /// const - which means it can't change the member variable. Using a pointer, we *can*
   /// change the contents of the pointer, but *not* the pointer itself.
-  const G4AffineTransform* globalToLocal;
-  const G4AffineTransform* localToGlobal;
-
-private:
+  G4AffineTransform* const globalToLocal;
+  G4AffineTransform* const localToGlobal;
+  
   static G4Navigator* auxNavigator;
 };
+
+inline G4bool BDSAuxiliaryNavigator::Initialised() const
+{return (*initialised);}
 
 
 #endif

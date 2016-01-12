@@ -11,7 +11,7 @@ G4ThreeVector BDSFieldMagBase::ConvertToLocal(const G4dobule (&point)[4]) const
 {
   G4ThreeVector globalPosition(point[0], point[1], point[2]);
 
-  if (!initialised)
+  if (Initialised())
     {InitialiseTransform(globalPosition);}
 
   return globalToLocal.TransformPoint(globalPosition);
