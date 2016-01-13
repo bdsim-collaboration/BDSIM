@@ -1,10 +1,5 @@
-/* BDSIM code.   
-A scintillator screen.
-Work in progress.  
-*/
-
-#ifndef BDSScintillatorScreen_h
-#define BDSScintillatorScreen_h 
+#ifndef BDSSCINTILLATORSCREEN_H
+#define BDSSCINTILLATORSCREEN_H 
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"

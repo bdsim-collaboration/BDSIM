@@ -1,5 +1,5 @@
-#ifndef BDSLine_h
-#define BDSLine_h 
+#ifndef BDSLINE_H
+#define BDSLINE_H 
 
 #include <vector>
 #include <iterator>

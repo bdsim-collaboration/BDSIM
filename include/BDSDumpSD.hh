@@ -1,18 +1,5 @@
-//  
-//   BDSIM, (C) 2001-2007
-//    
-//   version 0.3 
-//   last modified : 08 May 2007 by agapov@pp.rhul.ac.uk
-//  
-
-
-//
-//    beam dumper/reader for online exchange - Sensitive Detector
-//
-
-
-#ifndef BDSDumpSD_h
-#define BDSDumpSD_h 
+#ifndef BDSDUMPSD_H
+#define BDSDUMPSD_H 
 
 #include "G4VSensitiveDetector.hh"
 

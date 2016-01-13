@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "cavitymodel.h"
 #include "element.h"
 #include "fastlist.h"
 #include "elementtype.h"
@@ -75,6 +76,8 @@ namespace GMAD {
     void add_dump(std::string name, int before_count, ElementType type);
     /// insert region
     void add_region();
+    /// insert cavity model
+    void add_cavitymodel();
     /// insert tunnel
     void add_tunnel();
     /// insert cross section bias
@@ -117,6 +120,9 @@ namespace GMAD {
     /// Set options value
     template <typename T>
       void SetOptionsValue(std::string property, T value);
+    /// Set options value
+    template <typename T>
+      void SetCavityModelValue(std::string property, T value);
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
     /// Add variable memory to variable list for memory management
@@ -171,6 +177,8 @@ namespace GMAD {
     Tunnel tunnel;
     /// PhysicsBiasing instance 
     PhysicsBiasing xsecbias;
+    /// RF Cavity model instance
+    CavityModel cavitymodel;
     
     /// List of all encountered elements
     FastList<Element> element_list;
@@ -190,8 +198,8 @@ namespace GMAD {
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects
     FastList<PhysicsBiasing> xsecbias_list;
-    /// List of regions
-    
+    /// List of parser defined rf cavity models
+    std::vector<CavityModel> cavitymodel_list;
     
     /// Parser symbol map
     std::map<std::string, Symtab*> symtab_map;
@@ -223,6 +231,11 @@ namespace GMAD {
     void Parser::SetOptionsValue(std::string property, T value)
     {
       options.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetCavityModelValue(std::string property, T value)
+    {
+      cavitymodel.set_value(property, value);
     }
 }
 

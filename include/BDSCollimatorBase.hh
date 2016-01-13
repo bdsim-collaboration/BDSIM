@@ -1,5 +1,5 @@
-#ifndef BDSCollimator_h
-#define BDSCollimator_h 
+#ifndef BDSCOLLIMATORBASE_H
+#define BDSCOLLIMATORBASE_H
 
 #include "BDSAcceleratorComponent.hh"
 

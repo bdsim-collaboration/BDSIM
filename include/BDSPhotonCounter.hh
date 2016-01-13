@@ -1,5 +1,5 @@
-#ifndef BDSPhotonCounter_h
-#define BDSPhotonCounter_h 
+#ifndef BDSPHOTONCOUNTER_H
+#define BDSPHOTONCOUNTER_H 
 
 #include "G4Track.hh"
 

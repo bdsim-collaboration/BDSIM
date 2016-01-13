@@ -1,5 +1,5 @@
-#ifndef BDSVisManager_h
-#define BDSVisManager_h 
+#ifndef BDSVISMANAGER_H
+#define BDSVISMANAGER_H 
 
 #include "G4Types.hh"
 
@@ -13,8 +13,8 @@ class G4VisManager;
  *
  */
 
-class BDSVisManager {
-
+class BDSVisManager
+{
 public:
   BDSVisManager();
 

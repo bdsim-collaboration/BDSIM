@@ -1,5 +1,5 @@
-#ifndef BDSShowerModel_h
-#define BDSShowerModel_h 1
+#ifndef BDSSHOWERMODEL_H
+#define BDSSHOWERMODEL_H
 
 #include "GFlashShowerModel.hh"
 #include "G4FastTrack.hh"

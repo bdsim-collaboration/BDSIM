@@ -1,8 +1,8 @@
-.. _appendix2_geometry:
+.. _extendedgeometry:
 
-===========================
-Appendix 2 - Geometry Input
-===========================
+=================
+Extended Geometry
+=================
 
 The element with user-defined physical geometry (see also :ref:`element`) is defined by::
   

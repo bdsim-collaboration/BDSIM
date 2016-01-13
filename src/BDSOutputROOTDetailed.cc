@@ -5,7 +5,7 @@
 #include "BDSHistogram.hh"
 
 #include <string>
-
+#define DEBUG 1
 BDSOutputROOTDetailed::BDSOutputROOTDetailed()
 {
 #ifdef BDSDEBUG

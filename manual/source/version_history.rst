@@ -1,4 +1,4 @@
-V0.91 - 2015 / 11 / ??
+V0.91 - 2015 / 12 / 17
 ======================
 
 New Features
@@ -22,7 +22,7 @@ Parser
 ^^^^^^
 
 * Parser warns for redefined variable, and exits for usage of undeclared variables (issue #98)
-* Parser reorganised to c++ class structure (issue #77)
+* Parser reorganised to C++ class structure (issue #77)
 * Command line options more flexible (issue #105)
 * Ability to define Geant4 regions as objects in parser.
 * Can attach samplers to all elements of one type, ie collimators.
@@ -69,6 +69,7 @@ Tracking
 * Circular turn counting bugs fixed
 * Particles no longer killed with circular flag on if starting slightly behind starting mid point.
 * Particles no longer stepped by teleporter at beginning of 1st turn if starting behind starting mid point.
+* Fix teleporter tracking for backwards travelling particles that would get stuck in a loop.
   
 General
 ^^^^^^^
@@ -77,10 +78,10 @@ General
 
 Utilities
 ---------
-* pymadx v?
-* pybdsim v?
-* pymad8 v?
-* robdsim v?
+* pymadx v0.3
+* pybdsim v0.4
+* pymad8 v0.2
+* robdsim v0.4
 
 V0.9 - 2015 / 11 / 10
 =====================

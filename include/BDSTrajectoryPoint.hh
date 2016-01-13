@@ -1,5 +1,5 @@
-#ifndef _BDS_TRAJECTORY_POINT_HH__
-#define _BDS_TRAJECTORY_POINT_HH__
+#ifndef BDSTRAJECTORYPOINT_H
+#define BDSTRAJECTORYPOINT_H
 
 #include "G4TrajectoryPoint.hh"
 #include "G4Track.hh"

@@ -76,7 +76,8 @@ Parameters::Parameters() {
   setMap["windowmaterial"] = false;
   setMap["airmaterial"] = false;
   setMap["spec"] = false;
-  
+  setMap["cavityModel"] = false;
+
   setMap["numberWedges"] = false;
   setMap["wedgeLength"] = false;
   setMap["degraderHeight"] = false;

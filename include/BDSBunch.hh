@@ -1,5 +1,5 @@
-#ifndef BDSBunch_h
-#define BDSBunch_h
+#ifndef BDSBUNCH_H
+#define BDSBUNCH_H
 
 #include <string>
 #include "BDSBunchInterface.hh"

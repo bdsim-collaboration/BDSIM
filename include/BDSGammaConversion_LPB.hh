@@ -1,7 +1,7 @@
 //GammaConversion Leading Particle Biasing Method, M.D. Salt, R.B. Appleby, 15/10/09
 
-#ifndef GAMMACONVERSION_LPB_HH
-#define GAMMACONVERSION_LPB_HH
+#ifndef GAMMACONVERSIONLPB_H
+#define GAMMACONVERSIONLPB_H
 
 #include "G4WrapperProcess.hh"
 

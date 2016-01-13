@@ -1,23 +1,10 @@
-//  
-//   BDSIM, (C) 2001-2006 
-//    
-//   version 0.3 
-//   last modified : 08 May 2007 by agapov@pp.rhul.ac.uk
-//  
-
-
-//
-//    beam dumper/reader for online exchange with external codes
-//
-
-
-#ifndef BDSDump_h
-#define BDSDump_h 
+#ifndef BDSDUMP_H
+#define BDSDUMP_H 
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
-class BDSDump : public BDSAcceleratorComponent
+class BDSDump: public BDSAcceleratorComponent
 {
 public:
   BDSDump(G4String aName,

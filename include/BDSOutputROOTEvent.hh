@@ -1,5 +1,5 @@
-#ifndef BDSOutputROOTEvent_h
-#define BDSOutputROOTEvent_h
+#ifndef BDSOUTPUTROOTEVENT_H
+#define BDSOUTPUTROOTEVENT_H
 
 #include "globals.hh"
 

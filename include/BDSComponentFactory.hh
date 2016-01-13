@@ -1,13 +1,17 @@
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
+#include <map>
 #include <list>
+
 #include "globals.hh"
 #include "parser/element.h"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
+
+class BDSCavityInfo;
 
 class BDSTiltOffset;
 
@@ -82,6 +86,7 @@ private:
   BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element& element);
   G4double            PrepareOuterDiameter(GMAD::Element& element);
   BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element& element);
+  BDSCavityInfo*      PrepareCavityModelInfo(const GMAD::Element& element);
   ///@}
 
   /// Utility function to check if the combination of outer diameter, angle and length
@@ -90,5 +95,12 @@ private:
 				      G4double angle,
 				      G4double outerDiameter,
 				      G4String name = "not given");
+
+  /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
+  /// This class deletes them upon destruction.
+  void PrepareCavityModels();
+
+  /// Map of cavity model info instances by name
+  std::map<G4String, BDSCavityInfo*> cavityInfos;
 };
 #endif

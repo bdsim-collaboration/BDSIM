@@ -1,5 +1,5 @@
-#ifndef BDSMultilayerScreen_h
-#define BDSMultilayerScreen_h 
+#ifndef BDSMULTILAYERSCREEN_H
+#define BDSMULTILAYERSCREEN_H 
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"

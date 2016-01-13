@@ -61,7 +61,7 @@
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
 %token <ival> MATERIAL ATOM
-%token ALL PERIOD XSECBIAS REGION TUNNEL
+%token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -186,6 +186,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->add_region();
            }
        }
+     | VARIABLE ':' cavitymodel
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : cavitymodel" << std::endl;
+	     Parser::Instance()->SetCavityModelValue("name",*($1));
+	     Parser::Instance()->add_cavitymodel();
+           }
+       }
      | VARIABLE ':' xsecbias
        {
          if(execute)
@@ -232,6 +241,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
 ;
 
 region : REGION ',' region_options ;
+cavitymodel : CAVITYMODEL ',' cavitymodel_options ;
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
 
@@ -258,6 +268,7 @@ error_noparams : DRIFT;
                | MATERIAL;
                | ATOM;
                | REGION;
+               | CAVITYMODEL;
                | TUNNEL;
                | XSECBIAS;
 
@@ -712,6 +723,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->add_region();
 	      }
           }
+        | CAVITYMODEL ',' cavitymodel_options // cavitymodel
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> CAVITYMODEL\n");
+		Parser::Instance()->add_cavitymodel();
+	      }
+          }
         | XSECBIAS ',' xsecbias_options // xsecbias
           {
 	    if(execute)
@@ -809,6 +828,28 @@ csample_options : VARIABLE '=' aexpr
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt\n");
 		    $$ = $1;
                   }
+;
+
+cavitymodel_options : VARIABLE '=' aexpr ',' cavitymodel_options
+                    {
+		      if(execute)
+			Parser::Instance()->SetCavityModelValue((*$1),$3);
+		    }
+                 | VARIABLE '=' aexpr
+                    {
+		      if(execute)
+			Parser::Instance()->SetCavityModelValue((*$1),$3);
+		    }
+                 | VARIABLE '=' STR ',' cavitymodel_options
+                    {
+		      if(execute)
+			Parser::Instance()->SetCavityModelValue(*$1,*$3);
+		    }
+                 | VARIABLE '=' STR
+                    {
+		      if(execute)
+			Parser::Instance()->SetCavityModelValue(*$1,*$3);
+		    }
 ;
 
 region_options : VARIABLE '=' aexpr ',' region_options

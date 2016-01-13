@@ -1,5 +1,5 @@
-#ifndef BDSSamplerHit_h
-#define BDSSamplerHit_h 1
+#ifndef BDSSAMPLERHIT_H
+#define BDSSAMPLERHIT_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"

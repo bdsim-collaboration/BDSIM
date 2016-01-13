@@ -1,15 +1,14 @@
-/* BDSIM code.
+#ifndef BDSXYMAGFIELD_H
+#define BDSXYMAGFIELD_H
 
-*/
-
-#include "G4ElectroMagneticField.hh"
-#include "globals.hh"
-#include "G4RotationMatrix.hh"
 #include "BDSMagField.hh"
+
+#include "globals.hh"
+#include "G4ElectroMagneticField.hh"
+#include "G4RotationMatrix.hh"
+
 #include <vector>
 
-#ifndef BDSXYMagField_h
-#define BDSXYMagField_h
 
 struct XYFieldRecord {
   G4double x;

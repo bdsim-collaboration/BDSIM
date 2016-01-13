@@ -1,5 +1,5 @@
-#ifndef BDSSurvey_h
-#define BDSSurvey_h 1
+#ifndef BDSSURVEY_H
+#define BDSSURVEY_H
 
 #include <fstream>
 #include <vector>
