@@ -6,16 +6,16 @@
 #include "BDSGeometry.hh"
 #include "BDSMagFieldMesh.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSMagnetType.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include "G4AffineTransform.hh"
 #include "G4EquationOfMotion.hh"
 #include "G4Field.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform.hh"
 
 class BDSGeometry;
-class BDSMagnetType;
 
 /**
  * @brief Factory that produces fields and their associated objects.
@@ -63,10 +63,10 @@ public:
 
   /// Create a field from a mesh of coordinates with field 3 vectors. All associated
   /// objects are created and packaged together.
-  BDSFieldObjects* CreateFieldMesh(BDSFieldType  type,
-				   G4String      filename,
-				   G4ThreeVector localOffset = G4ThreeVector(0,0,0),
-				   G4Transform*  transform = nullptr);
+  BDSFieldObjects* CreateFieldMesh(BDSFieldType       type,
+				   G4String           filename,
+				   G4ThreeVector      localOffset = G4ThreeVector(0,0,0),
+				   G4AffineTransform* transform = nullptr);
   
 private:
   /// Private default constructor as singleton class.

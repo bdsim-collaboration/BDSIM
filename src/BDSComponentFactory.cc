@@ -40,8 +40,9 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSMagnetStrength.hh"
+#include "BDSMagnetType.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
 

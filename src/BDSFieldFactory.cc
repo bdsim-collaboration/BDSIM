@@ -7,10 +7,10 @@
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSFieldMagDecapole.hh"
-#include "BDSFieldMagDipole.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
+#include "BDSFieldMagSBend.hh"
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSolenoid.hh"
 #include "BDSIntegratorDipole.hh"
@@ -20,9 +20,11 @@
 #include "BDSMagFieldSQL.hh"
 #include "BDSMagFieldXY.hh"
 #include "BDSMagField3D.hh"
+#include "BDSMagnetType.hh"
 #include "BDSUtilities.hh"
 
 #include "G4UniformMagField.hh"
+#include "G4Mag_UsualEqRhs.hh"
 
 #include <typeinfo>
 #include <utility>
@@ -50,9 +52,10 @@ BDSFieldFactory::BDSFieldFactory()
   CleanUp();
 }
 
-void BDSFieldType::CleanUp()
+void BDSFieldFactory::CleanUp()
 {
   field         = nullptr;
+  bField        = nullptr;
   integrator    = nullptr;
   completeField = nullptr;
 }
@@ -70,7 +73,7 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
 
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
   fileName = BDS::GetFullPath(ff.first);
-  format   = BDS::DetermineBType(ff.second);
+  format   = BDS::DetermineFieldType(ff.second);
   
   if (format == BDSFieldType::threed)
     {return CreateMagField3D();}
@@ -106,7 +109,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEquation(BDSMagnetType      type,
   CleanUp();
   
   // switch on type and build correct field
-  switch (type)
+  switch (type.underlying())
     {
     case BDSMagnetType::solenoid:
       CreateSolenoid(strength,   brho); break;
@@ -123,9 +126,9 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEquation(BDSMagnetType      type,
       CreateDecapole(strength,   brho); break;
     case BDSMagnetType::multipole:
       CreateMultipole(strength,  brho); break;
-    case BDSMagnetType::vkick:
+    case BDSMagnetType::vkicker:
       CreateKicker(strength, brho, true); break;
-    case BDSMagnetType::hkick:
+    case BDSMagnetType::hkicker:
       CreateKicker(strength, brho, false); break;
     default:
       G4cerr << __METHOD_NAME__ << "not an equation based field type" << G4endl;
@@ -135,7 +138,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEquation(BDSMagnetType      type,
   return completeField;
 }
   
-void BDSFieldObjects::CommonConstructor()
+void BDSFieldFactory::CommonConstructor()
 {
   completeField = new BDSFieldObjects(field, eqOfMotion, integrator);
 }

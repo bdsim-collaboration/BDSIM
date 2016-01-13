@@ -20,7 +20,7 @@ public:
   BDSFieldMagQuadrupole(const BDSMagnetStrength* strength,
 			const G4double           brho);
   
-  ~BDSQuadMagField(){;}
+  ~BDSFieldMagQuadrupole(){;}
 
   /// Overridden method from G4MagneticField - access the field from this quadrupole
   /// at a given global set of coordinates. These are first converted to local coordinates

@@ -75,10 +75,10 @@ private:
   static G4double variable;
 };
 
-inline std::vector<G4String> NormalComponentKeys() const
+inline std::vector<G4String> BDSMagnetStrength::NormalComponentKeys() const
 {return normalComponentKeys;}
 
-inline std::vector<G4String> SkewComponentKeys() const
+inline std::vector<G4String> BDSMagnetStrength::SkewComponentKeys() const
 {return skewComponentKeys;}
 
 

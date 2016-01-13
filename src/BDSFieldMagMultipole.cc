@@ -26,7 +26,7 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(const BDSMagnetStrength* strength,
     {order = (G4int)normalComponents.size();}
 }
 
-void BDSFieldMagMultipole::GetFieldValue(const G4double* point,
+void BDSFieldMagMultipole::GetFieldValue(const G4double point[4],
 					 G4double* field) const
 {
   G4ThreeVector localPosition = ConvertToLocal(point);

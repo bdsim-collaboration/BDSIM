@@ -14,7 +14,7 @@ BDSFieldMagSolenoid::BDSFieldMagSolenoid(BDSMagnetStrength* strength,
 #endif
 }
 
-void BDSFieldMagSolenoid::GetFieldValue(const G4double* point[4],
+void BDSFieldMagSolenoid::GetFieldValue(const G4double point[4],
 					G4double* field) const
 {
   ConvertToLocal(point);

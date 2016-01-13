@@ -29,10 +29,12 @@ public:
   /// Calculate the local coordinates of a global point for this field. Changes
   /// protected member localPosition.  This has to be const because it's called
   /// inside the const Geant4 pure virtual function GetFieldValue.
-  G4ThreeVector ConvertToLocal(const G4dobule (&point)[4]) const;
+  G4ThreeVector ConvertToLocal(const G4double (&point)[4]) const;
 
   /// Convert the supplied local magnetic field vector to global coordinates
   /// and write it to the supplied pointer address - 6 values in total (3 B and
   /// 3 E field).
   void OutputGlobalField(const G4ThreeVector& localField, G4double* field) const;
 };
+
+#endif

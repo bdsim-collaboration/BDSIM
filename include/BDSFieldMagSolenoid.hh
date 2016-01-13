@@ -17,7 +17,7 @@ public:
   ~BDSFieldMagSolenoid(){;}
 
   /// Get Field Value (independent of position, since solenoid field is uniform)
-  virtual void  GetFieldValue(const G4double* point[4],
+  virtual void  GetFieldValue(const G4double point[4],
 			      G4double* field) const;
   
 private:

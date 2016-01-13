@@ -28,7 +28,7 @@ public:
   /// Overridden method from G4MagneticField - access the field from this multipole
   /// at a given global set of coordinates. These are first converted to local coordinates
   /// using the cached transform from BDSAuxiliaryNavigator.
-  virtual void  GetFieldValue(const G4double* point,
+  virtual void  GetFieldValue(const G4double point[4],
 			      G4double* field) const;
 
 private:
@@ -39,10 +39,10 @@ private:
   const G4int order;
 
   /// Normal field components (normal - ie not skew) = kn * brho
-  std::vector<G4double> normalComponents
+  std::vector<G4double> normalComponents;
 
   /// Skew field components = kns * brho
-  std::vector<G4double> skewComponents
+  std::vector<G4double> skewComponents;
 };
 
 

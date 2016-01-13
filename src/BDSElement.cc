@@ -4,7 +4,7 @@
 #include "BDSElement.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagFieldFactory.hh"
+#include "BDSFieldFactory.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4Box.hh"
