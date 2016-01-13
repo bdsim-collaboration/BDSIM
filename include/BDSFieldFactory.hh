@@ -83,6 +83,7 @@ private:
 
   ///@{ Variable to allow different functions to access different parts during construction
   G4Field*                field;
+  G4MagneticField*        bField;
   G4EquationOfMotion*     eqOfMotion;
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;

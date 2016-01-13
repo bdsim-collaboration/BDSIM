@@ -146,63 +146,63 @@ void BDSFieldFactory::CommonConstructor()
 void BDSFieldFactory::CreateSolenoid(BDSMagnetStrength* strength,
 				     G4double           brho)
 {
-  field         = new BDSFieldMagSolenoid(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSolenoid(strength, brho, eqOfMotion);
+  bField        = new BDSFieldMagSolenoid(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorSolenoid(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
 void BDSFieldFactory::CreateDipole(BDSMagnetStrength* strength,
 				   G4double           brho)
 {
-  field         = new BDSFieldMagSBend(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorDipole(strength, brho, eqOfMotion);
+  bField        = new BDSFieldMagSBend(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorDipole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
 void BDSFieldFactory::CreateQuadrupole(BDSMagnetStrength* strength,
 				       G4double           brho)
 {
-  field         = new BDSFieldMagQuadrupole(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorQuadrupole(strength, brho);
+  bField        = new BDSFieldMagQuadrupole(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorQuadrupole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
 void BDSFieldFactory::CreateSextupole(BDSMagnetStrength* strength,
 				      G4double           brho)
 {
-  field         = new BDSFieldMagSextupole(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorSextupole(strength, brho);
+  bField        = new BDSFieldMagSextupole(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorSextupole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
 void BDSFieldFactory::CreateOctupole(BDSMagnetStrength* strength,
 				     G4double           brho)
 {
-  field         = new BDSFieldMagOctupole(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorOctupole(strength, brho);
+  bField        = new BDSFieldMagOctupole(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorOctupole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
 void BDSFieldFactory::CreateDecapole(BDSMagnetStrength* strength,
 				     G4double           brho)
 {
-  field         = new BDSFieldMagDecapole(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorDecapole(strength, brho);
+  bField        = new BDSFieldMagDecapole(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorDecapole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
 void BDSFieldFactory::CreateMultipole(BDSMagnetStrength* strength,
 				      G4double           brho)
 {
-  field         = new BDSFieldMagMultipole(strength, brho);
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorMultipole(strength, brho);
+  bField        = new BDSFieldMagMultipole(strength, brho);
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorMultipole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
@@ -211,11 +211,11 @@ void BDSFieldFactory::CreateKicker(BDSMagnetStrength* strength,
 				   G4bool             isVertical)
 {
   if (isVertical)
-    {field = new BDSFieldMagSBend(strength, brho, G4ThreeVector(-1,0,0));}
+    {bField = new BDSFieldMagSBend(strength, brho, G4ThreeVector(-1,0,0));}
   else
-    {field = new BDSFieldMagSBend(strength, brho);}
-  eqOfMotion    = new G4Mag_UsualEqRhs(field);
-  integrator    = new BDSIntegratorDipole(strength, brho);
+    {bField = new BDSFieldMagSBend(strength, brho);}
+  eqOfMotion    = new G4Mag_UsualEqRhs(bField);
+  integrator    = new BDSIntegratorDipole(strength, brho, static_cast<G4Mag_EqRhs*>(eqOfMotion));
   CommonConstructor();
 }
 
