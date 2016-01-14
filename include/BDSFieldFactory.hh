@@ -58,9 +58,9 @@ public:
 
   /// Create a pure magnetic field as described by an equation, such as a quadupole or
   /// dipole field.  All associated objects are created and packaged together.
-  BDSFieldObjects* CreateFieldEquation(BDSMagnetType      type,
-				       BDSMagnetStrength* strength,
-				       G4double           brho);
+  BDSFieldObjects* CreateFieldMagEquation(BDSMagnetType      type,
+					  BDSMagnetStrength* strength,
+					  G4double           brho);
 
   /// Create a field from a mesh of coordinates with field 3 vectors. All associated
   /// objects are created and packaged together.
@@ -86,6 +86,9 @@ private:
   G4Field*                field;
   G4MagneticField*        bField;
   G4EquationOfMotion*     eqOfMotion;
+  /// B Fields require at least this level in the inheritance - use G4Mag_EqRhs instead
+  /// of G4EquationOfMotion for b fields
+  G4Mag_EqRhs*            bEqOfMotion;
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;
   ///@}
