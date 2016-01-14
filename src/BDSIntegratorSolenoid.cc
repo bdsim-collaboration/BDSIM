@@ -1,8 +1,8 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorSolenoid.hh"
+#include "BDSMagnetStrength.hh"
 
-#include "G4AffineTransform.hh"
-#include "G4MagIntegratorStepper.hh"
+#include "globals.hh" // geant4 types / globals.hh
 #include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
 
@@ -227,7 +227,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yOut[4] = GlobalP.y();
       yOut[5] = GlobalP.z();
 
-      for(G4int i=0;i<nvar;i++) yErr[i]=0; //set error to be zero - not strictly correct
+      for(G4int i = 0; i < nVariables; i++)
+	{yErr[i]=0;} //set error to be zero - not strictly correct
     }
   else
     // perform local helical steps (paraxial approx not safe)

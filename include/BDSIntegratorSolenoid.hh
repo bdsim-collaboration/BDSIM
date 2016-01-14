@@ -8,6 +8,8 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+class BDSMagnetStrength;
+
 /**
  * @brief Integrator that ignores the field and uses the analytical solution to a solenoid.
  * 

@@ -83,7 +83,8 @@ BDSComponentFactory::BDSComponentFactory()
   // rigidity (in Geant4 units)
   _brho *= (CLHEP::tesla*CLHEP::m);
 
-  if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+  if (verbose || debug1)
+    {G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;}
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();

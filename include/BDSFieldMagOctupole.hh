@@ -32,7 +32,11 @@ private:
   /// Private default constructor to force use of supplied constructor.
   BDSFieldMagOctupole();
 
+  /// 3rd derivative of the magnetic field
   G4double bTriplePrime;
+
+  /// bTriplePrime / 3! cached for simplicity
+  G4double bTPNormed; 
 };
 
 #endif

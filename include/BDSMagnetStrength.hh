@@ -44,7 +44,7 @@ public:
   std::vector<G4double> NormalComponents() const;
 
   /// Accessor for all skew components
-  std::vector<G4double> SkewCompoents() const;
+  std::vector<G4double> SkewComponents() const;
   
 private:
   /// A map containing the values for various magnet strengths. It only contains

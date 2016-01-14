@@ -8,7 +8,7 @@
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
 
-BDSFieldObjects::BDSFieldObjects(G4MagneticField*        fieldIn,
+BDSFieldObjects::BDSFieldObjects(G4Field*                fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn,
 				 G4ChordFinder*          chordFinderIn,
@@ -29,7 +29,7 @@ BDSFieldObjects::BDSFieldObjects(G4MagneticField*        fieldIn,
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   
-  chordFinder = new G4ChordFinder(field,
+  chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
 				  globals->GetChordStepMinimum(),
 				  magIntegratorStepper);
 

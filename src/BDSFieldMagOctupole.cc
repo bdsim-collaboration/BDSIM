@@ -1,5 +1,6 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSFieldMagOctupole.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"

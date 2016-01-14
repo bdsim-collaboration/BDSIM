@@ -2,9 +2,9 @@
 #define BDSINTEGRATORQUADRUPOLE_H
 
 #include "BDSIntegratorBase.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 

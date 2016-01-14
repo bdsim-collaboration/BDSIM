@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSFieldMagMultipole.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
 
 #include "G4ThreeVector.hh"
@@ -9,20 +10,20 @@
 
 BDSFieldMagMultipole::BDSFieldMagMultipole(const BDSMagnetStrength* strength,
 					   const G4double           brho,
-					   const G4int              orderIn = 12):
+					   const G4int              orderIn):
   order(orderIn)
 {
-  normalComponents = strength->GetNormalComponents();
-  skewCompoennts   = strength->GetSkewComponents();
+  normalComponents = strength->NormalComponents();
+  skewComponents   = strength->SkewComponents();
   // multiple by brho to get field coefficients
   for (auto kn : normalComponents)
     {kn *= brho;}
-  for (auto ksn : skewCompoennts)
+  for (auto ksn : skewComponents)
     {ksn *= brho;}
   
   // safety check - ensure we're not going to a higher order than the strength
   // class supports.
-  if (std::abs(order) > normalComponents.size())
+  if (std::abs(order) > (G4int)normalComponents.size())
     {order = (G4int)normalComponents.size();}
 }
 
@@ -52,7 +53,7 @@ void BDSFieldMagMultipole::GetFieldValue(const G4double point[4],
   // I want to use the strange convention of dipole coeff. with opposite sign -
   // then it is the same sign as angle.
   G4double ffact = -1;
-  for (G4int i = 0; it < order; i++)
+  for (G4int i = 0; i < order; i++)
     {
       G4double o = (G4double)i+1; // the current order
       br   += normalComponents[i] * pow(r, o - 1) * sin(o * phi) / ffact; //normal

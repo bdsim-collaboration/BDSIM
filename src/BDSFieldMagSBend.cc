@@ -6,6 +6,7 @@
 
 #include "globals.hh"
 #include "G4AffineTransform.hh"
+#include "G4ParticleDefinition.hh"
 
 #include <limits>
 #include <cmath>
@@ -64,7 +65,7 @@ BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength* strength,
     {localField = bFieldMag * unitDirection.unit();}
   // always normalise to ensure it's a unit vector
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "B (local) = " << localBField << G4endl;
+  G4cout << __METHOD_NAME__ << "B (local) = " << localField << G4endl;
 #endif
 }
 

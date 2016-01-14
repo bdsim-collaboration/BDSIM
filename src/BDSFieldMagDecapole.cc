@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSFieldMagDecapole.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"

@@ -1,9 +1,12 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorQuadrupole.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+
+#include <cmath>
 
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;

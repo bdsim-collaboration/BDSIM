@@ -15,6 +15,7 @@ class G4ChordFinder;
 class G4EquationOfMotion;
 class G4FieldManager;
 class G4MagIntegratorStepper;
+class G4MagneticField;
 class G4Field;
 
 class BDSFieldObjects
@@ -31,7 +32,7 @@ public:
   /// for convenience. The field manager uses delta intersection, epsilon min / max,
   /// and delta one step from BDSGlobalConstants as defaults for field propagation
   /// accuracy.
-  BDSFieldObjects(G4Field*                fieldIn,
+  BDSFieldObjects(G4MagneticField*        fieldIn,
 		  G4EquationOfMotion*     equationOfMotionIn,
 		  G4MagIntegratorStepper* magIntegratorStepperIn);
 

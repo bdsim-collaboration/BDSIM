@@ -31,11 +31,8 @@ private:
   
   /// B'' - second derivative of the magnetic field.
   G4double bDoublePrime;
-
-  /// B'' / 3! cached for simplicity
-  G4double bTPNormed;
   
-  /// bDoublePrime / 2 cached
+  /// bDoublePrime / 2! cached
   G4double halfBDoublePrime;
 };
 

@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorDipole.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"

@@ -1,14 +1,14 @@
 #ifndef BDSFIELDMAGSOLENOID_H
 #define BDSFIELDMAGSOLENOID_H
 
-#include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 
-#include "BDSAuxiliaryNavigator.hh"
+#include "BDSFieldMagBase.hh"
 
 class BDSMagnetStrength;
 
-class BDSFieldMagSolenoid: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagSolenoid: public BDSFieldMagBase
 {
 public:
   BDSFieldMagSolenoid(BDSMagnetStrength* strength,
@@ -25,7 +25,7 @@ private:
   BDSFieldMagSolenoid();
 
   /// The value of the uniform magnetic field in local coordinates.
-  G4ThreeVector localBField;
+  G4ThreeVector localField;
 };
 
 #endif

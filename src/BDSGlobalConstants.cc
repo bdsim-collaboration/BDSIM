@@ -205,8 +205,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
     itsTurnsToTake = opt.nturns;
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
   teleporterlength    = 0.0;
-
-  InitRotationMatrices();
   
   // options that are never used (no set method):
   itsLWCalWidth       = 0.0;

@@ -36,7 +36,7 @@ private:
   BDSFieldMagMultipole();
 
   /// Order up to which field components are considered.
-  const G4int order;
+  G4int order;
 
   /// Normal field components (normal - ie not skew) = kn * brho
   std::vector<G4double> normalComponents;

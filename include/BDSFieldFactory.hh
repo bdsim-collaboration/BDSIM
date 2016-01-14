@@ -13,6 +13,7 @@
 #include "G4EquationOfMotion.hh"
 #include "G4Field.hh"
 #include "G4MagIntegratorStepper.hh"
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 class BDSGeometry;
