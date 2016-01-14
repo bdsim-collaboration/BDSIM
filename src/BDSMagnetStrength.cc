@@ -19,7 +19,8 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k9", "k9s",
   "k10", "k10s",
   "k11", "k11s",
-  "k12", "k12s"
+  "k12", "k12s",
+  "field", // constant field
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {

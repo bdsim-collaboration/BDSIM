@@ -8,6 +8,7 @@
 #include "BDSGeometryType.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagMultipole.hh"
+#include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSFieldMagSBend.hh"
@@ -111,9 +112,9 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
   return nullptr;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateFieldMagEquation(BDSMagnetType      type,
-							 BDSMagnetStrength* strength,
-							 G4double           brho)
+BDSFieldObjects* BDSFieldFactory::CreateFieldMagEquation(const BDSMagnetType      type,
+							 BDSMagnetStrength* const strength,
+							 const G4double           brho)
 {
   CleanUp();
   
@@ -139,10 +140,41 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMagEquation(BDSMagnetType      type
       CreateKicker(strength, brho, true); break;
     case BDSMagnetType::hkicker:
       CreateKicker(strength, brho, false); break;
+    case BDSMagnetType::muonspoiler:
+      CreateMuonSpoiler(strength, brho); break;
     default:
-      G4cerr << __METHOD_NAME__ << "not an equation based field type" << G4endl;
-      exit(1);
-      break;
+      G4cerr << __METHOD_NAME__ << "not an equation based field type - not building field" << G4endl;
+      break; // this will return nullptr
+    }
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      type,
+						      BDSMagnetStrength* const strength,
+						      const G4double           brho)
+{
+  CleanUp();
+
+  // switch on the type and build correct field
+  switch (type.underlying())
+    {
+    case BDSMagnetType::sectorbend:
+    case BDSMagnetType::rectangularbend:
+    case BDSMagnetType::quadrupole:
+    case BDSMagnetType::sextupole:
+    case BDSMagnetType::octupole:
+    case BDSMagnetType::decapole:
+    case BDSMagnetType::multipole:
+      CreateOuterMultipole(type, strength, brho); break;
+    case BDSMagnetType::solenoid:
+    case BDSMagnetType::vkicker:
+    case BDSMagnetType::hkicker:
+      break; // return a nullptr
+    case BDSMagnetType::muonspoiler:
+      CreateMuonSpoiler(strength, brho); break;
+    default:
+      G4cerr << __METHOD_NAME__ << "no outer field defined for this type of magnet" << G4endl;
+      break; // return a nullptr
     }
   return completeField;
 }
@@ -155,6 +187,11 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta
   CommonConstructor();
   return completeField;
 }
+
+void BDSFieldFactory::CreateOuterMultipole(const BDSMagnetType      type,
+					   BDSMagnetStrength* const strength,
+					   const G4double           brho)
+{;}
   
 void BDSFieldFactory::CommonConstructor()
 {
@@ -235,6 +272,15 @@ void BDSFieldFactory::CreateKicker(BDSMagnetStrength* strength,
   bEqOfMotion = new G4Mag_UsualEqRhs(bField);
   integrator  = new G4ClassicalRK4(bEqOfMotion);
   //integrator  = new BDSIntegratorDipole(strength, brho, bEqOfMotion);
+  CommonConstructor();
+}
+
+void BDSFieldFactory::CreateMuonSpoiler(BDSMagnetStrength* strength,
+					G4double           brho)
+{
+  bField      = new BDSFieldMagMuonSpoiler(strength, brho);
+  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
+  integrator  = new G4ClassicalRK4(bEqOfMotion);
   CommonConstructor();
 }
 
