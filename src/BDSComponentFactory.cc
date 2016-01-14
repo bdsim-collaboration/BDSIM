@@ -501,6 +501,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["k1"] = _element.k1 / CLHEP::m2;
   
   // magnetic field
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -762,9 +765,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     _element.outerDiameter*CLHEP::m,
 				     _element.xsize*CLHEP::m,
 				     _element.ysize*CLHEP::m,
-                     _element.xsizeOut*CLHEP::m,
-                     _element.ysizeOut*CLHEP::m,
-                     _element.material);
+				     _element.xsizeOut*CLHEP::m,
+				     _element.ysizeOut*CLHEP::m,
+				     _element.material);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
