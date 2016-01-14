@@ -66,7 +66,8 @@ void BDSScintillatorScreen::SetVisAttributes()
   RegisterVisAttributes(_visAttSampler);
 }
 
-void BDSScintillatorScreen::BuildFrontLayer(){
+void BDSScintillatorScreen::BuildFrontLayer()
+{
   //The cellulose protective layerx
   itsFrontLayerSolid  = new G4Box("CelluloseFront",_screenWidth/2.0,_screenHeight/2.0,_frontThickness/2.0);
   itsFrontLayerLog = new G4LogicalVolume(itsFrontLayerSolid,BDSMaterials::Instance()->GetMaterial("Cellulose"),"CelluloseFront",0,0,0);
@@ -83,7 +84,8 @@ void BDSScintillatorScreen::BuildFrontLayer(){
   RegisterPhysicalVolume(itsFrontLayerPhys);
 }
 
-void BDSScintillatorScreen::BuildCameraScoringPlane(){
+void BDSScintillatorScreen::BuildCameraScoringPlane()
+{
   G4String tmp = "_cameraScoringPlane";
   _scoringPlaneName=name+tmp;
   int nThisSampler= BDSSamplerBase::GetNSamplers() + 1;
@@ -97,8 +99,19 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispX=-_xLength/2.0+_scoringPlaneThickness/2.0;
   G4double dispY=0;
   G4double dispZ=0;
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
-		    containerLogicalVolume,false,0,checkOverlaps);
+
+  G4RotationMatrix* rotY90 = new G4RotationMatrix();
+  rotY90->rotateY(CLHEP::halfpi);
+  RegisterRotationMatrix(rotY90);
+  
+  new G4PVPlacement(rotY90,
+		    G4ThreeVector(dispX,dispY,dispZ),
+		    itsCameraScoringPlaneLog,
+		    _samplerName,
+		    containerLogicalVolume,
+		    false,
+		    0,
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //SPM bdsOutput->nSamplers++;

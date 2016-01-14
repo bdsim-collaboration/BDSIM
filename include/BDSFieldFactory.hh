@@ -67,7 +67,7 @@ public:
   BDSFieldObjects* CreateFieldMesh(BDSFieldType       type,
 				   G4String           filename,
 				   G4ThreeVector      localOffset = G4ThreeVector(0,0,0),
-				   G4AffineTransform* transform = nullptr);
+				   G4AffineTransform* transform   = nullptr);
   
 private:
   /// Private default constructor as singleton class.
