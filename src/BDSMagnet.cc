@@ -20,10 +20,12 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactory.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleOuterMagField.hh"
@@ -37,7 +39,9 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
-  magnetOuterOffset(G4ThreeVector(0,0,0))
+  magnetOuterOffset(G4ThreeVector(0,0,0)),
+  vacuumField(nullptr),
+  outerField(nullptr)
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
@@ -64,9 +68,10 @@ void BDSMagnet::Build()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif  
   BuildBeampipe();           // build beam pipe without placing it
-  BuildBPFieldAndStepper();  // build magnetic field - provided by derived class
-  BuildBPFieldMgr();         // build the field manager - done here
-  AttachFieldToBeamPipe();   // attach the magnetic field to the vacuum
+  //BuildBPFieldAndStepper();  // build magnetic field - provided by derived class
+  //BuildBPFieldMgr();         // build the field manager - done here
+  //AttachFieldToBeamPipe();   // attach the magnetic field to the vacuum
+  BuildVacuumField();
   BuildOuter();              // build outer and update container solid
   //BuildOuterFieldManager(..) // unused currently - uncomment when reimplemented!!!
   //AttachFieldToOuter();
@@ -91,6 +96,13 @@ void BDSMagnet::BuildBeampipe()
   RegisterDaughter(beampipe);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+}
+
+void BDSMagnet::BuildVacuumField()
+{
+  vacuumField = BDSFieldFactory::Instance()->BuildFieldEquation(type, strength, brho);
+  if (vacuumField)
+    {beampipe->GetVacuumLogicalVolume()->SetFieldManager(vacuumField->GetFieldManager());}
 }
 
 void BDSMagnet::BuildBPFieldMgr()
@@ -341,4 +353,7 @@ BDSMagnet::~BDSMagnet()
   delete itsMagField;
   delete itsEqRhs;
   delete itsStepper;
+  
+  delete vacuumField;
+  delete outerField;
 }

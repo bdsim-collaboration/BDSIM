@@ -22,7 +22,6 @@ private:
   G4double itsBGrad;
   
   virtual void Build();
-  virtual void BuildBPFieldAndStepper();
 };
 
 #endif

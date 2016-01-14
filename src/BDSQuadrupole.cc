@@ -52,13 +52,3 @@ void BDSQuadrupole::Build()
       BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
     }
 }
-
-void BDSQuadrupole::BuildBPFieldAndStepper()
-{
-  // set up the magnetic field and stepper
-  itsMagField = new BDSFieldMagQuadrupole(1 * itsBGrad); //L Deacon checking sign of field 4/7/12
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-  BDSQuadStepper* quadStepper = new BDSQuadStepper(itsEqRhs);
-  quadStepper->SetBGrad(itsBGrad);
-  itsStepper = quadStepper;
-}

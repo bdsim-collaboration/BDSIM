@@ -29,8 +29,6 @@ protected:
 
 private:
   G4double itsBQuadPrime;
-
-  virtual void BuildBPFieldAndStepper();
 };
 
 #endif

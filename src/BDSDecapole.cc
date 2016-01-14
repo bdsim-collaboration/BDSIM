@@ -1,8 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDecapole.hh"
-#include "BDSFieldMagDecapole.hh"
-#include "BDSDecStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 
@@ -20,7 +18,8 @@ BDSDecapole::BDSDecapole(G4String            name,
   itsBQuadPrime(bQuadPrime)
 {;}
 
-void BDSDecapole::Build() {
+void BDSDecapole::Build()
+{
   BDSMagnet::Build();
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
@@ -45,15 +44,4 @@ void BDSDecapole::Build() {
       
       BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
     }
-}
-
-void BDSDecapole::BuildBPFieldAndStepper()
-{
-  // set up the magnetic field and stepper
-  itsMagField=new BDSFieldMagDecapole(itsBQuadPrime);
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  
-  BDSDecStepper* decStepper=new BDSDecStepper(itsEqRhs);
-  decStepper->SetBQuadPrime(itsBQuadPrime);
-  itsStepper = decStepper;
 }

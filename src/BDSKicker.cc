@@ -2,17 +2,13 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSKicker.hh"
 
-#include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSFieldMagSBend.hh"
 #include "BDSUtilities.hh"
 
-#include "G4ClassicalRK4.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
@@ -60,35 +56,4 @@ void BDSKicker::Build()
       
       BuildOuterFieldManager(2, BFldIron,0);
     }
-}
-
-void BDSKicker::BuildBPFieldAndStepper()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // don't build field if angle is 0 as stepper intolerant of this and wast of memory and cpu
-  if (BDS::IsFinite(kickAngle))
-    {
-      // set up the magnetic field and stepper
-      // set magnetic field direction dependingon whether it's a vertical kicker or not
-      G4ThreeVector vectorBField;
-      if (magnetType == BDSMagnetType::vkicker)
-	{vectorBField = G4ThreeVector(-bField, 0, 0);} // vertical kicker
-      else
-	{vectorBField = G4ThreeVector(0, bField, 0);} // must be horizontal kicker
-
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "Name: " << name << ", type: " << magnetType.ToString() << G4endl;
-      G4cout << __METHOD_NAME__ << "Kick angle: " << kickAngle << " B: " << vectorBField << G4endl;
-#endif
-      
-      itsMagField = new BDSFieldMagSBend(vectorBField,chordLength,kickAngle);
-      itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-      itsStepper  = new G4ClassicalRK4(itsEqRhs);
-    }
-#ifdef BDSDEBUG
-  else
-    {G4cout << __METHOD_NAME__ << "kick angle isn't finite - not building field" << G4endl;}
-#endif
 }

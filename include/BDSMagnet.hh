@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuter.hh"
@@ -48,7 +49,7 @@ protected:
   virtual void Build();
   
   /// define field and stepper
-  virtual void BuildBPFieldAndStepper()=0;
+  //virtual void BuildBPFieldAndStepper()=0;
   
   /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
   /// by derived classes as required - such as RBend.
@@ -83,6 +84,8 @@ protected:
   /// Place the beam pipe and outer geometry in the overall container. If there's no outer
   /// geometry, then we don't need to place either as the beam pipe becomes the container.
   virtual void PlaceComponents();
+
+  virtual void BuildVacuumField();
 
   ///@{ normal vector for faces when preparing solids
   G4ThreeVector inputface;
@@ -129,6 +132,10 @@ protected:
   
   /// The assembled outer magnet geometry
   BDSMagnetOuter* outer;
+
+  /// The fields associated with this magnet
+  BDSFieldObjects* vacuumField;
+  BDSFieldObjects* outerField;
 };
 
 #endif
