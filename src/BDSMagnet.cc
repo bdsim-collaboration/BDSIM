@@ -179,7 +179,7 @@ void BDSMagnet::BuildOuter()
       outer = theFactory->CreateKicker(geometryType,name,outerLength,beampipe,
 				       outerDiameter,chordLength,false,outerMaterial);
       break;
-    case BDSMagnetType::muspoiler:
+    case BDSMagnetType::muonspoiler:
       outer = theFactory->CreateMuSpoiler(geometryType,name,outerLength,beampipe,
 					  outerDiameter,chordLength,outerMaterial);
       break;
