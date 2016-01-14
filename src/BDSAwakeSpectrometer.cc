@@ -637,7 +637,7 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 void BDSAwakeSpectrometer::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
-  G4double grainSize = 10*1e-6*CLHEP::m;
+  G4double grainSize = 25*1e-6*CLHEP::m;
   _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap ,grainSize, _windowThickness, _windowMaterial);
   
   G4cout << "finished." << G4endl;
