@@ -21,7 +21,7 @@ BDSRfCavity::BDSRfCavity(G4String            name,
 			 BDSBeamPipeInfo*    beamPipeInfo,
 			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rfcavity, name, length,
-	    beamPipeInfo, magnetOuterInfo),
+	    beamPipeInfo, magnetOuterInfo, nullptr, 0),
   gradient(grad),
   eField(nullptr),equation(nullptr),fieldManager(nullptr),intgrDriver(nullptr),stepper(nullptr)
 {;}

@@ -61,8 +61,7 @@ private:
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend();
-  BDSAcceleratorComponent* CreateHKick();
-  BDSAcceleratorComponent* CreateVKick();
+  BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
   BDSAcceleratorComponent* CreateQuad();  
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();

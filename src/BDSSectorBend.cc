@@ -21,11 +21,12 @@ BDSSectorBend::BDSSectorBend(G4String            name,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
-	    beamPipeInfo, magnetOuterInfo)
+	    beamPipeInfo, magnetOuterInfo, nullptr, 0)
 {
   /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
   /// - this results in a wrongly chord length
-  angle       = angleIn;
+  angle                  = angleIn;
+  magnetOuterInfo->angle = angle;
   if (BDS::IsFinite(angle))
     {
       chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;

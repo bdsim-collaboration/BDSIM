@@ -23,7 +23,7 @@ BDSRBend::BDSRBend(G4String            name,
 		   BDSBeamPipeInfo*    beamPipeInfo,
 		   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
-	    beamPipeInfo, magnetOuterInfo),
+	    beamPipeInfo, magnetOuterInfo, nullptr, 0),
   bField(bFieldIn),
   bGrad(bGradIn),
   bpFirstBit(nullptr),

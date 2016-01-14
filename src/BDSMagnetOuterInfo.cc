@@ -11,12 +11,16 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo()
   outerMaterial = nullptr;
 }
 
-BDSMagnetOuterInfo::BDSMagnetOuterInfo(BDSMagnetGeometryType geometryTypeIn,
+BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
+				       BDSMagnetGeometryType geometryTypeIn,
 				       G4double              outerDiameterIn,
-				       G4Material*           outerMaterialIn)
+				       G4Material*           outerMaterialIn,
+				       G4double              angleIn)
 {
+  name          = nameIn;
   geometryType  = geometryTypeIn;
   outerDiameter = outerDiameterIn;
   outerMaterial = outerMaterialIn;
+  angle         = angleIn;
 }
   

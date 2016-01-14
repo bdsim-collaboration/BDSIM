@@ -15,18 +15,23 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct BDSMagnetOuterInfo {
+struct BDSMagnetOuterInfo
+{
   /// default constructor
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
-  BDSMagnetOuterInfo(BDSMagnetGeometryType geometryTypeIn,
+  BDSMagnetOuterInfo(G4String              nameIn,
+		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              outerDiameterIn,
-		     G4Material*           outerMaterialIn);
-		  
+		     G4Material*           outerMaterialIn,
+		     G4double              angle = 0.0);
+
+  G4String              name;
   BDSMagnetGeometryType geometryType;
-  G4double        outerDiameter;
-  G4Material*     outerMaterial;
+  G4double              outerDiameter;
+  G4Material*           outerMaterial;
+  G4double              angle;
 };
 
 #endif

@@ -39,7 +39,9 @@ public:
 	    G4String            name, 
 	    G4double            length,
 	    BDSBeamPipeInfo*    beamPipeInfo,
-	    BDSMagnetOuterInfo* magnetOuterInfo);
+	    BDSMagnetOuterInfo* magnetOuterInfo,
+	    BDSMagnetStrength*  vacuumFieldStrength,
+	    G4double            brhoIn);
   
   virtual ~BDSMagnet();
   
@@ -84,6 +86,15 @@ protected:
   
   /// Model information for the beam pipe
   BDSBeamPipeInfo* beamPipeInfo;
+
+  /// Model information for the outer volume construction
+  BDSMagnetOuterInfo* magnetOuterInfo;
+
+  /// Magnetic strengths
+  BDSMagnetStrength* strength;
+
+  /// Nominal rigidity with repect to which the field is constructed
+  G4double           brho;
   
   /// The constructed beampipe
   BDSBeamPipe*    beampipe;
@@ -99,10 +110,7 @@ protected:
   /// Separate variable for the container radius so it can be changed if
   /// required by specific magnet geometry.
   G4double        containerRadius;
-
-  /// Model information for the outer volume construction
-  BDSMagnetOuterInfo* magnetOuterInfo;
-
+  
   /// Displacement (if required - default 0,0,0) for specific magnet geometry. Allows
   /// derived classes to specify different geometry without having to override placement
   /// which is provided in base class.
@@ -114,9 +122,6 @@ protected:
   /// The fields associated with this magnet
   BDSFieldObjects* vacuumField;
   BDSFieldObjects* outerField;
-
-  BDSMagnetStrength* strength;
-  G4double           brho;
 };
 
 #endif

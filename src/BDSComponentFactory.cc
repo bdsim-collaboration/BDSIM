@@ -9,21 +9,15 @@
 #include "BDSDrift.hh"
 #include "BDSDump.hh"
 #include "BDSElement.hh"
-#include "BDSKicker.hh"
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
-#include "BDSMuSpoiler.hh"
-#include "BDSOctupole.hh"
-#include "BDSDecapole.hh"
-#include "BDSQuadrupole.hh"
+#include "BDSMagnet.hh"
 #include "BDSRBend.hh"
 #include "BDSRfCavity.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSSectorBend.hh"
-#include "BDSSextupole.hh"
-#include "BDSSolenoid.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTiltOffset.hh"
@@ -131,9 +125,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element& elementIn
   case ElementType::_RBEND:
     element = CreateRBend(); break; 
   case ElementType::_HKICK:
-    element = CreateHKick(); break; 
+    element = CreateKicker(false); break; 
   case ElementType::_VKICK:
-    element = CreateVKick(); break; 
+    element = CreateKicker(true); break; 
   case ElementType::_QUAD:
     element = CreateQuad(); break; 
   case ElementType::_SEXTUPOLE:
@@ -424,78 +418,36 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 			PrepareMagnetOuterInfo(_element)));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
-{
-  if(!HasSufficientMinimumLength(_element))
-    {return nullptr;}  
-  
-  G4double length = _element.l*CLHEP::m;
-  
-  // magnetic field
-  G4double bField;
-  if(_element.B != 0)
-    {
-      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-      bField = _element.B * CLHEP::tesla;
-      _element.angle  = -bField * length / _brho;
-    }
-  else
-    {
-      // B = Brho/rho = Brho/(arc length/angle)
-      // charge in e units
-      // multiply once more with ffact to not flip fields in kicks defined with angle
-      bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
-      _element.B = bField/CLHEP::tesla;
-    }
-  
-  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-  
-  return (new BDSKicker(_element.name,
-			_element.l * CLHEP::m,
-			bField,
-			_element.angle,
-			BDSMagnetType::hkicker,
-			PrepareBeamPipeInfo(_element),
-			PrepareMagnetOuterInfo(_element)));
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
+BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
   G4double length = _element.l*CLHEP::m;
-  
-  // magnetic field
-  G4double bField;
-  if(_element.B != 0)
+  if(BDS::IsFinite(_element.B))
     {
-      // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-      bField = _element.B * CLHEP::tesla;
-      _element.angle  = -bField * length / _brho;
+      (*st)["field"] = _element.B * CLHEP::tesla;
+      (*st)["angle"] = (*st)["field"] * length / _brho;
     }
   else
     {
-      // B = Brho/rho = Brho/(arc length/angle)
-      // charge in e units
-      // multiply once more with ffact to not flip fields in kicks
-      bField = - _brho * _element.angle / length * _charge * BDSGlobalConstants::Instance()->GetFFact();
-      _element.B = bField/CLHEP::tesla;
+      G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
+      (*st)["angle"] = _element.angle;
+      (*st)["field"] = _brho * (*st)["angle"] / length * _charge * ffact / CLHEP::tesla;
     }
-  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  //G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+
+  BDSMagnetType t = BDSMagnetType::hkicker;
+  if (isVertical)
+    {t = BDSMagnetType::vkicker;}
   
-  return (new BDSKicker(_element.name,
-			_element.l * CLHEP::m,
-			bField,
-			_element.angle,
-			BDSMagnetType::vkicker,
-			PrepareBeamPipeInfo(_element),
-			PrepareMagnetOuterInfo(_element)
-			));
+  return new BDSMagnet(t,
+		       _element.name,
+		       _element.l*CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -505,100 +457,65 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k1"] = _element.k1 / CLHEP::m2;
-  
-  // magnetic field
-  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
 
-  return (new BDSQuadrupole( _element.name,
-			     _element.l * CLHEP::m,
-			     bPrime,
-			     PrepareBeamPipeInfo(_element),
-			     PrepareMagnetOuterInfo(_element)));
+  return new BDSMagnet(BDSMagnetType::quadrupole,
+		       _element.name,
+		       _element.l * CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-  // magnetic field 
-  // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
-  // brho is in Geant4 units, but k2 is not -> multiply k2 by m^-3
-  G4double bDoublePrime = - _brho * (_element.k2 / CLHEP::m3);
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Sextupole,"
-	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " k2= " << _element.k2 << "m^-3"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
-	 << " material= " << _element.outerMaterial
-	 << G4endl;
-#endif
-  
-  return (new BDSSextupole( _element.name,
-			    _element.l * CLHEP::m,
-			    bDoublePrime,
-			    PrepareBeamPipeInfo(_element),
-			    PrepareMagnetOuterInfo(_element)));
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["k2"] = _element.k2 / CLHEP::m3;
+
+  return new BDSMagnet(BDSMagnetType::sextupole,
+		       _element.name,
+		       _element.l * CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-  // magnetic field  
-  // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
-  // brho is in Geant4 units, but k3 is not -> multiply k3 by m^-4
-  G4double bTriplePrime = - _brho * (_element.k3 / (CLHEP::m3*CLHEP::m));
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Octupole,"
-	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " k3= " << _element.k3 << "m^-4"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
-	 << " material= " << _element.outerMaterial
-	 << G4endl;
-#endif
-  
-  return ( new BDSOctupole( _element.name,
-			    _element.l * CLHEP::m,
-			    bTriplePrime,
-			    PrepareBeamPipeInfo(_element),
-			    PrepareMagnetOuterInfo(_element)));
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["k3"] = _element.k3 / (CLHEP::m3*CLHEP::m);
+
+  return new BDSMagnet(BDSMagnetType::octupole,
+		       _element.name,
+		       _element.l * CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-  // magnetic field  
-  // B''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
-  // brho is in Geant4 units, but k4 is not -> multiply k4 by m^-5
-  G4double bQuadruplePrime = - _brho * (_element.k4 / (CLHEP::m3*CLHEP::m2));
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Decapole,"
-	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " k4= " << _element.k4 << "m^-5"
-	 << " brho= " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
-	 << " B''''= " << bQuadruplePrime/(CLHEP::tesla/CLHEP::m3*CLHEP::m) << "T/m^4"
-	 << " material= " << _element.outerMaterial
-	 << G4endl;
-#endif
-  
-  return ( new BDSDecapole( _element.name,
-			    _element.l * CLHEP::m,
-			    PrepareBeamPipeInfo(_element),
-			    PrepareMagnetOuterInfo(_element)));
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["k4"] = _element.k4 / (CLHEP::m3*CLHEP::m2);
+
+  return new BDSMagnet(BDSMagnetType::decapole,
+		       _element.name,
+		       _element.l * CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
@@ -689,37 +606,26 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-  // magnetic field
-  //
-  // B = B/Brho * Brho = ks * Brho
-  // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
-  G4double bField;
-  if(_element.B != 0) {
-    bField = _element.B * CLHEP::tesla;
-    _element.ks  = (bField/_brho) / CLHEP::m;
-  }
-  else {
-    bField = (_element.ks/CLHEP::m) * _brho;
-    _element.B = bField/CLHEP::tesla;
-  }
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Solenoid,"
-	 << " name = " << _element.name
-	 << " l = " << _element.l << " m,"
-	 << " ks = " << _element.ks << " m^-1,"
-	 << " brho = " << fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m,"
-	 << " B = " << bField/CLHEP::tesla << " T,"
-	 << " material = \"" << _element.outerMaterial << "\""
-	 << G4endl;
-#endif
-  
-  return (new BDSSolenoid( _element.name,
-			   _element.l * CLHEP::m,
-			   bField,
-			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element)));
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  if (BDS::IsFinite(_element.B))
+    {
+      (*st)["field"] = _element.B * CLHEP::tesla;
+      (*st)["ks"]    = (*st)["field"] / _brho / CLHEP::m;
+    }
+  else
+    {
+      (*st)["field"] = (_element.ks / CLHEP::m) * _brho;
+      (*st)["ks"]    = _element.ks / CLHEP::m;
+    }
+
+  return new BDSMagnet(BDSMagnetType::solenoid,
+		       _element.name,
+		       _element.l*CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -774,20 +680,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-#ifdef BDSDEBUG 
-  G4cout << "---->creating muspoiler,"
-	 << " name = " << _element.name 
-	 << " length = " << _element.l
-	 << " B = " << _element.B*CLHEP::tesla << " m*T"
-	 << G4endl;
-#endif
-  
-  return (new BDSMuSpoiler(_element.name,
-			   _element.l*CLHEP::m,
-			   _element.B * CLHEP::tesla,
-			   PrepareBeamPipeInfo(_element),
-			   PrepareMagnetOuterInfo(_element)));
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["field"] = _element.B * CLHEP::tesla;
+
+  return new BDSMagnet(BDSMagnetType::muonspoiler,
+		       _element.name,
+		       _element.l*CLHEP::m,
+		       PrepareBeamPipeInfo(_element),
+		       PrepareMagnetOuterInfo(_element),
+		       st,
+		       _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
@@ -961,6 +864,9 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element& element)
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element& element)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
+
+  info->name = element.name;
+  
   // magnet geometry type
   if (element.magnetGeometryType == "")
     info->geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();

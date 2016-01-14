@@ -3,8 +3,10 @@
 
 #include "BDSBeamPipe.hh"
 #include "BDSMagnetOuter.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSMagnetType.hh"
 
 #include "globals.hh"           // geant4 globals / types
 #include "G4Material.hh"
@@ -25,6 +27,12 @@ public:
   static BDSMagnetOuterFactory* Instance(); /// singleton pattern
   
   ~BDSMagnetOuterFactory();
+
+  BDSMagnetOuter* CreateMagnetOuter(BDSMagnetType       magnetType,
+				    BDSMagnetOuterInfo* outerInfo,
+				    G4double            outerLength,
+				    G4double            chordLength,
+				    BDSBeamPipe*        beampipe);
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(BDSMagnetGeometryType magnetType,   // magnet type

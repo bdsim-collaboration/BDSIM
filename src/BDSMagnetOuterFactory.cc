@@ -90,6 +90,72 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
   }
 }
 
+BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       magnetType,
+							 BDSMagnetOuterInfo* outerInfo,
+							 G4double            outerLength,
+							 G4double            chordLength,
+							 BDSBeamPipe*        beampipe)
+{
+  BDSMagnetOuter* outer = nullptr;
+
+  G4String name                         = outerInfo->name;
+  G4double outerDiameter                = outerInfo->outerDiameter;
+  G4Material* outerMaterial             = outerInfo->outerMaterial;
+  BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
+  
+  switch(magnetType.underlying())
+    {
+    case BDSMagnetType::decapole:
+      outer = CreateDecapole(geometryType,name,outerLength,beampipe,
+			     outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::vkicker:
+      outer = CreateKicker(geometryType,name,outerLength,beampipe,
+			   outerDiameter,chordLength,true,outerMaterial);
+      break;
+    case BDSMagnetType::hkicker:
+      outer = CreateKicker(geometryType,name,outerLength,beampipe,
+			   outerDiameter,chordLength,false,outerMaterial);
+      break;
+    case BDSMagnetType::muonspoiler:
+      outer = CreateMuSpoiler(geometryType,name,outerLength,beampipe,
+			      outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::octupole:
+      outer = CreateOctupole(geometryType,name,outerLength,beampipe,
+			     outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::quadrupole:
+      outer = CreateQuadrupole(geometryType,name,outerLength,beampipe,
+			       outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::rfcavity:
+      outer = CreateRfCavity(geometryType,name,outerLength,beampipe,
+			     outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::sectorbend:
+      outer = CreateSectorBend(geometryType,name,outerLength,beampipe,
+			       outerDiameter,chordLength,outerInfo->angle,outerMaterial);
+      break;
+    case BDSMagnetType::sextupole:
+      outer = CreateSextupole(geometryType,name,outerLength,beampipe,
+			      outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::solenoid:
+      outer = CreateSolenoid(geometryType,name,outerLength,beampipe,
+			     outerDiameter,chordLength,outerMaterial);
+      break;
+    case BDSMagnetType::multipole:
+      outer = CreateMultipole(geometryType,name,outerLength,beampipe,
+			      outerDiameter,chordLength,outerMaterial);
+      break;
+    default:
+      G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
+      break;
+    }
+  return outer;
+}
+
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetGeometryType magnetType,
 							G4String      name,
 							G4double      length,

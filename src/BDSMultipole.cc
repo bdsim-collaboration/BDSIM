@@ -19,7 +19,7 @@ BDSMultipole::BDSMultipole(G4String            name,
 			   BDSBeamPipeInfo*    beamPipeInfo,
 			   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::multipole, name, length,
-	    beamPipeInfo, magnetOuterInfo)
+	    beamPipeInfo, magnetOuterInfo,nullptr,0)
 {
   CommonConstructor(akn,aks);
 }
