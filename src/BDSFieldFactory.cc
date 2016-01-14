@@ -19,6 +19,7 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
+#include "BDSIntegratorTeleporter.hh"
 #include "BDSMagFieldMesh.hh"
 #include "BDSMagFieldSQL.hh"
 #include "BDSMagFieldXY.hh"
@@ -143,6 +144,15 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMagEquation(BDSMagnetType      type
       exit(1);
       break;
     }
+  return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
+{
+  bField      = new BDSMagFieldMesh(); //Zero magnetic field.
+  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
+  integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  CommonConstructor();
   return completeField;
 }
   

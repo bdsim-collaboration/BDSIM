@@ -1,34 +1,25 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSTeleporterStepper.hh"
+#include "BDSIntegratorTeleporter.hh"
 
-#include "G4MagIntegratorStepper.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
-  G4MagIntegratorStepper(eqRHS, 6)
-{
-#ifdef BDSDEBUG
-  G4cout << "BDSTeleporterStepper Constructor " << G4endl;
-#endif
-  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-  nvar               = 6;
-  teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
-#ifdef BDSDEBUG
-  verboseStep = true;
-#endif
-}
+BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs* const  eqRHSIn,
+						 const G4ThreeVector teleporterDeltaIn):
+  BDSIntegratorBase(eqRHSIn, 6),
+  teleporterDelta(teleporterDeltaIn)
+{;}
 
-void BDSTeleporterStepper::Stepper(const G4double yIn[],
+void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
 				   const G4double /*dxdy*/[],
 				   const G4double h,
 				   G4double yOut[],
 				   G4double yErr[])
 {
-  for(G4int i=0;i<nvar;i++)
-    {yErr[i]=0;}
+  for(G4int i = 0; i < nVariables; i++)
+    {yErr[i] = 0;}
 
   G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
 #ifdef BDSDEBUG
@@ -38,9 +29,16 @@ void BDSTeleporterStepper::Stepper(const G4double yIn[],
   // must test for this to avoid backwards going particles getting stuck
   if (turnstaken > 0 && yIn[5] > 0)
     {
-      yOut[0] = yIn[0] - teleporterdelta.x();
-      yOut[1] = yIn[1] - teleporterdelta.y();
-      yOut[2] = yIn[2] + h; // move it to end of teleporter
+      G4ThreeVector localPosition = ConvertToLocal(yIn);
+      G4ThreeVector localPositionAfter;
+      localPositionAfter[0] = localPosition.x() - teleporterDelta.x();
+      localPositionAfter[1] = localPosition.y() - teleporterDelta.y();
+      localPositionAfter[2] = localPosition.z() + h;
+
+      G4ThreeVector globalPosition = ConvertToGlobal(localPositionAfter);
+      yOut[0] = globalPosition[0];
+      yOut[1] = globalPosition[1];
+      yOut[2] = globalPosition[2];
       yOut[3] = yIn[3];
       yOut[4] = yIn[4];
       yOut[5] = yIn[5];
@@ -59,8 +57,7 @@ void BDSTeleporterStepper::Stepper(const G4double yIn[],
       yOut[5] = yIn[5];
     }
   
-  if (verboseStep)
-    {
+#ifdef BDSDEBUG
       G4ThreeVector inA  = G4ThreeVector(yIn[0],yIn[1],yIn[2]);
       G4ThreeVector inB  = G4ThreeVector(yIn[3],yIn[4],yIn[5]);
       G4ThreeVector outA = G4ThreeVector(yOut[0],yOut[1],yOut[2]);
@@ -74,8 +71,5 @@ void BDSTeleporterStepper::Stepper(const G4double yIn[],
       G4cout << "Output x,y,z    " << outA/CLHEP::m << G4endl;
       G4cout << "Output px,py,pz " << outB/CLHEP::m << G4endl;
       G4cout.flags(ff); // reset cout flags
-    }
+#endif
 }
-
-BDSTeleporterStepper::~BDSTeleporterStepper()
-{}

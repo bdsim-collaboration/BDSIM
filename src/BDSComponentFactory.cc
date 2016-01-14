@@ -219,7 +219,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
 		       BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDetla)
 {
   // This relies on things being added to the beamline immediately
   // after they've been created
@@ -240,7 +240,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
 #endif
 
     return( new BDSTeleporter(name,
-			      teleporterLength ));
+			      teleporterLength,
+			      teleporterDetla));
   
 }
 

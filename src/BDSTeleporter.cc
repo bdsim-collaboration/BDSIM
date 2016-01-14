@@ -1,24 +1,24 @@
-#include "globals.hh" //G4 global constants & types
-#include "BDSTeleporter.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldFactory.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSMagFieldMesh.hh"
-#include "BDSTeleporterStepper.hh"
+#include "BDSTeleporter.hh"
 
+#include "globals.hh" //G4 global constants & types
 #include "G4Box.hh" 
-#include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
 #include "G4ThreeVector.hh"
+
 #include <cmath>
 
-BDSTeleporter::BDSTeleporter(G4String name,
-			     G4double length):
+
+BDSTeleporter::BDSTeleporter(const G4String      name,
+			     const G4double      length,
+			     const G4ThreeVector teleporterDeltaIn):
   BDSAcceleratorComponent(name, length, 0, "teleporter"),
-  itsChordFinder(nullptr),itsFieldManager(nullptr),itsStepper(nullptr),itsMagField(nullptr),itsEqRhs(nullptr),magIntDriver(nullptr)
+  vacuumField(nullptr),
+  teleporterDelta(teleporterDeltaIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
@@ -28,9 +28,9 @@ BDSTeleporter::BDSTeleporter(G4String name,
 
 void BDSTeleporter::Build()
 {
-  BuildBPFieldAndStepper();         // create custom stepper
-  BuildBPFieldMgr();                // register it in a manager
-  BDSAcceleratorComponent::Build(); // create container and attach stepper
+  BDSAcceleratorComponent::Build(); // create container
+  vacuumField = BDSFieldFactory::Instance()->CreateTeleporter(teleporterDelta);
+  containerLogicalVolume->SetFieldManager(vacuumField->GetFieldManager(), true);
 }
 
 void BDSTeleporter::BuildContainerLogicalVolume()
@@ -43,44 +43,14 @@ void BDSTeleporter::BuildContainerLogicalVolume()
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
-  containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMagnet.cc
 
   // register extents with BDSGeometryComponent base class
   SetExtentX(-radius,radius);
   SetExtentY(-radius,radius);
   SetExtentZ(-chordLength*0.5, chordLength*0.5);
 }
-  
-void BDSTeleporter::BuildBPFieldAndStepper()
-{
-#ifdef BDSDEBUG
-  G4cout << "BDSTeleporter Build Stepper & Field " << G4endl;
-#endif
-  // set up the magnetic field and stepper
-  itsMagField = new BDSMagFieldMesh(); //Zero magnetic field.
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper  = new BDSTeleporterStepper(itsEqRhs);
-}
 
-void BDSTeleporter::BuildBPFieldMgr()
-{
-  magIntDriver = new G4MagInt_Driver(chordLength, // set chord length as minimum step
-				     itsStepper,
-				     itsStepper->GetNumberOfVariables());
-
-  itsChordFinder = new G4ChordFinder(magIntDriver);
-  
-  itsFieldManager = new G4FieldManager();
-  itsFieldManager->SetDetectorField(itsMagField);
-  itsFieldManager->SetChordFinder(itsChordFinder);
-  // set limits for field (always non zero, so always set)
-  itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
-}
-
-void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
+G4ThreeVector BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 {
   // get position of last item in beamline
   // and then calculate necessary offset teleporter should apply
@@ -106,13 +76,11 @@ void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
     {teleporterLength -= 3*CLHEP::um;}
   G4cout << "Calculated teleporter length: " << teleporterLength << " mm" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterLength);
+
+  return delta;
 }
 
 BDSTeleporter::~BDSTeleporter()
 {
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
-  delete itsChordFinder;
-  delete itsFieldManager;
+  delete vacuumField;
 }

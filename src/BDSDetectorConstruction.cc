@@ -169,7 +169,7 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      BDS::CalculateAndSetTeleporterDelta(beamline);
+      G4ThreeVector teleporterDetla = BDS::CalculateAndSetTeleporterDelta(beamline);
       BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
       if (terminator)
         {
@@ -181,7 +181,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	      survey->Write(addedComponents, element);
 	    }
 	}
-      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter();
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDetla);
       if (teleporter)
 	{
 	  teleporter->Initialise();

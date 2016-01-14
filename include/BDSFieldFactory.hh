@@ -68,6 +68,10 @@ public:
 				   G4String           filename,
 				   G4ThreeVector      localOffset = G4ThreeVector(0,0,0),
 				   G4AffineTransform* transform   = nullptr);
+
+  /// Create a special teleporter 'field' that shifts particles at the end of rings to
+  /// match up correctly.
+  BDSFieldObjects* CreateTeleporter(G4ThreeVector teleporterDelta);
   
 private:
   /// Private default constructor as singleton class.

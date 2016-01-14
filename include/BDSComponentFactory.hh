@@ -37,7 +37,7 @@ public:
 
   // for each of them - special cases need only for ring logic
   BDSAcceleratorComponent* CreateTerminator();
-  BDSAcceleratorComponent* CreateTeleporter();
+  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDetla);
   /// Create the tilt and offset information object by inspecting the parser element
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element& element);
  
