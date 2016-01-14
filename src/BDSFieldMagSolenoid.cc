@@ -20,5 +20,5 @@ void BDSFieldMagSolenoid::GetFieldValue(const G4double point[4],
 {
   ConvertToLocal(point);
 
-  OutputToGlobal(localField, field);
+  OutputGlobalField(localField, field);
 }

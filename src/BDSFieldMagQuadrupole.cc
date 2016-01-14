@@ -26,7 +26,7 @@ void BDSFieldMagQuadrupole::GetFieldValue(const G4double point[4],
   localField[1] = localPosition.x() * bPrime; // B_y = B' * x;
   localField[2] = 0;                          // B_z = 0
 
-  OutputToGlobal(localField, field);
+  OutputGlobalField(localField, field);
 }
 
 

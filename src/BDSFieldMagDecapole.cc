@@ -36,7 +36,7 @@ void BDSFieldMagDecapole::GetFieldValue(const G4double point[4],
   localField[1] = (pow(x,4) - 6 * pow(x,2) * pow(y,2) + pow(y,4)) * bQPNormed;
   localField[2] = 0;
 
-  OutputToGlobal(localField, field);
+  OutputGlobalField(localField, field);
 }
 
 

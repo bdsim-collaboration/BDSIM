@@ -36,7 +36,7 @@ void BDSFieldMagOctupole::GetFieldValue(const G4double point[4],
   localField[1] = (pow(x,3) - x * pow(y,2)) * bTPNormed;
   localField[2] = 0;
 
-  OutputToGlobal(localField, field);
+  OutputGlobalField(localField, field);
 }
 
 

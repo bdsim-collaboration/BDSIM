@@ -73,7 +73,7 @@ void BDSFieldMagMultipole::GetFieldValue(const G4double point[4],
   localField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
   localField[2] = 0;                                 // B_z
 
-  OutputToGlobal(localField, field);
+  OutputGlobalField(localField, field);
 }
 
 

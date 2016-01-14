@@ -32,7 +32,7 @@ void BDSFieldMagSextupole::GetFieldValue(const G4double point[4],
   localField[1] = (pow(localPosition.x(),2) - pow(localPosition.y(),2)) * halfBDoublePrime;
   localField[2] = 0;
 
-  OutputToGlobal(localField, field);
+  OutputGlobalField(localField, field);
 }
 
 
