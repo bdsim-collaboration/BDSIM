@@ -45,9 +45,6 @@ public:
 
   static void AttachWorldVolumeToNavigator(G4VPhysicalVolume* worldPV);
 
-  /// Whether the transform has been initialised or not.
-  inline G4bool Initialised() const;
-
   /// Locate the supplied point the in the geometry and get and store
   /// the transform to that volume in the member variable. This function
   /// has to be const as it's called the first time in GetField which is
@@ -55,6 +52,42 @@ public:
   /// implement and have to keep const. This function doesn't change the
   /// const pointer but does change the contents of what it points to.
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
+
+  /// Calculate the local coordinates of a global point.
+  G4ThreeVector ConvertToLocal(const G4double globalPoint[3]) const;
+
+  /// Vector version
+  G4ThreeVector ConvertToLocal(const G4ThreeVector& globalPoint) const;
+
+  /// Calculate the local version of a global vector (axis). This is done
+  /// w.r.t. a point - ie, the point is used to initialise the transform
+  /// if not done already.
+  G4ThreeVector ConvertAxisToLocal(const G4double globalPoint[3],
+				   const G4double globalAxis[3]) const;
+
+  /// Vector version
+  G4ThreeVector ConvertAxisToLocal(const G4ThreeVector& globalPoint,
+				   const G4ThreeVector& globalAxis) const;
+
+  /// Convert a vector (axis) from local to global coordinates. NOTE this
+  /// function must be used once the instance of this class has been initialised
+  /// setting up the transforms.  It is up to the developer to ensure this,
+  /// otherwise you'll find a bad access.
+  G4ThreeVector ConvertAxisToGlobal(const G4ThreeVector& localAxis) const;
+
+  /// Convert a position in local coordinates to global coordinates. NOTE a
+  /// similar caution to ConvertAxisToGlobal applies.
+  G4ThreeVector ConvertToGlobal(const G4ThreeVector& localPosition) const;
+
+  /// Convert a vector (axis) from local to global coordinates. This uses a global
+  /// position to ensure the transform is initialised.
+  G4ThreeVector ConvertAxisToGlobal(const G4ThreeVector& globalPosition,
+				    const G4ThreeVector& localAxis) const;
+
+  /// Convert a position in local coordinates to global coordinates. This uses a
+  /// global position to ensure the transform is initialised.
+  G4ThreeVector ConvertToGlobal(const G4ThreeVector& globalPosition,
+				const G4ThreeVector& localPosition) const;
 
 protected:
   /// Whether this instance has been intialised. If not store the transform
@@ -70,9 +103,6 @@ protected:
   
   static G4Navigator* auxNavigator;
 };
-
-inline G4bool BDSAuxiliaryNavigator::Initialised() const
-{return (*initialised);}
 
 
 #endif
