@@ -45,10 +45,6 @@ private:
   /// Override method from BDSAcceleratorComponent to detail construction process.
   virtual void Build();
 
-  /// Required by BDSMagnet. We change the magnetic field length to just the length of the
-  /// straight section in the rbend here.
-  virtual void BuildBPFieldAndStepper();
-
   /// Override method so we can build several bits of beam pipe
   virtual void BuildBeampipe();
 

@@ -4,26 +4,22 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSOctupole.hh"
-#include "BDSFieldMagOctupole.hh"
-#include "BDSOctStepper.hh"
 
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "globals.hh" // geant4 types / globals
 
 BDSOctupole::BDSOctupole(G4String            name,
 			 G4double            length,
-			 G4double            bTriplePrime,
+			 G4double            /*bTriplePrime*/,
 			 BDSBeamPipeInfo*    beamPipeInfo,
 			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::octupole, name, length,
-	    beamPipeInfo, magnetOuterInfo),
-  itsBTriplePrime(bTriplePrime)
+	    beamPipeInfo, magnetOuterInfo)
 {;}
 
 void BDSOctupole::Build()
 {
   BDSMagnet::Build();
+  /*
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -46,16 +42,5 @@ void BDSOctupole::Build()
       BFldIron/=2.;
       
       BuildOuterFieldManager(8, BFldIron,CLHEP::pi/8);
-    }
-}
-
-void BDSOctupole::BuildBPFieldAndStepper()
-{
-  // set up the magnetic field and stepper
-  itsMagField=new BDSFieldMagOctupole(itsBTriplePrime);
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);
-  
-  BDSOctStepper* octStepper=new BDSOctStepper(itsEqRhs);
-  octStepper->SetBTrpPrime(itsBTriplePrime);
-  itsStepper = octStepper;
+      }*/
 }

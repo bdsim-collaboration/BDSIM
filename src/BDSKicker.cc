@@ -33,6 +33,7 @@ BDSKicker::BDSKicker(G4String            name,
 void BDSKicker::Build()
 {
   BDSMagnet::Build();
+  /*
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -56,4 +57,5 @@ void BDSKicker::Build()
       
       BuildOuterFieldManager(2, BFldIron,0);
     }
+  */
 }

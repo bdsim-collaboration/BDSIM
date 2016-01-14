@@ -84,11 +84,3 @@ void BDSMultipole::CommonConstructor(std::list<G4double> akn, std::list<G4double
 
   itsOrder = kn.size();
 }
-
-void BDSMultipole::BuildBPFieldAndStepper()
-{
-  // set up the magnetic field and stepper
-  itsMagField = new BDSFieldMagMultipole(kn,ks);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper  = new G4SimpleRunge(itsEqRhs);
-}

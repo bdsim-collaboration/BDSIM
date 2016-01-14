@@ -4,21 +4,16 @@
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSQuadrupole.hh"
-#include "BDSFieldMagQuadrupole.hh"
-#include "BDSQuadStepper.hh"
 
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
+#include "globals.hh"
 
 BDSQuadrupole::BDSQuadrupole(G4String            name,
 			     G4double            length,
-			     G4double            bGrad,
+			     G4double            /*bGrad*/,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::quadrupole, name, length,
-	    beamPipeInfo, magnetOuterInfo),
-  itsBGrad(bGrad)
+	    beamPipeInfo, magnetOuterInfo)
 {;}
 
 void BDSQuadrupole::Build() 
@@ -27,7 +22,7 @@ void BDSQuadrupole::Build()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnet::Build();
-  
+  /*
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -50,5 +45,5 @@ void BDSQuadrupole::Build()
       BFldIron/=2.;
       
       BuildOuterFieldManager(4, BFldIron,CLHEP::pi/4);
-    }
+      }*/
 }

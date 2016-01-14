@@ -10,17 +10,16 @@
 
 BDSDecapole::BDSDecapole(G4String            name,
 			 G4double            length,
-			 G4double            bQuadPrime,
 			 BDSBeamPipeInfo*    beamPipeInfo,
 			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::decapole, name, length,
-	    beamPipeInfo,magnetOuterInfo),
-  itsBQuadPrime(bQuadPrime)
+	    beamPipeInfo,magnetOuterInfo)
 {;}
 
 void BDSDecapole::Build()
 {
   BDSMagnet::Build();
+  /*
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -44,4 +43,5 @@ void BDSDecapole::Build()
       
       BuildOuterFieldManager(10, BFldIron,CLHEP::pi/10);
     }
+  */
 }

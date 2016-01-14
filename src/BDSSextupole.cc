@@ -1,14 +1,11 @@
-#include "BDSSextupole.hh"
-
-#include "BDSGlobalConstants.hh" 
 #include "BDSBeamPipeInfo.hh"
+#include "BDSGlobalConstants.hh" 
 #include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSFieldMagSextupole.hh"
-#include "BDSSextStepper.hh"
+#include "BDSSextupole.hh"
 
-#include "G4FieldManager.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 
@@ -16,17 +13,17 @@ class BDSTiltOffset;
 
 BDSSextupole::BDSSextupole(G4String            name,
 			   G4double            length,
-			   G4double            bDblPrime,
+			   G4double            /*bDblPrime*/,
 			   BDSBeamPipeInfo*    beamPipeInfo,
 			   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sextupole, name, length,
-	    beamPipeInfo, magnetOuterInfo),
-   itsBDblPrime(bDblPrime)
+	    beamPipeInfo, magnetOuterInfo)
 {;}
 
 void BDSSextupole::Build()
 {
   BDSMagnet::Build();
+  /*
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -49,16 +46,5 @@ void BDSSextupole::Build()
       BFldIron/=2.;
       
       BuildOuterFieldManager(6, BFldIron,CLHEP::pi/6);
-    }
-}
-
-void BDSSextupole::BuildBPFieldAndStepper()
-{
-  // set up the magnetic field and stepper
-  itsMagField = new BDSFieldMagSextupole(1*itsBDblPrime);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-
-  BDSSextStepper* sextStepper = new BDSSextStepper(itsEqRhs);
-  sextStepper->SetBDblPrime(itsBDblPrime);
-  itsStepper = sextStepper;
+      }*/
 }

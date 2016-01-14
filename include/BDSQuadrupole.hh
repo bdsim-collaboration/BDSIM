@@ -12,15 +12,13 @@ class BDSQuadrupole: public BDSMagnet
 public:
   BDSQuadrupole(G4String            name,
 		G4double            length,
-		G4double            bGrad,
+		G4double            /*bGrad*/,
 		BDSBeamPipeInfo*    beamPipeInfo,
 		BDSMagnetOuterInfo* magnetOuterInfo);
 		
   ~BDSQuadrupole(){;}
 
-private:
-  G4double itsBGrad;
-  
+private:  
   virtual void Build();
 };
 

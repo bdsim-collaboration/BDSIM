@@ -21,10 +21,6 @@ public:
 
 protected:
   virtual void Build();
-  virtual void BuildBPFieldAndStepper();
-
-private:
-  G4double itsBTriplePrime;
 };
 
 #endif

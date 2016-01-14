@@ -1,22 +1,17 @@
-#include "BDSGlobalConstants.hh"
-#include "BDSDebug.hh"
-
-#include "BDSRBend.hh"
-
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
-#include "BDSDipoleStepper.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSFieldMagSBend.hh"
+#include "BDSRBend.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh" // geant4 types / globals
 #include "G4CutTubs.hh"
-#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 
@@ -37,6 +32,18 @@ BDSRBend::BDSRBend(G4String            name,
   angle       = angleIn;
   outerRadius = magnetOuterInfo->outerDiameter*0.5; 
   CalculateLengths(length);
+
+  G4double arclength;
+  if (BDS::IsFinite(angle))
+    {
+      arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
+#endif
+      (*strength)["length"] = arclength;
+    }
+  else
+    {arclength = magFieldLength;}
 }
 
 void BDSRBend::CalculateLengths(G4double aLength)
@@ -81,6 +88,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
 void BDSRBend::Build()
 {
   BDSMagnet::Build();
+  /*
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -103,30 +111,7 @@ void BDSRBend::Build()
       BFldIron/=2.;
       
       BuildOuterFieldManager(2, BFldIron,CLHEP::pi/2);
-    }
-}
-
-void BDSRBend::BuildBPFieldAndStepper()
-{
-  // set up the magnetic field and stepper
-  G4ThreeVector Bfield(0.,bField,0.);
-  G4double arclength;
-  if (BDS::IsFinite(angle))
-    {
-      arclength = fabs(angle) * ((magFieldLength*0.5) / sin(0.5*fabs(angle)));
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
-#endif
-      itsMagField = new BDSFieldMagSBend(Bfield,arclength,angle);
-      itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
-  
-      BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
-      dipoleStepper->SetBField(bField);
-      dipoleStepper->SetBGrad(bGrad);
-      itsStepper = dipoleStepper;
-    }
-  else
-    {arclength = magFieldLength;}
+      }*/
 }
 
 void BDSRBend::BuildOuter()

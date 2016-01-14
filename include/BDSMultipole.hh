@@ -32,8 +32,6 @@ private:
   std::list<G4double> ks; // list of skew multipole strengths 1/Brho * Bsn
 		     // (NOT multiplied by multipole length)
   G4int itsOrder;
-  
-  virtual void BuildBPFieldAndStepper();
 };
 
 #endif

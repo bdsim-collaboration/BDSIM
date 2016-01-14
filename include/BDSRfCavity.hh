@@ -12,6 +12,9 @@
 class  BDSBeamPipeInfo;
 struct BDSMagnetOuterInfo;
 
+class G4ChordFinder;
+class G4MagErrorStepper;
+
 class BDSRfCavity: public BDSMagnet
 {
 public:
@@ -23,20 +26,17 @@ public:
   ~BDSRfCavity();
   
 private:
-  virtual void BuildBPFieldAndStepper();
-
-  /// Override this function from BDSMagnet to prevent it from
-  /// overwriting the custom field manager here that has an E field
-  /// instead of the B field that all other derived classes of BDSMagnet
-  /// have.
-  virtual void BuildBPFieldMgr();
+  virtual void BuildVacuumField();
   
   G4double gradient; // longitudinal E field grad in MV / m
 
   // field related objects:
   G4UniformElectricField* eField;
   G4EqMagElectricField*   equation;
+  G4FieldManager*         fieldManager;
   G4MagInt_Driver*        intgrDriver;
+  G4MagErrorStepper*      stepper;
+  G4ChordFinder*          chordFinder;
 };
 
 #endif

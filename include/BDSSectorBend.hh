@@ -21,11 +21,8 @@ public:
   ~BDSSectorBend(){;};
 
 private:
-  G4double itsBField;
-  G4double itsBGrad;
   
   virtual void Build();
-  virtual void BuildBPFieldAndStepper();
   virtual void BuildBeampipe();
 };
 

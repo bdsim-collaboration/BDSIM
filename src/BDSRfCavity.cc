@@ -22,21 +22,11 @@ BDSRfCavity::BDSRfCavity(G4String            name,
 			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rfcavity, name, length,
 	    beamPipeInfo, magnetOuterInfo),
-  gradient(grad)
-{
-  eField      = nullptr;
-  equation    = nullptr;
-  intgrDriver = nullptr;
-}
+  gradient(grad),
+  eField(nullptr),equation(nullptr),fieldManager(nullptr),intgrDriver(nullptr),stepper(nullptr)
+{;}
 
-void BDSRfCavity::BuildBPFieldMgr()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "empty implementation due to e field instead of B" << G4endl;
-#endif
-}
-
-void BDSRfCavity::BuildBPFieldAndStepper()
+void BDSRfCavity::BuildVacuumField()
 {
   G4int nvar = 8;
 
@@ -44,24 +34,25 @@ void BDSRfCavity::BuildBPFieldAndStepper()
   G4ThreeVector eFieldVector(0., 0., gradient * CLHEP::megavolt / CLHEP::m);
   eField        = new G4UniformElectricField(eFieldVector);
   equation      = new G4EqMagElectricField(eField);
-  itsBPFieldMgr = new G4FieldManager();
-  itsBPFieldMgr->SetDetectorField(eField);
-  itsStepper    = new G4ExplicitEuler(equation, nvar);
+  fieldManager  = new G4FieldManager();
+  fieldManager->SetDetectorField(eField);
+  stepper       = new G4ExplicitEuler(equation, nvar);
 
   G4double minStep = BDSGlobalConstants::Instance()->GetChordStepMinimum();
   
   intgrDriver = new G4MagInt_Driver(minStep,
-				    itsStepper,
-				    itsStepper->GetNumberOfVariables() );
+				    stepper,
+				    stepper->GetNumberOfVariables());
   
-  itsChordFinder = new G4ChordFinder(intgrDriver);
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  itsBPFieldMgr->SetChordFinder(itsChordFinder);
+  chordFinder = new G4ChordFinder(intgrDriver);
+  chordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  fieldManager->SetChordFinder(chordFinder);
 }
 
 BDSRfCavity::~BDSRfCavity()
 {
   delete eField;
   delete equation;
+  // must work out what to delete here
   //delete intgrDriver; seems to be deleted by itsChordFinder in BDSMagnet
 }

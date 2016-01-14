@@ -597,7 +597,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
   
   return ( new BDSDecapole( _element.name,
 			    _element.l * CLHEP::m,
-			    bQuadruplePrime,
 			    PrepareBeamPipeInfo(_element),
 			    PrepareMagnetOuterInfo(_element)));
 }

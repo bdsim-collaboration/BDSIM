@@ -8,6 +8,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 
 #include "G4FieldManager.hh"
@@ -48,32 +49,20 @@ protected:
   /// build the container, the beam pipe and outer geometry are built.
   virtual void Build();
   
-  /// define field and stepper
-  //virtual void BuildBPFieldAndStepper()=0;
-  
   /// Construct a general straight piece of beampipe. Virtual so it can be overloaded
   /// by derived classes as required - such as RBend.
   virtual void BuildBeampipe();
 
-  /// build and set field manager and chord finder
-  virtual void BuildBPFieldMgr();
-
-  /// Attach the inner magnetic field to the beam pipe vacuum volume.
-  void AttachFieldToBeamPipe();
+  /// Construct the field for the vacuum and attach it
+  virtual void BuildVacuumField();
 
   /// Construct the outer magnet geometry beit poled geometry or cylinders. This
   /// function switches on the member variable of BDSMagnetType type, so is contained in
   /// the base class.
   virtual void BuildOuter();
   
-  /// Construct the magnetic field for the outer magnet geometry. Virtual so derived classes
-  /// may override as they need to - for example BDSMuSpoiler.
-  virtual void BuildOuterFieldManager(G4int    nPoles,
-				      G4double poleField, 
-				      G4double phiOffset);
-
-  /// Attach the outer magnetic field to the outer geometry container volume
-  void AttachFieldToOuter();
+  /// Construct the magnetic field for the outer magnet geometry.
+  virtual void BuildOuterField();
 
   /// Necessary to provide this function a la BDSAcceleratorComponent. If there's an
   /// outer geometry, the containerSolid will have been set and build it into a logical
@@ -85,8 +74,6 @@ protected:
   /// geometry, then we don't need to place either as the beam pipe becomes the container.
   virtual void PlaceComponents();
 
-  virtual void BuildVacuumField();
-
   ///@{ normal vector for faces when preparing solids
   G4ThreeVector inputface;
   G4ThreeVector outputface;
@@ -94,15 +81,6 @@ protected:
   
   /// Magnet type
   BDSMagnetType magnetType;
-  
-  // field related objects, set by BuildBPFieldAndStepper
-  G4MagIntegratorStepper* itsStepper;
-  G4MagneticField*   itsMagField;
-  G4Mag_UsualEqRhs*  itsEqRhs;
-  G4FieldManager*    itsBPFieldMgr;
-  G4FieldManager*    itsOuterFieldMgr;
-  G4ChordFinder*     itsChordFinder;
-  G4MagneticField*   itsOuterMagField;
   
   /// Model information for the beam pipe
   BDSBeamPipeInfo* beamPipeInfo;
@@ -136,6 +114,9 @@ protected:
   /// The fields associated with this magnet
   BDSFieldObjects* vacuumField;
   BDSFieldObjects* outerField;
+
+  BDSMagnetStrength* strength;
+  G4double           brho;
 };
 
 #endif

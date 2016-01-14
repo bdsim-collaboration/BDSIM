@@ -16,14 +16,11 @@ public:
 	       G4double            bDblPrime,
 	       BDSBeamPipeInfo*    beamPipeInfo,
 	       BDSMagnetOuterInfo* magnetOuterInfo);
+  
   ~BDSSextupole(){;};
 
 private:
-  G4double itsBDblPrime;
-
-  virtual void Build();
-  virtual void BuildBPFieldAndStepper();
-  
+  virtual void Build();  
 };
 
 #endif
