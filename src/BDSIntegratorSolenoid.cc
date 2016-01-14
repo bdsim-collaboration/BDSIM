@@ -11,9 +11,8 @@ extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(const BDSMagnetStrength* strength,
 					     const G4double           brho,
-					     const G4Mag_EqRhs*       eqRHSIn):
-  BDSIntegratorBase(eqRHS, 6),
-  distChord(0)
+					     G4Mag_EqRhs* const       eqRHSIn):
+  BDSIntegratorBase(eqRHSIn, 6)
 {
   bField = brho * (*strength)["ks"];
 #ifdef BDSDEBUG
@@ -50,13 +49,9 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
          << " k  = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
-
-  if (Initialised())
-    {InitialiseTransform(GlobalR);}
+  G4ThreeVector LocalR = ConvertToLocal(GlobalR);
+  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, InitMomDir);
   
-  G4ThreeVector LocalR  = globalToLocal.TransformPoint(GlobalR); 
-  G4ThreeVector LocalRp = globalToLocal.TransformAxis(InitMomDir);
-
   G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
   
   if (fabs(kappa)<1e-12)
@@ -214,11 +209,9 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	     << G4endl; 
 #endif
       
-      G4AffineTransform LocalAffine = auxNavigator->GetLocalToGlobalTransform();
-      
-      GlobalR = LocalAffine.TransformPoint(LocalR); 
-      GlobalP = InitPMag*LocalAffine.TransformAxis(LocalRp);
-      
+      GlobalR = ConvertToGlobal(LocalR);
+      GlobalP = ConvertAxisToGlobal(GlobalR, LocalRp);
+            
       yOut[0] = GlobalR.x(); 
       yOut[1] = GlobalR.y(); 
       yOut[2] = GlobalR.z(); 

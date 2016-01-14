@@ -26,7 +26,7 @@ class BDSIntegratorDipole: public BDSIntegratorBase
 public:
   BDSIntegratorDipole(const BDSMagnetStrength* strength,
 		      const G4double           brho,
-		      const G4Mag_EqRhs*       eqRHSIn);
+		      G4Mag_EqRhs* const       eqRHSIn);
     
   ~BDSIntegratorDipole(){;}
 
@@ -37,12 +37,6 @@ public:
 		       const G4double h,
 		       G4double yout[],
 		       G4double yerr[]);
-
-  /// Estimate maximum distance of curved solution and chord.
-  inline virtual G4double DistChord() const;
-
-  /// Geant4 requires that the integrator order must be supplied by the derived class.
-  inline virtual G4int IntegratorOrder() const;
   
 protected:
   /// Calcaulte the new particle coordinates. A first order Step along a solenoid inside the field.
@@ -69,17 +63,8 @@ private:
   /// Uniform magnetic field in global Y direction
   G4double bField;
 
-  /// Variable used to record the distance from the chord calculated during the step.
-  G4double distChord;
-
   /// Total beam energy
   G4double nominalEnergy; 
 };
-
-G4double BDSIntegratorDipole::DistChord() const 
-{return distChord;}
-
-inline G4int BDSIntegratorDipole::IntegratorOrder() const
-{return 2;}
 
 #endif 

@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
-#include "BDSOctStepper.hh"
+#include "BDSIntegratorOctupole.hh"
+#include "BDSMagnetStrength.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -7,17 +8,24 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSOctStepper::BDSOctStepper(G4Mag_EqRhs* eqRHS):
-  G4MagIntegratorStepper(eqRHS, 6),
-  fPtrMagEqOfMot(eqRHS),
-  itsBTrpPrime(0.0),
-  itsDist(0.0)
-{;}
+BDSIntegratorOctupole::BDSIntegratorOctupole(const BDSMagnetStrength* strength,
+					     const G4double           brho,
+					     G4Mag_EqRhs* const       eqRHSIn):
+  BDSIntegratorBase(eqRHSIn, 6),
+  bTriplePrime(0.0),
+  yInitial(0), yMidPoint(0), yFinal(0)
+{
+  // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
+  bTriplePrime = brho * (*strength)["k3"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B''' = " << bTriplePrime << G4endl;
+#endif
+}
 
-void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
-				 G4ThreeVector,
-				 G4double  h,
-				 G4double  yOct[])
+void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
+					 G4ThreeVector /*bField*/,
+					 G4double  h,
+					 G4double  yOct[])
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector v0 = G4ThreeVector(pIn[0], pIn[1], pIn[2]);  
@@ -25,7 +33,7 @@ void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
 
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
   G4double InitMag = v0.mag();
-  G4double kappa   = -fPtrMagEqOfMot->FCof()*itsBTrpPrime/InitMag;
+  G4double kappa   = -eqRHS->FCof()*bTriplePrime/InitMag;
 
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:
@@ -41,7 +49,7 @@ void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
       yOct[4] = v0.y();
       yOct[5] = v0.z();
 
-      itsDist=0;
+      distChord=0;
     }
   else 
     {
@@ -87,7 +95,7 @@ void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
 
 	  // chord distance (simple quadratic approx)
           G4double h2=h*h;
-	  itsDist= h2*R_1/8;
+	  distChord= h2*R_1/8;
 
 	  G4double dx=LocalRp.x()*h + LocalRpp.x()*h2/2; 
 	  G4double dy=LocalRp.y()*h + LocalRpp.y()*h2/2; 
@@ -125,48 +133,43 @@ void BDSOctStepper::AdvanceHelix(const G4double  yIn[],
     }
 }
 
-void BDSOctStepper::Stepper( const G4double yInput[],
-			    const G4double[],
-			    const G4double hstep,
-			    G4double yOut[],
-			    G4double yErr[]      )
+void BDSIntegratorOctupole::Stepper(const G4double yInput[],
+				    const G4double[],
+				    const G4double hstep,
+				    G4double yOut[],
+				    G4double yErr[])
 {  
-  G4int i;
-  const G4int nvar = 6 ;
-  
   //const G4double *pIn = yInput+3;
   //G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
   //G4double InitMag=v0.mag();
-  //G4double kappa=  -fPtrMagEqOfMot->FCof()*itsBTrpPrime/InitMag;
+  //G4double kappa=  -fPtrMagEqOfMot->FCof()*bTriplePrime/InitMag;
   
   G4double yTemp[7], yIn[7];
   
   //  Saving yInput because yInput and yOut can be aliases for same array
   
-  for(i=0;i<nvar;i++) yIn[i]=yInput[i];
+  for(G4int i = 0; i < nVariables; i++)
+    {yIn[i] = yInput[i];}
   
   G4double h = hstep * 0.5; 
   
   // Do two half steps
-  AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
+  AdvanceHelix(yIn,   (G4ThreeVector)0, h, yTemp);
   AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 
   
   // Do a full Step
   h = hstep ;
   AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
   
-  for(i=0;i<nvar;i++) {
-    yErr[i] = yOut[i] - yTemp[i] ;
-    // if error small, set error to 0
-    // this is done to prevent Geant4 going to smaller and smaller steps
-    // ideally use some of the global constants instead of hardcoding here
-    // could look at step size as well instead.
-    if (std::abs(yErr[i]) < 1e-7) yErr[i] = 0;
-  }
+  for(G4int i = 0; i < nVariables; i++)
+    {
+      yErr[i] = yOut[i] - yTemp[i];
+      // if error small, set error to 0
+      // this is done to prevent Geant4 going to smaller and smaller steps
+      // ideally use some of the global constants instead of hardcoding here
+      // could look at step size as well instead.
+      if (std::abs(yErr[i]) < 1e-7)
+	{yErr[i] = 0;}
+    }
 }
 
-G4double BDSOctStepper::DistChord() const 
-{return itsDist;}
-
-BDSOctStepper::~BDSOctStepper()
-{}

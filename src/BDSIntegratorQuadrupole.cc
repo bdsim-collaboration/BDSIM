@@ -13,9 +13,8 @@ extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(const BDSMagnetStrength* strength,
 						 const G4double           brho,
-						 const G4Mag_EqRhs*       eqRHSIn):
-  BDSIntegratorBase(eqRHS, 6),
-  distChord(0),
+						 G4Mag_EqRhs* const       eqRHSIn):
+  BDSIntegratorBase(eqRHSIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -72,10 +71,9 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
   
   auxNavigator->LocateGlobalPointAndSetup(GlobalR);
 
-  G4double          h2           =h*h;
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
-  G4ThreeVector     LocalRp      = GlobalAffine.TransformAxis(InitMomDir);
+  G4double      h2      = pow(h,2);
+  G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
+  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, GlobalP);
 
 #ifdef BDSDEBUG
   G4cout << "BDSIntegratorQuadrupole: initial point in local coordinates:" << G4endl
@@ -304,9 +302,6 @@ void BDSIntegratorQuadrupole::Stepper(const G4double     yInput[],
   G4ThreeVector GlobalP = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4double InitPMag     = GlobalP.mag();
   G4double kappa        = - eqRHS->FCof()*bPrime/InitPMag;
-
-  if (Initialised())
-    {InitialiseTransform(GlobalR);}
   
   if(fabs(kappa) < 1.e-6) //kappa is small - no error needed for paraxial treatment
     {

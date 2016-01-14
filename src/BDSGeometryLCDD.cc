@@ -5,7 +5,7 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSDetectorSolenoidMagField.hh"
+#include "BDSFieldMagDetectorSolenoid.hh"
 
 #include "G4Box.hh"
 #include "G4Colour.hh"
@@ -388,7 +388,7 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
       G4double zmin = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmin")) * lunit;
 
       //Make the magnetic field
-      field = new BDSDetectorSolenoidMagField(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
+      field = new BDSFieldMagDetectorSolenoid(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"bdsimdipole"))){
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
       itsFieldVolName = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"volume"));

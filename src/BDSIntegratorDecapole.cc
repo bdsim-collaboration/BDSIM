@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSDecStepper.hh"
+#include "BDSIntegratorDecapole.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4MagIntegratorStepper.hh"
@@ -7,17 +7,23 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSDecStepper::BDSDecStepper(G4Mag_EqRhs *EqRhs):
-  G4MagIntegratorStepper(EqRhs, 6),  
-  fPtrMagEqOfMot(EqRhs),
-  itsBQuadPrime(0.0),
-  itsDist(0.0)
-{;}
+BDSIntegratorDecapole::BDSIntegratorDecapole(const BDSMagnetStrength* strength,
+					     const G4double           brho,
+					     G4Mag_EqRhs* const       eqRHSIn):
+  BDSIntegratorBase(eqRHSIn, 6),
+  yInitial(0), yMidPoint(0), yFinal(0)
+{
+  // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
+  bQuadruplePrime = brho * (*strength)["k4"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B'''' = " << bQuadruplePrime << G4endl;
+#endif
+}
 
-void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
-                                   G4ThreeVector,
-				   G4double  h,
-				   G4double  yDec[])
+void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
+					 G4ThreeVector,
+					 G4double  h,
+					 G4double  yDec[])
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector v0 = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
@@ -25,7 +31,7 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
 
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
   G4double InitMag = v0.mag();
-  G4double kappa   = -fPtrMagEqOfMot->FCof()*itsBQuadPrime/InitMag;
+  G4double kappa   = -eqRHS->FCof()*bQuadruplePrime/InitMag;
 
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:
@@ -41,14 +47,12 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
       yDec[4] = v0.y();
       yDec[5] = v0.z();
 
-      itsDist=0;
+      distChord=0;
     }
   else 
     {
-      G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
-      G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-      G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
-      G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
+      G4ThreeVector LocalR  = ConvertToLocal(yIn);
+      G4ThreeVector LocalRp = ConvertAxisToLocal(yIn, pIn);
 
       G4double x0=LocalR.x(); 
       G4double y0=LocalR.y();
@@ -80,7 +84,7 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
 
 	  // chord distance (simple quadratic approx)
           G4double h2=h*h;
-	  itsDist= h2*R_1/8;
+	  distChord= h2*R_1/8;
 
 	  G4double dx=LocalRp.x()*h + LocalRpp.x()*h2/2; 
 	  G4double dy=LocalRp.y()*h + LocalRpp.y()*h2/2; 
@@ -104,9 +108,9 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
 	}
       else
 	{LocalR += h*LocalRp;}
-       
-      GlobalPosition = LocalAffine.TransformPoint(LocalR); 
-      G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(LocalRp)*InitMag;
+      
+      GlobalPosition = ConvertToGlobal(LocalR);
+      G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp) * InitMag;
       
       yDec[0] = GlobalPosition.x(); 
       yDec[1] = GlobalPosition.y(); 
@@ -117,21 +121,13 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
     }
 }
 
-void BDSDecStepper::Stepper(const G4double yInput[],
+void BDSIntegratorDecapole::Stepper(const G4double yInput[],
 			    const G4double[],
 			    const G4double hstep,
 			    G4double yOut[],
 			    G4double yErr[])
-{  
-  const G4int nvar = 6 ;
-  
-  G4int i;
-  for(i=0;i<nvar;i++) yErr[i]=0;
-  AdvanceHelix(yInput,(G4ThreeVector)0,hstep,yOut);
+{    
+  for(G4int i = 0; i < nVariables; i++)
+    {yErr[i]=0;} // this is clearly wrong!
+  AdvanceHelix(yInput, (G4ThreeVector)0, hstep, yOut);
 }
-
-G4double BDSDecStepper::DistChord() const 
-{return itsDist;}
-
-BDSDecStepper::~BDSDecStepper()
-{}

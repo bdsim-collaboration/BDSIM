@@ -9,14 +9,15 @@
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength* strength,
-					 G4double           brho,
-					 G4Mag_EqRhs*       eqRHSIn):
-  BDSIntegratorBase(eqRHS, 6),
+BDSIntegratorDipole::BDSIntegratorDipole(const BDSMagnetStrength* strength,
+					 const G4double           brho,
+					 G4Mag_EqRhs* const       eqRHSIn):
+  BDSIntegratorBase(eqRHSIn, 6),
   angle((*strength)["angle"]),
-  length((*strength)["length"]),
-  distChord(0)
+  length((*strength)["length"])
 {
+  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4double ffact  = BDSGlobalConstants::Instance()->GetFFact();
   bField = brho * angle / length * charge * ffact;
   bPrime = brho * (*strength)["k1"];
   nominalEnergy   = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
@@ -34,9 +35,6 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   //backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
   //return;
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
-
-  if (Initialised())
-    {InitialiseTransform(GlobalPosition);}
       
   G4double charge = (eqRHS->FCof())/CLHEP::c_light;
 #ifdef BDSDEBUG
@@ -80,10 +78,11 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
     }
 
   //G4double h2=h*h;
-  
-  G4ThreeVector LocalR           = globalToLocal.TransformPoint(GlobalPosition); 
-  G4ThreeVector LocalRp          = globalToLocal.TransformAxis(InitMomDir);
 
+  G4ThreeVector globalPositionIn(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector LocalR  = ConvertToLocal(globalPositionIn);
+  G4ThreeVector LocalRp = ConvertAxisToLocal(globalPositionIn, InitMomDir);
+  
   G4ThreeVector itsInitialR      = LocalR;
   G4ThreeVector itsInitialRp     = LocalRp;
   
@@ -122,12 +121,12 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       itsFinalDir   = CosT*vhat +SinT*vnorm;
   
       // gradient for quadrupolar field
-      G4double kappa = - eqRHS->FCof()* ( itsBGrad) /InitMag; // was ist das? 
+      G4double kappa = - eqRHS->FCof() * bPrime / InitMag; // was ist das? 
       // ignore quadrupolar component for now as this needs fixing
       if(true || fabs(kappa)<1.e-12)
 	{// no gradient
-	  GlobalPosition = localToGlobal.TransformPoint(itsFinalPoint); 
-	  G4ThreeVector GlobalTangent = localToGlobal.TransformAxis(itsFinalDir);
+	  GlobalPosition = ConvertToGlobal(itsFinalPoint);
+	  G4ThreeVector GlobalTangent = ConvertAxisToGlobal(GlobalPosition, itsFinalDir);
 	
 	  GlobalTangent*=InitMag;
 	  
@@ -223,11 +222,11 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       LocalRp.setY(y1p);
       LocalRp.setZ(z1p);
       LocalRp.rotateY(theta_in);
-  
-      GlobalPosition = localToGlobal.TransformPoint(LocalR); 
+
+      GlobalPosition = ConvertToGlobal(LocalR);
       
       LocalRp.rotateY(-h/R);
-      G4ThreeVector GlobalTangent = localToGloba.TransformAxis(LocalRp);
+      G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp);
       
       GlobalTangent*=InitMag;
   

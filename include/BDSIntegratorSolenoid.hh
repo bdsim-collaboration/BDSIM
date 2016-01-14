@@ -25,7 +25,7 @@ class BDSIntegratorSolenoid: public BDSIntegratorBase
 public:
   BDSIntegratorSolenoid(const BDSMagnetStrength* strength,
 			const G4double           brho,
-			const G4Mag_EqRhs*       eqRHSIn);
+			G4Mag_EqRhs* const       eqRHSIn);
 
   ~BDSIntegratorSolenoid(){;}
 
@@ -39,12 +39,6 @@ public:
 	       const G4double h,
 	       G4double yout[],
 	       G4double yerr[]);
-
-  /// Estimate maximum distance of curved solution and chord.
-  inline G4double DistChord() const;
-
-  /// Geant4 requires that the integrator order must be supplied by the derived class.
-  inline virtual G4int IntegratorOrder() const;
 
 protected:
   /// Calcaulte the new particle coordinates. A first order Step along a solenoid inside the field.
@@ -62,15 +56,6 @@ private:
 
   /// The field strength.
   G4double bField;
-
-  /// Variable used to record the distance from the chord calculated during the step.
-  G4double distChord;
 };
-
-inline G4double BDSIntegratorSolenoid::DistChord() const
-{return distChord;}
-
-inline G4int BDSIntegratorSolenoid::IntegratorOrder() const
-{return 2;}
 
 #endif

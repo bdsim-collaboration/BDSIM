@@ -1,47 +1,51 @@
 #include "BDSDebug.hh"
-#include "BDSSextStepper.hh"
+#include "BDSIntegratorSextupole.hh"
+#include "BDSMagnetStrength.hh"
 
-#include "G4AffineTransform.hh"
-#include "G4MagIntegratorStepper.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSSextStepper::BDSSextStepper(G4Mag_EqRhs* eqRHS):
-  G4MagIntegratorStepper(eqRHS, 6),
-  fPtrMagEqOfMot(eqRHS),
-  itsBDblPrime(0.0),
-  itsDist(0.0)
-{;}
-
-void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
-                                   G4ThreeVector,
-				   G4double  h,
-				   G4double  ySext[])
+BDSIntegratorSextupole::BDSIntegratorSextupole(const BDSMagnetStrength* strength,
+					       const G4double           brho,
+					       G4Mag_EqRhs* const       eqRHSIn):
+  BDSIntegratorBase(eqRHSIn, 6)
 {
+  // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
+  bDoublePrime     = brho * (*strength)["k2"];
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
+#endif
+}
 
+void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
+					  G4ThreeVector /*bField*/,
+					  G4double        h,
+					  G4double        ySext[])
+{
   const G4double *pIn = yIn+3;
   G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
   G4ThreeVector InitMomDir=v0.unit();
 
   G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
   G4double InitMag=v0.mag();
-  G4double kappa=  (-fPtrMagEqOfMot->FCof()*itsBDblPrime) /InitMag;
+  G4double kappa=  (-eqRHS->FCof()*bDoublePrime) /InitMag;
   /*
 #ifdef BDSDEBUG  
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << "kappa                 : " << kappa << G4endl;
   G4cout << __METHOD_NAME__ << "InitMag               : " << InitMag << G4endl;
-  G4cout << __METHOD_NAME__ << "fPtrMagEqOfMot::FCof(): " << fPtrMagEqOfMot->FCof() << G4endl;
-  G4cout << __METHOD_NAME__ << "g''                   : " << itsBDblPrime<< G4endl;
-  G4cout << __METHOD_NAME__ << "fPtrMagEqOfMot->FCof(): " << fPtrMagEqOfMot->FCof() << G4endl;
+  G4cout << __METHOD_NAME__ << "eqRHS::FCof(): " << eqRHS->FCof() << G4endl;
+  G4cout << __METHOD_NAME__ << "g''                   : " << bDoublePrime<< G4endl;
+  G4cout << __METHOD_NAME__ << "eqRHS->FCof(): " << eqRHS->FCof() << G4endl;
   G4cout << __METHOD_NAME__ << "h                     : " << h << G4endl;
 
-  G4double charge = (fPtrMagEqOfMot->FCof())/CLHEP::c_light;
+  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
 
   G4String VolName = auxNavigator->LocateGlobalPointAndSetup(GlobalPosition)->GetName();
 
-  G4cout << "BDSSextStepper: " << VolName << G4endl
+  G4cout << "BDSIntegratorSextupole: " << VolName << G4endl
 	 << " step= " << h/CLHEP::m << " m" << G4endl
          << " x= " << yIn[0]/CLHEP::m << "m" << G4endl
          << " y= " << yIn[1]/CLHEP::m << "m" << G4endl
@@ -50,7 +54,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
          << " py= " << yIn[4]/CLHEP::GeV << "GeV/c" << G4endl
          << " pz= " << yIn[5]/CLHEP::GeV << "GeV/c" << G4endl
          << " q= " << charge/CLHEP::eplus << "e" << G4endl
-         << " dBy/dx= " << itsBDblPrime/(CLHEP::tesla/CLHEP::m/CLHEP::m) << "T/m^2" << G4endl
+         << " dBy/dx= " << bDoublePrime/(CLHEP::tesla/CLHEP::m/CLHEP::m) << "T/m^2" << G4endl
          << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
          << G4endl 
          << G4endl;
@@ -68,16 +72,13 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        ySext[4] = v0.y();
        ySext[5] = v0.z();
 
-       itsDist=0;
+       distChord=0;
      }
    else 
-     {       
-       G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
-       G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-       
-       G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
-       G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
-       
+     {
+       G4ThreeVector LocalR = ConvertToLocal(GlobalPosition);
+       G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalPosition, InitMomDir);
+              
        G4double x0=LocalR.x(); 
        G4double y0=LocalR.y();
 
@@ -103,12 +104,11 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
        // determine effective curvature
        G4double R_1 = LocalRpp.mag();
 
-
        if(R_1>0.)
 	 {    
 	   G4double h2=h*h;
 	   // chord distance (simple quadratic approx)
-	   itsDist= h2*R_1/8;
+	   distChord= h2*R_1/8;
 
 	   // Save for Synchrotron Radiation calculations:
 	   BDSLocalRadiusOfCurvature=1./R_1;
@@ -132,13 +132,12 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
            LocalR.setZ(LocalR.z()+dz);
 	  
 	   LocalRp = LocalRp+ h*LocalRpp;
-
 	 }
        else
 	 {LocalR += h*LocalRp;}
-       
-       GlobalPosition=LocalAffine.TransformPoint(LocalR); 
-       G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp)*InitMag;
+
+       GlobalPosition = ConvertToGlobal(LocalR);
+       G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp) * InitMag;
        
        ySext[0]   = GlobalPosition.x(); 
        ySext[1]   = GlobalPosition.y(); 
@@ -150,20 +149,17 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
      }
 }
 
-void BDSSextStepper::Stepper( const G4double yInput[],
-			     const G4double[],
-			     const G4double hstep,
-			     G4double yOut[],
-			     G4double yErr[]      )
-{  
-  const G4int nvar = 6 ;
-  G4int i;
- 
+void BDSIntegratorSextupole::Stepper(const G4double yInput[],
+				     const G4double[],
+				     const G4double hstep,
+				     G4double yOut[],
+				     G4double yErr[])
+{
   G4double yTemp[7], yIn[7];
   
-  //  Saving yInput because yInput and yOut can be aliases for same array
-  
-  for(i=0;i<nvar;i++) yIn[i]=yInput[i];
+  //  Saving yInput because yInput and yOut can be aliases for same array 
+  for(G4int i = 0; i < nVariables; i++)
+    {yIn[i]=yInput[i];}
   
   G4double h = hstep * 0.5;
   
@@ -175,20 +171,14 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   h = hstep ;
   AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
   
-  for(i=0;i<nvar;i++) {
-    yErr[i] = yOut[i] - yTemp[i] ;
-    // if error small, set error to 0
-    // this is done to prevent Geant4 going to smaller and smaller steps
-    // ideally use some of the global constants instead of hardcoding here
-    // could look at step size as well instead.
-    if (std::abs(yErr[i]) < 1e-7) yErr[i] = 0;
+  for(G4int i = 0; i < nVariables; i++)
+    {
+      yErr[i] = yOut[i] - yTemp[i];
+      // if error small, set error to 0
+      // this is done to prevent Geant4 going to smaller and smaller steps
+      // ideally use some of the global constants instead of hardcoding here
+      // could look at step size as well instead.
+      if (std::abs(yErr[i]) < 1e-7)
+	{yErr[i] = 0;}
   }
 }
-
-G4double BDSSextStepper::DistChord()   const 
-{
-  return itsDist;
-}
-
-BDSSextStepper::~BDSSextStepper()
-{}

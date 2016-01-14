@@ -25,7 +25,7 @@ class BDSIntegratorQuadrupole: public BDSIntegratorBase
 public:
   BDSIntegratorQuadrupole(const BDSMagnetStrength* strength,
 			  const G4double           brho,
-			  const G4Mag_EqRhs*       eqRHSIn);
+			  G4Mag_EqRhs* const       eqRHSIn);
   
   ~BDSIntegratorQuadrupole(){;}
 
@@ -37,12 +37,6 @@ public:
 	       const G4double h,
 	       G4double yout[],
 	       G4double yerr[]);
-
-  /// Estimate maximum distance of curved solution and chord.
-  inline G4double DistChord() const;
-
-  /// Geant4 requires that the integrator order must be supplied by the derived class.
-  inline virtual G4int IntegratorOrder() const;
 
 protected:
   /// Calcaulte the new particle coordinates. A first order Step along a solenoid inside the field.
@@ -58,17 +52,8 @@ private:
   /// B Field Gradient
   G4double bPrime;
 
-  /// Variable used to record the distance from the chord calculated during the step.
-  G4double distChord;
-
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
 };
-  
-inline G4double BDSIntegratorQuadrupole::DistChord() const
-{return distChord;}
-
-inline G4int BDSIntegratorQuadrupole::IntegratorOrder() const
-{return 2;}
 
 #endif
