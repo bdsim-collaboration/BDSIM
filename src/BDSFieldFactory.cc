@@ -191,10 +191,15 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta
   return completeField;
 }
 
-void BDSFieldFactory::CreateOuterMultipole(const BDSMagnetType      type,
-					   BDSMagnetStrength* const strength,
-					   const G4double           brho)
-{;}
+void BDSFieldFactory::CreateOuterMultipole(const BDSMagnetType      /*type*/,
+					   BDSMagnetStrength* const /*strength*/,
+					   const G4double           /*brho*/)
+{
+  bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
+  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
+  integrator  = new G4ClassicalRK4(bEqOfMotion);
+  FinalConstruction();
+}
 
 void BDSFieldFactory::IntermediateConstruction()
 {
