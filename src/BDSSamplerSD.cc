@@ -136,9 +136,9 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   BDSParticle global(pos,momDir,energy,t);
   
   G4double weight = theTrack->GetWeight();
-  if(std::abs(PDGtype)==13){
-    //    std::cout << "Weight of muon = " << weight << std::endl;
-  }
+  //  if(std::abs(PDGtype)==13){
+  //    std::cout << "Weight of muon = " << weight << std::endl;
+  // }
  
   // process that creating the particle
   G4String process = "";
