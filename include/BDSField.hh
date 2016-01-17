@@ -21,6 +21,8 @@ public:
 
   /// Get the field - local coordinates.
   virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const = 0;
+
+  virtual G4String Name() const = 0;
   
 };
 

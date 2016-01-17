@@ -15,7 +15,11 @@ public:
 
   virtual ~BDSFieldMagOuterMultipole(){;}
 
+  /// Access the field value.
   virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+
+  /// Get the name of the field.
+  virtual inline G4String Name() const;
 
 private:
   const G4int    nPoles;
@@ -23,5 +27,8 @@ private:
   const G4double phiOffset;
   G4double itsSectorPhi;
 };
+
+inline G4String BDSFieldMagOuterMultipole::Name() const
+{return "outer mulitpole";}
 
 #endif

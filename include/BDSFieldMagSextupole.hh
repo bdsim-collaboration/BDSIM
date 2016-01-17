@@ -23,7 +23,11 @@ public:
   
   virtual ~BDSFieldMagSextupole(){;}
 
+  /// Access the field value.
   virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+
+  /// Get the name of the field.
+  virtual inline G4String Name() const;
   
 private:
   /// Private default constructor to avoid usage.
@@ -35,5 +39,8 @@ private:
   /// bDoublePrime / 2! cached
   G4double halfBDoublePrime;
 };
+
+inline G4String BDSFieldMagSextupole::Name() const
+{return "sextupole";}
 
 #endif

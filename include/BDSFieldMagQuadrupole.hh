@@ -23,7 +23,11 @@ public:
   
   virtual ~BDSFieldMagQuadrupole(){;}
 
+  /// Access the field value.
   virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+
+  /// Get the name of the field.
+  virtual inline G4String Name() const;
   
 private:
   /// Private default constructor to force use of supplied constructor.
@@ -32,5 +36,8 @@ private:
   /// B' - the field gradient - a constant for a quadrupole.
   G4double bPrime;
 };
+
+inline G4String BDSFieldMagQuadrupole::Name() const
+{return "quadrupole";}
 
 #endif
