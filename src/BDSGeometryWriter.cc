@@ -3,7 +3,9 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#ifdef USE_GDML
 #include "G4GDMLParser.hh"
+#endif
 #include "G4FileUtilities.hh"
 #include "G4TransportationManager.hh"
 
@@ -35,7 +37,8 @@ void BDSGeometryWriter::WriteToGDML(G4String           outputFileName,
     G4FileUtilities fileUtilities;
     fileUtilities.DeleteFile(outputFileName, "");
   }
-  
+#ifdef USE_GDML
   G4GDMLParser parser;
   parser.Write(outputFileName, volume, true);
+#endif
 }

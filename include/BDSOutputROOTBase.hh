@@ -96,9 +96,9 @@ protected:
   /// Local parameters
   float x=0.0,xp=0.0,y=0.0,yp=0.0,z=0.0,zp=0.0,E=0.0,t=0.0,S=0.0;
   /// Global parameters
-  float X=0.0,Y=0.0,Z=0.0,T=0.0;
+  float X=0.0,Y=0.0,Z=0.0,T=0.0,weight=0.0,stepLength=0.0;
   /// PDG id, event number, parentID, trackID, turn number
-  int part=-1,eventno=-1, pID=-1, track_id=-1, turnnumber=-1,weight=0.0,stepLength=0.0;
+  int part=-1,eventno=-1, pID=-1, track_id=-1, turnnumber=-1;
   std::string process;
   
   /// tunnel hits variables
