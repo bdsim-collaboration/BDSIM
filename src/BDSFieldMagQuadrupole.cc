@@ -16,18 +16,12 @@ BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(const BDSMagnetStrength* strength,
 #endif
 }
 
-void BDSFieldMagQuadrupole::GetFieldValue(const G4double point[4],
-					  G4double* field) const
-{
-  G4ThreeVector localPosition = ConvertToLocal(point);
-  
-  G4ThreeVector localField;
-  localField[0] = localPosition.y() * bPrime; // B_x = B' * y;
-  localField[1] = localPosition.x() * bPrime; // B_y = B' * x;
-  localField[2] = 0;                          // B_z = 0
+G4ThreeVector BDSFieldMagQuadrupole::GetFieldValue(const G4ThreeVector& position) const
+{  
+  G4ThreeVector field;
+  field[0] = position.y() * bPrime; // B_x = B' * y;
+  field[1] = position.x() * bPrime; // B_y = B' * x;
+  field[2] = 0;                          // B_z = 0
 
-  OutputGlobalField(localField, field);
+  return field;
 }
-
-
-

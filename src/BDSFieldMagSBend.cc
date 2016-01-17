@@ -69,10 +69,7 @@ BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength* strength,
 #endif
 }
 
-void BDSFieldMagSBend::GetFieldValue(const G4double point[4],
-				     G4double* field) const
+G4ThreeVector BDSFieldMagSBend::GetFieldValue(const G4ThreeVector& /*position*/) const
 {
-  ConvertToLocal(point);
-
-  OutputGlobalField(localField, field);
+  return localField;
 }

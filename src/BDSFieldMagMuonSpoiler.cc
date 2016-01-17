@@ -16,21 +16,18 @@ BDSFieldMagMuonSpoiler::BDSFieldMagMuonSpoiler(BDSMagnetStrength* const strength
 #endif
 }
 
-void BDSFieldMagMuonSpoiler::GetFieldValue(const G4double point[4],
-					   G4double* field) const
-{
-  G4ThreeVector localPosition = ConvertToLocal(point);
-  
-  G4double y = localPosition.x();
-  G4double x = localPosition.y();
-  G4double r = std::sqrt(pow(x,2) + pow(y,2));
+G4ThreeVector BDSFieldMagMuonSpoiler::GetFieldValue(const G4ThreeVector& position) const
+{ 
+  G4double x = position.x();
+  G4double y = position.y();
+  G4double r = std::sqrt(std::pow(x,2) + std::pow(y,2));
 
   G4ThreeVector localField;
   localField[0] =  y/r * bField;
   localField[1] = -x/r * bField;
   localField[2] = 0;
 
-  OutputGlobalField(localField, field);
+  return localField;
 }
 
 

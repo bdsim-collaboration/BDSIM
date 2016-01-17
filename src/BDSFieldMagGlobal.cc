@@ -1,16 +1,21 @@
 #include "BDSDebug.hh"
-#include "BDSFieldMagBase.hh"
+#include "BDSField.hh"
+#include "BDSFieldMagGlobal.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-BDSFieldMagBase::BDSFieldMagBase()
+BDSFieldMagGlobal::BDSFieldMagGlobal(BDSField* fieldObjectIn, G4ThreeVector localOffsetIn):
+  fieldObject(fieldObjectIn), localOffset(localOffsetIn)
 {;}
 
-void BDSFieldMagBase::OutputGlobalField(const G4ThreeVector& localField,
-					G4double* field) const
+void BDSFieldMagGlobal::GetFieldValue(const G4double point[4],
+				      G4double* field) const
 {
-  G4ThreeVector globalField = ConvertAxisToGlobal(localField);
+  G4ThreeVector localPosition = ConvertToLocal(point);
+  localPosition += localOffset;
+  G4ThreeVector localField    = fieldObject->GetFieldValue(localPosition);
+  G4ThreeVector globalField   = ConvertAxisToGlobal(localField);
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local B Field:  " << localField  << G4endl;

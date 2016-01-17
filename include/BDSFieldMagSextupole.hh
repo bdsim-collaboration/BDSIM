@@ -1,9 +1,10 @@
 #ifndef BDSFIELDMAGSEXTUPOLE_H
 #define BDSFIELDMAGSEXTUPOLE_H
 
-#include "globals.hh" // geant4 types / globals
+#include "BDSField.hh"
 
-#include "BDSFieldMagBase.hh"
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 
 class BDSMagnetStrength;
 
@@ -14,16 +15,15 @@ class BDSMagnetStrength;
  * "k2" and a design rigidity (brho).
  */
 
-class BDSFieldMagSextupole: public BDSFieldMagBase
+class BDSFieldMagSextupole: public BDSField
 {
 public:
   BDSFieldMagSextupole(const BDSMagnetStrength* strength,
 		       const G4double           brho);
   
   virtual ~BDSFieldMagSextupole(){;}
-  
-  virtual void  GetFieldValue(const G4double point[4],
-			      G4double* field) const;
+
+  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
   
 private:
   /// Private default constructor to avoid usage.

@@ -1,12 +1,14 @@
 #include "BDSFieldType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSField.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldMagSolenoid.hh"
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSFieldMagDecapole.hh"
+#include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
 #include "BDSFieldMagOctupole.hh"
@@ -63,7 +65,8 @@ BDSFieldFactory::BDSFieldFactory()
 void BDSFieldFactory::CleanUp()
 {
   field         = nullptr;
-  bField        = nullptr;
+  bdsField      = nullptr;
+  bGlobalField  = nullptr;
   eqOfMotion    = nullptr;
   bEqOfMotion   = nullptr;
   integrator    = nullptr;
@@ -181,10 +184,10 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      t
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
 {
-  bField      = new BDSMagFieldMesh(); //Zero magnetic field.
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  CommonConstructor();
+  bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
+  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
+  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  FinalConstruction();
   return completeField;
 }
 
@@ -192,73 +195,79 @@ void BDSFieldFactory::CreateOuterMultipole(const BDSMagnetType      type,
 					   BDSMagnetStrength* const strength,
 					   const G4double           brho)
 {;}
-  
-void BDSFieldFactory::CommonConstructor()
+
+void BDSFieldFactory::IntermediateConstruction()
 {
-  completeField = new BDSFieldObjects(bField, bEqOfMotion, integrator);
+  bGlobalField = new BDSFieldMagGlobal(bdsField);
+  bEqOfMotion = new G4Mag_UsualEqRhs(bGlobalField);
+}
+
+void BDSFieldFactory::FinalConstruction()
+{
+  completeField = new BDSFieldObjects(bGlobalField, bEqOfMotion, integrator);
 }
 
 void BDSFieldFactory::CreateSolenoid(BDSMagnetStrength* strength,
 				     G4double           brho)
 {
-  bField      = new BDSFieldMagSolenoid(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorSolenoid(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagSolenoid(strength, brho);
+  IntermediateConstruction();
+  integrator = new BDSIntegratorSolenoid(strength, brho, bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateDipole(BDSMagnetStrength* strength,
 				   G4double           brho)
 {
-  bField      = new BDSFieldMagSBend(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorDipole(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagSBend(strength, brho);
+  IntermediateConstruction();
+  integrator = new BDSIntegratorDipole(strength, brho, bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateQuadrupole(BDSMagnetStrength* strength,
 				       G4double           brho)
 {
-  bField      = new BDSFieldMagQuadrupole(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorQuadrupole(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagQuadrupole(strength, brho);
+  IntermediateConstruction();
+  integrator = new BDSIntegratorQuadrupole(strength, brho, bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateSextupole(BDSMagnetStrength* strength,
 				      G4double           brho)
 {
-  bField      = new BDSFieldMagSextupole(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorSextupole(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagSextupole(strength, brho);
+  IntermediateConstruction();
+  integrator = new BDSIntegratorSextupole(strength, brho, bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateOctupole(BDSMagnetStrength* strength,
 				     G4double           brho)
 {
-  bField      = new BDSFieldMagOctupole(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorOctupole(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagOctupole(strength, brho);
+  IntermediateConstruction();
+  integrator = new BDSIntegratorOctupole(strength, brho, bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateDecapole(BDSMagnetStrength* strength,
 				     G4double           brho)
 {
-  bField      = new BDSFieldMagDecapole(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new BDSIntegratorDecapole(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagDecapole(strength, brho);
+  IntermediateConstruction();
+  integrator = new BDSIntegratorDecapole(strength, brho, bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateMultipole(BDSMagnetStrength* strength,
 				      G4double           brho)
 {
-  bField      = new BDSFieldMagMultipole(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new G4SimpleRunge(bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagMultipole(strength, brho);
+  IntermediateConstruction();
+  integrator = new G4SimpleRunge(bEqOfMotion);
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateKicker(BDSMagnetStrength* strength,
@@ -266,22 +275,22 @@ void BDSFieldFactory::CreateKicker(BDSMagnetStrength* strength,
 				   G4bool             isVertical)
 {
   if (isVertical)
-    {bField = new BDSFieldMagSBend(strength, brho, G4ThreeVector(-1,0,0));}
+    {bdsField = new BDSFieldMagSBend(strength, brho, G4ThreeVector(-1,0,0));}
   else
-    {bField = new BDSFieldMagSBend(strength, brho);}
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
+    {bdsField = new BDSFieldMagSBend(strength, brho);}
+  IntermediateConstruction();
   integrator  = new G4ClassicalRK4(bEqOfMotion);
   //integrator  = new BDSIntegratorDipole(strength, brho, bEqOfMotion);
-  CommonConstructor();
+  FinalConstruction();
 }
 
 void BDSFieldFactory::CreateMuonSpoiler(BDSMagnetStrength* strength,
 					G4double           brho)
 {
-  bField      = new BDSFieldMagMuonSpoiler(strength, brho);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bField);
-  integrator  = new G4ClassicalRK4(bEqOfMotion);
-  CommonConstructor();
+  bdsField   = new BDSFieldMagMuonSpoiler(strength, brho);
+  IntermediateConstruction();
+  integrator = new G4ClassicalRK4(bEqOfMotion);
+  FinalConstruction();
 }
 
 BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldXY()

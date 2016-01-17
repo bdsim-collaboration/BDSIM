@@ -1,10 +1,10 @@
 #ifndef BDSFIELDMAGSBEND_H
 #define BDSFIELDMAGSBEND_H
 
+#include "BDSField.hh"
+
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-
-#include "BDSFieldMagBase.hh"
 
 class BDSMagnetStrength;
 
@@ -18,7 +18,7 @@ class BDSMagnetStrength;
  * convention.
  */
 
-class BDSFieldMagSBend: public BDSFieldMagBase
+class BDSFieldMagSBend: public BDSField
 {
 public:
   /// A constant uniform field with value equal to 'field'. If angle is
@@ -32,11 +32,9 @@ public:
 		   G4double           brho,
 		   G4ThreeVector      unitDirection = G4ThreeVector(0,0,0));
   
-  ~BDSFieldMagSBend(){;}
+  virtual ~BDSFieldMagSBend(){;}
 
-  /// The method Geant4 will use to access the field value
-  virtual void  GetFieldValue(const G4double point[4],
-			      G4double* field) const;
+  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
 
   /// Access the local radius of curvature for the nominal momentum in this field.
   G4double GetLocalRadius() const;

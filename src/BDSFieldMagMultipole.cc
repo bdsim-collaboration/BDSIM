@@ -3,6 +3,7 @@
 #include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
 
+#include "globals.hh"
 #include "G4ThreeVector.hh"
 
 #include <cmath>
@@ -27,16 +28,13 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(const BDSMagnetStrength* strength,
     {order = (G4int)normalComponents.size();}
 }
 
-void BDSFieldMagMultipole::GetFieldValue(const G4double point[4],
-					 G4double* field) const
+G4ThreeVector BDSFieldMagMultipole::GetFieldValue(const G4ThreeVector& position) const
 {
-  G4ThreeVector localPosition = ConvertToLocal(point);
-
   // Translate carteasian to polar coordinates
-  G4double r   = sqrt(pow(localPosition.x(),2) + pow(localPosition.y(),2));
+  G4double r   = sqrt(pow(position.x(),2) + pow(position.y(),2));
   G4double phi = 0;
   if (BDS::IsFinite(std::abs(r)))
-    {phi = atan2(localPosition.y(),localPosition.x());}
+    {phi = atan2(position.y(),position.x());}
 
   // compute B field in local coordinates
   // Bx = Br * cos(phi) - Bphi * sin(phi)
@@ -73,7 +71,7 @@ void BDSFieldMagMultipole::GetFieldValue(const G4double point[4],
   localField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
   localField[2] = 0;                                 // B_z
 
-  OutputGlobalField(localField, field);
+  return localField;
 }
 
 

@@ -1,26 +1,26 @@
 #ifndef BDSFIELDMAGMUONSPOILER_H
 #define BDSFIELDMAGMUONSPOILER_H
 
-#include "BDSFieldMagBase.hh"
+#include "BDSField.hh"
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 
 /** 
  * @brief Field of a Muon Spoiler.
  *
  */
 
-class BDSFieldMagMuonSpoiler: public BDSFieldMagBase
+class BDSFieldMagMuonSpoiler: public BDSField
 {
 public:
   BDSFieldMagMuonSpoiler(BDSMagnetStrength* const strength,
 			 const G4double           brho);
 
-  ~BDSFieldMagMuonSpoiler(){;}
-  
-  virtual void GetFieldValue(const G4double point[4],
-			     G4double* field) const;
+  virtual ~BDSFieldMagMuonSpoiler(){;}
+
+  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
 
 private:
   G4double bField;

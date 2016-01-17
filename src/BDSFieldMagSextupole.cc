@@ -18,21 +18,18 @@ BDSFieldMagSextupole::BDSFieldMagSextupole(const BDSMagnetStrength* strength,
 #endif
 }
 
-void BDSFieldMagSextupole::GetFieldValue(const G4double point[4],
-					 G4double* field) const
-{
-  G4ThreeVector localPosition = ConvertToLocal(point);
-  
+G4ThreeVector BDSFieldMagSextupole::GetFieldValue(const G4ThreeVector& position) const
+{ 
   // B_x = 2*x*y * (B''/2!)
   // B_y = (x^2 - y^2) * (B''/2!)
   // B_z = 0
 
   G4ThreeVector localField;
-  localField[0] = localPosition.x() * localPosition.y() * bDoublePrime;
-  localField[1] = (pow(localPosition.x(),2) - pow(localPosition.y(),2)) * halfBDoublePrime;
+  localField[0] = position.x() * position.y() * bDoublePrime;
+  localField[1] = (pow(position.x(),2) - pow(position.y(),2)) * halfBDoublePrime;
   localField[2] = 0;
-
-  OutputGlobalField(localField, field);
+  
+  return localField;
 }
 
 

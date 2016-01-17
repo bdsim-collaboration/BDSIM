@@ -1,24 +1,31 @@
 #ifndef BDSFIELDMAGSOLENOID_H
 #define BDSFIELDMAGSOLENOID_H
 
+#include "BDSField.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-#include "BDSFieldMagBase.hh"
-
 class BDSMagnetStrength;
 
-class BDSFieldMagSolenoid: public BDSFieldMagBase
+/**
+ * @ brief Class the provides the field in a solenoid.
+ * 
+ * This simply returns a uniform field that is independent of
+ * position.
+ * 
+ * @author Laurie Nevay
+ */
+
+class BDSFieldMagSolenoid: public BDSField
 {
 public:
   BDSFieldMagSolenoid(BDSMagnetStrength* strength,
 		      G4double           brho);
   
-  ~BDSFieldMagSolenoid(){;}
+  virtual ~BDSFieldMagSolenoid(){;}
 
-  /// Get Field Value (independent of position, since solenoid field is uniform)
-  virtual void  GetFieldValue(const G4double point[4],
-			      G4double* field) const;
+  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
   
 private:
   /// Private default constructor to ensure use of supplied constructor

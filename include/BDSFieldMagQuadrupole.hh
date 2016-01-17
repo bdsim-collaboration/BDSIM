@@ -1,9 +1,10 @@
 #ifndef BDSFIELDMAGQUADRUPOLE_H
 #define BDSFIELDMAGQUADRUPOLE_H
 
-#include "globals.hh" // geant4 types / globals
+#include "BDSField.hh"
 
-#include "BDSFieldMagBase.hh"
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 
 class BDSMagnetStrength;
 
@@ -14,19 +15,15 @@ class BDSMagnetStrength;
  * "k1" and a design rigidity (brho).
  */
 
-class BDSFieldMagQuadrupole: public BDSFieldMagBase
+class BDSFieldMagQuadrupole: public BDSField
 {
 public:
   BDSFieldMagQuadrupole(const BDSMagnetStrength* strength,
 			const G4double           brho);
   
-  ~BDSFieldMagQuadrupole(){;}
+  virtual ~BDSFieldMagQuadrupole(){;}
 
-  /// Overridden method from G4MagneticField - access the field from this quadrupole
-  /// at a given global set of coordinates. These are first converted to local coordinates
-  /// using the cached transform from BDSAuxiliaryNavigator.
-  virtual void GetFieldValue(const G4double point[4],
-			     G4double* field) const;
+  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
   
 private:
   /// Private default constructor to force use of supplied constructor.

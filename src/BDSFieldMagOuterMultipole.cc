@@ -3,6 +3,8 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include <cmath>
 
 BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int    nPolesIn,
@@ -15,14 +17,10 @@ BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int    nPolesIn,
   itsSectorPhi=CLHEP::twopi/G4double(nPoles);
 }
 
-BDSFieldMagOuterMultipole::~BDSFieldMagOuterMultipole(){}
-
-void BDSFieldMagOuterMultipole::GetFieldValue(const G4double point[4],
-					      G4double* field) const
+G4ThreeVector BDSFieldMagOuterMultipole::GetFieldValue(const G4ThreeVector& position) const
 {
-  G4ThreeVector localPosition = ConvertToLocal(point);
-  G4double      BFactor       = fieldStrength/localPosition.mag();
-  G4double      phi           = localPosition.phi() - phiOffset;
+  G4double BFactor = fieldStrength/position.mag();
+  G4double phi     = position.phi() - phiOffset;
 
   // extra term for dipoles, because of rotation required during positioning
   // of trapezoids
@@ -42,8 +40,8 @@ void BDSFieldMagOuterMultipole::GetFieldValue(const G4double point[4],
   BFactor *= pow(-1.0,nSector);
 
   G4ThreeVector localField;
-  localField[0] = localPosition.y()*BFactor;
-  localField[1] = -localPosition.x()*BFactor;
+  localField[0] = position.y()*BFactor;
+  localField[1] = -position.x()*BFactor;
   localField[2] = 0;
 
   // extra term for dipoles, because of rotation required during positioning
@@ -51,7 +49,7 @@ void BDSFieldMagOuterMultipole::GetFieldValue(const G4double point[4],
   if (nPoles==2)
     {localField[1] *= -1;}
   
-  OutputGlobalField(localField, field);
+  return localField;
 }
 
 

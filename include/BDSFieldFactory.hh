@@ -16,6 +16,7 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+class BDSField;
 class BDSGeometry;
 
 /**
@@ -94,7 +95,8 @@ private:
 
   ///@{ Variable to allow different functions to access different parts during construction
   G4Field*                field;
-  G4MagneticField*        bField;
+  BDSField*               bdsField;
+  G4MagneticField*        bGlobalField;
   G4EquationOfMotion*     eqOfMotion;
   /// B Fields require at least this level in the inheritance - use G4Mag_EqRhs instead
   /// of G4EquationOfMotion for b fields
@@ -102,9 +104,12 @@ private:
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;
   ///@}
+
+  /// Build global field from local field and build equation of motion
+  void IntermediateConstruction();
   
-  /// Common construction of building field objects
-  void CommonConstructor();
+  /// Package objects in BDSFieldObjects instance
+  void FinalConstruction();
 
   ///@{ Delegate function to construct the specific classes
   void CreateSolenoid(BDSMagnetStrength*    strength, G4double brho);
