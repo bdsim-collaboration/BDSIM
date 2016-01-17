@@ -17,11 +17,9 @@
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSScintillatorScreen.hh"
-#include "BDSSectorBend.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTiltOffset.hh"
-#include "BDSMultipole.hh"
 #include "BDSTransform3D.hh"
 
 // general
@@ -75,7 +73,7 @@ BDSComponentFactory::BDSComponentFactory()
   _brho = BDSGlobalConstants::Instance()->GetFFact()*( _momentum / 0.299792458);
   
   // rigidity (in Geant4 units)
-  _brho *= (CLHEP::tesla*CLHEP::m);
+  _brho *= - (CLHEP::tesla*CLHEP::m);
 
   if (verbose || debug1)
     {G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;}
@@ -271,56 +269,35 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 {
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
-  
-  // arc length
-  G4double length = _element.l*CLHEP::m;
-  G4double magFieldLength = length;
-  
-  // magnetic field
-  // MAD conventions:
-  // 1) a positive bend angle represents a bend to the right, i.e.
-  // towards negative x values (even for negative _charges??)
-  // 2) a positive K1 = 1/|Brho| dBy/dx means horizontal focusing of
-  // positive charges
-  // CHECK SIGNS 
-  
-  G4double bField;
-  if(_element.B != 0)
+
+  G4double length = _element.l * CLHEP::m;
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  if (BDS::IsFinite(_element.B))
     {
-      bField = _element.B * CLHEP::tesla;
-      G4double rho = _brho/bField;
-      //    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
-      _element.angle  = - magFieldLength/rho;
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "angle calculated from B(" << bField << ") : " << _element.angle << G4endl;
-#endif
+      (*st)["field"] = _element.B * CLHEP::tesla;
+      (*st)["angle"] = (*st)["field"] * length / _brho;
     }
   else
     {
-      _element.angle *= -1;
-      //    bField = - 2 * _brho * sin(_element.angle/2.0) / magFieldLength;
-      // charge in e units
-      // multiply once more with ffact to not flip fields in bends
-      bField = - _brho * _element.angle/magFieldLength * _charge * BDSGlobalConstants::Instance()->GetFFact();
-      _element.B = bField/CLHEP::tesla;
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "B calculated from angle (" << _element.angle << ") : " << bField << G4endl;
-#endif
+      G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
+      (*st)["field"] = - _brho *  _element.angle / length * _charge * ffact / CLHEP::tesla;
+      (*st)["angle"] = - _element.angle;
     }
   
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
+  (*st)["k1"] = _brho * _element.k1 / CLHEP::m2;
 
-  //calculate number of sbends to split parent into
-  //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
-  //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
+  // Calculate number of sbends to split parent into. If the maximum distance
+  // between the arc and chord at the centre is > 1mm, split sbend into N chunks,
+  // such that the maximum distance between the chord and the arc is 1mm, ie
+  // the maximum possible error on the aperture.
+  // This also works when maximum distance is less than 1mm as there will just be 1 chunk!
   double aperturePrecision = 1.0; // in mm
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   int nSbends = (int) ceil(std::sqrt(std::abs(length*_element.angle/2/aperturePrecision)));
-  if (nSbends==0) nSbends = 1; // can happen in case angle = 0
-  if (BDSGlobalConstants::Instance()->DontSplitSBends())
-    {nSbends = 1;}   //use for debugging
+  if (nSbends==0 || BDSGlobalConstants::Instance()->DontSplitSBends())
+    {nSbends = 1;} // can happen in case angle = 0
       
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
@@ -328,29 +305,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // prepare one name for all that makes sense
   std::string thename = _element.name + "_1_of_" + std::to_string(nSbends);
   //calculate their angle and length
-  double semiangle  = _element.angle / (double) nSbends;
-  double semilength = length / (double) nSbends;
+  (*st)["angle"] /= (G4double) nSbends; // field stays the same
+  G4double semilength = length / (G4double) nSbends;
   //create Line to put them in
   BDSLine* sbendline = new BDSLine(_element.name);
   //create sbends and put them in the line
   BDSBeamPipeInfo*    bpInfo = PrepareBeamPipeInfo(_element);
   BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
 
-  CheckBendLengthAngleWidthCombo(semilength, semiangle, moInfo->outerDiameter, thename);
+  CheckBendLengthAngleWidthCombo(semilength, (*st)["angle"], moInfo->outerDiameter, thename);
   
   // prepare one sbend segment
-  BDSSectorBend* oneBend = new BDSSectorBend(thename,
-					     semilength,
-					     semiangle,
-					     bField,
-					     bPrime,
-					     bpInfo,
-					     moInfo);
+  BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
+				     thename,
+				     semilength,
+				     bpInfo,
+				     moInfo,
+				     st,
+				     _brho);
 
   oneBend->SetBiasVacuumList(_element.biasVacuumList);
   oneBend->SetBiasMaterialList(_element.biasMaterialList);
   // create a line of this sbend repeatedly
-  for (int i = 0; i < nSbends; ++i)
+  for (G4int i = 0; i < nSbends; ++i)
     {sbendline->AddComponent(oneBend);}
   return sbendline;
 }
@@ -522,51 +499,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 {
  if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
- 
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Multipole,"
-	 << " name= " << _element.name
-	 << " l= " << _element.l << "m"
-	 << " material= " << _element.outerMaterial
-	 << G4endl;
-#endif
-  // magnetic field
-  std::list<double>::iterator kit;
-  
-#ifdef BDSDEBUG 
-  G4cout << " knl={ ";
-#endif
-  for(kit=(_element.knl).begin();kit!=(_element.knl).end();kit++)
-    {
-#ifdef BDSDEBUG 
-      G4cout<<(*kit)<<", ";
-#endif
-      (*kit) /= _element.l; 
-    }
-#ifdef BDSDEBUG 
-  G4cout << "}";
-#endif
-  
-#ifdef BDSDEBUG 
-  G4cout << " ksl={ ";
-#endif
-  for(kit=(_element.ksl).begin();kit!=(_element.ksl).end();kit++)
-    {
-#ifdef BDSDEBUG 
-      G4cout<<(*kit)<<" ";
-#endif
-      (*kit) /= _element.l; 
-    }
-#ifdef BDSDEBUG 
-  G4cout << "}" << G4endl;
-#endif
 
-  return (new BDSMultipole( _element.name,
-			    _element.l * CLHEP::m,
-			    _element.knl,
-			    _element.ksl,
-			    PrepareBeamPipeInfo(_element),
-			    PrepareMagnetOuterInfo(_element)));
+ BDSMagnetStrength* st = new BDSMagnetStrength();
+ std::list<double>::iterator kn = _element.knl.begin();
+ std::list<double>::iterator ks = _element.ksl.begin();
+ std::vector<G4String> normKeys = st->NormalComponentKeys();
+ std::vector<G4String> skewKeys = st->SkewComponentKeys();
+ std::vector<G4String>::iterator nkey = normKeys.begin();
+ std::vector<G4String>::iterator skey = skewKeys.begin();
+ for (; kn != _element.knl.end(); kn++, ks++, nkey++, skey++)
+   {
+     (*st)[*nkey] = (*kn) / _element.l;
+     (*st)[*skey] = (*ks) / _element.l;
+   }
+
+ return new BDSMagnet(BDSMagnetType::multipole,
+		      _element.name,
+		      _element.l * CLHEP::m,
+		      PrepareBeamPipeInfo(_element),
+		      PrepareMagnetOuterInfo(_element),
+		      st,
+		      _brho);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
