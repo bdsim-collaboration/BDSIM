@@ -115,6 +115,41 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
   return nullptr;
 }
 
+BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
+					       BDSMagnetStrength* strength,
+					       G4double           brho)
+{
+  CleanUp();
+  switch (type.underlying())
+    {
+    case BDSFieldType::solenoid:
+      bdsField = new BDSFieldMagSolenoid(strength, brho); break;
+    case BDSFieldType::sectorbend:
+    case BDSFieldType::rectangularbend: // TBC need to think about length for this
+      break;
+    case BDSFieldType::quadrupole:
+      bdsField = new BDSFieldMagQuadrupole(strength, brho); break;
+    case BDSFieldType::sextupole:
+      bdsField = new BDSFieldMagSextupole(strength, brho); break;
+    case BDSFieldType::octupole:
+      bdsField = new BDSFieldMagOctupole(strength, brho); break;
+    case BDSFieldType::decapole:
+      bdsField = new BDSFieldMagDecapole(strength, brho); break;
+    case BDSFieldType::multipole:
+      bdsField = new BDSFieldMagMultipole(strength, brho); break;
+      CreateMultipole(strength,  brho); break;
+    case BDSFieldType::vkicker:
+    case BDSFieldType::hkicker:
+      break;
+    case BDSFieldType::muonspoiler:
+      bdsField = new BDSFieldMagMuonSpoiler(strength, brho); break;
+    default:
+      G4cerr << __METHOD_NAME__ << "not an equation based field type - not building field" << G4endl;
+      break; // this will return nullptr
+    }
+  return bdsField;
+}
+
 BDSFieldObjects* BDSFieldFactory::CreateFieldMagEquation(const BDSMagnetType      type,
 							 BDSMagnetStrength* const strength,
 							 const G4double           brho)

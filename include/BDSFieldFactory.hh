@@ -51,6 +51,11 @@ public:
 				       G4ThreeVector offsetIn   = G4ThreeVector(0,0,0),
 				       BDSGeometry*  geometryIn = nullptr);
 
+  /// Create only a local field object
+  BDSField* CreateFieldMagLocal(BDSFieldType       type,
+				BDSMagnetStrength* strength,
+				G4double           brho);
+
   /// Create a pure magnetic field as described by an equation, such as a quadupole or
   /// dipole field.  All associated objects are created and packaged together.
   BDSFieldObjects* CreateFieldEquation(BDSFieldType       type,
