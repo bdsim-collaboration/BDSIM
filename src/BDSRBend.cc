@@ -17,15 +17,13 @@
 
 BDSRBend::BDSRBend(G4String            name,
 		   G4double            length,
-		   G4double            bFieldIn,
-		   G4double            bGradIn,
+		   G4double            /*bFieldIn*/,
+		   G4double            /*bGradIn*/,
 		   G4double            angleIn,
 		   BDSBeamPipeInfo*    beamPipeInfo,
 		   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
 	    beamPipeInfo, magnetOuterInfo, nullptr, 0),
-  bField(bFieldIn),
-  bGrad(bGradIn),
   bpFirstBit(nullptr),
   bpLastBit(nullptr)
 {

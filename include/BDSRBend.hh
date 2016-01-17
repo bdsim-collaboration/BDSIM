@@ -22,8 +22,6 @@ public:
 	   BDSMagnetOuterInfo* magnetOuterInfo);
 
 private:
-  G4double bField;
-  G4double bGrad;
   G4double magFieldLength;
 
   /// chord length of straight section (along main chord) [m]
