@@ -47,6 +47,6 @@ private:
 };
 
 inline G4String BDSFieldMagMultipole::Name() const
-{return "mulitpole";}
+{return "multipole";}
 
 #endif 
