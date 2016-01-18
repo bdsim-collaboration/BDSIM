@@ -21,7 +21,7 @@ BDSFieldMagOctupole::BDSFieldMagOctupole(const BDSMagnetStrength* strength,
 G4ThreeVector BDSFieldMagOctupole::GetFieldValue(const G4ThreeVector& position) const
 {
   // B_x = (3x^2y - y^3) * (B'''/3!)
-  // B_y = (x^3-xy^2) * (B'''/3!)
+  // B_y = (x^3-3xy^2) * (B'''/3!)
   // B_z = 0
 
   //shortcuts
@@ -30,7 +30,7 @@ G4ThreeVector BDSFieldMagOctupole::GetFieldValue(const G4ThreeVector& position) 
   
   G4ThreeVector localField;
   localField[0] = (3 * pow(x,2) * y - pow(y,3)) * bTPNormed;
-  localField[1] = (pow(x,3) - x * pow(y,2)) * bTPNormed;
+  localField[1] = (pow(x,3) - 3* x * pow(y,2)) * bTPNormed;
   localField[2] = 0;
 
   return localField;
