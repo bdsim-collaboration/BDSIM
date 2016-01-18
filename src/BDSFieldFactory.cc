@@ -124,8 +124,7 @@ BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
     {
     case BDSFieldType::solenoid:
       bdsField = new BDSFieldMagSolenoid(strength, brho); break;
-    case BDSFieldType::sectorbend:
-    case BDSFieldType::rectangularbend: // TBC need to think about length for this
+      case BDSFieldType::dipole:
       break;
     case BDSFieldType::quadrupole:
       bdsField = new BDSFieldMagQuadrupole(strength, brho); break;
@@ -137,10 +136,6 @@ BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
       bdsField = new BDSFieldMagDecapole(strength, brho); break;
     case BDSFieldType::multipole:
       bdsField = new BDSFieldMagMultipole(strength, brho); break;
-      CreateMultipole(strength,  brho); break;
-    case BDSFieldType::vkicker:
-    case BDSFieldType::hkicker:
-      break;
     case BDSFieldType::muonspoiler:
       bdsField = new BDSFieldMagMuonSpoiler(strength, brho); break;
     default:

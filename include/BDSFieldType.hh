@@ -14,7 +14,7 @@
 struct fieldtypes_def
 {
   enum type {zero, threed, xy, mokka, solenoid, dipole, quadrupole,
-	     sextupole, octupole, decapole, multipole};
+	     sextupole, octupole, decapole, multipole, muonspoiler};
 };
 
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
