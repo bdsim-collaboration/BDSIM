@@ -56,14 +56,13 @@ int main(int /*argc*/, char** /*argv*/)
   const G4int    nPhi  = 100;
   const G4double rMax  = 20; // mm
   const G4double rStep = rMax / (G4double) nR;
-  const G4double pStep = CLHEP::twopi / (G4double) nPhi;
+  const G4double pStep = CLHEP::twopi / (G4double) (nPhi-1);
 
   // Regular carteasian grid - symmetric for x,y just now
-  const G4int    nX    = 100;
-  const G4int    nY    = nX;
-  const G4double xMin  = - rMax;
-  const G4double xMax  = std::abs(xMin);
-  const G4double xStep = (xMax - xMin) / (G4double) nX;
+  const G4int    nX    = 10;
+  const G4double xMin  = -20; // mm 
+  const G4double xMax  = 20;  // mm
+  const G4double xStep = (xMax - xMin) / (G4double) (nX-1);
    
   for (auto field : fields)
     {
@@ -95,9 +94,9 @@ int main(int /*argc*/, char** /*argv*/)
       cfile << "> brho = " << brho << "\n";
       cfile << "# (x,y,z)\t\tField\n";
       G4double x,y;
-      for (x=xMin, i=0; i < nX; x+=xStep, i++)
+      for (y=xMin, i=0; i < nX; y+=xStep, ++i)
 	{
-	  for (y=xMin, j=0; j < nY ; y+=xStep, j++)
+	  for (x=xMin, j=0; j < nX; x+=xStep, ++j)
 	    {
 	      G4ThreeVector position(x,y,0);
 	      cfile << position << "\t" << field->GetFieldValue(position) << "\n";
