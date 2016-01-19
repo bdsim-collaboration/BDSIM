@@ -125,7 +125,7 @@ BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
     case BDSFieldType::solenoid:
       bdsField = new BDSFieldMagSolenoid(strength, brho); break;
     case BDSFieldType::dipole:
-      break;
+      bdsField = new BDSFieldMagSBend(strength, brho); break;
     case BDSFieldType::quadrupole:
       bdsField = new BDSFieldMagQuadrupole(strength, brho); break;
     case BDSFieldType::sextupole:

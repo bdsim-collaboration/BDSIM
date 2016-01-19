@@ -30,7 +30,7 @@ public:
 
   BDSFieldMagSBend(BDSMagnetStrength* strength,
 		   G4double           brho,
-		   G4ThreeVector      unitDirection = G4ThreeVector(0,0,0));
+		   G4ThreeVector      unitDirection = G4ThreeVector(0,1,0));
 
   virtual ~BDSFieldMagSBend(){;}
 
