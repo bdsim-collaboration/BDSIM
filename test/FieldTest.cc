@@ -29,9 +29,9 @@ int main(int /*argc*/, char** /*argv*/)
   BDSMagnetStrength* st2 = new BDSMagnetStrength();
   (*st2)["k1"] = 0.12;
   (*st2)["k2"] = 0.02;
-  (*st2)["k3"] = 0.003;
+  (*st2)["k3"] = -0.003;
   (*st2)["k4"] = 0.0004;
-  (*st2)["k5"] = 0.00005;
+  (*st2)["k5"] = -0.00005;
 
   const G4double brho = 0.3456;
 
@@ -45,6 +45,8 @@ int main(int /*argc*/, char** /*argv*/)
     BDSFieldType::skewsextupole,
     BDSFieldType::skewoctupole,
     BDSFieldType::skewdecapole,
+    BDSFieldType::muonspoiler,
+    BDSFieldType::dipole
   };
   std::vector<BDSField*> fields;
   for (auto t : types)

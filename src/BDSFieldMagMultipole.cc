@@ -36,7 +36,7 @@ G4ThreeVector BDSFieldMagMultipole::GetFieldValue(const G4ThreeVector& position)
   if (BDS::IsFinite(std::abs(r)))
     {phi = atan2(position.y(),position.x());}
 
-  // compute B field in local coordinates
+  // compute B field in cylindrical coordinates first then convert to carteasian
   // Bx = Br * cos(phi) - Bphi * sin(phi)
   // By = Br * sin(phi) + Bphi * cos(phi)
   // where, if n=1 is for dipole:
@@ -53,15 +53,17 @@ G4ThreeVector BDSFieldMagMultipole::GetFieldValue(const G4ThreeVector& position)
   G4double ffact = -1;
   for (G4int i = 0; i < order; i++)
     {
-      G4double o = (G4double)i+1; // the current order
+      // Here we add to so order represents kn properly
+      G4double o = (G4double)i+2; // the current order
       br   += normalComponents[i] * pow(r, o - 1) * sin(o * phi) / ffact; //normal
       br   -= skewComponents[i]   * pow(r, o - 1) * cos(o * phi) / ffact; //skewed
 
       bphi += normalComponents[i] * pow(r, o - 1) * cos(o * phi) / ffact; //normal
       bphi += skewComponents[i]   * pow(r, o - 1) * sin(o * phi) / ffact; //skewed
 
-      if(o==1) // for the angle convention
-	{br *= -1; bphi *=-1; }
+      // Ignore dipole component for now!
+      //if(o==1) // for the angle convention
+	  //{br *= -1; bphi *=-1; }
 
       ffact *= o;
     }

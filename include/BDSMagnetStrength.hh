@@ -34,16 +34,16 @@ public:
   G4double& operator[](const G4String key);
   const G4double& operator[](G4String key) const;
 
-  /// Accessor for normal component keys
+  /// Accessor for normal component keys - k1 - k12
   inline std::vector<G4String> NormalComponentKeys() const;
 
-  /// Accessor for skew component keys
+  /// Accessor for skew component keys - k1 - k12
   inline std::vector<G4String> SkewComponentKeys() const;
 
-  /// Accessor for all normal components
+  /// Accessor for all normal components - k1 - k12
   std::vector<G4double> NormalComponents() const;
 
-  /// Accessor for all skew components
+  /// Accessor for all skew components - k1 - k12
   std::vector<G4double> SkewComponents() const;
   
 private:
