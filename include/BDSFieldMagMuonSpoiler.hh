@@ -31,6 +31,6 @@ private:
 };
 
 inline G4String BDSFieldMagMuonSpoiler::Name() const
-{return "muon spoiler";}
+{return "muon_spoiler";}
 
 #endif
