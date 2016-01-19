@@ -25,9 +25,6 @@ public:
   /// Wrap a field and rotate it by angle (rad) in the x-y plane (about z axis).
   BDSFieldSkew(BDSField* fieldIn, G4double angle = 0);
 
-  /// Wrap a field and rotate it according to a rotation matrix.
-  BDSFieldSkew(BDSField* fieldIn, G4RotationMatrix* rotationIn);
-
   virtual ~BDSFieldSkew();
 
   /// Get the field - local coordinates, and rotated.
@@ -46,11 +43,14 @@ private:
   /// The rotation matrix used to rotation the coordinates.
   G4RotationMatrix* rotation;
 
+  /// The opposite rotation matrix used to transform the resultant field vector.
+  G4RotationMatrix* antiRotation;
+
 };
 
 inline G4String BDSFieldSkew::Name() const
 {
-  G4String name = "skew " + field->Name();
+  G4String name = "skew_" + field->Name();
   return name;
 }
 

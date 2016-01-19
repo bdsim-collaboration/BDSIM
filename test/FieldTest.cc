@@ -63,7 +63,7 @@ int main(int /*argc*/, char** /*argv*/)
   const G4double pStep = CLHEP::twopi / (G4double) (nPhi-1);
 
   // Regular carteasian grid - symmetric for x,y just now
-  const G4int    nX    = 10;
+  const G4int    nX    = 100;
   const G4double xMin  = -20; // mm 
   const G4double xMax  = 20;  // mm
   const G4double xStep = (xMax - xMin) / (G4double) (nX-1);
@@ -79,7 +79,7 @@ int main(int /*argc*/, char** /*argv*/)
       rfile << "# (x,y,z)\t\tField\n";
       G4double r, phi;
       G4int i, j;
-      for (r=0.0, i=0; i < nR; r+= rStep, i++)
+      for (r=rStep, i=0; i < nR; r+= rStep, i++)
 	{
 	  for (phi=0, j=0; j < nPhi; phi+=pStep, j++)
 	    {
