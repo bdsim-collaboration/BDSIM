@@ -40,7 +40,11 @@ int main(int /*argc*/, char** /*argv*/)
     BDSFieldType::sextupole,
     BDSFieldType::octupole,
     BDSFieldType::decapole,
-    BDSFieldType::multipole
+    BDSFieldType::multipole,
+    BDSFieldType::skewquadrupole,
+    BDSFieldType::skewsextupole,
+    BDSFieldType::skewoctupole,
+    BDSFieldType::skewdecapole,
   };
   std::vector<BDSField*> fields;
   for (auto t : types)

@@ -1,12 +1,7 @@
-#include "BDSFieldType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSField.hh"
 #include "BDSFieldFactory.hh"
-#include "BDSFieldMagSolenoid.hh"
-#include "BDSGeometry.hh"
-#include "BDSGeometrySQL.hh"
-#include "BDSGeometryType.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
@@ -16,6 +11,11 @@
 #include "BDSFieldMagSBend.hh"
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSolenoid.hh"
+#include "BDSFieldSkew.hh"
+#include "BDSFieldType.hh"
+#include "BDSGeometry.hh"
+#include "BDSGeometrySQL.hh"
+#include "BDSGeometryType.hh"
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorOctupole.hh"
@@ -124,7 +124,7 @@ BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
     {
     case BDSFieldType::solenoid:
       bdsField = new BDSFieldMagSolenoid(strength, brho); break;
-      case BDSFieldType::dipole:
+    case BDSFieldType::dipole:
       break;
     case BDSFieldType::quadrupole:
       bdsField = new BDSFieldMagQuadrupole(strength, brho); break;
@@ -138,6 +138,14 @@ BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
       bdsField = new BDSFieldMagMultipole(strength, brho); break;
     case BDSFieldType::muonspoiler:
       bdsField = new BDSFieldMagMuonSpoiler(strength, brho); break;
+    case BDSFieldType::skewquadrupole:
+      bdsField = new BDSFieldSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::halfpi); break;
+    case BDSFieldType::skewsextupole:
+      bdsField = new BDSFieldSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;
+    case BDSFieldType::skewoctupole:
+      bdsField = new BDSFieldSkew(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;
+    case BDSFieldType::skewdecapole:
+      bdsField = new BDSFieldSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;
     default:
       G4cerr << __METHOD_NAME__ << "not an equation based field type - not building field" << G4endl;
       break; // this will return nullptr
