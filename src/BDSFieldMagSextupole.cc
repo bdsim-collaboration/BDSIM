@@ -31,6 +31,3 @@ G4ThreeVector BDSFieldMagSextupole::GetFieldValue(const G4ThreeVector& position)
   
   return localField;
 }
-
-
-

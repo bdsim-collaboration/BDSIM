@@ -80,6 +80,24 @@ is :math:`(0,1,0)` - unit y.
 Quadrupole
 ----------
 
+The quadrupole field is constructed with strength parameter :math:`k_1` and with respect to
+a nominal rigidity :math:`B\rho`. Although the rigidity is included in :math:`k_1`, it is
+required to calculate the field gradient internally.
+
+.. math::
+
+   k_1 = \frac{1}{B\rho} \frac{\partial B_y}{\partial x}
+
+The field is described by
+
+.. math::
+   \begin{eqnarray}
+   B_x & = & \frac{\partial B_y}{\partial x} y \\
+   B_y & = & \frac{\partial B_y}{\partial x} x \\
+   B_z & = & 0
+   \end{eqnarray}
+   
+   
 .. figure:: dev_figures/quadrupole_radial.pdf
 	    :width: 70%
 	    :align: center
@@ -88,6 +106,23 @@ Quadrupole
 
 Sextupole
 ---------
+
+The sextupole field is constructed with strength parameter :math:`k_2` and with respect
+to a nominal rigidity :math:`B\rho`.
+
+.. math::
+
+   k_2 = \frac{1}{B\rho} \frac{\partial^2 B_y}{\partial x^2}
+
+The field is described by
+
+.. math::
+   \begin{eqnarray}
+   B_x & = & \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \,2xy \\
+   B_y & = & \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \, (x^2 - y^2) \\
+   B_z & = & 0 \\
+   \end{eqnarray}
+   
 
 .. figure:: dev_figures/sextupole_radial.pdf
 	    :width: 70%
@@ -99,6 +134,23 @@ Sextupole
 Octupole
 --------
 
+The octupole field is constructed with strength parameter :math:`k_3` and with respect to
+a nominal rigidity :math:`B\rho`.
+
+.. math::
+
+   k_3 = \frac{1}{B\rho} \frac{\partial^3 B_y}{\partial x^3}
+
+The field is described by
+
+.. math::
+   \begin{eqnarray}
+   B_x & = & \frac{1}{3!} \frac{\partial^3 B_y}{\partial x^3} \,(3x^2 y - y^3) \\
+   B_y & = & \frac{1}{3!} \frac{\partial^3 B_y}{\partial x^3} \, (x^3 - 3xy^2) \\
+   B_z & = & 0 \\
+   \end{eqnarray}
+
+
 .. figure:: dev_figures/octupole_radial.pdf
 	    :width: 70%
 	    :align: center
@@ -108,6 +160,22 @@ Octupole
 
 Decapole
 --------
+
+The decapole field is constructed with strength parameter :math:`k_4` and with respect to
+a nominal rigidity :math:`B\rho`.
+
+.. math::
+
+   k_4 = \frac{1}{B\rho} \frac{\partial^4 B_y}{\partial x^4}
+
+The field is described by
+
+.. math::
+   \begin{eqnarray}
+   B_x & = & \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, 4xy(x^2 - y^2) \\
+   B_y & = & \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, (x^4 - 6x^2y^2 + y^4) \\ 
+   B_z & = & 0 \\
+   \end{eqnarray}
 
 .. figure:: dev_figures/decapole_radial.pdf
 	    :width: 70%
@@ -135,23 +203,27 @@ location.
    \mathbf{B}_{skew}(x,y) = R(-\theta) \mathbf{B}(x',y')
    
    \begin{bmatrix}
-   x'\\
-   y'\\
+   x' \\
+   y' \\
+   z' \\
    \end{bmatrix}
    =
    R(\theta)
    \begin{bmatrix}
    x \\
    y \\
+   z \\
    \end{bmatrix}
    =
    \begin{bmatrix}
-   \cos \theta & - \sin \theta \\
-   \sin \theta & \cos \theta \\
+   \cos \theta & - \sin \theta & 0\\
+   \sin \theta & \cos \theta   & 0\\
+   0 & 0 & 0 \\
    \end{bmatrix}
    \begin{bmatrix}
    x \\
    y \\
+   z \\
    \end{bmatrix}
 
 Example field maps are shown below.
@@ -196,6 +268,39 @@ Skew Decapole
 
 
 
-
 Multipole
 ---------
+
+A general multipole field is also provided. The field is calculated in cylindrical coordinates, then converted
+to carteasian. The field is calculated using an array of strength parameters :math:`k_1,k_2,\dotsc k_{12}` and
+the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a nominal rigidity :math:`B\rho`.
+
+.. note:: Currently the dipole component is not implemented. :math:`k_1` is the quadrupole strength,
+	  :math:`k_2` is the sextupole strength, :math:`etc.`.
+
+.. math::
+
+   \begin{eqnarray}
+   r                          & = & \sqrt{x^2 + y^2} \\
+   B_r      (\mathrm{normal}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \,r^i \sin(i \phi) \\
+   B_{\phi} (\mathrm{normal}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \, r^i \cos(i \phi) \\
+   B_r      (\mathrm{skewed}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{ks_i}{i!} \, r^i \cos(i \phi) \\
+   B_{\phi} (\mathrm{skewed}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} -\frac{ks_i}{i!} \, r^i \sin(i \phi) \\
+   \end{eqnarray}
+   
+   \begin{eqnarray}
+   B_x & = & B_r \cos \phi - B_{\phi} \sin \phi \\
+   B_y & = & B_r \sin \phi + B_{\phi} \cos \phi \\
+   \end{eqnarray}
+
+      
+.. figure:: dev_figures/multipole_radial.pdf
+	    :width: 70%
+	    :align: center
+
+	    Example field map of a skew decapole with :math:`{k_1, k_2, k_3, k_4, k_5} = {0.12,0.02,-0.003,0.0004,-0.00005}`,
+	    and :math:`B\rho = 0.3456`.
+
+
+Muon Spoiler
+------------
