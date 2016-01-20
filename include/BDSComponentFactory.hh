@@ -42,7 +42,7 @@ public:
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTeleporter();
   /// Create the tilt and offset information object by inspecting the parser element
-  BDSTiltOffset*           CreateTiltOffset(GMAD::Element* element);
+  BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
  
 private:
   /// length safety from global constants
@@ -88,10 +88,10 @@ private:
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
   
   ///@{ Utility function to prepare model info
-  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element* element);
-  G4double            PrepareOuterDiameter(GMAD::Element* element);
-  BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element* element);
-  BDSCavityInfo*      PrepareCavityModelInfo(const GMAD::Element* element);
+  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element) const;
+  G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
+  BDSBeamPipeInfo*    PrepareBeamPipeInfo   (GMAD::Element const* element) const;
+  BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
 
   /// Utility function to check if the combination of outer diameter, angle and length

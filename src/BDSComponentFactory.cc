@@ -1086,7 +1086,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element* element)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element) const
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
@@ -1117,7 +1117,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element* element
   return info;
 }
 
-G4double BDSComponentFactory::PrepareOuterDiameter(Element* element)
+G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
 {
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
@@ -1128,7 +1128,7 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element* element)
   return outerDiameter;
 }
 
-BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element* element)
+BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element) const
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
@@ -1143,7 +1143,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element* element)
   return info;
 }
 
-BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element* element)
+BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) const
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "offsetX,Y: " << element->offsetX << " " << element->offsetY << " tilt: " << element->tilt << G4endl;
