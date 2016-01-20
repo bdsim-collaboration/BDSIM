@@ -298,9 +298,30 @@ the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a
 	    :width: 70%
 	    :align: center
 
-	    Example field map of a skew decapole with :math:`{k_1, k_2, k_3, k_4, k_5} = {0.12,0.02,-0.003,0.0004,-0.00005}`,
+	    Example field map of a multipole with :math:`\{k_1, k_2, k_3, k_4, k_5\} = \{0.12,0.02,-0.003,0.0004,-0.00005\}`,
 	    and :math:`B\rho = 0.3456`.
 
 
 Muon Spoiler
 ------------
+
+A muon spoiler field is provided that gives a constant toroidal field. It is constructed with field strength
+:math:`B~(\mathrm{T})`. The field is calculated
+according to
+
+.. math::
+
+   \begin{eqnarray}
+   r & = & \sqrt{x^2 + y^2} \\
+   B_x & = & \frac{y}{r} B \\
+   B_y & = & \frac{-x}{r} B \\
+   B_z & = & 0
+   \end{eqnarray}
+
+.. figure:: dev_figures/muon_spoiler_radial2.pdf
+	    :width: 70%
+	    :align: center
+
+	    Example field map of a muon spoiler with field :math:`B = 1.3~(\mathrm{T})`. Note, the
+	    variation shown in the graph is only numerical differences. The field is constant and this
+	    is purely due to the plotting vector field algorithm.

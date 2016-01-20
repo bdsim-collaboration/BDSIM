@@ -8,9 +8,9 @@
 #include <cmath>
 
 BDSFieldMagMuonSpoiler::BDSFieldMagMuonSpoiler(BDSMagnetStrength* const strength,
-					       const G4double           brho)
+					       const G4double           /*brho*/)
 {
-  bField = brho * (*strength)["field"];
+  bField = (*strength)["field"];
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B = " << bField << G4endl;
 #endif
@@ -29,6 +29,3 @@ G4ThreeVector BDSFieldMagMuonSpoiler::GetFieldValue(const G4ThreeVector& positio
 
   return localField;
 }
-
-
-
