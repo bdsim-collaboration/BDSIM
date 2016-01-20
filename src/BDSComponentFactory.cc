@@ -1091,9 +1091,9 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element* element
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
   if (element->magnetGeometryType == "")
-    info->geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();
+    {info->geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();}
   else
-    info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
+    {info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);}
 
   // outer diameter
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
@@ -1197,14 +1197,14 @@ void BDSComponentFactory::PrepareCavityModels()
     }
 }
 
-BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(const Element& element)
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* element) const
 {
   // If the cavity model name (identifier) has been defined, return a *copy* of
   // that model - so that the component will own that info object.
-  auto result = cavityInfos.find(element.cavityModel);
+  auto result = cavityInfos.find(element->cavityModel);
   if (result == cavityInfos.end())
     {
-      G4cout << "Unknown cavity model identifier \"" << element.cavityModel << "\" - please define it" << G4endl;
+      G4cout << "Unknown cavity model identifier \"" << element->cavityModel << "\" - please define it" << G4endl;
       exit(1);
     }
 
@@ -1212,15 +1212,15 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(const Element& elemen
   // which are the only pointers in this class
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
   // update materials in info with valid materials - only element has material info
-  if (!element.material.empty())
-    {info->material       = BDSMaterials::Instance()->GetMaterial(element.material);}
+  if (!element->material.empty())
+    {info->material       = BDSMaterials::Instance()->GetMaterial(element->material);}
   else
     {
-      G4cout << "ERROR: Cavity material is not defined for cavity \"" << element.name << "\" - please define it" << G4endl;
+      G4cout << "ERROR: Cavity material is not defined for cavity \"" << element->name << "\" - please define it" << G4endl;
       exit(1);
     }
-  if(!element.vacuumMaterial.empty())
-    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element.vacuumMaterial);}
+  if(!element->vacuumMaterial.empty())
+    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
   else
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
