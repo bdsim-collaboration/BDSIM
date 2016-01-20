@@ -75,7 +75,7 @@ BDSComponentFactory::BDSComponentFactory()
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
 
-  if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+  G4cout << "Rigidity (Brho) : "<< fabs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();
@@ -267,10 +267,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  return (new BDSCavityRF(_element.name,
-			  _element.l*CLHEP::m,
-			  _element.gradient,
-			  PrepareCavityModelInfo(_element)));
+  return (new BDSCavityRF(element->name,
+			  element->l*CLHEP::m,
+			  element->gradient,
+			  PrepareCavityModelInfo(element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
