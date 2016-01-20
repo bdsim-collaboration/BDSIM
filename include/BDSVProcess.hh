@@ -1,9 +1,12 @@
-#ifndef __G4_V_PROCESS_HH_
-#define __G4_V_PROCESS_HH_
+#ifndef BDSVPROCESS_H
+#define BDSVPROCESS_H
+
 #include "G4VProcess.hh"
 #include "G4ProcessType.hh"
 
-class BDSVProcess : public G4VProcess {
+
+class BDSVProcess: public G4VProcess
+{
  public:
   BDSVProcess(const G4String& aName="NoName", G4ProcessType aType=fNotDefined);
   BDSVProcess(const BDSVProcess &right);

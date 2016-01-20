@@ -1,12 +1,7 @@
-#ifdef USE_ROOT
 #include "BDSOutputROOT.hh"
 #include "BDSOutputROOTDetailed.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSSamplerBase.hh"
-#include "BDSTrajectory.hh"
-#include "BDSUtilities.hh"
 #include "BDSHistogram.hh"
 
 #include <string>
@@ -243,5 +238,3 @@ void BDSOutputROOTDetailed::WritePrimary(G4double totalEnergy,
 		       turnsTaken,
 		       "");
 }
-
-#endif

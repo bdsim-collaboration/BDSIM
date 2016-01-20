@@ -34,7 +34,7 @@ simple_testing(Component-RBendPoleFace "--file=rbenPoleFaceTest.gmad" ${OVERLAP_
 
 simple_testing(Component-RCollimator "--file=rcolTest.gmad" ${OVERLAP_CHECK})
 
-simple_testing(Component-RF "--file=rfTest.gmad" ${OVERLAP_CHECK})
+simple_testing(Component-RF_LONG "--file=rfTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Sampler "--file=samplerTest.gmad" ${OVERLAP_CHECK})
  

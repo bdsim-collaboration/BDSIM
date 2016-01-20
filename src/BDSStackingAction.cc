@@ -1,12 +1,9 @@
-//
-//    Stacking action - taken when secondaries created
-//
-
-
 #include "BDSGlobalConstants.hh"
 #include "BDSPhotonCounter.hh"
 #include "BDSRunManager.hh"
 #include "BDSStackingAction.hh"
+
+#include "globals.hh" // geant4 globals / types
 #include "G4Run.hh"
 #include "G4Event.hh"
 #include "G4ThreeVector.hh"
@@ -14,15 +11,12 @@
 #include "G4TrackStatus.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
-#include "G4ios.hh"
 
 BDSStackingAction::BDSStackingAction()
-{ 
-}
+{;}
 
 BDSStackingAction::~BDSStackingAction()
-{
-}
+{;}
 
 G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * aTrack)
 {
@@ -93,7 +87,8 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   return classification;
 }
 
-void BDSStackingAction::countPhoton(const G4Track* aTrack){
+void BDSStackingAction::countPhoton(const G4Track* aTrack)
+{
   BDSPhotonCounter::Instance()->countPhoton(aTrack);
 }
 
@@ -106,11 +101,9 @@ void BDSStackingAction::NewStage()
 #endif
 
   return;
- 
 }
     
 void BDSStackingAction::PrepareNewEvent()
-{ 
-}
+{;}
 
 

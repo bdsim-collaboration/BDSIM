@@ -1,9 +1,10 @@
-#ifndef __AWAKE_MULTILAYER_SCREEN_H_
-#define __AWAKE_MULTILAYER_SCREEN_H_
+#ifndef AWAKEMULTILAYERSCREEN_H
+#define AWAKEMULTILAYERSCREEN_H
 
 #include "BDSMultilayerScreen.hh"
 
-class BDSAwakeMultilayerScreen : public BDSMultilayerScreen{
+class BDSAwakeMultilayerScreen : public BDSMultilayerScreen
+{
 public:
   BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial);
   virtual ~BDSAwakeMultilayerScreen();

@@ -1,11 +1,9 @@
-//Back scatter biasing
-
-#ifndef BACKSCATTERBIAS_HH
-#define BACKSCATTERBIAS_HH
+#ifndef BACKSCATTERBIAS_H
+#define BACKSCATTERBIAS_H
 
 #include "G4WrapperProcess.hh"
 
-class BDSBackScatterBias  :public G4WrapperProcess
+class BDSBackScatterBias: public G4WrapperProcess
 {
 public: 
   //  destructor 

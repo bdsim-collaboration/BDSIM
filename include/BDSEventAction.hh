@@ -1,6 +1,5 @@
-#ifndef BDSEventAction_h
-#define BDSEventAction_h 
-
+#ifndef BDSEVENTACTION_H
+#define BDSEVENTACTION_H
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"

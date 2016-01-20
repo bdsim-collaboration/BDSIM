@@ -1,5 +1,5 @@
-#ifndef BDSBunchTwiss_h
-#define BDSBunchTwiss_h 
+#ifndef BDSBUNCHTWISS_H
+#define BDSBUNCHTWISS_H 
 
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"

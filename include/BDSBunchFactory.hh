@@ -1,5 +1,5 @@
-#ifndef BDSBunchFactory_h
-#define BDSBunchFactory_h
+#ifndef BDSBUNCHFACTORY_H
+#define BDSBUNCHFACTORY_H
 
 #include "globals.hh"
 

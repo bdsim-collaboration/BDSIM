@@ -142,9 +142,16 @@ void Parser::Initialise()
   add_var("ns" ,1.e-9,reserved);
   add_var("ps" ,1.e-12,reserved);
 
+  add_var("Hz" ,1.0,  reserved);
+  add_var("kHz",1e+3, reserved);
+  add_var("MHz",1e+6, reserved);
+  add_var("GHz",1e+9, reserved);
+
   add_var("rad" ,1.0  ,reserved);
   add_var("mrad",1.e-3,reserved);
   add_var("urad",1.e-6,reserved);
+
+  add_var("degrees",std::atan(1)/45,reserved);
 
   add_var("clight",2.99792458e+8,reserved);
 
@@ -400,13 +407,7 @@ void Parser::add_element(Element& e, std::string before, int before_count, Eleme
   // if before_count equal to -1 add to all element instances
   else if (before_count==-1)
     {
-      auto itPair = beamline_list.equal_range(before);
-      if (itPair.first==itPair.second) {
-	std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
-	exit(1);
-      }
-      for (auto it = itPair.first; it!= itPair.second; ++it) 
-	{beamline_list.insert(it->second,e);}
+      beamline_list.insert_before(before,e);
     }
   else
     {
@@ -472,6 +473,18 @@ void Parser::add_dump(std::string name, int before_count, ElementType type)
   add_element(e, name, before_count, type);
 }
 
+void Parser::add_region()
+{
+  // copy from global
+  Region t(region);
+  // reset region
+  region.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  region_list.push_back(t);
+}
+
 void Parser::add_tunnel()
 {
   // copy from global
@@ -482,6 +495,18 @@ void Parser::add_tunnel()
   t.print();
 #endif
   tunnel_list.push_back(t);
+}
+
+void Parser::add_cavitymodel()
+{
+  // copy from global
+  CavityModel c(cavitymodel);
+  // reset cavitymodel
+  cavitymodel.clear();
+#ifdef BDSDEBUG 
+  c.print();
+#endif
+  cavitymodel_list.push_back(c);
 }
 
 void Parser::add_xsecbias()

@@ -2,6 +2,7 @@
 
 // elements
 #include "BDSAwakeScintillatorScreen.hh"
+#include "BDSCavityRF.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDegrader.hh"
@@ -34,22 +35,27 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSCavityInfo.hh"
+#include "BDSCavityType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSParser.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4GeometryTolerance.hh"
 
 #include "parser/elementtype.h"
+#include "parser/cavitymodel.h"
 
 #include <cmath>
 #include <string>
 
 using namespace GMAD;
+
 
 BDSComponentFactory::BDSComponentFactory()
 {
@@ -69,13 +75,17 @@ BDSComponentFactory::BDSComponentFactory()
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "<< fabs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
-#endif
+  if (verbose || debug1) G4cout << "Rigidity (Brho) : "<< fabs(_brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+
+  // prepare rf cavity model info from parser
+  PrepareCavityModels();
 }
 
 BDSComponentFactory::~BDSComponentFactory()
-{;}
+{
+  for(auto info : cavityInfos)
+    {delete info.second;}
+}
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn, Element* prevElementIn, Element* nextElementIn)
 {
@@ -256,12 +266,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
-  
-  return (new BDSRfCavity( element->name,
-			   element->l * CLHEP::m,
-			   element->gradient,
-			   PrepareBeamPipeInfo(element),
-			   PrepareMagnetOuterInfo(element)));
+
+  return (new BDSCavityRF(_element.name,
+			  _element.l*CLHEP::m,
+			  _element.gradient,
+			  PrepareCavityModelInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
@@ -1162,4 +1171,58 @@ void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,
 	     << "\" will result in overlapping faces!" << G4endl << "Please correct!" << G4endl;
       exit(1);
     }
+}
+
+void BDSComponentFactory::PrepareCavityModels()
+{
+  for (auto model : BDSParser::Instance()->GetCavityModels())
+    {
+      auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
+				    nullptr, //construct without material as stored in element
+				    nullptr,
+				    model.frequency, // TBC - units
+				    model.phase,
+				    model.irisRadius*CLHEP::m,
+				    model.thickness*CLHEP::m,
+				    model.equatorRadius*CLHEP::m,
+				    model.halfCellLength*CLHEP::m,
+				    model.numberOfPoints,
+				    model.numberOfCells,
+				    model.equatorEllipseSemiAxis*CLHEP::m,
+				    model.irisHorizontalAxis*CLHEP::m,
+				    model.irisVerticalAxis*CLHEP::m,
+				    model.tangentLineAngle);
+      
+      cavityInfos[model.name] = info;
+    }
+}
+
+BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(const Element& element)
+{
+  // If the cavity model name (identifier) has been defined, return a *copy* of
+  // that model - so that the component will own that info object.
+  auto result = cavityInfos.find(element.cavityModel);
+  if (result == cavityInfos.end())
+    {
+      G4cout << "Unknown cavity model identifier \"" << element.cavityModel << "\" - please define it" << G4endl;
+      exit(1);
+    }
+
+  // ok to use compiler provided copy constructor as doesn't own materials
+  // which are the only pointers in this class
+  BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
+  // update materials in info with valid materials - only element has material info
+  if (!element.material.empty())
+    {info->material       = BDSMaterials::Instance()->GetMaterial(element.material);}
+  else
+    {
+      G4cout << "ERROR: Cavity material is not defined for cavity \"" << element.name << "\" - please define it" << G4endl;
+      exit(1);
+    }
+  if(!element.vacuumMaterial.empty())
+    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element.vacuumMaterial);}
+  else
+    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
+
+  return info;
 }

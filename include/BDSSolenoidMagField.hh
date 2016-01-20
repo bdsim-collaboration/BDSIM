@@ -1,5 +1,5 @@
-#ifndef BDSSOLENOIDMAGFIELD
-#define BDSSOLENOIDMAGFIELD
+#ifndef BDSSOLENOIDMAGFIELD_H
+#define BDSSOLENOIDMAGFIELD_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"

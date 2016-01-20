@@ -38,6 +38,10 @@ public:
   const std::list<GMAD::Element>& GetMaterials()const;
   /// Return atom list
   const std::list<GMAD::Element>& GetAtoms()const;
+  /// Return region list
+  const std::vector<GMAD::Region>& GetRegions()const;
+  /// Return cavity model list
+  const std::vector<GMAD::CavityModel>& GetCavityModels() const;
 
 protected:
   /// Constructor from filename

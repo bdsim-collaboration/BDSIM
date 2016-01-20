@@ -1,11 +1,5 @@
-/*
-  Stacking Action - action performed before particles pushed to the stack
-
-*/
-
-
-#ifndef __BDSSTACKING_ACTION__
-#define __BDSSTACKING_ACTION__
+#ifndef BDSSTACKINGACTION_H
+#define BDSSTACKINGACTION_H
 
 #include "globals.hh"
 #include "G4UserStackingAction.hh"

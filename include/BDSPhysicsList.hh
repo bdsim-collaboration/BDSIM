@@ -1,5 +1,5 @@
-#ifndef BDSPhysicsList_h
-#define BDSPhysicsList_h
+#ifndef BDSPHYSICSLIST_H
+#define BDSPHYSICSLIST_H
 
 #include "G4VModularPhysicsList.hh"
 #include "globals.hh"

@@ -1,15 +1,8 @@
 #ifndef BDSOUTPUTROOT_H
 #define BDSOUTPUTROOT_H
 
-#ifdef USE_ROOT
-
 #include "BDSOutputROOTBase.hh"
-#include "BDSTrajectory.hh"
 
-#include "TROOT.h"
-#include "TH1F.h"
-#include "TH2F.h"
-#include "TFile.h"
 #include "TTree.h"
 
 /**
@@ -34,5 +27,4 @@ public:
 
 };
 
-#endif // USE_ROOT
 #endif

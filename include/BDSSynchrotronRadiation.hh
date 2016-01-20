@@ -1,6 +1,5 @@
-
-#ifndef BDSSynchrotronRadiation_h
-#define BDSSynchrotronRadiation_h 1
+#ifndef BDSSYNCHROTRONRADIATION_H
+#define BDSSYNCHROTRONRADIATION_H
 
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"

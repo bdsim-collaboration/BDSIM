@@ -808,13 +808,13 @@ void BDSPhysicsList::ConstructMuon()
       //positron
       //===========ee to hadrons in development================
       G4eeToHadrons* eetohadrons = new G4eeToHadrons();
-      // BDSXSBias* eetohadrons_xsbias = new BDSXSBias();
-      // G4cout << "eeToHadronsXSBias = " << BDSGlobalConstants::Instance()->GetEeToHadronsFe() << G4endl;
+      BDSXSBias* eetohadrons_xsbias = new BDSXSBias();
+      //G4cout << "eeToHadronsXSBias = " << BDSGlobalConstants::Instance()->GetEeToHadronsFe() << G4endl;
       eetohadrons->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
-      //eetohadrons_xsbias->RegisterProcess(eetohadrons);
-      //eetohadrons_xsbias->eFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
-      //pmanager->AddDiscreteProcess(eetohadrons_xsbias);
-      pmanager->AddDiscreteProcess(eetohadrons);
+      eetohadrons_xsbias->RegisterProcess(eetohadrons);
+      eetohadrons_xsbias->eFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
+      pmanager->AddDiscreteProcess(eetohadrons_xsbias);
+      //pmanager->AddDiscreteProcess(eetohadrons);
       //-------------------------------------------------------
       G4AnnihiToMuPair* annihitomupair = new G4AnnihiToMuPair();
       BDSXSBias* annihitomupair_xsbias = new BDSXSBias();

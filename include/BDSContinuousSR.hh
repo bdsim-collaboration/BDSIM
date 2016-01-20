@@ -1,6 +1,5 @@
-
-#ifndef BDSContinuousSR_h
-#define BDSContinuousSR_h 1
+#ifndef BDSCONTINUOUSSR_H
+#define BDSCONTINUOUSSR_H
 
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -17,7 +16,7 @@
 #include "G4AffineTransform.hh"
 #include "G4NavigationHistory.hh"
 
-class BDSContinuousSR : public G4VDiscreteProcess 
+class BDSContinuousSR: public G4VDiscreteProcess 
 { 
 public:
  
