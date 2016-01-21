@@ -127,9 +127,9 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   if (!BDS::IsFinite(chordLength)) return nullptr;
 
   G4double roRadius = 0;
-  G4double roRadiusFromSampler     = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
   
-  G4VSolid* roSolid      = nullptr;
+  G4VSolid* roSolid = nullptr;
   if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box

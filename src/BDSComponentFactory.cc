@@ -203,9 +203,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()
 {
   if( element->l < 1.E-4 )
     {element->l = 1.0;}
-  return (new BDSSamplerCylinder( element->name,
-				  element->l * CLHEP::m,
-				  element->r * CLHEP::m ));
+  return (new BDSSamplerCylinder(element->name,
+				 element->l * CLHEP::m,
+				 element->r * CLHEP::m ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDump()

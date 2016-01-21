@@ -44,8 +44,7 @@ void BDSSampler::BuildContainerLogicalVolume()
     }
 }
 
-BDSSamplerSD* BDSSampler::GetSensitiveDetector()const
+BDSSamplerSD* BDSSampler::GetSensitiveDetector() const
 {
   return BDSSDManager::Instance()->GetSamplerPlaneSD();
 }
-
