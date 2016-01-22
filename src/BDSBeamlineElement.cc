@@ -25,7 +25,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4RotationMatrix*        referenceRotationEndIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
-				       G4double                 sPositionEndIn):
+				       G4double                 sPositionEndIn,
+				       G4bool                   attachSamplerIn):
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
@@ -35,7 +36,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationStart(referenceRotationStartIn),
   referenceRotationMiddle(referenceRotationMiddleIn),
   referenceRotationEnd(referenceRotationEndIn),
-  sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn)
+  sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
+  attachSampler(attachSamplerIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__;
@@ -70,6 +72,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   // create the placement transform from supplied rotation matrices and vector
   placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
   readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
+  samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd,    referencePositionEnd);
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()
@@ -82,6 +85,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationEnd;
   delete placementTransform;
   delete readOutPlacementTransform;
+  delete samplerPlacementTransform;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)

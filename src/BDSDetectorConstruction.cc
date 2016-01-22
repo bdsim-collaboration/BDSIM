@@ -470,7 +470,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4PVPlacement* elementPV = new G4PVPlacement(*pt,              // placement transform
 						   placementName,    // name
 						   elementLV,        // logical volume
-						   worldPV,          // mother  volume
+						   worldPV,          // mother volume
 						   false,	     // no boolean operation
 						   nCopy,            // copy number
 						   checkOverlaps);   // overlap checking
