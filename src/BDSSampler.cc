@@ -1,50 +1,36 @@
+#include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
 
-#include "BDSGlobalConstants.hh" 
-#include "BDSMaterials.hh"
-#include "BDSDebug.hh"
-#include "G4Box.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSDManager.hh"
+#incldue "G4Transform3D.hh"
 
-G4Box* BDSSampler::containerSolidSampler = nullptr;
-G4LogicalVolume* BDSSampler::containerLogicalVolumeSampler = nullptr;
+#include <vector>
 
-BDSSampler::BDSSampler(G4String name):
-  BDSSamplerBase(name, BDSGlobalConstants::Instance()->GetSamplerLength(), "sampler")
-{}
+/// Initialise static members.
+G4int BDSSampler::totalNumberOfSamplers = 0;
+std::vector<G4Transform*> BDSSampler::transforms;
+std::vector<G4Transform*> BDSSampler::inverseTransforms;
+std::vector<G4String>     BDSSampler::names;
 
-void BDSSampler::BuildContainerLogicalVolume()
+BDSSampler::BDSSampler(G4String       nameIn,
+		       G4Transform3D* transformIn):
+  BDSGeometryComponent(nullptr, nullptr)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  if(!containerSolidSampler)
-    {
-      G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-      G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
-      containerSolid = containerSolidSampler = new G4Box("Sampler_solid",
-							 samplerDiameter,
-							 samplerDiameter,
-							 chordLength*0.5);
-      containerLogicalVolume = containerLogicalVolumeSampler = new G4LogicalVolume(containerSolidSampler,
-										   emptyMaterial,
-										   "Sampler");
-
-      // set user limits, vis attributes and sensitive detector
-      BDSSamplerBase::BuildContainerLogicalVolume();
-    }
-  else
-    {
-      containerSolid = containerSolidSampler;
-      containerLogicalVolume = containerLogicalVolumeSampler;
-    }
+  names.push_back(nameIn);
+  transforms.push_back(transformIn);
+  inverseTransforms.push_back(transformIn.inv());
+  samplerID(totalNumberOfSamplers);
+  totalNumberOfSamplers++;
 }
 
-BDSSamplerSD* BDSSampler::GetSensitiveDetector() const
+void BDSSampler::CommonContruction()
 {
-  return BDSSDManager::Instance()->GetSamplerPlaneSD();
+  // Construct logical volume from solid. Note it's ok to have nullptr for material
+  // as the sampler is only placed in a parallel world where the material is ignored.
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       nullptr,
+					       name + "_lv");
+  
+  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 }
