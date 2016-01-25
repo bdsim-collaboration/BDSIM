@@ -2,6 +2,7 @@
 #define BDSBEAMLINEELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -42,8 +43,8 @@ public:
 		     G4RotationMatrix*        referenceRotationEnd,
 		     G4double                 sPositionStart,
 		     G4double                 sPositionMiddle,
-		     G4double                 sPositionEnd
-		     G4bool                   attachSamplerIn = false);
+		     G4double                 sPositionEnd,
+		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none);
 
   ~BDSBeamlineElement();
   
@@ -70,7 +71,7 @@ public:
   inline G4double                 GetSPositionEnd()              const;
   inline G4Transform3D*           GetPlacementTransform()        const;
   inline G4Transform3D*           GetReadOutPlacementTransform() const;
-  inline G4bool                   AttachSampler()                const;
+  inline BDSSamplerType           GetSamplerType()               const;
   inline G4Transform3D*           GetSamplerPlacementTransform() const;
   ///@}
   
@@ -140,8 +141,8 @@ private:
   /// transform for it.
   G4Transform3D*    readOutPlacementTransform;
 
-  /// Whether or not to attach a sampler to this particluar beam line element.
-  const G4bool      attachSampler;
+  /// The type of sampler to attach to this element - could be none as well.
+  const BDSSamplerType samplerType;
 
   /// The transform for where the sampler 'attached' to this element should be placed.
   /// Note this would normally overlap in the real 'mass' world, but this will be used
@@ -218,8 +219,8 @@ inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() cons
 inline G4Transform3D*           BDSBeamlineElement::GetReadOutPlacementTransform() const
 {return readOutPlacementTransform;}
 
-inline G4bool                   BDSBeamlineElement::AttachSampler() const
-{return attachSampler;}
+inline BDSSamplerType           BDSBeamlineElement::GetSamplerType() const
+{return samplerType;}
 
 inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform() const
 {return samplerPlacementTransform;}

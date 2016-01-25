@@ -1,8 +1,8 @@
 #include "BDSBeamlineElement.hh"
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSSamplerBase.hh"
 #include "BDSDebug.hh"
+#include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -26,7 +26,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4double                 sPositionStartIn,
 				       G4double                 sPositionMiddleIn,
 				       G4double                 sPositionEndIn,
-				       G4bool                   attachSamplerIn):
+				       BDSSamplerType           samplerTypeIn):
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
@@ -37,7 +37,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationMiddle(referenceRotationMiddleIn),
   referenceRotationEnd(referenceRotationEndIn),
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
-  attachSampler(attachSamplerIn)
+  samplerType(samplerTypeIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__;
@@ -72,7 +72,10 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   // create the placement transform from supplied rotation matrices and vector
   placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
   readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
-  samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd,    referencePositionEnd);
+  if (samplerType == BDSSamplerType::plane)
+    {samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, referencePositionEnd);}
+  else if (samplerType == BDSSamplerType::cylinder)
+    {samplerPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);}
 }
 
 BDSBeamlineElement::~BDSBeamlineElement()
