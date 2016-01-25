@@ -7,7 +7,8 @@
 #include "G4LogicalVolume.hh"
 #include "G4Transform3D.hh"
 
-const G4double BDSSamplerPlane::chordLength = 1e-9; // 1pm (geant4 units are mm)
+// geometry tolerance is 1e-8 and dz of the box must be > 1e-8
+const G4double BDSSamplerPlane::chordLength = 4e-8*CLHEP::m;
 
 BDSSamplerPlane::BDSSamplerPlane(G4String      name,
 				 G4Transform3D transform,
