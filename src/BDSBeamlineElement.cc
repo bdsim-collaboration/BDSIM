@@ -51,21 +51,6 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   /// increase copy number (starts at -1)
   componentIn->IncrementCopyNumber();
 
-  /*
-  /// use output name for samplers so that it can be quickly identified for output
-  BDSSamplerBase* sampler = dynamic_cast<BDSSamplerBase*>(componentIn);
-  if (sampler)
-    {
-      copyNumber = 0;
-      placementName = sampler->GetOutputName();
-    }
-  else 
-    {
-      copyNumber = componentIn->GetCopyNumber();
-      /// placement name (starting at 0)
-      placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
-    }
-  */
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
 #endif
@@ -74,7 +59,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
   readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
   if (samplerType == BDSSamplerType::plane)
-    {samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, referencePositionEnd);}
+    {samplerPlacementTransform = new G4Transform3D(*referenceRotationStart, referencePositionStart);}
   else if (samplerType == BDSSamplerType::cylinder)
     {samplerPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);}
 }
