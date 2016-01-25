@@ -59,8 +59,6 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element* nextElement;
   
-  BDSAcceleratorComponent* CreateSampler();
-  BDSAcceleratorComponent* CreateCSampler();
   BDSAcceleratorComponent* CreateDump();
   BDSAcceleratorComponent* CreateDrift();
   BDSAcceleratorComponent* CreateRF();
