@@ -2,12 +2,16 @@
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSSamplerBase.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
+#include "BDSSampler.hh"
 #include "BDSTrajectory.hh"
 #include "BDSUtilities.hh"
-#include "BDSHistogram.hh"
+
+#include "globals.hh" // geant types / globals
 
 #include <string>
+#include <vector>
 
 BDSOutputROOTBase::BDSOutputROOTBase()
 {
@@ -88,7 +92,7 @@ void BDSOutputROOTBase::Init()
   // Build sampler trees and store in samplerTrees
   // clear (for the case of multiple output files)
   samplerTrees.clear();
-  samplerTrees.reserve(BDSSamplerBase::GetNSamplers()+1);
+  samplerTrees.reserve((size_t)BDSSampler::NumberOfExistingSamplers);
   
   G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
@@ -97,12 +101,12 @@ void BDSOutputROOTBase::Init()
   TTree* sampler = BuildSamplerTree(primariesSamplerName);
   // primaries is the first
   samplerTrees.push_back(sampler);
-  for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++)
+  for(G4int i=0;i<BDSSampler::NumberOfExistingSamplers();i++)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
 #endif
-      G4String name = BDSSamplerBase::outputNames[i];
+      G4String name = BDSSampler::GetName(i);
       // remove sampler number:
       name = name.substr(0,name.find_last_of("_"));
 

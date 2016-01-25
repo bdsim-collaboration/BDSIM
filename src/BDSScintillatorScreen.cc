@@ -6,7 +6,7 @@ Work in progress.
 #include "BDSGlobalConstants.hh" 
 #include "BDSScintillatorScreen.hh"
 #include "BDSMaterials.hh"
-#include "BDSSamplerBase.hh"
+#include "BDSSampler.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "G4Box.hh"
@@ -86,7 +86,7 @@ void BDSScintillatorScreen::BuildFrontLayer(){
 void BDSScintillatorScreen::BuildCameraScoringPlane(){
   G4String tmp = "_cameraScoringPlane";
   _scoringPlaneName=name+tmp;
-  int nThisSampler= BDSSamplerBase::GetNSamplers() + 1;
+  int nThisSampler= BDSSampler::NumberOfExistingSamplers() + 1;
   G4String ident="_camera";
   _samplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName);
   
@@ -102,7 +102,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
   
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //SPM bdsOutput->nSamplers++;
-  BDSSamplerBase::AddExternalSampler(_samplerName+"_1");
+  BDSSampler::AddExternalSampler(_samplerName+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
@@ -115,7 +115,7 @@ void BDSScintillatorScreen::BuildCameraScoringPlane(){
 void BDSScintillatorScreen::BuildScreenScoringPlane(){
   G4String tmp = "_screenScoringPlane";
   _screenScoringPlaneName=name+tmp;
-  int nThisSampler= BDSSamplerBase::GetNSamplers() + 1;
+  int nThisSampler= BDSSampler::NumberOfExistingSamplers() + 1;
   G4String ident="_camera";
   _screenSamplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_screenScoringPlaneName);
   
@@ -131,7 +131,7 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //SPM bdsOutput->nSamplers++;
-  BDSSamplerBase::AddExternalSampler(_screenSamplerName+"_1");
+  BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
@@ -152,7 +152,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
 
 
 
-  int nThisSampler= BDSSamplerBase::GetNSamplers() + 1;
+  int nThisSampler= BDSSampler::NumberOfExistingSamplers() + 1;
   _screenSamplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+name);
   
   //Build and place the volume...
@@ -165,7 +165,7 @@ void BDSScintillatorScreen::BuildScintillatorLayer(){
   }
   itsScintillatorLayerLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //SPM bdsOutput->nSamplers++;
-  BDSSamplerBase::AddExternalSampler();
+  BDSSampler::AddExternalSampler();
   bdsOutput->SampName.push_back(_screenSamplerName+"_1");
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;

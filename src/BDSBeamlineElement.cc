@@ -44,13 +44,14 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   if (componentIn)
     {G4cout << componentIn->GetName();}
   else
-    {G4cerr << "WARNING - supplied component is in valid!" << G4endl;}
+    {G4cerr << "WARNING - supplied component is invalid!" << G4endl;}
   G4cout << G4endl;
 #endif
 
   /// increase copy number (starts at -1)
   componentIn->IncrementCopyNumber();
 
+  /*
   /// use output name for samplers so that it can be quickly identified for output
   BDSSamplerBase* sampler = dynamic_cast<BDSSamplerBase*>(componentIn);
   if (sampler)
@@ -64,7 +65,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
       /// placement name (starting at 0)
       placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
     }
-  
+  */
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
 #endif
