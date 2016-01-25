@@ -1,17 +1,16 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerCylinder.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 
 #include "globals.hh" // geant types / globals
+#include "G4LogicalVolume.hh"
+#include "G4Transform3D.hh"
 #include "G4Tubs.hh"
 
-class G4Transform3D;
-
-BDSSamplerCylinder::BDSSamplerCylinder(G4String       name,
-				       G4Transform3D* transform,
-				       G4double       length,
-				       G4double       radius):
+BDSSamplerCylinder::BDSSamplerCylinder(G4String      name,
+				       G4Transform3D transform,
+				       G4double      length,
+				       G4double      radius):
   BDSSampler(name, transform)
 {
   containerSolid = new G4Tubs(name + "_solid",      // name
@@ -23,12 +22,12 @@ BDSSamplerCylinder::BDSSamplerCylinder(G4String       name,
 
   SetExtentX(-radius, radius);
   SetExtentY(-radius, radius);
-  SexExtentZ(-length*0.5, length*0.5);
+  SetExtentZ(-length*0.5, length*0.5);
 
   CommonConstruction();
 }
 
-BDSSamplerSD* BDSSamplerCylinder::GetSensitiveDetector()const
+void BDSSamplerCylinder::SetSensitiveDetector()
 {
-  return BDSSDManager::Instance()->GetSamplerCylinderSD();
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerCylinderSD());
 }

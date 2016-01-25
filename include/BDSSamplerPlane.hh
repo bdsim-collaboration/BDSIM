@@ -3,7 +3,8 @@
 
 #include "BDSSampler.hh"
 
-class G4Transform3D;
+#include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
 
 /** 
  * @brief Rectangular sampler with fixed thickness but variable x,y.
@@ -15,11 +16,13 @@ class G4Transform3D;
 class BDSSamplerPlane: public BDSSampler
 {
 public:
-  BDSSamplerPlane(G4String       name,
-		  G4Transform3D* transform,
-		  G4double       boxHalfWidth);
+  BDSSamplerPlane(G4String      name,
+		  G4Transform3D transform,
+		  G4double      boxHalfWidth);
 
   virtual ~BDSSamplerPlane();
+
+  virtual void SetSensitiveDetector();
 
 private:
   /// Private default constructor to ensure use of provided one.

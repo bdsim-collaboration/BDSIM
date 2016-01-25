@@ -3,8 +3,10 @@
 
 #include "BDSSampler.hh"
 
+#include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
+
 class BDSSamplerSD;
-class G4Transform3D;
 
 /** 
  * Cylindrical sampler class
@@ -13,15 +15,14 @@ class G4Transform3D;
 class BDSSamplerCylinder: public BDSSampler
 {
 public:
-  BDSSamplerCylinder(G4String       name,
-		     G4Transform3D* transform,
-		     G4double       lengthIn,
-		     G4double       radiusIn);
+  BDSSamplerCylinder(G4String      name,
+		     G4Transform3D transform,
+		     G4double      lengthIn,
+		     G4double      radiusIn);
 
   virtual ~BDSSamplerCylinder();
 
-  /// access for external classes to sensitive detector
-  virtual BDSSamplerSD* GetSensitiveDetector()const override final;
+  virtual void SetSensitiveDetector();
 
 private:
   /// Private default constructor to ensure use of provided one.
