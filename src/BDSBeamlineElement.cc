@@ -74,7 +74,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationEnd;
   delete placementTransform;
   delete readOutPlacementTransform;
-  delete samplerPlacementTransform;
+    //delete samplerPlacementTransform; // this seems to be deleted by the placement
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
