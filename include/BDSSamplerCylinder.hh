@@ -20,7 +20,7 @@ public:
 		     G4double      lengthIn,
 		     G4double      radiusIn);
 
-  virtual ~BDSSamplerCylinder();
+  virtual ~BDSSamplerCylinder(){;}
 
   virtual void SetSensitiveDetector();
 

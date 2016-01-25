@@ -35,7 +35,6 @@
 #include "G4PropagatorInField.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
-#include "G4TransportationManager.hh"
 #include "G4UserLimits.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"

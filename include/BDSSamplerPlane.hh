@@ -20,7 +20,7 @@ public:
 		  G4Transform3D transform,
 		  G4double      boxHalfWidth);
 
-  virtual ~BDSSamplerPlane();
+  virtual ~BDSSamplerPlane(){;}
 
   virtual void SetSensitiveDetector();
 

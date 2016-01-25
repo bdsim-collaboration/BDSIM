@@ -8,6 +8,7 @@
 
 class BDSParallelWorldSampler: public G4VUserParallelWorld
 {
+public:
   BDSParallelWorldSampler();
   virtual ~BDSParallelWorldSampler();
 
@@ -16,7 +17,7 @@ class BDSParallelWorldSampler: public G4VUserParallelWorld
   virtual void Construct();
 
 private:
-
+  
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
 };
