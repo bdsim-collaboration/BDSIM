@@ -24,6 +24,8 @@
 #include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
+#include "parser/options.h"
+
 #include "G4Box.hh"
 #include "G4Electron.hh"
 #include "G4LogicalVolume.hh"
@@ -81,8 +83,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // placement procedure
   ComponentPlacement();
 
-  // implement bias operations on all volumes 
-  BuildPhysicsBias();
+  // implement bias operations on all volumes
+  if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
+    {BuildPhysicsBias();}
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
