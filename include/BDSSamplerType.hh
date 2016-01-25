@@ -21,4 +21,9 @@ struct samplertypes_def {
 
 typedef BDSTypeSafeEnum<samplertypes_def,int> BDSSamplerType;
 
+namespace BDS
+{
+  BDSSamplerType DetermineSamplerType(G4String samplerType);
+}
+
 #endif

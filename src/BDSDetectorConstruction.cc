@@ -180,12 +180,28 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
+
+      BDSSamplerType sType = BDSSamplerType::none;
+      auto samplerIt = elementIt;
+      --samplerIt;
+      switch ((*samplerIt).type)
+	{
+	case GMAD::ElementType::_SAMPLER:
+	  {sType = BDSSamplerType::plane; break;}
+	case GMAD::ElementType::_CSAMPLER:
+	  {sType = BDSSamplerType::cylinder; break;}
+	default:
+	  {sType = BDSSamplerType::none; break;}
+	}
+
+      // in future after parser changes
+      //BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt)->sampler);
       
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
 	{
 	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset, sType);
 	  if (survey) survey->Write(addedComponents, *elementIt);
 	}
     }

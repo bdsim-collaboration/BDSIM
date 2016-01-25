@@ -82,7 +82,9 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
+							   BDSTiltOffset*           tiltOffset,
+							   BDSSamplerType           samplerType)
 {
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
@@ -94,14 +96,14 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
     {
       for (auto component : *line)
 	{
-	  element = AddSingleComponent(component, tiltOffset);
+	  element = AddSingleComponent(component, tiltOffset, samplerType);
 	  if (element)
 	    {addedComponents.push_back(element);}
 	}
     }
   else
     {
-      element = AddSingleComponent(component, tiltOffset);
+      element = AddSingleComponent(component, tiltOffset, samplerType);
       if (element)
 	{addedComponents.push_back(element);}
     }
@@ -111,7 +113,9 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
   return addedComponents;
 }
 
-BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
+						    BDSTiltOffset*           tiltOffset,
+						    BDSSamplerType           samplerType)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -329,7 +333,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 						       referenceRotationEnd,
 						       sPositionStart,
 						       sPositionMiddle,
-						       sPositionEnd);
+						       sPositionEnd,
+						       samplerType);
 
   // calculate extents for world size determination
   UpdateExtents(element);
