@@ -128,7 +128,9 @@ void BDSOutputROOTBase::Init()
       samplerTrees.push_back(sampler);
     }
 
-  if(globalConstants->GetStoreTrajectory() || globalConstants->GetStoreMuonTrajectories() || globalConstants->GetStoreNeutronTrajectories()) 
+  if(globalConstants->GetStoreTrajectory() ||
+     globalConstants->GetStoreMuonTrajectories() ||
+     globalConstants->GetStoreNeutronTrajectories()) 
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
@@ -244,17 +246,8 @@ void BDSOutputROOTBase::WriteRootHit(TTree*   Tree,
   turnnumber  = turnsTakenIn;
   process     = processIn;
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - weightIn = " << weightIn << G4endl;
-  G4cout << __METHOD_NAME__ << " - weight = " << weight << G4endl;
-#endif
-
   if (fillTree)
-    {Tree->Fill();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - filled tree with weight: " << weight << G4endl;
-#endif
-    }
+    {Tree->Fill();}
 }
 
 void BDSOutputROOTBase::WriteRootHit(TTree*         tree,
@@ -278,17 +271,8 @@ void BDSOutputROOTBase::WriteRootHit(TTree*         tree,
   turnnumber  = hit->GetTurnsTaken();
   process     = hit->GetProcess();
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - weightIn = " << hit->GetWeight() << G4endl;
-  G4cout << __METHOD_NAME__ << " - weight = " << weight << G4endl;
-#endif
-
   if (fillTree)
-    {tree->Fill();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - filled tree with weight: " << weight << G4endl;
-#endif
-    }
+    {tree->Fill();}
 }
 
 void BDSOutputROOTBase::WritePrimary(G4double totalEnergy,
