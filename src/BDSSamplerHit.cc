@@ -4,6 +4,7 @@
 G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
 
 BDSSamplerHit::BDSSamplerHit(G4String    aName,
+							 G4int       samplerID,
 			     BDSParticle init,
 			     BDSParticle prod,
 			     BDSParticle last_scat,
@@ -19,6 +20,7 @@ BDSSamplerHit::BDSSamplerHit(G4String    aName,
 			     G4String    sampType,
 			     G4String    process):
   itsName(aName),
+  itsSamplerID(samplerID),
   itsInit(init),
   itsProd(prod),
   itsLastScat(last_scat),
