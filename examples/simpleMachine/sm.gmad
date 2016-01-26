@@ -6,6 +6,8 @@ s1: sbend, l=1*m, angle=0.10;
 l1: line = (d1, q1, d1, c1, d1, s1);
 use,period=l1;
 
+sample, all;
+
 option, ngenerate=1,
 !	physicsList="QGSP_BERT",
 !	physicsList="hadronic_standard",

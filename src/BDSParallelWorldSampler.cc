@@ -17,7 +17,7 @@
 
 
 BDSParallelWorldSampler::BDSParallelWorldSampler():
-  G4VUserParallelWorld("Sampler_World")
+  G4VUserParallelWorld("SamplerWorld")
 {;}
 
 BDSParallelWorldSampler::~BDSParallelWorldSampler()
