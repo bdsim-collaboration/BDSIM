@@ -132,8 +132,6 @@ int main(int argc,char** argv)
 #endif
   BDSRunManager * runManager = new BDSRunManager;
   // runManager->SetNumberOfAdditionalWaitingStacks(1);
-
-
   // note this doesn't actually construct the accelerator - only instantiates the class.
   // the run manager later calls the construct method
 #ifdef BDSDEBUG 
@@ -151,7 +149,9 @@ int main(int argc,char** argv)
 #endif
   if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
     {
-      BDSModularPhysicsList *physList = new BDSModularPhysicsList();
+      G4ParallelWorldPhysics* pWorld  = new G4ParallelWorldPhysics(samplerWorld->GetName());
+      BDSModularPhysicsList* physList = new BDSModularPhysicsList();
+      physList->RegisterPhysics(pWorld);
       /* Biasing */
 #if G4VERSION_NUMBER > 999
       G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
@@ -161,12 +161,11 @@ int main(int argc,char** argv)
       physBias->Bias("proton");
       physList->RegisterPhysics(physBias);
 #endif
-      physList->RegisterPhysics(new G4ParallelWorldPhysics(samplerWorld->GetName(),true));
       runManager->SetUserInitialization(physList);
     }
   else
     { 
-      BDSPhysicsList        *physList = new BDSPhysicsList();
+      BDSPhysicsList* physList = new BDSPhysicsList();
       runManager->SetUserInitialization(physList);
     }
 
