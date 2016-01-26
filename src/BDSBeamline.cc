@@ -91,12 +91,15 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset)
     {tiltOffset  = new BDSTiltOffset();}
-  
+
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (auto component : *line)
+      for (G4int i = 0; i < (G4int)line->size(); ++i)
 	{
-	  element = AddSingleComponent(component, tiltOffset, samplerType);
+	  if (i == 0) // only attach the desired sampler to the first one
+	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType);}
+	  else
+	    {element = AddSingleComponent((*line)[i], tiltOffset, BDSSamplerType::none);}
 	  if (element)
 	    {addedComponents.push_back(element);}
 	}
