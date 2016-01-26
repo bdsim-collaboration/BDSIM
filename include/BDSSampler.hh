@@ -36,6 +36,9 @@ public:
   /// Access the name of a registered sampler by index.
   static inline G4String GetName(G4int index);
 
+  /// Access all the names at once - useful for output building.
+  static inline std::vector<G4String> GetNames();
+
   /// Access the transform (local to global) that was used to place the sampler
   /// in the world volume.
   static inline G4Transform3D GetTransform(G4int index);
@@ -83,6 +86,9 @@ inline G4int BDSSampler::GetID() const
 
 inline G4String BDSSampler::GetName() const
 {return names[samplerID];}
+
+inline std::vector<G4String> BDSSampler::GetNames()
+{return names;}
 
 inline G4int BDSSampler::NumberOfExistingSamplers()
 {return totalNumberOfSamplers;}
