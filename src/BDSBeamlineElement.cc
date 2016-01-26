@@ -48,9 +48,10 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   G4cout << G4endl;
 #endif
 
-  /// increase copy number (starts at -1)
-  componentIn->IncrementCopyNumber();
-
+  componentIn->IncrementCopyNumber(); // increase copy number (starts at -1)
+  copyNumber = componentIn->GetCopyNumber();
+  /// placement name (starting at 0)
+  placementName = componentIn->GetName() + "_" + std::to_string(copyNumber);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "unique placement name: \"" << placementName << "_pv\"" << G4endl;
 #endif

@@ -471,19 +471,18 @@ void BDSDetectorConstruction::ComponentPlacement()
 	}
 
       // get the placement details from the beamline component
-      G4int nCopy          = (*it)->GetCopyNo();
+      G4int nCopy       = (*it)->GetCopyNo();
       // reference rotation and position for the read out volume
-      G4ThreeVector     rp = (*it)->GetReferencePositionMiddle();
-      G4Transform3D*    pt = (*it)->GetPlacementTransform();
+      G4ThreeVector  rp = (*it)->GetReferencePositionMiddle();
+      G4Transform3D* pt = (*it)->GetPlacementTransform();
       
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "placing mass geometry" << G4endl;
       G4cout << "placement transform position: " << pt->getTranslation()  << G4endl;
       G4cout << "placement transform rotation: " << pt->getRotation()  << G4endl; 
 #endif
-      G4String placementName = (*it)->GetPlacementName() + "_pv";
       G4PVPlacement* elementPV = new G4PVPlacement(*pt,              // placement transform
-						   placementName,    // name
+                                                   (*it)->GetPlacementName() + "_pv", // name
 						   elementLV,        // logical volume
 						   worldPV,          // mother volume
 						   false,	     // no boolean operation
@@ -497,15 +496,15 @@ void BDSDetectorConstruction::ComponentPlacement()
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "placing readout geometry" << G4endl;
 #endif
-	  G4String readOutPVName = name + "_ro_pv";
+	  G4String readOutPVName = (*it)->GetPlacementName() + "_ro_pv";
 	  G4Transform3D* ropt = (*it)->GetReadOutPlacementTransform();
-	  readOutPV = new G4PVPlacement(*ropt,                                  // placement transform
-					(*it)->GetPlacementName() + "_ro_pv", // name
-					readOutLV,                            // logical volume
-					readOutWorldPV,                       // mother  volume
-					false,	                              // no boolean operation
-					nCopy,                                // copy number
-					checkOverlaps);                       // overlap checking
+	  readOutPV = new G4PVPlacement(*ropt,          // placement transform
+					readOutPVName,  // name
+					readOutLV,      // logical volume
+					readOutWorldPV, // mother  volume
+					false,	        // no boolean operation
+					nCopy,          // copy number
+					checkOverlaps); // overlap checking
 	  
 	  // Register the spos and other info of this elemnet.
 	  // Used by energy counter sd to get spos of that logical volume at histogram time.
