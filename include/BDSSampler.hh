@@ -50,15 +50,13 @@ public:
   /// Register an externally constructed sampler (from another class). If transform
   /// isn't known at time of construction (as likely inside an accelerator component),
   /// the sampler SD will look it up from the volume rather than using the cache.
-  static G4int AddExternalSampler(G4String       name,
+  static G4int AddExternalSampler(G4String      name,
 				  G4Transform3D transform = G4Transform3D());
   
 protected:
+  /// Common construction tasks such as creating a logical volume from the solid
+  /// and visualisation options.
   void CommonConstruction();
-
-  /// Pure virtual method derived class must provide to attach the right type of
-  /// sensitive detector class to containerLogicalVolume.
-  virtual void SetSensitiveDetector() = 0;
 
 private:  
   /// The ID number of this sampler instance. 0 counting.

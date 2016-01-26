@@ -25,9 +25,6 @@ BDSSamplerPlane::BDSSamplerPlane(G4String      name,
   SetExtentZ(-chordLength*0.5, chordLength*0.5);
 
   CommonConstruction();
-}
 
-void BDSSamplerPlane::SetSensitiveDetector()
-{
   containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 }

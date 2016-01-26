@@ -9,7 +9,10 @@
 class BDSSamplerSD;
 
 /** 
- * Cylindrical sampler class
+ * @brief Cylindrical sampler around an object.
+ * 
+ * Creates a hollow very thin (1um thick) cylinder around an object
+ * without end caps that acts as a sampler.
  */
 
 class BDSSamplerCylinder: public BDSSampler
@@ -21,8 +24,6 @@ public:
 		     G4double      radiusIn);
 
   virtual ~BDSSamplerCylinder(){;}
-
-  virtual void SetSensitiveDetector();
 
 private:
   /// Private default constructor to ensure use of provided one.
