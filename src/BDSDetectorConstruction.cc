@@ -516,23 +516,8 @@ void BDSDetectorConstruction::ComponentPlacement()
 								     readOutPVName,
 								     (*it)->GetSPositionMiddle(),
 								     thecurrentitem->GetPrecisionRegion());
-	  if (!dynamic_cast<BDSSampler*>(thecurrentitem))
-	    {
-	      BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
-	      // true = it's a read out volume
-	    }
-	}
-      
-      if (dynamic_cast<BDSSampler*>(thecurrentitem))
-	{
-	  // fiddle the physical volume info registry since samplers don't use the read
-	  // out geometry.
-	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(placementName,
-								     name + "_ro_pv",
-								     (*it)->GetSPositionMiddle(),
-								     thecurrentitem->GetPrecisionRegion());
-	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(elementPV, theinfo, false);
-	  // false = it's NOT a read out volume  
+
+	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
 	}
       
       //this does nothing by default - only used by BDSElement
