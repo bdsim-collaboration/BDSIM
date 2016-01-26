@@ -81,6 +81,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
   // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
+    G4int samplerID = preStepPoint->GetPhysicalVolume()->GetCopyNo();
   G4AffineTransform tf(preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform());
   
   G4ThreeVector LocalPosition  = tf.TransformPoint(pos);
@@ -133,6 +134,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {process = theTrack->GetCreatorProcess()->GetProcessName();}
   
   BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
+                                            samplerID,
 					    BDSGlobalConstants::Instance()->GetInitialPoint(),
 					    production,
 					    lastScatter,
