@@ -30,7 +30,7 @@ use the following commands::
 Requirements
 ============
 
-1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
+1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher.
 2) `CMake`_ 2.6.4 or higher
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
@@ -79,7 +79,6 @@ Linux
 Install the `required packages`_ preferably with a
 package manager.
 
-For Scientific Linux 5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
 For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.2.
@@ -269,7 +268,7 @@ to make the Doxygen documentation in a folder called ``Doxygen``.
 Geant4 Installation Guide
 -------------------------
 
-As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
+As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.10 onwards).
 If not built with **MacPorts** then download the 4.10.2 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
