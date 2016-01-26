@@ -385,66 +385,92 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element);
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element);
 
-  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
+  //multiple for loops to account for pole face angle - no angle can use repeat of the same
+  //component, non-zero angle requires several unique components
+
+  //for loop for no pole face angle - uses old method.
+  if ((element->e1 == 0)&&(element->e2 == 0)){
+    // prepare one sbend segment
+    BDSSectorBend* oneBend = new BDSSectorBend(thename,
+                            semilength,
+                            semiangle,
+                            bField,
+                            bPrime,
+                            -semiangle*0.5,
+                            -semiangle*0.5,
+                            beamPipeInfo,
+                            magnetOuterInfo);
+
+    //angleIn and angleOut have to be -angle*0.5 for the beam pipe angle, it was originally
+    //calculated in BDSSectorbend but now has to be passed in from here.
+
+    oneBend->SetBiasVacuumList(element->biasVacuumList);
+    oneBend->SetBiasMaterialList(element->biasMaterialList);
+    // create a line of this sbend repeatedly
+    for (int i = 0; i < nSbends; ++i)
+        {sbendline->AddComponent(oneBend);}
+    return sbendline;
+  }
   
-  G4double deltastart = 0;
-  G4double deltaend   = 0;
-  G4double anglein    = 0;
-  G4double angleout   = 0;
+  //for loop for non zero pole face angle - uses new method.
+  else{
 
-  // prepare one sbend segment
-  // create a line of this sbend repeatedly
+    CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
 
-  for (int i = 0; i < nSbends; ++i)
-    {
-      //Calculate change in angle up to middle wedge
-      if (element->e1 != 0)
-        {deltastart = -element->e1/(0.5*(nSbends-1));}
-      if (element->e2 != 0)
-        {deltaend = -element->e2/(0.5*(nSbends-1));}
-      
-      //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
-      if (i == 0.5*(nSbends-1))
+    G4double deltastart = 0;
+    G4double deltaend   = 0;
+    G4double anglein    = 0;
+    G4double angleout   = 0;
+    for (int i = 0; i < nSbends; ++i)
         {
-          anglein = -0.5*element->angle/(nSbends);
-          angleout = -0.5*element->angle/(nSbends);
-        }
-      else if (i < 0.5*(nSbends-1))
-        {
-          anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
-          angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
-        }
-      else if (i > 0.5*(nSbends-1))
-        {
-          anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
-          angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
-        }
+        //Calculate change in angle up to middle wedge
+        if (element->e1 != 0)
+            {deltastart = -element->e1/(0.5*(nSbends-1));}
+        if (element->e2 != 0)
+            {deltaend = -element->e2/(0.5*(nSbends-1));}
 
-      thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
-      
-      BDSBeamPipeInfo*    localBeamPipeInfo    = new BDSBeamPipeInfo(*beamPipeInfo);
-      BDSMagnetOuterInfo* localMagnetOuterInfo = new BDSMagnetOuterInfo(*magnetOuterInfo);
-      BDSSectorBend* oneBend = new BDSSectorBend(thename,
-						 semilength,
-						 semiangle,
-						 bField,
-						 bPrime,
-						 anglein,
-						 angleout,
-						 localBeamPipeInfo,
-						 localMagnetOuterInfo);
-      
-      oneBend->SetBiasVacuumList(element->biasVacuumList);
-      oneBend->SetBiasMaterialList(element->biasMaterialList);
-      
-      sbendline->AddComponent(oneBend);
-    }
+        //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
+        if (i == 0.5*(nSbends-1))
+            {
+              anglein = -0.5*element->angle/(nSbends);
+              angleout = -0.5*element->angle/(nSbends);
+            }
+        else if (i < 0.5*(nSbends-1))
+            {
+              anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
+              angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
+            }
+        else if (i > 0.5*(nSbends-1))
+            {
+              anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
+              angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
+            }
 
-  // clean up
-  delete beamPipeInfo;
-  delete magnetOuterInfo;
+        thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
+
+        BDSBeamPipeInfo*    localBeamPipeInfo    = new BDSBeamPipeInfo(*beamPipeInfo);
+        BDSMagnetOuterInfo* localMagnetOuterInfo = new BDSMagnetOuterInfo(*magnetOuterInfo);
+        BDSSectorBend* oneBend = new BDSSectorBend(thename,
+                             semilength,
+                             semiangle,
+                             bField,
+                             bPrime,
+                             anglein,
+                             angleout,
+                             localBeamPipeInfo,
+                             localMagnetOuterInfo);
+
+        oneBend->SetBiasVacuumList(element->biasVacuumList);
+        oneBend->SetBiasMaterialList(element->biasMaterialList);
+        sbendline->AddComponent(oneBend);
+        }
+      
+    // clean up
+    delete beamPipeInfo;
+    delete magnetOuterInfo;
   
-  return sbendline;
+    return sbendline;
+  }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
