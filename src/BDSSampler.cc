@@ -43,7 +43,7 @@ G4int BDSSampler::AddExternalSampler(G4String      name,
   if (transform != G4Transform3D::Identity)
     {inverseTransforms.push_back(transform.inverse());}
   else
-    {inverseTransforms.push_back(G4Transform3D());}
+    {inverseTransforms.push_back(G4Transform3D());} // identity
   G4int ID = totalNumberOfSamplers;
   totalNumberOfSamplers++;
 

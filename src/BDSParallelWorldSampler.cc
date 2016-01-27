@@ -12,24 +12,31 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4Transform3D.hh"
+#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VUserParallelWorld.hh"
 
 
 BDSParallelWorldSampler::BDSParallelWorldSampler():
-  G4VUserParallelWorld("SamplerWorld")
+  G4VUserParallelWorld("SamplerWorld"),
+  samplerWorldVis(nullptr)
 {;}
 
 BDSParallelWorldSampler::~BDSParallelWorldSampler()
 {
   for (auto placement : placements)
     {delete placement;}
+  delete samplerWorldVis;
 }
 
 void BDSParallelWorldSampler::Construct()
 {
   G4VPhysicalVolume* samplerWorld   = GetWorld();
   G4LogicalVolume*   samplerWorldLV = samplerWorld->GetLogicalVolume();
+
+  samplerWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
+  samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
+  samplerWorldLV->SetVisAttributes(samplerWorldVis);
   
   const G4double samplerR    = BDSGlobalConstants::Instance()->GetSamplerDiameter();
   BDSBeamline* beamline      = BDSAcceleratorModel::Instance()->GetFlatBeamline();

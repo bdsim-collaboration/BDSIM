@@ -6,6 +6,8 @@
 
 #include <vector>
 
+class G4VisAttributes;
+
 class BDSParallelWorldSampler: public G4VUserParallelWorld
 {
 public:
@@ -20,6 +22,9 @@ private:
   
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
+
+  /// Visualisation attributes for the sampler world.
+  G4VisAttributes* samplerWorldVis;
 };
 
 #endif
