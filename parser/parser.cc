@@ -407,13 +407,7 @@ void Parser::add_element(Element& e, std::string before, int before_count, Eleme
   // if before_count equal to -1 add to all element instances
   else if (before_count==-1)
     {
-      auto itPair = beamline_list.equal_range(before);
-      if (itPair.first==itPair.second) {
-	std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
-	exit(1);
-      }
-      for (auto it = itPair.first; it!= itPair.second; ++it) 
-	{beamline_list.insert(it->second,e);}
+      beamline_list.insert_before(before,e);
     }
   else
     {
