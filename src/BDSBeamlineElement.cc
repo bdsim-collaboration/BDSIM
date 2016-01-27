@@ -2,6 +2,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -59,8 +60,16 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   // create the placement transform from supplied rotation matrices and vector
   placementTransform        = new G4Transform3D(*rotationMiddle, positionMiddle);
   readOutPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);
+
+  // calculate sampler central position slightly away from end position of element.
   if (samplerType == BDSSamplerType::plane)
-    {samplerPlacementTransform = new G4Transform3D(*referenceRotationStart, referencePositionStart);}
+    {
+      G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
+      dZLocal *= BDSSamplerPlane::ChordLength();
+      dZLocal.transform(*referenceRotationStart);
+      G4ThreeVector samplerPosition = referencePositionStart + dZLocal;
+      samplerPlacementTransform = new G4Transform3D(*referenceRotationStart, samplerPosition);
+    }
   else if (samplerType == BDSSamplerType::cylinder)
     {samplerPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);}
 }
