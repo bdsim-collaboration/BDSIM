@@ -17,11 +17,7 @@
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
-
-#include "G4Version.hh"
-#if G4VERSION_NUMBER > 999
 #include "G4GenericBiasingPhysics.hh"
-#endif
 
 #include "G4Electron.hh"
 

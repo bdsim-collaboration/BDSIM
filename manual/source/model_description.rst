@@ -1576,10 +1576,26 @@ range from `-envelopeX` to `envelopeX` for example.
 square
 ^^^^^^
 
-This distribution has the same properties and parameters as the `circle`_ distribution with the
+This distribution has similar properties to the `circle`_ distribution with the
 exception that the particles are randomly uniformly distributed within a square.
 
 * All parameters from `reference`_ distribution as used as centroids.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `envelopeX`                      | Maximum position in X [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeXp`                     | Maximum canonical momentum in X                       |
++----------------------------------+-------------------------------------------------------+
+| `envelopeY`                      | Maximum position in Y [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeYp`                     | Maximum canonical momentum in Y                       |
++----------------------------------+-------------------------------------------------------+
+| `envelopeT`                      | Maximum time offset [s]                               |
++----------------------------------+-------------------------------------------------------+
+| `envelopeE`                      | Maximum energy offset [GeV]                           |
++----------------------------------+-------------------------------------------------------+
 
 
 ring
