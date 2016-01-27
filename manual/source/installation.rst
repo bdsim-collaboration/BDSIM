@@ -30,6 +30,7 @@ use the following commands::
 Requirements
 ============
 
+0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher.
 2) `CMake`_ 2.6.4 or higher
 3) Flex 2.5.37 or higher
@@ -103,7 +104,7 @@ The following scripts must be sourced before using CMake.
 
 For the versions 0.61 and onwards::
 
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
+  source /afs/cern.ch/user/j/jsnuveri/public/gcc49-setup.sh
   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
 For version 0.6 and older::

@@ -48,7 +48,7 @@ System requirements:
 tested on:
     os: Linux (Scientific Linux Cern 5 and 6), Mac OS 10.x 
     architecture: x86_64
-    compiler: gcc 4.x, clang
+    compiler: gcc 4.9, clang
    
 mandatory:
     Geant versions Geant4.10 or greater
