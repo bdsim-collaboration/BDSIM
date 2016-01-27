@@ -1,7 +1,6 @@
 #include "BDSSynchRadPhysics.hh"
 #include "G4Gamma.hh"
 #include "G4ProcessManager.hh"
-#include "G4Version.hh"
 
 BDSSynchRadPhysics::BDSSynchRadPhysics():G4VPhysicsConstructor("BDSSynchRadPhysics"),
 					 _srProcess(nullptr),_srProcessG4(nullptr),_contSR(nullptr),_wasActivated(false)
@@ -23,13 +22,6 @@ void BDSSynchRadPhysics::ConstructProcess(){
   _srProcess    = new BDSSynchrotronRadiation();
   _srProcessG4  = new G4SynchrotronRadiation();
   _contSR       = new BDSContinuousSR();
-
-
-#if G4VERSION_NUMBER < 1000
-  theParticleTable    = G4ParticleTable::GetParticleTable();
-  theParticleIterator = theParticleTable->GetIterator();
-  G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
-#endif
 
   aParticleIterator->reset();
   while( (*aParticleIterator)() ){
