@@ -37,10 +37,10 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
   apertureType.toLower();
 
   auto result = types.find(apertureType);
-  if (result == types.end() )
+  if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << " " << apertureType << "is not a valid apertureType" << G4endl;
+      G4cerr << __METHOD_NAME__ << apertureType << " is not a valid apertureType" << G4endl;
 
       G4cout << "Available geometry types are:" << G4endl;
       for (auto it : types)
@@ -49,7 +49,7 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
     }
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "determined aperture type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << "determined aperture type to be " << result->second  << G4endl;
 #endif
   return result->second;
 }
