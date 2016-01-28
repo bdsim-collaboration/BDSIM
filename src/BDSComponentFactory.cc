@@ -233,9 +233,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 	 << G4endl;
 #endif
   // Match poleface from previous and next element
-  double e1 = (prevElement) ? (prevElement->e2) : 0.0;
-  double e2 = (nextElement) ? (nextElement->e1) : 0.0;
-  
+  double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+  double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
+  if (prevElement && (prevElement->type == ElementType::_RBEND))
+    {e1 += -0.5*(prevElement->angle);}
+
+  if (nextElement && (nextElement->type == ElementType::_RBEND))
+    {e2 += 0.5*nextElement->angle;}
+
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
 			PrepareBeamPipeInfo(element, e1, e2) ));
@@ -502,8 +508,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   G4double outerRadius = PrepareOuterDiameter(element)*0.5;
   G4double angle       = element->angle;
   G4double chordLength = element->l*CLHEP::m;
-  G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
-  G4double magFieldLength = chordLength - (2.0*straightSectionChord);
+  //G4double straightSectionChord = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
+  G4double magFieldLength = chordLength;
 
   CheckBendLengthAngleWidthCombo(chordLength, angle, 2*outerRadius, element->name);
 
