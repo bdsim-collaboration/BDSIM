@@ -1,6 +1,5 @@
 #include "BDSBeamPipeFactoryRaceTrack.hh"
 #include "BDSBeamPipeFactoryPoints.hh"
-
 #include "BDSDebug.hh"
 
 #include "globals.hh"                 // geant4 globals / types

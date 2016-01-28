@@ -110,10 +110,6 @@ public:
 protected:
   /// protected default constructor so only derived classes can use it
   BDSTunnelFactoryBase();
-  
-  /// Calculate and set (to member variables) the input and output normal vectors
-  std::pair<G4ThreeVector, G4ThreeVector> CalculateFaces(G4double angleIn,
-							 G4double angleOut);
 
   /// General basic viability tests for input parameters - these are only basic tests
   /// and not dependent on the accelerator model, other components or specific tunnel model

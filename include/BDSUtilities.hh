@@ -6,7 +6,7 @@
 #include "G4ThreeVector.hh"
 
 #include <string>
-
+#include <utility>
 
 /**
  * @brief Various utility functions that have no specific place - 
@@ -29,6 +29,10 @@ namespace BDS {
   /// Calculate the +- 1 orientation multiplier for absolute angles
   /// seems trivial, but used in a lot of places so put in one place
   G4int    CalculateOrientation(G4double angle);
+
+  /// Calculate input and output normal vector
+  std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
+							G4double angleOutIn);
 
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
