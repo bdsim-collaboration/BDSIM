@@ -131,7 +131,7 @@ void BDSRBend::BuildBPFieldAndStepper()
   else
     {arclength = magFieldLength;}
 }
-
+/*
 void BDSRBend::BuildOuter()
 {
 #ifdef BDSDEBUG
@@ -280,4 +280,4 @@ void BDSRBend::PlaceComponents()
 
       RegisterPhysicalVolume(magnetOuterPV);
     }
-}
+}*/
