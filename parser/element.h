@@ -51,7 +51,6 @@ namespace GMAD {
     double tilt; ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
-    double r; ///< radius, i.e cylindrical sampler
     double B; ///< magnetic field
     double e1; ///< input pole face rotation for bends
     double e2; ///< output pole face rotation for bends
@@ -90,7 +89,9 @@ namespace GMAD {
     /// physics biasing list for the vacuum
     std::list<std::string> biasVacuumList;
 
+    std::string samplerName; ///< name of sampler (default empty)
     std::string samplerType; ///< element has a sampler of this type
+    double samplerRadius; ///< radius for cylindrical sampler
     
     int precisionRegion; ///<which precision physics region the element is in (0 = none)
     std::string region; ///< region with range cuts
@@ -131,6 +132,9 @@ namespace GMAD {
     /// property lookup by name (slow method)
     /// only for properties with type int/double!
     double property_lookup(std::string property_name)const;
+
+    /// set sampler info
+    void setSamplerInfo(std::string samplerType, std::string samplerName, double samplerRadius);
 
     ///@{ set method from Parameters structure
     void set(const Parameters& params);

@@ -65,7 +65,6 @@ void Element::PublishMembers()
   publish("ysize",&Element::ysize);
   publish("xsizeOut",&Element::xsizeOut);
   publish("ysizeOut",&Element::ysizeOut);
-  publish("r",&Element::r);
   publish("tilt",&Element::tilt);
   publish("e1",&Element::e1);
   publish("e2",&Element::e2);
@@ -118,7 +117,11 @@ void Element::PublishMembers()
   publish("bias",&Element::bias);
   publish("biasMaterial",&Element::biasMaterial);
   publish("biasVacuum",&Element::biasVacuum);
+  publish("samplerName",&Element::samplerName);
   publish("samplerType",&Element::samplerType);
+  publish("r",&Element::samplerRadius); // historic
+  publish("samplerRadius",&Element::samplerRadius);
+  alternativeNames["samplerRadius"] ="r";
 
   publish("knl",&Element::knl);
   publish("ksl",&Element::ksl);
@@ -142,9 +145,7 @@ std::string Element::getPublishedName(std::string name)const
 bool Element::isSpecial()const {
   bool isSpecial = false;
 
-  if (type == ElementType::_SAMPLER ||
-      type == ElementType::_CSAMPLER ||
-      type == ElementType::_DUMP ||
+  if (type == ElementType::_DUMP ||
       type == ElementType::_TRANSFORM3D ||
       type == ElementType::_MARKER ||
       type == ElementType::_LINE ||
@@ -195,10 +196,6 @@ void Element::print(int & ident)const{
     break;
     
   case ElementType::_SCREEN:
-    break;
-    
-  case ElementType::_CSAMPLER:
-    printf(" length=%.10g, radius=%.10g",l, r);
     break;
     
   case ElementType::_TRANSFORM3D:
@@ -261,7 +258,6 @@ void Element::flush() {
   ysize = 0;
   xsizeOut = 0;
   ysizeOut = 0;
-  r = 0;
   B = 0;
   e1 = 0;
   e2 = 0;
@@ -288,7 +284,9 @@ void Element::flush() {
   biasMaterialList.clear();
   biasVacuumList.clear();
 
+  samplerName = "";
   samplerType = "none"; // allowed "none", "plane", "cylinder"
+  samplerRadius = 0;
   
   precisionRegion = 0;
   region = "";
@@ -373,4 +371,11 @@ void Element::set(const Parameters& params)
 	    }
 	}
     }
+}
+
+void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
+{
+  samplerType   = samplerTypeIn;
+  samplerName   = samplerNameIn;
+  samplerRadius = samplerRadiusIn;
 }

@@ -96,9 +96,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #endif
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
-  if (element->type != ElementType::_SAMPLER &&
-      element->type != ElementType::_CSAMPLER &&
-      element->type != ElementType::_DUMP &&
+  if (element->type != ElementType::_DUMP &&
       BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
     {
 #ifdef BDSDEBUG
@@ -158,8 +156,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateTransform3D(); break;
 
     // common types, but nothing to do here
-  case ElementType::_SAMPLER:
-  case ElementType::_CSAMPLER:
   case ElementType::_MARKER:
   case ElementType::_LINE:
   case ElementType::_REV_LINE:
