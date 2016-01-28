@@ -55,7 +55,7 @@ void BDSRBend::CalculateLengths(G4double aLength)
   // into the previous volume / outside the marker volume.  for zero angle, this is 0
 
   straightSectionChord        = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
-  magFieldLength              = chordLength - (2.0*straightSectionChord);
+  magFieldLength              = chordLength;
   magnetXShift                = orientation*straightSectionChord*tan(0.5*fabs(angle));
   magnetOuterOffset           = G4ThreeVector(magnetXShift, 0, 0);
   G4double      dz            = (magFieldLength*0.5)+(straightSectionChord*0.5);
@@ -164,36 +164,10 @@ void BDSRBend::BuildBeampipe()
 {
   // check for finite length (can be negative if angle is zero or very small)
   G4double safeStraightSectionLength = straightSectionLength - lengthSafetyLarge;
-  if (safeStraightSectionLength > 0)
-    {
-      bpFirstBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,
-									   name,
-									   safeStraightSectionLength,
-									   -angle*0.5,
-									   beamPipeInfo->aper1,
-									   beamPipeInfo->aper2,
-									   beamPipeInfo->aper3,
-									   beamPipeInfo->aper4,
-									   beamPipeInfo->vacuumMaterial,
-									   beamPipeInfo->beamPipeThickness,
-									   beamPipeInfo->beamPipeMaterial);
-      RegisterDaughter(bpFirstBit);
-      
-      bpLastBit = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
-									 name,
-									 safeStraightSectionLength,
-									 angle*0.5,
-									 beamPipeInfo->aper1,
-									 beamPipeInfo->aper2,
-									 beamPipeInfo->aper3,
-									 beamPipeInfo->aper4,
-									 beamPipeInfo->vacuumMaterial,
-									 beamPipeInfo->beamPipeThickness,
-									 beamPipeInfo->beamPipeMaterial);
-      RegisterDaughter(bpLastBit);
-    }
   
-  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
+  if ((e1 == 0) && (e2 == 0))
+    {
+      beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
 							    name,
 							    magFieldLength - lengthSafety,
 							    beamPipeInfo->aper1,
@@ -203,7 +177,24 @@ void BDSRBend::BuildBeampipe()
 							    beamPipeInfo->vacuumMaterial,
 							    beamPipeInfo->beamPipeThickness,
 							    beamPipeInfo->beamPipeMaterial);
-  
+    }
+  else
+    {
+    beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
+							    name,
+							    magFieldLength - lengthSafety,
+                                -1.0*e1,
+                                -1.0*e2,
+							    beamPipeInfo->aper1,
+							    beamPipeInfo->aper2,
+							    beamPipeInfo->aper3,
+							    beamPipeInfo->aper4,
+							    beamPipeInfo->vacuumMaterial,
+							    beamPipeInfo->beamPipeThickness,
+							    beamPipeInfo->beamPipeMaterial);
+    }
+    
+    
   RegisterDaughter(beampipe);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
@@ -250,33 +241,11 @@ void BDSRBend::PlaceComponents()
   // place logical volumes inside marker (container) volume
   // calculate offsets and rotations
   G4double straightSectionCentralZ = (magFieldLength*0.5) + (straightSectionChord*0.5);
-  G4RotationMatrix* straightStartRM = new G4RotationMatrix();
-  straightStartRM->rotateY(-angle*0.5);
-  G4RotationMatrix* straightEndRM = new G4RotationMatrix();
-  straightEndRM->rotateY(-angle*0.5);
-  straightEndRM->rotateZ(CLHEP::pi);
+
   G4ThreeVector straightStartPos = G4ThreeVector(magnetXShift*0.5,0,-straightSectionCentralZ);
   straightStartPos += -1*GetPlacementOffset();
   G4ThreeVector straightEndPos   = G4ThreeVector(magnetXShift*0.5,0,straightSectionCentralZ);
   straightEndPos += -1*GetPlacementOffset();
-
-  G4Transform3D straightStartTF(*straightStartRM, straightStartPos);
-  G4Transform3D straightEndTF  (*straightEndRM,   straightEndPos);
-
-  RegisterRotationMatrix(straightStartRM);
-  RegisterRotationMatrix(straightEndRM);
-
-  if (bpFirstBit)
-    {
-      G4PVPlacement* pipeStartPV = new G4PVPlacement(straightStartTF,
-						     bpFirstBit->GetContainerLogicalVolume(), // logical volume
-						     name+"_beampipe_start_pv",               // name
-						     containerLogicalVolume,                  // mother volume
-						     false,		                      // no booleanm operation
-						     0,                                       // copy number
-						     checkOverlaps);
-      RegisterPhysicalVolume(pipeStartPV);
-    }
 
   // no if(placeBeamPipe) here as custom procedure and rbend has different construction
   if (beampipe)
@@ -294,19 +263,7 @@ void BDSRBend::PlaceComponents()
 						checkOverlaps);
       RegisterPhysicalVolume(pipePV);
     }
-
-  if (bpLastBit)
-    {
-      G4PVPlacement* pipeEndRM   = new G4PVPlacement(straightEndTF,
-						     bpLastBit->GetContainerLogicalVolume(),  // logical volume
-						     name+"_beampipe_end_pv",	              // name
-						     containerLogicalVolume,                  // mother volume
-						     false,	                              // no boolean operation
-						     0,                                       // copy number
-						     checkOverlaps);
-      RegisterPhysicalVolume(pipeEndRM);
-    }
-
+    
   if (outer)
     {
       G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
