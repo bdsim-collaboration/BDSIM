@@ -7,13 +7,21 @@
 
 class BDSBeamPipeInfo;
 
+/**
+ * @brief A piece of vacuum beam pipe.
+ * 
+ * A simple class that represents a section of beam pipe or drift
+ * in an accelerator. This simply uses the BDSBeamPipeFactory to 
+ * construct the piece of beam pipe based on the input parameters.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSDrift: public BDSAcceleratorComponent
 {
 public:
   BDSDrift(G4String         name, 
 	   G4double         length,
-	   G4double         e1,
-	   G4double         e2,
 	   BDSBeamPipeInfo* beamPipeInfo,
 	   G4int            precisionRegion = 0);
   ~BDSDrift();
@@ -22,9 +30,8 @@ protected:
   void Build();
 
 private:
-  void BuildContainerLogicalVolume(){;}; // to fulfill bdsacceleratorcomponent requirements
-  G4double e1;
-  G4double e2;
+  /// Void function to fulfill BDSAcceleratorComponent requirements.
+  void BuildContainerLogicalVolume(){;}; 
 };
 
 #endif

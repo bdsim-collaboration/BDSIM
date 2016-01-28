@@ -232,16 +232,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 	 << " l= " << element->l << "m"
 	 << G4endl;
 #endif
-
   // Match poleface from previous and next element
-  double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-  double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+  double e1 = (prevElement) ? (prevElement->e2) : 0.0;
+  double e2 = (nextElement) ? (nextElement->e1) : 0.0;
   
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
-			e1,
-			e2,
-			PrepareBeamPipeInfo(element) ));
+			PrepareBeamPipeInfo(element, e1, e2) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
@@ -1094,7 +1091,9 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element) const
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
+								const G4double /*e1*/,
+								const G4double /*e2*/) const
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
@@ -1136,7 +1135,9 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
   return outerDiameter;
 }
 
-BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element) const
+BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
+							  const G4double e1,
+							  const G4double e2) const
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
@@ -1147,7 +1148,9 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->aper4 * CLHEP::m,
 					      element->vacuumMaterial,
 					      element->beampipeThickness * CLHEP::m,
-					      element->beampipeMaterial);  
+					      element->beampipeMaterial,
+					      e1,
+					      e2);  
   return info;
 }
 

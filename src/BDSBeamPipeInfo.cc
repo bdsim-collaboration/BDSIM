@@ -15,12 +15,16 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 				 G4double        aper4In,
 				 G4Material*     vacuumMaterialIn,
 				 G4double        beamPipeThicknessIn,
-				 G4Material*     beamPipeMaterialIn):
+				 G4Material*     beamPipeMaterialIn,
+				 G4double        angleInIn,
+				 G4double        angleOutIn):
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   vacuumMaterial(vacuumMaterialIn),
   beamPipeThickness(beamPipeThicknessIn),
-  beamPipeMaterial(beamPipeMaterialIn)
+  beamPipeMaterial(beamPipeMaterialIn),
+  angleIn(angleInIn),
+  angleOut(angleOutIn)
 {
   CheckApertureInfo();
 }
@@ -32,9 +36,13 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(G4String beamPipeTypeIn,
 				 G4double aper4In,
 				 G4String vacuumMaterialIn,
 				 G4double beamPipeThicknessIn,
-				 G4String beamPipeMaterialIn):
+				 G4String beamPipeMaterialIn,
+				 G4double angleInIn,
+				 G4double angleOutIn):
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
-  beamPipeThickness(beamPipeThicknessIn)
+  beamPipeThickness(beamPipeThicknessIn),
+  angleIn(angleInIn),
+  angleOut(angleOutIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "vacuum material: " << vacuumMaterialIn << G4endl;
@@ -53,7 +61,11 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
 				 G4double         aper4In,
 				 G4String         vacuumMaterialIn,
 				 G4double         beamPipeThicknessIn,
-				 G4String         beamPipeMaterialIn)
+				 G4String         beamPipeMaterialIn,
+				 G4double         angleInIn,
+				 G4double         angleOutIn):
+  angleIn(angleInIn),
+  angleOut(angleOutIn)
 {
   if (beamPipeTypeIn == "")
     {beamPipeType = defaultInfo->beamPipeType;}
