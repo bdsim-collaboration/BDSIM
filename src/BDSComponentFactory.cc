@@ -1094,8 +1094,8 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
-								const G4double /*e1*/,
-								const G4double /*e2*/) const
+								const G4double e1,
+								const G4double e2) const
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
@@ -1104,6 +1104,13 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   else
     {info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);}
 
+  if (element->type == ElementType::_RBEND)
+    {info->angleIn = e1;
+    info->angleOut = e2;}
+  else if (element->type == ElementType::_SBEND)
+    {info->angleIn = e1 + 0.5*element->angle;
+    info->angleOut = e2 + 0.5*element->angle;}
+  
   // outer diameter
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)

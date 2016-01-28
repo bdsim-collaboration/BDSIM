@@ -184,10 +184,10 @@ void BDSMagnet::BuildOuter()
       outer = theFactory->CreateRfCavity(geometryType,name,outerLength,beampipe,
 					 outerDiameter,chordLength,outerMaterial);
       break;
-    /*case BDSMagnetType::sectorbend:
-      outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
-					   outerDiameter,chordLength,angle,e1,e2,outerMaterial);
-      break;*/
+    case BDSMagnetType::rectangularbend:
+      outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
+					   outerDiameter,outerDiameter,chordLength,angle,magnetOuterInfo->angleIn,magnetOuterInfo->angleOut,outerMaterial);
+      break;
     case BDSMagnetType::sextupole:
       outer = theFactory->CreateSextupole(geometryType,name,outerLength,beampipe,
 					  outerDiameter,chordLength,outerMaterial);
