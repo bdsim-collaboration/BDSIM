@@ -124,13 +124,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   // Simple cylinder if no poleface rotation, otherwise angled.
   if ((e1 == 0) && (e2 == 0))
     {
-      G4int orientation   = BDS::CalculateOrientation(angle);
-      G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-      G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
-      inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
-      outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
-      
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
+      BuildMagnetContainerSolidStraight(name,containerLength,magnetContainerRadius);
     }
   else
     {
@@ -139,21 +134,20 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
       G4double zcomponentOut = cos(e2); // calculate components of normal vectors (in the end mag(normal) = 1)
       G4double xcomponentOut = sin(e2); // note full angle here as it's the exit angle
 
-
       // NOTE: Sign change for xcomponent compared to Sbend. No idea why yet.
       inputface  = G4ThreeVector(xcomponentIn, 0.0, -1.0*zcomponentIn);
       outputface = G4ThreeVector(xcomponentOut, 0.0, zcomponentOut);
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
+      
+      // delete the magnet container solid created by default in CreateCylindricalSolids
+      // (common to all apart from this one)
+      delete magnetContainerSolid;
+      // make a new magnet container solid
+      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
+				  inputface, outputface);
     }
 
-  // delete the magnet container solid created by default in CreateCylindricalSolids
-  // (common to all apart from this one)
-  delete magnetContainerSolid;
-  // make a new magnet container solid
-  BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
-				  inputface, outputface);
-  
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("rectangularbend"));
 }

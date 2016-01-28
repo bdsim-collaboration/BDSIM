@@ -25,17 +25,12 @@ BDSRBend::BDSRBend(G4String            name,
 		   G4double            bFieldIn,
 		   G4double            bGradIn,
 		   G4double            angleIn,
-		   G4double            e1In,
-		   G4double            e2In,
 		   BDSBeamPipeInfo*    beamPipeInfo,
 		   BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
 	    beamPipeInfo, magnetOuterInfo),
   bField(bFieldIn),
-  bGrad(bGradIn),
-  e1(e1In), e2(e2In),
-  bpFirstBit(nullptr),
-  bpLastBit(nullptr)
+  bGrad(bGradIn)
 {
   angle       = angleIn;
   outerRadius = magnetOuterInfo->outerDiameter*0.5; 
@@ -131,153 +126,4 @@ void BDSRBend::BuildBPFieldAndStepper()
   else
     {arclength = magFieldLength;}
 }
-/*
-void BDSRBend::BuildOuter()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
-  BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType; 
-  BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
-  G4double containerDiameter = 2*containerRadius;
-  
-  outer = theFactory->CreateRectangularBend(geometryType, name, magFieldLength, beampipe,
-					    outerDiameter, containerDiameter, chordLength,
-					    angle, e1, e2, outerMaterial);
 
-  if (outer)
-    {
-      BDSGeometryComponent* container = outer->GetMagnetContainer();
-      containerSolid    = container->GetContainerSolid()->Clone();
-      G4ThreeVector contOffset = container->GetPlacementOffset();
-      // set the main offset of the whole magnet which is placed w.r.t. the
-      // zero coordinate of the container solid
-      SetPlacementOffset(contOffset);
-
-      InheritExtents(container); // update extents
-      outer->ClearMagnetContainer(); // delete the magnet container as done with
-    }
-}
-
-void BDSRBend::BuildBeampipe()
-{
-  // check for finite length (can be negative if angle is zero or very small)
-  G4double safeStraightSectionLength = straightSectionLength - lengthSafetyLarge;
-  
-  if ((e1 == 0) && (e2 == 0))
-    {
-      beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(beamPipeInfo->beamPipeType,
-							    name,
-							    magFieldLength - lengthSafety,
-							    beamPipeInfo->aper1,
-							    beamPipeInfo->aper2,
-							    beamPipeInfo->aper3,
-							    beamPipeInfo->aper4,
-							    beamPipeInfo->vacuumMaterial,
-							    beamPipeInfo->beamPipeThickness,
-							    beamPipeInfo->beamPipeMaterial);
-    }
-  else
-    {
-    beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-							    name,
-							    magFieldLength - lengthSafety,
-                                -1.0*e1,
-                                -1.0*e2,
-							    beamPipeInfo->aper1,
-							    beamPipeInfo->aper2,
-							    beamPipeInfo->aper3,
-							    beamPipeInfo->aper4,
-							    beamPipeInfo->vacuumMaterial,
-							    beamPipeInfo->beamPipeThickness,
-							    beamPipeInfo->beamPipeMaterial);
-    }
-    
-    
-  RegisterDaughter(beampipe);
-
-  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
-
-  G4double extentX = (beampipe->GetExtentX().second / cos(angle)) + fabs(magnetOuterOffset.x());
-  SetExtentX(-extentX, extentX);
-  SetExtentY(beampipe->GetExtentY());
-  SetExtentZ(-chordLength*0.5,chordLength*0.5);
-}
-
-void BDSRBend::BuildContainerLogicalVolume()
-{
-  if (!outer)
-    {
-      // update container solid to hold all the beampipe segments as there's no outer
-      // and the default way won't suffice for rbend's unique geometry
-      // +ve extent - updated by build beam pipe
-      G4double smallContainerRadius = extentX.second;
-      
-      containerSolid = new G4CutTubs(name + "_container_solid", // name
-				     0,                         // inner radius
-				     smallContainerRadius,           // outer radius
-				     chordLength*0.5,           // half length
-				     0,                         // start angle
-				     CLHEP::twopi,              // sweep angle
-				     inputface,                 // input normal vector
-				     outputface);               // output normal vector
-
-    }
-
-  containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name + "_container_lv");
-  
-  // supposed to protect against fields being overridden
-  containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
-}
-
-void BDSRBend::PlaceComponents()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // place logical volumes inside marker (container) volume
-  // calculate offsets and rotations
-  G4double straightSectionCentralZ = (magFieldLength*0.5) + (straightSectionChord*0.5);
-
-  G4ThreeVector straightStartPos = G4ThreeVector(magnetXShift*0.5,0,-straightSectionCentralZ);
-  straightStartPos += -1*GetPlacementOffset();
-  G4ThreeVector straightEndPos   = G4ThreeVector(magnetXShift*0.5,0,straightSectionCentralZ);
-  straightEndPos += -1*GetPlacementOffset();
-
-  // no if(placeBeamPipe) here as custom procedure and rbend has different construction
-  if (beampipe)
-    {
-      // offset in container is offset suggested by beam pipe component (if asymmetrical) +
-      // magnet offset due to rbend geometry
-      G4ThreeVector beamPipeOffset = beampipe->GetPlacementOffset() + magnetOuterOffset;
-      G4PVPlacement* pipePV = new G4PVPlacement(nullptr,
-						beamPipeOffset,
-						beampipe->GetContainerLogicalVolume(),   // logical volume
-						name+"_beampipe_pv",                     // name
-						containerLogicalVolume,                  // mother volume
-						false,	                                 // no boolean operation
-						0,                                       // copy number
-						checkOverlaps);
-      RegisterPhysicalVolume(pipePV);
-    }
-    
-  if (outer)
-    {
-      G4ThreeVector placementOffset = magnetOuterOffset + outer->GetPlacementOffset();
-      
-      // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                           // rotation
-						       placementOffset,             // at normally (0,0,0)
-						       outer->GetContainerLogicalVolume(), // its logical volume
-						       name+"_outer_pv",            // its name
-						       containerLogicalVolume,      // its mother  volume
-						       false,                       // no boolean operation
-						       0,                           // copy number
-						       BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
-      RegisterPhysicalVolume(magnetOuterPV);
-    }
-}*/

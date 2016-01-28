@@ -551,18 +551,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
   
-  G4double anglein    = element->e1*CLHEP::rad;
-  G4double angleout   = element->e2*CLHEP::rad;
-  
+  G4double angleIn    = element->e1*CLHEP::rad;
+  G4double angleOut   = element->e2*CLHEP::rad;
+
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,
 			bField,
 			bPrime,
 			element->angle,
-			anglein,
-			angleout,
-			PrepareBeamPipeInfo(element),
-			PrepareMagnetOuterInfo(element)));
+			PrepareBeamPipeInfo(element,angleIn,angleOut),
+			PrepareMagnetOuterInfo(element,angleIn,angleOut)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
@@ -1163,7 +1161,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->beampipeThickness * CLHEP::m,
 					      element->beampipeMaterial,
 					      e1,
-					      e2);  
+					      e2);
   return info;
 }
 

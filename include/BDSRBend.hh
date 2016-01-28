@@ -18,8 +18,6 @@ public:
 	   G4double            bField,
 	   G4double            bGrad,
 	   G4double            angle,
-	   G4double            e1,
-	   G4double            e2,
 	   BDSBeamPipeInfo*    beamPipeInfo,
 	   BDSMagnetOuterInfo* magnetOuterInfo);
 
@@ -27,8 +25,6 @@ private:
   G4double bField;
   G4double bGrad;
   G4double magFieldLength;
-  G4double e1;
-  G4double e2;
 
   /// chord length of straight section (along main chord) [m]
   G4double straightSectionChord;
@@ -41,10 +37,6 @@ private:
 
   /// radius of magnet body
   G4double outerRadius;
-
-  /// Extra start and finish piece of beam pipe
-  BDSBeamPipe* bpFirstBit;
-  BDSBeamPipe* bpLastBit;
 
   /// Override method from BDSAcceleratorComponent to detail construction process.
   virtual void Build();
