@@ -1,5 +1,3 @@
-#include "BDSDebug.hh"
-
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
@@ -12,6 +10,9 @@
 #include "BDSBeamPipeFactoryRectEllipse.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
+#include "BDSDebug.hh"
+#include "BDSUtilities.hh"
+
 #include "globals.hh"                        // geant4 globals / types
 
 BDSBeamPipeFactory* BDSBeamPipeFactory::_instance = nullptr;
@@ -98,16 +99,34 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(G4String         name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "using beam pipe information" << G4endl;
 #endif
-  return CreateBeamPipe(bpi->beamPipeType,
-			name,
-			length,
-			bpi->aper1,
-			bpi->aper2,
-			bpi->aper3,
-			bpi->aper4,
-			bpi->vacuumMaterial,
-			bpi->beamPipeThickness,
-			bpi->beamPipeMaterial);
+  if (BDS::IsFinite(bpi->angleIn) || BDS::IsFinite(bpi->angleOut))
+    {
+      return CreateBeamPipeAngledInOut(bpi->beamPipeType,
+				       name,
+				       length,
+				       bpi->angleIn,
+				       bpi->angleOut,
+				       bpi->aper1,
+				       bpi->aper2,
+				       bpi->aper3,
+				       bpi->aper4,
+				       bpi->vacuumMaterial,
+				       bpi->beamPipeThickness,
+				       bpi->beamPipeMaterial);
+    }
+  else
+    {
+      return CreateBeamPipe(bpi->beamPipeType,
+			    name,
+			    length,
+			    bpi->aper1,
+			    bpi->aper2,
+			    bpi->aper3,
+			    bpi->aper4,
+			    bpi->vacuumMaterial,
+			    bpi->beamPipeThickness,
+			    bpi->beamPipeMaterial);
+    }
 }
   
 BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
