@@ -118,6 +118,7 @@ void Element::PublishMembers()
   publish("bias",&Element::bias);
   publish("biasMaterial",&Element::biasMaterial);
   publish("biasVacuum",&Element::biasVacuum);
+  publish("samplerType",&Element::samplerType);
 
   publish("knl",&Element::knl);
   publish("ksl",&Element::ksl);
@@ -170,8 +171,8 @@ void Element::print(int & ident)const{
   case ElementType::_SEXTUPOLE:
   case ElementType::_OCTUPOLE:
   case ElementType::_DECAPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g ",
-	   l,k0,k1,k2,k3,k4,angle,tilt);
+    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g,samplerType=%s ",
+	   l,k0,k1,k2,k3,k4,angle,tilt,samplerType.c_str());
     break;
     
   case ElementType::_SOLENOID:
@@ -286,6 +287,8 @@ void Element::flush() {
   bias = ""; biasMaterial=""; biasVacuum="";
   biasMaterialList.clear();
   biasVacuumList.clear();
+
+  samplerType = "none"; // allowed "none", "plane", "cylinder"
   
   precisionRegion = 0;
   region = "";

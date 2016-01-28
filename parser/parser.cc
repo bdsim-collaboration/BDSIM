@@ -384,7 +384,7 @@ void Parser::add_element(Element& e, std::string before, int before_count, Eleme
 	  skip=true;
 	  continue;
 	}
-	// skip all elements of type not equal to NONE
+	// if type not equal to NONE and elments have to match type 
 	if (type != ElementType::_NONE && type != (*it).type) {
 	  continue;
 	}
@@ -419,7 +419,64 @@ void Parser::add_element(Element& e, std::string before, int before_count, Eleme
       beamline_list.insert(it,e);
     }
 }
- 
+
+void Parser::set_sampler(std::string name, int before_count, ElementType type, std::string samplerType)
+{
+  // if before_count equal to -2 add to all elements regardless of name
+  // typically used for output elements like samplers
+  // skip first element and add one at the end
+  if (before_count==-2)
+    {
+      // flag to see if first element has already been skipped
+      bool skip = false;
+      for (auto it=beamline_list.begin(); it!=beamline_list.end(); it++) {
+	// skip LINEs
+	if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
+	  {continue;}
+	// skip first real element
+	if (skip == false) {
+	  skip=true;
+	  continue;
+	}
+	// if type not equal to NONE and elments have to match type 
+	if (type != ElementType::_NONE && type != (*it).type) {
+	  continue;
+	}
+
+	(*it).samplerType = samplerType;
+      }
+      // also add to final element
+      if (type == ElementType::_NONE) {
+	// add marker with sampler at end
+	Element e;
+	e.name = "Sampler_end";
+	e.type = ElementType::_MARKER;
+	e.samplerType = samplerType;
+	beamline_list.push_back(e);
+      }
+    }
+  // if before_count equal to -1 add sampler to all element instances
+  else if (before_count==-1)
+    {
+      auto itPair = beamline_list.equal_range(name);
+      if (itPair.first==itPair.second) {
+	std::cerr<<"current beamline doesn't contain element "<< name << std::endl;
+	exit(1);
+      }
+      for (auto it = itPair.first; it!= itPair.second; ++it) 
+	{(it->second)->samplerType = samplerType;}
+    }
+  else
+    {
+      auto it = beamline_list.find(name,before_count);
+      if (it==beamline_list.end()) {
+	std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<before_count<<std::endl;
+	exit(1);
+      }
+      (*it).samplerType = samplerType;
+    }
+}
+
 void Parser::add_sampler(std::string name, int before_count, ElementType type)
 {
 #ifdef BDSDEBUG 
@@ -428,13 +485,15 @@ void Parser::add_sampler(std::string name, int before_count, ElementType type)
   std::cout<<std::endl;
 #endif
 
-  Element e;
-  e.type = ElementType::_SAMPLER;
-  e.name = "Sampler_" + name;
-  e.lst = nullptr;
+  // Element e;
+  // e.type = ElementType::_SAMPLER;
+  // e.name = "Sampler_" + name;
+  // e.lst = nullptr;
 
   // add element to beamline
-  add_element(e, name, before_count, type);
+  //  add_element(e, name, before_count, type);
+
+  set_sampler(name,before_count,type,"plane");
 }
 
 void Parser::add_csampler(std::string name, int before_count, ElementType type)
@@ -445,15 +504,17 @@ void Parser::add_csampler(std::string name, int before_count, ElementType type)
   std::cout<<std::endl;
 #endif
 
-  Element e;
-  e.type = ElementType::_CSAMPLER;
-  e.l = params.l;
-  e.r = params.r;
-  e.name = "CSampler_" + name;
-  e.lst = nullptr;
+  // Element e;
+  // e.type = ElementType::_CSAMPLER;
+  // e.l = params.l;
+  // e.r = params.r;
+  // e.name = "CSampler_" + name;
+  // e.lst = nullptr;
 
-  // add element to beamline
-  add_element(e, name, before_count, type);
+  // // add element to beamline
+  // add_element(e, name, before_count, type);
+
+  set_sampler(name,before_count,type,"cylinder");
 }
 
 void Parser::add_dump(std::string name, int before_count, ElementType type)

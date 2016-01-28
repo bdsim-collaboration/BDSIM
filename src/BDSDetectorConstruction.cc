@@ -15,7 +15,7 @@
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
-#include "BDSSampler.hh"
+#include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
@@ -183,21 +183,8 @@ void BDSDetectorConstruction::BuildBeamline()
 	  ++nextIt;
 	}
 
-      BDSSamplerType sType = BDSSamplerType::none;
-      auto samplerIt = elementIt;
-      --samplerIt;
-      switch ((*samplerIt).type)
-	{
-	case GMAD::ElementType::_SAMPLER:
-	  {sType = BDSSamplerType::plane; break;}
-	case GMAD::ElementType::_CSAMPLER:
-	  {sType = BDSSamplerType::cylinder; break;}
-	default:
-	  {sType = BDSSamplerType::none; break;}
-	}
-
-      // in future after parser changes
-      //BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt)->sampler);
+      // Determine parser type
+      BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
       
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
