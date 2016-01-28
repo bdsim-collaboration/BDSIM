@@ -145,9 +145,7 @@ std::string Element::getPublishedName(std::string name)const
 bool Element::isSpecial()const {
   bool isSpecial = false;
 
-  if (type == ElementType::_SAMPLER ||
-      type == ElementType::_CSAMPLER ||
-      type == ElementType::_DUMP ||
+  if (type == ElementType::_DUMP ||
       type == ElementType::_TRANSFORM3D ||
       type == ElementType::_MARKER ||
       type == ElementType::_LINE ||
@@ -198,10 +196,6 @@ void Element::print(int & ident)const{
     break;
     
   case ElementType::_SCREEN:
-    break;
-    
-  case ElementType::_CSAMPLER:
-    printf(" length=%.10g, radius=%.10g",l, samplerRadius);
     break;
     
   case ElementType::_TRANSFORM3D:
