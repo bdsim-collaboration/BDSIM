@@ -144,7 +144,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
       // angle is finite!
       // factor of 0.95 here is arbitrary tolerance as g4 cut tubs seems to fail
       // with cutting entranace / exit planes close to limit.  
-      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle) * 0.95; // s = r*theta -> r = s/theta
+      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle) * 0.8; // s = r*theta -> r = s/theta
       roRadius = std::min(roRadiusFromSampler,roRadiusFromAngleLength);
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler

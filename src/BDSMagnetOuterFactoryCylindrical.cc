@@ -122,7 +122,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
-  if ((e1 == 0) && (e2 == 0))
+  if ((!BDS::IsFinite(e1)) && !BDS::IsFinite(e2))
     {
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
       BuildMagnetContainerSolidStraight(name,containerLength,magnetContainerRadius);
@@ -139,11 +139,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
       outputface = G4ThreeVector(xcomponentOut, 0.0, zcomponentOut);
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
-      
-      // delete the magnet container solid created by default in CreateCylindricalSolids
-      // (common to all apart from this one)
-      delete magnetContainerSolid;
-      // make a new magnet container solid
       BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
 				  inputface, outputface);
     }
