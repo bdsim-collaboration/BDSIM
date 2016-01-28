@@ -86,9 +86,13 @@ private:
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
   
   ///@{ Utility function to prepare model info
-  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element) const;
+  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
+					     const G4double e1 = 0,
+					     const G4double e2 = 0) const;
   G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
-  BDSBeamPipeInfo*    PrepareBeamPipeInfo   (GMAD::Element const* element) const;
+  BDSBeamPipeInfo*    PrepareBeamPipeInfo   (GMAD::Element const* element,
+					     const G4double e1 = 0,
+					     const G4double e2 = 0) const;
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
 
