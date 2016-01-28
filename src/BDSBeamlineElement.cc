@@ -65,7 +65,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   if (samplerType == BDSSamplerType::plane)
     {
       G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
-      dZLocal *= BDSSamplerPlane::ChordLength();
+      dZLocal *= 0.5*BDSSamplerPlane::ChordLength();
       dZLocal.transform(*referenceRotationStart);
       G4ThreeVector samplerPosition = referencePositionStart + dZLocal;
       samplerPlacementTransform = new G4Transform3D(*referenceRotationStart, samplerPosition);
