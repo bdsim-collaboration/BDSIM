@@ -74,6 +74,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
     }
   else
     {
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(e1,e2);
+      inputface = faces.first;
+      outputface = faces.second;
+
+      G4cout <<inputface<<G4endl;
+      G4cout <<outputface<<G4endl;
+
       G4double zcomponentIn = cos(e1); // calculate components of normal vectors (in the end mag(normal) = 1)
       G4double xcomponentIn = sin(e1); // note full angle here as it's the exit angle
       G4double zcomponentOut = cos(e2); // calculate components of normal vectors (in the end mag(normal) = 1)
@@ -81,6 +88,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 
       inputface  = G4ThreeVector(-1*xcomponentIn, 0.0, -1.0*zcomponentIn);
       outputface = G4ThreeVector(-1*xcomponentOut, 0.0, zcomponentOut);
+
+      G4cout <<inputface<<G4endl;
+      G4cout <<outputface<<G4endl;
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
     
@@ -129,14 +139,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
     }
   else
     {
-      G4double zcomponentIn = cos(e1); // calculate components of normal vectors (in the end mag(normal) = 1)
-      G4double xcomponentIn = sin(e1); // note full angle here as it's the exit angle
-      G4double zcomponentOut = cos(e2); // calculate components of normal vectors (in the end mag(normal) = 1)
-      G4double xcomponentOut = sin(e2); // note full angle here as it's the exit angle
-
-      // NOTE: Sign change for xcomponent compared to Sbend. No idea why yet.
-      inputface  = G4ThreeVector(xcomponentIn, 0.0, -1.0*zcomponentIn);
-      outputface = G4ThreeVector(xcomponentOut, 0.0, zcomponentOut);
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(e1,e2);
+      inputface = faces.first;
+      outputface = faces.second;
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
       BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,

@@ -546,9 +546,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
-  
-  G4double angleIn    = element->e1*CLHEP::rad;
-  G4double angleOut   = element->e2*CLHEP::rad;
+
+  //e1 and e2 have to be multiplied by minus one for some reason. Cannot figure out why yet.
+  G4double angleIn    = -1.0*element->e1*CLHEP::rad;
+  G4double angleOut   = -1.0*element->e2*CLHEP::rad;
 
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,

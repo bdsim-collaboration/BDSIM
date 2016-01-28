@@ -150,13 +150,12 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
       G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler
 	     << " mm, max possible radius: " << roRadiusFromAngleLength << " mm" << G4endl;
 #endif
-
-      G4int orientation = BDS::CalculateOrientation(angle);
-      G4double in_z     = cos(0.5*fabs(angle)); 
-      G4double in_x     = sin(0.5*fabs(angle));
-      G4ThreeVector inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
-      //-1 as pointing down in z for normal
-      G4ThreeVector outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(0.5*angle,0.5*angle);
+      G4ThreeVector inputface = faces.first;
+      G4ThreeVector outputface = faces.second;
+      inputface[0] *= -1;
+      outputface[0] *= -1;
+      //x components have to be multiplied by -1 for some reason. 
 
       roSolid = new G4CutTubs(name + "_ro_solid", // name
 			      0,                  // inner radius

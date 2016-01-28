@@ -34,46 +34,6 @@ BDSRBend::BDSRBend(G4String            name,
 {
   angle       = angleIn;
   outerRadius = magnetOuterInfo->outerDiameter*0.5; 
-  CalculateLengths(length);
-}
-
-void BDSRBend::CalculateLengths(G4double aLength)
-{
-  //full length along chord - just its length in case of rbend
-  chordLength = aLength;
-
-  // orientation of shifts - depends on angle - calculations use absolute value of angle for safety
-  G4int orientation = BDS::CalculateOrientation(angle);
-  
-  // straightSectionChord is the distance along the chord required to be used by a drift pipe so that
-  // the outer logical volume (magnet cylinder - defined by outRadius) doesn't protrude
-  // into the previous volume / outside the marker volume.  for zero angle, this is 0
-
-  straightSectionChord        = outerRadius / (tan(0.5*fabs(angle)) + tan((0.5*CLHEP::pi) - (0.5*fabs(angle))) );
-  magFieldLength              = chordLength;
-  magnetXShift                = orientation*straightSectionChord*tan(0.5*fabs(angle));
-  magnetOuterOffset           = G4ThreeVector(magnetXShift, 0, 0);
-  G4double      dz            = (magFieldLength*0.5)+(straightSectionChord*0.5);
-  G4ThreeVector driftposstart = G4ThreeVector(0.5*magnetXShift, 0, -1*dz);
-  G4ThreeVector driftposend   = G4ThreeVector(0.5*magnetXShift, 0, dz);
-  straightSectionLength       = straightSectionChord / (cos(0.5*fabs(angle)));
-  // increase container radius to account for magnet outer geometry offset
-  // container axis is chord axis between entry and exit points
-  containerRadius             += fabs(magnetXShift)*1.001; // 1% margin due to calculations
-
-  G4double in_z = cos(0.5*fabs(angle)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_x = sin(0.5*fabs(angle));
-  inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
-  
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Angle                   = " << angle                    << G4endl;
-  G4cout << __METHOD_NAME__ << "Straight section chord  = " << straightSectionChord  << G4endl;
-  G4cout << __METHOD_NAME__ << "Magnetic field length   = " << magFieldLength        << G4endl;
-  G4cout << __METHOD_NAME__ << "Straight section length = " << straightSectionLength << G4endl;
-  G4cout << __METHOD_NAME__ << "Straight section chord  = " << straightSectionChord  << G4endl;
-  G4cout << __METHOD_NAME__ << "Magnet shift in X       = " << magnetXShift             << G4endl;
-#endif
 }
 
 void BDSRBend::Build()
