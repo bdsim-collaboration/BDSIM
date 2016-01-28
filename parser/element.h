@@ -89,7 +89,9 @@ namespace GMAD {
     std::list<std::string> biasMaterialList;
     /// physics biasing list for the vacuum
     std::list<std::string> biasVacuumList;
- 
+
+    std::string samplerType; ///< element has a sampler of this type
+    
     int precisionRegion; ///<which precision physics region the element is in (0 = none)
     std::string region; ///< region with range cuts
     

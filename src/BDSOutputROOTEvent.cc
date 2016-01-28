@@ -3,15 +3,15 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSSampler.hh"
 #include "BDSUtilities.hh"
-#include "BDSSamplerBase.hh"
 
 BDSOutputROOTEvent::BDSOutputROOTEvent() 
 {  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  this->Init(); 
+  Init(); 
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -61,9 +61,9 @@ void BDSOutputROOTEvent::Init()
   samplerMap["Primary"] = primary;
 
   // build sampler structures 
-  for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++) 
+  for(G4int i=0;i<BDSSampler::NumberOfExistingSamplers();i++) 
     { 
-      G4String name=BDSSamplerBase::outputNames[i];
+      G4String name=BDSSampler::GetName(i);
 
       // remove sampler number
       G4String stripName = name.substr(0,name.find_last_of("_"));

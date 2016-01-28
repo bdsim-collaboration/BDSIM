@@ -13,14 +13,11 @@
 
 #include "G4EventManager.hh" // Geant4 includes
 #include "G4GeometryManager.hh"
+#include "G4ParallelWorldPhysics.hh"
 #include "G4TrackingManager.hh"
 #include "G4SteppingManager.hh"
 #include "G4GeometryTolerance.hh"
-
-#include "G4Version.hh"
-#if G4VERSION_NUMBER > 999
 #include "G4GenericBiasingPhysics.hh"
-#endif
 
 #include "G4Electron.hh"
 
@@ -33,6 +30,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh" // Parser
 #include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
@@ -130,28 +128,42 @@ int main(int argc,char** argv)
 #endif
   BDSRunManager * runManager = new BDSRunManager;
   // runManager->SetNumberOfAdditionalWaitingStacks(1);
+  // note this doesn't actually construct the accelerator - only instantiates the class.
+  // the run manager later calls the construct method
+#ifdef BDSDEBUG 
+  G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
+#endif
+  BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
+  BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
+  realWorld->RegisterParallelWorld(samplerWorld);
+  runManager->SetUserInitialization(realWorld);  
 
   //For geometry sampling, phys list must be initialized before detector.
+  // BUT for samplers we use a parallel world and this HAS to be before the physcis
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
-  if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn) {
-    BDSModularPhysicsList *physList = new BDSModularPhysicsList();
-    /* Biasing */
+  if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
+    {
+      G4ParallelWorldPhysics* pWorld  = new G4ParallelWorldPhysics(samplerWorld->GetName());
+      BDSModularPhysicsList* physList = new BDSModularPhysicsList();
+      physList->RegisterPhysics(pWorld);
+      /* Biasing */
 #if G4VERSION_NUMBER > 999
-    G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
-    physBias->Bias("e-");
-    physBias->Bias("e+");
-    physBias->Bias("gamma");
-    physBias->Bias("proton");
-    physList->RegisterPhysics(physBias);
+      G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
+      physBias->Bias("e-");
+      physBias->Bias("e+");
+      physBias->Bias("gamma");
+      physBias->Bias("proton");
+      physList->RegisterPhysics(physBias);
 #endif
-    runManager->SetUserInitialization(physList);
-  }
-  else { 
-    BDSPhysicsList        *physList = new BDSPhysicsList();  
-    runManager->SetUserInitialization(physList);
-  }
+      runManager->SetUserInitialization(physList);
+    }
+  else
+    { 
+      BDSPhysicsList* physList = new BDSPhysicsList();
+      runManager->SetUserInitialization(physList);
+    }
 
   // Set the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
@@ -171,15 +183,6 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m"   << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance()          << " rad" << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m"   << G4endl;
-
-  // note this doesn't actually construct the accelerator - only instantiates the class.
-  // the run manager later calls the construct method
-  BDSDetectorConstruction* detector = new BDSDetectorConstruction();
- 
-#ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
-#endif
-  runManager->SetUserInitialization(detector);
 
   //
   // set user action classes
@@ -230,7 +233,7 @@ int main(int argc,char** argv)
   //
   // Build Physics bias, only after G4RunManager::Initialize()
   //
-  detector->BuildPhysicsBias();
+  realWorld->BuildPhysicsBias();
 
   //
   // set verbosity levels

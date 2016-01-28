@@ -70,7 +70,7 @@ set_tests_properties(gmad-testMissingAccessAttribute PROPERTIES WILL_FAIL 1)
 
 # test access element
 add_test(gmad-testAccessElement ${gmadBinary} accesselement.gmad)
-set_tests_properties(gmad-testAccessElement PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d)
+set_tests_properties(gmad-testAccessElement PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test access element
 add_test(gmad-testAccessElementOutsiderange ${gmadBinary} accesselementoutsiderange.gmad)
@@ -78,15 +78,15 @@ set_tests_properties(gmad-testAccessElementOutsiderange PROPERTIES WILL_FAIL 1)
 
 # test add sampler
 add_test(gmad-testAddSampler ${gmadBinary} addsampler.gmad)
-set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d)
+set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add all samplers
 add_test(gmad-testAddAllSamplers ${gmadBinary} addallsamplers.gmad)
-set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d2)
+set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add samplers at all quadrupoles
 add_test(gmad-testAddQuadSamplers ${gmadBinary} addquadsamplers.gmad)
-set_tests_properties(gmad-testAddQuadSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_q2)
+set_tests_properties(gmad-testAddQuadSamplers PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)

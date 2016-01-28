@@ -18,8 +18,6 @@
 #include "BDSQuadrupole.hh"
 #include "BDSRBend.hh"
 #include "BDSRfCavity.hh"
-#include "BDSSampler.hh"
-#include "BDSSamplerCylinder.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSSectorBend.hh"
 #include "BDSSextupole.hh"
@@ -114,8 +112,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4cout << "BDSComponentFactory - creating " << element->type << G4endl;
 #endif
   switch(element->type){
-  case ElementType::_SAMPLER:
-    component = CreateSampler(); break;
   case ElementType::_DRIFT:
     component = CreateDrift(); break;
   case ElementType::_RF:
@@ -139,9 +135,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_MULT:
     component = CreateMultipole(); break;
   case ElementType::_ELEMENT:    
-    component = CreateElement(); break; 
-  case ElementType::_CSAMPLER:
-    component = CreateCSampler(); break; 
+    component = CreateElement(); break;
   case ElementType::_DUMP:
     component = CreateDump(); break; 
   case ElementType::_SOLENOID:
@@ -164,6 +158,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateTransform3D(); break;
 
     // common types, but nothing to do here
+  case ElementType::_SAMPLER:
+  case ElementType::_CSAMPLER:
   case ElementType::_MARKER:
   case ElementType::_LINE:
   case ElementType::_REV_LINE:
@@ -192,20 +188,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   
   return component;
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateSampler()
-{
-  return (new BDSSampler(element->name));
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateCSampler()
-{
-  if( element->l < 1.E-4 )
-    {element->l = 1.0;}
-  return (new BDSSamplerCylinder(element->name,
-				 element->l * CLHEP::m,
-				 element->r * CLHEP::m ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
@@ -250,7 +232,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 	 << " l= " << element->l << "m"
 	 << G4endl;
 #endif
-
   // Match poleface from previous and next element
   double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
   double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
@@ -263,9 +244,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
-			e1,
-			e2,
-			PrepareBeamPipeInfo(element) ));
+			PrepareBeamPipeInfo(element, e1, e2) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
@@ -1118,7 +1097,9 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element) const
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
+								const G4double /*e1*/,
+								const G4double /*e2*/) const
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
@@ -1160,7 +1141,9 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
   return outerDiameter;
 }
 
-BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element) const
+BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
+							  const G4double e1,
+							  const G4double e2) const
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
@@ -1171,7 +1154,9 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->aper4 * CLHEP::m,
 					      element->vacuumMaterial,
 					      element->beampipeThickness * CLHEP::m,
-					      element->beampipeMaterial);  
+					      element->beampipeMaterial,
+					      e1,
+					      e2);  
   return info;
 }
 

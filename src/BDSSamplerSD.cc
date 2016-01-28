@@ -6,22 +6,21 @@
 #include "BDSSamplerSD.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
-#include "G4VPhysicalVolume.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4AffineTransform.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Track.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4VTouchable.hh"
-#include "G4TouchableHistory.hh"
-#include "G4ios.hh"
 #include "G4ThreeVector.hh"
-
-#include "G4AffineTransform.hh"
+#include "G4TouchableHistory.hh"
+#include "G4Track.hh"
+#include "G4VPhysicalVolume.hh"
+#include "G4VTouchable.hh"
 
 #include <vector>
-
-#include "G4SDManager.hh"
 
 BDSSamplerSD::BDSSamplerSD(G4String name, G4String type):
   G4VSensitiveDetector(name),
@@ -82,17 +81,9 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
   // as described in Geant4 FAQ's: http://geant4.cern.ch/support/faq.shtml
+    G4int samplerID = preStepPoint->GetPhysicalVolume()->GetCopyNo();
   G4AffineTransform tf(preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  //      const G4RotationMatrix Rot=tf.NetRotation();
-  //      const G4ThreeVector Trans=-tf.NetTranslation();
   
-  //Old method - works for standard Samplers, but not samplers within a deeper
-  //hierarchy of volumes (e.g. Mokka built samplers)
-  //const G4RotationMatrix* Rot=theTrack->GetVolume()->GetFrameRotation();
-  //const G4ThreeVector Trans=theTrack->GetVolume()->GetFrameTranslation();
-  
-  //      G4ThreeVector LocalPosition=pos+Trans; 
-  //      G4ThreeVector LocalDirection=Rot*momDir; 
   G4ThreeVector LocalPosition  = tf.TransformPoint(pos);
   G4ThreeVector LocalDirection = tf.TransformAxis(momDir);
   BDSParticle   local(LocalPosition,LocalDirection,energy,t);
@@ -136,9 +127,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   BDSParticle global(pos,momDir,energy,t);
   
   G4double weight = theTrack->GetWeight();
-  //  if(std::abs(PDGtype)==13){
-  //    std::cout << "Weight of muon = " << weight << std::endl;
-  // }
  
   // process that creating the particle
   G4String process = "";
@@ -146,6 +134,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
     {process = theTrack->GetCreatorProcess()->GetProcessName();}
   
   BDSSamplerHit* smpHit = new BDSSamplerHit(SampName,
+                                            samplerID,
 					    BDSGlobalConstants::Instance()->GetInitialPoint(),
 					    production,
 					    lastScatter,

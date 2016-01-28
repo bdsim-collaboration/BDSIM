@@ -82,26 +82,31 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
+							   BDSTiltOffset*           tiltOffset,
+							   BDSSamplerType           samplerType)
 {
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset)
     {tiltOffset  = new BDSTiltOffset();}
-  
+
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (auto component : *line)
+      for (G4int i = 0; i < (G4int)line->size(); ++i)
 	{
-	  element = AddSingleComponent(component, tiltOffset);
+	  if (i == 0) // only attach the desired sampler to the first one
+	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType);}
+	  else
+	    {element = AddSingleComponent((*line)[i], tiltOffset, BDSSamplerType::none);}
 	  if (element)
 	    {addedComponents.push_back(element);}
 	}
     }
   else
     {
-      element = AddSingleComponent(component, tiltOffset);
+      element = AddSingleComponent(component, tiltOffset, samplerType);
       if (element)
 	{addedComponents.push_back(element);}
     }
@@ -111,7 +116,9 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
   return addedComponents;
 }
 
-BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
+						    BDSTiltOffset*           tiltOffset,
+						    BDSSamplerType           samplerType)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -329,7 +336,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 						       referenceRotationEnd,
 						       sPositionStart,
 						       sPositionMiddle,
-						       sPositionEnd);
+						       sPositionEnd,
+						       samplerType);
 
   // calculate extents for world size determination
   UpdateExtents(element);
