@@ -24,13 +24,11 @@ BDSSectorBend::BDSSectorBend(G4String            name,
 			     G4double            angleIn,
 			     G4double            bField,
 			     G4double            bGrad,
-			     G4double            e1in,
-			     G4double            e2in,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
 	    beamPipeInfo, magnetOuterInfo),
-  itsBField(bField),itsBGrad(bGrad),e1(e1in),e2(e2in)
+  itsBField(bField),itsBGrad(bGrad)
 {
   /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
   /// - this results in a wrongly chord length
@@ -100,95 +98,4 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   dipoleStepper->SetBField(itsBField);
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
-}
-
-void BDSSectorBend::BuildOuter()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
-  BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType; 
-  BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
-  //G4double containerDiameter = 2*containerRadius;
-  
-  outer = theFactory->CreateSectorBend(geometryType, name, chordLength, beampipe,
-					    outerDiameter, chordLength,
-					    angle, e1, e2, outerMaterial);
-
-  if (outer)
-    {
-      BDSGeometryComponent* container = outer->GetMagnetContainer();
-      containerSolid    = container->GetContainerSolid()->Clone();
-      G4ThreeVector contOffset = container->GetPlacementOffset();
-      // set the main offset of the whole magnet which is placed w.r.t. the
-      // zero coordinate of the container solid
-      SetPlacementOffset(contOffset);
-
-      InheritExtents(container); // update extents
-      outer->ClearMagnetContainer(); // delete the magnet container as done with
-    }
-}
-
-
-void BDSSectorBend::BuildBeampipe()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
-#endif
-  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-
-  if (BDS::IsFinite(e1) && BDS::IsFinite(e2))
-    {
-      beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-						    name,
-						    chordLength - lengthSafety,
-						    e1,
-						    e2,
-						    beamPipeInfo->aper1,
-						    beamPipeInfo->aper2,
-						    beamPipeInfo->aper3,
-						    beamPipeInfo->aper4,
-						    beamPipeInfo->vacuumMaterial,
-						    beamPipeInfo->beamPipeThickness,
-						    beamPipeInfo->beamPipeMaterial);
-    }
-  else if (BDS::IsFinite(e1))
-    {
-      beampipe = factory->CreateBeamPipeAngledIn(beamPipeInfo->beamPipeType,
-						 name,
-						 chordLength - lengthSafety,
-						 e1,
-						 beamPipeInfo->aper1,
-						 beamPipeInfo->aper2,
-						 beamPipeInfo->aper3,
-						 beamPipeInfo->aper4,
-						 beamPipeInfo->vacuumMaterial,
-						 beamPipeInfo->beamPipeThickness,
-						 beamPipeInfo->beamPipeMaterial);
-    }
-  else if (BDS::IsFinite(e2))
-    {
-      beampipe = factory->CreateBeamPipeAngledOut(beamPipeInfo->beamPipeType,
-						  name,
-						  chordLength - lengthSafety,
-						  e2,
-						  beamPipeInfo->aper1,
-						  beamPipeInfo->aper2,
-						  beamPipeInfo->aper3,
-						  beamPipeInfo->aper4,
-						  beamPipeInfo->vacuumMaterial,
-						  beamPipeInfo->beamPipeThickness,
-						  beamPipeInfo->beamPipeMaterial);
-    }
-  else
-    {
-      beampipe = factory->CreateBeamPipe(name,
-					 chordLength - lengthSafety,
-					 beamPipeInfo);
-    }
-
-  RegisterDaughter(beampipe);
-
-  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }

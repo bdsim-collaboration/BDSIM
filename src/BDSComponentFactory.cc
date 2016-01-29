@@ -360,27 +360,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   double semiangle  = element->angle / (double) nSbends;
   double semilength = length / (double) nSbends;
 
+  G4double angleIn    = element->e1*CLHEP::rad;
+  G4double angleOut   = element->e2*CLHEP::rad;
+
   //create Line to put them in
   BDSLine* sbendline = new BDSLine(element->name);
   //create sbends and put them in the line
-  BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element);
+  BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
 
   //multiple for loops to account for pole face angle - no angle can use repeat of the same
   //component, non-zero angle requires several unique components
 
   //for loop for no pole face angle - uses old method.
-  if ((element->e1 == 0)&&(element->e2 == 0)){
+
+  if ((!BDS::IsFinite(element->e1))&&(!BDS::IsFinite(element->e2))){
     // prepare one sbend segment
     BDSSectorBend* oneBend = new BDSSectorBend(thename,
                             semilength,
                             semiangle,
                             bField,
                             bPrime,
-                            -semiangle*0.5,
-                            -semiangle*0.5,
-                            beamPipeInfo,
-                            magnetOuterInfo);
+                            PrepareBeamPipeInfo(element,-semiangle*0.5,-semiangle*0.5),
+                            PrepareMagnetOuterInfo(element,-semiangle*0.5,-semiangle*0.5));
 
     //angleIn and angleOut have to be -angle*0.5 for the beam pipe angle, it was originally
     //calculated in BDSSectorbend but now has to be passed in from here.
@@ -405,9 +407,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     for (int i = 0; i < nSbends; ++i)
         {
         //Calculate change in angle up to middle wedge
-        if (element->e1 != 0)
+        if (BDS::IsFinite(element->e1))
             {deltastart = -element->e1/(0.5*(nSbends-1));}
-        if (element->e2 != 0)
+        if (BDS::IsFinite(element->e2))
             {deltaend = -element->e2/(0.5*(nSbends-1));}
 
         //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
@@ -429,17 +431,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
         thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
 
-        BDSBeamPipeInfo*    localBeamPipeInfo    = new BDSBeamPipeInfo(*beamPipeInfo);
-        BDSMagnetOuterInfo* localMagnetOuterInfo = new BDSMagnetOuterInfo(*magnetOuterInfo);
         BDSSectorBend* oneBend = new BDSSectorBend(thename,
                              semilength,
                              semiangle,
                              bField,
                              bPrime,
-                             anglein,
-                             angleout,
-                             localBeamPipeInfo,
-                             localMagnetOuterInfo);
+                             PrepareBeamPipeInfo(element,anglein,angleout),
+                             PrepareMagnetOuterInfo(element,anglein,angleout));
 
         oneBend->SetBiasVacuumList(element->biasVacuumList);
         oneBend->SetBiasMaterialList(element->biasMaterialList);
@@ -1107,8 +1105,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
     {info->angleIn = e1;
     info->angleOut = e2;}
   else if (element->type == ElementType::_SBEND)
-    {info->angleIn = e1 + 0.5*element->angle;
-    info->angleOut = e2 + 0.5*element->angle;}
+    {info->angleIn = e1;
+    info->angleOut = e2;}
   
   // outer diameter
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
