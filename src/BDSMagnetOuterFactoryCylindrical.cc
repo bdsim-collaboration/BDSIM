@@ -48,8 +48,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4double     outerDiameter,
 								   G4double     containerLength,
 								   G4double     angle,
-								   G4double     e1,
-								   G4double     e2,
+								   G4double     angleIn,
+								   G4double     angleOut,
 								   G4Material*  outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -65,8 +65,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
-  //  std::cout << "angle, e1, e2 " << angle << " " << e1 << " " << e2 << std::endl;
-  if (!BDS::IsFinite(angle) && !BDS::IsFinite(e1) && !BDS::IsFinite(e2))
+  if (!BDS::IsFinite(angle) && !BDS::IsFinite(angleIn) && !BDS::IsFinite(angleOut))
     {
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
       G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
@@ -74,7 +73,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
     }
   else
     {
-      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(e1,e2);
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
       inputface = faces.first;
       outputface = faces.second;
 
@@ -97,8 +96,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     containerDiameter,
 									G4double     containerLength,
 									G4double     angle,
-									G4double     e1,
-									G4double     e2,
+									G4double     angleIn,
+									G4double     angleOut,
 									G4Material*  outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -118,14 +117,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
-  if ((!BDS::IsFinite(e1)) && !BDS::IsFinite(e2))
+  if ((!BDS::IsFinite(angleIn)) && !BDS::IsFinite(angleOut))
     {
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
       BuildMagnetContainerSolidStraight(name,containerLength,magnetContainerRadius);
     }
   else
     {
-      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(e1,e2);
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
       inputface = faces.first;
       outputface = faces.second;
 

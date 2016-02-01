@@ -45,8 +45,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      outerDiameter,
 							   G4double      containerLength,
 							   G4double      angle,
-							   G4double      /*e1*/,
-							   G4double      /*e2*/,
+							   G4double      /*angleIn*/,
+							   G4double      /*angleIn*/,
 							   G4Material*   outerMaterial)
 
 {
@@ -936,8 +936,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      containerDiameter,
 								G4double      containerLength,
 								G4double      angle,
-								G4double      e1,
-								G4double      e2,
+								G4double      angleIn,
+								G4double      angleOut,
 								G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -950,8 +950,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     containerDiameter,
 									     containerLength,
 									     angle,
-									     e1,
-									     e2,
+									     angleIn,
+									     angleOut,
 									     outerMaterial);
 }
 
