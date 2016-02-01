@@ -394,7 +394,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
         {sbendline->AddComponent(oneBend);}
     return sbendline;
   }
-  
+
   //for loop for non zero pole face angle - uses new method.
   else{
 
@@ -402,8 +402,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
     G4double deltastart = 0;
     G4double deltaend   = 0;
-    G4double anglein    = 0;
-    G4double angleout   = 0;
+    angleIn    = 0;
+    angleOut   = 0;
     for (int i = 0; i < nSbends; ++i)
         {
         //Calculate change in angle up to middle wedge
@@ -415,18 +415,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
         //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
         if (i == 0.5*(nSbends-1))
             {
-              anglein = -0.5*element->angle/(nSbends);
-              angleout = -0.5*element->angle/(nSbends);
+              angleIn = -0.5*element->angle/(nSbends);
+              angleOut = -0.5*element->angle/(nSbends);
             }
         else if (i < 0.5*(nSbends-1))
             {
-              anglein = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
-              angleout = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
+              angleIn = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
+              angleOut = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
             }
         else if (i > 0.5*(nSbends-1))
             {
-              anglein  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
-              angleout = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
+              angleIn  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
+              angleOut = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
             }
 
         thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
@@ -436,8 +436,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
                              semiangle,
                              bField,
                              bPrime,
-                             PrepareBeamPipeInfo(element,anglein,angleout),
-                             PrepareMagnetOuterInfo(element,anglein,angleout));
+                             PrepareBeamPipeInfo(element,angleIn,angleOut),
+                             PrepareMagnetOuterInfo(element,angleIn,angleOut));
 
         oneBend->SetBiasVacuumList(element->biasVacuumList);
         oneBend->SetBiasMaterialList(element->biasMaterialList);
