@@ -61,8 +61,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 G4double      outerDiameter,
 								 G4double      containerLength,
 								 G4double      angle,
-								 G4double      /*e1*/,
-								 G4double      /*e2*/,
+								 G4double      angleIn,
+								 G4double      angleOut,
 								 G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -73,11 +73,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
-  G4int orientation   = BDS::CalculateOrientation(angle);
-  G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
-  G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+  G4ThreeVector inputface = faces.first;
+  G4ThreeVector outputface = faces.second;
 
   G4double beampipeRadiusX = std::max(beamPipe->GetExtentX().first, beamPipe->GetExtentX().second);
   G4double beampipeRadiusY = std::max(beamPipe->GetExtentY().first, beamPipe->GetExtentY().second);
@@ -336,8 +334,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4double      containerDiameter,
 								      G4double      containerLength,
 								      G4double      angle,
-								      G4double      e1,
-								      G4double      e2,
+								      G4double      angleIn,
+								      G4double      angleOut,
 								      G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -347,7 +345,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name, length, beamPipe, outerDiameter,
 									     containerDiameter, containerLength,
-									     angle, e1, e2, outerMaterial);
+									     angle, angleIn, angleOut, outerMaterial);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
