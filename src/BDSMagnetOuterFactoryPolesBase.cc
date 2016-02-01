@@ -321,8 +321,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   outer->RegisterUserLimits(allUserLimits);
   
   // Register logical volumes and set sensitivity
-  outer->RegisterLogicalVolume(poleLV);
-  outer->RegisterSensitiveVolume(poleLV);
+	if (buildPoles)
+	{
+		outer->RegisterLogicalVolume(poleLV);
+		outer->RegisterSensitiveVolume(poleLV);
+	}
   outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterSensitiveVolume(yokeLV);
   
