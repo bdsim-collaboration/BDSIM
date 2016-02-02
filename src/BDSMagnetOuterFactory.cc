@@ -96,16 +96,16 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetGeometryType ma
 							BDSBeamPipe*  beamPipe,
 							G4double      outerDiameter,
 							G4double      containerLength,
-							G4double      angle,
-							G4double      e1,
-							G4double      e2,
+							G4double      angleIn,
+							G4double      angleOut,
 							G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateSectorBend(name, length, beamPipe, outerDiameter, containerLength, angle, e1, e2, outerMaterial);
+  return factory->CreateSectorBend(name, length, beamPipe, outerDiameter, containerLength,
+				   angleIn, angleOut, outerMaterial);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryType magnetType,
@@ -115,9 +115,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryTy
 							     G4double      outerDiameter,
 							     G4double      containerDiameter,
 							     G4double      containerLength,
-							     G4double      angle,
-							     G4double      e1,
-							     G4double      e2,
+							     G4double      angleIn,
+							     G4double      angleOut,
 							     G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -125,7 +124,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryTy
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
   return factory->CreateRectangularBend(name, length, beamPipe, outerDiameter, containerDiameter,
-					containerLength, angle, e1, e2, outerMaterial);
+					containerLength, angleIn, angleOut, outerMaterial);
 }
   
 

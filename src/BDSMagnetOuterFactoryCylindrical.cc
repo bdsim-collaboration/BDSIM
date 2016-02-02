@@ -47,7 +47,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   BDSBeamPipe* beamPipe,
 								   G4double     outerDiameter,
 								   G4double     containerLength,
-								   G4double     angle,
 								   G4double     angleIn,
 								   G4double     angleOut,
 								   G4Material*  outerMaterial)
@@ -65,7 +64,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
-  if (!BDS::IsFinite(angle) && !BDS::IsFinite(angleIn) && !BDS::IsFinite(angleOut))
+  if (!BDS::IsFinite(angleIn) && !BDS::IsFinite(angleOut))
     {
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
       G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
@@ -95,7 +94,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     outerDiameter,
 									G4double     containerDiameter,
 									G4double     containerLength,
-									G4double     angle,
 									G4double     angleIn,
 									G4double     angleOut,
 									G4Material*  outerMaterial)

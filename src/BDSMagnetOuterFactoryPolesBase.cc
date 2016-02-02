@@ -60,7 +60,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 BDSBeamPipe*  beamPipe,
 								 G4double      outerDiameter,
 								 G4double      containerLength,
-								 G4double      angle,
 								 G4double      angleIn,
 								 G4double      angleOut,
 								 G4Material*   outerMaterial)
@@ -129,7 +128,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 					  5.0*outerLength - lengthSafety);  // z half width - long for unambiguous intersection
   
   G4VSolid* angledFaceSolid = nullptr;
-  if (BDS::IsFinite(angle))
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     {
       angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
 				      0,                           // inner radius
@@ -177,7 +176,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 				       contRY,                          // y half width
 				       5.0*outerLength - 2.0*lengthSafety); // z half width - long for unambiguous intersection
   G4VSolid* magnetAngledFaceSolid = nullptr;
-  if (BDS::IsFinite(angle))
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     {
       magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
 					    0,                           // inner radius
@@ -336,7 +335,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4double      outerDiameter,
 								      G4double      containerDiameter,
 								      G4double      containerLength,
-								      G4double      angle,
 								      G4double      angleIn,
 								      G4double      angleOut,
 								      G4Material*   outerMaterial)
@@ -348,7 +346,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name, length, beamPipe, outerDiameter,
 									     containerDiameter, containerLength,
-									     angle, angleIn, angleOut, outerMaterial);
+									     angleIn, angleOut, outerMaterial);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,

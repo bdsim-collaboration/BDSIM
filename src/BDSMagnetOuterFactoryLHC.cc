@@ -44,9 +44,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   BDSBeamPipe*  beamPipe,
 							   G4double      outerDiameter,
 							   G4double      containerLength,
-							   G4double      angle,
-							   G4double      /*angleIn*/,
-							   G4double      /*angleIn*/,
+							   G4double      angleIn,
+							   G4double      angleOut,
 							   G4Material*   outerMaterial)
 
 {
@@ -142,11 +141,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
     }
 
   // calculate some geometrical parameters
-  G4int orientation        = BDS::CalculateOrientation(angle);
-  G4double zcomponent      = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double xcomponent      = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
-  G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
+  G4double angle = angleIn + angleOut; // total angle
+  G4int orientation = BDS::CalculateOrientation(angle); // WRONG FOR NOW TBC
+  //G4int orientation        = BDS::CalculateOrientation(angle);
+
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+  G4ThreeVector inputface = faces.first;
+  G4ThreeVector outputface = faces.second;
 
   // lengths at different points transversely - dependent on left or right geometry as well as angle +ve or -ve
   G4double centralHalfLength      = length*0.5 - orientation*0.5*beamPipeAxisSeparation*tan(fabs(angle*0.5)); // central axis of outer cylinder
@@ -935,7 +936,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      outerDiameter,
 								G4double      containerDiameter,
 								G4double      containerLength,
-								G4double      angle,
 								G4double      angleIn,
 								G4double      angleOut,
 								G4Material*   outerMaterial)
@@ -949,7 +949,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     outerDiameter,
 									     containerDiameter,
 									     containerLength,
-									     angle,
 									     angleIn,
 									     angleOut,
 									     outerMaterial);
