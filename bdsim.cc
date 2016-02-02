@@ -222,8 +222,9 @@ int main(int argc,char** argv)
 #endif
   runManager->Initialize();
 
-  /// Build Physics bias, only after G4RunManager::Initialize()
-  //realWorld->BuildPhysicsBias();
+  /// Implement bias operations on all volumes only after G4RunManager::Initialize()
+  if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
+  {realWorld->BuildPhysicsBias();}
 
   /// Set verbosity levels
   runManager->SetVerboseLevel(execOptions->GetVerboseRunLevel());

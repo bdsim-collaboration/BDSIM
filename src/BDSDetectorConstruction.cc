@@ -81,10 +81,6 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 
   // placement procedure
   ComponentPlacement();
-
-  // implement bias operations on all volumes
-  if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
-    {BuildPhysicsBias();}
   
   if(verbose || debug) G4cout << __METHOD_NAME__ << "detector Construction done"<<G4endl; 
 
