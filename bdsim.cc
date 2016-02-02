@@ -230,10 +230,8 @@ int main(int argc,char** argv)
 
   runManager->Initialize();
 
-  //
-  // Build Physics bias, only after G4RunManager::Initialize()
-  //
-  realWorld->BuildPhysicsBias();
+  /// Build Physics bias, only after G4RunManager::Initialize()
+  //realWorld->BuildPhysicsBias();
 
   //
   // set verbosity levels
