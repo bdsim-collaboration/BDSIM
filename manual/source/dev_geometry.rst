@@ -16,16 +16,6 @@ after these stages, can an appropriately sized world volume be created. Each ele
 is then placed into the world volume. Ultimately, the fully constructed world volume (and therefore all
 of its contents - the accelerator model) is returned to Geant4, which then handles it for the simulation.
 
-Component Factory
-=================
-
-
-Beam Pipe / Aperture Factories
-==============================
-
-Magnet Factories
-================
-
 Beam Line Calculations
 ======================
 
@@ -57,7 +47,7 @@ any one component affects the reference ('design') trajectory.
 
 * Geant4 uses the right handed coordinate system.
 * Euler angles are used to rotate frames of reference and offsets are applied first.
-* The length :math:`l` is always the chord length and not the arc length.
+* :math:`l` is not used for length in the code - only :code:`chordLength` or :code:`arcLength` to be explicit.
 * The chord length and arclength are supplied or calculated in :code:`BDSAcceleratorComponent`.
 
 A schematic of the chord and arc length for a :code:`BDSAcceleratorComponent` with a finite bend
@@ -70,6 +60,34 @@ angle is shown below.
 	   Schematic of chord and arc length as well as reference points and planes for
 	   a :code:`BDSAcceleratorComponent` that bends by finite angle :math:`\alpha`.
 	  
+
+Component Factory
+=================
+
+
+Beam Pipe / Aperture Factories
+==============================
+
+Magnet Factories
+================
+
+The magnet geometry is built in factories with virtual base class :code:`BDSMagnetOuterFactoryBase`. Many
+factories inherit this implementing the virtual methods (one for each magnet type) and provide various
+styles of magnet geometry. In this way, a new magnet style can be added easily or a factory made that
+mixes and matches others by calling other factories. All factories are singletons as there need only be
+one of them - although this isn't strictly required.
+
+Angles of Bends and Faces
+-------------------------
+
+For the sector and rectangular bends, angled faces are required (remember, each segment of geometry in
+BDSIM is always a small straight section, but can have angled faces). To accommodate both normal bends
+and those with pole face rotations, the angle of the input face and the angle of the output face are
+specified. If no pole face rotations are specified, half the bend angle is given as the face angles.
+
+**TBC** Definition of pole face angles (+ve, -ve) w.r.t. right-handed coordinate system and madx
+angle convention.
+
 
 Specific Element Details
 ========================
