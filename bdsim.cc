@@ -1,7 +1,11 @@
-//  
-//   BDSIM, (C) 2001-2015
-//   
-//   version 0.9.develop
+/**
+ * @file bdsim.cc
+ *
+ * \mainpage
+ * BDSIM © 2001-2016
+ *
+ * version 0.9.develop
+ */
 
 #include "BDSDebug.hh" 
 #include "BDSExecOptions.hh"     // executable command line options 
@@ -45,47 +49,41 @@
 
 //=======================================================
 // Global variables 
-BDSOutputBase* bdsOutput=nullptr;     // output interface
+BDSOutputBase* bdsOutput=nullptr;     ///< output interface
 //=======================================================
 
 int main(int argc,char** argv)
 {
-  // print header
+  /// Print header & program information
   G4cout<<"bdsim : version 0.9.develop"<<G4endl;
   G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
-  /* Initialize executable command line options reader object */
+  /// Initialize executable command line options reader object
   const BDSExecOptions* execOptions = BDSExecOptions::Instance(argc,argv);
   execOptions->Print();
   
-  // check geant4 exists in the current environment
+  /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
     {G4cout << "No Geant4 environmental variables found - please source geant4.sh environment" << G4endl; exit(1);}
 
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> DEBUG mode is on." << G4endl;
-#endif  
+#endif
 
-  //
-  // Parse lattice file
-  //
+  /// Parse lattice file
   G4cout << __FUNCTION__ << "> Using input file : "<< execOptions->GetInputFilename()<<G4endl;
   
   BDSParser::Instance(execOptions->GetInputFilename());
 
-  //
-  // parse options, explicitly initialise materials and global constants and construct required materials
-  //
+  /// Parse options, explicitly initialise materials and global constants and construct required materials
   BDSMaterials::Instance()->PrepareRequiredMaterials();
-  
-  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
-  
-  //
-  // initialize random number generator
-  //
 
+  /// Force construction of global constants after parser has been initialised (requires materials first).
+  const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
+
+  /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
   if (execOptions->SetSeedState()) //optionally load the seed state from file (separate from seed)
@@ -93,15 +91,16 @@ int main(int argc,char** argv)
   if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
     {BDSRandom::WriteSeedState();} //write the current state once set / loaded
 
-  // instantiate the specific type of bunch distribution (class),
-  // get the corresponding parameters from the gmad parser info
-  // and attach to the initialised random number generator
+  /// Instantiate the specific type of bunch distribution (class),
+  /// get the corresponding parameters from the gmad parser info
+  /// and attach to the initialised random number generator.
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Instantiating chosen bunch distribution." << G4endl;
 #endif
   BDSBunch* bdsBunch = new BDSBunch();
   bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
-  
+
+  /// Optionally generate primaries only and exit
   if (execOptions->GeneratePrimariesOnly())
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
@@ -117,11 +116,8 @@ int main(int argc,char** argv)
       exit(0);
     }
 
-  
-  //
-  // construct mandatory run manager (the G4 kernel) and
-  // set mandatory initialization classes
-  //
+  /// Construct mandatory run manager (the G4 kernel) and
+  /// register mandatory initialization classes.
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing run manager"<<G4endl;
@@ -133,6 +129,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
 #endif
+  /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
   BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
   realWorld->RegisterParallelWorld(samplerWorld);
@@ -150,7 +147,7 @@ int main(int argc,char** argv)
       physList->RegisterPhysics(pWorld);
       /* Biasing */
 #if G4VERSION_NUMBER > 999
-      G4GenericBiasingPhysics *physBias = new G4GenericBiasingPhysics();
+      G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
       physBias->Bias("e-");
       physBias->Bias("e+");
       physBias->Bias("gamma");
@@ -165,7 +162,7 @@ int main(int argc,char** argv)
       runManager->SetUserInitialization(physList);
     }
 
-  // Set the geometry tolerance
+  /// Set the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
 #ifdef BDSDEBUG
   G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
@@ -184,9 +181,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance()          << " rad" << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m"   << G4endl;
 
-  //
-  // set user action classes
-  //
+  /// Set user action classes
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - runaction"<<G4endl;
 #endif
@@ -220,28 +215,23 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Registering user action - primary generator"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
-  
-  //
-  // Initialize G4 kernel
-  //
+
+  /// Initialize G4 kernel
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Initialising Geant4 kernel"<<G4endl;
 #endif
-
   runManager->Initialize();
 
   /// Build Physics bias, only after G4RunManager::Initialize()
   //realWorld->BuildPhysicsBias();
 
-  //
-  // set verbosity levels
-  //
+  /// Set verbosity levels
   runManager->SetVerboseLevel(execOptions->GetVerboseRunLevel());
   G4EventManager::GetEventManager()->SetVerboseLevel(execOptions->GetVerboseEventLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(execOptions->GetVerboseTrackingLevel());
   G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(execOptions->GetVerboseSteppingLevel());
   
-  // Close the geometry
+  /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry) { 
     G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
@@ -256,21 +246,22 @@ int main(int argc,char** argv)
     }
   else
     {
-      // set default output formats:
+      /// Construct output
 #ifdef BDSDEBUG
       G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
       bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
       G4cout.precision(10);
       
-      // catch aborts to close output stream/file. perhaps not all are needed.
+      /// Catch aborts to close output stream/file. perhaps not all are needed.
       signal(SIGABRT, &BDS::HandleAborts); // aborts
       signal(SIGTERM, &BDS::HandleAborts); // termination requests
       signal(SIGSEGV, &BDS::HandleAborts); // segfaults
       // no interrupts since ctest sends an interrupt signal when interrupted
       // and then the BDSIM process somehow doesn't get killed
       // signal(SIGINT,  &BDS::HandleAborts); // interrupts
-  
+
+    /// Run in either interactive or batch mode
       if(!execOptions->GetBatch())   // Interactive mode
 	{
 	  BDSVisManager visManager;
@@ -279,10 +270,8 @@ int main(int argc,char** argv)
       else           // Batch mode
 	{runManager->BeamOn(globalConstants->GetNumberToGenerate());}
     }
-  
-  //
-  // job termination
-  //
+
+  /// Termination & clean up.
   G4GeometryManager::GetInstance()->OpenGeometry();
 
 #ifdef BDSDEBUG 
