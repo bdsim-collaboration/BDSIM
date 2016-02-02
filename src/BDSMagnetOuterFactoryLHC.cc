@@ -141,12 +141,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
     }
 
   // calculate some geometrical parameters
-  G4double angle = angleIn + angleOut; // total angle
-  G4int orientation = BDS::CalculateOrientation(angle); // WRONG FOR NOW TBC
-  //G4int orientation        = BDS::CalculateOrientation(angle);
-
+  G4double angle    = angleIn + angleOut; // total angle
+  G4int orientation = BDS::CalculateOrientation(-angle);
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-  G4ThreeVector inputface = faces.first;
+  G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
 
   // lengths at different points transversely - dependent on left or right geometry as well as angle +ve or -ve
@@ -393,8 +391,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
       allPhysicalVolumes.push_back(collar1PoleTopInnerPV);
       allPhysicalVolumes.push_back(collar1PoleBottomInnerPV);
     }
-
-  //buildOuterCoil = false;
+  
   if (buildOuterCoil)
     {
       coil1Outer = new G4CutTubs(name+"_coil1_outer_solid",            // name
@@ -850,8 +847,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
 										    name,
 										    2*secondBPHalfLength-2*lengthSafety,
-										    -angle*0.5,        // entrane angle
-										    -angle*0.5,        // exit angle
+										    angleIn,           // entrane angle
+										    angleOut,          // exit angle
 										    2.202*CLHEP::cm,   // aper1
 										    1.714*CLHEP::cm,   // aper2
 										    2.202*CLHEP::cm,   // aper3
