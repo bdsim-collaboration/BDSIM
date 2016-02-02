@@ -116,8 +116,8 @@ public:
   void SetBiasMaterialList(std::list<std::string> biasMaterialListIn);
 
   /// Access the bias list copied from parser
-  std::list<std::string> GetBiasVacuumList();
-  std::list<std::string> GetBiasMaterialList();
+  std::list<std::string> GetBiasVacuumList() const;
+  std::list<std::string> GetBiasMaterialList() const;
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -243,13 +243,13 @@ inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
 inline void BDSAcceleratorComponent::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
 {biasVacuumList = biasVacuumListIn;}
 
-inline std::list<std::string> BDSAcceleratorComponent::GetBiasVacuumList()
+inline std::list<std::string> BDSAcceleratorComponent::GetBiasVacuumList() const
 {return biasVacuumList;}
 
 inline void BDSAcceleratorComponent::SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
 {biasMaterialList = biasMaterialListIn;}
 
-inline std::list<std::string> BDSAcceleratorComponent::GetBiasMaterialList()
+inline std::list<std::string> BDSAcceleratorComponent::GetBiasMaterialList() const
 {return biasMaterialList;}
 
 #endif

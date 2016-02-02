@@ -82,7 +82,7 @@ private:
 
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
-  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(std::list<std::string>& biasList) const;
+  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList) const;
 #endif
 
 #ifdef BDSDEBUG
