@@ -125,7 +125,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4Box* containerSquareSolid = new G4Box(name + "_container_square_solid", // name
 					  yokeFinishRadius,                 // x half width
 					  yokeFinishRadiusY,                // y half width
-					  5.0*outerLength - lengthSafety);  // z half width - long for unambiguous intersection
+					  10.0*outerLength - lengthSafety);  // z half width - long for unambiguous intersection
   
   G4VSolid* angledFaceSolid = nullptr;
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
@@ -174,7 +174,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4Box* magnetContSqSolid = new G4Box(name + "_mag_cont_square_solid", // name
 				       contRX,                          // x half width
 				       contRY,                          // y half width
-				       5.0*outerLength - 2.0*lengthSafety); // z half width - long for unambiguous intersection
+				       10.0*outerLength - 2.0*lengthSafety); // z half width - long for unambiguous intersection
   G4VSolid* magnetAngledFaceSolid = nullptr;
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     {
@@ -213,12 +213,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4Box* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 			       yokeFinishRadius - lengthSafety,           // x half width
 			       yokeFinishRadiusY - lengthSafety,          // y half width
-			       5.0*outerLength - 3.0*lengthSafety);           // z half width
+			       10.0*outerLength - 3.0*lengthSafety);           // z half width
 
   G4Box* yokeInner = new G4Box(name + "_yoke_inner_solid", // name
 			       yokeStartRadius,            // x half width
 			       yokeStartRadiusY,           // y half width
-			       5.0*outerLength - 4.0*lengthSafety);             // z half width
+			       10.0*outerLength - 4.0*lengthSafety);             // z half width
   // z long for unambiguous first subtraction and second intersection
 
   G4SubtractionSolid* yokeSquareSolid = new G4SubtractionSolid(name + "_yoke_square_solid", // name
@@ -251,7 +251,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
       G4Box* poleSquareSolid = new G4Box(name + "_pole_square_solid", // name
 					 poleWidth,                   // x half width
 					 poleHeight*0.5,                  // y half width
-					 5.0*outerLength - 5.0*lengthSafety); // z half width - long for unambiguous intersection
+					 10.0*outerLength - 5.0*lengthSafety); // z half width - long for unambiguous intersection
       allSolids.push_back(poleSquareSolid);
       
       poleSolid = new G4IntersectionSolid(name + "_pole_solid", // name
