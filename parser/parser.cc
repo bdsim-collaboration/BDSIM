@@ -2,6 +2,7 @@
 
 #include <cmath>
 // for getpwuid: http://linux.die.net/man/3/getpwuid
+#include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
 
