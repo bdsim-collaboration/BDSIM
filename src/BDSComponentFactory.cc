@@ -51,7 +51,6 @@
 
 #include <cmath>
 #include <string>
-
 using namespace GMAD;
 
 
@@ -228,19 +227,35 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 	 << " l= " << element->l << "m"
 	 << G4endl;
 #endif
+
   // Match poleface from previous and next element
   double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
   double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
 
+  //Normal vector of rbend is from the magnet, angle of the rbend has to be taken into account regardless of poleface rotation
   if (prevElement && (prevElement->type == ElementType::_RBEND))
     {e1 += -0.5*(prevElement->angle);}
 
   if (nextElement && (nextElement->type == ElementType::_RBEND))
     {e2 += 0.5*nextElement->angle;}
 
+  // Beampipeinfo needed here to get aper1 for check.
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, e1, e2);
+
+  double projLengthIn = 2.0 * tan(e1) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  double projLengthOut = 2.0 * tan(e2) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  double elementLength = element->l * CLHEP::m;
+
+  if (projLengthIn > elementLength){
+    G4cerr << __METHOD_NAME__ << "Drift " << element->name << " is too short for outgoing Poleface angle from " << prevElement->name << G4endl;
+    exit(1);}
+  if (projLengthOut > elementLength){
+    G4cerr << __METHOD_NAME__ << "Drift " << element->name << " is too short for incoming Poleface angle from " << nextElement->name << G4endl;
+    exit(1);}
+
   return (new BDSDrift( element->name,
 			element->l*CLHEP::m,
-			PrepareBeamPipeInfo(element, e1, e2) ));
+			beamPipeInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
@@ -297,7 +312,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 	  exit(1);
 	}
     }
-  
+
   // arc length
   G4double length = element->l*CLHEP::m;
   G4double magFieldLength = length;
@@ -429,6 +444,43 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
               angleOut = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
             }
 
+        //BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
+
+        std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+        G4ThreeVector inputface = faces.first;
+        G4ThreeVector outputface = faces.second;
+
+        // Check if angled faces intersect within magnet radius
+        double intersectionX;
+        double magnetRadius = 0.5*magnetOuterInfo->outerDiameter*CLHEP::mm;
+
+        if (angleIn > 0){
+            // Rotate input clockwise, output counterclockwise
+            std::swap(inputface[0],inputface[2]);
+            inputface[0] *= -1.0;
+            std::swap(outputface[0],outputface[2]);
+            outputface[2] *= -1.0;
+
+            // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
+            intersectionX = semilength / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
+        }
+        if (angleIn < 0){
+            // Rotate input counterclockwise, output clockwise
+            std::swap(inputface[0],inputface[2]);
+            inputface[2] *= -1.0;
+            std::swap(outputface[0],outputface[2]);
+            outputface[0] *= -1.0;
+
+            // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
+            intersectionX = semilength / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
+        }
+
+        if (fabs(intersectionX) < magnetRadius)
+          {
+          G4cerr << __METHOD_NAME__ << "Angled faces of element "<< thename << " intersect within the magnet radius." << G4endl;
+          exit(1);
+          }
+
         thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
 
         BDSSectorBend* oneBend = new BDSSectorBend(thename,
@@ -436,7 +488,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
                              semiangle,
                              bField,
                              bPrime,
-                             PrepareBeamPipeInfo(element,angleIn,angleOut),
+                             PrepareBeamPipeInfo(element, angleIn, angleOut),
                              PrepareMagnetOuterInfo(element,angleIn,angleOut));
 
         oneBend->SetBiasVacuumList(element->biasVacuumList);
