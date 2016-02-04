@@ -369,139 +369,123 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
 #endif
-  // prepare one name for all that makes sense
-  std::string thename = element->name + "_1_of_" + std::to_string(nSbends);
-  //calculate their angle and length
-  double semiangle  = element->angle / (double) nSbends;
-  double semilength = length / (double) nSbends;
 
+  //Zero angle bend only needs one element.
+  std::string thename = element->name + "_1_of_1";
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
-  //create Line to put them in
+  if (!BDS::IsFinite(element->angle)){
+    return (new BDSSectorBend(thename,
+                            length,
+                            element->angle,
+                            bField,
+                            bPrime,
+                            PrepareBeamPipeInfo(element,-angleIn, -angleOut),
+                            PrepareMagnetOuterInfo(element,-angleIn,-angleOut)
+                            ));
+
+  }
+  else  //Otherwise, create line of sbend segments
+  {
+    BDSLine* sbendline = CreateSBendLine(element, nSbends, bField, bPrime);
+    return sbendline;
+  }
+}
+
+BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
+                            int nSbends,
+                            G4double bField,
+                            G4double bPrime)
+{
   BDSLine* sbendline = new BDSLine(element->name);
-  //create sbends and put them in the line
+
+  G4double length = element->l*CLHEP::m;
+  // prepare one name for all that makes sense
+  std::string thename = element->name + "_1_of_" + std::to_string(nSbends);
+  //calculate their angles and length
+  G4double semiangle  = element->angle / (double) nSbends;
+  G4double semilength = length / (double) nSbends;
+  G4double angleIn    = element->e1*CLHEP::rad;
+  G4double angleOut   = element->e2*CLHEP::rad;
+
   BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
 
-  //multiple for loops to account for pole face angle - no angle can use repeat of the same
-  //component, non-zero angle requires several unique components
+  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
 
-  //for loop for no pole face angle - uses old method.
+  G4double deltastart = (BDS::IsFinite(element->e1)) ? (-element->e1/(0.5*(nSbends-1))) : 0.0;
+  G4double deltaend = (BDS::IsFinite(element->e2)) ? (-element->e2/(0.5*(nSbends-1))) : 0.0;
 
-  if ((!BDS::IsFinite(element->e1))&&(!BDS::IsFinite(element->e2))){
-    // prepare one sbend segment
-    BDSSectorBend* oneBend = new BDSSectorBend(thename,
-                            semilength,
-                            semiangle,
-                            bField,
-                            bPrime,
-                            PrepareBeamPipeInfo(element,-semiangle*0.5,-semiangle*0.5),
-                            PrepareMagnetOuterInfo(element,-semiangle*0.5,-semiangle*0.5));
-
-    //angleIn and angleOut have to be -angle*0.5 for the beam pipe angle, it was originally
-    //calculated in BDSSectorbend but now has to be passed in from here.
-
-    oneBend->SetBiasVacuumList(element->biasVacuumList);
-    oneBend->SetBiasMaterialList(element->biasMaterialList);
-    // create a line of this sbend repeatedly
-    for (int i = 0; i < nSbends; ++i)
-        {sbendline->AddComponent(oneBend);}
-    return sbendline;
-  }
-
-  //for loop for non zero pole face angle - uses new method.
-  else{
-
-    CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
-
-    G4double deltastart = 0;
-    G4double deltaend   = 0;
-    angleIn    = 0;
-    angleOut   = 0;
-    for (int i = 0; i < nSbends; ++i)
+  for (int i = 0; i < nSbends; ++i)
+    {
+      // Input and output angles when no poleface rotation
+      if ((!BDS::IsFinite(element->e1))&&(!BDS::IsFinite(element->e2)))
         {
-        //Calculate change in angle up to middle wedge
-        if (BDS::IsFinite(element->e1))
-            {deltastart = -element->e1/(0.5*(nSbends-1));}
-        if (BDS::IsFinite(element->e2))
-            {deltaend = -element->e2/(0.5*(nSbends-1));}
-
-        //Central wedge as before, poleface angle(s) added/subtracted either side as appropriate.
-        if (i == 0.5*(nSbends-1))
-            {
-              angleIn = -0.5*element->angle/(nSbends);
-              angleOut = -0.5*element->angle/(nSbends);
-            }
-        else if (i < 0.5*(nSbends-1))
-            {
-              angleIn = -0.5*element->angle/(nSbends) - element->e1 - (i*deltastart);
-              angleOut = -0.5*element->angle/nSbends - ((0.5*(nSbends-3)-i)*deltastart);
-            }
-        else if (i > 0.5*(nSbends-1))
-            {
-              angleIn  = -0.5*element->angle/nSbends + ((0.5*(nSbends+1)-i)*deltaend);
-              angleOut = -0.5*element->angle/nSbends + (i-(0.5*(nSbends-1)))*deltaend;
-            }
-
-        //BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
-
-        std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-        G4ThreeVector inputface = faces.first;
-        G4ThreeVector outputface = faces.second;
-
-        // Check if angled faces intersect within magnet radius
-        double intersectionX;
-        double magnetRadius = 0.5*magnetOuterInfo->outerDiameter*CLHEP::mm;
-
-        if (angleIn > 0){
-            // Rotate input clockwise, output counterclockwise
-            std::swap(inputface[0],inputface[2]);
-            inputface[0] *= -1.0;
-            std::swap(outputface[0],outputface[2]);
-            outputface[2] *= -1.0;
-
-            // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
-            intersectionX = semilength / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
+          angleIn = -semiangle*0.5;
+          angleOut = -semiangle*0.5;
+          thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
         }
-        if (angleIn < 0){
-            // Rotate input counterclockwise, output clockwise
-            std::swap(inputface[0],inputface[2]);
-            inputface[2] *= -1.0;
-            std::swap(outputface[0],outputface[2]);
-            outputface[0] *= -1.0;
+      else  // Input and output angles with poleface rotation
+        {
+          angleIn    = -0.5*element->angle/nSbends;
+          angleOut   = -0.5*element->angle/nSbends;
+          thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
 
-            // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
-            intersectionX = semilength / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
+          if (i < 0.5*(nSbends-1))
+            {
+              angleIn -= (element->e1 + (i*deltastart));
+              angleOut -= ((0.5*(nSbends-3)-i)*deltastart);
+            }
+          else if (i > 0.5*(nSbends-1))
+            {
+              angleIn  += ((0.5*(nSbends+1)-i)*deltaend);
+              angleOut += (i-(0.5*(nSbends-1)))*deltaend;
+            }
         }
+      // Check for intersection of angled faces.
+      G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
+      BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
 
-        if (fabs(intersectionX) < magnetRadius)
-          {
+      // Every geometry type has a completely arbitrary factor of 1.25 except cylindrical
+      G4double magnetRadius= 0.625*magnetOuterInfo->outerDiameter*CLHEP::mm;
+
+      if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::cylindrical){
+        magnetRadius= 0.5*magnetOuterInfo->outerDiameter*CLHEP::mm;}
+
+      //Check if intersection is within radius
+      if ((BDS::IsFinite(intersectionX)) && (fabs(intersectionX) < magnetRadius))
+        {
           G4cerr << __METHOD_NAME__ << "Angled faces of element "<< thename << " intersect within the magnet radius." << G4endl;
           exit(1);
-          }
+        }
 
-        thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
-
-        BDSSectorBend* oneBend = new BDSSectorBend(thename,
+      BDSSectorBend* oneBend = new BDSSectorBend(thename,
                              semilength,
                              semiangle,
                              bField,
                              bPrime,
                              PrepareBeamPipeInfo(element, angleIn, angleOut),
-                             PrepareMagnetOuterInfo(element,angleIn,angleOut));
+                             magnetOuterInfo);
 
-        oneBend->SetBiasVacuumList(element->biasVacuumList);
-        oneBend->SetBiasMaterialList(element->biasMaterialList);
-        sbendline->AddComponent(oneBend);
-        }
-      
+      oneBend->SetBiasVacuumList(element->biasVacuumList);
+      oneBend->SetBiasMaterialList(element->biasMaterialList);
+      sbendline->AddComponent(oneBend);
+q
+#ifdef BDSDEBUG
+  G4cout << "---->creating sbend line,"
+     << " element= " << thename
+	 << " angleIn= " << angleIn
+	 << " angleOut= " << angleOut << "m"
+	 << G4endl;
+#endif
+  }
+
     // clean up
     delete beamPipeInfo;
     delete magnetOuterInfo;
-  
+
     return sbendline;
-  }
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
