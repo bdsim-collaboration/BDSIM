@@ -34,6 +34,11 @@ namespace BDS {
   std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
 							G4double angleOutIn);
 
+  /// Calculate the radial distance that the two planes inputface and outputface intersect one another
+  G4double CalculateFacesOverlapRadius(G4double angleInIn,
+                            G4double angleOutIn,
+                            G4double lengthIn);
+
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
   
