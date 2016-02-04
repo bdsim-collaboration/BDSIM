@@ -86,7 +86,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4double yokeStartRadiusY  = yokeFinishRadiusY - yokeThickness;
   G4double outerLength       = (0.5 * length) - lengthSafety;
   // make angled face cylinder big enough to encompass it all
-  G4double angledFaceRadius  = 1.5 * sqrt(pow(yokeFinishRadius, 2) + pow(yokeFinishRadiusY, 2));
+  G4double angledFaceRadius  = sqrt(pow(yokeFinishRadius, 2) + pow(yokeFinishRadiusY, 2)) + lengthSafetyLarge;
 
   // protection
   G4bool buildPoles = true;
