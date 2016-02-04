@@ -471,7 +471,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
       oneBend->SetBiasVacuumList(element->biasVacuumList);
       oneBend->SetBiasMaterialList(element->biasMaterialList);
       sbendline->AddComponent(oneBend);
-q
+
 #ifdef BDSDEBUG
   G4cout << "---->creating sbend line,"
      << " element= " << thename
