@@ -34,7 +34,9 @@ public:
 
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn, GMAD::Element* prevElementIn, GMAD::Element* nextElementIn);
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
+					   GMAD::Element* prevElementIn,
+					   GMAD::Element* nextElementIn);
 
   // for each of them - special cases need only for ring logic
   /// Public creation method for ring logic
@@ -84,15 +86,16 @@ private:
 
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element const* element,
-                      int nSbends,
-                      G4double bField,
-                      G4double bPrime);
+			   int nSbends,
+			   G4double bField,
+			   G4double bPrime);
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
 
   /// Check whether the pole face rotation angles are too big for practical construction.
-  void   PoleFaceRotationsNotTooLarge(GMAD::Element* elmeent, G4double maxAngle=0.5*CLHEP::halfpi);
+  void   PoleFaceRotationsNotTooLarge(GMAD::Element* element,
+				      G4double maxAngle=0.5*CLHEP::halfpi);
   
   ///@{ Utility function to prepare model info
   BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element) const;
@@ -109,8 +112,8 @@ private:
   
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
-  G4int CalculateNSBendSegments(Element const* element,
-				const G4double aperturePrecision = 1.0) const
+  G4int CalculateNSBendSegments(GMAD::Element const* element,
+				const G4double aperturePrecision = 1.0) const;
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.

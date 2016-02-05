@@ -1192,22 +1192,22 @@ G4int BDSComponentFactory::CalculateNSBendSegments(Element const* element,
 {
   //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
   //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
-  double aperturePrecision = 1.0; // in mm
 
   G4double length = element->l*CLHEP::m;
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   // add poleface rotations onto angle as absolute number (just to be safe)
-  double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
-  G4int nSbends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
-  if (nSbends==0)
-    {nSbends = 1;} // can happen in case angle = 0
+  G4double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
+  G4int nSBends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
+  if (nSBends==0)
+    {nSBends = 1;} // can happen in case angle = 0
   if (BDSGlobalConstants::Instance()->DontSplitSBends())
-    {nSbends = 1;}  // use for debugging
-  if (nSbends % 2 == 0)
-    {nSbends += 1;} // always have odd number of poles for poleface rotations
+    {nSBends = 1;}  // use for debugging
+  if (nSBends % 2 == 0)
+    {nSBends += 1;} // always have odd number of poles for poleface rotations
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
+  G4cout << __METHOD_NAME__ << " splitting sbend into " << nSBends << " sbends" << G4endl;
 #endif
+  return nSBends;
 }
 
 BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) const
