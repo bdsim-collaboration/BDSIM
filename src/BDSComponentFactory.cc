@@ -238,9 +238,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
   if (nextElement && (nextElement->type == ElementType::_RBEND))
     {e2 += 0.5*nextElement->angle;}
 
-  return (new BDSDrift( element->name,
-			element->l*CLHEP::m,
-			PrepareBeamPipeInfo(element, e1, e2) ));
+  return (new BDSDrift(element->name,
+		       element->l*CLHEP::m,
+		       PrepareBeamPipeInfo(element, e1, e2) ));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
@@ -298,7 +298,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // towards negative x values (even for negative charges??)
   // 2) a positive K1 = 1/|Brho| dBy/dx means horizontal focusing of
   // positive charges
-  // CHECK SIGNS 
   
   G4double bField;
   if(element->B != 0)
@@ -365,7 +364,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     oneBend->SetBiasVacuumList(element->biasVacuumList);
     oneBend->SetBiasMaterialList(element->biasMaterialList);
     // create a line of this sbend repeatedly
-    for (int i = 0; i < nSbends; ++i)
+    for (G4int i = 0; i < nSbends; ++i)
         {sbendline->AddComponent(oneBend);}
     return sbendline;
   }
@@ -531,7 +530,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   
   G4double length = element->l*CLHEP::m;
   
-  // magnetic field
   G4double bField;
   if(element->B != 0)
     {
@@ -777,8 +775,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->outerDiameter * CLHEP::m,
 			 element->geometryFile,
 			 element->bmapFile,
-			 element->bmapZOffset * CLHEP::m
-			  ));
+			 element->bmapZOffset * CLHEP::m));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
@@ -786,15 +783,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
   
-  // magnetic field
-  //
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
   if(element->B != 0)
     {
       bField = element->B * CLHEP::tesla;
-      element->ks  = (bField/brho) / CLHEP::m;
+      element->ks = (bField/brho) / CLHEP::m;
     }
   else
     {
@@ -839,8 +834,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->outerDiameter*CLHEP::m,
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
-                      element->xsizeOut*CLHEP::m,
-                      element->ysizeOut*CLHEP::m,
+				      element->xsizeOut*CLHEP::m,
+				      element->ysizeOut*CLHEP::m,
 				      element->material);
 }
 
@@ -863,9 +858,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->outerDiameter*CLHEP::m,
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
-                     element->xsizeOut*CLHEP::m,
-                     element->ysizeOut*CLHEP::m,
-                     element->material);
+				     element->xsizeOut*CLHEP::m,
+				     element->ysizeOut*CLHEP::m,
+				     element->material);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
@@ -899,10 +894,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
 	 << " length = " << element->l
 	 << G4endl;
 #endif
-  
 
   G4double degraderOffset;
-    
   if ((element->materialThickness <= 0) && (element->degraderOffset <= 0))
     {
         G4cerr << __METHOD_NAME__ << "Error: Both \"materialThickness\" and \"degraderOffset\" are either undefined or <= 0" <<  G4endl;
@@ -910,34 +903,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
     }
 
   if ((element->materialThickness <= 0) && (element->degraderOffset > 0))
-    {
-        degraderOffset = element->degraderOffset*CLHEP::m;
-    }
-    
+    {degraderOffset = element->degraderOffset*CLHEP::m;}
   else
     {
-        //Width of wedge base
-        G4double wedgeBasewidth = (element->l*CLHEP::m /element->numberWedges) - lengthSafety;
-        
-        //Angle between hypotenuse and height (in the triangular wedge face)
-        G4double theta = atan(wedgeBasewidth / (2.0*element->wedgeLength*CLHEP::m));
-        
-        //Overlap distance of wedges
-        G4double overlap = (element->materialThickness*CLHEP::m/element->numberWedges - wedgeBasewidth) * (sin(CLHEP::pi/2.0 - theta) / sin(theta));
-
-        degraderOffset = overlap * -0.5;
-        
+      //Width of wedge base
+      G4double wedgeBasewidth = (element->l*CLHEP::m /element->numberWedges) - lengthSafety;
+      
+      //Angle between hypotenuse and height (in the triangular wedge face)
+      G4double theta = atan(wedgeBasewidth / (2.0*element->wedgeLength*CLHEP::m));
+      
+      //Overlap distance of wedges
+      G4double overlap = (element->materialThickness*CLHEP::m/element->numberWedges - wedgeBasewidth) * (sin(CLHEP::pi/2.0 - theta) / sin(theta));
+      
+      degraderOffset = overlap * -0.5;
     }
     
   return (new BDSDegrader(element->name,
 			  element->l*CLHEP::m,
 			  element->outerDiameter*CLHEP::m,
-              element->numberWedges,
-              element->wedgeLength*CLHEP::m,
-              element->degraderHeight*CLHEP::m,
-              degraderOffset,
-              element->material));
-
+			  element->numberWedges,
+			  element->wedgeLength*CLHEP::m,
+			  element->degraderHeight*CLHEP::m,
+			  degraderOffset,
+			  element->material));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
@@ -960,10 +948,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
 
   G4double length = element->l*CLHEP::m;
   G4double lambda = element->waveLength*CLHEP::m;
-
 	
-  G4ThreeVector direction = 
-    G4ThreeVector(element->xdir,element->ydir,element->zdir);
+  G4ThreeVector direction = G4ThreeVector(element->xdir,element->ydir,element->zdir);
   G4ThreeVector position  = G4ThreeVector(0,0,0);
 	
   return (new BDSLaserWire(element->name, length, lambda, direction) );       
@@ -984,12 +970,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
                << " airmaterial=" << "vacuum"//element->airmaterial
                << G4endl;
 #endif
-	return (new BDSScintillatorScreen( element->name, element->tscint*CLHEP::m, (element->angle-0.78539816339)*CLHEP::rad, "ups923a",BDSGlobalConstants::Instance()->GetVacuumMaterial())); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+	return (new BDSScintillatorScreen(element->name,
+					  element->tscint*CLHEP::m,
+					  (element->angle-0.78539816339)*CLHEP::rad,
+					  "ups923a",
+					  BDSGlobalConstants::Instance()->GetVacuumMaterial()));
 }
 
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen(){
-	
+BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
+{	
 #ifdef BDSDEBUG 
         G4cout << "---->creating Awake Screen,"
 	       << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
@@ -998,10 +987,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen(){
 	       << "scintmaterial = " << element->scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeScintillatorScreen(element->name, element->scintmaterial, element->tscint*1e3, element->angle, element->twindow*1e3, element->windowmaterial)); //Name
+	return (new BDSAwakeScintillatorScreen(element->name,
+					       element->scintmaterial,
+					       element->tscint*1e3,
+					       element->angle,
+					       element->twindow*1e3,
+					       element->windowmaterial));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
+{
 	
 #ifdef BDSDEBUG 
   G4cout << "---->creating Transform3d,"
@@ -1039,7 +1034,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   return (new BDSTerminator("terminator", 
 			    length));
 }
-
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
 {
