@@ -89,13 +89,15 @@ private:
   void   PoleFaceRotationsNotTooLarge(GMAD::Element* elmeent, G4double maxAngle=0.5*CLHEP::halfpi);
   
   ///@{ Utility function to prepare model info
+  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element) const;
   BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
-					     const G4double e1 = 0,
-					     const G4double e2 = 0) const;
+					     const G4double angleIn,
+					     const G4double angleOut) const;
   G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
   BDSBeamPipeInfo*    PrepareBeamPipeInfo   (GMAD::Element const* element,
-					     const G4double e1 = 0,
-					     const G4double e2 = 0) const;
+					     const G4double angleIn  = 0,
+					     const G4double angleOut = 0) const;
+
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
   

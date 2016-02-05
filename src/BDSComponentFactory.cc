@@ -1071,9 +1071,27 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
     }
 }
 
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element) const
+{
+  // input and output face angles
+  G4double angleIn  = 0;
+  G4double angleOut = 0;
+  if (element->type == ElementType::_RBEND)
+    {
+      angleIn  = -1.0*element->e1*CLHEP::rad;
+      angleOut = -1.0*element->e2*CLHEP::rad;
+    }
+  else if (element->type == ElementType::_SBEND)
+    {
+      angleIn  = (element->angle*0.5) + element->e1;
+      angleOut = (element->angle*0.5) + element->e2;
+    }
+  return PrepareMagnetOuterInfo(element, angleIn, angleOut);
+}
+
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
-								const G4double e1,
-								const G4double e2) const
+								const G4double angleIn,
+								const G4double angleOut) const
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
   // magnet geometry type
@@ -1082,12 +1100,9 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   else
     {info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);}
 
-  if (element->type == ElementType::_RBEND)
-    {info->angleIn = e1;
-    info->angleOut = e2;}
-  else if (element->type == ElementType::_SBEND)
-    {info->angleIn = e1;
-    info->angleOut = e2;}
+  // set face angles w.r.t. chord
+  info->angleIn  = angleIn;
+  info->angleOut = angleOut;
   
   // outer diameter
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
@@ -1123,8 +1138,8 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
-							  const G4double e1,
-							  const G4double e2) const
+							  const G4double angleIn,
+							  const G4double angleOut) const
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
@@ -1136,8 +1151,8 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->vacuumMaterial,
 					      element->beampipeThickness * CLHEP::m,
 					      element->beampipeMaterial,
-					      e1,
-					      e2);
+					      angleIn,
+					      angleOut);
   return info;
 }
 
