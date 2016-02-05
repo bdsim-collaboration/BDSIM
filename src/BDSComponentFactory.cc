@@ -73,7 +73,7 @@ BDSComponentFactory::BDSComponentFactory()
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
 
-  G4cout << "Rigidity (Brho) : "<< fabs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+  G4cout << "Rigidity (Brho) : "<< std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();
@@ -628,7 +628,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 	 << " name= " << element->name
 	 << " l= " << element->l << "m"
 	 << " k2= " << element->k2 << "m^-3"
-	 << " brho= " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " brho= " << std::abs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''= " << bDoublePrime/(CLHEP::tesla/CLHEP::m2) << "T/m^2"
 	 << " material= " << element->outerMaterial
 	 << G4endl;
@@ -656,7 +656,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 	 << " name= " << element->name
 	 << " l= " << element->l << "m"
 	 << " k3= " << element->k3 << "m^-4"
-	 << " brho= " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " brho= " << std::abs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B'''= " << bTriplePrime/(CLHEP::tesla/CLHEP::m3) << "T/m^3"
 	 << " material= " << element->outerMaterial
 	 << G4endl;
@@ -684,7 +684,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 	 << " name= " << element->name
 	 << " l= " << element->l << "m"
 	 << " k4= " << element->k4 << "m^-5"
-	 << " brho= " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
+	 << " brho= " << std::abs(brho)/(CLHEP::tesla*CLHEP::m) << "T*m"
 	 << " B''''= " << bQuadruplePrime/(CLHEP::tesla/CLHEP::m3*CLHEP::m) << "T/m^4"
 	 << " material= " << element->outerMaterial
 	 << G4endl;
@@ -802,7 +802,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 	 << " name = " << element->name
 	 << " l = " << element->l << " m,"
 	 << " ks = " << element->ks << " m^-1,"
-	 << " brho = " << fabs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m,"
+	 << " brho = " << std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m,"
 	 << " B = " << bField/CLHEP::tesla << " T,"
 	 << " material = \"" << element->outerMaterial << "\""
 	 << G4endl;
