@@ -259,17 +259,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  // check if poleface is not too large
-  if (fabs(element->e1) > (0.5*CLHEP::halfpi))
-    {
-      G4cerr << __METHOD_NAME__ << "Poleface angle e1 " << element->e1 << " is greater than pi/4" << G4endl;
-      exit(1);
-    }
-  if (fabs(element->e2) > (0.5*CLHEP::halfpi))
-    {
-      G4cerr << __METHOD_NAME__ << "Poleface angle e2 " << element->e2 << " is greater than pi/4" << G4endl;
-      exit(1);
-    }
+  PoleFaceRotationsNotTooLarge(element);  // check if poleface is not too large
 
   // require drift next to non-zero poleface or sbend with matching poleface
   if (BDS::IsFinite(element->e1) )
@@ -300,7 +290,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   
   // arc length
   G4double length = element->l*CLHEP::m;
-  G4double magFieldLength = length;
+  G4double magFieldLength = length; // initialise with this value
   
   // magnetic field
   // MAD conventions:
@@ -338,23 +328,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
-  //calculate number of sbends to split parent into
-  //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
-  //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
-  double aperturePrecision = 1.0; // in mm
-  // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
-  // add poleface rotations onto angle as absolute number (just to be safe)
-  double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
-  int nSbends = (int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
-  if (nSbends==0) nSbends = 1; // can happen in case angle = 0
-  if (BDSGlobalConstants::Instance()->DontSplitSBends())
-    {nSbends = 1;}  // use for debugging
-  if (nSbends % 2 == 0)
-    {nSbends += 1;} // always have odd number of poles for poleface rotations
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
-#endif
-  // prepare one name for all that makes sense
+  // Calculate number of sbends to split parent into
+  G4int nSbends = CalculateNSBendSegments(element);
   std::string thename = element->name + "_1_of_" + std::to_string(nSbends);
   //calculate their angle and length
   double semiangle  = element->angle / (double) nSbends;
@@ -456,18 +431,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
-    
-  if (fabs(element->e1) > (0.5*CLHEP::halfpi))
-    {
-      G4cerr << __METHOD_NAME__ << "Poleface angle e1 " << element->e1 << " is greater than pi/4" << G4endl;
-      exit(1);
-    }
-  if (fabs(element->e2) > (0.5*CLHEP::halfpi))
-    {
-      G4cerr << __METHOD_NAME__ << "Poleface angle e2 " << element->e2 << " is greater than pi/4" << G4endl;
-      exit(1);
-    }
 
+  PoleFaceRotationsNotTooLarge(element);
+  
   // require drift next to non-zero poleface or rbend with matching poleface
   if (BDS::IsFinite(element->e1) )
     {
@@ -1090,6 +1056,21 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
+void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
+						       G4double maxAngle)
+{
+  if (std::abs(element->e1) > maxAngle)
+    {
+      G4cerr << __METHOD_NAME__ << "Pole face angle e1: " << element->e1 << " is greater than pi/4" << G4endl;
+      exit(1);
+    }
+  if (std::abs(element->e2) > maxAngle)
+    {
+      G4cerr << __METHOD_NAME__ << "Pole face angle e2: " << element->e2 << " is greater than pi/4" << G4endl;
+      exit(1);
+    }
+}
+
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
 								const G4double e1,
 								const G4double e2) const
@@ -1158,6 +1139,29 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      e1,
 					      e2);
   return info;
+}
+
+G4int BDSComponentFactory::CalculateNSBendSegments(Element const* element,
+						   const G4double aperturePrecision) const
+{
+  //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
+  //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
+  double aperturePrecision = 1.0; // in mm
+
+  G4double length = element->l*CLHEP::m;
+  // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
+  // add poleface rotations onto angle as absolute number (just to be safe)
+  double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
+  G4int nSbends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
+  if (nSbends==0)
+    {nSbends = 1;} // can happen in case angle = 0
+  if (BDSGlobalConstants::Instance()->DontSplitSBends())
+    {nSbends = 1;}  // use for debugging
+  if (nSbends % 2 == 0)
+    {nSbends += 1;} // always have odd number of poles for poleface rotations
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " splitting sbend into " << nSbends << " sbends" << G4endl;
+#endif
 }
 
 BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) const

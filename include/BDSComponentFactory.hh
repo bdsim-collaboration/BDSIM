@@ -82,8 +82,11 @@ private:
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateTransform3D();
 
-  /// Testing function
+  /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
+
+  /// Check whether the pole face rotation angles are too big for practical construction.
+  void   PoleFaceRotationsNotTooLarge(GMAD::Element* elmeent, G4double maxAngle=0.5*CLHEP::halfpi);
   
   ///@{ Utility function to prepare model info
   BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
@@ -95,6 +98,11 @@ private:
 					     const G4double e2 = 0) const;
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
+  
+  /// Utility function to calculate the number of segments an sbend should be split into.
+  /// Based on aperture error tolerance - default is 1mm.
+  G4int CalculateNSBendSegments(Element const* element,
+				const G4double aperturePrecision = 1.0) const
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
