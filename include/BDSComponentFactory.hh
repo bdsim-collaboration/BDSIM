@@ -10,7 +10,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
-
+#include "BDSLine.hh"
 class BDSCavityInfo;
 
 class BDSTiltOffset;
@@ -81,6 +81,12 @@ private:
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateTransform3D();
+
+  /// Creates line of components for sbend
+  BDSLine* CreateSBendLine(GMAD::Element const* element,
+                      int nSbends,
+                      G4double bField,
+                      G4double bPrime);
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
