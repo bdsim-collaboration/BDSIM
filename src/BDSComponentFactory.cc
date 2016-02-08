@@ -229,8 +229,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 #endif
 
   // Match poleface from previous and next element
-  double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-  double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+  G4double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+  G4double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
 
   //Normal vector of rbend is from the magnet, angle of the rbend has to be taken into account regardless of poleface rotation
   if (prevElement && (prevElement->type == ElementType::_RBEND))
@@ -242,9 +242,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
   // Beampipeinfo needed here to get aper1 for check.
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, e1, e2);
 
-  double projLengthIn = 2.0 * tan(e1) * (beamPipeInfo->aper1*CLHEP::mm) ;
-  double projLengthOut = 2.0 * tan(e2) * (beamPipeInfo->aper1*CLHEP::mm) ;
-  double elementLength = element->l * CLHEP::m;
+  G4double projLengthIn = 2.0 * tan(e1) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  G4double projLengthOut = 2.0 * tan(e2) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  G4double elementLength = element->l * CLHEP::m;
 
   if (projLengthIn > elementLength){
     G4cerr << __METHOD_NAME__ << "Drift " << element->name << " is too short for outgoing Poleface angle from " << prevElement->name << G4endl;
@@ -369,7 +369,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 }
 
 BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
-                            int nSbends,
+                            G4int nSbends,
                             G4double bField,
                             G4double bPrime)
 {
@@ -379,8 +379,8 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
   // prepare one name for all that makes sense
   std::string thename = element->name + "_1_of_" + std::to_string(nSbends);
   //calculate their angles and length
-  G4double semiangle  = element->angle / (double) nSbends;
-  G4double semilength = length / (double) nSbends;
+  G4double semiangle  = element->angle / (G4double) nSbends;
+  G4double semilength = length / (G4double) nSbends;
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
@@ -394,18 +394,17 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
 
   for (int i = 0; i < nSbends; ++i)
     {
+      thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
       // Input and output angles when no poleface rotation
       if ((!BDS::IsFinite(element->e1))&&(!BDS::IsFinite(element->e2)))
         {
           angleIn = -semiangle*0.5;
           angleOut = -semiangle*0.5;
-          thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
         }
       else  // Input and output angles with poleface rotation
         {
           angleIn    = -0.5*element->angle/nSbends;
           angleOut   = -0.5*element->angle/nSbends;
-          thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
 
           if (i < 0.5*(nSbends-1))
             {

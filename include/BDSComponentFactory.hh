@@ -86,7 +86,7 @@ private:
 
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element const* element,
-			   int nSbends,
+			   G4int nSbends,
 			   G4double bField,
 			   G4double bPrime);
 
