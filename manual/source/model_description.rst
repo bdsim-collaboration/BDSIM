@@ -232,26 +232,38 @@ Examples::
 
 rbend
 ^^^^^
-.. figure:: figures/rbend.png
-	    :width: 30%
-	    :align: right
-	    :figclass: align-right
+
+.. |rbend| image:: figures/rbend.png
+			     :width: 45%
+
+.. |rbend_poleface| image:: figures/poleface_notation_rbend.png
+			     :width: 75%
+
++-+-+-----------------------+---------------------------------+
+| | | Example Rbend Magnet  |  Notation for Poleface Rotation |
+| | |        |rbend|        |         |rbend_poleface|        |
++-+-+-----------------------+---------------------------------+
+
+.. raw:: latex
+
+    \newpage
+
 
 `rbend` defines a rectangular bend magnet. Either the total bending angle, `angle`
 for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
 `B` overrides angle. The faces of the magnet are normal to the chord of the
-input and output point. Furthermore, an additional very small drift section is
-added on either side and the magnetic field up-scaled for the shorter field
-length to ensure that the magnet body fits inside the start and end faces
-of the element volume and doesn't protrude into the previous and next elements.
+input and output point. Pole face rotations can be applied to both the input
+and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  =====================  ==========  ===========
-parameter         description            default     required
-`l`               length [m]             0           yes
-`angle`           angle [rad]            0           yes, or `B`
-`B`               magnetic field [T]     0           yes
-`material`        magnet outer material  Iron        no
-================  =====================  ==========  ===========
+================  ===========================  ==========  ===========
+parameter         description                  default     required
+`l`               length [m]                   0           yes
+`angle`           angle [rad]                  0           yes, or `B`
+`B`               magnetic field [T]           0           yes
+`e1`              input poleface angle [rad]   0           no
+`e2`              output poleface angle [rad]  0           no
+`material`        magnet outer material        Iron        no
+================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -264,34 +276,58 @@ parameter         description            default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
+.. note:: The poleface rotation angle is limited to +/- pi/4 radians.
+
+.. note:: If a non-zero poleface rotation angle is specified, the element preceding/succeeding
+      the rotated magnet face must either be a drift or an rbend with opposite rotation (eg an rbend with
+      e2=0.1 can be followed by an rbend with e1=-0.1). The preceding/succeeding element must be longer
+      than the projected length from the rotation, given by
+      :math:`2\times\tan{\left(~\lvert~\text{poleface_angle}~\rvert~\right)}`.
+
 Examples::
 
    MRB20: rbend, l=3*m, angle=0.003;
    r1: rbend, l=5.43m, beampipeRadius=10*cm, B=2*Tesla;
+   RB04: rbend, l=1.8*m, angle=0.05, e1=0.1, e2=-0.1
 
 sbend
 ^^^^^
 
-.. figure:: figures/sbend.png
-	    :width: 30%
-	    :align: right
+.. |sbend| image:: figures/sbend.png
+			     :width: 45%
+
+.. |sbend_poleface| image:: figures/poleface_notation_sbend.png
+			     :width: 75%
+
++-+-+-----------------------+---------------------------------+
+| | | Example Sbend Magnet  |  Notation for Poleface Rotation |
+| | |        |sbend|        |         |sbend_poleface|        |
++-+-+-----------------------+---------------------------------+
+
+.. raw:: latex
+
+    \newpage
+
 
 `sbend` defines a sector bend magnet. Either the total bending angle, `angle`
 for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
 `B` overrides angle. The faces of the magnet are normal to the curvilinear coordinate
 system. `sbend` magnets are made of a series of straight segments. If the specified
 (or calculated from `B` field) bending angle is large, the `sbend` is automatically
-split such that the maximum tangential error in the aperture is 1 mm. For an LHC for
-example with a bending angle of ~0.005rad and l = 14m, the magnet is typically split
-into 5 co-joined `sbend` magnets.
+split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
+typically split into several co-joined `sbend` magnets, the number depending on the magnet
+length and bending angle. Pole face rotations can be applied to both the input
+and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  =====================  ==========  ===========
-parameter         description            default     required
-`l`               length [m]             0           yes
-`angle`           angle [rad]            0           yes, or `B`
-`B`               magnetic field [T]     0           yes
-`material`        magnet outer material  Iron        no
-================  =====================  ==========  ===========
+================  ===========================  ==========  ===========
+parameter         description                  default     required
+`l`               length [m]                   0           yes
+`angle`           angle [rad]                  0           yes, or `B`
+`B`               magnetic field [T]           0           yes
+`e1`              input poleface angle [rad]   0           no
+`e2`              output poleface angle [rad]  0           no
+`material`        magnet outer material        Iron        no
+================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -299,10 +335,19 @@ parameter         description            default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
+.. note:: The poleface rotation angle is limited to +/- pi/4 radians.
+
+.. note:: If a non-zero poleface rotation angle is specified, the element preceding/succeeding
+      the rotated magnet face must either be a drift or an rbend with opposite rotation (eg an sbend with
+      e2=0.1 can be followed by an sbend with e1=-0.1). The preceding/succeeding element must be longer
+      than the projected length from the rotation, given by
+      :math:`2\times\tan{\left(~\lvert~\text{poleface_angle}~\rvert~\right)}`.
+
 Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
    mb201x: sbend, l=304.2*cm, b=1.5*Tesla;
+   SB17A: sbend, l=0.61*m, angle=0.016, e1=-0.05, e2=0.09
 
 quadrupole
 ^^^^^^^^^^
