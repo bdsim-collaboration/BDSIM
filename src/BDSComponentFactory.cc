@@ -478,7 +478,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 	  !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires previous element to be a Drift or RBend with opposite outcoming poleface" << G4endl;
+	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires previous element to be a Drift or RBend with opposite outcoming poleface" << G4endl;
 	  exit(1);
 	}
     }
@@ -491,11 +491,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 	  !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
+	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
 	  exit(1);
 	}
     }
-  
+
   // calculate length of central straight length and edge sections
   // unfortunately, this has to be duplicated here as we need to
   // calculated the magnetic field length (less than the full length)
@@ -546,9 +546,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
+  G4double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+  G4double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
   //e1 and e2 have to be multiplied by minus one for some reason. Cannot figure out why yet.
-  G4double angleIn    = -1.0*element->e1*CLHEP::rad;
-  G4double angleOut   = -1.0*element->e2*CLHEP::rad;
+  G4double angleIn    = -1.0*e1*CLHEP::rad;
+  G4double angleOut   = -1.0*e2*CLHEP::rad;
+
+  if (nextElement && (nextElement->type == ElementType::_RBEND)){
+    angleOut += 0.5*angle;}
+  if (prevElement && (prevElement->type == ElementType::_RBEND)){
+    angleIn += 0.5*angle;}
 
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,
