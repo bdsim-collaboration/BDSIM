@@ -242,8 +242,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
   // Beampipeinfo needed here to get aper1 for check.
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, e1, e2);
 
-  G4double projLengthIn = 2.0 * tan(e1) * (beamPipeInfo->aper1*CLHEP::mm) ;
-  G4double projLengthOut = 2.0 * tan(e2) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  G4double projLengthIn = 2.0 * std::abs(tan(e1)) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  G4double projLengthOut = 2.0 * std::abs(tan(e2)) * (beamPipeInfo->aper1*CLHEP::mm) ;
   G4double elementLength = element->l * CLHEP::m;
 
   if (projLengthIn > elementLength){
@@ -428,7 +428,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
         magnetRadius= 0.5*magnetOuterInfo->outerDiameter*CLHEP::mm;}
 
       //Check if intersection is within radius
-      if ((BDS::IsFinite(intersectionX)) && (fabs(intersectionX) < magnetRadius))
+      if ((BDS::IsFinite(intersectionX)) && (std::abs(intersectionX) < magnetRadius))
         {
           G4cerr << __METHOD_NAME__ << "Angled faces of element "<< thename << " intersect within the magnet radius." << G4endl;
           exit(1);
@@ -529,7 +529,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
       //            = (geometrical length/(2.0*sin(angle/2))*angle
       G4double arclength;
       if (BDS::IsFinite(element->angle))
-	{arclength = 0.5*magFieldLength * fabs(element->angle) / sin(fabs(element->angle)*0.5);}
+	{arclength = 0.5*magFieldLength * std::abs(element->angle) / sin(std::abs(element->angle)*0.5);}
       else
 	{arclength = magFieldLength;}
       // B = Brho/rho = Brho/(arc length/angle)
