@@ -236,7 +236,7 @@ rbend
 .. |rbend| image:: figures/rbend.png
 			     :width: 45%
 
-.. |rbend_poleface| image:: figures/poleface_notation_rbend.png
+.. |rbend_poleface| image:: figures/poleface_notation_rbend.pdf
 			     :width: 75%
 
 +-+-+-----------------------+---------------------------------+
@@ -296,7 +296,7 @@ sbend
 .. |sbend| image:: figures/sbend.png
 			     :width: 45%
 
-.. |sbend_poleface| image:: figures/poleface_notation_sbend.png
+.. |sbend_poleface| image:: figures/poleface_notation_sbend.pdf
 			     :width: 75%
 
 +-+-+-----------------------+---------------------------------+
