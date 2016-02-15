@@ -151,20 +151,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 					    process);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " Sampler : " << SampName << G4endl;
-  G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-  G4cout << __METHOD_NAME__ << " " << energy <<" "  << LocalPosition.x() << " " << LocalPosition.y() << " " << LocalPosition.z() << " " << LocalDirection.x() << " " << LocalDirection.y() << G4endl;
-  G4cout << __METHOD_NAME__ << " Storing hit: E, x, y, z, xPrime, yPrime" << G4endl;
-  G4cout << __METHOD_NAME__ << " " << energy <<" "  << pos.x() << " " << pos.y() << " " << pos.z() << " " << LocalDirection.x() << " " << LocalDirection.y() << G4endl;
-  G4cout << __METHOD_NAME__ << " entries in hits collection before inserting hit: " << SamplerCollection->entries() << G4endl;
+  G4cout << __METHOD_NAME__ << *smpHit;
 #endif
   SamplerCollection->insert(smpHit);
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " entries in hits collection after inserting hit: " << SamplerCollection->entries() << G4endl;
-#endif
 
   delete bdsTraj;
-  
-  //The hit was stored, so the return value is "true".
-  return true;
+  return true;    //The hit was stored
 }

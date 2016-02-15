@@ -183,17 +183,17 @@ int main(int argc,char** argv)
 
   /// Set user action classes
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - runaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - Run Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSRunAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - eventaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - Event Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSEventAction());
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - steppingaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
 #endif
   // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
   if (globalConstants->GetThresholdCutPhotons() > 0 || globalConstants->GetThresholdCutCharged() > 0
@@ -202,17 +202,17 @@ int main(int argc,char** argv)
   }
   
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - trackingaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - Tracking Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSUserTrackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - stackingaction"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSStackingAction);
 
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Registering user action - primary generator"<<G4endl;
+  G4cout << __FUNCTION__ << "> Registering user action - Primary Generator"<<G4endl;
 #endif
   runManager->SetUserAction(new BDSPrimaryGeneratorAction(bdsBunch));
 
