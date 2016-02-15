@@ -34,7 +34,7 @@ namespace GMAD {
     template <typename FastListInputIterator>
       FastListIterator insert(FastListInputIterator position, const T& val);
     template <typename FastListInputIterator>
-      void insert (FastListConstIterator position, FastListInputIterator first, FastListInputIterator last);
+      void insert (FastListConstIterator position, FastListInputIterator first, const FastListInputIterator last);
     ///@}
     /// insert element before all elements with given name
     /// exits if no element with name
@@ -50,8 +50,8 @@ namespace GMAD {
     void clear();
     ///@{ erase elements
     void erase();
-    FastListConstIterator erase (FastListConstIterator position);
-    FastListConstIterator erase (FastListConstIterator first, FastListConstIterator last);
+    FastListConstIterator erase (const FastListConstIterator position);
+    FastListConstIterator erase (const FastListConstIterator first, const FastListConstIterator last);
     ///@}
     ///@{ non-const begin/end iterator:
     FastListIterator begin();
@@ -95,7 +95,7 @@ namespace GMAD {
 
   template <typename T>
     template <typename FastListInputIterator>
-    void FastList<T>::insert(FastListConstIterator position, FastListInputIterator first, FastListInputIterator last) {
+    void FastList<T>::insert(FastListConstIterator position, FastListInputIterator first, const FastListInputIterator last) {
     for (;first!=last; ++first) {
       // insert one by one before position
       FastList<T>::insert(position,*first);
@@ -154,7 +154,7 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastListConstIterator FastList<T>::erase(FastList<T>::FastListConstIterator it) {
+    typename FastList<T>::FastListConstIterator FastList<T>::erase(const FastList<T>::FastListConstIterator it) {
 
     // find entry in map to erase:
     std::string name = (*it).name;
@@ -175,7 +175,7 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastListConstIterator FastList<T>::erase(FastListConstIterator first, FastListConstIterator last) {
+    typename FastList<T>::FastListConstIterator FastList<T>::erase(const FastListConstIterator first, const FastListConstIterator last) {
     FastListConstIterator it=first;
     while (it!=last) {
       // erase one by one
