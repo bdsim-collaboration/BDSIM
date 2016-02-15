@@ -26,7 +26,9 @@ BDSSamplerSD::BDSSamplerSD(G4String name, G4String type):
   G4VSensitiveDetector(name),
   itsHCID(-1),
   SamplerCollection(nullptr),
-  itsType(type)
+  itsType(type),
+  registry(nullptr),
+  globals(nullptr)
 {
   itsCollectionName="Sampler_"+type;
   collectionName.insert(itsCollectionName);
@@ -40,10 +42,13 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
   // Create Sampler hits collection
   SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
 
-  // Record id for use in EventAction to save time
+  // Record id for use in EventAction to save time - slow string lookup by collection name
   if (itsHCID < 0)
     {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
   HCE->AddHitsCollection(itsHCID,SamplerCollection);
+
+  registry = BDSSamplerRegistry::Instance(); // cache pointer to registry
+  globals  = BDSGlobalConstants::Instance(); // cache pointer to globals
 }
 
 G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
