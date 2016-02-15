@@ -576,5 +576,3 @@ void BDSOutputROOTBase::WriteTrackerPrimaryLoss(TRKBunch* /*lostBunch*/, int /*t
   // so simply ascii output
   return;
 }
-
-#endif
