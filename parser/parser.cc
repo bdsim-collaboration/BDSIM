@@ -1,9 +1,39 @@
 #include "parser.h"
 
 #include <cmath>
+// for getpwuid: http://linux.die.net/man/3/getpwuid
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include "array.h"
 #include "sym_table.h"
+
+namespace {
+  // helper method
+  // replace algorithm of all substring instances
+  // from http://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
+  void replaceAll(std::string& source, const std::string& from, const std::string& to)
+  {
+    std::string newString;
+    newString.reserve( source.length() );  // avoids a few memory allocations
+    
+    std::string::size_type lastPos = 0;
+    std::string::size_type findPos;
+    
+    while( std::string::npos != ( findPos = source.find( from, lastPos )))
+      {
+        newString.append( source, lastPos, findPos - lastPos );
+        newString += to;
+        lastPos = findPos + from.length();
+      }
+
+    // Care for the rest after last occurrence
+    newString += source.substr( lastPos );
+    
+    source.swap( newString );
+  }
+}
 
 using namespace GMAD;
 
@@ -46,6 +76,14 @@ Parser::Parser(std::string name)
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
+  // replace all ~ symbols with home directory to allow for that
+  // note $HOME is not necessarily equivalent to ~
+  // see http://linux.die.net/man/3/getpwuid
+  std::string tilde("~");
+  std::string home(getpwuid(getuid())->pw_dir);
+
+  replaceAll(name,tilde,home);
+  
   FILE *f = fopen(name.c_str(),"r");
 
   if(f==nullptr) {
