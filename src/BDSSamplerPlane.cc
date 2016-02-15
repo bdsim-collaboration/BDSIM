@@ -8,7 +8,7 @@
 
 // geometry tolerance is 1e-8 and dz of the box must be > 1e-8
 // was 4e-8*m
-const G4double BDSSamplerPlane::chordLength = 100*CLHEP::nm;
+const G4double BDSSamplerPlane::chordLength = 40*CLHEP::nm;
 
 BDSSamplerPlane::BDSSamplerPlane(G4String      name,
 				 G4double      boxHalfWidth):
