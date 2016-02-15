@@ -35,7 +35,7 @@ BDSCavityType BDS::DetermineCavityType(G4String cavityType)
     }
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined cavity type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << " determined cavity type to be " << result->second << G4endl;
 #endif
   return result->second;
 }
