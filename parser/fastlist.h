@@ -12,7 +12,7 @@ namespace GMAD {
    * @brief List with Efficient Lookup
    * 
    * This class keeps a list of elements
-   * It has efficient lookup on an element's name (log n) by having a multimap 
+   * It has efficient lookup on an element's name (log n) by having a multimap between name and list position
    *
    * Used for beamline
    *
@@ -34,11 +34,15 @@ namespace GMAD {
     template <typename FastListInputIterator>
       FastListIterator insert(FastListInputIterator position, const T& val);
     template <typename FastListInputIterator>
-      void insert (FastListConstIterator position, FastListInputIterator first, FastListInputIterator last);
+      void insert (FastListConstIterator position, FastListInputIterator first, const FastListInputIterator last);
     ///@}
+    /// insert element before all elements with given name
+    /// exits if no element with name
+    void insert_before(std::string name, const T& val);
+    
     /// insert element at end of list
     /// option to check for unique element name (exits in case name is not unique), false by default
-    void push_back(T& el, bool unique=false);
+    void push_back(const T& el, bool unique=false);
 
     /// size of list
     int size()const;
@@ -46,8 +50,8 @@ namespace GMAD {
     void clear();
     ///@{ erase elements
     void erase();
-    FastListConstIterator erase (FastListConstIterator position);
-    FastListConstIterator erase (FastListConstIterator first, FastListConstIterator last);
+    FastListConstIterator erase (const FastListConstIterator position);
+    FastListConstIterator erase (const FastListConstIterator first, const FastListConstIterator last);
     ///@}
     ///@{ non-const begin/end iterator:
     FastListIterator begin();
@@ -65,7 +69,7 @@ namespace GMAD {
     FastListIterator find(std::string name,unsigned int count=1);
     ///@}
     /// lookup method, returns pair of iterators of list pointing (similar to std::multimap::equal_range)
-    std::pair<FastMapIterator,FastMapIterator> equal_range(std::string name);
+    FastMapIteratorPair equal_range(std::string name)const;
 
     /// print method
     void print(int ident=0)const;
@@ -91,7 +95,7 @@ namespace GMAD {
 
   template <typename T>
     template <typename FastListInputIterator>
-    void FastList<T>::insert(FastListConstIterator position, FastListInputIterator first, FastListInputIterator last) {
+    void FastList<T>::insert(FastListConstIterator position, FastListInputIterator first, const FastListInputIterator last) {
     for (;first!=last; ++first) {
       // insert one by one before position
       FastList<T>::insert(position,*first);
@@ -99,7 +103,26 @@ namespace GMAD {
   }
 
   template <typename T>
-    void FastList<T>::push_back(T& el, bool unique) {
+    void FastList<T>::insert_before(std::string name, const T& val) {
+    FastMapIteratorPair itPair = equal_range(name);
+    if (itPair.first==itPair.second) {
+      std::cerr<<"current list doesn't contain element "<< name << std::endl;
+      exit(1);
+    }
+    // first insert into list and only then into map, otherwise map iterators are invalidated(!)
+    std::vector<FastListIterator> listIterators;
+    for (FastMapIterator it = itPair.first; it != itPair.second; ++it)
+      {
+	FastListIterator listIt = itsList.insert(it->second,val);
+	listIterators.push_back(listIt);
+      }
+    for (FastListIterator it : listIterators) {
+      itsMap.insert(std::pair<std::string,FastListIterator>(val.name,it));
+    }
+  }
+  
+  template <typename T>
+    void FastList<T>::push_back(const T& el, bool unique) {
     // better to search in map (faster)
     if (unique && itsMap.find(el.name) != itsMap.end()) {
       std::cout << "ERROR: element already defined: " << el.name << std::endl;
@@ -131,7 +154,7 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastListConstIterator FastList<T>::erase(FastList<T>::FastListConstIterator it) {
+    typename FastList<T>::FastListConstIterator FastList<T>::erase(const FastList<T>::FastListConstIterator it) {
 
     // find entry in map to erase:
     std::string name = (*it).name;
@@ -139,7 +162,7 @@ namespace GMAD {
       itsMap.erase(name);
     }
     else { // more than one entry with same name 
-      std::pair<FastMapIterator,FastMapIterator> ret = itsMap.equal_range(name);
+      FastMapIteratorPair ret = itsMap.equal_range(name);
       for (FastMapIterator emit = ret.first; emit!=ret.second; ++emit) {
 	if ((*emit).second == it) // valid comparison? if not, how to find correct element?
 	  {
@@ -152,7 +175,7 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastListConstIterator FastList<T>::erase(FastListConstIterator first, FastListConstIterator last) {
+    typename FastList<T>::FastListConstIterator FastList<T>::erase(const FastListConstIterator first, const FastListConstIterator last) {
     FastListConstIterator it=first;
     while (it!=last) {
       // erase one by one
@@ -182,7 +205,7 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastMapIteratorPair FastList<T>::equal_range(std::string name) {
+    typename FastList<T>::FastMapIteratorPair FastList<T>::equal_range(std::string name)const {
     return itsMap.equal_range(name);
   }
 

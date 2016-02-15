@@ -1,5 +1,5 @@
-#ifndef BDSMAGNETOUTERINFO
-#define BDSMAGNETOUTERINFO
+#ifndef BDSMAGNETOUTERINFO_H
+#define BDSMAGNETOUTERINFO_H
 
 #include "BDSMagnetGeometryType.hh"
 #include "globals.hh"         // geant4 types / globals

@@ -1,5 +1,5 @@
-#ifndef BDSRunAction_h
-#define BDSRunAction_h 1
+#ifndef BDSRUNACTION_H
+#define BDSRUNACTION_H
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"

@@ -15,24 +15,15 @@
 #include "G4ParticleTable.hh"
 #include "G4FastSimulationManagerProcess.hh"
 
-#include "G4Version.hh"
-
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
 #include "G4ios.hh"
 #include "QGSP_BERT.hh"
 #include "QGSP_BERT_HP.hh"
-#if G4VERSION_NUMBER < 1000
-#include "HadronPhysicsQGSP_BERT.hh"
-#include "HadronPhysicsQGSP_BERT_HP.hh"
-#include "HadronPhysicsFTFP_BERT.hh"
-#include "HadronPhysicsLHEP.hh"
-#else
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
-#endif
 #include "G4Decay.hh"
 #include "G4eeToHadrons.hh"
 
@@ -78,11 +69,7 @@
 #include "G4MuIonisation.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuPairProduction.hh"
-#if G4VERSION_NUMBER < 953
-#include "G4MuNuclearInteraction.hh"
-#else 
 #include "G4MuonVDNuclearModel.hh"
-#endif
 
 //ions
 #include "G4hIonisation.hh"
@@ -133,10 +120,6 @@
 #include "G4QGSMFragmentation.hh"
 #include "G4ExcitedStringDecay.hh"
 
-#if G4VERSION_NUMBER < 1000
-#include "G4GammaNuclearReaction.hh"
-#include "G4ElectroNuclearReaction.hh"
-#endif
 #include "G4PhotoNuclearProcess.hh"
 #include "G4ElectronNuclearProcess.hh"
 #include "G4PositronNuclearProcess.hh"
@@ -265,11 +248,7 @@ void BDSPhysicsList::ConstructProcess()
   bool plistFound=false;
   //standard physics lists
   if(physicsListName == "QGSP_BERT"){
-#if G4VERSION_NUMBER < 1000
-    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
-#else
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();    
-#endif
     //    theReferenceHadronicPhysList_xsbias = new BDSXSBias(); 
     //    theReferenceHadronicPhysList_xsbias->RegisterProcess(theReferenceHadronicPhysList); 
     //    theReferenceHadronicPhysList_xsbias->eFactor(1);    
@@ -279,39 +258,23 @@ void BDSPhysicsList::ConstructProcess()
     theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
   } else if(physicsListName == "QGSP_BERT_HP"){
-#if G4VERSION_NUMBER < 1000
-    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
-#else
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
-#endif
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
   } else if (physicsListName == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
-#if G4VERSION_NUMBER < 1000
-    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
-#else
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
-#endif
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if (physicsListName == "QGSP_BERT_muon"){
-#if G4VERSION_NUMBER < 1000
-    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT();
-#else
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
-#endif
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
   } else if(physicsListName == "QGSP_BERT_HP_muon_em_low"){
-#if G4VERSION_NUMBER < 1000
-    theReferenceHadronicPhysList = new HadronPhysicsQGSP_BERT_HP();
-#else
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
-#endif
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     ConstructEM_Low_Energy();
@@ -430,11 +393,7 @@ void BDSPhysicsList::ConstructProcess()
   else if(physicsListName == "hadronic_QGSP_BERT") 
     {
       ConstructEM();
-#if G4VERSION_NUMBER < 1000
-      theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
-#else
       theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
-#endif
       theBDSIMPhysList->ConstructProcess();
     }
   
@@ -442,21 +401,13 @@ void BDSPhysicsList::ConstructProcess()
     {
       ConstructEM();
       ConstructMuon();
-#if G4VERSION_NUMBER < 1000
-      theBDSIMPhysList = new HadronPhysicsQGSP_BERT("hadron");
-#else
       theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
-#endif
       theBDSIMPhysList->ConstructProcess();
     }
   
   else if(physicsListName == "hadronic_FTFP_BERT"){
     ConstructEM();
-#if G4VERSION_NUMBER < 1000
-    theBDSIMPhysList = new HadronPhysicsFTFP_BERT;
-#else
     theBDSIMPhysList = new G4HadronPhysicsFTFP_BERT;
-#endif
     theBDSIMPhysList->ConstructProcess();
   }
   
@@ -464,11 +415,7 @@ void BDSPhysicsList::ConstructProcess()
     ConstructEM();
     ConstructMuon();
     ConstructHadronic();
-#if G4VERSION_NUMBER < 1000
-    theBDSIMPhysList = new HadronPhysicsQGSP_BERT_HP;
-#else
     theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT_HP;
-#endif
     theBDSIMPhysList->ConstructProcess();
   }
       
@@ -476,11 +423,7 @@ void BDSPhysicsList::ConstructProcess()
     G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
     ConstructEM();
     ConstructMuon();
-#if G4VERSION_NUMBER < 1000
-    theBDSIMPhysList = new HadronPhysicsFTFP_BERT;
-#else
     theBDSIMPhysList = new G4HadronPhysicsFTFP_BERT;
-#endif
     theBDSIMPhysList->ConstructProcess();
   }
   // physics list for laser wire - standard em stuff +
@@ -808,13 +751,13 @@ void BDSPhysicsList::ConstructMuon()
       //positron
       //===========ee to hadrons in development================
       G4eeToHadrons* eetohadrons = new G4eeToHadrons();
-      // BDSXSBias* eetohadrons_xsbias = new BDSXSBias();
-      // G4cout << "eeToHadronsXSBias = " << BDSGlobalConstants::Instance()->GetEeToHadronsFe() << G4endl;
+      BDSXSBias* eetohadrons_xsbias = new BDSXSBias();
+      //G4cout << "eeToHadronsXSBias = " << BDSGlobalConstants::Instance()->GetEeToHadronsFe() << G4endl;
       eetohadrons->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
-      //eetohadrons_xsbias->RegisterProcess(eetohadrons);
-      //eetohadrons_xsbias->eFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
-      //pmanager->AddDiscreteProcess(eetohadrons_xsbias);
-      pmanager->AddDiscreteProcess(eetohadrons);
+      eetohadrons_xsbias->RegisterProcess(eetohadrons);
+      eetohadrons_xsbias->eFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
+      pmanager->AddDiscreteProcess(eetohadrons_xsbias);
+      //pmanager->AddDiscreteProcess(eetohadrons);
       //-------------------------------------------------------
       G4AnnihiToMuPair* annihitomupair = new G4AnnihiToMuPair();
       BDSXSBias* annihitomupair_xsbias = new BDSXSBias();
@@ -836,11 +779,7 @@ void BDSPhysicsList::ConstructMuon()
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
-#if G4VERSION_NUMBER < 953
-	pmanager->AddDiscreteProcess(new G4MuNuclearInteraction);     
-#else 
 	/*	pmanager->AddDiscreteProcess(new G4MuonVDNuclearModel); */
-#endif
       }
     }
   }
@@ -898,10 +837,6 @@ void BDSPhysicsList::ConstructOptical()
   }
   if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
     theBoundaryProcess           = new G4OpBoundaryProcess();
-#if G4VERSION_NUMBER < 960
-    G4OpticalSurfaceModel themodel = unified;
-    theBoundaryProcess->SetModel(themodel);
-#endif
   }
 
   SetVerboseLevel(1);
@@ -1122,39 +1057,10 @@ void BDSPhysicsList::ConstructLaserWire()
 #include "G4AntiOmegaMinusInelasticProcess.hh"
 
 // Low-energy Models
-#if G4VERSION_NUMBER < 1000
-#include "G4LCapture.hh"
-#else
 #include "G4HadronElastic.hh"
 #include "G4NeutronRadCapture.hh"
-#endif
 
-#if G4VERSION_NUMBER < 1000
-#include "G4LEPionPlusInelastic.hh"
-#include "G4LEPionMinusInelastic.hh"
-#include "G4LEKaonPlusInelastic.hh"
-#include "G4LEKaonZeroSInelastic.hh"
-#include "G4LEKaonZeroLInelastic.hh"
-#include "G4LEKaonMinusInelastic.hh"
-#include "G4LEProtonInelastic.hh"
-#include "G4LEAntiProtonInelastic.hh"
-#include "G4LENeutronInelastic.hh"
-#include "G4LEAntiNeutronInelastic.hh"
-#include "G4LELambdaInelastic.hh"
-#include "G4LEAntiLambdaInelastic.hh"
-#include "G4LESigmaPlusInelastic.hh"
-#include "G4LESigmaMinusInelastic.hh"
-#include "G4LEAntiSigmaPlusInelastic.hh"
-#include "G4LEAntiSigmaMinusInelastic.hh"
-#include "G4LEXiZeroInelastic.hh"
-#include "G4LEXiMinusInelastic.hh"
-#include "G4LEAntiXiZeroInelastic.hh"
-#include "G4LEAntiXiMinusInelastic.hh"
-#include "G4LEOmegaMinusInelastic.hh"
-#include "G4LEAntiOmegaMinusInelastic.hh"
-#else
 #include "G4CascadeInterface.hh"
-#endif
 
 // -- generator models
 #include "G4TheoFSGenerator.hh"
@@ -1171,56 +1077,6 @@ void BDSPhysicsList::ConstructHadronic()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
-#if G4VERSION_NUMBER < 1000
-  G4NeutronBuilder* theNeutrons=new G4NeutronBuilder;
-  theNeutrons->RegisterMe(new G4LHEPNeutronBuilder);
-
-  G4ProtonBuilder * thePro=new G4ProtonBuilder;
-  thePro->RegisterMe(new G4LHEPProtonBuilder);
-
-  G4PiKBuilder * thePiK=new G4PiKBuilder;
-  thePiK->RegisterMe(new G4LHEPPiKBuilder);
-
-  theNeutrons->Build();
-  thePro->Build();
-  thePiK->Build();
-
-  // Photonuclear processes
-
-  G4PhotoNuclearProcess * thePhotoNuclearProcess = new G4PhotoNuclearProcess;
-  G4GammaNuclearReaction * theGammaReaction = new G4GammaNuclearReaction;
-  G4ElectronNuclearProcess * theElectronNuclearProcess = new G4ElectronNuclearProcess;
-  G4PositronNuclearProcess * thePositronNuclearProcess = new G4PositronNuclearProcess;
-  G4ElectroNuclearReaction * theElectroReaction = new G4ElectroNuclearReaction;
-  G4TheoFSGenerator * theModel = new G4TheoFSGenerator;
-  
-  G4QGSModel< G4GammaParticipants > * theStringModel = new G4QGSModel< G4GammaParticipants >;
-  G4ExcitedStringDecay * theStringDecay = new G4ExcitedStringDecay(/*theFragmentation=*/new G4QGSMFragmentation);
-  theStringModel->SetFragmentationModel(theStringDecay);
-  
-  G4GeneratorPrecompoundInterface * theCascade = new G4GeneratorPrecompoundInterface;
-  
-  theModel->SetTransport(theCascade);
-  theModel->SetHighEnergyGenerator(theStringModel);
-
-  G4ProcessManager * aProcMan = nullptr;
-  
-  aProcMan = G4Gamma::Gamma()->GetProcessManager();
-  theGammaReaction->SetMaxEnergy(3.5*CLHEP::GeV);
-  thePhotoNuclearProcess->RegisterMe(theGammaReaction);
-  theModel->SetMinEnergy(3.*CLHEP::GeV);
-  theModel->SetMaxEnergy(100*CLHEP::TeV);
-  thePhotoNuclearProcess->RegisterMe(theModel);
-  aProcMan->AddDiscreteProcess(thePhotoNuclearProcess);
-
-  aProcMan = G4Electron::Electron()->GetProcessManager();
-  theElectronNuclearProcess->RegisterMe(theElectroReaction);
-  aProcMan->AddDiscreteProcess(theElectronNuclearProcess);
-  
-  aProcMan = G4Positron::Positron()->GetProcessManager();
-  thePositronNuclearProcess->RegisterMe(theElectroReaction);
-  aProcMan->AddDiscreteProcess(thePositronNuclearProcess);
-#else
     /*
     From (14-7-14)
     http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/useCases.shtml  
@@ -1247,8 +1103,6 @@ void BDSPhysicsList::ConstructHadronic()
 
   theHadPhysList2 = new G4HadronPhysicsQGSP_BIC_HP();
   theHadPhysList2->ConstructProcess();
-
-#endif
 }
 
 void BDSPhysicsList::ConstructSR()

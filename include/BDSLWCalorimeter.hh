@@ -1,5 +1,5 @@
-#ifndef BDSLWCalorimeter_h
-#define BDSLWCalorimeter_h 1
+#ifndef BDSLWCALORIMETER_H
+#define BDSLWCALORIMETER_H
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"

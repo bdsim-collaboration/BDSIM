@@ -100,3 +100,6 @@ set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-array ${gmadBinary} array.gmad)
 set_tests_properties(gmad-array PROPERTIES PASS_REGULAR_EXPRESSION 32)
 add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)
+
+# test regions
+add_test(gmad-region ${gmadBinary} region.gmad)

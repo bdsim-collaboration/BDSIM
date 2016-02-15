@@ -1,7 +1,6 @@
-#ifndef BDSParticle_h
-#define BDSParticle_h 
+#ifndef BDSPARTICLE_H
+#define BDSPARTICLE_H 
 
-// GEANT4 types
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
 

@@ -1,11 +1,10 @@
-//Cross section biasing
-
-#ifndef GAMMACONVERSIONTOMUONS_HH
-#define GAMMACONVERSIONTOMUONS_HH
+#ifndef BDSXSBIAS_H
+#define BDSXSBIAS_H
 
 #include "G4WrapperProcess.hh"
 
-class BDSXSBias  :public G4WrapperProcess
+
+class BDSXSBias: public G4WrapperProcess
 {
 public: 
   //  destructor 
@@ -19,10 +18,7 @@ public: // with description
   //  copy constructor copies the name but does not copy the 
   //  physics table (0 pointer is assigned)
   BDSXSBias(const BDSXSBias &right);
-
-  ////////////////////////////
-  // DoIt    /////////////////
-  ///////////////////////////
+  
   virtual G4VParticleChange* PostStepDoIt(
 				  const G4Track& track,
 				  const G4Step&  stepData

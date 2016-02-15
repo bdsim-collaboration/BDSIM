@@ -1,5 +1,5 @@
-#ifndef BDSOutputVector_h
-#define BDSOutputVector_h 
+#ifndef BDSOUTPUTVECTOR_H
+#define BDSOUTPUTVECTOR_H 
 
 #include "BDSOutputBase.hh"
 

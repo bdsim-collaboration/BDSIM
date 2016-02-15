@@ -1,13 +1,13 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
-#ifndef BDSTerminatorSD_h
-#define BDSTerminatorSD_h
+#ifndef BDSTERMINATORSD_H
+#define BDSTERMINATORSD_H
 
 #include "G4VSensitiveDetector.hh"
+
+/**
+ * @brief Sensitivity that measures primary particle turns for terminator.
+ *
+ * @author Laurie Nevay
+ */
 
 class BDSTerminatorSD: public G4VSensitiveDetector
 {

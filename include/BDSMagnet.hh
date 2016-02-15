@@ -1,5 +1,5 @@
-#ifndef BDSMAGNET
-#define BDSMAGNET 
+#ifndef BDSMAGNET_H
+#define BDSMAGNET_H
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"

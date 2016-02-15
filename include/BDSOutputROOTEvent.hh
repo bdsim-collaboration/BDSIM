@@ -1,7 +1,5 @@
-#ifndef BDSOutputROOTEvent_h
-#define BDSOutputROOTEvent_h
-
-#ifdef USE_ROOT 
+#ifndef BDSOUTPUTROOTEVENT_H
+#define BDSOUTPUTROOTEVENT_H
 
 #include "globals.hh"
 
@@ -92,15 +90,13 @@ private:
   // output tree
   TTree *theRootOutputTree;
 
-  // primary structures 
+  // primary structure 
+  BDSOutputROOTEventSampler *primary;
 
   // sampler structures 
   std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
 
   // energy hit structures 
 };
-
-
-#endif
 
 #endif

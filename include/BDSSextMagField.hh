@@ -1,5 +1,5 @@
-#ifndef BDSSEXTMAGFIELD
-#define BDSSEXTMAGFIELD
+#ifndef BDSSEXTMAGFIELD_H
+#define BDSSEXTMAGFIELD_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"
@@ -24,4 +24,4 @@ private:
 inline void BDSSextMagField::SetBDblPrime(G4double aBDblePrime)
 { itsBDblePrime = aBDblePrime; }
 
-#endif /* BDSSEXTMAGFIELD */
+#endif

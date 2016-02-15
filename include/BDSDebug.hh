@@ -1,5 +1,5 @@
-#ifndef BDSDebug_h
-#define BDSDebug_h
+#ifndef BDSDEBUG_H
+#define BDSDEBUG_H
 
 #include <cstddef>
 #include <cstdio>

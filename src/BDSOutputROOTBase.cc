@@ -1,4 +1,3 @@
-#ifdef USE_ROOT
 #include "BDSOutputROOTBase.hh"
 
 #include "BDSDebug.hh"
@@ -20,6 +19,8 @@ BDSOutputROOTBase::BDSOutputROOTBase()
   EnergyLossTree                = nullptr;
   PrimaryHitsTree               = nullptr;
   PrimaryLossTree               = nullptr;
+  TunnelLossTree                = nullptr;
+  tunnelHitsHisto               = nullptr;
 }
 
 BDSOutputROOTBase::~BDSOutputROOTBase()
@@ -244,8 +245,17 @@ void BDSOutputROOTBase::WriteRootHit(TTree*   Tree,
   turnnumber  = turnsTakenIn;
   process     = processIn;
 
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - weightIn = " << weightIn << G4endl;
+  G4cout << __METHOD_NAME__ << " - weight = " << weight << G4endl;
+#endif
+
   if (fillTree)
-    {Tree->Fill();}
+    {Tree->Fill();
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " - filled tree with weight: " << weight << G4endl;
+#endif
+    }
 }
 
 void BDSOutputROOTBase::WriteRootHit(TTree*         tree,
@@ -269,8 +279,17 @@ void BDSOutputROOTBase::WriteRootHit(TTree*         tree,
   turnnumber  = hit->GetTurnsTaken();
   process     = hit->GetProcess();
 
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - weightIn = " << hit->GetWeight() << G4endl;
+  G4cout << __METHOD_NAME__ << " - weight = " << weight << G4endl;
+#endif
+
   if (fillTree)
-    {tree->Fill();}
+    {tree->Fill();
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " - filled tree with weight: " << weight << G4endl;
+#endif
+    }
 }
 
 void BDSOutputROOTBase::WritePrimary(G4double totalEnergy,
@@ -313,7 +332,7 @@ void BDSOutputROOTBase::WriteHits(BDSSamplerHitsCollection *hc)
     {
       G4String name = (*hc)[i]->GetName();
 #ifdef BDSDEBUG
-      G4cout << "Writing hit to sampler " << name << G4endl;
+      G4cout << __METHOD_NAME__ << "Writing hit to sampler " << name << G4endl;
 #endif
       // convert name to tree
       TTree* tree = nullptr;

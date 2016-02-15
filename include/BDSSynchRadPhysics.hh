@@ -1,5 +1,5 @@
-#ifndef __BDS_SYNCH_RAD_PHYSICS_HH_
-#define __BDS_SYNCH_RAD_PHYSICS_HH_
+#ifndef BDSSYNCHRADPHYSICS_H
+#define BDSSYNCHRADPHYSICS_H
 
 #include "G4VPhysicsConstructor.hh"
 #include "G4SynchrotronRadiation.hh"

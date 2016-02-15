@@ -1,9 +1,39 @@
 #include "parser.h"
 
 #include <cmath>
+// for getpwuid: http://linux.die.net/man/3/getpwuid
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include "array.h"
 #include "sym_table.h"
+
+namespace {
+  // helper method
+  // replace algorithm of all substring instances
+  // from http://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
+  void replaceAll(std::string& source, const std::string& from, const std::string& to)
+  {
+    std::string newString;
+    newString.reserve( source.length() );  // avoids a few memory allocations
+    
+    std::string::size_type lastPos = 0;
+    std::string::size_type findPos;
+    
+    while( std::string::npos != ( findPos = source.find( from, lastPos )))
+      {
+        newString.append( source, lastPos, findPos - lastPos );
+        newString += to;
+        lastPos = findPos + from.length();
+      }
+
+    // Care for the rest after last occurrence
+    newString += source.substr( lastPos );
+    
+    source.swap( newString );
+  }
+}
 
 using namespace GMAD;
 
@@ -46,6 +76,14 @@ Parser::Parser(std::string name)
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
+  // replace all ~ symbols with home directory to allow for that
+  // note $HOME is not necessarily equivalent to ~
+  // see http://linux.die.net/man/3/getpwuid
+  std::string tilde("~");
+  std::string home(getpwuid(getuid())->pw_dir);
+
+  replaceAll(name,tilde,home);
+  
   FILE *f = fopen(name.c_str(),"r");
 
   if(f==nullptr) {
@@ -142,9 +180,16 @@ void Parser::Initialise()
   add_var("ns" ,1.e-9,reserved);
   add_var("ps" ,1.e-12,reserved);
 
+  add_var("Hz" ,1.0,  reserved);
+  add_var("kHz",1e+3, reserved);
+  add_var("MHz",1e+6, reserved);
+  add_var("GHz",1e+9, reserved);
+
   add_var("rad" ,1.0  ,reserved);
   add_var("mrad",1.e-3,reserved);
   add_var("urad",1.e-6,reserved);
+
+  add_var("degrees",std::atan(1)/45,reserved);
 
   add_var("clight",2.99792458e+8,reserved);
 
@@ -400,13 +445,7 @@ void Parser::add_element(Element& e, std::string before, int before_count, Eleme
   // if before_count equal to -1 add to all element instances
   else if (before_count==-1)
     {
-      auto itPair = beamline_list.equal_range(before);
-      if (itPair.first==itPair.second) {
-	std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
-	exit(1);
-      }
-      for (auto it = itPair.first; it!= itPair.second; ++it) 
-	{beamline_list.insert(it->second,e);}
+      beamline_list.insert_before(before,e);
     }
   else
     {
@@ -472,6 +511,18 @@ void Parser::add_dump(std::string name, int before_count, ElementType type)
   add_element(e, name, before_count, type);
 }
 
+void Parser::add_region()
+{
+  // copy from global
+  Region t(region);
+  // reset region
+  region.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  region_list.push_back(t);
+}
+
 void Parser::add_tunnel()
 {
   // copy from global
@@ -482,6 +533,18 @@ void Parser::add_tunnel()
   t.print();
 #endif
   tunnel_list.push_back(t);
+}
+
+void Parser::add_cavitymodel()
+{
+  // copy from global
+  CavityModel c(cavitymodel);
+  // reset cavitymodel
+  cavitymodel.clear();
+#ifdef BDSDEBUG 
+  c.print();
+#endif
+  cavitymodel_list.push_back(c);
 }
 
 void Parser::add_xsecbias()

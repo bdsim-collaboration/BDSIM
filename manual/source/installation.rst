@@ -30,14 +30,12 @@ use the following commands::
 Requirements
 ============
 
-1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.9.6 or higher.
+0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
+1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher.
 2) `CMake`_ 2.6.4 or higher
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher
-
-Optional dependencies
-  
 6) `ROOT`_ framework for output analysis
 
 Note, even though installed, the Geant4 environmental variables must be
@@ -70,7 +68,7 @@ The following sections detail the setup process for different operating systems.
 Mac OSX
 -------
 
-We recommend obtaining `required packages <Requirements>`_ using `MacPorts`_ package manager,
+We recommend obtaining `required packages`_ using `MacPorts`_ package manager,
 although they can be obtained both through other package managers and by
 manually downloading, compiling and installing the source for each.
 
@@ -79,13 +77,12 @@ After this, `Building`_ can be started.
 Linux
 -----
 
-Install the `required packages <Requirements>`_ preferably with a
+Install the `required packages`_ preferably with a
 package manager.
 
-For Scientific Linux 5 you will have to use Geant 4.9.6 as Geant 4.10 onwards is not compatible.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
-For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.1.  
+For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.2.
 
 After this, `Building`_ can be started.
 
@@ -107,7 +104,7 @@ The following scripts must be sourced before using CMake.
 
 For the versions 0.61 and onwards::
 
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc47-setup.sh
+  source /afs/cern.ch/user/j/jsnuveri/public/gcc49-setup.sh
   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
 
 For version 0.6 and older::
@@ -156,7 +153,6 @@ This typically produces the following output, which is slightly different on eac
   -- Found CLHEP 2.2.0.5 in /opt/local/lib/CLHEP-2.2.0.5/../../include
   -- Looking for ROOT...
   -- Found ROOT 5.34/32 in /opt/local/libexec/root5
-  -- ROOT support ON
   -- GDML support ON
   -- Looking for XML2... - found
   -- LCDD support ON
@@ -273,23 +269,23 @@ to make the Doxygen documentation in a folder called ``Doxygen``.
 Geant4 Installation Guide
 -------------------------
 
-As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.9.6 onwards).
-If not built with **MacPorts** then download the 4.10.01 version or an older version from the
+As of version 0.6, BDSIM builds with the most recent versions of Geant4 (version 4.10 onwards).
+If not built with **MacPorts** then download the 4.10.2 version or an older version from the
 Geant archive. Move and unpack to a suitable place ::
 
-  > tar -xzf geant4.10.04.tar.gz
+  > tar -xzf geant4.10.2.tar.gz
   > ls
-  geant4.10.04
+  geant4.10.2
 
 Make a build and installation directory **outside** that directory ::
   
-  > mkdir geant4.10.04-build
-  > mkdir geant4.10.04-install
+  > mkdir geant4.10.2-build
+  > mkdir geant4.10.2-install
 
 Configure Geant4 using CMake ::
 
-  > cd geant4.10.04-build
-  > cmake ../geant4.10.04
+  > cd geant4.10.2-build
+  > cmake ../geant4.10.2
 
 At this point it's useful to define the installation directory for Geant4 by
 modifying the CMake configuration as generally described in
@@ -322,7 +318,7 @@ in a colder that requires ``sudo`` permissions such as ``/usr/local/``.
 **IMPORTANT** - you should source the Geant4 environment each time before running
 BDSIM as this is required for the physics models of Geant4.  This can be done using ::
 
-  > source path/to/geant4.10.04-install/bin/geant4.sh
+  > source path/to/geant4.10.2-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
@@ -410,3 +406,5 @@ please contact us (see :ref:`support-section`).
 .. _Geant4: http://geant4.cern.ch/
 .. _Macports: http://www.macports.org/
 .. _ROOT: http://root.cern.ch/
+
+.. _`required packages`: `Requirements`_

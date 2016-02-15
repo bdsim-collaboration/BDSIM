@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+#################################
 Welcome to BDSIM's documentation!
-=================================
+#################################
 
 Contents:
 
@@ -17,6 +18,7 @@ Contents:
    installation
    running
    model_description
+   extendedgeometry
    model_preparation
    output
    output_analysis
@@ -27,10 +29,28 @@ Contents:
 
 .. toctree::
    :maxdepth: 1
-
-   appendix1_tracking
-   appendix2_geometry
+   
    history
+
+#######################
+Developer Documentation
+#######################
+   
+.. toctree::
+   :maxdepth: 2
+   
+   dev_introduction
+   dev_styleguide
+   dev_release
+   dev_programlayout
+   dev_buildsystem
+   dev_parser
+   dev_geantusage
+   dev_geometry
+   dev_fields
+   dev_tracking
+   dev_analysisoutput
+   dev_analysissuite
 
 Indices and tables
 ==================

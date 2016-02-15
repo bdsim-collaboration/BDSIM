@@ -10,11 +10,13 @@
 
 #ifdef USE_GDML
 
-#ifndef BDSGeometryGDML_h
-#define BDSGeometryGDML_h 1
+#ifndef BDSGEOMETRYGDML_H
+#define BDSGEOMETRYGDML_H
+
 #include "G4LogicalVolume.hh"
 
-class BDSGeometryGDML {
+class BDSGeometryGDML
+{
 public:
   BDSGeometryGDML(G4String GMDLfile);
   ~BDSGeometryGDML();

@@ -12,7 +12,7 @@ find_python_module(pymadx QUIET)
 # configure tester with correct BDSIM and MadX executables
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/run_bdsimMadx.py.in ${CMAKE_CURRENT_BINARY_DIR}/run_bdsimMadx.py)
 
-if (MADX_FOUND AND USE_ROOT AND USE_ROBDSIM AND PY_ROOT_NUMPY AND PY_PYBDSIM AND PY_PYMADX)
+if (MADX_FOUND AND USE_ROBDSIM AND PY_ROOT_NUMPY AND PY_PYBDSIM AND PY_PYMADX)
   message(STATUS "Tracking tests enabled")
   message(STATUS "Found MadX: ${MADX_EXECUTABLE}")
   # add tests

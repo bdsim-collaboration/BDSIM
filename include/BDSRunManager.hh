@@ -1,13 +1,5 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-// $Id: BDSRunManager.hh,v 1.2 2007/07/18 13:35:01 malton Exp $
-// GEANT4 tag $Name:  $
-#ifndef BDSRunManager_h
-#define BDSRunManager_h 1
+#ifndef BDSRUNMANAGER_H
+#define BDSRUNMANAGER_H
 
 #include "G4RunManager.hh"
 

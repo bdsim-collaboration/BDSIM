@@ -1,16 +1,7 @@
-#ifdef USE_ROOT
 #include "BDSOutputROOT.hh"
-#include "BDSOutputROOTBase.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
-#include "BDSSamplerBase.hh"
-#include "BDSTrajectory.hh"
-#include "BDSUtilities.hh"
-#include "BDSHistogram.hh"
 
-#include <string>
-// #define BDSDEBUG
 BDSOutputROOT::BDSOutputROOT()
 {
 #ifdef BDSDEBUG
@@ -29,5 +20,3 @@ TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
 #endif
   return BDSOutputROOTBase::BuildSamplerTreeBasic(name);
 }
-
-#endif

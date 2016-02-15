@@ -64,6 +64,7 @@ emittances                      [pi m mrad]
 density                         [g/cm :math:`^{3}` ] 
 temperature                     [K] (Kelvin)
 pressure                        [atm] (atmosphere)
+frequency                       [Hz] (Hertz)
 mass number                     [g/mol]
 ==============================  =========================
 
@@ -96,6 +97,10 @@ ms          :math:`10^{-3}`
 us          :math:`10^{-6}`
 ns          :math:`10^{-9}`
 ps          :math:`10^{-12}`
+Hz          1
+kHz         :math:`10^{3}`
+MHz         :math:`10^{6}`
+GHz         :math:`10^{9}`
 ==========  =================================
 
 For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD
@@ -684,7 +689,7 @@ Examples::
    detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
    detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
 
-For specific details on the geometry format, see :ref:`appendix2_geometry`
+For specific details on the geometry format, see :ref:`extendedgeometry`
 
 marker
 ^^^^^^
@@ -1571,10 +1576,26 @@ range from `-envelopeX` to `envelopeX` for example.
 square
 ^^^^^^
 
-This distribution has the same properties and parameters as the `circle`_ distribution with the
+This distribution has similar properties to the `circle`_ distribution with the
 exception that the particles are randomly uniformly distributed within a square.
 
 * All parameters from `reference`_ distribution as used as centroids.
+
++----------------------------------+-------------------------------------------------------+
+| Option                           | Description                                           |
++==================================+=======================================================+
+| `envelopeX`                      | Maximum position in X [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeXp`                     | Maximum canonical momentum in X                       |
++----------------------------------+-------------------------------------------------------+
+| `envelopeY`                      | Maximum position in Y [m]                             |
++----------------------------------+-------------------------------------------------------+
+| `envelopeYp`                     | Maximum canonical momentum in Y                       |
++----------------------------------+-------------------------------------------------------+
+| `envelopeT`                      | Maximum time offset [s]                               |
++----------------------------------+-------------------------------------------------------+
+| `envelopeE`                      | Maximum energy offset [GeV]                           |
++----------------------------------+-------------------------------------------------------+
 
 
 ring

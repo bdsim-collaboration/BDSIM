@@ -1,5 +1,5 @@
-#ifndef BDSTELEPORTERSTEPPER_HH
-#define BDSTELEPORTERSTEPPER_HH
+#ifndef BDSTELEPORTERSTEPPER_H
+#define BDSTELEPORTERSTEPPER_H
 
 #include "BDSAuxiliaryNavigator.hh"
 
@@ -13,7 +13,7 @@ class BDSTeleporterStepper:
   public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
-  BDSTeleporterStepper(G4Mag_EqRhs *EqRhs);
+  BDSTeleporterStepper(G4Mag_EqRhs* EqRhs);
   ~BDSTeleporterStepper();
   
   void Stepper(const G4double y[],

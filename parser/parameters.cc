@@ -59,6 +59,7 @@ Parameters::Parameters() {
   setMap["blmLocZ"] = false;  setMap["blmLocTheta"] = false;
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["precisionRegion"] = false;
+  setMap["region"] = false;
 
   setMap["A"] = false;
   setMap["Z"] = false;
@@ -75,7 +76,8 @@ Parameters::Parameters() {
   setMap["windowmaterial"] = false;
   setMap["airmaterial"] = false;
   setMap["spec"] = false;
-  
+  setMap["cavityModel"] = false;
+
   setMap["numberWedges"] = false;
   setMap["wedgeLength"] = false;
   setMap["degraderHeight"] = false;

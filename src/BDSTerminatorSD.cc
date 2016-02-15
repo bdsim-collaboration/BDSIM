@@ -33,19 +33,6 @@ void BDSTerminatorSD::Initialize(G4HCofThisEvent* /*HCE*/)
 
 G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
-  // feedback info but only every 10 turns to avoid slow down and output bloat
-  if (turnstaken % 10 == 0)
-    {
-      // save flags since G4cout flags are changed
-      std::ios_base::fmtflags ff = G4cout.flags();
-      G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
-	     << turnstaken << " / " << std::left 
-	     << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
-      // reset flags
-      G4cout.flags(ff);
-    }
-  
   G4Track* theTrack    = aStep->GetTrack();
   G4int parentID       = theTrack->GetParentID();
   G4double trackLength = theTrack->GetTrackLength();
@@ -63,8 +50,24 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       G4cout << __METHOD_NAME__ << "Primary particle - incrementing turn number" << G4endl;
       G4cout << __METHOD_NAME__ << "Track length is : " << trackLength << " m" << G4endl;
       G4cout << __METHOD_NAME__ << "Turn number is  : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
-#endif   
+#endif
+      G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+      // feedback info but only every 10 turns to avoid slow down and output bloat
+      if (turnstaken % 10 == 0)
+	{
+	  // save flags since G4cout flags are changed
+	  std::ios_base::fmtflags ff = G4cout.flags();
+	  if (turnstaken == 0)
+	    {turnstaken += 1;}
+	  G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
+		 << turnstaken << " / " << std::left 
+		 << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
+	  // reset flags
+	  G4cout.flags(ff);
+	}
+      
       BDSGlobalConstants::Instance()->IncrementTurnNumber();
+      
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "New turn number : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
 #endif

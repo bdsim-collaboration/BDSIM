@@ -1,7 +1,6 @@
 #ifndef __OPTIONS_H
 #define __OPTIONS_H
 
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <string>

@@ -85,6 +85,7 @@ void Element::PublishMembers()
   publish("psi",&Element::psi);
   publish("gradient",&Element::gradient);
   publish("precisionRegion",&Element::precisionRegion);
+  publish("region",&Element::region);
   publish("A",&Element::A);
   publish("Z",&Element::Z);
   publish("density",&Element::density);
@@ -111,6 +112,7 @@ void Element::PublishMembers()
   publish("windowmaterial",&Element::windowmaterial);
   publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
+  publish("cavityModel",&Element::cavityModel);
   publish("state",&Element::state);
   publish("symbol",&Element::symbol);
   publish("bias",&Element::bias);
@@ -269,7 +271,8 @@ void Element::flush() {
   biasVacuumList.clear();
   
   precisionRegion = 0;
-
+  region = "";
+  
   A = 0;
   Z = 0;
   density = 0;      //g*cm-3
@@ -289,6 +292,7 @@ void Element::flush() {
   scintmaterial = "";
   airmaterial="";
   spec = "";
+  cavityModel = "";
 }
 
 double Element::property_lookup(std::string property_name)const{

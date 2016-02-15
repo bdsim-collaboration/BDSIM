@@ -1,5 +1,5 @@
-#ifndef BDSTeleporter_h
-#define BDSTeleporter_h 1
+#ifndef BDSTELEPORTER_H
+#define BDSTELEPORTER_H
 
 #include "BDSTeleporterStepper.hh"
 #include "G4ChordFinder.hh"
@@ -8,6 +8,8 @@
 #include "BDSMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "BDSBeamline.hh"
+
+class G4MagInt_Driver;
 
 class BDSTeleporter: public BDSAcceleratorComponent
 {
@@ -22,6 +24,7 @@ protected:
   G4MagIntegratorStepper* itsStepper;
   BDSMagField*            itsMagField;
   G4Mag_UsualEqRhs*       itsEqRhs;
+  G4MagInt_Driver*        magIntDriver;
 
 private:
   virtual void Build();
@@ -29,7 +32,7 @@ private:
   /// define field and stepper
   void BuildBPFieldAndStepper();
   /// build and set field manager and chord finder
-  void BuildBPFieldMgr(G4MagIntegratorStepper* stepper,G4MagneticField* field);
+  void BuildBPFieldMgr();
 };
 
 namespace BDS {
