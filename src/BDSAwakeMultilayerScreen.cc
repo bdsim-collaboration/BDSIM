@@ -4,6 +4,7 @@
 #include "G4TwoVector.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 
 BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
 						   G4double thickness,
@@ -58,7 +59,7 @@ void BDSAwakeMultilayerScreen::layers()
 
 void BDSAwakeMultilayerScreen::sampler(G4String name)
 {
-  G4int nThisSampler = BDSSampler::NumberOfExistingSamplers()+1;
+  G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers()+1;
   G4String samplerName = "Sampler_" + std::to_string(nThisSampler) + "_" + name;
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),
 					   samplerName,

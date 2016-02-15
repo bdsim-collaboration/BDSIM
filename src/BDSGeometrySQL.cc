@@ -22,8 +22,9 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSPCLTube.hh"
-#include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
 #include <string>
@@ -604,7 +605,8 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
   
   aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  G4int samplerID = BDSSampler::AddExternalSampler(std::to_string(BDSSampler::NumberOfExistingSamplers())+"_"+_Name+"_1");
+  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(_Name,nullptr);
+  
   samplerIDs[aSamplerVol] = samplerID;
   
   return aSamplerVol;

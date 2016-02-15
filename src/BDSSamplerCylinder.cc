@@ -8,10 +8,9 @@
 #include "G4Tubs.hh"
 
 BDSSamplerCylinder::BDSSamplerCylinder(G4String      name,
-				       G4Transform3D transform,
 				       G4double      length,
 				       G4double      radius):
-  BDSSampler(name, transform)
+  BDSSampler(name)
 {
   containerSolid = new G4Tubs(name + "_solid",      // name
 			      radius - 1*CLHEP::um, // inner radius

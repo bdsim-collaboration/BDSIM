@@ -18,10 +18,9 @@ class BDSSamplerSD;
 class BDSSamplerCylinder: public BDSSampler
 {
 public:
-  BDSSamplerCylinder(G4String      name,
-		     G4Transform3D transform,
-		     G4double      lengthIn,
-		     G4double      radiusIn);
+  BDSSamplerCylinder(G4String name,
+		     G4double lengthIn,
+		     G4double radiusIn);
 
   virtual ~BDSSamplerCylinder(){;}
 

@@ -5,6 +5,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSHistogram.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSTrajectory.hh"
 #include "BDSUtilities.hh"
 
@@ -92,7 +93,7 @@ void BDSOutputROOTBase::Init()
   // Build sampler trees and store in samplerTrees
   // clear (for the case of multiple output files)
   samplerTrees.clear();
-  samplerTrees.reserve((size_t)BDSSampler::NumberOfExistingSamplers);
+  samplerTrees.reserve(BDSSamplerRegistry::Instance()->size());
   
   G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
@@ -102,7 +103,7 @@ void BDSOutputROOTBase::Init()
   // primaries is the first
   samplerTrees.push_back(sampler);
 
-  for (auto const samplerName : BDSSampler::GetNames())
+  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
     {
       G4String name = samplerName;
       // Check if a tree by this name already exists (name has to be unique)

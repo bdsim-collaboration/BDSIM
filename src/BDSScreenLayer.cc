@@ -2,6 +2,7 @@
 #include "BDSScreenLayer.hh"
 #include "BDSMaterials.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "G4Box.hh"
@@ -182,7 +183,7 @@ void BDSScreenLayer::sampler()
   G4String samplerName = _name + "_1";
 
   _log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  copyNumber = BDSSampler::AddExternalSampler(samplerName);
+  copyNumber = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;

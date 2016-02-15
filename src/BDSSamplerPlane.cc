@@ -5,15 +5,14 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Transform3D.hh"
 
 // geometry tolerance is 1e-8 and dz of the box must be > 1e-8
-const G4double BDSSamplerPlane::chordLength = 4e-8*CLHEP::m;
+// was 4e-8*m
+const G4double BDSSamplerPlane::chordLength = 100*CLHEP::nm;
 
 BDSSamplerPlane::BDSSamplerPlane(G4String      name,
-				 G4Transform3D transform,
 				 G4double      boxHalfWidth):
-  BDSSampler(name, transform)
+  BDSSampler(name)
 {
   containerSolid = new G4Box(name + "_solid",
 			     boxHalfWidth,

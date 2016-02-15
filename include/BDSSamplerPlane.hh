@@ -18,9 +18,8 @@
 class BDSSamplerPlane: public BDSSampler
 {
 public:
-  BDSSamplerPlane(G4String      name,
-		  G4Transform3D transform,
-		  G4double      boxHalfWidth);
+  BDSSamplerPlane(G4String name,
+		  G4double boxHalfWidth);
 
   virtual ~BDSSamplerPlane(){;}
 
