@@ -65,7 +65,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   if (samplerType == BDSSamplerType::plane)
     {
       G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
-      dZLocal *= 0.5*BDSSamplerPlane::ChordLength();
+      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() - 100*CLHEP::nm; // back off to avoid overlaps
       dZLocal.transform(*referenceRotationStart);
       G4ThreeVector samplerPosition = referencePositionStart + dZLocal;
       samplerPlacementTransform = new G4Transform3D(*referenceRotationStart, samplerPosition);
@@ -84,7 +84,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationEnd;
   delete placementTransform;
   delete readOutPlacementTransform;
-    //delete samplerPlacementTransform; // this seems to be deleted by the placement
+  //delete samplerPlacementTransform; // this seems to be deleted by the placement
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
