@@ -8,7 +8,7 @@
  * @brief Type definition for field formats - 
  * used for comparison in factory methods.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 struct fieldtypes_def
@@ -22,7 +22,7 @@ typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
 
 namespace BDS
 {
-  /// function that gives corresponding enum value for string (case-insensitive)
+  /// Function that gives corresponding enum value for string (case-insensitive)
   BDSFieldType DetermineFieldType(G4String fieldType);
 }
 

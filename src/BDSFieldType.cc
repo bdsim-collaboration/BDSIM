@@ -3,8 +3,9 @@
 #include "globals.hh"
 
 #include <map>
+#include <string>
 
-// dictionary for BDSFieldType for relexivity
+// dictionary for BDSFieldType for reflexivity
 template<>
 std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
   new std::map<BDSFieldType, std::string> ({
@@ -44,7 +45,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << " " << bType << " is not a valid field type" << G4endl;
+      G4cerr << __METHOD_NAME__ << bType << " is not a valid field type" << G4endl;
 
       G4cout << "Available field types are:" << G4endl;
       for (auto it : types)

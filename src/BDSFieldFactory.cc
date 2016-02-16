@@ -235,14 +235,14 @@ void BDSFieldFactory::CreateOuterMultipole(const BDSMagnetType      /*type*/,
 {
   bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
   bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-  integrator  = new G4ClassicalRK4(bEqOfMotion);
+  integrator   = new G4ClassicalRK4(bEqOfMotion);
   FinalConstruction();
 }
 
 void BDSFieldFactory::IntermediateConstruction()
 {
   bGlobalField = new BDSFieldMagGlobal(bdsField);
-  bEqOfMotion = new G4Mag_UsualEqRhs(bGlobalField);
+  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
 }
 
 void BDSFieldFactory::FinalConstruction()

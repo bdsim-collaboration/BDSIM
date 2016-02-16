@@ -7,10 +7,9 @@
 class G4Material;
 
 /**
- * @brief Holder struct of all Geometrical (only) information required to
- * create an RF cavity. Geant4 units are assumed by classes that use instances
- * of this class.
+ * @brief Holder for all Geometrical information required to create an RF cavity. 
  * 
+ * Geant4 units are assumed by classes that use instances of this class.
  * This reduces the number of argument to constructors 
  * plus aggregates common tasks in the component factory.
  * 
