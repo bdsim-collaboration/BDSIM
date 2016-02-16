@@ -395,17 +395,12 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
   for (int i = 0; i < nSbends; ++i)
     {
       thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
-      // Input and output angles when no poleface rotation
-      if ((!BDS::IsFinite(element->e1))&&(!BDS::IsFinite(element->e2)))
-        {
-          angleIn = -semiangle*0.5;
-          angleOut = -semiangle*0.5;
-        }
-      else  // Input and output angles with poleface rotation
-        {
-          angleIn    = -0.5*element->angle/nSbends;
-          angleOut   = -0.5*element->angle/nSbends;
+      angleIn = -semiangle*0.5;
+      angleOut = -semiangle*0.5;
 
+      // Input and output angles when no poleface rotation
+      if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
+        {
           if (i < 0.5*(nSbends-1))
             {
               angleIn -= (element->e1 + (i*deltastart));
