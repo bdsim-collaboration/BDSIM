@@ -9,10 +9,10 @@
 BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 			   G4double           brhoIn,
 			   BDSIntegratorType  integratorTypeIn,
-			   G4Transform3D      transformIn             = G4Transform3D(),
-			   BDSMagnetStrength* magnetStrengthIn        = nullptr,
-			   G4String           magneticFieldFilePathIn = "",
-			   G4String           electricFieldFilePathIn = ""):
+			   G4Transform3D      transformIn,
+			   BDSMagnetStrength* magnetStrengthIn,
+			   G4String           magneticFieldFilePathIn,
+			   G4String           electricFieldFilePathIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),

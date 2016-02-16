@@ -3,6 +3,8 @@
 
 #include "BDSTypeSafeEnum.hh"
 
+#include "globals.hh" // geant4 types / globals
+
 /**
  * @brief Type definition for integrators.
  * 
@@ -19,7 +21,7 @@ struct integratortypes_def
 	     g4nystromrk4, g4rkg3stepper};
 };
 
-typdef BDSTypeSafeEnum<integratortypes_def,int> BDSIntegratorType;
+typedef BDSTypeSafeEnum<integratortypes_def,int> BDSIntegratorType;
 
 namespace BDS
 {

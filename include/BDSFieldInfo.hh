@@ -33,7 +33,7 @@ public:
 	       G4String           electricFieldFilePathIn = "");
   ~BDSFieldInfo();
 
-  const BDSFieldType       fieldtype;
+  const BDSFieldType       fieldType;
   const G4double           brho;
   const BDSIntegratorType  integratorType;
   const G4Transform3D      transform;  ///< Transform w.r.t. solid field will be attached to
