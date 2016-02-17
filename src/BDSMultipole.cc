@@ -344,7 +344,7 @@ void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* Rot
     }
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - beam pipe material = " << material->GetName() << " for beamline component " << name << G4endl;
+  G4cout << __METHOD_NAME__ << " - beam pipe material = " << material->GetName() << " for beamline component " << itsName << G4endl;
 #endif    
 
   itsBeampipeLogicalVolume=	
