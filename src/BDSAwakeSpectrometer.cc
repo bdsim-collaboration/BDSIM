@@ -40,6 +40,13 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
     _vacuumChamberType=1;
   }
 
+  try{
+    _magnetGeometryType=getParameterValueInt(spec,"magnetGeometryType");
+  } catch(boost::bad_lexical_cast&){
+    //If the cast fails, set magnet geometry type to 1
+    _magnetGeometryType=1;
+  }
+
 
   //Set as part of precision region (for energy loss monitoring)
   itsPrecisionRegion=1;
@@ -252,8 +259,8 @@ void BDSAwakeSpectrometer::SetVisAttributes()
 }
 
 void BDSAwakeSpectrometer::BuildMagnet(){
-  BuildYoke();
-  BuildCoils();
+    BuildYoke();
+    BuildCoils();
 }
 
 void BDSAwakeSpectrometer::BuildCoils(){
@@ -607,8 +614,17 @@ void BDSAwakeSpectrometer::Build(){
       //	BuildTunnel();
       //      }
       AddSensitiveVolume(itsMarkerLogicalVolume);
-      BuildMagnet();
-      PlaceMagnet();
+      switch(_magnetGeometryType){
+      case 0:
+	break;
+      case 1:
+	BuildMagnet();
+	PlaceMagnet();
+	break;
+      default:
+	G4String exceptionString = (G4String)"magnetGeometryType: " + _magnetGeometryType + (G4String)" unknown.";
+	G4Exception(exceptionString.c_str(), "-1", FatalErrorInArgument, "");
+      }
       BuildVacuumChamber();
       PlaceVacuumChamber();
       BuildFieldAndStepper();

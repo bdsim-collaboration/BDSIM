@@ -9,6 +9,7 @@
    Removed StringFromInt function
 */
 
+#define BDSDEBUG 1
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
@@ -334,14 +335,18 @@ void BDSMultipole::BuildBeampipe(G4double startAper,
 void BDSMultipole::FinaliseBeampipe(G4String materialName, G4RotationMatrix* RotY) {
   G4Material* material;
   if(materialName == "")
-    {
+    {     
       material = BDSMaterials::Instance()->GetMaterial( BDSGlobalConstants::Instance()->GetPipeMaterialName() );
     }
   else
     {
       material = BDSMaterials::Instance()->GetMaterial(materialName);
     }
-  
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " - beam pipe material = " << material->GetName() << " for beamline component " << name << G4endl;
+#endif    
+
   itsBeampipeLogicalVolume=	
     new G4LogicalVolume(itsBeampipeSolid,
 			material,

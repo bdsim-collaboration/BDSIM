@@ -146,6 +146,7 @@ private:
   //Vacuum chamber dimensions
   BDSSpectrVacChamb* _vacChamb;
   G4int _vacuumChamberType;
+  G4int _magnetGeometryType;
   G4double _vacWindowHeight;
   G4double _vacMylarThickness;
   G4double _vacKevlarThickness;
