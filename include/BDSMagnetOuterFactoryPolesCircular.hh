@@ -15,7 +15,7 @@
  * Most magnets are 2N poles, but sector- and r-bends as well as 
  * muon spoilers, and h/v kickers are unique.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 
@@ -24,7 +24,7 @@ class BDSMagnetOuterFactoryPolesCircular: public BDSMagnetOuterFactoryPolesBase
 public:
   static BDSMagnetOuterFactoryPolesCircular* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryPolesCircular();
+  virtual ~BDSMagnetOuterFactoryPolesCircular();
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class

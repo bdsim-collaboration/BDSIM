@@ -6,19 +6,22 @@
 class BDSTerminatorUserLimits;
 
 /** 
- * @brief Class for small control volume with dynamic user limits
+ * @brief Class for small control volume for circular macines.
+ * 
+ * Controls particles with dynamic user limits
  * that change based on the global constants parameter nturns. Used
  * to control the nunmber of tunrs a primary particle completes in 
  * the machine.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTerminator: public BDSAcceleratorComponent
 {
 public:
   BDSTerminator(G4String aName, G4double aLength);
-  ~BDSTerminator();
+  virtual ~BDSTerminator();
+  
 private:
   /// Override this function in BDSACceleratorComponent purely to avoid
   /// BDSAcceleratorComponent replacing the user limits on the terminator.

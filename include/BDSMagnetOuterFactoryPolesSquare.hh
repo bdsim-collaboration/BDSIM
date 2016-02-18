@@ -13,22 +13,23 @@ class G4Colour;
 class G4Material;
 
 /**
- * @brief Factory class for outer volume of magnets. Produces magnets
+ * @brief Factory class for outer volume of magnets. 
+ * 
+ * Produces magnets
  * with 2N-poles around the beampipe with a square yoke.
  * 
  * Most magnets are 2N poles, but sector- and r-bends as well as 
  * muon spoilers, and h/v kickers are unique.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
-
 
 class BDSMagnetOuterFactoryPolesSquare: public BDSMagnetOuterFactoryPolesBase
 {
 public:
   static BDSMagnetOuterFactoryPolesSquare* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryPolesSquare();
+  virtual ~BDSMagnetOuterFactoryPolesSquare();
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class

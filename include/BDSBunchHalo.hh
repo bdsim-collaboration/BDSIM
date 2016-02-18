@@ -12,12 +12,12 @@ namespace CLHEP {
 /**
  * @brief A halo distribution based on both twiss parameters and sigmas.
  *
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchHalo: public BDSBunchInterface
 {
-private : 
+private: 
   /* Twiss parameters */
   G4double betaX;
   G4double betaY;
@@ -33,14 +33,14 @@ private :
   G4double envelopeXp; 
   G4double envelopeYp; 
 
-  CLHEP::RandFlat  *FlatGen;
+  CLHEP::RandFlat* FlatGen;
 
   G4double weightParameter;
   std::string weightFunction;
 
-public : 
+public: 
   BDSBunchHalo();
-  ~BDSBunchHalo();
+  virtual ~BDSBunchHalo();
   virtual void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

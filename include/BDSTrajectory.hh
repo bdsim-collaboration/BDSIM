@@ -7,7 +7,8 @@
 #include "G4ThreeVector.hh"
 #include <vector>
 
-class BDSTrajectory: public G4Trajectory{
+class BDSTrajectory: public G4Trajectory
+{
 public:
   BDSTrajectory();
   BDSTrajectory(const G4Track* aTrack);

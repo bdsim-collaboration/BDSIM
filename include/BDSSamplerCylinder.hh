@@ -6,7 +6,7 @@
 class BDSSamplerSD;
 
 /** 
- * Cylindrical sampler class
+ * @brief Cylindrical sampler class.
  */
 
 class BDSSamplerCylinder :public BDSSamplerBase

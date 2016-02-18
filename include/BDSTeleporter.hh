@@ -30,7 +30,7 @@ public:
   BDSTeleporter(const G4String      name,
 		const G4double      length,
 		const G4ThreeVector teleporterDetlaIn);  
-  ~BDSTeleporter();
+  virtual ~BDSTeleporter();
 
 private:
   /// Overridden method from BDSAcceleratorComponent that dictates the construction.

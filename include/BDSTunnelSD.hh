@@ -12,6 +12,12 @@ class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
+/**
+ * @brief Sensitive detector for tunnel geometry.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSTunnelSD: public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
 {
 

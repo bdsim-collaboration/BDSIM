@@ -20,13 +20,13 @@ public:
 		    G4double length,
 		    G4double outerDiameter,
 		    G4String type,
-		    G4double xApertureIn = 0,
-		    G4double yApertureIn = 0,
-		    G4double xOutApertureIn = 0,
-		    G4double yOutApertureIn = 0,
+		    G4double xApertureIn        = 0,
+		    G4double yApertureIn        = 0,
+		    G4double xOutApertureIn     = 0,
+		    G4double yOutApertureIn     = 0,
 		    G4String collimatorMaterial = "copper",
 		    G4String vacuumMaterial     = "vacuum");
-  ~BDSCollimatorBase();
+  virtual ~BDSCollimatorBase();
 
 protected:
   virtual void Build();

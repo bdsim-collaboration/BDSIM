@@ -4,14 +4,15 @@
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
 
-namespace CLHEP {
+namespace CLHEP
+{
   class RandFlat;
 }
 
 /**
  * @brief An uncorrelated uniform random distribution within an elliptical shell.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchEShell: public BDSBunchInterface
@@ -30,7 +31,7 @@ protected :
 
 public: 
   BDSBunchEShell();  
-  ~BDSBunchEShell(); 
+  virtual ~BDSBunchEShell(); 
   void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

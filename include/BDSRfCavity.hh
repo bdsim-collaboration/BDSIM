@@ -23,7 +23,7 @@ public:
 	      G4double            grad,
 	      BDSBeamPipeInfo*    beamPipeInfoIn,
 	      BDSMagnetOuterInfo* magnetOuterInfo);
-  ~BDSRfCavity();
+  virtual ~BDSRfCavity();
   
 private:
   virtual void BuildVacuumField();

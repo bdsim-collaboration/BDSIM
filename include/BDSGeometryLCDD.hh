@@ -71,7 +71,7 @@ class BDSGeometryLCDD: public BDSGeometry
 {
 public:
   BDSGeometryLCDD(G4String LCDDfile);
-  ~BDSGeometryLCDD();
+  virtual ~BDSGeometryLCDD();
 
   inline G4String GetFieldVolName(){return itsFieldVolName;}
 

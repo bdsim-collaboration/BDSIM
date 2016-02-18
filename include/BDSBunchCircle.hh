@@ -4,7 +4,8 @@
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
 
-namespace CLHEP {
+namespace CLHEP
+{
   class RandFlat;
 }
 
@@ -26,7 +27,7 @@ protected :
 
 public: 
   BDSBunchCircle(); 
-  ~BDSBunchCircle(); 
+  virtual ~BDSBunchCircle(); 
   void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

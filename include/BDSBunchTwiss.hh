@@ -10,12 +10,12 @@
 /**
  * @brief A bunch distribution according to the twiss parameterisation.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchTwiss: public BDSBunchInterface
 {
-private : 
+private: 
   /* Twiss parameters */
   G4double betaX;
   G4double betaY;
@@ -35,9 +35,9 @@ private :
   CLHEP::HepVector    meansGM;
   CLHEP::HepSymMatrix sigmaGM;
 
-public : 
+public: 
   BDSBunchTwiss();
-  ~BDSBunchTwiss();
+  virtual ~BDSBunchTwiss();
   void SetOptions(const GMAD::Options& opt); 
   void CommonConstruction();
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

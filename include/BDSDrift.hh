@@ -7,6 +7,12 @@
 
 class BDSBeamPipeInfo;
 
+/**
+ * @brief A section of beam pipe.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSDrift: public BDSAcceleratorComponent
 {
 public:
@@ -14,7 +20,7 @@ public:
 	   G4double         length,
 	   BDSBeamPipeInfo* beamPipeInfo,
 	   G4int            precisionRegion = 0);
-  ~BDSDrift();
+  virtual ~BDSDrift();
 
 protected:
   void Build();

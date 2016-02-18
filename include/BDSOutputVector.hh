@@ -5,14 +5,17 @@
 
 #include <vector>
 
-// class that holds multiple outputs
+/**
+ * @brief Output that holds multiple outputs.
+ *
+ * @author Jochem Snuverink
+ */
 
-class BDSOutputVector: public BDSOutputBase {
-
+class BDSOutputVector: public BDSOutputBase
+{
 public: 
-
   BDSOutputVector();
-  ~BDSOutputVector();
+  virtual ~BDSOutputVector();
 
   /// add output type
   void Add(BDSOutputBase*);

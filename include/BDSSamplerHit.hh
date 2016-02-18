@@ -8,7 +8,12 @@
 
 #include "BDSParticle.hh"
 
-class BDSSamplerHit :public G4VHit
+/**
+ * @brief Information recorded from a hit in a sampler.
+ *
+ */
+
+class BDSSamplerHit: public G4VHit
 {
 public:
   BDSSamplerHit(G4String    aName,
@@ -27,7 +32,7 @@ public:
 		G4String    sampType,
 		G4String    process);
 
-  ~BDSSamplerHit();
+  virtual ~BDSSamplerHit();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

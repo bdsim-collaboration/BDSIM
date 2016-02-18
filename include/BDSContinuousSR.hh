@@ -22,7 +22,7 @@ public:
  
   BDSContinuousSR(const G4String& processName = "contSR");
  
-  ~BDSContinuousSR();
+  virtual ~BDSContinuousSR();
 
   G4bool IsApplicable(const G4ParticleDefinition&);
      

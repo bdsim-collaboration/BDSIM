@@ -19,7 +19,7 @@ class BDSMuonPhysics: public BDSXSBiasPhysics
 {
 public:
   BDSMuonPhysics();
-  ~BDSMuonPhysics();
+  virtual ~BDSMuonPhysics();
   void ConstructProcess();
   void ConstructParticle();
   

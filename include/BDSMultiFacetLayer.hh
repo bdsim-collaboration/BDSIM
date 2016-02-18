@@ -7,11 +7,11 @@
 #include "BDSLensFacet.hh"
 #include <vector>
 
-class BDSMultiFacetLayer : public BDSScreenLayer 
+class BDSMultiFacetLayer: public BDSScreenLayer 
 {
 public:
   BDSMultiFacetLayer(G4String name, BDSLensFacet* facet, G4double gapWidth, G4double nFacets);
-  ~BDSMultiFacetLayer();
+  virtual ~BDSMultiFacetLayer();
 
 private:
   void computeDimensions();

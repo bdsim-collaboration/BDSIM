@@ -25,7 +25,7 @@ public:
   /// Construct a sampler with name and type (plane/cylinder). Optionally, the primariesOnly
   /// flag is whether to only record primary hits in this sampler.
   BDSSamplerSD(G4String name, G4String type);
-  ~BDSSamplerSD();
+  virtual ~BDSSamplerSD();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
   /// the hits collection of this event (HCE).

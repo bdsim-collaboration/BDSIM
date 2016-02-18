@@ -9,12 +9,18 @@
 class BDSBeamPipe;
 class G4Material;
 
+/**
+ * @brief Factory that produces null outer geometry.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSMagnetOuterFactoryNone: public BDSMagnetOuterFactoryBase
 {
 public:
   static BDSMagnetOuterFactoryNone* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryNone();
+  virtual ~BDSMagnetOuterFactoryNone();
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,                  // name

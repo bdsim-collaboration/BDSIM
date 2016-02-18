@@ -16,13 +16,12 @@
 // flag initiated in BDSEventAction
 extern G4bool FireLaserCompton;
 
-class BDSLaserCompton : public G4VDiscreteProcess
+class BDSLaserCompton: public G4VDiscreteProcess
 { 
-  public:
-   
+public:  
   BDSLaserCompton(const G4String& processName = "eLaser");
   
-  ~BDSLaserCompton();
+  virtual ~BDSLaserCompton();
 
   G4bool IsApplicable(const G4ParticleDefinition&);
   

@@ -15,7 +15,7 @@ class BDSGeometryGDML: public BDSGeometry
 {
 public:
   BDSGeometryGDML(G4String GMDLfile);
-  ~BDSGeometryGDML();
+  virtual ~BDSGeometryGDML();
   void Construct(G4LogicalVolume *marker);
 
   /// Access all logical volumes belonging to this component

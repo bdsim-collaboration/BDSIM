@@ -6,10 +6,11 @@
 #include "BDSSynchrotronRadiation.hh"
 #include "BDSContinuousSR.hh"
 
-class BDSSynchRadPhysics: public G4VPhysicsConstructor{
+class BDSSynchRadPhysics: public G4VPhysicsConstructor
+{
 public:
   BDSSynchRadPhysics();
-  ~BDSSynchRadPhysics();
+  virtual ~BDSSynchRadPhysics();
   void ConstructProcess();
   void ConstructParticle();
   

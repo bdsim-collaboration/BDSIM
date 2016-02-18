@@ -8,12 +8,12 @@ class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
-class BDSCCDPixelSD : public G4VSensitiveDetector
+class BDSCCDPixelSD: public G4VSensitiveDetector
 {
   
 public:
   BDSCCDPixelSD(G4String name);
-  ~BDSCCDPixelSD();
+  virtual ~BDSCCDPixelSD();
   
   virtual void Initialize(G4HCofThisEvent*HCE);
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);

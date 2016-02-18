@@ -12,7 +12,8 @@ class BDSIntegratorTeleporter: public BDSIntegratorBase
 public:
   BDSIntegratorTeleporter(G4Mag_EqRhs* const  eqRHSIn,
 			  const G4ThreeVector teleporterDelta);
-  ~BDSIntegratorTeleporter(){;}
+
+  virtual ~BDSIntegratorTeleporter(){;}
   
   void Stepper(const G4double y[],
 	       const G4double dydx[],

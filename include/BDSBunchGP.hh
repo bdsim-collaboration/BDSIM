@@ -6,13 +6,13 @@
 /**
  * @brief A bunch distribution class for Guinea-Pig software. Unimplemented.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchGP: public BDSBunchInterface
 {
   BDSBunchGP();
-  ~BDSBunchGP();
+  virtual ~BDSBunchGP();
 };
 
 #endif

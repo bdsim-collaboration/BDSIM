@@ -13,7 +13,7 @@
 /**
  * @brief Factory that produces cylindrical magnet geometry.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryCylindrical: public BDSMagnetOuterFactoryBase
@@ -21,7 +21,7 @@ class BDSMagnetOuterFactoryCylindrical: public BDSMagnetOuterFactoryBase
 public:
   static BDSMagnetOuterFactoryCylindrical* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryCylindrical();
+  virtual ~BDSMagnetOuterFactoryCylindrical();
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,                  // name

@@ -10,20 +10,19 @@
 #include "G4VSolid.hh"
 
 /**
- * @brief The base factory for the LHC magnet geometry
- * factory.
+ * @brief The base factory for the LHC magnet geometry factory.
  * 
  * This class is not a singleton unlike the other factories
  * as it will be constructed twice by each derived class
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryLHC: public BDSMagnetOuterFactoryBase
 {
 public:
   BDSMagnetOuterFactoryLHC(G4bool isLeftOffset);
-  ~BDSMagnetOuterFactoryLHC(){;};
+  virtual ~BDSMagnetOuterFactoryLHC(){;};
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,                  // name

@@ -20,7 +20,7 @@ class BDSGeometrySQL: public BDSGeometry
 {
 public:
   BDSGeometrySQL(G4String filePath);
-  ~BDSGeometrySQL();
+  virtual ~BDSGeometrySQL();
 
   virtual void Construct(G4LogicalVolume* containerLogicalVolume);
 

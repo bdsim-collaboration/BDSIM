@@ -32,14 +32,14 @@ private:
   G4double ParseAngleUnit(G4String &fmt);
   G4double ParseTimeUnit(G4String &fmt);
 
-protected : 
+protected: 
   G4String distribFile; ///< bunch file
   G4String bunchFormat; ///< the format of the file
   G4int nlinesIgnore; ///< number of lines that will be ignored after each particle (default 0)
   
 public: 
   BDSBunchUserFile();
-  ~BDSBunchUserFile();
+  virtual ~BDSBunchUserFile();
   virtual void SetOptions(const GMAD::Options& opt);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,

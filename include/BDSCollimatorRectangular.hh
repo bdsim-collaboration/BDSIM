@@ -6,6 +6,7 @@
 /**
  * @brief A class for a rectangular collimator.
  */
+
 class BDSCollimatorRectangular: public BDSCollimatorBase
 {
 public:
@@ -18,7 +19,7 @@ public:
 			   G4double yOutApertureIn     = 0,
 			   G4String collimatorMaterial = "copper",
 			   G4String vacuumMaterial     = "vacuum");
-  ~BDSCollimatorRectangular(){;};
+  virtual ~BDSCollimatorRectangular(){;};
 
   virtual void BuildInnerCollimator();
   

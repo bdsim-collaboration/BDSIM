@@ -7,6 +7,8 @@
 #include "globals.hh"
 #include "parser/options.h"
 
+// can become a singleton? - JS
+
 /**
  * @brief A delegator class for the BDSIM particle distribution generator.
  * 
@@ -14,13 +16,11 @@
  * This class generates new particle coordinates for each event based on the 
  * GMAD::Options structure passed from the parser. 
  *
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
-// can become a singleton? - JS
-
-class BDSBunch {
-
+class BDSBunch
+{
 protected:
   /// particle distribution
   std::string        distribType;

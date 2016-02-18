@@ -43,7 +43,7 @@ class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
   BDSDetectorConstruction();
-  ~BDSDetectorConstruction();
+  virtual ~BDSDetectorConstruction();
 
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
   /// and returns the finished world physical volume.

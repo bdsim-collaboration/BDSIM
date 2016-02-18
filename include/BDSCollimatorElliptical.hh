@@ -8,6 +8,7 @@
 /**
  * @brief A class for an elliptical collimator.
  */
+
 class BDSCollimatorElliptical: public BDSCollimatorBase
 {
 public:
@@ -20,7 +21,7 @@ public:
 			  G4double yOutApertureIn     = 0,
 			  G4String collimatorMaterial = "copper",
 			  G4String vacuumMaterial     = "vacuum");
-  ~BDSCollimatorElliptical(){;};
+  virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();
 };

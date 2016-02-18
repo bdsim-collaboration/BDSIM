@@ -10,12 +10,12 @@
 /**
  * @brief A 6D Gaussian distribution.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchGaussian: public BDSBunchInterface
 { 
-protected : 
+protected: 
   G4double sigmaX;
   G4double sigmaY;
   G4double sigmaXp;
@@ -27,9 +27,9 @@ protected :
   // Multidimensional Gaussian random number generator
   CLHEP::RandMultiGauss* GaussMultiGen;
 
-public :
+public:
   BDSBunchGaussian();
-  ~BDSBunchGaussian();
+  virtual ~BDSBunchGaussian();
   void SetOptions(const GMAD::Options& opt); 
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

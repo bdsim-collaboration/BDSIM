@@ -13,7 +13,7 @@ class G4Material;
  * This reduces the number of argument to constructors 
  * plus aggregates common tasks in the component factory.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSCavityInfo

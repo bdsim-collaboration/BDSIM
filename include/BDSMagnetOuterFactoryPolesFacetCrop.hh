@@ -6,7 +6,9 @@
 #include "globals.hh"           // geant4 globals / types
 
 /**
- * @brief Factory class for outer volume of magnets. Produces magnets
+ * @brief Factory class for outer volume of magnets. 
+ *
+ * Produces magnets
  * with 2N-poles around the beampipe with a faceted yoke - the yoke 
  * is perpendiular to the pole direction where the pole joins the yoke.
  * Between each pole there is a flat section angled between the two poles
@@ -14,16 +16,15 @@
  * Most magnets are 2N poles, but sector- and r-bends as well as 
  * muon spoilers, and h/v kickers are unique.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
-
 
 class BDSMagnetOuterFactoryPolesFacetCrop: public BDSMagnetOuterFactoryPolesBase
 {
 public:
   static BDSMagnetOuterFactoryPolesFacetCrop* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryPolesFacetCrop();
+  virtual ~BDSMagnetOuterFactoryPolesFacetCrop();
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class

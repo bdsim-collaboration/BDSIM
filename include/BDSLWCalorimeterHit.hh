@@ -11,7 +11,7 @@ class BDSLWCalorimeterHit :public G4VHit
 public:
   BDSLWCalorimeterHit(G4int nCopy, G4double Energy=0, G4int nEvent=0);
 
-  ~BDSLWCalorimeterHit();
+  virtual ~BDSLWCalorimeterHit();
 
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

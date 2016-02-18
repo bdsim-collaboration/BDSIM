@@ -5,8 +5,8 @@
 
 #include <vector>
 
-class BDSOutputROOTEventLoss : public TObject {
-
+class BDSOutputROOTEventLoss: public TObject
+{
 protected: 
   int                n;
   std::vector<float> energy;
@@ -15,7 +15,7 @@ protected:
 
 public:
   BDSOutputROOTEventLoss();
-  ~BDSOutputROOTEventLoss();
+  virtual ~BDSOutputROOTEventLoss();
   void Fill();
   void Flush();
 

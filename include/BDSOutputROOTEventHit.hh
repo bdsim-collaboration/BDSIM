@@ -3,18 +3,19 @@
 
 #include "BDSOutputROOTEventLoss.hh"
 
-class BDSOutputROOTEventHit : public BDSOutputROOTEventLoss {
-
-protected:
-  std::vector<float> x;
-  std::vector<float> y;
+class BDSOutputROOTEventHit: public BDSOutputROOTEventLoss
+{
 public:
   BDSOutputROOTEventHit();
-  ~BDSOutputROOTEventHit();
+  virtual ~BDSOutputROOTEventHit();
   void Fill();
   void Flush();
   
   ClassDef(BDSOutputROOTEventHit,1);
+
+protected:
+  std::vector<float> x;
+  std::vector<float> y;
 };
 
 #endif

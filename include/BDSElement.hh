@@ -36,7 +36,7 @@ public:
 	     G4String      geometry,
 	     G4String      bmap,
 	     G4ThreeVector bMapOffsetIn);
-  ~BDSElement();
+  virtual ~BDSElement();
 
   /// Creates a field mesh in global coordinates in case it is given by map
   //void PrepareField(G4VPhysicalVolume *referenceVolume);

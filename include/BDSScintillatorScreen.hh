@@ -9,7 +9,7 @@
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
-class BDSScintillatorScreen :public BDSAcceleratorComponent
+class BDSScintillatorScreen: public BDSAcceleratorComponent
 {
 public:
   BDSScintillatorScreen(G4String      aName,
@@ -17,9 +17,7 @@ public:
 			G4double      angle         = 0,
 			G4String      scintMaterial = "lanex",
 			G4String      airMaterial   = "air");
-  ~BDSScintillatorScreen();
-
-protected:
+  virtual ~BDSScintillatorScreen();
 
 private:
   virtual void Build();

@@ -11,7 +11,7 @@
 /**
  * @brief a 1D histogram class
  * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSHistogram1D

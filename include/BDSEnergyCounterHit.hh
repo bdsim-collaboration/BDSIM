@@ -14,7 +14,7 @@ extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 //LowestSPosPrimaryHit declaration at the bottom of this file
 //HighestSPosPrimaryHit declaration at the bottom of this file
 
-class BDSEnergyCounterHit :public G4VHit
+class BDSEnergyCounterHit: public G4VHit
 {
 public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
@@ -38,7 +38,7 @@ public:
 		      G4int    eventNoIn         = 0,    // event number
 		      G4double stepLengthIn      = 0);
   
-  ~BDSEnergyCounterHit();
+  virtual ~BDSEnergyCounterHit();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

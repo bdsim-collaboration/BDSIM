@@ -19,6 +19,12 @@
 
 class G4Material;
 
+/**
+ * @brief Base class for cavities.
+ * 
+ * @author Stuart Walker
+ */
+
 class BDSCavity: public BDSAcceleratorComponent
 {
 public:
@@ -27,7 +33,7 @@ public:
 	    G4double       fieldAmplitude,
 	    BDSCavityInfo* cavityInfoIn);
 
-  ~BDSCavity();
+  virtual ~BDSCavity();
 
 protected:
   BDSCavity();

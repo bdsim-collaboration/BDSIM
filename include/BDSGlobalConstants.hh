@@ -34,7 +34,6 @@ namespace GMAD
  */
 class BDSGlobalConstants 
 {
-
 protected:
   BDSGlobalConstants(const GMAD::Options&);
 

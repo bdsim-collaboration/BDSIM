@@ -13,7 +13,7 @@
  * part of BDSIM code base and recently developed and maintained
  * by Jochem Snuverink, Lawrence Deacon & Laurie Nevay
  * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSOutputROOTDetailed: public BDSOutputROOTBase
@@ -21,7 +21,7 @@ class BDSOutputROOTDetailed: public BDSOutputROOTBase
 public: 
 
   BDSOutputROOTDetailed(); // default constructor
-  ~BDSOutputROOTDetailed();
+  virtual ~BDSOutputROOTDetailed();
   
   /// write primary hit
   virtual void WritePrimary(G4double totalEnergy,

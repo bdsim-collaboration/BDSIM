@@ -9,7 +9,7 @@
 /**
  * @brief A bunch distribution that reads a SixTrack hits file.
  * 
- * @author Regina Kwee-Hinzmann <Regina.Kwee@rhul.ac.uk>
+ * @author Regina Kwee-Hinzmann
  */
 
 class BDSBunchSixTrack: public BDSBunchInterface
@@ -24,7 +24,7 @@ private:
 public: 
   BDSBunchSixTrack();
   BDSBunchSixTrack(G4String fileNameIn);
-  ~BDSBunchSixTrack(); 
+  virtual ~BDSBunchSixTrack(); 
   void LoadSixTrackFile(); 
   virtual void SetOptions(const GMAD::Options& opt);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 

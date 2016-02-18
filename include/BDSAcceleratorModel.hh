@@ -22,7 +22,8 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-class BDSAcceleratorModel {
+class BDSAcceleratorModel
+{
 public:
   static BDSAcceleratorModel* Instance();
   ~BDSAcceleratorModel();

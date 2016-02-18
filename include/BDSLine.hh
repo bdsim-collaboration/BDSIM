@@ -26,7 +26,7 @@ private:
   
 public:
   BDSLine(G4String name);
-  ~BDSLine(){};
+  virtual ~BDSLine(){};
 
   void AddComponent(BDSAcceleratorComponent* component);
 

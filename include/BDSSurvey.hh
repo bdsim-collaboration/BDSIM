@@ -12,10 +12,9 @@ namespace GMAD {
 class BDSBeamline;
 class BDSBeamlineElement;
 
-/** Survey Class
+/**
  * @brief A class of functions to output Geant4/Mokka/BDSIM parameters for elements
- * to include geometry, optics, fields, etc.
- * much like MadX Tfs file
+ * to include geometry, optics, fields, etc, much like MadX Tfs file.
  */
 
 class BDSSurvey
