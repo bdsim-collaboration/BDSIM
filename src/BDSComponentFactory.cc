@@ -1365,8 +1365,14 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 					      aper, _element.tunnelMaterial, _element.tunnelOffsetX*CLHEP::m, size, _element.angle); 
 	if(_element.layerThicknesses.size() != _element.layerMaterials.size()){
 	  std::stringstream ss;
-	  ss << "Material and ticknesses lists are of unequal size.";
+	  ss << "Material and thicknesses lists are of unequal size.";
 	  ss<< _element.layerMaterials.size() << " and " << _element.layerThicknesses.size();
+	  G4Exception(ss.str().c_str(), "-1", FatalException, "");
+	}
+	if( (_element.layerThicknesses.size() != _element.layerIsSampler.size()) && ( _element.layerIsSampler.size() !=0 )){
+	  std::stringstream ss;
+	  ss << "Material and isSampler lists are of unequal size.";
+	  ss<< _element.layerMaterials.size() << " and " << _element.layerIsSampler.size();
 	  G4Exception(ss.str().c_str(), "-1", FatalException, "");
 	}
 
@@ -1376,13 +1382,21 @@ BDSAcceleratorComponent* BDSComponentFactory::createScreen(){
 
 	std::list<const char*>::const_iterator itm;
 	std::list<double>::const_iterator itt;
+	std::list<int>::const_iterator itIsSampler;
 	for(itt = _element.layerThicknesses.begin(),
-	      itm = _element.layerMaterials.begin();
+	      itm = _element.layerMaterials.begin(),
+	      itIsSampler = _element.layerIsSampler.begin();
 	    itt != _element.layerThicknesses.end();
 	    itt++, itm++){
 	  G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
-	    *(itt)<< ", material "  << (*itm) << G4endl;
-	  theScreen->screenLayer((*itt)*CLHEP::m, *itm);
+	    *(itt)<< ", material "  << (*itm) << 
+	    ", isSampler: "  << (*itIsSampler) << G4endl;
+	  if(_element.layerIsSampler.size()>0) {
+	    theScreen->screenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
+	    itIsSampler++;
+	  } else {
+	    theScreen->screenLayer((*itt)*CLHEP::m, *itm);
+	  }
 	}
 	return theScreen;
 }

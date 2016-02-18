@@ -31,11 +31,12 @@ void Parameters::flush() {
   state = "solid"; stateset = 0; // "solid", "liquid", or "gas"
   symbol = ""; symbolset = 0;
   componentsset = 0; componentsFractionsset = 0; componentsWeightsset = 0;
-  layerThicknessesset=0; layerMaterialsset=0;
+  layerThicknessesset=0; layerMaterialsset=0; layerIsSamplerset=0;
   components.erase(components.begin(),components.end());
   componentsFractions.erase(componentsFractions.begin(),componentsFractions.end());
   componentsWeights.erase(componentsWeights.begin(),componentsWeights.end());
   layerThicknesses.erase(layerThicknesses.begin(), layerThicknesses.end());
+  layerIsSampler.erase(layerIsSampler.begin(), layerIsSampler.end());
   layerMaterials.erase(layerMaterials.begin(), layerMaterials.end());
   flatlength = 0; flatlengthset = 0;
   taperlength = 0; taperlengthset = 0;
@@ -172,6 +173,8 @@ void Parameters::inherit_properties(struct Element& e)
     { layerThicknesses = e.layerThicknesses; layerThicknessesset = 1; }
   if(!layerMaterialsset) 
     { layerMaterials = e.layerMaterials; layerMaterialsset = 1; }
+  if(!layerIsSamplerset) 
+    { layerIsSampler = e.layerIsSampler; layerIsSamplerset = 1; }
   if(!beampipeThicknessset) { beampipeThickness = e.beampipeThickness; beampipeThicknessset = 1; }
   if(!aperset) { aper = e.aper; aperset = 1; }
   if(!aperXset) { aperX = e.aperX; aperXset = 1; }

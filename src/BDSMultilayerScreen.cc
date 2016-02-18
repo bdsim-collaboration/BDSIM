@@ -24,14 +24,15 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
   _phys=NULL;
 }
 
-void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency){
+void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler, G4double grooveWidth, G4double grooveSpatialFrequency){
   G4ThreeVector layerSize(_xysize.x(), _xysize.y(), thickness);
-  screenLayer(new BDSScreenLayer(layerSize,_name+"_"+name ,material,grooveWidth,grooveSpatialFrequency));
+  screenLayer(new BDSScreenLayer(layerSize,_name+"_"+name ,material, grooveWidth,grooveSpatialFrequency), isSampler);
 }
 
-void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer){
+void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer, G4int isSampler){
   _colourWheel->spin();
   layer->color(_colourWheel->colour());
+  if(isSampler) layer->sampler();
   _screenLayers.push_back(layer);
 }
 

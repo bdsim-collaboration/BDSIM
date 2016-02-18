@@ -46,12 +46,12 @@ void BDSScreen::BuildFieldAndStepper(){
   BuildBmapFieldAndStepper();
 }
 
-void BDSScreen::screenLayer(G4double thickness, G4String material){
+void BDSScreen::screenLayer(G4double thickness, G4String material, G4int isSampler){
   std::stringstream ss;
   ss << _nLayers;
   G4String lNum = ss.str();
   G4String lName = itsName+"_"+lNum;
-  _mlScreen->screenLayer(thickness,material,lName);
+  _mlScreen->screenLayer(thickness,material,lName, isSampler);
   AddSensitiveVolume(_mlScreen->lastLayer()->log());
   _nLayers++;
 }

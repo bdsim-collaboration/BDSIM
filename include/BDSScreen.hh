@@ -21,7 +21,7 @@ public:
 	    G4double screenAngle = 0 //Phi angle of screen
 	    );
   //Use the below method to add the screen layers (to be done in the ComponentFactory).
-  void screenLayer(G4double thickness, G4String material);
+  void screenLayer(G4double thickness, G4String material, G4int isSampler=0);
 
 private:
   BDSMultilayerScreen* _mlScreen;

@@ -720,6 +720,13 @@ parameters:
                          set_vector(params.layerThicknesses,$3);
 			 delete[] $3->data;
                        }
+		   else
+                     if(!strcmp($1->name,"layerIsSampler"))
+                       {
+                         params.layerIsSamplerset = 1;
+                         set_vector(params.layerIsSampler,$3);
+			 delete[] $3->data;
+                       }
                    else
                      if(!strcmp($1->name,"layerMaterials"))
                        {

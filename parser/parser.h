@@ -531,6 +531,8 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
       e.layerThicknesses = params.layerThicknesses;
     if(params.layerMaterialsset)
       e.layerMaterials = params.layerMaterials;
+    if(params.layerIsSamplerset)
+      e.layerIsSampler = params.layerIsSampler;
     e.angle = params.angle;
     if(params.beampipeThicknessset)
       e.beampipeThickness = params.beampipeThickness;

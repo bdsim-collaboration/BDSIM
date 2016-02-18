@@ -112,6 +112,7 @@ struct Parameters {
   //For the layers of a multi -layer diagnostics screen.
   std::list<const char*> layerMaterials; int layerMaterialsset;
   std::list<double> layerThicknesses; int layerThicknessesset;
+  std::list<int> layerIsSampler; int layerIsSamplerset;
   //For a spectrometer scintillator screen.
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;

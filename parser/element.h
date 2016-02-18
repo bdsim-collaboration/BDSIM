@@ -49,6 +49,7 @@ struct Element {
 
   std::list<double> layerThicknesses;
   std::list<const char*> layerMaterials;
+  std::list<int> layerIsSampler;
 
   std::string geometryFile;
   std::string bmapFile;
