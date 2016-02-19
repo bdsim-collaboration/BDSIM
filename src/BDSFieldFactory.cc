@@ -87,15 +87,210 @@ BDSFieldFactory::BDSFieldFactory()
   CleanUp();
 }
 
-void BDSFieldFactory::CleanUp()
+BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
 {
-  field         = nullptr;
-  bdsField      = nullptr;
-  bGlobalField  = nullptr;
-  eqOfMotion    = nullptr;
-  bEqOfMotion   = nullptr;
-  integrator    = nullptr;
-  completeField = nullptr;
+  // Forward on to delegate functions for the main types of field
+  // such as E, EM and Magnetic
+  BDSFieldObjects* field = nullptr;
+  switch (info.FieldType().underlying())
+    {
+    case BDSFieldType::zero:
+    case BDSFieldType::threed:
+    case BDSFieldType::xy:
+    case BDSFieldType::mokka:
+    case BDSFieldType::solenoid:
+    case BDSFieldType::dipole:
+    case BDSFieldType::quadrupole:
+    case BDSFieldType::sextupole:
+    case BDSFieldType::octupole:
+    case BDSFieldType::decapole:
+    case BDSFieldType::multipole:
+    case BDSFieldType::muonspoiler:
+    case BDSFieldType::skewquadrupole:
+    case BDSFieldType::skewsextupole:
+    case BDSFieldType::skewoctupole:
+    case BDSFieldType::skewdecapole:
+      field = CreateFieldMag(info);
+      break;
+    case BDSFieldType::rfcavity:
+      field = CreateFieldEM(info);
+      break;
+      // case BDSFieldType::anyEfield
+    default:
+      G4cerr << __METHOD_NAME__ << "not a valid field type" << G4endl;
+      break; // this will return nullptr
+    }
+  return field;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& /*info*/)
+{
+  // TBC
+  return nullptr;
+}
+      
+BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
+{
+  BDSMagnetStrength* strength = info.MagnetStrength();
+  G4double brho               = info.BRho();
+  BDSFieldMag* field          = nullptr;
+  switch (info.FieldType().underlying())
+    {
+    case BDSFieldType::zero:
+      break;
+    case BDSFieldType::threed:
+      /*field = new BDSFieldMag3D(filename, info.transform);*/ break;
+    case BDSFieldType::xy:
+      break;
+    case BDSFieldType::mokka:
+      break;
+    case BDSFieldType::solenoid:
+      field = new BDSFieldMagSolenoid(strength, brho); break;
+    case BDSFieldType::dipole:
+      field = new BDSFieldMagSBend(strength, brho); break;
+    case BDSFieldType::quadrupole:
+      field = new BDSFieldMagQuadrupole(strength, brho); break;
+    case BDSFieldType::sextupole:
+      field = new BDSFieldMagSextupole(strength, brho); break;
+    case BDSFieldType::octupole:
+      field = new BDSFieldMagOctupole(strength, brho); break;
+    case BDSFieldType::decapole:
+      field = new BDSFieldMagDecapole(strength, brho); break;
+    case BDSFieldType::multipole:
+      field = new BDSFieldMagMultipole(strength, brho); break;
+    case BDSFieldType::muonspoiler:
+      field = new BDSFieldMagMuonSpoiler(strength, brho); break;
+    case BDSFieldType::skewquadrupole:
+      field = new BDSFieldMagSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::halfpi); break;
+    case BDSFieldType::skewsextupole:
+      field = new BDSFieldMagSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;
+    case BDSFieldType::skewoctupole:
+      field = new BDSFieldMagSkew(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;
+    case BDSFieldType::skewdecapole:
+      field = new BDSFieldMagSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;
+    default:
+      break; // this will return nullptr
+    }
+
+  // Optionally provide local to global transform using curvilinear coordinate system.
+  BDSFieldMag* resultantField = field;
+  if (info.ProvideGlobal())
+    {resultantField = new BDSFieldMagGlobal(field);}
+
+  // Always this equation of motion for magnetic (only) fields
+  G4Mag_UsualEqRhs* eqOfM = new G4Mag_UsualEqRhs(field);
+
+  // Create appropriate integrator
+  G4MagIntegratorStepper* integrator = CreateIntegratorMag(info, eqOfM, strength);
+
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, field, eqOfM, integrator);
+  return completeField;
+}
+
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      info,
+							     G4Mag_EqRhs*       eqOfM,
+							     BDSMagnetStrength* strength)
+{
+  G4double brho = info.BRho();
+  G4MagIntegratorStepper* integrator = nullptr;
+  // these ones can only be used for magnetic field
+  switch (info.IntegratorType().underlying())
+    {
+    case BDSIntegratorType::solenoid:
+      integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
+    case BDSIntegratorType::dipole:
+      integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::quadrupole:
+      integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::sextupole:
+      integrator = new BDSIntegratorSextupole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::octupole:
+      integrator = new BDSIntegratorOctupole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::decapole:
+      integrator = new BDSIntegratorDecapole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::g4constrk4:
+      integrator = new G4ConstRK4(eqOfM); break;
+    case BDSIntegratorType::g4exacthelixstepper:
+      integrator = new G4ExactHelixStepper(eqOfM); break;
+    case BDSIntegratorType::g4helixexpliciteuler:
+      integrator = new G4HelixExplicitEuler(eqOfM); break;
+    case BDSIntegratorType::g4helixheum:
+      integrator = new G4HelixHeum(eqOfM); break;
+    case BDSIntegratorType::g4heliximpliciteuler:
+      integrator = new G4HelixImplicitEuler(eqOfM); break;
+    case BDSIntegratorType::g4helixmixedstepper:
+      integrator = new G4HelixMixedStepper(eqOfM); break;
+    case BDSIntegratorType::g4helixsimplerunge:
+      integrator = new G4HelixSimpleRunge(eqOfM); break;
+    case BDSIntegratorType::g4nystromrk4:
+      integrator = new G4NystromRK4(eqOfM); break;
+    case BDSIntegratorType::g4rkg3stepper:
+      integrator = new G4RKG3_Stepper(eqOfM); break;
+    case BDSIntegratorType::g4cashkarprkf45:
+    case BDSIntegratorType::g4classicalrk4:
+    case BDSIntegratorType::g4expliciteuler:
+    case BDSIntegratorType::g4impliciteuler:
+    case BDSIntegratorType::g4simpleheum:
+    case BDSIntegratorType::g4simplerunge:
+      integrator = CreateIntegratorEM(info, (G4EquationOfMotion*)eqOfM); break;
+    default:
+      break; // returns nullptr;
+    }
+  return nullptr;
+}
+
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo& info,
+							    G4EquationOfMotion* eqOfM)
+{
+  G4MagIntegratorStepper* integrator = nullptr;
+  switch (info.IntegratorType().underlying())
+    {
+      // do the EM ones first, then complain
+    case BDSIntegratorType::g4cashkarprkf45:
+      integrator = new G4CashKarpRKF45(eqOfM); break;
+    case BDSIntegratorType::g4classicalrk4:
+      integrator = new G4ClassicalRK4(eqOfM); break;
+    case BDSIntegratorType::g4expliciteuler:
+      integrator = new G4ExplicitEuler(eqOfM); break;
+    case BDSIntegratorType::g4impliciteuler:
+      integrator = new G4ImplicitEuler(eqOfM); break;
+    case BDSIntegratorType::g4simpleheum:
+      integrator = new G4SimpleHeum(eqOfM); break;
+    case BDSIntegratorType::g4simplerunge:
+      integrator = new G4SimpleRunge(eqOfM); break;
+    case BDSIntegratorType::solenoid:
+    case BDSIntegratorType::dipole:
+    case BDSIntegratorType::quadrupole:
+    case BDSIntegratorType::sextupole:
+    case BDSIntegratorType::octupole:
+    case BDSIntegratorType::decapole:
+    case BDSIntegratorType::g4constrk4:
+    case BDSIntegratorType::g4exacthelixstepper:
+    case BDSIntegratorType::g4helixexpliciteuler:
+    case BDSIntegratorType::g4helixheum:
+    case BDSIntegratorType::g4heliximpliciteuler:
+    case BDSIntegratorType::g4helixmixedstepper:
+    case BDSIntegratorType::g4helixsimplerunge:
+    case BDSIntegratorType::g4nystromrk4:
+    case BDSIntegratorType::g4rkg3stepper:
+      {
+	G4cerr << "Error: integrator \"" << info.IntegratorType() << "\" is not suitable for an EM field." << G4endl;
+	G4cout << "Suitable integrators are:" << G4endl;
+	std::vector<BDSIntegratorType> types = {
+	  BDSIntegratorType::g4cashkarprkf45,
+	  BDSIntegratorType::g4classicalrk4,
+	  BDSIntegratorType::g4expliciteuler,
+	  BDSIntegratorType::g4impliciteuler,
+	  BDSIntegratorType::g4simpleheum,
+	  BDSIntegratorType::g4simplerunge};
+	for (auto type : types)
+	  {G4cout << type << G4endl;}
+	exit(1);
+      }
+    default:
+      break; // returns nullptr;
+    }
+  return integrator;
 }
 
 BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFilePath,
@@ -140,80 +335,15 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
   return nullptr;
 }
 
-BDSField* BDSFieldFactory::CreateFieldMagLocal(BDSFieldType       type,
-					       BDSMagnetStrength* strength,
-					       G4double           brho)
+BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
 {
-  CleanUp();
-  switch (type.underlying())
-    {
-    case BDSFieldType::solenoid:
-      bdsField = new BDSFieldMagSolenoid(strength, brho); break;
-    case BDSFieldType::dipole:
-      bdsField = new BDSFieldMagSBend(strength, brho); break;
-    case BDSFieldType::quadrupole:
-      bdsField = new BDSFieldMagQuadrupole(strength, brho); break;
-    case BDSFieldType::sextupole:
-      bdsField = new BDSFieldMagSextupole(strength, brho); break;
-    case BDSFieldType::octupole:
-      bdsField = new BDSFieldMagOctupole(strength, brho); break;
-    case BDSFieldType::decapole:
-      bdsField = new BDSFieldMagDecapole(strength, brho); break;
-    case BDSFieldType::multipole:
-      bdsField = new BDSFieldMagMultipole(strength, brho); break;
-    case BDSFieldType::muonspoiler:
-      bdsField = new BDSFieldMagMuonSpoiler(strength, brho); break;
-    case BDSFieldType::skewquadrupole:
-      bdsField = new BDSFieldSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::halfpi); break;
-    case BDSFieldType::skewsextupole:
-      bdsField = new BDSFieldSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;
-    case BDSFieldType::skewoctupole:
-      bdsField = new BDSFieldSkew(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;
-    case BDSFieldType::skewdecapole:
-      bdsField = new BDSFieldSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;
-    default:
-      G4cerr << __METHOD_NAME__ << "not an equation based field type - not building field" << G4endl;
-      break; // this will return nullptr
-    }
-  return bdsField;
-}
-
-BDSFieldObjects* BDSFieldFactory::CreateFieldMagEquation(const BDSMagnetType      type,
-							 BDSMagnetStrength* const strength,
-							 const G4double           brho)
-{
-  CleanUp();
-  
-  // switch on type and build correct field
-  switch (type.underlying())
-    {
-    case BDSMagnetType::solenoid:
-      CreateSolenoid(strength,   brho); break;
-    case BDSMagnetType::sectorbend:
-    case BDSMagnetType::rectangularbend: // TBC need to think about length for this
-      CreateDipole(strength,     brho); break;
-    case BDSMagnetType::quadrupole:
-      CreateQuadrupole(strength, brho); break;
-    case BDSMagnetType::sextupole:
-      CreateSextupole(strength,  brho); break;
-    case BDSMagnetType::octupole:
-      CreateOctupole(strength,   brho); break;
-    case BDSMagnetType::decapole:
-      CreateDecapole(strength,   brho); break;
-    case BDSMagnetType::multipole:
-      CreateMultipole(strength,  brho); break;
-    case BDSMagnetType::vkicker:
-      CreateKicker(strength, brho, true); break;
-    case BDSMagnetType::hkicker:
-      CreateKicker(strength, brho, false); break;
-    case BDSMagnetType::muonspoiler:
-      CreateMuonSpoiler(strength, brho); break;
-    default:
-      G4cerr << __METHOD_NAME__ << "not an equation based field type - not building field" << G4endl;
-      break; // this will return nullptr
-    }
+  bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
+  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
+  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  BDSFieldObjects* completeField = new BDSFieldObjects(nullptr, bGlobalField, bEqOfMotion, integrator);
   return completeField;
 }
+
 
 BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      type,
 						      BDSMagnetStrength* const strength,
@@ -231,134 +361,18 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      t
     case BDSMagnetType::octupole:
     case BDSMagnetType::decapole:
     case BDSMagnetType::multipole:
-      CreateOuterMultipole(type, strength, brho); break;
+      //CreateOuterMultipole(type, strength, brho); break;
     case BDSMagnetType::solenoid:
     case BDSMagnetType::vkicker:
     case BDSMagnetType::hkicker:
       break; // return a nullptr
     case BDSMagnetType::muonspoiler:
-      CreateMuonSpoiler(strength, brho); break;
+      //CreateMuonSpoiler(strength, brho); break;
     default:
       G4cerr << __METHOD_NAME__ << "no outer field defined for this type of magnet" << G4endl;
       break; // return a nullptr
     }
   return completeField;
-}
-
-BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
-{
-  bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
-  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  FinalConstruction();
-  return completeField;
-}
-
-void BDSFieldFactory::CreateOuterMultipole(const BDSMagnetType      /*type*/,
-					   BDSMagnetStrength* const /*strength*/,
-					   const G4double           /*brho*/)
-{
-  bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
-  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-  integrator   = new G4ClassicalRK4(bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::IntermediateConstruction()
-{
-  bGlobalField = new BDSFieldMagGlobal(bdsField);
-  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-}
-
-void BDSFieldFactory::FinalConstruction()
-{
-  completeField = new BDSFieldObjects(bGlobalField, bEqOfMotion, integrator);
-}
-
-void BDSFieldFactory::CreateSolenoid(BDSMagnetStrength* strength,
-				     G4double           brho)
-{
-  bdsField   = new BDSFieldMagSolenoid(strength, brho);
-  IntermediateConstruction();
-  integrator = new BDSIntegratorSolenoid(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateDipole(BDSMagnetStrength* strength,
-				   G4double           brho)
-{
-  bdsField   = new BDSFieldMagSBend(strength, brho);
-  IntermediateConstruction();
-  integrator = new BDSIntegratorDipole(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateQuadrupole(BDSMagnetStrength* strength,
-				       G4double           brho)
-{
-  bdsField   = new BDSFieldMagQuadrupole(strength, brho);
-  IntermediateConstruction();
-  integrator = new BDSIntegratorQuadrupole(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateSextupole(BDSMagnetStrength* strength,
-				      G4double           brho)
-{
-  bdsField   = new BDSFieldMagSextupole(strength, brho);
-  IntermediateConstruction();
-  integrator = new BDSIntegratorSextupole(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateOctupole(BDSMagnetStrength* strength,
-				     G4double           brho)
-{
-  bdsField   = new BDSFieldMagOctupole(strength, brho);
-  IntermediateConstruction();
-  integrator = new BDSIntegratorOctupole(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateDecapole(BDSMagnetStrength* strength,
-				     G4double           brho)
-{
-  bdsField   = new BDSFieldMagDecapole(strength, brho);
-  IntermediateConstruction();
-  integrator = new BDSIntegratorDecapole(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateMultipole(BDSMagnetStrength* strength,
-				      G4double           brho)
-{
-  bdsField   = new BDSFieldMagMultipole(strength, brho);
-  IntermediateConstruction();
-  integrator = new G4SimpleRunge(bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateKicker(BDSMagnetStrength* strength,
-				   G4double           brho,
-				   G4bool             isVertical)
-{
-  if (isVertical)
-    {bdsField = new BDSFieldMagSBend(strength, brho, G4ThreeVector(-1,0,0));}
-  else
-    {bdsField = new BDSFieldMagSBend(strength, brho);}
-  IntermediateConstruction();
-  integrator  = new G4ClassicalRK4(bEqOfMotion);
-  //integrator  = new BDSIntegratorDipole(strength, brho, bEqOfMotion);
-  FinalConstruction();
-}
-
-void BDSFieldFactory::CreateMuonSpoiler(BDSMagnetStrength* strength,
-					G4double           brho)
-{
-  bdsField   = new BDSFieldMagMuonSpoiler(strength, brho);
-  IntermediateConstruction();
-  integrator = new G4ClassicalRK4(bEqOfMotion);
-  FinalConstruction();
 }
 
 BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldXY()

@@ -47,6 +47,28 @@ public:
   
   ~BDSFieldFactory();
 
+  /// Main interface to field factory.
+  BDSFieldObjects* CreateField(BDSFieldInfo& info);
+
+private:
+  /// Create a purely magnetic field.
+  BDSFieldObjects* CreateFieldMag(BDSFieldInfo& info);
+
+  /// Create a general EM field.
+  BDSFieldObjects* CreateFieldEM(BDSFieldInfo& info);
+
+  /// Create a purely magnetic integrator. As it's purely magnetic, this
+  /// requires a G4Mag_EqRhs* equation of motion instance.
+  G4MagIntegratorStepper* CreateIntegratorMag(BDSFieldInfo& info,
+					      G4Mag_EqRhs*        eqOfM,
+					      BDSMagnetStrength*  strength);
+
+  /// Create an integrator for a general EM field. As it's a general field,
+  /// this takes a G4EquationOfMotion* equation of motion instance.
+  G4MagIntegratorStepper* CreateIntegratorEM(BDSFieldInfo& info,
+					     G4EquationOfMotion* eqOfM);
+  
+
   /// Create a field based on a mesh of coordinates with field 3 vectors. This only
   /// produces the field object itself.
   BDSMagFieldMesh* CreateMagneticField(G4String      formatAndFilePath,
@@ -110,27 +132,6 @@ private:
   G4Mag_EqRhs*            bEqOfMotion;
   G4MagIntegratorStepper* integrator;
   BDSFieldObjects*        completeField;
-  ///@}
-
-  /// Build global field from local field and build equation of motion
-  void IntermediateConstruction();
-  
-  /// Package objects in BDSFieldObjects instance
-  void FinalConstruction();
-
-  ///@{ Delegate function to construct the specific classes
-  void CreateSolenoid(BDSMagnetStrength*    strength, G4double brho);
-  void CreateDipole(BDSMagnetStrength*      strength, G4double brho);
-  void CreateQuadrupole(BDSMagnetStrength*  strength, G4double brho);
-  void CreateSextupole(BDSMagnetStrength*   strength, G4double brho);
-  void CreateOctupole(BDSMagnetStrength*    strength, G4double brho);
-  void CreateDecapole(BDSMagnetStrength*    strength, G4double brho);
-  void CreateMultipole(BDSMagnetStrength*   strength, G4double brho);
-  void CreateKicker(BDSMagnetStrength*      strength, G4double brho, G4bool isVertical);
-  void CreateMuonSpoiler(BDSMagnetStrength* strength, G4double brho);
-  void CreateOuterMultipole(const BDSMagnetType      type,
-			    BDSMagnetStrength* const strength,
-			    const G4double           brho);
   ///@}
   
   /// Splits the G4String member variable formatAndName on the ":" character.
