@@ -9,7 +9,6 @@
    Removed StringFromInt function
 */
 
-#define BDSDEBUG 1
 
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"

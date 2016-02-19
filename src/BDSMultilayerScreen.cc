@@ -9,12 +9,13 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4TransportationManager.hh"
+#include "BDSSampler.hh"
 
 #include "BDSMultilayerScreen.hh"
 
 //============================================================
 BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
-  _xysize(xysize), _name(name+"_MultilayerScreen"), _colourWheel(new BDSColourWheel())
+  _xysize(xysize), _name(name), _colourWheel(new BDSColourWheel())
 {
   _size.setX(_xysize.x()); 
   _size.setY(_xysize.y());
@@ -25,8 +26,16 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
 }
 
 void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler, G4double grooveWidth, G4double grooveSpatialFrequency){
-  G4ThreeVector layerSize(_xysize.x(), _xysize.y(), thickness);
-  screenLayer(new BDSScreenLayer(layerSize,_name+"_"+name ,material, grooveWidth,grooveSpatialFrequency), isSampler);
+    G4String layerName = _name+"_"+name;
+    if(isSampler){
+      G4int nThisSampler = BDSSampler::GetNSamplers()+1;
+      G4String tempString = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler);
+      layerName = tempString + "_" + layerName;
+    } else {
+      layerName=name;
+    }
+    G4ThreeVector layerSize(_xysize.x(), _xysize.y(), thickness);
+    screenLayer(new BDSScreenLayer(layerSize, layerName, material, grooveWidth,grooveSpatialFrequency), isSampler);
 }
 
 void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer, G4int isSampler){

@@ -347,6 +347,9 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
   for (G4int i=0; i<hc->entries(); i++)
     {
       G4String name = (*hc)[i]->GetName();
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " - writing hits for sampler: " << name << G4endl;
+#endif
       WriteRootHit(name,
 		   (*hc)[i]->GetInitMom(),
 		   (*hc)[i]->GetInitX(),
