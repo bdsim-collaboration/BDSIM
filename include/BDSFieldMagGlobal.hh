@@ -4,45 +4,40 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4MagneticField.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
-
-class BDSField;
+#include "BDSFieldMag.hh"
 
 /**
- * @brief A base class for magnetic fields in local coordinates.
+ * @brief A base class for magnetic fields in local to be used in global coordinates.
  * 
  * This base class provides the aggregative inheritance and utility functions
- * for magnetic fields in local coordinates.
+ * for magnetic fields in local coordinates to be used in global coordinates.
  * 
  * Constness is particularly important here as member functions are called
  * from inside G4MagneticField::GetField function which is const.
+ *
+ * This owns the field it wraps.
  * 
  * @author Laurie Nevay
  */
 
-class BDSFieldMagGlobal: public G4MagneticField, public BDSAuxiliaryNavigator
+class BDSFieldMagGlobal: public BDSFieldMag, public BDSAuxiliaryNavigator
 {
 public:
-  BDSFieldMagGlobal(BDSField* fieldObjectIn, G4ThreeVector localOffsetIn = G4ThreeVector(0,0,0));
-  ~BDSFieldMagGlobal(){;}
+  BDSFieldMagGlobal(BDSFieldMag* fieldIn);
+  virtual ~BDSFieldMagGlobal();
 
-  /// Accessor that overloads Geant4 pure virtual method. Gets the coordinates at global
-  /// position "point[4]" by converting to local coordinates and adding the local offset
-  /// this field was constructed with, then converting back to global coordinates and writing
-  /// the value to *field.
-  virtual void GetFieldValue(const G4double point[4],
-			     G4double* field) const;
+  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetFieldValueTransformed( const G4ThreeVector& position) const;
   
 private:
   /// Private default constructor to force use of supplied constructor
   BDSFieldMagGlobal();
 
-  BDSField* fieldObject;
-
-  /// Offset between that is applied - use in case field is intended to be offset
-  /// from local coordinates.
-  G4ThreeVector localOffset;
+  /// The field on which this is based.
+  BDSFieldMag* field;
 };
 
 #endif
