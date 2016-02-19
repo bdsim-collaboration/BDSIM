@@ -89,14 +89,45 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   element = elementIn;
   prevElement = prevElementIn;
   nextElement = nextElementIn;
-
+  G4bool overrideRegistration = false; // for multiple instances of the same element but different poleface rotations.
+  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
+
+  if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name)){
+    overrideRegistration = true;
+    }
+
+  // Match poleface from previous and next element
+  G4double angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+  G4double angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
+  if (element->type == ElementType::_DRIFT){
+    //Normal vector of rbend is from the magnet, angle of the rbend has to be taken into account regardless of poleface rotation
+    if (prevElement && (prevElement->type == ElementType::_RBEND))
+      {angleIn += -0.5*(prevElement->angle);}
+
+    if (nextElement && (nextElement->type == ElementType::_RBEND))
+      {angleOut += 0.5*nextElement->angle;}
+  }
+
+  if (element->type == ElementType::_RBEND){
+    //angleIn and angleOut have to be multiplied by minus one for rbends for some reason. Cannot figure out why yet.
+    angleIn    *= -1.0;
+    angleOut   *= -1.0;
+
+    if (nextElement && (nextElement->type == ElementType::_RBEND))
+      {angleOut += 0.5*element->angle;}
+    if (prevElement && (prevElement->type == ElementType::_RBEND))
+      {angleIn += 0.5*element->angle;}
+  }
+  
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
   if (element->type != ElementType::_DUMP &&
-      BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
+      BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name)
+      && not overrideRegistration)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -110,13 +141,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #endif
   switch(element->type){
   case ElementType::_DRIFT:
-    component = CreateDrift(); break;
+    component = CreateDrift(angleIn,angleOut); break;
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
-    component = CreateRBend(); break;
+    component = CreateRBend(angleIn,angleOut); break;
   case ElementType::_HKICK:
     component = CreateHKick(); break;
   case ElementType::_VKICK:
@@ -216,7 +247,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
   
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
+BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn,
+                            G4double angleOut)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -228,22 +260,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift()
 	 << G4endl;
 #endif
 
-  // Match poleface from previous and next element
-  G4double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-  G4double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-
-  //Normal vector of rbend is from the magnet, angle of the rbend has to be taken into account regardless of poleface rotation
-  if (prevElement && (prevElement->type == ElementType::_RBEND))
-    {e1 += -0.5*(prevElement->angle);}
-
-  if (nextElement && (nextElement->type == ElementType::_RBEND))
-    {e2 += 0.5*nextElement->angle;}
-
   // Beampipeinfo needed here to get aper1 for check.
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, e1, e2);
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, angleOut);
 
-  G4double projLengthIn = 2.0 * std::abs(tan(e1)) * (beamPipeInfo->aper1*CLHEP::mm) ;
-  G4double projLengthOut = 2.0 * std::abs(tan(e2)) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  G4double projLengthIn = 2.0 * std::abs(tan(angleIn)) * (beamPipeInfo->aper1*CLHEP::mm) ;
+  G4double projLengthOut = 2.0 * std::abs(tan(angleOut)) * (beamPipeInfo->aper1*CLHEP::mm) ;
   G4double elementLength = element->l * CLHEP::m;
 
   if (projLengthIn > elementLength){
@@ -457,7 +478,8 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
     return sbendline;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
+BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
+                                    G4double angleOut)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -540,18 +562,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
-
-  G4double e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-  G4double e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-
-  //e1 and e2 have to be multiplied by minus one for some reason. Cannot figure out why yet.
-  G4double angleIn    = -1.0*e1*CLHEP::rad;
-  G4double angleOut   = -1.0*e2*CLHEP::rad;
-
-  if (nextElement && (nextElement->type == ElementType::_RBEND)){
-    angleOut += 0.5*angle;}
-  if (prevElement && (prevElement->type == ElementType::_RBEND)){
-    angleIn += 0.5*angle;}
 
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,

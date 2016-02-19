@@ -62,10 +62,10 @@ private:
   GMAD::Element* nextElement;
   
   BDSAcceleratorComponent* CreateDump();
-  BDSAcceleratorComponent* CreateDrift();
+  BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend();
-  BDSAcceleratorComponent* CreateRBend();
+  BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateHKick();
   BDSAcceleratorComponent* CreateVKick();
   BDSAcceleratorComponent* CreateQuad();  
