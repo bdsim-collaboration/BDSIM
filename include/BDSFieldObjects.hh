@@ -56,12 +56,21 @@ public:
   inline G4ChordFinder*          GetChordFinder()      const;
   inline G4FieldManager*         GetFieldManager()     const;
   ///@}
+
+  /// Interface to easily attach to logical volume.
+  void AttachToVolume(G4LogicalVolume* volume,
+		      G4bool penetrateToDaughterVolumes = true);
+
+  /// Interface to easily attach to logical volumes.
+  void AttachToVolume(std::vector<G4LogicalVolume*> volumes,
+		      G4bool penetrateToDaughterVolumes = true);
   
 private:
   /// Private default constructor to force use of non-default constructor
   BDSFieldObjects();
 
-  /// Private copy constructor to avoid shallow pointer copy and possible double deletion
+  /// Private copy constructor to avoid shallow pointer copy and possible double deletion.
+  /// Could possibly implement this with the info and the field factory.
   BDSFieldObjects(const BDSFieldObjects& other);
 
   /// The complete information required to build this field.

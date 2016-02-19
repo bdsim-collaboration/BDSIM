@@ -57,3 +57,16 @@ BDSFieldObjects::~BDSFieldObjects()
   delete magIntegratorStepper;
   delete equationOfMotion;
 }
+
+void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,
+				     G4bool penetrateToDaughterVolumes)
+{
+  volume->SetFieldManager(fieldManager, penetrateToDaughterVolumes);
+}
+
+void BDSFieldObjects::AttachToVolume(std::vector<G4LogicalVolume*> volumes,
+				     G4bool penetrateToDaughterVolumes)
+{
+  for (auto volume : volumes)
+    {AttachToVolume(volume, penetrateToDaughterVolumes);}
+}
