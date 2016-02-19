@@ -22,15 +22,9 @@ public:
 
   /// Access the field value.
   virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
-
-  /// Get the name of the field.
-  virtual inline G4String Name() const;
   
 private:
   G4double bField;
 };
-
-inline G4String BDSFieldMagMuonSpoiler::Name() const
-{return "muon_spoiler";}
 
 #endif
