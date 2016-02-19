@@ -14,12 +14,15 @@
 #include "BDSFieldMagQuadrupole.hh"
 #include "BDSFieldMagSBend.hh"
 #include "BDSFieldMagSextupole.hh"
+#include "BDSFieldMagSkew.hh"
 #include "BDSFieldMagSolenoid.hh"
-#include "BDSFieldSkew.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
+
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
+
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorOctupole.hh"
@@ -27,6 +30,8 @@
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
+#include "BDSIntegratorType.hh"
+
 #include "BDSMagFieldMesh.hh"
 #include "BDSMagFieldSQL.hh"
 #include "BDSMagFieldXY.hh"
@@ -35,10 +40,26 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4ClassicalRK4.hh"
+#include "G4EquationOfMotion.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4SimpleRunge.hh"
 #include "G4UniformMagField.hh"
+// geant4 integrators
+#include "G4CashKarpRKF45.hh"
+#include "G4ClassicalRK4.hh"
+#include "G4ConstRK4.hh"
+#include "G4ExactHelixStepper.hh"
+#include "G4ExplicitEuler.hh"
+#include "G4HelixExplicitEuler.hh"
+#include "G4HelixHeum.hh"
+#include "G4HelixImplicitEuler.hh"
+#include "G4HelixMixedStepper.hh"
+#include "G4HelixSimpleRunge.hh"
+#include "G4ImplicitEuler.hh"
+#include "G4NystromRK4.hh"
+#include "G4RKG3_Stepper.hh"
+#include "G4SimpleHeum.hh"
+#include "G4SimpleRunge.hh"
 
 #include <typeinfo>
 #include <utility>
