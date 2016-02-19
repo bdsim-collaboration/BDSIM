@@ -3,16 +3,23 @@
 
 #include "G4ChordFinder.hh"
 #include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
+
+#include <vector>
+
+class BDSFieldInfo;
 
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
 
-BDSFieldObjects::BDSFieldObjects(G4Field*                fieldIn,
+BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+				 G4Field*                fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn,
 				 G4ChordFinder*          chordFinderIn,
 				 G4FieldManager*         fieldManagerIn):
+  info(infoIn),
   field(fieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn),
@@ -20,9 +27,11 @@ BDSFieldObjects::BDSFieldObjects(G4Field*                fieldIn,
   fieldManager(fieldManagerIn)
 {;}
 
-BDSFieldObjects::BDSFieldObjects(G4MagneticField*        fieldIn,
+BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+				 G4MagneticField*        fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn):
+  info(infoIn),
   field(fieldIn),
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn)
