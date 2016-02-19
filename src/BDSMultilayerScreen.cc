@@ -26,7 +26,7 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
 }
 
 void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler, G4double grooveWidth, G4double grooveSpatialFrequency){
-    G4String layerName = _name+"_"+name;
+    G4String layerName = name;
     if(isSampler){
       G4int nThisSampler = BDSSampler::GetNSamplers()+1;
       G4String tempString = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler);
