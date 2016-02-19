@@ -1,6 +1,8 @@
 #ifndef BDSFIELDFACTORY_H
 #define BDSFIELDFACTORY_H
 
+#include "BDSFieldInfo.hh"
+#include "BDSFieldMag.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGeometry.hh"
@@ -34,7 +36,7 @@ class BDSGeometry;
  * 5 field manager
  * 6 package it up
  * 
- * @author L. Deacon & L. Nevay
+ * @author Laurie Nevay
  */
 
 class BDSFieldFactory
@@ -100,7 +102,7 @@ private:
 
   ///@{ Variable to allow different functions to access different parts during construction
   G4Field*                field;
-  BDSField*               bdsField;
+  BDSFieldMag*            bdsField;
   G4MagneticField*        bGlobalField;
   G4EquationOfMotion*     eqOfMotion;
   /// B Fields require at least this level in the inheritance - use G4Mag_EqRhs instead

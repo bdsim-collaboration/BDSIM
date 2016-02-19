@@ -1,7 +1,11 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSField.hh"
+
+#include "BDSFieldE.hh"
+#include "BDSFieldEM.hh"
+#include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
