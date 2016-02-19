@@ -7,6 +7,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+class BDSCavityInfo;
 class BDSMagnetStrength;
 
 /**
@@ -27,24 +28,37 @@ public:
   BDSFieldInfo(BDSFieldType       fieldTypeIn,
 	       G4double           brhoIn,
 	       BDSIntegratorType  integratorTypeIn,
-	       G4Transform3D      transformIn             = G4Transform3D(),
-	       BDSMagnetStrength* magnetStrengthIn        = nullptr,
-	       G4String           magneticFieldFilePathIn = "",
-	       G4String           electricFieldFilePathIn = "");
+	       G4Transform3D      transformIn              = G4Transform3D(),
+	       BDSMagnetStrength* magnetStrengthIn         = nullptr,
+	       BDSCavityInfo*     cavityInfoIn             = nullptr,
+	       G4bool             provideGlobalTransformIn = true,
+	       G4String           magneticFieldFilePathIn  = "",
+	       G4String           electricFieldFilePathIn  = "");
   ~BDSFieldInfo();
 
-  const BDSFieldType       fieldType;
-  const G4double           brho;
-  const BDSIntegratorType  integratorType;
-  const G4Transform3D      transform;  ///< Transform w.r.t. solid field will be attached to
-  BDSMagnetStrength const* magnetStrength;
-  const G4String           magneticFieldFilePath;
-  const G4String           electricFieldFilePath;
-
+  inline BDSFieldType       FieldType()      const {return fieldType;}
+  inline G4double           BRho()           const {return brho;}
+  inline BDSIntegratorType  IntegratorType() const {return integratorType;}
+  inline G4Transform3D      Transform()      const {return transform;}
+  inline BDSMagnetStrength* MagnetStrength() const {return magnetStrength;}
+  inline BDSCavityInfo*     CavityInfo()     const {return cavityInfo;}
+  inline G4bool             ProvideGlobal()  const {return provideGlobalTransform;}
+  inline G4String           MagneticFile()   const {return magneticFieldFilePath;}
+  inline G4String           ElectricFile()   const {return electricFieldFilePath;}
+  
 private:
   /// Private default constructor to force use of provided one.
   BDSFieldInfo();
-
+  
+  BDSFieldType       fieldType;
+  G4double           brho;
+  BDSIntegratorType  integratorType;
+  G4Transform3D      transform;  ///< Transform w.r.t. solid field will be attached to
+  BDSMagnetStrength* magnetStrength;
+  BDSCavityInfo*     cavityInfo;
+  G4bool             provideGlobalTransform;
+  G4String           magneticFieldFilePath;
+  G4String           electricFieldFilePath;
 };
 
 #endif
