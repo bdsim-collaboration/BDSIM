@@ -11,11 +11,11 @@
 class BDSIntegratorSextupole: public BDSIntegratorBase
 {
 public:
-  BDSIntegratorSextupole(const BDSMagnetStrength* strength,
-			 const G4double           brho,
-			 G4Mag_EqRhs* const       eqRHSIn);
+  BDSIntegratorSextupole(BDSMagnetStrength const* strength,
+			 G4double                 brho,
+			 G4Mag_EqRhs*             eqOfMIn);
   
-  ~BDSIntegratorSextupole(){;}
+  virtual ~BDSIntegratorSextupole(){;}
 
   /// The stepper for integration. The stepsize is fixed, equal to h. The reason for this
   /// is so that intermediate steps can be calculated and therefore the error ascertained

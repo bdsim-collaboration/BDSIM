@@ -5,18 +5,19 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSIntegratorDipole::BDSIntegratorDipole(const BDSMagnetStrength* strength,
-					 const G4double           brho,
-					 G4Mag_EqRhs* const       eqRHSIn):
-  BDSIntegratorBase(eqRHSIn, 6),
+BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
+					 G4double                  brho,
+					 G4Mag_EqRhs*              eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
   angle((*strength)["angle"]),
   length((*strength)["length"])
 {
-  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
   G4double ffact  = BDSGlobalConstants::Instance()->GetFFact();
   bField = brho * angle / length * charge * ffact;
   bPrime = brho * (*strength)["k1"];
@@ -36,7 +37,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   //return;
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
       
-  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
 #ifdef BDSDEBUG
   G4cout << "BDSIntegratorDipole: step= " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
@@ -58,7 +59,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 
   // in case of zero field (though what if there is a quadrupole part..)
   // or neutral particles do a linear step:
-  if(bField==0 || eqRHS->FCof()==0)
+  if(bField==0 || eqOfM->FCof()==0)
     {
       G4ThreeVector positionMove = h * InitMomDir;
       
@@ -121,7 +122,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       itsFinalDir   = CosT*vhat +SinT*vnorm;
   
       // gradient for quadrupolar field
-      G4double kappa = - eqRHS->FCof() * bPrime / InitMag; // was ist das? 
+      G4double kappa = - eqOfM->FCof() * bPrime / InitMag; // was ist das? 
       // ignore quadrupolar component for now as this needs fixing
       if(true || fabs(kappa)<1.e-12)
 	{// no gradient

@@ -3,16 +3,16 @@
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals.hh
-#include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
+#include "G4Mag_EqRhs.hh"
+#include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-
-BDSIntegratorSolenoid::BDSIntegratorSolenoid(const BDSMagnetStrength* strength,
-					     const G4double           brho,
-					     G4Mag_EqRhs* const       eqRHSIn):
-  BDSIntegratorBase(eqRHSIn, 6)
+BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
+					     G4double                 brho,
+					     G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6)
 {
   bField = brho * (*strength)["ks"];
 #ifdef BDSDEBUG
@@ -32,11 +32,11 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalP    = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
-  G4double      kappa      = - 0.5*eqRHS->FCof()*bField/InitPMag;
+  G4double      kappa      = - 0.5*eqOfM->FCof()*bField/InitPMag;
   G4double      h2 = h*h;
   
 #ifdef BDSDEBUG
-  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
   G4cout << "BDSIntegratorSolenoid: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m   << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m   << " m"     << G4endl

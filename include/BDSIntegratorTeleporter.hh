@@ -7,11 +7,17 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+/**
+ * @brieft Custom unphysical integrator to advance particle in teleporter.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSIntegratorTeleporter: public BDSIntegratorBase
 {
 public:
-  BDSIntegratorTeleporter(G4Mag_EqRhs* const  eqRHSIn,
-			  const G4ThreeVector teleporterDelta);
+  BDSIntegratorTeleporter(G4Mag_EqRhs* eqRHSIn,
+			  G4ThreeVector teleporterDelta);
 
   virtual ~BDSIntegratorTeleporter(){;}
   

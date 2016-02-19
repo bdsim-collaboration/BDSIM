@@ -24,11 +24,11 @@ class BDSMagnetStrength;
 class BDSIntegratorDipole: public BDSIntegratorBase
 {
 public:
-  BDSIntegratorDipole(const BDSMagnetStrength* strength,
-		      const G4double           brho,
-		      G4Mag_EqRhs* const       eqRHSIn);
+  BDSIntegratorDipole(BDSMagnetStrength const* strength,
+		      G4double                 brho,
+		      G4Mag_EqRhs*             eqOfMIn);
     
-  ~BDSIntegratorDipole(){;}
+  virtual ~BDSIntegratorDipole(){;}
 
   /// Stepper for this integrator.  Calculates the new coordinates of a particle
   /// through a uniform magnetic field.

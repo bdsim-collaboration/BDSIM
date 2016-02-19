@@ -23,10 +23,10 @@
 class BDSIntegratorBase: public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
 public:
-  BDSIntegratorBase(G4Mag_EqRhs* const eqRHSIn,
-		    const G4double     nVariablesIn);
+  BDSIntegratorBase(G4Mag_EqRhs* eqOfMIn,
+		    G4double     nVariablesIn);
   
-  ~BDSIntegratorBase();
+  virtual ~BDSIntegratorBase();
 
   /// Estimate maximum distance of curved solution and chord.
   inline G4double DistChord() const;
@@ -38,7 +38,7 @@ protected:
   /// The equation of motion object that this integrator is constructed w.r.t. This is
   /// used to get fPtrMagEqOfMot->FCof()/CLHEP::c_light, which is the charge of the particle
   /// being stepped.
-  G4Mag_EqRhs* const eqRHS;
+  G4Mag_EqRhs* eqOfM;
 
   /// Number of variables this can integrate over.
   const G4double nVariables;

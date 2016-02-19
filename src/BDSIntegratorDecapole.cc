@@ -1,16 +1,18 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorDecapole.hh"
 
+#include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
+#include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSIntegratorDecapole::BDSIntegratorDecapole(const BDSMagnetStrength* strength,
-					     const G4double           brho,
-					     G4Mag_EqRhs* const       eqRHSIn):
-  BDSIntegratorBase(eqRHSIn, 6),
+BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
+					     G4double                 brho,
+					     G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
@@ -31,7 +33,7 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
   G4double InitMag = v0.mag();
-  G4double kappa   = -eqRHS->FCof()*bQuadruplePrime/InitMag;
+  G4double kappa   = -eqOfM->FCof()*bQuadruplePrime/InitMag;
 
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:

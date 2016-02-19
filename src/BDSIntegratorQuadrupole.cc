@@ -3,6 +3,7 @@
 #include "BDSMagnetStrength.hh"
 
 #include "G4AffineTransform.hh"
+#include "G4Mag_EqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
@@ -11,10 +12,10 @@
 using std::max;
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(const BDSMagnetStrength* strength,
-						 const G4double           brho,
-						 G4Mag_EqRhs* const       eqRHSIn):
-  BDSIntegratorBase(eqRHSIn, 6),
+BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
+						 G4double                 brho,
+						 G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -35,10 +36,10 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
   // quad strength k normalised to charge and momentum of this particle
-  G4double kappa = - eqRHS->FCof()*bPrime/InitPMag;
+  G4double kappa = - eqOfM->FCof()*bPrime/InitPMag;
 
 #ifdef BDSDEBUG
-  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
   G4cout << "BDSIntegratorQuadrupole: step = " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m"     << G4endl
          << " y  = " << yIn[1]/CLHEP::m     << " m"     << G4endl
@@ -301,7 +302,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double     yInput[],
   const G4double *pIn   = yInput+3;
   G4ThreeVector GlobalP = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4double InitPMag     = GlobalP.mag();
-  G4double kappa        = - eqRHS->FCof()*bPrime/InitPMag;
+  G4double kappa        = - eqOfM->FCof()*bPrime/InitPMag;
   
   if(fabs(kappa) < 1.e-6) //kappa is small - no error needed for paraxial treatment
     {

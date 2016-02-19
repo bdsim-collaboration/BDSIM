@@ -23,11 +23,11 @@ class BDSMagnetStrength;
 class BDSIntegratorSolenoid: public BDSIntegratorBase
 {
 public:
-  BDSIntegratorSolenoid(const BDSMagnetStrength* strength,
-			const G4double           brho,
-			G4Mag_EqRhs* const       eqRHSIn);
+  BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
+			G4double                 brho,
+			G4Mag_EqRhs*             eqOfMIn);
 
-  ~BDSIntegratorSolenoid(){;}
+  virtual ~BDSIntegratorSolenoid(){;}
 
   /// The stepper for the Runge Kutta integration. The stepsize is fixed, equal to h.
   /// Integrates ODE starting values y[0 to 6] and utputs yout[] and its estimated error yerr[].

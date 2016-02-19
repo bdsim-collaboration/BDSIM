@@ -4,19 +4,20 @@
 #include "BDSIntegratorTeleporter.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs* const  eqRHSIn,
-						 const G4ThreeVector teleporterDeltaIn):
+BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs* eqRHSIn,
+						 G4ThreeVector teleporterDeltaIn):
   BDSIntegratorBase(eqRHSIn, 6),
   teleporterDelta(teleporterDeltaIn)
 {;}
 
 void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
-				   const G4double /*dxdy*/[],
-				   const G4double h,
-				   G4double yOut[],
-				   G4double yErr[])
+				      const G4double /*dxdy*/[],
+				      const G4double h,
+				      G4double yOut[],
+				      G4double yErr[])
 {
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}

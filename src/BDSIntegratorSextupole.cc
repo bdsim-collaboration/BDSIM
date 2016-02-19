@@ -3,14 +3,15 @@
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 extern G4double BDSLocalRadiusOfCurvature;
 
-BDSIntegratorSextupole::BDSIntegratorSextupole(const BDSMagnetStrength* strength,
-					       const G4double           brho,
-					       G4Mag_EqRhs* const       eqRHSIn):
-  BDSIntegratorBase(eqRHSIn, 6)
+BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
+					       G4double                 brho,
+					       G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime     = brho * (*strength)["k2"];
@@ -30,18 +31,18 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 
   G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
   G4double InitMag=v0.mag();
-  G4double kappa=  (-eqRHS->FCof()*bDoublePrime) /InitMag;
+  G4double kappa=  (-eqOfM->FCof()*bDoublePrime) /InitMag;
   /*
 #ifdef BDSDEBUG  
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << "kappa                 : " << kappa << G4endl;
   G4cout << __METHOD_NAME__ << "InitMag               : " << InitMag << G4endl;
-  G4cout << __METHOD_NAME__ << "eqRHS::FCof(): " << eqRHS->FCof() << G4endl;
+  G4cout << __METHOD_NAME__ << "eqOfM::FCof(): " << eqOfM->FCof() << G4endl;
   G4cout << __METHOD_NAME__ << "g''                   : " << bDoublePrime<< G4endl;
-  G4cout << __METHOD_NAME__ << "eqRHS->FCof(): " << eqRHS->FCof() << G4endl;
+  G4cout << __METHOD_NAME__ << "eqOfM->FCof(): " << eqOfM->FCof() << G4endl;
   G4cout << __METHOD_NAME__ << "h                     : " << h << G4endl;
 
-  G4double charge = (eqRHS->FCof())/CLHEP::c_light;
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
 
   G4String VolName = auxNavigator->LocateGlobalPointAndSetup(GlobalPosition)->GetName();
 
