@@ -4,7 +4,7 @@
 
 #include "globals.hh"
 #include "G4Material.hh"
-#include "BDSCavityField.hh"
+#include "BDSFieldEMRFCavity.hh"
 #include "G4FieldManager.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ChordFinder.hh"
@@ -22,14 +22,17 @@ BDSCavityRF::BDSCavityRF(G4String       name,
 
  void BDSCavityRF::BuildField()
 {
+  /*
   itsField = new BDSCavityField(fieldAmplitude,
 				 cavityRadius,
 				 cavityInfo->frequency,
 				 cavityInfo->phase);
+  */
 }
 
 void BDSCavityRF::AttachField()
 {
+  /*
   G4EqMagElectricField* itsEquation = new G4EqMagElectricField(itsField); //Create field
   itsStepper = new G4ClassicalRK4(itsEquation, nvar); //Create stepper
 
@@ -53,6 +56,7 @@ void BDSCavityRF::AttachField()
   G4bool allLocal = true ; //using "true" makes it push the field to all existing daugher volumes (and their daughters and so on) -- unless a daughter has its own field manager.
 
   vacuumLV->SetFieldManager(itsFieldManager,allLocal);
+  */
 
   // std::cout << "field attached" << std::endl;
   
