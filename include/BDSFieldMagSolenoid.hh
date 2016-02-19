@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGSOLENOID_H
 #define BDSFIELDMAGSOLENOID_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -17,11 +17,11 @@ class BDSMagnetStrength;
  * @author Laurie Nevay
  */
 
-class BDSFieldMagSolenoid: public BDSField
+class BDSFieldMagSolenoid: public BDSFieldMag
 {
 public:
-  BDSFieldMagSolenoid(BDSMagnetStrength* strength,
-		      G4double           brho);
+  BDSFieldMagSolenoid(BDSMagnetStrength const* strength,
+		      G4double          const  brho);
   
   virtual ~BDSFieldMagSolenoid(){;}
 

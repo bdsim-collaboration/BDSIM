@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGMULTIPOLE_H
 #define BDSFIELDMAGMULTIPOLE_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -17,12 +17,12 @@ class BDSMagnetStrength;
  * "kn" up to a specified order and a design rigidity (brho).
  */
 
-class BDSFieldMagMultipole: public BDSField
+class BDSFieldMagMultipole: public BDSFieldMag
 {
 public:
-  BDSFieldMagMultipole(const BDSMagnetStrength* strength,
-		       const G4double           brho,
-		       const G4int              orderIn = 12);
+  BDSFieldMagMultipole(BDSMagnetStrength const* strength,
+		       G4double          const  brho,
+		       G4int             const  orderIn = 12);
   
   virtual ~BDSFieldMagMultipole(){;}
 

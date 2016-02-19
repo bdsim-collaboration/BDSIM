@@ -9,9 +9,9 @@
 #include <cmath>
 #include <vector>
 
-BDSFieldMagMultipole::BDSFieldMagMultipole(const BDSMagnetStrength* strength,
-					   const G4double           brho,
-					   const G4int              orderIn):
+BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
+					   G4double          const  brho,
+					   G4int             const  orderIn):
   order(orderIn)
 {
   normalComponents = strength->NormalComponents();

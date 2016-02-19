@@ -6,8 +6,8 @@
 #include "G4ThreeVector.hh"
 
 
-BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(const BDSMagnetStrength* strength,
-					     const G4double           brho)
+BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(BDSMagnetStrength const* strength,
+					     G4double          const  brho)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
   bPrime = brho * (*strength)["k1"];

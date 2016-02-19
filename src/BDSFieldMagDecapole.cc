@@ -7,8 +7,8 @@
 
 #include <cmath>
 
-BDSFieldMagDecapole::BDSFieldMagDecapole(const BDSMagnetStrength* strength,
-					 const G4double           brho)
+BDSFieldMagDecapole::BDSFieldMagDecapole(BDSMagnetStrength const* strength,
+					 G4double          const  brho)
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
   bQuadruplePrime = brho * (*strength)["k4"];

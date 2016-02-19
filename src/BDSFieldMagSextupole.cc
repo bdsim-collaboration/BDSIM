@@ -7,8 +7,8 @@
 
 #include <cmath>
 
-BDSFieldMagSextupole::BDSFieldMagSextupole(const BDSMagnetStrength* strength,
-					   const G4double           brho)
+BDSFieldMagSextupole::BDSFieldMagSextupole(BDSMagnetStrength const* strength,
+					   G4double          const   brho)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime     = brho * (*strength)["k2"];

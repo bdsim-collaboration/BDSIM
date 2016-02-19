@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGQUADRUPOLE_H
 #define BDSFIELDMAGQUADRUPOLE_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -15,11 +15,11 @@ class BDSMagnetStrength;
  * "k1" and a design rigidity (brho).
  */
 
-class BDSFieldMagQuadrupole: public BDSField
+class BDSFieldMagQuadrupole: public BDSFieldMag
 {
 public:
-  BDSFieldMagQuadrupole(const BDSMagnetStrength* strength,
-			const G4double           brho);
+  BDSFieldMagQuadrupole(BDSMagnetStrength const* strength,
+			G4double          const  brho);
   
   virtual ~BDSFieldMagQuadrupole(){;}
 

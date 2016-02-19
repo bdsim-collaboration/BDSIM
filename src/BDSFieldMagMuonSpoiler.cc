@@ -7,8 +7,8 @@
 
 #include <cmath>
 
-BDSFieldMagMuonSpoiler::BDSFieldMagMuonSpoiler(BDSMagnetStrength* const strength,
-					       const G4double           /*brho*/)
+BDSFieldMagMuonSpoiler::BDSFieldMagMuonSpoiler(BDSMagnetStrength const* strength,
+					       G4double           const /*brho*/)
 {
   bField = (*strength)["field"];
 #ifdef BDSDEBUG

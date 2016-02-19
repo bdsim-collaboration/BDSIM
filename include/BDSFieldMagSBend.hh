@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGSBEND_H
 #define BDSFIELDMAGSBEND_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -18,7 +18,7 @@ class BDSMagnetStrength;
  * convention.
  */
 
-class BDSFieldMagSBend: public BDSField
+class BDSFieldMagSBend: public BDSFieldMag
 {
 public:
   /// A constant uniform field with value equal to 'field'. If angle is
@@ -28,9 +28,9 @@ public:
 		   const G4double aAngle  = 0,
 		   G4bool debugIn = false);
 
-  BDSFieldMagSBend(BDSMagnetStrength* strength,
-		   G4double           brho,
-		   G4ThreeVector      unitDirection = G4ThreeVector(0,1,0));
+  BDSFieldMagSBend(BDSMagnetStrength const* strength,
+		   G4double          const  brho,
+		   G4ThreeVector unitDirection = G4ThreeVector(0,1,0));
 
   virtual ~BDSFieldMagSBend(){;}
 

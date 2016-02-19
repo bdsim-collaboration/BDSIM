@@ -1,12 +1,12 @@
 #ifndef BDSFIELDMAGOUTERMULTIPOLE_H
 #define BDSFIELDMAGOUTERMULTIPOLE_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-class BDSFieldMagOuterMultipole: public BDSField
+class BDSFieldMagOuterMultipole: public BDSFieldMag
 {
 public:
   BDSFieldMagOuterMultipole(const G4int    nPolesIn,

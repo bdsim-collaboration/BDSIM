@@ -8,8 +8,8 @@
 
 #include <cmath>
 
-BDSFieldMagOctupole::BDSFieldMagOctupole(const BDSMagnetStrength* strength,
-					 const G4double           brho)
+BDSFieldMagOctupole::BDSFieldMagOctupole(BDSMagnetStrength const* strength,
+					 G4double          const   brho)
 {
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
   bTriplePrime = brho * (*strength)["k3"];

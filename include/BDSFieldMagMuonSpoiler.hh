@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGMUONSPOILER_H
 #define BDSFIELDMAGMUONSPOILER_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -12,11 +12,11 @@
  *
  */
 
-class BDSFieldMagMuonSpoiler: public BDSField
+class BDSFieldMagMuonSpoiler: public BDSFieldMag
 {
 public:
-  BDSFieldMagMuonSpoiler(BDSMagnetStrength* const strength,
-			 const G4double           brho);
+  BDSFieldMagMuonSpoiler(BDSMagnetStrength const* strength,
+			 G4double          const  brho);
 
   virtual ~BDSFieldMagMuonSpoiler(){;}
 

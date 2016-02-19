@@ -1,7 +1,7 @@
 #ifndef BDSFIELDMAGSEXTUPOLE_H
 #define BDSFIELDMAGSEXTUPOLE_H
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -15,11 +15,11 @@ class BDSMagnetStrength;
  * "k2" and a design rigidity (brho).
  */
 
-class BDSFieldMagSextupole: public BDSField
+class BDSFieldMagSextupole: public BDSFieldMag
 {
 public:
-  BDSFieldMagSextupole(const BDSMagnetStrength* strength,
-		       const G4double           brho);
+  BDSFieldMagSextupole(BDSMagnetStrength const* strength,
+		       G4double          const  brho);
   
   virtual ~BDSFieldMagSextupole(){;}
 
@@ -31,7 +31,7 @@ public:
   
 private:
   /// Private default constructor to avoid usage.
-  BDSFieldMagSextupole(){;}
+  BDSFieldMagSextupole();
   
   /// B'' - second derivative of the magnetic field.
   G4double bDoublePrime;

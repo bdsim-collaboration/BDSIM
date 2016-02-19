@@ -6,9 +6,9 @@
 #include "G4ThreeVector.hh"
 
 
-BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength* strength,
-				   G4double           /*brho*/,
-				   G4ThreeVector      unitDirection)
+BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength const* strength,
+				   G4double          const  /*brho*/,
+				   G4ThreeVector            unitDirection)
 {
   localField  = unitDirection.unit() * (*strength)["field"];
 #ifdef BDSDEBUG

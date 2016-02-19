@@ -6,8 +6,8 @@
 #include "G4ThreeVector.hh"
 
 
-BDSFieldMagSolenoid::BDSFieldMagSolenoid(BDSMagnetStrength* strength,
-					 G4double           brho)
+BDSFieldMagSolenoid::BDSFieldMagSolenoid(BDSMagnetStrength const* strength,
+					 G4double          const  brho)
 {
   localField = G4ThreeVector(0,0,brho * (*strength)["ks"]);
 #ifdef BDSDEBUG
