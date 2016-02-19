@@ -1,13 +1,11 @@
-#include "BDSFieldSkew.hh"
+#include "BDSFieldMagSkew.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
 
-#include "BDSDebug.hh"
-
-BDSFieldSkew::BDSFieldSkew(BDSField* fieldIn,
-			   G4double  angle):
+BDSFieldMagSkew::BDSFieldMagSkew(BDSFieldMag* fieldIn,
+				 G4double     angle):
   field(fieldIn)
 {
   rotation = new G4RotationMatrix();
@@ -16,14 +14,14 @@ BDSFieldSkew::BDSFieldSkew(BDSField* fieldIn,
   rotation->rotateZ(-angle);
 }
 
-BDSFieldSkew::~BDSFieldSkew()
+BDSFieldMagSkew::~BDSFieldMagSkew()
 {
   delete field;
   delete rotation;
   delete antiRotation;
 }
 
-G4ThreeVector BDSFieldSkew::GetFieldValue(const G4ThreeVector& position) const
+G4ThreeVector BDSFieldMagSkew::GetFieldValue(const G4ThreeVector& position) const
 {
   G4ThreeVector rotatedPosition(position);
   rotatedPosition           = rotatedPosition.transform(*rotation);
