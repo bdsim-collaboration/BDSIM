@@ -618,3 +618,12 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
   G4cout << "new global extent -ve:         " << maximumExtentNegative << G4endl;
 #endif
 }
+
+std::vector<G4double> BDSBeamline::GetSPositionEndOfEach()
+{
+  std::vector<G4double> sEnd;
+  sEnd.reserve(beamline.size());
+  for (auto element : beamline)
+    {sEnd.push_back(element->GetSPositionEnd()/CLHEP::m);}
+  return sEnd;
+}

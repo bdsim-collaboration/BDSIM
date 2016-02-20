@@ -43,13 +43,9 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   phitsindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax,slabel); //0
   plossindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax,slabel); //1
   elossindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss", nbins,smin,smax,slabel,"GeV"); //2
+
   // prepare bin edges for a by-element histogram
-  std::vector<double> binedges;
-  binedges.push_back(0.0);
-  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  BDSBeamline::iterator it = beamline->begin();
-  for(; it != beamline->end(); ++it)
-    {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
+  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetSPositionEndOfEach();
   
   // create per element ("pe") bin width histograms
   phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",binedges,slabel); //3

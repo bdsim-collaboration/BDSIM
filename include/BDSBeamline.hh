@@ -114,6 +114,10 @@ public:
 					    G4double x = 0,
 					    G4double y = 0);
 
+  /// Get the global s position of each element all in one - used for histograms.
+  /// For convenience, s positions are converted to metres in this function.
+  std::vector<G4double> GetSPositionEndOfEach();
+
   ///@{ iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
