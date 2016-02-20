@@ -32,6 +32,8 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldType.hh"
+#include "BDSIntegratorType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetStrength.hh"
@@ -41,6 +43,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4GeometryTolerance.hh"
+#include "G4Transform3D.hh"
 
 #include "parser/elementtype.h"
 #include "parser/cavitymodel.h"
@@ -315,6 +318,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
 
   CheckBendLengthAngleWidthCombo(semilength, (*st)["angle"], moInfo->outerDiameter, thename);
+
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+					       _brho,
+					       BDSIntegratorType::dipole,
+					       st);
   
   // prepare one sbend segment
   BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
@@ -322,8 +330,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 				     semilength,
 				     bpInfo,
 				     moInfo,
-				     PrepareFieldInfo(_element),
-				     PrepareOuterFieldInfo(_element));
+				     vacuumField,
+				     nullptr);
 
   oneBend->SetBiasVacuumList(_element.biasVacuumList);
   oneBend->SetBiasMaterialList(_element.biasMaterialList);
@@ -387,15 +395,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
 
-  return (new BDSRBend( _element.name,
-			_element.l*CLHEP::m,
-			bField,
-			bPrime,
-			_element.angle,
-			PrepareBeamPipeInfo(_element),
-			PrepareMagnetOuterInfo(_element),
-			PrepareFieldInfo(_element),
-			PrepareOuterFieldInfo(_element)));
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["field"] = _element.B * CLHEP::tesla;
+  (*st)["angle"] = _element.angle;
+  
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+					       _brho,
+					       BDSIntegratorType::dipole,
+					       st);
+
+  return new BDSRBend(_element.name,
+		      _element.l*CLHEP::m,
+		      bField,
+		      bPrime,
+		      _element.angle,
+		      PrepareBeamPipeInfo(_element),
+		      PrepareMagnetOuterInfo(_element),
+		      vacuumField,
+		      nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
@@ -416,18 +433,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
       (*st)["angle"] = _element.angle;
       (*st)["field"] = _brho * (*st)["angle"] / length * _charge * ffact / CLHEP::tesla;
     }
-
+  G4Transform3D fieldRotation = G4Transform3D();
+  
   BDSMagnetType t = BDSMagnetType::hkicker;
   if (isVertical)
-    {t = BDSMagnetType::vkicker;}
+    {
+      t = BDSMagnetType::vkicker;
+      fieldRotation = G4RotateZ3D(CLHEP::halfpi);
+    }
+  
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::muonspoiler,
+					       _brho,
+					       BDSIntegratorType::g4classicalrk4,
+					       st,
+					       true,
+					       fieldRotation);
   
   return new BDSMagnet(t,
 		       _element.name,
 		       _element.l*CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       vacuumField,
+		       nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -437,14 +465,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k1"] = _element.k1 / CLHEP::m2;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::quadrupole,
+					       _brho,
+					       BDSIntegratorType::quadrupole,
+					       st);
 
   return new BDSMagnet(BDSMagnetType::quadrupole,
 		       _element.name,
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       vacuumField,
+		       nullptr);
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
@@ -454,14 +486,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k2"] = _element.k2 / CLHEP::m3;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::sextupole,
+					       _brho,
+					       BDSIntegratorType::sextupole,
+					       st);
 
   return new BDSMagnet(BDSMagnetType::sextupole,
 		       _element.name,
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       vacuumField,
+		       nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
@@ -471,14 +507,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k3"] = _element.k3 / (CLHEP::m3*CLHEP::m);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::octupole,
+					       _brho,
+					       BDSIntegratorType::octupole,
+					       st);
 
   return new BDSMagnet(BDSMagnetType::octupole,
 		       _element.name,
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       vacuumField,
+		       nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
@@ -488,14 +528,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k4"] = _element.k4 / (CLHEP::m3*CLHEP::m2);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::decapole,
+					       _brho,
+					       BDSIntegratorType::decapole,
+					       st);
+  
 
   return new BDSMagnet(BDSMagnetType::decapole,
 		       _element.name,
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       vacuumField,
+		       nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
@@ -515,14 +560,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
      (*st)[*nkey] = (*kn) / _element.l;
      (*st)[*skey] = (*ks) / _element.l;
    }
+ BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
+					       _brho,
+					       BDSIntegratorType::g4classicalrk4,
+					       st);
 
  return new BDSMagnet(BDSMagnetType::multipole,
 		      _element.name,
 		      _element.l * CLHEP::m,
 		      PrepareBeamPipeInfo(_element),
 		      PrepareMagnetOuterInfo(_element),
-		      PrepareFieldInfo(_element),
-		      PrepareOuterFieldInfo(_element));
+		      vacuumField,
+		      nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
@@ -574,14 +623,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
       (*st)["field"] = (_element.ks / CLHEP::m) * _brho;
       (*st)["ks"]    = _element.ks / CLHEP::m;
     }
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::solenoid,
+					       _brho,
+					       BDSIntegratorType::solenoid,
+					       st);
 
   return new BDSMagnet(BDSMagnetType::solenoid,
 		       _element.name,
 		       _element.l*CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       vacuumField,
+		       nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -639,14 +692,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["field"] = _element.B * CLHEP::tesla;
+  BDSFieldInfo* outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
+					      _brho,
+					      BDSIntegratorType::g4classicalrk4,
+					       st);
 
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       _element.name,
 		       _element.l*CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       PrepareFieldInfo(_element),
-		       PrepareOuterFieldInfo(_element));
+		       nullptr,
+		       outerField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
@@ -693,11 +750,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
   return (new BDSDegrader(_element.name,
 			  _element.l*CLHEP::m,
 			  _element.outerDiameter*CLHEP::m,
-              _element.numberWedges,
-              _element.wedgeLength*CLHEP::m,
-              _element.degraderHeight*CLHEP::m,
-              degraderOffset,
-              _element.material));
+			  _element.numberWedges,
+			  _element.wedgeLength*CLHEP::m,
+			  _element.degraderHeight*CLHEP::m,
+			  degraderOffset,
+			  _element.material));
 
 }
 
@@ -959,16 +1016,4 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(const Element& elemen
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   return info;
-}
-
-BDSFieldInfo* BDSComponentFactory::PrepareFieldInfo(const Element& /*element*/)
-{
-  // TBC
-  return nullptr;
-}
-
-BDSFieldInfo* BDSComponentFactory::PrepareOuterFieldInfo(const Element& /*element*/)
-{
-  // TBC
-  return nullptr;
 }

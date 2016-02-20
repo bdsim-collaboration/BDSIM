@@ -100,9 +100,6 @@ private:
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
 
-  BDSFieldInfo* PrepareFieldInfo(const GMAD::Element& element);
-  BDSFieldInfo* PrepareOuterFieldInfo(const GMAD::Element& element);
-
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
 };
