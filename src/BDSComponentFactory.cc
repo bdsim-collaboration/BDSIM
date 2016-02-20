@@ -31,6 +31,7 @@
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetStrength.hh"
@@ -321,8 +322,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 				     semilength,
 				     bpInfo,
 				     moInfo,
-				     st,
-				     _brho);
+				     PrepareFieldInfo(_element),
+				     PrepareOuterFieldInfo(_element));
 
   oneBend->SetBiasVacuumList(_element.biasVacuumList);
   oneBend->SetBiasMaterialList(_element.biasMaterialList);
@@ -392,7 +393,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 			bPrime,
 			_element.angle,
 			PrepareBeamPipeInfo(_element),
-			PrepareMagnetOuterInfo(_element)));
+			PrepareMagnetOuterInfo(_element),
+			PrepareFieldInfo(_element),
+			PrepareOuterFieldInfo(_element)));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
@@ -423,8 +426,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 		       _element.l*CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -440,8 +443,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
@@ -457,8 +460,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
@@ -474,8 +477,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
@@ -491,8 +494,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 		       _element.l * CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
@@ -518,8 +521,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 		      _element.l * CLHEP::m,
 		      PrepareBeamPipeInfo(_element),
 		      PrepareMagnetOuterInfo(_element),
-		      st,
-		      _brho);
+		      PrepareFieldInfo(_element),
+		      PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
@@ -577,8 +580,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 		       _element.l*CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -642,8 +645,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       _element.l*CLHEP::m,
 		       PrepareBeamPipeInfo(_element),
 		       PrepareMagnetOuterInfo(_element),
-		       st,
-		       _brho);
+		       PrepareFieldInfo(_element),
+		       PrepareOuterFieldInfo(_element));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
@@ -956,4 +959,16 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(const Element& elemen
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
 
   return info;
+}
+
+BDSFieldInfo* BDSComponentFactory::PrepareFieldInfo(const Element& /*element*/)
+{
+  // TBC
+  return nullptr;
+}
+
+BDSFieldInfo* BDSComponentFactory::PrepareOuterFieldInfo(const Element& /*element*/)
+{
+  // TBC
+  return nullptr;
 }

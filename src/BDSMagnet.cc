@@ -3,8 +3,8 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSFieldFactory.hh"
-#include "BDSFieldMagOuterMultipole.hh"
+#include "BDSFieldBuilder.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetOuter.hh"
@@ -16,8 +16,6 @@
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4MagneticField.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
@@ -33,14 +31,14 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4double            length,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
-		     BDSMagnetStrength*  strengthIn,
-		     G4double            brhoIn):
+		     BDSFieldInfo*       vacuumFieldInfoIn,
+		     BDSFieldInfo*       outerFieldInfoIn):
   BDSAcceleratorComponent(name, length, 0, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
-  strength(strengthIn),
-  brho(brhoIn),
+  vacuumFieldInfo(vacuumFieldInfoIn),
+  outerFieldInfo(outerFieldInfoIn),
   beampipe(nullptr),
   placeBeamPipe(false),
   magnetOuterOffset(G4ThreeVector(0,0,0)),
@@ -83,9 +81,9 @@ void BDSMagnet::BuildBeampipe()
 
 void BDSMagnet::BuildVacuumField()
 {
-  vacuumField = BDSFieldFactory::Instance()->CreateFieldMagEquation(magnetType, strength, brho);
-  if (vacuumField)
-    {beampipe->GetVacuumLogicalVolume()->SetFieldManager(vacuumField->GetFieldManager(),true);}
+  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+							    beampipe->GetVacuumLogicalVolume(),
+							    true);
 }
 
 void BDSMagnet::BuildOuter()
@@ -126,16 +124,10 @@ void BDSMagnet::BuildOuterField()
 #endif  
   if (outer)
     {
-      // only build the outer field if the outer part exists
-      outerField = BDSFieldFactory::Instance()->CreateFieldMagOuter(magnetType,
-								    strength,
-								    brho);
-
-      G4LogicalVolume* outerContLV = outer->GetContainerLogicalVolume(); //shortcut
-      if (outerField)
-	{outerContLV->SetFieldManager(outerField->GetFieldManager(), true);}
-      else
-	{outerContLV->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),true);}
+      G4LogicalVolume* vol = outer->GetContainerLogicalVolume();
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+								vol,
+								true);
     }
 }
 
@@ -218,5 +210,6 @@ BDSMagnet::~BDSMagnet()
   delete magnetOuterInfo;  
   delete vacuumField;
   delete outerField;
-  delete strength;
+  delete vacuumFieldInfo;
+  delete outerFieldInfo;
 }

@@ -40,8 +40,8 @@ public:
 	    G4double            length,
 	    BDSBeamPipeInfo*    beamPipeInfo,
 	    BDSMagnetOuterInfo* magnetOuterInfo,
-	    BDSMagnetStrength*  vacuumFieldStrength,
-	    G4double            brhoIn);
+	    BDSFieldInfo*       vacuumFieldInfoIn,
+	    BDSFieldInfo*       outerFieldInfoIn = nullptr);
   
   virtual ~BDSMagnet();
   
@@ -90,11 +90,11 @@ protected:
   /// Model information for the outer volume construction
   BDSMagnetOuterInfo* magnetOuterInfo;
 
-  /// Magnetic strengths
-  BDSMagnetStrength* strength;
+  /// Field information for vacuum field
+  BDSFieldInfo* vacuumFieldInfo;
 
-  /// Nominal rigidity with repect to which the field is constructed
-  G4double           brho;
+  /// Field information for outer magnetic field (optional)
+  BDSFieldInfo* outerFieldInfo;
   
   /// The constructed beampipe
   BDSBeamPipe*    beampipe;

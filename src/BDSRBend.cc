@@ -21,9 +21,12 @@ BDSRBend::BDSRBend(G4String            name,
 		   G4double            /*bGradIn*/,
 		   G4double            angleIn,
 		   BDSBeamPipeInfo*    beamPipeInfo,
-		   BDSMagnetOuterInfo* magnetOuterInfo):
+		   BDSMagnetOuterInfo* magnetOuterInfo,
+		   BDSFieldInfo*       vacuumFieldInfo,
+		   BDSFieldInfo*       outerFieldInfo):
   BDSMagnet(BDSMagnetType::rectangularbend, name, length,
-	    beamPipeInfo, magnetOuterInfo, nullptr, 0),
+	    beamPipeInfo, magnetOuterInfo, vacuumFieldInfo,
+	    outerFieldInfo),
   bpFirstBit(nullptr),
   bpLastBit(nullptr)
 {
@@ -38,7 +41,7 @@ BDSRBend::BDSRBend(G4String            name,
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
 #endif
-      (*strength)["length"] = arclength;
+      //(*strength)["length"] = arclength;
     }
   else
     {arclength = magFieldLength;}

@@ -19,7 +19,9 @@ public:
 	   G4double            bGrad,
 	   G4double            angle,
 	   BDSBeamPipeInfo*    beamPipeInfo,
-	   BDSMagnetOuterInfo* magnetOuterInfo);
+	   BDSMagnetOuterInfo* magnetOuterInfo,
+	   BDSFieldInfo*       vacuumFieldInfo,
+	   BDSFieldInfo*       outerFieldInfo = nullptr);
 
 private:
   G4double magFieldLength;
