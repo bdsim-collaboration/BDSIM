@@ -16,7 +16,7 @@ G4ThreeVector BDSFieldMag::GetFieldValueTransformed(const G4ThreeVector& positio
 {
   if (transform != G4Transform3D::Identity)
     {
-      G4ThreeVector transformedPosition = transform * (HepGeom::Vector3D<G4double>)position;
+      G4ThreeVector transformedPosition = transform * (HepGeom::Point3D<G4double>)position;
       return GetFieldValue(transformedPosition);
     }
   else
