@@ -83,8 +83,6 @@ BDSFieldFactory::BDSFieldFactory()
   fileName          = "";
   geometry          = nullptr;
   cacheLength       = 1*CLHEP::um;
-
-  CleanUp();
 }
 
 BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
@@ -346,11 +344,9 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta
 
 
 BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      type,
-						      BDSMagnetStrength* const strength,
-						      const G4double           brho)
+						      BDSMagnetStrength* const /*strength*/,
+						      const G4double           /*brho*/)
 {
-  CleanUp();
-
   // switch on the type and build correct field
   switch (type.underlying())
     {
