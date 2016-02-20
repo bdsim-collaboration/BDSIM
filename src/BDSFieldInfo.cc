@@ -9,19 +9,19 @@
 BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 			   G4double           brhoIn,
 			   BDSIntegratorType  integratorTypeIn,
-			   G4Transform3D      transformIn,
 			   BDSMagnetStrength* magnetStrengthIn,
-			   BDSCavityInfo*     cavityInfoIn,
 			   G4bool             provideGlobalTransformIn,
+			   G4Transform3D      transformIn,
+			   BDSCavityInfo*     cavityInfoIn,
 			   G4String           magneticFieldFilePathIn,
 			   G4String           electricFieldFilePathIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
-  transform(transformIn),
   magnetStrength(magnetStrengthIn),
-  cavityInfo(cavityInfoIn),
   provideGlobalTransform(provideGlobalTransformIn),
+  transform(transformIn),
+  cavityInfo(cavityInfoIn),
   magneticFieldFilePath(magneticFieldFilePathIn),
   electricFieldFilePath(electricFieldFilePathIn)
 {;}

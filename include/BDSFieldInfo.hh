@@ -28,10 +28,10 @@ public:
   BDSFieldInfo(BDSFieldType       fieldTypeIn,
 	       G4double           brhoIn,
 	       BDSIntegratorType  integratorTypeIn,
-	       G4Transform3D      transformIn              = G4Transform3D(),
 	       BDSMagnetStrength* magnetStrengthIn         = nullptr,
-	       BDSCavityInfo*     cavityInfoIn             = nullptr,
 	       G4bool             provideGlobalTransformIn = true,
+	       G4Transform3D      transformIn              = G4Transform3D(),
+	       BDSCavityInfo*     cavityInfoIn             = nullptr,
 	       G4String           magneticFieldFilePathIn  = "",
 	       G4String           electricFieldFilePathIn  = "");
   ~BDSFieldInfo();
@@ -53,10 +53,10 @@ private:
   BDSFieldType       fieldType;
   G4double           brho;
   BDSIntegratorType  integratorType;
-  G4Transform3D      transform;  ///< Transform w.r.t. solid field will be attached to
   BDSMagnetStrength* magnetStrength;
-  BDSCavityInfo*     cavityInfo;
   G4bool             provideGlobalTransform;
+  G4Transform3D      transform;  ///< Transform w.r.t. solid field will be attached to
+  BDSCavityInfo*     cavityInfo;
   G4String           magneticFieldFilePath;
   G4String           electricFieldFilePath;
 };
