@@ -10,6 +10,8 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExecOptions.hh"
+#include "BDSFieldBuilder.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -53,7 +55,7 @@ typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   precisionRegion(nullptr),gasRegion(nullptr),
-  worldPV(nullptr),magField(nullptr),
+  worldPV(nullptr),
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
   verbose       = BDSExecOptions::Instance()->GetVerbose();
@@ -724,4 +726,10 @@ void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
   //gFlashRegion.back()->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
   //volume->SetUserLimits(new G4UserLimits(thecurrentitem->GetChordLength()/10.0));
 
+}
+
+void BDSDetectorConstruction::ConstructSDandField()
+{
+  auto fields = BDSFieldBuilder::Instance()->CreateAndAttachAll();
+  BDSAcceleratorModel::Instance()->RegisterFields(fields);
 }

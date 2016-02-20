@@ -6,10 +6,15 @@
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamline.hh"
+#include "BDSFieldObjects.hh"
+
+#include <vector>
 
 /**
  * @brief A holder class for all representations of the
- * accelerator model created in BDSIM. Can be extend to 
+ * accelerator model created in BDSIM. 
+ *
+ * This can be extended to 
  * allow inspection of the model. Holds the readout geometry
  * physical world in a location independent of detector 
  * construction.
@@ -19,7 +24,7 @@
  * version.  These can be contained here and this class can
  * be extended as required.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSAcceleratorModel
@@ -85,21 +90,25 @@ public:
   /// Register any physical volumes that should be managed - typically from world placement
   inline void               RegisterPhysicalVolume(std::vector<G4VPhysicalVolume*> physicalVolumes);
 
+  /// Register all field objects
+  inline void               RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn);
+
 private:
   BDSAcceleratorModel(); ///< default constructor is private as singleton
 
   static BDSAcceleratorModel* _instance;
 
-  G4VPhysicalVolume* worldPV;              ///< physical volume of the mass world
-  G4VPhysicalVolume* readOutWorldPV;       ///< physical volume for read out geometry
-  G4LogicalVolume*   readOutWorldLV;       ///< logical volume for read out geometry
-  G4VPhysicalVolume* tunnelReadOutWorldPV; ///< physical volume for tunnel read out geometry
-  G4LogicalVolume*   tunnelReadOutWorldLV; ///< logical volume for tunnel read out geometry
-  
+  G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world
+  G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry
+  G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry
+  G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry
+  G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry
 
-  BDSBeamline*       flatBeamline;     ///< flat beam line
-  BDSBeamline*       supportsBeamline; ///< element supports beam line
-  BDSBeamline*       tunnelBeamline;   ///< tunnel segments beam line
+  BDSBeamline*       flatBeamline;      ///< Flat beam line
+  BDSBeamline*       supportsBeamline;  ///< Element supports beam line
+  BDSBeamline*       tunnelBeamline;    ///< Tunnel segments beam line
+
+  std::vector<BDSFieldObjects*> fields; ///< All field objects.
 };
 
 inline void BDSAcceleratorModel::RegisterWorldPV(G4VPhysicalVolume* worldIn)
@@ -149,5 +158,8 @@ inline void BDSAcceleratorModel::RegisterTunnelBeamline(BDSBeamline* beamlineIn)
 
 inline BDSBeamline* BDSAcceleratorModel::GetTunnelBeamline()
 {return tunnelBeamline;}
+
+inline void BDSAcceleratorModel::RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn)
+{fields = fieldsIn;}
 
 #endif

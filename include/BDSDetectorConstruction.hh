@@ -1,12 +1,13 @@
 #ifndef BDSDETECTORCONSTRUCTION_H
 #define BDSDETECTORCONSTRUCTION_H 
 
+#include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4VUserDetectorConstruction.hh"
-#include "globals.hh"
 
+#include "globals.hh" // geant4 types / globals
 #include "G4Region.hh"
 #include "G4Version.hh"
+#include "G4VUserDetectorConstruction.hh"
 
 #include <list>
 #include <string>
@@ -48,6 +49,8 @@ public:
   /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
   /// and returns the finished world physical volume.
   virtual G4VPhysicalVolume* Construct();
+
+  virtual void ConstructSDandField();
 
   /// Create biasing operations 
   void BuildPhysicsBias();
@@ -100,7 +103,8 @@ private:
   /// World physical volume
   G4VPhysicalVolume* worldPV;
 
-  G4UniformMagField* magField;      //pointer to the magnetic field
+  // All fields
+  std::vector<BDSFieldObjects*> fields;
   
   // Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
