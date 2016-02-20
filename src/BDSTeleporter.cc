@@ -1,7 +1,8 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
-#include "BDSFieldFactory.hh"
+#include "BDSFieldBuilder.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTeleporter.hh"
 
@@ -29,8 +30,13 @@ BDSTeleporter::BDSTeleporter(const G4String      name,
 void BDSTeleporter::Build()
 {
   BDSAcceleratorComponent::Build(); // create container
-  vacuumField = BDSFieldFactory::Instance()->CreateTeleporter(teleporterDelta);
-  containerLogicalVolume->SetFieldManager(vacuumField->GetFieldManager(), true);
+
+  // TBC
+  BDSFieldInfo* vacuumFieldInfo = nullptr;
+  
+  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+							    containerLogicalVolume,
+							    true);
 }
 
 void BDSTeleporter::BuildContainerLogicalVolume()
