@@ -680,7 +680,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
   BDSFieldInfo* outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
 					      _brho,
 					      BDSIntegratorType::g4classicalrk4,
-					       st);
+					      st);
 
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       _element.name,
@@ -763,13 +763,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
 
   G4double length = _element.l*CLHEP::m;
   G4double lambda = _element.waveLength*CLHEP::m;
-
 	
-  G4ThreeVector direction = 
-    G4ThreeVector(_element.xdir,_element.ydir,_element.zdir);
+  G4ThreeVector direction = G4ThreeVector(_element.xdir,_element.ydir,_element.zdir);
   G4ThreeVector position  = G4ThreeVector(0,0,0);
 	
-  return (new BDSLaserWire(_element.name, length, lambda, direction) );       
+  return new BDSLaserWire(_element.name, length, lambda, direction);       
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
@@ -778,34 +776,44 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
     {return nullptr;}
 	
 #ifdef BDSDEBUG 
-        G4cout << "---->creating Screen,"
-               << " name= "<< _element.name
-               << " l=" << _element.l/CLHEP::m<<"m"
-               << " tscint=" << _element.tscint/CLHEP::m<<"m"
-               << " angle=" << _element.angle/CLHEP::rad<<"rad"
-               << " scintmaterial=" << "ups923a"//_element.scintmaterial
-               << " airmaterial=" << "vacuum"//_element.airmaterial
-               << G4endl;
+  G4cout << "---->creating Screen,"
+	 << " name= "<< _element.name
+	 << " l=" << _element.l/CLHEP::m<<"m"
+	 << " tscint=" << _element.tscint/CLHEP::m<<"m"
+	 << " angle=" << _element.angle/CLHEP::rad<<"rad"
+	 << " scintmaterial=" << "ups923a"//_element.scintmaterial
+	 << " airmaterial=" << "vacuum"//_element.airmaterial
+	 << G4endl;
 #endif
-	return (new BDSScintillatorScreen( _element.name, _element.tscint*CLHEP::m, (_element.angle-0.78539816339)*CLHEP::rad, "ups923a",BDSGlobalConstants::Instance()->GetVacuumMaterial())); //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+  //Name, scintillator thickness, angle in radians (relative to -45 degrees)
+  return new BDSScintillatorScreen(_element.name,
+				   _element.tscint*CLHEP::m,
+				   (_element.angle-0.78539816339)*CLHEP::rad,
+				   "ups923a",
+				   BDSGlobalConstants::Instance()->GetVacuumMaterial()); 
 }
 
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen(){
-	
+BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
+{	
 #ifdef BDSDEBUG 
-        G4cout << "---->creating Awake Screen,"
-	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
-	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
-	       << "windowmaterial = " << _element.windowmaterial << " um"
-	       << "scintmaterial = " << _element.scintmaterial << " um"
-               << G4endl;
+  G4cout << "---->creating Awake Screen,"
+	 << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	 << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
+	 << "windowmaterial = " << _element.windowmaterial << " um"
+	 << "scintmaterial = " << _element.scintmaterial << " um"
+	 << G4endl;
 #endif
-	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
+  return new BDSAwakeScintillatorScreen(_element.name,
+					_element.scintmaterial,
+					_element.tscint*1e3,
+					_element.angle,
+					_element.twindow*1e3,
+					_element.windowmaterial);
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D(){
-	
+BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
+{	
 #ifdef BDSDEBUG 
   G4cout << "---->creating Transform3d,"
 	 << " name= " << _element.name
@@ -818,14 +826,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D(){
 	 << G4endl;
 #endif
 	
-  return (new BDSTransform3D( _element.name,
-			      _element.xdir *CLHEP::m,
-			      _element.ydir *CLHEP::m,
-			      _element.zdir *CLHEP::m,
-			      _element.phi *CLHEP::rad,
-			      _element.theta *CLHEP::rad,
-			      _element.psi *CLHEP::rad ) );
-	
+  return new BDSTransform3D(_element.name,
+			    _element.xdir  *CLHEP::m,
+			    _element.ydir  *CLHEP::m,
+			    _element.zdir  *CLHEP::m,
+			    _element.phi   *CLHEP::rad,
+			    _element.theta *CLHEP::rad,
+			    _element.psi   *CLHEP::rad);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
@@ -839,8 +846,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 	   << G4endl;
 #endif
   
-  return (new BDSTerminator("terminator", 
-			    length));
+  return new BDSTerminator("terminator", 
+			   length);
 }
 
 
