@@ -15,6 +15,9 @@
  * volume to attach it to, so all fields can actually be constructed at one
  * time irrespective of when they're apparently 'created' in the geometry / 
  * individual BDSAcceleratorComponents.
+ * 
+ * This register does not retain ownership of anything so multiple logical volumes
+ * may be safely registered along with a single BDSFieldInfo instance.
  *
  * @author Laurie Nevay
  */
@@ -27,6 +30,10 @@ public:
 
   ~BDSFieldBuilder();
 
+  /// Register a field for construction - ie the field specification along with
+  /// which logical volume to attach it to. The same field specification (info)
+  /// can be registered for multiple logical volumes as this builder does not
+  /// retain ownership of anything.
   void RegisterFieldForConstruction(BDSFieldInfo* info,
 				    G4LogicalVolume* logicalVolume,
 				    G4bool           propagateToDaughters = false);
