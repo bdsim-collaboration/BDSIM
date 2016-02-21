@@ -20,7 +20,7 @@
  * with different outer shapes - all have poles, but the return 
  * yoke can for example, circular, square or faceted (with 4N facets)
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 

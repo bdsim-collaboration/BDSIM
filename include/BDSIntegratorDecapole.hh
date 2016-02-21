@@ -11,7 +11,7 @@
 /**
  * @brief Integrator for Decapolar field.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSIntegratorDecapole: public BDSIntegratorBase

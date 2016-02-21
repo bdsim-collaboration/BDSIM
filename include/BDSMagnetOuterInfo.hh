@@ -12,7 +12,7 @@
  * This reduces the number of argument to all magnet constructors 
  * plus aggregates common tasks in the component factory.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 struct BDSMagnetOuterInfo

@@ -12,7 +12,7 @@
  * a circular accelerator. An instance of these user limits is
  * typically attached to a volume near the end of the lattice.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTerminatorUserLimits: public G4UserLimits

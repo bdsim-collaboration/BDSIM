@@ -23,7 +23,7 @@ class G4Material;
  * faces, a G4ExtrudedSolid intersected with a G4CutTubs (cylinder with 
  * angled faces).
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryPoints: public BDSBeamPipeFactoryBase

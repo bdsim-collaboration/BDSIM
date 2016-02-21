@@ -14,12 +14,12 @@ class G4Material;
  * arguments to all constructors plus aggregates common tasks
  * in the component factory.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 struct BDSTunnelInfo
 {
-  /// default constructor, not needed
+  /// Default constructor, not needed
   BDSTunnelInfo() = delete;
 
   /// extra constructor to assign all members at once

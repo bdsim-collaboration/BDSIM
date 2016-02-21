@@ -8,17 +8,19 @@
  * @brief Type definition for tunnels - used for comparison
  * in factory methods
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
-struct tunneltypes_def {
-  enum type { circular, elliptical, square, rectangular, ilc, rectaboveground};
+struct tunneltypes_def
+{
+  enum type {circular, elliptical, square, rectangular, ilc, rectaboveground};
 };
 
 typedef BDSTypeSafeEnum<tunneltypes_def,int> BDSTunnelType;
 
-namespace BDS {
-  /// function to determine the enum type of the tunnel (case-insensitive)
+namespace BDS
+{
+  /// Function to determine the enum type of the tunnel (case-insensitive)
   BDSTunnelType DetermineTunnelType(G4String tunnelType);
 
   /*

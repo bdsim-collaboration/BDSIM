@@ -34,7 +34,7 @@ class G4VPhysicalVolume;
  * and every time the field is queried. This class stores that transform after the first 
  * look up.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSAuxiliaryNavigator

@@ -16,7 +16,7 @@
  * vector contains the possible magnet strength parameters that can be checked against.
  * If a parameter is not specified in the map, its value is return as 0.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetStrength

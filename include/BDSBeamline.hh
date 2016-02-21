@@ -32,7 +32,7 @@ class BDSTransform3D;
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents. It can also be used to create multiple beam lines.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author
  */
 
 class BDSBeamline

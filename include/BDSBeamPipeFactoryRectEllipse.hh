@@ -23,7 +23,7 @@
  * 
  * Singleton pattern
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryRectEllipse: public BDSBeamPipeFactoryBase

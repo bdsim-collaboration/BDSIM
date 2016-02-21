@@ -10,7 +10,7 @@ class G4VSolid;
 /**
  * @brief Base class for collimators with common construction
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSCollimatorBase: public BDSAcceleratorComponent

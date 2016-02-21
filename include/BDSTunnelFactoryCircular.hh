@@ -9,9 +9,10 @@ class BDSTunnelSection;
 
 /**
  * @brief Factory for circular tunnel segments. Builds floor, tunnel and soil.
+ *
  * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTunnelFactoryCircular: public BDSTunnelFactoryBase

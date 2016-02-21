@@ -21,7 +21,7 @@
  * Each instance of this class owns the position vectors and rotation matrices
  * BUT NOT the accelerator component - this is owned by the component registry.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamlineElement

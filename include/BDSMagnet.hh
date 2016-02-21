@@ -22,12 +22,13 @@
 /**
  * @brief Abstract base class that implements features common to all magnets. 
  *
- * This includes the general construction pattern using the magnet outer geometry factories
- * and the field related objects and attaching them to the necessary volumes. Each derived
- * class must implement BuildBPFieldAndStepper() which constructs the field objects that
+ * This includes the general construction pattern using the magnet 
+ * outer geometry factories and the field related objects and attaching 
+ * them to the necessary volumes. Each derived class must implement 
+ * BuildBPFieldAndStepper() which constructs the field objects that
  * are later attached to the vacuum volume.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnet: public BDSAcceleratorComponent

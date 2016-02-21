@@ -15,7 +15,7 @@
  * This does not implement the construction of the beampipe but merely
  * holds all relevant objects and information. 
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipe: public BDSGeometryComponent

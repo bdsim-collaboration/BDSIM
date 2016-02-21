@@ -4,8 +4,7 @@
 #include "globals.hh" // geant4 types / globals
 
 /**
- * @brief A holder for any placement offsets and rotations for a
- * BDSAcceleratorComponent.
+ * @brief A holder for any placement offsets and rotations for a BDSAcceleratorComponent.
  * 
  * Note, no rotation variables are provided other than along the beam
  * axis (z) as this would cause overlapping volumes between a component
@@ -13,7 +12,7 @@
  * geometry or padding space (perhaps acceptable for very low angles), 
  * but for now is left to be implemented in future.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTiltOffset

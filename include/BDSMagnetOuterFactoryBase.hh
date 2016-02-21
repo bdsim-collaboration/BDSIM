@@ -31,7 +31,7 @@ class G4VSolid;
  * Each factory should implement a method for every type of magnet - ie for
  * each class that inherits BDSMagnet.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryBase

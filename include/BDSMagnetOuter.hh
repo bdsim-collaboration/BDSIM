@@ -21,7 +21,7 @@ class G4VSolid;
  * and only the magnet factory knows its true shape and can make a well
  * fitting container.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuter: public BDSGeometryComponent

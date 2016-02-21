@@ -25,7 +25,7 @@ struct BDSTunnelInfo;
  * 
  * Uses Geant4 default units by default, ie mm, rad (not metres)
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTunnelFactoryBase

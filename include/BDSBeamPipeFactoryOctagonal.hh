@@ -22,7 +22,7 @@ class G4Material;
  * 
  * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryOctagonal: public BDSBeamPipeFactoryPoints

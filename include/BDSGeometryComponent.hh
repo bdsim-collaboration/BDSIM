@@ -26,7 +26,7 @@ class G4VisAttributes;
  * like all other volumes. There are safeguards to prevent double registration
  * and the consequential seg faults.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSGeometryComponent

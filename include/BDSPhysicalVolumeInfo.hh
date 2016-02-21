@@ -12,7 +12,7 @@
  * s position coordinate, but can be extended to store any other pertinent 
  * information.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSPhysicalVolumeInfo
