@@ -42,6 +42,10 @@ BDSMagnetStrength::BDSMagnetStrength(std::map<G4String, G4double> strengths)
     }
 }
 
+BDSMagnetStrength::BDSMagnetStrength(const BDSMagnetStrength& other):
+  strengths(other.strengths)
+{;}
+
 std::ostream& operator<<(std::ostream& out, BDSMagnetStrength const &st)
 {
   for (auto key : st.keys)

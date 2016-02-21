@@ -36,6 +36,10 @@ public:
 	       G4String           electricFieldFilePathIn  = "");
   ~BDSFieldInfo();
 
+  /// Copy constructor
+  BDSFieldInfo(const BDSFieldInfo& other);
+
+  /// @{ Accessor
   inline BDSFieldType       FieldType()      const {return fieldType;}
   inline G4double           BRho()           const {return brho;}
   inline BDSIntegratorType  IntegratorType() const {return integratorType;}
@@ -45,6 +49,10 @@ public:
   inline G4bool             ProvideGlobal()  const {return provideGlobalTransform;}
   inline G4String           MagneticFile()   const {return magneticFieldFilePath;}
   inline G4String           ElectricFile()   const {return electricFieldFilePath;}
+  /// @}
+
+  /// Set Transform - could be done afterwards once instance of this class is passed around.
+  inline void SetTransform(G4Transform3D transformIn);
   
 private:
   /// Private default constructor to force use of provided one.
@@ -60,5 +68,8 @@ private:
   G4String           magneticFieldFilePath;
   G4String           electricFieldFilePath;
 };
+
+void BDSFieldInfo::SetTransform(G4Transform3D transformIn)
+{transform = transformIn;}
 
 #endif

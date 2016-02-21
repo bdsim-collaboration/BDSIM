@@ -1,3 +1,4 @@
+#include "BDSCavityInfo.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldType.hh"
 #include "BDSIntegratorType.hh"
@@ -29,4 +30,17 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
+}
+
+BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
+  fieldType(other.fieldType),
+  brho(other.brho),
+  integratorType(other.integratorType),
+  provideGlobalTransform(other.provideGlobalTransform),
+  transform(other.transform),
+  magneticFieldFilePath(other.magneticFieldFilePath),
+  electricFieldFilePath(other.electricFieldFilePath)
+{
+  magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
+  cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
 }

@@ -27,6 +27,9 @@ public:
   /// This constructor allows instantiation with a map of keys and values.
   BDSMagnetStrength(std::map<G4String, G4double> keyvalues);
 
+  /// Copy constructor
+  BDSMagnetStrength(const BDSMagnetStrength& other);
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSMagnetStrength const &st);
 

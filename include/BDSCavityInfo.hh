@@ -12,6 +12,9 @@ class G4Material;
  * Geant4 units are assumed by classes that use instances of this class.
  * This reduces the number of argument to constructors 
  * plus aggregates common tasks in the component factory.
+ *
+ * Note, compiler provided copy constructor is sufficient as only pointers
+ * to materials owned by BDSMaterials are kept - shallow copy is required then.
  * 
  * @author Laurie Nevay
  */
