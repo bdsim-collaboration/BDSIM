@@ -92,12 +92,12 @@ void BDSMagnet::BuildOuter()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 
-  G4double outerLength               = chordLength - 2*lengthSafety;
-  BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(magnetType,
-						       magnetOuterInfo,
-						       outerLength,
-						       chordLength,
-						       beampipe);
+  G4double outerLength = chordLength - 2*lengthSafety;
+  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(magnetType,
+							       magnetOuterInfo,
+							       outerLength,
+							       chordLength,
+							       beampipe);
 
   if(outer)
     {
@@ -174,7 +174,7 @@ void BDSMagnet::PlaceComponents()
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
-      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                       // rotation
+      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                 // rotation
 						    beamPipeOffset,          // position in container
 						    beampipe->GetContainerLogicalVolume(),  // its logical volume
 						    name + "_beampipe_pv",   // its name
@@ -192,7 +192,7 @@ void BDSMagnet::PlaceComponents()
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                      // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                // rotation
 						       outerOffset,            // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",       // its name
