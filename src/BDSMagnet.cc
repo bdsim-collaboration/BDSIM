@@ -46,6 +46,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   vacuumField(nullptr),
   outerField(nullptr)
 {
+  angle           = (*vacuumFieldInfo->MagnetStrength())["angle"];
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,0);
