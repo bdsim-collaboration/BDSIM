@@ -1,5 +1,5 @@
 
-#include "BDSField.hh"
+#include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
@@ -11,7 +11,9 @@
 
 #include <cmath>
 #include <fstream>
+#include <iostream>
 #include <ostream>
+//#include <string>
 #include <vector>
 
 
@@ -48,13 +50,19 @@ int main(int /*argc*/, char** /*argv*/)
     BDSFieldType::muonspoiler,
     BDSFieldType::dipole
   };
-  std::vector<BDSField*> fields;
+  std::vector<BDSFieldMag*> fields;
   for (auto t : types)
     {
+      /*
+      BDSFieldInfo info;
       if (t != BDSFieldType::multipole)
-	{fields.push_back(BDSFieldFactory::Instance()->CreateFieldMagLocal(t,st,brho));}
+	//{fields.push_back(BDSFieldFactory::Instance()->CreateField(t,st,brho));}
+	{fields.push_back(BDSFieldFactory::Instance()->CreateField(info);}
       else
-	{fields.push_back(BDSFieldFactory::Instance()->CreateFieldMagLocal(t,st2,brho));}
+	//{fields.push_back(BDSFieldFactory::Instance()->CreateField(t,st2,brho));}
+      	{fields.push_back(BDSFieldFactory::Instance()->CreateField(info));}
+      */
+      std::cout << "t: " << G4endl;
     }
 
   // Angular data
@@ -72,9 +80,9 @@ int main(int /*argc*/, char** /*argv*/)
    
   for (auto field : fields)
     {
-      G4cout << "Generating field for type \"" << field->Name() << "\"" << G4endl;
+      //G4cout << "Generating field for type \"" << field->Name() << "\"" << G4endl;
       std::ofstream rfile;
-      rfile.open((field->Name()+"_radial.dat").c_str());
+      rfile.open(std::string("_radial.dat").c_str());
       rfile << "> nR = "   << nR   << "\n";
       rfile << "> nPhi = " << nPhi << "\n";
       rfile << "> brho = " << brho << "\n";
@@ -94,7 +102,7 @@ int main(int /*argc*/, char** /*argv*/)
       rfile.close();
       
       std::ofstream cfile;
-      cfile.open((field->Name()+"_carteasian.dat").c_str());
+      cfile.open(std::string("_carteasian.dat").c_str());
       cfile << "> nX = "   << nX   << "\n";
       cfile << "> nY = "   << nX   << "\n";
       cfile << "> brho = " << brho << "\n";
