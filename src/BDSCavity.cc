@@ -33,7 +33,9 @@ BDSCavity::BDSCavity(G4String      name,
 }
 
 BDSCavity::~BDSCavity()
-{;}
+{
+  delete vacuumField;
+}
 
 void BDSCavity::Build()
 {
@@ -125,7 +127,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis; //equator ellipse horizontal semiaxis
   G4double tangentAngle     = cavityInfo->tangentLineAngle;
   G4double irisRadius       = cavityInfo->irisRadius;
-  unsigned int noPoints            = cavityInfo->numberOfPoints;
+  unsigned int noPoints     = cavityInfo->numberOfPoints;
 
   //Calculatecartesian coordinates (z, r) from parameters.
   //2D spherical coordinates, z along the beamline:
@@ -135,12 +137,16 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double re = equatorRadius - equatorRSemiAxis;  //r coord of equator ellipse centre.
   G4double m = tan(tangentAngle + 0.5*CLHEP::pi);  //gradient of line connecting the ellipses.  Add a pi/2 because angle is defined from the vertical, clockwise.
    
-  // gradient from tangentAngle.  Find the derivative of ellipses.  equate and solve for the parameter.
-  G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));  //atan finds solution in the first quadrant.
-  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; //Add pi to get desired solution (third quadrant)
+  // Gradient from tangentAngle. Find the derivative of ellipses. Equate
+  // and solve for the parameter.
+  // atan finds solution in the first quadrant.
+  G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));
+  // Add pi to get desired solution (third quadrant)
+  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; 
  
-       
-  noPoints = noPoints - (noPoints % 4);  //rounding down to a multiple of 4.  This is so that number of points are share equally and consistently between the constituent ellipses.
+  // Rounding down to a multiple of 4. This is so that number of points are
+  // share equally and consistently between the constituent ellipses.
+  noPoints = noPoints - (noPoints % 4);  
 
   //Vector Definitions:
   //Parametric equation parameters:
@@ -152,16 +158,14 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //rOuterCoord      --> the values of radius for the outer geometry
   //zInnerCoord      --> the values of z for the inner geometry
   //zOuterCoord      --> the values of z for the outer goemetry
-
-    
+  
   //Vector declaration:
   std::vector<G4double> equatorParameter;
-  std::vector<G4double> irisParameter;   
+  std::vector<G4double> irisParameter;
   std::vector<G4double> rInnerCoord;
   std::vector<G4double> rOuterCoord;
-  std::vector<G4double> zInnerCoord;     
-  std::vector<G4double> zOuterCoord;     
- 
+  std::vector<G4double> zInnerCoord; 
+  std::vector<G4double> zOuterCoord;
     
   //---Generating values for the parameters used to define the ellipse shapes---
     
@@ -240,17 +244,13 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4cout << "Length of zInnerCoord = " << zInnerCoord.size() << G4endl;
   G4cout << "Length of rInnerCoord = " << rInnerCoord.size() << G4endl;
   for (G4int i = 0; i < (G4int)zInnerCoord.size(); i++)
-    {
-      G4cout << "(" << zInnerCoord[i] << "," << rInnerCoord[i] << ")" << G4endl;
-    };
+    {G4cout << "(" << zInnerCoord[i] << "," << rInnerCoord[i] << ")" << G4endl;};
   
   G4cout << "Now printing the values of (zOuterCoord,rOuterCoord):" << G4endl;
   G4cout << "Length of zOuterCoord = " << zOuterCoord.size() << G4endl;
   G4cout << "Length of rOuterCoord = " << rOuterCoord.size() << G4endl;
   for (G4int i = 0; i < (G4int)zOuterCoord.size(); i++)
-    {
-      G4cout << "(" << zOuterCoord[i] << "," << rOuterCoord[i] << ")" << G4endl;
-    };
+    {G4cout << "(" << zOuterCoord[i] << "," << rOuterCoord[i] << ")" << G4endl;};
 #endif
 
   //Array of inner r coordinates.  zeroes ensures the polycone will be solid.
@@ -295,8 +295,6 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   cavityVis->SetColour(0.69,0.769,0.871); //light steel blue
   cavityVis->SetVisibility(true);          //visible
   cavityLV->SetVisAttributes(cavityVis);   //give  colour+visibility to the cavity logical volume
-  
-
  
   //Delete first and last elements of the InnerCoord Vectors, as these entries.
   //The reason we need to do this is the same vector is also used for making the vacuum filling the cavity, but without the extra points for subtraction.
@@ -333,7 +331,6 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.  
 }
 
-//A method for building a pillbox cavity geometry.
 void BDSCavity::BuildPillBoxCavityGeometry()
 {
   //Creates a solid 
@@ -364,9 +361,7 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
 				 cavityInfo->material, // material
 				 name + "_cavity_lv"); // name
-
   
-
   //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
   //thinner cylinder (vaccumAperture) to fill the ends provided by the thickness.
   
@@ -406,5 +401,4 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   G4VisAttributes* vacuumVis = new G4VisAttributes(); //vistattributes instance 
   vacuumVis->SetVisibility(true);                    //Make invisible (visible)
   vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.
-
 }

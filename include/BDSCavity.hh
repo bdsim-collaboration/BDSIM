@@ -62,7 +62,7 @@ protected:
 
   /// Field information - also includes cavity info as cavity info contains both
   /// field information and geometrical information.
-  BDSFieldInfo*  vacuumField;
+  BDSFieldInfo* vacuumField;
 
   /// Convenience shortcut to cavity information inside field information object.
   BDSCavityInfo* cavityInfo;

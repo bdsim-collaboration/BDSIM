@@ -21,6 +21,8 @@ public:
   BDSCavityRF(G4String      name,
 	      G4double      length,
 	      BDSFieldInfo* vacuumFieldIn);
+
+  virtual ~BDSCavityRF(){;}
     
   /// Creates field objects - doesn't nothing by default and derived classes can override.
   virtual void BuildField();
