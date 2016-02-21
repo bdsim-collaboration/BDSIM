@@ -7,6 +7,7 @@
 #include <vector>
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
+  "ks",
   "angle", "length",
   "k1", "k1s",
   "k2", "k2s",
@@ -24,7 +25,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
-  "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12"};
+  "ks", "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12"};
 
 const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
   "k1s", "k2s", "k3s", "k4s", "k5s", "k6s", "k7s", "k8s", "k9s", "k10s", "k11s", "k12s"};
@@ -65,7 +66,7 @@ G4double& BDSMagnetStrength::operator[](const G4String key)
     }
   else
     {
-      G4cerr << "Invalid key \"" << key << G4endl;
+      G4cerr << "Invalid key \"" << key << "\"" << G4endl;
       return variable;
     }
 }
