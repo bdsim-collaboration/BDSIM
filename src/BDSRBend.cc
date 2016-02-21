@@ -17,8 +17,6 @@
 
 BDSRBend::BDSRBend(G4String            name,
 		   G4double            length,
-		   G4double            /*bFieldIn*/,
-		   G4double            /*bGradIn*/,
 		   G4double            angleIn,
 		   BDSBeamPipeInfo*    beamPipeInfo,
 		   BDSMagnetOuterInfo* magnetOuterInfo,

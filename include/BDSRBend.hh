@@ -15,13 +15,13 @@ class BDSRBend: public BDSMagnet
 public:
   BDSRBend(G4String            name,
 	   G4double            length,
-	   G4double            bField,
-	   G4double            bGrad,
 	   G4double            angle,
 	   BDSBeamPipeInfo*    beamPipeInfo,
 	   BDSMagnetOuterInfo* magnetOuterInfo,
 	   BDSFieldInfo*       vacuumFieldInfo,
 	   BDSFieldInfo*       outerFieldInfo = nullptr);
+
+  virtual ~BDSRBend(){;}
 
 private:
   G4double magFieldLength;

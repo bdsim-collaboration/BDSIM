@@ -294,10 +294,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       (*st)["field"] = - _brho *  _element.angle / length * _charge * ffact / CLHEP::tesla;
       (*st)["angle"] = - _element.angle;
     }
-  
-  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  (*st)["k1"] = _brho * _element.k1 / CLHEP::m2;
+  // Quadrupole component
+  if (BDS::IsFinite(_element.k1))
+    {(*st)["k1"] = _element.k1 / CLHEP::m2;}
 
   // Calculate number of sbends to split parent into. If the maximum distance
   // between the arc and chord at the centre is > 1mm, split sbend into N chunks,
@@ -365,46 +364,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 
   CheckBendLengthAngleWidthCombo(chordLength, angle, 2*outerRadius, _element.name);
 
-  // magnetic field
-  // CHECK SIGNS OF B, B', ANGLE
-  G4double bField;
-  if(_element.B != 0){
-  // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
-    bField = _element.B * CLHEP::tesla;
-    G4double rho = _brho/bField;
-    //_element.angle  = - bField * length / brho;
-    _element.angle  = - 2.0*asin(magFieldLength/2.0/rho);
-#ifdef BDSDEBUG
-    G4cout << "calculated angle from field - now " << _element.angle << G4endl;
-#endif
-  }
-  else{
-    _element.angle *= -1;
-    // arc length = radius*angle
-    //            = (geometrical length/(2.0*sin(angle/2))*angle
-    G4double arclength;
-    if (BDS::IsFinite(_element.angle)) {
-      arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);
-    } else {
-      arclength = magFieldLength;
-    }
-    // B = Brho/rho = Brho/(arc length/angle)
-    // charge in e units
-    // multiply once more with ffact to not flip fields in bends
-    bField = - _brho * _element.angle / arclength * _charge * BDSGlobalConstants::Instance()->GetFFact();
-    _element.B = bField/CLHEP::tesla;
-#ifdef BDSDEBUG
-    G4cout << "calculated field from angle - angle,field = " << _element.angle << " " << _element.B << G4endl;
-#endif
-  }
-  
-  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
-  G4double bPrime = - _brho * (_element.k1 / CLHEP::m2);
-
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["field"] = _element.B * CLHEP::tesla;
-  (*st)["angle"] = _element.angle;
+  if (BDS::IsFinite(_element.B))
+    {
+      (*st)["field"] = _element.B * CLHEP::tesla;
+      (*st)["angle"] = -2.0*asin(magFieldLength*0.5 / (_brho / (*st)["field"]));
+      //(*st)["angle"] = (*st)["field"] * length / _brho; // for poleface branch merge
+    }
+  else
+    {
+      G4double arclength;
+      if (BDS::IsFinite(_element.angle))
+	{arclength = 0.5*magFieldLength * fabs(_element.angle) / sin(fabs(_element.angle)*0.5);}
+      else
+	{arclength = magFieldLength;}
+      G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
+      (*st)["field"] = - _brho *  _element.angle / arclength * _charge * ffact / CLHEP::tesla;
+      (*st)["angle"] = - _element.angle;
+    }
+  // Quadrupole component
+  if (BDS::IsFinite(_element.k1))
+    {(*st)["k1"] = _element.k1 / CLHEP::m2;}
   
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       _brho,
@@ -413,8 +393,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 
   return new BDSRBend(_element.name,
 		      _element.l*CLHEP::m,
-		      bField,
-		      bPrime,
 		      _element.angle,
 		      PrepareBeamPipeInfo(_element),
 		      PrepareMagnetOuterInfo(_element),
