@@ -2,10 +2,10 @@
 #include "BDSCavity.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSParser.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4ElectroMagneticField.hh"
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
@@ -20,23 +20,20 @@
 #include <cmath>
 #include <vector>
 
-BDSCavity::BDSCavity(G4String       name,
-		     G4double       length,
-		     G4double       fieldAmplitudeIn,
-		     BDSCavityInfo* cavityInfoIn):
-  BDSAcceleratorComponent(name, length, 0, "cavity_"+cavityInfoIn->cavityType.ToString()),
-  fieldAmplitude(fieldAmplitudeIn),
-  cavityInfo(cavityInfoIn)
+BDSCavity::BDSCavity(G4String      name,
+		     G4double      length,
+		     BDSFieldInfo* vacuumField):
+  BDSAcceleratorComponent(name, length, 0,
+			  "cavity_"+vacuumField->CavityInfo()->cavityType.ToString())
 {
+  cavityInfo   = vacuumField->CavityInfo(); // create shortcut for convenience
   cavityRadius = cavityInfo->equatorRadius;
-  thickness = cavityInfo->thickness;
-  irisRadius = cavityInfo->irisRadius;
+  thickness    = cavityInfo->thickness;
+  irisRadius   = cavityInfo->irisRadius;
 }
 
 BDSCavity::~BDSCavity()
-{
-  delete cavityInfo;
-}
+{;}
 
 void BDSCavity::Build()
 {
@@ -58,14 +55,10 @@ void BDSCavity::Build()
   
   BDSAcceleratorComponent::Build();
   BuildField();
-  AttachField();
   PlaceComponents();
 }
 
 void BDSCavity::BuildField()
-{;}
-
-void BDSCavity::AttachField()
 {;}
 
 void BDSCavity::PlaceComponents()
@@ -316,12 +309,8 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   for (unsigned int i = 0; i < noPoints; i++)
     {
       rInnerCoord[i] = rInnerCoord[i] - lengthSafety;
-      
       if (i == 0 || (i == zInnerCoord.size() - 1)) 
-	{
-	  zInnerCoord[i] = zInnerCoord[i]- lengthSafety;
-	}
-      
+	{zInnerCoord[i] = zInnerCoord[i]- lengthSafety;}
     };
   
   //Initializing the vacuum solid.
@@ -341,9 +330,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //The following 3 lines define the visual attributes of the vacuum.  
   G4VisAttributes* vacuumVis = new G4VisAttributes(); //visattributes instance 
   vacuumVis->SetVisibility(false);                    //Make invisible
-  vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.
-  
-  
+  vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.  
 }
 
 //A method for building a pillbox cavity geometry.
@@ -391,13 +378,12 @@ void BDSCavity::BuildPillBoxCavityGeometry()
 					   2*CLHEP::pi                                         //spanning angle
 					   );
 
-  G4VSolid* vacuumAperture = new G4Tubs(name + "_vacuum_aperture_solid",        //name
-					0.0,                                   //inner radius
-					irisRadius - lengthSafety,             //outer radius
-					0.5 * chordLength - lengthSafety,      //length
-					0.0,                                   //start angle
-					2*CLHEP::pi                            //spanning angle
-					);
+  G4VSolid* vacuumAperture = new G4Tubs(name + "_vacuum_aperture_solid",  //name
+					0.0,                              //inner radius
+					irisRadius - lengthSafety,        //outer radius
+					0.5 * chordLength - lengthSafety, //length
+					0.0,                              //start angle
+					2*CLHEP::pi);                     //spanning angle
   
   //Create the vacuum as a union of the two solides defined prior
   vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  //name
@@ -415,8 +401,6 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   cavityVis->SetColour(0.69,0.769,0.871); //light steel blue
   cavityVis->SetVisibility(true);          //visible
   cavityLV->SetVisAttributes(cavityVis);   //give  colour+visibility to the cavity logical volume
-
-  
   
   //The following 3 lines define the visual attribues of the vacuum.
   G4VisAttributes* vacuumVis = new G4VisAttributes(); //vistattributes instance 

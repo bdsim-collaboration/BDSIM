@@ -263,10 +263,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   if(!HasSufficientMinimumLength(_element))
     {return nullptr;}
 
-  return (new BDSCavityRF(_element.name,
-			  _element.l*CLHEP::m,
-			  _element.gradient,
-			  PrepareCavityModelInfo(_element)));
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
+					       _brho,
+					       BDSIntegratorType::g4classicalrk4,
+					       nullptr,
+					       true,
+					       G4Transform3D(),
+					       PrepareCavityModelInfo(_element));
+
+  return new BDSCavityRF(_element.name,
+			 _element.l*CLHEP::m,
+			 vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
