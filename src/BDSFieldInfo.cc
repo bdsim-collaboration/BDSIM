@@ -7,6 +7,8 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+#include <ostream>
+
 BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 			   G4double           brhoIn,
 			   BDSIntegratorType  integratorTypeIn,
@@ -43,4 +45,14 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
 {
   magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
   cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
+}
+
+std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
+{
+  out << "Field type:       " << info.fieldType              << G4endl;
+  out << "Rigidity:         " << info.brho                   << G4endl;
+  out << "Integrator:       " << info.integratorType         << G4endl;
+  out << "Magnet strength:  " << *(info.magnetStrength)      << G4endl;
+  out << "Global transform? " << info.provideGlobalTransform << G4endl;
+  return out;
 }

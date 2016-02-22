@@ -7,6 +7,8 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+#include <ostream>
+
 class BDSCavityInfo;
 class BDSMagnetStrength;
 
@@ -53,6 +55,9 @@ public:
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetTransform(G4Transform3D transformIn);
+
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
   
 private:
   /// Private default constructor to force use of provided one.
