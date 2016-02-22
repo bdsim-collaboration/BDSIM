@@ -283,13 +283,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   G4double length = _element.l * CLHEP::m;
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  if (BDS::IsFinite(_element.B))
-    {
-      (*st)["field"] = _element.B * CLHEP::tesla;
-      (*st)["angle"] = (*st)["field"] * length / _brho;
+  if (BDS::IsFinite(_element.B) && BDS::IsFinite(_element.angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      (*st)["field"] = _element.B;
+      (*st)["angle"] = - _element.angle;
+    }
+  else if (BDS::IsFinite(_element.B))
+    {// only B field - calculate angle
+      G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
+      (*st)["field"] = _element.B;
+      (*st)["angle"] = (*st)["field"] * length * _charge * ffact / _brho;
     }
   else
-    {
+    {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
       (*st)["field"] = - _brho *  _element.angle / length * _charge * ffact / CLHEP::tesla / CLHEP::m;
       (*st)["angle"] = - _element.angle;
@@ -297,6 +303,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // Quadrupole component
   if (BDS::IsFinite(_element.k1))
     {(*st)["k1"] = _element.k1 / CLHEP::m2;}
+
+#ifdef BDSDEBUG
+  G4cout << "Angle " << (*st)["angle"] << G4endl;
+  G4cout << "Field " << (*st)["field"] << G4endl;
+#endif
 
   // Calculate number of sbends to split parent into. If the maximum distance
   // between the arc and chord at the centre is > 1mm, split sbend into N chunks,
