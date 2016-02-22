@@ -6,9 +6,11 @@
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo()
 {
+  name          = "not specified";
   geometryType  = BDSMagnetGeometryType::cylindrical;
   outerDiameter = 0;
   outerMaterial = nullptr;
+  angle         = 0;
 }
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
