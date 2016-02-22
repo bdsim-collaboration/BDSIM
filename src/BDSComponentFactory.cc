@@ -322,6 +322,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   //create sbends and put them in the line
   BDSBeamPipeInfo*    bpInfo = PrepareBeamPipeInfo(_element);
   BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
+  moInfo->angle = (*st)["angle"]; // already been set to semiangle by this point
 
   CheckBendLengthAngleWidthCombo(semilength, (*st)["angle"], moInfo->outerDiameter, thename);
 
@@ -391,11 +392,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					       BDSIntegratorType::dipole,
 					       st);
 
+  BDSMagnetOuterInfo* moInfo = PrepareMagnetOuterInfo(_element);
+  moInfo->angle = (*st)["angle"];
   return new BDSRBend(_element.name,
 		      _element.l*CLHEP::m,
 		      _element.angle,
 		      PrepareBeamPipeInfo(_element),
-		      PrepareMagnetOuterInfo(_element),
+		      moInfo,
 		      vacuumField,
 		      nullptr);
 }
@@ -870,6 +873,10 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element& element
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
+  // angle - we can't set here as we can't rely on the angle being specified in element
+  // as only the field may be specified. Therefore, must be set in above CreateXXXX methods
+  
+  // name
   info->name = element.name;
   
   // magnet geometry type
