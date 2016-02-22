@@ -179,12 +179,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     {resultantField = new BDSFieldMagGlobal(field);}
 
   // Always this equation of motion for magnetic (only) fields
-  G4Mag_UsualEqRhs* eqOfM = new G4Mag_UsualEqRhs(field);
+  G4Mag_UsualEqRhs* eqOfM = new G4Mag_UsualEqRhs(resultantField);
 
   // Create appropriate integrator
   G4MagIntegratorStepper* integrator = CreateIntegratorMag(info, eqOfM, strength);
 
-  BDSFieldObjects* completeField = new BDSFieldObjects(&info, field, eqOfM, integrator);
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
   return completeField;
 }
 

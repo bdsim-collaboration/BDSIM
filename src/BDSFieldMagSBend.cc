@@ -21,4 +21,5 @@ G4ThreeVector BDSFieldMagSBend::GetFieldValue(const G4ThreeVector& /*position*/)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Field: " << localField << G4endl;
 #endif
-  return localField;}
+  return localField;
+}
