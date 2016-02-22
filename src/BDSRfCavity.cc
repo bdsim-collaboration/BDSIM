@@ -13,7 +13,7 @@
 #include "G4UniformElectricField.hh"
 #include "G4VPhysicalVolume.hh"
 
-struct BDSMagnetOuterInfo;
+class BDSMagnetOuterInfo;
 
 BDSRfCavity::BDSRfCavity(G4String            name,
 			 G4double            length,

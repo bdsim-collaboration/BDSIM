@@ -9,8 +9,8 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4UniformElectricField.hh"
 
-class  BDSBeamPipeInfo;
-struct BDSMagnetOuterInfo;
+class BDSBeamPipeInfo;
+class BDSMagnetOuterInfo;
 
 class G4ChordFinder;
 class G4MagErrorStepper;

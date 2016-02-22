@@ -18,8 +18,9 @@
  * @author Laurie Nevay
  */
 
-struct BDSMagnetOuterInfo
+class BDSMagnetOuterInfo
 {
+public:
   /// default constructor
   BDSMagnetOuterInfo();
 
