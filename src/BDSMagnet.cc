@@ -78,8 +78,8 @@ void BDSMagnet::BuildBeampipe()
       beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngled(name,
 								      chordLength - lengthSafety,
 								      beamPipeInfo,
-								      angle*0.5,
-								      angle*0.5);
+								      -angle*0.5,
+								      -angle*0.5);
     }
   else
     {
