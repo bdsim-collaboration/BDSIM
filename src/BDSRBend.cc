@@ -2,9 +2,11 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSRBend.hh"
 #include "BDSUtilities.hh"
@@ -39,7 +41,7 @@ BDSRBend::BDSRBend(G4String            name,
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "calculated arclength in dipole field: " << arclength << G4endl;
 #endif
-      //(*strength)["length"] = arclength;
+      (*vacuumFieldInfo->MagnetStrength())["length"] = arclength;
     }
   else
     {arclength = magFieldLength;}
