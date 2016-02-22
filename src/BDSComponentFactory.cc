@@ -291,7 +291,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   else
     {
       G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
-      (*st)["field"] = - _brho *  _element.angle / length * _charge * ffact / CLHEP::tesla;
+      (*st)["field"] = - _brho *  _element.angle / length * _charge * ffact / CLHEP::tesla / CLHEP::m;
       (*st)["angle"] = - _element.angle;
     }
   // Quadrupole component
