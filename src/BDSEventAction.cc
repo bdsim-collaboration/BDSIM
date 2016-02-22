@@ -99,7 +99,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
 {
 #ifdef BDSDEBUG
-  G4cout<<"BDSEventAction : processing end of event action"<<G4endl;
+  G4cout << __METHOD_NAME__ << "processing end of event action" << G4endl;
 #endif
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
@@ -107,7 +107,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Get event number information
   G4int event_number = evt->GetEventID();
   if(verboseEvent || verboseEventNumber == event_number)
-    {G4cout << __METHOD_NAME__ << " processing end of event"<<G4endl;}
+    {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
   
   // Record the primary vertex in output
   WritePrimaryVertex();
@@ -212,7 +212,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
       
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " finished writing energy loss." << G4endl;
+  G4cout << __METHOD_NAME__ << "finished writing energy loss." << G4endl;
 #endif
   
   // if events per ntuples not set (default 0) - only write out at end 
@@ -221,7 +221,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " writing events." << G4endl;
+      G4cout << __METHOD_NAME__ << "writing events." << G4endl;
 #endif      
       bdsOutput->Commit(); // write and open new file
 #ifdef BDSDEBUG
@@ -245,7 +245,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
-      G4cout<<"BDSEventAction : storing trajectories"<<G4endl;
+      G4cout << __METHOD_NAME__ << "storing trajectories"<<G4endl;
 #endif
       G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
       if(!trajCont) return;
@@ -274,7 +274,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   bdsOutput->FillEvent();
     
 #ifdef BDSDEBUG 
- G4cout<<"BDSEventAction : end of event action done"<<G4endl;
+  G4cout << __METHOD_NAME__ << "end of event action done"<<G4endl;
 #endif
 }
 
