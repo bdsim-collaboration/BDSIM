@@ -49,7 +49,7 @@ BDSMagnetStrength::BDSMagnetStrength(const BDSMagnetStrength& other):
 std::ostream& operator<<(std::ostream& out, BDSMagnetStrength const &st)
 {
   for (auto key : st.keys)
-    {out << key << ": " << st.GetValue(key) << G4endl;}
+    {out << key << ": " << st.GetValue(key) << ", ";}
   return out;
 }
 

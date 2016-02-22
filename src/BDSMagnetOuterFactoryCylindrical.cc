@@ -314,6 +314,9 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 							       G4double     magnetContainerLength,
 							       G4double     outerDiameter)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   // clear up variables
   CleanUp();
 

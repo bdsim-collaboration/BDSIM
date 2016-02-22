@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSFieldMag.hh"
 #include "BDSFieldMagGlobal.hh"
 
@@ -23,5 +24,10 @@ G4ThreeVector BDSFieldMagGlobal::GetFieldValueTransformed(const G4ThreeVector& p
   G4ThreeVector localPosition  = ConvertToLocal(position);
   G4ThreeVector localField     = field->GetFieldValueTransformed(localPosition);
   G4ThreeVector globalField    = ConvertAxisToGlobal(localField);
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Local Position: " << localPosition << G4endl;
+  G4cout << __METHOD_NAME__ << "Local Field:    " << localField    << G4endl;
+  G4cout << __METHOD_NAME__ << "Global Field:   " << globalField   << G4endl;
+#endif
   return globalField;
 }

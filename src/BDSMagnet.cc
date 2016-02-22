@@ -90,9 +90,8 @@ void BDSMagnet::BuildVacuumField()
 void BDSMagnet::BuildOuter()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ <<  *magnetOuterInfo << G4endl;
 #endif
-
   G4double outerLength = chordLength - 2*lengthSafety;
   outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(magnetType,
 							       magnetOuterInfo,

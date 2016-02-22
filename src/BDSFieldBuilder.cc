@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
@@ -34,6 +35,10 @@ void BDSFieldBuilder::RegisterFieldForConstruction(BDSFieldInfo*    info,
 {
   if (info)
     {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Registering info: " << info
+	     << " to volume: " << logicalVolume->GetName() << G4endl;
+#endif
       infos.push_back(info);
       lvs.push_back(logicalVolume);
       propagators.push_back(propagateToDaughters);
