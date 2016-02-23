@@ -90,10 +90,10 @@ namespace GMAD {
     std::list<std::string> biasVacuumList;
 
     std::string samplerName; ///< name of sampler (default empty)
-    std::string samplerType; ///< element has a sampler of this type
+    std::string samplerType; ///< element has a sampler of this type (default "none")
     double samplerRadius; ///< radius for cylindrical sampler
     
-    int precisionRegion; ///<which precision physics region the element is in (0 = none)
+    int precisionRegion; ///< which precision physics region the element is in (0 = none)
     std::string region; ///< region with range cuts
     
     ///@{ material properties

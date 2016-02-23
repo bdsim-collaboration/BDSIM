@@ -403,12 +403,12 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
     beamline_list.push_back(*itTunnel);
 }
 
-void Parser::add_element(Element& e, std::string before, int before_count, ElementType type)
+void Parser::add_element(Element& e, std::string name, int count, ElementType type)
 {
-  // if before_count equal to -2 add to all elements regardless of name
+  // if count equal to -2 add to all elements regardless of name
   // typically used for output elements like samplers
   // skip first element and add one at the end
-  if (before_count==-2)
+  if (count==-2)
     {
       std::string origName = e.name;
       // flag to see if first element has already been skipped
@@ -442,28 +442,28 @@ void Parser::add_element(Element& e, std::string before, int before_count, Eleme
       // reset name (not really needed)
       e.name = origName;
     }
-  // if before_count equal to -1 add to all element instances
-  else if (before_count==-1)
+  // if count equal to -1 add to all element instances
+  else if (count==-1)
     {
-      beamline_list.insert_before(before,e);
+      beamline_list.insert_before(name,e);
     }
   else
     {
-      auto it = beamline_list.find(before,before_count);
+      auto it = beamline_list.find(name,count);
       if (it==beamline_list.end()) {
-	std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+	std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
 	exit(1);
       }
       beamline_list.insert(it,e);
     }
 }
 
-void Parser::set_sampler(std::string name, int before_count, ElementType type, std::string samplerType, std::string samplerName, double samplerRadius)
+void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, std::string samplerName, double samplerRadius)
 {
-  // if before_count equal to -2 add to all elements regardless of name
+  // if count equal to -2 add to all elements regardless of name
   // typically used for output elements like samplers
   // skip first element and add one at the end
-  if (before_count==-2)
+  if (count==-2)
     {
       // flag to see if first element has already been skipped
       bool skip = false;
@@ -493,8 +493,8 @@ void Parser::set_sampler(std::string name, int before_count, ElementType type, s
 	beamline_list.push_back(e);
       }
     }
-  // if before_count equal to -1 add sampler to all element instances
-  else if (before_count==-1)
+  // if count equal to -1 add sampler to all element instances
+  else if (count==-1)
     {
       auto itPair = beamline_list.equal_range(name);
       if (itPair.first==itPair.second) {
@@ -506,42 +506,42 @@ void Parser::set_sampler(std::string name, int before_count, ElementType type, s
     }
   else
     {
-      auto it = beamline_list.find(name,before_count);
+      auto it = beamline_list.find(name,count);
       if (it==beamline_list.end()) {
-	std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<before_count<<std::endl;
+	std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
 	exit(1);
       }
       (*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
     }
 }
 
-void Parser::add_sampler(std::string name, int before_count, ElementType type)
+void Parser::add_sampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting sampler before "<<name;
-  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<"inserting sampler "<<name;
+  if (count!=-1) std::cout<<"["<< count <<"]";
   std::cout<<std::endl;
 #endif
 
-  set_sampler(name,before_count,type,"plane", params.samplerName);
+  set_sampler(name,count,type,"plane", params.samplerName);
 }
 
-void Parser::add_csampler(std::string name, int before_count, ElementType type)
+void Parser::add_csampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting csampler before "<<name;
-  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<"inserting csampler "<<name;
+  if (count!=-1) std::cout<<"["<<count<<"]";
   std::cout<<std::endl;
 #endif
 
-  set_sampler(name,before_count,type,"cylinder", params.samplerName, params.samplerRadius);
+  set_sampler(name,count,type,"cylinder", params.samplerName, params.samplerRadius);
 }
 
-void Parser::add_dump(std::string name, int before_count, ElementType type)
+void Parser::add_dump(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting dump before "<<name;
-  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<"inserting dump "<<name;
+  if (count!=-1) std::cout<<"["<<count<<"]";
   std::cout<<std::endl;
 #endif
 
@@ -551,7 +551,7 @@ void Parser::add_dump(std::string name, int before_count, ElementType type)
   e.lst = nullptr;
 
   // add element to beamline
-  add_element(e, name, before_count, type);
+  add_element(e, name, count, type);
 }
 
 void Parser::add_region()
