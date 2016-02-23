@@ -458,7 +458,7 @@ void Parser::add_element(Element& e, std::string name, int count, ElementType ty
     }
 }
 
-void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, std::string samplerName, double samplerRadius)
+void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius)
 {
   // if count equal to -2 add to all elements regardless of name
   // typically used for output elements like samplers
@@ -474,7 +474,7 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
 	  continue;
 	}
 
-	(*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
+	(*it).setSamplerInfo(samplerType,(*it).name,samplerRadius);
       }
     }
   // if count equal to -1 add sampler to all element instances
@@ -485,8 +485,26 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
 	std::cerr<<"current beamline doesn't contain element "<< name << std::endl;
 	exit(1);
       }
-      for (auto it = itPair.first; it!= itPair.second; ++it) 
-	{(it->second)->setSamplerInfo(samplerType,samplerName,samplerRadius);}
+      for (auto it = itPair.first; it!= itPair.second; ++it) {
+	// if sampler is attached to a marker, really attach it to the previous element with the name of marker
+	auto elementIt = (it->second);
+	std::string samplerName = elementIt->name;
+	if ((*elementIt).type == ElementType::_MARKER) {
+	  // need to find real element before
+	  // but careful not to go beyond first element also!
+	  while ((*elementIt).isSpecial()) {
+	    elementIt--;
+	    // have to break first before continue since in while loop
+	    if (elementIt==beamline_list.begin()) break;
+	  }
+	  
+	  if (elementIt==beamline_list.begin()) {
+	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+	    continue;
+	  }
+	}
+	(*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
+      }
     }
   else
     {
@@ -494,6 +512,19 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
       if (it==beamline_list.end()) {
 	std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
 	exit(1);
+      }
+      // if sampler is attached to a marker, really attach it to the previous element with the name of marker
+      std::string samplerName = (*it).name;
+      if ((*it).type == ElementType::_MARKER) {
+	  // need to find real element before
+	  // but careful not to go beyond first element also!
+	while ((*it).isSpecial()) {
+	  it--;
+	  if (it==beamline_list.begin()) {
+	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+	    return;
+	  }
+	}
       }
       (*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
     }
@@ -507,7 +538,7 @@ void Parser::add_sampler(std::string name, int count, ElementType type)
   std::cout<<std::endl;
 #endif
 
-  set_sampler(name,count,type,"plane", params.samplerName);
+  set_sampler(name,count,type,"plane");
 }
 
 void Parser::add_csampler(std::string name, int count, ElementType type)
@@ -518,7 +549,7 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
   std::cout<<std::endl;
 #endif
 
-  set_sampler(name,count,type,"cylinder", params.samplerName, params.samplerRadius);
+  set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
 void Parser::add_dump(std::string name, int count, ElementType type)

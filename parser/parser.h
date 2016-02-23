@@ -149,7 +149,7 @@ namespace GMAD {
     /// Add element to beamline
     void add_element(Element& e, std::string before, int count, ElementType type);
     /// Set sampler
-    void set_sampler(std::string name, int count, ElementType type, std::string samplerType, std::string samplerName="", double samplerRadius=0.0);
+    void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
     /// Add function to parser
     int add_func(std::string name, double (*func)(double));
     /// Add reserved variable to parser
