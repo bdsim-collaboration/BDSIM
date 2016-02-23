@@ -67,7 +67,7 @@ void BDSParallelWorldSampler::Construct()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
 #endif
-      G4String name     = element->GetName();
+      G4String name     = element->GetSamplerName();
       G4Transform3D* pt = element->GetSamplerPlacementTransform();
       G4double sEnd     = element->GetSPositionEnd();
       

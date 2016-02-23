@@ -186,7 +186,7 @@ void BDSDetectorConstruction::BuildBeamline()
       if(temp)
 	{
 	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset, sType);
+	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	  if (survey) survey->Write(addedComponents, *elementIt);
 	}
     }

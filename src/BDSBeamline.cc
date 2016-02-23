@@ -84,7 +84,8 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 
 std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 							   BDSTiltOffset*           tiltOffset,
-							   BDSSamplerType           samplerType)
+							   BDSSamplerType           samplerType,
+							   G4String                 samplerName)
 {
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
@@ -97,16 +98,16 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
       for (G4int i = 0; i < (G4int)line->size(); ++i)
 	{
 	  if (i == 0) // only attach the desired sampler to the first one
-	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType);}
+	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
 	  else
-	    {element = AddSingleComponent((*line)[i], tiltOffset, BDSSamplerType::none);}
+	    {element = AddSingleComponent((*line)[i], tiltOffset, BDSSamplerType::none, samplerName);}
 	  if (element)
 	    {addedComponents.push_back(element);}
 	}
     }
   else
     {
-      element = AddSingleComponent(component, tiltOffset, samplerType);
+      element = AddSingleComponent(component, tiltOffset, samplerType, samplerName);
       if (element)
 	{addedComponents.push_back(element);}
     }
@@ -118,7 +119,8 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
 
 BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 						    BDSTiltOffset*           tiltOffset,
-						    BDSSamplerType           samplerType)
+						    BDSSamplerType           samplerType,
+						    G4String                 samplerName)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;

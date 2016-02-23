@@ -44,7 +44,8 @@ public:
 		     G4double                 sPositionStart,
 		     G4double                 sPositionMiddle,
 		     G4double                 sPositionEnd,
-		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none);
+		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
+		     G4String                 samplerNameIn = "");
 
   ~BDSBeamlineElement();
   
@@ -72,6 +73,7 @@ public:
   inline G4Transform3D*           GetPlacementTransform()        const;
   inline G4Transform3D*           GetReadOutPlacementTransform() const;
   inline BDSSamplerType           GetSamplerType()               const;
+  inline G4String                 GetSamplerName()               const;
   inline G4Transform3D*           GetSamplerPlacementTransform() const;
   ///@}
   
@@ -143,6 +145,8 @@ private:
 
   /// The type of sampler to attach to this element - could be none as well.
   const BDSSamplerType samplerType;
+
+  const G4String samplerName;
 
   /// The transform for where the sampler 'attached' to this element should be placed.
   /// Note this would normally overlap in the real 'mass' world, but this will be used
@@ -221,6 +225,9 @@ inline G4Transform3D*           BDSBeamlineElement::GetReadOutPlacementTransform
 
 inline BDSSamplerType           BDSBeamlineElement::GetSamplerType() const
 {return samplerType;}
+
+inline G4String                 BDSBeamlineElement::GetSamplerName() const
+{return samplerName;}
 
 inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform() const
 {return samplerPlacementTransform;}
