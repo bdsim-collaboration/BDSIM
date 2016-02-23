@@ -483,15 +483,6 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
 
 	(*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
       }
-      // also add to final element
-      if (type == ElementType::_NONE) {
-	// add marker with sampler at end
-	Element e;
-	e.name = "Sampler_end";
-	e.type = ElementType::_MARKER;
-	e.setSamplerInfo(samplerType,samplerName,samplerRadius);
-	beamline_list.push_back(e);
-      }
     }
   // if count equal to -1 add sampler to all element instances
   else if (count==-1)
