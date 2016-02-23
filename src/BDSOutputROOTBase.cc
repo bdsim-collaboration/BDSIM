@@ -460,7 +460,7 @@ void BDSOutputROOTBase::WriteHistogram(BDSHistogram1D* hIn)
   std::vector<G4double> binLowerEdges = hIn->GetBinLowerEdges();
   if (binLowerEdges.size() < 1)
     {return;} //no bins - don't write the histogram
-  binLowerEdges.push_back(hIn->GetLastBin()->GetUpperEdge()); //root requires nbins+1
+  binLowerEdges.push_back(hIn->GetLastBin().GetUpperEdge()); //root requires nbins+1
 
   //always construct the histogram by bin edges - works both with constant
   //and variable bin width histograms
@@ -472,18 +472,18 @@ void BDSOutputROOTBase::WriteHistogram(BDSHistogram1D* hIn)
   h->GetYaxis()->SetTitle(hIn->GetYLabel());
   h->GetXaxis()->CenterTitle();
   h->GetYaxis()->CenterTitle();
-  G4int i;
-  for(hIn->first(),i = 1;!hIn->isDone();hIn->next(), i++)
+  G4int i = 1;
+  for (auto const& bin : *hIn)
     {
-      BDSBin* currentBin = hIn->currentBin();
-      h->SetBinContent(i,currentBin->GetValue());
-      h->SetBinError(i,  currentBin->GetError());
+      h->SetBinContent(i, bin.GetValue());
+      h->SetBinError(i, bin.GetError());
+      i++;
     }
   //over / underflow manually set
-  h->SetBinContent(0,hIn->GetUnderflowBin()->GetValue()); //underflow
-  h->SetBinContent(0,hIn->GetUnderflowBin()->GetError());
-  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin()->GetValue()); //overflow
-  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin()->GetError());
+  h->SetBinContent(0,hIn->GetUnderflowBin().GetValue()); //underflow
+  h->SetBinContent(0,hIn->GetUnderflowBin().GetError());
+  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin().GetValue()); //overflow
+  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin().GetError());
 
   h->SetEntries(hIn->GetNEntries());
   

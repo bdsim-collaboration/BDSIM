@@ -65,10 +65,10 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   if (samplerType == BDSSamplerType::plane)
     {
       G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
-      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() - 1*CLHEP::um; // back off to avoid overlaps
-      dZLocal.transform(*referenceRotationStart);
-      G4ThreeVector samplerPosition = referencePositionStart + dZLocal;
-      samplerPlacementTransform = new G4Transform3D(*referenceRotationStart, samplerPosition);
+      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() + 1*CLHEP::um; // back off to avoid overlaps
+      dZLocal.transform(*referenceRotationEnd);
+      G4ThreeVector samplerPosition = referencePositionEnd - dZLocal;
+      samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, samplerPosition);
     }
   else if (samplerType == BDSSamplerType::cylinder)
     {samplerPlacementTransform = new G4Transform3D(*referenceRotationMiddle, referencePositionMiddle);}

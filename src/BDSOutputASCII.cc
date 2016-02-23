@@ -286,16 +286,16 @@ void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
 	 << std::setw(20) << "SLower[m]" << " "
     	 << std::setw(20) << "SUpper[m]" << " "
 	 << std::setw(20) << "Value"     << G4endl;
-  histOS << "Underflow: " << histogramIn->GetUnderflowBin()->GetValue() << G4endl;
-  histOS << "Overflow:  " << histogramIn->GetOverflowBin()->GetValue()  << G4endl;
+  histOS << "Underflow: " << histogramIn->GetUnderflowBin().GetValue() << G4endl;
+  histOS << "Overflow:  " << histogramIn->GetOverflowBin().GetValue()  << G4endl;
   
   //iterate over bins and fill them in
   histOS << std::scientific;
-  for (histogramIn->first();!histogramIn->isDone();histogramIn->next())
+  for (const auto& bin : *histogramIn)
     {
-      histOS << std::setw(20) << histogramIn->currentBin()->GetLowerEdge() << " ";
-      histOS << std::setw(20) << histogramIn->currentBin()->GetUpperEdge() << " ";
-      histOS << std::setw(20) << histogramIn->currentBin()->GetValue() << G4endl;
+      histOS << std::setw(20) << bin.GetLowerEdge() << " ";
+      histOS << std::setw(20) << bin.GetUpperEdge() << " ";
+      histOS << std::setw(20) << bin.GetValue() << G4endl;
     }
   histOS.close();
 }
