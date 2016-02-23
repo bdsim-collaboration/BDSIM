@@ -465,18 +465,11 @@ void Parser::set_sampler(std::string name, int count, ElementType type, std::str
   // skip first element and add one at the end
   if (count==-2)
     {
-      // flag to see if first element has already been skipped
-      bool skip = false;
       for (auto it=beamline_list.begin(); it!=beamline_list.end(); it++) {
 	// skip LINEs
 	if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
 	  {continue;}
-	// skip first real element
-	if (skip == false) {
-	  skip=true;
-	  continue;
-	}
-	// if type not equal to NONE and elments have to match type 
+	// if type not equal to NONE and elements have to match type 
 	if (type != ElementType::_NONE && type != (*it).type) {
 	  continue;
 	}
