@@ -89,21 +89,26 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   element = elementIn;
   prevElement = prevElementIn;
   nextElement = nextElementIn;
-  G4bool overrideRegistration = false; // for multiple instances of the same element but different poleface rotations.
-  
+  G4double angleIn;
+  G4double angleOut;
+  G4bool registered = false;
+  G4bool willNotModify = true; // Used for multiple instances of the same element but different poleface rotations.
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
 
   if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name)){
-    overrideRegistration = true;
+    registered = true;
     }
 
-  // Match poleface from previous and next element
-  G4double angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-  G4double angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-
   if (element->type == ElementType::_DRIFT){
+    willNotModify = false;
+
+    // Match poleface from previous and next element
+    angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+    angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
     //Normal vector of rbend is from the magnet, angle of the rbend has to be taken into account regardless of poleface rotation
     if (prevElement && (prevElement->type == ElementType::_RBEND))
       {angleIn += -0.5*(prevElement->angle);}
@@ -113,28 +118,28 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   }
 
   if (element->type == ElementType::_RBEND){
+    willNotModify = false;
+
     //angleIn and angleOut have to be multiplied by minus one for rbends for some reason. Cannot figure out why yet.
-    angleIn    *= -1.0;
-    angleOut   *= -1.0;
+    angleIn = -1.0 * element->e1;
+    angleOut = -1.0 * element->e2;
 
     if (nextElement && (nextElement->type == ElementType::_RBEND))
       {angleOut += 0.5*element->angle;}
     if (prevElement && (prevElement->type == ElementType::_RBEND))
       {angleIn += 0.5*element->angle;}
   }
-  
+
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
-  if (element->type != ElementType::_DUMP &&
-      BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name)
-      && not overrideRegistration)
+  if (element->type != ElementType::_DUMP && registered && willNotModify)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
 #endif
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
     }
-  
+
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory - creating " << element->type << G4endl;
@@ -210,7 +215,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetPrecisionRegion(element->precisionRegion);
       component->Initialise();
-      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component);
+      //don't register the component if it's been modified for angle or pole face
+      if (willNotModify){
+        BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component);
+      }
     }
   
   return component;
