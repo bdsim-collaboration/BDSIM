@@ -21,6 +21,15 @@
 
 class BDSMagnetStrength
 {
+private:
+  /// Typedefs up first so we can declare public iterators.
+  typedef std::map<G4String, G4double> StrengthMap;
+
+  /// A map containing the values for various magnet strengths. It only contains
+  /// the set magnet strengths. If a strength isn't specified, it's assumed to be zero
+  /// without having to store the 0 value.
+  StrengthMap strengths;
+  
 public:
   /// Default constructor does nothing as class will return 0 for uninitialised keys
   BDSMagnetStrength(){;}
@@ -37,6 +46,8 @@ public:
   G4double& operator[](const G4String key);
   const G4double& operator[](G4String key) const;
 
+  static const std::vector<G4String> AllKeys() {return keys;}
+
   /// Accessor for normal component keys - k1 - k12
   inline std::vector<G4String> NormalComponentKeys() const;
 
@@ -48,13 +59,18 @@ public:
 
   /// Accessor for all skew components - k1 - k12
   std::vector<G4double> SkewComponents() const;
+
+  ///@{ iterator mechanics
+  typedef StrengthMap::iterator       iterator;
+  typedef StrengthMap::const_iterator const_iterator;
+  iterator       begin()       {return strengths.begin();}
+  iterator       end()         {return strengths.end();}
+  const_iterator begin() const {return strengths.begin();}
+  const_iterator end()   const {return strengths.end();}
+  G4bool         empty() const {return strengths.empty();}
+  ///@}
   
 private:
-  /// A map containing the values for various magnet strengths. It only contains
-  /// the set magnet strengths. If a strength isn't specified, it's assumed to be zero
-  /// without having to store the 0 value.
-  std::map<G4String, G4double> strengths;
-
   /// Whether or not the supplied key is a valid magnet strength parameter
   G4bool ValidKey(const G4String key) const;
 
