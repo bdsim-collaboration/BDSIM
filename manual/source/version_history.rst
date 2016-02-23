@@ -1,3 +1,36 @@
+V0.92 - 2016 / ?? / ??
+======================
+
+New Features
+------------
+
+* Samplers are attached at the *exit* instead of the *entrance* of an element
+
+Geometry
+^^^^^^^^
+
+Output
+^^^^^^
+
+Parser
+^^^^^^
+
+Physics
+^^^^^^^
+
+Tracking
+^^^^^^^^
+  
+Bug fixes
+---------
+
+Geometry
+^^^^^^^^
+  
+Parser
+^^^^^^
+
+
 V0.91 - 2015 / 12 / 17
 ======================
 
