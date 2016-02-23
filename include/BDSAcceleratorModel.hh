@@ -19,7 +19,7 @@
  * physical world in a location independent of detector 
  * construction.
  * 
- * In future, there may be more than several beamlines - 
+ * In future, there may be several more beamlines than just
  * a flat one, and perhaps grouped into a more hierarchical
  * version.  These can be contained here and this class can
  * be extended as required.

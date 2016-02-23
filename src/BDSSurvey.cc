@@ -4,8 +4,8 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
-
-#include "parser/element.h"
+#include "BDSMagnet.hh"
+#include "BDSMagnetStrength.hh"
 
 #include <fstream>
 #include <iomanip>
@@ -14,15 +14,22 @@
 
 using std::setw;
 
-BDSSurvey::BDSSurvey(G4String filename)
+BDSSurvey::BDSSurvey(G4String filename):
+  nullStrength(new BDSMagnetStrength())
 {
+  magnetKeys = nullStrength->AllKeys();
+  
   G4cout << __METHOD_NAME__ << "Generating Survey: " << filename << " ..." << G4endl;
-
   survey.open(filename);
+  WriteHeader();
 }
 
 BDSSurvey::~BDSSurvey()
-{}
+{
+  if (survey.is_open())
+    {survey.close();}
+  delete nullStrength;
+}
 
 void BDSSurvey::WriteHeader()
 {
@@ -49,12 +56,12 @@ void BDSSurvey::WriteHeader()
 	 << setw(12) << "AperX[m]    " << " "
 	 << setw(12) << "AperY[m]    " << " "
 	 << setw(15) << "Aper_Type   " << " "
-	 << setw(12) << "Angle[rad]  " << " "
-	 << setw(12) << "K1[m^-2]    " << " "
-	 << setw(12) << "K2[m^-3]    " << " "
-	 << setw(12) << "K3[m^-4]    " << " "
-	 << setw(12) << "K4[m^-5]    " << " "
-	 << G4endl;
+	 << setw(12) << "Angle[rad]  ";
+
+    for (auto const key : magnetKeys)
+      {survey << " " << setw(12) << key;}
+
+    survey << G4endl;
 
   survey.setf(std::ios::fixed, std::ios::floatfield);
   survey.setf(std::ios::showpoint);
@@ -62,13 +69,17 @@ void BDSSurvey::WriteHeader()
   survey.precision(7);      
 }
 
-void BDSSurvey::Write(std::vector<BDSBeamlineElement*> components, GMAD::Element& element)
+void BDSSurvey::Write(BDSBeamline* beamline)
 {
-  for (auto beamlineElement : components)
-    {Write(beamlineElement, element);}
+  for (auto element : *beamline)
+    {Write(element);}
+
+  survey << "### Total length = " << beamline->GetTotalChordLength()/CLHEP::m << "m" << G4endl;
+  survey << "### Total arc length = " <<  beamline->GetTotalArcLength()/CLHEP::m << "m" << G4endl;
+  survey.close();
 }
 
-void BDSSurvey::Write(BDSBeamlineElement* beamlineElement, GMAD::Element& element)
+void BDSSurvey::Write(BDSBeamlineElement* beamlineElement)
 {  
   BDSAcceleratorComponent* acceleratorComponent = beamlineElement->GetAcceleratorComponent();
 
@@ -101,12 +112,18 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement, GMAD::Element& elemen
 	 << setw(12) << (beamPipeInfo ? beamPipeInfo->aper1/CLHEP::m : 0) << " "
 	 << setw(12) << (beamPipeInfo ? beamPipeInfo->aper2/CLHEP::m : 0) << " "
 	 << setw(15) << (beamPipeInfo ? beamPipeInfo->beamPipeType : 0)   << " "
-	 << setw(12) << acceleratorComponent->GetAngle()                  << " "
-	 << setw(12) << element.k1 << " "
-	 << setw(12) << element.k2 << " "
-	 << setw(12) << element.k3 << " "
-	 << setw(12) << element.k4
-	 << G4endl;
+	 << setw(12) << acceleratorComponent->GetAngle();
+
+  BDSMagnetStrength const* st;
+  if (BDSMagnet* magCast = dynamic_cast<BDSMagnet*>(acceleratorComponent))
+    {st = magCast->MagnetStrength();}
+  else
+    {st = nullStrength;}
+  
+  for (auto const key : magnetKeys)
+    {survey << " " << setw(12) << (*st)[key];}
+
+  survey << G4endl;
 }
 
 void BDSSurvey::WriteSummary(BDSBeamline* beamline)

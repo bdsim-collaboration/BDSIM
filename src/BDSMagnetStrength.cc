@@ -7,8 +7,9 @@
 #include <vector>
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
-  "ks",
+  "field",// constant field
   "angle", "length",
+  "ks",
   "k1", "k1s",
   "k2", "k2s",
   "k3", "k3s",
@@ -20,8 +21,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "k9", "k9s",
   "k10", "k10s",
   "k11", "k11s",
-  "k12", "k12s",
-  "field", // constant field
+  "k12", "k12s"
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {

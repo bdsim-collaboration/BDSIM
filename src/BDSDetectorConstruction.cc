@@ -138,19 +138,14 @@ void BDSDetectorConstruction::InitialiseRegions()
 
 void BDSDetectorConstruction::BuildBeamline()
 {
+  const BDSExecOptions* execOptions = BDSExecOptions::Instance();
+  
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
-
-  const BDSExecOptions* execOptions = BDSExecOptions::Instance();
-  // Write survey file here since has access to both element and beamline
-  BDSSurvey* survey = nullptr;
-  if(execOptions->GetSurvey())
-    {
-      survey = new BDSSurvey(execOptions->GetSurveyFilename());
-      survey->WriteHeader();
-    }
   
-  if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
+  if (verbose || debug)
+    {G4cout << "parsing the beamline element list..."<< G4endl;}
+  
   for(auto element : BDSParser::Instance()->GetBeamline())
     {
 #ifdef BDSDEBUG
@@ -161,8 +156,7 @@ void BDSDetectorConstruction::BuildBeamline()
       if(temp)
 	{
 	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(element);
-	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(temp, tiltOffset);
-	  if (survey) survey->Write(addedComponents, element);
+	  beamline->AddComponent(temp, tiltOffset);
 	}
     }
 
@@ -179,29 +173,20 @@ void BDSDetectorConstruction::BuildBeamline()
       if (terminator)
         {
 	  terminator->Initialise();
-	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(terminator);
-	  if (survey)
-	    {
-	      GMAD::Element element = GMAD::Element(); // dummy element
-	      survey->Write(addedComponents, element);
-	    }
+	  beamline->AddComponent(terminator);
 	}
       BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDetla);
       if (teleporter)
 	{
 	  teleporter->Initialise();
-	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(teleporter);
-	  if (survey)
-	    {
-	      GMAD::Element element = GMAD::Element(); // dummy element
-	      survey->Write(addedComponents, element);
-	    }
+	  beamline->AddComponent(teleporter);
 	}
     }
 
-  if (survey)
+  if(execOptions->GetSurvey())
     {
-      survey->WriteSummary(beamline);
+      BDSSurvey* survey = new BDSSurvey(execOptions->GetSurveyFilename());
+      survey->Write(beamline);
       delete survey;
     }
   delete theComponentFactory;

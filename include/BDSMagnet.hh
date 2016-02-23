@@ -6,6 +6,7 @@
 #include "BDSFieldObjects.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetStrength.hh"
@@ -45,6 +46,8 @@ public:
 	    BDSFieldInfo*       outerFieldInfoIn = nullptr);
   
   virtual ~BDSMagnet();
+
+  inline BDSMagnetStrength* MagnetStrength() const {return vacuumFieldInfo->MagnetStrength();}
   
 protected:
   /// Overridden method of BDSAcceleratorComponent to not only build container, but
