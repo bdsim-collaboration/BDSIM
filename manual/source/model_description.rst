@@ -1068,7 +1068,7 @@ Lattice Sequence
 ----------------
 
 Once all the necessary components have been defined, they must be placed in a sequence to make
-a lattice. Elements can be repeated [#doublesamplernote]_. A sequence of elements is defined by
+a lattice. Elements can be repeated. A sequence of elements is defined by
 a `line`_. Lines of lines can be made to describe the accelerator sequence programmatically i.e.
 ::
 
@@ -1119,7 +1119,7 @@ Samplers - Output
 Normally, the only output BDSIM would produce is the various particle loss histograms,
 as well as the coordinates of energy deposition hits. To observe the particles at a
 point in the beam lattice a `sampler` can be used. Samplers are attached to an already
-defined element and record all the particles passing through a plane at the *entrance*
+defined element and record all the particles passing through a plane at the *exit*
 to that element. They are defined using the following syntax::
 
   sample, range=<element_name>;
@@ -1127,8 +1127,8 @@ to that element. They are defined using the following syntax::
 where `element_name` is the name of the element you wish to sample. Depending on the
 output format chosen, the element name may be recorded in the output (ROOT output only).
 
-To place a sampler after an item, attach it to the next item. If however, you wish
-to record the coordinates at the end of the line or with another name, you must define
+To place a sampler before an item, attach it to the previous item. If however, you wish
+to record the coordinates with another name, you must define
 a marker, place it in the sequence and then define a sampler that uses that marker::
 
   d1: drift, l=2.4*m;
@@ -1147,7 +1147,7 @@ To attach samplers to all elements (except the first one)::
 
   sample, all;
 
-And to attach samplers before all elements of a specific type::
+And to attach samplers after all elements of a specific type::
 
   sample, <type>;
 
@@ -1158,13 +1158,6 @@ e.g.::
 .. note:: Samplers **can only** be defined **after** the main sequence has been defined
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
-
-.. warning:: A sampler attached to the first item (therefore at the beginning of the beamline)
-	     may not record all primary particles. This is due to the bunch distribution having
-	     a finite length in z and some of the particles (typically half) start in front of
-	     the sampler. This is not an error, but as expected. It is best not to put a sampler
-	     on the first element, but to use the recorded primary coordinates in the output.
-	  
 
 Physics Lists
 -------------
@@ -2033,9 +2026,5 @@ can be set to the precision region by setting the attribute *precisionRegion* eq
 
 .. rubric:: Footnotes
 
-.. [#doublesamplernote] Note, if a sampler is attached to a beam line element and that element is
-			use more than once in a *line*, then output will only be from the first
-			occurrence of that element in the sequence. This will be addressed in future
-			releases.
 .. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
 		      The distinction is kept for clarity, and this might be changed in the future.

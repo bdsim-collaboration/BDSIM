@@ -7,8 +7,7 @@ b1: line=(q1,d1,q1,d2,q2);
 
 use, b1;
 
-! add samplers before all quads
-! skip first element
+! add samplers after all quads
 sample, quadrupole;
 
 print, line;
