@@ -106,36 +106,41 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
   if (element->type == ElementType::_DRIFT)
     {
-      willNotModify = false;
-      
       // Match poleface from previous and next element
       angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
       angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-      
+
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{angleIn += -0.5*(prevElement->angle);}
-      
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{angleOut += 0.5*nextElement->angle;}
-    }
+	  {angleIn += -0.5*(prevElement->angle);}
 
+      if (nextElement && (nextElement->type == ElementType::_RBEND))
+      {angleOut += 0.5*nextElement->angle;}
+
+      //if drift has been modified at all
+      if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+      {willNotModify = false;}
+    }
   else if (element->type == ElementType::_RBEND)
     {
-      willNotModify = false;
-      
       // angleIn and angleOut have to be multiplied by minus one for rbends for
       // some reason. Cannot figure out why yet.
       angleIn = -1.0 * element->e1;
       angleOut = -1.0 * element->e2;
-      
+
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{angleOut += 0.5*element->angle;}
+        {
+          willNotModify = false;
+          angleOut += 0.5*element->angle;
+        }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{angleIn += 0.5*element->angle;}
+        {
+          willNotModify = false;
+          angleIn += 0.5*element->angle;
+        }
     }
-  
+
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
   if (element->type != ElementType::_DUMP && registered && willNotModify)
