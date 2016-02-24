@@ -34,62 +34,63 @@ BDSBeamPipeFactory::~BDSBeamPipeFactory()
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
 {
-  switch(type.underlying()){
-  case BDSBeamPipeType::circular:
+  switch(type.underlying())
+    {
+    case BDSBeamPipeType::circular:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "circular beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "circular beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryCircular::Instance();
-    break;
-  case BDSBeamPipeType::elliptical:
+      return BDSBeamPipeFactoryCircular::Instance();
+      break;
+    case BDSBeamPipeType::elliptical:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "elliptical beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "elliptical beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryElliptical::Instance();
-    break;
-  case BDSBeamPipeType::rectangular:
+      return BDSBeamPipeFactoryElliptical::Instance();
+      break;
+    case BDSBeamPipeType::rectangular:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "rectangular beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "rectangular beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryRectangular::Instance();
-    break;
-  case BDSBeamPipeType::lhc:
+      return BDSBeamPipeFactoryRectangular::Instance();
+      break;
+    case BDSBeamPipeType::lhc:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "lhc beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "lhc beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryLHC::Instance();
-    break;
-  case BDSBeamPipeType::lhcdetailed:
+      return BDSBeamPipeFactoryLHC::Instance();
+      break;
+    case BDSBeamPipeType::lhcdetailed:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "lhc detailed beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "lhc detailed beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryLHCDetailed::Instance();
-    break;
-  case BDSBeamPipeType::rectellipse:
+      return BDSBeamPipeFactoryLHCDetailed::Instance();
+      break;
+    case BDSBeamPipeType::rectellipse:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "rectangular ellipse beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "rectangular ellipse beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryRectEllipse::Instance();
-    break;
-  case BDSBeamPipeType::racetrack:
+      return BDSBeamPipeFactoryRectEllipse::Instance();
+      break;
+    case BDSBeamPipeType::racetrack:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "racetrack beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "racetrack beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryRaceTrack::Instance();
-    break;
-  case BDSBeamPipeType::octagonal:
+      return BDSBeamPipeFactoryRaceTrack::Instance();
+      break;
+    case BDSBeamPipeType::octagonal:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "octagonal beampipe factory" << G4endl;
+      G4cout << __METHOD_NAME__ << "octagonal beampipe factory" << G4endl;
 #endif
-    return BDSBeamPipeFactoryOctagonal::Instance();
-    break;
-  default:
+      return BDSBeamPipeFactoryOctagonal::Instance();
+      break;
+    default:
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "unknown type \"" << type << "\" - circular beampipe factory by default" << G4endl;
+      G4cout << __METHOD_NAME__ << "unknown type \"" << type << "\" - circular beampipe factory by default" << G4endl;
 #endif
-    return BDSBeamPipeFactoryCircular::Instance();
-    break;
-  }
+      return BDSBeamPipeFactoryCircular::Instance();
+      break;
+    }
 }
 
 BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(G4String         name,
@@ -158,8 +159,7 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledIn(BDSBeamPipeType beamPipe
 							G4double        aper4,
 							G4Material*     vacuumMaterial,
 							G4double        beamPipeThickness,
-							G4Material*     beamPipeMaterial
-							)
+							G4Material*     beamPipeMaterial)
 {
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipeAngledIn(name,length,angleIn,aper1,aper2,aper3,aper4,
@@ -176,8 +176,7 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledOut(BDSBeamPipeType beamPip
 							 G4double        aper4,
 							 G4Material*     vacuumMaterial,
 							 G4double        beamPipeThickness,
-							 G4Material*     beamPipeMaterial
-							 )
+							 G4Material*     beamPipeMaterial)
 {
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipeAngledOut(name,length,angleOut,aper1,aper2,aper3,aper4,
@@ -195,8 +194,7 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngledInOut(BDSBeamPipeType beamP
 							   G4double        aper4,
 							   G4Material*     vacuumMaterial,
 							   G4double        beamPipeThickness,
-							   G4Material*     beamPipeMaterial
-							   )
+							   G4Material*     beamPipeMaterial)
 {
   BDSBeamPipeFactoryBase* factory = GetAppropriateFactory(beamPipeType);
   return factory->CreateBeamPipeAngledInOut(name,length,angleIn,angleOut,aper1,aper2,aper3,aper4,
