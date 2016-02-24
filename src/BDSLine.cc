@@ -16,5 +16,10 @@ void BDSLine::Initialise()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (iterator it = begin(); it != end(); ++it)
-    {(*it)->Initialise();}
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Initialising component named: " << (*it)->GetName() << G4endl;
+#endif
+      (*it)->Initialise();
+    }
 }

@@ -60,7 +60,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 BDSBeamPipe*  beamPipe,
 								 G4double      outerDiameter,
 								 G4double      containerLength,
-								 G4double      angle,
+								 G4double      angleIn,
+								 G4double      angleOut,
 								 G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -71,11 +72,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
-  G4int orientation   = BDS::CalculateOrientation(angle);
-  G4double zcomponent = cos(fabs(angle*0.5)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double xcomponent = sin(fabs(angle*0.5)); // note full angle here as it's the exit angle
-  G4ThreeVector inputface  = G4ThreeVector(-orientation*xcomponent, 0.0, -1.0*zcomponent); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(-orientation*xcomponent, 0.0, zcomponent);   // no output face angle
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+  G4ThreeVector inputface = faces.first;
+  G4ThreeVector outputface = faces.second;
 
   G4double beampipeRadiusX = std::max(beamPipe->GetExtentX().first, beamPipe->GetExtentX().second);
   G4double beampipeRadiusY = std::max(beamPipe->GetExtentY().first, beamPipe->GetExtentY().second);
@@ -87,7 +86,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4double yokeStartRadiusY  = yokeFinishRadiusY - yokeThickness;
   G4double outerLength       = (0.5 * length) - lengthSafety;
   // make angled face cylinder big enough to encompass it all
-  G4double angledFaceRadius  = 1.5 * sqrt(pow(yokeFinishRadius, 2) + pow(yokeFinishRadiusY, 2));
+  G4double angledFaceRadius  = sqrt(pow(yokeFinishRadius, 2) + pow(yokeFinishRadiusY, 2)) + lengthSafetyLarge;
 
   // protection
   G4bool buildPoles = true;
@@ -126,10 +125,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4Box* containerSquareSolid = new G4Box(name + "_container_square_solid", // name
 					  yokeFinishRadius,                 // x half width
 					  yokeFinishRadiusY,                // y half width
-					  1.5 * outerLength); // z half width - long for unambiguous intersection
+					  15.0*outerLength - lengthSafety);  // z half width - long for unambiguous intersection
   
   G4VSolid* angledFaceSolid = nullptr;
-  if (BDS::IsFinite(angle))
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     {
       angledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
 				      0,                           // inner radius
@@ -175,9 +174,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4Box* magnetContSqSolid = new G4Box(name + "_mag_cont_square_solid", // name
 				       contRX,                          // x half width
 				       contRY,                          // y half width
-				       containerLength); // z half width - long for unambiguous intersection
+				       15.0*outerLength - 2.0*lengthSafety); // z half width - long for unambiguous intersection
   G4VSolid* magnetAngledFaceSolid = nullptr;
-  if (BDS::IsFinite(angle))
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     {
       magnetAngledFaceSolid = new G4CutTubs(name + "_angled_face_solid", // name
 					    0,                           // inner radius
@@ -214,12 +213,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   G4Box* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
 			       yokeFinishRadius - lengthSafety,           // x half width
 			       yokeFinishRadiusY - lengthSafety,          // y half width
-			       1.5*outerLength);           // z half width
+			       15.0*outerLength - 3.0*lengthSafety);           // z half width
 
   G4Box* yokeInner = new G4Box(name + "_yoke_inner_solid", // name
 			       yokeStartRadius,            // x half width
 			       yokeStartRadiusY,           // y half width
-			       2*outerLength);             // z half width
+			       15.0*outerLength - 4.0*lengthSafety);             // z half width
   // z long for unambiguous first subtraction and second intersection
 
   G4SubtractionSolid* yokeSquareSolid = new G4SubtractionSolid(name + "_yoke_square_solid", // name
@@ -252,7 +251,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
       G4Box* poleSquareSolid = new G4Box(name + "_pole_square_solid", // name
 					 poleWidth,                   // x half width
 					 poleHeight*0.5,                  // y half width
-					 1.5*outerLength); // z half width - long for unambiguous intersection
+					 15.0*outerLength - 5.0*lengthSafety); // z half width - long for unambiguous intersection
       allSolids.push_back(poleSquareSolid);
       
       poleSolid = new G4IntersectionSolid(name + "_pole_solid", // name
@@ -319,8 +318,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   outer->RegisterUserLimits(allUserLimits);
   
   // Register logical volumes and set sensitivity
-  outer->RegisterLogicalVolume(poleLV);
-  outer->RegisterSensitiveVolume(poleLV);
+	if (buildPoles)
+	{
+		outer->RegisterLogicalVolume(poleLV);
+		outer->RegisterSensitiveVolume(poleLV);
+	}
   outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterSensitiveVolume(yokeLV);
   
@@ -333,7 +335,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4double      outerDiameter,
 								      G4double      containerDiameter,
 								      G4double      containerLength,
-								      G4double      angle,
+								      G4double      angleIn,
+								      G4double      angleOut,
 								      G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -343,7 +346,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
   
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name, length, beamPipe, outerDiameter,
 									     containerDiameter, containerLength,
-									     angle, outerMaterial);
+									     angleIn, angleOut, outerMaterial);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,

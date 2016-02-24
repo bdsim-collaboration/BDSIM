@@ -1,51 +1,21 @@
+#include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
 
-#include "BDSGlobalConstants.hh" 
-#include "BDSMaterials.hh"
-#include "BDSDebug.hh"
-#include "G4Box.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSSDManager.hh"
 
-G4Box* BDSSampler::containerSolidSampler = nullptr;
-G4LogicalVolume* BDSSampler::containerLogicalVolumeSampler = nullptr;
+BDSSampler::BDSSampler(G4String nameIn):
+  BDSGeometryComponent(nullptr, nullptr),
+  name(nameIn)
+{;}
 
-BDSSampler::BDSSampler(G4String name):
-  BDSSamplerBase(name, BDSGlobalConstants::Instance()->GetSamplerLength(), "sampler")
-{}
-
-void BDSSampler::BuildContainerLogicalVolume()
+void BDSSampler::CommonConstruction()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
-  if(!containerSolidSampler)
-    {
-      G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-      G4double samplerDiameter = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
-      containerSolid = containerSolidSampler = new G4Box("Sampler_solid",
-							 samplerDiameter,
-							 samplerDiameter,
-							 chordLength*0.5);
-      containerLogicalVolume = containerLogicalVolumeSampler = new G4LogicalVolume(containerSolidSampler,
-										   emptyMaterial,
-										   "Sampler");
-
-      // set user limits, vis attributes and sensitive detector
-      BDSSamplerBase::BuildContainerLogicalVolume();
-    }
-  else
-    {
-      containerSolid = containerSolidSampler;
-      containerLogicalVolume = containerLogicalVolumeSampler;
-    }
+  // Construct logical volume from solid. Note it's ok to have nullptr for material
+  // as the sampler is only placed in a parallel world where the material is ignored.
+  containerLogicalVolume = new G4LogicalVolume(containerSolid,
+					       nullptr,
+					       GetName() + "_lv");
+  
+  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 }
-
-BDSSamplerSD* BDSSampler::GetSensitiveDetector()const
-{
-  return BDSSDManager::Instance()->GetSamplerPlaneSD();
-}
-

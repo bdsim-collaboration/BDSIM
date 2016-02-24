@@ -22,8 +22,9 @@
 #include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSPCLTube.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
-#include "BDSSamplerBase.hh"
 #include "BDSSDManager.hh"
 #include "BDSUtilities.hh"
 #include <string>
@@ -604,7 +605,9 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
   
   aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  BDSSamplerBase::AddExternalSampler(std::to_string(BDSSamplerBase::GetNSamplers())+"_"+_Name+"_1");
+  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(_Name,nullptr);
+  
+  samplerIDs[aSamplerVol] = samplerID;
   
   return aSamplerVol;
 }
@@ -849,15 +852,22 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " k = " << k << ", volume = " << VOL_LIST[ID]->GetName() << G4endl;
 #endif
+
+      G4LogicalVolume* volume = VOL_LIST[ID];
+      G4int copyNumber = 0;
+      auto result = samplerIDs.find(volume);
+      if (result != samplerIDs.end())
+	{copyNumber = result->second;}
       
-	G4VPhysicalVolume* PhysiComp = 
-	  new G4PVPlacement(RotateComponent(_RotPsi,_RotPhi,_RotTheta),
-			    PlacementPoint,
-			    VOL_LIST[ID],
-			    _Name,
-			    VOL_LIST[PARENTID],
-			    false,
-			    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+      G4VPhysicalVolume* PhysiComp = 
+	new G4PVPlacement(RotateComponent(_RotPsi,_RotPhi,_RotTheta),
+			  PlacementPoint,
+			  VOL_LIST[ID],
+			  _Name,
+			  VOL_LIST[PARENTID],
+			  false,
+			  copyNumber,
+			  BDSGlobalConstants::Instance()->GetCheckOverlaps());
       if(_align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.

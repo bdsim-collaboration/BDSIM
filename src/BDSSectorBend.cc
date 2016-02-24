@@ -3,10 +3,12 @@
 
 #include "BDSSectorBend.hh"
 
+#include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
@@ -45,6 +47,7 @@ BDSSectorBend::BDSSectorBend(G4String            name,
     }
   else
     {chordLength = arcLength;}
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
   G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
@@ -95,37 +98,4 @@ void BDSSectorBend::BuildBPFieldAndStepper()
   dipoleStepper->SetBField(itsBField);
   dipoleStepper->SetBGrad(itsBGrad);
   itsStepper = dipoleStepper;
-}
-
-void BDSSectorBend::BuildBeampipe()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
-#endif
-  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  if (BDS::IsFinite(angle))
-    {
-      beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-						    name,
-						    chordLength - lengthSafety,
-						    -angle*0.5,
-						    -angle*0.5,
-						    beamPipeInfo->aper1,
-						    beamPipeInfo->aper2,
-						    beamPipeInfo->aper3,
-						    beamPipeInfo->aper4,
-						    beamPipeInfo->vacuumMaterial,
-						    beamPipeInfo->beamPipeThickness,
-						    beamPipeInfo->beamPipeMaterial);
-    }
-  else
-    {
-      beampipe = factory->CreateBeamPipe(name,
-					 chordLength - lengthSafety,
-					 beamPipeInfo);
-    }
-
-  RegisterDaughter(beampipe);
-
-  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 }

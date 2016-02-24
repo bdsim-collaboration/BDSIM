@@ -1,5 +1,7 @@
 #include "BDSParticle.hh"
 
+#include <ostream>
+
 BDSParticle::BDSParticle():
   position(0,0,0),
   momentum(0,0,0),
@@ -8,8 +10,7 @@ BDSParticle::BDSParticle():
   weight(1.0),
   trackID(-1),
   parentID(-1)
-{
-}
+{;}
 
 BDSParticle::BDSParticle(G4double x,
 			 G4double y,
@@ -29,8 +30,7 @@ BDSParticle::BDSParticle(G4double x,
   weight(weightIn),
   trackID(trackIDIn),
   parentID(parentIDIn)
-{
-}
+{;}
 
 BDSParticle::BDSParticle(G4ThreeVector pos,
 			 G4ThreeVector mom,
@@ -46,5 +46,12 @@ BDSParticle::BDSParticle(G4ThreeVector pos,
   weight(weightIn),
   trackID(trackIDIn),
   parentID(parentIDIn)
+{;}
+
+std::ostream& operator<< (std::ostream& out, BDSParticle const& p)
 {
+  out << "Total E: " << p.GetTotalEnergy() << " MeV" << G4endl;
+  out << "Position: (" << p.GetX() << ", " << p.GetY() << ", " << p.GetZ() << ")" << G4endl;
+  out << "Momentum: (" << p.GetXp() << ", " << p.GetYp() << ", " << p.GetZp() << ")" << G4endl;
+  return out;
 }

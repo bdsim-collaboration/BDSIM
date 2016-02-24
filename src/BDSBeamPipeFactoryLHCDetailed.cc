@@ -1,12 +1,12 @@
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSBeamPipe.hh"
-
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -349,7 +349,7 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
   // calculate geometrical parameters
   CalculateGeometricalParameters(aper1, aper2, aper3, beamPipeThickness, length);
   
-  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleIn, angleOut);
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
   

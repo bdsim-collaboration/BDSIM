@@ -38,10 +38,9 @@ Parameters::Parameters() {
   setMap["ysize"] = false;
   setMap["xsizeOut"] = false;
   setMap["ysizeOut"] = false;
-  setMap["r"] = false;
   setMap["B"]  = false;
-  setMap["phiAngleIn"] = false;
-  setMap["phiAngleOut"] = false;
+  setMap["e1"] = false;
+  setMap["e2"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
@@ -58,6 +57,9 @@ Parameters::Parameters() {
   setMap["knl"] = false, setMap["ksl"]=false;
   setMap["blmLocZ"] = false;  setMap["blmLocTheta"] = false;
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
+  setMap["samplerName"] = false;
+  setMap["samplerType"] = false;
+  setMap["r"] = false; // for samplerRadius
   setMap["precisionRegion"] = false;
   setMap["region"] = false;
 

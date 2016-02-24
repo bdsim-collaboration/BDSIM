@@ -210,21 +210,3 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(std::pair<d
   
   return aPipe;
 }
-
-/// Calculate input and output normal vector
-std::pair<G4ThreeVector,G4ThreeVector> BDSBeamPipeFactoryBase::CalculateFaces(G4double angleIn,
-									      G4double angleOut)
-{
-  /// orientation -1,0,1 value - always use |angle| with trigonometric and then
-  /// multiply by this factor, 0 by default
-  G4int orientationIn  = BDS::CalculateOrientation(angleIn);
-  G4int orientationOut = BDS::CalculateOrientation(angleOut);
-  
-  G4double in_z  = cos(fabs(angleIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
-  G4double in_x  = sin(fabs(angleIn)); // note full angle here as it's the exit angle
-  G4double out_z = cos(fabs(angleOut));
-  G4double out_x = sin(fabs(angleOut));
-  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
-  G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);   // no output face angle
-  return std::make_pair(inputface,outputface);
-}

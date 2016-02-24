@@ -82,25 +82,34 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
+							   BDSTiltOffset*           tiltOffset,
+							   BDSSamplerType           samplerType,
+							   G4String                 samplerName)
 {
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
-  if (!tiltOffset) {tiltOffset  = new BDSTiltOffset();}
-  
+  if (!tiltOffset)
+    {tiltOffset  = new BDSTiltOffset();}
+
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
+      for (G4int i = 0; i < (G4int)line->size(); ++i)
 	{
-	  element = AddSingleComponent(*i, tiltOffset);
-	  if (element) addedComponents.push_back(element);
+	  if (i == 0) // only attach the desired sampler to the first one
+	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
+	  else
+	    {element = AddSingleComponent((*line)[i], tiltOffset);}
+	  if (element)
+	    {addedComponents.push_back(element);}
 	}
     }
   else
     {
-      element = AddSingleComponent(component, tiltOffset);
-      if (element) addedComponents.push_back(element);
+      element = AddSingleComponent(component, tiltOffset, samplerType, samplerName);
+      if (element)
+	{addedComponents.push_back(element);}
     }
   // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;
@@ -108,7 +117,10 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
   return addedComponents;
 }
 
-BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
+						    BDSTiltOffset*           tiltOffset,
+						    BDSSamplerType           samplerType,
+						    G4String                 samplerName)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -326,7 +338,9 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 						       referenceRotationEnd,
 						       sPositionStart,
 						       sPositionMiddle,
-						       sPositionEnd);
+						       sPositionEnd,
+						       samplerType,
+						       samplerName);
 
   // calculate extents for world size determination
   UpdateExtents(element);

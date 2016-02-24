@@ -1,10 +1,10 @@
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipe.hh"
-
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
@@ -106,7 +106,7 @@ BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipeAngledInOut(G4String  
   // clean up after last usage
   CleanUp();
   
-  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
 

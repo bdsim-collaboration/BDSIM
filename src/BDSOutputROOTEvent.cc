@@ -2,15 +2,17 @@
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSUtilities.hh"
-#include "BDSSamplerBase.hh"
 
 BDSOutputROOTEvent::BDSOutputROOTEvent() 
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  this->Init();
+  Init(); 
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -87,20 +89,16 @@ void BDSOutputROOTEvent::Init()
 
   //
   // build sampler structures 
-  //
-  for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++) 
-    { 
-      G4String name=BDSSamplerBase::outputNames[i];
-
-      // remove sampler number
-      G4String stripName = name.substr(8,100); // remove Sampler_
-      
+  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+    {
       // create sampler structure
-      samplerMap[stripName] = new BDSOutputROOTEventSampler(stripName);
+      samplerMap[samplerName] = new BDSOutputROOTEventSampler(samplerName);
 
       // set tree branches 
-      theRootOutputTree->Branch((stripName+".").c_str(),"BDSOutputROOTEventSampler",samplerMap[stripName],4000,1);
-
+      theRootOutputTree->Branch((samplerName+".").c_str(),
+				"BDSOutputROOTEventSampler",
+				samplerMap[samplerName],
+				4000,1);     
     }
 
   //

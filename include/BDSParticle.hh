@@ -4,6 +4,8 @@
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
 
+#include <ostream>
+
 /**
  * @brief a particle definition
  * 
@@ -36,6 +38,9 @@ public:
 	      G4double      weightIn   = 1.,
 	      G4int         trackIDIn  = -1,
 	      G4int         parentIDIn = -1);
+
+  /// Output stream
+  friend std::ostream& operator<< (std::ostream& out, BDSParticle const& p);
 
 private:
   /// position
@@ -73,7 +78,6 @@ public:
   G4double GetWeight()      const {return weight;}
   G4int    GetTrackID()     const {return trackID;}
   G4int    GetParentID()    const {return parentID;}
-  
 };
 
 #endif

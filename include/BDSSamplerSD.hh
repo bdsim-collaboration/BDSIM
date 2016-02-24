@@ -6,6 +6,9 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4VSensitiveDetector.hh"
 
+class BDSGlobalConstants;
+class BDSSamplerRegistry;
+
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
@@ -49,6 +52,12 @@ private:
 
   /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;
+
+  /// Cached pointer to registry as accessed many times
+  BDSSamplerRegistry* registry;
+
+  /// Cached pointer to global constants as accessed many times
+  BDSGlobalConstants* globals;
 };
 
 #endif
