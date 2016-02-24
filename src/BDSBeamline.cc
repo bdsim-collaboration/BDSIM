@@ -100,7 +100,7 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
 	  if (i == 0) // only attach the desired sampler to the first one
 	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
 	  else
-	    {element = AddSingleComponent((*line)[i], tiltOffset, BDSSamplerType::none, samplerName);}
+	    {element = AddSingleComponent((*line)[i], tiltOffset);}
 	  if (element)
 	    {addedComponents.push_back(element);}
 	}
@@ -339,7 +339,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 						       sPositionStart,
 						       sPositionMiddle,
 						       sPositionEnd,
-						       samplerType);
+						       samplerType,
+						       samplerName);
 
   // calculate extents for world size determination
   UpdateExtents(element);
