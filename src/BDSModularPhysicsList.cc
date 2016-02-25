@@ -167,11 +167,7 @@ void BDSModularPhysicsList::SetCuts()
   G4VUserPhysicsList::SetCuts();  
   G4double defaultRangeCut  = globals->GetDefaultRangeCut(); 
   SetDefaultCutValue(defaultRangeCut);
-  SetCutsWithDefault();   
-
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Default production range cut (mm)   " << defaultRangeCut   << G4endl;
-#endif
+  SetCutsWithDefault();
 
   G4double prodCutPhotons   = globals->GetProdCutPhotons();
   G4double prodCutElectrons = globals->GetProdCutElectrons();
@@ -179,10 +175,11 @@ void BDSModularPhysicsList::SetCuts()
   G4double prodCutProtons   = globals->GetProdCutProtons();
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Photon production range cut (mm)   " << prodCutPhotons   << G4endl;
-  G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
-  G4cout << __METHOD_NAME__ << "Positron production range cut (mm) " << prodCutPositrons << G4endl;
-  G4cout << __METHOD_NAME__ << "Proton production range cut (mm)   " << prodCutProtons   << G4endl;
+  G4cout << __METHOD_NAME__ << "Default production range cut  " << defaultRangeCut  << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Photon production range cut   " << prodCutPhotons   << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Electron production range cut " << prodCutElectrons << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Positron production range cut " << prodCutPositrons << " mm" << G4endl;
+  G4cout << __METHOD_NAME__ << "Proton production range cut   " << prodCutProtons   << " mm" << G4endl;
 #endif
   
   SetCutValue(prodCutPhotons,  "gamma");
@@ -191,9 +188,9 @@ void BDSModularPhysicsList::SetCuts()
   SetCutValue(prodCutProtons,  "proton");
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "list of all constructed particles by physics lists" << G4endl;
+  G4cout << __METHOD_NAME__ << "List of all constructed particles by physics lists" << G4endl;
   for (auto particle : *G4ParticleTable::fDictionary)
-    {G4cout << particle.second->GetParticleName() << " ";}
+    {G4cout << particle.second->GetParticleName() << ", ";}
   G4cout << G4endl;
 #endif
   

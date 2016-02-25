@@ -3,10 +3,21 @@
 #include "BDSAwakeMultilayerScreen.hh"
 #include "G4TwoVector.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSSamplerBase.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial):
-BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,3*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness),  _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial)
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
+						   G4double thickness,
+						   G4double dgrain,
+						   G4double windowThickness,
+						   G4String windowMaterial):
+BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,3*CLHEP::cm),
+		    (G4String)"AwakeMultilayerScreen"),
+_material(material),
+_thickness(thickness),
+_dgrain(dgrain),
+_windowThickness(windowThickness),
+_windowMaterial(windowMaterial)
 {
   _fillFactor=0.5;
   _layerThickness=_dgrain;
@@ -18,11 +29,11 @@ BDSMultilayerScreen(G4TwoVector(1*CLHEP::m,3*CLHEP::cm),(G4String)"AwakeMultilay
   layers();
 }
 
+BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen()
+{;}
 
-BDSAwakeMultilayerScreen::~BDSAwakeMultilayerScreen(){
-}
-
-void BDSAwakeMultilayerScreen::layers(){
+void BDSAwakeMultilayerScreen::layers()
+{
   _gapWidth=0*1e-3*CLHEP::mm;
   _gapSpacing=1*CLHEP::mm;
   preWindowSampler();
@@ -46,10 +57,15 @@ void BDSAwakeMultilayerScreen::layers(){
   build();
 }
 
-void BDSAwakeMultilayerScreen::sampler(G4String name){
-  G4int nThisSampler = BDSSamplerBase::GetNSamplers()+1;
+void BDSAwakeMultilayerScreen::sampler(G4String name)
+{
+  G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers()+1;
   G4String samplerName = "Sampler_" + std::to_string(nThisSampler) + "_" + name;
-  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),samplerName,BDSGlobalConstants::Instance()->GetVacuumMaterial(),0,0);
+  BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),
+					   samplerName,
+					   BDSGlobalConstants::Instance()->GetVacuumMaterial(),
+					   0,
+					   0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
   sl->sampler();
   screenLayer(sl);

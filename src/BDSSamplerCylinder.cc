@@ -1,39 +1,29 @@
-#include "BDSSamplerCylinder.hh"
-
 #include "BDSGlobalConstants.hh"
-#include "BDSMaterials.hh"
-#include "G4Tubs.hh"
-#include "G4LogicalVolume.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSamplerCylinder.hh"
 #include "BDSSDManager.hh"
 
-BDSSamplerCylinder::BDSSamplerCylinder(G4String name,
-				       G4double length,
-				       G4double radiusIn):
-  BDSSamplerBase(name,
-		 length,
-		 "samplercylinder"),
-  radius(radiusIn)
-{}
+#include "globals.hh" // geant types / globals
+#include "G4LogicalVolume.hh"
+#include "G4Transform3D.hh"
+#include "G4Tubs.hh"
 
-void BDSSamplerCylinder::BuildContainerLogicalVolume()
+BDSSamplerCylinder::BDSSamplerCylinder(G4String      name,
+				       G4double      length,
+				       G4double      radius):
+  BDSSampler(name)
 {
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
-  containerSolid = new G4Tubs(name+"_body",
-			      radius-1.e-6*CLHEP::m,
-			      radius,
-			      chordLength*0.5,
-			      0,
-			      CLHEP::twopi*CLHEP::radian);
-  containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name);
+  containerSolid = new G4Tubs(name + "_solid",      // name
+			      radius - 1*CLHEP::um, // inner radius
+			      radius,               // outer radius
+			      length*0.5,           // half length
+			      0,                    // start angle
+			      CLHEP::twopi);        // sweep angle
 
-  // set user limits, vis attributes and sensitive detector
-  BDSSamplerBase::BuildContainerLogicalVolume();
-}
+  SetExtentX(-radius, radius);
+  SetExtentY(-radius, radius);
+  SetExtentZ(-length*0.5, length*0.5);
 
-BDSSamplerSD* BDSSamplerCylinder::GetSensitiveDetector()const
-{
-  return BDSSDManager::Instance()->GetSamplerCylinderSD();
+  CommonConstruction();
+
+  containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerCylinderSD());
 }

@@ -10,7 +10,7 @@ Options::Options()
 
   // very important options
   physicsList           = "standard"; //default - standard (only transportation)
-  modularPhysicsListsOn = 0;
+  modularPhysicsListsOn = 1;
   numberToGenerate      = 1;
   randomSeed            = 0;
 

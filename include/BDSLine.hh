@@ -1,9 +1,10 @@
 #ifndef BDSLINE_H
 #define BDSLINE_H 
 
+#include "BDSAcceleratorComponent.hh"
+
 #include <vector>
 #include <iterator>
-#include "BDSAcceleratorComponent.hh"
 
 /**
  * @brief a class that hold multiple accelerator components
@@ -35,6 +36,10 @@ public:
   iterator begin() {return line.begin();}
   iterator end()   {return line.end();}
   G4bool   empty() {return line.empty();}
+  size_t   size() const {return line.size();}
+
+  /// Accessor for part - exposes functionality of the vector for iteration by index.
+  BDSAcceleratorComponent * const& operator[](G4int index) const {return line.at(index);}
   
   /// Override the BDSAccelerator::Initialise() function to loop over the
   /// line and call that function belonging to each member

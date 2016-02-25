@@ -2,9 +2,10 @@
 #include "BDSDrift.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
 
 #include "globals.hh" // geant4 globals / types
+
+class BDSBeamPipeInfo;
 
 BDSDrift::BDSDrift(G4String         name, 
 		   G4double         length,
@@ -21,7 +22,7 @@ void BDSDrift::Build()
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
   BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
 					      chordLength,
-					      beamPipeInfo);
+					      beamPipeInfo);;
 
   RegisterDaughter(pipe);
   
@@ -29,6 +30,7 @@ void BDSDrift::Build()
   containerLogicalVolume = pipe->GetContainerLogicalVolume();
   containerSolid         = pipe->GetContainerSolid();
 
+  // register vacuum volume (for biasing)
   SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
 
   // update extents

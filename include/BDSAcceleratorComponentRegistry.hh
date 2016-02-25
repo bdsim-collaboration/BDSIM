@@ -58,6 +58,7 @@ public:
   /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.
   BDSAcceleratorComponent* GetComponent(G4String name);
 
+  /// @{ Iterator mechanics
   typedef RegistryMap::iterator       iterator;
   typedef RegistryMap::const_iterator const_iterator;
   iterator       begin()       {return registry.begin();}
@@ -65,6 +66,10 @@ public:
   const_iterator begin() const {return registry.begin();}
   const_iterator end()   const {return registry.end();}
   G4bool         empty() const {return registry.empty();}
+  /// @}
+
+  /// Size of registry
+  size_t size() const {return registry.size();}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r);

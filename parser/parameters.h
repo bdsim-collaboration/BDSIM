@@ -55,7 +55,7 @@ namespace GMAD {
       }
       catch(std::runtime_error) {
 	// not implemented mad parameters will be ignored
-	if (property == "e1" || property == "e2" || property == "fint" || property == "fintx" ||
+	if (property == "fint" || property == "fintx" ||
 	    property == "hgap" || property == "harmon" || property == "lag" || property == "volt")
 	  {return;}
 	

@@ -1,32 +1,42 @@
 #ifndef BDSSAMPLER_H
-#define BDSSAMPLER_H 
+#define BDSSAMPLER_H
 
-#include "BDSSamplerBase.hh"
+#include "BDSGeometryComponent.hh"
 
-class BDSSamplerSD;
-class G4Box;
-class G4LogicalVolume;
+#include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
 
-/** 
- * Rectangular sampler class
+#include <vector>
+
+/**
+ * @brief Base class and registry of sampler instances.
+ * 
+ * Retruns G4Transform3D identity in case none is set, which can be tested
+ * against G4Transfrom3D::Identity.
+ * 
+ * @author Laurie Nevay
  */
 
-class BDSSampler : public BDSSamplerBase
+class BDSSampler: public BDSGeometryComponent
 {
 public:
-  BDSSampler(G4String name);
+  BDSSampler(G4String      nameIn);
+  virtual ~BDSSampler(){;}
 
-  /// access for external classes to sensitive detector
-  virtual BDSSamplerSD* GetSensitiveDetector()const override final;
+  /// Return the name of this sampler.
+  inline G4String GetName() const;
   
-private:
-  /// build container logical volume
-  virtual void BuildContainerLogicalVolume() override final;
+protected:
+  /// Common construction tasks such as creating a logical volume from the solid
+  /// and visualisation options.
+  void CommonConstruction();
 
-  /// static containerSolid (since same for every sampler)
-  static G4Box* containerSolidSampler;
-  /// static containerLogicalVolume (since same for every sampler)
-  static G4LogicalVolume* containerLogicalVolumeSampler;
+private:  
+  /// Name of this sampler
+  G4String name;
 };
+
+inline G4String BDSSampler::GetName() const
+{return name;}
 
 #endif

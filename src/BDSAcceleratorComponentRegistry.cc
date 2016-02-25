@@ -21,6 +21,9 @@ BDSAcceleratorComponentRegistry::BDSAcceleratorComponentRegistry()
 
 BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "size of registry " << registry.size() << G4endl;
+#endif
   iterator i = registry.begin();
   for (; i != registry.end(); ++i)
     {delete i->second;}
@@ -54,6 +57,9 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       G4cout << __METHOD_NAME__ << "registering component \"" << component->GetName() << "\"" << G4endl;
 #endif
       registry[component->GetName()] = component;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "size of registry " << registry.size() << G4endl;
+#endif
 }
 
 G4bool BDSAcceleratorComponentRegistry::IsRegistered(BDSAcceleratorComponent* component)
