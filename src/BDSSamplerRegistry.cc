@@ -6,6 +6,8 @@
 
 #include <vector>
 
+class BDSBeamlineElement;
+
 BDSSamplerRegistry* BDSSamplerRegistry::instance = nullptr;
 
 BDSSamplerRegistry* BDSSamplerRegistry::Instance()
@@ -24,12 +26,13 @@ BDSSamplerRegistry::~BDSSamplerRegistry()
   instance = nullptr;
 }
 
-G4int BDSSamplerRegistry::RegisterSampler(G4String      name,
-					  BDSSampler*   sampler,
-					  G4Transform3D transform,
-					  G4double      S)
+G4int BDSSamplerRegistry::RegisterSampler(G4String            name,
+					  BDSSampler*         sampler,
+					  G4Transform3D       transform,
+					  G4double            S,
+					  BDSBeamlineElement* element)
 {
-  BDSSamplerInfo info = BDSSamplerInfo(name, sampler, transform, S);
+  BDSSamplerInfo info = BDSSamplerInfo(name, sampler, transform, S, element);
   return RegisterSampler(info);
 }
 

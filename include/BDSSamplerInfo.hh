@@ -4,6 +4,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+class BDSBeamlineElement;
 class BDSSampler;
 
 /**
@@ -26,10 +27,11 @@ class BDSSampler;
 class BDSSamplerInfo
 {
 public:
-  BDSSamplerInfo(G4String      nameIn,
-		 BDSSampler*   samplerIn,
-		 G4Transform3D transformIn,
-		 G4double      sPositionIn);
+  BDSSamplerInfo(G4String            nameIn,
+		 BDSSampler*         samplerIn,
+		 G4Transform3D       transformIn,
+		 G4double            sPositionIn = -1000,
+		 BDSBeamlineElement* elementIn   = nullptr);
 
   ~BDSSamplerInfo(){;}
 
@@ -39,6 +41,7 @@ public:
   inline G4Transform3D Transform()        const {return transform;}
   inline G4Transform3D TransformInverse() const {return transformInverse;}
   inline G4double      SPosition()        const {return sPosition;}
+  inline BDSBeamlineElement* Element()    const {return element;}
   /// @}
   
 private:
@@ -59,6 +62,9 @@ private:
 
   /// The curvilinear S position of this sampler.
   G4double      sPosition;
+
+  /// The beam line element to which this sampler pertains (if any).
+  BDSBeamlineElement* element;
 };
 
 #endif
