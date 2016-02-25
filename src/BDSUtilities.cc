@@ -67,8 +67,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDS::CalculateFaces(G4double angleIn,
 }
 
 G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
-                                G4double angleOut,
-                                G4double length)
+					  G4double angleOut,
+					  G4double length)
 {
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
   G4ThreeVector inputface = faces.first;
@@ -77,16 +77,18 @@ G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
   std::swap(inputface[0],inputface[2]);
   std::swap(outputface[0],outputface[2]);
 
-  if (angleIn > 0){
-    // Rotate input clockwise, output counterclockwise
-    inputface[0] *= -1.0;
-    outputface[2] *= -1.0;
-  }
-  else if (angleIn < 0){
-    // Rotate input counterclockwise, output clockwise
-    inputface[2] *= -1.0;
-    outputface[0] *= -1.0;
-  }
+  if (angleIn > 0)
+    {
+      // Rotate input clockwise, output counterclockwise
+      inputface[0]  *= -1.0;
+      outputface[2] *= -1.0;
+    }
+  else if (angleIn < 0)
+    {
+      // Rotate input counterclockwise, output clockwise
+      inputface[2]  *= -1.0;
+      outputface[0] *= -1.0;
+    }
   // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
   G4double intersectionRadius = length / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
 
@@ -293,7 +295,7 @@ G4double BDS::GetParameterValue(const G4String spec, const G4String name)
       std::string val = spec.substr(pos + param.length(), llen);
       
       value = atof(val.c_str());
-  }
+    }
   return value;
 }
 
@@ -315,4 +317,33 @@ G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
       value = spec.substr(pos + param.length(), llen);
     }
   return value;
+}
+
+std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << formatAndPath << G4endl;
+#endif
+  if(!formatAndPath.empty())
+    {
+      std::size_t found = formatAndPath.find(":");
+      if (found == std::string::npos)
+	{
+	  G4cerr << __METHOD_NAME__ << "invalid specifier \""
+		 << formatAndPath << "\"" << G4endl;
+	  G4cerr << "Missing \":\" to separate format and file path" << G4endl;
+	  exit(1);
+	}
+      else
+	{
+	  G4String format   = formatAndPath.substr(0,found);
+	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
+#ifdef BDSDEBUG
+	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
+	G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
+#endif
+	return std::make_pair(format,filePath);
+	}
+    }
+  return std::make_pair("","");
 }

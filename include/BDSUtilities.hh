@@ -16,7 +16,8 @@
  * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
  */
 
-namespace BDS {
+namespace BDS
+{
   /// Logical not for isalpha predictator as needed for string manipulations
   struct non_alpha
   {
@@ -80,6 +81,10 @@ namespace BDS {
   G4double GetParameterValue      (const G4String spec, const G4String name);
   G4String GetParameterValueString(const G4String spec, const G4String name);
   ///@}
+
+  /// Split a format and file path string around the ":" character. This format
+  /// is used for geometry and field maps
+  std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
 }
 
 

@@ -78,6 +78,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
   G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, GlobalP);
 
+  /*
 #ifdef BDSDEBUG
   G4cout << "BDSIntegratorQuadrupole: initial point in local coordinates:" << G4endl
 	 << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl

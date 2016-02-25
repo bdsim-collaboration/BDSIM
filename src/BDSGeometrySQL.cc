@@ -620,7 +620,7 @@ G4LogicalVolume* BDSGeometrySQL::BuildSampler(BDSMySQLTable* aSQLTable, G4int k)
   
   aSamplerVol->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(_Name,nullptr);
+  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(Name,nullptr);
   
   samplerIDs[aSamplerVol] = samplerID;
   
@@ -875,15 +875,15 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 	{copyNumber = result->second;}
       
       G4VPhysicalVolume* PhysiComp = 
-	new G4PVPlacement(RotateComponent(_RotPsi,_RotPhi,_RotTheta),
+	new G4PVPlacement(RotateComponent(RotPsi,RotPhi,RotTheta),
 			  PlacementPoint,
 			  VOL_LIST[ID],
-			  _Name,
+			  Name,
 			  VOL_LIST[PARENTID],
 			  false,
 			  copyNumber,
 			  BDSGlobalConstants::Instance()->GetCheckOverlaps());
-      if(_align_in)
+      if(align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.
 	  if(GetAlignInVolume())

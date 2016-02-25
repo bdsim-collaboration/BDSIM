@@ -59,9 +59,9 @@ public:
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   /// Returns vector of components added
   void AddComponent(BDSAcceleratorComponent* component,
-						BDSTiltOffset* tiltOffset  = nullptr,
-						BDSSamplerType samplerType = BDSSamplerType::none,
-						G4String       samplerNameIn = "");
+		    BDSTiltOffset* tiltOffset  = nullptr,
+		    BDSSamplerType samplerType = BDSSamplerType::none,
+		    G4String       samplerNameIn = "");
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component

@@ -173,15 +173,13 @@ void BDSDetectorConstruction::BuildBeamline()
 	    }
 	  ++nextIt;
 	}
-
-      // Determine parser type
-      BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
       
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
 	{
-	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(*elementIt);
-	  beamline->AddComponent(temp, tiltOffset);
+	  BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
+	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
+	  beamline->AddComponent(temp, tiltOffset, sType, (*elementIt).samplerName);
 	}
     }
 
