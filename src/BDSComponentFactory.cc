@@ -585,16 +585,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   G4double length = element->l*CLHEP::m;
+  // Purposively don't set "angle" in strength as BDSMagnet builds according to this - only set B
   if(BDS::IsFinite(element->B))
-    {
-      (*st)["field"] = element->B * CLHEP::tesla;
-      (*st)["angle"] = (*st)["field"] * length / brho;
-    }
+    {(*st)["field"] = element->B;}
   else
     {
       G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
-      (*st)["angle"] = element->angle;
-      (*st)["field"] = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla;
+      (*st)["field"] = - brho * element->angle / length * charge * ffact / CLHEP::tesla / CLHEP::m;
     }
   G4Transform3D fieldRotation = G4Transform3D();
   
@@ -605,7 +602,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
       fieldRotation = G4RotateZ3D(CLHEP::halfpi);
     }
   
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::muonspoiler,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       BDSIntegratorType::g4classicalrk4,
 					       st,
