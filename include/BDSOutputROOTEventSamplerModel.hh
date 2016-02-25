@@ -8,22 +8,36 @@
 #include "TVector3.h"
 #include "TRotation.h"
 
-#ifndef __MAKECINT__
-#include "BDSAcceleratorModel.hh"
-#endif
-
 #include <string>
+#include <vector>
+
+/**
+ * @brief A record of all samplers in the BDSIM model.
+ *
+ * Uses ROOT types only for storage in ROOT files.
+ * 
+ * @author Laurie Nevay
+ */
+
 
 class BDSOutputROOTEventSamplerModel
 {
-public :
+public:
   BDSOutputROOTEventSamplerModel();
-  virtual ~BDSOutputROOTEventSamplerModel();
+  ~BDSOutputROOTEventSamplerModel();
   
-protected :
+protected:
+  /// Sampler names
   std::vector<std::string> samplerName;
+
+  /// Sampler positions
   std::vector<TVector3>    position;
+
+  /// Sampler placement rotations - note inverse should be used to transform
+  /// sampler hit positions to global coordinates.
   std::vector<TRotation>   rotation;
+
+  /// Curvilinear S position of the sampler (if applicable)
   std::vector<double>      sPosition;
 
 #ifndef __MAKECINT__   
