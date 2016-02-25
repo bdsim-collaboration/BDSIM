@@ -46,7 +46,7 @@ Parameters::Parameters() {
   setMap["tscint"] = false;
   setMap["twindow"] = false;
   setMap["bmapXOffset"] = false;
-  setMap["bmapTOffset"] = false;
+  setMap["bmapYOffset"] = false;
   setMap["bmapZOffset"] = false;
   setMap["xdir"] = false;
   setMap["ydir"] = false;

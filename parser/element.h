@@ -58,8 +58,8 @@ namespace GMAD {
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
     double twindow; ///<thickness of window
-	double bmapXOffset; ///< offset of the field map magnet field X
-  	double bmapYOffset; ///< offset of the field map magnet field Y
+    double bmapXOffset; ///< offset of the field map magnet field X
+    double bmapYOffset; ///< offset of the field map magnet field Y
     double bmapZOffset; ///< offset of the field map magnet field Z
     double xdir;
     double ydir;
