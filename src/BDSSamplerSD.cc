@@ -140,7 +140,8 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
 					    TrackID,
 					    turnstaken,
 					    itsType,
-					    process);
+					    process,
+					    0);
 /*theInfo->GetBeamlineIndex() */ // TODO Check with LN why this does not work for samplers
   
   

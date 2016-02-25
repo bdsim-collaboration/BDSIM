@@ -29,7 +29,7 @@ public:
 		G4int       TurnsTaken,
 		G4String    sampType,
 		G4String    process,
-    G4int       beamlineIndex);
+		G4int       beamlineIndex);
 
   ~BDSSamplerHit();
   
