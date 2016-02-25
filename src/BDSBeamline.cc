@@ -96,9 +96,9 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
       for (G4int i = 0; i < (G4int)line->size(); ++i)
 	{
 	  if (i == 0) // only attach the desired sampler to the first one
-	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
+	    {AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
 	  else
-	    {element = AddSingleComponent((*line)[i], tiltOffset);}
+	    {AddSingleComponent((*line)[i], tiltOffset);}
 	}
     }
   else

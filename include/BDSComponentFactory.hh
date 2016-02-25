@@ -11,9 +11,10 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSLine.hh"
+
 class BDSCavityInfo;
 class BDSFieldInfo;
-
+class BDSMagnetStrength;
 class BDSTiltOffset;
 
 /**
@@ -38,12 +39,13 @@ public:
   BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
 					   GMAD::Element* prevElementIn,
 					   GMAD::Element* nextElementIn);
-
-  // for each of them - special cases need only for ring logic
+  
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
+
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDetla);
+
   /// Create the tilt and offset information object by inspecting the parser element
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
  
@@ -85,10 +87,9 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
 
   /// Creates line of components for sbend
-  BDSLine* CreateSBendLine(GMAD::Element const* element,
-			   G4int nSbends,
-			   G4double bField,
-			   G4double bPrime);
+  BDSLine* CreateSBendLine(GMAD::Element*     element,
+			   G4int              nSbends,
+			   BDSMagnetStrength* st);
 
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
