@@ -28,7 +28,8 @@ public:
 					   BDSBeamPipe* beamPipe,              // beampipe
 					   G4double     outerDiameter,         // full width
 					   G4double     containerLength,       // full length to make AccComp container
-					   G4double     angle,                 // full bend angle [rad]
+					   G4double     angleIn,               // input face angle w.r.t. chord
+					   G4double     angleOut,              // output face angle w.r.t. chord
 					   G4Material*  outerMaterial = nullptr// material for outer volume
 					   );
 
@@ -39,7 +40,8 @@ public:
 						G4double     outerDiameter,         // full width
 						G4double     containerDiameter,     // full width to make AccComp contianer
 						G4double     containerLength,       // full length to make AccComp container
-						G4double     angle,                 // full bend angle [rad]
+						G4double     angleIn,               // input face angle w.r.t. chord
+						G4double     angleOut,              // output face angle w.r.t. chord
 						G4Material*  outerMaterial = nullptr// material for outer volume
 						);
   

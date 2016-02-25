@@ -98,6 +98,17 @@ private:
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
+  //  BDSMagFieldSQL* itsMagField;
+  //  BDSSamplerSD* SensDet;
+
+  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+
+  /// As the samplers are regsitered and placed in a separate loop, we need to
+  /// store a cache of the copy numbers (for lookup in the output) w.r.t. the
+  /// particular logical volume (referenced by pointer);
+  std::map<G4LogicalVolume*, G4int> samplerIDs;
+
+protected:
 };
 
 

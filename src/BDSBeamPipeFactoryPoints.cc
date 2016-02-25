@@ -1,7 +1,7 @@
 #include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipe.hh"
-
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4CutTubs.hh"
@@ -233,7 +233,7 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipeAngledInOut(G4String    nam
   // generate extruded solid edges - provided by derived class
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
   
-  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
 

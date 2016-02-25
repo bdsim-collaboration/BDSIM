@@ -8,7 +8,6 @@
 #include <string>
 #include <utility>
 
-
 /**
  * @brief Various utility functions that have no specific place - 
  * for example string manipulations, and checking
@@ -30,6 +29,15 @@ namespace BDS {
   /// Calculate the +- 1 orientation multiplier for absolute angles
   /// seems trivial, but used in a lot of places so put in one place
   G4int    CalculateOrientation(G4double angle);
+
+  /// Calculate input and output normal vector
+  std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
+							G4double angleOutIn);
+
+  /// Calculate the radial distance that the two planes inputface and outputface intersect one another
+  G4double CalculateFacesOverlapRadius(G4double angleInIn,
+                            G4double angleOutIn,
+                            G4double lengthIn);
 
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
@@ -67,10 +75,11 @@ namespace BDS {
 
   /// Check if the geant4 environmental variables necessary for a run are set
   G4bool Geant4EnvironmentIsSet();
-
-  /// Split a format and file path string around the ":" character. This format
-  /// is used for geometry and field maps
-  std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
+    
+  ///@{ Get parameter value from the specification ('spec') string
+  G4double GetParameterValue      (const G4String spec, const G4String name);
+  G4String GetParameterValueString(const G4String spec, const G4String name);
+  ///@}
 }
 
 

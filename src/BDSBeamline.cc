@@ -82,7 +82,10 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
+							   BDSTiltOffset*           tiltOffset,
+							   BDSSamplerType           samplerType,
+							   G4String                 samplerName)
 {
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
   if (!tiltOffset)
@@ -90,16 +93,24 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component, BDSTiltOffset
   
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
-      for (auto component : *line)
-	{AddSingleComponent(component, tiltOffset);}
+      for (G4int i = 0; i < (G4int)line->size(); ++i)
+	{
+	  if (i == 0) // only attach the desired sampler to the first one
+	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
+	  else
+	    {element = AddSingleComponent((*line)[i], tiltOffset);}
+	}
     }
   else
-    {AddSingleComponent(component, tiltOffset);}
+    {AddSingleComponent(component, tiltOffset, samplerType, samplerName);}
   // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;
 }
 
-void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset)
+void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
+						    BDSTiltOffset*           tiltOffset,
+						    BDSSamplerType           samplerType,
+						    G4String                 samplerName)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -317,7 +328,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component, BDSTilt
 						       referenceRotationEnd,
 						       sPositionStart,
 						       sPositionMiddle,
-						       sPositionEnd);
+						       sPositionEnd,
+						       samplerType,
+						       samplerName);
 
   // calculate extents for world size determination
   UpdateExtents(element);

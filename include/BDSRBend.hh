@@ -26,21 +26,8 @@ public:
 private:
   G4double magFieldLength;
 
-  /// chord length of straight section (along main chord) [m]
-  G4double straightSectionChord;
-
-  /// length of little straight sections on either side of dipole [m]
-  G4double straightSectionLength;
-
-  /// x shift for magnet and beampipe from chord
-  G4double magnetXShift;
-
   /// radius of magnet body
   G4double outerRadius;
-
-  /// Extra start and finish piece of beam pipe
-  BDSBeamPipe* bpFirstBit;
-  BDSBeamPipe* bpLastBit;
 
   /// Override method from BDSAcceleratorComponent to detail construction process.
   virtual void Build();

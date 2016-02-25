@@ -10,20 +10,23 @@ BDSMagnetOuterInfo::BDSMagnetOuterInfo()
   geometryType  = BDSMagnetGeometryType::cylindrical;
   outerDiameter = 0;
   outerMaterial = nullptr;
-  angle         = 0;
+  angleIn       = 0;
+  angleOut      = 0;
 }
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       BDSMagnetGeometryType geometryTypeIn,
 				       G4double              outerDiameterIn,
 				       G4Material*           outerMaterialIn,
-				       G4double              angleIn)
+				       G4double              angleInIn,
+				       G4double              angleOutIn)
 {
   name          = nameIn;
   geometryType  = geometryTypeIn;
   outerDiameter = outerDiameterIn;
   outerMaterial = outerMaterialIn;
-  angle         = angleIn;
+  angleIn       = angleInIn;
+  angleOut      = angleOutIn;
 }
   
 std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
@@ -32,6 +35,7 @@ std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
   out << "Geometry Type:      "  << info.geometryType             << G4endl;
   out << "Diameter:           "  << info.outerDiameter            << G4endl;
   out << "Material:           "  << info.outerMaterial->GetName() << G4endl;
-  out << "Angle:              "  << info.angle;
+  out << "Angle In:           "  << info.angleIn                  << G4endl;
+  out << "Angle Out:          "  << info.angleOut                 << G4endl;
   return out;
 }

@@ -41,6 +41,13 @@ public:
   const_iterator end()   const {return line.end();}
   G4bool         empty() const {return line.empty();}
   /// @}
+
+  /// Size of line
+  size_t size() const {return line.size();}
+
+  /// Accessor for part - exposes functionality of the vector for iteration by index.
+  BDSAcceleratorComponent * const& operator[](G4int index) const {return line.at(index);}
+
   
   /// Override the BDSAccelerator::Initialise() function to loop over the
   /// line and call that function belonging to each member

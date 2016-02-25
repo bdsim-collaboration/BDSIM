@@ -27,8 +27,10 @@ namespace GMAD {
     //    template<typename T>
     using FastListIterator         = typename std::list<T>::iterator;
     using FastListConstIterator    = typename std::list<T>::const_iterator;
-    using FastMapIterator          = typename std::multimap<std::string, FastListConstIterator>::const_iterator;
+    using FastMapIterator          = typename std::multimap<std::string, FastListIterator>::iterator;
+    using FastMapConstIterator     = typename std::multimap<std::string, FastListIterator>::const_iterator;
     using FastMapIteratorPair      = std::pair<FastMapIterator,FastMapIterator>;
+    using FastMapConstIteratorPair = std::pair<FastMapConstIterator,FastMapConstIterator>;
     ///@{
     /// insert options (classic list inserts):
     /// inputiterator templated to account for reverse iterators
@@ -70,7 +72,8 @@ namespace GMAD {
     FastListIterator find(std::string name,unsigned int count=1);
     ///@}
     /// lookup method, returns pair of iterators of list pointing (similar to std::multimap::equal_range)
-    FastMapIteratorPair equal_range(std::string name)const;
+    FastMapIteratorPair equal_range(std::string name);
+    FastMapConstIteratorPair equal_range(std::string name)const;
 
     /// print method
     void print(int ident=0)const;
@@ -80,7 +83,7 @@ namespace GMAD {
     /// a list is chosen since insertion is fast and iterators are not invalidated
     typename std::list<T> itsList;
     /// multimap for name lookup
-    std::multimap<std::string, FastListConstIterator> itsMap;
+    std::multimap<std::string, FastListIterator> itsMap;
   };
 
   /// template definitions need to be in header
@@ -206,21 +209,26 @@ namespace GMAD {
   }
 
   template <typename T>
-    typename FastList<T>::FastMapIteratorPair FastList<T>::equal_range(std::string name)const {
+    typename FastList<T>::FastMapIteratorPair FastList<T>::equal_range(std::string name) {
+    return itsMap.equal_range(name);
+  }
+
+  template <typename T>
+    typename FastList<T>::FastMapConstIteratorPair FastList<T>::equal_range(std::string name) const {
     return itsMap.equal_range(name);
   }
 
   template <typename T>
     typename FastList<T>::FastListConstIterator FastList<T>::find(std::string name,unsigned int count)const {
     if (count==1) {
-      FastMapIterator emit = itsMap.find(name);
+      FastMapConstIterator emit = itsMap.find(name);
       if (emit==itsMap.end()) return itsList.end();
       return (*emit).second;
     } else {
       // if count > 1
-      FastMapIteratorPair ret = itsMap.equal_range(name);
+      FastMapConstIteratorPair ret = itsMap.equal_range(name);
       unsigned int i=1;
-      for (FastMapIterator emit = ret.first; emit!=ret.second; ++emit, i++) {
+      for (FastMapConstIterator emit = ret.first; emit!=ret.second; ++emit, i++) {
 	if (i==count) {
 	  return (*emit).second;
 	}

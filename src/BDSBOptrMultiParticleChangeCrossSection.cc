@@ -11,7 +11,7 @@
 #include "BDSDebug.hh"
 
 BDSBOptrMultiParticleChangeCrossSection::BDSBOptrMultiParticleChangeCrossSection()
-  : G4VBiasingOperator("NotSureWhatToCallThis")
+  : G4VBiasingOperator("BDSIM General Biasing")
 {
 #ifdef BDSDEBUG
   debug = true;

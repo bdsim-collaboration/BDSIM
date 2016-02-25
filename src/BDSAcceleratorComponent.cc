@@ -127,9 +127,9 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   if (!BDS::IsFinite(chordLength)) return nullptr;
 
   G4double roRadius = 0;
-  G4double roRadiusFromSampler     = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
   
-  G4VSolid* roSolid      = nullptr;
+  G4VSolid* roSolid = nullptr;
   if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box
@@ -144,19 +144,18 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
       // angle is finite!
       // factor of 0.95 here is arbitrary tolerance as g4 cut tubs seems to fail
       // with cutting entranace / exit planes close to limit.  
-      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle) * 0.95; // s = r*theta -> r = s/theta
+      G4double roRadiusFromAngleLength =  std::abs(chordLength / angle) * 0.8; // s = r*theta -> r = s/theta
       roRadius = std::min(roRadiusFromSampler,roRadiusFromAngleLength);
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler
 	     << " mm, max possible radius: " << roRadiusFromAngleLength << " mm" << G4endl;
 #endif
-
-      G4int orientation = BDS::CalculateOrientation(angle);
-      G4double in_z     = cos(0.5*fabs(angle)); 
-      G4double in_x     = sin(0.5*fabs(angle));
-      G4ThreeVector inputface  = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
-      //-1 as pointing down in z for normal
-      G4ThreeVector outputface = G4ThreeVector(-orientation*in_x, 0.0, in_z);
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(0.5*angle,0.5*angle);
+      G4ThreeVector inputface = faces.first;
+      G4ThreeVector outputface = faces.second;
+      inputface[0] *= -1;
+      outputface[0] *= -1;
+      //x components have to be multiplied by -1 for some reason. 
 
       roSolid = new G4CutTubs(name + "_ro_solid", // name
 			      0,                  // inner radius

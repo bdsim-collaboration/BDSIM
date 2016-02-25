@@ -7,11 +7,14 @@
 #include "G4ThreeVector.hh"
 
 #include <algorithm>
+#include <cmath>
 #include <cctype>
 #include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <limits>
+#include <utility>
+
 #include <signal.h>
 #include <unistd.h>
 #include <utility>
@@ -44,6 +47,50 @@ G4int BDS::CalculateOrientation(G4double angle)
   else
     {orientation = -1;}
   return orientation;
+}
+
+std::pair<G4ThreeVector,G4ThreeVector> BDS::CalculateFaces(G4double angleIn,
+							   G4double angleOut)
+{
+  /// orientation -1,0,1 value - always use |angle| with trigonometric and then
+  /// multiply by this factor, 0 by default
+  G4int orientationIn  = BDS::CalculateOrientation(angleIn);
+  G4int orientationOut = BDS::CalculateOrientation(angleOut);
+  
+  G4double in_z  = cos(fabs(angleIn)); // calculate components of normal vectors (in the end mag(normal) = 1)
+  G4double in_x  = sin(fabs(angleIn)); // note full angle here as it's the exit angle
+  G4double out_z = cos(fabs(angleOut));
+  G4double out_x = sin(fabs(angleOut));
+  G4ThreeVector inputface  = G4ThreeVector(orientationIn*in_x, 0.0, -1.0*in_z); //-1 as pointing down in z for normal
+  G4ThreeVector outputface = G4ThreeVector(orientationOut*out_x, 0.0, out_z);   // no output face angle
+  return std::make_pair(inputface,outputface);
+}
+
+G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
+                                G4double angleOut,
+                                G4double length)
+{
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+  G4ThreeVector inputface = faces.first;
+  G4ThreeVector outputface = faces.second;
+
+  std::swap(inputface[0],inputface[2]);
+  std::swap(outputface[0],outputface[2]);
+
+  if (angleIn > 0){
+    // Rotate input clockwise, output counterclockwise
+    inputface[0] *= -1.0;
+    outputface[2] *= -1.0;
+  }
+  else if (angleIn < 0){
+    // Rotate input counterclockwise, output clockwise
+    inputface[2] *= -1.0;
+    outputface[0] *= -1.0;
+  }
+  // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
+  G4double intersectionRadius = length / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
+
+  return intersectionRadius;
 }
 
 G4bool BDS::FileExists(G4String fileName)
@@ -228,31 +275,44 @@ G4bool BDS::Geant4EnvironmentIsSet()
   return result;
 }
 
-std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
+G4double BDS::GetParameterValue(const G4String spec, const G4String name)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << formatAndPath << G4endl;
-#endif
-  if(!formatAndPath.empty())
+  G4double value = 0;
+
+  std::string delimiters = "&";
+  std::string param = name + "=";
+
+  int pos = spec.find(param);
+  if( pos >= 0 )
     {
-      std::size_t found = formatAndPath.find(":");
-      if (found == std::string::npos)
-	{
-	  G4cerr << __METHOD_NAME__ << "invalid specifier \""
-		 << formatAndPath << "\"" << G4endl;
-	  G4cerr << "Missing \":\" to separate format and file path" << G4endl;
-	  exit(1);
-	}
-      else
-	{
-	  G4String format   = formatAndPath.substr(0,found);
-	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
-#ifdef BDSDEBUG
-	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
-	G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
-#endif
-	return std::make_pair(format,filePath);
-	}
+      int pos2 = spec.find("&",pos);
+      int pos3 = spec.length();
+      int tend = pos2 < 0 ? pos3 : pos2; 
+      int llen = tend - pos - param.length();
+      
+      std::string val = spec.substr(pos + param.length(), llen);
+      
+      value = atof(val.c_str());
+  }
+  return value;
+}
+
+G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
+{
+  G4String value = "";
+
+  std::string delimiters = "&";
+  std::string param = name + "=";
+
+  int pos = spec.find(param);
+  if( pos >= 0 )
+    {
+      int pos2 = spec.find("&",pos);
+      int pos3 = spec.length();
+      int tend = pos2 < 0 ? pos3 : pos2; 
+      int llen = tend - pos - param.length();
+      
+      value = spec.substr(pos + param.length(), llen);
     }
-  return std::make_pair("","");
+  return value;
 }

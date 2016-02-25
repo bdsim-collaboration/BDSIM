@@ -38,6 +38,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
   // quad strength k normalised to charge and momentum of this particle
   G4double kappa = - eqOfM->FCof()*bPrime/InitPMag;
 
+  /*
 #ifdef BDSDEBUG
   G4double charge = (eqOfM->FCof())/CLHEP::c_light;
   G4cout << "BDSIntegratorQuadrupole: step = " << h/CLHEP::m << " m" << G4endl
@@ -52,6 +53,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
          << " k = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
+  */
   // relevant momentum scale is p_z, not P_tot:
   // check that the approximations are valid, else do a linear step:
   if(fabs(kappa)<1.e-12)
@@ -86,7 +88,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
 	 << " z'= " << LocalRp[2] << G4endl
 	 << G4endl; 
 #endif
-
+  */
   G4double x0,xp,y0,yp,z0,zp;
   G4double x1,x1p,y1,y1p,z1,z1p;
   x0=LocalR.x();
@@ -106,9 +108,11 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
 
   // determine effective curvature 
   G4double R_1 = LocalRpp.mag();
+  /*
 #ifdef BDSDEBUG 
   G4cout << " curvature= " << R_1*CLHEP::m << "m^-1" << G4endl;
 #endif
+  */
   if(R_1>0.)
     {
       G4double R=1./R_1;
@@ -189,6 +193,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
 #ifdef BDSDEBUG
 	  G4cout << "local helical steps" << G4endl;
 #endif
+
 	  // simple quadratic approx:	      
 	  G4double quadX= - kappa*x0*zp;
 	  G4double quadY=   kappa*y0*zp;
@@ -266,7 +271,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
       LocalR += h*LocalRp;
       distChord=0.;
     }
-
+  /*
 #ifdef BDSDEBUG 
   G4cout << "BDSIntegratorQuadrupole: final point in local coordinates:" << G4endl
 	 << " x= " << LocalR[0]/CLHEP::m << "m" << G4endl
@@ -277,6 +282,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
 	 << " z'= " << LocalRp[2] << G4endl
 	 << G4endl; 
 #endif
+  */
 
   G4AffineTransform LocalAffine = auxNavigator->GetLocalToGlobalTransform();
 

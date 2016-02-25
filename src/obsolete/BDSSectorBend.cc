@@ -1,32 +1,38 @@
-#include "BDSBeamPipeFactory.hh"
-#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
+#include "BDSDebug.hh"
+
+#include "BDSSectorBend.hh"
+
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
+#include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
-#include "BDSSectorBend.hh"
+#include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
 
-#include "globals.hh" // geant4 types / globals
 #include "G4LogicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
 #include "G4VPhysicalVolume.hh"
 
-#include <cmath>
+#include "globals.hh"             // geant4 types / globals
 
 BDSSectorBend::BDSSectorBend(G4String            name,
 			     G4double            arcLength,
 			     G4double            angleIn,
-			     G4double            /*bField*/,
-			     G4double            /*bGrad*/,
+			     G4double            bField,
+			     G4double            bGrad,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
-	    beamPipeInfo, magnetOuterInfo, nullptr, 0)
+	    beamPipeInfo, magnetOuterInfo),
+  itsBField(bField),itsBGrad(bGrad)
 {
   /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
   /// - this results in a wrongly chord length
-  angle                  = angleIn;
-  magnetOuterInfo->angle = angle;
+  angle       = angleIn;
   if (BDS::IsFinite(angle))
     {
       chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
@@ -41,6 +47,7 @@ BDSSectorBend::BDSSectorBend(G4String            name,
     }
   else
     {chordLength = arcLength;}
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
   G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
@@ -54,7 +61,7 @@ void BDSSectorBend::Build()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnet::Build();
-  /*
+  
   if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
     {
       G4double polePos[4];
@@ -77,38 +84,18 @@ void BDSSectorBend::Build()
       BFldIron/=2.;
       
       BuildOuterFieldManager(2, BFldIron,CLHEP::halfpi);
-      }*/
+    }
 }
 
-void BDSSectorBend::BuildBeampipe()
+void BDSSectorBend::BuildBPFieldAndStepper()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "sector bend version " << G4endl;
-#endif
-  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
-  if (BDS::IsFinite(angle))
-    {
-      beampipe = factory->CreateBeamPipeAngledInOut(beamPipeInfo->beamPipeType,
-						    name,
-						    chordLength - lengthSafety,
-						    -angle*0.5,
-						    -angle*0.5,
-						    beamPipeInfo->aper1,
-						    beamPipeInfo->aper2,
-						    beamPipeInfo->aper3,
-						    beamPipeInfo->aper4,
-						    beamPipeInfo->vacuumMaterial,
-						    beamPipeInfo->beamPipeThickness,
-						    beamPipeInfo->beamPipeMaterial);
-    }
-  else
-    {
-      beampipe = factory->CreateBeamPipe(name,
-					 chordLength - lengthSafety,
-					 beamPipeInfo);
-    }
-
-  RegisterDaughter(beampipe);
-
-  SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+  // set up the magnetic field and stepper
+  G4ThreeVector Bfield(0.,itsBField,0.);
+  // B-Field constructed with arc length for radius of curvature
+  itsMagField = new BDSSbendMagField(Bfield,arcLength,angle);
+  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);  
+  BDSDipoleStepper* dipoleStepper = new BDSDipoleStepper(itsEqRhs);
+  dipoleStepper->SetBField(itsBField);
+  dipoleStepper->SetBGrad(itsBGrad);
+  itsStepper = dipoleStepper;
 }

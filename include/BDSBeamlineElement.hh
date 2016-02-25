@@ -2,6 +2,7 @@
 #define BDSBEAMLINEELEMENT_H
 
 #include "BDSAcceleratorComponent.hh"
+#include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
@@ -42,7 +43,9 @@ public:
 		     G4RotationMatrix*        referenceRotationEnd,
 		     G4double                 sPositionStart,
 		     G4double                 sPositionMiddle,
-		     G4double                 sPositionEnd);
+		     G4double                 sPositionEnd,
+		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
+		     G4String                 samplerNameIn = "");
 
   ~BDSBeamlineElement();
   
@@ -69,8 +72,11 @@ public:
   inline G4double                 GetSPositionEnd()              const;
   inline G4Transform3D*           GetPlacementTransform()        const;
   inline G4Transform3D*           GetReadOutPlacementTransform() const;
+  inline BDSSamplerType           GetSamplerType()               const;
+  inline G4String                 GetSamplerName()               const;
+  inline G4Transform3D*           GetSamplerPlacementTransform() const;
   ///@}
-
+  
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);
   inline void SetReferenceRotationEnd(G4RotationMatrix* newReferenceRotatonEnd);
@@ -136,6 +142,19 @@ private:
   /// not the possibly offset position of the mass geometry, hence have a separate
   /// transform for it.
   G4Transform3D*    readOutPlacementTransform;
+
+  /// The type of sampler to attach to this element - could be none as well.
+  const BDSSamplerType samplerType;
+
+  const G4String samplerName;
+
+  /// The transform for where the sampler 'attached' to this element should be placed.
+  /// Note this would normally overlap in the real 'mass' world, but this will be used
+  /// in the sampler parallel world, so a transform to coordinates that lie within the
+  /// accelerator component are valid. This transform places the sampler just at the
+  /// end of the element overlapping with the outgoing boundary as defined by the
+  /// reference position at the end and the reference rotation at the end.
+  G4Transform3D*    samplerPlacementTransform;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -203,5 +222,14 @@ inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() cons
 
 inline G4Transform3D*           BDSBeamlineElement::GetReadOutPlacementTransform() const
 {return readOutPlacementTransform;}
+
+inline BDSSamplerType           BDSBeamlineElement::GetSamplerType() const
+{return samplerType;}
+
+inline G4String                 BDSBeamlineElement::GetSamplerName() const
+{return samplerName;}
+
+inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform() const
+{return samplerPlacementTransform;}
 
 #endif

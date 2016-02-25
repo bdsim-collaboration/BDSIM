@@ -106,10 +106,6 @@ protected:
 					       std::pair<double,double> extY,
 					       std::pair<double,double> extZ,
 					       G4double containerRadius);
-
-  /// Calculate input and output normal vector
-  std::pair<G4ThreeVector,G4ThreeVector> CalculateFaces(G4double angleInIn,
-							G4double angleOutIn);
   
   // methods called by CommonConstruction, can be implmented by derived classes
   
