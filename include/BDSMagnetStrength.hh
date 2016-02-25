@@ -39,6 +39,8 @@ public:
   /// Copy constructor
   BDSMagnetStrength(const BDSMagnetStrength& other);
 
+  ~BDSMagnetStrength(){;}
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSMagnetStrength const &st);
 

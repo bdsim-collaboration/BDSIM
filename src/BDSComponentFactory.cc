@@ -476,7 +476,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   BDSIntegratorType::dipole,
-						   st);
+						   stSemi);
 
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 thename,
