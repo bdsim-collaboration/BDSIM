@@ -12,7 +12,6 @@
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
-#include "BDSRBend.hh"
 #include "BDSRfCavity.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSTerminator.hh"
@@ -570,13 +569,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					       BDSIntegratorType::dipole,
 					       st);
   
-  return new BDSRBend(element->name,
-		      length,
-		      element->angle,
-		      PrepareBeamPipeInfo(element, angleIn, angleOut),
-		      PrepareMagnetOuterInfo(element, angleIn, angleOut),
-		      vacuumField,
-		      nullptr);
+  return new BDSMagnet(BDSMagnetType::rectangularbend,
+		       element->name,
+		       length,
+		       PrepareBeamPipeInfo(element, angleIn, angleOut),
+		       PrepareMagnetOuterInfo(element, angleIn, angleOut),
+		       vacuumField,
+		       nullptr);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
