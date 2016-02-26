@@ -48,6 +48,7 @@ private:
   G4double _thickness;
   G4double _strutSizeX;
   G4double _strutSizeZ;
+  G4bool _bBuildStrut;
   G4String _strutMaterial;
   G4double _trapLengthZ;
   G4double _trapLengthX;

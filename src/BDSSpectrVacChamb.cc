@@ -31,11 +31,17 @@ BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4d
 }
 
 void BDSSpectrVacChamb::Build(){
+  if((_strutSizeX>0)&&(_strutSizeZ>0)) {
+    _bBuildStrut=true;
+  } else {
+    _bBuildStrut=false;
+  }
+  
   BuildBox();
   BuildTrap();
   BuildSideWall();
   BuildBoxInner();
-  BuildStrut();
+  if(_bBuildStrut) BuildStrut();
 }
 
 void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
@@ -129,15 +135,17 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    false,
 		    0,
 		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
-
-  new G4PVPlacement(_rotStrut,
-		    _transStrut,
-		    _logVolStrut,
-		    _name+"_physi_strut",
-		    _innerLogVolTrap,
-		    false,
-		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  
+  if(_bBuildStrut){
+    new G4PVPlacement(_rotStrut,
+		      _transStrut,
+		      _logVolStrut,
+		      _name+"_physi_strut",
+		      _innerLogVolTrap,
+		      false,
+		      0,
+		      BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  }
 }
 
 void BDSSpectrVacChamb::SetParameters(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness){
@@ -284,11 +292,11 @@ void BDSSpectrVacChamb::BuildTrap(){
 				    BDSMaterials::Instance()->GetMaterial("G4_Fe"),
 				    _name+"_lower_trap_log");
   
-  G4VisAttributes* InnerTrapVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.4));
+  G4VisAttributes* InnerTrapVisAtt = new G4VisAttributes(G4Color(1.0,0.0,0.0,0.1));
   InnerTrapVisAtt->SetForceSolid(true);
   InnerTrapVisAtt->SetVisibility(true);
   _innerLogVolTrap->SetVisAttributes(InnerTrapVisAtt);
-  G4VisAttributes* OuterTrapVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.4));
+  G4VisAttributes* OuterTrapVisAtt = new G4VisAttributes(G4Color(0.0,1.0,0.0,0.1));
   OuterTrapVisAtt->SetForceSolid(true);
   OuterTrapVisAtt->SetVisibility(true);
   _lowerLogVolTrap->SetVisAttributes(OuterTrapVisAtt);
@@ -313,9 +321,9 @@ void BDSSpectrVacChamb::BuildSideWall(){
 
 void BDSSpectrVacChamb::BuildStrut(){
   _strutSolid = new G4Box(_name+"_strutSolid", 
-			     _strutSizeZ/2.0, //depth
+			     _strutSizeX/2.0, //width
 			     _sizeY/2.0,      //height
-			     _strutSizeX/2.0); //width
+			     _strutSizeZ/2.0); //depth
 
   _logVolStrut = new G4LogicalVolume(_strutSolid,
 				     BDSMaterials::Instance()->GetMaterial(_strutMaterial.c_str()),
@@ -406,9 +414,9 @@ void BDSSpectrVacChamb::CalculateGeometry(){
 
   _rotStrut=new G4RotationMatrix();
   _rotStrut->rotateY(_screenAngle);
-  _transStrut.setX(0);
+  _transStrut.setX(_trapLengthZ/2.0-trapLengthZ2/2.0-std::abs((_strutSizeZ/2.0)*cos(_screenAngle)));
   _transStrut.setY(0);
-  _transStrut.setZ(-_trapLengthX/2.0);
+  _transStrut.setZ(-std::abs((_strutSizeZ/2.0)*sin(_screenAngle)));//-_trapLengthX/2.0+);
   printGeom();
 }
 
