@@ -373,7 +373,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
       (*st)["angle"] = - element->angle;
-      (*st)["field"] = - brho *  (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+      (*st)["field"] = - brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
 
     }
   // Quadrupole component
@@ -550,16 +550,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   CheckBendLengthAngleWidthCombo(length, angle, 2*outerRadius, element->name);
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  if (BDS::IsFinite(element->B))
-    {
+  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      (*st)["field"] = element->B;
+      (*st)["angle"] = - element->angle;
+    }
+  else if (BDS::IsFinite(element->B))
+    {// only B field - calculate angle
+      G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
       (*st)["field"] = element->B * CLHEP::tesla;
-      (*st)["angle"] = -2.0*asin(length*0.5 / (brho / (*st)["field"]));
+      (*st)["angle"] = charge * ffact * -2.0*asin(length*0.5 / (brho / (*st)["field"]));
     }
   else
-    {
+    {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
-      (*st)["field"] = - brho *  element->angle / length * charge * ffact / CLHEP::tesla;
       (*st)["angle"] = - element->angle;
+      (*st)["field"] = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
     }
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
