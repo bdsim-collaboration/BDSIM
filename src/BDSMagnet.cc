@@ -72,21 +72,9 @@ void BDSMagnet::BuildBeampipe()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
-  if (BDS::IsFinite(angle))
-    {
-      beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngled(name,
-								      chordLength - lengthSafety,
-								      beamPipeInfo,
-								      -angle*0.5,
-								      -angle*0.5);
-    }
-  else
-    {
-      beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
-								chordLength - lengthSafety,
-								beamPipeInfo);
-    }
+  beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
+							    chordLength - lengthSafety,
+							    beamPipeInfo);
 
   RegisterDaughter(beampipe);
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
