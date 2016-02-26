@@ -109,20 +109,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	  {angleIn += -0.5*(prevElement->angle);}
+	{angleIn += -0.5*(prevElement->angle);}
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-      {angleOut += 0.5*nextElement->angle;}
+	{angleOut += 0.5*nextElement->angle;}
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-      {willNotModify = false;}
+	{willNotModify = false;}
     }
   else if (element->type == ElementType::_RBEND)
     {
       // angleIn and angleOut have to be multiplied by minus one for rbends for
       // some reason. Cannot figure out why yet.
-      angleIn = -1.0 * element->e1;
+      angleIn  = -1.0 * element->e1;
       angleOut = -1.0 * element->e2;
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
@@ -153,13 +153,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #endif
   switch(element->type){
   case ElementType::_DRIFT:
-    component = CreateDrift(angleIn,angleOut); break;
+    component = CreateDrift(angleIn, angleOut); break;
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
-    component = CreateRBend(angleIn,angleOut); break;
+    component = CreateRBend(angleIn, angleOut); break;
   case ElementType::_HKICK:
     component = CreateKicker(false); break;
   case ElementType::_VKICK:
@@ -372,8 +372,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   else
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
-      (*st)["field"] = - brho *  element->angle / length * charge * ffact / CLHEP::tesla / CLHEP::m;
       (*st)["angle"] = - element->angle;
+      (*st)["field"] = - brho *  (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+
     }
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -544,7 +545,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // in case we need to calculate the field
   G4double outerRadius = PrepareOuterDiameter(element)*0.5;
   G4double angle       = element->angle;
-  G4double length = element->l*CLHEP::m;
+  G4double length      = element->l*CLHEP::m;
 
   CheckBendLengthAngleWidthCombo(length, angle, 2*outerRadius, element->name);
 
