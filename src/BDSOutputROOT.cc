@@ -6,7 +6,7 @@
 #include "BDSSampler.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSTrajectory.hh"
-
+#define BDSDEBUG 1
 
 BDSOutputROOT::BDSOutputROOT():BDSOutputBase()
 {
@@ -162,14 +162,14 @@ void BDSOutputROOT::Init()
 //Close file and clear memory
 void BDSOutputROOT::Close(){
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - deleting EnergyLossHisto" << G4endl;
+  //  G4cout << __METHOD_NAME__ << " - deleting EnergyLossHisto" << G4endl;
 #endif
-  if(EnergyLossHisto) delete EnergyLossHisto;
+  //  if(EnergyLossHisto) delete EnergyLossHisto;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - deleting EnergyLossTree" << G4endl;
+  //  G4cout << __METHOD_NAME__ << " - deleting EnergyLossTree" << G4endl;
 #endif
   
-  if(EnergyLossTree) delete EnergyLossTree;
+  //  if(EnergyLossTree) delete EnergyLossTree;
 
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {

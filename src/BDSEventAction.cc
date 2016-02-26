@@ -7,7 +7,7 @@
    Removed StringFromInt function - using BDSGlobalConstants::Instance() version
    Added/Changed Sampler code for Plane Sampler or Cylinder Sampler (GABs Code)
 */
-
+#define BDSDEBUG 1
 
 //======================================================
 //======================================================
@@ -82,7 +82,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 { 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  G4cout << __METHOD_NAME__ << " processing begin of event action" << G4endl;
 #endif
 
   event_number = evt->GetEventID();
@@ -112,7 +111,7 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   FireLaserCompton=true;
    
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "begin of event action done"<<G4endl;
+  G4cout << __METHOD_NAME__ << " - done"<<G4endl;
 #endif
 }
 
@@ -270,13 +269,12 @@ G4cout<<"BDSEventAction : processing cylinder hits collection"<<G4endl;
       interestingTrajectories.clear();
     }
   }
-
-  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
+  if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0 && event_number>=0)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " writing out events." << G4endl;
 #endif
-
+      
       // notify the output about the event end
       // this can be used for splitting output files etc.
       

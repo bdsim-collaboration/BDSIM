@@ -47,6 +47,24 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
     _magnetGeometryType=1;
   }
 
+  try{
+    _strutSizeX=getParameterValueDouble(spec,"strutSizeX");
+  } catch(boost::bad_lexical_cast&){
+    _strutSizeX=0;
+  }
+
+  try{
+    _strutSizeZ=getParameterValueDouble(spec,"strutSizeZ");
+  } catch(boost::bad_lexical_cast&){
+    _strutSizeZ=0;
+  }
+
+  try{
+    _strutMaterial=getParameterValueString(spec,"strutMaterial");
+  } catch(boost::bad_lexical_cast&){
+    _strutMaterial="G4_STAINLESS-STEEL";
+  }
+
 
   //Set as part of precision region (for energy loss monitoring)
   itsPrecisionRegion=1;
@@ -394,7 +412,10 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 				      _screenAngle,
 				      _vacInnerWidth,
 				      _vacInnerHeight,
-				      _vacThickness);
+				      _vacThickness,
+				      _strutSizeX,
+				      _strutSizeZ,
+				      _strutMaterial);
     break;
   default:
     G4String exceptionString = (G4String)"vacuumChamberType: " + _vacuumChamberType + (G4String)" unknown.";

@@ -28,7 +28,7 @@ class BDSSpectrVacChamb
 {
 
 public:
-  BDSSpectrVacChamb(const G4String& name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness);
+  BDSSpectrVacChamb(const G4String& name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness, G4double strutSizeX, G4double strutSizeZ, G4String strutMaterial);
   ~BDSSpectrVacChamb();
 
   void Place(G4LogicalVolume* motherVolume);
@@ -46,6 +46,9 @@ private:
   G4double _sizeX; //The size of the incoming beam pipe
   G4double _sizeY;
   G4double _thickness;
+  G4double _strutSizeX;
+  G4double _strutSizeZ;
+  G4String _strutMaterial;
   G4double _trapLengthZ;
   G4double _trapLengthX;
   G4String _name;
@@ -77,6 +80,12 @@ private:
   G4RotationMatrix* _rotSideWall;
   G4ThreeVector _transSideWall;
   G4double _sideWallLength;
+
+  void BuildStrut();
+  G4LogicalVolume* _logVolStrut;
+  G4VSolid* _strutSolid;
+  G4RotationMatrix* _rotStrut;
+  G4ThreeVector _transStrut;
 
   void Build();
   void BuildBox(); 

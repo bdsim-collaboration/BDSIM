@@ -17,7 +17,7 @@
 //#include "G4UImanager.hh"
 //#include "G4VVisManager.hh"
 #include "G4ios.hh"
-
+#define BDSDEBUG 1
 extern BDSOutputBase* bdsOutput;         // output interface
 
 //==========================================================
