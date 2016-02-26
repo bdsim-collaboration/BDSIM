@@ -92,7 +92,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     length,
 									BDSBeamPipe* beamPipe,
 									G4double     outerDiameter,
-									G4double     containerDiameter,
 									G4double     containerLength,
 									G4double     angleIn,
 									G4double     angleOut,
@@ -109,7 +108,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
-  G4double magnetContainerRadius = 0.5*containerDiameter;
+  G4double magnetContainerRadius = 0.5*outerDiameter;
   
   G4ThreeVector inputface;
   G4ThreeVector outputface;
