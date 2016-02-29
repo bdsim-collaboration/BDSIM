@@ -119,6 +119,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       if (nextElement && (nextElement->type == ElementType::_RBEND))
       {angleOut += 0.5*nextElement->angle;}
 
+      // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
+      // so the drifts must be modified accordingly.
       if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
 	  {angleIn += -0.5*(prevElement->angle);}
 
