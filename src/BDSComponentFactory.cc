@@ -397,7 +397,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
-  if (!BDS::IsFinite(element->angle)){
+  // Single element for zero bend angle or dontSplitSBends=1, therefore nsbends = 1
+  if ((!BDS::IsFinite(element->angle)) || (nSbends == 1)){
     return (new BDSSectorBend(thename,
                             length,
                             element->angle,
