@@ -95,7 +95,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4double angleOut = 0.0;
   G4bool registered    = false;
   // Used for multiple instances of the same element but different poleface rotations.
-  G4bool willNotModify = true; 
+  G4bool willNotModify = true;
+  G4bool notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
@@ -117,6 +118,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
       {angleOut += 0.5*nextElement->angle;}
+
+      // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
+      // so the drifts must be modified accordingly.
+      if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
+	  {angleIn += -0.5*(prevElement->angle);}
+
+      if (nextElement && (nextElement->type == ElementType::_SBEND) && notSplit)
+	  {angleOut += 0.5*(nextElement->angle);}
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
@@ -140,6 +149,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
           angleIn += 0.5*element->angle;
         }
     }
+  else if (element->type == ElementType::_SBEND)
+    {
+      angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
+      if (nextElement && (nextElement->type == ElementType::_SBEND))
+        {
+          willNotModify = false;
+          angleOut -= 0.5*element->angle;
+        }
+      if (prevElement && (prevElement->type == ElementType::_SBEND))
+        {
+          willNotModify = false;
+          angleIn -= 0.5*element->angle;
+        }
+    }
 
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
@@ -161,7 +186,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
-    component = CreateSBend(); break;
+    component = CreateSBend(angleIn,angleOut); break;
   case ElementType::_RBEND:
     component = CreateRBend(angleIn,angleOut); break;
   case ElementType::_HKICK:
@@ -316,7 +341,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 			  PrepareCavityModelInfo(element)));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
+BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
+                                    G4double angleOut)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -394,10 +420,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   //Zero angle bend only needs one element.
   std::string thename = element->name + "_1_of_1";
-  G4double angleIn    = element->e1*CLHEP::rad;
-  G4double angleOut   = element->e2*CLHEP::rad;
 
-  if (!BDS::IsFinite(element->angle)){
+  // Single element for zero bend angle or dontSplitSBends=1, therefore nsbends = 1
+  if ((!BDS::IsFinite(element->angle)) || (nSbends == 1)){
     return (new BDSSectorBend(thename,
                             length,
                             element->angle,
