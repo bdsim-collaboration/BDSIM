@@ -436,16 +436,16 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
 
   CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
 
-  G4double deltastart = (BDS::IsFinite(element->e1)) ? (-element->e1/(0.5*(nSbends-1))) : 0.0;
-  G4double deltaend = (BDS::IsFinite(element->e2)) ? (-element->e2/(0.5*(nSbends-1))) : 0.0;
+  G4double deltastart = -element->e1/(0.5*(nSbends-1));
+  G4double deltaend   = -element->e2/(0.5*(nSbends-1));
 
   for (int i = 0; i < nSbends; ++i)
     {
       thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
-      angleIn = -semiangle*0.5;
+      angleIn  = -semiangle*0.5;
       angleOut = -semiangle*0.5;
 
-      // Input and output angles when no poleface rotation
+      // Input and output angles for poleface rotation
       if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
         {
           if (i < 0.5*(nSbends-1))
@@ -455,8 +455,8 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
             }
           else if (i > 0.5*(nSbends-1))
             {
-              angleIn  += ((0.5*(nSbends+1)-i)*deltaend);
-              angleOut += (i-(0.5*(nSbends-1)))*deltaend;
+              angleIn  +=  (0.5*(nSbends+1)-i)*deltaend;
+              angleOut += -(0.5*(nSbends-1)-i)*deltaend;
             }
         }
       // Check for intersection of angled faces.
