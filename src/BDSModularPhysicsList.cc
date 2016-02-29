@@ -18,6 +18,10 @@
 #include "G4Proton.hh"
 #include "G4AntiProton.hh"
 
+#include "G4ParticleTable.hh"
+#include "G4ProcessManager.hh"
+#include "G4ProcessVector.hh"
+
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #include "G4HadronPhysicsFTFP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BERT.hh"
@@ -78,8 +82,16 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetParticleDefinition();
   SetCuts();
   DumpCutValuesTable(100);
-}
 
+#ifdef BDSDEBUG
+  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
+  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
+  
+  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
+  for (G4int i = 0; i < pl->length(); i++)
+    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
+#endif
+}
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
 {;}
@@ -103,7 +115,6 @@ void BDSModularPhysicsList::ParsePhysicsList()
   std::istream_iterator<std::string> begin(ss);
   std::istream_iterator<std::string> end;
   std::vector<std::string> vstrings(begin, end);
-  std::copy(vstrings.begin(), vstrings.end(), std::ostream_iterator<std::string>(std::cout, "\n"));
 
   for (auto name : vstrings)
     {
