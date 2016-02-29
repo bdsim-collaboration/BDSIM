@@ -442,10 +442,14 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
   for (int i = 0; i < nSbends; ++i)
     {
       thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
+
+      // Default angles for all segments
       angleIn = -semiangle*0.5;
       angleOut = -semiangle*0.5;
 
-      // Input and output angles when no poleface rotation
+      // Input and output angles added to or subtracted from the default as appropriate
+      // Note: case of i == 0.5*(nsbends-1) is just the default central wedge.
+      // More detailed methodology/reasons in developer manual
       if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
         {
           if (i < 0.5*(nSbends-1))
