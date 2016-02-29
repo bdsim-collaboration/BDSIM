@@ -68,7 +68,6 @@ void BDSParallelWorldSampler::Construct()
       G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
 #endif
       G4String name     = element->GetSamplerName();
-      G4Transform3D* pt = element->GetSamplerPlacementTransform();
       G4double sEnd     = element->GetSPositionEnd();
       
       BDSSampler* sampler = nullptr;
@@ -91,6 +90,8 @@ void BDSParallelWorldSampler::Construct()
       
       if (sampler)
 	{
+	  G4Transform3D* pt = new G4Transform3D(*element->GetSamplerPlacementTransform());
+
 #ifdef BDSDEBUG
 	  G4cout << "Translation: " << pt->getTranslation() << G4endl;
 	  G4cout << "Rotation:    " << pt->getRotation()    << G4endl;
