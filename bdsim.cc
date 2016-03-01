@@ -226,6 +226,12 @@ int main(int argc,char** argv)
   if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
   {realWorld->BuildPhysicsBias();}
 
+#ifdef BDSDEBUG
+  auto physics = runManager->GetUserPhysicsList();
+  if (const BDSModularPhysicsList* modPhysics = dynamic_cast<const BDSModularPhysicsList*>(physics))
+    {modPhysics->PrintPrimaryParticleProcesses();}
+#endif
+
   /// Set verbosity levels
   runManager->SetVerboseLevel(execOptions->GetVerboseRunLevel());
   G4EventManager::GetEventManager()->SetVerboseLevel(execOptions->GetVerboseEventLevel());

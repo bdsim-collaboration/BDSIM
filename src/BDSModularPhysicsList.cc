@@ -86,13 +86,6 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 
 #ifdef BDSDEBUG
   Print();
-  
-  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
-  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
-  
-  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
-    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 #endif
 }
 
@@ -106,6 +99,16 @@ void BDSModularPhysicsList::Print()
       G4String result = (physics.second ? "activated" : "inactive");
       G4cout << "\"" << physics.first << "\" : " << result << G4endl;
     }
+}
+
+void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
+{
+  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
+  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
+  
+  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
+  for (G4int i = 0; i < pl->length(); i++)
+    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 }
 
 //Parse the physicsList option
