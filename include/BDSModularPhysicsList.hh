@@ -20,7 +20,14 @@ class BDSModularPhysicsList: public G4VModularPhysicsList
 public:
   BDSModularPhysicsList();
   virtual ~BDSModularPhysicsList();
+
+  /// Print out which physics lists are activated.
   void Print();
+
+  /// Print all the processes by name as registered to the primary particle type.
+  /// Note, this should only be done after the physics lists are fully constructed.
+  void PrintPrimaryParticleProcesses() const;
+  
   virtual void SetCuts();
 
 private:

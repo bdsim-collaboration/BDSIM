@@ -86,13 +86,6 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 
 #ifdef BDSDEBUG
   Print();
-  
-  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
-  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
-  
-  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
-    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 #endif
 }
 
@@ -106,6 +99,16 @@ void BDSModularPhysicsList::Print()
       G4String result = (physics.second ? "activated" : "inactive");
       G4cout << "\"" << physics.first << "\" : " << result << G4endl;
     }
+}
+
+void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
+{
+  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
+  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
+  
+  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
+  for (G4int i = 0; i < pl->length(); i++)
+    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 }
 
 //Parse the physicsList option
@@ -357,6 +360,7 @@ void BDSModularPhysicsList::QGSPBERT()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
@@ -368,6 +372,7 @@ void BDSModularPhysicsList::QGSPBERTHP()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
@@ -379,6 +384,7 @@ void BDSModularPhysicsList::QGSPBIC()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
@@ -390,6 +396,7 @@ void BDSModularPhysicsList::QGSPBICHP()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
@@ -401,6 +408,7 @@ void BDSModularPhysicsList::FTFPBERT()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -412,6 +420,7 @@ void BDSModularPhysicsList::FTFPBERTHP()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
