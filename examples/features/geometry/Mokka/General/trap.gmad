@@ -6,7 +6,6 @@ option, beampipeRadius = 10 * cm,
         boxSize = 1.0 * m,
         tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
-        lengthSafety = 0.00001 * m,
         thresholdCutCharged = 100 * KeV,
         thresholdCutPhotons = 100 * KeV;
 !        thresholdCutCharged = 1 * MeV,

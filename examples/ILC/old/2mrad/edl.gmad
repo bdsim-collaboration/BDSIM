@@ -714,13 +714,6 @@ option, beampipeRadius = 10 * cm,
         boxSize = 1.0 * m,
         tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
-        chordStepMinimum = 1.e-7 * m,
-        deltaIntersection = 1.e-7 * m,
-	deltaChord = 1.e-6 * m,
-        lengthSafety = 1.e-6 * m,
-        deltaOneStep = 1.e-9*m,
-        maximumEpsilonStep = 1.e-9*m,
-	minimumEpsilonStep = 1.e-9*m,
         thresholdCutCharged = 1 * MeV,
         thresholdCutPhotons = 0.01 * MeV;
 
