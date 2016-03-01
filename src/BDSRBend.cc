@@ -7,17 +7,14 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDipoleStepper.hh"
-#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
-#include "G4CutTubs.hh"
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Mag_EqRhs.hh"
-#include "G4PVPlacement.hh"
 #include "G4VPhysicalVolume.hh"
 
 BDSRBend::BDSRBend(G4String            name,
@@ -33,7 +30,8 @@ BDSRBend::BDSRBend(G4String            name,
   bGrad(bGradIn)
 {
   angle       = angleIn;
-  outerRadius = magnetOuterInfo->outerDiameter*0.5; 
+  outerRadius = magnetOuterInfo->outerDiameter*0.5;
+  magFieldLength = length; 
 }
 
 void BDSRBend::Build()

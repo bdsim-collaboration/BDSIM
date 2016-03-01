@@ -8,6 +8,11 @@
 
 class BDSCavityInfo;
 
+/** 
+ * @brief RF Cavity class
+ *  
+ * @author Stuart Walker
+ */
 class BDSCavityRF: public BDSCavity
 {
 public:

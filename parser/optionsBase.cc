@@ -1,7 +1,3 @@
-//
-// Created by Stewart Boogert on 16/12/2015.
-//
-
 #include "options.h"
 
 #include <iostream>
@@ -13,7 +9,7 @@ OptionsBase::OptionsBase()
   // Default Values for Options
 
   // very important options
-  physicsList           = "standard"; //default - standard (only transportation)
+  physicsList           = ""; //default - only transportation
   modularPhysicsListsOn = 0;
   numberToGenerate      = 1;
   randomSeed            = 0;

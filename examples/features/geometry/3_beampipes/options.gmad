@@ -1,4 +1,4 @@
-option,	physicsList="em_standard",
+option,	physicsList="em",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=0.5*cm,
 	outerDiameter=2.0*m,

@@ -3,12 +3,10 @@
 
 #include "BDSSectorBend.hh"
 
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"        // for calculateorientation

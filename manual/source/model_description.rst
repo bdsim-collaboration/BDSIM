@@ -1159,77 +1159,93 @@ e.g.::
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
 
-Physics Lists
--------------
+Physics Processes
+-----------------
 
 BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
 and simulation it is very useful to define the physical processes that should be simulated so
 that the simulation is both relevant and efficient. Rather than specify each individual process
 for every individual particle, a series of "physics lists" are provided that are a predetermined
-set of physics process suitable for a certain application. BDSIM follows the Geant4 ethos in this
+set of physics process suitable for a certain applications. BDSIM follows the Geant4 ethos in this
 regard.
 
-The physics list can be selected with the following syntax::
+Note, using extra physics processes that are not required will slow the simulation and produce
+many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
+only use the minimal set of physics processes required.
 
-  option, physicsList="physicslistname";
+The physics list can be selected with the following syntax (delimited by a space)::
 
-.. note:: Some physics lists allow biasing and re-weighting for some processes to further improve
-	  simulation efficiency. (See `options`_ for more details).
+  option, physicsList="physicslistname anotherphysicslistname";
+
+  option, physicsList="em optical";
+
+.. note:: The strings for the physics list are case-insensitive
+  
+A summary of the available physics lists in BDSIM is provided below (Others can be easily added
+by contacting the developers - see :ref:`feature-request`).
+
+More details can be found in the Geant4 documentation:
 
 Physics Lists In BDSIM
 ^^^^^^^^^^^^^^^^^^^^^^
 
+   * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
+   * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
+
+
 .. table check in latex before commit
 .. tabularcolumns:: |p{5cm}|p{10cm}|
-		    
-============================  ============================================================
-standard                      transportation of primary particles 
-                              only - no scattering in material.
-em_standard                   transportation of primary particles, 
-                              ionization, bremsstrahlung, 
-                              Cerenkov, multiple scattering.
-em_low                        the same as `em_standard` but using low 
-                              energy electromagnetic models.
-em_single_scatter             **TBC**.
-em_muon                       `em_standard` plus muon production 
-                              processes with biased muon 
-                              cross-sections.
-lw                            list for laser wire simulation - 
-                              `em_standard` and "laserwire" 
-                              physics, which is Compton Scattering 
-			      with total cross-section 
-			      renormalized to 1.
-merlin                        transportation of primary particles, and 
-                              the following processes 
-                              for electrons: multiple scattering, 
-			      ionisation, and bremsstrahlung.
-hadronic_standard             `em_standard` plus fission, neutron 
-                              capture, neutron and proton 
-                              elastic and inelastic scattering.
-hadronic_muon                 `hadronic_standard` plus muon production 
-                              processes with biased muon 
-                              cross-sections.
-hadronic_QGSP_BERT            `em_standard` plus hadronic physics 
-                              using the quark gluon string 
-                              plasma (QGSP) model and the Bertini 
-			      cascade model (BERT).
-hadronic_QGSP_BERT_muon       `hadronic_QGSP_BERT` plus muon 
-                              production processes with biased muon 
-                              cross-sections.
-hadronic_FTFP_BERT            `em_standard` plus hadronic physics 
-                              using the Fritiof model followed 
-                              by Reggion cascade and Precompound and 
-			      evaporation models for the 
-			      nucleus de-excitation (FTFP) model and 
-			      the Bertini cascade model 
-			      (BERT).
-hadronic_FTFP_BERT_muon       `hadronic_FTFP_BERT` plus muon 
-                              production processes with biased muon 
-                              cross-sections.
-hadronic_QGSP_BERT_HP_muon    `hadronic_QGSP_BERT_muon` plus high 
-                              precision low energy neutron 
-                              scattering models.
-============================  ============================================================
+
++---------------------------+------------------------------------------------------------------------+
+| **String to use**         | **Description**                                                        |
++---------------------------+------------------------------------------------------------------------+
+|                           | Transportation of primary particles only - no scattering in material.  |
++---------------------------+------------------------------------------------------------------------+
+| em                        | Transportation of primary particles, ionization, bremsstrahlung,       |
+|                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
++---------------------------+------------------------------------------------------------------------+
+| em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
+|                           | `G4EmPenelopePhysics`.                                                 |
++---------------------------+------------------------------------------------------------------------+
+| synchrad                  | BDSIM synchrotron radiation process.                                   |
++---------------------------+------------------------------------------------------------------------+
+| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
+|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                           | This uses `G4OpticalPhysics` class.                                    |
++---------------------------+------------------------------------------------------------------------+
+| hadronic                  | A shortcut for `QGSP_BERT`                                             |
++---------------------------+------------------------------------------------------------------------+
+| hadronichp                | A shortcut for `QGSP_BERT_HP`                                          |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
+|                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
+|                           | hadronic elastic and inelastic processes. Suitable for high energy     |
+|                           | (>10 GeV). This includes and uses `G4EmStandardPhysics`.               |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
+|                           | precision neutron models to transport neutrons below 20 MeV down to    |
+|                           | thermal energies. This includes and uses `G4EmStandardPhysics`. This   |
+|                           | is provided by `G4HadronPhysicsQGSP_BERT_HP`.                          |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
+|                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
+|                           | model for protons and neutrons In comparison to the LEP model, Binary  |
+|                           | cascade better describes production of secondary particles produced in |
+|                           | interactions of protons and neutrons with nuclei. This is provided by  |
+|                           | `G4HadronPhysicsQGSP_BIC`.                                             |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bic_hp               | Similar to `QGSP_BIC` but with the high precision neutron package.     |
+|                           | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
++---------------------------+------------------------------------------------------------------------+
+| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                           | is based on the FRITIOF description of string excitation and           |
+|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`.         |
++---------------------------+------------------------------------------------------------------------+
+| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
++---------------------------+------------------------------------------------------------------------+
+| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
++---------------------------+------------------------------------------------------------------------+
 
 
 Options
