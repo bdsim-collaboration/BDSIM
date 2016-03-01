@@ -1058,7 +1058,6 @@ void BDSPhysicsList::ConstructLaserWire()
 
 // Low-energy Models
 #include "G4HadronElastic.hh"
-#include "G4NeutronRadCapture.hh"
 
 #include "G4CascadeInterface.hh"
 

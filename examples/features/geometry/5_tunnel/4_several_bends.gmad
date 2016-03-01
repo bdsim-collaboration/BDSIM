@@ -12,9 +12,8 @@ use,period=l1;
 !sample, range=endoftheline;
 
 option, ngenerate=1,
-!	physicsList="QGSP_BERT",
-	physicsList="hadronic em QGSP_BERT",
-!	physicsList="em_standard",
+	physicsList="QGSP_BERT",
+!	physicsList="em",
 	beampipeRadius=10.0*cm,
 	beampipeThickness=3*cm,
 	outerDiameter=0.5*m,

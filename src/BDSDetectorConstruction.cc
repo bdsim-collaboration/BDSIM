@@ -36,7 +36,6 @@
 #include "G4Navigator.hh"
 #include "G4Positron.hh"
 #include "G4ProductionCuts.hh"
-#include "G4PropagatorInField.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
 #include "G4UserLimits.hh"

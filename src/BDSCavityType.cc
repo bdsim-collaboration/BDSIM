@@ -1,7 +1,6 @@
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
 
-#include <iterator>
 #include <map>
 #include <string>
 

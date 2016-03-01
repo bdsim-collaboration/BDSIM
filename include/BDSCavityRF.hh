@@ -15,6 +15,11 @@ class BDSFieldInfo;
  * @author Stuart Walker
  */
 
+/** 
+ * @brief RF Cavity class
+ *  
+ * @author Stuart Walker
+ */
 class BDSCavityRF: public BDSCavity
 {
 public:
