@@ -1213,9 +1213,11 @@ Physics Lists In BDSIM
 |                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
 |                           | This uses `G4OpticalPhysics` class.                                    |
 +---------------------------+------------------------------------------------------------------------+
-| hadronic                  | A shortcut for `QGSP_BERT`                                             |
+| hadronicelastic           | Elastic hadronic processes. This is provided by G4HadronElasticPhysics.|
 +---------------------------+------------------------------------------------------------------------+
-| hadronichp                | A shortcut for `QGSP_BERT_HP`                                          |
+| hadronic                  | A shortcut for `QGSP_BERT`.                                            |
++---------------------------+------------------------------------------------------------------------+
+| hadronichp                | A shortcut for `QGSP_BERT_HP`.                                         |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |

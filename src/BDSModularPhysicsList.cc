@@ -22,6 +22,7 @@
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
 
+#include "G4HadronElasticPhysics.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #include "G4HadronPhysicsFTFP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BERT.hh"
@@ -56,6 +57,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   physicsConstructors.insert(std::make_pair("cutsandlimits",&BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("em",           &BDSModularPhysicsList::Em));
   physicsConstructors.insert(std::make_pair("em_low",       &BDSModularPhysicsList::EmLow));
+  physicsConstructors.insert(std::make_pair("hadronicelastic", &BDSModularPhysicsList::HadronicElastic));
   physicsConstructors.insert(std::make_pair("hadronic",     &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronichp",   &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("synchrad",     &BDSModularPhysicsList::SynchRad));
@@ -125,13 +127,11 @@ void BDSModularPhysicsList::ParsePhysicsList()
   for (auto name : vstrings)
     {
       G4String nameLower(name);
-      nameLower.toLower();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "Constructing \"" << nameLower << "\"" << G4endl;
-#endif
+      nameLower.toLower(); // case insensitive
       auto result = physicsConstructors.find(nameLower);
       if (result != physicsConstructors.end())
 	{
+	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\"" << G4endl;
 	  auto mem = result->second;
 	  (this->*mem)(); // call the function pointer in this instance of the class
 	}
@@ -171,8 +171,9 @@ void BDSModularPhysicsList::ConfigurePhysics()
 void BDSModularPhysicsList::ConfigureOptical()
 {
   if(verbose || debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
-  if (!opticalPhysics) return;
+    {G4cout << __METHOD_NAME__ << G4endl;}
+  if (!opticalPhysics)
+    {return;}
   opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
   opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
   opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
@@ -265,8 +266,6 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
 void BDSModularPhysicsList::Em()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if (!physicsActivated["em"])
     {
       constructors.push_back(new G4EmStandardPhysics());
@@ -277,20 +276,25 @@ void BDSModularPhysicsList::Em()
 							  
 void BDSModularPhysicsList::EmLow()
 {
-  if(verbose || debug)
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if (!physicsActivated["em_low"])
     {
       constructors.push_back(new G4EmPenelopePhysics());
       physicsActivated["em_low"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics
-}							  
+}
+
+void BDSModularPhysicsList::HadronicElastic()
+{
+  if (!physicsActivated["hadronicelastic"])
+    {
+      constructors.push_back(new G4HadronElasticPhysics());
+      physicsActivated["hadronicelastic"];
+    }
+}
 							  
 void BDSModularPhysicsList::ParameterisationPhysics()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if (!physicsActivated["parameterisation"])
     {
       constructors.push_back(new BDSParameterisationPhysics());
@@ -299,9 +303,7 @@ void BDSModularPhysicsList::ParameterisationPhysics()
 }							  
 							  
 void BDSModularPhysicsList::SynchRad()
-{		    
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+{
   if(!physicsActivated["synchrad"])
     {
       constructors.push_back(new BDSSynchRadPhysics());
@@ -313,8 +315,6 @@ void BDSModularPhysicsList::SynchRad()
 							  
 void BDSModularPhysicsList::Muon()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["muon"])
     {
       constructors.push_back(new BDSMuonPhysics());
@@ -324,8 +324,6 @@ void BDSModularPhysicsList::Muon()
 							  
 void BDSModularPhysicsList::Optical()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["optical"])
     {
       opticalPhysics = new G4OpticalPhysics();		  
@@ -336,8 +334,6 @@ void BDSModularPhysicsList::Optical()
 							  
 void BDSModularPhysicsList::Decay()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["decay"])
     {
       constructors.push_back(new G4DecayPhysics());
@@ -347,8 +343,6 @@ void BDSModularPhysicsList::Decay()
 
 void BDSModularPhysicsList::CutsAndLimits()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["cutsandlimits"])
     {
       constructors.push_back(new BDSCutsAndLimits());
@@ -358,9 +352,6 @@ void BDSModularPhysicsList::CutsAndLimits()
 
 void BDSModularPhysicsList::QGSPBERT()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  Em();
   if(!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
@@ -370,9 +361,6 @@ void BDSModularPhysicsList::QGSPBERT()
 
 void BDSModularPhysicsList::QGSPBERTHP()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  Em();
   if(!physicsActivated["qgsp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
@@ -382,9 +370,6 @@ void BDSModularPhysicsList::QGSPBERTHP()
 
 void BDSModularPhysicsList::QGSPBIC()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  Em();
   if(!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
@@ -394,9 +379,6 @@ void BDSModularPhysicsList::QGSPBIC()
 
 void BDSModularPhysicsList::QGSPBICHP()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  Em();
   if(!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
@@ -406,9 +388,6 @@ void BDSModularPhysicsList::QGSPBICHP()
 
 void BDSModularPhysicsList::FTFPBERT()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  Em();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -418,9 +397,6 @@ void BDSModularPhysicsList::FTFPBERT()
 
 void BDSModularPhysicsList::FTFPBERTHP()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  Em();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());

@@ -68,6 +68,7 @@ private:
   void CutsAndLimits();
   void Em();
   void EmLow();
+  void HadronicElastic();
   void Hadronic();
   void HadronicHP();
   void SynchRad();
