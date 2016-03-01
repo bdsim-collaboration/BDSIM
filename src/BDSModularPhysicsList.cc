@@ -53,7 +53,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetVerboseLevel(1);
   opticalPhysics  = nullptr;
 
-  physicsConstructors.insert(std::make_pair("cutsAndLimits",&BDSModularPhysicsList::CutsAndLimits));
+  physicsConstructors.insert(std::make_pair("cutsandlimits",&BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("em",           &BDSModularPhysicsList::Em));
   physicsConstructors.insert(std::make_pair("em_low",       &BDSModularPhysicsList::EmLow));
   physicsConstructors.insert(std::make_pair("hadronic",     &BDSModularPhysicsList::QGSPBERT));
@@ -61,7 +61,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   physicsConstructors.insert(std::make_pair("synchrad",     &BDSModularPhysicsList::SynchRad));
   physicsConstructors.insert(std::make_pair("muon",         &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",      &BDSModularPhysicsList::Optical));
-  physicsConstructors.insert(std::make_pair("nodecay",      &BDSModularPhysicsList::NoDecay));
+  physicsConstructors.insert(std::make_pair("decay",        &BDSModularPhysicsList::Decay));
   physicsConstructors.insert(std::make_pair("qgsp_bert",    &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("qgsp_bert_hp", &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("qgsp_bic",     &BDSModularPhysicsList::QGSPBIC));
@@ -85,6 +85,8 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   DumpCutValuesTable(100);
 
 #ifdef BDSDEBUG
+  Print();
+  
   auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
   G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
   
@@ -329,14 +331,14 @@ void BDSModularPhysicsList::Optical()
     }
 }							  
 							  
-void BDSModularPhysicsList::NoDecay()
+void BDSModularPhysicsList::Decay()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
-  if(!physicsActivated["nodecay"])
+  if(!physicsActivated["decay"])
     {
       constructors.push_back(new G4DecayPhysics());
-      physicsActivated["nodecay"] = true;
+      physicsActivated["decay"] = true;
     }
 }                                                         
 

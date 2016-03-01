@@ -66,7 +66,7 @@ private:
   void SynchRad();
   void Muon();					
   void Optical();
-  void NoDecay();
+  void Decay();
   void QGSPBERT();
   void QGSPBERTHP();
   void QGSPBIC();
