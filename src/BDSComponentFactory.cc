@@ -89,7 +89,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   nextElement = nextElementIn;
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
-  G4bool registered    = false;
+  G4bool registered = false;
   // Used for multiple instances of the same element but different poleface rotations.
   G4bool willNotModify = true; 
 
@@ -103,16 +103,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   if (element->type == ElementType::_DRIFT)
     {
       // Match poleface from previous and next element
-      angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+      angleIn  = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
       angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
 
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{angleIn += 0.5*(prevElement->angle);}
+	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{angleOut += 0.5*nextElement->angle;}
+	{angleOut += 0.5*nextElement->angle;}// won't work if only field set TBC
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
