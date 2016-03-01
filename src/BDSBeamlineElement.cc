@@ -40,7 +40,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   referenceRotationEnd(referenceRotationEndIn),
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
   samplerType(samplerTypeIn),
-  samplerName(samplerNameIn)
+  samplerName(samplerNameIn),
+  samplerPlacementTransform(nullptr)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__;
@@ -86,7 +87,7 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete referenceRotationEnd;
   delete placementTransform;
   delete readOutPlacementTransform;
-  //delete samplerPlacementTransform; // this seems to be deleted by the placement
+  delete samplerPlacementTransform;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)

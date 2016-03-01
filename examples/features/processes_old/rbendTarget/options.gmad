@@ -10,7 +10,7 @@ option, beampipeRadius = 1 * cm,
 	defaultRangeCut = 1*m;
 
 
-option,physicsList="hadronic_FTFP_BERT";
+option,physicsList="FTFP_BERT";
 !option, ffact=1.00006400499999999999;
 option, ffact=1.0000640014297218494195;
 

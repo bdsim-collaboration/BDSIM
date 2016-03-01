@@ -49,12 +49,12 @@ protected:
   void BuildPillBoxCavityGeometry(); 
   
   //Solids  
-  G4VSolid* cavitySolid; ///< Set by e.g BuildEllipticalCavityGeometry
-  G4VSolid* innerSolid;  ///< Used only PillBox atm Should expand to elliptical as well
-  G4VSolid* vacuumSolid; ///< Set by e.g BuildEllipticalCavityGeometry
+  G4VSolid* cavitySolid = nullptr; ///<Set by e.g BuildEllipticalCavityGeometry
+  G4VSolid* innerSolid  = nullptr; ///<Used only PillBox atm Should expand to elliptical as well
+  G4VSolid* vacuumSolid = nullptr; ///<Set by e.g BuildEllipticalCavityGeometry
 
-  G4LogicalVolume* cavityLV; ///< Set at same time as cavitySolid
-  G4LogicalVolume* vacuumLV; ///< Set at same time as vacuumSolid
+  G4LogicalVolume* cavityLV = nullptr; ///<Set at same time as cavitySolid
+  G4LogicalVolume* vacuumLV = nullptr; ///<Set at same time as vacuumSolid
  
   G4double cavityRadius; ///< Largest value of r from z.
   G4double irisRadius;   ///< Radius of the iris (aperture).
@@ -62,10 +62,10 @@ protected:
 
   /// Field information - also includes cavity info as cavity info contains both
   /// field information and geometrical information.
-  BDSFieldInfo* vacuumField;
+  BDSFieldInfo* vacuumField = nullptr;
 
   /// Convenience shortcut to cavity information inside field information object.
-  BDSCavityInfo* cavityInfo;
+  BDSCavityInfo* cavityInfo = nullptr;
   
 };
 

@@ -10,8 +10,6 @@
 
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-
 
 BDSKicker::BDSKicker(G4String            name,
 		     G4double            length,

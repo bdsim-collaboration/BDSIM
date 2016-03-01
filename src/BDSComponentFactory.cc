@@ -12,6 +12,7 @@
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
+#include "BDSMuSpoiler.hh"
 #include "BDSRfCavity.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSTerminator.hh"
@@ -91,7 +92,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4double angleOut = 0.0;
   G4bool registered    = false;
   // Used for multiple instances of the same element but different poleface rotations.
-  G4bool willNotModify = true; 
+  G4bool willNotModify = true;
+  G4bool notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
@@ -113,6 +115,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
 	{angleOut += 0.5*nextElement->angle;}
+
+      // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
+      // so the drifts must be modified accordingly.
+      if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
+	  {angleIn += -0.5*(prevElement->angle);}
+
+      if (nextElement && (nextElement->type == ElementType::_SBEND) && notSplit)
+	  {angleOut += 0.5*(nextElement->angle);}
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
@@ -136,6 +146,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
           angleIn += 0.5*element->angle;
         }
     }
+  else if (element->type == ElementType::_SBEND)
+    {
+      angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
+      if (nextElement && (nextElement->type == ElementType::_SBEND))
+        {
+          willNotModify = false;
+          angleOut -= 0.5*element->angle;
+        }
+      if (prevElement && (prevElement->type == ElementType::_SBEND))
+        {
+          willNotModify = false;
+          angleIn -= 0.5*element->angle;
+        }
+    }
 
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
@@ -157,7 +183,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
-    component = CreateSBend(); break;
+    component = CreateSBend(angleIn,angleOut); break;
   case ElementType::_RBEND:
     component = CreateRBend(angleIn, angleOut); break;
   case ElementType::_HKICK:
@@ -320,7 +346,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 			 vacuumField);
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
+BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
+                                    G4double angleOut)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -390,10 +417,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 
   //Zero angle bend only needs one element.
   std::string thename = element->name + "_1_of_1";
-  G4double angleIn    = element->e1*CLHEP::rad;
-  G4double angleOut   = element->e2*CLHEP::rad;
 
-  if (!BDS::IsFinite(element->angle))
+  if (!BDS::IsFinite(element->angle) || (nSbends == 1))
     {
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
@@ -431,16 +456,25 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
-  G4double deltastart = (BDS::IsFinite(element->e1)) ? (-element->e1/(0.5*(nSbends-1))) : 0.0;
-  G4double deltaend   = (BDS::IsFinite(element->e2)) ? (-element->e2/(0.5*(nSbends-1))) : 0.0;
+  BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
+
+  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
+
+  G4double deltastart = -element->e1/(0.5*(nSbends-1));
+  G4double deltaend   = -element->e2/(0.5*(nSbends-1));
 
   for (int i = 0; i < nSbends; ++i)
     {
-      thename  = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
-      angleIn  = -semiangle*0.5;
+      thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
+
+      // Default angles for all segments
+      angleIn = -semiangle*0.5;
       angleOut = -semiangle*0.5;
 
-      // Input and output angles when no poleface rotation
+      // Input and output angles added to or subtracted from the default as appropriate
+      // Note: case of i == 0.5*(nsbends-1) is just the default central wedge.
+      // More detailed methodology/reasons in developer manual
       if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
         {
           if (i < 0.5*(nSbends-1))
@@ -450,8 +484,8 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
             }
           else if (i > 0.5*(nSbends-1))
             {
-              angleIn  += ((0.5*(nSbends+1)-i)*deltaend);
-              angleOut += (i-(0.5*(nSbends-1)))*deltaend;
+              angleIn  +=  (0.5*(nSbends+1)-i)*deltaend;
+              angleOut += -(0.5*(nSbends-1)-i)*deltaend;
             }
         }
       

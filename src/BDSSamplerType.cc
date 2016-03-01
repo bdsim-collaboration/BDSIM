@@ -3,7 +3,6 @@
 
 #include "globals.hh" // geant4 types / globals
 
-#include <iterator>
 #include <map>
 #include <string>
 
