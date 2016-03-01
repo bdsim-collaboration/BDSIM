@@ -112,7 +112,7 @@ void BDSModularPhysicsList::Print()
 void BDSModularPhysicsList::ParsePhysicsList()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "physics list string: \"" << physListName << "\"" << G4enld;
+  G4cout << __METHOD_NAME__ << "physics list string: \"" << physListName << "\"" << G4endl;
 #endif
   std::stringstream ss(physListName);
   std::istream_iterator<std::string> begin(ss);

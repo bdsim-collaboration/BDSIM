@@ -3,7 +3,7 @@
 
 #include "globals.hh" // geant4 types / globals
 
-class BDSBeamline;
+#include "BDSBeamline.hh"
 
 /**
  * @brief A class that constructs the necessary tunnel segments
