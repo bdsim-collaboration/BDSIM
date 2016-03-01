@@ -360,6 +360,7 @@ void BDSModularPhysicsList::QGSPBERT()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
@@ -371,6 +372,7 @@ void BDSModularPhysicsList::QGSPBERTHP()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
@@ -382,6 +384,7 @@ void BDSModularPhysicsList::QGSPBIC()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
@@ -393,6 +396,7 @@ void BDSModularPhysicsList::QGSPBICHP()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
@@ -404,6 +408,7 @@ void BDSModularPhysicsList::FTFPBERT()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -415,6 +420,7 @@ void BDSModularPhysicsList::FTFPBERTHP()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  Em();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
