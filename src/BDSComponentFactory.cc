@@ -149,8 +149,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   else if (element->type == ElementType::_SBEND)
     {
-      angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+      angleIn = element->e1;
+      angleOut = element->e2;
 
       if (nextElement && (nextElement->type == ElementType::_SBEND))
         {
