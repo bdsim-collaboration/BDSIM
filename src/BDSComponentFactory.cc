@@ -12,8 +12,6 @@
 #include "BDSLaserWire.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
-#include "BDSMuSpoiler.hh"
-#include "BDSRfCavity.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
@@ -456,10 +454,10 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
-  BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
-
-  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
+  // TBC - check this!!!
+  //BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
+  //BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
+  //CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
 
   G4double deltastart = -element->e1/(0.5*(nSbends-1));
   G4double deltaend   = -element->e2/(0.5*(nSbends-1));
