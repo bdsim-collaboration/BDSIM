@@ -30,7 +30,8 @@ BDSRBend::BDSRBend(G4String            name,
   bGrad(bGradIn)
 {
   angle       = angleIn;
-  outerRadius = magnetOuterInfo->outerDiameter*0.5; 
+  outerRadius = magnetOuterInfo->outerDiameter*0.5;
+  magFieldLength = length; 
 }
 
 void BDSRBend::Build()
