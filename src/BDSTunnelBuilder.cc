@@ -1,9 +1,12 @@
+#include "BDSTunnelBuilder.hh"
+
 #include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSTiltOffset.hh"
-#include "BDSTunnelBuilder.hh"
 #include "BDSTunnelFactory.hh"
+#include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"  // for isfinite function
 
 #include "globals.hh"
