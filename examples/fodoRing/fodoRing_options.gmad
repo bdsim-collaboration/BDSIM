@@ -3,7 +3,6 @@
 ! OPTIONS DEFINITION 
 
 option,	beampipeThickness=3*mm,
-	outerDiameter=0.5*m, 
-	physicsList="standard", 
+	outerDiameter=0.5*m,
 	beampipeRadius=3*cm, 
 	ngenerate=100;

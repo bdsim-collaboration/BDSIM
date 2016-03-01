@@ -2,7 +2,6 @@
 #include "G4Navigator.hh"
 #include "CLHEP/Units/PhysicalConstants.h" 
 #include "globals.hh"
-#include "G4TransportationManager.hh"
 #include <cmath>
 
 BDSCavityField::BDSCavityField(G4double eFieldMaxIn,

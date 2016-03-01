@@ -4,7 +4,6 @@ option, beampipeRadius = 10 * cm,
         outerDiameter = 1.9 * m,
         samplerDiameter = 2.0*m,
         beampipeThickness = 0.5 * mm,
-!	lengthSafety = 1e-5 * mm,
 	elossHistoBinWidth = 0.01,
 !	thresholdCutCharged = 200*MeV,
 	prodCutPhotons=0.1*m,
@@ -16,13 +15,12 @@ option, beampipeRadius = 10 * cm,
 ! option,apertureType="rectangular";
 ! option,aper2=15*cm;
 
-option,modularPhysicsListsOn=1;
 option,physicsList="em synchrad";
 option,srMultiplicity=1;
 option,stopTracks=0;
 
 !option,modularPhysicsListsOn=0;
-!option,physicsList="em_standard";
+!option,physicsList="em";
 !option,synchRadOn=1;
 !option,srMultiplicity=1;
 

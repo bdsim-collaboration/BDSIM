@@ -32,22 +32,8 @@ option, beampipeRadius = 0.05,
         tunnelOffsetY = offsetY,
         samplerDiameter=2*(tunnelRad+tunnelThick+tunnelSoilThick),
         beampipeThickness = 0.2 * cm,
-
-!	chordStepMinimum = 1e-6 * m,			
-!        deltaIntersection = 1e-4 * m,
-!        deltaChord = 1e-6 * m,
-!        lengthSafety = 1e-6 * m,
-!        lengthSafety = 0 * m,
-
-	chordStepMinimum = 1e-7 * m,			
-        deltaIntersection = 1e-3 * m,
-        deltaChord = 1e-7 * m,
-!        lengthSafety = 1e-6 * m,
-        lengthSafety = 0 * m,
-
         thresholdCutCharged = 0.01*MeV,
         thresholdCutPhotons = 0.01*MeV,
-        stopTracks=0,
         elossHistoBinWidth=10*cm,
         sensitiveBeamlineComponents=0,
         sensitiveBeamPipe=0,
@@ -57,9 +43,9 @@ option, beampipeRadius = 0.05,
         defaultRangeCut=0.00885*mm;
 
 
-option, physicsList="hadronic_QGSP_BERT_HP_muon", useHadLPB=0;
+option, physicsList="QGSP_BERT_HP", useHadLPB=0;
 option, gammaToMuFe=1e3, annihiToMuFe=1e3;
-!option, physicsList="hadronic_muon", useHadLPB=0;
+!option, physicsList="hadronic muon", useHadLPB=0;
 option, randomSeed=-1;
 
 
