@@ -5,6 +5,4 @@ option, beampipeRadius = 10 * cm,
         beampipeThickness = 0.5 * cm,
         checkOverlaps=1;
 
-
-option,physicsList="standard";
 option,ngenerate=1000;

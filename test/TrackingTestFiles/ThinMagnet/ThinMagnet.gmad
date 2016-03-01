@@ -14,5 +14,5 @@ option, beampipeRadius = 10 * cm,
         samplerDiameter = 4.0*m,
         elossHistoBinWidth  = 0.1,
         stopTracks = 1,
-	physicsList="em_standard",
+	physicsList="em",
 	ngenerate=100;

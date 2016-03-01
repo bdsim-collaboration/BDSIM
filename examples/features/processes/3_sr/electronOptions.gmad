@@ -16,13 +16,12 @@ option, beampipeRadius = 10 * cm,
 ! option,apertureType="rectangular";
 ! option,aper2=15*cm;
 
-option,modularPhysicsListsOn=1;
 option,physicsList="em synchrad";
 option,srMultiplicity=1;
 option,stopTracks=0;
 
 !option,modularPhysicsListsOn=0;
-!option,physicsList="em_standard";
+!option,physicsList="em";
 !option,synchRadOn=1;
 !option,srMultiplicity=1;
 

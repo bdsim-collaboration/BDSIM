@@ -10,5 +10,5 @@ option, beampipeRadius = 2 * cm,
 	stopTracks = 0,
 	elossHistoBinWidth = 0.01*m;
 
-option,physicsList="em_standard";
+option,physicsList="em";
 option,ngenerate=1000;

@@ -25,8 +25,8 @@ IntRegion:line=(ir);
 use,period=IntRegion;
 
 
-option, ngenerate=1, physicsList="em_standard",
-randomSeed=-1;
+option, ngenerate=1,
+	physicsList="em";
 
 beam,  particle="e-",
        energy=250 * GeV,

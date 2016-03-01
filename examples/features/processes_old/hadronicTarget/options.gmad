@@ -6,21 +6,15 @@ option, beampipeRadius = 50 * cm,
         buildTunnelFloor=0,
         tunnelRadius= 2.0 * m,
         samplerDiameter = 2.0*m,
-        beampipeThickness = 0.5 * mm,
-        chordStepMinimum = 0.0000000001 * m,
-        deltaIntersection = 0.00000001 * m,
-        deltaChord = 0.001 * m,
-        lengthSafety = 0.00001 * m,
-        
+        beampipeThickness = 0.5 * mm,        
        ! thresholdCutCharged = 1 * KeV,
        ! thresholdCutPhotons = 1 * KeV;
        !  thresholdCutCharged = 1 * MeV,                
        !  thresholdCutPhotons = 1 * MeV;
         thresholdCutCharged = 15 * GeV,
         thresholdCutPhotons = 15 * GeV;
-!option,physicsList="em_muon_xsbias";
-!option,physicsList="hadronic_FTFP_BERT_muon";
-option,physicsList="hadronic_muon";
+!option,physicsList="FTFP_BERT";
+option,physicsList="hadronic";
 option, gammaToMuFe=1e4, annihiToMuFe=1e4;
 option, randomSeed=123456;
 option,ngenerate=10;

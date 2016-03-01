@@ -14,5 +14,4 @@ beam, particle="e-",
       distrType="reference",
       S0 = 7.6*m;
 
-option, physicsList="em_standard",
-	ngenerate=1;
+option,	ngenerate=1;
