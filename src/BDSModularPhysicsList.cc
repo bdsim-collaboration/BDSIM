@@ -29,6 +29,7 @@
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 
+#include <iterator>
 #include <map>
 #include <ostream>
 #include <string>
