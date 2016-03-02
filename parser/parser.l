@@ -128,7 +128,6 @@ stop {return STOP;}
 use { return USE; }
 sample { return SAMPLE; }
 csample { return CSAMPLE; }
-dump  { return DUMP; }
 
 \"[^"]*\" {
   //strip quotes and return string

@@ -7,6 +7,7 @@ New Features
 * Samplers are attached at the *exit* instead of the *entrance* of an element
 * Poleface rotations for bends are implemented (issue #100)
 * Geant4 9.6.x versions support is dropped (issue #111)
+* DUMP element removed (issue #116)
 * Modular physics lists are default (issue #121)
 
 Geometry

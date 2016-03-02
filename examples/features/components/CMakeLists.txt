@@ -8,8 +8,6 @@ simple_testing(Component-Degrader "--file=degraderTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Drift "--file=driftTest.gmad" ${OVERLAP_CHECK})
 
-simple_testing(Component-Dump "--file=dumpTest.gmad" ${OVERLAP_CHECK})
-
 simple_testing(Component-ECollimator "--file=ecolTest.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-GDML "--file=gdmlTest.gmad" ${OVERLAP_CHECK})
