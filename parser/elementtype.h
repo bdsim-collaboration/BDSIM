@@ -34,7 +34,6 @@ namespace GMAD {
     _AWAKESCREEN = 22,
     _VKICK       = 31,
     _HKICK       = 32,
-    _DUMP        = 43,
     _TRANSFORM3D = 61,
     _MUSPOILER   = 62,
     _DEGRADER    = 63,

@@ -7,7 +7,6 @@
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
-#include "BDSDump.hh"
 #include "BDSElement.hh"
 #include "BDSKicker.hh"
 #include "BDSLaserWire.hh"
@@ -166,7 +165,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
-  if (element->type != ElementType::_DUMP && registered && willNotModify)
+  if (registered && willNotModify)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -203,8 +202,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateMultipole(); break;
   case ElementType::_ELEMENT:    
     component = CreateElement(); break;
-  case ElementType::_DUMP:
-    component = CreateDump(); break; 
   case ElementType::_SOLENOID:
     component = CreateSolenoid(); break; 
   case ElementType::_ECOL:
@@ -255,12 +252,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   
   return component;
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
-{
-  return (new BDSDump( element->name,
-		       BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
