@@ -1179,7 +1179,14 @@ The physics list can be selected with the following syntax (delimited by a space
 
   option, physicsList="em optical";
 
-.. note:: The strings for the physics list are case-insensitive
+.. note:: The strings for the physics list are case-insensitive.
+
+.. versionadded:: 0.92
+
+   Note, the physics lists changed from BDSIM produced physics lists to using the Geant4
+   modular physics lists in version 0.92. This also introduced the space-delimited syntax
+   slight changes to the physics list names.
+
   
 A summary of the available physics lists in BDSIM is provided below (Others can be easily added
 by contacting the developers - see :ref:`feature-request`).
@@ -1206,8 +1213,7 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 | em_extra                  | This provides extra electromagnetic models including, muon nuclear     |
 |                           | processes, bertini electro-nuclear model and synchrotron radiation     |
-|                           | (not in material). Constructs `em` if not already included. Provided   |
-|                           | by `G4EmPhysicsExtra`.                                                 |
+|                           | (not in material). Provided by `G4EmPhysicsExtra`.                     |
 +---------------------------+------------------------------------------------------------------------+
 | em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
 |                           | `G4EmPenelopePhysics`.                                                 |

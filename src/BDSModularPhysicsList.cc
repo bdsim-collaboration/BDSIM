@@ -24,7 +24,6 @@
 
 // particles
 #include "G4Electron.hh"
-#include "G4OpticalPhoton.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
 #include "G4AntiProton.hh"
@@ -300,7 +299,6 @@ void BDSModularPhysicsList::Em()
 void BDSModularPhysicsList::EmExtra()
 {
   ConstructAllLeptons();
-  Em(); // construct em phyiscs as well
   if (!physicsActivated["em_extra"])
     {
       constructors.push_back(new G4EmExtraPhysics());
@@ -363,7 +361,6 @@ void BDSModularPhysicsList::Optical()
 {
   if(!physicsActivated["optical"])
     {
-      G4OpticalPhoton::OpticalPhotonDefinition();
       opticalPhysics = new G4OpticalPhysics();		  
       constructors.push_back(opticalPhysics);
       physicsActivated["optical"] = true;
@@ -391,7 +388,6 @@ void BDSModularPhysicsList::CutsAndLimits()
 void BDSModularPhysicsList::QGSPBERT()
 {
   ConstructAllLeptons();
-  Em();
   if(!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
@@ -402,7 +398,6 @@ void BDSModularPhysicsList::QGSPBERT()
 void BDSModularPhysicsList::QGSPBERTHP()
 {
   ConstructAllLeptons();
-  Em();
   if(!physicsActivated["qgsp_bert_hp"])
     {
   constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
@@ -413,7 +408,6 @@ void BDSModularPhysicsList::QGSPBERTHP()
 void BDSModularPhysicsList::QGSPBIC()
 {
   ConstructAllLeptons();
-  Em();
   if(!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
@@ -424,7 +418,6 @@ void BDSModularPhysicsList::QGSPBIC()
 void BDSModularPhysicsList::QGSPBICHP()
 {
   ConstructAllLeptons();
-  Em();
   if(!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
@@ -435,7 +428,6 @@ void BDSModularPhysicsList::QGSPBICHP()
 void BDSModularPhysicsList::FTFPBERT()
 {
   ConstructAllLeptons();
-  Em();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -446,7 +438,6 @@ void BDSModularPhysicsList::FTFPBERT()
 void BDSModularPhysicsList::FTFPBERTHP()
 {
   ConstructAllLeptons();
-  Em();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
