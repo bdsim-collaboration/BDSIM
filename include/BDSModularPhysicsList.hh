@@ -20,7 +20,18 @@ class BDSModularPhysicsList: public G4VModularPhysicsList
 public:
   BDSModularPhysicsList();
   virtual ~BDSModularPhysicsList();
+
+  /// Print out which physics lists are activated.
   void Print();
+
+  /// Print all the processes by name as registered to the primary particle type.
+  /// Note, this should only be done after the physics lists are fully constructed.
+  void PrintPrimaryParticleProcesses() const;
+
+  /// Print all constructed particle names. Note, this should only be done after the
+  /// physics lists are fully constructed.
+  void PrintDefinedParticles() const;
+  
   virtual void SetCuts();
 
 private:
@@ -44,7 +55,16 @@ private:
   std::map<G4String, G4bool> physicsActivated;
   
   void SetParticleDefinition();
+
+  /// Construct the minimum particle set required (gamma, electron, positron,
+  /// proton and anti-proton.
   void ConstructMinimumParticleSet();
+
+  /// Neutrinos are not constructed by defualt in many (most) physics lists
+  /// yet this results in crashes when they're produced but not defined by
+  /// physics processes, so purposively define for ones where it's a problem.
+  void ConstructAllLeptons();
+  
   G4OpticalPhysics* opticalPhysics;
   std::vector<G4VPhysicsConstructor*> constructors;
   void ParsePhysicsList();
@@ -60,7 +80,9 @@ private:
   void ParameterisationPhysics();  
   void CutsAndLimits();
   void Em();
+  void EmExtra();
   void EmLow();
+  void HadronicElastic();
   void Hadronic();
   void HadronicHP();
   void SynchRad();
