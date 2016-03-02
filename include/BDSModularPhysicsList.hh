@@ -51,7 +51,16 @@ private:
   std::map<G4String, G4bool> physicsActivated;
   
   void SetParticleDefinition();
+
+  /// Construct the minimum particle set required (gamma, electron, positron,
+  /// proton and anti-proton.
   void ConstructMinimumParticleSet();
+
+  /// Neutrinos are not constructed by defualt in many (most) physics lists
+  /// yet this results in crashes when they're produced but not defined by
+  /// physics processes, so purposively define for ones where it's a problem.
+  void ConstructNeutrinos();
+  
   G4OpticalPhysics* opticalPhysics;
   std::vector<G4VPhysicsConstructor*> constructors;
   void ParsePhysicsList();
