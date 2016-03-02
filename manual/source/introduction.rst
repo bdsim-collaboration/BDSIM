@@ -15,9 +15,9 @@ geometry dynamically built based on a text input file.
 What BDSIM is suitable for
 --------------------------
 
-* single particle Monte-Carlo simulations of particle accelerators
-* simulating beam loss in a particle accelerator
-* simulating detector backgrounds from halo and machine background sources
+* Single particle Monte-Carlo simulations of particle accelerators
+* Simulating beam loss in a particle accelerator
+* Simulating detector backgrounds from halo and machine background sources
 
 What BDSIM is not intended for
 ------------------------------
@@ -52,8 +52,8 @@ BDSIM uses **ASCII** text input with a syntax designed to be very similar to
 **MAD8** / **MADX**. The user prepares a representation of the
 accelerator lattice they wish
 to simulate by defining magnets or various accelerator components and the sequence
-they should appear in. Additionally, the user may set options describing for
-example, energy tracking cuts, which physics processes of importance and at which
+they should appear in. Additionally, the user may set options describing, for
+example, energy tracking cuts, which physics processes are of importance and at which
 locations to record output.
 
 BDSIM can then use the input file to simulate the passage of the desired number of
@@ -67,14 +67,15 @@ histogram as a function of distance along the accelerator.
 One may generally write their own C++ program to simulate the setup of geometry
 and magnetic fields they like, however, in the case of an accelerator the
 typical geometry is highly repetitive and usually consists of either a beampipe
-or a beampipe with a magnet surrounding it. BDSIM generate Geant4 geometry
-automatically and uses custom 'steppers' for specific magnetic fields in place
-of normal Runge-Kutta integrators used by Geant4. Equations of motion describing
+or a beampipe with a magnet surrounding it. BDSIM generates Geant4 geometry
+automatically and provides integrators for linear magnetic fields in place
+of the normal Runge-Kutta integrators used by Geant4. Equations of motion describing
 particle motion in magnetic fields such as that of a quadrupole or sector-bend have 
 analytical solutions that can be used in place of numerical integration. BDSIM
 uses these to provide fast and accurate thick lens tracking in vacuum.
 
-Although BDSIM uses fairly generic geometry, the user may specify the style of
-geometry to be used, which will cover most cases. Should a more detailed geometry
-be required, the user may supply this in various formats as well as magnetic field
-maps.
+BDSIM provides a library of fairly generic magnet gemoetry styles that will cover
+most cases. Should a more detailed geometry be required, the user may supply
+this in various formats as well as magnetic field maps. Alternatively, if the user
+wishes to write their own Geant4 geometry for a particular component this can be
+integrated into BDSIM relatively easily.

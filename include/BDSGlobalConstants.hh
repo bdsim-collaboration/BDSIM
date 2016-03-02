@@ -200,10 +200,6 @@ public:
   G4int    GetEventNumberOffset() const;
   G4FieldManager* GetZeroFieldManager() const;
 
-  // AI : for placet synchronization
-  void     setWaitingForDump(G4bool flag);
-  G4bool   getWaitingForDump() const;
-
   /// This is the number of complete turns already completed. Starts at 0 and
   /// increments to 1 after 1 complete turn.
   G4int    GetTurnsTaken() const;
@@ -214,9 +210,6 @@ public:
 
   /// Get the number of complete turns that should be simulated.
   G4int    GetTurnsToTake() const;
-
-  G4AffineTransform GetDumpTransform() const;
-  void              SetDumpTransform(G4AffineTransform tf);
 
   G4double GetSMax() const;
   void     SetSMax(G4double);
@@ -377,8 +370,6 @@ private:
   
   G4String itsVacuumMaterial;         ///<vacuum inside beampipe
   G4String itsEmptyMaterial;          ///<empty material for e.g. marker volumes
-  G4bool   isWaitingForDump;
-  G4AffineTransform itsDumpTransform; ///<transform of frame from start to current dump element
   
   ///@{ Turn Control
   G4int    itsTurnsTaken;
@@ -738,18 +729,6 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
-
-inline void BDSGlobalConstants::setWaitingForDump(G4bool flag)
-{isWaitingForDump = flag;} // waiting before all tracks arrive at a dump element
-
-inline G4bool BDSGlobalConstants::getWaitingForDump() const 
-{return isWaitingForDump;}
-
-inline G4AffineTransform BDSGlobalConstants::GetDumpTransform() const
-{return itsDumpTransform;}
-
-inline void BDSGlobalConstants::SetDumpTransform(G4AffineTransform tf)
-{itsDumpTransform=tf;}
 
 inline G4int BDSGlobalConstants::GetTurnsTaken() const
 {return itsTurnsTaken;}

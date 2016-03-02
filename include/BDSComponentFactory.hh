@@ -64,7 +64,6 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element* nextElement;
   
-  BDSAcceleratorComponent* CreateDump();
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
