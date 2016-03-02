@@ -234,7 +234,7 @@ rbend
 ^^^^^
 
 .. figure:: figures/rbend.png
-	    :width: 45%
+	    :width: 30%
 	    :align: right
 
 
@@ -288,7 +288,7 @@ sbend
 ^^^^^
 
 .. figure:: figures/sbend.png
-	    :width: 45%
+	    :width: 30%
 	    :align: right
 	    
 
