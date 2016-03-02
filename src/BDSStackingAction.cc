@@ -77,13 +77,6 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
 	}
     }
 
-  if(BDSGlobalConstants::Instance()->getWaitingForDump()) // if waiting for placet synchronization
-    {
-       // when waiting to synchronize with placet - put on postponed stack
-      if( aTrack->GetTrackStatus()==fPostponeToNextEvent )
-	classification = fPostpone;
-     }
-  
   return classification;
 }
 

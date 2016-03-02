@@ -72,8 +72,6 @@ namespace GMAD {
     void add_sampler(std::string name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
     void add_csampler(std::string name, int count, ElementType type);
-    /// insert a beam dumper into beamline_list
-    void add_dump(std::string name, int count, ElementType type);
     /// insert region
     void add_region();
     /// insert cavity model
@@ -146,8 +144,6 @@ namespace GMAD {
     // Private methods *
     // *****************
     
-    /// Add element to beamline
-    void add_element(Element& e, std::string before, int count, ElementType type);
     /// Set sampler
     void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
     /// Add function to parser

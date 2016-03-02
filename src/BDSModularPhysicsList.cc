@@ -7,27 +7,33 @@
 #include "BDSParameterisationPhysics.hh"
 #include "BDSSynchRadPhysics.hh"
 
-#include "G4EmPenelopePhysics.hh"
-#include "G4OpticalPhysics.hh"
-#include "G4OpticalProcessIndex.hh"
-#include "G4ParticleTable.hh"
-#include "G4EmStandardPhysics.hh"
+// physics processes / builders
 #include "G4DecayPhysics.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4Proton.hh"
-#include "G4AntiProton.hh"
-
-#include "G4ParticleTable.hh"
-#include "G4ProcessManager.hh"
-#include "G4ProcessVector.hh"
-
+#include "G4EmExtraPhysics.hh"
+#include "G4EmPenelopePhysics.hh"
+#include "G4EmStandardPhysics.hh"
+#include "G4HadronElasticPhysics.hh"
 #include "G4HadronPhysicsFTFP_BERT.hh"
 #include "G4HadronPhysicsFTFP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BERT.hh"
 #include "G4HadronPhysicsQGSP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
+#include "G4OpticalPhysics.hh"
+#include "G4OpticalProcessIndex.hh"
+
+// particles
+#include "G4Electron.hh"
+#include "G4Positron.hh"
+#include "G4Proton.hh"
+#include "G4AntiProton.hh"
+#include "G4LeptonConstructor.hh"
+
+// general geant4
+#include "globals.hh"
+#include "G4ParticleTable.hh"
+#include "G4ProcessManager.hh"
+#include "G4ProcessVector.hh"
 
 #include <iterator>
 #include <map>
@@ -53,21 +59,23 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetVerboseLevel(1);
   opticalPhysics  = nullptr;
 
-  physicsConstructors.insert(std::make_pair("cutsandlimits",&BDSModularPhysicsList::CutsAndLimits));
-  physicsConstructors.insert(std::make_pair("em",           &BDSModularPhysicsList::Em));
-  physicsConstructors.insert(std::make_pair("em_low",       &BDSModularPhysicsList::EmLow));
-  physicsConstructors.insert(std::make_pair("hadronic",     &BDSModularPhysicsList::QGSPBERT));
-  physicsConstructors.insert(std::make_pair("hadronichp",   &BDSModularPhysicsList::QGSPBERTHP));
-  physicsConstructors.insert(std::make_pair("synchrad",     &BDSModularPhysicsList::SynchRad));
-  physicsConstructors.insert(std::make_pair("muon",         &BDSModularPhysicsList::Muon));
-  physicsConstructors.insert(std::make_pair("optical",      &BDSModularPhysicsList::Optical));
-  physicsConstructors.insert(std::make_pair("decay",        &BDSModularPhysicsList::Decay));
-  physicsConstructors.insert(std::make_pair("qgsp_bert",    &BDSModularPhysicsList::QGSPBERT));
-  physicsConstructors.insert(std::make_pair("qgsp_bert_hp", &BDSModularPhysicsList::QGSPBERTHP));
-  physicsConstructors.insert(std::make_pair("qgsp_bic",     &BDSModularPhysicsList::QGSPBIC));
-  physicsConstructors.insert(std::make_pair("qgsp_bic_hp",  &BDSModularPhysicsList::QGSPBICHP));
-  physicsConstructors.insert(std::make_pair("ftfp_bert",    &BDSModularPhysicsList::FTFPBERT));
-  physicsConstructors.insert(std::make_pair("ftfp_bert_hp", &BDSModularPhysicsList::FTFPBERTHP));
+  physicsConstructors.insert(std::make_pair("cutsandlimits",    &BDSModularPhysicsList::CutsAndLimits));
+  physicsConstructors.insert(std::make_pair("em",               &BDSModularPhysicsList::Em));
+  physicsConstructors.insert(std::make_pair("em_extra",         &BDSModularPhysicsList::EmExtra));
+  physicsConstructors.insert(std::make_pair("em_low",           &BDSModularPhysicsList::EmLow));
+  physicsConstructors.insert(std::make_pair("hadronic_elastic", &BDSModularPhysicsList::HadronicElastic));
+  physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
+  physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
+  physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
+  physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
+  physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
+  physicsConstructors.insert(std::make_pair("decay",            &BDSModularPhysicsList::Decay));
+  physicsConstructors.insert(std::make_pair("qgsp_bert",        &BDSModularPhysicsList::QGSPBERT));
+  physicsConstructors.insert(std::make_pair("qgsp_bert_hp",     &BDSModularPhysicsList::QGSPBERTHP));
+  physicsConstructors.insert(std::make_pair("qgsp_bic",         &BDSModularPhysicsList::QGSPBIC));
+  physicsConstructors.insert(std::make_pair("qgsp_bic_hp",      &BDSModularPhysicsList::QGSPBICHP));
+  physicsConstructors.insert(std::make_pair("ftfp_bert",        &BDSModularPhysicsList::FTFPBERT));
+  physicsConstructors.insert(std::make_pair("ftfp_bert_hp",     &BDSModularPhysicsList::FTFPBERTHP));
 
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
@@ -86,13 +94,6 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 
 #ifdef BDSDEBUG
   Print();
-  
-  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
-  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
-  
-  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
-  for (G4int i = 0; i < pl->length(); i++)
-    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 #endif
 }
 
@@ -108,11 +109,31 @@ void BDSModularPhysicsList::Print()
     }
 }
 
+void BDSModularPhysicsList::PrintDefinedParticles() const
+{
+  G4cout << __METHOD_NAME__ << "Defined particles: " << G4endl;
+  auto it = G4ParticleTable::GetParticleTable()->GetIterator();
+  it->reset();
+  while ((*it)())
+  {G4cout <<  it->value()->GetParticleName() << " ";}
+  G4cout << G4endl;
+}
+
+void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
+{
+  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
+  G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
+  
+  auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
+  for (G4int i = 0; i < pl->length(); i++)
+    {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
+}
+
 //Parse the physicsList option
 void BDSModularPhysicsList::ParsePhysicsList()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "physics list string: \"" << physListName << "\"" << G4endl;
+  G4cout << __METHOD_NAME__ << "Physics list string: \"" << physListName << "\"" << G4endl;
 #endif
   std::stringstream ss(physListName);
   std::istream_iterator<std::string> begin(ss);
@@ -122,13 +143,11 @@ void BDSModularPhysicsList::ParsePhysicsList()
   for (auto name : vstrings)
     {
       G4String nameLower(name);
-      nameLower.toLower();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "Constructing \"" << nameLower << "\"" << G4endl;
-#endif
+      nameLower.toLower(); // case insensitive
       auto result = physicsConstructors.find(nameLower);
       if (result != physicsConstructors.end())
 	{
+	  G4cout << __METHOD_NAME__ << "Constructing \"" << result->first << "\"" << G4endl;
 	  auto mem = result->second;
 	  (this->*mem)(); // call the function pointer in this instance of the class
 	}
@@ -148,13 +167,18 @@ void BDSModularPhysicsList::ParsePhysicsList()
 void BDSModularPhysicsList::ConstructMinimumParticleSet()
 {
   if(verbose || debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
-  //Minimum required set of particles required for tracking
+    {G4cout << __METHOD_NAME__ << G4endl;}
   G4Gamma::Gamma();
   G4Electron::Electron();
   G4Positron::Positron();
   G4Proton::Proton();
   G4AntiProton::AntiProton();
+}
+
+void BDSModularPhysicsList::ConstructAllLeptons()
+{
+  G4LeptonConstructor leptons;
+  leptons.ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConfigurePhysics()
@@ -168,8 +192,9 @@ void BDSModularPhysicsList::ConfigurePhysics()
 void BDSModularPhysicsList::ConfigureOptical()
 {
   if(verbose || debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
-  if (!opticalPhysics) return;
+    {G4cout << __METHOD_NAME__ << G4endl;}
+  if (!opticalPhysics)
+    {return;}
   opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
   opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
   opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
@@ -262,32 +287,49 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
 void BDSModularPhysicsList::Em()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if (!physicsActivated["em"])
     {
       constructors.push_back(new G4EmStandardPhysics());
       physicsActivated["em"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics
-}							  
+}
+
+void BDSModularPhysicsList::EmExtra()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["em_extra"])
+    {
+      constructors.push_back(new G4EmExtraPhysics());
+      physicsActivated["em_extra"] = true;
+    }
+  ParameterisationPhysics(); // requires parameterisation physics
+}
 							  
 void BDSModularPhysicsList::EmLow()
 {
-  if(verbose || debug)
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if (!physicsActivated["em_low"])
     {
       constructors.push_back(new G4EmPenelopePhysics());
       physicsActivated["em_low"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics
-}							  
+}
+
+void BDSModularPhysicsList::HadronicElastic()
+{
+  ConstructAllLeptons();
+  if (!physicsActivated["hadronicelastic"])
+    {
+      constructors.push_back(new G4HadronElasticPhysics());
+      physicsActivated["hadronicelastic"];
+    }
+}
 							  
 void BDSModularPhysicsList::ParameterisationPhysics()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if (!physicsActivated["parameterisation"])
     {
       constructors.push_back(new BDSParameterisationPhysics());
@@ -296,9 +338,7 @@ void BDSModularPhysicsList::ParameterisationPhysics()
 }							  
 							  
 void BDSModularPhysicsList::SynchRad()
-{		    
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+{
   if(!physicsActivated["synchrad"])
     {
       constructors.push_back(new BDSSynchRadPhysics());
@@ -310,8 +350,6 @@ void BDSModularPhysicsList::SynchRad()
 							  
 void BDSModularPhysicsList::Muon()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["muon"])
     {
       constructors.push_back(new BDSMuonPhysics());
@@ -321,8 +359,6 @@ void BDSModularPhysicsList::Muon()
 							  
 void BDSModularPhysicsList::Optical()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["optical"])
     {
       opticalPhysics = new G4OpticalPhysics();		  
@@ -333,8 +369,6 @@ void BDSModularPhysicsList::Optical()
 							  
 void BDSModularPhysicsList::Decay()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["decay"])
     {
       constructors.push_back(new G4DecayPhysics());
@@ -344,8 +378,6 @@ void BDSModularPhysicsList::Decay()
 
 void BDSModularPhysicsList::CutsAndLimits()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
   if(!physicsActivated["cutsandlimits"])
     {
       constructors.push_back(new BDSCutsAndLimits());
@@ -355,8 +387,7 @@ void BDSModularPhysicsList::CutsAndLimits()
 
 void BDSModularPhysicsList::QGSPBERT()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if(!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
@@ -366,19 +397,17 @@ void BDSModularPhysicsList::QGSPBERT()
 
 void BDSModularPhysicsList::QGSPBERTHP()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if(!physicsActivated["qgsp_bert_hp"])
     {
-      constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
+  constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
       physicsActivated["qgsp_bert_hp"] = true;
     }
 }
 
 void BDSModularPhysicsList::QGSPBIC()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if(!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
@@ -388,8 +417,7 @@ void BDSModularPhysicsList::QGSPBIC()
 
 void BDSModularPhysicsList::QGSPBICHP()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if(!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
@@ -399,8 +427,7 @@ void BDSModularPhysicsList::QGSPBICHP()
 
 void BDSModularPhysicsList::FTFPBERT()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -410,8 +437,7 @@ void BDSModularPhysicsList::FTFPBERT()
 
 void BDSModularPhysicsList::FTFPBERTHP()
 {
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
+  ConstructAllLeptons();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());

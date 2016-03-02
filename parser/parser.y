@@ -62,7 +62,7 @@
 %token <ival> VKICK HKICK
 %token <ival> MATERIAL ATOM
 %token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
-%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr
@@ -696,16 +696,6 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		element_count = -1;
 		Parser::Instance()->ClearParams();
 	      }
-          }
-        | DUMP ',' sample_options //  options for beam dump
-          {
-            if(execute)
-              {
-                if(ECHO_GRAMMAR) printf("command -> DUMP\n");
-                Parser::Instance()->add_dump(*($3), element_count, element_type);
-                element_count = -1;
-                Parser::Instance()->ClearParams();
-              }
           }
         | TUNNEL ',' tunnel_options // tunnel
           {

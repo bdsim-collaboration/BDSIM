@@ -7,7 +7,6 @@
 #include "BDSCollimatorRectangular.hh"
 #include "BDSDegrader.hh"
 #include "BDSDrift.hh"
-#include "BDSDump.hh"
 #include "BDSElement.hh"
 #include "BDSKicker.hh"
 #include "BDSLaserWire.hh"
@@ -149,8 +148,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   else if (element->type == ElementType::_SBEND)
     {
-      angleIn = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+      angleIn = element->e1;
+      angleOut = element->e2;
 
       if (nextElement && (nextElement->type == ElementType::_SBEND))
         {
@@ -166,7 +165,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
-  if (element->type != ElementType::_DUMP && registered && willNotModify)
+  if (registered && willNotModify)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -203,8 +202,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateMultipole(); break;
   case ElementType::_ELEMENT:    
     component = CreateElement(); break;
-  case ElementType::_DUMP:
-    component = CreateDump(); break; 
   case ElementType::_SOLENOID:
     component = CreateSolenoid(); break; 
   case ElementType::_ECOL:
@@ -255,12 +252,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   
   return component;
-}
-
-BDSAcceleratorComponent* BDSComponentFactory::CreateDump()
-{
-  return (new BDSDump( element->name,
-		       BDSGlobalConstants::Instance()->GetSamplerLength()));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
@@ -414,13 +405,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
   // Calculate number of sbends to split parent into
-  G4int nSbends = CalculateNSBendSegments(element);
+  G4int nSBends = CalculateNSBendSegments(element);
 
   //Zero angle bend only needs one element.
   std::string thename = element->name + "_1_of_1";
 
-  // Single element for zero bend angle or dontSplitSBends=1, therefore nsbends = 1
-  if ((!BDS::IsFinite(element->angle)) || (nSbends == 1)){
+  // Single element for zero bend angle or dontSplitSBends=1, therefore nSBends = 1
+  if ((!BDS::IsFinite(element->angle)) || (nSBends == 1)){
     return (new BDSSectorBend(thename,
                             length,
                             element->angle,
@@ -433,13 +424,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   }
   else  //Otherwise, create line of sbend segments
   {
-    BDSLine* sbendline = CreateSBendLine(element, nSbends, bField, bPrime);
+    BDSLine* sbendline = CreateSBendLine(element, nSBends, bField, bPrime);
     return sbendline;
   }
 }
 
 BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
-                            G4int nSbends,
+                            G4int nSBends,
                             G4double bField,
                             G4double bPrime)
 {
@@ -447,10 +438,10 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
 
   G4double length = element->l*CLHEP::m;
   // prepare one name for all that makes sense
-  std::string thename = element->name + "_1_of_" + std::to_string(nSbends);
+  std::string thename = element->name + "_1_of_" + std::to_string(nSBends);
   //calculate their angles and length
-  G4double semiangle  = element->angle / (G4double) nSbends;
-  G4double semilength = length / (G4double) nSbends;
+  G4double semiangle  = element->angle / (G4double) nSBends;
+  G4double semilength = length / (G4double) nSBends;
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
@@ -459,31 +450,31 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
 
   CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
 
-  G4double deltastart = -element->e1/(0.5*(nSbends-1));
-  G4double deltaend   = -element->e2/(0.5*(nSbends-1));
+  G4double deltastart = -element->e1/(0.5*(nSBends-1));
+  G4double deltaend   = -element->e2/(0.5*(nSBends-1));
 
-  for (int i = 0; i < nSbends; ++i)
+  for (int i = 0; i < nSBends; ++i)
     {
-      thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSbends);
+      thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
 
       // Default angles for all segments
       angleIn = -semiangle*0.5;
       angleOut = -semiangle*0.5;
 
       // Input and output angles added to or subtracted from the default as appropriate
-      // Note: case of i == 0.5*(nsbends-1) is just the default central wedge.
+      // Note: case of i == 0.5*(nSBends-1) is just the default central wedge.
       // More detailed methodology/reasons in developer manual
       if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
         {
-          if (i < 0.5*(nSbends-1))
+          if (i < 0.5*(nSBends-1))
             {
               angleIn -= (element->e1 + (i*deltastart));
-              angleOut -= ((0.5*(nSbends-3)-i)*deltastart);
+              angleOut -= ((0.5*(nSBends-3)-i)*deltastart);
             }
-          else if (i > 0.5*(nSbends-1))
+          else if (i > 0.5*(nSBends-1))
             {
-              angleIn  +=  (0.5*(nSbends+1)-i)*deltaend;
-              angleOut += -(0.5*(nSbends-1)-i)*deltaend;
+              angleIn  +=  (0.5*(nSBends+1)-i)*deltaend;
+              angleOut += -(0.5*(nSBends-1)-i)*deltaend;
             }
         }
       // Check for intersection of angled faces.
