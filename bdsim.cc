@@ -229,7 +229,10 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG
   auto physics = runManager->GetUserPhysicsList();
   if (const BDSModularPhysicsList* modPhysics = dynamic_cast<const BDSModularPhysicsList*>(physics))
-    {modPhysics->PrintPrimaryParticleProcesses();}
+    {
+      modPhysics->PrintPrimaryParticleProcesses();
+      modPhysics->PrintDefinedParticles();
+    }
 #endif
 
   /// Set verbosity levels
@@ -240,10 +243,11 @@ int main(int argc,char** argv)
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
-  if(!bCloseGeometry) { 
-    G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
-    return 1;
-  }
+  if(!bCloseGeometry)
+    { 
+      G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
+      return 1;
+    }
 
   if (execOptions->ExportGeometry())
     {

@@ -24,15 +24,11 @@
 
 // particles
 #include "G4Electron.hh"
+#include "G4OpticalPhoton.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
 #include "G4AntiProton.hh"
-#include "G4NeutrinoMu.hh"
-#include "G4AntiNeutrinoMu.hh"
-#include "G4NeutrinoTau.hh"
-#include "G4AntiNeutrinoTau.hh"
-#include "G4NeutrinoE.hh"
-#include "G4AntiNeutrinoE.hh"
+#include "G4LeptonConstructor.hh"
 
 // general geant4
 #include "globals.hh"
@@ -114,6 +110,16 @@ void BDSModularPhysicsList::Print()
     }
 }
 
+void BDSModularPhysicsList::PrintDefinedParticles() const
+{
+  G4cout << __METHOD_NAME__ << "Defined particles: " << G4endl;
+  auto it = G4ParticleTable::GetParticleTable()->GetIterator();
+  it->reset();
+  while ((*it)())
+  {G4cout <<  it->value()->GetParticleName() << " ";}
+  G4cout << G4endl;
+}
+
 void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 {
   auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
@@ -128,7 +134,7 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 void BDSModularPhysicsList::ParsePhysicsList()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "physics list string: \"" << physListName << "\"" << G4endl;
+  G4cout << __METHOD_NAME__ << "Physics list string: \"" << physListName << "\"" << G4endl;
 #endif
   std::stringstream ss(physListName);
   std::istream_iterator<std::string> begin(ss);
@@ -170,14 +176,10 @@ void BDSModularPhysicsList::ConstructMinimumParticleSet()
   G4AntiProton::AntiProton();
 }
 
-void BDSModularPhysicsList::ConstructNeutrinos()
+void BDSModularPhysicsList::ConstructAllLeptons()
 {
-  G4NeutrinoE::NeutrinoEDefinition();
-  G4AntiNeutrinoE::AntiNeutrinoEDefinition();
-  G4NeutrinoMu::NeutrinoMuDefinition();
-  G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();
-  G4NeutrinoTau::NeutrinoTauDefinition();
-  G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();
+  G4LeptonConstructor leptons;
+  leptons.ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConfigurePhysics()
@@ -286,46 +288,46 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
 void BDSModularPhysicsList::Em()
 {
+  ConstructAllLeptons();
   if (!physicsActivated["em"])
     {
       constructors.push_back(new G4EmStandardPhysics());
       physicsActivated["em"] = true;
     }
-  ConstructNeutrinos();
   ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::EmExtra()
 {
+  ConstructAllLeptons();
   Em(); // construct em phyiscs as well
   if (!physicsActivated["em_extra"])
     {
       constructors.push_back(new G4EmExtraPhysics());
       physicsActivated["em_extra"] = true;
     }
-  ConstructNeutrinos();
   ParameterisationPhysics(); // requires parameterisation physics
 }
 							  
 void BDSModularPhysicsList::EmLow()
 {
+  ConstructAllLeptons();
   if (!physicsActivated["em_low"])
     {
       constructors.push_back(new G4EmPenelopePhysics());
       physicsActivated["em_low"] = true;
     }
-  ConstructNeutrinos();
   ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::HadronicElastic()
 {
+  ConstructAllLeptons();
   if (!physicsActivated["hadronicelastic"])
     {
       constructors.push_back(new G4HadronElasticPhysics());
       physicsActivated["hadronicelastic"];
     }
-  ConstructNeutrinos();
 }
 							  
 void BDSModularPhysicsList::ParameterisationPhysics()
@@ -361,6 +363,7 @@ void BDSModularPhysicsList::Optical()
 {
   if(!physicsActivated["optical"])
     {
+      G4OpticalPhoton::OpticalPhotonDefinition();
       opticalPhysics = new G4OpticalPhysics();		  
       constructors.push_back(opticalPhysics);
       physicsActivated["optical"] = true;
@@ -387,26 +390,30 @@ void BDSModularPhysicsList::CutsAndLimits()
 
 void BDSModularPhysicsList::QGSPBERT()
 {
+  ConstructAllLeptons();
+  Em();
   if(!physicsActivated["qgsp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BERT());
       physicsActivated["qgsp_bert"] = true;
     }
-  ConstructNeutrinos();
 }
 
 void BDSModularPhysicsList::QGSPBERTHP()
 {
+  ConstructAllLeptons();
+  Em();
   if(!physicsActivated["qgsp_bert_hp"])
     {
-      constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
+  constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
       physicsActivated["qgsp_bert_hp"] = true;
     }
-  ConstructNeutrinos();
 }
 
 void BDSModularPhysicsList::QGSPBIC()
 {
+  ConstructAllLeptons();
+  Em();
   if(!physicsActivated["qgsp_bic"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC());
@@ -416,30 +423,33 @@ void BDSModularPhysicsList::QGSPBIC()
 
 void BDSModularPhysicsList::QGSPBICHP()
 {
+  ConstructAllLeptons();
+  Em();
   if(!physicsActivated["qgsp_bic_hp"])
     {
       constructors.push_back(new G4HadronPhysicsQGSP_BIC_HP());
       physicsActivated["qgsp_bic_hp"] = true;
     }
-  ConstructNeutrinos();
 }
 
 void BDSModularPhysicsList::FTFPBERT()
 {
+  ConstructAllLeptons();
+  Em();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
       physicsActivated["ftfp_bert"] = true;
     }
-  ConstructNeutrinos();
 }
 
 void BDSModularPhysicsList::FTFPBERTHP()
 {
+  ConstructAllLeptons();
+  Em();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
       physicsActivated["ftfp_bert_hp"] = true;
     }
-  ConstructNeutrinos();
 }

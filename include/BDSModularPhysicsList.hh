@@ -27,6 +27,10 @@ public:
   /// Print all the processes by name as registered to the primary particle type.
   /// Note, this should only be done after the physics lists are fully constructed.
   void PrintPrimaryParticleProcesses() const;
+
+  /// Print all constructed particle names. Note, this should only be done after the
+  /// physics lists are fully constructed.
+  void PrintDefinedParticles() const;
   
   virtual void SetCuts();
 
@@ -59,7 +63,7 @@ private:
   /// Neutrinos are not constructed by defualt in many (most) physics lists
   /// yet this results in crashes when they're produced but not defined by
   /// physics processes, so purposively define for ones where it's a problem.
-  void ConstructNeutrinos();
+  void ConstructAllLeptons();
   
   G4OpticalPhysics* opticalPhysics;
   std::vector<G4VPhysicsConstructor*> constructors;
