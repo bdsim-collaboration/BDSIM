@@ -233,20 +233,9 @@ Examples::
 rbend
 ^^^^^
 
-.. |rbend| image:: figures/rbend.png
-			     :width: 45%
-
-.. |rbend_poleface| image:: figures/poleface_notation_rbend.pdf
-			     :width: 75%
-
-+-+-+-----------------------+---------------------------------+
-| | | Example Rbend Magnet  |  Notation for Poleface Rotation |
-| | |        |rbend|        |         |rbend_poleface|        |
-+-+-+-----------------------+---------------------------------+
-
-.. raw:: latex
-
-    \newpage
+.. figure:: figures/rbend.png
+	    :width: 45%
+	    :align: right
 
 
 `rbend` defines a rectangular bend magnet. Either the total bending angle, `angle`
@@ -276,7 +265,11 @@ parameter         description                  default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
-.. note:: The poleface rotation angle is limited to +/- pi/4 radians.
+.. figure:: figures/poleface_notation_rbend.pdf
+	    :width: 75%
+	    :align: center
+
+.. note:: The poleface rotation angle is limited to :math:`\pm \pi/4` radians.
 
 .. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
 	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
@@ -294,21 +287,10 @@ Examples::
 sbend
 ^^^^^
 
-.. |sbend| image:: figures/sbend.png
-			     :width: 45%
-
-.. |sbend_poleface| image:: figures/poleface_notation_sbend.pdf
-			     :width: 75%
-
-+-+-+-----------------------+---------------------------------+
-| | | Example Sbend Magnet  |  Notation for Poleface Rotation |
-| | |        |sbend|        |         |sbend_poleface|        |
-+-+-+-----------------------+---------------------------------+
-
-.. raw:: latex
-
-    \newpage
-
+.. figure:: figures/sbend.png
+	    :width: 45%
+	    :align: right
+	    
 
 `sbend` defines a sector bend magnet. Either the total bending angle, `angle`
 for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
@@ -336,7 +318,11 @@ parameter         description                  default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
-.. note:: The poleface rotation angle is limited to +/- pi/4 radians.
+.. figure:: figures/poleface_notation_sbend.pdf
+	    :width: 75%
+	    :align: center
+
+.. note:: The poleface rotation angle is limited to :math:`\pm pi/4` radians.
 
 .. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
 	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
@@ -357,7 +343,7 @@ quadrupole
 	    :width: 30%
 	    :align: right
 
-`quadrupole` defines a quadrupole magnet. The strength parameter `k1` is defined as
+`quadrupole` defines a quadrupole magnet. The strength parameter :math:`k1` is defined as
 :math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
 
 ================  ===========================  ==========  ===========
@@ -383,7 +369,7 @@ sextupole
 	    :width: 30%
 	    :align: right
 
-`sextupole` defines a sextupole magnet. The strength parameter `k2` is defined as
+`sextupole` defines a sextupole magnet. The strength parameter :math:`k2` is defined as
 :math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
 
 ================  ===========================  ==========  ===========
@@ -409,7 +395,7 @@ octupole
 	    :width: 30%
 	    :align: right
 
-`octupole` defines an octupole magnet. The strength parameter `k3` is defined as
+`octupole` defines an octupole magnet. The strength parameter :math:`k3` is defined as
 :math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
 
 ================  ===========================  ==========  ===========
@@ -432,7 +418,7 @@ decapole
 
 .. TODO: add picture
 
-`decapole` defines a decapole magnet. The strength parameter `k4` is defined as
+`decapole` defines a decapole magnet. The strength parameter :math:`k4` is defined as
 :math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
 
 ================  ===========================  ==========  ===========
@@ -456,10 +442,10 @@ multipole
 .. TODO: add picture
 
 `multipole` defines a general multipole magnet. The strength parameter
-`knl` is a list defined as
+:math:`knl` is a list defined as
 :math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
 starting with the quadrupole component.
-The skew strength parameter `ksl` is a list representing the skew coefficients.  
+The skew strength parameter :math:`ksl` is a list representing the skew coefficients.  
    
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -584,10 +570,10 @@ degrader
 ^^^^^^^^
 
 .. figure:: figures/degrader.png
-        :width: 40%
+        :width: 70%
         :align: right
 
-`degrader` defines an interleaved pyramidal degrader which decreases the beam's energy.
+`degrader` defines an interleaved pyramidal degrader that decreases the beam's energy.
 
 ===================    =======================================  ==========  ===========
 parameter              description                              default     required
@@ -601,18 +587,19 @@ parameter              description                              default     requ
 `outerDiameter`        outer full width [m]                     global      no
 ===================    =======================================  ==========  ===========
 
-.. note:: ``*`` Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
-            position, and consequently the total material thickness the beam can propagate through. If both are
-            specified, `degraderOffset` will be ignored.
-
-            When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
-            When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
-            triangle.
+.. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
+          position, and consequently the total material thickness the beam can propagate through. If both are
+          specified, `degraderOffset` will be ignored.
+	  
+          When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
+          When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
+          triangle.
 
 Examples::
 
     DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
     DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
+
 
 muspoiler
 ^^^^^^^^^
