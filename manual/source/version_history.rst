@@ -5,9 +5,14 @@ New Features
 ------------
 
 * Samplers are attached at the *exit* instead of the *entrance* of an element
+* Poleface rotations for bends are implemented (issue #100)
+* Geant4 9.6.x versions support is dropped (issue #111)
+* Modular physics lists are default (issue #121)
 
 Geometry
 ^^^^^^^^
+
+* Samplers are no longer placed in the physical world but in a parallel sampler world
 
 Output
 ^^^^^^
@@ -30,6 +35,8 @@ Geometry
 Parser
 ^^^^^^
 
+* Fix fast list insertion (issue #113)
+* Support for tildes in path names (issue #119)
 
 V0.91 - 2015 / 12 / 17
 ======================
