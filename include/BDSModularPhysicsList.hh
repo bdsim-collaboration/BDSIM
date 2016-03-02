@@ -76,6 +76,7 @@ private:
   void ParameterisationPhysics();  
   void CutsAndLimits();
   void Em();
+  void EmExtra();
   void EmLow();
   void HadronicElastic();
   void Hadronic();

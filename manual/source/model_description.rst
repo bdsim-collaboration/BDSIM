@@ -1201,8 +1201,13 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 |                           | Transportation of primary particles only - no scattering in material.  |
 +---------------------------+------------------------------------------------------------------------+
-| em                        | Transportation of primary particles, ionization, bremsstrahlung,       |
+| em                        | Transportation of primary particles, ionisation, bremsstrahlung,       |
 |                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
++---------------------------+------------------------------------------------------------------------+
+| em_extra                  | This provides extra electromagnetic models including, muon nuclear     |
+|                           | processes, bertini electro-nuclear model and synchrotron radiation     |
+|                           | (not in material). Constructs `em` if not already included. Provided   |
+|                           | by `G4EmPhysicsExtra`.                                                 |
 +---------------------------+------------------------------------------------------------------------+
 | em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
 |                           | `G4EmPenelopePhysics`.                                                 |
@@ -1213,11 +1218,12 @@ Physics Lists In BDSIM
 |                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
 |                           | This uses `G4OpticalPhysics` class.                                    |
 +---------------------------+------------------------------------------------------------------------+
-| hadronicelastic           | Elastic hadronic processes. This is provided by G4HadronElasticPhysics.|
+| hadronic_elastic          | Elastic hadronic processes. This is provided by                        |
+|                           | `G4HadronElasticPhysics.`                                              |
 +---------------------------+------------------------------------------------------------------------+
 | hadronic                  | A shortcut for `QGSP_BERT`.                                            |
 +---------------------------+------------------------------------------------------------------------+
-| hadronichp                | A shortcut for `QGSP_BERT_HP`.                                         |
+| hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |

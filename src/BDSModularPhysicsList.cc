@@ -64,22 +64,23 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   SetVerboseLevel(1);
   opticalPhysics  = nullptr;
 
-  physicsConstructors.insert(std::make_pair("cutsandlimits",&BDSModularPhysicsList::CutsAndLimits));
-  physicsConstructors.insert(std::make_pair("em",           &BDSModularPhysicsList::Em));
-  physicsConstructors.insert(std::make_pair("em_low",       &BDSModularPhysicsList::EmLow));
-  physicsConstructors.insert(std::make_pair("hadronicelastic", &BDSModularPhysicsList::HadronicElastic));
-  physicsConstructors.insert(std::make_pair("hadronic",     &BDSModularPhysicsList::QGSPBERT));
-  physicsConstructors.insert(std::make_pair("hadronichp",   &BDSModularPhysicsList::QGSPBERTHP));
-  physicsConstructors.insert(std::make_pair("synchrad",     &BDSModularPhysicsList::SynchRad));
-  physicsConstructors.insert(std::make_pair("muon",         &BDSModularPhysicsList::Muon));
-  physicsConstructors.insert(std::make_pair("optical",      &BDSModularPhysicsList::Optical));
-  physicsConstructors.insert(std::make_pair("decay",        &BDSModularPhysicsList::Decay));
-  physicsConstructors.insert(std::make_pair("qgsp_bert",    &BDSModularPhysicsList::QGSPBERT));
-  physicsConstructors.insert(std::make_pair("qgsp_bert_hp", &BDSModularPhysicsList::QGSPBERTHP));
-  physicsConstructors.insert(std::make_pair("qgsp_bic",     &BDSModularPhysicsList::QGSPBIC));
-  physicsConstructors.insert(std::make_pair("qgsp_bic_hp",  &BDSModularPhysicsList::QGSPBICHP));
-  physicsConstructors.insert(std::make_pair("ftfp_bert",    &BDSModularPhysicsList::FTFPBERT));
-  physicsConstructors.insert(std::make_pair("ftfp_bert_hp", &BDSModularPhysicsList::FTFPBERTHP));
+  physicsConstructors.insert(std::make_pair("cutsandlimits",    &BDSModularPhysicsList::CutsAndLimits));
+  physicsConstructors.insert(std::make_pair("em",               &BDSModularPhysicsList::Em));
+  physicsConstructors.insert(std::make_pair("em_extra",         &BDSModularPhysicsList::EmExtra));
+  physicsConstructors.insert(std::make_pair("em_low",           &BDSModularPhysicsList::EmLow));
+  physicsConstructors.insert(std::make_pair("hadronic_elastic", &BDSModularPhysicsList::HadronicElastic));
+  physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
+  physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
+  physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
+  physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
+  physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
+  physicsConstructors.insert(std::make_pair("decay",            &BDSModularPhysicsList::Decay));
+  physicsConstructors.insert(std::make_pair("qgsp_bert",        &BDSModularPhysicsList::QGSPBERT));
+  physicsConstructors.insert(std::make_pair("qgsp_bert_hp",     &BDSModularPhysicsList::QGSPBERTHP));
+  physicsConstructors.insert(std::make_pair("qgsp_bic",         &BDSModularPhysicsList::QGSPBIC));
+  physicsConstructors.insert(std::make_pair("qgsp_bic_hp",      &BDSModularPhysicsList::QGSPBICHP));
+  physicsConstructors.insert(std::make_pair("ftfp_bert",        &BDSModularPhysicsList::FTFPBERT));
+  physicsConstructors.insert(std::make_pair("ftfp_bert_hp",     &BDSModularPhysicsList::FTFPBERTHP));
 
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
@@ -161,8 +162,7 @@ void BDSModularPhysicsList::ParsePhysicsList()
 void BDSModularPhysicsList::ConstructMinimumParticleSet()
 {
   if(verbose || debug) 
-    G4cout << __METHOD_NAME__ << G4endl;
-  //Minimum required set of particles required for tracking
+    {G4cout << __METHOD_NAME__ << G4endl;}
   G4Gamma::Gamma();
   G4Electron::Electron();
   G4Positron::Positron();
@@ -293,7 +293,19 @@ void BDSModularPhysicsList::Em()
     }
   ConstructNeutrinos();
   ParameterisationPhysics(); // requires parameterisation physics
-}							  
+}
+
+void BDSModularPhysicsList::EmExtra()
+{
+  Em(); // construct em phyiscs as well
+  if (!physicsActivated["em_extra"])
+    {
+      constructors.push_back(new G4EmExtraPhysics());
+      physicsActivated["em_extra"] = true;
+    }
+  ConstructNeutrinos();
+  ParameterisationPhysics(); // requires parameterisation physics
+}
 							  
 void BDSModularPhysicsList::EmLow()
 {
