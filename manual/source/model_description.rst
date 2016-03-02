@@ -278,11 +278,12 @@ parameter         description                  default     required
 
 .. note:: The poleface rotation angle is limited to +/- pi/4 radians.
 
-.. note:: If a non-zero poleface rotation angle is specified, the element preceding/succeeding
-      the rotated magnet face must either be a drift or an rbend with opposite rotation (eg an rbend with
-      e2=0.1 can be followed by an rbend with e1=-0.1). The preceding/succeeding element must be longer
-      than the projected length from the rotation, given by
-      :math:`2\times\tan{\left(~\lvert~\text{poleface_angle}~\rvert~\right)}`.
+.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+	  element must be longer than the projected length from the rotation, given by
+	  :math:`2 \tan(\mathrm{eX})`.
+	  
 
 Examples::
 
@@ -337,11 +338,11 @@ parameter         description                  default     required
 
 .. note:: The poleface rotation angle is limited to +/- pi/4 radians.
 
-.. note:: If a non-zero poleface rotation angle is specified, the element preceding/succeeding
-      the rotated magnet face must either be a drift or an rbend with opposite rotation (eg an sbend with
-      e2=0.1 can be followed by an sbend with e1=-0.1). The preceding/succeeding element must be longer
-      than the projected length from the rotation, given by
-      :math:`2\times\tan{\left(~\lvert~\text{poleface_angle}~\rvert~\right)}`.
+.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+	  element must be longer than the projected length from the rotation, given by
+	  :math:`2 \tan(\mathrm{eX})`.
 
 Examples::
 
