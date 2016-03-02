@@ -7,7 +7,7 @@
    Removed StringFromInt function - using BDSGlobalConstants::Instance() version
    Added/Changed Sampler code for Plane Sampler or Cylinder Sampler (GABs Code)
 */
-#define BDSDEBUG 1
+
 
 //======================================================
 //======================================================
