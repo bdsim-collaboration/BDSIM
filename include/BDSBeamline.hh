@@ -59,7 +59,9 @@ public:
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   /// Returns vector of components added
   std::vector<BDSBeamlineElement*> AddComponent(BDSAcceleratorComponent* component,
-						BDSTiltOffset* tiltOffset = nullptr);
+						BDSTiltOffset* tiltOffset  = nullptr,
+						BDSSamplerType samplerType = BDSSamplerType::none,
+						G4String       samplerNameIn = "");
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component
@@ -114,7 +116,7 @@ public:
 					    G4double x = 0,
 					    G4double y = 0);
 
-  ///@{ iterator mechanics
+  ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
   iterator       begin()       {return beamline.begin();}
@@ -141,7 +143,10 @@ private:
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
   /// Returns pointer to component added
-  BDSBeamlineElement* AddSingleComponent(BDSAcceleratorComponent* component, BDSTiltOffset* tiltOffset = nullptr);
+  BDSBeamlineElement* AddSingleComponent(BDSAcceleratorComponent* component,
+					 BDSTiltOffset* tiltOffset  = nullptr,
+					 BDSSamplerType samplerType = BDSSamplerType::none,
+					 G4String       samplerNameIn = "");
 
   /// Register the fully created element to a map of names vs element pointers. Used to
   /// look up transforms by name.

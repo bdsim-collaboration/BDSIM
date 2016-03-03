@@ -232,26 +232,27 @@ Examples::
 
 rbend
 ^^^^^
+
 .. figure:: figures/rbend.png
 	    :width: 30%
 	    :align: right
-	    :figclass: align-right
+
 
 `rbend` defines a rectangular bend magnet. Either the total bending angle, `angle`
 for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
 `B` overrides angle. The faces of the magnet are normal to the chord of the
-input and output point. Furthermore, an additional very small drift section is
-added on either side and the magnetic field up-scaled for the shorter field
-length to ensure that the magnet body fits inside the start and end faces
-of the element volume and doesn't protrude into the previous and next elements.
+input and output point. Pole face rotations can be applied to both the input
+and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  =====================  ==========  ===========
-parameter         description            default     required
-`l`               length [m]             0           yes
-`angle`           angle [rad]            0           yes, or `B`
-`B`               magnetic field [T]     0           yes
-`material`        magnet outer material  Iron        no
-================  =====================  ==========  ===========
+================  ===========================  ==========  ===========
+parameter         description                  default     required
+`l`               length [m]                   0           yes
+`angle`           angle [rad]                  0           yes, or `B`
+`B`               magnetic field [T]           0           yes
+`e1`              input poleface angle [rad]   0           no
+`e2`              output poleface angle [rad]  0           no
+`material`        magnet outer material        Iron        no
+================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -264,10 +265,24 @@ parameter         description            default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
+.. figure:: figures/poleface_notation_rbend.pdf
+	    :width: 75%
+	    :align: center
+
+.. note:: The poleface rotation angle is limited to :math:`\pm \pi/4` radians.
+
+.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+	  element must be longer than the projected length from the rotation, given by
+	  :math:`2 \tan(\mathrm{eX})`.
+	  
+
 Examples::
 
    MRB20: rbend, l=3*m, angle=0.003;
    r1: rbend, l=5.43m, beampipeRadius=10*cm, B=2*Tesla;
+   RB04: rbend, l=1.8*m, angle=0.05, e1=0.1, e2=-0.1
 
 sbend
 ^^^^^
@@ -275,23 +290,27 @@ sbend
 .. figure:: figures/sbend.png
 	    :width: 30%
 	    :align: right
+	    
 
 `sbend` defines a sector bend magnet. Either the total bending angle, `angle`
 for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
 `B` overrides angle. The faces of the magnet are normal to the curvilinear coordinate
 system. `sbend` magnets are made of a series of straight segments. If the specified
 (or calculated from `B` field) bending angle is large, the `sbend` is automatically
-split such that the maximum tangential error in the aperture is 1 mm. For an LHC for
-example with a bending angle of ~0.005rad and l = 14m, the magnet is typically split
-into 5 co-joined `sbend` magnets.
+split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
+typically split into several co-joined `sbend` magnets, the number depending on the magnet
+length and bending angle. Pole face rotations can be applied to both the input
+and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  =====================  ==========  ===========
-parameter         description            default     required
-`l`               length [m]             0           yes
-`angle`           angle [rad]            0           yes, or `B`
-`B`               magnetic field [T]     0           yes
-`material`        magnet outer material  Iron        no
-================  =====================  ==========  ===========
+================  ===========================  ==========  ===========
+parameter         description                  default     required
+`l`               length [m]                   0           yes
+`angle`           angle [rad]                  0           yes, or `B`
+`B`               magnetic field [T]           0           yes
+`e1`              input poleface angle [rad]   0           no
+`e2`              output poleface angle [rad]  0           no
+`material`        magnet outer material        Iron        no
+================  ===========================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -299,10 +318,23 @@ parameter         description            default     required
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
 
+.. figure:: figures/poleface_notation_sbend.pdf
+	    :width: 75%
+	    :align: center
+
+.. note:: The poleface rotation angle is limited to :math:`\pm pi/4` radians.
+
+.. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
+	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
+	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
+	  element must be longer than the projected length from the rotation, given by
+	  :math:`2 \tan(\mathrm{eX})`.
+
 Examples::
 
    s1: sbend, l=14.5*m, angle=0.005, magnetGeometryType="lhcright";
    mb201x: sbend, l=304.2*cm, b=1.5*Tesla;
+   SB17A: sbend, l=0.61*m, angle=0.016, e1=-0.05, e2=0.09
 
 quadrupole
 ^^^^^^^^^^
@@ -311,7 +343,7 @@ quadrupole
 	    :width: 30%
 	    :align: right
 
-`quadrupole` defines a quadrupole magnet. The strength parameter `k1` is defined as
+`quadrupole` defines a quadrupole magnet. The strength parameter :math:`k1` is defined as
 :math:`k1 = 1/(B \rho)~dB_{y}~/~dx~[m^{-2}]`.
 
 ================  ===========================  ==========  ===========
@@ -337,7 +369,7 @@ sextupole
 	    :width: 30%
 	    :align: right
 
-`sextupole` defines a sextupole magnet. The strength parameter `k2` is defined as
+`sextupole` defines a sextupole magnet. The strength parameter :math:`k2` is defined as
 :math:`k2 = 1/(B \rho)~dB^{2}_{y}~/~dx^{2}~[m^{-3}]`.
 
 ================  ===========================  ==========  ===========
@@ -363,7 +395,7 @@ octupole
 	    :width: 30%
 	    :align: right
 
-`octupole` defines an octupole magnet. The strength parameter `k3` is defined as
+`octupole` defines an octupole magnet. The strength parameter :math:`k3` is defined as
 :math:`k3 = 1/(B \rho)~dB^{3}_{y}~/~dx^{3}~[m^{-4}]`.
 
 ================  ===========================  ==========  ===========
@@ -386,7 +418,7 @@ decapole
 
 .. TODO: add picture
 
-`decapole` defines a decapole magnet. The strength parameter `k4` is defined as
+`decapole` defines a decapole magnet. The strength parameter :math:`k4` is defined as
 :math:`k4 = 1/(B \rho)~dB^{4}_{y}~/~dx^{4}~[m^{-5}]`.
 
 ================  ===========================  ==========  ===========
@@ -410,10 +442,10 @@ multipole
 .. TODO: add picture
 
 `multipole` defines a general multipole magnet. The strength parameter
-`knl` is a list defined as
+:math:`knl` is a list defined as
 :math:`knl[n] = 1/(B \rho)~dB^{n}_{y}~/~dx^{n}~[m^{-(n+1)}]`
 starting with the quadrupole component.
-The skew strength parameter `ksl` is a list representing the skew coefficients.  
+The skew strength parameter :math:`ksl` is a list representing the skew coefficients.  
    
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
@@ -538,10 +570,10 @@ degrader
 ^^^^^^^^
 
 .. figure:: figures/degrader.png
-        :width: 40%
+        :width: 70%
         :align: right
 
-`degrader` defines an interleaved pyramidal degrader which decreases the beam's energy.
+`degrader` defines an interleaved pyramidal degrader that decreases the beam's energy.
 
 ===================    =======================================  ==========  ===========
 parameter              description                              default     required
@@ -555,18 +587,19 @@ parameter              description                              default     requ
 `outerDiameter`        outer full width [m]                     global      no
 ===================    =======================================  ==========  ===========
 
-.. note:: ``*`` Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
-            position, and consequently the total material thickness the beam can propagate through. If both are
-            specified, `degraderOffset` will be ignored.
-
-            When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
-            When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
-            triangle.
+.. note:: Either `materialThickness` or `degraderOffset` can be specified to adjust the horizontal lateral wedge
+          position, and consequently the total material thickness the beam can propagate through. If both are
+          specified, `degraderOffset` will be ignored.
+	  
+          When numberWedges is specified to be n, the degrader will consist of n-1 `full` wedges and two `half` wedges.
+          When viewed from above, a `full` wedge appears as an isosceles triangle, and a `half` wedge appears as a right-angled
+          triangle.
 
 Examples::
 
     DEG1: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, materialThickness=200*mm;
     DEG2: degrader, l=0.25*m, material="carbon", numberWedges=5, wedgeLength=100*mm, degraderHeight=100*mm, degraderOffset=50*mm,
+
 
 muspoiler
 ^^^^^^^^^
@@ -1023,7 +1056,7 @@ Lattice Sequence
 ----------------
 
 Once all the necessary components have been defined, they must be placed in a sequence to make
-a lattice. Elements can be repeated [#doublesamplernote]_. A sequence of elements is defined by
+a lattice. Elements can be repeated. A sequence of elements is defined by
 a `line`_. Lines of lines can be made to describe the accelerator sequence programmatically i.e.
 ::
 
@@ -1074,7 +1107,7 @@ Samplers - Output
 Normally, the only output BDSIM would produce is the various particle loss histograms,
 as well as the coordinates of energy deposition hits. To observe the particles at a
 point in the beam lattice a `sampler` can be used. Samplers are attached to an already
-defined element and record all the particles passing through a plane at the *entrance*
+defined element and record all the particles passing through a plane at the *exit*
 to that element. They are defined using the following syntax::
 
   sample, range=<element_name>;
@@ -1082,8 +1115,8 @@ to that element. They are defined using the following syntax::
 where `element_name` is the name of the element you wish to sample. Depending on the
 output format chosen, the element name may be recorded in the output (ROOT output only).
 
-To place a sampler after an item, attach it to the next item. If however, you wish
-to record the coordinates at the end of the line or with another name, you must define
+To place a sampler before an item, attach it to the previous item. If however, you wish
+to record the coordinates with another name, you must define
 a marker, place it in the sequence and then define a sampler that uses that marker::
 
   d1: drift, l=2.4*m;
@@ -1102,7 +1135,7 @@ To attach samplers to all elements (except the first one)::
 
   sample, all;
 
-And to attach samplers before all elements of a specific type::
+And to attach samplers after all elements of a specific type::
 
   sample, <type>;
 
@@ -1114,84 +1147,107 @@ e.g.::
 	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
 	  so will result in an error and BDSIM will exit.
 
-.. warning:: A sampler attached to the first item (therefore at the beginning of the beamline)
-	     may not record all primary particles. This is due to the bunch distribution having
-	     a finite length in z and some of the particles (typically half) start in front of
-	     the sampler. This is not an error, but as expected. It is best not to put a sampler
-	     on the first element, but to use the recorded primary coordinates in the output.
-	  
-
-Physics Lists
--------------
+Physics Processes
+-----------------
 
 BDSIM can exploit all the physics processes that come with Geant4. As with any Geant4 program
 and simulation it is very useful to define the physical processes that should be simulated so
 that the simulation is both relevant and efficient. Rather than specify each individual process
 for every individual particle, a series of "physics lists" are provided that are a predetermined
-set of physics process suitable for a certain application. BDSIM follows the Geant4 ethos in this
+set of physics process suitable for a certain applications. BDSIM follows the Geant4 ethos in this
 regard.
 
-The physics list can be selected with the following syntax::
+Note, using extra physics processes that are not required will slow the simulation and produce
+many orders of magnitude more particles, which in turn slow the simulation further. Therefore,
+only use the minimal set of physics processes required.
 
-  option, physicsList="physicslistname";
+The physics list can be selected with the following syntax (delimited by a space)::
 
-.. note:: Some physics lists allow biasing and re-weighting for some processes to further improve
-	  simulation efficiency. (See `options`_ for more details).
+  option, physicsList="physicslistname anotherphysicslistname";
+
+  option, physicsList="em optical";
+
+.. note:: The strings for the physics list are case-insensitive.
+
+.. versionadded:: 0.92
+
+   Note, the physics lists changed from BDSIM produced physics lists to using the Geant4
+   modular physics lists in version 0.92. This also introduced the space-delimited syntax
+   slight changes to the physics list names.
+
+  
+A summary of the available physics lists in BDSIM is provided below (Others can be easily added
+by contacting the developers - see :ref:`feature-request`).
+
+More details can be found in the Geant4 documentation:
 
 Physics Lists In BDSIM
 ^^^^^^^^^^^^^^^^^^^^^^
 
+   * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
+   * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
+
+
 .. table check in latex before commit
 .. tabularcolumns:: |p{5cm}|p{10cm}|
-		    
-============================  ============================================================
-standard                      transportation of primary particles 
-                              only - no scattering in material.
-em_standard                   transportation of primary particles, 
-                              ionization, bremsstrahlung, 
-                              Cerenkov, multiple scattering.
-em_low                        the same as `em_standard` but using low 
-                              energy electromagnetic models.
-em_single_scatter             **TBC**.
-em_muon                       `em_standard` plus muon production 
-                              processes with biased muon 
-                              cross-sections.
-lw                            list for laser wire simulation - 
-                              `em_standard` and "laserwire" 
-                              physics, which is Compton Scattering 
-			      with total cross-section 
-			      renormalized to 1.
-merlin                        transportation of primary particles, and 
-                              the following processes 
-                              for electrons: multiple scattering, 
-			      ionisation, and bremsstrahlung.
-hadronic_standard             `em_standard` plus fission, neutron 
-                              capture, neutron and proton 
-                              elastic and inelastic scattering.
-hadronic_muon                 `hadronic_standard` plus muon production 
-                              processes with biased muon 
-                              cross-sections.
-hadronic_QGSP_BERT            `em_standard` plus hadronic physics 
-                              using the quark gluon string 
-                              plasma (QGSP) model and the Bertini 
-			      cascade model (BERT).
-hadronic_QGSP_BERT_muon       `hadronic_QGSP_BERT` plus muon 
-                              production processes with biased muon 
-                              cross-sections.
-hadronic_FTFP_BERT            `em_standard` plus hadronic physics 
-                              using the Fritiof model followed 
-                              by Reggion cascade and Precompound and 
-			      evaporation models for the 
-			      nucleus de-excitation (FTFP) model and 
-			      the Bertini cascade model 
-			      (BERT).
-hadronic_FTFP_BERT_muon       `hadronic_FTFP_BERT` plus muon 
-                              production processes with biased muon 
-                              cross-sections.
-hadronic_QGSP_BERT_HP_muon    `hadronic_QGSP_BERT_muon` plus high 
-                              precision low energy neutron 
-                              scattering models.
-============================  ============================================================
+
++---------------------------+------------------------------------------------------------------------+
+| **String to use**         | **Description**                                                        |
++---------------------------+------------------------------------------------------------------------+
+|                           | Transportation of primary particles only - no scattering in material.  |
++---------------------------+------------------------------------------------------------------------+
+| em                        | Transportation of primary particles, ionisation, bremsstrahlung,       |
+|                           | Cerenkov, multiple scattering. Uses `G4EmStandardPhysics`.             |
++---------------------------+------------------------------------------------------------------------+
+| em_extra                  | This provides extra electromagnetic models including, muon nuclear     |
+|                           | processes, bertini electro-nuclear model and synchrotron radiation     |
+|                           | (not in material). Provided by `G4EmPhysicsExtra`.                     |
++---------------------------+------------------------------------------------------------------------+
+| em_low                    | The same as `em` but using low energy electromagnetic models. Uses     |
+|                           | `G4EmPenelopePhysics`.                                                 |
++---------------------------+------------------------------------------------------------------------+
+| synchrad                  | BDSIM synchrotron radiation process.                                   |
++---------------------------+------------------------------------------------------------------------+
+| optical                   | Optical physics processes including absorption, Rayleigh scattering,   |
+|                           | Mie scattering, optical boundary processes, scintillation, cherenkov.  |
+|                           | This uses `G4OpticalPhysics` class.                                    |
++---------------------------+------------------------------------------------------------------------+
+| hadronic_elastic          | Elastic hadronic processes. This is provided by                        |
+|                           | `G4HadronElasticPhysics.`                                              |
++---------------------------+------------------------------------------------------------------------+
+| hadronic                  | A shortcut for `QGSP_BERT`.                                            |
++---------------------------+------------------------------------------------------------------------+
+| hadronic_hp               | A shortcut for `QGSP_BERT_HP`.                                         |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
+|                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
+|                           | hadronic elastic and inelastic processes. Suitable for high energy     |
+|                           | (>10 GeV). This includes and uses `G4EmStandardPhysics`.               |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
+|                           | precision neutron models to transport neutrons below 20 MeV down to    |
+|                           | thermal energies. This includes and uses `G4EmStandardPhysics`. This   |
+|                           | is provided by `G4HadronPhysicsQGSP_BERT_HP`.                          |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
+|                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
+|                           | model for protons and neutrons In comparison to the LEP model, Binary  |
+|                           | cascade better describes production of secondary particles produced in |
+|                           | interactions of protons and neutrons with nuclei. This is provided by  |
+|                           | `G4HadronPhysicsQGSP_BIC`.                                             |
++---------------------------+------------------------------------------------------------------------+
+| qgsp_bic_hp               | Similar to `QGSP_BIC` but with the high precision neutron package.     |
+|                           | This is provided by `G4HadronPhysicsQGSP_BIC_HP`.                      |
++---------------------------+------------------------------------------------------------------------+
+| ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
+|                           | is based on the FRITIOF description of string excitation and           |
+|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`.         |
++---------------------------+------------------------------------------------------------------------+
+| ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
+|                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
++---------------------------+------------------------------------------------------------------------+
+| decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
++---------------------------+------------------------------------------------------------------------+
 
 
 Options
@@ -1988,9 +2044,5 @@ can be set to the precision region by setting the attribute *precisionRegion* eq
 
 .. rubric:: Footnotes
 
-.. [#doublesamplernote] Note, if a sampler is attached to a beam line element and that element is
-			use more than once in a *line*, then output will only be from the first
-			occurrence of that element in the sequence. This will be addressed in future
-			releases.
 .. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
 		      The distinction is kept for clarity, and this might be changed in the future.

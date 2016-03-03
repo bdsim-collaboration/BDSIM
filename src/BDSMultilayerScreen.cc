@@ -10,7 +10,6 @@
 
 #include "BDSMultilayerScreen.hh"
 
-//============================================================
 BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
   _xysize(xysize), _name(name+"_MultilayerScreen")
 {

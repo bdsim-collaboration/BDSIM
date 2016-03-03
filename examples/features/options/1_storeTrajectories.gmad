@@ -11,7 +11,7 @@ option, storeTrajectories=1,
 	trajCutLTR=1e12;
 
 option, ngenerate=100,
-	physicsList="em_standard",
+	physicsList="em",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=5*cm,
 	outerDiameter=2.0*m,

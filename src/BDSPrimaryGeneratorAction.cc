@@ -16,12 +16,10 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 
 #ifdef BDSDEBUG
-  G4cout << "BDSPrimaryGeneratorAction.cc: Primary particle is " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
+  G4cout << __METHOD_NAME__ << "Primary particle is "
+	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetParticleName() << G4endl;
 #endif
   
-#ifdef BDSDEBUG
-  G4cout << "Setting momentum..." << G4endl;
-#endif
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   particleGun->SetParticlePosition(G4ThreeVector(0.*CLHEP::cm,0.*CLHEP::cm,0.*CLHEP::cm));
   particleGun->SetParticleEnergy(BDSGlobalConstants::Instance()->GetBeamKineticEnergy());

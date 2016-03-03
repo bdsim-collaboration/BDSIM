@@ -12,7 +12,11 @@
 class BDSScreenLayer 
 {
 public:
-  BDSScreenLayer(G4ThreeVector size, G4String name, G4String material, G4double grooveWidth, G4double grooveSpatialFrequency);
+  BDSScreenLayer(G4ThreeVector size,
+		 G4String name,
+		 G4String material,
+		 G4double grooveWidth,
+		 G4double grooveSpatialFrequency);
   ~BDSScreenLayer();
   inline G4LogicalVolume* log(){return _log;}
   inline G4String name(){return _name;}
@@ -22,7 +26,9 @@ public:
   void color(G4Color col);
   void backInternalMirror();
   void frontInternalMirror();
-  void sampler(); //make this plane a sampling plane
+
+  /// Make this plane a sampling plane.
+  void sampler(); 
 
 protected:
   BDSScreenLayer();
@@ -31,6 +37,9 @@ protected:
   G4LogicalVolume* _log;
   G4PVPlacement* _phys;
   G4VSolid* _solid;
+
+  /// Copy number for placement. Used if it's a sampler as an ID for output lookup.
+  G4int copyNumber;
 
 private:
   class InternalMirror{

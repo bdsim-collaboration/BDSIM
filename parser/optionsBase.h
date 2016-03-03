@@ -1,7 +1,3 @@
-//
-// Created by Stewart Boogert on 16/12/2015.
-//
-
 #ifndef __OPTIONSBASE_H
 #define __OPTIONSBASE_H
 
@@ -9,8 +5,14 @@
 #include <iostream>
 #include <string>
 
-namespace GMAD {
-
+namespace GMAD
+{
+/*
+ * @brief Basic options class independent of Geant4.
+ *
+ * @author Stewart Boogert.
+ */
+  
   class OptionsBase
   {
   public:

@@ -2,12 +2,17 @@
 
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSSamplerBase.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSTrajectory.hh"
 #include "BDSUtilities.hh"
-#include "BDSHistogram.hh"
+
+#include "globals.hh" // geant types / globals
 
 #include <string>
+#include <vector>
 
 BDSOutputROOTBase::BDSOutputROOTBase()
 {
@@ -88,7 +93,7 @@ void BDSOutputROOTBase::Init()
   // Build sampler trees and store in samplerTrees
   // clear (for the case of multiple output files)
   samplerTrees.clear();
-  samplerTrees.reserve(BDSSamplerBase::GetNSamplers()+1);
+  samplerTrees.reserve(BDSSamplerRegistry::Instance()->size());
   
   G4String primariesSamplerName="Primaries";
 #ifdef BDSDEBUG
@@ -97,18 +102,13 @@ void BDSOutputROOTBase::Init()
   TTree* sampler = BuildSamplerTree(primariesSamplerName);
   // primaries is the first
   samplerTrees.push_back(sampler);
-  for(G4int i=0;i<BDSSamplerBase::GetNSamplers();i++)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " building sampler tree number: " << i << G4endl;
-#endif
-      G4String name = BDSSamplerBase::outputNames[i];
-      // remove sampler number:
-      name = name.substr(0,name.find_last_of("_"));
 
-      // check if tree already exist (name has to be unique)
+  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+    {
+      G4String name = samplerName;
+      // Check if a tree by this name already exists (name has to be unique)
       TTree* tree = (TTree*)gDirectory->Get(name);
-      // if exist add number and increase, start counting at 2
+      // If it exists, add number and increase, start counting at 2
       if(tree)
 	{
 	  int count = 2;
@@ -116,20 +116,22 @@ void BDSOutputROOTBase::Init()
 	  while (tree)
 	    {
 	      uniqueName = name + "_" + std::to_string(count);
-	      tree=(TTree*)gDirectory->Get(uniqueName);
+	      tree = (TTree*)gDirectory->Get(uniqueName);
 	      count++;
 	    }
 	  name = uniqueName;
 	}
 
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " named: " << name << G4endl;
+      G4cout << __METHOD_NAME__ << "named: " << name << G4endl;
 #endif
       sampler = BuildSamplerTree(name);
       samplerTrees.push_back(sampler);
     }
 
-  if(globalConstants->GetStoreTrajectory() || globalConstants->GetStoreMuonTrajectories() || globalConstants->GetStoreNeutronTrajectories()) 
+  if(globalConstants->GetStoreTrajectory() ||
+     globalConstants->GetStoreMuonTrajectories() ||
+     globalConstants->GetStoreNeutronTrajectories()) 
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
@@ -245,17 +247,8 @@ void BDSOutputROOTBase::WriteRootHit(TTree*   Tree,
   turnnumber  = turnsTakenIn;
   process     = processIn;
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - weightIn = " << weightIn << G4endl;
-  G4cout << __METHOD_NAME__ << " - weight = " << weight << G4endl;
-#endif
-
   if (fillTree)
-    {Tree->Fill();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - filled tree with weight: " << weight << G4endl;
-#endif
-    }
+    {Tree->Fill();}
 }
 
 void BDSOutputROOTBase::WriteRootHit(TTree*         tree,
@@ -279,17 +272,8 @@ void BDSOutputROOTBase::WriteRootHit(TTree*         tree,
   turnnumber  = hit->GetTurnsTaken();
   process     = hit->GetProcess();
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - weightIn = " << hit->GetWeight() << G4endl;
-  G4cout << __METHOD_NAME__ << " - weight = " << weight << G4endl;
-#endif
-
   if (fillTree)
-    {tree->Fill();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - filled tree with weight: " << weight << G4endl;
-#endif
-    }
+    {tree->Fill();}
 }
 
 void BDSOutputROOTBase::WritePrimary(G4double totalEnergy,
@@ -330,36 +314,8 @@ void BDSOutputROOTBase::WriteHits(BDSSamplerHitsCollection *hc)
 #endif
   for (G4int i=0; i<hc->entries(); i++)
     {
-      G4String name = (*hc)[i]->GetName();
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "Writing hit to sampler " << name << G4endl;
-#endif
-      // convert name to tree
-      TTree* tree = nullptr;
-      // try to convert to int, std::stoul can throw invalid argument
-      try
-	{
-	  G4String samplerNumber = name.substr(name.find_last_of("_")+1,std::string::npos);
-	  unsigned int treeIndex = std::stoul(samplerNumber);
-	  if (treeIndex < samplerTrees.size())
-	    {tree = samplerTrees[treeIndex];}
-	}
-      catch (std::invalid_argument) {} // for std::stoul, do nothing
-      catch (std::out_of_range) {} // for string::substr, do nothing
-
-      // if it did not work then
-      // get tree from name
-      // this will not work for multiple samplers attached to elements with same name
-      if (!tree)
-	{
-	  tree = (TTree*)gDirectory->Get(name);
-	  if(!tree)
-	    {
-	      G4String errorString = "BDSOutputROOTBase: ROOT Sampler " + name + " not found!";
-	      G4Exception(errorString.c_str(), "-1", FatalException, "");
-	    }
-	}
-
+      G4int  samplerID = (*hc)[i]->GetSamplerID();
+      TTree* tree      = samplerTrees[samplerID+1]; // +1 to account for extra primaries sampler in output
       WriteRootHit(tree, (*hc)[i]);
     }
 }
@@ -504,7 +460,7 @@ void BDSOutputROOTBase::WriteHistogram(BDSHistogram1D* hIn)
   std::vector<G4double> binLowerEdges = hIn->GetBinLowerEdges();
   if (binLowerEdges.size() < 1)
     {return;} //no bins - don't write the histogram
-  binLowerEdges.push_back(hIn->GetLastBin()->GetUpperEdge()); //root requires nbins+1
+  binLowerEdges.push_back(hIn->GetLastBin().GetUpperEdge()); //root requires nbins+1
 
   //always construct the histogram by bin edges - works both with constant
   //and variable bin width histograms
@@ -516,18 +472,18 @@ void BDSOutputROOTBase::WriteHistogram(BDSHistogram1D* hIn)
   h->GetYaxis()->SetTitle(hIn->GetYLabel());
   h->GetXaxis()->CenterTitle();
   h->GetYaxis()->CenterTitle();
-  G4int i;
-  for(hIn->first(),i = 1;!hIn->isDone();hIn->next(), i++)
+  G4int i = 1;
+  for (auto const& bin : *hIn)
     {
-      BDSBin* currentBin = hIn->currentBin();
-      h->SetBinContent(i,currentBin->GetValue());
-      h->SetBinError(i,  currentBin->GetError());
+      h->SetBinContent(i, bin.GetValue());
+      h->SetBinError(i, bin.GetError());
+      i++;
     }
   //over / underflow manually set
-  h->SetBinContent(0,hIn->GetUnderflowBin()->GetValue()); //underflow
-  h->SetBinContent(0,hIn->GetUnderflowBin()->GetError());
-  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin()->GetValue()); //overflow
-  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin()->GetError());
+  h->SetBinContent(0,hIn->GetUnderflowBin().GetValue()); //underflow
+  h->SetBinContent(0,hIn->GetUnderflowBin().GetError());
+  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin().GetValue()); //overflow
+  h->SetBinContent(h->GetNbinsX()+1,hIn->GetOverflowBin().GetError());
 
   h->SetEntries(hIn->GetNEntries());
   

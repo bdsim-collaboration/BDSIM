@@ -38,8 +38,7 @@ use,period=l1;
 
 option, ngenerate=1,
 !	physicsList="QGSP_BERT",
-!	physicsList="hadronic_standard",
-	physicsList="em_standard",
+	physicsList="em",
 	beampipeRadius=4.0*cm,
 	beampipeThickness=0.5*cm,
 	outerDiameter=1.0*m,

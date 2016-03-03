@@ -1,10 +1,8 @@
 ! standard options for runing bdsim
 
 option, beampipeRadius = 10 * cm,
-        outerDiameter = 1.9 * m,
+        outerDiameter = 0.4 * m,
         beampipeThickness = 0.5 * cm,
         checkOverlaps=1;
 
-
-option,physicsList="standard";
 option,ngenerate=1000;

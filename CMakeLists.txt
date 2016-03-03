@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6.4)
 
-project(BDSIM) 
+project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
@@ -10,7 +10,7 @@ set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_L
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 
-# add source dir as a place for CMake modules (e.g. FindGSL.cmake)
+# add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 # With this true we automatically include current src/binary directory
@@ -418,3 +418,18 @@ add_subdirectory(test)
 
 # Manual
 add_subdirectory(manual)
+
+# Packaging
+set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${BDSIM_VERSION})
+
+set(CPACK_GENERATOR "TGZ;DragNDrop")
+
+set(CPACK_PACKAGE_FILE_NAME "${ARCHIVE_NAME}")
+
+include(CPack)
+
+# package source
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

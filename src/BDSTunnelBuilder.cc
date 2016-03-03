@@ -1,9 +1,10 @@
+#include "BDSTunnelBuilder.hh"
+
 #include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "BDSSampler.hh"
 #include "BDSTiltOffset.hh"
-#include "BDSTunnelBuilder.hh"
 #include "BDSTunnelFactory.hh"
 #include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"  // for isfinite function
@@ -404,12 +405,14 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
   return tunnelLine;
 }
 
-G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::iterator& iterator)
+G4bool BDSTunnelBuilder::IsASampler(const BDSBeamline::iterator& /*iterator*/)
 {
-  BDSAcceleratorComponent* component = (*iterator)->GetAcceleratorComponent();
-  BDSSampler* sampler = dynamic_cast<BDSSampler*>(component);
+  //BDSAcceleratorComponent* component = (*iterator)->GetAcceleratorComponent();
+  /*BDSSampler* sampler = dynamic_cast<BDSSampler*>(component);
   if (sampler)
     {return true;}
   else
     {return false;}
+  */
+  return false;
 }

@@ -93,12 +93,7 @@ public:
   inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}
   
   // in case a mapped field is provided creates a field mesh in global coordinates
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
-  
-  ///@{ Get parameter value from the specification ('spec') string
-  G4double GetParameterValue      (G4String spec, G4String name) const;
-  G4String GetParameterValueString(G4String spec, G4String name) const;
-  ///@}
+  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
 
   ///@{ This function should be revisited given recent changes (v0.7)
   void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
@@ -121,8 +116,8 @@ public:
   void SetBiasMaterialList(std::list<std::string> biasMaterialListIn);
 
   /// Access the bias list copied from parser
-  std::list<std::string> GetBiasVacuumList();
-  std::list<std::string> GetBiasMaterialList();
+  std::list<std::string> GetBiasVacuumList() const;
+  std::list<std::string> GetBiasMaterialList() const;
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -245,58 +240,16 @@ inline G4int BDSAcceleratorComponent::GetCopyNumber()const
 inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
 {return readOutLV;}
 
-inline  G4double BDSAcceleratorComponent::GetParameterValue(G4String spec, G4String name) const
-{
-  G4double value = 0;
-
-  std::string delimiters = "&";
-  std::string param = name + "=";
-
-  int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      int pos2 = spec.find("&",pos);
-      int pos3 = spec.length();
-      int tend = pos2 < 0 ? pos3 : pos2; 
-      int llen = tend - pos - param.length();
-      
-      std::string val = spec.substr(pos + param.length(), llen);
-      
-      value = atof(val.c_str());
-  }
-  return value;
-}
-
-inline  G4String BDSAcceleratorComponent::GetParameterValueString(G4String spec, G4String name) const
-{
-  G4String value = "";
-
-  std::string delimiters = "&";
-  std::string param = name + "=";
-
-  int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      int pos2 = spec.find("&",pos);
-      int pos3 = spec.length();
-      int tend = pos2 < 0 ? pos3 : pos2; 
-      int llen = tend - pos - param.length();
-      
-      value = spec.substr(pos + param.length(), llen);
-    }
-  return value;
-}
-
 inline void BDSAcceleratorComponent::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
 {biasVacuumList = biasVacuumListIn;}
 
-inline std::list<std::string> BDSAcceleratorComponent::GetBiasVacuumList()
+inline std::list<std::string> BDSAcceleratorComponent::GetBiasVacuumList() const
 {return biasVacuumList;}
 
 inline void BDSAcceleratorComponent::SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
 {biasMaterialList = biasMaterialListIn;}
 
-inline std::list<std::string> BDSAcceleratorComponent::GetBiasMaterialList()
+inline std::list<std::string> BDSAcceleratorComponent::GetBiasMaterialList() const
 {return biasMaterialList;}
 
 #endif

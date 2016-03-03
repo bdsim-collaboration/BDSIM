@@ -246,7 +246,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4cout << "Now printing the values of (zInnerCoord,rInnerCoord):" << G4endl;
   G4cout << "Length of zInnerCoord = " << zInnerCoord.size() << G4endl;
   G4cout << "Length of rInnerCoord = " << rInnerCoord.size() << G4endl;
-  for (G4int i = 0; i < zInnerCoord.size(); i++)
+  for (G4int i = 0; i < (G4int)zInnerCoord.size(); i++)
     {
       G4cout << "(" << zInnerCoord[i] << "," << rInnerCoord[i] << ")" << G4endl;
     };
@@ -254,7 +254,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4cout << "Now printing the values of (zOuterCoord,rOuterCoord):" << G4endl;
   G4cout << "Length of zOuterCoord = " << zOuterCoord.size() << G4endl;
   G4cout << "Length of rOuterCoord = " << rOuterCoord.size() << G4endl;
-  for (G4int i = 0; i < zOuterCoord.size(); i++)
+  for (G4int i = 0; i < (G4int)zOuterCoord.size(); i++)
     {
       G4cout << "(" << zOuterCoord[i] << "," << rOuterCoord[i] << ")" << G4endl;
     };

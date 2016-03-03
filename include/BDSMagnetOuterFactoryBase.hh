@@ -17,7 +17,7 @@ class G4VPhysicalVolume;
 class G4VSolid;
 
 /**
- * @brief Abstract base class for magnet outer volume factories
+ * @brief Abstract base class for magnet outer volume factories.
  * 
  * Abstract base class that defines the interface of each factory
  * to build any type of outer logical volume required. 
@@ -48,7 +48,8 @@ public:
 					   BDSBeamPipe* beamPipe,               // beampipe
 					   G4double     outerDiameter,          // full width
 					   G4double     containerLength,        // full length to make AccComp container
-					   G4double     angle,                  // full bend angle [rad]
+					   G4double     angleIn,                // input face angle w.r.t. chord
+					   G4double     angleOut,               // output face angle w.r.t. chord
 					   G4Material*  outerMaterial = nullptr // material for outer volume
 					   ) = 0;
   
@@ -59,7 +60,8 @@ public:
 						G4double     outerDiameter,     // full width
 						G4double     containerDiameter, // full width to make AccComp container
 						G4double     containerLength,   // full length to make AccComp container
-						G4double     angle,             // full bend angle [rad]
+						G4double     angleIn,           // input face angle w.r.t. chord
+						G4double     angleOut,          // output face angle w.r.t. chord
 						G4Material*  outerMaterial = nullptr // material for outer volume
 						) = 0;
   
@@ -80,7 +82,7 @@ public:
 					  BDSBeamPipe* beamPipe,             // beampipe
 					  G4double     outerDiameter,        // full width
 					  G4double     containerLength,      // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr  // material for outer volume
+					  G4Material*  outerMaterial = nullptr // material for outer volume
 					  ) = 0;
   
   /// octupole outer volume
@@ -89,7 +91,7 @@ public:
 					 BDSBeamPipe* beamPipe,              // beampipe
 					 G4double     outerDiameter,         // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr   // material for outer volume
+					 G4Material*  outerMaterial = nullptr // material for outer volume
 					 ) = 0;
 
   /// decapole outer volume
@@ -98,7 +100,7 @@ public:
 					 BDSBeamPipe* beamPipe,              // beampipe
 					 G4double     outerDiameter,         // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr   // material for outer volume
+					 G4Material*  outerMaterial = nullptr // material for outer volume
 					 ) = 0;
   
   /// solenoid  outer volume
@@ -116,7 +118,7 @@ public:
 					  BDSBeamPipe* beamPipe,             // beampipe
 					  G4double     outerDiameter,        // full width
 					  G4double     containerLength,      // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr  // material for outer volume
+					  G4Material*  outerMaterial = nullptr // material for outer volume
 					  ) = 0;
   
   /// RF cavity outer volume
@@ -125,7 +127,7 @@ public:
 					 BDSBeamPipe* beamPipe,              // beampipe
 					 G4double     outerDiameter,         // full width
 					 G4double     containerLength,       // full length to make AccComp container
-					 G4Material*  outerMaterial = nullptr   // material for outer volume
+					 G4Material*  outerMaterial = nullptr // material for outer volume
 					 ) = 0;
 
   /// muon spoiler outer volume
@@ -134,7 +136,7 @@ public:
 					  BDSBeamPipe* beamPipe,             // beampipe
 					  G4double     outerDiameter,        // full width
 					  G4double     containerLength,      // full length to make AccComp container
-					  G4Material*  outerMaterial = nullptr  // material for outer volume
+					  G4Material*  outerMaterial = nullptr // material for outer volume
 					  ) = 0;
   
   /// horizontal and vertical kicker outer volume
@@ -144,7 +146,7 @@ public:
 				       G4double     outerDiameter,         // full width
 				       G4double     containerLength,       // full length to make AccComp container
 				       G4bool       vertical = true,       // is it a vertical kicker?
-				       G4Material*  outerMaterial = nullptr   // material for outer volume
+				       G4Material*  outerMaterial = nullptr // material for outer volume
 				       ) = 0;
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope

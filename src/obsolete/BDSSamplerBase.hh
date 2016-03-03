@@ -17,34 +17,37 @@ public:
   BDSSamplerBase(G4String name, G4double length, G4String type);
   virtual ~BDSSamplerBase();
 
-  /// returns current number of samplers
+  /// Returns current number of samplers
   static int GetNSamplers();
-  /// method to add sampler independent of beamline
+
+  /// Method to add sampler independent of beamline
   static void AddExternalSampler(G4String outputName);
 
-  /// names of samplers for output
+  /// Names of samplers for output
   static std::vector <G4String> outputNames;
 
-  /// access for external classes to sensitive detector
-  virtual BDSSamplerSD* GetSensitiveDetector()const=0;
+  /// Access for external classes to sensitive detector
+  virtual BDSSamplerSD* GetSensitiveDetector() const=0;
 
-  /// get SamplerId
+  /// Get SamplerId
   G4int GetSamplerNumber()const {return nThisSampler;}
-  /// get OutputName
-  // -1 since count starts at 1
+
+  /// Get OutputName. [nthisSampler-1] since count starts at 1.
   G4String GetOutputName()const {return outputNames[nThisSampler-1];}
 
 protected:
-  /// build container volume
+  /// Build container volume
   virtual void BuildContainerLogicalVolume();
 private:
-  /// set user limits
+  /// Set user limits
   void SetUserLimits();
-  /// set vis attributes and sensitive detector
+
+  /// Set vis attributes and sensitive detector
   void SetVisAttributes();
   
-  /// id of sampler (count starts at 1)
+  /// ID of sampler (count starts at 1)
   G4int nThisSampler;
+
   /// number of total Samplers
   static G4int nSamplers;
 };
