@@ -32,7 +32,7 @@ Requirements
 
 0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher.
-2) `CMake`_ 2.6.4 or higher (Geant4.10.2 - the lastest - rquires `CMake`_ 3.3 or higher.)
+2) `CMake`_ 2.6.4 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher
@@ -308,33 +308,34 @@ It is useful to change a few options with Geant4 for practical purposes.
 +---------------------------------+-------------------------------------------------------------+
 | **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder you make.               |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_BUILD_MULTITHREADED**  | Off - BDSIM does not support this yet.                      |
+| **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_INSTALL_DATA**         | On - otherwise Geant will try to download data dynamically  |
+| **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically  |
 |                                 | as it's required during the simulation and it may not be    |
 |                                 | possible to run offline then.                               |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_INSTALL_DATADIR**      | Useful to specify to a known folder you make. Typically     |
 |                                 | whatever **CMAKE_INSTALL_PREFIX** / data.                   |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_GDML**             | On - for external geometry import.                          |
+| **GEANT4_USE_GDML**             | ON - for external geometry import.                          |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_OPENGL_X11**       | On - basic visualiser.                                      |
+| **GEANT4_USE_OPENGL_X11**       | ON - basic visualiser.                                      |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_QT**               | On - the best and most interactive visualiser.              |
+| **GEANT4_USE_QT**               | ON - the best and most interactive visualiser.              |
+|                                 | Needs Qt to be installed                                    |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_RAYTRACER_X11**    | The most accurate visualiser, but relatively slow and not   |
-|                                 | interactive. Useful for promotional materials.              |
+| **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
+|                                 | not interactive. Useful for promotional materials.          |
 +---------------------------------+-------------------------------------------------------------+
-| **GEANT4_USE_XM**               | On - similar to Qt and the one to use if Qt isn't           |
-|                                 | available.                                                  |
+| **GEANT4_USE_XM**               | ON - similar to Qt and the one to use if Qt isn't           |
+|                                 | available. Needs motif to be installed.                     |
 +---------------------------------+-------------------------------------------------------------+
 
 Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
 Once the installation directory is set, press ``c`` to run the configuration
 process, and when complete, press ``g`` to generate the build. If ``g`` is not an
 available option, then continue to press ``c`` until it becomes available. This
-typically takes two or three times - it is due to dependencies being dependent oon
+typically takes two or three times - it is due to dependencies being dependent on
 other dependencies. Geant4 can then
 be compiled ::
 
