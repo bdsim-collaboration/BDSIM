@@ -1241,7 +1241,8 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 | ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
 |                           | is based on the FRITIOF description of string excitation and           |
-|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`.         |
+|                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
+|                           | FTF phyiscs lists require `G4HadronElasticPhysics` to work correctly.  |
 +---------------------------+------------------------------------------------------------------------+
 | ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
 |                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |

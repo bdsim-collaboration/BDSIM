@@ -31,12 +31,12 @@ Requirements
 ============
 
 0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher.
-2) `CMake`_ 2.6.4 or higher
+1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher. See `Geant4 Installation Guide`_
+2) `CMake`_ 2.6.4 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
-5) `CLHEP`_ 2.1.3.1 or higher
-6) `ROOT`_ 5.x framework for output analysis
+5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
+6) `ROOT`_ framework for output analysis.
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
@@ -83,6 +83,10 @@ package manager.
 Older version of Geant4 can be downloaded from their
 `archive <http://geant4.web.cern.ch/geant4/support/source_archive.shtml>`_ . 
 For Scientific Linux 6 or modern Linux versions, we recommend the latest version of Geant4, currently 4.10.2.
+Note, the required compiler version (gcc 4.9) is more modern than the default one (gcc 4.4) on SL6. You
+can check the compiler version with::
+
+  gcc --version
 
 After this, `Building`_ can be started.
 
@@ -293,9 +297,46 @@ modifying the CMake configuration as generally described in
 
   > ccmake .
 
-Make sure GEANT4_BUILD_MULTITHREADED is off since this is currently not supported.
+It is useful to change a few options with Geant4 for practical purposes.
+
+.. figure:: figures/geant4options.png
+	    :width: 80%
+	    :align: center
+
++---------------------------------+-------------------------------------------------------------+
+| **Option**                      | **Description**                                             |
++---------------------------------+-------------------------------------------------------------+
+| **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder you make.               |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically  |
+|                                 | as it's required during the simulation and it may not be    |
+|                                 | possible to run offline then.                               |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_INSTALL_DATADIR**      | Useful to specify to a known folder you make. Typically     |
+|                                 | whatever **CMAKE_INSTALL_PREFIX** / data.                   |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_GDML**             | ON - for external geometry import.                          |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_OPENGL_X11**       | ON - basic visualiser.                                      |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_QT**               | ON - the best and most interactive visualiser.              |
+|                                 | Needs Qt to be installed                                    |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_RAYTRACER_X11**    | ON - The most accurate visualiser, but relatively slow and  |
+|                                 | not interactive. Useful for promotional materials.          |
++---------------------------------+-------------------------------------------------------------+
+| **GEANT4_USE_XM**               | ON - similar to Qt and the one to use if Qt isn't           |
+|                                 | available. Needs motif to be installed.                     |
++---------------------------------+-------------------------------------------------------------+
+
+Make sure **GEANT4_BUILD_MULTITHREADED** is off since this is currently not supported.
 Once the installation directory is set, press ``c`` to run the configuration
-process, and when complete, press ``g`` to generate the build. Geant4 can then
+process, and when complete, press ``g`` to generate the build. If ``g`` is not an
+available option, then continue to press ``c`` until it becomes available. This
+typically takes two or three times - it is due to dependencies being dependent on
+other dependencies. Geant4 can then
 be compiled ::
 
   > make
@@ -321,6 +362,32 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
   > source path/to/geant4.10.2-install/bin/geant4.sh
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
+
+
+CLHEP Installation Guide
+------------------------
+
+If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
+
+Move and unpack to a suitable place::
+
+   > tar -xzf clhep-2.3.1.1.tgz
+   > cd 2.3.1.1
+
+Make build directory::
+
+   > mkdir build
+   > cd build
+   > cmake ../CLHEP
+
+Adapt parameters if needed with::
+
+   > ccmake .
+
+Make and install::
+   
+   > make
+   > sudo make install
 
 .. _Troubleshooting:
 
@@ -356,6 +423,8 @@ please contact us (see :ref:`support-section`).
      gMocrenFile (gMocrenFile)
    
    If your favourite is not there check that Geant4 is correctly compiled with that graphics system.
+   You will have to reconfigure Geant4 and install any necessary libraries (such as Qt or XMotif), then
+   recompile Geant4, then recompile bdsim.
 
 2) Error from OpenGL::
      
@@ -403,6 +472,7 @@ please contact us (see :ref:`support-section`).
 
 .. _CMake: http://www.cmake.org/
 .. _CLHEP: http://proj-clhep.web.cern.ch/
+.. _CLHEP-2.3.1.1: http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-2.3.1.1.tgz
 .. _Geant4: http://geant4.cern.ch/
 .. _Macports: http://www.macports.org/
 .. _ROOT: http://root.cern.ch/
