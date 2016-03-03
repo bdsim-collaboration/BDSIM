@@ -23,11 +23,16 @@
 #include "G4OpticalProcessIndex.hh"
 
 // particles
+#include "G4AntiNeutrinoE.hh"
+#include "G4AntiNeutron.hh"
+#include "G4AntiProton.hh"
 #include "G4Electron.hh"
+#include "G4Gamma.hh"
+#include "G4LeptonConstructor.hh"
+#include "G4NeutrinoE.hh"
+#include "G4Neutron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
-#include "G4AntiProton.hh"
-#include "G4LeptonConstructor.hh"
 
 // general geant4
 #include "globals.hh"
@@ -52,7 +57,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
+  
   verbose = BDSExecOptions::Instance()->GetVerbose();
   globals = BDSGlobalConstants::Instance();
   
@@ -168,11 +173,21 @@ void BDSModularPhysicsList::ConstructMinimumParticleSet()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+
+  // e-, e+, v_e, v_e(bar)
+  G4Electron::ElectronDefinition();
+  G4Positron::PositronDefinition();
+  G4NeutrinoE::NeutrinoEDefinition();
+  G4AntiNeutrinoE::AntiNeutrinoEDefinition();
+
+  // p, pbar, neutron, anti-neutron
+  G4Proton::ProtonDefinition();
+  G4AntiProton::AntiProtonDefinition();
+  G4Neutron::NeutronDefinition();
+  G4AntiNeutron::AntiNeutronDefinition();
+
+  // photon
   G4Gamma::Gamma();
-  G4Electron::Electron();
-  G4Positron::Positron();
-  G4Proton::Proton();
-  G4AntiProton::AntiProton();
 }
 
 void BDSModularPhysicsList::ConstructAllLeptons()
@@ -428,6 +443,7 @@ void BDSModularPhysicsList::QGSPBICHP()
 void BDSModularPhysicsList::FTFPBERT()
 {
   ConstructAllLeptons();
+  HadronicElastic();
   if(!physicsActivated["ftfp_bert"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT());
@@ -438,6 +454,7 @@ void BDSModularPhysicsList::FTFPBERT()
 void BDSModularPhysicsList::FTFPBERTHP()
 {
   ConstructAllLeptons();
+  HadronicElastic();
   if(!physicsActivated["ftfp_bert_hp"])
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());

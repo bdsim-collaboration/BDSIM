@@ -149,6 +149,8 @@ elseif(USE_AFS)
 endif()
 
 find_package(ROOT REQUIRED)
+# major ROOT version
+string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
