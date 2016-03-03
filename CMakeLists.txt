@@ -149,6 +149,8 @@ elseif(USE_AFS)
 endif()
 
 find_package(ROOT REQUIRED)
+# major ROOT version
+string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
@@ -164,15 +166,27 @@ foreach(header ${linkHeaders})
   MATH(EXPR length "${pos}-${beginpos}")
   string(SUBSTRING ${header} ${beginpos} ${length} className)
   #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
-    COMMAND ${ROOTCINT_EXECUTABLE}
-    ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+  if (${ROOT_MAJOR_VERSION} STREQUAL "6")
     # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
-    -D__MAKECINT__
-    -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    )
+    # also rootcint5 does not accept additional options
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+      COMMAND ${ROOTCINT_EXECUTABLE}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      -D__MAKECINT__
+      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      )
+  else()
+    # ROOT 5
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+      COMMAND ${ROOTCINT_EXECUTABLE}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      )
+  endif()
   # keep list of ROOT dictionaries
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
   set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
