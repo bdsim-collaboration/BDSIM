@@ -251,7 +251,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   return component;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDetla)
 {
   // This relies on things being added to the beamline immediately
   // after they've been created
@@ -265,16 +265,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
   
   G4String name = "teleporter";
 #ifdef BDSDEBUG
-    G4cout << "---->creating Teleporter,"
-	   << " name = " << name
-	   << ", l = " << teleporterLength/CLHEP::m << "m"
-	   << G4endl;
+  G4cout << "---->creating Teleporter,"
+	 << " name = " << name
+	 << ", l = " << teleporterLength/CLHEP::m << "m"
+	 << G4endl;
 #endif
 
-    return( new BDSTeleporter(name,
-			      teleporterLength,
-			      teleporterDetla));
-  
+  return( new BDSTeleporter(name,
+			    teleporterLength,
+			    teleporterDetla));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn,
@@ -408,7 +407,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   std::string thename = element->name + "_1_of_1";
 
   // Single element for zero bend angle or dontSplitSBends=1, therefore nSBends = 1
-  if (!BDS::IsFinite(element->angle) || (nSbends == 1))
+  if (!BDS::IsFinite(element->angle) || (nSBends == 1))
     {
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
@@ -429,11 +428,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       return oneBend;
     }
   else  //Otherwise, create line of sbend segments
-  {return CreateSBendLine(element, nSbends, st);}
+  {return CreateSBendLine(element, nSBends, st);}
 }
 
 BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
-					      G4int              nSbends,
+					      G4int              nSBends,
 					      BDSMagnetStrength* st)
 {
   BDSLine* sbendline  = new BDSLine(element->name);
@@ -450,8 +449,6 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   //BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
   //BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
   //CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
-
-  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
 
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
   G4double deltaend   = -element->e2/(0.5*(nSBends-1));
