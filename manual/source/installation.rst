@@ -36,7 +36,7 @@ Requirements
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
-6) `ROOT`_ 5.x framework for output analysis
+6) `ROOT`_ framework for output analysis.
 
 Note, even though installed, the Geant4 environmental variables must be
 available. You can test this in a terminal with::
