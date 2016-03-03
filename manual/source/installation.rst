@@ -31,11 +31,11 @@ Requirements
 ============
 
 0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
-1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher.
+1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher. See `Geant4 Installation Guide`_
 2) `CMake`_ 2.6.4 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
-5) `CLHEP`_ 2.1.3.1 or higher
+5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
 6) `ROOT`_ 5.x framework for output analysis
 
 Note, even though installed, the Geant4 environmental variables must be
@@ -363,6 +363,32 @@ BDSIM as this is required for the physics models of Geant4.  This can be done us
 
 It may be useful to add this command to your ``.bashrc`` or profile script.
 
+
+CLHEP Installation Guide
+------------------------
+
+If not installed with a package manager, download the `CLHEP-2.3.1.1`_ or newer version from the `CLHEP`_ website.
+
+Move and unpack to a suitable place::
+
+   > tar -xzf clhep-2.3.1.1.tgz
+   > cd 2.3.1.1
+
+Make build directory::
+
+   > mkdir build
+   > cd build
+   > cmake ../CLHEP
+
+Adapt parameters if needed with::
+
+   > ccmake .
+
+Make and install::
+   
+   > make
+   > sudo make install
+
 .. _Troubleshooting:
 
 Troubleshooting
@@ -446,6 +472,7 @@ please contact us (see :ref:`support-section`).
 
 .. _CMake: http://www.cmake.org/
 .. _CLHEP: http://proj-clhep.web.cern.ch/
+.. _CLHEP-2.3.1.1: http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles/clhep-2.3.1.1.tgz
 .. _Geant4: http://geant4.cern.ch/
 .. _Macports: http://www.macports.org/
 .. _ROOT: http://root.cern.ch/
