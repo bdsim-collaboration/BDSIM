@@ -308,6 +308,8 @@ It is useful to change a few options with Geant4 for practical purposes.
 +---------------------------------+-------------------------------------------------------------+
 | **CMAKE_INSTALL_PREFIX**        | Useful to specify to a known folder you make.               |
 +---------------------------------+-------------------------------------------------------------+
+| **GEANT4_BUILD_CXXSTD**         | 14 - For ROOT version 6 (and gcc compiler).                 |
++---------------------------------+-------------------------------------------------------------+
 | **GEANT4_BUILD_MULTITHREADED**  | OFF - BDSIM does not support this yet.                      |
 +---------------------------------+-------------------------------------------------------------+
 | **GEANT4_INSTALL_DATA**         | ON - otherwise Geant will try to download data dynamically  |
