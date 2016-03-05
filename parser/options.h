@@ -185,13 +185,6 @@ namespace GMAD {
     int      turnOnRayleighScattering;
     int      turnOnOpticalSurface;
     int      turnOnBirksSaturation;
-    int      synchRadOn;
-    int      decayOn;
-    int      synchTrackPhotons;
-    double   synchLowX;
-    double   synchLowGamE;
-    int      synchPhotonMultiplicity;
-    int      synchMeanFreeFactor;
     double   lengthSafety;
     int      randomSeed;
 

@@ -156,14 +156,6 @@ public:
   
   ///@{ Physical processes etc.
   G4String GetPhysListName() const;
-  G4bool   GetSynchRadOn() const;
-  void     SetSynchRadOn(G4bool);
-  G4bool   GetDecayOn() const;
-  G4bool   GetSynchTrackPhotons() const;
-  G4double GetSynchLowX() const;
-  G4double GetSynchLowGamE() const;
-  G4int    GetSynchPhotonMultiplicity() const;
-  G4int    GetSynchMeanFreeFactor() const;
   ///@}
   G4double GetLaserwireWavelength() const;
   G4ThreeVector GetLaserwireDir() const;
@@ -307,13 +299,6 @@ private:
   G4double itsProdCutProtonsP;
   G4double itsProdCutProtonsA;
   G4String itsPhysListName;
-  G4bool   itsSynchRadOn;
-  G4bool   itsDecayOn;
-  G4bool   itsSynchTrackPhotons;
-  G4double itsSynchLowX;
-  G4double itsSynchLowGamE;
-  G4int    itsSynchMeanFreeFactor;
-  G4int    itsSynchPhotonMultiplicity;
   // test map container for laserwire parameters - Steve
   std::map<const G4String, G4double> lwWavelength;
   std::map<const G4String, G4ThreeVector> lwDirection;
@@ -611,30 +596,6 @@ inline G4double BDSGlobalConstants::GetProdCutProtonsA() const
 
 inline G4String BDSGlobalConstants::GetPhysListName() const
 {return itsPhysListName;}
-
-inline G4bool BDSGlobalConstants::GetSynchRadOn() const
-{return itsSynchRadOn;}
-
-inline void BDSGlobalConstants::SetSynchRadOn(G4bool synchRadOn) 
-{itsSynchRadOn = synchRadOn;}
-
-inline G4bool BDSGlobalConstants::GetDecayOn() const
-{return itsDecayOn;}
-
-inline G4bool BDSGlobalConstants::GetSynchTrackPhotons() const
-{return itsSynchTrackPhotons ;}
-
-inline G4double BDSGlobalConstants::GetSynchLowX() const
-{return itsSynchLowX ;}
-
-inline G4double BDSGlobalConstants::GetSynchLowGamE() const
-{return itsSynchLowGamE ;}
-
-inline G4int BDSGlobalConstants::GetSynchPhotonMultiplicity() const
-{return itsSynchPhotonMultiplicity ;}
-
-inline G4int BDSGlobalConstants::GetSynchMeanFreeFactor() const
-{return itsSynchMeanFreeFactor ;}
 
 inline G4double BDSGlobalConstants::GetLaserwireWavelength() const
 {return itsLaserwireWavelength ;}

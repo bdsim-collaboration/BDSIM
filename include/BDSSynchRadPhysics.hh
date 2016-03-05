@@ -1,12 +1,16 @@
 #ifndef BDSSYNCHRADPHYSICS_H
 #define BDSSYNCHRADPHYSICS_H
 
+#include "globals.hh" // geant4 types / globals
 #include "G4VPhysicsConstructor.hh"
-#include "G4SynchrotronRadiation.hh"
-#include "BDSSynchrotronRadiation.hh"
-#include "BDSContinuousSR.hh"
 
-class BDSSynchRadPhysics: public G4VPhysicsConstructor{
+/*
+ * @brief A physics constructor that only constructs Synchrotron Radiation.
+ *
+ */
+
+class BDSSynchRadPhysics: public G4VPhysicsConstructor
+{
 public:
   BDSSynchRadPhysics();
   ~BDSSynchRadPhysics();
@@ -14,10 +18,7 @@ public:
   void ConstructParticle();
   
 private:
-  BDSSynchrotronRadiation* _srProcess;
-  G4SynchrotronRadiation* _srProcessG4;
-  BDSContinuousSR* _contSR;
-  G4bool _wasActivated;
+  G4bool activated;
 };
 
 #endif

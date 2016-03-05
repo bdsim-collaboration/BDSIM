@@ -141,15 +141,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
   itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
   itsScintYieldFactor=opt.scintYieldFactor;
-  itsSynchRadOn = opt.synchRadOn;
-  G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
-  itsDecayOn = opt.decayOn;
-  itsSynchTrackPhotons= opt.synchTrackPhotons;
-  G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
-  itsSynchLowX = opt.synchLowX;
-  itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
-  itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
-  itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
   if (opt.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps
       G4cerr << "Dangerously low \"lengthSafety\" value of: " << opt.lengthSafety
@@ -176,7 +167,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsEeToHadronsFe=opt.eeToHadronsFe;
   itsUseEMLPB=opt.useEMLPB;
   itsUseHadLPB=opt.useHadLPB;
-  itsDecayOn=opt.decayOn;
   SetLPBFraction(opt.LPBFraction);
   itsStoreMuonTrajectories = opt.storeMuonTrajectories;
   itsTrajCutGTZ = opt.trajCutGTZ;

@@ -37,6 +37,8 @@
 // EM
 //
 
+#include "G4SynchrotronRadiation.hh"
+
 // gamma
 #include "G4ComptonScattering.hh"
 #include "G4GammaConversion.hh"
@@ -105,8 +107,6 @@
 
 //ions
 #include "BDSLaserCompton.hh"
-#include "BDSSynchrotronRadiation.hh"
-#include "BDSContinuousSR.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
 
@@ -160,9 +160,6 @@
 
 //ShortLived
 #include "G4ShortLivedConstructor.hh"
-
-
-
 
 BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
 {
@@ -247,7 +244,7 @@ void BDSPhysicsList::ConstructProcess()
 
   bool plistFound=false;
   //standard physics lists
-  if(physicsListName == "QGSP_BERT"){
+  if(physicsListName.contains("QGSP_BERT")){
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();    
     //    theReferenceHadronicPhysList_xsbias = new BDSXSBias(); 
     //    theReferenceHadronicPhysList_xsbias->RegisterProcess(theReferenceHadronicPhysList); 
@@ -257,71 +254,65 @@ void BDSPhysicsList::ConstructProcess()
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
-  } else if(physicsListName == "QGSP_BERT_HP"){
+  } else if(physicsListName.contains("QGSP_BERT_HP")){
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceEmPhysList->ConstructProcess();
     plistFound=true;
-  } else if (physicsListName == "QGSP_BERT_HP_muon"){ //Modified standard physics lists
+  } else if (physicsListName.contains("QGSP_BERT_HP_muon")){ //Modified standard physics lists
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
-  } else if (physicsListName == "QGSP_BERT_muon"){
+  } else if (physicsListName.contains("QGSP_BERT_muon")){
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     plistFound=true;
-  } else if(physicsListName == "QGSP_BERT_HP_muon_em_low"){
+  } else if(physicsListName.contains("QGSP_BERT_HP_muon_em_low")){
     theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT_HP();
     theReferenceHadronicPhysList->ConstructProcess();
     ConstructMuon();
     ConstructEM_Low_Energy();
     plistFound=true;
-  } else if(physicsListName == "livermore"){
+  } else if(physicsListName.contains("livermore")){
     G4EmLivermorePhysics* physList = new G4EmLivermorePhysics;
     physList->ConstructProcess();
     plistFound=true;
-  }else if(physicsListName == "penelope"){
+  }else if(physicsListName.contains("penelope")){
     G4EmPenelopePhysics* physList = new G4EmPenelopePhysics;
     physList->ConstructProcess();
     plistFound=true;
-  }else if(physicsListName == "G4EmStandard"){
+  }else if(physicsListName.contains("G4EmStandard")){
     G4EmStandardPhysics* physList = new G4EmStandardPhysics;
     physList->ConstructProcess();
     plistFound=true;
   }
-
-
-
   
   //===========================================
   //Some options
   //-------------------------------------------
   //Build planck scattering if option is set
-  if(BDSGlobalConstants::Instance()->GetDoPlanckScattering()){
-    BDSPlanckScatterBuilder* psbuild = new BDSPlanckScatterBuilder();
-    psbuild->Build();
-    // psbuild is leaked. This can't be deleted as its BDSPlanckScatterProcess is registered
-  }
+  if(BDSGlobalConstants::Instance()->GetDoPlanckScattering())
+    {
+      BDSPlanckScatterBuilder* psbuild = new BDSPlanckScatterBuilder();
+      psbuild->Build();
+      // psbuild is leaked. This can't be deleted as its BDSPlanckScatterProcess is registered
+    }
+  
   //A flag to switch on hadronic lead particle biasing
-  if (BDSGlobalConstants::Instance()->GetUseHadLPB() ){
-    setenv("SwitchLeadBiasOn","1",1); 
-  }
+  if (BDSGlobalConstants::Instance()->GetUseHadLPB())
+    {setenv("SwitchLeadBiasOn","1",1);}
+  
   //Synchrotron radiation
-  if(BDSGlobalConstants::Instance()->GetSynchRadOn()) {
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "synch. rad. is turned on" << G4endl;
-#endif
-    ConstructSR();
-  } else {
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "synch. rad. is turned OFF!" << G4endl;
-#endif
-  }
+  if(physicsListName.contains("synchrad"))
+    {ConstructSR();}
+  
   //Particle decay
-  if(BDSGlobalConstants::Instance()->GetDecayOn()) ConstructDecay();
+  if(physicsListName.contains("synchrad"))
+    {ConstructDecay();}
+  
   //Optical processes
   ConstructOptical();
   //============================================
@@ -347,57 +338,57 @@ void BDSPhysicsList::ConstructProcess()
   
   if(plistFound) return;
   //Search BDSIM physics lists
-  if (physicsListName == "standard") return;
+  if (physicsListName.contains("standard")) return;
   // register physics processes here
   // standard e+/e-/gamma electromagnetic interactions
-  if(physicsListName == "em_standard") 
+  if(physicsListName.contains("em_standard") )
     {
       ConstructEM();
     }
-  else if(physicsListName == "em_single_scatter") 
+  else if(physicsListName.contains("em_single_scatter") )
     {
       ConstructEMSingleScatter();
     }
-  else if(physicsListName == "merlin") 
+  else if(physicsListName.contains("merlin") )
     {
       ConstructMerlin();
     }
   
   // low energy em processes
-  else if(physicsListName == "em_low") 
+  else if(physicsListName.contains("em_low") )
     {
       ConstructEM_Low_Energy();
     }
       
   // standard electromagnetic + muon
-  else if(physicsListName == "em_muon") 
+  else if(physicsListName.contains("em_muon") )
     {
       ConstructEM();
       ConstructMuon();
     }
   // standard hadronic - photo-nuclear etc.
-  else if(physicsListName == "hadronic_standard") 
+  else if(physicsListName.contains("hadronic_standard") )
     {
       ConstructEM();
       ConstructHadronic();
     }
       
   // standard electromagnetic + muon + hadronic
-  else if(physicsListName == "hadronic_muon") 
+  else if(physicsListName.contains("hadronic_muon") )
     {
       ConstructEM();
       ConstructMuon();
       ConstructHadronic();
     }
   
-  else if(physicsListName == "hadronic_QGSP_BERT") 
+  else if(physicsListName.contains("hadronic_QGSP_BERT") )
     {
       ConstructEM();
       theBDSIMPhysList = new G4HadronPhysicsQGSP_BERT("hadron");
       theBDSIMPhysList->ConstructProcess();
     }
   
-  else if(physicsListName == "hadronic_QGSP_BERT_muon") 
+  else if(physicsListName.contains("hadronic_QGSP_BERT_muon") )
     {
       ConstructEM();
       ConstructMuon();
@@ -405,13 +396,13 @@ void BDSPhysicsList::ConstructProcess()
       theBDSIMPhysList->ConstructProcess();
     }
   
-  else if(physicsListName == "hadronic_FTFP_BERT"){
+  else if(physicsListName.contains("hadronic_FTFP_BERT")){
     ConstructEM();
     theBDSIMPhysList = new G4HadronPhysicsFTFP_BERT;
     theBDSIMPhysList->ConstructProcess();
   }
   
-  else if(physicsListName == "hadronic_QGSP_BERT_HP_muon"){
+  else if(physicsListName.contains("hadronic_QGSP_BERT_HP_muon")){
     ConstructEM();
     ConstructMuon();
     ConstructHadronic();
@@ -419,7 +410,7 @@ void BDSPhysicsList::ConstructProcess()
     theBDSIMPhysList->ConstructProcess();
   }
       
-  else if(physicsListName == "hadronic_FTFP_BERT_muon"){
+  else if(physicsListName.contains("hadronic_FTFP_BERT_muon")){
     G4cout << __METHOD_NAME__ << "Using hadronic_FTFP_BERT_muon" << G4endl;
     ConstructEM();
     ConstructMuon();
@@ -428,7 +419,7 @@ void BDSPhysicsList::ConstructProcess()
   }
   // physics list for laser wire - standard em stuff +
   // weighted compton scattering from laser wire
-  else if(physicsListName == "lw") {
+  else if(physicsListName.contains("lw")) {
     ConstructEM();
     ConstructLaserWire();
   }
@@ -1106,60 +1097,38 @@ void BDSPhysicsList::ConstructHadronic()
 
 void BDSPhysicsList::ConstructSR()
 {
-  // BDSIM's version of Synchrotron Radiation
-  BDSSynchrotronRadiation* srProcess = new BDSSynchrotronRadiation;
-  BDSContinuousSR *contSR = new BDSContinuousSR(); // contin. energy loss process
-
-  // G4's version of Synchrotron Radiation - not used because does not have
-  // Multiplicity or MeanFreeFactor capability
-  // G4SynchrotronRadiation* srProcess = new G4SynchrotronRadiation;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "synch. rad. is turned on" << G4endl;
+#endif
+  G4SynchrotronRadiation* synchrotron = new G4SynchrotronRadiation();
 
   theParticleIterator->reset();
 
-  while( (*theParticleIterator)() ){
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4String particleName = particle->GetParticleName();
-    
-    if (particleName == "e-") {
-      pmanager->AddProcess(srProcess);
-      pmanager->SetProcessOrderingToLast(srProcess,idxPostStep);
+  while( (*theParticleIterator)() )
+    {
+      G4ParticleDefinition* particle = theParticleIterator->value();
+      G4ProcessManager* pmanager = particle->GetProcessManager();
 
-      G4int idx = pmanager->AddProcess(contSR);
-      pmanager->SetProcessOrderingToLast(contSR,idxPostStep);
-      pmanager->SetProcessActivation(idx, false);
+      // add to charged particles
+      if (particle->GetPDGCharge() != 0)
+	{
+	  pmanager->AddProcess(synchrotron);
+	  pmanager->SetProcessOrderingToLast(synchrotron,idxPostStep);
+	}
     }
-    
-    if (particleName == "e+") {
-      pmanager->AddProcess(srProcess);
-      pmanager->SetProcessOrderingToLast(srProcess,idxPostStep);
-
-      // JS : why is contSR switched off for positrons?
-      
-      //G4int idx = pmanager->AddProcess(contSR);
-      //      pmanager->SetProcessOrderingToLast(contSR,idxPostStep);
-      //      pmanager->SetProcessActivation(idx, false);
-    }
-    
-  }
   return; 
 }
 
 void BDSPhysicsList::AddParameterisation()
 {
-  G4FastSimulationManagerProcess*
-    theFastSimulationManagerProcess =
-    new G4FastSimulationManagerProcess();
+  auto theFastSimulationManagerProcess = new G4FastSimulationManagerProcess();
   G4cout << "FastSimulationManagerProcess" <<G4endl;
   theParticleIterator->reset();
-  //G4cout<<"---"<<G4endl;                                                                                                                                              
-  while( (*theParticleIterator)() ){
-    //G4cout<<"+++"<<G4endl;                                                                                                                                            
 
-    G4ParticleDefinition* particle = theParticleIterator->value();
-    // G4cout<<"--- particle "<<particle->GetParticleName()<<G4endl;                                                                                                    
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    // The fast simulation process becomes a discrete process only since 9.0:                                                                                                 
-    pmanager->AddDiscreteProcess(theFastSimulationManagerProcess);
-  }
+  while( (*theParticleIterator)() )
+    {
+      G4ParticleDefinition* particle = theParticleIterator->value();
+      G4ProcessManager* pmanager = particle->GetProcessManager();
+      pmanager->AddDiscreteProcess(theFastSimulationManagerProcess);
+    }
 }
