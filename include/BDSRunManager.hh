@@ -5,15 +5,24 @@
 
 #include "globals.hh"
 
-class BDSRunManager:public G4RunManager
+/**
+ * @brief Wrapper from G4RunManager that provides more output.
+ *
+ */
+
+class BDSRunManager: public G4RunManager
 {
 public:
-  // override virtual methods
+  BDSRunManager();
+
+  virtual ~BDSRunManager();
 
   /// For additional output
   virtual void DoEventLoop(G4int n_event,const char* macroFile=nullptr,G4int n_select=-1);
+  
   /// Altered BeamOn function to account for Placet synchronisation
   virtual void BeamOn(G4int n_event,const char* macroFile=nullptr,G4int n_select=-1);
+  
   /// For additional output
   virtual void ProcessOneEvent(G4int i_event);
 

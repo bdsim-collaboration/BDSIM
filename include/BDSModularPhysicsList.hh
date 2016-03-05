@@ -1,8 +1,8 @@
 #ifndef BDSMODULARPHYSICSLIST_H
 #define BDSMODULARPHYSICSLIST_H
 
-#include "G4VModularPhysicsList.hh"
 #include "G4OpticalPhysics.hh"
+#include "G4VModularPhysicsList.hh"
 #include "G4VPhysicsConstructor.hh"
 
 #include <map>
@@ -41,7 +41,7 @@ private:
 #else 
   bool debug = false;
 #endif
-
+  
   /// A map of physics list names to their constructors.
   std::map<std::string, Constructor> physicsConstructors;
 

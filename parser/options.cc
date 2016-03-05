@@ -103,9 +103,6 @@ Options::Options()
   sensitiveBLMs            = 1;
 
   // physics processes
-  gammaToMuFe              = 1;
-  annihiToMuFe             = 1;
-  eeToHadronsFe            = 1;
   useEMLPB                 = 0;
   useHadLPB                = 0;
   doPlanckScattering       = 0;
@@ -117,7 +114,6 @@ Options::Options()
   turnOnOpticalSurface     = 1;
   turnOnBirksSaturation    = 1;
   scintYieldFactor         = 1.0;
-  decayOn                  = 1;
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
@@ -151,14 +147,6 @@ Options::Options()
   trackingType             = "hybrid";
   trackingSteps            = 1;
   dontUseAperture          = false;
-
-  // synchrotron radiation
-  synchRadOn               = 0;
-  synchTrackPhotons        = 0;
-  synchLowX                = 0.0;
-  synchLowGamE             = 0.0;
-  synchPhotonMultiplicity  = 1;
-  synchMeanFreeFactor      = 1;
   
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
@@ -330,10 +318,7 @@ void Options::PublishMembers()
   // options for beam loss monitor geometry
   publish("blmRad",&Options::blmRad);
   publish("blmLength",&Options::blmLength);
-
-  publish("gammaToMuFe",&Options::gammaToMuFe);
-  publish("annihiToMuFe",&Options::annihiToMuFe);
-  publish("eeToHadronsFe",&Options::eeToHadronsFe);
+  
   publish("scintYieldFactor",&Options::scintYieldFactor);
   publish("useEMLPB",&Options::useEMLPB);
   publish("useHadLPB",&Options::useHadLPB);
@@ -377,13 +362,6 @@ void Options::PublishMembers()
   publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
   publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
-  publish("synchRadOn",&Options::synchRadOn);
-  publish("decayOn",&Options::decayOn);
-  publish("srTrackPhotons",&Options::synchTrackPhotons);
-  publish("srLowX",&Options::synchLowX);
-  publish("srLowGamE",&Options::synchLowGamE);
-  publish("srMultiplicity",&Options::synchPhotonMultiplicity);
-  publish("srMeanFreeFactor",&Options::synchMeanFreeFactor);
   publish("lengthSafety",&Options::lengthSafety);
   publish("randomSeed",&Options::randomSeed);
   publish("storeMuonTrajectory",&Options::storeMuonTrajectories);

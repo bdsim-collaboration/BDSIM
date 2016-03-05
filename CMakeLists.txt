@@ -44,20 +44,29 @@ endif()
 # Compiler-specific C++11 activation. Replace later with
 # CMAKE_CXX_STANDARD flag only available for cmake 3.1
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    execute_process(
-        COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-        message(STATUS "Compiler supports C++11")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    endif ()
+  execute_process(
+    COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if (GCC_VERSION VERSION_GREATER 4.8 OR GCC_VERSION VERSION_EQUAL 4.8)
+    message(STATUS "Compiler supports C++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+  elseif (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+    message(STATUS "Compiler supports C++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  endif ()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    # find version:
-    EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
-    string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-    #message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
-
+  # get clang version
+  execute_process( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
+  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
+  if($ENV{VERBOSE})
+    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
+  endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
+    message(STATUS "Compiler supports C++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
+  else()
     message(STATUS "Compiler supports C++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+  endif()
 else()
     message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11")
 endif()
@@ -149,6 +158,8 @@ elseif(USE_AFS)
 endif()
 
 find_package(ROOT REQUIRED)
+# major ROOT version
+string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
@@ -164,12 +175,27 @@ foreach(header ${linkHeaders})
   MATH(EXPR length "${pos}-${beginpos}")
   string(SUBSTRING ${header} ${beginpos} ${length} className)
   #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
-    COMMAND ${ROOTCINT_EXECUTABLE}
-    ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    )
+  if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+    # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
+    # also rootcint5 does not accept additional options
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+      COMMAND ${ROOTCINT_EXECUTABLE}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      -D__MAKECINT__
+      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      )
+  else()
+    # ROOT 5
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+      COMMAND ${ROOTCINT_EXECUTABLE}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      )
+  endif()
   # keep list of ROOT dictionaries
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
   set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
@@ -299,12 +325,6 @@ set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
 # for ROOT dictionaries
 # stop warnings from Clang version (for versions 7 and greater)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  # get clang version
-  EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
-  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-  if($ENV{VERBOSE})
-    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
-  endif()
   if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
     set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
   endif()

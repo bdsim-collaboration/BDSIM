@@ -10,7 +10,12 @@
 
 #include <ostream>
 
-class BDSSamplerHit :public G4VHit
+/**
+ * @brief The information recorded from a particle impacting a sampler.
+ *
+ */
+
+class BDSSamplerHit: public G4VHit
 {
 public:
   BDSSamplerHit(G4String    aName,
@@ -30,7 +35,7 @@ public:
 		G4String    sampType,
 		G4String    process);
 
-  ~BDSSamplerHit();
+  virtual ~BDSSamplerHit();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

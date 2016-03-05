@@ -6,5 +6,8 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/robdsim/CMakeLists.txt AND
     add_subdirectory(robdsim)
   endif()
 else()
-   set(USE_ROBDSIM FALSE CACHE BOOL "Use submodule robdsim")
+  message(STATUS "Robdsim not found - switching off")
+  message(STATUS "To get robdsim do 'git submodule init' and 'git submodule update'")
+  # force overwrite
+  set(USE_ROBDSIM FALSE CACHE BOOL "Use submodule robdsim" FORCE)
 endif()
