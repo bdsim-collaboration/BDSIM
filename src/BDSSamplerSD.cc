@@ -89,16 +89,31 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
   // Get coordinate transform and prepare local coordinates
   G4Transform3D localToGlobal = registry->GetTransformInverse(samplerID);
-  G4AffineTransform tf;
   if (localToGlobal == G4Transform3D::Identity) // no transform was provided - look it up
-    {tf = G4AffineTransform(preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform());}
-  else
-    {tf = G4AffineTransform(localToGlobal.getRotation(),localToGlobal.getTranslation());}
-  
-  G4ThreeVector localPosition  = tf.TransformPoint(pos);
-  G4ThreeVector localDirection = tf.TransformAxis(mom);
-  BDSParticle   local(localPosition,localDirection,energy,t);
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Getting transform dynamically from geometry." << G4endl;
+#endif
+      // This geometry lookup provides G4AffineTransfrom, but convert to G4Transform3D for uniform
+      // code afterwards.
+      G4AffineTransform tf = preStepPoint->GetTouchableHandle()->GetHistory()->GetTopTransform();
+      localToGlobal = G4Transform3D(tf.NetRotation(), tf.NetTranslation());
+    }
 
+  // Cast 3 vector to 'point' to transform position (required to be explicit for * operator)
+  G4ThreeVector localPosition  = localToGlobal * (HepGeom::Point3D<G4double>)pos;
+  // Now, if the sampler is infinitely thin, the local z should be 0, but it's finite.
+  // Account for this by purposively setting local z to be 0.
+  localPosition.setZ(0.0);
+  
+  // Cast 3 vector to 3 vector to transform vector (required to be explicit for * operator)
+  G4ThreeVector localDirection = localToGlobal * (HepGeom::Vector3D<G4double>)mom;
+  BDSParticle   local(localPosition,localDirection,energy,t);
+  
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "Local coordinates: " << local << G4endl;
+#endif
+  
   G4String samplerName = registry->GetName(samplerID);      // name
   G4double s           = registry->GetSPosition(samplerID); // S position
   G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
