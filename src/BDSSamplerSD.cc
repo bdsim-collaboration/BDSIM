@@ -55,8 +55,8 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   // Do not store hit if the particle pre step point is not on the boundary
-  G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-  if(preStepPoint->GetStepStatus() != fGeomBoundary)
+  G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
+  if(postStepPoint->GetStepStatus() != fGeomBoundary)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "not storing as not on geometry boundary" << G4endl;
@@ -80,6 +80,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // give the ones in the parallel sampler world this SD is attached to. If the post step
   // point is on a boundary, it belongs to the next volume - ie not the one of interest
   // so always use the pre step point for volume identification.
+  G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
   G4int samplerID   = preStepPoint->GetTouchable()->GetVolume()->GetCopyNo();
   
 #ifdef BDSDEBUG
