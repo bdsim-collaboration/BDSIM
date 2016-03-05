@@ -26,10 +26,8 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
 
 BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
 {
-  for(std::map< const G4BiasingProcessInterface*, G4BOptnChangeCrossSection* >::iterator it = fChangeCrossSectionOperations.begin() ;
-      it != fChangeCrossSectionOperations.end() ;
-      it++ ) 
-    delete (*it).second;
+  for (auto change : fChangeCrossSectionOperations)
+    {delete change.second;}
 }
 
 void BDSBOptrChangeCrossSection::StartRun()
