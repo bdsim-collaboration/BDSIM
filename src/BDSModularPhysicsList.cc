@@ -21,6 +21,7 @@
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
 #include "G4OpticalProcessIndex.hh"
+#include "G4SynchrotronRadiation.hh"
 
 // particles
 #include "G4AntiNeutrinoE.hh"
@@ -354,13 +355,12 @@ void BDSModularPhysicsList::ParameterisationPhysics()
 							  
 void BDSModularPhysicsList::SynchRad()
 {
+  ConstructAllLeptons();
   if(!physicsActivated["synchrad"])
     {
       constructors.push_back(new BDSSynchRadPhysics());
       physicsActivated["synchrad"] = true;
     }
-  // Switch on BDSGlobalConstants::SetSynchRadOn() to keep BDSPhysicsListCompatibility
-  globals->SetSynchRadOn(true);
 }							  
 							  
 void BDSModularPhysicsList::Muon()

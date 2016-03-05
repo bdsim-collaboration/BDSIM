@@ -953,13 +953,9 @@ int yyerror(const char *s)
   exit(1);
 }
 
-#ifdef __cplusplus
 extern "C" {
-#endif
-int yywrap()
-{
-	return 1;
+  int yywrap()
+  {
+    return 1;
+  }
 }
-#ifdef __cplusplus
-}
-#endif

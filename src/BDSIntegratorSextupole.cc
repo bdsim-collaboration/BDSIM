@@ -110,9 +110,6 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 	   G4double h2=h*h;
 	   // chord distance (simple quadratic approx)
 	   distChord= h2*R_1/8;
-
-	   // Save for Synchrotron Radiation calculations:
-	   BDSLocalRadiusOfCurvature=1./R_1;
 	   
            G4double dx=LocalRp.x()*h + LocalRpp.x()*h2 /2.; 
 	   G4double dy=LocalRp.y()*h + LocalRpp.y()*h2 /2.;

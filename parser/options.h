@@ -140,10 +140,6 @@ namespace GMAD {
     double   blmLength;
 
     ///Cross section biasing parameters
-    double   gammaToMuFe;
-    double   annihiToMuFe;
-    double   eeToHadronsFe;
-
     double   scintYieldFactor;
  
     int      useEMLPB;
@@ -185,13 +181,6 @@ namespace GMAD {
     int      turnOnRayleighScattering;
     int      turnOnOpticalSurface;
     int      turnOnBirksSaturation;
-    int      synchRadOn;
-    int      decayOn;
-    int      synchTrackPhotons;
-    double   synchLowX;
-    double   synchLowGamE;
-    int      synchPhotonMultiplicity;
-    int      synchMeanFreeFactor;
     double   lengthSafety;
     int      randomSeed;
 

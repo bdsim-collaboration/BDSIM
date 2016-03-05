@@ -71,9 +71,6 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       yOut[4] = v0.y();
       yOut[5] = v0.z();
       
-      // Set to infinite radius for Synchrotron Radiation calculation:
-      //    BDSLocalRadiusOfCurvature=DBL_MAX;
-      
       distChord = 0;
       return;
     }
@@ -107,9 +104,6 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   
   CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
   SinT=2*CosT_ov_2*SinT_ov_2;
-  
-  // Save for Synchrotron Radiation calculations:
-  BDSLocalRadiusOfCurvature = R;
   
   distChord = fabs(R)*(1.-CosT_ov_2);
   

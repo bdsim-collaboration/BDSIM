@@ -9,16 +9,16 @@ class G4Event;
 class G4ParticleGun;
 
 /**
- * @brief Generator of primary particle coordinates.
+ * @brief Generates primary particle vertices using BDSBunch.
+ *
  */
 
-class BDSPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
   BDSPrimaryGeneratorAction(BDSBunch*);    
   virtual ~BDSPrimaryGeneratorAction();
   
-public:
   virtual void GeneratePrimaries(G4Event*);
   
 private:

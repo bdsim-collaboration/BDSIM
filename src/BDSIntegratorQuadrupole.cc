@@ -10,7 +10,6 @@
 #include <cmath>
 
 using std::max;
-extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
@@ -117,10 +116,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double  yIn[],
   if(R_1>0.)
     {
       G4double R=1./R_1;
-
-      // Save for Synchrotron Radiation calculations:
-      BDSLocalRadiusOfCurvature=R;
-
+      
       // chord distance (simple quadratic approx)
       distChord= h2/(8*R);
 

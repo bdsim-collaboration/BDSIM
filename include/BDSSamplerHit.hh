@@ -11,7 +11,7 @@
 #include <ostream>
 
 /**
- * @brief Information recorded from a hit in a sampler.
+ * @brief The information recorded from a particle impacting a sampler.
  *
  */
 

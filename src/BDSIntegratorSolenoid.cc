@@ -129,7 +129,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   
   // Save for Synchrotron Radiation calculations
   G4double R=1./R_1;
-  BDSLocalRadiusOfCurvature=R;
   
   // chord distance (simple quadratic approx)
   distChord= h2/(8*R);
