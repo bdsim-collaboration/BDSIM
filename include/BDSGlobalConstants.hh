@@ -83,10 +83,6 @@ public:
   void     SetParticleMomentum(G4double val);
 
   G4double GetPlanckScatterFe() const;
-
-  G4double GetGammaToMuFe() const;
-  G4double GetAnnihiToMuFe() const;
-  G4double GetEeToHadronsFe() const;
   G4bool   GetSampleDistRandomly() const;
   G4bool   GetUseEMLPB() const;
   G4bool   GetUseHadLPB() const;
@@ -156,14 +152,6 @@ public:
   
   ///@{ Physical processes etc.
   G4String GetPhysListName() const;
-  G4bool   GetSynchRadOn() const;
-  void     SetSynchRadOn(G4bool);
-  G4bool   GetDecayOn() const;
-  G4bool   GetSynchTrackPhotons() const;
-  G4double GetSynchLowX() const;
-  G4double GetSynchLowGamE() const;
-  G4int    GetSynchPhotonMultiplicity() const;
-  G4int    GetSynchMeanFreeFactor() const;
   ///@}
   G4double GetLaserwireWavelength() const;
   G4ThreeVector GetLaserwireDir() const;
@@ -244,9 +232,6 @@ private:
   G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
   G4double itsPlanckScatterFe;
-  G4double itsGammaToMuFe;
-  G4double itsAnnihiToMuFe;
-  G4double itsEeToHadronsFe;
   G4bool   itsSampleDistRandomly;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
@@ -307,13 +292,6 @@ private:
   G4double itsProdCutProtonsP;
   G4double itsProdCutProtonsA;
   G4String itsPhysListName;
-  G4bool   itsSynchRadOn;
-  G4bool   itsDecayOn;
-  G4bool   itsSynchTrackPhotons;
-  G4double itsSynchLowX;
-  G4double itsSynchLowGamE;
-  G4int    itsSynchMeanFreeFactor;
-  G4int    itsSynchPhotonMultiplicity;
   // test map container for laserwire parameters - Steve
   std::map<const G4String, G4double> lwWavelength;
   std::map<const G4String, G4ThreeVector> lwDirection;
@@ -477,15 +455,6 @@ inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
 inline G4double BDSGlobalConstants::GetPlanckScatterFe() const
 {return itsPlanckScatterFe;}
 
-inline G4double BDSGlobalConstants::GetGammaToMuFe() const
-{return itsGammaToMuFe;}
-
-inline G4double BDSGlobalConstants::GetAnnihiToMuFe() const
-{return itsAnnihiToMuFe;}
-
-inline G4double BDSGlobalConstants::GetEeToHadronsFe() const
-{return itsEeToHadronsFe;}
-
 inline G4bool BDSGlobalConstants::GetSampleDistRandomly() const{
   return itsSampleDistRandomly;}
 
@@ -611,30 +580,6 @@ inline G4double BDSGlobalConstants::GetProdCutProtonsA() const
 
 inline G4String BDSGlobalConstants::GetPhysListName() const
 {return itsPhysListName;}
-
-inline G4bool BDSGlobalConstants::GetSynchRadOn() const
-{return itsSynchRadOn;}
-
-inline void BDSGlobalConstants::SetSynchRadOn(G4bool synchRadOn) 
-{itsSynchRadOn = synchRadOn;}
-
-inline G4bool BDSGlobalConstants::GetDecayOn() const
-{return itsDecayOn;}
-
-inline G4bool BDSGlobalConstants::GetSynchTrackPhotons() const
-{return itsSynchTrackPhotons ;}
-
-inline G4double BDSGlobalConstants::GetSynchLowX() const
-{return itsSynchLowX ;}
-
-inline G4double BDSGlobalConstants::GetSynchLowGamE() const
-{return itsSynchLowGamE ;}
-
-inline G4int BDSGlobalConstants::GetSynchPhotonMultiplicity() const
-{return itsSynchPhotonMultiplicity ;}
-
-inline G4int BDSGlobalConstants::GetSynchMeanFreeFactor() const
-{return itsSynchMeanFreeFactor ;}
 
 inline G4double BDSGlobalConstants::GetLaserwireWavelength() const
 {return itsLaserwireWavelength ;}

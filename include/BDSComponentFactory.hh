@@ -55,11 +55,11 @@ private:
   G4double brho;
   
   /// element for storing instead of passing around
-  GMAD::Element* element;
+  GMAD::Element* element = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* prevElement;
+  GMAD::Element* prevElement = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* nextElement;
+  GMAD::Element* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();

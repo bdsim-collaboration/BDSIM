@@ -1,20 +1,12 @@
 ! standard options for runing bdsim
 
 option, beampipeRadius = 50 * cm,
-        boxSize = 1.9 * m,
-        buildTunnel=0,
-        buildTunnelFloor=0,
-        tunnelRadius= 2.0 * m,
-        samplerDiameter = 2.0*m,
         beampipeThickness = 0.5 * mm,        
-       ! thresholdCutCharged = 1 * KeV,
-       ! thresholdCutPhotons = 1 * KeV;
-       !  thresholdCutCharged = 1 * MeV,                
-       !  thresholdCutPhotons = 1 * MeV;
         thresholdCutCharged = 15 * GeV,
         thresholdCutPhotons = 15 * GeV;
+
 !option,physicsList="FTFP_BERT";
 option,physicsList="hadronic";
-option, gammaToMuFe=1e4, annihiToMuFe=1e4;
-option, randomSeed=123456;
 option,ngenerate=10;
+
+!option, gammaToMuFe=1e4, annihiToMuFe=1e4;

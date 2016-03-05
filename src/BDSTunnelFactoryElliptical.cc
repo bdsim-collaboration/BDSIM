@@ -336,7 +336,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
       G4VSolid* floorBox     = new G4Box(name + "_floor_box_solid",  // name
 					 floorBoxRadius,             // x half width
 					 floorBoxRadius,             // y half width
-					 length);                    // z half length
+					 length*1.2);                // z half length
       // box z length extra long for unambiguous subtraction
 
       // register solids
@@ -353,7 +353,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
       G4VSolid* floorContainerEllAng = new G4EllipticalTube(name + "_floor_cont_ell_solid", // name
 							    tunnel1*1.1,                    // x radius
 							    tunnel2*1.1,                    // y radius
-							    length);                       // z half length
+							    length*1.3);                    // z half length
       // z long for unambiguous intersection
 
       G4VSolid* floorContainerEllipseAngled = new G4IntersectionSolid(name + "+floor_cont_ell_ang_solid", // name
@@ -383,7 +383,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
       G4VSolid* tunnelContainerSolidInner = new G4EllipticalTube(name + "_tunnel_cont_solid_inner", // name
 								 tunnel1,                           // x radius
 								 tunnel2,                           // y radius
-								 length*0.5);
+								 length*2.4);
 
       G4VSolid* tunnelContainerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid",       // name
 							      tunnelContainerSolidOuterAngled,   // this
