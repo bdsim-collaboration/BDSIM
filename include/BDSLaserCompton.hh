@@ -12,90 +12,91 @@
 #include "BDSComptonEngine.hh"
 #include "BDSMaterials.hh"
 
-
 // flag initiated in BDSEventAction
 extern G4bool FireLaserCompton;
 
-class BDSLaserCompton : public G4VDiscreteProcess
+/**
+ * @brief Laser compton scattering process to achieve a laserwire.
+ * 
+ * This tests whether the current track is in a 'laservacuum' material
+ * as defined by BDSMaterials and if so simulates compton scattering of
+ * a photon from the incident particle.
+ *
+ * This is long standing code and hasn't been used for sometime and should
+ * be validated.
+ *
+ * @author Grahame Blair
+ */
+
+
+class BDSLaserCompton: public G4VDiscreteProcess
 { 
-  public:
+public:
    
   BDSLaserCompton(const G4String& processName = "eLaser");
   
-  ~BDSLaserCompton();
+  virtual  ~BDSLaserCompton();
 
-  G4bool IsApplicable(const G4ParticleDefinition&);
+  /// Overridden from G4VProcess - whether applicable to a particular particle.
+  virtual G4bool IsApplicable(const G4ParticleDefinition&);
+
+  /// Overridden from G4VDiscreteProcess.
+  virtual G4double GetMeanFreePath(const G4Track& track,
+				   G4double previousStepSize,
+				   G4ForceCondition* condition );
   
-  G4double GetMeanFreePath(const G4Track& track,
-			   G4double previousStepSize,
-			   G4ForceCondition* condition );
-  
-  G4VParticleChange *PostStepDoIt(const G4Track& track,         
-				  const G4Step&  step);                 
+  virtual G4VParticleChange *PostStepDoIt(const G4Track& track,         
+					  const G4Step&  step);                 
   
   inline void SetLaserDirection(G4ThreeVector aDirection);
-  inline G4ThreeVector GetLaserDirection();
+  inline G4ThreeVector GetLaserDirection() const;
   
   inline void SetLaserWavelength(G4double aWavelength);
-  inline G4double GetLaserWavelength();
+  inline G4double GetLaserWavelength() const;
   
 protected:
-  
   G4double ComputeMeanFreePath( const G4ParticleDefinition* ParticleType,
 				G4double KineticEnergy, 
 				const G4Material* aMaterial);
-
-  //  virtual G4double SecondaryEnergyThreshold(size_t index);
   
 private:
-  
   // assignment and copy constructor not implemented nor used
   BDSLaserCompton & operator=(const BDSLaserCompton &right);
   BDSLaserCompton(const BDSLaserCompton&);
 
-  //  const std::vector<G4double>* secondaryEnergyCuts;
+  BDSGlobalConstants* globals;
   
-  G4double itsLaserWavelength;
-  G4ThreeVector itsLaserDirection;
-  G4double itsLaserEnergy;
-  BDSComptonEngine* itsComptonEngine;
-  //  G4Material* itsLastMaterial;
-
+  G4double          laserWavelength;
+  G4ThreeVector     laserDirection;
+  G4double          laserEnergy;
+  BDSComptonEngine* comptonEngine;
 };
-inline G4bool BDSLaserCompton::IsApplicable(
-					    const G4ParticleDefinition& particle)
+
+inline G4bool BDSLaserCompton::IsApplicable(const G4ParticleDefinition& particle)
 {
-  return(  (&particle == G4Electron::Electron())
-	   ||(&particle == G4Positron::Positron()) );
+  return ( (&particle == G4Electron::Electron()) || (&particle == G4Positron::Positron()) );
 }
 
 inline G4double BDSLaserCompton::GetMeanFreePath(const G4Track& track,
 						 G4double /*PreviousStepSize*/,
 						 G4ForceCondition* ForceCondition)
 {
-  if( track.GetMaterial()==BDSMaterials::Instance()->GetMaterial("LaserVac") &&
-      FireLaserCompton ) {
-    *ForceCondition=Forced;
-  }
+  if ( track.GetMaterial() == BDSMaterials::Instance()->GetMaterial("LaserVac") &&
+      FireLaserCompton )
+    {*ForceCondition = Forced;}
   return DBL_MAX;
 }
 
+inline void BDSLaserCompton::SetLaserDirection(G4ThreeVector laserDirectionIn)
+{laserDirection = laserDirectionIn;}
 
-inline void BDSLaserCompton::SetLaserDirection(G4ThreeVector aDirection)
-{itsLaserDirection=aDirection;}
+inline G4ThreeVector BDSLaserCompton::GetLaserDirection() const
+{return laserDirection;}
 
-inline G4ThreeVector BDSLaserCompton::GetLaserDirection()
-{return itsLaserDirection;}
+inline void BDSLaserCompton::SetLaserWavelength(G4double wavelengthIn)
+{laserWavelength = wavelengthIn;}
 
-inline void BDSLaserCompton::SetLaserWavelength(G4double aWavelength)
-{itsLaserWavelength=aWavelength;}
-
-inline G4double BDSLaserCompton::GetLaserWavelength()
-{return itsLaserWavelength;}
-
-// inline G4double BDSLaserCompton::SecondaryEnergyThreshold(size_t index)
-// {
-//   return (*secondaryEnergyCuts)[index];
-// }
+inline G4double BDSLaserCompton::GetLaserWavelength() const
+{return laserWavelength;}
 
 #endif
