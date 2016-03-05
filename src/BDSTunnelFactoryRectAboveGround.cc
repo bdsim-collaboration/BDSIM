@@ -34,7 +34,7 @@ BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
 BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 {
   slabSolid      = nullptr;
-  slabYHalfWidth = 1.5*CLHEP::m;
+  slabYHalfWidth = 1*CLHEP::m;
 }
 
 BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
@@ -67,38 +67,41 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
   // build the solids
   // work out how wide the slab needs to be
   G4double slabXHalfWidth = std::max(tunnel1, tunnel2) * 2;
+
+  // lengthSafety ensures clean union with floor plane
+  G4double yDisp = tunnel2 + slabYHalfWidth + lengthSafety;
+  
+  G4ThreeVector slabDisplacement = G4ThreeVector(0,-yDisp,0);
+  
   slabSolid = new G4Box(name + "_slab_solid",       // name
 			slabXHalfWidth,             // x half width
 			slabYHalfWidth,             // y half width
-			0.5*length - lengthSafety); // z half width
-			
+			0.5*length - lengthSafety); // z half width		
   
   G4VSolid* tunnelOuterSolid = new G4Box(name + "_tunnel_outer_solid", // name
 					 tunnel1 + tunnelThickness,    // x radius
 					 tunnel2 + tunnelThickness,    // y radius
 					 0.5*length - lengthSafety);   // z half length (to fit in container)
+
+  G4VSolid* tunnelRectSolid = new G4UnionSolid(name + "_tunnel_outer_solid", // name,
+					       tunnelOuterSolid,
+					       slabSolid,
+					       0,
+					       slabDisplacement);
   
   G4VSolid* tunnelInnerSolid = new G4Box(name + "_tunnel_outer_solid", // name
 					 tunnel1 + lengthSafety,       // x radius
 					 tunnel2 + lengthSafety,       // y radius
 					 length); // z half length - long for unambiguous subtraction
 
-  G4VSolid* tunnelRectSolid = new G4SubtractionSolid(name + "_tunnel_rect_solid",// name
-						     tunnelOuterSolid,           // this
-						     tunnelInnerSolid);          // minus this
+  tunnelSolid = new G4SubtractionSolid(name + "_tunnel_solid",// name
+				       tunnelRectSolid,           // this
+				       tunnelInnerSolid);          // minus this
 
   // register solids
   solidsToBeRegistered.push_back(tunnelOuterSolid);
   solidsToBeRegistered.push_back(tunnelInnerSolid);
   solidsToBeRegistered.push_back(tunnelRectSolid);
-
-  G4double yDisp = tunnel2 + slabYHalfWidth + lengthSafety; // lengthSafety ensures clean union with floor plane
-  G4ThreeVector slabDisplacement = G4ThreeVector(0,-yDisp,0);
-  tunnelSolid = new G4UnionSolid(name + "_tunnel_solid", // name
-				 slabSolid,
-				 tunnelRectSolid,
-				 0,
-				 slabDisplacement);
   
   G4double containerXRadius = slabXHalfWidth + lengthSafety;
   G4double containerYRadius = slabYHalfWidth + lengthSafety;
@@ -125,28 +128,25 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSection(G4String 
 						       tunnel2 + tunnelThickness + lengthSafety, // y radius
 						       0.5*length);                              // z half length
       G4VSolid* tunnelContainerOuter = new G4UnionSolid(name + "_cont_outer_solid",
+							tunnelContainerOuterTunnel,
 							tunnelContainerOuterSlab,
-							tunnelContainerOuterTunnel);
+							0,
+							slabDisplacement);
 
-      G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;
+      //G4double tunnelContInnerYRadius = ( tunnelFloorOffset + tunnel2 ) * 0.5;
       G4VSolid* tunnelContainerInner = new G4Box(name + "_tunnel_cont_solid_inner", // name
 						 tunnel1,                           // x radius
-						 tunnelContInnerYRadius,            // y radius
-						 length*0.5);
-
-      // regsiter solids
+						 tunnel2,                           // y radius
+						 length);
+      
       solidsToBeRegistered.push_back(tunnelContainerOuterSlab);
       solidsToBeRegistered.push_back(tunnelContainerOuterTunnel);
       solidsToBeRegistered.push_back(tunnelContainerOuter);
       solidsToBeRegistered.push_back(tunnelContainerInner);
-
-      // offset the centre cut out by the difference between the vertical half widths of tunnel2 and tunnel2+floor
-      G4ThreeVector contInsideDisplacement = G4ThreeVector(0, tunnelContInnerYRadius - tunnel2, 0);
+      
       containerSolid = new G4SubtractionSolid(name + "_tunnel_cont_solid", // name
 					      tunnelContainerOuter,        // this
-					      tunnelContainerInner,        // minus this
-					      0,                           // rotate by this
-					      contInsideDisplacement);
+					      tunnelContainerInner);       // minus this
     }
   else
     {
