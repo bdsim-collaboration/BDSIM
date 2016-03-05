@@ -140,10 +140,6 @@ namespace GMAD {
     double   blmLength;
 
     ///Cross section biasing parameters
-    double   gammaToMuFe;
-    double   annihiToMuFe;
-    double   eeToHadronsFe;
-
     double   scintYieldFactor;
  
     int      useEMLPB;

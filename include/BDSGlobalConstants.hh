@@ -83,10 +83,6 @@ public:
   void     SetParticleMomentum(G4double val);
 
   G4double GetPlanckScatterFe() const;
-
-  G4double GetGammaToMuFe() const;
-  G4double GetAnnihiToMuFe() const;
-  G4double GetEeToHadronsFe() const;
   G4bool   GetSampleDistRandomly() const;
   G4bool   GetUseEMLPB() const;
   G4bool   GetUseHadLPB() const;
@@ -236,9 +232,6 @@ private:
   G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
   G4double itsPlanckScatterFe;
-  G4double itsGammaToMuFe;
-  G4double itsAnnihiToMuFe;
-  G4double itsEeToHadronsFe;
   G4bool   itsSampleDistRandomly;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
@@ -461,15 +454,6 @@ inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
 
 inline G4double BDSGlobalConstants::GetPlanckScatterFe() const
 {return itsPlanckScatterFe;}
-
-inline G4double BDSGlobalConstants::GetGammaToMuFe() const
-{return itsGammaToMuFe;}
-
-inline G4double BDSGlobalConstants::GetAnnihiToMuFe() const
-{return itsAnnihiToMuFe;}
-
-inline G4double BDSGlobalConstants::GetEeToHadronsFe() const
-{return itsEeToHadronsFe;}
 
 inline G4bool BDSGlobalConstants::GetSampleDistRandomly() const{
   return itsSampleDistRandomly;}

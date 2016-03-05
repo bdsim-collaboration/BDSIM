@@ -162,9 +162,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
-  itsGammaToMuFe= opt.gammaToMuFe;
-  itsAnnihiToMuFe= opt.annihiToMuFe;
-  itsEeToHadronsFe=opt.eeToHadronsFe;
   itsUseEMLPB=opt.useEMLPB;
   itsUseHadLPB=opt.useHadLPB;
   SetLPBFraction(opt.LPBFraction);

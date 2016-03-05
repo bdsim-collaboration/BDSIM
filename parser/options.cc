@@ -103,9 +103,6 @@ Options::Options()
   sensitiveBLMs            = 1;
 
   // physics processes
-  gammaToMuFe              = 1;
-  annihiToMuFe             = 1;
-  eeToHadronsFe            = 1;
   useEMLPB                 = 0;
   useHadLPB                = 0;
   doPlanckScattering       = 0;
@@ -316,10 +313,7 @@ void Options::PublishMembers()
   // options for beam loss monitor geometry
   publish("blmRad",&Options::blmRad);
   publish("blmLength",&Options::blmLength);
-
-  publish("gammaToMuFe",&Options::gammaToMuFe);
-  publish("annihiToMuFe",&Options::annihiToMuFe);
-  publish("eeToHadronsFe",&Options::eeToHadronsFe);
+  
   publish("scintYieldFactor",&Options::scintYieldFactor);
   publish("useEMLPB",&Options::useEMLPB);
   publish("useHadLPB",&Options::useHadLPB);

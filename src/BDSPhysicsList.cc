@@ -730,35 +730,15 @@ void BDSPhysicsList::ConstructMuon()
     if (particleName == "gamma") {
       // gamma         
       G4GammaConversionToMuons* gammaconversiontomuons = new G4GammaConversionToMuons();
-      BDSXSBias* gammaconversiontomuon_xsbias = new BDSXSBias();
-      gammaconversiontomuons->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
-      gammaconversiontomuon_xsbias->RegisterProcess(gammaconversiontomuons);
-      gammaconversiontomuon_xsbias->eFactor(BDSGlobalConstants::Instance()->GetGammaToMuFe());
-      pmanager->AddDiscreteProcess(gammaconversiontomuon_xsbias);
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "GammaToMuFe = " << BDSGlobalConstants::Instance()->GetGammaToMuFe() << G4endl;
-#endif
+      pmanager->AddDiscreteProcess(gammaconversiontomuons);
     } else if (particleName == "e+") {
       //positron
       //===========ee to hadrons in development================
       G4eeToHadrons* eetohadrons = new G4eeToHadrons();
-      BDSXSBias* eetohadrons_xsbias = new BDSXSBias();
-      //G4cout << "eeToHadronsXSBias = " << BDSGlobalConstants::Instance()->GetEeToHadronsFe() << G4endl;
-      eetohadrons->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
-      eetohadrons_xsbias->RegisterProcess(eetohadrons);
-      eetohadrons_xsbias->eFactor(BDSGlobalConstants::Instance()->GetEeToHadronsFe());
-      pmanager->AddDiscreteProcess(eetohadrons_xsbias);
-      //pmanager->AddDiscreteProcess(eetohadrons);
+      pmanager->AddDiscreteProcess(eetohadrons);
       //-------------------------------------------------------
       G4AnnihiToMuPair* annihitomupair = new G4AnnihiToMuPair();
-      BDSXSBias* annihitomupair_xsbias = new BDSXSBias();
-      annihitomupair->SetCrossSecFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
-      annihitomupair_xsbias->RegisterProcess(annihitomupair);
-      annihitomupair_xsbias->eFactor(BDSGlobalConstants::Instance()->GetAnnihiToMuFe());
-      pmanager->AddDiscreteProcess(annihitomupair_xsbias); 
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "AnnihiToMuFe = " << BDSGlobalConstants::Instance()->GetAnnihiToMuFe() << G4endl;
-#endif    
+      pmanager->AddDiscreteProcess(annihitomupair);  
     } else if( particleName == "mu+" || 
                particleName == "mu-"    ) {
       //muon  
