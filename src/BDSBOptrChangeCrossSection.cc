@@ -148,36 +148,41 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // To do this, to first order, the two lines:
   //        operation->SetBiasedCrossSection( XStransformation * analogXS );
   //        operation->Sample();
-  if(previousOperation == nullptr) {
-    //    G4cout << __METHOD_NAME__ << " previousOperation==0 " << XStransformation * analogXS << G4endl;
-    operation->SetBiasedCrossSection( XStransformation * analogXS );
-    operation->Sample();
-  }
-  else {
-    //    G4cout << __METHOD_NAME__ << " previousOperation!=0 " << XStransformation * analogXS << G4endl;
-    if(previousOperation != operation) {
-      // -- should not happen !
-      G4ExceptionDescription ed;
-      ed << "Logic problem in operation handling !" << G4endl;
-      G4Exception("GB01BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(...)",
-		  "exGB01.02",JustWarning,ed);
-      return nullptr;
-    }
-    if(operation->GetInteractionOccured()) {
+  // are correct and sufficient.
+  // But, to avoid having to shoot a random number each time, we sample
+  // only on the first time the operation is proposed, or if the interaction
+  // occured. If the interaction did not occur for the process in the previous,
+  // we update the number of interaction length instead of resampling.
+
+  if(previousOperation == nullptr)
+    {
       operation->SetBiasedCrossSection( XStransformation * analogXS );
       operation->Sample();
     }
-    else {
-      // -- update the 'interaction length' and underneath 'number of interaction lengths'
-      // -- for past step  (this takes into accout the previous step cross-section value)
-      operation->UpdateForStep(callingProcess->GetPreviousStepSize());
-      // -- update the cross-section value:
-      operation->SetBiasedCrossSection(XStransformation * analogXS);
-      // -- forces recomputation of the 'interaction length' taking into account above
-      // -- new cross-section value [tricky : to be improved]
-      operation->UpdateForStep(0.0);
+  else
+    {
+      if(previousOperation != operation)
+	{// should not happen !
+	  //G4cout << __METHOD_NAME__ << "Logic Problem" << G4endl;
+	  return nullptr;
+	}
+      if(operation->GetInteractionOccured())
+	{
+	  operation->SetBiasedCrossSection( XStransformation * analogXS );
+	  operation->Sample();
+	}
+    else
+      {
+	// update the 'interaction length' and underneath 'number of interaction lengths'
+	// for past step  (this takes into accout the previous step cross-section value)
+	operation->UpdateForStep(callingProcess->GetPreviousStepSize());
+	// update the cross-section value:
+	operation->SetBiasedCrossSection(XStransformation * analogXS);
+	// forces recomputation of the 'interaction length' taking into account above
+	// new cross-section value [tricky : to be improved]
+	operation->UpdateForStep(0.0);
+      }
     }
-  }
   return operation;  
 }
 
