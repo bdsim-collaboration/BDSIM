@@ -13,9 +13,9 @@ class BDSSynchRadPhysics: public G4VPhysicsConstructor
 {
 public:
   BDSSynchRadPhysics();
-  ~BDSSynchRadPhysics();
-  void ConstructProcess();
-  void ConstructParticle();
+  virtual ~BDSSynchRadPhysics();
+  virtual void ConstructProcess();
+  virtual void ConstructParticle();
   
 private:
   G4bool activated;
