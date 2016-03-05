@@ -1265,20 +1265,19 @@ proc                process(es) to be biased
 flag                flag which particles are biased for the process(es)
                     (1=all, 2=primaries, 3=secondaries)
 xsecfact            biasing factor(s) for the process(es)
-logicalVolumes      logical volumes that the biasing process will
-                    be attached to (work in progress).
-                    Currently always attached to both vacuum
-		    and accelerator material
 =================== ================================================
 
 Example::
 
-  biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3, logicalVolumes="acceleratorVacuum";
-  biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2}, logicalVolumes="acceleratorMaterial";
+  biasDef1: xsecBias, particle="e-", proc="all", xsecfact=10, flag=3;
+  biasDef2: xsecBias, particle="e+", proc="eBrem eIoni msc", xsecfact={10,1,5}, flag={1,1,2};
 
-The process can also be attached to a specific element::
+The process can also be attached to a specific element using the keywords `biasVacuum` or
+`biasMaterial` for the biasing to be attached the vacuum volume or everything outside the
+vacuum respectively::
 
-  q1 : quadrupole, l=1*m, material="Iron", bias="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
+  q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
+  q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
 
 
 Options
