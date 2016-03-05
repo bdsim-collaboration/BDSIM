@@ -4,6 +4,8 @@
 #include "BDSTunnelFactoryBase.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include "G4ThreeVector.hh"
+#include "G4VSolid.hh"
 
 class BDSTunnelSection;
 
@@ -66,13 +68,24 @@ private:
 			   G4double&    tunnelSoilThickness,
 			   G4Material*& tunnelMaterial,
 			   G4Material*& tunnelSoildMaterial,
-			   G4double&    tunnelFloorOffset,
 			   G4double&    tunnel1,
 			   G4double&    tunnel2);
 
+  virtual void TidyUp();
+  
+  G4VSolid* BuildContainerStraight(G4String name,
+				   G4double lengthIn,
+				   G4double tunnel1,
+				   G4double tunnel2,
+				   G4double tunnelThickness,
+				   G4ThreeVector slabDisplacement);
+
   G4VSolid* slabSolid;
-  //G4double  slabXHalfWidth;
+  G4double  slabXHalfWidth;
   G4double  slabYHalfWidth;
+
+  G4double containerXRadius;
+  G4double containerYRadius;
 
 };
   
