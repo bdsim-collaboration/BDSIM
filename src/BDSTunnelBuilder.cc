@@ -171,20 +171,10 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  G4cout << "Start element is:              " << (*startElement)->GetPlacementName() << G4endl;
 #endif
 	}
-
-      G4bool nextItemIsSampler = IsASampler(it);
-
-      if (nextItemIsSampler)
-	{
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "it's a sampler - break the tunnel around it" << G4endl;
-#endif
-	  endElement--; // decrement the end element to avoid the sampler
-	}
+      
       // it if matches any of the conditions, break the tunnel here (BEFORE) the item
       // pointed to by (*it)
-      
-      if (breakIt || isEnd || nextItemIsSampler)
+      if (breakIt || isEnd)
 	{
 	  // work out tunnel parameters
 	  std::string name = "tunnel_" + std::to_string(nTunnelSections);
@@ -361,19 +351,8 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	      startElement++;                    // next segment will begin where this one finishes
 #ifdef BDSDEBUG
 	      G4cout << __METHOD_NAME__ << "new start element: " << (*startElement)->GetPlacementName() << G4endl;
-#endif
-	      if (nextItemIsSampler)
-		{ // skip the sampler - ie no tunnel around it
-#ifdef BDSDEBUG
-		  G4cout << __METHOD_NAME__ << "next item a sampler - skipping over it" << G4endl;
-#endif
-		  startElement++;
-		  previousEndElement++;
-		  endElement = startElement; // end elmeent has to start at at least the 1st element
-		}
-#ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << "new tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
-	  G4cout << __METHOD_NAME__ << "new tunnel previous end element: " << (*previousEndElement)->GetPlacementName() << G4endl;
+	      G4cout << __METHOD_NAME__ << "new tunnel start element: " << (*startElement)->GetPlacementName() << G4endl;
+	      G4cout << __METHOD_NAME__ << "new tunnel previous end element: " << (*previousEndElement)->GetPlacementName() << G4endl;
 #endif
 	    }
 	} // end of scope of if (break section)
