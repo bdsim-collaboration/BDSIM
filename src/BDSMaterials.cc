@@ -25,14 +25,15 @@
 
 BDSMaterials* BDSMaterials::_instance = nullptr;
 
-BDSMaterials* BDSMaterials::Instance(){
-  if(_instance==nullptr) {
-    _instance = new BDSMaterials();
-  }
+BDSMaterials* BDSMaterials::Instance()
+{
+  if(_instance==nullptr)
+    {_instance = new BDSMaterials();}
   return _instance;
 }
 
-BDSMaterials::BDSMaterials(){
+BDSMaterials::BDSMaterials()
+{
   Initialise();
 }
 
@@ -615,10 +616,10 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["O"],4);
   materials[name]=tmpMaterial;
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////
+
   // Superconducting components of LHC magnet elements
   // Definitions taken from FLUKA
-
+  
   // Liquid helium at 1.9K  
   tmpMaterial = new G4Material(name="lhe_1.9k", 0.1472*CLHEP::g/CLHEP::cm3, 1, kStateLiquid, 1.9*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["He"],1);
@@ -650,8 +651,6 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddMaterial(GetMaterial("nbti_87k"),fractionmass=1.0/5.4);
   tmpMaterial->AddMaterial(GetMaterial("cu_4k"),fractionmass=4.4/5.4);
   materials[name]=tmpMaterial;
-  
-  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   //Gadolinium oxysulphate Gd_2 O_2 S
   G4Material* GOS = G4NistManager::Instance()->FindOrBuildMaterial("G4_GADOLINIUM_OXYSULFIDE",true,true);
