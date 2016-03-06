@@ -7,7 +7,7 @@ BDSBunchTwiss::BDSBunchTwiss():
   emitX(0.0), emitY(0.0),
   gammaX(0.0), gammaY(0.0),
   dispX(0.0), dispY(0.0),
-  dispPX(0.0), dispPY(0.0)
+  dispXP(0.0), dispYP(0.0)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -36,8 +36,8 @@ void BDSBunchTwiss::SetOptions(const GMAD::Options& opt)
   SetEmitY(opt.emity);
   SetDispX(opt.dispx);
   SetDispY(opt.dispy);
-  SetDispPX(opt.dispxp);
-  SetDispPY(opt.dispyp);
+  SetDispXP(opt.dispxp);
+  SetDispYP(opt.dispyp);
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;
 
@@ -78,12 +78,12 @@ void BDSBunchTwiss::CommonConstruction()
   sigmaGM[5][5] =  pow(sigmaE,2);
   sigmaGM[0][5] = dispX*pow(sigmaE,2);
   sigmaGM[5][0] = dispX*pow(sigmaE,2);
-  sigmaGM[1][5] = dispPX*pow(sigmaE,2);
-  sigmaGM[5][1] = dispPX*pow(sigmaE,2);
+  sigmaGM[1][5] = dispXP*pow(sigmaE,2);
+  sigmaGM[5][1] = dispXP*pow(sigmaE,2);
   sigmaGM[2][5] = dispY*pow(sigmaE,2);
   sigmaGM[5][2] = dispY*pow(sigmaE,2);
-  sigmaGM[3][5] = dispPY*pow(sigmaE,2);
-  sigmaGM[5][3] = dispPY*pow(sigmaE,2);
+  sigmaGM[3][5] = dispYP*pow(sigmaE,2);
+  sigmaGM[5][3] = dispYP*pow(sigmaE,2);
   
 
   delete GaussMultiGen;
