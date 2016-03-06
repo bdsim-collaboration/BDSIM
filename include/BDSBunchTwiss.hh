@@ -25,6 +25,10 @@ private :
   G4double emitY; 
   G4double gammaX;
   G4double gammaY;
+  G4double dispX;
+  G4double dispY;
+  G4double dispPX;
+  G4double dispPY;
   
   /* Random number generators */
   //  CLHEP::RandGauss *GaussGen;
@@ -49,14 +53,22 @@ public :
   G4double GetAlphaY() {return alphaY;} 
   G4double GetEmitX()  {return emitX;}
   G4double GetEmitY()  {return emitY;}
+  G4double GetDispX() {return dispX;}
+  G4double GetDispY() {return dispY;} 
+  G4double GetDispPX() {return dispX;}
+  G4double GetDispPY() {return dispY;}
 
 private:
   void     SetBetaX(double newBetaX) {betaX    = newBetaX;}
   void     SetBetaY(double newBetaY) {betaY    = newBetaY;}
-  void     SetAlphaX(double newAlphaX) {alphaX = newAlphaX;}
-  void     SetAlphaY(double newAlphaY) {alphaY = newAlphaY;}
+  void     SetAlphaX(double newAlphaX){alphaX = newAlphaX;}
+  void     SetAlphaY(double newAlphaY){alphaY = newAlphaY;}
   void     SetEmitX(double newEmitX)   {emitX  = newEmitX;}
-  void     SetEmitY(double newEmitY)   {emitY  = newEmitY;}   
+  void     SetEmitY(double newEmitY)   {emitY  = newEmitY;}
+  void     SetDispX(double newDispX)   {dispX  = newDispX;}
+  void     SetDispY(double newDispY)   {dispY  = newDispY;}
+  void     SetDispPX(double newDispPX) {dispPX  = newDispPX;}
+  void     SetDispPY(double newDispPY) {dispPY  = newDispPY;}
 };
 
 #endif
