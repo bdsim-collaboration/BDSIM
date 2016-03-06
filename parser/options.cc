@@ -203,6 +203,10 @@ void Options::PublishMembers()
   publish("alfy",&Options::alfy);
   publish("emitx",&Options::emitx);
   publish("emity",&Options::emity);
+  publish("dispx",&Options::dispx);
+  publish("dispy",&Options::dispy);
+  publish("disppx",&Options::disppx);
+  publish("disppy",&Options::disppy);
   
   // options for beam distrType="gauss"
   publish("sigmaX",&Options::sigmaX);
