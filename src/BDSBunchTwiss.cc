@@ -36,8 +36,8 @@ void BDSBunchTwiss::SetOptions(const GMAD::Options& opt)
   SetEmitY(opt.emity);
   SetDispX(opt.dispx);
   SetDispY(opt.dispy);
-  SetDispPX(opt.disppx);
-  SetDispPY(opt.disppy);
+  SetDispPX(opt.dispxp);
+  SetDispPY(opt.dispyp);
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;
 
