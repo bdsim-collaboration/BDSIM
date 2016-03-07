@@ -161,10 +161,7 @@ void Options::PublishMembers()
   // options for beam loss monitor geometry
   publish("blmRad",&Options::blmRad);
   publish("blmLength",&Options::blmLength);
-
-  publish("gammaToMuFe",&Options::gammaToMuFe);
-  publish("annihiToMuFe",&Options::annihiToMuFe);
-  publish("eeToHadronsFe",&Options::eeToHadronsFe);
+  
   publish("scintYieldFactor",&Options::scintYieldFactor);
   publish("useEMLPB",&Options::useEMLPB);
   publish("useHadLPB",&Options::useHadLPB);
@@ -208,13 +205,6 @@ void Options::PublishMembers()
   publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
   publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
-  publish("synchRadOn",&Options::synchRadOn);
-  publish("decayOn",&Options::decayOn);
-  publish("srTrackPhotons",&Options::synchTrackPhotons);
-  publish("srLowX",&Options::synchLowX);
-  publish("srLowGamE",&Options::synchLowGamE);
-  publish("srMultiplicity",&Options::synchPhotonMultiplicity);
-  publish("srMeanFreeFactor",&Options::synchMeanFreeFactor);
   publish("lengthSafety",&Options::lengthSafety);
   publish("randomSeed",&Options::randomSeed);
   publish("storeMuonTrajectory",&Options::storeMuonTrajectories);

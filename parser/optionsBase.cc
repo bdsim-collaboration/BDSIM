@@ -103,9 +103,6 @@ OptionsBase::OptionsBase()
   sensitiveBLMs            = 1;
 
   // physics processes
-  gammaToMuFe              = 1;
-  annihiToMuFe             = 1;
-  eeToHadronsFe            = 1;
   useEMLPB                 = 0;
   useHadLPB                = 0;
   doPlanckScattering       = 0;
@@ -117,7 +114,6 @@ OptionsBase::OptionsBase()
   turnOnOpticalSurface     = 1;
   turnOnBirksSaturation    = 1;
   scintYieldFactor         = 1.0;
-  decayOn                  = 1;
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
@@ -146,14 +142,6 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
-
-  // synchrotron radiation
-  synchRadOn               = 0;
-  synchTrackPhotons        = 0;
-  synchLowX                = 0.0;
-  synchLowGamE             = 0.0;
-  synchPhotonMultiplicity  = 1;
-  synchMeanFreeFactor      = 1;
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;

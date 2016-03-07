@@ -5,7 +5,6 @@ option, beampipeRadius = 10 * cm,
         samplerDiameter = 2.0*m,
         beampipeThickness = 0.5 * mm,
 	elossHistoBinWidth = 0.01,
-!	thresholdCutCharged = 200*MeV,
 	prodCutPhotons=0.1*m,
 	prodCutElectrons=0.1*m,
 	prodCutPositrons=0.1*m,
@@ -16,15 +15,6 @@ option, beampipeRadius = 10 * cm,
 ! option,aper2=15*cm;
 
 option,physicsList="em synchrad";
-option,srMultiplicity=1;
-option,stopTracks=0;
-
-!option,modularPhysicsListsOn=0;
-!option,physicsList="em";
-!option,synchRadOn=1;
-!option,srMultiplicity=1;
-
-option,srTrackPhotons=1;
 
 
 

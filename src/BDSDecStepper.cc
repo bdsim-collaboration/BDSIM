@@ -5,8 +5,6 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
-
 BDSDecStepper::BDSDecStepper(G4Mag_EqRhs *EqRhs):
   G4MagIntegratorStepper(EqRhs, 6),  
   fPtrMagEqOfMot(EqRhs),
@@ -75,9 +73,6 @@ void BDSDecStepper::AdvanceHelix( const G4double  yIn[],
       G4double R_1 = LocalRpp.mag();
       if(R_1>0.)
 	{
-	  // Save for Synchrotron Radiation calculations:
-	  BDSLocalRadiusOfCurvature=1/R_1;
-
 	  // chord distance (simple quadratic approx)
           G4double h2=h*h;
 	  itsDist= h2*R_1/8;

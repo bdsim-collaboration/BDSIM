@@ -6,7 +6,6 @@
 #include "G4ThreeVector.hh"
 
 using std::max;
-extern G4double BDSLocalRadiusOfCurvature;
 
 BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs* eqRHS):
   G4MagIntegratorStepper(eqRHS, 6),
@@ -106,10 +105,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
   if(R_1>0.)
     {
       G4double R=1./R_1;
-
-      // Save for Synchrotron Radiation calculations:
-      BDSLocalRadiusOfCurvature=R;
-
+      
       // chord distance (simple quadratic approx)
       itsDist= h2/(8*R);
 

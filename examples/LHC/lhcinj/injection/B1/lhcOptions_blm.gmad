@@ -44,9 +44,6 @@ option, beampipeRadius = 0.05,
 
 
 option, physicsList="QGSP_BERT_HP", useHadLPB=0;
-option, gammaToMuFe=1e3, annihiToMuFe=1e3;
-!option, physicsList="hadronic muon", useHadLPB=0;
-option, randomSeed=-1;
 
 
 
