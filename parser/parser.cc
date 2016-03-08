@@ -1,8 +1,6 @@
 #include "parser.h"
 
-#include <algorithm>
 #include <cmath>
-#include <memory>
 
 // for getpwuid: http://linux.die.net/man/3/getpwuid
 #include <unistd.h>
@@ -72,7 +70,8 @@ Parser::~Parser()
 {
   beamline_list.erase();
   // delete allocated lines
-  std::for_each(allocated_lines.begin(), allocated_lines.end(), std::default_delete<std::list<Element>>());
+  for (auto element : allocated_lines)
+    {delete element;}
   
   instance = nullptr;
 }

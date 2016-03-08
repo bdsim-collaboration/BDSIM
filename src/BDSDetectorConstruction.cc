@@ -42,11 +42,9 @@
 #include "G4VPhysicalVolume.hh"
 #include "globals.hh"
 
-#include <algorithm>
 #include <iterator>
 #include <list>
 #include <map>
-#include <memory>
 #include <vector>
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
@@ -97,7 +95,8 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
 {
 #if G4VERSION_NUMBER > 1009
   // delete bias objects
-  std::for_each(biasObjects.begin(), biasObjects.end(), std::default_delete<BDSBOptrMultiParticleChangeCrossSection>());
+  for (auto i : biasObjects)
+    {delete i;}
 #endif
   delete precisionRegion;
 
