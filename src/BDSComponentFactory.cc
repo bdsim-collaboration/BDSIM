@@ -92,7 +92,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4double angleOut = 0.0;
   G4bool registered    = false;
   // Used for multiple instances of the same element but different poleface rotations.
-  G4bool willNotModify = true;
+  G4bool willModify = false;
   G4bool notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 
 #ifdef BDSDEBUG
@@ -126,7 +126,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-      {willNotModify = false;}
+      {willModify = true;}
     }
   else if (element->type == ElementType::_RBEND)
     {
@@ -137,12 +137,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
         {
-          willNotModify = false;
+          willModify = true;
           angleOut += 0.5*element->angle;
         }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
         {
-          willNotModify = false;
+          willModify = true;
           angleIn += 0.5*element->angle;
         }
     }
@@ -153,19 +153,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       if (nextElement && (nextElement->type == ElementType::_SBEND))
         {
-          willNotModify = false;
+          willModify = true;
           angleOut -= 0.5*element->angle;
         }
       if (prevElement && (prevElement->type == ElementType::_SBEND))
         {
-          willNotModify = false;
+          willModify = true;
           angleIn -= 0.5*element->angle;
         }
     }
 
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
-  if (registered && willNotModify)
+  if (registered && !willModify)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -246,9 +246,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetPrecisionRegion(element->precisionRegion);
       component->Initialise();
-      //don't register the component if it's been modified for angle or pole face
-      if (willNotModify)
-	{BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component);}
+      // register component and memory
+      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,willModify);
     }
   
   return component;
@@ -445,10 +444,10 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
 
-  BDSBeamPipeInfo*    beamPipeInfo    = PrepareBeamPipeInfo(element,angleIn,angleOut);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
-
-  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfo->outerDiameter, thename);
+  BDSMagnetOuterInfo* magnetOuterInfoCheck = PrepareMagnetOuterInfo(element,angleIn,angleOut);
+  CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfoCheck->outerDiameter, thename);
+  // clean up
+  delete magnetOuterInfoCheck;
 
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
   G4double deltaend   = -element->e2/(0.5*(nSBends-1));
@@ -514,12 +513,8 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
 	 << G4endl;
 #endif
   }
-
-    // clean up
-    delete beamPipeInfo;
-    delete magnetOuterInfo;
-
-    return sbendline;
+  
+  return sbendline;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
