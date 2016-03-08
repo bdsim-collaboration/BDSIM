@@ -42,9 +42,11 @@
 #include "G4VPhysicalVolume.hh"
 #include "globals.hh"
 
+#include <algorithm>
 #include <iterator>
 #include <list>
 #include <map>
+#include <memory>
 #include <vector>
 
 typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
@@ -92,7 +94,11 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 }
 
 BDSDetectorConstruction::~BDSDetectorConstruction()
-{ 
+{
+#if G4VERSION_NUMBER > 1009
+  // delete bias objects
+  std::for_each(biasObjects.begin(), biasObjects.end(), std::default_delete<BDSBOptrMultiParticleChangeCrossSection>());
+#endif
   delete precisionRegion;
 
   // gflash stuff
@@ -574,7 +580,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 
 #if G4VERSION_NUMBER > 1009
 BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
-        const std::list<std::string>& biasList) const
+        const std::list<std::string>& biasList)
 {
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
@@ -600,6 +606,8 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
 	}
     }
+
+  biasObjects.push_back(eg);
   return eg;
 }
 #endif
