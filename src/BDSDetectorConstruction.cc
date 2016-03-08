@@ -206,7 +206,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(terminator);
 	  if (survey)
 	    {
-	      GMAD::Element element = GMAD::Element(); // dummy element
+	      GMAD::Element element; // dummy element
 	      survey->Write(addedComponents, element);
 	    }
 	}
@@ -217,7 +217,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(teleporter);
 	  if (survey)
 	    {
-	      GMAD::Element element = GMAD::Element(); // dummy element
+	      GMAD::Element element; // dummy element
 	      survey->Write(addedComponents, element);
 	    }
 	}
