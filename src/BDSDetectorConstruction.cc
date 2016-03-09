@@ -51,7 +51,7 @@ typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   precisionRegion(nullptr),gasRegion(nullptr),
-  worldPV(nullptr),magField(nullptr),
+  worldPV(nullptr),worldUserLimits(nullptr),magField(nullptr),
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
   verbose       = BDSExecOptions::Instance()->GetVerbose();
@@ -99,7 +99,8 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
     {delete i;}
 #endif
   delete precisionRegion;
-
+  delete worldUserLimits;
+  
   // gflash stuff
   gFlashRegion.clear();
   delete theHitMaker;
@@ -336,7 +337,7 @@ void BDSDetectorConstruction::BuildWorld()
 	
   // set limits
 #ifndef NOUSERLIMITS
-  G4UserLimits* worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
   worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
   worldLV->SetUserLimits(worldUserLimits);
   readOutWorldLV->SetUserLimits(worldUserLimits);

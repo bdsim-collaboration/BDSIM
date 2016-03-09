@@ -102,6 +102,8 @@ private:
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
+  /// World user limits  
+  G4UserLimits* worldUserLimits;
 
   G4UniformMagField* magField;      //pointer to the magnetic field
   
