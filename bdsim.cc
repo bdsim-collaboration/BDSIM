@@ -23,10 +23,9 @@
 #include "G4GeometryTolerance.hh"
 #include "G4GenericBiasingPhysics.hh"
 
-#include "G4Electron.hh"
-
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
+#include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryWriter.hh"
@@ -41,6 +40,8 @@
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
+#include "BDSSamplerRegistry.hh"
+#include "BDSSDManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
 #include "BDSUserTrackingAction.hh"
@@ -224,7 +225,7 @@ int main(int argc,char** argv)
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
-  {realWorld->BuildPhysicsBias();}
+    {realWorld->BuildPhysicsBias();}
 
 #ifdef BDSDEBUG
   auto physics = runManager->GetUserPhysicsList();
@@ -290,10 +291,6 @@ int main(int argc,char** argv)
 #endif
   delete bdsOutput;
   
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
-#endif
-
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
@@ -302,6 +299,12 @@ int main(int argc,char** argv)
   delete globalConstants;
   delete BDSMaterials::Instance();
   delete BDSParser::Instance();
+
+  // instances not used in this file, but no other good location for deletion
+  delete BDSColours::Instance();
+  delete BDSSDManager::Instance();
+  delete BDSSamplerRegistry::Instance();
+  
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
