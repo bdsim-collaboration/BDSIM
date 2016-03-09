@@ -309,6 +309,7 @@ int main(int argc,char** argv)
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
   delete runManager;
+  delete samplerWorld;
   delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;
