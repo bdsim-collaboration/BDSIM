@@ -2,7 +2,6 @@
 #include "BDSCavity.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
-#include "BDSParser.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"

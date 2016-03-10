@@ -254,4 +254,6 @@ G4double BDSSolenoidStepper::DistChord()   const
 }
 
 BDSSolenoidStepper::~BDSSolenoidStepper()
-{}
+{
+  delete backupStepper;
+}

@@ -82,7 +82,10 @@ private:
 
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
-  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList) const;
+  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList);
+
+  /// List of bias objects - for memory management
+  std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
 #endif
 
 #ifdef BDSDEBUG
@@ -99,6 +102,8 @@ private:
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
+  /// World user limits  
+  G4UserLimits* worldUserLimits;
 
   G4UniformMagField* magField;      //pointer to the magnetic field
   

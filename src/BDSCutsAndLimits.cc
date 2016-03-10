@@ -8,10 +8,16 @@
 #include "G4ProcessManager.hh"
 
 BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits"),_wasActivated(false)
-{;}
+{
+  stepLimiter = new G4StepLimiter;
+  specialCuts = new G4UserSpecialCuts;
+}
 
 BDSCutsAndLimits::~BDSCutsAndLimits()
-{;}
+{
+  delete stepLimiter;
+  delete specialCuts;
+}
 
 void BDSCutsAndLimits::ConstructParticle(){
   G4Gamma::Gamma();
@@ -35,9 +41,9 @@ void BDSCutsAndLimits::ConstructProcess(){
        (particle->GetParticleName()=="proton")){
       particle->SetApplyCutsFlag(true);
     }
-    pmanager->AddProcess(new G4StepLimiter,-1,-1,1);
+    pmanager->AddProcess(stepLimiter,-1,-1,1);
 #ifndef NOUSERSPECIALCUTS
-    pmanager->AddDiscreteProcess(new G4UserSpecialCuts);
+    pmanager->AddDiscreteProcess(specialCuts);
 #endif
   }
   return;

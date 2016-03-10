@@ -265,4 +265,6 @@ G4double BDSDipoleStepper::DistChord() const
 }
 
 BDSDipoleStepper::~BDSDipoleStepper()
-{}
+{
+  delete backupStepper;
+}

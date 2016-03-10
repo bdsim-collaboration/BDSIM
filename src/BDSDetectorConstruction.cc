@@ -51,7 +51,7 @@ typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   precisionRegion(nullptr),gasRegion(nullptr),
-  worldPV(nullptr),magField(nullptr),
+  worldPV(nullptr),worldUserLimits(nullptr),magField(nullptr),
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
   verbose       = BDSExecOptions::Instance()->GetVerbose();
@@ -92,9 +92,15 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
 }
 
 BDSDetectorConstruction::~BDSDetectorConstruction()
-{ 
+{
+#if G4VERSION_NUMBER > 1009
+  // delete bias objects
+  for (auto i : biasObjects)
+    {delete i;}
+#endif
   delete precisionRegion;
-
+  delete worldUserLimits;
+  
   // gflash stuff
   gFlashRegion.clear();
   delete theHitMaker;
@@ -206,7 +212,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(terminator);
 	  if (survey)
 	    {
-	      GMAD::Element element = GMAD::Element(); // dummy element
+	      GMAD::Element element; // dummy element
 	      survey->Write(addedComponents, element);
 	    }
 	}
@@ -217,7 +223,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	  std::vector<BDSBeamlineElement*> addedComponents = beamline->AddComponent(teleporter);
 	  if (survey)
 	    {
-	      GMAD::Element element = GMAD::Element(); // dummy element
+	      GMAD::Element element; // dummy element
 	      survey->Write(addedComponents, element);
 	    }
 	}
@@ -331,7 +337,7 @@ void BDSDetectorConstruction::BuildWorld()
 	
   // set limits
 #ifndef NOUSERLIMITS
-  G4UserLimits* worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
+  worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
   worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
   worldLV->SetUserLimits(worldUserLimits);
   readOutWorldLV->SetUserLimits(worldUserLimits);
@@ -574,7 +580,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 
 #if G4VERSION_NUMBER > 1009
 BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
-        const std::list<std::string>& biasList) const
+        const std::list<std::string>& biasList)
 {
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
@@ -600,6 +606,8 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
 	}
     }
+
+  biasObjects.push_back(eg);
   return eg;
 }
 #endif
