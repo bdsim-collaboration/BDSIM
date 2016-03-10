@@ -32,7 +32,7 @@ G4int BDSSamplerRegistry::RegisterSampler(G4String      name,
   names.push_back(name);
   samplers.push_back(sampler);
   transforms.push_back(transform);
-  transformInverses.push_back(G4Transform3D(transform.inverse()));
+  transformInverses.push_back(transform.inverse());
   sPosition.push_back(S);
 
   G4int index = numberOfEntries; // copy the number of entires / the index of this entry

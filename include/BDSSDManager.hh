@@ -6,7 +6,9 @@
 #include "BDSSamplerSD.hh"
 #include "BDSTerminatorSD.hh"
 
+class BDSReadOutGeometry;
 class BDSTunnelSD;
+class BDSTunnelReadOutGeometry;
 
 /**
  * @brief A singleton class that holds all required sensitive
@@ -70,11 +72,13 @@ private:
   // the readout geometry to be already created so can't
   // be used during object construction
   BDSEnergyCounterSD* eCounterOnAxisRO;
-
+  BDSReadOutGeometry* eCounterROGeom;
+  
   /// function to create the energy counter SD on demand
   void ConstructECounterSDOnAxisOnDemand();
 
-  BDSTunnelSD*        tunnelOnAxisRO;
+  BDSTunnelSD*              tunnelOnAxisRO;
+  BDSTunnelReadOutGeometry* tunnelROGeom;
 
   /// function to create the tunnel SD on demand as it uses read out geometry
   void ConstructTunnelSDOnAxisOnDemand();

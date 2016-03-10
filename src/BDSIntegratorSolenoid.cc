@@ -243,3 +243,15 @@ void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
   //simply perform one step here
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
 }
+
+G4double BDSSolenoidStepper::DistChord()   const 
+{
+  return itsDist;
+  // This is a class method that gives distance of Mid 
+  //  from the Chord between the Initial and Final points.
+}
+
+BDSSolenoidStepper::~BDSSolenoidStepper()
+{
+  delete backupStepper;
+}

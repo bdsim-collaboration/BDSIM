@@ -34,6 +34,7 @@ Options::Options()
   E0 = 0.0;
   sigmaT = 0.0;
   betx = 0.0, bety = 0.0, alfx = 0.0, alfy = 0.0, emitx = 0.0, emity = 0.0;
+  dispx = 0.0, dispy = 0.0, dispxp = 0.0, dispyp = 0.0;
   sigmaX = 0.0, sigmaXp = 0.0, sigmaY = 0.0, sigmaYp = 0.0;
   envelopeX = 0.0, envelopeXp = 0.0, envelopeY = 0.0, envelopeYp = 0.0, envelopeT = 0.0, envelopeE = 0.0;
   envelopeR = 0.0, envelopeRp = 0.0;
@@ -203,6 +204,10 @@ void Options::PublishMembers()
   publish("alfy",&Options::alfy);
   publish("emitx",&Options::emitx);
   publish("emity",&Options::emity);
+  publish("dispx",&Options::dispx);
+  publish("dispy",&Options::dispy);
+  publish("dispxp",&Options::dispxp);
+  publish("dispyp",&Options::dispyp);
   
   // options for beam distrType="gauss"
   publish("sigmaX",&Options::sigmaX);

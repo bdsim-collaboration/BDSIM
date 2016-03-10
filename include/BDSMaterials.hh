@@ -9,6 +9,11 @@
 
 class G4MaterialPropertiesTable;
 
+/**
+ * @brief A class for all material definitions known to BDSIM.
+ * Additional materials can be added in the parser as well.
+ */
+
 class BDSMaterials
 {
 public:
@@ -73,12 +78,22 @@ private:
   void Initialise(); 
 
   static BDSMaterials* _instance;
-  G4MaterialPropertiesTable* airMaterialPropertiesTable;
-  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable;
-  G4MaterialPropertiesTable* fsMaterialPropertiesTable;
-  G4MaterialPropertiesTable* petMaterialPropertiesTable;
-  G4MaterialPropertiesTable* vacMaterialPropertiesTable;
-
+  ///@{ Material tables
+  G4MaterialPropertiesTable* airMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable = nullptr;
+  G4MaterialPropertiesTable* fsMaterialPropertiesTable        = nullptr;
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable      = nullptr;
+  G4MaterialPropertiesTable* mptLanex                         = nullptr;
+  G4MaterialPropertiesTable* mptLanex2                        = nullptr;
+  G4MaterialPropertiesTable* mptGOSLanex                      = nullptr;
+  G4MaterialPropertiesTable* mptGOSLanexRi1                   = nullptr;
+  G4MaterialPropertiesTable* mptMedex                         = nullptr;
+  G4MaterialPropertiesTable* mptPETLanex                      = nullptr;
+  G4MaterialPropertiesTable* mpt_YAG                          = nullptr;
+  G4MaterialPropertiesTable* petMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* ups923a_mt                       = nullptr;
+  G4MaterialPropertiesTable* vacMaterialPropertiesTable       = nullptr;
+  ///@}
 };
 
 #endif

@@ -74,7 +74,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4ThreeVector pos = track->GetPosition();    // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection();// current particle direction (global)
   G4double weight   = track->GetWeight();      // weighting
-
+  
   // The copy number of physical volume is the sampler ID in BDSIM scheme.
   // track->GetVolume gives the volume in the mass world. pre/postStepPoint->->GetVolume()
   // give the ones in the parallel sampler world this SD is attached to. If the post step

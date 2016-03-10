@@ -26,6 +26,8 @@ BDSSDManager* BDSSDManager::Instance()
 BDSSDManager::~BDSSDManager()
 {
   // no need to delete SD's as they are all registered in G4SDManager
+  delete eCounterROGeom;
+  delete tunnelROGeom;
   _instance = nullptr;
 }
 
@@ -38,7 +40,8 @@ BDSSDManager::BDSSDManager()
 
   // read out geometry SD - construct on demand
   eCounterOnAxisRO = nullptr;
-
+  eCounterROGeom = nullptr;
+  
   // sampler plane
   samplerPlane = new BDSSamplerSD("sampler_plane","plane");
   SDMan->AddNewDetector(samplerPlane);
@@ -57,6 +60,7 @@ BDSSDManager::BDSSDManager()
 
   // Tunnel read out SD - constructed on demand - uses tunnel read out geometry
   tunnelOnAxisRO = nullptr;
+  tunnelROGeom = nullptr;
 }
 
 BDSEnergyCounterSD* BDSSDManager::GetEnergyCounterOnAxisSDRO()
@@ -91,13 +95,13 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
   // object construction when the beamline won't exist which wouldn't work.
   // on axis energy counter - uses read out geometry
   eCounterOnAxisRO = new BDSEnergyCounterSD("ec_on_axis_read_out");
-  BDSReadOutGeometry* roGeom = new BDSReadOutGeometry("readOutGeometry");
+  eCounterROGeom = new BDSReadOutGeometry("readOutGeometry");
   // although unnecessary for bdsim this MUST be called for geant4 to
   // register things properly
   // this method actually invokes roGeom->Build() which we have to implement
   // but geant4 must do this - so messy!  
-  roGeom->BuildROGeometry();
-  eCounterOnAxisRO->SetROgeometry(roGeom); // attach the read out geometry to this SD
+  eCounterROGeom->BuildROGeometry();
+  eCounterOnAxisRO->SetROgeometry(eCounterROGeom); // attach the read out geometry to this SD
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(eCounterOnAxisRO);
 }
@@ -114,13 +118,13 @@ void BDSSDManager::ConstructTunnelSDOnAxisOnDemand()
   // object construction when the beamline won't exist which wouldn't work.
   // on axis tunnel SD - uses read out geometry
   tunnelOnAxisRO = new BDSTunnelSD("tunnel_on_axis");
-  BDSTunnelReadOutGeometry* roGeom = new BDSTunnelReadOutGeometry("tunnelReadOutGeometry");
+  tunnelROGeom = new BDSTunnelReadOutGeometry("tunnelReadOutGeometry");
   // although unnecessary for bdsim this MUST be called for geant4 to
   // register things properly
   // this method actually invokes roGeom->Build() which we have to implement
   // but geant4 must do this - so messy!  
-  roGeom->BuildROGeometry();
-  tunnelOnAxisRO->SetROgeometry(roGeom); // attach the read out geometry to this SD
+  tunnelROGeom->BuildROGeometry();
+  tunnelOnAxisRO->SetROgeometry(tunnelROGeom); // attach the read out geometry to this SD
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(tunnelOnAxisRO);
 }

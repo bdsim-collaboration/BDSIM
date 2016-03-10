@@ -3,7 +3,6 @@
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSFieldInfo.hh"
-#include "BDSParser.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4GenericPolycone.hh"

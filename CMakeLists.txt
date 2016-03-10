@@ -179,7 +179,7 @@ foreach(header ${linkHeaders})
     # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
     # also rootcint5 does not accept additional options
     add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       -D__MAKECINT__

@@ -257,3 +257,15 @@ void BDSIntegratorDipole::Stepper(const G4double yInput[],
 
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
 }
+
+G4double BDSDipoleStepper::DistChord() const 
+{
+  return itsDist;
+  // This is a class method that gives distance of Mid 
+  // from the Chord between the Initial and Final points.
+}
+
+BDSDipoleStepper::~BDSDipoleStepper()
+{
+  delete backupStepper;
+}
