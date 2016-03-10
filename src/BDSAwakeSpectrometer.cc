@@ -74,7 +74,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
-    _screenRotationMatrix->rotateY(_screenAngle);
+  _screenRotationMatrix->rotateY(-CLHEP::pi/2.0+_screenAngle);
 
   _vacRotationMatrix = new G4RotationMatrix();
 
@@ -410,7 +410,8 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
     _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
 				      itsLength,
 				      _poleStartZ,
-				      _screenEndZ-std::abs(cos(_screenAngle)*_totalThickness),
+				      //_screenEndZ-std::abs(cos(_screenAngle)*_totalThickness),
+				      _screenEndZ-sin(_screenAngle)*_totalThickness,
 				      _screenWidth,
 				      _screenAngle,
 				      _vacInnerWidth,
@@ -707,12 +708,14 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   //The scoring plane...
   _scoringPlaneThickness=1*CLHEP::um;
   _screenThickness = _mlScreen->size().z();
-  _totalThickness = _screenThickness + 2*_scoringPlaneThickness;
-  G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle
-  G4double z_thi = _totalThickness * std::cos(std::abs(_screenAngle));//Length due to the screen thickness
+  _totalThickness = _screenThickness;
+  //  G4double z_wid = _screenWidth * std::sin(std::abs(90*CLHEP::pi/180.0-_screenAngle));//Length due to the screen width and angle
+  //  G4double z_thi = _totalThickness * std::cos(std::abs(90*CLHEP::pi/180.0-_screenAngle));//Length due to the screen thickness
+  G4double z_wid = _screenWidth * std::cos(_screenAngle);//Length due to the screen width and angle
+  G4double z_thi = _totalThickness * std::sin(_screenAngle);//Length due to the screen thickness
   _screen_z_dim = z_wid+z_thi;
-  G4double x_wid = _screenWidth * std::cos(std::abs(_screenAngle));//Length due to the screen width and angle
-  G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
+  G4double x_wid = _screenWidth * std::sin(_screenAngle);//Length due to the screen width and angle
+  G4double x_thi = _totalThickness * std::cos(_screenAngle);//Length due to the screen thickness
   _screen_x_dim = x_wid+x_thi;
   //Vacuum chamber dimensions.
   _vacThickness=2*CLHEP::mm;
@@ -725,7 +728,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   _poleStartZ += _startZPos;
   //Screen position
   _screenEndZ += _poleStartZ;
-  _screenCentreZ = _screenEndZ - _screen_z_dim/2.0;
+  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0;
   _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
   
   /*
