@@ -8,7 +8,6 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 					 G4double                  brho,
@@ -250,22 +249,10 @@ void BDSIntegratorDipole::Stepper(const G4double yInput[],
 				  const G4double hstep,
 				  G4double yOut[],
 				  G4double yErr[])
-{  
-  const G4int nvar = 6 ;
-
-  for(G4int i=0;i<nvar;i++) yErr[i]=0;
+{
+  G4double err = 1e-10 * hstep; // very small linear increase with distance
+  for(G4int i=0; i<nVariables; i++)
+    {yErr[i] = err;}
 
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
-}
-
-G4double BDSDipoleStepper::DistChord() const 
-{
-  return itsDist;
-  // This is a class method that gives distance of Mid 
-  // from the Chord between the Initial and Final points.
-}
-
-BDSDipoleStepper::~BDSDipoleStepper()
-{
-  delete backupStepper;
 }

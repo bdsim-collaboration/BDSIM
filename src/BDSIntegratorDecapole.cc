@@ -7,7 +7,6 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 					     G4double                 brho,
@@ -23,9 +22,9 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 }
 
 void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
-					 G4ThreeVector,
-					 G4double  h,
-					 G4double  yDec[])
+					 G4ThreeVector /*bField*/,
+					 G4double        h,
+					 G4double        yDec[])
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector v0 = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  

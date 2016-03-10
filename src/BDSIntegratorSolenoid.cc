@@ -7,7 +7,6 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 					     G4double                 brho,
@@ -33,7 +32,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4ThreeVector InitMomDir = GlobalP.unit();
   G4double      InitPMag   = GlobalP.mag();
   G4double      kappa      = - 0.5*eqOfM->FCof()*bField/InitPMag;
-  G4double      h2 = h*h;
+  G4double      h2         = h*h;
   
 #ifdef BDSDEBUG
   G4double charge = (eqOfM->FCof())/CLHEP::c_light;
@@ -242,16 +241,4 @@ void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
 {
   //simply perform one step here
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
-}
-
-G4double BDSSolenoidStepper::DistChord()   const 
-{
-  return itsDist;
-  // This is a class method that gives distance of Mid 
-  //  from the Chord between the Initial and Final points.
-}
-
-BDSSolenoidStepper::~BDSSolenoidStepper()
-{
-  delete backupStepper;
 }

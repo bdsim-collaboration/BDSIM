@@ -6,7 +6,6 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
 
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 					       G4double                 brho,

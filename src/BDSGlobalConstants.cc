@@ -235,13 +235,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete defaultUserLimits;
   delete invisibleVisAttr;
   delete visibleDebugVisAttr;
-
-  delete _RotY90;
-  delete _RotYM90;
-  delete _RotX90;
-  delete _RotXM90;
-  delete _RotYM90X90;
-  delete _RotYM90XM90;
-
+  
   _instance = nullptr;
 }
