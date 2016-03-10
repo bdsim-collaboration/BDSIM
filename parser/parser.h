@@ -162,6 +162,8 @@ namespace GMAD {
     std::list<double> tmparray;
     std::list<std::string> tmpstring;
     ///@}
+    /// vector of defined lines for memory management
+    std::vector<std::list<Element>*> allocated_lines;
 
     // protected implementation (for inheritance to BDSParser - hackish)
   protected:

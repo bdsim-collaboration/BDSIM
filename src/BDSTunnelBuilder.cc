@@ -21,7 +21,9 @@ BDSTunnelBuilder::BDSTunnelBuilder()
 }
 
 BDSTunnelBuilder::~BDSTunnelBuilder()
-{;}
+{
+  delete BDSTunnelFactory::Instance();
+}
 
 G4bool BDSTunnelBuilder::BreakTunnel(G4double cumulativeLength,
 				     G4double cumulativeAngle,

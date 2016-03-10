@@ -16,8 +16,6 @@
 class BDSTiltOffset;
 
 /// Forward declaration for iterator so it can appear at the top
-class BDSBeamline;
-class BDSLine;
 class BDSTransform3D;
 
 /**
