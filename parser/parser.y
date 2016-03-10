@@ -649,6 +649,8 @@ parameters:
                   if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
                   else
                   if(!strcmp($1->name,"screenEndZ")) { params.screenEndZ = $3; params.screenEndZset = 1;} // z distance from start of pole to screen 
+                  else
+                  if(!strcmp($1->name,"screenWidth")) { params.screenWidth = $3; params.screenWidthset = 1;} // width of screen
 		  else
                   if(!strcmp($1->name,"poleStartZ")) { params.poleStartZ = $3; params.poleStartZset = 1;} // z distance from start of element to start of pole 
 		  else

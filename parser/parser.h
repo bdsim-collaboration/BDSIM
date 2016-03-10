@@ -556,6 +556,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.type = _AWAKESPECTROMETER;
     e.l = params.l;
     e.B = params.B;
+    e.screenWidth = params.screenWidth;
     e.screenEndZ = params.screenEndZ;
     e.poleStartZ = params.poleStartZ;
     e.scintmaterial = std::string(params.scintmaterial);

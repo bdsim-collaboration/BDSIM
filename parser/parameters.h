@@ -29,6 +29,7 @@ struct Parameters {
   double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
   double screenEndZ; int screenEndZset;//z position of end of screen relative to beginning of magnet pole
+  double screenWidth; int screenWidthset;//width of the scintillator screen
   double poleStartZ; int poleStartZset;//z position of beginning of magnet pole relative to beginning of element
 
   std::list<double> knl;           /// multipole expansion coefficients

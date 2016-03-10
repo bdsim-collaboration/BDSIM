@@ -117,6 +117,7 @@ void Element::flush() {
   windowScreenGap = 0;
   twindow = 0;
   screenEndZ = 0;
+  screenWidth = 0;
   poleStartZ = 0;
   tilt = 0;
   phi = 0;
