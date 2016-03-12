@@ -37,7 +37,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):
     {
       // ...and the particle changed momentum during the step, then this is a "scattering"
       // (momentum-changing non-transportation) process.
-      G4ThreeVector deltaP = aTrack->GetStep()->GetDeltaMomentum();
+      const G4Step* step = aTrack->GetStep();
+      G4ThreeVector pBefore = step->GetPreStepPoint()->GetMomentum();
+      G4ThreeVector pAfter  = step->GetPostStepPoint()->GetMomentum();
+      G4ThreeVector deltaP  = pAfter - pBefore;
       if (deltaP.x() != 0 || deltaP.y() != 0 || deltaP.z() != 0)
 	{_isScatteringProcess = true;}
     }
