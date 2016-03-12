@@ -10,44 +10,37 @@
 
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
-BDSTrajectoryPoint::BDSTrajectoryPoint(){
-  _currentProcess=nullptr;
-  _isScatteringProcess=false;
-  _trackID = -1;
-}
-BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):G4TrajectoryPoint(aTrack->GetPosition())
+BDSTrajectoryPoint::BDSTrajectoryPoint()
 {
-  _currentProcess=nullptr;
-  _isScatteringProcess=false;
-  _trackID = -1;
-  //  G4cout << "Getting current process..." << G4endl;
-  if(aTrack){
-    _vertexPosition=aTrack->GetVertexPosition();
-    _trackID = aTrack->GetTrackID();
-    if(aTrack->GetStep()){
-      _currentProcess = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
-      //      G4cout << "Getting current process type..." << G4endl;
-      G4ProcessType ptype;
-      if(_currentProcess){
-	ptype = _currentProcess->GetProcessType();
-      } else {
-	ptype = fNotDefined;
-      }
-      //      G4cout << "Getting isScattering..." << G4endl;
-      _isScatteringProcess = false;
-      if(!((ptype == fNotDefined) || (ptype == fTransportation))){  //If the process type is not undefined or transportation...
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().x() != 0){ //...and the particle changed momentum during the step..
-	  _isScatteringProcess = true; //...then this is a "scattering" (momentum-changing non-transportation) process.
-	}
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().y() != 0){ //same for y and z components of momentum.
-	  _isScatteringProcess = true; 
-	}
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().z() != 0){ //...and the particle changed momentum during the step..
-	  _isScatteringProcess = true; 
-	}
-      }
+  _currentProcess      = nullptr;
+  _isScatteringProcess = false;
+  _trackID             = -1;
+}
+
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):
+  G4TrajectoryPoint(aTrack->GetPosition())
+{
+  _currentProcess      = nullptr;
+  _isScatteringProcess = false;
+  _trackID             = -1;
+  _vertexPosition      = aTrack->GetVertexPosition();
+  _trackID             = aTrack->GetTrackID();
+  _currentProcess      = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
+
+  G4ProcessType ptype = fNotDefined;
+  if(_currentProcess)
+    {ptype = _currentProcess->GetProcessType();}
+  
+  _isScatteringProcess = false;
+  // If the process type is not undefined or transportation...
+  if(!((ptype == fNotDefined) || (ptype == fTransportation))) 
+    {
+      // ...and the particle changed momentum during the step, then this is a "scattering"
+      // (momentum-changing non-transportation) process.
+      G4ThreeVector deltaP = aTrack->GetStep()->GetDeltaMomentum();
+      if (deltaP.x() != 0 || deltaP.y() != 0 || deltaP.z() != 0)
+	{_isScatteringProcess = true;}
     }
-  }
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()
