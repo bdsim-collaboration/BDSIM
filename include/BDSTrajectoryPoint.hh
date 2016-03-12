@@ -5,7 +5,10 @@
 #include "G4Track.hh"
 #include "G4Allocator.hh"
 
-class BDSTrajectoryPoint: public G4TrajectoryPoint{
+#include <ostream>
+
+class BDSTrajectoryPoint: public G4TrajectoryPoint
+{
 public:
   BDSTrajectoryPoint();
   BDSTrajectoryPoint(const G4Track* aTrack);
@@ -21,6 +24,8 @@ public:
   void printData();
   inline G4ThreeVector GetVertexPosition(){return _vertexPosition;}
 
+  /// output stream
+  friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
 private:
   G4bool _isScatteringProcess;

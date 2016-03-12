@@ -4,6 +4,10 @@
 #include "G4ProcessType.hh"
 #include "G4VProcess.hh"
 
+#include "globals.hh" // geant4 types / globals
+
+#include <ostream>
+
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(){
@@ -46,13 +50,24 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):G4TrajectoryPoint(
   }
 }
 
-BDSTrajectoryPoint::~BDSTrajectoryPoint(){
+BDSTrajectoryPoint::~BDSTrajectoryPoint()
+{;}
+
+std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
+{
+  if(p._currentProcess)
+    {
+      out << "BDSTrajectoryPoint: ";
+      out << "current process = " << p._currentProcess->GetProcessName() << ", ";
+      G4String result = "isn't";
+      if (p._isScatteringProcess)
+	{result = "is";}
+      out << result << " a scattering process" << G4endl;
+    }
+  return out;
 }
 
-void BDSTrajectoryPoint::printData(){
-  G4cout << "BDSTrajectoryPoint> printData" << G4endl;
-  if(_currentProcess){
-    G4cout << "_currentProcess = " << _currentProcess->GetProcessName() << G4endl;
-    G4cout << "_isScatteringProcess = " << _isScatteringProcess << G4endl;
-  }
+void BDSTrajectoryPoint::printData()
+{
+  G4cout << *(this) << G4endl;
 }
