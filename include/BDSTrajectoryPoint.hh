@@ -12,7 +12,7 @@ class BDSTrajectoryPoint: public G4TrajectoryPoint
 public:
   BDSTrajectoryPoint();
   BDSTrajectoryPoint(const G4Track* aTrack);
-  ~BDSTrajectoryPoint();
+  virtual ~BDSTrajectoryPoint();
 
   inline void *operator new(size_t);
   inline void operator delete(void *aTrajectoryPoint);
