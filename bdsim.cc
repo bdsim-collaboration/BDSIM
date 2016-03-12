@@ -153,6 +153,10 @@ int main(int argc,char** argv)
       physBias->Bias("e+");
       physBias->Bias("gamma");
       physBias->Bias("proton");
+      physBias->Bias("mu-");
+      physBias->Bias("mu+");
+      physBias->Bias("pi-");
+      physBias->Bias("pi+");
       physList->RegisterPhysics(physBias);
 #endif
       runManager->SetUserInitialization(physList);
