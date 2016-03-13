@@ -43,14 +43,14 @@ private:
 
 extern G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
-inline void* BDSTrajectory::operator new(size_t){
+inline void* BDSTrajectory::operator new(size_t)
+{
   void* aTrajectory;
   aTrajectory = (void*)bdsTrajectoryAllocator.MallocSingle();
   return aTrajectory;
 }
 
-inline void BDSTrajectory::operator delete(void* aTrajectory){
-  bdsTrajectoryAllocator.FreeSingle((BDSTrajectory*)aTrajectory);
-}
+inline void BDSTrajectory::operator delete(void* aTrajectory)
+{bdsTrajectoryAllocator.FreeSingle((BDSTrajectory*)aTrajectory);}
 
 #endif

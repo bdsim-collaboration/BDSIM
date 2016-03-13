@@ -16,32 +16,31 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format = " << format << G4endl;
 #endif
-  if (format == BDSOutputFormat::none)
-    {return new BDSOutputNone();}
-  
-  if (format == BDSOutputFormat::combined)
+  switch (format.underlying())
     {
-      BDSOutputVector* combinedOutput = new BDSOutputVector();
-      combinedOutput->Add(new BDSOutputASCII());
-      combinedOutput->Add(new BDSOutputROOT());
-      return combinedOutput;
+    case BDSOutputFormat::none:
+      {return new BDSOutputNone(); break;}
+    case BDSOutputFormat::combined:
+      {
+	BDSOutputVector* combinedOutput = new BDSOutputVector();
+	combinedOutput->Add(new BDSOutputASCII());
+	combinedOutput->Add(new BDSOutputROOT("F"));
+	return combinedOutput;
+	break;
+      }
+    case BDSOutputFormat::ascii:
+      {return new BDSOutputASCII(); break;}
+    case BDSOutputFormat::root:
+      {return new BDSOutputROOT("F"); break;}
+    case BDSOutputFormat::rootdouble:
+      {return new BDSOutputROOT("D"); break;}
+    case BDSOutputFormat::rootdetailed:
+      {return new BDSOutputROOTDetailed("F"); break;}
+    case BDSOutputFormat::rootdetaileddouble:
+      {return new BDSOutputROOTDetailed("D"); break;}
+    case BDSOutputFormat::rootevent:
+      {return new BDSOutputROOTEvent(); break;}
+    default:
+      {return new BDSOutputNone(); break;} // absolute default - should not reach this
     }
-  
-  else if (format == BDSOutputFormat::ascii)
-    {return new BDSOutputASCII();}
-  
-  else if (format == BDSOutputFormat::root)
-    {
-    return new BDSOutputROOT();
-    }
-  else if (format == BDSOutputFormat::rootdetailed) 
-    {
-      return new BDSOutputROOTDetailed();
-    }
-  else if (format == BDSOutputFormat::rootevent) 
-    {
-      return new BDSOutputROOTEvent();
-    }
-  else
-    {return new BDSOutputNone();} // absolute default - should not reach this
 }
