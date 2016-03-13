@@ -1249,6 +1249,12 @@ Physics Lists In BDSIM
 +---------------------------+------------------------------------------------------------------------+
 | decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
 +---------------------------+------------------------------------------------------------------------+
+| muon                      | Proivdes muon production and scattering processes. Gamma to muons,     |
+|                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
+|                           | multiple scattering for muons, muon brehmstrahhlung, pair production   |
+|                           | and Cherenkov light are all provided. Provided by BDSIM phyiscs        |
+|                           | builder (a la Geant4) `BDSMuonPhyiscs`.                                |
++---------------------------+------------------------------------------------------------------------+
 
 Physics Biasing
 ---------------

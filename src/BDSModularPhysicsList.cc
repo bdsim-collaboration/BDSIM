@@ -415,7 +415,7 @@ void BDSModularPhysicsList::QGSPBERTHP()
   ConstructAllLeptons();
   if(!physicsActivated["qgsp_bert_hp"])
     {
-  constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
+      constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
       physicsActivated["qgsp_bert_hp"] = true;
     }
 }
