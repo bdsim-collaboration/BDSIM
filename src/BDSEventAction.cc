@@ -21,6 +21,7 @@
 #include "G4SDManager.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "Randomize.hh" // for G4UniformRand
 
 #include <list>
 #include <map>
@@ -168,11 +169,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
 	  G4double sBefore = hit.GetSBefore()/CLHEP::m;
 	  G4double sAfter  = hit.GetSAfter()/CLHEP::m;
+	  // The energy deposition should be randomly attributed to a point
+	  // along the step - not exactly the beginning, end or middle.
+	  G4double sEDep   = sBefore + G4UniformRand()*(sAfter - sBefore);
 	  G4double energy  = hit.GetEnergy()/CLHEP::GeV;
 	  G4double weight  = hit.GetWeight();
 	  G4double weightedEnergy = energy * weight;
-	  generalELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
-	  perElementELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
+	  generalELoss->Fill(sEDep, weightedEnergy);
+	  perElementELoss->Fill(sEDep, weightedEnergy);
 	}
     }
 

@@ -197,10 +197,10 @@ foreach(header ${linkHeaders})
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       )
+    set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
   endif()
   # keep list of ROOT dictionaries
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
-  set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
 endforeach()
 
 # GDML (on by default)
