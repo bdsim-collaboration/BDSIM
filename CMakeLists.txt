@@ -444,6 +444,11 @@ add_custom_target(dist
         | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
+# copy dependent libraries in deps directory
+add_custom_target(copy-deps
+  COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
+)
+      
 ## Add subdirectories
 # Parser
 add_subdirectory(parser)
