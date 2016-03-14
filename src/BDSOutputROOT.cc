@@ -556,3 +556,42 @@ void BDSOutputROOT<Type>::Write()
     }
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }
+
+
+template void BDSOutputROOT<double>::WriteRootHit(TTree*   tree,
+				 G4double totalEnergy,
+				 G4double xIn,
+				 G4double yIn,
+				 G4double zIn,
+				 G4double xPrime,
+				 G4double yPrime,
+				 G4double zPrime,
+				 G4double tIn,
+				 G4double sIn,
+				 G4double weightIn,
+				 G4int    PDGtype,
+				 G4int    eventNoIn,
+				 G4int    parentID,
+				 G4int    trackIDIn,
+				 G4int    turnsTakenIn,
+				 G4String processIn,
+						G4bool   fillTree);
+
+template void BDSOutputROOT<float>::WriteRootHit(TTree*   tree,
+				 G4double totalEnergy,
+				 G4double xIn,
+				 G4double yIn,
+				 G4double zIn,
+				 G4double xPrime,
+				 G4double yPrime,
+				 G4double zPrime,
+				 G4double tIn,
+				 G4double sIn,
+				 G4double weightIn,
+				 G4int    PDGtype,
+				 G4int    eventNoIn,
+				 G4int    parentID,
+				 G4int    trackIDIn,
+				 G4int    turnsTakenIn,
+				 G4String processIn,
+						G4bool   fillTree);

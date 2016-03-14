@@ -243,3 +243,6 @@ void BDSOutputROOTDetailed<Type>::WritePrimary(G4double totalEnergy,
 		       turnsTaken,
 		       "");
 }
+
+template BDSOutputROOTDetailed<float>::BDSOutputROOTDetailed();
+template BDSOutputROOTDetailed<double>::BDSOutputROOTDetailed();
