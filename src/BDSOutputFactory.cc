@@ -24,20 +24,20 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
       {
 	BDSOutputVector* combinedOutput = new BDSOutputVector();
 	combinedOutput->Add(new BDSOutputASCII());
-	combinedOutput->Add(new BDSOutputROOT("F"));
+	combinedOutput->Add(new BDSOutputROOT());
 	return combinedOutput;
 	break;
       }
     case BDSOutputFormat::ascii:
       {return new BDSOutputASCII(); break;}
     case BDSOutputFormat::root:
-      {return new BDSOutputROOT("F"); break;}
+      {return new BDSOutputROOT(); break;}
     case BDSOutputFormat::rootdouble:
-      {return new BDSOutputROOT("D"); break;}
+      {return new BDSOutputROOT(); break;}
     case BDSOutputFormat::rootdetailed:
-      {return new BDSOutputROOTDetailed("F"); break;}
+      {return new BDSOutputROOTDetailed(); break;}
     case BDSOutputFormat::rootdetaileddouble:
-      {return new BDSOutputROOTDetailed("D"); break;}
+      {return new BDSOutputROOTDetailed(); break;}
     case BDSOutputFormat::rootevent:
       {return new BDSOutputROOTEvent(); break;}
     default:

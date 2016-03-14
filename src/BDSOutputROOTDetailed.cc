@@ -7,8 +7,7 @@
 
 #include <string>
 
-BDSOutputROOTDetailed::BDSOutputROOTDetailed(G4String numberType):
-  BDSOutputROOT(numberType)
+BDSOutputROOTDetailed::BDSOutputROOTDetailed()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format ROOT detailed"<<G4endl;

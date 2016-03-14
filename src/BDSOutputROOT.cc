@@ -14,8 +14,8 @@
 #include <string>
 #include <vector>
 
-BDSOutputROOT::BDSOutputROOT(G4String numberType):
-  type(numberType)
+BDSOutputROOT::BDSOutputROOT():
+  type("F")
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format ROOT"<<G4endl;
@@ -280,17 +280,17 @@ void BDSOutputROOT::WriteRootHit(TTree*         tree,
 }
 
 void BDSOutputROOT::WritePrimary(G4double totalEnergy,
-				     G4double x0,
-				     G4double y0,
-				     G4double z0,
-				     G4double xp,
-				     G4double yp,
-				     G4double zp,
-				     G4double t,
-				     G4double weight,
-				     G4int    PDGType, 
-				     G4int    nEvent, 
-				     G4int    turnsTaken)
+				 G4double x0,
+				 G4double y0,
+				 G4double z0,
+				 G4double xp,
+				 G4double yp,
+				 G4double zp,
+				 G4double t,
+				 G4double weight,
+				 G4int    PDGType, 
+				 G4int    nEvent, 
+				 G4int    turnsTaken)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

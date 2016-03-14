@@ -19,8 +19,7 @@
 class BDSOutputROOT: public BDSOutputBase
 {
 public:
-  /// Default constructor
-  BDSOutputROOT(G4String numberType); 
+  BDSOutputROOT(); 
   virtual ~BDSOutputROOT();
 
   /// write sampler hit collection
@@ -95,23 +94,20 @@ protected:
 
   /// Members for writing to TTrees
   /// Local parameters
-  double x=0.0,xp=0.0,y=0.0,yp=0.0,z=0.0,zp=0.0,E=0.0,t=0.0,S=0.0;
+  float x=0.0,xp=0.0,y=0.0,yp=0.0,z=0.0,zp=0.0,E=0.0,t=0.0,S=0.0;
   /// Global parameters
-  double X=0.0,Y=0.0,Z=0.0,T=0.0,weight=0.0,stepLength=0.0;
+  float X=0.0,Y=0.0,Z=0.0,T=0.0,weight=0.0,stepLength=0.0;
   /// PDG id, event number, parentID, trackID, turn number
   int part=-1,eventno=-1, pID=-1, track_id=-1, turnnumber=-1;
   std::string process;
   
   /// tunnel hits variables
-  double E_tun=0.0, S_tun=0.0, r_tun=0.0, angle_tun=0.0;
+  float E_tun=0.0, S_tun=0.0, r_tun=0.0, angle_tun=0.0;
 
   /// vector of Sampler trees
   std::vector<TTree*> samplerTrees;
 
 private:
-  /// Private default constructor to force use of provided one
-  BDSOutputROOT();
-  
   TFile* theRootOutputFile;
   
   TTree* PrecisionRegionEnergyLossTree;
