@@ -14,7 +14,8 @@
 #include <string>
 #include <vector>
 
-BDSOutputROOT::BDSOutputROOT():
+template<>
+BDSOutputROOT<float>::BDSOutputROOT():
   type("F")
 {
 #ifdef BDSDEBUG
@@ -31,13 +32,33 @@ BDSOutputROOT::BDSOutputROOT():
   Init();
 }
 
-BDSOutputROOT::~BDSOutputROOT()
+template<>
+BDSOutputROOT<double>::BDSOutputROOT():
+  type("D")
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "output format ROOT"<<G4endl;
+#endif
+  theRootOutputFile = nullptr;
+  PrecisionRegionEnergyLossTree = nullptr;
+  EnergyLossTree                = nullptr;
+  PrimaryHitsTree               = nullptr;
+  PrimaryLossTree               = nullptr;
+  TunnelLossTree                = nullptr;
+  tunnelHitsHisto               = nullptr;
+
+  Init();
+}
+
+template<typename Type>
+BDSOutputROOT<Type>::~BDSOutputROOT()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
-TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
+template<typename Type>
+TTree* BDSOutputROOT<Type>::BuildSamplerTree(G4String name)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -64,7 +85,8 @@ TTree* BDSOutputROOT::BuildSamplerTree(G4String name)
   return SamplerTree;
 }
 
-void BDSOutputROOT::Init()
+template<typename Type>
+void BDSOutputROOT<Type>::Init()
 {
   const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
@@ -214,7 +236,8 @@ void BDSOutputROOT::Init()
   PrecisionRegionEnergyLossTree->Branch("eventNo",    &eventno,    "eventNo/I");
 }
 
-void BDSOutputROOT::WriteRootHit(TTree*   tree,
+template<typename Type>
+void BDSOutputROOT<Type>::WriteRootHit(TTree*   tree,
 				 G4double totalEnergy,
 				 G4double xIn,
 				 G4double yIn,
@@ -254,7 +277,8 @@ void BDSOutputROOT::WriteRootHit(TTree*   tree,
     {tree->Fill();}
 }
 
-void BDSOutputROOT::WriteRootHit(TTree*         tree,
+template<typename Type>
+void BDSOutputROOT<Type>::WriteRootHit(TTree*         tree,
 				 BDSSamplerHit* hit,
 				 G4bool         fillTree)
 {
@@ -279,7 +303,8 @@ void BDSOutputROOT::WriteRootHit(TTree*         tree,
     {tree->Fill();}
 }
 
-void BDSOutputROOT::WritePrimary(G4double totalEnergy,
+template<typename Type>
+void BDSOutputROOT<Type>::WritePrimary(G4double totalEnergy,
 				 G4double x0,
 				 G4double y0,
 				 G4double z0,
@@ -309,7 +334,8 @@ void BDSOutputROOT::WritePrimary(G4double totalEnergy,
 	       "");
 }
 
-void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
+template<typename Type>
+void BDSOutputROOT<Type>::WriteHits(BDSSamplerHitsCollection *hc)
 {
   G4String name;
 #ifdef BDSDEBUG
@@ -323,7 +349,8 @@ void BDSOutputROOT::WriteHits(BDSSamplerHitsCollection *hc)
     }
 }
 
-void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
+template<typename Type>
+void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -369,7 +396,8 @@ void BDSOutputROOT::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
     }
 }
 
-void BDSOutputROOT::FillHit(BDSEnergyCounterHit* hit)
+template<typename Type>
+void BDSOutputROOT<Type>::FillHit(BDSEnergyCounterHit* hit)
 {
   //copy variables from hit to root variables
   X          = hit->GetX()/CLHEP::m;
@@ -387,7 +415,8 @@ void BDSOutputROOT::FillHit(BDSEnergyCounterHit* hit)
   eventno    = hit->GetEventNo();
 }
 
-void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
+template<typename Type>
+void BDSOutputROOT<Type>::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -412,7 +441,8 @@ void BDSOutputROOT::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     }
 }
 
-void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
+template<typename Type>
+void BDSOutputROOT<Type>::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -423,7 +453,8 @@ void BDSOutputROOT::WritePrimaryLoss(BDSEnergyCounterHit* hit)
   PrimaryLossTree->Fill();
 }
 
-void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
+template<typename Type>
+void BDSOutputROOT<Type>::WritePrimaryHit(BDSEnergyCounterHit* hit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -434,7 +465,8 @@ void BDSOutputROOT::WritePrimaryHit(BDSEnergyCounterHit* hit)
   PrimaryHitsTree->Fill();
 }
 
-void BDSOutputROOT::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits)
+template<typename Type>
+void BDSOutputROOT<Type>::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits)
 {
   for (G4int i = 0; i < tunnelHits->entries(); i++)
     {
@@ -450,7 +482,8 @@ void BDSOutputROOT::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits)
     }
 }
 
-void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
+template<typename Type>
+void BDSOutputROOT<Type>::WriteHistogram(BDSHistogram1D* hIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -492,7 +525,8 @@ void BDSOutputROOT::WriteHistogram(BDSHistogram1D* hIn)
   delete h;
 }
 
-void BDSOutputROOT::Commit()
+template<typename Type>
+void BDSOutputROOT<Type>::Commit()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -502,7 +536,8 @@ void BDSOutputROOT::Commit()
   Init();
 }
 
-void BDSOutputROOT::Write()
+template<typename Type>
+void BDSOutputROOT<Type>::Write()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
