@@ -16,7 +16,8 @@
  * @author Laurie Nevay
  */
 
-class BDSOutputROOTDetailed: public BDSOutputROOT
+template <typename Type>
+class BDSOutputROOTDetailed: public BDSOutputROOT<Type>
 {
 public:
   BDSOutputROOTDetailed();
@@ -41,10 +42,10 @@ public:
   
 private:  
   /// @{ Member for writing to TTree
-  float Xp=0.0,Yp=0.0,Zp=0.0;
-  float x0=0.0,xp0=0.0,y0=0.0,yp0=0.0,z0=0.0,zp0=0.0,E0=0.0,t0=0.0;
-  float x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
-  float x_lastScat=0.0,xp_lastScat=0.0,y_lastScat=0.0,yp_lastScat=0.0,z_lastScat=0.0,zp_lastScat=0.0,E_lastScat=0.0,t_lastScat=0.0;
+  Type Xp=0.0,Yp=0.0,Zp=0.0;
+  Type x0=0.0,xp0=0.0,y0=0.0,yp0=0.0,z0=0.0,zp0=0.0,E0=0.0,t0=0.0;
+  Type x_prod=0.0,xp_prod=0.0,y_prod=0.0,yp_prod=0.0,z_prod=0.0,zp_prod=0.0,E_prod=0.0,t_prod=0.0;
+  Type x_lastScat=0.0,xp_lastScat=0.0,y_lastScat=0.0,yp_lastScat=0.0,z_lastScat=0.0,zp_lastScat=0.0,E_lastScat=0.0,t_lastScat=0.0;
   /// @}
   
   void FillEvent(){};
