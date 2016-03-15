@@ -18,10 +18,9 @@ namespace GMAD {
     friend class Array;
 
     enum class symtabtype {
-      _INT=0,
-      _DOUBLE=1,
-      _STRING=2,
-      _ARRAY=3
+      _NUMBER=0,
+      _STRING=1,
+      _ARRAY=2
     };
 
     int is_reserved;
@@ -36,7 +35,7 @@ namespace GMAD {
     ///@}
     
     // constructors
-    explicit Symtab(std::string s):is_reserved(0),type(symtabtype::_INT),name(s),funcptr(nullptr),value(0.0){}
+    explicit Symtab(std::string s):is_reserved(0),type(symtabtype::_NUMBER),name(s),funcptr(nullptr),value(0.0){}
     /// Set to Array value
     void Set(Array*);
     /// Print method

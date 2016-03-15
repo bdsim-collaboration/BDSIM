@@ -14,18 +14,28 @@ void Symtab::Set(Array* a)
 
 void Symtab::Print()
 {
-  if(type == Symtab::symtabtype::_ARRAY)
-    {
-      printf("\t%s = {",name.c_str());
-      std::list<double>::iterator it;
-      for(it=array.begin();it!=array.end();it++)
-	{
-	  printf(" %.10g ",(*it));
-	}
-      printf("} \n");
-    }
-  else
-    {
-      printf ("%.10g\n", value);
-    }
+  printf("\t%s = ",name.c_str());
+  std::list<double>::iterator it;
+  switch(type) {
+  case Symtab::symtabtype::_NUMBER:
+    printf ("%.10g\n", value);
+    break;
+
+  case Symtab::symtabtype::_STRING:
+    printf ("%s\n", str.c_str());
+    break;
+
+  case Symtab::symtabtype::_ARRAY:
+    
+    printf("\t%s = {",name.c_str());
+    for(it=array.begin();it!=array.end();it++)
+      {
+	printf(" %.10g ",(*it));
+      }
+    printf("} \n");
+    break;
+    
+  default:
+    break;
+  }
 }

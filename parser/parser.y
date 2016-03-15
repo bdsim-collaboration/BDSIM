@@ -61,6 +61,7 @@
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
 %token <ival> MATERIAL ATOM
+%token <dval> CONSTANT
 %token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
@@ -306,6 +307,20 @@ parameters: VARIABLE '=' aexpr ',' parameters
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
+          | VARIABLE '=' VARIABLE
+	    {
+	      if(execute) {
+		Symtab *sp = Parser::Instance()->symlook(*($3));
+		if (!sp) {
+		  std::string errorstring = "ERROR: use of undeclared variable " + *($3) + "\n";
+		  yyerror(errorstring.c_str());
+		}
+		if (sp->type == Symtab::symtabtype::_NUMBER)
+		  Parser::Instance()->SetParameterValue(*($1),sp->value);
+		else if (sp->type == Symtab::symtabtype::_STRING)
+		  Parser::Instance()->SetParameterValue(*($1),sp->str);
+	      }
+	    }
           | VARIABLE '=' STR ',' parameters
             {
 	      if(execute) {
@@ -426,16 +441,8 @@ expr : aexpr
        }
 ;
 
-aexpr  :  NUMBER               { $$ = $1;                         }
-       |  VARIABLE
-       {
-	 Symtab *sp = Parser::Instance()->symlook(*($1));
-	 if (!sp) {
-	   std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
-	   yyerror(errorstring.c_str());
-	 }
-	 $$ = sp->value;
-       }
+aexpr  :  NUMBER              { $$ = $1;                         }
+       | CONSTANT             { $$ = $1;                         }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
@@ -504,6 +511,7 @@ assignment :  symdecl aexpr
 		    else
 		      {
 			$1->str = *$2; $$=$1;
+			$1->type = Symtab::symtabtype::_STRING;
 		      }
 		  }
 	      }
@@ -678,7 +686,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		std::cout << "Variable " << *($3) << " not defined!" << std::endl;
 	      }
 	      else {
-		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
+		sp->Print();
 	      }
 	    }
 	  }
