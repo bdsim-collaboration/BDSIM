@@ -33,6 +33,9 @@ extern LogVolMap* LogVol;
 BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm, G4String spec="", G4double screenWidth=1*CLHEP::m):
   BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _BField(BField), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial), _screenWidth(screenWidth)
 {
+  //Change sign of angle.
+  _screenAngle*=-1;
+
   try{
     _vacuumChamberType=getParameterValueInt(spec,"vacuumChamberType");
   } catch(boost::bad_lexical_cast&){
@@ -64,7 +67,6 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
   } catch(boost::bad_lexical_cast&){
     _strutMaterial="G4_STAINLESS-STEEL";
   }
-
 
   //Screen width 1m by default.
   if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
