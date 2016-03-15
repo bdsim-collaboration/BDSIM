@@ -96,6 +96,9 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 
+# test string (issue #126)
+add_test(gmad-string ${gmadBinary} string.gmad)
+
 # test arrays
 add_test(gmad-array ${gmadBinary} array.gmad)
 set_tests_properties(gmad-array PROPERTIES PASS_REGULAR_EXPRESSION 32)
