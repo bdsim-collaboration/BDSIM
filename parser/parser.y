@@ -55,7 +55,7 @@
 %nonassoc UPLUS
 
 %token <dval> NUMBER
-%token <symp> VECVAR FUNC
+%token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
@@ -74,6 +74,7 @@
 %type <ival> component component_with_params newinstance
 %type <str> sample_options
 %type <str> csample_options
+%type <str> paramassign
 
 /* printout format for debug output */
 /*
@@ -286,33 +287,59 @@ newinstance : VARIABLE ',' parameters
 	    }
 ;
 
-parameters: VARIABLE '=' aexpr ',' parameters
+paramassign: VARIABLE
+             {
+               $$=$1;
+             }
+           // allow defined variables to have the same name as parameters
+           | NUMVAR
+             {
+               $$=&($1->name);
+             }
+           | STRVAR
+             {
+               $$=&($1->name);
+             }
+
+parameters: paramassign '=' aexpr ',' parameters
             {
 	      if(execute)
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' aexpr
+          | paramassign '=' aexpr
             {
 	      if(execute)
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' vecexpr ',' parameters
+          | paramassign '=' vecexpr ',' parameters
             {
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' vecexpr
+          | paramassign '=' vecexpr
             {
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' STR ',' parameters
+          | paramassign '=' STRVAR ',' parameters
+	    {
+	      if(execute) {
+                Parser::Instance()->SetParameterValue(*($1),$3->str);
+	      }
+	    }
+          | paramassign '=' STRVAR
+	    {
+	      if(execute) {
+                Parser::Instance()->SetParameterValue(*($1),$3->str);
+	      }
+	    }
+          | paramassign '=' STR ',' parameters
             {
 	      if(execute) {
 		Parser::Instance()->SetParameterValue(*($1),*$3);
 	      }
 	    }
-          | VARIABLE '=' STR
+          | paramassign '=' STR
             {
 	      if(execute) {
 		Parser::Instance()->SetParameterValue(*($1),*$3);
@@ -426,16 +453,8 @@ expr : aexpr
        }
 ;
 
-aexpr  :  NUMBER               { $$ = $1;                         }
-       |  VARIABLE
-       {
-	 Symtab *sp = Parser::Instance()->symlook(*($1));
-	 if (!sp) {
-	   std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
-	   yyerror(errorstring.c_str());
-	 }
-	 $$ = sp->value;
-       }
+aexpr  :  NUMBER              { $$ = $1;                         }
+       | NUMVAR               { $$ = $1->value;                  }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
@@ -456,7 +475,7 @@ aexpr  :  NUMBER               { $$ = $1;                         }
         | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; } 
         | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; } 
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
-        | VARIABLE '[' VARIABLE ']' 
+        | VARIABLE '[' STR ']' 
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
 	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
@@ -467,13 +486,24 @@ symdecl : VARIABLE '='
         {
 	  if(execute)
 	    {
-	      Symtab *sp = Parser::Instance()->symlook(*($1));
-	      if (!sp) {
-		sp = Parser::Instance()->symcreate(*($1));
-	      } else {
-		std::cout << "WARNING redefinition of variable " << sp->name << " with old value: " << sp->value << std::endl;
-	      }
+	      Symtab *sp = Parser::Instance()->symcreate(*($1));
 	      $$ = sp;
+	    }
+	}
+        | NUMVAR '='
+	{
+	  if(execute)
+	    {
+	      std::cout << "WARNING redefinition of variable " << $1->name << " with old value: " << $1->value << std::endl;
+	      $$ = $1;
+	    }
+	}
+        | STRVAR '='
+	{
+	  if(execute)
+	    {
+	      std::cout << "WARNING redefinition of variable " << $1->name << " with old value: " << $1->str << std::endl;
+	      $$ = $1;
 	    }
 	}
 ;
@@ -490,6 +520,21 @@ assignment :  symdecl aexpr
 		    else
 		      {
 			$1->value = $2; $$=$1;       
+		      }
+		  }
+	      }
+           |  symdecl STR
+	      {
+		if (execute)
+		  {
+		    if($1->is_reserved) {
+		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		      yyerror(errorstring.c_str());
+		    }
+		    else
+		      {
+			$1->str = *$2; $$=$1;
+			$1->type = Symtab::symtabtype::_STRING;
 		      }
 		  }
 	      }
@@ -664,9 +709,23 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		std::cout << "Variable " << *($3) << " not defined!" << std::endl;
 	      }
 	      else {
-		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
+		sp->Print();
 	      }
 	    }
+	  }
+        | PRINT ',' NUMVAR
+	  {
+	    if(execute)
+	      {
+	        $3->Print();
+	      }
+	  }
+        | PRINT ',' STRVAR
+	  {
+	    if(execute)
+	      {
+	        $3->Print();
+	      }
 	  }
         | PRINT ',' VECVAR
 	  {
@@ -796,13 +855,13 @@ sample_options: RANGE '=' VARIABLE
 	        }
 ;
 
-csample_options : VARIABLE '=' aexpr
+csample_options : paramassign '=' aexpr
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    if(execute)
 		      Parser::Instance()->SetParameterValue(*($1),$3);
 		  }
-                | VARIABLE '=' aexpr ',' csample_options
+                | paramassign '=' aexpr ',' csample_options
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    if(execute)
@@ -820,120 +879,120 @@ csample_options : VARIABLE '=' aexpr
                   }
 ;
 
-cavitymodel_options : VARIABLE '=' aexpr ',' cavitymodel_options
+cavitymodel_options : paramassign '=' aexpr ',' cavitymodel_options
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue((*$1),$3);
 		    }
-                 | VARIABLE '=' aexpr
+                 | paramassign '=' aexpr
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue((*$1),$3);
 		    }
-                 | VARIABLE '=' STR ',' cavitymodel_options
+                 | paramassign '=' STR ',' cavitymodel_options
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
 		    }
-                 | VARIABLE '=' STR
+                 | paramassign '=' STR
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
 		    }
 ;
 
-region_options : VARIABLE '=' aexpr ',' region_options
+region_options : paramassign '=' aexpr ',' region_options
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue((*$1),$3);
 		    }
-                 | VARIABLE '=' aexpr
+                 | paramassign '=' aexpr
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue((*$1),$3);
 		    }
-                 | VARIABLE '=' STR ',' region_options
+                 | paramassign '=' STR ',' region_options
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue(*$1,*$3);
 		    }
-                 | VARIABLE '=' STR
+                 | paramassign '=' STR
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue(*$1,*$3);
 		    }
 ;
 
-tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
+tunnel_options : paramassign '=' aexpr ',' tunnel_options
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
-                 | VARIABLE '=' aexpr
+                 | paramassign '=' aexpr
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
-                 | VARIABLE '=' STR ',' tunnel_options
+                 | paramassign '=' STR ',' tunnel_options
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
-                 | VARIABLE '=' STR
+                 | paramassign '=' STR
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
 ;
 
-xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
+xsecbias_options : paramassign '=' aexpr ',' xsecbias_options
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-                 | VARIABLE '=' aexpr
+                 | paramassign '=' aexpr
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-                 | VARIABLE '=' STR ',' xsecbias_options
+                 | paramassign '=' STR ',' xsecbias_options
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
 		    }
-                 | VARIABLE '=' STR
+                 | paramassign '=' STR
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
 		    }
-                 | VARIABLE '=' vecexpr ',' xsecbias_options
+                 | paramassign '=' vecexpr ',' xsecbias_options
 		    {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-                 | VARIABLE '=' vecexpr
+                 | paramassign '=' vecexpr
 		    {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
 ;
 
-option_parameters : VARIABLE '=' aexpr ',' option_parameters
+option_parameters : paramassign '=' aexpr ',' option_parameters
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    }   
-                  | VARIABLE '=' aexpr
+                  | paramassign '=' aexpr
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    } 
-                  | VARIABLE '=' STR ',' option_parameters
+                  | paramassign '=' STR ',' option_parameters
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,*$3);
 		    }   
-                  | VARIABLE '=' STR
+                  | paramassign '=' STR
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,*$3);

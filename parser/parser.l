@@ -153,6 +153,10 @@ csample { return CSAMPLE; }
          return FUNC;
        } else if(sp->type == Symtab::symtabtype::_ARRAY) {
          return VECVAR;
+       } else if (sp->type == Symtab::symtabtype::_NUMBER) {
+         return NUMVAR;
+       } else if (sp->type == Symtab::symtabtype::_STRING) {
+         return STRVAR;
        }
      }
      std::string* name = new std::string(var);

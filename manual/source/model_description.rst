@@ -114,7 +114,7 @@ Useful Commands
 * :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`length = d1[l];` way to access properties of elements, in this case length of element d1.
+* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
 

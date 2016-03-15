@@ -144,7 +144,9 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSSurvey* survey = nullptr;
   if(execOptions->GetSurvey())
     {
-      survey = new BDSSurvey(execOptions->GetSurveyFilename());
+      G4String surveyFilename = execOptions->GetSurveyFilename();
+      surveyFilename += ".dat";
+      survey = new BDSSurvey(surveyFilename);
       survey->WriteHeader();
     }
   
