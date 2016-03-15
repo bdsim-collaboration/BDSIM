@@ -153,12 +153,10 @@ csample { return CSAMPLE; }
          return FUNC;
        } else if(sp->type == Symtab::symtabtype::_ARRAY) {
          return VECVAR;
-       } else if(sp->is_reserved) {
-         // only reserved numbers for now
-         if (sp->type == Symtab::symtabtype::_NUMBER) {
-           yylval.dval = sp->value;
-           return CONSTANT;
-         }
+       } else if (sp->type == Symtab::symtabtype::_NUMBER) {
+         return NUMVAR;
+       } else if (sp->type == Symtab::symtabtype::_STRING) {
+         return STRVAR;
        }
      }
      std::string* name = new std::string(var);

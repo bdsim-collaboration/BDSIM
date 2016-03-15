@@ -55,13 +55,12 @@
 %nonassoc UPLUS
 
 %token <dval> NUMBER
-%token <symp> VECVAR FUNC
+%token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
 %token <ival> MATERIAL ATOM
-%token <dval> CONSTANT
 %token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
@@ -307,18 +306,10 @@ parameters: VARIABLE '=' aexpr ',' parameters
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' VARIABLE
+          | VARIABLE '=' STRVAR
 	    {
 	      if(execute) {
-		Symtab *sp = Parser::Instance()->symlook(*($3));
-		if (!sp) {
-		  std::string errorstring = "ERROR: use of undeclared variable " + *($3) + "\n";
-		  yyerror(errorstring.c_str());
-		}
-		if (sp->type == Symtab::symtabtype::_NUMBER)
-		  Parser::Instance()->SetParameterValue(*($1),sp->value);
-		else if (sp->type == Symtab::symtabtype::_STRING)
-		  Parser::Instance()->SetParameterValue(*($1),sp->str);
+                Parser::Instance()->SetParameterValue(*($1),$3->str);
 	      }
 	    }
           | VARIABLE '=' STR ',' parameters
@@ -442,7 +433,7 @@ expr : aexpr
 ;
 
 aexpr  :  NUMBER              { $$ = $1;                         }
-       | CONSTANT             { $$ = $1;                         }
+       | NUMVAR               { $$ = $1->value;                  }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
@@ -463,7 +454,7 @@ aexpr  :  NUMBER              { $$ = $1;                         }
         | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; } 
         | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; } 
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
-        | VARIABLE '[' VARIABLE ']' 
+        | VARIABLE '[' STR ']' 
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
 	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
@@ -474,13 +465,24 @@ symdecl : VARIABLE '='
         {
 	  if(execute)
 	    {
-	      Symtab *sp = Parser::Instance()->symlook(*($1));
-	      if (!sp) {
-		sp = Parser::Instance()->symcreate(*($1));
-	      } else {
-		std::cout << "WARNING redefinition of variable " << sp->name << " with old value: " << sp->value << std::endl;
-	      }
+	      Symtab *sp = Parser::Instance()->symcreate(*($1));
 	      $$ = sp;
+	    }
+	}
+        | NUMVAR '='
+	{
+	  if(execute)
+	    {
+	      std::cout << "WARNING redefinition of variable " << $1->name << " with old value: " << $1->value << std::endl;
+	      $$ = $1;
+	    }
+	}
+        | STRVAR '='
+	{
+	  if(execute)
+	    {
+	      std::cout << "WARNING redefinition of variable " << $1->name << " with old value: " << $1->str << std::endl;
+	      $$ = $1;
 	    }
 	}
 ;
@@ -689,6 +691,20 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		sp->Print();
 	      }
 	    }
+	  }
+        | PRINT ',' NUMVAR
+	  {
+	    if(execute)
+	      {
+	        $3->Print();
+	      }
+	  }
+        | PRINT ',' STRVAR
+	  {
+	    if(execute)
+	      {
+	        $3->Print();
+	      }
 	  }
         | PRINT ',' VECVAR
 	  {
