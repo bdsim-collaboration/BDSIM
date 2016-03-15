@@ -493,6 +493,20 @@ assignment :  symdecl aexpr
 		      }
 		  }
 	      }
+           |  symdecl STR
+	      {
+		if (execute)
+		  {
+		    if($1->is_reserved) {
+		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		      yyerror(errorstring.c_str());
+		    }
+		    else
+		      {
+			$1->str = *$2; $$=$1;
+		      }
+		  }
+	      }
            |  symdecl vecexpr
               {
 		if(execute)
