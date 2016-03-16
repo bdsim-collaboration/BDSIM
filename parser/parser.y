@@ -294,11 +294,13 @@ paramassign: VARIABLE
            // allow defined variables to have the same name as parameters
            | NUMVAR
              {
-               $$=&($1->name);
+               $$ = new std::string($1->GetName());
+	       Parser::Instance()->AddVariable($$);
              }
            | STRVAR
              {
-               $$=&($1->name);
+               $$ = new std::string($1->GetName());
+	       Parser::Instance()->AddVariable($$);
              }
 
 parameters_extend : /* nothing */
@@ -317,7 +319,7 @@ parameters: paramassign '=' aexpr parameters_extend
           | paramassign '=' STRVAR parameters_extend
 	    {
 	      if(execute) {
-                Parser::Instance()->SetParameterValue(*($1),$3->str);
+                Parser::Instance()->SetParameterValue(*($1),$3->GetString());
 	      }
 	    }
           | paramassign '=' STR parameters_extend
@@ -409,8 +411,8 @@ expr : aexpr
 ;
 
 aexpr  : NUMBER               { $$ = $1;                         }
-       | NUMVAR               { $$ = $1->value;                  }
-       | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
+       | NUMVAR               { $$ = $1->GetNumber();            }
+       | FUNC '(' aexpr ')'   { $$ = $1->GetFunction()($3);      }
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
        | aexpr '*' aexpr      { $$ = $1 * $3;                    }
@@ -449,7 +451,7 @@ symdecl : VARIABLE '='
 	{
 	  if(execute)
 	    {
-	      std::cout << "WARNING redefinition of variable " << $1->name << " with old value: " << $1->value << std::endl;
+	      std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetNumber() << std::endl;
 	      $$ = $1;
 	    }
 	}
@@ -457,7 +459,7 @@ symdecl : VARIABLE '='
 	{
 	  if(execute)
 	    {
-	      std::cout << "WARNING redefinition of variable " << $1->name << " with old value: " << $1->str << std::endl;
+	      std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetString() << std::endl;
 	      $$ = $1;
 	    }
 	}
@@ -465,16 +467,17 @@ symdecl : VARIABLE '='
 
 assignment :  symdecl aexpr  
               {
-		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
+		if(ECHO_GRAMMAR) std::cout << $1->GetName() << std::endl;
 		if(execute)
 		  {
-		    if($1->is_reserved) {
-		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		    if($1->IsReserved()) {
+		      std::string errorstring = "ERROR: " + $1->GetName() + " is reserved\n";
 		      yyerror(errorstring.c_str());
 		    }
 		    else
 		      {
-			$1->value = $2; $$=$1;       
+			$1->Set($2);
+			$$=$1;       
 		      }
 		  }
 	      }
@@ -482,14 +485,14 @@ assignment :  symdecl aexpr
 	      {
 		if (execute)
 		  {
-		    if($1->is_reserved) {
-		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		    if($1->IsReserved()) {
+		      std::string errorstring = "ERROR: " + $1->GetName() + " is reserved\n";
 		      yyerror(errorstring.c_str());
 		    }
 		    else
 		      {
-			$1->str = *$2; $$=$1;
-			$1->type = Symtab::symtabtype::_STRING;
+			$1->Set(*$2);
+			$$=$1;
 		      }
 		  }
 	      }
