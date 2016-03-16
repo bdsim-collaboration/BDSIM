@@ -301,45 +301,26 @@ paramassign: VARIABLE
                $$=&($1->name);
              }
 
-parameters: paramassign '=' aexpr ',' parameters
+parameters_extend : /* nothing */
+                  | ',' parameters
+
+parameters: paramassign '=' aexpr parameters_extend
             {
 	      if(execute)
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | paramassign '=' aexpr
-            {
-	      if(execute)
-		Parser::Instance()->SetParameterValue(*($1),$3);
-	    }
-          | paramassign '=' vecexpr ',' parameters
+          | paramassign '=' vecexpr parameters_extend
             {
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | paramassign '=' vecexpr
-            {
-	      if(execute) 
-		Parser::Instance()->SetParameterValue(*($1),$3);
-	    }
-          | paramassign '=' STRVAR ',' parameters
+          | paramassign '=' STRVAR parameters_extend
 	    {
 	      if(execute) {
                 Parser::Instance()->SetParameterValue(*($1),$3->str);
 	      }
 	    }
-          | paramassign '=' STRVAR
-	    {
-	      if(execute) {
-                Parser::Instance()->SetParameterValue(*($1),$3->str);
-	      }
-	    }
-          | paramassign '=' STR ',' parameters
-            {
-	      if(execute) {
-		Parser::Instance()->SetParameterValue(*($1),*$3);
-	      }
-	    }
-          | paramassign '=' STR
+          | paramassign '=' STR parameters_extend
             {
 	      if(execute) {
 		Parser::Instance()->SetParameterValue(*($1),*$3);
@@ -352,71 +333,45 @@ line : LINE '=' '(' element_seq ')'
 line : LINE '=' '-' '(' rev_element_seq ')'
 ;
 
+element_seq_extend : /* nothing */
+                   | ',' element_seq
+
 element_seq : 
-            | VARIABLE ',' element_seq
+            | VARIABLE element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), 1, true, ElementType::_LINE);
 	      }
-            | VARIABLE '*' NUMBER ',' element_seq
+            | VARIABLE '*' NUMBER element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
 	      }
-            | NUMBER '*' VARIABLE ',' element_seq
+            | NUMBER '*' VARIABLE element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
 	      }
-            | VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), 1, true, ElementType::_LINE);
-	      }
-           | VARIABLE '*' NUMBER
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
-	      }
-            | NUMBER '*' VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
-	      }
-            | '-' VARIABLE ',' element_seq
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
-	      }
-            | '-' VARIABLE
+            | '-' VARIABLE element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
 	      }
 ;
 
+rev_element_seq_extend : /* nothing */
+                       | ',' rev_element_seq
+
 rev_element_seq : 
-            | VARIABLE ',' rev_element_seq 
+            | VARIABLE rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
 	      }
-            | VARIABLE '*' NUMBER ',' rev_element_seq
+            | VARIABLE '*' NUMBER rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
 	      }
-            | NUMBER '*' VARIABLE ',' rev_element_seq
+            | NUMBER '*' VARIABLE rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
 	      }
-            | VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
-	      }
-           | VARIABLE '*' NUMBER
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
-	      }
-            | NUMBER '*' VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
-	      }
-            | '-' VARIABLE ',' element_seq
-              {
-		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
-	      }
-            | '-' VARIABLE
+            | '-' VARIABLE rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
 	      }
@@ -453,7 +408,7 @@ expr : aexpr
        }
 ;
 
-aexpr  :  NUMBER              { $$ = $1;                         }
+aexpr  : NUMBER               { $$ = $1;                         }
        | NUMVAR               { $$ = $1->value;                  }
        | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
@@ -855,144 +810,96 @@ sample_options: RANGE '=' VARIABLE
 	        }
 ;
 
-csample_options : paramassign '=' aexpr
+csample_options_extend : /* nothing */
+                       | ',' csample_options
+
+csample_options : paramassign '=' aexpr csample_options_extend
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    if(execute)
 		      Parser::Instance()->SetParameterValue(*($1),$3);
 		  }
-                | paramassign '=' aexpr ',' csample_options
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
-		    if(execute)
-		      Parser::Instance()->SetParameterValue(*($1),$3);
-		  }
-                | sample_options ',' csample_options
+                | sample_options csample_options_extend
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt, csopt\n");
 		    $$ = $1;
 		  }
-                | sample_options
-                  {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt\n");
-		    $$ = $1;
-                  }
 ;
 
-cavitymodel_options : paramassign '=' aexpr ',' cavitymodel_options
+cavitymodel_options_extend : /* nothing */
+                           | ',' cavitymodel_options
+
+cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue((*$1),$3);
 		    }
-                 | paramassign '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetCavityModelValue((*$1),$3);
-		    }
-                 | paramassign '=' STR ',' cavitymodel_options
-                    {
-		      if(execute)
-			Parser::Instance()->SetCavityModelValue(*$1,*$3);
-		    }
-                 | paramassign '=' STR
+                 | paramassign '=' STR cavitymodel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
 		    }
 ;
 
-region_options : paramassign '=' aexpr ',' region_options
+region_options_extend : /* nothing */
+                      | ',' region_options
+
+region_options : paramassign '=' aexpr region_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue((*$1),$3);
 		    }
-                 | paramassign '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetRegionValue((*$1),$3);
-		    }
-                 | paramassign '=' STR ',' region_options
-                    {
-		      if(execute)
-			Parser::Instance()->SetRegionValue(*$1,*$3);
-		    }
-                 | paramassign '=' STR
+                 | paramassign '=' STR region_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue(*$1,*$3);
 		    }
 ;
 
-tunnel_options : paramassign '=' aexpr ',' tunnel_options
+tunnel_options_extend : /* nothing */
+                      | ',' tunnel_options
+
+tunnel_options : paramassign '=' aexpr tunnel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
-                 | paramassign '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetTunnelValue((*$1),$3);
-		    }
-                 | paramassign '=' STR ',' tunnel_options
-                    {
-		      if(execute)
-			Parser::Instance()->SetTunnelValue(*$1,*$3);
-		    }
-                 | paramassign '=' STR
+                 | paramassign '=' STR tunnel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
 ;
 
-xsecbias_options : paramassign '=' aexpr ',' xsecbias_options
+xsecbias_options_extend : /* nothing */
+                        | ',' xsecbias_options
+
+xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-                 | paramassign '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
-		    }
-                 | paramassign '=' STR ',' xsecbias_options
+                 | paramassign '=' STR xsecbias_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
 		    }
-                 | paramassign '=' STR
-                    {
-		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
-		    }
-                 | paramassign '=' vecexpr ',' xsecbias_options
-		    {
-		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
-		    }
-                 | paramassign '=' vecexpr
+                 | paramassign '=' vecexpr xsecbias_options_extend
 		    {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
 ;
 
-option_parameters : paramassign '=' aexpr ',' option_parameters
+option_parameters_extend : /* nothing */
+                         | ',' option_parameters
+
+option_parameters : paramassign '=' aexpr option_parameters_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    }   
-                  | paramassign '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,$3);
-		    } 
-                  | paramassign '=' STR ',' option_parameters
-                    {
-		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,*$3);
-		    }   
-                  | paramassign '=' STR
+                  | paramassign '=' STR option_parameters_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,*$3);
