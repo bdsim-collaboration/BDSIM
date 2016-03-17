@@ -47,7 +47,10 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   vacuumField(nullptr),
   outerField(nullptr)
 {
-  angle           = (*vacuumFieldInfo->MagnetStrength())["angle"];
+  if (vacuumFieldInfo) // there may not always be a vacuum field - ie muon spoiler
+    {angle = (*vacuumFieldInfo->MagnetStrength())["angle"];}
+  else
+    {angle = 0;}
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,0);
