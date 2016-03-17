@@ -1,6 +1,6 @@
-a = 1;
+a = "copper";
 
 ! should give warning that variable is redefined
-a = 3;
+a = "iron";
 
 print, a;

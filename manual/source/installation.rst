@@ -39,7 +39,7 @@ With AFS connection you can get the latest released bdsim version from::
   
   /afs/cern.ch/user/j/jsnuveri/public/bdsim
 
-The latest develop version is available under::
+The latest develop version (updated daily) is available under::
 
   /afs/cern.ch/user/j/jsnuveri/public/bdsim-develop
 

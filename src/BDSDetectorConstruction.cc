@@ -184,7 +184,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	{
 	  BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
 	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-	  beamline->AddComponent(temp, tiltOffset, sType, (*elementIt).samplerName);
+	  beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
 	}
     }
 
@@ -213,7 +213,7 @@ void BDSDetectorConstruction::BuildBeamline()
 
   if(execOptions->GetSurvey())
     {
-      BDSSurvey* survey = new BDSSurvey(execOptions->GetSurveyFilename());
+      BDSSurvey* survey = new BDSSurvey(execOptions->GetSurveyFilename() + ".dat");
       survey->Write(beamline);
       delete survey;
     }
