@@ -321,9 +321,9 @@ void BDSSpectrVacChamb::BuildSideWall(){
 
 void BDSSpectrVacChamb::BuildStrut(){
   _strutSolid = new G4Box(_name+"_strutSolid", 
-			     _strutSizeX/2.0, //width
+			     _strutSizeZ/2.0, //width
 			     _sizeY/2.0,      //height
-			     _strutSizeZ/2.0); //depth
+			     _strutSizeX/2.0); //depth
 
   _logVolStrut = new G4LogicalVolume(_strutSolid,
 				     BDSMaterials::Instance()->GetMaterial(_strutMaterial.c_str()),
