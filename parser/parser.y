@@ -463,6 +463,14 @@ symdecl : VARIABLE '='
 	      $$ = $1;
 	    }
 	}
+        | VECVAR '='
+        {
+           if(execute)
+	     {
+	       std::cout << "WARNING redefinition of array variable " << $1->GetName() << std::endl;
+	       $$=$1;
+	     }
+	}
 ;
 
 assignment :  symdecl aexpr  
@@ -504,96 +512,20 @@ assignment :  symdecl aexpr
 		    $$=$1;
 		  }
               }
-
-           |  VECVAR '=' vecexpr
-              {
-		if(execute)
-		  {
-		    $1->Set($3);
-		    $$=$1;
-		  }
-              }
 ;
 
-vecexpr :   VECVAR  
-        {
-	  if(execute)
-	    {
-	      $$ = new Array($1);
-	    }
-        } 
-        | vectnum
-        {
-	  if(execute)
-	    {
-	      $$ = $1;
-	    }
-	}
-       | vectstr
-	{
-	  if(execute)
-	  {
-	    $$ = $1;
-	  }
-	}
-
-       | vecexpr '+' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Add($1,$3);
-	    }
-        }
-      | vecexpr '-' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Subtract($1,$3);
-	    }
-	}
-       | vecexpr '+' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Add($1,$3);
-	    }
-	}
-       | aexpr '+' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Add($3,$1);
-	    }
-	}
-      | vecexpr '*' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Multiply($1,$3);
-	    }
-	}
-      | aexpr '*' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Multiply($3,$1);
-	    }
-	}
-      | vecexpr '/' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Divide($1,$3);
-	    }
-	}
-       | vecexpr '-' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Subtract($1,$3);
-	    }
-	}
-       | aexpr '-' vecexpr
+vecexpr : VECVAR              {if(execute) $$ = new Array($1);} 
+        | vectnum             {if(execute) $$ = $1;}
+        | vectstr             {if(execute) $$ = $1;}
+        | vecexpr '+' vecexpr {if(execute) $$ = Array::Add($1,$3);}
+        | vecexpr '-' vecexpr {if(execute) $$ = Array::Subtract($1,$3);}
+        | vecexpr '+' aexpr   {if(execute) $$ = Array::Add($1,$3);}
+        | aexpr   '+' vecexpr {if(execute) $$ = Array::Add($3,$1);}
+        | vecexpr '*' aexpr   {if(execute) $$ = Array::Multiply($1,$3);}
+        | aexpr   '*' vecexpr {if(execute) $$ = Array::Multiply($3,$1);}
+        | vecexpr '/' aexpr   {if(execute) $$ = Array::Divide($1,$3);}
+        | vecexpr '-' aexpr   {if(execute) $$ = Array::Subtract($1,$3);}
+        | aexpr '-' vecexpr
         {
 	  if(execute)
 	    {
@@ -630,28 +562,12 @@ vectstr : vectstrexec
 	  }
 	}
 
-numbers : aexpr ',' numbers 
-          {
-	    if(execute)
-	      Parser::Instance()->Store($1);
-          } 
-       | aexpr
-         {
-	   if(execute)
-	     Parser::Instance()->Store($1);
-        }
+numbers : aexpr ',' numbers { if(execute) Parser::Instance()->Store($1);} 
+        | aexpr             { if(execute) Parser::Instance()->Store($1);}
 ;
 
-letters : STR ',' letters
-          {
-            if(execute)
-              Parser::Instance()->Store(*$1);
-          }
-	| STR
-         {
-           if(execute)
-             Parser::Instance()->Store(*$1);
-         }
+letters : STR ',' letters { if(execute) Parser::Instance()->Store(*$1);}
+	| STR             { if(execute) Parser::Instance()->Store(*$1);}
 ;
 
 command : STOP             { if(execute) Parser::Instance()->quit(); }
@@ -671,27 +587,9 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	      }
 	    }
 	  }
-        | PRINT ',' NUMVAR
-	  {
-	    if(execute)
-	      {
-	        $3->Print();
-	      }
-	  }
-        | PRINT ',' STRVAR
-	  {
-	    if(execute)
-	      {
-	        $3->Print();
-	      }
-	  }
-        | PRINT ',' VECVAR
-	  {
-	    if(execute)
-	      {
-	        $3->Print();
-	      } 
-	  }
+        | PRINT ',' NUMVAR { if(execute) $3->Print();}
+        | PRINT ',' STRVAR { if(execute) $3->Print();}
+        | PRINT ',' VECVAR { if(execute) $3->Print();} 
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters
         | SAMPLE ',' sample_options 
