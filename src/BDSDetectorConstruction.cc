@@ -562,8 +562,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 }
 
 #if G4VERSION_NUMBER > 1009
-BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
-        const std::list<std::string>& biasList)
+BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(const std::list<std::string>& biasList)
 {
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();

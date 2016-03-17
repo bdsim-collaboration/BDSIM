@@ -64,7 +64,7 @@ BDSComponentFactory::BDSComponentFactory()
   brho = BDSGlobalConstants::Instance()->GetFFact()*( momentum / 0.299792458);
   
   // rigidity (in Geant4 units)
-  brho *= - (CLHEP::tesla*CLHEP::m);
+  brho *= (CLHEP::tesla*CLHEP::m);
 
   G4cout << "Rigidity (Brho) : "<< std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 
