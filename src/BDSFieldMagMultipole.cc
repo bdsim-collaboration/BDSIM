@@ -68,12 +68,12 @@ G4ThreeVector BDSFieldMagMultipole::GetFieldValue(const G4ThreeVector& position)
       ffact *= o;
     }
 
-  G4ThreeVector localField;
-  localField[0] = (br * cos(phi) - bphi * sin(phi)); // B_x
-  localField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
-  localField[2] = 0;                                 // B_z
+  G4ThreeVector carteasianField;
+  carteasianField[0] = (br * cos(phi) - bphi * sin(phi)); // B_x
+  carteasianField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
+  carteasianField[2] = 0;                                 // B_z
 
-  return localField;
+  return carteasianField;
 }
 
 

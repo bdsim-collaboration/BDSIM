@@ -21,7 +21,7 @@ G4ThreeVector BDSFieldMagQuadrupole::GetFieldValue(const G4ThreeVector& position
   G4ThreeVector field;
   field[0] = position.y() * bPrime; // B_x = B' * y;
   field[1] = position.x() * bPrime; // B_y = B' * x;
-  field[2] = 0;                          // B_z = 0
+  field[2] = 0;                     // B_z = 0
 
   return field;
 }
