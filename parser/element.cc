@@ -343,7 +343,14 @@ void Element::set(const Parameters& params)
 	{
 	  std::string property = i.first;
 
-	  Published<Element>::set(this,(Element*)&params,property);
+	  // method can in theory throw runtime_error (shouldn't happen), catch and exit gracefully
+	  try {
+	    Published<Element>::set(this,(Element*)&params,property);
+	  }
+	  catch(std::runtime_error) {
+	    std::cerr << "Error: parser> unknown property \"" << property << "\" for element " << name  << std::endl;
+	    exit(1);
+	  }
 
 	  // split bias into tokens and add to both material and vacuum
 	  if (property == "bias")

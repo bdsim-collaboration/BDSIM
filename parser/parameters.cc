@@ -107,7 +107,15 @@ void Parameters::inherit_properties(Element& e)
       if(i.second == false)
 	{
 	  std::string property = i.first;
-	  Published<Element>::set(this,(Element*)&e,property);
+          // method can in theory throw runtime_error (shouldn't happen), catch and exit gracefully
+	  try {
+	    Published<Element>::set(this,(Element*)&e,property);
+	  }
+	  catch(std::runtime_error) {
+	    std::cerr << "Error: parser> unknown property \"" << property << "\" from element " << e.name  << std::endl;
+	    exit(1);
+	  }
+	  
 	  i.second = true;
 	}
     }
