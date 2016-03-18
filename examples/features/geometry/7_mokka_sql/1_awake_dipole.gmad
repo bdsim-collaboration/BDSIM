@@ -41,5 +41,5 @@ option, beampipeRadius = 35*mm,
 	maximumTrackingTime=1e-3*s;
 
 option, modularPhysicsListsOn = 1;
-option, physicsList = "hadronic optical sr";
+option, physicsList = "hadronic optical synchrad";
 option, ngenerate = 1;

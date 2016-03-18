@@ -1,1 +1,1 @@
-sql/myField.sql
+myField.sql
