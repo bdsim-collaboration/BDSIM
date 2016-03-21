@@ -8,7 +8,6 @@ New Features
 * Poleface rotations for bends are implemented (issue #100)
 * Geant4 9.6.x versions support is dropped (issue #111)
 * DUMP element removed (issue #116)
-* Modular physics lists are default (issue #121)
 
 Geometry
 ^^^^^^^^
@@ -18,26 +17,50 @@ Geometry
 Output
 ^^^^^^
 
+* ROOT version 6 support (issue #114)
+* Option to fill ROOT with double precision
+  
 Parser
 ^^^^^^
+
+* Support for string variable (issue #126)
 
 Physics
 ^^^^^^^
 
-Tracking
-^^^^^^^^
-  
+* Modular physics lists are default (issue #121)
+
 Bug fixes
 ---------
 
 Geometry
 ^^^^^^^^
-  
+
+* Tunnel geometry fixes (issues #88 and #89)
+
 Parser
 ^^^^^^
 
 * Fix fast list insertion (issue #113)
 * Support for tildes in path names (issue #119)
+
+Physics
+^^^^^^^
+
+* Old physics code cleanup (issue #123)
+* Physics biasing properly initialised (issue #84)
+  
+General
+^^^^^^^
+
+* PDF Manual builds on Ubuntu (issue #85)
+
+Utilities
+---------
+* pymadx v0.?
+* pybdsim v0.?
+* pymad8 v0.?
+* robdsim v0.?
 
 V0.91 - 2015 / 12 / 17
 ======================
