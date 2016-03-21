@@ -141,10 +141,11 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
 #endif
+  G4String physicsListName = BDSParser::Instance()->GetOptions().physicsList;
   if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
     {
       G4ParallelWorldPhysics* pWorld  = new G4ParallelWorldPhysics(samplerWorld->GetName());
-      BDSModularPhysicsList* physList = new BDSModularPhysicsList();
+      BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
       physList->RegisterPhysics(pWorld);
       /* Biasing */
 #if G4VERSION_NUMBER > 999
@@ -163,7 +164,7 @@ int main(int argc,char** argv)
     }
   else
     { 
-      BDSPhysicsList* physList = new BDSPhysicsList();
+      BDSPhysicsList* physList = new BDSPhysicsList(physicsListName);
       runManager->SetUserInitialization(physList);
     }
 

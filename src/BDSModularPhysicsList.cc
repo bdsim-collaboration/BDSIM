@@ -51,9 +51,8 @@
 
 //Note: transportation process is constructed by default with classes that derive from G4VModularPhysicsList
 
-BDSModularPhysicsList::BDSModularPhysicsList():
-  G4VModularPhysicsList(),
-  physListName(BDSGlobalConstants::Instance()->GetPhysListName())
+BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
+  opticalPhysics(nullptr)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -63,7 +62,6 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);
-  opticalPhysics  = nullptr;
 
   physicsConstructors.insert(std::make_pair("cutsandlimits",    &BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("em",               &BDSModularPhysicsList::Em));
@@ -90,7 +88,7 @@ BDSModularPhysicsList::BDSModularPhysicsList():
       physicsActivated[constructor.first] = false;
     }
   
-  ParsePhysicsList();
+  ParsePhysicsList(physicsList);
   ConfigurePhysics();
   Register();
   ConstructMinimumParticleSet();
@@ -136,7 +134,7 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 }
 
 //Parse the physicsList option
-void BDSModularPhysicsList::ParsePhysicsList()
+void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Physics list string: \"" << physListName << "\"" << G4endl;

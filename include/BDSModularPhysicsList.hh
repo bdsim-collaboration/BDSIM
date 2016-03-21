@@ -18,7 +18,7 @@ typedef void(BDSModularPhysicsList::*Constructor)(void);
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
 public:
-  BDSModularPhysicsList();
+  BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
 
   /// Print out which physics lists are activated.
@@ -35,6 +35,9 @@ public:
   virtual void SetCuts();
 
 private:
+  /// Private default constructor to force use of supplied one.
+  BDSModularPhysicsList();
+  
   G4bool verbose;
 #ifdef BDSDEBUG 
   bool debug = true;
@@ -71,7 +74,6 @@ private:
   void ConfigurePhysics();
   void ConfigureOptical();
   void Register();
-  G4String physListName;
 
   /// Keep a local reference to global constants to avoid getting it all the time
   BDSGlobalConstants* globals;
