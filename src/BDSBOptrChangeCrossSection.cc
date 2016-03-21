@@ -21,7 +21,7 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
 
   if (fParticleToBias == nullptr)
-    {G4cout << __METHOD_NAME__ << "Particle \"" << particleName << "\" not found!" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "Particle \"" << particleName << "\" not found!" << G4endl; exit(1);}
 }
 
 BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
@@ -76,18 +76,32 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
   G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
 #endif
 
+  G4bool processFound = false;
   for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++)
     {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
-      if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName())
+      G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
+      if(processName == currentProcess)
 	{ 
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;
+	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
 #endif
 	  fXSScale[wrapperProcess]      = bias;
 	  fPrimaryScale[wrapperProcess] = iPrimary;
+	  processFound                  = true; // the process was found at some point
 	}
     }
+  if (!processFound)
+    {
+      G4cout << __METHOD_NAME__ << "Error: Process \"" << processName
+	     << "\" not found registered to particle \""
+	     << particleName << "\"" << G4endl;
+      exit(1);
+    }
+#ifdef BDSDEBUG
+  else
+    {G4cout << "Process found OK" << G4endl;}
+#endif
 }
 
 G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*                   track, 
