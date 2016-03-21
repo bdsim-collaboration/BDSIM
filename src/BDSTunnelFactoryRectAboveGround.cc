@@ -13,7 +13,6 @@
 #include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
-#include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
 #include "G4VSolid.hh"
 
@@ -33,8 +32,11 @@ BDSTunnelFactoryRectAboveGround* BDSTunnelFactoryRectAboveGround::Instance()
 
 BDSTunnelFactoryRectAboveGround::BDSTunnelFactoryRectAboveGround()
 {
-  slabSolid      = nullptr;
-  slabYHalfWidth = 1*CLHEP::m;
+  slabSolid        = nullptr;
+  slabXHalfWidth   = 0;
+  slabYHalfWidth   = 1*CLHEP::m;
+  containerXRadius = 0;
+  containerYRadius = 0;
 }
 
 BDSTunnelFactoryRectAboveGround::~BDSTunnelFactoryRectAboveGround()
