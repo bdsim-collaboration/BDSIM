@@ -44,8 +44,15 @@ void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
 
 void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary) 
 {
-  if(debug) 
-    G4cout << __METHOD_NAME__ << particleName << " " << process << " " << dBias << " " << iPrimary << G4endl;
+  // imporant feedback for the user
+  G4cout << "Biasing process \"" << process << "\" for particle \"" << particleName << "\" by factor " << dBias;
+  G4String flagString = "all";
+  if (iPrimary == 2)
+    {flagString = "primary";}
+  else if (iPrimary == 3)
+    {flagString = "primary & secondary";}
+  G4cout << ", for " << flagString << " particles" << G4endl;
+  
   const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   if(particle == nullptr) {
     G4ExceptionDescription ed;

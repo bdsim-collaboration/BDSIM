@@ -599,14 +599,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       
       // loop through all processes
       for(unsigned int p = 0; p < pb.processList.size(); ++p)
-	{
-	  if(debug)
-	    {
-	      G4cout << __METHOD_NAME__ << "Process loop "
-		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
-	    }
-	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
-	}
+	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
   biasObjects.push_back(eg);
