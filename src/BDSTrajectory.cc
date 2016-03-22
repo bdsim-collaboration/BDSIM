@@ -28,6 +28,7 @@ BDSTrajectory::~BDSTrajectory()
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
+  G4Trajectory::AppendStep(aStep);
   G4Track*            aTrack = aStep->GetTrack();
   BDSTrajectoryPoint* tempTP = new BDSTrajectoryPoint(aTrack);
   if(tempTP->isScatteringProcess())
@@ -45,6 +46,8 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   if(!secondTrajectory)
     {return;}
 
+  G4Trajectory::MergeTrajectory(secondTrajectory);
+  
   BDSTrajectory* seco = (BDSTrajectory*)secondTrajectory;
   for (auto position : seco->_positionOfLastScatter)
     {_positionOfLastScatter.insert(position);}
