@@ -10,6 +10,7 @@
 #include "G4BiasingProcessInterface.hh"
 #include "G4BiasingProcessSharedData.hh"
 #include "G4BOptnChangeCrossSection.hh"
+#include "G4InteractionLawPhysical.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "G4VProcess.hh"
@@ -120,14 +121,14 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   if (analogInteractionLength > DBL_MAX/10.)
     {return nullptr;}
 
+  // protect against negative interaction lengths
+  // sometimes this appears as -1 - exactly -1
   if(analogInteractionLength < 0)
     {return nullptr;}
 
-  G4double analogXS = 0;
-  if(analogInteractionLength > 0)
-    {analogXS = 1./analogInteractionLength;}
-
   // Analog cross-section is well-defined:
+  G4double analogXS = 1./analogInteractionLength;
+  
   // Choose a constant cross-section bias. But at this level, this factor can be made
   // direction dependent, like in the exponential transform MCNP case, or it
   // can be chosen differently, depending on the process, etc.
@@ -135,12 +136,12 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   
   // fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection* operation = fChangeCrossSectionOperations[callingProcess];
-  if (!operation)
+  /*if (!operation)
     {
       G4cout << __METHOD_NAME__ << "ERROR: Process not known: " << G4endl;
       callingProcess->DumpInfo();
       exit(1);
-    }
+      }*/
   
   // get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
@@ -168,7 +169,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // occured. If the interaction did not occur for the process in the previous,
   // we update the number of interaction length instead of resampling.
 
-  if(previousOperation == nullptr)
+  if(!previousOperation)
     {
       operation->SetBiasedCrossSection( XStransformation * analogXS );
       operation->Sample();
