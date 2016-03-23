@@ -167,6 +167,10 @@ namespace GMAD {
     double   prodCutProtonsP;
     double   prodCutProtonsA;
 
+    /// Biasing options
+    std::string defaultBiasVacuum;
+    std::string defaultBiasMaterial;
+
     /// Tracking related parameters 
     double   maximumTrackingTime; ///< maximum tracking time per volume [s]
     double   deltaChord;

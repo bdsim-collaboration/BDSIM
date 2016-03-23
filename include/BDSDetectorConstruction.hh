@@ -82,7 +82,9 @@ private:
 
 #if G4VERSION_NUMBER > 1009
   /// Function that creates physics biasing cross section
-  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList);
+  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
+								 G4String defaultBias,
+								 G4String elementName);
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;

@@ -132,6 +132,10 @@ Options::Options()
   prodCutProtonsP          = 1e-3;
   prodCutProtonsA          = 1e-3;
 
+  // biasing options
+  defaultBiasVacuum        = "";
+  defaultBiasMaterial      = "";
+
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = 0.1;
@@ -344,6 +348,10 @@ void Options::PublishMembers()
   publish("prodCutHadrons",&Options::prodCutProtons); // backwards compatability
   publish("prodCutProtonsP",&Options::prodCutProtonsP);
   publish("prodCutProtonsA",&Options::prodCutProtonsA);
+
+  // bias options
+  publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
+  publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
 
   // options which influence tracking 
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
