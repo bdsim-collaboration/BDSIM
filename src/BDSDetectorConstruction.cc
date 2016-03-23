@@ -595,25 +595,23 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       GMAD::FastList<GMAD::PhysicsBiasing>::FastListConstIterator result;
       if (bs.empty() && defaultBias.empty())
 	{continue;} // no bias specified and no default
-      else if (bs.empty() && !defaultBias.empty())
+
+      G4String bias;
+      if (bs.empty())
 	{// no bias but default specified
-	  result = biasObjectList.find(defaultBias);
-	  if (result == biasObjectList.end())
-	    {
-	      G4cout << "Error: bias named \"" << bs << "\" not found for element named \""
-		     << elementName << "\"" << G4endl;
-	      exit(1);
-	    }
+	  bias = defaultBias;
 	}
       else
 	{// bias specified - look it up and ignore default
-	  result = biasObjectList.find(bs);
-	  if (result == biasObjectList.end())
-	    {
-	      G4cout << "Error: bias named \"" << bs << "\" not found for element named \""
-		     << elementName << "\"" << G4endl;
-	      exit(1);
-	    }
+	  bias = bs;
+	}
+      
+      result = biasObjectList.find(bias);
+      if (result == biasObjectList.end())
+	{
+	  G4cout << "Error: bias named \"" << bias << "\" not found for element named \""
+		 << elementName << "\"" << G4endl;
+	  exit(1);
 	}
       const GMAD::PhysicsBiasing& pb = *result;
       
