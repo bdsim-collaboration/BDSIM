@@ -1,5 +1,5 @@
-#ifndef __ELEMENT_H
-#define __ELEMENT_H
+#ifndef ELEMENT_H
+#define ELEMENT_H
 
 #include <list>
 #include <map>
@@ -7,8 +7,8 @@
 
 #include "published.h"
 
-namespace GMAD {
-
+namespace GMAD
+{
   enum class ElementType;
 
   struct Parameters;

@@ -1,11 +1,11 @@
-#ifndef __ELEMENTTYPE_H
-#define __ELEMENTTYPE_H
+#ifndef ELEMENTTYPE_H
+#define ELEMENTTYPE_H
 
 #include <ostream>
 #include <string>
 
-namespace GMAD {
-
+namespace GMAD
+{
   /// types of elements
   enum class ElementType {
     _NONE        = -1,

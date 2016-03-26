@@ -1,5 +1,5 @@
-#ifndef __OPTIONS_H
-#define __OPTIONS_H
+#ifndef OPTIONS_H
+#define OPTIONS_H
 
 #include <iomanip>
 #include <iostream>

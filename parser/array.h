@@ -1,15 +1,17 @@
-#ifndef __ARRAY_H
-#define __ARRAY_H
+#ifndef ARRAY_H
+#define ARRAY_H
 
 #include <iostream>
 #include <string>
 #include <vector>
 
-namespace GMAD {
+namespace GMAD
+{
   class Symtab;
 }
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief Representation of arrays used in tokens
    *

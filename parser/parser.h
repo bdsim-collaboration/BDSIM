@@ -1,5 +1,5 @@
-#ifndef __PARSER_H
-#define __PARSER_H
+#ifndef PARSER_H
+#define PARSER_H
 
 #include <list>
 #include <map>
@@ -22,7 +22,8 @@ int yyerror(const char *);
 /// declaration needed by bison
 extern int yylex();
 
-namespace GMAD {
+namespace GMAD
+{
   class Array;
   class Symtab;
   /**
