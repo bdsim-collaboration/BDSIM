@@ -23,10 +23,9 @@
 #include "G4GeometryTolerance.hh"
 #include "G4GenericBiasingPhysics.hh"
 
-#include "G4Electron.hh"
-
 #include "BDSAcceleratorModel.hh"
 #include "BDSBunch.hh"
+#include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
 #include "BDSGeometryWriter.hh"
@@ -41,9 +40,11 @@
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
 #include "BDSRunManager.hh"
+#include "BDSSamplerRegistry.hh"
+#include "BDSSDManager.hh"
 #include "BDSSteppingAction.hh"
 #include "BDSStackingAction.hh"
-#include "BDSUserTrackingAction.hh"
+#include "BDSTrackingAction.hh"
 #include "BDSUtilities.hh"
 #include "BDSVisManager.hh"
 
@@ -56,7 +57,7 @@ int main(int argc,char** argv)
 {
   /// Print header & program information
   G4cout<<"bdsim : version 0.9.develop"<<G4endl;
-  G4cout<<"        (C) 2001-2015 Royal Holloway University London"<<G4endl;
+  G4cout<<"        (C) 2001-2016 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
 
@@ -152,6 +153,10 @@ int main(int argc,char** argv)
       physBias->Bias("e+");
       physBias->Bias("gamma");
       physBias->Bias("proton");
+      physBias->Bias("mu-");
+      physBias->Bias("mu+");
+      physBias->Bias("pi-");
+      physBias->Bias("pi+");
       physList->RegisterPhysics(physBias);
 #endif
       runManager->SetUserInitialization(physList);
@@ -204,7 +209,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Tracking Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSUserTrackingAction);
+  runManager->SetUserAction(new BDSTrackingAction);
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;
@@ -224,7 +229,7 @@ int main(int argc,char** argv)
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
   if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
-  {realWorld->BuildPhysicsBias();}
+    {realWorld->BuildPhysicsBias();}
 
 #ifdef BDSDEBUG
   auto physics = runManager->GetUserPhysicsList();
@@ -290,10 +295,6 @@ int main(int argc,char** argv)
 #endif
   delete bdsOutput;
   
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> BDSBeamline deleting..."<<G4endl;
-#endif
-
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
@@ -302,10 +303,17 @@ int main(int argc,char** argv)
   delete globalConstants;
   delete BDSMaterials::Instance();
   delete BDSParser::Instance();
+
+  // instances not used in this file, but no other good location for deletion
+  delete BDSColours::Instance();
+  delete BDSSDManager::Instance();
+  delete BDSSamplerRegistry::Instance();
+  
 #ifdef BDSDEBUG 
   G4cout<< __FUNCTION__ << "> BDSRunManager deleting..."<<G4endl;
 #endif
   delete runManager;
+  delete samplerWorld;
   delete bdsBunch;
 
   G4cout << __FUNCTION__ << "> End of Run, Thank you for using BDSIM!" << G4endl;

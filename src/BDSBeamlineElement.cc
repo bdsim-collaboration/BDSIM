@@ -68,7 +68,12 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   if (samplerType == BDSSamplerType::plane)
     {
       G4ThreeVector dZLocal = G4ThreeVector(0,0,1); // initialise with local unit z
-      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() + 1*CLHEP::um; // back off to avoid overlaps
+      // offset from end face as overlapping faces produce weird results - no hits etc
+      // 1um seemed ok, but then ~20 / 10k would appear wrong - last step in world volume
+      // instead of correct place - should be impossible.  Also had nullptr for track->GetVolume()
+      // empirically found good results with 2um (at least 1.5um)
+      // back off to avoid overlaps
+      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() + 2*CLHEP::um; 
       dZLocal.transform(*referenceRotationEnd);
       G4ThreeVector samplerPosition = referencePositionEnd - dZLocal;
       samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, samplerPosition);

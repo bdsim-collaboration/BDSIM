@@ -14,8 +14,7 @@ BDSSamplerInfo::BDSSamplerInfo(G4String            nameIn,
   name(nameIn),
   sampler(samplerIn),
   transform(transformIn),
+  transformInverse(transformIn.inverse()),
   sPosition(sPositionIn),
   element(elementIn)
-{
-  transformInverse = G4Transform3D(transform.inverse());
-}
+{;}

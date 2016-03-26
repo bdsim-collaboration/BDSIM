@@ -344,6 +344,7 @@ void BDSMagnet::PlaceComponents()
 
 BDSMagnet::~BDSMagnet()
 {
+  delete beamPipeInfo;
   delete magnetOuterInfo;
   delete itsBPFieldMgr;
   delete itsChordFinder;

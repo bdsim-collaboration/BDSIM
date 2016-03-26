@@ -1,6 +1,7 @@
 #include "parser.h"
 
 #include <cmath>
+
 // for getpwuid: http://linux.die.net/man/3/getpwuid
 #include <unistd.h>
 #include <sys/types.h>
@@ -67,6 +68,11 @@ Parser* Parser::Instance(std::string name)
 
 Parser::~Parser()
 {
+  beamline_list.erase();
+  // delete allocated lines
+  for (auto element : allocated_lines)
+    {delete element;}
+  
   instance = nullptr;
 }
 
@@ -213,6 +219,7 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
   if (isLine)
     {
       e.lst = new std::list<Element>(tmp_list);
+      allocated_lines.push_back(e.lst);
       // clean list
       tmp_list.clear();
     }
@@ -331,7 +338,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 #ifdef BDSDEBUG
 		printf("inserted\n");
 #endif
-		
+
 		// delete the list pointer
 		beamline_list.erase(it--);
 		
@@ -342,8 +349,6 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 		  printf("keeping element...%s\n",(*it).name.c_str());
 #endif
 		  // copy properties
-		  //		  copy_properties(it,tmpit);
-		  // better use default assign operator:
 		  (*it) = (*tmpit);
 #ifdef BDSDEBUG 
 		  printf("done\n");
@@ -370,7 +375,6 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 	  exit(1);
 	}
     }// while
-  
   
   // leave only the desired range
   //

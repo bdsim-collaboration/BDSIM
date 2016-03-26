@@ -5,7 +5,7 @@ Installation
 Obtaining  BDSIM
 ================
 
-BDSIM may be obtained either from the BDSIM website from the GIT repository
+BDSIM may be obtained either from the BDSIM website from the git repository
 (https://www.bitbucket.org/jairhul/bdsim). The user must compile it on
 their system and must have Geant4 already present (or access to AFS).
 
@@ -25,7 +25,27 @@ use the following commands::
   > cd bdsim
   > git submodule init
   > git submodule update
+
+
+From precompiled sources
+------------------------
+
+BDSIM may also be downloaded from pre-compiled sources. These are available on: http://www.pp.rhul.ac.uk/bdsim/download
+
+AFS
+---
+
+With AFS connection you can get the latest released bdsim version from::
   
+  /afs/cern.ch/user/j/jsnuveri/public/bdsim
+
+The latest develop version is available under::
+
+  /afs/cern.ch/user/j/jsnuveri/public/bdsim-develop
+
+As usual the Geant4 environment script needs to be loaded::
+  
+  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10.2-setup.sh
 
 Requirements
 ============

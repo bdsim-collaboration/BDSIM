@@ -27,11 +27,27 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
   iterator i = registry.begin();
   for (; i != registry.end(); ++i)
     {delete i->second;}
+  for (auto ac : allocatedComponents)
+    {delete ac;}
+  
   _instance = nullptr;
 }
 
-void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component)
+void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component, bool isModified)
 {
+  // if modified then store in vector and return
+  if (isModified)
+    {
+      allocatedComponents.push_back(component);
+      // if line then also add constituents
+      if (BDSLine* line = dynamic_cast<BDSLine*>(component))
+	{
+	  for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
+	    {allocatedComponents.push_back(*i);}
+	}
+      return;
+    }
+  
   if (IsRegistered(component->GetName()))
     {// don't register something that's already registered
 #ifdef BDSDEBUG
@@ -49,7 +65,7 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       registry[component->GetName()] = component;
       // now add all the components of the line individually using this very function
       for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	{RegisterComponent(*i);}
+	{RegisterComponent(*i,isModified);}
     }
   else
     {

@@ -12,6 +12,7 @@
 #include "G4PionPlus.hh"
 #include "G4PionMinus.hh"
 #include "G4Positron.hh"
+#include "G4PionDecayMakeSpin.hh"
 #include "G4ProcessManager.hh"
 
 BDSMuonPhysics::BDSMuonPhysics():
@@ -69,6 +70,11 @@ void BDSMuonPhysics::ConstructProcess()
 	pmanager->AddProcess(anni);
 	G4eeToHadrons* eetohadrons = new G4eeToHadrons();
 	pmanager->AddProcess(eetohadrons);
+      }
+    if(particleName == "pi+" || particleName == "pi-") 
+      {
+	G4PionDecayMakeSpin *pdms = new G4PionDecayMakeSpin();
+	pmanager->AddProcess(pdms);	
       }
     }
   return;
