@@ -13,11 +13,15 @@ namespace GMAD
   /**
    * @brief Options class
    * 
-   * options passed with option and beam command
+   * Options passed with option and beam command. This inherits
+   * the OptionsBase class which contains all the members and 
+   * provides templated filling functions. This separation allows
+   * the OptionsBase class to be more easily written out to ROOT files
+   * or other formats for strong reproducibility in a BDSIM run.
    *
-   * @author I. Agapov
+   * @author I. Agapov, J. Snuverink
    */
-  class Options : public Published<OptionsBase>, public OptionsBase
+  class Options: public Published<OptionsBase>, public OptionsBase
   {
   public:
     Options();

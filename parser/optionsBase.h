@@ -9,6 +9,10 @@ namespace GMAD
 {
   /**
    * @brief Basic options class independent of Geant4.
+   * 
+   * This is the basic options structure that can be saved to output
+   * and should only contain basic built in C++ types. No Geant4 types
+   * are to be used. See also the Options class which inherits this one.
    *
    * @author Stewart Boogert.
    */
