@@ -10,7 +10,7 @@ OptionsBase::OptionsBase()
 
   // very important options
   physicsList           = ""; //default - only transportation
-  modularPhysicsListsOn = 0;
+  modularPhysicsListsOn = 1;
   numberToGenerate      = 1;
   randomSeed            = 0;
 
@@ -60,7 +60,8 @@ OptionsBase::OptionsBase()
   outerDiameter        = 0.2;
 
   // geometry debugging
-  dontSplitSBends      = false; // always split sbends into smaller chunks by default
+  // always split sbends into smaller chunks by default
+  dontSplitSBends      = false; 
 
   includeIronMagFields = 0;
   sensitiveBeamlineComponents = 1;
@@ -130,6 +131,10 @@ OptionsBase::OptionsBase()
   prodCutProtons           = 1e-3;
   prodCutProtonsP          = 1e-3;
   prodCutProtonsA          = 1e-3;
+
+  // biasing options
+  defaultBiasVacuum        = "";
+  defaultBiasMaterial      = "";
 
   // tracking options
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry

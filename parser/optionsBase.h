@@ -7,11 +7,11 @@
 
 namespace GMAD
 {
-/*
- * @brief Basic options class independent of Geant4.
- *
- * @author Stewart Boogert.
- */
+  /**
+   * @brief Basic options class independent of Geant4.
+   *
+   * @author Stewart Boogert.
+   */
   
   class OptionsBase
   {
@@ -137,6 +137,7 @@ namespace GMAD
     double   blmRad;
     double   blmLength;
 
+    ///Cross section biasing parameters
     double   scintYieldFactor;
 
     int      useEMLPB;
@@ -163,6 +164,10 @@ namespace GMAD
     double   prodCutProtons;
     double   prodCutProtonsP;
     double   prodCutProtonsA;
+
+    /// Biasing options
+    std::string defaultBiasVacuum;
+    std::string defaultBiasMaterial;
 
     /// Tracking related parameters
     double   maximumTrackingTime; ///< maximum tracking time per volume [s]
@@ -196,7 +201,6 @@ namespace GMAD
 
     /// print some properties
     void print() const;
-
   };
 }
 
