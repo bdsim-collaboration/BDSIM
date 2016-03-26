@@ -107,7 +107,15 @@ void Parameters::inherit_properties(Element& e)
       if(i.second == false)
 	{
 	  std::string property = i.first;
-	  Published<Element>::set(this,(Element*)&e,property);
+          // method can in theory throw runtime_error (shouldn't happen), catch and exit gracefully
+	  try {
+	    Published<Element>::set(this,(Element*)&e,property);
+	  }
+	  catch(std::runtime_error) {
+	    std::cerr << "Error: parser> unknown property \"" << property << "\" from element " << e.name  << std::endl;
+	    exit(1);
+	  }
+	  
 	  i.second = true;
 	}
     }
@@ -119,44 +127,39 @@ void Parameters::set_value(std::string property, Array* value)
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property << std::endl;
 #endif
-  setMap.at(property) = true;
-  
   if(property=="knl") 
     {
       value->set_vector(knl);
-      return;
     } 
-  if(property=="ksl") 
+  else if(property=="ksl") 
     {
       value->set_vector(ksl);
-      return;
     }
-  if(property=="blmLocZ") 
+  else if(property=="blmLocZ") 
     {
       value->set_vector(blmLocZ);
-      return;
     }
-  if(property=="blmLocTheta") 
+  else if(property=="blmLocTheta") 
     {
       value->set_vector(blmLocTheta);
-      return;
     }
-  if(property=="components")
+  else if(property=="components")
     {
       value->set_vector(components);
-      return;
     } 
-  if(property=="componentsWeights")
+  else if(property=="componentsWeights")
     {
       value->set_vector(componentsWeights);
-      return;
     }
-  if(property=="componentsFractions")
+  else if(property=="componentsFractions")
     {
       value->set_vector(componentsFractions);
-      return;
+    }
+  else
+    {
+      std::cerr << "Error: parser> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
+      exit(1);
     }
 
-  std::cerr << "Error: parser> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
-  exit(1);
+  setMap.at(property) = true;
 }

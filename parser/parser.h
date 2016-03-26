@@ -14,6 +14,7 @@
 #include "parameters.h"
 #include "physicsbiasing.h"
 #include "region.h"
+#include "symbolmap.h"
 #include "tunnel.h"
 
 /// parser error message, defined in parser.y
@@ -89,7 +90,6 @@ namespace GMAD {
 
     /// create new parser symbol
     Symtab * symcreate(std::string s);
-
     /// look up parser symbol
     Symtab * symlook(std::string s);
 
@@ -147,9 +147,9 @@ namespace GMAD {
     /// Set sampler
     void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
     /// Add function to parser
-    int add_func(std::string name, double (*func)(double));
+    void add_func(std::string name, double (*func)(double));
     /// Add reserved variable to parser
-    int add_var(std::string name, double value, int is_reserved = 0);
+    void add_var(std::string name, double value, int is_reserved = 0);
 
     // *****************
     // Private members *
@@ -202,7 +202,7 @@ namespace GMAD {
     std::vector<CavityModel> cavitymodel_list;
     
     /// Parser symbol map
-    std::map<std::string, Symtab*> symtab_map;
+    SymbolMap symtab_map;
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
   };

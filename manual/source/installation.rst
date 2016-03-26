@@ -22,9 +22,9 @@ This will create a directory called ``bdsim``, inside which all the code, exampl
 and documentation is provided. To obtain the python utilities that come with BDSIM,
 use the following commands::
 
-  > cd bdsim
-  > git submodule init
-  > git submodule update
+  cd bdsim
+  git submodule init
+  git submodule update
 
 
 From precompiled sources
@@ -39,7 +39,7 @@ With AFS connection you can get the latest released bdsim version from::
   
   /afs/cern.ch/user/j/jsnuveri/public/bdsim
 
-The latest develop version is available under::
+The latest develop version (updated daily) is available under::
 
   /afs/cern.ch/user/j/jsnuveri/public/bdsim-develop
 
@@ -479,6 +479,12 @@ please contact us (see :ref:`support-section`).
    Make sure it is the same compiler version. Remember to start from a clean build
    directory otherwise CMake does **NOT** update the compiler version.
 
+4) Build does not work - linker errors with xml and zlib like ::
+
+     /usr/lib/../lib64/libxml2.so: undefined reference to `gzdirect@ZLIB_1.2.2.3'
+     collect2: error: ld returned 1 exit status
+
+   This probably means that the xml library is not properly installed. Easiest might be to not use this part of BDSIM by switching off the CMake variable USE_LCDD (in ccmake).
 
 .. rubric:: Footnotes
 

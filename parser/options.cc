@@ -192,6 +192,10 @@ void Options::PublishMembers()
   publish("prodCutProtonsP",&Options::prodCutProtonsP);
   publish("prodCutProtonsA",&Options::prodCutProtonsA);
 
+  // bias options
+  publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
+  publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
+
   // options which influence tracking 
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
   publish("deltaChord",&Options::deltaChord);

@@ -99,6 +99,7 @@ degrader { return DEGRADER;}
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
 tunnel { return TUNNEL; }
+xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
 
 matdef { return MATERIAL; }
@@ -149,10 +150,17 @@ csample { return CSAMPLE; }
      Symtab *sp = Parser::Instance()->symlook(var);
      if (sp) {
        yylval.symp=sp;
-       if(sp->funcptr) {
+       switch(sp->GetType()) {
+       case Symtab::symtabtype::FUNCTION:
          return FUNC;
-       } else if(sp->type == Symtab::symtabtype::_ARRAY) {
+       case Symtab::symtabtype::ARRAY:
          return VECVAR;
+       case Symtab::symtabtype::NUMBER:
+         return NUMVAR;
+       case Symtab::symtabtype::STRING:
+         return STRVAR;
+       default:
+         break;
        }
      }
      std::string* name = new std::string(var);

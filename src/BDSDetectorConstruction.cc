@@ -144,7 +144,9 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSSurvey* survey = nullptr;
   if(execOptions->GetSurvey())
     {
-      survey = new BDSSurvey(execOptions->GetSurveyFilename());
+      G4String surveyFilename = execOptions->GetSurveyFilename();
+      surveyFilename += ".dat";
+      survey = new BDSSurvey(surveyFilename);
       survey->WriteHeader();
     }
   
@@ -580,15 +582,38 @@ void BDSDetectorConstruction::ComponentPlacement()
 
 #if G4VERSION_NUMBER > 1009
 BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
-        const std::list<std::string>& biasList)
+ const std::list<std::string>& biasList,
+ G4String defaultBias,
+ G4String elementName)
 {
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
+
+  const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
   for(std::string const & bs : biasList)
     {
-      auto it = BDSParser::Instance()->GetBiasing().find(bs);
-      if (it==BDSParser::Instance()->GetBiasing().end()) continue;
-      const GMAD::PhysicsBiasing& pb = *it;
+      GMAD::FastList<GMAD::PhysicsBiasing>::FastListConstIterator result;
+      if (bs.empty() && defaultBias.empty())
+	{continue;} // no bias specified and no default
+
+      G4String bias;
+      if (bs.empty())
+	{// no bias but default specified
+	  bias = defaultBias;
+	}
+      else
+	{// bias specified - look it up and ignore default
+	  bias = bs;
+	}
+      
+      result = biasObjectList.find(bias);
+      if (result == biasObjectList.end())
+	{
+	  G4cout << "Error: bias named \"" << bias << "\" not found for element named \""
+		 << elementName << "\"" << G4endl;
+	  exit(1);
+	}
+      const GMAD::PhysicsBiasing& pb = *result;
       
       if(debug)
 	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
@@ -597,14 +622,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       
       // loop through all processes
       for(unsigned int p = 0; p < pb.processList.size(); ++p)
-	{
-	  if(debug)
-	    {
-	      G4cout << __METHOD_NAME__ << "Process loop "
-		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
-	    }
-	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
-	}
+	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
   biasObjects.push_back(eg);
@@ -622,24 +640,30 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   if(debug)
     {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
 
+  G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
+  G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;
+
   // apply per element biases
   for (auto const & item : *registry)
   {
     if (debug)
       {G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
     BDSAcceleratorComponent* accCom = item.second;
+    G4String                accName = accCom->GetName();
+    
     // Build vacuum bias object based on vacuum bias list in the component
-    auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList());
+    auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
     auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
     if(vacuumLV)
       {
 	if(debug)
-	  {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
-	{egVacuum->AttachTo(vacuumLV);}
+	  {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
+		  << " " << vacuumLV->GetName() << G4endl;}
+	egVacuum->AttachTo(vacuumLV);
       }
       
     // Build material bias object based on material bias list in the component
-    auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList());
+    auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
     auto allLVs     = accCom->GetAllLogicalVolumes();
     if(debug)
       {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
@@ -648,7 +672,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	if(materialLV != vacuumLV)
 	  {
 	    if(debug)
-	      {G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV << " " << (materialLV)->GetName() << G4endl;}
+	      {G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
+		      << " " << (materialLV)->GetName() << G4endl;}
 	    egMaterial->AttachTo(materialLV);
 	  }
       }

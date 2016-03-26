@@ -338,6 +338,11 @@ set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G
 # add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
+if(APPLE)
+  # For MacOS bundle
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names")
+  message(STATUS "CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS}")
+endif()
 
 if($ENV{VERBOSE})
   message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
@@ -358,6 +363,14 @@ if(DOXYGEN_FOUND)
   add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
+# enable Testing with ctest
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
+
+# This module sets up installation:
+include(bdsim_install)
+
 #-----------------------------------------------------------------------
 # macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
 #
@@ -368,7 +381,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
     )
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
 
 # source files
@@ -385,22 +397,11 @@ endif()
 
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
-# This module sets up installation:
-include(bdsim_install)
-
-# enable Testing with ctest
-enable_testing()
-include(CTest)
-include(bdsim_test_macros)
-
-add_subdirectory( parser )
-
 add_executable(bdsimexec bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
-#link_directories(${Geant4_LIBRARY_DIR})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 # link against ROOT
@@ -427,6 +428,33 @@ bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
+include(CPack)
+
+option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
+
+if (BUILD_MACOSX_APP AND APPLE)
+    # building a macos executablemaking a bundle of 
+    add_executable(bdsimapp MACOSX_BUNDLE bdsim.cc)
+    set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+    target_link_libraries(bdsimapp bdsim gmad)
+    bdsim_install_bundle(bdsim)
+endif()
+
+# package source
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# copy dependent libraries in deps directory
+add_custom_target(copy-deps
+  COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
+)
+      
+## Add subdirectories
+# Parser
+add_subdirectory(parser)
+
 # Visualisation directory
 add_subdirectory(vis)
 
@@ -435,22 +463,10 @@ add_subdirectory(utils)
 
 # For testing
 add_subdirectory(examples)
+
+# Include directory for tests
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)
 
 # Manual
 add_subdirectory(manual)
-
-# Packaging
-set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${BDSIM_VERSION})
-
-set(CPACK_GENERATOR "TGZ;DragNDrop")
-
-set(CPACK_PACKAGE_FILE_NAME "${ARCHIVE_NAME}")
-
-include(CPack)
-
-# package source
-add_custom_target(dist
-    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
-        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

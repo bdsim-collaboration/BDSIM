@@ -49,11 +49,10 @@
 #include <utility>
 #include <vector>
 
-//Note: transportation process is constructed by default with classes that derive from G4VModularPhysicsList
+#include "G4MesonConstructor.hh"
 
-BDSModularPhysicsList::BDSModularPhysicsList():
-  G4VModularPhysicsList(),
-  physListName(BDSGlobalConstants::Instance()->GetPhysListName())
+BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
+  opticalPhysics(nullptr)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -63,7 +62,6 @@ BDSModularPhysicsList::BDSModularPhysicsList():
   globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);
-  opticalPhysics  = nullptr;
 
   physicsConstructors.insert(std::make_pair("cutsandlimits",    &BDSModularPhysicsList::CutsAndLimits));
   physicsConstructors.insert(std::make_pair("em",               &BDSModularPhysicsList::Em));
@@ -90,9 +88,13 @@ BDSModularPhysicsList::BDSModularPhysicsList():
       physicsActivated[constructor.first] = false;
     }
   
-  ParsePhysicsList();
+  ParsePhysicsList(physicsList);
   ConfigurePhysics();
-  Register();
+
+  // register the phyiscs constructors with base class mechanics.
+  for(auto physics : constructors)
+    {RegisterPhysics(physics);}
+  
   ConstructMinimumParticleSet();
   SetParticleDefinition();
   SetCuts();
@@ -105,6 +107,27 @@ BDSModularPhysicsList::BDSModularPhysicsList():
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
 {;}
+
+void BDSModularPhysicsList::ConstructParticle()
+{
+  // mesons
+  //G4MesonConstructor mConstructor;
+  //mConstructor.ConstructParticle();
+  
+  // baryons
+  //G4BaryonConstructor bConstructor;
+  //bConstructor.ConstructParticle();
+  
+  // ions
+  //G4IonConstructor iConstructor;
+  //iConstructor.ConstructParticle();
+  
+  //  Construct resonances and quarks
+  //G4ShortLivedConstructor pShortLivedConstructor;
+  //pShortLivedConstructor.ConstructParticle();
+
+  G4VModularPhysicsList::ConstructParticle();
+}
 
 void BDSModularPhysicsList::Print()
 {
@@ -127,7 +150,7 @@ void BDSModularPhysicsList::PrintDefinedParticles() const
 
 void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 {
-  auto particleName = BDSGlobalConstants::Instance()->GetParticleName();
+  auto particleName = globals->GetParticleName();
   G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
   
   auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
@@ -136,7 +159,7 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 }
 
 //Parse the physicsList option
-void BDSModularPhysicsList::ParsePhysicsList()
+void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Physics list string: \"" << physListName << "\"" << G4endl;
@@ -220,14 +243,6 @@ void BDSModularPhysicsList::ConfigureOptical()
   opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
 // opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
   opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
-}
-
-void BDSModularPhysicsList::Register()
-{
-  if(verbose || debug) 
-    {G4cout << __METHOD_NAME__ << G4endl;}
-  for(auto physics : constructors)
-    {RegisterPhysics(physics);}
 }
 
 void BDSModularPhysicsList::SetCuts()
@@ -415,7 +430,7 @@ void BDSModularPhysicsList::QGSPBERTHP()
   ConstructAllLeptons();
   if(!physicsActivated["qgsp_bert_hp"])
     {
-  constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
+      constructors.push_back(new G4HadronPhysicsQGSP_BERT_HP());
       physicsActivated["qgsp_bert_hp"] = true;
     }
 }

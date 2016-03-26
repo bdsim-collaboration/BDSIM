@@ -15,11 +15,27 @@ class BDSModularPhysicsList;
 /// Typedef for function pointers to simplify syntax.
 typedef void(BDSModularPhysicsList::*Constructor)(void);
 
+/**
+ * @brief Modular physics list based on Geant4 constructors.
+ *
+ * Dynamically construct phyiscs process constructors based on 
+ * key words in parser physics list option. Being modular, these
+ * can be built up and added to individually to give the required
+ * set of physics processes. Note: the transportation process is 
+ * constructed by default with classes that derive from G4VModularPhysicsList.
+ *
+ * @author L. Deacon, S. Boogert & L. Nevay
+ */
+
 class BDSModularPhysicsList: public G4VModularPhysicsList
 {
 public:
-  BDSModularPhysicsList();
+  BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
+
+  /// Construct required particles. Overlays G4VModularPhysicsList function
+  /// and calls that one.  Adds extra particles.
+  virtual void ConstructParticle();
 
   /// Print out which physics lists are activated.
   void Print();
@@ -35,12 +51,39 @@ public:
   virtual void SetCuts();
 
 private:
+  /// Private default constructor to force use of supplied one.
+  BDSModularPhysicsList();
+  
   G4bool verbose;
 #ifdef BDSDEBUG 
   bool debug = true;
 #else 
   bool debug = false;
 #endif
+
+  /// Update variables in global constants with all information about the primary particle
+  /// momenta etc.
+  void SetParticleDefinition();
+
+  /// Construct the minimum particle set required (gamma, electron, positron,
+  /// proton and anti-proton.
+  void ConstructMinimumParticleSet();
+
+  /// Neutrinos are not constructed by defualt in many (most) physics lists
+  /// yet this results in crashes when they're produced but not defined by
+  /// physics processes, so purposively define for ones where it's a problem.
+  void ConstructAllLeptons();
+
+  /// Interpret the string of physics lists given from the user through the parser.
+  void ParsePhysicsList(G4String physListName);
+
+  /// Set particular options for various physics lists from the parser. This is
+  /// currently only done for the optical physics list.
+  void ConfigurePhysics();
+
+  /// Delegate function for the specific optical physics processes controllable from
+  /// the parser.
+  void ConfigureOptical();
   
   /// A map of physics list names to their constructors.
   std::map<std::string, Constructor> physicsConstructors;
@@ -54,24 +97,8 @@ private:
   /// activate them. This is also constructed from the physicsConstructors map.
   std::map<G4String, G4bool> physicsActivated;
   
-  void SetParticleDefinition();
-
-  /// Construct the minimum particle set required (gamma, electron, positron,
-  /// proton and anti-proton.
-  void ConstructMinimumParticleSet();
-
-  /// Neutrinos are not constructed by defualt in many (most) physics lists
-  /// yet this results in crashes when they're produced but not defined by
-  /// physics processes, so purposively define for ones where it's a problem.
-  void ConstructAllLeptons();
-  
   G4OpticalPhysics* opticalPhysics;
   std::vector<G4VPhysicsConstructor*> constructors;
-  void ParsePhysicsList();
-  void ConfigurePhysics();
-  void ConfigureOptical();
-  void Register();
-  G4String physListName;
 
   /// Keep a local reference to global constants to avoid getting it all the time
   BDSGlobalConstants* globals;
