@@ -96,13 +96,13 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
   // on axis energy counter - uses read out geometry
   eCounterOnAxisRO = new BDSEnergyCounterSD("ec_on_axis_read_out");
   eCounterROGeom = new BDSReadOutGeometry("readOutGeometry");
-  eCounterOnAxisRO->SetUpAuxilliaryNavigator(); // attach read out geometry to navigator
   // although unnecessary for bdsim this MUST be called for geant4 to
   // register things properly
   // this method actually invokes roGeom->Build() which we have to implement
   // but geant4 must do this - so messy!  
   eCounterROGeom->BuildROGeometry();
   eCounterOnAxisRO->SetROgeometry(eCounterROGeom); // attach the read out geometry to this SD
+  eCounterOnAxisRO->SetUpAuxilliaryNavigator(); // attach read out geometry to navigator
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(eCounterOnAxisRO);
 }
