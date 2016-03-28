@@ -46,6 +46,9 @@ public:
 
   ~BDSArray2D(){;}
 
+  inline G4int sizeX() const {return nX;}
+  inline G4int sizeY() const {return nY;}
+
   T& operator()(const G4int x, const G4int y)
   {
     // nX,nY are at least 1 but the index would be 0 hence +1
