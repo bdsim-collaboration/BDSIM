@@ -7,8 +7,8 @@
 
 #include "published.h"
 
-namespace GMAD {
-
+namespace GMAD
+{
   enum class ElementType;
 
   struct Parameters;

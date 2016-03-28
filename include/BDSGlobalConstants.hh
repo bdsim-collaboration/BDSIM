@@ -149,9 +149,6 @@ public:
   G4double GetProdCutProtonsA()   const;
   ///@}
   
-  ///@{ Physical processes etc.
-  G4String GetPhysListName() const;
-  ///@}
   G4double GetLaserwireWavelength() const;
   G4ThreeVector GetLaserwireDir() const;
 
@@ -290,7 +287,7 @@ private:
   G4double itsProdCutProtons;
   G4double itsProdCutProtonsP;
   G4double itsProdCutProtonsA;
-  G4String itsPhysListName;
+  
   // test map container for laserwire parameters - Steve
   std::map<const G4String, G4double> lwWavelength;
   std::map<const G4String, G4ThreeVector> lwDirection;
@@ -561,9 +558,6 @@ inline G4double BDSGlobalConstants::GetProdCutProtonsP() const
 
 inline G4double BDSGlobalConstants::GetProdCutProtonsA() const 
 {return itsProdCutProtonsA;}
-
-inline G4String BDSGlobalConstants::GetPhysListName() const
-{return itsPhysListName;}
 
 inline G4double BDSGlobalConstants::GetLaserwireWavelength() const
 {return itsLaserwireWavelength ;}

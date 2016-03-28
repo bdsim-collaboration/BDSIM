@@ -67,19 +67,19 @@ void BDSMuonPhysics::ConstructProcess()
     if(particleName == "gamma")
       {
 	G4GammaConversionToMuons* gamConvToMu = new G4GammaConversionToMuons();
-	pmanager->AddProcess(gamConvToMu);
+	pmanager->AddDiscreteProcess(gamConvToMu);
       }      
-    if(particleName == "e+" || particleName == "e-")
+    if(particleName == "e+")
       {
 	G4AnnihiToMuPair* anni = new G4AnnihiToMuPair();
-	pmanager->AddProcess(anni);
+	pmanager->AddDiscreteProcess(anni);
 	G4eeToHadrons* eetohadrons = new G4eeToHadrons();
-	pmanager->AddProcess(eetohadrons);
+	pmanager->AddDiscreteProcess(eetohadrons);
       }
     if(particleName == "pi+" || particleName == "pi-") 
       {
 	G4PionDecayMakeSpin *pdms = new G4PionDecayMakeSpin();
-	pmanager->AddProcess(pdms);	
+	pmanager->AddDiscreteProcess(pdms);	
       }
     if(particleName == "mu+" || particleName == "mu-")
       {
@@ -93,6 +93,7 @@ void BDSMuonPhysics::ConstructProcess()
 	pmanager->AddProcess(mupar);
 	G4Cerenkov*             mucer = new G4Cerenkov();
 	pmanager->AddProcess(mucer);
+	pmanager->SetProcessOrdering(mucer,idxPostStep);
       }
     }
   return;

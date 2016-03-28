@@ -99,6 +99,7 @@ degrader { return DEGRADER;}
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
 tunnel { return TUNNEL; }
+xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
 
 matdef { return MATERIAL; }

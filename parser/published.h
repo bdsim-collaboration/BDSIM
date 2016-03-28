@@ -1,5 +1,5 @@
-#ifndef __PUBLISH_H
-#define __PUBLISH_H
+#ifndef PUBLISHED_H
+#define PUBLISHED_H
 
 #include <list>
 #include <string>

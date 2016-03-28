@@ -118,7 +118,7 @@ public:
   /// For convenience, s positions are converted to metres in this function.
   std::vector<G4double> GetSPositionEndOfEach();
 
-  ///@{ iterator mechanics
+  ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
   iterator       begin()       {return beamline.begin();}

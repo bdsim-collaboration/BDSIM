@@ -25,6 +25,11 @@ macro(bdsim_install_headers)
       DESTINATION include/bdsim
       COMPONENT Headers)
 endmacro()
+macro(bdsim_install_libs)
+    install(FILES ${ARGN}
+      DESTINATION lib
+      COMPONENT Libraries)
+endmacro()
 macro(bdsim_install_doc)
     install(FILES ${ARGN}
         DESTINATION share/${PROJECT_NAME}/doc/${DOC_POSTFIX}

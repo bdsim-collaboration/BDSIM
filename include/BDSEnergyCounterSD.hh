@@ -24,6 +24,10 @@ public:
   
   G4String GetName();
 
+  /// Instantiate a G4Navigator with the read out geometry - must be run
+  /// after the read out geometry has been attached to this SD!!
+  void SetUpAuxilliaryNavigator();
+
 private:
   /// assignment and copy constructor not implemented nor used
   BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
@@ -48,6 +52,9 @@ private:
   G4int    turnstaken;
   G4int    eventnumber;
   ///@}
+
+  /// Navigator for checking points in read out geometry
+  G4Navigator* auxilliaryNavigator;
 };
 
 inline G4String BDSEnergyCounterSD::GetName()

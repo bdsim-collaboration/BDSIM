@@ -161,7 +161,8 @@
 //ShortLived
 #include "G4ShortLivedConstructor.hh"
 
-BDSPhysicsList::BDSPhysicsList(): G4VUserPhysicsList()
+BDSPhysicsList::BDSPhysicsList(G4String physicsListNameIn):
+  physicsListName(physicsListNameIn)
 {
   physicsListNames = {"QGSP_BERT",
 		      "QGSP_BERT_muon",
@@ -231,8 +232,7 @@ void BDSPhysicsList::ConstructProcess()
 #if BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
-  G4String physicsListName = BDSGlobalConstants::Instance()->GetPhysListName();
+  
   if (std::find(physicsListNames.begin(), physicsListNames.end(), physicsListName) == physicsListNames.end())
     {
       G4cerr << __METHOD_NAME__ << "unknown physics list " << physicsListName << G4endl;

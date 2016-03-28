@@ -98,7 +98,8 @@ void BDSParallelWorldSampler::Construct()
 	  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
 									    sampler,
 									    *pt,
-									    sEnd);
+									    sEnd,
+									    element);
 	  
 	  // record placements for cleaning up at destruction.
 	  G4PVPlacement* pl = new G4PVPlacement(*pt,              // placement transform

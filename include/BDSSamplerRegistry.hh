@@ -1,11 +1,14 @@
 #ifndef BDSSAMPLERREGISTRY_H
 #define BDSSAMPLERREGISTRY_H
 
+#include "BDSSamplerInfo.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
 #include <vector>
 
+class BDSBeamlineElement;
 class BDSSampler;
 
 /**
@@ -29,6 +32,13 @@ class BDSSampler;
 
 class BDSSamplerRegistry
 {
+private:
+  /// Typedefs up first so we can declare public iterators.
+  typedef std::vector<BDSSamplerInfo> InfoVector;
+
+  /// Storate of registerd information.
+  InfoVector infos;
+  
 public:
   /// Accessor for registry.
   static BDSSamplerRegistry* Instance();
@@ -48,10 +58,23 @@ public:
   /// the world volume, so the inverse is required to get global to
   /// local transformation. S is global s position with unphysical
   /// default of -1m.
-  G4int RegisterSampler(G4String      name,
-			BDSSampler*   sampler,
-			G4Transform3D transform = G4Transform3D(),
-			G4double      S = -1000);
+  G4int RegisterSampler(G4String            name,
+			BDSSampler*         sampler,
+			G4Transform3D       transform = G4Transform3D(),
+			G4double            S         = -1000,
+			BDSBeamlineElement* element   = nullptr);
+
+  G4int RegisterSampler(BDSSamplerInfo info);
+
+  ///@{ Iterator mechanics
+  typedef InfoVector::iterator       iterator;
+  typedef InfoVector::const_iterator const_iterator;
+  iterator       begin()       {return infos.begin();}
+  iterator       end()         {return infos.end();}
+  const_iterator begin() const {return infos.begin();}
+  const_iterator end()   const {return infos.end();}
+  G4bool         empty() const {return infos.empty();}
+  ///@}
 
   /// @{ Accessor
   inline G4String      GetName(G4int name) const;
@@ -62,7 +85,7 @@ public:
   /// @}
 
   /// Access all names at once
-  inline std::vector<G4String> GetNames() const;
+  std::vector<G4String> GetNames() const;
 
   /// Get number of registered samplers
   inline G4int NumberOfExistingSamplers() const;
@@ -78,38 +101,27 @@ private:
   /// Counter for easy checking of out of bounds and incrementing.
   /// Also the index in the member vectors, so zero counting.
   G4int numberOfEntries;
-
-  /// @{ Storage of sampler info where index is reference integer.
-  std::vector<G4String>      names;
-  std::vector<BDSSampler*>   samplers;
-  std::vector<G4Transform3D> transforms;
-  std::vector<G4Transform3D> transformInverses;
-  std::vector<G4double>      sPosition;
-  /// @}
 };
 
 inline G4String BDSSamplerRegistry::GetName(G4int index) const
-{return names.at(index);}
+{return infos.at(index).Name();}
 
 inline BDSSampler* BDSSamplerRegistry::GetSampler(G4int index) const
-{return samplers.at(index);}
+{return infos.at(index).Sampler();}
 
 inline G4Transform3D BDSSamplerRegistry::GetTransform(G4int index) const
-{return transforms.at(index);}
+{return infos.at(index).Transform();}
 
 inline G4Transform3D BDSSamplerRegistry::GetTransformInverse(G4int index) const
-{return transformInverses.at(index);}
+{return infos.at(index).TransformInverse();}
 
 inline G4double BDSSamplerRegistry::GetSPosition(G4int index) const
-{return sPosition.at(index);}
-
-inline std::vector<G4String> BDSSamplerRegistry::GetNames() const
-{return names;}
+{return infos.at(index).SPosition();}
 
 inline G4int BDSSamplerRegistry::NumberOfExistingSamplers() const
 {return numberOfEntries;}
 
 inline size_t BDSSamplerRegistry::size() const
-{return names.size();}
+{return infos.size();}
 
 #endif

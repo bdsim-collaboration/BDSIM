@@ -33,7 +33,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsSMax(0.0)
 {
   printModuloFraction   = opt.printModuloFraction;
-  itsPhysListName       = opt.physicsList;
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
 

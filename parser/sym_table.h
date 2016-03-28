@@ -1,10 +1,11 @@
-#ifndef __SYM_TABLE_H
-#define __SYM_TABLE_H
+#ifndef SYM_TABLE_H
+#define SYM_TABLE_H
 
 #include <list>
 #include <string>
 
-namespace GMAD {
+namespace GMAD
+{
   /** 
       @brief Common header for the lexer and the parser 
       to share Symbol table for numeric variables and functions

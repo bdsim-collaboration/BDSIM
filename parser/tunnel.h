@@ -1,5 +1,5 @@
-#ifndef __TUNNEL_H
-#define __TUNNEL_H
+#ifndef TUNNEL_H
+#define TUNNEL_H
 
 #include <iomanip>
 #include <iostream>
@@ -7,7 +7,8 @@
 
 #include "published.h"
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief Tunnel class for parser
    * 

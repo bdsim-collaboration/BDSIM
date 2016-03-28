@@ -36,7 +36,9 @@ public:
 		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
 		      G4int    eventNoIn         = 0,    // event number
-		      G4double stepLengthIn      = 0);
+		      G4double stepLengthIn      = 0,
+					G4int    beamlineIndexIn   = -1,
+          G4int    geomFlag          = -1);
   
   virtual ~BDSEnergyCounterHit();
   
@@ -62,6 +64,8 @@ public:
   inline G4int    GetTurnsTaken()      const;
   inline G4int    GetEventNo()         const;
   inline G4double GetStepLength()      const;
+	inline G4int    GetBeamlineIndex()   const;
+  inline G4int    GetGeomFlag()        const;
   
 private:
   /// Private default constructor (not implemented) as the constructor
@@ -89,6 +93,9 @@ private:
   G4int    turnsTaken;
   G4int    eventNo;
   G4double stepLength;
+
+	G4int    beamlineIndex;
+	G4int    geomFlag;
 };
 
 inline G4int    BDSEnergyCounterHit::GetCopyNumber() const
@@ -147,6 +154,12 @@ inline G4int    BDSEnergyCounterHit::GetEventNo() const
 
 inline G4double BDSEnergyCounterHit::GetStepLength() const
 {return stepLength;}
+
+inline G4int BDSEnergyCounterHit::GetBeamlineIndex() const
+{return beamlineIndex; }
+
+inline G4int BDSEnergyCounterHit::GetGeomFlag() const
+{return geomFlag;}
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
 {

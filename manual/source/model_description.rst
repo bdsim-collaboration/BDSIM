@@ -15,7 +15,7 @@ and very similar to MADX.
 * unary operators +, -, are valid
 * boolean operators <, >, <=, >=, <>, == are valid
 * every expression **must** end with a semi-colon;
-* no name can begin with a number
+* no variable name can begin with a number
 
 The following functions are provided
 
@@ -34,7 +34,7 @@ Examples::
    x = 1;
    y = 2.5-x;
    z = sin(x) + log(y) - 8e5;
-
+   mat = "copper";
 
 Coordinates & Units
 -------------------

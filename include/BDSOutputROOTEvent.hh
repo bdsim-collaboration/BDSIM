@@ -6,7 +6,14 @@
 #include <map>
 
 #include "BDSOutputBase.hh"
+
+#include "BDSOutputROOTEventOptions.hh"
+#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventHit.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
+
 
 #include "TROOT.h"
 #include "TH1F.h"
@@ -71,7 +78,7 @@ public:
   virtual void Write();
 
   /// clear structures 
-  void Clear();
+  void Flush();
   
 private:
 
@@ -79,16 +86,35 @@ private:
 
   // output file
   TFile *theRootOutputFile;
+
+  // options structure
+  // BDSOutputROOTEventOptions *theOptionsOutput;
+
+  // options tree
+  TTree *theOptionsOutputTree;
+
+  // model tree 
+  TTree *theModelOutputTree;
+
   // output tree
   TTree *theRootOutputTree;
-
+  
   // primary structure 
   BDSOutputROOTEventSampler *primary;
 
   // sampler structures 
   std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
 
-  // energy hit structures 
+  // energy loss
+  BDSOutputROOTEventLoss        *eLoss;
+  // primary first hit
+  BDSOutputROOTEventHit         *pFirstHit;
+  // primary final hit
+  BDSOutputROOTEventHit         *pLastHit;
+  // tunnel hit
+  BDSOutputROOTEventHit         *tHit;
+  // trajectory
+  BDSOutputROOTEventTrajectory  *traj;
 };
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef __CAVITYMODEL_H
-#define __CAVITYMODEL_H
+#ifndef CAVITYMODEL_H
+#define CAVITYMODEL_H
 
 #include <iomanip>
 #include <iostream>
@@ -7,7 +7,8 @@
 
 #include "published.h"
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief RF CavityModel class for parser
    * 

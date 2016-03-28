@@ -19,7 +19,9 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4bool   precisionRegionIn, 
 					 G4int    turnsTakenIn,
 					 G4int    eventNoIn,
-					 G4double stepLengthIn):
+					 G4double stepLengthIn,
+           G4int    beamlineIndexIn,
+                                         G4int geomFlagIn):
   copyNumber(nCopyIn),
   energy(energyIn),
   X(XIn),
@@ -36,7 +38,9 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   precisionRegion(precisionRegionIn),
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn),
-  stepLength(stepLengthIn)
+  stepLength(stepLengthIn),
+  beamlineIndex(beamlineIndexIn),
+  geomFlag(geomFlagIn)
 {;}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()

@@ -2,28 +2,32 @@
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
 
+#include "globals.hh" // geant4 types / globals
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
 //#include "BDSNeutronTrackInfo.hh"
 
-BDSTrackingAction::BDSTrackingAction()
+BDSTrackingAction::BDSTrackingAction():
+  interactive(false)
 {;}
 
-void BDSTrackingAction::PreUserTrackingAction(const G4Track* aTrack)
+BDSTrackingAction::BDSTrackingAction(G4bool batchMode):
+  interactive(!batchMode)
+{;}
+
+void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-  // Only store full trajectory information for primary particles
-  if (aTrack->GetParentID() == 0)
+  if (interactive || (track->GetParentID() == 0))
     {
       fpTrackingManager->SetStoreTrajectory(1);
-      fpTrackingManager->SetTrajectory(new BDSTrajectory(aTrack));
+      fpTrackingManager->SetTrajectory(new BDSTrajectory(track));
     }
   else
     {fpTrackingManager->SetStoreTrajectory(0);}
-  // 1 - trajectory, 2 - smooth trajectory, 3 & 4 - rich trajectory, default nothing
   
   /*
-    if(aTrack->GetDefinition()->GetParticleName()=="neutron")
+    if(track->GetDefinition()->GetParticleName()=="neutron")
     {
     BDSNeutronTrackInfo* Info= new BDSNeutronTrackInfo();
     Info->SetIsLogged(false);

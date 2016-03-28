@@ -1,5 +1,5 @@
-#ifndef __MYGETENV_H
-#define __MYGETENV_H
+#ifndef MYGETENV_H
+#define MYGETENV_H
 #include <string>
 std::string getEnv(const char* env);
 
