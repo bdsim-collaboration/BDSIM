@@ -12,9 +12,8 @@ simpleCollimation: line = (fodoRaw,fodoCol);
 use,period=simpleCollimation;
 sample, all;
 
-option,
-    ngenerate=1,
-	physicsList="em_standard",
+option, ngenerate=1,
+	physicsList="em",
 	beampipeRadius=5.0*cm,
 	beampipeThickness=0.1*cm,
 	outerDiameter=0.5*m,
@@ -22,7 +21,7 @@ option,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-    buildTunnel=1,
+    	buildTunnel=1,
 	checkOverlaps=1,
 	storeTrajectories=1;
 
