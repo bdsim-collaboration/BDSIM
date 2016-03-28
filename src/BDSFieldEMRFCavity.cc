@@ -22,8 +22,8 @@ G4bool BDSFieldEMRFCavity::DoesFieldChangeEnergy() const
   return true;
 }
 
-std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetFieldValue(const G4ThreeVector& position,
-									  const G4double t) const
+std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
+                                                                     const G4double t) const
 {
   G4double radialDistance = pow(pow(position.x(),2) +  pow(position.y(),2), 0.5);
 

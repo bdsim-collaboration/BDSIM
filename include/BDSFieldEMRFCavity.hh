@@ -15,8 +15,8 @@ public:
   virtual ~BDSFieldEMRFCavity(){;}
   virtual G4bool DoesFieldChangeEnergy() const;
 
-  virtual std::pair<G4ThreeVector, G4ThreeVector> GetFieldValue(const G4ThreeVector& position,
-								const G4double t) const;
+  virtual std::pair<G4ThreeVector, G4ThreeVector> GetField(const G4ThreeVector &position,
+														   const G4double t) const;
   
 protected:
   /// Maximum field in MV/m
