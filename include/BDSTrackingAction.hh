@@ -7,7 +7,6 @@
 
 /**
  * @brief Action to decide whether or not to store trajectory information.
- *
  */
 
 class BDSTrackingAction: public G4UserTrackingAction

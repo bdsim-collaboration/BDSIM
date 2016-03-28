@@ -9,6 +9,12 @@
 class G4VisAttributes;
 class BDSSampler;
 
+/**
+ * @brief A parallel world for sampler planes.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSParallelWorldSampler: public G4VUserParallelWorld
 {
 public:
@@ -19,8 +25,7 @@ public:
   /// overload the pure virutal method in G4VUserParallelWorld.
   virtual void Construct();
 
-private:
-  
+private: 
   /// Cache of the placements to clean up at the end.
   std::vector<G4VPhysicalVolume*> placements;
 
