@@ -8,15 +8,15 @@
 
 #include "BDSBin.hh"
 
+class BDSHistogram1D;
+
+typedef BDSHistogram1D BDSHistogram;
+
 /**
  * @brief a 1D histogram class
  * 
  * @author Laurie Nevay
  */
-
-class BDSHistogram1D;
-
-typedef BDSHistogram1D BDSHistogram;
 
 class BDSHistogram1D
 {

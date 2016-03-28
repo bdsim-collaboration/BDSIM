@@ -10,7 +10,9 @@
 #include "G4Trajectory.hh"
 #include <vector>
 
-// virtual base class
+/**
+ * @brief Output base class that defines interface for all output types.
+ */
 
 class BDSOutputBase
 {
