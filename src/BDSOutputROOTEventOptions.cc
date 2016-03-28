@@ -1,6 +1,6 @@
 #include "BDSOutputROOTEventOptions.hh"
 
-ClassImp(BDSOutputROOTEventOptions);
+ClassImp(BDSOutputROOTEventOptions)
 
 BDSOutputROOTEventOptions::BDSOutputROOTEventOptions()
 {

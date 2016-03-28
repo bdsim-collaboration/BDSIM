@@ -1,16 +1,12 @@
 #include "BDSOutputROOTEventTrajectory.hh"
 
-ClassImp(BDSOutputROOTEventTrajectory);
+ClassImp(BDSOutputROOTEventTrajectory)
 
 BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory()
-{
-
-}
+{;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
-{
-
-}
+{;}
 
 void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 {
