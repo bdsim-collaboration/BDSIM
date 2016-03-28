@@ -17,10 +17,10 @@ G4ThreeVector BDSFieldMag::GetFieldValueTransformed(const G4ThreeVector& positio
   if (transform != G4Transform3D::Identity)
     {
       G4ThreeVector transformedPosition = transform * (HepGeom::Point3D<G4double>)position;
-      return GetFieldValue(transformedPosition);
+      return GetField(transformedPosition);
     }
   else
-    {return GetFieldValue(position);}
+    {return GetField(position);}
 }
 
 void BDSFieldMag::GetFieldValue(const G4double point[4],

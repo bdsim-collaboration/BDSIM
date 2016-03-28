@@ -35,7 +35,7 @@ public:
   virtual ~BDSFieldMagSBend(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
 
   /// Access the local radius of curvature for the nominal momentum in this field.
   G4double GetLocalRadius() const;

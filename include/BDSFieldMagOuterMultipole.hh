@@ -16,7 +16,7 @@ public:
   virtual ~BDSFieldMagOuterMultipole(){;}
 
   /// Access the field value.
-  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
 
 private:
   const G4int    nPoles;

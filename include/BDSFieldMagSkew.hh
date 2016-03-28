@@ -28,7 +28,7 @@ public:
   virtual ~BDSFieldMagSkew();
 
   /// Get the field - local coordinates, and rotated.
-  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
   
 private:
   /// Private default constructor to force use of supplied ones.

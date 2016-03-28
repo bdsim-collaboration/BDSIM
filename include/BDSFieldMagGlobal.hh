@@ -31,7 +31,7 @@ public:
 
   /// Apply the global to local transform, query the wrapped field object
   /// and transform this field to global coordinates before returning.
-  virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
   
 private:
   /// Private default constructor to force use of supplied constructor

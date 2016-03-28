@@ -15,7 +15,7 @@ BDSFieldMagSolenoid::BDSFieldMagSolenoid(BDSMagnetStrength const* strength,
 #endif
 }
 
-G4ThreeVector BDSFieldMagSolenoid::GetFieldValue(const G4ThreeVector& /*position*/) const
+G4ThreeVector BDSFieldMagSolenoid::GetField(const G4ThreeVector & /*position*/) const
 {
   return localField;
 }

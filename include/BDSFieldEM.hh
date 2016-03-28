@@ -27,7 +27,7 @@ public:
   virtual std::pair<G4ThreeVector,G4ThreeVector> GetFieldValue(const G4ThreeVector& position,
 							       const G4double t) const = 0;
   
-  /// Implement interface to this class's GetFieldValue to fulfill G4ElectroMagneticField
+  /// Implement interface to this class's GetField to fulfill G4ElectroMagneticField
   /// inheritance and allow a BDSFieldEM instance to be passed around in the field
   /// factory even if it's not wrapped in a BDSFieldGlobal instance and is in fact
   /// in local coordinates.

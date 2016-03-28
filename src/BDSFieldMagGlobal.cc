@@ -14,7 +14,7 @@ BDSFieldMagGlobal::~BDSFieldMagGlobal()
   delete field;
 }
 
-G4ThreeVector BDSFieldMagGlobal::GetFieldValue(const G4ThreeVector& position) const
+G4ThreeVector BDSFieldMagGlobal::GetField(const G4ThreeVector &position) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
   G4ThreeVector localField    = field->GetFieldValueTransformed(localPosition);

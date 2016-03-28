@@ -217,7 +217,7 @@ void BDSMagFieldXY::GetFieldValue(const G4double Point[4], G4double *Bfield ) co
 
   if( (nX <= 0) || (nY<=0) )
     {
-      G4cerr<<"BDSMagFieldXY::GetFieldValue> Error: no mesh"<<G4endl;
+      G4cerr<<"BDSMagFieldXY::GetField> Error: no mesh"<<G4endl;
     }
   else
     {

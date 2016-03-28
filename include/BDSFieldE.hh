@@ -23,7 +23,7 @@ public:
   /// Get the field - local coordinates.
   virtual G4ThreeVector GetFieldValue(const G4ThreeVector& position) const = 0;
   
-  /// Implement interface to this class's GetFieldValue to fulfill G4ElectricField
+  /// Implement interface to this class's GetField to fulfill G4ElectricField
   /// inheritance and allow a BDSFieldE instance to be passed around in the field
   /// factory even if it's not wrapped in a BDSFieldGlobal instance and is in fact
   /// in local coordinates.

@@ -17,7 +17,7 @@ BDSFieldMagOuterMultipole::BDSFieldMagOuterMultipole(const G4int    nPolesIn,
   itsSectorPhi=CLHEP::twopi/G4double(nPoles);
 }
 
-G4ThreeVector BDSFieldMagOuterMultipole::GetFieldValue(const G4ThreeVector& position) const
+G4ThreeVector BDSFieldMagOuterMultipole::GetField(const G4ThreeVector &position) const
 {
   G4double BFactor = fieldStrength/position.mag();
   G4double phi     = position.phi() - phiOffset;

@@ -19,7 +19,7 @@ BDSFieldMagOctupole::BDSFieldMagOctupole(BDSMagnetStrength const* strength,
 #endif
 }
 
-G4ThreeVector BDSFieldMagOctupole::GetFieldValue(const G4ThreeVector& position) const
+G4ThreeVector BDSFieldMagOctupole::GetField(const G4ThreeVector &position) const
 {
   // B_x = (3x^2y - y^3) * (B'''/3!)
   // B_y = (x^3-3xy^2) * (B'''/3!)
