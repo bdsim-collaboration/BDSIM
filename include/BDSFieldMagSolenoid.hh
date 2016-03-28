@@ -9,7 +9,7 @@
 class BDSMagnetStrength;
 
 /**
- * @ brief Class the provides the field in a solenoid.
+ * @brief Class the provides the field in a solenoid.
  * 
  * This simply returns a uniform field that is independent of
  * position.

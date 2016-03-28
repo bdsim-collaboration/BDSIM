@@ -16,7 +16,9 @@ class G4MagneticField;
 class G4Field;
 
 /**
- * @brief A holder for all the Geant4 field related objects that
+ * @brief A holder for all the Geant4 field related objects.
+ *
+ * These are the objects that
  * are required for a magnetic field other than the  magnetic field
  * itself. If owns all objects apart from the G4MagneticField. This
  * is used purely to construct the other objects or as a reference

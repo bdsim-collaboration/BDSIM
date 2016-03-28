@@ -8,6 +8,10 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+/** 
+ * @brief Integrator for octupole field.
+ */
+
 class BDSIntegratorOctupole: public BDSIntegratorBase
 {
 public:

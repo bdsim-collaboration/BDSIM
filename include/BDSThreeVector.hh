@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 /**
- * @brief simple three vector that's templated so the right type can be used.
+ * @brief Simple three vector that's templated so the right type can be used.
  * 
  * The G4ThreeVector(HEP::ThreeVector) is much better, but this only uses
  * a double. Here, a simple three vector that's templated allows the

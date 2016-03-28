@@ -8,7 +8,7 @@
 #include "G4ThreeVector.hh"
 
 /**
- * @brieft Custom unphysical integrator to advance particle in teleporter.
+ * @brief Custom unphysical integrator to advance particle in teleporter.
  *
  * @author Laurie Nevay
  */
