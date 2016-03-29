@@ -18,6 +18,9 @@ BDSOutputASCII::BDSOutputASCII()
   time(&currenttime);
   timestring = asctime(localtime(&currenttime));
   timestring = timestring.substr(0,timestring.size()-1);
+
+  // initialise file in constructor since multiple file writing not implemented for ASCII
+  // should in principle be in Initialise()
   
   // policy overwrite if output filename specifically set, otherwise increase
   // generate filenames
@@ -300,23 +303,23 @@ void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
   histOS.close();
 }
 
-void BDSOutputASCII::Commit()
+void BDSOutputASCII::Initialise()
 {
-  ofMain.flush();
-  ofPrimaries.flush();
-  ofELoss.flush();
-  ofPLoss.flush();
-  // Multiple file writing not implemented for ascii
+  // Multiple file writing not implemented for ASCII
 }
 
 void BDSOutputASCII::Write()
 {
   ofMain.flush();
-  ofMain.close();
   ofPrimaries.flush();
-  ofPrimaries.close();
   ofELoss.flush();
-  ofELoss.close();
   ofPLoss.flush();
+}
+
+void BDSOutputASCII::Close()
+{
+  ofMain.close();
+  ofPrimaries.close();
+  ofELoss.close();
   ofPLoss.close();
 }

@@ -12,7 +12,6 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  Init(); 
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -21,8 +20,9 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
-void BDSOutputROOTEvent::Init() 
+void BDSOutputROOTEvent::Initialise() 
 {
+  outputFileNumber++;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
@@ -230,23 +230,29 @@ void BDSOutputROOTEvent::FillEvent()
   
 }
 
-/// write and close and open new file
-void BDSOutputROOTEvent::Commit() 
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-}
-
-/// write and close the file
 void BDSOutputROOTEvent::Write() 
 {
-  theRootOutputFile->Write();
-  theRootOutputFile->Close();
-  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+      theRootOutputFile->Write(nullptr,TObject::kOverwrite);
+    }
+}
+
+void BDSOutputROOTEvent::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ <<G4endl;
+#endif
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+      theRootOutputFile=nullptr;
+    }
 }
 
 void BDSOutputROOTEvent::Flush()
