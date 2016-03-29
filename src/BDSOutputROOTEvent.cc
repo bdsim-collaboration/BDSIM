@@ -132,11 +132,10 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
 
-  G4String stripName;
   for(int i=0;i<hc->entries();i++) {
-    stripName = (*hc)[i]->GetName().substr(8,100);
+    G4String samplerName = (*hc)[i]->GetName();
     //    G4cout << (*hc)[i]->GetName() << G4endl;
-    samplerMap[stripName]->Fill((*hc)[i]);
+    samplerMap[samplerName]->Fill((*hc)[i]);
   }  
 }
 
