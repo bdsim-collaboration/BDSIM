@@ -43,12 +43,6 @@ std::string GMAD::typestr(ElementType type) {
     return "line";
   case ElementType::_REV_LINE :
     return "rev_line";
-  case ElementType::_SAMPLER :
-    return "sampler";
-  case ElementType::_CSAMPLER:
-    return "csampler";
-  case ElementType::_DUMP:
-    return "dump";
   case ElementType::_MATERIAL:
     return "material";
   case ElementType::_ATOM:

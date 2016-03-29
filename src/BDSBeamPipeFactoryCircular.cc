@@ -1,10 +1,10 @@
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipe.hh"
-
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4CutTubs.hh"
@@ -97,7 +97,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
    // clean up after last usage
   CleanUp();
 
-  std::pair<G4ThreeVector,G4ThreeVector> faces = CalculateFaces(angleInIn, angleOutIn);
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
   G4ThreeVector inputface  = faces.first;
   G4ThreeVector outputface = faces.second;
 
@@ -126,7 +126,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
   containerSubtractionSolid = new G4Tubs(nameIn + "_container_sub_solid",// name
 					 0,                              // inner radius
 					 containerRadiusIn,              // outer radius
-					 lengthIn,                       // full length for unambiguous subtraction
+					 lengthIn*4,                     // full length for unambiguous subtraction
 					 0,                              // rotation start angle
 					 CLHEP::twopi);                  // rotation finish angle
   

@@ -55,14 +55,14 @@
 %nonassoc UPLUS
 
 %token <dval> NUMBER
-%token <symp> VECVAR FUNC
+%token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
 %token <ival> MATERIAL ATOM
-%token ALL PERIOD XSECBIAS REGION TUNNEL
-%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE DUMP
+%token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
+%token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr
@@ -74,6 +74,7 @@
 %type <ival> component component_with_params newinstance
 %type <str> sample_options
 %type <str> csample_options
+%type <str> paramassign
 
 /* printout format for debug output */
 /*
@@ -186,6 +187,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->add_region();
            }
        }
+     | VARIABLE ':' cavitymodel
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : cavitymodel" << std::endl;
+	     Parser::Instance()->SetCavityModelValue("name",*($1));
+	     Parser::Instance()->add_cavitymodel();
+           }
+       }
      | VARIABLE ':' xsecbias
        {
          if(execute)
@@ -232,6 +242,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
 ;
 
 region : REGION ',' region_options ;
+cavitymodel : CAVITYMODEL ',' cavitymodel_options ;
 tunnel : TUNNEL ',' tunnel_options ;
 xsecbias : XSECBIAS ',' xsecbias_options ;
 
@@ -258,6 +269,7 @@ error_noparams : DRIFT;
                | MATERIAL;
                | ATOM;
                | REGION;
+               | CAVITYMODEL;
                | TUNNEL;
                | XSECBIAS;
 
@@ -275,33 +287,42 @@ newinstance : VARIABLE ',' parameters
 	    }
 ;
 
-parameters: VARIABLE '=' aexpr ',' parameters
+paramassign: VARIABLE
+             {
+               $$=$1;
+             }
+           // allow defined variables to have the same name as parameters
+           | NUMVAR
+             {
+               $$ = new std::string($1->GetName());
+	       Parser::Instance()->AddVariable($$);
+             }
+           | STRVAR
+             {
+               $$ = new std::string($1->GetName());
+	       Parser::Instance()->AddVariable($$);
+             }
+
+parameters_extend : /* nothing */
+                  | ',' parameters
+
+parameters: paramassign '=' aexpr parameters_extend
             {
 	      if(execute)
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' aexpr
-            {
-	      if(execute)
-		Parser::Instance()->SetParameterValue(*($1),$3);
-	    }
-          | VARIABLE '=' vecexpr ',' parameters
+          | paramassign '=' vecexpr parameters_extend
             {
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | VARIABLE '=' vecexpr
-            {
-	      if(execute) 
-		Parser::Instance()->SetParameterValue(*($1),$3);
-	    }
-          | VARIABLE '=' STR ',' parameters
-            {
+          | paramassign '=' STRVAR parameters_extend
+	    {
 	      if(execute) {
-		Parser::Instance()->SetParameterValue(*($1),*$3);
+                Parser::Instance()->SetParameterValue(*($1),$3->GetString());
 	      }
 	    }
-          | VARIABLE '=' STR
+          | paramassign '=' STR parameters_extend
             {
 	      if(execute) {
 		Parser::Instance()->SetParameterValue(*($1),*$3);
@@ -314,71 +335,45 @@ line : LINE '=' '(' element_seq ')'
 line : LINE '=' '-' '(' rev_element_seq ')'
 ;
 
+element_seq_extend : /* nothing */
+                   | ',' element_seq
+
 element_seq : 
-            | VARIABLE ',' element_seq
+            | VARIABLE element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), 1, true, ElementType::_LINE);
 	      }
-            | VARIABLE '*' NUMBER ',' element_seq
+            | VARIABLE '*' NUMBER element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
 	      }
-            | NUMBER '*' VARIABLE ',' element_seq
+            | NUMBER '*' VARIABLE element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
 	      }
-            | VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), 1, true, ElementType::_LINE);
-	      }
-           | VARIABLE '*' NUMBER
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), (int)$3, true, ElementType::_LINE);
-	      }
-            | NUMBER '*' VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($3), (int)$1, true, ElementType::_LINE);
-	      }
-            | '-' VARIABLE ',' element_seq
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
-	      }
-            | '-' VARIABLE
+            | '-' VARIABLE element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
 	      }
 ;
 
+rev_element_seq_extend : /* nothing */
+                       | ',' rev_element_seq
+
 rev_element_seq : 
-            | VARIABLE ',' rev_element_seq 
+            | VARIABLE rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
 	      }
-            | VARIABLE '*' NUMBER ',' rev_element_seq
+            | VARIABLE '*' NUMBER rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
 	      }
-            | NUMBER '*' VARIABLE ',' rev_element_seq
+            | NUMBER '*' VARIABLE rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
 	      }
-            | VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), 1, false, ElementType::_REV_LINE);
-	      }
-           | VARIABLE '*' NUMBER
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($1), int($3), false, ElementType::_REV_LINE);
-	      }
-            | NUMBER '*' VARIABLE
-              {
-		if(execute) Parser::Instance()->add_element_temp(*($3), int($1), false, ElementType::_REV_LINE);
-	      }
-            | '-' VARIABLE ',' element_seq
-              {
-		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
-	      }
-            | '-' VARIABLE
+            | '-' VARIABLE rev_element_seq_extend
               {
 		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
 	      }
@@ -415,17 +410,9 @@ expr : aexpr
        }
 ;
 
-aexpr  :  NUMBER               { $$ = $1;                         }
-       |  VARIABLE
-       {
-	 Symtab *sp = Parser::Instance()->symlook(*($1));
-	 if (!sp) {
-	   std::string errorstring = "ERROR: use of undeclared variable " + *($1) + "\n";
-	   yyerror(errorstring.c_str());
-	 }
-	 $$ = sp->value;
-       }
-       | FUNC '(' aexpr ')'   { $$ = (*($1->funcptr))($3);       } 
+aexpr  : NUMBER               { $$ = $1;                         }
+       | NUMVAR               { $$ = $1->GetNumber();            }
+       | FUNC '(' aexpr ')'   { $$ = $1->GetFunction()($3);      }
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
        | aexpr '*' aexpr      { $$ = $1 * $3;                    }
@@ -445,7 +432,7 @@ aexpr  :  NUMBER               { $$ = $1;                         }
         | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; } 
         | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; } 
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
-        | VARIABLE '[' VARIABLE ']' 
+        | VARIABLE '[' STR ']' 
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
 	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
@@ -456,29 +443,64 @@ symdecl : VARIABLE '='
         {
 	  if(execute)
 	    {
-	      Symtab *sp = Parser::Instance()->symlook(*($1));
-	      if (!sp) {
-		sp = Parser::Instance()->symcreate(*($1));
-	      } else {
-		std::cout << "WARNING redefinition of variable " << sp->name << " with old value: " << sp->value << std::endl;
-	      }
+	      Symtab *sp = Parser::Instance()->symcreate(*($1));
 	      $$ = sp;
 	    }
+	}
+        | NUMVAR '='
+	{
+	  if(execute)
+	    {
+	      std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetNumber() << std::endl;
+	      $$ = $1;
+	    }
+	}
+        | STRVAR '='
+	{
+	  if(execute)
+	    {
+	      std::cout << "WARNING redefinition of variable " << $1->GetName() << " with old value: " << $1->GetString() << std::endl;
+	      $$ = $1;
+	    }
+	}
+        | VECVAR '='
+        {
+           if(execute)
+	     {
+	       std::cout << "WARNING redefinition of array variable " << $1->GetName() << std::endl;
+	       $$=$1;
+	     }
 	}
 ;
 
 assignment :  symdecl aexpr  
               {
-		if(ECHO_GRAMMAR) std::cout << $1->name << std::endl;
+		if(ECHO_GRAMMAR) std::cout << $1->GetName() << std::endl;
 		if(execute)
 		  {
-		    if($1->is_reserved) {
-		      std::string errorstring = "ERROR: " + $1->name + " is reserved\n";
+		    if($1->IsReserved()) {
+		      std::string errorstring = "ERROR: " + $1->GetName() + " is reserved\n";
 		      yyerror(errorstring.c_str());
 		    }
 		    else
 		      {
-			$1->value = $2; $$=$1;       
+			$1->Set($2);
+			$$=$1;       
+		      }
+		  }
+	      }
+           |  symdecl STR
+	      {
+		if (execute)
+		  {
+		    if($1->IsReserved()) {
+		      std::string errorstring = "ERROR: " + $1->GetName() + " is reserved\n";
+		      yyerror(errorstring.c_str());
+		    }
+		    else
+		      {
+			$1->Set(*$2);
+			$$=$1;
 		      }
 		  }
 	      }
@@ -490,96 +512,20 @@ assignment :  symdecl aexpr
 		    $$=$1;
 		  }
               }
-
-           |  VECVAR '=' vecexpr
-              {
-		if(execute)
-		  {
-		    $1->Set($3);
-		    $$=$1;
-		  }
-              }
 ;
 
-vecexpr :   VECVAR  
-        {
-	  if(execute)
-	    {
-	      $$ = new Array($1);
-	    }
-        } 
-        | vectnum
-        {
-	  if(execute)
-	    {
-	      $$ = $1;
-	    }
-	}
-       | vectstr
-	{
-	  if(execute)
-	  {
-	    $$ = $1;
-	  }
-	}
-
-       | vecexpr '+' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Add($1,$3);
-	    }
-        }
-      | vecexpr '-' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Subtract($1,$3);
-	    }
-	}
-       | vecexpr '+' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Add($1,$3);
-	    }
-	}
-       | aexpr '+' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Add($3,$1);
-	    }
-	}
-      | vecexpr '*' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Multiply($1,$3);
-	    }
-	}
-      | aexpr '*' vecexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Multiply($3,$1);
-	    }
-	}
-      | vecexpr '/' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Divide($1,$3);
-	    }
-	}
-       | vecexpr '-' aexpr
-        {
-	  if(execute)
-	    {
-	      $$ = Array::Subtract($1,$3);
-	    }
-	}
-       | aexpr '-' vecexpr
+vecexpr : VECVAR              {if(execute) $$ = new Array($1);} 
+        | vectnum             {if(execute) $$ = $1;}
+        | vectstr             {if(execute) $$ = $1;}
+        | vecexpr '+' vecexpr {if(execute) $$ = Array::Add($1,$3);}
+        | vecexpr '-' vecexpr {if(execute) $$ = Array::Subtract($1,$3);}
+        | vecexpr '+' aexpr   {if(execute) $$ = Array::Add($1,$3);}
+        | aexpr   '+' vecexpr {if(execute) $$ = Array::Add($3,$1);}
+        | vecexpr '*' aexpr   {if(execute) $$ = Array::Multiply($1,$3);}
+        | aexpr   '*' vecexpr {if(execute) $$ = Array::Multiply($3,$1);}
+        | vecexpr '/' aexpr   {if(execute) $$ = Array::Divide($1,$3);}
+        | vecexpr '-' aexpr   {if(execute) $$ = Array::Subtract($1,$3);}
+        | aexpr '-' vecexpr
         {
 	  if(execute)
 	    {
@@ -616,28 +562,12 @@ vectstr : vectstrexec
 	  }
 	}
 
-numbers : aexpr ',' numbers 
-          {
-	    if(execute)
-	      Parser::Instance()->Store($1);
-          } 
-       | aexpr
-         {
-	   if(execute)
-	     Parser::Instance()->Store($1);
-        }
+numbers : aexpr ',' numbers { if(execute) Parser::Instance()->Store($1);} 
+        | aexpr             { if(execute) Parser::Instance()->Store($1);}
 ;
 
-letters : STR ',' letters
-          {
-            if(execute)
-              Parser::Instance()->Store(*$1);
-          }
-	| STR
-         {
-           if(execute)
-             Parser::Instance()->Store(*$1);
-         }
+letters : STR ',' letters { if(execute) Parser::Instance()->Store(*$1);}
+	| STR             { if(execute) Parser::Instance()->Store(*$1);}
 ;
 
 command : STOP             { if(execute) Parser::Instance()->quit(); }
@@ -653,17 +583,13 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		std::cout << "Variable " << *($3) << " not defined!" << std::endl;
 	      }
 	      else {
-		printf("\t%s = %.10g\n",sp->name.c_str(),sp->value);
+		sp->Print();
 	      }
 	    }
 	  }
-        | PRINT ',' VECVAR
-	  {
-	    if(execute)
-	      {
-	        $3->Print();
-	      } 
-	  }
+        | PRINT ',' NUMVAR { if(execute) $3->Print();}
+        | PRINT ',' STRVAR { if(execute) $3->Print();}
+        | PRINT ',' VECVAR { if(execute) $3->Print();} 
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters
         | SAMPLE ',' sample_options 
@@ -686,16 +612,6 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->ClearParams();
 	      }
           }
-        | DUMP ',' sample_options //  options for beam dump
-          {
-            if(execute)
-              {
-                if(ECHO_GRAMMAR) printf("command -> DUMP\n");
-                Parser::Instance()->add_dump(*($3), element_count, element_type);
-                element_count = -1;
-                Parser::Instance()->ClearParams();
-              }
-          }
         | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
@@ -710,6 +626,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> REGION\n");
 		Parser::Instance()->add_region();
+	      }
+          }
+        | CAVITYMODEL ',' cavitymodel_options // cavitymodel
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> CAVITYMODEL\n");
+		Parser::Instance()->add_cavitymodel();
 	      }
           }
         | XSECBIAS ',' xsecbias_options // xsecbias
@@ -787,122 +711,96 @@ sample_options: RANGE '=' VARIABLE
 	        }
 ;
 
-csample_options : VARIABLE '=' aexpr
+csample_options_extend : /* nothing */
+                       | ',' csample_options
+
+csample_options : paramassign '=' aexpr csample_options_extend
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    if(execute)
 		      Parser::Instance()->SetParameterValue(*($1),$3);
 		  }
-                | VARIABLE '=' aexpr ',' csample_options
-                  {
-		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
-		    if(execute)
-		      Parser::Instance()->SetParameterValue(*($1),$3);
-		  }
-                | sample_options ',' csample_options
+                | sample_options csample_options_extend
                   {
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt, csopt\n");
 		    $$ = $1;
 		  }
-                | sample_options
-                  {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt\n");
-		    $$ = $1;
-                  }
 ;
 
-region_options : VARIABLE '=' aexpr ',' region_options
+cavitymodel_options_extend : /* nothing */
+                           | ',' cavitymodel_options
+
+cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetCavityModelValue((*$1),$3);
+		    }
+                 | paramassign '=' STR cavitymodel_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetCavityModelValue(*$1,*$3);
+		    }
+;
+
+region_options_extend : /* nothing */
+                      | ',' region_options
+
+region_options : paramassign '=' aexpr region_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue((*$1),$3);
 		    }
-                 | VARIABLE '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetRegionValue((*$1),$3);
-		    }
-                 | VARIABLE '=' STR ',' region_options
-                    {
-		      if(execute)
-			Parser::Instance()->SetRegionValue(*$1,*$3);
-		    }
-                 | VARIABLE '=' STR
+                 | paramassign '=' STR region_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue(*$1,*$3);
 		    }
 ;
 
-tunnel_options : VARIABLE '=' aexpr ',' tunnel_options
+tunnel_options_extend : /* nothing */
+                      | ',' tunnel_options
+
+tunnel_options : paramassign '=' aexpr tunnel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
-                 | VARIABLE '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetTunnelValue((*$1),$3);
-		    }
-                 | VARIABLE '=' STR ',' tunnel_options
-                    {
-		      if(execute)
-			Parser::Instance()->SetTunnelValue(*$1,*$3);
-		    }
-                 | VARIABLE '=' STR
+                 | paramassign '=' STR tunnel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
 ;
 
-xsecbias_options : VARIABLE '=' aexpr ',' xsecbias_options
+xsecbias_options_extend : /* nothing */
+                        | ',' xsecbias_options
+
+xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-                 | VARIABLE '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
-		    }
-                 | VARIABLE '=' STR ',' xsecbias_options
+                 | paramassign '=' STR xsecbias_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
 		    }
-                 | VARIABLE '=' STR
-                    {
-		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
-		    }
-                 | VARIABLE '=' vecexpr ',' xsecbias_options
-		    {
-		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
-		    }
-                 | VARIABLE '=' vecexpr
+                 | paramassign '=' vecexpr xsecbias_options_extend
 		    {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
 ;
 
-option_parameters : VARIABLE '=' aexpr ',' option_parameters
+option_parameters_extend : /* nothing */
+                         | ',' option_parameters
+
+option_parameters : paramassign '=' aexpr option_parameters_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    }   
-                  | VARIABLE '=' aexpr
-                    {
-		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,$3);
-		    } 
-                  | VARIABLE '=' STR ',' option_parameters
-                    {
-		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,*$3);
-		    }   
-                  | VARIABLE '=' STR
+                  | paramassign '=' STR option_parameters_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,*$3);
@@ -922,13 +820,9 @@ int yyerror(const char *s)
   exit(1);
 }
 
-#ifdef __cplusplus
 extern "C" {
-#endif
-int yywrap()
-{
-	return 1;
+  int yywrap()
+  {
+    return 1;
+  }
 }
-#ifdef __cplusplus
-}
-#endif

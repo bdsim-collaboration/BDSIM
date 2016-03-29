@@ -714,13 +714,6 @@ option, beampipeRadius = 10 * cm,
         boxSize = 1.0 * m,
         tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
-        chordStepMinimum = 1.e-7 * m,
-        deltaIntersection = 1.e-7 * m,
-	deltaChord = 1.e-6 * m,
-        lengthSafety = 1.e-6 * m,
-        deltaOneStep = 1.e-9*m,
-        maximumEpsilonStep = 1.e-9*m,
-	minimumEpsilonStep = 1.e-9*m,
         thresholdCutCharged = 1 * MeV,
         thresholdCutPhotons = 0.01 * MeV;
 
@@ -728,7 +721,7 @@ option, prodCutPhotonsP=0.511*MeV;
 option, prodCutElectronsP=0.511*MeV;
 option, prodCutPositronsP=0.511*MeV;
 
-option, ngenerate=200, physicsList="em_standard", synchRadOn=0, srTrackPhotons=0, nperfile=10000;
+option, ngenerate=200, physicsList="em", nperfile=10000;
 option, stopTracks=1;
 
 !option, storeNeutronTrajectory=1;

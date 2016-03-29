@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 2.6.4)
 
-project(BDSIM) 
+project(bdsim)
 
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 9 )
-set( BDSIM_PATCH_LEVEL 1 )
+set( BDSIM_PATCH_LEVEL 2 )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 
-# add source dir as a place for CMake modules (e.g. FindGSL.cmake)
+# add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 # With this true we automatically include current src/binary directory
@@ -44,20 +44,29 @@ endif()
 # Compiler-specific C++11 activation. Replace later with
 # CMAKE_CXX_STANDARD flag only available for cmake 3.1
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    execute_process(
-        COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-        message(STATUS "Compiler supports C++11")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    endif ()
+  execute_process(
+    COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if (GCC_VERSION VERSION_GREATER 4.8 OR GCC_VERSION VERSION_EQUAL 4.8)
+    message(STATUS "Compiler supports C++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+  elseif (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+    message(STATUS "Compiler supports C++11")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  endif ()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    # find version:
-    EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
-    string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-    #message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
-
+  # get clang version
+  execute_process( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
+  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
+  if($ENV{VERBOSE})
+    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
+  endif()
+  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
+    message(STATUS "Compiler supports C++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
+  else()
     message(STATUS "Compiler supports C++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+  endif()
 else()
     message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11")
 endif()
@@ -71,12 +80,12 @@ endif()
 
 # Check for Scientific Linux
 if(UNIX)
-    if("${CMAKE_SYSTEM}" MATCHES "el5")
-        set(RHL5 TRUE)
-    elseif("${CMAKE_SYSTEM}" MATCHES "el6")
+    if("${CMAKE_SYSTEM}" MATCHES "el6")
         set(RHL6 TRUE)
+    elseif("${CMAKE_SYSTEM}" MATCHES "el7")
+        set(RHL7 TRUE)
     endif()
-    if(RHL5 OR RHL6)
+    if(RHL6 OR RHL7)
         set(RHL TRUE)
     endif()
     if("$ENV{HOSTNAME}" MATCHES "lxplus" OR "$ENV{HOSTNAME}" MATCHES "lxfssl")
@@ -106,9 +115,6 @@ if (USE_AFS AND NOT CLHEP_LIBRARY_DIR)
    if (APPLE)
       set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/include)
       set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/lib)
-   elseif (RHL5)
-      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/include)
-      set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.3.1/x86_64-slc5-gcc43-opt/lib)
    elseif (RHL6)
       if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
          set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/include)
@@ -130,26 +136,30 @@ include_directories(${CLHEP_INCLUDE_DIRS})
 
 # ROOT
 if ($ENV{ROOTSYS})
-   message(STATUS "Use ROOTSYS from environment: $ENV{ROOTSYS}")
+  message(STATUS "Use ROOTSYS from environment: $ENV{ROOTSYS}")
+  set (ROOTSYS $ENV{ROOTSYS})
 elseif(USE_AFS)
-   # add ROOT afs library to PATH (only in cmake)
-   if (APPLE)
-   	set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.14/x86_64-mac108-gcc42-opt/root")
-    elseif (RHL5)
-        set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.07/x86_64-slc5-gcc43-opt/root")
-    elseif (RHL6)
-        if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-           set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.28/x86_64-slc6-gcc47-opt/root")
-	else()
-           set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.19/x86_64-slc6-gcc46-opt/root")
-        endif()
+  # add ROOT afs library to PATH (only in cmake)
+  if (APPLE)
+    set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.14/x86_64-mac108-gcc42-opt/root")
+  elseif (RHL6)
+    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
+      set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.28/x86_64-slc6-gcc47-opt/root")
+    else()
+      set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.19/x86_64-slc6-gcc46-opt/root")
     endif()
-    if($ENV{VERBOSE})
-        message(STATUS "ROOTSYS: ${ROOTSYS}")
-    endif()
+  endif()
+  if($ENV{VERBOSE})
+    message(STATUS "ROOTSYS: ${ROOTSYS}")
+  endif()
+  if($ENV{VERBOSE})
+    message(STATUS "ROOTSYS: ${ROOTSYS}")
+  endif()
 endif()
 
 find_package(ROOT REQUIRED)
+# major ROOT version
+string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
@@ -165,15 +175,30 @@ foreach(header ${linkHeaders})
   MATH(EXPR length "${pos}-${beginpos}")
   string(SUBSTRING ${header} ${beginpos} ${length} className)
   #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
-    COMMAND ${ROOTCINT_EXECUTABLE}
-    ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-    )
+  if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+    # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
+    # also rootcint5 does not accept additional options
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      COMMAND ${ROOTCINT_EXECUTABLE}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      -D__MAKECINT__
+      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      )
+  else()
+    # ROOT 5
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
+      COMMAND ${ROOTCINT_EXECUTABLE}
+      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      )
+    set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
+  endif()
   # keep list of ROOT dictionaries
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
-  set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
 endforeach()
 
 # GDML (on by default)
@@ -236,11 +261,6 @@ if (NOT Geant4_FOUND AND USE_AFS)
    # Use AFS directory
    if(APPLE)
       message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
-   elseif(RHL5)
-      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/share/include)
-      set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/x86_64-slc5-gcc43-opt/lib64)
-      set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/9.6.p03/x86_64-slc5-gcc43-opt/lib64/Geant4-9.6.3)
-      set(Geant4_VERSION 9.6.3)
    elseif(RHL6)
       set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/share/include)
       set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/x86_64-slc6-gcc47-opt/lib64)
@@ -286,9 +306,12 @@ if (Geant4_VERSION AND NOT "${Geant4_VERSION}" MATCHES "UNKNOWN")
     message(STATUS "G4_MINOR_VERSION: ${G4_MINOR_VERSION}")
     message(STATUS "G4_PATCH_LEVEL: ${G4_PATCH_LEVEL}")
   endif()
+  if(10 GREATER ${G4_MAJOR_VERSION})
+    message(FATAL_ERROR "Geant4 version 10 is needed!")
+  endif()
 else()
-  set(G4_VERSION 9.9.9)
-  set(G4_MAJOR_VERSION 9)
+  set(G4_VERSION 10.9.9)
+  set(G4_MAJOR_VERSION 10)
   set(G4_MINOR_VERSION 9)
   set(G4_PATCH_LEVEL 9)
 endif()
@@ -302,12 +325,6 @@ set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
 # for ROOT dictionaries
 # stop warnings from Clang version (for versions 7 and greater)
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  # get clang version
-  EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
-  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-  if($ENV{VERBOSE})
-    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
-  endif()
   if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
     set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
   endif()
@@ -319,6 +336,11 @@ set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G
 # add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
+if(APPLE)
+  # For MacOS bundle
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names")
+  message(STATUS "CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS}")
+endif()
 
 if($ENV{VERBOSE})
   message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
@@ -339,6 +361,14 @@ if(DOXYGEN_FOUND)
   add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
+# enable Testing with ctest
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
+
+# This module sets up installation:
+include(bdsim_install)
+
 #-----------------------------------------------------------------------
 # macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
 #
@@ -349,7 +379,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
     )
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
 
 # source files
@@ -366,22 +395,11 @@ endif()
 
 add_library(bdsim ${bdsim_sources} ${root_dicts})
 
-# This module sets up installation:
-include(bdsim_install)
-
-# enable Testing with ctest
-enable_testing()
-include(CTest)
-include(bdsim_test_macros)
-
-add_subdirectory( parser )
-
 add_executable(bdsimexec bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
-#link_directories(${Geant4_LIBRARY_DIR})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 # link against ROOT
@@ -408,6 +426,33 @@ bdsim_install_targets(${executables} ${libraries})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
+include(CPack)
+
+option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
+
+if (BUILD_MACOSX_APP AND APPLE)
+    # building a macos executablemaking a bundle of 
+    add_executable(bdsimapp MACOSX_BUNDLE bdsim.cc)
+    set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+    target_link_libraries(bdsimapp bdsim gmad)
+    bdsim_install_bundle(bdsim)
+endif()
+
+# package source
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# copy dependent libraries in deps directory
+add_custom_target(copy-deps
+  COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
+)
+      
+## Add subdirectories
+# Parser
+add_subdirectory(parser)
+
 # Visualisation directory
 add_subdirectory(vis)
 
@@ -416,6 +461,9 @@ add_subdirectory(utils)
 
 # For testing
 add_subdirectory(examples)
+
+# Include directory for tests
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)
 
 # Manual

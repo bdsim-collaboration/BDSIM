@@ -3,6 +3,12 @@
 
 #include "CLHEP/Random/Random.h"
 
+BDSRunManager::BDSRunManager()
+{;}
+
+BDSRunManager::~BDSRunManager()
+{;}
+
 void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 {
   G4RunManager::BeamOn(n_event,macroFile,n_select);

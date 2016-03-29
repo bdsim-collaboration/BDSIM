@@ -1,5 +1,5 @@
-#ifndef BDSOCTSTEPPER_HH
-#define BDSOCTSTEPPER_HH
+#ifndef BDSOCTSTEPPER_H
+#define BDSOCTSTEPPER_H
 
 #include "BDSAuxiliaryNavigator.hh"
 

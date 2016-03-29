@@ -45,6 +45,10 @@ set_tests_properties(gmad-overwriteElement PROPERTIES WILL_FAIL 1)
 add_test(gmad-overwriteVariable ${gmadBinary} overwriteVariable.gmad)
 set_tests_properties(gmad-overwriteVariable PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
 
+# try to overwrite a variable
+add_test(gmad-overwriteVariableString ${gmadBinary} overwriteVariableString.gmad)
+set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
+
 # try to use an undeclared variable
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
 set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
@@ -70,7 +74,7 @@ set_tests_properties(gmad-testMissingAccessAttribute PROPERTIES WILL_FAIL 1)
 
 # test access element
 add_test(gmad-testAccessElement ${gmadBinary} accesselement.gmad)
-set_tests_properties(gmad-testAccessElement PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d)
+set_tests_properties(gmad-testAccessElement PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test access element
 add_test(gmad-testAccessElementOutsiderange ${gmadBinary} accesselementoutsiderange.gmad)
@@ -78,15 +82,15 @@ set_tests_properties(gmad-testAccessElementOutsiderange PROPERTIES WILL_FAIL 1)
 
 # test add sampler
 add_test(gmad-testAddSampler ${gmadBinary} addsampler.gmad)
-set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d)
+set_tests_properties(gmad-testAddSampler PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add all samplers
 add_test(gmad-testAddAllSamplers ${gmadBinary} addallsamplers.gmad)
-set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_d2)
+set_tests_properties(gmad-testAddAllSamplers PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test add samplers at all quadrupoles
 add_test(gmad-testAddQuadSamplers ${gmadBinary} addquadsamplers.gmad)
-set_tests_properties(gmad-testAddQuadSamplers PROPERTIES PASS_REGULAR_EXPRESSION Sampler_q2)
+set_tests_properties(gmad-testAddQuadSamplers PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
 # test inheritance declaration
 add_test(gmad-inherit ${gmadBinary} inherit.gmad)
@@ -95,6 +99,9 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 # test extension
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
+
+# test string (issue #126)
+add_test(gmad-string ${gmadBinary} string.gmad)
 
 # test arrays
 add_test(gmad-array ${gmadBinary} array.gmad)

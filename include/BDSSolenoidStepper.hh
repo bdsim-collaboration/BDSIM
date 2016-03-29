@@ -1,5 +1,5 @@
-#ifndef BDSSOLENOIDSTEPPER_HH
-#define BDSSOLENOIDSTEPPER_HH
+#ifndef BDSSOLENOIDSTEPPER_H
+#define BDSSOLENOIDSTEPPER_H
 
 #include "BDSAuxiliaryNavigator.hh"
 

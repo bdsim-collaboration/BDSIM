@@ -7,9 +7,8 @@ option, beampipeRadius = 8*mm,
 	checkOverlaps=1,
 	magnetGeometryType="cylindrical",
 	ngenerate=1e5,
-        annihiToMuFe=1e5,
-        gammaToMuFe=1e5,
-        eeToHadronsFe=1e5,
-!        physicsList="em_muon";
-	modularPhysicsListsOn=1,
-	physicsList="em muon";
+        physicsList="em em_extra hadronic_elastic QGSP_BERT muon";
+
+!        annihiToMuFe=1e1,
+!        gammaToMuFe=1e1,
+!        eeToHadronsFe=1e8,

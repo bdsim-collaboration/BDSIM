@@ -9,8 +9,8 @@ Options::Options()
   // Default Values for Options
 
   // very important options
-  physicsList           = "standard"; //default - standard (only transportation)
-  modularPhysicsListsOn = 0;
+  physicsList           = ""; //default no specific ones (only transportation)
+  modularPhysicsListsOn = 1;
   numberToGenerate      = 1;
   randomSeed            = 0;
 
@@ -34,6 +34,7 @@ Options::Options()
   E0 = 0.0;
   sigmaT = 0.0;
   betx = 0.0, bety = 0.0, alfx = 0.0, alfy = 0.0, emitx = 0.0, emity = 0.0;
+  dispx = 0.0, dispy = 0.0, dispxp = 0.0, dispyp = 0.0;
   sigmaX = 0.0, sigmaXp = 0.0, sigmaY = 0.0, sigmaYp = 0.0;
   envelopeX = 0.0, envelopeXp = 0.0, envelopeY = 0.0, envelopeYp = 0.0, envelopeT = 0.0, envelopeE = 0.0;
   envelopeR = 0.0, envelopeRp = 0.0;
@@ -103,9 +104,6 @@ Options::Options()
   sensitiveBLMs            = 1;
 
   // physics processes
-  gammaToMuFe              = 1;
-  annihiToMuFe             = 1;
-  eeToHadronsFe            = 1;
   useEMLPB                 = 0;
   useHadLPB                = 0;
   doPlanckScattering       = 0;
@@ -117,7 +115,6 @@ Options::Options()
   turnOnOpticalSurface     = 1;
   turnOnBirksSaturation    = 1;
   scintYieldFactor         = 1.0;
-  decayOn                  = 1;
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
@@ -146,14 +143,6 @@ Options::Options()
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
-
-  // synchrotron radiation
-  synchRadOn               = 0;
-  synchTrackPhotons        = 0;
-  synchLowX                = 0.0;
-  synchLowGamE             = 0.0;
-  synchPhotonMultiplicity  = 1;
-  synchMeanFreeFactor      = 1;
   
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
@@ -215,6 +204,10 @@ void Options::PublishMembers()
   publish("alfy",&Options::alfy);
   publish("emitx",&Options::emitx);
   publish("emity",&Options::emity);
+  publish("dispx",&Options::dispx);
+  publish("dispy",&Options::dispy);
+  publish("dispxp",&Options::dispxp);
+  publish("dispyp",&Options::dispyp);
   
   // options for beam distrType="gauss"
   publish("sigmaX",&Options::sigmaX);
@@ -325,10 +318,7 @@ void Options::PublishMembers()
   // options for beam loss monitor geometry
   publish("blmRad",&Options::blmRad);
   publish("blmLength",&Options::blmLength);
-
-  publish("gammaToMuFe",&Options::gammaToMuFe);
-  publish("annihiToMuFe",&Options::annihiToMuFe);
-  publish("eeToHadronsFe",&Options::eeToHadronsFe);
+  
   publish("scintYieldFactor",&Options::scintYieldFactor);
   publish("useEMLPB",&Options::useEMLPB);
   publish("useHadLPB",&Options::useHadLPB);
@@ -372,13 +362,6 @@ void Options::PublishMembers()
   publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
   publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
-  publish("synchRadOn",&Options::synchRadOn);
-  publish("decayOn",&Options::decayOn);
-  publish("srTrackPhotons",&Options::synchTrackPhotons);
-  publish("srLowX",&Options::synchLowX);
-  publish("srLowGamE",&Options::synchLowGamE);
-  publish("srMultiplicity",&Options::synchPhotonMultiplicity);
-  publish("srMeanFreeFactor",&Options::synchMeanFreeFactor);
   publish("lengthSafety",&Options::lengthSafety);
   publish("randomSeed",&Options::randomSeed);
   publish("storeMuonTrajectory",&Options::storeMuonTrajectories);

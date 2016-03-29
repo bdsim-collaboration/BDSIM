@@ -1,7 +1,8 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSScreenLayer.hh"
 #include "BDSMaterials.hh"
-#include "BDSSamplerBase.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "G4Box.hh"
@@ -13,11 +14,20 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 
-BDSScreenLayer::BDSScreenLayer(){
-}
+BDSScreenLayer::BDSScreenLayer()
+{;}
 
-BDSScreenLayer::BDSScreenLayer (G4ThreeVector size, G4String name, G4String material, G4double grooveWidth, G4double grooveSpatialFrequency):
-  _size(size), _name(name),_material(material),_grooveWidth(grooveWidth),_grooveSpatialFrequency(grooveSpatialFrequency)
+BDSScreenLayer::BDSScreenLayer (G4ThreeVector size,
+				G4String name,
+				G4String material, 
+				G4double grooveWidth,
+				G4double grooveSpatialFrequency):
+  _size(size),
+  _name(name),
+  copyNumber(0),
+  _material(material),
+  _grooveWidth(grooveWidth),
+  _grooveSpatialFrequency(grooveSpatialFrequency)
 {
   _nGrooves=0; //Counter for the number of grooves etched into the screen.
   _color=G4Colour(0.1,0.8,0.1,0.3);
@@ -131,7 +141,7 @@ void BDSScreenLayer::InternalMirror::place(){
 			  "internalMirrorPhys",
 			  _motherLog,
 			  false,
-			  0,
+			  0, // BDSScreenLayer::copyNumber, // nested class prevents data passing
 			  true
 			  );
 }
@@ -168,11 +178,12 @@ void BDSScreenLayer::InternalMirror::compute(){
   _pos = sign*(_motherSize.z()/2.0-_thickness/2.0);
 }
 
-void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
+void BDSScreenLayer::sampler()
+{
   G4String samplerName = _name + "_1";
 
   _log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  BDSSamplerBase::AddExternalSampler(samplerName);
+  copyNumber = BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
@@ -182,7 +193,5 @@ void BDSScreenLayer::sampler(){ //Make this layer a sampler scoring plane
 #endif
 }
 
-
-
-BDSScreenLayer::~BDSScreenLayer(){
-}
+BDSScreenLayer::~BDSScreenLayer()
+{;}

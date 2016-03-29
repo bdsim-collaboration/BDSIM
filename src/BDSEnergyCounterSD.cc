@@ -70,15 +70,15 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step*aStep, G4TouchableHistory* readOutTH)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
   if(BDSGlobalConstants::Instance()->GetStopTracks())
-    enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit()); // Why subtract the energy deposit of the step? Why not add?
+    {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
   //see developer guide 6.2.2...
   else
-    enrg = aStep->GetTotalEnergyDeposit();
+    {enrg = aStep->GetTotalEnergyDeposit();}
 #ifdef BDSDEBUG
   G4cout << "BDSEnergyCounterSD> enrg = " << enrg << G4endl;
 #endif

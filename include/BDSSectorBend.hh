@@ -18,7 +18,7 @@ public:
 		G4double            bGradIn,
 		BDSBeamPipeInfo*    beamPipeInfo,
 		BDSMagnetOuterInfo* magnetOuterInfo);
-  ~BDSSectorBend(){;};
+  ~BDSSectorBend(){;}
 
 private:
   G4double itsBField;
@@ -26,7 +26,7 @@ private:
   
   virtual void Build();
   virtual void BuildBPFieldAndStepper();
-  virtual void BuildBeampipe();
+
 };
 
 #endif

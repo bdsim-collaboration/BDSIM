@@ -4,10 +4,6 @@ option, beampipeRadius = 3.8 * cm,
         boxSize = 2.0 * m,
         tunnelRadius = 2.0*m,
         beampipeThickness = 0.1 * cm,
-        chordStepMinimum = 0.0000000001 * m,
-        deltaIntersection = 0.00000001 * m,
-	deltaChord = 0.001 * m,
-        lengthSafety = 0.00001 * m,
         thresholdCutCharged = 1 * MeV,
         thresholdCutPhotons = 1 * MeV;
 
@@ -68,7 +64,7 @@ sample, range=mk1;
 !sample, range=mk2;
 !sample, range=mk3;
 
-option, ngenerate=1000, physicsList="lw",randomSeed=-1;
+option, ngenerate=1000, physicsList="lw",modularPhysicsListsOn=0,randomSeed=-1;
 
 beam,  particle="e-",
        energy=250,

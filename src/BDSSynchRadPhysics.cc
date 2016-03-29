@@ -1,56 +1,44 @@
 #include "BDSSynchRadPhysics.hh"
-#include "G4Gamma.hh"
-#include "G4ProcessManager.hh"
-#include "G4Version.hh"
 
-BDSSynchRadPhysics::BDSSynchRadPhysics():G4VPhysicsConstructor("BDSSynchRadPhysics"),
-					 _srProcess(nullptr),_srProcessG4(nullptr),_contSR(nullptr),_wasActivated(false)
+#include "globals.hh" // geant4 types / globals
+#include "G4AutoDelete.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ProcessManager.hh"
+#include "G4SynchrotronRadiation.hh"
+
+BDSSynchRadPhysics::BDSSynchRadPhysics():
+  G4VPhysicsConstructor("BDSSynchRadPhysics"),
+  activated(false)
 {;}
 
 BDSSynchRadPhysics::~BDSSynchRadPhysics()
 {;}
 
-void BDSSynchRadPhysics::ConstructParticle(){
-  G4Gamma::Gamma();
-  G4Electron::Electron();
-  G4Positron::Positron();    
-  return;
-}
+void BDSSynchRadPhysics::ConstructParticle()
+{return;}
 
-void BDSSynchRadPhysics::ConstructProcess(){
-  if(_wasActivated) return;
-  _wasActivated = true;
-  _srProcess    = new BDSSynchrotronRadiation();
-  _srProcessG4  = new G4SynchrotronRadiation();
-  _contSR       = new BDSContinuousSR();
+void BDSSynchRadPhysics::ConstructProcess()
+{
+  if(activated)
+    {return;}
+  activated = true;
 
-
-#if G4VERSION_NUMBER < 1000
-  theParticleTable    = G4ParticleTable::GetParticleTable();
-  theParticleIterator = theParticleTable->GetIterator();
-  G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
-#endif
-
+  G4SynchrotronRadiation* synchrotron = new G4SynchrotronRadiation();
+  G4AutoDelete::Register(synchrotron);
+  
   aParticleIterator->reset();
-  while( (*aParticleIterator)() ){
-    G4ParticleDefinition* particle = aParticleIterator->value();
-    G4ProcessManager* pmanager = particle->GetProcessManager();
-    G4String particleName = particle->GetParticleName();
-    if (particleName == "e-") {
-      pmanager->AddProcess(_srProcess);
-      pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      //G4int idx = pmanager->AddProcess(_contSR);
-      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      //pmanager->SetProcessActivation(idx, false);
+  while( (*aParticleIterator)() )
+    {
+      G4ParticleDefinition* particle = aParticleIterator->value();
+      G4ProcessManager* pmanager = particle->GetProcessManager();
+
+      // add to charged particles
+      if (particle->GetPDGCharge() != 0)
+	{
+	  pmanager->AddProcess(synchrotron);
+	  pmanager->SetProcessOrderingToLast(synchrotron,idxPostStep);
+	}
     }
-    if (particleName == "e+") {
-      pmanager->AddProcess(_srProcess);
-      pmanager->SetProcessOrderingToLast(_srProcess,idxPostStep);
-      //G4int idx = pmanager->AddProcess(_contSR);
-      //pmanager->SetProcessOrderingToLast(_contSR,idxPostStep);
-      //pmanager->SetProcessActivation(idx, false);
-    }
-  }
   return;
 }
 

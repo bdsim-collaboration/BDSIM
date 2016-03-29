@@ -1,27 +1,32 @@
 #ifndef BDSSAMPLERCYLINDER_H
 #define BDSSAMPLERCYLINDER_H
 
-#include "BDSSamplerBase.hh"
+#include "BDSSampler.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
 
 class BDSSamplerSD;
 
 /** 
- * Cylindrical sampler class
+ * @brief Cylindrical sampler around an object.
+ * 
+ * Creates a hollow very thin (1um thick) cylinder around an object
+ * without end caps that acts as a sampler.
  */
 
-class BDSSamplerCylinder :public BDSSamplerBase
+class BDSSamplerCylinder: public BDSSampler
 {
 public:
-  BDSSamplerCylinder(G4String name,G4double length, G4double radiusIn);
+  BDSSamplerCylinder(G4String name,
+		     G4double lengthIn,
+		     G4double radiusIn);
 
-  /// access for external classes to sensitive detector
-  virtual BDSSamplerSD* GetSensitiveDetector()const override final;
+  virtual ~BDSSamplerCylinder(){;}
 
 private:
-  virtual void BuildContainerLogicalVolume() override final;
-
-  /// radius of cylindrical sampler
-  G4double radius;
+  /// Private default constructor to ensure use of provided one.
+  BDSSamplerCylinder();
 };
 
 #endif

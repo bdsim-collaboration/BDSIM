@@ -1,16 +1,5 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 13.04.2005
-*/
-
-
-#ifndef BDSGeometrySQL_h
-#define BDSGeometrySQL_h 1
+#ifndef BDSGEOMETRYSQL_H
+#define BDSGEOMETRYSQL_H
 
 #include <fstream>
 #include <list>
@@ -125,6 +114,11 @@ private:
   //  BDSSamplerSD* SensDet;
 
   void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+
+  /// As the samplers are regsitered and placed in a separate loop, we need to
+  /// store a cache of the copy numbers (for lookup in the output) w.r.t. the
+  /// particular logical volume (referenced by pointer);
+  std::map<G4LogicalVolume*, G4int> samplerIDs;
 
 protected:
 };

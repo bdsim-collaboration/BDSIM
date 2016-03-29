@@ -1,5 +1,5 @@
-#ifndef BDSPhysicsList_h
-#define BDSPhysicsList_h
+#ifndef BDSPHYSICSLIST_H
+#define BDSPHYSICSLIST_H
 
 #include "G4VModularPhysicsList.hh"
 #include "globals.hh"
@@ -17,7 +17,7 @@
 class BDSPhysicsList: public G4VUserPhysicsList
 {
 public:
-  BDSPhysicsList();
+  BDSPhysicsList(G4String physicsListNameIn);
   virtual ~BDSPhysicsList();
 
 public:
@@ -54,6 +54,11 @@ public:
   void ConstructSR();
   
 private:
+  /// Private default constructor to force use of provided one.
+  BDSPhysicsList();
+  
+  G4String physicsListName;
+  
   G4bool verbose;
 
   /// A vector of all the physics lists names

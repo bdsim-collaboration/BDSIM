@@ -1,5 +1,5 @@
-#ifndef BDSLens_h
-#define BDSLens_h 
+#ifndef BDSLENS_H
+#define BDSLENS_H 
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"

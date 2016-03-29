@@ -3,7 +3,6 @@
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 #include "G4ProcessManager.hh"
-#include "G4Version.hh"
 
 BDSParameterisationPhysics::BDSParameterisationPhysics():G4VPhysicsConstructor("BDSParameterisationPhysics"),_wasActivated(false),
 							 _fastSimulationManagerProcess(nullptr)
@@ -26,12 +25,6 @@ void BDSParameterisationPhysics::ConstructProcess(){
   _fastSimulationManagerProcess =
     new G4FastSimulationManagerProcess();
   G4cout << "FastSimulationManagerProcess" <<G4endl;
-
-#if G4VERSION_NUMBER < 1000
-  theParticleTable = G4ParticleTable::GetParticleTable();
-  theParticleIterator = theParticleTable->GetIterator();
-  G4ParticleTable::G4PTblDicIterator* aParticleIterator = theParticleIterator;
-#endif
 
   aParticleIterator->reset();
   //G4cout<<"---"<<G4endl;                                                                                                                                              

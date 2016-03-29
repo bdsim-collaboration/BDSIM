@@ -8,8 +8,6 @@
 #include "G4ThreeVector.hh"
 #include "G4ClassicalRK4.hh"
 
-extern G4double BDSLocalRadiusOfCurvature;
-
 BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs* eqRHS):
   G4MagIntegratorStepper(eqRHS, 6),
   itsLength(0.0),itsAngle(0.0),
@@ -68,10 +66,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
       yOut[3] = v0.x();
       yOut[4] = v0.y();
       yOut[5] = v0.z();
-      
-      // Set to infinite radius for Synchrotron Radiation calculation:
-      //    BDSLocalRadiusOfCurvature=DBL_MAX;
-      
+            
       itsDist=0;
       return;
     }
@@ -108,10 +103,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   
   CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
   SinT=2*CosT_ov_2*SinT_ov_2;
-  
-  // Save for Synchrotron Radiation calculations:
-  BDSLocalRadiusOfCurvature = R;
-  
+    
   itsDist = fabs(R)*(1.-CosT_ov_2);
   
   // check for paraxial approximation:
@@ -273,4 +265,6 @@ G4double BDSDipoleStepper::DistChord() const
 }
 
 BDSDipoleStepper::~BDSDipoleStepper()
-{}
+{
+  delete backupStepper;
+}

@@ -1,32 +1,46 @@
-#ifndef _BDS_TRAJECTORY_POINT_HH__
-#define _BDS_TRAJECTORY_POINT_HH__
+#ifndef BDSTRAJECTORYPOINT_H
+#define BDSTRAJECTORYPOINT_H
 
+#include "globals.hh" // geant4 types / globals
+#include "G4Allocator.hh"
+#include "G4Step.hh"
 #include "G4TrajectoryPoint.hh"
 #include "G4Track.hh"
-#include "G4Allocator.hh"
 
-class BDSTrajectoryPoint: public G4TrajectoryPoint{
+#include <ostream>
+
+/**
+ * @brief A Point in a trajectory with extra information.
+ *
+ * @author L. Deacon
+ */
+
+class BDSTrajectoryPoint: public G4TrajectoryPoint
+{
 public:
   BDSTrajectoryPoint();
-  BDSTrajectoryPoint(const G4Track* aTrack);
-  ~BDSTrajectoryPoint();
+  BDSTrajectoryPoint(const G4Step* step);
+  virtual ~BDSTrajectoryPoint(){;}
 
   inline void *operator new(size_t);
   inline void operator delete(void *aTrajectoryPoint);
   inline int operator==(const BDSTrajectoryPoint& right) const
   {return (this==&right);};
 
-  inline G4bool isScatteringProcess(){return _isScatteringProcess;}
-  inline G4int GetTrackID(){return _trackID;}
-  void printData();
-  inline G4ThreeVector GetVertexPosition(){return _vertexPosition;}
-
+  /// @{ Accessor
+  inline G4bool        IsScatteringProcess() const {return isScatteringProcess;}
+  inline G4int         GetTrackID()          const {return trackID;}
+  inline G4ThreeVector GetVertexPosition()   const {return vertexPosition;}
+  /// @}
+  
+  /// Output stream
+  friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
 private:
-  G4bool _isScatteringProcess;
-  const G4VProcess* _currentProcess;
-  G4int _trackID;
-  G4ThreeVector _vertexPosition;
+  G4bool            isScatteringProcess;
+  const G4VProcess* currentProcess;
+  G4int             trackID;
+  G4ThreeVector     vertexPosition;
 };
 
 extern G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;

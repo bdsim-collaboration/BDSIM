@@ -1,12 +1,5 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Added Get method to enable access to materials by passing a string
-*/
-#ifndef BDSMaterials_h
-#define BDSMaterials_h 1
+#ifndef BDSMATERIALS_H
+#define BDSMATERIALS_H
 
 #include <map>
 #include <list>
@@ -14,6 +7,10 @@
 #include "globals.hh"
 #include "G4Material.hh"
 
+/**
+ * @brief A class for all material definitions known to BDSIM.
+ * Additional materials can be added in the parser as well.
+ */
 class BDSMaterials
 {
 public:
@@ -78,12 +75,22 @@ private:
   void Initialise(); 
 
   static BDSMaterials* _instance;
-  G4MaterialPropertiesTable* airMaterialPropertiesTable;
-  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable;
-  G4MaterialPropertiesTable* fsMaterialPropertiesTable;
-  G4MaterialPropertiesTable* petMaterialPropertiesTable;
-  G4MaterialPropertiesTable* vacMaterialPropertiesTable;
-
+  ///@{ Material tables
+  G4MaterialPropertiesTable* airMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable = nullptr;
+  G4MaterialPropertiesTable* fsMaterialPropertiesTable        = nullptr;
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable      = nullptr;
+  G4MaterialPropertiesTable* mptLanex                         = nullptr;
+  G4MaterialPropertiesTable* mptLanex2                        = nullptr;
+  G4MaterialPropertiesTable* mptGOSLanex                      = nullptr;
+  G4MaterialPropertiesTable* mptGOSLanexRi1                   = nullptr;
+  G4MaterialPropertiesTable* mptMedex                         = nullptr;
+  G4MaterialPropertiesTable* mptPETLanex                      = nullptr;
+  G4MaterialPropertiesTable* mpt_YAG                          = nullptr;
+  G4MaterialPropertiesTable* petMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* ups923a_mt                       = nullptr;
+  G4MaterialPropertiesTable* vacMaterialPropertiesTable       = nullptr;
+  ///@}
 };
 
 #endif

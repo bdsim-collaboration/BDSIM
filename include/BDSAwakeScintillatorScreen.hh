@@ -3,8 +3,8 @@ A scintillator screen.
 Work in progress.  
 */
 
-#ifndef BDSAwakeScintillatorScreen_h
-#define BDSAwakeScintillatorScreen_h 
+#ifndef BDSAwakeScintillatorScreen_H
+#define BDSAwakeScintillatorScreen_H 
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"

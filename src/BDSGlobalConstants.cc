@@ -33,7 +33,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsSMax(0.0)
 {
   printModuloFraction   = opt.printModuloFraction;
-  itsPhysListName       = opt.physicsList;
   itsVacuumMaterial     = opt.vacMaterial;
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
 
@@ -141,15 +140,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
   itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
   itsScintYieldFactor=opt.scintYieldFactor;
-  itsSynchRadOn = opt.synchRadOn;
-  G4cout << "BDSGlobalConstants::Instance() synchRadOn = " << itsSynchRadOn << G4endl;
-  itsDecayOn = opt.decayOn;
-  itsSynchTrackPhotons= opt.synchTrackPhotons;
-  G4cout << __METHOD_NAME__ << "synchTrackphotons = " << itsSynchTrackPhotons << G4endl;
-  itsSynchLowX = opt.synchLowX;
-  itsSynchLowGamE = opt.synchLowGamE * CLHEP::GeV;  // lowest gamma energy
-  itsSynchPhotonMultiplicity = opt.synchPhotonMultiplicity;
-  itsSynchMeanFreeFactor = opt.synchMeanFreeFactor;
   if (opt.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps
       G4cerr << "Dangerously low \"lengthSafety\" value of: " << opt.lengthSafety
@@ -171,12 +161,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
   itsRandomSeed = opt.randomSeed;
-  itsGammaToMuFe= opt.gammaToMuFe;
-  itsAnnihiToMuFe= opt.annihiToMuFe;
-  itsEeToHadronsFe=opt.eeToHadronsFe;
   itsUseEMLPB=opt.useEMLPB;
   itsUseHadLPB=opt.useHadLPB;
-  itsDecayOn=opt.decayOn;
   SetLPBFraction(opt.LPBFraction);
   itsStoreMuonTrajectories = opt.storeMuonTrajectories;
   itsTrajCutGTZ = opt.trajCutGTZ;
@@ -191,7 +177,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsLaserwireDir = G4ThreeVector(1,0,0);
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
-  isWaitingForDump = false;
   //itsIncludeIronMagFields = opt.includeIronMagFields;
   itsIncludeIronMagFields = false;
   zeroMagField = new G4UniformMagField(G4ThreeVector());
@@ -287,5 +272,15 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
+  delete invisibleVisAttr;
+  delete visibleDebugVisAttr;
+
+  delete _RotY90;
+  delete _RotYM90;
+  delete _RotX90;
+  delete _RotXM90;
+  delete _RotYM90X90;
+  delete _RotYM90XM90;
+
   _instance = nullptr;
 }

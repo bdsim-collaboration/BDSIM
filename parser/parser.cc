@@ -2,8 +2,39 @@
 
 #include <cmath>
 
+// for getpwuid: http://linux.die.net/man/3/getpwuid
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 #include "array.h"
 #include "sym_table.h"
+
+namespace {
+  // helper method
+  // replace algorithm of all substring instances
+  // from http://stackoverflow.com/questions/2896600/how-to-replace-all-occurrences-of-a-character-in-string
+  void replaceAll(std::string& source, const std::string& from, const std::string& to)
+  {
+    std::string newString;
+    newString.reserve( source.length() );  // avoids a few memory allocations
+    
+    std::string::size_type lastPos = 0;
+    std::string::size_type findPos;
+    
+    while( std::string::npos != ( findPos = source.find( from, lastPos )))
+      {
+        newString.append( source, lastPos, findPos - lastPos );
+        newString += to;
+        lastPos = findPos + from.length();
+      }
+
+    // Care for the rest after last occurrence
+    newString += source.substr( lastPos );
+    
+    source.swap( newString );
+  }
+}
 
 using namespace GMAD;
 
@@ -37,6 +68,11 @@ Parser* Parser::Instance(std::string name)
 
 Parser::~Parser()
 {
+  beamline_list.erase();
+  // delete allocated lines
+  for (auto element : allocated_lines)
+    {delete element;}
+  
   instance = nullptr;
 }
 
@@ -46,6 +82,14 @@ Parser::Parser(std::string name)
 #ifdef BDSDEBUG
   std::cout << "gmad_parser> opening file" << std::endl;
 #endif
+  // replace all ~ symbols with home directory to allow for that
+  // note $HOME is not necessarily equivalent to ~
+  // see http://linux.die.net/man/3/getpwuid
+  std::string tilde("~");
+  std::string home(getpwuid(getuid())->pw_dir);
+
+  replaceAll(name,tilde,home);
+  
   FILE *f = fopen(name.c_str(),"r");
 
   if(f==nullptr) {
@@ -84,10 +128,6 @@ void Parser::ParseFile(FILE *f)
 #endif
   element_list.clear();
   tmp_list.clear();
-  std::map<std::string,Symtab*>::iterator it;
-  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
-    delete (*it).second;
-  }
   symtab_map.clear();
   for(auto it : var_list)
     {delete it;}
@@ -142,9 +182,16 @@ void Parser::Initialise()
   add_var("ns" ,1.e-9,reserved);
   add_var("ps" ,1.e-12,reserved);
 
+  add_var("Hz" ,1.0,  reserved);
+  add_var("kHz",1e+3, reserved);
+  add_var("MHz",1e+6, reserved);
+  add_var("GHz",1e+9, reserved);
+
   add_var("rad" ,1.0  ,reserved);
   add_var("mrad",1.e-3,reserved);
   add_var("urad",1.e-6,reserved);
+
+  add_var("degrees",std::atan(1)/45,reserved);
 
   add_var("clight",2.99792458e+8,reserved);
 
@@ -168,6 +215,7 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
   if (isLine)
     {
       e.lst = new std::list<Element>(tmp_list);
+      allocated_lines.push_back(e.lst);
       // clean list
       tmp_list.clear();
     }
@@ -286,7 +334,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 #ifdef BDSDEBUG
 		printf("inserted\n");
 #endif
-		
+
 		// delete the list pointer
 		beamline_list.erase(it--);
 		
@@ -297,8 +345,6 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 		  printf("keeping element...%s\n",(*it).name.c_str());
 #endif
 		  // copy properties
-		  //		  copy_properties(it,tmpit);
-		  // better use default assign operator:
 		  (*it) = (*tmpit);
 #ifdef BDSDEBUG 
 		  printf("done\n");
@@ -325,7 +371,6 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 	  exit(1);
 	}
     }// while
-  
   
   // leave only the desired range
   //
@@ -358,118 +403,98 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
     beamline_list.push_back(*itTunnel);
 }
 
-void Parser::add_element(Element& e, std::string before, int before_count, ElementType type)
+void Parser::set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius)
 {
-  // if before_count equal to -2 add to all elements regardless of name
+  // if count equal to -2 add to all elements regardless of name
   // typically used for output elements like samplers
   // skip first element and add one at the end
-  if (before_count==-2)
+  if (count==-2)
     {
-      std::string origName = e.name;
-      // flag to see if first element has already been skipped
-      bool skip = false;
       for (auto it=beamline_list.begin(); it!=beamline_list.end(); it++) {
 	// skip LINEs
 	if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)
 	  {continue;}
-	// skip first real element
-	if (skip == false) {
-	  skip=true;
-	  continue;
-	}
-	// skip all elements of type not equal to NONE
+	// if type not equal to NONE and elements have to match type 
 	if (type != ElementType::_NONE && type != (*it).type) {
 	  continue;
 	}
-	
-	// add element name to name
-	e.name += it->name;
-	beamline_list.insert(it,e);
-	// reset name
-	e.name = origName;
+
+	(*it).setSamplerInfo(samplerType,(*it).name,samplerRadius);
       }
-      // if add sampler to all also add to final element
-      if (type == ElementType::_NONE) {
-	// add final element
-	e.name += "end";
-	beamline_list.push_back(e);
-      }
-      // reset name (not really needed)
-      e.name = origName;
     }
-  // if before_count equal to -1 add to all element instances
-  else if (before_count==-1)
+  // if count equal to -1 add sampler to all element instances
+  else if (count==-1)
     {
-      auto itPair = beamline_list.equal_range(before);
+      auto itPair = beamline_list.equal_range(name);
       if (itPair.first==itPair.second) {
-	std::cerr<<"current beamline doesn't contain element "<< before << std::endl;
+	std::cerr<<"current beamline doesn't contain element "<< name << std::endl;
 	exit(1);
       }
-      for (auto it = itPair.first; it!= itPair.second; ++it) 
-	{beamline_list.insert(it->second,e);}
+      for (auto it = itPair.first; it!= itPair.second; ++it) {
+	// if sampler is attached to a marker, really attach it to the previous element with the name of marker
+	auto elementIt = (it->second);
+	std::string samplerName = elementIt->name;
+	if ((*elementIt).type == ElementType::_MARKER) {
+	  // need to find real element before
+	  // but careful not to go beyond first element also!
+	  while ((*elementIt).isSpecial()) {
+	    elementIt--;
+	    // have to break first before continue since in while loop
+	    if (elementIt==beamline_list.begin()) break;
+	  }
+	  
+	  if (elementIt==beamline_list.begin()) {
+	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+	    continue;
+	  }
+	}
+	(*elementIt).setSamplerInfo(samplerType,samplerName,samplerRadius);
+      }
     }
   else
     {
-      auto it = beamline_list.find(before,before_count);
+      auto it = beamline_list.find(name,count);
       if (it==beamline_list.end()) {
-	std::cerr<<"current beamline doesn't contain element "<<before<<" with number "<<before_count<<std::endl;
+	std::cerr<<"current beamline doesn't contain element "<<name<<" with number "<<count<<std::endl;
 	exit(1);
       }
-      beamline_list.insert(it,e);
+      // if sampler is attached to a marker, really attach it to the previous element with the name of marker
+      std::string samplerName = (*it).name;
+      if ((*it).type == ElementType::_MARKER) {
+	  // need to find real element before
+	  // but careful not to go beyond first element also!
+	while ((*it).isSpecial()) {
+	  it--;
+	  if (it==beamline_list.begin()) {
+	    std::cout << "WARNING: no element before marker " << name << ", no sampler added" << std::endl;
+	    return;
+	  }
+	}
+      }
+      (*it).setSamplerInfo(samplerType,samplerName,samplerRadius);
     }
 }
- 
-void Parser::add_sampler(std::string name, int before_count, ElementType type)
+
+void Parser::add_sampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting sampler before "<<name;
-  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<"inserting sampler "<<name;
+  if (count!=-1) std::cout<<"["<< count <<"]";
   std::cout<<std::endl;
 #endif
 
-  Element e;
-  e.type = ElementType::_SAMPLER;
-  e.name = "Sampler_" + name;
-  e.lst = nullptr;
-
-  // add element to beamline
-  add_element(e, name, before_count, type);
+  set_sampler(name,count,type,"plane");
 }
 
-void Parser::add_csampler(std::string name, int before_count, ElementType type)
+void Parser::add_csampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
-  std::cout<<"inserting csampler before "<<name;
-  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
+  std::cout<<"inserting csampler "<<name;
+  if (count!=-1) std::cout<<"["<<count<<"]";
   std::cout<<std::endl;
 #endif
 
-  Element e;
-  e.type = ElementType::_CSAMPLER;
-  e.l = params.l;
-  e.r = params.r;
-  e.name = "CSampler_" + name;
-  e.lst = nullptr;
-
-  // add element to beamline
-  add_element(e, name, before_count, type);
-}
-
-void Parser::add_dump(std::string name, int before_count, ElementType type)
-{
-#ifdef BDSDEBUG 
-  std::cout<<"inserting dump before "<<name;
-  if (before_count!=-1) std::cout<<"["<<before_count<<"]";
-  std::cout<<std::endl;
-#endif
-
-  Element e;
-  e.type = ElementType::_DUMP;
-  e.name = "Dump_" + name;
-  e.lst = nullptr;
-
-  // add element to beamline
-  add_element(e, name, before_count, type);
+  set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
 void Parser::add_region()
@@ -494,6 +519,18 @@ void Parser::add_tunnel()
   t.print();
 #endif
   tunnel_list.push_back(t);
+}
+
+void Parser::add_cavitymodel()
+{
+  // copy from global
+  CavityModel c(cavitymodel);
+  // reset cavitymodel
+  cavitymodel.clear();
+#ifdef BDSDEBUG 
+  c.print();
+#endif
+  cavitymodel_list.push_back(c);
 }
 
 void Parser::add_xsecbias()
@@ -568,43 +605,27 @@ int Parser::copy_element_to_params(std::string elementName)
   return type;
 }
 
-int Parser::add_func(std::string name, double (*func)(double))
+void Parser::add_func(std::string name, double (*func)(double))
 {
-  Symtab *sp=symcreate(name);
-  sp->funcptr=func;
-  return 0;
+  Symtab *sp=symtab_map.symcreate(name);
+  sp->Set(func);
 }
 
-int Parser::add_var(std::string name, double value, int is_reserved)
+void Parser::add_var(std::string name, double value, int is_reserved)
 {
-  Symtab *sp=symcreate(name);
-  sp->value=value;
-  sp->is_reserved = is_reserved;
-  return 0;
+  Symtab *sp=symtab_map.symcreate(name);
+  sp->Set(value,is_reserved);
 }
 
 Symtab * Parser::symcreate(std::string s)
 {
-  std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
-  if (it!=symtab_map.end()) {
-    std::cerr << "ERROR Variable " << s << " is already defined!" << std::endl;
-    exit(1);
-  }
-    
-  Symtab* sp = new Symtab(s);
-  std::pair<std::map<std::string,Symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
-  return (*(ret.first)).second;
-}
-  
-Symtab * Parser::symlook(std::string s)
-{
-  std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
-  if (it==symtab_map.end()) {
-    return nullptr;
-  } 
-  return (*it).second;
+  return symtab_map.symcreate(s);
 }
 
+Symtab * Parser::symlook(std::string s)
+{
+  return symtab_map.symlook(s);
+}
 void Parser::Store(double value)
 {
   tmparray.push_front(value);

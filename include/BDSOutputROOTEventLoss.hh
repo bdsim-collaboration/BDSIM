@@ -8,7 +8,7 @@
 class BDSOutputROOTEventLoss : public TObject {
 
 protected: 
-  int                n;
+  int                n = 0;
   std::vector<float> energy;
   std::vector<float> S;
   std::vector<float> weight;  

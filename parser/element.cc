@@ -42,8 +42,6 @@ void Element::PublishMembers()
   publish("k3",&Element::k3);
   publish("k4",&Element::k4);
   publish("angle",&Element::angle);
-  publish("phiAngleIn",&Element::phiAngleIn);
-  publish("phiAngleOut",&Element::phiAngleOut);
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper",&Element::aper1);
   alternativeNames["aper"] = "aper1";
@@ -67,8 +65,9 @@ void Element::PublishMembers()
   publish("ysize",&Element::ysize);
   publish("xsizeOut",&Element::xsizeOut);
   publish("ysizeOut",&Element::ysizeOut);
-  publish("r",&Element::r);
   publish("tilt",&Element::tilt);
+  publish("e1",&Element::e1);
+  publish("e2",&Element::e2);
   publish("offsetX",&Element::offsetX);
   publish("offsetY",&Element::offsetY);
   publish("x",&Element::xdir);
@@ -112,11 +111,17 @@ void Element::PublishMembers()
   publish("windowmaterial",&Element::windowmaterial);
   publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
+  publish("cavityModel",&Element::cavityModel);
   publish("state",&Element::state);
   publish("symbol",&Element::symbol);
   publish("bias",&Element::bias);
   publish("biasMaterial",&Element::biasMaterial);
   publish("biasVacuum",&Element::biasVacuum);
+  publish("samplerName",&Element::samplerName);
+  publish("samplerType",&Element::samplerType);
+  publish("r",&Element::samplerRadius); // historic
+  publish("samplerRadius",&Element::samplerRadius);
+  alternativeNames["samplerRadius"] ="r";
 
   publish("knl",&Element::knl);
   publish("ksl",&Element::ksl);
@@ -137,6 +142,20 @@ std::string Element::getPublishedName(std::string name)const
   return name;
 }
 
+bool Element::isSpecial()const {
+  bool isSpecial = false;
+
+  if (type == ElementType::_TRANSFORM3D ||
+      type == ElementType::_MARKER ||
+      type == ElementType::_LINE ||
+      type == ElementType::_REV_LINE ||
+      type == ElementType::_MATERIAL ||
+      type == ElementType::_ATOM)
+    {isSpecial = true;}
+
+  return isSpecial;
+}
+
 void Element::print(int & ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
@@ -152,8 +171,8 @@ void Element::print(int & ident)const{
   case ElementType::_SEXTUPOLE:
   case ElementType::_OCTUPOLE:
   case ElementType::_DECAPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g ",
-	   l,k0,k1,k2,k3,k4,angle,tilt);
+    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g,samplerType=%s ",
+	   l,k0,k1,k2,k3,k4,angle,tilt,samplerType.c_str());
     break;
     
   case ElementType::_SOLENOID:
@@ -176,10 +195,6 @@ void Element::print(int & ident)const{
     break;
     
   case ElementType::_SCREEN:
-    break;
-    
-  case ElementType::_CSAMPLER:
-    printf(" length=%.10g, radius=%.10g",l, r);
     break;
     
   case ElementType::_TRANSFORM3D:
@@ -242,10 +257,9 @@ void Element::flush() {
   ysize = 0;
   xsizeOut = 0;
   ysizeOut = 0;
-  r = 0;
   B = 0;
-  phiAngleIn = 0;
-  phiAngleOut = 0;
+  e1 = 0;
+  e2 = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
@@ -268,6 +282,10 @@ void Element::flush() {
   bias = ""; biasMaterial=""; biasVacuum="";
   biasMaterialList.clear();
   biasVacuumList.clear();
+
+  samplerName = "";
+  samplerType = "none"; // allowed "none", "plane", "cylinder"
+  samplerRadius = 0;
   
   precisionRegion = 0;
   region = "";
@@ -291,6 +309,7 @@ void Element::flush() {
   scintmaterial = "";
   airmaterial="";
   spec = "";
+  cavityModel = "";
 }
 
 double Element::property_lookup(std::string property_name)const{
@@ -324,7 +343,14 @@ void Element::set(const Parameters& params)
 	{
 	  std::string property = i.first;
 
-	  Published<Element>::set(this,(Element*)&params,property);
+	  // method can in theory throw runtime_error (shouldn't happen), catch and exit gracefully
+	  try {
+	    Published<Element>::set(this,(Element*)&params,property);
+	  }
+	  catch(std::runtime_error) {
+	    std::cerr << "Error: parser> unknown property \"" << property << "\" for element " << name  << std::endl;
+	    exit(1);
+	  }
 
 	  // split bias into tokens and add to both material and vacuum
 	  if (property == "bias")
@@ -351,4 +377,11 @@ void Element::set(const Parameters& params)
 	    }
 	}
     }
+}
+
+void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
+{
+  samplerType   = samplerTypeIn;
+  samplerName   = samplerNameIn;
+  samplerRadius = samplerRadiusIn;
 }

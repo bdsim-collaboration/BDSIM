@@ -6,10 +6,6 @@ option, beampipeRadius = 10 * cm,
         boxSize = 1.0 * m,
         tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
-        chordStepMinimum = 0.0000000001 * m,
-        deltaIntersection = 0.00000001 * m,
-				deltaChord = 0.001 * m,
-        lengthSafety = 0.00001 * m,
         thresholdCutCharged = 100 * KeV,
         thresholdCutPhotons = 100 * KeV;
 !        thresholdCutCharged = 1 * MeV,
@@ -17,19 +13,13 @@ option, beampipeRadius = 10 * cm,
 
 ! beamline definiton
 
-
 tester:element,l=2*m,geometry="mokka:examples/Mokka/General/trap_geomlist.sql";
-
-
-
 
 test:line=(tester);
 
-
 use,period=test;
 
-option, ngenerate=1, physicsList="standard",
-useEMHadronic=0, randomSeed=-1;
+option, ngenerate=1;
 
 beam,  particle="e-",
        energy=250 * GeV,

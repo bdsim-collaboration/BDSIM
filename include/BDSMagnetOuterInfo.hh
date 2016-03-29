@@ -1,5 +1,5 @@
-#ifndef BDSMAGNETOUTERINFO
-#define BDSMAGNETOUTERINFO
+#ifndef BDSMAGNETOUTERINFO_H
+#define BDSMAGNETOUTERINFO_H
 
 #include "BDSMagnetGeometryType.hh"
 #include "globals.hh"         // geant4 types / globals
@@ -15,18 +15,23 @@
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
 
-struct BDSMagnetOuterInfo {
+struct BDSMagnetOuterInfo
+{
   /// default constructor
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
   BDSMagnetOuterInfo(BDSMagnetGeometryType geometryTypeIn,
 		     G4double              outerDiameterIn,
-		     G4Material*           outerMaterialIn);
+		     G4Material*           outerMaterialIn,
+		     G4double              angleInIn = 0,
+		     G4double              angleOutIn = 0);
 		  
   BDSMagnetGeometryType geometryType;
-  G4double        outerDiameter;
-  G4Material*     outerMaterial;
+  G4double              outerDiameter;
+  G4Material*           outerMaterial;
+  G4double              angleIn;
+  G4double              angleOut;
 };
 
 #endif

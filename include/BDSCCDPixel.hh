@@ -1,5 +1,5 @@
-#ifndef BDSCCDPixel_h
-#define BDSCCDPixel_h 
+#ifndef BDSCCDPIXEL_H
+#define BDSCCDPIXEL_H
 
 #include "globals.hh"
 #include "G4LogicalVolume.hh"

@@ -1,5 +1,5 @@
-#ifndef BDSOutputROOTEvent_h
-#define BDSOutputROOTEvent_h
+#ifndef BDSOUTPUTROOTEVENT_H
+#define BDSOUTPUTROOTEVENT_H
 
 #include "globals.hh"
 
@@ -14,18 +14,13 @@
 #include "TFile.h"
 #include "TTree.h"
 
-
 /**
- * @brief ROOT Event output class
+ * @brief ROOT Event output class.
  * 
- * Write BDSIM output to ROOT files. Originally
- * part of BDSIM code base and recently developed and maintained
- * by Jochem Snuverink, Lawrence Deacon & Laurie Nevay
- * 
- * @author Stewart Boogert <stewart.boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
-class BDSOutputROOTEvent : public BDSOutputBase 
+class BDSOutputROOTEvent: public BDSOutputBase 
 {
 public:
   BDSOutputROOTEvent();

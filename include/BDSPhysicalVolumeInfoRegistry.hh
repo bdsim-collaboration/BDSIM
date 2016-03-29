@@ -1,5 +1,16 @@
-#ifndef BDSPHYSICALVOLUMEINFOREGISTRY
-#define BDSPHYSICALVOLUMEINFOREGISTRY
+#ifndef BDSPHYSICALVOLUMEINFOREGISTRY_H
+#define BDSPHYSICALVOLUMEINFOREGISTRY_H
+
+#include "globals.hh" // geant4 globals / types
+#include "G4VPhysicalVolume.hh"
+
+#include <iterator>
+#include <map>
+
+class BDSPhysicalVolumeInfo;
+
+typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::iterator BDSPVInfoIterator;
+typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::const_iterator BDSPVInfoIteratorConst;
 
 /**
  * @brief A registry of physical volume info instances that
@@ -19,17 +30,6 @@
  * 
  * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
  */
-
-#include "globals.hh" // geant4 globals / types
-#include "G4VPhysicalVolume.hh"
-
-#include <iterator>
-#include <map>
-
-class BDSPhysicalVolumeInfo;
-
-typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::iterator BDSPVInfoIterator;
-typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::const_iterator BDSPVInfoIteratorConst;
 
 class BDSPhysicalVolumeInfoRegistry
 {

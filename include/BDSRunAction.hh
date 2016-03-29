@@ -1,5 +1,5 @@
-#ifndef BDSRunAction_h
-#define BDSRunAction_h 1
+#ifndef BDSRUNACTION_H
+#define BDSRUNACTION_H
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
@@ -7,13 +7,16 @@
 
 class G4Run;
 
-class BDSRunAction : public G4UserRunAction
+/**
+ * @brief Control over the beginning and end or run actions.
+ */
+
+class BDSRunAction: public G4UserRunAction
 {
 public:
   BDSRunAction();
-  ~BDSRunAction();
+  virtual ~BDSRunAction();
   
-public:
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
 

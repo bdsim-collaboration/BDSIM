@@ -1,5 +1,5 @@
-#ifndef BDSMUSPOILERMAGFIELD
-#define BDSMUSPOILERMAGFIELD
+#ifndef BDSMUSPOILERMAGFIELD_H
+#define BDSMUSPOILERMAGFIELD_H
 
 #include "G4Types.hh"
 #include "G4MagneticField.hh"

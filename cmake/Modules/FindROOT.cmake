@@ -15,11 +15,13 @@ elseif(EXISTS "${ROOTSYS}/bin/root-config")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config")
 elseif(EXISTS "${ROOTSYS}/bin/root-config5")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config5")
+elseif(EXISTS "${ROOTSYS}/bin/root-config6")
+  set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config6")
 else()
   if($ENV{VERBOSE})
        message(STATUS "root-config not found in ROOTSYS ${ROOTSYS}, trying default PATHS")
   endif()
-  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5)
+  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5 root-config6)
 endif()
 
 if(NOT ROOT_CONFIG_EXECUTABLE OR
@@ -74,7 +76,8 @@ else()
      set(ROOT_LIBRARY_NAMES libCore.so libCint.so libRIO.so libNet.so libHist.so libGraf.so libGraf3d.so libGpad.so libTree.so libRint.so libPostscript.so libMatrix.so libPhysics.so libMathCore.so libThread.so)
      foreach (library_temp ${ROOT_LIBRARY_NAMES})
 	unset(ROOT_LIBRARY_temp)
-     	FIND_LIBRARY(ROOT_LIBRARY_temp NAMES ${library_temp} PATHS ${ROOT_LIBRARY_DIR})
+	unset(ROOT_LIBRARY_temp CACHE)
+     	find_library(ROOT_LIBRARY_temp NAMES ${library_temp} PATHS ${ROOT_LIBRARY_DIR})
 	# prevent trailing space character
         if (ROOT_LIBRARIES_GLOB)
            set(ROOT_LIBRARIES_GLOB "${ROOT_LIBRARIES_GLOB};${ROOT_LIBRARY_temp}")
@@ -103,8 +106,13 @@ else()
 endif()
 
 #include(CMakeMacroParseArguments)
-find_program(ROOTCINT_EXECUTABLE rootcint PATHS $ENV{ROOTSYS}/bin)
-find_program(GENREFLEX_EXECUTABLE genreflex PATHS $ENV{ROOTSYS}/bin)
+find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 PATHS ${ROOTSYS}/bin)
+if(NOT ROOTCINT_EXECUTABLE OR
+    NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
+  MESSAGE(FATAL_ERROR "rootcint not found")
+endif()
+
+find_program(GENREFLEX_EXECUTABLE genreflex PATHS ${ROOTSYS}/bin)
 find_package(GCCXML)
 # set as advanced variable
 mark_as_advanced(FORCE ROOTCINT_EXECUTABLE)

@@ -6,7 +6,8 @@ Work in progress.
 #include "BDSGlobalConstants.hh" 
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSMaterials.hh"
-#include "BDSSamplerBase.hh"
+#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSCCDCamera.hh"
@@ -77,7 +78,7 @@ void BDSAwakeScintillatorScreen::SetVisAttributes()
 void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4String tmp = "_cameraScoringPlane";
   _scoringPlaneName=name+tmp;
-  int nThisSampler= BDSSamplerBase::GetNSamplers() + 1;
+  int nThisSampler= BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
   G4String ident="_camera";
   _samplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName);
   _samplerName2 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_2");
@@ -93,8 +94,17 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY=0;
   G4double dispZ=-_cameraScreenDist/2.0;;
 
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX,dispY,dispZ),itsCameraScoringPlaneLog,_samplerName,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  G4int samplerNameID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName,
+									 nullptr);
+
+  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),
+		    G4ThreeVector(dispX,dispY,dispZ),
+		    itsCameraScoringPlaneLog,
+		    _samplerName,
+		    containerLogicalVolume,
+		    false,
+		    samplerNameID1,
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog2 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog2",0,0,0);
   itsCameraScoringPlaneLog2->SetVisAttributes(_visAttSampler);
@@ -103,19 +113,23 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY2=0;
   G4double dispZ2=cos(_screenAngle)*_cameraScreenDist-_cameraScreenDist/2.0;
 
-
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX2,dispY2,dispZ2),itsCameraScoringPlaneLog2,_samplerName2,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  G4int samplerNameID2 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName2,
+									 nullptr);
+  
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX2,dispY2,dispZ2),
+		    itsCameraScoringPlaneLog2,
+		    _samplerName2,
+		    containerLogicalVolume,
+		    false,
+		    samplerNameID2,
+		    checkOverlaps);
 
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  //SPM bdsOutput->nSamplers++;
-  BDSSamplerBase::AddExternalSampler(_samplerName+"_1");
-  BDSSamplerBase::AddExternalSampler(_samplerName2+"_1");
 
   _samplerName3 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_3");
   _samplerName4 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_4");
-
   
   //Build and place the volume...
   itsCameraScoringPlaneLog3 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog3",0,0,0);
@@ -125,8 +139,14 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY3=0;
   G4double dispZ3=-_cameraScreenDist/2.0;;
 
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX3,dispY3,dispZ3),itsCameraScoringPlaneLog3,_samplerName3,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),
+		    G4ThreeVector(dispX3,dispY3,dispZ3),
+		    itsCameraScoringPlaneLog3,
+		    _samplerName3,
+		    containerLogicalVolume,
+		    false,
+		    0,
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog4 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog4",0,0,0);
   itsCameraScoringPlaneLog4->SetVisAttributes(_visAttSampler);
@@ -135,18 +155,23 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY4=0;
   G4double dispZ4=cos(_screenAngle)*_cameraScreenDist/2.0-_cameraScreenDist/2.0;
 
-
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX4,dispY4,dispZ4),itsCameraScoringPlaneLog4,_samplerName4,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  G4int samplerNameID4 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName4,
+									 nullptr);
+  
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX4,dispY4,dispZ4),
+		    itsCameraScoringPlaneLog4,
+		    _samplerName4,
+		    containerLogicalVolume,
+		    false,
+		    samplerNameID4,
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  BDSSamplerBase::AddExternalSampler(_samplerName3+"_1");
-  BDSSamplerBase::AddExternalSampler(_samplerName4+"_1");
 
   _samplerName5 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_5");
   _samplerName6 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_6");
-
   
   //Build and place the volume...
   itsCameraScoringPlaneLog5 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog5",0,0,0);
@@ -154,10 +179,19 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
   G4double dispX5=_cameraScreenDist/4.0-_scoringPlaneThickness/2.0;
   G4double dispY5=0;
-  G4double dispZ5=-_cameraScreenDist/2.0;;
+  G4double dispZ5=-_cameraScreenDist/2.0;
 
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),G4ThreeVector(dispX5,dispY5,dispZ5),itsCameraScoringPlaneLog5,_samplerName5,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  G4int samplerNameID5 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName5,
+									 nullptr);
+
+  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),
+		    G4ThreeVector(dispX5,dispY5,dispZ5),
+		    itsCameraScoringPlaneLog5,
+		    _samplerName5,
+		    containerLogicalVolume,
+		    false,
+		    samplerNameID5,
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog6 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog6",0,0,0);
   itsCameraScoringPlaneLog6->SetVisAttributes(_visAttSampler);
@@ -166,14 +200,20 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   G4double dispY6=0;
   G4double dispZ6=cos(_screenAngle)*_cameraScreenDist/4.0-_cameraScreenDist/2.0;
 
+  G4int samplerNameID6 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName6,
+									 nullptr);
 
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX6,dispY6,dispZ6),itsCameraScoringPlaneLog6,_samplerName6,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX6,dispY6,dispZ6),
+		    itsCameraScoringPlaneLog6,
+		    _samplerName6,
+		    containerLogicalVolume,
+		    false,
+		    samplerNameID6,
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  BDSSamplerBase::AddExternalSampler(_samplerName5+"_1");
-  BDSSamplerBase::AddExternalSampler(_samplerName6+"_1");
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
@@ -208,7 +248,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   G4String tmp = "_screenScoringPlane";
   _screenScoringPlaneName=name+tmp;
-  int nThisSampler= BDSSamplerBase::GetNSamplers() + 1;
+  int nThisSampler= BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
   G4String ident="_screen";
   _screenSamplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_screenScoringPlaneName);
   _screenSamplerName2 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_screenScoringPlaneName+"_2");
@@ -223,21 +263,37 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   G4double dispY=0;
   G4double dispZ=2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
   G4double dispZ2=-2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
-		    containerLogicalVolume,false,0,checkOverlaps);
 
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
-		    containerLogicalVolume,false,0,checkOverlaps);
+  // Register with output - returns ID which is set as copy number and used by SamplerSD
+  // for output addressing.
+  G4int samplerID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName+"_1",
+								     nullptr);
+  G4int samplerID2 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName2+"_1",
+								     nullptr);
+  
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX,dispY,dispZ),
+		    itsScreenScoringPlaneLog,
+		    _screenSamplerName,
+		    containerLogicalVolume,
+		    false,
+		    samplerID1,
+		    checkOverlaps);
+
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX,dispY,dispZ2),
+		    itsScreenScoringPlaneLog2,
+		    _screenSamplerName2,
+		    containerLogicalVolume,
+		    false,
+		    samplerID2,
+		    checkOverlaps);
   
   //--
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  //SPM bdsOutput->nSamplers++;
-  //--
-  BDSSamplerBase::AddExternalSampler(_screenSamplerName+"_1");
-  //----------
-  BDSSamplerBase::AddExternalSampler(_screenSamplerName2+"_1");
+  
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();

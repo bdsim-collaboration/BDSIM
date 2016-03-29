@@ -1,9 +1,13 @@
-#ifndef __BDS_CUTS_AND_LIMITS_HH_
-#define __BDS_CUTS_AND_LIMITS_HH_
+#ifndef BDSCUTSANDLIMITS_H
+#define BDSCUTSANDLIMITS_H
 
 #include "G4VPhysicsConstructor.hh"
 
-class BDSCutsAndLimits: public G4VPhysicsConstructor{
+class G4StepLimiter;
+class G4UserSpecialCuts;
+
+class BDSCutsAndLimits: public G4VPhysicsConstructor
+{
 public:
   BDSCutsAndLimits();
   ~BDSCutsAndLimits();
@@ -11,5 +15,7 @@ public:
   void ConstructParticle();
 private:
   G4bool _wasActivated;
+  G4StepLimiter* stepLimiter;
+  G4UserSpecialCuts* specialCuts;
 };
 #endif

@@ -6,5 +6,4 @@ beam,  particle="proton",
        Xp0=0.0,
        Yp0=0.0;
 
-option,modularPhysicsListsOn=1;
 option,physicsList="em";

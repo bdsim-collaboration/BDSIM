@@ -1,5 +1,5 @@
-#ifndef BDSBEAMPIPEINFO
-#define BDSBEAMPIPEINFO
+#ifndef BDSBEAMPIPEINFO_H
+#define BDSBEAMPIPEINFO_H
 
 #include "BDSBeamPipeType.hh"
 #include "globals.hh"         // geant4 types / globals
@@ -19,8 +19,6 @@ class G4Material;
 class BDSBeamPipeInfo
 {
 public:
-
-
   /// extra constructor to assign all members at once
   BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 		  G4double        aper1In,
@@ -29,7 +27,9 @@ public:
 		  G4double        aper4In,
 		  G4Material*     vacuumMaterialIn,
 		  G4double        beamPipeThicknessIn,
-		  G4Material*     beamPipeMaterialIn);
+		  G4Material*     beamPipeMaterialIn,
+		  G4double        angleInIn = 0,
+		  G4double        angleOutIn = 0);
 
   /// Constructor with string descriptors of materials and type. Automatically determined
   /// using BDSBeamPipeType and BDSMaterials
@@ -40,7 +40,9 @@ public:
 		  G4double aper4In,
 		  G4String vacuumMaterialIn,
 		  G4double beamPipeThicknessIn,
-		  G4String beamPipeMaterialIn);
+		  G4String beamPipeMaterialIn,
+		  G4double angleInIn = 0,
+		  G4double angleOutIn = 0);
 
   /// Constructor that allows a default model to be used as backup. Checks on parameter
   /// validity are done after substituting unset values by values from defaultInfo.
@@ -52,7 +54,9 @@ public:
 		  G4double aper4In,
 		  G4String vacuumMaterialIn,
 		  G4double beamPipeThicknessIn,
-		  G4String beamPipeMaterialIn);
+		  G4String beamPipeMaterialIn,
+		  G4double angleInIn = 0,
+		  G4double angleOutIn = 0);
 
   /// Function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
@@ -67,6 +71,8 @@ public:
   G4Material*     vacuumMaterial;
   G4double        beamPipeThickness;
   G4Material*     beamPipeMaterial;
+  G4double        angleIn;
+  G4double        angleOut;
   ///@}
   
 private:

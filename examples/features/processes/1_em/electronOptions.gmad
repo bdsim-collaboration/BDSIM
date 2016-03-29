@@ -1,6 +1,6 @@
 ! standard options for runing bdsim
 
-rangecut = 1*m;
+rangecut = 1*mm;
 
 option, beampipeRadius = 10 * cm,
         outerDiameter = 1.9 * m,
@@ -11,5 +11,4 @@ option, beampipeRadius = 10 * cm,
 	prodCutPositrons = rangecut,
 	defaultRangeCut  = rangecut;
 
-option,modularPhysicsListsOn=1;
 option,physicsList="em";

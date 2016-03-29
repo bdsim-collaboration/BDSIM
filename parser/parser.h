@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "cavitymodel.h"
 #include "element.h"
 #include "fastlist.h"
 #include "elementtype.h"
@@ -13,6 +14,7 @@
 #include "parameters.h"
 #include "physicsbiasing.h"
 #include "region.h"
+#include "symbolmap.h"
 #include "tunnel.h"
 
 /// parser error message, defined in parser.y
@@ -68,13 +70,13 @@ namespace GMAD {
     /// Remove sublines from beamline, expand all into one LINE
     void expand_line(std::string name, std::string start, std::string end);
     /// insert a sampler into beamline_list
-    void add_sampler(std::string name, int before_count, ElementType type);
+    void add_sampler(std::string name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
-    void add_csampler(std::string name, int before_count, ElementType type);
-    /// insert a beam dumper into beamline_list
-    void add_dump(std::string name, int before_count, ElementType type);
+    void add_csampler(std::string name, int count, ElementType type);
     /// insert region
     void add_region();
+    /// insert cavity model
+    void add_cavitymodel();
     /// insert tunnel
     void add_tunnel();
     /// insert cross section bias
@@ -88,7 +90,6 @@ namespace GMAD {
 
     /// create new parser symbol
     Symtab * symcreate(std::string s);
-
     /// look up parser symbol
     Symtab * symlook(std::string s);
 
@@ -117,6 +118,9 @@ namespace GMAD {
     /// Set options value
     template <typename T>
       void SetOptionsValue(std::string property, T value);
+    /// Set options value
+    template <typename T>
+      void SetCavityModelValue(std::string property, T value);
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
     /// Add variable memory to variable list for memory management
@@ -140,12 +144,12 @@ namespace GMAD {
     // Private methods *
     // *****************
     
-    /// Add element to beamline
-    void add_element(Element& e, std::string before, int before_count, ElementType type);
+    /// Set sampler
+    void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
     /// Add function to parser
-    int add_func(std::string name, double (*func)(double));
+    void add_func(std::string name, double (*func)(double));
     /// Add reserved variable to parser
-    int add_var(std::string name, double value, int is_reserved = 0);
+    void add_var(std::string name, double value, int is_reserved = 0);
 
     // *****************
     // Private members *
@@ -158,6 +162,8 @@ namespace GMAD {
     std::list<double> tmparray;
     std::list<std::string> tmpstring;
     ///@}
+    /// vector of defined lines for memory management
+    std::vector<std::list<Element>*> allocated_lines;
 
     // protected implementation (for inheritance to BDSParser - hackish)
   protected:
@@ -171,6 +177,8 @@ namespace GMAD {
     Tunnel tunnel;
     /// PhysicsBiasing instance 
     PhysicsBiasing xsecbias;
+    /// RF Cavity model instance
+    CavityModel cavitymodel;
     
     /// List of all encountered elements
     FastList<Element> element_list;
@@ -190,11 +198,11 @@ namespace GMAD {
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects
     FastList<PhysicsBiasing> xsecbias_list;
-    /// List of regions
-    
+    /// List of parser defined rf cavity models
+    std::vector<CavityModel> cavitymodel_list;
     
     /// Parser symbol map
-    std::map<std::string, Symtab*> symtab_map;
+    SymbolMap symtab_map;
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
   };
@@ -223,6 +231,11 @@ namespace GMAD {
     void Parser::SetOptionsValue(std::string property, T value)
     {
       options.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetCavityModelValue(std::string property, T value)
+    {
+      cavitymodel.set_value(property, value);
     }
 }
 

@@ -23,7 +23,7 @@
 class BDSAcceleratorComponentRegistry
 {
 private:
-  /// Typedefs up first so we can declare public iterators.
+  // Typedefs up first so we can declare public iterators.
   /// Use a typedef for this specific map implementation so we can easily
   /// define iterators and internal member variables without risking getting
   /// the exact map declaration wrong. 
@@ -31,6 +31,9 @@ private:
 
   /// Registry is a map - note 'register' is a protected keyword.
   RegistryMap registry;
+
+  /// Vector of created components not in registry, for memory management
+  std::vector<BDSAcceleratorComponent*> allocatedComponents;
   
 public:
   /// Singleton accessor
@@ -41,11 +44,10 @@ public:
   ~BDSAcceleratorComponentRegistry();
 
   /// Register an instance of logical volume info with the address of the logical
-  /// volume, which is used as the key to access it. Optional isReadOutVolume flag
-  /// means volume info will be stored in a separate register that will be searched
-  /// first to minimise search time. If not found there, the main register will be
-  /// searched.
-  void RegisterComponent(BDSAcceleratorComponent* component);
+  /// volume, which is used as the key to access it. If isModified flag true
+  /// means volume info will be stored in a separate vector that is only for
+  /// memory management.
+  void RegisterComponent(BDSAcceleratorComponent* component, bool isModified);
 
   /// Check whether an accelerator component is already registered.
   G4bool IsRegistered(BDSAcceleratorComponent* component);
@@ -58,6 +60,7 @@ public:
   /// nullptr to BDSDetectorConstruction safely if an invalid component is requested.
   BDSAcceleratorComponent* GetComponent(G4String name);
 
+  /// @{ Iterator mechanics
   typedef RegistryMap::iterator       iterator;
   typedef RegistryMap::const_iterator const_iterator;
   iterator       begin()       {return registry.begin();}
@@ -65,6 +68,10 @@ public:
   const_iterator begin() const {return registry.begin();}
   const_iterator end()   const {return registry.end();}
   G4bool         empty() const {return registry.empty();}
+  /// @}
+
+  /// Size of registry
+  size_t size() const {return registry.size();}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry const &r);

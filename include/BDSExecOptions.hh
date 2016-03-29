@@ -1,17 +1,17 @@
-/* BDSIM code.    
-   Author: Stewart T. Boogert , Royal Holloway, Univ. of London.
-   Last modified 16.04.2013
-   Copyright (c) 2002 by BDSIM authors.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSExecOptions_h
-#define BDSExecOptions_h
+#ifndef BDSEXECOPTIONS_H
+#define BDSEXECOPTIONS_H
 
 #include <getopt.h>
 
 #include "G4String.hh"
 #include "G4Types.hh"
 #include "BDSOutputFormat.hh"
+
+/**
+ * @brief Executable option processing for BDSIM
+ *
+ * @author Stewart Boogert <stewart.boogert@rhul.ac.uk>
+ */
 
 class BDSExecOptions
 {
@@ -50,6 +50,7 @@ public:
   inline G4String        GetSeedStateFilename() const    {return seedStateFilename;}
   inline G4int           GetNGenerate() const            {return nGenerate;}
   inline G4bool          ExportGeometry() const          {return exportGeometry;}
+  inline G4bool          GeneratePrimariesOnly() const   {return generatePrimariesOnly;}
   inline G4bool          GetSurvey() const               {return survey;}
   inline G4String        GetSurveyFilename() const       {return surveyFilename;}
   inline G4String        GetExportType() const           {return exportType;}
@@ -114,6 +115,8 @@ private :
   G4String seedStateFilename; ///< The seed state filename
 
   G4int    nGenerate; ///< The number of primary events to simulate
+
+  G4bool   generatePrimariesOnly; ///< Whether to only generate primary coordinates and quit, or not.
 
   ///@{ Parameter for controlling geometry export
   G4bool   exportGeometry;
