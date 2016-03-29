@@ -195,6 +195,7 @@ foreach(header ${linkHeaders})
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
       COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict_rdict.pcm
       ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       )
     # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
     set_property(
