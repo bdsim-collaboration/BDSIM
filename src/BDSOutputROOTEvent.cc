@@ -86,18 +86,21 @@ void BDSOutputROOTEvent::Init()
   primary = new BDSOutputROOTEventSampler("Primary");
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
+  samplerTrees.push_back(primary);
 
   //
   // build sampler structures 
   for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
     {
       // create sampler structure
-      samplerMap[samplerName] = new BDSOutputROOTEventSampler(samplerName);
+      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
+      samplerMap[samplerName] = res;
+      samplerTrees.push_back(res);
 
       // set tree branches 
       theRootOutputTree->Branch((samplerName+".").c_str(),
 				"BDSOutputROOTEventSampler",
-				samplerMap[samplerName],
+				res,
 				4000,1);     
     }
 
@@ -133,9 +136,10 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
 #endif
 
   for(int i=0;i<hc->entries();i++) {
-    G4String samplerName = (*hc)[i]->GetName();
-    //    G4cout << (*hc)[i]->GetName() << G4endl;
-    samplerMap[samplerName]->Fill((*hc)[i]);
+    //    G4String samplerName = (*hc)[i]->GetName();
+    G4int    samplerId   = (*hc)[i]->GetSamplerID();
+    //    samplerMap[samplerName]->Fill((*hc)[i]);
+    samplerTrees[samplerId+1]->Fill((*hc)[i]);
   }  
 }
 
@@ -252,8 +256,8 @@ void BDSOutputROOTEvent::Write()
 void BDSOutputROOTEvent::Flush()
 {
   // loop over sampler map and clear vectors
-  for(auto i= samplerMap.begin() ; i != samplerMap.end() ;++i) {
-    i->second->Flush();
+  for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i) {
+    (*i)->Flush();
   }  
   eLoss->Flush();
   pFirstHit->Flush();

@@ -103,7 +103,8 @@ private:
   BDSOutputROOTEventSampler *primary;
 
   // sampler structures 
-  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
+  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler*> samplerTrees;
 
   // energy loss
   BDSOutputROOTEventLoss        *eLoss;
