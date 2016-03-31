@@ -4,6 +4,8 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
+#include "TMath.h"
+
 #include <cmath>
 #include <utility>
 
@@ -14,39 +16,45 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
   eFieldMax(eFieldMaxIn),
   cavityRadius(cavityRadiusIn),
   frequency(frequencyIn),
-  phase(phaseIn)
+  phase(phaseIn),
+  j0FirstZero(2.404825557695772768622)
 {;}
-
-G4bool BDSFieldEMRFCavity::DoesFieldChangeEnergy() const
-{
-  return true;
-}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
                                                                      const G4double t) const
 {
-  G4double radialDistance = pow(pow(position.x(),2) +  pow(position.y(),2), 0.5);
+  G4double r = pow(pow(position.x(),2) +  pow(position.y(),2), 0.5);
 
+  G4double rNormalised = (j0FirstZero / cavityRadius) * r;
+
+  G4double J0r = TMath::BesselJ0(rNormalised);
+  G4double J1r = TMath::BesselJ1(rNormalised);
+
+  /*
   //Calculating the magnitudes of the Fields:  
-  //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J0 arg between 0 and 3 
+  //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J0 arg between 0 and 3
+
+  G4double factor = (2.405*r) / (3*cavityRadius);
+  
   double J0r = 0.999999999
-    -2.249999879*pow((2.405*radialDistance/(3*cavityRadius)),2)
-    +1.265623060*pow((2.405*radialDistance/(3*cavityRadius)),4)
-    -0.316394552*pow((2.405*radialDistance/(3*cavityRadius)),6)
-    +0.044460948*pow((2.405*radialDistance/(3*cavityRadius)),8)
-    -0.003954479*pow((2.405*radialDistance/(3*cavityRadius)),10)
-    +0.000212950*pow((2.405*radialDistance/(3*cavityRadius)),12); 
+    -2.249999879*pow(factor,2)
+    +1.265623060*pow(factor,4)
+    -0.316394552*pow(factor,6)
+    +0.044460948*pow(factor,8)
+    -0.003954479*pow(factor,10)
+    +0.000212950*pow(factor,12);
+
 
   //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J1 arg between 0 and 3 
-  double J1r = (2.405*radialDistance/(3*cavityRadius))*
+  double J1r = factor*
     (0.500000000
-     -0.562499992*pow((2.405*radialDistance/(3*cavityRadius)),2)
-     +0.210937377*pow((2.405*radialDistance/(3*cavityRadius)),4)
-     -0.039550040*pow((2.405*radialDistance/(3*cavityRadius)),6)
-     +0.004447331*pow((2.405*radialDistance/(3*cavityRadius)),8)
-     -0.000330547*pow((2.405*radialDistance/(3*cavityRadius)),10)
-     +0.000015525*pow((2.405*radialDistance/(3*cavityRadius)),12));
-
+     -0.562499992*pow(factor,2)
+     +0.210937377*pow(factor,4)
+     -0.039550040*pow(factor,6)
+     +0.004447331*pow(factor,8)
+     -0.000330547*pow(factor,10)
+     +0.000015525*pow(factor,12));
+  */
   //|E|
   G4double eMagnitude = eFieldMax*J0r*cos(frequency*t);
   //|H|
