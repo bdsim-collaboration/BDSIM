@@ -40,7 +40,7 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4double globalPosition[3]) const
 {
   G4ThreeVector globalPositionV(globalPosition[0], globalPosition[1], globalPosition[2]);
-  return ConvertToLocal(globalPosition);
+  return ConvertToLocal(globalPositionV);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPosition) const
