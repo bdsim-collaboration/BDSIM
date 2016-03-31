@@ -1,3 +1,3 @@
 #ifdef __CINT__
-#pragma link C++ class BDSOutputROOTEventOptions;
+#pragma link C++ class BDSOutputROOTEventOptions+;
 #endif
