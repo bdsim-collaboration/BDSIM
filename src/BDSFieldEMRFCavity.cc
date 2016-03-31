@@ -27,6 +27,10 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
 
   G4double rNormalised = (j0FirstZero / cavityRadius) * r;
 
+  // In case a point outside the cavity is queried, ensure the bessel will return 0
+  if (rNormalised > j0FirstZero)
+    {rNormalised = j0FirstZero - 1e-6;}
+
   G4double J0r = TMath::BesselJ0(rNormalised);
   G4double J1r = TMath::BesselJ1(rNormalised);
 
