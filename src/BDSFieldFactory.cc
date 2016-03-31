@@ -237,7 +237,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
     default:
       break; // returns nullptr;
     }
-  return nullptr;
+  return integrator;
 }
 
 G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo& info,
