@@ -153,7 +153,10 @@ void BDSMagFieldXY::Prepare(G4VPhysicalVolume *referenceVolume)
   SetOriginRotation(*Rot);
   SetOriginTranslation(Trans);
 
-  G4double bx, by, bz, x, y;
+  G4double bx = 0;
+  G4double by = 0;
+  G4double bz = 0;
+  G4double x, y;
 
   for(int i=0; i<nX;i++)
     for(int j=0;j<nY;j++)
