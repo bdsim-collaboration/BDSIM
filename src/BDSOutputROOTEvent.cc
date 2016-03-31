@@ -7,7 +7,7 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSUtilities.hh"
 
-BDSOutputROOTEvent::BDSOutputROOTEvent() 
+BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -94,14 +94,14 @@ void BDSOutputROOTEvent::Init()
     {
       // create sampler structure
       BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
-      samplerMap[samplerName] = res;
+      //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
 
       // set tree branches 
       theRootOutputTree->Branch((samplerName+".").c_str(),
 				"BDSOutputROOTEventSampler",
 				res,
-				4000,1);     
+				4000,1);
     }
 
   //
@@ -136,9 +136,9 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
 #endif
 
   for(int i=0;i<hc->entries();i++) {
-    //    G4String samplerName = (*hc)[i]->GetName();
+    G4String samplerName = (*hc)[i]->GetName();
     G4int    samplerId   = (*hc)[i]->GetSamplerID();
-    //    samplerMap[samplerName]->Fill((*hc)[i]);
+    //samplerMap[samplerName]->Fill((*hc)[i]);
     samplerTrees[samplerId+1]->Fill((*hc)[i]);
   }  
 }
