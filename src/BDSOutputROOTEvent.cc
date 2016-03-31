@@ -109,7 +109,7 @@ void BDSOutputROOTEvent::Initialise()
   pLastHit  = new BDSOutputROOTEventHit();
   tHit      = new BDSOutputROOTEventHit();
   theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,4000,2);
+  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
 
