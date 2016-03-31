@@ -67,7 +67,7 @@ void BDSOutputROOTEvent::Init()
   // build options and write structure
   //
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions();
-  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,1);
+  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
 
