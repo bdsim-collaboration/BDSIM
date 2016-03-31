@@ -12,7 +12,6 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  Init(); 
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -21,8 +20,9 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
-void BDSOutputROOTEvent::Init() 
+void BDSOutputROOTEvent::Initialise() 
 {
+  outputFileNumber++;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
@@ -112,7 +112,7 @@ void BDSOutputROOTEvent::Init()
   pLastHit  = new BDSOutputROOTEventHit();
   tHit      = new BDSOutputROOTEventHit();
   theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,4000,2);
+  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
 
@@ -234,23 +234,29 @@ void BDSOutputROOTEvent::FillEvent()
   
 }
 
-/// write and close and open new file
-void BDSOutputROOTEvent::Commit() 
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-}
-
-/// write and close the file
 void BDSOutputROOTEvent::Write() 
 {
-  theRootOutputFile->Write();
-  theRootOutputFile->Close();
-  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+      theRootOutputFile->Write(nullptr,TObject::kOverwrite);
+    }
+}
+
+void BDSOutputROOTEvent::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ <<G4endl;
+#endif
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+      theRootOutputFile=nullptr;
+    }
 }
 
 void BDSOutputROOTEvent::Flush()

@@ -16,6 +16,9 @@ simple_testing(simpleMachineROOT "--file=sm.gmad" "")
 # root detailed output format
 set(TESTING_ARGS --output=rootdetailed)
 simple_testing(simpleMachineROOTDetailed "--file=sm.gmad" "")
+# root event output format
+set(TESTING_ARGS --output=rootevent)
+simple_testing(simpleMachineROOTEvent "--file=sm.gmad" "")
 # print help
 simple_testing(help "--help" "")
 # print list of materials

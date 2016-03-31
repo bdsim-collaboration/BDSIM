@@ -108,13 +108,13 @@ void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
     {output[i]->WriteHistogram(histogramIn);}
 }
 
-void BDSOutputVector::Commit()
+void BDSOutputVector::Initialise()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->Commit();}
+    {output[i]->Initialise();}
 }
 
 void BDSOutputVector::Write()
@@ -124,4 +124,13 @@ void BDSOutputVector::Write()
 #endif
   for (unsigned int i=0; i<output.size(); i++)
     {output[i]->Write();}
+}
+
+void BDSOutputVector::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->Close();}
 }
