@@ -3,6 +3,8 @@
 
 #include "BDSFieldE.hh"
 #include "BDSFieldEM.hh"
+#include "BDSFieldEMGlobal.hh"
+#include "BDSFieldEMRFCavity.hh"
 #include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
@@ -41,6 +43,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4EquationOfMotion.hh"
+#include "G4EqMagElectricField.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4UniformMagField.hh"
@@ -124,10 +127,30 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   return field;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& /*info*/)
+BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
 {
-  // TBC
-  return nullptr;
+  BDSFieldEM* field = nullptr;
+  switch (info.FieldType().underlying())
+    {
+    case BDSFieldType::rfcavity:
+      field = new BDSFieldEMRFCavity(0 /*field*/, info.CavityInfo()); break;
+    default:
+      break;
+    }
+
+  // Optionally provide local to global transform using curvilinear coordinate system.
+  BDSFieldEM* resultantField = field;
+  if (info.ProvideGlobal())
+    {resultantField = new BDSFieldEMGlobal(field);}
+
+  // Always this equation of motion for magnetic (only) fields
+  G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
+
+  // Create appropriate integrator
+  G4MagIntegratorStepper* integrator = CreateIntegratorEM(info, eqOfM);
+
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
+  return completeField;
 }
       
 BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
@@ -240,7 +263,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
   return integrator;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo& info,
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       info,
 							    G4EquationOfMotion* eqOfM)
 {
   G4MagIntegratorStepper* integrator = nullptr;
