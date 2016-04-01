@@ -1,3 +1,6 @@
+#ifndef BDSFIELDEMRFCAVITY_H
+#define BDSFIELDEMRFCAVITY_H
+
 #include "BDSFieldEM.hh"
 
 #include "globals.hh"
@@ -46,3 +49,5 @@ private:
   /// Precalculated normalised calulated radius w.r.t. bessel first 0.
   const G4double normalisedCavityRadius;
 };
+
+#endif
