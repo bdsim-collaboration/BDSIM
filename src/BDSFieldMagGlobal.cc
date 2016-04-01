@@ -17,7 +17,7 @@ BDSFieldMagGlobal::~BDSFieldMagGlobal()
 G4ThreeVector BDSFieldMagGlobal::GetField(const G4ThreeVector &position) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
-  G4ThreeVector localField    = field->GetFieldValueTransformed(localPosition);
+  G4ThreeVector localField    = field->GetFieldTransformed(localPosition);
   G4ThreeVector globalField   = ConvertAxisToGlobal(localField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local Position: " << localPosition << G4endl;

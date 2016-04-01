@@ -38,7 +38,7 @@ public:
 			     G4double* field) const;
   
   /// Get the field value after applying transform for local offset.
-  G4ThreeVector GetFieldValueTransformed(const G4ThreeVector& position) const;
+  G4ThreeVector GetFieldTransformed(const G4ThreeVector& position) const;
 
 private:
   /// Transform to apply for the field relative to the local coordinates of the geometry.
