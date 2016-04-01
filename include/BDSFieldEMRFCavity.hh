@@ -21,8 +21,8 @@ public:
   virtual ~BDSFieldEMRFCavity(){;}
   virtual G4bool DoesFieldChangeEnergy() const {return true;}
 
-  virtual std::pair<G4ThreeVector, G4ThreeVector> GetField(const G4ThreeVector &position,
-														   const G4double t) const;
+  virtual std::pair<G4ThreeVector, G4ThreeVector> GetField(const G4ThreeVector& position,
+							   const G4double&      t) const;
   
 private:
   /// Private constructor to force use of provided one.
