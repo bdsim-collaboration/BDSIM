@@ -2,8 +2,13 @@
 
 ClassImp(BDSOutputROOTEventOptions)
 
-BDSOutputROOTEventOptions::BDSOutputROOTEventOptions()
+BDSOutputROOTEventOptions::BDSOutputROOTEventOptions() : OptionsBase()
 {
+}
+
+BDSOutputROOTEventOptions::BDSOutputROOTEventOptions(GMAD::OptionsBase *ob) : OptionsBase(*ob)
+{
+
 }
 
 BDSOutputROOTEventOptions::~BDSOutputROOTEventOptions()

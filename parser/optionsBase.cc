@@ -180,3 +180,4 @@ void OptionsBase::print() const
   std::cout<<"Optical surface on    : " << turnOnOpticalSurface <<std::endl;
   std::cout<<"Birks saturation on   : " << turnOnBirksSaturation <<std::endl;
 }
+
