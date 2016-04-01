@@ -73,7 +73,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   //|E|
   G4double eMagnitude = eFieldMax*J0r*cos(frequency*t);
   //|H|
-  G4double hMagnitude = (eFieldMax/(pow(CLHEP::mu0/CLHEP::epsilon0,0.5))*J1r*sin(frequency*t));
+  G4double hMagnitude = (eFieldMax/(std::sqrt(CLHEP::mu0/CLHEP::epsilon0))*J1r*sin(frequency*t));
 
 
   //Angle of the position vector.
@@ -81,7 +81,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
   G4double angle = atan2(position.y(),position.x()) + CLHEP::pi*0.5; 
 
   //Normalization factor
-  G4double normalization = pow(tan(angle)*tan(angle)+1,0.5);
+  G4double normalization = std::sqrt(tan(angle)*tan(angle)+1);
 
   //Local B and E fields:
   G4ThreeVector LocalB = G4ThreeVector(tan(angle)*hMagnitude/normalization, //x
