@@ -21,7 +21,8 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::decapole,   "decapole"},
       {BDSFieldType::multipole,  "multipole"},
       {BDSFieldType::muonspoiler,"muonspoiler"},
-      {BDSFieldType::rfcavity,   "rfcavity"}
+      {BDSFieldType::rfcavity,   "rfcavity"},
+      {BDSFieldType::rf,         "rf"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
@@ -40,6 +41,7 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["multipole"]  = BDSFieldType::multipole;
   types["muonspoiler"]= BDSFieldType::muonspoiler;
   types["rfcavity"]   = BDSFieldType::rfcavity;
+  types["rf"]         = BDSFieldType::rf;
   
   bType.toLower();
 

@@ -17,7 +17,7 @@ struct fieldtypes_def
 	     solenoid, dipole, quadrupole, sextupole, octupole, decapole,
 	     multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
-	     rfcavity};
+	     rfcavity, rf};
 };
 
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
