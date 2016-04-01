@@ -9,6 +9,8 @@
 #include <cmath>
 #include <utility>
 
+const G4double BDSFieldEMRFCavity::j0FirstZero = 2.404825557695772768622;
+
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
 				       G4double cavityRadiusIn,
 				       G4double frequencyIn,
@@ -16,8 +18,7 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
   eFieldMax(eFieldMaxIn),
   cavityRadius(cavityRadiusIn),
   frequency(frequencyIn),
-  phase(phaseIn),
-  j0FirstZero(2.404825557695772768622)
+  phase(phaseIn)
 {;}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,

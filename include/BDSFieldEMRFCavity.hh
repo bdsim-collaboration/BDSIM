@@ -31,5 +31,5 @@ private:
   G4double phase;
 
   /// x coordinate of first 0 point for bessel J0.
-  const G4double j0FirstZero;
+  static const G4double j0FirstZero;
 };
