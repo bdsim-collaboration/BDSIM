@@ -5,12 +5,15 @@
 
 #include <vector>
 
+class BDSFieldEM;
 class BDSFieldInfo;
 
 class G4ChordFinder;
+class G4ElectroMagneticField;
 class G4EquationOfMotion;
 class G4FieldManager;
 class G4LogicalVolume;
+class G4MagInt_Driver;
 class G4MagIntegratorStepper;
 class G4MagneticField;
 class G4Field;
@@ -47,16 +50,24 @@ public:
 		  G4EquationOfMotion*     equationOfMotionIn,
 		  G4MagIntegratorStepper* magIntegratorStepperIn);
 
+  /// Alternative constructor for the special case of an electro-magnetic field
+  /// which doesn't follow the same hierarchy of classes as magnetic fields.
+  BDSFieldObjects(BDSFieldInfo*           infoIn,
+		  G4ElectroMagneticField* fieldIn,
+		  G4EquationOfMotion*     equationOfMotionIn,
+		  G4MagIntegratorStepper* magIntegratorStepperIn);
+
   /// Destructor deletes all objects apart from the magnetic field
   ~BDSFieldObjects();
 
   ///@{ Acessor.
-  inline BDSFieldInfo*           GetInfo()             const;
-  inline G4Field*                GetField()            const;
-  inline G4EquationOfMotion*     GetEquationOfMotion() const;
-  inline G4MagIntegratorStepper* GetIntegrator()       const;
-  inline G4ChordFinder*          GetChordFinder()      const;
-  inline G4FieldManager*         GetFieldManager()     const;
+  inline BDSFieldInfo*           GetInfo()             const {return info;}
+  inline G4Field*                GetField()            const {return field;}
+  inline G4EquationOfMotion*     GetEquationOfMotion() const {return equationOfMotion;}
+  inline G4MagIntegratorStepper* GetIntegrator()       const {return magIntegratorStepper;}
+  inline G4ChordFinder*          GetChordFinder()      const {return chordFinder;}
+  inline G4FieldManager*         GetFieldManager()     const {return fieldManager;}
+  inline G4MagInt_Driver*        GetMagIntDriver()     const {return magIntDriver;}
   ///@}
 
   /// Interface to easily attach to logical volume.
@@ -92,24 +103,9 @@ private:
 
   /// Field manager
   G4FieldManager* fieldManager;
+
+  /// EM field integrator driver (optional) - only for EM fields.
+  G4MagInt_Driver* magIntDriver;
 };
-
-inline BDSFieldInfo* BDSFieldObjects::GetInfo() const
-{return info;}
-
-inline G4Field* BDSFieldObjects::GetField() const
-{return field;}
-
-inline G4EquationOfMotion* BDSFieldObjects::GetEquationOfMotion() const
-{return equationOfMotion;}
-
-inline G4MagIntegratorStepper* BDSFieldObjects::GetIntegrator() const
-{return magIntegratorStepper;}
-
-inline G4ChordFinder* BDSFieldObjects::GetChordFinder() const
-{return chordFinder;}
-
-inline G4FieldManager* BDSFieldObjects::GetFieldManager() const
-{return fieldManager;}
 
 #endif

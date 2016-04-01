@@ -5,6 +5,7 @@
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagneticField.hh"
+#include "G4MagIntegratorDriver.hh" // for G4MagInt_Driver
 
 #include <vector>
 
@@ -24,8 +25,31 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   equationOfMotion(equationOfMotionIn),
   magIntegratorStepper(magIntegratorStepperIn),
   chordFinder(chordFinderIn),
-  fieldManager(fieldManagerIn)
+  fieldManager(fieldManagerIn),
+  magIntDriver(nullptr)
 {;}
+
+BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+				 G4ElectroMagneticField* fieldIn,
+				 G4EquationOfMotion*     equationOfMotionIn,
+				 G4MagIntegratorStepper* magIntegratorStepperIn):
+  info(infoIn),
+  field(fieldIn),
+  equationOfMotion(equationOfMotionIn),
+  magIntegratorStepper(magIntegratorStepperIn)
+{
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
+  magIntDriver = new G4MagInt_Driver(globals->GetChordStepMinimum(),
+				     magIntegratorStepper,
+				     magIntegratorStepper->GetNumberOfVariables());
+
+  chordFinder  = new G4ChordFinder(magIntDriver);
+  fieldManager = new G4FieldManager(field, chordFinder);
+  fieldManager->SetDeltaIntersection(globals->GetDeltaIntersection());
+  fieldManager->SetMinimumEpsilonStep(globals->GetMinimumEpsilonStep());
+  fieldManager->SetMaximumEpsilonStep(globals->GetMaximumEpsilonStep());
+  fieldManager->SetDeltaOneStep(globals->GetDeltaOneStep());
+}
 
 BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
 				 G4MagneticField*        fieldIn,
@@ -34,7 +58,8 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   info(infoIn),
   field(fieldIn),
   equationOfMotion(equationOfMotionIn),
-  magIntegratorStepper(magIntegratorStepperIn)
+  magIntegratorStepper(magIntegratorStepperIn),
+  magIntDriver(nullptr)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   
@@ -56,6 +81,7 @@ BDSFieldObjects::~BDSFieldObjects()
   delete chordFinder;
   delete magIntegratorStepper;
   delete equationOfMotion;
+  delete magIntDriver;
 }
 
 void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,
