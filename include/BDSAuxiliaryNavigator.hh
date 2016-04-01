@@ -3,6 +3,8 @@
 
 #include "G4Navigator.hh"
 
+#include <utility>
+
 class G4VPhysicalVolume;
 
 /**
@@ -70,10 +72,16 @@ public:
 				   const G4ThreeVector& globalAxis) const;
 
   /// Convert a vector (axis) from local to global coordinates. NOTE this
-  /// function must be used once the instance of this class has been initialised
+  /// function must only be used once the instance of this class has been initialised,
   /// setting up the transforms.  It is up to the developer to ensure this,
   /// otherwise you'll find a bad access.
   G4ThreeVector ConvertAxisToGlobal(const G4ThreeVector& localAxis) const;
+
+  /// Convert a vector (axis) from local to global coordinates. Note this function
+  /// must only be used once the instance of htis class has been initialised, setting
+  /// up the transforms. It is up to the developer to ensure this. This utility function
+  /// operates on two threevectors in a pair.
+  std::pair<G4ThreeVector, G4ThreeVector> ConvertAxisToGlobal(const std::pair<G4ThreeVector, G4ThreeVector>& localAxis) const;
 
   /// Convert a position in local coordinates to global coordinates. NOTE a
   /// similar caution to ConvertAxisToGlobal applies.

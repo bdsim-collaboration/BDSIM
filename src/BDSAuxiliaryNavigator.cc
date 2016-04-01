@@ -4,6 +4,8 @@
 #include "G4AffineTransform.hh"
 #include "G4Navigator.hh"
 
+#include <utility>
+
 class G4VPhysicalVolume;
 
 G4Navigator* BDSAuxiliaryNavigator::auxNavigator = new G4Navigator();
@@ -68,6 +70,14 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4ThreeVector& glo
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& localAxis) const
 {return localToGlobal->TransformAxis(localAxis);}
+
+std::pair<G4ThreeVector, G4ThreeVector> BDSAuxiliaryNavigator::ConvertAxisToGlobal(const std::pair<G4ThreeVector, G4ThreeVector>& localAxis) const
+{
+  G4ThreeVector globalB = localToGlobal->TransformAxis(localAxis.first);
+  G4ThreeVector globalE = localToGlobal->TransformAxis(localAxis.second);
+  return std::make_pair(globalB, globalE);
+}
+										 
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& localPosition) const
 {return localToGlobal->TransformPoint(localPosition);}
