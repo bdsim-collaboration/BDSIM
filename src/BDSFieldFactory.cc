@@ -133,7 +133,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rfcavity:
-      field = new BDSFieldEMRFCavity(0 /*field*/, info.CavityInfo()); break;
+      field = new BDSFieldEMRFCavity(info.CavityInfo()); break;
     default:
       break;
     }

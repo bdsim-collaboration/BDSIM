@@ -40,6 +40,9 @@ public:
   std::pair<G4ThreeVector,G4ThreeVector> GetFieldTransformed(const G4ThreeVector& position,
 							     const G4double&      t) const;
 
+  /// Required overload by Geant4.
+  virtual G4bool DoesFieldChangeEnergy() const {return true;}
+  
 private:
   /// Transform to apply for the field relative to the local coordinates of the geometry.
   G4Transform3D transform;

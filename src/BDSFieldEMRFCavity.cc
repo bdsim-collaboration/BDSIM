@@ -12,20 +12,11 @@
 
 const G4double BDSFieldEMRFCavity::j0FirstZero = 2.404825557695772768622;
 
-BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
-				       G4double cavityRadiusIn,
-				       G4double frequencyIn,
-				       G4double phaseIn):
-  eFieldMax(eFieldMaxIn),
-  cavityRadius(cavityRadiusIn),
-  frequency(frequencyIn),
-  phase(phaseIn)
-{;}
 
-BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
-				       BDSCavityInfo const* info):
-  eFieldMax(eFieldMaxIn)
+BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSCavityInfo const* info):
+  normalisedCavityRadius(j0FirstZero/info->equatorRadius)
 {
+  eFieldMax    = info->eField;
   cavityRadius = info->equatorRadius;
   frequency    = info->frequency;
   phase        = info->phase;
@@ -36,7 +27,7 @@ std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4Thr
 {
   G4double r = std::sqrt(pow(position.x(),2) +  pow(position.y(),2));
 
-  G4double rNormalised = (j0FirstZero / cavityRadius) * r;
+  G4double rNormalised = normalisedCavityRadius * r;
 
   // In case a point outside the cavity is queried, ensure the bessel will return 0
   if (rNormalised > j0FirstZero)

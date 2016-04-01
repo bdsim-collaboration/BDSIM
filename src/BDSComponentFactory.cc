@@ -1230,7 +1230,8 @@ void BDSComponentFactory::PrepareCavityModels()
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
 				    nullptr, //construct without material as stored in element
 				    nullptr,
-				    model.frequency, // TBC - units
+				    model.eField*CLHEP::volt / CLHEP::m,
+				    model.frequency*CLHEP::hertz,
 				    model.phase,
 				    model.irisRadius*CLHEP::m,
 				    model.thickness*CLHEP::m,

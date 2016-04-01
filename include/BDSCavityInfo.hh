@@ -26,6 +26,7 @@ public:
   BDSCavityInfo(BDSCavityType cavityTypeIn,
 		G4Material*   materialIn,
 		G4Material*   vacuumMaterialIn,
+		G4double      eFieldIn,
 		G4double      frequencyIn,
 		G4double      phaseIn,
 		G4double      irisRadiusIn,
@@ -47,6 +48,9 @@ public:
 
   /// Vacuum Material
   G4Material* vacuumMaterial;
+
+  /// Peak Electric Field
+  G4double eField;
 
   /// Frequency in MHz
   G4double frequency;
