@@ -163,7 +163,9 @@ void Parser::Initialise()
   add_var("KeV",1e-6,reserved); // for compatibility
   add_var("eV" ,1e-9,reserved);
 
-  add_var("MV",1.0,reserved);
+  add_var("V" ,1.0, reserved);
+  add_var("kV",1e+3,reserved);
+  add_var("MV",1e+6,reserved);
 
   add_var("Tesla",1.0,reserved);
 
