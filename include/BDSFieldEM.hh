@@ -4,6 +4,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ElectroMagneticField.hh"
 #include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 
 #include <utility>
 
@@ -20,12 +21,13 @@ class BDSFieldEM: public G4ElectroMagneticField
 {
 public:
   BDSFieldEM();
+  BDSFieldEM(G4Transform3D transformIn);
   virtual ~BDSFieldEM(){;}
 
   /// Get the field - local coordinates. First G4ThreeVector is B field, second is E Field
   /// x,y,z respectively.
-  virtual std::pair<G4ThreeVector,G4ThreeVector> GetField(const G4ThreeVector &position,
-                                                          const G4double t) const = 0;
+  virtual std::pair<G4ThreeVector,G4ThreeVector> GetField(const G4ThreeVector& position,
+							       const G4double& t) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4ElectroMagneticField
   /// inheritance and allow a BDSFieldEM instance to be passed around in the field
@@ -33,7 +35,14 @@ public:
   /// in local coordinates.
   virtual void GetFieldValue(const G4double point[4],
 			     G4double* field) const;
-  
+
+  /// Get the field value after applying transform for local offset.
+  std::pair<G4ThreeVector,G4ThreeVector> GetFieldTransformed(const G4ThreeVector& position,
+							     const G4double&      t) const;
+
+private:
+  /// Transform to apply for the field relative to the local coordinates of the geometry.
+  G4Transform3D transform;
 };
 
 #endif
