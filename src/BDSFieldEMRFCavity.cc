@@ -1,3 +1,4 @@
+#include "BDSCavityInfo.hh"
 #include "BDSFieldEMRFCavity.hh"
 
 #include "CLHEP/Units/PhysicalConstants.h" 
@@ -21,10 +22,19 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
   phase(phaseIn)
 {;}
 
-std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
-                                                                     const G4double t) const
+BDSFieldEMRFCavity::BDSFieldEMRFCavity(G4double eFieldMaxIn,
+				       BDSCavityInfo const* info):
+  eFieldMax(eFieldMaxIn)
 {
-  G4double r = pow(pow(position.x(),2) +  pow(position.y(),2), 0.5);
+  cavityRadius = info->equatorRadius;
+  frequency    = info->frequency;
+  phase        = info->phase;
+}
+
+std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
+                                                                     const G4double& t) const
+{
+  G4double r = std::sqrt(pow(position.x(),2) +  pow(position.y(),2));
 
   G4double rNormalised = (j0FirstZero / cavityRadius) * r;
 

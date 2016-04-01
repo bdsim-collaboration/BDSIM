@@ -5,6 +5,8 @@
 
 #include <utility>
 
+class BDSCavityInfo;
+
 class BDSFieldEMRFCavity: public BDSFieldEM
 {
 public:
@@ -12,6 +14,10 @@ public:
 		     G4double cavityRadius,
 		     G4double frequency,
 		     G4double phase);
+
+  BDSFieldEMRFCavity(G4double EFieldMax,
+		     BDSCavityInfo const* info);
+  
   virtual ~BDSFieldEMRFCavity(){;}
   virtual G4bool DoesFieldChangeEnergy() const {return true;}
 
