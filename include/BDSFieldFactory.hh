@@ -57,6 +57,9 @@ private:
   /// Create a general EM field.
   BDSFieldObjects* CreateFieldEM(BDSFieldInfo& info);
 
+  /// Create an electric field.
+  BDSFieldObjects* CreateFieldE(BDSFieldInfo& info);
+
   /// Create a purely magnetic integrator. As it's purely magnetic, this
   /// requires a G4Mag_EqRhs* equation of motion instance.
   G4MagIntegratorStepper* CreateIntegratorMag(BDSFieldInfo& info,
