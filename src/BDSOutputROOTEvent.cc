@@ -1,5 +1,7 @@
 #include "BDSOutputROOTEvent.hh"
 
+#include "BDSParser.hh"
+#include "parser/options.h"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
@@ -66,7 +68,12 @@ void BDSOutputROOTEvent::Initialise()
   //
   // build options and write structure
   //
-  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions();
+  // get options
+  const GMAD::Options o = BDSParser::Instance()->GetOptions();
+  const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
+  // get exec options
+  const BDSExecOptions *eo = BDSExecOptions::Instance();
+  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob,eo);
   theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();

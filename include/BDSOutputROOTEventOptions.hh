@@ -20,7 +20,7 @@ protected :
 public :
 
   BDSOutputROOTEventOptions();
-  BDSOutputROOTEventOptions(GMAD::OptionsBase *, BDSExecOptions *);
+  BDSOutputROOTEventOptions(const GMAD::OptionsBase *, const BDSExecOptions *);
   virtual ~BDSOutputROOTEventOptions();
 #ifndef __MAKECINT__   
   void Fill();
