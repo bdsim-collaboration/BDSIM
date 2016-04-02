@@ -10,15 +10,17 @@
 #include "BDSGlobalConstants.hh"
 #endif
 
+#include "BDSExecOptions.hh"
+
 #include "parser/optionsBase.h"
 
-class BDSOutputROOTEventOptions : public TObject, GMAD::OptionsBase {
+class BDSOutputROOTEventOptions : public TObject, GMAD::OptionsBase, BDSExecOptions {
 protected :
   
 public :
 
   BDSOutputROOTEventOptions();
-  BDSOutputROOTEventOptions(GMAD::OptionsBase *);
+  BDSOutputROOTEventOptions(GMAD::OptionsBase *, BDSExecOptions *);
   virtual ~BDSOutputROOTEventOptions();
 #ifndef __MAKECINT__   
   void Fill();
