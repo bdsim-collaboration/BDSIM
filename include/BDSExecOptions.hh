@@ -1,8 +1,11 @@
 #ifndef BDSEXECOPTIONS_H
 #define BDSEXECOPTIONS_H
 
+#include <string>
+
 #include <getopt.h>
 
+#include "TROOT.h"
 #include "G4String.hh"
 #include "G4Types.hh"
 #include "BDSOutputFormat.hh"
@@ -13,16 +16,18 @@
  * @author Stewart Boogert <stewart.boogert@rhul.ac.uk>
  */
 
+
 class BDSExecOptions
 {
 public: 
+  BDSExecOptions();
 
   static const BDSExecOptions* Instance();
   static const BDSExecOptions* Instance(int argc, char **argv);
   ~BDSExecOptions();
 
-  void Usage()const;
-  void Print()const;
+  void Usage() const;
+  void Print() const;
 
   inline G4String        GetInputFilename() const        {return inputFilename;}
   inline G4String        GetVisMacroFilename() const     {return visMacroFilename;}
@@ -61,7 +66,6 @@ protected :
   static BDSExecOptions* _instance;
   
 private :
-  BDSExecOptions();
 
   /** Parse the command line options
    * @param[in] argc command line input number of variables
@@ -71,19 +75,19 @@ private :
   /// Helper method to set the BDSIMPath correctly
   G4String GetPath(G4String filename);
 
-  G4String        inputFilename;    ///< input filename
-  G4String        visMacroFilename; ///< visualisation filename
+  std::string     inputFilename;    ///< input filename
+  std::string     visMacroFilename; ///< visualisation filename
   G4bool          visDebug;         ///< flag for visualisation debug
   
   ///@{ Parameter for output format
-  G4String        outputFilename;
+  std::string     outputFilename;
   G4bool          outputFilenameSet;
   BDSOutputFormat outputFormat;
   ///@}
   
   ///@{ Parameter for survey
   G4bool          survey;
-  G4String        surveyFilename;
+  std::string     surveyFilename;
   ///@}
   
   ///@{ Parameter for gflash shower parameterisation
@@ -110,9 +114,9 @@ private :
   G4int  seed;     ///< The seed value for the random number generator
   G4bool setSeed;  ///< If the seed was set by command line - override if specified in options
   /// string that points to path where files are searched; based on environment variable or else input filename
-  G4String itsBDSIMPATH;
+  std::string itsBDSIMPATH;
   G4bool   setSeedState;      ///< If seed state is specifed - use the state saved in it
-  G4String seedStateFilename; ///< The seed state filename
+  std::string seedStateFilename; ///< The seed state filename
 
   G4int    nGenerate; ///< The number of primary events to simulate
 
@@ -120,9 +124,11 @@ private :
 
   ///@{ Parameter for controlling geometry export
   G4bool   exportGeometry;
-  G4String exportType;
-  G4String exportFileName;
+  std::string exportType;
+  std::string exportFileName;
   ///@}
+
+  ClassDef(BDSExecOptions,1);
 };
 
 #endif
