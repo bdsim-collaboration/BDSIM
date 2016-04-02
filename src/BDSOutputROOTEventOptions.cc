@@ -2,11 +2,11 @@
 
 ClassImp(BDSOutputROOTEventOptions)
 
-BDSOutputROOTEventOptions::BDSOutputROOTEventOptions() : OptionsBase()
+BDSOutputROOTEventOptions::BDSOutputROOTEventOptions() : OptionsBase(), BDSExecOptions()
 {
 }
 
-BDSOutputROOTEventOptions::BDSOutputROOTEventOptions(GMAD::OptionsBase *ob) : OptionsBase(*ob)
+BDSOutputROOTEventOptions::BDSOutputROOTEventOptions(GMAD::OptionsBase *ob, BDSExecOptions *eo) : OptionsBase(*ob), BDSExecOptions(*eo)
 {
 
 }
