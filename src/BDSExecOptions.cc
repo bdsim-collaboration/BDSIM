@@ -12,14 +12,14 @@
 #include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
-#incldue "parser/options.h"
+#include "parser/options.h"
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv):
   options(GMAD::Options())
 {
   Parse(argc, argv);
   /// after parsing the absolute path can be reconstructed  
-  itsBDSIMPATH = GetPath(inputFilename);
+  options.set_value("bdsimPath", GetPath(options.inputFileName));
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
 #endif
@@ -96,7 +96,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("verboseEvent", true);
 	}
       else if( !strcmp(optionName , "verbose_event") )
-	{options.set_value("verboseEvent", true;}
+	{options.set_value("verboseEvent", true);}
       else if( !strcmp(optionName , "verbose_event_num") )
 	{
 	  G4int result = -1;
@@ -107,7 +107,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{
 	  G4int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseRunLevel", result)
+	  options.set_value("verboseRunLevel", result);
 	}
       else if( !strcmp(optionName , "verbose_G4event") )
 	{
@@ -130,10 +130,10 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName , "output") )
 	{options.set_value("outputFormat", optarg);}
       else if( !strcmp(optionName , "outfile") )
-	{options.set_value("outputFilename", optarg);}
+	{options.set_value("outputFileName", optarg);}
       else if( !strcmp(optionName , "survey") )
 	{
-	  options.set_value("surveyFilename", optarg);
+	  options.set_value("surveyFileName", optarg);
 	  options.set_value("survey",         true);
 	}
       else if( !strcmp(optionName , "file") )
@@ -141,13 +141,21 @@ void BDSExecOptions::Parse(int argc, char **argv)
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
-	{options.set_value("visMacroFilename", optarg);}
+	{options.set_value("visMacroFileName", optarg);}
       else if( !strcmp(optionName , "gflash") )
 	{options.set_value("gflash", true);}
       else if( !strcmp(optionName , "gflashemax") )
-	{conversion = BDS::IsNumber(optarg,gflashemax);}
+	{
+	  G4double result = 1e5;
+	  conversion = BDS::IsNumber(optarg, result);
+	  options.set_value("gflashemax", result);
+	}
       else if( !strcmp(optionName , "gflashemin") )
-	{conversion = BDS::IsNumber(optarg,gflashemin);}
+	{
+	  G4double result = 0.1;
+	  conversion = BDS::IsNumber(optarg, result);
+	  options.set_value("gflashemin", result);
+	}
       else if( !strcmp(optionName, "materials") )
 	{
 	  BDSMaterials::ListMaterials();
@@ -262,7 +270,7 @@ void BDSExecOptions::Usage() const
 
 void BDSExecOptions::Print() const
 {
-  G4cout << __METHOD_NAME__ << std::setw(23) << " inputFilename: "       << std::setw(15) << options.inputFilename       << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " inputFileName: "       << std::setw(15) << options.inputFileName       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << options.batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << options.circular            << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << options.exportFileName      << G4endl;
@@ -271,12 +279,12 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << options.gflashemin          << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << options.gflashemax          << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " ngnerate: "            << std::setw(15) << options.nGenerate           << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFilename: "      << std::setw(15) << options.outputFilename      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << options.seed                << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFilename: "   << std::setw(15) << options.seedStateFilename   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFileName: "   << std::setw(15) << options.seedStateFileName   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << options.survey              << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFilename: "      << std::setw(15) << options.surveyFilename      << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFileName: "      << std::setw(15) << options.surveyFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << options.verbose             << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEvent: "        << std::setw(15) << options.verboseEvent        << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseStep: "         << std::setw(15) << options.verboseStep         << G4endl;  
@@ -284,7 +292,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseEventLevel: "   << std::setw(15) << options.verboseEventLevel   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseTrackingLevel: "<< std::setw(15) << options.verboseTrackingLevel<< G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << options.verboseSteppingLevel<< G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFilename: "    << std::setw(15) << options.visMacroFilename    << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFileName: "    << std::setw(15) << options.visMacroFileName    << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << options.visDebug            << G4endl;
   
   return;

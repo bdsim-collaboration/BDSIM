@@ -22,7 +22,7 @@ class BDSExecOptions
 public: 
   BDSExecOptions(int argc, char **argv);
 
-  ~BDSExecOptions();
+  ~BDSExecOptions(){;}
 
   /// Print out the available executable commands.
   void Usage() const;
@@ -34,7 +34,7 @@ public:
   const GMAD::Options& Options() const {return options;}
 
   /// Acessor for convenience for the one thing that's needed before the parser options.
-  inline G4String GetInputFileName() const {return options.inputFileName;}
+  inline G4String InputFileName() const {return options.inputFileName;}
   
   /*
   
