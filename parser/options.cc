@@ -4,13 +4,42 @@
 
 using namespace GMAD;
 
-Options::Options() : OptionsBase()
+Options::Options()
 {
   PublishMembers();
 }
 
 void Options::PublishMembers()
 {
+  // executable options first
+  publish("inputFileName",         &Options::inputFileName);
+  publish("visMacroFileName",      &Options::visMacroFileName);
+  publish("visDebug",              &Options::visDebug);
+  publish("outputFileName",        &Options::outputFileName);
+  publish("outputFormat",          &Options::outputFormat);
+  publish("survey",                &Options::survey);
+  publish("surveyFileName",        &Options::surveyFileName);
+  publish("gflash",                &Options::gflash);
+  publish("gflashemax",            &Options::gflashemax);
+  publish("gflashemin",            &Options::gflashemin);
+  publish("verbose",               &Options::verbose);
+  publish("verboseEvent",          &Options::verboseEvent);
+  publish("verboseStep",           &Options::verboseStep);
+  publish("verboseEventNumber",    &Options::verboseEventNumber);
+  publish("verboseTrackingLevel",  &Options::verboseTrackingLevel);
+  publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
+  publish("circular",              &Options::circular);
+  publish("seed",                  &Options::seed);
+  publish("setSeed",               &Options::setSeed);
+  publish("setSeedState",          &Options::setSeedState);
+  publish("seedStateFileName",     &Options::seedStateFileName);
+  publish("bdsimPath",             &Options::bdsimPath);
+  publish("nGenerate",             &Options::nGenerate);
+  publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
+  publish("exportGeometry",        &Options::exportGeometry);
+  publish("exportType",            &Options::exportType);
+  publish("exportFileName",        &Options::exportFileName);
+  
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);
   publish("modularPhysicsListsOn",&Options::modularPhysicsListsOn);
