@@ -1,10 +1,3 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
-#include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 

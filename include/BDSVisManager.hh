@@ -6,11 +6,10 @@
 class G4VisManager;
 
 /**
- * @brief the BDS Vis Manager
+ * @brief The BDS Visualisation Manager
  * 
  * This class manages the visualisation.
  * Chosen not to inherit from G4Manager, but instead a wrapper around it.
- *
  */
 
 class BDSVisManager
