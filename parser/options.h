@@ -56,6 +56,9 @@ namespace GMAD
 	    }
 	}
     }
+
+    /// Whether a parameter has been set using the set_value method or not.
+    bool HasBeenSet(std::string name) const;
     
   private:
     /// publish members so these can be looked up from parser

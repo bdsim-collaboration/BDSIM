@@ -1,5 +1,6 @@
 #include "options.h"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace GMAD;
@@ -7,6 +8,15 @@ using namespace GMAD;
 Options::Options()
 {
   PublishMembers();
+}
+
+bool Options::HasBeenSet(std::string name) const
+{
+  auto result = std::find(setKeys.begin(), setKeys.end(), name);
+  if (result == setKeys.end())
+    {return false;}
+  else
+    {return true;}
 }
 
 void Options::PublishMembers()
@@ -30,7 +40,6 @@ void Options::PublishMembers()
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
-  publish("setSeed",               &Options::setSeed);
   publish("setSeedState",          &Options::setSeedState);
   publish("seedStateFileName",     &Options::seedStateFileName);
   publish("bdsimPath",             &Options::bdsimPath);
