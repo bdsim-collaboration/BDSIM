@@ -1,5 +1,7 @@
 #include "BDSParser.hh"
 
+#include <string>
+
 BDSParser* BDSParser::instance = nullptr;
 
 BDSParser* BDSParser::Instance()
@@ -29,37 +31,7 @@ BDSParser::~BDSParser()
 BDSParser::BDSParser(std::string name):GMAD::Parser(name)
 {}
 
-const GMAD::Options& BDSParser::GetOptions()const
+void BDSParser::AmalgamateOptions(GMAD::Options& optionsIn)
 {
-  return options;
-}
-
-const GMAD::FastList<GMAD::Element>& BDSParser::GetBeamline()const
-{
-  return beamline_list;
-}
-
-const GMAD::FastList<GMAD::PhysicsBiasing>& BDSParser::GetBiasing()const
-{
-  return xsecbias_list;
-}
-
-const std::list<GMAD::Element>& BDSParser::GetMaterials()const
-{
-  return material_list;
-}
-
-const std::list<GMAD::Element>& BDSParser::GetAtoms()const
-{
-  return atom_list;
-}
-
-const std::vector<GMAD::Region>& BDSParser::GetRegions()const
-{
-  return region_list;
-}
-
-const std::vector<GMAD::CavityModel>& BDSParser::GetCavityModels()const
-{
-  return cavitymodel_list;
+  options.Amalgamate(optionsIn, true);
 }
