@@ -2,13 +2,15 @@
 #define BDSGLOBALCONSTANTS_H 
 
 #include "BDSMagnetGeometryType.hh"
+#include "BDSOutputFormat.hh"
 #include "BDSParticle.hh"
 #include "BDSTunnelInfo.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-#include "G4String.hh"
 #include "G4AffineTransform.hh"
+
+#include "parser/options.h"
 
 #include <map>
 
@@ -22,31 +24,62 @@ class G4VPhysicalVolume;
 
 class BDSBeamPipeInfo;
 
-namespace GMAD
-{
-  class Options;
-}
-
 /**
  * @brief A class that holds global options and constants.
  * 
  * Singleton pattern
  */
-class BDSGlobalConstants 
+class BDSGlobalConstants
 {
-
 protected:
+  /// Protected constructor based on a set of gmad options.
   BDSGlobalConstants(const GMAD::Options&);
 
 private:
-  static BDSGlobalConstants* _instance;
+  /// Singleton instance
+  static BDSGlobalConstants* instance;
+
+  /// Options instance that this is largely based on and extends
+  GMAD::Options options;
 
 public:
    /// Access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
 
-  G4double GetPrintModuloFraction() const;
+  inline G4String InputFileName()         const {return G4String(options.inputFileName);}
+  inline G4String VisMacroFileName()      const {return G4String(options.visMacroFileName);}
+  inline G4bool   VisDebug()              const {return G4bool  (options.visDebug);}
+  inline G4String OutputFileName()        const {return G4String(options.outputFileName);}
+  inline G4bool   OutputFileNameSet()     const {return G4bool  (options.HasBeenSet("outputFileName"));}
+  inline BDSOutputFormat OutputFormat()   const {return outputFormat;}
+  inline G4bool   Survey()                const {return G4bool  (options.survey);}
+  inline G4String SurveyFileName()        const {return G4String(options.surveyFileName);}
+  inline G4bool   GFlash()                const {return G4bool  (options.gflash);}
+  inline G4double GFlashEMax()            const {return G4double(options.gflashemax);}
+  inline G4double GFlashEMin()            const {return G4double(options.gflashemin);}
+  inline G4bool   Batch()                 const {return G4bool  (options.batch);}
+  inline G4bool   Verbose()               const {return G4bool  (options.verbose);}
+  inline G4bool   VerboseEvent()          const {return G4bool  (options.verboseEvent);}
+  inline G4bool   VerboseStep()           const {return G4bool  (options.verboseStep);}
+  inline G4int    VerboseEventNumber()    const {return G4int   (options.verboseEventNumber);}
+  inline G4int    VerboseRunLevel()       const {return G4int   (options.verboseRunLevel);}
+  inline G4int    VerboseEventLevel()     const {return G4int   (options.verboseEventLevel);}
+  inline G4int    VerboseTrackingLevel()  const {return G4int   (options.verboseTrackingLevel);}
+  inline G4int    VerboseSteppingLevel()  const {return G4int   (options.verboseSteppingLevel);}
+  inline G4bool   Circular()              const {return G4bool  (options.circular);}
+  inline G4int    Seed()                  const {return G4int   (options.seed);}
+  inline G4bool   SetSeedState()          const {return G4bool  (options.setSeedState);}
+  inline G4String SeedStateFileName()     const {return G4String(options.seedStateFileName);}
+  inline G4String BDSIMPath()             const {return G4String(options.bdsimPath);}
+  inline G4int    NGenerate()             const {return G4int   (options.nGenerate);}
+  inline G4bool   GeneratePrimariesOnly() const {return G4bool  (options.generatePrimariesOnly);}
+  inline G4bool   ExportGeometry()        const {return G4bool  (options.exportGeometry);}
+  inline G4String ExportType()            const {return G4String(options.exportType);}
+  inline G4String ExportFileName()        const {return G4String(options.exportFileName);}
+  
+
+  G4double GetPrintModuloFraction() const {return G4double(options.printModuloFraction);}
   
   G4bool   GetDoPlanckScattering() const;
   G4bool   GetCheckOverlaps() const;
@@ -180,7 +213,6 @@ public:
 
   G4double GetLengthSafety() const;
   G4long   GetRandomSeed() const;
-  G4int    GetNumberToGenerate() const;
   void     SetNumberToGenerate(G4int);
   G4int    GetNumberOfEventsPerNtuple() const;
   G4int    GetEventNumberOffset() const;
@@ -313,7 +345,6 @@ private:
   G4bool   itsIncludeIronMagFields;
   G4double itsLengthSafety;
   G4long   itsRandomSeed;
-  G4int    itsNumberToGenerate;
   G4int    itsNumberOfEventsPerNtuple;
   G4int    itsEventNumberOffset;
   G4FieldManager* itsZeroFieldManager;
@@ -334,8 +365,6 @@ private:
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
 
-  G4double printModuloFraction;
-
 public:
   G4RotationMatrix* RotY90() const;
   G4RotationMatrix* RotYM90() const;
@@ -347,7 +376,7 @@ public:
   G4double GetLWCalWidth() const;
   G4double GetLWCalOffset() const;
 
-  G4String GetVacuumMaterial() const;
+  G4String GetVacuumMaterial() const {return G4String(options.vacMaterial);}
   G4String GetEmptyMaterial() const;
 
   G4VisAttributes* GetInvisibleVisAttr() const;
@@ -359,7 +388,6 @@ private:
   G4double itsLWCalWidth;
   G4double itsLWCalOffset;
   
-  G4String itsVacuumMaterial;         ///<vacuum inside beampipe
   G4String itsEmptyMaterial;          ///<empty material for e.g. marker volumes
   
   ///@{ Turn Control
@@ -378,10 +406,9 @@ private:
   // private set methods
   void     SetLPBFraction(G4double val);
 
-};
 
-inline G4double BDSGlobalConstants::GetPrintModuloFraction() const
-{return printModuloFraction;}
+  BDSOutputFormat outputFormat;
+};
 
 inline G4double BDSGlobalConstants::GetElossHistoBinWidth() const
 {return itsElossHistoBinWidth;}
@@ -638,11 +665,8 @@ inline G4bool BDSGlobalConstants::GetStopTracks() const
 inline G4long BDSGlobalConstants::GetRandomSeed() const
 {return itsRandomSeed;}
 
-inline G4int BDSGlobalConstants::GetNumberToGenerate() const
-{return itsNumberToGenerate;}
-
 inline void BDSGlobalConstants::SetNumberToGenerate(G4int numberToGenerate)
-{itsNumberToGenerate = numberToGenerate;}
+{options.set_value("nGenerate", (int)numberToGenerate);}
 
 inline G4int BDSGlobalConstants::GetNumberOfEventsPerNtuple() const
 {return itsNumberOfEventsPerNtuple;}
@@ -658,9 +682,6 @@ inline  G4double BDSGlobalConstants::GetLWCalWidth() const
 
 inline  G4double BDSGlobalConstants::GetLWCalOffset() const
 {return itsLWCalOffset;}
-
-inline G4String BDSGlobalConstants::GetVacuumMaterial() const
-{return itsVacuumMaterial;}
 
 inline G4String BDSGlobalConstants::GetEmptyMaterial() const
 {return itsEmptyMaterial;}

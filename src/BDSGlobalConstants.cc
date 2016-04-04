@@ -5,6 +5,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
 
@@ -15,16 +16,17 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
-BDSGlobalConstants* BDSGlobalConstants::_instance = nullptr;
+BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 
 BDSGlobalConstants* BDSGlobalConstants::Instance()
 {
-  if(_instance==nullptr)
-    {_instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
-  return _instance;
+  if(instance == nullptr)
+    {instance = new BDSGlobalConstants(BDSParser::Instance()->GetOptions());}
+  return instance;
 }
 
 BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
+  options(GMAD::Options(opt)),
   itsBeamParticleDefinition(nullptr),
   itsBeamMomentum(0.0),
   itsBeamKineticEnergy(0.0),
@@ -32,10 +34,11 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsParticleKineticEnergy(0.0),
   itsSMax(0.0)
 {
-  printModuloFraction   = opt.printModuloFraction;
-  itsVacuumMaterial     = opt.vacMaterial;
+  outputFormat = BDS::DetermineOutputFormat(opt.outputFormat);
+  if (options.nGenerate < 0) // run at least 1 event!
+    {options.set_value("nGenerate", 1);}
+  
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
-
   itsSampleDistRandomly = true;
   
   itsSensitiveComponents=opt.sensitiveBeamlineComponents;
@@ -150,13 +153,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
     }
   else
     {itsLengthSafety = opt.lengthSafety * CLHEP::m;}
-
-  // set the number of primaries to generate - exec options overrides whatever's in gmad
-  G4int nToGenerate = BDSExecOptions::Instance()->GetNGenerate();
-  if (nToGenerate < 0)
-    {itsNumberToGenerate = opt.numberToGenerate;}
-  else
-    {itsNumberToGenerate = nToGenerate;}
   
   itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
   itsEventNumberOffset = opt.eventNumberOffset;
@@ -282,5 +278,5 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete _RotYM90X90;
   delete _RotYM90XM90;
 
-  _instance = nullptr;
+  instance = nullptr;
 }
