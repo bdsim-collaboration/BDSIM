@@ -31,7 +31,7 @@ BDSParser::~BDSParser()
 BDSParser::BDSParser(std::string name):GMAD::Parser(name)
 {}
 
-void BDSParser::AmalgamateOptions(GMAD::Options& optionsIn)
+void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 {
   options.Amalgamate(optionsIn, true);
 }
