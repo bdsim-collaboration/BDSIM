@@ -376,7 +376,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   // positive charges
   
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      bField = element->B * CLHEP::tesla;
+      element->angle *= -1; // convention
+    }
+  else if (BDS::IsFinite(element->B))
     {
       bField = element->B * CLHEP::tesla;
       G4double rho = brho/bField;
@@ -387,7 +392,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
 #endif
     }
   else
-    {
+    { // B = 0, but angle finite - calculate implied b field
       element->angle *= -1;
       //    bField = - 2 * brho * sin(element->angle/2.0) / magFieldLength;
       // charge in e units
