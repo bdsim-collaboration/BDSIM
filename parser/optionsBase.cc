@@ -10,12 +10,12 @@ OptionsBase::OptionsBase()
 
   // executable options
   inputFileName         = "optics.mad";
-  visMacroFilename      = "";
+  visMacroFileName      = "";
   visDebug              = false;
   outputFileName        = "output";
   outputFormat          = "ascii";
   survey                = false;
-  surveyFilename        = "survey.dat";
+  surveyFileName        = "survey.dat";
   gflash                = false;
   gflashemax            = 10000;
   gflashemin            = 0.1;
