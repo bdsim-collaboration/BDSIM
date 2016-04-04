@@ -8,6 +8,37 @@ OptionsBase::OptionsBase()
 {
   // Default Values for Options
 
+  // executable options
+  inputFileName         = "optics.mad";
+  visMacroFilename      = "";
+  visDebug              = false;
+  outputFileName        = "output";
+  outputFormat          = "ascii";
+  survey                = false;
+  surveyFilename        = "survey.dat";
+  gflash                = false;
+  gflashemax            = 10000;
+  gflashemin            = 0.1;
+  verbose               = false;
+  verboseEvent          = false;
+  verboseStep           = false;
+  verboseEventNumber    = -1;
+  batch                 = false; 
+  verboseRunLevel       = 0;
+  verboseEventLevel     = 0;
+  verboseTrackingLevel  = 0;
+  verboseSteppingLevel  = 0;
+  circular              = false;
+  seed                  = -1;
+  setSeed               = false;
+  seedStateFileName     = "";
+  setSeedState          = false;
+  nGenerate             = 1;
+  generatePrimariesOnly = false;
+  exportGeometry        = false;
+  exportType            = "gdml";
+  exportFileName        = "geometry";    
+  
   // very important options
   physicsList           = ""; //default - only transportation
   modularPhysicsListsOn = 1;

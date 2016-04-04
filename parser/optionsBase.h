@@ -22,7 +22,63 @@ namespace GMAD
   public:
     OptionsBase();
 
-    /// list of pyhysics processes
+    std::string inputFileName;    ///< input filename
+    std::string visMacroFileName; ///< visualisation filename
+    G4bool      visDebug;         ///< flag for visualisation debug
+  
+    ///@{ Parameter for output format
+    std::string outputFileName;
+    std::string outputFormat;
+    ///@}
+  
+    ///@{ Parameter for survey
+    G4bool      survey;
+    std::string surveyFileName;
+    ///@}
+  
+    ///@{ Parameter for gflash shower parameterisation
+    G4bool   gflash;
+    G4double gflashemax;
+    G4double gflashemin;
+    ///@}
+  
+    G4bool batch; ///< Flag for batch / interactive mode
+    
+    ///@{ Geant4 verbose levels
+    G4bool verbose;
+    G4bool verboseEvent;
+    G4bool verboseStep;
+    G4int  verboseEventNumber;
+    
+    G4int  verboseRunLevel;
+    G4int  verboseEventLevel;
+    G4int  verboseTrackingLevel;
+    G4int  verboseSteppingLevel;
+    ///@}
+  
+    G4bool circular;     ///< Flag for circular machine
+    G4int  seed;         ///< The seed value for the random number generator
+    G4bool setSeed;      ///< If the seed was set by command line - override if specified in options
+    G4bool setSeedState; ///< If seed state is specifed - use the state saved in it
+    std::string seedStateFileName; ///< The seed state filename
+    
+    /// String that points to path where files are searched;
+    /// based on environment variable or else input filename
+    std::string bdsimPath;
+    
+    /// The number of primary events to simulate
+    G4int nGenerate; 
+
+    /// Whether to only generate primary coordinates and quit, or not.
+    G4bool generatePrimariesOnly; 
+    
+    ///@{ Parameter for controlling geometry export
+    G4bool      exportGeometry;
+    std::string exportType;
+    std::string exportFileName;
+    ///@}
+    
+    /// list of physics processes
     std::string physicsList;
     int modularPhysicsListsOn;
 
