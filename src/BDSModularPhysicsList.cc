@@ -1,6 +1,5 @@
 #include "BDSCutsAndLimits.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
@@ -58,7 +57,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);

@@ -1,11 +1,9 @@
-#include "BDSTunnelHit.hh"
-#include "BDSTunnelSD.hh"
-
-#include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSTunnelHit.hh"
+#include "BDSTunnelSD.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
@@ -37,7 +35,7 @@ BDSTunnelSD::BDSTunnelSD(G4String name)
    r(0.0),
    theta(0.0)
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   collectionName.insert("tunnel_hits");
 }
 

@@ -19,7 +19,7 @@
 #include "G4TrajectoryDrawByCharge.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
 BDSVisManager::BDSVisManager() {}
@@ -68,7 +68,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv) {
   }
 
   // check if visualisation file is present and readable
-  std::string visMacroName = BDSExecOptions::Instance()->GetVisMacroFilename();
+  G4String visMacroName = BDSGlobalConstants::Instance()->VisMacroFileName();
   bool useDefault = false;
   // if not set use default visualisation file
   if (visMacroName.empty()) useDefault = true;

@@ -3,7 +3,6 @@
 #include "BDSParser.hh"
 #include "parser/options.h"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
 #include "BDSSamplerRegistry.hh"
@@ -28,22 +27,21 @@ void BDSOutputROOTEvent::Initialise()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   // Base root file name 
-  G4String basefilename = execOptions->GetOutputFilename();
+  G4String basefilename = globalConstants->OutputFileName();
   basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple)
+  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + std::string(".root");
 
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
-  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch()) {
+  if (!globalConstants->OutputFileNameSet() || !globalConstants->Batch()) {
     // check if file exists
     int nTimeAppended = 1;
     while (BDS::FileExists(filename)) {
@@ -72,8 +70,7 @@ void BDSOutputROOTEvent::Initialise()
   const GMAD::Options o = BDSParser::Instance()->GetOptions();
   const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
   // get exec options
-  const BDSExecOptions *eo = BDSExecOptions::Instance();
-  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob,eo);
+  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
   theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();

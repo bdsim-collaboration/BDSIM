@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
@@ -146,12 +146,13 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   }
   
   // need to know whether it's an absolute or relative path
-  if ((fileName.substr(0,1)) == "/"){
-    fullPath = inputFilepath;
-  } else {
-    // the main file has a relative path or just the file name, add bdsimpath
-    fullPath = BDSExecOptions::Instance()->GetBDSIMPATH() + "/" + inputFilepath;
-  }
+  if ((fileName.substr(0,1)) == "/")
+    {fullPath = inputFilepath;}
+  else
+    {
+      // the main file has a relative path or just the file name, add bdsimpath
+      fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + "/" + inputFilepath;
+    }
   // add additional slash just to be safe
   fullPath += "/";
   // add filename if not excluded

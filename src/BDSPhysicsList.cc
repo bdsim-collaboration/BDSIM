@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSPhysicsList.hh"
 
@@ -200,7 +199,7 @@ BDSPhysicsList::BDSPhysicsList(G4String physicsListNameIn):
   theHadPhysList1              = nullptr;
   theHadPhysList2              = nullptr;
 
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
 
   // construct particles
 

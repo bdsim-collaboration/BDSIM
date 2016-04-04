@@ -1,6 +1,5 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSReadOutGeometry.hh"
@@ -105,7 +104,7 @@ void BDSAcceleratorComponent::Build()
   // visual attributes
   if(containerLogicalVolume)
     {
-    if (BDSExecOptions::Instance()->GetVisDebug())
+    if (BDSGlobalConstants::Instance()->VisDebug())
       {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
     else
       {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}

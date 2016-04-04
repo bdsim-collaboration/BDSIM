@@ -74,7 +74,7 @@ int main(int argc,char** argv)
 #endif
 
   /// Parse lattice file
-  auto fileName = execOptions->GetInputFileName();
+  auto fileName = execOptions->InputFileName();
   G4cout << __FUNCTION__ << "> Using input file : "<< fileName << G4endl;
   BDSParser::Instance(fileName);
 
@@ -82,7 +82,9 @@ int main(int argc,char** argv)
   BDSParser::Instance()->AmalgamateOptions(execOptions->Options());
 
   /// Parse options, explicitly initialise materials and global constants and construct required materials
-  BDSMaterials::Instance()->PrepareRequiredMaterials();
+  BDSMaterials::Instance()->PrepareRequiredMaterials(execOptions->Options().verbose);
+
+  delete execOptions; // no longer needed. Everything can safely use BDSGlobalConstants from now on.
 
   /// Force construction of global constants after parser has been initialised (requires materials first).
   /// This uses the options from BDSParser.
@@ -91,9 +93,9 @@ int main(int argc,char** argv)
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (execOptions->SetSeedState()) //optionally load the seed state from file (separate from seed)
-    {BDSRandom::LoadSeedState(execOptions->GetSeedStateFilename());}
-  if (BDSExecOptions::Instance()->GetOutputFormat() != BDSOutputFormat::none)
+  if (globalConstants->SetSeedState()) //optionally load the seed state from file (separate from seed)
+    {BDSRandom::LoadSeedState(globalConstants->SeedStateFileName());}
+  if (globalConstants->OutputFormat() != BDSOutputFormat::none)
     {BDSRandom::WriteSeedState();} //write the current state once set / loaded
 
   /// Instantiate the specific type of bunch distribution (class),
@@ -106,12 +108,12 @@ int main(int argc,char** argv)
   bdsBunch->SetOptions(BDSParser::Instance()->GetOptions());
 
   /// Optionally generate primaries only and exit
-  if (execOptions->GeneratePrimariesOnly())
+  if (globalConstants->GeneratePrimariesOnly())
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
-      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
-      for (G4int i = 0; i < globalConstants->GetNumberToGenerate(); i++)
+      for (G4int i = 0; i < globalConstants->NGenerate(); i++)
       {
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
         bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
@@ -207,14 +209,14 @@ int main(int argc,char** argv)
 #endif
   // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
   if (globalConstants->GetThresholdCutPhotons() > 0 || globalConstants->GetThresholdCutCharged() > 0
-      || execOptions->GetVerboseStep()) {
+      || globalConstants->VerboseStep()) {
     runManager->SetUserAction(new BDSSteppingAction);
   }
   
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Tracking Action"<<G4endl;
 #endif
-  runManager->SetUserAction(new BDSTrackingAction(BDSExecOptions::Instance()->GetBatch()));
+  runManager->SetUserAction(new BDSTrackingAction(globalConstants->Batch()));
 
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Stacking Action"<<G4endl;
@@ -246,10 +248,10 @@ int main(int argc,char** argv)
 #endif
 
   /// Set verbosity levels
-  runManager->SetVerboseLevel(execOptions->GetVerboseRunLevel());
-  G4EventManager::GetEventManager()->SetVerboseLevel(execOptions->GetVerboseEventLevel());
-  G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(execOptions->GetVerboseTrackingLevel());
-  G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(execOptions->GetVerboseSteppingLevel());
+  runManager->SetVerboseLevel(globalConstants->VerboseRunLevel());
+  G4EventManager::GetEventManager()->SetVerboseLevel(globalConstants->VerboseEventLevel());
+  G4EventManager::GetEventManager()->GetTrackingManager()->SetVerboseLevel(globalConstants->VerboseTrackingLevel());
+  G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager()->SetVerboseLevel(globalConstants->VerboseSteppingLevel());
   
   /// Close the geometry in preparation for running - everything is now fixed.
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
@@ -259,11 +261,11 @@ int main(int argc,char** argv)
       return 1;
     }
 
-  if (execOptions->ExportGeometry())
+  if (globalConstants->ExportGeometry())
     {
       BDSGeometryWriter geometrywriter;
-      geometrywriter.ExportGeometry(execOptions->GetExportType(),
-				    execOptions->GetExportFileName());
+      geometrywriter.ExportGeometry(globalConstants->ExportType(),
+				    globalConstants->ExportFileName());
     }
   else
     {
@@ -271,7 +273,7 @@ int main(int argc,char** argv)
 #ifdef BDSDEBUG
       G4cout << __FUNCTION__ << "> Setting up output." << G4endl;
 #endif
-      bdsOutput = BDSOutputFactory::CreateOutput(execOptions->GetOutputFormat());
+      bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
       G4cout.precision(10);
       
       /// Catch aborts to close output stream/file. perhaps not all are needed.
@@ -283,13 +285,13 @@ int main(int argc,char** argv)
       // signal(SIGINT,  &BDS::HandleAborts); // interrupts
 
     /// Run in either interactive or batch mode
-      if(!execOptions->GetBatch())   // Interactive mode
+      if(!globalConstants->Batch())   // Interactive mode
 	{
 	  BDSVisManager visManager;
 	  visManager.StartSession(argc,argv);
 	}
       else           // Batch mode
-	{runManager->BeamOn(globalConstants->GetNumberToGenerate());}
+	{runManager->BeamOn(globalConstants->NGenerate());}
     }
 
   /// Termination & clean up.

@@ -1,6 +1,5 @@
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"          // for vis debug flag
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -226,7 +225,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       visAttributesToBeRegistered.push_back(soilVisAttr);
     }
   // container & read out
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (BDSGlobalConstants::Instance()->VisDebug())
     {
       containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
       readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
