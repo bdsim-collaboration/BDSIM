@@ -58,7 +58,6 @@ namespace GMAD
   
     bool circular;     ///< Flag for circular machine
     int  seed;         ///< The seed value for the random number generator
-    bool setSeed;      ///< If the seed was set by command line - override if specified in options
     bool setSeedState; ///< If seed state is specifed - use the state saved in it
     std::string seedStateFileName; ///< The seed state filename
     

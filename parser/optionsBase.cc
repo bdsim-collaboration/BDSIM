@@ -30,7 +30,6 @@ OptionsBase::OptionsBase()
   verboseSteppingLevel  = 0;
   circular              = false;
   seed                  = -1;
-  setSeed               = false;
   seedStateFileName     = "";
   setSeedState          = false;
   nGenerate             = 1;
