@@ -30,34 +30,33 @@ namespace GMAD
     /// set methods by property name
     template<typename T>
     void set_value(std::string name, T value);
-
+    
     /// Take another instance of options and copy the values that have
     /// been set (through setKeys, which although private each instance
     /// has access to as C++ treats encapsulation at the class level).
     /// If override is true, the input option will override the existing
-    /// one in this instance.    
-    template<typename T>
-      void Amalgamate(const Options& optionsIn, bool override)
-      {
-	if (override)
-	  {
-	    for (auto const key : setKeys)
-	      {set_value(key, optionsIn.get<T>(optionsIn, key));}
-	  }
-	else
-	  {// don't override - ie give preference to ones set in this instance
-	    for (auto const key : setKeys)
-	      {
-		auto const& ok = optionsIn.setKeys; // shortcut
-		auto result = std::find(ok.begin(), ok.end(), key);
-		if (result == optionsIn.setKeys.end())
-		  {//it wasn't found so ok to copy
-		    set_value(key, optionsIn.get<T>(optionsIn, key));
-		  }
-	      }
-	  }
-      }
-
+    /// one in this instance.
+    void Amalgamate(const Options& optionsIn, bool override)
+    {
+      if (override)
+	{
+	  for (auto const key : setKeys)
+	    {set(this, &optionsIn, key);}
+	}
+      else
+	{// don't override - ie give preference to ones set in this instance
+	  for (auto const key : setKeys)
+	    {
+	      auto const& ok = optionsIn.setKeys; // shortcut
+	      auto result = std::find(ok.begin(), ok.end(), key);
+	      if (result == optionsIn.setKeys.end())
+		{//it wasn't found so ok to copy
+		  set(this, &optionsIn, key);
+		}
+	    }
+	}
+    }
+    
   private:
     /// publish members so these can be looked up from parser
     void PublishMembers();
