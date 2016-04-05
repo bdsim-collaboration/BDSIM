@@ -15,6 +15,8 @@
 
 BDSExecOptions* BDSExecOptions::_instance=nullptr;
 
+ClassImp(BDSExecOptions);
+
 const BDSExecOptions* BDSExecOptions::Instance(int argc, char **argv){
   if(_instance==nullptr) {
     _instance = new BDSExecOptions(argc, argv);
@@ -31,6 +33,9 @@ const BDSExecOptions* BDSExecOptions::Instance(){
     return nullptr;
   } else 
     return _instance;
+}
+
+BDSExecOptions::BDSExecOptions() {
 }
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv)
@@ -76,7 +81,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv)
   exportFileName    = "none";
 
   Parse(argc, argv);
-  /// after parsing the absolute path can be reconstructed
+  /// after parsing the absolute path can be reconstructed  
   itsBDSIMPATH = GetPath(inputFilename);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
@@ -190,6 +195,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
       }
       else if( !strcmp(optionName , "file") ) {
 	inputFilename=optarg;
+	G4cout << optarg << " " << inputFilename << G4endl;
       }
       else if( !strcmp(optionName , "vis_debug") ) {
 	visDebug = true;
@@ -339,8 +345,10 @@ void BDSExecOptions::Print()const
 
 G4String BDSExecOptions::GetPath(G4String fileName)
 {
+  G4cout << fileName << G4endl;
   //Set fullPath to mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
   G4String fullPath = getEnv("BDSIMPATH");
+  G4cout << fullPath << G4endl;
   if(fullPath.length()<=0){
     G4String inputFilepath = "";
     // get the path part of the supplied path to the main input file
@@ -362,5 +370,6 @@ G4String BDSExecOptions::GetPath(G4String fileName)
   }
   // add additional slash just to be safe
   fullPath += "/";
+  G4cout << "fullpath :" << fullPath << ":" << G4endl;
   return fullPath;
 }

@@ -28,8 +28,6 @@ BDSOutputROOT<float>::BDSOutputROOT():
   PrimaryLossTree               = nullptr;
   TunnelLossTree                = nullptr;
   tunnelHitsHisto               = nullptr;
-
-  Init();
 }
 
 template<>
@@ -46,8 +44,6 @@ BDSOutputROOT<double>::BDSOutputROOT():
   PrimaryLossTree               = nullptr;
   TunnelLossTree                = nullptr;
   tunnelHitsHisto               = nullptr;
-
-  Init();
 }
 
 template<typename Type>
@@ -86,8 +82,9 @@ TTree* BDSOutputROOT<Type>::BuildSamplerTree(G4String name)
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::Init()
+void BDSOutputROOT<Type>::Initialise()
 {
+  outputFileNumber++;
   const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
@@ -526,17 +523,6 @@ void BDSOutputROOT<Type>::WriteHistogram(BDSHistogram1D* hIn)
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::Commit()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  Write();
-  outputFileNumber++;
-  Init();
-}
-
-template<typename Type>
 void BDSOutputROOT<Type>::Write()
 {
 #ifdef BDSDEBUG
@@ -549,14 +535,28 @@ void BDSOutputROOT<Type>::Write()
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
-      theRootOutputFile->Write(0,TObject::kOverwrite);
-      theRootOutputFile->Close();
-      delete theRootOutputFile;
-      theRootOutputFile=nullptr;
+      theRootOutputFile->Write();
     }
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }
 
+template<typename Type>
+void BDSOutputROOT<Type>::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " - ROOT file found and open, closing." << G4endl;
+#endif
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+      theRootOutputFile=nullptr;
+    }
+}
 
 template void BDSOutputROOT<double>::WriteRootHit(TTree*   tree,
 						  G4double totalEnergy,
