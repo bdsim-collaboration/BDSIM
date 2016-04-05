@@ -43,7 +43,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 
   if (options.beamEnergy == 0)
     {
-      G4cerr << __METHOD_NAME__ << "Error: option \"beanm, energy\" is not defined or must be greater than 0" <<  G4endl;
+      G4cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
 
