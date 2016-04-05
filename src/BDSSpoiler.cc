@@ -69,7 +69,7 @@ void BDSSpoiler::BuildInnerSpoiler()
   SetAcceleratorVacuumLogicalVolume(itsInnerLogVol);
   RegisterPhysicalVolume(itsPhysiComp2);
   
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
+  if(BDSGlobalConstants::Instance()->SensitiveComponents())
     {RegisterSensitiveVolume(itsSolidLogVol);}
   
   itsPhysiComp = new G4PVPlacement(nullptr,                      // no rotation

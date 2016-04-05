@@ -1,5 +1,4 @@
 #include "BDSRandom.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 
@@ -26,9 +25,9 @@ void BDSRandom::SetSeed()
   G4cout << __METHOD_NAME__ << "seed from BDSGlobalConstants = " 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl
          << __METHOD_NAME__ << "seed from BDSExecOptions = "
-         << BDSExecOptions::Instance()->GetSeed() << G4endl
+         << BDSGlobalConstants::Instance()->Seed() << G4endl
          << __METHOD_NAME__ << "seed set in exec options : "
-	 << BDSExecOptions::Instance()->IsSeedSet() << G4endl;
+	 << BDSGlobalConstants::Instance()->SeedSet() << G4endl;
 #endif
   // get seed from options if set
   // override with seed from execoptions if specifed
@@ -36,13 +35,9 @@ void BDSRandom::SetSeed()
   // if seed positive set it, else use the time
   long seed = 0;
   if(BDSGlobalConstants::Instance()->GetRandomSeed()<=0)
-    seed = time(nullptr);
+    {seed = time(nullptr);}
   else
-    seed = BDSGlobalConstants::Instance()->GetRandomSeed();
-  
-  // if the seed was set by command line (exec) option - override the general option
-  if(BDSExecOptions::Instance()->IsSeedSet())
-    {seed = BDSExecOptions::Instance()->GetSeed();}
+    {seed = BDSGlobalConstants::Instance()->GetRandomSeed();}
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "selected seed = " << seed << G4endl;
@@ -70,7 +65,7 @@ void BDSRandom::WriteSeedState()
   // get the full seed state and write it to a file
   // Print generator full state to output 
 
-  G4String seedstatefilename = BDSExecOptions::Instance()->GetOutputFilename() + ".seedstate.txt";
+  G4String seedstatefilename = BDSGlobalConstants::Instance()->OutputFileName() + ".seedstate.txt";
   std::ofstream ofseedstate (seedstatefilename.c_str());
   if (ofseedstate.is_open())
     {CLHEP::HepRandom::saveFullState(ofseedstate);}

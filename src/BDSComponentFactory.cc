@@ -16,6 +16,7 @@
 #include "BDSDecapole.hh"
 #include "BDSQuadrupole.hh"
 #include "BDSRBend.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSSectorBend.hh"
 #include "BDSSextupole.hh"
@@ -1111,7 +1112,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 {
   G4String name   = "terminator";
-  G4double length = BDSGlobalConstants::Instance()->GetSamplerLength();
+  G4double length = BDSSamplerPlane::ChordLength();
 #ifdef BDSDEBUG
     G4cout << "---->creating Terminator,"
 	   << " name = " << name

@@ -1,16 +1,57 @@
 #include "options.h"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace GMAD;
 
-Options::Options() : OptionsBase()
+Options::Options(): OptionsBase()
 {
   PublishMembers();
 }
 
+bool Options::HasBeenSet(std::string name) const
+{
+  auto result = std::find(setKeys.begin(), setKeys.end(), name);
+  if (result == setKeys.end())
+    {return false;}
+  else
+    {return true;}
+}
+
 void Options::PublishMembers()
 {
+  // executable options first
+  publish("inputFileName",         &Options::inputFileName);
+  publish("visMacroFileName",      &Options::visMacroFileName);
+  publish("visDebug",              &Options::visDebug);
+  publish("outputFileName",        &Options::outputFileName);
+  publish("outputFormat",          &Options::outputFormat);
+  publish("survey",                &Options::survey);
+  publish("surveyFileName",        &Options::surveyFileName);
+  publish("gflash",                &Options::gflash);
+  publish("gflashemax",            &Options::gflashemax);
+  publish("gflashemin",            &Options::gflashemin);
+  publish("verbose",               &Options::verbose);
+  publish("verboseEvent",          &Options::verboseEvent);
+  publish("verboseStep",           &Options::verboseStep);
+  publish("verboseEventNumber",    &Options::verboseEventNumber);
+  publish("batch",                 &Options::batch);
+  publish("verboseRunLevel",       &Options::verboseRunLevel);
+  publish("verboseEventLevel",     &Options::verboseEventLevel);
+  publish("verboseTrackingLevel",  &Options::verboseTrackingLevel);
+  publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
+  publish("circular",              &Options::circular);
+  publish("seed",                  &Options::seed);
+  publish("seedStateFileName",     &Options::seedStateFileName);
+  publish("setSeedState",          &Options::setSeedState);
+  publish("nGenerate",             &Options::nGenerate);
+  publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
+  publish("exportGeometry",        &Options::exportGeometry);
+  publish("exportType",            &Options::exportType);
+  publish("exportFileName",        &Options::exportFileName);
+  publish("bdsimPath",             &Options::bdsimPath);
+  
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);
   publish("modularPhysicsListsOn",&Options::modularPhysicsListsOn);

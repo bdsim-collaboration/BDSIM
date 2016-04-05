@@ -1,6 +1,5 @@
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
-#include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -45,7 +44,7 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    turnstaken(0),
    eventnumber(0)
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   itsName = name;
   collectionName.insert("energy_counter");
   collectionName.insert("primary_counter");

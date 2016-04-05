@@ -21,3 +21,5 @@ Tesla9Cell: cavitymodel,
 !print, Tesla9Cell;
 
 lat : line = (d1,rf1,rf2,d2);
+
+include optionsTest.gmad;

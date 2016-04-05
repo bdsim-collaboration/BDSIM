@@ -2,7 +2,6 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEventAction.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 
 #include "BDSRunManager.hh"
@@ -40,14 +39,14 @@ BDSEventAction::BDSEventAction():
   primaryCounterCollID(-1),
   tunnelCollID(-1)
 { 
-  verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-  isBatch            = BDSExecOptions::Instance()->GetBatch();
+  verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
+  verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
+  isBatch            = BDSGlobalConstants::Instance()->Batch();
   useTunnel          = BDSGlobalConstants::Instance()->BuildTunnel();
 
   if(isBatch)
     {
-      G4int nGenerate = BDSGlobalConstants::Instance()->GetNumberToGenerate();
+      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
       G4double fraction = BDSGlobalConstants::Instance()->GetPrintModuloFraction();
       printModulo = (G4int)ceil(nGenerate * fraction);
       if (printModulo < 0)

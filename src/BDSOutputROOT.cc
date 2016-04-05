@@ -1,7 +1,6 @@
 #include "BDSOutputROOT.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSHistogram.hh"
 #include "BDSSampler.hh"
@@ -85,18 +84,17 @@ template<typename Type>
 void BDSOutputROOT<Type>::Initialise()
 {
   outputFileNumber++;
-  const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  G4String basefilename = execOptions->GetOutputFilename();
+  G4String basefilename = globalConstants->OutputFileName();
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple)
+  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
-  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch())
+  if (!globalConstants->OutputFileNameSet() || !globalConstants->Batch())
     {
       // check if file exists
       int nTimeAppended = 1;
