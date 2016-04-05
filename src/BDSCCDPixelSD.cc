@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh" 
-#include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSCCDPixelSD.hh"
 #include "BDSCCDPixelHit.hh"
