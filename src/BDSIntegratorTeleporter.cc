@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSIntegratorTeleporter.hh"
 
@@ -22,7 +21,7 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i] = 0;}
 
-  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "turnstaken: " << turnstaken << G4endl;
 #endif

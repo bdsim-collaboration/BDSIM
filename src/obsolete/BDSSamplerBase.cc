@@ -39,7 +39,7 @@ void BDSSamplerBase::BuildContainerLogicalVolume()
 void BDSSamplerBase::SetUserLimits()
 {
   G4UserLimits* outerUserLimits = new G4UserLimits();
-  outerUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5);
+  outerUserLimits->SetMaxAllowedStep(BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5);
   containerLogicalVolume->SetUserLimits(outerUserLimits);
   RegisterUserLimits(outerUserLimits);
 }

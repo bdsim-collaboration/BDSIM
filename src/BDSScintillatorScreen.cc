@@ -95,7 +95,8 @@ void BDSScintillatorScreen::BuildCameraScoringPlane()
   
   //Build and place the volume...
   itsCameraScoringPlaneSolid = new G4Box("CameraScoringPlaneSolid",chordLength/2.0,_yLength/2.0,_scoringPlaneThickness/2.0);
-  itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"CameraScoringPlaneLog",0,0,0);
+  itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(
+          BDSGlobalConstants::Instance()->VacuumMaterial()),"CameraScoringPlaneLog",0,0,0);
   itsCameraScoringPlaneLog->SetVisAttributes(_visAttScint);
   G4double dispX=-_xLength/2.0+_scoringPlaneThickness/2.0;
   G4double dispY=0;
@@ -137,7 +138,8 @@ void BDSScintillatorScreen::BuildScreenScoringPlane(){
   
   //Build and place the volume...
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
-  itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),"ScreenScoringPlaneLog",0,0,0);
+  itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial(
+          BDSGlobalConstants::Instance()->VacuumMaterial()),"ScreenScoringPlaneLog",0,0,0);
   itsScreenScoringPlaneLog->SetVisAttributes(_visAttSampler);
   G4double dispX=0;
   G4double dispY=0;
@@ -310,10 +312,11 @@ void BDSScintillatorScreen::BuildScintillatorScreen()
   BuildScreenScoringPlane();
   BuildCameraScoringPlane();
   
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-      RegisterSensitiveVolume(itsScintillatorLayerLog);
-  } 
+  if(BDSGlobalConstants::Instance()->SensitiveComponents())
+    {RegisterSensitiveVolume(itsScintillatorLayerLog);} 
+#ifdef BDSDEBUG
   G4cout << "BDSScintillatorScreen: finished building geometry" << G4endl;
+#endif
 }
 
 void BDSScintillatorScreen::BuildScintillatorMaterial()

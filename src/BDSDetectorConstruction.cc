@@ -9,7 +9,6 @@
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
-#include "BDSExecOptions.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
@@ -56,10 +55,11 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   worldPV(nullptr),worldUserLimits(nullptr),
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
-  verbose       = BDSExecOptions::Instance()->GetVerbose();
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
-  G4bool gflash = BDSExecOptions::Instance()->GetGFlash();
-  if (gflash) InitialiseGFlash();
+  verbose       = BDSGlobalConstants::Instance()->Verbose();
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+  gflash        = BDSGlobalConstants::Instance()->GFlash();
+  if (gflash)
+    {InitialiseGFlash();}
   BDSAcceleratorModel::Instance(); // instantiate the accelerator model holding class
 }
 
@@ -129,10 +129,10 @@ void BDSDetectorConstruction::InitialiseRegions()
   // precision region
   precisionRegion = new G4Region("precisionRegion");
   G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutProtonsP(),  "proton");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsP(),  "gamma");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsP(),"e-");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsP(),"e+");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutProtonsP(),  "proton");
   precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 
@@ -191,7 +191,7 @@ void BDSDetectorConstruction::BuildBeamline()
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (execOptions->GetCircular())
+  if (BDSGlobalConstants::Instance()->Circular())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
@@ -283,7 +283,7 @@ void BDSDetectorConstruction::BuildWorld()
   G4String worldName   = "World";
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->GetEmptyMaterial();
+  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial     = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
 						      emptyMaterial,           // material
@@ -302,7 +302,7 @@ void BDSDetectorConstruction::BuildWorld()
 							      worldName + "_tunnel_ro_lv"); // name
   
   // visual attributes
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (BDSGlobalConstants::Instance()->VisDebug())
     {
       // copy the debug vis attributes but change to force wireframe
       G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
@@ -429,7 +429,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  lv->SetSensitiveDetector(energyCounterSDRO);
 	  
 	  //set gflash parameterisation on volume if required
-	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
 	  //TBC - so glash is only used for 'element' types - perhaps this should be used
 	  //for other volumes too.  The logic of the if statement needs checked.
 	  //The check of the precision region really compares the region pointer of the
@@ -664,18 +663,18 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
 void BDSDetectorConstruction::InitialiseGFlash()
 {
-  G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
-  G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
+  G4double gflashemax = BDSGlobalConstants::Instance()->GFlashEMax();
+  G4double gflashemin = BDSGlobalConstants::Instance()->GFlashEMin();
   theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
       
   theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
   // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
       
   // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);

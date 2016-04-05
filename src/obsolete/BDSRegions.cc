@@ -61,14 +61,14 @@ void BDSRegions::buildPrecisionRegion(){
   _precisionRegion = new G4Region("precisionRegion");
   _precisionProductionCuts = new G4ProductionCuts();
   
-  if(BDSGlobalConstants::Instance()->GetProdCutPhotonsP()>0)
-    _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
+  if(BDSGlobalConstants::Instance()->ProdCutPhotonsP()>0)
+    _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
   
-  if(BDSGlobalConstants::Instance()->GetProdCutElectronsP()>0)
-    _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),G4ProductionCuts::GetIndex("e-"));
+  if(BDSGlobalConstants::Instance()->ProdCutElectronsP()>0)
+    _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsP(),G4ProductionCuts::GetIndex("e-"));
   
-  if(BDSGlobalConstants::Instance()->GetProdCutPositronsP()>0)
-    _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
+  if(BDSGlobalConstants::Instance()->ProdCutPositronsP()>0)
+    _precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
   
   _precisionRegion->SetProductionCuts(_precisionProductionCuts);
 }
@@ -79,11 +79,13 @@ void BDSRegions::buildGFlashRegion(){
   _gFlashParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                
   _gFlashParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
   _gFlashParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
-  _gFlashParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  _gFlashParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),
+                                      BDSGlobalConstants::Instance()->ThresholdCutCharged());
   
   _gFlashParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
   _gFlashParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
-  _gFlashParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  _gFlashParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),
+                                      BDSGlobalConstants::Instance()->ThresholdCutCharged());
 
   _gFlashParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   _gFlashParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);

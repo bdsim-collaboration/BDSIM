@@ -8,6 +8,37 @@ OptionsBase::OptionsBase()
 {
   // Default Values for Options
 
+  // executable options
+  inputFileName         = "optics.mad";
+  visMacroFileName      = "";
+  visDebug              = false;
+  outputFileName        = "output";
+  outputFormat          = "ascii";
+  survey                = false;
+  surveyFileName        = "survey.dat";
+  gflash                = false;
+  gflashemax            = 10000;
+  gflashemin            = 0.1;
+  verbose               = false;
+  verboseEvent          = false;
+  verboseStep           = false;
+  verboseEventNumber    = -1;
+  batch                 = false; 
+  verboseRunLevel       = 0;
+  verboseEventLevel     = 0;
+  verboseTrackingLevel  = 0;
+  verboseSteppingLevel  = 0;
+  circular              = false;
+  seed                  = -1;
+  seedStateFileName     = "";
+  setSeedState          = false;
+  nGenerate             = 1;
+  generatePrimariesOnly = false;
+  exportGeometry        = false;
+  exportType            = "gdml";
+  exportFileName        = "geometry";
+  bdsimPath             = "";
+  
   // very important options
   physicsList           = ""; //default - only transportation
   modularPhysicsListsOn = 1;
@@ -63,7 +94,7 @@ OptionsBase::OptionsBase()
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false; 
 
-  includeIronMagFields = 0;
+  includeIronMagFields = false;
   sensitiveBeamlineComponents = 1;
 
   // beam pipe / aperture

@@ -1,6 +1,5 @@
 #ifdef USE_GDML
 #include "BDSColours.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGeometryGDML.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -46,7 +45,7 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker)
     sensitiveVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
   }
 
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (BDSGlobalConstants::Instance()->VisDebug())
     {gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
     {gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
@@ -58,7 +57,7 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker)
                     markerVol,
                     false,
                     0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                    BDSGlobalConstants::Instance()->CheckOverlaps());
 }
 #endif
 

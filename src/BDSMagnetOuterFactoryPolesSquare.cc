@@ -228,7 +228,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   yokeLV->SetVisAttributes(outerVisAttr);
 
   // container
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
@@ -242,7 +242,7 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(outerUserLimits);
   //attach cuts to volumes
   yokeLV->SetUserLimits(outerUserLimits);

@@ -94,7 +94,7 @@ BDSContinuousSR::GetMeanFreePath(const G4Track& track,
       if ( FieldValueVec[0]!=0.)
 	Blocal=sqrt(Blocal*Blocal+FieldValueVec[0]*FieldValueVec[0]); 
  
-      if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial())
+      if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial())
 	 && Blocal !=0 )
 	{
 	  G4ThreeVector InitMag=track.GetMomentum();

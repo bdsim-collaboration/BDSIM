@@ -15,7 +15,6 @@
    Added ListMaterials function
 */
 
-#include "BDSExecOptions.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "G4NistManager.hh"
@@ -1204,12 +1203,10 @@ BDSMaterials::~BDSMaterials(){
   _instance = nullptr;
 }
 
-void BDSMaterials::PrepareRequiredMaterials()
+void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 {
   // This function uses the list from the parser and prepares
   // the necessary materials for this run.
-  
-  G4bool verbose = BDSExecOptions::Instance()->GetVerbose();
 #ifdef BDSDEBUG
   G4bool debug = true;
 #else

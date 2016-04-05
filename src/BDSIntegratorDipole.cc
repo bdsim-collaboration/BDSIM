@@ -17,10 +17,10 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
   length((*strength)["length"])
 {
   G4double charge = (eqOfM->FCof())/CLHEP::c_light;
-  G4double ffact  = BDSGlobalConstants::Instance()->GetFFact();
+  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
   bField = brho * angle / length * charge * ffact;
   bPrime = brho * (*strength)["k1"];
-  nominalEnergy   = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+  nominalEnergy   = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 }
 
 void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],

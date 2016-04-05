@@ -28,8 +28,8 @@ void BDSSpoiler::Build()
 void BDSSpoiler::BuildMarkerLogicalVolume()
 {
   containerSolid = new G4Box(name,
-			     BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-			     BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+							 BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
+							 BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
 			     chordLength/2);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
@@ -39,8 +39,8 @@ void BDSSpoiler::BuildMarkerLogicalVolume()
 void BDSSpoiler::BuildInnerSpoiler()
 {
   G4VSolid* solidSolid = new G4Box(name+"_solid",
-				   BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				   BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+								   BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
+								   BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
 				   chordLength/2);
   RegisterSolid(solidSolid);
   itsSolidLogVol = new G4LogicalVolume(solidSolid,
@@ -52,7 +52,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 				   chordLength/2);
   RegisterSolid(innerSolid);
   itsInnerLogVol = new G4LogicalVolume(innerSolid,
-				       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+				       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial()),
 				       name+"_inner");
   
   itsPhysiComp2 = new G4PVPlacement(nullptr,                // no rotation
@@ -69,7 +69,7 @@ void BDSSpoiler::BuildInnerSpoiler()
   SetAcceleratorVacuumLogicalVolume(itsInnerLogVol);
   RegisterPhysicalVolume(itsPhysiComp2);
   
-  if(BDSGlobalConstants::Instance()->GetSensitiveComponents())
+  if(BDSGlobalConstants::Instance()->SensitiveComponents())
     {RegisterSensitiveVolume(itsSolidLogVol);}
   
   itsPhysiComp = new G4PVPlacement(nullptr,                      // no rotation

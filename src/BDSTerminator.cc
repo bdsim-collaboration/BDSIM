@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
@@ -21,7 +20,7 @@ void BDSTerminator::Build()
 void BDSTerminator::BuildContainerLogicalVolume()
 {
   //Bascially a copy of BDSSampler but with different sensitive detector added
-  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   containerSolid = new G4Box(name + "_container_solid",
 			     radius,
 			     radius,
@@ -41,7 +40,7 @@ void BDSTerminator::BuildContainerLogicalVolume()
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 
   // visual attributes
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (BDSGlobalConstants::Instance()->VisDebug())
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}

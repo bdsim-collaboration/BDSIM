@@ -185,11 +185,13 @@ BDSDetectorConstruction::BDSDetectorConstruction()
   theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*GeV);
-  theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),
+                                  BDSGlobalConstants::Instance()->ThresholdCutCharged());
   
   theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*GeV);
-  theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),
+                                  BDSGlobalConstants::Instance()->ThresholdCutCharged());
 
   theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*GeV);
@@ -410,7 +412,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
                                  NULL,		// its mother  volume
                                  false,		// no boolean operation
                                  0,             // copy number
-				 BDSGlobalConstants::Instance()->GetCheckOverlaps());		// overlap checking
+				 BDSGlobalConstants::Instance()->CheckOverlaps());		// overlap checking
 
 
   */

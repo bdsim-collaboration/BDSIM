@@ -184,7 +184,7 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-						    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                                                    BDSGlobalConstants::Instance()->CheckOverlaps());
       
       RegisterPhysicalVolume(beamPipePV);
     }
@@ -202,7 +202,7 @@ void BDSMagnet::PlaceComponents()
 						       containerLogicalVolume, // its mother  volume
 						       false,                  // no boolean operation
 						       0,                      // copy number
-						       BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                                                       BDSGlobalConstants::Instance()->CheckOverlaps());
 
       RegisterPhysicalVolume(magnetOuterPV);
     }

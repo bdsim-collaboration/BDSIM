@@ -31,7 +31,7 @@ void BDSLWCalorimeter::Build()
 void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 {
   G4double SampTransSize;
-  SampTransSize = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5 * CLHEP::mm;
+  SampTransSize = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5 * CLHEP::mm;
 
   containerSolid = new G4Box(name + "_container_solid", // name
 			     SampTransSize,
@@ -44,7 +44,7 @@ void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits =new G4UserLimits();
   outerUserLimits->SetMaxAllowedStep(chordLength);
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   RegisterUserLimits(outerUserLimits);
   containerLogicalVolume->SetUserLimits(outerUserLimits);
 #endif
@@ -54,8 +54,8 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 {
   // build the Calorimeter
   lwCal=new G4Box(name + "_lw_cal_solid",
-		  BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
-		  BDSGlobalConstants::Instance()->GetLWCalWidth()/2,
+                  BDSGlobalConstants::Instance()->LWCalWidth()/2,
+                  BDSGlobalConstants::Instance()->LWCalWidth()/2,
 		  aLength/2);
   RegisterSolid(lwCal);
   lwCalLogicalVolume=new G4LogicalVolume(lwCal,
@@ -63,7 +63,7 @@ void BDSLWCalorimeter::BuildCal(G4double aLength)
 					 name + "_lw_cal_lv");
   RegisterLogicalVolume(lwCalLogicalVolume);
   physiLWCal = new G4PVPlacement(nullptr,                       // rotation
-				 G4ThreeVector(BDSGlobalConstants::Instance()->GetLWCalOffset(),0.,0.),
+				 G4ThreeVector(BDSGlobalConstants::Instance()->LWCalOffset(),0.,0.),
 				 lwCalLogicalVolume,   // its logical volume
 				 name +"_lw_cal_pv",	     // its name
 				 containerLogicalVolume,  // its mother  volume

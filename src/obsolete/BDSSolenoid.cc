@@ -18,6 +18,6 @@ BDSSolenoid::BDSSolenoid(G4String            name,
 void BDSSolenoid::Build()
 {
   BDSMagnet::Build();
-  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
+  if(BDSGlobalConstants::Instance()->IncludeIronMagFields())
     {G4cout << __METHOD_NAME__ << "IncludeIronMagFields option not implemented for solenoid class"<<G4endl;}
 }

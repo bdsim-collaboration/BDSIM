@@ -32,9 +32,9 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
 {
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
-  itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  if(BDSGlobalConstants::Instance()->GetThresholdCutCharged()>0){
-    itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+  if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0){
+    itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
   }
 #endif
 
@@ -358,7 +358,7 @@ void BDSGeometryLCDD::parseLCDD(xmlNodePtr cur)
 				     topvol->GetName()+"_PhysiComp",
 				     itsMarkerVol,
 				     false,
-				     0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+				     0, BDSGlobalConstants::Instance()->CheckOverlaps());
 #ifndef NOUSERLIMITS
 	   	   topvol->SetUserLimits(itsUserLimits);
 #endif
@@ -828,7 +828,7 @@ void BDSGeometryLCDD::parsePHYSVOL(xmlNodePtr cur, G4String volume_name)
 		    currentVol->GetName()+"_PhysiComp",
 		    parentVol,
 		    false,
-		    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    0, BDSGlobalConstants::Instance()->CheckOverlaps());
   
 
   return;

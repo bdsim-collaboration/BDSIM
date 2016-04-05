@@ -22,7 +22,7 @@ public:
   ~BDSMaterials(); 
 
   /// converts parser material list
-  void PrepareRequiredMaterials();
+  void PrepareRequiredMaterials(G4bool verbose = false);
 
   /** Add materials
       @param[in] Z        atomic number

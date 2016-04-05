@@ -63,9 +63,9 @@ BDSGeometrySQL::BDSGeometrySQL(G4String filePath):
   G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   // production cuts are always non-zero so always set
-  theProductionCuts->SetProductionCut(globals->GetProdCutPhotonsP(),"gamma");
-  theProductionCuts->SetProductionCut(globals->GetProdCutElectronsP(),"e-");
-  theProductionCuts->SetProductionCut(globals->GetProdCutPositronsP(),"e+");
+  theProductionCuts->SetProductionCut(globals->ProdCutPhotonsP(),"gamma");
+  theProductionCuts->SetProductionCut(globals->ProdCutElectronsP(),"e-");
+  theProductionCuts->SetProductionCut(globals->ProdCutPositronsP(),"e+");
   precisionRegionSQL->SetProductionCuts(theProductionCuts);
   //  }
   
@@ -74,9 +74,9 @@ BDSGeometrySQL::BDSGeometrySQL(G4String filePath):
   approximationRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(vRegName);
   //  if(!approximationRegionSQL->IsModified()){
   G4ProductionCuts* approxProductionCuts = new G4ProductionCuts();
-  approxProductionCuts->SetProductionCut(globals->GetProdCutPhotonsA(),"gamma");
-  approxProductionCuts->SetProductionCut(globals->GetProdCutElectronsA(),"e-");
-  approxProductionCuts->SetProductionCut(globals->GetProdCutPositronsA(),"e+");
+  approxProductionCuts->SetProductionCut(globals->ProdCutPhotonsA(),"gamma");
+  approxProductionCuts->SetProductionCut(globals->ProdCutElectronsA(),"e-");
+  approxProductionCuts->SetProductionCut(globals->ProdCutPositronsA(),"e+");
   approximationRegionSQL->SetProductionCuts(approxProductionCuts);
     //  }
 }
@@ -155,7 +155,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   VisRed = VisGreen = VisBlue = 0.5;
   VisAlpha = 0.5;
   VisType = "S";
-  Material = BDSGlobalConstants::Instance()->GetVacuumMaterial();
+  Material = BDSGlobalConstants::Instance()->VacuumMaterial();
   Name="";
   PrecisionRegion=0;
   ApproximationRegion=0;
@@ -273,9 +273,9 @@ G4VisAttributes* BDSGeometrySQL::VisAtt(){
 G4UserLimits* BDSGeometrySQL::UserLimits(G4double var){
   G4UserLimits* UserLimits = new G4UserLimits();
   UserLimits->SetMaxAllowedStep(var*0.5);
-  UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
-  if(BDSGlobalConstants::Instance()->GetThresholdCutCharged()>0){
-    UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+  if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0){
+    UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
   }
   return UserLimits;
 }
@@ -882,8 +882,8 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 			  VOL_LIST[PARENTID],
 			  false,
 			  copyNumber,
-			  BDSGlobalConstants::Instance()->GetCheckOverlaps());
-      if(align_in)
+                      BDSGlobalConstants::Instance()->CheckOverlaps());
+      if(_align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.
 	  if(GetAlignInVolume())
@@ -909,7 +909,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 	    {alignOutVolume = PhysiComp;}
 	}
 
-//      G4double P0 = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+//      G4double P0 = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 //      G4double brho=
 //	sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
 
@@ -919,7 +919,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
       // charge (in |e| units)
       G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();  
       // momentum (in GeV/c)   
-      G4double momentum = BDSGlobalConstants::Instance()->GetBeamMomentum();
+      G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum();
       // rigidity (in T*m)
       G4double brho = ( (momentum/CLHEP::GeV) / (0.299792458 * charge));
       // rigidity (in Geant4 units)

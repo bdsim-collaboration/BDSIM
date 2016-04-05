@@ -1,9 +1,5 @@
 include rben.gmad;
-include options.gmad;
-include elec.gmad;
 
 !add poleface
 rb1: e1=0.1, e2=-0.1;
 rb2: e1=-0.1, e2=0.1;
-
-use, period=lat;

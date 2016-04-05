@@ -13,7 +13,7 @@
  * for example string manipulations, and checking
  *
  * Functions are part of the BDS namespace 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 namespace BDS

@@ -120,6 +120,9 @@ private:
   //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
+
+  /// Whether or not to use the GFlash shower parameterisation.
+  G4bool gflash;
 };
 
 #endif

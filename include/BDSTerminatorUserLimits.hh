@@ -18,6 +18,9 @@
 class BDSTerminatorUserLimits: public G4UserLimits
 {
 public:
+  /// Basic inheritance - just use everything normally from G4UserLimits but 
+  /// replace one function in inherited class. Default values are defined
+  /// in G4UserLimits so all particles continue.
   BDSTerminatorUserLimits(G4double ustepMax = DBL_MAX,
 			  G4double utrakMax = DBL_MAX,
 			  G4double utimeMax = DBL_MAX,
@@ -39,8 +42,8 @@ public:
   virtual G4double GetUserMinEkine(const G4Track&);
 
 protected:
-  G4double keeprunningEK; // minimum energy particle must have to keep going
-  G4double stoprunningEK; // same, so everything < DBL_MAX so everything stopped
+  G4double keeprunningEK; ///< Minimum energy particle must have to keep going
+  G4double stoprunningEK; ///< Same, so everything < DBL_MAX so everything stopped
   
 private:
   G4bool verbose;

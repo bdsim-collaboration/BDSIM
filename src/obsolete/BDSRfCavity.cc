@@ -13,7 +13,7 @@
 #include "G4UniformElectricField.hh"
 #include "G4VPhysicalVolume.hh"
 
-class BDSMagnetOuterInfo;
+struct BDSMagnetOuterInfo;
 
 BDSRfCavity::BDSRfCavity(G4String            name,
 			 G4double            length,
@@ -21,12 +21,22 @@ BDSRfCavity::BDSRfCavity(G4String            name,
 			 BDSBeamPipeInfo*    beamPipeInfo,
 			 BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::rfcavity, name, length,
-	    beamPipeInfo, magnetOuterInfo, nullptr, 0),
-  gradient(grad),
-  eField(nullptr),equation(nullptr),fieldManager(nullptr),intgrDriver(nullptr),stepper(nullptr)
-{;}
+	    beamPipeInfo, magnetOuterInfo),
+  gradient(grad)
+{
+  eField      = nullptr;
+  equation    = nullptr;
+  intgrDriver = nullptr;
+}
 
-void BDSRfCavity::BuildVacuumField()
+void BDSRfCavity::BuildBPFieldMgr()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "empty implementation due to e field instead of B" << G4endl;
+#endif
+}
+
+void BDSRfCavity::BuildBPFieldAndStepper()
 {
   G4int nvar = 8;
 
@@ -34,25 +44,24 @@ void BDSRfCavity::BuildVacuumField()
   G4ThreeVector eFieldVector(0., 0., gradient * CLHEP::megavolt / CLHEP::m);
   eField        = new G4UniformElectricField(eFieldVector);
   equation      = new G4EqMagElectricField(eField);
-  fieldManager  = new G4FieldManager();
-  fieldManager->SetDetectorField(eField);
-  stepper       = new G4ExplicitEuler(equation, nvar);
+  itsBPFieldMgr = new G4FieldManager();
+  itsBPFieldMgr->SetDetectorField(eField);
+  itsStepper    = new G4ExplicitEuler(equation, nvar);
 
-  G4double minStep = BDSGlobalConstants::Instance()->GetChordStepMinimum();
+  G4double minStep = BDSGlobalConstants::Instance()->ChordStepMinimum();
   
   intgrDriver = new G4MagInt_Driver(minStep,
-				    stepper,
-				    stepper->GetNumberOfVariables());
+				    itsStepper,
+				    itsStepper->GetNumberOfVariables() );
   
-  chordFinder = new G4ChordFinder(intgrDriver);
-  chordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
-  fieldManager->SetChordFinder(chordFinder);
+  itsChordFinder = new G4ChordFinder(intgrDriver);
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->DeltaChord());
+  itsBPFieldMgr->SetChordFinder(itsChordFinder);
 }
 
 BDSRfCavity::~BDSRfCavity()
 {
   delete eField;
   delete equation;
-  // must work out what to delete here
   //delete intgrDriver; seems to be deleted by itsChordFinder in BDSMagnet
 }

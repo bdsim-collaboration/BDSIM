@@ -1,5 +1,4 @@
 #include "BDSSteppingAction.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "G4AffineTransform.hh"
@@ -16,7 +15,7 @@ BDSSteppingAction::~BDSSteppingAction()
 void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 {
   _step = ThisStep;
-  if(BDSExecOptions::Instance()->GetVerboseStep())
+  if(BDSGlobalConstants::Instance()->VerboseStep())
     {VerboseSteppingAction();}
 }
 
