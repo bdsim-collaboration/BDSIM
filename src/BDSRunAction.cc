@@ -55,6 +55,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
+  bdsOutput->Initialise(); // open file
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
@@ -69,11 +70,9 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   // write histograms to output - do this before potentially closing / opening new files
   for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
     {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
-  // Non-interactive mode
-  if(BDSExecOptions::Instance()->GetBatch())
-    {bdsOutput->Write();} // write last file
-  else
-    {bdsOutput->Commit();} // write and open new file
+
+  bdsOutput->Write(); // write last file
+  bdsOutput->Close();
 
   // delete analysis manager
   delete BDSAnalysisManager::Instance();

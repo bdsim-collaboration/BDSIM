@@ -50,10 +50,9 @@ public:
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// Fill event
   virtual void FillEvent() {};
-  /// write and close and open new file
-  virtual void Commit();
-  /// write and close the file
-  virtual void Write();
+  virtual void Initialise(); ///< open the file
+  virtual void Write();      ///< write to file
+  virtual void Close();      ///< close the file
 
 private:
   /// 

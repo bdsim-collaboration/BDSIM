@@ -186,7 +186,8 @@ foreach(header ${linkHeaders})
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       -D__MAKECINT__
-      -c -p -I${Geant4_INCLUDE_DIR} -I${CLHEP_INCLUDE_DIRS}
+#      -c -p -I${Geant4_INCLUDE_DIR} -I${CLHEP_INCLUDE_DIRS} -I${CMAKE_CURRENT_SOURCE_DIR}
+      -c -p -I${Geant4_DIR}/../../include/Geant4/ -I${CLHEP_INCLUDE_DIRS} -I${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
@@ -210,7 +211,7 @@ foreach(header ${linkHeaders})
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      -c -p -I${Geant4_INCLUDE_DIR} -I${CLHEP_INCLUDE_DIRS}
+      -c -p -I${Geant4_DIR}/../../include/Geant4/ -I${CLHEP_INCLUDE_DIRS} -I${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"

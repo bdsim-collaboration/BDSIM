@@ -1,5 +1,7 @@
 #include "BDSOutputROOTEvent.hh"
 
+#include "BDSParser.hh"
+#include "parser/options.h"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
@@ -7,12 +9,11 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSUtilities.hh"
 
-BDSOutputROOTEvent::BDSOutputROOTEvent() 
+BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  Init(); 
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -21,8 +22,9 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
 }
 
-void BDSOutputROOTEvent::Init() 
+void BDSOutputROOTEvent::Initialise() 
 {
+  outputFileNumber++;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
@@ -66,8 +68,13 @@ void BDSOutputROOTEvent::Init()
   //
   // build options and write structure
   //
-  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions();
-  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,1);
+  // get options
+  const GMAD::Options o = BDSParser::Instance()->GetOptions();
+  const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
+  // get exec options
+  const BDSExecOptions *eo = BDSExecOptions::Instance();
+  BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob,eo);
+  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
 
@@ -86,19 +93,22 @@ void BDSOutputROOTEvent::Init()
   primary = new BDSOutputROOTEventSampler("Primary");
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
+  samplerTrees.push_back(primary);
 
   //
   // build sampler structures 
   for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
     {
       // create sampler structure
-      samplerMap[samplerName] = new BDSOutputROOTEventSampler(samplerName);
+      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
+      //samplerMap[samplerName] = res;
+      samplerTrees.push_back(res);
 
       // set tree branches 
       theRootOutputTree->Branch((samplerName+".").c_str(),
 				"BDSOutputROOTEventSampler",
-				samplerMap[samplerName],
-				4000,1);     
+				res,
+				4000,1);
     }
 
   //
@@ -109,7 +119,7 @@ void BDSOutputROOTEvent::Init()
   pLastHit  = new BDSOutputROOTEventHit();
   tHit      = new BDSOutputROOTEventHit();
   theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BSDOutputROOTEventHit",pFirstHit,4000,2);
+  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
 
@@ -134,8 +144,9 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
 
   for(int i=0;i<hc->entries();i++) {
     G4String samplerName = (*hc)[i]->GetName();
-    //    G4cout << (*hc)[i]->GetName() << G4endl;
-    samplerMap[samplerName]->Fill((*hc)[i]);
+    G4int    samplerId   = (*hc)[i]->GetSamplerID();
+    //samplerMap[samplerName]->Fill((*hc)[i]);
+    samplerTrees[samplerId+1]->Fill((*hc)[i]);
   }  
 }
 
@@ -230,30 +241,36 @@ void BDSOutputROOTEvent::FillEvent()
   
 }
 
-/// write and close and open new file
-void BDSOutputROOTEvent::Commit() 
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
-#endif
-}
-
-/// write and close the file
 void BDSOutputROOTEvent::Write() 
 {
-  theRootOutputFile->Write();
-  theRootOutputFile->Close();
-  
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+      theRootOutputFile->Write(nullptr,TObject::kOverwrite);
+    }
+}
+
+void BDSOutputROOTEvent::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ <<G4endl;
+#endif
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+      theRootOutputFile=nullptr;
+    }
 }
 
 void BDSOutputROOTEvent::Flush()
 {
   // loop over sampler map and clear vectors
-  for(auto i= samplerMap.begin() ; i != samplerMap.end() ;++i) {
-    i->second->Flush();
+  for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i) {
+    (*i)->Flush();
   }  
   eLoss->Flush();
   pFirstHit->Flush();

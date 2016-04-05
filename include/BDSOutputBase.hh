@@ -59,12 +59,18 @@ public:
   /// write a complete event
   virtual void FillEvent() = 0;
 
-  /// write and close and open new file
-  virtual void Commit()=0;
+  /// open new file
+  virtual void Initialise()=0;
   
-  /// write and close the file
+  /// write the data to file
   virtual void Write()=0;
 
+  /// close file
+  virtual void Close()=0;
+
+  /// write, close and open new file
+  void Commit();
+  
 protected:
   /// current event number
   int eventNumber;

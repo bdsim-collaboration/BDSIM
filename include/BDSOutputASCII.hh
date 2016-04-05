@@ -40,9 +40,9 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   virtual void FillEvent() {} ;
-  virtual void Commit();  ///< close the file
-  virtual void Write();   ///< close and open new file
-  
+  virtual void Initialise(); ///< open the file
+  virtual void Write();      ///< write to file
+  virtual void Close();      ///< close the file
 private:
   G4String basefilename;
   G4String timestring;
