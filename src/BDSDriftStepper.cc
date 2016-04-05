@@ -44,8 +44,8 @@ void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],
 
 
       // dump step information for particular event
-      //G4bool verboseStep       = BDSExecOptions::Instance()->GetVerboseStep();
-      //G4int verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+      //G4bool verboseStep       = BDSGlobalConstants::Instance()->GetVerboseStep();
+      //G4int verboseEventNumber = BDSGlobalConstants::Instance()->GetVerboseEventNumber();
       if(verboseStep && verboseEventNumber == G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID())
 	{
 	  int G4precision = G4cout.precision();

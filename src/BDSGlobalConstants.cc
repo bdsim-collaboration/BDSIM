@@ -4,7 +4,6 @@
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"

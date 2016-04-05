@@ -24,9 +24,9 @@ void BDSRandom::SetSeed()
   G4cout << __METHOD_NAME__ << "set the seed" << G4endl;
   G4cout << __METHOD_NAME__ << "seed from BDSGlobalConstants = " 
 	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl
-         << __METHOD_NAME__ << "seed from BDSExecOptions = "
+         << __METHOD_NAME__ << "seed in command line options = "
          << BDSGlobalConstants::Instance()->Seed() << G4endl
-         << __METHOD_NAME__ << "seed set in exec options : "
+         << __METHOD_NAME__ << "seed set in command line options : "
 	 << BDSGlobalConstants::Instance()->SeedSet() << G4endl;
 #endif
   // get seed from options if set
