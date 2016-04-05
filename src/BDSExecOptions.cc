@@ -169,7 +169,6 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  G4int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("seed",    int(result));
-	  options.set_value("setSeed", true);
 	}
       else if( !strcmp(optionName, "seedstate") )
 	{

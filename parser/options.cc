@@ -22,7 +22,6 @@ bool Options::HasBeenSet(std::string name) const
 void Options::PublishMembers()
 {
   // executable options first
-  publish("inputFilename",         &Options::inputFileName);
   publish("inputFileName",         &Options::inputFileName);
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("visDebug",              &Options::visDebug);
@@ -37,19 +36,21 @@ void Options::PublishMembers()
   publish("verboseEvent",          &Options::verboseEvent);
   publish("verboseStep",           &Options::verboseStep);
   publish("verboseEventNumber",    &Options::verboseEventNumber);
+  publish("batch",                 &Options::batch);
+  publish("verboseRunLevel",       &Options::verboseRunLevel);
+  publish("verboseEventLevel",     &Options::verboseEventLevel);
   publish("verboseTrackingLevel",  &Options::verboseTrackingLevel);
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
-  publish("setSeedState",          &Options::setSeedState);
   publish("seedStateFileName",     &Options::seedStateFileName);
-  publish("bdsimPath",             &Options::bdsimPath);
+  publish("setSeedState",          &Options::setSeedState);
   publish("nGenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
   publish("exportGeometry",        &Options::exportGeometry);
   publish("exportType",            &Options::exportType);
   publish("exportFileName",        &Options::exportFileName);
-  publish("batch",                 &Options::batch);
+  publish("bdsimPath",             &Options::bdsimPath);
   
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);

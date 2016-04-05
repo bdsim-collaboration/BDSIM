@@ -36,7 +36,8 @@ OptionsBase::OptionsBase()
   generatePrimariesOnly = false;
   exportGeometry        = false;
   exportType            = "gdml";
-  exportFileName        = "geometry";    
+  exportFileName        = "geometry";
+  bdsimPath             = "";
   
   // very important options
   physicsList           = ""; //default - only transportation
