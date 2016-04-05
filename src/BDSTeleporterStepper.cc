@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSTeleporterStepper.hh"
 
@@ -12,8 +11,8 @@ BDSTeleporterStepper::BDSTeleporterStepper(G4Mag_EqRhs* eqRHS):
 #ifdef BDSDEBUG
   G4cout << "BDSTeleporterStepper Constructor " << G4endl;
 #endif
-  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+  verboseStep        = BDSGlobalConstants::Instance()->VerboseStep();
+  verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
   nvar               = 6;
   teleporterdelta    = BDSGlobalConstants::Instance()->GetTeleporterDelta();
 #ifdef BDSDEBUG

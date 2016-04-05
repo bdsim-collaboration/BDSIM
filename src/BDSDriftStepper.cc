@@ -3,7 +3,6 @@
    Last modified 24.7.2002
    Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
 */
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 
 #include "BDSDriftStepper.hh"
@@ -15,8 +14,8 @@ BDSDriftStepper::BDSDriftStepper(G4Mag_EqRhs *EqRhs)
    : G4MagIntegratorStepper(EqRhs,6)  // integrate over 6 variables only !!
                                       // position & velocity
 {
-  verboseStep        = BDSExecOptions::Instance()->GetVerboseStep();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
+  verboseStep        = BDSGlobalConstants::Instance()->VerboseStep();
+  verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
 }
 
 void BDSDriftStepper::AdvanceHelix( const G4double  yIn[],

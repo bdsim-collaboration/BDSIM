@@ -22,9 +22,64 @@ namespace GMAD
   public:
     OptionsBase();
 
-    /// list of pyhysics processes
+    std::string inputFileName;    ///< input filename
+    std::string visMacroFileName; ///< visualisation filename
+    bool        visDebug;         ///< flag for visualisation debug
+  
+    ///@{ Parameter for output format
+    std::string outputFileName;
+    std::string outputFormat;
+    ///@}
+  
+    ///@{ Parameter for survey
+    bool        survey;
+    std::string surveyFileName;
+    ///@}
+  
+    ///@{ Parameter for gflash shower parameterisation
+    bool   gflash;
+    double gflashemax;
+    double gflashemin;
+    ///@}
+  
+    bool batch; ///< Flag for batch / interactive mode
+    
+    ///@{ Geant4 verbose levels
+    bool verbose;
+    bool verboseEvent;
+    bool verboseStep;
+    int  verboseEventNumber;
+    
+    int  verboseRunLevel;
+    int  verboseEventLevel;
+    int  verboseTrackingLevel;
+    int  verboseSteppingLevel;
+    ///@}
+  
+    bool circular;     ///< Flag for circular machine
+    int  seed;         ///< The seed value for the random number generator
+    bool setSeedState; ///< If seed state is specifed - use the state saved in it
+    std::string seedStateFileName; ///< The seed state filename
+    
+    /// String that points to path where files are searched;
+    /// based on environment variable or else input filename
+    std::string bdsimPath;
+    
+    /// The number of primary events to simulate
+    int nGenerate; 
+
+    /// Whether to only generate primary coordinates and quit, or not.
+    bool generatePrimariesOnly; 
+    
+    ///@{ Parameter for controlling geometry export
+    bool        exportGeometry;
+    std::string exportType;
+    std::string exportFileName;
+    ///@}
+    
+    /// list of physics processes
     std::string physicsList;
-    int modularPhysicsListsOn;
+    int         modularPhysicsListsOn;
 
     /// beam parameters
     std::string particleName;
@@ -105,7 +160,7 @@ namespace GMAD
     /// geometry debug
     bool        dontSplitSBends;
 
-    int         includeIronMagFields;
+    bool        includeIronMagFields;
 
     /// default beampipe parameters
     double      beampipeThickness;

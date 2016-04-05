@@ -50,7 +50,7 @@ BDSSkewSextupole::BDSSkewSextupole(G4String& aName,G4double aLength,
       if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
         SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
       }
-      if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+      if(BDSGlobalConstants::Instance()->SensitiveComponents()){
         SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
       }
 
