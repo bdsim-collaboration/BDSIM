@@ -5,3 +5,5 @@ of2 : octupole, l=0.5*m , k3 = 0.0;
 
 lat : line = (d1,of1,d2,of2);
 com : line = (of1,of2);
+
+include optionsTest.gmad;
