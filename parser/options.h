@@ -49,7 +49,7 @@ namespace GMAD
 	    {
 	      auto const& ok = setKeys; // shortcut
 	      auto result = std::find(ok.begin(), ok.end(), key);
-	      if (result == optionsIn.setKeys.end())
+	      if (result == ok.end())
 		{//it wasn't found so ok to copy
 		  set(this, &optionsIn, key);
 		}
