@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iomanip>
+#include <string>
 #include <unistd.h>
 
 #include "globals.hh" // geant4 types / globals
@@ -19,7 +20,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 {
   Parse(argc, argv);
   /// after parsing the absolute path can be reconstructed  
-  options.set_value("bdsimPath", GetPath(options.inputFileName));
+  options.set_value("bdsimPath", std::string(GetPath(options.inputFileName)));
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
@@ -101,60 +102,60 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{
 	  G4int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseEventNumber", result);
+	  options.set_value("verboseEventNumber", int(result));
 	}
       else if( !strcmp(optionName , "verbose_G4run") )
 	{
 	  G4int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseRunLevel", result);
+	  options.set_value("verboseRunLevel", int(result));
 	}
       else if( !strcmp(optionName , "verbose_G4event") )
 	{
 	  G4int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseEventLevel", result);
+	  options.set_value("verboseEventLevel", int(result));
 	}
       else if( !strcmp(optionName , "verbose_G4tracking") )
 	{
 	  G4int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseTrackingLevel", result);
+	  options.set_value("verboseTrackingLevel", int(result));
 	}
       else if( !strcmp(optionName , "verbose_G4stepping") )
 	{
 	  G4int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseSteppingLevel", result);
+	  options.set_value("verboseSteppingLevel", int(result));
 	}
       else if( !strcmp(optionName , "output") )
-	{options.set_value("outputFormat", optarg);}
+	{options.set_value("outputFormat", std::string(optarg));}
       else if( !strcmp(optionName , "outfile") )
-	{options.set_value("outputFileName", optarg);}
+	{options.set_value("outputFileName", std::string(optarg));}
       else if( !strcmp(optionName , "survey") )
 	{
-	  options.set_value("surveyFileName", optarg);
+	  options.set_value("surveyFileName", std::string(optarg));
 	  options.set_value("survey",         true);
 	}
       else if( !strcmp(optionName , "file") )
-	{options.set_value("inputFileName", optarg);}
+	{options.set_value("inputFileName", std::string(optarg));}
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
-	{options.set_value("visMacroFileName", optarg);}
+	{options.set_value("visMacroFileName", std::string(optarg));}
       else if( !strcmp(optionName , "gflash") )
 	{options.set_value("gflash", true);}
       else if( !strcmp(optionName , "gflashemax") )
 	{
 	  G4double result = 1e5;
 	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("gflashemax", result);
+	  options.set_value("gflashemax", double(result));
 	}
       else if( !strcmp(optionName , "gflashemin") )
 	{
 	  G4double result = 0.1;
 	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("gflashemin", result);
+	  options.set_value("gflashemin", double(result));
 	}
       else if( !strcmp(optionName, "materials") )
 	{
@@ -167,19 +168,19 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{
 	  G4int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("seed",    result);
+	  options.set_value("seed",    int(result));
 	  options.set_value("setSeed", true);
 	}
       else if( !strcmp(optionName, "seedstate") )
 	{
-	  options.set_value("seedStateFileName", optarg);
+	  options.set_value("seedStateFileName", std::string(optarg));
 	  options.set_value("setSeedState",      true);
 	}
       else if( !strcmp(optionName, "ngenerate") )
 	{
 	  G4int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("nGenerate", result);
+	  options.set_value("nGenerate", int(result));
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
@@ -188,7 +189,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  std::string fn = optarg;
 	  if (fn.substr(fn.find_last_of(".") + 1) == "gdml")
 	    {
-	      options.set_value("exportType",     "gdml");
+	      options.set_value("exportType",     std::string("gdml"));
 	      options.set_value("exportFileName", fn);
 	    }
 	  else
