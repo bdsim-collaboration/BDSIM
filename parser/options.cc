@@ -5,7 +5,7 @@
 
 using namespace GMAD;
 
-Options::Options()
+Options::Options(): OptionsBase()
 {
   PublishMembers();
 }

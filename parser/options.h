@@ -76,10 +76,10 @@ namespace GMAD
 #endif
     // member method can throw runtime_error, catch and exit gracefully
     try
-    {
-      set(this, name, value);
-      setKeys.push_back(name);
-    }
+      {
+	set(this, name, value);
+	setKeys.push_back(name);
+      }
     catch (std::runtime_error)
     {
       std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value << std::endl;
