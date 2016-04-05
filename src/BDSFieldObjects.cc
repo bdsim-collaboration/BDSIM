@@ -39,16 +39,16 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   magIntegratorStepper(magIntegratorStepperIn)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  magIntDriver = new G4MagInt_Driver(globals->GetChordStepMinimum(),
+  magIntDriver = new G4MagInt_Driver(globals->ChordStepMinimum(),
 				     magIntegratorStepper,
 				     magIntegratorStepper->GetNumberOfVariables());
 
   chordFinder  = new G4ChordFinder(magIntDriver);
   fieldManager = new G4FieldManager(field, chordFinder);
-  fieldManager->SetDeltaIntersection(globals->GetDeltaIntersection());
-  fieldManager->SetMinimumEpsilonStep(globals->GetMinimumEpsilonStep());
-  fieldManager->SetMaximumEpsilonStep(globals->GetMaximumEpsilonStep());
-  fieldManager->SetDeltaOneStep(globals->GetDeltaOneStep());
+  fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
+  fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
+  fieldManager->SetMaximumEpsilonStep(globals->MaximumEpsilonStep());
+  fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
 }
 
 BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
@@ -64,14 +64,14 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   
   chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
-				  globals->GetChordStepMinimum(),
+				  globals->ChordStepMinimum(),
 				  magIntegratorStepper);
 
   fieldManager = new G4FieldManager(field, chordFinder);
-  fieldManager->SetDeltaIntersection(globals->GetDeltaIntersection());
-  fieldManager->SetMinimumEpsilonStep(globals->GetMinimumEpsilonStep());
-  fieldManager->SetMaximumEpsilonStep(globals->GetMaximumEpsilonStep());
-  fieldManager->SetDeltaOneStep(globals->GetDeltaOneStep());
+  fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
+  fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
+  fieldManager->SetMaximumEpsilonStep(globals->MaximumEpsilonStep());
+  fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
 }
 
 BDSFieldObjects::~BDSFieldObjects()

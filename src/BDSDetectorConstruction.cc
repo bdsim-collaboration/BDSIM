@@ -137,9 +137,7 @@ void BDSDetectorConstruction::InitialiseRegions()
 }
 
 void BDSDetectorConstruction::BuildBeamline()
-{
-  const BDSExecOptions* execOptions = BDSExecOptions::Instance();
-  
+{ 
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
   
@@ -211,9 +209,9 @@ void BDSDetectorConstruction::BuildBeamline()
 	}
     }
 
-  if(execOptions->GetSurvey())
+  if(BDSGlobalConstants::Instance()->Survey())
     {
-      BDSSurvey* survey = new BDSSurvey(execOptions->GetSurveyFilename() + ".dat");
+      BDSSurvey* survey = new BDSSurvey(BDSGlobalConstants::Instance()->SurveyFileName() + ".dat");
       survey->Write(beamline);
       delete survey;
     }

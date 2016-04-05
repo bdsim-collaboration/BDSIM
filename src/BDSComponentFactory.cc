@@ -621,7 +621,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
     {(*st)["field"] = element->B;}
   else
     {
-      G4double ffact = BDSGlobalConstants::Instance()->GetFFact();
+      G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["field"] = - brho * element->angle / length * charge * ffact / CLHEP::tesla / CLHEP::m;
     }
   G4Transform3D fieldRotation = G4Transform3D();

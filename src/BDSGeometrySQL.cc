@@ -883,7 +883,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 			  false,
 			  copyNumber,
                       BDSGlobalConstants::Instance()->CheckOverlaps());
-      if(_align_in)
+      if(align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.
 	  if(GetAlignInVolume())
