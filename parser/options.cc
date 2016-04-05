@@ -49,6 +49,7 @@ void Options::PublishMembers()
   publish("exportGeometry",        &Options::exportGeometry);
   publish("exportType",            &Options::exportType);
   publish("exportFileName",        &Options::exportFileName);
+  publish("batch",                 &Options::batch);
   
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);
