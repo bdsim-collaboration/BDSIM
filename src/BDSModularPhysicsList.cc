@@ -149,7 +149,7 @@ void BDSModularPhysicsList::PrintDefinedParticles() const
 
 void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 {
-  auto particleName = globals->GetParticleName();
+  auto particleName = globals->ParticleName();
   G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
   
   auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
@@ -233,15 +233,15 @@ void BDSModularPhysicsList::ConfigureOptical()
     {G4cout << __METHOD_NAME__ << G4endl;}
   if (!opticalPhysics)
     {return;}
-  opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
+  opticalPhysics->Configure(kCerenkov, globals->TurnOnCerenkov());           ///< Cerenkov process index
   opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
-  opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
-  opticalPhysics->Configure(kRayleigh,      globals->GetTurnOnRayleighScattering()); ///< Rayleigh scattering process index                        
-  opticalPhysics->Configure(kMieHG,         globals->GetTurnOnMieScattering());      ///< Mie scattering process index                             
-  opticalPhysics->Configure(kBoundary,      globals->GetTurnOnOpticalSurface());     ///< Boundary process index                                   
+  opticalPhysics->Configure(kAbsorption, globals->TurnOnOpticalAbsorption());  ///< Absorption process index
+  opticalPhysics->Configure(kRayleigh, globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
+  opticalPhysics->Configure(kMieHG, globals->TurnOnMieScattering());      ///< Mie scattering process index
+  opticalPhysics->Configure(kBoundary, globals->TurnOnOpticalSurface());     ///< Boundary process index
   opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
 // opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
-  opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
+  opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
 }
 
 void BDSModularPhysicsList::SetCuts()
@@ -289,7 +289,7 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  globals->SetParticleDefinition(particleTable->FindParticle(globals->GetParticleName()));  
+  globals->SetParticleDefinition(particleTable->FindParticle(globals->ParticleName()));
   
   if(!globals->GetParticleDefinition()) 
     {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
@@ -297,8 +297,8 @@ void BDSModularPhysicsList::SetParticleDefinition()
   // set kinetic beam parameters other than total energy
   globals->SetBeamMomentum(sqrt(pow(globals->BeamTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
-  globals->SetParticleMomentum(sqrt(pow(globals->GetParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetParticleKineticEnergy(globals->GetParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+  globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 
@@ -310,9 +310,9 @@ void BDSModularPhysicsList::SetParticleDefinition()
   G4cout << __METHOD_NAME__ << "Total Energy : "
 	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << globals->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
-	 << globals->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
 void BDSModularPhysicsList::Em()

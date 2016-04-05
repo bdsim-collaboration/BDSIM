@@ -1,7 +1,7 @@
 void BDSMultipole::BuildEllipticalOuterLogicalVolume(G4bool OuterMaterialIsVacuum)
 {
   //OuterMaterialIsVacuum parameter is useless: one can set
-  //itsMaterial = BDSGlobalConstants::Instance()->GetVacuumMaterial() and obtain the same result. Or cannot?
+  //itsMaterial = BDSGlobalConstants::Instance()->VacuumMaterial() and obtain the same result. Or cannot?
 
   G4Material* material;
   if(itsMaterial != "") material = BDSMaterials::Instance()->GetMaterial(itsMaterial);

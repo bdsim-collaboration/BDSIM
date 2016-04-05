@@ -19,7 +19,7 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
   keeprunningEK(0.0),
   stoprunningEK(DBL_MAX),
   verbose(BDSGlobalConstants::Instance()->Verbose()),
-  turnsToTake(BDSGlobalConstants::Instance()->GetTurnsToTake())
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
 {;}
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
@@ -37,13 +37,13 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
   keeprunningEK(0.0),
   stoprunningEK(DBL_MAX),
   verbose(BDSGlobalConstants::Instance()->Verbose()),
-  turnsToTake(BDSGlobalConstants::Instance()->GetTurnsToTake())
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
 {;}
 
 inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
 {
   // does the number of turns passed == number of turns to take
-  G4int turnsTaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
 #ifdef BDSDEBUG
   // for some reason the __METHOD_NAME__ can't identify this function so hard coded its name
   G4cout << "BDSTerminatorUserLimits::GetUserMinEkine> turns taken : " << turnsTaken << G4endl;

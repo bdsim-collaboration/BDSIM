@@ -146,7 +146,7 @@ void BDSGeometrySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k){
   _VisRed = _VisGreen = _VisBlue = 0.5;
   _VisAlpha = 0.5;
   _VisType = "S";
-  _Material = BDSGlobalConstants::Instance()->GetVacuumMaterial();
+  _Material = BDSGlobalConstants::Instance()->VacuumMaterial();
   _Name="";
   _PrecisionRegion=0;
   _ApproximationRegion=0;
@@ -261,7 +261,7 @@ G4VisAttributes* BDSGeometrySQL::VisAtt(){
 G4UserLimits* BDSGeometrySQL::UserLimits(G4double var){
   G4UserLimits* UserLimits = new G4UserLimits();
   UserLimits->SetMaxAllowedStep(var*0.5);
-  UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   return UserLimits;
 }
 
@@ -867,7 +867,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 			  VOL_LIST[PARENTID],
 			  false,
 			  copyNumber,
-			  BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                      BDSGlobalConstants::Instance()->CheckOverlaps());
       if(_align_in)
 	{
 	  // Make sure program stops and informs user if more than one alignment vol.
@@ -906,7 +906,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
       // charge (in |e| units)
       G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();  
       // momentum (in GeV/c)   
-      G4double momentum = BDSGlobalConstants::Instance()->GetBeamMomentum();
+      G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum();
       // rigidity (in T*m)
       G4double brho = ( (momentum/CLHEP::GeV) / (0.299792458 * charge));
       // rigidity (in Geant4 units)

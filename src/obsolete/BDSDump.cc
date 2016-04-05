@@ -38,7 +38,7 @@ void BDSDump::BuildContainerLogicalVolume()
 #ifndef NOUSERLIMITS
   G4UserLimits* itsOuterUserLimits = new G4UserLimits();
   itsOuterUserLimits->SetMaxAllowedStep(chordLength);
-  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
   RegisterUserLimits(itsOuterUserLimits);
 #endif

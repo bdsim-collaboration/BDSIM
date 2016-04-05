@@ -412,7 +412,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::ConstructBDS(list<struct Element>& b
                                  NULL,		// its mother  volume
                                  false,		// no boolean operation
                                  0,             // copy number
-				 BDSGlobalConstants::Instance()->GetCheckOverlaps());		// overlap checking
+				 BDSGlobalConstants::Instance()->CheckOverlaps());		// overlap checking
 
 
   */

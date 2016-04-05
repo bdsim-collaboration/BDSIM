@@ -28,13 +28,13 @@ BDSGlobalConstants* BDSGlobalConstants::Instance()
 
 BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   options(GMAD::Options(opt)),
-  itsBeamParticleDefinition(nullptr),
-  itsBeamMomentum(0.0),
-  itsBeamKineticEnergy(0.0),
-  itsParticleMomentum(0.0),
-  itsParticleKineticEnergy(0.0),
-  itsSMax(0.0),
-  itsTurnsTaken(0.0),
+  beamParticleDefinition(nullptr),
+  beamMomentum(0.0),
+  beamKineticEnergy(0.0),
+  particleMomentum(0.0),
+  particleKineticEnergy(0.0),
+  sMax(0.0),
+  turnsTaken(0.0),
   teleporterlength(0.0)
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
@@ -67,7 +67,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
       G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"aper1\" + \"beamPipeThickness\") " << G4endl;
       exit(1);
     }
-  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
+  magnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
 
   // tunnel
   tunnelInfo             = new BDSTunnelInfo(options.tunnelType,
@@ -91,13 +91,13 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
       exit(1);
     }
   else
-    {itsLengthSafety = options.lengthSafety * CLHEP::m;}
+    {lengthSafety = options.lengthSafety * CLHEP::m;}
 
-  itsLPBFraction = options.LPBFraction;
-  if(itsLPBFraction > 1.0) // safety checks
-    {itsLPBFraction = 1.0;}
-  if(itsLPBFraction < 0.0)
-    {itsLPBFraction = 0.0;}
+  lPBFraction = options.LPBFraction;
+  if(lPBFraction > 1.0) // safety checks
+    {lPBFraction = 1.0;}
+  if(lPBFraction < 0.0)
+    {lPBFraction = 0.0;}
   
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
@@ -106,13 +106,13 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsLaserwireTrackElectrons = 1;
   
   zeroMagField = new G4UniformMagField(G4ThreeVector());
-  itsZeroFieldManager=new G4FieldManager();
-  itsZeroFieldManager->SetDetectorField(zeroMagField);
-  itsZeroFieldManager->CreateChordFinder(zeroMagField);
+  zeroFieldManager=new G4FieldManager();
+  zeroFieldManager->SetDetectorField(zeroMagField);
+  zeroFieldManager->CreateChordFinder(zeroMagField);
   
-  itsTurnsToTake = options.nturns;
-  if(itsTurnsToTake < 1)
-    {itsTurnsToTake = 1;}
+  turnsToTake = options.nturns;
+  if(turnsToTake < 1)
+    {turnsToTake = 1;}
   
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
 
@@ -149,45 +149,45 @@ void BDSGlobalConstants::InitDefaultUserLimits()
 {
   //these must be copied and not attached directly
   defaultUserLimits = new G4UserLimits("default_cuts");
-  defaultUserLimits->SetUserMaxTime(GetMaxTime());
+  defaultUserLimits->SetUserMaxTime(MaxTime());
   //user must set step length manually
 }
 
 void BDSGlobalConstants::InitRotationMatrices()
 {
-  _RotY90       = new G4RotationMatrix();
-  _RotYM90      = new G4RotationMatrix();
-  _RotX90       = new G4RotationMatrix();
-  _RotXM90      = new G4RotationMatrix();
-  _RotYM90X90   = new G4RotationMatrix();
-  _RotYM90XM90  = new G4RotationMatrix();
+  rotY90       = new G4RotationMatrix();
+  rotYM90      = new G4RotationMatrix();
+  rotX90       = new G4RotationMatrix();
+  rotXM90      = new G4RotationMatrix();
+  rotYM90X90   = new G4RotationMatrix();
+  rotYM90XM90  = new G4RotationMatrix();
   G4double pi_ov_2 = asin(1.);
-  _RotY90->rotateY(pi_ov_2);
-  _RotYM90->rotateY(-pi_ov_2);
-  _RotX90->rotateX(pi_ov_2);
-  _RotXM90->rotateX(-pi_ov_2);
-  _RotYM90X90->rotateY(-pi_ov_2);
-  _RotYM90X90->rotateX( pi_ov_2);
-  _RotYM90XM90->rotateY(-pi_ov_2);
-  _RotYM90XM90->rotateX(-pi_ov_2);
+  rotY90->rotateY(pi_ov_2);
+  rotYM90->rotateY(-pi_ov_2);
+  rotX90->rotateX(pi_ov_2);
+  rotXM90->rotateX(-pi_ov_2);
+  rotYM90X90->rotateY(-pi_ov_2);
+  rotYM90X90->rotateX( pi_ov_2);
+  rotYM90XM90->rotateY(-pi_ov_2);
+  rotYM90XM90->rotateX(-pi_ov_2);
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
   delete defaultBeamPipeModel;
-  delete itsZeroFieldManager;
+  delete zeroFieldManager;
   delete zeroMagField;
   delete tunnelInfo;
   delete defaultUserLimits;
   delete invisibleVisAttr;
   delete visibleDebugVisAttr;
 
-  delete _RotY90;
-  delete _RotYM90;
-  delete _RotX90;
-  delete _RotXM90;
-  delete _RotYM90X90;
-  delete _RotYM90XM90;
+  delete rotY90;
+  delete rotYM90;
+  delete rotX90;
+  delete rotXM90;
+  delete rotYM90X90;
+  delete rotYM90XM90;
 
   instance = nullptr;
 }

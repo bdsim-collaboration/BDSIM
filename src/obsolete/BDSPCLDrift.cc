@@ -52,7 +52,7 @@ void BDSPCLDrift::BuildBeampipe(){
   G4cout << "PCLDrift Dy: " << itsDyAper/CLHEP::m << " m" << G4endl;
 #endif
 
-  G4double ts = BDSGlobalConstants::Instance()->GetLengthSafety()+itsBeampipeThickness/2;
+  G4double ts = BDSGlobalConstants::Instance()->LengthSafety()+itsBeampipeThickness/2;
 
   BDSPCLTube* innerTube = new BDSPCLTube(itsXAper-ts, itsYAperUp-ts, itsYAperDown-ts, itsDyAper, -1, itsLength, itsName+"_inner");
 
@@ -72,7 +72,7 @@ void BDSPCLDrift::BuildBeampipe(){
 
   itsInnerBeamPipeLogicalVolume=	
     new G4LogicalVolume(inner_solid,
-			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+			BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial()),
 			itsName+"_inner_bmp_log");
 
   itsOuterBeamPipeLogicalVolume=	
@@ -107,7 +107,7 @@ void BDSPCLDrift::BuildBeampipe(){
 				    itsName+"_inner_bmp_phys",// its name
 				    itsMarkerLogicalVolume,   // its mother  volume
 				    false,		        // no boolean operation
-				    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
+				    0, BDSGlobalConstants::Instance()->CheckOverlaps());		        // copy number
 
 
   
@@ -118,7 +118,7 @@ void BDSPCLDrift::BuildBeampipe(){
 				    itsName+"_inner_bmp_phys",// its name
 				    itsMarkerLogicalVolume,   // its mother  volume
 				    false,		        // no boolean operation
-				    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());		        // copy number
+				    0, BDSGlobalConstants::Instance()->CheckOverlaps());		        // copy number
 
 
 
@@ -129,18 +129,18 @@ void BDSPCLDrift::BuildBeampipe(){
   //
   // define sensitive volumes for hit generation
   //
-  if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+  if(BDSGlobalConstants::Instance()->SensitiveBeamPipe()){
     AddSensitiveVolume(itsOuterBeamPipeLogicalVolume);	
   }
 
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =  new G4UserLimits("beampipe cuts");
   itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
-  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
 
   itsInnerBeampipeUserLimits =  new G4UserLimits("inner beampipe cuts");
   itsInnerBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
-  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
 
   G4double stepfactor = 5;
 

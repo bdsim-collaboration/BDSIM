@@ -27,7 +27,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // construct output histograms
   // calculate histogram dimensions
   G4double smin     = 0.0;
-  G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
+  G4double smax     = BDSGlobalConstants::Instance()->SMax() / CLHEP::m;
   G4double binwidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax              = smin + (nbins*binwidth);          // redefine smax

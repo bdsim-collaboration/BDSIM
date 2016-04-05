@@ -75,8 +75,8 @@ void BDSTeleporter::BuildBPFieldMgr()
   itsFieldManager->SetChordFinder(itsChordFinder);
   // set limits for field (always non zero, so always set)
   itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
-  itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+  itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
   itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 

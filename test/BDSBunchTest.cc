@@ -33,7 +33,7 @@ int main(int argc,char** argv)
   std::cout << "BDSBunchTest> distribFile : "      << options.distribFile << std::endl;
   std::cout << "BDSBunchTest> distribType : "      << options.distribType << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << options.particleName << std::endl;
-  std::cout << "BDSBunchTest> particle    : "      << globalConstants->GetParticleName() << std::endl;
+  std::cout << "BDSBunchTest> particle    : "      << globalConstants->ParticleName() << std::endl;
   std::cout << "BDSBunchTest> numberToGenerate : " << options.numberToGenerate << std::endl;
 
 
@@ -47,7 +47,7 @@ int main(int argc,char** argv)
   G4Proton::ProtonDefinition();
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();  
-  globalConstants->SetParticleDefinition(particleTable->FindParticle(globalConstants->GetParticleName()));  
+  globalConstants->SetParticleDefinition(particleTable->FindParticle(globalConstants->ParticleName()));
   globalConstants->SetBeamMomentum(sqrt(pow(globalConstants->BeamTotalEnergy(),2)-pow(globalConstants->GetParticleDefinition()->GetPDGMass(),2)));
   globalConstants->SetBeamKineticEnergy(
           globalConstants->BeamTotalEnergy()-globalConstants->GetParticleDefinition()->GetPDGMass());

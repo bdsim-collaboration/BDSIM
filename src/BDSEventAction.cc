@@ -220,7 +220,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
   
   // if events per ntuples not set (default 0) - only write out at end 
-  int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
+  int evntsPerNtuple = BDSGlobalConstants::Instance()->NumberOfEventsPerNtuple();
 
   if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
@@ -243,9 +243,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // Save interesting trajectories
-  if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
-     BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
-     BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories())
+  if(BDSGlobalConstants::Instance()->StoreTrajectory() ||
+          BDSGlobalConstants::Instance()->StoreMuonTrajectories() ||
+          BDSGlobalConstants::Instance()->StoreNeutronTrajectories())
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
@@ -260,9 +260,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  BDSTrajectory* traj=(BDSTrajectory*)(*iT1);
 	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
 	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
-	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m > BDSGlobalConstants::Instance()->GetTrajCutGTZ();
+	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m >
+              BDSGlobalConstants::Instance()->TrajCutGTZ();
 	  G4double radius   = sqrt(pow(trajEndPointThreeVector.x()/CLHEP::m, 2) + pow(trajEndPointThreeVector.y()/CLHEP::m, 2));
-	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->GetTrajCutLTR();
+	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
 	  if (greaterThanZInteresting && withinRInteresting)
 	    {interestingTrajectories.push_back(traj);}
 	}
@@ -302,6 +303,6 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int              turnstaken      = BDSGlobalConstants::Instance()->TurnsTaken();
   bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

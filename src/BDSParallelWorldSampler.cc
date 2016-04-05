@@ -50,7 +50,7 @@ void BDSParallelWorldSampler::Construct()
   
   const G4double samplerR    = 0.5* BDSGlobalConstants::Instance()->SamplerDiameter();
   BDSBeamline* beamline      = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  const G4bool checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  const G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
 
   // Construct the one sampler typically used for a general sampler
   BDSSamplerPlane* generalPlane = new BDSSamplerPlane("Plane_sampler", samplerR);

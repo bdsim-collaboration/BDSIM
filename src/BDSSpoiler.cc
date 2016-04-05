@@ -52,7 +52,7 @@ void BDSSpoiler::BuildInnerSpoiler()
 				   chordLength/2);
   RegisterSolid(innerSolid);
   itsInnerLogVol = new G4LogicalVolume(innerSolid,
-				       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),
+				       BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial()),
 				       name+"_inner");
   
   itsPhysiComp2 = new G4PVPlacement(nullptr,                // no rotation

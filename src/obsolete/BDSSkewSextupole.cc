@@ -47,20 +47,20 @@ BDSSkewSextupole::BDSSkewSextupole(G4String& aName,G4double aLength,
 
       BuildDefaultOuterLogicalVolume(itsLength);
 
-      if(BDSGlobalConstants::Instance()->GetSensitiveBeamPipe()){
+      if(BDSGlobalConstants::Instance()->SensitiveBeamPipe()){
         SetMultipleSensitiveVolumes(itsBeampipeLogicalVolume);
       }
       if(BDSGlobalConstants::Instance()->SensitiveComponents()){
         SetMultipleSensitiveVolumes(itsOuterLogicalVolume);
       }
 
-      if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
+      if(BDSGlobalConstants::Instance()->IncludeIronMagFields())
 	{
 	  G4double polePos[4];
 	  G4double Bfield[3];
 
-	  polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/6);
-	  polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/6);
+	  polePos[0]=-BDSGlobalConstants::Instance()->MagnetPoleRadius()*sin(CLHEP::pi/6);
+	  polePos[1]= BDSGlobalConstants::Instance()->MagnetPoleRadius()*cos(CLHEP::pi/6);
 	  polePos[2]=0.;
 	  polePos[3]=-999.;//flag to use polePos rather than local track
 	                   //coordinate in GetFieldValue	    
@@ -68,9 +68,9 @@ BDSSkewSextupole::BDSSkewSextupole(G4String& aName,G4double aLength,
 	  itsMagField->GetFieldValue(polePos,Bfield);
 	  G4double BFldIron=
 	    sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-	    BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
+                BDSGlobalConstants::Instance()->MagnetPoleSize()/
 	    (BDSGlobalConstants::Instance()->ComponentBoxSize()/2-
-	     BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+                BDSGlobalConstants::Instance()->MagnetPoleRadius());
 	  // Magnetic flux from a pole is divided in two directions
 	  BFldIron/=2.;
 

@@ -407,7 +407,7 @@ void BDSMagnetOuterFactoryCylindrical::TestInputParameters(BDSBeamPipe* beamPipe
   //function arguments by reference to they can be modified in place
   //check outer material is something
   if (!outerMaterial)
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
 
   // ensure box size is bigger than the beampipe
   if (beamPipe->ContainerIsCircular())

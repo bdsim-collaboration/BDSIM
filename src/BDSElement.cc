@@ -326,11 +326,11 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   if(BDSGlobalConstants::Instance()->DeltaOneStep()>0){
     fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
   }
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
-    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->MaximumEpsilonStep()>0){
+    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
   }
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
-    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->MinimumEpsilonStep()>=0){
+    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
   }
   if(BDSGlobalConstants::Instance()->DeltaIntersection()>0){
     fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());

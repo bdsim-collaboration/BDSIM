@@ -111,8 +111,8 @@ void BDSMagnet::BuildBPFieldMgr()
       
       // these options are always non-zero so always set them
       itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
-      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
       itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
     }
 }
@@ -248,8 +248,8 @@ void BDSMagnet::BuildOuterFieldManager(G4int    nPoles,
 
   // these options are always non-zero so always set them
   itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
-  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
   itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 
@@ -318,7 +318,7 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-						    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                                                    BDSGlobalConstants::Instance()->CheckOverlaps());
       
       RegisterPhysicalVolume(beamPipePV);
     }
@@ -336,7 +336,7 @@ void BDSMagnet::PlaceComponents()
 						       containerLogicalVolume, // its mother  volume
 						       false,                  // no boolean operation
 						       0,                      // copy number
-						       BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                                                       BDSGlobalConstants::Instance()->CheckOverlaps());
 
       RegisterPhysicalVolume(magnetOuterPV);
     }

@@ -54,7 +54,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   gflash        = BDSGlobalConstants::Instance()->GFlash();
   if (gflash)
     {InitialiseGFlash();}
@@ -301,7 +301,7 @@ void BDSDetectorConstruction::BuildWorld()
   G4String worldName   = "World";
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->GetEmptyMaterial();
+  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial     = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
 						      emptyMaterial,           // material
