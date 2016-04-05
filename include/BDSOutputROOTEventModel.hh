@@ -10,11 +10,14 @@
 
 #ifndef __MAKECINT__
 #include "BDSAcceleratorModel.hh"
+#else
+#include "TTree.h"
 #endif
 
-class BDSOutputROOTEventModel {
-protected :
-  std::vector<std::string> componentName;
+class BDSOutputROOTEventModel : public TObject {
+public :
+
+  std::vector<std::string> *componentName;
   std::vector<std::string> placementName;
   std::vector<float>       length;
   std::vector<TVector3>    staPos;
@@ -33,15 +36,15 @@ protected :
   std::vector<float>       midS;
   std::vector<float>       endS;
 
-
-
-public :
   BDSOutputROOTEventModel();
   virtual ~BDSOutputROOTEventModel();
 
 #ifndef __MAKECINT__   
   virtual void Fill();
+#else
+  void SetBranchAddress(TTree *);
 #endif
+
   ClassDef(BDSOutputROOTEventModel,1);
 };
 

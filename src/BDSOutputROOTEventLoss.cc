@@ -13,7 +13,7 @@ BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 {
 }
 
-
+#ifndef __MAKECINT__
 void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
 {
   this->n++;
@@ -32,6 +32,8 @@ void BDSOutputROOTEventLoss::Fill(BDSTunnelHit *hit)
   this->S.push_back     ( (float &&)      (hit->GetS() / CLHEP::m));
   this->weight.push_back( (float &&) hit->GetWeight());
 }
+#endif
+
 void BDSOutputROOTEventLoss::Flush()
 {
   this->n = 0;

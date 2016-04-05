@@ -4,12 +4,14 @@ ClassImp(BDSOutputROOTEventModel)
 
 BDSOutputROOTEventModel::BDSOutputROOTEventModel()
 {
+  componentName = new std::vector<std::string>();
 }
 
 BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 {
 }
 
+#ifndef __MAKECINT__
 void BDSOutputROOTEventModel::Fill()
 {
   // get accelerator model
@@ -19,7 +21,7 @@ void BDSOutputROOTEventModel::Fill()
   for(auto i = beamline->begin(); i != beamline->end(); ++i)
   {
     // Name
-    this->componentName.push_back((*i)->GetName());
+    this->componentName->push_back((*i)->GetName());
     this->placementName.push_back((*i)->GetPlacementName());
 
     // Length
@@ -70,7 +72,12 @@ void BDSOutputROOTEventModel::Fill()
     this->staS.push_back((float &&) (*i)->GetSPositionStart());
     this->midS.push_back((float &&) (*i)->GetSPositionMiddle());
     this->endS.push_back((float &&) (*i)->GetSPositionEnd());
-
-
   }
 }
+#else
+void BDSOutputROOTEventModel::SetBranchAddress(TTree *t)
+{
+  t->SetBranchAddress("Model.componentName",&(this->componentName));
+  t->SetBranchAddress("Model.length",&(this->length));
+}
+#endif

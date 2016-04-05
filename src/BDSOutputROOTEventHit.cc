@@ -15,6 +15,7 @@ BDSOutputROOTEventHit::~BDSOutputROOTEventHit()
 }
 
 
+#ifndef __MAKECINT__
 void BDSOutputROOTEventHit::Fill(BDSEnergyCounterHit *hit)
 {
   // Fill base class
@@ -35,7 +36,7 @@ void BDSOutputROOTEventHit::Fill(BDSTunnelHit *hit) // TODO Could we tidy the st
   this->Y.push_back((float &&) (hit->GetY() / CLHEP::m));
   this->Z.push_back((float &&) (hit->GetZ() / CLHEP::m));
 }
-
+#endif
 
 void BDSOutputROOTEventHit::Flush() {
   BDSOutputROOTEventLoss::Flush();

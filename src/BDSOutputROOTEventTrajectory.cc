@@ -8,6 +8,7 @@ BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory()
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 {;}
 
+#ifndef __MAKECINT__
 void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 {
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
@@ -27,6 +28,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     trajectory.clear();
   }
 }
+#endif
 
 void BDSOutputROOTEventTrajectory::Flush()
 {

@@ -19,6 +19,7 @@ BDSOutputROOTEventSampler::BDSOutputROOTEventSampler(std::string samplerNameIn)
 BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler()
 { }
 
+#ifndef __MAKECINT__ 
 void BDSOutputROOTEventSampler::Fill(G4double E,
                                      G4double x0,
                                      G4double y0,
@@ -83,6 +84,11 @@ void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
   this->turnNumber.push_back(hit->GetTurnsTaken());
 
 }
+#else
+void BDSOutputROOTEventSampler::SetBranchAddress(TTree *t)
+{
+}
+#endif
 
 void BDSOutputROOTEventSampler::Flush()
 {

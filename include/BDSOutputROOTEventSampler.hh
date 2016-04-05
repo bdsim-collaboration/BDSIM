@@ -5,11 +5,13 @@
 #include <vector>
 #ifndef __MAKECINT__ 
 #include "BDSSamplerHit.hh"
+#else
+#include "TTree.h"
 #endif
 
 class BDSOutputROOTEventSampler {
   
-protected:
+public:
   std::string samplerName; //|| Don't split the header
   
   int                n;    
@@ -29,8 +31,7 @@ protected:
   std::vector<int>   turnNumber;
   
   float              S;   // Will not need this when have global transforms
-  
-public:
+
   BDSOutputROOTEventSampler();
   BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
@@ -42,6 +43,8 @@ public:
             G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(BDSSamplerHit *hit);
+#else
+  void SetBranchAddress(TTree *);
 #endif
   /// Clean Sampler
   void Flush();

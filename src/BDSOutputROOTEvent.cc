@@ -79,7 +79,7 @@ void BDSOutputROOTEvent::Initialise()
   // build model and write structure
   //
   BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
-  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000,2);
+  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000,1);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
    
