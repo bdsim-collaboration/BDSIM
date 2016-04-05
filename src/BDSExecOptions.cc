@@ -100,33 +100,33 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("verboseEvent", true);}
       else if( !strcmp(optionName , "verbose_event_num") )
 	{
-	  G4int result = -1;
+	  int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseEventNumber", int(result));
+	  options.set_value("verboseEventNumber", result);
 	}
       else if( !strcmp(optionName , "verbose_G4run") )
 	{
-	  G4int result = 0;
+	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseRunLevel", int(result));
+	  options.set_value("verboseRunLevel", result);
 	}
       else if( !strcmp(optionName , "verbose_G4event") )
 	{
-	  G4int result = 0;
+	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseEventLevel", int(result));
+	  options.set_value("verboseEventLevel", result);
 	}
       else if( !strcmp(optionName , "verbose_G4tracking") )
 	{
-	  G4int result = 0;
+	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseTrackingLevel", int(result));
+	  options.set_value("verboseTrackingLevel", result);
 	}
       else if( !strcmp(optionName , "verbose_G4stepping") )
 	{
-	  G4int result = 0;
+	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("verboseSteppingLevel", int(result));
+	  options.set_value("verboseSteppingLevel", result);
 	}
       else if( !strcmp(optionName , "output") )
 	{options.set_value("outputFormat", std::string(optarg));}
@@ -147,15 +147,15 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("gflash", true);}
       else if( !strcmp(optionName , "gflashemax") )
 	{
-	  G4double result = 1e5;
+	  double result = 1e5;
 	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("gflashemax", double(result));
+	  options.set_value("gflashemax", result);
 	}
       else if( !strcmp(optionName , "gflashemin") )
 	{
-	  G4double result = 0.1;
+	  double result = 0.1;
 	  conversion = BDS::IsNumber(optarg, result);
-	  options.set_value("gflashemin", double(result));
+	  options.set_value("gflashemin", result);
 	}
       else if( !strcmp(optionName, "materials") )
 	{
@@ -166,9 +166,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{options.set_value("circular", true);}
       else if( !strcmp(optionName, "seed")  )
 	{
-	  G4int result = -1;
+	  int result = -1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("seed",    int(result));
+	  options.set_value("seed", result);
 	}
       else if( !strcmp(optionName, "seedstate") )
 	{
@@ -177,9 +177,9 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "ngenerate") )
 	{
-	  G4int result = 1;
+	  int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("nGenerate", int(result));
+	  options.set_value("nGenerate", result);
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
