@@ -556,6 +556,23 @@ void BDSOutputROOT<Type>::Close()
     }
 }
 
+template<typename Type>
+void BDSOutputROOT<Type>::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* /*bunch*/, bool /*primary*/)
+{
+  // do nothing for now - only really needed for development purposes just now
+  // so simply ascii output
+  return;
+}
+
+template<typename Type>
+void BDSOutputROOT<Type>::WriteTrackerPrimaryLoss(TRKBunch* /*lostBunch*/, int /*turnsTaken*/)
+{
+  // do nothing for now - only really needed for development purposes just now
+  // so simply ascii output
+  return;
+}
+
+
 template void BDSOutputROOT<double>::WriteRootHit(TTree*   tree,
 						  G4double totalEnergy,
 						  G4double xIn,

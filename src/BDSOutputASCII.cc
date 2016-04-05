@@ -281,7 +281,7 @@ void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch
   else
     {outfile = &ofMain;}
   //turns taken same for all particles in bunch
-  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   //loop over bunch and write using ascii method
   for (TRKBunchIter it = bunch->begin(); it != bunch->end(); it++) {
 

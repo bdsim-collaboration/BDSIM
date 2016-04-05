@@ -258,6 +258,10 @@ namespace GMAD
 
     double   printModuloFraction;
 
+    std::string trackingType;
+    int         trackingSteps;
+    bool        dontUseAperture;
+
     /// print some properties
     void print() const;
   };

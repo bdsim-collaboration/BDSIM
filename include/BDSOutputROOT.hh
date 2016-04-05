@@ -56,6 +56,9 @@ public:
   virtual void Write() override;      ///< write to file
   virtual void Close() override;      ///< close the file
 
+  virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false) override;
+  virtual void WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken)override;
+
 protected:
   /// The number type identifier string to put into root.
   G4String type;

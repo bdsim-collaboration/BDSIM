@@ -193,6 +193,11 @@ OptionsBase::OptionsBase()
   nturns                   = 1;
 
   printModuloFraction      = 0.1;
+
+  // tracker options
+  trackingType             = "hybrid";
+  trackingSteps            = 1;
+  dontUseAperture          = false;
 }
 
 
