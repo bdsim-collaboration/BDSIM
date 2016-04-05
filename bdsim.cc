@@ -306,7 +306,6 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> instances deleting..."<<G4endl;
 #endif
   delete BDSAcceleratorModel::Instance();
-  delete execOptions;
   delete globalConstants;
   delete BDSMaterials::Instance();
   delete BDSParser::Instance();
