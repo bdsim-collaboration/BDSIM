@@ -440,9 +440,27 @@ endif()
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
+file(GLOB bdsimRootEventSources
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventModel.cc
+	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventModelDict.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventSampler.cc
+	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventSamplerDict.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventLoss.cc
+	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventLossDict.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventHit.cc
+	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventHitDict.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventTrajectory.cc
+        ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventTrajectoryDict.cc
+        )
+add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
+target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")	
+# link against ROOT
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+
 # Install the targets:
 set(executables bdsimexec)
-set(libraries bdsim)
+set(libraries bdsim bdsimRootEvent)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
@@ -471,7 +489,7 @@ add_custom_target(dist
 add_custom_target(copy-deps
   COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
 )
-      
+
 ## Add subdirectories
 # Parser
 add_subdirectory(parser)
