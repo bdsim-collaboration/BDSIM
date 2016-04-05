@@ -93,7 +93,7 @@ OptionsBase::OptionsBase()
   // always split sbends into smaller chunks by default
   dontSplitSBends      = false; 
 
-  includeIronMagFields = 0;
+  includeIronMagFields = false;
   sensitiveBeamlineComponents = 1;
 
   // beam pipe / aperture

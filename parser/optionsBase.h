@@ -160,7 +160,7 @@ namespace GMAD
     /// geometry debug
     bool        dontSplitSBends;
 
-    int         includeIronMagFields;
+    bool        includeIronMagFields;
 
     /// default beampipe parameters
     double      beampipeThickness;
