@@ -4,7 +4,7 @@
  * \mainpage
  * BDSIM © 2001-2016
  *
- * version 0.92
+ * version 0.9.develop
  */
 
 #include "BDSDebug.hh" 
@@ -56,7 +56,7 @@ BDSOutputBase* bdsOutput=nullptr;     ///< output interface
 int main(int argc,char** argv)
 {
   /// Print header & program information
-  G4cout<<"bdsim : version 0.92"<<G4endl;
+  G4cout<<"bdsim : version 0.9.develop"<<G4endl;
   G4cout<<"        (C) 2001-2016 Royal Holloway University London"<<G4endl;
   G4cout<<"        http://www.pp.rhul.ac.uk/bdsim"<<G4endl;
   G4cout<<G4endl;
