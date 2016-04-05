@@ -53,12 +53,12 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength, G4Logical
   _precisionRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(pRegName);
   //  if(!_precisionRegionSQL->IsModified()){
     G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-    if(BDSGlobalConstants::Instance()->GetProdCutPhotonsP()>0)
-      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
-    if(BDSGlobalConstants::Instance()->GetProdCutElectronsP()>0)
-      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),G4ProductionCuts::GetIndex("e-"));
-    if(BDSGlobalConstants::Instance()->GetProdCutPositronsP()>0)
-      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
+    if(BDSGlobalConstants::Instance()->ProdCutPhotonsP()>0)
+      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsP(),G4ProductionCuts::GetIndex("gamma"));
+    if(BDSGlobalConstants::Instance()->ProdCutElectronsP()>0)
+      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsP(),G4ProductionCuts::GetIndex("e-"));
+    if(BDSGlobalConstants::Instance()->ProdCutPositronsP()>0)
+      theProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsP(),G4ProductionCuts::GetIndex("e+"));
     _precisionRegionSQL->SetProductionCuts(theProductionCuts);
     //  }
   //Set up the approximation region
@@ -66,9 +66,9 @@ BDSGeometrySQL::BDSGeometrySQL(G4String DBfile, G4double markerlength, G4Logical
   _approximationRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(vRegName);
   //  if(!_approximationRegionSQL->IsModified()){
     G4ProductionCuts* approxProductionCuts = new G4ProductionCuts();
-    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsA(),G4ProductionCuts::GetIndex("gamma"));
-    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsA(),G4ProductionCuts::GetIndex("e-"));
-    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsA(),G4ProductionCuts::GetIndex("e+"));
+    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsA(),G4ProductionCuts::GetIndex("gamma"));
+    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsA(),G4ProductionCuts::GetIndex("e-"));
+    approxProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsA(),G4ProductionCuts::GetIndex("e+"));
     _approximationRegionSQL->SetProductionCuts(approxProductionCuts);
     //  }
     Construct();
@@ -896,7 +896,7 @@ void BDSGeometrySQL::PlaceComponents(BDSMySQLTable* aSQLTable, std::vector<G4Log
 	    align_out_volume=PhysiComp;
 	}
 
-//      G4double P0 = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+//      G4double P0 = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 //      G4double brho=
 //	sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
 

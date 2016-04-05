@@ -20,7 +20,7 @@ void BDSTerminator::Build()
 void BDSTerminator::BuildContainerLogicalVolume()
 {
   //Bascially a copy of BDSSampler but with different sensitive detector added
-  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   containerSolid = new G4Box(name + "_container_solid",
 			     radius,
 			     radius,

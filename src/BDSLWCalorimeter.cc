@@ -31,7 +31,7 @@ void BDSLWCalorimeter::Build()
 void BDSLWCalorimeter::BuildMarkerLogicalVolume()
 {
   G4double SampTransSize;
-  SampTransSize = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5 * CLHEP::mm;
+  SampTransSize = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5 * CLHEP::mm;
 
   containerSolid = new G4Box(name + "_container_solid", // name
 			     SampTransSize,

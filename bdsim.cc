@@ -208,7 +208,7 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Registering user action - Stepping Action"<<G4endl;
 #endif
   // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
-  if (globalConstants->GetThresholdCutPhotons() > 0 || globalConstants->GetThresholdCutCharged() > 0
+  if (globalConstants->ThresholdCutPhotons() > 0 || globalConstants->ThresholdCutCharged() > 0
       || globalConstants->VerboseStep()) {
     runManager->SetUserAction(new BDSSteppingAction);
   }

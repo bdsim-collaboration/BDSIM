@@ -207,7 +207,7 @@ void BDSOutputROOT<Type>::Initialise()
   // Tunnel hits histogram
   G4double smin     = 0.0;
   G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
-  G4double binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
+  G4double binwidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax              = smin + (nbins*binwidth);          // redefine smax
   // x then y -> x is angle, y is s position

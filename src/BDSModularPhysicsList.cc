@@ -250,14 +250,14 @@ void BDSModularPhysicsList::SetCuts()
     {G4cout << __METHOD_NAME__ << G4endl;}
 
   G4VUserPhysicsList::SetCuts();  
-  G4double defaultRangeCut  = globals->GetDefaultRangeCut(); 
+  G4double defaultRangeCut  = globals->DefaultRangeCut();
   SetDefaultCutValue(defaultRangeCut);
   SetCutsWithDefault();
 
-  G4double prodCutPhotons   = globals->GetProdCutPhotons();
-  G4double prodCutElectrons = globals->GetProdCutElectrons();
-  G4double prodCutPositrons = globals->GetProdCutPositrons();
-  G4double prodCutProtons   = globals->GetProdCutProtons();
+  G4double prodCutPhotons   = globals->ProdCutPhotons();
+  G4double prodCutElectrons = globals->ProdCutElectrons();
+  G4double prodCutPositrons = globals->ProdCutPositrons();
+  G4double prodCutProtons   = globals->ProdCutProtons();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Default production range cut  " << defaultRangeCut  << " mm" << G4endl;
@@ -295,8 +295,8 @@ void BDSModularPhysicsList::SetParticleDefinition()
     {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
   
   // set kinetic beam parameters other than total energy
-  globals->SetBeamMomentum(sqrt(pow(globals->GetBeamTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetBeamKineticEnergy(globals->GetBeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+  globals->SetBeamMomentum(sqrt(pow(globals->BeamTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   globals->SetParticleMomentum(sqrt(pow(globals->GetParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetParticleKineticEnergy(globals->GetParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   
@@ -308,7 +308,7 @@ void BDSModularPhysicsList::SetParticleDefinition()
   G4cout << __METHOD_NAME__ << "Charge : " 
 	 << globals->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << globals->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
 	 << globals->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "

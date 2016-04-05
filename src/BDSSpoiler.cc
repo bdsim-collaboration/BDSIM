@@ -28,8 +28,8 @@ void BDSSpoiler::Build()
 void BDSSpoiler::BuildMarkerLogicalVolume()
 {
   containerSolid = new G4Box(name,
-			     BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-			     BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+							 BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
+							 BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
 			     chordLength/2);
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
@@ -39,8 +39,8 @@ void BDSSpoiler::BuildMarkerLogicalVolume()
 void BDSSpoiler::BuildInnerSpoiler()
 {
   G4VSolid* solidSolid = new G4Box(name+"_solid",
-				   BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
-				   BDSGlobalConstants::Instance()->GetComponentBoxSize()/2,
+								   BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
+								   BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
 				   chordLength/2);
   RegisterSolid(solidSolid);
   itsSolidLogVol = new G4LogicalVolume(solidSolid,

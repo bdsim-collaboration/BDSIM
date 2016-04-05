@@ -24,7 +24,7 @@ BDSDump::BDSDump (G4String name, G4double length):
 
 void BDSDump::BuildContainerLogicalVolume()
 {
-  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   
   containerSolid = new G4Box(name + "_container_solid",
 			     radius,

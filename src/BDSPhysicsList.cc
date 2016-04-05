@@ -203,15 +203,15 @@ BDSPhysicsList::BDSPhysicsList(G4String physicsListNameIn):
 
   // construct particles
 
-  defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
-  SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
+  defaultCutValue = BDSGlobalConstants::Instance()->DefaultRangeCut()*CLHEP::m;
+  SetDefaultCutValue(BDSGlobalConstants::Instance()->DefaultRangeCut()*CLHEP::m);
 
   G4cout  << __METHOD_NAME__ << "Charged Thresholdcut = " 
-	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
+	  << BDSGlobalConstants::Instance()->ThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout  << __METHOD_NAME__ << "Photon Thresholdcut  = " 
-	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
+	  << BDSGlobalConstants::Instance()->ThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout  << __METHOD_NAME__ << "Default range cut    = " 
-	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
+	  << BDSGlobalConstants::Instance()->DefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
 
   //This is the GEANT4 physics list verbose level.
   SetVerboseLevel(1);   
@@ -496,10 +496,10 @@ void BDSPhysicsList::ConstructParticle()
     }
   
   // set kinetic beam parameters other than total energy
-  BDSGlobalConstants::Instance()->SetBeamMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-
+  BDSGlobalConstants::Instance()->SetBeamMomentum( sqrt(pow(BDSGlobalConstants::Instance()->BeamTotalEnergy(),2)-
                                     pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
   
-  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
+  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->BeamTotalEnergy() -
                                    BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
 
 
@@ -517,7 +517,7 @@ void BDSPhysicsList::ConstructParticle()
   G4cout << __METHOD_NAME__ << "Charge : " 
 	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
 	 << BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
@@ -528,10 +528,10 @@ void BDSPhysicsList::SetCuts()
 {
   SetCutsWithDefault();   
 
-  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
-  G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
-  G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  G4double prodCutProtons   = BDSGlobalConstants::Instance()->GetProdCutProtons();  
+  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->ProdCutPhotons();
+  G4double prodCutElectrons = BDSGlobalConstants::Instance()->ProdCutElectrons();
+  G4double prodCutPositrons = BDSGlobalConstants::Instance()->ProdCutPositrons();
+  G4double prodCutProtons   = BDSGlobalConstants::Instance()->ProdCutProtons();
   
   G4cout << __METHOD_NAME__ << "Photon   production range cut (mm) " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;

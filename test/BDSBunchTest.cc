@@ -48,8 +48,9 @@ int main(int argc,char** argv)
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();  
   globalConstants->SetParticleDefinition(particleTable->FindParticle(globalConstants->GetParticleName()));  
-  globalConstants->SetBeamMomentum(sqrt(pow(globalConstants->GetBeamTotalEnergy(),2)-pow(globalConstants->GetParticleDefinition()->GetPDGMass(),2)));  
-  globalConstants->SetBeamKineticEnergy(globalConstants->GetBeamTotalEnergy()-globalConstants->GetParticleDefinition()->GetPDGMass());
+  globalConstants->SetBeamMomentum(sqrt(pow(globalConstants->BeamTotalEnergy(),2)-pow(globalConstants->GetParticleDefinition()->GetPDGMass(),2)));
+  globalConstants->SetBeamKineticEnergy(
+          globalConstants->BeamTotalEnergy()-globalConstants->GetParticleDefinition()->GetPDGMass());
 
   // Set options for bunch
   bdsBunch.SetOptions(options);

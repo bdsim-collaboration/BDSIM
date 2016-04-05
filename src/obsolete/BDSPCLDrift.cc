@@ -135,11 +135,11 @@ void BDSPCLDrift::BuildBeampipe(){
 
 #ifndef NOUSERLIMITS
   itsBeampipeUserLimits =  new G4UserLimits("beampipe cuts");
-  itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
   itsBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
 
   itsInnerBeampipeUserLimits =  new G4UserLimits("inner beampipe cuts");
-  itsInnerBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  itsInnerBeampipeUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
   itsInnerBeampipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
 
   G4double stepfactor = 5;

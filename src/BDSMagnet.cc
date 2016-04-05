@@ -101,19 +101,19 @@ void BDSMagnet::BuildBPFieldMgr()
   if (itsMagField && itsEqRhs && itsStepper)
     {
       itsChordFinder = new G4ChordFinder(itsMagField,
-					 BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+                                         BDSGlobalConstants::Instance()->ChordStepMinimum(),
 					 itsStepper);
       
-      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->DeltaChord());
       itsBPFieldMgr = new G4FieldManager();
       itsBPFieldMgr->SetDetectorField(itsMagField);
       itsBPFieldMgr->SetChordFinder(itsChordFinder);
       
       // these options are always non-zero so always set them
-      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
       itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
       itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
     }
 }
 
@@ -247,10 +247,10 @@ void BDSMagnet::BuildOuterFieldManager(G4int    nPoles,
   itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
 
   // these options are always non-zero so always set them
-  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
   itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
   itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 
 void BDSMagnet::AttachFieldToOuter()

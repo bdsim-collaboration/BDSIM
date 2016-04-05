@@ -43,12 +43,12 @@ void BDSMuSpoiler::BuildOuterFieldManager(G4int    /*nPoles*/,
   itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
 
   // these options are always non-zero so always set them
-  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
   itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
   itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
 
   // NOTE this one was commented out - but no reason why - reinstated for v0.81
-  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 
 BDSMuSpoiler::~BDSMuSpoiler()

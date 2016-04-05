@@ -94,40 +94,40 @@ public:
   inline G4String ExportFileName()         const {return G4String(options.exportFileName);}  
 
   // regular options from here on
-  inline G4double GetPrintModuloFraction() const {return G4double(options.printModuloFraction);}
-  inline G4double GetPlanckScatterFe()     const {return G4double(options.planckScatterFe);}
-  inline G4double GetOuterDiameter()       const {return G4double(options.outerDiameter)*CLHEP::m;}
-  inline G4double GetComponentBoxSize()    const {return GetOuterDiameter();}
-  inline G4String GetOuterMaterialName()   const {return G4String(options.outerMaterialName);}
+  inline G4double PrintModuloFraction()    const {return G4double(options.printModuloFraction);}
+  inline G4double PlanckScatterFraction()  const {return G4double(options.planckScatterFe);}
+  inline G4double OuterDiameter()          const {return G4double(options.outerDiameter)*CLHEP::m;}
+  inline G4double ComponentBoxSize()       const {return OuterDiameter();}
+  inline G4String OuterMaterialName()      const {return G4String(options.outerMaterialName);}
   inline G4bool   DontSplitSBends()        const {return G4bool  (options.dontSplitSBends);}
   inline G4bool   BuildTunnel()            const {return G4bool  (options.buildTunnel);}
   inline G4bool   BuildTunnelStraight()    const {return G4bool  (options.buildTunnelStraight);}
   inline G4double TunnelOffsetX()          const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
   inline G4double TunnelOffsetY()          const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
-  inline G4double GetElossHistoBinWidth()  const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
-  inline G4double GetDefaultRangeCut()     const {return G4double(options.defaultRangeCut)*CLHEP::m;}
-  inline G4double GetBeamTotalEnergy()     const {return G4double(options.beamEnergy)*CLHEP::GeV;}
-  inline G4double GetBlmRad()              const {return G4double(options.blmRad)*CLHEP::m;}
-  inline G4double GetBlmLength()           const {return G4double(options.blmLength)*CLHEP::m;}
-  inline G4double GetSamplerDiameter()     const {return G4double(options.samplerDiameter)*CLHEP::m;}
-  inline G4double GetThresholdCutCharged() const {return G4double(options.thresholdCutCharged)*CLHEP::GeV;}
-  inline G4double GetThresholdCutPhotons() const {return G4double(options.thresholdCutPhotons)*CLHEP::GeV;}
-  inline G4double GetProdCutPhotons()      const {return G4double(options.prodCutPhotons)*CLHEP::m;}
-  inline G4double GetProdCutPhotonsP()     const {return G4double(options.prodCutPhotonsP)*CLHEP::m;}
-  inline G4double GetProdCutPhotonsA()     const {return G4double(options.prodCutPhotonsA)*CLHEP::m;}
-  inline G4double GetProdCutElectrons()    const {return G4double(options.prodCutElectrons)*CLHEP::m;}
-  inline G4double GetProdCutElectronsP()   const {return G4double(options.prodCutElectronsP)*CLHEP::m;}
-  inline G4double GetProdCutElectronsA()   const {return G4double(options.prodCutElectronsA)*CLHEP::m;}
-  inline G4double GetProdCutPositrons()    const {return G4double(options.prodCutPositrons)*CLHEP::m;}
-  inline G4double GetProdCutPositronsP()   const {return G4double(options.prodCutPositronsP)*CLHEP::m;}
-  inline G4double GetProdCutPositronsA()   const {return G4double(options.prodCutPositronsA)*CLHEP::m;}
-  inline G4double GetProdCutProtons()      const {return G4double(options.prodCutProtons)*CLHEP::m;}
-  inline G4double GetProdCutProtonsP()     const {return G4double(options.prodCutProtonsP)*CLHEP::m;}
-  inline G4double GetProdCutProtonsA()     const {return G4double(options.prodCutProtonsA)*CLHEP::m;}
-  inline G4double GetDeltaChord()          const {return G4double(options.deltaChord)*CLHEP::m;}
-  inline G4double GetDeltaIntersection()   const {return G4double(options.deltaIntersection)*CLHEP::m;}
-  inline G4double GetChordStepMinimum()    const {return G4double(options.chordStepMinimum)*CLHEP::m;}
-  inline G4double GetDeltaOneStep()        const {return G4double(options.deltaOneStep)*CLHEP::m;}
+  inline G4double ElossHistoBinWidth()     const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
+  inline G4double DefaultRangeCut()        const {return G4double(options.defaultRangeCut)*CLHEP::m;}
+  inline G4double BeamTotalEnergy()        const {return G4double(options.beamEnergy)*CLHEP::GeV;}
+  inline G4double BlmRad()                 const {return G4double(options.blmRad)*CLHEP::m;}
+  inline G4double BlmLength()              const {return G4double(options.blmLength)*CLHEP::m;}
+  inline G4double SamplerDiameter()        const {return G4double(options.samplerDiameter)*CLHEP::m;}
+  inline G4double ThresholdCutCharged()    const {return G4double(options.thresholdCutCharged)*CLHEP::GeV;}
+  inline G4double ThresholdCutPhotons()    const {return G4double(options.thresholdCutPhotons)*CLHEP::GeV;}
+  inline G4double ProdCutPhotons()         const {return G4double(options.prodCutPhotons)*CLHEP::m;}
+  inline G4double ProdCutPhotonsP()        const {return G4double(options.prodCutPhotonsP)*CLHEP::m;}
+  inline G4double ProdCutPhotonsA()        const {return G4double(options.prodCutPhotonsA)*CLHEP::m;}
+  inline G4double ProdCutElectrons()       const {return G4double(options.prodCutElectrons)*CLHEP::m;}
+  inline G4double ProdCutElectronsP()      const {return G4double(options.prodCutElectronsP)*CLHEP::m;}
+  inline G4double ProdCutElectronsA()      const {return G4double(options.prodCutElectronsA)*CLHEP::m;}
+  inline G4double ProdCutPositrons()       const {return G4double(options.prodCutPositrons)*CLHEP::m;}
+  inline G4double ProdCutPositronsP()      const {return G4double(options.prodCutPositronsP)*CLHEP::m;}
+  inline G4double ProdCutPositronsA()      const {return G4double(options.prodCutPositronsA)*CLHEP::m;}
+  inline G4double ProdCutProtons()         const {return G4double(options.prodCutProtons)*CLHEP::m;}
+  inline G4double ProdCutProtonsP()        const {return G4double(options.prodCutProtonsP)*CLHEP::m;}
+  inline G4double ProdCutProtonsA()        const {return G4double(options.prodCutProtonsA)*CLHEP::m;}
+  inline G4double DeltaChord()             const {return G4double(options.deltaChord)*CLHEP::m;}
+  inline G4double DeltaIntersection()      const {return G4double(options.deltaIntersection)*CLHEP::m;}
+  inline G4double ChordStepMinimum()       const {return G4double(options.chordStepMinimum)*CLHEP::m;}
+  inline G4double DeltaOneStep()           const {return G4double(options.deltaOneStep)*CLHEP::m;}
   inline G4double GetMinimumEpsilonStep()  const {return G4double(options.minimumEpsilonStep);}
   inline G4double GetMaximumEpsilonStep()  const {return G4double(options.maximumEpsilonStep);}
   inline G4double GetMaxTime()             const {return G4double(options.maximumTrackingTime)*CLHEP::s;}

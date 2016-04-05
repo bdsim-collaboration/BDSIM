@@ -1191,7 +1191,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
     {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
+      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
     }
   info->outerDiameter = outerDiameter;
 
@@ -1199,7 +1199,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   G4Material* outerMaterial;
   if(element->outerMaterial == "")
     {
-      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetOuterMaterialName();
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
@@ -1214,7 +1214,7 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
     {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
+      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
     }
   // returns in metres
   return outerDiameter;

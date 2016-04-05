@@ -43,7 +43,7 @@ void BDSQuadrupole::Build()
       G4double BFldIron=
 	sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
 	BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-	(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
+	(BDSGlobalConstants::Instance()->ComponentBoxSize()/2-
 	 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
       
       // Magnetic flux from a pole is divided in two directions
