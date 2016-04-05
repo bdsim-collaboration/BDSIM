@@ -8,6 +8,7 @@
 #include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
@@ -32,33 +33,32 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   itsBeamKineticEnergy(0.0),
   itsParticleMomentum(0.0),
   itsParticleKineticEnergy(0.0),
-  itsSMax(0.0)
+  itsSMax(0.0),
+  itsTurnsTaken(0.0),
+  teleporterlength(0.0)
 {
-  outputFormat = BDS::DetermineOutputFormat(opt.outputFormat);
+  outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
   if (options.nGenerate < 0) // run at least 1 event!
     {options.set_value("nGenerate", 1);}
-  
-  itsEmptyMaterial      = "G4_Galactic"; // space vacuum
-  itsSampleDistRandomly = true;
 
-  if (opt.beamEnergy == 0)
+  if (options.beamEnergy == 0)
     {
       G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
 
-  if (opt.E0 == 0)
+  if (!BDS::IsFinite(options.E0))
     {options.set_value("E0", options.beamEnergy);}
 
   //beampipe
-  defaultBeamPipeModel = new BDSBeamPipeInfo(opt.apertureType,
-					     opt.aper1 * CLHEP::m,
-					     opt.aper2 * CLHEP::m,
-					     opt.aper3 * CLHEP::m,
-					     opt.aper4 * CLHEP::m,
-					     opt.vacMaterial,
-					     opt.beampipeThickness * CLHEP::m,
-					     opt.beampipeMaterial);
+  defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
+					     options.aper1 * CLHEP::m,
+					     options.aper2 * CLHEP::m,
+					     options.aper3 * CLHEP::m,
+					     options.aper4 * CLHEP::m,
+					     options.vacMaterial,
+					     options.beampipeThickness * CLHEP::m,
+					     options.beampipeMaterial);
   
   // magnet geometry
   G4double outerDi = options.outerDiameter * CLHEP::m;
@@ -67,110 +67,59 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
       G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"aper1\" + \"beamPipeThickness\") " << G4endl;
       exit(1);
     }
-  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
+  itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
 
   // tunnel
-  tunnelInfo             = new BDSTunnelInfo(opt.tunnelType,
-					     opt.tunnelThickness     * CLHEP::m,
-					     opt.tunnelSoilThickness * CLHEP::m,
-					     opt.tunnelMaterial,
-					     opt.soilMaterial,
-					     opt.buildTunnelFloor,
-					     opt.tunnelFloorOffset   * CLHEP::m,
-					     opt.tunnelAper1         * CLHEP::m,
-					     opt.tunnelAper2         * CLHEP::m,
-					     opt.tunnelSensitive,
-					     opt.tunnelVisible);
-
-  // beam loss monitor (BLM) geometry
-  itsBlmRad              = opt.blmRad              * CLHEP::m;
-  itsBlmLength           = opt.blmLength           * CLHEP::m;
-
-  // samplers
-  itsSamplerDiameter     = opt.samplerDiameter     * CLHEP::m;
-  itsSamplerLength       = 4E-8                    * CLHEP::m;
-
-  // production thresholds
-  itsThresholdCutCharged = opt.thresholdCutCharged * CLHEP::GeV;
-  itsThresholdCutPhotons = opt.thresholdCutPhotons * CLHEP::GeV;
-  itsProdCutPhotons      = opt.prodCutPhotons      * CLHEP::m;
-  itsProdCutPhotonsP     = opt.prodCutPhotonsP     * CLHEP::m;
-  itsProdCutPhotonsA     = opt.prodCutPhotonsA     * CLHEP::m;
-  itsProdCutElectrons    = opt.prodCutElectrons    * CLHEP::m;
-  itsProdCutElectronsP   = opt.prodCutElectronsP   * CLHEP::m;
-  itsProdCutElectronsA   = opt.prodCutElectronsA   * CLHEP::m;
-  itsProdCutPositrons    = opt.prodCutPositrons    * CLHEP::m;
-  itsProdCutPositronsP   = opt.prodCutPositronsP   * CLHEP::m;
-  itsProdCutPositronsA   = opt.prodCutPositronsA   * CLHEP::m;
-  itsProdCutProtons      = opt.prodCutProtons      * CLHEP::m;
-  itsProdCutProtonsP     = opt.prodCutProtonsP     * CLHEP::m;
-  itsProdCutProtonsA     = opt.prodCutProtonsA     * CLHEP::m;
+  tunnelInfo             = new BDSTunnelInfo(options.tunnelType,
+					     options.tunnelThickness     * CLHEP::m,
+					     options.tunnelSoilThickness * CLHEP::m,
+					     options.tunnelMaterial,
+					     options.soilMaterial,
+					     options.buildTunnelFloor,
+					     options.tunnelFloorOffset   * CLHEP::m,
+					     options.tunnelAper1         * CLHEP::m,
+					     options.tunnelAper2         * CLHEP::m,
+					     options.tunnelSensitive,
+					     options.tunnelVisible);
   
-  // tracking accuracy
-  itsDeltaChord          = opt.deltaChord          * CLHEP::m;
-  itsChordStepMinimum    = opt.chordStepMinimum    * CLHEP::m;
-  itsDeltaIntersection   = opt.deltaIntersection   * CLHEP::m;
-  itsMinimumEpsilonStep  = opt.minimumEpsilonStep;
-  itsMaximumEpsilonStep  = opt.maximumEpsilonStep;
-  itsMaxTime             = opt.maximumTrackingTime * CLHEP::s;
-  itsDeltaOneStep        = opt.deltaOneStep        * CLHEP::m;
-  
-  itsDoPlanckScattering = opt.doPlanckScattering;
-  itsCheckOverlaps = opt.checkOverlaps;
-  itsTurnOnCerenkov = opt.turnOnCerenkov;
-  itsTurnOnOpticalAbsorption = opt.turnOnOpticalAbsorption;
-  itsTurnOnRayleighScattering = opt.turnOnRayleighScattering;
-  itsTurnOnMieScattering = opt.turnOnMieScattering;
-  itsTurnOnOpticalSurface = opt.turnOnOpticalSurface;
-  itsTurnOnBirksSaturation = opt.turnOnBirksSaturation;
-  itsScintYieldFactor=opt.scintYieldFactor;
-  if (opt.lengthSafety < 1e-15)
+  if (options.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps
-      G4cerr << "Dangerously low \"lengthSafety\" value of: " << opt.lengthSafety
+      G4cerr << "Dangerously low \"lengthSafety\" value of: " << options.lengthSafety
 	     << " m that will result in potential geometry overlaps!" << G4endl;
       G4cerr << "This affects all geometry construction and should be carefully chosen!!!" << G4endl;
       G4cerr << "The default value is 1 pm" << G4endl;
       exit(1);
     }
   else
-    {itsLengthSafety = opt.lengthSafety * CLHEP::m;}
+    {itsLengthSafety = options.lengthSafety * CLHEP::m;}
+
+  itsLPBFraction = options.LPBFraction;
+  if(itsLPBFraction > 1.0) // safety checks
+    {itsLPBFraction = 1.0;}
+  if(itsLPBFraction < 0.0)
+    {itsLPBFraction = 0.0;}
   
-  itsNumberOfEventsPerNtuple = opt.numberOfEventsPerNtuple;
-  itsEventNumberOffset = opt.eventNumberOffset;
-  itsRandomSeed = opt.randomSeed;
-  itsUseEMLPB=opt.useEMLPB;
-  itsUseHadLPB=opt.useHadLPB;
-  SetLPBFraction(opt.LPBFraction);
-  itsStoreMuonTrajectories = opt.storeMuonTrajectories;
-  itsTrajCutGTZ = opt.trajCutGTZ;
-  itsTrajCutLTR = opt.trajCutLTR;
-  itsStoreNeutronTrajectories = opt.storeNeutronTrajectories;
-  itsStoreTrajectory = opt.storeTrajectory;
-  //G4cout<<"STOREA TRAJ = "<< itsStoreTrajectory<<G4endl;
-  stopSecondaries = opt.stopSecondaries;
-  stopTracks = opt.stopTracks; 
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
   itsLaserwireDir = G4ThreeVector(1,0,0);
   itsLaserwireTrackPhotons = 1;
   itsLaserwireTrackElectrons = 1;
-  //itsIncludeIronMagFields = opt.includeIronMagFields;
-  itsIncludeIronMagFields = false;
+  
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   itsZeroFieldManager=new G4FieldManager();
   itsZeroFieldManager->SetDetectorField(zeroMagField);
   itsZeroFieldManager->CreateChordFinder(zeroMagField);
-  itsTurnsTaken = 0;
-  if(opt.nturns < 1)
-    itsTurnsToTake = 1;
-  else
-    itsTurnsToTake = opt.nturns;
+  
+  itsTurnsToTake = options.nturns;
+  if(itsTurnsToTake < 1)
+    {itsTurnsToTake = 1;}
+  
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
-  teleporterlength    = 0.0;
 
   InitRotationMatrices();
   
   // options that are never used (no set method):
+  // refactor out of classes that use this
   itsLWCalWidth       = 0.0;
   itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
@@ -179,7 +128,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
   InitVisAttributes();
-  InitDefaultUserLimits(); // should be done after itsMaxTime set
+  InitDefaultUserLimits();
 }
 
 void BDSGlobalConstants::InitVisAttributes()
@@ -200,7 +149,7 @@ void BDSGlobalConstants::InitDefaultUserLimits()
 {
   //these must be copied and not attached directly
   defaultUserLimits = new G4UserLimits("default_cuts");
-  defaultUserLimits->SetUserMaxTime(itsMaxTime);
+  defaultUserLimits->SetUserMaxTime(GetMaxTime());
   //user must set step length manually
 }
 
@@ -222,25 +171,6 @@ void BDSGlobalConstants::InitRotationMatrices()
   _RotYM90XM90->rotateY(-pi_ov_2);
   _RotYM90XM90->rotateX(-pi_ov_2);
 }
-
-//Methods to get the rotation matrices
-G4RotationMatrix* BDSGlobalConstants::RotY90() const
-{return _RotY90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotYM90() const
-{return _RotYM90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotX90() const
-{return _RotX90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotXM90() const
-{return _RotXM90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotYM90X90() const
-{return _RotYM90X90;}
-
-G4RotationMatrix* BDSGlobalConstants::RotYM90XM90() const
-{return _RotYM90XM90;}
 
 BDSGlobalConstants::~BDSGlobalConstants()
 {  
