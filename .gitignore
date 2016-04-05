@@ -15,7 +15,10 @@
 ##########################
 *~
 # clion (jetbrains C++ ide)
-.idea  
+.idea
+# Emacs autosave files
+.#*
+*#
 
 # Packages #
 ############
@@ -43,7 +46,7 @@ Thumbs.db
 # Latex #
 #########
 *.aux
-*.out 
+*.out
 
 # Exclusion #
 #############
