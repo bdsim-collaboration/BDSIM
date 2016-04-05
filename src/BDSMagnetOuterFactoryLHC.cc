@@ -216,7 +216,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   BuildMagnetContainerSolidAngled(name, centralContainerLength, magnetContainerRadius, inputface, outputface);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
 					  emptyMaterial,
 					  name + "_container_lv");
@@ -884,7 +884,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 #ifndef NOUSERLIMITS
   G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
   userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(userLimits);
   for (auto i : allLogicalVolumes)
     {i->SetUserLimits(userLimits);} // apply to general vector of logical volumes
@@ -1089,7 +1089,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   BuildMagnetContainerSolidStraight(name, containerLength, magnetContainerRadius);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
 
   magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
 					  emptyMaterial,
@@ -1509,7 +1509,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 #ifndef NOUSERLIMITS
   G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
   userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(userLimits);    
   for (auto i : allLogicalVolumes)
     {i->SetUserLimits(userLimits);}

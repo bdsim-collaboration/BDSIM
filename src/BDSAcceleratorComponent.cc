@@ -45,10 +45,10 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 #endif
   // initialise static members
   if (!emptyMaterial)
-    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
+    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
   if (lengthSafety < 0)
-    {lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();}
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+    {lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();}
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
@@ -126,7 +126,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   if (!BDS::IsFinite(chordLength)) return nullptr;
 
   G4double roRadius = 0;
-  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
   
   G4VSolid* roSolid = nullptr;
   if (!BDS::IsFinite(angle))

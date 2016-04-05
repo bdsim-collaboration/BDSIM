@@ -98,7 +98,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 	      "vol_"+G4String(count),  // its name
 	      marker,                  // its mother  volume
 	      false,		       // no boolean operation
-	      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+	      0, BDSGlobalConstants::Instance()->CheckOverlaps());
 	    count++;
 
 	  } else error();
@@ -165,7 +165,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 			      "vol_"+G4String(count),	     // its name
 			      marker,     // its mother  volume
 			      false,		     // no boolean operation
-			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			      0, BDSGlobalConstants::Instance()->CheckOverlaps());
 	    
 	    count++;
 	    
@@ -239,7 +239,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 			      "vol_"+G4String(count),	     // its name
 			      marker,     // its mother  volume
 			      false,		     // no boolean operation
-			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			      0, BDSGlobalConstants::Instance()->CheckOverlaps());
 	    
 	    count++;
 	    
@@ -301,7 +301,7 @@ void GGmadDriver::Construct(G4LogicalVolume *marker)
 			      "vol_"+G4String(count),	     // its name
 			      marker,     // its mother  volume
 			      false,		     // no boolean operation
-			      0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+			      0, BDSGlobalConstants::Instance()->CheckOverlaps());
 	    
 	    count++;
 	    

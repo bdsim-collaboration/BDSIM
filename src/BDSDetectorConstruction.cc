@@ -54,7 +54,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   gflash        = BDSGlobalConstants::Instance()->GFlash();
   if (gflash)
     {InitialiseGFlash();}
@@ -127,10 +127,10 @@ void BDSDetectorConstruction::InitialiseRegions()
   // precision region
   precisionRegion = new G4Region("precisionRegion");
   G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutProtonsP(),  "proton");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsP(),  "gamma");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsP(),"e-");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsP(),"e+");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutProtonsP(),  "proton");
   precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 
@@ -301,7 +301,7 @@ void BDSDetectorConstruction::BuildWorld()
   G4String worldName   = "World";
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->GetEmptyMaterial();
+  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial     = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
 						      emptyMaterial,           // material
@@ -687,12 +687,12 @@ void BDSDetectorConstruction::InitialiseGFlash()
   theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
       
   theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
   // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
       
   // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);

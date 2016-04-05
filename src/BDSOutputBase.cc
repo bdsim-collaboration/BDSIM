@@ -4,7 +4,7 @@
 
 BDSOutputBase::BDSOutputBase():eventNumber(0),outputFileNumber(-1)
 {
-  numberEventPerFile = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
+  numberEventPerFile = BDSGlobalConstants::Instance()->NumberOfEventsPerNtuple();
 }
 
 void BDSOutputBase::Commit()

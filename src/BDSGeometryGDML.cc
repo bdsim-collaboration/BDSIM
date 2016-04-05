@@ -56,7 +56,7 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
                     markerVol,
                     false,
                     0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                    BDSGlobalConstants::Instance()->CheckOverlaps());
 }
 #endif
 

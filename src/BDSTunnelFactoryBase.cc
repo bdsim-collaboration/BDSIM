@@ -28,7 +28,7 @@ BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   // use large length safety for tunnel construction to avoid stuck particles
   // will not make difference to tracking so is acceptable to have 1um gap.
   lengthSafety  = 1*CLHEP::um;
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   defaultModel  = BDSGlobalConstants::Instance()->TunnelInfo();
 }
 
@@ -165,7 +165,7 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 					       G4Material* tunnelSoilMaterial)
 {  
   // build logical volumes
-  G4Material* emptyMaterial    = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial    = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
@@ -297,7 +297,7 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   G4UserLimits* tunnelUserLimits = new G4UserLimits("tunnel_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   tunnelUserLimits->SetMaxAllowedStep(length * maxStepFactor);
-  tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
   if (soilLV)

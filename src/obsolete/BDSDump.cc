@@ -24,7 +24,7 @@ BDSDump::BDSDump (G4String name, G4double length):
 
 void BDSDump::BuildContainerLogicalVolume()
 {
-  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   
   containerSolid = new G4Box(name + "_container_solid",
 			     radius,
@@ -38,7 +38,7 @@ void BDSDump::BuildContainerLogicalVolume()
 #ifndef NOUSERLIMITS
   G4UserLimits* itsOuterUserLimits = new G4UserLimits();
   itsOuterUserLimits->SetMaxAllowedStep(chordLength);
-  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  itsOuterUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   containerLogicalVolume->SetUserLimits(itsOuterUserLimits);
   RegisterUserLimits(itsOuterUserLimits);
 #endif

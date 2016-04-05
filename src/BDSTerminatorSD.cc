@@ -44,7 +44,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       G4cout << __METHOD_NAME__ << "Track length is : " << trackLength << " m" << G4endl;
       G4cout << __METHOD_NAME__ << "Turn number is  : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
 #endif
-      G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+      G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
       // feedback info but only every 10 turns to avoid slow down and output bloat
       if (turnstaken % 10 == 0)
 	{
@@ -54,7 +54,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	    {turnstaken += 1;}
 	  G4cout << "Turn: " << std::right << std::setw(4) << std::fixed
 		 << turnstaken << " / " << std::left 
-		 << BDSGlobalConstants::Instance()->GetTurnsToTake() << G4endl;
+		 << BDSGlobalConstants::Instance()->TurnsToTake() << G4endl;
 	  // reset flags
 	  G4cout.flags(ff);
 	}

@@ -69,7 +69,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
   G4int ParentID    = track->GetParentID();    // unique ID of track's mother
   G4double t        = track->GetGlobalTime();  // time since beginning of event
   G4double energy   = track->GetTotalEnergy(); // total track energy
-  G4int turnstaken  = globals->GetTurnsTaken();// turn Number 
+  G4int turnstaken  = globals->TurnsTaken();// turn Number
   G4ThreeVector pos = track->GetPosition();    // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection();// current particle direction (global)
   G4double weight   = track->GetWeight();      // weighting
@@ -116,7 +116,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
   G4String samplerName = registry->GetName(samplerID);      // name
   G4double s           = registry->GetSPosition(samplerID); // S position
   G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  nEvent += globals->GetEventNumberOffset();
+  nEvent += globals->EventNumberOffset();
   G4int    PDGtype     = track->GetDefinition()->GetPDGEncoding();
   G4String pName       = track->GetDefinition()->GetParticleName();
 

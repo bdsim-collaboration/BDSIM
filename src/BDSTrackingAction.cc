@@ -27,7 +27,7 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
     {fpTrackingManager->SetStoreTrajectory(0);}
   
   /*
-    if(track->GetDefinition()->GetParticleName()=="neutron")
+    if(track->GetDefinition()->ParticleName()=="neutron")
     {
     BDSNeutronTrackInfo* Info= new BDSNeutronTrackInfo();
     Info->SetIsLogged(false);

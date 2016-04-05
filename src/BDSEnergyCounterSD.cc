@@ -81,7 +81,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
-  if(BDSGlobalConstants::Instance()->GetStopTracks())
+  if(BDSGlobalConstants::Instance()->StopTracks())
     {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
@@ -183,7 +183,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
     {
       G4cout << "BDSEnergyCounterSD: Current Volume: " 
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
@@ -197,7 +197,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
-  turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
   //do analysis / output in end of event action
@@ -239,14 +239,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
       BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
       //set the energy to be the full energy of the primary
       //just now it's the wee bit of energy deposited in that step
-      G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+      G4double primaryEnergy = BDSGlobalConstants::Instance()->BeamKineticEnergy();
       PCHit->SetEnergy(primaryEnergy);
       primaryCounterCollection->insert(PCHit);
     }
 
   // this will kill all particles - both primaries and secondaries, but if it's being
   // recorded in an SD that means it's hit something, so ok
-  if(BDSGlobalConstants::Instance()->GetStopTracks())
+  if(BDSGlobalConstants::Instance()->StopTracks())
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;
@@ -308,9 +308,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   
   ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
-  turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
 
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
     {
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
 	     << " Event: "    << eventnumber 
@@ -347,7 +347,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
     //create a duplicate hit in the primarycounter hits collection
     //there are usually a few - filter at end of event action
     BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-    G4double primaryEnergy = BDSGlobalConstants::Instance()->GetBeamKineticEnergy();
+    G4double primaryEnergy = BDSGlobalConstants::Instance()->BeamKineticEnergy();
     PCHit->SetEnergy(primaryEnergy);
     primaryCounterCollection->insert(PCHit);
   }
