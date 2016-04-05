@@ -26,9 +26,21 @@ class BDSBeamPipeInfo;
 
 /**
  * @brief A class that holds global options and constants.
+ *
+ * This wraps an instance of GMAD::Options and also converts
+ * from the std C++ types used in the options to the Geant4 types
+ * solely used in BDSIM. Additionally, some more refined information 
+ * is provided - for example, simple strings are converted to enum types
+ * for outputs and geometry, as well as G4Materials.
+ *
+ * This is almost entirely constant apart from a very few variables 
+ * that by necessity can be updated. Generally, this is not used as
+ * as a way to dynamically pass around information at a global level
+ * but purely as constants.
  * 
  * Singleton pattern
  */
+
 class BDSGlobalConstants
 {
 protected:
@@ -47,39 +59,53 @@ public:
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
 
-  inline G4String InputFileName()         const {return G4String(options.inputFileName);}
-  inline G4String VisMacroFileName()      const {return G4String(options.visMacroFileName);}
-  inline G4bool   VisDebug()              const {return G4bool  (options.visDebug);}
-  inline G4String OutputFileName()        const {return G4String(options.outputFileName);}
-  inline G4bool   OutputFileNameSet()     const {return G4bool  (options.HasBeenSet("outputFileName"));}
-  inline BDSOutputFormat OutputFormat()   const {return outputFormat;}
-  inline G4bool   Survey()                const {return G4bool  (options.survey);}
-  inline G4String SurveyFileName()        const {return G4String(options.surveyFileName);}
-  inline G4bool   GFlash()                const {return G4bool  (options.gflash);}
-  inline G4double GFlashEMax()            const {return G4double(options.gflashemax);}
-  inline G4double GFlashEMin()            const {return G4double(options.gflashemin);}
-  inline G4bool   Batch()                 const {return G4bool  (options.batch);}
-  inline G4bool   Verbose()               const {return G4bool  (options.verbose);}
-  inline G4bool   VerboseEvent()          const {return G4bool  (options.verboseEvent);}
-  inline G4bool   VerboseStep()           const {return G4bool  (options.verboseStep);}
-  inline G4int    VerboseEventNumber()    const {return G4int   (options.verboseEventNumber);}
-  inline G4int    VerboseRunLevel()       const {return G4int   (options.verboseRunLevel);}
-  inline G4int    VerboseEventLevel()     const {return G4int   (options.verboseEventLevel);}
-  inline G4int    VerboseTrackingLevel()  const {return G4int   (options.verboseTrackingLevel);}
-  inline G4int    VerboseSteppingLevel()  const {return G4int   (options.verboseSteppingLevel);}
-  inline G4bool   Circular()              const {return G4bool  (options.circular);}
-  inline G4int    Seed()                  const {return G4int   (options.seed);}
-  inline G4bool   SetSeedState()          const {return G4bool  (options.setSeedState);}
-  inline G4String SeedStateFileName()     const {return G4String(options.seedStateFileName);}
-  inline G4String BDSIMPath()             const {return G4String(options.bdsimPath);}
-  inline G4int    NGenerate()             const {return G4int   (options.nGenerate);}
-  inline G4bool   GeneratePrimariesOnly() const {return G4bool  (options.generatePrimariesOnly);}
-  inline G4bool   ExportGeometry()        const {return G4bool  (options.exportGeometry);}
-  inline G4String ExportType()            const {return G4String(options.exportType);}
-  inline G4String ExportFileName()        const {return G4String(options.exportFileName);}
+  inline G4String InputFileName()          const {return G4String(options.inputFileName);}
+  inline G4String VisMacroFileName()       const {return G4String(options.visMacroFileName);}
+  inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
+  inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
+  inline G4bool   OutputFileNameSet()      const {return G4bool  (options.HasBeenSet("outputFileName"));}
+  inline BDSOutputFormat OutputFormat()    const {return outputFormat;}
+  inline G4bool   Survey()                 const {return G4bool  (options.survey);}
+  inline G4String SurveyFileName()         const {return G4String(options.surveyFileName);}
+  inline G4bool   GFlash()                 const {return G4bool  (options.gflash);}
+  inline G4double GFlashEMax()             const {return G4double(options.gflashemax);}
+  inline G4double GFlashEMin()             const {return G4double(options.gflashemin);}
+  inline G4bool   Batch()                  const {return G4bool  (options.batch);}
+  inline G4bool   Verbose()                const {return G4bool  (options.verbose);}
+  inline G4bool   VerboseEvent()           const {return G4bool  (options.verboseEvent);}
+  inline G4bool   VerboseStep()            const {return G4bool  (options.verboseStep);}
+  inline G4int    VerboseEventNumber()     const {return G4int   (options.verboseEventNumber);}
+  inline G4int    VerboseRunLevel()        const {return G4int   (options.verboseRunLevel);}
+  inline G4int    VerboseEventLevel()      const {return G4int   (options.verboseEventLevel);}
+  inline G4int    VerboseTrackingLevel()   const {return G4int   (options.verboseTrackingLevel);}
+  inline G4int    VerboseSteppingLevel()   const {return G4int   (options.verboseSteppingLevel);}
+  inline G4bool   Circular()               const {return G4bool  (options.circular);}
+  inline G4int    Seed()                   const {return G4int   (options.seed);}
+  inline G4bool   SetSeedState()           const {return G4bool  (options.setSeedState);}
+  inline G4String SeedStateFileName()      const {return G4String(options.seedStateFileName);}
+  inline G4String BDSIMPath()              const {return G4String(options.bdsimPath);}
+  inline G4int    NGenerate()              const {return G4int   (options.nGenerate);}
+  inline G4bool   GeneratePrimariesOnly()  const {return G4bool  (options.generatePrimariesOnly);}
+  inline G4bool   ExportGeometry()         const {return G4bool  (options.exportGeometry);}
+  inline G4String ExportType()             const {return G4String(options.exportType);}
+  inline G4String ExportFileName()         const {return G4String(options.exportFileName);}
   
 
-  G4double GetPrintModuloFraction() const {return G4double(options.printModuloFraction);}
+  inline G4double GetPrintModuloFraction() const {return G4double(options.printModuloFraction);}
+  inline G4double GetPlanckScatterFe()     const {return G4double(options.planckScatterFe);}
+  inline G4double GetOuterDiameter()       const {return G4double(options.outerDiameter)*CLHEP::m;}
+  inline G4double GetComponentBoxSize()    const {return GetOuterDiameter();}
+  inline G4String GetOuterMaterialName()   const {return G4String(options.outerMaterialName);}
+  inline G4bool   DontSplitSBends()        const {return G4bool  (options.dontSplitSBends);}
+  inline G4bool   BuildTunnel()            const {return G4bool  (options.buildTunnel);}
+  inline G4bool   BuildTunnelStraight()    const {return G4bool  (options.buildTunnelStraight);}
+  inline G4double TunnelOffsetX()          const {return G4double(options.tunnelOffsetX)*CLHEP::m;}
+  inline G4double TunnelOffsetY()          const {return G4double(options.tunnelOffsetY)*CLHEP::m;}
+  inline G4double GetElossHistoBinWidth()  const {return G4double(options.elossHistoBinWidth)*CLHEP::m;}
+  inline G4double GetElossHistoTransBinWidth() const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
+  inline G4double GetDefaultRangeCut()     const {return G4double(options.defaultRangeCut)*CLHEP::m;}
+  inline G4double GetBeamTotalEnergy()     const {return G4double(options.beamEnergy)*CLHEP::GeV;}
+  
   
   G4bool   GetDoPlanckScattering() const;
   G4bool   GetCheckOverlaps() const;
@@ -90,61 +116,47 @@ public:
 
   G4ParticleDefinition* GetParticleDefinition() const;
   void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  G4String GetParticleName() const;
+  G4String GetParticleName() const {return G4String(options.particleName);}
   void     SetParticleName(G4String aParticleName);
 
   G4double GetLPBFraction() const;
-  G4double GetElossHistoBinWidth() const;
-  G4double GetElossHistoTransBinWidth() const; ///< The transverse (x,y) bin width
-  G4double GetDefaultRangeCut() const;
+  
 
   /// Magnetic field switch flag
-  G4double GetFFact() const;
+  G4double GetFFact() const {return G4double(options.ffact);}
 
   G4double GetBeamKineticEnergy() const;
   void     SetBeamKineticEnergy(G4double val);
-  G4double GetBeamTotalEnergy() const;
-  void     SetBeamTotalEnergy(G4double val);
+
   G4double GetBeamMomentum() const;
   void     SetBeamMomentum(G4double val);
 
 
   G4double GetParticleKineticEnergy() const;
   void     SetParticleKineticEnergy(G4double val);
-  G4double GetParticleTotalEnergy() const;
+  G4double GetParticleTotalEnergy() const {return options.E0*CLHEP::GeV;}
   G4double GetParticleMomentum() const;
   void     SetParticleMomentum(G4double val);
 
-  G4double GetPlanckScatterFe() const;
+
   G4bool   GetSampleDistRandomly() const;
   G4bool   GetUseEMLPB() const;
   G4bool   GetUseHadLPB() const;
   ///@{ Booleans determining which types of components are sensitive
-  G4bool   GetSensitiveComponents() const;
-  G4bool   GetSensitiveBeamPipe() const;
-  G4bool   GetSensitiveBLMs() const;
+  G4bool   SensitiveComponents()  const {return G4bool(options.sensitiveBeamlineComponents);}
+  G4bool   GetSensitiveBeamPipe() const {return G4bool(options.sensitiveBeamPipe);}
+  G4bool   GetSensitiveBLMs()     const {return G4bool(options.sensitiveBLMs);}
   ///@}
 
   BDSBeamPipeInfo* GetDefaultBeamPipeModel() const;
   
-  G4double GetComponentBoxSize() const;
-  
   /// Magnet geometry variable
   BDSMagnetGeometryType GetMagnetGeometryType() const;
-  G4String GetOuterMaterialName() const;
-  G4double GetOuterDiameter() const;
   G4double GetMagnetPoleSize() const;
   G4double GetMagnetPoleRadius() const;
 
-  G4bool   DontSplitSBends() const;
-
-  ///@{ Tunnel
-  G4bool         BuildTunnel()         const;
-  G4bool         BuildTunnelStraight() const;
+  /// Tunnel
   BDSTunnelInfo* TunnelInfo()          const;
-  G4double       TunnelOffsetX()       const;
-  G4double       TunnelOffsetY()       const;
-  ///@}
   
   ///@{ Beam loss monitors
   G4double GetBlmRad() const;
@@ -244,23 +256,14 @@ private:
 
   G4UniformMagField* zeroMagField;
 
-  G4double itsElossHistoBinWidth;
-  G4double itsElossHistoTransBinWidth;
-  G4double itsDefaultRangeCut;
-  /// fudge factor, flips magnetic fields in elements (except for bends and kicks defined by angle, so that opposite charge and ffact -1 will produce same trajectory)
-  /// similar to BV flag in MadX
-  G4double itsFFact;
-
   ///@{ Initial bunch parameters
-  G4String itsParticleName;
   G4ParticleDefinition* itsBeamParticleDefinition;
   ///@}
   /// Reference beam energy
-  G4double itsBeamTotalEnergy, itsBeamMomentum, itsBeamKineticEnergy;
+  G4double itsBeamMomentum, itsBeamKineticEnergy;
   /// Particle energy
-  G4double itsParticleTotalEnergy, itsParticleMomentum, itsParticleKineticEnergy;
+  G4double itsParticleMomentum, itsParticleKineticEnergy;
   G4double itsLPBFraction;
-  G4double itsPlanckScatterFe;
   G4bool   itsSampleDistRandomly;
   G4bool   itsUseEMLPB;
   G4bool   itsUseHadLPB;
@@ -273,30 +276,16 @@ private:
   
   ///@{ Magnet geometry
   BDSMagnetGeometryType itsMagnetGeometryType;
-  G4String itsOuterMaterialName;
-  G4double itsOuterDiameter;
   G4double itsMagnetPoleSize;
   G4double itsMagnetPoleRadius;
   ///@}
 
   /// Default beam pipe model information
   BDSBeamPipeInfo* defaultBeamPipeModel;
-
-  /// A debug option to NOT split sbends into multiple sections
-  G4bool   dontSplitSBends;
   
-  ///@{ Tunnel model
-  G4bool         buildTunnel;
-  G4bool         buildTunnelStraight;
+  /// Tunnel model
   BDSTunnelInfo* tunnelInfo;
-  G4double       tunnelOffsetX;
-  G4double       tunnelOffsetY;
-  ///@}
-  ///@{ Booleans determining which types of components are sensitive
-  G4bool   itsSensitiveComponents;
-  G4bool   itsSensitiveBeamPipe;
-  G4bool   itsSensitiveBLMs;
-  ///@}
+  
   ///@{ Beam loss monitor geometry
   G4double itsBlmRad;
   G4double itsBlmLength;
@@ -410,18 +399,6 @@ private:
   BDSOutputFormat outputFormat;
 };
 
-inline G4double BDSGlobalConstants::GetElossHistoBinWidth() const
-{return itsElossHistoBinWidth;}
-
-inline G4double BDSGlobalConstants::GetElossHistoTransBinWidth() const
-{return itsElossHistoTransBinWidth;}
-
-inline G4double BDSGlobalConstants::GetDefaultRangeCut() const
-{return itsDefaultRangeCut;}
-
-inline G4double BDSGlobalConstants::GetFFact() const
-{return itsFFact;}
-
 inline G4double BDSGlobalConstants::GetMinimumEpsilonStep() const
 {return itsMinimumEpsilonStep;}
 
@@ -452,12 +429,6 @@ inline void BDSGlobalConstants::SetLPBFraction(G4double val)
     {itsLPBFraction = val;}
 }
 
-inline G4double BDSGlobalConstants::GetBeamTotalEnergy() const
-{return itsBeamTotalEnergy;}
-
-inline void BDSGlobalConstants::SetBeamTotalEnergy(G4double val)
-{itsBeamTotalEnergy = val;}
-
 inline G4double BDSGlobalConstants::GetBeamMomentum() const
 {return itsBeamMomentum;}
 
@@ -467,17 +438,11 @@ inline void BDSGlobalConstants::SetBeamMomentum(G4double val)
 inline G4ParticleDefinition* BDSGlobalConstants::GetParticleDefinition() const
 {return itsBeamParticleDefinition;}
 
-inline G4String BDSGlobalConstants::GetParticleName() const
-{return itsParticleName;}
-
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {itsBeamParticleDefinition = aBeamParticleDefinition;}
 
-inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
-{itsParticleName = aParticleName;}
-
-inline G4double BDSGlobalConstants::GetPlanckScatterFe() const
-{return itsPlanckScatterFe;}
+inline void BDSGlobalConstants::SetParticleName(G4String particleName)
+{options.set_value("particleName", particleName);}
 
 inline G4bool BDSGlobalConstants::GetSampleDistRandomly() const{
   return itsSampleDistRandomly;}
@@ -488,33 +453,11 @@ inline G4bool BDSGlobalConstants::GetUseEMLPB() const{
 inline G4bool BDSGlobalConstants::GetUseHadLPB() const{
   return itsUseHadLPB;}
 
-//Booleans determining which types of components are sensitive
-inline  G4bool BDSGlobalConstants::GetSensitiveComponents() const
-{return itsSensitiveComponents;}
-
-inline  G4bool BDSGlobalConstants::GetSensitiveBeamPipe() const
-{return itsSensitiveBeamPipe;}
-
-inline  G4bool BDSGlobalConstants::GetSensitiveBLMs() const
-{return itsSensitiveBLMs;}
-
 inline  BDSBeamPipeInfo* BDSGlobalConstants::GetDefaultBeamPipeModel() const
 {return defaultBeamPipeModel;}  
 
 inline BDSMagnetGeometryType BDSGlobalConstants::GetMagnetGeometryType() const
 {return itsMagnetGeometryType;}
-
-inline G4String BDSGlobalConstants::GetOuterMaterialName() const
-{return itsOuterMaterialName;}
-
-inline G4double BDSGlobalConstants::GetOuterDiameter() const
-{return itsOuterDiameter;}
-
-inline G4bool   BDSGlobalConstants::DontSplitSBends() const
-{return dontSplitSBends;}
-
-inline G4double BDSGlobalConstants::GetComponentBoxSize() const
-{return itsOuterDiameter;}
 
 inline G4double BDSGlobalConstants::GetMagnetPoleSize() const
 {return itsMagnetPoleSize;}
@@ -522,20 +465,8 @@ inline G4double BDSGlobalConstants::GetMagnetPoleSize() const
 inline G4double BDSGlobalConstants::GetMagnetPoleRadius() const
 {return itsMagnetPoleRadius;}
 
-inline G4bool   BDSGlobalConstants::BuildTunnel() const
-{return buildTunnel;}
-
-inline G4bool   BDSGlobalConstants::BuildTunnelStraight() const
-{return buildTunnelStraight;}
-
 inline BDSTunnelInfo* BDSGlobalConstants::TunnelInfo() const
 {return tunnelInfo;}
-
-inline G4double BDSGlobalConstants::TunnelOffsetX() const
-{return tunnelOffsetX;}
-
-inline G4double BDSGlobalConstants::TunnelOffsetY() const
-{return tunnelOffsetY;}
 
 //Beam loss monitors
 
@@ -741,9 +672,6 @@ inline G4double BDSGlobalConstants::GetParticleKineticEnergy() const
 
 inline void BDSGlobalConstants::SetParticleKineticEnergy(G4double val)
 {itsParticleKineticEnergy = val;}
-
-inline G4double BDSGlobalConstants::GetParticleTotalEnergy() const
-{return itsParticleTotalEnergy;}
 
 inline G4double BDSGlobalConstants::GetParticleMomentum() const
 {return itsParticleMomentum;}

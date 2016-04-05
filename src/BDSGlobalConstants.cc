@@ -40,27 +40,15 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   
   itsEmptyMaterial      = "G4_Galactic"; // space vacuum
   itsSampleDistRandomly = true;
-  
-  itsSensitiveComponents=opt.sensitiveBeamlineComponents;
-  itsSensitiveBeamPipe=opt.sensitiveBeamPipe;
-  itsSensitiveBLMs=opt.sensitiveBLMs;
-  itsDefaultRangeCut=opt.defaultRangeCut * CLHEP::m;
-  itsElossHistoBinWidth=opt.elossHistoBinWidth; //Longitudinal and transverse energy loss histogram bin widths
-  itsElossHistoTransBinWidth=opt.elossHistoTransBinWidth;
-  itsFFact=opt.ffact;
-  itsParticleName = G4String(opt.particleName);
-  itsBeamTotalEnergy = opt.beamEnergy * CLHEP::GeV;
-  if (itsBeamTotalEnergy == 0)
+
+  if (opt.beamEnergy == 0)
     {
       G4cerr << __METHOD_NAME__ << "Error: option \"beamenergy\" is not defined or must be greater than 0" <<  G4endl;
       exit(1);
     }
-  itsParticleTotalEnergy = opt.E0 * CLHEP::GeV; 
-  if (itsParticleTotalEnergy == 0)
-    {itsParticleTotalEnergy = itsBeamTotalEnergy;}
 
-  itsPlanckScatterFe = opt.planckScatterFe;
-  //Fraction of events with leading particle biasing.
+  if (opt.E0 == 0)
+    {options.set_value("E0", options.beamEnergy);}
 
   //beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(opt.apertureType,
@@ -73,20 +61,15 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 					     opt.beampipeMaterial);
   
   // magnet geometry
-  itsOuterDiameter = opt.outerDiameter * CLHEP::m;
-  if (itsOuterDiameter < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
+  G4double outerDi = options.outerDiameter * CLHEP::m;
+  if (outerDi < 2*(defaultBeamPipeModel->beamPipeThickness + defaultBeamPipeModel->aper1))
     {
       G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" must be greater than 2x (\"aper1\" + \"beamPipeThickness\") " << G4endl;
       exit(1);
     }
   itsMagnetGeometryType = BDS::DetermineMagnetGeometryType(opt.magnetGeometryType);
-  itsOuterMaterialName  = opt.outerMaterialName;
-
-  dontSplitSBends       = opt.dontSplitSBends;
 
   // tunnel
-  buildTunnel            = opt.buildTunnel;
-  buildTunnelStraight    = opt.buildTunnelStraight;
   tunnelInfo             = new BDSTunnelInfo(opt.tunnelType,
 					     opt.tunnelThickness     * CLHEP::m,
 					     opt.tunnelSoilThickness * CLHEP::m,
@@ -98,8 +81,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 					     opt.tunnelAper2         * CLHEP::m,
 					     opt.tunnelSensitive,
 					     opt.tunnelVisible);
-  tunnelOffsetX          = opt.tunnelOffsetX * CLHEP::m;
-  tunnelOffsetY          = opt.tunnelOffsetY * CLHEP::m;
 
   // beam loss monitor (BLM) geometry
   itsBlmRad              = opt.blmRad              * CLHEP::m;
