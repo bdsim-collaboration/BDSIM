@@ -40,14 +40,14 @@ namespace GMAD
     {
       if (override)
 	{
-	  for (auto const key : setKeys)
+	  for (auto const key : optionsIn.setKeys)
 	    {set(this, &optionsIn, key);}
 	}
       else
 	{// don't override - ie give preference to ones set in this instance
-	  for (auto const key : setKeys)
+	  for (auto const key : optionsIn.setKeys)
 	    {
-	      auto const& ok = optionsIn.setKeys; // shortcut
+	      auto const& ok = setKeys; // shortcut
 	      auto result = std::find(ok.begin(), ok.end(), key);
 	      if (result == optionsIn.setKeys.end())
 		{//it wasn't found so ok to copy
