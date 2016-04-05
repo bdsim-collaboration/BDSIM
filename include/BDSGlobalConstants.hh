@@ -155,7 +155,8 @@ public:
   // options with long names
   inline G4bool   GetStoreMuonTrajectories()    const {return G4bool(options.storeMuonTrajectories);}
   inline G4bool   GetStoreNeutronTrajectories() const {return G4bool(options.storeNeutronTrajectories);}
-  inline G4bool   GetIncludeIronMagFields()     const {return G4bool(options.includeIronMagFields);}
+  //inline G4bool   GetIncludeIronMagFields()     const {return G4bool(options.includeIronMagFields);} // TBC
+  inline G4bool   GetIncludeIronMagFields()     const {return false;}
   inline G4bool   GetTurnOnCerenkov()           const {return G4bool(options.turnOnCerenkov);}
   inline G4bool   GetTurnOnOpticalAbsorption()  const {return G4bool(options.turnOnOpticalAbsorption);}
   inline G4bool   GetTurnOnRayleighScattering() const {return G4bool(options.turnOnRayleighScattering);}
