@@ -31,7 +31,7 @@ void BDSParameterisationPhysics::ConstructProcess(){
   while( (*aParticleIterator)() ){
     //G4cout<<"+++"<<G4endl;                                                                                                                                            
     G4ParticleDefinition* particle = aParticleIterator->value();
-    // G4cout<<"--- particle "<<particle->GetParticleName()<<G4endl;                                                                                                    
+    // G4cout<<"--- particle "<<particle->ParticleName()<<G4endl;
     G4ProcessManager* pmanager = particle->GetProcessManager();
     // The fast simulation process becomes a discrete process only since 9.0:                                                                                                 
     pmanager->AddDiscreteProcess(_fastSimulationManagerProcess);

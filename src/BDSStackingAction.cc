@@ -46,10 +46,10 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   }
 
   // kill secondaries
-  if(BDSGlobalConstants::Instance()->GetStopSecondaries() && (aTrack->GetParentID() > 0) )
+  if(BDSGlobalConstants::Instance()->StopSecondaries() && (aTrack->GetParentID() > 0) )
     {return fKill;}
   
-  if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
+  if(BDSGlobalConstants::Instance()->StopTracks()) // if tracks killed after interaction
     {
       // kill secondary electrons      
       if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) ) {

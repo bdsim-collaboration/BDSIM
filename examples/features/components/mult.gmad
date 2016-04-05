@@ -5,3 +5,5 @@ mul2 : multipole, l=0.5*m , knl={ 0,0,0 } , ksl={ 0,0,0 };
 
 lat : line = (d1,mul,d2,mul2);
 com : line = (mul,mul2);
+
+include optionsTest.gmad;

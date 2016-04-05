@@ -649,7 +649,7 @@ void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
   //function arguments by reference to they can be modified in place
   //check outer material is something
   if (!outerMaterial)
-    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
+    {outerMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
 
   // ensure box size is bigger than the beampipe
   if (beamPipe->ContainerIsCircular())
@@ -809,7 +809,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 
   // logical volumes
   G4Material* copper = BDSMaterials::Instance()->GetMaterial("copper");
-  G4Material* empty  = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* empty  = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,          // solid
 				    empty,                   // material
 				    name + "_container_lv"); // name
@@ -860,7 +860,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(outerUserLimits);
   // attach cuts to volumes
   yokeLV->SetUserLimits(outerUserLimits);

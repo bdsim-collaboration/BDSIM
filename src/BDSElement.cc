@@ -323,25 +323,25 @@ void BDSElement::BuildMagField(G4bool forceToAllDaughters)
   G4cout << "BDSElement.cc> Setting stepping accuracy parameters..." << G4endl;
 #endif
   
-  if(BDSGlobalConstants::Instance()->GetDeltaOneStep()>0){
-    fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  if(BDSGlobalConstants::Instance()->DeltaOneStep()>0){
+    fieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
   }
-  if(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep()>0){
-    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->MaximumEpsilonStep()>0){
+    fieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
   }
-  if(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep()>=0){
-    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
+  if(BDSGlobalConstants::Instance()->MinimumEpsilonStep()>=0){
+    fieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
   }
-  if(BDSGlobalConstants::Instance()->GetDeltaIntersection()>0){
-    fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
+  if(BDSGlobalConstants::Instance()->DeltaIntersection()>0){
+    fieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
   }
 
-  G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+  G4MagInt_Driver* fIntgrDriver = new G4MagInt_Driver(BDSGlobalConstants::Instance()->ChordStepMinimum(),
 						      itsFStepper, 
 						      itsFStepper->GetNumberOfVariables() );
   fChordFinder = new G4ChordFinder(fIntgrDriver);
   
-  fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  fChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->DeltaChord());
   
   fieldManager->SetChordFinder( fChordFinder ); 
   

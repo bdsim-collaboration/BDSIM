@@ -1,5 +1,4 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
@@ -20,9 +19,9 @@ G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
 
 BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
 {
-  lengthSafety       = BDSGlobalConstants::Instance()->GetLengthSafety();
-  checkOverlaps      = BDSGlobalConstants::Instance()->GetCheckOverlaps();
-  visDebug           = BDSExecOptions::Instance()->GetVisDebug();
+  lengthSafety       = BDSGlobalConstants::Instance()->LengthSafety();
+  checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
+  visDebug           = BDSGlobalConstants::Instance()->VisDebug();
   nSegmentsPerCircle = 50;
   maxStepFactor      = 0.5;
 
@@ -77,7 +76,7 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 				 outerMaterial,
 				 name + "_yoke_lv");
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_outer_container_lv");
@@ -95,7 +94,7 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
     {poleLV->SetVisAttributes(outerVisAttr);}
   yokeLV->SetVisAttributes(outerVisAttr);
   // container
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (visDebug)
     {
       containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
       magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
@@ -110,7 +109,7 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
   outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(outerUserLimits);
   //attach cuts to volumes
   if (poleLV)

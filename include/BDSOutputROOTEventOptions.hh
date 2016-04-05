@@ -10,18 +10,21 @@
 #include "BDSGlobalConstants.hh"
 #endif
 
-#include "BDSExecOptions.hh"
-
 #include "parser/optionsBase.h"
 
-class BDSOutputROOTEventOptions : public TObject, GMAD::OptionsBase, BDSExecOptions {
-protected :
-  
-public :
+/** 
+ * @brief Class to store all options for a BDSIM run.
+ *
+ * @author Stewart Boogert
+ */
 
+class BDSOutputROOTEventOptions: public TObject, GMAD::OptionsBase
+{
+public:
   BDSOutputROOTEventOptions();
-  BDSOutputROOTEventOptions(const GMAD::OptionsBase *, const BDSExecOptions *);
+  BDSOutputROOTEventOptions(const GMAD::OptionsBase* ob);
   virtual ~BDSOutputROOTEventOptions();
+  
 #ifndef __MAKECINT__   
   void Fill();
 #endif

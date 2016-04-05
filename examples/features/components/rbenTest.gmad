@@ -1,5 +1,0 @@
-include rben.gmad;
-include options.gmad;
-include elec.gmad;
-
-use, period=lat;

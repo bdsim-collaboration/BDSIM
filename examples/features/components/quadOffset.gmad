@@ -5,3 +5,5 @@ d2: drift, l=0.05;
 finish: marker;
 
 lat : line = (start,d1,q1,d2,finish);
+
+include optionsTest.gmad;

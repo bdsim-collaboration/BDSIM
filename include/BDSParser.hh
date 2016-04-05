@@ -29,19 +29,28 @@ public:
   virtual ~BDSParser();
   
   /// Return options
-  const GMAD::Options& GetOptions()const;
+  const GMAD::Options& GetOptions() const {return options;}
+
+  /// Amalgamate the input options with the ones stored in the parser.
+  void AmalgamateOptions(const GMAD::Options& optionsIn);
+  
   /// Return beamline
-  const GMAD::FastList<GMAD::Element>& GetBeamline()const;
+  inline const GMAD::FastList<GMAD::Element>& GetBeamline() const {return beamline_list;}
+  
   /// Return biasing list
-  const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing()const;
+  inline const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing() const {return xsecbias_list;}
+  
   /// Return material list
-  const std::list<GMAD::Element>& GetMaterials()const;
+  inline const std::list<GMAD::Element>& GetMaterials() const {return material_list;}
+  
   /// Return atom list
-  const std::list<GMAD::Element>& GetAtoms()const;
+  inline const std::list<GMAD::Element>& GetAtoms() const {return atom_list;}
+  
   /// Return region list
-  const std::vector<GMAD::Region>& GetRegions()const;
+  inline const std::vector<GMAD::Region>& GetRegions() const {return region_list;}
+  
   /// Return cavity model list
-  const std::vector<GMAD::CavityModel>& GetCavityModels() const;
+  inline const std::vector<GMAD::CavityModel>& GetCavityModels() const {return cavitymodel_list;}
 
 protected:
   /// Constructor from filename

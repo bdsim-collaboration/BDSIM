@@ -7,3 +7,5 @@ sb3: sbend, l=2.5*m, angle=-0.02;
 
 lat : line = (d1,sb1,d2,sb2,d3,sb3);
 com : line = (sb1,sb2,sb3);
+
+include optionsTest.gmad;
