@@ -44,6 +44,9 @@ simple_testing(Component-Sextupole "--file=sext.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Solenoid "--file=sole.gmad" ${OVERLAP_CHECK})
 
+set(TESTING_ARGS --circular)
+simple_testing(Component-Teleporter "--file=teleporter.gmad" "")
+
 simple_testing(Component-Tunnel "--file=tunnel.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-VKick "--file=vkick.gmad" ${OVERLAP_CHECK})
