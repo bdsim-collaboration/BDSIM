@@ -2,7 +2,6 @@
 #include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
