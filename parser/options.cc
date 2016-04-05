@@ -22,6 +22,7 @@ bool Options::HasBeenSet(std::string name) const
 void Options::PublishMembers()
 {
   // executable options first
+  publish("inputFilename",         &Options::inputFileName);
   publish("inputFileName",         &Options::inputFileName);
   publish("visMacroFileName",      &Options::visMacroFileName);
   publish("visDebug",              &Options::visDebug);

@@ -21,7 +21,7 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
   /// after parsing the absolute path can be reconstructed  
   options.set_value("bdsimPath", GetPath(options.inputFileName));
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << itsBDSIMPATH << G4endl;
+  G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
 }
 

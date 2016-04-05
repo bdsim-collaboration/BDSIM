@@ -83,6 +83,7 @@ public:
   inline G4int    VerboseSteppingLevel()   const {return G4int   (options.verboseSteppingLevel);}
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
+  inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
   inline G4bool   SetSeedState()           const {return G4bool  (options.setSeedState);}
   inline G4String SeedStateFileName()      const {return G4String(options.seedStateFileName);}
   inline G4String BDSIMPath()              const {return G4String(options.bdsimPath);}
