@@ -45,6 +45,10 @@ set_tests_properties(gmad-overwriteElement PROPERTIES WILL_FAIL 1)
 add_test(gmad-overwriteVariable ${gmadBinary} overwriteVariable.gmad)
 set_tests_properties(gmad-overwriteVariable PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
 
+# try to overwrite a variable
+add_test(gmad-overwriteVariableString ${gmadBinary} overwriteVariableString.gmad)
+set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
+
 # try to use an undeclared variable
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
 set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
@@ -95,6 +99,9 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 # test extension
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
+
+# test string (issue #126)
+add_test(gmad-string ${gmadBinary} string.gmad)
 
 # test arrays
 add_test(gmad-array ${gmadBinary} array.gmad)

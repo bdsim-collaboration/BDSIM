@@ -33,7 +33,7 @@ class BDSGeometryComponent
 {
 public:
   BDSGeometryComponent(G4VSolid*        containerSolidIn,
-		       G4LogicalVolume* containerLVIn);
+		       G4LogicalVolume*             containerLVIn);
   BDSGeometryComponent(G4VSolid*        containerSolidIn,
 		       G4LogicalVolume* containerLVIn,
 		       std::pair<G4double,G4double> extentXIn,

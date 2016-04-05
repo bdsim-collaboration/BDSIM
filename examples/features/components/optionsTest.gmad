@@ -1,4 +1,3 @@
-include sben.gmad;
 include options.gmad;
 include elec.gmad;
 

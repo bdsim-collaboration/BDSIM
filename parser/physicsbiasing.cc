@@ -79,15 +79,15 @@ void PhysicsBiasing::set_value(std::string property, std::string value )
 
   if (property=="name")           {name = value; return;}
   if (property=="particle")       {particle = value; return;}
-  if (property=="proc")           {
-    process = value; 
-    std::stringstream ss(process);
-    std::string tok;
-    while(ss >> tok) {
-      processList.push_back(tok);
-    }    
-    return;
-  }
+  if ((property=="proc") || (property=="process"))
+    {
+      process = value; 
+      std::stringstream ss(process);
+      std::string tok;
+      while(ss >> tok)
+	{processList.push_back(tok);}
+      return;
+    }
 
   std::cerr << "Error: parser> unknown physicsbiasing option \"" << property << "\" with value " << value << std::endl;
   exit(1);

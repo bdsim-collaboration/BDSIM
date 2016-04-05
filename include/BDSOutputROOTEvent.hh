@@ -6,7 +6,14 @@
 #include <map>
 
 #include "BDSOutputBase.hh"
+
+#include "BDSOutputROOTEventOptions.hh"
+#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventHit.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
+
 
 #include "TROOT.h"
 #include "TH1F.h"
@@ -14,18 +21,13 @@
 #include "TFile.h"
 #include "TTree.h"
 
-
 /**
- * @brief ROOT Event output class
+ * @brief ROOT Event output class.
  * 
- * Write BDSIM output to ROOT files. Originally
- * part of BDSIM code base and recently developed and maintained
- * by Jochem Snuverink, Lawrence Deacon & Laurie Nevay
- * 
- * @author Stewart Boogert <stewart.boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
-class BDSOutputROOTEvent : public BDSOutputBase 
+class BDSOutputROOTEvent: public BDSOutputBase 
 {
 public:
   BDSOutputROOTEvent();
@@ -71,32 +73,48 @@ public:
   virtual void WriteTrackerPrimaryLoss(TRKBunch* /*lostBunch*/, int /*turnsTaken*/) {};
   /// fill event structure
   virtual void FillEvent();
-  
-  /// write and close and open new file
-  virtual void Commit();
-  
-  /// write and close the file
-  virtual void Write();
+
+  virtual void Initialise(); ///< open the file
+  virtual void Write();      ///< write to file
+  virtual void Close();      ///< close the file
 
   /// clear structures 
-  void Clear();
+  void Flush();
   
 private:
 
-  void Init();
-
   // output file
   TFile *theRootOutputFile;
+
+  // options structure
+  // BDSOutputROOTEventOptions *theOptionsOutput;
+
+  // options tree
+  TTree *theOptionsOutputTree;
+
+  // model tree 
+  TTree *theModelOutputTree;
+
   // output tree
   TTree *theRootOutputTree;
-
+  
   // primary structure 
   BDSOutputROOTEventSampler *primary;
 
   // sampler structures 
-  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
+  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler*> samplerTrees;
 
-  // energy hit structures 
+  // energy loss
+  BDSOutputROOTEventLoss        *eLoss;
+  // primary first hit
+  BDSOutputROOTEventHit         *pFirstHit;
+  // primary final hit
+  BDSOutputROOTEventHit         *pLastHit;
+  // tunnel hit
+  BDSOutputROOTEventHit         *tHit;
+  // trajectory
+  BDSOutputROOTEventTrajectory  *traj;
 };
 
 #endif

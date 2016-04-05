@@ -1,5 +1,5 @@
-#ifndef __REGION_H
-#define __REGION_H
+#ifndef REGION_H
+#define REGION_H
 
 #include <iomanip>
 #include <iostream>
@@ -7,7 +7,8 @@
 
 #include "published.h"
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief Region class for parser
    * 

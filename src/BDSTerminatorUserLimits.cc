@@ -1,27 +1,11 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
-/*
-
-This class is to give dynamic user limits to a certain volume.
-In the case of a ring, we want to cut ALL particles at the end 
-of the ring after a certain number of turns.
-*/
-
-#include "G4ios.hh"
-#include "BDSTerminatorUserLimits.hh"
-#include "G4UserLimits.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSExecOptions.hh"
-#include "G4Track.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSTerminatorUserLimits.hh"
 
-// basic inheritance - just use everything normally from G4UserLimits but 
-// replace one function in inherited class
-// default values are defined in G4UserLimits so all particles continue
+#include "globals.hh"
+#include "G4Track.hh"
+#include "G4UserLimits.hh"
+
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 						 G4double utrakMax,
 						 G4double utimeMax,
@@ -33,14 +17,10 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 		 uekinMin,
 		 urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  verbose     = BDSExecOptions::Instance()->GetVerbose();
-  turnsToTake = BDSGlobalConstants::Instance()->GetTurnsToTake();
-}
+  stoprunningEK(DBL_MAX),
+  verbose(BDSGlobalConstants::Instance()->Verbose()),
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
+{;}
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 						 G4double ustepMax,
@@ -55,19 +35,15 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       uekinMin,
 	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  verbose     = BDSExecOptions::Instance()->GetVerbose();
-  turnsToTake = BDSGlobalConstants::Instance()->GetTurnsToTake();
-}
+  stoprunningEK(DBL_MAX),
+  verbose(BDSGlobalConstants::Instance()->Verbose()),
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
+{;}
 
 inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
 {
   // does the number of turns passed == number of turns to take
-  G4int turnsTaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
 #ifdef BDSDEBUG
   // for some reason the __METHOD_NAME__ can't identify this function so hard coded its name
   G4cout << "BDSTerminatorUserLimits::GetUserMinEkine> turns taken : " << turnsTaken << G4endl;

@@ -2,57 +2,66 @@
 #include <map>
 #include "G4Allocator.hh"
 #include "G4ProcessType.hh"
+#include "G4Step.hh"
+#include "G4Track.hh"
 #include "G4VProcess.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+
+#include <ostream>
 
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
-BDSTrajectoryPoint::BDSTrajectoryPoint(){
-  _currentProcess=nullptr;
-  _isScatteringProcess=false;
-  _trackID = -1;
-}
-BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* aTrack):G4TrajectoryPoint(aTrack->GetPosition())
+BDSTrajectoryPoint::BDSTrajectoryPoint():
+  G4TrajectoryPoint(G4ThreeVector())
 {
-  _currentProcess=nullptr;
-  _isScatteringProcess=false;
-  _trackID = -1;
-  //  G4cout << "Getting current process..." << G4endl;
-  if(aTrack){
-    _vertexPosition=aTrack->GetVertexPosition();
-    _trackID = aTrack->GetTrackID();
-    if(aTrack->GetStep()){
-      _currentProcess = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
-      //      G4cout << "Getting current process type..." << G4endl;
-      G4ProcessType ptype;
-      if(_currentProcess){
-	ptype = _currentProcess->GetProcessType();
-      } else {
-	ptype = fNotDefined;
-      }
-      //      G4cout << "Getting isScattering..." << G4endl;
-      _isScatteringProcess = false;
-      if(!((ptype == fNotDefined) || (ptype == fTransportation))){  //If the process type is not undefined or transportation...
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().x() != 0){ //...and the particle changed momentum during the step..
-	  _isScatteringProcess = true; //...then this is a "scattering" (momentum-changing non-transportation) process.
-	}
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().y() != 0){ //same for y and z components of momentum.
-	  _isScatteringProcess = true; 
-	}
-	if ( aTrack -> GetStep() -> GetDeltaMomentum().z() != 0){ //...and the particle changed momentum during the step..
-	  _isScatteringProcess = true; 
-	}
-      }
+  currentProcess      = nullptr;
+  isScatteringProcess = false;
+  trackID             = -1;
+  vertexPosition      = G4ThreeVector();
+}
+
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
+  G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
+{
+  G4Track* aTrack      = step->GetTrack();
+  currentProcess      = nullptr;
+  isScatteringProcess = false;
+  trackID             = -1;
+  vertexPosition      = aTrack->GetVertexPosition();
+  trackID             = aTrack->GetTrackID();
+  currentProcess      = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
+
+  G4ProcessType ptype = fNotDefined;
+  if(currentProcess)
+    {ptype = currentProcess->GetProcessType();}
+  
+  isScatteringProcess = false;
+  // If the process type is not undefined or transportation...
+  if(!((ptype == fNotDefined) || (ptype == fTransportation))) 
+    {
+      // ...and the particle changed momentum during the step, then this is a "scattering"
+      // (momentum-changing non-transportation) process.
+      const G4Step* step    = aTrack->GetStep();
+      G4ThreeVector pBefore = step->GetPreStepPoint()->GetMomentum();
+      G4ThreeVector pAfter  = step->GetPostStepPoint()->GetMomentum();
+      G4ThreeVector deltaP  = pAfter - pBefore;
+      if (deltaP.x() != 0 || deltaP.y() != 0 || deltaP.z() != 0)
+	{isScatteringProcess = true;}
     }
-  }
 }
 
-BDSTrajectoryPoint::~BDSTrajectoryPoint(){
-}
-
-void BDSTrajectoryPoint::printData(){
-  G4cout << "BDSTrajectoryPoint> printData" << G4endl;
-  if(_currentProcess){
-    G4cout << "_currentProcess = " << _currentProcess->GetProcessName() << G4endl;
-    G4cout << "_isScatteringProcess = " << _isScatteringProcess << G4endl;
-  }
+std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
+{
+  if(p.currentProcess)
+    {
+      out << "BDSTrajectoryPoint: ";
+      out << "current process = " << p.currentProcess->GetProcessName() << ", that ";
+      G4String result = "isn't";
+      if (p.isScatteringProcess)
+	{result = "is";}
+      out << result << " a scattering process" << G4endl;
+    }
+  return out;
 }

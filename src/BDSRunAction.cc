@@ -2,7 +2,6 @@
 #include "BDSBeamline.hh"
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
@@ -27,8 +26,8 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // construct output histograms
   // calculate histogram dimensions
   G4double smin     = 0.0;
-  G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
-  G4double binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
+  G4double smax     = BDSGlobalConstants::Instance()->SMax() / CLHEP::m;
+  G4double binwidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax              = smin + (nbins*binwidth);          // redefine smax
   G4String slabel   = "s [m]";
@@ -59,6 +58,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
+  bdsOutput->Initialise(); // open file
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
@@ -73,11 +73,9 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   // write histograms to output - do this before potentially closing / opening new files
   for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
     {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
-  // Non-interactive mode
-  if(BDSExecOptions::Instance()->GetBatch())
-    {bdsOutput->Write();} // write last file
-  else
-    {bdsOutput->Commit();} // write and open new file
+
+  bdsOutput->Write(); // write last file
+  bdsOutput->Close();
 
   // delete analysis manager
   delete BDSAnalysisManager::Instance();

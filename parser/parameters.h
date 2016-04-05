@@ -1,5 +1,5 @@
-#ifndef __PARAMETERS_H
-#define __PARAMETERS_H
+#ifndef PARAMETERS_H
+#define PARAMETERS_H
 
 #include <string>
 #include <iostream>
@@ -8,8 +8,8 @@
 #include "array.h"
 #include "element.h"
 
-namespace GMAD {
-
+namespace GMAD
+{
   /**
    * @brief Parameters - Element class with booleans
    * 

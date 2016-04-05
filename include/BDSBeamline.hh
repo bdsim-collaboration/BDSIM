@@ -114,7 +114,7 @@ public:
 					    G4double x = 0,
 					    G4double y = 0);
 
-  ///@{ iterator mechanics
+  ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
   iterator       begin()       {return beamline.begin();}

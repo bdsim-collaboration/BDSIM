@@ -1,43 +1,70 @@
-V0.92 - 2016 / ?? / ??
+V0.92 - 2016 / 03 / 29
 ======================
 
 New Features
 ------------
 
-* Samplers are attached at the *exit* instead of the *entrance* of an element
-* Poleface rotations for bends are implemented (issue #100)
-* Geant4 9.6.x versions support is dropped (issue #111)
-* DUMP element removed (issue #116)
-* Modular physics lists are default (issue #121)
+* Samplers are attached at the *exit* instead of the *entrance* of an element.
+* Poleface rotations for bends are implemented (issue #100).
+* Geant4 9.6.x versions support has been dropped (issue #111).
+* DUMP element removed (issue #116).
 
 Geometry
 ^^^^^^^^
 
-* Samplers are no longer placed in the physical world but in a parallel sampler world
+* Samplers are no longer placed in the physical world but in a parallel sampler world.
+* Above ground 'tunnel' geometry implemented.
+* Introduced new RF cavity geometry and fields (still in development).
 
 Output
 ^^^^^^
 
+* ROOT version 6 support (issue #114).
+* Option to fill ROOT with double or float precision.
+  
 Parser
 ^^^^^^
+
+* Support for string variable (issue #126).
 
 Physics
 ^^^^^^^
 
-Tracking
-^^^^^^^^
-  
+* Modular physics lists are default (issue #121).
+* Use Geant4 provided synchrotron radiation instead of BDSIM one.
+
 Bug fixes
 ---------
 
 Geometry
 ^^^^^^^^
-  
+
+* Tunnel geometry fixes (issues #88 and #89).
+
 Parser
 ^^^^^^
 
-* Fix fast list insertion (issue #113)
-* Support for tildes in path names (issue #119)
+* Fix fast list insertion (issue #113).
+* Support for tildes in path names (issue #119).
+
+Physics
+^^^^^^^
+
+* Old physics code cleanup (issue #123).
+* Physics biasing properly initialised (issue #84).
+  
+General
+^^^^^^^
+
+* PDF Manual builds on Ubuntu (issue #85).
+* 1D Histogram class significantly faster for uneven bin width histograms.
+
+Utilities
+---------
+* pymadx v0.4
+* pybdsim v0.5
+* pymad8 v0.3
+* robdsim v0.5
 
 V0.91 - 2015 / 12 / 17
 ======================

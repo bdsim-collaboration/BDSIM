@@ -39,8 +39,9 @@ public:
   virtual void WriteTrackerPrimaryLoss(TRKBunch*, int){}
   
   virtual void FillEvent(){}///< fill event structure
-  virtual void Commit(){}  ///< close the file
-  virtual void Write(){}   ///< close and open new file
+  virtual void Initialise(){}; ///< open the file
+  virtual void Write(){};      ///< write to file
+  virtual void Close(){};      ///< close the file
 };
 
 extern BDSOutputBase* bdsOutput;

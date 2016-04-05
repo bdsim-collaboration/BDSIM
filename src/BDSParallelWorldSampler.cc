@@ -48,9 +48,9 @@ void BDSParallelWorldSampler::Construct()
   samplerWorldVis->SetForceWireframe(true);//just wireframe so we can see inside it
   samplerWorldLV->SetVisAttributes(samplerWorldVis);
   
-  const G4double samplerR    = 0.5*BDSGlobalConstants::Instance()->GetSamplerDiameter();
+  const G4double samplerR    = 0.5* BDSGlobalConstants::Instance()->SamplerDiameter();
   BDSBeamline* beamline      = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  const G4bool checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  const G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
 
   // Construct the one sampler typically used for a general sampler
   BDSSamplerPlane* generalPlane = new BDSSamplerPlane("Plane_sampler", samplerR);
@@ -98,7 +98,8 @@ void BDSParallelWorldSampler::Construct()
 	  G4int samplerID = BDSSamplerRegistry::Instance()->RegisterSampler(name,
 									    sampler,
 									    *pt,
-									    sEnd);
+									    sEnd,
+									    element);
 	  
 	  // record placements for cleaning up at destruction.
 	  G4PVPlacement* pl = new G4PVPlacement(*pt,              // placement transform

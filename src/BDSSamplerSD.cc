@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh" 
-#include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSParticle.hh"
 #include "BDSRunManager.hh"
@@ -52,7 +51,7 @@ void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
   globals  = BDSGlobalConstants::Instance(); // cache pointer to globals
 }
 
-G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
+G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH */)
 {
   // Do not store hit if the particle pre step point is not on the boundary
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();
@@ -70,7 +69,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4int ParentID    = track->GetParentID();    // unique ID of track's mother
   G4double t        = track->GetGlobalTime();  // time since beginning of event
   G4double energy   = track->GetTotalEnergy(); // total track energy
-  G4int turnstaken  = globals->GetTurnsTaken();// turn Number 
+  G4int turnstaken  = globals->TurnsTaken();// turn Number
   G4ThreeVector pos = track->GetPosition();    // current particle position (global)
   G4ThreeVector mom = track->GetMomentumDirection();// current particle direction (global)
   G4double weight   = track->GetWeight();      // weighting
@@ -117,7 +116,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4String samplerName = registry->GetName(samplerID);      // name
   G4double s           = registry->GetSPosition(samplerID); // S position
   G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  nEvent += globals->GetEventNumberOffset();
+  nEvent += globals->EventNumberOffset();
   G4int    PDGtype     = track->GetDefinition()->GetPDGEncoding();
   G4String pName       = track->GetDefinition()->GetParticleName();
 
@@ -156,7 +155,10 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 					    TrackID,
 					    turnstaken,
 					    itsType,
-					    process);
+					    process,
+					    0);
+/*theInfo->GetBeamlineIndex() */ // TODO Check with LN why this does not work for samplers
+  
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << *smpHit;

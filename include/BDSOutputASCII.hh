@@ -42,13 +42,14 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   virtual void FillEvent() {} ;
-  virtual void Commit();  ///< close the file
-  virtual void Write();   ///< close and open new file
+  virtual void Initialise(); ///< open the file
+  virtual void Write();      ///< write to file
+  virtual void Close();      ///< close the file
 
   /// write tracker bunch
   virtual void WriteTrackerBunch(G4String samplerName, TRKBunch* bunch, bool primary=false);
   virtual void WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken);
-  
+
 private:
   G4String basefilename;
   G4String timestring;

@@ -6,6 +6,8 @@
 
 #include <vector>
 
+class BDSBeamlineElement;
+
 BDSSamplerRegistry* BDSSamplerRegistry::instance = nullptr;
 
 BDSSamplerRegistry* BDSSamplerRegistry::Instance()
@@ -24,19 +26,29 @@ BDSSamplerRegistry::~BDSSamplerRegistry()
   instance = nullptr;
 }
 
-G4int BDSSamplerRegistry::RegisterSampler(G4String      name,
-					  BDSSampler*   sampler,
-					  G4Transform3D transform,
-					  G4double      S)
+G4int BDSSamplerRegistry::RegisterSampler(G4String            name,
+					  BDSSampler*         sampler,
+					  G4Transform3D       transform,
+					  G4double            S,
+					  BDSBeamlineElement* element)
 {
-  names.push_back(name);
-  samplers.push_back(sampler);
-  transforms.push_back(transform);
-  transformInverses.push_back(transform.inverse());
-  sPosition.push_back(S);
+  BDSSamplerInfo info = BDSSamplerInfo(name, sampler, transform, S, element);
+  return RegisterSampler(info);
+}
+
+G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerInfo info)
+{
+  infos.push_back(info);
 
   G4int index = numberOfEntries; // copy the number of entires / the index of this entry
   numberOfEntries++;
   return index;
 }
-  
+
+std::vector<G4String> BDSSamplerRegistry::GetNames() const
+{
+  std::vector<G4String> names;
+  for (auto info : infos)
+    {names.push_back(info.Name());}
+  return names;
+}

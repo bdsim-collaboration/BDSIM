@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
@@ -75,16 +75,18 @@ G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
   std::swap(inputface[0],inputface[2]);
   std::swap(outputface[0],outputface[2]);
 
-  if (angleIn > 0){
-    // Rotate input clockwise, output counterclockwise
-    inputface[0] *= -1.0;
-    outputface[2] *= -1.0;
-  }
-  else if (angleIn < 0){
-    // Rotate input counterclockwise, output clockwise
-    inputface[2] *= -1.0;
-    outputface[0] *= -1.0;
-  }
+  if (angleIn > 0)
+    {
+      // Rotate input clockwise, output counterclockwise
+      inputface[0] *= -1.0;
+      outputface[2] *= -1.0;
+    }
+  else if (angleIn < 0)
+    {
+      // Rotate input counterclockwise, output clockwise
+      inputface[2] *= -1.0;
+      outputface[0] *= -1.0;
+    }
   // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
   G4double intersectionRadius = length / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
 
@@ -104,20 +106,18 @@ std::string BDS::GetBDSIMExecPath()
 #ifdef __linux__
   // get path from /proc/self/exe
   ssize_t len = ::readlink("/proc/self/exe", path, sizeof(path) - 1);
-  if (len != -1) {
-    path[len] = '\0';
-  }
+  if (len != -1)
+    {path[len] = '\0';}
 #elif __APPLE__
   uint32_t size = sizeof(path);
   if (_NSGetExecutablePath(path, &size) != 0)
-    std::cout << "buffer too small; need size " << size << std::endl;
+    {std::cout << "buffer too small; need size " << size << std::endl;}
 #endif
   std::string bdsimPath(path);
   // remove executable from path
   std::string::size_type found = bdsimPath.rfind("/"); // find the last '/'
-  if (found != std::string::npos){
-    bdsimPath = bdsimPath.substr(0,found+1); // the path is the bit before that, including the '/'
-  }
+  if (found != std::string::npos)
+    {bdsimPath = bdsimPath.substr(0,found+1);} // the path is the bit before that, including the '/'
   return bdsimPath;
 }
 
@@ -136,28 +136,31 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // split input into path and filename
   G4String inputFilepath, inputFilename;
   G4String::size_type found = fileName.rfind("/"); // find the last '/'
-  if (found != G4String::npos){
-    inputFilepath = fileName.substr(0,found); // the path is the bit before that
-    inputFilename = fileName.substr(found); // the rest
-  } else {
-    // no slash, only filename
-    inputFilepath = "";
-    inputFilename = fileName;
-  }
+  if (found != G4String::npos)
+    {
+      inputFilepath = fileName.substr(0,found); // the path is the bit before that
+      inputFilename = fileName.substr(found); // the rest
+    }
+  else
+    {
+      // no slash, only filename
+      inputFilepath = "";
+      inputFilename = fileName;
+    }
   
   // need to know whether it's an absolute or relative path
-  if ((fileName.substr(0,1)) == "/"){
-    fullPath = inputFilepath;
-  } else {
-    // the main file has a relative path or just the file name, add bdsimpath
-    fullPath = BDSExecOptions::Instance()->GetBDSIMPATH() + "/" + inputFilepath;
-  }
+  if ((fileName.substr(0,1)) == "/")
+    {fullPath = inputFilepath;}
+  else
+    {
+      // the main file has a relative path or just the file name, add bdsimpath
+      fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + "/" + inputFilepath;
+    }
   // add additional slash just to be safe
   fullPath += "/";
   // add filename if not excluded
-  if (!excludeNameFromPath) {
-    fullPath += inputFilename;
-  }
+  if (!excludeNameFromPath)
+    {fullPath += inputFilename;}
   return fullPath;
 }
 
@@ -169,7 +172,8 @@ void BDS::HandleAborts(int signal_number)
   */
   // prevent recursive calling
   static int nrOfCalls=0;
-  if (nrOfCalls>0) exit(1);
+  if (nrOfCalls>0)
+    {exit(1);}
   nrOfCalls++;
   std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
@@ -203,7 +207,8 @@ G4bool BDS::IsInteger(const char* ch, int& convertedInteger)
   // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
   // convert to string
   std::string s(ch);
-  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
+    {return false;}
   
   char * p;
   convertedInteger = std::strtol(ch, &p, 10);
@@ -216,7 +221,8 @@ G4bool BDS::IsNumber(const char* ch, double& convertedNumber)
   // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
   // convert to string
   std::string s(ch);
-  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
+    {return false;}
   
   char * p;
   convertedNumber = std::strtod(ch, &p);
@@ -285,7 +291,7 @@ G4double BDS::GetParameterValue(const G4String spec, const G4String name)
       std::string val = spec.substr(pos + param.length(), llen);
       
       value = atof(val.c_str());
-  }
+    }
   return value;
 }
 

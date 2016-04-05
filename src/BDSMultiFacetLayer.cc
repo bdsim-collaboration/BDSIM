@@ -38,7 +38,8 @@ void BDSMultiFacetLayer::build(){
 
 void BDSMultiFacetLayer::buildScreen(){
   _solid  = new G4Box((_name+"_solid").c_str(),_size.x()/2.0,_size.z()/2.0,_size.y()/2.0);
-  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial()),(_name+"_log").c_str(),0,0,0);
+  _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial(
+          BDSGlobalConstants::Instance()->VacuumMaterial()),(_name+"_log").c_str(),0,0,0);
   G4VisAttributes* visAtt = new G4VisAttributes();
   visAtt->SetColor(G4Colour(0.7,0.2,0.0,0.3));
   visAtt->SetForceSolid(true);

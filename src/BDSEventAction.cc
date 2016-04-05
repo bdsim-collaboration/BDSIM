@@ -2,7 +2,6 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEventAction.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 
 #include "BDSRunManager.hh"
@@ -21,6 +20,7 @@
 #include "G4SDManager.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "Randomize.hh" // for G4UniformRand
 
 #include <list>
 #include <map>
@@ -39,15 +39,15 @@ BDSEventAction::BDSEventAction():
   primaryCounterCollID(-1),
   tunnelCollID(-1)
 { 
-  verboseEvent       = BDSExecOptions::Instance()->GetVerboseEvent();
-  verboseEventNumber = BDSExecOptions::Instance()->GetVerboseEventNumber();
-  isBatch            = BDSExecOptions::Instance()->GetBatch();
+  verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
+  verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
+  isBatch            = BDSGlobalConstants::Instance()->Batch();
   useTunnel          = BDSGlobalConstants::Instance()->BuildTunnel();
 
   if(isBatch)
     {
-      G4int nGenerate = BDSGlobalConstants::Instance()->GetNumberToGenerate();
-      G4double fraction = BDSGlobalConstants::Instance()->GetPrintModuloFraction();
+      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
+      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
       printModulo = (G4int)ceil(nGenerate * fraction);
       if (printModulo < 0)
 	{printModulo = 1;}
@@ -168,11 +168,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
 	  G4double sBefore = hit.GetSBefore()/CLHEP::m;
 	  G4double sAfter  = hit.GetSAfter()/CLHEP::m;
+	  // The energy deposition should be randomly attributed to a point
+	  // along the step - not exactly the beginning, end or middle.
+	  G4double sEDep   = sBefore + G4UniformRand()*(sAfter - sBefore);
 	  G4double energy  = hit.GetEnergy()/CLHEP::GeV;
 	  G4double weight  = hit.GetWeight();
 	  G4double weightedEnergy = energy * weight;
-	  generalELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
-	  perElementELoss->Fill(std::make_pair(sBefore,sAfter), weightedEnergy);
+	  generalELoss->Fill(sEDep, weightedEnergy);
+	  perElementELoss->Fill(sEDep, weightedEnergy);
 	}
     }
 
@@ -217,7 +220,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
   
   // if events per ntuples not set (default 0) - only write out at end 
-  int evntsPerNtuple = BDSGlobalConstants::Instance()->GetNumberOfEventsPerNtuple();
+  int evntsPerNtuple = BDSGlobalConstants::Instance()->NumberOfEventsPerNtuple();
 
   if (evntsPerNtuple>0 && (event_number+1)%evntsPerNtuple == 0)
     {
@@ -240,9 +243,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   
   // Save interesting trajectories
-  if(BDSGlobalConstants::Instance()->GetStoreTrajectory() ||
-     BDSGlobalConstants::Instance()->GetStoreMuonTrajectories() ||
-     BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories())
+  if(BDSGlobalConstants::Instance()->StoreTrajectory() ||
+          BDSGlobalConstants::Instance()->StoreMuonTrajectories() ||
+          BDSGlobalConstants::Instance()->StoreNeutronTrajectories())
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
@@ -257,9 +260,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  BDSTrajectory* traj=(BDSTrajectory*)(*iT1);
 	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint((int)traj->GetPointEntries()-1);
 	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
-	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m > BDSGlobalConstants::Instance()->GetTrajCutGTZ();
+	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z()/CLHEP::m >
+              BDSGlobalConstants::Instance()->TrajCutGTZ();
 	  G4double radius   = sqrt(pow(trajEndPointThreeVector.x()/CLHEP::m, 2) + pow(trajEndPointThreeVector.y()/CLHEP::m, 2));
-	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->GetTrajCutLTR();
+	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
 	  if (greaterThanZInteresting && withinRInteresting)
 	    {interestingTrajectories.push_back(traj);}
 	}
@@ -299,6 +303,6 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
   G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4int              turnstaken      = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int              turnstaken      = BDSGlobalConstants::Instance()->TurnsTaken();
   bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }

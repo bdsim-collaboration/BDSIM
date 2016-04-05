@@ -1,15 +1,17 @@
-#ifndef __PHYSICSBIASING_H
-#define __PHYSICSBIASING_H
+#ifndef PHYSICSBIASING_H
+#define PHYSICSBIASING_H
 
 #include <string>
 #include <list>
 #include <vector>
 
-namespace GMAD {
+namespace GMAD
+{
   class Array;
 }
 
-namespace GMAD {
+namespace GMAD
+{
   enum class PhysicsBiasingType {ALL=1,PRIMARY=2,SECONDARY=3};
   
   /**

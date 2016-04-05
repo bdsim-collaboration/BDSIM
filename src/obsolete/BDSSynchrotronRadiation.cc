@@ -383,7 +383,7 @@ G4double  BDSSynchrotronRadiation::GetMeanFreePath(const G4Track& track,
       Blocal=sqrt(Blocal*Blocal+FieldValueVec[0]*FieldValueVec[0]);
        
     // DangerousStuffHere, 1 line
-    if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial())
+    if(track.GetMaterial()==BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial())
        && Blocal !=0 ) {
       G4ThreeVector InitMag=track.GetMomentum();
       

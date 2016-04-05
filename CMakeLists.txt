@@ -178,27 +178,47 @@ foreach(header ${linkHeaders})
   if (${ROOT_MAJOR_VERSION} STREQUAL "6")
     # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
     # also rootcint5 does not accept additional options
+    # root6 .pcm file needs to be at library level
+    # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict_rdict.pcm
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       -D__MAKECINT__
-      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      COMMENT "Generate ROOT Dictionary for ${className}"
       )
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict_rdict.pcm
+      ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      )
+    # add arbitrary dependence to make it run at compile time (since DEPENDS at custom_command seems not to work)
+    set_property(
+      SOURCE ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
+      APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
+      )
+    # keep list of ROOT pcms
+    set(root_pcms ${root_pcms} ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm)
   else()
     # ROOT 5
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      COMMENT "Generate ROOT Dictionary for ${className}"
       )
+    set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
   endif()
   # keep list of ROOT dictionaries
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
-  set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
 endforeach()
 
 # GDML (on by default)
@@ -336,6 +356,11 @@ set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G
 # add original flags to cmake c and c++ flags
 set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
+if(APPLE)
+  # For MacOS bundle
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names")
+  message(STATUS "CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS}")
+endif()
 
 if($ENV{VERBOSE})
   message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
@@ -356,6 +381,14 @@ if(DOXYGEN_FOUND)
   add_test(Doxygen_LONG make doc)
 endif(DOXYGEN_FOUND)
 
+# enable Testing with ctest
+enable_testing()
+include(CTest)
+include(bdsim_test_macros)
+
+# This module sets up installation:
+include(bdsim_install)
+
 #-----------------------------------------------------------------------
 # macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
 #
@@ -366,7 +399,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
     )
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 endmacro()
 
 # source files
@@ -378,20 +410,11 @@ if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
 if($ENV{VERBOSE})
-  message(STATUS "bdsim sources ${bdsim_sources}")
+  message(STATUS "ROOT dictionaries ${root_dicts}")
+  message(STATUS "BDSIM sources ${bdsim_sources}")
 endif()
 
-add_library(bdsim ${bdsim_sources} ${root_dicts})
-
-# This module sets up installation:
-include(bdsim_install)
-
-# enable Testing with ctest
-enable_testing()
-include(CTest)
-include(bdsim_test_macros)
-
-add_subdirectory( parser )
+add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
 add_subdirectory( tracker )
 
@@ -400,7 +423,6 @@ add_executable(bdsimexec bdsim.cc)
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
-#link_directories(${Geant4_LIBRARY_DIR})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 # link against ROOT
@@ -424,8 +446,36 @@ set(executables bdsimexec)
 set(libraries bdsim)
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
+bdsim_install_libs(${root_pcms})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
 bdsim_install_headers(${headers} ${root_dicts_headers})
+
+include(CPack)
+
+option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
+
+if (BUILD_MACOSX_APP AND APPLE)
+    # building a macos executablemaking a bundle of 
+    add_executable(bdsimapp MACOSX_BUNDLE bdsim.cc)
+    set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
+    target_link_libraries(bdsimapp bdsim gmad)
+    bdsim_install_bundle(bdsim)
+endif()
+
+# package source
+add_custom_target(dist
+    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# copy dependent libraries in deps directory
+add_custom_target(copy-deps
+  COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
+)
+      
+## Add subdirectories
+# Parser
+add_subdirectory(parser)
 
 # Visualisation directory
 add_subdirectory(vis)
@@ -435,22 +485,10 @@ add_subdirectory(utils)
 
 # For testing
 add_subdirectory(examples)
+
+# Include directory for tests
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)
 
 # Manual
 add_subdirectory(manual)
-
-# Packaging
-set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${BDSIM_VERSION})
-
-set(CPACK_GENERATOR "TGZ;DragNDrop")
-
-set(CPACK_PACKAGE_FILE_NAME "${ARCHIVE_NAME}")
-
-include(CPack)
-
-# package source
-add_custom_target(dist
-    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
-        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
-	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
