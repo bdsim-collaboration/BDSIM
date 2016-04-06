@@ -44,14 +44,13 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     {
       G4cout << __METHOD_NAME__ << "Particle energy is 0! This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
+    }
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ 
 	 << x0 << " " << y0 << " " << z0 << " " 
 	 << xp << " " << yp << " " << zp << " " 
 	 << t  << " " << E  << " " << weight << G4endl;
-    
 #endif
-    }
     
   G4ThreeVector LocalPos;
   G4ThreeVector LocalMomDir;
