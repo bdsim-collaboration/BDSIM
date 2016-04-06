@@ -85,7 +85,7 @@ void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
 
 }
 #else
-void BDSOutputROOTEventSampler::SetBranchAddress(TTree *t)
+void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
 {
 }
 #endif
