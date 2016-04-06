@@ -74,16 +74,15 @@ void BDSOutputROOTEvent::Initialise()
   theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
-
   //
   // build model and write structure
   //
   BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
-  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000,1);
+  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
-   
- 
+
+
   //
   // build primary structures
   //
@@ -100,8 +99,7 @@ void BDSOutputROOTEvent::Initialise()
       BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
       //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
-
-      // set tree branches 
+      // set tree branches
       theRootOutputTree->Branch((samplerName+".").c_str(),
 				"BDSOutputROOTEventSampler",
 				res,
@@ -119,7 +117,6 @@ void BDSOutputROOTEvent::Initialise()
   theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
-
   //
   // Build process/track structures
   //

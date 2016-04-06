@@ -7,6 +7,7 @@
 #include "TObject.h"
 #include "TVector3.h"
 #include "TRotation.h"
+#include "TTree.h"
 
 #ifndef __MAKECINT__
 #include "BDSAcceleratorModel.hh"
@@ -17,7 +18,8 @@
 class BDSOutputROOTEventModel : public TObject {
 public :
 
-  std::vector<std::string> *componentName;
+
+  std::vector<std::string> componentName;
   std::vector<std::string> placementName;
   std::vector<float>       length;
   std::vector<TVector3>    staPos;
@@ -41,9 +43,8 @@ public :
 
 #ifndef __MAKECINT__   
   virtual void Fill();
-#else
-  void SetBranchAddress(TTree *);
 #endif
+
 
   ClassDef(BDSOutputROOTEventModel,1);
 };

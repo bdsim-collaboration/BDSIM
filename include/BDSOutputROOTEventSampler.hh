@@ -9,7 +9,7 @@
 #include "TTree.h"
 #endif
 
-class BDSOutputROOTEventSampler {
+class BDSOutputROOTEventSampler : public TObject {
   
 public:
   std::string samplerName; //|| Don't split the header

@@ -1,6 +1,8 @@
 #ifdef __CINT__
-#pragma link C++ namespace std+;
+#pragma link off all globals;
+#pragma link off all classes;
+#pragma link off all functions;
+#pragma link C++ class BDSOutputROOTEventModel+;
 #pragma link C++ class std::vector<std::string>+;
 #pragma link C++ class std::vector<float>+;
-#pragma link C++ class BDSOutputROOTEventModel+;
 #endif

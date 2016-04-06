@@ -10,7 +10,7 @@
 
 #include <vector>
 
-class BDSOutputROOTEventLoss {
+class BDSOutputROOTEventLoss : public TObject {
 
 protected: 
   int                       n = 0;

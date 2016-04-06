@@ -452,7 +452,7 @@ file(GLOB bdsimRootEventSources
         ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventTrajectoryDict.cc
         )
 add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
-target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")	
+target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")
 # link against ROOT
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})

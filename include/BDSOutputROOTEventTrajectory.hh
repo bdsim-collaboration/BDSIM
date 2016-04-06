@@ -9,7 +9,7 @@
 #include "BDSTrajectory.hh"
 #endif
 
-class BDSOutputROOTEventTrajectory
+class BDSOutputROOTEventTrajectory : public TObject
 {
 public:
   BDSOutputROOTEventTrajectory();
