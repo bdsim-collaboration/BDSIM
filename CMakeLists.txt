@@ -447,9 +447,11 @@ set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
 set(bdsimRootEventSources ${root_dicts} ${root_files})
+
 # Remove Options for now - temporary!
-list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventOptions.cc)
-list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventOptionsDict.cc)
+list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+#list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventOptions.cc)
+#list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventOptionsDict.cc)
 if($ENV{VERBOSE})
   message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
 endif()
