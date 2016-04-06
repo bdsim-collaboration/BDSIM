@@ -6,3 +6,5 @@ deg2: deg1, numberWedges=6;
 
 lat : line = (d1,deg1,d1,deg2,d1);
 com : line = (deg1);
+
+include optionsTest.gmad;

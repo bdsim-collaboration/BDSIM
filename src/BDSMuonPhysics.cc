@@ -1,4 +1,4 @@
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMuonPhysics.hh"
 
 #include "G4AnnihiToMuPair.hh"
@@ -24,7 +24,7 @@ BDSMuonPhysics::BDSMuonPhysics():
   G4VPhysicsConstructor("BDSMuonPhysics"),
   activated(false)
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}

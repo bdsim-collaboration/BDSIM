@@ -99,7 +99,7 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->GetParticleTotalEnergy() * v[5];   //Geant4 require KE, not total.
+  E  = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * v[5];   //Geant4 require KE, not total.
   zp = CalculateZp(xp,yp,Zp0);
 
   weight = 1.0;

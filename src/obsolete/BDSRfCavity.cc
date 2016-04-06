@@ -48,14 +48,14 @@ void BDSRfCavity::BuildBPFieldAndStepper()
   itsBPFieldMgr->SetDetectorField(eField);
   itsStepper    = new G4ExplicitEuler(equation, nvar);
 
-  G4double minStep = BDSGlobalConstants::Instance()->GetChordStepMinimum();
+  G4double minStep = BDSGlobalConstants::Instance()->ChordStepMinimum();
   
   intgrDriver = new G4MagInt_Driver(minStep,
 				    itsStepper,
 				    itsStepper->GetNumberOfVariables() );
   
   itsChordFinder = new G4ChordFinder(intgrDriver);
-  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+  itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->DeltaChord());
   itsBPFieldMgr->SetChordFinder(itsChordFinder);
 }
 

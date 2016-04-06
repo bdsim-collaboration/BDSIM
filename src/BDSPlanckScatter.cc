@@ -26,7 +26,7 @@ BDSPlanckScatter::BDSPlanckScatter():G4VEnergyLossProcess("PlanckScatt")
   
   G4double AvPhotonEnergy=2.7*CLHEP::k_Boltzmann*itsTemperature;
   
-  G4double w= BDSGlobalConstants::Instance()->GetBeamTotalEnergy()*AvPhotonEnergy/
+  G4double w= BDSGlobalConstants::Instance()->BeamTotalEnergy()*AvPhotonEnergy/
     pow( CLHEP::electron_mass_c2,2);
   
   G4double sigma=sigma_T*3/4*(
@@ -38,7 +38,7 @@ BDSPlanckScatter::BDSPlanckScatter():G4VEnergyLossProcess("PlanckScatt")
   itsPlanckMeanFreePath=1/(photon_density*sigma);
   
   // include scaling so that statistics are more reasonable:
-  itsPlanckMeanFreePath /= BDSGlobalConstants::Instance()->GetPlanckScatterFe(); 
+  itsPlanckMeanFreePath /= BDSGlobalConstants::Instance()->PlanckScatterFraction();
 } 
 
 

@@ -1,7 +1,9 @@
-#include "BDSOutputASCII.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSOutputASCII.hh"
 #include "BDSUtilities.hh"       // for BDS::non_alpha
+
+#include "globals.hh" // geant4 types / globals
 
 #include <cmath>
 #include <ctime>
@@ -24,7 +26,7 @@ BDSOutputASCII::BDSOutputASCII()
   
   // policy overwrite if output filename specifically set, otherwise increase
   // generate filenames
-  basefilename = BDSExecOptions::Instance()->GetOutputFilename();
+  basefilename = BDSGlobalConstants::Instance()->OutputFileName();
   G4String originalname = basefilename;
   // lots of files - make a directory with the users permissions
   // see sysstat.h, e.g. http://pubs.opengroup.org/onlinepubs/007908799/xsh/sysstat.h.html
@@ -33,7 +35,7 @@ BDSOutputASCII::BDSOutputASCII()
   while (status != 0)
     {
       status = mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-      if (BDSExecOptions::Instance()->GetOutputFilenameSet())
+      if (BDSGlobalConstants::Instance()->OutputFileNameSet())
 	{
 	  // if this directory already exists or not, use this directory (should be checked for other error codes)
 	  break;

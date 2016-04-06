@@ -74,7 +74,7 @@ void BDSBunchInterface::GetNextParticle(G4double& x0, G4double& y0, G4double& z0
     {ApplyCurvilinearTransform(x0,y0,z0,xp,yp,zp);}
   
   t  = 0.0; 
-  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
+  E = BDSGlobalConstants::Instance()->ParticleKineticEnergy();
   weight = 1.0;
   return;
 }

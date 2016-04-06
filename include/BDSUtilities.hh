@@ -13,10 +13,11 @@
  * for example string manipulations, and checking
  *
  * Functions are part of the BDS namespace 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
-namespace BDS {
+namespace BDS
+{
   /// Logical not for isalpha predictator as needed for string manipulations
   struct non_alpha
   {

@@ -19,12 +19,14 @@
 #include "G4TrajectoryDrawByCharge.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
-BDSVisManager::BDSVisManager() {}
+BDSVisManager::BDSVisManager()
+{;}
 
-void BDSVisManager::StartSession(G4int argc, char** argv) {
+void BDSVisManager::StartSession(G4int argc, char** argv)
+{
   G4UIsession* session=nullptr;
 #ifdef G4UI_USE_TCSH
   session = new G4UIterminal(new G4UItcsh);
@@ -57,45 +59,53 @@ void BDSVisManager::StartSession(G4int argc, char** argv) {
   std::string localPath = bdsimPath + "vis/vis.mac";
   std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
       
-  if (FILE *file = fopen(localPath.c_str(), "r")) {
-    fclose(file);
-    visPath = bdsimPath + "vis/";
-  } else if (FILE *file = fopen(installPath.c_str(), "r")) {
-    fclose(file);
-    visPath = bdsimPath + "../share/BDSIM/vis/";
-  } else {
-    G4cout << __METHOD_NAME__ << "ERROR: default visualisation file could not be found!" << G4endl;
-  }
+  if (FILE *file = fopen(localPath.c_str(), "r"))
+    {
+      fclose(file);
+      visPath = bdsimPath + "vis/";
+    }
+  else if (FILE *file = fopen(installPath.c_str(), "r"))
+    {
+      fclose(file);
+      visPath = bdsimPath + "../share/BDSIM/vis/";
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "ERROR: default visualisation file could not be found!" << G4endl;}
 
   // check if visualisation file is present and readable
-  std::string visMacroName = BDSExecOptions::Instance()->GetVisMacroFilename();
+  G4String visMacroName = BDSGlobalConstants::Instance()->VisMacroFileName();
   bool useDefault = false;
   // if not set use default visualisation file
-  if (visMacroName.empty()) useDefault = true;
+  if (visMacroName.empty())
+    {useDefault = true;}
   G4String visMacroFilename = BDS::GetFullPath(visMacroName);
-  if (!useDefault) {
-    FILE* file = nullptr;
-    // first relative to main path:
-    file = fopen(visMacroFilename.c_str(), "r");
-    if (file) {
-      fclose(file);
-    } else {
-      // if not present use a default one (OGLSQt or DAWNFILE)
-      G4cout << __METHOD_NAME__ << "WARNING: visualisation file " << visMacroFilename <<  " file not present, using default!" << G4endl;
-      useDefault = true;
+  if (!useDefault)
+    {
+      FILE* file = nullptr;
+      // first relative to main path:
+      file = fopen(visMacroFilename.c_str(), "r");
+      if (file)
+	{fclose(file);}
+      else
+	{
+	  // if not present use a default one (OGLSQt or DAWNFILE)
+	  G4cout << __METHOD_NAME__ << "WARNING: visualisation file "
+		 << visMacroFilename <<  " file not present, using default!" << G4endl;
+	  useDefault = true;
+	}
     }
-  }
-  if (useDefault) {
+  if (useDefault)
+    {
 #ifdef G4VIS_USE_OPENGLQT
-    visMacroFilename = visPath + "vis.mac";
+      visMacroFilename = visPath + "vis.mac";
 #else
-    visMacroFilename = visPath + "dawnfile.mac";
+      visMacroFilename = visPath + "dawnfile.mac";
 #endif
-  }
+    }
   // execute visualisation file
   G4UImanager* UIManager = G4UImanager::GetUIpointer();
   UIManager->ApplyCommand("/control/execute " + visMacroFilename);
-
+  
   // add default gui
   if (session2->IsGUI()) {
     // Add icons

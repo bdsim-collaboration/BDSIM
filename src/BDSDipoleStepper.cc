@@ -15,7 +15,7 @@ BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs* eqRHS):
   itsBGrad(0.0),itsBField(0.0),itsDist(0.0)
 {
   backupStepper   = new G4ClassicalRK4(eqRHS,6);
-  nominalEnergy   = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+  nominalEnergy   = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 }
 
 

@@ -1,7 +1,6 @@
 #include "BDSOutputROOT.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSHistogram.hh"
 #include "BDSSampler.hh"
@@ -85,18 +84,17 @@ template<typename Type>
 void BDSOutputROOT<Type>::Initialise()
 {
   outputFileNumber++;
-  const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  G4String basefilename = execOptions->GetOutputFilename();
+  G4String basefilename = globalConstants->OutputFileName();
   // if more than one file add number (starting at 0)
-  int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple)
+  int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
+  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
-  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch())
+  if (!globalConstants->OutputFileNameSet() || !globalConstants->Batch())
     {
       // check if file exists
       int nTimeAppended = 1;
@@ -151,9 +149,9 @@ void BDSOutputROOT<Type>::Initialise()
       samplerTrees.push_back(sampler);
     }
 
-  if(globalConstants->GetStoreTrajectory() ||
-     globalConstants->GetStoreMuonTrajectories() ||
-     globalConstants->GetStoreNeutronTrajectories()) 
+  if(globalConstants->StoreTrajectory() ||
+          globalConstants->StoreMuonTrajectories() ||
+          globalConstants->StoreNeutronTrajectories())
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
@@ -208,8 +206,8 @@ void BDSOutputROOT<Type>::Initialise()
 
   // Tunnel hits histogram
   G4double smin     = 0.0;
-  G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
-  G4double binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
+  G4double smax     = BDSGlobalConstants::Instance()->SMax() / CLHEP::m;
+  G4double binwidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax              = smin + (nbins*binwidth);          // redefine smax
   // x then y -> x is angle, y is s position
@@ -368,13 +366,13 @@ void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
       G4bool saveTrajectory=false;
 
       // store primaries
-      if((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))
+      if((parentID==0)&&(BDSGlobalConstants::Instance()->StoreTrajectory()))
 	{saveTrajectory = true;}
       // store muons
-      else if((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))
+      else if((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->StoreMuonTrajectories()))
 	{saveTrajectory = true;}
       // store neutrons
-      else if((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))
+      else if((part==2112)&&(BDSGlobalConstants::Instance()->StoreNeutronTrajectories()))
 	{saveTrajectory = true;}
 	  
       if(!saveTrajectory) continue;

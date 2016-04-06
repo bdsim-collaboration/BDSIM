@@ -36,7 +36,7 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
   vacuumMaterial(vacuumMaterialIn)
 {
   if(outerDiameter==0)
-    {outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();}
+    {outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
 
   if ( (xAperture > 0.5*outerDiameter) || (yAperture > 0.5*outerDiameter) )
     {

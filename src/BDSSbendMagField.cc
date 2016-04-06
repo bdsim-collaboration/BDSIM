@@ -25,7 +25,7 @@ BDSSbendMagField::BDSSbendMagField(G4ThreeVector fieldIn,
       // check for synchrotron radiation factors
       if (debug)
 	{
-	  G4double momentum   = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
+	  G4double momentum   = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
 	  G4double B_inferred = momentum / (0.299792458 * (CLHEP::GeV/CLHEP::tesla/CLHEP::m)*localRadius/CLHEP::m);
 	  G4cout  << __METHOD_NAME__ << "B inferred = " << B_inferred/CLHEP::tesla
 		  << " field = " << field/CLHEP::tesla << G4endl;

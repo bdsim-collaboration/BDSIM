@@ -5,3 +5,5 @@ sf2 : sextupole, l=0.5*m , k2 = 0.0;
 
 lat : line = (d1,sf1,d2,sf2);
 com : line = (sf1,sf2);
+
+include optionsTest.gmad;
