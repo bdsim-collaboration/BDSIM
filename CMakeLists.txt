@@ -469,7 +469,11 @@ endif()
 
 # Install the targets:
 set(executables bdsimexec)
-set(libraries bdsim bdsimRootEvent)
+if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+  set(libraries bdsim bdsimRootEvent)
+else()
+  set(libraries bdsim)
+endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})
