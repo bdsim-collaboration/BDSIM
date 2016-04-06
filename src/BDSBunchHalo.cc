@@ -107,7 +107,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       
       zp = CalculateZp(xp,yp,Zp0);
       t = 0 * CLHEP::s;
-      E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy();
+      E = BDSGlobalConstants::Instance()->GetParticleTotalEnergy();
 
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "selected> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;

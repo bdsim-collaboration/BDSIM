@@ -39,7 +39,7 @@ void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
   meansGM[3]    = Yp0;
   meansGM[4]    = T0;
   meansGM[5]    = 1;
-      
+
   if(strcmp(opt.distribType.data(),"gaussmatrix") == 0) {
     sigmaGM[0][0] = opt.sigma11; 
     sigmaGM[0][1] = opt.sigma12;
@@ -72,7 +72,9 @@ void BDSBunchGaussian::SetOptions(const GMAD::Options& opt)
     sigmaGM[4][4] = pow(opt.sigmaT,2); 
     sigmaGM[5][5] = pow(opt.sigmaE,2);
   }
-
+#ifdef BDSDEBUG
+  G4cout << "sigmaGM" << sigmaGM << G4endl;
+#endif
   delete GaussMultiGen;
   GaussMultiGen = CreateMultiGauss(*CLHEP::HepRandom::getTheEngine(),meansGM,sigmaGM);
   return;
@@ -87,6 +89,9 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #endif
 
   CLHEP::HepVector v = GaussMultiGen->fire();
+#ifdef BDSDEBUG 
+  G4cout << "HEPVECTOR" << v << G4endl;
+#endif
   x0 = v[0] * CLHEP::m;
   xp = v[1] * CLHEP::rad;
   y0 = v[2] * CLHEP::m;
@@ -94,8 +99,7 @@ void BDSBunchGaussian::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * v[5];
-  
+  E  = BDSGlobalConstants::Instance()->GetParticleTotalEnergy() * v[5];   //Geant4 require KE, not total.
   zp = CalculateZp(xp,yp,Zp0);
 
   weight = 1.0;
