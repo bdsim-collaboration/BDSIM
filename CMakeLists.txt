@@ -13,6 +13,9 @@ message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 # add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
+# include BDSIM macros
+include(bdsim_macros)
+
 # With this true we automatically include current src/binary directory
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -359,7 +362,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
 if(APPLE)
   # For MacOS bundle
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names")
-  message(STATUS "CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS}")
+  if($ENV{VERBOSE})
+    message(STATUS "CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS}")
+  endif()
 endif()
 
 if($ENV{VERBOSE})
@@ -483,6 +488,8 @@ add_subdirectory(utils)
 
 # For testing
 add_subdirectory(examples)
+# copy examples at to build directory
+copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examples bdsimexec)
 
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
