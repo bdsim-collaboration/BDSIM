@@ -12,6 +12,8 @@ BDSOutputROOTEventOptions::~BDSOutputROOTEventOptions()
 {
 }
 
+#ifndef __MAKECINT__
 void BDSOutputROOTEventOptions::Fill()
 {
 }
+#endif
