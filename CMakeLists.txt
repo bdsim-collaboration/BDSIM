@@ -450,7 +450,6 @@ set(bdsimRootEventSources ${root_dicts} ${root_files})
 # Remove Options for now - temporary!
 list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventOptions.cc)
 list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventOptionsDict.cc)
-
 if($ENV{VERBOSE})
   message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
 endif()
@@ -460,6 +459,10 @@ target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")
 # link against ROOT
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+# Add dependency to make sure bdsimRootEvent is done first
+# This is done because the ROOT dictionary generation needs to be done separately for each of them
+# And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
+add_dependencies(bdsim bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
