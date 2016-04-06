@@ -108,7 +108,7 @@ void BDSBunchTwiss::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   t  = v[4] * CLHEP::s;
   zp = 0.0  * CLHEP::rad;
   z0 = Z0*CLHEP::m + t*CLHEP::c_light;
-  E  = BDSGlobalConstants::Instance()->ParticleKineticEnergy() * v[5];
+  E  = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * v[5];
   
   zp = CalculateZp(xp,yp,Zp0);
   
