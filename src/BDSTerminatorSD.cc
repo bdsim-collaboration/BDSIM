@@ -62,7 +62,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       BDSGlobalConstants::Instance()->IncrementTurnNumber();
       
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "New turn number : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+      G4cout << __METHOD_NAME__ << "New turn number : " << BDSGlobalConstants::Instance()->TurnsTaken() << G4endl;
 #endif
     }
 #ifdef BDSDEBUG
