@@ -221,6 +221,7 @@ foreach(header ${linkHeaders})
     set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
   endif()
   # keep list of ROOT dictionaries
+  set(root_files ${root_files} ${CMAKE_CURRENT_SOURCE_DIR}/src/${className}.cc)
   set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
 endforeach()
 
@@ -444,18 +445,16 @@ endif()
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
-file(GLOB bdsimRootEventSources
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventModel.cc
-	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventModelDict.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventSampler.cc
-	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventSamplerDict.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventLoss.cc
-	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventLossDict.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventHit.cc
-	    ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventHitDict.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventTrajectory.cc
-        ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventTrajectoryDict.cc
-        )
+# ROOT Event Library
+set(bdsimRootEventSources ${root_dicts} ${root_files})
+# Remove Options for now - temporary!
+list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventOptions.cc)
+list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventOptionsDict.cc)
+
+if($ENV{VERBOSE})
+  message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
+endif()
+
 add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
 target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")
 # link against ROOT
