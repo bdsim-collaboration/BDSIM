@@ -42,7 +42,7 @@ G4bool BDSTerminatorSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       G4cout << __METHOD_NAME__ << "Incrementing turn number " << G4endl;
       G4cout << __METHOD_NAME__ << "Primary particle - incrementing turn number" << G4endl;
       G4cout << __METHOD_NAME__ << "Track length is : " << trackLength << " m" << G4endl;
-      G4cout << __METHOD_NAME__ << "Turn number is  : " << BDSGlobalConstants::Instance()->GetTurnsTaken() << G4endl;
+      G4cout << __METHOD_NAME__ << "Turn number is  : " << BDSGlobalConstants::Instance()->TurnsTaken() << G4endl;
 #endif
       G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
       // feedback info but only every 10 turns to avoid slow down and output bloat
