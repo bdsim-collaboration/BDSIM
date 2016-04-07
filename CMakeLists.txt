@@ -517,5 +517,8 @@ copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examp
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)
 
+# Include directory for analysis
+add_subdirectory(analysis)
+
 # Manual
 add_subdirectory(manual)
