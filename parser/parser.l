@@ -202,9 +202,7 @@ if(bdsimpath.length()>0){
      includefilename = cwd + mainfilepath + (std::string)yytext;
    }
 }
-#ifdef BDSDEBUG
-printf("parser> include filename is: %s \n",includefilename.c_str());
-#endif
+
    printf("parser> reading file %s \n",includefilename.c_str());//yytext
      if( include_stack_ptr >= max_include_depth )
        {
