@@ -5,12 +5,13 @@
 #include <vector>
 #ifndef __MAKECINT__ 
 #include "BDSSamplerHit.hh"
-#else
-#include "TTree.h"
 #endif
 
-class BDSOutputROOTEventSampler : public TObject {
-  
+#include "TObject.h"
+#include "TTree.h"
+
+class BDSOutputROOTEventSampler: public TObject
+{  
 public:
   std::string samplerName; //|| Don't split the header
   
@@ -43,9 +44,10 @@ public:
             G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(BDSSamplerHit *hit);
-#else
-  void SetBranchAddress(TTree *);
+  //#else
+  //void SetBranchAddress(TTree *);
 #endif
+  void SetBranchAddress(TTree *);
   /// Clean Sampler
   void Flush();
 

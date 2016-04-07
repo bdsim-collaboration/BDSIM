@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8)
 
 project(bdsim)
 
@@ -147,7 +147,7 @@ elseif(USE_AFS)
     set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.36/x86_64-mac1011-clang70-opt/root")
   elseif (RHL6)
     if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-      set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.36/x86_64-slc6-gcc47-opt/root")
+      set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.36/x86_64-slc6-gcc49-opt/root")
     else()
       set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.19/x86_64-slc6-gcc46-opt/root")
     endif()
@@ -180,7 +180,6 @@ foreach(header ${linkHeaders})
   #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
   if (${ROOT_MAJOR_VERSION} STREQUAL "6")
     # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
-    # also rootcint5 does not accept additional options
     # root6 .pcm file needs to be at library level
     # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
     add_custom_command(
@@ -214,6 +213,7 @@ foreach(header ${linkHeaders})
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
+      -D__MAKECINT__
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
@@ -446,29 +446,34 @@ get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
-set(bdsimRootEventSources ${root_dicts} ${root_files})
+# Only for root6 for now, not working yet for root5
+if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+  set(bdsimRootEventSources ${root_dicts} ${root_files})
 
-# Remove Options for now - temporary!
-list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
-#list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSOutputROOTEventOptions.cc)
-#list(REMOVE_ITEM bdsimRootEventSources ${CMAKE_CURRENT_BINARY_DIR}/root/BDSOutputROOTEventOptionsDict.cc)
-if($ENV{VERBOSE})
-  message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
+  # Remove Options for now - temporary!
+  list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+  if($ENV{VERBOSE})
+    message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
+  endif()
+
+  add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
+  target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")
+  # link against ROOT
+  target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
+  target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+  # Add dependency to make sure bdsimRootEvent is done first
+  # This is done because the ROOT dictionary generation needs to be done separately for each of them
+  # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
+  add_dependencies(bdsim bdsimRootEvent)
 endif()
-
-add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
-target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")
-# link against ROOT
-target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
-target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
-# Add dependency to make sure bdsimRootEvent is done first
-# This is done because the ROOT dictionary generation needs to be done separately for each of them
-# And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
-add_dependencies(bdsim bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
-set(libraries bdsim bdsimRootEvent)
+if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+  set(libraries bdsim bdsimRootEvent)
+else()
+  set(libraries bdsim)
+endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
 bdsim_install_libs(${root_pcms})

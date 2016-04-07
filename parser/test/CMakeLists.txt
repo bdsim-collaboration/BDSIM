@@ -53,6 +53,10 @@ set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRES
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
 set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
 
+# recursive inclusion
+add_test(gmad-recursiveinclusion ${gmadBinary} recursiveinclusion.gmad)
+set_tests_properties(gmad-recursiveinclusion PROPERTIES PASS_REGULAR_EXPRESSION "Error : Include depth exceeds 10")
+
 ##########################
 ### Test Functionality ###
 ##########################
