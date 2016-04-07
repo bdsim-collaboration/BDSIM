@@ -1,7 +1,7 @@
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/src/rebdsim.cc)
 
-file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.h)
+file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
 message(${CMAKE_CURRENT_SOURCE_DIR})
 message(ROOT DICTS : ${rebdsimLibLinkDefs})
@@ -26,8 +26,8 @@ foreach(header ${rebdsimLibLinkDefs})
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 -D__MAKECINT__
                 -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
-                ${CMAKE_CURRENT_SOURCE_DIR}/${className}.h ${header}
-                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.h ${header}
+                ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
         add_custom_command(
@@ -44,12 +44,12 @@ foreach(header ${rebdsimLibLinkDefs})
     else()
         # ROOT 5
         add_custom_command(
-                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.h
+                OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.hh
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
-                ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.h ${header}
-                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.h ${header}
+                ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
     endif()
