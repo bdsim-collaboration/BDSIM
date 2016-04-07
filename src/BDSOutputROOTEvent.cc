@@ -8,6 +8,10 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSUtilities.hh"
 
+#include "TFile.h"
+#include "TObject.h"
+#include "TTree.h"
+
 BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
 #ifdef BDSDEBUG
