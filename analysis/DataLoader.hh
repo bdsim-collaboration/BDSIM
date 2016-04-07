@@ -10,7 +10,11 @@ class DataLoader
   public :
     DataLoader();
     DataLoader(Config &config);
+    void CommonCtor();
     virtual ~DataLoader();
+    BDSOutputROOTEventOptions*  GetOptions();
+    BDSOutputROOTEventModel*    GetModel();
+    Event*                      GetEvent();
 
   private:
     BDSOutputROOTEventOptions *opt;
