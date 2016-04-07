@@ -2,6 +2,8 @@
 
 #include "BDSOutputROOTEventSampler.hh"
 
+#include "TTree.h"
+
 ClassImp(BDSOutputROOTEventSampler)
 
 BDSOutputROOTEventSampler::BDSOutputROOTEventSampler()
@@ -84,11 +86,13 @@ void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
   this->turnNumber.push_back(hit->GetTurnsTaken());
 
 }
-#else
-void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
-{
-}
+//#else
+//void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
+//{}
 #endif
+
+void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
+{;}
 
 void BDSOutputROOTEventSampler::Flush()
 {
