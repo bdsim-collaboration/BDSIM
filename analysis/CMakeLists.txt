@@ -25,7 +25,8 @@ foreach(header ${rebdsimLibLinkDefs})
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 -D__MAKECINT__
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
+                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
+                -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
@@ -47,7 +48,8 @@ foreach(header ${rebdsimLibLinkDefs})
                 OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.hh
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
+                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
+                -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
@@ -58,7 +60,6 @@ endforeach()
 
 
 add_library(rebdsimLib SHARED ${rebdsimLibSources})
-
 
 target_link_libraries(rebdsimLib ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(rebdsimLib ${ROOT_LIBRARIES})
