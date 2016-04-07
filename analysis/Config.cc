@@ -4,7 +4,7 @@
 #include <cstring>
 #include <sstream>
 
-//ClassImp(Config);
+ClassImp(Config);
 
 Config* Config::instance = nullptr;
 

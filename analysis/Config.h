@@ -44,7 +44,7 @@ class Config {
 
   std::vector<std::map<std::string, std::string>>  histos;
 
-//  ClassDef(Config,1);
+  ClassDef(Config,1);
 };
 
 #endif
