@@ -1,6 +1,8 @@
 #ifndef __Config_h
 #define __Config_h
 
+#include "TROOT.h"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -9,7 +11,7 @@
 
 class Config {
  public:
-  ~Config();
+  virtual ~Config();
   static Config* Instance(std::string fileName = std::string(""));
   void ParseInputFile();
     
@@ -42,6 +44,7 @@ class Config {
 
   std::vector<std::map<std::string, std::string>>  histos;
 
+//  ClassDef(Config,1);
 };
 
 #endif
