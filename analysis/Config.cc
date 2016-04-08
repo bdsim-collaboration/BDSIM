@@ -38,6 +38,10 @@ Config* Config::Instance(std::string fileName)
 void Config::ParseInputFile()
 { 
   std::ifstream f(this->fileName.c_str());
+
+  if(!f) {
+    throw std::string("Config::ParseInputFile> could not open file");
+  }
   
   std::string firstTok;
   std::string secondTok;

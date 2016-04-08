@@ -14,8 +14,25 @@ int main(int argc, char *argv[])
   if(argc != 2)
   {
     std::cout << "usage rebdsim <ConfigFileName>" << std::endl;
+    exit(1);
   }
 
-  Config    *cf = Config::Instance(argv[1]);
-  DataLoader dl = DataLoader(*cf);
+  std::cout << "rebdsim> ConfigFileName : " << argv[1] << std::endl;
+
+  try {
+    Config::Instance(argv[1]);
+  }
+  catch(std::string e) {
+    std::cout << e << std::endl;
+    exit(1);
+  }
+
+  try {
+    DataLoader dl = DataLoader();
+  }
+  catch(std::string e) {
+    std::cout << e << std::endl;
+    exit(1);    
+  }
+
 }

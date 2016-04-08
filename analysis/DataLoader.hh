@@ -1,25 +1,39 @@
+#include "Config.hh"
+#include "Event.hh"
+
+#include "TChain.h"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
 
-#include "Config.hh"
-#include "Event.hh"
+
 
 class DataLoader
 {
-  public :
-    DataLoader();
-    DataLoader(Config &config);
-    void CommonCtor();
-    virtual ~DataLoader();
-    BDSOutputROOTEventOptions*  GetOptions();
-    BDSOutputROOTEventModel*    GetModel();
-    Event*                      GetEvent();
+public :
+  DataLoader();
+  void CommonCtor();
+  void BuildInputFileList();
+  void BuildTreeNameList();
+  void BuildSamplerNameList();
+  void ChainTrees();
+  virtual ~DataLoader();
+  BDSOutputROOTEventOptions*  GetOptions();
+  BDSOutputROOTEventModel*    GetModel();
+  Event*                      GetEvent();
+  
+private:
+  BDSOutputROOTEventOptions    *opt;
+  BDSOutputROOTEventModel      *mod;
+  Event                        *evt;
+  std::vector<std::string>      fileNames;
+  
+  std::vector<std::string>      samplerNames;
+  std::map<std::string, int>    samplerNameMap;
 
-  private:
-    BDSOutputROOTEventOptions *opt;
-    BDSOutputROOTEventModel   *mod;
-    Event                     *evt;
+  TChain *optChain;
+  TChain *modChain;
+  TChain *evtChain;
 
   ClassDef(DataLoader,1);
 };
