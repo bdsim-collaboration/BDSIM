@@ -32,8 +32,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    X(0.0),
    Y(0.0),
    Z(0.0),
-   SBefore(0.0),
-   SAfter(0.0),
+   sBefore(0.0),
+   sAfter(0.0),
    x(0.0),
    y(0.0),
    z(0.0),
@@ -170,16 +170,18 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
   if (theInfo)
     {
-      SAfter  = theInfo->GetSPos() + posafterlocal.z();
-      SBefore = theInfo->GetSPos() + posbeforelocal.z();
+      sAfter  = theInfo->GetSPos() + z; //z is posafterlocal.z() - saves access
+      sBefore = theInfo->GetSPos() + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
     }
   else
     {
-      SAfter  = -1000; // unphysical default value to allow easy identification in output
-      SBefore = -1000;
+      sAfter  = -1000; // unphysical default value to allow easy identification in output
+      sBefore = -1000;
       precisionRegion = false;
     }
+
+  G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
@@ -189,7 +191,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
 	     << "\tEvent:  " << eventnumber 
 	     << "\tEnergy: " << enrg/CLHEP::GeV 
-	     << "GeV\tPosition: " << SAfter/CLHEP::m <<" m"<< G4endl;
+	     << "GeV\tPosition: " << sAfter/CLHEP::m <<" m"<< G4endl;
     }
   
   weight = aStep->GetTrack()->GetWeight();
@@ -200,25 +202,13 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
-  //do analysis / output in end of event action
-
-  //G4cout << posbefore.getZ() << " " << SBefore << " " << " " << posafter.getZ() << " " << SAfter << G4endl;
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
                                                        enrg,
-                                                       X,
-                                                       Y,
-                                                       Z,
-//                                                       SBefore,
-//                                                       SAfter,
-                                                       posbefore.getZ() + G4UniformRand()*(posafter.getZ()-posbefore.getZ()) /*SBefore*/,
-                                                       posbefore.getZ() + G4UniformRand()*(posafter.getZ()-posbefore.getZ()) /*SAfter*/,
-//                                                       posbefore.getZ()  /*SBefore*/,
-//                                                       posafter.getZ()  /*SAfter*/,
-//                                                       SBefore+G4UniformRand()*(SAfter-SBefore),
-//                                                       SBefore+G4UniformRand()*(SAfter-SBefore),
-                                                       x,
-                                                       y,
-                                                       z,
+                                                       X, Y, Z,
+						       sBefore,
+						       sAfter,
+						       sHit,
+                                                       x, y, z,
                                                        volName,
                                                        ptype,
                                                        weight,
@@ -301,6 +291,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
       SBefore = -1000;
       precisionRegion = false;
     }
+
+  G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();  
   weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
@@ -315,7 +307,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
       G4cout << " BDSEnergyCounterSD: Current Volume: " <<  volName 
 	     << " Event: "    << eventnumber 
 	     << " Energy: "   << enrg/CLHEP::GeV << " GeV"
-	     << " Position: " << SAfter/CLHEP::m   << " m" 
+	     << " Position: " << sAfter/CLHEP::m   << " m" 
 	     << G4endl;
     }
   
@@ -327,6 +319,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       Z,
 						       Z /*SBefore*/,
 						       Z /*SAfter*/,
+						       sHit,
 						       x,
 						       y,
 						       z,

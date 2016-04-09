@@ -27,6 +27,7 @@ public:
 		      G4double ZIn               = 0,    // global x
 		      G4double SBeforeIn         = 0,    // s of pre step coordinate
 		      G4double SAfterIn          = 0,    // s of post step coordinate
+		      G4double SHitIn            = 0,    // assigned s of loss
 		      G4double xIn               = 0,    // local x
 		      G4double yIn               = 0,    // local y
 		      G4double zIn               = 0,    // local z
@@ -75,14 +76,21 @@ private:
 
   G4int    copyNumber;
   G4double energy;
-  /// global coordinates
+  /// @{ Global coordinate
   G4double X;
   G4double Y;
   G4double Z;
-  /// s coordinate of pre step and post step point
-  G4double SBefore;
-  G4double SAfter;
-  /// local coordinates
+  /// @}
+  
+  G4double sBefore; ///< s coordinate of pre step point
+  G4double sAfter;  ///< s coordinate of post step point
+
+  /// The position this energy deposition is assigned to. As we represent
+  /// a Monte Carlo of discrete processes, this is randomly scattered along
+  /// the length of the track this energy deposition corresponds to (uniform
+  /// random distribution).
+  G4double sHit;
+  
   G4double x;
   G4double y;
   G4double z;
