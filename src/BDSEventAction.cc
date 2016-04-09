@@ -185,16 +185,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {
 	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-	      G4double hitSBefore  = thePrimaryHit->GetSBefore()/CLHEP::m;
-	      G4double hitSAfter   = thePrimaryHit->GetSAfter()/CLHEP::m;
-	      G4double lossSBefore = thePrimaryLoss->GetSBefore()/CLHEP::m;
-	      G4double lossSAfter  = thePrimaryLoss->GetSAfter()/CLHEP::m;
 	      // general histos
-	      analMan->Fill1DHistogram(0, std::make_pair(hitSBefore,hitSAfter));
-	      analMan->Fill1DHistogram(1, std::make_pair(lossSBefore,lossSAfter));
+	      analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
+	      analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
 	      // per element histos
-	      analMan->Fill1DHistogram(3, std::make_pair(hitSBefore,hitSAfter));
-	      analMan->Fill1DHistogram(4, std::make_pair(lossSBefore,lossSAfter));
+	      analMan->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
+	      analMan->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
 	    }
 	}
     }
