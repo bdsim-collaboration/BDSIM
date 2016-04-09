@@ -1,4 +1,6 @@
+#include "Config.hh"
 #include "Event.hh"
+
 
 ClassImp(Event);
 
@@ -48,9 +50,13 @@ BDSOutputROOTEventTrajectory* Event::GetTrajectory()
   return trajectory;
 }
 
-void Event::SetBranchAddress(TTree *t) 
+void Event::SetBranchAddress(TChain *t)
 {
-  t->SetBranchAddress("Primaries.",&primaries);
+  if(Config::Instance()->Debug())
+  {
+    std::cout << "Event::SetBranchAddress" << std::endl;
+  }
+  t->SetBranchAddress("Primary.",&primaries);
   t->SetBranchAddress("Eloss.",&eloss);
   t->SetBranchAddress("PrimaryFirstHit.",&primaryFirstHit);
   t->SetBranchAddress("PrimaryLastHit.",&primaryLastHit);

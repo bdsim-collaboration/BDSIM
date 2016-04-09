@@ -1,7 +1,11 @@
+#ifndef __EVENT_H
+#define __EVENT_H
+
 #include <vector>
 
 #include "TROOT.h"
 #include "TTree.h"
+#include "TChain.h"
 
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventLoss.hh"
@@ -21,9 +25,8 @@ public :
   BDSOutputROOTEventHit*        GetPrimaryLastHit();
   BDSOutputROOTEventHit*        GetTunnelHit();
   BDSOutputROOTEventTrajectory* GetTrajectory();
-  void SetBranchAddress(TTree *);
+  void SetBranchAddress(TChain *);
 
-private:
   BDSOutputROOTEventSampler               *primaries;
   BDSOutputROOTEventLoss                  *eloss;
   BDSOutputROOTEventHit                   *primaryFirstHit;
@@ -32,6 +35,11 @@ private:
   BDSOutputROOTEventTrajectory            *trajectory;
   std::vector<BDSOutputROOTEventSampler*> samplers;
 
+private:
+
+
   ClassDef(Event,1);
 
 };
+
+#endif

@@ -11,7 +11,7 @@
 
 class BDSOutputROOTEventHit : public BDSOutputROOTEventLoss {
 
-protected:
+public:
   /* local coordinates */
   std::vector<float> x;
   std::vector<float> y;
@@ -22,7 +22,6 @@ protected:
   std::vector<float> Y;
   std::vector<float> Z;
 
-public:
   BDSOutputROOTEventHit();
   virtual ~BDSOutputROOTEventHit();
 #ifndef __MAKECINT__

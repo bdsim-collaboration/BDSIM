@@ -7,6 +7,7 @@
 
 #include "Config.hh"
 #include "DataLoader.hh"
+#include "EventAnalysis.hh"
 
 int main(int argc, char *argv[])
 {
@@ -27,12 +28,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  try {
-    DataLoader dl = DataLoader();
-  }
-  catch(std::string e) {
-    std::cout << e << std::endl;
-    exit(1);    
-  }
-
+  DataLoader dl = DataLoader();
+  EventAnalysis evtAnalysis = EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  evtAnalysis.Process();
 }

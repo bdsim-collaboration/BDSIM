@@ -12,7 +12,7 @@
 
 class BDSOutputROOTEventLoss : public TObject {
 
-protected: 
+public:
   int                       n = 0;
   std::vector<float>        energy;
   std::vector<float>        S;
@@ -24,7 +24,6 @@ protected:
   std::vector<unsigned int> trackID;
   std::vector<int>          geomFlag;
 
-public:
   BDSOutputROOTEventLoss();
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __MAKECINT__

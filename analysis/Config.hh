@@ -1,5 +1,5 @@
-#ifndef __Config_h
-#define __Config_h
+#ifndef __CONFIG_H
+#define __CONFIG_H
 
 #include "TROOT.h"
 
