@@ -24,3 +24,13 @@ void EventAnalysis::Process()
     }
   }
 }
+
+void EventAnalysis::SimpleHistograms()
+{
+  if(Config::Instance()->Debug())
+  {
+    std::cout << "EventAnalysis::SimpleHistograms>" << std::endl;
+  }
+
+
+}

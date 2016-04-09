@@ -12,6 +12,7 @@ public:
   EventAnalysis(Event *, TChain *);
   ~EventAnalysis();
   void Process();
+  void SimpleHistograms();
 protected:
   Event  *event;
   TChain *chain;
