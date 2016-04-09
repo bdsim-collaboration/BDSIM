@@ -43,7 +43,7 @@ private:
   ///@{ per hit variable
   G4double enrg;
   G4double weight;
-  G4double X,Y,Z,SBefore,SAfter; // global coordinates
+  G4double X,Y,Z,sBefore,sAfter; // global coordinates
   G4double x,y,z;   // local coordinates
   G4double stepLength;
   G4bool   precisionRegion;

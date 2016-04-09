@@ -211,7 +211,7 @@ public:
   void     SetInitialPoint(BDSParticle& particle);
 
   // inline setters
-  inline void SetSMax(G4double smax) {sMax=smax;}
+  inline void SetSMax(G4double sMaxIn) {sMax = sMaxIn;}
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
   inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("nGenerate", (int)numberToGenerate);}

@@ -53,6 +53,10 @@ set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRES
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
 set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
 
+# recursive inclusion
+add_test(gmad-recursiveinclusion ${gmadBinary} recursiveinclusion.gmad)
+set_tests_properties(gmad-recursiveinclusion PROPERTIES WILL_FAIL 1)
+
 ##########################
 ### Test Functionality ###
 ##########################
@@ -108,5 +112,15 @@ add_test(gmad-array ${gmadBinary} array.gmad)
 set_tests_properties(gmad-array PROPERTIES PASS_REGULAR_EXPRESSION 32)
 add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)
 
+# test cavitymodel
+add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
+
+# test physics biasing
+add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
+
 # test regions
 add_test(gmad-region ${gmadBinary} region.gmad)
+
+# test tunnel
+add_test(gmad-tunnel ${gmadBinary} tunnel.gmad)
+

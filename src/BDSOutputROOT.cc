@@ -398,7 +398,7 @@ void BDSOutputROOT<Type>::FillHit(BDSEnergyCounterHit* hit)
   X          = hit->GetX()/CLHEP::m;
   Y          = hit->GetY()/CLHEP::m;
   Z          = hit->GetZ()/CLHEP::m;
-  S          = hit->GetS()/CLHEP::m;
+  S          = hit->GetSHit()/CLHEP::m;
   x          = hit->Getx()/CLHEP::m;
   y          = hit->Gety()/CLHEP::m;
   z          = hit->Getz()/CLHEP::m;

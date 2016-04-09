@@ -10,6 +10,7 @@ BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 {
 }
 
+#ifndef __MAKECINT__
 void BDSOutputROOTEventModel::Fill()
 {
   // get accelerator model
@@ -70,7 +71,6 @@ void BDSOutputROOTEventModel::Fill()
     this->staS.push_back((float &&) (*i)->GetSPositionStart());
     this->midS.push_back((float &&) (*i)->GetSPositionMiddle());
     this->endS.push_back((float &&) (*i)->GetSPositionEnd());
-
-
   }
 }
+#endif

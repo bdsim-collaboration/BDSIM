@@ -61,6 +61,9 @@ macro(bdsim_install_bundle)
   endif()
 endmacro()
 
+# set MACOSX_RPATH explicitly (CMP0042)
+set(CMAKE_MACOSX_RPATH ON)
+
 # CPack boilerplate for this project
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
 set(CPACK_PACKAGE_VENDOR "RHUL")

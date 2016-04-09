@@ -43,6 +43,7 @@ protected:
 #ifndef __MAKECINT__   
   virtual void Fill();
 #endif
+
   ClassDef(BDSOutputROOTEventSamplerModel,1);
 };
 

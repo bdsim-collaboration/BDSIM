@@ -19,6 +19,10 @@ The test system is based on CTest, which works in combination with CMake. Tests 
 :code:`CMakeLists.txt` file beside each example declaring the main gmad file as well as any
 optional command line arguments.
 
+Submissions to the `BDSIM test server <http://abp-cdash.web.cern.ch/abp-cdash/index.php?project=BDSIM>`_ can be done with the example configuration file cmake/cdash_bdsim.cmake. Adjust it to your settings and run::
+
+  ctest --timeout 900 -S cdash_bdsim.cmake
+
 Comparison of output is being added currently.
 
 Package System
