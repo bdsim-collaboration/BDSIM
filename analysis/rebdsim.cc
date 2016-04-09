@@ -31,4 +31,6 @@ int main(int argc, char *argv[])
   DataLoader dl = DataLoader();
   EventAnalysis evtAnalysis = EventAnalysis(dl.GetEvent(), dl.GetEventTree());
   evtAnalysis.Process();
+  evtAnalysis.SimpleHistograms();
+
 }
