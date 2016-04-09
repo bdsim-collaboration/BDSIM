@@ -39,9 +39,14 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  phitsindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",nbins,smin,smax,slabel); //0
-  plossindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",nbins,smin,smax,slabel); //1
-  elossindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss", nbins,smin,smax,slabel,"GeV"); //2
+  phitsindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",
+								 nbins,smin,smax,slabel,
+								 "Number of Primaries"); //0
+  plossindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",
+								 nbins,smin,smax,slabel,
+								 "Number of Primaries"); //1
+  elossindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss",
+								 nbins,smin,smax,slabel,"GeV"); //2
   // prepare bin edges for a by-element histogram
   std::vector<double> binedges;
   binedges.push_back(0.0);
@@ -51,9 +56,12 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
     {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
   
   // create per element ("pe") bin width histograms
-  phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",binedges,slabel); //3
-  plosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",binedges,slabel); //4
-  elosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,binedges,slabel,"GeV"); //5
+  phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
+								   binedges,slabel, "Number of Primaries / Element"); //3
+  plosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",
+								   binedges,slabel, "Number of Primaries / Element"); //4
+  elosspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,
+								   binedges,slabel,"GeV"); //5
   
   // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
