@@ -9,6 +9,7 @@ fodo1: line = (d1,fq1, d2, dq1, d3);
 
 ioline: line = (fodo1);
 use,period=ioline;
+sample, all;
 
 option, ngenerate=10,
 	physicsList="em",
