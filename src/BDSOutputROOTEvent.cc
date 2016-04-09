@@ -95,24 +95,10 @@ void BDSOutputROOTEvent::Initialise()
   samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
-  //
-  // build sampler structures 
-  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
-    {
-      // create sampler structure
-      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
-      //samplerMap[samplerName] = res;
-      samplerTrees.push_back(res);
-      // set tree branches
-      theRootOutputTree->Branch((samplerName+".").c_str(),
-				"BDSOutputROOTEventSampler",
-				res,
-				4000,1);
-    }
 
   //
   // Build loss and hit structures
-  // 
+  //
   eLoss     = new BDSOutputROOTEventLoss();
   pFirstHit = new BDSOutputROOTEventHit();
   pLastHit  = new BDSOutputROOTEventHit();
@@ -124,12 +110,27 @@ void BDSOutputROOTEvent::Initialise()
   //
   // Build process/track structures
   //
-  
+
   //
   // Build trajectory structures
-  // 
+  //
   traj = new BDSOutputROOTEventTrajectory();
   theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
+
+  //
+  // build sampler structures 
+  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+    {
+      // create sampler structure
+      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
+      //samplerMap[samplerName] = res;
+      samplerTrees.push_back(res);
+      // set tree branches
+      theRootOutputTree->Branch((G4String("Sampler_")+samplerName+".").c_str(),
+				"BDSOutputROOTEventSampler",
+				res,
+				4000,1);
+    }
 }
   
 /// write sampler hit collection
