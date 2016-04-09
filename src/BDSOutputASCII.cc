@@ -234,7 +234,7 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 		    (*hc)[i]->Getx(),          // local x
 		    (*hc)[i]->Gety(),          // local y
 		    (*hc)[i]->GetZ(),    // global z
-		    (*hc)[i]->GetS(),
+		    (*hc)[i]->GetSHit(),
 		    0, //(*hc)[i]->GetXPrime(),
 		    0, //(*hc)[i]->GetYPrime(),
 		    (*hc)[i]->GetEventNo(),
@@ -255,7 +255,7 @@ void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 		hit->Getx(),
 		hit->Gety(),
 		hit->GetZ(),
-		hit->GetS(),
+		hit->GetSHit(),
 		0,//hit->GetXPrime(),
 		0,//hit->GetYPrime(),
 		hit->GetEventNo(),

@@ -166,16 +166,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       for (G4int i = 0; i < energyCounterHits->entries(); i++)
 	{
 	  BDSEnergyCounterHit hit = *((*energyCounterHits)[i]);
-	  G4double sBefore = hit.GetSBefore()/CLHEP::m;
-	  G4double sAfter  = hit.GetSAfter()/CLHEP::m;
-	  // The energy deposition should be randomly attributed to a point
-	  // along the step - not exactly the beginning, end or middle.
-	  G4double sEDep   = sBefore + G4UniformRand()*(sAfter - sBefore);
-	  G4double energy  = hit.GetEnergy()/CLHEP::GeV;
-	  G4double weight  = hit.GetWeight();
-	  G4double weightedEnergy = energy * weight;
-	  generalELoss->Fill(sEDep, weightedEnergy);
-	  perElementELoss->Fill(sEDep, weightedEnergy);
+	  G4double sHit = hit.GetSHit()/CLHEP::m;
+	  G4double eW   = hit.GetEnergyWeighted()/CLHEP::GeV;
+	  generalELoss->Fill(sHit, eW);
+	  perElementELoss->Fill(sHit, eW);
 	}
     }
 
@@ -191,16 +185,12 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {
 	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-	      G4double hitSBefore  = thePrimaryHit->GetSBefore()/CLHEP::m;
-	      G4double hitSAfter   = thePrimaryHit->GetSAfter()/CLHEP::m;
-	      G4double lossSBefore = thePrimaryLoss->GetSBefore()/CLHEP::m;
-	      G4double lossSAfter  = thePrimaryLoss->GetSAfter()/CLHEP::m;
 	      // general histos
-	      analMan->Fill1DHistogram(0, std::make_pair(hitSBefore,hitSAfter));
-	      analMan->Fill1DHistogram(1, std::make_pair(lossSBefore,lossSAfter));
+	      analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
+	      analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
 	      // per element histos
-	      analMan->Fill1DHistogram(3, std::make_pair(hitSBefore,hitSAfter));
-	      analMan->Fill1DHistogram(4, std::make_pair(lossSBefore,lossSAfter));
+	      analMan->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
+	      analMan->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
 	    }
 	}
     }
