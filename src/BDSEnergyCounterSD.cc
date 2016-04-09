@@ -142,7 +142,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
   }
 
-
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
 
@@ -281,14 +280,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(currentVolume);
   if (theInfo)
     {
-      SAfter  = theInfo->GetSPos() + z; 
-      SBefore = theInfo->GetSPos() + z; // no pre/post step for spot
+      sAfter  = theInfo->GetSPos() + z; 
+      sBefore = theInfo->GetSPos() + z; // no pre/post step for spot
       precisionRegion = theInfo->GetPrecisionRegion();
     }
   else
     {
-      SAfter  = -1000; // unphysical default value to allow easy identification in output
-      SBefore = -1000;
+      sAfter  = -1000; // unphysical default value to allow easy identification in output
+      sBefore = -1000;
       precisionRegion = false;
     }
 
@@ -330,7 +329,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       turnstaken,
 						       eventnumber,
 						       stepLength,
-                   theInfo->GetBeamlineIndex());
+						       theInfo->GetBeamlineIndex());
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);

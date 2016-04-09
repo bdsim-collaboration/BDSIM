@@ -1,5 +1,7 @@
 #include "BDSEnergyCounterHit.hh"
-#include "G4ios.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4Allocator.hh"
 
 G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
