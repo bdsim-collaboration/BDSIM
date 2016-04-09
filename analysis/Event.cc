@@ -12,12 +12,12 @@ Event::Event()
 
 void Event::CommonCtor()
 {
-  primaries       = new BDSOutputROOTEventSampler();
-  eloss           = new BDSOutputROOTEventLoss();
-  primaryFirstHit = new BDSOutputROOTEventHit();
-  primaryLastHit  = new BDSOutputROOTEventHit();
-  tunnelHit       = new BDSOutputROOTEventHit();
-  trajectory      = new BDSOutputROOTEventTrajectory();
+  primaries       = nullptr;
+  eloss           = nullptr;
+  primaryFirstHit = nullptr;
+  primaryLastHit  = nullptr;
+  tunnelHit       = nullptr;
+  trajectory      = nullptr;
 }
 
 BDSOutputROOTEventSampler*    Event::GetPrimaries() 
