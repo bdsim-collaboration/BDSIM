@@ -9,9 +9,11 @@
 class EventAnalysis
 {
 public:
+  EventAnalysis();
   EventAnalysis(Event *, TChain *);
-  ~EventAnalysis();
+  virtual ~EventAnalysis();
   void Process();
+  void ProcessSamplers();
   void SimpleHistograms();
 protected:
   Event  *event;

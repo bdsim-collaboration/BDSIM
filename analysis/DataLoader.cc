@@ -151,7 +151,7 @@ void DataLoader::SetBranchAddress()
 {
   optChain->SetBranchAddress("Options.",&opt);
   modChain->SetBranchAddress("Model.",&mod);
-  evt->SetBranchAddress(evtChain);
+  evt->SetBranchAddress(evtChain,this->samplerNames);
 }
 
 BDSOutputROOTEventOptions* DataLoader::GetOptions()

@@ -128,8 +128,7 @@ void BDSOutputROOTEvent::Initialise()
       // set tree branches
       theRootOutputTree->Branch((G4String("Sampler_")+samplerName+".").c_str(),
 				"BDSOutputROOTEventSampler",
-				res,
-				4000,1);
+				res,32000,1);
     }
 }
   

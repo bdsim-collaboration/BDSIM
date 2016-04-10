@@ -12,6 +12,7 @@
 #include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 
+#define MAXSAMPLERS 30000
 class Event
 {
 public :
@@ -25,7 +26,7 @@ public :
   BDSOutputROOTEventHit*        GetPrimaryLastHit();
   BDSOutputROOTEventHit*        GetTunnelHit();
   BDSOutputROOTEventTrajectory* GetTrajectory();
-  void SetBranchAddress(TChain *);
+  void SetBranchAddress(TChain *, std::vector<std::string>&);
 
   BDSOutputROOTEventSampler               *primaries;
   BDSOutputROOTEventLoss                  *eloss;
@@ -33,8 +34,8 @@ public :
   BDSOutputROOTEventHit                   *primaryLastHit;
   BDSOutputROOTEventHit                   *tunnelHit;
   BDSOutputROOTEventTrajectory            *trajectory;
+  BDSOutputROOTEventSampler*              samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler*> samplers;
-
 private:
 
 
