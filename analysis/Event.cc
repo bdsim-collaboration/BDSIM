@@ -68,12 +68,12 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
 
   if(Config::Instance()->Debug())
   {
-    std::cout << "Primary.         " << primaries << std::endl;
-    std::cout << "Eloss.           " << eloss << std::endl;
-    std::cout << "PrimaryFirstHit. " << primaryFirstHit << std::endl;
-    std::cout << "PrimaryLastHit.  " << primaryLastHit << std::endl;
-    std::cout << "TunnelHit.       " << tunnelHit << std::endl;
-    std::cout << "Trajectory.      " << trajectory << std::endl;
+    std::cout << "Event::SetBranchAddress> Primary.         " << primaries << std::endl;
+    std::cout << "Event::SetBranchAddress> Eloss.           " << eloss << std::endl;
+    std::cout << "Event::SetBranchAddress> PrimaryFirstHit. " << primaryFirstHit << std::endl;
+    std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << primaryLastHit << std::endl;
+    std::cout << "Event::SetBranchAddress> TunnelHit.       " << tunnelHit << std::endl;
+    std::cout << "Event::SetBranchAddress> Trajectory.      " << trajectory << std::endl;
   }
 
   for(int i=0;i<(int)samplerNames.size();++i)
@@ -81,7 +81,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     t->SetBranchAddress(samplerNames[i].c_str(),&samplersA[i]);
     if(Config::Instance()->Debug())
     {
-      std::cout << samplerNames[i].c_str() << " " << samplersA[i] << std::endl;
+      std::cout << "Event::SetBranchAddress> " << samplerNames[i].c_str() << " " << samplersA[i] << std::endl;
     }
     samplers.push_back(samplersA[i]);
   }
