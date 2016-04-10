@@ -6,7 +6,6 @@ public:
   SamplerAnalysis();
   SamplerAnalysis(BDSOutputROOTEventSampler*);
   ~SamplerAnalysis();
-
-protected:
+  void Process();
   BDSOutputROOTEventSampler *sampler;
 };

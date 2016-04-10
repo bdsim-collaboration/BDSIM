@@ -7,11 +7,16 @@ SamplerAnalysis::SamplerAnalysis()
 
 SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler *samplerIn)
 {
-  this->sampler;
+  this->sampler = samplerIn;
 }
 
 
 SamplerAnalysis::~SamplerAnalysis()
+{
+
+}
+
+void SamplerAnalysis::Process()
 {
 
 }

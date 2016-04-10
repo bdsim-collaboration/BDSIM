@@ -52,12 +52,13 @@ void EventAnalysis::Process()
 
 void EventAnalysis::ProcessSamplers()
 {
-  for(auto s = event->samplers.begin(); s != event->samplers.end(); ++s)
+  for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
   {
     if(Config::Instance()->Debug())
     {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->samplerName.c_str() << " " << (*s)->n <<std::endl;
+      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->sampler->samplerName.c_str() << " " << (*s)->sampler->n <<std::endl;
     }
+    (*s)->Process();
   }
 
 }
