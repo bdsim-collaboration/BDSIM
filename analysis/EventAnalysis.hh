@@ -5,6 +5,7 @@
 #include "TChain.h"
 
 #include "Event.hh"
+#include "SamplerAnalysis.hh"
 
 class EventAnalysis
 {
@@ -18,6 +19,7 @@ public:
 protected:
   Event  *event;
   TChain *chain;
+  std::vector<SamplerAnalysis*> samplerAnalyses;
 };
 
 #endif

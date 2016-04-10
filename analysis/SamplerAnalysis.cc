@@ -5,6 +5,12 @@ SamplerAnalysis::SamplerAnalysis()
 
 }
 
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler *samplerIn)
+{
+  this->sampler;
+}
+
+
 SamplerAnalysis::~SamplerAnalysis()
 {
 

@@ -10,8 +10,13 @@ EventAnalysis::EventAnalysis()
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
 {
-  event = eventIn;
-  chain = chainIn;
+  this->event = eventIn;
+  this->chain = chainIn;
+  // create sampler analyses
+  for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
+  {
+    this->samplerAnalyses.push_back(new SamplerAnalysis(*i));
+  }
 }
 
 EventAnalysis::~EventAnalysis()
