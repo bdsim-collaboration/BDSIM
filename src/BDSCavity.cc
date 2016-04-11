@@ -7,7 +7,6 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4Polycone.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"

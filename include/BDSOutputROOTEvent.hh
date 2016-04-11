@@ -81,37 +81,37 @@ public:
 private:
 
   // output file
-  TFile *theRootOutputFile;
+  TFile *theRootOutputFile = nullptr;
 
   // options structure
   // BDSOutputROOTEventOptions *theOptionsOutput;
 
   // options tree
-  TTree *theOptionsOutputTree;
+  TTree *theOptionsOutputTree = nullptr;
 
   // model tree 
-  TTree *theModelOutputTree;
+  TTree *theModelOutputTree = nullptr;
 
   // output tree
-  TTree *theRootOutputTree;
+  TTree *theRootOutputTree = nullptr;
   
   // primary structure 
-  BDSOutputROOTEventSampler *primary;
+  BDSOutputROOTEventSampler *primary = nullptr;
 
   // sampler structures 
   std::map<G4String, BDSOutputROOTEventSampler*> samplerMap; // will remove
   std::vector<BDSOutputROOTEventSampler*> samplerTrees;
 
   // energy loss
-  BDSOutputROOTEventLoss        *eLoss;
+  BDSOutputROOTEventLoss        *eLoss = nullptr;
   // primary first hit
-  BDSOutputROOTEventHit         *pFirstHit;
+  BDSOutputROOTEventHit         *pFirstHit = nullptr;
   // primary final hit
-  BDSOutputROOTEventHit         *pLastHit;
+  BDSOutputROOTEventHit         *pLastHit = nullptr;
   // tunnel hit
-  BDSOutputROOTEventHit         *tHit;
+  BDSOutputROOTEventHit         *tHit = nullptr;
   // trajectory
-  BDSOutputROOTEventTrajectory  *traj;
+  BDSOutputROOTEventTrajectory  *traj = nullptr;
 };
 
 #endif
