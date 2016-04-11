@@ -5,7 +5,7 @@
 #include "TVector3.h"
 #include <vector>
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 #include "BDSTrajectory.hh"
 #endif
 
@@ -14,7 +14,7 @@ class BDSOutputROOTEventTrajectory : public TObject
 public:
   BDSOutputROOTEventTrajectory();
   virtual ~BDSOutputROOTEventTrajectory();
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
   void Fill(std::vector<BDSTrajectory*> &trajVec);
 #endif
   void Flush();

@@ -3,7 +3,7 @@
 
 #include "BDSOutputROOTEventLoss.hh"
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTunnelHit.hh"
 #endif
@@ -24,7 +24,7 @@ public:
 
   BDSOutputROOTEventHit();
   virtual ~BDSOutputROOTEventHit();
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
   virtual void Fill(BDSEnergyCounterHit *hit);
   virtual void Fill(BDSTunnelHit *hit);
 #endif

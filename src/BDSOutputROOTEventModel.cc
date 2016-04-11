@@ -10,7 +10,7 @@ BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 {
 }
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 void BDSOutputROOTEventModel::Fill()
 {
   // get accelerator model

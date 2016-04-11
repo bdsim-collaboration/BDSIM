@@ -3,7 +3,7 @@
 
 #include "TROOT.h"
 #include <vector>
-#ifndef __MAKECINT__ 
+#ifndef __ROOTBUILD__ 
 #include "BDSSamplerHit.hh"
 #endif
 
@@ -36,7 +36,7 @@ public:
   BDSOutputROOTEventSampler();
   BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
   void Fill(G4double E,
             G4double x0, G4double y0, G4double z0,
             G4double xp, G4double yp, G4double zp,
