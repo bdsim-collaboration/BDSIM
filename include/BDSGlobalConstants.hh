@@ -175,6 +175,8 @@ public:
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4double TeleporterLength()         const {return teleporterlength;}
   inline G4double SMax()                     const {return sMax;}
+  inline G4double SMaxHistograms()           const {return sMaxHistograms;}
+  inline G4int    NBins()                    const {return nBins;}
   inline G4RotationMatrix*     RotY90()                  const {return rotY90;}
   inline G4RotationMatrix*     RotYM90()                 const {return rotYM90;}
   inline G4RotationMatrix*     RotX90()                  const {return rotX90;}
@@ -200,18 +202,18 @@ public:
   inline G4double LWCalOffset()        const {return itsLWCalOffset;}
 
   // Setters
-  void     SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  void     SetParticleName(G4String aParticleName);
-  void     SetBeamKineticEnergy(G4double val);
-  void     SetBeamMomentum(G4double val);
-  void     SetParticleKineticEnergy(G4double val);
-  void     SetParticleMomentum(G4double val);
-  void     SetTeleporterDelta(G4ThreeVector newteleporterdelta);
-  void     SetTeleporterLength(G4double newteleporterlength);
-  void     SetInitialPoint(BDSParticle& particle);
-
+  inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
+  inline void SetParticleName(G4String aParticleName);
+  inline void SetBeamKineticEnergy(G4double val);
+  inline void SetBeamMomentum(G4double val);
+  inline void SetParticleKineticEnergy(G4double val);
+  inline void SetParticleMomentum(G4double val);
+  inline void SetTeleporterDelta(G4ThreeVector newteleporterdelta);
+  inline void SetTeleporterLength(G4double newteleporterlength);
+  inline void SetInitialPoint(BDSParticle& particle);
+  inline void SetSMax(G4double sMaxIn);
+  
   // inline setters
-  inline void SetSMax(G4double sMaxIn) {sMax = sMaxIn;}
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
   inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("nGenerate", (int)numberToGenerate);}
@@ -242,6 +244,15 @@ private:
 
   /// Beamline length in mm
   G4double sMax;
+  
+  /// The maximum s in mm such that there is an integer number of
+  /// elossHistoBinWidths along the line. Used for histogramming purposes.
+  G4double sMaxHistograms;
+
+  G4int nBins; ///< Number of bins for each histogram required.
+
+  /// Calculate the number of bins and required maximum s.
+  void CalculateHistogramParameters();
   
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
@@ -299,6 +310,12 @@ private:
 
   G4double lPBFraction;
 };
+
+inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)
+{
+  sMax = sMaxIn;
+  CalculateHistogramParameters();
+}
 
 inline void BDSGlobalConstants::SetBeamKineticEnergy(G4double val)
 {beamKineticEnergy = val;}

@@ -24,5 +24,3 @@ beam, particle="proton",
       distrType="reference",
       X0=0.001,
       Y0=0.001;
-
-option, checkOverlaps=1;
