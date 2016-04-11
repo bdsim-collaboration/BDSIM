@@ -13,10 +13,10 @@
 extern BDSOutputBase* bdsOutput;         // output interface
 
 BDSRunAction::BDSRunAction()
-{}
+{;}
 
 BDSRunAction::~BDSRunAction()
-{}
+{;}
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
@@ -25,12 +25,10 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 
   // construct output histograms
   // calculate histogram dimensions
-  G4double smin     = 0.0;
-  G4double smax     = BDSGlobalConstants::Instance()->SMax() / CLHEP::m;
-  G4double binwidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth() / CLHEP::m;
-  G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
-  smax              = smin + (nbins*binwidth);          // redefine smax
-  G4String slabel   = "s [m]";
+  const G4double smin   = 0.0;
+  const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
+  const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
+  const G4String slabel = "s [m]";
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
   G4cout << "s minimum: " << smin     << " m" << G4endl;

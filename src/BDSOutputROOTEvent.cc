@@ -35,7 +35,6 @@ void BDSOutputROOTEvent::Initialise()
 
   // Base root file name 
   G4String basefilename = globalConstants->OutputFileName();
-  basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
@@ -65,38 +64,30 @@ void BDSOutputROOTEvent::Initialise()
   theModelOutputTree   = new TTree("Model","BDSIM model");
   // event data tree
   theRootOutputTree    = new TTree("Event","BDSIM event");
-
-
-  //
-  // build options and write structure
-  //
-  // get options
+  
+  // Build options and write structure
+  // Get options
   const GMAD::Options o = BDSParser::Instance()->GetOptions();
   const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
-  // get exec options
+  // Get exec options
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
   theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
-  //
-  // build model and write structure
-  //
+  
+  // Build model and write structure
   BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
   theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
-
-
-  //
-  // build primary structures
-  //
+  
+  // Build primary structures
   primary = new BDSOutputROOTEventSampler("Primary");
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
-  //
-  // build sampler structures 
+  // Build sampler structures 
   for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
     {
       // create sampler structure
@@ -109,10 +100,8 @@ void BDSOutputROOTEvent::Initialise()
 				res,
 				4000,1);
     }
-
-  //
+  
   // Build loss and hit structures
-  // 
   eLoss     = new BDSOutputROOTEventLoss();
   pFirstHit = new BDSOutputROOTEventHit();
   pLastHit  = new BDSOutputROOTEventHit();
@@ -121,13 +110,10 @@ void BDSOutputROOTEvent::Initialise()
   theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
-  //
-  // Build process/track structures
-  //
   
-  //
+  // Build process/track structures
+  
   // Build trajectory structures
-  // 
   traj = new BDSOutputROOTEventTrajectory();
   theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
 }
@@ -155,10 +141,11 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   G4int n_hit = hc->entries();
-  for(G4int i=0;i<n_hit;i++){
-    BDSEnergyCounterHit *hit = (*hc)[i];
-    eLoss->Fill(hit);
-  }
+  for(G4int i=0;i<n_hit;i++)
+    {
+      BDSEnergyCounterHit* hit = (*hc)[i];
+      eLoss->Fill(hit);
+    }
 }
 
 /// write where primaries impact
@@ -167,7 +154,7 @@ void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* phit) // TODO Writ
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-    pFirstHit->Fill(phit);
+  pFirstHit->Fill(phit);
 }
 
 /// write where primaries stop being primaries
