@@ -2,8 +2,6 @@
 #include "BDSDebug.hh"
 
 #include <cstdlib>
-#include <cmath>
-#include <string>
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
