@@ -36,7 +36,7 @@ G4int BDSSamplerRegistry::RegisterSampler(G4String            name,
   return RegisterSampler(info);
 }
 
-G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerInfo info)
+G4int BDSSamplerRegistry::RegisterSampler(BDSSamplerInfo& info)
 {
   infos.push_back(info);
 
