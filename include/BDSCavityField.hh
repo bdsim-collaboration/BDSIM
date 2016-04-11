@@ -15,7 +15,7 @@ public:
 		  G4double phase);
   ~BDSCavityField();
   virtual G4bool DoesFieldChangeEnergy() const;
-  virtual void GetFieldValue(const G4double Point[4],G4double *Bfield ) const ;
+  virtual void GetFieldValue(const G4double Point[4],G4double *Bfield ) const;
   
 protected:
   /// Maximum field in MV/m
@@ -24,6 +24,8 @@ protected:
   /// angular frequency
   G4double frequency;
   G4double phase;
-private:
-  //G4Navigator* PillBoxNavigator;
+
+  G4double normalisedCavityRadius;
+
+  static const G4double j0FirstZero;
 };
