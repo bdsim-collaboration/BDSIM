@@ -33,7 +33,6 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
   G4cout << "s minimum: " << smin     << " m" << G4endl;
   G4cout << "s maximum: " << smax     << " m" << G4endl;
-  G4cout << "bin width: " << binwidth << " m" << G4endl;
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms

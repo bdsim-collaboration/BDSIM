@@ -48,7 +48,7 @@ public:
   /// Register a sampler. This register an instance of a sampler
   /// (note could be same sampler object again and again) with a
   /// specific placement transform. The registration returns an
-  /// integeter that the sampler transform, name etc can be looked
+  /// integer that the sampler transform, name etc can be looked
   /// up in this registry by - ie by the output. The name does not
   /// need to be unique. This registry ensures the returned integer
   /// will be unique however. Default transform is unity - ie up
@@ -64,7 +64,7 @@ public:
 			G4double            S         = -1000,
 			BDSBeamlineElement* element   = nullptr);
 
-  G4int RegisterSampler(BDSSamplerInfo info);
+  G4int RegisterSampler(BDSSamplerInfo& info);
 
   ///@{ Iterator mechanics
   typedef InfoVector::iterator       iterator;

@@ -42,7 +42,17 @@ namespace GMAD
       if (override)
 	{
 	  for (auto const key : optionsIn.setKeys)
-	    {set(this, &optionsIn, key);}
+	    {
+	      try
+		{
+		  set(this, &optionsIn, key);
+		}
+	      catch (std::runtime_error)
+		{
+		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  exit(1);
+		}
+	    }
 	}
       else
 	{// don't override - ie give preference to ones set in this instance
@@ -52,7 +62,15 @@ namespace GMAD
 	      auto result = std::find(ok.begin(), ok.end(), key);
 	      if (result == ok.end())
 		{//it wasn't found so ok to copy
-		  set(this, &optionsIn, key);
+		  try
+		    {
+		      set(this, &optionsIn, key);
+		    }
+		  catch (std::runtime_error)
+		    {
+		      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		      exit(1);
+		    }
 		}
 	    }
 	}

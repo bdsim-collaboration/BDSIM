@@ -48,7 +48,7 @@
 #include <utility>
 #include <vector>
 
-#include "G4MesonConstructor.hh"
+//#include "G4MesonConstructor.hh"
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   opticalPhysics(nullptr)

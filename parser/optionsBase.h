@@ -13,8 +13,6 @@ namespace GMAD
    * This is the basic options structure that can be saved to output
    * and should only contain basic built in C++ types. No Geant4 types
    * are to be used. See also the Options class which inherits this one.
-   *
-   * @author Stewart Boogert.
    */
   
   class OptionsBase
@@ -81,7 +79,7 @@ namespace GMAD
     std::string physicsList;
     int         modularPhysicsListsOn;
 
-    /// beam parameters
+    ///@{ beam parameters
     std::string particleName;
     std::string distribType;
     std::string xDistribType;
@@ -89,7 +87,8 @@ namespace GMAD
     std::string zDistribType;
     std::string distribFile;
     std::string distribFileFormat;
-
+    ///@}
+    
     int numberToGenerate;
     int nlinesIgnore; ///< ignore first lines in the input bunch file
 
@@ -100,44 +99,52 @@ namespace GMAD
     double ffact;
     double beamEnergy;
 
-    /// initial beam centroid
+    ///@{ initial beam centroid
     double X0, Y0, Z0, S0;
     double Xp0, Yp0, Zp0;
     double T0;
     double E0;
-
+    ///@}
+    
     /// bunch length
     double sigmaT;
 
-    /// initial twiss parameters
+    ///@{ initial twiss parameters
     double betx, bety, alfx, alfy, emitx, emity, dispx, dispy, dispxp, dispyp;
-
-    /// for the gaussian beam distribution
+    ///@}
+    
+    ///@{ for the gaussian beam distribution
     double sigmaX, sigmaXp, sigmaY, sigmaYp;
-
-    /// for the circle/square beam distribution
+    ///@}
+    
+    ///@{ for the circle/square beam distribution
     double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
     double envelopeR, envelopeRp;
-
-    /// for the gaussian sigma matrix distribution
+    ///@}
+    
+    ///@{ for the gaussian sigma matrix distribution
     double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
     double          sigma22, sigma23, sigma24, sigma25, sigma26;
     double                   sigma33, sigma34, sigma35, sigma36;
     double                            sigma44, sigma45, sigma46;
     double                                     sigma55, sigma56;
     double                                              sigma66;
-
-    /// for the elliptic shell distribution
+    ///@}
+    
+    ///@{ for the elliptic shell distribution
     double shellX, shellXp, shellY, shellYp;
     double shellXWidth, shellXpWidth, shellYWidth, shellYpWidth;
-
-    /// for the ring beam distribution
+    ///@}
+    
+    ///@{ for the ring beam distribution
     double Rmin, Rmax;
-
-    /// for the halo distribution
+    ///@}
+    
+    ///@{ for the halo distribution
     double      haloPSWeightParameter;
     std::string haloPSWeightFunction;
-
+    ///@}
+    
     /// for the gaussian, elliptic shell, ring distributions
     double sigmaE;
 
@@ -162,7 +169,7 @@ namespace GMAD
 
     bool        includeIronMagFields;
 
-    /// default beampipe parameters
+    ///@{ default beampipe parameters
     double      beampipeThickness;
     std::string apertureType;
     double      aper1;
@@ -171,8 +178,9 @@ namespace GMAD
     double      aper4;
     std::string beampipeMaterial;
     std::string vacMaterial;
-
-    /// tunnel geometry parameters
+    ///@}
+    
+    ///@{ tunnel geometry parameters
     bool        buildTunnel;
     bool        buildTunnelStraight;
     std::string tunnelType;
@@ -188,7 +196,8 @@ namespace GMAD
     bool        tunnelVisible;
     double      tunnelOffsetX;
     double      tunnelOffsetY;
-
+    ///@}
+    
     /// Sampler
     double   samplerDiameter;
 

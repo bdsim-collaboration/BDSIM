@@ -25,13 +25,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint():
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
-  G4Track* aTrack      = step->GetTrack();
+  const G4Track* aTrack = step->GetTrack();
   currentProcess      = nullptr;
   isScatteringProcess = false;
   trackID             = -1;
   vertexPosition      = aTrack->GetVertexPosition();
   trackID             = aTrack->GetTrackID();
-  currentProcess      = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
+  currentProcess      = step->GetPostStepPoint()->GetProcessDefinedStep();
 
   G4ProcessType ptype = fNotDefined;
   if(currentProcess)
@@ -43,7 +43,6 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     {
       // ...and the particle changed momentum during the step, then this is a "scattering"
       // (momentum-changing non-transportation) process.
-      const G4Step* step    = aTrack->GetStep();
       G4ThreeVector pBefore = step->GetPreStepPoint()->GetMomentum();
       G4ThreeVector pAfter  = step->GetPostStepPoint()->GetMomentum();
       G4ThreeVector deltaP  = pAfter - pBefore;

@@ -175,9 +175,12 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     }
   else
     {
-      sAfter  = -1000; // unphysical default value to allow easy identification in output
-      sBefore = -1000;
-      precisionRegion = false;
+      // need to exit as theInfo is dereferenced later
+      G4cerr << "No volume info for " << theVolume << G4endl;
+      exit(1);
+      // sAfter  = -1000; // unphysical default value to allow easy identification in output
+      // sBefore = -1000;
+      // precisionRegion = false;
     }
 
   G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
@@ -286,9 +289,12 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
     }
   else
     {
-      sAfter  = -1000; // unphysical default value to allow easy identification in output
-      sBefore = -1000;
-      precisionRegion = false;
+      // need to exit as theInfo is dereferenced later
+      G4cerr << "No volume info for " << currentVolume << G4endl;
+      exit(1);
+      // sAfter  = -1000; // unphysical default value to allow easy identification in output
+      // sBefore = -1000;
+      // precisionRegion = false;
     }
 
   G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
