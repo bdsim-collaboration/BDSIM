@@ -15,13 +15,15 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
-    this->samplerAnalyses.push_back(new SamplerAnalysis(*i));
+    SamplerAnalysis *sa = new SamplerAnalysis(*i);
+    this->samplerAnalyses.push_back(sa);
   }
 }
 
 EventAnalysis::~EventAnalysis()
 {
 }
+
 
 void EventAnalysis::Process()
 {
@@ -56,12 +58,31 @@ void EventAnalysis::ProcessSamplers()
   {
     if(Config::Instance()->Debug())
     {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->sampler->samplerName.c_str() << " " << (*s)->sampler->n <<std::endl;
+      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName.c_str() << " " << (*s)->s->n <<std::endl;
     }
+
+    // process samplers
     (*s)->Process();
   }
 
 }
+
+void EventAnalysis::Initialise()
+{
+  for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
+  {
+    (*i)->Initialise();
+  }
+}
+
+void EventAnalysis::Terminate()
+{
+  for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
+  {
+    (*i)->Terminate();
+  }
+}
+
 
 void EventAnalysis::SimpleHistograms()
 {

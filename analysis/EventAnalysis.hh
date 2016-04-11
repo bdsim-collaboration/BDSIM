@@ -13,9 +13,15 @@ public:
   EventAnalysis();
   EventAnalysis(Event *, TChain *);
   virtual ~EventAnalysis();
+
+  void Initialise();
   void Process();
   void ProcessSamplers();
+  void Terminate();
+
   void SimpleHistograms();
+
+
 protected:
   Event  *event;
   TChain *chain;
