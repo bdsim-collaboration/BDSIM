@@ -13,10 +13,10 @@
 extern BDSOutputBase* bdsOutput;         // output interface
 
 BDSRunAction::BDSRunAction()
-{}
+{;}
 
 BDSRunAction::~BDSRunAction()
-{}
+{;}
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {

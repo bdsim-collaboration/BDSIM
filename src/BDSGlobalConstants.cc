@@ -69,17 +69,17 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   magnetGeometryType = BDS::DetermineMagnetGeometryType(options.magnetGeometryType);
 
   // tunnel
-  tunnelInfo             = new BDSTunnelInfo(options.tunnelType,
-					     options.tunnelThickness     * CLHEP::m,
-					     options.tunnelSoilThickness * CLHEP::m,
-					     options.tunnelMaterial,
-					     options.soilMaterial,
-					     options.buildTunnelFloor,
-					     options.tunnelFloorOffset   * CLHEP::m,
-					     options.tunnelAper1         * CLHEP::m,
-					     options.tunnelAper2         * CLHEP::m,
-					     options.tunnelSensitive,
-					     options.tunnelVisible);
+  tunnelInfo = new BDSTunnelInfo(options.tunnelType,
+				 options.tunnelThickness     * CLHEP::m,
+				 options.tunnelSoilThickness * CLHEP::m,
+				 options.tunnelMaterial,
+				 options.soilMaterial,
+				 options.buildTunnelFloor,
+				 options.tunnelFloorOffset   * CLHEP::m,
+				 options.tunnelAper1         * CLHEP::m,
+				 options.tunnelAper2         * CLHEP::m,
+				 options.tunnelSensitive,
+				 options.tunnelVisible);
   
   if (options.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps
