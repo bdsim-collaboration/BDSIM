@@ -35,7 +35,6 @@ void BDSOutputROOTEvent::Initialise()
 
   // Base root file name 
   G4String basefilename = globalConstants->OutputFileName();
-  basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
