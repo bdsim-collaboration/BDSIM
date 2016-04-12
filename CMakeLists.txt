@@ -10,6 +10,15 @@ set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_L
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 
+# record which version of bdsim is being built in the code itself
+exec_program(
+    "git"
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ARGS "describe --dirty"
+    OUTPUT_VARIABLE VERSION_SHA1 )
+add_definitions( -DGIT_SHA1="${VERSION_SHA1}" )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configuration/version.hh.in ${CMAKE_CURRENT_SOURCE_DIR}/configuration/version.hh @ONLY)
+
 # add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
@@ -342,6 +351,7 @@ endif()
 
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/configuration)
 
 ## set compiler flags
 # warning flags
