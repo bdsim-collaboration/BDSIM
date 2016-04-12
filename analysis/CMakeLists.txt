@@ -3,8 +3,8 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/src/rebdsim.cc)
 
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
-message(${CMAKE_CURRENT_SOURCE_DIR})
-message(ROOT DICTS : ${rebdsimLibLinkDefs})
+#message(${CMAKE_CURRENT_SOURCE_DIR})
+#message(ROOT DICTS : ${rebdsimLibLinkDefs})
 
 foreach(header ${rebdsimLibLinkDefs})
     # remove LinkDef.hh
