@@ -13,6 +13,7 @@
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 
 
 #include "TROOT.h"
@@ -94,7 +95,7 @@ private:
 
   // output tree
   TTree *theRootOutputTree = nullptr;
-  
+
   // primary structure 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *primary = nullptr;
@@ -117,6 +118,10 @@ private:
   BDSOutputROOTEventHit         *tHit = nullptr;
   // trajectory
   BDSOutputROOTEventTrajectory  *traj = nullptr;
+  // run histograms
+  BDSOutputROOTEventHistograms  *runHistos = nullptr;
+  // event histograms
+  BDSOutputROOTEventHistograms  *evtHistos = nullptr;
 };
 
 #endif
