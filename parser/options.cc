@@ -46,6 +46,7 @@ void Options::PublishMembers()
   publish("seedStateFileName",     &Options::seedStateFileName);
   publish("setSeedState",          &Options::setSeedState);
   publish("nGenerate",             &Options::nGenerate);
+  publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
   publish("exportGeometry",        &Options::exportGeometry);
   publish("exportType",            &Options::exportType);
