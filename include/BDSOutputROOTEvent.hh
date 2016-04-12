@@ -96,11 +96,16 @@ private:
   TTree *theRootOutputTree = nullptr;
   
   // primary structure 
+#ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *primary = nullptr;
-
+#else 
+  BDSOutputROOTEventSampler<double> *primary = nullptr;
+#endif
   // sampler structures 
   std::map<G4String, BDSOutputROOTEventSampler<float>*> samplerMap; // will remove
+#ifndef __ROOTDOUBLE__
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
+#endif
 
   // energy loss
   BDSOutputROOTEventLoss        *eLoss = nullptr;

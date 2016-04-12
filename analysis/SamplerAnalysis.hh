@@ -4,16 +4,22 @@ class SamplerAnalysis
 {
 public:
   SamplerAnalysis();
+#ifndef __ROOTDOUBLE__
   SamplerAnalysis(BDSOutputROOTEventSampler<float>*);
+#else 
+  SamplerAnalysis(BDSOutputROOTEventSampler<double>*);
+#endif
   void CommonCtor();
   virtual ~SamplerAnalysis();
 
   void Initialise();
   void Process();
   void Terminate();
-
+#ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
-
+#else 
+  BDSOutputROOTEventSampler<double> *s;
+#endif
 protected:
   // sums - initialised to zero as that's what they start at
   double npart;

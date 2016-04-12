@@ -19,8 +19,12 @@ public :
   Event();
   void CommonCtor();
   virtual ~Event();
-  
+
+#ifndef __ROOTDOUBLE__  
   BDSOutputROOTEventSampler<float>*    GetPrimaries();
+#else
+  BDSOutputROOTEventSampler<double>*    GetPrimaries();
+#endif
   BDSOutputROOTEventLoss*       GetLoss();
   BDSOutputROOTEventHit*        GetPrimaryFirstHit();
   BDSOutputROOTEventHit*        GetPrimaryLastHit();
@@ -34,8 +38,13 @@ public :
   BDSOutputROOTEventHit                   *primaryLastHit;
   BDSOutputROOTEventHit                   *tunnelHit;
   BDSOutputROOTEventTrajectory            *trajectory;
+#ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float>*       samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler<float>*> samplers;
+#else 
+  BDSOutputROOTEventSampler<double>*       samplersA[MAXSAMPLERS];
+  std::vector<BDSOutputROOTEventSampler<double>*> samplers;
+#endif
 private:
 
 

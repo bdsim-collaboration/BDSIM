@@ -83,7 +83,11 @@ void BDSOutputROOTEvent::Initialise()
   theModelOutputTree->Fill();
   
   // Build primary structures
+#ifndef __ROOTDOUBLE__
   primary = new BDSOutputROOTEventSampler<float>("Primary");
+#else
+  primary = new BDSOutputROOTEventSampler<double>("Primary");
+#endif
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
@@ -114,7 +118,11 @@ void BDSOutputROOTEvent::Initialise()
   for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
     {
       // create sampler structure
+#ifndef __ROOTDOUBLE__
       BDSOutputROOTEventSampler<float> *res = new BDSOutputROOTEventSampler<float>(samplerName);
+#else 
+      BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
+#endif
       //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
       // set tree branches

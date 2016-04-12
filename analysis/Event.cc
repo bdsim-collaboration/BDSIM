@@ -19,8 +19,11 @@ void Event::CommonCtor()
   tunnelHit       = nullptr;
   trajectory      = nullptr;
 }
-
+#ifndef __ROOTDOUBLE__
 BDSOutputROOTEventSampler<float>*    Event::GetPrimaries() 
+#else 
+BDSOutputROOTEventSampler<double>*    Event::GetPrimaries() 
+#endif
 {
   return primaries;
 }
