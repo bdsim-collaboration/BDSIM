@@ -10,25 +10,25 @@
 #include "TObject.h"
 #include "TTree.h"
 
-class BDSOutputROOTEventSampler: public TObject
+template<class T> class BDSOutputROOTEventSampler: public TObject
 {  
 public:
   std::string samplerName; //|| Don't split the header
   
   int                n;    
-  std::vector<float> energy;
-  std::vector<float> x;
-  std::vector<float> y;
+  std::vector<T>     energy;
+  std::vector<T>     x;
+  std::vector<T>     y;
   float              z;
-  std::vector<float> xp;
-  std::vector<float> yp;
-  std::vector<float> zp;
-  std::vector<float> t;
+  std::vector<T>     xp;
+  std::vector<T>     yp;
+  std::vector<T>     zp;
+  std::vector<T>     t;
 
-  std::vector<float> weight;
+  std::vector<T>     weight;
   std::vector<int>   partID;
   std::vector<int>   parentID;
-	std::vector<int>   modelID;
+  std::vector<int>   modelID;
   std::vector<int>   turnNumber;
   
   float              S;   // Will not need this when have global transforms

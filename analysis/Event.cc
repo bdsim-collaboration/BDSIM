@@ -20,7 +20,7 @@ void Event::CommonCtor()
   trajectory      = nullptr;
 }
 
-BDSOutputROOTEventSampler*    Event::GetPrimaries() 
+BDSOutputROOTEventSampler<float>*    Event::GetPrimaries() 
 {
   return primaries;
 }

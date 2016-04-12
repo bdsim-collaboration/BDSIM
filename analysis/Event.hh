@@ -20,7 +20,7 @@ public :
   void CommonCtor();
   virtual ~Event();
   
-  BDSOutputROOTEventSampler*    GetPrimaries();
+  BDSOutputROOTEventSampler<float>*    GetPrimaries();
   BDSOutputROOTEventLoss*       GetLoss();
   BDSOutputROOTEventHit*        GetPrimaryFirstHit();
   BDSOutputROOTEventHit*        GetPrimaryLastHit();
@@ -28,14 +28,14 @@ public :
   BDSOutputROOTEventTrajectory* GetTrajectory();
   void SetBranchAddress(TChain *, std::vector<std::string>&);
 
-  BDSOutputROOTEventSampler               *primaries;
+  BDSOutputROOTEventSampler<float>        *primaries;
   BDSOutputROOTEventLoss                  *eloss;
   BDSOutputROOTEventHit                   *primaryFirstHit;
   BDSOutputROOTEventHit                   *primaryLastHit;
   BDSOutputROOTEventHit                   *tunnelHit;
   BDSOutputROOTEventTrajectory            *trajectory;
-  BDSOutputROOTEventSampler*              samplersA[MAXSAMPLERS];
-  std::vector<BDSOutputROOTEventSampler*> samplers;
+  BDSOutputROOTEventSampler<float>*       samplersA[MAXSAMPLERS];
+  std::vector<BDSOutputROOTEventSampler<float>*> samplers;
 private:
 
 

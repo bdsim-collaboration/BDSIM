@@ -4,7 +4,7 @@ class SamplerAnalysis
 {
 public:
   SamplerAnalysis();
-  SamplerAnalysis(BDSOutputROOTEventSampler*);
+  SamplerAnalysis(BDSOutputROOTEventSampler<float>*);
   void CommonCtor();
   virtual ~SamplerAnalysis();
 
@@ -12,7 +12,7 @@ public:
   void Process();
   void Terminate();
 
-  BDSOutputROOTEventSampler *s;
+  BDSOutputROOTEventSampler<float> *s;
 
 protected:
   // sums - initialised to zero as that's what they start at
