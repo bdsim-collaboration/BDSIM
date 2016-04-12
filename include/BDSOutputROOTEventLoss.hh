@@ -1,7 +1,7 @@
 #ifndef BDSOUTPUTROOTEVENTLOSS_H
 #define BDSOUTPUTROOTEVENTLOSS_H
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTunnelHit.hh"
 #endif
@@ -12,7 +12,7 @@
 
 class BDSOutputROOTEventLoss : public TObject {
 
-protected: 
+public:
   int                       n = 0;
   std::vector<float>        energy;
   std::vector<float>        S;
@@ -24,10 +24,9 @@ protected:
   std::vector<unsigned int> trackID;
   std::vector<int>          geomFlag;
 
-public:
   BDSOutputROOTEventLoss();
   virtual ~BDSOutputROOTEventLoss();
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
   void Fill(BDSEnergyCounterHit *hit);
   void Fill(BDSTunnelHit *hit);
 #endif

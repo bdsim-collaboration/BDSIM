@@ -35,6 +35,7 @@ void BDSOutputROOTEvent::Initialise()
 
   // Base root file name 
   G4String basefilename = globalConstants->OutputFileName();
+  basefilename = basefilename+std::string("_event");
 
   // if more than one file add number (starting at 0)
   int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
@@ -87,21 +88,9 @@ void BDSOutputROOTEvent::Initialise()
   samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
-  // Build sampler structures 
-  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
-    {
-      // create sampler structure
-      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
-      //samplerMap[samplerName] = res;
-      samplerTrees.push_back(res);
-      // set tree branches
-      theRootOutputTree->Branch((samplerName+".").c_str(),
-				"BDSOutputROOTEventSampler",
-				res,
-				4000,1);
-    }
-  
+  //
   // Build loss and hit structures
+  // 
   eLoss     = new BDSOutputROOTEventLoss();
   pFirstHit = new BDSOutputROOTEventHit();
   pLastHit  = new BDSOutputROOTEventHit();
@@ -110,12 +99,29 @@ void BDSOutputROOTEvent::Initialise()
   theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
-  
+  //
   // Build process/track structures
+  //
   
+  //
   // Build trajectory structures
+  // 
   traj = new BDSOutputROOTEventTrajectory();
   theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
+
+  //
+  // build sampler structures 
+  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+    {
+      // create sampler structure
+      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
+      //samplerMap[samplerName] = res;
+      samplerTrees.push_back(res);
+      // set tree branches
+      theRootOutputTree->Branch((G4String("Sampler_")+samplerName+".").c_str(),
+				"BDSOutputROOTEventSampler",
+				res,32000,1);
+    }
 }
   
 /// write sampler hit collection
@@ -154,7 +160,7 @@ void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* phit) // TODO Writ
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  pFirstHit->Fill(phit);
+    pFirstHit->Fill(phit);
 }
 
 /// write where primaries stop being primaries

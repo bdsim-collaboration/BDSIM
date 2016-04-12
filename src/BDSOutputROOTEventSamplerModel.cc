@@ -1,7 +1,6 @@
 #include "BDSOutputROOTEventSamplerModel.hh"
 
-#ifndef __MAKECINT__
-
+#ifndef __ROOTBUILD__
 #include "BDSSamplerInfo.hh"
 #include "BDSSamplerRegistry.hh"
 
@@ -9,7 +8,6 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
-
 #endif
 
 #include "TRotation.h"
@@ -25,6 +23,7 @@ BDSOutputROOTEventSamplerModel::BDSOutputROOTEventSamplerModel()
 BDSOutputROOTEventSamplerModel::~BDSOutputROOTEventSamplerModel()
 {;}
 
+#ifndef __ROOTBULD__
 void BDSOutputROOTEventSamplerModel::Fill()
 {
   const BDSSamplerRegistry* registry = BDSSamplerRegistry::Instance();
@@ -50,4 +49,5 @@ void BDSOutputROOTEventSamplerModel::Fill()
       // S position of sampler
       sPosition.push_back(info.SPosition());
     }
+#endif
 }

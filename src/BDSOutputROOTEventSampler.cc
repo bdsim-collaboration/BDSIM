@@ -21,7 +21,7 @@ BDSOutputROOTEventSampler::BDSOutputROOTEventSampler(std::string samplerNameIn)
 BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler()
 { }
 
-#ifndef __MAKECINT__ 
+#ifndef __ROOTBUILD__ 
 void BDSOutputROOTEventSampler::Fill(G4double E,
                                      G4double x0,
                                      G4double y0,

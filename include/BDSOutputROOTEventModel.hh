@@ -9,7 +9,7 @@
 #include "TRotation.h"
 #include "TTree.h"
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 #include "BDSAcceleratorModel.hh"
 #else
 #include "TTree.h"
@@ -41,7 +41,7 @@ public :
   BDSOutputROOTEventModel();
   virtual ~BDSOutputROOTEventModel();
 
-#ifndef __MAKECINT__   
+#ifndef __ROOTBUILD__   
   virtual void Fill();
 #endif
 

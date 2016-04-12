@@ -15,7 +15,7 @@ BDSOutputROOTEventHit::~BDSOutputROOTEventHit()
 }
 
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 void BDSOutputROOTEventHit::Fill(BDSEnergyCounterHit *hit)
 {
   // Fill base class

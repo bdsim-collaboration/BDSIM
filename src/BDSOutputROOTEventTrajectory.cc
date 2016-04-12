@@ -8,7 +8,7 @@ BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory()
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 {;}
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 {
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)

@@ -13,7 +13,7 @@ BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 {
 }
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
 {
   this->n++;

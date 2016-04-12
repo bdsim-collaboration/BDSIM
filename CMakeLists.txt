@@ -35,7 +35,7 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
     add_definitions("-g -O0 -DBDSDEBUG")
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     if(NOT CMAKE_COMPILER_IS_GNUCXX)
-         message(WARNING "DebugCoverage only works with gcc compiler")
+        message(WARNING "DebugCoverage only works with gcc compiler")
     endif()
     add_definitions("-g -O0 -DBDSDEBUG")
     add_definitions("--coverage")
@@ -187,7 +187,7 @@ foreach(header ${linkHeaders})
       ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict_rdict.pcm
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      -D__MAKECINT__
+      -D__ROOTBUILD__
       -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
@@ -213,7 +213,7 @@ foreach(header ${linkHeaders})
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
-      -D__MAKECINT__
+      -D__ROOTBUILD__
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
@@ -447,7 +447,7 @@ set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
 # Only for root6 for now, not working yet for root5
-if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+#if (${ROOT_MAJOR_VERSION} STREQUAL "6")
   set(bdsimRootEventSources ${root_dicts} ${root_files})
 
   # Remove Options for now - temporary!
@@ -457,7 +457,7 @@ if (${ROOT_MAJOR_VERSION} STREQUAL "6")
   endif()
 
   add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
-  target_compile_definitions(bdsimRootEvent PRIVATE "-D__MAKECINT__")
+  target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
   # link against ROOT
   target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
   target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
@@ -465,7 +465,7 @@ if (${ROOT_MAJOR_VERSION} STREQUAL "6")
   # This is done because the ROOT dictionary generation needs to be done separately for each of them
   # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
   add_dependencies(bdsim bdsimRootEvent)
-endif()
+#endif()
 
 # Install the targets:
 set(executables bdsimexec)
@@ -521,6 +521,9 @@ copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examp
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)
+
+# Include directory for analysis
+add_subdirectory(analysis)
 
 # Manual
 add_subdirectory(manual)

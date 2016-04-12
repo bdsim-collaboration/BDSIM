@@ -11,7 +11,7 @@ public:
   BDSOutputROOTEventPrimary();
   ~BDSOutputROOTEventPrimary();
   
-#ifndef __MAKECINT__ 
+#ifndef __ROOTBUILD__ 
   void Fill(BDSSamplerHit *hit);
 #endif
 

@@ -12,7 +12,7 @@ BDSOutputROOTEventOptions::~BDSOutputROOTEventOptions()
 {
 }
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 void BDSOutputROOTEventOptions::Fill()
 {
 }

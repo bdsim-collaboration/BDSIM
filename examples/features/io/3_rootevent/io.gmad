@@ -3,12 +3,13 @@ d1 : drift,      l=0.5*m;
 fq1: quadrupole, l=0.1*m, k1=2;
 d2 : drift,      l=1.0*m;
 dq1: quadrupole, l=0.1*m, k1=-2;
-d3 : drift,      l=0.5*m;
+d3 : drift,      l=20*m;
 
 fodo1: line = (d1,fq1, d2, dq1, d3);
 
 ioline: line = (fodo1);
 use,period=ioline;
+sample, all;
 
 option, ngenerate=10,
 	physicsList="em",
@@ -19,15 +20,17 @@ option, ngenerate=10,
 	prodCutPositrons=1*cm,
 	prodCutElectrons=1*cm,
 	prodCutPhotons=1*cm,
-        buildTunnel=1,
+    buildTunnel=1,
 	checkOverlaps=1,
 	storeTrajectories=1;
 
 beam, particle="e-",
       energy=1.0*GeV,
       distrType="gausstwiss",
-      emitx=1e-12*m,
-      emity=1e-12*m,
+!      emitx=1e-12*m,
+!      emity=1e-12*m,
+      emitx=1e-8*m,
+      emity=1e-8*m,
       betx=1e-4*m,
       bety=1e-4*m,
       alfx=0.0,
