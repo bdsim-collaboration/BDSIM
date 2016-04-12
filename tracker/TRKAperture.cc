@@ -11,8 +11,7 @@
 
 extern BDSOutputBase* trkOutput;
 
-
-std::ostream& operator<< (std::ostream& out, const TRKAperture& aperture)
+std::ostream& operator<<(std::ostream& out, const TRKAperture& aperture)
 {
   aperture.PrintDetails(out);
   return out;
@@ -88,11 +87,12 @@ TRKBunch* TRKAperture::CheckAperture(TRKBunch* bunch)
   //now publish / shift all output particles to BDSIM here - TBC
   // for now lets just output them
 #ifdef TRKDEBUG
-  if (lostparticles.size() > 0) {
-    std::cout << "Lost particles: " << std::endl;
-    std::cout << TRKBunch(lostparticles);
-    std::cout << "End of lost particles" << std::endl;
-  }
+  if (lostparticles.size() > 0)
+    {
+      std::cout << "Lost particles: " << std::endl;
+      std::cout << TRKBunch(lostparticles);
+      std::cout << "End of lost particles" << std::endl;
+    }
 #endif
 
 #ifdef TRKDEBUG

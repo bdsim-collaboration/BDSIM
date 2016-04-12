@@ -5,15 +5,19 @@
 #include <vector>
 #include <utility>
 #include <string>
+
 #include "parser/options.h"
+
 #include "TRKParticle.hh"
 
 typedef std::vector<TRKParticle>::iterator TRKBunchIter;
 
 /**
- * @brief vector of particles
+ * @brief Vector of particles
  */
-class TRKBunch { 
+
+class TRKBunch
+{ 
 public:
   TRKBunch(const GMAD::Options& opt);
   TRKBunch(const std::vector<TRKParticle>& particleVectorIn);
@@ -34,10 +38,13 @@ public:
 
 private:
   TRKBunch(); /// bunch must be instantiated with a number of particles  
+
   int population;
   std::vector <TRKParticle> bunch;
+
+  /// populate particles using options and random number generator
+  void Populate(const GMAD::Options& opt);
   
-  void Populate(const GMAD::Options& opt); /// populate particles using options and random number generator
   std::pair<double,int> GetParticleMassAndCharge(std::string particlename);
 };
 

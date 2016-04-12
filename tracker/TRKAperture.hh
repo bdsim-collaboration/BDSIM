@@ -12,8 +12,9 @@
  * @brief Aperture base class
  */
 
-class TRKAperture {
-public : 
+class TRKAperture
+{
+public:
   TRKAperture(){};
   virtual ~TRKAperture(){}; 
 

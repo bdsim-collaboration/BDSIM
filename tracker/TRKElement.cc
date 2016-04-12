@@ -13,13 +13,13 @@ TRKElement::TRKElement(std::string nameIn, double lengthIn,
   offsetOut = NULL;
 } 
 
-TRKElement::~TRKElement() {
+TRKElement::~TRKElement()
+{
   delete aperture;
   delete placement;
   delete offsetIn;
   delete offsetOut;
 }
-
 
 void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
 {
