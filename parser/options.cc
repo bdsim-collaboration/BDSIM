@@ -65,7 +65,6 @@ void Options::PublishMembers()
   publish("zDistrType",&Options::zDistribType);
   publish("distrFile",&Options::distribFile);
   publish("distrFileFormat",&Options::distribFileFormat);
-  publish("ngenerate",&Options::numberToGenerate);
   publish("nlinesIgnore",&Options::nlinesIgnore);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);

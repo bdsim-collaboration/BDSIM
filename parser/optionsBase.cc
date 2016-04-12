@@ -42,9 +42,8 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList           = ""; //default - only transportation
   modularPhysicsListsOn = 1;
-  numberToGenerate      = 1;
-  randomSeed            = 0;
-
+  randomSeed            = -1;
+  
   // beam options
   particleName          = "";
   distribType           = "reference";
@@ -199,17 +198,17 @@ OptionsBase::OptionsBase()
 
 void OptionsBase::print() const
 {
-  std::cout<<"Options               : " <<std::endl;
-  std::cout<<"particle              : " <<particleName<<std::endl;
-  std::cout<<"nominal energy        : " <<beamEnergy<<std::endl;
-  std::cout<<"n macroparticles      : " <<numberToGenerate<<std::endl;
-  std::cout<<"sigmaX                : " <<sigmaX<<std::endl;
-  std::cout<<"BV sign               : " <<ffact<<std::endl;
-  std::cout<<"Cerenkov on           : " <<turnOnCerenkov<<std::endl;
-  std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption <<std::endl;
-  std::cout<<"Mie scattering on     : " << turnOnMieScattering <<std::endl;
-  std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering <<std::endl;
-  std::cout<<"Optical surface on    : " << turnOnOpticalSurface <<std::endl;
-  std::cout<<"Birks saturation on   : " << turnOnBirksSaturation <<std::endl;
+  std::cout<<"Options               : " << std::endl;
+  std::cout<<"particle              : " << particleName             << std::endl;
+  std::cout<<"nominal energy        : " << beamEnergy               << std::endl;
+  std::cout<<"n particles           : " << nGenerate                << std::endl;
+  std::cout<<"sigmaX                : " << sigmaX                   << std::endl;
+  std::cout<<"BV sign               : " << ffact                    << std::endl;
+  std::cout<<"Cerenkov on           : " << turnOnCerenkov           << std::endl;
+  std::cout<<"Optical absorption on : " << turnOnOpticalAbsorption  << std::endl;
+  std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
+  std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;
+  std::cout<<"Optical surface on    : " << turnOnOpticalSurface     << std::endl;
+  std::cout<<"Birks saturation on   : " << turnOnBirksSaturation    << std::endl;
 }
 

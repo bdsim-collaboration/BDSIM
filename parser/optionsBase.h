@@ -89,7 +89,6 @@ namespace GMAD
     std::string distribFileFormat;
     ///@}
     
-    int numberToGenerate;
     int nlinesIgnore; ///< ignore first lines in the input bunch file
 
     double elossHistoBinWidth;
