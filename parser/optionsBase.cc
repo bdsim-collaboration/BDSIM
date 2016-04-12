@@ -1,5 +1,7 @@
 #include "options.h"
 
+#include "version.hh"
+
 #include <iostream>
 
 using namespace GMAD;
@@ -7,6 +9,8 @@ using namespace GMAD;
 OptionsBase::OptionsBase()
 {
   // Default Values for Options
+
+  gitVersion = std::string(GIT_VERSION);
 
   // executable options
   inputFileName         = "optics.mad";
