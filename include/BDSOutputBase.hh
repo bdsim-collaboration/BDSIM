@@ -10,7 +10,7 @@
 #include "G4Trajectory.hh"
 #include <vector>
 
-#include "tracker/TRKBunch.hh"
+class TRKBunch;
 
 /**
  * @brief Output base class that defines interface for all output types.
