@@ -4,23 +4,25 @@
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSOutputBase.hh"
+
 #include "parser/options.h"
 
-#include "TRKTracker.hh"
-
 #include "TRKBunch.hh"
-#include "TRKLine.hh"
-#include "TRKStrategy.hh"
-#include "TRKParticle.hh"
 #include "TRKElement.hh"
+#include "TRKLine.hh"
+#include "TRKParticle.hh"
+#include "TRKStrategy.hh"
+#include "TRKTracker.hh"
 
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds milliseconds;
 
 TRKTracker::TRKTracker(TRKLine*       lineIn,
 		       TRKStrategy*   strategyIn,
-		       const GMAD::Options& options):
-  line(lineIn), strategy(strategyIn)
+		       const GMAD::Options& options,
+		       BDSOutputBase* outputIn):
+  line(lineIn), strategy(strategyIn), output(outputIn)
 {
   dontuseaperture = options.dontUseAperture;
   maxTurns = std::abs(options.nturns);
@@ -65,11 +67,23 @@ void TRKTracker::Track(TRKBunch* bunch)
 	  
 	  //check the aperture and decide whether to shift to bdsim
 	  if (!dontuseaperture) //is aperture checking turned on?
-	    {(*elIter)->CheckAperture(bunch);}
+	    {
+	      TRKBunch* lostParticles = (*elIter)->CheckAperture(bunch);
+	      if (lostParticles)
+		{
+		  int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
+		  output->WriteTrackerPrimaryLoss(lostParticles, turnsTaken);
+		  delete lostParticles;
+		}
+	    }
+
+	  if ((*elIter)->Sample())
+	    {output->WriteTrackerBunch((*elIter)->GetName(), bunch);}
 	  
 	  //confirm coordinates for particles that didn't 'hit' aperture
 	  (*elIter)->ConfirmCoordinates(bunch);
 	}// end of beamline iteration
+      
       BDSGlobalConstants::Instance()->IncrementTurnNumber(); //used in output data
       if (bunch->empty()) {std::cout << "No further particles to track" << std::endl;break;}
     }// end of turns iteration

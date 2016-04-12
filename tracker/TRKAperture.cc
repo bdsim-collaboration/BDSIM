@@ -18,7 +18,7 @@ std::ostream& operator<< (std::ostream& out, const TRKAperture& aperture)
   return out;
 }
 
-void TRKAperture::CheckAperture(TRKBunch* bunch)
+TRKBunch* TRKAperture::CheckAperture(TRKBunch* bunch)
 {
   //loop over bunch and check aperture
   TRKBunchIter iter       = bunch->begin();
@@ -101,15 +101,7 @@ void TRKAperture::CheckAperture(TRKBunch* bunch)
 	    << "; Lost Particles Population: " << lostparticles.size() << std::endl;
 #endif
   
-  // Output losses to ploss file
-  // The precision of the losses in only precise to the start of the element
-  if(lostparticles.size() > 0)
-  {
-    TRKBunch* lostBunch = new TRKBunch(lostparticles);
-    int turnsTaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
-    trkOutput->WriteTrackerPrimaryLoss(lostBunch, turnsTaken);
-    
-    delete lostBunch;
-  }
+  TRKBunch* lostBunch = new TRKBunch(lostparticles);
+  return lostBunch;
 }
 

@@ -22,7 +22,7 @@ public :
   virtual bool OutsideAperture(const TRKParticle& particle)=0;
   
   /// loop over bunch and apply aperture test - implemented in this base class
-  void CheckAperture(TRKBunch* bunch);
+  TRKBunch* CheckAperture(TRKBunch* bunch);
 
   virtual std::ostream& PrintDetails(std::ostream& out) const = 0;
   //you can't make a friend operator virtual so wrap the real output in a method 

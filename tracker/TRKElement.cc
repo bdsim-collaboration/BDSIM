@@ -41,11 +41,13 @@ void TRKElement::Track(TRKBunch* bunch, TRKStrategy* strategy)
 #endif
 }
 
-void TRKElement::CheckAperture(TRKBunch* bunch)
+TRKBunch* TRKElement::CheckAperture(TRKBunch* bunch)
 {
   //use member instance of Aperture strategy called aperture
   if (aperture) 
-    {aperture->CheckAperture(bunch);}
+    {return aperture->CheckAperture(bunch);}
+  else
+    {return nullptr;}
 }
 
 void TRKElement::ConfirmCoordinates(TRKBunch* bunch)
