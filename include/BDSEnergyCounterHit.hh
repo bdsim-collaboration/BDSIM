@@ -14,7 +14,12 @@ extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 //LowestSPosPrimaryHit declaration at the bottom of this file
 //HighestSPosPrimaryHit declaration at the bottom of this file
 
-class BDSEnergyCounterHit :public G4VHit
+/**
+ * @brief Information recorded for a single piece of energy deposition.
+ *
+ */
+
+class BDSEnergyCounterHit: public G4VHit
 {
 public:
   /// Default (in effect) constructor for energy counter hit. The intention (by a lack of
@@ -27,6 +32,7 @@ public:
 		      G4double ZIn               = 0,    // global x
 		      G4double SBeforeIn         = 0,    // s of pre step coordinate
 		      G4double SAfterIn          = 0,    // s of post step coordinate
+		      G4double SHitIn            = 0,    // assigned s of loss
 		      G4double xIn               = 0,    // local x
 		      G4double yIn               = 0,    // local y
 		      G4double zIn               = 0,    // local z
@@ -37,35 +43,36 @@ public:
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
 		      G4int    eventNoIn         = 0,    // event number
 		      G4double stepLengthIn      = 0,
-					G4int    beamlineIndexIn   = -1,
-          G4int    geomFlag          = -1);
+		      G4int    beamlineIndexIn   = -1,
+		      G4int    geomFlag          = -1);
   
   ~BDSEnergyCounterHit();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);
 
-  inline G4int    GetCopyNumber()      const;
-  inline G4double GetEnergy()          const;
+  inline G4int    GetCopyNumber()      const {return copyNumber;}
+  inline G4double GetEnergy()          const {return energy;}
   inline void     SetEnergy(G4double energyIn);
-  inline G4double GetX()               const; 
-  inline G4double GetY()               const;
-  inline G4double GetZ()               const;
-  inline G4double GetS()               const; ///< returns average s position
-  inline G4double GetSBefore()         const;
-  inline G4double GetSAfter()          const;
-  inline G4double Getx()               const; 
-  inline G4double Gety()               const;
-  inline G4double Getz()               const; 
-  inline G4String GetName()            const;
-  inline G4int    GetPartID()          const;
-  inline G4double GetWeight()          const; 
-  inline G4bool   GetPrecisionRegion() const;
-  inline G4int    GetTurnsTaken()      const;
-  inline G4int    GetEventNo()         const;
-  inline G4double GetStepLength()      const;
-	inline G4int    GetBeamlineIndex()   const;
-  inline G4int    GetGeomFlag()        const;
+  inline G4double GetX()               const {return X;} 
+  inline G4double GetY()               const {return Y;}
+  inline G4double GetZ()               const {return Z;}
+  inline G4double GetSBefore()         const {return sBefore;}
+  inline G4double GetSAfter()          const {return sAfter;}
+  inline G4double GetSHit()            const {return sHit;}
+  inline G4double Getx()               const {return x;} 
+  inline G4double Gety()               const {return y;}
+  inline G4double Getz()               const {return z;} 
+  inline G4String GetName()            const {return name;}
+  inline G4int    GetPartID()          const {return partID;}
+  inline G4double GetWeight()          const {return weight;} 
+  inline G4bool   GetPrecisionRegion() const {return precisionRegion;}
+  inline G4int    GetTurnsTaken()      const {return turnsTaken;}
+  inline G4int    GetEventNo()         const {return eventNo;}
+  inline G4double GetStepLength()      const {return stepLength;}
+  inline G4int    GetBeamlineIndex()   const {return beamlineIndex;}
+  inline G4int    GetGeomFlag()        const {return geomFlag;}
+  inline G4double GetEnergyWeighted()  const {return weight * energy;}
   
 private:
   /// Private default constructor (not implemented) as the constructor
@@ -75,17 +82,27 @@ private:
 
   G4int    copyNumber;
   G4double energy;
-  /// global coordinates
+  /// @{ Global coordinate
   G4double X;
   G4double Y;
   G4double Z;
-  /// s coordinate of pre step and post step point
-  G4double SBefore;
-  G4double SAfter;
-  /// local coordinates
+  /// @}
+  
+  G4double sBefore; ///< s coordinate of pre step point
+  G4double sAfter;  ///< s coordinate of post step point
+
+  /// The position this energy deposition is assigned to. As we represent
+  /// a Monte Carlo of discrete processes, this is randomly scattered along
+  /// the length of the track this energy deposition corresponds to (uniform
+  /// random distribution).
+  G4double sHit;
+  
+  /// @{ Local coordinate
   G4double x;
   G4double y;
   G4double z;
+  /// @}
+  
   G4String name;
   G4int    partID;
   G4double weight;
@@ -93,73 +110,12 @@ private:
   G4int    turnsTaken;
   G4int    eventNo;
   G4double stepLength;
-
-	G4int    beamlineIndex;
-	G4int    geomFlag;
+  G4int    beamlineIndex;
+  G4int    geomFlag;
 };
-
-inline G4int    BDSEnergyCounterHit::GetCopyNumber() const
-{return copyNumber;}
-
-inline G4double BDSEnergyCounterHit::GetEnergy() const
-{return energy;}
 
 inline void     BDSEnergyCounterHit::SetEnergy(G4double energyIn)
 {energy = energyIn;}
-
-inline G4double BDSEnergyCounterHit::GetX() const
-{return X;}
-
-inline G4double BDSEnergyCounterHit::GetY() const
-{return Y;}
-
-inline G4double BDSEnergyCounterHit::GetZ() const
-{return Z;}
-
-inline G4double BDSEnergyCounterHit::GetS() const
-{return (SAfter + SBefore)/2.;}
-
-inline G4double BDSEnergyCounterHit::GetSAfter() const
-{return SAfter;}
-
-inline G4double BDSEnergyCounterHit::GetSBefore() const
-{return SBefore;}
-
-inline G4double BDSEnergyCounterHit::Getx() const
-{return x;}
-
-inline G4double BDSEnergyCounterHit::Gety() const
-{return y;}
-
-inline G4double BDSEnergyCounterHit::Getz() const
-{return z;}
-
-inline G4String BDSEnergyCounterHit::GetName() const
-{return name;}
-
-inline G4int    BDSEnergyCounterHit::GetPartID() const
-{return partID;}
-
-inline G4double BDSEnergyCounterHit::GetWeight() const
-{return weight;}
-
-inline G4bool   BDSEnergyCounterHit::GetPrecisionRegion() const
-{return precisionRegion;}
-
-inline G4int    BDSEnergyCounterHit::GetTurnsTaken() const
-{return turnsTaken;}
-
-inline G4int    BDSEnergyCounterHit::GetEventNo() const
-{return eventNo;}
-
-inline G4double BDSEnergyCounterHit::GetStepLength() const
-{return stepLength;}
-
-inline G4int BDSEnergyCounterHit::GetBeamlineIndex() const
-{return beamlineIndex; }
-
-inline G4int BDSEnergyCounterHit::GetGeomFlag() const
-{return geomFlag;}
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
 {
@@ -173,8 +129,8 @@ inline void BDSEnergyCounterHit::operator delete(void *aHit)
  BDSEnergyCounterHitAllocator.FreeSingle((BDSEnergyCounterHit*) aHit);
 }
 
-
-namespace BDS {
+namespace BDS
+{
   BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
   BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
 }

@@ -8,6 +8,10 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSUtilities.hh"
 
+#include "TFile.h"
+#include "TObject.h"
+#include "TTree.h"
+
 BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
 #ifdef BDSDEBUG
@@ -61,52 +65,28 @@ void BDSOutputROOTEvent::Initialise()
   theModelOutputTree   = new TTree("Model","BDSIM model");
   // event data tree
   theRootOutputTree    = new TTree("Event","BDSIM event");
-
-
-  //
-  // build options and write structure
-  //
-  // get options
+  
+  // Build options and write structure
+  // Get options
   const GMAD::Options o = BDSParser::Instance()->GetOptions();
   const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
-  // get exec options
+  // Get exec options
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
   theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
-
-  //
-  // build model and write structure
-  //
+  
+  // Build model and write structure
   BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
-  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000,2);
+  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
-   
- 
-  //
-  // build primary structures
-  //
+  
+  // Build primary structures
   primary = new BDSOutputROOTEventSampler("Primary");
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
-
-  //
-  // build sampler structures 
-  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
-    {
-      // create sampler structure
-      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
-      //samplerMap[samplerName] = res;
-      samplerTrees.push_back(res);
-
-      // set tree branches 
-      theRootOutputTree->Branch((samplerName+".").c_str(),
-				"BDSOutputROOTEventSampler",
-				res,
-				4000,1);
-    }
 
   //
   // Build loss and hit structures
@@ -119,7 +99,6 @@ void BDSOutputROOTEvent::Initialise()
   theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
   theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
-
   //
   // Build process/track structures
   //
@@ -129,6 +108,20 @@ void BDSOutputROOTEvent::Initialise()
   // 
   traj = new BDSOutputROOTEventTrajectory();
   theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
+
+  //
+  // build sampler structures 
+  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+    {
+      // create sampler structure
+      BDSOutputROOTEventSampler *res = new BDSOutputROOTEventSampler(samplerName);
+      //samplerMap[samplerName] = res;
+      samplerTrees.push_back(res);
+      // set tree branches
+      theRootOutputTree->Branch((G4String("Sampler_")+samplerName+".").c_str(),
+				"BDSOutputROOTEventSampler",
+				res,32000,1);
+    }
 }
   
 /// write sampler hit collection
@@ -154,10 +147,11 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   G4int n_hit = hc->entries();
-  for(G4int i=0;i<n_hit;i++){
-    BDSEnergyCounterHit *hit = (*hc)[i];
-    eLoss->Fill(hit);
-  }
+  for(G4int i=0;i<n_hit;i++)
+    {
+      BDSEnergyCounterHit* hit = (*hc)[i];
+      eLoss->Fill(hit);
+    }
 }
 
 /// write where primaries impact

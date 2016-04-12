@@ -40,9 +40,10 @@ protected:
   /// Curvilinear S position of the sampler (if applicable)
   std::vector<double>      sPosition;
 
-#ifndef __MAKECINT__   
+#ifndef __ROOTBUILD__   
   virtual void Fill();
 #endif
+
   ClassDef(BDSOutputROOTEventSamplerModel,1);
 };
 

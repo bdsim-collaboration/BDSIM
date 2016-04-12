@@ -3,13 +3,16 @@
 
 #include "TROOT.h"
 #include <vector>
-#ifndef __MAKECINT__ 
+#ifndef __ROOTBUILD__ 
 #include "BDSSamplerHit.hh"
 #endif
 
-class BDSOutputROOTEventSampler {
-  
-protected:
+#include "TObject.h"
+#include "TTree.h"
+
+class BDSOutputROOTEventSampler: public TObject
+{  
+public:
   std::string samplerName; //|| Don't split the header
   
   int                n;    
@@ -29,12 +32,11 @@ protected:
   std::vector<int>   turnNumber;
   
   float              S;   // Will not need this when have global transforms
-  
-public:
+
   BDSOutputROOTEventSampler();
   BDSOutputROOTEventSampler(std::string samplerNameIn);
   virtual ~BDSOutputROOTEventSampler();
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
   void Fill(G4double E,
             G4double x0, G4double y0, G4double z0,
             G4double xp, G4double yp, G4double zp,
@@ -42,7 +44,10 @@ public:
             G4double weight, G4int    PDGType, G4int    nEvent, G4int    TurnsTaken,
             G4int beamlineIndex);
   void Fill(BDSSamplerHit *hit);
+  //#else
+  //void SetBranchAddress(TTree *);
 #endif
+  void SetBranchAddress(TTree *);
   /// Clean Sampler
   void Flush();
 

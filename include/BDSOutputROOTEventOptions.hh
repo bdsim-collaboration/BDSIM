@@ -6,7 +6,7 @@
 
 #include "TObject.h"
 
-#ifndef __MAKECINT__
+#ifndef __ROOTBUILD__
 #include "BDSGlobalConstants.hh"
 #endif
 
@@ -25,7 +25,7 @@ public:
   BDSOutputROOTEventOptions(const GMAD::OptionsBase* ob);
   virtual ~BDSOutputROOTEventOptions();
   
-#ifndef __MAKECINT__   
+#ifndef __ROOTBUILD__   
   void Fill();
 #endif
   ClassDef(BDSOutputROOTEventOptions,1);
