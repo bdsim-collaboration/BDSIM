@@ -230,9 +230,6 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       //TEMPORARY
       trkelement = CreateDrift(element);
       break;
-    case GMAD::ElementType::_SAMPLER:
-      trkelement = CreateSampler(element);
-      break;
     case GMAD::ElementType::_RCOL:
       trkelement = CreateDrift(element);
       break;
@@ -249,10 +246,7 @@ TRKElement* TRKFactory::CreateElement(GMAD::Element& element)
       break;
   }
   
-  /* types not specified - see parser/enums.h for types
-  _SCREEN
-  _CSAMPLER
-  */
+  // TBC - implement sampler here based on element.samplerType - str - defualt 'none'
 
   if (trkelement)
     {AddCommonProperties(trkelement,element);}

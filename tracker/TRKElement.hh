@@ -27,6 +27,7 @@ public :
   std::string  GetName()const {return name;}
   double       GetLength()const {return length;}
   TRKAperture* GetAperture()const {return aperture;}
+  bool         Sample()     const {return sample;}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
@@ -46,6 +47,7 @@ protected :
   TRKPlacement*  placement;         ///< location of element
   TRKTiltOffset* offsetIn;          ///< tilt and offset entrance of element
   TRKTiltOffset* offsetOut;         ///< tilt and offset exit of element
+  bool           sample;            ///< whether to sample afterwards or not
 
   /// virtual print method for overloading operator<<. Virtual Friend Function Idiom
   virtual void Print(std::ostream& out) const;

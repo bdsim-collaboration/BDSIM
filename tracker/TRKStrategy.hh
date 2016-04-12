@@ -43,7 +43,6 @@ public :
   virtual void Track(TRKSextupole*  el, TRKBunch* bunch)=0;
   virtual void Track(TRKOctupole*   el, TRKBunch* bunch)=0;
   virtual void Track(TRKSolenoid*   el, TRKBunch* bunch)=0;
-  void         Track(TRKSampler*    el, TRKBunch* bunch);
   void         Track(TRKTiltOffset* el, TRKBunch* bunch);
   ///@}
 

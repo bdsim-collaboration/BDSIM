@@ -6,8 +6,9 @@
 #include "TRKTiltOffset.hh"
 
 TRKElement::TRKElement(std::string nameIn, double lengthIn,
-		       TRKAperture *apertureIn, TRKPlacement *placementIn) :
-  name(nameIn), length(lengthIn), aperture(apertureIn), placement(placementIn)
+		       TRKAperture *apertureIn, TRKPlacement *placementIn):
+  name(nameIn), length(lengthIn), aperture(apertureIn), placement(placementIn),
+  sample(false)
 {
   offsetIn  = NULL;
   offsetOut = NULL;
