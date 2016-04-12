@@ -166,6 +166,12 @@ string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
+option(ROOT_DOUBLE_OUTPUT "Double precision root output" OFF)
+
+#if (ROOT_DOUBLE_OUTPUT) 
+#   set(ROOT_PREPROC_FLAG "Flags for root compilation" "-D__ROOTDOUBLE__") 
+#endif()
+
 # Make Dictionaries
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
 file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
