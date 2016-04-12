@@ -4,7 +4,7 @@
 
 #include "TFile.h"
 
-ClassImp(DataLoader);
+ClassImp(DataLoader)
 
 DataLoader::DataLoader()
 {

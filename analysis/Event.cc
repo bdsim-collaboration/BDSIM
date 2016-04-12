@@ -2,7 +2,7 @@
 #include "Event.hh"
 
 
-ClassImp(Event);
+ClassImp(Event)
 
 Event::Event()
 {
