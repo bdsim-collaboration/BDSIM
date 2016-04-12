@@ -15,19 +15,16 @@ void TRK::CalculateKineticEnergy(const GMAD::Options& options)
   std::cout << __METHOD_NAME__ << std::endl;
 #endif
   double particlemass = TRKParticleDefinition::Instance()->GetParticleMass((std::string)options.particleName);
+
+  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   
   // set kinetic beam parameters other than total energy
-  BDSGlobalConstants::Instance()->SetBeamMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-
-							pow(particlemass,2)) );
+  globals->SetBeamMomentum( sqrt(pow(globals->BeamTotalEnergy(),2) - pow(particlemass,2)) );
   
-  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
-						       particlemass );
-
-
-  BDSGlobalConstants::Instance()->SetParticleMomentum (sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
-							    pow(particlemass,2)) );
+  globals->SetBeamKineticEnergy(globals->BeamTotalEnergy() - particlemass );
   
-  BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->GetParticleTotalEnergy() - 
-							   particlemass );
+  globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2) - pow(particlemass,2)) );
+  
+  globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy() - particlemass);
 
 }

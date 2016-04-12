@@ -51,7 +51,7 @@ TRKFactory::TRKFactory(const GMAD::Options& options)
 #endif
   // define charge and momentum from options
   charge = TRKParticleDefinition::Instance()->GetParticleCharge(options.particleName);
-  momentum = BDSGlobalConstants::Instance()->GetParticleMomentum()/CLHEP::GeV;
+  momentum = BDSGlobalConstants::Instance()->ParticleMomentum()/CLHEP::GeV;
   // magnetic rigidity
   if (charge!=0)
     {brho = options.ffact * momentum / 0.299792458 / charge;}

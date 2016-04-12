@@ -53,7 +53,7 @@ void TRKBunch::Populate(const GMAD::Options& opt)
 
 
   // Update population according to changes in bunch type
-  population= BDSGlobalConstants::Instance()->GetNumberToGenerate();
+  population = BDSGlobalConstants::Instance()->NGenerate();
 
   //must have positive number of particles
   if (population < 0){population = abs(population);}

@@ -23,8 +23,8 @@
 
 TRKHybrid::TRKHybrid(int trackingStepsIn) :
   TRKStrategy(trackingStepsIn) {
-  nominalenergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
-  nominalmomentum = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
+  nominalenergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  nominalmomentum = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
 }
 
 TRKHybrid::~TRKHybrid() {
@@ -131,7 +131,7 @@ void TRKHybrid::Track(TRKDipole* el, TRKBunch* bunch) {
       double x1,x1p,y1,y1p,z1p;
 
       /** TODO   NOMR should go to factory
-	  double NomEnergy = BDSGlobalConstants::Instance()->GetBeamTotalEnergy();
+	  double NomEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 	  double NomR = -(NomEnergy/CLHEP::GeV)/(0.299792458 * bField/CLHEP::tesla) * CLHEP::m;
 
 	  double NominalPath = sqrt(NomR*NomR - z0*z0) - fabs(NomR)*cos(itsAngle/2);
