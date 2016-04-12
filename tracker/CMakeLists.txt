@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6.4)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 # Suppress policy CMP0042 warning (as of cmake 3.0.0)
 if (${CMAKE_MAJOR_VERSION} GREATER 2)
     cmake_policy(SET CMP0042 OLD)
@@ -14,16 +12,14 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -DTRKDEBUG --coverage")
 endif()
 
-file(GLOB TRKsources *.cc )
-file(GLOB BDSBunchsources ../src/BDSBunch*.cc )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(../include)
 
-# no longer so easy to make static library as dependencies back to
-# BDSIM classes
-add_library(tracker STATIC ${TRKsources} ${BDSBunchsources} 
- ../include/BDSDebug.hh
- ../src/BDSOutputBase.cc
- ../src/BDSGlobalConstants.cc)
+file(GLOB TRKsources *.cc )
+
+add_library(tracker SHARED ${TRKsources})
+target_link_libraries(tracker bdsim)
+target_link_libraries(tracker gmad)
+
 bdsim_install_targets(tracker)
 
-#file(GLOB gmadsources ../parser/gmad.cc ../parser/getEnv.cc ../parser/element.cc ../parser/elementlist.cc ../parser/enums.cc ../parser/options.cc ../parser/parameters.cc)
-#add_library(trackerShared SHARED ${TRKsources} ${gmadsources})
