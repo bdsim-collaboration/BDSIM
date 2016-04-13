@@ -3,8 +3,8 @@ list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/src/rebdsim.cc)
 
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
-message(${CMAKE_CURRENT_SOURCE_DIR})
-message(ROOT DICTS : ${rebdsimLibLinkDefs})
+#message(${CMAKE_CURRENT_SOURCE_DIR})
+#message(ROOT DICTS : ${rebdsimLibLinkDefs})
 
 foreach(header ${rebdsimLibLinkDefs})
     # remove LinkDef.hh
@@ -15,8 +15,7 @@ foreach(header ${rebdsimLibLinkDefs})
     string(SUBSTRING ${header} ${beginpos} ${length} className)
     #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
     if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-        # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
-        # also rootcint5 does not accept additional options
+        # add preprocessor flag __ROOTBUILD__ as used in BDSIM.
         # root6 .pcm file needs to be at library level
         # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
         add_custom_command(

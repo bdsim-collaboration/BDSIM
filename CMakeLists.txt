@@ -81,6 +81,10 @@ if($ENV{VERBOSE})
 	message(STATUS "CMAKE_CXX_ORIG_FLAGS ${CMAKE_CXX_ORIG_FLAGS}")
 endif()
 
+add_subdirectory(configuration)
+
+# Find Packages
+
 # Check for Scientific Linux
 if(UNIX)
     if("${CMAKE_SYSTEM}" MATCHES "el6")
@@ -185,7 +189,7 @@ foreach(header ${linkHeaders})
   string(SUBSTRING ${header} ${beginpos} ${length} className)
   #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
   if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-    # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
+    # add preprocessor flag __ROOTBUILD__ as used in BDSIM.
     # root6 .pcm file needs to be at library level
     # for discussion see e.g. this forum topic: https://root.cern.ch/phpBB3/viewtopic.php?t=17654
     add_custom_command(
@@ -348,6 +352,8 @@ endif()
 
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# include configuration directory for git version
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
 
 ## set compiler flags
 # warning flags
@@ -401,19 +407,10 @@ include(bdsim_test_macros)
 # This module sets up installation:
 include(bdsim_install)
 
-#-----------------------------------------------------------------------
-# macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
-#
-macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
-  file(GLOB 
-    ${source_dest_var} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    )
-endmacro()
+# Source files
+string(TIMESTAMP CURRENT_YEAR %Y)
+configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
 
-# source files
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_LCDD)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
@@ -428,7 +425,7 @@ endif()
 
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
-add_executable(bdsimexec bdsim.cc)
+add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
@@ -452,26 +449,23 @@ get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
-# Only for root6 for now, not working yet for root5
-#if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-  set(bdsimRootEventSources ${root_dicts} ${root_files})
+set(bdsimRootEventSources ${root_dicts} ${root_files})
 
-  # Remove Options for now - temporary!
-  list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
-  if($ENV{VERBOSE})
-    message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
-  endif()
+# Remove Options for now - temporary!
+list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+if($ENV{VERBOSE})
+  message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
+endif()
 
-  add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
-  target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
-  # link against ROOT
-  target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
-  target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
-  # Add dependency to make sure bdsimRootEvent is done first
-  # This is done because the ROOT dictionary generation needs to be done separately for each of them
-  # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
-  add_dependencies(bdsim bdsimRootEvent)
-#endif()
+add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
+target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
+# link against ROOT
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+# Add dependency to make sure bdsimRootEvent is done first
+# This is done because the ROOT dictionary generation needs to be done separately for each of them
+# And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
+add_dependencies(bdsim bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
@@ -492,7 +486,7 @@ option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
 
 if (BUILD_MACOSX_APP AND APPLE)
     # building a macos executablemaking a bundle of 
-    add_executable(bdsimapp MACOSX_BUNDLE bdsim.cc)
+    add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
     set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
     target_link_libraries(bdsimapp bdsim gmad)
     bdsim_install_bundle(bdsim)

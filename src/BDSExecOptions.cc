@@ -52,6 +52,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "seedstate",1,0,0 },
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
+					{ "nGenerate", 1, 0, 0 },
 					{ "exportgeometryto", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ 0, 0, 0, 0 }};
@@ -175,7 +176,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("seedStateFileName", std::string(optarg));
 	  options.set_value("setSeedState",      true);
 	}
-      else if( !strcmp(optionName, "ngenerate") )
+      else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
 	  int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
