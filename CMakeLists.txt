@@ -401,7 +401,10 @@ include(bdsim_test_macros)
 # This module sets up installation:
 include(bdsim_install)
 
-# source files
+# Source files
+string(TIMESTAMP CURRENT_YEAR %Y)
+configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
+
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_LCDD)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
@@ -416,7 +419,7 @@ endif()
 
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
-add_executable(bdsimexec bdsim.cc)
+add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
@@ -477,7 +480,7 @@ option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
 
 if (BUILD_MACOSX_APP AND APPLE)
     # building a macos executablemaking a bundle of 
-    add_executable(bdsimapp MACOSX_BUNDLE bdsim.cc)
+    add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
     set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
     target_link_libraries(bdsimapp bdsim gmad)
     bdsim_install_bundle(bdsim)
