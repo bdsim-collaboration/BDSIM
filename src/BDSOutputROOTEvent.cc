@@ -130,6 +130,13 @@ void BDSOutputROOTEvent::Initialise()
 				"BDSOutputROOTEventSampler",
 				res,32000,1);
     }
+
+  evtHistos = new BDSOutputROOTEventHistograms();
+  theRootOutputTree->Branch("EventHistos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
+
+  runHistos = new BDSOutputROOTEventHistograms();
+  theRootOutputTree->Branch("RunHistos.","BDSOutputROOTEvent",runHistos,32000,1);
+
 }
   
 /// write sampler hit collection

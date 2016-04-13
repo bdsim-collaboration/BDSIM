@@ -18,6 +18,16 @@ public:
   virtual ~BDSOutputROOTEventHistograms();
 
 #ifndef __ROOTBUILD__
+  G4int Create1DHistogram(G4String name, G4String title,
+                          G4int nbins, G4double xmin, G4double xmax);
+  G4int Create1DHistogram(G4String name, G4String title,
+                          std::vector<double>& edges);
+  G4int Create2DHistogram(G4String name, G4String title,
+                          G4int nxbins, G4double xmin, G4double xmax,
+                          G4int nybins, G4double ymin, G4double ymax);
+  G4int Create2DHistogram(G4String name, G4String title,
+                          std::vector<double>& xedges,
+                          std::vector<double>& yedges);
   void Fill1DHistogram(G4int histoId, G4double value, G4double weight = 1.0);
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
 #endif
