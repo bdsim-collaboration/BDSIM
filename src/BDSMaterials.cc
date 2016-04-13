@@ -937,7 +937,7 @@ void BDSMaterials::AddMaterial(G4String aName,
 			       G4State  itsState,
 			       G4double itsTemp,
 			       G4double itsPressure,
-			       std::list<std::string> itsComponents,
+			       std::list<G4String> itsComponents,
 			       std::list<Type> itsComponentsFractions)
 {
   aName.toLower();
