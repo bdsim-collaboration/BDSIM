@@ -34,7 +34,7 @@ int main(int argc,char** argv)
   std::cout << "BDSBunchTest> distribType : "      << options.distribType << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << options.particleName << std::endl;
   std::cout << "BDSBunchTest> particle    : "      << globalConstants->ParticleName() << std::endl;
-  std::cout << "BDSBunchTest> numberToGenerate : " << options.numberToGenerate << std::endl;
+  std::cout << "BDSBunchTest> numberToGenerate : " << options.nGenerate << std::endl;
 
 
   // Print options for reference orbit 
@@ -60,7 +60,7 @@ int main(int argc,char** argv)
 
   // Generate nparticle particles 
   double x0, y0, z0, xp, yp, zp, t, E, weight;
-  for(int i=0;i<options.numberToGenerate;i++) { 
+  for(int i=0;i<options.nGenerate;i++) { 
     bdsBunch.GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
     if(i% 1 == 0 ) {
       std::cout << "i = " << i  << " x0 = " 

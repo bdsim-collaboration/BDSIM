@@ -1,3 +1,15 @@
+#-----------------------------------------------------------------------
+# macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
+#
+macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
+  file(GLOB 
+    ${source_dest_var} 
+    ${CMAKE_CURRENT_BINARY_DIR}/bdsim.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
+    )
+endmacro()
+
 #from https://cmake.org/pipermail/cmake/2009-March/027892.html
 
 MACRO(COPY_FILE_IF_CHANGED in_file out_file target)
