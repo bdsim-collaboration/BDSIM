@@ -30,6 +30,7 @@ public:
                           std::vector<double>& yedges);
   void Fill1DHistogram(G4int histoId, G4double value, G4double weight = 1.0);
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
+  void Flush();
 #endif
 
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}

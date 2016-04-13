@@ -185,7 +185,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	    {
 	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
 	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-        // bdsOutput->GetAnalysis()->Fill1D();
 	      // general histos
 	      analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
 	      analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);

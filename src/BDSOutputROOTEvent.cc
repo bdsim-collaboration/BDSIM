@@ -162,7 +162,9 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
     G4int    samplerId   = (*hc)[i]->GetSamplerID();
     //samplerMap[samplerName]->Fill((*hc)[i]);
     samplerTrees[samplerId+1]->Fill((*hc)[i]);
-  }  
+  }
+
+
 }
 
 /// write energy deposition hits
@@ -173,28 +175,44 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 #endif
   G4int n_hit = hc->entries();
   for(G4int i=0;i<n_hit;i++)
-    {
-      BDSEnergyCounterHit* hit = (*hc)[i];
-      eLoss->Fill(hit);
-    }
+  {
+    BDSEnergyCounterHit* hit = (*hc)[i];
+    eLoss->Fill(hit);
+
+    G4double sHit = hit->GetSHit()/CLHEP::m;
+    G4double eW   = hit->GetEnergyWeighted()/CLHEP::GeV;
+    runHistos->Fill1DHistogram(2, sHit, eW);
+    evtHistos->Fill1DHistogram(2, sHit, eW);
+    runHistos->Fill1DHistogram(5, sHit, eW);
+    evtHistos->Fill1DHistogram(5, sHit, eW);
+
+  }
 }
 
 /// write where primaries impact
-void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* phit) // TODO WritePrimaryFirstHit
+void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* thePrimaryHit) // TODO WritePrimaryFirstHit
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-    pFirstHit->Fill(phit);
+  pFirstHit->Fill(thePrimaryHit);
+  runHistos->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
+  evtHistos->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
+  runHistos->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
+  evtHistos->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
 }
 
 /// write where primaries stop being primaries
-void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* ploss) // TODO WritePrimaryLastHit)
+void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* thePrimaryLoss) // TODO WritePrimaryLastHit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  pLastHit->Fill(ploss);
+  pLastHit->Fill(thePrimaryLoss);
+  runHistos->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
+  evtHistos->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
+  runHistos->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
+  evtHistos->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
 }
 
 /// write tunnel hits
@@ -295,6 +313,7 @@ void BDSOutputROOTEvent::Flush()
   pLastHit->Flush();
   tHit->Flush();
   traj->Flush();
+  evtHistos->Flush();
 }
 
 BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetEventAnalysis()

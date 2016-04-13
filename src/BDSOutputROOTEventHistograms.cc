@@ -77,4 +77,17 @@ void BDSOutputROOTEventHistograms::Fill2DHistogram(G4int histoId, G4double xValu
 {
   this->histograms2D[histoId]->Fill(xValue,yValue,weight);
 }
+
+void BDSOutputROOTEventHistograms::Flush()
+{
+  for(auto i : this->histograms1D)
+  {
+    i->Clear();
+  }
+
+  for(auto i : this->histograms2D)
+  {
+    i->Clear();
+  }
+}
 #endif
