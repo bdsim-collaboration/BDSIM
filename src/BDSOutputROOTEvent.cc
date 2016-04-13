@@ -58,13 +58,16 @@ void BDSOutputROOTEvent::Initialise()
 
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   // root file
-  theRootOutputFile    = new TFile(filename,"RECREATE", "BDS output file");
+  theRootOutputFile      = new TFile(filename,"RECREATE", "BDS output file");
   // options data tree
-  theOptionsOutputTree = new TTree("Options","BDSIM options");
+  theOptionsOutputTree   = new TTree("Options","BDSIM options");
   // model data tree
-  theModelOutputTree   = new TTree("Model","BDSIM model");
+  theModelOutputTree     = new TTree("Model","BDSIM model");
+  // run histogram tree
+  theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
   // event data tree
-  theRootOutputTree    = new TTree("Event","BDSIM event");
+  theRootOutputTree      = new TTree("Event","BDSIM event");
+
   
   // Build options and write structure
   // Get options
@@ -81,7 +84,12 @@ void BDSOutputROOTEvent::Initialise()
   theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
-  
+
+    // Build run data tree
+  runHistos = new BDSOutputROOTEventHistograms();
+  runHistos->Create1DHistogram("c","d",100,0,100);
+  theRunOutputTree->Branch("Histos.","BDSOutputROOTEvent",runHistos,32000,1);
+
   // Build primary structures
 #ifndef __ROOTDOUBLE__
   primary = new BDSOutputROOTEventSampler<float>("Primary");
@@ -114,6 +122,13 @@ void BDSOutputROOTEvent::Initialise()
   theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
 
   //
+  // Build event histograms
+  //
+  evtHistos = new BDSOutputROOTEventHistograms();
+  evtHistos->Create1DHistogram("a","b",100,0,100);
+  theRootOutputTree->Branch("Histos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
+
+  //
   // build sampler structures 
   for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
     {
@@ -130,13 +145,6 @@ void BDSOutputROOTEvent::Initialise()
 				"BDSOutputROOTEventSampler",
 				res,32000,1);
     }
-
-  evtHistos = new BDSOutputROOTEventHistograms();
-  theRootOutputTree->Branch("EventHistos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
-
-  runHistos = new BDSOutputROOTEventHistograms();
-  theRootOutputTree->Branch("RunHistos.","BDSOutputROOTEvent",runHistos,32000,1);
-
 }
   
 /// write sampler hit collection

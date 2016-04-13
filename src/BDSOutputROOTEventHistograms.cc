@@ -4,7 +4,8 @@ ClassImp(BDSOutputROOTEventHistograms)
 
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms()
 {
-
+  TH1D::AddDirectory(kFALSE);
+  TH2D::AddDirectory(kFALSE);
 };
 
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()

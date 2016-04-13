@@ -96,6 +96,9 @@ private:
   // output tree
   TTree *theRootOutputTree = nullptr;
 
+  // output histogram tree
+  TTree *theRunOutputTree  = nullptr;
+
   // primary structure 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *primary = nullptr;
