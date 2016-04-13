@@ -38,6 +38,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "verbose_G4tracking", 1, 0, 0 },
 					{ "verbose_G4stepping", 1, 0, 0 },
 					{ "file", 1, 0, 0 },
+					{ "distrFile", 1, 0, 0 },
 					{ "vis_debug", 0, 0, 0 },
 					{ "vis_mac", 1, 0, 0 },
 					{ "gflash", 0, 0, 0 },
@@ -52,6 +53,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "seedstate",1,0,0 },
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
+					{ "nGenerate", 1, 0, 0 },
 					{ "exportgeometryto", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
 					{ 0, 0, 0, 0 }};
@@ -139,6 +141,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName , "file") )
 	{options.set_value("inputFileName", std::string(optarg));}
+      else if( !strcmp(optionName, "distrFile") )
+	{options.set_value("distrFile", std::string(optarg));}
       else if( !strcmp(optionName , "vis_debug") )
 	{options.set_value("visDebug", true);}
       else if( !strcmp(optionName , "vis_mac") )
@@ -175,7 +179,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("seedStateFileName", std::string(optarg));
 	  options.set_value("setSeedState",      true);
 	}
-      else if( !strcmp(optionName, "ngenerate") )
+      else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
 	  int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
@@ -240,6 +244,7 @@ void BDSExecOptions::Usage() const
   G4cout<<"--file=<filename>         : specify the lattice and options file "<<G4endl
 	<<"--batch                   : batch mode - no graphics"<<G4endl
 	<<"--circular                : assume circular machine - turn control"<<G4endl
+	<<"--distrFile=<file>        : specify which file to use for the bunch distribution" << G4endl
 	<<"--exportgeometryto=<file> : export the geometry to a file - extension determines format"<<G4endl
 	<<"                            where possible extensions are (\"gdml\")"<<G4endl
 	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
@@ -273,6 +278,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " inputFileName: "       << std::setw(15) << options.inputFileName       << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " batch: "               << std::setw(15) << options.batch               << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " circular: "            << std::setw(15) << options.circular            << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " distrFile: "           << std::setw(15) << options.distribFile         << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " exportgeometryto "     << std::setw(15) << options.exportFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " generatePrimariesOnly "<< std::setw(15) << options.generatePrimariesOnly << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflash: "              << std::setw(15) << options.gflash              << G4endl;

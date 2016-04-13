@@ -20,6 +20,8 @@ namespace GMAD
   public:
     OptionsBase();
 
+    std::string gitVersion; ///< The version of BDSIM as given by the git repository.
+
     std::string inputFileName;    ///< input filename
     std::string visMacroFileName; ///< visualisation filename
     bool        visDebug;         ///< flag for visualisation debug
@@ -89,7 +91,6 @@ namespace GMAD
     std::string distribFileFormat;
     ///@}
     
-    int numberToGenerate;
     int nlinesIgnore; ///< ignore first lines in the input bunch file
 
     double elossHistoBinWidth;

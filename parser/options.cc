@@ -46,6 +46,7 @@ void Options::PublishMembers()
   publish("seedStateFileName",     &Options::seedStateFileName);
   publish("setSeedState",          &Options::setSeedState);
   publish("nGenerate",             &Options::nGenerate);
+  publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
   publish("exportGeometry",        &Options::exportGeometry);
   publish("exportType",            &Options::exportType);
@@ -65,7 +66,6 @@ void Options::PublishMembers()
   publish("zDistrType",&Options::zDistribType);
   publish("distrFile",&Options::distribFile);
   publish("distrFileFormat",&Options::distribFileFormat);
-  publish("ngenerate",&Options::numberToGenerate);
   publish("nlinesIgnore",&Options::nlinesIgnore);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
