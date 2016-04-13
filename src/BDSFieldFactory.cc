@@ -126,6 +126,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
       break;
     default:
       G4cerr << __METHOD_NAME__ << "not a valid field type" << G4endl;
+      return field;
       break; // this will return nullptr
     }
   return field;
@@ -171,7 +172,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::skewdecapole:
       field = new BDSFieldMagSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;
     default:
-      break; // this will return nullptr
+      return nullptr;
+      break;
     }
 
   // Optionally provide local to global transform using curvilinear coordinate system.
@@ -197,6 +199,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
     case BDSFieldType::rfcavity:
       field = new BDSFieldEMRFCavity(info.CavityInfo()); break;
     default:
+      return nullptr;
       break;
     }
 
@@ -223,6 +226,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
     case BDSFieldType::rf:
       field = new BDSFieldESinusoid(info.CavityInfo()); break;
     default:
+      return nullptr;
       break;
     }
 
