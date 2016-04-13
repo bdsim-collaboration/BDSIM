@@ -25,6 +25,7 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
 	BDSOutputVector* combinedOutput = new BDSOutputVector();
 	combinedOutput->Add(new BDSOutputASCII());
 	combinedOutput->Add(new BDSOutputROOT<float>());
+	combinedOutput->Add(new BDSOutputROOTEvent());
 	return combinedOutput;
 	break;
       }

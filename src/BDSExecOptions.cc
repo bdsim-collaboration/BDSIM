@@ -244,7 +244,7 @@ void BDSExecOptions::Usage() const
   G4cout<<"--file=<filename>         : specify the lattice and options file "<<G4endl
 	<<"--batch                   : batch mode - no graphics"<<G4endl
 	<<"--circular                : assume circular machine - turn control"<<G4endl
-	<<"--distrFile=>file>        : specify which file to use for the bunch distribution" << G4endl
+	<<"--distrFile=<file>        : specify which file to use for the bunch distribution" << G4endl
 	<<"--exportgeometryto=<file> : export the geometry to a file - extension determines format"<<G4endl
 	<<"                            where possible extensions are (\"gdml\")"<<G4endl
 	<<"--generatePrimariesOnly   : generate N primary particle coordinates without simulation then quit"<<G4endl
