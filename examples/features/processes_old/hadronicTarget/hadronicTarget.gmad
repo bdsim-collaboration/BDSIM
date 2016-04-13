@@ -38,7 +38,7 @@ myLine: line = (startl,leadTarget,endl);
 
 use ,period=myLine;
 
-sample, range = startl;
+!sample, range = startl;
 sample, range = endl;
 
 !sample, range = msb1b;
