@@ -347,7 +347,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
     {
       if (
 	  prevElement &&
-	  !(prevElement->type == ElementType::_DRIFT) &&
+	  prevElement->type != ElementType::_DRIFT &&
 	  !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
@@ -494,8 +494,9 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
           exit(1);
         }
       
-      BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st);
-      (*stSemi)["angle"] = semiangle;
+      BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st); // copy field strength - ie B
+      (*stSemi)["angle"]  = semiangle;  // override copied length and angle
+      (*stSemi)["length"] = semilength;
       
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
