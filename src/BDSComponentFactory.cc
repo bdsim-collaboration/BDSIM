@@ -361,7 +361,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
     {
       if (
 	  nextElement &&
-	  !(nextElement->type == ElementType::_DRIFT) &&
+	  nextElement->type != ElementType::_DRIFT &&
 	  !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
@@ -539,7 +539,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     {
       if (
 	  prevElement &&
-	  !(prevElement->type == ElementType::_DRIFT) &&
+	  prevElement->type != ElementType::_DRIFT &&
 	  !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
@@ -553,7 +553,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     {
       if (
 	  nextElement &&
-	  !(nextElement->type == ElementType::_DRIFT) &&
+	  nextElement->type != ElementType::_DRIFT &&
 	  !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
