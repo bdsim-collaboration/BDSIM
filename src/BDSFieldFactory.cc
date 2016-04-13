@@ -205,7 +205,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
   if (info.ProvideGlobal())
     {resultantField = new BDSFieldEMGlobal(field);}
 
-  // Always this equation of motion for magnetic (only) fields
+  // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
 
   // Create appropriate integrator
@@ -231,10 +231,13 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
   if (info.ProvideGlobal())
     {resultantField = new BDSFieldEGlobal(field);}
 
-  //eqom
-  // complete field
+  // Equation of motion for em fields
+  G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
 
-  BDSFieldObjects* completeField = nullptr;
+  // Create appropriate integrator
+  G4MagIntegratorStepper* integrator = CreateIntegratorE(info, eqOfM);
+
+  BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
   return completeField;
 }
 
@@ -342,6 +345,14 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
       break; // returns nullptr;
     }
   return integrator;
+}
+
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(BDSFieldInfo&       info,
+							   G4EquationOfMotion* eqOfM)
+{
+  // Geant4 is pretty unclear about which ones are only for E fields if any
+  // so just use EM ones for now.
+  return CreateIntegratorEM(info,eqOfM);
 }
 
 BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFilePath,

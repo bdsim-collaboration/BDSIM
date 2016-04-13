@@ -70,6 +70,12 @@ private:
   /// this takes a G4EquationOfMotion* equation of motion instance.
   G4MagIntegratorStepper* CreateIntegratorEM(BDSFieldInfo& info,
 					     G4EquationOfMotion* eqOfM);
+
+  /// Create an integrator for a general E field. This currently delegates
+  /// to CreateIntegratorEM as Geant4 isn't clear about which ones can be
+  /// used for an E field.
+  G4MagIntegratorStepper* CreateIntegratorE(BDSFieldInfo& info,
+					    G4EquationOfMotion* eqOfM);
   
 
   /// Create a field based on a mesh of coordinates with field 3 vectors. This only
