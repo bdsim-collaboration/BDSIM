@@ -401,18 +401,6 @@ include(bdsim_test_macros)
 # This module sets up installation:
 include(bdsim_install)
 
-#-----------------------------------------------------------------------
-# macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
-#
-macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
-  file(GLOB 
-    ${source_dest_var} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    )
-endmacro()
-
 # source files
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_LCDD)
