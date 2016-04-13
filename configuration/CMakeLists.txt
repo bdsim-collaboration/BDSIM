@@ -1,5 +1,5 @@
 # record which version of bdsim is being built in the code itself
-find_package(git)
+find_package(Git)
 if (GIT_FOUND)
   exec_program(
     ${GIT_EXECUTABLE}
