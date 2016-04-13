@@ -53,4 +53,3 @@ Thumbs.db
 #####################
 build*/*
 manual/build/*
-configuration/*.hh

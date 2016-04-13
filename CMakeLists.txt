@@ -10,15 +10,6 @@ set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_L
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 
-# record which version of bdsim is being built in the code itself
-exec_program(
-    "git"
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ARGS "describe --dirty"
-    OUTPUT_VARIABLE VERSION_SHA1 )
-add_definitions( -DGIT_SHA1="${VERSION_SHA1}" )
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/configuration/version.hh.in ${CMAKE_CURRENT_SOURCE_DIR}/configuration/version.hh @ONLY)
-
 # add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
@@ -89,6 +80,10 @@ if($ENV{VERBOSE})
 	message(STATUS "CMAKE_C_ORIG_FLAGS ${CMAKE_C_ORIG_FLAGS}")
 	message(STATUS "CMAKE_CXX_ORIG_FLAGS ${CMAKE_CXX_ORIG_FLAGS}")
 endif()
+
+add_subdirectory(configuration)
+
+# Find Packages
 
 # Check for Scientific Linux
 if(UNIX)
@@ -351,7 +346,8 @@ endif()
 
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/configuration)
+# include configuration directory for git version
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
 
 ## set compiler flags
 # warning flags
@@ -456,26 +452,23 @@ get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
 # ROOT Event Library
-# Only for root6 for now, not working yet for root5
-#if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-  set(bdsimRootEventSources ${root_dicts} ${root_files})
+set(bdsimRootEventSources ${root_dicts} ${root_files})
 
-  # Remove Options for now - temporary!
-  list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
-  if($ENV{VERBOSE})
-    message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
-  endif()
+# Remove Options for now - temporary!
+list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+if($ENV{VERBOSE})
+  message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
+endif()
 
-  add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
-  target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
-  # link against ROOT
-  target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
-  target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
-  # Add dependency to make sure bdsimRootEvent is done first
-  # This is done because the ROOT dictionary generation needs to be done separately for each of them
-  # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
-  add_dependencies(bdsim bdsimRootEvent)
-#endif()
+add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
+target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
+# link against ROOT
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+# Add dependency to make sure bdsimRootEvent is done first
+# This is done because the ROOT dictionary generation needs to be done separately for each of them
+# And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
+add_dependencies(bdsim bdsimRootEvent)
 
 # Install the targets:
 set(executables bdsimexec)
