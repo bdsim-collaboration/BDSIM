@@ -32,6 +32,12 @@ public:
   void Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue, G4double weight = 1.0);
 #endif
 
+  std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
+  std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
+
+TH1D* Get1DHistogram(int iHisto) {return histograms1D[iHisto];}
+TH2D* Get2DHistogram(int iHisto) {return histograms2D[iHisto];}
+
 private:
   std::vector<TH1D*> histograms1D;
   std::vector<TH2D*> histograms2D;

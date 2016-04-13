@@ -29,6 +29,15 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
   const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
   const G4String slabel = "s [m]";
+
+  // prepare bin edges for a by-element histogram
+  std::vector<double> binedges;
+  binedges.push_back(0.0);
+  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamline::iterator it = beamline->begin();
+  for(; it != beamline->end(); ++it)
+  {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
   G4cout << "s minimum: " << smin     << " m" << G4endl;
@@ -44,13 +53,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 								 "Number of Primaries"); //1
   elossindex = BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss",
 								 nbins,smin,smax,slabel,"GeV"); //2
-  // prepare bin edges for a by-element histogram
-  std::vector<double> binedges;
-  binedges.push_back(0.0);
-  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  BDSBeamline::iterator it = beamline->begin();
-  for(; it != beamline->end(); ++it)
-    {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
+
   
   // create per element ("pe") bin width histograms
   phitspeindex = BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
@@ -63,7 +66,34 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
+
+  // new output
+  BDSOutputROOTEventHistograms *eh = bdsOutput->GetEventAnalysis();
+  BDSOutputROOTEventHistograms *rh = bdsOutput->GetRunAnalysis();
+
+  if(eh) {
+    phitsindex = eh->Create1DHistogram("PhitsHisto","Primary Hits", nbins,smin,smax);
+    plossindex = eh->Create1DHistogram("PlossHisto","Primary Loss", nbins,smin,smax);
+    elossindex = eh->Create1DHistogram("ElossHisto","Energy Loss", nbins,smin,smax);
+
+    phitspeindex = eh->Create1DHistogram("PhitsPEHisto","Primary Hits per Element", binedges);
+    plosspeindex = eh->Create1DHistogram("PlossPEHisto","Primary Loss per Element", binedges);
+    elosspeindex = eh->Create1DHistogram("ElossPEHisto","Energy Loss per Element" , binedges);
+  }
+
+  if(rh)
+  {
+    phitsindex = rh->Create1DHistogram("PhitsHisto", "Primary Hits", nbins, smin, smax);
+    plossindex = rh->Create1DHistogram("PlossHisto", "Primary Loss", nbins, smin, smax);
+    elossindex = rh->Create1DHistogram("ElossHisto", "Energy Loss", nbins, smin, smax);
+
+    phitspeindex = rh->Create1DHistogram("PhitsPEHisto", "Primary Hits per Element", binedges);
+    plosspeindex = rh->Create1DHistogram("PlossPEHisto", "Primary Loss per Element", binedges);
+    elosspeindex = rh->Create1DHistogram("ElossPEHisto", "Energy Loss per Element", binedges);
+  }
+
   bdsOutput->Initialise(); // open file
+
 }
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)

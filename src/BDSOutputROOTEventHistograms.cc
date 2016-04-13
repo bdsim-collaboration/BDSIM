@@ -19,18 +19,20 @@ G4int BDSOutputROOTEventHistograms::Create1DHistogram(G4String name, G4String ti
                                                       G4int nbins, G4double xmin, G4double xmax)
 {
   this->histograms1D.push_back(new TH1D(name,title, nbins, xmin, xmax));
-  return this->histograms1D.size();
+  return (G4int)this->histograms1D.size();
 }
 
 G4int BDSOutputROOTEventHistograms::Create1DHistogram(G4String name, G4String title,
                                                       std::vector<double>& edges)
 {
+
   Double_t* edgesD = new Double_t[edges.size()];
   for(int i=0;i<(int)edges.size();++i) {
     edgesD[i] = edges[i];
+//    G4cout << edgesD[i] << G4endl;
   }
   this->histograms1D.push_back(new TH1D(name,title,(Int_t)edges.size(),edgesD));
-  return this->histograms1D.size();
+  return (G4int)this->histograms1D.size();
 
   delete[] edgesD;
 }
@@ -40,7 +42,7 @@ G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String ti
                                                       G4int nybins, G4double ymin, G4double ymax)
 {
   this->histograms2D.push_back(new TH2D(name,title, nxbins, xmin, xmax, nybins, ymin, ymax));
-  return this->histograms2D.size();
+  return (G4int)this->histograms2D.size();
 }
 
 G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String title,
@@ -58,7 +60,7 @@ G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String ti
   }
 
   this->histograms2D.push_back(new TH2D(name.data(),title.data(), (Int_t)xedges.size(), xedgesD, (Int_t)yedges.size(), yedgesD));
-  return this->histograms2D.size();
+  return (G4int)this->histograms2D.size();
 
   delete[] xedgesD;
   delete[] yedgesD;
@@ -69,6 +71,7 @@ void BDSOutputROOTEventHistograms::Fill1DHistogram(G4int histoId, G4double value
 {
   this->histograms1D[histoId]->Fill(value,weight);
 }
+
 void BDSOutputROOTEventHistograms::Fill2DHistogram(G4int histoId, G4double xValue, G4double yValue,
                                                    G4double weight)
 {

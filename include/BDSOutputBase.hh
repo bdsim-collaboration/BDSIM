@@ -6,6 +6,7 @@
 #include "BDSTrajectory.hh"
 #include "BDSTunnelHit.hh"
 #include "BDSHistogram.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 
 #include "G4Trajectory.hh"
 #include <vector>
@@ -63,10 +64,16 @@ public:
   virtual void Initialise()=0;
   
   /// write the data to file
-  virtual void Write()=0;
+  virtual void Write() = 0;
 
   /// close file
-  virtual void Close()=0;
+  virtual void Close() = 0;
+
+
+  /// get event analysis/histogam structure
+  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
+  /// get run analysis/historgram structure
+  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
 
   /// write, close and open new file
   void Commit();

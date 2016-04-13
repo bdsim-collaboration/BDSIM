@@ -76,9 +76,13 @@ public:
   virtual void Write();      ///< write to file
   virtual void Close();      ///< close the file
 
-  /// clear structures 
+  /// clear structures
   void Flush();
-  
+
+  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
+  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
+
+
 private:
 
   // output file
