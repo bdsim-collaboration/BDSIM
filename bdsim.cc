@@ -112,6 +112,7 @@ int main(int argc,char** argv)
     {
       // output creation is duplicated below but with this if loop, we exit so ok.
       bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
+      bdsOutput->Initialise();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       for (G4int i = 0; i < globalConstants->NGenerate(); i++)
       {
