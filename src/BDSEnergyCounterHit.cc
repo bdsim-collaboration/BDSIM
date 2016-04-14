@@ -5,8 +5,8 @@
 
 G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn, 
-					 G4double energyIn, 
+BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
+					 G4double energyIn,
 					 G4double XIn, 
 					 G4double YIn, 
 					 G4double ZIn,

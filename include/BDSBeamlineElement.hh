@@ -45,7 +45,8 @@ public:
 		     G4double                 sPositionMiddle,
 		     G4double                 sPositionEnd,
 		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
-		     G4String                 samplerNameIn = "");
+		     G4String                 samplerNameIn = "",
+		                 G4int indexIn = -1);
 
   ~BDSBeamlineElement();
   
@@ -75,6 +76,7 @@ public:
   inline BDSSamplerType           GetSamplerType()               const;
   inline G4String                 GetSamplerName()               const;
   inline G4Transform3D*           GetSamplerPlacementTransform() const;
+	inline G4int                    GetIndex()                   const;
   ///@}
   
   ///@{ Reassign the end variable as required when applying a transform
@@ -155,6 +157,8 @@ private:
   /// end of the element overlapping with the outgoing boundary as defined by the
   /// reference position at the end and the reference rotation at the end.
   G4Transform3D*    samplerPlacementTransform;
+
+	G4int index;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -231,5 +235,8 @@ inline G4String                 BDSBeamlineElement::GetSamplerName() const
 
 inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform() const
 {return samplerPlacementTransform;}
+
+inline G4int                    BDSBeamlineElement::GetIndex() const
+{ return index;}
 
 #endif

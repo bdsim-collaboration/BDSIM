@@ -341,7 +341,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 						       sPositionMiddle,
 						       sPositionEnd,
 						       samplerType,
-						       samplerName);
+						       samplerName,
+                                                       (G4int)beamline.size());
 
   // calculate extents for world size determination
   UpdateExtents(element);

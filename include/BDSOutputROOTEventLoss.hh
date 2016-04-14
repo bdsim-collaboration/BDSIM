@@ -18,10 +18,11 @@ public:
   std::vector<float>        S;
   std::vector<float>        weight;
   /* geometry model */
-  std::vector<unsigned int> modelID;
+  std::vector<int>          modelID;
   /* process */
-  std::vector<unsigned int> processID;
-  std::vector<unsigned int> trackID;
+
+  std::vector<int>          processID;
+  std::vector<int>          trackID;
   std::vector<int>          geomFlag;
 
   BDSOutputROOTEventLoss();

@@ -32,9 +32,11 @@ void BDSOutputROOTEventHit::Fill(BDSTunnelHit *hit) // TODO Could we tidy the st
   this->x.push_back((float &&) (hit->Getx() / CLHEP::m));
   this->y.push_back((float &&) (hit->Gety() / CLHEP::m));
   this->z.push_back((float &&) (hit->Getz() / CLHEP::m));
+#if 0
   this->X.push_back((float &&) (hit->GetX() / CLHEP::m));
   this->Y.push_back((float &&) (hit->GetY() / CLHEP::m));
   this->Z.push_back((float &&) (hit->GetZ() / CLHEP::m));
+#endif
 }
 #endif
 
@@ -45,7 +47,9 @@ void BDSOutputROOTEventHit::Flush() {
   this->y.clear();
   this->z.clear();
 
+#if 0
   this->X.clear();
   this->Y.clear();
   this->Z.clear();
+#endif
 }
