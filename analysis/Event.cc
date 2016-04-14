@@ -18,6 +18,7 @@ void Event::CommonCtor()
   primaryLastHit  = nullptr;
   tunnelHit       = nullptr;
   trajectory      = nullptr;
+  histos          = nullptr;
 }
 #ifndef __ROOTDOUBLE__
 BDSOutputROOTEventSampler<float>*    Event::GetPrimaries() 
@@ -68,6 +69,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
   t->SetBranchAddress("PrimaryLastHit.",&primaryLastHit);
   t->SetBranchAddress("TunnelHit.",&tunnelHit);
   t->SetBranchAddress("Trajectory.",&trajectory);
+  t->SetBranchAddress("Histos.",&histos);
 
   if(Config::Instance()->Debug())
   {
@@ -77,6 +79,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << primaryLastHit << std::endl;
     std::cout << "Event::SetBranchAddress> TunnelHit.       " << tunnelHit << std::endl;
     std::cout << "Event::SetBranchAddress> Trajectory.      " << trajectory << std::endl;
+    std::cout << "Event::SetBranchAddress> Histos.          " << histos << std::endl;
   }
 
   for(int i=0;i<(int)samplerNames.size();++i)

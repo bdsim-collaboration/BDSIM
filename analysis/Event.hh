@@ -11,6 +11,7 @@
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 
 #define MAXSAMPLERS 30000
 class Event
@@ -41,10 +42,11 @@ public :
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float>*       samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler<float>*> samplers;
-#else 
+#else
   BDSOutputROOTEventSampler<double>*       samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler<double>*> samplers;
 #endif
+  BDSOutputROOTEventHistograms            *histos;
 private:
 
 
