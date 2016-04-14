@@ -69,4 +69,5 @@ add_executable(rebdsim rebdsim.cc)
 set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 
-set (bdsimBinary rebdsim)
+# installation
+bdsim_install_targets(rebdsim rebdsimLib)
