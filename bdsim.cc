@@ -154,7 +154,6 @@ int main(int argc,char** argv)
       BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
       physList->RegisterPhysics(pWorld);
       /* Biasing */
-#if G4VERSION_NUMBER > 999
       G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
       physBias->Bias("e-");
       physBias->Bias("e+");
@@ -165,7 +164,6 @@ int main(int argc,char** argv)
       physBias->Bias("pi-");
       physBias->Bias("pi+");
       physList->RegisterPhysics(physBias);
-#endif
       runManager->SetUserInitialization(physList);
     }
   else
