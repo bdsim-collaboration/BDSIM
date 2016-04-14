@@ -71,9 +71,9 @@ private:
   G4MagIntegratorStepper* CreateIntegratorEM(BDSFieldInfo& info,
 					     G4EquationOfMotion* eqOfM);
 
-  /// Create an integrator for a general E field. This currently delegates
-  /// to CreateIntegratorEM as Geant4 isn't clear about which ones can be
-  /// used for an E field.
+  /// Create an integrator for a general E field. 
+  /// Same ones as EM but keep this method for clarity as Geant4 unclear - only based
+  /// on their examples. examples/extended/field/field02/src/F02ElectricFieldSetup.cc
   G4MagIntegratorStepper* CreateIntegratorE(BDSFieldInfo& info,
 					    G4EquationOfMotion* eqOfM);
   

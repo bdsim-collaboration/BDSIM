@@ -354,8 +354,6 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
 G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(BDSFieldInfo&       info,
 							   G4EquationOfMotion* eqOfM)
 {
-  // Geant4 is pretty unclear about which ones are only for E fields if any
-  // so just use EM ones for now.
   return CreateIntegratorEM(info,eqOfM);
 }
 
