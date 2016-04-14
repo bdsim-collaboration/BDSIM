@@ -8,6 +8,20 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms()
   TH2D::AddDirectory(kFALSE);
 };
 
+BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(BDSOutputROOTEventHistograms &rhs)
+{
+// loop over 1d histograms
+  for(auto h : rhs.histograms1D)
+  {
+    this->histograms1D.push_back((TH1D*)h->Clone());
+  }
+
+  for(auto h : rhs.histograms2D)
+  {
+    this->histograms2D.push_back((TH2D*)h->Clone());
+  }
+}
+
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
 {
 
@@ -89,5 +103,14 @@ void BDSOutputROOTEventHistograms::Flush()
   {
     i->Clear();
   }
+}
+
+void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms *rhs)
+{
+  for(auto h : rhs->histograms1D )
+  {
+//    this->
+  }
+
 }
 #endif

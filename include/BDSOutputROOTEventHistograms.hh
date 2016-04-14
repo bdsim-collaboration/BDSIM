@@ -11,10 +11,11 @@
 #include "TH1D.h"
 #include "TH2D.h"
 
-class BDSOutputROOTEventHistograms
+class BDSOutputROOTEventHistograms : public TObject
 {
 public:
   BDSOutputROOTEventHistograms();
+  BDSOutputROOTEventHistograms(BDSOutputROOTEventHistograms &h);
   virtual ~BDSOutputROOTEventHistograms();
 
 #ifndef __ROOTBUILD__
@@ -36,8 +37,10 @@ public:
   std::vector<TH1D*>& Get1DHistograms() {return histograms1D;}
   std::vector<TH2D*>& Get2DHistograms() {return histograms2D;}
 
-TH1D* Get1DHistogram(int iHisto) {return histograms1D[iHisto];}
-TH2D* Get2DHistogram(int iHisto) {return histograms2D[iHisto];}
+  TH1D* Get1DHistogram(int iHisto) {return histograms1D[iHisto];}
+  TH2D* Get2DHistogram(int iHisto) {return histograms2D[iHisto];}
+
+  void Add(BDSOutputROOTEventHistograms *h);
 
 private:
   std::vector<TH1D*> histograms1D;
