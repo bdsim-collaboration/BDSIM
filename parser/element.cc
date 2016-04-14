@@ -287,7 +287,7 @@ void Element::flush() {
   samplerType = "none"; // allowed "none", "plane", "cylinder"
   samplerRadius = 0;
   
-  precisionRegion = 0;
+  precisionRegion = false;
   region = "";
   
   A = 0;

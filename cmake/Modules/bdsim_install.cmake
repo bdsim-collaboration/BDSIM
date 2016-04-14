@@ -32,7 +32,7 @@ macro(bdsim_install_libs)
 endmacro()
 macro(bdsim_install_doc)
     install(FILES ${ARGN}
-        DESTINATION share/${PROJECT_NAME}/doc/${DOC_POSTFIX}
+        DESTINATION share/bdsim/doc/${DOC_POSTFIX}
         COMPONENT Documentation)
 endmacro()
 macro(bdsim_install_scripts)
@@ -42,8 +42,18 @@ macro(bdsim_install_scripts)
 endmacro()
 macro(bdsim_install_vis)
     install(FILES ${ARGN}
-        DESTINATION share/${PROJECT_NAME}/vis/
+        DESTINATION share/bdsim/vis/
         COMPONENT Visualisation)
+endmacro()
+macro(bdsim_install_analysis_headers)
+  install(FILES ${ARGN}
+    DESTINATION include/bdsim/analysis
+    COMPONENT Headers)
+endmacro()
+macro(bdsim_install_macros)
+  install(FILES ${ARGN}
+    DESTINATION share/bdsim/analysis
+    COMPONENT Scripts)
 endmacro()
 
 # This macro fixes the MACOSX_BUNDLES
