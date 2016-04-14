@@ -32,6 +32,9 @@ protected:
   std::vector<SamplerAnalysis*> samplerAnalyses;
   std::map<std::string, TH1*>   histograms1D;
   std::map<std::string, TH2*>   histograms2D;
+  BDSOutputROOTEventHistograms  *histoSum;
+
+  ClassDef(EventAnalysis,1);
 };
 
 #endif
