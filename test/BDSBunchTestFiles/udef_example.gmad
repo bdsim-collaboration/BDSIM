@@ -1,8 +1,0 @@
-beam,  particle="e-",
-	distrType="x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:E[MeV]",
-       distrFile="path/to/beam/file.txt"; !The beam file contains space separated comlumns containing the above paramters, with no header.
-
-option,ngenerate=307320;
-option,nperfile=30732;
-
-
