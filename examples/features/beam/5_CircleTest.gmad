@@ -1,0 +1,5 @@
+include 5_Circle.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=1000;

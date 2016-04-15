@@ -1,0 +1,5 @@
+include 4_Square.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=1000;

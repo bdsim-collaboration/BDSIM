@@ -1,0 +1,5 @@
+include 12_Composite.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=1000;
