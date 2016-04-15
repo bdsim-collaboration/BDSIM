@@ -15,7 +15,7 @@ class BDSOutputROOTEventHistograms : public TObject
 {
 public:
   BDSOutputROOTEventHistograms();
-  BDSOutputROOTEventHistograms(BDSOutputROOTEventHistograms &h);
+  BDSOutputROOTEventHistograms(const BDSOutputROOTEventHistograms &h);
   virtual ~BDSOutputROOTEventHistograms();
 
 #ifndef __ROOTBUILD__
