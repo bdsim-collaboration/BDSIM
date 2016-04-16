@@ -41,6 +41,9 @@ foreach(header ${rebdsimLibLinkDefs})
                 SOURCE ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
         )
+
+        # keep list of ROOT pcms
+        set(root_pcms ${root_pcms} ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm)
     else()
         # ROOT 5
         add_custom_command(
@@ -71,6 +74,9 @@ target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 
 # Installation
 bdsim_install_targets(rebdsim rebdsimLib)
+
+# Install pcms
+bdsim_install_libs(${root_pcms})
 
 file(GLOB rebdsimMacros ${CMAKE_CURRENT_SOURCE_DIR}/*.C)
 bdsim_install_macros(${rebdsimMacros})
