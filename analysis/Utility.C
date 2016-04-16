@@ -15,6 +15,4 @@ void DrawPhaseEllipse(TString fileName)
   BDSOutputROOTEventOptions *o = 0;
   t->SetBranchAddress("Options.",&o);
   t->GetEntry(0);
-
-
 }
