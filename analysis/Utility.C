@@ -1,3 +1,12 @@
+#include <vector>
+
+#include "TFile.h"
+#include "TTree.h"
+#include "TH1D.h"
+
+#include "BDSOutputROOTEventOptions.hh"
+#include "BDSOutputROOTEventHistograms.hh"
+
 std::vector<TH1D*>& GetRun1DHistograms(TString fileName)
 {
   TFile *f = new TFile(fileName.Data());
@@ -8,11 +17,12 @@ std::vector<TH1D*>& GetRun1DHistograms(TString fileName)
   return h->Get1DHistograms();
 }
 
-void DrawPhaseEllipse(TString fileName)
+BDSOutputROOTEventOptions* GetOptions(TString fileName)
 {
   TFile *f = new TFile(fileName.Data());
   TTree *t = (TTree*)f->Get("Options");
-  BDSOutputROOTEventOptions *o = 0;
-  t->SetBranchAddress("Options.",&o);
+  BDSOutputROOTEventOptions *h = 0;
+  t->SetBranchAddress("Options.",&h);
   t->GetEntry(0);
+  return h;
 }
