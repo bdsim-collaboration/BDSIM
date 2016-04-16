@@ -2,10 +2,12 @@
 
 #include "TFile.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TH1D.h"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventHistograms.hh"
+#include "Event.hh"
 
 std::vector<TH1D*>& GetRun1DHistograms(TString fileName)
 {
@@ -26,3 +28,4 @@ BDSOutputROOTEventOptions* GetOptions(TString fileName)
   t->GetEntry(0);
   return h;
 }
+
