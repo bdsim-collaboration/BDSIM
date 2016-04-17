@@ -44,7 +44,7 @@ public:
   {
     for (G4int i : {0, 1, 2})
       {values[i] = rhs.values[i];}
-    return this*;
+    return *this;
   }
 
   /// Access / set a single element.
@@ -52,7 +52,7 @@ public:
   {
     if (index > 2)
       {G4cerr << "index outside array" << G4endl; exit(1);}
-    return &values[index];
+    return values[index];
   }
 
   /// Access a single element.
@@ -60,7 +60,7 @@ public:
   {
     if (index > 2)
       {G4cerr << "index outside array" << G4endl; exit(1);}
-    return &values[index];
+    return values[index];
   }
 
   /// @{ Accessor by name.
