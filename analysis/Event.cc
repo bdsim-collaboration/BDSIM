@@ -56,9 +56,9 @@ BDSOutputROOTEventTrajectory* Event::GetTrajectory()
 
 void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
 {
-  if(Config::Instance()->Debug())
+  if(Config::Instance())
   {
-    std::cout << "Event::SetBranchAddress" << std::endl;
+    if(Config::Instance()->Debug()) std::cout << "Event::SetBranchAddress" << std::endl;
   }
 
   t->GetEntry(0);                                            // Pointers don't appear to be valid without this
@@ -71,23 +71,27 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
   t->SetBranchAddress("Trajectory.",&trajectory);
   t->SetBranchAddress("Histos.",&histos);
 
-  if(Config::Instance()->Debug())
+  if(Config::Instance())
   {
-    std::cout << "Event::SetBranchAddress> Primary.         " << primaries << std::endl;
-    std::cout << "Event::SetBranchAddress> Eloss.           " << eloss << std::endl;
-    std::cout << "Event::SetBranchAddress> PrimaryFirstHit. " << primaryFirstHit << std::endl;
-    std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << primaryLastHit << std::endl;
-    std::cout << "Event::SetBranchAddress> TunnelHit.       " << tunnelHit << std::endl;
-    std::cout << "Event::SetBranchAddress> Trajectory.      " << trajectory << std::endl;
-    std::cout << "Event::SetBranchAddress> Histos.          " << histos << std::endl;
+    if(Config::Instance()->Debug())
+    {
+      std::cout << "Event::SetBranchAddress> Primary.         " << primaries << std::endl;
+      std::cout << "Event::SetBranchAddress> Eloss.           " << eloss << std::endl;
+      std::cout << "Event::SetBranchAddress> PrimaryFirstHit. " << primaryFirstHit << std::endl;
+      std::cout << "Event::SetBranchAddress> PrimaryLastHit.  " << primaryLastHit << std::endl;
+      std::cout << "Event::SetBranchAddress> TunnelHit.       " << tunnelHit << std::endl;
+      std::cout << "Event::SetBranchAddress> Trajectory.      " << trajectory << std::endl;
+      std::cout << "Event::SetBranchAddress> Histos.          " << histos << std::endl;
+    }
   }
 
   for(int i=0;i<(int)samplerNames.size();++i)
   {
     t->SetBranchAddress(samplerNames[i].c_str(),&samplersA[i]);
-    if(Config::Instance()->Debug())
+    if(Config::Instance())
     {
-      std::cout << "Event::SetBranchAddress> " << samplerNames[i].c_str() << " " << samplersA[i] << std::endl;
+      if(Config::Instance()->Debug())
+        std::cout << "Event::SetBranchAddress> " << samplerNames[i].c_str() << " " << samplersA[i] << std::endl;
     }
     samplers.push_back(samplersA[i]);
   }
