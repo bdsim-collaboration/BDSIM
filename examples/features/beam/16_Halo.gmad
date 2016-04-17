@@ -2,12 +2,12 @@ nEmitX    = 5;
 nEmitY    = 5;
 nEnvelX   = 1.1;
 nEnvelY   = 1.1;
-emitX     = 0.05*mm;
-emitY     = 0.05*mm;
+emitX     = 5e-9;
+emitY     = 5e-9;
 emitHaloX = nEmitX*emitX;
 emitHaloY = nEmitY*emitY;
-betX      = 0.6*m;
-betY      = 0.6*m;
+betX      = 0.6;
+betY      = 0.6;
 alfX      = -1.0;
 alfY      = 1.0;
 gamX      = (1+alfX*alfX)/betX;
@@ -42,8 +42,17 @@ beam, particle="e-",
       haloEnvelopeCollMaxX = sqrt(emitHaloX*betX),
       haloEnvelopeCollMinY = -sqrt(emitHaloY*betY),
       haloEnvelopeCollMaxY = sqrt(emitHaloY*betY),
+      haloEnvelopeCollMinXp = -sqrt(emitHaloX*gamX),
+      haloEnvelopeCollMaxXp = sqrt(emitHaloX*gamX),
+      haloEnvelopeCollMinYp = -sqrt(emitHaloY*gamY),
+      haloEnvelopeCollMaxYp = sqrt(emitHaloY*gamY),
       haloPSWeightParameter=1,
       haloPSWeightFunction="oneoverr";
+
+print, emitHaloX;
+print, emitHaloY;
+print, maxX;
+print, maxY;
 
 !beam, particle="e-",
 !      energy=1.0*GeV,
