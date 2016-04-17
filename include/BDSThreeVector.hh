@@ -1,7 +1,9 @@
 #ifndef BDSTHREEVECTOR_H
 #define BDSTHREEVECTOR_H
 
-#include <stdexcept>
+#include "globals.hh" // geant4 types / globals
+
+#include <ostream>
 
 /**
  * @brief Simple three vector that's templated so the right type can be used.
@@ -22,19 +24,38 @@ template <typename T>
 class BDSThreeVector
 {
 public:
+  /// Default constructor.
   BDSThreeVector()
   {values[0] = 0; values[1] = 0; values[2] = 0;}
-  
+
+  /// Alternate constructor.
   BDSThreeVector(T x, T y, T z)
   {values[0] = x; values[1] = y; values[2] = z;}
 
+  /// Copy constructor.
+  BDSThreeVector(const BDSThreeVector& other)
+  {
+    for (G4int i : {0, 1, 2})
+      {values[i] = other.values[i];}
+  }
+
+  /// Assignment operator.
+  BDSThreeVector& operator=(const BDSThreeVector& rhs)
+  {
+    for (G4int i : {0, 1, 2})
+      {values[i] = rhs.values[i];}
+    return this*;
+  }
+
+  /// Access / set a single element.
   T& operator[](const G4int index)
   {
     if (index > 2)
       {G4cerr << "index outside array" << G4endl; exit(1);}
     return &values[index];
   }
-  
+
+  /// Access a single element.
   const T& operator[](const G4int index) const
   {
     if (index > 2)
@@ -42,9 +63,11 @@ public:
     return &values[index];
   }
 
-  const T& x() const {return values[0];}
-  const T& y() const {return values[1];}
-  const T& z() const {return values[2];}
+  /// @{ Accessor by name.
+  inline const T& x() const {return values[0];}
+  inline const T& y() const {return values[1];}
+  inline const T& z() const {return values[2];}
+  /// @}
 
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSThreeVector const &v)
