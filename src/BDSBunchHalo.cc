@@ -1,7 +1,7 @@
 #include "BDSBunchHalo.hh"
 #include "BDSDebug.hh"
 
-// #define BDSDEBUG
+///#define BDSDEBUG
 
 BDSBunchHalo::BDSBunchHalo():
   betaX(0.0), betaY(0.0),
@@ -91,12 +91,11 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
  #endif
 
     // check if particle is within normal beam core, if so continue generation
-    if ((emitXSp < emitX || emitYSp < emitY) || (emitXSp > envelopeEmitX || emitYSp > envelopeEmitY)) //  ||
-        //(dx  > envelopeCollMinX  || dx < envelopeCollMaxX) ||
-        //(dxp > envelopeCollMinXp || dxp < envelopeCollMaxXp) ||
-        //(dy  > envelopeCollMinY  || dx < envelopeCollMaxY) ||
-        //(dyp > envelopeCollMinYp || dxp < envelopeCollMaxYp)
-        //)
+    if ((emitXSp < emitX || emitYSp < emitY) || (emitXSp > envelopeEmitX || emitYSp > envelopeEmitY)  ||
+        ((dx  > envelopeCollMinX)  && (dx < envelopeCollMaxX)) ||
+        ((dy  > envelopeCollMinY)  && (dy < envelopeCollMaxY)))
+    //      (dxp > envelopeCollMinXp || dxp < envelopeCollMaxXp) ||
+    //    (dyp > envelopeCollMinYp || dxp < envelopeCollMaxYp))
     {
  #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "inside> " << G4endl;
@@ -132,10 +131,10 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       //continue;
 
       // add to reference orbit 
-      x0 += dx;
-      y0 += dy;
-      xp += dxp;
-      yp += dyp;
+      x0 += dx * CLHEP::m;
+      y0 += dy * CLHEP::m;
+      xp += dxp * CLHEP::rad;
+      yp += dyp * CLHEP::rad;
 
       zp = CalculateZp(xp, yp, Zp0);
       t = 0 * CLHEP::s;
