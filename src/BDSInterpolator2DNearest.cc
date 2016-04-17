@@ -1,3 +1,4 @@
+#include "BDSArray2DCoords.hh"
 #include "BDSInterpolator2DNearest.hh"
 
 template<typename T>

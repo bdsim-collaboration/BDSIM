@@ -1,7 +1,7 @@
 #ifndef BDSINTERPOLATOR2DNEAREST_H
 #define BDSINTERPOLATOR2DNEAREST_H
 
-#include "BDSArray2DCoord.hh"
+#include "BDSArray2DCoords.hh"
 
 template<typename T>
 class BDSInterpolator2DNearest
