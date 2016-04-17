@@ -1,5 +1,0 @@
-include 11_PLACET.gmad
-include options.gmad
-include fodo.gmad;
-
-option, ngenerate=4;

@@ -1,4 +1,0 @@
-beam,  particle="proton",
-       energy = 7*GeV,
-       distrType  = "sixtrack",
-       distrFile  = "15_LPI_BLP_out_6.5TeV_hHaloB2_h5_run_00310.s";

@@ -1,5 +1,0 @@
-include 6_EShell.gmad
-include options.gmad
-include fodo.gmad;
-
-option, ngenerate=1000;

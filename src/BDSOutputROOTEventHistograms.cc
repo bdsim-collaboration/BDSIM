@@ -6,9 +6,10 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms()
 {
   TH1D::AddDirectory(kFALSE);
   TH2D::AddDirectory(kFALSE);
-};
+}
 
-BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(BDSOutputROOTEventHistograms &rhs)
+BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEventHistograms &rhs):
+  TObject(rhs)
 {
 // loop over 1d histograms
   for(auto h : rhs.histograms1D)
@@ -25,7 +26,7 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(BDSOutputROOTEventHis
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
 {
 
-};
+}
 
 #ifndef __ROOTBUILD__
 
