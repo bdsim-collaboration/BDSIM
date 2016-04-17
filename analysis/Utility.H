@@ -7,5 +7,6 @@
 
 std::vector<TH1D*>& GetRun1DHistograms(TString fileName);
 BDSOutputROOTEventOptions* GetOptions(TString fileName);
+void GetEvent(TString fileName, TChain *c, Event *e);
 
 #endif

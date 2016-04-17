@@ -29,3 +29,10 @@ BDSOutputROOTEventOptions* GetOptions(TString fileName)
   return h;
 }
 
+void GetEvent(TString fileName, TChain *c, Event *e)
+{
+  c->Add(fileName.Data());
+  std::vector<std::string> samplerNames;
+  e->SetBranchAddress(c,samplerNames);
+  return;
+}
