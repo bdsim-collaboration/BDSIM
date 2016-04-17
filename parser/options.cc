@@ -151,6 +151,17 @@ void Options::PublishMembers()
   publish("Rmax",&Options::Rmax);
 
   // options for beam distrType="halo"
+  publish("haloEnvelopeEmitX", &Options::haloEnvelopeEmitX);
+  publish("haloEnvelopeEmitY", &Options::haloEnvelopeEmitY);
+  publish("haloEnvelopeCollMinX", &Options::haloEnvelopeCollMinX);
+  publish("haloEnvelopeCollMaxX", &Options::haloEnvelopeCollMaxX);
+  publish("haloEnvelopeCollMinXp", &Options::haloEnvelopeCollMinXp);
+  publish("haloEnvelopeCollMaxXp", &Options::haloEnvelopeCollMaxXp);
+  publish("haloEnvelopeCollMinY", &Options::haloEnvelopeCollMinY);
+  publish("haloEnvelopeCollMaxY", &Options::haloEnvelopeCollMaxY);
+  publish("haloEnvelopeCollMinYp", &Options::haloEnvelopeCollMinYp);
+  publish("haloEnvelopeCollMaxYp", &Options::haloEnvelopeCollMaxYp);
+
   publish("haloPSWeightParameter",&Options::haloPSWeightParameter);
   publish("haloPSWeightFunction",&Options::haloPSWeightFunction);
 
