@@ -1,7 +1,6 @@
 #include "BDSBunchHalo.hh"
 #include "BDSDebug.hh"
 
-///#define BDSDEBUG
 
 BDSBunchHalo::BDSBunchHalo():
   betaX(0.0), betaY(0.0),
