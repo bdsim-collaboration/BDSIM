@@ -130,6 +130,8 @@ void Element::PublishMembers()
   publish("components",&Element::components);
   publish("componentsWeights",&Element::componentsWeights);
   publish("componentsFractions",&Element::componentsFractions);
+
+  publish("colour", &Element::colour);
 }
 
 std::string Element::getPublishedName(std::string name)const
@@ -310,6 +312,8 @@ void Element::flush() {
   airmaterial="";
   spec = "";
   cavityModel = "";
+
+  colour = "warning";
 }
 
 double Element::property_lookup(std::string property_name)const{

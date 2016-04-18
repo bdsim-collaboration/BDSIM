@@ -140,6 +140,9 @@ namespace GMAD
     void set(const Parameters& params);
     void set(const Parameters& params,std::string nameIn, ElementType typeIn);
     ///@}
+
+    /// Override colour for certain items
+    std::string colour;
   
     /// constructor
     Element();

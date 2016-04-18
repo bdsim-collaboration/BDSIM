@@ -25,7 +25,8 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
 				     G4double xOutApertureIn,
 				     G4double yOutApertureIn,
 				     G4String collimatorMaterialIn,
-				     G4String vacuumMaterialIn):
+				     G4String vacuumMaterialIn,
+				     G4String colourIn):
   BDSAcceleratorComponent(name, length, 0, type),
   outerDiameter(outerDiameterIn),
   xAperture(xApertureIn),
@@ -33,7 +34,8 @@ BDSCollimatorBase::BDSCollimatorBase(G4String name,
   xOutAperture(xOutApertureIn),
   yOutAperture(yOutApertureIn),
   collimatorMaterial(collimatorMaterialIn),
-  vacuumMaterial(vacuumMaterialIn)
+  vacuumMaterial(vacuumMaterialIn),
+  colour(colourIn)
 {
   if(outerDiameter==0)
     {outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
@@ -125,7 +127,7 @@ void BDSCollimatorBase::Build()
 						      material,                 // material
 						      name + "_collimator_lv"); // name
 
-  G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("collimator"));
+  G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour(colour));
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
 
@@ -165,7 +167,11 @@ void BDSCollimatorBase::Build()
 
   if (buildVacuumAndAperture)
     {
-      G4Material* vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial);
+      G4Material* vMaterial = nullptr;
+      if (vacuumMaterial == "")
+	{vMaterial = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->vacuumMaterial;}
+      else
+	{vMaterial = BDSMaterials::Instance()->GetMaterial(vacuumMaterial);}
       G4LogicalVolume* vacuumLV = new G4LogicalVolume(vacuumSolid,          // solid
 						      vMaterial,            // material
 						      name + "_vacuum_lv"); // name

@@ -930,7 +930,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      element->material);
+				      G4String(element->material),
+				      G4String(element->vacuumMaterial),
+				      G4String(element->colour));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -954,7 +956,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     element->material);
+				     G4String(element->material),
+				     G4String(element->vacuumMaterial),
+				     G4String(element->colour));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
