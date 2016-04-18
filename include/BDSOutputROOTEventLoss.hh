@@ -21,9 +21,7 @@ public:
   std::vector<int>          modelID;
   /* process */
 
-  std::vector<int>          processID;
-  std::vector<int>          trackID;
-  std::vector<int>          geomFlag;
+  // std::vector<int>          geomFlag;
 
   BDSOutputROOTEventLoss();
   virtual ~BDSOutputROOTEventLoss();

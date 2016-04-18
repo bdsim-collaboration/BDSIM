@@ -18,11 +18,11 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
 {
   this->n++;
   this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
-  this->S.push_back     ( (float &&) (hit->GetSHit()      / CLHEP::m));
+  this->S.push_back     ( (float &&) (hit->GetSHit()   / CLHEP::m));
   this->weight.push_back( (float &&)  hit->GetWeight());
   this->modelID.push_back( (unsigned int)hit->GetBeamlineIndex());
-  this->geomFlag.push_back( (unsigned int)hit->GetGeomFlag());
-//  G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
+  // this->geomFlag.push_back( (unsigned int)hit->GetGeomFlag());
+  // G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
 }
 
 void BDSOutputROOTEventLoss::Fill(BDSTunnelHit *hit)
@@ -41,5 +41,5 @@ void BDSOutputROOTEventLoss::Flush()
   this->S.clear();
   this->weight.clear();
   this->modelID.clear();
-  this->geomFlag.clear();
+  // this->geomFlag.clear();
 }
