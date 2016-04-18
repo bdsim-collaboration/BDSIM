@@ -40,6 +40,10 @@ namespace BDS
                             G4double angleOutIn,
                             G4double lengthIn);
 
+  /// Ensure a variable passed by reference is capped within lowerLimit and upperLimit.
+  /// If it's outside these it is defaulted to those limit values.
+  void EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit);
+
   /// Checks if filename exists
   G4bool FileExists(G4String filename);
   

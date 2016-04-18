@@ -93,6 +93,14 @@ G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
   return intersectionRadius;
 }
 
+void BDS::EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit)
+{
+  if (value < lowerLimit)
+    {value = lowerLimit;}
+  if (value > upperLimit)
+    {value = upperLimit;}
+}
+
 G4bool BDS::FileExists(G4String fileName)
 {
   std::ifstream infile(fileName.c_str());
