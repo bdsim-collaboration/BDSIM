@@ -22,6 +22,19 @@ public:
     yStep = (yMax - yMin ) / (G4double)nY;
   }
 
+  inline G4double XStep() const
+  {return xStep;}
+
+  inline G4double YStep() const
+  {return yStep;}
+
+  inline G4bool Outside(const G4double x, const G4double y) const
+  {
+    G4bool resultX = (x < xMin) || (x > xMax);
+    G4bool resultY = (y < yMin) || (y > yMax);
+    return resultX || resultY;
+  } 
+
   inline G4double ArrayCoordsFromX(const G4double x) const
   {return (x - xMin) / xStep;}
 
@@ -50,7 +63,8 @@ public:
   {return BDSTwoVector<G4int>(NearestX(x), NearestY(y));}
 
   /// Access / set a single element. Note the [] operator cannot be used as it
-  /// only allows one argument.
+  /// only allows one argument. Trying to set (because non const) a value outside
+  /// the array results in an error and exiting.
   T& operator()(const G4int x, const G4int y)
   {
     if ( (x < xMin) || (x > xMax) || (y < xMin) || (y > yMax) )
@@ -62,9 +76,10 @@ public:
   T& operator()(const BDSTwoVector<G4int> xy)
   {return (*this)(xy[0], xy[1]);}
 
-  /// Access a single element.  Note the [] operator cannot be used as it only
-  /// allows one arument.
-  const T& operator()(const G4double x, G4double y) const
+  /// Access a single element in array coordinates.  Note the [] operator
+  /// cannot be used as it only allows one arument. Accessing coordinates outside
+  /// the array returns a default value of the teamplated parameter.
+  const T& operator()(const G4int x, G4int y) const
   {
     if ( (x < xMin) || (x > xMax) || (y < xMin) || (y > yMax) )
       {return defaultValue;}
