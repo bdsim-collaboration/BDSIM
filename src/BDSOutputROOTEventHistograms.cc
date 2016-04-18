@@ -106,12 +106,12 @@ void BDSOutputROOTEventHistograms::Flush()
   }
 }
 
-void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms *rhs)
-{
-  for(auto h : rhs->histograms1D )
-  {
-//    this->
-  }
-
-}
 #endif
+
+void BDSOutputROOTEventHistograms::Add(BDSOutputROOTEventHistograms * /*rhs*/)
+{
+//   for(auto h : rhs->histograms1D )
+//   {
+// //    this->
+//   }
+}

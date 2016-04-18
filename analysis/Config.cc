@@ -34,10 +34,7 @@ Config* Config::Instance(std::string fileName)
     instance = new Config(fileName);
     instance->ParseInputFile();    
   }
-  else if(!instance)
-  {
-    instance = nullptr;
-  }
+  // else return current instance (can be nullptr!)
   return instance;
 }
 
