@@ -15,7 +15,8 @@ std::map<BDSOutputFormat,std::string>* BDSOutputFormat::dictionary=
     ,{BDSOutputFormat::rootdetailed,"rootdetailed"}
     ,{BDSOutputFormat::rootdetailed,"rootdetaileddouble"}
     ,{BDSOutputFormat::rootevent,"rootevent"}
-    ,{BDSOutputFormat::combined,"combined"}});
+    ,{BDSOutputFormat::combined,"combined"}
+    ,{BDSOutputFormat::rootcombined, "rootcombined"}});
 
 
 BDSOutputFormat BDS::DetermineOutputFormat(G4String outputFormat)
@@ -29,6 +30,7 @@ BDSOutputFormat BDS::DetermineOutputFormat(G4String outputFormat)
   formats["rootdetaileddouble"] = BDSOutputFormat::rootdetaileddouble;
   formats["rootevent"]          = BDSOutputFormat::rootevent;
   formats["combined"]           = BDSOutputFormat::combined;
+  formats["rootcombined"]       = BDSOutputFormat::rootcombined;
 
   outputFormat.toLower();
 
