@@ -1,3 +1,5 @@
+#include "Utility.H"
+
 #include <vector>
 
 #include "TFile.h"
@@ -5,8 +7,6 @@
 #include "TChain.h"
 #include "TH1D.h"
 
-#include "BDSOutputROOTEventOptions.hh"
-#include "BDSOutputROOTEventHistograms.hh"
 #include "Event.hh"
 
 std::vector<TH1D*>& GetRun1DHistograms(TString fileName)
@@ -25,6 +25,16 @@ BDSOutputROOTEventOptions* GetOptions(TString fileName)
   TTree *t = (TTree*)f->Get("Options");
   BDSOutputROOTEventOptions *h = 0;
   t->SetBranchAddress("Options.",&h);
+  t->GetEntry(0);
+  return h;
+}
+
+BDSOutputROOTEventModel* GetModel(TString fileName)
+{
+  TFile *f = new TFile(fileName.Data());
+  TTree *t = (TTree*)f->Get("Model");
+  BDSOutputROOTEventModel *h = 0;
+  t->SetBranchAddress("Model.",&h);
   t->GetEntry(0);
   return h;
 }
