@@ -175,35 +175,35 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   //if we have primary hits, find the first one and write that
   if(primaryCounterHits)
+  {
+    if (primaryCounterHits->entries() > 0)
     {
-      if (primaryCounterHits->entries()>0)
-	{
-	  BDSEnergyCounterHit* thePrimaryHit  = BDS::LowestSPosPrimaryHit(primaryCounterHits);
-	  BDSEnergyCounterHit* thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
-	  //write
-	  if (thePrimaryHit && thePrimaryLoss)
-	    {
-	      bdsOutput->WritePrimaryLoss(thePrimaryLoss);
-	      bdsOutput->WritePrimaryHit(thePrimaryHit);
-	      // general histos
-	      analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
-	      analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
-	      // per element histos
-	      analMan->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
-	      analMan->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
-	    }
-	}
+      BDSEnergyCounterHit *thePrimaryHit = BDS::LowestSPosPrimaryHit(primaryCounterHits);
+      BDSEnergyCounterHit *thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
+      //write
+      if (thePrimaryHit && thePrimaryLoss)
+      {
+        bdsOutput->WritePrimaryLoss(thePrimaryLoss);
+        bdsOutput->WritePrimaryHit(thePrimaryHit);
+        // general histos
+        analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore() / CLHEP::m);
+        analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter() / CLHEP::m);
+        // per element histos
+        analMan->Fill1DHistogram(3, thePrimaryHit->GetSBefore() / CLHEP::m);
+        analMan->Fill1DHistogram(4, thePrimaryLoss->GetSAfter() / CLHEP::m);
+      }
     }
+  }
 
   // we should only try and access the tunnel hits collection if it was actually
   // instantiated which won't happen if the tunnel isn't build and placed. During
   // placement the SD is attached, which is done on demand as it's a read out one,
   // so without placement, accessing this will cause a segfault.
   if (BDSGlobalConstants::Instance()->BuildTunnel())
-    {
-      if (tunnelHits)
-	{bdsOutput->WriteTunnelHits(tunnelHits);} // write hits
-    }
+  {
+    if (tunnelHits)
+      {bdsOutput->WriteTunnelHits(tunnelHits);} // write hits
+  }
       
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished writing energy loss" << G4endl;
