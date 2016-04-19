@@ -71,7 +71,7 @@ G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String ti
 
   Double_t* yedgesD = new Double_t[yedges.size()];
   for(int i=0;i<(int)yedges.size();++i) {
-    yedgesD[i] = xedges[i];
+    yedgesD[i] = yedges[i];
   }
 
   this->histograms2D.push_back(new TH2D(name.data(),title.data(), (Int_t)xedges.size()-1, xedgesD, (Int_t)yedges.size()-1, yedgesD));
