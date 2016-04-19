@@ -19,6 +19,7 @@ public:
   std::vector<float>        weight;
   /* geometry model */
   std::vector<int>          modelID;
+  std::vector<int>          turn;
   /* process */
 
   // std::vector<int>          geomFlag;
