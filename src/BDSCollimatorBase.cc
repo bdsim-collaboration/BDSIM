@@ -126,7 +126,7 @@ void BDSCollimatorBase::Build()
   G4LogicalVolume* collimatorLV = new G4LogicalVolume(collimatorSolid,          // solid
 						      material,                 // material
 						      name + "_collimator_lv"); // name
-
+  
   G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour(colour));
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
