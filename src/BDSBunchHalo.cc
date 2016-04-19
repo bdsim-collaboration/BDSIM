@@ -31,8 +31,8 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt)
   SetBetaY(opt.bety);
   SetAlphaX(opt.alfx);
   SetAlphaY(opt.alfy);
-  SetEmitX(opt.emitx);
-  SetEmitY(opt.emity);  
+  SetEmitX(opt.haloEmitX);
+  SetEmitY(opt.haloEmitY);  
   gammaX = (1.0+alphaX*alphaX)/betaX;
   gammaY = (1.0+alphaY*alphaY)/betaY;  
   SetEnvelopeX(opt.envelopeX); 

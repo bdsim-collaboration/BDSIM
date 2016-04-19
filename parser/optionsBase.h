@@ -142,6 +142,8 @@ namespace GMAD
     ///@}
     
     ///@{ for the halo distribution
+    double      haloEmitX             =  0;
+    double      haloEmitY             =  0;
     double      haloEnvelopeEmitX     =  1e9;
     double      haloEnvelopeEmitY     =  1e9;
     double      haloEnvelopeCollMinX  =  1e9;
