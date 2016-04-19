@@ -112,9 +112,13 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local coordinates: " << local << G4endl;
 #endif
+
+  const BDSSamplerInfo& info = registry->GetInfo(samplerID);
+  G4String samplerName = info.Name();
+  G4double s           = info.SPosition();
+  G4int beamlineIndex  = info.BeamlineIndex();
+  // BDSBeamlineElement* element = info.Element();
   
-  G4String samplerName = registry->GetName(samplerID);      // name
-  G4double s           = registry->GetSPosition(samplerID); // S position
   G4int nEvent = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
   nEvent += globals->EventNumberOffset();
   G4int    PDGtype     = track->GetDefinition()->GetPDGEncoding();
@@ -156,9 +160,7 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH 
 					    turnstaken,
 					    itsType,
 					    process,
-					    0);
-/*theInfo->GetBeamlineIndex() */ // TODO Check with LN why this does not work for samplers
-  
+					    beamlineIndex);
   
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << *smpHit;
