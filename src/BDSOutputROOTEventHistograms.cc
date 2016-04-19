@@ -47,9 +47,9 @@ G4int BDSOutputROOTEventHistograms::Create1DHistogram(G4String name, G4String ti
 //    G4cout << edgesD[i] << G4endl;
   }
   this->histograms1D.push_back(new TH1D(name,title,(Int_t)edges.size()-1,edgesD));
-  return (G4int)this->histograms1D.size();
-
   delete[] edgesD;
+
+  return (G4int)this->histograms1D.size();
 }
 
 G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String title,
@@ -75,10 +75,10 @@ G4int BDSOutputROOTEventHistograms::Create2DHistogram(G4String name, G4String ti
   }
 
   this->histograms2D.push_back(new TH2D(name.data(),title.data(), (Int_t)xedges.size()-1, xedgesD, (Int_t)yedges.size()-1, yedgesD));
-  return (G4int)this->histograms2D.size();
-
   delete[] xedgesD;
   delete[] yedgesD;
+
+  return (G4int)this->histograms2D.size();
 }
 
 void BDSOutputROOTEventHistograms::Fill1DHistogram(G4int histoId, G4double value,
