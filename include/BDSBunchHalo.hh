@@ -24,9 +24,9 @@ private :
   G4double alphaX;
   G4double alphaY;
   G4double emitX;
-  G4double emitY; 
+  G4double emitY;
   G4double gammaX;
-  G4double gammaY;  
+  G4double gammaY;
 
   G4double envelopeX; 
   G4double envelopeY;
