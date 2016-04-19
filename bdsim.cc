@@ -114,11 +114,23 @@ int main(int argc,char** argv)
       bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
       bdsOutput->Initialise();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
-      for (G4int i = 0; i < globalConstants->NGenerate(); i++)
+      const G4int nToGenerate = globalConstants->NGenerate();
+      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
+      G4int printModulo = (G4int)ceil(nToGenerate * fraction);
+      if (printModulo < 0)
+	{printModulo = 1;}
+      
+      for (G4int i = 0; i < nToGenerate; i++)
       {
+	if (i%printModulo == 0)
+	  {
+	    G4cout << "\r Primary> " << std::setprecision(1) << std::fixed << i+1 << " of " << nToGenerate;
+	    G4cout.flush();
+	  }
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
         bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
       }
+      G4cout << G4endl;
       delete bdsBunch;
       delete bdsOutput;
       exit(0);
