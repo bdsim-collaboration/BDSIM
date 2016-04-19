@@ -573,7 +573,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // magnetic field
   // CHECK SIGNS OF B, B', ANGLE
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -625,7 +625,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   G4double length = element->l*CLHEP::m;
   
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -662,7 +662,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   
   // magnetic field
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -880,7 +880,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       bField = element->B * CLHEP::tesla;
       element->ks = (bField/brho) / CLHEP::m;
