@@ -573,7 +573,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // magnetic field
   // CHECK SIGNS OF B, B', ANGLE
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -625,7 +625,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   G4double length = element->l*CLHEP::m;
   
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -662,7 +662,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   
   // magnetic field
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -880,7 +880,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       bField = element->B * CLHEP::tesla;
       element->ks = (bField/brho) / CLHEP::m;
@@ -930,7 +930,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      element->material);
+				      G4String(element->material),
+				      G4String(element->vacuumMaterial),
+				      PrepareColour(element, "collimator"));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -954,7 +956,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     element->material);
+				     G4String(element->material),
+				     G4String(element->vacuumMaterial),
+				     PrepareColour(element, "collimator"));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
@@ -1349,4 +1353,12 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
 
   return info;
+}
+
+G4String BDSComponentFactory::PrepareColour(Element const* element, const G4String fallback) const
+{
+  G4String colour = element->colour;
+  if (colour == "")
+    {colour = fallback;}
+  return colour;
 }

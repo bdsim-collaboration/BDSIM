@@ -125,6 +125,8 @@ private:
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
 
+  G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
+
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
 };

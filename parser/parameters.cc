@@ -85,6 +85,8 @@ Parameters::Parameters() {
   setMap["degraderHeight"] = false;
   setMap["materialThickness"] = false;
   setMap["degraderOffset"] = false;
+
+  setMap["colour"] = false;
 }
 
 void Parameters::flush() {

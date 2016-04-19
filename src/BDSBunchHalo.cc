@@ -1,7 +1,6 @@
 #include "BDSBunchHalo.hh"
 #include "BDSDebug.hh"
 
-///#define BDSDEBUG
 
 BDSBunchHalo::BDSBunchHalo():
   betaX(0.0), betaY(0.0),
@@ -82,13 +81,13 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     double emitXSp = gammaX * pow(dx, 2) + 2. * alphaX * dx * dxp + betaX * pow(dxp, 2);
     double emitYSp = gammaY * pow(dy, 2) + 2. * alphaY * dy * dyp + betaY * pow(dyp, 2);
 
- #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
-    G4cout << __METHOD_NAME__ << "Xcollimators> "  << envelopeCollMinX << " " << envelopeCollMaxX << " " << envelopeCollMinXp << " " << envelopeCollMaxXp << G4endl;
-    G4cout << __METHOD_NAME__ << "Ycollimators> "  << envelopeCollMinY << " " << envelopeCollMaxY << " " << envelopeCollMinYp << " " << envelopeCollMaxYp << G4endl;
-    G4cout << __METHOD_NAME__ << "emittance> " << emitX << " " << emitXSp << " " << envelopeEmitX << " "
-                                               << emitY << " " << emitYSp << " " << envelopeEmitY << G4endl;
- #endif
+    // #ifdef BDSDEBUG
+    //    G4cout << __METHOD_NAME__ << "phase space> " << dx << " " << dy << " " << dxp << " " << dyp << G4endl;
+    //    G4cout << __METHOD_NAME__ << "Xcollimators> "  << envelopeCollMinX << " " << envelopeCollMaxX << " " << envelopeCollMinXp << " " << envelopeCollMaxXp << G4endl;
+    //    G4cout << __METHOD_NAME__ << "Ycollimators> "  << envelopeCollMinY << " " << envelopeCollMaxY << " " << envelopeCollMinYp << " " << envelopeCollMaxYp << G4endl;
+    //    G4cout << __METHOD_NAME__ << "emittance> " << emitX << " " << emitXSp << " " << envelopeEmitX << " "
+    //                                               << emitY << " " << emitYSp << " " << envelopeEmitY << G4endl;
+    // #endif
 
     // check if particle is within normal beam core, if so continue generation
     if ((emitXSp < emitX || emitYSp < emitY) || (emitXSp > envelopeEmitX || emitYSp > envelopeEmitY)  ||
@@ -97,9 +96,9 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     //      (dxp > envelopeCollMinXp || dxp < envelopeCollMaxXp) ||
     //    (dyp > envelopeCollMinYp || dxp < envelopeCollMaxYp))
     {
- #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "inside> " << G4endl;
- #endif
+      // #ifdef BDSDEBUG
+      //      G4cout << __METHOD_NAME__ << "inside> " << G4endl;
+      // #endif
       continue;
     }
     else
