@@ -8,7 +8,7 @@ EventAnalysis::EventAnalysis()
 {
   event = nullptr;
   chain = nullptr;
-
+  histoSum = nullptr;
 }
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
