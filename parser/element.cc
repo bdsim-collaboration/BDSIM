@@ -313,7 +313,7 @@ void Element::flush() {
   spec = "";
   cavityModel = "";
 
-  colour = "warning";
+  colour = "";
 }
 
 double Element::property_lookup(std::string property_name)const{
