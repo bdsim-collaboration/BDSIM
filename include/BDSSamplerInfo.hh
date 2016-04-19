@@ -1,10 +1,11 @@
 #ifndef BDSSAMPLERINFO_H
 #define BDSSAMPLERINFO_H
 
+#include "BDSBeamlineElement.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
-class BDSBeamlineElement;
 class BDSSampler;
 
 /**
@@ -42,6 +43,7 @@ public:
   inline G4Transform3D TransformInverse() const {return transformInverse;}
   inline G4double      SPosition()        const {return sPosition;}
   inline BDSBeamlineElement* Element()    const {return element;}
+  inline G4int         BeamlineIndex()    const;
   /// @}
   
 private:
@@ -66,5 +68,13 @@ private:
   /// The beam line element to which this sampler pertains (if any).
   BDSBeamlineElement* element;
 };
+
+G4int BDSSamplerInfo::BeamlineIndex() const
+{
+  if (element)
+    {return element->GetIndex();}
+  else
+    {return -1;}
+}
 
 #endif

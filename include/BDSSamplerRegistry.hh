@@ -77,11 +77,13 @@ public:
   ///@}
 
   /// @{ Accessor
-  inline G4String      GetName(G4int name) const;
-  inline BDSSampler*   GetSampler(G4int sampler) const;
-  inline G4Transform3D GetTransform(G4int index) const;
-  inline G4Transform3D GetTransformInverse(G4int index) const;
-  inline G4double      GetSPosition(G4int index) const;
+  inline G4String       GetName(G4int name) const;
+  inline BDSSampler*    GetSampler(G4int sampler) const;
+  inline G4Transform3D  GetTransform(G4int index) const;
+  inline G4Transform3D  GetTransformInverse(G4int index) const;
+  inline G4double       GetSPosition(G4int index) const;
+  inline const BDSSamplerInfo& GetInfo(G4int index) const {return infos.at(index);}
+  inline G4int          GetBeamlineIndex(G4int index) const;
   /// @}
 
   /// Access all names at once
@@ -123,5 +125,8 @@ inline G4int BDSSamplerRegistry::NumberOfExistingSamplers() const
 
 inline size_t BDSSamplerRegistry::size() const
 {return infos.size();}
+
+inline G4int BDSSamplerRegistry::GetBeamlineIndex(G4int index) const
+{return infos.at(index).BeamlineIndex();}
 
 #endif
