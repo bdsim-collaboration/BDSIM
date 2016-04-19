@@ -116,19 +116,19 @@ private:
 #endif
 
   // energy loss
-  BDSOutputROOTEventLoss        *eLoss = nullptr;
+  BDSOutputROOTEventLoss        *eLoss       = nullptr;
   // primary first hit
-  BDSOutputROOTEventHit         *pFirstHit = nullptr;
+  BDSOutputROOTEventHit         *pFirstHit   = nullptr;
   // primary final hit
-  BDSOutputROOTEventHit         *pLastHit = nullptr;
+  BDSOutputROOTEventHit         *pLastHit    = nullptr;
   // tunnel hit
-  BDSOutputROOTEventHit         *tHit = nullptr;
+  BDSOutputROOTEventHit         *tHit        = nullptr;
   // trajectory
-  BDSOutputROOTEventTrajectory  *traj = nullptr;
+  BDSOutputROOTEventTrajectory  *traj        = nullptr;
   // run histograms
-  BDSOutputROOTEventHistograms  *runHistos = nullptr;
+  BDSOutputROOTEventHistograms  *runHistos   = nullptr;
   // event histograms
-  BDSOutputROOTEventHistograms  *evtHistos = nullptr;
+  BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
 };
 
 #endif
