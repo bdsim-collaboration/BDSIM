@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSPhotonCounter.hh"
 #include "BDSRunManager.hh"
 #include "BDSStackingAction.hh"
 
