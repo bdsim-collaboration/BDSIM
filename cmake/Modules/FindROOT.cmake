@@ -52,8 +52,13 @@ else()
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   execute_process(
-    COMMAND ${ROOT_CONFIG_EXECUTABLE} --evelibs
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --libs
     OUTPUT_VARIABLE ROOT_LIBRARIES
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --evelibs
+    OUTPUT_VARIABLE ROOT_EVELIBRARIES
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   # Hack to remove c++11 lib in favour of the one provided already
