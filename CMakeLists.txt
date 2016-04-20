@@ -433,7 +433,6 @@ target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 # link against ROOT
-target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
 
 if(USE_LCDD)
@@ -460,7 +459,6 @@ endif()
 add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
 target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
 # link against ROOT
-target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # Add dependency to make sure bdsimRootEvent is done first
 # This is done because the ROOT dictionary generation needs to be done separately for each of them
