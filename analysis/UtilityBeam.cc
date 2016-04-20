@@ -8,7 +8,7 @@
 #include "BDSOutputROOTEventOptions.hh"
 #include "parser/OptionsBase.h"
 
-#include "Utility.H"
+#include "Utility.hh"
 
 void DrawGaussTwissEllipse(TString fileName)
 {
