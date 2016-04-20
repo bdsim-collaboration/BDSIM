@@ -50,8 +50,9 @@ endif()
 
 add_library(gmad STATIC ${GMAD_PARSER_SOURCES}
   ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
-#add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
-#  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# For Python a shared library is needed
+add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
+  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 
 if($ENV{VERBOSE})
   message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
@@ -62,7 +63,7 @@ add_executable(gmadexec gmad.cc)
 set_target_properties(gmadexec PROPERTIES OUTPUT_NAME "gmad" VERSION ${BDSIM_VERSION})
 target_link_libraries(gmadexec gmad)
 
-bdsim_install_targets(gmadexec gmad) # gmadShared)
+bdsim_install_targets(gmadexec gmad gmadShared)
 
 # set binary name for testing usage
 get_target_property(binaryname gmadexec OUTPUT_NAME)
