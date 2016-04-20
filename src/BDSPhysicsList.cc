@@ -43,7 +43,6 @@
 #include "G4GammaConversion.hh"
 #include "G4GammaConversionToMuons.hh"
 #include "G4PhotoElectricEffect.hh"
-#include "BDSXSBias.hh" //added by L.D. 16/11/09
 #include "BDSGammaConversion_LPB.hh" //added by M.D. Salt, R.B. Appleby, 15/10/09
 
 // charged particles
@@ -244,11 +243,7 @@ void BDSPhysicsList::ConstructProcess()
   bool plistFound=false;
   //standard physics lists
   if(physicsListName.contains("QGSP_BERT")){
-    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();    
-    //    theReferenceHadronicPhysList_xsbias = new BDSXSBias(); 
-    //    theReferenceHadronicPhysList_xsbias->RegisterProcess(theReferenceHadronicPhysList); 
-    //    theReferenceHadronicPhysList_xsbias->eFactor(1);    
- 
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();     
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList->ConstructProcess();
@@ -580,15 +575,6 @@ void BDSPhysicsList::ConstructEMMisc()
       // gamma         
       pmanager->AddDiscreteProcess(new G4PhotoElectricEffect);
       pmanager->AddDiscreteProcess(new G4ComptonScattering);
-      // if(0){
-      // 	G4GammaConversion* gammaconversion = new G4GammaConversion();
-      // 	gammaconversion->SetLambdaFactor(1/1.0e-20);
-      // 	BDSXSBias* gammaconversion_xsbias = new BDSXSBias();
-      // 	gammaconversion_xsbias->RegisterProcess(gammaconversion);
-      // 	gammaconversion_xsbias->eFactor(1e-20);
-      // 	pmanager->AddDiscreteProcess(gammaconversion_xsbias);
-	
-      // } else 
       if (BDSGlobalConstants::Instance()->UseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
 	  G4GammaConversion* gammaconversion = new G4GammaConversion();
 	  GammaConversion_LPB* gammaconversion_lpb = new GammaConversion_LPB();
@@ -601,14 +587,6 @@ void BDSPhysicsList::ConstructEMMisc()
       
     } else if (particleName == "e-") {
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
-      // if(0){
-      // 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
-      // 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
-      // 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
-      // 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-      // 	ebremsstrahlung_xsbias->eFactor(1e-20);
-      // 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);     
-      // }	else 
       if(BDSGlobalConstants::Instance()->UseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
 	  
         G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
@@ -629,14 +607,6 @@ void BDSPhysicsList::ConstructEMMisc()
     } else if (particleName == "e+") {
       //positron
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
-      // if(0){
-      // 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
-      // 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
-      // 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
-      // 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-      // 	ebremsstrahlung_xsbias->eFactor(1e-20);
-      // 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);      
-      // } else 
       if (BDSGlobalConstants::Instance()->UseEMLPB()){
 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
 	eBremsstrahlung_LPB* ebremsstrahlung_lpb = new eBremsstrahlung_LPB();
