@@ -80,11 +80,6 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   return classification;
 }
 
-void BDSStackingAction::countPhoton(const G4Track* aTrack)
-{
-  BDSPhotonCounter::Instance()->countPhoton(aTrack);
-}
-
 void BDSStackingAction::NewStage()
 {
   // urgent stack empty, looking into the waiting stack
