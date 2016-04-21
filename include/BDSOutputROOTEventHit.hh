@@ -17,12 +17,10 @@ public:
   std::vector<float> y;
   std::vector<float> z;
 
-  /* Global coordinates */
-#if 0
+  /* global coordinates */
   std::vector<float> X;
   std::vector<float> Y;
   std::vector<float> Z;
-#endif
 
   BDSOutputROOTEventHit();
   virtual ~BDSOutputROOTEventHit();
