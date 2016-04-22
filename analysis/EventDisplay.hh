@@ -3,34 +3,36 @@
 
 #include "TROOT.h"
 
+#include "DataLoader.hh"
+#include "Event.hh"
+#include "TChain.h"
+
 class EventDisplay
 {
 public:
-  EventDisplay(TString geoFileName, TString datFileName);
+  static EventDisplay* Instance();
+  EventDisplay(TString geoFileName);
   virtual ~EventDisplay();
+
+  void ClearEvent();
+  void DrawElossHits();
+  void DrawTunnelHits();
+  void DrawTrajectories();
+  void LoadData(int iEvt);
+
 
 private:
   void LoadGeometry();
-  void LoadData();
 
-  TString geoFileName = "";
-  TString datFileName = "";
+  TString geoFileName    = "";
+
+  DataLoader *dataLoader = nullptr;
+  Event      *event      = nullptr;
+  TChain     *eventTree  = nullptr;
+
+  static EventDisplay *_instance;
 
   ClassDef(EventDisplay,1);
 };
 
-#endif
-
-#if 0
-void eve(TString fileName)
-{
-  TEveManager::Create();
-  TFile::SetCacheFileDir(".");
-  gGeoManager = gEve->GetGeometry(fileName.Data());
-  gGeoManager->DefaultColors();
-
-  TEveGeoTopNode* tn = new TEveGeoTopNode(gGeoManager, gGeoManager->GetTopNode());
-  gEve->AddGlobalElement(tn);
-  gEve->FullRedraw3D(kTRUE);
-}
 #endif
