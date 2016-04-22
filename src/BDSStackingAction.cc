@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSPhotonCounter.hh"
 #include "BDSRunManager.hh"
 #include "BDSStackingAction.hh"
 
@@ -78,11 +77,6 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
     }
 
   return classification;
-}
-
-void BDSStackingAction::countPhoton(const G4Track* aTrack)
-{
-  BDSPhotonCounter::Instance()->countPhoton(aTrack);
 }
 
 void BDSStackingAction::NewStage()

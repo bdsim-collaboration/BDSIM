@@ -124,8 +124,7 @@ int main(int argc,char** argv)
       {
 	if (i%printModulo == 0)
 	  {
-	    G4cout << "\r Primary> " << std::setprecision(1) << std::fixed << i << " of " << nToGenerate;
-	    G4cout.flush();
+	    G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;
 	  }
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
         bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
