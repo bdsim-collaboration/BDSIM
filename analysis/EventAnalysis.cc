@@ -6,8 +6,8 @@ ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis()
 {
-  event = nullptr;
-  chain = nullptr;
+  event    = nullptr;
+  chain    = nullptr;
   histoSum = nullptr;
 }
 
