@@ -3,12 +3,17 @@
 
 #include <vector>
 #include "TH1D.h"
+#include "TVector3.h"
+#include "TRotation.h"
+
+
 #include "Event.hh"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
+TVector3 LocalToGlobal(const TVector3 &vLocal, const TRotation &r, const TVector3 &d);
 std::vector<TH1D*>& GetRun1DHistograms(TString fileName);
 BDSOutputROOTEventOptions* GetOptions(TString fileName);
 BDSOutputROOTEventModel* GetModel(TString fileName);

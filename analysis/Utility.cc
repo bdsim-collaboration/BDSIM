@@ -9,6 +9,10 @@
 
 #include "Event.hh"
 
+TVector3 LocalToGlobal(const TVector3 &vLocal, const TRotation &r, const TVector3 &d) {
+  return r*vLocal+d;
+}
+
 std::vector<TH1D*>& GetRun1DHistograms(TString fileName)
 {
   TFile *f = new TFile(fileName.Data());
