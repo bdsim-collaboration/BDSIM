@@ -27,18 +27,23 @@ class BDSBeamPipeInfo;
 /**
  * @brief A class that holds global options and constants.
  *
- * This wraps an instance of GMAD::Options and also converts
+ * This wraps (but does not inherit) an instance of GMAD::Options and also converts
  * from the std C++ types used in the options to the Geant4 types
  * solely used in BDSIM. Additionally, some more refined information 
  * is provided - for example, simple strings are converted to enum types
  * for outputs and geometry, as well as G4Materials.
+ *
+ * This does modify its instance of GMAD::Options due to some parameter
+ * checks.
  *
  * This is almost entirely constant apart from a very few variables 
  * that by necessity can be updated. Generally, this is not used as
  * as a way to dynamically pass around information at a global level
  * but purely as constants.
  * 
- * Singleton pattern.
+ * Singleton pattern. The (private) constructor requires a GMAD::Options
+ * instance, but to maintain the singleton pattern this is accessed through
+ * BDSParser singleton instance.
  */
 
 class BDSGlobalConstants
@@ -58,6 +63,9 @@ public:
    /// Access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
+
+  /// Access the underlying parser options.
+  const GMAD::Options& Options() const {return options;}
 
   // Options that access GMAD::options instance
   // Executable options
