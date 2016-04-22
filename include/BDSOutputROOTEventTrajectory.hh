@@ -7,6 +7,7 @@
 
 #ifndef __ROOTBUILD__
 #include "BDSTrajectory.hh"
+#include "BDSEnergyCounterHit.hh"
 #endif
 
 class BDSOutputROOTEventTrajectory : public TObject
@@ -16,10 +17,9 @@ public:
   virtual ~BDSOutputROOTEventTrajectory();
 #ifndef __ROOTBUILD__
   void Fill(std::vector<BDSTrajectory*> &trajVec);
+  void Fill(BDSEnergyCounterHitsCollection *phc);
 #endif
   void Flush();
-
-private:
 
   std::vector<unsigned int> trackID;
   std::vector<std::vector<TVector3>> trajectories;
