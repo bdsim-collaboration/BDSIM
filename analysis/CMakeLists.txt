@@ -66,8 +66,7 @@ endforeach()
 
 add_library(rebdsimLib SHARED ${rebdsimLibSources})
 
-target_link_libraries(rebdsimLib ${ROOT_LIBRARIES_GLOB})
-target_link_libraries(rebdsimLib ${ROOT_LIBRARIES})
+target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
 target_link_libraries(rebdsimLib bdsimRootEvent)
 
 add_executable(rebdsim rebdsim.cc)
