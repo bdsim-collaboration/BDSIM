@@ -23,10 +23,10 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  eLoss     = new BDSOutputROOTEventLoss();
-  pFirstHit = new BDSOutputROOTEventHit();
-  pLastHit  = new BDSOutputROOTEventHit();
-  tHit      = new BDSOutputROOTEventHit();
+  eLoss     = new BDSOutputROOTEventLoss(false,true);
+  pFirstHit = new BDSOutputROOTEventLoss(true,false);
+  pLastHit  = new BDSOutputROOTEventLoss(true,false);
+  tHit      = new BDSOutputROOTEventLoss(false,true);
   runHistos = new BDSOutputROOTEventHistograms();
   evtHistos = new BDSOutputROOTEventHistograms();
 
@@ -111,9 +111,9 @@ void BDSOutputROOTEvent::Initialise()
   // Build loss and hit structures
   //
   theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
-  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
-  theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
+  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
+  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
+  theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventLoss",tHit, 4000,2);
   //
   // Build process/track structures
   //

@@ -11,7 +11,6 @@
 #include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventLoss.hh"
-#include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
@@ -118,11 +117,11 @@ private:
   // energy loss
   BDSOutputROOTEventLoss        *eLoss       = nullptr;
   // primary first hit
-  BDSOutputROOTEventHit         *pFirstHit   = nullptr;
+  BDSOutputROOTEventLoss        *pFirstHit   = nullptr;
   // primary final hit
-  BDSOutputROOTEventHit         *pLastHit    = nullptr;
+  BDSOutputROOTEventLoss        *pLastHit    = nullptr;
   // tunnel hit
-  BDSOutputROOTEventHit         *tHit        = nullptr;
+  BDSOutputROOTEventLoss        *tHit        = nullptr;
   // trajectory
   BDSOutputROOTEventTrajectory  *traj        = nullptr;
   // run histograms
