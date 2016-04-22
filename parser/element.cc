@@ -385,6 +385,10 @@ void Element::set(const Parameters& params)
 
 void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
 {
+  if (samplerType != "none") {
+    std::cout << "WARNING: overwriting already defined sampler info for element: " << name << std::endl;
+  }
+
   samplerType   = samplerTypeIn;
   samplerName   = samplerNameIn;
   samplerRadius = samplerRadiusIn;

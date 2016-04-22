@@ -479,7 +479,7 @@ void Parser::add_sampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler "<<name;
-  if (count!=-1) std::cout<<"["<< count <<"]";
+  if (count>=0) std::cout<<"["<< count <<"]";
   std::cout<<std::endl;
 #endif
 
@@ -490,7 +490,7 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting csampler "<<name;
-  if (count!=-1) std::cout<<"["<<count<<"]";
+  if (count>=0) std::cout<<"["<<count<<"]";
   std::cout<<std::endl;
 #endif
 
