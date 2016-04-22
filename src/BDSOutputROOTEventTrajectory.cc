@@ -24,7 +24,6 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       G4ThreeVector      pos = point->GetPosition();
       trajectory.push_back(TVector3(pos.getX() / CLHEP::m,
                                     pos.getY() / CLHEP::m,
-                                    pos.getY() / CLHEP::m,
                                     pos.getZ() / CLHEP::m));
     }
     trajectories.push_back(trajectory);
