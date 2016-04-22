@@ -34,17 +34,17 @@ BDSOutputROOTEventLoss*       Event::GetLoss()
   return eloss;
 }
 
-BDSOutputROOTEventHit*        Event::GetPrimaryFirstHit()
+BDSOutputROOTEventLoss*       Event::GetPrimaryFirstHit()
 {
   return primaryFirstHit;
 }
 
-BDSOutputROOTEventHit*        Event::GetPrimaryLastHit()
+BDSOutputROOTEventLoss*       Event::GetPrimaryLastHit()
 {
   return primaryLastHit;
 }
 
-BDSOutputROOTEventHit*        Event::GetTunnelHit()
+BDSOutputROOTEventLoss*       Event::GetTunnelHit()
 {
   return tunnelHit;
 }
@@ -87,6 +87,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
 
   for(int i=0;i<(int)samplerNames.size();++i)
   {
+    samplersA[i] = nullptr;
     t->SetBranchAddress(samplerNames[i].c_str(),&samplersA[i]);
     if(Config::Instance())
     {

@@ -9,7 +9,6 @@
 
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventLoss.hh"
-#include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
@@ -22,31 +21,31 @@ public :
   virtual ~Event();
 
 #ifndef __ROOTDOUBLE__  
-  BDSOutputROOTEventSampler<float>*    GetPrimaries();
+  BDSOutputROOTEventSampler<float>*     GetPrimaries();
 #else
   BDSOutputROOTEventSampler<double>*    GetPrimaries();
 #endif
-  BDSOutputROOTEventLoss*       GetLoss();
-  BDSOutputROOTEventHit*        GetPrimaryFirstHit();
-  BDSOutputROOTEventHit*        GetPrimaryLastHit();
-  BDSOutputROOTEventHit*        GetTunnelHit();
-  BDSOutputROOTEventTrajectory* GetTrajectory();
+  BDSOutputROOTEventLoss*               GetLoss();
+  BDSOutputROOTEventLoss*               GetPrimaryFirstHit();
+  BDSOutputROOTEventLoss*               GetPrimaryLastHit();
+  BDSOutputROOTEventLoss*               GetTunnelHit();
+  BDSOutputROOTEventTrajectory*         GetTrajectory();
   void SetBranchAddress(TChain *, std::vector<std::string>&);
 
-  BDSOutputROOTEventSampler<float>        *primaries;
-  BDSOutputROOTEventLoss                  *eloss;
-  BDSOutputROOTEventHit                   *primaryFirstHit;
-  BDSOutputROOTEventHit                   *primaryLastHit;
-  BDSOutputROOTEventHit                   *tunnelHit;
-  BDSOutputROOTEventTrajectory            *trajectory;
+  BDSOutputROOTEventSampler<float>               *primaries;
+  BDSOutputROOTEventLoss                         *eloss;
+  BDSOutputROOTEventLoss                         *primaryFirstHit;
+  BDSOutputROOTEventLoss                         *primaryLastHit;
+  BDSOutputROOTEventLoss                         *tunnelHit;
+  BDSOutputROOTEventTrajectory                   *trajectory;
 #ifndef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<float>*       samplersA[MAXSAMPLERS];
-  std::vector<BDSOutputROOTEventSampler<float>*> samplers;
+  BDSOutputROOTEventSampler<float>*               samplersA[MAXSAMPLERS];
+  std::vector<BDSOutputROOTEventSampler<float>*>  samplers;
 #else
-  BDSOutputROOTEventSampler<double>*       samplersA[MAXSAMPLERS];
+  BDSOutputROOTEventSampler<double>*              samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler<double>*> samplers;
 #endif
-  BDSOutputROOTEventHistograms            *histos;
+  BDSOutputROOTEventHistograms                   *histos;
 private:
 
 
