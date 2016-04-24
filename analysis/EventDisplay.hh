@@ -15,9 +15,15 @@ public:
   virtual ~EventDisplay();
 
   void ClearEvent();
+
+  void Draw();
+  void DrawModel();
   void DrawElossHits();
   void DrawTunnelHits();
   void DrawTrajectories();
+
+  void LoadOptions(int iOpt);
+  void LoadModel(int iMod);
   void LoadData(int iEvt);
 
 
@@ -26,9 +32,13 @@ private:
 
   TString geoFileName    = "";
 
-  DataLoader *dataLoader = nullptr;
-  Event      *event      = nullptr;
-  TChain     *eventTree  = nullptr;
+  DataLoader *dataLoader             = nullptr;
+  Event      *event                  = nullptr;
+  TChain     *eventTree              = nullptr;
+  BDSOutputROOTEventOptions *options = nullptr;
+  TChain     *optionsTree            = nullptr;
+  BDSOutputROOTEventModel *model     = nullptr;
+  TChain     *modelTree              = nullptr;
 
   static EventDisplay *_instance;
 

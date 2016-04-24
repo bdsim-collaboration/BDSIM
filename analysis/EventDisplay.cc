@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "TFile.h"
+#include "TVector3.h"
 
 #include "TEveManager.h"
 #include "TGeoManager.h"
@@ -12,6 +13,8 @@
 #include "TEveLine.h"
 #include "TEveScene.h"
 #include "TEveEventManager.h"
+
+#include "parser/optionsBase.h"
 
 ClassImp(EventDisplay)
 
@@ -26,16 +29,22 @@ EventDisplay* EventDisplay::Instance()
 EventDisplay::EventDisplay(TString geoFileNameIn) :
   geoFileName(geoFileNameIn)
 {
+  std::cout << "EventDisplay::EventDisplay(" << geoFileName << ")" << std::endl;
   TEveManager::Create();
   dataLoader = new DataLoader();
   event      = dataLoader->GetEvent();
   eventTree  = dataLoader->GetEventTree();
 
+  options    = dataLoader->GetOptions();
+  optionsTree= dataLoader->GetOptionsTree();
+
+  model      = dataLoader->GetModel();
+  modelTree  = dataLoader->GetModelTree();
+
   this->LoadGeometry();
+  this->LoadOptions(0);
+  this->LoadModel(0);
   this->LoadData(0);
-  this->DrawElossHits();
-  this->DrawTunnelHits();
-  this->DrawTrajectories();
 
   _instance = this;
 }
@@ -47,6 +56,7 @@ EventDisplay::~EventDisplay()
 
 void EventDisplay::LoadGeometry()
 {
+  std::cout << "EventDisplay::LoadGeometry>" << std::endl;
   TFile::SetCacheFileDir(".");
   std::cout << this->geoFileName.Data() << std::endl;
   gGeoManager = gEve->GetGeometry(this->geoFileName.Data());
@@ -57,22 +67,114 @@ void EventDisplay::LoadGeometry()
   gEve->FullRedraw3D(kTRUE);
 }
 
+void EventDisplay::LoadModel(int iMod)
+{
+  std::cout << "EventDisplay::LoadModel>" << std::endl;
+  modelTree->GetEntry(iMod);
+}
+
+void EventDisplay::LoadOptions(int iOpt)
+{
+  std::cout << "EventDisplay::LoadOptions>" << std::endl;
+  optionsTree->GetEntry(iOpt);
+}
+
 void EventDisplay::LoadData(int i)
 {
+  std::cout << "EventDisplay::LoadData>" << std::endl;
   eventTree->GetEntry(i);
+}
+
+void EventDisplay::ClearEvent()
+{
+  std::cout << "EventDisplay::ClearEvent>" << std::endl;
+  gEve->GetCurrentEvent()->DestroyElements();
+}
+
+void EventDisplay::Draw()
+{
+  this->DrawModel();
   this->DrawElossHits();
   this->DrawTunnelHits();
   this->DrawTrajectories();
 }
 
-void EventDisplay::ClearEvent()
+void EventDisplay::DrawModel()
 {
-  gEve->GetCurrentEvent()->DestroyElements();
+  std::cout << "EventDisplay::DrawModel>" << std::endl;
+  GMAD::OptionsBase *ob = (GMAD::OptionsBase*)options;
+  std::cout << "EventDisplay::DrawModel> outerDiameter" << ob->outerDiameter << std::endl;
+  double outerDiameter = ob->outerDiameter; // need cm
+
+
+  TEveBoxSet *bs = new TEveBoxSet("model");
+  bs->Reset(TEveBoxSet::kBT_FreeBox, kFALSE,64);
+
+  int i=0;
+  float vert[8*3];
+  for(auto mp : model->midPos)
+  {
+    std::cout << mp.X() << " " << mp.Y() << " " << mp.Z() << std::endl;
+    std::cout << model->length[i] << std::endl;
+
+    // 100 as need cm not m
+    TVector3 v1 = 100*(mp + TVector3(-outerDiameter / 2, -outerDiameter / 2, -model->length[i] / 2));
+    TVector3 v2 = 100*(mp + TVector3(-outerDiameter / 2,  outerDiameter / 2, -model->length[i] / 2));
+    TVector3 v3 = 100*(mp + TVector3( outerDiameter / 2,  outerDiameter / 2, -model->length[i] / 2));
+    TVector3 v4 = 100*(mp + TVector3( outerDiameter / 2, -outerDiameter / 2, -model->length[i] / 2));
+
+    TVector3 v5 = 100*(mp + TVector3(-outerDiameter / 2, -outerDiameter / 2,  model->length[i] / 2));
+    TVector3 v6 = 100*(mp + TVector3(-outerDiameter / 2,  outerDiameter / 2,  model->length[i] / 2));
+    TVector3 v7 = 100*(mp + TVector3( outerDiameter / 2,  outerDiameter / 2,  model->length[i] / 2));
+    TVector3 v8 = 100*(mp + TVector3( outerDiameter / 2, -outerDiameter / 2,  model->length[i] / 2));
+
+
+    vert[0] = (float) v1.x();
+    vert[1] = (float) v1.y();
+    vert[2] = (float) v1.z();
+
+    vert[3] = (float) v2.x();
+    vert[4] = (float) v2.y();
+    vert[5] = (float) v2.z();
+
+    vert[6] = (float) v3.x();
+    vert[7] = (float) v3.y();
+    vert[8] = (float) v3.z();
+
+    vert[9] = (float)  v4.x();
+    vert[10] = (float) v4.y();
+    vert[11] = (float) v4.z();
+
+    vert[12] = (float) v5.x();
+    vert[13] = (float) v5.y();
+    vert[14] = (float) v5.z();
+
+    vert[15] = (float) v6.x();
+    vert[16] = (float) v6.y();
+    vert[17] = (float) v6.z();
+
+    vert[18] = (float) v7.x();
+    vert[19] = (float) v7.y();
+    vert[20] = (float) v7.z();
+
+    vert[21] = (float) v8.x();
+    vert[22] = (float) v8.y();
+    vert[23] = (float) v8.z();
+
+    bs->AddBox(vert);
+    ++i;
+  }
+  bs->SetMainColor(kWhite);
+  bs->SetMainAlpha(0.95);
+  bs->SetRenderMode(TEveBoxSet::kRM_Line);
+  gEve->AddElement(bs);
+  gEve->Redraw3D();
 }
 
 void EventDisplay::DrawElossHits()
 {
-  TEvePointSet *ps = new TEvePointSet();
+  std::cout << "EventDisplay::DrawElossHits>" << std::endl;
+  TEvePointSet *ps = new TEvePointSet("Eloss");
   for(int i=0;i<(int)event->eloss->X.size();++i)
   {
     ps->SetNextPoint(event->eloss->X[i]*100.0,
@@ -86,6 +188,8 @@ void EventDisplay::DrawElossHits()
 
 void EventDisplay::DrawTunnelHits()
 {
+  std::cout << "EventDisplay::DrawTunnelHits>" << std::endl;
+
 #if 0
   TEvePointSet *ps = new TEvePointSet();
   for(int i=0;i<(int)event->tunnelHit->X.size();++i)
@@ -99,7 +203,7 @@ void EventDisplay::DrawTunnelHits()
   gEve->Redraw3D();
 #endif
 
-  TEveBoxSet *bs = new TEveBoxSet("boxset");
+  TEveBoxSet *bs = new TEveBoxSet("TunnelHits");
   bs->Reset(TEveBoxSet::kBT_AABox, kFALSE,64);
 
   for(int i=0;i<(int)event->tunnelHit->X.size();++i)
@@ -123,7 +227,7 @@ void EventDisplay::DrawTrajectories()
   std::cout << "EventDisplay::DrawTrajectories>" << std::endl;
   std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->trajectory->trajectories.size() << std::endl;
   for(auto t : event->trajectory->trajectories) {
-    TEveLine *et = new TEveLine();
+    TEveLine *et = new TEveLine("Trajectory");
 //    std::cout << "EventDisplay::DrawTrajectories> ntrajPoint=" << t.size() << std::endl;
     for(auto tp : t) {
       //std::cout << tp.x() << " " << tp.y() << " " << tp.z() << std::endl;
