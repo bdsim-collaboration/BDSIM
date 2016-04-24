@@ -17,8 +17,8 @@ void DataLoader::CommonCtor()
   mod = new BDSOutputROOTEventModel();
   evt = new Event();
 
-  optChain = new TChain("Model","Model");
-  modChain = new TChain("Options","Options");
+  optChain = new TChain("Options","Options");
+  modChain = new TChain("Model","Model");
   evtChain = new TChain("Event","Event");
   
   this->BuildInputFileList();
