@@ -114,19 +114,19 @@ void EventDisplay::DrawModel()
   float vert[8*3];
   for(auto mp : model->midPos)
   {
-    std::cout << mp.X() << " " << mp.Y() << " " << mp.Z() << std::endl;
-    std::cout << model->length[i] << std::endl;
+    double modelLength      = model->length[i];
+    TRotation modelRotation = model->midRot[i];
 
     // 100 as need cm not m
-    TVector3 v1 = 100*(mp + TVector3(-outerDiameter / 2, -outerDiameter / 2, -model->length[i] / 2));
-    TVector3 v2 = 100*(mp + TVector3(-outerDiameter / 2,  outerDiameter / 2, -model->length[i] / 2));
-    TVector3 v3 = 100*(mp + TVector3( outerDiameter / 2,  outerDiameter / 2, -model->length[i] / 2));
-    TVector3 v4 = 100*(mp + TVector3( outerDiameter / 2, -outerDiameter / 2, -model->length[i] / 2));
+    TVector3 v1 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2, -outerDiameter / 2, -modelLength / 2));
+    TVector3 v2 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2,  outerDiameter / 2, -modelLength / 2));
+    TVector3 v3 = 100*(mp + modelRotation*TVector3( outerDiameter / 2,  outerDiameter / 2, -modelLength / 2));
+    TVector3 v4 = 100*(mp + modelRotation*TVector3( outerDiameter / 2, -outerDiameter / 2, -modelLength / 2));
 
-    TVector3 v5 = 100*(mp + TVector3(-outerDiameter / 2, -outerDiameter / 2,  model->length[i] / 2));
-    TVector3 v6 = 100*(mp + TVector3(-outerDiameter / 2,  outerDiameter / 2,  model->length[i] / 2));
-    TVector3 v7 = 100*(mp + TVector3( outerDiameter / 2,  outerDiameter / 2,  model->length[i] / 2));
-    TVector3 v8 = 100*(mp + TVector3( outerDiameter / 2, -outerDiameter / 2,  model->length[i] / 2));
+    TVector3 v5 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2, -outerDiameter / 2,  modelLength / 2));
+    TVector3 v6 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2,  outerDiameter / 2,  modelLength / 2));
+    TVector3 v7 = 100*(mp + modelRotation*TVector3( outerDiameter / 2,  outerDiameter / 2,  modelLength / 2));
+    TVector3 v8 = 100*(mp + modelRotation*TVector3( outerDiameter / 2, -outerDiameter / 2,  modelLength / 2));
 
 
     vert[0] = (float) v1.x();
@@ -165,7 +165,6 @@ void EventDisplay::DrawModel()
     ++i;
   }
   bs->SetMainColor(kWhite);
-  bs->SetMainAlpha(0.95);
   bs->SetRenderMode(TEveBoxSet::kRM_Line);
   gEve->AddElement(bs);
   gEve->Redraw3D();

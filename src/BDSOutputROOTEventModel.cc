@@ -16,6 +16,8 @@ void BDSOutputROOTEventModel::Fill()
   // get accelerator model
   BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
 
+  double angle;
+  CLHEP::Hep3Vector axis;
   // iterate over flat beamline
   for(auto i = beamline->begin(); i != beamline->end(); ++i)
   {
@@ -39,13 +41,21 @@ void BDSOutputROOTEventModel::Fill()
     G4RotationMatrix *gr;
     gr = (*i)->GetRotationStart();
     TRotation rr = TRotation();
-    rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
+    gr->getAngleAxis(angle,axis);
+    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
+    rr.SetXTheta(angle);
     this->staRot.push_back(rr);
+
     gr = (*i)->GetRotationMiddle();
-    rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
+    gr->getAngleAxis(angle,axis);
+    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
+    rr.SetXTheta(angle);
     this->midRot.push_back(rr);
+
     gr = (*i)->GetRotationEnd();
-    rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
+    gr->getAngleAxis(angle,axis);
+    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
+    rr.SetXTheta(angle);
     this->endRot.push_back(rr);
 
     // Reference orbit positions
@@ -58,13 +68,21 @@ void BDSOutputROOTEventModel::Fill()
 
     // Reference orbit rotations
     gr = (*i)->GetReferenceRotationStart();
-    rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
+    gr->getAngleAxis(angle,axis);
+    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
+    rr.SetXTheta(angle);
     this->staRefRot.push_back(rr);
+
     gr = (*i)->GetReferenceRotationMiddle();
-    rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
+    gr->getAngleAxis(angle,axis);
+    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
+    rr.SetXTheta(angle);
     this->midRefRot.push_back(rr);
+
     gr = (*i)->GetReferenceRotationEnd();
-    rr.SetXEulerAngles(gr->getTheta(),gr->getPhi(),gr->getPsi());
+    gr->getAngleAxis(angle,axis);
+    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
+    rr.SetXTheta(angle);
     this->endRefRot.push_back(rr);
 
     // S positions
