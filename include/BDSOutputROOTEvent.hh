@@ -13,6 +13,7 @@
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventInfo.hh"
 
 
 #include "TROOT.h"
@@ -71,6 +72,10 @@ public:
   /// fill event structure
   virtual void FillEvent();
 
+  /// fill event inforamtion structure
+  virtual void WriteEventInfo(double dStart, double dEnd, double dDuration);
+
+
   virtual void Initialise(); ///< open the file
   virtual void Write();      ///< write to file
   virtual void Close();      ///< close the file
@@ -80,6 +85,8 @@ public:
 
   virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
   virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
+
+
 
 
 private:
@@ -128,6 +135,9 @@ private:
   BDSOutputROOTEventHistograms  *runHistos   = nullptr;
   // event histograms
   BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
+  // event information
+  BDSOutputROOTEventInfo         *evtInfo     = nullptr;
 };
+
 
 #endif

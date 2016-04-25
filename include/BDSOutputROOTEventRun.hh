@@ -13,9 +13,9 @@ public:
   virtual ~BDSOutputROOTEventRun();
 
 private:
-  double runStartTime;
-  double runEndTime;
-  double runDuration;
+  double startTime;
+  double endTime;
+  double runTime;
 
   BDSOutputROOTEventHistograms *histo = nullptr;
 

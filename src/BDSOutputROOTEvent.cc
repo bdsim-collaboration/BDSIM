@@ -27,9 +27,10 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
   pFirstHit = new BDSOutputROOTEventLoss(true,false);
   pLastHit  = new BDSOutputROOTEventLoss(true,false);
   tHit      = new BDSOutputROOTEventLoss(false,true);
+  traj      = new BDSOutputROOTEventTrajectory();
   runHistos = new BDSOutputROOTEventHistograms();
   evtHistos = new BDSOutputROOTEventHistograms();
-
+  evtInfo   = new BDSOutputROOTEventInfo();
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -102,6 +103,12 @@ void BDSOutputROOTEvent::Initialise()
   runHistos->Create1DHistogram("c","d",100,0,100);
   theRunOutputTree->Branch("Histos.","BDSOutputROOTEvent",runHistos,32000,1);
 
+
+  //
+  // Event info output
+  //
+  theRootOutputTree->Branch("Info.","BDSOutputROOTEventInfo",evtInfo,32000,1);
+
   // Build primary structures
   theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
   samplerMap["Primary"] = primary;
@@ -121,7 +128,6 @@ void BDSOutputROOTEvent::Initialise()
   //
   // Build trajectory structures
   // 
-  traj = new BDSOutputROOTEventTrajectory();
   theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
 
   //
@@ -129,6 +135,7 @@ void BDSOutputROOTEvent::Initialise()
   //
   evtHistos->Create1DHistogram("a","b",100,0,100);
   theRootOutputTree->Branch("Histos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
+
 
   //
   // build sampler structures 
@@ -273,6 +280,13 @@ void BDSOutputROOTEvent::FillEvent()
   theRootOutputTree->Fill();
   this->Flush();
   
+}
+
+void BDSOutputROOTEvent::WriteEventInfo(double dStart, double dEnd, double dDuration)
+{
+  evtInfo->startTime = dStart;
+  evtInfo->endTime   = dEnd;
+  evtInfo->eventTime = dDuration;
 }
 
 void BDSOutputROOTEvent::Write() 

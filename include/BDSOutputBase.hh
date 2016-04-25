@@ -54,6 +54,9 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken) = 0;
 
+  ///
+  virtual void WriteEventInfo(double dStart, double dEnd, double dDuration) {}
+
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
   
