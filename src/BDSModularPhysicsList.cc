@@ -353,7 +353,7 @@ void BDSModularPhysicsList::HadronicElastic()
   if (!physicsActivated["hadronicelastic"])
     {
       constructors.push_back(new G4HadronElasticPhysics());
-      physicsActivated["hadronicelastic"];
+      physicsActivated["hadronicelastic"] = true;
     }
 }
 							  
