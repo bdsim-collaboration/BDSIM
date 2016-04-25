@@ -157,7 +157,6 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
     {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 }
 
-//Parse the physicsList option
 void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 {
 #ifdef BDSDEBUG
@@ -354,7 +353,7 @@ void BDSModularPhysicsList::HadronicElastic()
   if (!physicsActivated["hadronicelastic"])
     {
       constructors.push_back(new G4HadronElasticPhysics());
-      physicsActivated["hadronicelastic"];
+      physicsActivated["hadronicelastic"] = true;
     }
 }
 							  
