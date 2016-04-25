@@ -11,6 +11,7 @@
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 
 #define MAXSAMPLERS 30000
 class Event
@@ -19,8 +20,12 @@ public :
   Event();
   void CommonCtor();
   virtual ~Event();
-  
-  BDSOutputROOTEventSampler*    GetPrimaries();
+
+#ifndef __ROOTDOUBLE__  
+  BDSOutputROOTEventSampler<float>*    GetPrimaries();
+#else
+  BDSOutputROOTEventSampler<double>*    GetPrimaries();
+#endif
   BDSOutputROOTEventLoss*       GetLoss();
   BDSOutputROOTEventHit*        GetPrimaryFirstHit();
   BDSOutputROOTEventHit*        GetPrimaryLastHit();
@@ -28,14 +33,20 @@ public :
   BDSOutputROOTEventTrajectory* GetTrajectory();
   void SetBranchAddress(TChain *, std::vector<std::string>&);
 
-  BDSOutputROOTEventSampler               *primaries;
+  BDSOutputROOTEventSampler<float>        *primaries;
   BDSOutputROOTEventLoss                  *eloss;
   BDSOutputROOTEventHit                   *primaryFirstHit;
   BDSOutputROOTEventHit                   *primaryLastHit;
   BDSOutputROOTEventHit                   *tunnelHit;
   BDSOutputROOTEventTrajectory            *trajectory;
-  BDSOutputROOTEventSampler*              samplersA[MAXSAMPLERS];
-  std::vector<BDSOutputROOTEventSampler*> samplers;
+#ifndef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<float>*       samplersA[MAXSAMPLERS];
+  std::vector<BDSOutputROOTEventSampler<float>*> samplers;
+#else
+  BDSOutputROOTEventSampler<double>*       samplersA[MAXSAMPLERS];
+  std::vector<BDSOutputROOTEventSampler<double>*> samplers;
+#endif
+  BDSOutputROOTEventHistograms            *histos;
 private:
 
 

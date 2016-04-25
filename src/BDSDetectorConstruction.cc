@@ -479,9 +479,10 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  
 	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-								     readOutPVName,
-								     element->GetSPositionMiddle(),
-								     accComp->GetPrecisionRegion());
+                                                               readOutPVName,
+                                                               element->GetSPositionMiddle(),
+                                                               accComp->GetPrecisionRegion(),
+                                                               element->GetIndex());
 
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
 	}

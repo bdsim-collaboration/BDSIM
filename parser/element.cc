@@ -132,6 +132,8 @@ void Element::PublishMembers()
   publish("components",&Element::components);
   publish("componentsWeights",&Element::componentsWeights);
   publish("componentsFractions",&Element::componentsFractions);
+
+  publish("colour", &Element::colour);
 }
 
 std::string Element::getPublishedName(std::string name)const
@@ -314,6 +316,8 @@ void Element::flush() {
   airmaterial="";
   spec = "";
   cavityModel = "";
+
+  colour = "";
 }
 
 double Element::property_lookup(std::string property_name)const{
@@ -385,6 +389,10 @@ void Element::set(const Parameters& params)
 
 void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
 {
+  if (samplerType != "none") {
+    std::cout << "WARNING: overwriting already defined sampler info for element: " << name << std::endl;
+  }
+
   samplerType   = samplerTypeIn;
   samplerName   = samplerNameIn;
   samplerRadius = samplerRadiusIn;

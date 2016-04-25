@@ -13,3 +13,15 @@ void BDSOutputBase::Commit()
   Close();
   Initialise();
 }
+
+BDSOutputROOTEventHistograms* BDSOutputBase::GetEventAnalysis()
+{
+  G4cout << "BDSOutputBase::GetEventAnalysis()" << G4endl;
+  return nullptr;
+}
+
+BDSOutputROOTEventHistograms* BDSOutputBase::GetRunAnalysis()
+{
+  G4cout << "BDSOutputBase::GetRunAnalysis()" << G4endl;
+  return nullptr;
+}

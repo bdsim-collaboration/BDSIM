@@ -15,11 +15,12 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String name,
 						 G4double xOutAperture,
 						 G4double yOutAperture,
 						 G4String collimatorMaterial,
-						 G4String vacuumMaterial):
+						 G4String vacuumMaterial,
+						 G4String colour):
   BDSCollimatorBase(name, length, outerDiameter, "ecol",
 		    xAperture, yAperture,xOutAperture, yOutAperture,
 		    collimatorMaterial,
-		    vacuumMaterial)
+		    vacuumMaterial, colour)
 {;}
 
 

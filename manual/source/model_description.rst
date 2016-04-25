@@ -736,6 +736,21 @@ then attach a sampler to the marker.
 Examples::
 
    m1: marker;
+
+
+Colours
+-------
+
+A few items allow you to define a custom colour for them to aid in visualisation. Currently,
+only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
+where the RGB values are space delimited and given from 0 to 255. Once the colour name has
+been defined it may be used again without having to redefine the components. Once defined, a
+colour may not be redefined.
+
+Examples::
+
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
+  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
    
 
 Aperture Parameters

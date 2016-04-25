@@ -50,6 +50,7 @@ endif()
 
 add_library(gmad STATIC ${GMAD_PARSER_SOURCES}
   ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# For Python a shared library is needed
 add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
   ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 

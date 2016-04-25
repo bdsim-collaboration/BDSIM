@@ -170,6 +170,12 @@ string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 # add ROOT include directory
 include_directories(${ROOT_INCLUDE_DIR})
 
+option(ROOT_DOUBLE_OUTPUT "Double precision root output" OFF)
+
+#if (ROOT_DOUBLE_OUTPUT) 
+#   set(ROOT_PREPROC_FLAG "Flags for root compilation" "-D__ROOTDOUBLE__") 
+#endif()
+
 # Make Dictionaries
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
 file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
@@ -427,7 +433,6 @@ target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
 
 # link against ROOT
-target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
 
 if(USE_LCDD)
@@ -454,7 +459,6 @@ endif()
 add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
 target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
 # link against ROOT
-target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # Add dependency to make sure bdsimRootEvent is done first
 # This is done because the ROOT dictionary generation needs to be done separately for each of them

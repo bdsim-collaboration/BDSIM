@@ -3,7 +3,7 @@
 #include "BDSTerminatorUserLimits.hh"
 
 #include "globals.hh"
-#include "G4Track.hh"
+//#include "G4Track.hh"
 #include "G4UserLimits.hh"
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,

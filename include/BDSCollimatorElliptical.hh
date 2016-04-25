@@ -20,7 +20,8 @@ public:
 			  G4double xOutApertureIn     = 0,
 			  G4double yOutApertureIn     = 0,
 			  G4String collimatorMaterial = "copper",
-			  G4String vacuumMaterial     = "vacuum");
+			  G4String vacuumMaterial     = "vacuum",
+			  G4String colour             = "collimator");
   virtual ~BDSCollimatorElliptical(){;};
 
   virtual void BuildInnerCollimator();

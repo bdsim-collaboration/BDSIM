@@ -343,6 +343,10 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       else if(it->name=="weight") ReadValue(weight);
       
       else if(it->name=="skip") {double dummy; ReadValue(dummy);}
+
+      // If energy isn't specified, use the central beam energy (kinetic for Geant4)
+      if (!BDS::IsFinite(E))
+	{E = BDSGlobalConstants::Instance()->BeamKineticEnergy();}
       
       // compute zp from xp and yp if it hasn't been read from file
       if (!zpdef) zp = CalculateZp(xp,yp,1);

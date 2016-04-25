@@ -41,6 +41,9 @@ foreach(header ${rebdsimLibLinkDefs})
                 SOURCE ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
         )
+
+        # keep list of ROOT pcms
+        set(rebdsim_pcms ${rebdsim_pcms} ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm)
     else()
         # ROOT 5
         add_custom_command(
@@ -69,5 +72,20 @@ add_executable(rebdsim rebdsim.cc)
 set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 
-# installation
+# Installation
 bdsim_install_targets(rebdsim rebdsimLib)
+
+# Install pcms
+bdsim_install_libs(${rebdsim_pcms})
+
+file(GLOB rebdsimMacros ${CMAKE_CURRENT_SOURCE_DIR}/*.C ${CMAKE_CURRENT_SOURCE_DIR}/*.H)
+bdsim_install_macros(${rebdsimMacros})
+#message(STATUS "rebdsimMacros ${rebdsimMacros}")
+
+file(GLOB rebdsimHeaders ${CMAKE_CURRENT_SOURCE_DIR}/*.hh)
+# remove linkdefs
+foreach(header ${rebdsimLibLinkDefs})
+  list(REMOVE_ITEM rebdsimHeaders ${header})
+endforeach()
+bdsim_install_analysis_headers(${rebdsimHeaders})
+#message(STATUS "rebdsimHeaders ${rebdsimHeaders}")

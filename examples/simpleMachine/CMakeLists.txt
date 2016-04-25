@@ -4,7 +4,7 @@ simple_testing(simpleMachine "--file=sm.gmad" ${OVERLAP_CHECK})
 # additional arguments testing #
 ################################
 
-# all output formats
+# All output formats
 set(TESTING_ARGS --output=combined)
 simple_testing(simpleMachineCombined "--file=sm.gmad" "")
 # no output formats
@@ -19,10 +19,15 @@ simple_testing(simpleMachineROOTDetailed "--file=sm.gmad" "")
 # root event output format
 set(TESTING_ARGS --output=rootevent)
 simple_testing(simpleMachineROOTEvent "--file=sm.gmad" "")
+
+# Test other arguments
 # print help
 simple_testing(help "--help" "")
 # print list of materials
 simple_testing(materials "--materials" "")
+# primaries only
+set(TESTING_ARGS --generatePrimariesOnly)
+simple_testing(generatePrimariesOnly "--file=sm.gmad" "")
 # output survey
 set(TESTING_ARGS --survey=survey.dat)
 simple_testing(survey "--file=sm.gmad" "")

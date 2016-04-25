@@ -40,9 +40,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   G4double mass = particleGun->GetParticleDefinition()->GetPDGMass();
   G4double EK = E - mass;
   
-  if(E==0)
+  if(EK<0)
     {
-      G4cout << __METHOD_NAME__ << "Particle energy is 0! This will not be tracked." << G4endl;
+      G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
     }
 #ifdef BDSDEBUG 

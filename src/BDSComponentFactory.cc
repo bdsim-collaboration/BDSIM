@@ -617,10 +617,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   G4double length = element->l*CLHEP::m;
-  // Purposively don't set "angle" in strength as BDSMagnet builds according to this - only set B
+  
+  // magnetic field
+  G4double bField;
   if(BDS::IsFinite(element->B))
-    {(*st)["field"] = element->B;}
-  else
     {
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["field"] = - brho * element->angle / length * charge * ffact / CLHEP::tesla / CLHEP::m;
@@ -850,7 +850,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      element->material);
+				      G4String(element->material),
+				      G4String(element->vacuumMaterial),
+				      PrepareColour(element, "collimator"));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -874,7 +876,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     element->material);
+				     G4String(element->material),
+				     G4String(element->vacuumMaterial),
+				     PrepareColour(element, "collimator"));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
@@ -1278,4 +1282,12 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
 
   return info;
+}
+
+G4String BDSComponentFactory::PrepareColour(Element const* element, const G4String fallback) const
+{
+  G4String colour = element->colour;
+  if (colour == "")
+    {colour = fallback;}
+  return colour;
 }
