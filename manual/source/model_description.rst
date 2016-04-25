@@ -1237,12 +1237,11 @@ Physics Lists In BDSIM
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
 |                           | hadronic elastic and inelastic processes. Suitable for high energy     |
-|                           | (>10 GeV). This includes and uses `G4EmStandardPhysics`.               |
+|                           | (>10 GeV).                                                             |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
 |                           | precision neutron models to transport neutrons below 20 MeV down to    |
-|                           | thermal energies. This includes and uses `G4EmStandardPhysics`. This   |
-|                           | is provided by `G4HadronPhysicsQGSP_BERT_HP`.                          |
+|                           | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
 |                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
