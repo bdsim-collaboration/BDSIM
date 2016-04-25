@@ -20,6 +20,7 @@ public:
   void DrawModel();
   void DrawElossHits();
   void DrawTunnelHits();
+  void DrawSamplers();
   void DrawTrajectories();
 
   void LoadOptions(int iOpt);

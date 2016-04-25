@@ -96,6 +96,7 @@ void EventDisplay::Draw()
   this->DrawModel();
   this->DrawElossHits();
   this->DrawTunnelHits();
+  this->DrawSamplers();
   this->DrawTrajectories();
 }
 
@@ -189,19 +190,6 @@ void EventDisplay::DrawTunnelHits()
 {
   std::cout << "EventDisplay::DrawTunnelHits>" << std::endl;
 
-#if 0
-  TEvePointSet *ps = new TEvePointSet();
-  for(int i=0;i<(int)event->tunnelHit->X.size();++i)
-  {
-    ps->SetNextPoint(event->tunnelHit->X[i]*100.0,
-                     event->tunnelHit->Y[i]*100.0,
-                     event->tunnelHit->Z[i]*100.0);
-  }
-  ps->SetMainColor(kWhite);
-  gEve->AddElement(ps);
-  gEve->Redraw3D();
-#endif
-
   TEveBoxSet *bs = new TEveBoxSet("TunnelHits");
   bs->Reset(TEveBoxSet::kBT_AABox, kFALSE,64);
 
@@ -218,6 +206,34 @@ void EventDisplay::DrawTunnelHits()
 
   bs->SetMainColor(kWhite);
   gEve->AddElement(bs);
+  gEve->Redraw3D();
+}
+
+void EventDisplay::DrawSamplers()
+{
+  std::cout << "EventDisplay::DrawSamplers>" << std::endl;
+
+  // loop over samplers
+  for(auto sampler : event->samplers)
+  {
+    TEvePointSet *ps = new TEvePointSet(sampler->samplerName.c_str());
+
+    // Get coordinate tranform for sampler
+    TVector3 mpos = model->endPos[sampler->modelID];
+    TRotation mrot = model->endRot[sampler->modelID];
+
+    // loop over sampler hits
+    for(int i=0;i<sampler->n;++i)
+    {
+      TVector3 v = mpos + mrot*TVector3(sampler->x[i],sampler->y[i],0);
+      ps->SetNextPoint(v.x()*100.0,
+                       v.y()*100.0,
+                       v.z()*100.0);
+    }
+
+    ps->SetMainColor(kBlue);
+    gEve->AddElement(ps);
+  }
   gEve->Redraw3D();
 }
 
