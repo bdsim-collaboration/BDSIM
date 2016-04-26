@@ -6,6 +6,7 @@
 #include "G4Allocator.hh"
 #include "G4Step.hh"
 #include "G4Track.hh"
+#include "G4VProcess.hh"
 
 #include <map>
 #include <ostream>
@@ -15,6 +16,15 @@ G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
   G4Trajectory(aTrack)
 {
+  if(aTrack->GetCreatorProcess() != 0 )
+  {
+    G4cout << "BDSTrajectory::BDSTrajectory> Creator " << aTrack->GetParentID() << " " << aTrack->GetTrackID() << " " << aTrack->GetCreatorProcess()->GetProcessType() << " " <<
+    aTrack->GetCreatorProcess()->GetProcessSubType() << G4endl;
+  }
+  else
+  {
+    G4cout << "BDSTrajectory::BDSTrajectory> No creator " << aTrack->GetParentID() << " " << aTrack->GetTrackID() << G4endl;
+  }
   positionOfLastScatter[aTrack->GetTrackID()] = aTrack->GetPosition();
   momDirAtLastScatter[aTrack->GetTrackID()]   = aTrack->GetMomentumDirection();
   energyAtLastScatter[aTrack->GetTrackID()]   = aTrack->GetTotalEnergy();
@@ -24,6 +34,32 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
+  if(aStep->GetTrack()->GetTrackID() == 1)
+  {
+    G4cout <<  "BDSTrajector::AppendStep> " << aStep->GetPreStepPoint()->GetProcessDefinedStep();
+    if(aStep->GetPreStepPoint()->GetProcessDefinedStep() != 0)
+    {
+      G4cout << " " << aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessType() << " "
+      <<   aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessSubType() << G4endl;
+    }
+    else
+    {
+      G4cout << G4endl;
+    }
+  }
+
+#if 0
+  if(aStep->GetTrack()->GetCreatorProcess() != 0)
+  {
+    G4cout << "BDSTrajectory::AppendStep> " << aStep->GetTrack()->GetTrackID() << " " << aStep->GetTrack()->GetCreatorProcess()->GetProcessType() << " " <<
+    aStep->GetTrack()->GetCreatorProcess()->GetProcessSubType()<< G4endl;
+  }
+  else
+  {
+    G4cout << "BDSTrajectory::AppendStep>" << G4endl;
+  }
+#endif
+
   G4Trajectory::AppendStep(aStep);
   G4Track*            aTrack = aStep->GetTrack();
   BDSTrajectoryPoint* tempTP = new BDSTrajectoryPoint(aStep);
