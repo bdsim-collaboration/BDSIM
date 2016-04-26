@@ -267,11 +267,12 @@ namespace GMAD
     double   lengthSafety;
     int      randomSeed;
 
+    bool     storeTrajectory;
     bool     storeMuonTrajectories;
+    bool     storeNeutronTrajectories;
     double   trajCutGTZ;
     double   trajCutLTR;
-    bool     storeNeutronTrajectories;
-    bool     storeTrajectory;
+
     bool     stopSecondaries;
     bool     stopTracks;
 
