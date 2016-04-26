@@ -37,6 +37,7 @@ class Config {
   std::string inputFilePath                     = "";
   std::string outputFileName                    = "";
   std::string calculateOpticalFunctionsFileName = "";
+  std::string gdmlFileName                      = "";
 
   bool bDebug                                   = false;
   bool bCalculateOpticalFunctions               = false;
