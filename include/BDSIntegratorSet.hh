@@ -1,7 +1,26 @@
 #ifndef BDSINTEGRATORSET_H
 #define BDSINTEGRATORSET_H
 
+#include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
+
+#include "globals.hh" // geant4 types / globals
+
+struct BDSIntegratorSet;
+
+namespace BDS
+{
+  /// @{ Return the appropraiate set of integrators to use for each magnet type.
+  BDSIntegratorSet GetIntegratorSet(G4String             set);
+  BDSIntegratorSet GetIntegratorSet(BDSIntegratorSetType set);
+  /// @}
+}
+
+/**
+ * @brief Which integrator to use for each type of magnet / field object
+ * 
+ * @author Laurie Nevay
+ */
 
 struct BDSIntegratorSet
 {
@@ -40,7 +59,6 @@ struct BDSIntegratorSet
   BDSIntegratorType rfcavity;
   BDSIntegratorType rf;
   BDSIntegratorType general;
-
 };
 
 
