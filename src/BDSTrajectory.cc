@@ -18,12 +18,17 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
 {
   if(aTrack->GetCreatorProcess() != 0 )
   {
-    G4cout << "BDSTrajectory::BDSTrajectory> Creator " << aTrack->GetParentID() << " " << aTrack->GetTrackID() << " " << aTrack->GetCreatorProcess()->GetProcessType() << " " <<
-    aTrack->GetCreatorProcess()->GetProcessSubType() << G4endl;
+    this->stepProcessType.push_back(aTrack->GetCreatorProcess()->GetProcessType());
+    this->stepProcessSubType.push_back(aTrack->GetCreatorProcess()->GetProcessSubType());
+    this->creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
+    this->creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
   }
   else
   {
-    G4cout << "BDSTrajectory::BDSTrajectory> No creator " << aTrack->GetParentID() << " " << aTrack->GetTrackID() << G4endl;
+    this->stepProcessType.push_back(0);
+    this->stepProcessSubType.push_back(0);
+    this->creatorProcessType    = 0;
+    this->creatorProcessSubType = 0;
   }
   positionOfLastScatter[aTrack->GetTrackID()] = aTrack->GetPosition();
   momDirAtLastScatter[aTrack->GetTrackID()]   = aTrack->GetMomentumDirection();
@@ -34,31 +39,16 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
-  if(aStep->GetTrack()->GetTrackID() == 1)
+  if(aStep->GetPreStepPoint()->GetProcessDefinedStep() != 0)
   {
-    G4cout <<  "BDSTrajector::AppendStep> " << aStep->GetPreStepPoint()->GetProcessDefinedStep();
-    if(aStep->GetPreStepPoint()->GetProcessDefinedStep() != 0)
-    {
-      G4cout << " " << aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessType() << " "
-      <<   aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessSubType() << G4endl;
-    }
-    else
-    {
-      G4cout << G4endl;
-    }
-  }
-
-#if 0
-  if(aStep->GetTrack()->GetCreatorProcess() != 0)
-  {
-    G4cout << "BDSTrajectory::AppendStep> " << aStep->GetTrack()->GetTrackID() << " " << aStep->GetTrack()->GetCreatorProcess()->GetProcessType() << " " <<
-    aStep->GetTrack()->GetCreatorProcess()->GetProcessSubType()<< G4endl;
+    this->stepProcessType.push_back(aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessType());
+    this->stepProcessSubType.push_back(aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessSubType());
   }
   else
   {
-    G4cout << "BDSTrajectory::AppendStep>" << G4endl;
+    this->stepProcessType.push_back(0);
+    this->stepProcessSubType.push_back(0);
   }
-#endif
 
   G4Trajectory::AppendStep(aStep);
   G4Track*            aTrack = aStep->GetTrack();
@@ -75,6 +65,8 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 {
+  G4cout << __METHOD_NAME__ << G4endl;
+
   if(!secondTrajectory)
     {return;}
 
@@ -88,7 +80,8 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {
-  for(G4int i = 1; i < t.GetPointEntries(); i++)
-    {out << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
+  out << t.stepProcessType.size() << " " << t.GetPointEntries() << G4endl;
+  for(G4int i = 0; i < t.GetPointEntries(); i++)
+   {out << t.stepProcessType[i] << " " << t.stepProcessSubType[i] << " " << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
   return out;
 }

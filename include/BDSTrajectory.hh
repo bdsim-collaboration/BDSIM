@@ -49,6 +49,12 @@ private:
   /// Private trajectory to force use of supplied one.
   BDSTrajectory();
   
+  G4int creatorProcessType;
+  G4int creatorProcessSubType;
+  
+  std::vector<G4int> stepProcessType;
+  std::vector<G4int> stepProcessSubType;
+  
   std::map<G4int,G4ThreeVector> positionOfLastScatter;
   std::map<G4int,G4ThreeVector> momDirAtLastScatter;
   std::map<G4int,G4double>      energyAtLastScatter;
