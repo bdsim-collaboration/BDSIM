@@ -268,12 +268,8 @@ void Options::PublishMembers()
 
   publish("lengthSafety",&Options::lengthSafety);
   publish("randomSeed",&Options::randomSeed);
-  publish("storeMuonTrajectory",&Options::storeMuonTrajectories);
-  publish("storeMuonTrajectories",&Options::storeMuonTrajectories);
   publish("trajCutGTZ",&Options::trajCutGTZ);
   publish("trajCutLTR",&Options::trajCutLTR);
-  publish("storeNeutronTrajectory",&Options::storeNeutronTrajectories);
-  publish("storeNeutronTrajectories",&Options::storeNeutronTrajectories);
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);

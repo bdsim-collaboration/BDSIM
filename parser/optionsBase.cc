@@ -194,9 +194,6 @@ OptionsBase::OptionsBase()
   storeTrajectoryDepth     = 1;
   storeTrajectoryParticle  = "";
   storeTrajectoryEnergyThreshold = 0.0;
-  
-  storeNeutronTrajectories = false;
-  storeMuonTrajectories    = false;
 
   // circular options
   nturns                   = 1;

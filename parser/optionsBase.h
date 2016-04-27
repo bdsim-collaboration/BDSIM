@@ -272,9 +272,6 @@ namespace GMAD
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
     
-    bool     storeMuonTrajectories;
-    bool     storeNeutronTrajectories;
-    
     double   trajCutGTZ;
     double   trajCutLTR;
 
