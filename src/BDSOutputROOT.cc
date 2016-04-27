@@ -149,9 +149,7 @@ void BDSOutputROOT<Type>::Initialise()
       samplerTrees.push_back(sampler);
     }
 
-  if(globalConstants->StoreTrajectory() ||
-          globalConstants->StoreMuonTrajectories() ||
-          globalConstants->StoreNeutronTrajectories())
+  if(globalConstants->StoreTrajectory())
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
@@ -356,27 +354,8 @@ void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   
   if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
-  for(auto iT = TrajVec.begin(); iT<TrajVec.end(); iT++)
+  for(BDSTrajectory* Traj : TrajVec)
     {
-      G4Trajectory* Traj=(G4Trajectory*)(*iT);
-	  
-      G4int parentID=Traj->GetParentID();
-      part = Traj->GetPDGEncoding();
-	  
-      G4bool saveTrajectory=false;
-
-      // store primaries
-      if((parentID==0)&&(BDSGlobalConstants::Instance()->StoreTrajectory()))
-	{saveTrajectory = true;}
-      // store muons
-      else if((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->StoreMuonTrajectories()))
-	{saveTrajectory = true;}
-      // store neutrons
-      else if((part==2112)&&(BDSGlobalConstants::Instance()->StoreNeutronTrajectories()))
-	{saveTrajectory = true;}
-	  
-      if(!saveTrajectory) continue;
-      
       for(G4int j=0; j<Traj->GetPointEntries(); j++)
 	{
 	  G4TrajectoryPoint* TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
