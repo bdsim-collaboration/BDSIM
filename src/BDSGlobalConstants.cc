@@ -70,8 +70,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 				 options.tunnelSensitive,
 				 options.tunnelVisible);
   
-  lengthSafety = options.lengthSafety * CLHEP::m;
-  
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
   itsLaserwireDir = G4ThreeVector(1,0,0);

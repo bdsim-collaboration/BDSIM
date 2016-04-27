@@ -104,6 +104,7 @@ public:
   // regular options from here on
   inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
   inline G4double PlanckScatterFraction()    const {return G4double(options.planckScatterFe);}
+  inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
   inline G4double ComponentBoxSize()         const {return OuterDiameter();}
   inline G4String OuterMaterialName()        const {return G4String(options.outerMaterialName);}
@@ -174,8 +175,7 @@ public:
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
   inline G4double ElossHistoTransBinWidth()  const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
 
-  // options that require members in this class (for value checking or because they're another class)
-  inline G4double LengthSafety()             const {return lengthSafety;}
+  // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
   inline G4double BeamMomentum()             const {return beamMomentum;}
@@ -283,8 +283,6 @@ private:
   G4double      itsLWCalWidth;
   G4double      itsLWCalOffset;
   
-  G4double lengthSafety;
-
   /// rotation
   void InitRotationMatrices();
   G4RotationMatrix* rotY90;
