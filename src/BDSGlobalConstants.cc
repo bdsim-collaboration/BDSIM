@@ -38,6 +38,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
 
+  particleName = G4String(options.particleName);
+  
   //beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
 					     options.aper1 * CLHEP::m,

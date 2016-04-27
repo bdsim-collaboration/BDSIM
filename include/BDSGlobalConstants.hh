@@ -142,7 +142,6 @@ public:
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4bool   DoPlanckScattering()       const {return G4bool  (options.doPlanckScattering);}
-  inline G4String ParticleName()             const {return G4String(options.particleName);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double ParticleTotalEnergy()      const {return G4double(options.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
@@ -181,6 +180,7 @@ public:
   inline G4double BeamMomentum()             const {return beamMomentum;}
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
   inline G4double ParticleMomentum()         const {return particleMomentum;}
+  inline G4String ParticleName()             const {return particleName;}
   inline G4double TeleporterLength()         const {return teleporterlength;}
   inline G4double SMax()                     const {return sMax;}
   inline G4double SMaxHistograms()           const {return sMaxHistograms;}
@@ -249,6 +249,9 @@ private:
   /// Particle energy
   G4double particleMomentum, particleKineticEnergy;
 
+  /// Particle name
+  G4String particleName;
+  
   /// Beamline length in mm
   G4double sMax;
   
@@ -327,8 +330,8 @@ inline void BDSGlobalConstants::SetBeamMomentum(G4double val)
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {beamParticleDefinition = aBeamParticleDefinition;}
 
-inline void BDSGlobalConstants::SetParticleName(G4String particleName)
-{options.set_value("particleName", particleName);}
+inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
+{particleName = aParticleName;}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}
