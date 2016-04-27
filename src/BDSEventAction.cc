@@ -7,7 +7,6 @@
 #include "BDSRunManager.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
-#include "BDSTrajectoryPoint.hh"
 #include "BDSTunnelHit.hh"
 
 #include "globals.hh"                  // geant4 types / globals
@@ -16,6 +15,7 @@
 #include "G4Run.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
+#include "G4RichTrajectoryPoint.hh"
 #include "G4SDManager.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
@@ -245,7 +245,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  BDSTrajectory* traj = (BDSTrajectory*) (iT1);
 
 	  // clear out trajectories that don't reach point x
-	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
+	  G4RichTrajectoryPoint* trajEndPoint = (G4RichTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
 	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
 	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
 	  G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) + std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));

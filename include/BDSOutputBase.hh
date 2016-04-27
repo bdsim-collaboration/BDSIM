@@ -8,7 +8,6 @@
 #include "BDSHistogram.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
-#include "G4Trajectory.hh"
 #include <vector>
 
 /**

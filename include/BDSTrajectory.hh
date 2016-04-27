@@ -12,6 +12,9 @@
 /**
  * @brief Trajectory information from track including last scatter etc.
  * 
+ * BDSTrajectory stores G4RichTrajectoryPoints
+ * This can be changed to BDSTrajectoryPoints if necessary
+ *
  * @author L. Deacon.
  */
 
