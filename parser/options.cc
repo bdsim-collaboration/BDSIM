@@ -276,6 +276,9 @@ void Options::PublishMembers()
   publish("storeNeutronTrajectories",&Options::storeNeutronTrajectories);
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
+  publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
+  publish("storeTrajectoryParticle",&Options::storeTrajectoryParticle);
+  publish("storeTrajectoryEnergyThreshold",&Options::storeTrajectoryEnergyThreshold);
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",&Options::stopTracks);
   publish("nturns",&Options::nturns);

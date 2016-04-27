@@ -267,9 +267,14 @@ namespace GMAD
     double   lengthSafety;
     int      randomSeed;
 
-    bool     storeTrajectory;
+    bool        storeTrajectory;
+    int         storeTrajectoryDepth;
+    std::string storeTrajectoryParticle;
+    double      storeTrajectoryEnergyThreshold;
+    
     bool     storeMuonTrajectories;
     bool     storeNeutronTrajectories;
+    
     double   trajCutGTZ;
     double   trajCutLTR;
 
