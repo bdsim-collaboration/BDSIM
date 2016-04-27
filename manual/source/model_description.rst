@@ -1446,9 +1446,11 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
 +----------------------------------+-------------------------------------------------------+
-| storeMuonTrajectories            | whether to store muon trajectories in the output      |
+| storeTrajectoryDepth             | maximum depth (secondaries) of stored trajectories    |
 +----------------------------------+-------------------------------------------------------+
-| storeNeutronTrajectories         | whether to store neutron trajectories in the output   |
+| storeTrajectoryEnergyThreshold   | minimum energy of stored trajectories                 |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryParticle          | store trajectories of these particles                 |
 +----------------------------------+-------------------------------------------------------+
 | trajCutGTZ                       | global z position cut (minimum) for storing           |
 |                                  | trajectories                                          |
