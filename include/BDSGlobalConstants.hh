@@ -139,6 +139,7 @@ public:
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
+  inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4bool   DoPlanckScattering()       const {return G4bool  (options.doPlanckScattering);}
   inline G4String ParticleName()             const {return G4String(options.particleName);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
@@ -151,6 +152,7 @@ public:
   inline G4long   RandomSeed()               const {return G4long  (options.randomSeed);}
   inline G4bool   UseEMLPB()                 const {return G4bool  (options.useEMLPB);}
   inline G4bool   UseHadLPB()                const {return G4bool  (options.useHadLPB);}
+  inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
@@ -175,8 +177,6 @@ public:
   // options that require members in this class (for value checking or because they're another class)
   inline G4double LengthSafety()             const {return lengthSafety;}
   inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
-  inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
   inline G4double BeamMomentum()             const {return beamMomentum;}
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
@@ -205,7 +205,6 @@ public:
   // refactor out of classes that use this
   inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
   inline G4double MagnetPoleRadius()   const {return itsMagnetPoleRadius;}
-  inline G4bool   SampleDistRandomly() const {return true;}
   inline G4double LWCalWidth()         const {return itsLWCalWidth;}
   inline G4double LWCalOffset()        const {return itsLWCalOffset;}
 
