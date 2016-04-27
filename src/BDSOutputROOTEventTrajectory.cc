@@ -11,10 +11,10 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 #ifndef __ROOTBUILD__
 void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 {
-  G4cout << "ntraj=" << trajVec.size() << G4endl;
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
   {
     G4Trajectory* traj=(G4Trajectory*)(*iT);
+    //G4cout << *(BDSTrajectory*)*iT << G4endl;
     trackID.push_back((unsigned int &&) traj->GetTrackID());
 
     std::vector<TVector3> trajectory;
