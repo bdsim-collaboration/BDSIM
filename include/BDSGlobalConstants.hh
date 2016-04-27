@@ -175,8 +175,8 @@ public:
   // options that require members in this class (for value checking or because they're another class)
   inline G4double LengthSafety()             const {return lengthSafety;}
   inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4int    TurnsToTake()              const {return turnsToTake;}
-  inline G4double LPBFraction()              const {return lPBFraction;}
+  inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
+  inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
   inline G4double BeamMomentum()             const {return beamMomentum;}
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
@@ -302,10 +302,8 @@ private:
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
   
-  ///@{ Turn Control
+  /// Turn Control
   G4int    turnsTaken;
-  G4int    turnsToTake;
-  ///@}
   ///@{ Teleporter offset corrections
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
@@ -315,8 +313,6 @@ private:
   BDSParticle initialPoint;
 
   BDSOutputFormat outputFormat;
-
-  G4double lPBFraction;
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)

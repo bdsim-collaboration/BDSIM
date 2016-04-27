@@ -41,7 +41,7 @@ void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 void BDSParser::CheckOptions()
 {
   if (options.nGenerate < 0) // run at least 1 event!
-    {options.set_value("nGenerate", 1);}
+    {options.nGenerate = 1;}
   
   if (options.beamEnergy == 0)
     {
@@ -50,5 +50,22 @@ void BDSParser::CheckOptions()
     }
   
   if (!BDS::IsFinite(options.E0))
-    {options.set_value("E0", options.beamEnergy);}
+    {options.E0 = options.beamEnergy;}
+
+  if(options.LPBFraction > 1.0) // safety checks
+    {options.LPBFraction = 1.0;}
+  if(options.LPBFraction < 0.0)
+    {options.LPBFraction = 0.0;}
+
+  if (options.lengthSafety < 1e-15)
+    { // protect against poor lengthSafety choices that would cause potential overlaps
+      std::cerr << "Dangerously low \"lengthSafety\" value of: " << options.lengthSafety
+		<< " m that will result in potential geometry overlaps!" << std::endl;
+      std::cerr << "This affects all geometry construction and should be carefully chosen!!!" << std::endl;
+      std::cerr << "The default value is 1 pm" << std::endl;
+      exit(1);
+    }
+
+  if(options.nturns < 1)
+    {options.nturns = 1;}
 }

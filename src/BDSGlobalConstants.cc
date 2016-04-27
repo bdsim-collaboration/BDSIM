@@ -33,7 +33,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   particleMomentum(0.0),
   particleKineticEnergy(0.0),
   sMax(0.0),
-  turnsTaken(0.0),
+  turnsTaken(0),
   teleporterlength(0.0)
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
@@ -70,22 +70,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
 				 options.tunnelSensitive,
 				 options.tunnelVisible);
   
-  if (options.lengthSafety < 1e-15)
-    { // protect against poor lengthSafety choices that would cause potential overlaps
-      G4cerr << "Dangerously low \"lengthSafety\" value of: " << options.lengthSafety
-	     << " m that will result in potential geometry overlaps!" << G4endl;
-      G4cerr << "This affects all geometry construction and should be carefully chosen!!!" << G4endl;
-      G4cerr << "The default value is 1 pm" << G4endl;
-      exit(1);
-    }
-  else
-    {lengthSafety = options.lengthSafety * CLHEP::m;}
-
-  lPBFraction = options.LPBFraction;
-  if(lPBFraction > 1.0) // safety checks
-    {lPBFraction = 1.0;}
-  if(lPBFraction < 0.0)
-    {lPBFraction = 0.0;}
+  lengthSafety = options.lengthSafety * CLHEP::m;
   
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
@@ -97,11 +82,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   zeroFieldManager=new G4FieldManager();
   zeroFieldManager->SetDetectorField(zeroMagField);
   zeroFieldManager->CreateChordFinder(zeroMagField);
-  
-  turnsToTake = options.nturns;
-  if(turnsToTake < 1)
-    {turnsToTake = 1;}
-  
+    
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
 
   CalculateHistogramParameters();
