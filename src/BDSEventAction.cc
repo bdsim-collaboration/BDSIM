@@ -256,27 +256,59 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
 	  G4int parentID=traj->GetParentID();
 	  // always store primaries
-	  if(parentID==0) {
-	    interestingTrajectories.push_back(traj);
-	    continue;
-	  }
+	  if(parentID==0)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
 
-	  // check on depth
-	  // TODO
-	  
 	  // check on energy
 	  if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() > traj->GetInitialKineticEnergy())
 	    {continue;}
 	    
-	  // check on particle
+	  // check on particle if not empty string
 	  if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
 	    G4String particleName = traj->GetParticleName();
 	    std::size_t found = BDSGlobalConstants::Instance()->StoreTrajectoryParticle().find(particleName);
-	    if (found == std::string::npos) {
-	      continue;
-	    }
+	    if (found == std::string::npos)
+	      {continue;}
 	  }
-  
+
+	  // check on depth
+	  // discuss with Stewart exact definition
+	  // now depth = 1 means only primaries
+	  G4bool depthCheck = false;
+	  const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
+	  if (parentID == 0 ||
+	      (depth > 1 && parentID == 1)
+	      )
+	    {
+	      depthCheck = true;
+	    }
+	  // starting loop with tertiaries
+	  for (G4int i=2; i<depth; i++)
+	    {
+	      // find track of parentID
+	      // looping over vector seems only way?
+	      for(auto iT2 : *trajVec)
+		{
+		  BDSTrajectory *tr2 = (BDSTrajectory*) (iT2);
+		  if(tr2->GetTrackID()==parentID)
+		    {
+		      parentID = tr2->GetParentID();
+		      break;
+		    }
+		}
+	      // best to stop at parentID == 1
+	      if (parentID == 1)
+		{
+		  depthCheck = true;
+		  break;
+		}
+	    }
+	  if (depthCheck == false)
+	    {continue;}
+ 
 	  interestingTrajectories.push_back(traj);
 	}
       
