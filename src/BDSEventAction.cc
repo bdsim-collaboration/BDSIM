@@ -16,7 +16,6 @@
 #include "G4Run.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4TrajectoryContainer.hh"
-#include "G4Trajectory.hh"
 #include "G4SDManager.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
@@ -235,15 +234,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Save interesting trajectories
   if(BDSGlobalConstants::Instance()->StoreTrajectory())
     {
-      std::vector<BDSTrajectory *> interestingTrajectories;
+      std::vector<BDSTrajectory*> interestingTrajectories;
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "storing trajectories" << G4endl;
 #endif
-      G4TrajectoryContainer *trajCont = evt->GetTrajectoryContainer();
-      TrajectoryVector *trajVec = trajCont->GetVector();
+      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
+      TrajectoryVector* trajVec = trajCont->GetVector();
       for (auto iT1 : *trajVec)
 	{
-	  BDSTrajectory *traj = (BDSTrajectory*) (iT1);
+	  BDSTrajectory* traj = (BDSTrajectory*) (iT1);
 
 	  // clear out trajectories that don't reach point x
 	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
@@ -275,24 +274,23 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  }
 
 	  // check on depth
-	  // discuss with Stewart exact definition
-	  // now depth = 1 means only primaries
+	  // depth = 0 means only primaries
 	  G4bool depthCheck = false;
 	  const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
+	  // check directly for primaries and secondaries
 	  if (parentID == 0 ||
-	      (depth > 1 && parentID == 1)
+	      (depth > 0 && parentID == 1)
 	      )
-	    {
-	      depthCheck = true;
-	    }
+	    {depthCheck = true;}
+	  
 	  // starting loop with tertiaries
-	  for (G4int i=2; i<depth; i++)
+	  for (G4int i=1; i<depth; i++)
 	    {
 	      // find track of parentID
 	      // looping over vector seems only way?
 	      for(auto iT2 : *trajVec)
 		{
-		  BDSTrajectory *tr2 = (BDSTrajectory*) (iT2);
+		  BDSTrajectory* tr2 = (BDSTrajectory*) (iT2);
 		  if(tr2->GetTrackID()==parentID)
 		    {
 		      parentID = tr2->GetParentID();
