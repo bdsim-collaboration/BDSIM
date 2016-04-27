@@ -53,14 +53,18 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
 {
+    out << p.GetPosition();
+
+  #if 0 // TODO understand this process code
   if(p.currentProcess)
-    {
-      out << "BDSTrajectoryPoint: ";
-      out << "current process = " << p.currentProcess->GetProcessName() << ", that ";
-      G4String result = "isn't";
-      if (p.isScatteringProcess)
-	{result = "is";}
-      out << result << " a scattering process" << G4endl;
-    }
+  {
+    out << "BDSTrajectoryPoint: ";
+    out << "current process = " << p.currentProcess->GetProcessName() << ", that ";
+    G4String result = "isn't";
+    if (p.isScatteringProcess)
+    {result = "is";}
+    out << result << " a scattering process" << G4endl;
+  }
+#endif
   return out;
 }
