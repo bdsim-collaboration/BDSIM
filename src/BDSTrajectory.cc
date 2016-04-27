@@ -14,7 +14,7 @@
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
-  G4Trajectory(aTrack)
+  G4RichTrajectory(aTrack)
 {
   if(aTrack->GetCreatorProcess() != 0 )
   {
@@ -50,7 +50,7 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
     this->stepProcessSubType.push_back(0);
   }
 
-  G4Trajectory::AppendStep(aStep);
+  G4RichTrajectory::AppendStep(aStep);
   G4Track*            aTrack = aStep->GetTrack();
   BDSTrajectoryPoint* tempTP = new BDSTrajectoryPoint(aStep);
   if(tempTP->IsScatteringProcess())
@@ -70,7 +70,7 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   if(!secondTrajectory)
     {return;}
 
-  G4Trajectory::MergeTrajectory(secondTrajectory);
+  G4RichTrajectory::MergeTrajectory(secondTrajectory);
   
   BDSTrajectory* seco = (BDSTrajectory*)secondTrajectory;
   for (auto position : seco->positionOfLastScatter)

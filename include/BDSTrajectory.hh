@@ -1,7 +1,7 @@
 #ifndef BDSTRAJECTORY_H
 #define BDSTRAJECTORY_H
 
-#include "G4Trajectory.hh"
+#include "G4RichTrajectory.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -15,12 +15,12 @@
  * @author L. Deacon.
  */
 
-class BDSTrajectory: public G4Trajectory
+class BDSTrajectory: public G4RichTrajectory
 {
 public:
   BDSTrajectory(const G4Track* aTrack);
   BDSTrajectory(BDSTrajectory &);
-  virtual ~BDSTrajectory(){;}
+  virtual ~BDSTrajectory(){}
 
   inline void* operator new(size_t);
   inline void operator delete(void*);
