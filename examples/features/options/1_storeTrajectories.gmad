@@ -8,8 +8,6 @@ option, storeTrajectories=1,
 	storeTrajectoryEnergyThreshold = 3*GeV,
 	storeTrajectoryDepth = 3,
 	storeTrajectoryParticle = "muon neutron",
-	storeMuonTrajectories = 1,
-	storeNeutronTrajectories = 1,
 	trajCutGTZ=0.0,
 	trajCutLTR=1e12;
 
