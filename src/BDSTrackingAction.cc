@@ -21,7 +21,9 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
   if (interactive || (track->GetParentID() == 0))
   {
     fpTrackingManager->SetStoreTrajectory(1);
-    fpTrackingManager->SetTrajectory(new BDSTrajectory(track));
+    BDSTrajectory *bdsTraj = new BDSTrajectory(track);
+    fpTrackingManager->SetTrajectory(bdsTraj);
+    //G4cout << *bdsTraj << G4endl;
   }
   else
   {fpTrackingManager->SetStoreTrajectory(0);}
