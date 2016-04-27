@@ -37,17 +37,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   teleporterlength(0.0)
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
-  if (options.nGenerate < 0) // run at least 1 event!
-    {options.set_value("nGenerate", 1);}
-
-  if (options.beamEnergy == 0)
-    {
-      G4cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" <<  G4endl;
-      exit(1);
-    }
-
-  if (!BDS::IsFinite(options.E0))
-    {options.set_value("E0", options.beamEnergy);}
 
   //beampipe
   defaultBeamPipeModel = new BDSBeamPipeInfo(options.apertureType,
