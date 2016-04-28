@@ -23,6 +23,8 @@ public:
 
   std::vector<unsigned int> trackID;
   std::vector<unsigned int> parentID;
+  std::vector<std::vector<int>> processTypes;
+  std::vector<std::vector<int>> processSubTypes;
   std::vector<std::vector<TVector3>> trajectories;
 
   ClassDef(BDSOutputROOTEventTrajectory,1);
