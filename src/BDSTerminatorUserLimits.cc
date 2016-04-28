@@ -12,15 +12,13 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 						 G4double uekinMin,
 						 G4double urangMin):
   G4UserLimits(ustepMax,
-		 utrakMax,
-		 utimeMax,
-		 uekinMin,
-		 urangMin),
+	       utrakMax,
+	       utimeMax,
+	       uekinMin,
+	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX),
-  verbose(BDSGlobalConstants::Instance()->Verbose()),
-  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
-{;}
+  stoprunningEK(DBL_MAX)
+{}
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 						 G4double ustepMax,
@@ -35,10 +33,8 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       uekinMin,
 	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX),
-  verbose(BDSGlobalConstants::Instance()->Verbose()),
-  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
-{;}
+  stoprunningEK(DBL_MAX)
+{}
 
 inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
 {
@@ -46,12 +42,12 @@ inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
   G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
 #ifdef BDSDEBUG
   // for some reason the __METHOD_NAME__ can't identify this function so hard coded its name
-  G4cout << "BDSTerminatorUserLimits::GetUserMinEkine> turns taken : " << turnsTaken << G4endl;
+  G4cout << __METHOD_NAME__ << "turns taken : " << turnsTaken << G4endl;
 #endif
-  if (turnsTaken >= turnsToTake)
+  if (turnsTaken >= BDSGlobalConstants::Instance()->TurnsToTake())
     {
 #ifdef BDSDEBUG
-      G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
+      G4cout << __METHOD_NAME__ << "Requested number of turns completed - stopping all particles" << G4endl;
 #endif
       return stoprunningEK;
     } // yes - stop: return DBL_MAX eV so no particles will be tracked

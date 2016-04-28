@@ -73,31 +73,6 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  
 
-  G4double GetBetaX()             {return betaX;}
-  G4double GetBetaY()             {return betaY;}
-  G4double GetAlphaX()            {return alphaX;}
-  G4double GetAlphaY()            {return alphaY;}
-  G4double GetEmitX()             {return emitX;}
-  G4double GetEmitY()             {return emitY;}
-  G4double GetEnvelopeX()         {return envelopeX;}
-  G4double GetEnvelopeY()         {return envelopeY;}
-  G4double GetEnvelopeXp()        {return envelopeXp;}
-  G4double GetEnvelopeYp()        {return envelopeYp;}
-  G4double GetEnvelopeEmitX()     {return envelopeEmitX;}
-  G4double GetEnvelopeEmitY()     {return envelopeEmitY;}
-  G4double GetEnvelopeCollMinX()  {return envelopeCollMinX;}
-  G4double GetEnvelopeCollMaxX()  {return envelopeCollMaxX;}
-  G4double GetEnvelopeCollMinXp() {return envelopeCollMinXp;}
-  G4double GetEnvelopeCollMaxXp() {return envelopeCollMaxXp;}
-  G4double GetEnvelopeCollMinY()  {return envelopeCollMinY;}
-  G4double GetEnvelopeCollMaxY()  {return envelopeCollMaxY;}
-  G4double GetEnvelopeCollMinYp() {return envelopeCollMinYp;}
-  G4double GetEnvelopeCollMaxYp() {return envelopeCollMaxYp;}
-
-  G4double GetWeightParamer(){return weightParameter;}
-  std::string GetWeightFunction() {return weightFunction;}
-
-
 protected:
   void     SetBetaX(double newBetaX)                          {betaX  = newBetaX;}
   void     SetBetaY(double newBetaY)                          {betaY  = newBetaY;}

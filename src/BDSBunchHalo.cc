@@ -191,8 +191,8 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
        G4cout << __METHOD_NAME__ << emitXSp/emitX << " " << emitYSp/emitY << " " << wx << " " << wy << G4endl;
  #endif
       // reject
-      //if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
-      //continue;
+      if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
+	{continue;}
 
       // add to reference orbit 
       x0 += dx * CLHEP::m;
