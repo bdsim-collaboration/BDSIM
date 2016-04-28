@@ -37,15 +37,6 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);
 
-  G4double GetShellX()       {return shellX;      }
-  G4double GetShellXp()      {return shellXp;     }
-  G4double GetShellY()       {return shellY;      }
-  G4double GetShellYp()      {return shellYp;     }
-  G4double GetShellXWidth()  {return shellXWidth; }
-  G4double GetShellXpWidth() {return shellXpWidth;}
-  G4double GetShellYWidth()  {return shellYWidth; }
-  G4double GetShellYpWidth() {return shellYpWidth;}
-
 protected:
   void SetShellX (G4double shellXIn)            {shellX       = shellXIn;      }
   void SetShellXp(G4double shellXpIn)           {shellXp      = shellXpIn;     }

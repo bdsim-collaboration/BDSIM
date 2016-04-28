@@ -18,9 +18,6 @@ public:
   virtual void   Initialize (G4HCofThisEvent* HCE);
   virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
   virtual void   EndOfEvent (G4HCofThisEvent* HCE);
-
-private:
-  G4bool verbose;
 };
 
 #endif

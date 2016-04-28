@@ -33,11 +33,6 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  
   
-  G4double GetEnvelopeR() {return envelopeR;}
-  G4double GetEnvelopeRp(){return envelopeRp;}
-  G4double GetEnvelopeT() {return envelopeT;}
-  G4double GetEnvelopeE() {return envelopeE;}
-
 protected:
   void SetEnvelopeR(G4double envelopeRIn)  {envelopeR = envelopeRIn;}
   void SetEnvelopeRp(G4double envelopeRpIn) {envelopeRp= envelopeRpIn;}

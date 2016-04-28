@@ -30,8 +30,6 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);
 
-  G4double GetRMin() {return rMin;}
-  G4double GetRMax() {return rMax;}
 protected:
   void SetRMin(G4double rMinIn) { rMin = rMinIn;}
   void SetRMax(G4double rMaxIn) { rMax = rMaxIn;}

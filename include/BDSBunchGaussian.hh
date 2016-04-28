@@ -34,12 +34,6 @@ public:
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  
-
-  G4double GetSigmaX()  {return sigmaX;}
-  G4double GetSigmaY()  {return sigmaY;}
-  G4double GetSigmaXp() {return sigmaXp;}
-  G4double GetSigmaYp() {return sigmaYp;}
-  G4double GetSigma(G4int i, G4int j) {return sigmaGM[i][j];}
   
 protected:
   void SetSigmaX(G4double sigmaXIn) {sigmaX = sigmaXIn;}
