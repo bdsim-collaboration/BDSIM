@@ -5,8 +5,6 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4UserLimits.hh"
 
-class G4Track;
-
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 						 G4double utrakMax,
 						 G4double utimeMax,
