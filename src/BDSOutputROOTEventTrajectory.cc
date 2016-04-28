@@ -13,15 +13,15 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 {
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
   {
-    G4Trajectory* traj=(G4Trajectory*)(*iT);
-    //G4cout << *(BDSTrajectory*)*iT << G4endl;
-    trackID.push_back((unsigned int &&) traj->GetTrackID());
+    BDSTrajectory* traj = *iT;
+    trackID.push_back( (unsigned int &&) traj->GetTrackID() );
+    parentID.push_back((unsigned int &&) traj->GetParentID());
 
     std::vector<TVector3> trajectory;
 
     for(auto i = 0; i< traj->GetPointEntries();++i)
     {
-      G4VTrajectoryPoint *point = traj->GetPoint(i);
+      BDSTrajectoryPoint *point = dynamic_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
       G4ThreeVector      pos = point->GetPosition();
       trajectory.push_back(TVector3(pos.getX() / CLHEP::m,
                                     pos.getY() / CLHEP::m,

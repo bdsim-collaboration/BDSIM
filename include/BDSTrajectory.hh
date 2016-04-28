@@ -1,10 +1,12 @@
 #ifndef BDSTRAJECTORY_H
 #define BDSTRAJECTORY_H
 
-#include "G4RichTrajectory.hh"
+#include "G4Trajectory.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
+
+#include "BDSTrajectoryPoint.hh"
 
 #include <map>
 #include <ostream>
@@ -12,13 +14,15 @@
 /**
  * @brief Trajectory information from track including last scatter etc.
  * 
- * BDSTrajectory stores G4RichTrajectoryPoints
- * This can be changed to BDSTrajectoryPoints if necessary
+ * BDSTrajectory stores BDSTrajectoryPoints
  *
- * @author L. Deacon.
+ * @author S. Boogert
  */
 
-class BDSTrajectory: public G4RichTrajectory
+typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
+
+
+class BDSTrajectory: public G4Trajectory
 {
 public:
   BDSTrajectory(const G4Track* aTrack);
@@ -37,32 +41,19 @@ public:
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
-  /// @{ Acessor
-  inline G4ThreeVector GetPositionOfLastScatter(G4Track* aTrack) const;
-  inline G4ThreeVector GetMomDirAtLastScatter(G4Track* aTrack)   const;
-  inline G4double      GetTimeAtLastScatter(G4Track* aTrack)     const;
-  inline G4double      GetTimeAtVertex(G4Track* aTrack)          const;
-  inline G4double      GetEnergyAtLastScatter(G4Track* aTrack)   const;
-  /// @}
-  
+  //G4VTrajectoryPoint* GetPoint(G4int i) const { return (*fpBDSPointsContainer)[i]; }
+
+//  void DrawTrajectory() const { G4VTrajectory::DrawTrajectory(); }
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);
   
 private:
   /// Private trajectory to force use of supplied one.
   BDSTrajectory();
-  
-  G4int creatorProcessType;
-  G4int creatorProcessSubType;
-  
-  std::vector<G4int> stepProcessType;
-  std::vector<G4int> stepProcessSubType;
-  
-  std::map<G4int,G4ThreeVector> positionOfLastScatter;
-  std::map<G4int,G4ThreeVector> momDirAtLastScatter;
-  std::map<G4int,G4double>      energyAtLastScatter;
-  std::map<G4int,G4double>      timeAtLastScatter;
-  std::map<G4int,G4double>      timeAtVertex;
+
+protected:
+  BDSTrajectoryPointsContainer *fpBDSPointsContainer;
 };
 
 extern G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
@@ -77,19 +68,5 @@ inline void* BDSTrajectory::operator new(size_t)
 inline void BDSTrajectory::operator delete(void* aTrajectory)
 {bdsTrajectoryAllocator.FreeSingle((BDSTrajectory*)aTrajectory);}
 
-inline G4ThreeVector BDSTrajectory::GetPositionOfLastScatter(G4Track* aTrack) const
-{return positionOfLastScatter.at(aTrack->GetTrackID());}
-
-inline G4ThreeVector BDSTrajectory::GetMomDirAtLastScatter(G4Track* aTrack) const
-{return momDirAtLastScatter.at(aTrack->GetTrackID());}
-
-inline G4double BDSTrajectory::GetEnergyAtLastScatter(G4Track* aTrack) const
-{return energyAtLastScatter.at(aTrack->GetTrackID());}
-
-inline G4double BDSTrajectory::GetTimeAtLastScatter(G4Track* aTrack) const
-{return timeAtLastScatter.at(aTrack->GetTrackID());}
-
-inline G4double BDSTrajectory::GetTimeAtVertex(G4Track* aTrack) const
-{return timeAtVertex.at(aTrack->GetTrackID());}
 
 #endif

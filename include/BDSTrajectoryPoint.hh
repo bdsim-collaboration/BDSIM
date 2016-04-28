@@ -12,7 +12,8 @@
 /**
  * @brief A Point in a trajectory with extra information.
  *
- * @author L. Deacon
+ * @author S. Boogert
+ *
  */
 
 class BDSTrajectoryPoint: public G4TrajectoryPoint
@@ -28,19 +29,16 @@ public:
   {return (this==&right);};
 
   /// @{ Accessor
-  inline G4bool        IsScatteringProcess() const {return isScatteringProcess;}
-  inline G4int         GetTrackID()          const {return trackID;}
-  inline G4ThreeVector GetVertexPosition()   const {return vertexPosition;}
+  inline G4int         GetProcessType()      const {return processType;}
+  inline G4int         GetProcessSubType()   const {return processSubType;}
   /// @}
   
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
 private:
-  G4bool            isScatteringProcess;
-  const G4VProcess* currentProcess;
-  G4int             trackID;
-  G4ThreeVector     vertexPosition;
+  G4int             processType;
+  G4int             processSubType;
 };
 
 extern G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
