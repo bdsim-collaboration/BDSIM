@@ -7,6 +7,7 @@
 #include "G4ThreeVector.hh"
 
 #include "BDSTrajectoryPoint.hh"
+#include "BDSDebug.hh"
 
 #include <map>
 #include <ostream>
@@ -41,9 +42,12 @@ public:
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
-  //G4VTrajectoryPoint* GetPoint(G4int i) const { return (*fpBDSPointsContainer)[i]; }
+  G4VTrajectoryPoint* GetPoint(G4int i) const
+  { return (*fpBDSPointsContainer)[i];  }
 
-//  void DrawTrajectory() const { G4VTrajectory::DrawTrajectory(); }
+  virtual int GetPointEntries() const { return fpBDSPointsContainer->size(); }
+
+  //  void DrawTrajectory() const { G4VTrajectory::DrawTrajectory(); }
 
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);

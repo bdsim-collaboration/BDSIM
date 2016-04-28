@@ -20,7 +20,6 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack): G4Trajectory(aTrack)
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
-  G4Trajectory::AppendStep(aStep);
   fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
 }
 

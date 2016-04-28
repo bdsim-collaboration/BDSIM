@@ -19,7 +19,7 @@ BDSTrackingAction::BDSTrackingAction(G4bool batchMode):
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-  G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID() << " ParentID=" << track->GetParentID() << G4endl;
+  //G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID() << " ParentID=" << track->GetParentID() << G4endl;
 
   if (interactive || (track->GetParentID() == 0))
   {
