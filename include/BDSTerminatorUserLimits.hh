@@ -44,6 +44,11 @@ public:
 protected:
   G4double keeprunningEK; ///< Minimum energy particle must have to keep going
   G4double stoprunningEK; ///< Same, so everything < DBL_MAX so everything stopped
+
+private:
+  /// Number of turns in total that simulation will progress for - not changed during
+  /// run or after construction.
+  const G4int turnsToTake;
 };
 
 #endif

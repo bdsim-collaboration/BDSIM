@@ -2,9 +2,10 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSTerminatorUserLimits.hh"
 
-#include "globals.hh"
-//#include "G4Track.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4UserLimits.hh"
+
+class G4Track;
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 						 G4double utrakMax,
@@ -17,7 +18,8 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 	       uekinMin,
 	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX)
+  stoprunningEK(DBL_MAX),
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
 {}
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
@@ -33,7 +35,8 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       uekinMin,
 	       urangMin),
   keeprunningEK(0.0),
-  stoprunningEK(DBL_MAX)
+  stoprunningEK(DBL_MAX),
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
 {}
 
 inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
@@ -41,10 +44,9 @@ inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
   // does the number of turns passed == number of turns to take
   G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
 #ifdef BDSDEBUG
-  // for some reason the __METHOD_NAME__ can't identify this function so hard coded its name
   G4cout << __METHOD_NAME__ << "turns taken : " << turnsTaken << G4endl;
 #endif
-  if (turnsTaken >= BDSGlobalConstants::Instance()->TurnsToTake())
+  if (turnsTaken >= turnsToTake)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Requested number of turns completed - stopping all particles" << G4endl;
