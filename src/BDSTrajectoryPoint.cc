@@ -1,12 +1,13 @@
-#include "BDSTrajectoryPoint.hh"
 #include "G4Allocator.hh"
 #include "G4ProcessType.hh"
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
-
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+
+#include "BDSTrajectoryPoint.hh"
+#include "BDSDebug.hh"
 
 #include <ostream>
 
@@ -22,6 +23,8 @@ BDSTrajectoryPoint::BDSTrajectoryPoint():
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
+  processType    = -1;
+  processSubType = -1;
 
   const G4Track    *aTrack         = step->GetTrack();
   const G4VProcess *currentProcess = step->GetPreStepPoint()->GetProcessDefinedStep();
@@ -41,6 +44,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     G4ThreeVector pAfter  = step->GetPostStepPoint()->GetMomentum();
     G4ThreeVector deltaP  = pAfter - pBefore;
   }
+
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
