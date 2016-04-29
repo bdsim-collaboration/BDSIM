@@ -21,10 +21,11 @@
 #include "G4PrimaryParticle.hh"
 #include "Randomize.hh" // for G4UniformRand
 
+#include <algorithm>
+#include <ctime>
 #include <list>
 #include <map>
 #include <vector>
-#include <algorithm>
 
 extern BDSOutputBase* bdsOutput;       // output interface
 
@@ -62,6 +63,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
+  //Get the current time
+  startTime = time(nullptr);
+  
   // get pointer to analysis manager
   analMan = BDSAnalysisManager::Instance();
 
@@ -101,6 +105,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing end of event action" << G4endl;
 #endif
+  // Get the current time
+  stopTime = time(nullptr);
+  // Record timing in output
+  bdsOutput->WriteEventInfo(startTime, stopTime);
+  
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
 

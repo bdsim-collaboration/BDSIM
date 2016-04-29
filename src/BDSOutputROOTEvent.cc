@@ -12,6 +12,8 @@
 #include "TObject.h"
 #include "TTree.h"
 
+#include <ctime>
+
 BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
 #ifdef BDSDEBUG
@@ -269,12 +271,12 @@ void BDSOutputROOTEvent::FillEvent()
   this->Flush();
   
 }
-
-void BDSOutputROOTEvent::WriteEventInfo(double dStart, double dEnd, double dDuration)
+void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime)
 {
-  evtInfo->startTime = dStart;
-  evtInfo->endTime   = dEnd;
-  evtInfo->eventTime = dDuration;
+  // Would be better if we could use constructor here...
+  evtInfo->startTime      = startTime;
+  evtInfo->stopTime       = stopTime;
+  evtInfo-> eventDuration = (float)difftime(stopTime,stopTime);
 }
 
 void BDSOutputROOTEvent::Write() 

@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 
+#include <ctime>
 #include <map>
 
 #include "BDSOutputBase.hh"
@@ -71,10 +72,9 @@ public:
 
   /// fill event structure
   virtual void FillEvent();
-
-  /// fill event inforamtion structure
-  virtual void WriteEventInfo(double dStart, double dEnd, double dDuration);
-
+  
+  /// write event info
+  virtual void WriteEventInfo(time_t startTime, time_t stopTime);
 
   virtual void Initialise(); ///< open the file
   virtual void Write();      ///< write to file
