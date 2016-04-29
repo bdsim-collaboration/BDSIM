@@ -9,8 +9,6 @@ class BDSOutputROOTEventInfo
 {  
 public:
   BDSOutputROOTEventInfo();
-  BDSOutputROOTEventInfo(time_t startTimeIn,
-			 time_t stopTimeIn);
 
   virtual ~BDSOutputROOTEventInfo();
 
