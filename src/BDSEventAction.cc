@@ -121,7 +121,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   stops = (G4double)ms.count()/1000.0;
   G4float duration = stops - starts;
-  G4cout << "Duration " << duration << G4endl;
 
   // Record timing in output
   bdsOutput->WriteEventInfo(startTime, stopTime, (G4float)duration);
