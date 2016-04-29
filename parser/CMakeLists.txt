@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6.4)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 find_package(BISON 2.4 REQUIRED)
 find_package(FLEX REQUIRED)
 
@@ -39,20 +37,6 @@ endif()
 
 flex_target(SCANNER parser.l ${CMAKE_CURRENT_BINARY_DIR}/lex.yy.cc)
 add_flex_bison_dependency(SCANNER PARSER)
-
-# record which git version is being built
-find_package(Git)
-if (GIT_FOUND)
-  exec_program(
-    ${GIT_EXECUTABLE}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ARGS "describe --dirty"
-    OUTPUT_VARIABLE VERSION_SHA1 )
-else()
-  set(VERSION_SHA1 "UNKNOWN")
-endif()
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
 
 # glob parser sources
 file(GLOB GMAD_PARSER_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)

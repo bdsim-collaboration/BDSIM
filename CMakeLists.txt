@@ -416,13 +416,17 @@ if($ENV{VERBOSE})
   message(STATUS "BDSIM sources ${bdsim_sources}")
 endif()
 
+# Configuration information
+add_subdirectory(configuration)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
+
 # Parser
 add_subdirectory(parser)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/parser)
 # include current directory for parser includes
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# BDSIM library and binaries
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
