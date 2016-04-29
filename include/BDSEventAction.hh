@@ -38,6 +38,9 @@ private:
 
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
+
+  G4double starts; ///< Precise start time in seconds.
+  G4double stops;  ///< Precise stop time in seconds.
 };
 
 #endif

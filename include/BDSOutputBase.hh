@@ -54,7 +54,7 @@ public:
 			    G4int    TurnsTaken) = 0;
 
   /// Write additional information about event such as timing.
-  virtual void WriteEventInfo(time_t startTime, time_t stopTime) = 0;
+  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration) = 0;
 
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;

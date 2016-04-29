@@ -22,10 +22,13 @@
 #include "Randomize.hh" // for G4UniformRand
 
 #include <algorithm>
+#include <chrono>
 #include <ctime>
 #include <list>
 #include <map>
 #include <vector>
+
+using namespace std::chrono;
 
 extern BDSOutputBase* bdsOutput;       // output interface
 
@@ -37,7 +40,11 @@ BDSEventAction::BDSEventAction():
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
   primaryCounterCollID(-1),
-  tunnelCollID(-1)
+  tunnelCollID(-1),
+  startTime(0),
+  stopTime(0),
+  starts(0),
+  stops(0)
 { 
   verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
   verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
@@ -65,6 +72,9 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #endif
   //Get the current time
   startTime = time(nullptr);
+
+  milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+  starts = (G4double)ms.count()/1000.0;
   
   // get pointer to analysis manager
   analMan = BDSAnalysisManager::Instance();
@@ -107,8 +117,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
   // Get the current time
   stopTime = time(nullptr);
+  
+  milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+  stops = (G4double)ms.count()/1000.0;
+  G4float duration = stops - starts;
+  G4cout << "Duration " << duration << G4endl;
+
   // Record timing in output
-  bdsOutput->WriteEventInfo(startTime, stopTime);
+  bdsOutput->WriteEventInfo(startTime, stopTime, (G4float)duration);
   
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();

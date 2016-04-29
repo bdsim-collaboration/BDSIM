@@ -271,12 +271,11 @@ void BDSOutputROOTEvent::FillEvent()
   this->Flush();
   
 }
-void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime)
+void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
 {
-  // Would be better if we could use constructor here...
-  evtInfo->startTime      = startTime;
-  evtInfo->stopTime       = stopTime;
-  evtInfo-> eventDuration = (float)difftime(stopTime,stopTime);
+  evtInfo->startTime     = startTime;
+  evtInfo->stopTime      = stopTime;
+  evtInfo->eventDuration = duration;
 }
 
 void BDSOutputROOTEvent::Write() 

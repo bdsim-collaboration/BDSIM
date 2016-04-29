@@ -46,7 +46,7 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// write event info
-  virtual void WriteEventInfo(time_t startTime, time_t stopTime);
+  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration);
   /// Fill event
   virtual void FillEvent() {};
   virtual void Initialise(); ///< open the file

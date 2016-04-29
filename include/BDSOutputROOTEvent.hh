@@ -74,7 +74,7 @@ public:
   virtual void FillEvent();
   
   /// write event info
-  virtual void WriteEventInfo(time_t startTime, time_t stopTime);
+  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration);
 
   virtual void Initialise(); ///< open the file
   virtual void Write();      ///< write to file
