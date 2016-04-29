@@ -81,8 +81,6 @@ if($ENV{VERBOSE})
 	message(STATUS "CMAKE_CXX_ORIG_FLAGS ${CMAKE_CXX_ORIG_FLAGS}")
 endif()
 
-add_subdirectory(configuration)
-
 # Find Packages
 
 # Check for Scientific Linux
@@ -350,11 +348,6 @@ else()
   set(G4_PATCH_LEVEL 9)
 endif()
 
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-# include configuration directory for git version
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
-
 ## set compiler flags
 # warning flags
 set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
@@ -423,6 +416,17 @@ if($ENV{VERBOSE})
   message(STATUS "BDSIM sources ${bdsim_sources}")
 endif()
 
+# Configuration information
+add_subdirectory(configuration)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
+
+# Parser
+add_subdirectory(parser)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
+# include current directory for parser includes
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# BDSIM library and binaries
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
 
 add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
@@ -450,7 +454,7 @@ set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 # ROOT Event Library
 set(bdsimRootEventSources ${root_dicts} ${root_files})
 
-# Remove Options for now - temporary!
+# Add parser options
 list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
 if($ENV{VERBOSE})
   message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
@@ -502,9 +506,6 @@ add_custom_target(copy-deps
 )
 
 ## Add subdirectories
-# Parser
-add_subdirectory(parser)
-
 # Visualisation directory
 add_subdirectory(vis)
 

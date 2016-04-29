@@ -33,6 +33,8 @@ public:
 
   /// Amalgamate the input options with the ones stored in the parser.
   void AmalgamateOptions(const GMAD::Options& optionsIn);
+  /// Check options for consistency
+  void CheckOptions();
   
   /// Return beamline
   inline const GMAD::FastList<GMAD::Element>& GetBeamline() const {return beamline_list;}
