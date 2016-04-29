@@ -28,7 +28,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       trajectory.push_back(TVector3(pos.getX() / CLHEP::m,
                                     pos.getY() / CLHEP::m,
                                     pos.getZ() / CLHEP::m));
-      G4cout << (unsigned int &&) point->GetProcessType() << " " << (unsigned int &&)point->GetProcessSubType() << G4endl;
+      //G4cout << (unsigned int &&) point->GetProcessType() << " " << (unsigned int &&)point->GetProcessSubType() << G4endl;
       processType.push_back( point->GetProcessType());
       processSubType.push_back(  point->GetProcessSubType());
     }
