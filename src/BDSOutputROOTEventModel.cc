@@ -41,21 +41,22 @@ void BDSOutputROOTEventModel::Fill()
     G4RotationMatrix *gr;
     gr = (*i)->GetRotationStart();
     TRotation rr = TRotation();
+    rr.SetToIdentity();
     gr->getAngleAxis(angle,axis);
-    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
-    rr.SetXTheta(angle);
+    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
     this->staRot.push_back(rr);
 
     gr = (*i)->GetRotationMiddle();
     gr->getAngleAxis(angle,axis);
-    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
-    rr.SetXTheta(angle);
+    rr.SetToIdentity();
+    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
+    //G4cout << (*i)->GetName() << " " << angle << " " << axis.x() << " " << axis.y() << " " << axis.z() << G4endl;
     this->midRot.push_back(rr);
 
     gr = (*i)->GetRotationEnd();
     gr->getAngleAxis(angle,axis);
-    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
-    rr.SetXTheta(angle);
+    rr.SetToIdentity();
+    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
     this->endRot.push_back(rr);
 
     // Reference orbit positions
@@ -69,20 +70,20 @@ void BDSOutputROOTEventModel::Fill()
     // Reference orbit rotations
     gr = (*i)->GetReferenceRotationStart();
     gr->getAngleAxis(angle,axis);
-    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
-    rr.SetXTheta(angle);
+    rr.SetToIdentity();
+    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
     this->staRefRot.push_back(rr);
 
     gr = (*i)->GetReferenceRotationMiddle();
     gr->getAngleAxis(angle,axis);
-    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
-    rr.SetXTheta(angle);
+    rr.SetToIdentity();
+    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
     this->midRefRot.push_back(rr);
 
     gr = (*i)->GetReferenceRotationEnd();
     gr->getAngleAxis(angle,axis);
-    rr.SetXAxis(TVector3(axis.x(),axis.y(),axis.z()));
-    rr.SetXTheta(angle);
+    rr.SetToIdentity();
+    rr.Rotate(angle,TVector3(axis.x(),axis.y(),axis.z()));
     this->endRefRot.push_back(rr);
 
     // S positions
