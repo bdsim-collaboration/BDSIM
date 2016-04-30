@@ -501,6 +501,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   
   CalculatePoleAndYoke(outerDiameter, beamPipe, order);
   CreatePoleSolid(name, length, order);
+  CreateCoilSolids(name, length);
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
@@ -631,6 +632,78 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   allSolids.push_back(poleSolid);
 }
 
+void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
+							  G4double    length,
+							  G4Colour*   colour,
+							  G4Material* outerMaterial)
+{
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
+
+  G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
+  if (coilLeftSolid && coilRightSolid)
+    {
+      coilLeftLV = new G4LogicalVolume(coilLeftSolid,
+				       coilMaterial,
+				       name + "_coil_left_lv");
+
+      coilRightLV = new G4LogicalVolume(coilRightSolid,
+					coilMaterial,
+					name + "_coil_right_lv");
+
+      G4Colour* coil = BDSColours::Instance()->GetColour("coil");
+      G4VisAttributes* coilVisAttr = new G4VisAttributes(*coil);
+      coilVisAttr->SetVisibility(true);
+
+      coilLeftLV->SetVisAttributes(coilVisAttr);
+      coilRightLV->SetVisAttributes(coilVisAttr);
+      allVisAttributes.push_back(coilVisAttr);
+    }
+}
+
+void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
+{
+  G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
+  G4double outerX = 0.95 * poleSquareStartRadius * 1.8 * tan(poleAngle*0.5);
+  G4double upperY = poleFinishRadius * 0.85;
+  leftPoints.push_back(G4TwoVector(innerX, poleSquareStartRadius*1.2));
+  leftPoints.push_back(G4TwoVector(outerX, poleSquareStartRadius*1.2));
+  leftPoints.push_back(G4TwoVector(outerX, upperY));
+  leftPoints.push_back(G4TwoVector(innerX, upperY));
+
+  // must be in clockwise order
+  rightPoints.push_back(G4TwoVector(-innerX, poleSquareStartRadius*1.2));
+  rightPoints.push_back(G4TwoVector(-innerX, upperY));
+  rightPoints.push_back(G4TwoVector(-outerX, upperY));
+  rightPoints.push_back(G4TwoVector(-outerX, poleSquareStartRadius*1.2));
+}
+
+void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
+						      G4double length)
+{
+  // create an extruded polygon even though a square to avoid the need for
+  // individual rotated translations. This also allows the same rotation
+  // to be used for the coils as the poles.
+  CreateCoilPoints();
+
+  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
+  G4double zScale = 1;       // the scale at each end of the points = 1
+  
+  coilLeftSolid = new G4ExtrudedSolid(name + "_coil_left_solid", // name
+				      leftPoints,                // transverse 2d coordinates
+				      length*0.5 - lengthSafety, // z half length
+				      zOffsets, zScale, // dx,dy offset for each face, scaling
+				      zOffsets, zScale);// dx,dy offset for each face, scaling
+
+  coilRightSolid = new G4ExtrudedSolid(name + "_coil_right_solid", // name
+				       rightPoints,                // transverse 2d coordinates
+				       length*0.5 - lengthSafety, // z half length
+				       zOffsets, zScale, // dx,dy offset for each face, scaling
+				       zOffsets, zScale);// dx,dy offset for each face, scaling
+
+  allSolids.push_back(coilLeftSolid);
+  allSolids.push_back(coilRightSolid);
+}
+
 void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 								 G4double length,
 								 G4int    /*order*/,
@@ -729,7 +802,8 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
   allPhysicalVolumes.push_back(yokePV);
   // pole placement
   G4PVPlacement* aPolePV = nullptr;
-  for (G4int n = 0; n < 2*order; ++n)
+    for (G4int n = 0; n < 2*order; ++n)
+  //for (G4int n = 0; n < 1; ++n)
     {
       // prepare a new rotation matrix - must be new and can't reuse the same one
       // as the placement doesn't own it - changing the existing one will affect all
@@ -738,6 +812,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
       allRotationMatrices.push_back(rm);
       G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
+      //rm->rotateZ((n)*segmentAngle + CLHEP::pi*0.5);
 
       aPolePV = new G4PVPlacement(rm,                 // rotation
 				  (G4ThreeVector)0,   // position
@@ -749,6 +824,25 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 				  checkOverlaps);     // check overlaps
       allPhysicalVolumes.push_back(aPolePV);
       //name + "_pole_" + printf("_%d_pv", n), // name
+
+       new G4PVPlacement(rm,                 // rotation
+			 (G4ThreeVector)0,   // position
+			 coilLeftLV,             // logical volume
+			 name + "_coil_left_pv",       // name      
+			 containerLV,        // mother lv to be placed in
+			 false,              // no boolean operation
+			 n,                  // copy number
+			 checkOverlaps);     // check overlaps
+
+       new G4PVPlacement(rm,                 // rotation
+			 (G4ThreeVector)0,   // position
+			 coilRightLV,             // logical volume
+			 name + "_coil_right_pv",       // name      
+			 containerLV,        // mother lv to be placed in
+			 false,              // no boolean operation
+			 n,                  // copy number
+			 checkOverlaps);     // check overlaps
+      
     }
 }
 

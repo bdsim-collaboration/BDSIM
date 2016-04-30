@@ -203,6 +203,12 @@ protected:
   virtual void CreatePoleSolid(G4String      name,                 // name
 			       G4double      length,               // length [mm]
 			       G4int         order);               // Nx2 poles
+
+  virtual void CreateCoilPoints();
+  
+  /// Create the coil solids corresponding to the pole solid
+  virtual void CreateCoilSolids(G4String name,
+				G4double length);
   
   /// Create yoke that connects poles and container to put them in
   virtual void CreateYokeAndContainerSolid(G4String      name,
@@ -222,6 +228,11 @@ protected:
 					    G4double     outerDiameter,
 					    G4Material*  outerMaterial,
 					    G4double     magnetContainerLength);
+
+  virtual void CreateLogicalVolumes(G4String    name,
+				    G4double    length,
+				    G4Colour*   colour,
+				    G4Material* outerMaterial);
   
   /// Test inputs for no null pointers or overlapping volumes due to poorly defined sizes
   void TestInputParameters(BDSBeamPipe* beamPipe,
