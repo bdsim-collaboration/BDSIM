@@ -7,7 +7,10 @@
 
 #include "globals.hh"           // geant4 globals / types
 #include "G4Material.hh"
+#include "G4TwoVector.hh"
 #include "G4VSolid.hh"
+
+#include <vector>
 
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets
@@ -20,15 +23,14 @@
  * with different outer shapes - all have poles, but the return 
  * yoke can for example, circular, square or faceted (with 4N facets)
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
-
 
 class BDSMagnetOuterFactoryPolesBase: public BDSMagnetOuterFactoryBase
 {
 public:
-  //static BDSMagnetOuterFactoryPoles* Instance(); /// singleton pattern
   BDSMagnetOuterFactoryPolesBase();
+  virtual ~BDSMagnetOuterFactoryPolesBase(){;}
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,            // name
@@ -140,19 +142,28 @@ protected:
   // geometry parameters
   /// The fraction of the distance from the beam pipe to the outerDiameter/2 that each pole
   /// will take - always < 1
-  G4double poleFraction;
+  const G4double poleFraction;
 
   /// Fraction of 2pi/Npoles that the pole will occupy - always < 1
-  G4double poleAngularFraction;
+  const G4double poleAngularFraction;
 
   /// Fraction of length from pole tip to outerDiameter that pole tip ellisoid will
   /// take up
-  G4double poleTipFraction;
+  const G4double poleTipFraction;
+
+  /// Fraction of length from pole tip to outerDiamter that the expanding section of
+  /// the pole will take up. There's the tip, this bit, then a straight bit.
+  const G4double poleAnnulusFraction;
 
   /// Bends are often wider in the bending plane. As we only have one parameter to pass
   /// which is outerDimaeter, make the non bending dimension a fixed (< 1) fraction of
   /// the outerDimaeter.
-  G4double bendHeightFraction;
+  const G4double bendHeightFraction;
+
+  /// Factor by which the pole length is multiplied for the raw pole length before it's
+  /// intersected with the inside of the yoke. Where the pole would normally stop at
+  /// yokeStartRadius - lengthSaftey, it runs to yokeStartRadius x poleStopFactor.
+  const G4double poleStopFactor;
   
   //length will be calculated in each derived class
   //will be less than outer radius but long enough so poles can be
@@ -162,6 +173,17 @@ protected:
   G4double yokeStartRadius;
   G4double yokeFinishRadius;
   G4double magnetContainerRadius;
+  G4double poleSquareWidth;
+  G4double poleSquareStartRadius;
+  G4double poleAngle;
+  
+  G4VSolid* coilLeftSolid;
+  G4VSolid* coilRightSolid;
+  G4LogicalVolume* coilLeftLV;
+  G4LogicalVolume* coilRightLV;
+
+  std::vector<G4TwoVector> leftPoints;
+  std::vector<G4TwoVector> rightPoints;
 
   // functions
 

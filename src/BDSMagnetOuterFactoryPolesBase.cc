@@ -14,6 +14,7 @@
 #include "G4Colour.hh"
 #include "G4CutTubs.hh"
 #include "G4EllipticalTube.hh"
+#include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4Material.hh"
@@ -21,23 +22,25 @@
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
+#include "G4TwoVector.hh"
 #include "G4UnionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
+#include <algorithm>                       // for std::max
 #include <cmath>
 #include <utility>                         // for std::pair
-#include <algorithm>                       // for std::max
+#include <vector>
 
-BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase()
+BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
+  poleFraction(0.7),
+  poleAngularFraction(0.7),
+  poleTipFraction(0.2),
+  poleAnnulusFraction(0.1),
+  bendHeightFraction(0.7),
+  poleStopFactor(1.1)
 {
-  // geometrical parameters
-  poleFraction        = 0.7;
-  poleAngularFraction = 0.45;
-  poleTipFraction     = 0.2;
-  bendHeightFraction  = 0.7;
-
   // now the base class constructor should be called first which
   // should call clean up (in the derived class) which should initialise
   // the variables I think, but doing here just to be sure.
@@ -53,6 +56,15 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
   yokeStartRadius       = 0;
   yokeFinishRadius      = 0;
   magnetContainerRadius = 0;
+  poleSquareWidth       = 0;
+  poleSquareStartRadius = 0;
+  poleAngle             = 0;
+  coilLeftSolid         = nullptr;
+  coilRightSolid        = nullptr;
+  coilLeftLV            = nullptr;
+  coilRightLV           = nullptr;
+  leftPoints.clear();
+  rightPoints.clear();
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      name,
@@ -550,6 +562,8 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   poleFinishRadius      = poleStartRadius + poleFraction*totalLength;
   yokeStartRadius       = poleFinishRadius + lengthSafety;
   magnetContainerRadius = yokeFinishRadius + lengthSafetyLarge;
+
+  poleSquareWidth       = yokeFinishRadius - yokeStartRadius;
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
@@ -563,48 +577,57 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   
   // full circle is divided into segments for each pole
   G4double segmentAngleWidth = CLHEP::twopi / (G4double)nPoles;
-  G4double poleAngle = segmentAngleWidth * poleAngularFraction;
-
-  // compose pole of an annulus of a certain angle plus
-  // an ellipsoid at the inner side. make the union of the
-  // two to give a typical pole shape - curved inner surface
-  // with increasing width outwards
+  poleAngle = segmentAngleWidth * poleAngularFraction;
   
   // make some % of pole length curved ellipsoidal surface
-  G4double poleLength          = poleFinishRadius - poleStartRadius - 2*lengthSafety;
-  G4double ellipsoidHeight     = poleTipFraction*poleLength;
-  //G4double annulusHeight       = poleLength - ellipsoidHeight;
-  G4double ellipsoidCentre     = poleStartRadius + ellipsoidHeight*0.5;
+  G4double poleLength      = poleFinishRadius - poleStartRadius - 2*lengthSafety;
+  G4double ellipsoidHeight = poleTipFraction*poleLength;
 
   // work out the chord length
-  G4double ellipsoidWidth      = 2*(poleStartRadius + 0.5*ellipsoidHeight) * tan(poleAngle*0.5);
+  G4double ellipsoidWidth   = 2*(poleStartRadius + 0.5*ellipsoidHeight) * tan(poleAngle*0.5);
+  G4double ellipsoidCentreY = poleStartRadius + ellipsoidHeight*0.5;
+  poleSquareStartRadius = poleStartRadius + ellipsoidHeight + poleFinishRadius*poleAnnulusFraction;
+
+  // points that define extruded polygon
+  std::vector<G4TwoVector> points;
+
+  // generate points on a ellipse in the positive quadrant for the pole tip
+  // note, the QT visualiser can't visualise the union of an ellipsoid and extruded
+  // polygon so can't use that method and this method produces a better transition
+  // between the ellipse and the pole.
+  std::vector<G4double> xEllipse;
+  std::vector<G4double> yEllipse;
+  const G4int numAngPoints = 6;
+  for (G4double angle = 0; angle < CLHEP::halfpi; angle += CLHEP::halfpi/(G4double)numAngPoints)
+    {
+      xEllipse.push_back(0.5*ellipsoidWidth*sin(angle));
+      yEllipse.push_back(0.5*ellipsoidHeight*cos(angle));
+    }
+
+  // check pole square width
+  poleSquareWidth = std::max(poleSquareWidth, ellipsoidWidth);
   
-  G4double annulusStartRadius  = ellipsoidCentre / cos(poleAngle*0.5); //so edges line up with ellipsoid edges
-  G4double annulusFinishRadius = poleFinishRadius;
+  // add bottom left quadrant - miss out first point so don't reach apex.
+  for (G4int i = 0; i < (G4int)xEllipse.size()-1; i++)
+    {points.push_back(G4TwoVector(xEllipse[i], ellipsoidCentreY-yEllipse[i]));}
+  points.push_back(G4TwoVector(poleSquareWidth*0.5, poleSquareStartRadius));
+  // top points are x poleStopFactor for unambiguous intersection later on
+  points.push_back(G4TwoVector(poleSquareWidth*0.5, poleFinishRadius*poleStopFactor));
+  points.push_back(G4TwoVector(-poleSquareWidth*0.5, poleFinishRadius*poleStopFactor));
+  points.push_back(G4TwoVector(-poleSquareWidth*0.5, poleSquareStartRadius));
+  // add bottom right quadrant - miss out first point so don't reach apex.
+  // required start index is of course size()-1 also.
+  for (G4int i = (G4int)xEllipse.size()-2; i > 0; i--)
+    {points.push_back(G4TwoVector(-xEllipse[i], ellipsoidCentreY-yEllipse[i]));}
   
-  G4VSolid* poleTip = new G4EllipticalTube(name + "_pole_tip_solid",   // name
-					   ellipsoidHeight*0.5,        // x half width
-					   ellipsoidWidth*0.5,         // y half width
-					   length*0.5 - lengthSafety); // z half width
-
-  G4VSolid* poleAnnulus = new G4Tubs(name + "_pole_annulus_solid", // name
-				     annulusStartRadius,           // start radius
-				     annulusFinishRadius,          // finish radius
-				     length*0.5 - lengthSafety,    // z half length
-				     -poleAngle*0.5,               // start angle
-				     poleAngle);                   // sweep angle
-
-  // note annulus is defined from centre of rotation
-  G4ThreeVector ellipsoidTranslation(poleStartRadius + ellipsoidHeight*0.5, 0, 0);
-  // the centre of the union solid will be that of the 1st solid - the annulus - ie 0,0,0
-  poleSolid = new G4UnionSolid(name + "_pole_solid", // name
-			       poleAnnulus,          // solid 1
-			       poleTip,              // solid 2
-			       0,                    // rotation matrix
-			       ellipsoidTranslation);// translation of poleTip
-
-  allSolids.push_back(poleTip);
-  allSolids.push_back(poleAnnulus);
+  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
+  G4double zScale = 1;       // the scale at each end of the points = 1
+  poleSolid = new G4ExtrudedSolid(name + "_pole_raw_solid",  // name
+				  points,                    // transverse 2d coordinates
+				  length*0.5 - lengthSafety, // z half length
+				  zOffsets, zScale,          // dx,dy offset for each face, scaling
+				  zOffsets, zScale);         // dx,dy offset for each face, scaling
+  
   allSolids.push_back(poleSolid);
 }
 
@@ -616,6 +639,19 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  // cut pole here with knowledge of yoke shape.
+  G4VSolid* poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
+					       0,                                 // start radius
+					       yokeStartRadius - lengthSafetyLarge,
+					       length,  // long half length for unamibiguous intersection
+					       0,                                 // start angle
+					       CLHEP::twopi);                     // sweep angle
+  
+  allSolids.push_back(poleIntersectionSolid);
+  poleSolid = new G4IntersectionSolid(name + "_pole_solid",   // name
+				      poleSolid,              // solid a
+				      poleIntersectionSolid); // solid b
+  
   // circular yoke so pretty easy
   yokeSolid = new G4Tubs(name + "_yoke_solid",      // name
 			 yokeStartRadius,           // start radius
