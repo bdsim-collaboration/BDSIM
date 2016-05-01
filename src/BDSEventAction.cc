@@ -256,6 +256,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   }
   
   // Save interesting trajectories
+
   if(BDSGlobalConstants::Instance()->StoreTrajectory())
   {
     std::vector<BDSTrajectory*> interestingTrajectories;
@@ -263,13 +264,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
     TrajectoryVector* trajVec = trajCont->GetVector();
 
+#define BDSDEBUG 1
+
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "storing trajectories ntrajectory=" << trajCont->size() << G4endl;
+    G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
 #endif
     for (auto iT1 : *trajVec)
 	  {
 	    BDSTrajectory* traj = (BDSTrajectory*) (iT1);
-
 
 	    G4int parentID=traj->GetParentID();
 	    // always store primaries
@@ -280,32 +282,37 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
 
 	    // check on energy
-	    if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() > traj->GetInitialKineticEnergy())
+	    if (traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
       {
         interestingTrajectories.push_back(traj);
         continue;
       }
-	    
-	    // check on particle if not empty string
+
+      // check on particle if not empty string
+
 	    if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
 	      G4String particleName = traj->GetParticleName();
+        //G4cout << particleName << G4endl;
 	      std::size_t found = BDSGlobalConstants::Instance()->StoreTrajectoryParticle().find(particleName);
-	      if (found == std::string::npos)
+	      if (found != std::string::npos)
         {
           interestingTrajectories.push_back(traj);
           continue;
         }
 	    }
 
-	    // check on depth
+      // check on depth
 	    // depth = 0 means only primaries
-	    G4bool depthCheck = false;
+#if 0
 	    const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
 	    // check directly for primaries and secondaries
-	    if (parentID == 0 ||
-          (depth > 0 && parentID == 1))
-	    {depthCheck = true;}
-	  
+	    if (parentID == 0 ||(depth > 0 && parentID == 1))
+	    {
+          interestingTrajectories.push_back(traj);
+          continue;
+	    }
+
+      G4bool depthCheck = false;
 	    // starting loop with tertiaries
 	    for (G4int i=1; i<depth; i++)
 	    {
@@ -327,25 +334,34 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 		      break;
 		    }
 	    }
-	    if (depthCheck == false)
-      {continue;}
+	    if(depthCheck == true)
+      {
+          interestingTrajectories.push_back(traj);
+          continue;
+      }
+#endif
 
+#if 0
       // clear out trajectories that don't reach point x
-      G4RichTrajectoryPoint* trajEndPoint = (G4RichTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
+      BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
       G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
       G4bool greaterThanZInteresting = trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
       G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) + std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));
       G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
-      if (!(greaterThanZInteresting && withinRInteresting))
-      {continue;}
+      if (greaterThanZInteresting && withinRInteresting)
+      {
+        interestingTrajectories.push_back(traj);
+        continue;
+      }
+#endif
+    }
 
-	    interestingTrajectories.push_back(traj);
-	  }
-      
     //Output interesting trajectories
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTrajectories.size() << G4endl;
 #endif
+
+
     bdsOutput->WriteTrajectory(interestingTrajectories);
     interestingTrajectories.clear();
   }
