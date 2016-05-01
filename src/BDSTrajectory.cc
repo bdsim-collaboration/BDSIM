@@ -15,7 +15,23 @@ G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack): G4Trajectory(aTrack)
 {
+  const G4VProcess *proc = aTrack->GetCreatorProcess();
+  if(proc)
+  {
+    creatorProcessType = aTrack->GetCreatorProcess()->GetProcessType();
+    creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
+  }
+  else
+  {
+    creatorProcessType    = -1;
+    creatorProcessSubType = -1;
+  }
+  particleID            = aTrack->GetParticleDefinition()->GetPDGEncoding();
+  initKineticEnergy     = aTrack->GetKineticEnergy();
+  initMomentum          = aTrack->GetMomentum();
+
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer;
+
 }
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)

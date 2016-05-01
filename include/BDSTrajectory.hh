@@ -47,6 +47,9 @@ public:
 
   virtual int GetPointEntries() const { return fpBDSPointsContainer->size(); }
 
+  G4int GetCreatorProcessType()    const {return creatorProcessType;}
+  G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
+
   //  void DrawTrajectory() const { G4VTrajectory::DrawTrajectory(); }
 
   /// Output stream
@@ -57,6 +60,12 @@ private:
   BDSTrajectory();
 
 protected:
+  G4int          creatorProcessType;
+  G4int          creatorProcessSubType;
+  G4int          particleID;
+  G4double       initKineticEnergy;
+  G4ThreeVector  initMomentum;
+
   BDSTrajectoryPointsContainer *fpBDSPointsContainer;
 };
 
