@@ -21,12 +21,11 @@ void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
   //G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID() << " ParentID=" << track->GetParentID() << G4endl;
 
-  if (interactive || (track->GetParentID() == 0))
+  if (interactive || BDSGlobalConstants::Instance()->StoreTrajectory())
   {
     fpTrackingManager->SetStoreTrajectory(1);
     BDSTrajectory *bdsTraj = new BDSTrajectory(track);
     fpTrackingManager->SetTrajectory(bdsTraj);
-    //G4cout << *bdsTraj << G4endl;
   }
   else
   {fpTrackingManager->SetStoreTrajectory(0);}
