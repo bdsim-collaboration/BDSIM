@@ -11,12 +11,17 @@ BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
 #ifndef __ROOTBUILD__
 void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 {
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " " << trajVec.size() << G4endl;
+#endif
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
   {
     BDSTrajectory* traj = *iT;
     trackID.push_back( (unsigned int &&) traj->GetTrackID() );
     parentID.push_back((unsigned int &&) traj->GetParentID());
+#ifdef BDSDEBUG
+//    G4cout << __METHOD_NAME__ << traj->GetTrackID() << " " << traj->GetParentID() << G4endl;
+#endif
 
     std::vector<TVector3> trajectory;
     std::vector<int> preProcessType;
