@@ -7,6 +7,7 @@
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
+#include "G4TrajectoryContainer.hh"
 
 #include <map>
 #include <ostream>
@@ -47,6 +48,37 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   {return;}
 
   G4Trajectory::MergeTrajectory(secondTrajectory);
+}
+
+BDSTrajectoryPoint* BDSTrajectory::FirstLoss(G4TrajectoryContainer *trajCont)
+{
+  TrajectoryVector* trajVec = trajCont->GetVector();
+  BDSTrajectory *primary = nullptr;
+  for (auto iT1 : *trajVec)
+  {
+    BDSTrajectory *traj = (BDSTrajectory *) (iT1);
+    if(traj->GetParentID() == 0)
+    {
+      primary = traj;
+    }
+  }
+  return dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(0));
+}
+
+
+BDSTrajectoryPoint* BDSTrajectory::LastLoss(G4TrajectoryContainer *trajCont)
+{
+  TrajectoryVector* trajVec = trajCont->GetVector();
+  BDSTrajectory *primary = nullptr;
+  for (auto iT1 : *trajVec)
+  {
+    BDSTrajectory *traj = (BDSTrajectory *) (iT1);
+    if(traj->GetParentID() == 0)
+    {
+      primary = traj;
+    }
+  }
+  return dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(primary->GetPointEntries()-1));
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)

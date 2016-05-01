@@ -5,6 +5,7 @@
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
+#include "G4TrajectoryContainer.hh"
 
 #include "BDSTrajectoryPoint.hh"
 #include "BDSDebug.hh"
@@ -54,7 +55,10 @@ public:
 
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);
-  
+
+  static BDSTrajectoryPoint* FirstLoss(G4TrajectoryContainer *trajCont);
+  static BDSTrajectoryPoint* LastLoss(G4TrajectoryContainer *trajCont);
+
 private:
   /// Private trajectory to force use of supplied one.
   BDSTrajectory();
