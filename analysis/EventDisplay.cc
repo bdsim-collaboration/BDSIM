@@ -199,9 +199,9 @@ void EventDisplay::DrawTunnelHits()
     bs->AddBox(event->tunnelHit->X[i]*100.0,
                event->tunnelHit->Y[i]*100.0,
                event->tunnelHit->Z[i]*100.0,
-               -event->tunnelHit->energy[i]*1000.0,
-               -event->tunnelHit->energy[i]*1000.0,
-               -event->tunnelHit->energy[i]*1000.0);
+               -event->tunnelHit->energy[i]*5000.0,
+               -event->tunnelHit->energy[i]*5000.0,
+               -event->tunnelHit->energy[i]*5000.0);
   }
   bs->RefitPlex();
 
@@ -217,7 +217,7 @@ void EventDisplay::DrawSamplers()
   // loop over samplers
   for(auto sampler : event->samplers)
   {
-    TEvePointSet *ps = new TEvePointSet(sampler->samplerName.c_str());
+    TEvePointSet *ps = new TEvePointSet((std::string("Sampler_")+sampler->samplerName.c_str()).c_str());
 
     // Get coordinate tranform for sampler
     TVector3 mpos = model->endPos[sampler->modelID];
@@ -250,6 +250,10 @@ void EventDisplay::DrawTrajectories()
     if(event->trajectory->parentID[iTraj] == 0)
     {
       trajNameAppend = "_primary";
+    }
+    else
+    {
+      trajNameAppend = "_"+std::to_string(event->trajectory->trackID[iTraj]);
     }
 
     TEveLine *et = new TEveLine((std::string("Trajectory")+trajNameAppend).c_str());
