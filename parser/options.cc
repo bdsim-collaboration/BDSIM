@@ -269,14 +269,15 @@ void Options::PublishMembers()
   publish("lengthSafety",&Options::lengthSafety);
   publish("randomSeed",&Options::randomSeed);
 
-  publish("trajCutGTZ",&Options::trajCutGTZ);
-  publish("trajCutLTR",&Options::trajCutLTR);
-
+  // trajectory storage
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
   publish("storeTrajectoryParticle",&Options::storeTrajectoryParticle);
   publish("storeTrajectoryEnergyThreshold",&Options::storeTrajectoryEnergyThreshold);
+
+  publish("trajCutGTZ",&Options::trajCutGTZ);
+  publish("trajCutLTR",&Options::trajCutLTR);
 
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",&Options::stopTracks);
