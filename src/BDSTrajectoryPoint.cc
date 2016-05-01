@@ -16,27 +16,38 @@ G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 BDSTrajectoryPoint::BDSTrajectoryPoint():
   G4TrajectoryPoint(G4ThreeVector())
 {
-  processType    = -1;
-  processSubType = -1;
+  preProcessType        = -1;
+  preProcessSubType     = -1;
+  postProcessType       = -1;
+  postProcessSubType    = -1;
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
-  processType    = -1;
-  processSubType = -1;
+  preProcessType     = -1;
+  preProcessSubType  = -1;
+  postProcessType    = -1;
+  postProcessSubType = -1;
 
-  const G4Track    *aTrack         = step->GetTrack();
-  const G4VProcess *currentProcess = step->GetPreStepPoint()->GetProcessDefinedStep();
+  const G4Track    *aTrack      = step->GetTrack();
+  const G4VProcess *preProcess  = step->GetPreStepPoint()->GetProcessDefinedStep();
+  const G4VProcess *postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
 
-  if(currentProcess)
+  if(preProcess)
   {
-    processType    = currentProcess->GetProcessType();
-    processSubType = currentProcess->GetProcessSubType();
+    preProcessType    = preProcess->GetProcessType();
+    preProcessSubType = preProcess->GetProcessSubType();
+  }
+
+  if(postProcess)
+  {
+    postProcessType    = postProcess->GetProcessType();
+    postProcessSubType = postProcess->GetProcessSubType();
   }
   // If the process type is not undefined or transportation...
-  if(!((currentProcess->GetProcessType() == fNotDefined) ||
-       (currentProcess->GetProcessType() == fTransportation)))
+  if(!((preProcess->GetProcessType() == fNotDefined) ||
+       (preProcess->GetProcessType() == fTransportation)))
   {
     // ...and the particle changed momentum during the step, then this is a "scattering"
     // (momentum-changing non-transportation) process.

@@ -29,16 +29,20 @@ public:
   {return (this==&right);};
 
   /// @{ Accessor
-  inline G4int         GetProcessType()      const {return processType;}
-  inline G4int         GetProcessSubType()   const {return processSubType;}
+  inline G4int         GetPreProcessType()       const {return preProcessType;}
+  inline G4int         GetPreProcessSubType()    const {return preProcessSubType;}
+  inline G4int         GetPostProcessType()      const {return postProcessType;}
+  inline G4int         GetPostProcessSubType()   const {return postProcessSubType;}
   /// @}
   
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
 private:
-  G4int             processType;
-  G4int             processSubType;
+  G4int             preProcessType;
+  G4int             preProcessSubType;
+  G4int             postProcessType;
+  G4int             postProcessSubType;
 };
 
 extern G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
