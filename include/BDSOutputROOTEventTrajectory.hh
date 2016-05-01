@@ -23,9 +23,14 @@ public:
 
   std::vector<unsigned int> trackID;
   std::vector<unsigned int> parentID;
-  std::vector<std::vector<int>> processTypes;
-  std::vector<std::vector<int>> processSubTypes;
+  std::vector<std::vector<int>> preProcessTypes;
+  std::vector<std::vector<int>> preProcessSubTypes;
+  std::vector<std::vector<int>> postProcessTypes;
+  std::vector<std::vector<int>> postProcessSubTypes;
+
   std::vector<std::vector<TVector3>> trajectories;
+
+  friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
   ClassDef(BDSOutputROOTEventTrajectory,1);
 };
