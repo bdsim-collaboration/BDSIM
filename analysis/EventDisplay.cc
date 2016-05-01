@@ -1,6 +1,7 @@
 #include "EventDisplay.hh"
 
 #include <iostream>
+#include <string>
 
 #include "TFile.h"
 #include "TVector3.h"
@@ -241,9 +242,18 @@ void EventDisplay::DrawTrajectories()
 {
   std::cout << "EventDisplay::DrawTrajectories>" << std::endl;
   std::cout << "EventDisplay::DrawTrajectories> ntraj=" << event->trajectory->trajectories.size() << std::endl;
+
+  int iTraj = 0;
   for(auto t : event->trajectory->trajectories) {
-    TEveLine *et = new TEveLine("Trajectory");
-//    std::cout << "EventDisplay::DrawTrajectories> ntrajPoint=" << t.size() << std::endl;
+
+    std::string trajNameAppend = std::string();
+    if(event->trajectory->parentID[iTraj] == 0)
+    {
+      trajNameAppend = "_primary";
+    }
+
+    TEveLine *et = new TEveLine((std::string("Trajectory")+trajNameAppend).c_str());
+
     for(auto tp : t) {
       //std::cout << tp.x() << " " << tp.y() << " " << tp.z() << std::endl;
       et->SetNextPoint(tp.x()*100,
@@ -253,5 +263,8 @@ void EventDisplay::DrawTrajectories()
     et->SetMainColor(kWhite);
     gEve->AddElement(et);
     gEve->Redraw3D();
+
+    iTraj++;
+
   }
 }
