@@ -229,7 +229,7 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
 void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
+  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajVec.size() << G4endl;
 #endif
   traj->Fill(trajVec);
 }
@@ -321,12 +321,16 @@ void BDSOutputROOTEvent::Flush()
 
 BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetEventAnalysis()
 {
-  G4cout << "BDSOutputROOTEvent::GetEventAnalysis()" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   return this->evtHistos;
 }
 
 BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetRunAnalysis()
 {
-  G4cout << "BDSOutputROOTEvent::GetRunAnalysis()" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
   return this->runHistos;
 }
