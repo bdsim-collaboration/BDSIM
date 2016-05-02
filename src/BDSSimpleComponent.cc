@@ -6,8 +6,9 @@
 
 BDSSimpleComponent::BDSSimpleComponent(G4String              name,
 				       BDSGeometryComponent* component,
+                                       G4double length,
 				       G4double              angle):
-  BDSAcceleratorComponent(name, component->GetLengthZ(), angle, "simpleComponent")
+  BDSAcceleratorComponent(name, length, angle, "simpleComponent")
 {
   InheritObjects(component);
   InheritExtents(component);

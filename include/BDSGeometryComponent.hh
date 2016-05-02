@@ -80,7 +80,7 @@ public:
 
   /// Get the full length in Z.  This is for convenience as most geometry components
   /// are built along z although this needn't be required.
-  G4double GetLengthZ() const {return extentZ.second + extentZ.first;}
+  G4double GetLengthZ() const {return extentZ.second + std::abs(extentZ.first);}
   
   /// Get the extent of the object in the positive direction in all dimensions
   G4ThreeVector GetExtentPositive() const;

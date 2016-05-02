@@ -12,6 +12,7 @@ class BDSSimpleComponent: public BDSAcceleratorComponent
 public:
   BDSSimpleComponent(G4String              name,
 		     BDSGeometryComponent* componentIn,
+					 G4double length,
 		     G4double              angle = 0);
 
   virtual ~BDSSimpleComponent(){;}
