@@ -28,6 +28,10 @@ public:
   std::vector<std::vector<int>> postProcessTypes;
   std::vector<std::vector<int>> postProcessSubTypes;
 
+  std::vector<std::vector<double>> preWeights;
+  std::vector<std::vector<double>> postWeights;
+  std::vector<std::vector<double>> energys;
+
   std::vector<std::vector<TVector3>> trajectories;
 
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);

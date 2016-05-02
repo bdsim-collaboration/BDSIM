@@ -28,6 +28,9 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
     std::vector<int> preProcessSubType;
     std::vector<int> postProcessType;
     std::vector<int> postProcessSubType;
+    std::vector<double> preWeight;
+    std::vector<double> postWeight;
+    std::vector<double> energy;
 
     for(auto i = 0; i< traj->GetPointEntries();++i)
     {
@@ -40,12 +43,19 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
       preProcessSubType.push_back(point->GetPreProcessSubType());
       postProcessType.push_back(point->GetPostProcessType());
       postProcessSubType.push_back(point->GetPostProcessSubType());
+
+      preWeight.push_back(point->GetPreWeight());
+      postWeight.push_back(point->GetPostWeight());
+      energy.push_back(point->GetEnergy());
     }
     trajectories.push_back(trajectory);
     preProcessTypes.push_back(preProcessType);
     preProcessSubTypes.push_back(preProcessSubType);
     postProcessTypes.push_back(postProcessType);
     postProcessSubTypes.push_back(postProcessSubType);
+    preWeights.push_back(preWeight);
+    postWeights.push_back(postWeight);
+    energys.push_back(energy);
   }
 }
 
@@ -74,9 +84,14 @@ std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const 
   {
     for(int j=0; j< t.preProcessTypes[i].size(); ++j)
     {
-      out << i << " " << j
-      << " " << t.preProcessTypes[i][j]  << " " << t.preProcessSubTypes[i][j]
-      << " " << t.postProcessTypes[i][j] << " " << t.postProcessSubTypes[i][j] << std::endl;
+      //if(t.preProcessTypes[i][j] != 1 && t.preProcessTypes[i][j] != 7)
+      //{
+        out << i << " " << j
+            << " " << t.preProcessTypes[i][j]   << " " << t.preProcessSubTypes[i][j]
+            << " " << t.postProcessTypes[i][j]  << " " << t.postProcessSubTypes[i][j]
+            << " " << t.preWeights[i][j]        << " " << t.postWeights[i][j]
+            << " " << t.energys[i][j]      << std::endl;
+      //}
     }
   }
   return out;
