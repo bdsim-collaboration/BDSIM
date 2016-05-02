@@ -62,6 +62,10 @@ public:
   std::pair<G4double,G4double> GetExtentX() const;   ///< get -ve/+ve extent in local x
   std::pair<G4double,G4double> GetExtentY() const;   ///< get -ve/+ve extent in local y
   std::pair<G4double,G4double> GetExtentZ() const;   ///< get -ve/+ve extent in local z
+
+  /// Get the full length in Z.  This is for convenience as most geometry components
+  /// are built along z although this needn't be required.
+  G4double GetLengthZ() const {return extentZ.second + extentZ.first;}
   
   /// Get the extent of the object in the positive direction in all dimensions
   G4ThreeVector GetExtentPositive() const;
