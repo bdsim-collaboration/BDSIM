@@ -206,8 +206,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       //write
       if (thePrimaryHit && thePrimaryLoss)
       {
-        bdsOutput->WritePrimaryLoss(thePrimaryLoss);
         bdsOutput->WritePrimaryHit(thePrimaryHit);
+        bdsOutput->WritePrimaryLoss(thePrimaryLoss);
         // general histos
         analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore() / CLHEP::m);
         analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter() / CLHEP::m);
@@ -217,6 +217,29 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
       }
     }
   }
+
+  // primary hits and losses from
+  G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
+  TrajectoryVector* trajVec = trajCont->GetVector();
+
+  BDSTrajectoryPoint *primaryFirstInt = BDSTrajectory::FirstInteraction(trajCont);
+  BDSTrajectoryPoint *primaryLastInt  = BDSTrajectory::LastInteraction(trajCont);
+
+  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPosition()        << G4endl;
+  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPreProcessType()  << " " << primaryFirstInt->GetPreProcessSubType()  << " "
+                            << primaryFirstInt->GetPostProcessType() << " " << primaryFirstInt->GetPostProcessSubType() << G4endl;
+  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPostWeight()      << G4endl;
+  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPreEnergy()       << " " << primaryFirstInt->GetPostEnergy()         << " "
+                            << primaryFirstInt->GetEnergy()          << " "
+                            << primaryFirstInt->GetPreS()            << " " << primaryFirstInt->GetPostS()              << G4endl;
+  G4cout << __METHOD_NAME__ << primaryLastInt->GetPosition()         << G4endl;
+  G4cout << __METHOD_NAME__ << primaryLastInt->GetPreProcessType()   << " " << primaryLastInt->GetPreProcessSubType()   << " "
+                            << primaryLastInt->GetPostProcessType()  << " " << primaryLastInt->GetPostProcessSubType()  << G4endl;
+  G4cout << __METHOD_NAME__ << primaryLastInt->GetPostWeight()       << G4endl;
+  G4cout << __METHOD_NAME__ << primaryLastInt->GetPreEnergy()        << " " << primaryLastInt->GetPostEnergy()          << " "
+                            << primaryLastInt->GetEnergy()           << " "
+                            << primaryLastInt->GetPreS()             << " " << primaryLastInt->GetPostS()              << G4endl;
+
 
   // we should only try and access the tunnel hits collection if it was actually
   // instantiated which won't happen if the tunnel isn't build and placed. During
