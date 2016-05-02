@@ -658,7 +658,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
       coilRightLV = new G4LogicalVolume(coilRightSolid,
 					coilMaterial,
 					name + "_coil_right_lv");
-
+      
       G4Colour* coil = BDSColours::Instance()->GetColour("coil");
       G4VisAttributes* coilVisAttr = new G4VisAttributes(*coil);
       coilVisAttr->SetVisibility(true);
@@ -1117,15 +1117,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
 #endif
 
   // place components
-  yokePV       = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
-				   yokeTranslation,              // position
-				   yokeLV,                       // lv to be placed
-				   name + "_yoke_pv",            // name
-				   containerLV,                  // mother lv to be place in
-				   false,                        // no boolean operation
-				   0,                            // copy number
-				   checkOverlaps);
-
+  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
+			     yokeTranslation,              // position
+			     yokeLV,                       // lv to be placed
+			     name + "_yoke_pv",            // name
+			     containerLV,                  // mother lv to be place in
+			     false,                        // no boolean operation
+			     0,                            // copy number
+			     checkOverlaps);
+  
   G4PVPlacement* poleLowerPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 						 lowerPoleTranslation,         // position
 						 poleLV,                       // lv to be placed
