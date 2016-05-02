@@ -74,7 +74,7 @@ private:
   /// Check whether a physical volume is registered ot the general backup registry
   G4bool IsRegisteredToBackupRegister(G4VPhysicalVolume* physicalVolume);
 
-  // Check whether a physical volume is registered ot the tunel registry
+  // Check whether a physical volume is registered ot the tunnel registry
   G4bool IsRegisteredToTunnelRegister(G4VPhysicalVolume* physicalVolume);
 
   /// @{ Search iterator
