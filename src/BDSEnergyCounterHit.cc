@@ -59,8 +59,8 @@ BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* h
     {
       spos = (*hc)[i]->GetSBefore();
       if (spos < sposMin) {
-	sposMin = spos; //keep for testing
-	indexofHit = i; //record which hit it was
+	      sposMin = spos; //keep for testing
+	      indexofHit = i; //record which hit it was
       }
     }
   if (indexofHit != -1)
@@ -79,8 +79,8 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
     {
       spos = (*hc)[i]->GetSAfter();
       if (spos > sposMax) {
-	sposMax = spos; //keep for testing
-	indexofHit = i; //record which hit it was
+	      sposMax = spos; //keep for testing
+	      indexofHit = i; //record which hit it was
       }
     }
   if (indexofHit != -1)
