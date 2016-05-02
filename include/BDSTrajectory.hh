@@ -56,8 +56,8 @@ public:
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);
 
-  static BDSTrajectoryPoint* FirstLoss(G4TrajectoryContainer *trajCont);
-  static BDSTrajectoryPoint* LastLoss(G4TrajectoryContainer *trajCont);
+  static BDSTrajectoryPoint* FirstInteraction(G4TrajectoryContainer *trajCont);
+  static BDSTrajectoryPoint* LastInteraction(G4TrajectoryContainer *trajCont);
 
 private:
   /// Private trajectory to force use of supplied one.
@@ -66,9 +66,7 @@ private:
 protected:
   G4int          creatorProcessType;
   G4int          creatorProcessSubType;
-  G4int          particleID;
-  G4double       initKineticEnergy;
-  G4ThreeVector  initMomentum;
+  G4double       weight;
 
   BDSTrajectoryPointsContainer *fpBDSPointsContainer;
 };

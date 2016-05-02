@@ -8,6 +8,8 @@
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 #include "G4TrajectoryContainer.hh"
+#include "G4TransportationProcessType.hh"
+
 
 #include <map>
 #include <ostream>
@@ -27,9 +29,7 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack): G4Trajectory(aTrack)
     creatorProcessType    = -1;
     creatorProcessSubType = -1;
   }
-  particleID            = aTrack->GetParticleDefinition()->GetPDGEncoding();
-  initKineticEnergy     = aTrack->GetKineticEnergy();
-  initMomentum          = aTrack->GetMomentum();
+  weight                = aTrack->GetWeight();
 
   fpBDSPointsContainer = new BDSTrajectoryPointsContainer;
 
@@ -50,7 +50,7 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   G4Trajectory::MergeTrajectory(secondTrajectory);
 }
 
-BDSTrajectoryPoint* BDSTrajectory::FirstLoss(G4TrajectoryContainer *trajCont)
+BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(G4TrajectoryContainer *trajCont)
 {
   TrajectoryVector* trajVec = trajCont->GetVector();
   BDSTrajectory *primary = nullptr;
@@ -62,11 +62,24 @@ BDSTrajectoryPoint* BDSTrajectory::FirstLoss(G4TrajectoryContainer *trajCont)
       primary = traj;
     }
   }
+
+  // loop over primary trajectory to find non transportation step
+  for(G4int i=0;i<primary->GetPointEntries();++i)
+  {
+    BDSTrajectoryPoint *point = dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(i));
+    if((point->GetPostProcessType()  != fTransportation) &&
+       (point->GetPostProcessType() != fGeneral          && point->GetPostProcessSubType() != STEP_LIMITER))
+    {
+      return point;
+    };
+  }
+
+  G4cout << "no interaction" << G4endl;
   return dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(0));
 }
 
 
-BDSTrajectoryPoint* BDSTrajectory::LastLoss(G4TrajectoryContainer *trajCont)
+BDSTrajectoryPoint* BDSTrajectory::LastInteraction(G4TrajectoryContainer *trajCont)
 {
   TrajectoryVector* trajVec = trajCont->GetVector();
   BDSTrajectory *primary = nullptr;
@@ -78,7 +91,20 @@ BDSTrajectoryPoint* BDSTrajectory::LastLoss(G4TrajectoryContainer *trajCont)
       primary = traj;
     }
   }
+
+  // loop over primary trajectory to find non transportation step
+  for(G4int i=primary->GetPointEntries()-1;i>=0 ;--i)
+  {
+    BDSTrajectoryPoint *point = dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(i));
+    if((point->GetPostProcessType()  != fTransportation) &&
+        (point->GetPostProcessType() != fGeneral         && point->GetPostProcessSubType() != STEP_LIMITER))
+    {
+      return point;
+    };
+  }
+  G4cout << "no interaction" << G4endl;
   return dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(primary->GetPointEntries()-1));
+
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
