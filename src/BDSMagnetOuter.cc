@@ -46,8 +46,8 @@ void BDSMagnetOuter::ClearEndPieces()
 {
   if (endPieceBefore)
     {delete endPieceBefore; endPieceBefore = nullptr;}
-  if (endPieceAfter)
-    {delete endPieceAfter; endPieceAfter = nullptr;}
+  //if (endPieceAfter)
+  //  {delete endPieceAfter; endPieceAfter = nullptr;}
 }
 
 BDSMagnetOuter::~BDSMagnetOuter()

@@ -147,11 +147,9 @@ public:
   void PrintMemoryConsumption() const;
 
   BDSBeamlineElement* ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
-						   G4int    index,
-						   G4double endPieceLength) const;
+						   G4int    index) const;
   BDSBeamlineElement* ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
-						  G4int    index,
-						  G4double endPieceLength) const;
+						  G4int    index) const;
 
   /// Whether the supplied index will lie within the beam line vector.
   G4bool IndexOK(G4int index) const;

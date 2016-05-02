@@ -339,13 +339,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   outer->RegisterUserLimits(allUserLimits);
   
   // Register logical volumes and set sensitivity
-	if (buildPoles)
-	{
-		outer->RegisterLogicalVolume(poleLV);
-		outer->RegisterSensitiveVolume(poleLV);
-	}
+  if (buildPoles)
+    {
+      outer->RegisterLogicalVolume(poleLV);
+      outer->RegisterSensitiveVolume(poleLV);
+    }
   outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterSensitiveVolume(yokeLV);
+
+  outer->SetEndPieceBefore(endPiece);
+  outer->SetEndPieceAfter(endPiece);
   
   return outer;
 }
@@ -546,6 +549,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
     }
   outer->RegisterLogicalVolume(yokeLV);
   outer->RegisterSensitiveVolume(yokeLV);
+
+  outer->SetEndPieceBefore(endPiece);
+  outer->SetEndPieceAfter(endPiece);
   
   return outer;
 }
@@ -695,18 +701,19 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4double length)
   // this will be the eventual length along z but for now
   // is the amplitude in y.
   endPieceLength = 0.1 * length;
-  endPieceLength = std::min(endPieceLength, 10*CLHEP::cm); // maximum is 10cm
+    endPieceLength = std::max(endPieceLength, outerX-innerX);
+  //endPieceLength = std::min(endPieceLength, 10*CLHEP::cm); // maximum is 10cm
   // make slightly smaller version as endPieceLength used for container dimensions
   G4double endPieceLengthSafe = endPieceLength - lengthSafetyLarge;
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
-      G4double x = innerX + endPieceLength * cos(angle);
+      G4double x = outerX + endPieceLength * (cos(angle) - 1.0);
       G4double y = endPieceLengthSafe * sin(angle);
       endPiecePoints.push_back(G4TwoVector(x,y));
     }
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
-      G4double x = -innerX - endPieceLength * sin(angle);
+      G4double x = -outerX - endPieceLength * (sin(angle) - 1.0);
       G4double y = endPieceLengthSafe * cos(angle);
       endPiecePoints.push_back(G4TwoVector(x,y));
     }
@@ -849,21 +856,23 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
   G4RotationMatrix* endCoilRM = new G4RotationMatrix();
   endCoilRM->rotateX(CLHEP::halfpi);
 
-  G4ThreeVector endCoilTranslation(0,coilCentreRadius,0);
+  G4ThreeVector endCoilTranslation(0,coilCentreRadius,0.5*endPieceLength);
   
-  //  for (G4int n = 0; n < 2*order; ++n)
-  for (G4int n = 0; n < 1; ++n)
+  for (G4int n = 0; n < 2*order; ++n)
+    //for (G4int n = 0; n < 1; ++n)
     {
       // prepare a new rotation matrix - must be new and can't reuse the same one
       // as the placement doesn't own it - changing the existing one will affect all
       // previously placed objects
       G4RotationMatrix* rm  = new G4RotationMatrix();
+      G4RotationMatrix* ecrm = new G4RotationMatrix(*endCoilRM);
       allRotationMatrices.push_back(rm);
       G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
       G4double rotationAngle = (n+0.5)*segmentAngle + CLHEP::pi*0.5;
-      //rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
-      //endCoilRM->rotateZ(rotationAngle);
+      rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
+      ecrm->rotateY(rotationAngle);
 
+      //  G4double rotationAngle = 0;
       aPolePV = new G4PVPlacement(rm,                 // rotation
 				  (G4ThreeVector)0,   // position
 				  poleLV,             // logical volume
@@ -895,7 +904,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 
       G4ThreeVector placementOffset = G4ThreeVector(endCoilTranslation);
       placementOffset.rotateZ(rotationAngle);
-      endCoilPV = new G4PVPlacement(endCoilRM,               // rotation
+      endCoilPV = new G4PVPlacement(ecrm,               // rotation
 				    placementOffset,         // position
 				    endPieceCoilLV,          // logical volume
 				    name + "_end_piece_coil_pv", // name      
@@ -914,10 +923,10 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
 {
   // container solid
-  // TBC - this will be too narrow on outside - some trig needed
+  // TBC - this will be too narrow on outside - some trig needed - x2 for now
   G4VSolid* endPieceContainerSolid = new G4Tubs(name + "_end_container_solid", // name
 						endPieceInnerR,                // inner radius
-						endPieceOuterR,                // outer radius
+						endPieceOuterR*2,                // outer radius
 						endPieceLength*0.5,            // z half length
 						0,                             // start angle
 						CLHEP::twopi);                 // sweep angle
@@ -955,21 +964,22 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   //endPieceCoilLV->SetUserLimits(endPieceLimits);
 
   // geometry component
-  auto endPieceSC = new BDSGeometryComponent(endPieceContainerSolid,
+  auto endPieceGC = new BDSGeometryComponent(endPieceContainerSolid,
 					     endPieceContainerLV);
-  endPieceSC->RegisterSolid(endPieceCoilSolid);
-  endPieceSC->RegisterLogicalVolume(endPieceCoilLV);
-  endPieceSC->RegisterVisAttributes(endPieceCoilVis);
-  //endPieceSC->RegisterUserLimits(endPieceLimits);
-  endPieceSC->SetExtentX(-endPieceOuterR, endPieceOuterR);
-  endPieceSC->SetExtentY(-endPieceOuterR, endPieceOuterR);
-  endPieceSC->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
-  endPieceSC->SetInnerExtentX(-endPieceInnerR, endPieceInnerR);
-  endPieceSC->SetInnerExtentY(-endPieceInnerR, endPieceInnerR);
-  endPieceSC->SetInnerExtentZ(endPiece->GetExtentZ());
+  endPieceGC->RegisterSolid(endPieceCoilSolid);
+  endPieceGC->RegisterLogicalVolume(endPieceCoilLV);
+  endPieceGC->RegisterVisAttributes(endPieceCoilVis);
+  //endPieceGC->RegisterUserLimits(endPieceLimits);
+  endPieceGC->SetExtentX(-endPieceOuterR, endPieceOuterR);
+  endPieceGC->SetExtentY(-endPieceOuterR, endPieceOuterR);
+  endPieceGC->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
+  endPieceGC->SetInnerExtentX(-endPieceInnerR, endPieceInnerR);
+  endPieceGC->SetInnerExtentY(-endPieceInnerR, endPieceInnerR);
+  endPieceGC->SetInnerExtentZ(endPieceGC->GetExtentZ());
 
   endPiece = new BDSSimpleComponent(name + "_end_piece",
-				    endPieceSC);
+				    endPieceGC,
+  endPieceLength);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     name,

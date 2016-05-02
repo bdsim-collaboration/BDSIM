@@ -571,7 +571,7 @@ BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
 
 BDSBeamlineElement* BDSBeamline::GetNext(G4int index)
 {
-  if (index < 1 || index > (G4int)(beamline.size()-1))
+  if (index < 1 || index > (G4int)(beamline.size()-2))
     {return nullptr;} // invalid index - inc beginning or end
   else
     {return beamline[index+1];}
@@ -677,12 +677,12 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 }
 
 BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
-							      G4int    index,
-							      G4double endPieceLength) const
+							      G4int    index) const
 {
   if (!IndexOK(index))
     {return nullptr;}
 
+    G4double endPieceLength       = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix* elRotStart = element->GetReferenceRotationStart();
   G4ThreeVector     elPosStart = element->GetPositionStart();
@@ -709,17 +709,18 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 }
 
 BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
-							     G4int    index,
-							     G4double endPieceLength) const
+							     G4int    index) const
 {
   if (!IndexOK(index))
     {return nullptr;}
 
+    G4double endPieceLength = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
-  G4RotationMatrix*   elRotEnd = element->GetReferenceRotationEnd();
+  G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetReferenceRotationEnd()));
+    elRotEnd->rotateY(CLHEP::pi);
   G4ThreeVector       elPosEnd = element->GetPositionEnd();
-  G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotEnd);
-  G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*elRotEnd);
+  G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*(element->GetReferenceRotationEnd()));
+  G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*(element->GetReferenceRotationEnd()));
   G4double           elSPosEnd = element->GetSPositionEnd();
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
