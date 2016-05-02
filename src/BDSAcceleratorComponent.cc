@@ -38,6 +38,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   beamPipeInfo(beamPipeInfoIn),
   readOutLV(nullptr),
   acceleratorVacuumLV(nullptr),
+  endPieceBefore(nullptr),
+  endPieceAfter(nullptr),
   copyNumber(-1) // -1 initialisation since it will be incremented when placed 
 {
 #ifdef BDSDEBUG

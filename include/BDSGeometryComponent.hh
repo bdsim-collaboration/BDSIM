@@ -26,14 +26,14 @@ class G4VisAttributes;
  * like all other volumes. There are safeguards to prevent double registration
  * and the consequential seg faults.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSGeometryComponent
 {
 public:
   BDSGeometryComponent(G4VSolid*        containerSolidIn,
-		       G4LogicalVolume*             containerLVIn);
+		       G4LogicalVolume* containerLVIn);
   BDSGeometryComponent(G4VSolid*        containerSolidIn,
 		       G4LogicalVolume* containerLVIn,
 		       std::pair<G4double,G4double> extentXIn,

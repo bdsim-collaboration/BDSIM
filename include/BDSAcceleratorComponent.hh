@@ -40,7 +40,7 @@ class BDSGeometryComponentHollow;
  * This was significantly reworked in version 0.7 from the original. The indicator
  * author is the maintainer of the new version.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSAcceleratorComponent: public BDSGeometryComponent

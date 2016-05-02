@@ -19,10 +19,11 @@
  * version.  These can be contained here and this class can
  * be extended as required.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author
  */
 
-class BDSAcceleratorModel {
+class BDSAcceleratorModel
+{
 public:
   static BDSAcceleratorModel* Instance();
   ~BDSAcceleratorModel();

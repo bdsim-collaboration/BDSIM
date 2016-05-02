@@ -13,10 +13,9 @@
 #include <utility>    //for std::pair
 #include <vector>
 
+class BDSGeometryComponent;
 class BDSTiltOffset;
-
-/// Forward declaration for iterator so it can appear at the top
-class BDSTransform3D;
+class BDSTransform3D; ///< Forward declaration for iterator so it can appear at the top
 
 /**
  * @brief A vector of BDSBeamlineElement instances - a beamline.
@@ -30,7 +29,7 @@ class BDSTransform3D;
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents. It can also be used to create multiple beam lines.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamline
