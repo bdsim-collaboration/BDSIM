@@ -1,4 +1,5 @@
 #include "BDSGeometryComponent.hh"
+#include "BDSGeometryComponentHollow.hh"
 #include "BDSMagnetOuter.hh"
 
 #include <utility>
@@ -13,8 +14,8 @@ BDSMagnetOuter::BDSMagnetOuter(G4VSolid*                    containerSolid,
 			       std::pair<G4double,G4double> extentZ,
 			       BDSGeometryComponent*        magnetContainerIn,
 			       G4ThreeVector                placementOffset,
-			       BDSGeometryComponent*        endPieceBeginningIn,
-			       BDSGeometryComponent*        endPieceEndIn):
+			       BDSGeometryComponentHollow*  endPieceBeginningIn,
+			       BDSGeometryComponentHollow*  endPieceEndIn):
   BDSGeometryComponent(containerSolid, containerLV, extentX, extentY, extentZ,
 		       placementOffset),
   magnetContainer(magnetContainerIn),
@@ -24,8 +25,8 @@ BDSMagnetOuter::BDSMagnetOuter(G4VSolid*                    containerSolid,
 
 BDSMagnetOuter::BDSMagnetOuter(BDSGeometryComponent* componentIn,
 			       BDSGeometryComponent* magnetContainerIn,
-			       BDSGeometryComponent* endPieceBeginningIn,
-			       BDSGeometryComponent* endPieceEndIn):
+			       BDSGeometryComponentHollow* endPieceBeginningIn,
+			       BDSGeometryComponentHollow* endPieceEndIn):
   BDSGeometryComponent(*componentIn),
   magnetContainer(magnetContainerIn),
   endPieceBeginning(endPieceBeginningIn),

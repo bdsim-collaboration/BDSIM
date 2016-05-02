@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+class BDSGeometryComponentHollow;
+
 /**
  * @brief Abstract class that represents a component of an accelerator.
  *
@@ -118,6 +120,11 @@ public:
   /// Access the bias list copied from parser
   std::list<std::string> GetBiasVacuumList() const;
   std::list<std::string> GetBiasMaterialList() const;
+
+  /// Whether this component has an optional end piece that should be placed
+  /// independently or not depending on other items in the beamline.
+  BDSGeometryComponentHollow* EndPieceBefore() const {return endPieceBefore;}
+  BDSGeometryComponentHollow* EndPieceAfter()  const {return endPieceAfter;}
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -168,6 +175,9 @@ protected:
   /// A larger length safety that can be used where tracking accuracy isn't required
   /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
+
+  BDSGeometryComponentHollow* endPieceBefore;
+  BDSGeometryComponentHollow* endPieceAfter;
   
 private:
   /// Private default constructor to force use of provided constructors, which

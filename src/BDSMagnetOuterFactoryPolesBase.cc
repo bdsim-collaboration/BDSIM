@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSGeometryComponentHollow.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
@@ -949,18 +950,23 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   endPieceContainerLV->SetVisAttributes(containerLV->GetVisAttributes());
   
   // user limits - copy again - length will be a wee bit too long, but should be ok
+  // TBC - geant4 has removed copy constructor for limits - wonderful
   //G4UserLimits* endPieceLimits = new G4UserLimits(*(coilLeftLV->GetUserLimits()));
   //endPieceCoilLV->SetUserLimits(endPieceLimits);
 
   // geometry component
-  endPiece = new BDSGeometryComponent(endPieceContainerSolid,
-				      endPieceContainerLV);
+  endPiece = new BDSGeometryComponentHollow(endPieceContainerSolid,
+					    endPieceContainerLV);
   endPiece->RegisterSolid(endPieceCoilSolid);
   endPiece->RegisterLogicalVolume(endPieceCoilLV);
   endPiece->RegisterVisAttributes(endPieceCoilVis);
   //endPiece->RegisterUserLimits(endPieceLimits);
   endPiece->SetExtentX(-endPieceOuterR, endPieceOuterR);
   endPiece->SetExtentY(-endPieceOuterR, endPieceOuterR);
+  endPiece->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
+  endPiece->SetInnerExtentX(-endPieceInnerR, endPieceInnerR);
+  endPiece->SetInnerExtentY(-endPieceInnerR, endPieceInnerR);
+  endPiece->SetInnerExtentZ(endPiece->GetExtentZ());
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     name,

@@ -8,6 +8,7 @@
 
 #include <utility>
 
+class BDSGeometryComponentHollow;
 class G4LogicalVolume;
 class G4VSolid;
 
@@ -34,12 +35,12 @@ public:
 		 std::pair<G4double,G4double> extentZIn,
 		 BDSGeometryComponent*        magnetContainerIn,
 		 G4ThreeVector                placementOffset     = G4ThreeVector(0,0,0),
-		 BDSGeometryComponent*        endPieceBeginningIn = nullptr,
-		 BDSGeometryComponent*        endPieceEndIn       = nullptr);
+		 BDSGeometryComponentHollow*  endPieceBeginningIn = nullptr,
+		 BDSGeometryComponentHollow*  endPieceEndIn       = nullptr);
   BDSMagnetOuter(BDSGeometryComponent* component,
 		 BDSGeometryComponent* magnetContainerIn,
-		 BDSGeometryComponent* endPieceBeginningIn = nullptr,
-		 BDSGeometryComponent* endPieceEndIn       = nullptr);
+		 BDSGeometryComponentHollow* endPieceBeginningIn = nullptr,
+		 BDSGeometryComponentHollow* endPieceEndIn       = nullptr);
   virtual ~BDSMagnetOuter();
 
   /// Access the magnet container - a BDSGeometryComponent instance that has a suggested
@@ -49,8 +50,8 @@ public:
   BDSGeometryComponent* GetMagnetContainer() const {return magnetContainer;}
 
   /// @{ Access the end piece.
-  BDSGeometryComponent* EndPieceBeginning() const {return endPieceBeginning;}
-  BDSGeometryComponent* EndPieceEnd()       const {return endPieceEnd;}
+  BDSGeometryComponentHollow* EndPieceBeginning() const {return endPieceBeginning;}
+  BDSGeometryComponentHollow* EndPieceEnd()       const {return endPieceEnd;}
   /// @}
   
   /// Clear the memory of the now uneeded magnet container object.
@@ -61,8 +62,8 @@ public:
 
 protected:
   BDSGeometryComponent* magnetContainer;
-  BDSGeometryComponent* endPieceBeginning;
-  BDSGeometryComponent* endPieceEnd;
+  BDSGeometryComponentHollow* endPieceBeginning;
+  BDSGeometryComponentHollow* endPieceEnd;
 };
 
 #endif

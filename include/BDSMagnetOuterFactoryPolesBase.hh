@@ -12,6 +12,8 @@
 
 #include <vector>
 
+class BDSGeometryComponentHollow;
+
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets
  * with 2N-poles around the beampipe with a yoke of various shapes.
@@ -189,7 +191,7 @@ protected:
   G4LogicalVolume* coilRightLV;
   G4LogicalVolume* endPieceCoilLV;
   G4LogicalVolume* endPieceContainerLV;
-  BDSGeometryComponent* endPiece;
+  BDSGeometryComponentHollow* endPiece;
   
   std::vector<G4TwoVector> leftPoints;
   std::vector<G4TwoVector> rightPoints;
