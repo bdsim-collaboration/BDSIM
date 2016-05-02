@@ -176,14 +176,24 @@ protected:
   G4double poleSquareWidth;
   G4double poleSquareStartRadius;
   G4double poleAngle;
+  G4double coilHeight;
+  G4double coilCentreRadius;
+  G4double endPieceLength;
+  G4double endPieceInnerR;
+  G4double endPieceOuterR;
   
   G4VSolid* coilLeftSolid;
   G4VSolid* coilRightSolid;
+  G4VSolid* endPieceContainerSolid;
   G4LogicalVolume* coilLeftLV;
   G4LogicalVolume* coilRightLV;
-
+  G4LogicalVolume* endPieceCoilLV;
+  G4LogicalVolume* endPieceContainerLV;
+  BDSGeometryComponent* endPiece;
+  
   std::vector<G4TwoVector> leftPoints;
   std::vector<G4TwoVector> rightPoints;
+  std::vector<G4TwoVector> endPiecePoints;
 
   // functions
 
@@ -204,7 +214,7 @@ protected:
 			       G4double      length,               // length [mm]
 			       G4int         order);               // Nx2 poles
 
-  virtual void CreateCoilPoints();
+  virtual void CreateCoilPoints(G4double length);
   
   /// Create the coil solids corresponding to the pole solid
   virtual void CreateCoilSolids(G4String name,
@@ -219,6 +229,10 @@ protected:
   /// Place the poles and yoke in the container volume
   virtual void PlaceComponents(G4String name,
 			       G4int    order);
+
+  /// Create the solids, logical volumes for the end piece - everything
+  /// but the placement. Also, create the geometry component now.
+  virtual void CreateEndPiece(G4String name);
 
   /// Common construction tasks to all methods - assemble yoke and poles in container
   virtual BDSMagnetOuter* CommonConstructor(G4String     name,
