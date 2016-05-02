@@ -93,7 +93,7 @@ OptionsBase::OptionsBase()
   // magnet geometry
   magnetGeometryType   = "cylindrical";
   outerMaterialName    = "iron";
-  outerDiameter        = 0.2;
+  outerDiameter        = 0.5;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
@@ -105,7 +105,7 @@ OptionsBase::OptionsBase()
   // beam pipe / aperture
   beampipeThickness    = 0.005;
   apertureType         = "circular";
-  aper1                = 0.05; // also beampipeRadius
+  aper1                = 0.025; // also beampipeRadius
   aper2                = 0.0;
   aper3                = 0.0;
   aper4                = 0.0;
