@@ -53,6 +53,9 @@ public:
   BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
   BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
   /// @}
+
+  void SetEndPieceBefore(BDSSimpleComponent* endPieceIn) {endPieceBefore = endPieceIn;}
+  void SetEndPieceAfter(BDSSimpleComponent* endPieceIn) {endPieceAfter = endPieceIn;}
   
   /// Clear the memory of the now uneeded magnet container object.
   void ClearMagnetContainer();
