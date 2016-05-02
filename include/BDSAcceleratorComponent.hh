@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-class BDSGeometryComponentHollow;
+class BDSSimpleComponent;
 
 /**
  * @brief Abstract class that represents a component of an accelerator.
@@ -123,8 +123,8 @@ public:
 
   /// Whether this component has an optional end piece that should be placed
   /// independently or not depending on other items in the beamline.
-  BDSGeometryComponentHollow* EndPieceBefore() const {return endPieceBefore;}
-  BDSGeometryComponentHollow* EndPieceAfter()  const {return endPieceAfter;}
+  BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
+  BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -176,8 +176,8 @@ protected:
   /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
 
-  BDSGeometryComponentHollow* endPieceBefore;
-  BDSGeometryComponentHollow* endPieceAfter;
+  BDSSimpleComponent* endPieceBefore;
+  BDSSimpleComponent* endPieceAfter;
   
 private:
   /// Private default constructor to force use of provided constructors, which

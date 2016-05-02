@@ -191,7 +191,7 @@ protected:
   G4LogicalVolume* coilRightLV;
   G4LogicalVolume* endPieceCoilLV;
   G4LogicalVolume* endPieceContainerLV;
-  BDSGeometryComponentHollow* endPiece;
+  BDSSimpleComponent* endPiece;
   
   std::vector<G4TwoVector> leftPoints;
   std::vector<G4TwoVector> rightPoints;

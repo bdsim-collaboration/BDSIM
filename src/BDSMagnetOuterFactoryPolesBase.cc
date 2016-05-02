@@ -3,7 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSGeometryComponentHollow.hh"
+#include "BDSSimpleComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactoryCylindrical.hh" // for default geometry
@@ -955,18 +955,21 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   //endPieceCoilLV->SetUserLimits(endPieceLimits);
 
   // geometry component
-  endPiece = new BDSGeometryComponentHollow(endPieceContainerSolid,
-					    endPieceContainerLV);
-  endPiece->RegisterSolid(endPieceCoilSolid);
-  endPiece->RegisterLogicalVolume(endPieceCoilLV);
-  endPiece->RegisterVisAttributes(endPieceCoilVis);
-  //endPiece->RegisterUserLimits(endPieceLimits);
-  endPiece->SetExtentX(-endPieceOuterR, endPieceOuterR);
-  endPiece->SetExtentY(-endPieceOuterR, endPieceOuterR);
-  endPiece->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
-  endPiece->SetInnerExtentX(-endPieceInnerR, endPieceInnerR);
-  endPiece->SetInnerExtentY(-endPieceInnerR, endPieceInnerR);
-  endPiece->SetInnerExtentZ(endPiece->GetExtentZ());
+  auto endPieceSC = new BDSGeometryComponent(endPieceContainerSolid,
+					     endPieceContainerLV);
+  endPieceSC->RegisterSolid(endPieceCoilSolid);
+  endPieceSC->RegisterLogicalVolume(endPieceCoilLV);
+  endPieceSC->RegisterVisAttributes(endPieceCoilVis);
+  //endPieceSC->RegisterUserLimits(endPieceLimits);
+  endPieceSC->SetExtentX(-endPieceOuterR, endPieceOuterR);
+  endPieceSC->SetExtentY(-endPieceOuterR, endPieceOuterR);
+  endPieceSC->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
+  endPieceSC->SetInnerExtentX(-endPieceInnerR, endPieceInnerR);
+  endPieceSC->SetInnerExtentY(-endPieceInnerR, endPieceInnerR);
+  endPieceSC->SetInnerExtentZ(endPiece->GetExtentZ());
+
+  endPiece = new BDSSimpleComponent(name + "_end_piece",
+				    endPieceSC);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     name,

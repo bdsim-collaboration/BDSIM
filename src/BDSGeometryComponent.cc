@@ -20,6 +20,9 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
   SetExtentX(0,0); // initialise only - unphysical - should be set by child class
   SetExtentY(0,0);
   SetExtentZ(0,0);
+  SetInnerExtentX(0,0);
+  SetInnerExtentY(0,0);
+  SetInnerExtentZ(0,0);
 }
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containerSolidIn,
@@ -27,13 +30,37 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
 					   std::pair<G4double,G4double> extentXIn,
 					   std::pair<G4double,G4double> extentYIn,
 					   std::pair<G4double,G4double> extentZIn,
-					   G4ThreeVector                placementOffsetIn):
+					   G4ThreeVector                placementOffset):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
   extentX(extentXIn),
   extentY(extentYIn),
   extentZ(extentZIn),
-  placementOffset(placementOffsetIn)
+  placementOffset(placementOffset)
+{
+  SetInnerExtentX(0,0); // initialise only - unphysical - should be set by child class
+  SetInnerExtentY(0,0);
+  SetInnerExtentZ(0,0);
+}
+
+BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containerSolidIn,
+					   G4LogicalVolume*             containerLVIn,
+					   std::pair<G4double,G4double> extentXIn,
+					   std::pair<G4double,G4double> extentYIn,
+					   std::pair<G4double,G4double> extentZIn,
+					   std::pair<G4double,G4double> innerExtentXIn,
+					   std::pair<G4double,G4double> innerExtentYIn,
+					   std::pair<G4double,G4double> innerExtentZIn,
+					   G4ThreeVector                placementOffset):
+  containerSolid(containerSolidIn),
+  containerLogicalVolume(containerLVIn),
+  extentX(extentXIn),
+  extentY(extentYIn),
+  extentZ(extentZIn),
+  innerExtentX(innerExtentXIn),
+  innerExtentY(innerExtentYIn),
+  innerExtentZ(innerExtentZIn),
+  placementOffset(placementOffset)
 {;}
 
 BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
