@@ -226,6 +226,9 @@ void BDSMagnet::BuildOuter()
       RegisterDaughter(outer);
       InheritExtents(container); // update extents
       outer->ClearMagnetContainer();
+
+      endPieceBefore = outer->EndPieceBefore();
+      endPieceAfter  = outer->EndPieceAfter();
     }
 }
 
