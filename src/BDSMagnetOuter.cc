@@ -12,16 +12,24 @@ BDSMagnetOuter::BDSMagnetOuter(G4VSolid*                    containerSolid,
 			       std::pair<G4double,G4double> extentY,
 			       std::pair<G4double,G4double> extentZ,
 			       BDSGeometryComponent*        magnetContainerIn,
-			       G4ThreeVector                placementOffset):
+			       G4ThreeVector                placementOffset,
+			       BDSGeometryComponent*        endPieceBeginningIn,
+			       BDSGeometryComponent*        endPieceEndIn):
   BDSGeometryComponent(containerSolid, containerLV, extentX, extentY, extentZ,
 		       placementOffset),
-  magnetContainer(magnetContainerIn)
+  magnetContainer(magnetContainerIn),
+  endPieceBeginning(endPieceBeginningIn),
+  endPieceEnd(endPieceEndIn)
 {;}
 
 BDSMagnetOuter::BDSMagnetOuter(BDSGeometryComponent* componentIn,
-			       BDSGeometryComponent* magnetContainerIn):
+			       BDSGeometryComponent* magnetContainerIn,
+			       BDSGeometryComponent* endPieceBeginningIn,
+			       BDSGeometryComponent* endPieceEndIn):
   BDSGeometryComponent(*componentIn),
-  magnetContainer(magnetContainerIn)
+  magnetContainer(magnetContainerIn),
+  endPieceBeginning(endPieceBeginningIn),
+  endPieceEnd(endPieceEndIn)
 {;}
 
 void BDSMagnetOuter::ClearMagnetContainer()
@@ -33,7 +41,16 @@ void BDSMagnetOuter::ClearMagnetContainer()
     }
 }
 
+void BDSMagnetOuter::ClearEndPieces()
+{
+  if (endPieceBeginning)
+    {delete endPieceBeginning; endPieceBeginning = nullptr;}
+  if (endPieceEnd)
+    {delete endPieceEnd; endPieceEnd = nullptr;}
+}
+
 BDSMagnetOuter::~BDSMagnetOuter()
 {
   ClearMagnetContainer();
+  ClearEndPieces();
 }

@@ -21,7 +21,7 @@ class G4VSolid;
  * and only the magnet factory knows its true shape and can make a well
  * fitting container.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuter: public BDSGeometryComponent
@@ -33,25 +33,36 @@ public:
 		 std::pair<G4double,G4double> extentYIn,
 		 std::pair<G4double,G4double> extentZIn,
 		 BDSGeometryComponent*        magnetContainerIn,
-		 G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
+		 G4ThreeVector                placementOffset     = G4ThreeVector(0,0,0),
+		 BDSGeometryComponent*        endPieceBeginningIn = nullptr,
+		 BDSGeometryComponent*        endPieceEndIn       = nullptr);
   BDSMagnetOuter(BDSGeometryComponent* component,
-		 BDSGeometryComponent* magnetContainerIn);
+		 BDSGeometryComponent* magnetContainerIn,
+		 BDSGeometryComponent* endPieceBeginningIn = nullptr,
+		 BDSGeometryComponent* endPieceEndIn       = nullptr);
   virtual ~BDSMagnetOuter();
 
   /// Access the magnet container - a BDSGeometryComponent instance that has a suggested
   /// container solid (null pointer LV! - constructed from solid in BDSMagnet and saves doing it
   /// repeatedly in factories) that would contain both the magnet outer section and the
   /// beam pipe - so a solid container. Use as a way to pass solid + extents
-  BDSGeometryComponent* GetMagnetContainer() const;
+  BDSGeometryComponent* GetMagnetContainer() const {return magnetContainer;}
 
-  /// Clear the memory of the now uneeded magnet container object
+  /// @{ Access the end piece.
+  BDSGeometryComponent* EndPieceBeginning() const {return endPieceBeginning;}
+  BDSGeometryComponent* EndPieceEnd()       const {return endPieceEnd;}
+  /// @}
+  
+  /// Clear the memory of the now uneeded magnet container object.
   void ClearMagnetContainer();
+
+  /// Clear the memory of the possibly uneeded end piece objects.
+  void ClearEndPieces();
 
 protected:
   BDSGeometryComponent* magnetContainer;
+  BDSGeometryComponent* endPieceBeginning;
+  BDSGeometryComponent* endPieceEnd;
 };
-
-inline BDSGeometryComponent* BDSMagnetOuter::GetMagnetContainer() const
-{return magnetContainer;}
 
 #endif
