@@ -536,6 +536,46 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   return result;
 }
 
+BDSBeamlineElement* BDSBeamline::GetPrevious(BDSBeamlineElement* element)
+{
+  // search for element
+  auto result = find(beamline.begin(), beamline.end(), element);
+  if (result != beamline.end())
+    {// found
+      return GetPrevious(result - beamline.begin());
+    }
+  else
+    {return nullptr;}
+}
+
+BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index)
+{
+  if (index < 1 || index > (G4int)(beamline.size()-1))
+    {return nullptr;} // invalid index - inc beginning or end
+  else
+    {return beamline[index-1];}
+}
+
+BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
+{
+  // search for element
+  auto result = find(beamline.begin(), beamline.end(), element);
+  if (result != beamline.end())
+    {// found
+      return GetNext(result - beamline.begin());
+    }
+  else
+    {return nullptr;}
+}
+
+BDSBeamlineElement* BDSBeamline::GetNext(G4int index)
+{
+  if (index < 1 || index > (G4int)(beamline.size()-1))
+    {return nullptr;} // invalid index - inc beginning or end
+  else
+    {return beamline[index+1];}
+}
+
 void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
 {
   // check if base name already registered (can be single component placed multiple times)

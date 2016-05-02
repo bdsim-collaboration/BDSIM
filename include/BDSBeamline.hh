@@ -123,6 +123,16 @@ public:
   const_iterator end()   const {return beamline.end();}
   G4bool         empty() const {return beamline.empty();}
   ///@}
+
+  /// Return a pointer to the previous element. First this beamline is
+  /// searched for the vector. If there is no such element or no previous
+  /// element because it's the beginning, then a nullptr is returned. The
+  /// caller should test on this.
+  BDSBeamlineElement* GetPrevious(BDSBeamlineElement* element);
+  BDSBeamlineElement* GetNext(BDSBeamlineElement* element);
+
+  BDSBeamlineElement* GetPrevious(G4int index);
+  BDSBeamlineElement* GetNext(G4int index);
   
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
