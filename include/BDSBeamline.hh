@@ -145,6 +145,16 @@ public:
   /// Feedback about memory consumption for this beamline instance - container size,
   /// size of all BDSBeamlineElement() and size of all BDSAcceleratorComponent() stored.
   void PrintMemoryConsumption() const;
+
+  BDSBeamlineElement* ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
+						   G4int    index,
+						   G4double endPieceLength) const;
+  BDSBeamlineElement* ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
+						  G4int    index,
+						  G4double endPieceLength) const;
+
+  /// Whether the supplied index will lie within the beam line vector.
+  G4bool IndexOK(G4int index) const;
   
 private:
   /// Add a single component and calculate its position and rotation with respect

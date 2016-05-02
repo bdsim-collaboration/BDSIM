@@ -8,6 +8,7 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSLine.hh"
+#include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
@@ -673,4 +674,76 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
   G4cout << "new global extent +ve:         " << maximumExtentPositive << G4endl;
   G4cout << "new global extent -ve:         " << maximumExtentNegative << G4endl;
 #endif
+}
+
+BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
+							      G4int    index,
+							      G4double endPieceLength) const
+{
+  if (!IndexOK(index))
+    {return nullptr;}
+
+  BDSBeamlineElement*  element = beamline[index];
+  G4RotationMatrix* elRotStart = element->GetReferenceRotationStart();
+  G4ThreeVector     elPosStart = element->GetPositionStart();
+  G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
+  G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
+  G4double         elSPosStart = element->GetSPositionStart();
+  BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
+						      positionStart,
+						      positionMiddle,
+						      elPosStart,
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      positionStart,// for now the same
+						      positionMiddle,
+						      elPosStart,
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      elSPosStart - endPieceLength,
+						      elSPosStart - 0.5*endPieceLength,
+						      elSPosStart);
+  return result;
+}
+
+BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
+							     G4int    index,
+							     G4double endPieceLength) const
+{
+  if (!IndexOK(index))
+    {return nullptr;}
+
+  BDSBeamlineElement*  element = beamline[index];
+  G4RotationMatrix*   elRotEnd = element->GetReferenceRotationEnd();
+  G4ThreeVector       elPosEnd = element->GetPositionEnd();
+  G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotEnd);
+  G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*elRotEnd);
+  G4double           elSPosEnd = element->GetSPositionEnd();
+  BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
+						      elPosEnd,
+						      positionMiddle,
+						      positionEnd,
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      elPosEnd,
+						      positionMiddle,
+						      positionEnd,
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      elSPosEnd,
+						      elSPosEnd + 0.5*endPieceLength,
+						      elSPosEnd + endPieceLength);
+  return result;
+}
+
+G4bool BDSBeamline::IndexOK(G4int index) const
+{
+  if (index < 0 || index > (G4int)(beamline.size()-1))
+    {return false;}
+  else
+    {return true;}
 }
