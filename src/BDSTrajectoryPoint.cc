@@ -5,9 +5,13 @@
 #include "G4VProcess.hh"
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4NavigationHistory.hh"
+
 
 #include "BDSTrajectoryPoint.hh"
 #include "BDSDebug.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSPhysicalVolumeInfo.hh"
 
 #include <ostream>
 
@@ -30,9 +34,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   postProcessType    = -1;
   postProcessSubType = -1;
 
-  const G4Track    *aTrack      = step->GetTrack();
-  const G4VProcess *preProcess  = step->GetPreStepPoint()->GetProcessDefinedStep();
-  const G4VProcess *postProcess = step->GetPostStepPoint()->GetProcessDefinedStep();
+  const G4Track           *aTrack      = step->GetTrack();
+  const G4StepPoint        *prePoint   = step->GetPreStepPoint();
+  const G4StepPoint       *postPoint   = step->GetPostStepPoint();
+  const G4VProcess         *preProcess = prePoint->GetProcessDefinedStep();
+  const G4VProcess        *postProcess = postPoint->GetProcessDefinedStep();
+  G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
+  G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
 
   if(preProcess)
   {
@@ -45,6 +53,39 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     postProcessType    = postProcess->GetProcessType();
     postProcessSubType = postProcess->GetProcessSubType();
   }
+
+  preWeight   = prePoint->GetWeight();
+  postWeight  = postPoint->GetWeight();
+
+  energy      = step->GetTotalEnergyDeposit();
+  preEnergy   = prePoint->GetKineticEnergy();
+  postEnergy  = postPoint->GetKineticEnergy();
+
+  G4AffineTransform preT;
+  G4AffineTransform postT;
+
+  preT  =  prePoint->GetTouchableHandle()->GetHistory()->GetTopTransform();
+  postT = postPoint->GetTouchableHandle()->GetHistory()->GetTopTransform();
+
+
+  G4ThreeVector  prePos      =  prePoint->GetPosition();
+  G4ThreeVector postPos      = postPoint->GetPosition();
+
+  G4ThreeVector  prePosLocal = preT.TransformPoint(prePos);
+  G4ThreeVector postPosLocal = preT.TransformPoint(postPos);
+
+#if 0
+  BDSPhysicalVolumeInfo* preVolInfo  = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(preVolume);
+  BDSPhysicalVolumeInfo* postVolInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(postVolume);
+
+  if(preVolInfo)
+    G4cout << preVolInfo << G4endl;
+  //    preS  =  preVolInfo->GetSPos() + prePosLocal.z();
+  if(postVolInfo)
+    G4cout << postVolInfo << G4endl;
+  // postS = postVolInfo->GetSPos() + postPosLocal.z();
+#endif
+
   // If the process type is not undefined or transportation...
   if(!((preProcess->GetProcessType() == fNotDefined) ||
        (preProcess->GetProcessType() == fTransportation)))
