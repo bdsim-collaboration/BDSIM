@@ -571,7 +571,7 @@ BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
 
 BDSBeamlineElement* BDSBeamline::GetNext(G4int index)
 {
-  if (index < 1 || index > (G4int)(beamline.size()-2))
+  if (index < 0 || index > (G4int)(beamline.size()-2))
     {return nullptr;} // invalid index - inc beginning or end
   else
     {return beamline[index+1];}
