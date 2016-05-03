@@ -870,6 +870,9 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
       G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
       G4double rotationAngle = (n+0.5)*segmentAngle + CLHEP::pi*0.5;
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
+
+      // nominally this should be around z axis, but I guess z is now y give
+      // rotation already... could do with rotate about axis in future
       ecrm->rotateY(rotationAngle);
 
       //  G4double rotationAngle = 0;
