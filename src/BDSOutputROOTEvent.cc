@@ -102,7 +102,6 @@ void BDSOutputROOTEvent::Initialise()
   theModelOutputTree->Fill();
 
   // Build run data tree
-  runHistos->Create1DHistogram("c","d",100,0,100);
   theRunOutputTree->Branch("Histos.","BDSOutputROOTEvent",runHistos,32000,1);
 
   // Event info output
@@ -124,7 +123,6 @@ void BDSOutputROOTEvent::Initialise()
 
 
   // Build event histograms
-  evtHistos->Create1DHistogram("a","b",100,0,100);
   theRootOutputTree->Branch("Histos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
 
