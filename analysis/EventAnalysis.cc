@@ -215,6 +215,14 @@ void EventAnalysis::Write(std::string outputFileName)
   TDirectory *bdsimDir = f->mkdir("bdsimHistograms");
   bdsimDir->cd();
 
+  for(auto h : this->histoSum->Get1DHistograms())
+  {
+    h->Write();
+  }
+  for(auto h :this->histoSum->Get2DHistograms())
+  {
+    h->Write();
+  }
 
   f->Close();
 }
