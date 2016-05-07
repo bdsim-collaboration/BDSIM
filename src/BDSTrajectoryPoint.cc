@@ -78,6 +78,11 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   BDSPhysicalVolumeInfo* preVolInfo  = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(preVolume);
   BDSPhysicalVolumeInfo* postVolInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(postVolume);
 
+
+  if(preVolume)
+    G4cout << preVolume->GetName() << " " << preVolInfo << G4endl;
+  if(postVolume)
+    G4cout << postVolume->GetName()<< " " << postVolInfo << G4endl;
   if(preVolInfo)
     G4cout << preVolInfo << G4endl;
   //    preS  =  preVolInfo->GetSPos() + prePosLocal.z();
