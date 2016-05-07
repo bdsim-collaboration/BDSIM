@@ -224,7 +224,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
   BDSTrajectoryPoint *primaryFirstInt = BDSTrajectory::FirstInteraction(trajCont);
   BDSTrajectoryPoint *primaryLastInt  = BDSTrajectory::LastInteraction(trajCont);
-
+#if 0
   G4cout << __METHOD_NAME__ << primaryFirstInt->GetPosition()        << G4endl;
   G4cout << __METHOD_NAME__ << primaryFirstInt->GetPreProcessType()  << " " << primaryFirstInt->GetPreProcessSubType()  << " "
                             << primaryFirstInt->GetPostProcessType() << " " << primaryFirstInt->GetPostProcessSubType() << G4endl;
@@ -239,7 +239,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4cout << __METHOD_NAME__ << primaryLastInt->GetPreEnergy()        << " " << primaryLastInt->GetPostEnergy()          << " "
                             << primaryLastInt->GetEnergy()           << " "
                             << primaryLastInt->GetPreS()             << " " << primaryLastInt->GetPostS()              << G4endl;
-
+#endif
 
   // we should only try and access the tunnel hits collection if it was actually
   // instantiated which won't happen if the tunnel isn't build and placed. During
@@ -286,8 +286,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 
     G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
     TrajectoryVector* trajVec = trajCont->GetVector();
-
-#define BDSDEBUG 1
 
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
