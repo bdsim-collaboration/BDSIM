@@ -36,4 +36,7 @@ int main(int argc, char *argv[])
   evtAnalysis.Process();
   evtAnalysis.SimpleHistograms();
   evtAnalysis.Terminate();
+
+  // write output
+  evtAnalysis.Write(Config::Instance()->OutputFileName());
 }
