@@ -1,8 +1,8 @@
-Debug					            1
-InputFilePath				        ./output_event.root
-OutputFileName				        ./output.root
-CalculateOpticalFunctions		    0
-CalculateOpticalFunctionsFileName	./output.dat
-# Object        treeName        Histogram Name           # Bins     Binning	        variable            selection
-Histogram       Event.          Primaryx                 {100}       {-0.1:0.1}     Primary.x           1
-Histogram       Event.          Primaryy                 {100}       {-0.1:0.1}     Primary.y           1
+Debug						1
+InputFilePath					./output_event.root
+OutputFileName					./output.root
+CalculateOpticalFunctions			0
+CalculateOpticalFunctionsFileName		./output.dat
+# Object	treeName	Histogram Name           # Bins     Binning	        variable            selection
+Histogram	Event.		Primaryx                 {100}       {-0.1:0.1}     Primary.x           1
+Histogram	Event.		Primaryy                 {100}       {-0.1:0.1}     Primary.y           1
