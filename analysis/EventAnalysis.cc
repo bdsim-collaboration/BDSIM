@@ -47,13 +47,14 @@ void EventAnalysis::Process()
 
     if(Config::Instance()->Debug())
     {
-      std::cout << "EventAnalysis::Process> Got entry : " << i << std::endl;
-      std::cout << "EventAnalysis::Process> Vector lengths : "
-                                              << this->event->primaries->n << " : "
-                                              << this->event->eloss->n   << " : "
-                                              << this->event->primaryFirstHit->n << " : "
-                                              << this->event->primaryLastHit->n  << " : "
-                                              << this->event->tunnelHit->n << std::endl;
+      std::cout << __METHOD_NAME__ << i << std::endl;
+      std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+      std::cout << __METHOD_NAME__ << "primaries="   << this->event->primaries->n << std::endl;
+      std::cout << __METHOD_NAME__ << "eloss="       << this->event->eloss->n   << std::endl;
+      std::cout << __METHOD_NAME__ << "nprimary="    << this->event->primaryFirstHit->n << std::endl;
+      std::cout << __METHOD_NAME__ << "nlast="       << this->event->primaryLastHit->n  << std::endl;
+      std::cout << __METHOD_NAME__ << "ntunnel="     << this->event->tunnelHit->n << std::endl;
+      std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
 //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName.c_str() << std::endl;
     }
 
@@ -100,6 +101,4 @@ void EventAnalysis::SimpleHistograms()
   {
     std::cout << "EventAnalysis::SimpleHistograms>" << std::endl;
   }
-
-
 }
