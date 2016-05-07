@@ -21,6 +21,7 @@ public:
 #endif
   void Flush();
 
+  int n;
   std::vector<unsigned int> trackID;
   std::vector<unsigned int> parentID;
   std::vector<std::vector<int>> preProcessTypes;

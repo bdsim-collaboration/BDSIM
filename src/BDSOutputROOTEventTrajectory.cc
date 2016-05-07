@@ -14,6 +14,8 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << " " << trajVec.size() << G4endl;
 #endif
+
+  n = trajVec.size();
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
   {
     BDSTrajectory* traj = *iT;
