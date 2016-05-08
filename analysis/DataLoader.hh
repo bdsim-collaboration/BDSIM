@@ -3,11 +3,13 @@
 
 #include "Config.hh"
 #include "Event.hh"
+#include "Run.hh"
 
 #include "TChain.h"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
+#include "BDSOutputROOTEventRunInfo.hh"
 
 class DataLoader
 {
@@ -20,20 +22,22 @@ public :
   void ChainTrees();
   void SetBranchAddress();
   virtual ~DataLoader();
-  std::vector<std::string>    GetTreeNames()    { return treeNames;};
-  std::vector<std::string>    GetBranchNames()  { return branchNames;}
-  std::vector<std::string>    GetSamplerNames() { return samplerNames;}
-  BDSOutputROOTEventOptions*  GetOptions();
-  BDSOutputROOTEventModel*    GetModel();
-  Event*                      GetEvent();
-  TChain*                     GetOptionsTree()  { return optChain;}
-  TChain*                     GetModelTree()    { return modChain;}
-  TChain*                     GetEventTree()    { return evtChain;}
-
+  std::vector<std::string>      GetTreeNames()    { return treeNames;};
+  std::vector<std::string>      GetBranchNames()  { return branchNames;}
+  std::vector<std::string>      GetSamplerNames() { return samplerNames;}
+  BDSOutputROOTEventOptions*    GetOptions()      { return opt;}
+  BDSOutputROOTEventModel*      GetModel()        { return mod;}
+  Event*                        GetEvent()        { return evt;}
+  Run*                          GetRun()          { return run;};
+  TChain*                       GetOptionsTree()  { return optChain;}
+  TChain*                       GetModelTree()    { return modChain;}
+  TChain*                       GetEventTree()    { return evtChain;}
+  TChain*                       GetRunTree()      { return runChain;}
 private:
   BDSOutputROOTEventOptions    *opt;
   BDSOutputROOTEventModel      *mod;
   Event                        *evt;
+  Run                          *run;
 
   std::vector<std::string>      fileNames;
 
@@ -45,6 +49,7 @@ private:
   TChain *optChain;
   TChain *modChain;
   TChain *evtChain;
+  TChain *runChain;
 
   ClassDef(DataLoader,1);
 };

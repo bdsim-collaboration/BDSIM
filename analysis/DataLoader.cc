@@ -16,11 +16,13 @@ void DataLoader::CommonCtor()
   opt = new BDSOutputROOTEventOptions();
   mod = new BDSOutputROOTEventModel();
   evt = new Event();
+  run = new Run();
 
   optChain = new TChain("Options","Options");
   modChain = new TChain("Model","Model");
   evtChain = new TChain("Event","Event");
-  
+  runChain = new TChain("Run","Run");
+
   this->BuildInputFileList();
   this->BuildTreeNameList();
   this->BuildEventBranchNameList();
@@ -130,10 +132,12 @@ DataLoader::~DataLoader()
   delete opt;
   delete mod;
   delete evt;
+  delete run;
 
   delete optChain;
   delete modChain;
   delete evtChain;
+  delete runChain;
 }
 
 void DataLoader::ChainTrees()
@@ -144,6 +148,7 @@ void DataLoader::ChainTrees()
     optChain->Add((*i).c_str());
     modChain->Add((*i).c_str());
     evtChain->Add((*i).c_str());
+    runChain->Add((*i).c_str());
   }
 }
 
@@ -152,19 +157,5 @@ void DataLoader::SetBranchAddress()
   optChain->SetBranchAddress("Options.",&opt);
   modChain->SetBranchAddress("Model.",&mod);
   evt->SetBranchAddress(evtChain,this->samplerNames);
-}
-
-BDSOutputROOTEventOptions* DataLoader::GetOptions()
-{
-  return opt;
-}
-
-BDSOutputROOTEventModel* DataLoader::GetModel()
-{
-  return mod;
-}
-
-Event* DataLoader::GetEvent()
-{
-  return evt;
+  run->SetBranchAddress(runChain);
 }
