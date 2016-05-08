@@ -98,12 +98,12 @@ void BDSOutputROOTEventHistograms::Flush()
 {
   for(auto i : this->histograms1D)
   {
-    i->Clear();
+    i->Reset();
   }
 
   for(auto i : this->histograms2D)
   {
-    i->Clear();
+    i->Reset();
   }
 }
 
