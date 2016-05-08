@@ -30,9 +30,11 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
   pLastHit  = new BDSOutputROOTEventLoss(true,false);
   tHit      = new BDSOutputROOTEventLoss(false,true);
   traj      = new BDSOutputROOTEventTrajectory();
-  runHistos = new BDSOutputROOTEventHistograms();
   evtHistos = new BDSOutputROOTEventHistograms();
   evtInfo   = new BDSOutputROOTEventInfo();
+
+  runHistos = new BDSOutputROOTEventHistograms();
+  runInfo   = new BDSOutputROOTEventRunInfo();
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
@@ -91,39 +93,40 @@ void BDSOutputROOTEvent::Initialise()
   const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
   // Get exec options
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
-  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
+  theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
   
   // Build model and write structure
   BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
-  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000);
+  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",theModelOutput,32000);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
 
   // Build run data tree
-  theRunOutputTree->Branch("Histos.","BDSOutputROOTEvent",runHistos,32000,1);
+  theRunOutputTree->Branch("Histos.",          "BDSOutputROOTEventHistograms",runHistos,32000,1);
+  theRunOutputTree->Branch("Info.",            "BDSOutputROOTEventRunInfo",runInfo,32000,1);
 
   // Event info output
-  theRootOutputTree->Branch("Info.","BDSOutputROOTEventInfo",evtInfo,32000,1);
+  theRootOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
+  theRootOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
   samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
   // Build loss and hit structures
-  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
+  theRootOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
   theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
   theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
-  theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventLoss",tHit, 4000,2);
+  theRootOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
 
   // Build trajectory structures
-  theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
+  theRootOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
 
 
   // Build event histograms
-  theRootOutputTree->Branch("Histos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
+  theRootOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
 
   // build sampler structures 

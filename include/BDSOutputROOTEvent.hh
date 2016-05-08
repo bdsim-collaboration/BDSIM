@@ -15,6 +15,7 @@
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventInfo.hh"
+#include "BDSOutputROOTEventRunInfo.hh"
 
 
 #include "TROOT.h"
@@ -121,6 +122,12 @@ private:
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
 #endif
 
+  // run information
+  BDSOutputROOTEventRunInfo     *runInfo     = nullptr;
+  // run histograms
+  BDSOutputROOTEventHistograms  *runHistos   = nullptr;
+
+
   // energy loss
   BDSOutputROOTEventLoss        *eLoss       = nullptr;
   // primary first hit
@@ -131,12 +138,10 @@ private:
   BDSOutputROOTEventLoss        *tHit        = nullptr;
   // trajectory
   BDSOutputROOTEventTrajectory  *traj        = nullptr;
-  // run histograms
-  BDSOutputROOTEventHistograms  *runHistos   = nullptr;
   // event histograms
   BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
   // event information
-  BDSOutputROOTEventInfo         *evtInfo     = nullptr;
+  BDSOutputROOTEventInfo        *evtInfo     = nullptr;
 };
 
 
