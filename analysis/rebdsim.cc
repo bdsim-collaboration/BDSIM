@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "TChain.h"
+#include "TFile.h"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventModel.hh"
@@ -8,6 +9,8 @@
 #include "Config.hh"
 #include "DataLoader.hh"
 #include "EventAnalysis.hh"
+#include "RunAnalysis.hh"
+
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +40,12 @@ int main(int argc, char *argv[])
   evtAnalysis.SimpleHistograms();
   evtAnalysis.Terminate();
 
+  RunAnalysis runAnalysis = RunAnalysis(dl.GetRun(), dl.GetRunTree());
+
   // write output
-  evtAnalysis.Write(Config::Instance()->OutputFileName());
+  TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
+  evtAnalysis.Write(outputFile);
+  runAnalysis.Write(outputFile);
+  outputFile->Close();
+
 }
