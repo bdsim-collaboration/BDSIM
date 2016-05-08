@@ -11,6 +11,7 @@
 
 #include "Event.hh"
 #include "SamplerAnalysis.hh"
+#include "HistogramMerge.hh"
 
 class EventAnalysis
 {
@@ -38,7 +39,7 @@ protected:
   std::vector<std::string>      histogramNames;     // rebdsim generated histogram names
   std::map<std::string, TH1*>   histograms1D;       // rebdsim 1d histogram
   std::map<std::string, TH2*>   histograms2D;       // rebdsim 2d histograms
-  BDSOutputROOTEventHistograms  *histoSum;          // bdsim histograms
+  HistogramMerge               *histoSum;           // bdsim histograms
 
   ClassDef(EventAnalysis,1);
 };

@@ -49,8 +49,11 @@ void EventAnalysis::Process()
 
     if(i==0)
     {
-      histoSum = new BDSOutputROOTEventHistograms(*(event->histos));
+      histoSum = new HistogramMerge(event->histos);
     }
+
+    histoSum->Add(event->histos);
+
 
     if(Config::Instance()->Debug())
     {
@@ -212,13 +215,5 @@ void EventAnalysis::Write(TFile *outputFile)
   // write run merged run histograms
   TDirectory *bdsimDir = outputFile->mkdir("bdsimEventMergedHistograms");
   bdsimDir->cd();
-
-  for(auto h : this->histoSum->Get1DHistograms())
-  {
-    h->Write();
-  }
-  for(auto h :this->histoSum->Get2DHistograms())
-  {
-    h->Write();
-  }
+  this->histoSum->Write(outputFile);
 }
