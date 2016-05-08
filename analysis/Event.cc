@@ -54,6 +54,11 @@ BDSOutputROOTEventTrajectory* Event::GetTrajectory()
   return trajectory;
 }
 
+BDSOutputROOTEventHistograms* Event::GetHistograms()
+{
+  return histos;
+}
+
 void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
 {
   if(Config::Instance())
