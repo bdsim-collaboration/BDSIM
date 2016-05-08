@@ -7,6 +7,7 @@
 #include "TChain.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TFile.h"
 
 #include "Event.hh"
 #include "SamplerAnalysis.hh"
@@ -28,7 +29,7 @@ public:
                      std::string nbins,    std::string binning,
                      std::string plot,     std::string selection);
 
-  void Write(std::string outputFileName);
+  void Write(TFile *outputFileName);
 
 protected:
   Event  *event;

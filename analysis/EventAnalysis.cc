@@ -180,7 +180,6 @@ void EventAnalysis::FillHistogram(std::string treeName, std::string histoName,
     std::cout << h << std::endl;
   }
 
-  gDirectory->ls();
 
   if(Config::Instance()->Debug())
   {
@@ -188,31 +187,27 @@ void EventAnalysis::FillHistogram(std::string treeName, std::string histoName,
   }
 }
 
-void EventAnalysis::Write(std::string outputFileName)
+void EventAnalysis::Write(TFile *outputFile)
 {
   if(Config::Instance()->Debug())
   {
     std::cout << __METHOD_NAME__ << std::endl;
   }
 
-  TFile *f = new TFile(outputFileName.c_str(),"RECREATE");
-
   // write rebdsim histograms
-  TDirectory *rebdsimDir = f->mkdir("rebdsimHistorgrams");
+  TDirectory *rebdsimDir = outputFile->mkdir("rebdsimHistorgrams");
   rebdsimDir->cd();
   for(auto h : histograms1D)
   {
-    std::cout << h.first << " " << h.second << std::endl;
     h.second->Write();
   }
   for(auto h : histograms2D)
   {
-    std::cout << h.first << " " << h.second << std::endl;
     h.second->Write();
   }
 
   // write run merged run histograms
-  TDirectory *bdsimDir = f->mkdir("bdsimHistograms");
+  TDirectory *bdsimDir = outputFile->mkdir("bdsimEventMergedHistograms");
   bdsimDir->cd();
 
   for(auto h : this->histoSum->Get1DHistograms())
@@ -223,6 +218,4 @@ void EventAnalysis::Write(std::string outputFileName)
   {
     h->Write();
   }
-
-  f->Close();
 }
