@@ -33,6 +33,7 @@ public :
   TChain*                       GetModelTree()    { return modChain;}
   TChain*                       GetEventTree()    { return evtChain;}
   TChain*                       GetRunTree()      { return runChain;}
+
 private:
   BDSOutputROOTEventOptions    *opt;
   BDSOutputROOTEventModel      *mod;
