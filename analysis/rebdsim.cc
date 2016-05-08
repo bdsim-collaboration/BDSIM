@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   evtAnalysis.Terminate();
 
   RunAnalysis runAnalysis = RunAnalysis(dl.GetRun(), dl.GetRunTree());
+  runAnalysis.Process();
 
   // write output
   TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");

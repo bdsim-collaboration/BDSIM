@@ -16,13 +16,10 @@ RunAnalysis::RunAnalysis(Run *runIn, TChain *chainIn)
     std::cout << __METHOD_NAME__ << " " << runIn << " " << chainIn <<  " " << chainIn->GetEntries() << std::endl;
   }
 
-  chainIn->GetEntry(0);
+  //chainIn->GetEntry(0);
 
   this->run   = runIn;
   this->chain = chainIn;
-
-  std::cout << run << std::endl;
-  histoSum = new BDSOutputROOTEventHistograms(*(run->histos));
 }
 
 
@@ -30,6 +27,26 @@ RunAnalysis::~RunAnalysis()
 {
 
 }
+
+void RunAnalysis::Process()
+{
+  if(Config::Instance()->Debug())
+  {
+    std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
+  }
+  // loop over events
+  for(int i=0;i<this->chain->GetEntries();++i)
+  {
+    this->chain->GetEntry(i);
+
+    if (i == 0)
+    {
+      histoSum = new BDSOutputROOTEventHistograms(*(run->histos));
+    }
+  }
+
+}
+
 
 void RunAnalysis::Write(TFile *outputFile)
 {

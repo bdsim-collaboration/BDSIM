@@ -17,8 +17,11 @@ public:
 
   virtual ~RunAnalysis();
 
-  BDSOutputROOTEventHistograms  *histoSum;          // bdsim histograms
+  void Process();
   void Write(TFile *f);
+
+  BDSOutputROOTEventHistograms  *histoSum;          // bdsim histograms
+
 
 protected:
   Run    *run;

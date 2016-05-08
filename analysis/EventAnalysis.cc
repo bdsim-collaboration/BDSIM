@@ -28,9 +28,8 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     this->samplerAnalyses.push_back(sa);
   }
 
-  histoSum = new BDSOutputROOTEventHistograms(*(event->histos));
-  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
-  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
+//  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
+//  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
 }
 
 EventAnalysis::~EventAnalysis()
@@ -42,11 +41,16 @@ void EventAnalysis::Process()
 {
   if(Config::Instance()->Debug())
   {
-    std::cout << "EventAnalysis::Process> " << this->chain->GetEntries() << " " << std::endl;
+    std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
   // loop over events
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
+
+    if(i==0)
+    {
+      histoSum = new BDSOutputROOTEventHistograms(*(event->histos));
+    }
 
     if(Config::Instance()->Debug())
     {
@@ -164,20 +168,19 @@ void EventAnalysis::FillHistogram(std::string treeName, std::string histoName,
 
   auto n = chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
 
-  std::cout << n << std::endl;
   if(ndim == 1)
   {
     auto h = (TH1*)gDirectory->Get(pltSav.c_str());
     this->histogramNames.push_back(pltSav);
     this->histograms1D[pltSav] = h;
-    std::cout << h << std::endl;
+    // std::cout << h << std::endl;
   }
   else if(ndim == 2)
   {
     auto h = (TH2*)gDirectory->Get(pltSav.c_str());
     this->histogramNames.push_back(pltSav);
     this->histograms2D[pltSav] = h;
-    std::cout << h << std::endl;
+    // std::cout << h << std::endl;
   }
 
 
