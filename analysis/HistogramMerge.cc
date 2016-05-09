@@ -14,13 +14,11 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
   for(auto h : h1i)
   {
     auto ch  = (TH1D*)h->Clone();
-    auto chN = (TH1D*)h->Clone();
     auto chE = (TH1D*)h->Clone();
     ch->Reset();
-    chN->Reset();
     chE->Reset();
     this->histograms1D.push_back(ch);
-    this->histograms1DN.push_back(chN);
+    this->histograms1DN.push_back(0);
     this->histograms1DError.push_back(chE);
   }
 
@@ -28,13 +26,11 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
   for(auto h : h2i)
   {
     auto ch  = (TH2D*)h->Clone();
-    auto chN = (TH2D*)h->Clone();
     auto chE = (TH2D*)h->Clone();
     ch->Reset();
-    chN->Reset();
     chE->Reset();
     this->histograms2D.push_back(ch);
-    this->histograms2DN.push_back(chN);
+    this->histograms2DN.push_back(0);
     this->histograms2DError.push_back(chE);
   }
 }

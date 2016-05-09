@@ -22,10 +22,10 @@ public:
 
 private:
   std::vector<TH1D*> histograms1D;
-  std::vector<TH1D*> histograms1DN;
+  std::vector<int> histograms1DN;
   std::vector<TH1D*> histograms1DError;
   std::vector<TH2D*> histograms2D;
-  std::vector<TH2D*> histograms2DN;
+  std::vector<int> histograms2DN;
   std::vector<TH2D*> histograms2DError;
 
   ClassDef(HistogramMerge,1);
