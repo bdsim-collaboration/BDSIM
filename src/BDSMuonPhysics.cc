@@ -3,21 +3,21 @@
 
 #include "G4AnnihiToMuPair.hh"
 #include "G4Cerenkov.hh"
+#include "G4ChargedGeantino.hh"
 #include "G4eeToHadrons.hh"
-#include "G4Electron.hh"
 #include "G4Gamma.hh"
 #include "G4GammaConversionToMuons.hh"
+#include "G4Geantino.hh"
+#include "G4LeptonConstructor.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuIonisation.hh"
 #include "G4MuMultipleScattering.hh"
-#include "G4MuonPlus.hh"
-#include "G4MuonMinus.hh"
 #include "G4MuPairProduction.hh"
+#include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4PionDecayMakeSpin.hh"
 #include "G4PionPlus.hh"
 #include "G4PionMinus.hh"
-#include "G4Positron.hh"
 #include "G4ProcessManager.hh"
 
 BDSMuonPhysics::BDSMuonPhysics():
@@ -37,14 +37,21 @@ void BDSMuonPhysics::ConstructParticle()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  // leptons
+  G4LeptonConstructor leptons;
+  leptons.ConstructParticle();
+
+  // photons
   G4Gamma::Gamma();
-  G4Electron::Electron();
-  G4Positron::Positron();    
-  G4MuonPlus::MuonPlus();
-  G4MuonMinus::MuonMinus();
-  G4PionPlus::PionPlusDefinition();
-  G4PionMinus::PionMinusDefinition();
-  return;
+  G4OpticalPhoton::OpticalPhoton();
+  
+  //pions
+  G4PionPlus::PionPlus();
+  G4PionMinus::PionMinus();
+  
+  // pseudo-particles
+  G4Geantino::Geantino();
+  G4ChargedGeantino::ChargedGeantino();
 }
 
 void BDSMuonPhysics::ConstructProcess()
@@ -98,6 +105,5 @@ void BDSMuonPhysics::ConstructProcess()
 	pmanager->SetProcessOrdering(mucer,idxPostStep);
       }
     }
-  return;
 }
 
