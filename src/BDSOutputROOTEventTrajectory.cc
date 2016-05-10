@@ -82,9 +82,9 @@ void BDSOutputROOTEventTrajectory::Flush()
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)
 {
-  for(int i=0; i< t.preProcessTypes.size();++i)
+  for(int i=0; i< (int)t.preProcessTypes.size();++i)
   {
-    for(int j=0; j< t.preProcessTypes[i].size(); ++j)
+    for(int j=0; j< (int)t.preProcessTypes[i].size(); ++j)
     {
       //if(t.preProcessTypes[i][j] != 1 && t.preProcessTypes[i][j] != 7)
       //{
