@@ -92,6 +92,8 @@ void BDSMuonPhysics::ConstructProcess()
 	G4MuPairProduction*     mupar = new G4MuPairProduction();
 	pmanager->AddProcess(mupar);
 	G4Cerenkov*             mucer = new G4Cerenkov();
+	// reduce memory profile
+	mucer->SetTrackSecondariesFirst(true);
 	pmanager->AddProcess(mucer);
 	pmanager->SetProcessOrdering(mucer,idxPostStep);
       }
