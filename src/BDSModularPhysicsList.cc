@@ -19,7 +19,6 @@
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
-#include "G4OpticalProcessIndex.hh"
 #include "G4SynchrotronRadiation.hh"
 
 // particles
@@ -91,7 +90,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   ParsePhysicsList(physicsList);
   ConfigurePhysics();
 
-  // register the phyiscs constructors with base class mechanics.
+  // register the physics constructors with base class mechanics.
   for(auto physics : constructors)
     {RegisterPhysics(physics);}
   
