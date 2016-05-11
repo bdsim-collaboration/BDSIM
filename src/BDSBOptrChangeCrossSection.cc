@@ -77,12 +77,16 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
   G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
 #endif
 
+  G4bool allProcesses = false;
+  if (processName == "all")
+    {allProcesses = true;}
+  
   G4bool processFound = false;
   for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++)
     {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
-      if(processName == currentProcess)
+      if(processName == currentProcess || allProcesses == true)
 	{ 
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
