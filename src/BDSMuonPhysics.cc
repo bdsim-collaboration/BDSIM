@@ -5,10 +5,11 @@
 #include "G4Cerenkov.hh"
 #include "G4ChargedGeantino.hh"
 #include "G4eeToHadrons.hh"
+#include "G4EmSaturation.hh"
 #include "G4Gamma.hh"
 #include "G4GammaConversionToMuons.hh"
-#include "G4Geantino.hh"
 #include "G4LeptonConstructor.hh"
+#include "G4LossTableManager.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuIonisation.hh"
 #include "G4MuMultipleScattering.hh"
@@ -19,10 +20,10 @@
 #include "G4PionPlus.hh"
 #include "G4PionMinus.hh"
 #include "G4ProcessManager.hh"
+#include "G4Scintillation.hh"
 
 BDSMuonPhysics::BDSMuonPhysics():
-  G4VPhysicsConstructor("BDSMuonPhysics"),
-  activated(false)
+  G4VPhysicsConstructor("BDSMuonPhysics")
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
   
@@ -48,10 +49,6 @@ void BDSMuonPhysics::ConstructParticle()
   //pions
   G4PionPlus::PionPlus();
   G4PionMinus::PionMinus();
-  
-  // pseudo-particles
-  G4Geantino::Geantino();
-  G4ChargedGeantino::ChargedGeantino();
 }
 
 void BDSMuonPhysics::ConstructProcess()
@@ -59,10 +56,6 @@ void BDSMuonPhysics::ConstructProcess()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
-  if(activated)
-    {return;}
-  activated=true;
-  
   aParticleIterator->reset();
 
   while( (*aParticleIterator)() )
@@ -98,11 +91,28 @@ void BDSMuonPhysics::ConstructProcess()
 	pmanager->AddProcess(mubrm);
 	G4MuPairProduction*     mupar = new G4MuPairProduction();
 	pmanager->AddProcess(mupar);
-	G4Cerenkov*             mucer = new G4Cerenkov();
-	// reduce memory profile
-	mucer->SetTrackSecondariesFirst(true);
-	pmanager->AddProcess(mucer);
-	pmanager->SetProcessOrdering(mucer,idxPostStep);
+	if (BDSGlobalConstants::Instance()->TurnOnCerenkov()) {
+	  G4Cerenkov*           mucer = new G4Cerenkov();
+	  // reduce memory profile
+	  mucer->SetTrackSecondariesFirst(true);
+	  // common settings (similar to optical physics) 
+	  mucer->SetMaxNumPhotonsPerStep(100);
+	  mucer->SetMaxBetaChangePerStep(10.0);
+	  
+	  pmanager->AddProcess(mucer);
+	  pmanager->SetProcessOrdering(mucer,idxPostStep);
+
+	  // cerenkov also needs scintillation it seems
+	  G4Scintillation* muscint = new G4Scintillation();
+	  muscint->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->ScintYieldFactor());
+	  muscint->SetTrackSecondariesFirst(true);
+	  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+	  muscint->AddSaturation(emSaturation);
+
+	  pmanager->AddProcess(muscint);
+	  pmanager->SetProcessOrderingToLast(muscint,idxAtRest);
+	  pmanager->SetProcessOrderingToLast(muscint,idxPostStep);
+	}
       }
     }
 }
