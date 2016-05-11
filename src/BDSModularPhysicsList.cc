@@ -350,10 +350,10 @@ void BDSModularPhysicsList::EmLow()
 void BDSModularPhysicsList::HadronicElastic()
 {
   ConstructAllLeptons();
-  if (!physicsActivated["hadronicelastic"])
+  if (!physicsActivated["hadronic_elastic"])
     {
       constructors.push_back(new G4HadronElasticPhysics());
-      physicsActivated["hadronicelastic"] = true;
+      physicsActivated["hadronic_elastic"] = true;
     }
 }
 							  
