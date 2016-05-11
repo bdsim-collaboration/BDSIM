@@ -86,7 +86,7 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
     {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
       G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
-      if(processName == currentProcess || allProcesses == true)
+      if(allProcesses || processName == currentProcess)
 	{ 
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
