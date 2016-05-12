@@ -65,7 +65,7 @@ void EventAnalysis::Process()
       std::cout << __METHOD_NAME__ << "nlast="       << this->event->primaryLastHit->n  << std::endl;
       std::cout << __METHOD_NAME__ << "ntunnel="     << this->event->tunnelHit->n << std::endl;
       std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
-//      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName.c_str() << std::endl;
+//      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
     }
 
     this->ProcessSamplers();
@@ -79,7 +79,7 @@ void EventAnalysis::ProcessSamplers()
   {
     if(Config::Instance()->Debug())
     {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName.c_str() << " " << (*s)->s->n <<std::endl;
+      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
     }
 
     // process samplers
@@ -169,7 +169,7 @@ void EventAnalysis::FillHistogram(std::string treeName, std::string histoName,
     h->AddDirectory(kTRUE);
   }
 
-  auto n = chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
+  chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
 
   if(ndim == 1)
   {
