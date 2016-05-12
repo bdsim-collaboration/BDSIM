@@ -102,6 +102,8 @@ void EventAnalysis::Terminate()
   {
     (*i)->Terminate();
   }
+
+  histoSum->Terminate();
 }
 
 void EventAnalysis::SimpleHistograms()

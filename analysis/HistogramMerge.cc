@@ -1,4 +1,6 @@
 #include "HistogramMerge.hh"
+#include "Config.hh"
+#include "rebdsim.hh"
 
 ClassImp(HistogramMerge);
 
@@ -40,13 +42,23 @@ HistogramMerge::~HistogramMerge()
 
 }
 
-void HistogramMerge::Add(BDSOutputROOTEventHistograms *h)
+void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
 {
   // loop over 1d histograms
-  auto h1i = h->Get1DHistograms();
+  auto h1i = hIn->Get1DHistograms();
   for(size_t i=0;i<h1i.size();++i)
   {
-    this->histograms1D[i]->Add(h1i[i]);
+    auto h1  = this->histograms1D[i];
+    auto h1e = this->histograms1DError[i];
+    h1e->SetName((std::string(h1->GetName())+"Error").c_str());
+    auto h2  = hIn->Get1DHistograms()[i];
+    // loop over bins
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
+    {
+      h1->SetBinContent(j,h1->GetBinContent(j)+h2->GetBinContent(j));
+      h1e->SetBinContent(j,h1e->GetBinContent(j)+pow(h2->GetBinContent(j),2));
+    }
+    this->histograms1DN[i]    = this->histograms1DN[i]+1;
   }
 
 #if 0
@@ -61,7 +73,24 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *h)
 
 void HistogramMerge::Terminate()
 {
+  if(Config::Instance()->Debug())
+  {
+    std::cout << "terminate " << std::endl;
+  }
+  // loop over 1d histograms
+  for(auto i=0;i< histograms1D.size();++i)
+  {
+    auto h1  = histograms1D[i];
+    auto h1e = histograms1DError[i];
 
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
+    {
+      double mean = h1->GetBinContent(j)/histograms1DN[i];
+      double std  = sqrt(h1e->GetBinContent(j)/histograms1DN[i]-pow(mean,2))/sqrt(histograms1DN[i]);
+      h1->SetBinContent(j,mean);
+      h1->SetBinError(j,std);
+    }
+  }
 }
 
 void HistogramMerge::Write(TFile *outputFile)
