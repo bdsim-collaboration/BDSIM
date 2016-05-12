@@ -30,14 +30,20 @@ BDSTrajectory::BDSTrajectory(const G4Track* aTrack): G4Trajectory(aTrack)
     creatorProcessSubType = -1;
   }
   weight                = aTrack->GetWeight();
+}
 
-  fpBDSPointsContainer = new BDSTrajectoryPointsContainer;
-
+BDSTrajectory::~BDSTrajectory()
+{
+  // clean points container
+  for (auto i : fpBDSPointsContainer)
+    {
+      delete i;
+    }
 }
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
-  fpBDSPointsContainer->push_back(new BDSTrajectoryPoint(aStep));
+  fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
 }
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)

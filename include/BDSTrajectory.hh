@@ -28,8 +28,9 @@ class BDSTrajectory: public G4Trajectory
 {
 public:
   BDSTrajectory(const G4Track* aTrack);
-  BDSTrajectory(BDSTrajectory &);
-  virtual ~BDSTrajectory(){}
+  /// copy constructor is not needed
+  BDSTrajectory(BDSTrajectory &) = delete;
+  virtual ~BDSTrajectory();
 
   inline void* operator new(size_t);
   inline void operator delete(void*);
@@ -44,9 +45,9 @@ public:
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
   G4VTrajectoryPoint* GetPoint(G4int i) const
-  { return (*fpBDSPointsContainer)[i];  }
+  { return (fpBDSPointsContainer)[i];  }
 
-  virtual int GetPointEntries() const { return fpBDSPointsContainer->size(); }
+  virtual int GetPointEntries() const { return fpBDSPointsContainer.size(); }
 
   G4int GetCreatorProcessType()    const {return creatorProcessType;}
   G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
@@ -68,7 +69,7 @@ protected:
   G4int          creatorProcessSubType;
   G4double       weight;
 
-  BDSTrajectoryPointsContainer *fpBDSPointsContainer;
+  BDSTrajectoryPointsContainer fpBDSPointsContainer;
 };
 
 extern G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;

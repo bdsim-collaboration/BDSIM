@@ -78,6 +78,9 @@ void BDSOutputROOTEventTrajectory::Flush()
   preProcessSubTypes.clear();
   postProcessTypes.clear();
   postProcessSubTypes.clear();
+  preWeights.clear();
+  postWeights.clear();
+  energys.clear();
 }
 
 std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &t)

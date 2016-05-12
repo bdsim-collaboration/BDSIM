@@ -41,6 +41,18 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
+
+  // need to delete all objects allocated in constructor
+  delete primary;
+  delete eLoss;
+  delete pFirstHit;
+  delete pLastHit;
+  delete tHit;
+  delete traj;
+  delete evtHistos;
+  delete evtInfo;
+  delete runHistos;
+  delete runInfo;
 }
 
 void BDSOutputROOTEvent::Initialise() 
