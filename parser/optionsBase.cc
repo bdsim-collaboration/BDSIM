@@ -1,7 +1,7 @@
 #include "options.h"
 
-// include git commit version. header is in build/configuration
-#include "version.hh"
+// include git commit version.
+#include "version.h"
 
 #include <iostream>
 

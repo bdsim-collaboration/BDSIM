@@ -6,8 +6,12 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 ###################
 
 # test binary without input file
-add_test(gmad ${gmadBinary})
-set_tests_properties(gmad PROPERTIES WILL_FAIL 1)
+add_test(gmad-noinputfile ${gmadBinary})
+set_tests_properties(gmad-noinputfile PROPERTIES WILL_FAIL 1)
+
+# test binary without two input files
+add_test(gmad-twoinputfiles ${gmadBinary} a;b)
+set_tests_properties(gmad-twoinputfiles PROPERTIES WILL_FAIL 1)
 
 # try to overwrite a reserved variable
 add_test(gmad-reservedVar ${gmadBinary} reservedvariable.gmad)
