@@ -619,7 +619,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
   G4double length = element->l*CLHEP::m;
   
   // magnetic field
-  G4double bField;
   if(BDS::IsFinite(element->B))
     {
       G4double ffact = BDSGlobalConstants::Instance()->FFact();

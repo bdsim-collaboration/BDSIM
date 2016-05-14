@@ -76,7 +76,7 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
      }
    else 
      {
-       G4ThreeVector LocalR = ConvertToLocal(GlobalPosition);
+       G4ThreeVector LocalR  = ConvertToLocal(GlobalPosition);
        G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalPosition, InitMomDir);
               
        G4double x0=LocalR.x(); 

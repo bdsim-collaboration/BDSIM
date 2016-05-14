@@ -78,7 +78,7 @@ public:
   G4ThreeVector ConvertAxisToGlobal(const G4ThreeVector& localAxis) const;
 
   /// Convert a vector (axis) from local to global coordinates. Note this function
-  /// must only be used once the instance of htis class has been initialised, setting
+  /// must only be used once the instance of this class has been initialised, setting
   /// up the transforms. It is up to the developer to ensure this. This utility function
   /// operates on two threevectors in a pair.
   std::pair<G4ThreeVector, G4ThreeVector> ConvertAxisToGlobal(const std::pair<G4ThreeVector, G4ThreeVector>& localAxis) const;
