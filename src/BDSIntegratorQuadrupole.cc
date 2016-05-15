@@ -52,11 +52,11 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
          << " q  = " << charge/CLHEP::eplus << " e"     << G4endl
          << " dBy/dx = " << bPrime/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
          << " k = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
-         << G4endl; 
-#endif
+         << G4endl;
+         #endif
   */
-  // relevant momentum scale is p_z, not P_tot:
-  // check that the approximations are valid, else do a linear step:
+
+  // Check this will have a perceptible effect and if not do a linear step.
   if(fabs(kappa)<1.e-12)
     {
       G4ThreeVector positionMove = h * InitMomDir;
@@ -78,7 +78,9 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
 
   G4double      h2      = pow(h,2);
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
-  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, GlobalP);
+  //G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, GlobalP);
+  //  LocalRp /= InitPMag;
+  G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
   
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
@@ -86,9 +88,11 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double xp  = LocalRp.x();
   G4double yp  = LocalRp.y();
   G4double zp  = LocalRp.z();
+    
+  // initialise output varibles with input position as default
   G4double x1  = x0;
   G4double y1  = y0;
-  G4double z1  = z0 + h;
+  G4double z1  = z0 + h; // new z position will be along z by step length h
   G4double xp1 = xp;
   G4double yp1 = yp;
   G4double zp1 = zp;
@@ -102,7 +106,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   // determine effective curvature 
   G4double R_1 = LocalRpp.mag();
   
-  if (!BDS::IsFinite(R_1))
+  if (!BDS::IsFinite(R_1)) // ie is 0
     {
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
@@ -158,15 +162,14 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
       
       y1  = Y11*y0 + Y12*yp;    
       yp1 = Y21*y0 + Y22*yp;
-      
+
+      // relies on normalised momenta otherwise this will be nan.
       zp1 = sqrt(1 - xp1*xp1 - yp1*yp1);
       
       G4double dx = x1-x0;
       G4double dy = y1-y0;
       
-      // Linear chord length
-      G4double dR2=dx*dx+dy*dy;
-      //G4double dz=sqrt(h2*(1.-h2/(12*R*R))-dR2);
+      // Linear chord length - this is paraxial and only moves directly along z
       G4double dz = h;
       
       // check for precision problems - enforce conservation
