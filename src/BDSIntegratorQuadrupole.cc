@@ -88,7 +88,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double zp  = LocalRp.z();
   G4double x1  = x0;
   G4double y1  = y0;
-  G4double z1  = z0;
+  G4double z1  = z0 + h;
   G4double xp1 = xp;
   G4double yp1 = yp;
   G4double zp1 = zp;
@@ -96,7 +96,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   // local r'' (for curvature)
   G4ThreeVector LocalRpp;
   LocalRpp.setX(-zp*x0); // can this be replaced by a cross produce?
-  LocalRpp.setY( zp*y0); // G4ThreeVector as cross method
+  LocalRpp.setY( zp*y0); // G4ThreeVector has a cross method
   LocalRpp.setZ( x0*xp - y0*yp);
   LocalRpp *= kappa;
   // determine effective curvature 
@@ -166,7 +166,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
       
       // Linear chord length
       G4double dR2=dx*dx+dy*dy;
-      G4double dz=sqrt(h2*(1.-h2/(12*R*R))-dR2);
+      //G4double dz=sqrt(h2*(1.-h2/(12*R*R))-dR2);
+      G4double dz = h;
       
       // check for precision problems - enforce conservation
       G4double ScaleFac = (dx*dx+dy*dy+dz*dz)/h2;
@@ -181,99 +182,14 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
 	}
       z1 = z0 + dz;
     }
-		  /*
-      Else
-	// perform local helical steps (paraxial approx not safe)
-	{
-#ifdef BDSDEBUG
-	  G4cout << "local helical steps" << G4endl;
-#endif
-
-	  // simple quadratic approx:	      
-	  G4double quadX= - kappa*x0*zp;
-	  G4double quadY=   kappa*y0*zp;
-	  G4double quadZ=   kappa*(x0*xp - y0*yp);
-	      
-	  // determine maximum curvature:
-	  G4double maxCurv=max(fabs(quadX),fabs(quadY));
-	  maxCurv=max(maxCurv,fabs(quadZ));
-	      
-	  x1 = x0 + h*xp + quadX*h2/2;
-	  y1 = y0 + h*yp + quadY*h2/2; 
-	  z1 = z0 + h*zp + quadZ*h2/2;
-	      
-	  xp1 = xp + quadX*h;
-	  yp1 = yp + quadY*h;
-	  zp1 = zp + quadZ*h;
-	      
-	  // estimate parameters at end of step:
-	  G4double quadX_end= - kappa*x1*zp1;
-	  G4double quadY_end=   kappa*y1*zp1;
-	  G4double quadZ_end=   kappa*(x1*xp1 - y1*yp1);
-	      
-	  // determine maximum curvature:
-	  maxCurv=max(maxCurv,fabs(quadX_end));
-	  maxCurv=max(maxCurv,fabs(quadY_end));
-	  maxCurv=max(maxCurv,fabs(quadZ_end));
-
-	  distChord=maxCurv*h2/4.;
-	      
-	  // use the average:
-	  G4double quadX_av=(quadX+quadX_end)/2;
-	  G4double quadY_av=(quadY+quadY_end)/2;
-	  G4double quadZ_av=(quadZ+quadZ_end)/2;
-	      
-	  G4double x_prime_av=(xp + xp1)/2;
-	  G4double y_prime_av=(yp + yp1)/2;
-	  G4double z_prime_av=(zp + zp1)/2;
-	      
-	  x1 = x0 + h*x_prime_av + quadX_av * h2/2;
-	  y1 = y0 + h*y_prime_av + quadY_av * h2/2; 
-	  z1 = z0 + h*z_prime_av + quadZ_av * h2/2;
-	      
-	  xp1 = xp + quadX_av*h;
-	  yp1 = yp + quadY_av*h;
-	  zp1 = zp + quadZ_av*h;
-	      
-	  G4double dx = (x1-x0);
-	  G4double dy = (y1-y0);
-	  G4double dz = (z1-z0);
-	  G4double chord2 = dx*dx + dy*dy + dz*dz;
-	  if(chord2>h2)
-	    {
-	      G4double hnew=h*sqrt(h2/chord2);
-	      x1=x0 + hnew*x_prime_av + quadX_av * hnew*hnew/2;
-	      y1=y0 + hnew*y_prime_av + quadY_av * hnew*hnew/2; 
-	      z1=z0 + hnew*z_prime_av + quadZ_av * hnew*hnew/2;
-
-	      xp1=xp + quadX_av*hnew;
-	      yp1=yp + quadY_av*hnew;
-	      zp1=zp + quadZ_av*hnew;
-	    }
-	}
-
-      LocalR.setX(x1);
-      LocalR.setY(y1);
-      LocalR.setZ(z1);
-	  
-      LocalRp.setX(xp1);
-      LocalRp.setY(yp1);
-      LocalRp.setZ(zp1);
-
-    }
-  else //if curvature = 0 ...
-    {
-      LocalR += h*LocalRp;
-      distChord=0.;
-    }
-*/
-    LocalR.setX(x1);
-    LocalR.setY(y1);
-    LocalR.setZ(z1);
-
-    LocalRp.setX(xp1);
-    LocalRp.setY(yp1);
-    LocalRp.setZ(zp1);
+  
+  LocalR.setX(x1);
+  LocalR.setY(y1);
+  LocalR.setZ(z1);
+  
+  LocalRp.setX(xp1);
+  LocalRp.setY(yp1);
+  LocalRp.setZ(zp1);
 
   GlobalR = ConvertToGlobal(LocalR);
   GlobalP = ConvertAxisToGlobal(LocalRp);
