@@ -46,7 +46,7 @@ public:
   inline const std::list<GMAD::Element>& GetMaterials() const {return material_list;}
   
   /// Return atom list
-  inline const std::list<GMAD::Element>& GetAtoms() const {return atom_list;}
+  inline const std::list<GMAD::Atom>& GetAtoms() const {return atom_list;}
   
   /// Return region list
   inline const std::vector<GMAD::Region>& GetRegions() const {return region_list;}

@@ -60,8 +60,8 @@
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
-%token <ival> MATERIAL ATOM
-%token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
+%token <ival> MATERIAL
+%token ALL ATOM PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -169,6 +169,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->OverwriteElement(*$1);
 	   }
        }
+     | VARIABLE ':' atom
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : atom" << std::endl;
+	     Parser::Instance()->SetAtomValue("name",*($1));
+	     Parser::Instance()->add_atom();
+           }
+       }
      | VARIABLE ':' tunnel
        {
          if(execute)
@@ -238,9 +247,9 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
           | MATERIAL    {$$=static_cast<int>(ElementType::_MATERIAL);}
-          | ATOM        {$$=static_cast<int>(ElementType::_ATOM);}
 ;
 
+atom : ATOM ',' atom_options ;
 region : REGION ',' region_options ;
 cavitymodel : CAVITYMODEL ',' cavitymodel_options ;
 tunnel : TUNNEL ',' tunnel_options ;
@@ -612,6 +621,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->ClearParams();
 	      }
           }
+        | ATOM ',' atom_options // atom
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> ATOM\n");
+		Parser::Instance()->add_atom();
+	      }
+          }
         | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
@@ -739,6 +756,21 @@ cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
+		    }
+;
+
+atom_options_extend : /* nothing */
+                      | ',' atom_options
+
+atom_options : paramassign '=' aexpr atom_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetAtomValue((*$1),$3);
+		    }
+                 | paramassign '=' STR atom_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetAtomValue(*$1,*$3);
 		    }
 ;
 

@@ -116,6 +116,9 @@ add_test(gmad-array ${gmadBinary} array.gmad)
 set_tests_properties(gmad-array PROPERTIES PASS_REGULAR_EXPRESSION 32)
 add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)
 
+# test atom
+add_test(gmad-atom ${gmadBinary} atom.gmad)
+
 # test cavitymodel
 add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
 

@@ -151,8 +151,7 @@ bool Element::isSpecial()const {
       type == ElementType::_MARKER ||
       type == ElementType::_LINE ||
       type == ElementType::_REV_LINE ||
-      type == ElementType::_MATERIAL ||
-      type == ElementType::_ATOM)
+      type == ElementType::_MATERIAL)
     {isSpecial = true;}
 
   return isSpecial;
