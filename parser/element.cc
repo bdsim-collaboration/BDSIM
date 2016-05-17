@@ -87,11 +87,6 @@ void Element::PublishMembers()
   publish("gradient",&Element::gradient);
   publish("precisionRegion",&Element::precisionRegion);
   publish("region",&Element::region);
-  publish("A",&Element::A);
-  publish("Z",&Element::Z);
-  publish("density",&Element::density);
-  publish("T",&Element::temper);
-  publish("P",&Element::pressure);
   publish("waveLength",&Element::waveLength);
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
@@ -114,8 +109,6 @@ void Element::PublishMembers()
   publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
   publish("cavityModel",&Element::cavityModel);
-  publish("state",&Element::state);
-  publish("symbol",&Element::symbol);
   publish("bias",&Element::bias);
   publish("biasMaterial",&Element::biasMaterial);
   publish("biasVacuum",&Element::biasVacuum);
@@ -129,9 +122,6 @@ void Element::PublishMembers()
   publish("ksl",&Element::ksl);
   publish("blmLocZ",&Element::blmLocZ);
   publish("blmLocTheta",&Element::blmLocTheta);
-  publish("components",&Element::components);
-  publish("componentsWeights",&Element::componentsWeights);
-  publish("componentsFractions",&Element::componentsFractions);
 
   publish("colour", &Element::colour);
 }
@@ -152,9 +142,7 @@ bool Element::isSpecial()const {
   if (type == ElementType::_TRANSFORM3D ||
       type == ElementType::_MARKER ||
       type == ElementType::_LINE ||
-      type == ElementType::_REV_LINE ||
-      type == ElementType::_MATERIAL ||
-      type == ElementType::_ATOM)
+      type == ElementType::_REV_LINE )
     {isSpecial = true;}
 
   return isSpecial;
@@ -204,10 +192,6 @@ void Element::print(int & ident)const{
   case ElementType::_TRANSFORM3D:
     printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
 	   xdir, ydir, zdir, phi, theta, psi);
-    break;
-  case ElementType::_MATERIAL:
-    printf(" A=%.10g, Z=%.10g, density=%.10g,  temper=%.10g, pressure=%.10g",
-	   A, Z, density, temper, pressure);
     break;
   default:
     break;
@@ -295,18 +279,6 @@ void Element::flush() {
   
   precisionRegion = false;
   region = "";
-  
-  A = 0;
-  Z = 0;
-  density = 0;      //g*cm-3
-  temper = 300;     //kelvin
-  pressure = 0;     //atm
-  state = "solid";  //allowed values: "solid", "liquid", "gas"
-  symbol = "";
-
-  components.clear();
-  componentsFractions.clear();
-  componentsWeights.clear();
 
   geometryFile ="";
   bmapFile = "";
