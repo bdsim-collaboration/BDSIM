@@ -96,18 +96,14 @@ input :
 /* { */
 /*   yyerrok; */
 /* } */
-;
-
 
 stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = 1;}
               | if_clause '{' stmt '}' ELSE '{' stmt '}' 
                 { if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" ); }
               | atomic_stmt  { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
               | BEGN input END { if(ECHO_GRAMMAR) printf("stmt -> '{' stmt ';' atomic_stmt '}' \n"); }
-;
 
 if_clause: IF '(' aexpr ')' {if( ($3 > 0) && (execute > 0) ) execute = 1; else execute = 0;}
-;
 
 atomic_stmt : 
             | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
@@ -118,7 +114,6 @@ atomic_stmt :
 		//yyerror(" : some error message\n"); 
 		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
 	      }
-;
 
 decl : VARIABLE ':' component_with_params
        {
@@ -229,7 +224,6 @@ decl : VARIABLE ':' component_with_params
 	    yyerror("ERROR: Element needs parameters");
 	  }
       }
-;
 
 component_with_params : component ',' parameters
 
@@ -254,41 +248,40 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
-;
 
-atom : ATOM ',' atom_options ;
-material : MATERIAL ',' material_options ;
-region : REGION ',' region_options ;
-cavitymodel : CAVITYMODEL ',' cavitymodel_options ;
-tunnel : TUNNEL ',' tunnel_options ;
-xsecbias : XSECBIAS ',' xsecbias_options ;
+atom : ATOM ',' atom_options
+material : MATERIAL ',' material_options
+region : REGION ',' region_options
+cavitymodel : CAVITYMODEL ',' cavitymodel_options
+tunnel : TUNNEL ',' tunnel_options
+xsecbias : XSECBIAS ',' xsecbias_options
 
-error_noparams : DRIFT;
-               | RF;
-               | SBEND;
-               | RBEND;
-               | VKICK;
-               | HKICK;
-               | QUADRUPOLE;
-               | SEXTUPOLE;
-               | OCTUPOLE;
-               | DECAPOLE;
-               | MULTIPOLE;
-               | SOLENOID;
-               | ECOL;
-               | MUSPOILER;
-               | RCOL;
-               | LASER;
-               | SCREEN;
-               | AWAKESCREEN;
-               | TRANSFORM3D;
-               | ELEMENT;
-               | MATERIAL;
-               | ATOM;
-               | REGION;
-               | CAVITYMODEL;
-               | TUNNEL;
-               | XSECBIAS;
+error_noparams : DRIFT
+               | RF
+               | SBEND
+               | RBEND
+               | VKICK
+               | HKICK
+               | QUADRUPOLE
+               | SEXTUPOLE
+               | OCTUPOLE
+               | DECAPOLE
+               | MULTIPOLE
+               | SOLENOID
+               | ECOL
+               | MUSPOILER
+               | RCOL
+               | LASER
+               | SCREEN
+               | AWAKESCREEN
+               | TRANSFORM3D
+               | ELEMENT
+               | MATERIAL
+               | ATOM
+               | REGION
+               | CAVITYMODEL
+               | TUNNEL
+               | XSECBIAS
 
 newinstance : VARIABLE ',' parameters
             {
@@ -302,7 +295,6 @@ newinstance : VARIABLE ',' parameters
 		$$ = Parser::Instance()->copy_element_to_params(*$1);
 	      }
 	    }
-;
 
 paramassign: VARIABLE
              {
@@ -354,10 +346,8 @@ parameters: paramassign '=' aexpr parameters_extend
 	    }
 
 line : LINE '=' '(' element_seq ')'
-;
 
 line : LINE '=' '-' '(' rev_element_seq ')'
-;
 
 element_seq_extend : /* nothing */
                    | ',' element_seq
@@ -379,7 +369,6 @@ element_seq :
               {
 		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
 	      }
-;
 
 rev_element_seq_extend : /* nothing */
                        | ',' rev_element_seq
@@ -401,7 +390,6 @@ rev_element_seq :
               {
 		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
 	      }
-;
 
 expr : aexpr 
        { // check type ??
@@ -432,7 +420,6 @@ expr : aexpr
 	     $$=0;
 	   }
        }
-;
 
 aexpr  : NUMBER               { $$ = $1;                         }
        | NUMVAR               { $$ = $1->GetNumber();            }
@@ -461,7 +448,6 @@ aexpr  : NUMBER               { $$ = $1;                         }
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
 	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
 	  }// element attributes
-; 
 
 symdecl : VARIABLE '='
         {
@@ -495,7 +481,6 @@ symdecl : VARIABLE '='
 	       $$=$1;
 	     }
 	}
-;
 
 assignment :  symdecl aexpr  
               {
@@ -536,7 +521,6 @@ assignment :  symdecl aexpr
 		    $$=$1;
 		  }
               }
-;
 
 vecexpr : VECVAR              {if(execute) $$ = new Array($1);} 
         | vectnum             {if(execute) $$ = $1;}
@@ -557,7 +541,6 @@ vecexpr : VECVAR              {if(execute) $$ = new Array($1);}
 	      $$ = Array::Add(a,$1);
 	    }
 	}
-;
 
 vectnumexec : '{' numbers '}'
             | '[' numbers ']'
@@ -571,11 +554,9 @@ vectnum : vectnumexec
 	        Parser::Instance()->FillString($$);		
 	      }
 	  }
-;
 
 vectstrexec : '[' letters ']'
             | '{' letters '}'
-;
 
 vectstr : vectstrexec
 	{
@@ -588,11 +569,9 @@ vectstr : vectstrexec
 
 numbers : aexpr ',' numbers { if(execute) Parser::Instance()->Store($1);} 
         | aexpr             { if(execute) Parser::Instance()->Store($1);}
-;
 
 letters : string ',' letters { if(execute) Parser::Instance()->Store(*$1);}
         | string             { if(execute) Parser::Instance()->Store(*$1);}
-;
 
 command : STOP             { if(execute) Parser::Instance()->quit(); }
         | BEAM ',' beam_parameters
@@ -684,7 +663,6 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->add_xsecbias();
 	      }
           }
-;
 
 use_parameters :  VARIABLE
                   {
@@ -716,7 +694,6 @@ use_parameters :  VARIABLE
 			Parser::Instance()->current_end = *($9);
 		      }
 		  }
-;
 
 sample_options: RANGE '=' VARIABLE
                 {
@@ -749,7 +726,6 @@ sample_options: RANGE '=' VARIABLE
 		     $$ = new std::string("");
 	          }
 	        }
-;
 
 csample_options_extend : /* nothing */
                        | ',' csample_options
@@ -765,7 +741,6 @@ csample_options : paramassign '=' aexpr csample_options_extend
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt, csopt\n");
 		    $$ = $1;
 		  }
-;
 
 cavitymodel_options_extend : /* nothing */
                            | ',' cavitymodel_options
@@ -780,7 +755,6 @@ cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
 		    }
-;
 
 material_options_extend : /* nothing */
                         | ',' material_options
@@ -801,8 +775,6 @@ material_options : paramassign '=' aexpr material_options_extend
 			Parser::Instance()->SetMaterialValue(*($1),$3);
 		    }
 
-;
-
 atom_options_extend : /* nothing */
                       | ',' atom_options
 
@@ -816,7 +788,6 @@ atom_options : paramassign '=' aexpr atom_options_extend
 		      if(execute)
 			Parser::Instance()->SetAtomValue(*$1,*$3);
 		    }
-;
 
 region_options_extend : /* nothing */
                       | ',' region_options
@@ -831,7 +802,6 @@ region_options : paramassign '=' aexpr region_options_extend
 		      if(execute)
 			Parser::Instance()->SetRegionValue(*$1,*$3);
 		    }
-;
 
 tunnel_options_extend : /* nothing */
                       | ',' tunnel_options
@@ -846,7 +816,6 @@ tunnel_options : paramassign '=' aexpr tunnel_options_extend
 		      if(execute)
 			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
-;
 
 xsecbias_options_extend : /* nothing */
                         | ',' xsecbias_options
@@ -866,7 +835,6 @@ xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-;
 
 option_parameters_extend : /* nothing */
                          | ',' option_parameters
@@ -881,11 +849,9 @@ option_parameters : paramassign '=' aexpr option_parameters_extend
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,*$3);
 		    }
-;
 
 // beam_parameter same as option_parameters, might change in future
 beam_parameters : option_parameters
-;
 
 %%
 
