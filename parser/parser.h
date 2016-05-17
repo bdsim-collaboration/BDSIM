@@ -206,9 +206,9 @@ namespace GMAD
     /// Beamline
     FastList<Element>   beamline_list;
     /// List of parser defined atoms
-    std::list<Atom>     atom_list;
+    std::vector<Atom>   atom_list;
     /// List of parser defined materials
-    std::list<Material> material_list;
+    std::vector<Material> material_list;
     /// List of parser defined regions
     std::vector<Region> region_list;
     /// List of parser defined tunnels
