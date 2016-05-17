@@ -11,7 +11,7 @@
 #include "element.h"
 #include "elementtype.h"
 #include "fastlist.h"
-//#include "material.h"
+#include "material.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
@@ -78,6 +78,8 @@ namespace GMAD
     void add_csampler(std::string name, int count, ElementType type);
     /// insert atom
     void add_atom();
+    /// insert material
+    void add_material();
     /// insert region
     void add_region();
     /// insert cavity model
@@ -114,6 +116,9 @@ namespace GMAD
     /// Set atom value
     template <typename T>
       void SetAtomValue(std::string property, T value);
+    /// Set material value
+    template <typename T>
+      void SetMaterialValue(std::string property, T value);
     /// Set region value
     template <typename T>
       void SetRegionValue(std::string property, T value);
@@ -181,6 +186,8 @@ namespace GMAD
     Options options;
     /// Atom instance;
     Atom atom;
+    /// Material instance;
+    Material material;
     /// Region instance;
     Region region;
     /// Tunnel instance
@@ -198,10 +205,10 @@ namespace GMAD
     
     /// Beamline
     FastList<Element>   beamline_list;
-    /// List of parser defined materials
-    std::list<Element> material_list;
     /// List of parser defined atoms
     std::list<Atom>     atom_list;
+    /// List of parser defined materials
+    std::list<Material> material_list;
     /// List of parser defined regions
     std::vector<Region> region_list;
     /// List of parser defined tunnels
@@ -226,6 +233,11 @@ namespace GMAD
     void Parser::SetAtomValue(std::string property, T value)
     {
       atom.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetMaterialValue(std::string property, T value)
+    {
+      material.set_value(property, value);
     }
   template <typename T>
     void Parser::SetRegionValue(std::string property, T value)

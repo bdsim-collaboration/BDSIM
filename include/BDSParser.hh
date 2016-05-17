@@ -43,7 +43,7 @@ public:
   inline const GMAD::FastList<GMAD::PhysicsBiasing>& GetBiasing() const {return xsecbias_list;}
   
   /// Return material list
-  inline const std::list<GMAD::Element>& GetMaterials() const {return material_list;}
+  inline const std::list<GMAD::Material>& GetMaterials() const {return material_list;}
   
   /// Return atom list
   inline const std::list<GMAD::Atom>& GetAtoms() const {return atom_list;}

@@ -226,7 +226,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_MARKER:
   case ElementType::_LINE:
   case ElementType::_REV_LINE:
-  case ElementType::_MATERIAL:
     component = nullptr;
     break;
   default:

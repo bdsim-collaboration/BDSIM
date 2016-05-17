@@ -119,6 +119,9 @@ add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)
 # test atom
 add_test(gmad-atom ${gmadBinary} atom.gmad)
 
+# test material
+add_test(gmad-material ${gmadBinary} material.gmad)
+
 # test cavitymodel
 add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
 

@@ -60,8 +60,7 @@
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
-%token <ival> MATERIAL
-%token ALL ATOM PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -178,6 +177,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->add_atom();
            }
        }
+     | VARIABLE ':' material
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
+	     Parser::Instance()->SetMaterialValue("name",*($1));
+	     Parser::Instance()->add_material();
+           }
+       }
      | VARIABLE ':' tunnel
        {
          if(execute)
@@ -246,10 +254,10 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
-          | MATERIAL    {$$=static_cast<int>(ElementType::_MATERIAL);}
 ;
 
 atom : ATOM ',' atom_options ;
+material : MATERIAL ',' material_options ;
 region : REGION ',' region_options ;
 cavitymodel : CAVITYMODEL ',' cavitymodel_options ;
 tunnel : TUNNEL ',' tunnel_options ;
@@ -629,6 +637,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->add_atom();
 	      }
           }
+        | MATERIAL ',' material_options // material
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> MATERIAL\n");
+		Parser::Instance()->add_material();
+	      }
+          }
         | TUNNEL ',' tunnel_options // tunnel
           {
 	    if(execute)
@@ -757,6 +773,27 @@ cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
 		    }
+;
+
+material_options_extend : /* nothing */
+                        | ',' material_options
+
+material_options : paramassign '=' aexpr material_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetMaterialValue((*$1),$3);
+		    }
+                 | paramassign '=' STR material_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetMaterialValue(*$1,*$3);
+		    }
+                 | paramassign '=' vecexpr material_options_extend
+                    {
+		      if(execute) 
+			Parser::Instance()->SetMaterialValue(*($1),$3);
+		    }
+
 ;
 
 atom_options_extend : /* nothing */

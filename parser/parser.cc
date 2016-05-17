@@ -219,16 +219,6 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
       // clean list
       tmp_list.clear();
     }
-
-  switch(type) {
-
-  case ElementType::_MATERIAL:
-    material_list.push_back(e);
-    return;
-    
-  default:
-    break;
-  }
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
@@ -503,6 +493,18 @@ void Parser::add_atom()
   t.print();
 #endif
   atom_list.push_back(t);
+}
+
+void Parser::add_material()
+{
+  // copy from global
+  Material t(material);
+  // reset region
+  material.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  material_list.push_back(t);
 }
 
 void Parser::add_region()
