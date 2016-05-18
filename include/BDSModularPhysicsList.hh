@@ -69,7 +69,7 @@ private:
   /// proton and anti-proton.
   void ConstructMinimumParticleSet();
 
-  /// Neutrinos are not constructed by defualt in many (most) physics lists
+  /// Neutrinos are not constructed by default in many (most) physics lists
   /// yet this results in crashes when they're produced but not defined by
   /// physics processes, so purposively define for ones where it's a problem.
   void ConstructAllLeptons();

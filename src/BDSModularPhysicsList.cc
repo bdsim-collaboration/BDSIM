@@ -19,7 +19,6 @@
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
-#include "G4OpticalProcessIndex.hh"
 #include "G4SynchrotronRadiation.hh"
 
 // particles
@@ -70,6 +69,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
+  physicsConstructors.insert(std::make_pair("parameterisation", &BDSModularPhysicsList::ParameterisationPhysics));
   physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("decay",            &BDSModularPhysicsList::Decay));
@@ -90,7 +90,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   ParsePhysicsList(physicsList);
   ConfigurePhysics();
 
-  // register the phyiscs constructors with base class mechanics.
+  // register the physics constructors with base class mechanics.
   for(auto physics : constructors)
     {RegisterPhysics(physics);}
   
@@ -350,10 +350,10 @@ void BDSModularPhysicsList::EmLow()
 void BDSModularPhysicsList::HadronicElastic()
 {
   ConstructAllLeptons();
-  if (!physicsActivated["hadronicelastic"])
+  if (!physicsActivated["hadronic_elastic"])
     {
       constructors.push_back(new G4HadronElasticPhysics());
-      physicsActivated["hadronicelastic"] = true;
+      physicsActivated["hadronic_elastic"] = true;
     }
 }
 							  

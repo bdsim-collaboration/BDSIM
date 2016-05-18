@@ -63,14 +63,6 @@ Parameters::Parameters() {
   setMap["precisionRegion"] = false;
   setMap["region"] = false;
 
-  setMap["A"] = false;
-  setMap["Z"] = false;
-  setMap["density"] = false;
-  setMap["T"] = false; // for temper
-  setMap["P"] = false; // for pressure
-  setMap["state"] = false;
-  setMap["symbol"] = false;
-  setMap["components"] = false; setMap["componentsFractions"] = false; setMap["componentsWeights"] = false;
   setMap["geometry"] = false; // for geometryFile
   setMap["bmap"] = false; // for bmapFile
   setMap["material"] = false;
@@ -144,18 +136,6 @@ void Parameters::set_value(std::string property, Array* value)
   else if(property=="blmLocTheta") 
     {
       value->set_vector(blmLocTheta);
-    }
-  else if(property=="components")
-    {
-      value->set_vector(components);
-    } 
-  else if(property=="componentsWeights")
-    {
-      value->set_vector(componentsWeights);
-    }
-  else if(property=="componentsFractions")
-    {
-      value->set_vector(componentsFractions);
     }
   else
     {

@@ -1,5 +1,5 @@
-#ifndef REGION_H
-#define REGION_H
+#ifndef ATOM_H
+#define ATOM_H
 
 #include <iomanip>
 #include <iostream>
@@ -10,36 +10,37 @@
 namespace GMAD
 {
   /**
-   * @brief Region class for parser
+   * @brief Atom class
    * 
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   * @author Jochem Snuverink
+   *
    */
-  class Region : public Published<Region> {
-  public:
-    std::string name; ///< name
 
-    double   prodCutPhotons;
-    double   prodCutElectrons;
-    double   prodCutPositrons;
-    double   prodCutHadrons;
+  struct Atom : public Published<Atom>{
+    /// name
+    std::string name;
+
+    double A; ///< g*mol^-1
+    double Z; 
+    std::string symbol;
 
     /// constructor
-    Region();
+    Atom();
     /// reset
     void clear();
-    /// print some properties
+    /// printout
     void print()const;
     /// set methods by property name
     template <typename T>
       void set_value(std::string name, T value);
 
   private:
-    /// publish members
+    /// publish members so these can be looked up from parser
     void PublishMembers();
   };
-  
+
   template <typename T>
-    void Region::set_value(std::string name, T value)
+    void Atom::set_value(std::string name, T value)
     {
 #ifdef BDSDEBUG
       std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
@@ -49,7 +50,7 @@ namespace GMAD
 	set(this,name,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value  << std::endl;
+	std::cerr << "Error: parser> unknown atom option \"" << name << "\" with value " << value << std::endl;
 	exit(1);
       }
     }

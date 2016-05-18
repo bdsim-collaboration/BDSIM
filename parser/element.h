@@ -95,20 +95,7 @@ namespace GMAD
     
     bool precisionRegion; ///< precision region range cuts or not
     std::string region; ///< region with range cuts
-    
-    ///@{ material properties
-    double A; ///< g*mol^-1
-    double Z; 
-    double density; ///< g*cm-3 
-    double temper; ///< kelvin
-    double pressure; ///< atm
-    std::string state; ///< "solid", "liquid", or "gas"
-    std::string symbol;
-    std::list<std::string> components;
-    std::list<double> componentsFractions;
-    std::list<int> componentsWeights;
-    ///@}
-  
+      
     std::string geometryFile;
     std::string bmapFile;
     std::string material;
