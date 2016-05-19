@@ -100,7 +100,7 @@ public:
 protected:
   /// Whether this instance has been intialised. If not store the transform
   /// this field requires and record as initialised so not repeated.
-  G4bool* const initialised;
+  mutable G4bool initialised;
 
   /// Transform for this particular field depending on which part of the geometry
   /// it's attached to. This has to be a pointer as the Geant4 GetField function is
