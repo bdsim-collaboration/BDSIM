@@ -27,7 +27,7 @@ class BDSIntegratorBase: public G4MagIntegratorStepper, public BDSAuxiliaryNavig
 {
 public:
   BDSIntegratorBase(G4Mag_EqRhs* eqOfMIn,
-		    G4double     nVariablesIn);
+		    G4int        nVariablesIn);
   
   virtual ~BDSIntegratorBase();
 
@@ -44,7 +44,7 @@ protected:
   G4Mag_EqRhs* eqOfM;
 
   /// Number of variables this can integrate over.
-  const G4double nVariables;
+  const G4int nVariables;
 
   /// General integrator that can be used as a backup if the particle momentum is
   /// outside the (transverse) momentum range applicable for the integration scheme
