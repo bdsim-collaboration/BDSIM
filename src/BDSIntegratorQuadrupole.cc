@@ -10,8 +10,6 @@
 
 #include <cmath>
 
-using std::max;
-
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
 						 G4Mag_EqRhs*             eqOfMIn):
@@ -222,7 +220,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   else
     {
       // Compute errors by making two half steps
-      G4double yTemp[7], yIn[7];
+      G4double yTemp[6], yIn[6];
       
       // Saving yInput because yInput and yOut can be aliases for same array
       for(G4int i = 0; i < nVariables; i++)
