@@ -23,7 +23,7 @@ AWAKE spectrometer.
 
 #include "G4Trap.hh"
 //#include "BDSOutputBase.hh"
-#include "BDSDipoleStepper.hh"
+//#include "BDSDipoleStepper.hh"
 #include "BDSUniformMagField.hh"
 
 //============================================================

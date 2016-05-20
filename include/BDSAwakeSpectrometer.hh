@@ -16,7 +16,6 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
-#include "BDS3DMagField.hh"
 #include "BDSSpectrVacChamb.hh"
 
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
@@ -201,7 +200,7 @@ private:
   G4double _startZPos;
   G4double _screenCentreZ;
   G4double _screenCentreX;
-  BDS3DMagField* _magField;
+  //  BDS3DMagField* _magField;
   //Y component of the B field.
   G4double _BField;
 };
