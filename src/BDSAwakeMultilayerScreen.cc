@@ -65,13 +65,21 @@ void BDSAwakeMultilayerScreen::layers()
   build();
 }
 
-void BDSAwakeMultilayerScreen::sampler(G4String name)
+void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bool bSampler)
 {
-  G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers()+1;
-  G4String samplerName = "Sampler_" + std::to_string(nThisSampler) + "_" + name;
+  G4String samplerName;
+  if(bSampler)
+    {
+      G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers()+1;
+      samplerName = "Sampler_" + std::to_string(nThisSampler) + "_" + name;
+    }
+  else
+    {
+      samplerName=name;
+    }
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(size().x(),size().y(),1*CLHEP::um),
 					   samplerName,
-                                           BDSGlobalConstants::Instance()->VacuumMaterial(),
+                                           material,
 					   0,
 					   0);
   sl->color(G4Color(1.0,0.0,0.0,0.3));
