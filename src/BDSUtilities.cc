@@ -288,29 +288,30 @@ G4bool BDS::Geant4EnvironmentIsSet()
   return result;
 }
 
-G4double BDS::GetParameterValue(const G4String spec, const G4String name)
+//Get a value of type double form the spec string.
+G4double BDS::GetParameterValueDouble(G4String spec, G4String name) const
 {
-  G4double value = 0;
-
-  std::string delimiters = "&";
-  std::string param = name + "=";
-
-  int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      int pos2 = spec.find("&",pos);
-      int pos3 = spec.length();
-      int tend = pos2 < 0 ? pos3 : pos2; 
-      int llen = tend - pos - param.length();
-      
-      std::string val = spec.substr(pos + param.length(), llen);
-      
-      value = atof(val.c_str());
-    }
-  return value;
+  try{
+    return (G4double)std::stol(GetParameterValueString(spec,name).c_str());
+  }catch(std::invalid_argument& e){
+    throw e;
+  }
+  return 0;
 }
 
-G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
+//Get a value of type int form the spec string.
+G4int BDS::GetParameterValueInt(G4String spec, G4String name) const
+{
+  try{
+    return (G4int)std::stoi(GetParameterValueString(spec,name).c_str());
+  }catch(std::invalid_argument& e){
+    throw e;
+  }
+  return 0;
+}
+
+//Get a value of type string from the spec string (all other types derived from this).
+G4String BDS::GetParameterValueString(G4String spec, G4String name) const
 {
   G4String value = "";
 
@@ -320,14 +321,17 @@ G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
   int pos = spec.find(param);
   if( pos >= 0 )
     {
+      
       int pos2 = spec.find("&",pos);
       int pos3 = spec.length();
       int tend = pos2 < 0 ? pos3 : pos2; 
       int llen = tend - pos - param.length();
       
       value = spec.substr(pos + param.length(), llen);
-    }
+  }
+
   return value;
+
 }
 
 std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
