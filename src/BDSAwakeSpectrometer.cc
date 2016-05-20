@@ -5,8 +5,10 @@ AWAKE spectrometer.
 #include "BDSGlobalConstants.hh" 
 #include "BDSAwakeSpectrometer.hh"
 #include "BDSMaterials.hh"
+#include "BDSUtilities.hh"
 #include "BDSSampler.hh"
-#include "BDSSamplerSD.hh"
+#include "BDSSDManager.hh"
+#include "BDSSamplerRegistry.hh"
 #include "BDSCCDCamera.hh"
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
@@ -24,44 +26,58 @@ AWAKE spectrometer.
 #include "G4Trap.hh"
 //#include "BDSOutputBase.hh"
 //#include "BDSDipoleStepper.hh"
-#include "BDSUniformMagField.hh"
+#include "BDSFieldMagSolenoid.hh"
 
 //============================================================
 BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm, G4String spec="", G4double screenWidth=1*CLHEP::m):
-  BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _BField(BField), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial), _screenWidth(screenWidth)
+  BDSAcceleratorComponent(aName, length, 0, "awakespectrometer"),
+  _screenWidth(screenWidth),
+  _mlScreen(nullptr),
+  _camera(nullptr),
+  _material(material),
+  _thickness(thickness),
+  _windowScreenGap(windowScreenGap),
+  _screenAngle(angle),
+  _windowThickness(windowThickness),
+  _windowMaterial(windowMaterial),
+  _screenEndZ(screenEndZ),
+  _poleStartZ(poleStartZ),
+  _BField(BField)
 {
+  // TODO JS bmap file!
+  
   //Change sign of angle.
   _screenAngle*=-1;
 
   try{
-    _vacuumChamberType=getParameterValueInt(spec,"vacuumChamberType");
-  } catch(boost::bad_lexical_cast&){
+    _vacuumChamberType=BDS::GetParameterValueInt(spec,"vacuumChamberType");
+  } catch(std::invalid_argument&){
     //If the cast fails, set vacuum chamber type to 1
     _vacuumChamberType=1;
   }
 
   try{
-    _magnetGeometryType=getParameterValueInt(spec,"magnetGeometryType");
-  } catch(boost::bad_lexical_cast&){
+    _magnetGeometryType=BDS::GetParameterValueInt(spec,"magnetGeometryType");
+  } catch(std::invalid_argument&){
     //If the cast fails, set magnet geometry type to 1
     _magnetGeometryType=1;
   }
 
   try{
-    _strutSizeX=getParameterValueDouble(spec,"strutSizeX");
-  } catch(boost::bad_lexical_cast&){
+    _strutSizeX=BDS::GetParameterValueDouble(spec,"strutSizeX");
+  } catch(std::invalid_argument&){
     _strutSizeX=0;
   }
 
   try{
-    _strutSizeZ=getParameterValueDouble(spec,"strutSizeZ");
-  } catch(boost::bad_lexical_cast&){
+    _strutSizeZ=BDS::GetParameterValueDouble(spec,"strutSizeZ");
+  } catch(std::invalid_argument&){
     _strutSizeZ=0;
   }
 
   try{
-    _strutMaterial=getParameterValueString(spec,"strutMaterial");
-  } catch(boost::bad_lexical_cast&){
+    _strutMaterial=BDS::GetParameterValueString(spec,"strutMaterial");
+  } catch(std::invalid_argument&){
     _strutMaterial="G4_STAINLESS-STEEL";
   }
 
@@ -69,7 +85,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
   if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
 
   //Set as part of precision region (for energy loss monitoring)
-  itsPrecisionRegion=1;
+  precisionRegion=1;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -82,7 +98,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
 
 void BDSAwakeSpectrometer::MagnetDefaults(){
   //Initialise geometry pointers.
-  itsCoilLog=NULL;
+  itsCoilLog=nullptr;
   //Gap between the pole faces.
   itsPoleAperture=65*CLHEP::mm;
   //Gap between the coil faces.
@@ -311,32 +327,32 @@ void BDSAwakeSpectrometer::BuildCoils(){
 }
 
 void BDSAwakeSpectrometer::PlaceCoils(){
-  if(itsCoilLog == NULL){
+  if(itsCoilLog == nullptr){
     BuildCoils();
   }
   new G4PVPlacement(_magRotationMatrix,itsUpperCoilPos,itsCoilLog,"CoilUpper",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   
   new G4PVPlacement(_magRotationMatrix,itsLowerCoilPos,itsCoilLog,"CoilLower",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   
   new G4PVPlacement(_magRotationMatrix,itsUpperLeftCoilPos,itsCoilLog,"CoilUpperLeft",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   
   new G4PVPlacement(_magRotationMatrix,itsLowerLeftCoilPos,itsCoilLog,"CoilLowerLeft",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_magRotationMatrix,itsUpperFrontCoilPos,itsMiddleCoilLog,"CoilUpperFront",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   
   new G4PVPlacement(_magRotationMatrix,itsLowerFrontCoilPos,itsMiddleCoilLog,"CoilLowerFront",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_magRotationMatrix,itsUpperRearCoilPos,itsMiddleCoilLog,"CoilUpperRear",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   
   new G4PVPlacement(_magRotationMatrix,itsLowerRearCoilPos,itsMiddleCoilLog,"CoilLowerRear",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
 }
 
 
@@ -363,24 +379,24 @@ void BDSAwakeSpectrometer::BuildYoke(){
 }
 
 void BDSAwakeSpectrometer::PlaceYoke(){
-  if(itsYokeMiddleLog == NULL){
+  if(itsYokeMiddleLog == nullptr){
     BuildYoke();
   }
   new G4PVPlacement(_magRotationMatrix,itsYokeUpperPos,itsYokeUpperLog,"YokeUpper",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   new G4PVPlacement(_magRotationMatrix,itsYokeMiddlePos,itsYokeMiddleLog,"YokeMiddle",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
   new G4PVPlacement(_magRotationMatrix,itsYokeLowerPos,itsYokeLowerLog,"YokeLower",
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
 }
 
 void BDSAwakeSpectrometer::BuildBPFieldAndStepper(){
   // set up the magnetic field and stepper
   G4cout << __METHOD_NAME__ << " - Bfield = " << _BField << G4endl;
-  itsMagField=new BDSUniformMagField(G4ThreeVector(0,-_BField,0));
+  itsMagField=new BDSFieldMagSolenoid(nullptr,_BField); // JS - TODO to be fixed!
   G4ThreeVector pmin;
   //Set the extent of the magnetic field to within the magnet pole region.
-  itsMagField->SetFieldExtent(itsPolePos-itsAperture2Size/2.0, itsPolePos+itsAperture2Size/2.0);
+  //TODO  itsMagField->SetFieldExtent(itsPolePos-itsAperture2Size/2.0, itsPolePos+itsAperture2Size/2.0);
   itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
   itsStepper = new G4NystromRK4(itsEqRhs);
   /*
@@ -396,18 +412,18 @@ void BDSAwakeSpectrometer::BuildBPFieldAndStepper(){
 }
 
 void BDSAwakeSpectrometer::SetBPFieldMgr(){
-  BuildFieldMgr(itsStepper, itsMagField);
-  itsMarkerLogicalVolume->SetFieldManager(itsFieldMgr,true);
+  //TODO BuildFieldMgr(itsStepper, itsMagField);
+  //TODO  containerLogicalVolume->SetFieldManager(itsFieldMgr,true);
 }
 
 
 void BDSAwakeSpectrometer::BuildVacuumChamber(){
   switch(_vacuumChamberType){
   case 0:
-    _vacChamb=NULL;
+    _vacChamb=nullptr;
   case 1:
-    _vacChamb = new BDSSpectrVacChamb(itsName + "_vacChamb",
-				      itsLength,
+    _vacChamb = new BDSSpectrVacChamb(name + "_vacChamb",
+				      chordLength,
 				      _poleStartZ,
 				      //_screenEndZ-std::abs(cos(_screenAngle)*_totalThickness),
 				      _screenEndZ-sin(_screenAngle)*_totalThickness,
@@ -432,13 +448,13 @@ void BDSAwakeSpectrometer::PlaceVacuumChamber(){
     if(!_vacChamb){
       BuildVacuumChamber();
     }
-    _vacChamb->Place(itsMarkerLogicalVolume);
+    _vacChamb->Place(containerLogicalVolume);
   }
 }
 
 void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   G4String tmp = "_cameraScoringPlane";
-  _scoringPlaneName=itsName+tmp;
+  _scoringPlaneName=name+tmp;
   int nThisSampler= BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
   G4String ident="_camera";
   _samplerName = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName);
@@ -463,10 +479,10 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    G4ThreeVector(dispX,dispY,dispZ),
 		    itsCameraScoringPlaneLog,
 		    _samplerName,
-		    itsMarkerLogicalVolume,
+		    containerLogicalVolume,
 		    false,
 		    samplerID1,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
   
   itsCameraScoringPlaneLog2 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog2",0,0,0);
   itsCameraScoringPlaneLog2->SetVisAttributes(_visAttSampler);
@@ -480,13 +496,13 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    G4ThreeVector(dispX2,dispY2,dispZ2),
 		    itsCameraScoringPlaneLog2,
 		    _samplerName2,
-		    itsMarkerLogicalVolume,
+		    containerLogicalVolume,
 		    false,
 		    samplerID2,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
     
-  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
-  itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
   _samplerName3 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_3");
   _samplerName4 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_4");
@@ -508,10 +524,10 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    G4ThreeVector(dispX3,dispY3,dispZ3),
 		    itsCameraScoringPlaneLog3,
 		    _samplerName3,
-		    itsMarkerLogicalVolume,
+		    containerLogicalVolume,
 		    false,
 		    samplerID3,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
   
   itsCameraScoringPlaneLog4 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog4",0,0,0);
   itsCameraScoringPlaneLog4->SetVisAttributes(_visAttSampler);
@@ -525,13 +541,13 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    G4ThreeVector(dispX4,dispY4,dispZ4),
 		    itsCameraScoringPlaneLog4,
 		    _samplerName4,
-		    itsMarkerLogicalVolume,
+		    containerLogicalVolume,
 		    false,
 		    samplerID4,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
     
-  itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
-  itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
   _samplerName5 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_5");
   _samplerName6 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_scoringPlaneName+"_6");
@@ -553,10 +569,10 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    G4ThreeVector(dispX5,dispY5,dispZ5),
 		    itsCameraScoringPlaneLog5,
 		    _samplerName5,
-		    itsMarkerLogicalVolume,
+		    containerLogicalVolume,
 		    false,
 		    samplerID5,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
   
   itsCameraScoringPlaneLog6 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog6",0,0,0);
   itsCameraScoringPlaneLog6->SetVisAttributes(_visAttSampler);
@@ -570,13 +586,13 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    G4ThreeVector(dispX6,dispY6,dispZ6),
 		    itsCameraScoringPlaneLog6,
 		    _samplerName6,
-		    itsMarkerLogicalVolume,
+		    containerLogicalVolume,
 		    false,
 		    samplerID6,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
     
-  itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
-  itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
+  itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
@@ -610,11 +626,11 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
 void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
   G4String tmp = "_screenScoringPlane";
-  _screenScoringPlaneName=itsName+tmp;
-  int nThisSampler= BDSSampler::GetNSamplers() + 1;
+  _screenScoringPlaneName=name+tmp;
+  int nThisSampler= BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
   G4String ident="_screen";
-  _screenSamplerName = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName);
-  _screenSamplerName2 = ("Sampler_"+BDSGlobalConstants::Instance()->StringFromInt(nThisSampler)+"_"+_screenScoringPlaneName+"_2");
+  _screenSamplerName  = ("Sampler_"+std::to_string(nThisSampler)+"_"+_screenScoringPlaneName);
+  _screenSamplerName2 = ("Sampler_"+std::to_string(nThisSampler)+"_"+_screenScoringPlaneName+"_2");
   
   //Build and place the volume...
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
@@ -626,21 +642,32 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
   G4double dispY=0;
   G4double dispZ=2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
   G4double dispZ2=-2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ),itsScreenScoringPlaneLog,_screenSamplerName,
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  G4int samplerID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName,
+								     nullptr);
+  G4int samplerID2 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName2,
+								     nullptr);
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX,dispY,dispZ),
+		    itsScreenScoringPlaneLog,
+		    _screenSamplerName,
+		    containerLogicalVolume,
+		    false,
+		    samplerID1,
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
-  new G4PVPlacement(_screenRotationMatrix,G4ThreeVector(dispX,dispY,dispZ2),itsScreenScoringPlaneLog2,_screenSamplerName2,
-		    itsMarkerLogicalVolume,false,0,BDSGlobalConstants::Instance()->GetCheckOverlaps());
+  new G4PVPlacement(_screenRotationMatrix,
+		    G4ThreeVector(dispX,dispY,dispZ2),
+		    itsScreenScoringPlaneLog2,
+		    _screenSamplerName2,
+		    containerLogicalVolume,
+		    false,
+		    samplerID2,
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
   
   //--
-  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
+  itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //-----------
-  itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSampler::GetSensitiveDetector());
-  //SPM bdsOutput->nSamplers++;
-  //--
-  BDSSampler::AddExternalSampler(_screenSamplerName+"_1");
-  //----------
-  BDSSampler::AddExternalSampler(_screenSamplerName2+"_1");
+  itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
   G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
@@ -654,15 +681,15 @@ void BDSAwakeSpectrometer::Build(){
       BuildScreen();
       BuildCamera();	
       CalculateLengths();
-      BuildMarkerLogicalVolume();
+      BuildContainerLogicalVolume();
       //      BuildScreenScoringPlane();
       //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
-      //      if(BDSGlobalConstants::Instance()->GetBuildTunnel()){
+      //      if(BDSGlobalConstants::Instance()->BuildTunnel()){
       //	BuildTunnel();
       //      }
-      AddSensitiveVolume(itsMarkerLogicalVolume);
+      RegisterSensitiveVolume(containerLogicalVolume);
       switch(_magnetGeometryType){
       case 0:
 	break;
@@ -676,7 +703,7 @@ void BDSAwakeSpectrometer::Build(){
       }
       BuildVacuumChamber();
       PlaceVacuumChamber();
-      BuildFieldAndStepper();
+      //TODO  BuildFieldAndStepper();
 }
 
 void BDSAwakeSpectrometer::PlaceMagnet(){
@@ -692,7 +719,7 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 				  G4ThreeVector(-1*_cameraScreenDist*sin(_screenAngle),0,1*_cameraScreenDist*cos(_screenAngle)),
 				  _camera->log(),
 				  _camera->name()+"_phys",
-				  itsMarkerLogicalVolume,
+				  containerLogicalVolume,
 				  false,
 				  0,
 				  true)
@@ -706,7 +733,7 @@ void BDSAwakeSpectrometer::BuildScreen()
   _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap ,grainSize, _windowThickness, _windowMaterial, _screenWidth);
   
   G4cout << "finished." << G4endl;
-  //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
+  //  if(BDSGlobalConstants::Instance()->SensitiveComponents()){
   //    for(int i=0; i<_mlScreen->nLayers(); i++){
   //      AddSensitiveVolume(_mlScreen[i].log());
   //    }
@@ -717,13 +744,13 @@ void BDSAwakeSpectrometer::BuildScreen()
 void BDSAwakeSpectrometer::PlaceScreen(){
   _mlScreen->place(_screenRotationMatrix,
 		   G4ThreeVector(_screenCentreX,0,_screenCentreZ),
-		   itsMarkerLogicalVolume
+		   containerLogicalVolume
 		   );
 }
 
 void BDSAwakeSpectrometer::CalculateLengths(){
   std::cout << __METHOD_NAME__ << std::endl;
-  BDSAcceleratorComponent::CalculateLengths();
+  //TODO BDSAcceleratorComponent::CalculateLengths();
   //-------
   //Screen dimensions.
   _screenWidth=_mlScreen->size().x();
@@ -747,7 +774,7 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   _vacInnerWidth=_vacHeight-2*_vacThickness;
   _vacInnerHeight=_vacHeight-2*_vacThickness;
 
-  _startZPos = -itsLength/2.0;
+  _startZPos = -chordLength/2.0;
   //Pole position
   _poleStartZ += _startZPos;
   //Screen position
@@ -756,9 +783,9 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
   
   /*
-  itsXLength = itsYLength = BDSGlobalConstants::Instance()->GetComponentBoxSize()/2;
-  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->GetLengthSafety() );   
-  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->GetTunnelOffsetY()) + BDSGlobalConstants::Instance()->GetTunnelThickness()+BDSGlobalConstants::Instance()->GetTunnelSoilThickness()+4*BDSGlobalConstants::Instance()->GetLengthSafety() );
+  itsXLength = itsYLength = BDSGlobalConstants::Instance()->ComponentBoxSize()/2;
+  itsXLength = std::max(itsXLength, this->GetTunnelRadius()+2*std::abs(this->GetTunnelOffsetX()) + BDSGlobalConstants::Instance()->TunnelThickness()+BDSGlobalConstants::Instance()->TunnelSoilThickness() + 4*BDSGlobalConstants::Instance()->LengthSafety() );   
+  itsYLength = std::max(itsYLength, this->GetTunnelRadius()+2*std::abs(BDSGlobalConstants::Instance()->TunnelOffsetY()) + BDSGlobalConstants::Instance()->TunnelThickness()+BDSGlobalConstants::Instance()->TunnelSoilThickness()+4*BDSGlobalConstants::Instance()->LengthSafety() );
   */
 
   _cameraScreenDist=(4.0)*CLHEP::m;
@@ -775,37 +802,38 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   //  itsXLength = std::max(2*(std::abs(_screenCentreX)+_screen_x_dim), itsYokeSize.x()+2*std::abs(itsPolePos.x()));
   //  itsYLength = std::max(std::max(_screenHeight,_camera->size().y()),itsYokeSize.y());
   //  itsYLength = std::max(itsYLength,50*CLHEP::cm);
-  std::cout << __METHOD_NAME__ << " " << itsLength << " " << itsXLength << " " << itsYLength << std::endl;
+  //  std::cout << __METHOD_NAME__ << " " << chordLength << " " << itsXLength << " " << itsYLength << std::endl;
 
-  _vacDispZ2=(-itsLength)/2.0+(_vacWidth2)/2.0;
+  _vacDispZ2=(-chordLength)/2.0+(_vacWidth2)/2.0;
 
 
-  _vacLength=itsLength;
+  _vacLength=chordLength;
 
 
   std::cout << __METHOD_END__ << std::endl;
 }
 
-void BDSAwakeSpectrometer::BuildMarkerLogicalVolume(){
-  itsMarkerSolidVolume=new G4Box( itsName+"_marker_solid",
-				  itsXLength/2.0,
-				  itsYLength/2.0,
-				  itsLength/2.0); //z half length 
+void BDSAwakeSpectrometer::BuildContainerLogicalVolume(){
+  containerSolid=new G4Box( name+"_marker_solid",
+			    BDSGlobalConstants::Instance()->ComponentBoxSize()/2, //TODO
+			    BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
+			    chordLength/2.0); //z half length 
 
-  itsMarkerLogicalVolume=new G4LogicalVolume
-    (itsMarkerSolidVolume, 
+  containerLogicalVolume=new G4LogicalVolume
+    (containerSolid, 
      BDSMaterials::Instance()->GetMaterial("vacuum"),
-     itsName+"_marker_log");
+     name+"_marker_log");
   G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0,1,0));
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
-  itsMarkerLogicalVolume->SetVisAttributes(visAtt);
+  containerLogicalVolume->SetVisAttributes(visAtt);
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
-  itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(itsLength*maxStepFactor);
-  itsMarkerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->GetThresholdCutCharged());
-  itsMarkerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
+  G4UserLimits* containerUserLimits =  new G4UserLimits();
+  containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+  containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
+  containerLogicalVolume->SetUserLimits(containerUserLimits);
+  allUserLimits.push_back(containerUserLimits);
 #endif
 }
 

@@ -18,6 +18,9 @@ Work in progress.
 #include "BDSCCDCamera.hh"
 #include "BDSSpectrVacChamb.hh"
 
+class BDSFieldMag;
+class G4MagIntegratorStepper;
+
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
 {
 
@@ -57,7 +60,7 @@ private:
   //To build the tunnel...
   void BuildAwakeSpectrometerTunnel();
   virtual void SetVisAttributes();
-  virtual void BuildMarkerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
 
@@ -172,6 +175,7 @@ private:
   G4VisAttributes* _visAttScint;
   G4VisAttributes* _visAttBase;
   G4VisAttributes* _visAttSampler;
+  G4VisAttributes* itsVisAttributes;
 
   G4String _scoringPlaneName;
   G4String _screenScoringPlaneName;
@@ -203,6 +207,12 @@ private:
   //  BDS3DMagField* _magField;
   //Y component of the B field.
   G4double _BField;
+
+  // added by JS
+  G4double itsBmapXOffset, itsBmapZOffset;
+  BDSFieldMag* itsMagField;
+  G4Mag_UsualEqRhs* itsEqRhs;
+  G4MagIntegratorStepper* itsStepper;
 };
 
 #endif
