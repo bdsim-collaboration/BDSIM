@@ -26,22 +26,9 @@ Work in progress.
 #include "G4Trap.hh"
 //#include "BDSOutputBase.hh"
 
-#include <string>
-
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen(G4String aName,
-						       G4String material,
-						       G4double thickness = 0.3 * CLHEP::mm,
-						       G4double angle = -45*CLHEP::pi/180.0,
-						       G4double windowThickness=0,
-						       G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 0, 0, "awakescintillatorscreen"),
-  _mlScreen(nullptr),
-  _camera(nullptr),
-  _material(material),
-  _thickness(thickness),
-  _screenAngle(angle),
-  _windowThickness(windowThickness),
-  _windowMaterial(windowMaterial)
+//============================================================
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap = 0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
+  BDSAcceleratorComponent(aName, 1.0, 0, 0, 0), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _windowScreenGap(windowScreenGap),_screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
   //Set as part of precision region (for energy loss monitoring)
@@ -277,9 +264,9 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
 
   // Register with output - returns ID which is set as copy number and used by SamplerSD
   // for output addressing.
-  G4int samplerID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName+"_1",
+  G4int samplerID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName,
 								     nullptr);
-  G4int samplerID2 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName2+"_1",
+  G4int samplerID2 = BDSSamplerRegistry::Instance()->RegisterSampler(_screenSamplerName2",
 								     nullptr);
   
   new G4PVPlacement(_screenRotationMatrix,
@@ -317,15 +304,16 @@ void BDSAwakeScintillatorScreen::Build()
 {
   SetVisAttributes(); 
   BuildScreen();
-  BuildCamera();	
-  ComputeDimensions();
+  BuildCamera();	//Need the screen and camera for the dimensions.
+  ComputeDimensions(); //Need the dimensions in order to build the tunnel.
   BuildContainerLogicalVolume();
   if(_vacChambType==2){
     BuildVacuumChamber2();
   } else {
     BuildVacuumChamber1();
   }
-  //      BuildScreenScoringPlane();
+
+  BuildScreenScoringPlane();
   BuildCameraScoringPlane();
   PlaceScreen();
   //      PlaceCamera();
@@ -350,14 +338,8 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
   G4double grainSize = 10*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, grainSize, _windowThickness, _windowMaterial);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap, grainSize, _windowThickness, _windowMaterial);
   
-  G4cout << "finished." << G4endl;
-  //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
-  //    for(int i=0; i<_mlScreen->nLayers(); i++){
-  //      RegisterSensitiveVolume(_mlScreen[i].log());
-  //    }
-  //  } 
   G4cout << "BDSAwakeScintillatorScreen: finished building geometry" << G4endl;
 }
 
@@ -396,9 +378,9 @@ void BDSAwakeScintillatorScreen::ComputeDimensions()
   G4double x_thi = _totalThickness * std::sin(std::abs(_screenAngle));//Length due to the screen thickness
   
   //Vacuum chamber dimensions.
-  _vacThickness=2*CLHEP::mm;
+  _vacThickness=6*CLHEP::mm; //MBPS = 2mm
   _vacInnerWidth=7*CLHEP::cm;
-  _vacInnerHeight=7*CLHEP::cm;
+  _vacInnerHeight=7*CLHEP::cm;//MBPS = 7cm
   _vacHeight=_vacInnerHeight+2*_vacThickness;
   
   _vacWidth2=x_wid;

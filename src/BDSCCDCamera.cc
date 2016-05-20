@@ -37,7 +37,6 @@ void BDSCCDCamera::build(){
 }
 
 void BDSCCDCamera::buildMotherVolume(){
-  G4cout << __METHOD_NAME__ << G4endl;
   _solid=new G4Box( _name+"_solid",
 		    _size.x()/2.0,
 		    _size.y()/2.0,
@@ -48,7 +47,6 @@ void BDSCCDCamera::buildMotherVolume(){
      BDSMaterials::Instance()->GetMaterial("G4_POLYSTYRENE"),
      _name+"_log");
   _log->SetVisAttributes(new G4VisAttributes(G4Color(0,1.0,0)));
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSCCDCamera::buildCavity(){
@@ -81,20 +79,15 @@ void BDSCCDCamera::placeCavity(){
 }
 
 void BDSCCDCamera::buildObjectLens(){
-  G4cout << __METHOD_NAME__ << G4endl;
   G4double factor =1.0;
   _objectLens = new BDSLens(_name+"ObjectLens",factor*25.4*CLHEP::mm, 1029.8*CLHEP::mm,factor*2.2*CLHEP::mm); //Focal length 1m lens (Thorlabs LB1409-A)
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSCCDCamera::buildImageLens(){
-  G4cout << __METHOD_NAME__ << G4endl;
   //  _imageLens = new BDSLens(_name+"ImageLens",12.7*CLHEP::mm, 14.6*CLHEP::mm, 4.7*CLHEP::mm); //Focal length 15CLHEP::mm lens (Thorlabs LB1092-A) (magnification factor = 66.4)
   _imageLens = new BDSLens(_name+"ImageLens",25.4*CLHEP::mm, 25.5*CLHEP::mm, 9.0*CLHEP::mm); //Focal length 25.4CLHEP::mm lens (Thorlabs LB1761-A)(back focal length 22.2CLHEP::mm)
-  G4cout << __METHOD_END__ << G4endl;
 }
 void BDSCCDCamera::buildCCDChip(){
-  G4cout << __METHOD_NAME__ << G4endl;
   G4ThreeVector pixelSize;
   G4TwoVector nPixels;
 
@@ -104,9 +97,7 @@ void BDSCCDCamera::buildCCDChip(){
   nPixels.setX(2048);
   nPixels.setY(1);
 
-  G4cout << __METHOD_NAME__ << " constructing BDSCCDChip..." << G4endl;
   _ccdChip = new BDSCCDChip((G4String)(_name+"_CCDChip"), pixelSize, nPixels);
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 void BDSCCDCamera::placeComponents(){
@@ -132,7 +123,6 @@ void BDSCCDCamera::placeObjectLens(){
 }
 
 void BDSCCDCamera::placeImageLens(){
-  G4cout << __METHOD_NAME__ << G4endl;
   G4ThreeVector placementVec;
   placementVec.setX(0);
   placementVec.setY(0);
@@ -145,10 +135,8 @@ void BDSCCDCamera::placeImageLens(){
 		    false,
 		    0,
 		    false);
-  G4cout << __METHOD_END__ << G4endl;
 }
 void BDSCCDCamera::placeCCDChip(){
-  G4cout << __METHOD_NAME__ << G4endl;
   G4ThreeVector placementVec;
   placementVec.setX(0);
   placementVec.setY(0);
@@ -161,7 +149,6 @@ void BDSCCDCamera::placeCCDChip(){
 		    false,
 		    0,
 		    false);
-  G4cout << __METHOD_END__ << G4endl;
 }
 
 BDSCCDCamera::~BDSCCDCamera()

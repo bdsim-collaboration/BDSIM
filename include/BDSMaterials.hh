@@ -91,6 +91,7 @@ private:
   G4MaterialPropertiesTable* mptPETLanex                      = nullptr;
   G4MaterialPropertiesTable* mpt_YAG                          = nullptr;
   G4MaterialPropertiesTable* petMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* pet_opaqueMaterialPropertiesTable= nullptr;
   G4MaterialPropertiesTable* ups923a_mt                       = nullptr;
   G4MaterialPropertiesTable* vacMaterialPropertiesTable       = nullptr;
   ///@}

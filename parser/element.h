@@ -58,6 +58,14 @@ namespace GMAD
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
     double twindow; ///<thickness of window
+    double windowScreenGap; ///< air gap between window and screen
+    double screenXSize, screenYSize;
+    double screenEndZ;
+    double poleStartZ;
+    double screenWidth;
+    std::list<double> layerThicknesses;
+    std::list<std::string> layerMaterials;
+    std::list<int> layerIsSampler;
     double bmapXOffset; ///< offset of the field map magnet field X
     double bmapYOffset; ///< offset of the field map magnet field Y
     double bmapZOffset; ///< offset of the field map magnet field Z

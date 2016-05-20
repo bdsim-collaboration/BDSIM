@@ -6,7 +6,7 @@
 class BDSAwakeMultilayerScreen : public BDSMultilayerScreen
 {
 public:
-  BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double dgrain, G4double windowThickness, G4String windowMaterial);
+  BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial, G4double width=1*CLHEP::m);
   virtual ~BDSAwakeMultilayerScreen();
   void surfaces();
   void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
@@ -14,8 +14,12 @@ public:
 private:
   typedef BDSMultilayerScreen super;
   void layers();
-  void sampler(G4String name);
+  void sampler(G4String name, const char* material="air", G4bool bSampler=true);
+  void thinAirLayer();  
+  void thinVacuumLayer();  
   void preWindowSampler();
+  void postWindowSampler();
+  void windowScreenGap();
   void preScreenSampler();
   void postScreenSampler();
   void windowLayer();
@@ -32,6 +36,7 @@ private:
   void roughSurface();
   G4String _material;
   G4double _thickness;
+  G4double _windowScreenGap;
   G4double _gapWidth;
   G4double _gapSpacing;
   G4double _dgrain;
@@ -43,6 +48,16 @@ private:
   G4double _firstBinderLayerThickness;
   G4double _nScintLayers;
   G4double _fillFactor;
- };
+
+  G4int _scintLayerCount;
+  G4int _binderLayerCount;
+  std::stringstream _ss;
+  G4String _binderLayerName;
+  G4String _scintLayerName;
+  
+  void incBinderLayer();
+  void incScintLayer();
+  
+};
 
 #endif

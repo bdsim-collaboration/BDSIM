@@ -92,6 +92,7 @@ muspoiler { return MUSPOILER; }
 element { return ELEMENT; }
 screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
+awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}

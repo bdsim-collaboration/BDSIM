@@ -7,11 +7,13 @@
 #include "G4PVPlacement.hh"               
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
+#include "G4TransportationManager.hh"
+#include "BDSSampler.hh"
 
 #include "BDSMultilayerScreen.hh"
 
 BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
-  _xysize(xysize), _name(name+"_MultilayerScreen")
+  _xysize(xysize), _name(name), _colourWheel(new BDSColourWheel())
 {
   _size.setX(_xysize.x()); 
   _size.setY(_xysize.y());
@@ -21,13 +23,28 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
   _phys=nullptr;
 }
 
-void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4double grooveWidth, G4double grooveSpatialFrequency){
-  G4ThreeVector layerSize(_xysize.x(), _xysize.y(), thickness);
-  screenLayer(new BDSScreenLayer(layerSize,_name+"_"+name ,material,grooveWidth,grooveSpatialFrequency));
+void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler, G4double grooveWidth, G4double grooveSpatialFrequency){
+    G4String layerName = name;
+    if(isSampler){
+      G4int nThisSampler = BDSSampler::GetNSamplers()+1;
+      G4String tempString = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler);
+      layerName = tempString + "_" + layerName;
+    } else {
+      layerName=name;
+    }
+    G4ThreeVector layerSize(_xysize.x(), _xysize.y(), thickness);
+    screenLayer(new BDSScreenLayer(layerSize, layerName, material, grooveWidth,grooveSpatialFrequency), isSampler);
 }
 
-void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer){
+void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer, G4int isSampler){
+  _colourWheel->spin();
+  layer->color(_colourWheel->colour());
+  if(isSampler) layer->sampler();
   _screenLayers.push_back(layer);
+}
+
+BDSScreenLayer* BDSMultilayerScreen::lastLayer(){
+  return screenLayer(nLayers()-1);
 }
 
 G4LogicalVolume* BDSMultilayerScreen::log(){
@@ -53,6 +70,9 @@ void BDSMultilayerScreen::computeDimensions(){
   G4cout << "Compute dimensions..." << G4endl;
   G4cout << "...z size..." << G4endl;
   G4double temp=0;
+  if(_screenLayers.size()==0){
+    G4Exception("Screen has no layers.", "-1", FatalException, "");
+  }
   for(unsigned int i=0; i<_screenLayers.size(); i++){
     G4cout << "..adding z size for layer number " << i << G4endl;
     temp += _screenLayers[i]->size().z();
