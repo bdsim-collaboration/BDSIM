@@ -26,6 +26,7 @@ public:
   ~BDSSpoiler();
 
 protected:
+  virtual void BuildContainerLogicalVolume();
 
 private:
 
