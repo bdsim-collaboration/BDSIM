@@ -3,13 +3,10 @@
 #include "BDSDebug.hh"
 
 #include "G4AffineTransform.hh"
-#include "G4NavigationHistory.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
-
-extern G4int event_number;
 
 BDSSteppingAction::BDSSteppingAction():_step(nullptr)
 {;}
@@ -20,7 +17,8 @@ BDSSteppingAction::~BDSSteppingAction()
 void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 {
   _step = ThisStep;
-  if(BDSExecOptions::Instance()->GetVerboseStep() || (event_number == BDSExecOptions::Instance()->GetVerboseEventNumber())) {
+  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  if(BDSGlobalConstants::Instance()->VerboseStep() || (event_number == BDSGlobalConstants::Instance()->VerboseEventNumber())) {
     VerboseSteppingAction();
   }
 }

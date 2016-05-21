@@ -289,7 +289,7 @@ G4bool BDS::Geant4EnvironmentIsSet()
 }
 
 //Get a value of type double form the spec string.
-G4double BDS::GetParameterValueDouble(G4String spec, G4String name) const
+G4double BDS::GetParameterValueDouble(G4String spec, G4String name)
 {
   try{
     return (G4double)std::stol(GetParameterValueString(spec,name).c_str());
@@ -300,7 +300,7 @@ G4double BDS::GetParameterValueDouble(G4String spec, G4String name) const
 }
 
 //Get a value of type int form the spec string.
-G4int BDS::GetParameterValueInt(G4String spec, G4String name) const
+G4int BDS::GetParameterValueInt(G4String spec, G4String name)
 {
   try{
     return (G4int)std::stoi(GetParameterValueString(spec,name).c_str());
@@ -311,7 +311,7 @@ G4int BDS::GetParameterValueInt(G4String spec, G4String name) const
 }
 
 //Get a value of type string from the spec string (all other types derived from this).
-G4String BDS::GetParameterValueString(G4String spec, G4String name) const
+G4String BDS::GetParameterValueString(G4String spec, G4String name)
 {
   G4String value = "";
 
