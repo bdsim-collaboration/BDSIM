@@ -8,7 +8,7 @@
 #include "G4OpticalSurface.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4TransportationManager.hh"
-#include "BDSSampler.hh"
+#include "BDSSamplerRegistry.hh"
 
 #include "BDSMultilayerScreen.hh"
 
@@ -26,8 +26,8 @@ BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
 void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler, G4double grooveWidth, G4double grooveSpatialFrequency){
     G4String layerName = name;
     if(isSampler){
-      G4int nThisSampler = BDSSampler::GetNSamplers()+1;
-      G4String tempString = "Sampler_" + BDSGlobalConstants::Instance()->StringFromInt(nThisSampler);
+      G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
+      G4String tempString = "Sampler_" + std::to_string(nThisSampler);
       layerName = tempString + "_" + layerName;
     } else {
       layerName=name;
