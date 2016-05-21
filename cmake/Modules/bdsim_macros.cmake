@@ -6,7 +6,6 @@ macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
     ${source_dest_var} 
     ${CMAKE_CURRENT_BINARY_DIR}/bdsim.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
     )
 endmacro()
 
