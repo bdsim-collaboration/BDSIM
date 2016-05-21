@@ -57,24 +57,24 @@ private:
   G4LogicalVolume* _upperLogVolTrap;
   G4LogicalVolume* _innerLogVolTrap;
   G4LogicalVolume* _lowerLogVolTrap;
-  G4VSolid* _upperSolidTrap;
-  G4VSolid* _innerSolidTrap;
-  G4VSolid* _lowerSolidTrap;
+  // G4VSolid* _upperSolidTrap;
+  // G4VSolid* _innerSolidTrap;
+  // G4VSolid* _lowerSolidTrap;
 
   G4LogicalVolume* _logVolBox1;
   G4LogicalVolume* _innerLogVolBox1;
-  G4VSolid* _solidBox1;
-  G4VSolid* _innerSolidBox1;
+  // G4VSolid* _solidBox1;
+  // G4VSolid* _innerSolidBox1;
 
   G4LogicalVolume* _logVolBox2;
   G4LogicalVolume* _innerLogVolBox2;
-  G4VSolid* _solidBox2;
-  G4VSolid* _innerSolidBox2;
+  // G4VSolid* _solidBox2;
+  // G4VSolid* _innerSolidBox2;
 
   G4LogicalVolume* _logVolBox3;
   G4LogicalVolume* _innerLogVolBox3;
-  G4VSolid* _solidBox3;
-  G4VSolid* _innerSolidBox3;
+  // G4VSolid* _solidBox3;
+  // G4VSolid* _innerSolidBox3;
 
   G4LogicalVolume* _logVolSideWall;
   G4VSolid* _sideWallSolid;
@@ -141,7 +141,7 @@ private:
   G4RotationMatrix* _box3Rotation;
   G4ThreeVector _box3Translation;
 
-  G4double _screenAngle2;
+  // G4double _screenAngle2;
 };
 
 #endif

@@ -9,7 +9,15 @@
 BDSSpectrVacChamb::BDSSpectrVacChamb(){}
 BDSSpectrVacChamb::~BDSSpectrVacChamb(){}
 
-BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness, G4double strutSizeX=0, G4double strutSizeZ=0, G4String strutMaterial="G4_STAINLESS-STEEL"):_name(name),_vacuumEndZ(vacuumEndZ),_magStartZ(magStartZ),_lengthZ(lengthZ), _strutSizeX(strutSizeX), _strutSizeZ(strutSizeZ), _strutMaterial(strutMaterial){
+BDSSpectrVacChamb::BDSSpectrVacChamb(const G4String &name, G4double lengthZ, G4double magStartZ, G4double vacuumEndZ, G4double screenWidth, G4double screenAngle, G4double sizeX, G4double sizeY, G4double thickness, G4double strutSizeX=0, G4double strutSizeZ=0, G4String strutMaterial="G4_STAINLESS-STEEL"):
+  _lengthZ(lengthZ),
+  _magStartZ(magStartZ),
+  _vacuumEndZ(vacuumEndZ),
+  _strutSizeX(strutSizeX),
+  _strutSizeZ(strutSizeZ),
+  _strutMaterial(strutMaterial),
+  _name(name)
+{
   SetParameters(name, lengthZ, magStartZ, vacuumEndZ, screenWidth, screenAngle, sizeX, sizeY, thickness);
   Build();
   
@@ -53,7 +61,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_upperTrapRotation,
 		    _upperTrapTranslation,
@@ -62,7 +70,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_lowerTrapRotation,
 		    _lowerTrapTranslation,
@@ -71,7 +79,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_box1Rotation,
 		   _box1Translation,
@@ -80,7 +88,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_box1RotationInner,
 		   _box1TranslationInner,
@@ -89,7 +97,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    _logVolBox1,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_box2Rotation,
 		   _box2Translation,
@@ -98,7 +106,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_box2RotationInner,
 		   _box2TranslationInner,
@@ -107,7 +115,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    _logVolBox2,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_box3Rotation,
 		   _box3Translation,
@@ -116,7 +124,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_box3RotationInner,
 		   _box3TranslationInner,
@@ -125,7 +133,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    _logVolBox3,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
 
   new G4PVPlacement(_rotSideWall,
 		    _transSideWall,
@@ -134,7 +142,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		    motherVolume,
 		    false,
 		    0,
-		    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		    BDSGlobalConstants::Instance()->CheckOverlaps());
   
   if(_bBuildStrut){
     new G4PVPlacement(_rotStrut,
@@ -144,7 +152,7 @@ void BDSSpectrVacChamb::Place(G4LogicalVolume* motherVolume){
 		      _innerLogVolTrap,
 		      false,
 		      0,
-		      BDSGlobalConstants::Instance()->GetCheckOverlaps());
+		      BDSGlobalConstants::Instance()->CheckOverlaps());
   }
 }
 
