@@ -14,14 +14,13 @@ BDSScreen::~BDSScreen(){
 
 BDSScreen::BDSScreen(G4String aName,  
 		     G4double aLength,
-		     G4bool aperset, 
-		     G4double aper, //Aperture of beampipe around screen
-		     G4String tunnelMaterial,
-		     G4double tunnelOffsetX,
+		     BDSBeamPipeInfo* beamPipeInfo, 
 		     G4TwoVector size, //X Y dimensions of screen
-		     G4double screenAngle):BDSDrift(aName,aLength, aper,aper,tunnelMaterial,aperset,aper,tunnelOffsetX),
-					   _size(size), 
-					   _screenAngle(screenAngle){
+		     G4double screenAngle):
+  BDSDrift(aName,aLength,beamPipeInfo),
+  _size(size), 
+  _screenAngle(screenAngle)
+{
   _screenRot = new G4RotationMatrix();
   _screenRot->rotateY(_screenAngle);
   _screenPos.setX(0);

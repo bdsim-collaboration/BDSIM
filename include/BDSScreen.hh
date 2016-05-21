@@ -8,15 +8,14 @@
 #include "G4TwoVector.hh"
 #include <list>
 
+class BDSBeamPipeInfo;
+
 class BDSScreen : public BDSDrift{
 public:
   ~BDSScreen();
   BDSScreen(G4String aName,  
 	    G4double aLength, //length of the drift section containing the screen
-	    G4bool aperset = false, 
-	    G4double aper = 0, //Aperture of beampipe around screen
-	    G4String tunnelMaterial="",
-	    G4double tunnelOffsetX = BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
+	    BDSBeamPipeInfo* beamPipeInfo,
 	    G4TwoVector size = G4TwoVector(), //X Y dimensions of screen
 	    G4double screenAngle = 0 //Phi angle of screen
 	    );

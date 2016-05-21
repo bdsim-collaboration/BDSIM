@@ -2,6 +2,7 @@
 
 // elements
 #include "BDSAwakeScintillatorScreen.hh"
+#include "BDSAwakeSpectrometer.hh"
 #include "BDSCavityRF.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
@@ -12,7 +13,7 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSSamplerPlane.hh"
-#include "BDSScintillatorScreen.hh"
+#include "BDSScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTiltOffset.hh"
@@ -978,58 +979,58 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 	
 #ifdef BDSDEBUG 
         G4cout << "---->creating Screen,"
-               << " name= "<< _element.name
-               << " l=" << _element.l/CLHEP::m<<"m"
-               << " angle=" << _element.angle/CLHEP::rad<<"rad"
-	       << " precision region " << _element.precisionRegion
+               << " name= "<< element->name
+               << " l=" << element->l/CLHEP::m<<"m"
+               << " angle=" << element->angle/CLHEP::rad<<"rad"
+	       << " precision region " << element->precisionRegion
                << G4endl;
 #endif
 	G4TwoVector size;
-	size.setX(_element.screenXSize*CLHEP::m);
-	size.setY(_element.screenYSize*CLHEP::m);
+	size.setX(element->screenXSize*CLHEP::m);
+	size.setY(element->screenYSize*CLHEP::m);
 	G4cout << __METHOD_NAME__ << " - size = " << size << G4endl;
-	G4double aper = _element.aper*CLHEP::m;
-	if(aper==0){
-	  aper=BDSGlobalConstants::Instance()->GetBeampipeRadius()/CLHEP::m;
-	}
-
-	BDSScreen* theScreen = new BDSScreen( _element.name, _element.l*CLHEP::m, true,
-					      aper, _element.tunnelMaterial, _element.tunnelOffsetX*CLHEP::m, size, _element.angle); 
-	if(_element.layerThicknesses.size() != _element.layerMaterials.size()){
+	
+	BDSScreen* theScreen = new BDSScreen( element->name,
+					      element->l*CLHEP::m,
+					      PrepareBeamPipeInfo(element),
+					      size,
+					      element->angle); 
+	if(element->layerThicknesses.size() != element->layerMaterials.size()){
 	  std::stringstream ss;
 	  ss << "Material and thicknesses lists are of unequal size.";
-	  ss<< _element.layerMaterials.size() << " and " << _element.layerThicknesses.size();
+	  ss<< element->layerMaterials.size() << " and " << element->layerThicknesses.size();
 	  G4Exception(ss.str().c_str(), "-1", FatalException, "");
 	}
-	if( (_element.layerThicknesses.size() != _element.layerIsSampler.size()) && ( _element.layerIsSampler.size() !=0 )){
+	if( (element->layerThicknesses.size() != element->layerIsSampler.size()) && ( element->layerIsSampler.size() !=0 )){
 	  std::stringstream ss;
 	  ss << "Material and isSampler lists are of unequal size.";
-	  ss<< _element.layerMaterials.size() << " and " << _element.layerIsSampler.size();
+	  ss<< element->layerMaterials.size() << " and " << element->layerIsSampler.size();
 	  G4Exception(ss.str().c_str(), "-1", FatalException, "");
 	}
 
-	if(_element.layerThicknesses.size() == 0 ){
+	if(element->layerThicknesses.size() == 0 ){
 	  G4Exception("Number of screen layers = 0.", "-1", FatalException, "");
 	}
 
-	std::list<const char*>::const_iterator itm;
+	std::list<std::string>::const_iterator itm;
 	std::list<double>::const_iterator itt;
 	std::list<int>::const_iterator itIsSampler;
-	for(itt = _element.layerThicknesses.begin(),
-	      itm = _element.layerMaterials.begin(),
-	      itIsSampler = _element.layerIsSampler.begin();
-	    itt != _element.layerThicknesses.end();
-	    itt++, itm++){
-	  G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
-	    *(itt)<< ", material "  << (*itm) << 
-	    ", isSampler: "  << (*itIsSampler) << G4endl;
-	  if(_element.layerIsSampler.size()>0) {
-	    theScreen->screenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
-	    itIsSampler++;
-	  } else {
-	    theScreen->screenLayer((*itt)*CLHEP::m, *itm);
+	for(itt = element->layerThicknesses.begin(),
+	      itm = element->layerMaterials.begin(),
+	      itIsSampler = element->layerIsSampler.begin();
+	    itt != element->layerThicknesses.end();
+	    itt++, itm++)
+	  {
+	    G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
+	      *(itt)<< ", material "  << (*itm) << 
+	      ", isSampler: "  << (*itIsSampler) << G4endl;
+	    if(element->layerIsSampler.size()>0) {
+	      theScreen->screenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
+	      itIsSampler++;
+	    } else {
+	      theScreen->screenLayer((*itt)*CLHEP::m, *itm);
+	    }
 	  }
-	}
 	return theScreen;
 }
 
@@ -1037,29 +1038,34 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
 {	
 #ifdef BDSDEBUG 
         G4cout << "---->creating Awake Screen,"
-	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
-	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
-	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
-	       << "windowmaterial = " << _element.windowmaterial << " um"
-	       << "scintmaterial = " << _element.scintmaterial << " um"
+	       << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
+	       << "tscint = " << element->tscint*1e3/CLHEP::um << " um"
+	       << "windowScreenGap = " << element->windowScreenGap*1e3/CLHEP::um << " um"
+	       << "windowmaterial = " << element->windowmaterial << " um"
+	       << "scintmaterial = " << element->scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
+	return (new BDSAwakeScintillatorScreen(element->name,
+					       element->scintmaterial,
+					       element->tscint*1e3,
+					       element->windowScreenGap*1e3,
+					       element->angle,
+					       element->twindow*1e3,
+					       element->windowmaterial));
 }
 
-
-BDSAcceleratorComponent* BDSComponentFactory::createAwakeSpectrometer(){
+BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer(){
 	
 #ifdef BDSDEBUG 
         G4cout << "---->creating AWAKE spectrometer,"
-	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
-	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
-	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
-	       << "windowmaterial = " << _element.windowmaterial << " um"
-	       << "scintmaterial = " << _element.scintmaterial << " um"
+	       << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
+	       << "tscint = " << element->tscint*1e3/CLHEP::um << " um"
+	       << "windowScreenGap = " << element->windowScreenGap*1e3/CLHEP::um << " um"
+	       << "windowmaterial = " << element->windowmaterial << " um"
+	       << "scintmaterial = " << element->scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeSpectrometer(_element.name, _element.l*1e3,  _element.bmapFile, _element.B,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3, _element.spec, _element.screenWidth*1e3));
+	return (new BDSAwakeSpectrometer(element->name, element->l*1e3,  element->bmapFile, element->B,  element->poleStartZ*1e3, element->scintmaterial, element->tscint*1e3, element->windowScreenGap*1e3,element->angle, element->twindow*1e3, element->windowmaterial, element->screenEndZ*1e3, element->spec, element->screenWidth*1e3));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()

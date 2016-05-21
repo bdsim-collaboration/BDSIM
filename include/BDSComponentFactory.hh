@@ -83,6 +83,7 @@ private:
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateAwakeScreen();
+  BDSAcceleratorComponent* CreateAwakeSpectrometer();
   BDSAcceleratorComponent* CreateTransform3D();
 
   /// Creates line of components for sbend
