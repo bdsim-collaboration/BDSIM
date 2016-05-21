@@ -82,10 +82,11 @@ private:
   BDSAcceleratorComponent* CreateDegrader();
   BDSAcceleratorComponent* CreateLaser();
   BDSAcceleratorComponent* CreateScreen();
+  BDSAcceleratorComponent* CreateTransform3D();
+#ifdef USE_AWAKE
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
-  BDSAcceleratorComponent* CreateTransform3D();
-
+#endif
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element*     element,
 			   G4int              nSbends,

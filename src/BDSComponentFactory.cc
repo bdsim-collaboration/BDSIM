@@ -1,8 +1,10 @@
 #include "BDSComponentFactory.hh"
 
 // elements
+#ifdef USE_AWAKE
 #include "BDSAwakeScintillatorScreen.hh"
 #include "BDSAwakeSpectrometer.hh"
+#endif
 #include "BDSCavityRF.hh"
 #include "BDSCollimatorElliptical.hh"
 #include "BDSCollimatorRectangular.hh"
@@ -215,11 +217,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateLaser(); break; 
   case ElementType::_SCREEN:
     component = CreateScreen(); break; 
-  case ElementType::_AWAKESCREEN:
-    component = CreateAwakeScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
-
+  case ElementType::_AWAKESCREEN:
+#ifdef USE_AWAKE
+    component = CreateAwakeScreen(); break; 
+#endif
+  case ElementType::_AWAKESPECTROMETER:
+#ifdef USE_AWAKE
+    component = CreateAwakeSpectrometer(); break; 
+#endif
     // common types, but nothing to do here
   case ElementType::_MARKER:
   case ElementType::_LINE:
@@ -1034,8 +1041,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 	return theScreen;
 }
 
+#ifdef USE_AWAKE
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
-{	
+{
 #ifdef BDSDEBUG 
         G4cout << "---->creating Awake Screen,"
 	       << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
@@ -1054,8 +1062,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
 					       element->windowmaterial));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer(){
-	
+BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
+{
 #ifdef BDSDEBUG 
         G4cout << "---->creating AWAKE spectrometer,"
 	       << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
@@ -1067,6 +1075,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer(){
 #endif
 	return (new BDSAwakeSpectrometer(element->name, element->l*1e3,  element->bmapFile, element->B,  element->poleStartZ*1e3, element->scintmaterial, element->tscint*1e3, element->windowScreenGap*1e3,element->angle, element->twindow*1e3, element->windowmaterial, element->screenEndZ*1e3, element->spec, element->screenWidth*1e3));
 }
+#endif
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
