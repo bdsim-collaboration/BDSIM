@@ -26,7 +26,7 @@ BDSScreen::BDSScreen(G4String aName,
   _screenPos.setX(0);
   _screenPos.setY(0);
   _screenPos.setZ(0);
-  _mlScreen = new BDSMultilayerScreen(size, itsName+"_mlscreen");
+  _mlScreen = new BDSMultilayerScreen(size, name+"_mlscreen");
   _nLayers=0;
 }
 
@@ -35,27 +35,28 @@ void BDSScreen::Build(){
   G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4, 0.3));
   VisAtt1->SetForceWireframe(true);
   VisAtt1->SetVisibility(true);
-  itsBeampipeLogicalVolume->SetVisAttributes(VisAtt1);
+  containerLogicalVolume->SetVisAttributes(VisAtt1);
 
   PlaceScreen(); //Place the screen in the beam pipe
 }
 
-void BDSScreen::BuildFieldAndStepper(){
-  G4cout << __METHOD_NAME__ << " - building bmap field and stepper." << G4endl;
-  BuildBmapFieldAndStepper();
-}
+// TODO
+// void BDSScreen::BuildFieldAndStepper(){
+//   G4cout << __METHOD_NAME__ << " - building bmap field and stepper." << G4endl;
+//   BuildBmapFieldAndStepper();
+// }
 
 void BDSScreen::screenLayer(G4double thickness, G4String material, G4int isSampler){
   std::stringstream ss;
   ss << _nLayers;
   G4String lNum = ss.str();
-  G4String lName = itsName+"_"+lNum;
+  G4String lName = name+"_"+lNum;
   _mlScreen->screenLayer(thickness,material,lName, isSampler);
-  if(!isSampler) AddSensitiveVolume(_mlScreen->lastLayer()->log());
+  if(!isSampler) RegisterSensitiveVolume(_mlScreen->lastLayer()->log());
   _nLayers++;
 }
 
 void BDSScreen::PlaceScreen(){
   _mlScreen->build();//Build the screen.
-  _mlScreen->place(_screenRot, _screenPos, itsInnerBPLogicalVolume); //Place the screen in the beampipe centre.
+  _mlScreen->place(_screenRot, _screenPos, containerLogicalVolume); //Place the screen in the beampipe centre. // TODO check if containerlogical volume is correct here
 }

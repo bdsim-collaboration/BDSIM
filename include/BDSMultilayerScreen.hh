@@ -12,7 +12,7 @@ class BDSMultilayerScreen
 {
 public:
   BDSMultilayerScreen(G4TwoVector xysize, G4String name); //X-Y size
-  ~BDSMultilayerScreen();
+  virtual ~BDSMultilayerScreen();
   G4LogicalVolume* log();
   inline G4String name(){return _name;}
   inline G4ThreeVector size(){return _size;}
