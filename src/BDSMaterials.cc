@@ -481,20 +481,6 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddMaterial(materials["hy906"],fractionmass=0.497512);
   tmpMaterial->AddMaterial(materials["dy061"],fractionmass=0.004976);
   materials[name] = tmpMaterial;
-  //n-bk7
-  tmpMaterial = new G4Material 
-    (name="n-bk7", density=1.032*CLHEP::g/CLHEP::cm3, 2, kStateSolid);
-  tmpMaterial->AddElement(elements["O"],2);
-  tmpMaterial->AddElement(elements["Si"],1);
-  const G4int N_Bk7_NUMENTRIES = 3; //Number of entries in the material properties table
-  G4double N_Bk7_RIND[N_Bk7_NUMENTRIES]={1.51680,1.51680,1.51680};
-  G4double N_Bk7_AbsLength[N_Bk7_NUMENTRIES]={420.*CLHEP::cm,420.*CLHEP::cm,420.*CLHEP::cm};
-  G4double N_Bk7_Energy[N_Bk7_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV};
-  nbk7MaterialPropertiesTable= new G4MaterialPropertiesTable();
-  nbk7MaterialPropertiesTable->AddProperty("ABSLENGTH",N_Bk7_Energy,N_Bk7_AbsLength,N_Bk7_NUMENTRIES);
-  nbk7MaterialPropertiesTable->AddProperty("RINDEX",N_Bk7_Energy,N_Bk7_RIND,N_Bk7_NUMENTRIES);
-  tmpMaterial->SetMaterialPropertiesTable(nbk7MaterialPropertiesTable);
-  materials[name] = tmpMaterial; 
   
   //scintillator materials
   //YAG
