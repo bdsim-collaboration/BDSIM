@@ -357,19 +357,19 @@ void BDSAwakeScintillatorScreen::ComputeDimensions()
   //  _cameraScreenDist=(4.0)*CLHEP::m;
   _cameraScreenDist=4*213*CLHEP::mm;
 
-  _screenWidth=_mlScreen->size().x();
-  _screenHeight=_mlScreen->size().y();
+  _screenWidth=_mlScreen->GetSize().x();
+  _screenHeight=_mlScreen->GetSize().y();
 
   //The scoring plane...
   _scoringPlaneThickness=1*CLHEP::um;
 
-  _screenThickness = _mlScreen->size().z();
+  _screenThickness = _mlScreen->GetSize().z();
   
   _totalThickness =  
     _screenThickness + 2*_scoringPlaneThickness;
   
   
-  //  G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->size().z()+2*_scoringPlaneThickness;
+  //  G4double thi=_totalThickness+2*_cameraScreenDist+2*_camera->GetSize().z()+2*_scoringPlaneThickness;
 
   //Compute the marker volume length according to the screen thickness and width.
   G4double z_wid = _screenWidth * std::sin(std::abs(_screenAngle));//Length due to the screen width and angle

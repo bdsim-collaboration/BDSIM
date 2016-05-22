@@ -3,10 +3,10 @@
 
 #include "globals.hh"
 #include "BDSDrift.hh"
-#include "BDSMultilayerScreen.hh"
-#include "BDSColourWheel.hh"
 #include "G4TwoVector.hh"
 #include <list>
+
+class BDSMultilayerScreen;
 
 class BDSBeamPipeInfo;
 
@@ -23,17 +23,17 @@ public:
   void screenLayer(G4double thickness, G4String material, G4int isSampler=0);
 
 private:
-  BDSMultilayerScreen* _mlScreen;
-  std::list<G4double> _layerThicknesses;
-  G4TwoVector _size;
-  G4double _screenAngle;
-  std::list<G4String> _layerMaterials;
+  BDSMultilayerScreen* mlScreen;
+  std::list<G4double> layerThicknesses;
+  G4TwoVector size;
+  G4double screenAngle;
+  std::list<G4String> layerMaterials;
   
   virtual void Build();
   void PlaceScreen();
-  G4ThreeVector _screenPos;
-  G4RotationMatrix* _screenRot;
-  G4int _nLayers;
+  G4ThreeVector screenPos;
+  G4RotationMatrix* screenRot;
+  G4int nLayers;
 
   //TODO  virtual void BuildFieldAndStepper(); 
 };

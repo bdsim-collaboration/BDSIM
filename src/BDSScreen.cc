@@ -1,33 +1,37 @@
-//An accelerator component for diagnostics screens e.g. OTR. Screen inside beam pipe.
-
 #include "BDSScreen.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSDebug.hh"
-#include <list>
-#include <string>
-#include <sstream>
 
-BDSScreen::~BDSScreen(){
-  delete _screenRot;
-  delete _mlScreen;
-}
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMultilayerScreen.hh"
+#include "BDSScreenLayer.hh"
+
+#include "G4Colour.hh"
+#include "G4VisAttributes.hh"
+
+#include <list>
+#include <sstream>
 
 BDSScreen::BDSScreen(G4String aName,  
 		     G4double aLength,
 		     BDSBeamPipeInfo* beamPipeInfo, 
-		     G4TwoVector size, //X Y dimensions of screen
-		     G4double screenAngle):
+		     G4TwoVector sizeIn, //X Y dimensions of screen
+		     G4double screenAngleIn):
   BDSDrift(aName,aLength,beamPipeInfo),
-  _size(size), 
-  _screenAngle(screenAngle)
+  size(sizeIn), 
+  screenAngle(screenAngleIn)
 {
-  _screenRot = new G4RotationMatrix();
-  _screenRot->rotateY(_screenAngle);
-  _screenPos.setX(0);
-  _screenPos.setY(0);
-  _screenPos.setZ(0);
-  _mlScreen = new BDSMultilayerScreen(size, name+"_mlscreen");
-  _nLayers=0;
+  screenRot = new G4RotationMatrix();
+  screenRot->rotateY(screenAngle);
+  screenPos.setX(0);
+  screenPos.setY(0);
+  screenPos.setZ(0);
+  mlScreen = new BDSMultilayerScreen(size, name+"_mlscreen");
+  nLayers=0;
+}
+
+BDSScreen::~BDSScreen(){
+  delete screenRot;
+  delete mlScreen;
 }
 
 void BDSScreen::Build(){
@@ -48,15 +52,15 @@ void BDSScreen::Build(){
 
 void BDSScreen::screenLayer(G4double thickness, G4String material, G4int isSampler){
   std::stringstream ss;
-  ss << _nLayers;
+  ss << nLayers;
   G4String lNum = ss.str();
   G4String lName = name+"_"+lNum;
-  _mlScreen->screenLayer(thickness,material,lName, isSampler);
-  if(!isSampler) RegisterSensitiveVolume(_mlScreen->lastLayer()->log());
-  _nLayers++;
+  mlScreen->screenLayer(thickness,material,lName, isSampler);
+  if(!isSampler) RegisterSensitiveVolume(mlScreen->lastLayer()->log());
+  nLayers++;
 }
 
 void BDSScreen::PlaceScreen(){
-  _mlScreen->build();//Build the screen.
-  _mlScreen->place(_screenRot, _screenPos, containerLogicalVolume); //Place the screen in the beampipe centre. // TODO check if containerlogical volume is correct here
+  mlScreen->build();//Build the screen.
+  mlScreen->place(screenRot, screenPos, containerLogicalVolume); //Place the screen in the beampipe centre. // TODO check if containerlogical volume is correct here
 }

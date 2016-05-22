@@ -754,12 +754,12 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   //TODO BDSAcceleratorComponent::CalculateLengths();
   //-------
   //Screen dimensions.
-  _screenWidth=_mlScreen->size().x();
-  _screenHeight=_mlScreen->size().y();
+  _screenWidth=_mlScreen->GetSize().x();
+  _screenHeight=_mlScreen->GetSize().y();
   std::cout << "... got screen dimensions... " << std::endl;
   //The scoring plane...
   _scoringPlaneThickness=1*CLHEP::um;
-  _screenThickness = _mlScreen->size().z();
+  _screenThickness = _mlScreen->GetSize().z();
   _totalThickness = _screenThickness;
   //  G4double z_wid = _screenWidth * std::sin(std::abs(90*CLHEP::pi/180.0-_screenAngle));//Length due to the screen width and angle
   //  G4double z_thi = _totalThickness * std::cos(std::abs(90*CLHEP::pi/180.0-_screenAngle));//Length due to the screen thickness
