@@ -32,3 +32,8 @@ The package system is based on CPack, which works in combination with CMake.
 One can package the binaries and libraries with :code:`cpack`. A packed .tar.gz and a Mac OS .dmg is created.
 The source can be packed with :code:`make dist`.
 It is recommended to pack the libraries after each release version and put the binaries and libraries on the `BDSIM Download page <https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimDownload>`_.
+
+Static Code Analysis
+====================
+
+The code of BDSIM is analysed by the static analysis tool Coverity. Its analysis is available with CERN credentials at `CERN's Coverity site <https://coverity.cern.ch>`_.
