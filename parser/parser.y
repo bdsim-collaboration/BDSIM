@@ -29,7 +29,7 @@
        3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
     */
 
-    int execute = 1;
+    bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
   }
@@ -97,13 +97,19 @@ input :
 /*   yyerrok; */
 /* } */
 
-stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = 1;}
-              | if_clause '{' stmt '}' ELSE '{' stmt '}' 
+stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = true;}
+              | if_clause '{' stmt '}' else_clause '{' stmt '}' 
                 { if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" ); }
               | atomic_stmt  { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
               | BEGN input END { if(ECHO_GRAMMAR) printf("stmt -> '{' stmt ';' atomic_stmt '}' \n"); }
 
-if_clause: IF '(' aexpr ')' {if( ($3 > 0) && (execute > 0) ) execute = 1; else execute = 0;}
+if_clause: IF '(' aexpr ')' {if( ($3 > 0) && execute ) execute = true; else execute = false;}
+
+else_clause: ELSE
+             {
+	       if (execute) {execute = false;}
+	       else  {execute = true;}
+             }
 
 atomic_stmt : 
             | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
