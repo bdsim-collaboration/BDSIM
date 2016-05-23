@@ -84,14 +84,11 @@ public:
   /// clear structures
   void Flush();
 
-  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
-  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
-
-
-
-
 private:
 
+  /// create histograms
+  void CreateHistograms();
+  
   // output file
   TFile *theRootOutputFile = nullptr;
 
