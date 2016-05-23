@@ -87,16 +87,14 @@
 
 %%
 
+// every statement ends in a semicolon 
 input : 
       | input stmt ';'
        { 
 	 if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
        }
-/*       | error input';' */
-/* { */
-/*   yyerrok; */
-/* } */
 
+// deconstruct if statements into atomic statements 
 stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = true;}
               | if_clause '{' stmt '}' else_clause '{' stmt '}' 
                 { if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" ); }
@@ -111,16 +109,13 @@ else_clause: ELSE
 	       else  {execute = true;}
              }
 
+// atomic statements can be an mathematical expression, a declaration or a command
 atomic_stmt : 
             | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
             | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
             | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
-            | error
-              {
-		//yyerror(" : some error message\n"); 
-		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
-	      }
 
+// instantiate an object
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
@@ -262,6 +257,7 @@ cavitymodel : CAVITYMODEL ',' cavitymodel_options
 tunnel : TUNNEL ',' tunnel_options
 xsecbias : XSECBIAS ',' xsecbias_options
 
+// every element needs parameters
 error_noparams : DRIFT
                | RF
                | SBEND
