@@ -296,7 +296,6 @@ G4double BDS::GetParameterValueDouble(G4String spec, G4String name)
   }catch(std::invalid_argument& e){
     throw e;
   }
-  return 0;
 }
 
 //Get a value of type int form the spec string.
@@ -307,7 +306,6 @@ G4int BDS::GetParameterValueInt(G4String spec, G4String name)
   }catch(std::invalid_argument& e){
     throw e;
   }
-  return 0;
 }
 
 //Get a value of type string from the spec string (all other types derived from this).
