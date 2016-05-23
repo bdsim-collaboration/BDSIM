@@ -36,12 +36,13 @@ public:
   void sampler(); 
 
 protected:
+  /// protected constructor, currently used by AWAKE/BDSMultiFacetLayer
   BDSScreenLayer();
   G4ThreeVector size;
   G4String name;
-  G4LogicalVolume* log;
-  G4PVPlacement* phys;
-  G4VSolid* solid;
+  G4LogicalVolume* log = nullptr;
+  G4PVPlacement* phys  = nullptr;
+  G4VSolid* solid = nullptr;
 
 private:
   class InternalMirror{
@@ -67,7 +68,7 @@ private:
     G4double thickness;
     G4double pos;
   };
-  InternalMirror* internalMirror;
+  InternalMirror* internalMirror = nullptr;
   virtual void build();
   void buildGroove();
   virtual void buildScreen();
@@ -78,11 +79,12 @@ private:
   G4String logName;
   G4String solidName;
   // Geometrical objects:
-  G4LogicalVolume* grooveLog;
-  G4VSolid* grooveSolid;
-  G4double grooveWidth;
-  G4double grooveSpatialFrequency;
-  G4int nGrooves;
+  G4LogicalVolume* grooveLog = nullptr;
+  G4VSolid* grooveSolid  = nullptr;
+  G4double grooveWidth = 0.0;
+  G4double grooveSpatialFrequency = 0.0;
+  /// Counter for the number of grooves etched into the screen.
+  G4int nGrooves = 0;
   G4Colour colour;
 
 };

@@ -4,6 +4,7 @@
 #include "BDSMaterials.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSDManager.hh"
+#include "BDSUtilities.hh"
 
 #include "G4Box.hh"
 #include "G4LogicalBorderSurface.hh"
@@ -16,7 +17,7 @@
 #include "G4VSolid.hh"
 
 BDSScreenLayer::BDSScreenLayer()
-{;}
+{}
 
 BDSScreenLayer::BDSScreenLayer (G4ThreeVector sizeIn,
 				G4String nameIn,
@@ -29,7 +30,6 @@ BDSScreenLayer::BDSScreenLayer (G4ThreeVector sizeIn,
   grooveWidth(grooveWidthIn),
   grooveSpatialFrequency(grooveSpatialFrequencyIn)
 {
-  nGrooves=0; //Counter for the number of grooves etched into the screen.
   colour=G4Colour(0.1,0.8,0.1,0.3);
   build();
 }
@@ -41,9 +41,7 @@ void BDSScreenLayer::build(){
 }
 
 void BDSScreenLayer::buildGroove(){
-  if (grooveWidth==0){ //There may or may not be grooves in the screen layer.
-    grooveSolid=nullptr;
-    grooveLog=nullptr;
+  if (!BDS::IsFinite(grooveWidth)){ //There may or may not be grooves in the screen layer.
     return;
   }
   grooveSolid = new G4Box((name+"_grooveSolid").c_str(),grooveWidth/2.0, size.y()/2.0, size.z()/2.0);
@@ -211,4 +209,4 @@ void BDSScreenLayer::sampler()
 }
 
 BDSScreenLayer::~BDSScreenLayer()
-{;}
+{}

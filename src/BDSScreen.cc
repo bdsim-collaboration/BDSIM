@@ -1,6 +1,5 @@
 #include "BDSScreen.hh"
 
-#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMultilayerScreen.hh"
 #include "BDSScreenLayer.hh"
