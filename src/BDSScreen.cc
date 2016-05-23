@@ -56,7 +56,7 @@ void BDSScreen::screenLayer(G4double thickness, G4String material, G4int isSampl
   G4String lNum = ss.str();
   G4String lName = name+"_"+lNum;
   mlScreen->screenLayer(thickness,material,lName, isSampler);
-  if(!isSampler) RegisterSensitiveVolume(mlScreen->lastLayer()->log());
+  if(!isSampler) RegisterSensitiveVolume(mlScreen->lastLayer()->GetLog());
   nLayers++;
 }
 

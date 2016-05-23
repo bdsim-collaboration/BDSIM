@@ -43,7 +43,7 @@ void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4S
 void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer, G4int isSampler)
 {
   colourWheel->spin();
-  layer->color(colourWheel->colour());
+  layer->SetColour(colourWheel->colour());
   if(isSampler) layer->sampler();
   screenLayers.push_back(layer);
 }
@@ -64,7 +64,7 @@ void BDSMultilayerScreen::buildMotherVolume()
   solid  = new G4Box((name+"_solid").c_str(),size.x()/2.0,size.y()/2.0,size.z()/2.0);
   log = new G4LogicalVolume(solid,BDSMaterials::Instance()->GetMaterial(
           BDSGlobalConstants::Instance()->VacuumMaterial()),(name+"_log").c_str(),0,0,0);
-  G4VisAttributes* visAtt = new G4VisAttributes(G4Color(0.0,0.0,1.0,0.3));
+  G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.0,0.0,1.0,0.3));
   visAtt->SetForceWireframe(true);
   log->SetVisAttributes(visAtt);
 }
@@ -78,16 +78,16 @@ void BDSMultilayerScreen::computeDimensions(){
   }
   for(unsigned int i=0; i<screenLayers.size(); i++){
     G4cout << "..adding z size for layer number " << i << G4endl;
-    temp += screenLayers[i]->size().z();
+    temp += screenLayers[i]->GetSize().z();
     //Compute the total z thickness.
   }
   size.setZ(temp);
   //Compute the z positions of all the layers.
   G4cout << "...z positions..." << G4endl;
-  G4double pos = screenLayers[0]->size().z()/2.0 -1.0*size.z()/2.0; //Position each layer after the previous one.
+  G4double pos = screenLayers[0]->GetSize().z()/2.0 -1.0*size.z()/2.0; //Position each layer after the previous one.
   screenLayerZPos.push_back(pos);
   for(unsigned int i=1; i<screenLayers.size(); i++){
-    pos += (screenLayers[i-1]->size().z()+screenLayers[i]->size().z())/2.0;
+    pos += (screenLayers[i-1]->GetSize().z()+screenLayers[i]->GetSize().z())/2.0;
     screenLayerZPos.push_back(pos);
   }
   G4cout << "...finsished." << G4endl;
@@ -101,10 +101,10 @@ void BDSMultilayerScreen::placeLayers(){
 
   for(unsigned int i=0; i<screenLayers.size(); i++){
     pos.setZ(screenLayerZPos[i]);
-    screenLayers[i]->phys(new G4PVPlacement((G4RotationMatrix*)nullptr,  //Create a new physical volume placement for each groove in the screen.
+    screenLayers[i]->SetPhys(new G4PVPlacement((G4RotationMatrix*)nullptr,  //Create a new physical volume placement for each groove in the screen.
 					     pos,
-					     screenLayers[i]->log(),
-					     (G4String)(screenLayers[i]->name()),
+					     screenLayers[i]->GetLog(),
+					     (G4String)(screenLayers[i]->GetName()),
 					     log,
 					     false,
 					     0,
@@ -117,7 +117,7 @@ void BDSMultilayerScreen::placeLayers(){
 
 BDSScreenLayer* BDSMultilayerScreen::screenLayer(G4String layer){
   for(unsigned int i=0; i<screenLayers.size(); i++){
-    if(screenLayer(i)->name()==layer){
+    if(screenLayer(i)->GetName()==layer){
       screenLayer(i);
     }
   }
@@ -142,8 +142,8 @@ void BDSMultilayerScreen::place(G4RotationMatrix* rot, G4ThreeVector pos, G4Logi
 void BDSMultilayerScreen::reflectiveSurface(G4int layer1, G4int layer2){
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
   //  G4LogicalBorderSurface* LogSurface =
-  new G4LogicalBorderSurface("LogSurface", screenLayer(layer1)->phys(), screenLayer(layer2)->phys(), OpSurface);
-  //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->log(),OpSurface);
+  new G4LogicalBorderSurface("LogSurface", screenLayer(layer1)->GetPhys(), screenLayer(layer2)->GetPhys(), OpSurface);
+  //  G4LogicalSkinSurface* LogSurface  = new G4LogicalSkinSurface("LogSurface",screenLayer(1)->GetLog(),OpSurface);
   OpSurface->SetType(dielectric_metal);
   OpSurface->SetModel(unified);
   OpSurface->SetFinish(polished);
@@ -154,7 +154,7 @@ void BDSMultilayerScreen::reflectiveSurface(G4int layer1, G4int layer2){
   SMPT->AddConstProperty("REFLECTIVITY",0.8);
   
   /*
-  OpSurface -> SetSigmaAlpha(0.7);
+  OpSurface->SetSigmaAlpha(0.7);
   SMPT->AddConstProperty("SPECULARLOBECONSTANT",1.0);
   SMPT->AddConstProperty("SPECULARSPIKECONSTANT",0.0);
   SMPT->AddConstProperty("BACKSCATTERCONSTANT",0.0);
@@ -173,7 +173,7 @@ void BDSMultilayerScreen::roughSurface(G4int layer1, G4int layer2){
   OpSurface->SetModel(unified);
 
   //  G4LogicalBorderSurface* LogSurface = 
-  new G4LogicalBorderSurface("LogSurface", screenLayer(layer1)->phys(), screenLayer(layer2)->phys(), OpSurface);
+  new G4LogicalBorderSurface("LogSurface", screenLayer(layer1)->GetPhys(), screenLayer(layer2)->GetPhys(), OpSurface);
 
   G4double sigma_alpha=0.7;
   OpSurface->SetSigmaAlpha(sigma_alpha);
