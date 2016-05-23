@@ -67,12 +67,12 @@ void SamplerAnalysis::Process()
   // loop over all entries
   for(int i=0;i<this->s->n;++i)
   {
-    v[0] = (double &&)s->x[i];
-    v[1] = (double &&)s->xp[i];
-    v[2] = (double &&)s->y[i];
-    v[3] = (double &&)s->yp[i];
-    v[4] = (double &&)s->energy[i];
-    v[5] = (double &&)s->t[i];
+    v[0] = s->x[i];
+    v[1] = s->xp[i];
+    v[2] = s->y[i];
+    v[3] = s->yp[i];
+    v[4] = s->energy[i];
+    v[5] = s->t[i];
 
     // means
     for(int a = 0;a<6;++a)
