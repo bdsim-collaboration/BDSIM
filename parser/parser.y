@@ -95,9 +95,16 @@ input :
        }
 
 // deconstruct if statements into atomic statements 
-stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = true;}
+stmt :        if_clause '{' stmt '}'
+              {
+		if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" );
+		execute = true;
+	      }
               | if_clause '{' stmt '}' else_clause '{' stmt '}' 
-                { if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" ); }
+	      {
+		if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" );
+		execute = true;
+	      }
               | atomic_stmt  { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
               | BEGN input END { if(ECHO_GRAMMAR) printf("stmt -> '{' stmt ';' atomic_stmt '}' \n"); }
 
