@@ -34,4 +34,6 @@ protected:
   twoDArray                         optical;     // e, ax, gx, etax, bx, ay, gy, by, etay
 
   static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
+
+  static double centMomToCovariance(fourDArray &centMoms, int npart ,int a, int i, int j);
 };
