@@ -1,4 +1,7 @@
 #include "SamplerAnalysis.hh"
+#include "Config.hh"
+#include "rebdsim.hh"
+
 
 SamplerAnalysis::SamplerAnalysis()
 {
@@ -17,14 +20,17 @@ SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn)
 
 void SamplerAnalysis::CommonCtor()
 {
+  if(Config::Instance()->Debug())
+  {
+    std::cout << __METHOD_NAME__ << std::endl;
+  }
   npart = 0;
   means.resize(6);
-  optical[0].resize(6);
-  optical[1].resize(6);  //test with limited opt. funcs for now
-                         // ex, bx, ax, ey, by, ay
+  optical.resize(2); //test with limited opt. funcs for now  ex, bx, ax, ey, by, ay
   for(int i=0;i<2;++i)
   {
-    for(int j=0;j<7;++j)
+    optical[i].resize(6);
+    for(int j=0;j<6;++j)
     {
       optical[i][j]=0.0;
     }
@@ -65,13 +71,20 @@ SamplerAnalysis::~SamplerAnalysis()
 
 void SamplerAnalysis::Initialise()
 {
+  if(Config::Instance()->Debug())
+  {
+    std::cout << __METHOD_NAME__ << std::endl;
+  }
   npart = 0;
-
 }
 
 void SamplerAnalysis::Process()
 {
-  npart++;
+  if(Config::Instance()->Debug())
+  {
+    std::cout << __METHOD_NAME__ << std::endl;
+  }
+
   std::vector<double> v;
   v.resize(6);
 
@@ -106,10 +119,15 @@ void SamplerAnalysis::Process()
       }
     }
   }
+  npart++;
 }
 
 void SamplerAnalysis::Terminate()
 {
+  if(Config::Instance()->Debug())
+  {
+    std::cout << __METHOD_NAME__ << std::endl;
+  }
   for(int i=0;i<6;++i)
   {
     means[i] = means[i]/npart;
@@ -123,19 +141,24 @@ void SamplerAnalysis::Terminate()
     }
   }
 
-  for(int i=0;i<=2;i+=2)
+  for(int i=0;i<2;++i)
   {
-    optical[0][i]=sqrt(covMats[i][i]*covMats[i+1][i+1]+pow(covMats[i][i+1],2));                   //emittance
-    optical[1][i]=covMats[i][i]/sqrt(covMats[i][i]*covMats[i+1][i+1]+pow(covMats[i][i+1],2));     //beta
-    optical[2][i]=covMats[i+1][i+1]/sqrt(covMats[i][i]*covMats[i+1][i+1]+pow(covMats[i][i+1],2)); //alpha
-    optical[3][i]=covMats[i][6]/covMats[6][6];                                                    //dispersion
+    int j = 0;
+    if(i== 1) j = 2;
+
+    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));                   //emittance
+    optical[i][1] = covMats[j+1][j+1]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2)); //alpha
+    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));     //beta
+    optical[i][3] = 0.0;
+    optical[i][4] = covMats[j][5]/covMats[5][5];                                                    //dispersion
+    optical[i][6] = 0.0;
   }
 
-  for(int i=0;i<=2;i++)
+  for(int i=0;i<2;++i)
   {
-    std::cout<<"e = "<<optical[0][i]<<" b = "<<optical[1][i]<<" a = "<<optical[2][i]<<" d = "<<optical[3][i]<<std::endl;
+    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][1]<<" a = "<<optical[i][2]<<" d = "<< optical[i][3]<<std::endl;
   }
-  
+
   // compute covariances
   // cov[][][][] = ;
 }
