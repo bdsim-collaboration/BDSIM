@@ -128,6 +128,23 @@ void SamplerAnalysis::Terminate()
   {
     std::cout << __METHOD_NAME__ << this->s->modelID << " " << npart << std::endl;
   }
+
+  // power sums
+  for(int a=0;a<6;++a)
+    {
+      for(int b=0;b<6;++b)
+	{
+	  for (int j = 0; j <= 4; ++j)
+	    {
+	      for (int k = 0; k <= 4; ++k)
+		{
+		  cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+		}
+	    }
+	}
+    }
+
+  
   for(int i=0;i<6;++i)
   {
     means[i] = means[i]/npart;
@@ -141,12 +158,10 @@ void SamplerAnalysis::Terminate()
     }
   }
 
-  std::cout << covMats[2][2] << " " << covMats[3][3] << " " << covMats[2][3] << " " << covMats[3][2] << " " << covMats[3][5] << " " <<covMats[5][5] << std::endl;
-
   for(int i=0;i<2;++i)
   {
     int j = 0;
-    if(i==1) j = 2;
+    if(i== 1) j = 2;
 
     optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));                   // emittance
     optical[i][1] = covMats[j+1][j+1]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2)); // alpha
@@ -159,6 +174,8 @@ void SamplerAnalysis::Terminate()
   for(int i=0;i<2;++i)
   {
     std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][1]<<" a = "<<optical[i][2]<<" d = "<< optical[i][3]<<std::endl;
+    std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
+    std::cout<<"mean x = "<<means[0]<<std::endl;
   }
 
   // compute covariances
@@ -170,43 +187,122 @@ std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
   return optical;
 }
 
-double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  int a, int b, int m, int n)
-{
-  double moment = 0.0;             //store the value of the moment
-  
-  if((n == 4 && m == 0) || (n == 0 && m == 4))
+  if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
-      double s1,s2,s3,s4;
-      if(m == 4)
+      double s_1_0 = 0.0;
+      
+      s_1_0 = powSums[a][b][m][n];
+
+      moment = s_1_0/npart;
+    }
+
+  else if((n == 2 && m == 0) || (n == 0 && m == 2))
+    {
+      double s_1_0 = 0.0, s_2_0 = 0.0;
+      if(m == 2)
       {
-	s1 = 0.0;
-	s2 = 0.0;
-	s3 = 0.0;
-	s4 = 0.0;
+	s_1_0 = powSums[a][b][m-1][n];
+	s_2_0 = powSums[a][b][m][n];
       }
-      else if( n == 4)
+      else if(n == 2)
       {
-	s1 = 0.0;
-	s2 = 0.0;
-	s3 = 0.0;
-	s4 = 0.0;
+	s_1_0 = powSums[a][b][m][n-1];
+	s_2_0 = powSums[a][b][m][n];
       }
 
-      moment =  (-3*pow(powSums[a][b][m-3][n],4))/pow(npart,4) + (6*pow(powSums[a][b][m-3][n],2)*powSums[a][b][m-2][n])/pow(npart,3)
-               +(-4*powSums[a][b][m-3][n]*powSums[a][b][m-1][n])/pow(npart,2) + powSums[a][b][m-3][n]/npart;
+      moment =  (npart*s_2_0 - pow(s_1_0,2))/(npart*(npart-1));
+      
       return moment;
     }
 
-    if((m == 1 || n == 1) && m + n == 4)
+  else if(n == 1 && m == 1)
     {
-      if(m > n)
+      double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0;
+
+      s_1_0 = powSums[a][b][m][n-1];
+      s_0_1 = powSums[a][b][m-1][n];
+      s_1_1 = powSums[a][b][m][n];
+
+      moment =  (npart*s_1_1 - s_0_1*s_1_0)/(npart*(npart-1));
+      
+      return moment;
+    }
+  
+  else if((n == 4 && m == 0) || (n == 0 && m == 4))
+    {
+      double s_1_0 = 0.0, s_2_0 = 0.0, s_3_0 = 0.0, s_4_0 = 0.0;
+      if(m == 4)
       {
-	moment =  (-3*pow(powSums[a][b][m-2][n],3)*powSums[a][b][m-3][n])/pow(npart,4); //icomplete
+	s_1_0 = powSums[a][b][m-3][n];
+	s_2_0 = powSums[a][b][m-2][n];
+	s_3_0 = powSums[a][b][m-1][n];
+	s_4_0 = powSums[a][b][m][n];
       }
-      else
+      else if( n == 4)
       {
-	moment =   0.0; //incomplete
+	s_1_0 = powSums[a][b][m][n-3];
+	s_2_0 = powSums[a][b][m][n-2];
+	s_3_0 = powSums[a][b][m][n-1];
+	s_4_0 = powSums[a][b][m][n];
       }
+
+      moment =  (-3*pow(s_1_0,4))/pow(npart,4) + (6*pow(s_1_0,2)*s_2_0)/pow(npart,3)
+               +(-4*s_1_0*s_3_0)/pow(npart,2) + s_4_0/npart;
+      
+      return moment;
+    }
+
+  else if((m == 3 && n == 1) || (m == 1 && n ==3))
+    {
+      double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0, s_2_0 = 0.0, s_2_1 = 0.0, s_3_0 = 0.0, s_3_1 = 0.0;
+      
+      if(m == 3)
+      {
+	s_1_0 = powSums[a][b][m-2][n-1];
+	s_0_1 = powSums[a][b][m-3][n];
+	s_1_1 = powSums[a][b][m-2][n];
+	s_2_0 = powSums[a][b][m-1][n-1];
+	s_2_1 = powSums[a][b][m-1][n];
+	s_3_0 = powSums[a][b][m][n-1];
+	s_3_1 = powSums[a][b][m][n];
+      }
+      else if(n == 3)
+      {
+	s_1_0 = powSums[a][b][m-1][n-2];
+	s_0_1 = powSums[a][b][m][n-3];
+	s_1_1 = powSums[a][b][m][n-2];
+	s_2_0 = powSums[a][b][m-1][n-1];
+	s_2_1 = powSums[a][b][m][n-1];
+	s_3_0 = powSums[a][b][m-1][n];
+	s_3_1 = powSums[a][b][m][n];
+      }
+
+      moment =   (-3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*pow(s_1_0,2)*s_1_1)/pow(npart,3)
+	       + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) + (-3*s_1_0*s_2_1)/pow(npart,2)
+	       + (-s_0_1*s_3_0)/pow(npart,2) + s_3_1/npart;     
+      
+      return moment;
+    }
+
+   else if(m == 2 && n == 2)
+    {
+      double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0, s_2_0 = 0.0, s_0_2 = 0.0, s_1_2 = 0.0, s_2_1 = 0.0, s_2_2 = 0.0;
+
+      s_1_0 = powSums[a][b][m-1][n-2];
+      s_0_1 = powSums[a][b][m-2][n-1];
+      s_1_1 = powSums[a][b][m-1][n-1];
+      s_2_0 = powSums[a][b][m][n-2];
+      s_0_2 = powSums[a][b][m-2][n];
+      s_1_2 = powSums[a][b][m-1][n];
+      s_2_1 = powSums[a][b][m][n-1];
+      s_2_2 = powSums[a][b][m][n];
+
+      moment =  (-3*pow(s_0_1,2)*pow(s_1_0,2))/pow(npart,4) + (s_0_2*pow(s_1_0,2))/pow(npart,3)
+	      + (4*s_0_1*s_1_0*s_1_1)/pow(npart,3) + (2*s_1_0*s_1_2)/pow(npart,2)
+	      + (pow(s_0_1,2)*s_2_0)/pow(npart,3) + (-2*s_0_1*s_2_1)/pow(npart,2) + s_2_2/npart;
+      
+      return moment;
+      
     }
 
     return 0;
