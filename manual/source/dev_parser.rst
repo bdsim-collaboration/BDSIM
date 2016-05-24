@@ -35,7 +35,32 @@ The Symtab class represents a parser variable, all variables are stored in a map
 Bison
 =====
 
-Bison tokens are from a union and this can be one of the following types:
+This section gives a brief overview of Bison. For a more comprehensive reading a `manual <https://www.gnu.org/software/bison/manual/>`_ is recommended.
+
+The :code:`parser.y` file contains the typical four main sections::
+
+  %{
+  C declarations
+  %}
+
+  Bison token and types declarations
+
+  %%
+  Grammar rules
+  %%
+
+  Additional C code
+
+The gmad keywords are translated to bison tokens in the *library* file :code:`parser.l`.
+
+C declarations
+^^^^^^^^^^^^^^
+The C declarations are a few global variables.
+
+Bison tokens
+^^^^^^^^^^^^
+
+Bison tokens and types are from a union and these can be one of the following types:
 
  * double
  * int (for the enum class ElementType)
@@ -43,10 +68,46 @@ Bison tokens are from a union and this can be one of the following types:
  * GMAD::Array*
  * GMAD::Symtab* (a pointer to a general symbol class, which can represent a double, string, GMAD::Array or a function)
 
-The tokens themselves are defined at the top of :code:`parser.y`
+The union type of the tokens are defined in the Bison declaration section of :code:`parser.y`.
+
+Grammar rules
+^^^^^^^^^^^^^
+
+The grammar rules define a syntax tree. Bison is a bottom-up parser. It tries, by shifts and reductions, to reduce the entire input down to a single grouping whose symbol is the grammar's start-symbol, which in our case is *input*::
+
+  // every statement ends in a semicolon 
+  input : 
+        | input stmt ';'
+        { 
+          if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
+        }
+
+This rule is split in two parts:
+
+* input can be empty (indicated by no text after the colon)
+* or it is a recursive rule, where it breaks the input into statements with ending with a semicolon.
+
+A rule can be split into as many parts as possible.
+
+Another example is are the atomic statements::
+
+   // atomic statements can be an mathematical expression, a declaration or a command
+   atomic_stmt : 
+   | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
+   | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
+   | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
+
+Rules can be tokens and types as well, and can have a value. The rule for addition loks like:
+
+   
+aexpr   | aexpr '+' aexpr      { $$ = $1 + $3;                    }
+
+
+   
 
 Since adding or changing Bison rules can often have unforseen consequences, 
-it is strongly recommended that when extending the GMAD language to first write a test case for it and check that it fails.
+it is strongly recommended that when extending the GMAD language to first write a test case for it and check that it fails. There are many GMAD CMake tests in the *parser/test* directory.
+
 Often the compiler will complain when the rules are inconsistent
 and the CMake tests cover many syntax cases which all should still work.
 For debugging there are several options in :code:`parser.y`, all of which need recompilation:
