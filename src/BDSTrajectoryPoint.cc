@@ -34,13 +34,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   postProcessType    = -1;
   postProcessSubType = -1;
 
-  const G4Track           *aTrack      = step->GetTrack();
+  // const G4Track           *aTrack      = step->GetTrack();
   const G4StepPoint        *prePoint   = step->GetPreStepPoint();
   const G4StepPoint       *postPoint   = step->GetPostStepPoint();
   const G4VProcess         *preProcess = prePoint->GetProcessDefinedStep();
   const G4VProcess        *postProcess = postPoint->GetProcessDefinedStep();
-  G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
-  G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
+  // G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
+  // G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
 
   if(preProcess)
   {
