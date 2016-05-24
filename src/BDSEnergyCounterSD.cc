@@ -42,7 +42,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    ptype(0),
    volName(""),
    turnstaken(0),
-   eventnumber(0)
+   eventnumber(0),
+   auxilliaryNavigator(nullptr)
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
   itsName = name;

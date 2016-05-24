@@ -23,7 +23,9 @@ BDSBunchHalo::BDSBunchHalo():
   envelopeCollMinXp(0.0), envelopeCollMaxXp(0.0),
   envelopeCollMinY(0.0), envelopeCollMaxY(0.0),
   envelopeCollMinYp(0.0), envelopeCollMaxYp(0.0),
-  twoLobeX(false), twoLobeY(false)
+  twoLobeX(false), twoLobeY(false),
+  xMinDist(0.0), xMaxDist(0.0), xMinMaxRatio(0.0),
+  yMinDist(0.0), yMaxDist(0.0), yMinMaxRatio(0.0)
 {
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());  
   weightParameter=1.0;
