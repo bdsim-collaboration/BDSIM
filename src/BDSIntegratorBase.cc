@@ -4,7 +4,7 @@
 #include "G4ClassicalRK4.hh"
 
 BDSIntegratorBase::BDSIntegratorBase(G4Mag_EqRhs* eqOfMIn,
-				     G4double     nVariablesIn):
+				     G4int        nVariablesIn):
   G4MagIntegratorStepper(eqOfMIn, nVariablesIn),
   eqOfM(eqOfMIn),
   nVariables(6),

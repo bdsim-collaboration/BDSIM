@@ -22,8 +22,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMGlobal::GetField(const G4ThreeV
   auto          globalField   = ConvertAxisToGlobal(localField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local Position: " << localPosition << G4endl;
-  G4cout << __METHOD_NAME__ << "Local Field:    " << localField    << G4endl;
-  G4cout << __METHOD_NAME__ << "Global Field:   " << globalField   << G4endl;
+  G4cout << __METHOD_NAME__ << "Local Field:    " << localField.first  << " " << localField.second  << G4endl;
+  G4cout << __METHOD_NAME__ << "Global Field:   " << globalField.first << " " << globalField.second << G4endl;
 #endif
   return globalField;
 }

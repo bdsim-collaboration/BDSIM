@@ -6,21 +6,17 @@
 
 #include <utility>
 
-class G4VPhysicalVolume;
-
 G4Navigator* BDSAuxiliaryNavigator::auxNavigator = new G4Navigator();
 
 BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
-  initialised(new G4bool),
+  initialised(false),
   globalToLocal(new G4AffineTransform()),
   localToGlobal(new G4AffineTransform())
 {
-  (*initialised) = false;
 }
 
 BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
 {
-  delete initialised;
   delete globalToLocal;
   delete localToGlobal;
   // do not delete static *auxNavigator as required by other instances of BDSAuxiliaryNavigator
@@ -36,7 +32,7 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
   auxNavigator->LocateGlobalPointAndSetup(globalPosition);  
   (*globalToLocal) = auxNavigator->GetGlobalToLocalTransform();
   (*localToGlobal) = auxNavigator->GetLocalToGlobalTransform();
-  (*initialised)   = true;
+  initialised      = true;
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4double globalPosition[3]) const
@@ -47,7 +43,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4double globalPositio
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPosition) const
 {
-  if (!(*initialised))
+  if (!initialised)
     {InitialiseTransform(globalPosition);}
   return globalToLocal->TransformPoint(globalPosition);
 }
@@ -63,7 +59,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4double globalPos
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4ThreeVector& globalPosition,
 							const G4ThreeVector& globalAxis) const
 {
-  if (!(*initialised))
+  if (!initialised)
     {InitialiseTransform(globalPosition);}
   return globalToLocal->TransformAxis(globalAxis);
 }
@@ -85,7 +81,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& localP
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& globalPosition,
 							 const G4ThreeVector& localAxis) const
 {
-  if (!(*initialised))
+  if (!initialised)
     {InitialiseTransform(globalPosition);}
   return localToGlobal->TransformAxis(localAxis);
 }
@@ -93,7 +89,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& gl
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& globalPosition,
 						     const G4ThreeVector& localPosition) const
 {
-  if (!(*initialised))
+  if (!initialised)
     {InitialiseTransform(globalPosition);}
   return localToGlobal->TransformPoint(localPosition);
 }
