@@ -1078,7 +1078,41 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 	       << "scintmaterial = " << element->scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeSpectrometer(element->name, element->l*1e3,  element->bmapFile, element->B,  element->poleStartZ*1e3, element->scintmaterial, element->tscint*1e3, element->windowScreenGap*1e3,element->angle, element->twindow*1e3, element->windowmaterial, element->screenEndZ*1e3, element->spec, element->screenWidth*1e3));
+	BDSFieldInfo* awakeField = nullptr;
+	if (element->bmapFile.empty())
+	  {
+	    BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
+	    (*awakeStrength)["field"] = element->B;
+	
+	    awakeField = new BDSFieldInfo(BDSFieldType::dipole,
+					  brho,
+					  BDSIntegratorType::g4nystromrk4,
+					  awakeStrength);
+	  }
+	else
+	  {
+	    awakeField = new BDSFieldInfo(BDSFieldType::threed,
+					  brho,
+					  BDSIntegratorType::g4nystromrk4,
+					  nullptr,
+					  true,
+					  G4Transform3D(),
+					  nullptr,
+					  element->bmapFile);
+	  }
+	return (new BDSAwakeSpectrometer(element->name,
+					 element->l*1e3,
+					 awakeField,
+					 element->poleStartZ*1e3,
+					 element->scintmaterial,
+					 element->tscint*1e3,
+					 element->windowScreenGap*1e3,
+					 element->angle,
+					 element->twindow*1e3,
+					 element->windowmaterial,
+					 element->screenEndZ*1e3,
+					 element->spec,
+					 element->screenWidth*1e3));
 }
 #endif
 

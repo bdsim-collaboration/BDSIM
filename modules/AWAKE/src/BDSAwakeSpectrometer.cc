@@ -1,9 +1,8 @@
-/* BDSIM code.    
-AWAKE spectrometer.
-*/
+#include "BDSAwakeSpectrometer.hh"
 
 #include "BDSGlobalConstants.hh" 
-#include "BDSAwakeSpectrometer.hh"
+#include "BDSFieldInfo.hh"
+#include "BDSFieldBuilder.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 #include "BDSSampler.hh"
@@ -22,16 +21,23 @@ AWAKE spectrometer.
 #include "BDSAwakeMultilayerScreen.hh"
 //#include "UltraFresnelLens.hh"
 //#include "UltraFresnelLensParameterisation.hh"
-#include "G4NystromRK4.hh"
-
-#include "G4Trap.hh"
-//#include "BDSOutputBase.hh"
-//#include "BDSDipoleStepper.hh"
-#include "BDSFieldMagSolenoid.hh"
 
 //============================================================
-BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double screenEndZ = (258-62.733)*CLHEP::cm, G4String spec="", G4double screenWidth=1*CLHEP::m):
+BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
+					    G4double length=2.7*CLHEP::m,
+					    BDSFieldInfo* fieldInfo = nullptr,
+					    G4double poleStartZ=62.733*CLHEP::cm,
+					    G4String material="lanex",
+					    G4double thickness = 0.3 * CLHEP::mm,
+					    G4double windowScreenGap=0,
+					    G4double angle = -45*CLHEP::pi/180.0,
+					    G4double windowThickness=0,
+					    G4String windowMaterial="G4_Al",
+					    G4double screenEndZ = (258-62.733)*CLHEP::cm,
+					    G4String spec="",
+					    G4double screenWidth=1*CLHEP::m):
   BDSAcceleratorComponent(aName, length, 0, "awakespectrometer"),
+  _fieldInfo(fieldInfo),
   _screenWidth(screenWidth),
   _mlScreen(nullptr),
   _camera(nullptr),
@@ -42,11 +48,8 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*
   _windowThickness(windowThickness),
   _windowMaterial(windowMaterial),
   _screenEndZ(screenEndZ),
-  _poleStartZ(poleStartZ),
-  _BField(BField)
+  _poleStartZ(poleStartZ)
 {
-  // TODO JS bmap file!
-  
   //Change sign of angle.
   _screenAngle*=-1;
 
@@ -295,6 +298,13 @@ void BDSAwakeSpectrometer::SetVisAttributes()
   _visAttSampler->SetVisibility(true);
 }
 
+void BDSAwakeSpectrometer::BuildField()
+{
+  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
+							    containerLogicalVolume,
+							    true);
+}
+
 void BDSAwakeSpectrometer::BuildMagnet(){
     BuildYoke();
     BuildCoils();
@@ -390,33 +400,6 @@ void BDSAwakeSpectrometer::PlaceYoke(){
   new G4PVPlacement(_magRotationMatrix,itsYokeLowerPos,itsYokeLowerLog,"YokeLower",
 		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
 }
-
-void BDSAwakeSpectrometer::BuildBPFieldAndStepper(){
-  // set up the magnetic field and stepper
-  G4cout << __METHOD_NAME__ << " - Bfield = " << _BField << G4endl;
-  itsMagField=new BDSFieldMagSolenoid(nullptr,_BField); // JS - TODO to be fixed!
-  G4ThreeVector pmin;
-  //Set the extent of the magnetic field to within the magnet pole region.
-  //TODO  itsMagField->SetFieldExtent(itsPolePos-itsAperture2Size/2.0, itsPolePos+itsAperture2Size/2.0);
-  itsEqRhs=new G4Mag_UsualEqRhs(itsMagField);  
-  itsStepper = new G4NystromRK4(itsEqRhs);
-  /*
-  itsStepper = new BDSDipoleStepper(itsEqRhs);
-  */
-  //  BDSDipoleStepper* dipoleStepper = dynamic_cast<BDSDipoleStepper*>(itsStepper);
-
-  /*
-  BDSDipoleStepper* dipoleStepper = (BDSDipoleStepper*)itsStepper;
-  dipoleStepper->SetBField(-_BField); // note the - sign...
-  dipoleStepper->SetBGrad(0);
-  */
-}
-
-void BDSAwakeSpectrometer::SetBPFieldMgr(){
-  //TODO BuildFieldMgr(itsStepper, itsMagField);
-  //TODO  containerLogicalVolume->SetFieldManager(itsFieldMgr,true);
-}
-
 
 void BDSAwakeSpectrometer::BuildVacuumChamber(){
   switch(_vacuumChamberType){
@@ -704,11 +687,11 @@ void BDSAwakeSpectrometer::Build(){
       }
       BuildVacuumChamber();
       PlaceVacuumChamber();
-      //TODO  BuildFieldAndStepper();
+      BuildField();
 }
 
 void BDSAwakeSpectrometer::PlaceMagnet(){
-    PlaceYoke();
+  PlaceYoke();
   PlaceCoils();
 }
 
@@ -816,8 +799,8 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 void BDSAwakeSpectrometer::BuildContainerLogicalVolume(){
   containerSolid=new G4Box( name+"_marker_solid",
-			    BDSGlobalConstants::Instance()->ComponentBoxSize()/2, //TODO
-			    BDSGlobalConstants::Instance()->ComponentBoxSize()/2,
+			    BDSGlobalConstants::Instance()->TunnelInfo()->aper1,
+			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2,
 			    chordLength/2.0); //z half length 
 
   containerLogicalVolume=new G4LogicalVolume

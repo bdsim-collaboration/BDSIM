@@ -17,7 +17,7 @@ Work in progress.
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
 
-class BDSFieldMag;
+class BDSFieldInfo;
 class BDSSpectrVacChamb;
 class G4MagIntegratorStepper;
 
@@ -29,7 +29,19 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double BField, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd, G4String spec, G4double screenWidth);
+  BDSAwakeSpectrometer(G4String aName,
+		       G4double length,
+		       BDSFieldInfo* fieldInfo,
+		       G4double poleStartZ,
+		       G4String material,
+		       G4double thickness,
+		       G4double windowScreenGap,
+		       G4double angle,
+		       G4double windowThickness,
+		       G4String windowMaterial,
+		       G4double screenEnd,
+		       G4String spec,
+		       G4double screenWidth);
   virtual ~BDSAwakeSpectrometer();
 
 protected:
@@ -47,8 +59,6 @@ private:
   void PlacePoles();
   void BuildCoils();
   void PlaceCoils();
-  virtual void BuildBPFieldAndStepper(); 
-  virtual void SetBPFieldMgr(); 
   void BuildVacuumChamber();
   void PlaceVacuumChamber();
   //To build the camera...
@@ -63,8 +73,12 @@ private:
   virtual void BuildContainerLogicalVolume();
   void BuildCameraScoringPlane();
   void BuildScreenScoringPlane();
+  /// Build Field
+  void BuildField();
 
-
+  /// Field info object
+  BDSFieldInfo* _fieldInfo;
+  
   // Geometrical objects and associated parameters:
   //Magnet logical volume to include magnet and surrounding area in order to include the vacuum chamber which will protude the magnet at the end/sides
   G4LogicalVolume* itsMagnetLog;
@@ -206,13 +220,9 @@ private:
   G4double _screenCentreX;
   //  BDS3DMagField* _magField;
   //Y component of the B field.
-  G4double _BField;
 
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;
-  BDSFieldMag* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
-  G4MagIntegratorStepper* itsStepper;
 };
 
 #endif
