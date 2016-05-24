@@ -13,7 +13,6 @@
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEVentInfo.hh"
 
-#define MAXSAMPLERS 30000
 class Event
 {
 public :
@@ -41,10 +40,8 @@ public :
   BDSOutputROOTEventLoss                         *tunnelHit;
   BDSOutputROOTEventTrajectory                   *trajectory;
 #ifndef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<float>*               samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler<float>*>  samplers;
 #else
-  BDSOutputROOTEventSampler<double>*              samplersA[MAXSAMPLERS];
   std::vector<BDSOutputROOTEventSampler<double>*> samplers;
 #endif
   BDSOutputROOTEventHistograms                   *histos;

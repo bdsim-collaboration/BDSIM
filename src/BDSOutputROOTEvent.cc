@@ -2,6 +2,7 @@
 
 #include "BDSParser.hh"
 #include "parser/options.h"
+#include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
@@ -55,12 +56,44 @@ BDSOutputROOTEvent::~BDSOutputROOTEvent()
   delete runInfo;
 }
 
+void BDSOutputROOTEvent::CreateHistograms()
+{
+  // copy histograms from analysis manager
+  BDSAnalysisManager* analysisManager = BDSAnalysisManager::Instance();
+  for (int i=0; i<analysisManager->NumberOfHistograms(); i++)
+    {
+      BDSHistogram1D* hist = analysisManager->GetHistogram(i);
+      G4String name = hist->GetName();
+      G4String title = hist->GetTitle();
+      G4bool equiDistant = hist->GetEquidistantBins();
+      if (equiDistant)
+	{
+	  G4int nbins = hist->GetNBins();
+	  G4double xmin = hist->GetXMin();
+	  G4double xmax = hist->GetXMax();
+	  evtHistos->Create1DHistogram(name,title,nbins,xmin,xmax);
+	  runHistos->Create1DHistogram(name,title,nbins,xmin,xmax);
+	}
+      else
+	{
+	  // create bin edges
+	  std::vector<double> binedges = hist->GetBinLowerEdges();
+	  binedges.push_back(hist->GetXMax());
+	  evtHistos->Create1DHistogram(name,title,binedges);
+	  runHistos->Create1DHistogram(name,title,binedges);
+	}
+    }
+}
+
 void BDSOutputROOTEvent::Initialise() 
 {
   outputFileNumber++;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+  CreateHistograms();
+  
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   // Base root file name 
@@ -330,20 +363,4 @@ void BDSOutputROOTEvent::Flush()
   tHit->Flush();
   traj->Flush();
   evtHistos->Flush();
-}
-
-BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetEventAnalysis()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return this->evtHistos;
-}
-
-BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetRunAnalysis()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  return this->runHistos;
 }

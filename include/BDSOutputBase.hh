@@ -71,12 +71,6 @@ public:
   /// close file
   virtual void Close() = 0;
 
-
-  /// get event analysis/histogam structure
-  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
-  /// get run analysis/historgram structure
-  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
-
   /// write, close and open new file
   void Commit();
   
