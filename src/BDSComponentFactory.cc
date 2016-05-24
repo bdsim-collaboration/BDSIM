@@ -222,10 +222,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_AWAKESCREEN:
 #ifdef USE_AWAKE
     component = CreateAwakeScreen(); break; 
+#else
+    G4cerr << __METHOD_NAME__ << "Awake Screen can't be used - not compiled with AWAKE module!" << G4endl;
+    exit(1);
 #endif
   case ElementType::_AWAKESPECTROMETER:
 #ifdef USE_AWAKE
-    component = CreateAwakeSpectrometer(); break; 
+    component = CreateAwakeSpectrometer(); break;
+#else
+    G4cerr << __METHOD_NAME__ << "Awake Spectrometer can't be used - not compiled with AWAKE module!" << G4endl;
+    exit(1);
 #endif
     // common types, but nothing to do here
   case ElementType::_MARKER:
