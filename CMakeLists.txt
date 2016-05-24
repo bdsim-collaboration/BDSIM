@@ -525,7 +525,7 @@ add_subdirectory(utils)
 # For testing
 add_subdirectory(examples)
 # copy examples to build directory
-#copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examples bdsimexec)
+copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examples bdsimexec)
 
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
