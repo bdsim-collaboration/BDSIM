@@ -128,6 +128,23 @@ void SamplerAnalysis::Terminate()
   {
     std::cout << __METHOD_NAME__ << std::endl;
   }
+
+  // power sums
+  for(int a=0;a<6;++a)
+    {
+      for(int b=0;b<6;++b)
+	{
+	  for (int j = 0; j <= 4; ++j)
+	    {
+	      for (int k = 0; k <= 4; ++k)
+		{
+		  cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+		}
+	    }
+	}
+    }
+
+  
   for(int i=0;i<6;++i)
   {
     means[i] = means[i]/npart;
@@ -141,6 +158,7 @@ void SamplerAnalysis::Terminate()
     }
   }
 
+  
   for(int i=0;i<2;++i)
   {
     int j = 0;
@@ -150,24 +168,65 @@ void SamplerAnalysis::Terminate()
     optical[i][1] = covMats[j+1][j+1]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2)); //alpha
     optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));     //beta
     optical[i][3] = 0.0;
-    optical[i][4] = covMats[j][5]/covMats[5][5];                                                    //dispersion
+    optical[i][4] = covMats[j][4]/covMats[4][4];                                                    //dispersion
     optical[i][6] = 0.0;
   }
 
   for(int i=0;i<2;++i)
   {
     std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][1]<<" a = "<<optical[i][2]<<" d = "<< optical[i][3]<<std::endl;
+    std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
+    std::cout<<"mean x = "<<means[0]<<std::endl;
   }
 
-  // compute covariances
-  // cov[][][][] = ;
 }
 
 double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  int a, int b, int m, int n)
 {
-  double moment = 0.0; 
+  double moment = 0.0;
+
+  if((m == 1 && n == 0) || (m == 0 && n == 1))
+    {
+      double s_1_0 = 0.0;
+      
+      s_1_0 = powSums[a][b][m][n];
+
+      moment = s_1_0/npart;
+    }
+
+  else if((n == 2 && m == 0) || (n == 0 && m == 2))
+    {
+      double s_1_0 = 0.0, s_2_0 = 0.0;
+      if(m == 2)
+      {
+	s_1_0 = powSums[a][b][m-1][n];
+	s_2_0 = powSums[a][b][m][n];
+      }
+      else if(n == 2)
+      {
+	s_1_0 = powSums[a][b][m][n-1];
+	s_2_0 = powSums[a][b][m][n];
+      }
+
+      moment =  (npart*s_2_0 - pow(s_1_0,2))/(npart*(npart-1));
+      
+      return moment;
+    }
+
+  else if(n == 1 && m == 1)
+    {
+      double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0;
+
+      s_1_0 = powSums[a][b][m][n-1];
+      s_0_1 = powSums[a][b][m-1][n];
+      s_1_1 = powSums[a][b][m][n];
+
+      moment =  (npart*s_1_1 - s_0_1*s_1_0)/(npart*(npart-1));
+      
+      return moment;
+    }
   
-  if((n == 4 && m == 0) || (n == 0 && m == 4))
+  else if((n == 4 && m == 0) || (n == 0 && m == 4))
     {
       double s_1_0 = 0.0, s_2_0 = 0.0, s_3_0 = 0.0, s_4_0 = 0.0;
       if(m == 4)
@@ -246,4 +305,6 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
 
     return 0;
 }
+
+
 
