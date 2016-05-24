@@ -72,6 +72,14 @@ set_tests_properties(gmad-testFunctions PROPERTIES PASS_REGULAR_EXPRESSION 3.141
 # test stop command
 add_test(gmad-stop ${gmadBinary} stop.gmad)
 
+# test if construct
+add_test(gmad-if ${gmadBinary} if.gmad)
+set_tests_properties(gmad-if PROPERTIES PASS_REGULAR_EXPRESSION 2)
+
+# test if/else construct
+add_test(gmad-ifelse ${gmadBinary} ifelse.gmad)
+set_tests_properties(gmad-ifelse PROPERTIES PASS_REGULAR_EXPRESSION 2)
+
 # test access attribute
 add_test(gmad-testAccessAttribute ${gmadBinary} accessattribute.gmad)
 set_tests_properties(gmad-testAccessAttribute PROPERTIES PASS_REGULAR_EXPRESSION 0.1)

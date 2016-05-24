@@ -29,7 +29,7 @@
        3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
     */
 
-    int execute = 1;
+    bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
   }
@@ -48,12 +48,14 @@
 /* more debug output can be added with %debug" */
 //%debug
 
+// change associativity of operators
 %left '+' '-'
 %left '*' '/'
 %left '^' '<' '>' NE LE GE EQ
 %nonassoc UMINUS
 %nonassoc UPLUS
 
+// declare union value of tokens and types
 %token <dval> NUMBER
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
@@ -87,34 +89,42 @@
 
 %%
 
+// every statement ends in a semicolon 
 input : 
       | input stmt ';'
        { 
 	 if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
        }
-/*       | error input';' */
-/* { */
-/*   yyerrok; */
-/* } */
 
-stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = 1;}
-              | if_clause '{' stmt '}' ELSE '{' stmt '}' 
-                { if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" ); }
-              | atomic_stmt  { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
+// deconstruct statements into atomic statements
+stmt :        if_clause '{' stmt '}'
+              {
+		if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" );
+		execute = true;
+	      }
+              | if_clause '{' stmt '}' else_clause '{' stmt '}' 
+	      {
+		if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" );
+		execute = true;
+	      }
+              | atomic_stmt { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
               | BEGN input END { if(ECHO_GRAMMAR) printf("stmt -> '{' stmt ';' atomic_stmt '}' \n"); }
 
-if_clause: IF '(' aexpr ')' {if( ($3 > 0) && (execute > 0) ) execute = 1; else execute = 0;}
+if_clause: IF '(' aexpr ')' {if( ($3 > 0) && execute ) execute = true; else execute = false;}
 
+else_clause: ELSE
+             {
+	       if (execute) {execute = false;}
+	       else {execute = true;}
+             }
+
+// atomic statements can be an mathematical expression, a declaration or a command
 atomic_stmt : 
             | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
             | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
             | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
-            | error
-              {
-		//yyerror(" : some error message\n"); 
-		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
-	      }
 
+// instantiate an object
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
@@ -256,6 +266,7 @@ cavitymodel : CAVITYMODEL ',' cavitymodel_options
 tunnel : TUNNEL ',' tunnel_options
 xsecbias : XSECBIAS ',' xsecbias_options
 
+// every element needs parameters
 error_noparams : DRIFT
                | RF
                | SBEND
@@ -573,26 +584,30 @@ numbers : aexpr ',' numbers { if(execute) Parser::Instance()->Store($1);}
 letters : string ',' letters { if(execute) Parser::Instance()->Store(*$1);}
         | string             { if(execute) Parser::Instance()->Store(*$1);}
 
+// accept print with and without comma
+print   : PRINT
+        | PRINT ','
+
 command : STOP             { if(execute) Parser::Instance()->quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) Parser::Instance()->PrintElements(); }
-        | PRINT ',' LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
-        | PRINT ',' OPTION { if(execute) Parser::Instance()->PrintOptions(); }
-        | PRINT ',' VARIABLE
+        | print        { if(execute) Parser::Instance()->PrintElements(); }
+        | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
+        | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
+        | print VARIABLE
           {
 	    if(execute) {
-	      Symtab *sp = Parser::Instance()->symlook(*($3));
+	      Symtab *sp = Parser::Instance()->symlook(*($2));
 	      if (!sp) {
-		std::cout << "Variable " << *($3) << " not defined!" << std::endl;
+		std::cout << "Variable " << *($2) << " not defined!" << std::endl;
 	      }
 	      else {
 		sp->Print();
 	      }
 	    }
 	  }
-        | PRINT ',' NUMVAR { if(execute) $3->Print();}
-        | PRINT ',' STRVAR { if(execute) $3->Print();}
-        | PRINT ',' VECVAR { if(execute) $3->Print();} 
+        | print NUMVAR { if(execute) $2->Print();}
+        | print STRVAR { if(execute) $2->Print();}
+        | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters
         | SAMPLE ',' sample_options 
