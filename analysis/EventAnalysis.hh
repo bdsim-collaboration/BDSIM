@@ -36,11 +36,11 @@ protected:
   Event  *event;
   TChain *chain;
   std::vector<SamplerAnalysis*> samplerAnalyses;
-  std::vector<std::string>      histogramNames;     // rebdsim generated histogram names
-  std::map<std::string, TH1*>   histograms1D;       // rebdsim 1d histogram
-  std::map<std::string, TH2*>   histograms2D;       // rebdsim 2d histograms
-  HistogramMerge               *histoSum;           // bdsim histograms
-
+  std::vector<std::string>      histogramNames;                   // rebdsim generated histogram names
+  std::map<std::string, TH1*>   histograms1D;                     // rebdsim 1d histogram
+  std::map<std::string, TH2*>   histograms2D;                     // rebdsim 2d histograms
+  HistogramMerge               *histoSum;                         // bdsim histograms
+  std::vector<std::vector<std::vector<double>>> opticalFunctions; // optical functions from all samplers
   ClassDef(EventAnalysis,1);
 };
 
