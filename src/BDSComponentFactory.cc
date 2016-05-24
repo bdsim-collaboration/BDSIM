@@ -29,7 +29,6 @@
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
-#include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSCavityInfo.hh"
