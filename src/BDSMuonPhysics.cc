@@ -56,6 +56,24 @@ void BDSMuonPhysics::ConstructProcess()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
+  G4Cerenkov*        cer = nullptr;
+  G4Scintillation* scint = nullptr;
+  if (BDSGlobalConstants::Instance()->TurnOnCerenkov()) {
+    cer = new G4Cerenkov();
+    // reduce memory profile
+    cer->SetTrackSecondariesFirst(true);
+    // common settings (similar to optical physics) 
+    cer->SetMaxNumPhotonsPerStep(100);
+    cer->SetMaxBetaChangePerStep(10.0);
+    
+    // Cerenkov also needs scintillation it seems
+    scint = new G4Scintillation();
+    scint->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->ScintYieldFactor());
+    scint->SetTrackSecondariesFirst(true);
+    G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+    scint->AddSaturation(emSaturation);
+  }
+  
   aParticleIterator->reset();
 
   while( (*aParticleIterator)() )
@@ -71,6 +89,7 @@ void BDSMuonPhysics::ConstructProcess()
       }      
     if(particleName == "e+")
       {
+	// Processes for positron annihilation
 	G4AnnihiToMuPair* anni = new G4AnnihiToMuPair();
 	pmanager->AddDiscreteProcess(anni);
 	G4eeToHadrons* eetohadrons = new G4eeToHadrons();
@@ -91,28 +110,20 @@ void BDSMuonPhysics::ConstructProcess()
 	pmanager->AddProcess(mubrm);
 	G4MuPairProduction*     mupar = new G4MuPairProduction();
 	pmanager->AddProcess(mupar);
-	if (BDSGlobalConstants::Instance()->TurnOnCerenkov()) {
-	  G4Cerenkov*           mucer = new G4Cerenkov();
-	  // reduce memory profile
-	  mucer->SetTrackSecondariesFirst(true);
-	  // common settings (similar to optical physics) 
-	  mucer->SetMaxNumPhotonsPerStep(100);
-	  mucer->SetMaxBetaChangePerStep(10.0);
-	  
-	  pmanager->AddProcess(mucer);
-	  pmanager->SetProcessOrdering(mucer,idxPostStep);
+      }
 
-	  // cerenkov also needs scintillation it seems
-	  G4Scintillation* muscint = new G4Scintillation();
-	  muscint->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->ScintYieldFactor());
-	  muscint->SetTrackSecondariesFirst(true);
-	  G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
-	  muscint->AddSaturation(emSaturation);
-
-	  pmanager->AddProcess(muscint);
-	  pmanager->SetProcessOrderingToLast(muscint,idxAtRest);
-	  pmanager->SetProcessOrderingToLast(muscint,idxPostStep);
-	}
+    // turn on Cerenkov for all particles, needed for Geant4 10.1
+    if (BDSGlobalConstants::Instance()->TurnOnCerenkov())
+      {
+	if (cer->IsApplicable(*particle))
+	  {
+	    pmanager->AddProcess(cer);
+	    pmanager->SetProcessOrdering(cer,idxPostStep);
+	    // Cerenkov also needs scintillation it seems, for 10.1 and 10.2
+	    pmanager->AddProcess(scint);
+	    pmanager->SetProcessOrderingToLast(scint,idxAtRest);
+	    pmanager->SetProcessOrderingToLast(scint,idxPostStep);
+	  }
       }
     }
 }

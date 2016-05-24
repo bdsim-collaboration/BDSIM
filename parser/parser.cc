@@ -650,19 +650,13 @@ void Parser::Store(std::string name)
 
 void Parser::FillArray(Array* array)
 {
-  for(double value : tmparray)
-    {
-      array->data.push_back(value);
-    }
+  array->Copy(tmparray);
   tmparray.clear();
 }
 
 void Parser::FillString(Array* array)
-{  
-  for(std::string name : tmpstring)
-    {
-      array->symbols.push_back(name);
-    }
+{
+  array->Copy(tmpstring);
   tmpstring.clear();
 }
 
