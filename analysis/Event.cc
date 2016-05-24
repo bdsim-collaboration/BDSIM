@@ -19,6 +19,7 @@ void Event::CommonCtor()
   tunnelHit       = nullptr;
   trajectory      = nullptr;
   histos          = nullptr;
+  info            = nullptr;
 }
 #ifndef __ROOTDOUBLE__
 BDSOutputROOTEventSampler<float>*    Event::GetPrimaries() 
@@ -90,24 +91,27 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     }
   }
 
-  for(int i=0;i<(int)samplerNames.size();++i)
+  unsigned int nrSamplers = samplerNames.size();
+  samplers.resize(nrSamplers);
+  for(unsigned int i=0;i<nrSamplers;++i)
   {
-    samplersA[i] = nullptr;
-    t->SetBranchAddress(samplerNames[i].c_str(),&samplersA[i]);
+    t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
     if(Config::Instance())
     {
       if(Config::Instance()->Debug())
-        std::cout << "Event::SetBranchAddress> " << samplerNames[i].c_str() << " " << samplersA[i] << std::endl;
+        std::cout << "Event::SetBranchAddress> " << samplerNames[i].c_str() << " " << samplers[i] << std::endl;
     }
-    samplers.push_back(samplersA[i]);
   }
 }
 
 Event::~Event()
 {
-  if(Config::Instance()->Debug())
+  if(Config::Instance())
   {
-    std::cout <<"Event::~Event>" << std::endl;
+    if(Config::Instance()->Debug())
+    {
+      std::cout <<"Event::~Event>" << std::endl;
+    }
   }
   delete primaries;
   delete eloss;
