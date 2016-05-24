@@ -142,41 +142,83 @@ void SamplerAnalysis::Terminate()
 
 double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  int a, int b, int m, int n)
 {
-  double moment = 0.0;             //store the value of the moment
+  double moment = 0.0; 
   
   if((n == 4 && m == 0) || (n == 0 && m == 4))
     {
-      double s1,s2,s3,s4;
+      double s_1_0 = 0.0, s_2_0 = 0.0, s_3_0 = 0.0, s_4_0 = 0.0;
       if(m == 4)
       {
-	s1 = 0.0;
-	s2 = 0.0;
-	s3 = 0.0;
-	s4 = 0.0;
+	s_1_0 = powSums[a][b][m-3][n];
+	s_2_0 = powSums[a][b][m-2][n];
+	s_3_0 = powSums[a][b][m-1][n];
+	s_4_0 = powSums[a][b][m][n];
       }
       else if( n == 4)
       {
-	s1 = 0.0;
-	s2 = 0.0;
-	s3 = 0.0;
-	s4 = 0.0;
+	s_1_0 = powSums[a][b][m][n-3];
+	s_2_0 = powSums[a][b][m][n-2];
+	s_3_0 = powSums[a][b][m][n-1];
+	s_4_0 = powSums[a][b][m][n];
       }
 
-      moment =  (-3*pow(powSums[a][b][m-3][n],4))/pow(npart,4) + (6*pow(powSums[a][b][m-3][n],2)*powSums[a][b][m-2][n])/pow(npart,3)
-               +(-4*powSums[a][b][m-3][n]*powSums[a][b][m-1][n])/pow(npart,2) + powSums[a][b][m-3][n]/npart;
+      moment =  (-3*pow(s_1_0,4))/pow(npart,4) + (6*pow(s_1_0,2)*s_2_0)/pow(npart,3)
+               +(-4*s_1_0*s_3_0)/pow(npart,2) + s_4_0/npart;
+      
       return moment;
     }
 
-    if((m == 1 || n == 1) && m + n == 4)
+  else if((m == 3 && n == 1) || (m == 1 && n ==3))
     {
-      if(m > n)
+      double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0, s_2_0 = 0.0, s_2_1 = 0.0, s_3_0 = 0.0, s_3_1 = 0.0;
+      
+      if(m == 3)
       {
-	moment =  (-3*pow(powSums[a][b][m-2][n],3)*powSums[a][b][m-3][n])/pow(npart,4); //icomplete
+	s_1_0 = powSums[a][b][m-2][n-1];
+	s_0_1 = powSums[a][b][m-3][n];
+	s_1_1 = powSums[a][b][m-2][n];
+	s_2_0 = powSums[a][b][m-1][n-1];
+	s_2_1 = powSums[a][b][m-1][n];
+	s_3_0 = powSums[a][b][m][n-1];
+	s_3_1 = powSums[a][b][m][n];
       }
-      else
+      else if(n == 3)
       {
-	moment =   0.0; //incomplete
+	s_1_0 = powSums[a][b][m-1][n-2];
+	s_0_1 = powSums[a][b][m][n-3];
+	s_1_1 = powSums[a][b][m][n-2];
+	s_2_0 = powSums[a][b][m-1][n-1];
+	s_2_1 = powSums[a][b][m][n-1];
+	s_3_0 = powSums[a][b][m-1][n];
+	s_3_1 = powSums[a][b][m][n];
       }
+
+      moment =   (-3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*pow(s_1_0,2)*s_1_1)/pow(npart,3)
+	       + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) + (-3*s_1_0*s_2_1)/pow(npart,2)
+	       + (-s_0_1*s_3_0)/pow(npart,2) + s_3_1/npart;     
+      
+      return moment;
+    }
+
+   else if(m == 2 && n == 2)
+    {
+      double s_1_0 = 0.0, s_0_1 = 0.0, s_1_1 = 0.0, s_2_0 = 0.0, s_0_2 = 0.0, s_1_2 = 0.0, s_2_1 = 0.0, s_2_2 = 0.0;
+
+      s_1_0 = powSums[a][b][m-1][n-2];
+      s_0_1 = powSums[a][b][m-2][n-1];
+      s_1_1 = powSums[a][b][m-1][n-1];
+      s_2_0 = powSums[a][b][m][n-2];
+      s_0_2 = powSums[a][b][m-2][n];
+      s_1_2 = powSums[a][b][m-1][n];
+      s_2_1 = powSums[a][b][m][n-1];
+      s_2_2 = powSums[a][b][m][n];
+
+      moment =  (-3*pow(s_0_1,2)*pow(s_1_0,2))/pow(npart,4) + (s_0_2*pow(s_1_0,2))/pow(npart,3)
+	      + (4*s_0_1*s_1_0*s_1_1)/pow(npart,3) + (2*s_1_0*s_1_2)/pow(npart,2)
+	      + (pow(s_0_1,2)*s_2_0)/pow(npart,3) + (-2*s_0_1*s_2_1)/pow(npart,2) + s_2_2/npart;
+      
+      return moment;
+      
     }
 
     return 0;
