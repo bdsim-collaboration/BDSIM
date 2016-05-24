@@ -187,6 +187,10 @@ std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
   return optical;
 }
 
+double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  int a, int b, int m, int n)
+{
+  double moment = 0.0;
+
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
       double s_1_0 = 0.0;
