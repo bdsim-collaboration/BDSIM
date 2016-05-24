@@ -28,6 +28,22 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     this->samplerAnalyses.push_back(sa);
   }
 
+#if 0
+  opticalFunctions.resize(event->samplers.size());
+  for(int i=0;i<event->samplers.size();++i)
+  {
+    opticalFunctions[i].resize(2);
+    for(int j=0;j<2;++j)
+    {
+      opticalFunctions[i][j].resize(6);
+      for(int k=0;k<6;++k)
+      {
+        opticalFunctions[i][j][k] = 0.0;
+      }
+    }
+  }
+#endif
+
 //  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
 //  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
 }
@@ -101,6 +117,7 @@ void EventAnalysis::Terminate()
   for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
   {
     (*i)->Terminate();
+    this->opticalFunctions.push_back((*i)->GetOpticalFunctions());
   }
 
   histoSum->Terminate();
@@ -218,4 +235,29 @@ void EventAnalysis::Write(TFile *outputFile)
   TDirectory *bdsimDir = outputFile->mkdir("bdsimEventMergedHistograms");
   bdsimDir->cd();
   this->histoSum->Write(outputFile);
+
+
+  outputFile->cd("/");
+
+  double *xOpticsPoint = nullptr;
+  double *yOpticsPoint = nullptr;
+
+  // write optical functions
+  TTree *opticsTree = new TTree("optics","optics");
+  opticsTree->Branch("Emitt_x",&(xOpticsPoint[0]),"Emitt_x/D");
+  opticsTree->Branch("Emitt_y",&(yOpticsPoint[0]),"Emitt_y/D");
+
+  for(auto i : this->opticalFunctions)
+  {
+    std::cout << "-------------" << std::endl;
+    std::cout << i[0][0] << " " << i[1][0] << std::endl;
+    xOpticsPoint = &(i[0][0]);
+    yOpticsPoint = &(i[1][0]);
+    xOpticsPoint[0] = 10.0;
+    yOpticsPoint[0] = 15.0;
+    std::cout << xOpticsPoint[0] << " " << yOpticsPoint[0] << std::endl;
+    opticsTree->Fill();
+  }
+  opticsTree->Write();
+
 }

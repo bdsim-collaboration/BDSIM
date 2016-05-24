@@ -126,7 +126,7 @@ void SamplerAnalysis::Terminate()
 {
   if(Config::Instance()->Debug())
   {
-    std::cout << __METHOD_NAME__ << std::endl;
+    std::cout << __METHOD_NAME__ << this->s->modelID << " " << npart << std::endl;
   }
 
   // power sums
@@ -158,18 +158,17 @@ void SamplerAnalysis::Terminate()
     }
   }
 
-  
   for(int i=0;i<2;++i)
   {
     int j = 0;
     if(i== 1) j = 2;
 
-    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));                   //emittance
-    optical[i][1] = covMats[j+1][j+1]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2)); //alpha
-    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));     //beta
-    optical[i][3] = 0.0;
-    optical[i][4] = covMats[j][4]/covMats[4][4];                                                    //dispersion
-    optical[i][6] = 0.0;
+    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));                   // emittance
+    optical[i][1] = covMats[j+1][j+1]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2)); // alpha
+    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));     // beta
+    optical[i][3] = 0.0;                                                                            // gamma
+    optical[i][4] = covMats[j][5]/covMats[5][5];                                                    // eta
+    optical[i][6] = 0.0;                                                                            // eta prime
   }
 
   for(int i=0;i<2;++i)
@@ -179,6 +178,13 @@ void SamplerAnalysis::Terminate()
     std::cout<<"mean x = "<<means[0]<<std::endl;
   }
 
+  // compute covariances
+  // cov[][][][] = ;
+}
+
+std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
+{
+  return optical;
 }
 
 double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  int a, int b, int m, int n)
@@ -382,5 +388,4 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
   return 0;
   
 }
-
 
