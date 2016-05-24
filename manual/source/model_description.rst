@@ -117,6 +117,7 @@ Useful Commands
 * :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
+* :code:`if () {} else {};` if-else construct
 
 Lattice Description
 -------------------
