@@ -26,11 +26,12 @@ protected:
 
   typedef std::vector<std::vector<double>>                           twoDArray;
   typedef std::vector<std::vector<std::vector<std::vector<double>>>> fourDArray;
-  std::vector<double>               means;
-  std::vector<double>               sums;
+  std::vector<double>               means;       // x, xp, y, yp, E, t 
+  std::vector<double>               sums;        // not used
   fourDArray                        powSums;
-  twoDArray                         covMats;
   fourDArray                        cenMoms;
+  twoDArray                         covMats;
+  twoDArray                         optical;     // e, ax, gx, etax, bx, ay, gy, by, etay
 
-  static double powSumToCentralMoment(fourDArray &powSum, int i, int j, int m, int n);
+  static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
 };
