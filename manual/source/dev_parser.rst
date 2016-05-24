@@ -60,15 +60,24 @@ The C declarations are a few global variables.
 Bison tokens
 ^^^^^^^^^^^^
 
-Bison tokens and types are from a union and these can be one of the following types:
+Bison tokens (translated directly with the library) and types (more general variables) are from a union and these can be one of the following types:
 
  * double
  * int (for the enum class ElementType)
  * std::string* (a pointer so its size can fit in the union; its memory is stored in the Parser class)
  * GMAD::Array*
- * GMAD::Symtab* (a pointer to a general symbol class, which can represent a double, string, GMAD::Array or a function)
+ * GMAD::Symtab* (a pointer to a general symbol / variable class, which can represent a double, string, GMAD::Array or a function)
 
-The union type of the tokens are defined in the Bison declaration section of :code:`parser.y`.
+The union type of the tokens are defined in the Bison declaration section of :code:`parser.y`, for example::
+
+  %token <str> STR
+  %type <dval> aexpr
+
+*STR* is a token of type string, and *aexpr* is general number of type double. 
+
+Tokens can also have no value attached to it at all::
+  
+  %token MATERIAL
 
 Grammar rules
 ^^^^^^^^^^^^^
@@ -78,18 +87,15 @@ The grammar rules define a syntax tree. Bison is a bottom-up parser. It tries, b
   // every statement ends in a semicolon 
   input : 
         | input stmt ';'
-        { 
-          if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
-        }
 
 This rule is split in two parts:
 
 * input can be empty (indicated by no text after the colon)
-* or it is a recursive rule, where it breaks the input into statements with ending with a semicolon.
+* or it is a recursive rule, where it breaks the input into statements with ending with a semicolon. 
 
 A rule can be split into as many parts as possible.
 
-Another example is are the atomic statements::
+Another example is are the atomic statements (single lines without if constructs)::
 
    // atomic statements can be an mathematical expression, a declaration or a command
    atomic_stmt : 
@@ -97,13 +103,16 @@ Another example is are the atomic statements::
    | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
    | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
 
-Rules can be tokens and types as well, and can have a value. The rule for addition loks like:
+The part in the brackets is the actual C-code.
 
-   
-aexpr   | aexpr '+' aexpr      { $$ = $1 + $3;                    }
+Rules can be tokens and types as well, and can have a value. For example, the rule for addition looks like::
 
+  aexpr   | aexpr '+' aexpr      { $$ = $1 + $3;}
 
-   
+*aexpr* is a variable of type double. The rule reduces the syntax "number + number" to a single number. The new value (indicated with $$) will be the value of the first token ($1) and the third token ($3). Note that the second token is '+'.
+
+Debug
+^^^^^
 
 Since adding or changing Bison rules can often have unforseen consequences, 
 it is strongly recommended that when extending the GMAD language to first write a test case for it and check that it fails. There are many GMAD CMake tests in the *parser/test* directory.
