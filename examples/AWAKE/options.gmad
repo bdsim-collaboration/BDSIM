@@ -17,16 +17,19 @@ myDeltaChord=25*myChordStepMinimum;
 myMinimumEpsilonStep=1e-9;
 myMaximumEpsilonStep=100*myMinimumEpsilonStep;
 
-tunOffY=tunRad-beamCeilH;
+tunOffY=-(tunRad-beamCeilH);
 tunFlOff=floorOffset-tunRad+beamCeilH;
 tunAp2=beamCeilH+tunOffY;
 
+!print, tunFlOff;
+!print, tunAp2;
+!print, tunOffY;
 
 option, beampipeRadius = bpRad,
         boxSize = 50 * cm,
 	tunnelMaterial = "lhcconcrete",
-	buildTunnel=0,
-	tunnelType="rectangular",	
+	buildTunnel=1,
+	tunnelType="circular",	
 	tunnelFloorOffset=tunFlOff,
 	tunnelAper2=tunRad,
 	tunnelAper1=tunRad,
