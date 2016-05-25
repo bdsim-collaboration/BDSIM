@@ -157,7 +157,7 @@ void BDSOutputROOTEvent::Initialise()
 
   // Build primary structures
   theRootOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
-  samplerMap["Primary"] = primary;
+  //  samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
   // Build loss and hit structures

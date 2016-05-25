@@ -19,7 +19,22 @@ The test system is based on CTest, which works in combination with CMake. Tests 
 :code:`CMakeLists.txt` file beside each example declaring the main gmad file as well as any
 optional command line arguments.
 
-Submissions to the `BDSIM test server <http://abp-cdash.web.cern.ch/abp-cdash/index.php?project=BDSIM>`_ can be done with the example configuration file cmake/cdash_bdsim.cmake. Adjust it to your settings and run::
+Useful ctest commands (can all be combined):
+
+* ctest -N : print tests without execution
+* ctest -R <regexp> : execute tests that match regexp
+* ctest -E LONG : execute tests that don't have LONG in name (opposite of -R)
+* ctest -I 5,5 : only execute test 5
+* ctest -VV : print output to screen
+
+For example to find the test command for the sextupole component test:
+
+ctest -R Component-Sextupole -N -VV
+
+Test Server
+===========
+
+The test server is based on CDash. Submissions to the `BDSIM test server <http://abp-cdash.web.cern.ch/abp-cdash/index.php?project=BDSIM>`_ can be done with the example configuration file cmake/cdash_bdsim.cmake. Adjust it to your settings and run::
 
   ctest --timeout 900 -S cdash_bdsim.cmake
 

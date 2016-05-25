@@ -78,7 +78,7 @@ void HistogramMerge::Terminate()
     std::cout << "terminate " << std::endl;
   }
   // loop over 1d histograms
-  for(auto i=0;i< histograms1D.size();++i)
+  for(unsigned int i=0;i< histograms1D.size();++i)
   {
     auto h1  = histograms1D[i];
     auto h1e = histograms1DError[i];
