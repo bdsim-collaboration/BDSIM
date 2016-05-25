@@ -29,8 +29,8 @@ void SamplerAnalysis::CommonCtor()
   optical.resize(2); //test with limited opt. funcs for now  ex, bx, ax, ey, by, ay
   for(int i=0;i<2;++i)
   {
-    optical[i].resize(6);
-    for(int j=0;j<6;++j)
+    optical[i].resize(7); //RESIZE TO CORRECT LENGTH!!
+    for(int j=0;j<7;++j)
     {
       optical[i][j]=0.0;
     }
@@ -163,17 +163,17 @@ void SamplerAnalysis::Terminate()
     int j = 0;
     if(i== 1) j = 2;
 
-    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));                   // emittance
-    optical[i][1] = covMats[j+1][j+1]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2)); // alpha
-    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]+pow(covMats[j][j+1],2));     // beta
+    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));                   // emittance
+    optical[i][1] = -(covMats[j][j+1])/(sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2))); // alpha
+    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));     // beta
     optical[i][3] = 0.0;                                                                            // gamma
-    optical[i][4] = covMats[j][5]/covMats[5][5];                                                    // eta
-    optical[i][6] = 0.0;                                                                            // eta prime
+    optical[i][4] = covMats[j][4]/covMats[4][4];                                                    // eta
+    optical[i][6] = covMats[j+1][4]/covMats[4][4];                                                  // eta prime
   }
 
   for(int i=0;i<2;++i)
   {
-    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][1]<<" a = "<<optical[i][2]<<" d = "<< optical[i][3]<<std::endl;
+    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][2]<<" a = "<<optical[i][1]<<" d = "<< optical[i][4]<<std::endl;
     std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
     std::cout<<"mean x = "<<means[0]<<std::endl;
   }
