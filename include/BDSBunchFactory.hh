@@ -15,7 +15,7 @@ class BDSBunchFactory {
 
 public:
   /// factory method
-  static BDSBunchInterface* createBunch(G4String distribType);
+  static BDSBunchInterface* createBunch(G4String distribType, G4String distribFile = "");
 };
 
 #endif
