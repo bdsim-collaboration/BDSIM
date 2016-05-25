@@ -5,7 +5,7 @@ include options.gmad;
 !include beam/proton/baseline.gmad
 !include beam/witness/onAxisInjection/jul14/e_beam.gmad
 !option, nperfile=10000, ngenerate=10000;
-!include beam/test/testBeam_0_to_10GeV.gmad
+include beam/test/testBeam_0_to_10GeV.gmad
 !include beam/test/testBeam_4_to_0GeV.gmad
 !include beam/test/testBeam_170MeV_to_2GeV.gmad
 !include beam/test/testBeam_1GeV.gmad
@@ -15,17 +15,17 @@ include options.gmad;
 beamEnergy=2*GeV;     !400GeV protons: 1.3GeV electrons
 !beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad strength
 
-beam, particle="e-",
-      energy=beamEnergy,
-      distrType="gausstwiss",
-      emitx=1e-10*m,
-      emity=1e-10*m,
-      betx=1e-6*m,
-      bety=1e-6*m,
-      alfx=0.0,
-      alfy=0.0,
-      X0=0.000,
-      Y0=0.000;
+!beam, particle="e-",
+!      energy=beamEnergy,
+!      distrType="gausstwiss",
+!      emitx=1e-10*m,
+!      emity=1e-10*m,
+!      betx=1e-6*m,
+!      bety=1e-6*m,
+!      alfx=0.0,
+!      alfy=0.0,
+!      X0=0.000,
+!      Y0=0.000;
 
 !beam, distrType="square",
 !particle="e-",
