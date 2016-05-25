@@ -163,7 +163,7 @@ public:
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
-  inline G4String EmptyMaterial()            const {return "G4_Galactic";}
+  inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
   inline G4bool   IncludeIronMagFields()     const {return false;}
   inline G4bool   TurnOnCerenkov()           const {return G4bool  (options.turnOnCerenkov);}
