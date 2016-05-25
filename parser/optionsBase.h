@@ -177,7 +177,7 @@ namespace GMAD
     std::string outerMaterialName;
     double      outerDiameter;
 
-    /// geometry debug
+    /// geometry debug, don't split bends into multiple segments
     bool        dontSplitSBends;
 
     bool        includeIronMagFields;
@@ -190,8 +190,12 @@ namespace GMAD
     double      aper3;
     double      aper4;
     std::string beampipeMaterial;
-    std::string vacMaterial;
     ///@}
+
+    /// vacuum material
+    std::string vacMaterial;
+    /// world volume
+    std::string emptyMaterial;
     
     ///@{ tunnel geometry parameters
     bool        buildTunnel;

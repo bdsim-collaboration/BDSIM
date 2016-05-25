@@ -33,7 +33,11 @@ public :
   BDSOutputROOTEventTrajectory* GetTrajectory();
   void SetBranchAddress(TChain *, std::vector<std::string>&);
 
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double>       *primaries;
+#else
   BDSOutputROOTEventSampler<float>        *primaries;
+#endif
   BDSOutputROOTEventLoss                  *eloss;
   BDSOutputROOTEventHit                   *primaryFirstHit;
   BDSOutputROOTEventHit                   *primaryLastHit;

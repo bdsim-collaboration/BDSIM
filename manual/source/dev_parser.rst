@@ -91,31 +91,35 @@ The grammar rules define a syntax tree. Bison is a bottom-up parser. It tries, b
 This rule is split in two parts:
 
 * input can be empty (indicated by no text after the colon)
-* or it is a recursive rule, where it breaks the input into statements with ending with a semicolon. 
+* or it is a recursive rule, where it breaks the input into statements (*stmt*) with ending with a semicolon.
 
 A rule can be split into as many parts as possible.
 
-Another example is are the atomic statements (single lines without if constructs)::
+Another example are the atomic statements (single lines without if constructs)::
 
    // atomic statements can be an mathematical expression, a declaration or a command
    atomic_stmt : 
-   | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
+   | expr     { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
    | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
-   | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
+   | decl     { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
 
-The part in the brackets is the actual C-code.
+The part inside the brackets is the actual C-code, which is only debug printout in this case.
+The rules for *expr*, *command* and *decl* are defined elsewhere.
 
 Rules can be tokens and types as well, and can have a value. For example, the rule for addition looks like::
 
   aexpr   | aexpr '+' aexpr      { $$ = $1 + $3;}
 
-*aexpr* is a variable of type double. The rule reduces the syntax "number + number" to a single number. The new value (indicated with $$) will be the value of the first token ($1) and the third token ($3). Note that the second token is '+'.
+*aexpr* is a variable of type double. The rule reduces the syntax "number + number" to a single number.
+The new value (indicated with $$) will be the value of the first token ($1) plus the third token ($3).
+Note that the second token is '+'.
 
-Debug
-^^^^^
+Debugging
+^^^^^^^^^
 
 Since adding or changing Bison rules can often have unforseen consequences, 
-it is strongly recommended that when extending the GMAD language to first write a test case for it and check that it fails. There are many GMAD CMake tests in the *parser/test* directory.
+it is strongly recommended that when extending the GMAD language to first write a test case for it and check that it fails.
+There are many GMAD CMake tests in the *parser/test* directory.
 
 Often the compiler will complain when the rules are inconsistent
 and the CMake tests cover many syntax cases which all should still work.
@@ -124,4 +128,3 @@ For debugging there are several options in :code:`parser.y`, all of which need r
  * The variables ECHO_GRAMMAR and INTERACTIVE can be switched on for extra output
  * Compile Bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
  * Uncomment the line with %debug. This will print out the token stack after each step.
-
