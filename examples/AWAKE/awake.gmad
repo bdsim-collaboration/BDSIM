@@ -5,7 +5,7 @@ include options.gmad;
 !include beam/proton/baseline.gmad
 !include beam/witness/onAxisInjection/jul14/e_beam.gmad
 !option, nperfile=10000, ngenerate=10000;
-include beam/test/testBeam_0_to_10GeV.gmad
+!include beam/test/testBeam_0_to_10GeV.gmad
 !include beam/test/testBeam_4_to_0GeV.gmad
 !include beam/test/testBeam_170MeV_to_2GeV.gmad
 !include beam/test/testBeam_1GeV.gmad
@@ -15,8 +15,9 @@ include beam/test/testBeam_0_to_10GeV.gmad
 beamEnergy=2*GeV;     !400GeV protons: 1.3GeV electrons
 beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad strength
 
-!beam, particle="e-",
-!      energy=beamEnergy,
+beam, particle="e-",
+      energy=beamEnergy;
+
 !      distrType="gausstwiss",
 !      emitx=1e-10*m,
 !      emity=1e-10*m,
@@ -36,7 +37,7 @@ beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad stren
 !envelopeYp=0*20*mrad,
 !envelopeE=0.1*GeV;
 
-option, ngenerate=1000, nperfile=1000;
+!option, ngenerate=1000, nperfile=1000;
 
 
 !quad geometry
@@ -147,13 +148,13 @@ d5: drift, aper=def_aper, l=345*mm-quad_length_diff/2;
 !baseline quad correction factor: subtract 7 percent
 quadCorrFactor=0.93;
 
-qf0: quadrupole, l=quad_effective_length, aper=def_aper,
-k1=quadCorrFactor*quadStrength;
+qf0: drift, l=quad_effective_length, aper=def_aper;
+!k1=quadCorrFactor*quadStrength;
 !,tunnelOffsetX=tunOffX;!, material="vacuum";
 d6: drift,l=210*mm-quad_length_diff, aper=def_aper;
 !,tunnelOffsetX=tunOffX;
-qd0: quadrupole, l=quad_effective_length, aper=def_aper,
-k1=-1*quadStrength;
+qd0: drift, l=quad_effective_length, aper=def_aper;
+!k1=-1*quadStrength;
 !,tunnelOffsetX=tunOffX;!, material="vacuum";
 d7: drift,l=1*mum, aper=def_aper;
 !,tunnelOffsetX=tunOffX;

@@ -5,6 +5,7 @@
 #include "BDSMaterials.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
+#include "BDSDebug.hh"
 
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"
@@ -100,14 +101,15 @@ void BDSMultilayerScreen::placeLayers(){
 
   for(unsigned int i=0; i<screenLayers.size(); i++){
     pos.setZ(screenLayerZPos[i]);
+    G4cout << __METHOD_NAME__ <<": placing screen layer with ID: " << screenLayers[i]->GetSamplerID() << G4endl;
     screenLayers[i]->SetPhys(new G4PVPlacement((G4RotationMatrix*)nullptr,  //Create a new physical volume placement for each groove in the screen.
-					     pos,
-					     screenLayers[i]->GetLog(),
-					     (G4String)(screenLayers[i]->GetName()),
-					     log,
-					     false,
-					     0,
-					     true
+					       pos,
+					       screenLayers[i]->GetLog(),
+					       (G4String)(screenLayers[i]->GetName()),
+					       log,
+					       false,
+					       screenLayers[i]->GetSamplerID(),
+					       true
 					     )
 			   );
   }

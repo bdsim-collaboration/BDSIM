@@ -71,18 +71,8 @@ void BDSAwakeMultilayerScreen::layers()
 
 void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bool bSampler)
 {
-  G4String samplerName;
-  if(bSampler)
-    {
-      G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers()+1;
-      samplerName = "Sampler_" + std::to_string(nThisSampler) + "_" + name;
-    }
-  else
-    {
-      samplerName=name;
-    }
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),1*CLHEP::um),
-					   samplerName,
+					   name,
                                            material,
 					   0,
 					   0);

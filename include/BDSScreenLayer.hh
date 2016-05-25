@@ -35,6 +35,9 @@ public:
   /// Make this plane a sampling plane.
   void sampler(); 
 
+  //Get the sampler ID.
+  G4int GetSamplerID(){return samplerID;}
+
 protected:
   /// protected constructor, currently used by AWAKE/BDSMultiFacetLayer
   BDSScreenLayer();
@@ -86,6 +89,8 @@ private:
   /// Counter for the number of grooves etched into the screen.
   G4int nGrooves = 0;
   G4Colour colour;
+
+  G4int samplerID;
 
 };
 

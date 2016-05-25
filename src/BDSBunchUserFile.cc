@@ -3,7 +3,7 @@
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
-#define BDSDEBUG 1
+
 BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0)
 {
 #ifdef BDSDEBUG 

@@ -30,6 +30,7 @@ BDSScreenLayer::BDSScreenLayer (G4ThreeVector sizeIn,
   grooveWidth(grooveWidthIn),
   grooveSpatialFrequency(grooveSpatialFrequencyIn)
 {
+  samplerID=0;
   colour=G4Colour(0.1,0.8,0.1,0.3);
   build();
 }
@@ -195,10 +196,11 @@ void BDSScreenLayer::InternalMirror::compute(){
 
 void BDSScreenLayer::sampler()
 {
-  G4String samplerName = name + "_1";
+  G4String samplerName = name;
 
   log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-  BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
+  samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
+  
 
 #ifndef NOUSERLIMITS
   G4double maxStepFactor=0.5;
