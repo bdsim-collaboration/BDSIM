@@ -339,9 +339,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
 
 double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  int a, int i, int j)
 {
-  //Calculates the matrix elements os the covariance matrix which is a 3x3 symmetric matrix because coupling is ignored. Inputs are:
-  //int a: plane specifier (a=0: horizontal, a=2: vertical, a=4: longitudinal)
-  //int i,j: indices of matrix elements
+  // Calculates the matrix elements os the covariance matrix which is a 3x3 symmetric matrix because coupling is ignored. Inputs are:
+  // int a: plane specifier (a=0: horizontal, a=2: vertical, a=4: longitudinal)
+  // int i,j: indices of matrix elements
   
   double cov = 0.0;
 
@@ -351,14 +351,14 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       
       if(i == 1)
       {	
-	m_4_0 = centMoms[a][a+1][4][0];
-	m_2_0 = centMoms[a][a+1][2][0];
+	      m_4_0 = centMoms[a][a+1][4][0];
+	      m_2_0 = centMoms[a][a+1][2][0];
       }
       
       else if(i == 2)
       {
-	m_4_0 = centMoms[a][a+1][0][4];
-	m_2_0 = centMoms[a][a+1][0][4];
+	      m_4_0 = centMoms[a][a+1][0][4];
+	      m_2_0 = centMoms[a][a+1][0][4];
       }
 
       cov = ((npart-3)*pow(m_2_0,2))/(npart*(npart-1)) + m_4_0/npart;
@@ -378,39 +378,36 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
     }
 
   else if((i == 1 && j == 2) || (i == 2 && j == 3))
+  {
+    double m_1_1 = 0.0, m_2_0 = 0.0, m_3_1 = 0.0;
+
+    if(i == 1)
     {
-      double m_1_1 = 0.0, m_2_0 = 0.0, m_3_1 = 0.0;
-
-      if(i == 1)
-	{
-	  m_1_1 = centMoms[a][a+1][1][1];
-	  m_2_0 = centMoms[a][a+1][2][0];
-	  m_3_1 = centMoms[a][a+1][3][1];
-	}
-
-      else if(i == 2)
-	{
-	  m_1_1 = centMoms[a][a+1][1][1];
-	  m_2_0 = centMoms[a][a+1][0][2];
-	  m_3_1 = centMoms[a][a+1][1][3];
-	}
-
-      cov = ((npart-3)*m_1_1*m_2_0)/(npart*(npart-1)) + m_3_1/npart;
+      m_1_1 = centMoms[a][a+1][1][1];
+      m_2_0 = centMoms[a][a+1][2][0];
+      m_3_1 = centMoms[a][a+1][3][1];
     }
-
-  else if(i == 1 && j == 3)
+    else if(i == 2)
     {
-      double m_1_1 = 0.0, m_2_0 = 0.0, m_0_2 = 0.0,  m_2_2 = 0.0;
-      
       m_1_1 = centMoms[a][a+1][1][1];
       m_2_0 = centMoms[a][a+1][0][2];
-      m_0_2 = centMoms[a][a+1][2][0];
-      m_2_2 = centMoms[a][a+1][2][2];
-
-      cov = 2*pow(m_1_1,2)/(npart*(npart-1)) + (-m_0_2*m_2_0)/npart + m_2_2/npart; 
+      m_3_1 = centMoms[a][a+1][1][3];
     }
-  
+
+    cov = ((npart-3)*m_1_1*m_2_0)/(npart*(npart-1)) + m_3_1/npart;
+  }
+  else if(i == 1 && j == 3)
+  {
+    double m_1_1 = 0.0, m_2_0 = 0.0, m_0_2 = 0.0,  m_2_2 = 0.0;
+      
+    m_1_1 = centMoms[a][a+1][1][1];
+    m_2_0 = centMoms[a][a+1][0][2];
+    m_0_2 = centMoms[a][a+1][2][0];
+    m_2_2 = centMoms[a][a+1][2][2];
+
+    cov = 2*pow(m_1_1,2)/(npart*(npart-1)) + (-m_0_2*m_2_0)/npart + m_2_2/npart;
+  }
+
   return 0;
-  
 }
 
