@@ -3,7 +3,7 @@
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
-
+#define BDSDEBUG 1
 BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0)
 {
 #ifdef BDSDEBUG 
@@ -291,18 +291,21 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef BDSDEBUG 
 	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+#endif
+	E+=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+#ifdef BDSDEBUG 
+	G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
+	G4cout << "******** Particle Total Energy = " << E << G4endl;
 	G4cout<< __METHOD_NAME__ << E <<G4endl;
 #endif
       }
       else if(it->name=="E") { 
 	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef BDSDEBUG 
-	G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
-	G4cout << "******** Particle Total Energy = " << E << G4endl;
+
 #endif
-	E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
 #ifdef BDSDEBUG 
-	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+	G4cout << "******** Particle Total Energy = " << E << G4endl;
 	G4cout<< __METHOD_NAME__ << E <<G4endl;
 #endif
       }
