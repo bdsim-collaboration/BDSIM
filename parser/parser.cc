@@ -219,20 +219,6 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
       // clean list
       tmp_list.clear();
     }
-
-  switch(type) {
-
-  case ElementType::_MATERIAL:
-    material_list.push_back(e);
-    return;
-    
-  case ElementType::_ATOM:
-    atom_list.push_back(e);
-    return;
-    
-  default:
-    break;
-  }
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
@@ -497,6 +483,30 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
   set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
+void Parser::add_atom()
+{
+  // copy from global
+  Atom t(atom);
+  // reset region
+  atom.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  atom_list.push_back(t);
+}
+
+void Parser::add_material()
+{
+  // copy from global
+  Material t(material);
+  // reset region
+  material.clear();
+#ifdef BDSDEBUG 
+  t.print();
+#endif
+  material_list.push_back(t);
+}
+
 void Parser::add_region()
 {
   // copy from global
@@ -638,19 +648,13 @@ void Parser::Store(std::string name)
 
 void Parser::FillArray(Array* array)
 {
-  for(double value : tmparray)
-    {
-      array->data.push_back(value);
-    }
+  array->Copy(tmparray);
   tmparray.clear();
 }
 
 void Parser::FillString(Array* array)
-{  
-  for(std::string name : tmpstring)
-    {
-      array->symbols.push_back(name);
-    }
+{
+  array->Copy(tmpstring);
   tmpstring.clear();
 }
 

@@ -6,10 +6,12 @@
 #include <string>
 #include <vector>
 
+#include "atom.h"
 #include "cavitymodel.h"
 #include "element.h"
-#include "fastlist.h"
 #include "elementtype.h"
+#include "fastlist.h"
+#include "material.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
@@ -74,6 +76,10 @@ namespace GMAD
     void add_sampler(std::string name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
     void add_csampler(std::string name, int count, ElementType type);
+    /// insert atom
+    void add_atom();
+    /// insert material
+    void add_material();
     /// insert region
     void add_region();
     /// insert cavity model
@@ -107,6 +113,12 @@ namespace GMAD
     /// Set parameter value
     template <typename T>
       void SetParameterValue(std::string property, T value);
+    /// Set atom value
+    template <typename T>
+      void SetAtomValue(std::string property, T value);
+    /// Set material value
+    template <typename T>
+      void SetMaterialValue(std::string property, T value);
     /// Set region value
     template <typename T>
       void SetRegionValue(std::string property, T value);
@@ -172,6 +184,10 @@ namespace GMAD
     Parameters params;
     /// General options
     Options options;
+    /// Atom instance;
+    Atom atom;
+    /// Material instance;
+    Material material;
     /// Region instance;
     Region region;
     /// Tunnel instance
@@ -189,10 +205,10 @@ namespace GMAD
     
     /// Beamline
     FastList<Element>   beamline_list;
-    /// List of parser defined materials
-    std::list<Element>  material_list;
     /// List of parser defined atoms
-    std::list<Element>  atom_list;
+    std::vector<Atom>   atom_list;
+    /// List of parser defined materials
+    std::vector<Material> material_list;
     /// List of parser defined regions
     std::vector<Region> region_list;
     /// List of parser defined tunnels
@@ -212,6 +228,16 @@ namespace GMAD
     void Parser::SetParameterValue(std::string property, T value)
     {
       params.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetAtomValue(std::string property, T value)
+    {
+      atom.set_value(property, value);
+    }
+  template <typename T>
+    void Parser::SetMaterialValue(std::string property, T value)
+    {
+      material.set_value(property, value);
     }
   template <typename T>
     void Parser::SetRegionValue(std::string property, T value)

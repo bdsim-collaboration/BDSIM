@@ -113,7 +113,6 @@ void Array::Clear()
 
 void Array::Print()
 {
-  
   for(double d : data)
     {
       std::cout << d << " ";

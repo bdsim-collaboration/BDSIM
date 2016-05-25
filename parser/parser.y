@@ -29,7 +29,7 @@
        3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
     */
 
-    int execute = 1;
+    bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
   }
@@ -41,27 +41,28 @@
   double dval;
   int ival; // ElementType, but underlying type as it is not possible to have enum class in union, rely on static_casts
   GMAD::Symtab *symp;
-  std::string* str;
+  std::string *str;
   GMAD::Array *array;
 }
 
 /* more debug output can be added with %debug" */
 //%debug
 
+// change associativity of operators
 %left '+' '-'
 %left '*' '/'
 %left '^' '<' '>' NE LE GE EQ
 %nonassoc UMINUS
 %nonassoc UPLUS
 
+// declare union value of tokens and types
 %token <dval> NUMBER
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
-%token <ival> MATERIAL ATOM
-%token ALL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -74,7 +75,7 @@
 %type <ival> component component_with_params newinstance
 %type <str> sample_options
 %type <str> csample_options
-%type <str> paramassign
+%type <str> paramassign string
 
 /* printout format for debug output */
 /*
@@ -88,39 +89,42 @@
 
 %%
 
+// every statement ends in a semicolon 
 input : 
       | input stmt ';'
        { 
 	 if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
        }
-/*       | error input';' */
-/* { */
-/*   yyerrok; */
-/* } */
-;
 
-
-stmt :          if_clause '{' stmt '}' { if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" ); execute = 1;}
-              | if_clause '{' stmt '}' ELSE '{' stmt '}' 
-                { if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" ); }
-              | atomic_stmt  { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
+// deconstruct statements into atomic statements
+stmt :        if_clause '{' stmt '}'
+              {
+		if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" );
+		execute = true;
+	      }
+              | if_clause '{' stmt '}' else_clause '{' stmt '}' 
+	      {
+		if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" );
+		execute = true;
+	      }
+              | atomic_stmt { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
               | BEGN input END { if(ECHO_GRAMMAR) printf("stmt -> '{' stmt ';' atomic_stmt '}' \n"); }
-;
 
-if_clause: IF '(' aexpr ')' {if( ($3 > 0) && (execute > 0) ) execute = 1; else execute = 0;}
-;
+if_clause: IF '(' aexpr ')' {if( ($3 > 0) && execute ) execute = true; else execute = false;}
 
+else_clause: ELSE
+             {
+	       if (execute) {execute = false;}
+	       else {execute = true;}
+             }
+
+// atomic statements can be an mathematical expression, a declaration or a command
 atomic_stmt : 
             | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
             | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
             | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
-            | error
-              {
-		//yyerror(" : some error message\n"); 
-		if(ECHO_GRAMMAR) printf("\natomic_stmt -> error\n");
-	      }
-;
 
+// instantiate an object
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
@@ -169,6 +173,24 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->OverwriteElement(*$1);
 	   }
        }
+     | VARIABLE ':' atom
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : atom" << std::endl;
+	     Parser::Instance()->SetAtomValue("name",*($1));
+	     Parser::Instance()->add_atom();
+           }
+       }
+     | VARIABLE ':' material
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
+	     Parser::Instance()->SetMaterialValue("name",*($1));
+	     Parser::Instance()->add_material();
+           }
+       }
      | VARIABLE ':' tunnel
        {
          if(execute)
@@ -212,7 +234,6 @@ decl : VARIABLE ':' component_with_params
 	    yyerror("ERROR: Element needs parameters");
 	  }
       }
-;
 
 component_with_params : component ',' parameters
 
@@ -237,41 +258,41 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
-          | MATERIAL    {$$=static_cast<int>(ElementType::_MATERIAL);}
-          | ATOM        {$$=static_cast<int>(ElementType::_ATOM);}
-;
 
-region : REGION ',' region_options ;
-cavitymodel : CAVITYMODEL ',' cavitymodel_options ;
-tunnel : TUNNEL ',' tunnel_options ;
-xsecbias : XSECBIAS ',' xsecbias_options ;
+atom : ATOM ',' atom_options
+material : MATERIAL ',' material_options
+region : REGION ',' region_options
+cavitymodel : CAVITYMODEL ',' cavitymodel_options
+tunnel : TUNNEL ',' tunnel_options
+xsecbias : XSECBIAS ',' xsecbias_options
 
-error_noparams : DRIFT;
-               | RF;
-               | SBEND;
-               | RBEND;
-               | VKICK;
-               | HKICK;
-               | QUADRUPOLE;
-               | SEXTUPOLE;
-               | OCTUPOLE;
-               | DECAPOLE;
-               | MULTIPOLE;
-               | SOLENOID;
-               | ECOL;
-               | MUSPOILER;
-               | RCOL;
-               | LASER;
-               | SCREEN;
-               | AWAKESCREEN;
-               | TRANSFORM3D;
-               | ELEMENT;
-               | MATERIAL;
-               | ATOM;
-               | REGION;
-               | CAVITYMODEL;
-               | TUNNEL;
-               | XSECBIAS;
+// every element needs parameters
+error_noparams : DRIFT
+               | RF
+               | SBEND
+               | RBEND
+               | VKICK
+               | HKICK
+               | QUADRUPOLE
+               | SEXTUPOLE
+               | OCTUPOLE
+               | DECAPOLE
+               | MULTIPOLE
+               | SOLENOID
+               | ECOL
+               | MUSPOILER
+               | RCOL
+               | LASER
+               | SCREEN
+               | AWAKESCREEN
+               | TRANSFORM3D
+               | ELEMENT
+               | MATERIAL
+               | ATOM
+               | REGION
+               | CAVITYMODEL
+               | TUNNEL
+               | XSECBIAS
 
 newinstance : VARIABLE ',' parameters
             {
@@ -285,7 +306,6 @@ newinstance : VARIABLE ',' parameters
 		$$ = Parser::Instance()->copy_element_to_params(*$1);
 	      }
 	    }
-;
 
 paramassign: VARIABLE
              {
@@ -300,8 +320,21 @@ paramassign: VARIABLE
            | STRVAR
              {
                $$ = new std::string($1->GetName());
+	       // store to prevent leak
 	       Parser::Instance()->AddVariable($$);
              }
+
+// reduce STR and STRVAR
+string: STR
+        {
+	  $$ = $1;
+	}
+        | STRVAR
+	{
+	  $$ = new std::string($1->GetString());
+	  // store to prevent leak
+	  Parser::Instance()->AddVariable($$);
+	}
 
 parameters_extend : /* nothing */
                   | ',' parameters
@@ -316,13 +349,7 @@ parameters: paramassign '=' aexpr parameters_extend
 	      if(execute) 
 		Parser::Instance()->SetParameterValue(*($1),$3);
 	    }
-          | paramassign '=' STRVAR parameters_extend
-	    {
-	      if(execute) {
-                Parser::Instance()->SetParameterValue(*($1),$3->GetString());
-	      }
-	    }
-          | paramassign '=' STR parameters_extend
+          | paramassign '=' string parameters_extend
             {
 	      if(execute) {
 		Parser::Instance()->SetParameterValue(*($1),*$3);
@@ -330,10 +357,8 @@ parameters: paramassign '=' aexpr parameters_extend
 	    }
 
 line : LINE '=' '(' element_seq ')'
-;
 
 line : LINE '=' '-' '(' rev_element_seq ')'
-;
 
 element_seq_extend : /* nothing */
                    | ',' element_seq
@@ -355,7 +380,6 @@ element_seq :
               {
 		if(execute) Parser::Instance()->add_element_temp(*($2), 1, true, ElementType::_REV_LINE);
 	      }
-;
 
 rev_element_seq_extend : /* nothing */
                        | ',' rev_element_seq
@@ -377,7 +401,6 @@ rev_element_seq :
               {
 		if(execute) Parser::Instance()->add_element_temp((*$2), 1, false, ElementType::_LINE);
 	      }
-;
 
 expr : aexpr 
        { // check type ??
@@ -408,7 +431,6 @@ expr : aexpr
 	     $$=0;
 	   }
        }
-;
 
 aexpr  : NUMBER               { $$ = $1;                         }
        | NUMVAR               { $$ = $1->GetNumber();            }
@@ -432,12 +454,11 @@ aexpr  : NUMBER               { $$ = $1;                         }
         | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; } 
         | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; } 
 	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
-        | VARIABLE '[' STR ']' 
+        | VARIABLE '[' string ']' 
           { 
 	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
 	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
 	  }// element attributes
-; 
 
 symdecl : VARIABLE '='
         {
@@ -471,7 +492,6 @@ symdecl : VARIABLE '='
 	       $$=$1;
 	     }
 	}
-;
 
 assignment :  symdecl aexpr  
               {
@@ -512,7 +532,6 @@ assignment :  symdecl aexpr
 		    $$=$1;
 		  }
               }
-;
 
 vecexpr : VECVAR              {if(execute) $$ = new Array($1);} 
         | vectnum             {if(execute) $$ = $1;}
@@ -533,7 +552,6 @@ vecexpr : VECVAR              {if(execute) $$ = new Array($1);}
 	      $$ = Array::Add(a,$1);
 	    }
 	}
-;
 
 vectnumexec : '{' numbers '}'
             | '[' numbers ']'
@@ -547,11 +565,9 @@ vectnum : vectnumexec
 	        Parser::Instance()->FillString($$);		
 	      }
 	  }
-;
 
 vectstrexec : '[' letters ']'
             | '{' letters '}'
-;
 
 vectstr : vectstrexec
 	{
@@ -564,32 +580,34 @@ vectstr : vectstrexec
 
 numbers : aexpr ',' numbers { if(execute) Parser::Instance()->Store($1);} 
         | aexpr             { if(execute) Parser::Instance()->Store($1);}
-;
 
-letters : STR ',' letters { if(execute) Parser::Instance()->Store(*$1);}
-	| STR             { if(execute) Parser::Instance()->Store(*$1);}
-;
+letters : string ',' letters { if(execute) Parser::Instance()->Store(*$1);}
+        | string             { if(execute) Parser::Instance()->Store(*$1);}
+
+// accept print with and without comma
+print   : PRINT
+        | PRINT ','
 
 command : STOP             { if(execute) Parser::Instance()->quit(); }
         | BEAM ',' beam_parameters
-        | PRINT            { if(execute) Parser::Instance()->PrintElements(); }
-        | PRINT ',' LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
-        | PRINT ',' OPTION { if(execute) Parser::Instance()->PrintOptions(); }
-        | PRINT ',' VARIABLE
+        | print        { if(execute) Parser::Instance()->PrintElements(); }
+        | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
+        | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
+        | print VARIABLE
           {
 	    if(execute) {
-	      Symtab *sp = Parser::Instance()->symlook(*($3));
+	      Symtab *sp = Parser::Instance()->symlook(*($2));
 	      if (!sp) {
-		std::cout << "Variable " << *($3) << " not defined!" << std::endl;
+		std::cout << "Variable " << *($2) << " not defined!" << std::endl;
 	      }
 	      else {
 		sp->Print();
 	      }
 	    }
 	  }
-        | PRINT ',' NUMVAR { if(execute) $3->Print();}
-        | PRINT ',' STRVAR { if(execute) $3->Print();}
-        | PRINT ',' VECVAR { if(execute) $3->Print();} 
+        | print NUMVAR { if(execute) $2->Print();}
+        | print STRVAR { if(execute) $2->Print();}
+        | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters
         | SAMPLE ',' sample_options 
@@ -610,6 +628,22 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->add_csampler(*($3), element_count, element_type);
 		element_count = -1;
 		Parser::Instance()->ClearParams();
+	      }
+          }
+        | ATOM ',' atom_options // atom
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> ATOM\n");
+		Parser::Instance()->add_atom();
+	      }
+          }
+        | MATERIAL ',' material_options // material
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> MATERIAL\n");
+		Parser::Instance()->add_material();
 	      }
           }
         | TUNNEL ',' tunnel_options // tunnel
@@ -644,7 +678,6 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->add_xsecbias();
 	      }
           }
-;
 
 use_parameters :  VARIABLE
                   {
@@ -676,7 +709,6 @@ use_parameters :  VARIABLE
 			Parser::Instance()->current_end = *($9);
 		      }
 		  }
-;
 
 sample_options: RANGE '=' VARIABLE
                 {
@@ -709,7 +741,6 @@ sample_options: RANGE '=' VARIABLE
 		     $$ = new std::string("");
 	          }
 	        }
-;
 
 csample_options_extend : /* nothing */
                        | ',' csample_options
@@ -725,7 +756,6 @@ csample_options : paramassign '=' aexpr csample_options_extend
 		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt, csopt\n");
 		    $$ = $1;
 		  }
-;
 
 cavitymodel_options_extend : /* nothing */
                            | ',' cavitymodel_options
@@ -735,12 +765,44 @@ cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue((*$1),$3);
 		    }
-                 | paramassign '=' STR cavitymodel_options_extend
+                 | paramassign '=' string cavitymodel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetCavityModelValue(*$1,*$3);
 		    }
-;
+
+material_options_extend : /* nothing */
+                        | ',' material_options
+
+material_options : paramassign '=' aexpr material_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetMaterialValue((*$1),$3);
+		    }
+                 | paramassign '=' string material_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetMaterialValue(*$1,*$3);
+		    }
+                 | paramassign '=' vecexpr material_options_extend
+                    {
+		      if(execute) 
+			Parser::Instance()->SetMaterialValue(*($1),$3);
+		    }
+
+atom_options_extend : /* nothing */
+                      | ',' atom_options
+
+atom_options : paramassign '=' aexpr atom_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetAtomValue((*$1),$3);
+		    }
+                 | paramassign '=' string atom_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetAtomValue(*$1,*$3);
+		    }
 
 region_options_extend : /* nothing */
                       | ',' region_options
@@ -750,12 +812,11 @@ region_options : paramassign '=' aexpr region_options_extend
 		      if(execute)
 			Parser::Instance()->SetRegionValue((*$1),$3);
 		    }
-                 | paramassign '=' STR region_options_extend
+                 | paramassign '=' string region_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetRegionValue(*$1,*$3);
 		    }
-;
 
 tunnel_options_extend : /* nothing */
                       | ',' tunnel_options
@@ -765,12 +826,11 @@ tunnel_options : paramassign '=' aexpr tunnel_options_extend
 		      if(execute)
 			Parser::Instance()->SetTunnelValue((*$1),$3);
 		    }
-                 | paramassign '=' STR tunnel_options_extend
+                 | paramassign '=' string tunnel_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetTunnelValue(*$1,*$3);
 		    }
-;
 
 xsecbias_options_extend : /* nothing */
                         | ',' xsecbias_options
@@ -780,7 +840,7 @@ xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-                 | paramassign '=' STR xsecbias_options_extend
+                 | paramassign '=' string xsecbias_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
@@ -790,7 +850,6 @@ xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
 		      if(execute)
 			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
 		    }
-;
 
 option_parameters_extend : /* nothing */
                          | ',' option_parameters
@@ -800,16 +859,14 @@ option_parameters : paramassign '=' aexpr option_parameters_extend
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,$3);
 		    }   
-                  | paramassign '=' STR option_parameters_extend
+                  | paramassign '=' string option_parameters_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetOptionsValue(*$1,*$3);
 		    }
-;
 
 // beam_parameter same as option_parameters, might change in future
 beam_parameters : option_parameters
-;
 
 %%
 

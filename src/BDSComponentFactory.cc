@@ -29,7 +29,6 @@
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
-#include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSCavityInfo.hh"
@@ -226,8 +225,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_MARKER:
   case ElementType::_LINE:
   case ElementType::_REV_LINE:
-  case ElementType::_MATERIAL:
-  case ElementType::_ATOM:
     component = nullptr;
     break;
   default:

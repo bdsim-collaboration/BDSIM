@@ -50,12 +50,12 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property;
-  for (const auto& i : value->data) std::cout << i << " ";
+  for (const auto& i : value->GetData()) std::cout << i << " ";
   std::cout << std::endl;
 #endif
 
   if (property=="flag") {
-    for (const auto& i : value->data) {
+    for (const auto& i : value->GetData()) {
       flag.push_back(static_cast<PhysicsBiasingType>((int)i));
     }
     return;
@@ -66,7 +66,7 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
   }
   
   std::cerr << "Error: parser> unknown physicsbiasing option \"" << property << "\" with value ";
-  for (const auto& i : value->data) std::cout << i << " ";
+  for (const auto& i : value->GetData()) std::cout << i << " ";
   std::cout << std::endl;
   exit(1);
 }
