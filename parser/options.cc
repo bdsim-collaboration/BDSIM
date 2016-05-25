@@ -191,6 +191,7 @@ void Options::PublishMembers()
   publish("aper4",&Options::aper4);
   publish("beampipeMaterial",&Options::beampipeMaterial);
   publish("vacuumMaterial",&Options::vacMaterial);
+  publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
 
   // tunnel options
