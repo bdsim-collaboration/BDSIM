@@ -13,7 +13,7 @@ include beam/test/testBeam_0_to_10GeV.gmad
 !include beam/background/0p2mm_alu_window_bg_full/outBeampipe/neutrons.gmad
 
 beamEnergy=2*GeV;     !400GeV protons: 1.3GeV electrons
-!beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad strength
+beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad strength
 
 !beam, particle="e-",
 !      energy=beamEnergy,
