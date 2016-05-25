@@ -157,18 +157,18 @@ void SamplerAnalysis::Terminate()
       covMats[i][j]=(npart*powSums[i][j][1][1] - powSums[i][i][1][0]*powSums[j][j][1][0])/(npart*(npart-1)); //beam sigma matrix
     }
   }
-
+  
   for(int i=0;i<2;++i)
   {
     int j = 0;
     if(i== 1) j = 2;
 
-    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));                   // emittance
-    optical[i][1] = -(covMats[j][j+1])/(sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2))); // alpha
-    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));     // beta
-    optical[i][3] = 0.0;                                                                            // gamma
-    optical[i][4] = covMats[j][4]/covMats[4][4];                                                    // eta
-    optical[i][6] = covMats[j+1][4]/covMats[4][4];                                                  // eta prime
+    optical[i][0] = sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));                        // emittance
+    optical[i][1] = -cenMoms[j][j+1][1][1]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2)); // alpha
+    optical[i][2] = cenMoms[j][j+1][2][0]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));  // beta
+    optical[i][3] = (1+pow(optical[i][1],2))/optical[i][2];                                                                // gamma
+    optical[i][4] = cenMoms[j][4][1][1]/cenMoms[4][4][2][0];                                                               // eta
+    optical[i][6] = cenMoms[j+1][4][1][1]/cenMoms[4][4][2][0];                                                             // eta prime
   }
 
   for(int i=0;i<2;++i)
@@ -178,8 +178,27 @@ void SamplerAnalysis::Terminate()
     std::cout<<"mean x = "<<means[0]<<std::endl;
   }
 
-  // compute covariances
-  // cov[][][][] = ;
+  /*
+  for(int i=0;i<2;++i)
+  {
+    int j = 0;
+    if(i== 1) j = 2;
+
+    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));                      // emittance
+    optical[i][1] = -(covMats[j][j+1])/(sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2))); // alpha
+    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));        // beta
+    optical[i][3] = (1+pow(optical[i][1],2))/optical[i][2];                                            // gamma
+    optical[i][4] = covMats[j][4]/covMats[4][4];                                                       // eta
+    optical[i][6] = covMats[j+1][4]/covMats[4][4];                                                     // eta prime
+  }
+
+  for(int i=0;i<2;++i)
+  {
+    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][2]<<" a = "<<optical[i][1]<<" d = "<< optical[i][4]<<std::endl;
+    std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
+    std::cout<<"mean x = "<<means[0]<<std::endl;
+  }
+  */
 }
 
 std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
