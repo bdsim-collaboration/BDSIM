@@ -131,18 +131,18 @@ void SamplerAnalysis::Terminate()
 
   // power sums
   for(int a=0;a<6;++a)
-    {
-      for(int b=0;b<6;++b)
-	{
-	  for (int j = 0; j <= 4; ++j)
-	    {
+  {
+    for(int b=0;b<6;++b)
+	  {
+	    for (int j = 0; j <= 4; ++j)
+      {
 	      for (int k = 0; k <= 4; ++k)
-		{
-		  cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
-		}
+		    {
+		      cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+		    }
 	    }
-	}
-    }
+	  }
+  }
 
   
   for(int i=0;i<6;++i)
@@ -205,13 +205,13 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
       double s_1_0 = 0.0, s_2_0 = 0.0;
       if(m == 2)
       {
-	s_1_0 = powSums[a][b][m-1][n];
-	s_2_0 = powSums[a][b][m][n];
+	      s_1_0 = powSums[a][b][m-1][n];
+	      s_2_0 = powSums[a][b][m][n];
       }
       else if(n == 2)
       {
-	s_1_0 = powSums[a][b][m][n-1];
-	s_2_0 = powSums[a][b][m][n];
+	      s_1_0 = powSums[a][b][m][n-1];
+	      s_2_0 = powSums[a][b][m][n];
       }
 
       moment =  (npart*s_2_0 - pow(s_1_0,2))/(npart*(npart-1));
@@ -237,17 +237,17 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
       double s_1_0 = 0.0, s_2_0 = 0.0, s_3_0 = 0.0, s_4_0 = 0.0;
       if(m == 4)
       {
-	s_1_0 = powSums[a][b][m-3][n];
-	s_2_0 = powSums[a][b][m-2][n];
-	s_3_0 = powSums[a][b][m-1][n];
-	s_4_0 = powSums[a][b][m][n];
+	      s_1_0 = powSums[a][b][m-3][n];
+	      s_2_0 = powSums[a][b][m-2][n];
+	      s_3_0 = powSums[a][b][m-1][n];
+	      s_4_0 = powSums[a][b][m][n];
       }
       else if( n == 4)
       {
-	s_1_0 = powSums[a][b][m][n-3];
-	s_2_0 = powSums[a][b][m][n-2];
-	s_3_0 = powSums[a][b][m][n-1];
-	s_4_0 = powSums[a][b][m][n];
+	      s_1_0 = powSums[a][b][m][n-3];
+	      s_2_0 = powSums[a][b][m][n-2];
+	      s_3_0 = powSums[a][b][m][n-1];
+	      s_4_0 = powSums[a][b][m][n];
       }
 
       moment =  (-3*pow(s_1_0,4))/pow(npart,4) + (6*pow(s_1_0,2)*s_2_0)/pow(npart,3)
@@ -262,28 +262,28 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
       
       if(m == 3)
       {
-	s_1_0 = powSums[a][b][m-2][n-1];
-	s_0_1 = powSums[a][b][m-3][n];
-	s_1_1 = powSums[a][b][m-2][n];
-	s_2_0 = powSums[a][b][m-1][n-1];
-	s_2_1 = powSums[a][b][m-1][n];
-	s_3_0 = powSums[a][b][m][n-1];
-	s_3_1 = powSums[a][b][m][n];
+	      s_1_0 = powSums[a][b][m-2][n-1];
+	      s_0_1 = powSums[a][b][m-3][n];
+	      s_1_1 = powSums[a][b][m-2][n];
+	      s_2_0 = powSums[a][b][m-1][n-1];
+	      s_2_1 = powSums[a][b][m-1][n];
+	      s_3_0 = powSums[a][b][m][n-1];
+	      s_3_1 = powSums[a][b][m][n];
       }
       else if(n == 3)
       {
-	s_1_0 = powSums[a][b][m-1][n-2];
-	s_0_1 = powSums[a][b][m][n-3];
-	s_1_1 = powSums[a][b][m][n-2];
-	s_2_0 = powSums[a][b][m-1][n-1];
-	s_2_1 = powSums[a][b][m][n-1];
-	s_3_0 = powSums[a][b][m-1][n];
-	s_3_1 = powSums[a][b][m][n];
+	      s_1_0 = powSums[a][b][m-1][n-2];
+	      s_0_1 = powSums[a][b][m][n-3];
+	      s_1_1 = powSums[a][b][m][n-2];
+	      s_2_0 = powSums[a][b][m-1][n-1];
+	      s_2_1 = powSums[a][b][m][n-1];
+	      s_3_0 = powSums[a][b][m-1][n];
+	      s_3_1 = powSums[a][b][m][n];
       }
 
       moment =   (-3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*pow(s_1_0,2)*s_1_1)/pow(npart,3)
-	       + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) + (-3*s_1_0*s_2_1)/pow(npart,2)
-	       + (-s_0_1*s_3_0)/pow(npart,2) + s_3_1/npart;     
+                 + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) + (-3*s_1_0*s_2_1)/pow(npart,2)
+                 + (-s_0_1*s_3_0)/pow(npart,2) + s_3_1/npart;
       
       return moment;
     }
