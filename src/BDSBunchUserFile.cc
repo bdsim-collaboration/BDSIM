@@ -187,6 +187,12 @@ void BDSBunchUserFile::SetDistribFile(G4String filename){
   distribFile = BDS::GetFullPath(filename);
 }
 
+void BDSBunchUserFile::SkipLines(){
+  //Skip the a number of lines defined by the user option.
+  G4cout << __METHOD_NAME__ << " - skipping " << nlinesIgnore << " lines" << G4endl;
+  skip((G4int)(nlinesIgnore * fields.size()));
+}
+
 void BDSBunchUserFile::SetOptions(const GMAD::Options& opt) {
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile((G4String)opt.distribFile); 
@@ -194,6 +200,7 @@ void BDSBunchUserFile::SetOptions(const GMAD::Options& opt) {
   SetNLinesIgnore(opt.nlinesIgnore);
   ParseFileFormat();
   OpenBunchFile(); //
+  SkipLines();
   return; 
 }
 
@@ -267,12 +274,6 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
-  
-  //Skip the a number of lines defined by the user option.
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "UDEF_BUNCH: skipping " << nlinesIgnore << " lines" << G4endl;
-#endif
-  skip((G4int)(nlinesIgnore * fields.size()));
   
   std::list<struct BDSBunchUserFile::Doublet>::iterator it;
   for(it=fields.begin();it!=fields.end();it++)
