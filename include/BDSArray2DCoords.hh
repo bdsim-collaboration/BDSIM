@@ -6,6 +6,12 @@
 
 #include "globals.hh" // geant4 types / globals
 
+/**
+ * @brief A wrapper for a templated BDSArray2D that provides real space coordinates.
+ * 
+ * @author Laurie Nevay
+ */
+
 template <typename T>
 class BDSArray2DCoords
 {
