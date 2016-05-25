@@ -28,6 +28,7 @@ public:
   /// Instantiate a G4Navigator with the read out geometry - must be run
   /// after the read out geometry has been attached to this SD!!
   void SetUpAuxilliaryNavigator();
+  static G4Navigator* GetAuxilliaryNavigator() { return auxilliaryNavigatorStatic;  }
 
 private:
   /// assignment and copy constructor not implemented nor used
@@ -56,6 +57,7 @@ private:
 
   /// Navigator for checking points in read out geometry
   G4Navigator* auxilliaryNavigator;
+  static G4Navigator* auxilliaryNavigatorStatic;
 };
 
 inline G4String BDSEnergyCounterSD::GetName()

@@ -21,6 +21,8 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
+G4Navigator* BDSEnergyCounterSD::auxilliaryNavigatorStatic = nullptr;
+
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    energyCounterCollection(nullptr),
@@ -61,7 +63,9 @@ void BDSEnergyCounterSD::SetUpAuxilliaryNavigator()
   // construct a G4Navigator with respect to the read out world
   auxilliaryNavigator = new G4Navigator();
   auxilliaryNavigator->SetWorldVolume(ROgeometry->GetROWorld());
+  auxilliaryNavigatorStatic = auxilliaryNavigator;
 }
+
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {

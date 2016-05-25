@@ -239,8 +239,8 @@ void EventAnalysis::Write(TFile *outputFile)
 
   outputFile->cd("/");
 
-  double *xOpticsPoint = nullptr;
-  double *yOpticsPoint = nullptr;
+  double *xOpticsPoint = new double[6];
+  double *yOpticsPoint = new double[6];
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");
@@ -251,10 +251,12 @@ void EventAnalysis::Write(TFile *outputFile)
   {
     std::cout << "-------------" << std::endl;
     std::cout << i[0][0] << " " << i[1][0] << std::endl;
-    xOpticsPoint = &(i[0][0]);
-    yOpticsPoint = &(i[1][0]);
-    xOpticsPoint[0] = 10.0;
-    yOpticsPoint[0] = 15.0;
+    for(size_t j=0;j< i[0].size(); ++j)
+    {
+      xOpticsPoint[j] = i[0][j];
+      yOpticsPoint[j] = i[1][j];
+    }
+
     std::cout << xOpticsPoint[0] << " " << yOpticsPoint[0] << std::endl;
     opticsTree->Fill();
   }

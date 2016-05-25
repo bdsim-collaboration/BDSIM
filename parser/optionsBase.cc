@@ -111,6 +111,7 @@ OptionsBase::OptionsBase()
   aper4                = 0.0;
   beampipeMaterial     = "StainlessSteel";
   vacMaterial          = "Vacuum";
+  emptyMaterial        = "G4_Galactic";
   vacuumPressure       = 1e-12;
   sensitiveBeamPipe    = 1;
 
