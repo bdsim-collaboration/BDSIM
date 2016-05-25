@@ -20,10 +20,10 @@ public :
   void CommonCtor();
   virtual ~Event();
 
-#ifndef __ROOTDOUBLE__  
-  BDSOutputROOTEventSampler<float>*     GetPrimaries();
-#else
+#ifdef __ROOTDOUBLE__  
   BDSOutputROOTEventSampler<double>*    GetPrimaries();
+#else
+  BDSOutputROOTEventSampler<float>*     GetPrimaries();
 #endif
   BDSOutputROOTEventLoss*               GetLoss();
   BDSOutputROOTEventLoss*               GetPrimaryFirstHit();
@@ -43,10 +43,10 @@ public :
   BDSOutputROOTEventLoss                         *primaryLastHit;
   BDSOutputROOTEventLoss                         *tunnelHit;
   BDSOutputROOTEventTrajectory                   *trajectory;
-#ifndef __ROOTDOUBLE__
-  std::vector<BDSOutputROOTEventSampler<float>*>  samplers;
-#else
+#ifdef __ROOTDOUBLE__
   std::vector<BDSOutputROOTEventSampler<double>*> samplers;
+#else
+  std::vector<BDSOutputROOTEventSampler<float>*>  samplers;
 #endif
   BDSOutputROOTEventHistograms                   *histos;
   BDSOutputROOTEventInfo                         *info;
