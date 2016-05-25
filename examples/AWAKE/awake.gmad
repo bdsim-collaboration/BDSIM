@@ -12,19 +12,31 @@ include options.gmad;
 !include beam/witness/onAxisInjection/jul14/e_beam.gmad
 !include beam/background/0p2mm_alu_window_bg_full/outBeampipe/neutrons.gmad
 
-beamEnergy=1.3*GeV;     !400GeV protons: 1.3GeV electrons
+beamEnergy=2*GeV;     !400GeV protons: 1.3GeV electrons
 !beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad strength
 
-beam, distrType="square",
-particle="e-",
-energy=1.3*GeV,
-envelopeX=0*35*mm,
-envelopeY=0*35*mm,
-envelopeXp=20*mrad,
-envelopeYp=0*20*mrad,
-envelopeE=1.0*GeV;
+beam, particle="e-",
+      energy=beamEnergy,
+      distrType="gausstwiss",
+      emitx=1e-10*m,
+      emity=1e-10*m,
+      betx=1e-6*m,
+      bety=1e-6*m,
+      alfx=0.0,
+      alfy=0.0,
+      X0=0.000,
+      Y0=0.000;
 
-option, ngenerate=100000, nperfile=100000;
+!beam, distrType="square",
+!particle="e-",
+!energy=2*GeV,
+!envelopeX=0*35*mm,
+!envelopeY=0*35*mm,
+!envelopeXp=0*20*mrad,
+!envelopeYp=0*20*mrad,
+!envelopeE=0.1*GeV;
+
+option, ngenerate=1000, nperfile=1000;
 
 
 !quad geometry
@@ -161,7 +173,7 @@ spec="vacuumChamberType=1&magnetGeometryType=1",
 !&strutSizeX=4&strutSizeZ=25&strutMaterial=G4_Ti",
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_320A_3.bmap";
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_650A_4.bmap";
-B=-0.00154;
+B=0.5*0.00154;
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_40A_3.bmap";
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_100A_2.bmap";
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_240A_3.bmap";
