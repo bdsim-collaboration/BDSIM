@@ -171,10 +171,9 @@ string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
 include_directories(${ROOT_INCLUDE_DIR})
 
 option(ROOT_DOUBLE_OUTPUT "Double precision root output" OFF)
-
-#if (ROOT_DOUBLE_OUTPUT) 
-#   set(ROOT_PREPROC_FLAG "Flags for root compilation" "-D__ROOTDOUBLE__") 
-#endif()
+if(ROOT_DOUBLE_OUTPUT)
+  add_definitions("-D__ROOTDOUBLE__")
+endif()
 
 # Make Dictionaries
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
@@ -273,7 +272,7 @@ if(USE_LCDD)
     message(STATUS "LCDD support ON")
 endif()
 
-# Find  GEANT4
+# Find GEANT4
 # with all available gui and visualisation options available
 # Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
 if ($ENV{VERBOSE})
