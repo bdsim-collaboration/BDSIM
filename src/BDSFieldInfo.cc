@@ -17,7 +17,9 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 			   G4Transform3D      transformIn,
 			   BDSCavityInfo*     cavityInfoIn,
 			   G4String           magneticFieldFilePathIn,
-			   G4String           electricFieldFilePathIn):
+			   BDSFieldFormat     magneticFieldFormatIn,
+			   G4String           electricFieldFilePathIn,
+			   BDSFieldFormat     electricFieldFormatIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -26,7 +28,9 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
   transform(transformIn),
   cavityInfo(cavityInfoIn),
   magneticFieldFilePath(magneticFieldFilePathIn),
-  electricFieldFilePath(electricFieldFilePathIn)
+  magneticFieldFormat(magneticFieldFormatIn),
+  electricFieldFilePath(electricFieldFilePathIn),
+  electricFieldFormat(electricFieldFormatIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -41,7 +45,9 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   provideGlobalTransform(other.provideGlobalTransform),
   transform(other.transform),
   magneticFieldFilePath(other.magneticFieldFilePath),
-  electricFieldFilePath(other.electricFieldFilePath)
+  magneticFieldFormat(other.magneticFieldFormat),
+  electricFieldFilePath(other.electricFieldFilePath),
+  electricFieldFormat(other.electricFieldFormat)
 {
   magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
   cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
@@ -49,10 +55,14 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
 
 std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
 {
-  out << "Field type:       " << info.fieldType              << G4endl;
-  out << "Rigidity:         " << info.brho                   << G4endl;
-  out << "Integrator:       " << info.integratorType         << G4endl;
-  out << "Magnet strength:  " << *(info.magnetStrength)      << G4endl;
-  out << "Global transform? " << info.provideGlobalTransform << G4endl;
+  out << "Field type:        " << info.fieldType              << G4endl;
+  out << "Rigidity:          " << info.brho                   << G4endl;
+  out << "Integrator:        " << info.integratorType         << G4endl;
+  out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;
+  out << "Global transform?  " << info.provideGlobalTransform << G4endl;
+  out << "B map file:        " << info.magneticFieldFilePath  << G4endl;
+  out << "B map file format: " << info.magneticFieldFormat    << G4endl;
+  out << "E map file:        " << info.electricFieldFilePath  << G4endl;
+  out << "E map file format: " << info.electricFieldFormat    << G4endl;
   return out;
 }

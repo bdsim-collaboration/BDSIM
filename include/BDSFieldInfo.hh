@@ -1,6 +1,7 @@
 #ifndef BDSFIELDINFO_H
 #define BDSFIELDINFO_H
 
+#include "BDSFieldFormat.hh"
 #include "BDSFieldType.hh"
 #include "BDSIntegratorType.hh"
 
@@ -35,7 +36,9 @@ public:
 	       G4Transform3D      transformIn              = G4Transform3D(),
 	       BDSCavityInfo*     cavityInfoIn             = nullptr,
 	       G4String           magneticFieldFilePathIn  = "",
-	       G4String           electricFieldFilePathIn  = "");
+	       BDSFieldFormat     magneticFieldFormatIn    = BDSFieldFormat::bdsim3d,
+	       G4String           electricFieldFilePathIn  = "",
+	       BDSFieldFormat     electricFieldFormatIn    = BDSFieldFormat::bdsim3d);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -50,7 +53,9 @@ public:
   inline BDSCavityInfo*     CavityInfo()     const {return cavityInfo;}
   inline G4bool             ProvideGlobal()  const {return provideGlobalTransform;}
   inline G4String           MagneticFile()   const {return magneticFieldFilePath;}
+  inline BDSFieldFormat     MagneticFormat() const {return magneticFieldFormat;}
   inline G4String           ElectricFile()   const {return electricFieldFilePath;}
+  inline BDSFieldFormat     ElectricFormat() const {return electricFieldFormat;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -71,7 +76,9 @@ private:
   G4Transform3D      transform;  ///< Transform w.r.t. solid field will be attached to
   BDSCavityInfo*     cavityInfo;
   G4String           magneticFieldFilePath;
+  BDSFieldFormat     magneticFieldFormat;
   G4String           electricFieldFilePath;
+  BDSFieldFormat     electricFieldFormat;
 };
 
 void BDSFieldInfo::SetTransform(G4Transform3D transformIn)
