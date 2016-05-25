@@ -199,7 +199,7 @@ void BDSBunchUserFile::SetOptions(const GMAD::Options& opt) {
   SetBunchFormat((G4String)opt.distribFileFormat); 
   SetNLinesIgnore(opt.nlinesIgnore);
   ParseFileFormat();
-  OpenBunchFile(); //
+  OpenBunchFile(); 
   SkipLines();
   return; 
 }
