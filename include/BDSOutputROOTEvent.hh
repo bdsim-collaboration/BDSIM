@@ -108,14 +108,17 @@ private:
   TTree *theRunOutputTree  = nullptr;
 
   // primary structure 
-#ifndef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<float> *primary = nullptr;
-#else 
+#ifdef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<double> *primary = nullptr;
+#else 
+  BDSOutputROOTEventSampler<float> *primary = nullptr;
 #endif
   // sampler structures 
-  std::map<G4String, BDSOutputROOTEventSampler<float>*> samplerMap; // will remove
-#ifndef __ROOTDOUBLE__
+#ifdef __ROOTDOUBLE__
+  //  std::map<G4String, BDSOutputROOTEventSampler<double>*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler<double>*> samplerTrees;
+#else
+  //  std::map<G4String, BDSOutputROOTEventSampler<float>*> samplerMap; // will remove
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
 #endif
 

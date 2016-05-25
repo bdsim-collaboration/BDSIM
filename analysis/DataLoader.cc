@@ -40,7 +40,7 @@ void DataLoader::BuildInputFileList()
   // wild card
   if(inputPath.find("*") != std::string::npos) {
     glob_t glob_result;    
-    glob(inputPath.c_str(),GLOB_TILDE,NULL,&glob_result);
+    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
     for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
       fileNames.push_back(glob_result.gl_pathv[i]);
     }
@@ -56,7 +56,7 @@ void DataLoader::BuildInputFileList()
     inputPath.append("/*.root");
 
     glob_t glob_result;    
-    glob(inputPath.c_str(),GLOB_TILDE,NULL,&glob_result);
+    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
     for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
       fileNames.push_back(glob_result.gl_pathv[i]);
     }

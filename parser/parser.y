@@ -48,12 +48,14 @@
 /* more debug output can be added with %debug" */
 //%debug
 
+// change associativity of operators
 %left '+' '-'
 %left '*' '/'
 %left '^' '<' '>' NE LE GE EQ
 %nonassoc UMINUS
 %nonassoc UPLUS
 
+// declare union value of tokens and types
 %token <dval> NUMBER
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
