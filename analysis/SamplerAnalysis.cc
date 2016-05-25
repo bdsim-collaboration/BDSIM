@@ -29,8 +29,8 @@ void SamplerAnalysis::CommonCtor()
   optical.resize(2); //test with limited opt. funcs for now  ex, bx, ax, ey, by, ay
   for(int i=0;i<2;++i)
   {
-    optical[i].resize(7); //RESIZE TO CORRECT LENGTH!!
-    for(int j=0;j<7;++j)
+    optical[i].resize(10);
+    for(int j=0;j<10;++j)
     {
       optical[i][j]=0.0;
     }
@@ -135,12 +135,12 @@ void SamplerAnalysis::Terminate()
     for(int b=0;b<6;++b)
 	  {
 	    for (int j = 0; j <= 4; ++j)
-      {
+	      {
 	      for (int k = 0; k <= 4; ++k)
 		    {
 		      cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
 		    }
-	    }
+	      }
 	  }
   }
 
@@ -163,19 +163,23 @@ void SamplerAnalysis::Terminate()
     int j = 0;
     if(i== 1) j = 2;
 
-    optical[i][0] = sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));                        // emittance
-    optical[i][1] = -cenMoms[j][j+1][1][1]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2)); // alpha
-    optical[i][2] = cenMoms[j][j+1][2][0]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));  // beta
-    optical[i][3] = (1+pow(optical[i][1],2))/optical[i][2];                                                                // gamma
-    optical[i][4] = cenMoms[j][4][1][1]/cenMoms[4][4][2][0];                                                               // eta
-    optical[i][6] = cenMoms[j+1][4][1][1]/cenMoms[4][4][2][0];                                                             // eta prime
+    optical[i][0]  = sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));                        // emittance
+    optical[i][1]  = -cenMoms[j][j+1][1][1]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2)); // alpha
+    optical[i][2]  = cenMoms[j][j+1][2][0]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));  // beta
+    optical[i][3]  = (1+pow(optical[i][1],2))/optical[i][2];                                                                // gamma
+    optical[i][4]  = cenMoms[j][4][1][1]/cenMoms[4][4][2][0];                                                               // eta
+    optical[i][5]  = cenMoms[j+1][4][1][1]/cenMoms[4][4][2][0];                                                             // eta prime
+    optical[i][6]  = cenMoms[j][j+1][1][0];                                                                                 // mean spatial
+    optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                 // mean divergence
+    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                           // sigma spatial
+    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                           // sigma divergence 
   }
 
   for(int i=0;i<2;++i)
   {
-    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][2]<<" a = "<<optical[i][1]<<" d = "<< optical[i][4]<<std::endl;
-    std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
-    std::cout<<"mean x = "<<means[0]<<std::endl;
+    std::cout<<i<<" e = "<<optical[i][0]<<" b = "<<optical[i][2]<<" a = "<<optical[i][1]<<" d = "<< optical[i][4]<<std::endl;
+    std::cout<<i<<" sigma = "<< sqrt(cenMoms[i][i+1][2][0])<<std::endl;
+    std::cout<<i<<" mean = "<<cenMoms[i][i+1][1][0]<<std::endl;
   }
 
   /*
@@ -217,6 +221,8 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
       s_1_0 = powSums[a][b][m][n];
 
       moment = s_1_0/npart;
+
+      return moment;
     }
 
   else if((n == 2 && m == 0) || (n == 0 && m == 2))

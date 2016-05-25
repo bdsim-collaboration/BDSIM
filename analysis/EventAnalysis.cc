@@ -35,8 +35,8 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     opticalFunctions[i].resize(2);
     for(int j=0;j<2;++j)
     {
-      opticalFunctions[i][j].resize(6);
-      for(int k=0;k<6;++k)
+      opticalFunctions[i][j].resize(10);
+      for(int k=0;k<10;++k)
       {
         opticalFunctions[i][j][k] = 0.0;
       }
@@ -239,8 +239,8 @@ void EventAnalysis::Write(TFile *outputFile)
 
   outputFile->cd("/");
 
-  double *xOpticsPoint = new double[6];
-  double *yOpticsPoint = new double[6];
+  double *xOpticsPoint = new double[10];
+  double *yOpticsPoint = new double[10];
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");
@@ -256,6 +256,14 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Disp_y",&(yOpticsPoint[4]),"Disp_y/D");
   opticsTree->Branch("Disp_xp",&(xOpticsPoint[5]),"Disp_xp/D");
   opticsTree->Branch("Disp_yp",&(yOpticsPoint[5]),"Disp_yp/D");
+  opticsTree->Branch("Mean_x",&(xOpticsPoint[6]),"Mean_x/D");
+  opticsTree->Branch("Mean_y",&(yOpticsPoint[6]),"Mean_y/D");
+  opticsTree->Branch("Mean_xp",&(xOpticsPoint[7]),"Mean_xp/D");
+  opticsTree->Branch("Mean_yp",&(yOpticsPoint[7]),"Mean_yp/D");
+  opticsTree->Branch("Sigma_x",&(xOpticsPoint[8]),"Sigma_x/D");
+  opticsTree->Branch("Sigma_y",&(yOpticsPoint[8]),"Sigma_y/D");
+  opticsTree->Branch("Sigma_xp",&(xOpticsPoint[9]),"Sigma_xp/D");
+  opticsTree->Branch("Sigma_yp",&(yOpticsPoint[9]),"Sigma_yp/D");
   
   for(auto i : this->opticalFunctions)
   {
