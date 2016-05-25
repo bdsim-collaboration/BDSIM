@@ -1,6 +1,5 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
 #include "BDSFieldESinusoid.hh"
@@ -10,6 +9,7 @@
 #include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldLoader.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
@@ -142,7 +142,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::zero:
       break;
     case BDSFieldType::threed:
-      /*field = new BDSFieldMag3D(filename, info.transform);*/ break;
+      field = BDSFieldLoader::Instance()->LoadMagField(info); break;
     case BDSFieldType::xy:
       break;
     case BDSFieldType::mokka:
