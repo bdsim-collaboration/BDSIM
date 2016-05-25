@@ -59,11 +59,17 @@ void BDSBunchUserFile::ParseFileFormat()
     G4cout<< __METHOD_NAME__ <<"pos -> "<<pos<<G4endl;
 #endif
     if(token.substr(0,1)=="E" || token.substr(0,1)=="P") {
-      G4String name = token.substr(0,1);
+      G4String name,rest;
+      if(token.substr(0,2)=="Ek") {//Kinetic energy (longer name).
+	name = token.substr(0,2);
+	rest = token.substr(2);
+      } else {
+	name = token.substr(0,1);
+	rest = token.substr(1);
+      }
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ << name << "!"<<G4endl;
 #endif
-      G4String rest = token.substr(1);
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ <<"rest ->"<<rest<<G4endl;
 #endif
@@ -281,7 +287,14 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
-      if(it->name=="E") { 
+      if(it->name=="Ek") { 
+	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
+#ifdef BDSDEBUG 
+	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+	G4cout<< __METHOD_NAME__ << E <<G4endl;
+#endif
+      }
+      else if(it->name=="E") { 
 	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef BDSDEBUG 
 	G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
