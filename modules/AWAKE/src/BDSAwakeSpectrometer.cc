@@ -670,8 +670,6 @@ void BDSAwakeSpectrometer::Build(){
       //      BuildCameraScoringPlane();
       PlaceScreen();
       //      PlaceCamera();
-      //      if(BDSGlobalConstants::Instance()->BuildTunnel()){
-      //	BuildTunnel();
       //      }
       RegisterSensitiveVolume(containerLogicalVolume);
       switch(_magnetGeometryType){
@@ -799,8 +797,8 @@ void BDSAwakeSpectrometer::CalculateLengths(){
 
 void BDSAwakeSpectrometer::BuildContainerLogicalVolume(){
   containerSolid=new G4Box( name+"_marker_solid",
-			    BDSGlobalConstants::Instance()->TunnelInfo()->aper1,
-			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2,
+			    BDSGlobalConstants::Instance()->TunnelInfo()->aper1/2, // size to be fixed
+			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2/2,
 			    chordLength/2.0); //z half length 
 
   containerLogicalVolume=new G4LogicalVolume
