@@ -246,7 +246,17 @@ void EventAnalysis::Write(TFile *outputFile)
   TTree *opticsTree = new TTree("optics","optics");
   opticsTree->Branch("Emitt_x",&(xOpticsPoint[0]),"Emitt_x/D");
   opticsTree->Branch("Emitt_y",&(yOpticsPoint[0]),"Emitt_y/D");
-
+  opticsTree->Branch("Alpha_x",&(xOpticsPoint[1]),"Alpha_x/D");
+  opticsTree->Branch("Alpha_y",&(yOpticsPoint[1]),"Alpha_y/D");
+  opticsTree->Branch("Beta_x",&(xOpticsPoint[2]),"Beta_x/D");
+  opticsTree->Branch("Beta_y",&(yOpticsPoint[2]),"Beta_y/D");
+  opticsTree->Branch("Gamma_x",&(xOpticsPoint[3]),"Gamma_x/D");
+  opticsTree->Branch("Gamma_y",&(yOpticsPoint[3]),"Gamma_y/D");
+  opticsTree->Branch("Disp_x",&(xOpticsPoint[4]),"Disp_x/D");
+  opticsTree->Branch("Disp_y",&(yOpticsPoint[4]),"Disp_y/D");
+  opticsTree->Branch("Disp_xp",&(xOpticsPoint[5]),"Disp_xp/D");
+  opticsTree->Branch("Disp_yp",&(yOpticsPoint[5]),"Disp_yp/D");
+  
   for(auto i : this->opticalFunctions)
   {
     std::cout << "-------------" << std::endl;
