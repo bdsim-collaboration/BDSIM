@@ -34,13 +34,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   postProcessType    = -1;
   postProcessSubType = -1;
 
-  // const G4Track           *aTrack      = step->GetTrack();
+  const G4Track            *aTrack      = step->GetTrack();
   const G4StepPoint        *prePoint   = step->GetPreStepPoint();
   const G4StepPoint       *postPoint   = step->GetPostStepPoint();
   const G4VProcess         *preProcess = prePoint->GetProcessDefinedStep();
   const G4VProcess        *postProcess = postPoint->GetProcessDefinedStep();
-  // G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
-  // G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
+  G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
+  G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
 
   if(preProcess)
   {
@@ -75,20 +75,30 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4ThreeVector postPosLocal = preT.TransformPoint(postPos);
 
 #if 0
+
+  G4cout << *BDSPhysicalVolumeInfoRegistry::Instance() << G4endl;
+  if(preVolume)
+    G4cout << preVolume->GetName() << " " << G4endl;
+  if(postVolume)
+    G4cout << postVolume->GetName()<< " " << G4endl;
+
+
   BDSPhysicalVolumeInfo* preVolInfo  = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(preVolume);
   BDSPhysicalVolumeInfo* postVolInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(postVolume);
 
-
   if(preVolume)
-    G4cout << preVolume->GetName() << " " << preVolInfo << G4endl;
+    G4cout << preVolInfo << G4endl;
   if(postVolume)
-    G4cout << postVolume->GetName()<< " " << postVolInfo << G4endl;
+    G4cout <<  postVolInfo << G4endl;
+
   if(preVolInfo)
     G4cout << preVolInfo << G4endl;
   //    preS  =  preVolInfo->GetSPos() + prePosLocal.z();
   if(postVolInfo)
     G4cout << postVolInfo << G4endl;
   // postS = postVolInfo->GetSPos() + postPosLocal.z();
+
+
 #endif
 
   // If the process type is not undefined or transportation...
