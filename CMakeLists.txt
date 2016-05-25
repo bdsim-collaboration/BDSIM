@@ -138,6 +138,8 @@ else()
    message(STATUS "Found CLHEP ${CLHEP_VERSION} in ${CLHEP_INCLUDE_DIRS}")
 endif()
 include_directories(${CLHEP_INCLUDE_DIRS})
+# Mark CLHEP_Dir as advanced since can't be set in GUI and this turned out to be confusing
+mark_as_advanced(CLHEP_DIR)
 
 # ROOT
 if ($ENV{ROOTSYS})
@@ -244,18 +246,20 @@ endif()
 
 #include XML directory
 find_path(XML2_INCLUDE_DIR NAMES libxml2)
+mark_as_advanced(XML2_INCLUDE_DIR)
 set(XML_INCLUDE_DIR ${XML2_INCLUDE_DIR}/libxml2)
 if($ENV{VERBOSE})
-    message(STATUS "XML_INCLUDE_DIR: ${XML_INCLUDE_DIR}")
+  message(STATUS "XML_INCLUDE_DIR: ${XML_INCLUDE_DIR}")
 endif()
 find_library(XML_LIBRARIES NAMES xml2 PATH_SUFFIXES xml2)
 if(XML_LIBRARIES)
-    MESSAGE(STATUS "Looking for XML2... - found")
+  message(STATUS "Looking for XML2... - found")
+  mark_as_advanced(XML_LIBRARIES)
 else()
-    MESSAGE(STATUS "Looking for XML2... - Not found")
+  message(STATUS "Looking for XML2... - Not found")
 endif(XML_LIBRARIES)
 if($ENV{VERBOSE})
-    message(STATUS "XML_LIBRARIES: ${XML_LIBRARIES}")
+  message(STATUS "XML_LIBRARIES: ${XML_LIBRARIES}")
 endif()
 
 if(XML_LIBRARIES)
@@ -277,6 +281,8 @@ if ($ENV{VERBOSE})
 endif()
 
 # Search for Geant4 CONFIG mode, if prefix given search that path only.
+# Add to GUI
+set(Geant4_PREFIX "" CACHE PATH "Location of Geant4 (optional)")
 if (NOT ${Geant4_PREFIX} STREQUAL "")
    if($ENV{VERBOSE})
       message(STATUS "Geant4 prefix: ${Geant4_PREFIX}")
@@ -317,6 +323,8 @@ if (Geant4_FOUND)
         message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
         message(STATUS "Geant4_LIBRARIES: ${Geant4_LIBRARIES}")
       endif()
+      # Mark Geant4_DIR as advanced since can't be set in GUI and this turned out to be confusing
+      mark_as_advanced(Geant4_DIR)
 elseif(Geant4_FOUND)
       message(FATAL_ERROR "Geant4 not found. Exiting. You can help cmake by adding -DGeant4_PREFIX=<PATH>")
 endif()
@@ -526,3 +534,10 @@ add_subdirectory(analysis)
 
 # Manual
 add_subdirectory(manual)
+
+# Mark some variables as advanced to clean up GUI
+if(APPLE)
+  mark_as_advanced(CMAKE_OSX_ARCHITECTURES)
+  mark_as_advanced(CMAKE_OSX_DEPLOYMENT_TARGET)
+  mark_as_advanced(CMAKE_OSX_SYSROOT)
+endif()
