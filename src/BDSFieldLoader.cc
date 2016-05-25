@@ -3,6 +3,8 @@
 #include "BDSFieldLoader.hh"
 #include "BDSFieldMag.hh"
 
+#include <algorithm>
+#include <fstream>
 
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;
 
@@ -61,5 +63,112 @@ BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String filePath)
 
 BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
 {
+  G4double lenUnit   = CLHEP::cm;
+  G4double fieldUnit = CLHEP::tesla; 
+  
+  G4cout << "Reading field map from " << filePath << G4endl; 
+
+  // Open the file for reading.
+  std::ifstream file;
+  file.open(filePath);
+  if(!file)
+    {G4cout << "Unable to load field map file: " << filePath << G4endl; exit(1);}
+  
+  // Ignore first blank line
+  char buffer[256];
+  file.getline(buffer,256);
+  
+  // Read table dimensions
+  G4int nx, ny, nz;
+  file >> nx >> ny >> nz; // Note dodgy order
+
+#ifdef BDSDEBUG
+  G4cout << "  [ Number of values x,y,z: " 
+	 << nx << " " << ny << " " << nz << " ] "
+	 << G4endl;
+#endif
+
+  /*
+  // Set up storage space for table
+  xField.resize( nx );
+  yField.resize( nx );
+  zField.resize( nx );
+  int ix, iy, iz;
+  for (ix=0; ix<nx; ix++) {
+    xField[ix].resize(ny);
+    yField[ix].resize(ny);
+    zField[ix].resize(ny);
+    for (iy=0; iy<ny; iy++) {
+      xField[ix][iy].resize(nz);
+      yField[ix][iy].resize(nz);
+      zField[ix][iy].resize(nz);
+    }
+  }
+  
+  // Ignore other header information    
+  // The first line whose second character is '0' is considered to
+  // be the last line of the header.
+  do {
+    file.getline(buffer,256);
+  } while ( buffer[1]!='0');
+  
+  //Set up progress display
+  // 
+  double ndis = static_cast<double>(nx);
+  BDSProgressBar* progDis = new BDSProgressBar(ndis);
+  //  boost::progress_display* progDis = new boost::progress_display(ndis,std::cout);
+  double inc = 1;
+  // Read in the data
+  double xval=0.0,yval=0.0,zval=0.0,bx,by,bz;
+  //  double permeability; // Not used in this example.
+  for (ix=0; ix<nx; ix++) {
+    //    G4cout << progDis->count() << " " << progDis->maxCount() << G4endl;
+     for (iy=0; iy<ny; iy++) {
+      for (iz=0; iz<nz; iz++) {
+        file >> xval >> yval >> zval >> bx >> by >> bz;
+#ifdef BDSDEBUG
+	G4cout << "Read: " << xval << " " << yval << " " << zval << " " << bx << " " << by << " " << bz << G4endl;
+#endif
+        if ( ix==0 && iy==0 && iz==0 ) {
+          minx = xval * _lenUnit + fXoffset;
+          miny = yval * _lenUnit + fYoffset;
+          minz = zval * _lenUnit + fZoffset;
+        }
+        xField[ix][iy][iz] = bx * _fieldUnit;
+        yField[ix][iy][iz] = by * _fieldUnit;
+        zField[ix][iy][iz] = bz * _fieldUnit;
+      }
+    }
+     progDis->increment(inc);
+  }
+  */
+  file.close();
+
+  /*
+  maxx = xval * _lenUnit + fXoffset;
+  maxy = yval * _lenUnit + fYoffset;
+  maxz = zval * _lenUnit + fZoffset;
+
+  G4cout << "\n ---> ... done reading " << G4endl;
+
+  // G4cout << " Read values of field from file " << filePath << G4endl; 
+#ifdef BDSDEBUG
+  G4cout << " ---> assumed the order:  x, y, z, Bx, By, Bz "
+	 << "\n ---> Min values x,y,z: " 
+	 << minx/CLHEP::cm << " " << miny/CLHEP::cm << " " << minz/CLHEP::cm << " cm "
+	 << "\n ---> Max values x,y,z: " 
+	 << maxx/CLHEP::cm << " " << maxy/CLHEP::cm << " " << maxz/CLHEP::cm << " cm "
+	 << "\n ---> The field will be offset by " << fZoffset/CLHEP::cm << " cm in z" 
+	 << "\n ---> The field will be offset by " << fXoffset/CLHEP::cm << " cm in x" << G4endl;
+#endif
+  // Should really check that the limits are not the wrong way around.
+  if (maxx < minx) {std::swap(maxx,minx); invertX = true;} 
+  if (maxy < miny) {std::swap(maxy,miny); invertY = true;} 
+  if (maxz < minz) {std::swap(maxz,minz); invertZ = true;} 
+  
+  dx = maxx - minx;
+  dy = maxy - miny;
+  dz = maxz - minz;
+  */
   return nullptr;
 }
