@@ -1,18 +1,15 @@
 #ifndef BDSFIELDMAGDETECTORSOLENOID_H
 #define BDSFIELDMAGDETECTORSOLENOID_H
 
-#include "G4Types.hh"
-#include "G4MagneticField.hh"
+#include "globals.hh" // geant4 types / globals
 
-#include "BDSAuxiliaryNavigator.hh"
-#include "BDSMagFieldMesh.hh"
+#include "BDSFieldMag.hh"
 
 /**
- * @brief This class descibes an inner and an outer solenoid field. 
- * Developed from BDSQuadMagField.cc
+ * @brief Field with different inner and an outer solenoid field. 
  */
 
-class BDSFieldMagDetectorSolenoid: public BDSMagFieldMesh, public BDSAuxiliaryNavigator
+class BDSFieldMagDetectorSolenoid: public BDSFieldMag
 {
 public: 
   BDSFieldMagDetectorSolenoid(G4double BIn,
@@ -21,12 +18,19 @@ public:
 			      G4double radiusOut,
 			      G4double zMin,
 			      G4double zMax);
-  virtual ~BDSFieldMagDetectorSolenoid();
   
-  virtual void  GetFieldValue( const G4double Point[4],
-			       G4double *Bfield ) const;
+  virtual ~BDSFieldMagDetectorSolenoid(){;}
+
+  /// Get the magnetic field vector in local coordinates.
+  virtual G4ThreeVector GetField(const G4ThreeVector& position) const;
+  
 private:
-  G4double itsBIn, itsBOut, itsRadiusIn, itsRadiusOut, itsZMin, itsZMax;
+  G4double itsBIn;
+  G4double itsBOut;
+  G4double itsRadiusIn;
+  G4double itsRadiusOut;
+  G4double itsZMin;
+  G4double itsZMax;
 };
 
 #endif
