@@ -27,15 +27,15 @@ protected:
   double npart;
 
   typedef std::vector<std::vector<double>>                           twoDArray;
+  typedef std::vector<std::vector<std::vector<double>>>              threeDArray; 
   typedef std::vector<std::vector<std::vector<std::vector<double>>>> fourDArray;
-  std::vector<double>               means;       // x, xp, y, yp, E, t 
-  std::vector<double>               sums;        // not used
+
   fourDArray                        powSums;
   fourDArray                        cenMoms;
-  twoDArray                         covMats;
-  twoDArray                         optical;     // e, ax, gx, etax, bx, ay, gy, by, etay
+  threeDArray                       covMats;
+  twoDArray                         optical;     // emt, alf, bta, gma, eta, etapr, mean, sigma 
 
   static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
 
-  static double centMomToCovariance(fourDArray &centMoms, int npart ,int a, int i, int j);
+  static double centMomToCovariance(fourDArray &centMoms, int npart ,int k, int i, int j);
 };

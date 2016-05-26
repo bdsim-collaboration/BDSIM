@@ -25,8 +25,8 @@ void SamplerAnalysis::CommonCtor()
     std::cout << __METHOD_NAME__ << std::endl;
   }
   npart = 0;
-  means.resize(6);
-  optical.resize(2); //test with limited opt. funcs for now  ex, bx, ax, ey, by, ay
+  
+  optical.resize(2); 
   for(int i=0;i<2;++i)
   {
     optical[i].resize(11);
@@ -35,22 +35,35 @@ void SamplerAnalysis::CommonCtor()
       optical[i][j]=0.0;
     }
   }
-  
 
+  covMats.resize(3);
+  for(int i=0;i<3;++i)
+  {
+    covMats[i].resize(3);
+    for(int j=0;j<3;++j)
+    {
+      covMats[i][j].resize(3);
+      for(int k=0;k<3;++k)
+      {
+        covMats[i][j][k] = 0.0;
+      }
+    }
+  }
+  
+  
   powSums.resize(6);
   cenMoms.resize(6);
-  covMats.resize(6);
+
   // (x,xp,y,yp,E,t) (x,xp,y,yp,E,t) v1pow, v2pow
   for(int i=0;i<6;++i)
   {
     powSums[i].resize(6);
     cenMoms[i].resize(6);
-    covMats[i].resize(6);
+
     for(int j=0;j<6;++j)
     {
       powSums[i][j].resize(5);
       cenMoms[i][j].resize(5);
-      covMats[i][j] = 0.0;
       for(int k=0;k<=4;++k)
       {
         powSums[i][j][k].resize(5);
@@ -98,12 +111,6 @@ void SamplerAnalysis::Process()
     v[4] = s->energy[i];
     v[5] = s->t[i];
 
-    // means
-    for(int a = 0;a<6;++a)
-    {
-      means[a] += v[a];
-    }
-
     // power sums
     for(int a=0;a<6;++a)
     {
@@ -129,7 +136,7 @@ void SamplerAnalysis::Terminate()
     std::cout << __METHOD_NAME__ << this->s->modelID << " " << npart << std::endl;
   }
 
-  // power sums
+  // central moments
   for(int a=0;a<6;++a)
   {
     for(int b=0;b<6;++b)
@@ -144,20 +151,7 @@ void SamplerAnalysis::Terminate()
 	  }
   }
 
-  
-  for(int i=0;i<6;++i)
-  {
-    means[i] = means[i]/npart;
-  }
-
-  for(int i=0;i<6;++i)
-  {
-    for(int j=0;j<6;++j)
-    {
-      covMats[i][j]=(npart*powSums[i][j][1][1] - powSums[i][i][1][0]*powSums[j][j][1][0])/(npart*(npart-1)); //beam sigma matrix
-    }
-  }
-  
+  //optical function calculation  
   for(int i=0;i<2;++i)
   {
     int j = 0;
@@ -183,27 +177,21 @@ void SamplerAnalysis::Terminate()
     std::cout<<i<<" mean = "<<cenMoms[i][i+1][1][0]<<std::endl;
   }
 
-  /*
-  for(int i=0;i<2;++i)
-  {
-    int j = 0;
-    if(i== 1) j = 2;
+  //statistical error calculation
+  
+  //covariance matrix of parameters for optical functions. no coupling considered.  
+  for(int i=0;i<3;++i)
+    {
+      for(int j=0;j<3;++j)
+	{
+	  for(int k=0;k<3;++k)
+	    {
+	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);
+	    }
+	}
+    }
 
-    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));                      // emittance
-    optical[i][1] = -(covMats[j][j+1])/(sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2))); // alpha
-    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));        // beta
-    optical[i][3] = (1+pow(optical[i][1],2))/optical[i][2];                                            // gamma
-    optical[i][4] = covMats[j][4]/covMats[4][4];                                                       // eta
-    optical[i][6] = covMats[j+1][4]/covMats[4][4];                                                     // eta prime
-  }
-
-  for(int i=0;i<2;++i)
-  {
-    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][2]<<" a = "<<optical[i][1]<<" d = "<< optical[i][4]<<std::endl;
-    std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
-    std::cout<<"mean x = "<<means[0]<<std::endl;
-  }
-  */
+  
 }
 
 std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
@@ -338,15 +326,21 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  i
     return 0;
 }
 
-double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  int a, int i, int j)
+double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  int k, int i, int j)
 {
-  // Calculates the matrix elements os the covariance matrix which is a 3x3 symmetric matrix because coupling is ignored. Inputs are:
-  // int a: plane specifier (a=0: horizontal, a=2: vertical, a=4: longitudinal)
-  // int i,j: indices of matrix elements
+  // Calculates the matrix elements of the parameter covariance matrix which is a 3x3 symmetric matrix in each plane (coupling is ignored). 
+  // Inputs:
+  // int k: plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
+  // int i,j: indices of matrix elements (i,j=0: <uu>, i,j=1: <u'u'>, i,j=2: <uu'>)
+  // e.g. covMat[0][1][2] = cov[<x'x'>,<xx'>], covMat[1][0][0] = cov[<yy>,<yy>]
   
   double cov = 0.0;
 
-  if((i == 1 && j == 1) || (i == 2 && j == 2))
+  int a = 0;
+  if(k == 1) {a=2;}
+  if(k == 2) {a=4;}
+
+  if((i == 0 && j == 0) || (i == 1 && j == 1))
     {
       double m_4_0 = 0.0, m_2_0 = 0.0;
       
@@ -359,14 +353,14 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       else if(i == 2)
       {
 	      m_4_0 = centMoms[a][a+1][0][4];
-	      m_2_0 = centMoms[a][a+1][0][4];
+	      m_2_0 = centMoms[a][a+1][0][2];
       }
 
       cov = ((npart-3)*pow(m_2_0,2))/(npart*(npart-1)) + m_4_0/npart;
       
     }
   
-  else if(i == 3 && j == 3)
+  else if(i == 2 && j == 2)
     {
       double m_1_1 = 0.0, m_2_0 = 0.0, m_0_2 = 0.0, m_2_2 = 0.0;
 
@@ -378,7 +372,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       cov = ((npart-2)*pow(m_1_1,2))/(npart*(npart-1)) + (m_0_2*m_2_0)/(npart*(npart-1)) + m_2_2/npart;
     }
 
-  else if((i == 1 && j == 2) || (i == 2 && j == 3))
+  else if((i == 0 && j == 1) || (i == 1 && j == 2))
   {
     double m_1_1 = 0.0, m_2_0 = 0.0, m_3_1 = 0.0;
 
@@ -397,7 +391,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
 
     cov = ((npart-3)*m_1_1*m_2_0)/(npart*(npart-1)) + m_3_1/npart;
   }
-  else if(i == 1 && j == 3)
+  else if(i == 0 && j == 2)
   {
     double m_1_1 = 0.0, m_2_0 = 0.0, m_0_2 = 0.0,  m_2_2 = 0.0;
       
