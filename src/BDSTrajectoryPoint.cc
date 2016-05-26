@@ -12,6 +12,7 @@
 #include "BDSDebug.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
+#include "BDSEnergyCounterSD.hh"
 
 #include <ostream>
 
@@ -34,7 +35,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   postProcessType    = -1;
   postProcessSubType = -1;
 
-  const G4Track            *aTrack      = step->GetTrack();
+  // const G4Track            *aTrack      = step->GetTrack();
   const G4StepPoint        *prePoint   = step->GetPreStepPoint();
   const G4StepPoint       *postPoint   = step->GetPostStepPoint();
   const G4VProcess         *preProcess = prePoint->GetProcessDefinedStep();
@@ -75,32 +76,40 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4ThreeVector postPosLocal = preT.TransformPoint(postPos);
 
 #if 0
+  G4cout << __METHOD_NAME__ << "Append point" << G4endl;
 
-  G4cout << *BDSPhysicalVolumeInfoRegistry::Instance() << G4endl;
+  // G4cout << *BDSPhysicalVolumeInfoRegistry::Instance() << G4endl;
   if(preVolume)
-    G4cout << preVolume->GetName() << " " << G4endl;
+    G4cout << __METHOD_NAME__ << "pre Volume name : " << preVolume->GetName() << " " << G4endl;
   if(postVolume)
-    G4cout << postVolume->GetName()<< " " << G4endl;
+    G4cout << __METHOD_NAME__ << "postVolume name : " << postVolume->GetName()<< " " << G4endl;
+
+  G4Navigator *nav = BDSEnergyCounterSD::GetAuxilliaryNavigator();
+  G4VPhysicalVolume* preVolumeNav  = nav->LocateGlobalPointAndSetup(prePos);
+  G4VPhysicalVolume* postVolumeNav = nav->LocateGlobalPointAndSetup(postPos);
 
 
-  BDSPhysicalVolumeInfo* preVolInfo  = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(preVolume);
-  BDSPhysicalVolumeInfo* postVolInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(postVolume);
-
-  if(preVolume)
-    G4cout << preVolInfo << G4endl;
-  if(postVolume)
-    G4cout <<  postVolInfo << G4endl;
+  BDSPhysicalVolumeInfo* preVolInfo  = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(preVolumeNav);
+  BDSPhysicalVolumeInfo* postVolInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(postVolumeNav);
 
   if(preVolInfo)
-    G4cout << preVolInfo << G4endl;
-  //    preS  =  preVolInfo->GetSPos() + prePosLocal.z();
+    G4cout << __METHOD_NAME__ << "pre Volume info : " << preVolInfo  << " " << preVolInfo->GetName() << G4endl;
   if(postVolInfo)
-    G4cout << postVolInfo << G4endl;
-  // postS = postVolInfo->GetSPos() + postPosLocal.z();
+    G4cout << __METHOD_NAME__ << "postVolume info : " << postVolInfo << " " << postVolInfo->GetName() << G4endl;
 
-
+  if(preVolInfo)
+  {
+    preS = preVolInfo->GetSPos() + prePosLocal.z();
+    G4cout << __METHOD_NAME__ << "pre Volume s    : " << preS << G4endl;
+  }
+  if(postVolInfo)
+  {
+    postS = postVolInfo->GetSPos() + postPosLocal.z();
+    G4cout << __METHOD_NAME__ << "postVolume s    : " << postS << G4endl;
+  }
 #endif
 
+#if 0
   // If the process type is not undefined or transportation...
   if(!((preProcess->GetProcessType() == fNotDefined) ||
        (preProcess->GetProcessType() == fTransportation)))
@@ -111,7 +120,7 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
     G4ThreeVector pAfter  = step->GetPostStepPoint()->GetMomentum();
     G4ThreeVector deltaP  = pAfter - pBefore;
   }
-
+#endif
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
