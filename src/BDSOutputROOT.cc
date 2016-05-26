@@ -123,29 +123,12 @@ void BDSOutputROOT<Type>::Initialise()
   // primaries is the first
   samplerTrees.push_back(sampler);
 
-  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {
-      G4String name = samplerName;
-      // Check if a tree by this name already exists (name has to be unique)
-      TTree* tree = (TTree*)gDirectory->Get(name);
-      // If it exists, add number and increase, start counting at 2
-      if(tree)
-	{
-	  int count = 2;
-	  G4String uniqueName;
-	  while (tree)
-	    {
-	      uniqueName = name + "_" + std::to_string(count);
-	      tree = (TTree*)gDirectory->Get(uniqueName);
-	      count++;
-	    }
-	  name = uniqueName;
-	}
-
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "named: " << name << G4endl;
+      G4cout << __METHOD_NAME__ << "named: " << samplerName << G4endl;
 #endif
-      sampler = BuildSamplerTree(name);
+      sampler = BuildSamplerTree(samplerName);
       samplerTrees.push_back(sampler);
     }
 

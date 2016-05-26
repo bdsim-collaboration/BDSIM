@@ -10,11 +10,13 @@ BDSSamplerInfo::BDSSamplerInfo(G4String            nameIn,
 			       BDSSampler*         samplerIn,
 			       G4Transform3D       transformIn,
 			       G4double            sPositionIn,
-			       BDSBeamlineElement* elementIn):
+			       BDSBeamlineElement* elementIn,
+			       G4String            uniqueNameIn):
   name(nameIn),
   sampler(samplerIn),
   transform(transformIn),
   transformInverse(transformIn.inverse()),
   sPosition(sPositionIn),
-  element(elementIn)
+  element(elementIn),
+  uniqueName(uniqueNameIn)
 {;}
