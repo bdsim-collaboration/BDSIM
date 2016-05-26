@@ -239,43 +239,41 @@ void EventAnalysis::Write(TFile *outputFile)
 
   outputFile->cd("/");
 
-  double *xOpticsPoint = new double[10];
-  double *yOpticsPoint = new double[10];
+  std::vector<double> xOpticsPoint;
+  std::vector<double> yOpticsPoint;
+  xOpticsPoint.resize(10);
+  yOpticsPoint.resize(10);
+//  double *xOpticsPoint = new double[10];
+//  double *yOpticsPoint = new double[10];
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");
-  opticsTree->Branch("Emitt_x",&(xOpticsPoint[0]),"Emitt_x/D");
-  opticsTree->Branch("Emitt_y",&(yOpticsPoint[0]),"Emitt_y/D");
-  opticsTree->Branch("Alpha_x",&(xOpticsPoint[1]),"Alpha_x/D");
-  opticsTree->Branch("Alpha_y",&(yOpticsPoint[1]),"Alpha_y/D");
-  opticsTree->Branch("Beta_x",&(xOpticsPoint[2]),"Beta_x/D");
-  opticsTree->Branch("Beta_y",&(yOpticsPoint[2]),"Beta_y/D");
-  opticsTree->Branch("Gamma_x",&(xOpticsPoint[3]),"Gamma_x/D");
-  opticsTree->Branch("Gamma_y",&(yOpticsPoint[3]),"Gamma_y/D");
-  opticsTree->Branch("Disp_x",&(xOpticsPoint[4]),"Disp_x/D");
-  opticsTree->Branch("Disp_y",&(yOpticsPoint[4]),"Disp_y/D");
-  opticsTree->Branch("Disp_xp",&(xOpticsPoint[5]),"Disp_xp/D");
-  opticsTree->Branch("Disp_yp",&(yOpticsPoint[5]),"Disp_yp/D");
-  opticsTree->Branch("Mean_x",&(xOpticsPoint[6]),"Mean_x/D");
-  opticsTree->Branch("Mean_y",&(yOpticsPoint[6]),"Mean_y/D");
-  opticsTree->Branch("Mean_xp",&(xOpticsPoint[7]),"Mean_xp/D");
-  opticsTree->Branch("Mean_yp",&(yOpticsPoint[7]),"Mean_yp/D");
-  opticsTree->Branch("Sigma_x",&(xOpticsPoint[8]),"Sigma_x/D");
-  opticsTree->Branch("Sigma_y",&(yOpticsPoint[8]),"Sigma_y/D");
+  opticsTree->Branch("Emitt_x", &(xOpticsPoint[0]),"Emitt_x/D");
+  opticsTree->Branch("Emitt_y", &(yOpticsPoint[0]),"Emitt_y/D");
+  opticsTree->Branch("Alpha_x", &(xOpticsPoint[1]),"Alpha_x/D");
+  opticsTree->Branch("Alpha_y", &(yOpticsPoint[1]),"Alpha_y/D");
+  opticsTree->Branch("Beta_x",  &(xOpticsPoint[2]),"Beta_x/D");
+  opticsTree->Branch("Beta_y",  &(yOpticsPoint[2]),"Beta_y/D");
+  opticsTree->Branch("Gamma_x", &(xOpticsPoint[3]),"Gamma_x/D");
+  opticsTree->Branch("Gamma_y", &(yOpticsPoint[3]),"Gamma_y/D");
+  opticsTree->Branch("Disp_x",  &(xOpticsPoint[4]),"Disp_x/D");
+  opticsTree->Branch("Disp_y",  &(yOpticsPoint[4]),"Disp_y/D");
+  opticsTree->Branch("Disp_xp", &(xOpticsPoint[5]),"Disp_xp/D");
+  opticsTree->Branch("Disp_yp", &(yOpticsPoint[5]),"Disp_yp/D");
+  opticsTree->Branch("Mean_x",  &(xOpticsPoint[6]),"Mean_x/D");
+  opticsTree->Branch("Mean_y",  &(yOpticsPoint[6]),"Mean_y/D");
+  opticsTree->Branch("Mean_xp", &(xOpticsPoint[7]),"Mean_xp/D");
+  opticsTree->Branch("Mean_yp", &(yOpticsPoint[7]),"Mean_yp/D");
+  opticsTree->Branch("Sigma_x", &(xOpticsPoint[8]),"Sigma_x/D");
+  opticsTree->Branch("Sigma_y", &(yOpticsPoint[8]),"Sigma_y/D");
   opticsTree->Branch("Sigma_xp",&(xOpticsPoint[9]),"Sigma_xp/D");
   opticsTree->Branch("Sigma_yp",&(yOpticsPoint[9]),"Sigma_yp/D");
   
   for(auto i : this->opticalFunctions)
   {
-    std::cout << "-------------" << std::endl;
-    std::cout << i[0][0] << " " << i[1][0] << std::endl;
-    for(size_t j=0;j< i[0].size(); ++j)
-    {
-      xOpticsPoint[j] = i[0][j];
-      yOpticsPoint[j] = i[1][j];
-    }
-
-    std::cout << xOpticsPoint[0] << " " << yOpticsPoint[0] << std::endl;
+//    std::cout << "-------------" << std::endl;
+    xOpticsPoint = i[0];
+    yOpticsPoint = i[1];
     opticsTree->Fill();
   }
   opticsTree->Write();
