@@ -29,7 +29,7 @@ void SamplerAnalysis::CommonCtor()
   optical.resize(2); //test with limited opt. funcs for now  ex, bx, ax, ey, by, ay
   for(int i=0;i<2;++i)
   {
-    optical[i].resize(10);
+    optical[i].resize(11);
     for(int j=0;j<10;++j)
     {
       optical[i][j]=0.0;
@@ -173,6 +173,7 @@ void SamplerAnalysis::Terminate()
     optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                 // mean divergence
     optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                           // sigma spatial
     optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                           // sigma divergence 
+    optical[i][10] = this->s->S;
   }
 
   for(int i=0;i<2;++i)
