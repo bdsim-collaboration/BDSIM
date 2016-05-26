@@ -27,12 +27,13 @@ protected:
   double npart;
 
   typedef std::vector<std::vector<double>>                           twoDArray;
+  typedef std::vector<std::vector<std::vector<double>>>              threeDArray; 
   typedef std::vector<std::vector<std::vector<std::vector<double>>>> fourDArray;
   std::vector<double>               means;       // x, xp, y, yp, E, t 
   std::vector<double>               sums;        // not used
   fourDArray                        powSums;
   fourDArray                        cenMoms;
-  twoDArray                         covMats;
+  threeDArray                       covMats;
   twoDArray                         optical;     // e, ax, gx, etax, bx, ay, gy, by, etay
 
   static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);

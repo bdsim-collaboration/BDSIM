@@ -26,7 +26,7 @@ void SamplerAnalysis::CommonCtor()
   }
   npart = 0;
   means.resize(6);
-  optical.resize(2); //test with limited opt. funcs for now  ex, bx, ax, ey, by, ay
+  optical.resize(2); 
   for(int i=0;i<2;++i)
   {
     optical[i].resize(10);
@@ -35,22 +35,35 @@ void SamplerAnalysis::CommonCtor()
       optical[i][j]=0.0;
     }
   }
-  
 
+  covMats.resize(3);
+  for(int i=0;i<3;++i)
+  {
+    covMats[i].resize(3);
+    for(int j=0;j<3;++j)
+    {
+      covMats[i][j].resize(3);
+      for(int k=0;k<3;++k)
+      {
+        covMats[i][j][k] = 0.0;
+      }
+    }
+  }
+  
+  
   powSums.resize(6);
   cenMoms.resize(6);
-  covMats.resize(6);
+
   // (x,xp,y,yp,E,t) (x,xp,y,yp,E,t) v1pow, v2pow
   for(int i=0;i<6;++i)
   {
     powSums[i].resize(6);
     cenMoms[i].resize(6);
-    covMats[i].resize(6);
+
     for(int j=0;j<6;++j)
     {
       powSums[i][j].resize(5);
       cenMoms[i][j].resize(5);
-      covMats[i][j] = 0.0;
       for(int k=0;k<=4;++k)
       {
         powSums[i][j][k].resize(5);
@@ -98,12 +111,6 @@ void SamplerAnalysis::Process()
     v[4] = s->energy[i];
     v[5] = s->t[i];
 
-    // means
-    for(int a = 0;a<6;++a)
-    {
-      means[a] += v[a];
-    }
-
     // power sums
     for(int a=0;a<6;++a)
     {
@@ -129,7 +136,7 @@ void SamplerAnalysis::Terminate()
     std::cout << __METHOD_NAME__ << this->s->modelID << " " << npart << std::endl;
   }
 
-  // power sums
+  // central moments
   for(int a=0;a<6;++a)
   {
     for(int b=0;b<6;++b)
@@ -144,20 +151,7 @@ void SamplerAnalysis::Terminate()
 	  }
   }
 
-  
-  for(int i=0;i<6;++i)
-  {
-    means[i] = means[i]/npart;
-  }
-
-  for(int i=0;i<6;++i)
-  {
-    for(int j=0;j<6;++j)
-    {
-      covMats[i][j]=(npart*powSums[i][j][1][1] - powSums[i][i][1][0]*powSums[j][j][1][0])/(npart*(npart-1)); //beam sigma matrix
-    }
-  }
-  
+  //optical function calculation  
   for(int i=0;i<2;++i)
   {
     int j = 0;
@@ -182,27 +176,21 @@ void SamplerAnalysis::Terminate()
     std::cout<<i<<" mean = "<<cenMoms[i][i+1][1][0]<<std::endl;
   }
 
-  /*
-  for(int i=0;i<2;++i)
-  {
-    int j = 0;
-    if(i== 1) j = 2;
+  //statistical error calculation
+  
+  //covariance matrix of parameters for optical functions. no coupling considered.  
+  for(int i=0;i<3;++i)
+    {
+      for(int j=0;i<3;++j)
+	{
+	  for(int k=0;k<3;++k)
+	    {
+	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, j);
+	    }
+	}
+    }
 
-    optical[i][0] = sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));                      // emittance
-    optical[i][1] = -(covMats[j][j+1])/(sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2))); // alpha
-    optical[i][2] = covMats[j][j]/sqrt(covMats[j][j]*covMats[j+1][j+1]-pow(covMats[j][j+1],2));        // beta
-    optical[i][3] = (1+pow(optical[i][1],2))/optical[i][2];                                            // gamma
-    optical[i][4] = covMats[j][4]/covMats[4][4];                                                       // eta
-    optical[i][6] = covMats[j+1][4]/covMats[4][4];                                                     // eta prime
-  }
-
-  for(int i=0;i<2;++i)
-  {
-    std::cout<<"e = "<<optical[i][0]<<" b = "<<optical[i][2]<<" a = "<<optical[i][1]<<" d = "<< optical[i][4]<<std::endl;
-    std::cout<<"sigx = "<< sqrt(covMats[0][0])<<std::endl;
-    std::cout<<"mean x = "<<means[0]<<std::endl;
-  }
-  */
+  
 }
 
 std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
