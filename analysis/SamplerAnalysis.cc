@@ -29,8 +29,8 @@ void SamplerAnalysis::CommonCtor()
   optical.resize(2); 
   for(int i=0;i<2;++i)
   {
-    optical[i].resize(11);
-    for(int j=0;j<10;++j)
+    optical[i].resize(12);
+    for(int j=0;j<12;++j)
     {
       optical[i][j]=0.0;
     }
@@ -101,6 +101,8 @@ void SamplerAnalysis::Process()
   std::vector<double> v;
   v.resize(6);
 
+  this->S = this->s->S;
+  
   // loop over all entries
   for(int i=0;i<this->s->n;++i)
   {
@@ -157,17 +159,36 @@ void SamplerAnalysis::Terminate()
     int j = 0;
     if(i== 1) j = 2;
 
-    optical[i][0]  = sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));                        // emittance
-    optical[i][1]  = -cenMoms[j][j+1][1][1]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2)); // alpha
-    optical[i][2]  = cenMoms[j][j+1][2][0]/sqrt(cenMoms[j][j+1][2][0]*cenMoms[j][j+1][0][2]-pow(cenMoms[j][j+1][1][1],2));  // beta
-    optical[i][3]  = (1+pow(optical[i][1],2))/optical[i][2];                                                                // gamma
+    //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs. 
+    
     optical[i][4]  = cenMoms[j][4][1][1]/cenMoms[4][4][2][0];                                                               // eta
     optical[i][5]  = cenMoms[j+1][4][1][1]/cenMoms[4][4][2][0];                                                             // eta prime
+
+    if(optical[i][4] != optical[i][4]) {optical[i][4]=0;}  //check for nans (expected if dE=0) and set disp=0 if found
+    if(optical[i][5] != optical[i][5]) {optical[i][5]=0;}
+
+    double u_2_0,u_0_2,u_1_1;
+    
+    u_2_0 = cenMoms[j][j+1][2][0]+(pow(optical[i][4],2)*cenMoms[4][4][2][0])/pow(cenMoms[4][4][1][0],2)
+            -2*(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
+    
+    u_0_2 = cenMoms[j][j+1][0][2]+(pow(optical[i][5],2)*cenMoms[4][4][2][0])/pow(cenMoms[4][4][1][0],2)
+            -2*(optical[i][5]*cenMoms[j+1][4][1][1])/cenMoms[4][4][1][0];
+    
+    u_1_1 = cenMoms[j][j+1][1][1]+(optical[i][4]*optical[i][5]*cenMoms[4][4][2][0])/pow(cenMoms[4][4][1][0],2)
+            -(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0]-(optical[i][4]*cenMoms[j][4][1][1])/cenMoms[4][4][1][0];
+    
+    optical[i][0]  = sqrt(u_2_0*u_0_2-pow(u_1_1,2));                                                                        // emittance
+    optical[i][1]  = -u_1_1/sqrt(u_2_0*u_0_2-pow(u_1_1,2));                                                                 // alpha
+    optical[i][2]  = u_2_0/sqrt(u_2_0*u_0_2-pow(u_1_1,2));                                                                  // beta
+    
+    optical[i][3]  = (1+pow(optical[i][1],2))/optical[i][2];                                                                // gamma
     optical[i][6]  = cenMoms[j][j+1][1][0];                                                                                 // mean spatial
     optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                 // mean divergence
     optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                           // sigma spatial
     optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                           // sigma divergence 
-    optical[i][10] = this->s->S;
+    optical[i][10] = this->S;
+    optical[i][11] = npart;
   }
 
   for(int i=0;i<2;++i)

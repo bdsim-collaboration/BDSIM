@@ -25,6 +25,7 @@ public:
 protected:
   // sums - initialised to zero as that's what they start at
   double npart;
+  double S;
 
   typedef std::vector<std::vector<double>>                           twoDArray;
   typedef std::vector<std::vector<std::vector<double>>>              threeDArray; 
@@ -36,6 +37,5 @@ protected:
   twoDArray                         optical;     // emt, alf, bta, gma, eta, etapr, mean, sigma 
 
   static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
-
   static double centMomToCovariance(fourDArray &centMoms, int npart ,int k, int i, int j);
 };

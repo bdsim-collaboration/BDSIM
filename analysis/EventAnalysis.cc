@@ -35,8 +35,8 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     opticalFunctions[i].resize(2);
     for(int j=0;j<2;++j)
     {
-      opticalFunctions[i][j].resize(10);
-      for(int k=0;k<10;++k)
+      opticalFunctions[i][j].resize(12);
+      for(int k=0;k<12;++k)
       {
         opticalFunctions[i][j][k] = 0.0;
       }
@@ -269,6 +269,7 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sigma_xp",&(xOpticsPoint[9]), "Sigma_xp/D");
   opticsTree->Branch("Sigma_yp",&(yOpticsPoint[9]), "Sigma_yp/D");
   opticsTree->Branch("S"       ,&(xOpticsPoint[10]),"S/D");
+  opticsTree->Branch("Npart"   ,&(xOpticsPoint[11]),"Npart/D");
   
   for(auto i : this->opticalFunctions)
   {
