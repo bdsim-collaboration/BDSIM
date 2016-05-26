@@ -225,10 +225,8 @@ void EventAnalysis::Write(TFile *outputFile)
 
   std::vector<double> xOpticsPoint;
   std::vector<double> yOpticsPoint;
-  xOpticsPoint.resize(11);
-  yOpticsPoint.resize(11);
-//  double *xOpticsPoint = new double[10];
-//  double *yOpticsPoint = new double[10];
+  xOpticsPoint.resize(12);
+  yOpticsPoint.resize(12);
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");
