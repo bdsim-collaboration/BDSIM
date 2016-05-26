@@ -28,22 +28,6 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     this->samplerAnalyses.push_back(sa);
   }
 
-#if 0
-  opticalFunctions.resize(event->samplers.size());
-  for(int i=0;i<event->samplers.size();++i)
-  {
-    opticalFunctions[i].resize(2);
-    for(int j=0;j<2;++j)
-    {
-      opticalFunctions[i][j].resize(12);
-      for(int k=0;k<12;++k)
-      {
-        opticalFunctions[i][j][k] = 0.0;
-      }
-    }
-  }
-#endif
-
 //  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
 //  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
 }
