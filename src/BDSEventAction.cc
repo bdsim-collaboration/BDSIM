@@ -218,13 +218,13 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     }
   }
 
+
+#if 0
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
-  TrajectoryVector* trajVec = trajCont->GetVector();
-
+  //  TrajectoryVector* trajVec = trajCont->GetVector();
   BDSTrajectoryPoint *primaryFirstInt = BDSTrajectory::FirstInteraction(trajCont);
   BDSTrajectoryPoint *primaryLastInt  = BDSTrajectory::LastInteraction(trajCont);
-#if 0
   G4cout << __METHOD_NAME__ << primaryFirstInt->GetPosition()        << G4endl;
   G4cout << __METHOD_NAME__ << primaryFirstInt->GetPreProcessType()  << " " << primaryFirstInt->GetPreProcessSubType()  << " "
                             << primaryFirstInt->GetPostProcessType() << " " << primaryFirstInt->GetPostProcessSubType() << G4endl;
