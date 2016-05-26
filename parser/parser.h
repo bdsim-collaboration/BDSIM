@@ -76,16 +76,16 @@ namespace GMAD
     void add_sampler(std::string name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
     void add_csampler(std::string name, int count, ElementType type);
-    /// insert atom
-    void add_atom();
-    /// insert material
-    void add_material();
-    /// insert region
-    void add_region();
-    /// insert cavity model
-    void add_cavitymodel();
-    /// insert tunnel
-    void add_tunnel();
+    /// Insert global object of parser class C in list
+    template <class C>
+      void Add();
+    /// Get global object of parser class C
+    template <class C>
+      C GetGlobal();
+    /// Get list for parser class C
+    template <class C>
+      std::vector<C> GetList();
+
     /// insert cross section bias
     void add_xsecbias();
     /// access property of Element with element_name
@@ -110,30 +110,19 @@ namespace GMAD
     ///@}
     /// Reset parameters
     void ClearParams();
+    /// Set value for parser class
+    template <class C, typename T>
+      void SetValue(std::string property, T value);
+
     /// Set parameter value
     template <typename T>
       void SetParameterValue(std::string property, T value);
-    /// Set atom value
-    template <typename T>
-      void SetAtomValue(std::string property, T value);
-    /// Set material value
-    template <typename T>
-      void SetMaterialValue(std::string property, T value);
-    /// Set region value
-    template <typename T>
-      void SetRegionValue(std::string property, T value);
-    /// Set tunnel value
-    template <typename T>
-      void SetTunnelValue(std::string property, T value);
     /// Set physics biasing value
     template <typename T>
       void SetPhysicsBiasValue(std::string property, T value);
     /// Set options value
     template <typename T>
       void SetOptionsValue(std::string property, T value);
-    /// Set options value
-    template <typename T>
-      void SetCavityModelValue(std::string property, T value);
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
     /// Add variable memory to variable list for memory management
@@ -224,30 +213,30 @@ namespace GMAD
     std::vector<std::string*> var_list;
   };
 
+  template <class C>
+    void Parser::Add()
+    {
+      // copy from global
+      C global = GetGlobal<C>();
+      C instance(global);
+      // reset global
+      global.clear();
+#ifdef BDSDEBUG 
+      instance.print();
+#endif
+      GetList<C>().push_back(instance);
+    }
+
+  template <class C, typename T>
+    void Parser::SetValue(std::string property, T value)
+    {
+      GetGlobal<C>().set_value(property, value);
+    }
+  
   template <typename T>
     void Parser::SetParameterValue(std::string property, T value)
     {
       params.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetAtomValue(std::string property, T value)
-    {
-      atom.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetMaterialValue(std::string property, T value)
-    {
-      material.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetRegionValue(std::string property, T value)
-    {
-      region.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetTunnelValue(std::string property, T value)
-    {
-      tunnel.set_value(property, value);
     }
   template <typename T>
     void Parser::SetPhysicsBiasValue(std::string property, T value)
@@ -258,11 +247,6 @@ namespace GMAD
     void Parser::SetOptionsValue(std::string property, T value)
     {
       options.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetCavityModelValue(std::string property, T value)
-    {
-      cavitymodel.set_value(property, value);
     }
 }
 
