@@ -223,8 +223,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
-	     Parser::Instance()->SetPhysicsBiasValue("name",*($1));
-	     Parser::Instance()->add_xsecbias();
+	     Parser::Instance()->SetValue<PhysicsBiasing>("name",*($1));
+	     Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
            }
        }
       | VARIABLE ':' error_noparams
@@ -342,17 +342,17 @@ parameters_extend : /* nothing */
 parameters: paramassign '=' aexpr parameters_extend
             {
 	      if(execute)
-		Parser::Instance()->SetParameterValue(*($1),$3);
+		Parser::Instance()->SetValue<Parameters>(*($1),$3);
 	    }
           | paramassign '=' vecexpr parameters_extend
             {
 	      if(execute) 
-		Parser::Instance()->SetParameterValue(*($1),$3);
+		Parser::Instance()->SetValue<Parameters>(*($1),$3);
 	    }
           | paramassign '=' string parameters_extend
             {
 	      if(execute) {
-		Parser::Instance()->SetParameterValue(*($1),*$3);
+		Parser::Instance()->SetValue<Parameters>(*($1),*$3);
 	      }
 	    }
 
@@ -675,7 +675,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
-		Parser::Instance()->add_xsecbias();
+		Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
 	      }
           }
 
@@ -749,7 +749,7 @@ csample_options : paramassign '=' aexpr csample_options_extend
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    if(execute)
-		      Parser::Instance()->SetParameterValue(*($1),$3);
+		      Parser::Instance()->SetValue<Parameters>(*($1),$3);
 		  }
                 | sample_options csample_options_extend
                   {
@@ -838,17 +838,17 @@ xsecbias_options_extend : /* nothing */
 xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
+			Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);
 		    }
                  | paramassign '=' string xsecbias_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
+			Parser::Instance()->SetValue<PhysicsBiasing>(*$1,*$3);
 		    }
                  | paramassign '=' vecexpr xsecbias_options_extend
 		    {
 		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
+			Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);
 		    }
 
 option_parameters_extend : /* nothing */
@@ -857,12 +857,12 @@ option_parameters_extend : /* nothing */
 option_parameters : paramassign '=' aexpr option_parameters_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,$3);
+			Parser::Instance()->SetValue<Options>(*$1,$3);
 		    }   
                   | paramassign '=' string option_parameters_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,*$3);
+			Parser::Instance()->SetValue<Options>(*$1,*$3);
 		    }
 
 // beam_parameter same as option_parameters, might change in future

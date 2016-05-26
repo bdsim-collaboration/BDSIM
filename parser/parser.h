@@ -76,18 +76,16 @@ namespace GMAD
     void add_sampler(std::string name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
     void add_csampler(std::string name, int count, ElementType type);
-    /// Insert global object of parser class C in list
-    template <class C>
+    /// Insert global object of parser class C in Container class
+    template <class C, class Container=std::vector<C>>
       void Add();
     /// Get global object of parser class C
     template <class C>
-      C GetGlobal();
+      C& GetGlobal();
     /// Get list for parser class C
-    template <class C>
-      std::vector<C> GetList();
+    template <class C, class Container=std::vector<C>>
+      Container& GetList();
 
-    /// insert cross section bias
-    void add_xsecbias();
     /// access property of Element with element_name
     double property_lookup(std::string element_name, std::string property_name);
     /// add element to temporary element sequence tmp_list
@@ -114,15 +112,6 @@ namespace GMAD
     template <class C, typename T>
       void SetValue(std::string property, T value);
 
-    /// Set parameter value
-    template <typename T>
-      void SetParameterValue(std::string property, T value);
-    /// Set physics biasing value
-    template <typename T>
-      void SetPhysicsBiasValue(std::string property, T value);
-    /// Set options value
-    template <typename T>
-      void SetOptionsValue(std::string property, T value);
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
     /// Add variable memory to variable list for memory management
@@ -213,40 +202,24 @@ namespace GMAD
     std::vector<std::string*> var_list;
   };
 
-  template <class C>
+  template <class C, class Container>
     void Parser::Add()
     {
       // copy from global
-      C global = GetGlobal<C>();
+      C& global = GetGlobal<C>();
       C instance(global);
       // reset global
       global.clear();
 #ifdef BDSDEBUG 
       instance.print();
 #endif
-      GetList<C>().push_back(instance);
+      GetList<C, Container>().push_back(instance);
     }
 
   template <class C, typename T>
     void Parser::SetValue(std::string property, T value)
     {
       GetGlobal<C>().set_value(property, value);
-    }
-  
-  template <typename T>
-    void Parser::SetParameterValue(std::string property, T value)
-    {
-      params.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetPhysicsBiasValue(std::string property, T value)
-    {
-      xsecbias.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetOptionsValue(std::string property, T value)
-    {
-      options.set_value(property, value);
     }
 }
 
