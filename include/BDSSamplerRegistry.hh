@@ -6,6 +6,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
 
+#include <map>
 #include <vector>
 
 class BDSBeamlineElement;
@@ -89,6 +90,9 @@ public:
   /// Access all names at once
   std::vector<G4String> GetNames() const;
 
+  /// Access all the unique names at once
+  std::vector<G4String> GetUniqueNames() const;
+
   /// Get number of registered samplers
   inline G4int NumberOfExistingSamplers() const;
   inline size_t size() const;
@@ -103,6 +107,11 @@ private:
   /// Counter for easy checking of out of bounds and incrementing.
   /// Also the index in the member vectors, so zero counting.
   G4int numberOfEntries;
+
+  /// Store  the already added names to ensure that a sampler can
+  /// also have a unique name for output purposes. Also store the number
+  /// of times that name has been used.
+  std::map<G4String, G4int> existingNames;
 };
 
 inline G4String BDSSamplerRegistry::GetName(G4int index) const
