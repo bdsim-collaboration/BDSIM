@@ -196,7 +196,7 @@ void BDSGeometryLCDD::parseDoc()
 #ifdef BDSDEBUG
      G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagField" << G4endl;
 #endif
-     field = new BDSMagFieldMesh();
+     //field = new BDSMagFieldMesh();
    }
 
    xmlFreeDoc(doc);
@@ -378,17 +378,17 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
 	G4Exception("BDSGeometryLCDD::parseFIELDS> making solenoid field but already built dipole field...", "-1", FatalException, "");
       } 
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
-      G4double lunit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"lunit"));
-      G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
-      G4double outer_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_radius")) * lunit;
-      G4double inner_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_radius")) * lunit;
-      G4double inner_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_field")) * funit;
-      G4double outer_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_field")) * funit;
-      G4double zmax = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmax")) * lunit;
-      G4double zmin = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmin")) * lunit;
+      //G4double lunit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"lunit"));
+      //G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
+      //G4double outer_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_radius")) * lunit;
+      //G4double inner_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_radius")) * lunit;
+      //G4double inner_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_field")) * funit;
+      //G4double outer_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_field")) * funit;
+      //G4double zmax = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmax")) * lunit;
+      //G4double zmin = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmin")) * lunit;
 
       //Make the magnetic field
-      field = new BDSFieldMagDetectorSolenoid(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
+      //field = new BDSFieldMagDetectorSolenoid(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"bdsimdipole"))){
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
       itsFieldVolName = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"volume"));

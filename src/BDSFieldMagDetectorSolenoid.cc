@@ -21,7 +21,7 @@ BDSFieldMagDetectorSolenoid::BDSFieldMagDetectorSolenoid(G4double BIn,
 
 G4ThreeVector BDSFieldMagDetectorSolenoid::GetField(const G4ThreeVector &position) const
 {
-  G4ThreeVector result(); // default values are 0
+  G4ThreeVector result(0,0,0);
   G4double zField   = 0;
   G4double localRad = sqrt(pow(position.y(),2)+pow(position.x(),2));
 
@@ -38,6 +38,7 @@ G4ThreeVector BDSFieldMagDetectorSolenoid::GetField(const G4ThreeVector &positio
     {zField=0;}
 
   result[2] = zField;
+  return result;
 }
 
 

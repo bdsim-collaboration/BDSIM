@@ -57,12 +57,12 @@ BDSFieldMagSQL::~BDSFieldMagSQL()
 
 G4ThreeVector BDSFieldMagSQL::GetField(const G4ThreeVector &position) const
 {
-  G4ThreeVector LocalR, LocalB, RLocalR, FieldB, NPoleB);
+  G4ThreeVector LocalR, LocalB, RLocalR, FieldB, NPoleB;
 
   auxNavigator->LocateGlobalPointAndSetup(position);
   //  G4TouchableHistory* aTouchable = auxNavigator->CreateTouchableHistory();
   G4TouchableHistoryHandle aTouchable = auxNavigator->CreateTouchableHistoryHandle();
-  const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
+  // const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
   //  const G4AffineTransform MarkerToGlobal=GlobalToMarker.Inverse();
   RLocalR = position;
   
@@ -151,7 +151,7 @@ G4ThreeVector BDSFieldMagSQL::GetField(const G4ThreeVector &position) const
 	LocalB.setY(fieldBrr_r*(RLocalR.y()));
 	LocalB.setZ(fieldBzz);
 	// Now rotate to give BField on Global Reference Frame
-	LocalB.transform(Rotation().inverse());
+	//LocalB.transform(Rotation().inverse());
       }
     //LocalB=G4ThreeVector(0.,0.,0.); //turn Bfield from Solenoid off
   }
@@ -226,7 +226,7 @@ void BDSFieldMagSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       itsBr_over_r.push_back(0.5 * itsdBz_by_dz[itsdBz_by_dz.size()-1] );
     }
 
-  const G4RotationMatrix* rot = referenceVolume->GetFrameRotation();
+  //const G4RotationMatrix* rot = referenceVolume->GetFrameRotation();
   /*if (rot)
     {SetOriginRotation(*rot);}
   SetOriginTranslation(referenceVolume->GetFrameTranslation());*/
