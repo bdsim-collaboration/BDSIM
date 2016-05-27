@@ -3,7 +3,6 @@
 
 #include "G4AnnihiToMuPair.hh"
 #include "G4Cerenkov.hh"
-#include "G4ChargedGeantino.hh"
 #include "G4eeToHadrons.hh"
 #include "G4EmSaturation.hh"
 #include "G4Gamma.hh"
