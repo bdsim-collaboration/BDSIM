@@ -631,44 +631,47 @@ const FastList<Element>& Parser::GetBeamline()const
 }
 
 //template specialisation
-template<>
-Parameters& Parser::GetGlobal(){return params;}
+// put explicitly in namespace since g++ complains
+namespace GMAD {
+  template<>
+  Parameters& Parser::GetGlobal(){return params;}
 
-template<>
-Options& Parser::GetGlobal(){return options;}
+  template<>
+  Options& Parser::GetGlobal(){return options;}
 
-template<>
-Region& Parser::GetGlobal(){return region;}
+  template<>
+  Region& Parser::GetGlobal(){return region;}
 
-template<>
-std::vector<Region>& Parser::GetList<Region>(){return region_list;}
+  template<>
+  std::vector<Region>& Parser::GetList<Region>(){return region_list;}
 
-template<>
-Atom& Parser::GetGlobal(){return atom;}
+  template<>
+  Atom& Parser::GetGlobal(){return atom;}
 
-template<>
-std::vector<Atom>& Parser::GetList<Atom>(){return atom_list;}
+  template<>
+  std::vector<Atom>& Parser::GetList<Atom>(){return atom_list;}
 
-template<>
-Material& Parser::GetGlobal(){return material;}
+  template<>
+  Material& Parser::GetGlobal(){return material;}
 
-template<>
-std::vector<Material>& Parser::GetList<Material>(){return material_list;}
+  template<>
+  std::vector<Material>& Parser::GetList<Material>(){return material_list;}
 
-template<>
-Tunnel& Parser::GetGlobal(){return tunnel;}
+  template<>
+  Tunnel& Parser::GetGlobal(){return tunnel;}
 
-template<>
-std::vector<Tunnel>& Parser::GetList<Tunnel>(){return tunnel_list;}
+  template<>
+  std::vector<Tunnel>& Parser::GetList<Tunnel>(){return tunnel_list;}
 
-template<>
-CavityModel& Parser::GetGlobal(){return cavitymodel;}
+  template<>
+  CavityModel& Parser::GetGlobal(){return cavitymodel;}
 
-template<>
-std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
+  template<>
+  std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
 
-template<>
-PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
+  template<>
+  PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
 
-template<>
-FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing,FastList<PhysicsBiasing>>(){return xsecbias_list;}
+  template<>
+  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing,FastList<PhysicsBiasing>>(){return xsecbias_list;}
+}
