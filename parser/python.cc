@@ -1,43 +1,43 @@
 #include "python.h"
 
-/** Python interface, need to match pybdsim/Gmad.py **/ 
-int GMAD::GmadParser_c(char *name) 
+/** Python interface, need to match pybdsim/Gmad.py **/
+int GMAD::GmadParser_c(char *name)
 {
   Parser::Instance(std::string(name));
   return 0;
 }
 
-int GMAD::GetNElements() 
+int GMAD::GetNElements()
 {
   return Parser::Instance()->GetBeamline().size();
-}  
+}
 
-const char* GMAD::GetName(int i) 
+const char* GMAD::GetName(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return (it->name).c_str();
 }
 
-int GMAD::GetType(int i) 
+int GMAD::GetType(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return static_cast<int>(it->type);
 }
 
-double GMAD::GetLength(int i) 
+double GMAD::GetLength(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->l;
 }
 
-double GMAD::GetAngle(int i) 
+double GMAD::GetAngle(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
-  return it->angle;  
+  return it->angle;
 }
 
 double* GMAD::GetKs(int i)
@@ -54,14 +54,14 @@ double* GMAD::GetKs(int i)
   return result;
 }
 
-double GMAD::GetAper1(int i) 
+double GMAD::GetAper1(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);
   return it->aper1;
 }
 
-double GMAD::GetAper2(int i) 
+double GMAD::GetAper2(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
   std::advance(it, i);

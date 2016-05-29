@@ -8,13 +8,13 @@
 
 namespace GMAD
 {
-  /** Python interface **/ 
-  extern "C" {   
+  /** Python interface **/
+  extern "C" {
     int    GmadParser_c(char *name);
 
     /* Interface to extern beamline_list */
     int          GetNElements();            // Length of list
-    int          GetType(int);              // Type of element 
+    int          GetType(int);              // Type of element
     const char*  GetName(int);              // Name of element
     double       GetLength(int);            // Length of element
     double       GetAngle(int);             // Angle of element
