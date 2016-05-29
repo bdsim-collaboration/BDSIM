@@ -82,6 +82,13 @@ double GMAD::GetAper4(int i)
   return it->aper4;
 }
 
+const char* GMAD::GetApertureType(int i)
+{
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
+  std::advance(it, i);
+  return (it->apertureType).c_str();
+}
+
 double GMAD::GetBeampipeThickness(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();

@@ -23,6 +23,7 @@ namespace GMAD
     double       GetAper2(int);             // Aperture 2
     double       GetAper3(int);             // Aperture 3
     double       GetAper4(int);             // Aperture 4
+    const char*  GetApertureType(int);       // Aperture Type
     double       GetBeampipeThickness(int); // Beam Pipe Thickness
 
   }
