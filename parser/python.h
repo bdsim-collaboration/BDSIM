@@ -21,6 +21,8 @@ namespace GMAD
     double*      GetKs(int);                // All magnetic ks
     double       GetAper1(int);             // Aperture 1
     double       GetAper2(int);             // Aperture 2
+    double       GetAper3(int);             // Aperture 3
+    double       GetAper4(int);             // Aperture 4
     double       GetBeampipeThickness(int); // Beam Pipe Thickness
 
   }

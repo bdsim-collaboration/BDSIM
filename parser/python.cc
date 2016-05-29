@@ -68,6 +68,20 @@ double GMAD::GetAper2(int i)
   return it->aper2;
 }
 
+double GMAD::GetAper3(int i)
+{
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
+  std::advance(it, i);
+  return it->aper3;
+}
+
+double GMAD::GetAper4(int i)
+{
+  std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
+  std::advance(it, i);
+  return it->aper4;
+}
+
 double GMAD::GetBeampipeThickness(int i)
 {
   std::list<Element>::const_iterator it = Parser::Instance()->GetBeamline().begin();
