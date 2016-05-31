@@ -28,22 +28,6 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     this->samplerAnalyses.push_back(sa);
   }
 
-#if 0
-  opticalFunctions.resize(event->samplers.size());
-  for(int i=0;i<event->samplers.size();++i)
-  {
-    opticalFunctions[i].resize(2);
-    for(int j=0;j<2;++j)
-    {
-      opticalFunctions[i][j].resize(12);
-      for(int k=0;k<12;++k)
-      {
-        opticalFunctions[i][j][k] = 0.0;
-      }
-    }
-  }
-#endif
-
 //  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
 //  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
 }
@@ -95,7 +79,7 @@ void EventAnalysis::ProcessSamplers()
   {
     if(Config::Instance()->Debug())
     {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s << " " << (*s)->s->n <<std::endl;
+      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
     }
 
     // process samplers
@@ -243,8 +227,6 @@ void EventAnalysis::Write(TFile *outputFile)
   std::vector<double> yOpticsPoint;
   xOpticsPoint.resize(12);
   yOpticsPoint.resize(12);
-//  double *xOpticsPoint = new double[10];
-//  double *yOpticsPoint = new double[10];
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");

@@ -175,7 +175,7 @@ void BDSOutputROOTEvent::Initialise()
 
 
   // build sampler structures 
-  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+  for(auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {
       // create sampler structure
 #ifndef __ROOTDOUBLE__
