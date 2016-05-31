@@ -95,7 +95,7 @@ void EventAnalysis::ProcessSamplers()
   {
     if(Config::Instance()->Debug())
     {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
+      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s << " " << (*s)->s->n <<std::endl;
     }
 
     // process samplers
@@ -241,8 +241,8 @@ void EventAnalysis::Write(TFile *outputFile)
 
   std::vector<double> xOpticsPoint;
   std::vector<double> yOpticsPoint;
-  xOpticsPoint.resize(11);
-  yOpticsPoint.resize(11);
+  xOpticsPoint.resize(12);
+  yOpticsPoint.resize(12);
 //  double *xOpticsPoint = new double[10];
 //  double *yOpticsPoint = new double[10];
 
