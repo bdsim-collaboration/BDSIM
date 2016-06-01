@@ -27,7 +27,7 @@ void BDSBunch::SetOptions(const GMAD::Options& opt)
   // check options and construct corrrect bdsBunchInterface
   delete bdsBunch;
 
-  bdsBunch = BDSBunchFactory::createBunch(opt.distribType);
+  bdsBunch = BDSBunchFactory::createBunch(opt.distribType,opt.distribFile);
 
   bdsBunch->SetOptions(opt);
   return;

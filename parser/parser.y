@@ -178,8 +178,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : atom" << std::endl;
-	     Parser::Instance()->SetAtomValue("name",*($1));
-	     Parser::Instance()->add_atom();
+	     Parser::Instance()->SetValue<Atom>("name",*($1));
+	     Parser::Instance()->Add<Atom>();
            }
        }
      | VARIABLE ':' material
@@ -187,8 +187,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : material" << std::endl;
-	     Parser::Instance()->SetMaterialValue("name",*($1));
-	     Parser::Instance()->add_material();
+	     Parser::Instance()->SetValue<Material>("name",*($1));
+	     Parser::Instance()->Add<Material>();
            }
        }
      | VARIABLE ':' tunnel
@@ -196,8 +196,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : tunnel" << std::endl;
-	     Parser::Instance()->SetTunnelValue("name",*($1));
-	     Parser::Instance()->add_tunnel();
+	     Parser::Instance()->SetValue<Tunnel>("name",*($1));
+	     Parser::Instance()->Add<Tunnel>();
            }
        }
      | VARIABLE ':' region
@@ -205,8 +205,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : region" << std::endl;
-	     Parser::Instance()->SetRegionValue("name",*($1));
-	     Parser::Instance()->add_region();
+	     Parser::Instance()->SetValue<Region>("name",*($1));
+	     Parser::Instance()->Add<Region>();
            }
        }
      | VARIABLE ':' cavitymodel
@@ -214,8 +214,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : cavitymodel" << std::endl;
-	     Parser::Instance()->SetCavityModelValue("name",*($1));
-	     Parser::Instance()->add_cavitymodel();
+	     Parser::Instance()->SetValue<CavityModel>("name",*($1));
+	     Parser::Instance()->Add<CavityModel>();
            }
        }
      | VARIABLE ':' xsecbias
@@ -223,8 +223,8 @@ decl : VARIABLE ':' component_with_params
          if(execute)
            {
 	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : xsecbias" << std::endl;
-	     Parser::Instance()->SetPhysicsBiasValue("name",*($1));
-	     Parser::Instance()->add_xsecbias();
+	     Parser::Instance()->SetValue<PhysicsBiasing>("name",*($1));
+	     Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
            }
        }
       | VARIABLE ':' error_noparams
@@ -342,17 +342,17 @@ parameters_extend : /* nothing */
 parameters: paramassign '=' aexpr parameters_extend
             {
 	      if(execute)
-		Parser::Instance()->SetParameterValue(*($1),$3);
+		Parser::Instance()->SetValue<Parameters>(*($1),$3);
 	    }
           | paramassign '=' vecexpr parameters_extend
             {
 	      if(execute) 
-		Parser::Instance()->SetParameterValue(*($1),$3);
+		Parser::Instance()->SetValue<Parameters>(*($1),$3);
 	    }
           | paramassign '=' string parameters_extend
             {
 	      if(execute) {
-		Parser::Instance()->SetParameterValue(*($1),*$3);
+		Parser::Instance()->SetValue<Parameters>(*($1),*$3);
 	      }
 	    }
 
@@ -635,7 +635,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> ATOM\n");
-		Parser::Instance()->add_atom();
+		Parser::Instance()->Add<Atom>();
 	      }
           }
         | MATERIAL ',' material_options // material
@@ -643,7 +643,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> MATERIAL\n");
-		Parser::Instance()->add_material();
+		Parser::Instance()->Add<Material>();
 	      }
           }
         | TUNNEL ',' tunnel_options // tunnel
@@ -651,7 +651,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
-		Parser::Instance()->add_tunnel();
+		Parser::Instance()->Add<Tunnel>();
 	      }
           }
         | REGION ',' region_options // region
@@ -659,7 +659,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> REGION\n");
-		Parser::Instance()->add_region();
+		Parser::Instance()->Add<Region>();
 	      }
           }
         | CAVITYMODEL ',' cavitymodel_options // cavitymodel
@@ -667,7 +667,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> CAVITYMODEL\n");
-		Parser::Instance()->add_cavitymodel();
+		Parser::Instance()->Add<CavityModel>();
 	      }
           }
         | XSECBIAS ',' xsecbias_options // xsecbias
@@ -675,7 +675,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute)
 	      {  
 		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
-		Parser::Instance()->add_xsecbias();
+		Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
 	      }
           }
 
@@ -749,7 +749,7 @@ csample_options : paramassign '=' aexpr csample_options_extend
                   {
 		    if(ECHO_GRAMMAR) std::cout << "csample_opt ->csopt " << (*$1) << " = " << $3 << std::endl;
 		    if(execute)
-		      Parser::Instance()->SetParameterValue(*($1),$3);
+		      Parser::Instance()->SetValue<Parameters>(*($1),$3);
 		  }
                 | sample_options csample_options_extend
                   {
@@ -763,12 +763,12 @@ cavitymodel_options_extend : /* nothing */
 cavitymodel_options : paramassign '=' aexpr cavitymodel_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetCavityModelValue((*$1),$3);
+			Parser::Instance()->SetValue<CavityModel>((*$1),$3);
 		    }
                  | paramassign '=' string cavitymodel_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetCavityModelValue(*$1,*$3);
+			Parser::Instance()->SetValue<CavityModel>(*$1,*$3);
 		    }
 
 material_options_extend : /* nothing */
@@ -777,17 +777,17 @@ material_options_extend : /* nothing */
 material_options : paramassign '=' aexpr material_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetMaterialValue((*$1),$3);
+			Parser::Instance()->SetValue<Material>((*$1),$3);
 		    }
                  | paramassign '=' string material_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetMaterialValue(*$1,*$3);
+			Parser::Instance()->SetValue<Material>(*$1,*$3);
 		    }
                  | paramassign '=' vecexpr material_options_extend
                     {
 		      if(execute) 
-			Parser::Instance()->SetMaterialValue(*($1),$3);
+			Parser::Instance()->SetValue<Material>(*($1),$3);
 		    }
 
 atom_options_extend : /* nothing */
@@ -796,12 +796,12 @@ atom_options_extend : /* nothing */
 atom_options : paramassign '=' aexpr atom_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetAtomValue((*$1),$3);
+			Parser::Instance()->SetValue<Atom>((*$1),$3);
 		    }
                  | paramassign '=' string atom_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetAtomValue(*$1,*$3);
+			Parser::Instance()->SetValue<Atom>(*$1,*$3);
 		    }
 
 region_options_extend : /* nothing */
@@ -810,12 +810,12 @@ region_options_extend : /* nothing */
 region_options : paramassign '=' aexpr region_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetRegionValue((*$1),$3);
+			Parser::Instance()->SetValue<Region>((*$1),$3);
 		    }
                  | paramassign '=' string region_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetRegionValue(*$1,*$3);
+			Parser::Instance()->SetValue<Region>(*$1,*$3);
 		    }
 
 tunnel_options_extend : /* nothing */
@@ -824,12 +824,12 @@ tunnel_options_extend : /* nothing */
 tunnel_options : paramassign '=' aexpr tunnel_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetTunnelValue((*$1),$3);
+			Parser::Instance()->SetValue<Tunnel>((*$1),$3);
 		    }
                  | paramassign '=' string tunnel_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetTunnelValue(*$1,*$3);
+			Parser::Instance()->SetValue<Tunnel>(*$1,*$3);
 		    }
 
 xsecbias_options_extend : /* nothing */
@@ -838,17 +838,17 @@ xsecbias_options_extend : /* nothing */
 xsecbias_options : paramassign '=' aexpr xsecbias_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
+			Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);
 		    }
                  | paramassign '=' string xsecbias_options_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,*$3);
+			Parser::Instance()->SetValue<PhysicsBiasing>(*$1,*$3);
 		    }
                  | paramassign '=' vecexpr xsecbias_options_extend
 		    {
 		      if(execute)
-			Parser::Instance()->SetPhysicsBiasValue(*$1,$3);
+			Parser::Instance()->SetValue<PhysicsBiasing>(*$1,$3);
 		    }
 
 option_parameters_extend : /* nothing */
@@ -857,12 +857,12 @@ option_parameters_extend : /* nothing */
 option_parameters : paramassign '=' aexpr option_parameters_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,$3);
+			Parser::Instance()->SetValue<Options>(*$1,$3);
 		    }   
                   | paramassign '=' string option_parameters_extend
                     {
 		      if(execute)
-			Parser::Instance()->SetOptionsValue(*$1,*$3);
+			Parser::Instance()->SetValue<Options>(*$1,*$3);
 		    }
 
 // beam_parameter same as option_parameters, might change in future
