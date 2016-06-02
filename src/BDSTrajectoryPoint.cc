@@ -35,13 +35,10 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   postProcessType    = -1;
   postProcessSubType = -1;
 
-  // const G4Track            *aTrack      = step->GetTrack();
   const G4StepPoint        *prePoint   = step->GetPreStepPoint();
   const G4StepPoint       *postPoint   = step->GetPostStepPoint();
   const G4VProcess         *preProcess = prePoint->GetProcessDefinedStep();
   const G4VProcess        *postProcess = postPoint->GetProcessDefinedStep();
-  // G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
-  // G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
 
   if(preProcess)
   {
@@ -75,7 +72,11 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4ThreeVector  prePosLocal = preT.TransformPoint(prePos);
   G4ThreeVector postPosLocal = preT.TransformPoint(postPos);
 
-#if 0
+#if 1
+  const G4Track            *aTrack      = step->GetTrack();
+  G4VPhysicalVolume        *preVolume  = prePoint->GetPhysicalVolume();
+  G4VPhysicalVolume       *postVolume  = postPoint->GetPhysicalVolume();
+
   G4cout << __METHOD_NAME__ << "Append point" << G4endl;
 
   // G4cout << *BDSPhysicalVolumeInfoRegistry::Instance() << G4endl;
