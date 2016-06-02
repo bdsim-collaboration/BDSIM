@@ -1,6 +1,7 @@
 #!/bin/sh
 
 source ./setup.sh
+source ./setup_gcc.sh
 
 DLDURL=http://proj-clhep.web.cern.ch/proj-clhep/DISTRIBUTION/tarFiles
 DLDFILE=clhep-2.3.3.0.tgz

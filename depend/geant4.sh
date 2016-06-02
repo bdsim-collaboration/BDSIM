@@ -1,6 +1,7 @@
 #!/bin/sh
 
 source ./setup.sh
+source ./setup_gcc.sh
 
 DLDURL=http://geant4.cern.ch/support/source/
 DLDFILE=geant4.10.02.p01.tar.gz
@@ -13,7 +14,7 @@ cd $BASEDIR
 rm -rf $LOG
 echo "Downloading $PKGNAME" | tee $LOG
 wget --quiet $DLDURL/$DLDFILE
-rm ./src/$DLDFILE
+rm -rf ./src/$DLDFILE
 mv $DLDFILE ./src/
 rm -rf $BASEDIR/build/$PKGNAME
 mkdir $BASEDIR/build/$PKGNAME

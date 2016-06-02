@@ -1,6 +1,7 @@
 #!/bin/sh
 
 source ./setup.sh
+source ./setup_gcc.sh
 
 DLDURL=https://root.cern.ch/download
 DLDFILE=root_v6.06.04.source.tar.gz
@@ -13,7 +14,7 @@ cd $BASEDIR
 rm -rf $LOG
 echo "Downloading $PKGNAME" | tee $LOG
 wget --quiet $DLDURL/$DLDFILE
-rm ./src/$DLDFILE
+rm -rf ./src/$DLDFILE
 mv $DLDFILE ./src/
 rm -rf $BASEDIR/build/$PKGNAME
 mkdir $BASEDIR/build/$PKGNAME

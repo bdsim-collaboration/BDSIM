@@ -1,6 +1,7 @@
 #!/bin/sh
 
 source ./setup.sh
+source ./setup_gcc.sh
 
 ##################################################
 # cmake
