@@ -1,15 +1,16 @@
 #!/bin/sh
 
-source setup.sh
+source ./setup.sh
+# check if these directories exist
 mkdir $INSTALLDIR
 mkdir $SRCDIR
 mkdir $BUILDDIR
 
-# ./gcc.sh
-# ./cmake.sh
-# ./llvm.sh
-# ./clang.sh
-# ./python.sh
+./gcc.sh
+./cmake.sh
+./llvm.sh
+./clang.sh
+./python.sh
 # ./libpng.sh
 # ./freetype.sh
 # ./fontconfig.sh

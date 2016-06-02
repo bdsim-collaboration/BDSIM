@@ -1,9 +1,10 @@
 #!/bin/sh
 
 source ./setup.sh
+source ./setup_gcc.sh
 
 ##################################################
-# cmake
+# python
 ##################################################
 cd $BASEDIR
 wget https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz

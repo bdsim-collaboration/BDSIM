@@ -1,9 +1,10 @@
 #!/bin/sh
 
 source ./setup.sh
+source ./setup_gcc.sh
 
 ##################################################
-# cmake
+# clang
 ##################################################
 cd $BASEDIR
 wget http://llvm.org/releases/3.7.0/cfe-3.7.0.src.tar.xz

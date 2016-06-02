@@ -1,12 +1,4 @@
-BASEDIR=`pwd`
-echo $BASEDIR
-INSTALLDIR=$BASEDIR/install
-SRCDIR=$BASEDIR/src
-BUILDDIR=$BASEDIR/build
-NCPU=20
-echo $INSTALLDIR
-echo $SRCDIR
-echo $BUILDDIR
+source ./setup.sh
 
 ##################################################
 # GCC
@@ -22,6 +14,5 @@ cd $BASEDIR/build/gcc
 mkdir $BASEDIR/build/gcc-build
 cd $BASEDIR/build/gcc-build/
 ../gcc/configure --prefix=$INSTALLDIR --enable-languages=c,c++,fortran,go
-make -j$NCPU 
 make -j$NCPU install
 
