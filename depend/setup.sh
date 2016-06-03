@@ -11,3 +11,4 @@ echo $BUILDDIR
 
 export PATH=$INSTALLDIR/bin/:./:$PATH
 export LD_LIBRARY_PATH=$INSTALLDIR/lib/
+export PYTHONPATH=$INSTALLDIR/lib/

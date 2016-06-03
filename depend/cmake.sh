@@ -3,13 +3,19 @@
 source ./setup.sh
 source ./setup_gcc.sh
 
+DLDURL=https://cmake.org/files/v3.5/
+DLDFILE=cmake-3.5.2.tar.gz
+PKGNAME=cmake
+LOG=$BASEDIR/$PKGNAME.log
+echo $LOG
+
 ##################################################
 # cmake
 ##################################################
 cd $BASEDIR
 wget https://cmake.org/files/v3.5/cmake-3.5.2.tar.gz
-mv cmake-3.5.2.tar.gz ./src/
-mkdir $BASEDIR/build/cmake
+mv $DLDFILE ./src/
+mkdir $BASEDIR/build/$PKGNAME
 tar zxf $BASEDIR/src/cmake-3.5.2.tar.gz -C ./build/cmake --strip-components=1
 mkdir $BASEDIR/build/cmake-build
 cd $BASEDIR/build/cmake-build
