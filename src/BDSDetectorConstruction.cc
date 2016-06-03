@@ -388,6 +388,11 @@ void BDSDetectorConstruction::BuildWorld()
   // Register read out world PV with our auxiliary navigator. This gives curvilinear
   // coordinates for multiple applications - CL = curvilinear.
   BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(readOutWorldPV);
+
+  /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
+  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
+  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(readOutWorldPV);
+  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(tunnelReadOutWorldPV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement()

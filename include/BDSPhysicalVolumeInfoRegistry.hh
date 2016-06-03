@@ -6,6 +6,7 @@
 
 #include <iterator>
 #include <map>
+#include <set>
 
 class BDSPhysicalVolumeInfo;
 
@@ -48,7 +49,7 @@ public:
   /// searched. Optional flag isTunnel controls whether the info is stored to a
   /// separate registry just for tunnel segments (not so many so quicker look up,
   /// and / or doesn't pollute main registry -> slower).
-  void RegisterInfo(G4VPhysicalVolume*     lvPointer,
+  void RegisterInfo(G4VPhysicalVolume*     physicalVolume,
 		    BDSPhysicalVolumeInfo* info,
 		    G4bool                 isReadOutVolume = false,
 		    G4bool                 isTunnel = false);
@@ -57,6 +58,12 @@ public:
   /// returns null pointer if none found. If isTunnel, gets only from tunnelRegistry.
   BDSPhysicalVolumeInfo* GetInfo(G4VPhysicalVolume* logicalVolume,
 				 G4bool             isTunnel = false);
+
+  /// Register a pointer to exclude from the search. If the registry is queried with
+  /// one of these pointers, it immediately returns a nullptr without complaint. This
+  /// registers the pointer to (hopefully small) member vector that is queried before
+  /// the main search each time.
+  void RegisterExcludedPV(G4VPhysicalVolume* physicalVolume);
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSPhysicalVolumeInfoRegistry const &r);
@@ -90,6 +97,7 @@ private:
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> readOutRegister;
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> backupRegister;
   std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*> tunnelRegister;
+  std::set<G4VPhysicalVolume*> excludedVolumes;
 };
 
 
