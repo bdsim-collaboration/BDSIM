@@ -21,7 +21,6 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-G4Navigator* BDSEnergyCounterSD::auxilliaryNavigatorStatic = nullptr;
 
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
@@ -45,7 +44,7 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    volName(""),
    turnstaken(0),
    eventnumber(0),
-   auxilliaryNavigator(nullptr)
+   auxNavigator(new BDSAuxiliaryNavigator())
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
   itsName = name;
@@ -55,17 +54,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
 {
-  delete auxilliaryNavigator;
+  delete auxNavigator;
 }
-
-void BDSEnergyCounterSD::SetUpAuxilliaryNavigator()
-{
-  // construct a G4Navigator with respect to the read out world
-  auxilliaryNavigator = new G4Navigator();
-  auxilliaryNavigator->SetWorldVolume(ROgeometry->GetROWorld());
-  auxilliaryNavigatorStatic = auxilliaryNavigator;
-}
-
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
@@ -118,19 +108,19 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     if (preeOnBound)
     {
       geomFlag = 1;
-      theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup(postP->GetPosition());
+      theVolume = auxNavigator->LocateGlobalPointAndSetup(postP->GetPosition());
       tf = postP->GetTouchableHandle()->GetHistory()->GetTopTransform();
       if (postOnBound)
       {
         geomFlag = 2;
-        theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup((preeP->GetPosition() + postP->GetPosition()) / 2.0);
+        theVolume = auxNavigator->LocateGlobalPointAndSetup((preeP->GetPosition() + postP->GetPosition()) / 2.0);
         tf = preeP->GetTouchableHandle()->GetHistory()->GetTopTransform();
       }
     }
     else if (postOnBound)
     {
       geomFlag = 3;
-      theVolume = auxilliaryNavigator->LocateGlobalPointAndSetup(preeP->GetPosition());
+      theVolume = auxNavigator->LocateGlobalPointAndSetup(preeP->GetPosition());
       tf = preeP->GetTouchableHandle()->GetHistory()->GetTopTransform();
     }
     else
