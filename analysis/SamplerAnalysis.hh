@@ -34,8 +34,11 @@ protected:
   fourDArray                        powSums;
   fourDArray                        cenMoms;
   threeDArray                       covMats;
-  twoDArray                         optical;     // emt, alf, bta, gma, eta, etapr, mean, sigma 
+  threeDArray                       derivMats;
+  twoDArray                         optical;     // emt, alf, bta, gma, eta, etapr, mean, sigma
+  twoDArray                         varOptical;  // variances of optical functions
 
   static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
   static double centMomToCovariance(fourDArray &centMoms, int npart ,int k, int i, int j);
+  static double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
 };

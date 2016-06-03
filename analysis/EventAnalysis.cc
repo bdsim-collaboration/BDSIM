@@ -225,8 +225,8 @@ void EventAnalysis::Write(TFile *outputFile)
 
   std::vector<double> xOpticsPoint;
   std::vector<double> yOpticsPoint;
-  xOpticsPoint.resize(12);
-  yOpticsPoint.resize(12);
+  xOpticsPoint.resize(24);
+  yOpticsPoint.resize(24);
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");
@@ -252,6 +252,28 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sigma_yp",&(yOpticsPoint[9]), "Sigma_yp/D");
   opticsTree->Branch("S"       ,&(xOpticsPoint[10]),"S/D");
   opticsTree->Branch("Npart"   ,&(xOpticsPoint[11]),"Npart/D");
+  
+  opticsTree->Branch("Sig_Emitt_x", &(xOpticsPoint[12]), "Sig_Emitt_x/D");
+  opticsTree->Branch("Sig_Emitt_y", &(yOpticsPoint[12]), "Sig_Emitt_y/D");
+  opticsTree->Branch("Sig_Alpha_x", &(xOpticsPoint[13]), "Sig_Alpha_x/D");
+  opticsTree->Branch("Sig_Alpha_y", &(yOpticsPoint[13]), "Sig_Alpha_y/D");
+  opticsTree->Branch("Sig_Beta_x",  &(xOpticsPoint[14]), "Sig_Beta_x/D");
+  opticsTree->Branch("Sig_Beta_y",  &(yOpticsPoint[14]), "Sig_Beta_y/D");
+  opticsTree->Branch("Sig_Gamma_x", &(xOpticsPoint[15]), "Sig_Gamma_x/D");
+  opticsTree->Branch("Sig_Gamma_y", &(yOpticsPoint[15]), "Sig_Gamma_y/D");
+  opticsTree->Branch("Sig_Disp_x",  &(xOpticsPoint[16]), "Sig_Disp_x/D");
+  opticsTree->Branch("Sig_Disp_y",  &(yOpticsPoint[16]), "Sig_Disp_y/D");
+  opticsTree->Branch("Sig_Disp_xp", &(xOpticsPoint[17]), "Sig_Disp_xp/D");
+  opticsTree->Branch("Sig_Disp_yp", &(yOpticsPoint[17]), "Sig_Disp_yp/D");
+  opticsTree->Branch("Sig_Mean_x",  &(xOpticsPoint[18]), "Sig_Mean_x/D");
+  opticsTree->Branch("Sig_Mean_y",  &(yOpticsPoint[18]), "Sig_Mean_y/D");
+  opticsTree->Branch("Sig_Mean_xp", &(xOpticsPoint[19]), "Sig_Mean_xp/D");
+  opticsTree->Branch("Sig_Mean_yp", &(yOpticsPoint[19]), "Sig_Mean_yp/D");
+  opticsTree->Branch("Sig_Sigma_x", &(xOpticsPoint[20]), "Sig_Sigma_x/D");
+  opticsTree->Branch("Sig_Sigma_y", &(yOpticsPoint[20]), "Sig_Sigma_y/D");
+  opticsTree->Branch("Sig_Sigma_xp",&(xOpticsPoint[21]), "Sig_Sigma_xp/D");
+  opticsTree->Branch("Sig_Sigma_yp",&(yOpticsPoint[21]), "Sig_Sigma_yp/D");
+
   
   for(auto i : this->opticalFunctions)
   {

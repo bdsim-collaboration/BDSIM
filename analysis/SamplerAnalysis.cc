@@ -26,15 +26,13 @@ void SamplerAnalysis::CommonCtor()
   }
   npart = 0;
   
-  optical.resize(2); 
+  optical.resize(2); // resize to 2 entries initialised to 0
+  varOptical.resize(2);
   for(int i=0;i<2;++i)
-  {
-    optical[i].resize(12);
-    for(int j=0;j<12;++j)
     {
-      optical[i][j]=0.0;
+      optical[i].resize(24, 0);   //12 for central values and 12 for errors
+      varOptical[i].resize(12, 0);
     }
-  }
 
   covMats.resize(3);
   for(int i=0;i<3;++i)
@@ -42,11 +40,17 @@ void SamplerAnalysis::CommonCtor()
     covMats[i].resize(3);
     for(int j=0;j<3;++j)
     {
-      covMats[i][j].resize(3);
-      for(int k=0;k<3;++k)
-      {
-        covMats[i][j][k] = 0.0;
-      }
+      covMats[i][j].resize(3, 0);
+    }
+  }
+
+  derivMats.resize(3);
+  for(int i=0;i<3;++i)
+  {
+    derivMats[i].resize(12);
+    for(int j=0;j<12;++j)
+    {
+      derivMats[i][j].resize(3, 0);
     }
   }
   
@@ -66,13 +70,8 @@ void SamplerAnalysis::CommonCtor()
       cenMoms[i][j].resize(5);
       for(int k=0;k<=4;++k)
       {
-        powSums[i][j][k].resize(5);
-        cenMoms[i][j][k].resize(5);
-        for(int l=0;l<=4;++l)
-        {
-          powSums[i][j][k][l] = 0.0;
-          cenMoms[i][j][k][l] = 0.0;
-        }
+        powSums[i][j][k].resize(5, 0);
+        cenMoms[i][j][k].resize(5, 0);
       }
     }
   }
@@ -157,7 +156,7 @@ void SamplerAnalysis::Terminate()
   for(int i=0;i<2;++i)
   {
     int j = 0;
-    if(i== 1) j = 2;
+    if(i==1) j = 2;
 
     //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs. 
 
@@ -195,7 +194,7 @@ void SamplerAnalysis::Terminate()
 
   //statistical error calculation
   
-  //covariance matrix of parameters for optical functions. no coupling considered.  
+  //covariance matrix of central moments for optical functions.
   for(int i=0;i<3;++i)
     {
       for(int j=0;j<3;++j)
@@ -208,6 +207,55 @@ void SamplerAnalysis::Terminate()
     }
 
   
+  //derivative matrix of parameters for optical functions. Each entry is a product of two first order derivatives w.r.t central moments.  
+  for(int i=0;i<3;++i)
+    {
+      for(int j=0;j<12;++j) //loop over optical functions.
+	{
+	  for(int k=0;k<3;++k) //loop over derivative indices
+	    {
+	       derivMats[i][j][k]=centMomToDerivative(cenMoms, i, j, k);
+	    }
+	}
+    }
+
+  
+  //compute variances of optical functions
+  for(int i=0;i<2;++i)      
+    {
+      for(int j=0;j<12;++j)
+	{
+	  for(int k=0;k<3;++k)
+	    {
+	      for(int l=0;l<3;++l)
+		{
+		  varOptical[i][j] += derivMats[i][j][k]*derivMats[i][j][l]*covMats[i][k][l];
+		}
+	    }
+	}
+    }
+
+  //compute the sigmas of optical functions
+  for(int i=0;i<2;++i)      
+    {
+      for(int j=0;j<12;++j)
+	{
+	  if(j==6 || j==7)
+	  {
+	    optical[i][j+12]=optical[i][j]/npart; //errors of the means 
+	  }
+	  else if(j == 10 || j == 11)
+	  {
+	    optical[i][j+12]= 0.0;                //no errors on S and Npart
+	  }
+	  else
+	  {
+	    optical[i][j+12]=sqrt(varOptical[i][j]);
+	  }
+	}
+    }
+
+
 }
 
 std::vector<std::vector<double>> SamplerAnalysis::GetOpticalFunctions()
@@ -421,4 +469,158 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
 
   return 0;
 }
+
+
+double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, int i)
+  // Calculates optical function's derivatives w.r.t. central moments. 
+  // Inputs -  int t: function specifier, corresponds to index of the function in the optical function vector. 
+  // int k: plane specifier (k=0: horizontal, k=1: vertical, k=2: longitudinal)
+  // int i: central moment to diffrentiate w.r.t, i=0: <uu>, i=1: <u'u'>, i=2: <uu'>
+  // e.g. derivMat[2][k=0][i=0]: d(beta)/d<xx> , derivMat[0][k=1][i=0][j=1]: (d(emittance)/d<yy>)*(d(emittance)/d<yy'>)
+{
+  double deriv = 0.0;
+  
+  switch(t)
+    {
+    case 0:
+      //emittance
+      if(i == 0 && k < 2)  // k<2 check selects transverse planes, longitudinal parameters are not calculated
+      {
+	deriv = centMoms[k][k+1][0][2]/(2*sqrt(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2)));
+      }
+      else if(i == 1 && k < 2)
+      {
+	deriv = centMoms[k][k+1][2][0]/(2*sqrt(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2)));
+      }
+      else if(i == 2 && k < 2)
+      {
+	deriv = -centMoms[k][k+1][1][1]/(2*sqrt(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2)));
+      }
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+      
+    case 1:
+      //alpha
+      if(i == 0 && k < 2) 
+      {
+	deriv = centMoms[k][k+1][0][2]*centMoms[k][k+1][1][1]/(2*pow(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2),3./2.));
+      }
+      else if(i == 1 && k < 2)
+      {
+	deriv = centMoms[k][k+1][2][0]*centMoms[k][k+1][1][1]/(2*pow(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2),3./2.)); 
+      }
+      else if(i == 2 && k < 2)
+      {
+	deriv = - centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]/pow(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2),3./2.);
+      }
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+
+    case 2:
+      //beta
+      if(i == 0 && k < 2) 
+      {
+	deriv = (centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-2*pow(centMoms[k][k+1][1][1],2))/(2*pow(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2),3./2.)); 
+      }
+      else if(i == 1 && k < 2)
+      {
+	deriv = - pow(centMoms[k][k+1][2][0],2)/(2*pow(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2),3./2.));
+      }
+      else if(i == 2 && k < 2)
+      {
+	deriv = centMoms[k][k+1][2][0]*centMoms[k][k+1][1][1]/pow(centMoms[k][k+1][2][0]*centMoms[k][k+1][0][2]-pow(centMoms[k][k+1][1][1],2),3./2.);
+      }
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+
+
+    case 3:
+      //gamma
+      return 0; //tbc
+      break;
+
+    case 4:
+      //eta
+      if(i == 0 && k < 2)
+      {
+	deriv = 0;
+      }
+      else if(i == 1 && k < 2)
+      {
+	deriv = -centMoms[k][4][1][1]/pow(centMoms[4][4][2][0],2);
+      }
+      else if(i == 2 && k < 2)
+      {
+	deriv = 1/centMoms[4][4][2][0];;
+      }
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+
+    case 5:
+      //eta prime
+      if(i == 0 && k < 2)
+      {
+	deriv = 0;
+      }
+      else if(i == 1 && k < 2)
+      {
+	deriv = -centMoms[k+1][4][1][1]/pow(centMoms[4][4][2][0],2);
+      }
+      else if(i == 2 && k < 2)
+      {
+	deriv = 1/centMoms[4][4][2][0];;
+      }
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+
+    case 6:                // mean derivatives are all 0 as they don't depend on second order moments
+      //mean spatial 
+      return 0;              
+      break;
+
+    case 7:
+      //mean divergence
+      return 0;
+      break;
+
+    case 8:
+      //sigma spatial
+      if(i == 0)
+      {
+	deriv = -1/sqrt(centMoms[k][k+1][2][0]);
+      }
+      
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+
+    case 9:
+      //sigma divergence
+      if(i == 0)
+      {
+	deriv = -1/sqrt(centMoms[k][k+1][0][2]);
+      }
+      
+      else {deriv=0;}
+      
+      return deriv;
+      break;
+      
+    default:
+      return 0;
+      break;
+    }
+}
+
 
