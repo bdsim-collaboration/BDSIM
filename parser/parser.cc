@@ -276,9 +276,6 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
   // bool to check if beamline is fully expanded
   bool is_expanded = false;
   
-  // insert material entries.
-  // TODO:::
-  
   // parse starting from the second element until the list is expanded
   int iteration = 0;
   while(!is_expanded)
@@ -483,78 +480,6 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
   set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
-void Parser::add_atom()
-{
-  // copy from global
-  Atom t(atom);
-  // reset region
-  atom.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  atom_list.push_back(t);
-}
-
-void Parser::add_material()
-{
-  // copy from global
-  Material t(material);
-  // reset region
-  material.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  material_list.push_back(t);
-}
-
-void Parser::add_region()
-{
-  // copy from global
-  Region t(region);
-  // reset region
-  region.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  region_list.push_back(t);
-}
-
-void Parser::add_tunnel()
-{
-  // copy from global
-  Tunnel t(tunnel);
-  // reset tunnel
-  tunnel.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  tunnel_list.push_back(t);
-}
-
-void Parser::add_cavitymodel()
-{
-  // copy from global
-  CavityModel c(cavitymodel);
-  // reset cavitymodel
-  cavitymodel.clear();
-#ifdef BDSDEBUG 
-  c.print();
-#endif
-  cavitymodel_list.push_back(c);
-}
-
-void Parser::add_xsecbias()
-{
-  // copy from global
-  PhysicsBiasing b(xsecbias);
-  // reset xsecbias
-  xsecbias.clear();
-#ifdef BDSDEBUG 
-  b.print();
-#endif
-  xsecbias_list.push_back(b);
-}
- 
 double Parser::property_lookup(std::string element_name, std::string property_name)
 {
   std::list<Element>::const_iterator it = element_list.find(element_name);
@@ -703,4 +628,50 @@ void Parser::PrintOptions()const
 const FastList<Element>& Parser::GetBeamline()const
 {
   return beamline_list;
+}
+
+//template specialisation
+// put explicitly in namespace since g++ complains
+namespace GMAD {
+  template<>
+  Parameters& Parser::GetGlobal(){return params;}
+
+  template<>
+  Options& Parser::GetGlobal(){return options;}
+
+  template<>
+  Region& Parser::GetGlobal(){return region;}
+
+  template<>
+  std::vector<Region>& Parser::GetList<Region>(){return region_list;}
+
+  template<>
+  Atom& Parser::GetGlobal(){return atom;}
+
+  template<>
+  std::vector<Atom>& Parser::GetList<Atom>(){return atom_list;}
+
+  template<>
+  Material& Parser::GetGlobal(){return material;}
+
+  template<>
+  std::vector<Material>& Parser::GetList<Material>(){return material_list;}
+
+  template<>
+  Tunnel& Parser::GetGlobal(){return tunnel;}
+
+  template<>
+  std::vector<Tunnel>& Parser::GetList<Tunnel>(){return tunnel_list;}
+
+  template<>
+  CavityModel& Parser::GetGlobal(){return cavitymodel;}
+
+  template<>
+  std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
+
+  template<>
+  PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
+
+  template<>
+  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing,FastList<PhysicsBiasing>>(){return xsecbias_list;}
 }
