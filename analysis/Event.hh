@@ -11,7 +11,7 @@
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
-#include "BDSOutputROOTEVentInfo.hh"
+#include "BDSOutputROOTEventInfo.hh"
 
 class Event
 {

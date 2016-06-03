@@ -7,7 +7,6 @@
 #include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
-#include "BDSUtilities.hh"
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
