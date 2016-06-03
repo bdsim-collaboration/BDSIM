@@ -102,7 +102,6 @@ void BDSSDManager::ConstructECounterSDOnAxisOnDemand()
   // but geant4 must do this - so messy!  
   eCounterROGeom->BuildROGeometry();
   eCounterOnAxisRO->SetROgeometry(eCounterROGeom); // attach the read out geometry to this SD
-  eCounterOnAxisRO->SetUpAuxilliaryNavigator(); // attach read out geometry to navigator
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   SDMan->AddNewDetector(eCounterOnAxisRO);
 }

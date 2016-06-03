@@ -385,6 +385,9 @@ void BDSDetectorConstruction::BuildWorld()
   // Register world PV with our auxiliary navigator so steppers and magnetic
   // fields know which geometry to navigate to get local / global transforms
   BDSAuxiliaryNavigator::AttachWorldVolumeToNavigator(worldPV);
+  // Register read out world PV with our auxiliary navigator. This gives curvilinear
+  // coordinates for multiple applications - CL = curvilinear.
+  BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(readOutWorldPV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement()
