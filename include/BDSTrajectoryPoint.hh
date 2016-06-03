@@ -58,9 +58,16 @@ private:
   G4double           preEnergy;
   G4double          postEnergy;
   G4double          energy;
+  G4double  preS;
+  G4double postS;
 
-  G4double           preS;
-  G4double          postS;
+  /// An auxilliary navigator to get curvilinear coordintes. Lots of points, but only
+  /// need one navigator so make it static.
+  static BDSAuxiliaryNavigator* auxNavigator;
+
+  /// Keep track of how many points are instantiated and delete the static navigator
+  /// when the last point is deleted.
+  static G4int numberOfPoints;
 };
 
 extern G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
