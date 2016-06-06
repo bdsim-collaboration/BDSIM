@@ -143,13 +143,13 @@ DataLoader::~DataLoader()
 void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
-  for(auto i = this->fileNames.begin(); i != this->fileNames.end(); ++i)
-  {
-    optChain->Add((*i).c_str());
-    modChain->Add((*i).c_str());
-    evtChain->Add((*i).c_str());
-    runChain->Add((*i).c_str());
-  }
+  for (auto filename : fileNames)
+    {
+      optChain->Add(filename.c_str());
+      modChain->Add(filename.c_str());
+      evtChain->Add(filename.c_str());
+      runChain->Add(filename.c_str());
+    }
 }
 
 void DataLoader::SetBranchAddress() 
