@@ -1,7 +1,4 @@
 #include "Utility.hh"
 
-void DrawModel(BDSOutputROOTEventModel *m)
-{
-
-
-}
+void DrawModel(BDSOutputROOTEventModel* /*m*/)
+{;}

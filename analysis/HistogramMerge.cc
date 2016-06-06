@@ -4,11 +4,8 @@
 
 ClassImp(HistogramMerge);
 
-
 HistogramMerge::HistogramMerge()
-{
-
-}
+{;}
 
 HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
 {
@@ -38,9 +35,7 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
 }
 
 HistogramMerge::~HistogramMerge()
-{
-
-}
+{;}
 
 void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
 {
