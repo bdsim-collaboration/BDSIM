@@ -9,7 +9,8 @@
 
 #include "Event.hh"
 
-TVector3 LocalToGlobal(const TVector3 &vLocal, const TRotation &r, const TVector3 &d) {
+TVector3 LocalToGlobal(const TVector3 &vLocal, const TRotation &r, const TVector3 &d)
+{
   return r*vLocal+d;
 }
 
