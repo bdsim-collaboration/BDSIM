@@ -21,9 +21,7 @@ SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn)
 void SamplerAnalysis::CommonCtor()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
   
   optical.resize(2); // resize to 2 entries initialised to 0
@@ -39,9 +37,7 @@ void SamplerAnalysis::CommonCtor()
   {
     covMats[i].resize(3);
     for(int j=0;j<3;++j)
-    {
-      covMats[i][j].resize(3, 0);
-    }
+      {covMats[i][j].resize(3, 0);}
   }
 
   derivMats.resize(3);
@@ -49,11 +45,8 @@ void SamplerAnalysis::CommonCtor()
   {
     derivMats[i].resize(12);
     for(int j=0;j<12;++j)
-    {
-      derivMats[i][j].resize(3, 0);
-    }
+      {derivMats[i][j].resize(3, 0);}
   }
-  
   
   powSums.resize(6);
   cenMoms.resize(6);
@@ -77,25 +70,20 @@ void SamplerAnalysis::CommonCtor()
   }
 }
 
-
 SamplerAnalysis::~SamplerAnalysis()
-{ }
+{;}
 
 void SamplerAnalysis::Initialise()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
 }
 
 void SamplerAnalysis::Process()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << std::endl;}
 
   std::vector<double> v;
   v.resize(6);
@@ -133,23 +121,19 @@ void SamplerAnalysis::Process()
 void SamplerAnalysis::Terminate()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << this->s->modelID << " " << npart << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << this->s->modelID << " " << npart << std::endl;}
 
   // central moments
   for(int a=0;a<6;++a)
   {
     for(int b=0;b<6;++b)
+      {
+	for (int j = 0; j <= 4; ++j)
 	  {
-	    for (int j = 0; j <= 4; ++j)
-	      {
-	      for (int k = 0; k <= 4; ++k)
-		    {
-		      cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
-		    }
-	      }
+	    for (int k = 0; k <= 4; ++k)
+	      {cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);}
 	  }
+      }
   }
 
   //optical function calculation  
@@ -191,7 +175,6 @@ void SamplerAnalysis::Terminate()
     optical[i][11] = npart;
   }
 
-
   //statistical error calculation
   
   //covariance matrix of central moments for optical functions.
@@ -200,12 +183,9 @@ void SamplerAnalysis::Terminate()
       for(int j=0;j<3;++j)
 	{
 	  for(int k=0;k<3;++k)
-	    {
-	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);
-	    }
+	    {covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);}
 	}
     }
-
   
   //derivative matrix of parameters for optical functions. Each entry is a product of two first order derivatives w.r.t central moments.  
   for(int i=0;i<3;++i)
@@ -213,12 +193,9 @@ void SamplerAnalysis::Terminate()
       for(int j=0;j<12;++j) //loop over optical functions.
 	{
 	  for(int k=0;k<3;++k) //loop over derivative indices
-	    {
-	       derivMats[i][j][k]=centMomToDerivative(cenMoms, i, j, k);
-	    }
+	    {derivMats[i][j][k]=centMomToDerivative(cenMoms, i, j, k);}
 	}
     }
-
   
   //compute variances of optical functions
   for(int i=0;i<2;++i)      
@@ -228,9 +205,7 @@ void SamplerAnalysis::Terminate()
 	  for(int k=0;k<3;++k)
 	    {
 	      for(int l=0;l<3;++l)
-		{
-		  varOptical[i][j] += derivMats[i][j][k]*derivMats[i][j][l]*covMats[i][k][l];
-		}
+		{varOptical[i][j] += derivMats[i][j][k]*derivMats[i][j][l]*covMats[i][k][l];}
 	    }
 	}
     }
@@ -241,24 +216,21 @@ void SamplerAnalysis::Terminate()
       for(int j=0;j<12;++j)
 	{
 	  if(j==6 || j==7)
-	  {
-	    optical[i][j+12]=optical[i][j]/npart; //errors of the means 
-	  }
+	    {optical[i][j+12]=optical[i][j]/npart;} //errors of the means 
 	  else if(j == 10 || j == 11)
-	  {
-	    optical[i][j+12]= 0.0;                //no errors on S and Npart
-	  }
+	    {optical[i][j+12]= 0.0;}                //no errors on S and Npart
 	  else
-	  {
-	    optical[i][j+12]=sqrt(varOptical[i][j]);
-	  }
+	    {optical[i][j+12]=sqrt(varOptical[i][j]);}
 	}
     }
-
-
 }
 
-double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums, int npart,  int a, int b, int m, int n)
+double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
+					      int         npart,
+					      int a,
+					      int b,
+					      int m,
+					      int n)
 {
   double moment = 0.0;
 
@@ -617,5 +589,3 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       break;
     }
 }
-
-
