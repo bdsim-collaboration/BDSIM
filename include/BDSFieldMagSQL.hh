@@ -1,5 +1,5 @@
-#ifndef BDSMAGFIELDSQL_H
-#define BDSMAGFIELDSQL_H 
+#ifndef BDSFIELDMAGSQL_H
+#define BDSFIELDMAGSQL_H
 
 #include <fstream>
 #include <iostream>
@@ -17,20 +17,21 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSMagFieldMesh.hh"
+#include "BDSFieldMag.hh"
 
-class BDSMagFieldSQL: public BDSMagFieldMesh, public BDSAuxiliaryNavigator
+class BDSFieldMagSQL: public BDSFieldMag, public BDSAuxiliaryNavigator
 {
 public:  // with description
 
 #if 0
-  BDSMagFieldSQL(const G4String& FieldFile, G4double aMarkerLength,
+  BDSFieldMagSQL(const G4String& FieldFile, G4double aMarkerLength,
 		 std::list<G4String> Quadvol, std::list<G4double> aQuadBgrad,
 		 std::list<G4String> Sextvol, std::list<G4double> aSextBgrad,
 		 std::list<G4String> Octvol, std::list<G4double> aOctBgrad,
 		 std::list<G4String> Fieldvol, std::list<G4ThreeVector> aUniformField);
 #endif
 
-  BDSMagFieldSQL(const G4String& aFieldFile,
+  BDSFieldMagSQL(const G4String& aFieldFile,
 		 G4double aMarkerLength,
 		 std::map<G4String, G4double> aQuadVolBgrad,
 		 std::map<G4String, G4double> aSextVolBgrad,
@@ -38,9 +39,11 @@ public:  // with description
 		 std::map<G4String, G4ThreeVector> aUniformFieldVolField,
 		 G4bool aHasNPoleFields, G4bool aHasUniformField);
   
-  virtual ~BDSMagFieldSQL();
+  virtual ~BDSFieldMagSQL();
   // Constructor and destructor. No actions.
 
+	/// Get the magnetic field vector in local coordinates.
+	virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
 
   void  GetFieldValue( const G4double Point[4],G4double *Bfield ) const;
 

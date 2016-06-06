@@ -151,10 +151,8 @@ private:
   /// Reset all pointers to nullptr that are temporarily used during construction
   /// to avoid mistaken contamination between uses of the factory
   void CleanUp();
-
-  BDSMagFieldMesh* CreateMagField3D();
-  BDSMagFieldMesh* CreateMagFieldXY();
-  BDSMagFieldMesh* CreateMagFieldLCDD();
-  BDSMagFieldMesh* CreateMagFieldSQL();
+  
+  //BDSMagFieldMesh* CreateMagFieldLCDD();
+  //BDSMagFieldMesh* CreateMagFieldSQL();
 };
 #endif

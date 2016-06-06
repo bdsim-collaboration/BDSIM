@@ -29,7 +29,7 @@
  * 
  * array(indx,indy) -> array.data[indx*nX + nY]
  * 
- * This class is templated so any type can be used, but it must implement
+ * This class is templated so any type can be used, but the type must implement
  * std::ostream operator<<.
  *
  * @author Laurie Nevay

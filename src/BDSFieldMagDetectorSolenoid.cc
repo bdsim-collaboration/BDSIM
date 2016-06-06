@@ -1,8 +1,9 @@
 #include "BDSFieldMagDetectorSolenoid.hh"
-#include "BDSMagFieldMesh.hh"
 
-#include "G4AffineTransform.hh"
+#include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+
+#include <cmath>
 
 BDSFieldMagDetectorSolenoid::BDSFieldMagDetectorSolenoid(G4double BIn,
 							 G4double BOut,
@@ -18,24 +19,13 @@ BDSFieldMagDetectorSolenoid::BDSFieldMagDetectorSolenoid(G4double BIn,
   itsZMax(zMax)
 {;}
 
-BDSFieldMagDetectorSolenoid::~BDSFieldMagDetectorSolenoid()
-{;}
+G4ThreeVector BDSFieldMagDetectorSolenoid::GetField(const G4ThreeVector &position) const
+{
+  G4ThreeVector result(0,0,0);
+  G4double zField   = 0;
+  G4double localRad = sqrt(pow(position.y(),2)+pow(position.x(),2));
 
-void BDSFieldMagDetectorSolenoid::GetFieldValue(const G4double Point[4],
-						G4double *Bfield) const
-{ 
-  G4ThreeVector     GlobalR      = G4ThreeVector(Point[0], Point[1], Point[2]);
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
-
-  Bfield[0] = 0;
-  Bfield[1] = 0;
-
-  G4double zField = 0;
-
-  G4double localRad = sqrt(pow(LocalR.y(),2)+pow(LocalR.x(),2));
-
-  if( (LocalR.z() > itsZMin) && (LocalR.z() < itsZMax) )
+  if( (position.z() > itsZMin) && (position.z() < itsZMax) )
     {
       if(localRad<itsRadiusIn)
 	{zField = itsBIn;}
@@ -47,7 +37,8 @@ void BDSFieldMagDetectorSolenoid::GetFieldValue(const G4double Point[4],
   else
     {zField=0;}
 
-  Bfield[2] = zField;
+  result[2] = zField;
+  return result;
 }
 
 

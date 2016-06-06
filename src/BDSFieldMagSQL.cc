@@ -1,6 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
-#include "BDSMagFieldSQL.hh"
+#include "BDSFieldMagSQL.hh"
 
 #include "G4RotationMatrix.hh"
 #include "G4VPhysicalVolume.hh"
@@ -14,7 +14,7 @@
 using std::list;
 
 #if 0
-BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
+BDSFieldMagSQL::BDSFieldMagSQL(const G4String& aFieldFile,
 			       G4double aMarkerLength,
 			       list<G4String> Quadvol, list<G4double> QuadBgrad,
 			       list<G4String> Sextvol, list<G4double> SextBgrad,
@@ -28,11 +28,11 @@ BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
 {;}
 #endif
 
-G4bool BDSMagFieldSQL::GetHasNPoleFields(){return itsHasNPoleFields;}
-G4bool BDSMagFieldSQL::GetHasUniformField(){return itsHasUniformField;}
-G4bool BDSMagFieldSQL::GetHasFieldMap(){return itsHasFieldMap;}
+G4bool BDSFieldMagSQL::GetHasNPoleFields(){return itsHasNPoleFields;}
+G4bool BDSFieldMagSQL::GetHasUniformField(){return itsHasUniformField;}
+G4bool BDSFieldMagSQL::GetHasFieldMap(){return itsHasFieldMap;}
 
-BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
+BDSFieldMagSQL::BDSFieldMagSQL(const G4String& aFieldFile,
 			       G4double aMarkerLength,
 			       std::map<G4String, G4double> aQuadVolBgrad,
 			       std::map<G4String, G4double> aSextVolBgrad,
@@ -52,36 +52,25 @@ BDSMagFieldSQL::BDSMagFieldSQL(const G4String& aFieldFile,
   itsdz(0.0)
 {;}
 
-BDSMagFieldSQL::~BDSMagFieldSQL()
+BDSFieldMagSQL::~BDSFieldMagSQL()
 {;}
 
-
-void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
-		       G4double *Bfield ) const
+G4ThreeVector BDSFieldMagSQL::GetField(const G4ThreeVector &position) const
 {
-  G4ThreeVector LocalR, LocalB, RLocalR, FieldB, NPoleB, GlobalR(Point[0], Point[1], Point[2]);
-  //  GlobalR.setX(Point[0]);
-  //  GlobalR.setY(Point[1]);
-  //  GlobalR.setZ(Point[2]);
+  G4ThreeVector LocalR, LocalB, RLocalR, FieldB, NPoleB;
 
-  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  auxNavigator->LocateGlobalPointAndSetup(position);
   //  G4TouchableHistory* aTouchable = auxNavigator->CreateTouchableHistory();
   G4TouchableHistoryHandle aTouchable = auxNavigator->CreateTouchableHistoryHandle();
-  const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
+  // const G4AffineTransform GlobalToMarker=aTouchable->GetHistory()->GetTransform(1);
   //  const G4AffineTransform MarkerToGlobal=GlobalToMarker.Inverse();
-  RLocalR = GlobalToMarker.TransformPoint(GlobalR);
+  RLocalR = position;
   
   if( fabs(RLocalR.z()) > fabs(itsMarkerLength/2) )
-    {
+  {
       // Outside of mokka region - field should be zero. This is needed
       // because sometimes RKStepper asks for overly large steps (1km)
-      Bfield[0] = 0;
-      Bfield[1] = 0;
-      Bfield[2] = 0;
-      Bfield[3] = 0;
-      Bfield[4] = 0;
-      Bfield[5] = 0;
-      return;
+      return G4ThreeVector();
     }
 
   G4bool inNPole = false;
@@ -92,7 +81,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
     G4AffineTransform GlobalAffine, LocalAffine;
     GlobalAffine=auxNavigator->GetGlobalToLocalTransform();
     LocalAffine=auxNavigator->GetLocalToGlobalTransform();
-    LocalR=GlobalAffine.TransformPoint(GlobalR); 
+    LocalR=GlobalAffine.TransformPoint(position);
     LocalR.setY(-LocalR.y());
     LocalR.setX(-LocalR.x());	  // -ve signs because of Geant Co-ord System
     if(itsHasNPoleFields){
@@ -140,7 +129,7 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 	// the mokka region length is not set properly, or that the BDSRKStepper
 	// is asking for a step length greater than the Mokka marker length
 	G4cout << "Z position in Mokka region less than 0 - check step lengths!!" << G4endl;
-	G4Exception("Quitting BDSIM in BDSMagFieldSQL.cc", "-1", FatalException, "");
+	G4Exception("Quitting BDSIM in BDSFieldMagSQL.cc", "-1", FatalException, "");
       }
     G4double zlow = floor(tempz);
     G4int ilow = (G4int)(zlow);
@@ -162,30 +151,14 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 	LocalB.setY(fieldBrr_r*(RLocalR.y()));
 	LocalB.setZ(fieldBzz);
 	// Now rotate to give BField on Global Reference Frame
-	LocalB.transform(Rotation().inverse());
+	//LocalB.transform(Rotation().inverse());
       }
     //LocalB=G4ThreeVector(0.,0.,0.); //turn Bfield from Solenoid off
   }
 
   if(inField) LocalB+=FieldB;
   if(inNPole) LocalB+=NPoleB;
-  // b-field
-  Bfield[0] = LocalB.x();
-  Bfield[1] = LocalB.y();
-  Bfield[2] = LocalB.z();
-  
-  /*
-    G4cout << "BField: " << LocalB << G4endl;
-    G4cout << itsMarkerLength << G4endl;
-    G4cout << RLocalR << G4endl;
-    G4cout << ilow << G4endl;
-    G4cout << QuadB << G4endl;
-    G4cout << SextB << G4endl;
-    G4cout << OctB << G4endl;
-    G4cout << G4endl;
-  */
-  
-  
+
 #ifdef BDSDEBUG 
   LocalB.rotateY(10e-3); //to track from incoming beamline perspective
   // this needs the be the crossing angle plus any marker rotation applied
@@ -194,11 +167,11 @@ void BDSMagFieldSQL::GetFieldValue( const G4double Point[4],
 #endif
   //  delete aTouchable;
   //  aTouchable = nullptr;
-  return;
+  return LocalB;
 }
 
 
-void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
+void BDSFieldMagSQL::Prepare(G4VPhysicalVolume *referenceVolume)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -253,8 +226,8 @@ void BDSMagFieldSQL::Prepare(G4VPhysicalVolume *referenceVolume)
       itsBr_over_r.push_back(0.5 * itsdBz_by_dz[itsdBz_by_dz.size()-1] );
     }
 
-  const G4RotationMatrix* rot = referenceVolume->GetFrameRotation();
-  if (rot)
+  //const G4RotationMatrix* rot = referenceVolume->GetFrameRotation();
+  /*if (rot)
     {SetOriginRotation(*rot);}
-  SetOriginTranslation(referenceVolume->GetFrameTranslation());
+  SetOriginTranslation(referenceVolume->GetFrameTranslation());*/
 }

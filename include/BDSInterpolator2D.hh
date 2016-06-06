@@ -37,6 +37,20 @@ G4ThreeVector BDSInterpolator2D<G4long>::GetInterpolatedValueV(G4double x, G4dou
 {return G4ThreeVector(GetInterpolatedValue(x,y),0,0);}
 
 template <>
+G4ThreeVector BDSInterpolator2D<BDSTwoVector<G4float> >::GetInterpolatedValueV(G4double x, G4double y) const
+{
+  BDSTwoVector<G4float> result = GetInterpolatedValue(x,y);
+  return G4ThreeVector(result[0],result[1],0);
+}
+
+template <>
+G4ThreeVector BDSInterpolator2D<BDSThreeVector<G4float> >::GetInterpolatedValueV(G4double x, G4double y) const
+{
+  BDSThreeVector<G4float> result = GetInterpolatedValue(x,y);
+  return G4ThreeVector(result[0], result[1], result[2]);
+}
+
+template <>
 G4ThreeVector BDSInterpolator2D<BDSTwoVector<G4double> >::GetInterpolatedValueV(G4double x, G4double y) const
 {
   BDSTwoVector<G4double> result = GetInterpolatedValue(x,y);
@@ -49,6 +63,5 @@ G4ThreeVector BDSInterpolator2D<BDSThreeVector<G4double> >::GetInterpolatedValue
   BDSThreeVector<G4double> result = GetInterpolatedValue(x,y);
   return G4ThreeVector(result[0], result[1], result[2]);
 }
-
 
 #endif

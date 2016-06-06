@@ -1,6 +1,5 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
 #include "BDSFieldESinusoid.hh"
@@ -10,6 +9,7 @@
 #include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldLoader.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
@@ -36,10 +36,7 @@
 #include "BDSIntegratorTeleporter.hh"
 #include "BDSIntegratorType.hh"
 
-#include "BDSMagFieldMesh.hh"
-#include "BDSMagFieldSQL.hh"
-#include "BDSMagFieldXY.hh"
-#include "BDSMagField3D.hh"
+#include "BDSFieldMagSQL.hh"
 #include "BDSMagnetType.hh"
 #include "BDSUtilities.hh"
 
@@ -142,9 +139,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::zero:
       break;
     case BDSFieldType::threed:
-      /*field = new BDSFieldMag3D(filename, info.transform);*/ break;
     case BDSFieldType::xy:
-      break;
+      field = BDSFieldLoader::Instance()->LoadMagField(info); break;
     case BDSFieldType::mokka:
       break;
     case BDSFieldType::solenoid:
@@ -371,7 +367,7 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
   fileName = BDS::GetFullPath(ff.first);
   format   = BDS::DetermineFieldType(ff.second);
-  
+  /*
   if (format == BDSFieldType::threed)
     {return CreateMagField3D();}
   
@@ -396,6 +392,7 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
 	    {return CreateMagFieldSQL();}
 	}
     }
+  */
   return nullptr;
 }
 
@@ -437,12 +434,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      t
   return completeField;
 }
 
-BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldXY()
-{return new BDSMagFieldXY(fileName);}
-
-BDSMagFieldMesh* BDSFieldFactory::CreateMagField3D()
-{return new BDSMagField3D(fileName, offset);}
-
+/*
 BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldSQL()
 {
   if(geometry->HasFields() || !fileName.empty())
@@ -450,7 +442,7 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldSQL()
       // Check for field file or volumes with fields
       // as there may be cases where there are no formats given
       // in gmad file but fields might be set to volumes in SQL files
-      return new BDSMagFieldSQL(fileName,
+      return new BDSFieldMagSQL(fileName,
 				geometry->Length(),
 				geometry->QuadVolBgrad(),
 				geometry->SextVolBgrad(),
@@ -463,5 +455,7 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldSQL()
     {return nullptr;}
 }
 
+
 BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldLCDD()
 {return (BDSMagFieldMesh*)(geometry->Field());}
+*/
