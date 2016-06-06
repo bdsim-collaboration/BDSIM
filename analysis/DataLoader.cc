@@ -11,16 +11,31 @@ DataLoader::DataLoader()
   this->CommonCtor();
 }
 
+DataLoader::~DataLoader()
+{
+  delete opt;
+  delete mod;
+  delete evt;
+  delete run;
+
+  delete optChain;
+  delete modChain;
+  delete evtChain;
+  delete runChain;
+}
+
 void DataLoader::CommonCtor()
 {
   opt = new BDSOutputROOTEventOptions();
   mod = new BDSOutputROOTEventModel();
   evt = new Event();
+  run = new Run();
 
-  optChain = new TChain("Model","Model");
-  modChain = new TChain("Options","Options");
+  optChain = new TChain("Options","Options");
+  modChain = new TChain("Model","Model");
   evtChain = new TChain("Event","Event");
-  
+  runChain = new TChain("Run","Run");
+
   this->BuildInputFileList();
   this->BuildTreeNameList();
   this->BuildEventBranchNameList();
@@ -38,7 +53,7 @@ void DataLoader::BuildInputFileList()
   // wild card
   if(inputPath.find("*") != std::string::npos) {
     glob_t glob_result;    
-    glob(inputPath.c_str(),GLOB_TILDE,NULL,&glob_result);
+    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
     for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
       fileNames.push_back(glob_result.gl_pathv[i]);
     }
@@ -54,7 +69,7 @@ void DataLoader::BuildInputFileList()
     inputPath.append("/*.root");
 
     glob_t glob_result;    
-    glob(inputPath.c_str(),GLOB_TILDE,NULL,&glob_result);
+    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
     for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
       fileNames.push_back(glob_result.gl_pathv[i]);
     }
@@ -76,9 +91,7 @@ void DataLoader::BuildTreeNameList()
   TList *kl = f->GetListOfKeys();
 
   for(int i=0;i<kl->GetEntries();++i)
-  {
-    this->treeNames.push_back(std::string(kl->At(i)->GetName()));
-  }
+    {this->treeNames.push_back(std::string(kl->At(i)->GetName()));}
 
   f->Close();
   delete f;
@@ -88,13 +101,12 @@ void DataLoader::BuildTreeNameList()
     for(auto i = this->treeNames.begin(); i != this->treeNames.end(); ++i)
       std::cout << "DataLoader::BuildTreeNameList> " <<  *i << std::endl;
   }
-
-
-
 }
 
-void DataLoader::BuildEventBranchNameList() {
+void DataLoader::BuildEventBranchNameList()
+{
   TFile *f = new TFile(fileNames[0].c_str());
+  // TBC we never close this file - is this correct?
 
   TTree *et = (TTree*)f->Get("Event");
 
@@ -104,47 +116,31 @@ void DataLoader::BuildEventBranchNameList() {
   {
     TString name = bl->At(i)->GetName();
     if(name.Contains("Sampler"))
-    {
-      this->samplerNames.push_back(name.Data());
-    }
+      {this->samplerNames.push_back(name.Data());}
     else
-    {
-      this->branchNames.push_back(name.Data());
-    }
+      {this->branchNames.push_back(name.Data());}
   }
 
   if(Config::Instance()->Debug())
   {
     for(auto i = this->branchNames.begin(); i != this->branchNames.end(); ++i)
-      std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;
+      {std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;}
 
     for(auto i = this->samplerNames.begin(); i != this->samplerNames.end(); ++i)
-      std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " <<  *i << std::endl;
-
+      {std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " <<  *i << std::endl;}
   }
-
-}
-
-DataLoader::~DataLoader()
-{
-  delete opt;
-  delete mod;
-  delete evt;
-
-  delete optChain;
-  delete modChain;
-  delete evtChain;
 }
 
 void DataLoader::ChainTrees()
 {
   // loop over files and chain trees
-  for(auto i = this->fileNames.begin(); i != this->fileNames.end(); ++i)
-  {
-    optChain->Add((*i).c_str());
-    modChain->Add((*i).c_str());
-    evtChain->Add((*i).c_str());
-  }
+  for (auto filename : fileNames)
+    {
+      optChain->Add(filename.c_str());
+      modChain->Add(filename.c_str());
+      evtChain->Add(filename.c_str());
+      runChain->Add(filename.c_str());
+    }
 }
 
 void DataLoader::SetBranchAddress() 
@@ -152,19 +148,5 @@ void DataLoader::SetBranchAddress()
   optChain->SetBranchAddress("Options.",&opt);
   modChain->SetBranchAddress("Model.",&mod);
   evt->SetBranchAddress(evtChain,this->samplerNames);
-}
-
-BDSOutputROOTEventOptions* DataLoader::GetOptions()
-{
-  return opt;
-}
-
-BDSOutputROOTEventModel* DataLoader::GetModel()
-{
-  return mod;
-}
-
-Event* DataLoader::GetEvent()
-{
-  return evt;
+  run->SetBranchAddress(runChain);
 }

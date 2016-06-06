@@ -1,18 +1,21 @@
 #ifndef BDSENERGYCOUNTERSD_H
 #define BDSENERGYCOUNTERSD_H
 
-#include "G4VSensitiveDetector.hh"
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSEnergyCounterHit.hh"
+
 #include "G4Navigator.hh"
 #include "G4GFlashSpot.hh"
-#include "G4VGFlashSensitiveDetector.hh"
+#include "G4VSensitiveDetector.hh"
+#include "G4VGFlashSensitiveDetector.hh" // G4VSensitiveDetector is required before this due to missing header
+
 
 class G4VProcess;
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
-class BDSEnergyCounterSD : public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
+class BDSEnergyCounterSD: public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
 {
 public:
   BDSEnergyCounterSD(G4String name);
@@ -23,11 +26,7 @@ public:
   virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
   
   G4String GetName();
-
-  /// Instantiate a G4Navigator with the read out geometry - must be run
-  /// after the read out geometry has been attached to this SD!!
-  void SetUpAuxilliaryNavigator();
-
+  
 private:
   /// assignment and copy constructor not implemented nor used
   BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
@@ -54,12 +53,11 @@ private:
   ///@}
 
   /// Navigator for checking points in read out geometry
-  G4Navigator* auxilliaryNavigator;
+  BDSAuxiliaryNavigator* auxNavigator;
 };
 
 inline G4String BDSEnergyCounterSD::GetName()
 {return itsName;}
-
 
 #endif
 

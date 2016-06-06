@@ -1,5 +1,7 @@
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/src/rebdsim.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsim.cc)
+list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/edbdsim.cc)
+
 
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
@@ -64,16 +66,20 @@ endforeach()
 
 add_library(rebdsimLib SHARED ${rebdsimLibSources})
 
-target_link_libraries(rebdsimLib ${ROOT_LIBRARIES_GLOB})
-target_link_libraries(rebdsimLib ${ROOT_LIBRARIES})
+target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
 target_link_libraries(rebdsimLib bdsimRootEvent)
 
 add_executable(rebdsim rebdsim.cc)
 set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 
+add_executable(edbdsim edbdsim.cc)
+set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
+target_link_libraries(edbdsim rebdsimLib bdsimRootEvent)
+
+
 # Installation
-bdsim_install_targets(rebdsim rebdsimLib)
+bdsim_install_targets(rebdsim edbdsim rebdsimLib)
 
 # Install pcms
 bdsim_install_libs(${rebdsim_pcms})

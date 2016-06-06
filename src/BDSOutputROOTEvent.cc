@@ -2,6 +2,7 @@
 
 #include "BDSParser.hh"
 #include "parser/options.h"
+#include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSampler.hh"
@@ -11,6 +12,8 @@
 #include "TFile.h"
 #include "TObject.h"
 #include "TTree.h"
+
+#include <ctime>
 
 BDSOutputROOTEvent::BDSOutputROOTEvent()
 {
@@ -23,19 +26,63 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  eLoss     = new BDSOutputROOTEventLoss();
-  pFirstHit = new BDSOutputROOTEventHit();
-  pLastHit  = new BDSOutputROOTEventHit();
-  tHit      = new BDSOutputROOTEventHit();
-  runHistos = new BDSOutputROOTEventHistograms();
+  eLoss     = new BDSOutputROOTEventLoss(false,true);
+  pFirstHit = new BDSOutputROOTEventLoss(true,false);
+  pLastHit  = new BDSOutputROOTEventLoss(true,false);
+  tHit      = new BDSOutputROOTEventLoss(false,true);
+  traj      = new BDSOutputROOTEventTrajectory();
   evtHistos = new BDSOutputROOTEventHistograms();
+  evtInfo   = new BDSOutputROOTEventInfo();
 
+  runHistos = new BDSOutputROOTEventHistograms();
+  runInfo   = new BDSOutputROOTEventRunInfo();
 }
 
 BDSOutputROOTEvent::~BDSOutputROOTEvent() 
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
     {theRootOutputFile->Write(0,TObject::kOverwrite);}
+
+  // need to delete all objects allocated in constructor
+  delete primary;
+  delete eLoss;
+  delete pFirstHit;
+  delete pLastHit;
+  delete tHit;
+  delete traj;
+  delete evtHistos;
+  delete evtInfo;
+  delete runHistos;
+  delete runInfo;
+}
+
+void BDSOutputROOTEvent::CreateHistograms()
+{
+  // copy histograms from analysis manager
+  BDSAnalysisManager* analysisManager = BDSAnalysisManager::Instance();
+  for (int i=0; i<analysisManager->NumberOfHistograms(); i++)
+    {
+      BDSHistogram1D* hist = analysisManager->GetHistogram(i);
+      G4String name = hist->GetName();
+      G4String title = hist->GetTitle();
+      G4bool equiDistant = hist->GetEquidistantBins();
+      if (equiDistant)
+	{
+	  G4int nbins = hist->GetNBins();
+	  G4double xmin = hist->GetXMin();
+	  G4double xmax = hist->GetXMax();
+	  evtHistos->Create1DHistogram(name,title,nbins,xmin,xmax);
+	  runHistos->Create1DHistogram(name,title,nbins,xmin,xmax);
+	}
+      else
+	{
+	  // create bin edges
+	  std::vector<double> binedges = hist->GetBinLowerEdges();
+	  binedges.push_back(hist->GetXMax());
+	  evtHistos->Create1DHistogram(name,title,binedges);
+	  runHistos->Create1DHistogram(name,title,binedges);
+	}
+    }
 }
 
 void BDSOutputROOTEvent::Initialise() 
@@ -44,6 +91,9 @@ void BDSOutputROOTEvent::Initialise()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+
+  CreateHistograms();
+  
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
   // Base root file name 
@@ -88,49 +138,42 @@ void BDSOutputROOTEvent::Initialise()
   const GMAD::OptionsBase *ob = dynamic_cast<const GMAD::OptionsBase*>(&o);
   // Get exec options
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
-  theOptionsOutputTree->Branch("Options.","BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
+  theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
   theOptionsOutputTree->Fill();
   
   // Build model and write structure
   BDSOutputROOTEventModel *theModelOutput = new BDSOutputROOTEventModel();
-  theModelOutputTree->Branch("Model.","BDSOutputROOTEventModel",theModelOutput,32000);
+  theModelOutputTree->Branch("Model.",         "BDSOutputROOTEventModel",theModelOutput,32000);
   theModelOutput->Fill();
   theModelOutputTree->Fill();
 
-    // Build run data tree
-  runHistos->Create1DHistogram("c","d",100,0,100);
-  theRunOutputTree->Branch("Histos.","BDSOutputROOTEvent",runHistos,32000,1);
+  // Build run data tree
+  theRunOutputTree->Branch("Histos.",          "BDSOutputROOTEventHistograms",runHistos,32000,1);
+  theRunOutputTree->Branch("Info.",            "BDSOutputROOTEventRunInfo",runInfo,32000,1);
+
+  // Event info output
+  theRootOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  theRootOutputTree->Branch("Primary.","BDSOutputROOTEventSampler",primary,32000,1); 
+  theRootOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
   //  samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
-  //
   // Build loss and hit structures
-  //
-  theRootOutputTree->Branch("Eloss.","BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventHit",pFirstHit,4000,2);
-  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventHit",pLastHit, 4000,2);
-  theRootOutputTree->Branch("TunnelHit.","BDSOutputROOTEventHit",tHit, 4000,2);
-  //
-  // Build process/track structures
-  //
-  
-  //
+  theRootOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
+  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
+  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
+  theRootOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
+
   // Build trajectory structures
-  // 
-  traj = new BDSOutputROOTEventTrajectory();
-  theRootOutputTree->Branch("Trajectory.","BDSOutputROOTEventTrajectory",traj,4000,2);
+  theRootOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
 
-  //
+
   // Build event histograms
-  //
-  evtHistos->Create1DHistogram("a","b",100,0,100);
-  theRootOutputTree->Branch("Histos.","BDSOutputROOTEventHistograms",evtHistos,32000,1);
+  theRootOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
-  //
+
   // build sampler structures 
   for(auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {
@@ -232,7 +275,7 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
 void BDSOutputROOTEvent::WriteTrajectory(std::vector<BDSTrajectory*> &trajVec)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ <<G4endl;
+  G4cout << __METHOD_NAME__ << " ntrajectory=" << trajVec.size() << G4endl;
 #endif
   traj->Fill(trajVec);
 }
@@ -274,6 +317,12 @@ void BDSOutputROOTEvent::FillEvent()
   this->Flush();
   
 }
+void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
+{
+  evtInfo->startTime     = startTime;
+  evtInfo->stopTime      = stopTime;
+  evtInfo->eventDuration = duration;
+}
 
 void BDSOutputROOTEvent::Write() 
 {
@@ -314,16 +363,4 @@ void BDSOutputROOTEvent::Flush()
   tHit->Flush();
   traj->Flush();
   evtHistos->Flush();
-}
-
-BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetEventAnalysis()
-{
-  G4cout << "BDSOutputROOTEvent::GetEventAnalysis()" << G4endl;
-  return this->evtHistos;
-}
-
-BDSOutputROOTEventHistograms* BDSOutputROOTEvent::GetRunAnalysis()
-{
-  G4cout << "BDSOutputROOTEvent::GetRunAnalysis()" << G4endl;
-  return this->runHistos;
 }
