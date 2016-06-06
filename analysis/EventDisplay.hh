@@ -1,5 +1,5 @@
-#ifndef __EVENTDISPLAY_H
-#define __EVENTDISPLAY_H
+#ifndef EVENTDISPLAY_H
+#define EVENTDISPLAY_H
 
 #include "TROOT.h"
 

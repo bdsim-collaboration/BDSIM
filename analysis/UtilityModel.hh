@@ -1,5 +1,5 @@
-#ifndef __UTILITYMODEL_H
-#define __UTILITYMODEL_H
+#ifndef UTILITYMODEL_H
+#define UTILITYMODEL_H
 
 #include "BDSOutputROOTEventModel.hh"
 

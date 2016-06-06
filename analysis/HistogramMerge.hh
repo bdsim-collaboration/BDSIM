@@ -1,5 +1,5 @@
-#ifndef __HISTOGRAMMERGE_H
-#define __HISTOGRAMMERGE_H
+#ifndef HISTOGRAMMERGE_H
+#define HISTOGRAMMERGE_H
 
 #include <vector>
 

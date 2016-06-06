@@ -1,5 +1,5 @@
-#ifndef __DATALOADER_H
-#define __DATALOADER_H
+#ifndef DATALOADER_H
+#define DATALOADER_H
 
 #include "Config.hh"
 #include "Event.hh"

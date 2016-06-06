@@ -1,5 +1,5 @@
-#ifndef __UTILITYBEAM_H
-#define __UTILITYBEAM_H
+#ifndef UTILITYBEAM_H
+#define UTILITYBEAM_H
 
 #include "TString.h"
 

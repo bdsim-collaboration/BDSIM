@@ -1,5 +1,5 @@
-#ifndef __RUN_H
-#define __RUN_H
+#ifndef RUN_H
+#define RUN_H
 
 #include "TChain.h"
 

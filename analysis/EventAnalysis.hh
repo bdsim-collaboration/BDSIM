@@ -1,5 +1,5 @@
-#ifndef __EVENTANALYSIS_H
-#define __EVENTANALYSIS_H
+#ifndef EVENTANALYSIS_H
+#define EVENTANALYSIS_H
 
 #include <vector>
 #include <map>

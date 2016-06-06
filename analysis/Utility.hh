@@ -1,5 +1,5 @@
-#ifndef __UTILITY_H
-#define __UTILITY_H
+#ifndef UTILITY_H
+#define UTILITY_H
 
 #include <vector>
 #include "TH1D.h"
