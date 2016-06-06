@@ -42,9 +42,11 @@ protected :
   /// Create multidimensional Gaussian random number generator
   /// for Twiss and Gauss, could be moved elsewhere
   /// can change sigma matrix to make non-definite
-  CLHEP::RandMultiGauss* CreateMultiGauss(CLHEP::HepRandomEngine & anEngine, const CLHEP::HepVector & mu, CLHEP::HepSymMatrix & sigma);
+  CLHEP::RandMultiGauss* CreateMultiGauss(CLHEP::HepRandomEngine & anEngine,
+					  const CLHEP::HepVector & mu,
+					  CLHEP::HepSymMatrix & sigma);
 
-  G4double CalculateZp(G4double xp, G4double yp, G4double Zp0)const;
+  G4double CalculateZp(G4double xp, G4double yp, G4double Zp0) const;
 
   /// Transforms the coordinates from initial coordinates about 0,0,0 to
   /// those in a curvilinear system.  Here, z0 is treated as the intended

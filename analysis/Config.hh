@@ -1,5 +1,5 @@
-#ifndef __CONFIG_H
-#define __CONFIG_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include "TROOT.h"
 
@@ -9,10 +9,20 @@
 #include <vector>
 #include <map>
 
-class Config {
+/**
+ * @brief Configuration and configuartion parser class.
+ * 
+ * @author Stewart Boogert
+ */
+
+class Config
+{
  public:
   virtual ~Config();
+
+  /// Singleton accessor.
   static Config* Instance(std::string fileName = std::string(""));
+
   void ParseInputFile();
     
   std::string InputFilePath()                     {return inputFilePath;}
@@ -29,14 +39,19 @@ class Config {
   static int  NBins(std::string nbins, int iAxis);
   static void Binning(std::string binning, int iAxis, double &low, double &high);
   
- protected: 
+ protected:
+  /// Private constructor for singleton pattern.
+  Config();
+  /// Desired constructor, also private for singleton pattern.
   Config(std::string fileName);
+  
   std::string     fileName                      = "Config.txt";
   static Config* instance;
 
   std::string inputFilePath                     = "";
   std::string outputFileName                    = "";
   std::string calculateOpticalFunctionsFileName = "";
+  std::string gdmlFileName                      = "";
 
   bool bDebug                                   = false;
   bool bCalculateOpticalFunctions               = false;

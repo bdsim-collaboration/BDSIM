@@ -11,12 +11,13 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms()
 BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEventHistograms &rhs):
   TObject(rhs)
 {
-// loop over 1d histograms
+  // loop over 1d histograms
   for(auto h : rhs.histograms1D)
   {
     this->histograms1D.push_back((TH1D*)h->Clone());
   }
 
+  // loop over 2d histograms
   for(auto h : rhs.histograms2D)
   {
     this->histograms2D.push_back((TH2D*)h->Clone());
@@ -97,12 +98,12 @@ void BDSOutputROOTEventHistograms::Flush()
 {
   for(auto i : this->histograms1D)
   {
-    i->Clear();
+    i->Reset();
   }
 
   for(auto i : this->histograms2D)
   {
-    i->Clear();
+    i->Reset();
   }
 }
 
