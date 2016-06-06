@@ -1,21 +1,37 @@
 #include "BDSOutputROOTEventSampler.hh"
 
+/**
+ * @brief Analysis routines for an individual sampler.
+ *
+ * @author Stewart Boogert, Andrey Abramov
+ */
+
 class SamplerAnalysis
 {
 public:
   SamplerAnalysis();
+
+  // Note compile time float / double templating.
 #ifndef __ROOTDOUBLE__
   SamplerAnalysis(BDSOutputROOTEventSampler<float>*);
 #else 
   SamplerAnalysis(BDSOutputROOTEventSampler<double>*);
 #endif
+  /// Initialisation of arrays for optical function calculations
   void CommonCtor();
   virtual ~SamplerAnalysis();
 
+  /// Initialise variables.
   void Initialise();
+
+  /// Loop over all entries in the sampler and accumulate power sums over variuos moments.
   void Process();
+
+  /// Calculate optical functions based on combinations of moments already accumulated.
   void Terminate();
-  std::vector<std::vector<double>> GetOpticalFunctions();
+
+  /// Accessor for optical functions
+  std::vector<std::vector<double> > GetOpticalFunctions() {return optical;}
 
 #ifndef __ROOTDOUBLE__
   BDSOutputROOTEventSampler<float> *s;
