@@ -433,7 +433,9 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
 
     cov = 2*pow(m_1_1,2)/(npart*(npart-1)) + (-m_0_2*m_2_0)/npart + m_2_2/npart;
   }
-
+  else
+    {cov = 0;} // this is silly, but prevents compiler warning - TBC - there should be an else right?
+  
   return 0;
 }
 

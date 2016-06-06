@@ -1,11 +1,9 @@
 #include "BDSOutputROOTEventRunInfo.hh"
 
-ClassImp(BDSOutputROOTEventRunInfo);
+ClassImp(BDSOutputROOTEventRunInfo)
 
 BDSOutputROOTEventRunInfo::BDSOutputROOTEventRunInfo()
-{
-};
+{;}
 
 BDSOutputROOTEventRunInfo::~BDSOutputROOTEventRunInfo()
-{
-};
+{;}

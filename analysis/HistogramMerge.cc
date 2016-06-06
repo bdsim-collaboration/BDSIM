@@ -2,7 +2,7 @@
 #include "Config.hh"
 #include "rebdsim.hh"
 
-ClassImp(HistogramMerge);
+ClassImp(HistogramMerge)
 
 HistogramMerge::HistogramMerge()
 {;}
