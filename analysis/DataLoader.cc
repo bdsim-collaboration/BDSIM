@@ -11,6 +11,19 @@ DataLoader::DataLoader()
   this->CommonCtor();
 }
 
+DataLoader::~DataLoader()
+{
+  delete opt;
+  delete mod;
+  delete evt;
+  delete run;
+
+  delete optChain;
+  delete modChain;
+  delete evtChain;
+  delete runChain;
+}
+
 void DataLoader::CommonCtor()
 {
   opt = new BDSOutputROOTEventOptions();
@@ -78,9 +91,7 @@ void DataLoader::BuildTreeNameList()
   TList *kl = f->GetListOfKeys();
 
   for(int i=0;i<kl->GetEntries();++i)
-  {
-    this->treeNames.push_back(std::string(kl->At(i)->GetName()));
-  }
+    {this->treeNames.push_back(std::string(kl->At(i)->GetName()));}
 
   f->Close();
   delete f;
@@ -90,13 +101,12 @@ void DataLoader::BuildTreeNameList()
     for(auto i = this->treeNames.begin(); i != this->treeNames.end(); ++i)
       std::cout << "DataLoader::BuildTreeNameList> " <<  *i << std::endl;
   }
-
-
-
 }
 
-void DataLoader::BuildEventBranchNameList() {
+void DataLoader::BuildEventBranchNameList()
+{
   TFile *f = new TFile(fileNames[0].c_str());
+  // TBC we never close this file - is this correct?
 
   TTree *et = (TTree*)f->Get("Event");
 
@@ -106,38 +116,19 @@ void DataLoader::BuildEventBranchNameList() {
   {
     TString name = bl->At(i)->GetName();
     if(name.Contains("Sampler"))
-    {
-      this->samplerNames.push_back(name.Data());
-    }
+      {this->samplerNames.push_back(name.Data());}
     else
-    {
-      this->branchNames.push_back(name.Data());
-    }
+      {this->branchNames.push_back(name.Data());}
   }
 
   if(Config::Instance()->Debug())
   {
     for(auto i = this->branchNames.begin(); i != this->branchNames.end(); ++i)
-      std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;
+      {std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;}
 
     for(auto i = this->samplerNames.begin(); i != this->samplerNames.end(); ++i)
-      std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " <<  *i << std::endl;
-
+      {std::cout << "DataLoader::BuildEventBranchNameList> Sampler     : " <<  *i << std::endl;}
   }
-
-}
-
-DataLoader::~DataLoader()
-{
-  delete opt;
-  delete mod;
-  delete evt;
-  delete run;
-
-  delete optChain;
-  delete modChain;
-  delete evtChain;
-  delete runChain;
 }
 
 void DataLoader::ChainTrees()
