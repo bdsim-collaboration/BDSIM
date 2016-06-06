@@ -16,7 +16,6 @@ EventAnalysis::EventAnalysis()
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
 {
-
   chainIn->GetEntry(0);
 
   this->event = eventIn;
@@ -33,9 +32,7 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
 }
 
 EventAnalysis::~EventAnalysis()
-{
-}
-
+{;}
 
 void EventAnalysis::Process()
 {
@@ -91,9 +88,7 @@ void EventAnalysis::ProcessSamplers()
 void EventAnalysis::Initialise()
 {
   for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
-  {
-    (*i)->Initialise();
-  }
+    {(*i)->Initialise();}
 }
 
 void EventAnalysis::Terminate()
@@ -110,9 +105,7 @@ void EventAnalysis::Terminate()
 void EventAnalysis::SimpleHistograms()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << std::endl;}
 
   // loop over histogram specifications and fill
   auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
@@ -122,15 +115,12 @@ void EventAnalysis::SimpleHistograms()
   }
 }
 
-
 void EventAnalysis::FillHistogram(std::string treeName, std::string histoName,
                                   std::string nbins,    std::string binning,
                                   std::string plot,     std::string selection)
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << std::endl;}
   double xlow=0.0, xhigh=0.0;
   double ylow=0.0, yhigh=0.0;
   int ndim = Config::Dimension(nbins);
