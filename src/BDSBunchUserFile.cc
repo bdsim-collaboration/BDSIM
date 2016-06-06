@@ -4,19 +4,22 @@
 #include "BDSDebug.hh"
 #include "BDSUtilities.hh"
 
-BDSBunchUserFile::BDSBunchUserFile():nlinesIgnore(0)
+template<class T>
+BDSBunchUserFile<T>::BDSBunchUserFile():nlinesIgnore(0)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 }
 
-BDSBunchUserFile::~BDSBunchUserFile()
+template<class T>
+BDSBunchUserFile<T>::~BDSBunchUserFile()
 {
   CloseBunchFile();
 }
 
-void BDSBunchUserFile::OpenBunchFile()
+template<class T>
+void BDSBunchUserFile<T>::OpenBunchFile()
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -29,7 +32,8 @@ void BDSBunchUserFile::OpenBunchFile()
     }
 }
 
-void BDSBunchUserFile::CloseBunchFile()
+template<class T>
+void BDSBunchUserFile<T>::CloseBunchFile()
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -37,7 +41,8 @@ void BDSBunchUserFile::CloseBunchFile()
   InputBunchFile.close();
 }
 
-void BDSBunchUserFile::ParseFileFormat()
+template<class T>
+void BDSBunchUserFile<T>::ParseFileFormat()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -184,22 +189,28 @@ void BDSBunchUserFile::ParseFileFormat()
   return;
 }
 
-void BDSBunchUserFile::skip(G4int nvalues){
+template<class T>
+void BDSBunchUserFile<T>::skip(G4int nvalues){
   G4double dummy_val;
   for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
 }
 
-void BDSBunchUserFile::SetDistribFile(G4String filename){
+template<class T>
+void BDSBunchUserFile<T>::SetDistribFile(G4String filename){
   distribFile = BDS::GetFullPath(filename);
 }
 
-void BDSBunchUserFile::SkipLines(){
+template<class T>
+void BDSBunchUserFile<T>::SkipLines()
+{
   //Skip the a number of lines defined by the user option.
   G4cout << __METHOD_NAME__ << " - skipping " << nlinesIgnore << " lines" << G4endl;
   skip((G4int)(nlinesIgnore * fields.size()));
 }
 
-void BDSBunchUserFile::SetOptions(const GMAD::Options& opt) {
+template<class T>
+void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt)
+{
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile((G4String)opt.distribFile); 
   SetBunchFormat((G4String)opt.distribFileFormat); 
@@ -210,7 +221,8 @@ void BDSBunchUserFile::SetOptions(const GMAD::Options& opt) {
   return; 
 }
 
-G4double BDSBunchUserFile::ParseEnergyUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="GeV") unit=1;
@@ -224,7 +236,8 @@ G4double BDSBunchUserFile::ParseEnergyUnit(G4String &fmt)
   return unit;
 }
 
-G4double BDSBunchUserFile::ParseLengthUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseLengthUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="m") unit=1;
@@ -239,7 +252,8 @@ G4double BDSBunchUserFile::ParseLengthUnit(G4String &fmt)
   return unit;
 }
 
-G4double BDSBunchUserFile::ParseAngleUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="rad") unit=1;
@@ -251,8 +265,8 @@ G4double BDSBunchUserFile::ParseAngleUnit(G4String &fmt)
   }
   return unit;
 }
-
-G4double BDSBunchUserFile::ParseTimeUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="s") unit=1;
@@ -268,7 +282,8 @@ G4double BDSBunchUserFile::ParseTimeUnit(G4String &fmt)
   return unit;
 }
 
-void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
+template<class T>
+void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		     G4double& xp, G4double& yp, G4double& zp,
 		     G4double& t , G4double&  E, G4double& weight)
 {
@@ -280,9 +295,8 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
-  
-  std::list<struct BDSBunchUserFile::Doublet>::iterator it;
-  for(it=fields.begin();it!=fields.end();it++)
+
+  for(auto it=fields.begin();it!=fields.end();it++)
     {
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ <<it->name<<"  ->  "<<it->unit<<G4endl;
@@ -377,7 +391,9 @@ void BDSBunchUserFile::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   z0=z0+Z0*CLHEP::m;
 }
 
-template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value)
+template <class T>
+template <typename Type>
+G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
 {
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
@@ -389,3 +405,8 @@ template <typename Type> G4bool  BDSBunchUserFile::ReadValue(Type &value)
   } 
   return !InputBunchFile.eof();
 }
+
+
+template BDSBunchUserFile<igzstream>::BDSBunchUserFile();
+
+template BDSBunchUserFile<std::ifstream>::BDSBunchUserFile();
