@@ -1,5 +1,5 @@
-#ifndef __HISTOANALYSIS_H
-#define __HISTOANALYSIS_H
+#ifndef HISTOANALYSIS_H
+#define HISTOANALYSIS_H
 
 #include "BDSOutputROOTEventHistograms.hh"
 

@@ -51,6 +51,8 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
+  /// write event info
+  virtual void WriteEventInfo(time_t,time_t,G4float) override {}
   virtual void FillEvent() override {;} ///< Fill the event
   virtual void Initialise() override; ///< open the file
   virtual void Write() override;      ///< write to file

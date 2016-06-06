@@ -83,10 +83,11 @@ int main(int argc,char** argv)
   /// Check options for consistency
   BDSParser::Instance()->CheckOptions();
   
-  /// Parse options, explicitly initialise materials and global constants and construct required materials
+  /// Explicitly initialise materials to construct required materials before global constants.
   BDSMaterials::Instance()->PrepareRequiredMaterials(execOptions->Options().verbose);
 
-  delete execOptions; // no longer needed. Everything can safely use BDSGlobalConstants from now on.
+  /// No longer needed. Everything can safely use BDSGlobalConstants from now on.
+  delete execOptions; 
 
   /// Force construction of global constants after parser has been initialised (requires materials first).
   /// This uses the options from BDSParser.
@@ -139,27 +140,23 @@ int main(int argc,char** argv)
 
   /// Construct mandatory run manager (the G4 kernel) and
   /// register mandatory initialization classes.
-
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Constructing run manager"<<G4endl;
 #endif
   BDSRunManager * runManager = new BDSRunManager;
-  // runManager->SetNumberOfAdditionalWaitingStacks(1);
-  // note this doesn't actually construct the accelerator - only instantiates the class.
-  // the run manager later calls the construct method
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - detector construction"<<G4endl;
 #endif
   /// Register the geometry and parallel world construction methods with run manager.
-  BDSDetectorConstruction* realWorld = new BDSDetectorConstruction();
+  BDSDetectorConstruction* realWorld    = new BDSDetectorConstruction();
   BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
   realWorld->RegisterParallelWorld(samplerWorld);
   runManager->SetUserInitialization(realWorld);  
 
-  //For geometry sampling, phys list must be initialized before detector.
-  // BUT for samplers we use a parallel world and this HAS to be before the physcis
+  /// For geometry sampling, phys list must be initialized before detector.
+  /// BUT for samplers we use a parallel world and this HAS to be before the physcis
 #ifdef BDSDEBUG 
-  G4cout << __FUNCTION__ << "> Constructing phys list" << G4endl;
+  G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = BDSParser::Instance()->GetOptions().physicsList;
   if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
@@ -167,7 +164,7 @@ int main(int argc,char** argv)
       G4ParallelWorldPhysics* pWorld  = new G4ParallelWorldPhysics(samplerWorld->GetName());
       BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
       physList->RegisterPhysics(pWorld);
-      /* Biasing */
+      // Biasing - TBC should only bias required particles to be biased
       G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
       physBias->Bias("e-");
       physBias->Bias("e+");
@@ -221,9 +218,8 @@ int main(int argc,char** argv)
 #endif
   // Only add steppingaction if it is actually used, so do check here (for cpu reasons)
   if (globalConstants->ThresholdCutPhotons() > 0 || globalConstants->ThresholdCutCharged() > 0
-      || globalConstants->VerboseStep()) {
-    runManager->SetUserAction(new BDSSteppingAction);
-  }
+      || globalConstants->VerboseStep())
+    {runManager->SetUserAction(new BDSSteppingAction);}
   
 #ifdef BDSDEBUG 
   G4cout << __FUNCTION__ << "> Registering user action - Tracking Action"<<G4endl;

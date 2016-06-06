@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 
+#include <ctime>
 #include <map>
 
 #include "BDSOutputBase.hh"
@@ -11,9 +12,10 @@
 #include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventLoss.hh"
-#include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventInfo.hh"
+#include "BDSOutputROOTEventRunInfo.hh"
 
 
 #include "TROOT.h"
@@ -71,6 +73,9 @@ public:
 
   /// fill event structure
   virtual void FillEvent();
+  
+  /// write event info
+  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration);
 
   virtual void Initialise(); ///< open the file
   virtual void Write();      ///< write to file
@@ -79,12 +84,11 @@ public:
   /// clear structures
   void Flush();
 
-  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
-  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
-
-
 private:
 
+  /// create histograms
+  void CreateHistograms();
+  
   // output file
   TFile *theRootOutputFile = nullptr;
 
@@ -118,20 +122,27 @@ private:
   std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
 #endif
 
-  // energy loss
-  BDSOutputROOTEventLoss        *eLoss = nullptr;
-  // primary first hit
-  BDSOutputROOTEventHit         *pFirstHit = nullptr;
-  // primary final hit
-  BDSOutputROOTEventHit         *pLastHit = nullptr;
-  // tunnel hit
-  BDSOutputROOTEventHit         *tHit = nullptr;
-  // trajectory
-  BDSOutputROOTEventTrajectory  *traj = nullptr;
+  // run information
+  BDSOutputROOTEventRunInfo     *runInfo     = nullptr;
   // run histograms
-  BDSOutputROOTEventHistograms  *runHistos = nullptr;
+  BDSOutputROOTEventHistograms  *runHistos   = nullptr;
+
+
+  // energy loss
+  BDSOutputROOTEventLoss        *eLoss       = nullptr;
+  // primary first hit
+  BDSOutputROOTEventLoss        *pFirstHit   = nullptr;
+  // primary final hit
+  BDSOutputROOTEventLoss        *pLastHit    = nullptr;
+  // tunnel hit
+  BDSOutputROOTEventLoss        *tHit        = nullptr;
+  // trajectory
+  BDSOutputROOTEventTrajectory  *traj        = nullptr;
   // event histograms
-  BDSOutputROOTEventHistograms  *evtHistos = nullptr;
+  BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
+  // event information
+  BDSOutputROOTEventInfo        *evtInfo     = nullptr;
 };
+
 
 #endif

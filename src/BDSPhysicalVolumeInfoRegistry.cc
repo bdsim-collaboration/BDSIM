@@ -6,6 +6,7 @@
 #include "G4VPhysicalVolume.hh"
 
 #include <map>
+#include <set>
 
 BDSPhysicalVolumeInfoRegistry* BDSPhysicalVolumeInfoRegistry::_instance = nullptr;
 
@@ -70,6 +71,10 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
 BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume* physicalVolume,
 							      G4bool             isTunnel)
 {
+  if (excludedVolumes.find(physicalVolume) != excludedVolumes.end())
+    {// it was found in excluded volumes
+      return nullptr;
+    }
   if (isTunnel)
     {
       tunnelSearch = tunnelRegister.find(physicalVolume);
@@ -84,10 +89,17 @@ BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume*
     {return backupSearch->second;}
   else
     {//uh oh - not found!
+#ifdef BDSDEBUG
       G4cerr << __METHOD_NAME__ << "physical volume not found" << G4endl;
       G4cerr << __METHOD_NAME__ << "pv name is: " << physicalVolume->GetName() << G4endl;
+#endif
       return nullptr;
     }
+}
+
+void BDSPhysicalVolumeInfoRegistry::RegisterExcludedPV(G4VPhysicalVolume* physicalVolume)
+{
+  excludedVolumes.insert(physicalVolume);
 }
 
 G4bool BDSPhysicalVolumeInfoRegistry::IsRegistered(G4VPhysicalVolume* physicalVolume)

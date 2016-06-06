@@ -159,6 +159,7 @@ private:
   /// reference position at the end and the reference rotation at the end.
   G4Transform3D*    samplerPlacementTransform;
 
+  /// Index of this item in the beamline - saves keeping track of iterators and conversion.
   G4int index;
 };
 

@@ -8,7 +8,6 @@
 #include "BDSHistogram.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
-#include "G4Trajectory.hh"
 #include <vector>
 
 /**
@@ -54,6 +53,9 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken) = 0;
 
+  /// Write additional information about event such as timing.
+  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration) = 0;
+
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
   
@@ -68,12 +70,6 @@ public:
 
   /// close file
   virtual void Close() = 0;
-
-
-  /// get event analysis/histogam structure
-  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
-  /// get run analysis/historgram structure
-  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
 
   /// write, close and open new file
   void Commit();
