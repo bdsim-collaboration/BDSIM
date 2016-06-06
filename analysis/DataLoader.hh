@@ -11,29 +11,52 @@
 #include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventRunInfo.hh"
 
+/**
+ * @brief Loader for a ROOT file using classes used to generate the file.
+ *
+ * @author Stewart Boogert
+ */
+
 class DataLoader
 {
-public :
+public:
   DataLoader();
-  void CommonCtor();
-  void BuildInputFileList();
-  void BuildTreeNameList();
-  void BuildEventBranchNameList();
-  void ChainTrees();
-  void SetBranchAddress();
   virtual ~DataLoader();
-  std::vector<std::string>      GetTreeNames()    { return treeNames;};
-  std::vector<std::string>      GetBranchNames()  { return branchNames;}
-  std::vector<std::string>      GetSamplerNames() { return samplerNames;}
-  BDSOutputROOTEventOptions*    GetOptions()      { return opt;}
-  BDSOutputROOTEventModel*      GetModel()        { return mod;}
-  Event*                        GetEvent()        { return evt;}
-  Run*                          GetRun()          { return run;};
-  TChain*                       GetOptionsTree()  { return optChain;}
-  TChain*                       GetModelTree()    { return modChain;}
-  TChain*                       GetEventTree()    { return evtChain;}
-  TChain*                       GetRunTree()      { return runChain;}
 
+  /// Create an instance of each class in the file to be overlaid by loading
+  /// the ROOT file.
+  void CommonCtor();
+
+  /// Build up the input file list.
+  void BuildInputFileList();
+
+  /// Open the first file in the file list and map the trees in it.
+  void BuildTreeNameList();
+
+  /// Inspect the first file (leaving it open...) and build a list of samplers
+  /// by checking whether they have 'Sampler' in the name.
+  void BuildEventBranchNameList();
+
+  /// Create a tree for each sampler and add all the files to it.
+  void ChainTrees();
+
+  /// Map each chain to the member instance of each storage class in this class.
+  void SetBranchAddress();
+
+  /// @{ Accessor
+  std::vector<std::string>   GetTreeNames()    {return treeNames;};
+  std::vector<std::string>   GetBranchNames()  {return branchNames;}
+  std::vector<std::string>   GetSamplerNames() {return samplerNames;}
+  BDSOutputROOTEventOptions* GetOptions()      {return opt;}
+  BDSOutputROOTEventModel*   GetModel()        {return mod;}
+  Event*                     GetEvent()        {return evt;}
+  Run*                       GetRun()          {return run;};
+  TChain*                    GetOptionsTree()  {return optChain;}
+  TChain*                    GetModelTree()    {return modChain;}
+  TChain*                    GetEventTree()    {return evtChain;}
+  TChain*                    GetRunTree()      {return runChain;}
+  /// @}
+  
 private:
   BDSOutputROOTEventOptions    *opt;
   BDSOutputROOTEventModel      *mod;
