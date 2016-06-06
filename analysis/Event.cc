@@ -7,7 +7,6 @@ ClassImp(Event)
 Event::Event()
 {
   this->CommonCtor();
-
 }
 
 void Event::CommonCtor()
@@ -21,44 +20,6 @@ void Event::CommonCtor()
   histos          = nullptr;
   info            = nullptr;
 }
-#ifndef __ROOTDOUBLE__
-BDSOutputROOTEventSampler<float>*    Event::GetPrimaries() 
-#else 
-BDSOutputROOTEventSampler<double>*    Event::GetPrimaries() 
-#endif
-{
-  return primaries;
-}
-
-BDSOutputROOTEventLoss*       Event::GetLoss()
-{
-  return eloss;
-}
-
-BDSOutputROOTEventLoss*       Event::GetPrimaryFirstHit()
-{
-  return primaryFirstHit;
-}
-
-BDSOutputROOTEventLoss*       Event::GetPrimaryLastHit()
-{
-  return primaryLastHit;
-}
-
-BDSOutputROOTEventLoss*       Event::GetTunnelHit()
-{
-  return tunnelHit;
-}
-
-BDSOutputROOTEventTrajectory* Event::GetTrajectory()
-{
-  return trajectory;
-}
-
-BDSOutputROOTEventHistograms* Event::GetHistograms()
-{
-  return histos;
-}
 
 void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
 {
@@ -67,7 +28,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     if(Config::Instance()->Debug()) std::cout << "Event::SetBranchAddress" << std::endl;
   }
 
-  t->GetEntry(0);                                            // Pointers don't appear to be valid without this
+  t->GetEntry(0); // Pointers don't appear to be valid without this
 
   t->SetBranchAddress("Primary.",&primaries);
   t->SetBranchAddress("Eloss.",&eloss);
@@ -99,7 +60,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     if(Config::Instance())
     {
       if(Config::Instance()->Debug())
-        std::cout << "Event::SetBranchAddress> " << samplerNames[i].c_str() << " " << samplers[i] << std::endl;
+        {std::cout << "Event::SetBranchAddress> " << samplerNames[i] << " " << samplers[i] << std::endl;}
     }
   }
 }
@@ -109,9 +70,7 @@ Event::~Event()
   if(Config::Instance())
   {
     if(Config::Instance()->Debug())
-    {
-      std::cout <<"Event::~Event>" << std::endl;
-    }
+      {std::cout << "Event::~Event>" << std::endl;}
   }
   delete primaries;
   delete eloss;
@@ -120,7 +79,5 @@ Event::~Event()
   delete tunnelHit;
   delete trajectory;
   for(auto s = samplers.begin(); s != samplers.end(); ++s)
-  {
-    delete *s;
-  }
+    {delete *s;}
 }
