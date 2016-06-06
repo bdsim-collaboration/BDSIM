@@ -1,3 +1,6 @@
+#ifndef SAMPLERANALYSIS_H
+#define SAMPLERANALYSIS_H
+
 #include "BDSOutputROOTEventSampler.hh"
 
 /**
@@ -58,3 +61,5 @@ protected:
   static double centMomToCovariance(fourDArray &centMoms, int npart ,int k, int i, int j);
   static double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef REBDISM_H
+#define REBDISM_H
+
 #include <string>
 
 inline std::string methodName(const std::string& prettyFunction)
@@ -10,3 +13,6 @@ inline std::string methodName(const std::string& prettyFunction)
   return prettyFunction.substr(begin,len) +"> ";
 }
 #define __METHOD_NAME__ methodName(__PRETTY_FUNCTION__)
+
+
+#endif

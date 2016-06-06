@@ -27,7 +27,7 @@ public:
   /// Load an entry from the model tree.
   void LoadModel(int iMod);
 
-  /// Load an entry from the options tree - presumably only one entry here - TBC.
+  /// Load an entry from the options tree.
   void LoadOptions(int iOpt);
 
   /// Load an entry in the event tree.
