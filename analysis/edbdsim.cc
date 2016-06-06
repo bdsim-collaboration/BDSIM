@@ -11,7 +11,7 @@ int main(int /*argc*/, char *argv[])
   TRint  *a = new TRint("App", &rintArgc, rintArgv);
 
   Config::Instance(argv[1]);
-  /*EventDisplay *ed = */ new EventDisplay(argv[2]);
+  EventDisplay::Instance(argv[2]);
   a->Run(kTRUE);
   
 }

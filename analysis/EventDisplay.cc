@@ -24,10 +24,18 @@ EventDisplay* EventDisplay::_instance = nullptr;
 
 EventDisplay* EventDisplay::Instance()
 {
+  if (!_instance)
+    {std::cout << "EventDisplay> Warning - no file supplied" << std::endl;}
   return _instance;
 }
 
-EventDisplay::EventDisplay(TString geoFileNameIn) :
+EventDisplay* EventDisplay::Instance(TString geoFileName)
+{
+  _instance = new EventDisplay(geoFileName);
+  return _instance;
+}
+
+EventDisplay::EventDisplay(TString geoFileNameIn):
   geoFileName(geoFileNameIn)
 {
   std::cout << "EventDisplay::EventDisplay(" << geoFileName << ")" << std::endl;
@@ -46,13 +54,13 @@ EventDisplay::EventDisplay(TString geoFileNameIn) :
   this->LoadOptions(0);
   this->LoadModel(0);
   this->LoadData(0);
-
-  _instance = this;
 }
 
 EventDisplay::~EventDisplay()
 {
   delete dataLoader;
+  delete _instance;
+  _instance = nullptr;
 }
 
 void EventDisplay::LoadGeometry()
