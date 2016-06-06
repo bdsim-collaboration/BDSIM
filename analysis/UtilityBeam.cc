@@ -12,7 +12,10 @@
 
 void DrawGaussTwissEllipse(TString fileName)
 {
-  BDSOutputROOTEventOptions *o = GetOptions(fileName);
+  // TBC - does this need to be called? Commented out return variable
+  // to prevent unused variable warning, but does this load something useful
+  // 
+  /*BDSOutputROOTEventOptions *o = */GetOptions(fileName);
 }
 
 void DrawHalo(TString fileName)

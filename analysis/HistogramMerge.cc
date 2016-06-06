@@ -93,14 +93,13 @@ void HistogramMerge::Terminate()
   }
 }
 
-void HistogramMerge::Write(TFile *outputFile)
+void HistogramMerge::Write(TFile* /*outputFile*/)
 {
+  // ROOT just writes object to the open file
+  // is there a way to do this explictly?  kDirectory?
+  // TBC commented out outputFile to prevent compiler warning
   for(auto h : histograms1D)
-  {
-    h->Write();
-  }
+  {h->Write();}
   for(auto h : histograms2D)
-  {
-    h->Write();
-  }
+  {h->Write();}
 }
