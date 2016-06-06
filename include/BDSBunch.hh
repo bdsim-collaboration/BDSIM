@@ -19,23 +19,31 @@
  * @author Stewart Boogert
  */
 
+// can become a singleton? - JS
+
 class BDSBunch
 {
 protected:
-  /// particle distribution
+  /// Particle distribution
   std::string        distribType;
-  /// bdsBunch holds the distribution information and provides the next particle
+  /// BDSBunch holds the distribution information and provides the next particle
   BDSBunchInterface *bdsBunch; 
   
 public:
   BDSBunch(); 
-  ~BDSBunch(); 
+  ~BDSBunch();
+  /// Copy bunch parameters from parser options.
   void SetOptions(const GMAD::Options& opt);
+
+  /// Interface to supply coordinates for a single particle.
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight); 
 
-  std::string        GetDistributionType() {return distribType;}
+  /// Return the distribution name.
+  std::string        GetDistributionType()  {return distribType;}
+
+  /// Interface.
   BDSBunchInterface* GetBDSBunchInterface() {return bdsBunch;}
 };
 

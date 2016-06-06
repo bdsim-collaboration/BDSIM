@@ -46,7 +46,7 @@ public:
 		     G4double                 sPositionEnd,
 		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
 		     G4String                 samplerNameIn = "",
-		                 G4int indexIn = -1);
+		     G4int                    indexIn = -1);
 
   ~BDSBeamlineElement();
   
@@ -158,7 +158,8 @@ private:
   /// reference position at the end and the reference rotation at the end.
   G4Transform3D*    samplerPlacementTransform;
 
-	G4int index;
+  /// Index of this item in the beamline - saves keeping track of iterators and conversion.
+  G4int index;
 };
 
 inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
@@ -237,6 +238,6 @@ inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform
 {return samplerPlacementTransform;}
 
 inline G4int                    BDSBeamlineElement::GetIndex() const
-{ return index;}
+{return index;}
 
 #endif

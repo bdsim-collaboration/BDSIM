@@ -108,6 +108,12 @@ void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
     {output[i]->WriteHistogram(histogramIn);}
 }
 
+void BDSOutputVector::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
+{
+  for (auto out : output)
+    {out->WriteEventInfo(startTime, stopTime, duration);}
+}
+
 void BDSOutputVector::Initialise()
 {
 #ifdef BDSDEBUG

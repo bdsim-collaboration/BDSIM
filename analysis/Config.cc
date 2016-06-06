@@ -77,12 +77,16 @@ void Config::ParseInputFile()
     }
     else if(firstTok == "CalculateOpticalFunctions")  {
       f >> secondTok;
-      if(atoi(secondTok.c_str()) == 0) { 
-	bCalculateOpticalFunctions = 0;
+      if(atoi(secondTok.c_str()) == 0) {
+        bCalculateOpticalFunctions = 0;
       }
       else if(atoi(secondTok.c_str()) == 1) {
-	bCalculateOpticalFunctions = 1;
-      };
+        bCalculateOpticalFunctions = 1;
+      }
+    }
+    else if(firstTok == "GdmlFileName") {
+      f >> secondTok;
+      gdmlFileName = secondTok;
     }
     else if(firstTok == "Histogram") { 
       std::string treeName; 

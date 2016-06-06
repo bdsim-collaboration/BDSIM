@@ -1,5 +1,5 @@
-#ifndef __EVENT_H
-#define __EVENT_H
+#ifndef EVENT_H
+#define EVENT_H
 
 #include <vector>
 
@@ -9,53 +9,62 @@
 
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSOutputROOTEventLoss.hh"
-#include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventInfo.hh"
 
-#define MAXSAMPLERS 30000
+/**
+ * @brief Event loader.
+ * 
+ * @author Stewart Boogert
+ */
+
 class Event
 {
-public :
+public:
   Event();
   void CommonCtor();
   virtual ~Event();
 
-#ifndef __ROOTDOUBLE__  
-  BDSOutputROOTEventSampler<float>*    GetPrimaries();
+  /// @{ Accessor
+#ifdef __ROOTDOUBLE__  
+  BDSOutputROOTEventSampler<double>* GetPrimaries() {return primaries;}
 #else
-  BDSOutputROOTEventSampler<double>*    GetPrimaries();
+  BDSOutputROOTEventSampler<float>*  GetPrimaries() {return primaries;}
 #endif
-  BDSOutputROOTEventLoss*       GetLoss();
-  BDSOutputROOTEventHit*        GetPrimaryFirstHit();
-  BDSOutputROOTEventHit*        GetPrimaryLastHit();
-  BDSOutputROOTEventHit*        GetTunnelHit();
-  BDSOutputROOTEventTrajectory* GetTrajectory();
+  BDSOutputROOTEventLoss*            GetLoss()             {return eloss;}
+  BDSOutputROOTEventLoss*            GetPrimaryFirstHit()  {return primaryFirstHit;}
+  BDSOutputROOTEventLoss*            GetPrimaryLastHit()   {return primaryLastHit;}
+  BDSOutputROOTEventLoss*            GetTunnelHit()        {return tunnelHit;}
+  BDSOutputROOTEventTrajectory*      GetTrajectory()       {return trajectory;}
+  BDSOutputROOTEventHistograms*      GetHistograms()       {return histos;}
+  /// @}
+
+  /// Set the branch addresses to address the contents of the file.
   void SetBranchAddress(TChain *, std::vector<std::string>&);
 
+  /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<double>       *primaries;
+  BDSOutputROOTEventSampler<double>              *primaries;
 #else
-  BDSOutputROOTEventSampler<float>        *primaries;
+  BDSOutputROOTEventSampler<float>               *primaries;
 #endif
-  BDSOutputROOTEventLoss                  *eloss;
-  BDSOutputROOTEventHit                   *primaryFirstHit;
-  BDSOutputROOTEventHit                   *primaryLastHit;
-  BDSOutputROOTEventHit                   *tunnelHit;
-  BDSOutputROOTEventTrajectory            *trajectory;
-#ifndef __ROOTDOUBLE__
-  BDSOutputROOTEventSampler<float>*       samplersA[MAXSAMPLERS];
-  std::vector<BDSOutputROOTEventSampler<float>*> samplers;
-#else
-  BDSOutputROOTEventSampler<double>*       samplersA[MAXSAMPLERS];
+  BDSOutputROOTEventLoss                         *eloss;
+  BDSOutputROOTEventLoss                         *primaryFirstHit;
+  BDSOutputROOTEventLoss                         *primaryLastHit;
+  BDSOutputROOTEventLoss                         *tunnelHit;
+  BDSOutputROOTEventTrajectory                   *trajectory;
+#ifdef __ROOTDOUBLE__
   std::vector<BDSOutputROOTEventSampler<double>*> samplers;
+#else
+  std::vector<BDSOutputROOTEventSampler<float>*>  samplers;
 #endif
-  BDSOutputROOTEventHistograms            *histos;
+  BDSOutputROOTEventHistograms                   *histos;
+  BDSOutputROOTEventInfo                         *info;
+  /// @}
+
 private:
-
-
   ClassDef(Event,1);
-
 };
 
 #endif

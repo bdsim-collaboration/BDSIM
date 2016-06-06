@@ -189,11 +189,12 @@ OptionsBase::OptionsBase()
   numberOfEventsPerNtuple  = 0;
   elossHistoBinWidth       = 1.0; // m
   elossHistoTransBinWidth  = 0.1;
-  storeMuonTrajectories    = false;
   trajCutGTZ               = 0.0;  // minimum z position
   trajCutLTR               = 1e12; // maximum radius in mm, so large default value
-  storeNeutronTrajectories = false;
   storeTrajectory          = false;
+  storeTrajectoryDepth     = 1;
+  storeTrajectoryParticle  = "";
+  storeTrajectoryEnergyThreshold = 0.0;
 
   // circular options
   nturns                   = 1;
