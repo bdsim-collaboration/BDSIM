@@ -9,13 +9,11 @@ Run::Run()
 }
 
 Run::~Run()
-{
-
-}
+{;}
 
 void Run::SetBranchAddress(TChain *t)
 {
-  t->GetEntry(0);                                            // Pointers don't appear to be valid without this
+  t->GetEntry(0);  // Pointers don't appear to be valid without this
   t->SetBranchAddress("Info.",&info);
   t->SetBranchAddress("Histos.",&histos);
 }
