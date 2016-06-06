@@ -6,7 +6,7 @@
 #include "TLine.h"
 
 #include "BDSOutputROOTEventOptions.hh"
-#include "parser/OptionsBase.h"
+#include "parser/optionsBase.h"
 
 #include "Utility.hh"
 
