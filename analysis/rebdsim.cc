@@ -53,4 +53,5 @@ int main(int argc, char *argv[])
   runAnalysis.Write(outputFile);
   outputFile->Close();
 
+  return 0;
 }
