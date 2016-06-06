@@ -33,7 +33,9 @@ public :
 private:
   BDSOutputROOTEventOptions    *opt;
   BDSOutputROOTEventModel      *mod;
+
   Event                        *evt;
+
   std::vector<std::string>      fileNames;
 
   std::vector<std::string>      treeNames;

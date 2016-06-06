@@ -28,7 +28,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4double                 sPositionMiddleIn,
 				       G4double                 sPositionEndIn,
 				       BDSSamplerType           samplerTypeIn,
-				       G4String                 samplerNameIn):
+				       G4String                 samplerNameIn,
+G4int indexIn) :
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),
@@ -41,7 +42,8 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
   sPositionStart(sPositionStartIn), sPositionMiddle(sPositionMiddleIn), sPositionEnd(sPositionEndIn),
   samplerType(samplerTypeIn),
   samplerName(samplerNameIn),
-  samplerPlacementTransform(nullptr)
+  samplerPlacementTransform(nullptr),
+  index(indexIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__;

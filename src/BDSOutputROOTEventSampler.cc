@@ -4,37 +4,37 @@
 
 #include "TTree.h"
 
-ClassImp(BDSOutputROOTEventSampler)
+templateClassImp(BDSOutputROOTEventSampler)
 
-BDSOutputROOTEventSampler::BDSOutputROOTEventSampler()
+template <class T> BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler()
 {
   samplerName = "sampler";
   this->Flush();
 }
 
-BDSOutputROOTEventSampler::BDSOutputROOTEventSampler(std::string samplerNameIn)
+template <class T> BDSOutputROOTEventSampler<T>::BDSOutputROOTEventSampler(std::string samplerNameIn)
 {
   samplerName = samplerNameIn;
   this->Flush();
 }
 
-BDSOutputROOTEventSampler::~BDSOutputROOTEventSampler()
+template <class T> BDSOutputROOTEventSampler<T>::~BDSOutputROOTEventSampler()
 { }
 
 #ifndef __ROOTBUILD__ 
-void BDSOutputROOTEventSampler::Fill(G4double E,
-                                     G4double x0,
-                                     G4double y0,
-                                     G4double z0,
-                                     G4double xp,
-                                     G4double yp,
-                                     G4double zp,
-                                     G4double t,
-                                     G4double weight,
-                                     G4int PDGType,
-                                     G4int    /*nEvent*/,
-                                     G4int TurnsTaken,
-                                     G4int beamlineIndex)
+template <class T> void BDSOutputROOTEventSampler<T>::Fill(G4double E,
+							   G4double x0,
+							   G4double y0,
+							   G4double z0,
+							   G4double xp,
+							   G4double yp,
+							   G4double zp,
+							   G4double t,
+							   G4double weight,
+							   G4int PDGType,
+							   G4int    /*nEvent*/,
+							   G4int TurnsTaken,
+							   G4int beamlineIndex)
 {
   this->n++;
   this->z = (float) (z0 / CLHEP::m);
@@ -53,7 +53,7 @@ void BDSOutputROOTEventSampler::Fill(G4double E,
   this->modelID.push_back(beamlineIndex);
 }
 
-void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
+template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
 {
   // get single values
   this->n++;
@@ -91,10 +91,10 @@ void BDSOutputROOTEventSampler::Fill(BDSSamplerHit *hit)
 //{}
 #endif
 
-void BDSOutputROOTEventSampler::SetBranchAddress(TTree *)
+template <class T> void BDSOutputROOTEventSampler<T>::SetBranchAddress(TTree *)
 {;}
 
-void BDSOutputROOTEventSampler::Flush()
+template <class T> void BDSOutputROOTEventSampler<T>::Flush()
 {
   this->n = 0;
   this->energy.clear();
@@ -118,3 +118,6 @@ void BDSOutputROOTEventSampler::Flush()
   this->turnNumber.clear();
   this->S = 0.0;
 }
+
+template class BDSOutputROOTEventSampler<float>;
+template class BDSOutputROOTEventSampler<double>;

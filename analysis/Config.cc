@@ -21,17 +21,20 @@ Config::~Config()
 
 Config* Config::Instance(std::string fileName)
 {
-  if(!instance) {
+  if(!instance && fileName != "")
+  {
     std::cout << "Config::Instance> No instance present, construct" << std::endl;
     instance = new Config(fileName);
     instance->ParseInputFile();
   }
-  else if(instance && fileName != "") {
+  else if(instance && fileName != "")
+  {
     std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
     delete instance;
     instance = new Config(fileName);
     instance->ParseInputFile();    
   }
+  // else return current instance (can be nullptr!)
   return instance;
 }
 

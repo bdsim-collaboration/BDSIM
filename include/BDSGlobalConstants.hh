@@ -27,18 +27,23 @@ class BDSBeamPipeInfo;
 /**
  * @brief A class that holds global options and constants.
  *
- * This wraps an instance of GMAD::Options and also converts
+ * This wraps (but does not inherit) an instance of GMAD::Options and also converts
  * from the std C++ types used in the options to the Geant4 types
  * solely used in BDSIM. Additionally, some more refined information 
  * is provided - for example, simple strings are converted to enum types
  * for outputs and geometry, as well as G4Materials.
+ *
+ * This does modify its instance of GMAD::Options due to some parameter
+ * checks.
  *
  * This is almost entirely constant apart from a very few variables 
  * that by necessity can be updated. Generally, this is not used as
  * as a way to dynamically pass around information at a global level
  * but purely as constants.
  * 
- * Singleton pattern.
+ * Singleton pattern. The (private) constructor requires a GMAD::Options
+ * instance, but to maintain the singleton pattern this is accessed through
+ * BDSParser singleton instance.
  */
 
 class BDSGlobalConstants
@@ -58,6 +63,9 @@ public:
    /// Access method 
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
+
+  /// Access the underlying parser options.
+  const GMAD::Options& Options() const {return options;}
 
   // Options that access GMAD::options instance
   // Executable options
@@ -96,6 +104,7 @@ public:
   // regular options from here on
   inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
   inline G4double PlanckScatterFraction()    const {return G4double(options.planckScatterFe);}
+  inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
   inline G4double ComponentBoxSize()         const {return OuterDiameter();}
   inline G4String OuterMaterialName()        const {return G4String(options.outerMaterialName);}
@@ -131,8 +140,8 @@ public:
   inline G4double MinimumEpsilonStep()       const {return G4double(options.minimumEpsilonStep);}
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
+  inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
   inline G4bool   DoPlanckScattering()       const {return G4bool  (options.doPlanckScattering);}
-  inline G4String ParticleName()             const {return G4String(options.particleName);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double ParticleTotalEnergy()      const {return G4double(options.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
@@ -143,6 +152,7 @@ public:
   inline G4long   RandomSeed()               const {return G4long  (options.randomSeed);}
   inline G4bool   UseEMLPB()                 const {return G4bool  (options.useEMLPB);}
   inline G4bool   UseHadLPB()                const {return G4bool  (options.useHadLPB);}
+  inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
@@ -150,7 +160,7 @@ public:
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
-  inline G4String EmptyMaterial()            const {return "G4_Galactic";}
+  inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
   inline G4bool   StoreMuonTrajectories()    const {return G4bool  (options.storeMuonTrajectories);}
   inline G4bool   StoreNeutronTrajectories() const {return G4bool  (options.storeNeutronTrajectories);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
@@ -164,15 +174,13 @@ public:
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
   inline G4double ElossHistoTransBinWidth()  const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
 
-  // options that require members in this class (for value checking or because they're another class)
-  inline G4double LengthSafety()             const {return lengthSafety;}
+  // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
-  inline G4int    TurnsToTake()              const {return turnsToTake;}
-  inline G4double LPBFraction()              const {return lPBFraction;}
   inline G4double BeamKineticEnergy()        const {return beamKineticEnergy;}
   inline G4double BeamMomentum()             const {return beamMomentum;}
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
   inline G4double ParticleMomentum()         const {return particleMomentum;}
+  inline G4String ParticleName()             const {return particleName;}
   inline G4double TeleporterLength()         const {return teleporterlength;}
   inline G4double SMax()                     const {return sMax;}
   inline G4double SMaxHistograms()           const {return sMaxHistograms;}
@@ -197,7 +205,6 @@ public:
   // refactor out of classes that use this
   inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
   inline G4double MagnetPoleRadius()   const {return itsMagnetPoleRadius;}
-  inline G4bool   SampleDistRandomly() const {return true;}
   inline G4double LWCalWidth()         const {return itsLWCalWidth;}
   inline G4double LWCalOffset()        const {return itsLWCalOffset;}
 
@@ -242,6 +249,9 @@ private:
   /// Particle energy
   G4double particleMomentum, particleKineticEnergy;
 
+  /// Particle name
+  G4String particleName;
+  
   /// Beamline length in mm
   G4double sMax;
   
@@ -276,8 +286,6 @@ private:
   G4double      itsLWCalWidth;
   G4double      itsLWCalOffset;
   
-  G4double lengthSafety;
-
   /// rotation
   void InitRotationMatrices();
   G4RotationMatrix* rotY90;
@@ -294,10 +302,8 @@ private:
   void InitDefaultUserLimits();
   G4UserLimits* defaultUserLimits;
   
-  ///@{ Turn Control
+  /// Turn Control
   G4int    turnsTaken;
-  G4int    turnsToTake;
-  ///@}
   ///@{ Teleporter offset corrections
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
@@ -307,8 +313,6 @@ private:
   BDSParticle initialPoint;
 
   BDSOutputFormat outputFormat;
-
-  G4double lPBFraction;
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)
@@ -326,8 +330,8 @@ inline void BDSGlobalConstants::SetBeamMomentum(G4double val)
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {beamParticleDefinition = aBeamParticleDefinition;}
 
-inline void BDSGlobalConstants::SetParticleName(G4String particleName)
-{options.set_value("particleName", particleName);}
+inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
+{particleName = aParticleName;}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}

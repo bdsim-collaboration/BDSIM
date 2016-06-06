@@ -12,7 +12,6 @@
 BDSTerminatorSD::BDSTerminatorSD(G4String name)
   :G4VSensitiveDetector(name)
 {
-  verbose  = BDSGlobalConstants::Instance()->Verbose();
 }
 
 BDSTerminatorSD::~BDSTerminatorSD()

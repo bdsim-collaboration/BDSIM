@@ -5,7 +5,11 @@ SamplerAnalysis::SamplerAnalysis()
   this->CommonCtor();
 }
 
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler *samplerIn)
+#ifndef __ROOTDOUBLE__
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn)
+#else 
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn)
+#endif
 {
   this->s = samplerIn;
   this->CommonCtor();

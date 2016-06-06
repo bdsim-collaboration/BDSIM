@@ -1,7 +1,7 @@
 #include "options.h"
 
-// include git commit version. header is in build/configuration
-#include "version.hh"
+// include git commit version.
+#include "version.h"
 
 #include <iostream>
 
@@ -111,6 +111,7 @@ OptionsBase::OptionsBase()
   aper4                = 0.0;
   beampipeMaterial     = "StainlessSteel";
   vacMaterial          = "Vacuum";
+  emptyMaterial        = "G4_Galactic";
   vacuumPressure       = 1e-12;
   sensitiveBeamPipe    = 1;
 

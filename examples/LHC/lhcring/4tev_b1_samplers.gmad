@@ -5272,4 +5272,4 @@ sample, range=TAS1L1;
 sample, range=TAS1L1_angle_neg;
 sample, range=DRIFT458;
 sample, range=MBAS21L1;
-sample, range=theendoftheline;
+!sample, range=theendoftheline;

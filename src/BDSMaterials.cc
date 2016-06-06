@@ -1013,8 +1013,8 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
       if(iter != materials.end()) return (*iter).second;
       else
 	{
-	  G4cout << __METHOD_NAME__ << "\"" << aMaterial << "\" is unknown." << G4endl;
 	  ListMaterials();
+	  G4cout << __METHOD_NAME__ << "\"" << aMaterial << "\" is unknown." << G4endl;
 	  exit(1);
 	}
     }

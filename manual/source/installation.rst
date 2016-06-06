@@ -16,16 +16,10 @@ From the GIT Repository
 
 To download the source from the git repository, use the command::
 
-  git clone https://bitbucket.org/jairhul/bdsim
+  git clone --recursive https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provided. To obtain the python utilities that come with BDSIM,
-use the following commands::
-
-  cd bdsim
-  git submodule init
-  git submodule update
-
+and documentation is provided. Also the python utilities that come with BDSIM will be present.
 
 From precompiled sources
 ------------------------

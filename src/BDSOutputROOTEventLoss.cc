@@ -20,8 +20,8 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
   this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
   this->S.push_back     ( (float &&) (hit->GetSHit()      / CLHEP::m));
   this->weight.push_back( (float &&)  hit->GetWeight());
-  this->modelID.push_back( hit->GetBeamlineIndex());
-  this->geomFlag.push_back(hit->GetGeomFlag());
+  this->modelID.push_back( (unsigned int)hit->GetBeamlineIndex());
+  this->geomFlag.push_back( (unsigned int)hit->GetGeomFlag());
 //  G4cout << "Fill BDSEnergyCounterHit " << hit->GetName() << G4endl;
 }
 

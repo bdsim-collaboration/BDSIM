@@ -1,6 +1,11 @@
 #include "BDSColours.hh"
-
 #include "BDSDebug.hh"
+#include "BDSUtilities.hh"
+
+#include "globals.hh" // geant4 types / globals
+
+#include <map>
+#include <sstream>
 
 BDSColours* BDSColours::_instance = nullptr;
 
@@ -63,19 +68,55 @@ BDSColours::BDSColours()
   colours["LHCyoke"]          = new G4Colour(0,     0.5,   1.0);   // LHC blue
   colours["LHCyokered"]       = new G4Colour(1,     0,     0);     // LHC red
   colours["gdml"]             = new G4Colour(0.4  , 0.2,   0);     // poo brown
+
+  // general
+  colours["white"]   = new G4Colour(G4Colour::White());
+  colours["gray"]    = new G4Colour(G4Colour::Gray());
+  colours["grey"]    = new G4Colour(G4Colour::Grey());
+  colours["black"]   = new G4Colour(G4Colour::Black());
+  colours["brown"]   = new G4Colour(G4Colour::Brown());
+  colours["red"]     = new G4Colour(G4Colour::Red());
+  colours["green"]   = new G4Colour(G4Colour::Green());
+  colours["blue"]    = new G4Colour(G4Colour::Blue());
+  colours["cyan"]    = new G4Colour(G4Colour::Cyan());
+  colours["magenta"] = new G4Colour(G4Colour::Magenta());
+  colours["yellow"]  = new G4Colour(G4Colour::Yellow());
 }
 
-G4Colour* BDSColours::GetColour(G4String type) const
+G4Colour* BDSColours::GetColour(G4String type)
 {
-  auto it = colours.find(type);
-  if (it == colours.end())
-    {// colour not found
-      G4cout << __METHOD_NAME__ << "WARNING: Colour does not exist for type " << type << G4endl;
-      return colours.at("warning");
+  G4String colourName = type;
+  G4bool   canDefine  = false;
+  if (type.contains(":"))
+    {
+      colourName = type.substr(0, type.find(":"));
+      canDefine  = true;
     }
-  else
+    
+  auto it = colours.find(colourName);
+  if (it != colours.end())
     {// colour must therefore exist
       return it->second;
+    }
+  else if (it == colours.end() && canDefine)
+    {
+      G4double r = 240;
+      G4double g = 240;
+      G4double b = 240; // default rgb is almost white but visible
+      G4String rgb = type.substr(type.find(":")+1); // everything after ':'
+      std::stringstream ss(rgb);
+      ss >> r >> g >> b;
+      BDS::EnsureInLimits(r,0,255);
+      BDS::EnsureInLimits(g,0,255);
+      BDS::EnsureInLimits(b,0,255);
+      G4Colour* newColour = new G4Colour(r/255.,g/255.,b/255.);
+      colours[colourName] = newColour;
+      return newColour;
+    }
+  else
+    {// colour not found
+      G4cout << __METHOD_NAME__ << "WARNING: invalid colour" << type << G4endl;
+      return colours.at("warning");
     }
 }
 

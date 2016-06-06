@@ -27,14 +27,17 @@ namespace GMAD
     Region();
     /// reset
     void clear();
-    /// publish members
-    void PublishMembers();
     /// print some properties
     void print()const;
     /// set methods by property name
     template <typename T>
       void set_value(std::string name, T value);
+
+  private:
+    /// publish members
+    void PublishMembers();
   };
+  
   template <typename T>
     void Region::set_value(std::string name, T value)
     {

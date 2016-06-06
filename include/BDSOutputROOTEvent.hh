@@ -13,6 +13,7 @@
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventHit.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 
 
 #include "TROOT.h"
@@ -78,9 +79,13 @@ public:
   virtual void Write();      ///< write to file
   virtual void Close();      ///< close the file
 
-  /// clear structures 
+  /// clear structures
   void Flush();
-  
+
+  virtual BDSOutputROOTEventHistograms* GetEventAnalysis();
+  virtual BDSOutputROOTEventHistograms* GetRunAnalysis();
+
+
 private:
 
   // output file
@@ -97,13 +102,24 @@ private:
 
   // output tree
   TTree *theRootOutputTree = nullptr;
-  
-  // primary structure 
-  BDSOutputROOTEventSampler *primary = nullptr;
 
+  // output histogram tree
+  TTree *theRunOutputTree  = nullptr;
+
+  // primary structure 
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double> *primary = nullptr;
+#else 
+  BDSOutputROOTEventSampler<float> *primary = nullptr;
+#endif
   // sampler structures 
-  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap; // will remove
-  std::vector<BDSOutputROOTEventSampler*> samplerTrees;
+#ifdef __ROOTDOUBLE__
+  //  std::map<G4String, BDSOutputROOTEventSampler<double>*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler<double>*> samplerTrees;
+#else
+  //  std::map<G4String, BDSOutputROOTEventSampler<float>*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
+#endif
 
   // energy loss
   BDSOutputROOTEventLoss        *eLoss = nullptr;
@@ -115,6 +131,10 @@ private:
   BDSOutputROOTEventHit         *tHit = nullptr;
   // trajectory
   BDSOutputROOTEventTrajectory  *traj = nullptr;
+  // run histograms
+  BDSOutputROOTEventHistograms  *runHistos = nullptr;
+  // event histograms
+  BDSOutputROOTEventHistograms  *evtHistos = nullptr;
 };
 
 #endif

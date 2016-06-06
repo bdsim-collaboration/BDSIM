@@ -1,15 +1,21 @@
 #include "EventAnalysis.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 #include "Config.hh"
+
+ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis()
 {
   event = nullptr;
   chain = nullptr;
-
+  histoSum = nullptr;
 }
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
 {
+
+  chainIn->GetEntry(0);
+
   this->event = eventIn;
   this->chain = chainIn;
   // create sampler analyses
@@ -18,6 +24,10 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     SamplerAnalysis *sa = new SamplerAnalysis(*i);
     this->samplerAnalyses.push_back(sa);
   }
+
+  histoSum = new BDSOutputROOTEventHistograms(*(event->histos));
+  std::cout << this->event->histos->Get1DHistogram(0) << std::endl;
+  std::cout << histoSum->Get1DHistogram(0) << std::endl;
 }
 
 EventAnalysis::~EventAnalysis()

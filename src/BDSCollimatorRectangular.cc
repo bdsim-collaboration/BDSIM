@@ -12,14 +12,15 @@ BDSCollimatorRectangular::BDSCollimatorRectangular(G4String name,
 						   G4double outerDiameter,
 						   G4double xAperture,
 						   G4double yAperture,
-                           G4double xOutAperture,
-                           G4double yOutAperture,
+						   G4double xOutAperture,
+						   G4double yOutAperture,
 						   G4String collimatorMaterial,
-						   G4String vacuumMaterial):
+						   G4String vacuumMaterial,
+						   G4String colour):
   BDSCollimatorBase(name, length, outerDiameter, "rcol",
 		    xAperture, yAperture,xOutAperture, yOutAperture,
 		    collimatorMaterial,
-		    vacuumMaterial)
+		    vacuumMaterial, colour)
 {;}
 
 void BDSCollimatorRectangular::BuildInnerCollimator()

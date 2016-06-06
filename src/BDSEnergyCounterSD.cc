@@ -42,7 +42,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    ptype(0),
    volName(""),
    turnstaken(0),
-   eventnumber(0)
+   eventnumber(0),
+   auxilliaryNavigator(nullptr)
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
   itsName = name;
@@ -207,9 +208,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
                                                        enrg,
                                                        X, Y, Z,
-						       sBefore,
-						       sAfter,
-						       sHit,
+                                                       sBefore,
+                                                       sAfter,
+                                                       sHit,
                                                        x, y, z,
                                                        volName,
                                                        ptype,

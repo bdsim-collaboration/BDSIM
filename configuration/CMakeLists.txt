@@ -1,4 +1,4 @@
-# record which version of bdsim is being built in the code itself
+# record which git version is being built
 find_package(Git)
 if (GIT_FOUND)
   exec_program(
@@ -10,4 +10,4 @@ else()
   set(VERSION_SHA1 "UNKNOWN")
 endif()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.hh.in ${CMAKE_CURRENT_BINARY_DIR}/version.hh @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.h ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
