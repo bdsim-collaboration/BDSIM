@@ -1,3 +1,5 @@
+#!/bin/sh
+
 source ./setup.sh
 
 DLDURL=http://nl.mirror.babylon.network/gcc/releases/gcc-4.9.3
@@ -34,5 +36,5 @@ echo "Building $PKGNAME" | tee -a $LOG
 make -j$NCPU >> $LOG
 
 echo "Installing $PKGNAME" | tee -a $LOG
-make -j$NCPU install $LOG
+make -j$NCPU install >> $LOG
 
