@@ -16,8 +16,8 @@ mkdir $BUILDDIR
 ./fontconfig.sh
 ./xml2.sh
 ./xerces3.sh
-# ./zlib.sh ! Not sure about this
 ./root.sh
 ./clhep.sh
 ./geant4.sh
+./zlib.sh ! Not sure about this
 ./bdsim.sh
