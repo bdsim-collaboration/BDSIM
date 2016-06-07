@@ -34,6 +34,8 @@ public:
   virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
+  /// write event info
+  virtual void WriteEventInfo(time_t,time_t,G4float){}
   virtual void FillEvent(){}///< fill event structure
   virtual void Initialise(){}; ///< open the file
   virtual void Write(){};      ///< write to file

@@ -156,13 +156,14 @@ public:
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
+  inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
+  inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
+  inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
-  inline G4bool   StoreMuonTrajectories()    const {return G4bool  (options.storeMuonTrajectories);}
-  inline G4bool   StoreNeutronTrajectories() const {return G4bool  (options.storeNeutronTrajectories);}
   //inline G4bool   IncludeIronMagFields()     const {return G4bool  (options.includeIronMagFields);} // TBC
   inline G4bool   IncludeIronMagFields()     const {return false;}
   inline G4bool   TurnOnCerenkov()           const {return G4bool  (options.turnOnCerenkov);}

@@ -28,7 +28,7 @@ public:
   std::vector<T>     weight;
   std::vector<int>   partID;
   std::vector<int>   parentID;
-  std::vector<int>   modelID;
+  int                modelID;
   std::vector<int>   turnNumber;
   
   float              S;   // Will not need this when have global transforms

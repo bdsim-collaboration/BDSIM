@@ -19,13 +19,21 @@ public:
   std::vector<float>        weight;
   /* geometry model */
   std::vector<int>          modelID;
-  /* process */
+  /* turn number */
+  std::vector<int>          turn;
 
-  std::vector<int>          processID;
-  std::vector<int>          trackID;
-  std::vector<int>          geomFlag;
+  /* local coordinates */
+  std::vector<float>        x;
+  std::vector<float>        y;
+  std::vector<float>        z;
 
+  /* global coordinates */
+  std::vector<float>        X;
+  std::vector<float>        Y;
+  std::vector<float>        Z;
+  
   BDSOutputROOTEventLoss();
+  BDSOutputROOTEventLoss(bool storeLocal, bool storeGobal);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
   void Fill(BDSEnergyCounterHit *hit);
@@ -33,6 +41,9 @@ public:
 #endif
   virtual void Flush();
 
+  bool storeLocal  = false;
+  bool storeGlobal = false;
+  
   ClassDef(BDSOutputROOTEventLoss,1);
 };
 

@@ -50,7 +50,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(G4double E,
   this->partID.push_back(PDGType);
   this->parentID.push_back(0);
   this->turnNumber.push_back(TurnsTaken);
-  this->modelID.push_back(beamlineIndex);
+  this->modelID = beamlineIndex;
 }
 
 template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
@@ -69,7 +69,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
   this->zp.push_back((float &&) (hit->GetZPrime() / CLHEP::radian));
 
   this->t.push_back((float &&) (hit->GetT() / CLHEP::ns));
-  this->modelID.push_back(hit->GetBeamlineIndex());
+  this->modelID = hit->GetBeamlineIndex();
 
 #if 0
   this->X.push_back(hit->GetGlobalX()           / CLHEP::m);
@@ -117,6 +117,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   this->parentID.clear();
   this->turnNumber.clear();
   this->S = 0.0;
+  this->modelID = -1;
 }
 
 template class BDSOutputROOTEventSampler<float>;
