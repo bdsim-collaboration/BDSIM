@@ -2,12 +2,14 @@
 
 
 #include "TCanvas.h"
+#include "TChain.h"
 #include "TString.h"
 #include "TLine.h"
 
 #include "BDSOutputROOTEventOptions.hh"
 #include "parser/optionsBase.h"
 
+#include "Event.hh"
 #include "Utility.hh"
 
 void DrawGaussTwissEllipse(TString fileName)

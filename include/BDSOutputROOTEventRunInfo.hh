@@ -3,17 +3,17 @@
 
 #include "TROOT.h"
 
+#include <ctime>
+
 class BDSOutputROOTEventRunInfo
 {
-
 public:
   BDSOutputROOTEventRunInfo();
   virtual ~BDSOutputROOTEventRunInfo();
-private:
-  double startTime;
-  double endTime;
-  double runTime;
 
+  time_t startTime;
+  time_t stopTime;
+  double duration;
 
   ClassDef(BDSOutputROOTEventRunInfo,1);
 };
