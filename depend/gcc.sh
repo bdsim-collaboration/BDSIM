@@ -1,3 +1,5 @@
+#!/bin/sh
+
 source ./setup.sh
 
 DLDURL=http://nl.mirror.babylon.network/gcc/releases/gcc-4.9.3
@@ -28,11 +30,11 @@ mkdir $BASEDIR/build/$PKGNAME-build
 cd $BASEDIR/build/$PKGNAME-build/
 
 echo "Configuring $PKGNAME" | tee -a $LOG
-../gcc/configure --prefix=$INSTALLDIR --enable-languages=c,c++,fortran,go 
+../gcc/configure --prefix=$INSTALLDIR --enable-languages=c,c++,fortran,go  >> $LOG
 
 echo "Building $PKGNAME" | tee -a $LOG
-make -j$NCPU
+make -j$NCPU >> $LOG
 
 echo "Installing $PKGNAME" | tee -a $LOG
-make -j$NCPU install
+make -j$NCPU install >> $LOG
 

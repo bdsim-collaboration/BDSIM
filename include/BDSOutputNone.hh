@@ -38,7 +38,8 @@ public:
   virtual void WriteEventInfo(time_t,time_t,G4float){}
   virtual void FillEvent(){}///< fill event structure
   virtual void Initialise(){}; ///< open the file
-  virtual void Write(){};      ///< write to file
+  virtual void Write(const time_t& /*startTime*/, const time_t& /*stopTime*/, const G4float& /*duration*/)
+  {};      ///< write to file
   virtual void Close(){};      ///< close the file
 };
 

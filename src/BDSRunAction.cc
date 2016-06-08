@@ -73,6 +73,8 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
   // Get the current time
   stoptime = time(nullptr);
+  // run duration
+  G4float duration = difftime(stoptime,starttime);
 
   // Output feedback
   G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
@@ -82,12 +84,12 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
     {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
 
-  bdsOutput->Write(); // write last file
+  bdsOutput->Write(starttime, stoptime, duration); // write last file
   bdsOutput->Close();
 
   // delete analysis manager
   delete BDSAnalysisManager::Instance();
   
   // note difftime only calculates to the integer second
-  G4cout << "Run Duration >> " << (int)difftime(stoptime,starttime) << " s" << G4endl;
+  G4cout << "Run Duration >> " << (int)duration << " s" << G4endl;
 }

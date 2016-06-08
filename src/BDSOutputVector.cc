@@ -123,13 +123,13 @@ void BDSOutputVector::Initialise()
     {output[i]->Initialise();}
 }
 
-void BDSOutputVector::Write()
+void BDSOutputVector::Write(const time_t& startTime, const time_t& stopTime, const G4float& duration)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->Write();}
+    {output[i]->Write(startTime, stopTime, duration);}
 }
 
 void BDSOutputVector::Close()

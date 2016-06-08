@@ -16,7 +16,7 @@ public:
   
   time_t startTime; ///< Time stamp at start of event.
   time_t stopTime;  ///< Time stamp at end of event.
-  float  eventDuration; ///< Number of seconds event took to complete simulation (not writing out).
+  float  duration;  ///< Number of seconds event took to complete simulation (not writing out).
 };
 
 #endif

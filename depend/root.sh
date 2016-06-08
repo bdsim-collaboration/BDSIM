@@ -7,7 +7,6 @@ DLDURL=https://root.cern.ch/download
 DLDFILE=root_v6.06.04.source.tar.gz
 PKGNAME=root6
 LOG=$BASEDIR/$PKGNAME.log
-echo $LOG
 
 cd $BASEDIR
 
