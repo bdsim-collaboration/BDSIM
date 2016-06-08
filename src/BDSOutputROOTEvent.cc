@@ -324,17 +324,17 @@ void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime, G4flo
   evtInfo->eventDuration = duration;
 }
 
-void BDSOutputROOTEvent::Write() 
+void BDSOutputROOTEvent::Write(const time_t& startTime, const time_t& stopTime, const G4float& duration)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-
+  runInfo->startTime = startTime;
+  runInfo->stopTime  = stopTime;
+  runInfo->duration  = duration;
   theRunOutputTree->Fill();
 
   if(theRootOutputFile && theRootOutputFile->IsOpen())
-    {
-      theRootOutputFile->Write(nullptr,TObject::kOverwrite);
     }
 }
 

@@ -310,7 +310,9 @@ void BDSOutputASCII::Initialise()
   // Multiple file writing not implemented for ASCII
 }
 
-void BDSOutputASCII::Write()
+void BDSOutputASCII::Write(const time_t&  /*startTime*/,
+			   const time_t&  /*stopTime*/,
+			   const G4float& /*duration*/)
 {
   ofMain.flush();
   ofPrimaries.flush();

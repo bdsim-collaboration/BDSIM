@@ -262,8 +262,11 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "writing events" << G4endl;
-#endif      
-      bdsOutput->Commit(); // write and open new file
+#endif
+    // note the timing information will be wrong here as the run hasn't finished but
+    // the file is bridged. There's no good way around this just now as this class
+    // can access the timing information stored in BDSRunAction
+    bdsOutput->Commit(0, 0, 0); // write and open new file
 #ifdef BDSDEBUG
       G4cout << "done" << G4endl;
 #endif

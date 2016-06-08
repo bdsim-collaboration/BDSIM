@@ -66,13 +66,13 @@ public:
   virtual void Initialise()=0;
   
   /// write the data to file
-  virtual void Write() = 0;
+  virtual void Write(const time_t& startTime, const time_t& stopTime, const G4float& duration) = 0;
 
   /// close file
   virtual void Close() = 0;
 
   /// write, close and open new file
-  void Commit();
+  void Commit(const time_t& startTime, const time_t& stopTime, const G4float& duration);
   
 protected:
   /// current event number
