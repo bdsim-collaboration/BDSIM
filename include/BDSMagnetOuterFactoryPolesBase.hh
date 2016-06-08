@@ -170,13 +170,15 @@ protected:
   //length will be calculated in each derived class
   //will be less than outer radius but long enough so poles can be
   //boolean added to return yoke - this is different for each type
-  G4double poleStartRadius;
-  G4double poleFinishRadius;
   G4double yokeStartRadius;
   G4double yokeFinishRadius;
   G4double magnetContainerRadius;
+  G4bool   buildPole;
+  G4double poleStartRadius;
+  G4double poleFinishRadius;
   G4double poleSquareWidth;
   G4double poleSquareStartRadius;
+	G4double segmentAngle;
   G4double poleAngle;
   G4double coilHeight;
   G4double coilCentreRadius;
@@ -202,7 +204,9 @@ protected:
   /// Empty containers for next use - this class is never deleted so can't rely on scope
   virtual void CleanUp();
 
-  /// Calculate the length of the pole and yoke radii based on the design
+  /// Calculate the length of the pole and yoke radii based on the design. This is only
+  /// responsible for calculating the gross proportions of the yoke and pole, not all the
+  /// geometrical parameters that may be required for the final geometry.
   virtual void CalculatePoleAndYoke(G4double     outerDiameter,
 				    BDSBeamPipe* beamPipe,
 				    G4double     order);
@@ -211,7 +215,8 @@ protected:
   //gap of length safety. This won't affect physics results and speeds up tracking
   //as the solid is not a boolean of order Npoles + 1
   
-  /// Create pole for magnet of order N where npoles = Nx2
+  /// Create pole for magnet of order N where npoles = Nx2. This contains some calcultion
+  /// of geometrical parameters pertinent to the exact geometry being required.
   virtual void CreatePoleSolid(G4String      name,                 // name
 			       G4double      length,               // length [mm]
 			       G4int         order);               // Nx2 poles

@@ -51,14 +51,16 @@ BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
 void BDSMagnetOuterFactoryPolesBase::CleanUp()
 {
   BDSMagnetOuterFactoryBase::CleanUp();
-  
-  poleStartRadius       = 0;
-  poleFinishRadius      = 0;
+
   yokeStartRadius       = 0;
   yokeFinishRadius      = 0;
   magnetContainerRadius = 0;
+  buildPole             = true;
+  poleStartRadius       = 0;
+  poleFinishRadius      = 0;
   poleSquareWidth       = 0;
   poleSquareStartRadius = 0;
+  segmentAngle          = 0;
   poleAngle             = 0;
   coilHeight            = 0;
   coilCentreRadius      = 0;
@@ -512,13 +514,17 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   CleanUp();
   
   CalculatePoleAndYoke(outerDiameter, beamPipe, order);
-  CreatePoleSolid(name, length, order);
-  CreateCoilSolids(name, length);
+  if (buildPole)
+    {
+      CreatePoleSolid(name, length, order);
+      CreateCoilSolids(name, length);
+    }
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
-  CreateEndPiece(name);
+  if (buildPole)
+    {CreateEndPiece(name);}
   PlaceComponents(name, order); //returns vector of PVs
   
   // record extents
@@ -579,8 +585,13 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   poleFinishRadius      = poleStartRadius + poleFraction*totalLength;
   yokeStartRadius       = poleFinishRadius + lengthSafety;
   magnetContainerRadius = yokeFinishRadius + lengthSafetyLarge;
+  poleSquareWidth       = (yokeFinishRadius - yokeStartRadius)*1.3;
 
-  poleSquareWidth       = yokeFinishRadius - yokeStartRadius;
+  G4double minimumPoleFraction = 0.05;
+  // If the space occupied by the yoke / pole is < 5% of outerDiameter, don't bother with
+  // pole and coil - it's clearly unphysical.
+  if ( ( (yokeFinishRadius - yokeStartRadius) / (minimumPoleFraction * outerDiameter) ) < 0.05 )
+    {buildPole = false;}
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
@@ -591,19 +602,38 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   G4int nPoles = 2*order;
+
+  // calculate geometrical parameters first.
+  // pole is ellipse at tip, then (possibly) tapered section going outwards and then
+  // a section that is straight - ie constant width going outwards. This is later
+  // intersected with the yoke solid to give the matching shape. Therefore, the pole
+  // is made slightly too long (ie > poleFinishRadius).
   
   // full circle is divided into segments for each pole
-  G4double segmentAngleWidth = CLHEP::twopi / (G4double)nPoles;
-  poleAngle = segmentAngleWidth * poleAngularFraction;
+  segmentAngle = CLHEP::twopi / (G4double)nPoles;
+  poleAngle = segmentAngle * poleAngularFraction;
   
-  // make some % of pole length curved ellipsoidal surface
+  // make some % of pole length the curved ellipsoidal surface at the pole tip
   G4double poleLength      = poleFinishRadius - poleStartRadius - 2*lengthSafety;
-  G4double ellipsoidHeight = poleTipFraction*poleLength;
+  G4double ellipsoidHeight = poleTipFraction*poleLength; // full height of an ellipse (2*a)
 
-  // work out the chord length
-  G4double ellipsoidWidth   = 2*(poleStartRadius + 0.5*ellipsoidHeight) * tan(poleAngle*0.5);
+  // calculate the ellipsoid centre radius from the centre of the magnet.
   G4double ellipsoidCentreY = poleStartRadius + ellipsoidHeight*0.5;
-  poleSquareStartRadius = poleStartRadius + ellipsoidHeight + poleFinishRadius*poleAnnulusFraction;
+  
+  // calculate the width (2*b) of the ellipse given its height - at the centre of the
+  // ellipsoid, go out by the pole angle and that's the half width, x2.
+  G4double ellipsoidWidth  = 2 * ellipsoidCentreY * tan(poleAngle*0.5);
+  // don't allow the pole to be wider than it is long - silly proportions - stops the scaling
+  ellipsoidWidth = std::min(ellipsoidWidth, poleLength); 
+
+  // calculate the distance from the centre of the magnet where the straight sides
+  // start to the end of the straight sides
+  // pole annulus fraction is hang over from when the bit beyond the ellipsoid was made from
+  // an annulus
+  poleSquareStartRadius = ellipsoidCentreY + (poleFinishRadius - ellipsoidCentreY) * 0.2;
+  //G4double minimumSquareStart = ellipsoidCentreY;
+  //poleSquareStartRadius = minimumSquareStart + poleAnnulusFraction*(poleFinishRadius - minimumSquareStart);
+  // poleSquareStartRadius = poleStartRadius + ellipsoidHeight + poleFinishRadius*poleAnnulusFraction;
 
   // points that define extruded polygon
   std::vector<G4TwoVector> points;
@@ -611,7 +641,7 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   // generate points on a ellipse in the positive quadrant for the pole tip
   // note, the QT visualiser can't visualise the union of an ellipsoid and extruded
   // polygon so can't use that method and this method produces a better transition
-  // between the ellipse and the pole.
+  // between the ellipse and the pole. We just generate an extruded solid for the whole pole.
   std::vector<G4double> xEllipse;
   std::vector<G4double> yEllipse;
   const G4int numAngPoints = 6;
@@ -623,7 +653,8 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
 
   // check pole square width
   poleSquareWidth = std::max(poleSquareWidth, ellipsoidWidth);
-  
+    //poleSquareWidth = std::min(poleSquareWidth, poleLength); // but no bigger than pole length
+
   // add bottom left quadrant - miss out first point so don't reach apex.
   for (G4int i = 0; i < (G4int)xEllipse.size()-1; i++)
     {points.push_back(G4TwoVector(xEllipse[i], ellipsoidCentreY-yEllipse[i]));}
@@ -679,13 +710,44 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
 void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4double length)
 {
   G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
-  G4double outerX = 0.95 * poleSquareStartRadius * 1.8 * tan(poleAngle*0.5);
-  G4double lowerY = poleSquareStartRadius*1.2;
-  G4double upperY = poleFinishRadius * 0.85;
-  coilHeight      = upperY - lowerY;
+
+  // start the coil just after the pole becomes square in cross-section
+  G4double lowerY = poleSquareStartRadius*1.1;
+
+  // now, with the bottom left corner of the right coil (positive quadrant),
+  // we extrapolate at 45 degress for a square coil as big as possible before
+  // it hits the yoke. 
+
+  // calculate angle of vector to lower left point
+  G4double theta = atan(lowerY / innerX);
+  // calculate angle between that and the vector from lower left to top right at 45 deg.
+  G4double phi = 225 - theta;
+
+  // we're trying to analyse a triangle including the two points plus the origin. ensure
+  // we get the angle on the inside rather than the outside of the triangle.
+  if (phi > CLHEP::pi)
+    {phi = CLHEP::twopi - phi;}
+  
+  // sin rule ratio - A / sin(a) = B / sin(b) = C / sin(c)
+  G4double ratio = poleFinishRadius*0.98 / sin(phi);
+
+  // radius from origin of lower left point
+  G4double pointRadius = sqrt(pow(innerX,2) + pow(lowerY,2));
+  G4double beta        = asin(pointRadius / ratio);
+  G4double alpha       = CLHEP::pi - beta - phi;
+  G4double v           = sin(alpha) * ratio;
+  G4double xcomponent  = v / sqrt(2);
+  G4double outerX      = innerX + xcomponent;
+  G4double upperY      = lowerY + xcomponent;
+  
+  // ensure the outer edge of the coil stays within the pole section of the circle.
+  G4double maxOuterX   = 0.95 * lowerY * tan(segmentAngle*0.5);
+  outerX = std::min(outerX, maxOuterX);
+  
+  coilHeight       = upperY - lowerY;
   coilCentreRadius = lowerY + 0.5*coilHeight;
   endPieceInnerR   = lowerY - lengthSafetyLarge;
-  endPieceOuterR   = upperY + lengthSafetyLarge;
+  endPieceOuterR   = yokeStartRadius;
   
   leftPoints.push_back(G4TwoVector(innerX, lowerY));
   leftPoints.push_back(G4TwoVector(outerX, lowerY));
@@ -701,7 +763,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4double length)
   // this will be the eventual length along z but for now
   // is the amplitude in y.
   endPieceLength = 0.1 * length;
-    endPieceLength = std::max(endPieceLength, outerX-innerX);
+  endPieceLength = std::max(endPieceLength, outerX-innerX);
   //endPieceLength = std::min(endPieceLength, 10*CLHEP::cm); // maximum is 10cm
   // make slightly smaller version as endPieceLength used for container dimensions
   G4double endPieceLengthSafe = endPieceLength - lengthSafetyLarge;
@@ -742,14 +804,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
 				       zOffsets, zScale, // dx,dy offset for each face, scaling
 				       zOffsets, zScale);// dx,dy offset for each face, scaling
   
-  
-
-  endPieceInnerR = coilCentreRadius - 0.5*coilHeight - lengthSafetyLarge;
-  endPieceOuterR = coilCentreRadius + 0.5*coilHeight + lengthSafetyLarge;
-  
   allSolids.push_back(coilLeftSolid);
   allSolids.push_back(coilRightSolid);
-
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
@@ -848,6 +904,10 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 			     checkOverlaps);               // whether to check overlaps
 
   allPhysicalVolumes.push_back(yokePV);
+
+  if (!buildPole)
+    {return;}
+  // else continue and place poles and coils
   // pole placement
   G4PVPlacement* aPolePV     = nullptr;
   G4PVPlacement* coilLeftPV  = nullptr;
@@ -920,7 +980,6 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
       allPhysicalVolumes.push_back(coilLeftPV);
       allPhysicalVolumes.push_back(coilRightPV);
     }
-				   
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
@@ -929,7 +988,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   // TBC - this will be too narrow on outside - some trig needed - x2 for now
   G4VSolid* endPieceContainerSolid = new G4Tubs(name + "_end_container_solid", // name
 						endPieceInnerR,                // inner radius
-						endPieceOuterR*2,                // outer radius
+						endPieceOuterR,                // outer radius
 						endPieceLength*0.5,            // z half length
 						0,                             // start angle
 						CLHEP::twopi);                 // sweep angle
