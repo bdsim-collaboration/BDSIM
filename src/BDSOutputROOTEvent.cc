@@ -319,9 +319,9 @@ void BDSOutputROOTEvent::FillEvent()
 }
 void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
 {
-  evtInfo->startTime     = startTime;
-  evtInfo->stopTime      = stopTime;
-  evtInfo->eventDuration = duration;
+  evtInfo->startTime = startTime;
+  evtInfo->stopTime  = stopTime;
+  evtInfo->duration  = duration;
 }
 
 void BDSOutputROOTEvent::Write(const time_t& startTime, const time_t& stopTime, const G4float& duration)
