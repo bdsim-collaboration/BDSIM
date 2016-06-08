@@ -7,12 +7,12 @@
 
 // class that holds multiple outputs
 
-class BDSOutputVector: public BDSOutputBase {
-
+class BDSOutputVector: public BDSOutputBase
+{
 public: 
 
   BDSOutputVector();
-  ~BDSOutputVector();
+  virtual ~BDSOutputVector();
 
   /// add output type
   void Add(BDSOutputBase*);
