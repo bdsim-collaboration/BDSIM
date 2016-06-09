@@ -37,7 +37,7 @@ ENDMACRO(COPY_DIRECTORY_IF_CHANGED)
 
 # Explicit version to copy examples files that are only in git
 MACRO(COPY_EXAMPLES)
-  #message(STATUS "Copying example directory")
+  message(STATUS "Copying example directory")
   execute_process(
     COMMAND git ls-files --full-name ${CMAKE_SOURCE_DIR}/examples
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
