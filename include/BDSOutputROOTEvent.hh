@@ -75,10 +75,12 @@ public:
   virtual void FillEvent();
   
   /// write event info
-  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration);
+  virtual void WriteEventInfo(const time_t &startTime, const time_t &stopTime, const G4float &duration,
+                              const std::string &seedStateAtStart);
 
   virtual void Initialise(); ///< open the file
-  virtual void Write(const time_t& startTime, const time_t& stopTime, const G4float& duration);      ///< write to file
+  virtual void Write(const time_t &startTime, const time_t &stopTime, const G4float &duration,
+                       const std::string &seedStateAtStart);      ///< write to file
   virtual void Close();      ///< close the file
 
   /// clear structures

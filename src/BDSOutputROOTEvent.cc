@@ -318,21 +318,29 @@ void BDSOutputROOTEvent::FillEvent()
   this->Flush();
   
 }
-void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
+void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
+					const time_t&  stopTime,
+					const G4float& duration,
+                                        const std::string& seedStateAtStart)
 {
-  evtInfo->startTime = startTime;
-  evtInfo->stopTime  = stopTime;
-  evtInfo->duration  = duration;
+  evtInfo->startTime        = startTime;
+  evtInfo->stopTime         = stopTime;
+  evtInfo->duration         = duration;
+  evtInfo->seedStateAtStart = seedStateAtStart;
 }
 
-void BDSOutputROOTEvent::Write(const time_t& startTime, const time_t& stopTime, const G4float& duration)
+void BDSOutputROOTEvent::Write(const time_t&  startTime,
+			       const time_t&  stopTime,
+			       const G4float& duration,
+                               const std::string& seedStateAtStart)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  runInfo->startTime = startTime;
-  runInfo->stopTime  = stopTime;
-  runInfo->duration  = duration;
+  runInfo->startTime        = startTime;
+  runInfo->stopTime         = stopTime;
+  runInfo->duration         = duration;
+  runInfo->seedStateAtStart = seedStateAtStart;
   theRunOutputTree->Fill();
 
   if(theRootOutputFile && theRootOutputFile->IsOpen())

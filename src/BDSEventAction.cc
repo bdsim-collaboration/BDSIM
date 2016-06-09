@@ -21,11 +21,15 @@
 #include "G4PrimaryParticle.hh"
 #include "Randomize.hh" // for G4UniformRand
 
+#include "CLHEP/Random/Random.h"
+
 #include <algorithm>
 #include <chrono>
 #include <ctime>
 #include <list>
 #include <map>
+#include <sstream>
+#include <string>
 #include <vector>
 
 using namespace std::chrono;
@@ -44,7 +48,8 @@ BDSEventAction::BDSEventAction():
   startTime(0),
   stopTime(0),
   starts(0),
-  stops(0)
+  stops(0),
+  seedStateAtStart("")
 { 
   verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
   verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
@@ -70,7 +75,12 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
-  //Get the current time
+  // save the random engine state
+  std::stringstream ss;
+  CLHEP::HepRandom::saveFullState(ss);
+  seedStateAtStart = ss.str();
+  
+  // get the current time
   startTime = time(nullptr);
 
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
@@ -123,7 +133,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   G4float duration = stops - starts;
 
   // Record timing in output
-  bdsOutput->WriteEventInfo(startTime, stopTime, (G4float)duration);
+  bdsOutput->WriteEventInfo(startTime, stopTime, (G4float) duration, seedStateAtStart);
   
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
@@ -266,7 +276,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // note the timing information will be wrong here as the run hasn't finished but
     // the file is bridged. There's no good way around this just now as this class
     // can access the timing information stored in BDSRunAction
-    bdsOutput->Commit(0, 0, 0); // write and open new file
+    bdsOutput->Commit(0, 0, 0, seedStateAtStart); // write and open new file
 #ifdef BDSDEBUG
       G4cout << "done" << G4endl;
 #endif

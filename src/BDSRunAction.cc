@@ -6,9 +6,13 @@
 #include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
 
+#include "globals.hh"               // geant4 globals / types
 #include "G4Run.hh"
 
-#include "globals.hh"               // geant4 globals / types
+#include "CLHEP/Random/Random.h"
+
+#include <sstream>
+#include <string>
 
 extern BDSOutputBase* bdsOutput;         // output interface
 
@@ -20,7 +24,12 @@ BDSRunAction::~BDSRunAction()
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  //Get the current time
+  // save the random engine state
+  std::stringstream ss;
+  CLHEP::HepRandom::saveFullState(ss);
+  seedStateAtStart = ss.str();
+  
+  // get the current time
   starttime = time(nullptr);
 
   // construct output histograms
@@ -84,7 +93,7 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
     {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
 
-  bdsOutput->Write(starttime, stoptime, duration); // write last file
+  bdsOutput->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
   bdsOutput->Close();
 
   // delete analysis manager
