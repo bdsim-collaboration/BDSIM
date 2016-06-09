@@ -682,7 +682,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   if (!IndexOK(index))
     {return nullptr;}
 
-    G4double endPieceLength       = endPiece->GetChordLength();
+  G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
   G4RotationMatrix* elRotStart = element->GetReferenceRotationStart();
   G4ThreeVector     elPosStart = element->GetPositionStart();

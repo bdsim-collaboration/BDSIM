@@ -154,11 +154,11 @@ void BDSDetectorConstruction::BuildBeamline()
       survey->WriteHeader();
     }
   
-  if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  //for(auto element : BDSParser::Instance()->GetBeamline())
+  if (verbose || debug)
+    {G4cout << "parsing the beamline element list..."<< G4endl;}
+  
   auto beamLine = BDSParser::Instance()->GetBeamline();
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
-
     {
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << (*elementIt).name << G4endl;
@@ -274,53 +274,59 @@ void BDSDetectorConstruction::BuildEndPieceBeamline()
   auto beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   for (auto element : *beamline)
     {
-      const auto accComponent = element->GetAcceleratorComponent();
+      const auto accComponent   = element->GetAcceleratorComponent();
       const auto endPieceBefore = accComponent->EndPieceBefore();
       const auto endPieceAfter  = accComponent->EndPieceAfter();
-      if (!endPieceBefore || !endPieceAfter)
+
+      G4bool placeBefore = true;
+      G4bool placeAfter  = true;
+      if (!endPieceBefore && !endPieceAfter)
 	{// no end piece on either side - skip this element
 	  currentIndex++;
 	  continue;
 	}
+      else if (!endPieceBefore)
+	{placeBefore = false;}
+      else if (!endPieceAfter)
+	{placeAfter  = false;}
       
       BDSBeamlineElement* previous = beamline->GetPrevious(currentIndex);
       BDSBeamlineElement* next     = beamline->GetNext(currentIndex);
-      //BDSBeamlineElement* next = nullptr;
       
-      // look behind
+      // look behind - always try this as could be the beginning of the beam line
+      G4bool previousIsDrift = true; // default true for beginning of the beam line
       if (previous)
+	{previousIsDrift = previous->GetType() == "drift";}
+      if (previousIsDrift && endPieceBefore)
 	{
-	  if (previous->GetType() == "drift" && endPieceBefore)
-	    {
-	      // a drift - ok to try and add
-	      G4double endPieceLength = endPieceBefore->GetChordLength();
-	      if (endPieceLength > previous->GetAcceleratorComponent()->GetChordLength()*0.5)
-		{continue;} // no space for the end piece
-	      auto beforeEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
-								     currentIndex);
-	      endPieces->AddBeamlineElement(beforeEl);
-	    }
+	  // ok to try and add
+	  G4double endPieceLength = endPieceBefore->GetChordLength();
+	  // check if it'll fit
+	  if (endPieceLength > previous->GetAcceleratorComponent()->GetChordLength()*0.5)
+	    {continue;} // no space for the end piece
+	  // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
+	  auto beforeEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
+								 currentIndex);
+	  endPieces->AddBeamlineElement(beforeEl); // append to end piece beam line
 	}
+      
       // look ahead
+      G4bool nextIsDrift = true; // default tru for end of the beam line
       if (next)
+	{nextIsDrift = next->GetType() == "drift";}
+      if (nextIsDrift && endPieceAfter)
 	{
-          if (next->GetType() == "drift" && endPieceAfter)
-	    {
-              // a drift - ok to try and add
-              G4double endPieceLength = endPieceAfter->GetLengthZ();
-              if (endPieceLength > next->GetAcceleratorComponent()->GetChordLength() * 0.5)
-		{ continue; } // no space for the end piece
-              auto afterEl = beamline->ProvideEndPieceElementAfter(endPieceAfter,
-                                                                   currentIndex);
-              endPieces->AddBeamlineElement(afterEl);
-	    }
-	}
-      else if (endPieceAfter)
-	{
+	  // ok to try and add
+	  G4double endPieceLength = endPieceAfter->GetLengthZ();
+	  // check if it'll fit
+	  if (endPieceLength > next->GetAcceleratorComponent()->GetChordLength() * 0.5)
+	    {continue;} // no space for the end piece
+	  // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
 	  auto afterEl = beamline->ProvideEndPieceElementAfter(endPieceAfter,
 							       currentIndex);
-	  endPieces->AddBeamlineElement(afterEl);
+	  endPieces->AddBeamlineElement(afterEl); // append to end piece beam line
 	}
+
       currentIndex++;
     }
   BDSAcceleratorModel::Instance()->RegisterEndPieceBeamline(endPieces);
