@@ -1,5 +1,5 @@
 ! standard options for runing bdsim
 
-option, beampipeRadius = 5 * cm,
+option, beampipeRadius = 3 * cm,
         checkOverlaps=1,
 	ngenerate=1000;
