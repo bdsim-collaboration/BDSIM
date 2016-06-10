@@ -26,7 +26,7 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  eLoss     = new BDSOutputROOTEventLoss(false,true);
+  eLoss     = new BDSOutputROOTEventLoss(false,false);
   pFirstHit = new BDSOutputROOTEventLoss(true,false);
   pLastHit  = new BDSOutputROOTEventLoss(true,false);
   tHit      = new BDSOutputROOTEventLoss(false,true);
