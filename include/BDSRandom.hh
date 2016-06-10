@@ -5,10 +5,20 @@
 
 namespace BDSRandom
 {
+  /// Construct and set the random engine.
   void CreateRandomNumberGenerator();
+
+  /// Set the initial seed. Takes the seed number from
+  /// BDSGlobalConstants - if negative uses the time.
   void SetSeed();
+
+  /// Print out seed state to G4cout.
   void PrintFullSeedState();
+
+  /// Write the seed state out to 'seedstate.txt' in cwd.
   void WriteSeedState();
+
+  /// Load a seedstate.txt file and restore the engine to this status.
   void LoadSeedState (G4String inSeedFilename);
 }
 
