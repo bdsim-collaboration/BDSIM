@@ -12,7 +12,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
   endif ()
   # if it passes the above if guard, then it's > GCC4.9 so C++14 ok
   message(STATUS "Compiler supports C++11 (fully) and C++14")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   # get clang version
   execute_process( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
