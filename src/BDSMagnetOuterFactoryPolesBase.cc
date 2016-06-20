@@ -590,8 +590,11 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   G4double minimumPoleFraction = 0.05;
   // If the space occupied by the yoke / pole is < 5% of outerDiameter, don't bother with
   // pole and coil - it's clearly unphysical.
-  if ( ( (yokeFinishRadius - yokeStartRadius) / (minimumPoleFraction * outerDiameter) ) < 0.05 )
-    {buildPole = false;}
+  if ( (yokeFinishRadius - yokeStartRadius) < (minimumPoleFraction * outerDiameter) )
+    {
+        buildPole = false;
+        yokeStartRadius = poleStartRadius; // make the magnet all yoke
+    }
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
