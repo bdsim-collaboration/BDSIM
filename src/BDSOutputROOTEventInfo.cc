@@ -5,7 +5,7 @@
 ClassImp(BDSOutputROOTEventInfo)
 
 BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
-  startTime(0), stopTime(0), duration(0)
+  startTime(time_t()), stopTime(time_t()), duration(0), seedStateAtStart("")
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()

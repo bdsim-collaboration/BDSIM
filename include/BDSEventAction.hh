@@ -7,6 +7,7 @@
 #include "G4UserEventAction.hh"
 
 #include <ctime>
+#include <string>
 #include <vector>
 
 class BDSEventAction: public G4UserEventAction
@@ -41,6 +42,8 @@ private:
 
   G4double starts; ///< Precise start time in seconds.
   G4double stops;  ///< Precise stop time in seconds.
+
+  std::string seedStateAtStart; ///< Seed state at start of the event.
 };
 
 #endif

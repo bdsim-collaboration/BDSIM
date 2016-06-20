@@ -40,10 +40,18 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// write event info
-  virtual void WriteEventInfo(time_t,time_t,G4float){}
-  virtual void FillEvent() {} ;
+  virtual void WriteEventInfo(const time_t&  /*startTime*/,
+			      const time_t&  /*stopTime*/,
+			      const G4float& /*duration*/,
+			      const std::string &/*seedStateAtStart*/)
+  {;}
+  virtual void FillEvent() {;}
   virtual void Initialise(); ///< open the file
-  virtual void Write(const time_t& startTime, const time_t& stopTime, const G4float& duration); ///< write to file
+  /// Write to file
+  virtual void Write(const time_t &startTime,
+		     const time_t &stopTime,
+		     const G4float &duration,
+		     const std::string &seedStateAtStart);
   virtual void Close();      ///< close the file
 private:
   G4String basefilename;

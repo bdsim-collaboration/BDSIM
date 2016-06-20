@@ -52,10 +52,16 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
   /// write event info
-  virtual void WriteEventInfo(time_t,time_t,G4float) override {}
+  virtual void WriteEventInfo(const time_t&  /*startTime*/,
+			      const time_t&  /*stopTime*/,
+			      const G4float& /*duration*/,
+			      const std::string& /*seedStateAtStart*/) override {}
   virtual void FillEvent() override {;} ///< Fill the event
   virtual void Initialise() override; ///< open the file
-  virtual void Write(const time_t& startTime, const time_t& stopTime, const G4float& duration) override;      ///< write to file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+		     const std::string& seedStateAtStart) override;      ///< write to file
   virtual void Close() override;      ///< close the file
 
 protected:
