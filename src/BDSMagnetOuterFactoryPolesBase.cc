@@ -626,17 +626,18 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   // calculate the width (2*b) of the ellipse given its height - at the centre of the
   // ellipsoid, go out by the pole angle and that's the half width, x2.
   G4double ellipsoidWidth  = 2 * ellipsoidCentreY * tan(poleAngle*0.5);
-  // don't allow the pole to be wider than it is long - silly proportions - stops the scaling
+  // don't allow the pole to be wider than it is long - silly proportions - stop the scaling
   ellipsoidWidth = std::min(ellipsoidWidth, poleLength); 
 
-  // calculate the distance from the centre of the magnet where the straight sides
-  // start to the end of the straight sides
-  // pole annulus fraction is hang over from when the bit beyond the ellipsoid was made from
-  // an annulus
+  // calculate the distance from the centre of the magnet where the straight sides start
   poleSquareStartRadius = ellipsoidCentreY + (poleFinishRadius - ellipsoidCentreY) * 0.2;
-  //G4double minimumSquareStart = ellipsoidCentreY;
-  //poleSquareStartRadius = minimumSquareStart + poleAnnulusFraction*(poleFinishRadius - minimumSquareStart);
-  // poleSquareStartRadius = poleStartRadius + ellipsoidHeight + poleFinishRadius*poleAnnulusFraction;
+
+  // poleSquareWidth is initially calculated in CalculatePoleAndYoke - here we check it
+  // ensure pole doesn't get narrower than ellipsoid tip part
+  poleSquareWidth = std::max(poleSquareWidth, ellipsoidWidth);
+  // but ensure the square section can't protrude outside the angular segment for a single pole
+  G4double maxPoleSquareWidth = 2 * poleSquareStartRadius * tan(0.5*poleAngle);
+  poleSquareWidth = std::min(maxPoleSquareWidth, poleSquareWidth);
 
   // points that define extruded polygon
   std::vector<G4TwoVector> points;
@@ -653,10 +654,6 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
       xEllipse.push_back(0.5*ellipsoidWidth*sin(angle));
       yEllipse.push_back(0.5*ellipsoidHeight*cos(angle));
     }
-
-  // check pole square width
-  poleSquareWidth = std::max(poleSquareWidth, ellipsoidWidth);
-    //poleSquareWidth = std::min(poleSquareWidth, poleLength); // but no bigger than pole length
 
   // add bottom left quadrant - miss out first point so don't reach apex.
   for (G4int i = 0; i < (G4int)xEllipse.size()-1; i++)
@@ -715,7 +712,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4double length)
   G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
 
   // start the coil just after the pole becomes square in cross-section
-  G4double lowerY = poleSquareStartRadius*1.1;
+  // start it just beyond this point - say + 20% square section length
+  G4double lowerY = poleSquareStartRadius + 0.2*(poleFinishRadius - poleSquareStartRadius);
 
   // now, with the bottom left corner of the right coil (positive quadrant),
   // we extrapolate at 45 degress for a square coil as big as possible before
