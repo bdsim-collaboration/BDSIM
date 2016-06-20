@@ -1,0 +1,5 @@
+collimatormaterial = "copper";
+
+print, collimatormaterial;
+
+r1: rcol, material = collimatormaterial;

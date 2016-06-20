@@ -33,7 +33,8 @@ public:
 		G4int       TrackID,
 		G4int       TurnsTaken,
 		G4String    sampType,
-		G4String    process);
+		G4String    process,
+		G4int       beamlineIndex);
 
   virtual ~BDSSamplerHit();
   
@@ -80,6 +81,9 @@ private:
 
   /// creating process
   G4String itsProcess;
+
+  /// simulation model component index
+  G4int itsBeamlineIndex;
   
 public:
   inline G4int  GetSamplerID() const
@@ -190,6 +194,8 @@ public:
   {return itsTurnsTaken;}
   inline G4String GetProcess() const 
   {return itsProcess;}
+  inline G4int GetBeamlineIndex() const
+  {return itsBeamlineIndex;}
 };
 
 typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;

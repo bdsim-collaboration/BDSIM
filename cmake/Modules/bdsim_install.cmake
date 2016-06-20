@@ -25,9 +25,14 @@ macro(bdsim_install_headers)
       DESTINATION include/bdsim
       COMPONENT Headers)
 endmacro()
+macro(bdsim_install_libs)
+    install(FILES ${ARGN}
+      DESTINATION lib
+      COMPONENT Libraries)
+endmacro()
 macro(bdsim_install_doc)
     install(FILES ${ARGN}
-        DESTINATION share/${PROJECT_NAME}/doc/${DOC_POSTFIX}
+        DESTINATION share/bdsim/doc/${DOC_POSTFIX}
         COMPONENT Documentation)
 endmacro()
 macro(bdsim_install_scripts)
@@ -37,8 +42,18 @@ macro(bdsim_install_scripts)
 endmacro()
 macro(bdsim_install_vis)
     install(FILES ${ARGN}
-        DESTINATION share/${PROJECT_NAME}/vis/
+        DESTINATION share/bdsim/vis/
         COMPONENT Visualisation)
+endmacro()
+macro(bdsim_install_analysis_headers)
+  install(FILES ${ARGN}
+    DESTINATION include/bdsim/analysis
+    COMPONENT Headers)
+endmacro()
+macro(bdsim_install_macros)
+  install(FILES ${ARGN}
+    DESTINATION share/bdsim/analysis
+    COMPONENT Scripts)
 endmacro()
 
 # This macro fixes the MACOSX_BUNDLES
@@ -55,6 +70,9 @@ macro(bdsim_install_bundle)
     endforeach()
   endif()
 endmacro()
+
+# set MACOSX_RPATH explicitly (CMP0042)
+set(CMAKE_MACOSX_RPATH ON)
 
 # CPack boilerplate for this project
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")

@@ -99,6 +99,7 @@ degrader { return DEGRADER;}
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
 tunnel { return TUNNEL; }
+xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
 
 matdef { return MATERIAL; }
@@ -149,10 +150,17 @@ csample { return CSAMPLE; }
      Symtab *sp = Parser::Instance()->symlook(var);
      if (sp) {
        yylval.symp=sp;
-       if(sp->funcptr) {
+       switch(sp->GetType()) {
+       case Symtab::symtabtype::FUNCTION:
          return FUNC;
-       } else if(sp->type == Symtab::symtabtype::_ARRAY) {
+       case Symtab::symtabtype::ARRAY:
          return VECVAR;
+       case Symtab::symtabtype::NUMBER:
+         return NUMVAR;
+       case Symtab::symtabtype::STRING:
+         return STRVAR;
+       default:
+         break;
        }
      }
      std::string* name = new std::string(var);
@@ -166,64 +174,62 @@ csample { return CSAMPLE; }
 <incl>[ \t]*  // eat the whitespace
 <incl>[^ \t\n;]+ {
 
-//this is perhaps unnecessary now...
-std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
-std::string includefilename = "";
-std::string mainfilename    = yyfilename; //get the supplied main filename
-std::string mainfilepath    = "";
-if(bdsimpath.length()>0){
+  //this is perhaps unnecessary now...
+  std::string bdsimpath = (std::string)getEnv("BDSIMPATH");
+  std::string includefilename = "";
+  std::string mainfilename    = yyfilename; //get the supplied main filename
+  std::string mainfilepath    = "";
+  if(bdsimpath.length()>0){
 #ifdef BDSDEBUG
-   printf("parser> using BDSIMPATH to build included filepaths\n");
+  printf("parser> using BDSIMPATH to build included filepaths\n");
 #endif
-   includefilename = bdsimpath + (std::string)yytext;
-} else {
-   // get the path part of the supplied path to the main input file
-   std::string::size_type found = mainfilename.rfind("/"); // find the last '/'
-   if (found != std::string::npos){
-     mainfilepath = mainfilename.substr(0,found+1); // the path is the bit before that, including the '/'
-   } // else remains empty string
-   // need to know whether it's an absolute or relative path
-   if ((mainfilename.substr(0,1)) == "/"){
-     // the main file has an absolute path
-     includefilename = mainfilepath + (std::string)yytext;
-   } else {
-     // the main file has a relative path or just the file name
-     char cwdchars[200]; //filepath up to 200 characters
-     // get current working directory
-     std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars)) + "/";
-     includefilename = cwd + mainfilepath + (std::string)yytext;
-   }
-}
-#ifdef BDSDEBUG
-printf("parser> include filename is: %s \n",includefilename.c_str());
-#endif
-   printf("parser> reading file %s \n",includefilename.c_str());//yytext
-     if( include_stack_ptr >= max_include_depth )
-       {
-         fprintf(stderr , "Error : Include depth exceeds %d\n",max_include_depth);
-         exit(1);
-       }
-     else
+  includefilename = bdsimpath + (std::string)yytext;
+  } else {
+    // get the path part of the supplied path to the main input file
+    std::string::size_type found = mainfilename.rfind("/"); // find the last '/'
+    if (found != std::string::npos) {
+      mainfilepath = mainfilename.substr(0,found+1); // the path is the bit before that, including the '/'
+    } // else remains empty string
+    // need to know whether it's an absolute or relative path
+    if ((mainfilename.substr(0,1)) == "/"){
+      // the main file has an absolute path
+      includefilename = mainfilepath + (std::string)yytext;
+    } else {
+      // the main file has a relative path or just the file name
+      char cwdchars[200]; //filepath up to 200 characters
+      // get current working directory
+      std::string cwd = (std::string)getcwd(cwdchars, sizeof(cwdchars)) + "/";
+      includefilename = cwd + mainfilepath + (std::string)yytext;
+    }
+  }
+
+  printf("parser> reading file %s \n",includefilename.c_str());//yytext
+  if(include_stack_ptr >= max_include_depth - 1)
+    {
+      std::cerr << "Error : Include depth exceeds " << max_include_depth << std::endl;
+      exit(1);
+    }
+  else
     {
       yyin = fopen(includefilename.c_str(), "r"); //yytext
       if(yyin)
-	{
+        {
           //printf("saving to stack buffer n %d, file %s\n",include_stack_ptr,yyfilename );
           // save info to the stack and load new buffer
           include_linenum_stack[include_stack_ptr] = line_num;
           line_num = 1;
           include_filename_stack[include_stack_ptr] = yyfilename;
           yyfilename = includefilename; //yytext
-	  include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
+          include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
           include_filename_stack[include_stack_ptr] = yyfilename;
-	  yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
-	  //printf("done saving to stack\n");
+          yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
+          //printf("done saving to stack\n");
     	}
       else
-	{
-	  fprintf(stderr, "Error : can't open %s\n", includefilename.c_str()); //yytext
-	  exit(1);
-	}
+        {
+          fprintf(stderr, "Error : can't open %s\n", includefilename.c_str()); //yytext
+          exit(1);
+        }
     }
   BEGIN(INITIAL);
 }

@@ -22,7 +22,8 @@ public:
   BDSPhysicalVolumeInfo(G4String nameIn,
 			G4String placementNameIn,
 			G4double sPosIn,
-			G4bool   precisionRegionIn = false);
+			G4bool   precisionRegionIn = false,
+      G4int    beamlineIndexIn = -1);
   ~BDSPhysicalVolumeInfo();
 
   /// output stream
@@ -59,6 +60,12 @@ public:
   /// Set whether this volume is one to produce precision output as well as normal.
   void   SetProducePrecisionOutput(G4bool precisionRegionIn)
   {precisionRegion = precisionRegionIn;}
+
+  /// Get beamline index
+  G4int  GetBeamlineIndex() const
+  {
+    return beamlineIndex;
+  }
   
 private:
   BDSPhysicalVolumeInfo();
@@ -67,10 +74,12 @@ private:
   G4String placementName;
   G4double spos;
 
+
   /// Whether this volume is in the precision region and the
   /// high precision output should be used for it
   G4bool   precisionRegion;
 
+  G4int    beamlineIndex;
 };
 
 

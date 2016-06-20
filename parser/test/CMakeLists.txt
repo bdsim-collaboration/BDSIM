@@ -6,8 +6,12 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURC
 ###################
 
 # test binary without input file
-add_test(gmad ${gmadBinary})
-set_tests_properties(gmad PROPERTIES WILL_FAIL 1)
+add_test(gmad-noinputfile ${gmadBinary})
+set_tests_properties(gmad-noinputfile PROPERTIES WILL_FAIL 1)
+
+# test binary without two input files
+add_test(gmad-twoinputfiles ${gmadBinary} a;b)
+set_tests_properties(gmad-twoinputfiles PROPERTIES WILL_FAIL 1)
 
 # try to overwrite a reserved variable
 add_test(gmad-reservedVar ${gmadBinary} reservedvariable.gmad)
@@ -45,9 +49,17 @@ set_tests_properties(gmad-overwriteElement PROPERTIES WILL_FAIL 1)
 add_test(gmad-overwriteVariable ${gmadBinary} overwriteVariable.gmad)
 set_tests_properties(gmad-overwriteVariable PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
 
+# try to overwrite a variable
+add_test(gmad-overwriteVariableString ${gmadBinary} overwriteVariableString.gmad)
+set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRESSION WARNING)
+
 # try to use an undeclared variable
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
 set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
+
+# recursive inclusion
+add_test(gmad-recursiveinclusion ${gmadBinary} recursiveinclusion.gmad)
+set_tests_properties(gmad-recursiveinclusion PROPERTIES WILL_FAIL 1)
 
 ##########################
 ### Test Functionality ###
@@ -59,6 +71,14 @@ set_tests_properties(gmad-testFunctions PROPERTIES PASS_REGULAR_EXPRESSION 3.141
 
 # test stop command
 add_test(gmad-stop ${gmadBinary} stop.gmad)
+
+# test if construct
+add_test(gmad-if ${gmadBinary} if.gmad)
+set_tests_properties(gmad-if PROPERTIES PASS_REGULAR_EXPRESSION 2)
+
+# test if/else construct
+add_test(gmad-ifelse ${gmadBinary} ifelse.gmad)
+set_tests_properties(gmad-ifelse PROPERTIES PASS_REGULAR_EXPRESSION 2)
 
 # test access attribute
 add_test(gmad-testAccessAttribute ${gmadBinary} accessattribute.gmad)
@@ -96,10 +116,29 @@ set_tests_properties(gmad-inherit PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 add_test(gmad-extend ${gmadBinary} extend.gmad)
 set_tests_properties(gmad-extend PROPERTIES PASS_REGULAR_EXPRESSION 0.05)
 
+# test string (issue #126)
+add_test(gmad-string ${gmadBinary} string.gmad)
+
 # test arrays
 add_test(gmad-array ${gmadBinary} array.gmad)
 set_tests_properties(gmad-array PROPERTIES PASS_REGULAR_EXPRESSION 32)
 add_test(gmad-arraystring ${gmadBinary} arraystring.gmad)
 
+# test atom
+add_test(gmad-atom ${gmadBinary} atom.gmad)
+
+# test material
+add_test(gmad-material ${gmadBinary} material.gmad)
+
+# test cavitymodel
+add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
+
+# test physics biasing
+add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
+
 # test regions
 add_test(gmad-region ${gmadBinary} region.gmad)
+
+# test tunnel
+add_test(gmad-tunnel ${gmadBinary} tunnel.gmad)
+

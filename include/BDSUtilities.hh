@@ -13,10 +13,11 @@
  * for example string manipulations, and checking
  *
  * Functions are part of the BDS namespace 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
-namespace BDS {
+namespace BDS
+{
   /// Logical not for isalpha predictator as needed for string manipulations
   struct non_alpha
   {
@@ -38,6 +39,10 @@ namespace BDS {
   G4double CalculateFacesOverlapRadius(G4double angleInIn,
                             G4double angleOutIn,
                             G4double lengthIn);
+
+  /// Ensure a variable passed by reference is capped within lowerLimit and upperLimit.
+  /// If it's outside these it is defaulted to those limit values.
+  void EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit);
 
   /// Checks if filename exists
   G4bool FileExists(G4String filename);

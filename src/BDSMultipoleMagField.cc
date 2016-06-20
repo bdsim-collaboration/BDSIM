@@ -22,7 +22,7 @@ BDSMultipoleMagField::BDSMultipoleMagField(std::list<G4double> kn, std::list<G4d
   // charge (in |e| units)
   G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   // momentum (in GeV/c)
-  G4double momentum = (BDSGlobalConstants::Instance()->GetBeamMomentum())/CLHEP::GeV;
+  G4double momentum = (BDSGlobalConstants::Instance()->BeamMomentum())/CLHEP::GeV;
   // rigidity (in T*m)
   G4double brho = ( momentum / (0.299792458 * fabs(charge)));
   // rigidity (in Geant4 units)

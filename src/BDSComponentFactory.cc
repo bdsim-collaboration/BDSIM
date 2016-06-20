@@ -16,6 +16,7 @@
 #include "BDSDecapole.hh"
 #include "BDSQuadrupole.hh"
 #include "BDSRBend.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSScintillatorScreen.hh"
 #include "BDSSectorBend.hh"
 #include "BDSSextupole.hh"
@@ -28,7 +29,6 @@
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
-#include "BDSBeamline.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSCavityInfo.hh"
@@ -53,7 +53,7 @@ using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory()
 {
-  lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();
+  lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();
   //
   // compute magnetic rigidity brho
   // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
@@ -62,9 +62,9 @@ BDSComponentFactory::BDSComponentFactory()
   charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   // momentum (in GeV/c)
 
-  G4double momentum = BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV;
+  G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
   // rigidity (in T*m)
-  brho = BDSGlobalConstants::Instance()->GetFFact()*( momentum / 0.299792458);
+  brho = BDSGlobalConstants::Instance()->FFact()*( momentum / 0.299792458);
   
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
@@ -225,8 +225,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_MARKER:
   case ElementType::_LINE:
   case ElementType::_REV_LINE:
-  case ElementType::_MATERIAL:
-  case ElementType::_ATOM:
     component = nullptr;
     break;
   default:
@@ -257,7 +255,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
 {
   // This relies on things being added to the beamline immediately
   // after they've been created
-  G4double teleporterLength = BDSGlobalConstants::Instance()->GetTeleporterLength() - 1e-8;
+  G4double teleporterLength = BDSGlobalConstants::Instance()->TeleporterLength() - 1e-8;
 
   if (teleporterLength < 10*G4GeometryTolerance::GetInstance()->GetSurfaceTolerance())
     {
@@ -376,7 +374,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   // positive charges
   
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      bField = element->B * CLHEP::tesla;
+      element->angle *= -1; // convention
+    }
+  else if (BDS::IsFinite(element->B))
     {
       bField = element->B * CLHEP::tesla;
       G4double rho = brho/bField;
@@ -387,12 +390,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
 #endif
     }
   else
-    {
+    { // B = 0, but angle finite - calculate implied b field
       element->angle *= -1;
       //    bField = - 2 * brho * sin(element->angle/2.0) / magFieldLength;
       // charge in e units
       // multiply once more with ffact to not flip fields in bends
-      bField = - brho * element->angle/magFieldLength * charge * BDSGlobalConstants::Instance()->GetFFact();
+      bField = - brho * element->angle/magFieldLength * charge * BDSGlobalConstants::Instance()->FFact();
       element->B = bField/CLHEP::tesla;
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "B calculated from angle (" << element->angle << ") : " << bField << G4endl;
@@ -567,7 +570,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // magnetic field
   // CHECK SIGNS OF B, B', ANGLE
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -591,7 +594,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       // B = Brho/rho = Brho/(arc length/angle)
       // charge in e units
       // multiply once more with ffact to not flip fields in bends
-      bField = - brho * element->angle / arclength * charge * BDSGlobalConstants::Instance()->GetFFact();
+      bField = - brho * element->angle / arclength * charge * BDSGlobalConstants::Instance()->FFact();
       element->B = bField/CLHEP::tesla;
 #ifdef BDSDEBUG
       G4cout << "calculated field from angle - angle,field = " << element->angle << " " << element->B << G4endl;
@@ -619,7 +622,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
   G4double length = element->l*CLHEP::m;
   
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -630,7 +633,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateHKick()
       // B = Brho/rho = Brho/(arc length/angle)
       // charge in e units
       // multiply once more with ffact to not flip fields in kicks defined with angle
-      bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact(); // charge in e units
+      bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->FFact(); // charge in e units
       element->B = bField/CLHEP::tesla;
     }
   
@@ -656,7 +659,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
   
   // magnetic field
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       // angle = arc length/radius of curvature = L/rho = (B*L)/(B*rho)
       bField = element->B * CLHEP::tesla;
@@ -667,7 +670,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateVKick()
       // B = Brho/rho = Brho/(arc length/angle)
       // charge in e units
       // multiply once more with ffact to not flip fields in kicks
-      bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->GetFFact();
+      bField = - brho * element->angle / length * charge * BDSGlobalConstants::Instance()->FFact();
       element->B = bField/CLHEP::tesla;
     }
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
@@ -874,7 +877,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   // B = B/Brho * Brho = ks * Brho
   // brho is in Geant4 units, but ks is not -> multiply ks by m^-1
   G4double bField;
-  if(element->B != 0)
+  if(BDS::IsFinite(element->B))
     {
       bField = element->B * CLHEP::tesla;
       element->ks = (bField/brho) / CLHEP::m;
@@ -924,7 +927,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
 				      element->ysizeOut*CLHEP::m,
-				      element->material);
+				      G4String(element->material),
+				      G4String(element->vacuumMaterial),
+				      PrepareColour(element, "collimator"));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
@@ -948,7 +953,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
 				     element->ysizeOut*CLHEP::m,
-				     element->material);
+				     G4String(element->material),
+				     G4String(element->vacuumMaterial),
+				     PrepareColour(element, "collimator"));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
@@ -1062,7 +1069,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 					  element->tscint*CLHEP::m,
 					  (element->angle-0.78539816339)*CLHEP::rad,
 					  "ups923a",
-					  BDSGlobalConstants::Instance()->GetVacuumMaterial()));
+                                      BDSGlobalConstants::Instance()->VacuumMaterial()));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
@@ -1111,7 +1118,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 {
   G4String name   = "terminator";
-  G4double length = BDSGlobalConstants::Instance()->GetSamplerLength();
+  G4double length = BDSSamplerPlane::ChordLength();
 #ifdef BDSDEBUG
     G4cout << "---->creating Terminator,"
 	   << " name = " << name
@@ -1190,7 +1197,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
     {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
+      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
     }
   info->outerDiameter = outerDiameter;
 
@@ -1198,7 +1205,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   G4Material* outerMaterial;
   if(element->outerMaterial == "")
     {
-      G4String defaultMaterialName = BDSGlobalConstants::Instance()->GetOuterMaterialName();
+      G4String defaultMaterialName = BDSGlobalConstants::Instance()->OuterMaterialName();
       outerMaterial = BDSMaterials::Instance()->GetMaterial(defaultMaterialName);
     }
   else
@@ -1213,7 +1220,7 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
     {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->GetOuterDiameter();
+      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
     }
   // returns in metres
   return outerDiameter;
@@ -1340,7 +1347,15 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
   if(!element->vacuumMaterial.empty())
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
   else
-    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetVacuumMaterial());}
+    {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
 
   return info;
+}
+
+G4String BDSComponentFactory::PrepareColour(Element const* element, const G4String fallback) const
+{
+  G4String colour = element->colour;
+  if (colour == "")
+    {colour = fallback;}
+  return colour;
 }

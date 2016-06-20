@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.8)
 
 project(bdsim)
 
@@ -13,6 +13,9 @@ message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
 # add source dir as a place for CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
+# include BDSIM macros
+include(bdsim_macros)
+
 # With this true we automatically include current src/binary directory
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -25,181 +28,24 @@ endif()
 
 message(STATUS "Build Type ${CMAKE_BUILD_TYPE}")
 
-# Compiler flags based on build type 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_definitions("-g -O0")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugOutput")
-    add_definitions("-g -O0 -DBDSDEBUG")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
-    if(NOT CMAKE_COMPILER_IS_GNUCXX)
-         message(WARNING "DebugCoverage only works with gcc compiler")
-    endif()
-    add_definitions("-g -O0 -DBDSDEBUG")
-    add_definitions("--coverage")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "None")
-    # if specifically None optimise
-    set(CMAKE_CXX_FLAGS "-O3 -ffast-math -DNDEBUG")
-endif()
+# Add compiler flags based on build type
+include(cmake/CompilerBuildFlags.cmake)
 
-# Compiler-specific C++11 activation. Replace later with
-# CMAKE_CXX_STANDARD flag only available for cmake 3.1
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-  execute_process(
-    COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-  if (GCC_VERSION VERSION_GREATER 4.8 OR GCC_VERSION VERSION_EQUAL 4.8)
-    message(STATUS "Compiler supports C++14")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-  elseif (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-    message(STATUS "Compiler supports C++11")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  endif ()
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  # get clang version
-  execute_process( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
-  string (REGEX REPLACE ".*version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
-  if($ENV{VERBOSE})
-    message(STATUS "CLANG_VERSION_STRING ${CLANG_VERSION_STRING}")
-  endif()
-  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
-    message(STATUS "Compiler supports C++14")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
-  else()
-    message(STATUS "Compiler supports C++11")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
-  endif()
-else()
-    message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11")
-endif()
+# Check if compiler is compatible
+include(cmake/CompilerCheck.cmake)
 
-set(CMAKE_C_ORIG_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_CXX_ORIG_FLAGS "${CMAKE_CXX_FLAGS}")
-if($ENV{VERBOSE})
-	message(STATUS "CMAKE_C_ORIG_FLAGS ${CMAKE_C_ORIG_FLAGS}")
-	message(STATUS "CMAKE_CXX_ORIG_FLAGS ${CMAKE_CXX_ORIG_FLAGS}")
-endif()
+# Check AFS and OS
+include(cmake/SystemCheck.cmake)
 
-# Check for Scientific Linux
-if(UNIX)
-    if("${CMAKE_SYSTEM}" MATCHES "el6")
-        set(RHL6 TRUE)
-    elseif("${CMAKE_SYSTEM}" MATCHES "el7")
-        set(RHL7 TRUE)
-    endif()
-    if(RHL6 OR RHL7)
-        set(RHL TRUE)
-    endif()
-    if("$ENV{HOSTNAME}" MATCHES "lxplus" OR "$ENV{HOSTNAME}" MATCHES "lxfssl")
-        set(LXPLUS TRUE)
-    else()
-        set(LXPLUS FALSE)
-    endif()
-    if($ENV{VERBOSE})
-         message(STATUS "UNIX System Version: ${CMAKE_SYSTEM}")
-         message(STATUS "ON HOST: $ENV{HOSTNAME}")
-         message(STATUS "ON LXPLUS... - ${LXPLUS}")
-    endif()
-endif()
-
-# Check for lxplus. We use afs version of Geant4/CLHEP if we are on lxplus by default:
-if(EXISTS "/afs/cern.ch" AND LXPLUS)
-    option(USE_AFS "Use Geant4/CLHEP libraries from AFS" ON)
-    if($ENV{VERBOSE})
-         message(STATUS "Use Libraries from LXPLUS")
-    endif()
-else()
-    option(USE_AFS "Use Geant4/CLHEP libraries from AFS" OFF)
-endif()
+#################  
+# Find Packages #
+#################
 
 # CLHEP
-if (USE_AFS AND NOT CLHEP_LIBRARY_DIR)
-   if (APPLE)
-      set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/include)
-      set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.0.1/x86_64-mac106-gcc42-opt/lib)
-   elseif (RHL6)
-      if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-         set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/include)
-         set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc47-opt/lib)
-      else()
-         set(CLHEP_INCLUDE_DIR /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc46-opt/include)
-         set(CLHEP_LIBRARY_DIR  /afs/cern.ch/sw/lcg/external/clhep/2.1.4.1/x86_64-slc6-gcc46-opt/lib)
-      endif()
-   endif()
-else()
-   if($ENV{VERBOSE})
-      set(CLHEP_CONFIG_DEBUG TRUE)
-   endif()
-   find_package(CLHEP REQUIRED)
-   message(STATUS "Looking for CLHEP... - found")
-   message(STATUS "Found CLHEP ${CLHEP_VERSION} in ${CLHEP_INCLUDE_DIRS}")
-endif()
-include_directories(${CLHEP_INCLUDE_DIRS})
+include(cmake/CLHEP.cmake)
 
 # ROOT
-if ($ENV{ROOTSYS})
-  message(STATUS "Use ROOTSYS from environment: $ENV{ROOTSYS}")
-  set (ROOTSYS $ENV{ROOTSYS})
-elseif(USE_AFS)
-  # add ROOT afs library to PATH (only in cmake)
-  if (APPLE)
-    set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.14/x86_64-mac108-gcc42-opt/root")
-  elseif (RHL6)
-    if (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-      set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.28/x86_64-slc6-gcc47-opt/root")
-    else()
-      set(ROOTSYS "/afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.19/x86_64-slc6-gcc46-opt/root")
-    endif()
-  endif()
-  if($ENV{VERBOSE})
-    message(STATUS "ROOTSYS: ${ROOTSYS}")
-  endif()
-  if($ENV{VERBOSE})
-    message(STATUS "ROOTSYS: ${ROOTSYS}")
-  endif()
-endif()
-
-find_package(ROOT REQUIRED)
-# major ROOT version
-string(SUBSTRING ${ROOT_VERSION} 0 1 ROOT_MAJOR_VERSION)
-# add ROOT include directory
-include_directories(${ROOT_INCLUDE_DIR})
-
-# Make Dictionaries
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/root)
-file(GLOB linkHeaders ${CMAKE_CURRENT_SOURCE_DIR}/include/*LinkDef.hh)
-# for loop over link definitions
-foreach(header ${linkHeaders})
-  # remove LinkDef.hh
-  string(FIND ${header} "LinkDef.hh" pos REVERSE)
-  string(FIND ${header} "/" dir REVERSE)
-  MATH(EXPR beginpos "${dir}+1")
-  MATH(EXPR length "${pos}-${beginpos}")
-  string(SUBSTRING ${header} ${beginpos} ${length} className)
-  #message(STATUS "${ROOTCINT_EXECUTABLE} -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}")
-  if (${ROOT_MAJOR_VERSION} STREQUAL "6")
-    # add preprocessor flag __MAKECINT__ as used in BDSIM. Defined for root5 but not for root6
-    # also rootcint5 does not accept additional options
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      COMMAND ${ROOTCINT_EXECUTABLE}
-      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      -D__MAKECINT__
-      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-      )
-  else()
-    # ROOT 5
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h
-      COMMAND ${ROOTCINT_EXECUTABLE}
-      ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      -c ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
-      )
-    set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
-  endif()
-  # keep list of ROOT dictionaries
-  set(root_dicts ${root_dicts} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc)
-endforeach()
+include(cmake/ROOT.cmake)
 
 # GDML (on by default)
 option( USE_GDML "Include GDML support."  ON )
@@ -209,22 +55,7 @@ if(USE_GDML)
 endif()
 
 # LCDD (on by default if xml libraries are found)
-
-#include XML directory
-find_path(XML2_INCLUDE_DIR NAMES libxml2)
-set(XML_INCLUDE_DIR ${XML2_INCLUDE_DIR}/libxml2)
-if($ENV{VERBOSE})
-    message(STATUS "XML_INCLUDE_DIR: ${XML_INCLUDE_DIR}")
-endif()
-find_library(XML_LIBRARIES NAMES xml2 PATH_SUFFIXES xml2)
-if(XML_LIBRARIES)
-    MESSAGE(STATUS "Looking for XML2... - found")
-else()
-    MESSAGE(STATUS "Looking for XML2... - Not found")
-endif(XML_LIBRARIES)
-if($ENV{VERBOSE})
-    message(STATUS "XML_LIBRARIES: ${XML_LIBRARIES}")
-endif()
+include(cmake/XML.cmake)
 
 if(XML_LIBRARIES)
     option( USE_LCDD "Include LCDD support."  ON )
@@ -237,116 +68,11 @@ if(USE_LCDD)
     message(STATUS "LCDD support ON")
 endif()
 
-# Find  GEANT4
-# with all available gui and visualisation options available
-# Try first with Geant4 built-in Config (versions 9.5 and higher should have it):
-if ($ENV{VERBOSE})
-   set(Geant4_CONFIG_DEBUG TRUE)
-endif()
-
-# Search for Geant4 CONFIG mode, if prefix given search that path only.
-if (NOT ${Geant4_PREFIX} STREQUAL "")
-   if($ENV{VERBOSE})
-      message(STATUS "Geant4 prefix: ${Geant4_PREFIX}")
-   endif()
-   find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG PATHS ${Geant4_PREFIX} NO_DEFAULT_PATH)
-else()
-   if($ENV{VERBOSE})
-      message(STATUS "No Geant4 prefix, searching default paths")
-   endif()
-   find_package(Geant4 QUIET COMPONENTS ui_all vis_all CONFIG)
-endif()
-
-if (NOT Geant4_FOUND AND USE_AFS)
-   # Use AFS directory
-   if(APPLE)
-      message(STATUS "WARNING NO MACOS GEANT4 LIBRARIES AVAILABLE ON AFS")
-   elseif(RHL6)
-      set(Geant4_INCLUDE_DIRS /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/share/include)
-      set(Geant4_LIBRARY_DIR /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/x86_64-slc6-gcc47-opt/lib64)
-      set(Geant4_DIR /afs/cern.ch/sw/lcg/external/geant4/10.0.p03/x86_64-slc6-gcc47-opt/lib64/Geant4-10.0.3)
-      set(Geant4_VERSION 10.0.3)
-   endif()
-   find_package(Geant4 QUIET COMPONENTS ui_all vis_all PATHS ${Geant4_DIR} NO_DEFAULT_PATH)
-endif()
-
-if (Geant4_FOUND)
-      message(STATUS "Geant4 Use File: ${Geant4_USE_FILE}")
-      include(${Geant4_USE_FILE})
-      message(STATUS "Geant4 Definitions: ${Geant4_DEFINITIONS}")
-
-      # We don't support multithreading for now
-      if ("${Geant4_DEFINITIONS}" MATCHES "G4MULTITHREADED")
-	message(FATAL_ERROR "Currently Geant4 builds with multithreading are not supported at the moment! Please build Geant4 with multithreading off. Exiting")
-      endif()
-      
-      if($ENV{VERBOSE})
-        message(STATUS "Geant4_INCLUDE_DIRS: ${Geant4_INCLUDE_DIRS}")
-        message(STATUS "Geant4_LIBRARY_DIR: ${Geant4_LIBRARY_DIR}")
-        message(STATUS "Geant4_LIBRARIES: ${Geant4_LIBRARIES}")
-      endif()
-elseif(Geant4_FOUND)
-      message(FATAL_ERROR "Geant4 not found. Exiting. You can help cmake by adding -DGeant4_PREFIX=<PATH>")
-endif()
-
-if (Geant4_VERSION AND NOT "${Geant4_VERSION}" MATCHES "UNKNOWN")
-  string(SUBSTRING ${Geant4_VERSION} 0 1 G4_MAJOR_VERSION)
-  if(${G4_MAJOR_VERSION} STREQUAL "1")
-    string(SUBSTRING ${Geant4_VERSION} 0 2 G4_MAJOR_VERSION)
-    string(SUBSTRING ${Geant4_VERSION} 3 1 G4_MINOR_VERSION) 
-    string(SUBSTRING ${Geant4_VERSION} 5 1 G4_PATCH_LEVEL)
-  else()
-    string(SUBSTRING ${Geant4_VERSION} 2 1 G4_MINOR_VERSION) 
-    string(SUBSTRING ${Geant4_VERSION} 4 1 G4_PATCH_LEVEL)
-  endif()
-
-  message(STATUS "G4_VERSION: ${Geant4_VERSION}")
-  if($ENV{VERBOSE})
-    message(STATUS "G4_MAJOR_VERSION: ${G4_MAJOR_VERSION}")
-    message(STATUS "G4_MINOR_VERSION: ${G4_MINOR_VERSION}")
-    message(STATUS "G4_PATCH_LEVEL: ${G4_PATCH_LEVEL}")
-  endif()
-  if(10 GREATER ${G4_MAJOR_VERSION})
-    message(FATAL_ERROR "Geant4 version 10 is needed!")
-  endif()
-else()
-  set(G4_VERSION 10.9.9)
-  set(G4_MAJOR_VERSION 10)
-  set(G4_MINOR_VERSION 9)
-  set(G4_PATCH_LEVEL 9)
-endif()
-
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+# Find GEANT4
+include(cmake/Geant4.cmake)
 
 ## set compiler flags
-# warning flags
-set(WFLAGS "-Wall -Wextra -pedantic -Wpointer-arith -Woverloaded-virtual")
-# for ROOT dictionaries
-# stop warnings from Clang version (for versions 7 and greater)
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-  if (CLANG_VERSION_STRING VERSION_GREATER 6.9)
-    set(WFLAGS "${WFLAGS} -Wno-keyword-macro")
-  endif()
-endif()
-
-# cmake flags
-set(CMAKE_FLAGS "${CMAKE_FLAGS} ${CLHEP_DEFINITIONS}  ${WFLAGS}")
-set(BDSIM_FLAGS "${CMAKE_FLAGS} -DCLHEP_VERSION=${CLHEP_VERSION} -DG4VERSION=${G4_MAJOR_VERSION} -DG4MINORVERSION=${G4_MINOR_VERSION} ${BDSIM_FLAGS}")
-# add original flags to cmake c and c++ flags
-set(CMAKE_C_FLAGS "${CMAKE_C_ORIG_FLAGS} ${BDSIM_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_ORIG_FLAGS} ${BDSIM_FLAGS}")
-if(APPLE)
-  # For MacOS bundle
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -headerpad_max_install_names")
-  message(STATUS "CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS}")
-endif()
-
-if($ENV{VERBOSE})
-  message(STATUS "BDSIM_FLAGS ${BDSIM_FLAGS}")
-  message(STATUS "CMAKE_C_FLAGS ${CMAKE_C_FLAGS}")
-  message(STATUS "CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS}")
-endif()
+include(cmake/CompilerFlags.cmake)
 
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
@@ -369,19 +95,10 @@ include(bdsim_test_macros)
 # This module sets up installation:
 include(bdsim_install)
 
-#-----------------------------------------------------------------------
-# macro BDSIM_COLLATE_APPLICATION_SOURCES(source_dest_var)
-#
-macro(BDSIM_COLLATE_APPLICATION_SOURCES source_dest_var)
-  file(GLOB 
-    ${source_dest_var} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/bdsim.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/BDS*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/ggmad.cc
-    )
-endmacro()
+# Source files
+string(TIMESTAMP CURRENT_YEAR %Y)
+configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
 
-# source files
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
 if(NOT USE_LCDD)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
@@ -390,20 +107,36 @@ if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
 if($ENV{VERBOSE})
-  message(STATUS "bdsim sources ${bdsim_sources}")
+  message(STATUS "ROOT dictionaries ${root_dicts}")
+  message(STATUS "BDSIM sources ${bdsim_sources}")
 endif()
 
-add_library(bdsim ${bdsim_sources} ${root_dicts})
+# Configuration information
+add_subdirectory(configuration)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/configuration)
 
-add_executable(bdsimexec bdsim.cc)
+# Parser
+add_subdirectory(parser)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
+# include current directory for parser includes
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# external sources
+add_subdirectory(src-external)
+# link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
+
+# BDSIM library and binaries
+add_library(bdsim ${root_dicts} ${bdsim_sources} )
+
+add_executable(bdsimexec ${CMAKE_BINARY_DIR}/bdsim.cc)
 
 set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
+target_link_libraries(bdsim gzstream)
 
 # link against ROOT
-target_link_libraries(bdsim ${ROOT_LIBRARIES_GLOB})
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
 
 if(USE_LCDD)
@@ -418,11 +151,34 @@ endif()
 get_target_property(binaryname bdsimexec OUTPUT_NAME)
 set(bdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${binaryname})
 
+# ROOT Event Library
+set(bdsimRootEventSources ${root_dicts} ${root_files})
+
+# Add parser options
+list(APPEND bdsimRootEventSources ${CMAKE_CURRENT_SOURCE_DIR}/parser/optionsBase.cc)
+if($ENV{VERBOSE})
+  message(STATUS "bdsimRootEventSources ${bdsimRootEventSources}")
+endif()
+
+add_library(bdsimRootEvent SHARED ${bdsimRootEventSources})
+target_compile_definitions(bdsimRootEvent PRIVATE "-D__ROOTBUILD__")
+# link against ROOT
+target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
+# Add dependency to make sure bdsimRootEvent is done first
+# This is done because the ROOT dictionary generation needs to be done separately for each of them
+# And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
+add_dependencies(bdsim bdsimRootEvent)
+
 # Install the targets:
 set(executables bdsimexec)
-set(libraries bdsim)
+if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+  set(libraries bdsim bdsimRootEvent)
+else()
+  set(libraries bdsim)
+endif()
 set_target_properties(${executables} ${libraries} PROPERTIES VERSION ${BDSIM_VERSION})
 bdsim_install_targets(${executables} ${libraries})
+bdsim_install_libs(${root_pcms})
 file(GLOB headers ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh ${CMAKE_CURRENT_SOURCE_DIR}/parser/*.h)
 bdsim_install_headers(${headers} ${root_dicts_headers})
 
@@ -432,7 +188,7 @@ option(BUILD_MACOSX_APP "Build Mac OSX application" OFF)
 
 if (BUILD_MACOSX_APP AND APPLE)
     # building a macos executablemaking a bundle of 
-    add_executable(bdsimapp MACOSX_BUNDLE bdsim.cc)
+    add_executable(bdsimapp MACOSX_BUNDLE ${CMAKE_BINARY_DIR}/bdsim.cc)
     set_target_properties(bdsimapp PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_VERSION})
     target_link_libraries(bdsimapp bdsim gmad)
     bdsim_install_bundle(bdsim)
@@ -448,11 +204,8 @@ add_custom_target(dist
 add_custom_target(copy-deps
   COMMAND ${CMAKE_SOURCE_DIR}/cmake/copyldd.sh bdsim ${CMAKE_BINARY_DIR}/deps
 )
-      
-## Add subdirectories
-# Parser
-add_subdirectory(parser)
 
+## Add subdirectories
 # Visualisation directory
 add_subdirectory(vis)
 
@@ -461,10 +214,22 @@ add_subdirectory(utils)
 
 # For testing
 add_subdirectory(examples)
-
+# copy examples to build directory - macro defined in bdsim_macros.cmake
+copy_examples()
+  
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_subdirectory(test)
 
+# Include directory for analysis
+add_subdirectory(analysis)
+
 # Manual
 add_subdirectory(manual)
+
+# Mark some variables as advanced to clean up GUI
+if(APPLE)
+  mark_as_advanced(CMAKE_OSX_ARCHITECTURES)
+  mark_as_advanced(CMAKE_OSX_DEPLOYMENT_TARGET)
+  mark_as_advanced(CMAKE_OSX_SYSROOT)
+endif()

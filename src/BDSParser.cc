@@ -1,4 +1,8 @@
 #include "BDSParser.hh"
+#include "BDSDebug.hh"
+#include "BDSUtilities.hh"
+
+#include <string>
 
 BDSParser* BDSParser::instance = nullptr;
 
@@ -29,37 +33,39 @@ BDSParser::~BDSParser()
 BDSParser::BDSParser(std::string name):GMAD::Parser(name)
 {}
 
-const GMAD::Options& BDSParser::GetOptions()const
+void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 {
-  return options;
+  options.Amalgamate(optionsIn, true);
 }
 
-const GMAD::FastList<GMAD::Element>& BDSParser::GetBeamline()const
+void BDSParser::CheckOptions()
 {
-  return beamline_list;
-}
+  if (options.nGenerate < 0) // run at least 1 event!
+    {options.nGenerate = 1;}
+  
+  if (options.beamEnergy == 0)
+    {
+      std::cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" << std::endl;
+      exit(1);
+    }
+  
+  if (!BDS::IsFinite(options.E0))
+    {options.E0 = options.beamEnergy;}
 
-const GMAD::FastList<GMAD::PhysicsBiasing>& BDSParser::GetBiasing()const
-{
-  return xsecbias_list;
-}
+  if(options.LPBFraction > 1.0) // safety checks
+    {options.LPBFraction = 1.0;}
+  if(options.LPBFraction < 0.0)
+    {options.LPBFraction = 0.0;}
 
-const std::list<GMAD::Element>& BDSParser::GetMaterials()const
-{
-  return material_list;
-}
+  if (options.lengthSafety < 1e-15)
+    { // protect against poor lengthSafety choices that would cause potential overlaps
+      std::cerr << "Dangerously low \"lengthSafety\" value of: " << options.lengthSafety
+		<< " m that will result in potential geometry overlaps!" << std::endl;
+      std::cerr << "This affects all geometry construction and should be carefully chosen!!!" << std::endl;
+      std::cerr << "The default value is 1 pm" << std::endl;
+      exit(1);
+    }
 
-const std::list<GMAD::Element>& BDSParser::GetAtoms()const
-{
-  return atom_list;
-}
-
-const std::vector<GMAD::Region>& BDSParser::GetRegions()const
-{
-  return region_list;
-}
-
-const std::vector<GMAD::CavityModel>& BDSParser::GetCavityModels()const
-{
-  return cavitymodel_list;
+  if(options.nturns < 1)
+    {options.nturns = 1;}
 }

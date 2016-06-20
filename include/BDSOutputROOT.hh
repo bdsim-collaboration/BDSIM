@@ -51,16 +51,22 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
+  /// write event info
+  virtual void WriteEventInfo(const time_t&  /*startTime*/,
+			      const time_t&  /*stopTime*/,
+			      const G4float& /*duration*/,
+			      const std::string& /*seedStateAtStart*/) override {}
   virtual void FillEvent() override {;} ///< Fill the event
-  virtual void Commit() override;  ///< close the file
-  virtual void Write()  override;  ///< close and open new file
+  virtual void Initialise() override; ///< open the file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+		     const std::string& seedStateAtStart) override;      ///< write to file
+  virtual void Close() override;      ///< close the file
 
 protected:
   /// The number type identifier string to put into root.
   G4String type;
-  
-  /// Output initialisation
-  void Init(); 
   
   virtual TTree* BuildSamplerTree(G4String name);
   

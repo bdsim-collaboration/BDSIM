@@ -43,7 +43,7 @@ void BDSBunchRing::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   yp = Yp0 * CLHEP::rad;
   zp = CalculateZp(xp,yp,Zp0);
   t  = T0 * CLHEP::s;
-  E  = BDSGlobalConstants::Instance()->GetParticleKineticEnergy()* (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));  
+  E  = BDSGlobalConstants::Instance()->ParticleTotalEnergy()* (1 + sigmaE/2. * (1. -2. * FlatGen->shoot()));
   weight = 1.0;
 }
 

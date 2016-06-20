@@ -15,7 +15,7 @@ and very similar to MADX.
 * unary operators +, -, are valid
 * boolean operators <, >, <=, >=, <>, == are valid
 * every expression **must** end with a semi-colon;
-* no name can begin with a number
+* no variable name can begin with a number
 
 The following functions are provided
 
@@ -34,7 +34,7 @@ Examples::
    x = 1;
    y = 2.5-x;
    z = sin(x) + log(y) - 8e5;
-
+   mat = "copper";
 
 Coordinates & Units
 -------------------
@@ -114,9 +114,10 @@ Useful Commands
 * :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
 * :code:`print, option;` prints the value of option
 * :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
-* :code:`length = d1[l];` way to access properties of elements, in this case length of element d1.
+* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
+* :code:`if () {} else {};` if-else construct
 
 Lattice Description
 -------------------
@@ -736,6 +737,21 @@ then attach a sampler to the marker.
 Examples::
 
    m1: marker;
+
+
+Colours
+-------
+
+A few items allow you to define a custom colour for them to aid in visualisation. Currently,
+only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
+where the RGB values are space delimited and given from 0 to 255. Once the colour name has
+been defined it may be used again without having to redefine the components. Once defined, a
+colour may not be redefined.
+
+Examples::
+
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
+  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
    
 
 Aperture Parameters
@@ -1222,12 +1238,11 @@ Physics Lists In BDSIM
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
 |                           | hadronic elastic and inelastic processes. Suitable for high energy     |
-|                           | (>10 GeV). This includes and uses `G4EmStandardPhysics`.               |
+|                           | (>10 GeV).                                                             |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
 |                           | precision neutron models to transport neutrons below 20 MeV down to    |
-|                           | thermal energies. This includes and uses `G4EmStandardPhysics`. This   |
-|                           | is provided by `G4HadronPhysicsQGSP_BERT_HP`.                          |
+|                           | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
 |                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
@@ -1432,9 +1447,11 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
 +----------------------------------+-------------------------------------------------------+
-| storeMuonTrajectories            | whether to store muon trajectories in the output      |
+| storeTrajectoryDepth             | maximum depth (secondaries) of stored trajectories    |
 +----------------------------------+-------------------------------------------------------+
-| storeNeutronTrajectories         | whether to store neutron trajectories in the output   |
+| storeTrajectoryEnergyThreshold   | minimum energy of stored trajectories                 |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryParticle          | store trajectories of these particles                 |
 +----------------------------------+-------------------------------------------------------+
 | trajCutGTZ                       | global z position cut (minimum) for storing           |
 |                                  | trajectories                                          |

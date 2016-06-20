@@ -1,7 +1,8 @@
 ! standard options for runing bdsim
 
 option, beampipeRadius = 50 * cm,
-        beampipeThickness = 0.5 * mm,        
+        beampipeThickness = 0.5 * mm,
+        outerDiameter = 1.5 *m,
         thresholdCutCharged = 15 * GeV,
         thresholdCutPhotons = 15 * GeV;
 

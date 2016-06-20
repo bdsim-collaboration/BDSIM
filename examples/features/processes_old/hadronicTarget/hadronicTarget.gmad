@@ -16,11 +16,11 @@ beam,  particle="proton",
        sigmaXp=0.02*0.005,
        sigmaYp=0.02*0.004;
 
-leadTarget: element, l=10*mm, geometry="mokka:sql/leadTargetGeomlist.sql", outR=1*m;
-myField: element, l=1.01*m, geometry="mokka:sql/myFieldGeomlist.sql", outR=1*m;
+leadTarget: element, l=10*mm, geometry="mokka:sql/leadTargetGeomlist.sql", outerDiameter=2*m;
+myField: element, l=1.01*m, geometry="mokka:sql/myFieldGeomlist.sql", outerDiameter=2*m;
 
-rbend1: rbend, l=0.1, angle=0.392/4, outR=2*m;
-sbend1: sbend, l=1, angle=0.392/4, outR=2*m;
+rbend1: rbend, l=0.1, angle=0.392/4, outerDiameter=4*m;
+sbend1: sbend, l=1, angle=0.392/4, outerDiameter=4*m;
 drift1: drift, l=3;
 drift2: drift, l=3;
 
@@ -38,7 +38,7 @@ myLine: line = (startl,leadTarget,endl);
 
 use ,period=myLine;
 
-sample, range = startl;
+!sample, range = startl;
 sample, range = endl;
 
 !sample, range = msb1b;

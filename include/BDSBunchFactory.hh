@@ -8,14 +8,14 @@ class BDSBunchInterface;
 /**
  * @brief factory class for BDSBunch
  * 
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  */
 
-class BDSBunchFactory {
-
+class BDSBunchFactory
+{
 public:
   /// factory method
-  static BDSBunchInterface* createBunch(G4String distribType);
+  static BDSBunchInterface* createBunch(G4String distribType, G4String distribFile = "");
 };
 
 #endif

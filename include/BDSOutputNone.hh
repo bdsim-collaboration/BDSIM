@@ -34,9 +34,14 @@ public:
   virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
+  /// write event info
+  virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &)
+  {}
   virtual void FillEvent(){}///< fill event structure
-  virtual void Commit(){}  ///< close the file
-  virtual void Write(){}   ///< close and open new file
+  virtual void Initialise(){}; ///< open the file
+  virtual void Write(const time_t &, const time_t &, const G4float &, const std::string &)
+  {};      ///< write to file
+  virtual void Close(){};      ///< close the file
 };
 
 extern BDSOutputBase* bdsOutput;

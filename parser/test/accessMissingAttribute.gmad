@@ -1,5 +1,5 @@
 d: drift, l=0.5*m;
 
-value = d[somenonexistingproperty];
+value = d["somenonexistingproperty"];
 
 print, value;

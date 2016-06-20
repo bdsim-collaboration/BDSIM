@@ -1,30 +1,30 @@
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMuonPhysics.hh"
 
 #include "G4AnnihiToMuPair.hh"
 #include "G4Cerenkov.hh"
 #include "G4eeToHadrons.hh"
-#include "G4Electron.hh"
+#include "G4EmSaturation.hh"
 #include "G4Gamma.hh"
 #include "G4GammaConversionToMuons.hh"
+#include "G4LeptonConstructor.hh"
+#include "G4LossTableManager.hh"
 #include "G4MuBremsstrahlung.hh"
 #include "G4MuIonisation.hh"
 #include "G4MuMultipleScattering.hh"
-#include "G4MuonPlus.hh"
-#include "G4MuonMinus.hh"
 #include "G4MuPairProduction.hh"
+#include "G4OpticalPhoton.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4PionDecayMakeSpin.hh"
 #include "G4PionPlus.hh"
 #include "G4PionMinus.hh"
-#include "G4Positron.hh"
 #include "G4ProcessManager.hh"
+#include "G4Scintillation.hh"
 
 BDSMuonPhysics::BDSMuonPhysics():
-  G4VPhysicsConstructor("BDSMuonPhysics"),
-  activated(false)
+  G4VPhysicsConstructor("BDSMuonPhysics")
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
@@ -37,14 +37,17 @@ void BDSMuonPhysics::ConstructParticle()
 {
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
+  // leptons
+  G4LeptonConstructor leptons;
+  leptons.ConstructParticle();
+
+  // photons
   G4Gamma::Gamma();
-  G4Electron::Electron();
-  G4Positron::Positron();    
-  G4MuonPlus::MuonPlus();
-  G4MuonMinus::MuonMinus();
-  G4PionPlus::PionPlusDefinition();
-  G4PionMinus::PionMinusDefinition();
-  return;
+  G4OpticalPhoton::OpticalPhoton();
+  
+  //pions
+  G4PionPlus::PionPlus();
+  G4PionMinus::PionMinus();
 }
 
 void BDSMuonPhysics::ConstructProcess()
@@ -52,9 +55,23 @@ void BDSMuonPhysics::ConstructProcess()
   if(verbose || debug) 
     {G4cout << __METHOD_NAME__ << G4endl;}
 
-  if(activated)
-    {return;}
-  activated=true;
+  G4Cerenkov*        cer = nullptr;
+  G4Scintillation* scint = nullptr;
+  if (BDSGlobalConstants::Instance()->TurnOnCerenkov()) {
+    cer = new G4Cerenkov();
+    // reduce memory profile
+    cer->SetTrackSecondariesFirst(true);
+    // common settings (similar to optical physics) 
+    cer->SetMaxNumPhotonsPerStep(100);
+    cer->SetMaxBetaChangePerStep(10.0);
+    
+    // Cerenkov also needs scintillation it seems
+    scint = new G4Scintillation();
+    scint->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->ScintYieldFactor());
+    scint->SetTrackSecondariesFirst(true);
+    G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
+    scint->AddSaturation(emSaturation);
+  }
   
   aParticleIterator->reset();
 
@@ -67,19 +84,20 @@ void BDSMuonPhysics::ConstructProcess()
     if(particleName == "gamma")
       {
 	G4GammaConversionToMuons* gamConvToMu = new G4GammaConversionToMuons();
-	pmanager->AddProcess(gamConvToMu);
+	pmanager->AddDiscreteProcess(gamConvToMu);
       }      
-    if(particleName == "e+" || particleName == "e-")
+    if(particleName == "e+")
       {
+	// Processes for positron annihilation
 	G4AnnihiToMuPair* anni = new G4AnnihiToMuPair();
-	pmanager->AddProcess(anni);
+	pmanager->AddDiscreteProcess(anni);
 	G4eeToHadrons* eetohadrons = new G4eeToHadrons();
-	pmanager->AddProcess(eetohadrons);
+	pmanager->AddDiscreteProcess(eetohadrons);
       }
     if(particleName == "pi+" || particleName == "pi-") 
       {
 	G4PionDecayMakeSpin *pdms = new G4PionDecayMakeSpin();
-	pmanager->AddProcess(pdms);	
+	pmanager->AddDiscreteProcess(pdms);	
       }
     if(particleName == "mu+" || particleName == "mu-")
       {
@@ -91,10 +109,21 @@ void BDSMuonPhysics::ConstructProcess()
 	pmanager->AddProcess(mubrm);
 	G4MuPairProduction*     mupar = new G4MuPairProduction();
 	pmanager->AddProcess(mupar);
-	G4Cerenkov*             mucer = new G4Cerenkov();
-	pmanager->AddProcess(mucer);
+      }
+
+    // turn on Cerenkov for all particles, needed for Geant4 10.1
+    if (BDSGlobalConstants::Instance()->TurnOnCerenkov())
+      {
+	if (cer->IsApplicable(*particle))
+	  {
+	    pmanager->AddProcess(cer);
+	    pmanager->SetProcessOrdering(cer,idxPostStep);
+	    // Cerenkov also needs scintillation it seems, for 10.1 and 10.2
+	    pmanager->AddProcess(scint);
+	    pmanager->SetProcessOrderingToLast(scint,idxAtRest);
+	    pmanager->SetProcessOrderingToLast(scint,idxPostStep);
+	  }
       }
     }
-  return;
 }
 

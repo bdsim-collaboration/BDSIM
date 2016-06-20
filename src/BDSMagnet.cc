@@ -1,10 +1,7 @@
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 
 #include <cstdlib>
-#include <cmath>
-#include <string>
 
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
@@ -101,19 +98,19 @@ void BDSMagnet::BuildBPFieldMgr()
   if (itsMagField && itsEqRhs && itsStepper)
     {
       itsChordFinder = new G4ChordFinder(itsMagField,
-					 BDSGlobalConstants::Instance()->GetChordStepMinimum(),
+                                         BDSGlobalConstants::Instance()->ChordStepMinimum(),
 					 itsStepper);
       
-      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->GetDeltaChord());
+      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->DeltaChord());
       itsBPFieldMgr = new G4FieldManager();
       itsBPFieldMgr->SetDetectorField(itsMagField);
       itsBPFieldMgr->SetChordFinder(itsChordFinder);
       
       // these options are always non-zero so always set them
-      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
+      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
+      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
     }
 }
 
@@ -247,10 +244,10 @@ void BDSMagnet::BuildOuterFieldManager(G4int    nPoles,
   itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
 
   // these options are always non-zero so always set them
-  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
+  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
+  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 
 void BDSMagnet::AttachFieldToOuter()
@@ -318,7 +315,7 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-						    BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                                                    BDSGlobalConstants::Instance()->CheckOverlaps());
       
       RegisterPhysicalVolume(beamPipePV);
     }
@@ -336,7 +333,7 @@ void BDSMagnet::PlaceComponents()
 						       containerLogicalVolume, // its mother  volume
 						       false,                  // no boolean operation
 						       0,                      // copy number
-						       BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                                                       BDSGlobalConstants::Instance()->CheckOverlaps());
 
       RegisterPhysicalVolume(magnetOuterPV);
     }

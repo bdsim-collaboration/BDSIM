@@ -3,10 +3,20 @@
 
 #include "globals.hh"
 
+#include <ctime>
 #include <map>
 
 #include "BDSOutputBase.hh"
+
+#include "BDSOutputROOTEventOptions.hh"
+#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventSampler.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
+#include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventInfo.hh"
+#include "BDSOutputROOTEventRunInfo.hh"
+
 
 #include "TROOT.h"
 #include "TH1F.h"
@@ -64,31 +74,77 @@ public:
   /// fill event structure
   virtual void FillEvent();
   
-  /// write and close and open new file
-  virtual void Commit();
-  
-  /// write and close the file
-  virtual void Write();
+  /// write event info
+  virtual void WriteEventInfo(const time_t &startTime, const time_t &stopTime, const G4float &duration,
+                              const std::string &seedStateAtStart);
 
-  /// clear structures 
-  void Clear();
-  
+  virtual void Initialise(); ///< open the file
+  virtual void Write(const time_t &startTime, const time_t &stopTime, const G4float &duration,
+                       const std::string &seedStateAtStart);      ///< write to file
+  virtual void Close();      ///< close the file
+
+  /// clear structures
+  void Flush();
+
 private:
 
-  void Init();
-
+  /// create histograms
+  void CreateHistograms();
+  
   // output file
-  TFile *theRootOutputFile;
+  TFile *theRootOutputFile = nullptr;
+
+  // options structure
+  // BDSOutputROOTEventOptions *theOptionsOutput;
+
+  // options tree
+  TTree *theOptionsOutputTree = nullptr;
+
+  // model tree 
+  TTree *theModelOutputTree = nullptr;
+
   // output tree
-  TTree *theRootOutputTree;
+  TTree *theRootOutputTree = nullptr;
+
+  // output histogram tree
+  TTree *theRunOutputTree  = nullptr;
 
   // primary structure 
-  BDSOutputROOTEventSampler *primary;
-
+#ifdef __ROOTDOUBLE__
+  BDSOutputROOTEventSampler<double> *primary = nullptr;
+#else 
+  BDSOutputROOTEventSampler<float> *primary = nullptr;
+#endif
   // sampler structures 
-  std::map<G4String, BDSOutputROOTEventSampler*> samplerMap;
+#ifdef __ROOTDOUBLE__
+  //  std::map<G4String, BDSOutputROOTEventSampler<double>*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler<double>*> samplerTrees;
+#else
+  //  std::map<G4String, BDSOutputROOTEventSampler<float>*> samplerMap; // will remove
+  std::vector<BDSOutputROOTEventSampler<float>*> samplerTrees;
+#endif
 
-  // energy hit structures 
+  // run information
+  BDSOutputROOTEventRunInfo     *runInfo     = nullptr;
+  // run histograms
+  BDSOutputROOTEventHistograms  *runHistos   = nullptr;
+
+
+  // energy loss
+  BDSOutputROOTEventLoss        *eLoss       = nullptr;
+  // primary first hit
+  BDSOutputROOTEventLoss        *pFirstHit   = nullptr;
+  // primary final hit
+  BDSOutputROOTEventLoss        *pLastHit    = nullptr;
+  // tunnel hit
+  BDSOutputROOTEventLoss        *tHit        = nullptr;
+  // trajectory
+  BDSOutputROOTEventTrajectory  *traj        = nullptr;
+  // event histograms
+  BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
+  // event information
+  BDSOutputROOTEventInfo        *evtInfo     = nullptr;
 };
+
 
 #endif

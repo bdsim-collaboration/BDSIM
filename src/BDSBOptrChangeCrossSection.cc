@@ -10,6 +10,7 @@
 #include "G4BiasingProcessInterface.hh"
 #include "G4BiasingProcessSharedData.hh"
 #include "G4BOptnChangeCrossSection.hh"
+#include "G4InteractionLawPhysical.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "G4VProcess.hh"
@@ -21,7 +22,7 @@ BDSBOptrChangeCrossSection::BDSBOptrChangeCrossSection(G4String particleNameIn,
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
 
   if (fParticleToBias == nullptr)
-    {G4cout << __METHOD_NAME__ << "Particle \"" << particleName << "\" not found!" << G4endl;}
+    {G4cout << __METHOD_NAME__ << "Particle \"" << particleName << "\" not found!" << G4endl; exit(1);}
 }
 
 BDSBOptrChangeCrossSection::~BDSBOptrChangeCrossSection()
@@ -76,18 +77,36 @@ void BDSBOptrChangeCrossSection::SetBias(G4String processName, G4double bias, G4
   G4cout << __METHOD_NAME__ << fParticleToBias << " " << processManager << " " << sharedData << G4endl;
 #endif
 
+  G4bool allProcesses = false;
+  if (processName == "all")
+    {allProcesses = true;}
+  
+  G4bool processFound = false;
   for (size_t i = 0 ; i < (sharedData->GetPhysicsBiasingProcessInterfaces()).size(); i++)
     {
       const G4BiasingProcessInterface* wrapperProcess = (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
-      if(processName == wrapperProcess->GetWrappedProcess()->GetProcessName())
+      G4String currentProcess = wrapperProcess->GetWrappedProcess()->GetProcessName();
+      if(allProcesses || processName == currentProcess)
 	{ 
 #ifdef BDSDEBUG
-	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << wrapperProcess->GetWrappedProcess()->GetProcessName() << G4endl;
+	  G4cout << __METHOD_NAME__ << i << " " << processName << " " << currentProcess << G4endl;
 #endif
 	  fXSScale[wrapperProcess]      = bias;
 	  fPrimaryScale[wrapperProcess] = iPrimary;
+	  processFound                  = true; // the process was found at some point
 	}
     }
+  if (!processFound)
+    {
+      G4cout << __METHOD_NAME__ << "Error: Process \"" << processName
+	     << "\" not found registered to particle \""
+	     << particleName << "\"" << G4endl;
+      exit(1);
+    }
+#ifdef BDSDEBUG
+  else
+    {G4cout << "Process found OK" << G4endl;}
+#endif
 }
 
 G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*                   track, 
@@ -106,14 +125,14 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   if (analogInteractionLength > DBL_MAX/10.)
     {return nullptr;}
 
+  // protect against negative interaction lengths
+  // sometimes this appears as -1 - exactly -1
   if(analogInteractionLength < 0)
     {return nullptr;}
 
-  G4double analogXS = 0;
-  if(analogInteractionLength > 0)
-    {analogXS = 1./analogInteractionLength;}
-
   // Analog cross-section is well-defined:
+  G4double analogXS = 1./analogInteractionLength;
+  
   // Choose a constant cross-section bias. But at this level, this factor can be made
   // direction dependent, like in the exponential transform MCNP case, or it
   // can be chosen differently, depending on the process, etc.
@@ -121,12 +140,12 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   
   // fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection* operation = fChangeCrossSectionOperations[callingProcess];
-  if (!operation)
+  /*if (!operation)
     {
       G4cout << __METHOD_NAME__ << "ERROR: Process not known: " << G4endl;
       callingProcess->DumpInfo();
       exit(1);
-    }
+      }*/
   
   // get the operation that was proposed to the process in the previous step:
   G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
@@ -154,7 +173,7 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   // occured. If the interaction did not occur for the process in the previous,
   // we update the number of interaction length instead of resampling.
 
-  if(previousOperation == nullptr)
+  if(!previousOperation)
     {
       operation->SetBiasedCrossSection( XStransformation * analogXS );
       operation->Sample();

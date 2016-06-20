@@ -1,11 +1,11 @@
-#ifndef __ELEMENTTYPE_H
-#define __ELEMENTTYPE_H
+#ifndef ELEMENTTYPE_H
+#define ELEMENTTYPE_H
 
 #include <ostream>
 #include <string>
 
-namespace GMAD {
-
+namespace GMAD
+{
   /// types of elements
   enum class ElementType {
     _NONE        = -1,
@@ -27,7 +27,7 @@ namespace GMAD {
     _LASER       = 15,
     _MATERIAL    = 16,
     _RBEND       = 17,
-    _ATOM        = 18,
+    // = 18,
     // = 19,
     _ELEMENT     = 20,
     _SCREEN      = 21,

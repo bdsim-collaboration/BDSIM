@@ -44,8 +44,15 @@ void BDSBOptrMultiParticleChangeCrossSection::AddParticle(G4String particleName)
 
 void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4String process, G4double dBias, G4int iPrimary) 
 {
-  if(debug) 
-    G4cout << __METHOD_NAME__ << particleName << " " << process << " " << dBias << " " << iPrimary << G4endl;
+  // important feedback for the user
+  G4cout << "Biasing process \"" << process << "\" for particle \"" << particleName << "\" by factor " << dBias;
+  G4String flagString = "all";
+  if (iPrimary == 2)
+    {flagString = "primary";}
+  else if (iPrimary == 3)
+    {flagString = "primary & secondary";}
+  G4cout << ", for " << flagString << " particles" << G4endl;
+  
   const G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
   if(particle == nullptr) {
     G4ExceptionDescription ed;
@@ -57,9 +64,9 @@ void BDSBOptrMultiParticleChangeCrossSection::SetBias(G4String particleName, G4S
   fBOptrForParticle[particle]->SetBias(process,dBias,iPrimary);
 }
 
-
 G4VBiasingOperation* BDSBOptrMultiParticleChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track* track,
-											       const G4BiasingProcessInterface* callingProcess) {
+											       const G4BiasingProcessInterface* callingProcess)
+{
   // -- examples of limitations imposed to apply the biasing:
   // -- limit application of biasing to primary particles only:
   //  if ( track->GetParentID() != 0 ) return 0;
@@ -68,17 +75,20 @@ G4VBiasingOperation* BDSBOptrMultiParticleChangeCrossSection::ProposeOccurenceBi
   // -- and limit to a weight of at least 0.05:
   //  if ( track->GetWeight() < 0.05 ) return 0;
   
-  if ( fCurrentOperator ) return fCurrentOperator->GetProposedOccurenceBiasingOperation(track, callingProcess);
-  else                    return nullptr;
+  if ( fCurrentOperator )
+    {return fCurrentOperator->GetProposedOccurenceBiasingOperation(track, callingProcess);}
+  else
+    {return nullptr;}
 }
 
-
-void BDSBOptrMultiParticleChangeCrossSection::StartTracking(const G4Track* track) {
+void BDSBOptrMultiParticleChangeCrossSection::StartTracking(const G4Track* track)
+{
   // -- fetch the underneath biasing operator, if any, for the current particle type:
   const G4ParticleDefinition* definition = track->GetParticleDefinition();
   std::map <const G4ParticleDefinition*,BDSBOptrChangeCrossSection*>::iterator it = fBOptrForParticle.find(definition);
   fCurrentOperator = 0;
-  if(it != fBOptrForParticle.end()) fCurrentOperator = (*it).second;
+  if(it != fBOptrForParticle.end())
+    {fCurrentOperator = (*it).second;}
 
   // -- reset count for number of biased interactions:
   fnInteractions = 0;
@@ -90,7 +100,8 @@ OperationApplied(const G4BiasingProcessInterface*               callingProcess,
 		 G4VBiasingOperation*                occurenceOperationApplied, 
 		 G4double                        weightForOccurenceInteraction,
 		 G4VBiasingOperation*               finalStateOperationApplied, 
-		 const G4VParticleChange*               particleChangeProduced ) {
+		 const G4VParticleChange*               particleChangeProduced)
+{
   // -- count number of biased interactions:
   fnInteractions++;
   

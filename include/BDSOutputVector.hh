@@ -7,12 +7,12 @@
 
 // class that holds multiple outputs
 
-class BDSOutputVector: public BDSOutputBase {
-
+class BDSOutputVector: public BDSOutputBase
+{
 public: 
 
   BDSOutputVector();
-  ~BDSOutputVector();
+  virtual ~BDSOutputVector();
 
   /// add output type
   void Add(BDSOutputBase*);
@@ -45,12 +45,20 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
+  /// write event info
+  virtual void WriteEventInfo(const time_t&  startTime,
+			      const time_t&  stopTime,
+			      const G4float& duration,
+                              const std::string& seedStateAtStart);
   /// Fill event
   virtual void FillEvent() {};
-  /// write and close and open new file
-  virtual void Commit();
-  /// write and close the file
-  virtual void Write();
+  virtual void Initialise(); ///< open the file
+  /// Write to file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+		     const std::string& seedStateAtStart);
+  virtual void Close();      ///< close the file
 
 private:
   /// 

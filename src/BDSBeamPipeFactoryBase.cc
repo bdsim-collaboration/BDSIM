@@ -2,7 +2,6 @@
 
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 
@@ -16,9 +15,9 @@
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
-  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
+  lengthSafety              = BDSGlobalConstants::Instance()->LengthSafety();
   lengthSafetyLarge         = 1*CLHEP::um;
-  checkOverlaps             = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  checkOverlaps             = BDSGlobalConstants::Instance()->CheckOverlaps();
   maxStepFactor             = 0.5; // fraction of length for maximum step size
   nSegmentsPerCircle        = 50;
   CleanUp();
@@ -111,7 +110,7 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
 				   beamPipeMaterialIn,
 				   nameIn + "_beampipe_lv");
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    nameIn + "_container_lv");
@@ -135,7 +134,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (BDSGlobalConstants::Instance()->VisDebug())
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
   else
     {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
@@ -150,7 +149,7 @@ G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
   // set user limits based on bdsim user specified parameters
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
   beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
-  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(beamPipeUserLimits);
   //attach cuts to volumes
   vacuumLV->SetUserLimits(beamPipeUserLimits);

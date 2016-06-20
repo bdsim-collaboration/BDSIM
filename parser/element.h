@@ -1,5 +1,5 @@
-#ifndef __ELEMENT_H
-#define __ELEMENT_H
+#ifndef ELEMENT_H
+#define ELEMENT_H
 
 #include <list>
 #include <map>
@@ -7,8 +7,8 @@
 
 #include "published.h"
 
-namespace GMAD {
-
+namespace GMAD
+{
   enum class ElementType;
 
   struct Parameters;
@@ -93,22 +93,9 @@ namespace GMAD {
     std::string samplerType; ///< element has a sampler of this type (default "none")
     double samplerRadius; ///< radius for cylindrical sampler
     
-    int precisionRegion; ///< which precision physics region the element is in (0 = none)
+    bool precisionRegion; ///< precision region range cuts or not
     std::string region; ///< region with range cuts
-    
-    ///@{ material properties
-    double A; ///< g*mol^-1
-    double Z; 
-    double density; ///< g*cm-3 
-    double temper; ///< kelvin
-    double pressure; ///< atm
-    std::string state; ///< "solid", "liquid", or "gas"
-    std::string symbol;
-    std::list<std::string> components;
-    std::list<double> componentsFractions;
-    std::list<int> componentsWeights;
-    ///@}
-  
+      
     std::string geometryFile;
     std::string bmapFile;
     std::string material;
@@ -140,6 +127,9 @@ namespace GMAD {
     void set(const Parameters& params);
     void set(const Parameters& params,std::string nameIn, ElementType typeIn);
     ///@}
+
+    /// Override colour for certain items
+    std::string colour;
   
     /// constructor
     Element();

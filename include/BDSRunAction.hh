@@ -1,14 +1,16 @@
 #ifndef BDSRUNACTION_H
 #define BDSRUNACTION_H
 
+#include "globals.hh" // geant4 types / globals
 #include "G4UserRunAction.hh"
-#include "globals.hh"
+
 #include <ctime>
+#include <string>
 
 class G4Run;
 
 /**
- * @brief Control over the beginning and end or run actions.
+ * @brief Control over the beginning and end of run actions.
  */
 
 class BDSRunAction: public G4UserRunAction
@@ -23,14 +25,7 @@ public:
 private:
   time_t starttime;
   time_t stoptime;
-
-  //indices of histograms with analysis manager
-  G4int phitsindex;
-  G4int plossindex;
-  G4int elossindex;
-  G4int phitspeindex;
-  G4int plosspeindex;
-  G4int elosspeindex;
+  std::string seedStateAtStart; ///< Seed state at start of the run.
 };
 
 #endif

@@ -1,17 +1,27 @@
 #ifndef BDSTRAJECTORYPOINT_H
 #define BDSTRAJECTORYPOINT_H
 
+#include "BDSAuxiliaryNavigator.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4Allocator.hh"
+#include "G4Step.hh"
 #include "G4TrajectoryPoint.hh"
 #include "G4Track.hh"
-#include "G4Allocator.hh"
 
 #include <ostream>
+
+/**
+ * @brief A Point in a trajectory with extra information.
+ *
+ * @author S. Boogert
+ */
 
 class BDSTrajectoryPoint: public G4TrajectoryPoint
 {
 public:
   BDSTrajectoryPoint();
-  BDSTrajectoryPoint(const G4Track* aTrack);
+  BDSTrajectoryPoint(const G4Step* step);
   virtual ~BDSTrajectoryPoint();
 
   inline void *operator new(size_t);
@@ -19,19 +29,46 @@ public:
   inline int operator==(const BDSTrajectoryPoint& right) const
   {return (this==&right);};
 
-  inline G4bool isScatteringProcess(){return _isScatteringProcess;}
-  inline G4int GetTrackID(){return _trackID;}
-  void printData();
-  inline G4ThreeVector GetVertexPosition(){return _vertexPosition;}
-
-  /// output stream
+  /// @{ Accessor
+  inline G4int    GetPreProcessType()     const {return preProcessType;}
+  inline G4int    GetPreProcessSubType()  const {return preProcessSubType;}
+  inline G4int    GetPostProcessType()    const {return postProcessType;}
+  inline G4int    GetPostProcessSubType() const {return postProcessSubType;}
+  inline G4double GetPreWeight()          const {return preWeight;}
+  inline G4double GetPostWeight()         const {return postWeight;}
+  inline G4double GetPreEnergy()          const {return preEnergy;}
+  inline G4double GetPostEnergy()         const {return postEnergy;}
+  inline G4double GetEnergy()             const {return energy;}
+  inline G4double GetPreS()               const {return preS;}
+  inline G4double GetPostS()              const {return postS;}
+  /// @}
+  
+  /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
 private:
-  G4bool _isScatteringProcess;
-  const G4VProcess* _currentProcess;
-  G4int _trackID;
-  G4ThreeVector _vertexPosition;
+  G4int preProcessType;
+  G4int preProcessSubType;
+  G4int postProcessType;
+  G4int postProcessSubType;
+
+  G4double preWeight;
+  G4double postWeight;
+
+  G4double preEnergy;
+  G4double postEnergy;
+  G4double energy;
+
+  G4double  preS;
+  G4double postS;
+
+  /// An auxilliary navigator to get curvilinear coordintes. Lots of points, but only
+  /// need one navigator so make it static.
+  static BDSAuxiliaryNavigator* auxNavigator;
+
+  /// Keep track of how many points are instantiated and delete the static navigator
+  /// when the last point is deleted.
+  static G4int numberOfPoints;
 };
 
 extern G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
@@ -47,7 +84,5 @@ inline void BDSTrajectoryPoint::operator delete(void *aTrajectoryPoint)
 {
   bdsTrajectoryPointAllocator.FreeSingle((BDSTrajectoryPoint *) aTrajectoryPoint);
 }
-
-
 
 #endif

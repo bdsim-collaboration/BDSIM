@@ -20,11 +20,20 @@ BDSOutputBase* BDSOutputFactory::CreateOutput(BDSOutputFormat format)
     {
     case BDSOutputFormat::none:
       {return new BDSOutputNone(); break;}
+    case BDSOutputFormat::rootcombined:
+      {
+	BDSOutputVector* combinedOutput = new BDSOutputVector();
+	combinedOutput->Add(new BDSOutputROOT<float>());
+	combinedOutput->Add(new BDSOutputROOTEvent());
+	return combinedOutput;
+	break;
+      }
     case BDSOutputFormat::combined:
       {
 	BDSOutputVector* combinedOutput = new BDSOutputVector();
 	combinedOutput->Add(new BDSOutputASCII());
 	combinedOutput->Add(new BDSOutputROOT<float>());
+	combinedOutput->Add(new BDSOutputROOTEvent());
 	return combinedOutput;
 	break;
       }

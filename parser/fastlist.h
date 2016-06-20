@@ -1,5 +1,5 @@
-#ifndef __FASTLIST_H
-#define __FASTLIST_H
+#ifndef FASTLIST_H
+#define FASTLIST_H
 
 #include <cstdlib>
 #include <iostream>
@@ -8,7 +8,8 @@
 #include <string>
 #include <vector>
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief List with Efficient Lookup
    * 

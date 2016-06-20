@@ -1,7 +1,6 @@
 #include "BDSOutputROOT.hh"
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSHistogram.hh"
 #include "BDSSampler.hh"
@@ -28,8 +27,6 @@ BDSOutputROOT<float>::BDSOutputROOT():
   PrimaryLossTree               = nullptr;
   TunnelLossTree                = nullptr;
   tunnelHitsHisto               = nullptr;
-
-  Init();
 }
 
 template<>
@@ -46,8 +43,6 @@ BDSOutputROOT<double>::BDSOutputROOT():
   PrimaryLossTree               = nullptr;
   TunnelLossTree                = nullptr;
   tunnelHitsHisto               = nullptr;
-
-  Init();
 }
 
 template<typename Type>
@@ -86,20 +81,20 @@ TTree* BDSOutputROOT<Type>::BuildSamplerTree(G4String name)
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::Init()
+void BDSOutputROOT<Type>::Initialise()
 {
-  const BDSExecOptions*     execOptions     = BDSExecOptions::Instance();
+  outputFileNumber++;
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
   // set up the root file
-  G4String basefilename = execOptions->GetOutputFilename();
+  G4String basefilename = globalConstants->OutputFileName();
   // if more than one file add number (starting at 0)
-  int evntsPerNtuple = globalConstants->GetNumberOfEventsPerNtuple();
-  if (evntsPerNtuple>0 && globalConstants->GetNumberToGenerate()>evntsPerNtuple)
+  int evntsPerNtuple = globalConstants->NumberOfEventsPerNtuple();
+  if (evntsPerNtuple>0 && globalConstants->NGenerate()>evntsPerNtuple)
     {basefilename += "_" + std::to_string(outputFileNumber);}
   filename = basefilename + ".root";
   // policy: overwrite if output filename specifically set, otherwise increase number
   // always check in interactive mode
-  if (!execOptions->GetOutputFilenameSet() || !execOptions->GetBatch())
+  if (!globalConstants->OutputFileNameSet() || !globalConstants->Batch())
     {
       // check if file exists
       int nTimeAppended = 1;
@@ -128,35 +123,16 @@ void BDSOutputROOT<Type>::Init()
   // primaries is the first
   samplerTrees.push_back(sampler);
 
-  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetNames())
+  for (auto const samplerName : BDSSamplerRegistry::Instance()->GetUniqueNames())
     {
-      G4String name = samplerName;
-      // Check if a tree by this name already exists (name has to be unique)
-      TTree* tree = (TTree*)gDirectory->Get(name);
-      // If it exists, add number and increase, start counting at 2
-      if(tree)
-	{
-	  int count = 2;
-	  G4String uniqueName;
-	  while (tree)
-	    {
-	      uniqueName = name + "_" + std::to_string(count);
-	      tree = (TTree*)gDirectory->Get(uniqueName);
-	      count++;
-	    }
-	  name = uniqueName;
-	}
-
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "named: " << name << G4endl;
+      G4cout << __METHOD_NAME__ << "named: " << samplerName << G4endl;
 #endif
-      sampler = BuildSamplerTree(name);
+      sampler = BuildSamplerTree(samplerName);
       samplerTrees.push_back(sampler);
     }
 
-  if(globalConstants->GetStoreTrajectory() ||
-     globalConstants->GetStoreMuonTrajectories() ||
-     globalConstants->GetStoreNeutronTrajectories()) 
+  if(globalConstants->StoreTrajectory())
     // create a tree with trajectories
     {
       TTree* TrajTree = new TTree("Trajectories", "Trajectories");
@@ -211,8 +187,8 @@ void BDSOutputROOT<Type>::Init()
 
   // Tunnel hits histogram
   G4double smin     = 0.0;
-  G4double smax     = BDSGlobalConstants::Instance()->GetSMax() / CLHEP::m;
-  G4double binwidth = BDSGlobalConstants::Instance()->GetElossHistoBinWidth();
+  G4double smax     = BDSGlobalConstants::Instance()->SMax() / CLHEP::m;
+  G4double binwidth = BDSGlobalConstants::Instance()->ElossHistoBinWidth();
   G4int    nbins    = (int) ceil((smax-smin)/binwidth); // rounding up so last bin definitely covers smax
   smax              = smin + (nbins*binwidth);          // redefine smax
   // x then y -> x is angle, y is s position
@@ -361,27 +337,8 @@ void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   
   if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
-  for(auto iT = TrajVec.begin(); iT<TrajVec.end(); iT++)
+  for(BDSTrajectory* Traj : TrajVec)
     {
-      G4Trajectory* Traj=(G4Trajectory*)(*iT);
-	  
-      G4int parentID=Traj->GetParentID();
-      part = Traj->GetPDGEncoding();
-	  
-      G4bool saveTrajectory=false;
-
-      // store primaries
-      if((parentID==0)&&(BDSGlobalConstants::Instance()->GetStoreTrajectory()))
-	{saveTrajectory = true;}
-      // store muons
-      else if((std::abs(part)==13)&&(BDSGlobalConstants::Instance()->GetStoreMuonTrajectories()))
-	{saveTrajectory = true;}
-      // store neutrons
-      else if((part==2112)&&(BDSGlobalConstants::Instance()->GetStoreNeutronTrajectories()))
-	{saveTrajectory = true;}
-	  
-      if(!saveTrajectory) continue;
-      
       for(G4int j=0; j<Traj->GetPointEntries(); j++)
 	{
 	  G4TrajectoryPoint* TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
@@ -403,7 +360,7 @@ void BDSOutputROOT<Type>::FillHit(BDSEnergyCounterHit* hit)
   X          = hit->GetX()/CLHEP::m;
   Y          = hit->GetY()/CLHEP::m;
   Z          = hit->GetZ()/CLHEP::m;
-  S          = hit->GetS()/CLHEP::m;
+  S          = hit->GetSHit()/CLHEP::m;
   x          = hit->Getx()/CLHEP::m;
   y          = hit->Gety()/CLHEP::m;
   z          = hit->Getz()/CLHEP::m;
@@ -526,18 +483,10 @@ void BDSOutputROOT<Type>::WriteHistogram(BDSHistogram1D* hIn)
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::Commit()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  Write();
-  outputFileNumber++;
-  Init();
-}
-
-template<typename Type>
-void BDSOutputROOT<Type>::Write()
+void BDSOutputROOT<Type>::Write(const time_t& /*startTime*/,
+				const time_t& /*stopTime*/,
+				const G4float& /*duration*/,
+				const std::string& /*seedStateAtStart*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -549,14 +498,28 @@ void BDSOutputROOT<Type>::Write()
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
-      theRootOutputFile->Write(0,TObject::kOverwrite);
-      theRootOutputFile->Close();
-      delete theRootOutputFile;
-      theRootOutputFile=nullptr;
+      theRootOutputFile->Write();
     }
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
 }
 
+template<typename Type>
+void BDSOutputROOT<Type>::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
+  if(theRootOutputFile && theRootOutputFile->IsOpen())
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " - ROOT file found and open, closing." << G4endl;
+#endif
+      theRootOutputFile->Close();
+      delete theRootOutputFile;
+      theRootOutputFile=nullptr;
+    }
+}
 
 template void BDSOutputROOT<double>::WriteRootHit(TTree*   tree,
 						  G4double totalEnergy,

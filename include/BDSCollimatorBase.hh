@@ -25,7 +25,8 @@ public:
 		    G4double xOutApertureIn = 0,
 		    G4double yOutApertureIn = 0,
 		    G4String collimatorMaterial = "copper",
-		    G4String vacuumMaterial     = "vacuum");
+		    G4String vacuumMaterial     = "vacuum",
+		    G4String colourIn           = "collimator");
   ~BDSCollimatorBase();
 
 protected:
@@ -58,7 +59,8 @@ protected:
   G4String collimatorMaterial;
   /// Vacuum material
   G4String vacuumMaterial;
-
+  /// Colour of collimator
+  G4String colour;
 };
 
 #endif

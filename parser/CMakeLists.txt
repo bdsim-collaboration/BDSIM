@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.6.4)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 find_package(BISON 2.4 REQUIRED)
 find_package(FLEX REQUIRED)
 
@@ -50,6 +48,7 @@ endif()
 
 add_library(gmad STATIC ${GMAD_PARSER_SOURCES}
   ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# For Python a shared library is needed
 add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
   ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
 

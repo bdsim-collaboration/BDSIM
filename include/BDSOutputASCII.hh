@@ -39,10 +39,20 @@ public:
   virtual void WritePrimary(G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken);
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
-  virtual void FillEvent() {} ;
-  virtual void Commit();  ///< close the file
-  virtual void Write();   ///< close and open new file
-  
+  /// write event info
+  virtual void WriteEventInfo(const time_t&  /*startTime*/,
+			      const time_t&  /*stopTime*/,
+			      const G4float& /*duration*/,
+			      const std::string &/*seedStateAtStart*/)
+  {;}
+  virtual void FillEvent() {;}
+  virtual void Initialise(); ///< open the file
+  /// Write to file
+  virtual void Write(const time_t &startTime,
+		     const time_t &stopTime,
+		     const G4float &duration,
+		     const std::string &seedStateAtStart);
+  virtual void Close();      ///< close the file
 private:
   G4String basefilename;
   G4String timestring;

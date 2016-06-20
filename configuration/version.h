@@ -1,0 +1,1 @@
+#define GIT_VERSION "@VERSION_SHA1@"

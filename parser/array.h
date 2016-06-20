@@ -1,15 +1,17 @@
-#ifndef __ARRAY_H
-#define __ARRAY_H
+#ifndef ARRAY_H
+#define ARRAY_H
 
 #include <iostream>
 #include <string>
 #include <vector>
 
-namespace GMAD {
+namespace GMAD
+{
   class Symtab;
 }
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief Representation of arrays used in tokens
    *
@@ -17,9 +19,8 @@ namespace GMAD {
    */
 
   class Array {
-    // TODO: needs better data protection
 
-  public:
+  private:
     /// Representation of string array
     std::vector<std::string> symbols;
     /// Representation of double array
@@ -30,8 +31,6 @@ namespace GMAD {
     friend class Symtab;
     /// Default Constructor
     Array();
-    /// Constructor from array
-    Array(Array*, bool isString);
     /// Constructor from symbol
     explicit Array(Symtab*);
     /// Constructor from adding 2 double arrays
@@ -49,10 +48,33 @@ namespace GMAD {
     /// Scalar vector product
     double Product(Array* a);
 
+    /// Access
+    const std::vector<std::string>& GetSymbols()const{return symbols;}
+    const std::vector<double>&      GetData()   const{return data;}
+    
     /// Clear data
     void Clear();
     /// Print data
     void Print();
+    
+    /// Copy STL string containers into symbols
+    template<template <typename, typename> class Container>
+      void Copy(Container<std::string, std::allocator<std::string>>& cpy)
+    {
+      for(std::string name : cpy){
+	symbols.push_back(name);
+      }
+    }
+
+    /// Copy STL numerical containers into data
+    template<typename T, template <typename, typename> class Container>
+      void Copy(Container<T, std::allocator<T>>& cpy)
+    {
+      for(T value : cpy){
+	data.push_back(value);
+      }
+    }
+
     /// Copy symbols into STL string containers
     template<template <typename, typename> class Container>
       void set_vector(Container<std::string, std::allocator<std::string>>& dst)

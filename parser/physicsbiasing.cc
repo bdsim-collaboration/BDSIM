@@ -50,12 +50,12 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
 {
 #ifdef BDSDEBUG
   std::cout << "parser> Setting value " << std::setw(25) << std::left << property;
-  for (const auto& i : value->data) std::cout << i << " ";
+  for (const auto& i : value->GetData()) std::cout << i << " ";
   std::cout << std::endl;
 #endif
 
   if (property=="flag") {
-    for (const auto& i : value->data) {
+    for (const auto& i : value->GetData()) {
       flag.push_back(static_cast<PhysicsBiasingType>((int)i));
     }
     return;
@@ -66,7 +66,7 @@ void PhysicsBiasing::set_value(std::string property, Array* value )
   }
   
   std::cerr << "Error: parser> unknown physicsbiasing option \"" << property << "\" with value ";
-  for (const auto& i : value->data) std::cout << i << " ";
+  for (const auto& i : value->GetData()) std::cout << i << " ";
   std::cout << std::endl;
   exit(1);
 }
@@ -79,15 +79,15 @@ void PhysicsBiasing::set_value(std::string property, std::string value )
 
   if (property=="name")           {name = value; return;}
   if (property=="particle")       {particle = value; return;}
-  if (property=="proc")           {
-    process = value; 
-    std::stringstream ss(process);
-    std::string tok;
-    while(ss >> tok) {
-      processList.push_back(tok);
-    }    
-    return;
-  }
+  if ((property=="proc") || (property=="process"))
+    {
+      process = value; 
+      std::stringstream ss(process);
+      std::string tok;
+      while(ss >> tok)
+	{processList.push_back(tok);}
+      return;
+    }
 
   std::cerr << "Error: parser> unknown physicsbiasing option \"" << property << "\" with value " << value << std::endl;
   exit(1);

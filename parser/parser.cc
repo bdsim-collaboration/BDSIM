@@ -128,10 +128,6 @@ void Parser::ParseFile(FILE *f)
 #endif
   element_list.clear();
   tmp_list.clear();
-  std::map<std::string,Symtab*>::iterator it;
-  for(it=symtab_map.begin();it!=symtab_map.end();++it) {
-    delete (*it).second;
-  }
   symtab_map.clear();
   for(auto it : var_list)
     {delete it;}
@@ -223,20 +219,6 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
       // clean list
       tmp_list.clear();
     }
-
-  switch(type) {
-
-  case ElementType::_MATERIAL:
-    material_list.push_back(e);
-    return;
-    
-  case ElementType::_ATOM:
-    atom_list.push_back(e);
-    return;
-    
-  default:
-    break;
-  }
   
   // insert element with uniqueness requirement
   element_list.push_back(e,true);
@@ -293,9 +275,6 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
   }
   // bool to check if beamline is fully expanded
   bool is_expanded = false;
-  
-  // insert material entries.
-  // TODO:::
   
   // parse starting from the second element until the list is expanded
   int iteration = 0;
@@ -483,7 +462,7 @@ void Parser::add_sampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting sampler "<<name;
-  if (count!=-1) std::cout<<"["<< count <<"]";
+  if (count>=0) std::cout<<"["<< count <<"]";
   std::cout<<std::endl;
 #endif
 
@@ -494,61 +473,13 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
 {
 #ifdef BDSDEBUG 
   std::cout<<"inserting csampler "<<name;
-  if (count!=-1) std::cout<<"["<<count<<"]";
+  if (count>=0) std::cout<<"["<<count<<"]";
   std::cout<<std::endl;
 #endif
 
   set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
-void Parser::add_region()
-{
-  // copy from global
-  Region t(region);
-  // reset region
-  region.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  region_list.push_back(t);
-}
-
-void Parser::add_tunnel()
-{
-  // copy from global
-  Tunnel t(tunnel);
-  // reset tunnel
-  tunnel.clear();
-#ifdef BDSDEBUG 
-  t.print();
-#endif
-  tunnel_list.push_back(t);
-}
-
-void Parser::add_cavitymodel()
-{
-  // copy from global
-  CavityModel c(cavitymodel);
-  // reset cavitymodel
-  cavitymodel.clear();
-#ifdef BDSDEBUG 
-  c.print();
-#endif
-  cavitymodel_list.push_back(c);
-}
-
-void Parser::add_xsecbias()
-{
-  // copy from global
-  PhysicsBiasing b(xsecbias);
-  // reset xsecbias
-  xsecbias.clear();
-#ifdef BDSDEBUG 
-  b.print();
-#endif
-  xsecbias_list.push_back(b);
-}
- 
 double Parser::property_lookup(std::string element_name, std::string property_name)
 {
   std::list<Element>::const_iterator it = element_list.find(element_name);
@@ -609,43 +540,27 @@ int Parser::copy_element_to_params(std::string elementName)
   return type;
 }
 
-int Parser::add_func(std::string name, double (*func)(double))
+void Parser::add_func(std::string name, double (*func)(double))
 {
-  Symtab *sp=symcreate(name);
-  sp->funcptr=func;
-  return 0;
+  Symtab *sp=symtab_map.symcreate(name);
+  sp->Set(func);
 }
 
-int Parser::add_var(std::string name, double value, int is_reserved)
+void Parser::add_var(std::string name, double value, int is_reserved)
 {
-  Symtab *sp=symcreate(name);
-  sp->value=value;
-  sp->is_reserved = is_reserved;
-  return 0;
+  Symtab *sp=symtab_map.symcreate(name);
+  sp->Set(value,is_reserved);
 }
 
 Symtab * Parser::symcreate(std::string s)
 {
-  std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
-  if (it!=symtab_map.end()) {
-    std::cerr << "ERROR Variable " << s << " is already defined!" << std::endl;
-    exit(1);
-  }
-    
-  Symtab* sp = new Symtab(s);
-  std::pair<std::map<std::string,Symtab*>::iterator,bool> ret = symtab_map.insert(std::make_pair(s,sp));
-  return (*(ret.first)).second;
-}
-  
-Symtab * Parser::symlook(std::string s)
-{
-  std::map<std::string,Symtab*>::iterator it = symtab_map.find(s);
-  if (it==symtab_map.end()) {
-    return nullptr;
-  } 
-  return (*it).second;
+  return symtab_map.symcreate(s);
 }
 
+Symtab * Parser::symlook(std::string s)
+{
+  return symtab_map.symlook(s);
+}
 void Parser::Store(double value)
 {
   tmparray.push_front(value);
@@ -658,19 +573,13 @@ void Parser::Store(std::string name)
 
 void Parser::FillArray(Array* array)
 {
-  for(double value : tmparray)
-    {
-      array->data.push_back(value);
-    }
+  array->Copy(tmparray);
   tmparray.clear();
 }
 
 void Parser::FillString(Array* array)
-{  
-  for(std::string name : tmpstring)
-    {
-      array->symbols.push_back(name);
-    }
+{
+  array->Copy(tmpstring);
   tmpstring.clear();
 }
 
@@ -719,4 +628,50 @@ void Parser::PrintOptions()const
 const FastList<Element>& Parser::GetBeamline()const
 {
   return beamline_list;
+}
+
+//template specialisation
+// put explicitly in namespace since g++ complains
+namespace GMAD {
+  template<>
+  Parameters& Parser::GetGlobal(){return params;}
+
+  template<>
+  Options& Parser::GetGlobal(){return options;}
+
+  template<>
+  Region& Parser::GetGlobal(){return region;}
+
+  template<>
+  std::vector<Region>& Parser::GetList<Region>(){return region_list;}
+
+  template<>
+  Atom& Parser::GetGlobal(){return atom;}
+
+  template<>
+  std::vector<Atom>& Parser::GetList<Atom>(){return atom_list;}
+
+  template<>
+  Material& Parser::GetGlobal(){return material;}
+
+  template<>
+  std::vector<Material>& Parser::GetList<Material>(){return material_list;}
+
+  template<>
+  Tunnel& Parser::GetGlobal(){return tunnel;}
+
+  template<>
+  std::vector<Tunnel>& Parser::GetList<Tunnel>(){return tunnel_list;}
+
+  template<>
+  CavityModel& Parser::GetGlobal(){return cavitymodel;}
+
+  template<>
+  std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
+
+  template<>
+  PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
+
+  template<>
+  FastList<PhysicsBiasing>& Parser::GetList<PhysicsBiasing,FastList<PhysicsBiasing>>(){return xsecbias_list;}
 }

@@ -82,7 +82,7 @@ void BDSDegrader::BuildContainerLogicalVolume()
                                 outerDiameter*0.5,
                                 chordLength*0.5);
     
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
     
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
                                 emptyMaterial,

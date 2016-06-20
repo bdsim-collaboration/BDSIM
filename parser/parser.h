@@ -1,19 +1,22 @@
-#ifndef __PARSER_H
-#define __PARSER_H
+#ifndef PARSER_H
+#define PARSER_H
 
 #include <list>
 #include <map>
 #include <string>
 #include <vector>
 
+#include "atom.h"
 #include "cavitymodel.h"
 #include "element.h"
-#include "fastlist.h"
 #include "elementtype.h"
+#include "fastlist.h"
+#include "material.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
 #include "region.h"
+#include "symbolmap.h"
 #include "tunnel.h"
 
 /// parser error message, defined in parser.y
@@ -21,7 +24,8 @@ int yyerror(const char *);
 /// declaration needed by bison
 extern int yylex();
 
-namespace GMAD {
+namespace GMAD
+{
   class Array;
   class Symtab;
   /**
@@ -72,14 +76,16 @@ namespace GMAD {
     void add_sampler(std::string name, int count, ElementType type);
     /// insert a cylindrical sampler into beamline_list
     void add_csampler(std::string name, int count, ElementType type);
-    /// insert region
-    void add_region();
-    /// insert cavity model
-    void add_cavitymodel();
-    /// insert tunnel
-    void add_tunnel();
-    /// insert cross section bias
-    void add_xsecbias();
+    /// Insert global object of parser class C in Container class
+    template <class C, class Container=std::vector<C>>
+      void Add();
+    /// Get global object of parser class C
+    template <class C>
+      C& GetGlobal();
+    /// Get list for parser class C
+    template <class C, class Container=std::vector<C>>
+      Container& GetList();
+
     /// access property of Element with element_name
     double property_lookup(std::string element_name, std::string property_name);
     /// add element to temporary element sequence tmp_list
@@ -89,7 +95,6 @@ namespace GMAD {
 
     /// create new parser symbol
     Symtab * symcreate(std::string s);
-
     /// look up parser symbol
     Symtab * symlook(std::string s);
 
@@ -103,24 +108,10 @@ namespace GMAD {
     ///@}
     /// Reset parameters
     void ClearParams();
-    /// Set parameter value
-    template <typename T>
-      void SetParameterValue(std::string property, T value);
-    /// Set region value
-    template <typename T>
-      void SetRegionValue(std::string property, T value);
-    /// Set tunnel value
-    template <typename T>
-      void SetTunnelValue(std::string property, T value);
-    /// Set physics biasing value
-    template <typename T>
-      void SetPhysicsBiasValue(std::string property, T value);
-    /// Set options value
-    template <typename T>
-      void SetOptionsValue(std::string property, T value);
-    /// Set options value
-    template <typename T>
-      void SetCavityModelValue(std::string property, T value);
+    /// Set value for parser class
+    template <class C, typename T>
+      void SetValue(std::string property, T value);
+
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
     /// Add variable memory to variable list for memory management
@@ -147,9 +138,9 @@ namespace GMAD {
     /// Set sampler
     void set_sampler(std::string name, int count, ElementType type, std::string samplerType, double samplerRadius=0.0);
     /// Add function to parser
-    int add_func(std::string name, double (*func)(double));
+    void add_func(std::string name, double (*func)(double));
     /// Add reserved variable to parser
-    int add_var(std::string name, double value, int is_reserved = 0);
+    void add_var(std::string name, double value, int is_reserved = 0);
 
     // *****************
     // Private members *
@@ -171,6 +162,10 @@ namespace GMAD {
     Parameters params;
     /// General options
     Options options;
+    /// Atom instance;
+    Atom atom;
+    /// Material instance;
+    Material material;
     /// Region instance;
     Region region;
     /// Tunnel instance
@@ -188,10 +183,10 @@ namespace GMAD {
     
     /// Beamline
     FastList<Element>   beamline_list;
-    /// List of parser defined materials
-    std::list<Element>  material_list;
     /// List of parser defined atoms
-    std::list<Element>  atom_list;
+    std::vector<Atom>   atom_list;
+    /// List of parser defined materials
+    std::vector<Material> material_list;
     /// List of parser defined regions
     std::vector<Region> region_list;
     /// List of parser defined tunnels
@@ -202,40 +197,29 @@ namespace GMAD {
     std::vector<CavityModel> cavitymodel_list;
     
     /// Parser symbol map
-    std::map<std::string, Symtab*> symtab_map;
+    SymbolMap symtab_map;
     /// Variable vector for memory storage
     std::vector<std::string*> var_list;
   };
 
-  template <typename T>
-    void Parser::SetParameterValue(std::string property, T value)
+  template <class C, class Container>
+    void Parser::Add()
     {
-      params.set_value(property, value);
+      // copy from global
+      C& global = GetGlobal<C>();
+      C instance(global);
+      // reset global
+      global.clear();
+#ifdef BDSDEBUG 
+      instance.print();
+#endif
+      GetList<C, Container>().push_back(instance);
     }
-  template <typename T>
-    void Parser::SetRegionValue(std::string property, T value)
+
+  template <class C, typename T>
+    void Parser::SetValue(std::string property, T value)
     {
-      region.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetTunnelValue(std::string property, T value)
-    {
-      tunnel.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetPhysicsBiasValue(std::string property, T value)
-    {
-      xsecbias.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetOptionsValue(std::string property, T value)
-    {
-      options.set_value(property, value);
-    }
-  template <typename T>
-    void Parser::SetCavityModelValue(std::string property, T value)
-    {
-      cavitymodel.set_value(property, value);
+      GetGlobal<C>().set_value(property, value);
     }
 }
 

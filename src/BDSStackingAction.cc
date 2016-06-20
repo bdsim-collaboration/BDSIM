@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSPhotonCounter.hh"
 #include "BDSRunManager.hh"
 #include "BDSStackingAction.hh"
 
@@ -46,10 +45,10 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   }
 
   // kill secondaries
-  if(BDSGlobalConstants::Instance()->GetStopSecondaries() && (aTrack->GetParentID() > 0) )
+  if(BDSGlobalConstants::Instance()->StopSecondaries() && (aTrack->GetParentID() > 0) )
     {return fKill;}
   
-  if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
+  if(BDSGlobalConstants::Instance()->StopTracks()) // if tracks killed after interaction
     {
       // kill secondary electrons      
       if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) ) {
@@ -78,11 +77,6 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
     }
 
   return classification;
-}
-
-void BDSStackingAction::countPhoton(const G4Track* aTrack)
-{
-  BDSPhotonCounter::Instance()->countPhoton(aTrack);
 }
 
 void BDSStackingAction::NewStage()

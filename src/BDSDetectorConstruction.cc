@@ -9,7 +9,6 @@
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -54,10 +53,11 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   worldPV(nullptr),worldUserLimits(nullptr),magField(nullptr),
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
-  verbose       = BDSExecOptions::Instance()->GetVerbose();
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
-  G4bool gflash = BDSExecOptions::Instance()->GetGFlash();
-  if (gflash) InitialiseGFlash();
+  verbose       = BDSGlobalConstants::Instance()->Verbose();
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+  gflash        = BDSGlobalConstants::Instance()->GFlash();
+  if (gflash)
+    {InitialiseGFlash();}
   BDSAcceleratorModel::Instance(); // instantiate the accelerator model holding class
 }
 
@@ -127,10 +127,10 @@ void BDSDetectorConstruction::InitialiseRegions()
   // precision region
   precisionRegion = new G4Region("precisionRegion");
   G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPhotonsP(),  "gamma");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutElectronsP(),"e-");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutPositronsP(),"e+");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->GetProdCutProtonsP(),  "proton");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsP(),  "gamma");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsP(),"e-");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsP(),"e+");
+  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutProtonsP(),  "proton");
   precisionRegion->SetProductionCuts(precisionProductionCuts);
 }
 
@@ -138,13 +138,12 @@ void BDSDetectorConstruction::BuildBeamline()
 {
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
-
-  const BDSExecOptions* execOptions = BDSExecOptions::Instance();
+  
   // Write survey file here since has access to both element and beamline
   BDSSurvey* survey = nullptr;
-  if(execOptions->GetSurvey())
+  if(BDSGlobalConstants::Instance()->Survey())
     {
-      G4String surveyFilename = execOptions->GetSurveyFilename();
+      G4String surveyFilename = BDSGlobalConstants::Instance()->SurveyFileName();
       surveyFilename += ".dat";
       survey = new BDSSurvey(surveyFilename);
       survey->WriteHeader();
@@ -201,7 +200,7 @@ void BDSDetectorConstruction::BuildBeamline()
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (execOptions->GetCircular())
+  if (BDSGlobalConstants::Instance()->Circular())
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
@@ -302,7 +301,7 @@ void BDSDetectorConstruction::BuildWorld()
   G4String worldName   = "World";
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
-  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->GetEmptyMaterial();
+  G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial     = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
   G4LogicalVolume* worldLV      = new G4LogicalVolume(worldSolid,              // solid
 						      emptyMaterial,           // material
@@ -321,7 +320,7 @@ void BDSDetectorConstruction::BuildWorld()
 							      worldName + "_tunnel_ro_lv"); // name
   
   // visual attributes
-  if (BDSExecOptions::Instance()->GetVisDebug())
+  if (BDSGlobalConstants::Instance()->VisDebug())
     {
       // copy the debug vis attributes but change to force wireframe
       G4VisAttributes* debugWorldVis = new G4VisAttributes(*(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr()));
@@ -386,6 +385,14 @@ void BDSDetectorConstruction::BuildWorld()
   // Register world PV with our auxiliary navigator so steppers and magnetic
   // fields know which geometry to navigate to get local / global transforms
   BDSAuxiliaryNavigator::AttachWorldVolumeToNavigator(worldPV);
+  // Register read out world PV with our auxiliary navigator. This gives curvilinear
+  // coordinates for multiple applications - CL = curvilinear.
+  BDSAuxiliaryNavigator::AttachWorldVolumeToNavigatorCL(readOutWorldPV);
+
+  /// Give the pv info registry a heads up that these volumes don't have info (optimisation).
+  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(worldPV);
+  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(readOutWorldPV);
+  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterExcludedPV(tunnelReadOutWorldPV);
 }
 
 void BDSDetectorConstruction::ComponentPlacement()
@@ -448,7 +455,6 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  lv->SetSensitiveDetector(energyCounterSDRO);
 	  
 	  //set gflash parameterisation on volume if required
-	  G4bool gflash     = BDSExecOptions::Instance()->GetGFlash();
 	  //TBC - so glash is only used for 'element' types - perhaps this should be used
 	  //for other volumes too.  The logic of the if statement needs checked.
 	  //The check of the precision region really compares the region pointer of the
@@ -501,9 +507,10 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  
 	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-								     readOutPVName,
-								     element->GetSPositionMiddle(),
-								     accComp->GetPrecisionRegion());
+                                                               readOutPVName,
+                                                               element->GetSPositionMiddle(),
+                                                               accComp->GetPrecisionRegion(),
+                                                               element->GetIndex());
 
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
 	}
@@ -582,15 +589,38 @@ void BDSDetectorConstruction::ComponentPlacement()
 
 #if G4VERSION_NUMBER > 1009
 BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSectionBias(
-        const std::list<std::string>& biasList)
+ const std::list<std::string>& biasList,
+ G4String defaultBias,
+ G4String elementName)
 {
   // loop over all physics biasing
   BDSBOptrMultiParticleChangeCrossSection* eg = new BDSBOptrMultiParticleChangeCrossSection();
+
+  const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
   for(std::string const & bs : biasList)
     {
-      auto it = BDSParser::Instance()->GetBiasing().find(bs);
-      if (it==BDSParser::Instance()->GetBiasing().end()) continue;
-      const GMAD::PhysicsBiasing& pb = *it;
+      GMAD::FastList<GMAD::PhysicsBiasing>::FastListConstIterator result;
+      if (bs.empty() && defaultBias.empty())
+	{continue;} // no bias specified and no default
+
+      G4String bias;
+      if (bs.empty())
+	{// no bias but default specified
+	  bias = defaultBias;
+	}
+      else
+	{// bias specified - look it up and ignore default
+	  bias = bs;
+	}
+      
+      result = biasObjectList.find(bias);
+      if (result == biasObjectList.end())
+	{
+	  G4cout << "Error: bias named \"" << bias << "\" not found for element named \""
+		 << elementName << "\"" << G4endl;
+	  exit(1);
+	}
+      const GMAD::PhysicsBiasing& pb = *result;
       
       if(debug)
 	{G4cout << __METHOD_NAME__ << "bias loop : " << bs << " " << pb.particle << " " << pb.process << G4endl;}
@@ -599,14 +629,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
       
       // loop through all processes
       for(unsigned int p = 0; p < pb.processList.size(); ++p)
-	{
-	  if(debug)
-	    {
-	      G4cout << __METHOD_NAME__ << "Process loop "
-		     << pb.processList[p] << " " << pb.factor[p] << " " << (int)pb.flag[p] << G4endl;
-	    }
-	  eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(int)pb.flag[p]);
-	}
+	{eg->SetBias(pb.particle,pb.processList[p],pb.factor[p],(G4int)pb.flag[p]);}
     }
 
   biasObjects.push_back(eg);
@@ -624,24 +647,30 @@ void BDSDetectorConstruction::BuildPhysicsBias()
   if(debug)
     {G4cout << __METHOD_NAME__ << "registry=" << registry << G4endl;}
 
+  G4String defaultBiasVacuum   = BDSParser::Instance()->GetOptions().defaultBiasVacuum;
+  G4String defaultBiasMaterial = BDSParser::Instance()->GetOptions().defaultBiasMaterial;
+
   // apply per element biases
   for (auto const & item : *registry)
   {
     if (debug)
       {G4cout << __METHOD_NAME__ << "component named: " << item.first << G4endl;}
     BDSAcceleratorComponent* accCom = item.second;
+    G4String                accName = accCom->GetName();
+    
     // Build vacuum bias object based on vacuum bias list in the component
-    auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList());
+    auto egVacuum = BuildCrossSectionBias(accCom->GetBiasVacuumList(), defaultBiasVacuum, accName);
     auto vacuumLV = accCom->GetAcceleratorVacuumLogicalVolume();
     if(vacuumLV)
       {
 	if(debug)
-	  {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV << " " << vacuumLV->GetName() << G4endl;}
-	{egVacuum->AttachTo(vacuumLV);}
+	  {G4cout << __METHOD_NAME__ << "vacuum volume name: " << vacuumLV
+		  << " " << vacuumLV->GetName() << G4endl;}
+	egVacuum->AttachTo(vacuumLV);
       }
       
     // Build material bias object based on material bias list in the component
-    auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList());
+    auto egMaterial = BuildCrossSectionBias(accCom->GetBiasMaterialList(), defaultBiasMaterial, accName);
     auto allLVs     = accCom->GetAllLogicalVolumes();
     if(debug)
       {G4cout << __METHOD_NAME__ << "All logical volumes " << allLVs.size() << G4endl;}
@@ -650,7 +679,8 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 	if(materialLV != vacuumLV)
 	  {
 	    if(debug)
-	      {G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV << " " << (materialLV)->GetName() << G4endl;}
+	      {G4cout << __METHOD_NAME__ << "All logical volumes " << materialLV
+		      << " " << (materialLV)->GetName() << G4endl;}
 	    egMaterial->AttachTo(materialLV);
 	  }
       }
@@ -660,18 +690,18 @@ void BDSDetectorConstruction::BuildPhysicsBias()
 
 void BDSDetectorConstruction::InitialiseGFlash()
 {
-  G4double gflashemax = BDSExecOptions::Instance()->GetGFlashEMax();
-  G4double gflashemin = BDSExecOptions::Instance()->GetGFlashEMin();
+  G4double gflashemax = BDSGlobalConstants::Instance()->GFlashEMax();
+  G4double gflashemin = BDSGlobalConstants::Instance()->GFlashEMin();
   theParticleBounds  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   theParticleBounds->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),gflashemax*CLHEP::GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Electron::ElectronDefinition(),gflashemin*CLHEP::GeV);
   // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //theParticleBounds->SetEneToKill(*G4Electron::ElectronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
       
   theParticleBounds->SetMaxEneToParametrise(*G4Positron::PositronDefinition(),gflashemax*CLHEP::GeV);
   theParticleBounds->SetMinEneToParametrise(*G4Positron::PositronDefinition(),gflashemin*CLHEP::GeV);
   // does this break energy conservation??
-  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->GetThresholdCutCharged());
+  //theParticleBounds->SetEneToKill(*G4Positron::PositronDefinition(),BDSGlobalConstants::Instance()->ThresholdCutCharged());
       
   // theParticleBoundsVac  = new GFlashParticleBounds();              // Energy Cuts to kill particles                                                                
   // theParticleBoundsVac->SetMaxEneToParametrise(*G4Electron::ElectronDefinition(),0*CLHEP::GeV);

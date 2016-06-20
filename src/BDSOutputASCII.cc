@@ -1,7 +1,9 @@
-#include "BDSOutputASCII.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSOutputASCII.hh"
 #include "BDSUtilities.hh"       // for BDS::non_alpha
+
+#include "globals.hh" // geant4 types / globals
 
 #include <cmath>
 #include <ctime>
@@ -18,10 +20,13 @@ BDSOutputASCII::BDSOutputASCII()
   time(&currenttime);
   timestring = asctime(localtime(&currenttime));
   timestring = timestring.substr(0,timestring.size()-1);
+
+  // initialise file in constructor since multiple file writing not implemented for ASCII
+  // should in principle be in Initialise()
   
   // policy overwrite if output filename specifically set, otherwise increase
   // generate filenames
-  basefilename = BDSExecOptions::Instance()->GetOutputFilename();
+  basefilename = BDSGlobalConstants::Instance()->OutputFileName();
   G4String originalname = basefilename;
   // lots of files - make a directory with the users permissions
   // see sysstat.h, e.g. http://pubs.opengroup.org/onlinepubs/007908799/xsh/sysstat.h.html
@@ -30,7 +35,7 @@ BDSOutputASCII::BDSOutputASCII()
   while (status != 0)
     {
       status = mkdir(basefilename.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-      if (BDSExecOptions::Instance()->GetOutputFilenameSet())
+      if (BDSGlobalConstants::Instance()->OutputFileNameSet())
 	{
 	  // if this directory already exists or not, use this directory (should be checked for other error codes)
 	  break;
@@ -212,7 +217,8 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 
 // write a trajectory to a root/ascii file
 // TODO: ASCII file not implemented - JS
-void BDSOutputASCII::WriteTrajectory(std::vector<BDSTrajectory*> &/*TrajVec*/){
+void BDSOutputASCII::WriteTrajectory(std::vector<BDSTrajectory*> &/*TrajVec*/)
+{
   G4cout << __METHOD_NAME__ << "WARNING trajectory writing not implemented for ASCII output" << G4endl;
 }
 
@@ -229,7 +235,7 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 		    (*hc)[i]->Getx(),          // local x
 		    (*hc)[i]->Gety(),          // local y
 		    (*hc)[i]->GetZ(),    // global z
-		    (*hc)[i]->GetS(),
+		    (*hc)[i]->GetSHit(),
 		    0, //(*hc)[i]->GetXPrime(),
 		    0, //(*hc)[i]->GetYPrime(),
 		    (*hc)[i]->GetEventNo(),
@@ -250,7 +256,7 @@ void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
 		hit->Getx(),
 		hit->Gety(),
 		hit->GetZ(),
-		hit->GetS(),
+		hit->GetSHit(),
 		0,//hit->GetXPrime(),
 		0,//hit->GetYPrime(),
 		hit->GetEventNo(),
@@ -300,23 +306,26 @@ void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
   histOS.close();
 }
 
-void BDSOutputASCII::Commit()
+void BDSOutputASCII::Initialise()
 {
-  ofMain.flush();
-  ofPrimaries.flush();
-  ofELoss.flush();
-  ofPLoss.flush();
-  // Multiple file writing not implemented for ascii
+  // Multiple file writing not implemented for ASCII
 }
 
-void BDSOutputASCII::Write()
+void BDSOutputASCII::Write(const time_t& /*startTime*/,
+			   const time_t& /*stopTime*/,
+			   const G4float& /*duration*/,
+			   const std::string& /*seedStateAtStart*/)
 {
   ofMain.flush();
-  ofMain.close();
   ofPrimaries.flush();
-  ofPrimaries.close();
   ofELoss.flush();
-  ofELoss.close();
   ofPLoss.flush();
+}
+
+void BDSOutputASCII::Close()
+{
+  ofMain.close();
+  ofPrimaries.close();
+  ofELoss.close();
   ofPLoss.close();
 }

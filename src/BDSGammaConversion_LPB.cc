@@ -8,7 +8,7 @@ G4VParticleChange* GammaConversion_LPB::PostStepDoIt(const G4Track& track, const
 {
   //System to control degree of biasing used
   G4bool fActive = true;
-  G4double fBiasFraction = BDSGlobalConstants::Instance()->GetLPBFraction();
+  G4double fBiasFraction = BDSGlobalConstants::Instance()->LPBFraction();
   if(fBiasFraction < CLHEP::RandFlat::shoot()){
     fActive = false;
   }
@@ -82,7 +82,7 @@ G4VParticleChange* GammaConversion_LPB_v2::PostStepDoIt(const G4Track& track, co
 
   //System to control degree of biasing used
   // G4bool fActive = true;
-  // G4double fBiasFraction = BDSGlobalConstants::Instance()->GetLPBFraction();
+  // G4double fBiasFraction = BDSGlobalConstants::Instance()->LPBFraction();
   // if(fBiasFraction < CLHEP::RandFlat::shoot()){
   //   fActive = false;
   // }
