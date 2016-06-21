@@ -707,7 +707,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4double length)
+void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
 {
   G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
 
@@ -761,23 +761,19 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4double length)
   rightPoints.push_back(G4TwoVector(-outerX, upperY));
   rightPoints.push_back(G4TwoVector(-outerX, lowerY));
 
-  // this will be the eventual length along z but for now
-  // is the amplitude in y.
-  endPieceLength = 0.1 * length;
-  endPieceLength = std::max(endPieceLength, outerX-innerX);
-  //endPieceLength = std::min(endPieceLength, 10*CLHEP::cm); // maximum is 10cm
+  // this will be the eventual length along z but for now its the amplitude in y.
   // make slightly smaller version as endPieceLength used for container dimensions
-  G4double endPieceLengthSafe = endPieceLength - lengthSafetyLarge;
+  endPieceLength = (outerX - innerX) - lengthSafetyLarge;
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
       G4double x = outerX + endPieceLength * (cos(angle) - 1.0);
-      G4double y = endPieceLengthSafe * sin(angle);
+      G4double y = endPieceLength * sin(angle);
       endPiecePoints.push_back(G4TwoVector(x,y));
     }
   for (G4double angle = 0; angle <= CLHEP::halfpi; angle+= CLHEP::halfpi / 8.0)
     {
       G4double x = -outerX - endPieceLength * (sin(angle) - 1.0);
-      G4double y = endPieceLengthSafe * cos(angle);
+      G4double y = endPieceLength * cos(angle);
       endPiecePoints.push_back(G4TwoVector(x,y));
     }
 }
@@ -788,7 +784,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
   // create an extruded polygon even though a square to avoid the need for
   // individual rotated translations. This also allows the same rotation
   // to be used for the coils as the poles.
-  CreateCoilPoints(length);
+  CreateCoilPoints();
 
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1
