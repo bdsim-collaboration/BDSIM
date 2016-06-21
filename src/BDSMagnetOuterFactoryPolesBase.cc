@@ -517,7 +517,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   if (buildPole)
     {
       CreatePoleSolid(name, length, order);
-      CreateCoilSolids(name, length);
+      CreateCoilSolids(name, length, order);
     }
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
@@ -707,13 +707,14 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
+void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4int order)
 {
   G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
 
   // Start the coil just after the pole becomes square in cross-section
   // start it just beyond this point - say + 20% square section length
-  G4double lowerY = poleSquareStartRadius + 0.2*(poleFinishRadius - poleSquareStartRadius);
+  G4double fraction = std::min(0.5, (G4double)order/10.0); // scale slightly with order
+  G4double lowerY = poleSquareStartRadius + fraction*(poleFinishRadius - poleSquareStartRadius);
 
   // At lower Y, project out in X as far as possible within the pole segment
   G4double outerX = 0.9 * lowerY * tan (segmentAngle*0.5);
@@ -721,8 +722,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
   // At outer X, we find out the maximum y before hitting the inside of the yoke and
   // back off a wee bit
   G4double upperY = 0.95 * std::abs(std::sqrt(pow(yokeStartRadius,2) - pow(outerX,2)));
-
-  G4double dy = upperY - lowerY;
+  
   coilHeight  = upperY - lowerY;
   G4double dx = outerX - innerX;
   // Check proportions and make roughly square.
@@ -767,12 +767,13 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
-						      G4double length)
+						      G4double length,
+						      G4int    order)
 {
   // create an extruded polygon even though a square to avoid the need for
   // individual rotated translations. This also allows the same rotation
   // to be used for the coils as the poles.
-  CreateCoilPoints();
+  CreateCoilPoints(order);
 
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1

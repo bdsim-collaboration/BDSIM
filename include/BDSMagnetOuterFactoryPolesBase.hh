@@ -221,11 +221,12 @@ protected:
 			       G4double      length,               // length [mm]
 			       G4int         order);               // Nx2 poles
 
-  virtual void CreateCoilPoints();
+  virtual void CreateCoilPoints(G4int order);
   
   /// Create the coil solids corresponding to the pole solid
   virtual void CreateCoilSolids(G4String name,
-				G4double length);
+				G4double length,
+				G4int    order);
   
   /// Create yoke that connects poles and container to put them in
   virtual void CreateYokeAndContainerSolid(G4String      name,
