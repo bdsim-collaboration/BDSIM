@@ -5,6 +5,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -74,7 +75,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildBeamline();
 
   // construct beamline of end pieces
-  BuildEndPieceBeamline();
+  BDS::BuildEndPieceBeamline();
 
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
