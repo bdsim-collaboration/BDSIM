@@ -64,8 +64,6 @@ private:
   /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
   void BuildBeamline();
 
-  void BuildEndPieceBeamline();
-
   /// Build the tunnel around the already constructed flat beam line.
   void BuildTunnel();
   
