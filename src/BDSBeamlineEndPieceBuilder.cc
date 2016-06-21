@@ -12,10 +12,16 @@ void BDS::BuildEndPieceBeamline()
 {
   // the beamline of end pieces to be placed.
   BDSBeamline* endPieces = new BDSBeamline();
+
+  // the main beam line
+  auto beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+
+  // references to first and last item for checking
+  const BDSBeamlineElement* firstItem = beamline->GetFirstItem();
+  const BDSBeamlineElement* lastItem  = beamline->GetLastItem();
   
   // loop over main beamline
   G4int currentIndex = 0;
-  auto beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   for (auto element : *beamline)
     {
       const auto accComponent   = element->GetAcceleratorComponent();
@@ -51,6 +57,7 @@ void BDS::BuildEndPieceBeamline()
 	  BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double   previousNonDriftEndPieceL = 0;
+	  G4bool              driftIsFirstItem = false;
 	  while(keepGoing)
 	    {
 	      inspectedElement = beamline->GetPrevious(inspectedElement);
@@ -71,9 +78,16 @@ void BDS::BuildEndPieceBeamline()
 	      else
 		{keepGoing = false;} // quit the loop - no previous element
 	    }
+	  
+	  // don't place if there isn't enough space for BOTH endpieces - the previous one and this one
 	  if (requiredBeforeLength > (availableLength - previousNonDriftEndPieceL))
 	    {placeBefore = false;}
 
+	  // place the last item anyway even if there technically isn't space - either too short
+	  // a drift or the magnet is first in the line
+	  if ( (element == firstItem) || driftIsFirstItem )
+	    {placeBefore = true;}
+	  
 	  if (placeBefore)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
 	      auto beforeEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
@@ -92,13 +106,17 @@ void BDS::BuildEndPieceBeamline()
 	  BDSBeamlineElement* inspectedElement = element; // start with current element
 	  G4double             availableLength = 0;
 	  G4double       nextNonDriftEndPieceL = 0;
+	  G4bool               driftIsLastItem = false;
 	  while(keepGoing)
 	    {
 	      inspectedElement = beamline->GetNext(inspectedElement);
 	      if (inspectedElement)
 		{ // there is a previous element - inspect it
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
-		    {availableLength += inspectedElement->GetChordLength();}
+		    {
+		      availableLength += inspectedElement->GetChordLength();
+		      driftIsLastItem = inspectedElement == lastItem;
+		    }
 		  else
 		    {
 		      keepGoing = false;
@@ -112,8 +130,15 @@ void BDS::BuildEndPieceBeamline()
 	      else
 		{keepGoing = false;} // quit the loop - no previous element
 	    }
+
+	  // don't place if there isn't enough space for BOTH endpieces - this one and the upcoming one
 	  if (requiredBeforeLength > (availableLength - nextNonDriftEndPieceL))
 	    {placeAfter = false;}
+	  
+	  // place the last item anyway even if there technically isn't space - either too short
+	  // a drift or the magnet is last in the line
+	  if ( (element == lastItem) || driftIsLastItem )
+	    {placeAfter = true;}
 
 	  if (placeAfter)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
