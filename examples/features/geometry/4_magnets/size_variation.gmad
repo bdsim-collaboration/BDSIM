@@ -1,0 +1,41 @@
+! This example is designed to test the scaling of the poled geometry.
+! With different ratios of beam pipe radius to outer diameter, the poled
+! geometry should decide whethere there's sufficient room to build the poles
+! and coils and should also not produce overlaps at any scale.
+
+! This should be included in a contcrete example and define a basic element
+! called 'el'.
+
+! control beam pipe radius
+option, beampipeRadius=4*cm,
+	beampipeThickness = 1.5*mm;
+
+! unphyiscally small, but outerDiameter > 2* beampipeRadius should work
+q1: el, l=0.5*m, k1=0.002, outerDiameter=8.4*cm;
+
+! small enough to be awkward but visible yoke - shouldn't build pole in this case
+q2: q1, outerDiameter=10*cm;
+
+! small but sensible
+q3: q1, outerDiameter=20*cm;
+
+! another step up
+q4: q1, outerDiameter=40*cm;
+
+! reaonable size
+q5: q1, outerDiameter=1*m;
+
+! large
+q6: q1, outerDiameter=2*m;
+
+d1: drift, l=0.5*m;
+
+l1: line = (d1,q1,d1,q2,d1,q3,d1,q4,d1,q5,d1,q6,d1);
+
+use, l1;
+
+option, magnetGeometryType="polescircular",
+	checkOverlaps=1;
+
+beam, particle="e-",
+      energy=1*GeV;
