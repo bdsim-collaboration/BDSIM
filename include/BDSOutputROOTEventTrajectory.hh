@@ -35,6 +35,11 @@ public:
 
   std::vector<std::vector<TVector3>> trajectories;
 
+  int primary();
+  int primaryElectromagnetic();
+  int primaryHadronic();
+  void primaryPrint();
+
   friend std::ostream& operator<< (std::ostream& out, BDSOutputROOTEventTrajectory const &p);
 
   ClassDef(BDSOutputROOTEventTrajectory,1);
