@@ -54,6 +54,7 @@ public:
   inline BDSAcceleratorComponent* GetAcceleratorComponent() const {return component;}
   inline G4String          GetName()                      const {return component->GetName();}
   inline G4String          GetType()                      const {return component->GetType();}
+  inline G4double          GetChordLength()               const {return component->GetChordLength();}
   inline G4String          GetPlacementName()             const;
   inline G4int             GetCopyNo()                    const;
   inline G4LogicalVolume*  GetContainerLogicalVolume()    const;
