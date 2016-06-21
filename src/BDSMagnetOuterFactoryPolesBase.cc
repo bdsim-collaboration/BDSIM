@@ -711,41 +711,29 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
 {
   G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
 
-  // start the coil just after the pole becomes square in cross-section
+  // Start the coil just after the pole becomes square in cross-section
   // start it just beyond this point - say + 20% square section length
   G4double lowerY = poleSquareStartRadius + 0.2*(poleFinishRadius - poleSquareStartRadius);
 
-  // now, with the bottom left corner of the right coil (positive quadrant),
-  // we extrapolate at 45 degress for a square coil as big as possible before
-  // it hits the yoke. 
+  // At lower Y, project out in X as far as possible within the pole segment
+  G4double outerX = 0.9 * lowerY * tan (segmentAngle*0.5);
 
-  // calculate angle of vector to lower left point
-  G4double theta = atan(lowerY / innerX);
-  // calculate angle between that and the vector from lower left to top right at 45 deg.
-  G4double phi = 225 - theta;
+  // At outer X, we find out the maximum y before hitting the inside of the yoke and
+  // back off a wee bit
+  G4double upperY = 0.95 * std::abs(std::sqrt(pow(yokeStartRadius,2) - pow(outerX,2)));
 
-  // we're trying to analyse a triangle including the two points plus the origin. ensure
-  // we get the angle on the inside rather than the outside of the triangle.
-  if (phi > CLHEP::pi)
-    {phi = CLHEP::twopi - phi;}
-  
-  // sin rule ratio - A / sin(a) = B / sin(b) = C / sin(c)
-  G4double ratio = poleFinishRadius*0.98 / sin(phi);
+  G4double dy = upperY - lowerY;
+  coilHeight  = upperY - lowerY;
+  G4double dx = outerX - innerX;
+  // Check proportions and make roughly square.
+  if (coilHeight < dx)
+    {
+      G4double newXHeight = std::max(dx*0.5, dx - (dx-coilHeight));
+      outerX = innerX + newXHeight;
+      // recalculate upperY given the new outerX
+      upperY = 0.95 * std::abs(std::sqrt(pow(yokeStartRadius,2) - pow(outerX,2)));
+    }
 
-  // radius from origin of lower left point
-  G4double pointRadius = sqrt(pow(innerX,2) + pow(lowerY,2));
-  G4double beta        = asin(pointRadius / ratio);
-  G4double alpha       = CLHEP::pi - beta - phi;
-  G4double v           = sin(alpha) * ratio;
-  G4double xcomponent  = v / sqrt(2);
-  G4double outerX      = innerX + xcomponent;
-  G4double upperY      = lowerY + xcomponent;
-  
-  // ensure the outer edge of the coil stays within the pole section of the circle.
-  G4double maxOuterX   = 0.95 * lowerY * tan(segmentAngle*0.5);
-  outerX = std::min(outerX, maxOuterX);
-  
-  coilHeight       = upperY - lowerY;
   coilCentreRadius = lowerY + 0.5*coilHeight;
   endPieceInnerR   = lowerY - lengthSafetyLarge;
   endPieceOuterR   = yokeStartRadius;
