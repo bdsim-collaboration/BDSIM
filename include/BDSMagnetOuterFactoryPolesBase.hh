@@ -221,12 +221,11 @@ protected:
 			       G4int         order);               // Nx2 poles
 
   /// Create all the points that make up the extruded solid of the pole.
-  virtual void CreateCoilPoints(G4int order);
+  virtual void CreateCoilPoints();
   
   /// Create the coil solids corresponding to the pole solid.
   virtual void CreateCoilSolids(G4String name,
-				G4double length,
-				G4int    order);
+				G4double length);
   
   /// Create yoke that connects poles and container to put them in.
   virtual void CreateYokeAndContainerSolid(G4String      name,

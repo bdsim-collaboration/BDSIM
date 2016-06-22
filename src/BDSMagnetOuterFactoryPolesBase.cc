@@ -521,7 +521,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   if (buildPole)
     {
       CreatePoleSolid(name, length, order);
-      CreateCoilSolids(name, length, order);
+      CreateCoilSolids(name, length);
     }
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);
   if (buildPole)
@@ -638,7 +638,8 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   ellipsoidWidth = std::min(ellipsoidWidth, poleLength); 
 
   // calculate the distance from the centre of the magnet where the straight sides start
-  poleSquareStartRadius = ellipsoidCentreY + (poleFinishRadius - ellipsoidCentreY) * 0.2;
+  G4double fraction = std::min(0.5, (G4double)order/10.0); // scale slightly with order
+  poleSquareStartRadius = ellipsoidCentreY + (poleFinishRadius - ellipsoidCentreY) * fraction;
 
   // poleSquareWidth is initially calculated in CalculatePoleAndYoke - here we check it
   // ensure pole doesn't get narrower than ellipsoid tip part
@@ -719,14 +720,13 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4int order)
+void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
 {
   G4double innerX = 0.5*poleSquareWidth + lengthSafetyLarge;
 
   // Start the coil just after the pole becomes square in cross-section
   // start it just beyond this point - say + 20% square section length
-  G4double fraction = std::min(0.5, (G4double)order/10.0); // scale slightly with order
-  G4double lowerY = poleSquareStartRadius + fraction*(poleFinishRadius - poleSquareStartRadius);
+  G4double lowerY = poleSquareStartRadius + 0.2*(poleFinishRadius - poleSquareStartRadius);
 
   // At lower Y, project out in X as far as possible within the pole segment
   G4double outerX = 0.9 * lowerY * tan (segmentAngle*0.5);
@@ -779,13 +779,12 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints(G4int order)
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
-						      G4double length,
-						      G4int    order)
+						      G4double length)
 {
   // create an extruded polygon even though a square to avoid the need for
   // individual rotated translations. This also allows the same rotation
   // to be used for the coils as the poles.
-  CreateCoilPoints(order);
+  CreateCoilPoints();
 
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1
