@@ -523,13 +523,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
       CreatePoleSolid(name, length, order);
       CreateCoilSolids(name, length, order);
     }
-  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);  
+  CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);
+  IntersectPoleWithYoke(name, length, order);
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
   if (buildPole)
     {CreateEndPiece(name);}
   PlaceComponents(name, order); //returns vector of PVs
+    PlaceComponentsCoils(name, order);
   
   // record extents
   // container radius is just outerDiamter as yoke is circular
@@ -689,10 +691,14 @@ void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
 							  G4Material* outerMaterial)
 {
   BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
+  CreateLogicalVolumesCoil(name);
+}
 
-  G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
+void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
+{
   if (coilLeftSolid)
     { // if one exists, all coil solids exist
+      G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
       coilLeftLV = new G4LogicalVolume(coilLeftSolid,
 				       coilMaterial,
 				       name + "_coil_left_lv");
@@ -805,19 +811,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // cut pole here with knowledge of yoke shape.
-  G4VSolid* poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
-					       0,                                 // start radius
-					       yokeStartRadius - lengthSafetyLarge,
-					       length,  // long half length for unamibiguous intersection
-					       0,                                 // start angle
-					       CLHEP::twopi);                     // sweep angle
-  
-  allSolids.push_back(poleIntersectionSolid);
-  poleSolid = new G4IntersectionSolid(name + "_pole_solid",   // name
-				      poleSolid,              // solid a
-				      poleIntersectionSolid); // solid b
+#endif  
   
   // circular yoke so pretty easy
   yokeSolid = new G4Tubs(name + "_yoke_solid",      // name
@@ -840,6 +834,24 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
   // magnet container radius calculated when poles are calculated and assigned to
   // BDSMagnetOuterFactoryBase::magnetContainerRadius
   BuildMagnetContainerSolidStraight(name, magnetContainerLength, magnetContainerRadius); 
+}
+
+void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
+							   G4double length,
+							   G4int  /*order*/)
+{ 
+  // cut pole here with knowledge of yoke shape.
+  G4VSolid* poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
+					       0,                                 // start radius
+					       yokeStartRadius - lengthSafetyLarge,
+					       length,  // long half length for unamibiguous intersection
+					       0,                                 // start angle
+					       CLHEP::twopi);                     // sweep angle
+  
+  allSolids.push_back(poleIntersectionSolid);
+  poleSolid = new G4IntersectionSolid(name + "_pole_solid",   // name
+				      poleSolid,              // solid a
+				      poleIntersectionSolid); // solid b
 }
 
 void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,
@@ -884,32 +896,58 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
-			     (G4ThreeVector)0,             // position
+  yokePV = new G4PVPlacement((G4RotationMatrix *) nullptr,   // no rotation
+			     (G4ThreeVector) 0,             // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
 			     containerLV,                  // mother lv to be placed in
 			     false,                        // no boolean operation
 			     0,                            // copy number
 			     checkOverlaps);               // whether to check overlaps
-
+  
   allPhysicalVolumes.push_back(yokePV);
-
+  
+  // place poles
   if (!buildPole)
     {return;}
   // else continue and place poles and coils
   // pole placement
   G4PVPlacement* aPolePV     = nullptr;
-  G4PVPlacement* coilLeftPV  = nullptr;
-  G4PVPlacement* coilRightPV = nullptr;
-  G4PVPlacement* endCoilPV   = nullptr;
+  
+  for (G4int n = 0; n < 2*order; ++n)
+    {
+      G4RotationMatrix* rm  = new G4RotationMatrix();
+      allRotationMatrices.push_back(rm);
+      G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
+      rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
+      
+      //  G4double rotationAngle = 0;
+      aPolePV = new G4PVPlacement(rm,                 // rotation
+				  (G4ThreeVector)0,   // position
+				  poleLV,             // logical volume
+				  name + "_pv",       // name
+				  containerLV,        // mother lv to be placed in
+				  false,              // no boolean operation
+				  n,                  // copy number
+				  checkOverlaps);     // check overlaps
+      allPhysicalVolumes.push_back(aPolePV);
+    }
+}
+
+void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
+							  G4int    order)
+{
+  if (!buildPole)
+    {return;}
+  G4PVPlacement* coilLeftPV   = nullptr;
+  G4PVPlacement* coilRightPV  = nullptr;
+  G4PVPlacement* endCoilPV    = nullptr;
   G4RotationMatrix* endCoilRM = new G4RotationMatrix();
   endCoilRM->rotateX(CLHEP::halfpi);
 
   G4ThreeVector endCoilTranslation(0,coilCentreRadius,0.5*endPieceLength);
   
   for (G4int n = 0; n < 2*order; ++n)
-    //for (G4int n = 0; n < 1; ++n)
     {
       // prepare a new rotation matrix - must be new and can't reuse the same one
       // as the placement doesn't own it - changing the existing one will affect all
@@ -924,18 +962,6 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
       // nominally this should be around z axis, but I guess z is now y give
       // rotation already... could do with rotate about axis in future
       ecrm->rotateY(rotationAngle);
-
-      //  G4double rotationAngle = 0;
-      aPolePV = new G4PVPlacement(rm,                 // rotation
-				  (G4ThreeVector)0,   // position
-				  poleLV,             // logical volume
-				  name + "_pv",       // name      
-				  containerLV,        // mother lv to be placed in
-				  false,              // no boolean operation
-				  n,                  // copy number
-				  checkOverlaps);     // check overlaps
-      allPhysicalVolumes.push_back(aPolePV);
-      //name + "_pole_" + printf("_%d_pv", n), // name
 
       coilLeftPV = new G4PVPlacement(rm,                 // rotation
 				     (G4ThreeVector)0,   // position
@@ -966,6 +992,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 				    n,                       // copy number
 				    checkOverlaps);          // check overlaps
       endPiece->RegisterPhysicalVolume(endCoilPV);
+      endPiece->RegisterRotationMatrix(ecrm);
       
       allPhysicalVolumes.push_back(coilLeftPV);
       allPhysicalVolumes.push_back(coilRightPV);

@@ -36,17 +36,20 @@ private:
 
   virtual void CleanUp();
 
-  virtual void CreatePoleSolid(G4String     name,
-			       G4double     length,
-			       G4int        order);
-
   /// Create yoke that connects poles and container to put them in
   virtual void CreateYokeAndContainerSolid(G4String name,
 					   G4double length,
 					   G4int    order,
 					   G4double magnetContainerRadius);
 
-  /// Build the logical volumes from the solids assigning materials and colours and cuts
+	virtual void IntersectPoleWithYoke(G4String name,
+									   G4double length,
+									   G4int    orderIn);
+
+  /// Build the logical volumes from the solids assigning materials and colours and cuts.
+  /// This doesn't make use of any base class implementation as this class creates a
+  /// vector of unique poles that must all be built individually into logical volumes.
+  /// It does however make use of BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil.
   virtual void CreateLogicalVolumes(G4String    name,
 				    G4double    length,
 				    G4Colour*   colour,

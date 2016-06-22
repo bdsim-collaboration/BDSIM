@@ -234,9 +234,17 @@ protected:
 					   G4int         order,
 					   G4double      magnetContainerRadius);
 
-  /// Place the poles and yoke in the container volume
+  /// Chop off the top of the pole to match the appropriate yoke geometry.
+  virtual void IntersectPoleWithYoke(G4String name,
+				     G4double length,
+				     G4int    order);
+  
+  /// Place the poles and yoke in the container volume.
   virtual void PlaceComponents(G4String name,
 			       G4int    order);
+
+	virtual void PlaceComponentsCoils(G4String name,
+	G4int order);
 
   /// Create the solids, logical volumes for the end piece - everything
   /// but the placement. Also, create the geometry component now.
@@ -255,6 +263,11 @@ protected:
 				    G4double    length,
 				    G4Colour*   colour,
 				    G4Material* outerMaterial);
+
+  /// Discretise the coil logical volumes as even though derived factories from this one
+  /// may complete override CreateLogicalVolumes as the poles can be individually unique,
+  /// the coils will be the same and this allows reuse of code and lack of duplication.
+  virtual void CreateLogicalVolumesCoil(G4String name);
   
   /// Test inputs for no null pointers or overlapping volumes due to poorly defined sizes
   void TestInputParameters(BDSBeamPipe* beamPipe,

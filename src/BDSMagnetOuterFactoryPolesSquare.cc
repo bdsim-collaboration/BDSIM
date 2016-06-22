@@ -10,20 +10,17 @@
 
 #include "G4Box.hh"
 #include "G4Colour.hh"
-#include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4Tubs.hh"
-#include "G4UnionSolid.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
 #include <vector>
-#include <cmath>
 
 BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::_instance = nullptr;
 
@@ -52,93 +49,6 @@ void BDSMagnetOuterFactoryPolesSquare::CleanUp()
   poleSolids.clear();
   poleLVs.clear();
   order = 0;
-}
-
-void BDSMagnetOuterFactoryPolesSquare::CreatePoleSolid(G4String     name,
-						       G4double     length,
-						       G4int        orderIn)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // record order to this class - this is the first method that uses it
-  order = orderIn;
-  
-  G4int nPoles = 2*order;
-  
-  // full circle is divided into segments for each pole
-  G4double segmentAngleWidth = CLHEP::twopi / (G4double)nPoles;
-  G4double poleAngle = segmentAngleWidth * poleAngularFraction;
-
-  // compose pole of an annulus of a certain angle plus
-  // an ellipsoid at the inner side. make the union of the
-  // two to give a typical pole shape - curved inner surface
-  // with increasing width outwards
-  
-  // make some % of pole length curved ellipsoidal surface
-
-  G4double  croppingBoxRadius = yokeStartRadius - lengthSafety;
-  G4VSolid* croppingBoxSolid = new G4Box(name + "_pole_intersection_solid", // name
-					 croppingBoxRadius,                 // x half width
-					 croppingBoxRadius,                 // y half width
-					 length);                           // z length
-  allSolids.push_back(croppingBoxSolid);
-  // z length long for unambiguous intersection
-  
-  G4double poleLength          = poleFinishRadius - poleStartRadius - 2*lengthSafety;
-  G4double ellipsoidHeight     = poleTipFraction*poleLength;
-  //G4double annulusHeight       = poleLength - ellipsoidHeight;
-  G4double ellipsoidCentre     = poleStartRadius + ellipsoidHeight*0.5;
-  
-  // work out the chord length
-  G4double ellipsoidWidth      = 2*(poleStartRadius + 0.5*ellipsoidHeight) * tan(poleAngle*0.5);
-  
-  G4double annulusStartRadius  = ellipsoidCentre / cos(poleAngle*0.5); //so edges line up with ellipsoid edges
-  G4double annulusFinishRadius = poleFinishRadius*2; // long for unambiguous intersection with yoke
-
-  G4VSolid* poleTip = new G4EllipticalTube(name + "_pole_tip_solid",   // name
-					       ellipsoidHeight*0.5,        // x half width
-					       ellipsoidWidth*0.5,         // y half width
-					       length*0.5 - lengthSafety); // z half width
-
-  G4VSolid* poleAnnulus = new G4Tubs(name + "_pole_annulus_solid", // name
-				     annulusStartRadius,           // start radius
-				     annulusFinishRadius,          // finish radius
-				     length*0.5 - lengthSafety,    // z half length
-				     -poleAngle*0.5,               // start angle
-				     poleAngle);                   // sweep angle
-  
-  // note annulus is defined from centre of rotation
-  G4ThreeVector ellipsoidTranslation(poleStartRadius + ellipsoidHeight*0.5, 0, 0);
-  // the centre of the union solid will be that of the 1st solid - the annulus - ie 0,0,0
-  G4VSolid* aSinglePoleSolid = new G4UnionSolid(name + "_pole_solid", // name
-						poleAnnulus,          // solid 1
-						poleTip,              // solid 2
-						0,                    // rotation matrix
-						ellipsoidTranslation);// translation of poleTip
-  allSolids.push_back(poleTip);
-  allSolids.push_back(poleAnnulus);
-  allSolids.push_back(aSinglePoleSolid);
-  
-  // create different poles to fit inside square yoke
-  G4RotationMatrix* iPoleRM;
-  for (G4int i = 0; i < nPoles; ++i)
-    {
-      iPoleRM = new G4RotationMatrix();
-      G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
-      G4double rotationAngle = (0.5-i)*segmentAngle + CLHEP::pi*0.5;
-      iPoleRM->rotateZ(rotationAngle);
-      allRotationMatrices.push_back(iPoleRM);
-      // crop the singlepolesolid with the cropping box so it'll fit inside the outer square yoke
-      G4IntersectionSolid* aSolid = new G4IntersectionSolid(name + "_pole_solid", // name
-							    aSinglePoleSolid,
-							    croppingBoxSolid,     // solid 2 - the one to be shifted
-							    iPoleRM,              // rotation matrix
-							    (G4ThreeVector)0);    // translation vector
-					  
-								
-      poleSolids.push_back(aSolid);
-    }
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name,
@@ -199,6 +109,41 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name
   magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
 }
 
+
+void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
+                                                             G4double length,
+                                                             G4int    orderIn)
+{
+  order = orderIn; // copy to member variable - this is the first function to be called with order
+  G4double  croppingBoxRadius = yokeStartRadius - lengthSafety;
+  G4VSolid* croppingBoxSolid = new G4Box(name + "_pole_intersection_solid", // name
+					 croppingBoxRadius,                 // x half width
+					 croppingBoxRadius,                 // y half width
+					 length);                           // z length
+  allSolids.push_back(croppingBoxSolid);
+  // z length long for unambiguous intersection
+  
+  G4int nPoles = 2*orderIn;
+  // create different poles to fit inside square yoke
+  G4RotationMatrix* iPoleRM;
+  for (G4int i = 0; i < nPoles; ++i)
+    {
+      iPoleRM = new G4RotationMatrix();
+      G4double segmentAngle = CLHEP::twopi/nPoles; // angle per pole
+      G4double rotationAngle = (0.5-i)*segmentAngle + CLHEP::pi*0.5;
+      iPoleRM->rotateZ(rotationAngle);
+      allRotationMatrices.push_back(iPoleRM);
+      // crop the singlepolesolid with the cropping box so it'll fit inside the outer square yoke
+      G4IntersectionSolid* aSolid = new G4IntersectionSolid(name + "_pole_solid", // name
+							    poleSolid,            // solid 1 - the pole
+							    croppingBoxSolid,     // solid 2 - the one to be shifted
+							    iPoleRM,              // rotation matrix
+							    (G4ThreeVector)0);    // translation vector
+      
+      poleSolids.push_back(aSolid);
+    }
+}
+
 void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 							    G4double    length,
 							    G4Colour*   colour,
@@ -252,6 +197,9 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
   for(j = poleLVs.begin(); j != poleLVs.end(); ++j)
     {(*j)->SetUserLimits(outerUserLimits);}
 #endif
+
+  // create logical volumes for the coils using base class method
+  CreateLogicalVolumesCoil(name);
 }
 
 void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
