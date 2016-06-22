@@ -19,16 +19,15 @@ class G4Material;
  * Most magnets are 2N poles, but sector- and r-bends as well as 
  * muon spoilers, and h/v kickers are unique.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
-
 
 class BDSMagnetOuterFactoryPolesSquare: public BDSMagnetOuterFactoryPolesBase
 {
 public:
   static BDSMagnetOuterFactoryPolesSquare* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryPolesSquare();
+  virtual ~BDSMagnetOuterFactoryPolesSquare();
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class
