@@ -1,0 +1,3 @@
+el: sextupole, l=0.5*m;
+include size_variation.gmadl
+option, magnetGeometryType="polescircular";
