@@ -220,7 +220,9 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 			     0,                            // copy number
 			     checkOverlaps);               // whether to check overlaps
   
-  // pole placement
+  // place poles
+  if (!buildPole)
+    {return;}
   G4double nPoles = 2*order;
   G4PVPlacement* aPlacement = nullptr;
   for (G4int n = 0; n < 2*order; ++n)
@@ -240,8 +242,7 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
 				     n,                  // copy number
 				     checkOverlaps);     // check overlaps
       allPhysicalVolumes.push_back(aPlacement);
-      //name + "_pole_" + printf("_%d_pv", n), // name
-      }
+    }
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesSquare::CommonConstructor(G4String     name,

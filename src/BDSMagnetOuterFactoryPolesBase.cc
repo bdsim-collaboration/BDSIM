@@ -524,14 +524,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
       CreateCoilSolids(name, length, order);
     }
   CreateYokeAndContainerSolid(name, length, order, magnetContainerLength);
-  IntersectPoleWithYoke(name, length, order);
+  if (buildPole)
+    {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
   CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
   if (buildPole)
     {CreateEndPiece(name);}
   PlaceComponents(name, order); //returns vector of PVs
-    PlaceComponentsCoils(name, order);
+  if (buildPole)
+    {PlaceComponentsCoils(name, order);}
   
   // record extents
   // container radius is just outerDiamter as yoke is circular
