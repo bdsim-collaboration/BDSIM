@@ -35,12 +35,16 @@
 #include <vector>
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
+  BDSMagnetOuterFactoryPolesBase(1.1)
+{;}
+
+BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn):
   poleFraction(0.7),
   poleAngularFraction(0.7),
   poleTipFraction(0.2),
   poleAnnulusFraction(0.1),
   bendHeightFraction(0.7),
-  poleStopFactor(1.1)
+  poleStopFactor(poleStopFactorIn)
 {
   // now the base class constructor should be called first which
   // should call clean up (in the derived class) which should initialise

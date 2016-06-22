@@ -30,6 +30,7 @@ class BDSMagnetOuterFactoryPolesBase: public BDSMagnetOuterFactoryBase
 {
 public:
   BDSMagnetOuterFactoryPolesBase();
+  BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn);
   virtual ~BDSMagnetOuterFactoryPolesBase(){;}
   
   /// sector bend outer volume

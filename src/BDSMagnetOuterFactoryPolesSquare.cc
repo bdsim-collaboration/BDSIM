@@ -34,7 +34,8 @@ BDSMagnetOuterFactoryPolesSquare* BDSMagnetOuterFactoryPolesSquare::Instance()
   return _instance;
 }
 
-BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare()
+BDSMagnetOuterFactoryPolesSquare::BDSMagnetOuterFactoryPolesSquare():
+  BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/1.5)
 {
   CleanUp();
 }
