@@ -484,8 +484,9 @@ void BDSOutputROOT<Type>::WriteHistogram(BDSHistogram1D* hIn)
 
 template<typename Type>
 void BDSOutputROOT<Type>::Write(const time_t& /*startTime*/,
-                                const time_t& /*stopTime*/,
-                                const G4float& /*duration*/)
+				const time_t& /*stopTime*/,
+				const G4float& /*duration*/,
+				const std::string& /*seedStateAtStart*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

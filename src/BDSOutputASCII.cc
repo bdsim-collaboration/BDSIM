@@ -311,9 +311,10 @@ void BDSOutputASCII::Initialise()
   // Multiple file writing not implemented for ASCII
 }
 
-void BDSOutputASCII::Write(const time_t&  /*startTime*/,
-			   const time_t&  /*stopTime*/,
-			   const G4float& /*duration*/)
+void BDSOutputASCII::Write(const time_t& /*startTime*/,
+			   const time_t& /*stopTime*/,
+			   const G4float& /*duration*/,
+			   const std::string& /*seedStateAtStart*/)
 {
   ofMain.flush();
   ofPrimaries.flush();
