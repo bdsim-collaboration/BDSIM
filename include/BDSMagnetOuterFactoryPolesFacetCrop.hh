@@ -1,9 +1,9 @@
 #ifndef BDSMAGNETOUTERFACTORYPOLESFACETCROP_H
 #define BDSMAGNETOUTERFACTORYPOLESFACETCROP_H
 
-#include "BDSMagnetOuterFactoryPolesBase.hh"
+#include "BDSMagnetOuterFactoryPolesFacetCommon.hh"
 
-#include "globals.hh"           // geant4 globals / types
+#include "globals.hh" // geant4 globals / types
 
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets
@@ -18,7 +18,7 @@
  */
 
 
-class BDSMagnetOuterFactoryPolesFacetCrop: public BDSMagnetOuterFactoryPolesBase
+class BDSMagnetOuterFactoryPolesFacetCrop: public BDSMagnetOuterFactoryPolesFacetCommon
 {
 public:
   /// Singleton accessory.
@@ -27,23 +27,11 @@ public:
   virtual ~BDSMagnetOuterFactoryPolesFacetCrop();
 
 private:
-  /// Private constructor as singleton - nothing special here - all in parent class
-  BDSMagnetOuterFactoryPolesFacetCrop(){;};
+  /// Private constructor as singleton
+  BDSMagnetOuterFactoryPolesFacetCrop();
 
   /// Singleton instance.
-  static BDSMagnetOuterFactoryPolesFacetCrop* _instance;
-
-  /// Create pole for magnet of order N where npoles = Nx2
-  virtual void CreatePoleSolid(G4String      name,                 // name
-			       G4double      length,               // length [mm]
-			       G4int         order);               // Nx2 poles
-  
-  /// Create yoke that connects poles and container to put them in
-  virtual void CreateYokeAndContainerSolid(G4String name,
-					   G4double length,
-					   G4int    order,
-					   G4double magnetContainerRadius);
-  
+  static BDSMagnetOuterFactoryPolesFacetCrop* _instance;  
 };
 
 #endif
