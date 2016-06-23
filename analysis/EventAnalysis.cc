@@ -44,6 +44,7 @@ void EventAnalysis::Process()
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
 
+    std::cout << i << std::endl;
     if(i==0)
     {
       histoSum = new HistogramMerge(event->histos);

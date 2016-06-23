@@ -315,15 +315,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
         continue;
       }
 
-	    // check on energy
-	    if (traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
+	    // check on energy (if energy threshold is not negative
+	    if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
+          traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
       {
         interestingTrajectories.push_back(traj);
         continue;
       }
 
       // check on particle if not empty string
-
 	    if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
 	      G4String particleName = traj->GetParticleName();
         //G4cout << particleName << G4endl;

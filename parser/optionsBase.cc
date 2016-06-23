@@ -194,7 +194,7 @@ OptionsBase::OptionsBase()
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1;
   storeTrajectoryParticle  = "";
-  storeTrajectoryEnergyThreshold = 0.0;
+  storeTrajectoryEnergyThreshold = -1.0;
 
   // circular options
   nturns                   = 1;
