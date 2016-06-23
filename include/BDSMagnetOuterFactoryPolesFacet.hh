@@ -37,7 +37,6 @@ private:
 					   G4double length,
 					   G4int    order,
 					   G4double magnetContainerRadius);
-  
 };
 
 #endif

@@ -25,7 +25,8 @@ class G4Material;
 class BDSMagnetOuterFactoryPolesSquare: public BDSMagnetOuterFactoryPolesBase
 {
 public:
-  static BDSMagnetOuterFactoryPolesSquare* Instance(); /// singleton pattern
+  /// Singelton accessor.
+  static BDSMagnetOuterFactoryPolesSquare* Instance();
   
   virtual ~BDSMagnetOuterFactoryPolesSquare();
 
