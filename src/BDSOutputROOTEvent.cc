@@ -26,7 +26,7 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  eLoss     = new BDSOutputROOTEventLoss(false,true);
+  eLoss     = new BDSOutputROOTEventLoss(false,false);
   pFirstHit = new BDSOutputROOTEventLoss(true,false);
   pLastHit  = new BDSOutputROOTEventLoss(true,false);
   tHit      = new BDSOutputROOTEventLoss(false,true);
@@ -265,10 +265,11 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   G4int n_hit = hc->entries();
-  for(G4int i=0;i<n_hit;i++){
-    BDSTunnelHit *hit = (*hc)[i];
-    tHit->Fill(hit);
-  }
+  for(G4int i=0;i<n_hit;i++)
+    {
+      BDSTunnelHit *hit = (*hc)[i];
+      tHit->Fill(hit);
+    }
 }
 
 /// write a trajectory 
@@ -317,25 +318,33 @@ void BDSOutputROOTEvent::FillEvent()
   this->Flush();
   
 }
-void BDSOutputROOTEvent::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
+void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
+					const time_t&  stopTime,
+					const G4float& duration,
+                                        const std::string& seedStateAtStart)
 {
-  evtInfo->startTime     = startTime;
-  evtInfo->stopTime      = stopTime;
-  evtInfo->eventDuration = duration;
+  evtInfo->startTime        = startTime;
+  evtInfo->stopTime         = stopTime;
+  evtInfo->duration         = duration;
+  evtInfo->seedStateAtStart = seedStateAtStart;
 }
 
-void BDSOutputROOTEvent::Write() 
+void BDSOutputROOTEvent::Write(const time_t&  startTime,
+			       const time_t&  stopTime,
+			       const G4float& duration,
+                               const std::string& seedStateAtStart)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-
+  runInfo->startTime        = startTime;
+  runInfo->stopTime         = stopTime;
+  runInfo->duration         = duration;
+  runInfo->seedStateAtStart = seedStateAtStart;
   theRunOutputTree->Fill();
 
   if(theRootOutputFile && theRootOutputFile->IsOpen())
-    {
-      theRootOutputFile->Write(nullptr,TObject::kOverwrite);
-    }
+    {theRootOutputFile->Write(nullptr,TObject::kOverwrite);}
 }
 
 void BDSOutputROOTEvent::Close()
@@ -347,16 +356,15 @@ void BDSOutputROOTEvent::Close()
     {
       theRootOutputFile->Close();
       delete theRootOutputFile;
-      theRootOutputFile=nullptr;
+      theRootOutputFile = nullptr;
     }
 }
 
 void BDSOutputROOTEvent::Flush()
 {
   // loop over sampler map and clear vectors
-  for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i) {
-    (*i)->Flush();
-  }  
+  for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
+    {(*i)->Flush();}  
   eLoss->Flush();
   pFirstHit->Flush();
   pLastHit->Flush();

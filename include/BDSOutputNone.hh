@@ -35,10 +35,12 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
   /// write event info
-  virtual void WriteEventInfo(time_t,time_t,G4float){}
+  virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &)
+  {}
   virtual void FillEvent(){}///< fill event structure
   virtual void Initialise(){}; ///< open the file
-  virtual void Write(){};      ///< write to file
+  virtual void Write(const time_t &, const time_t &, const G4float &, const std::string &)
+  {};      ///< write to file
   virtual void Close(){};      ///< close the file
 };
 

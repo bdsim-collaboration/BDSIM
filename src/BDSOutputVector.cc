@@ -108,10 +108,13 @@ void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
     {output[i]->WriteHistogram(histogramIn);}
 }
 
-void BDSOutputVector::WriteEventInfo(time_t startTime, time_t stopTime, G4float duration)
+void BDSOutputVector::WriteEventInfo(const time_t&  startTime,
+				     const time_t&  stopTime,
+				     const G4float& duration,
+                                     const std::string& seedStateAtStart)
 {
   for (auto out : output)
-    {out->WriteEventInfo(startTime, stopTime, duration);}
+    { out->WriteEventInfo(startTime, stopTime, duration, seedStateAtStart);}
 }
 
 void BDSOutputVector::Initialise()
@@ -123,13 +126,16 @@ void BDSOutputVector::Initialise()
     {output[i]->Initialise();}
 }
 
-void BDSOutputVector::Write()
+void BDSOutputVector::Write(const time_t&  startTime,
+			    const time_t&  stopTime,
+			    const G4float& duration,
+                            const std::string& seedStateAtStart)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->Write();}
+    {output[i]->Write(startTime, stopTime, duration, seedStateAtStart);}
 }
 
 void BDSOutputVector::Close()

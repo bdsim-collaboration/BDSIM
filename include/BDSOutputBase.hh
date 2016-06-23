@@ -8,6 +8,7 @@
 #include "BDSHistogram.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 
+#include <string>
 #include <vector>
 
 /**
@@ -54,7 +55,10 @@ public:
 			    G4int    TurnsTaken) = 0;
 
   /// Write additional information about event such as timing.
-  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration) = 0;
+  virtual void WriteEventInfo(const time_t&  startTime,
+			      const time_t&  stopTime,
+			      const G4float& duration,
+                              const std::string &seedStateAtStart) = 0;
 
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
@@ -66,13 +70,19 @@ public:
   virtual void Initialise()=0;
   
   /// write the data to file
-  virtual void Write() = 0;
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+                     const std::string& seedStateAtStart) = 0;
 
   /// close file
   virtual void Close() = 0;
 
   /// write, close and open new file
-  void Commit();
+  void Commit(const time_t&  startTime,
+	      const time_t&  stopTime,
+	      const G4float& duration,
+              const std::string& seedStateAtStart);
   
 protected:
   /// current event number

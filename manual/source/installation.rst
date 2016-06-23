@@ -130,6 +130,12 @@ For version 0.6 and older::
   source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
   source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
 
+If compiling independently, GCC 4.9 can be found with::
+
+  source /afs/cern.ch/sw/lcg/external/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
+
+but this must be sourced before using the software once compiled.
+
 After this, `Building`_ can be started.
   
 Building

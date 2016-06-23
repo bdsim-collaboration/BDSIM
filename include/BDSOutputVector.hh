@@ -49,11 +49,18 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// write event info
-  virtual void WriteEventInfo(time_t startTime, time_t stopTime, G4float duration);
+  virtual void WriteEventInfo(const time_t&  startTime,
+			      const time_t&  stopTime,
+			      const G4float& duration,
+                              const std::string& seedStateAtStart);
   /// Fill event
   virtual void FillEvent() {};
   virtual void Initialise(); ///< open the file
-  virtual void Write();      ///< write to file
+  /// Write to file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+		     const std::string& seedStateAtStart);
   virtual void Close();      ///< close the file
 
 private:
