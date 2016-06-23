@@ -36,12 +36,17 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4double zPlanes[2] = {-length*0.5, length*0.5};
-  G4double innerRadii[2] = {yokeStartRadius, yokeStartRadius};
+  G4double zPlanes[2]    = {-length*0.5,      length*0.5};
+  G4double innerRadii[2] = {yokeStartRadius,  yokeStartRadius};
   G4double outerRadii[2] = {yokeFinishRadius, yokeFinishRadius};
-  
+
+  //G4double rotationAngle = (0.5-i)*segmentAngle + CLHEP::pi*0.5;
+
+  // The start angle for G4Polyhedra lies on a vertex / point and is at the top
+  // in the positive y direction. 
+  G4double polyStartAngle = CLHEP::halfpi;
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
-			      CLHEP::pi*0.5,    // start angle
+			      polyStartAngle,          // start angle
 			      CLHEP::twopi,            // sweep angle
 			      2*order,                 // number of sides
 			      2,                       // number of z planes
@@ -52,7 +57,7 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
   G4double contInnerRadii[2] = {0, 0}; // solid polyhedra
   G4double contOuterRadii[2] = {yokeFinishRadius + lengthSafety, yokeFinishRadius + lengthSafety};
   G4VSolid* containerOuterSolid = new G4Polyhedra(name + "_container_outer_solid", // name
-						  CLHEP::pi*0.5,                   // start angle
+						  polyStartAngle,                  // start angle
 						  CLHEP::twopi,                    // sweep angle
 						  2*order,                         // number of sides
 						  2,                               // number of z planes
@@ -76,11 +81,11 @@ void BDSMagnetOuterFactoryPolesFacet::CreateYokeAndContainerSolid(G4String name,
   
   G4double magContOuterRadii[2] = {magnetContainerRadius, magnetContainerRadius};
   magnetContainerSolid = new G4Polyhedra(name + "_container_solid", // name
-					 CLHEP::pi*0.5,                   // start angle
-					 CLHEP::twopi,                    // sweep angle
-					 2*order,                         // number of sides
-					 2,                               // number of z planes
-					 zPlanes,                         // z plane z coordinates
+					 polyStartAngle,            // start angle
+					 CLHEP::twopi,              // sweep angle
+					 2*order,                   // number of sides
+					 2,                         // number of z planes
+					 zPlanes,                   // z plane z coordinates
 					 contInnerRadii,
 					 magContOuterRadii);
   

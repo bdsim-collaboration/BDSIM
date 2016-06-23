@@ -572,7 +572,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
 
 void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiameter,
 							  BDSBeamPipe* beamPipe,
-							  G4double     /*order*/)
+							  G4double     order)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -595,6 +595,11 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   magnetContainerRadius = yokeFinishRadius + lengthSafetyLarge;
   poleSquareWidth       = (yokeFinishRadius - yokeStartRadius)*1.3;
 
+  G4int nPoles = 2*order;
+  // full circle is divided into segments for each pole
+  segmentAngle = CLHEP::twopi / (G4double)nPoles;
+  poleAngle = segmentAngle * poleAngularFraction;
+
   G4double minimumPoleFraction = 0.05;
   // If the space occupied by the yoke / pole is < 5% of outerDiameter, don't bother with
   // pole and coil - it's clearly unphysical.
@@ -612,18 +617,12 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  G4int nPoles = 2*order;
-
   // calculate geometrical parameters first.
   // pole is ellipse at tip, then (possibly) tapered section going outwards and then
   // a section that is straight - ie constant width going outwards. This is later
   // intersected with the yoke solid to give the matching shape. Therefore, the pole
   // is made slightly too long (ie > poleFinishRadius).
-  
-  // full circle is divided into segments for each pole
-  segmentAngle = CLHEP::twopi / (G4double)nPoles;
-  poleAngle = segmentAngle * poleAngularFraction;
-  
+    
   // make some % of pole length the curved ellipsoidal surface at the pole tip
   G4double poleLength      = poleFinishRadius - poleStartRadius - 2*lengthSafety;
   G4double ellipsoidHeight = poleTipFraction*poleLength; // full height of an ellipse (2*a)
@@ -919,7 +918,6 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
     {
       G4RotationMatrix* rm  = new G4RotationMatrix();
       allRotationMatrices.push_back(rm);
-      G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
       
       //  G4double rotationAngle = 0;
@@ -956,7 +954,6 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
       G4RotationMatrix* rm  = new G4RotationMatrix();
       G4RotationMatrix* ecrm = new G4RotationMatrix(*endCoilRM);
       allRotationMatrices.push_back(rm);
-      G4double segmentAngle = CLHEP::twopi/(G4double)(2*order); // angle per pole
       G4double rotationAngle = (n+0.5)*segmentAngle + CLHEP::pi*0.5;
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
 
