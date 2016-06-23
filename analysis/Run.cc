@@ -1,6 +1,6 @@
 #include "Run.hh"
 
-ClassImp(Run);
+ClassImp(Run)
 
 Run::Run()
 {

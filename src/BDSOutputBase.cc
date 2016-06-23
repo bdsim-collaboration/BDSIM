@@ -7,9 +7,12 @@ BDSOutputBase::BDSOutputBase():eventNumber(0),outputFileNumber(-1)
   numberEventPerFile = BDSGlobalConstants::Instance()->NumberOfEventsPerNtuple();
 }
 
-void BDSOutputBase::Commit()
+void BDSOutputBase::Commit(const time_t&  startTime,
+			   const time_t&  stopTime,
+			   const G4float& duration,
+                           const std::string& seedStateAtStart)
 {
-  Write();
+  Write(startTime, stopTime, duration, seedStateAtStart);
   Close();
   Initialise();
 }

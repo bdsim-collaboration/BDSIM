@@ -2,10 +2,10 @@
 
 #include <ctime>
 
-ClassImp(BDSOutputROOTEventInfo);
+ClassImp(BDSOutputROOTEventInfo)
 
 BDSOutputROOTEventInfo::BDSOutputROOTEventInfo():
-  startTime(0.0), stopTime(0.0), eventDuration(0)
+  startTime(time_t()), stopTime(time_t()), duration(0), seedStateAtStart("")
 {;}
 
 BDSOutputROOTEventInfo::~BDSOutputROOTEventInfo()

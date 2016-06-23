@@ -73,13 +73,20 @@ add_executable(rebdsim rebdsim.cc)
 set_target_properties(rebdsim PROPERTIES OUTPUT_NAME "rebdsim" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 
-add_executable(edbdsim edbdsim.cc)
-set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-target_link_libraries(edbdsim rebdsimLib bdsimRootEvent)
+if (${ROOT_MAJOR_VERSION} STREQUAL "6")
+	add_executable(edbdsim edbdsim.cc)
+	set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
+	target_link_libraries(edbdsim rebdsimLib bdsimRootEvent)
 
-
-# Installation
-bdsim_install_targets(rebdsim edbdsim rebdsimLib)
+	# Installation
+	bdsim_install_targets(rebdsim edbdsim rebdsimLib)
+else()
+	# ROOT 5 - EVE parts are compatible with ROOT5 - turn off.
+	message(STATUS "ebdsim is not compatible with ROOT V5 - not compiling")
+	
+	# Installation
+	bdsim_install_targets(rebdsim rebdsimLib)
+endif()
 
 # Install pcms
 bdsim_install_libs(${rebdsim_pcms})

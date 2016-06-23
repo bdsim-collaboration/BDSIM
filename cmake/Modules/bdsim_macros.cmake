@@ -13,15 +13,25 @@ endmacro()
 #from https://cmake.org/pipermail/cmake/2009-March/027892.html
 
 MACRO(COPY_FILE_IF_CHANGED in_file out_file target)
-  IF(${in_file} IS_NEWER_THAN ${out_file})    
+  #message(STATUS "in_file: ${in_file}")
+  #message(STATUS "out_file: ${out_file}")
+  # copy the file the first time before compilation if it doesn't exist
+  IF(NOT EXISTS ${out_file})
+    #message(STATUS "copying")
+    # could use file(COPY here but that requires directory - avoid filename stripping
+    configure_file(${in_file} ${out_file} COPYONLY)
+  ELSEIF(${in_file} IS_NEWER_THAN ${out_file})
+    #message(STATUS "copying")
+    # this will only effictively be run after successfuly compilation even if called earlier
     ADD_CUSTOM_COMMAND (
       TARGET     ${target}
-      POST_BUILD
+      POST_BUILD 
       COMMAND    ${CMAKE_COMMAND}
       ARGS       -E copy ${in_file} ${out_file}
+      MAIN_DEPENDENCY ${in_file}
       #COMMENT    "Copying file: ${in_file} to: ${out_file}"
       )
-  ENDIF(${in_file} IS_NEWER_THAN ${out_file})
+  ENDIF()
 ENDMACRO(COPY_FILE_IF_CHANGED)
 
 # Copy all files and directories in in_dir to out_dir. 
@@ -37,7 +47,7 @@ ENDMACRO(COPY_DIRECTORY_IF_CHANGED)
 
 # Explicit version to copy examples files that are only in git
 MACRO(COPY_EXAMPLES)
-  #message(STATUS "Copying example directory")
+  message(STATUS "Copying example directory")
   execute_process(
     COMMAND git ls-files --full-name ${CMAKE_SOURCE_DIR}/examples
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"

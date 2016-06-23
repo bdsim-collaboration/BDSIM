@@ -62,9 +62,6 @@ void BDSRandom::PrintFullSeedState()
 
 void BDSRandom::WriteSeedState()
 {
-  // get the full seed state and write it to a file
-  // Print generator full state to output 
-
   G4String seedstatefilename = BDSGlobalConstants::Instance()->OutputFileName() + ".seedstate.txt";
   std::ofstream ofseedstate (seedstatefilename.c_str());
   if (ofseedstate.is_open())

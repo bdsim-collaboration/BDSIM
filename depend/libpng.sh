@@ -3,16 +3,35 @@
 source ./setup.sh
 source ./setup_gcc.sh
 
+DLDURL=http://prdownloads.sourceforge.net/libpng/
+DLDFILE=libpng-1.6.21.tar.gz
+PKGNAME=libpng
+LOG=$BASEDIR/$PKGNAME.log
+
+
 ##################################################
-# cmake
+# libpng
 ##################################################
 cd $BASEDIR
-wget http://prdownloads.sourceforge.net/libpng/libpng-1.6.21.tar.gz?download
-mv libpng-1.6.21.tar.gz?download ./src/libpng-1.6.21.tar.gz
-mkdir $BASEDIR/build/libpng
-tar zxf $BASEDIR/src/libpng-1.6.21.tar.gz -C ./build/libpng --strip-components=1
-mkdir $BASEDIR/build/libpng-build
-cd $BASEDIR/build/libpng-build
-../libpng/configure --prefix=$INSTALLDIR 
-make -j$NCPU
-make install
+echo "Downloading $PKGNAME" | tee $LOG
+wget --quiet $DLDURL/$DLDFILE?download
+mv $DLDFILE?download ./src/$DLDFILE
+
+echo "Unpacking $PKGNAME" | tee -a $LOG
+rm -rf $BASEDIR/build/$PKGNAME
+mkdir $BASEDIR/build/$PKGNAME
+tar zxf $BASEDIR/src/$DLDFILE -C ./build/$PKGNAME --strip-components=1
+
+
+rm -rf $BASEDIR/build/$PKGNAME-build
+mkdir $BASEDIR/build/$PKGNAME-build
+cd $BASEDIR/build/$PKGNAME-build
+
+echo "Configuring $PKGNAME" | tee -a $LOG
+../$PKGNAME/configure --prefix=$INSTALLDIR >> $LOG
+
+echo "Building $PKGNAME" | tee -a $LOG
+make -j$NCPU >> $LOG
+
+echo "Installing $PKGNAME" | tee -a $LOG
+make install >> $LOG

@@ -219,7 +219,8 @@ void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
 
 // write a trajectory to a root/ascii file
 // TODO: ASCII file not implemented - JS
-void BDSOutputASCII::WriteTrajectory(std::vector<BDSTrajectory*> &/*TrajVec*/){
+void BDSOutputASCII::WriteTrajectory(std::vector<BDSTrajectory*> &/*TrajVec*/)
+{
   G4cout << __METHOD_NAME__ << "WARNING trajectory writing not implemented for ASCII output" << G4endl;
 }
 
@@ -371,7 +372,10 @@ void BDSOutputASCII::Initialise()
   // Multiple file writing not implemented for ASCII
 }
 
-void BDSOutputASCII::Write()
+void BDSOutputASCII::Write(const time_t& /*startTime*/,
+			   const time_t& /*stopTime*/,
+			   const G4float& /*duration*/,
+			   const std::string& /*seedStateAtStart*/)
 {
   ofMain.flush();
   ofPrimaries.flush();

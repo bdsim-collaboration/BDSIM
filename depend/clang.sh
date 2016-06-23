@@ -3,17 +3,33 @@
 source ./setup.sh
 source ./setup_gcc.sh
 
+DLDURL=http://llvm.org/releases/3.7.0/
+DLDFILE=cfe-3.7.0.src.tar
+PKGNAME=cfe
+LOG=$BASEDIR/$PKGNAME.log
+echo $LOG
+
 ##################################################
 # clang
 ##################################################
 cd $BASEDIR
-wget http://llvm.org/releases/3.7.0/cfe-3.7.0.src.tar.xz
-unxz cfe-3.7.0.src.tar.xz
-mv  cfe-3.7.0.src.tar ./src/cfe-3.7.0.src.tar
-mkdir $BASEDIR/build/cfe
-tar xf $BASEDIR/src/cfe-3.7.0.src.tar -C ./build/cfe --strip-components=1
-mkdir $BASEDIR/build/cfe-build
-cd $BASEDIR/build/cfe-build
-cmake ../cfe -DCMAKE_INSTALL_PREFIX=$INSTALLDIR/ -DCMAKE_CXX_LINK_FLAGS="-L$INSTALLDIR/lib64 -L$INSTALLDIR/lib -Wl,-rpath,$INSTALLDIR/lib64,-rpath,$INSTALLDIR/lib"
-make -j$NCPU
-make install
+echo "Downloading $PKGNAME" | tee $LOG
+wget --quiet $DLDURL/$DLDFILE.xz
+unxz $DLDFILE.xz
+mv $DLDFILE ./src/$DLDFILE
+
+echo "Unpakcing $PKGNAME" | tee -a $LOG
+rm -rf $BASEDIR/build/$PKGNAME
+mkdir $BASEDIR/build/$PKGNAME
+tar xf $BASEDIR/src/$DLDFILE -C ./build/$PKGNAME --strip-components=1
+
+rm -rf $BASEDIR/build/$PKGNAME-build
+mkdir $BASEDIR/build/$PKGNAME-build
+cd $BASEDIR/build/$PKGNAME-build
+
+echo "CMake configuring $PKGNAME" | tee -a $LOG
+cmake ../$PKGNAME -DCMAKE_INSTALL_PREFIX=$INSTALLDIR/ -DCMAKE_CXX_LINK_FLAGS="-L$INSTALLDIR/lib64 -L$INSTALLDIR/lib -Wl,-rpath,$INSTALLDIR/lib64,-rpath,$INSTALLDIR/lib" >> $LOG
+
+echo "CMake build and install $PKGNAME" | tee -a $LOG
+make -j$NCPU install >> $LOG
+
