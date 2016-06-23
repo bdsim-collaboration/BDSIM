@@ -95,6 +95,15 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name
   allSolids.push_back(containerOuter);
   allSolids.push_back(containerInner);
 
+  // pole intersection solid
+  G4double  croppingBoxRadius = yokeStartRadius - lengthSafety;
+  poleIntersectionSolid = new G4Box(name + "_pole_intersection_solid", // name
+				    croppingBoxRadius,                 // x half width
+				    croppingBoxRadius,                 // y half width
+				    length);                           // z length
+  allSolids.push_back(poleIntersectionSolid);
+  // z length long for unambiguous intersection
+  
   containerSolid = new G4SubtractionSolid(name + "_outer_container_solid", // name
 					  containerOuter,
 					  containerInner);
@@ -111,17 +120,10 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name
 
 
 void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
-                                                             G4double length,
+                                                             G4double /*length*/,
                                                              G4int    orderIn)
 {
   order = orderIn; // copy to member variable - this is the first function to be called with order
-  G4double  croppingBoxRadius = yokeStartRadius - lengthSafety;
-  G4VSolid* croppingBoxSolid = new G4Box(name + "_pole_intersection_solid", // name
-					 croppingBoxRadius,                 // x half width
-					 croppingBoxRadius,                 // y half width
-					 length);                           // z length
-  allSolids.push_back(croppingBoxSolid);
-  // z length long for unambiguous intersection
   
   G4int nPoles = 2*orderIn;
   // create different poles to fit inside square yoke
@@ -136,7 +138,7 @@ void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
       // crop the singlepolesolid with the cropping box so it'll fit inside the outer square yoke
       G4IntersectionSolid* aSolid = new G4IntersectionSolid(name + "_pole_solid", // name
 							    poleSolid,            // solid 1 - the pole
-							    croppingBoxSolid,     // solid 2 - the one to be shifted
+							    poleIntersectionSolid,     // solid 2 - the one to be shifted
 							    iPoleRM,              // rotation matrix
 							    (G4ThreeVector)0);    // translation vector
       

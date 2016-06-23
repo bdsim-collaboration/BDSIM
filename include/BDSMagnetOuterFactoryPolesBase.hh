@@ -177,14 +177,15 @@ protected:
   G4double poleFinishRadius;
   G4double poleSquareWidth;
   G4double poleSquareStartRadius;
-	G4double segmentAngle;
+  G4double segmentAngle;
   G4double poleAngle;
   G4double coilHeight;
   G4double coilCentreRadius;
   G4double endPieceLength;
   G4double endPieceInnerR;
   G4double endPieceOuterR;
-  
+
+  G4VSolid* poleIntersectionSolid; ///< Solid used to chop off pole
   G4VSolid* coilLeftSolid;
   G4VSolid* coilRightSolid;
   G4VSolid* endPieceContainerSolid;
@@ -227,7 +228,9 @@ protected:
   virtual void CreateCoilSolids(G4String name,
 				G4double length);
   
-  /// Create yoke that connects poles and container to put them in.
+  /// Create yoke that connects poles and container to put them in. Also create the
+  /// poleIntersectionSolid that will be used to chop the extended pole in
+  /// IntersectPoleWithYoke().
   virtual void CreateYokeAndContainerSolid(G4String      name,
 					   G4double      length,
 					   G4int         order,

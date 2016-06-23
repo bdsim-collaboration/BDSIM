@@ -71,6 +71,7 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
   endPieceLength        = 0;
   endPieceInnerR        = 0;
   endPieceOuterR        = 0;
+  poleIntersectionSolid = nullptr;
   coilLeftSolid         = nullptr;
   coilRightSolid        = nullptr;
   coilLeftLV            = nullptr;
@@ -821,6 +822,15 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 			 0,                         // start angle
 			 CLHEP::twopi);             // sweep angle
 
+  poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
+				     0,                                 // start radius
+				     yokeStartRadius - lengthSafetyLarge,
+				     length,  // long half length for unamibiguous intersection
+				     0,                                 // start angle
+				     CLHEP::twopi);                     // sweep angle
+  allSolids.push_back(poleIntersectionSolid);
+  
+
   // note container must have hole in it for the beampipe to fit in!
   // poled geometry doesn't fit tightly to beampipe so can alays use a circular aperture
   containerSolid = new G4Tubs(name + "_outer_container_solid", // name
@@ -837,18 +847,10 @@ void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 }
 
 void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
-							   G4double length,
+							   G4double /*length*/,
 							   G4int  /*order*/)
 { 
   // cut pole here with knowledge of yoke shape.
-  G4VSolid* poleIntersectionSolid = new G4Tubs(name + "_yoke_intersection_solid", // name
-					       0,                                 // start radius
-					       yokeStartRadius - lengthSafetyLarge,
-					       length,  // long half length for unamibiguous intersection
-					       0,                                 // start angle
-					       CLHEP::twopi);                     // sweep angle
-  
-  allSolids.push_back(poleIntersectionSolid);
   poleSolid = new G4IntersectionSolid(name + "_pole_solid",   // name
 				      poleSolid,              // solid a
 				      poleIntersectionSolid); // solid b
