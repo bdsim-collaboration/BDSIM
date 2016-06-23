@@ -11,26 +11,26 @@ option, beampipeRadius=4*cm,
 	beampipeThickness = 1.5*mm;
 
 ! unphyiscally small, but outerDiameter > 2* beampipeRadius should work
-q1: el, l=0.5*m, k1=0.002, outerDiameter=8.4*cm;
+m1: el, l=0.5*m, k1=0.002, outerDiameter=8.4*cm;
 
 ! small enough to be awkward but visible yoke - shouldn't build pole in this case
-q2: q1, outerDiameter=10*cm;
+m2: m1, outerDiameter=10*cm;
 
 ! small but sensible
-q3: q1, outerDiameter=20*cm;
+m3: m1, outerDiameter=20*cm;
 
 ! another step up
-q4: q1, outerDiameter=40*cm;
+m4: m1, outerDiameter=40*cm;
 
 ! reaonable size
-q5: q1, outerDiameter=1*m;
+m5: m1, outerDiameter=1*m;
 
 ! large
-q6: q1, outerDiameter=2*m;
+m6: m1, outerDiameter=2*m;
 
 d1: drift, l=0.5*m;
 
-l1: line = (d1,q1,d1,q2,d1,q3,d1,q4,d1,q5,d1,q6,d1);
+l1: line = (d1,m1,d1,m2,d1,m3,d1,m4,d1,m5,d1,m6,d1);
 
 use, l1;
 
