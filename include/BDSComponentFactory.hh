@@ -69,7 +69,8 @@ private:
   BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
-  BDSAcceleratorComponent* CreateQuad();  
+  BDSAcceleratorComponent* CreateDipoleFringe(G4double angleIn, G4double angleOut);  
+  BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
   BDSAcceleratorComponent* CreateDecapole();

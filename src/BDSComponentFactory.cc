@@ -107,15 +107,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
+      if (prevElement && ((prevElement->type == ElementType::_RBEND) || (prevElement->type == ElementType::_DIPOLEFRINGE)))
 	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
 
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
+      if (nextElement && ((nextElement->type == ElementType::_RBEND) || (nextElement->type == ElementType::_DIPOLEFRINGE)))
 	{angleOut += 0.5*nextElement->angle;}// won't work if only field set TBC
 
       // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
       // so the drifts must be modified accordingly.
-      if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
+      if (prevElement && ((prevElement->type == ElementType::_SBEND)||(prevElement->type == ElementType::_SBEND)) && notSplit)
 	  {angleIn += -0.5*(prevElement->angle);}
 
       if (nextElement && (nextElement->type == ElementType::_SBEND) && notSplit)
@@ -158,6 +158,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
           willModify = true;
           angleIn -= 0.5*element->angle;
         }
+    }
+  else if (element->type == ElementType::_DIPOLEFRINGE)
+    {
+      // Match poleface from previous and next element
+      angleIn  = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+
+      // Normal vector of rbend is from the magnet, angle of the rbend has to be
+      // taken into account regardless of poleface rotation
+      if (prevElement && (prevElement->type == ElementType::_RBEND))
+	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
+
+      if (nextElement && (nextElement->type == ElementType::_RBEND))
+	{angleOut += 0.5*nextElement->angle;}// won't work if only field set TBC
+
+      // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
+      // so the drifts must be modified accordingly.
+      if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
+	  {angleIn += -0.5*(prevElement->angle);}
+
+      if (nextElement && (nextElement->type == ElementType::_SBEND) && notSplit)
+	  {angleOut += 0.5*(nextElement->angle);}
+
+      //if drift has been modified at all
+      if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+      {willModify = true;}
     }
 
   // check if the component already exists and return that
@@ -217,7 +243,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateAwakeScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
-
+  case ElementType::_DIPOLEFRINGE:
+    component = CreateDipoleFringe(angleIn, angleOut); break;
+    
     // common types, but nothing to do here
   case ElementType::_MARKER:
   case ElementType::_LINE:
@@ -345,6 +373,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       if (
 	  prevElement &&
 	  prevElement->type != ElementType::_DRIFT &&
+      prevElement->type != ElementType::_DIPOLEFRINGE &&
 	  !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
@@ -359,6 +388,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       if (
 	  nextElement &&
 	  nextElement->type != ElementType::_DRIFT &&
+      nextElement->type != ElementType::_DIPOLEFRINGE &&
 	  !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
@@ -603,6 +633,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 		       length,
 		       PrepareBeamPipeInfo(element, angleIn, angleOut),
 		       PrepareMagnetOuterInfo(element, angleIn, angleOut),
+		       vacuumField,
+		       nullptr);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateDipoleFringe(G4double angleIn,
+                                    G4double angleOut)
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleOut, angleOut);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,-angleOut,angleOut);
+  
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  (*st)["field"] = element->B / CLHEP::tesla;
+  (*st)["angle"] = 0;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+					       brho,
+					       BDSIntegratorType::fringe,
+					       st);
+
+  return new BDSMagnet(BDSMagnetType::sectorbend,
+		       element->name,
+		       element->l*CLHEP::m,
+		       beamPipeInfo,
+		       magnetOuterInfo,
 		       vacuumField,
 		       nullptr);
 }
