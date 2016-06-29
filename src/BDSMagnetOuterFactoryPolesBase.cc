@@ -95,7 +95,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  CleanUp(); // doesn't use CommonConstructor so must do this manually2012
+  CleanUp(); // doesn't use CommonConstructor so must do this manually
 
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
@@ -688,36 +688,31 @@ void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
   allSolids.push_back(poleSolid);
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
-							  G4double    length,
-							  G4Colour*   colour,
-							  G4Material* outerMaterial)
+void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
+						      G4double length)
 {
-  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
-  CreateLogicalVolumesCoil(name);
-}
+  // create an extruded polygon even though a square to avoid the need for
+  // individual rotated translations. This also allows the same rotation
+  // to be used for the coils as the poles.
+  CreateCoilPoints();
 
-void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
-{
-  if (coilLeftSolid)
-    { // if one exists, all coil solids exist
-      G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
-      coilLeftLV = new G4LogicalVolume(coilLeftSolid,
-				       coilMaterial,
-				       name + "_coil_left_lv");
+  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
+  G4double zScale = 1;       // the scale at each end of the points = 1
+  
+  coilLeftSolid = new G4ExtrudedSolid(name + "_coil_left_solid", // name
+				      leftPoints,                // transverse 2d coordinates
+				      length*0.5 - lengthSafety, // z half length
+				      zOffsets, zScale, // dx,dy offset for each face, scaling
+				      zOffsets, zScale);// dx,dy offset for each face, scaling
 
-      coilRightLV = new G4LogicalVolume(coilRightSolid,
-					coilMaterial,
-					name + "_coil_right_lv");
-      
-      G4Colour* coil = BDSColours::Instance()->GetColour("coil");
-      G4VisAttributes* coilVisAttr = new G4VisAttributes(*coil);
-      coilVisAttr->SetVisibility(true);
-
-      coilLeftLV->SetVisAttributes(coilVisAttr);
-      coilRightLV->SetVisAttributes(coilVisAttr);
-      allVisAttributes.push_back(coilVisAttr);
-    }
+  coilRightSolid = new G4ExtrudedSolid(name + "_coil_right_solid", // name
+				       rightPoints,                // transverse 2d coordinates
+				       length*0.5 - lengthSafety, // z half length
+				       zOffsets, zScale, // dx,dy offset for each face, scaling
+				       zOffsets, zScale);// dx,dy offset for each face, scaling
+  
+  allSolids.push_back(coilLeftSolid);
+  allSolids.push_back(coilRightSolid);
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
@@ -778,33 +773,6 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreateCoilSolids(G4String name,
-						      G4double length)
-{
-  // create an extruded polygon even though a square to avoid the need for
-  // individual rotated translations. This also allows the same rotation
-  // to be used for the coils as the poles.
-  CreateCoilPoints();
-
-  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
-  G4double zScale = 1;       // the scale at each end of the points = 1
-  
-  coilLeftSolid = new G4ExtrudedSolid(name + "_coil_left_solid", // name
-				      leftPoints,                // transverse 2d coordinates
-				      length*0.5 - lengthSafety, // z half length
-				      zOffsets, zScale, // dx,dy offset for each face, scaling
-				      zOffsets, zScale);// dx,dy offset for each face, scaling
-
-  coilRightSolid = new G4ExtrudedSolid(name + "_coil_right_solid", // name
-				       rightPoints,                // transverse 2d coordinates
-				       length*0.5 - lengthSafety, // z half length
-				       zOffsets, zScale, // dx,dy offset for each face, scaling
-				       zOffsets, zScale);// dx,dy offset for each face, scaling
-  
-  allSolids.push_back(coilLeftSolid);
-  allSolids.push_back(coilRightSolid);
-}
-
 void BDSMagnetOuterFactoryPolesBase::CreateYokeAndContainerSolid(G4String name,
 								 G4double length,
 								 G4int    /*order*/,
@@ -854,6 +822,38 @@ void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
   poleSolid = new G4IntersectionSolid(name + "_pole_solid",   // name
 				      poleSolid,              // solid a
 				      poleIntersectionSolid); // solid b
+}
+
+void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
+							  G4double    length,
+							  G4Colour*   colour,
+							  G4Material* outerMaterial)
+{
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
+  CreateLogicalVolumesCoil(name);
+}
+
+void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil(G4String name)
+{
+  if (coilLeftSolid)
+    { // if one exists, all coil solids exist
+      G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
+      coilLeftLV = new G4LogicalVolume(coilLeftSolid,
+				       coilMaterial,
+				       name + "_coil_left_lv");
+
+      coilRightLV = new G4LogicalVolume(coilRightSolid,
+					coilMaterial,
+					name + "_coil_right_lv");
+      
+      G4Colour* coil = BDSColours::Instance()->GetColour("coil");
+      G4VisAttributes* coilVisAttr = new G4VisAttributes(*coil);
+      coilVisAttr->SetVisibility(true);
+
+      coilLeftLV->SetVisAttributes(coilVisAttr);
+      coilRightLV->SetVisAttributes(coilVisAttr);
+      allVisAttributes.push_back(coilVisAttr);
+    }
 }
 
 void BDSMagnetOuterFactoryPolesBase::TestInputParameters(BDSBeamPipe* beamPipe,

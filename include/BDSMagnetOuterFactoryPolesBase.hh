@@ -245,8 +245,8 @@ protected:
   virtual void PlaceComponents(G4String name,
 			       G4int    order);
 
-	virtual void PlaceComponentsCoils(G4String name,
-	G4int order);
+  virtual void PlaceComponentsCoils(G4String name,
+				    G4int    order);
 
   /// Create the solids, logical volumes for the end piece - everything
   /// but the placement. Also, create the geometry component now.

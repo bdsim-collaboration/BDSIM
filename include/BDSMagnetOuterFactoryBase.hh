@@ -31,17 +31,17 @@ class G4VSolid;
  * Each factory should implement a method for every type of magnet - ie for
  * each class that inherits BDSMagnet.
  * 
+ * NOTE each derived class is expected to be a singleton but this can't be specified here
+ * as it'd refer to the abstract base class - must be implemented in each derived class. 
+ * 'In' in argument variables is used to distinguish between that and possible
+ * internal member variables with the same name - avoiding 'itsVariable'.
+ * 
  * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryBase
 {
 public:
-  /// NOTE each derived class is expected to be a singleton but this can't be specified here
-  /// as it'd refer to the abstract base class - must be implemented in each derived class. 
-  /// 'In' in argument variables is used to distinguish between that and possible
-  /// internal member variables with the same name - avoiding 'itsVariable'.
-
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,                   // name
 					   G4double     length,                 // full length [mm]
