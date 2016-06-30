@@ -27,7 +27,7 @@ public:
 			  G4double                 brho,
 			  G4Mag_EqRhs*             eqOfMIn);
   
-  virtual BDSIntegratorFringefield(){;}
+  virtual ~BDSIntegratorFringefield(){;}
 
   /// The stepper for integration. The stepsize is fixed, equal to h. The reason for this
   /// is so that intermediate steps can be calculated and therefore the error ascertained
@@ -51,7 +51,8 @@ private:
   BDSIntegratorFringefield();
   
   /// B Field Gradient
-  G4double bPrime;
+  G4double angle;
+  G4double rho;
 
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
