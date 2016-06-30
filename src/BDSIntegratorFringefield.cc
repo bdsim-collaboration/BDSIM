@@ -17,7 +17,9 @@ BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* stre
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   angle = (*strength)["polefaceangle"];
-  rho = brho / (*strength)["field"] *CLHEP::m;
+  //nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  //rho = brho / (*strength)["field"] *CLHEP::m;
+  bField = (*strength)["field"];
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
@@ -34,6 +36,9 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
   G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
   G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
+  G4double      InitMag = GlobalP.mag();
+  G4double      charge  = (eqOfM->FCof())/CLHEP::c_light;
+  G4double      rho = InitMag/CLHEP::GeV/(0.299792458 * bField) * CLHEP::m;
   
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();

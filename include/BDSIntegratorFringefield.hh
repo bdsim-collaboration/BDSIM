@@ -52,7 +52,7 @@ private:
   
   /// B Field Gradient
   G4double angle;
-  G4double rho;
+  G4double bField;
 
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
