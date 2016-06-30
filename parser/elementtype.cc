@@ -59,8 +59,6 @@ std::string GMAD::typestr(ElementType type) {
     return "awakescreen";
   case ElementType::_DEGRADER :
     return "degrader";
-  case ElementType::_DIPOLEFRINGE :
-    return "fringe";
   default:
     return "none";
   }

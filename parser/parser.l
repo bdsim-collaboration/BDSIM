@@ -95,7 +95,6 @@ awakescreen { return AWAKESCREEN; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
-fringe { return DIPOLEFRINGE;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
