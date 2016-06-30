@@ -403,7 +403,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
       (*st)["field"] = element->B;
-      (*st)["angle"] = - element->angle;
+      (*st)["angle"] = element->angle;
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
@@ -414,9 +414,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   else
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["angle"] = - element->angle;
+      (*st)["angle"] = element->angle;
       (*st)["field"] = - brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
-
     }
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -647,8 +646,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDipoleFringe(G4double angleI
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,-angleOut,angleOut);
   
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["field"] = element->B / CLHEP::tesla;
-  (*st)["angle"] = 0;
+  //(*st)["field"] = 0;
+
+  if (BDS::IsFinite(nextElement->B))
+    {// both are specified and should be used - under or overpowered dipole by design
+      (*st)["field"] = nextElement->B;
+    }
+  else if (BDS::IsFinite(nextElement->angle))
+    {// only angle - calculate B field
+      G4double ffact = BDSGlobalConstants::Instance()->FFact();
+      G4double nextAngle = nextElement->angle;
+      (*st)["field"] = brho * nextAngle / nextElement->l * charge * ffact / CLHEP::tesla / CLHEP::m;
+    }
+  else
+    // neither are specified - no bend, no field.
+    {(*st)["field"] = 0;}
+
+  if (BDS::IsFinite(nextElement->e1))
+    {(*st)["polefaceangle"] = nextElement->e1;}
+  else
+    {(*st)["polefaceangle"] = 0;}
+
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       BDSIntegratorType::fringe,
