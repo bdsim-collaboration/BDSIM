@@ -11,6 +11,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSLine.hh"
+#include "BDSMagnet.hh"
 
 class BDSCavityInfo;
 class BDSFieldInfo;
@@ -69,7 +70,6 @@ private:
   BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
-  BDSAcceleratorComponent* CreateDipoleFringe(G4double angleIn, G4double angleOut);  
   BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
@@ -85,6 +85,11 @@ private:
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateTransform3D();
+
+  BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
+                G4double angleIn,
+                G4double angleOut,
+                BDSMagnetStrength* st);
 
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element*     element,
