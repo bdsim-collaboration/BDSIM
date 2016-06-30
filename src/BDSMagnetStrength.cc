@@ -8,6 +8,7 @@
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
   "field",// constant field
+  "polefaceangle",//required for fringe field
   "angle", "length",
   "ks",
   "k1", "k1s",
