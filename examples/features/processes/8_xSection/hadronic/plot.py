@@ -3,22 +3,25 @@ import numpy as _np
 
 # http://pdg.lbl.gov/2015/hadronic-xsections/hadron.html
 
-def plot() :
-    nTotProton  = 100000
-#    thickness   = 0.01
-    thickness   = 0.001
+def compareHadronic() :
+    plot("01_hydrogen.dat", 100000,0.001, 8.96,  1.00);
+    plot("02_carbon.dat",   100000,0.01 , 1.88, 12.00);
+    plot("03_aluminium.dat",100000,0.01 , 2.70, 26.98);
+    plot("04_copper.dat",   100000,0.001, 8.96, 26.98);
+    plot("05_tungsten.dat", 100000,0.001,19.30,183.84);
+    plot("06_lead.dat",     100000,0.001,11.35,207.20);
+    
+def plot(filename = "hydrogen.dat", nTotProton = 100000,thickness = 0.001, densitygcm3 = 1.0, atomicweight = 1) :
     barn        = 1E-28
     mbarn       = barn*1E-3
-    d           = _np.loadtxt("output.dat")
+    d           = _np.loadtxt(filename)
     eTot        = d[:,0]
     eBeam       = _np.sqrt(d[:,0]**2-0.938270**2)
     nElastic    = 2*d[:,1]
     nInelastic  = 2*d[:,2]
     nTotal      = nElastic+nInelastic
 
-    atomicweight    = 1.0
     amu             = 1.660539040E-27
-    densitygcm3     = 8.96
     densitykgm3     = densitygcm3*1e-3/(0.01)**3
     numberdensitym3 = densitykgm3/(atomicweight*amu)
     numberdensitym2 = thickness*numberdensitym3
@@ -28,18 +31,19 @@ def plot() :
     print densitygcm3, densitykgm3, numberdensitym3, numberdensitym2
 
 
-    _pl.clf()
+#    _pl.clf()
     _pl.loglog(eBeam,eleXSec,"-b")
     _pl.loglog(eBeam,totXSec,"-g")
 
-    # elastic xsec
-    pdgEle= loadPdgCrossSection("./rpp2014-pp_elastic.dat")
-    _pl.loglog(pdgEle['PLAB(GEV/C)'],pdgEle['SIG(MB)'],".b")
-
-    # total xsec 
-    pdgTot = loadPdgCrossSection("./rpp2014-pp_total.dat")
-    _pl.loglog(pdgTot['PLAB(GEV/C)'],pdgTot['SIG(MB)'],".g")
-
+    if 0 :
+        # elastic xsec
+        pdgEle= loadPdgCrossSection("./rpp2014-pp_elastic.dat")
+        _pl.loglog(pdgEle['PLAB(GEV/C)'],pdgEle['SIG(MB)'],".b")
+        
+        # total xsec 
+        pdgTot = loadPdgCrossSection("./rpp2014-pp_total.dat")
+        _pl.loglog(pdgTot['PLAB(GEV/C)'],pdgTot['SIG(MB)'],".g")
+        
     _pl.grid(True,which="both");
     _pl.xlabel("$P_\mathrm{lab} \;\; [\mathrm{GeV}/{c}]$")
     _pl.ylabel("$\sigma \;\; [\mathrm{mb}]$")
