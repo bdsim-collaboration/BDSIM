@@ -66,6 +66,7 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
   poleSquareStartRadius = 0;
   segmentAngle          = 0;
   poleAngle             = 0;
+  poleTranslation       = G4ThreeVector(0,0,0);
   coilHeight            = 0;
   coilCentreRadius      = 0;
   endPieceLength        = 0;
@@ -579,6 +580,7 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   G4double bpRadius = beamPipe->GetContainerRadius();
+  
   // check parameters are valid
   if (outerDiameter*0.5 < bpRadius)
     {
@@ -895,36 +897,30 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  // PLACEMENT
   // place the components inside the container
-  // note we don't need the pointer for placements - it's registered upon construction with g4
-  yokePV = new G4PVPlacement((G4RotationMatrix *) nullptr,   // no rotation
-			     (G4ThreeVector) 0,             // position
+  yokePV = new G4PVPlacement((G4RotationMatrix *) nullptr, // no rotation
+			     (G4ThreeVector) 0,            // position
 			     yokeLV,                       // lv to be placed
 			     name + "_yoke_pv",            // name
 			     containerLV,                  // mother lv to be placed in
 			     false,                        // no boolean operation
 			     0,                            // copy number
 			     checkOverlaps);               // whether to check overlaps
-  
   allPhysicalVolumes.push_back(yokePV);
   
   // place poles
   if (!buildPole)
     {return;}
   // else continue and place poles and coils
-  // pole placement
-  G4PVPlacement* aPolePV     = nullptr;
-  
+  G4PVPlacement* aPolePV     = nullptr;  
   for (G4int n = 0; n < 2*order; ++n)
     {
       G4RotationMatrix* rm  = new G4RotationMatrix();
       allRotationMatrices.push_back(rm);
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
-      
-      //  G4double rotationAngle = 0;
+      // poleTranslation is by default (0,0,0)
       aPolePV = new G4PVPlacement(rm,                 // rotation
-				  (G4ThreeVector)0,   // position
+				  poleTranslation,    // position
 				  poleLV,             // logical volume
 				  name + "_pv",       // name
 				  containerLV,        // mother lv to be placed in
