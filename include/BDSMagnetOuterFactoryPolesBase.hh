@@ -281,7 +281,17 @@ protected:
 					    G4double     outerDiameter,
 					    G4Material*  outerMaterial,
 					    G4bool       isVertical);
-  
+
+  BDSMagnetOuter* CreateDipole(G4String     name,
+			       G4double     length,
+			       BDSBeamPipe* beamPipe,
+			       G4double     outerDiameter,
+			       G4double     containerLength,
+			       G4double     angleIn,
+			       G4double     angleOut,
+			       G4Material*  material,
+			       G4bool       bendLeft,
+			       G4Colour*    colour);
 };
 
 #endif

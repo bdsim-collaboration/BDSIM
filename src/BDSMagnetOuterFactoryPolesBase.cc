@@ -31,6 +31,7 @@
 
 #include <algorithm>                       // for std::max
 #include <cmath>
+#include <string>                          // for std::to_string
 #include <utility>                         // for std::pair
 #include <vector>
 
@@ -96,6 +97,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+
+  auto colour = BDSColours::Instance()->GetColour("sectorbend");
+  return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+		      angleOut, outerMaterial, true, colour);
+  
   CleanUp(); // doesn't use CommonConstructor so must do this manually
 
   // test input parameters - set global options as default if not specified
@@ -1286,4 +1292,405 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
   kicker->RegisterUserLimits(allUserLimits);
   
   return kicker;
+}
+
+BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
+							     G4double     length,
+							     BDSBeamPipe* beamPipe,
+							     G4double     outerDiameter,
+							     G4double     containerLength,
+							     G4double     angleIn,
+							     G4double     angleOut,
+							     G4Material*  material,
+							     G4bool       bendLeft,
+							     G4Colour*    colour)
+{
+  CleanUp();
+
+  // 1 calculations
+  // 2 c shaped solid
+  // 3 angled solids for intersection
+  // 4 intersection solids
+  // 5 logical volumes
+  // 6 placement
+  // general order - yoke, container, magnet container, coils
+
+  // calculate any geometrical parameters
+  const auto extXbp = beamPipe->GetExtentX();
+  const auto extYbp = beamPipe->GetExtentY();
+  const G4double bpHalfWidth    = std::max(std::abs(extXbp.first), std::abs(extXbp.second));
+  const G4double bpHalfHeight   = std::max(std::abs(extYbp.first), std::abs(extYbp.second));
+  G4double poleHalfWidth  = bpHalfWidth  + lengthSafety;
+  poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.3);
+  G4double poleHalfHeight = bpHalfHeight + lengthSafety;
+  G4double       outerHalf      = outerDiameter * 0.5;
+
+  // outerDiameter must be > max ( bp height , bp width )
+  G4double maxOfBP = std::max(poleHalfWidth, poleHalfHeight);
+  if (outerHalf <= maxOfBP)
+    {outerHalf = maxOfBP + lengthSafetyLarge;}
+
+  // propose yoke thickness
+  G4double yokeThickness = 0.2 * outerDiameter;
+  // check it's a suitable size and will fit in
+  if (yokeThickness > outerHalf - poleHalfHeight)
+    {
+      buildPole     = false;
+      yokeThickness = outerHalf - poleHalfHeight;
+    }
+
+  // coil calculations
+  // these are full height and width maximum so that they'd fit
+  G4double coilHeight = outerHalf - poleHalfHeight - yokeThickness;
+  G4double coilWidth  = outerHalf - yokeThickness  - poleHalfWidth;
+      
+  // reduce the coils from the absolute maximum;
+  coilHeight *= 0.8;
+  coilWidth  *= 0.8;
+
+  // T = top, B = bottom, L = left, R = right
+  G4double x = poleHalfWidth  + 0.5*coilWidth  + lengthSafetyLarge;
+  G4double y = poleHalfHeight + 0.5*coilHeight + lengthSafetyLarge;
+  G4ThreeVector coilTLDisp = G4ThreeVector( x, y, 0);
+  G4ThreeVector coilTRDisp = G4ThreeVector(-x, y, 0);
+  G4ThreeVector coilBLDisp = G4ThreeVector( x,-y, 0);
+  G4ThreeVector coilBRDisp = G4ThreeVector(-x,-y, 0);
+  std::vector<G4ThreeVector> coilDisps;
+  coilDisps.push_back(coilTLDisp);
+  coilDisps.push_back(coilTRDisp);
+  coilDisps.push_back(coilBLDisp);
+  coilDisps.push_back(coilBRDisp);
+
+  // create vectors of points for extruded solids
+  // create yoke + pole (as one solid about 0,0,0)
+  std::vector<G4TwoVector> yokePoints;
+  std::vector<G4TwoVector> cPoints;  // container points (for magnet outer only)
+  std::vector<G4TwoVector> mCPoints; // magnet container points
+
+  // Typically we have a positive bend angle that (by convention) causes a
+  // bend to the -ve x direction in right hadned coordinates. Also, typically,
+  // a C shaped magnet has the yoke to the inside so there is an aperture for
+  // any radiation to escape to the outside. Therefore, we build the yoke like this
+  // and flip it if required. Points are done in clock wise order from the bottom left
+  // corner of the top pole.
+  const G4double lsl = lengthSafetyLarge; // shortcut
+  G4double yokeInsideX = poleHalfWidth - outerDiameter + yokeThickness;
+  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl,  poleHalfHeight - lsl));
+  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl,  outerHalf - lsl));
+  //yokePoints.push_back(G4TwoVector(poleHalfWidth + lsl - outerDiameter,  poleHalfHeight - lsl));
+  //yokePoints.push_back(G4TwoVector(poleHalfWidth + lsl - outerDiameter, -poleHalfHeight + lsl));
+  yokePoints.push_back(G4TwoVector(poleHalfWidth + lsl - outerDiameter,  outerHalf - lsl));
+  yokePoints.push_back(G4TwoVector(poleHalfWidth + lsl - outerDiameter, -outerHalf + lsl));
+  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl, -outerHalf + lsl));
+  yokePoints.push_back(G4TwoVector(poleHalfWidth - lsl, -poleHalfHeight - lsl));
+  if (buildPole)
+    {
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -poleHalfHeight));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl, -outerHalf+yokeThickness));
+      yokePoints.push_back(G4TwoVector(poleHalfWidth-outerHalf+yokeThickness, -outerHalf+yokeThickness));
+      yokePoints.push_back(G4TwoVector(poleHalfWidth-outerHalf+yokeThickness,  outerHalf-yokeThickness));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  outerHalf-yokeThickness));
+      yokePoints.push_back(G4TwoVector(-poleHalfWidth + lsl,  poleHalfHeight));
+    }
+  else
+    {
+      yokePoints.push_back(G4TwoVector(yokeInsideX - lsl, -poleHalfHeight - lsl));
+      yokePoints.push_back(G4TwoVector(yokeInsideX - lsl,  poleHalfHeight + lsl));
+    }
+
+  for (auto point : yokePoints)
+    {G4cout << point << G4endl;}
+  
+  // points for container for magnet outer only
+  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));
+  if (buildPole)
+    {
+      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 4*lsl));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight + coilHeight + 4*lsl));
+    }
+  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, outerHalf + lsl));
+  cPoints.push_back(G4TwoVector(poleHalfWidth - outerDiameter - 2*lsl, outerHalf + lsl));
+  cPoints.push_back(G4TwoVector(poleHalfWidth - outerDiameter - 2*lsl, -outerHalf - lsl));
+  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -outerHalf - lsl));
+  if (buildPole)
+    {
+      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight - coilHeight - 4*lsl));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 4*lsl));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight));
+    }
+  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));
+  cPoints.push_back(G4TwoVector(yokeInsideX, -poleHalfHeight));
+  cPoints.push_back(G4TwoVector(yokeInsideX,  poleHalfHeight));
+
+  // points for container for full magnet object including beam pipe
+  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, poleHalfHeight));
+  if (buildPole)
+    {
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight + coilHeight + 2*lsl));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, poleHalfHeight + coilHeight + 2*lsl));
+    }
+  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl,  outerHalf + 2*lsl));
+  mCPoints.push_back(G4TwoVector(poleHalfWidth - outerDiameter - 2*lsl,  outerHalf + 2*lsl));
+  mCPoints.push_back(G4TwoVector(poleHalfWidth - outerDiameter - 2*lsl, -outerHalf - 2*lsl));
+  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -outerHalf - 2*lsl));
+  if (buildPole)
+    {
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight - coilHeight - 2*lsl));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 2*lsl));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight));
+    }
+  mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight));
+  
+  // record extents - do here as all the extents are bascially calcualted here
+  G4double mx = poleHalfWidth - outerDiameter - 2*lsl;
+  G4double px = poleHalfWidth + coilWidth + 4*lsl;
+  G4double my = -outerHalf - 2*lsl;
+  G4double py = outerHalf + 2*lsl;
+  std::pair<double,double> extX = std::make_pair(mx,px);
+  std::pair<double,double> extY = std::make_pair(my,py);
+  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  
+  if (bendLeft)
+    {
+      // flip x component so geometry is reflected horizontally
+      for (auto& vec : yokePoints)
+	{vec.setX(vec.x() * -1);}
+      // reverse order so it's clockwise as geant4 requires
+      std::reverse(yokePoints.begin(), yokePoints.end());
+
+      // same for container
+      for (auto& vec : cPoints)
+	{vec.setX(vec.x() * -1);}
+      std::reverse(cPoints.begin(), cPoints.end());
+
+      // same for magnet container
+      for (auto& vec : mCPoints)
+	{vec.setX(vec.x() * -1);}
+      std::reverse(mCPoints.begin(), mCPoints.end());
+    }
+
+  G4double sLength = length; // default is normal length
+  // if we have angled faces, make square faced solids longer for intersection.
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    {
+      // create yoke, coil, container and magnet container solids
+      // create a safe length here so solids are long enough for intersection
+      G4double dzIn  = tan(std::abs(angleIn))  * outerDiameter; // over estimation, but ok
+      G4double dzOut = tan(std::abs(angleOut)) * outerDiameter;
+      // safe length for intersection
+      sLength = std::max(2*length, 1.5*length + dzIn + dzOut);
+    }
+    
+  G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
+  G4double zScale = 1;       // the scale at each end of the points = 1
+  yokeSolid = new G4ExtrudedSolid(name + "_yoke_square_solid", // name
+				  yokePoints,                  // transverse 2d coordinates
+				  sLength*0.5 - lengthSafety,  // z half length
+				  zOffsets, zScale,  // dx,dy offset for each face, scaling
+				  zOffsets, zScale); // dx,dy offset for each face, scaling
+  
+  containerSolid = new G4ExtrudedSolid(name + "_outer_container_solid", // name
+				       cPoints,                    // transverse 2d coordinates
+				       sLength*0.5 - lengthSafety, // z half length
+				       zOffsets, zScale, // dx,dy offset for each face, scaling
+				       zOffsets, zScale);// dx,dy offset for each face, scaling
+
+  magnetContainerSolid = new G4ExtrudedSolid(name + "_container_solid", // name
+					     mCPoints,                  // transverse 2d coordinates
+					     sLength*0.5 - lengthSafety, // z half length
+					     zOffsets, zScale, // dx,dy offset for each face, scaling
+					     zOffsets, zScale);// dx,dy offset for each face, scaling
+
+
+  // create coil - one solid that will be placed 4 times... or
+  // if we have angled faces, they're all unique unfortunately so use a vector of solids
+  // and place individually
+  G4VSolid* coilSolid = nullptr;
+  std::vector<G4VSolid*>        coilsSolids;
+  std::vector<G4LogicalVolume*> coilLVs;
+  G4bool individualCoilsSolids = false;
+  if (buildPole)
+    {
+      coilSolid = new G4Box(name + "_coil_solid",        // name
+			    coilWidth*0.5,               // x half width
+			    coilHeight*0.5,              // y half height
+			    length*0.5 - lengthSafety);  // z half length
+    }
+
+  // Intersect and replace solids. Do it via replacmeent of the base class member G4VSolid*
+  // as the intersection is only done if one of the angles is finite.
+
+  // If we have angled faces, we need to also intersect the outer magnet container and
+  // we therefore have an extra solid that should belong to that geometry component
+  // and not the magnet outer - create a vector for holding any extra solids. These can
+  // only be registered once the container object is created and that can only happen
+  // once the solid and logical volumes are fully complete.
+  std::vector<G4VSolid*> magnetContainerExtraSolids;
+  if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
+    { 
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+      G4ThreeVector inputface  = faces.first;
+      G4ThreeVector outputface = faces.second;
+      
+      // angled solid for magnet outer and coils
+      G4VSolid* angledFaces = new G4CutTubs(name + "_angled_face_solid", // name
+					    0,                           // inner radius
+					    outerDiameter,               // outer radius
+					    length*0.5 - lengthSafety,   // z half length
+					    0,                           // start angle
+					    CLHEP::twopi,                // sweep angle
+					    inputface,                   // input face normal
+					    outputface);                 // output face normal
+      
+      // angled solid for magnet outer container volume
+      G4VSolid* angledFacesCont = new G4CutTubs(name + "_angled_face_cont_solid", // name
+						0,                           // inner radius
+						outerDiameter,               // outer radius
+						length*0.5,                  // z half length
+						0,                           // start angle
+						CLHEP::twopi,                // sweep angle
+						inputface,                   // input face normal
+						outputface);                 // output face normal
+      
+      // angled solid for full magnet container
+      G4VSolid* angledFacesMagCont = new G4CutTubs(name + "_angled_face_mag_cont_solid", // name
+						   0,                    // inner radius
+						   outerDiameter,        // outer radius
+						   containerLength*0.5,  // z half length
+						   0,                    // start angle
+						   CLHEP::twopi,         // sweep angle
+						   inputface,            // input face normal
+						   outputface);          // output face normal
+
+      // register angled solids
+      allSolids.push_back(angledFaces);
+      allSolids.push_back(angledFacesCont);
+      magnetContainerExtraSolids.push_back(angledFacesMagCont);
+
+      // register existing square solids as we're going to overwrite them with intersected ones
+      allSolids.push_back(yokeSolid);
+      allSolids.push_back(containerSolid);
+      allSolids.push_back(coilSolid);
+      
+      // now do intersections
+      yokeSolid = new G4IntersectionSolid(name + "_yoke_solid", // name
+					  yokeSolid,            // solid a - existing yoke
+					  angledFaces);         // solid b
+      
+      containerSolid = new G4IntersectionSolid(name + "_container_solid", // name
+					       containerSolid,            // solid a
+					       angledFacesCont);           // solid b
+
+      individualCoilsSolids = true; // flag that we have individual coil solids
+      for (G4int i = 0; i < 4; i++)
+	{
+	  G4VSolid* coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
+						    coilSolid,                  // solid a
+						    angledFaces,                // solid b
+						    (G4RotationMatrix*)nullptr, // 0 rotation
+						    coilDisps[i]);              // translation
+	  coilsSolids.push_back(coilS);
+	  allSolids.push_back(coilS);
+	}
+    }
+  
+  // logical volumes
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, material);
+  // we only use one coil solid here so do that here
+  G4LogicalVolume* coilLV;
+  if (buildPole)
+    {
+      G4Colour* coil = BDSColours::Instance()->GetColour("coil");
+      G4VisAttributes* coilVis = new G4VisAttributes(*coil);
+      coilVis->SetVisibility(true);
+      allVisAttributes.push_back(coilVis);
+      G4Material* coilMaterial = BDSMaterials::Instance()->GetMaterial("copper");
+      if (individualCoilsSolids)
+	{
+	  for (G4int i = 0; i < 4; i++)
+	    {
+	      G4String theName =  name + "_coil_solid_" + std::to_string(i);
+	      G4LogicalVolume* aCoilLV = new G4LogicalVolume(coilSolid,
+							     coilMaterial,
+							     theName);
+	      aCoilLV->SetVisAttributes(coilVis);
+	      coilLVs.push_back(aCoilLV);
+	      allLogicalVolumes.push_back(aCoilLV);
+	    }
+	}
+      else
+	{
+	  coilLV = new G4LogicalVolume(coilSolid,
+				       coilMaterial,
+				       name + "_coil_lv");
+	  coilLV->SetVisAttributes(coilVis);
+	  allLogicalVolumes.push_back(coilLV);
+	}
+    }
+  
+  // placement
+  // place yoke+pole (one solid) together
+  G4bool buildPoleOriginal = buildPole;
+  buildPole = false; // this will avoid PlaceComponents trying to place poles that don't exist
+  PlaceComponents(name, 1); // places yoke
+  buildPole = buildPoleOriginal;
+  // place coils
+  if (buildPole)
+    {
+      G4PVPlacement* aCoilPV = nullptr;
+      // coils intersection was done such that the coordinates of the resultant solid
+      // are the same as the plain coil G4Box. This allows us to programmatically place
+      // the coils here irrespective if there's one or 4 unqiue coils.
+      for (G4int i = 0; i < 4; i++)
+	{
+	  G4LogicalVolume* volToPlace = coilLV;
+	  if (individualCoilsSolids)
+	    {volToPlace = coilLVs[i];}
+	  G4String theName = name + "_coil_" + std::to_string(i) + "_pv";
+	  aCoilPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // no rotation
+				      coilDisps[i],                // position
+				      volToPlace,                 // lv to be placed
+				      theName,                    // name
+				      containerLV,                // mother lv to be place in
+				      false,                      // no boolean operation
+				      0,                          // copy number
+				      checkOverlaps);
+	  allPhysicalVolumes.push_back(aCoilPV);
+	}
+    }
+  
+  // end piece - TBC
+
+  // magnet outer instance
+  CreateMagnetContainerComponent();
+  magnetContainer->RegisterSolid(magnetContainerExtraSolids);
+
+  // build the BDSMagnetOuter instance and return it
+  BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
+					     containerLV,
+					     extX, extY, extZ,
+					     magnetContainer);
+  
+  outer->RegisterSolid(allSolids);
+  outer->RegisterLogicalVolume(allLogicalVolumes);
+  outer->RegisterRotationMatrix(allRotationMatrices);
+  outer->RegisterPhysicalVolume(allPhysicalVolumes);
+  outer->RegisterVisAttributes(allVisAttributes);
+  outer->RegisterUserLimits(allUserLimits);
+  
+  outer->RegisterSolid(yokeSolid);
+  outer->RegisterLogicalVolume(yokeLV);
+
+  outer->RegisterSensitiveVolume(yokeLV);
+  if (individualCoilsSolids)
+    {outer->RegisterSensitiveVolume(coilLVs);}
+  else
+    {outer->RegisterSensitiveVolume(coilLV);}
+
+  //outer->SetEndPieceBefore(endPiece);
+  //outer->SetEndPieceAfter(endPiece);
+  
+  return outer;
 }
