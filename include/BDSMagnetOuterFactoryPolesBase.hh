@@ -166,44 +166,49 @@ protected:
   /// yokeStartRadius - lengthSaftey, it runs to yokeStartRadius x poleStopFactor.
   const G4double poleStopFactor;
   
-  //length will be calculated in each derived class
-  //will be less than outer radius but long enough so poles can be
-  //boolean added to return yoke - this is different for each type
-  G4double yokeStartRadius;
-  G4double yokeFinishRadius;
-  G4double magnetContainerRadius;
-  G4bool   buildPole;
-  G4double poleStartRadius;
-  G4double poleFinishRadius;
-  G4double poleSquareWidth;
-  G4double poleSquareStartRadius;
-  G4double segmentAngle;
-  G4double poleAngle;
-  G4double coilHeight;
-  G4double coilCentreRadius;
-  G4double endPieceLength;
-  G4double endPieceInnerR;
-  G4double endPieceOuterR;
+  G4double yokeStartRadius;        ///< Start radius of yoke geometry from magnet cetnre.
+  G4double yokeFinishRadius;       ///< Finish radius of yoke geometry from magnet centre - less than outerDiameter.
+  G4double magnetContainerRadius;  ///< Radius of the container solid for the outer geometry.
+  G4bool   buildPole;              ///< Whether or not to build poles (and therefore coils).
+  G4double poleStartRadius;        ///< Start radius of the pole from magnet centre.
+  G4double poleFinishRadius;       ///< Finish radius of the pole from magnet centre.
+  G4double poleSquareWidth;        ///< Full width of pole in constant width section.
+  G4double poleSquareStartRadius;  ///< Radius from magnet centre that constant width section starts.
+  G4double segmentAngle;           ///< 2PI / # of poles - angle per segment allocated for each pole.
+  G4double poleAngle;              ///< The angle allowed for the pole to occupy - less than segmentAngle.
+  G4ThreeVector poleTranslation;   ///< Offste of pole for placement from magnet centre.
+  G4double coilHeight;             ///< Height along y for coil for coil beside 1 upgright pole aligned with y axis.
+  G4double coilCentreRadius;       ///< Radius from magnet centre that the centre of the coils exist at.
+  G4double endPieceLength;         ///< Length of the coil end piece along what will be curvilinear S.
+  G4double endPieceInnerR;         ///< Inner radius for end piece container.
+  G4double endPieceOuterR;         ///< Outer radius for end piece container.
 
   G4VSolid* poleIntersectionSolid; ///< Solid used to chop off pole
-  G4VSolid* coilLeftSolid;
-  G4VSolid* coilRightSolid;
-  G4VSolid* endPieceContainerSolid;
-  G4LogicalVolume* coilLeftLV;
-  G4LogicalVolume* coilRightLV;
-  G4LogicalVolume* endPieceCoilLV;
-  G4LogicalVolume* endPieceContainerLV;
-  BDSSimpleComponent* endPiece;
+  G4VSolid* coilLeftSolid;         ///< Left coil solid for one pole built upright along y axis.
+  G4VSolid* coilRightSolid;        ///< Right coil solid.
+  G4VSolid* endPieceContainerSolid;///< End piece container solid.
+  G4LogicalVolume* coilLeftLV;     ///< Logical volume for left coil.
+  G4LogicalVolume* coilRightLV;    ///< Logical volume for right coil.
+  G4LogicalVolume* endPieceCoilLV; ///< Logical volume for end piece single coil piece.
+  G4LogicalVolume* endPieceContainerLV; ///< Logical volume for end piece container.
+  BDSSimpleComponent* endPiece;    ///< Fully constructed end piece.
   
-  std::vector<G4TwoVector> leftPoints;
-  std::vector<G4TwoVector> rightPoints;
-  std::vector<G4TwoVector> endPiecePoints;
-
-  // functions
+  std::vector<G4TwoVector> leftPoints;    ///< Vector of 2D points for left coil.
+  std::vector<G4TwoVector> rightPoints;   ///< Vector of 2D points for right coil.
+  std::vector<G4TwoVector> endPiecePoints;///< Vector of 2D points for end piece looking from above down z.
 
   /// Empty containers for next use - this class is never deleted so can't rely on scope
   virtual void CleanUp();
 
+  /// Common construction tasks to all methods - assemble yoke and poles in container
+  virtual BDSMagnetOuter* CommonConstructor(G4String     name,
+					    G4double     length,
+					    BDSBeamPipe* beamPipe,
+					    G4int        order,
+					    G4double     outerDiameter,
+					    G4Material*  outerMaterial,
+					    G4double     magnetContainerLength);
+  
   /// Calculate the length of the pole and yoke radii based on the design. This is only
   /// responsible for calculating the gross proportions of the yoke and pole, not all the
   /// geometrical parameters that may be required for the final geometry.
@@ -211,22 +216,21 @@ protected:
 				    BDSBeamPipe* beamPipe,
 				    G4double     order);
   
-  //NOTE the poles are not joined (boolean union) to the outer yoke - there is a
-  //gap of length safety. This won't affect physics results and speeds up tracking
-  //as the solid is not a boolean of order Npoles + 1
-  
   /// Create pole for magnet of order N where npoles = Nx2. This contains some calcultion
   /// of geometrical parameters pertinent to the exact geometry being required.
+  /// NOTE the poles are not joined (boolean union) to the outer yoke - there is a
+  /// gap of length safety. This won't affect physics results and speeds up tracking
+  /// as the solid is not a boolean of order Npoles + 1.
   virtual void CreatePoleSolid(G4String      name,                 // name
 			       G4double      length,               // length [mm]
 			       G4int         order);               // Nx2 poles
 
-  /// Create all the points that make up the extruded solid of the pole.
-  virtual void CreateCoilPoints();
-  
   /// Create the coil solids corresponding to the pole solid.
   virtual void CreateCoilSolids(G4String name,
 				G4double length);
+  
+  /// Create all the points that make up the extruded solid of the pole.
+  virtual void CreateCoilPoints();
   
   /// Create yoke that connects poles and container to put them in. Also create the
   /// poleIntersectionSolid that will be used to chop the extended pole in
@@ -240,26 +244,6 @@ protected:
   virtual void IntersectPoleWithYoke(G4String name,
 				     G4double length,
 				     G4int    order);
-  
-  /// Place the poles and yoke in the container volume.
-  virtual void PlaceComponents(G4String name,
-			       G4int    order);
-
-  virtual void PlaceComponentsCoils(G4String name,
-				    G4int    order);
-
-  /// Create the solids, logical volumes for the end piece - everything
-  /// but the placement. Also, create the geometry component now.
-  virtual void CreateEndPiece(G4String name);
-
-  /// Common construction tasks to all methods - assemble yoke and poles in container
-  virtual BDSMagnetOuter* CommonConstructor(G4String     name,
-					    G4double     length,
-					    BDSBeamPipe* beamPipe,
-					    G4int        order,
-					    G4double     outerDiameter,
-					    G4Material*  outerMaterial,
-					    G4double     magnetContainerLength);
 
   virtual void CreateLogicalVolumes(G4String    name,
 				    G4double    length,
@@ -270,6 +254,18 @@ protected:
   /// may complete override CreateLogicalVolumes as the poles can be individually unique,
   /// the coils will be the same and this allows reuse of code and lack of duplication.
   virtual void CreateLogicalVolumesCoil(G4String name);
+
+  /// Create the solids, logical volumes for the end piece - everything
+  /// but the placement. Also, create the geometry component now.
+  virtual void CreateEndPiece(G4String name);
+  
+  /// Place the poles and yoke in the container volume.
+  virtual void PlaceComponents(G4String name,
+			       G4int    order);
+
+  /// If we're building coils, place two coils for each pole.
+  virtual void PlaceComponentsCoils(G4String name,
+				    G4int    order);
   
   /// Test inputs for no null pointers or overlapping volumes due to poorly defined sizes
   void TestInputParameters(BDSBeamPipe* beamPipe,

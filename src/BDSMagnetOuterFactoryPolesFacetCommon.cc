@@ -4,10 +4,11 @@
 #include "globals.hh"  // geant4 globals / types
 #include "G4Polyhedra.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
+#include <vector>
+#include <utility>
 
 BDSMagnetOuterFactoryPolesFacetCommon::BDSMagnetOuterFactoryPolesFacetCommon(G4double factorIn):
   BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/2), factor(factorIn)

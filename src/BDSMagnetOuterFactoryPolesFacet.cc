@@ -1,7 +1,5 @@
 #include "BDSMagnetOuterFactoryPolesFacet.hh"
 
-#include "globals.hh"  // geant4 globals / types
-
 BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::_instance = nullptr;
 
 BDSMagnetOuterFactoryPolesFacet* BDSMagnetOuterFactoryPolesFacet::Instance()
