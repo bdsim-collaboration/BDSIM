@@ -1485,21 +1485,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     
   G4TwoVector zOffsets(0,0); // the transverse offset of each plane from 0,0
   G4double zScale = 1;       // the scale at each end of the points = 1
-  yokeSolid = new G4ExtrudedSolid(name + "_yoke_square_solid", // name
+  yokeSolid = new G4ExtrudedSolid(name + "_yoke_sq_solid",     // name
 				  yokePoints,                  // transverse 2d coordinates
 				  sLength*0.5 - lengthSafety,  // z half length
 				  zOffsets, zScale,  // dx,dy offset for each face, scaling
 				  zOffsets, zScale); // dx,dy offset for each face, scaling
   
-  containerSolid = new G4ExtrudedSolid(name + "_outer_container_solid", // name
+  containerSolid = new G4ExtrudedSolid(name + "_outer_sq_container_solid", // name
 				       cPoints,                    // transverse 2d coordinates
 				       sLength*0.5 - lengthSafety, // z half length
 				       zOffsets, zScale, // dx,dy offset for each face, scaling
 				       zOffsets, zScale);// dx,dy offset for each face, scaling
 
-  magnetContainerSolid = new G4ExtrudedSolid(name + "_container_solid", // name
-					     mCPoints,                  // transverse 2d coordinates
-					     sLength*0.5 - lengthSafety, // z half length
+  magnetContainerSolid = new G4ExtrudedSolid(name + "_sq_container_solid", // name
+					     mCPoints,                     // transverse 2d coordinates
+					     sLength*0.5 - lengthSafety,   // z half length
 					     zOffsets, zScale, // dx,dy offset for each face, scaling
 					     zOffsets, zScale);// dx,dy offset for each face, scaling
 
@@ -1567,21 +1567,26 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       // register angled solids
       allSolids.push_back(angledFaces);
       allSolids.push_back(angledFacesCont);
-      magnetContainerExtraSolids.push_back(angledFacesMagCont);
+      allSolids.push_back(angledFacesMagCont);
 
       // register existing square solids as we're going to overwrite them with intersected ones
       allSolids.push_back(yokeSolid);
       allSolids.push_back(containerSolid);
       allSolids.push_back(coilSolid);
+      allSolids.push_back(magnetContainerSolid);
       
-      // now do intersections
+      // now do intersections overwriting existing pointers
       yokeSolid = new G4IntersectionSolid(name + "_yoke_solid", // name
 					  yokeSolid,            // solid a - existing yoke
 					  angledFaces);         // solid b
       
-      containerSolid = new G4IntersectionSolid(name + "_container_solid", // name
-					       containerSolid,            // solid a
-					       angledFacesCont);           // solid b
+      containerSolid = new G4IntersectionSolid(name + "_outer_container_solid", // name
+					       containerSolid,                  // solid a
+					       angledFacesCont);                // solid b
+
+      magnetContainerSolid = new G4IntersectionSolid(name + "_container_solid", // name
+						     magnetContainerSolid,      // solid a
+						     angledFacesMagCont);       // solid b
 
       individualCoilsSolids = true; // flag that we have individual coil solids
       for (G4int i = 0; i < 4; i++)
