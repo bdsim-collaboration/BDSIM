@@ -403,8 +403,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   //Zero angle bend only needs one element.
   std::string thename = element->name + "_1_of_1";
 
-  // Single element for zero bend angle or dontSplitSBends=1, therefore nSBends = 1
-  if (!BDS::IsFinite(element->angle) || (nSBends == 1))
+  // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
+  if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (!BDS::IsFinite(element->angle) || (nSBends == 1) || (notSplit)))
     {
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
@@ -449,13 +449,15 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
   G4double deltaend   = -element->e2/(0.5*(nSBends-1));
-
+  G4double fringeLength = 1e-3;
+  
   if (BDS::IsFinite(angleIn))
     {
     BDSMagnetStrength* infringest = new BDSMagnetStrength();
     (*infringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
     (*infringest)["polefaceangle"] = element->e1;
-    BDSMagnet* startfringe = CreateDipoleFringe(element,-angleIn,angleIn,infringest);
+    thename = element->name + "_e1_fringe";
+    BDSMagnet* startfringe = CreateDipoleFringe(element, fringeLength, angleIn, thename, infringest);
     sbendline->AddComponent(startfringe);
     }
   for (int i = 0; i < nSBends; ++i)
@@ -499,6 +501,13 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
           exit(1);
         }
       
+      if ((BDS::IsFinite(element->e1)) && (i == 0))
+        {length = semilength - fringeLength;}
+      else if ((BDS::IsFinite(element->e2)) && (i == nSBends-1))
+        {length = semilength - fringeLength;}
+      else
+        {length = semilength;}
+           
       BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st); // copy field strength - ie B
       (*stSemi)["angle"]  = semiangle;  // override copied length and angle
       (*stSemi)["length"] = semilength;
@@ -510,7 +519,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 thename,
-					 semilength,
+					 length,
 					 PrepareBeamPipeInfo(element, angleIn, angleOut),
 					 magnetOuterInfo,
 					 vacuumField,
@@ -528,7 +537,16 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 	 << G4endl;
 #endif
   }
-  
+  //Last element should be fringe if poleface specified
+  if (BDS::IsFinite(element->e2))
+    {
+    BDSMagnetStrength* outfringest = new BDSMagnetStrength();
+    (*outfringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
+    (*outfringest)["polefaceangle"] = element->e2;
+    thename = element->name + "_e2_fringe";
+    BDSMagnet* endfringe = CreateDipoleFringe(element, fringeLength, -element->e2, thename, outfringest);
+    sbendline->AddComponent(endfringe);
+    }
   return sbendline;
 }
 
@@ -616,45 +634,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 }
 
 BDSMagnet* BDSComponentFactory::CreateDipoleFringe(Element*           element,
-                                    G4double angleIn,
-                                    G4double angleOut,
+                                    G4double length,
+                                    G4double angle,
+                                    G4String name,
                                     BDSMagnetStrength* st)
 {
-  if(!HasSufficientMinimumLength(element))
-    {return nullptr;}
-
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, angleOut);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angle, angle);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angle, angle);
   
-  //BDSMagnetStrength* st = new BDSMagnetStrength();
-  //(*st)["field"] = 0;
-
-/*  if (BDS::IsFinite(element->B))
-    {// both are specified and should be used - under or overpowered dipole by design
-      (*st)["field"] = element->B;
-    }
-  else if (BDS::IsFinite(element->angle))
-    {// only angle - calculate B field
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["field"] = brho * element->angle / element->l * charge * ffact / CLHEP::tesla / CLHEP::m;
-    }
-  else
-    // neither are specified - no bend, no field.
-    {(*st)["field"] = 0;}
-
-  if (BDS::IsFinite(element->e1))
-    {(*st)["polefaceangle"] = element->e1;}
-  else
-    {(*st)["polefaceangle"] = 0;}
-*/
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       BDSIntegratorType::fringe,
 					       st);
 
   return new BDSMagnet(BDSMagnetType::sectorbend,
-		       element->name,
-		       1e-6 *CLHEP::m,
+		       name,
+		       length,
 		       beamPipeInfo,
 		       magnetOuterInfo,
 		       vacuumField,

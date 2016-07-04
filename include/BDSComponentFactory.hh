@@ -88,8 +88,9 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
 
   BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
-                G4double angleIn,
-                G4double angleOut,
+                G4double length,
+                G4double angle,
+                G4String name,
                 BDSMagnetStrength* st);
 
   /// Creates line of components for sbend
