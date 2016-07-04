@@ -182,6 +182,7 @@ void Options::PublishMembers()
   publish("outerDiameter",&Options::outerDiameter);
   publish("boxSize",      &Options::outerDiameter); // for backwards compatability
   publish("includeIronMagFields",&Options::includeIronMagFields);
+  publish("includeFringeFields",&Options::includeFringeFields);
   publish("beampipeRadius",&Options::aper1);
   publish("beampipeThickness",&Options::beampipeThickness);
   publish("apertureType",&Options::apertureType);

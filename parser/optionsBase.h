@@ -181,6 +181,7 @@ namespace GMAD
     bool        dontSplitSBends;
 
     bool        includeIronMagFields;
+    bool        includeFringeFields;
 
     ///@{ default beampipe parameters
     double      beampipeThickness;
