@@ -57,6 +57,7 @@ private:
   G4double charge;
   /// rigidity in T*m for beam particles
   G4double brho;
+  G4bool notSplit;
   
   /// element for storing instead of passing around
   GMAD::Element* element = nullptr;

@@ -70,6 +70,8 @@ BDSComponentFactory::BDSComponentFactory()
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();
+  
+  notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 }
 
 BDSComponentFactory::~BDSComponentFactory()
@@ -90,7 +92,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4bool registered = false;
   // Used for multiple instances of the same element but different poleface rotations.
   G4bool willModify = false;
-  G4bool notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
@@ -107,10 +108,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
-      if (prevElement && ((prevElement->type == ElementType::_RBEND) || (prevElement->type == ElementType::_DIPOLEFRINGE)))
+      if (prevElement && (prevElement->type == ElementType::_RBEND))
 	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
 
-      if (nextElement && ((nextElement->type == ElementType::_RBEND) || (nextElement->type == ElementType::_DIPOLEFRINGE)))
+      if (nextElement && (nextElement->type == ElementType::_RBEND))
 	{angleOut += 0.5*nextElement->angle;}// won't work if only field set TBC
 
       // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
@@ -158,32 +159,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
           willModify = true;
           angleIn -= 0.5*element->angle;
         }
-    }
-  else if (element->type == ElementType::_DIPOLEFRINGE)
-    {
-      // Match poleface from previous and next element
-      angleIn  = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-
-      // Normal vector of rbend is from the magnet, angle of the rbend has to be
-      // taken into account regardless of poleface rotation
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
-
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{angleOut += 0.5*nextElement->angle;}// won't work if only field set TBC
-
-      // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
-      // so the drifts must be modified accordingly.
-      if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
-	  {angleIn += -0.5*(prevElement->angle);}
-
-      if (nextElement && (nextElement->type == ElementType::_SBEND) && notSplit)
-	  {angleOut += 0.5*(nextElement->angle);}
-
-      //if drift has been modified at all
-      if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-      {willModify = true;}
     }
 
   // check if the component already exists and return that
@@ -243,8 +218,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateAwakeScreen(); break; 
   case ElementType::_TRANSFORM3D:
     component = CreateTransform3D(); break;
-//  case ElementType::_DIPOLEFRINGE:
-//  component = CreateDipoleFringe(element, angleIn, angleOut); break;
     
     // common types, but nothing to do here
   case ElementType::_MARKER:
@@ -373,7 +346,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       if (
 	  prevElement &&
 	  prevElement->type != ElementType::_DRIFT &&
-      prevElement->type != ElementType::_DIPOLEFRINGE &&
 	  !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
@@ -388,7 +360,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       if (
 	  nextElement &&
 	  nextElement->type != ElementType::_DRIFT &&
-      nextElement->type != ElementType::_DIPOLEFRINGE &&
 	  !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
