@@ -93,7 +93,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4bool registered    = false;
   // Used for multiple instances of the same element but different poleface rotations.
   G4bool willModify = false;
-  G4bool notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
