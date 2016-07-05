@@ -1396,9 +1396,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       yokePoints.push_back(G4TwoVector(yokeInsideX - lsl, -poleHalfHeight - lsl));
       yokePoints.push_back(G4TwoVector(yokeInsideX - lsl,  poleHalfHeight + lsl));
     }
-
-  //for (auto point : yokePoints)
-  //  {G4cout << point << G4endl;}
   
   // points for container for magnet outer only
   cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));
@@ -1515,7 +1512,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       coilSolid = new G4Box(name + "_coil_solid",        // name
 			    coilWidth*0.5,               // x half width
 			    coilHeight*0.5,              // y half height
-			    length*0.5 - lengthSafety);  // z half length
+			    sLength*0.5 - lengthSafety); // z half length
     }
 
   // Intersect and replace solids. Do it via replacmeent of the base class member G4VSolid*
@@ -1591,8 +1588,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       for (G4int i = 0; i < 4; i++)
 	{
 	  G4VSolid* coilS = new G4IntersectionSolid(name + "_pole_solid_" + std::to_string(i), // name
-						    coilSolid,                  // solid a
-						    angledFaces,                // solid b
+						    angledFaces,                // solid a
+						    coilSolid,                  // solid b
 						    (G4RotationMatrix*)nullptr, // 0 rotation
 						    coilDisps[i]);              // translation
 	  coilsSolids.push_back(coilS);
@@ -1616,7 +1613,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 	  for (G4int i = 0; i < 4; i++)
 	    {
 	      G4String theName =  name + "_coil_solid_" + std::to_string(i);
-	      G4LogicalVolume* aCoilLV = new G4LogicalVolume(coilSolid,
+	      G4LogicalVolume* aCoilLV = new G4LogicalVolume(coilsSolids[i],
 							     coilMaterial,
 							     theName);
 	      aCoilLV->SetVisAttributes(coilVis);
@@ -1650,11 +1647,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       for (G4int i = 0; i < 4; i++)
 	{
 	  G4LogicalVolume* volToPlace = coilLV;
+	  G4ThreeVector displacement = G4ThreeVector();
 	  if (individualCoilsSolids)
 	    {volToPlace = coilLVs[i];}
+	  else
+	    {displacement = coilDisps[i];} // with no intersection we have to displace it
 	  G4String theName = name + "_coil_" + std::to_string(i) + "_pv";
 	  aCoilPV = new G4PVPlacement((G4RotationMatrix*)nullptr, // no rotation
-				      coilDisps[i],                // position
+				      displacement,               // position
 				      volToPlace,                 // lv to be placed
 				      theName,                    // name
 				      containerLV,                // mother lv to be place in
