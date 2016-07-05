@@ -58,6 +58,7 @@ private:
   /// rigidity in T*m for beam particles
   G4double brho;
   G4bool notSplit;
+  G4bool includeFringe;
   
   /// element for storing instead of passing around
   GMAD::Element* element = nullptr;
@@ -88,7 +89,6 @@ private:
   BDSAcceleratorComponent* CreateTransform3D();
 
   BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
-                G4double length,
                 G4double angle,
                 G4String name,
                 BDSMagnetStrength* st);

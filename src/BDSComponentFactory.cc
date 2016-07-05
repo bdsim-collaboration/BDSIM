@@ -72,6 +72,8 @@ BDSComponentFactory::BDSComponentFactory()
   PrepareCavityModels();
   
   notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
+  includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
+
 }
 
 BDSComponentFactory::~BDSComponentFactory()
@@ -404,7 +406,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   std::string thename = element->name + "_1_of_1";
 
   // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
-  if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (!BDS::IsFinite(element->angle) || (nSBends == 1) || (notSplit)))
+  if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (!BDS::IsFinite(element->angle) || (nSBends == 1) ))
     {
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
@@ -451,13 +453,14 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   G4double deltaend   = -element->e2/(0.5*(nSBends-1));
   G4double fringeLength = 1e-3;
   
-  if (BDS::IsFinite(angleIn))
+  if (BDS::IsFinite(angleIn) && includeFringe)
     {
     BDSMagnetStrength* infringest = new BDSMagnetStrength();
     (*infringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
     (*infringest)["polefaceangle"] = element->e1;
+    (*infringest)["length"] = fringeLength;
     thename = element->name + "_e1_fringe";
-    BDSMagnet* startfringe = CreateDipoleFringe(element, fringeLength, angleIn, thename, infringest);
+    BDSMagnet* startfringe = CreateDipoleFringe(element, angleIn, thename, infringest);
     sbendline->AddComponent(startfringe);
     }
   for (int i = 0; i < nSBends; ++i)
@@ -501,9 +504,9 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
           exit(1);
         }
       
-      if ((BDS::IsFinite(element->e1)) && (i == 0))
+      if ((BDS::IsFinite(element->e1)) && (i == 0) && includeFringe)
         {length = semilength - fringeLength;}
-      else if ((BDS::IsFinite(element->e2)) && (i == nSBends-1))
+      else if ((BDS::IsFinite(element->e2)) && (i == nSBends-1) && includeFringe)
         {length = semilength - fringeLength;}
       else
         {length = semilength;}
@@ -538,13 +541,14 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 #endif
   }
   //Last element should be fringe if poleface specified
-  if (BDS::IsFinite(element->e2))
+  if (BDS::IsFinite(element->e2) && includeFringe)
     {
     BDSMagnetStrength* outfringest = new BDSMagnetStrength();
     (*outfringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
     (*outfringest)["polefaceangle"] = element->e2;
+    (*outfringest)["length"] = fringeLength;
     thename = element->name + "_e2_fringe";
-    BDSMagnet* endfringe = CreateDipoleFringe(element, fringeLength, -element->e2, thename, outfringest);
+    BDSMagnet* endfringe = CreateDipoleFringe(element, -element->e2, thename, outfringest);
     sbendline->AddComponent(endfringe);
     }
   return sbendline;
