@@ -24,25 +24,21 @@ G4int BDSTrajectoryPoint::numberOfPoints = 0;
 BDSTrajectoryPoint::BDSTrajectoryPoint():
   G4TrajectoryPoint(G4ThreeVector())
 {
-  numberOfPoints++;
-  preProcessType     = -1;
-  preProcessSubType  = -1;
-  postProcessType    = -1;
-  postProcessSubType = -1;
-  preS               = -1000;
-  postS              = -1000;
+  InitialiseVariables();
+}
+
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
+  G4TrajectoryPoint(track->GetPosition())
+{
+  InitialiseVariables();
+  preWeight  = track->GetWeight();
+  postWeight = preWeight;
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
-  numberOfPoints++;
-  preProcessType     = -1;
-  preProcessSubType  = -1;
-  postProcessType    = -1;
-  postProcessSubType = -1;
-  preS               = -1000;
-  postS              = -1000;
+  InitialiseVariables();
   
   const G4StepPoint  *prePoint   = step->GetPreStepPoint();
   const G4StepPoint *postPoint   = step->GetPostStepPoint();
@@ -87,6 +83,17 @@ BDSTrajectoryPoint::~BDSTrajectoryPoint()
   if (numberOfPoints == 0)
     {delete auxNavigator; auxNavigator = nullptr;}
   numberOfPoints--;
+}
+
+void BDSTrajectoryPoint::InitialiseVariables()
+{
+  numberOfPoints++;
+  preProcessType     = -1;
+  preProcessSubType  = -1;
+  postProcessType    = -1;
+  postProcessSubType = -1;
+  preS               = -1000;
+  postS              = -1000;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
