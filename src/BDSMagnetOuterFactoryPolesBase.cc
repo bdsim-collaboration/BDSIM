@@ -1331,8 +1331,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     {outerHalf = maxOfBP + lengthSafetyLarge;}
 
   // propose yoke thickness
-  G4double yokeThickness = 0.2 * outerDiameter;
-  //yokeThickness = std::max(yokeThickness, 2*poleHalfWidth);
+  G4double yokeThickness = 0.23 * outerDiameter;
   // check it's a suitable size and will fit in
   if (yokeThickness > outerHalf - poleHalfHeight)
     {
@@ -1349,7 +1348,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       
   // reduce the coils from the absolute maximum;
   coilHeight *= 0.8;
-  coilWidth  *= 0.7;
+  coilWidth  *= 0.65;
 
   // T = top, B = bottom, L = left, R = right
   G4double x = poleHalfWidth  + 0.5*coilWidth  + lengthSafetyLarge;
