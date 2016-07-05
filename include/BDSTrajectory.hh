@@ -44,10 +44,9 @@ public:
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
-  G4VTrajectoryPoint* GetPoint(G4int i) const
-  { return (fpBDSPointsContainer)[i];  }
+  G4VTrajectoryPoint* GetPoint(G4int i) const {return fpBDSPointsContainer[i];}
 
-  virtual int GetPointEntries() const { return fpBDSPointsContainer.size(); }
+  virtual int GetPointEntries()    const {return fpBDSPointsContainer.size();}
 
   G4int GetCreatorProcessType()    const {return creatorProcessType;}
   G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
@@ -60,16 +59,18 @@ public:
   static BDSTrajectoryPoint* FirstInteraction(G4TrajectoryContainer *trajCont);
   static BDSTrajectoryPoint* LastInteraction(G4TrajectoryContainer *trajCont);
 
-private:
-  /// Private trajectory to force use of supplied one.
-  BDSTrajectory();
-
 protected:
   G4int          creatorProcessType;
   G4int          creatorProcessSubType;
   G4double       weight;
 
+  /// Container of all points. This is really a vector so all memory is dynamically
+  /// allocated and there's no need to make this dynamically allocated itself a la
+  /// all Geant4 examples.
   BDSTrajectoryPointsContainer fpBDSPointsContainer;
+
+private:
+  BDSTrajectory();
 };
 
 extern G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
