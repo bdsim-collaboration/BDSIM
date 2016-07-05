@@ -16,20 +16,25 @@
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
-BDSTrajectory::BDSTrajectory(const G4Track* aTrack): G4Trajectory(aTrack)
+BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
+  G4Trajectory(aTrack)
 {
   const G4VProcess *proc = aTrack->GetCreatorProcess();
   if(proc)
-  {
-    creatorProcessType = aTrack->GetCreatorProcess()->GetProcessType();
-    creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
-  }
+    {
+      creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
+      creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
+    }
   else
-  {
-    creatorProcessType    = -1;
-    creatorProcessSubType = -1;
-  }
-  weight                = aTrack->GetWeight();
+    {
+      creatorProcessType    = -1;
+      creatorProcessSubType = -1;
+    }
+  weight = aTrack->GetWeight();
+
+  fpBDSPointsContainer = BDSTrajectoryPointsContainer();
+  // this is for the first point of the track
+  fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aTrack));
 }
 
 BDSTrajectory::~BDSTrajectory()
