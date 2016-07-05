@@ -40,22 +40,22 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
 {
   InitialiseVariables();
   
-  const G4StepPoint  *prePoint   = step->GetPreStepPoint();
-  const G4StepPoint *postPoint   = step->GetPostStepPoint();
-  const G4VProcess   *preProcess = prePoint->GetProcessDefinedStep();
-  const G4VProcess  *postProcess = postPoint->GetProcessDefinedStep();
+  const G4StepPoint* prePoint    = step->GetPreStepPoint();
+  const G4StepPoint* postPoint   = step->GetPostStepPoint();
+  const G4VProcess*  preProcess  = prePoint->GetProcessDefinedStep();
+  const G4VProcess*  postProcess = postPoint->GetProcessDefinedStep();
 
   if(preProcess)
-  {
-    preProcessType    = preProcess->GetProcessType();
-    preProcessSubType = preProcess->GetProcessSubType();
-  }
-
+    {
+      preProcessType    = preProcess->GetProcessType();
+      preProcessSubType = preProcess->GetProcessSubType();
+    }
+  
   if(postProcess)
-  {
-    postProcessType    = postProcess->GetProcessType();
-    postProcessSubType = postProcess->GetProcessSubType();
-  }
+    {
+      postProcessType    = postProcess->GetProcessType();
+      postProcessSubType = postProcess->GetProcessSubType();
+    }
 
   preWeight  = prePoint->GetWeight();
   postWeight = postPoint->GetWeight();

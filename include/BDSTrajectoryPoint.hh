@@ -56,20 +56,22 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectoryPoint const &p);
   
 private:
-  G4int preProcessType;
-  G4int preProcessSubType;
-  G4int postProcessType;
-  G4int postProcessSubType;
+  /// Initialisation of variables in separate function to reduce duplication in
+  /// multiple constructors.
+  void InitialiseVariables();
+  
+  G4int preProcessType;      ///< Process type of pre-step point
+  G4int preProcessSubType;   ///< Process sub type of pre-step point
+  G4int postProcessType;     ///< Process type of post step point
+  G4int postProcessSubType;  ///< Process sub type of post step point
 
-  G4double preWeight;
-  G4double postWeight;
-
-  G4double preEnergy;
-  G4double postEnergy;
-  G4double energy;
-
-  G4double  preS;
-  G4double postS;
+  G4double preWeight;        ///< Weight associated with pre-step point
+  G4double postWeight;       ///< Weight associtaed with post step point
+  G4double preEnergy;        ///< Kinetic energy of pre-step point
+  G4double postEnergy;       ///< Kinetic energy of post step point
+  G4double energy;           ///< Total energy deposited during step
+  G4double preS;             ///< Global curvilinear S coordinate of pre-step point
+  G4double postS;            ///< Global curvilinear S coordinate of post step point
 
   /// An auxilliary navigator to get curvilinear coordintes. Lots of points, but only
   /// need one navigator so make it static.

@@ -41,13 +41,14 @@ BDSTrajectory::~BDSTrajectory()
 {
   // clean points container
   for (auto i : fpBDSPointsContainer)
-    {
-      delete i;
-    }
+    {delete i;}
 }
 
 void BDSTrajectory::AppendStep(const G4Step* aStep)
 {
+  // we do not use G4Trajectory::AppendStep here as that would
+  // duplicate position information in its own vector of positions
+  // which we prevent access to be overrideing GetPoint
   fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
 }
 
@@ -56,7 +57,7 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   G4cout << __METHOD_NAME__ << G4endl;
 
   if(!secondTrajectory)
-  {return;}
+    {return;}
 
   G4Trajectory::MergeTrajectory(secondTrajectory);
 }
@@ -121,7 +122,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(G4TrajectoryContainer *trajCo
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {
   for(G4int i = 0; i < t.GetPointEntries(); i++)
-   {out << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
+    {out << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
   return out;
 }
 
