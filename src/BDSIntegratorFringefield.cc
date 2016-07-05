@@ -34,6 +34,7 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
   const G4double *pIn   = yInput+3;
   G4ThreeVector GlobalP = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
+  InitialiseTransform(GlobalP, GlobalR, h);
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
   G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
   G4double      InitMag = GlobalP.mag();
@@ -52,8 +53,11 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
   G4double y1  = y0;
   G4double z1  = z0 + h; // new z position will be along z by step length h
   G4double xp1 = xp;
-  G4double yp1 = yp - (y0 * tan(angle)/rho);
+  G4double kick =(y0 * tan(angle)/rho);
+  G4double yp1 = yp - kick;
   G4double zp1 = zp;
+  
+  G4cout << kick << G4endl;
     
   LocalR.setX(x1);
   LocalR.setY(y1);
@@ -65,6 +69,9 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
 
   GlobalR = ConvertToGlobal(LocalR);
   GlobalP = ConvertAxisToGlobal(LocalRp);
+
+  G4cout << "globalR " << GlobalR << G4endl;
+  G4cout << "globalP " << GlobalP << G4endl;
 
   yOut[0] = GlobalR.x();
   yOut[1] = GlobalR.y();
