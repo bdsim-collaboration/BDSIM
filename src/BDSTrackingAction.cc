@@ -1,7 +1,7 @@
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
-#include "BDSDebug.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4TrackingManager.hh"
@@ -11,24 +11,31 @@
 
 BDSTrackingAction::BDSTrackingAction():
   interactive(false)
-{;}
+{
+  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
+}
 
 BDSTrackingAction::BDSTrackingAction(G4bool batchMode):
   interactive(!batchMode)
-{;}
+{
+  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
+}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-  //G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID() << " ParentID=" << track->GetParentID() << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID()
+	 << " ParentID=" << track->GetParentID() << G4endl;
+#endif
 
-  if (interactive || BDSGlobalConstants::Instance()->StoreTrajectory() || track->GetParentID() == 0)
-  {
-    fpTrackingManager->SetStoreTrajectory(1);
-    BDSTrajectory *bdsTraj = new BDSTrajectory(track);
-    fpTrackingManager->SetTrajectory(bdsTraj);
-  }
+  if (interactive || storeTrajectory || track->GetParentID() == 0)
+    {
+      fpTrackingManager->SetStoreTrajectory(1);
+      BDSTrajectory* bdsTraj = new BDSTrajectory(track);
+      fpTrackingManager->SetTrajectory(bdsTraj);
+    }
   else
-  {fpTrackingManager->SetStoreTrajectory(0);}
+    {fpTrackingManager->SetStoreTrajectory(0);}
   
   /*
   if(track->GetDefinition()->ParticleName()=="neutron")
