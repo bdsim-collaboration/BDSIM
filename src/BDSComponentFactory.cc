@@ -591,6 +591,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 	}
     }
 
+  BDSLine* rbendline  = new BDSLine(element->name);
+
   // calculate length of central straight length and edge sections
   // unfortunately, this has to be duplicated here as we need to
   // calculated the magnetic field length (less than the full length)
@@ -598,6 +600,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   G4double outerRadius = PrepareOuterDiameter(element)*0.5;
   G4double angle       = element->angle;
   G4double length      = element->l*CLHEP::m;
+  G4double fringeLength = 1e-3;
+  G4String thename = element->name;
 
   CheckBendLengthAngleWidthCombo(length, angle, 2*outerRadius, element->name);
 
@@ -623,28 +627,58 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
   
+  if (BDS::IsFinite(element->e1) && includeFringe)
+    {
+    BDSMagnetStrength* infringest = new BDSMagnetStrength();
+    (*infringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
+    (*infringest)["polefaceangle"] = element->e1;
+    (*infringest)["length"] = fringeLength;
+    thename = element->name + "_e1_fringe";
+    BDSMagnet* startfringe = CreateDipoleFringe(element, element->e1 +0.5*angle, thename, infringest);
+    rbendline->AddComponent(startfringe);
+    }
+    
+  if (BDS::IsFinite(element->e1))
+    {length -= fringeLength;}
+  if (BDS::IsFinite(element->e2))
+    {length -= fringeLength;}
+    
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       BDSIntegratorType::dipole,
 					       st);
   
-  return new BDSMagnet(BDSMagnetType::rectangularbend,
-		       element->name,
+  BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::rectangularbend,
+		       thename,
 		       length,
 		       PrepareBeamPipeInfo(element, angleIn, angleOut),
 		       PrepareMagnetOuterInfo(element, angleIn, angleOut),
 		       vacuumField,
 		       nullptr);
+
+  rbendline->AddComponent(oneBend);
+  
+  if (BDS::IsFinite(element->e2) && includeFringe)
+    {
+    BDSMagnetStrength* outfringest = new BDSMagnetStrength();
+    (*outfringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
+    (*outfringest)["polefaceangle"] = element->e2;
+    (*outfringest)["length"] = fringeLength;
+    thename = element->name + "_e2_fringe";
+    BDSMagnet* endfringe = CreateDipoleFringe(element, -element->e2 -0.5*angle, thename, outfringest);
+    rbendline->AddComponent(endfringe);
+    }
+  return rbendline;
 }
 
 BDSMagnet* BDSComponentFactory::CreateDipoleFringe(Element*           element,
-                                    G4double length,
                                     G4double angle,
                                     G4String name,
                                     BDSMagnetStrength* st)
 {
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angle, angle);
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angle, angle);
+  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
   
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
@@ -653,7 +687,7 @@ BDSMagnet* BDSComponentFactory::CreateDipoleFringe(Element*           element,
 
   return new BDSMagnet(BDSMagnetType::sectorbend,
 		       name,
-		       length,
+               (*st)["length"],
 		       beamPipeInfo,
 		       magnetOuterInfo,
 		       vacuumField,
