@@ -1358,6 +1358,9 @@ as their value.
 | stopTracks                       | whether to stop tracks after                          |
 |                                  | interaction (default = false)                         |
 +----------------------------------+-------------------------------------------------------+
+| killNeutrinos                    | whether to always stop tracking neutrinos for         |
+|                                  | increased efficiency (default = true)                 |
++----------------------------------+-------------------------------------------------------+
 | circular                         | whether the accelerator is circular or not            |
 +----------------------------------+-------------------------------------------------------+
 | printModuloFraction              | the fraction of events to print out (default 0.1)     |

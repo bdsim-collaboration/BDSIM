@@ -22,7 +22,7 @@ option, ngenerate=10,
         prodCutPhotons=1*cm,
         buildTunnel=1,
         checkOverlaps=1,
-        storeTrajectories=1;
+        storeTrajectories=0;
 
 beam, particle="e-",
       energy=1.0*GeV,

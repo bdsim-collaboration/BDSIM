@@ -185,6 +185,7 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
+  killNeutrinos            = true;
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;

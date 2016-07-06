@@ -282,6 +282,7 @@ namespace GMAD
 
     bool     stopSecondaries;
     bool     stopTracks;
+    bool     killNeutrinos;
 
     /// Ring parameters
     int      nturns;
