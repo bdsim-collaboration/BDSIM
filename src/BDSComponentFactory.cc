@@ -93,7 +93,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4bool registered = false;
   // Used for multiple instances of the same element but different poleface rotations.
   G4bool willModify = false;
-  G4bool notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
@@ -115,14 +114,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
 	{angleOut += 0.5*nextElement->angle;}// won't work if only field set TBC
-
-      // For sbends where DontSplitSBends is true, the sbends effectively becomes an rbend,
-      // so the drifts must be modified accordingly.
-      if (prevElement && (prevElement->type == ElementType::_SBEND) && notSplit)
-	  {angleIn += -0.5*(prevElement->angle);}
-
-      if (nextElement && (nextElement->type == ElementType::_SBEND) && notSplit)
-	  {angleOut += 0.5*(nextElement->angle);}
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
@@ -148,19 +139,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   else if (element->type == ElementType::_SBEND)
     {
-      angleIn = element->e1;
-      angleOut = element->e2;
-
-      if (nextElement && (nextElement->type == ElementType::_SBEND))
-        {
-          willModify = true;
-          angleOut -= 0.5*element->angle;
-        }
-      if (prevElement && (prevElement->type == ElementType::_SBEND))
-        {
-          willModify = true;
-          angleIn -= 0.5*element->angle;
-        }
+      angleIn = element->e1 - 0.5*element->angle;
+      angleOut = element->e2 - 0.5*element->angle;
     }
 
   // check if the component already exists and return that
