@@ -22,3 +22,5 @@ simple_testing(proton_6500GeV_titanium_SHORT "--file=proton_6500GeV_titanium.gma
 # commented out because still LONG :)
 #set(TESTING_ARGS --ngenerate=1)
 #simple_testing(proton_6500GeV_tungsten_SHORT "--file=proton_6500GeV_tungsten.gmad" "")
+set(TESTING_ARGS  --ngenerate=1)
+simple_testing(proton_6500GeV_cu_neutrinos_SHORT "--file=proton_6500GeV_cu_neutrions.gmad" "")
