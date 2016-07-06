@@ -1,15 +1,18 @@
 # Compiler-specific C++11 activation. Replace later with
 # CMAKE_CXX_STANDARD flag only available for cmake 3.1
+
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-  execute_process(
-    COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-  if (GCC_VERSION VERSION_GREATER 4.8 OR GCC_VERSION VERSION_EQUAL 4.8)
-    message(STATUS "Compiler supports C++14")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-  elseif (GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-    message(STATUS "Compiler supports C++11")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  if($ENV{VERBOSE})
+	message(STATUS "GNU compiler detected")
+	message(STATUS "GCC Version is ${GCC_VERSION}")
+  endif()
+  if (GCC_VERSION VERSION_LESS 4.9)
+     message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11 fully - GCC4.9 or greater requried.")
   endif ()
+  # if it passes the above if guard, then it's > GCC4.9 so C++14 ok
+  message(STATUS "Compiler supports C++11 (fully) and C++14")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
   # get clang version
   execute_process( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
@@ -21,10 +24,12 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     message(STATUS "Compiler supports C++14")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -stdlib=libc++")
   else()
+    # apparently all versions of CLANG support C++11...
     message(STATUS "Compiler supports C++11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
   endif()
 else()
+    # unknown compiler so assume doesn't support C++11
     message(FATAL_ERROR "C++ compiler ${CMAKE_CXX_COMPILER} does not support C++11")
 endif()
 

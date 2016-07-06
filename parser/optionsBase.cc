@@ -184,6 +184,7 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
+  killNeutrinos            = true;
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
@@ -194,7 +195,7 @@ OptionsBase::OptionsBase()
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1;
   storeTrajectoryParticle  = "";
-  storeTrajectoryEnergyThreshold = 0.0;
+  storeTrajectoryEnergyThreshold = -1.0;
 
   // circular options
   nturns                   = 1;
