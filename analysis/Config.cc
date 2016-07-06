@@ -8,10 +8,17 @@ ClassImp(Config)
 
 Config* Config::instance = nullptr;
 
-
-Config::Config(std::string fileNameIn)
+Config::Config(std::string fileNameIn,
+	       std::string inputFilePathIn,
+	       std::string outputFileNameIn)
 {
   fileName = fileNameIn;
+  ParseInputFile();
+
+  if (inputFilePathIn != "")
+    {inputFilePath = inputFilePathIn;}
+  if (outputFileNameIn != "")
+    {outputFileName = outputFileNameIn;}
 }
 
 Config::~Config()
@@ -19,20 +26,22 @@ Config::~Config()
   delete instance;
 }
 
-Config* Config::Instance(std::string fileName)
+Config* Config::Instance(std::string fileName,
+			 std::string inputFilePath,
+			 std::string outputFileName)
 {
   if(!instance && fileName != "")
   {
     std::cout << "Config::Instance> No instance present, construct" << std::endl;
-    instance = new Config(fileName);
-    instance->ParseInputFile();
+    instance = new Config(fileName, inputFilePath, outputFileName);
+    //instance->ParseInputFile();
   }
   else if(instance && fileName != "")
   {
     std::cout << "Config::Instance> Instance present, delete and construct" << std::endl;
     delete instance;
-    instance = new Config(fileName);
-    instance->ParseInputFile();    
+    instance = new Config(fileName, inputFilePath, outputFileName);
+    //instance->ParseInputFile();
   }
   // else return current instance (can be nullptr!)
   return instance;

@@ -195,7 +195,7 @@ void EventAnalysis::Write(TFile *outputFile)
   }
 
   // write rebdsim histograms
-  TDirectory *rebdsimDir = outputFile->mkdir("rebdsimHistorgrams");
+  TDirectory *rebdsimDir = outputFile->mkdir("rebdsimHistograms");
   rebdsimDir->cd();
   for(auto h : histograms1D)
   {

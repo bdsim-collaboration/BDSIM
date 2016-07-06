@@ -19,16 +19,28 @@
 int main(int argc, char *argv[])
 {
   // check input
-  if(argc != 2)
+  if(argc < 2 || argc > 4)
   {
-    std::cout << "usage rebdsim <ConfigFileName>" << std::endl;
+    std::cout << "usage: rebdsim <analysisConfig> (<dataFile>) (<outputFile>)" << std::endl;
+    std::cout << " <datafile> (optional) - root file to operate on" << std::endl;
+    std::cout << " <outputfile> (optional) - output file name for analysis" << std::endl;
+    std::cout << " if no <datafile> and <outputfile> are specified, those from <analysisConfig> are used." << std::endl;
     exit(1);
   }
 
   std::cout << "rebdsim> ConfigFileName : " << argv[1] << std::endl;
 
+  std::string fileName = "";
+  std::string inputFilePath = "";
+  std::string outputFileName = "";
+
+  if (argc > 2)
+    {inputFilePath = std::string(argv[2]);}
+  if (argc > 3)
+    {outputFileName = std::string(argv[3]);}
+
   try {
-    Config::Instance(argv[1]);
+    Config::Instance(argv[1], argv[2], argv[3]);
   }
   catch(std::string e) {
     std::cout << e << std::endl;
