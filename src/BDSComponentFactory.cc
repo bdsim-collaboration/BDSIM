@@ -417,7 +417,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   // prepare one name for all that makes sense
   std::string thename = element->name + "_1_of_" + std::to_string(nSBends);
   //calculate their angles and length
-  G4double semiangle  = element->angle / (G4double) nSBends;
+  G4double semiangle  = -element->angle / (G4double) nSBends;
   G4double semilength = length / (G4double) nSBends;
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
@@ -567,7 +567,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["angle"] = - element->angle;
-      (*st)["field"] = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+      (*st)["field"] = - brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
     }
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
