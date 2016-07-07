@@ -3,15 +3,27 @@ import numpy as _np
 
 # http://pdg.lbl.gov/2015/hadronic-xsections/hadron.html
 
-def compareHadronic() :
-    plot("01_hydrogen.dat", 100000,0.001, 8.96,  1.00);
-    plot("02_carbon.dat",   100000,0.01 , 1.88, 12.00);
-    plot("03_aluminium.dat",100000,0.01 , 2.70, 26.98);
-    plot("04_copper.dat",   100000,0.001, 8.96, 26.98);
-    plot("05_tungsten.dat", 100000,0.001,19.30,183.84);
-    plot("06_lead.dat",     100000,0.001,11.35,207.20);
+def compareHadronic(dir="./") :
+    plot(dir+"01_hydrogen.dat", 100000,0.001, 8.96,  1.00,"b","H");
+    plot(dir+"02_carbon.dat",   100000,0.01 , 1.88, 12.00,"g","C");
+    plot(dir+"03_aluminium.dat",100000,0.01 , 2.70, 26.98,"r","Al");
+    plot(dir+"04_copper.dat",   100000,0.001, 8.96, 63.55,"c","Cu");
+    plot(dir+"05_tungsten.dat", 100000,0.001,19.30,183.84,"m","W");
+    plot(dir+"06_lead.dat",     100000,0.001,11.35,207.20,"y","Pb");
     
-def plot(filename = "hydrogen.dat", nTotProton = 100000,thickness = 0.001, densitygcm3 = 1.0, atomicweight = 1) :
+    # elastic
+    pdgEle= loadPdgCrossSection("./rpp2014-pp_elastic.dat")
+    _pl.loglog(pdgEle['PLAB(GEV/C)'],pdgEle['SIG(MB)'],"bx",label="PDG el")
+    
+    # total xsec 
+    pdgTot = loadPdgCrossSection("./rpp2014-pp_total.dat")
+    _pl.loglog(pdgTot['PLAB(GEV/C)'],pdgTot['SIG(MB)'],"b+", label="PDG tot")    
+
+    _pl.xlim(0.1,1e7)
+    _pl.legend(loc=1)
+
+
+def plot(filename = "hydrogen.dat", nTotProton = 100000,thickness = 0.001, densitygcm3 = 1.0, atomicweight = 1, lc = "b", leg = "Target") :
     barn        = 1E-28
     mbarn       = barn*1E-3
     d           = _np.loadtxt(filename)
@@ -32,8 +44,9 @@ def plot(filename = "hydrogen.dat", nTotProton = 100000,thickness = 0.001, densi
 
 
 #    _pl.clf()
-    _pl.loglog(eBeam,eleXSec,"-b")
-    _pl.loglog(eBeam,totXSec,"-g")
+    _pl.loglog(eBeam,totXSec,"-"+lc,label=leg+" tot")
+    _pl.loglog(eBeam,eleXSec,"--"+lc,label=leg +" el")
+
 
     if 0 :
         # elastic xsec
