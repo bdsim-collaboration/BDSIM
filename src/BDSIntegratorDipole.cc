@@ -59,6 +59,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector v0    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag        = v0.mag();
   G4ThreeVector InitMomDir     = v0.unit();
+  G4double rho = InitMag/CLHEP::GeV/(0.299792458 * bField/CLHEP::tesla * charge) * CLHEP::m;
 
   // in case of zero field (though what if there is a quadrupole part..)
   // or neutral particles do a linear step:
@@ -78,66 +79,43 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       return;
     }
 
-  //G4double h2=h*h;
-
   G4ThreeVector globalPositionIn(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector LocalR  = ConvertToLocal(globalPositionIn);
   G4ThreeVector LocalRp = ConvertAxisToLocal(globalPositionIn, InitMomDir);
   
+  //Copy of LocalR and LocalRP for use with quadrupolar component code
   G4ThreeVector itsInitialR      = LocalR;
   G4ThreeVector itsInitialRp     = LocalRp;
   
   // advance the orbit
-  G4ThreeVector itsFinalPoint,itsFinalDir;
-  G4ThreeVector yhat(0.,1.,0.);
-  G4ThreeVector vhat  = LocalRp;
-  G4ThreeVector vnorm = vhat.cross(yhat);
-  
-  // radius of curvature
-  G4double R = InitMag/CLHEP::GeV/(0.299792458 * bField/CLHEP::tesla) * CLHEP::m;
+  std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalRp);
 
-  // include the charge of the particles
-  R *= charge;
-  
-  G4double Theta   = h/R;
+  G4ThreeVector itsFinalPoint = RandRp.first;
+  G4ThreeVector itsFinalDir = RandRp.second;
 
-  G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
-  CosT_ov_2=cos(Theta/2);
-  SinT_ov_2=sin(Theta/2);
-  
-  CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
-  SinT=2*CosT_ov_2*SinT_ov_2;
-  
-  distChord = fabs(R)*(1.-CosT_ov_2);
-  
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
   {
-      G4ThreeVector dPos = R*(SinT*vhat + (1-CosT)*vnorm);
+    // gradient for quadrupolar field
+    G4double kappa = - eqOfM->FCof() * bPrime / InitMag; // was ist das?
+    // ignore quadrupolar component for now as this needs fixing
+    if(true || fabs(kappa)<1.e-12)
+      {
+      GlobalPosition = ConvertToGlobal(itsFinalPoint);
+      G4ThreeVector GlobalTangent = ConvertAxisToGlobal(GlobalPosition, itsFinalDir);
+
+      GlobalTangent*=InitMag;
       
-      itsFinalPoint = LocalR+dPos;
-      itsFinalDir   = CosT*vhat +SinT*vnorm;
-  
-      // gradient for quadrupolar field
-      G4double kappa = - eqOfM->FCof() * bPrime / InitMag; // was ist das? 
-      // ignore quadrupolar component for now as this needs fixing
-      if(true || fabs(kappa)<1.e-12)
-	{// no gradient
-	  GlobalPosition = ConvertToGlobal(itsFinalPoint);
-	  G4ThreeVector GlobalTangent = ConvertAxisToGlobal(GlobalPosition, itsFinalDir);
-	
-	  GlobalTangent*=InitMag;
-	  
-	  yOut[0] = GlobalPosition.x(); 
-	  yOut[1] = GlobalPosition.y(); 
-	  yOut[2] = GlobalPosition.z(); 
-	  
-	  yOut[3] = GlobalTangent.x();
-	  yOut[4] = GlobalTangent.y();
-	  yOut[5] = GlobalTangent.z();
-	  return; 
-	}
+      yOut[0] = GlobalPosition.x(); 
+      yOut[1] = GlobalPosition.y(); 
+      yOut[2] = GlobalPosition.z(); 
       
+      yOut[3] = GlobalTangent.x();
+      yOut[4] = GlobalTangent.y();
+      yOut[5] = GlobalTangent.z();
+      return;
+      }
+
       G4double x1,x1p,y1,y1p,z1p;
       //G4double z1;
       
@@ -147,7 +125,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       
       G4double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(angle/2);
 
-      if(R<0)
+      if(rho<0)
 	{
 	  NominalPath*=-1;
 	  EndNomPath*=-1;
@@ -223,7 +201,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 
       GlobalPosition = ConvertToGlobal(LocalR);
       
-      LocalRp.rotateY(-h/R);
+      LocalRp.rotateY(-h/rho);
       G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp);
       
       GlobalTangent*=InitMag;
