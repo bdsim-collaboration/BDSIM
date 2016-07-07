@@ -3,6 +3,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetStrength.hh"
 
+#include <utility>
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -258,4 +259,33 @@ void BDSIntegratorDipole::Stepper(const G4double yInput[],
     {yErr[i] = err;}
 
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+}
+
+std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double rho,
+                                            G4double h,
+                                            G4ThreeVector LocalR,
+                                            G4ThreeVector LocalRp)
+{
+  G4ThreeVector yhat(0.,1.,0.);
+  G4ThreeVector vhat  = LocalRp;
+  G4ThreeVector vnorm = vhat.cross(yhat);
+    
+  G4double Theta   = h/rho;
+
+  G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
+  CosT_ov_2=cos(Theta/2);
+  SinT_ov_2=sin(Theta/2);
+  
+  CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
+  SinT=2*CosT_ov_2*SinT_ov_2;
+  
+  distChord = fabs(rho)*(1.-CosT_ov_2);
+  
+  G4ThreeVector dPos = rho*(SinT*vhat + (1-CosT)*vnorm);
+      
+  G4ThreeVector itsFinalPoint = LocalR+dPos;
+  G4ThreeVector itsFinalDir   = CosT*vhat +SinT*vnorm;
+  
+  return std::make_pair(itsFinalPoint,itsFinalDir);
+
 }

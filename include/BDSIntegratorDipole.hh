@@ -46,7 +46,12 @@ protected:
 		    G4double h,
 		    G4double yOut[],
 		    G4double yErr[]);
-  
+
+  std::pair<G4ThreeVector,G4ThreeVector> updatePandR(G4double rho,
+													 G4double h,
+													 G4ThreeVector LocalR,
+													 G4ThreeVector LocalRP);
+
 private:
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
