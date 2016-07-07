@@ -357,7 +357,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
       (*st)["field"] = element->B;
-      (*st)["angle"] = element->angle;
+      (*st)["angle"] = - element->angle;
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
@@ -368,7 +368,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   else
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["angle"] = element->angle;
+      (*st)["angle"] = - element->angle;
       (*st)["field"] = - brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
     }
   // Quadrupole component
@@ -387,7 +387,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   std::string thename = element->name + "_1_of_1";
 
   // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
-  if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (!BDS::IsFinite(element->angle) || (nSBends == 1) ))
+  if (!BDS::IsFinite(element->angle) || (nSBends == 1))
     {
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
