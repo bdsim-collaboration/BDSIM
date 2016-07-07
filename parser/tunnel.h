@@ -12,7 +12,7 @@ namespace GMAD
   /**
    * @brief Tunnel class for parser
    * 
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   * @author Jochem Snuverink
    */
   class Tunnel: public Published<Tunnel> {
 

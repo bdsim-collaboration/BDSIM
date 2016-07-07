@@ -12,7 +12,7 @@
  *
  * Singleton pattern
  *
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  */
   
 class BDSParser : private GMAD::Parser
