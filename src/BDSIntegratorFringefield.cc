@@ -9,16 +9,16 @@
 #include "G4ThreeVector.hh"
 
 #include <cmath>
+#include <utility>
 
 BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* strength,
 						 G4double                 brho,
 						 G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6),
+  BDSIntegratorDipole(strength, brho, eqOfMIn),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
-  angle = (*strength)["polefaceangle"];
-  //nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
-  //rho = brho / (*strength)["field"] *CLHEP::m;
+  polefaceAngle = (*strength)["polefaceangle"];
+  angle = (*strength)["angle"];
   bField = (*strength)["field"];
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
@@ -37,10 +37,34 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
   InitialiseTransform(GlobalP, GlobalR, h);
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
   G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
-  G4double      InitMag = GlobalP.mag();
-  G4double      charge  = (eqOfM->FCof())/CLHEP::c_light;
-  G4double      rho = InitMag/CLHEP::GeV/(0.299792458 * bField) * CLHEP::m;
   
+  G4double      InitMag = GlobalP.mag();
+  G4ThreeVector InitMomDir = GlobalP.unit();
+ 
+  G4double      charge  = (eqOfM->FCof())/CLHEP::c_light;
+  G4double      rho = InitMag/CLHEP::GeV/(0.299792458 * bField * charge) * CLHEP::m;
+    
+  if(bField==0 || eqOfM->FCof()==0)
+    {
+      G4ThreeVector positionMove = h * InitMomDir;
+      
+      yOut[0] = yInput[0] + positionMove.x();
+      yOut[1] = yInput[1] + positionMove.y();
+      yOut[2] = yInput[2] + positionMove.z();
+      
+      yOut[3] = GlobalP.x();
+      yOut[4] = GlobalP.y();
+      yOut[5] = GlobalP.z();
+      
+      distChord = 0;
+      return;
+    }
+    
+  std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalRp);
+
+  LocalR = RandRp.first;
+  LocalRp = RandRp.second;
+    
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
   G4double z0  = LocalR.z();
@@ -53,11 +77,9 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
   G4double y1  = y0;
   G4double z1  = z0 + h; // new z position will be along z by step length h
   G4double xp1 = xp;
-  G4double kick =(y0 * tan(angle)/rho);
+  G4double kick =(y0 * tan(polefaceAngle)/rho);
   G4double yp1 = yp - kick;
   G4double zp1 = zp;
-  
-  G4cout << kick << G4endl;
     
   LocalR.setX(x1);
   LocalR.setY(y1);
@@ -69,10 +91,7 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
 
   GlobalR = ConvertToGlobal(LocalR);
   GlobalP = ConvertAxisToGlobal(LocalRp);
-
-  G4cout << "globalR " << GlobalR << G4endl;
-  G4cout << "globalP " << GlobalP << G4endl;
-
+  
   yOut[0] = GlobalR.x();
   yOut[1] = GlobalR.y();
   yOut[2] = GlobalR.z();

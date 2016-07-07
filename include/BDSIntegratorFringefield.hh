@@ -1,7 +1,8 @@
 #ifndef BDSINTEGRATORFRINGEFIELD_H
 #define BDSINTEGRATORFRINGEFIELD_H
 
-#include "BDSIntegratorBase.hh"
+#include "BDSIntegratorDipole.hh"
+#include "BDSIntegratorDipole.hh"
 #include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
@@ -20,7 +21,7 @@
  * 
  */
 
-class BDSIntegratorFringefield: public BDSIntegratorBase
+class BDSIntegratorFringefield: public BDSIntegratorDipole
 {
 public:
   BDSIntegratorFringefield(BDSMagnetStrength const* strength,
@@ -52,6 +53,7 @@ private:
   
   /// B Field Gradient
   G4double angle;
+  G4double polefaceAngle;
   G4double bField;
 
   /// Data stored in order to find the chord.
