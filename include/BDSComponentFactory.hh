@@ -12,6 +12,7 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
+#include "BDSMagnetType.hh"
 
 class BDSCavityInfo;
 class BDSFieldInfo;
@@ -91,6 +92,7 @@ private:
   BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
                 G4double angle,
                 G4String name,
+                BDSMagnetType magType,
                 BDSMagnetStrength* st);
 
   /// Creates line of components for sbend
