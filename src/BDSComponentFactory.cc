@@ -633,7 +633,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					       st);
   
   BDSMagnet* oneBend = new BDSMagnet(magType,
-		       thename,
+		       element->name,
 		       length,
 		       PrepareBeamPipeInfo(element, angleIn, angleOut),
 		       PrepareMagnetOuterInfo(element, angleIn, angleOut),
