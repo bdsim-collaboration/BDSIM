@@ -622,9 +622,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     rbendline->AddComponent(startfringe);
     }
     
-  if (BDS::IsFinite(element->e1))
+  if (BDS::IsFinite(element->e1) && includeFringe)
     {length -= fringeLength;}
-  if (BDS::IsFinite(element->e2))
+  if (BDS::IsFinite(element->e2) && includeFringe)
     {length -= fringeLength;}
     
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
