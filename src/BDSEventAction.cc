@@ -43,7 +43,6 @@ BDSEventAction::BDSEventAction():
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
-  primaryCounterCollID(-1),
   tunnelCollID(-1),
   startTime(0),
   stopTime(0),
@@ -104,8 +103,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     {samplerCollID_cylin  = g4SDMan->GetCollectionID("Sampler_cylinder");}
   if(energyCounterCollID < 0)
     {energyCounterCollID  = g4SDMan->GetCollectionID("ec_on_axis_read_out/energy_counter");}
-  if(primaryCounterCollID < 0)
-    {primaryCounterCollID = g4SDMan->GetCollectionID("ec_on_axis_read_out/primary_counter");}
   if (useTunnel)
     {
       if(tunnelCollID < 0)
@@ -176,9 +173,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // if (LWCalHC)
   //    {bdsOutput->WriteHits(SampHC);}
 
-  // energy deposition collections - eloss, primary hits, primary losses, tunnel hits
+  // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
-  BDSEnergyCounterHitsCollection* primaryCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(primaryCounterCollID));
   BDSTunnelHitsCollection*        tunnelHits         = nullptr;
   if (useTunnel)
     {tunnelHits = (BDSTunnelHitsCollection*)(HCE->GetHC(tunnelCollID));}
@@ -219,7 +215,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // instantiated which won't happen if the tunnel isn't build and placed. During
   // placement the SD is attached, which is done on demand as it's a read out one,
   // so without placement, accessing this will cause a segfault.
-  if (BDSGlobalConstants::Instance()->BuildTunnel())
+  if (useTunnel)
   {
     if (tunnelHits)
       {bdsOutput->WriteTunnelHits(tunnelHits);} // write hits
