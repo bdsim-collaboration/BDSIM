@@ -11,8 +11,8 @@
  * @author Jochem Snuverink
  */
 
-class BDSOutputNone : public BDSOutputBase {
-
+class BDSOutputNone: public BDSOutputBase
+{
 public: 
 
   BDSOutputNone():BDSOutputBase(){} ///< default constructor

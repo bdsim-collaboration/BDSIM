@@ -83,8 +83,8 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   // next volume
   
   G4Navigator* nav = Navigator(useCurvilinear);  // select navigator
-    G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);
-    return selectedVol;
+  G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);
+  return selectedVol;
 }
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
