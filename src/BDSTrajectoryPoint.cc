@@ -12,6 +12,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
+#include "BDSProcessMap.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include <ostream>
@@ -68,6 +69,9 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
 
+#ifdef BDSDEBUG
+  G4cout << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
+#endif
   if (info)
   {
     prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
