@@ -7,14 +7,26 @@
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
-#include "G4TrajectoryContainer.hh"
+#include "G4TrajectoryContainer.hh"  // also provides TrajectoryVector type(def)
 #include "G4TransportationProcessType.hh"
-
 
 #include <map>
 #include <ostream>
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
+
+BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
+{
+  TrajectoryVector* trajVec = trajCont->GetVector();
+  BDSTrajectory*    primary = nullptr;
+  for (const auto iT1 : *trajVec)
+    {
+      BDSTrajectory* traj = (BDSTrajectory*)iT1;
+      if(traj->GetParentID() == 0)
+	{primary = traj; break;}
+    }
+  return primary;
+}
 
 BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
   G4Trajectory(aTrack)
@@ -54,70 +66,78 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
 {
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-
-  if(!secondTrajectory)
-    {return;}
-
+#endif
+  // this checks if nullptr and we don't do anything here
   G4Trajectory::MergeTrajectory(secondTrajectory);
 }
 
-BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(G4TrajectoryContainer *trajCont)
+BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(BDSTrajectory* trajectory)
 {
-  TrajectoryVector* trajVec = trajCont->GetVector();
-  BDSTrajectory *primary = nullptr;
-  for (auto iT1 : *trajVec)
-  {
-    BDSTrajectory *traj = (BDSTrajectory *) (iT1);
-    if(traj->GetParentID() == 0)
+  // loop over trajectory to find non transportation step
+  for (G4int i=0; i < trajectory->GetPointEntries(); ++i)
     {
-      primary = traj;
+      BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+      auto processType    = point->GetPostProcessType();
+      auto processSubType = point->GetPostProcessSubType();
+
+      // test against things we want to exclude like tracking - these are not
+      // points of scattering
+      G4bool initialised       = processType != -1;
+      G4bool notTransportation = processType != fTransportation;
+      G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
+      G4bool notParallel       = processType != fParallel;
+
+      if (initialised && notTransportation && notGeneral && notParallel)
+	{
+#ifdef BDSDEBUG
+	  G4cout << "First primary interaction point found at "
+		 << point->GetPreS()/CLHEP::m
+		 << " m - "
+		 << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
+#endif
+	  return point;
+	}
     }
-  }
-
-  // loop over primary trajectory to find non transportation step
-  for(G4int i=0;i<primary->GetPointEntries();++i)
-  {
-    BDSTrajectoryPoint *point = dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(i));
-    if((point->GetPostProcessType()  != fTransportation) &&
-       (point->GetPostProcessType() != fGeneral          && point->GetPostProcessSubType() != STEP_LIMITER))
-    {
-      return point;
-    };
-  }
-
-  G4cout << "no interaction" << G4endl;
-  return dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(0));
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
+#endif
+  return dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(0));
 }
 
-
-BDSTrajectoryPoint* BDSTrajectory::LastInteraction(G4TrajectoryContainer *trajCont)
+BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
 {
-  TrajectoryVector* trajVec = trajCont->GetVector();
-  BDSTrajectory *primary = nullptr;
-  for (auto iT1 : *trajVec)
+  // loop over trajectory backwards to find non transportation step
+  for (G4int i = trajectory->GetPointEntries()-1; i >= 0; --i)
   {
-    BDSTrajectory *traj = (BDSTrajectory *) (iT1);
-    if(traj->GetParentID() == 0)
+    BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+    auto processType = point->GetPostProcessType();
+    auto processSubType = point->GetPostProcessSubType();
+
+    // test against things we want to exclude like tracking - these are not
+    // points of scattering
+    G4bool initialised       = processType != -1;
+    G4bool notTransportation = processType != fTransportation;
+    G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
+    G4bool notParallel       = processType != fParallel;
+
+    if (initialised && notTransportation && notGeneral && notParallel)
     {
-      primary = traj;
+#ifdef BDSDEBUG
+      G4cout << "First primary interaction point found at "
+		 << point->GetPreS()/CLHEP::m
+		 << " m - "
+		 << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
+#endif
+      return point;
     }
   }
-
-  // loop over primary trajectory to find non transportation step
-  for(G4int i=primary->GetPointEntries()-1;i>=0 ;--i)
-  {
-    BDSTrajectoryPoint *point = dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(i));
-    if((point->GetPostProcessType()  != fTransportation) &&
-        (point->GetPostProcessType() != fGeneral         && point->GetPostProcessSubType() != STEP_LIMITER))
-    {
-      return point;
-    };
-  }
-  G4cout << "no interaction" << G4endl;
-  return dynamic_cast<BDSTrajectoryPoint*>(primary->GetPoint(primary->GetPointEntries()-1));
-
-}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
+#endif
+  return dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
+} 
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {

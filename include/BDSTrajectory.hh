@@ -23,6 +23,13 @@
 
 typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
+class BDSTrajectory; // forward declaration so namespaced method can be at top
+
+namespace BDS
+{
+  /// Search the trajectory container for the primary trajectory.
+  BDSTrajectory* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
+}
 
 class BDSTrajectory: public G4Trajectory
 {
@@ -56,8 +63,11 @@ public:
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);
 
-  static BDSTrajectoryPoint* FirstInteraction(G4TrajectoryContainer *trajCont);
-  static BDSTrajectoryPoint* LastInteraction(G4TrajectoryContainer *trajCont);
+  /// Find the first point in a trajectory where the post step process isn't fTransportation
+  /// AND the post step process isn't fGeneral in combination with the post step process subtype
+  /// isn't step_limiter.
+  static BDSTrajectoryPoint* FirstInteraction(BDSTrajectory* trajectory);
+  static BDSTrajectoryPoint* LastInteraction(BDSTrajectory*  trajectory);
 
 protected:
   G4int          creatorProcessType;
