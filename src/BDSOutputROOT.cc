@@ -373,6 +373,28 @@ void BDSOutputROOT<Type>::FillHit(BDSEnergyCounterHit* hit)
 }
 
 template<typename Type>
+void BDSOutputROOT<Type>::FillHit(BDSTrajectoryPoint* hit)
+{
+    //copy variables from hit to root variables
+    const G4ThreeVector pos = hit->GetPosition();
+    X          = pos.x()/CLHEP::m;
+    Y          = pos.y()/CLHEP::m;
+    Z          = pos.z()/CLHEP::m;
+    S          = hit->GetPostS()/CLHEP::m;
+    const G4ThreeVector posL = hit->GetPostPosLocal();
+    x          = posL.x()/CLHEP::m;
+    y          = posL.y()/CLHEP::m;
+    z          = posL.z()/CLHEP::m;
+    E          = hit->GetEnergy()/CLHEP::GeV;
+    G4double sL = ((hit->GetPrePosLocal() - hit->GetPostPosLocal()) / CLHEP::m ).mag();
+    stepLength = sL;
+    weight     = hit->GetPostWeight();
+    part       = 0;   // not provided
+    turnnumber = hit->GetTurnsTaken();
+    eventno    = -1;  // not provided
+}
+
+template<typename Type>
 void BDSOutputROOT<Type>::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
@@ -399,25 +421,19 @@ void BDSOutputROOT<Type>::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::WritePrimaryLoss(BDSEnergyCounterHit* hit)
+void BDSOutputROOT<Type>::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   //copy variables from hit to root variables
-  FillHit(hit);
+  FillHit(ploss);
   //write to file
   PrimaryLossTree->Fill();
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::WritePrimaryHit(BDSEnergyCounterHit* hit)
+void BDSOutputROOT<Type>::WritePrimaryHit(BDSTrajectoryPoint* phit)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   //copy variables from hit to root variables
-  FillHit(hit);
+  FillHit(phit);
   //write to file
   PrimaryHitsTree->Fill();
 }

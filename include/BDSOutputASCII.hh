@@ -28,9 +28,9 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss);
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phit);
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection*);
   /// write a trajectory
