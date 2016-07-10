@@ -8,7 +8,7 @@ def main() :
                 3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,8.0,9.0,10.0,
                 100,500,1000,2000,3000,4000,5000,
                 6000,6500,7000,7500,8000, 8500,9000,9500, 
-                10000,12500, 25000,37500,50000,75000,100000]
+                10000,12500,25000,37500,50000,75000,100000]
 
     f = open("output.dat","w")
     
@@ -16,12 +16,12 @@ def main() :
         print "Running",energy 
 
         # make run files 
-#        makeRunFiles("hadronic hadronic_elastic",energy,0.001,"solidhydrogen",100000)
-#        makeRunFiles("hadronic hadronic_elastic",energy,0.01,"carbon",100000)
-#        makeRunFiles("hadronic hadronic_elastic",energy,0.01,"aluminium",100000)
-#        makeRunFiles("hadronic hadronic_elastic",energy,0.001,"copper",100000)
-#        makeRunFiles("hadronic hadronic_elastic",energy,0.001,"tungsten",100000)
-        makeRunFiles("hadronic hadronic_elastic",energy,0.001,"lead",100000)
+#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"solidhydrogen",100000)
+#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.01,"carbon",100000)
+        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.01,"aluminium",100000)
+#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"copper",100000)
+#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"tungsten",100000)
+#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"lead",100000)
         
         # execute bdsim 
         bdsimProc = _subprocess.Popen("bdsim --file=proton.gmad --output=rootevent --batch",
