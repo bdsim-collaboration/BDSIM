@@ -170,7 +170,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
 G4Navigator* BDSAuxiliaryNavigator::Navigator(G4bool curvilinear) const
 {
   // condition ? case true : case false
-  return curvilinear ? auxNavigatorCL : auxNavigatorCL;
+  return curvilinear ? auxNavigatorCL : auxNavigator;
 }
 
 G4AffineTransform* BDSAuxiliaryNavigator::GlobalToLocal(G4bool curvilinear) const
