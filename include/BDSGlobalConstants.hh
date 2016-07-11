@@ -44,6 +44,9 @@ class BDSBeamPipeInfo;
  * Singleton pattern. The (private) constructor requires a GMAD::Options
  * instance, but to maintain the singleton pattern this is accessed through
  * BDSParser singleton instance.
+ *
+ * Note, some options that are used by BDSBunchInterface derived classes 
+ * don't have accessors here as they're only used directly there.
  */
 
 class BDSGlobalConstants
