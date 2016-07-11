@@ -90,7 +90,9 @@ namespace GMAD
     ///@}
     
     int nlinesIgnore; ///< ignore first lines in the input bunch file
-
+    int eventOffset;  ///< Event number to start from when recreating from a root file.
+    bool recreateSeedState; ///< Load seed state when recreating events.
+    
     double elossHistoBinWidth;
     double elossHistoTransBinWidth;
     double defaultRangeCut;

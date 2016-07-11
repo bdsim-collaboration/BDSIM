@@ -58,13 +58,15 @@ void Options::PublishMembers()
   // options for the "beam" command
   publish("particle",&Options::particleName);
 
-  publish("distrType",&Options::distribType);
+  publish("distrType", &Options::distribType);
   publish("xDistrType",&Options::xDistribType);
   publish("yDistrType",&Options::yDistribType);
   publish("zDistrType",&Options::zDistribType);
-  publish("distrFile",&Options::distribFile);
-  publish("distrFileFormat",&Options::distribFileFormat);
-  publish("nlinesIgnore",&Options::nlinesIgnore);
+  publish("distrFile", &Options::distribFile);
+  publish("distrFileFormat",   &Options::distribFileFormat);
+  publish("nlinesIgnore",      &Options::nlinesIgnore);
+  publish("eventOffset",       &Options::eventOffset);
+  publish("recreateSeedState", &Options::recreateSeedState);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
   publish("elossHistoTransBinWidth",&Options::elossHistoTransBinWidth);
