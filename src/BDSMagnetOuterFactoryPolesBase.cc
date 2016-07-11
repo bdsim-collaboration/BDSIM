@@ -1323,7 +1323,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   G4double poleHalfWidth  = bpHalfWidth  + lengthSafety;
   poleHalfWidth = std::max(poleHalfWidth, outerDiameter*0.15);
   G4double poleHalfHeight = bpHalfHeight + lengthSafety;
-  G4double       outerHalf      = outerDiameter * 0.5;
+  G4double outerHalf      = outerDiameter * 0.5;
 
   // outerDiameter must be > max ( bp height , bp width )
   G4double maxOfBP = std::max(poleHalfWidth, poleHalfHeight);
@@ -1351,12 +1351,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   coilWidth  *= 0.65;
 
   // T = top, B = bottom, L = left, R = right
-  G4double x = poleHalfWidth  + 0.5*coilWidth  + lengthSafetyLarge;
-  G4double y = poleHalfHeight + 0.5*coilHeight + lengthSafetyLarge;
-  G4ThreeVector coilTLDisp = G4ThreeVector( x, y, 0);
-  G4ThreeVector coilTRDisp = G4ThreeVector(-x, y, 0);
-  G4ThreeVector coilBLDisp = G4ThreeVector( x,-y, 0);
-  G4ThreeVector coilBRDisp = G4ThreeVector(-x,-y, 0);
+  G4double coilDX = poleHalfWidth  + 0.5*coilWidth  + lengthSafetyLarge;
+  G4double coilDY = poleHalfHeight + 0.5*coilHeight + lengthSafetyLarge;
+  G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
+  G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
+  G4ThreeVector coilBLDisp = G4ThreeVector( coilDX,-coilDY, 0);
+  G4ThreeVector coilBRDisp = G4ThreeVector(-coilDX,-coilDY, 0);
   std::vector<G4ThreeVector> coilDisps;
   coilDisps.push_back(coilTLDisp);
   coilDisps.push_back(coilTRDisp);
@@ -1665,7 +1665,167 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 	}
     }
   
-  // end piece - TBC
+  // end pieces
+  // note with bends both are likely to be different so build independently here
+  G4double endPieceWidth;
+  G4double endPieceHeight;
+  G4double endPieceZLength;
+  G4TwoVector insideAxis;
+
+  // end piece coil solids
+  // build in x-y plane and project in z as that's the only way with an extruded solid
+  // then rotate so it's along z
+  // curved sections are elliptical with major axis being the projected with of the coil
+  // at an angle and the minor being the normal coil width.
+  // x = x0 + acos(t)cos(phi) - bsin(t)sin(phi)
+  // y = y0 + acos(t)sin(phi) + bsin(t)cos(phi)
+  std::vector<G4TwoVector> inEPPoints;  // input face end piece points
+  std::vector<G4TwoVector> outEPPoints; // output face end piece points
+
+  G4double inXO = poleHalfWidth + lengthSafetyLarge;
+  //    coilDX; // from coil displacement calculation at beginning of this func.
+  G4double inYO = tan(angleIn)*inXO;
+  G4double a    = coilWidth / cos(angleIn); // projected coil width - major axis of ellipse
+  G4double b    = coilWidth;
+
+  // create an ellipse with no angle, then shear it to match the angle
+  // left side
+  for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi; t += CLHEP::halfpi/8.0)
+    {
+      G4double x = -inXO + a*cos(t);
+      G4double y = b*sin(t);
+      inEPPoints.push_back(G4TwoVector(x,y));
+    }
+  // right side
+  for (G4double t = -CLHEP::halfpi; t <= 0; t += CLHEP::halfpi/8.0)
+    {
+      G4double x = inXO + a*cos(t);
+      G4double y = b*sin(t);
+      inEPPoints.push_back(G4TwoVector(x,y));
+    }
+
+  // shear it
+  // (x')   (1        0) (x)
+  // (y') = (tan(phi) 1) (y)
+  // x' = x; y' = tan(phi)*x + y
+  // copy the points, flip in y and shear for output angle
+  for (const auto point : inEPPoints) // copying this time
+    {
+      G4double outy = -1*(point.x()*tan(angleOut) + point.y());
+      outEPPoints.push_back(G4TwoVector(point.x(),outy));
+    }
+  // simply modify in place for shearing original points
+  for (auto& point : inEPPoints)
+    {point.setY(point.x()*tan(angleIn) + point.y());}
+
+  // these are projected by coilHeight in z as they'll be rotated later
+  G4VSolid* endPieceSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
+						   inEPPoints, // transverse 2d coordinates
+						   coilHeight*0.5, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
+
+  G4VSolid* endPieceSolidOut = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
+						   outEPPoints, // transverse 2d coordinates
+						   coilHeight*0.5, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
+  
+  // end piece container solids
+  std::vector<G4TwoVector> contEPPoints;
+  G4double xmax = poleHalfWidth + coilWidth + 1*CLHEP::mm;
+  G4double ymax = poleHalfHeight + coilHeight + 1*CLHEP::mm;
+  contEPPoints.push_back(G4TwoVector(xmax + 1*CLHEP::mm,  ymax));
+  contEPPoints.push_back(G4TwoVector(-xmax,  ymax));
+  contEPPoints.push_back(G4TwoVector(-xmax,  poleHalfHeight));
+  contEPPoints.push_back(G4TwoVector( xmax,  poleHalfHeight));
+  contEPPoints.push_back(G4TwoVector( xmax, -poleHalfHeight));
+  contEPPoints.push_back(G4TwoVector(-xmax, -poleHalfHeight));
+  contEPPoints.push_back(G4TwoVector(-xmax, -ymax));
+  contEPPoints.push_back(G4TwoVector(xmax + 1*CLHEP::mm, -ymax));
+
+  // calculate length for each end piece container - could be different due to different angles
+  G4double ePInLength = coilWidth + lengthSafetyLarge;
+  if (BDS::IsFinite(angleIn))
+    {
+      G4doudle dzIn = tan(std::abs(angleIn)) * outerDiameter;
+      ePInLength    = std::max(2*ePInLength, 2*dzIn); // 2x as long for intersection
+    }
+
+  G4VSolid* ePContSolidSqIn  = new G4ExtrudedSolid(name + "_end_coil_solid", // name
+						   contEPPoints, // transverse 2d coordinates
+						   coilHeight*0.5, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
+  // need to keep memory separate for each end piece so duplicate container square
+  G4VSolid* ePContSolidSqOut = ePContSolidSqIn->Clone();
+  
+  if (BDS::IsFinite(angleIn))
+    {
+      G4double ePLength = coilWidth + lengthSafetyLarge;
+      G4ThreeVector inputfaceReversed = inputface * -1;
+      G4VSolid* endPieceSolidAng = new G4CutTubs(name + "_angled_face_solid", // name
+						 0,                           // inner radius
+						 outerDiameter,               // outer radius
+						 ePLlength,                   // z half length
+						 0,                           // start angle
+						 CLHEP::twopi,                // sweep angle
+						 inputface,                   // input face normal
+						 inputfaceReversed);          // output face normal
+
+      // potential memory leak here with overwriting
+      endPieceSolidIn = new G4IntersectionSolid(name + "_end_coil_cont_solid", // name
+						endPieceSolidIn,
+						endPieceSolidAng);
+    }
+
+  G4double ePOutLength = coilWidth + lengthSafetyLarge;
+  if (BDS::IsFinite(angleOut))
+    {
+      G4doudle dzOut = tan(std::abs(angleOut)) * outerDiameter;
+      ePOutLength    = std::max(2*ePOutLength, 2*dzIn);
+    }
+  G4VSolid* endPieceSolidOut = new G4ExtrudedSolid(name + "_end_coil_out_solid", // name
+						   outEPPoints, // transverse 2d coordinates
+						   ePOutLength, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
+  if (BDS::IsFinite(angleOut))
+    {
+      G4ThreeVector outputfaceReversed = outputface * -1;
+      G4double ePLength = coilWidth + lengthSafetyLarge;
+      G4VSolid* endPieceSolidAng = new G4CutTubs(name + "_angled_face_solid", // name
+						 0,                           // inner radius
+						 outerDiameter,               // outer radius
+						 ePLength*0.5,                // z half length
+						 0,                           // start angle
+						 CLHEP::twopi,                // sweep angle
+						 outputface,                  // input face normal
+						 outputfaceReversed);         // output face normal
+
+      // potential memory leak here with overwriting
+      endPieceSolidOut = new G4IntersectionSolid(name + "_end_coil_cont_solid", // name
+						 endPieceSolidOut,
+						 endPieceSolidAng);
+    }
+
+  G4VSolid* epContSolidAngIn = new G4CutTubs(name + "_cont_angled_solid", // name
+						 0,                           // inner radius
+						 outerDiameter,               // outer radius
+						 ePLlength,                   // z half length
+						 0,                           // start angle
+						 CLHEP::twopi,                // sweep angle
+						 inputface,                   // input face normal
+						 inputfaceReversed);          // output face normal
+  
+  // simple extruded solid intersectd with cut tubs for angled faces
+  // build about magnet zero so we get the coordinates right for general placement
+
+  // end piece logical volumes
+
+  // placements
+
+  // packaging
 
   // magnet outer instance
   CreateMagnetContainerComponent();
