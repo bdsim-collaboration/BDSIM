@@ -20,6 +20,9 @@ namespace BDSRandom
 
   /// Load a seedstate.txt file and restore the engine to this status.
   void LoadSeedState (G4String inSeedFilename);
+
+  /// Set the seed state from a string.
+  void SetSeedState(G4String seedState);
 }
 
 #endif

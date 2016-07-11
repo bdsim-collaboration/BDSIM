@@ -8,6 +8,8 @@
 #include "CLHEP/Random/JamesRandom.h"
 
 #include <ctime>
+#include <string>
+#include <sstream>
 
 void BDSRandom::CreateRandomNumberGenerator()
 {
@@ -89,6 +91,16 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
     }
   ifseedstate.close();
 #ifdef BDSDEBUG
+  BDSRandom::PrintFullSeedState();
+#endif
+}
+
+void BDSRandom::SetSeedState(G4String seedState)
+{
+  std::stringstream ss;
+  ss.str(seedState); // set contents of string stream as input string
+  CLHEP::HepRandom::restoreFullState(ss);
+#ifdef BDSEBUG
   BDSRandom::PrintFullSeedState();
 #endif
 }
