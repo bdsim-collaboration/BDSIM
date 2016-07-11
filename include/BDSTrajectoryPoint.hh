@@ -50,6 +50,10 @@ public:
   inline G4double GetEnergy()             const {return energy;}
   inline G4double GetPreS()               const {return preS;}
   inline G4double GetPostS()              const {return postS;}
+  inline G4int    GetBeamLineIndex()      const {return beamlineIndex;}
+  inline G4int    GetTurnsTaken()         const {return turnstaken;}
+  inline G4ThreeVector GetPrePosLocal()   const {return prePosLocal;}
+  inline G4ThreeVector GetPostPosLocal()  const {return postPosLocal;}
   /// @}
   
   /// Output stream
@@ -72,7 +76,11 @@ private:
   G4double energy;           ///< Total energy deposited during step
   G4double preS;             ///< Global curvilinear S coordinate of pre-step point
   G4double postS;            ///< Global curvilinear S coordinate of post step point
-
+  G4int    beamlineIndex;    ///< Index to beam line elment
+  G4int    turnstaken;       ///< Number of turns taken
+  G4ThreeVector prePosLocal; ///< Local coordinates of pre-step point
+  G4ThreeVector postPosLocal;///< Local coordinates of post-step point
+  
   /// An auxilliary navigator to get curvilinear coordintes. Lots of points, but only
   /// need one navigator so make it static.
   static BDSAuxiliaryNavigator* auxNavigator;

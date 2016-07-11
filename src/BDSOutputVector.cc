@@ -43,22 +43,22 @@ void BDSOutputVector::WriteEnergyLoss(BDSEnergyCounterHitsCollection* a)
     {output[i]->WriteEnergyLoss(a);}
 }
 
-void BDSOutputVector::WritePrimaryLoss(BDSEnergyCounterHit* a)
+void BDSOutputVector::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->WritePrimaryLoss(a);}
+    {output[i]->WritePrimaryLoss(ploss);}
 }
 
-void BDSOutputVector::WritePrimaryHit(BDSEnergyCounterHit* a)
+void BDSOutputVector::WritePrimaryHit(BDSTrajectoryPoint* phit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->WritePrimaryHit(a);}
+    {output[i]->WritePrimaryHit(phit);}
 }
 
 void BDSOutputVector::WriteTunnelHits(BDSTunnelHitsCollection* a)

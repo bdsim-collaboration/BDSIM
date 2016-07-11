@@ -4,6 +4,7 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "BDSTunnelHit.hh"
 #include "BDSHistogram.hh"
 #include "BDSOutputROOTEventHistograms.hh"
@@ -29,10 +30,10 @@ public:
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) = 0;
   
   /// write where primaries stop being primaries
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit* ploss) = 0;
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss) = 0;
 
   /// write where primaries impact
-  virtual void WritePrimaryHit(BDSEnergyCounterHit* phits) = 0;
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phits) = 0;
 
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits) = 0;

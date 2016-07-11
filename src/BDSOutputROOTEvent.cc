@@ -233,33 +233,35 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
 }
 
 /// write where primaries impact
-void BDSOutputROOTEvent::WritePrimaryHit(BDSEnergyCounterHit* thePrimaryHit) // TODO WritePrimaryFirstHit
+void BDSOutputROOTEvent::WritePrimaryHit(BDSTrajectoryPoint* phit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  pFirstHit->Fill(thePrimaryHit);
-  runHistos->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
-  evtHistos->Fill1DHistogram(0, thePrimaryHit->GetSBefore()/CLHEP::m);
-  runHistos->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
-  evtHistos->Fill1DHistogram(3, thePrimaryHit->GetSBefore()/CLHEP::m);
+  pFirstHit->Fill(phit);
+  const G4double preStepSPosition = phit->GetPreS() / CLHEP::m;
+  runHistos->Fill1DHistogram(0, preStepSPosition);
+  evtHistos->Fill1DHistogram(0, preStepSPosition);
+  runHistos->Fill1DHistogram(3, preStepSPosition);
+  evtHistos->Fill1DHistogram(3, preStepSPosition);
 }
 
 /// write where primaries stop being primaries
-void BDSOutputROOTEvent::WritePrimaryLoss(BDSEnergyCounterHit* thePrimaryLoss) // TODO WritePrimaryLastHit)
+void BDSOutputROOTEvent::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  pLastHit->Fill(thePrimaryLoss);
-  runHistos->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
-  evtHistos->Fill1DHistogram(1, thePrimaryLoss->GetSAfter()/CLHEP::m);
-  runHistos->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
-  evtHistos->Fill1DHistogram(4, thePrimaryLoss->GetSAfter()/CLHEP::m);
+  pLastHit->Fill(ploss);
+  const G4double postStepSPosition = ploss->GetPostS() / CLHEP::m;
+  runHistos->Fill1DHistogram(1, postStepSPosition);
+  evtHistos->Fill1DHistogram(1, postStepSPosition);
+  runHistos->Fill1DHistogram(4, postStepSPosition);
+  evtHistos->Fill1DHistogram(4, postStepSPosition);
 }
 
 /// write tunnel hits
-void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection *hc)
+void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;

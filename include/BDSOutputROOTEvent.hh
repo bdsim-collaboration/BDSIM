@@ -43,10 +43,10 @@ public:
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   
   /// write where primaries stop being primaries
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit* ploss);
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss);
 
   /// write where primaries impact
-  virtual void WritePrimaryHit(BDSEnergyCounterHit* phits);
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phits);
 
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits);

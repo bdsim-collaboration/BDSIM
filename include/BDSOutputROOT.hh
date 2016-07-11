@@ -28,9 +28,9 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) override;
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*) override;
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss) override;
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*) override;
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phit) override;
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection*) override;
   /// write a trajectory 
@@ -98,6 +98,9 @@ protected:
   
   /// Fill members so that trees can be written
   void FillHit(BDSEnergyCounterHit* hit);
+
+	/// Fill members so that tree can be written but based on Trajectory Point
+	void FillHit(BDSTrajectoryPoint* hit);
 
   /// Members for writing to TTrees
   /// Local parameters
