@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  std::string configFilePath = argv[1]; //create a string from arguments so able to use find_last_of and substr  methods
+  std::string configFilePath = std::string(argv[1]); //create a string from arguments so able to use find_last_of and substr  methods
   std::string configFileExtension =  configFilePath.substr(configFilePath.find_last_of(".") + 1) ;
   if(configFileExtension != "txt")
   {
@@ -38,10 +38,9 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  std::cout << "rebdsim> ConfigFileName : " << argv[1] << std::endl;
+  std::cout << "rebdsim> configuration file name : " << configFilePath << std::endl;
 
-  std::string fileName = "";
-  std::string inputFilePath = "";
+  std::string inputFilePath = "";  // default of "" means use ones specified in analysisConfig.txt
   std::string outputFileName = "";
 
   if (argc > 2)
@@ -49,13 +48,7 @@ int main(int argc, char *argv[])
   if (argc > 3)
     {outputFileName = std::string(argv[3]);}
 
-  try {
-    Config::Instance(argv[1], argv[2], argv[3]);
-  }
-  catch(std::string e) {
-    std::cout << e << std::endl;
-    exit(1);
-  }
+  Config::Instance(configFilePath, inputFilePath, outputFileName);
 
   DataLoader dl = DataLoader();
   EventAnalysis evtAnalysis = EventAnalysis(dl.GetEvent(), dl.GetEventTree());
