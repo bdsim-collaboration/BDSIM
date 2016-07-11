@@ -181,7 +181,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateDecapole(); break;
   case ElementType::_MULT:
     component = CreateMultipole(); break;
-  case ElementType::_ELEMENT:    
+  case ElementType::_THINMULT:
+    component = CreateThinMultipole(); break;
+  case ElementType::_ELEMENT:
     component = CreateElement(); break;
   case ElementType::_SOLENOID:
     component = CreateSolenoid(); break; 
@@ -829,6 +831,37 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
  return new BDSMagnet(BDSMagnetType::multipole,
 		      element->name,
 		      element->l * CLHEP::m,
+		      PrepareBeamPipeInfo(element),
+		      PrepareMagnetOuterInfo(element),
+		      vacuumField,
+		      nullptr);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
+  {
+ if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+ BDSMagnetStrength* st = new BDSMagnetStrength();
+ std::list<double>::iterator kn = element->knl.begin();
+ std::list<double>::iterator ks = element->ksl.begin();
+ std::vector<G4String> normKeys = st->NormalComponentKeys();
+ std::vector<G4String> skewKeys = st->SkewComponentKeys();
+ std::vector<G4String>::iterator nkey = normKeys.begin();
+ std::vector<G4String>::iterator skey = skewKeys.begin();
+ for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
+   {
+     (*st)[*nkey] = (*kn) / element->l;
+     (*st)[*skey] = (*ks) / element->l;
+   }
+ BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
+					       brho,
+					       BDSIntegratorType::g4classicalrk4,
+					       st);
+
+ return new BDSMagnet(BDSMagnetType::multipole,
+		      element->name,
+		      1e-6 * CLHEP::m,
 		      PrepareBeamPipeInfo(element),
 		      PrepareMagnetOuterInfo(element),
 		      vacuumField,
