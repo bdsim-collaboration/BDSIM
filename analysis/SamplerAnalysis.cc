@@ -241,8 +241,6 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       s_1_0 = powSums[a][b][m][n];
 
       moment = s_1_0/npart;
-
-      return moment;
     }
 
   else if((n == 2 && m == 0) || (n == 0 && m == 2))
@@ -260,8 +258,6 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       }
 
       moment =  (npart*s_2_0 - pow(s_1_0,2))/(npart*(npart-1));
-      
-      return moment;
     }
 
   else if(n == 1 && m == 1)
@@ -273,8 +269,6 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       s_1_1 = powSums[a][b][m][n];
 
       moment =  (npart*s_1_1 - s_0_1*s_1_0)/(npart*(npart-1));
-      
-      return moment;
     }
   
   else if((n == 4 && m == 0) || (n == 0 && m == 4))
@@ -297,8 +291,6 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 
       moment =  (-3*pow(s_1_0,4))/pow(npart,4) + (6*pow(s_1_0,2)*s_2_0)/pow(npart,3)
                +(-4*s_1_0*s_3_0)/pow(npart,2) + s_4_0/npart;
-      
-      return moment;
     }
 
   else if((m == 3 && n == 1) || (m == 1 && n ==3))
@@ -329,8 +321,6 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       moment =   (-3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*pow(s_1_0,2)*s_1_1)/pow(npart,3)
                  + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) + (-3*s_1_0*s_2_1)/pow(npart,2)
                  + (-s_0_1*s_3_0)/pow(npart,2) + s_3_1/npart;
-      
-      return moment;
     }
 
    else if(m == 2 && n == 2)
@@ -350,11 +340,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 	      + (4*s_0_1*s_1_0*s_1_1)/pow(npart,3) + (2*s_1_0*s_1_2)/pow(npart,2)
 	      + (pow(s_0_1,2)*s_2_0)/pow(npart,3) + (-2*s_0_1*s_2_1)/pow(npart,2) + s_2_2/npart;
       
-      return moment;
-      
     }
 
-    return 0;
+    return moment;
 }
 
 double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  int k, int i, int j)
@@ -388,7 +376,6 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       }
 
       cov = ((npart-3)*pow(m_2_0,2))/(npart*(npart-1)) + m_4_0/npart;
-      
     }
   
   else if(i == 2 && j == 2)
@@ -433,10 +420,8 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
 
     cov = 2*pow(m_1_1,2)/(npart*(npart-1)) + (-m_0_2*m_2_0)/npart + m_2_2/npart;
   }
-  else
-    {cov = 0;} // this is silly, but prevents compiler warning - TBC - there should be an else right?
   
-  return 0;
+  return cov;
 }
 
 
