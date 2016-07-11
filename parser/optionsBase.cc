@@ -18,7 +18,7 @@ OptionsBase::OptionsBase()
   visMacroFileName      = "";
   visDebug              = false;
   outputFileName        = "output";
-  outputFormat          = "ascii";
+  outputFormat          = "rootevent";
   survey                = false;
   surveyFileName        = "survey.dat";
   gflash                = false;
