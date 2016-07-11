@@ -23,7 +23,7 @@ Config::Config(std::string fileNameIn,
 
 Config::~Config()
 {
-  delete instance;
+  instance = nullptr;
 }
 
 Config* Config::Instance(std::string fileName,
