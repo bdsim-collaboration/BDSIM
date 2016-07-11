@@ -58,8 +58,6 @@ namespace GMAD
   
     bool circular;     ///< Flag for circular machine
     int  seed;         ///< The seed value for the random number generator
-    bool setSeedState; ///< If seed state is specifed - use the state saved in it
-    std::string seedStateFileName; ///< The seed state filename
     
     /// String that points to path where files are searched;
     /// based on environment variable or else input filename

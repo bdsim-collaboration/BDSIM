@@ -50,7 +50,6 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "materials", 0, 0, 0 },
 					{ "circular", 0, 0, 0 },
 					{ "seed", 1, 0, 0 },
-					{ "seedstate",1,0,0 },
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
@@ -174,11 +173,6 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("seed", result);
 	}
-      else if( !strcmp(optionName, "seedstate") )
-	{
-	  options.set_value("seedStateFileName", std::string(optarg));
-	  options.set_value("setSeedState",      true);
-	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
 	  int result = 1;
@@ -259,7 +253,6 @@ void BDSExecOptions::Usage() const
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
 	<<"                            option in the input gmad file" << G4endl
         <<"--seed=N                  : the seed to use for the random number generator" <<G4endl
-	<<"--seedstate=<file>        : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl
 	<<"--survey=<file>           : print survey info to <file>"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl
 	<<"--verbose_event           : display information for every event "<<G4endl
@@ -288,7 +281,6 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << options.seed                << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFileName: "   << std::setw(15) << options.seedStateFileName   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << options.survey              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFileName: "      << std::setw(15) << options.surveyFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << options.verbose             << G4endl;

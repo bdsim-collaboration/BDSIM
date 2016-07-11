@@ -43,8 +43,6 @@ void Options::PublishMembers()
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
-  publish("seedStateFileName",     &Options::seedStateFileName);
-  publish("setSeedState",          &Options::setSeedState);
   publish("nGenerate",             &Options::nGenerate);
   publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);

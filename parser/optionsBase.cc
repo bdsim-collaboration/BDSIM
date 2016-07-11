@@ -35,8 +35,6 @@ OptionsBase::OptionsBase()
   verboseSteppingLevel  = 0;
   circular              = false;
   seed                  = -1;
-  seedStateFileName     = "";
-  setSeedState          = false;
   nGenerate             = 1;
   generatePrimariesOnly = false;
   exportGeometry        = false;
@@ -60,6 +58,8 @@ OptionsBase::OptionsBase()
   haloPSWeightParameter = 1.0;
   haloPSWeightFunction  = "";
   nlinesIgnore          = 0;
+  eventOffset           = 0;
+  recreateSeedState     = true;
   ffact                 = 1.0;
   beamEnergy            = 0.0;
 

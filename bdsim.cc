@@ -96,9 +96,7 @@ int main(int argc,char** argv)
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (globalConstants->SetSeedState()) //optionally load the seed state from file (separate from seed)
-    {BDSRandom::LoadSeedState(globalConstants->SeedStateFileName());}
-
+  
   /// Instantiate the specific type of bunch distribution (class),
   /// get the corresponding parameters from the gmad parser info
   /// and attach to the initialised random number generator.
