@@ -11,7 +11,6 @@ class BDSOutputROOTEventInfo;
 
 class TFile;
 class TTree;
-class TChain;
 
 class BDSBunchRecreate: public BDSBunchInterface
 {
