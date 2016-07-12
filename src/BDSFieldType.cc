@@ -9,6 +9,7 @@
 template<>
 std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
   new std::map<BDSFieldType, std::string> ({
+      {BDSFieldType::none,       "none"},
       {BDSFieldType::zero,       "zero"},
       {BDSFieldType::threed,     "threed"},
       {BDSFieldType::xy,         "xy"},
@@ -28,6 +29,7 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
 BDSFieldType BDS::DetermineFieldType(G4String bType)
 {
   std::map<G4String, BDSFieldType> types;
+  types["none"]       = BDSFieldType::none;
   types["zero"]       = BDSFieldType::zero;
   types["threed"]     = BDSFieldType::threed;
   types["xy"]         = BDSFieldType::xy;
