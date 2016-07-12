@@ -5,13 +5,11 @@
 #include "BDSOutputROOTEventSampler.hh"
 #include "BDSRandom.hh"
 
-#include "analysis/Event.hh"
 #include "parser/options.h"
 
 #include "globals.hh"  // geant4 types / globals
 #include "G4ParticleTable.hh"
 
-#include "TChain.h"
 #include "TFile.h"
 #include "TTree.h"
 
@@ -23,6 +21,7 @@ BDSBunchRecreate::BDSBunchRecreate():
   currentEventNumber(0),
   entries(0),
   strongRecreation(true),
+  file(nullptr),
   eventTree(nullptr),
   primary(nullptr),
   info(nullptr),

@@ -3,14 +3,14 @@
 
 #include "BDSBunchInterface.hh"
 #include "BDSOutputROOTEventSampler.hh"
-#include "analysis/Event.hh"
 #include "parser/options.h"
 
 #include "globals.hh" // geant4 types / globals
 
+class BDSOutputROOTEventInfo;
+
 class TFile;
 class TTree;
-
 class TChain;
 
 class BDSBunchRecreate: public BDSBunchInterface
@@ -42,16 +42,16 @@ private:
   /// coordinates from the file will be used. This will default to true.
   G4bool strongRecreation;
 
-    TFile* file;
-    TTree* eventTree;
-    TBranch* primary;
-    TBranch* info;
+  TFile* file;
+  TTree* eventTree;
+  TBranch* primary;
+  TBranch* info;
 #ifndef __ROOTDOUBLE__
-    BDSOutputROOTEventSampler<float>* primaryLocal;
+  BDSOutputROOTEventSampler<float>* primaryLocal;
 #else
-    BDSOutputROOTEventSampler<double>* primaryLocal;
+  BDSOutputROOTEventSampler<double>* primaryLocal;
 #endif
-    BDSOutputROOTEventInfo* infoLocal;
+  BDSOutputROOTEventInfo* infoLocal;
 
 };
 
