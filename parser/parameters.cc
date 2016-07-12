@@ -19,6 +19,7 @@ void Parameters::flush() {
   tscint = 0.0003; tscintset = 0;
   windowScreenGap = 0; windowScreenGapset = 0;
   twindow = 0; twindowset = 0;
+  tmount = 0; tmountset = 0;
   screenEndZ = 0; screenEndZset = 0;
   screenWidth = 0; screenWidthset = 0;
   poleStartZ = 0; poleStartZset = 0;
@@ -111,6 +112,7 @@ void Parameters::flush() {
   material = ""; materialset = 0;
   scintmaterial = ""; scintmaterialset = 0;
   windowmaterial = "vacuum"; windowmaterialset = 0;
+  mountmaterial = "vacuum"; mountmaterialset = 0;
   vacuummaterial = "vacuum"; vacuummaterialset = 0;
   airmaterial = ""; airmaterialset = 0;
   tunnelMaterial = "concrete"; tunnelmaterialset = 0;
@@ -153,6 +155,7 @@ void Parameters::inherit_properties(struct Element& e)
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
   if(!twindowset) { twindow = e.twindow; twindowset = 1; }
+  if(!tmountset) { tmount = e.tmount; tmountset = 1; }
   if(!screenEndZset) { screenEndZ = e.screenEndZ; screenEndZset = 1; }
   if(!screenWidthset) { screenWidth = e.screenWidth; screenWidthset = 1; }
   if(!poleStartZset) { poleStartZ = e.poleStartZ; poleStartZset = 1; }
@@ -201,6 +204,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!materialset) { material = e.spec; materialset = 1; }
   if(!scintmaterialset) { scintmaterial = e.spec; scintmaterialset = 1; }
   if(!windowmaterialset) { windowmaterial = e.spec; windowmaterialset = 1; }
+  if(!mountmaterialset) { mountmaterial = e.spec; mountmaterialset = 1; }
   if(!vacuummaterialset) { vacuummaterial = e.spec; vacuummaterialset = 1; }
   if(!airmaterialset) { airmaterial = e.spec; airmaterialset = 1; }
   if(!tunnelmaterialset) { tunnelMaterial = e.spec; tunnelmaterialset = 1; }

@@ -116,6 +116,7 @@ void Element::flush() {
   tscint = 0;
   windowScreenGap = 0;
   twindow = 0;
+  tmount = 0;
   screenEndZ = 0;
   screenWidth = 0;
   poleStartZ = 0;
@@ -170,6 +171,7 @@ void Element::flush() {
   material="";
   scintmaterial="";
   windowmaterial="";
+  mountmaterial="";
   vacuummaterial="";
   airmaterial="";
   tunnelMaterial="";

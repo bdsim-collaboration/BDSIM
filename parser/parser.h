@@ -548,7 +548,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.windowScreenGap = params.windowScreenGap;
     e.angle = params.angle;
     e.twindow = params.twindow;
+    e.tmount = params.tmount;
     e.windowmaterial = std::string(params.windowmaterial);
+    e.mountmaterial = std::string(params.mountmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
     break;
 
@@ -565,7 +567,9 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.windowScreenGap = params.windowScreenGap;
     e.angle = params.angle;
     e.twindow = params.twindow;
+    e.tmount = params.tmount;
     e.windowmaterial = std::string(params.windowmaterial);
+    e.mountmaterial = std::string(params.mountmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
     e.spec = std::string(params.spec); 
     break;

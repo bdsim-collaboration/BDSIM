@@ -28,6 +28,7 @@ struct Parameters {
   double tscint; int tscintset; ///thickness of scintillating part of screen
   double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
+  double tmount; int tmountset; ///thickness of additional backing for scint screen
   double screenEndZ; int screenEndZset;//z position of end of screen relative to beginning of magnet pole
   double screenWidth; int screenWidthset;//width of the scintillator screen
   double poleStartZ; int poleStartZset;//z position of beginning of magnet pole relative to beginning of element
@@ -117,6 +118,7 @@ struct Parameters {
   //For a spectrometer scintillator screen.
   std::string  scintmaterial;  int scintmaterialset;
   std::string  windowmaterial;  int windowmaterialset;
+  std::string  mountmaterial;  int mountmaterialset;
   std::string  vacuummaterial;  int vacuummaterialset;
   std::string  airmaterial;  int airmaterialset;
 

@@ -27,7 +27,9 @@ class BDSAwakeSpectrometer :public BDSAcceleratorComponent
   
 
 public:
-  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double BField, G4double poleStartZ, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double screenEnd, G4String spec, G4double screenWidth);
+  BDSAwakeSpectrometer(G4String aName, G4double length, G4String bmapFile, G4double BField, G4double poleStartZ, G4String material, G4double thickness, 
+		       G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial, G4double mountThickness, 
+		       G4String mountMaterial, G4double screenEnd, G4String spec, G4double screenWidth);
   virtual ~BDSAwakeSpectrometer();
 
 protected:
@@ -193,6 +195,8 @@ private:
   G4double _screenAngle;
   G4double _windowThickness;
   G4String _windowMaterial;
+  G4double _mountThickness;
+  G4String _mountMaterial;
 
   G4double _screenEndZ;
   G4double _poleStartZ;
