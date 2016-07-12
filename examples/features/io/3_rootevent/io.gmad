@@ -11,6 +11,8 @@ ioline: line = (fodo1);
 use,period=ioline;
 sample, all;
 
+! this has to be 10 events for other test that uses the output of this for
+! testing recreation of an event.
 option, ngenerate=10,
         physicsList="em",
         beampipeRadius=5.0*cm,
