@@ -169,8 +169,6 @@ target_link_libraries(bdsimRootEvent ${ROOT_LIBRARIES})
 # And even if the dictionaries are the same compiling with multiple threads will result in building them simultaneously
 add_dependencies(bdsim bdsimRootEvent)
 
-target_link_libraries(bdsim rebdsimLib)
-
 # Install the targets:
 set(executables bdsimexec)
 if (${ROOT_MAJOR_VERSION} STREQUAL "6")
