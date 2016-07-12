@@ -28,6 +28,8 @@ class BDSMagnetStrength;
 class BDSFieldInfo
 {
 public:
+	/// Default constructor for zero field effictively
+	BDSFieldInfo();
   BDSFieldInfo(BDSFieldType       fieldTypeIn,
 	       G4double           brhoIn,
 	       BDSIntegratorType  integratorTypeIn,
@@ -65,8 +67,6 @@ public:
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
   
 private:
-  /// Private default constructor to force use of provided one.
-  BDSFieldInfo();
   
   BDSFieldType       fieldType;
   G4double           brho;

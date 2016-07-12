@@ -34,7 +34,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
 		     BDSFieldInfo*       outerFieldInfoIn):
-  BDSAcceleratorComponent(name, length, 0, type.ToString()),
+  BDSAcceleratorComponent(name, length, (*vacuumFieldInfoIn->MagnetStrength())["angle"], type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
@@ -47,10 +47,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   vacuumField(nullptr),
   outerField(nullptr)
 {
-  if (vacuumFieldInfo) // there may not always be a vacuum field - ie muon spoiler
-    {angle = (*vacuumFieldInfo->MagnetStrength())["angle"];}
-  else
-    {angle = 0;}
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,0);

@@ -868,13 +868,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 					      brho,
 					      BDSIntegratorType::g4classicalrk4,
 					      st);
+    BDSFieldInfo* vacuumField = new BDSFieldInfo();
 
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       nullptr,
+		       vacuumField,
 		       outerField);
 }
 
