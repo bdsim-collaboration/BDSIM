@@ -967,7 +967,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
 
       coilLeftPV = new G4PVPlacement(rm,                 // rotation
 				     (G4ThreeVector)0,   // position
-				     coilLeftLV,             // logical volume
+				     coilLeftLV,         // logical volume
 				     name + "_coil_left_pv", // name      
 				     containerLV,        // mother lv to be placed in
 				     false,              // no boolean operation
@@ -976,7 +976,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
       
       coilRightPV = new G4PVPlacement(rm,                 // rotation
 				      (G4ThreeVector)0,   // position
-				      coilRightLV,             // logical volume
+				      coilRightLV,        // logical volume
 				      name + "_coil_right_pv", // name      
 				      containerLV,        // mother lv to be placed in
 				      false,              // no boolean operation
@@ -985,7 +985,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
 
       G4ThreeVector placementOffset = G4ThreeVector(endCoilTranslation);
       placementOffset.rotateZ(rotationAngle);
-      endCoilPV = new G4PVPlacement(ecrm,               // rotation
+      endCoilPV = new G4PVPlacement(ecrm,                    // rotation
 				    placementOffset,         // position
 				    endPieceCoilLV,          // logical volume
 				    name + "_end_piece_coil_pv", // name      
@@ -1060,7 +1060,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
 
   endPiece = new BDSSimpleComponent(name + "_end_piece",
 				    endPieceGC,
-  endPieceLength);
+				    endPieceLength);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     name,
