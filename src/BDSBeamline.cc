@@ -716,7 +716,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 
     G4double endPieceLength = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
-  G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetReferenceRotationEnd()));
+  G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetReferenceRotationMiddle()));
     elRotEnd->rotateY(CLHEP::pi);
   G4ThreeVector       elPosEnd = element->GetPositionEnd();
   G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*(element->GetReferenceRotationEnd()));
