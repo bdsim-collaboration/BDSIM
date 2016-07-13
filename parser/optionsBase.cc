@@ -45,8 +45,7 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList           = ""; //default - only transportation
   modularPhysicsListsOn = 1;
-  randomSeed            = -1;
-  
+
   // beam options
   particleName          = "";
   distribType           = "reference";

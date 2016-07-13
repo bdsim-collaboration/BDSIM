@@ -36,10 +36,11 @@ void BDSRandom::SetSeed()
   
   // if seed positive set it, else use the time
   long seed = 0;
-  if(BDSGlobalConstants::Instance()->RandomSeed() < 0)
+
+  if(BDSGlobalConstants::Instance()->Seed() < 0)
     {seed = time(nullptr);}
   else
-    {seed = BDSGlobalConstants::Instance()->RandomSeed();}
+    {seed = BDSGlobalConstants::Instance()->Seed();}
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "selected seed = " << seed << G4endl;

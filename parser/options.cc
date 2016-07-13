@@ -268,7 +268,6 @@ void Options::PublishMembers()
   publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
   publish("lengthSafety",&Options::lengthSafety);
-  publish("randomSeed",&Options::randomSeed);
 
   // trajectory storage
   publish("storeTrajectory",&Options::storeTrajectory);
