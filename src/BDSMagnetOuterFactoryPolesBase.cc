@@ -1198,11 +1198,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
   coilLV->SetVisAttributes(coilVisAttr);
 
   // container
-  if (visDebug)
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  
   // user limits
 #ifndef NOUSERLIMITS
   G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");

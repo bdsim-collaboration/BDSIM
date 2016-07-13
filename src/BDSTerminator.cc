@@ -40,11 +40,8 @@ void BDSTerminator::BuildContainerLogicalVolume()
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 
   // visual attributes
-  if (BDSGlobalConstants::Instance()->VisDebug())
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-
+  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+      
   // register extents with BDSGeometryComponent base class
   SetExtentX(-radius,radius);
   SetExtentY(-radius,radius);

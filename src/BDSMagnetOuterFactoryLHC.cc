@@ -869,16 +869,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  if (visDebug)
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    }
-  else
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    }
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
   // USER LIMITS for all components
 #ifndef NOUSERLIMITS
@@ -1494,17 +1486,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(secondBPPV);
   
   // visual attributes for container
-  if (visDebug)
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    }
-  else
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    }
-
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  
   // USER LIMITS and SENSITIVITY for all components
 #ifndef NOUSERLIMITS
   G4UserLimits* userLimits = new G4UserLimits("outer_cuts");

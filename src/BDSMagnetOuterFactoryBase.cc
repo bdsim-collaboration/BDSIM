@@ -94,16 +94,8 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
     {poleLV->SetVisAttributes(outerVisAttr);}
   yokeLV->SetVisAttributes(outerVisAttr);
   // container
-  if (visDebug)
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    }
-  else
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    }
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
   // USER LIMITS
 #ifndef NOUSERLIMITS

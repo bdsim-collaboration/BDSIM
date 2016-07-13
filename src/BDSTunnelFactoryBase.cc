@@ -225,16 +225,8 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       visAttributesToBeRegistered.push_back(soilVisAttr);
     }
   // container & read out
-  if (BDSGlobalConstants::Instance()->VisDebug())
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-      readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    }
-  else
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    }
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
 void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*/,

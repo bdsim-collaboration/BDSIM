@@ -134,10 +134,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-  if (BDSGlobalConstants::Instance()->VisDebug())
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
 G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)

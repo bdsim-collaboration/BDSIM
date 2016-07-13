@@ -105,12 +105,7 @@ void BDSAcceleratorComponent::Build()
 
   // visual attributes
   if(containerLogicalVolume)
-    {
-    if (BDSGlobalConstants::Instance()->VisDebug())
-      {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-    else
-      {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-    }
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
