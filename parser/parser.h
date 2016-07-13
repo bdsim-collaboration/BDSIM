@@ -35,7 +35,7 @@ namespace GMAD
    *
    * Singleton pattern
    *
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   * @author Jochem Snuverink
    */
   
   class Parser

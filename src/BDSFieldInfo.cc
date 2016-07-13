@@ -9,6 +9,20 @@
 
 #include <ostream>
 
+BDSFieldInfo::BDSFieldInfo():
+        fieldType(BDSFieldType::none),
+        brho(0),
+        integratorType(BDSIntegratorType::none),
+        magnetStrength(nullptr),
+        provideGlobalTransform(false),
+        transform(G4Transform3D()),
+        cavityInfo(nullptr),
+        magneticFieldFilePath(""),
+        magneticFieldFormat(BDSFieldFormat::none),
+        electricFieldFilePath(""),
+        electricFieldFormat(BDSFieldFormat::none)
+{;}
+
 BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 			   G4double           brhoIn,
 			   BDSIntegratorType  integratorTypeIn,

@@ -12,8 +12,7 @@
  * This class keeps information about a particle's parameters.
  * It is mainly used for output
  * 
- *
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  */
 
 class BDSParticle

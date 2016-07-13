@@ -35,9 +35,7 @@ private:
   G4bool   verbose;
   G4String itsName;
   BDSEnergyCounterHitsCollection* energyCounterCollection;
-  BDSEnergyCounterHitsCollection* primaryCounterCollection;
   G4int    HCIDe;
-  G4int    HCIDp;
 
   ///@{ per hit variable
   G4double enrg;
