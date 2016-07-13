@@ -1722,6 +1722,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						   coilHeight*0.5, // z half length
 						   zOffsets, zScale,
 						   zOffsets, zScale);
+
+  // these are projected by coilHeight in z as they'll be rotated later
+  G4VSolid* endPieceSolidOut = new G4ExtrudedSolid(name + "_end_coil_out_solid", // name
+						   outEPPoints, // transverse 2d coordinates
+						   coilHeight*0.5, // z half length
+						   zOffsets, zScale,
+						   zOffsets, zScale);
   
   // end piece container solids
   // simple extruded solid intersectd with cut tubs for angled faces
@@ -1747,12 +1754,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       ePInLength    = std::max(2*ePInLength, 2*dzIn); // 2x as long for intersection
     }
 
-  G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_solid", // name
+  G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
 						 contEPPoints,   // transverse 2d coordinates
 						 ePInLength*0.5, // z half length
 						 zOffsets, zScale,
 						 zOffsets, zScale);
 
+  G4double ePOutLength  = coilWidth + lengthSafetyLarge; // adjustable for intersection
+  G4double ePOutLengthZ = ePOutLength; // copy that will be final length of object
+  if (BDS::IsFinite(angleOut))
+    {
+      G4double dzOut = tan(std::abs(angleOut)) * outerDiameter;
+      ePOutLength    = std::max(2*ePOutLength, 2*dzOut); // 2x as long for intersection
+    }
+
+  G4VSolid* ePContSolidOut = new G4ExtrudedSolid(name + "_end_coil_out_solid", // name
+						 contEPPoints,   // transverse 2d coordinates
+						 ePOutLength*0.5, // z half length
+						 zOffsets, zScale,
+						 zOffsets, zScale);
+
+  
   // need to keep memory separate for each end piece so duplicate container square
   //G4VSolid* ePContSolidSqOut = ePContSolidSqIn->Clone();
 
@@ -1777,6 +1799,25 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					      ePContSolidInAng);
     }
 
+  if (BDS::IsFinite(angleOut))
+    {
+      
+      G4ThreeVector outputfaceReversed = outputface * -1;
+      G4VSolid* ePContSolidOutAng = new G4CutTubs(name + "_angled_face_solid", // name
+						  0,                           // inner radius
+						  outerDiameter,               // outer radius
+						  ePOutLengthZ*0.5,            // z half length
+						  0,                           // start angle
+						  CLHEP::twopi,                // sweep angle
+						  outputfaceReversed,          // input face normal
+						  outputface);          // output face normal
+
+      // potential memory leak here with overwriting
+      ePContSolidOut = new G4IntersectionSolid(name + "_end_coil_cont_solid", // name
+					       ePContSolidOut,
+					       ePContSolidOutAng);
+    }
+
   // end piece logical volumes
   // coil end piece lv
   G4Material* copper = BDSMaterials::Instance()->GetMaterial("copper");
@@ -1785,29 +1826,41 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   G4LogicalVolume* ePInLV = new G4LogicalVolume(endPieceSolidIn,           // solid
 						copper,                    // material
 						name + "_end_coil_in_lv"); // name
-
+  
   G4LogicalVolume* ePContInLV = new G4LogicalVolume(ePContSolidIn,             // solid
 						    emptyMaterial,             // material
 						    name + "_end_cont_in_lv"); // name
+
+  G4LogicalVolume* ePOutLV = new G4LogicalVolume(endPieceSolidOut,           // solid
+						 copper,                     // material
+						 name + "_end_coil_out_lv"); // name
+  
+  G4LogicalVolume* ePContOutLV = new G4LogicalVolume(ePContSolidOut,             // solid
+						     emptyMaterial,              // material
+						     name + "_end_cont_out_lv"); // name
 
   G4Colour* coilColour = BDSColours::Instance()->GetColour("coil");
   G4VisAttributes* coilVis = new G4VisAttributes(*coilColour);
   coilVis->SetVisibility(true);
 
   ePInLV->SetVisAttributes(coilVis);
+  ePOutLV->SetVisAttributes(coilVis);
   ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   
   ePInLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  ePOutLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
   ePContInLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+  ePContOutLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
   
   // placements
   G4RotationMatrix* endCoilInRM = new G4RotationMatrix();
   endCoilInRM->rotateX(-CLHEP::halfpi);
 
-  G4ThreeVector endCoilTranslationTop(0, coilDY, 0.5*coilWidth);
-  G4ThreeVector endCoilTranslationLow(0,-coilDY, 0.5*coilWidth);
+  G4ThreeVector endCoilTranslationInTop(0, coilDY, 0.5*coilWidth);
+  G4ThreeVector endCoilTranslationInLow(0,-coilDY, 0.5*coilWidth);
   G4PVPlacement* ePInTopPv = new G4PVPlacement(endCoilInRM,        // rotation
-					       endCoilTranslationTop, // position
+					       endCoilTranslationInTop, // position
 					       ePInLV,             // logical volume
 					       name + "_end_piece_in_top_pv", // name
 					       ePContInLV,         // mother lv to be placed in
@@ -1815,7 +1868,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					       0,                  // copy number
 					       checkOverlaps);     // check overlaps
   G4PVPlacement* ePInLowPv = new G4PVPlacement(endCoilInRM,        // rotation
-					       endCoilTranslationLow, // position
+					       endCoilTranslationInLow, // position
 					       ePInLV,             // logical volume
 					       name + "_end_piece_in_low_pv", // name
 					       ePContInLV,         // mother lv to be placed in
@@ -1823,6 +1876,27 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					       0,                  // copy number
 					       checkOverlaps);     // check overlaps
 
+  G4RotationMatrix* endCoilOutRM = new G4RotationMatrix();
+  endCoilOutRM->rotateX(CLHEP::halfpi);
+
+  G4ThreeVector endCoilTranslationOutTop(0, coilDY, 0.5*coilWidth);
+  G4ThreeVector endCoilTranslationOutLow(0,-coilDY, 0.5*coilWidth);
+  G4PVPlacement* ePOutTopPv = new G4PVPlacement(endCoilOutRM,       // rotation
+						endCoilTranslationOutTop, // position
+						ePOutLV,            // logical volume
+						name + "_end_piece_out_top_pv", // name
+						ePContOutLV,        // mother lv to be placed in
+						false,              // no boolean operation
+						0,                  // copy number
+						checkOverlaps);     // check overlaps
+  G4PVPlacement* ePOutLowPv = new G4PVPlacement(endCoilOutRM,        // rotation
+						endCoilTranslationOutLow, // position
+						ePOutLV,             // logical volume
+						name + "_end_piece_out_low_pv", // name
+						ePContOutLV,        // mother lv to be placed in
+						false,              // no boolean operation
+						0,                  // copy number
+						checkOverlaps);     // check overlaps
   
   // packaging - geometry component
   auto endPieceInGC = new BDSGeometryComponent(ePContSolidIn,
@@ -1833,12 +1907,25 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceInGC->RegisterVisAttributes(coilVis);
   endPieceInGC->RegisterLogicalVolume(ePInLV);
   endPieceInGC->RegisterSolid(endPieceSolidIn);
-
   endPieceInGC->RegisterSensitiveVolume(ePInLV);
 
   BDSSimpleComponent* endPieceInSC = new BDSSimpleComponent(name + "_end_piece_in",
 							    endPieceInGC,
 							    ePInLengthZ);
+
+  auto endPieceOutGC = new BDSGeometryComponent(ePContSolidOut,
+						ePContOutLV);
+  endPieceOutGC->RegisterPhysicalVolume(ePOutTopPv);
+  endPieceOutGC->RegisterPhysicalVolume(ePOutLowPv);
+  endPieceOutGC->RegisterRotationMatrix(endCoilOutRM);
+  endPieceOutGC->RegisterVisAttributes(coilVis);
+  endPieceOutGC->RegisterLogicalVolume(ePOutLV);
+  endPieceOutGC->RegisterSolid(endPieceSolidOut);
+  endPieceOutGC->RegisterSensitiveVolume(ePOutLV);
+
+  BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_in",
+							    endPieceOutGC,
+							    ePOutLengthZ);
   // back to general assembly here
   
   // magnet outer instance
@@ -1868,7 +1955,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     {outer->RegisterSensitiveVolume(coilLV);}
 
   outer->SetEndPieceBefore(endPieceInSC);
-  //outer->SetEndPieceAfter(endPiece);
+  outer->SetEndPieceAfter(endPieceOutSC);
   
   return outer;
 }
