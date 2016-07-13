@@ -194,7 +194,7 @@ void BDSOutputASCII::WritePrimary(G4double E,
   ofPrimaries.flush();
 }
 
-void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection *hc)
+void BDSOutputASCII::WriteHits(BDSSamplerHitsCollection* hc)
 {
   for (G4int i=0; i<hc->entries(); i++)
     {
@@ -250,28 +250,11 @@ void BDSOutputASCII::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
   ofELoss.flush();
 }
 
-void BDSOutputASCII::WritePrimaryLoss(BDSEnergyCounterHit* hit)
-{
-  WriteAsciiHit(&ofPLoss,
-		hit->GetPartID(),
-		hit->GetEnergy(),
-		hit->Getx(),
-		hit->Gety(),
-		hit->GetZ(),
-		hit->GetSHit(),
-		0,//hit->GetXPrime(),
-		0,//hit->GetYPrime(),
-		hit->GetEventNo(),
-		hit->GetWeight(),
-		0,//hit->GetParentID(),
-		0,//hit->GetTrackID(),
-		hit->GetTurnsTaken()
-		);
-  ofPLoss.flush();
-}
+void BDSOutputASCII::WritePrimaryLoss(BDSTrajectoryPoint* /*ploss*/)
+{;}
 
-void BDSOutputASCII::WritePrimaryHit(BDSEnergyCounterHit* /*hit*/)
-{}
+void BDSOutputASCII::WritePrimaryHit(BDSTrajectoryPoint* /*phit*/)
+{;}
 
 void BDSOutputASCII::WriteTrackerBunch(G4String /*samplerName*/, TRKBunch* bunch, bool primary)
 {
@@ -333,7 +316,7 @@ void BDSOutputASCII::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken
 
 
 void BDSOutputASCII::WriteTunnelHits(BDSTunnelHitsCollection* /*hits*/)
-{}
+{;}
 
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
 {

@@ -47,8 +47,7 @@ OptionsBase::OptionsBase()
   // very important options
   physicsList           = ""; //default - only transportation
   modularPhysicsListsOn = 1;
-  randomSeed            = -1;
-  
+
   // beam options
   particleName          = "";
   distribType           = "reference";
@@ -184,6 +183,7 @@ OptionsBase::OptionsBase()
   deltaOneStep             = 0.5e-5;  // default value in Geant4, old value 0.00001;
   stopTracks               = false;
   stopSecondaries          = false;
+  killNeutrinos            = true;
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;

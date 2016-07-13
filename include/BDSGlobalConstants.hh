@@ -149,7 +149,6 @@ public:
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4long   RandomSeed()               const {return G4long  (options.randomSeed);}
   inline G4bool   UseEMLPB()                 const {return G4bool  (options.useEMLPB);}
   inline G4bool   UseHadLPB()                const {return G4bool  (options.useHadLPB);}
   inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}
@@ -161,6 +160,7 @@ public:
   inline G4double StoreTrajectoryEnergyThreshold() const {return G4double (options.storeTrajectoryEnergyThreshold);}
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
+  inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}

@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.6.4)
-
 find_package(BISON 2.4 REQUIRED)
 find_package(FLEX REQUIRED)
 

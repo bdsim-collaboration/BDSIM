@@ -268,7 +268,6 @@ void Options::PublishMembers()
   publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
   publish("lengthSafety",&Options::lengthSafety);
-  publish("randomSeed",&Options::randomSeed);
 
   // trajectory storage
   publish("storeTrajectory",&Options::storeTrajectory);
@@ -281,8 +280,9 @@ void Options::PublishMembers()
   publish("trajCutLTR",&Options::trajCutLTR);
 
   publish("stopSecondaries",&Options::stopSecondaries);
-  publish("stopTracks",&Options::stopTracks);
-  publish("nturns",&Options::nturns);
+  publish("stopTracks",     &Options::stopTracks);
+  publish("killNeutrinos",  &Options::killNeutrinos);
+  publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
 
   // tracker

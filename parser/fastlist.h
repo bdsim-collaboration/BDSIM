@@ -18,7 +18,7 @@ namespace GMAD
    *
    * Used for beamline
    *
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   * @author Jochem Snuverink
    */
   template<typename T>
     class FastList {

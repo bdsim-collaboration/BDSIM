@@ -269,7 +269,6 @@ namespace GMAD
     int      turnOnOpticalSurface;
     int      turnOnBirksSaturation;
     double   lengthSafety;
-    int      randomSeed;
 
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
@@ -281,6 +280,7 @@ namespace GMAD
 
     bool     stopSecondaries;
     bool     stopTracks;
+    bool     killNeutrinos;
 
     /// Ring parameters
     int      nturns;

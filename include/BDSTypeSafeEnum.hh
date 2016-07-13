@@ -8,7 +8,7 @@
 /**
  * @brief Improve type-safety of native enum data type in C++.
  * 
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  *
  * more info at 
  * https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Type_Safe_Enum
