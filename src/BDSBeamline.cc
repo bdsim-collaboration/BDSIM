@@ -677,14 +677,14 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 }
 
 BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
-							      G4int    index) const
+							      G4int               index) const
 {
   if (!IndexOK(index))
     {return nullptr;}
 
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
-  G4RotationMatrix* elRotStart = element->GetReferenceRotationStart();
+  G4RotationMatrix* elRotStart = element->GetReferenceRotationMiddle();
   G4ThreeVector     elPosStart = element->GetPositionStart();
   G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
