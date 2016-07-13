@@ -21,6 +21,32 @@ BDSOutputROOTEventLoss::~BDSOutputROOTEventLoss()
 
 
 #ifndef __ROOTBUILD__
+
+void BDSOutputROOTEventLoss::Fill(BDSTrajectoryPoint* hit)
+{
+  n++;
+  energy.push_back( (float &&) hit->GetEnergy() / CLHEP::GeV);
+  S.push_back     ( (float &&) hit->GetPostS()   / CLHEP::m);
+  weight.push_back( (float &&) hit->GetPostWeight());
+  modelID.push_back( (unsigned int) hit->GetBeamLineIndex()); // TBC - the member type is just int though...
+  turn.push_back( (int) hit->GetTurnsTaken());
+
+  if (storeLocal)
+  {
+    const G4ThreeVector& pos = hit->GetPostPosLocal();
+    x.push_back( (float &&) pos.x());
+    y.push_back( (float &&) pos.y());
+    z.push_back( (float &&) pos.z());
+  }
+  if (storeGlobal)
+  {
+    const G4ThreeVector& pos = hit->GetPosition();
+    X.push_back( (float &&) pos.x());
+    Y.push_back( (float &&) pos.y());
+    Z.push_back( (float &&) pos.z());
+  }
+
+}
 void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
 {
   this->n++;

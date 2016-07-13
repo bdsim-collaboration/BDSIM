@@ -12,7 +12,7 @@ namespace GMAD
   /**
    * @brief RF CavityModel class for parser
    * 
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   * @author Jochem Snuverink
    */
   class CavityModel: public Published<CavityModel> {
   public:

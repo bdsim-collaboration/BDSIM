@@ -20,8 +20,10 @@ class Config
  public:
   virtual ~Config();
 
-  /// Singleton accessor.
-  static Config* Instance(std::string fileName = std::string(""));
+  /// Singleton accessor
+  static Config* Instance(std::string fileName = "",
+			  std::string inputFilePath = "",
+			  std::string outputFileName = "");
 
   void ParseInputFile();
     
@@ -43,8 +45,10 @@ class Config
   /// Private constructor for singleton pattern.
   Config();
   /// Desired constructor, also private for singleton pattern.
-  Config(std::string fileName);
-  
+  Config(std::string fileNameIn,
+	 std::string inputFilePathIn,
+	 std::string outputFileNameIn);
+
   std::string     fileName                      = "Config.txt";
   static Config* instance;
 

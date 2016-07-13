@@ -24,19 +24,26 @@ public:
   virtual ~BDSOutputASCII();
 
   /// write sampler hit collection
-  virtual void WriteHits(BDSSamplerHitsCollection*);
+  virtual void WriteHits(BDSSamplerHitsCollection* hc);
   /// make energy loss histo
-  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
+  virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc);
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss);
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phit);
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection*);
+  virtual void WriteTunnelHits(BDSTunnelHitsCollection* hits);
   /// write a trajectory
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);
   /// write primary hit
-  virtual void WritePrimary(G4double E,G4double x0,G4double y0,G4double z0,G4double xp,G4double yp,G4double zp,G4double t,G4double weight,G4int PDGType, G4int nEvent, G4int TurnsTaken);
+  virtual void WritePrimary(G4double E,
+			    G4double x0, G4double y0, G4double z0,
+			    G4double xp, G4double yp, G4double zp,
+			    G4double t,
+			    G4double weight,
+			    G4int PDGType,
+			    G4int nEvent,
+			    G4int TurnsTaken);
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
   /// write event info
@@ -53,6 +60,7 @@ public:
 		     const G4float &duration,
 		     const std::string &seedStateAtStart);
   virtual void Close();      ///< close the file
+
 private:
   G4String basefilename;
   G4String timestring;

@@ -43,7 +43,6 @@ BDSEventAction::BDSEventAction():
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
-  primaryCounterCollID(-1),
   tunnelCollID(-1),
   startTime(0),
   stopTime(0),
@@ -104,8 +103,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     {samplerCollID_cylin  = g4SDMan->GetCollectionID("Sampler_cylinder");}
   if(energyCounterCollID < 0)
     {energyCounterCollID  = g4SDMan->GetCollectionID("ec_on_axis_read_out/energy_counter");}
-  if(primaryCounterCollID < 0)
-    {primaryCounterCollID = g4SDMan->GetCollectionID("ec_on_axis_read_out/primary_counter");}
   if (useTunnel)
     {
       if(tunnelCollID < 0)
@@ -176,9 +173,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // if (LWCalHC)
   //    {bdsOutput->WriteHits(SampHC);}
 
-  // energy deposition collections - eloss, primary hits, primary losses, tunnel hits
+  // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
-  BDSEnergyCounterHitsCollection* primaryCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(primaryCounterCollID));
   BDSTunnelHitsCollection*        tunnelHits         = nullptr;
   if (useTunnel)
     {tunnelHits = (BDSTunnelHitsCollection*)(HCE->GetHC(tunnelCollID));}
@@ -206,56 +202,20 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	}
     }
 
-  //if we have primary hits, find the first one and write that
-  if(primaryCounterHits)
-  {
-    if (primaryCounterHits->entries() > 0)
-    {
-      BDSEnergyCounterHit *thePrimaryHit = BDS::LowestSPosPrimaryHit(primaryCounterHits);
-      BDSEnergyCounterHit *thePrimaryLoss = BDS::HighestSPosPrimaryHit(primaryCounterHits);
-      //write
-      if (thePrimaryHit && thePrimaryLoss)
-      {
-        bdsOutput->WritePrimaryHit(thePrimaryHit);
-        bdsOutput->WritePrimaryLoss(thePrimaryLoss);
-        // general histos
-        analMan->Fill1DHistogram(0, thePrimaryHit->GetSBefore() / CLHEP::m);
-        analMan->Fill1DHistogram(1, thePrimaryLoss->GetSAfter() / CLHEP::m);
-        // per element histos
-        analMan->Fill1DHistogram(3, thePrimaryHit->GetSBefore() / CLHEP::m);
-        analMan->Fill1DHistogram(4, thePrimaryLoss->GetSAfter() / CLHEP::m);
-      }
-    }
-  }
-
-
-#if 0
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
-  //  TrajectoryVector* trajVec = trajCont->GetVector();
-  BDSTrajectoryPoint *primaryFirstInt = BDSTrajectory::FirstInteraction(trajCont);
-  BDSTrajectoryPoint *primaryLastInt  = BDSTrajectory::LastInteraction(trajCont);
-  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPosition()        << G4endl;
-  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPreProcessType()  << " " << primaryFirstInt->GetPreProcessSubType()  << " "
-                            << primaryFirstInt->GetPostProcessType() << " " << primaryFirstInt->GetPostProcessSubType() << G4endl;
-  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPostWeight()      << G4endl;
-  G4cout << __METHOD_NAME__ << primaryFirstInt->GetPreEnergy()       << " " << primaryFirstInt->GetPostEnergy()         << " "
-                            << primaryFirstInt->GetEnergy()          << " "
-                            << primaryFirstInt->GetPreS()            << " " << primaryFirstInt->GetPostS()              << G4endl;
-  G4cout << __METHOD_NAME__ << primaryLastInt->GetPosition()         << G4endl;
-  G4cout << __METHOD_NAME__ << primaryLastInt->GetPreProcessType()   << " " << primaryLastInt->GetPreProcessSubType()   << " "
-                            << primaryLastInt->GetPostProcessType()  << " " << primaryLastInt->GetPostProcessSubType()  << G4endl;
-  G4cout << __METHOD_NAME__ << primaryLastInt->GetPostWeight()       << G4endl;
-  G4cout << __METHOD_NAME__ << primaryLastInt->GetPreEnergy()        << " " << primaryLastInt->GetPostEnergy()          << " "
-                            << primaryLastInt->GetEnergy()           << " "
-                            << primaryLastInt->GetPreS()             << " " << primaryLastInt->GetPostS()              << G4endl;
-#endif
+  BDSTrajectory*         primary  = BDS::GetPrimaryTrajectory(trajCont);
+  BDSTrajectoryPoint* primaryFirstInt = BDSTrajectory::FirstInteraction(primary);
+  BDSTrajectoryPoint* primaryLastInt  = BDSTrajectory::LastInteraction(primary);
+  bdsOutput->WritePrimaryHit(primaryFirstInt);
+  bdsOutput->WritePrimaryLoss(primaryLastInt);
+  
 
   // we should only try and access the tunnel hits collection if it was actually
   // instantiated which won't happen if the tunnel isn't build and placed. During
   // placement the SD is attached, which is done on demand as it's a read out one,
   // so without placement, accessing this will cause a segfault.
-  if (BDSGlobalConstants::Instance()->BuildTunnel())
+  if (useTunnel)
   {
     if (tunnelHits)
       {bdsOutput->WriteTunnelHits(tunnelHits);} // write hits

@@ -18,7 +18,7 @@ namespace GMAD
    * 
    * adapted into a class from http://stackoverflow.com/questions/19557881/convert-string-character-to-class-member-method-in-c
    *
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   * @author Jochem Snuverink
    */
 
   template<typename C>

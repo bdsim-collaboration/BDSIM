@@ -83,8 +83,8 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   // next volume
   
   G4Navigator* nav = Navigator(useCurvilinear);  // select navigator
-    G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);
-    return selectedVol;
+  G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);
+  return selectedVol;
 }
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
@@ -170,7 +170,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
 G4Navigator* BDSAuxiliaryNavigator::Navigator(G4bool curvilinear) const
 {
   // condition ? case true : case false
-  return curvilinear ? auxNavigatorCL : auxNavigatorCL;
+  return curvilinear ? auxNavigatorCL : auxNavigator;
 }
 
 G4AffineTransform* BDSAuxiliaryNavigator::GlobalToLocal(G4bool curvilinear) const

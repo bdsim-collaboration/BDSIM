@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 2.6.4)
-
 # unpack gzstream
 execute_process(COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/gzstream.tgz ${CMAKE_CURRENT_BINARY_DIR})
 execute_process(COMMAND tar zxf gzstream.tgz
