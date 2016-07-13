@@ -1714,7 +1714,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   // simply modify in place for shearing original points
   for (auto& point : inEPPoints)
-    {point.setY(point.x()*tan(angleIn) + point.y());}
+    {point.setY(point.x()*tan(-angleIn) + point.y());}
 
   // these are projected by coilHeight in z as they'll be rotated later
   G4VSolid* endPieceSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
@@ -1748,8 +1748,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
 
   G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_solid", // name
-						 contEPPoints, // transverse 2d coordinates
-						 coilHeight*0.5, // z half length
+						 contEPPoints,   // transverse 2d coordinates
+						 ePInLength*0.5, // z half length
 						 zOffsets, zScale,
 						 zOffsets, zScale);
 
@@ -1765,7 +1765,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       G4VSolid* ePContSolidInAng = new G4CutTubs(name + "_angled_face_solid", // name
 						 0,                           // inner radius
 						 outerDiameter,               // outer radius
-						 ePInLengthZ,                 // z half length
+						 ePInLengthZ*0.5,             // z half length
 						 0,                           // start angle
 						 CLHEP::twopi,                // sweep angle
 						 inputface,                   // input face normal
@@ -1802,23 +1802,33 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   
   // placements
   G4RotationMatrix* endCoilInRM = new G4RotationMatrix();
-  endCoilInRM->rotateX(CLHEP::halfpi);
+  endCoilInRM->rotateX(-CLHEP::halfpi);
 
-  G4ThreeVector endCoilTranslation(0,coilCentreRadius,0.5*endPieceLength);
-  G4PVPlacement* ePInPv = new G4PVPlacement(endCoilInRM,        // rotation
-					    endCoilTranslation, // position
-					    ePInLV,             // logical volume
-					    name + "_end_piece_in_pv", // name
-					    ePContInLV,         // mother lv to be placed in
-					    false,              // no boolean operation
-					    0,                  // copy number
-					    checkOverlaps);     // check overlaps
+  G4ThreeVector endCoilTranslationTop(0, coilDY, 0.5*coilWidth);
+  G4ThreeVector endCoilTranslationLow(0,-coilDY, 0.5*coilWidth);
+  G4PVPlacement* ePInTopPv = new G4PVPlacement(endCoilInRM,        // rotation
+					       endCoilTranslationTop, // position
+					       ePInLV,             // logical volume
+					       name + "_end_piece_in_top_pv", // name
+					       ePContInLV,         // mother lv to be placed in
+					       false,              // no boolean operation
+					       0,                  // copy number
+					       checkOverlaps);     // check overlaps
+  G4PVPlacement* ePInLowPv = new G4PVPlacement(endCoilInRM,        // rotation
+					       endCoilTranslationLow, // position
+					       ePInLV,             // logical volume
+					       name + "_end_piece_in_low_pv", // name
+					       ePContInLV,         // mother lv to be placed in
+					       false,              // no boolean operation
+					       0,                  // copy number
+					       checkOverlaps);     // check overlaps
 
   
   // packaging - geometry component
   auto endPieceInGC = new BDSGeometryComponent(ePContSolidIn,
 					       ePContInLV);
-  endPieceInGC->RegisterPhysicalVolume(ePInPv);
+  endPieceInGC->RegisterPhysicalVolume(ePInTopPv);
+  endPieceInGC->RegisterPhysicalVolume(ePInLowPv);
   endPieceInGC->RegisterRotationMatrix(endCoilInRM);
   endPieceInGC->RegisterVisAttributes(coilVis);
   endPieceInGC->RegisterLogicalVolume(ePInLV);
