@@ -92,6 +92,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 G4double      containerLength,
 								 G4double      angleIn,
 								 G4double      angleOut,
+								 G4bool        yokeOnLeft,
 								 G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -100,7 +101,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 
   auto colour = BDSColours::Instance()->GetColour("sectorbend");
   return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-		      angleOut, outerMaterial, true, colour);
+		      angleOut, outerMaterial, yokeOnLeft, colour);
   
   CleanUp(); // doesn't use CommonConstructor so must do this manually
 
@@ -1303,7 +1304,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 							     G4double     angleIn,
 							     G4double     angleOut,
 							     G4Material*  material,
-							     G4bool       bendLeft,
+							     G4bool       yokeOnLeft,
 							     G4Colour*    colour)
 {
   CleanUp();
@@ -1449,7 +1450,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   std::pair<double,double> extY = std::make_pair(my,py);
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
   
-  if (bendLeft)
+  if (!yokeOnLeft)
     {
       // flip x component so geometry is reflected horizontally
       for (auto& vec : yokePoints)

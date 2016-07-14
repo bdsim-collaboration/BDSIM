@@ -46,6 +46,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      containerLength,
 							   G4double      angleIn,
 							   G4double      angleOut,
+							   G4bool        /*yokeOnLeft*/,
 							   G4Material*   outerMaterial)
 
 {
