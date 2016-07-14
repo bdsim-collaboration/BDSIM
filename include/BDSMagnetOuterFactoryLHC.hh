@@ -46,6 +46,7 @@ public:
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     anlgeOut,          // output face angle w.r.t. chord
+						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
 						G4Material*  outerMaterial = nullptr// material for outer volume
 						);
   

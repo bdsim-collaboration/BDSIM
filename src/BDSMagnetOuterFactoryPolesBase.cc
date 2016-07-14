@@ -372,20 +372,21 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4double      length,
 								      BDSBeamPipe*  beamPipe,
 								      G4double      outerDiameter,
-								      G4double      containerDiameter,
+								      G4double      /*containerDiameter*/,
 								      G4double      containerLength,
 								      G4double      angleIn,
 								      G4double      angleOut,
+								      G4bool        yokeOnLeft,
 								      G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   CleanUp(); // doesn't use CommonConstructor so must do this manually
-  
-  return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRectangularBend(name, length, beamPipe, outerDiameter,
-									     containerDiameter, containerLength,
-									     angleIn, angleOut, outerMaterial);
+
+  auto colour = BDSColours::Instance()->GetColour("sectorbend");
+  return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
+		      angleOut, outerMaterial, yokeOnLeft, colour); 
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,

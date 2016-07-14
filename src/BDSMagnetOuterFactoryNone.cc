@@ -54,6 +54,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 								 G4double      /*containerLength*/,
 								 G4double      /*angleIn*/,
 								 G4double      /*angleOut*/,
+								 G4bool        /*yokeOnLeft*/,
 								 G4Material*   /*outerMaterial*/)
 {
 #ifdef BDSDEBUG
