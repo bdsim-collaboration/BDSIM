@@ -619,9 +619,9 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
     }
 }
 
-void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String     name,
-						     G4double     length,
-						     G4int        order)
+void BDSMagnetOuterFactoryPolesBase::CreatePoleSolid(G4String name,
+						     G4double length,
+						     G4int    order)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -927,11 +927,12 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponents(G4String name,
       G4RotationMatrix* rm  = new G4RotationMatrix();
       allRotationMatrices.push_back(rm);
       rm->rotateZ((n+0.5)*segmentAngle + CLHEP::pi*0.5);
+      G4String pvName = name + "_pole_" + std::to_string(n) + "_pv";
       // poleTranslation is by default (0,0,0)
       aPolePV = new G4PVPlacement(rm,                 // rotation
 				  poleTranslation,    // position
 				  poleLV,             // logical volume
-				  name + "_pv",       // name
+				  pvName,             // name
 				  containerLV,        // mother lv to be placed in
 				  false,              // no boolean operation
 				  n,                  // copy number
@@ -968,10 +969,11 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
       // rotation already... could do with rotate about axis in future
       ecrm->rotateY(rotationAngle);
 
+      G4String pvName = name + "_coil_" + std::to_string(n);
       coilLeftPV = new G4PVPlacement(rm,                 // rotation
 				     (G4ThreeVector)0,   // position
 				     coilLeftLV,         // logical volume
-				     name + "_coil_left_pv", // name      
+				     pvName + "_left_pv",// name      
 				     containerLV,        // mother lv to be placed in
 				     false,              // no boolean operation
 				     n,                  // copy number
@@ -980,7 +982,7 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
       coilRightPV = new G4PVPlacement(rm,                 // rotation
 				      (G4ThreeVector)0,   // position
 				      coilRightLV,        // logical volume
-				      name + "_coil_right_pv", // name      
+				      pvName + "_right_pv",// name      
 				      containerLV,        // mother lv to be placed in
 				      false,              // no boolean operation
 				      n,                  // copy number
