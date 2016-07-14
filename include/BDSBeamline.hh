@@ -148,8 +148,12 @@ public:
 
   BDSBeamlineElement* ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
 						   G4int    index) const;
+  /// Calculate the placements for an end piece w.r.t. a particlar beam line element
+  /// The optional flip flag is used for when the 'before' piece is used again and
+  /// must be rotated.
   BDSBeamlineElement* ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
-						  G4int    index) const;
+						  G4int               index,
+						  G4bool              flip = false) const;
 
   /// Whether the supplied index will lie within the beam line vector.
   G4bool IndexOK(G4int index) const;
