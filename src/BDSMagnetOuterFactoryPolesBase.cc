@@ -1709,7 +1709,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // copy the points, flip in y and shear for output angle
   for (const auto point : inEPPoints) // copying this time
     {
-      G4double outy = -1*(point.x()*tan(angleOut) + point.y());
+      G4double outy = -1*(point.x()*tan(-angleOut) + point.y());
       outEPPoints.push_back(G4TwoVector(point.x(),outy));
     }
   // simply modify in place for shearing original points
@@ -1877,10 +1877,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					       checkOverlaps);     // check overlaps
 
   G4RotationMatrix* endCoilOutRM = new G4RotationMatrix();
-  endCoilOutRM->rotateX(CLHEP::halfpi);
+  endCoilOutRM->rotateX(-CLHEP::halfpi);
 
-  G4ThreeVector endCoilTranslationOutTop(0, coilDY, 0.5*coilWidth);
-  G4ThreeVector endCoilTranslationOutLow(0,-coilDY, 0.5*coilWidth);
+  G4ThreeVector endCoilTranslationOutTop(0, coilDY, -0.5*coilWidth);
+  G4ThreeVector endCoilTranslationOutLow(0,-coilDY, -0.5*coilWidth);
   G4PVPlacement* ePOutTopPv = new G4PVPlacement(endCoilOutRM,       // rotation
 						endCoilTranslationOutTop, // position
 						ePOutLV,            // logical volume
