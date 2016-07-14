@@ -749,6 +749,9 @@ void BDSMagnetOuterFactoryPolesBase::CreateCoilPoints()
       upperY = 0.95 * std::abs(std::sqrt(pow(yokeStartRadius,2) - pow(outerX,2)));
     }
 
+  // update coil height as used for end piece construction later
+  coilHeight = upperY - lowerY;
+  
   coilCentreRadius = lowerY + 0.5*coilHeight;
   endPieceInnerR   = lowerY - lengthSafetyLarge;
   endPieceOuterR   = yokeStartRadius;
@@ -1004,7 +1007,6 @@ void BDSMagnetOuterFactoryPolesBase::PlaceComponentsCoils(G4String name,
 void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
 {
   // container solid
-  // TBC - this will be too narrow on outside - some trig needed - x2 for now
   G4VSolid* endPieceContainerSolid = new G4Tubs(name + "_end_container_solid", // name
 						endPieceInnerR,                // inner radius
 						endPieceOuterR,                // outer radius
