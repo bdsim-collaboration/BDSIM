@@ -1044,10 +1044,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   // container vis attributes are held in global constants - only need copy pointer
   endPieceContainerLV->SetVisAttributes(containerLV->GetVisAttributes());
   
-  // user limits - copy again - length will be a wee bit too long, but should be ok
-  // TBC - geant4 has removed copy constructor for limits - wonderful
-  //G4UserLimits* endPieceLimits = new G4UserLimits(*(coilLeftLV->GetUserLimits()));
-  //endPieceCoilLV->SetUserLimits(endPieceLimits);
+  // user limits - don't register as using global one
+  endPieceCoilLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // geometry component
   auto endPieceGC = new BDSGeometryComponent(endPieceContainerSolid,
@@ -1055,7 +1053,7 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   endPieceGC->RegisterSolid(endPieceCoilSolid);
   endPieceGC->RegisterLogicalVolume(endPieceCoilLV);
   endPieceGC->RegisterVisAttributes(endPieceCoilVis);
-  //endPieceGC->RegisterUserLimits(endPieceLimits);
+  endPieceGC->RegisterSensitiveVolume(endPieceCoilLV);
   endPieceGC->SetExtentX(-endPieceOuterR, endPieceOuterR);
   endPieceGC->SetExtentY(-endPieceOuterR, endPieceOuterR);
   endPieceGC->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
@@ -1608,7 +1606,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // logical volumes
   BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, material);
   // we only use one coil solid here so do that here
-  G4LogicalVolume* coilLV;
+  G4LogicalVolume* coilLV = nullptr;
   if (buildPole)
     {
       G4Colour* coil = BDSColours::Instance()->GetColour("coil");
@@ -1876,11 +1874,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   ePOutLV->SetVisAttributes(coilVis);
   ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  
-  ePInLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
-  ePOutLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
-  ePContInLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
-  ePContOutLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+
+  auto defaultUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  ePInLV->SetUserLimits(defaultUserLimits);
+  ePOutLV->SetUserLimits(defaultUserLimits);
+  ePContInLV->SetUserLimits(defaultUserLimits);
+  ePContOutLV->SetUserLimits(defaultUserLimits);
   
   // placements
   G4RotationMatrix* endCoilInRM = new G4RotationMatrix();
