@@ -15,7 +15,8 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					   G4LogicalVolume* containerLVIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
-  placementOffset(G4ThreeVector(0,0,0))
+  placementOffset(G4ThreeVector(0,0,0)),
+  placementRotation(nullptr)
 {
   SetExtentX(0,0); // initialise only - unphysical - should be set by child class
   SetExtentY(0,0);
@@ -30,13 +31,15 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
 					   std::pair<G4double,G4double> extentXIn,
 					   std::pair<G4double,G4double> extentYIn,
 					   std::pair<G4double,G4double> extentZIn,
-					   G4ThreeVector                placementOffset):
+					   G4ThreeVector                placementOffsetIn,
+					   G4RotationMatrix*            placementRotationIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
   extentX(extentXIn),
   extentY(extentYIn),
   extentZ(extentZIn),
-  placementOffset(placementOffset)
+  placementOffset(placementOffsetIn),
+  placementRotation(placementRotationIn)
 {
   SetInnerExtentX(0,0); // initialise only - unphysical - should be set by child class
   SetInnerExtentY(0,0);
@@ -51,7 +54,8 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
 					   std::pair<G4double,G4double> innerExtentXIn,
 					   std::pair<G4double,G4double> innerExtentYIn,
 					   std::pair<G4double,G4double> innerExtentZIn,
-					   G4ThreeVector                placementOffset):
+					   G4ThreeVector                placementOffsetIn,
+					   G4RotationMatrix*            placementRotationIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
   extentX(extentXIn),
@@ -60,7 +64,8 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
   innerExtentX(innerExtentXIn),
   innerExtentY(innerExtentYIn),
   innerExtentZ(innerExtentZIn),
-  placementOffset(placementOffset)
+  placementOffset(placementOffsetIn),
+  placementRotation(placementRotationIn)
 {;}
 
 BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
@@ -94,6 +99,8 @@ BDSGeometryComponent::~BDSGeometryComponent()
 
   for (auto ul : allUserLimits)
     {delete ul;}
+
+  delete placementRotation;
 }
 
 void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent)

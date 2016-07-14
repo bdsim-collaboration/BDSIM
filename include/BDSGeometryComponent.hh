@@ -2,14 +2,16 @@
 #define BDSGEOMETRYCOMPONENT_H
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
+#include "G4VSolid.hh"
+
 #include <utility>              //for std::pair
 #include <vector>
 
-class G4VPlacement;
 class G4UserLimits;
 class G4VisAttributes;
+class G4VPlacement;
 
 /**
  * @brief A generic geometry component for a bdsim model.
@@ -39,7 +41,8 @@ public:
 		       std::pair<G4double,G4double> extentXIn,
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn,
-		       G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
+		       G4ThreeVector                placementOffsetIn = G4ThreeVector(0,0,0),
+		       G4RotationMatrix*            placementRotationIn = nullptr);
   BDSGeometryComponent(G4VSolid*                    containerSolidIn,
 		       G4LogicalVolume*             containerLVIn,
 		       std::pair<G4double,G4double> extentXIn,
@@ -48,35 +51,35 @@ public:
 		       std::pair<G4double,G4double> innerExtentXIn,
 		       std::pair<G4double,G4double> innerExtentYIn,
 		       std::pair<G4double,G4double> innerExtentZIn,
-		       G4ThreeVector                placementOffset = G4ThreeVector(0,0,0));
+		       G4ThreeVector                placementOffsetIn = G4ThreeVector(0,0,0),
+		       G4RotationMatrix*            placementRotationIn = nullptr);
   
   /// Copy constructor
   BDSGeometryComponent(BDSGeometryComponent& component);
   virtual ~BDSGeometryComponent();
 
-  /// Get the name from the container logical volume
-  G4String          GetName() const;
-  
-  /// Get the solid of the container for possible subtraction
-  G4VSolid*         GetContainerSolid() const;
-  
-  /// Get the logical volume of the container for placement
-  G4LogicalVolume*  GetContainerLogicalVolume() const;
-
-  /// Get the offset from 0,0,0 that the object should ideally be placed in its parent
-  G4ThreeVector     GetPlacementOffset() const;
-
-  /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
-  void SetPlacementOffset(G4ThreeVector& offsetIn);
-  
-  std::pair<G4double,G4double> GetExtentX() const;   ///< get -ve/+ve extent in local x
-  std::pair<G4double,G4double> GetExtentY() const;   ///< get -ve/+ve extent in local y
-  std::pair<G4double,G4double> GetExtentZ() const;   ///< get -ve/+ve extent in local z
-  /// @{ Get -ve/+ve inner extent in local coords.
-  std::pair<G4double,G4double> GetInnerExtentX() const {return innerExtentX;}   
-  std::pair<G4double,G4double> GetInnerExtentY() const {return innerExtentY;}
-  std::pair<G4double,G4double> GetInnerExtentZ() const {return innerExtentZ;}
+  /// @Accessor - see member for more info
+  inline G4String          GetName()   const {return containerLogicalVolume->GetName();}
+  inline G4VSolid*         GetContainerSolid()         const {return containerSolid;}
+  inline G4LogicalVolume*  GetContainerLogicalVolume() const {return containerLogicalVolume;}
+  inline G4ThreeVector     GetPlacementOffset()        const {return placementOffset;}
+  inline G4RotationMatrix* GetPlacementRotation()      const {return placementRotation;}
+  inline std::pair<G4double,G4double> GetExtentX()     const {return extentX;}
+  inline std::pair<G4double,G4double> GetExtentY()     const {return extentY;}
+  inline std::pair<G4double,G4double> GetExtentZ()     const {return extentZ;}
+  inline std::pair<G4double,G4double> GetInnerExtentX() const {return innerExtentX;}   
+  inline std::pair<G4double,G4double> GetInnerExtentY() const {return innerExtentY;}
+  inline std::pair<G4double,G4double> GetInnerExtentZ() const {return innerExtentZ;}
+  inline std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return allPhysicalVolumes;}
+  inline std::vector<G4RotationMatrix*>  GetAllRotationMatrices() const {return allRotationMatrices;}
+  inline std::vector<G4VisAttributes*>   GetAllVisAttributes()    const {return allVisAttributes;}
+  inline std::vector<G4UserLimits*>      GetAllUserLimits()       const {return allUserLimits;}
+  inline std::vector<BDSGeometryComponent*> GetAllDaughters()     const {return allDaughters;};
+  inline std::vector<G4VSolid*>          GetAllSolids()           const {return allSolids;};
   /// @}
+  
+  /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
+  inline void SetPlacementOffset(G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
 
   /// Get the full length in Z.  This is for convenience as most geometry components
   /// are built along z although this needn't be required.
@@ -168,29 +171,11 @@ public:
   /// from factories are made to belong to an object.
   void InheritObjects(BDSGeometryComponent* component);
 
-  /// Access all daughter components
-  std::vector<BDSGeometryComponent*> GetAllDaughters() const;
-  
-  /// Access all solids belonging to this component
-  std::vector<G4VSolid*>          GetAllSolids() const;
-
   /// Access all logical volumes belonging to this component
   std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
   virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
-
-  /// Access all physical volumes belonging to this component
-  std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes() const;
-
-  /// Access all rotation matrices belonging to this component
-  std::vector<G4RotationMatrix*>  GetAllRotationMatrices() const;
-
-  /// Access all visualisation attributes belonging to this component
-  std::vector<G4VisAttributes*>   GetAllVisAttributes() const;
-
-  /// Access all user limits belonging to this component
-  std::vector<G4UserLimits*>      GetAllUserLimits() const;
 
 protected:
   
@@ -228,34 +213,17 @@ protected:
 
   /// registry of all user limits belonging to this component
   std::vector<G4UserLimits*>    allUserLimits;
-  
+
+  /// The offset to be applied BEFORE rotation when placed - used to account for
+  /// any asymmetry the component may have.
   G4ThreeVector                 placementOffset;
-  // can't be stored in the Logical Volume class itself without modifying Geant
+
+  /// The rotation to be applied when placed - used to account for any required rotation
+  /// of the geometry before placement such as being built along a different axis. This
+  /// is defaulted to a nullptr so MUST be tested before use - this saves memory as every
+  /// piece of geometry uses this class.
+  G4RotationMatrix*             placementRotation;
 };
-
-inline G4String  BDSGeometryComponent::GetName() const
-{return containerLogicalVolume->GetName();}
-
-inline G4VSolid* BDSGeometryComponent::GetContainerSolid() const
-{return containerSolid;}
-
-inline G4LogicalVolume* BDSGeometryComponent::GetContainerLogicalVolume() const
-{return containerLogicalVolume;}
-
-inline G4ThreeVector BDSGeometryComponent::GetPlacementOffset() const
-{return placementOffset;}
-
-inline void BDSGeometryComponent::SetPlacementOffset(G4ThreeVector& offsetIn)
-{placementOffset = G4ThreeVector(offsetIn);}
-
-inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentX() const
-{return extentX;}
-
-inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentY() const
-{return extentY;}
-
-inline std::pair<G4double,G4double> BDSGeometryComponent::GetExtentZ() const
-{return extentZ;}
 
 inline G4ThreeVector BDSGeometryComponent::GetExtentPositive() const
 {return G4ThreeVector(extentX.second, extentY.second, extentZ.second);}
@@ -298,23 +266,5 @@ inline  void BDSGeometryComponent::SetInnerExtentY(std::pair<G4double, G4double>
 
 inline  void BDSGeometryComponent::SetInnerExtentZ(std::pair<G4double, G4double> extentZIn)
 {innerExtentZ = extentZIn;}
-
-inline std::vector<BDSGeometryComponent*> BDSGeometryComponent::GetAllDaughters() const
-{return allDaughters;}
-
-inline std::vector<G4VSolid*> BDSGeometryComponent::GetAllSolids() const
-{return allSolids;}
-
-inline std::vector<G4VPhysicalVolume*> BDSGeometryComponent::GetAllPhysicalVolumes() const
-{return allPhysicalVolumes;}
-
-inline std::vector<G4RotationMatrix*> BDSGeometryComponent::GetAllRotationMatrices() const
-{return allRotationMatrices;}
-
-inline std::vector<G4VisAttributes*> BDSGeometryComponent::GetAllVisAttributes() const
-{return allVisAttributes;}
-
-inline std::vector<G4UserLimits*> BDSGeometryComponent::GetAllUserLimits() const
-{return allUserLimits;}
 
 #endif
