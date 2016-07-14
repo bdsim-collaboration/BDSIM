@@ -1667,14 +1667,45 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 	  allPhysicalVolumes.push_back(aCoilPV);
 	}
     }
+
+  // magnet outer instance
+  CreateMagnetContainerComponent();
+  magnetContainer->RegisterSolid(magnetContainerExtraSolids);
+
+  // build the BDSMagnetOuter instance and return it
+  BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
+					     containerLV,
+					     extX, extY, extZ,
+					     magnetContainer);
+  
+  outer->RegisterSolid(allSolids);
+  outer->RegisterLogicalVolume(allLogicalVolumes);
+  outer->RegisterRotationMatrix(allRotationMatrices);
+  outer->RegisterPhysicalVolume(allPhysicalVolumes);
+  outer->RegisterVisAttributes(allVisAttributes);
+  outer->RegisterUserLimits(allUserLimits);
+  
+  outer->RegisterSolid(yokeSolid);
+  outer->RegisterLogicalVolume(yokeLV);
+
+  outer->RegisterSensitiveVolume(yokeLV);
+
+  // no need to proceed with end pieces if we didn't build poles - just return
+  if (!buildPole)
+    {return outer;}
+
+  // continue with registration of objects and end piece construction
+  
+  if (individualCoilsSolids)
+    {outer->RegisterSensitiveVolume(coilLVs);}
+  else
+    {outer->RegisterSensitiveVolume(coilLV);}
   
   // end pieces
   // note with bends both are likely to be different so build independently here
-  //  G4TwoVector insideAxis;
 
-  // end piece coil solids
-  // build in x-y plane and project in z as that's the only way with an extruded solid
-  // then rotate so it's along z
+  // end piece coil solids - build in x-y plane and project in z as that's the
+  // only way with an extruded solid then rotate so it's along z
   // curved sections are elliptical with major axis being the projected with of the coil
   // at an angle and the minor being the normal coil width.
   // x = x0 + acos(t)cos(phi) - bsin(t)sin(phi)
@@ -1686,17 +1717,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   G4double a    = coilWidth / cos(angleIn); // projected coil width - major axis of ellipse
   G4double b    = coilWidth;
 
-  // create an ellipse with no angle, then shear it to match the angle
-  // left side
+  // create an ellipse with no angle, then shear it to match the angle 
   for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi; t += CLHEP::halfpi/8.0)
-    {
+    { // left side
       G4double x = -inXO + a*cos(t);
       G4double y = b*sin(t);
       inEPPoints.push_back(G4TwoVector(x,y));
     }
-  // right side
+  
   for (G4double t = -CLHEP::halfpi; t <= 0; t += CLHEP::halfpi/8.0)
-    {
+    { // right side
       G4double x = inXO + a*cos(t);
       G4double y = b*sin(t);
       inEPPoints.push_back(G4TwoVector(x,y));
@@ -1705,15 +1735,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // shear it
   // (x')   (1        0) (x)
   // (y') = (tan(phi) 1) (y)
-  // x' = x; y' = tan(phi)*x + y
+  // ->  x' = x; y' = tan(phi)*x + y
   // copy the points, flip in y and shear for output angle
   for (const auto point : inEPPoints) // copying this time
     {
       G4double outy = -1*(point.x()*tan(-angleOut) + point.y());
       outEPPoints.push_back(G4TwoVector(point.x(),outy));
     }
-  // simply modify in place for shearing original points
-  for (auto& point : inEPPoints)
+  for (auto& point : inEPPoints)  // modify in place for shearing original points
     {point.setY(point.x()*tan(-angleIn) + point.y());}
 
   // these are projected by coilHeight in z as they'll be rotated later
@@ -1730,9 +1759,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						   zOffsets, zScale,
 						   zOffsets, zScale);
   
-  // end piece container solids
-  // simple extruded solid intersectd with cut tubs for angled faces
-  // build about magnet zero so we get the coordinates right for general placement
+  // end piece container solids - simple extruded solid intersectd with cut tubs for
+  // angled faces build about magnet zero so we get the coordinates right for general placement
   std::vector<G4TwoVector> contEPPoints;
   G4double xmax = poleHalfWidth + coilWidth + 1*CLHEP::mm;
   G4double ymax = poleHalfHeight + coilHeight + 1*CLHEP::mm;
@@ -1773,10 +1801,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						 ePOutLength*0.5, // z half length
 						 zOffsets, zScale,
 						 zOffsets, zScale);
-
-  
-  // need to keep memory separate for each end piece so duplicate container square
-  //G4VSolid* ePContSolidSqOut = ePContSolidSqIn->Clone();
 
   // If there is a finite input face angle, the extruded solid above will be longer and
   // we now make a cut tubs for the angled faces to intersect it with.
@@ -1876,8 +1900,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					       0,                  // copy number
 					       checkOverlaps);     // check overlaps
 
-  G4RotationMatrix* endCoilOutRM = new G4RotationMatrix();
-  endCoilOutRM->rotateX(-CLHEP::halfpi);
+  G4RotationMatrix* endCoilOutRM = new G4RotationMatrix(*endCoilInRM); // copy as independent objects
 
   G4ThreeVector endCoilTranslationOutTop(0, coilDY, -0.5*coilWidth);
   G4ThreeVector endCoilTranslationOutLow(0,-coilDY, -0.5*coilWidth);
@@ -1926,34 +1949,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_out",
 							    endPieceOutGC,
 							    ePOutLengthZ);
-  // back to general assembly here
-  
-  // magnet outer instance
-  CreateMagnetContainerComponent();
-  magnetContainer->RegisterSolid(magnetContainerExtraSolids);
 
-  // build the BDSMagnetOuter instance and return it
-  BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
-					     magnetContainer);
-  
-  outer->RegisterSolid(allSolids);
-  outer->RegisterLogicalVolume(allLogicalVolumes);
-  outer->RegisterRotationMatrix(allRotationMatrices);
-  outer->RegisterPhysicalVolume(allPhysicalVolumes);
-  outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
-  
-  outer->RegisterSolid(yokeSolid);
-  outer->RegisterLogicalVolume(yokeLV);
-
-  outer->RegisterSensitiveVolume(yokeLV);
-  if (individualCoilsSolids)
-    {outer->RegisterSensitiveVolume(coilLVs);}
-  else
-    {outer->RegisterSensitiveVolume(coilLV);}
-
+  // attach to the magnet outer
   outer->SetEndPieceBefore(endPieceInSC);
   outer->SetEndPieceAfter(endPieceOutSC);
   
