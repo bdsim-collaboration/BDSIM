@@ -1923,7 +1923,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceOutGC->RegisterSolid(endPieceSolidOut);
   endPieceOutGC->RegisterSensitiveVolume(ePOutLV);
 
-  BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_in",
+  BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_out",
 							    endPieceOutGC,
 							    ePOutLengthZ);
   // back to general assembly here
