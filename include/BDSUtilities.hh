@@ -4,6 +4,7 @@
 #include "globals.hh"   // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
 
 #include <string>
 #include <utility>
@@ -85,6 +86,9 @@ namespace BDS
   G4double GetParameterValue      (const G4String spec, const G4String name);
   G4String GetParameterValueString(const G4String spec, const G4String name);
   ///@}
+
+  /// Rotate a two vector in polar coordinates by an angle.
+  G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
 }
 
 

@@ -5,6 +5,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -321,4 +322,11 @@ G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
       value = spec.substr(pos + param.length(), llen);
     }
   return value;
+}
+
+G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
+{
+  G4double xp = vec.x()*cos(angle) - vec.y()*sin(angle);
+  G4double yp = vec.x()*sin(angle) + vec.y()*cos(angle);
+  return G4TwoVector(xp,yp);
 }
