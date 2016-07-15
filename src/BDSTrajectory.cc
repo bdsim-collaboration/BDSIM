@@ -1,5 +1,7 @@
-#include "BDSDebug.hh"
 #include "BDSTrajectory.hh"
+
+#include "BDSDebug.hh"
+#include "BDSProcessMap.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh" // geant4 globals / types
