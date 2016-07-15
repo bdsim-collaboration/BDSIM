@@ -1741,21 +1741,20 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   std::vector<G4TwoVector> outEPPoints; // output face end piece points
 
   G4double inXO = poleHalfWidth + lengthSafetyLarge;
-  G4double a    = coilWidth / cos(angleIn); // projected coil width - major axis of ellipse
-  G4double b    = coilWidth;
 
-  // create an ellipse with no angle, then shear it to match the angle 
-  for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi; t += CLHEP::halfpi/8.0)
+  // create an ellipse with no angle, then shear it to match the angle
+  G4int nSegments = ceil((G4double)nSegmentsPerCircle / 4.0);
+  for (G4double t = -CLHEP::pi; t <= -CLHEP::halfpi + 1e-9; t += CLHEP::halfpi/nSegments)
     { // left side
-      G4double x = -inXO + a*cos(t);
-      G4double y = b*sin(t);
+      G4double x = -inXO + coilWidth*cos(t);
+      G4double y = coilWidth*sin(t);
       inEPPoints.push_back(G4TwoVector(x,y));
     }
   
-  for (G4double t = -CLHEP::halfpi; t <= 0; t += CLHEP::halfpi/8.0)
+  for (G4double t = -CLHEP::halfpi; t <= 0 + 1e-9; t += CLHEP::halfpi/nSegments)
     { // right side
-      G4double x = inXO + a*cos(t);
-      G4double y = b*sin(t);
+      G4double x = inXO + coilWidth*cos(t);
+      G4double y = coilWidth*sin(t);
       inEPPoints.push_back(G4TwoVector(x,y));
     }
 
