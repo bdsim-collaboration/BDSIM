@@ -379,7 +379,7 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   
 
   //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
-  //thinner cylinder (vaccumAperture) to fill the ends provided by the thickness.
+  //thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
   
   G4VSolid* vacuumInnerCavity = new G4Tubs(name + "_vacuum_inner_cavity_solid",                //name
 					   0.0,                                                //inner radius
