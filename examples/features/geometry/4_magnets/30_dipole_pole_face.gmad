@@ -11,6 +11,8 @@ lat : line = (d1,sb1,d2,sb2,d3,sb3,d4,d1,sb1,sb1);
 
 use, lat;
 
+option, magnetGeometryType="polescircular";
+
 option, checkOverlaps=1;
 
 beam, particle="e-",
