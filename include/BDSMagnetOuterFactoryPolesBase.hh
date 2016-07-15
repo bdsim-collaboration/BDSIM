@@ -293,7 +293,8 @@ protected:
 			       G4double     angleOut,
 			       G4Material*  material,
 			       G4bool       bendLeft,
-			       G4Colour*    colour);
+			       G4Colour*    colour,
+			       G4bool       buildVertically = false);
 };
 
 #endif
