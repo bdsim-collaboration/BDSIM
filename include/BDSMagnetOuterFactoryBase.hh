@@ -184,12 +184,14 @@ protected:
   // within the factory (as different parts factorised so they can
   // be overridden by the derived classes.
   G4double           lengthSafety;
-  G4bool             checkOverlaps;      // to avoid using globalconstants a lot
+  G4bool             checkOverlaps; ///< to avoid using globalconstants a lot
   G4bool             visDebug;
-  G4double           nSegmentsPerCircle; // for visualisation improvement
-  G4double           maxStepFactor;      // for user limits
-  G4VSolid*          poleSolid; /// solid for an individual pole that will be placed multiple times
-  G4VSolid*          yokeSolid; /// solid for outer part that connects all poles
+
+  /// For visualisation improvement. Also used for coil end piece geometry
+  G4double           nSegmentsPerCircle;
+  G4double           maxStepFactor;      ///< for user limits
+  G4VSolid*          poleSolid; ///< solid for an individual pole that will be placed multiple times
+  G4VSolid*          yokeSolid; ///< solid for outer part that connects all poles
   G4VSolid*          containerSolid;
   G4VSolid*          magnetContainerSolid;
   G4LogicalVolume*   poleLV;
