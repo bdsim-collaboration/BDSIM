@@ -24,4 +24,8 @@ simple_testing(23_size_variation_facetcrop_sext "--file=23_size_variation_facetc
 simple_testing(24_size_variation_facetcrop_oct  "--file=24_size_variation_facetcrop_oct.gmad"  ${OVERLAP_CHECK})
 simple_testing(25_size_variation_facetcrop_dec  "--file=25_size_variation_facetcrop_dec.gmad"  ${OVERLAP_CHECK})
 simple_testing(magnet_one_of_each_base          "--file=one_of_each_base.gmad"                 ${OVERLAP_CHECK})
-
+simple_testing(26_size_variation_sbend_c        "--file=26_size_variation_sbend_c.gmad"        ${OVERLAP_CHECK})
+simple_testing(27_size_variation_rbend_c        "--file=27_size_variation_rbend_c.gmad"        ${OVERLAP_CHECK})
+simple_testing(28_size_variation_hkicker_c      "--file=28_size_variation_hkicker_c.gmad"      ${OVERLAP_CHECK})
+simple_testing(29_size_variation_vkicker_c      "--file=29_size_variation_vkicker_c.gmad"      ${OVERLAP_CHECK})
+simple_testing(30_dipole_pole_face              "--file=30_dipole_pole_face.gmad"              ${OVERLAP_CHECK})
