@@ -1338,7 +1338,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | boxSize                          | default accelerator component full width [m]          |
 +----------------------------------+-------------------------------------------------------+
-| randomSeed                       | the integer seed value for the random number          |
+| seed                             | the integer seed value for the random number          |
 |                                  | generator                                             |
 +----------------------------------+-------------------------------------------------------+
 | ngenerate                        | number of primary particles to simulate               |
