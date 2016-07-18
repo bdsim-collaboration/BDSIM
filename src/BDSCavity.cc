@@ -302,12 +302,13 @@ void BDSCavity::BuildEllipticalCavityGeometry()
 				 );                      
 
   //Define the visual attributes in the following 4 lines:
-  G4VisAttributes* cavityVis = new G4VisAttributes(); 
-  cavityVis->SetColour(0.69,0.769,0.871); //light steel blue
-  cavityVis->SetVisibility(true);          //visible
+  auto col = BDSColours::Instance()->GetColour("srfcavity");
+  G4VisAttributes* cavityVis = new G4VisAttributes(*col);
+  cavityVis->SetVisibility(true);
+  // wont render if this is adjusted
+  //cavityVis->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle());
   cavityLV->SetVisAttributes(cavityVis);   //give  colour+visibility to the cavity logical volume
-  
-
+  RegisterVisAttributes(cavityVis);
  
   //Delete first and last elements of the InnerCoord Vectors, as these entries.
   //The reason we need to do this is the same vector is also used for making the vacuum filling the cavity, but without the extra points for subtraction.
@@ -414,13 +415,13 @@ void BDSCavity::BuildPillBoxCavityGeometry()
 				 cavityInfo->vacuumMaterial, //material
 				 name + "_vacuum_lv");  //name
 
-  //The following 4 lines define the visual attributes of the cavity
-  G4VisAttributes* cavityVis = new G4VisAttributes();
-  cavityVis->SetColour(0.69,0.769,0.871); //light steel blue
-  cavityVis->SetVisibility(true);          //visible
-  cavityLV->SetVisAttributes(cavityVis);   //give  colour+visibility to the cavity logical volume
-
-  
+  // visualisation attributes
+  auto col = BDSColours::Instance()->GetColour("srfcavity");
+  G4VisAttributes* cavityVis = new G4VisAttributes(*col);
+  cavityVis->SetVisibility(true);
+  cavityVis->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle());
+  cavityLV->SetVisAttributes(cavityVis);
+  RegisterVisAttributes(cavityVis);
   
   //The following 3 lines define the visual attribues of the vacuum.
   G4VisAttributes* vacuumVis = new G4VisAttributes(); //vistattributes instance 
