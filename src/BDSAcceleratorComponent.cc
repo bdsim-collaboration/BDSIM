@@ -40,7 +40,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   acceleratorVacuumLV(nullptr),
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
-  copyNumber(-1) // -1 initialisation since it will be incremented when placed 
+  copyNumber(-1), // -1 initialisation since it will be incremented when placed
+  inputFaceNormal(G4ThreeVector()),
+  outputFaceNormal(G4ThreeVector())
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;

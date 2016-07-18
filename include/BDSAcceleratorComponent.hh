@@ -82,6 +82,11 @@ public:
   /// Get the angle the component induces in the reference trajector (rad). 
   /// Note, this is 0 for h and v kickers
   inline G4double GetAngle() const {return angle;}
+
+  /// @{ Access face normal unit vector.
+  inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
+  inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
+  /// @}
   
   /// @{ Access the length of the component. Note there is no z length - this is chord length.
   /// Only chord OR arc makes it explicit.
@@ -127,6 +132,9 @@ public:
   /// independently or not depending on other items in the beamline.
   BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
   BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
+
+  void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
+  void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -212,6 +220,9 @@ private:
   std::list<std::string> biasVacuumList;
   std::list<std::string> biasMaterialList;
 
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
+};
 
 inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
 {precisionRegion = precisionRegionIn;}
