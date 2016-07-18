@@ -339,40 +339,33 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   vacuumLV = new G4LogicalVolume(vacuumSolid,           //solid
 				 cavityInfo->vacuumMaterial,//material
 				 name + "_vacuum_lv");
-  //The following 3 lines define the visual attributes of the vacuum.  
-  G4VisAttributes* vacuumVis = new G4VisAttributes(); //visattributes instance 
-  vacuumVis->SetVisibility(false);                    //Make invisible
-  vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.
-  
-  
+
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 }
 
-//A method for building a pillbox cavity geometry.
 void BDSCavity::BuildPillBoxCavityGeometry()
 {
   //Creates a solid 
-  G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid", //name
-				    irisRadius,                   //inner radius
-				    cavityRadius - lengthSafety, //cavityRadius
-				    0.5 * chordLength - lengthSafety, //half length
-				    0.0,                           //startAngle
-				    2*CLHEP::pi                    //spanningAngle
-				    );
+  G4VSolid* outerSolid = new G4Tubs(name + "_outer_solid",            // name
+				    irisRadius,                       // inner radius
+				    cavityRadius + thickness,         // outer radius
+				    0.5 * chordLength - lengthSafety, // half length
+				    0.0,                              // start angle
+				    2*CLHEP::pi);                     // sweep angle
+  RegisterSolid(outerSolid);
    
   //Creates a cylinder  to subtract from larger cylinder. 
-  innerSolid = new G4Tubs(name + "_inner_solid",              //name
-			  0.0,                                //inner radius 
-			  cavityRadius - thickness,           //cavityRadius
-			  0.5 * (chordLength - thickness),    //Half length
-			  0.0,                                //starAngle
-			  2*CLHEP::pi                         //spanningAngle
-			  );
+  innerSolid = new G4Tubs(name + "_inner_solid",        // name
+			  0.0,                          // inner radius 
+			  cavityRadius,                 // outer radius
+			  0.5*chordLength - thickness,  // galf length
+			  0.0,                          // star angle
+			  2*CLHEP::pi);                 // sweep angle
 
   //Do the subtraction
   cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",    //name
 				       outerSolid,                //solid1
-				       innerSolid                 //minus solid2
-				       );
+				       innerSolid);               //minus solid2
 
   //Logical volume from cavity solid
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
@@ -383,33 +376,32 @@ void BDSCavity::BuildPillBoxCavityGeometry()
 
   //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
   //thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
-  
-  G4VSolid* vacuumInnerCavity = new G4Tubs(name + "_vacuum_inner_cavity_solid",                //name
-					   0.0,                                                //inner radius
-					   (cavityRadius - thickness) - lengthSafety,          //outer radius
-					   0.5 * (chordLength - thickness) - lengthSafety,     //half length
-					   0.0,                                                //start angle
-					   2*CLHEP::pi                                         //spanning angle
-					   );
 
-  G4VSolid* vacuumAperture = new G4Tubs(name + "_vacuum_aperture_solid",        //name
-					0.0,                                   //inner radius
-					irisRadius - lengthSafety,             //outer radius
-					0.5 * chordLength - lengthSafety,      //length
-					0.0,                                   //start angle
-					2*CLHEP::pi                            //spanning angle
-					);
-  
-  //Create the vacuum as a union of the two solides defined prior
-  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  //name
-				 vacuumInnerCavity,       //solid one
-				 vacuumAperture           //Added to solid two.
-				 );
+  G4double vacuumInnerRadius = cavityRadius - thickness - lengthSafety;
+  G4double vacuumHalfLength  = 0.5*chordLength - thickness - lengthSafety;
+  G4VSolid* vacuumInnerCavity = new G4Tubs(name + "_vacuum_inner_cavity_solid",// name
+					   0.0,                                // inner radius
+					   vacuumInnerRadius,                  // outer radius
+					   vacuumHalfLength,                   // half length
+					   0.0,                                // start angle
+					   2*CLHEP::pi);                       // sweep angle
 
-  //Logical volume from the solid.
-  vacuumLV = new G4LogicalVolume(vacuumSolid,           //solid
-				 cavityInfo->vacuumMaterial, //material
-				 name + "_vacuum_lv");  //name
+  G4VSolid* vacuumAperture = new G4Tubs(name + "_vacuum_aperture_solid",   // name
+					0.0,                               // inner radius
+					irisRadius - lengthSafety,         // outer radius
+					0.5 * chordLength - lengthSafety,  // half length
+					0.0,                               // start angle
+					2*CLHEP::pi);                      // sweep angle
+  
+  // Create the vacuum as a union of the two solides defined prior
+  vacuumSolid = new G4UnionSolid(name + "_vacuum_solid",  // name
+				 vacuumInnerCavity,       // solid one
+				 vacuumAperture);         // added to solid two.
+
+  // Logical volume from the solid.
+  vacuumLV = new G4LogicalVolume(vacuumSolid,                // solid
+				 cavityInfo->vacuumMaterial, // material
+				 name + "_vacuum_lv");       // name
 
   // visualisation attributes
   auto col = BDSColours::Instance()->GetColour("srfcavity");
@@ -419,9 +411,5 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   cavityLV->SetVisAttributes(cavityVis);
   RegisterVisAttributes(cavityVis);
   
-  //The following 3 lines define the visual attribues of the vacuum.
-  G4VisAttributes* vacuumVis = new G4VisAttributes(); //vistattributes instance 
-  vacuumVis->SetVisibility(true);                    //Make invisible (visible)
-  vacuumLV->SetVisAttributes(vacuumVis);              //give invisiblity to the vacuum LV.
-
+  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 }
