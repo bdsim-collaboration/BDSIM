@@ -30,3 +30,5 @@ pillbox: cavitymodel,
 lat : line = (d1,rf1,rf2,d2,rf3);
 
 include optionsTest.gmad;
+
+option, nSegmentsPerCircle=40;
