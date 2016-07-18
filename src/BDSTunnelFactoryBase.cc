@@ -202,7 +202,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
   G4VisAttributes* tunnelVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("tunnel"));
   if (visible)
     {tunnelVisAttr->SetVisibility(true);}
-  tunnelVisAttr->SetForceLineSegmentsPerCircle(100);
+  tunnelVisAttr->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle()*2);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
   visAttributesToBeRegistered.push_back(tunnelVisAttr);
   if (floorLV)
@@ -210,7 +210,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       G4VisAttributes* floorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("tunnelfloor"));
       if (visible)
 	{floorVisAttr->SetVisibility(true);}
-      floorVisAttr->SetForceLineSegmentsPerCircle(100);
+      floorVisAttr->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle()*2);
       floorLV->SetVisAttributes(floorVisAttr);
       visAttributesToBeRegistered.push_back(floorVisAttr);
     }
@@ -220,7 +220,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       G4VisAttributes* soilVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("soil"));
       if (visible)
 	{soilVisAttr->SetVisibility(true);}
-      soilVisAttr->SetForceLineSegmentsPerCircle(50);
+      soilVisAttr->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle());
       soilLV->SetVisAttributes(soilVisAttr);
       visAttributesToBeRegistered.push_back(soilVisAttr);
     }
