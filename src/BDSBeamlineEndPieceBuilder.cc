@@ -142,10 +142,10 @@ void BDS::BuildEndPieceBeamline()
 
 	  if (placeAfter)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
-	      G4bool flip = endPieceAfter == endPieceBefore;
+	      G4bool flip = endPieceAfter == endPieceBefore; // sometimes the after piece is a copy of the before one
 	      auto afterEl = beamline->ProvideEndPieceElementAfter(endPieceAfter,
 								   currentIndex,
-								   flip);
+								   flip); // flip it round for placement
 	      endPieces->AddBeamlineElement(afterEl); // append to end piece beam line
 	    }
 	}
