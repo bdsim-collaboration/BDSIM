@@ -65,30 +65,32 @@ public:
   virtual ~BDSAcceleratorComponent();
 
   /// The name of the component without modification
-  G4String GetName() const;
+  inline G4String GetName() const {return name;}
 
   /// Get a string describing the type of the component
-  G4String GetType() const;
+  inline G4String GetType() const {return type;}
 
   /// Whether precision output is to be recorded for this component
-  G4bool GetPrecisionRegion() const;
+  G4bool GetPrecisionRegion() const {return precisionRegion;}
 
   /// Set whether precision output should be recorded for this component
   void   SetPrecisionRegion(G4bool precisionRegionIn);
 
   /// Access beam pipe information
-  BDSBeamPipeInfo* GetBeamPipeInfo() const;
+  inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
   /// Get the angle the component induces in the reference trajector (rad). 
   /// Note, this is 0 for h and v kickers
-  G4double GetAngle() const;
+  inline G4double GetAngle() const {return angle;}
   
-  /// Access the length of the component.
-  virtual G4double GetArcLength()   const; // note no z length - this is chord length
-  virtual G4double GetChordLength() const; // only chord OR arc makes it explicit
+  /// @{ Access the length of the component. Note there is no z length - this is chord length.
+  /// Only chord OR arc makes it explicit.
+  virtual G4double GetArcLength()   const {return arcLength;} 
+  virtual G4double GetChordLength() const {return chordLength;}
+  /// @}
   
   /// Access the read out geometry
-  inline G4LogicalVolume* GetReadOutLogicalVolume() const;
+  inline G4LogicalVolume* GetReadOutLogicalVolume() const {return readOutLV;}
 
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
@@ -103,10 +105,10 @@ public:
   ///@}
 
   /// Increment (+1) the number of times this component has been copied.
-  void  IncrementCopyNumber();
+  inline void  IncrementCopyNumber() {copyNumber++;}
 
   /// Get the number of times this component has been copied.
-  G4int GetCopyNumber()const;
+  inline G4int GetCopyNumber() const {return copyNumber;}
 
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
@@ -209,46 +211,16 @@ private:
   /// Copy of bias list from parser for this particlar element
   std::list<std::string> biasVacuumList;
   std::list<std::string> biasMaterialList;
-};
 
-inline G4String BDSAcceleratorComponent::GetName() const
-{return name;}
-
-inline G4double BDSAcceleratorComponent::GetChordLength() const
-{return chordLength;}
-
-inline G4double BDSAcceleratorComponent::GetArcLength() const
-{return arcLength;}
-
-inline G4double BDSAcceleratorComponent::GetAngle() const
-{return angle;}
-
-inline G4String BDSAcceleratorComponent::GetType() const
-{return type;}
-
-inline G4bool BDSAcceleratorComponent::GetPrecisionRegion() const
-{return precisionRegion;}
 
 inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
 {precisionRegion = precisionRegionIn;}
-
-inline BDSBeamPipeInfo* BDSAcceleratorComponent::GetBeamPipeInfo() const
-{return beamPipeInfo;}
 
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 {itsGFlashVolumes.push_back(aLogVol);}
 
 inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes() const
 {return itsGFlashVolumes;}
-
-inline void BDSAcceleratorComponent::IncrementCopyNumber()
-{copyNumber++;}
-
-inline G4int BDSAcceleratorComponent::GetCopyNumber()const
-{return copyNumber;}
-
-inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
-{return readOutLV;}
 
 inline void BDSAcceleratorComponent::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
 {biasVacuumList = biasVacuumListIn;}
