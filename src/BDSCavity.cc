@@ -2,6 +2,7 @@
 #include "BDSCavity.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
+#include "BDSColours.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"
@@ -99,15 +100,16 @@ void BDSCavity::PlaceComponents()
 
 void BDSCavity::BuildContainerLogicalVolume() 
 {
-  containerSolid = new G4Tubs(name + "_container_solid",       //name
-			      0.0,                             //innerRadius
-			      cavityRadius + thickness + lengthSafety, //outerRadius
-			      chordLength *0.5 + lengthSafety, //half length
-			      0.0,                             //starting angle
-			      2.0*CLHEP::pi);                  //spanning angle
+  G4double outerRadius = cavityRadius + thickness + lengthSafety;
+  containerSolid = new G4Tubs(name + "_container_solid",   //name
+			      0.0,                         //innerRadius
+			      outerRadius,                 //outerRadius
+			      chordLength*0.5,             //half length
+			      0.0,                         //starting angle
+			      2.0*CLHEP::pi);              //spanning angle
 
-  SetExtentX(-cavityRadius*0.5,cavityRadius*0.5);
-  SetExtentY(-cavityRadius*0.5,cavityRadius*0.5);
+  SetExtentX(-outerRadius, outerRadius);
+  SetExtentY(-outerRadius, outerRadius);
   SetExtentZ(-chordLength*0.5,chordLength*0.5);
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
@@ -271,35 +273,32 @@ void BDSCavity::BuildEllipticalCavityGeometry()
 
   //Define the inner solid which is to be subtracted from the outer and also used to define the vaccum.
   innerSolid = new G4Polycone(name + "_inner_solid", //name
-			      0.0,                 //start angle
-			      2*CLHEP::pi,         //sweep angle
+			      0.0,                  //start angle
+			      2*CLHEP::pi,          //sweep angle
 			      zInnerCoord.size(),
 			      zInnerCoord.data(),
 			      solidArrayInner.data(),
-			      rInnerCoord.data()   //r coordinates
-			      );
+			      rInnerCoord.data());  //r coordinates
 
   //Define the outer solid from which the inner is subtracted.
-  G4VSolid* outerSolid = new G4Polycone(name + "_outer_solid", //name
-					0.0,                   //start angle
-					2*CLHEP::pi,           //sweep angle
-					zOuterCoord.size(),    //number of corners
-					zOuterCoord.data(),    //zOuterCoord array of points
-					solidArrayOuter.data(),//array of zeroes for solid shape
-					rOuterCoord.data()     //rOuterCoord array of points.
-					);
+  G4VSolid* outerSolid = new G4Polycone(name + "_outer_solid", // name
+					0.0,                   // start angle
+					2*CLHEP::pi,           // sweep angle
+					zOuterCoord.size(),    // number of corners
+					zOuterCoord.data(),    // zOuterCoord array of points
+					solidArrayOuter.data(),// array of zeroes for solid shape
+					rOuterCoord.data());   // rOuterCoord array of points.
+  RegisterSolid(outerSolid);
   
   //Do the subtraction
-  cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",  //name
-				       outerSolid,                //solid1
-				       innerSolid                 //minus solid2
-				       );
+  cavitySolid = new G4SubtractionSolid(name + "_cavity_solid",  // name
+				       outerSolid,              // solid1
+				       innerSolid);             // minus solid2
   
   //define the logical volume.
   cavityLV = new G4LogicalVolume(cavitySolid,            //solid
 				 cavityInfo->material,   //material
-				 name + "_cavity_lv"     //name
-				 );                      
+				 name + "_cavity_lv");   //name
 
   //Define the visual attributes in the following 4 lines:
   auto col = BDSColours::Instance()->GetColour("srfcavity");
@@ -323,11 +322,8 @@ void BDSCavity::BuildEllipticalCavityGeometry()
       rInnerCoord[i] = rInnerCoord[i] - lengthSafety;
       
       if (i == 0 || (i == zInnerCoord.size() - 1)) 
-	{
-	  zInnerCoord[i] = zInnerCoord[i]- lengthSafety;
-	}
-      
-    };
+	{zInnerCoord[i] = zInnerCoord[i]- lengthSafety;}
+    }
   
   //Initializing the vacuum solid.
   vacuumSolid = new G4Polycone(name + "_inner_solid", //name
