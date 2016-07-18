@@ -41,8 +41,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
-  inputFaceNormal(G4ThreeVector()),
-  outputFaceNormal(G4ThreeVector())
+  inputFaceNormal(G4ThreeVector(0,0,-1)), // input backwards along z
+  outputFaceNormal(G4ThreeVector(0,0,1))  // unit forwards along z
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
