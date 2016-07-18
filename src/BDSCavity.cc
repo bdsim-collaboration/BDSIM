@@ -27,8 +27,14 @@ BDSCavity::BDSCavity(G4String       name,
   cavityInfo(cavityInfoIn)
 {
   cavityRadius = cavityInfo->equatorRadius;
-  thickness = cavityInfo->thickness;
-  irisRadius = cavityInfo->irisRadius;
+  thickness    = cavityInfo->thickness;
+  irisRadius   = cavityInfo->irisRadius;
+
+  if (cavityRadius < (irisRadius + thickness))
+    {
+      G4cout << "Invalid geometry for \"" << name << "\" - increase equatorRadius" << G4endl;
+      exit(1);
+    }
 }
 
 BDSCavity::~BDSCavity()
