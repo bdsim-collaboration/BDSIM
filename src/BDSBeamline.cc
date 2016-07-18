@@ -60,8 +60,8 @@ BDSBeamline::~BDSBeamline()
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
 {
-  for (const_iterator it = begin(); it != end(); ++it)
-    {out << *(it);}
+  for (const auto& element : *this)
+    {out << element;}
 }
 
 void BDSBeamline::PrintMemoryConsumption() const
