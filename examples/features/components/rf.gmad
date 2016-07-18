@@ -22,8 +22,8 @@ Tesla9Cell: cavitymodel,
 pillbox: cavitymodel,
 	 type = "rectangular",
 	 equatorRadius = 10*cm,
-	 irisRadius = 8*cm,
-	 thickness = 3*cm;
+	 irisRadius = 3*cm,
+	 thickness = 1*cm;
 
 !print, Tesla9Cell;
 
