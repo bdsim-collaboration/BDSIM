@@ -38,29 +38,12 @@ class BDSGeometryComponent
 public:
   BDSGeometryComponent(G4VSolid*        containerSolidIn,
 		       G4LogicalVolume* containerLVIn);
-  BDSGeometryComponent(G4VSolid*        containerSolidIn,
-		       G4LogicalVolume* containerLVIn,
-		       std::pair<G4double,G4double> extentXIn,
-		       std::pair<G4double,G4double> extentYIn,
-		       std::pair<G4double,G4double> extentZIn,
-		       G4ThreeVector                placementOffsetIn   = G4ThreeVector(0,0,0),
-		       G4RotationMatrix*            placementRotationIn = nullptr);
   BDSGeometryComponent(G4VSolid*         containerSolidIn,
 		       G4LogicalVolume*  containerLVIn,
 		       BDSExtent         extentIn,
 		       BDSExtent         innerExtentIn       = BDSExtent(),
 		       G4ThreeVector     placementOffsetIn   = G4ThreeVector(0,0,0),
 		       G4RotationMatrix* placementRotationIn = nullptr);
-  BDSGeometryComponent(G4VSolid*                    containerSolidIn,
-		       G4LogicalVolume*             containerLVIn,
-		       std::pair<G4double,G4double> extentXIn,
-		       std::pair<G4double,G4double> extentYIn,
-		       std::pair<G4double,G4double> extentZIn,
-		       std::pair<G4double,G4double> innerExtentXIn,
-		       std::pair<G4double,G4double> innerExtentYIn,
-		       std::pair<G4double,G4double> innerExtentZIn,
-		       G4ThreeVector                placementOffsetIn   = G4ThreeVector(0,0,0),
-		       G4RotationMatrix*            placementRotationIn = nullptr);
   
   /// Copy constructor
   BDSGeometryComponent(const BDSGeometryComponent& component);

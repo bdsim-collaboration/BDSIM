@@ -8,7 +8,6 @@
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include <utility>                 // for std::pair
 #include <vector>
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
@@ -21,21 +20,6 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
   placementRotation(nullptr)
 {;}
 
-BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containerSolidIn,
-					   G4LogicalVolume*             containerLVIn,
-					   std::pair<G4double,G4double> extentXIn,
-					   std::pair<G4double,G4double> extentYIn,
-					   std::pair<G4double,G4double> extentZIn,
-					   G4ThreeVector                placementOffsetIn,
-					   G4RotationMatrix*            placementRotationIn):
-  containerSolid(containerSolidIn),
-  containerLogicalVolume(containerLVIn),
-  outerExtent(BDSExtent(extentXIn, extentYIn, extentZIn)),
-  innerExtent(BDSExtent()),
-  placementOffset(placementOffsetIn),
-  placementRotation(placementRotationIn)
-{;}
-
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*         containerSolidIn,
 					   G4LogicalVolume*  containerLVIn,
 					   BDSExtent         extentIn,
@@ -46,24 +30,6 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*         containerSolidIn,
   containerLogicalVolume(containerLVIn),
   outerExtent(extentIn),
   innerExtent(innerExtentIn),
-  placementOffset(placementOffsetIn),
-  placementRotation(placementRotationIn)
-{;}
-
-BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containerSolidIn,
-					   G4LogicalVolume*             containerLVIn,
-					   std::pair<G4double,G4double> extentXIn,
-					   std::pair<G4double,G4double> extentYIn,
-					   std::pair<G4double,G4double> extentZIn,
-					   std::pair<G4double,G4double> innerExtentXIn,
-					   std::pair<G4double,G4double> innerExtentYIn,
-					   std::pair<G4double,G4double> innerExtentZIn,
-					   G4ThreeVector                placementOffsetIn,
-					   G4RotationMatrix*            placementRotationIn):
-  containerSolid(containerSolidIn),
-  containerLogicalVolume(containerLVIn),
-  outerExtent(BDSExtent(extentXIn, extentYIn, extentZIn)),
-  innerExtent(BDSExtent(innerExtentXIn, innerExtentYIn, innerExtentZIn)),
   placementOffset(placementOffsetIn),
   placementRotation(placementRotationIn)
 {;}
