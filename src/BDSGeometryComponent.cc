@@ -1,6 +1,6 @@
-#include "BDSGeometryComponent.hh"
-
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
+#include "BDSGeometryComponent.hh"
 
 #include "globals.hh"              // geant4 globals / types
 #include "G4VSolid.hh"
@@ -15,16 +15,11 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					   G4LogicalVolume* containerLVIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
+  outerExtent(BDSExtent()),
+  innerExtent(BDSExtent()),
   placementOffset(G4ThreeVector(0,0,0)),
   placementRotation(nullptr)
-{
-  SetExtentX(0,0); // initialise only - unphysical - should be set by child class
-  SetExtentY(0,0);
-  SetExtentZ(0,0);
-  SetInnerExtentX(0,0);
-  SetInnerExtentY(0,0);
-  SetInnerExtentZ(0,0);
-}
+{;}
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containerSolidIn,
 					   G4LogicalVolume*             containerLVIn,
@@ -35,16 +30,25 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
 					   G4RotationMatrix*            placementRotationIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
-  extentX(extentXIn),
-  extentY(extentYIn),
-  extentZ(extentZIn),
+  outerExtent(BDSExtent(extentXIn, extentYIn, extentZIn)),
+  innerExtent(BDSExtent()),
   placementOffset(placementOffsetIn),
   placementRotation(placementRotationIn)
-{
-  SetInnerExtentX(0,0); // initialise only - unphysical - should be set by child class
-  SetInnerExtentY(0,0);
-  SetInnerExtentZ(0,0);
-}
+{;}
+
+BDSGeometryComponent::BDSGeometryComponent(G4VSolid*         containerSolidIn,
+					   G4LogicalVolume*  containerLVIn,
+					   BDSExtent         extentIn,
+					   BDSExtent         innerExtentIn,
+					   G4ThreeVector     placementOffsetIn,
+					   G4RotationMatrix* placementRotationIn):
+  containerSolid(containerSolidIn),
+  containerLogicalVolume(containerLVIn),
+  outerExtent(extentIn),
+  innerExtent(innerExtentIn),
+  placementOffset(placementOffsetIn),
+  placementRotation(placementRotationIn)
+{;}
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containerSolidIn,
 					   G4LogicalVolume*             containerLVIn,
@@ -58,22 +62,17 @@ BDSGeometryComponent::BDSGeometryComponent(G4VSolid*                    containe
 					   G4RotationMatrix*            placementRotationIn):
   containerSolid(containerSolidIn),
   containerLogicalVolume(containerLVIn),
-  extentX(extentXIn),
-  extentY(extentYIn),
-  extentZ(extentZIn),
-  innerExtentX(innerExtentXIn),
-  innerExtentY(innerExtentYIn),
-  innerExtentZ(innerExtentZIn),
+  outerExtent(BDSExtent(extentXIn, extentYIn, extentZIn)),
+  innerExtent(BDSExtent(innerExtentXIn, innerExtentYIn, innerExtentZIn)),
   placementOffset(placementOffsetIn),
   placementRotation(placementRotationIn)
 {;}
 
-BDSGeometryComponent::BDSGeometryComponent(BDSGeometryComponent& component):
+BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component):
   containerSolid(component.containerSolid),
   containerLogicalVolume(component.containerLogicalVolume),
-  extentX(component.extentX),
-  extentY(component.extentY),
-  extentZ(component.extentZ),
+  outerExtent(component.outerExtent),
+  innerExtent(component.innerExtent),
   placementOffset(component.placementOffset)
 {;}
 
@@ -103,11 +102,9 @@ BDSGeometryComponent::~BDSGeometryComponent()
   delete placementRotation;
 }
 
-void BDSGeometryComponent::InheritExtents(BDSGeometryComponent* anotherComponent)
+void BDSGeometryComponent::InheritExtents(BDSGeometryComponent const * const anotherComponent)
 {
-  SetExtentX(anotherComponent->GetExtentX());
-  SetExtentY(anotherComponent->GetExtentY());
-  SetExtentZ(anotherComponent->GetExtentZ());
+  outerExtent = anotherComponent->GetExtent();
 }
 
 void BDSGeometryComponent::RegisterDaughter(BDSGeometryComponent* anotherComponent)

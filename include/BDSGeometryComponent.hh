@@ -1,6 +1,8 @@
 #ifndef BDSGEOMETRYCOMPONENT_H
 #define BDSGEOMETRYCOMPONENT_H
 
+#include "BDSExtent.hh"
+
 #include "globals.hh"           // geant4 globals / types
 #include "G4LogicalVolume.hh"
 #include "G4RotationMatrix.hh"
@@ -41,8 +43,14 @@ public:
 		       std::pair<G4double,G4double> extentXIn,
 		       std::pair<G4double,G4double> extentYIn,
 		       std::pair<G4double,G4double> extentZIn,
-		       G4ThreeVector                placementOffsetIn = G4ThreeVector(0,0,0),
+		       G4ThreeVector                placementOffsetIn   = G4ThreeVector(0,0,0),
 		       G4RotationMatrix*            placementRotationIn = nullptr);
+  BDSGeometryComponent(G4VSolid*         containerSolidIn,
+		       G4LogicalVolume*  containerLVIn,
+		       BDSExtent         extentIn,
+		       BDSExtent         innerExtentIn       = BDSExtent(),
+		       G4ThreeVector     placementOffsetIn   = G4ThreeVector(0,0,0),
+		       G4RotationMatrix* placementRotationIn = nullptr);
   BDSGeometryComponent(G4VSolid*                    containerSolidIn,
 		       G4LogicalVolume*             containerLVIn,
 		       std::pair<G4double,G4double> extentXIn,
@@ -51,11 +59,11 @@ public:
 		       std::pair<G4double,G4double> innerExtentXIn,
 		       std::pair<G4double,G4double> innerExtentYIn,
 		       std::pair<G4double,G4double> innerExtentZIn,
-		       G4ThreeVector                placementOffsetIn = G4ThreeVector(0,0,0),
+		       G4ThreeVector                placementOffsetIn   = G4ThreeVector(0,0,0),
 		       G4RotationMatrix*            placementRotationIn = nullptr);
   
   /// Copy constructor
-  BDSGeometryComponent(BDSGeometryComponent& component);
+  BDSGeometryComponent(const BDSGeometryComponent& component);
   virtual ~BDSGeometryComponent();
 
   /// @Accessor - see member for more info
@@ -64,12 +72,14 @@ public:
   inline G4LogicalVolume*  GetContainerLogicalVolume() const {return containerLogicalVolume;}
   inline G4ThreeVector     GetPlacementOffset()        const {return placementOffset;}
   inline G4RotationMatrix* GetPlacementRotation()      const {return placementRotation;}
-  inline std::pair<G4double,G4double> GetExtentX()     const {return extentX;}
-  inline std::pair<G4double,G4double> GetExtentY()     const {return extentY;}
-  inline std::pair<G4double,G4double> GetExtentZ()     const {return extentZ;}
-  inline std::pair<G4double,G4double> GetInnerExtentX() const {return innerExtentX;}   
-  inline std::pair<G4double,G4double> GetInnerExtentY() const {return innerExtentY;}
-  inline std::pair<G4double,G4double> GetInnerExtentZ() const {return innerExtentZ;}
+  inline BDSExtent         GetExtent()                 const {return outerExtent;}
+  inline BDSExtent         GetInnerExtent()            const {return innerExtent;}
+  inline std::pair<G4double,G4double> GetExtentX()     const {return outerExtent.ExtentX();}
+  inline std::pair<G4double,G4double> GetExtentY()     const {return outerExtent.ExtentY();}
+  inline std::pair<G4double,G4double> GetExtentZ()     const {return outerExtent.ExtentZ();}
+  inline std::pair<G4double,G4double> GetInnerExtentX() const {return innerExtent.ExtentX();}   
+  inline std::pair<G4double,G4double> GetInnerExtentY() const {return innerExtent.ExtentY();}
+  inline std::pair<G4double,G4double> GetInnerExtentZ() const {return innerExtent.ExtentZ();}
   inline std::vector<G4VPhysicalVolume*> GetAllPhysicalVolumes()  const {return allPhysicalVolumes;}
   inline std::vector<G4RotationMatrix*>  GetAllRotationMatrices() const {return allRotationMatrices;}
   inline std::vector<G4VisAttributes*>   GetAllVisAttributes()    const {return allVisAttributes;}
@@ -81,34 +91,19 @@ public:
   /// Set the offset from 0,0,0 that the object should ideally be placed in its parent
   inline void SetPlacementOffset(G4ThreeVector& offsetIn) {placementOffset = G4ThreeVector(offsetIn);}
 
-  /// Get the full length in Z.  This is for convenience as most geometry components
-  /// are built along z although this needn't be required.
-  G4double GetLengthZ() const {return extentZ.second + std::abs(extentZ.first);}
+  /// @{ Set extent
+  inline void SetExtent(BDSExtent extIn)      {outerExtent = extIn;}
+  inline void SetInnerExtent(BDSExtent extIn) {innerExtent = extIn;}
+  /// @}
   
   /// Get the extent of the object in the positive direction in all dimensions
-  G4ThreeVector GetExtentPositive() const;
+  G4ThreeVector GetExtentPositive() const {return outerExtent.ExtentPositive();}
 
   /// Get the extent of the object in the negative direction in all dimensions
-  G4ThreeVector GetExtentNegative() const;
-  
-  void SetExtentX(G4double lowerX, G4double upperX); ///< set the extent in local x
-  void SetExtentY(G4double lowerY, G4double upperY); ///< set the extent in local y
-  void SetExtentZ(G4double lowerZ, G4double upperZ); ///< set the extent in local z
-  void SetExtentX(std::pair<G4double, G4double> extentXIn); ///< set the extent in local x
-  void SetExtentY(std::pair<G4double, G4double> extentYIn); ///< set the extent in local y
-  void SetExtentZ(std::pair<G4double, G4double> extentZIn); ///< set the extent in local z
-
-  /// @{ Set the -ve/+ve inner extent in local coords.
-  void SetInnerExtentX(G4double lowerX, G4double upperX);
-  void SetInnerExtentY(G4double lowerY, G4double upperY);
-  void SetInnerExtentZ(G4double lowerZ, G4double upperZ);
-  void SetInnerExtentX(std::pair<G4double, G4double> extentXIn);
-  void SetInnerExtentY(std::pair<G4double, G4double> extentYIn);
-  void SetInnerExtentZ(std::pair<G4double, G4double> extentZIn);
-  /// @}
+  G4ThreeVector GetExtentNegative() const {return outerExtent.ExtentNegative();}
 
   /// Update the extents of this object with those of another object
-  void InheritExtents(BDSGeometryComponent* anotherComponent);
+  void InheritExtents(BDSGeometryComponent const * const anotherComponent);
 
   /// Register another geometry component as belonging to this one. This component will
   /// then own and delete it as necessary.
@@ -181,13 +176,9 @@ protected:
   
   G4VSolid*                 containerSolid;
   G4LogicalVolume*          containerLogicalVolume;
-  std::pair<G4double, G4double> extentX;  //local -ve,+ve
-  std::pair<G4double, G4double> extentY;
-  std::pair<G4double, G4double> extentZ;
-  std::pair<G4double, G4double> innerExtentX;
-  std::pair<G4double, G4double> innerExtentY;
-  std::pair<G4double, G4double> innerExtentZ;
-
+  BDSExtent outerExtent;
+  BDSExtent innerExtent;
+  
   /// registry of all daughter geometry components
   std::vector<BDSGeometryComponent*> allDaughters;
   
@@ -224,47 +215,5 @@ protected:
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
 };
-
-inline G4ThreeVector BDSGeometryComponent::GetExtentPositive() const
-{return G4ThreeVector(extentX.second, extentY.second, extentZ.second);}
-
-inline G4ThreeVector BDSGeometryComponent::GetExtentNegative() const
-{return G4ThreeVector(extentX.first, extentY.first, extentZ.first);}
-
-inline void BDSGeometryComponent::SetExtentX(G4double lowerX, G4double upperX)
-{extentX = std::make_pair(lowerX,upperX);}
-
-inline void BDSGeometryComponent::SetExtentY(G4double lowerY, G4double upperY)
-{extentY = std::make_pair(lowerY,upperY);}
-
-inline void BDSGeometryComponent::SetExtentZ(G4double lowerZ, G4double upperZ)
-{extentZ = std::make_pair(lowerZ,upperZ);}
-
-inline  void BDSGeometryComponent::SetExtentX(std::pair<G4double, G4double> extentXIn)
-{extentX = extentXIn;}
-
-inline  void BDSGeometryComponent::SetExtentY(std::pair<G4double, G4double> extentYIn)
-{extentY = extentYIn;}
-
-inline  void BDSGeometryComponent::SetExtentZ(std::pair<G4double, G4double> extentZIn)
-{extentZ = extentZIn;}
-
-inline void BDSGeometryComponent::SetInnerExtentX(G4double lowerX, G4double upperX)
-{innerExtentX = std::make_pair(lowerX,upperX);}
-
-inline void BDSGeometryComponent::SetInnerExtentY(G4double lowerY, G4double upperY)
-{innerExtentY = std::make_pair(lowerY,upperY);}
-
-inline void BDSGeometryComponent::SetInnerExtentZ(G4double lowerZ, G4double upperZ)
-{innerExtentZ = std::make_pair(lowerZ,upperZ);}
-
-inline  void BDSGeometryComponent::SetInnerExtentX(std::pair<G4double, G4double> extentXIn)
-{innerExtentX = extentXIn;}
-
-inline  void BDSGeometryComponent::SetInnerExtentY(std::pair<G4double, G4double> extentYIn)
-{innerExtentY = extentYIn;}
-
-inline  void BDSGeometryComponent::SetInnerExtentZ(std::pair<G4double, G4double> extentZIn)
-{innerExtentZ = extentZIn;}
 
 #endif

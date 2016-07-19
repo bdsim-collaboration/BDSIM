@@ -1,5 +1,6 @@
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -251,9 +252,7 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*
   // we fiddle the extents here as the extents of the read out don't exist and
   // this is relatively safe as nothing will be placed against the outside edge
   // of the soil.
-  tunnelComponent->SetExtentX(std::make_pair(-readOutRadius, readOutRadius));
-  tunnelComponent->SetExtentY(std::make_pair(-readOutRadius, readOutRadius));
-  tunnelComponent->SetExtentZ(std::make_pair(-containerZRadius, containerZRadius));
+  tunnelComponent->SetExtent(BDSExtent(readOutRadius, readOutRadius, containerZRadius));
 }
 
 void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,

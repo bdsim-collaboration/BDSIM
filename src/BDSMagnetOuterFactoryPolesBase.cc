@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
@@ -1057,12 +1058,8 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   endPieceGC->RegisterLogicalVolume(endPieceCoilLV);
   endPieceGC->RegisterVisAttributes(endPieceCoilVis);
   endPieceGC->RegisterSensitiveVolume(endPieceCoilLV);
-  endPieceGC->SetExtentX(-endPieceOuterR, endPieceOuterR);
-  endPieceGC->SetExtentY(-endPieceOuterR, endPieceOuterR);
-  endPieceGC->SetExtentZ(-endPieceLength*0.5, endPieceLength*0.5);
-  endPieceGC->SetInnerExtentX(-endPieceInnerR, endPieceInnerR);
-  endPieceGC->SetInnerExtentY(-endPieceInnerR, endPieceInnerR);
-  endPieceGC->SetInnerExtentZ(endPieceGC->GetExtentZ());
+  endPieceGC->SetExtent(BDSExtent(endPieceOuterR, endPieceOuterR, endPieceLength*0.5));
+  endPieceGC->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 
   endPiece = new BDSSimpleComponent(name + "_end_piece",
 				    endPieceGC,

@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
@@ -43,9 +44,7 @@ void BDSTerminator::BuildContainerLogicalVolume()
   containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
       
   // register extents with BDSGeometryComponent base class
-  SetExtentX(-radius,radius);
-  SetExtentY(-radius,radius);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
 
 BDSTerminator::~BDSTerminator()
