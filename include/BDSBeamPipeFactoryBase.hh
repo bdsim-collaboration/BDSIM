@@ -28,7 +28,7 @@ class G4VSolid;
  * Default values in constructors result in global defaults being used
  * ie beampipe material will be steel - the default from options
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryBase
