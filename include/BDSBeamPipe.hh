@@ -8,6 +8,8 @@
 #include "G4VSolid.hh"
 #include <utility>                  // for std::pair
 
+class BDSExtent;
+
 /**
  * @brief A holder class for all information required for a
  * piece of beampipe.  
@@ -25,9 +27,7 @@ public:
   /// then everything extra for this derived class
   BDSBeamPipe(G4VSolid*                 containerSolidIn,
 	      G4LogicalVolume*          containerLVIn,
-	      std::pair<double, double> extentXIn,
-	      std::pair<double, double> extentYIn,
-	      std::pair<double, double> extentZIn,
+	      BDSExtent                 extentIn,
 	      G4VSolid*                 containerSubtractionSolidIn,
 	      G4LogicalVolume*          vacuumLVIn,
 	      G4bool                    containerIsCircularIn = false,

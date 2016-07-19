@@ -185,13 +185,11 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
   allPhysicalVolumes.push_back(beamPipePV);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(std::pair<double,double> extX,
-								     std::pair<double,double> extY,
-								     std::pair<double,double> extZ,
-								     G4double containerRadius)
+BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
+								     G4double  containerRadius)
 {  
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,
+  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
 				       containerSubtractionSolid,
 				       vacuumLV,false,containerRadius);
 

@@ -2,6 +2,7 @@
 #include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
@@ -142,20 +143,16 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
 					     lengthIn);
 
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerXHalfWidth,containerXHalfWidth);
-  std::pair<double,double> extY = std::make_pair(-containerYHalfWidth,containerYHalfWidth);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
+  BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);
+  
   // calculate radius if a tube were to be place around it
   G4double containerRadius = std::max(containerXHalfWidth, containerYHalfWidth);
   
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext, containerRadius);
   
   return aPipe;
 }
 
-
-/// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
-/// by grouping common construction tasks
 void BDSBeamPipeFactoryElliptical::CreateGeneralAngledSolids(G4String      nameIn,
 							     G4double      lengthIn,
 							     G4double      aper1In,

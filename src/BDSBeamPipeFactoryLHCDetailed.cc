@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
@@ -373,12 +374,10 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 					     length);
 		    
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
   
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(screenLV);

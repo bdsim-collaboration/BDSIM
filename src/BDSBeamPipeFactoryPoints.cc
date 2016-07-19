@@ -1,6 +1,7 @@
 #include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
@@ -261,13 +262,12 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CommonFinalConstruction(G4String    nameI
 					     lengthIn);
 
   // record extents
-  std::pair<double,double> extX = std::make_pair(-extentX, extentX);
-  std::pair<double,double> extY = std::make_pair(-extentY, extentY);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5, lengthIn*0.5);
+  BDSExtent ext = BDSExtent(extentX, extentY, lengthIn*0.5);
+  
   // calculate radius if a tube were to be place around it
   G4double containerRadius = std::max(extentX, extentY);
   
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
   
   return aPipe;
 }

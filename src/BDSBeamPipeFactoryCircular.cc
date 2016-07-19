@@ -2,6 +2,7 @@
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
@@ -137,13 +138,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 
   
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
-  std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
+  BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);
 
-  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,
-								 containerRadiusIn);
-
+  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, containerRadiusIn);
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication

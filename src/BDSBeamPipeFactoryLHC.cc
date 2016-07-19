@@ -2,6 +2,7 @@
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
@@ -194,12 +195,10 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
 					     lengthIn);
   
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerWidthIn,containerWidthIn);
-  std::pair<double,double> extY = std::make_pair(-containerHeightIn,containerHeightIn);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
-
+  BDSExtent ext = BDSExtent(containerWidthIn, containerHeightIn, lengthIn*0.5);
+  
   // build the BDSBeamPipe instance and return it
-  return BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
+  return BuildBeamPipeAndRegisterVolumes(ext, containerWidthIn);
 }
 
 
