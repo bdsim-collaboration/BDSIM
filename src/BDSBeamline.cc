@@ -152,6 +152,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
   G4ThreeVector placementOffset   = component->GetPlacementOffset();
   G4bool hasFinitePlacementOffset = BDS::IsFinite(placementOffset);
+  G4ThreeVector iFNormal = component->InputFaceNormal();
+  G4ThreeVector oFNormal = component->OutputFaceNormal();
   
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
@@ -165,7 +167,52 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4cout << "extent negative             " << eN                           << G4endl;
   G4cout << "object placement offset     " << placementOffset              << G4endl;
   G4cout << "has finite placement offset " << hasFinitePlacementOffset     << G4endl;
+  G4cout << "input face normal           " << iFNormal                     << G4endl;
+  G4cout << "output face normal          " << oFNormal                     << G4endl;
 #endif
+
+  // Check this won't overlap with any previous geometry. This is only done for elements
+  // that aren't drifts as they should be built by the component factory to match any angles.
+  if (!empty()) // can only look back if there is an element - won't clash if no element
+    {
+      G4bool   keepGoing   = true;
+      G4double zSeparation = 0;
+      BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
+      // find previous non drift output face.
+      G4ThreeVector outputFace;
+      G4String clasherName = "Unknown";
+      while (keepGoing)
+	{
+	  if (inspectedElement) // valid element
+	    {// decrement could return nullptr so have to check if valid element
+	      if (inspectedElement->GetType() == "drift") // leave keepGoing true
+		{
+		  zSeparation += inspectedElement->GetChordLength();
+		  inspectedElement = GetPrevious(inspectedElement); // decrement
+		}
+	      else
+		{
+		  keepGoing   = false; // found a non drift - stop here
+		  outputFace  = inspectedElement->GetAcceleratorComponent()->OutputFaceNormal();
+		  clasherName = inspectedElement->GetAcceleratorComponent()->GetName();
+		}
+	    }
+	  else
+	    {keepGoing = false;}
+	}
+      // now do checks
+      BDSExtent extOF = inspectedElement->GetAcceleratorComponent()->GetExtent(); // output face
+      BDSExtent extIF = component->GetExtent(); // input face
+      
+      G4bool willIntersect = BDS::WillIntersect(iFNormal, outputFace, zSeparation, extOF, extIF);
+      if (willIntersect)
+	{
+	  G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
+	  G4cout << "\"" << component->GetName() << "\" will overlap with \""
+		 << clasherName << G4endl;
+	  exit(1);
+	}
+    }
   
   // Calculate the reference placement rotation
   // rotations are done first as they're required to transform the spatial displacements.
