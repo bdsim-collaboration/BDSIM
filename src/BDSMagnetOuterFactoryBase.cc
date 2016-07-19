@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
@@ -12,8 +13,6 @@
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-
-#include <utility>
 
 G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -49,10 +48,6 @@ void BDSMagnetOuterFactoryBase::CleanUp()
   allSolids.clear();
   allVisAttributes.clear();
   allUserLimits.clear();
-
-  magContExtentX = std::make_pair(0,0);
-  magContExtentY = std::make_pair(0,0);
-  magContExtentZ = std::make_pair(0,0);
 
   magnetContainer = nullptr;
 }
@@ -131,9 +126,7 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
 				       inputFace,                   // input face normal vector
 				       outputFace);                 // output fae normal vector
 
-  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
 
 
@@ -151,10 +144,8 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
 				    magnetContainerLength * 0.5, // z half length
 				    0,                           // starting angle
 				    CLHEP::twopi);               // sweep angle
-  
-  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
+
+  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
   
 void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
@@ -164,7 +155,5 @@ void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
 #endif
   magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
 					     magnetContainerLV,
-					     magContExtentX,
-					     magContExtentY,
-					     magContExtentZ);
+					     magContExtent);
 }

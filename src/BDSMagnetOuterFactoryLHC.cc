@@ -6,6 +6,7 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
@@ -889,21 +890,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = yokeOuterRadius;
   // massShift defined at very beginning of this function
-  std::pair<double,double> extX = std::make_pair(-containerRadius+massShift,containerRadius+massShift); 
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  // TBC - x component of this to be checked!
+  BDSExtent ext = BDSExtent(-containerRadius+massShift, containerRadius-massShift,
+			    -containerRadius,containerRadius,
+			    -length*0.5,length*0.5);
 
   magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
 					     magnetContainerLV,
-					     magContExtentX,
-					     magContExtentY,
-					     magContExtentZ,
-					     dipolePosition);
+					     ext, BDSExtent(), dipolePosition);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
 
   // register objects
@@ -1507,21 +1505,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = yokeOuterRadius;
   // massShift defined at very beginning of this function
-  std::pair<double,double> extX = std::make_pair(-containerRadius+massShift,containerRadius+massShift); 
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  // TBC - x component to be checked.
+  BDSExtent ext = BDSExtent(-containerRadius+massShift,containerRadius+massShift,
+			    -containerRadius,containerRadius,
+			    -length*0.5,length*0.5);
   
   magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
-					     magnetContainerLV,
-					     magContExtentX,
-					     magContExtentY,
-					     magContExtentZ,
+					     magnetContainerLV, ext, BDSExtent(),
 					     dipolePosition);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
   
   // register objects

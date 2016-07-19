@@ -6,8 +6,6 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
-#include <utility>
-
 class BDSSimpleComponent;
 class G4LogicalVolume;
 class G4VSolid;
@@ -30,11 +28,9 @@ class BDSMagnetOuter: public BDSGeometryComponent
 public:
   BDSMagnetOuter(G4VSolid*                    containerSolidIn,
 		 G4LogicalVolume*             containerLVIn,
-		 std::pair<G4double,G4double> extentXIn,
-		 std::pair<G4double,G4double> extentYIn,
-		 std::pair<G4double,G4double> extentZIn,
+		 BDSExtent                    extent,
 		 BDSGeometryComponent*        magnetContainerIn,
-		 G4ThreeVector                placementOffset     = G4ThreeVector(0,0,0),
+		 G4ThreeVector                placementOffset  = G4ThreeVector(0,0,0),
 		 BDSSimpleComponent*          endPieceBeforeIn = nullptr,
 		 BDSSimpleComponent*          endPieceAfterIn  = nullptr);
   BDSMagnetOuter(BDSGeometryComponent* component,

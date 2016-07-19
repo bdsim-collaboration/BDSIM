@@ -1,8 +1,9 @@
 #ifndef BDSMAGNETOUTERFACTORYBASE_H
 #define BDSMAGNETOUTERFACTORYBASE_H
 
-#include "BDSGeometryComponent.hh"
 #include "BDSBeamPipe.hh"
+#include "BDSExtent.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuter.hh"
 
 #include "globals.hh"         // geant4 globals / types
@@ -209,9 +210,7 @@ protected:
   std::vector<G4VisAttributes*>   allVisAttributes;
   std::vector<G4UserLimits*>      allUserLimits;
 
-  std::pair<G4double, G4double>   magContExtentX;
-  std::pair<G4double, G4double>   magContExtentY;
-  std::pair<G4double, G4double>   magContExtentZ;
+  BDSExtent                       magContExtent;
   BDSGeometryComponent*           magnetContainer;
 
   /// A larger length safety that can be used where tracking accuracty isn't required

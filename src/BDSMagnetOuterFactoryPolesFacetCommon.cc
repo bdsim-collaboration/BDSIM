@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSMagnetOuterFactoryPolesFacetCommon.hh"
 
 #include "globals.hh"  // geant4 globals / types
@@ -8,7 +9,6 @@
 #include "G4VSolid.hh"
 
 #include <vector>
-#include <utility>
 
 BDSMagnetOuterFactoryPolesFacetCommon::BDSMagnetOuterFactoryPolesFacetCommon(G4double factorIn):
   BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/2), factor(factorIn)
@@ -94,8 +94,7 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
 					 zPlanes,                   // z plane z coordinates
 					 contInnerRadii,
 					 magContOuterRadii);
-  
-  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5); 
+
+
+  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }

@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
@@ -458,14 +459,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = outerDiameter + lengthSafety;
-  std::pair<double,double> extX = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
   
   // register all objects that go with the final geometry component (from internal vectors)

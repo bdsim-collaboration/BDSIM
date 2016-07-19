@@ -1,6 +1,7 @@
 #include "BDSMagnetOuterFactoryPolesSquare.hh"
 
 #include "BDSBeamPipe.hh"
+#include "BDSExtent.hh"
 #include "BDSDebug.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSGlobalConstants.hh"
@@ -113,11 +114,8 @@ void BDSMagnetOuterFactoryPolesSquare::CreateYokeAndContainerSolid(G4String name
 				   magnetContainerRadius,     // y half length
 				   magnetContainerLength*0.5);// z half length
 
-  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
-
 
 void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
                                                              G4double /*length*/,

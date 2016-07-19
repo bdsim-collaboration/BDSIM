@@ -2,21 +2,18 @@
 #include "BDSMagnetOuter.hh"
 #include "BDSSimpleComponent.hh"
 
-#include <utility>
-
+class BDSExtent;
 class G4VSolid;
 class G4LogicalVolume;
 
 BDSMagnetOuter::BDSMagnetOuter(G4VSolid*                    containerSolid,
 			       G4LogicalVolume*             containerLV,
-			       std::pair<G4double,G4double> extentX,
-			       std::pair<G4double,G4double> extentY,
-			       std::pair<G4double,G4double> extentZ,
+			       BDSExtent                    extent,
 			       BDSGeometryComponent*        magnetContainerIn,
 			       G4ThreeVector                placementOffset,
 			       BDSSimpleComponent*          endPieceBeforeIn,
 			       BDSSimpleComponent*          endPieceAfterIn):
-  BDSGeometryComponent(containerSolid, containerLV, extentX, extentY, extentZ,
+  BDSGeometryComponent(containerSolid, containerLV, extent, BDSExtent(),
 		       placementOffset),
   magnetContainer(magnetContainerIn),
   endPieceBefore(endPieceBeforeIn),

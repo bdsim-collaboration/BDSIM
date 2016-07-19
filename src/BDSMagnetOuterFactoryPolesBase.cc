@@ -240,11 +240,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 						 magnetAngledFaceSolid);
 
   G4double contRZ = 0.5*length;
+  BDSExtent extCont = BDSExtent(contRX, contRY, contRZ);
   BDSMagnetOuter* magnetContainer = new BDSMagnetOuter(magnetContainerSolid,
 						       nullptr,
-						       std::make_pair(-contRX,contRX),
-						       std::make_pair(-contRY,contRY),
-						       std::make_pair(-contRZ,contRZ),
+						       extCont,
 						       nullptr);
   
   G4Box* yokeOuter = new G4Box(name + "_yoke_outer_solid", // name
@@ -338,14 +337,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
     }
   
   // record extents
-  std::pair<double,double> extX = std::make_pair(-yokeFinishRadius,  yokeFinishRadius);
-  std::pair<double,double> extY = std::make_pair(-yokeFinishRadiusY, yokeFinishRadiusY);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(yokeFinishRadius, yokeFinishRadiusY, length*0.5);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
   
   outer->RegisterSolid(allSolids);
@@ -551,14 +547,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   // record extents
   // container radius is just outerDiamter as yoke is circular
   G4double containerRadius = outerDiameter + lengthSafety;
-  std::pair<double,double> extX = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
 
   outer->RegisterRotationMatrix(allRotationMatrices);
@@ -1273,15 +1266,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::KickerConstructor(G4String     n
   G4double containerRadius = 0.5*outerDiameter;
   G4double extXPos = outerDiameter - beamPipeContainerRadius;
   G4double extXNeg = -beamPipeContainerRadius;
-  std::pair<double,double> extX = std::make_pair(extXNeg,extXPos);
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(extXNeg,extXPos,
+			    -containerRadius,containerRadius,
+			    -length*0.5,length*0.5);
   
   // construct geometry component
   BDSMagnetOuter* kicker = new BDSMagnetOuter(containerSolid,
-					      containerLV,
-					      extX, extY, extZ,
-					      nullptr, // TO BE COMPLETED!!!
+					      containerLV, ext,
+					      nullptr, // TBC!!!
 					      containerTranslation);
   
   // register everything
@@ -1482,6 +1474,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (buildVertically)
     {std::swap(extX, extY);}
   std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(extX, extY, extZ);
 
   G4double sLength = length; // default is normal length
   // if we have angled faces, make square faced solids longer for intersection.
@@ -1700,8 +1693,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
   
   outer->RegisterSolid(allSolids);
