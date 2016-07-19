@@ -1,6 +1,8 @@
 #ifndef BDSUTILITIES_H
 #define BDSUTILITIES_H
 
+#include "BDSExtent.hh"
+
 #include "globals.hh"   // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
@@ -89,7 +91,14 @@ namespace BDS
 
   /// Rotate a two vector in polar coordinates by an angle.
   G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
-}
 
+  /// Check if two planes will overlap - as defined by their UNIT normal
+  /// vectors at 0,0,0 and the z separation of the two.
+  G4bool WillIntersect(const G4ThreeVector& outgoingNormal,
+		       const G4ThreeVector& incomingNormal,
+		       const G4double&      zSeparation,
+		       const BDSExtent&     outgoingExtent,
+		       const BDSExtent&     incomingExtent);
+}
 
 #endif

@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
@@ -329,4 +330,29 @@ G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
   G4double xp = vec.x()*cos(angle) - vec.y()*sin(angle);
   G4double yp = vec.x()*sin(angle) + vec.y()*cos(angle);
   return G4TwoVector(xp,yp);
+}
+
+G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
+			  const G4ThreeVector& incomingNormal,
+			  const G4double&      zSeparation,
+			  const BDSExtent&     outgoingExtent,
+			  const BDSExtent&     incomingExtent)
+{
+  // for any two normal vectors of planes - if their cross
+  // product is zero, then they're (anti) parallel and will
+  // never intersect
+  G4ThreeVector cross = incomingNormal.cross(outgoingNormal);
+  G4double det = cross.mag2();
+  if (!BDS::IsFinite(det))
+    {return false;}
+
+  /*
+  // else they must intersect at some distance - work out how much
+  G4ThreeVector p1_normal = inputNormal;
+  G4ThreeVector p2_noraml = outputNormal;
+  G4ThreeVector p3_normal = cross;
+  G4ThreeVector point = ((p3_normal.cross(p2_normal) * p1_normal) +
+			 (p1_normal.cross(p3_normal) * p2_normal)) / det;
+  G4cout << point << G4endl;
+  */
 }
