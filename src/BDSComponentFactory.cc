@@ -849,14 +849,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
  std::vector<G4String> skewKeys = st->SkewComponentKeys();
  std::vector<G4String>::iterator nkey = normKeys.begin();
  std::vector<G4String>::iterator skey = skewKeys.begin();
+
+ //Don't divide by element length, keep strengths as knl/ksl
  for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
    {
-     (*st)[*nkey] = (*kn) / element->l;
-     (*st)[*skey] = (*ks) / element->l;
+     (*st)[*nkey] = (*kn) ;
+     (*st)[*skey] = (*ks) ;
    }
  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
-					       BDSIntegratorType::g4classicalrk4,
+					       BDSIntegratorType::multipole,
 					       st);
 
  return new BDSMagnet(BDSMagnetType::multipole,
