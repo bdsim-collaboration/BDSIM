@@ -29,7 +29,7 @@ BDSIntegratorSet BDS::GetIntegratorSet(BDSIntegratorSetType set)
 					     BDSIntegratorType::sextupole,      // sextupole
 					     BDSIntegratorType::octupole,       // octupole
 					     BDSIntegratorType::decapole,       // decapole
-					     BDSIntegratorType::g4classicalrk4, // multipole
+					     BDSIntegratorType::multipole,      // multipole
 					     BDSIntegratorType::g4classicalrk4, // muonspoiler
 					     BDSIntegratorType::g4classicalrk4, // rfcavity
 					     BDSIntegratorType::g4classicalrk4, // rf
