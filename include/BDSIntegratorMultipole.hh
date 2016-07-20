@@ -51,12 +51,14 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorMultipole();
 
-  G4int factorial(G4int n);
+  G4int Factorial(G4int n);
 
-  /// B Field Gradient
-  G4double bPrime;
-  std::list<double> knl;
-  std::list<double> ksl;
+  /// Dipole component
+  G4double b0l;
+  /// Higher order components
+  std::list<double> bnl;
+  std::list<double> bsl;
+  std::vector<G4int> nfact;
 
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;

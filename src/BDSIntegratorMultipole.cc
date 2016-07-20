@@ -2,6 +2,7 @@
 #include "BDSIntegratorMultipole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSUtilities.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -16,25 +17,23 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
   BDSIntegratorBase(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
-  // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  bPrime = - brho * (*strength)["k1"];
-
+  b0l = (*strength)["field"] * brho;
   std::vector<G4String> normKeys = strength->NormalComponentKeys();
   std::vector<G4String> skewKeys = strength->SkewComponentKeys();
   std::vector<G4String>::iterator nkey = normKeys.begin();
   std::vector<G4String>::iterator skey = skewKeys.begin();
-
   for (G4int i = 0; i < normKeys.size(); i++, nkey++, skey++)
     {
-        knl.push_back((*strength)[*nkey]);
-        ksl.push_back((*strength)[*skey]);
+        bnl.push_back((*strength)[*nkey] * brho);
+        bsl.push_back((*strength)[*skey] * brho);
+        nfact.push_back(Factorial(i+1));
     }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif
 }
 
-void BDSIntegratorMultipole::AdvanceHelix(const G4double yIn[],
+void BDSIntegratorMultipole::Stepper(const G4double yIn[],
 					   const G4double dydx[],
 					   const G4double h,
 					   G4double       yOut[],
@@ -44,11 +43,10 @@ void BDSIntegratorMultipole::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitPMag   = GlobalP.mag();
-  // quad strength k normalised to charge and momentum of this particle
-  // note bPrime was calculated w.r.t. the nominal rigidity.
-  G4double k = eqOfM->FCof()*bPrime/InitPMag;
-  // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
 
+  //Factor for normalising to particle momentum
+  G4double normFactor = eqOfM->FCof()/InitPMag;
+  // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   /*
   // this is excessive for debug - only uncomment if debugging this tracking code
 #ifdef BDSDEBUG
@@ -85,25 +83,64 @@ void BDSIntegratorMultipole::AdvanceHelix(const G4double yIn[],
   G4double yp1 = yp;
   G4double zp1 = zp;
 
-  G4complex deflection(0,0);
-  G4complex summ(x0, y0);
-  G4complex temp(0,0);
-  G4double real = 0;
-  G4double imag = 0;
+  //Kicks come from pg 27 of mad-8 physical methods manual
+  G4complex kick(0,0);
+  G4complex position(x0, y0);
+  G4complex result(0,0);
+  //Components of complex vector
+  G4double knReal = 0;
+  G4double knImag = 0;
+  G4double vOverc = 1;
+
+  //G4double speedoflight = CLHEP::c_light / (CLHEP::m / CLHEP::second);
+  G4double dipoleTerm = b0l*normFactor *zp / vOverc;
 
   G4int n = 1;
-  std::list<double>::iterator kn = knl.begin();
+  std::list<double>::iterator kn = bnl.begin();
 
-  for (; kn != knl.end(); n++, kn++)
+  //Sum higher order components into one kick
+  for (; kn != bnl.end(); n++, kn++)
     {
-      real = (*kn) * pow(summ,n).real() / factorial(n);
-      imag = (*kn) * pow(summ,n).imag() / factorial(n);
-      temp = {real,imag};
-      deflection += temp;
+      knReal = (*kn) * normFactor * pow(position,n).real() / nfact[n-1];
+      knImag = (*kn) * normFactor * pow(position,n).imag() / nfact[n-1];
+      result = {knReal,knImag};
+      kick += result;
     }
 
-  xp1 -= deflection.real();
-  yp1 += deflection.imag();
+  //apply kick
+  xp1 -= (kick.real() + dipoleTerm);
+  yp1 += kick.imag();
+
+  //Reset n for skewed kicks.
+  n=1;
+  G4double skewAngle = 0;
+  G4double ksReal = 0;
+  G4double ksImag = 0;
+  //components of rotated momentum
+  G4double xp1Rot = 0;
+  G4double yp1Rot = 0;
+
+
+  //Rotate momentum vector about z axis according to number of poles
+  //then apply each kick seperately and rotate back
+  std::list<double>::iterator ks = bsl.begin();
+  for (; ks != bsl.end(); n++, ks++)
+  {
+    skewAngle = CLHEP::pi / (2*(n+1));
+    //Rotate momentum vectors
+    xp1Rot = xp1*cos(skewAngle) - yp1 * sin(skewAngle);
+    yp1Rot = xp1*sin(skewAngle) + yp1 * cos(skewAngle);
+
+    // calculate and apply kick
+    ksReal = (*ks) * normFactor * pow(position,n).real() / nfact[n-1];
+    ksImag = (*ks) * normFactor * pow(position,n).imag() / nfact[n-1];
+    xp1Rot += ksReal;
+    yp1Rot -= ksImag;
+
+    // Rotate back
+    xp1 = xp1Rot*cos(-skewAngle) - yp1Rot * sin(-skewAngle);
+    yp1 = xp1Rot*sin(-skewAngle) + yp1Rot * cos(-skewAngle);
+  }
 
   LocalR.setX(x1);
   LocalR.setY(y1);
@@ -123,52 +160,13 @@ void BDSIntegratorMultipole::AdvanceHelix(const G4double yIn[],
   yOut[3] = GlobalP.x();
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
+
+  for(G4int i = 0; i < nVariables; i++)
+  {yErr[i] = 0;}
 }
 
-void BDSIntegratorMultipole::Stepper(const G4double yInput[],
-				      const G4double dydx[],
-				      const G4double h,
-				      G4double       yOut[],
-				      G4double       yErr[])
+G4int BDSIntegratorMultipole::Factorial(G4int n)
 {
-  const G4double *pIn   = yInput+3;
-  G4ThreeVector GlobalP = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double InitPMag     = GlobalP.mag();
-  G4double kappa        = - eqOfM->FCof()*bPrime/InitPMag;
-  
-  if(std::abs(kappa) < 1e-9) //kappa is small - no error needed for paraxial treatment
-    {AdvanceHelix(yInput,dydx,h,yOut,yErr);}
-  else
-    {
-      // Compute errors by making two half steps
-      G4double yTemp[6], yIn[6];
-      
-      // Saving yInput because yInput and yOut can be aliases for same array
-      for(G4int i = 0; i < nVariables; i++)
-	{yIn[i] = yInput[i];}
-      
-      // Do two half steps
-      G4double hstep = h * 0.5; 
-      AdvanceHelix(yIn,   dydx, hstep, yTemp, yErr);
-      AdvanceHelix(yTemp, dydx, hstep, yOut,  yErr);
-      
-      // Do a full Step
-      AdvanceHelix(yIn, dydx, h, yTemp, yErr);
-      
-      for(G4int i = 0; i < nVariables; i++)
-	{
-	  yErr[i] = yOut[i] - yTemp[i];
-	  // if error small, set error to 0
-	  // this is done to prevent Geant4 going to smaller and smaller steps
-	  // ideally use some of the global constants instead of hardcoding here
-	  // could look at step size as well instead.
-	  if (std::abs(yErr[i]) < 1e-7)
-	    {yErr[i] = 0;}
-	}
-    }
-}
-
-G4int BDSIntegratorMultipole::factorial(G4int n){
   G4int result = 1;
   for (G4int i = 1; i <= n; i++){
     result *= i;}
