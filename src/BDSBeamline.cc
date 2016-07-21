@@ -176,6 +176,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   if (!empty()) // can only look back if there is an element - won't clash if no element
     {
       G4bool   keepGoing   = true;
+      G4bool   checkFaces  = true;
       G4double zSeparation = 0;
       BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
       // find previous non drift output face.
@@ -198,19 +199,26 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 		}
 	    }
 	  else
-	    {keepGoing = false;}
+	    {
+	      keepGoing  = false;
+	      checkFaces = false; // got to the beginning with only drifts - don't check
+	    }
 	}
-      // now do checks
-      BDSExtent extOF = inspectedElement->GetAcceleratorComponent()->GetExtent(); // output face
-      BDSExtent extIF = component->GetExtent(); // input face
-      
-      G4bool willIntersect = BDS::WillIntersect(iFNormal, outputFace, zSeparation, extOF, extIF);
-      if (willIntersect)
+
+      if (checkFaces)
 	{
-	  G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
-	  G4cout << "\"" << component->GetName() << "\" will overlap with \""
-		 << clasherName << G4endl;
-	  exit(1);
+	  // now do checks
+	  BDSExtent extOF = inspectedElement->GetAcceleratorComponent()->GetExtent(); // output face
+	  BDSExtent extIF = component->GetExtent(); // input face
+	  
+	  G4bool willIntersect = BDS::WillIntersect(iFNormal, outputFace, zSeparation, extOF, extIF);
+	  if (willIntersect)
+	    {
+	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
+	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
+		     << clasherName << G4endl;
+	      exit(1);
+	    }
 	}
     }
   
