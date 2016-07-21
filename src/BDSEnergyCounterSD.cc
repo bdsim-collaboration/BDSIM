@@ -25,9 +25,7 @@
 BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   :G4VSensitiveDetector(name),
    energyCounterCollection(nullptr),
-   primaryCounterCollection(nullptr),
    HCIDe(-1),
-   HCIDp(-1),
    enrg(0.0),
    weight(0.0),
    X(0.0),
@@ -49,7 +47,6 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
   verbose = BDSGlobalConstants::Instance()->Verbose();
   itsName = name;
   collectionName.insert("energy_counter");
-  collectionName.insert("primary_counter");
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
@@ -63,13 +60,8 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
-
-  primaryCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[1]);
-  if (HCIDp < 0)
-    {HCIDp = G4SDManager::GetSDMpointer()->GetCollectionID(primaryCounterCollection);}
-  HCE->AddHitsCollection(HCIDp,primaryCounterCollection);
+  
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "HCID primaries: " << HCIDp << G4endl;
   G4cout << __METHOD_NAME__ << "HCID energy:    " << HCIDe << G4endl;
 #endif
 }
@@ -218,18 +210,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
-  //record first scatter of primary if it exists
-  if (aStep->GetTrack()->GetParentID() == 0)
-    {
-      //create a duplicate hit in the primarycounter hits collection
-      //there are usually a few - filter at end of event action
-      BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-      //set the energy to be the full energy of the primary
-      //just now it's the wee bit of energy deposited in that step
-      G4double primaryEnergy = BDSGlobalConstants::Instance()->BeamKineticEnergy();
-      PCHit->SetEnergy(primaryEnergy);
-      primaryCounterCollection->insert(PCHit);
-    }
 
   // this will kill all particles - both primaries and secondaries, but if it's being
   // recorded in an SD that means it's hit something, so ok
@@ -334,16 +314,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
-  
-  //record first scatter of primary if it exists
-  if (aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetParentID() == 0) {
-    //create a duplicate hit in the primarycounter hits collection
-    //there are usually a few - filter at end of event action
-    BDSEnergyCounterHit* PCHit = new BDSEnergyCounterHit(*ECHit);
-    G4double primaryEnergy = BDSGlobalConstants::Instance()->BeamKineticEnergy();
-    PCHit->SetEnergy(primaryEnergy);
-    primaryCounterCollection->insert(PCHit);
-  }
   
   return true;
 }

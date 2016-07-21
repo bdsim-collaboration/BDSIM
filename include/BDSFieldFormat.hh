@@ -12,7 +12,7 @@
 
 struct fieldformats_def
 {
-  enum type {bdsim2d, bdsim3d};
+  enum type {none, bdsim2d, bdsim3d};
 };
 
 typedef BDSTypeSafeEnum<fieldformats_def,int> BDSFieldFormat;

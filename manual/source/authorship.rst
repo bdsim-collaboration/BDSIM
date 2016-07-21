@@ -10,10 +10,10 @@ Current Authors
 ---------------
 
 * Laurie Nevay (*RHUL, lead developer*)
-* Jochem Snuverink (*RHUL, lead developer*)
 * Stewart Boogert (*RHUL, lead developer*)
 * Lawrence Deacon (*RHUL, CERN, UCL*)
 * William Shields (*RHUL*)
+* Jochem Snuverink (*RHUL, PSI*)
 * Hector Morales (*RHUL, CERN*)
 * Regina Kwee-Hinzmann (*RHUL, CERN*)
 * Stephen Gibson (*RHUL*)
@@ -33,7 +33,6 @@ Past Authors
 * Helmut Burkhardt (*CERN*)
 * Olivier Dadoun (*LAL*)
 * \G. Marchiori (*INFN*)
+* Yngve Levinsen (*CERN*)
 * Will Parker (*RHUL*)
 * Jaime Van Oers (*RHUL*)
-
-

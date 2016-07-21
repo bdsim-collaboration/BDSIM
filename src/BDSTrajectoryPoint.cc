@@ -9,8 +9,10 @@
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
+#include "BDSProcessMap.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include <ostream>
@@ -67,14 +69,19 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
 
+#ifdef BDSDEBUG
+  G4cout << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
+#endif
   if (info)
   {
-    G4ThreeVector prePosLocal = auxNavigator->ConvertToLocal(prePoint->GetPosition());
-    G4ThreeVector posPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
+    prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
+    postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
 
     G4double sCentre = info->GetSPos();
-    preS = sCentre + prePosLocal.z();
-    postS = sCentre + posPosLocal.z();
+    preS             = sCentre + prePosLocal.z();
+    postS            = sCentre + postPosLocal.z();
+    beamlineIndex    = info->GetBeamlineIndex();
+    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
   }
 }
 
@@ -94,6 +101,10 @@ void BDSTrajectoryPoint::InitialiseVariables()
   postProcessSubType = -1;
   preS               = -1000;
   postS              = -1000;
+  beamlineIndex      = -1;
+  turnstaken         = 0;
+  prePosLocal        = G4ThreeVector();
+  postPosLocal       = G4ThreeVector();
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)

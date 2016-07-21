@@ -270,7 +270,6 @@ namespace GMAD
     int      turnOnOpticalSurface;
     int      turnOnBirksSaturation;
     double   lengthSafety;
-    int      randomSeed;
 
     bool        storeTrajectory;
     int         storeTrajectoryDepth;

@@ -149,7 +149,6 @@ public:
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4long   RandomSeed()               const {return G4long  (options.randomSeed);}
   inline G4bool   UseEMLPB()                 const {return G4bool  (options.useEMLPB);}
   inline G4bool   UseHadLPB()                const {return G4bool  (options.useHadLPB);}
   inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}

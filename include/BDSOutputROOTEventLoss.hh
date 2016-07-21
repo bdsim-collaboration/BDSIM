@@ -4,40 +4,42 @@
 #ifndef __ROOTBUILD__
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTunnelHit.hh"
+#include "BDSTrajectoryPoint.hh"
 #endif
 
 #include "TObject.h"
 
 #include <vector>
 
-class BDSOutputROOTEventLoss : public TObject {
-
+class BDSOutputROOTEventLoss: public TObject
+{
 public:
-  int                       n = 0;
-  std::vector<float>        energy;
-  std::vector<float>        S;
-  std::vector<float>        weight;
-  /* geometry model */
-  std::vector<int>          modelID;
-  /* turn number */
-  std::vector<int>          turn;
+  int                       n = 0;   ///< Number of entries
+  std::vector<float>        energy;  ///< Energy deposited in step
+  std::vector<float>        S;       ///< Global curvilinear S coordinate
+  std::vector<float>        weight;  ///< Weight associated with loss
+  std::vector<int>          modelID; ///< Geometry model index
+  std::vector<int>          turn;    ///< Turn number
 
-  /* local coordinates */
+  /// @{ Local coordinate
   std::vector<float>        x;
   std::vector<float>        y;
   std::vector<float>        z;
-
-  /* global coordinates */
+  /// @}
+  
+  //// @{ Global coordinates
   std::vector<float>        X;
   std::vector<float>        Y;
   std::vector<float>        Z;
+  /// @}
   
   BDSOutputROOTEventLoss();
   BDSOutputROOTEventLoss(bool storeLocal, bool storeGobal);
   virtual ~BDSOutputROOTEventLoss();
 #ifndef __ROOTBUILD__
-  void Fill(BDSEnergyCounterHit *hit);
-  void Fill(BDSTunnelHit *hit);
+  void Fill(BDSTrajectoryPoint* hit);
+  void Fill(BDSEnergyCounterHit* hit);
+  void Fill(BDSTunnelHit* hit);
 #endif
   virtual void Flush();
 
