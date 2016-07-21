@@ -116,7 +116,6 @@ void DataLoader::BuildEventBranchNameList()
     std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
     exit(1);
   }
-  // TBC we never close this file - is this correct?
 
   TTree *et = (TTree*)f->Get("Event");
 
@@ -130,6 +129,9 @@ void DataLoader::BuildEventBranchNameList()
     else
       {this->branchNames.push_back(name.Data());}
   }
+
+  f->Close();
+  delete f;
 
   if(Config::Instance()->Debug())
   {
