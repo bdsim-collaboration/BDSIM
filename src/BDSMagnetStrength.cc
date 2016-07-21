@@ -26,7 +26,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
 };
 
 const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
-  "ks", "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12"};
+  "k1", "k2", "k3", "k4", "k5", "k6", "k7", "k8", "k9", "k10", "k11", "k12"};
 
 const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
   "k1s", "k2s", "k3s", "k4s", "k5s", "k6s", "k7s", "k8s", "k9s", "k10s", "k11s", "k12s"};
