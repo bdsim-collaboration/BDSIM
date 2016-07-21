@@ -48,9 +48,15 @@ int main(int argc, char *argv[])
   if (argc > 3)
     {outputFileName = std::string(argv[3]);}
 
-  Config::Instance(configFilePath, inputFilePath, outputFileName);
+  try
+    {Config::Instance(configFilePath, inputFilePath, outputFileName);}
+  catch (std::string error)
+    {
+      std::cout << error << std::endl;
+      exit(1);
+    }
 
-  DataLoader dl = DataLoader();
+  DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
   EventAnalysis evtAnalysis = EventAnalysis(dl.GetEvent(), dl.GetEventTree());
 
   // process events
