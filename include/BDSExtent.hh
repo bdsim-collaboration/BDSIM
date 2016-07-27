@@ -34,6 +34,13 @@ public:
   inline std::pair<G4double, G4double> ExtentX() const {return extentX;}
   inline std::pair<G4double, G4double> ExtentY() const {return extentY;}
   inline std::pair<G4double, G4double> ExtentZ() const {return extentZ;}
+
+  inline G4double XPos() const {return extentX.second;}
+  inline G4double XNeg() const {return extentX.first;}
+  inline G4double YPos() const {return extentY.second;}
+  inline G4double YNeg() const {return extentY.first;}
+  inline G4double ZPos() const {return extentZ.second;}
+  inline G4double ZNeg() const {return extentZ.first;}
   
   inline G4ThreeVector ExtentPositive() const
   {return G4ThreeVector(extentX.second, extentY.second, extentZ.second);}
