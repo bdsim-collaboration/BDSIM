@@ -153,7 +153,6 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4ThreeVector placementOffset   = component->GetPlacementOffset();
   G4bool hasFinitePlacementOffset = BDS::IsFinite(placementOffset);
   G4ThreeVector iFNormal = component->InputFaceNormal();
-  G4ThreeVector oFNormal = component->OutputFaceNormal();
   
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
@@ -180,7 +179,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
       G4double zSeparation = 0;
       BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
       // find previous non drift output face.
-      G4ThreeVector outputFace;
+      G4ThreeVector oFNormal;
       G4String clasherName = "Unknown";
       while (keepGoing)
 	{
@@ -194,7 +193,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 	      else
 		{
 		  keepGoing   = false; // found a non drift - stop here
-		  outputFace  = inspectedElement->GetAcceleratorComponent()->OutputFaceNormal();
+		  oFNormal    = inspectedElement->GetAcceleratorComponent()->OutputFaceNormal();
 		  clasherName = inspectedElement->GetAcceleratorComponent()->GetName();
 		}
 	    }
@@ -211,7 +210,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 	  BDSExtent extOF = inspectedElement->GetAcceleratorComponent()->GetExtent(); // output face
 	  BDSExtent extIF = component->GetExtent(); // input face
 	  
-	  G4bool willIntersect = BDS::WillIntersect(iFNormal, outputFace, zSeparation, extOF, extIF);
+	  G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extOF, extIF);
 	  if (willIntersect)
 	    {
 	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
