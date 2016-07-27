@@ -99,6 +99,17 @@ namespace BDS
 		       const G4double&      zSeparation,
 		       const BDSExtent&     outgoingExtent,
 		       const BDSExtent&     incomingExtent);
+
+  /// Given an x and y coordinate, calculate what the z coordinate must be to
+  /// lie on the plane defined by the supplied normal vector - assumes plane
+  /// intercepts 0,0,0. Used in WillIntersect.
+  G4double GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y);
+
+  /// Rotate a face normal vector for a given component to that of the reference
+  /// trajectory on that face.  This takes the component full angle and assumes the
+  /// component changes the angle continuously between its faces and therefore half
+  /// of this angle is used for the rotation.
+  G4ThreeVector RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle);
 }
 
 #endif

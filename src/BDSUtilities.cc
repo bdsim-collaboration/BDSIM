@@ -356,3 +356,24 @@ G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
   G4cout << point << G4endl;
   */
 }
+
+G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
+{
+  // equation of a plane with offset v_0, normal unit n and any point on plane v
+  // n.(v-v_0) = 0
+  // for equation of plane that intercepts 0,0,0
+  // n.v = 0;
+  // exanding dot product
+  // n.x()*v.x() + n.y()*v.y() + n.z()*v.z() = 0;
+  // for given x and y can solve for z
+  // v.z = (-n.x*v.x - n.y*v.y ) / n.z;
+
+  return (-normal.x()*x - normal.y()*y) / normal.z();
+}
+
+G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle)
+{
+  G4RotationMatrix rm = G4RotationMatrix();
+  rm.rotateY(fullAngle*0.5);
+  return faceNormal.transform(rm);
+}
