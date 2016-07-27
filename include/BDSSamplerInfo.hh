@@ -39,7 +39,7 @@ public:
 
   /// @{ Accessor
   inline G4String      Name()             const {return name;}
-  inline G4String      UniqueName()      const {return uniqueName;}
+  inline G4String      UniqueName()       const {return uniqueName;}
   inline BDSSampler*   Sampler()          const {return sampler;}
   inline G4Transform3D Transform()        const {return transform;}
   inline G4Transform3D TransformInverse() const {return transformInverse;}
