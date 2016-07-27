@@ -337,7 +337,7 @@ G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
 			  const G4double&      zSeparation,
 			  const BDSExtent&     outgoingExtent,
 			  const BDSExtent&     incomingExtent)
-{
+{  
   // for any two normal vectors of planes - if their cross
   // product is zero, then they're (anti) parallel and will
   // never intersect
@@ -346,15 +346,31 @@ G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
   if (!BDS::IsFinite(det))
     {return false;}
 
-  /*
-  // else they must intersect at some distance - work out how much
-  G4ThreeVector p1_normal = inputNormal;
-  G4ThreeVector p2_noraml = outputNormal;
-  G4ThreeVector p3_normal = cross;
-  G4ThreeVector point = ((p3_normal.cross(p2_normal) * p1_normal) +
-			 (p1_normal.cross(p3_normal) * p2_normal)) / det;
-  G4cout << point << G4endl;
-  */
+  // shortcuts / copies - OG for outgoing and IC for incoming
+  G4double   dz  = zSeparation;
+  const BDSExtent& eog = outgoingExtent;
+  const BDSExtent& eic = incomingExtent;
+
+  // z coordinate of points at maximum extents in x,y
+  G4double xNegYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YNeg());
+  G4double xNegYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YPos());
+  G4double xPosYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YPos());
+  G4double xPosYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YNeg());
+  G4double xNegYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YNeg());
+  G4double xNegYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YPos());
+  G4double xPosYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YPos());
+  G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YNeg());
+ 
+  // test of they'd overlap
+  G4bool xNegYNegFail = xNegYNegOG > (dz - xNegYNegIC);
+  G4bool xNegYPosFail = xNegYPosOG > (dz - xNegYPosIC);
+  G4bool xPosYPosFail = xPosYPosOG > (dz - xPosYPosIC);
+  G4bool xPosYNegFail = xPosYNegOG > (dz - xPosYNegIC);
+
+  if (xNegYNegFail || xNegYPosFail || xPosYPosFail || xPosYNegFail)
+    {return true;}
+  else // shouldn't happen
+    {return false;}
 }
 
 G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
