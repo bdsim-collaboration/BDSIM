@@ -83,10 +83,13 @@ public:
   /// Note, this is 0 for h and v kickers
   inline G4double GetAngle() const {return angle;}
 
-  /// @{ Access face normal unit vector.
+  /// Access face normal unit vector. This is w.r.t. the incoming reference
+  /// trajectory and NOT the local geometry of the component.
   inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
+
+  /// Normal unit vector w.r.t. the outgoing reference trajectory and NOT the
+  /// local geometry of the component.
   inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
-  /// @}
   
   /// @{ Access the length of the component. Note there is no z length - this is chord length.
   /// Only chord OR arc makes it explicit.
