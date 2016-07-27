@@ -11,13 +11,15 @@
 
 #ifndef __ROOTBUILD__
 #include "BDSAcceleratorModel.hh"
+#include "BDSSamplerRegistry.hh"
 #else
 #include "TTree.h"
 #endif
 
-class BDSOutputROOTEventModel : public TObject {
-public :
-
+class BDSOutputROOTEventModel: public TObject
+{
+public:
+  std::vector<std::string> samplerNamesUnique;
 
   std::vector<std::string> componentName;
   std::vector<std::string> placementName;
