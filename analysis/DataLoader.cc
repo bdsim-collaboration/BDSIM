@@ -85,8 +85,13 @@ void DataLoader::BuildInputFileList()
 
 void DataLoader::BuildTreeNameList()
 {
-  // open file
+  // open file - this is the first opening so test here if it's valid
   TFile *f = new TFile(fileNames[0].c_str());
+  if (f->IsZombie())
+  {
+    std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
+    exit(1);
+  }
 
   TList *kl = f->GetListOfKeys();
 
@@ -106,7 +111,11 @@ void DataLoader::BuildTreeNameList()
 void DataLoader::BuildEventBranchNameList()
 {
   TFile *f = new TFile(fileNames[0].c_str());
-  // TBC we never close this file - is this correct?
+  if (f->IsZombie())
+  {
+    std::cout << __METHOD_NAME__ << " no such file \"" << fileNames[0] << "\"" << std::endl;
+    exit(1);
+  }
 
   TTree *et = (TTree*)f->Get("Event");
 
@@ -120,6 +129,9 @@ void DataLoader::BuildEventBranchNameList()
     else
       {this->branchNames.push_back(name.Data());}
   }
+
+  f->Close();
+  delete f;
 
   if(Config::Instance()->Debug())
   {
