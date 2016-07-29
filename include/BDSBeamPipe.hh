@@ -17,7 +17,7 @@ class BDSExtent;
  * This does not implement the construction of the beampipe but merely
  * holds all relevant objects and information. 
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipe: public BDSGeometryComponent
@@ -39,14 +39,19 @@ public:
 
   /// Access a solid for beampipe subtraction - note this is typically longer
   /// than the actual beampipe for unambiguous subtraction
-  G4VSolid*        GetContainerSubtractionSolid() const;
+  inline G4VSolid* GetContainerSubtractionSolid() const {return containerSubtractionSolid;}
   /// Access the vacuum volume to set fields and limits
-  G4LogicalVolume* GetVacuumLogicalVolume() const;
+  inline G4LogicalVolume* GetVacuumLogicalVolume() const {return vacuumLogicalVolume;};
   /// Flag to tell whether the parent volume needn't use a subtraction
   /// solid and can simply use a G4Tubs for example
-  G4bool           ContainerIsCircular() const;
+  inline G4bool ContainerIsCircular() const {return containerIsCircular;}
   /// If it is circular, we need the radius
-  G4double         GetContainerRadius() const;
+  inline G4double GetContainerRadius() const {return containerRadius;}
+
+  /// @{ Accessor
+  inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
+  inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
+  /// @}
   
 protected:
   G4VSolid*        containerSubtractionSolid;
@@ -56,17 +61,5 @@ protected:
   G4ThreeVector    inputFaceNormal;
   G4ThreeVector    outputFaceNormal;
 };
-
-inline G4VSolid* BDSBeamPipe::GetContainerSubtractionSolid() const
-{return containerSubtractionSolid;}
-
-inline G4LogicalVolume* BDSBeamPipe::GetVacuumLogicalVolume() const
-{return vacuumLogicalVolume;}
-
-inline G4bool BDSBeamPipe::ContainerIsCircular() const
-{return containerIsCircular;}
-
-inline G4double BDSBeamPipe::GetContainerRadius() const
-{return containerRadius;}
 
 #endif
