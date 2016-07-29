@@ -26,17 +26,21 @@ class G4VSolid;
 class BDSMagnetOuter: public BDSGeometryComponent
 {
 public:
-  BDSMagnetOuter(G4VSolid*                    containerSolidIn,
-		 G4LogicalVolume*             containerLVIn,
-		 BDSExtent                    extent,
-		 BDSGeometryComponent*        magnetContainerIn,
-		 G4ThreeVector                placementOffset  = G4ThreeVector(0,0,0),
-		 BDSSimpleComponent*          endPieceBeforeIn = nullptr,
-		 BDSSimpleComponent*          endPieceAfterIn  = nullptr);
+  BDSMagnetOuter(G4VSolid*             containerSolidIn,
+		 G4LogicalVolume*      containerLVIn,
+		 BDSExtent             extent,
+		 BDSGeometryComponent* magnetContainerIn,
+		 G4ThreeVector         placementOffset    = G4ThreeVector(0,0,0),
+		 BDSSimpleComponent*   endPieceBeforeIn   = nullptr,
+		 BDSSimpleComponent*   endPieceAfterIn    = nullptr,
+		 G4ThreeVector         inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		 G4ThreeVector         outputFaceNormalIn = G4ThreeVector(0,0, 1));
   BDSMagnetOuter(BDSGeometryComponent* component,
 		 BDSGeometryComponent* magnetContainerIn,
-		 BDSSimpleComponent*   endPieceBeforeIn = nullptr,
-		 BDSSimpleComponent*   endPieceAfterIn  = nullptr);
+		 BDSSimpleComponent*   endPieceBeforeIn   = nullptr,
+		 BDSSimpleComponent*   endPieceAfterIn    = nullptr,
+		 G4ThreeVector         inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+		 G4ThreeVector         outputFaceNormalIn = G4ThreeVector(0,0, 1));
   virtual ~BDSMagnetOuter();
 
   /// Access the magnet container - a BDSGeometryComponent instance that has a suggested
@@ -59,10 +63,23 @@ public:
   /// Clear the memory of the possibly uneeded end piece objects.
   void ClearEndPieces();
 
+  /// @{ Accessor.
+  inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
+  inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
+  /// @}
+
+  /// @{ Setter for face normals.
+  inline void SetInputFaceNormal(const G4ThreeVector input)   {inputFaceNormal = input;}
+  inline void SetOutputFaceNormal(const G4ThreeVector output) {outputFaceNormal = output;}
+  /// @}
+  
 protected:
   BDSGeometryComponent* magnetContainer;
   BDSSimpleComponent* endPieceBefore;
   BDSSimpleComponent* endPieceAfter;
+
+  G4ThreeVector    inputFaceNormal;
+  G4ThreeVector    outputFaceNormal;
 };
 
 #endif
