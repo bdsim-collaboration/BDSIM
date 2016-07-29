@@ -150,6 +150,10 @@ protected:
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4VisAttributes*>   allVisAttributes;
   std::vector<G4UserLimits*>      allUserLimits;
+  
+  /// @{ For recording the face normals in the finished pipe component.
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
 };
 
 #endif

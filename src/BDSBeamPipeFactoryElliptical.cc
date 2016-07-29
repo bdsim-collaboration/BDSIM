@@ -108,12 +108,14 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipeAngledInOut(G4String   
   CleanUp();
   
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
   
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn, inputface, outputface);
+  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn,
+			    inputFaceNormal, outputFaceNormal);
   
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, aper1In, aper2In, beamPipeThicknessIn);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, aper1In, aper2In, beamPipeThicknessIn);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    nameIn,

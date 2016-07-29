@@ -98,14 +98,16 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
   CleanUp();
 
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
   
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn, inputface, outputface);
+  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn,
+			    inputFaceNormal, outputFaceNormal);
   
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, containerRadius);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, containerRadius);
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the

@@ -41,6 +41,9 @@ void BDSBeamPipeFactoryBase::CleanUp()
   allSolids.clear();
   allVisAttributes.clear();
   allUserLimits.clear();
+
+  inputFaceNormal  = G4ThreeVector(0,0,-1);
+  outputFaceNormal = G4ThreeVector(0,0, 1);
 }
 
 
@@ -191,7 +194,8 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   // build the BDSBeamPipe instance and return it
   BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
 				       containerSubtractionSolid,
-				       vacuumLV,false,containerRadius);
+				       vacuumLV,false,containerRadius,
+				       inputFaceNormal, outputFaceNormal);
 
   // register objects
   aPipe->RegisterSolid(allSolids);

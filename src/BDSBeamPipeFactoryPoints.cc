@@ -235,14 +235,15 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipeAngledInOut(G4String    nam
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
   
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   // calculate and set the intersection solid radius
-  intersectionRadius = CalculateIntersectionRadius(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
+  intersectionRadius = CalculateIntersectionRadius(aper1In, aper2In, aper3In, aper4In,
+						   beamPipeThicknessIn);
 
   // create solids based on the member vectors of points
-  CreateSolidsAngled(nameIn, lengthIn, inputface, outputface);
+  CreateSolidsAngled(nameIn, lengthIn, inputFaceNormal, outputFaceNormal);
   
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn);
 }

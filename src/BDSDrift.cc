@@ -35,4 +35,8 @@ void BDSDrift::Build()
 
   // update extents
   InheritExtents(pipe);
+
+  // update faces
+  SetInputFaceNormal(pipe->InputFaceNormal());
+  SetOutputFaceNormal(pipe->OutputFaceNormal());
 }

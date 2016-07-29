@@ -350,12 +350,14 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
   CalculateGeometricalParameters(aper1, aper2, aper3, beamPipeThickness, length);
   
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
   
-  G4double containerRadius = CreateGeneralAngledSolids(name, length, inputface, outputface);
+  G4double containerRadius = CreateGeneralAngledSolids(name, length, inputFaceNormal,
+						       outputFaceNormal);
   
-  return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial, length, containerRadius);
+  return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial,
+				 length, containerRadius);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    name,

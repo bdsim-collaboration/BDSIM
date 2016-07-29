@@ -161,16 +161,19 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipeAngledInOut(G4String  
   CleanUp();
   
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   G4double width  = std::max(aper1In,aper3In) + beamPipeThicknessIn + lengthSafety;
   G4double height = std::max(aper2In,aper4In) + beamPipeThicknessIn + lengthSafety;
   
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn, inputface, outputface);
-  CreateContainerSubtractionSolid(nameIn, lengthIn, beamPipeThicknessIn, aper1In, aper2In, aper3In, aper4In);
+  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, aper4In,
+			    beamPipeThicknessIn, inputFaceNormal, outputFaceNormal);
+  CreateContainerSubtractionSolid(nameIn, lengthIn, beamPipeThicknessIn, aper1In,
+				  aper2In, aper3In, aper4In);
   
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, width, height);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, width, height);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    nameIn,
