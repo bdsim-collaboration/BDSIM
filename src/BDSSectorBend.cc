@@ -46,6 +46,9 @@ BDSSectorBend::BDSSectorBend(G4String            name,
   else
     {chordLength = arcLength;}
 
+  SetInputFaceNormal(BDS::RotateToReferenceFrame(inputface, angle));
+  SetOutputFaceNormal(BDS::RotateToReferenceFrame(outputface, -angle));
+
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
   G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
