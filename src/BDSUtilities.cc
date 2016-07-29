@@ -347,7 +347,7 @@ G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
     {return false;}
 
   // shortcuts / copies - OG for outgoing and IC for incoming
-  G4double   dz  = zSeparation;
+  const G4double&  dz  = zSeparation;
   const BDSExtent& eog = outgoingExtent;
   const BDSExtent& eic = incomingExtent;
 
