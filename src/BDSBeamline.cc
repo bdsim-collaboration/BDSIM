@@ -152,7 +152,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
   G4ThreeVector placementOffset   = component->GetPlacementOffset();
   G4bool hasFinitePlacementOffset = BDS::IsFinite(placementOffset);
-  G4ThreeVector iFNormal = component->InputFaceNormal();
+  G4ThreeVector oFNormal = component->InputFaceNormal();
   
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
@@ -172,14 +172,15 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 
   // Check this won't overlap with any previous geometry. This is only done for elements
   // that aren't drifts as they should be built by the component factory to match any angles.
-  if (!empty()) // can only look back if there is an element - won't clash if no element
-    {
+  //if (!empty() && (component->GetType() != "drift"))
+  if (!empty())
+    {// can only look back if there is an element - won't clash if no element; also add drifts always
       G4bool   keepGoing   = true;
       G4bool   checkFaces  = true;
       G4double zSeparation = 0;
       BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
       // find previous non drift output face.
-      G4ThreeVector oFNormal;
+      G4ThreeVector iFNormal;
       G4String clasherName = "Unknown";
       while (keepGoing)
 	{
@@ -193,7 +194,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 	      else
 		{
 		  keepGoing   = false; // found a non drift - stop here
-		  oFNormal    = inspectedElement->GetAcceleratorComponent()->OutputFaceNormal();
+		  iFNormal    = inspectedElement->GetAcceleratorComponent()->OutputFaceNormal();
 		  clasherName = inspectedElement->GetAcceleratorComponent()->GetName();
 		}
 	    }
