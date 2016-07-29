@@ -28,7 +28,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
 						 G4bool           precisionRegionIn,
-						 BDSBeamPipeInfo* beamPipeInfoIn):
+						 BDSBeamPipeInfo* beamPipeInfoIn,
+						 G4ThreeVector    inputFaceNormalIn,
+						 G4ThreeVector    outputFaceNormalIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
@@ -41,8 +43,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   endPieceBefore(nullptr),
   endPieceAfter(nullptr),
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
-  inputFaceNormal(G4ThreeVector(0,0,-1)), // input backwards along z
-  outputFaceNormal(G4ThreeVector(0,0,1))  // unit forwards along z
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;

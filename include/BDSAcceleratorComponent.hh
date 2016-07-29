@@ -54,13 +54,15 @@ public:
   /// derived class, including extents.
   /// Note, this class has arc length and chord length which are initially set
   /// to be the same, unless angle is != 0 in which case, the chord length is
-  /// calculated from arc length
+  /// calculated from arc length.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
 			  G4bool           precisionRegion = false,
-			  BDSBeamPipeInfo* beamPipeInfo    = nullptr);
+			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
+			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
   
   virtual ~BDSAcceleratorComponent();
 
