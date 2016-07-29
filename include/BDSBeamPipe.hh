@@ -31,7 +31,9 @@ public:
 	      G4VSolid*                 containerSubtractionSolidIn,
 	      G4LogicalVolume*          vacuumLVIn,
 	      G4bool                    containerIsCircularIn = false,
-	      G4double                  containerRadiusIn = 0.0);
+	      G4double                  containerRadiusIn     = 0.0,
+	      G4ThreeVector             inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+	      G4ThreeVector             outputFaceNormalIn = G4ThreeVector(0,0, 1));
   
   virtual ~BDSBeamPipe(); /// default destructor sufficient as G4 manages solids and LVs
 
@@ -51,6 +53,8 @@ protected:
   G4LogicalVolume* vacuumLogicalVolume;
   G4bool           containerIsCircular;
   G4double         containerRadius;
+  G4ThreeVector    inputFaceNormal;
+  G4ThreeVector    outputFaceNormal;
 };
 
 inline G4VSolid* BDSBeamPipe::GetContainerSubtractionSolid() const
