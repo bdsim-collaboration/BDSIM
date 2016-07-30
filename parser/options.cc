@@ -284,4 +284,5 @@ void Options::PublishMembers()
   publish("killNeutrinos",  &Options::killNeutrinos);
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
+  publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
 }

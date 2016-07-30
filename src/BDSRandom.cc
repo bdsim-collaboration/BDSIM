@@ -25,15 +25,10 @@ void BDSRandom::SetSeed()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "set the seed" << G4endl;
   G4cout << __METHOD_NAME__ << "seed from BDSGlobalConstants = " 
-	 << BDSGlobalConstants::Instance()->RandomSeed() << G4endl
-         << __METHOD_NAME__ << "seed in command line options = "
          << BDSGlobalConstants::Instance()->Seed() << G4endl
-         << __METHOD_NAME__ << "seed set in command line options : "
+         << __METHOD_NAME__ << "seed set in GMAD options: "
 	 << BDSGlobalConstants::Instance()->SeedSet() << G4endl;
 #endif
-  // get seed from options if set
-  // override with seed from execoptions if specifed
-  
   // if seed positive set it, else use the time
   long seed = 0;
 

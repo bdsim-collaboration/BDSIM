@@ -1,8 +1,8 @@
 ! standard options for runing bdsim
 
-option, beampipeRadius = 10 * cm,
+option, beampipeRadius = 3 * cm,
         outerDiameter = 0.4 * m,
         beampipeThickness = 0.5 * cm,
         checkOverlaps=1;
 
-option,ngenerate=1000;
+option,ngenerate=1;

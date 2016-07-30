@@ -175,6 +175,7 @@ public:
   inline G4bool   TurnOnBirksSaturation()    const {return G4bool  (options.turnOnBirksSaturation);}
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
   inline G4double ElossHistoTransBinWidth()  const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
+  inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
 
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
