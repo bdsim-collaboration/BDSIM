@@ -1342,14 +1342,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // these are full height and width maximum so that they'd fit
   G4double coilHeight = outerHalf - poleHalfHeight - yokeThickness;
   G4double coilWidth  = outerDiameter - yokeThickness - 2*poleHalfWidth;
-      
+
+  G4double coilHeightOriginal = coilHeight;
   // reduce the coils from the absolute maximum;
   coilHeight *= 0.8;
   coilWidth  *= 0.65;
 
+  // Vertical offset of coil from pole tip
+  G4double cDY = (coilHeightOriginal - coilHeight)*0.5;
+
   // T = top, B = bottom, L = left, R = right
   G4double coilDX = poleHalfWidth  + 0.5*coilWidth  + lengthSafetyLarge;
-  G4double coilDY = poleHalfHeight + 0.5*coilHeight + lengthSafetyLarge;
+  G4double coilDY = poleHalfHeight + 0.5*coilHeight + lengthSafetyLarge + cDY;
   G4ThreeVector coilTLDisp = G4ThreeVector( coilDX, coilDY, 0);
   G4ThreeVector coilTRDisp = G4ThreeVector(-coilDX, coilDY, 0);
   G4ThreeVector coilBLDisp = G4ThreeVector( coilDX,-coilDY, 0);
@@ -1404,8 +1408,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (buildPole)
     {
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 4*lsl));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight + coilHeight + 4*lsl));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 4*lsl + cDY));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight + coilHeight + 4*lsl + cDY));
     }
   cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, outerHalf + lsl));
   cPoints.push_back(G4TwoVector(poleHalfWidth - outerDiameter - 2*lsl, outerHalf + lsl));
@@ -1413,8 +1417,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -outerHalf - lsl));
   if (buildPole)
     {
-      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight - coilHeight - 4*lsl));
-      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 4*lsl));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight - coilHeight - 4*lsl - cDY));
+      cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 4*lsl - cDY));
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight));
     }
   cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));
@@ -1426,8 +1430,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (buildPole)
     {
       mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight + coilHeight + 2*lsl));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, poleHalfHeight + coilHeight + 2*lsl));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, poleHalfHeight + coilHeight + 2*lsl + cDY));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, poleHalfHeight + coilHeight + 2*lsl + cDY));
     }
   mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl,  outerHalf + 2*lsl));
   mCPoints.push_back(G4TwoVector(poleHalfWidth - outerDiameter - 2*lsl,  outerHalf + 2*lsl));
@@ -1435,8 +1439,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -outerHalf - 2*lsl));
   if (buildPole)
     {
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight - coilHeight - 2*lsl));
-      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 2*lsl));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY));
+      mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight - coilHeight - 2*lsl - cDY));
       mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight));
     }
   mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight));
@@ -1787,7 +1791,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   std::vector<G4TwoVector> contEPPoints;
   const G4double connector = 1*CLHEP::mm;
   G4double xmax = poleHalfWidth + coilWidth + connector;
-  G4double ymax = poleHalfHeight + coilHeight + connector;
+  G4double ymax = poleHalfHeight + coilHeight + cDY + connector;
   contEPPoints.push_back(G4TwoVector(xmax + connector,  ymax));
   contEPPoints.push_back(G4TwoVector(-xmax,  ymax));
   contEPPoints.push_back(G4TwoVector(-xmax,  poleHalfHeight));
