@@ -1366,6 +1366,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   std::vector<G4TwoVector> cPoints;  // container points (for magnet outer only)
   std::vector<G4TwoVector> mCPoints; // magnet container points
 
+  // variables for extents
+  G4double extXPos = 0;
+  G4double extXNeg = 0;
+  G4double extYPos = 0;
+  G4double extYNeg = 0;
   // Typically we have a positive bend angle that (by convention) causes a
   // bend to the -ve x direction in right hadned coordinates. Also, typically,
   // a C shaped magnet has the yoke to the inside so there is an aperture for
@@ -1435,6 +1440,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       mCPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 4*lsl, -poleHalfHeight));
     }
   mCPoints.push_back(G4TwoVector(poleHalfWidth + 2*lsl, -poleHalfHeight));
+  // extents
+  extXPos = poleHalfWidth + lsl;
+  extXNeg = poleHalfWidth - outerDiameter - 2*lsl;
+  extYPos = outerHalf + lsl;
+  extYNeg = -(outerHalf +lsl);
+  if (buildPole)
+    {extXPos += coilWidth + lsl;}
 
   if (!yokeOnLeft)
     {
@@ -1453,6 +1465,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       for (auto& vec : mCPoints)
 	{vec.setX(vec.x() * -1);}
       std::reverse(mCPoints.begin(), mCPoints.end());
+
+      // flip extents
+      std::swap(extXPos, extXNeg);
     }
   
   // rotate if building vertically
@@ -1464,19 +1479,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 	{point = BDS::Rotate(point, CLHEP::halfpi);}
       for (auto& point : mCPoints)
 	{point = BDS::Rotate(point, CLHEP::halfpi);}
+      // 'rotate' extents too
+      std::swap(extXPos, extYPos);
+      std::swap(extXNeg, extYNeg);
     }
-  
-  // record extents - do here as all the extents are bascially calcualted here
-  G4double mx = poleHalfWidth - outerDiameter - 2*lsl;
-  G4double px = poleHalfWidth + coilWidth + 4*lsl;
-  G4double my = -outerHalf - 2*lsl;
-  G4double py = outerHalf + 2*lsl;
-  std::pair<double,double> extX = std::make_pair(mx,px);
-  std::pair<double,double> extY = std::make_pair(my,py);
-  if (buildVertically)
-    {std::swap(extX, extY);}
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
-  BDSExtent ext = BDSExtent(extX, extY, extZ);
+  BDSExtent ext = BDSExtent(extXNeg, extXPos, extYNeg, extYPos,
+			    -length*0.5, length*0.5);
+  magContExtent = ext; // copy to container variable - basically the same
 
   G4double sLength = length; // default is normal length
   // if we have angled faces, make square faced solids longer for intersection.
@@ -1509,7 +1518,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					     sLength*0.5 - lengthSafety,   // z half length
 					     zOffsets, zScale, // dx,dy offset for each face, scaling
 					     zOffsets, zScale);// dx,dy offset for each face, scaling
-
 
   // create coil - one solid that will be placed 4 times... or
   // if we have angled faces, they're all unique unfortunately so use a vector of solids
@@ -1692,6 +1700,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV, ext,
 					     magnetContainer);
+
+  outer->SetInputFaceNormal(inputFaceNormal);
+  outer->SetOutputFaceNormal(outputFaceNormal);
   
   outer->RegisterSolid(allSolids);
   outer->RegisterLogicalVolume(allLogicalVolumes);
@@ -1774,17 +1785,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // end piece container solids - simple extruded solid intersectd with cut tubs for
   // angled faces build about magnet zero so we get the coordinates right for general placement
   std::vector<G4TwoVector> contEPPoints;
-  G4double xmax = poleHalfWidth + coilWidth + 1*CLHEP::mm;
-  G4double ymax = poleHalfHeight + coilHeight + 1*CLHEP::mm;
-  contEPPoints.push_back(G4TwoVector(xmax + 1*CLHEP::mm,  ymax));
+  const G4double connector = 1*CLHEP::mm;
+  G4double xmax = poleHalfWidth + coilWidth + connector;
+  G4double ymax = poleHalfHeight + coilHeight + connector;
+  contEPPoints.push_back(G4TwoVector(xmax + connector,  ymax));
   contEPPoints.push_back(G4TwoVector(-xmax,  ymax));
   contEPPoints.push_back(G4TwoVector(-xmax,  poleHalfHeight));
   contEPPoints.push_back(G4TwoVector( xmax,  poleHalfHeight));
   contEPPoints.push_back(G4TwoVector( xmax, -poleHalfHeight));
   contEPPoints.push_back(G4TwoVector(-xmax, -poleHalfHeight));
   contEPPoints.push_back(G4TwoVector(-xmax, -ymax));
-  contEPPoints.push_back(G4TwoVector(xmax + 1*CLHEP::mm, -ymax));
-
+  contEPPoints.push_back(G4TwoVector(xmax + connector, -ymax));
+  
   if (buildVertically)
     {
       for (auto& point : contEPPoints)
@@ -1799,6 +1811,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       G4double dzIn = tan(std::abs(angleIn)) * outerDiameter;
       ePInLength    = std::max(2*ePInLength, 2*dzIn); // 2x as long for intersection
     }
+
+    BDSExtent ePExtOuter = BDSExtent(-xmax, xmax + connector,
+                                     -ymax, ymax,
+                                     -ePInLengthZ*0.5, ePInLengthZ*0.5);
+    BDSExtent ePExtInner = BDSExtent(-xmax, xmax,
+                                     -poleHalfHeight, poleHalfHeight,
+                                     -ePInLengthZ*0.5, ePInLengthZ*0.5);
 
   G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
 						 contEPPoints,   // transverse 2d coordinates
@@ -1965,6 +1984,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceInGC->RegisterLogicalVolume(ePInLV);
   endPieceInGC->RegisterSolid(endPieceSolidIn);
   endPieceInGC->RegisterSensitiveVolume(ePInLV);
+  endPieceInGC->SetExtent(ePExtOuter);
+  endPieceInGC->SetInnerExtent(ePExtInner);
 
   G4ThreeVector inputFaceNormalR = inputFaceNormal * -1; // just -1 as parallel but opposite
   BDSSimpleComponent* endPieceInSC = new BDSSimpleComponent(name + "_end_piece_in",
@@ -1983,7 +2004,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceOutGC->RegisterLogicalVolume(ePOutLV);
   endPieceOutGC->RegisterSolid(endPieceSolidOut);
   endPieceOutGC->RegisterSensitiveVolume(ePOutLV);
-
+  endPieceOutGC->SetExtent(ePExtOuter);
+  endPieceOutGC->SetInnerExtent(ePExtInner);
   
   G4ThreeVector outputFaceNormalR = outputFaceNormal * -1; // just -1 as parallel but opposite
   BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_out",
