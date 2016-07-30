@@ -82,27 +82,30 @@ public:
   /// Once the beamline element has been constructed and all positions and rotations
   /// use these to update the world extent of this beam line.
   void UpdateExtents(BDSBeamlineElement* element);
-  
-  BDSBeamlineElement* GetFirstItem(); ///< Return a reference to the first element
-  BDSBeamlineElement* GetLastItem();  ///< Return a reference to the last element
+
+  /// Return a reference to the first element
+  inline BDSBeamlineElement* GetFirstItem() {return front();} 
+
+  /// Return a reference to the last element
+  inline BDSBeamlineElement* GetLastItem() {return back();}
 
   /// Get an element by name. Returns null pointer if not found.
   BDSBeamlineElement* GetElement(G4String name);
   
   /// Get the total length of the beamline - the sum of the chord length of each element
-  inline G4double     GetTotalChordLength() const;
+  inline G4double     GetTotalChordLength() const {return totalChordLength;}
 
   /// Get the total ARC length for the beamline - ie the maximum s position
-  inline G4double     GetTotalArcLength() const;
+  inline G4double     GetTotalArcLength() const {return totalArcLength;}
 
   /// Get the number of elements
   BeamlineVector::size_type size() const {return beamline.size();}
 
   /// Get the maximum positive extent in all dimensions  
-  G4ThreeVector GetMaximumExtentPositive() const;
+  G4ThreeVector GetMaximumExtentPositive() const {return maximumExtentPositive;}
 
   /// Get the maximum negative extent in all dimensions
-  G4ThreeVector GetMaximumExtentNegative() const;
+  G4ThreeVector GetMaximumExtentNegative() const {return maximumExtentNegative;}
 
   /// Get the maximum extent absolute in each dimension
   G4ThreeVector GetMaximumExtentAbsolute() const;
@@ -135,9 +138,9 @@ public:
   
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
-  BDSBeamlineElement* front() const;
+  inline BDSBeamlineElement* front() const {return beamline.front();}
   /// Return a reference to the last element
-  BDSBeamlineElement* back()  const;
+  inline BDSBeamlineElement* back() const {return beamline.back();}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
@@ -203,29 +206,5 @@ private:
   BDSBeamline& operator=(const BDSBeamline&);
   BDSBeamline(BDSBeamline&);
 };
-
-inline BDSBeamlineElement* BDSBeamline::GetFirstItem()
-{return front();}
-
-inline BDSBeamlineElement* BDSBeamline::GetLastItem()
-{return back();}
-
-inline G4double BDSBeamline::GetTotalChordLength() const
-{return totalChordLength;}
-
-inline G4double BDSBeamline::GetTotalArcLength() const
-{return totalArcLength;}
-
-inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive() const
-{return maximumExtentPositive;}
-
-inline G4ThreeVector BDSBeamline::GetMaximumExtentNegative() const
-{return maximumExtentNegative;}
-
-inline BDSBeamlineElement* BDSBeamline::front() const
-{return beamline.front();}
-
-inline BDSBeamlineElement* BDSBeamline::back() const
-{return beamline.back();}
 
 #endif
