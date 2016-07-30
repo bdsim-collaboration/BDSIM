@@ -90,6 +90,10 @@ void BDSMagnet::BuildBeampipe()
   RegisterDaughter(beampipe);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+
+  /// Update record of normal vectors now beam pipe has been constructed.
+  SetInputFaceNormal(BDS::RotateToReferenceFrame(beampipe->InputFaceNormal(), angle));
+  SetOutputFaceNormal(BDS::RotateToReferenceFrame(beampipe->OutputFaceNormal(), -angle));
 }
 
 void BDSMagnet::BuildBPFieldMgr()
@@ -233,6 +237,10 @@ void BDSMagnet::BuildOuter()
 
       endPieceBefore = outer->EndPieceBefore();
       endPieceAfter  = outer->EndPieceAfter();
+
+      /// Update record of normal vectors now beam pipe has been constructed.
+      SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
+      SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
     }
 }
 
