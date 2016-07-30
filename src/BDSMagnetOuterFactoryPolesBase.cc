@@ -110,8 +110,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-  G4ThreeVector inputface = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   G4double beampipeRadiusX = std::max(beamPipe->GetExtentX().first, beamPipe->GetExtentX().second);
   G4double beampipeRadiusY = std::max(beamPipe->GetExtentY().first, beamPipe->GetExtentY().second);
@@ -173,8 +173,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 				      outerLength,                 // half length - must fit within container
 				      0,                           // rotation start angle
 				      CLHEP::twopi,                // rotation sweep angle
-				      inputface,                   // input face normal
-				      outputface);                 // output face normal
+				      inputFaceNormal,             // input face normal
+				      outputFaceNormal);           // output face normal
     }
   else
     {
@@ -221,8 +221,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 					    containerLength*0.5,         // half length - must fit within container
 					    0,                           // rotation start angle
 					    CLHEP::twopi,                // rotation sweep angle
-					    inputface,                   // input face normal
-					    outputface);                 // output face normal
+					    inputFaceNormal,             // input face normal
+					    outputFaceNormal);           // output face normal
     }
   else
     {
@@ -343,6 +343,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV, ext,
 					     magnetContainer);
+
+  SetFaceNormals(outer);
   
   outer->RegisterSolid(allSolids);
   outer->RegisterRotationMatrix(allRotationMatrices);
@@ -1533,17 +1535,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // only be registered once the container object is created and that can only happen
   // once the solid and logical volumes are fully complete.
   std::vector<G4VSolid*> magnetContainerExtraSolids;
-
-  // Declare and intialise angle variables here as they're used in multiple places later on
-  // They will only be used if either angle is finite, but need in this scope.
-  std::pair<G4ThreeVector,G4ThreeVector> faces = std::make_pair(G4ThreeVector(), G4ThreeVector());
-  G4ThreeVector inputface = G4ThreeVector();
-  G4ThreeVector outputface = G4ThreeVector();
+  
   if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
     { 
-      faces = BDS::CalculateFaces(angleIn,angleOut);
-      inputface  = faces.first;
-      outputface = faces.second;
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
+      inputFaceNormal  = faces.first;
+      outputFaceNormal = faces.second;
       
       // angled solid for magnet outer and coils
       G4VSolid* angledFaces = new G4CutTubs(name + "_angled_face_solid", // name
@@ -1552,8 +1549,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 					    length*0.5 - lengthSafety,   // z half length
 					    0,                           // start angle
 					    CLHEP::twopi,                // sweep angle
-					    inputface,                   // input face normal
-					    outputface);                 // output face normal
+					    inputFaceNormal,             // input face normal
+					    outputFaceNormal);           // output face normal
       
       // angled solid for magnet outer container volume
       G4VSolid* angledFacesCont = new G4CutTubs(name + "_angled_face_cont_solid", // name
@@ -1562,8 +1559,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						length*0.5,                  // z half length
 						0,                           // start angle
 						CLHEP::twopi,                // sweep angle
-						inputface,                   // input face normal
-						outputface);                 // output face normal
+						inputFaceNormal,             // input face normal
+						outputFaceNormal);           // output face normal
       
       // angled solid for full magnet container
       G4VSolid* angledFacesMagCont = new G4CutTubs(name + "_angled_face_mag_cont_solid", // name
@@ -1572,8 +1569,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						   containerLength*0.5,  // z half length
 						   0,                    // start angle
 						   CLHEP::twopi,         // sweep angle
-						   inputface,            // input face normal
-						   outputface);          // output face normal
+						   inputFaceNormal,      // input face normal
+						   outputFaceNormal);    // output face normal
 
       // register angled solids
       allSolids.push_back(angledFaces);
@@ -1828,14 +1825,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (BDS::IsFinite(angleIn))
     {
       
-      G4ThreeVector inputfaceReversed = inputface * -1;
+      G4ThreeVector inputfaceReversed = inputFaceNormal * -1;
       G4VSolid* ePContSolidInAng = new G4CutTubs(name + "_angled_face_solid", // name
 						 0,                           // inner radius
 						 outerDiameter,               // outer radius
 						 ePInLengthZ*0.5,             // z half length
 						 0,                           // start angle
 						 CLHEP::twopi,                // sweep angle
-						 inputface,                   // input face normal
+						 inputFaceNormal,             // input face normal
 						 inputfaceReversed);          // output face normal
 
       // potential memory leak here with overwriting
@@ -1847,7 +1844,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (BDS::IsFinite(angleOut))
     {
       
-      G4ThreeVector outputfaceReversed = outputface * -1;
+      G4ThreeVector outputfaceReversed = outputFaceNormal * -1;
       G4VSolid* ePContSolidOutAng = new G4CutTubs(name + "_angled_face_solid", // name
 						  0,                           // inner radius
 						  outerDiameter,               // outer radius
@@ -1855,7 +1852,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						  0,                           // start angle
 						  CLHEP::twopi,                // sweep angle
 						  outputfaceReversed,          // input face normal
-						  outputface);          // output face normal
+						  outputFaceNormal);           // output face normal
 
       // potential memory leak here with overwriting
       ePContSolidOut = new G4IntersectionSolid(name + "_end_coil_cont_solid", // name

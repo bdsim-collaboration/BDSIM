@@ -143,14 +143,11 @@ private:
 			       G4double     magnetContainerLength, // magnet object container full length
 			       G4double     boxSize);              // full width
 
-  void CreateCylindricalSolidsAngled(G4String     name,                  // name
-			       G4double         length,                // full length
-			       BDSBeamPipe*     beamPipe,              // beampipe
-			       G4double         magnetContainerLength, // magnet object container full length
-			       G4double         boxSize,               // full width
-                               G4ThreeVector    inputface,             // Normal vector (for poleface implementation)
-                               G4ThreeVector    outputface);           // Normal vector (for poleface implementation)
-
+  void CreateCylindricalSolidsAngled(G4String      name,                  // name
+				     G4double      length,                // full length
+				     BDSBeamPipe*  beamPipe,              // beampipe
+				     G4double      magnetContainerLength, // magnet object container full length
+				     G4double      boxSize);              // full width
 
   /// Only the solids are unique, once we have those, the logical volumes and placement in the
   /// container are the same.  Group all this functionality together

@@ -169,9 +169,7 @@ protected:
   /// of one with angled faces
   void BuildMagnetContainerSolidAngled(G4String      name,
 				       G4double      magnetContainerLength,
-				       G4double      magnetContainerRadius,
-				       G4ThreeVector inputFace,
-				       G4ThreeVector outputFace);
+				       G4double      magnetContainerRadius);
 
   /// Utility function to make cylindrical magnetContainerSolid in the case
   /// of flat faces
@@ -180,6 +178,9 @@ protected:
 					 G4double magnetContainerRadius);
 
   void CreateMagnetContainerComponent();
+
+  /// Copy face normals from members to an instance of outer.
+  void SetFaceNormals(BDSMagnetOuter* outer);
   
   // geometric pointers that will be used to pass around components
   // within the factory (as different parts factorised so they can
@@ -212,6 +213,9 @@ protected:
 
   BDSExtent                       magContExtent;
   BDSGeometryComponent*           magnetContainer;
+
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
 
   /// A larger length safety that can be used where tracking accuracty isn't required
   /// or more tolerante geometry is requried (1um).

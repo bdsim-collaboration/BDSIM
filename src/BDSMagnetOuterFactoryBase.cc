@@ -50,6 +50,9 @@ void BDSMagnetOuterFactoryBase::CleanUp()
   allUserLimits.clear();
 
   magnetContainer = nullptr;
+
+  inputFaceNormal  = G4ThreeVector(0,0,-1);
+  outputFaceNormal = G4ThreeVector(0,0, 1);
 }
 
 void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
@@ -109,9 +112,7 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 
 void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      name,
 								G4double      magnetContainerLength,
-								G4double      magnetContainerRadius,
-								G4ThreeVector inputFace,
-								G4ThreeVector outputFace)
+								G4double      magnetContainerRadius)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -123,8 +124,8 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
 				       magnetContainerLength * 0.5, // z half length
 				       0,                           // starting angle
 				       CLHEP::twopi,                // sweep angle
-				       inputFace,                   // input face normal vector
-				       outputFace);                 // output fae normal vector
+				       inputFaceNormal,             // input face normal vector
+				       outputFaceNormal);           // output fae normal vector
 
   magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
@@ -157,3 +158,11 @@ void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
 					     magnetContainerLV,
 					     magContExtent);
 }
+
+
+void BDSMagnetOuterFactoryBase::SetFaceNormals(BDSMagnetOuter* outer)
+{
+  outer->SetInputFaceNormal(inputFaceNormal);
+  outer->SetOutputFaceNormal(outputFaceNormal);
+}
+  

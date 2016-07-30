@@ -146,8 +146,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4double angle    = angleIn + angleOut; // total angle
   G4int orientation = BDS::CalculateOrientation(-angle);
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   // lengths at different points transversely - dependent on left or right geometry as well as angle +ve or -ve
   G4double centralHalfLength      = length*0.5 - orientation*0.5*beamPipeAxisSeparation*tan(fabs(angle*0.5)); // central axis of outer cylinder
@@ -179,8 +179,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						    centralHalfLength,           // half length
 						    0,                           // rotation start angle
 						    CLHEP::twopi,                // rotation finish angle
-						    inputface,                   // input face normal
-						    outputface);                 // output face normal
+						    inputFaceNormal,             // input face normal
+						    outputFaceNormal);           // output face normal
       G4VSolid* containerSolidInner = new G4Tubs(name + "_contiainer_solid_inner",  // name
 						 0,                                 // inner radius
 						 containerInnerRadius,              // outer radius
@@ -204,8 +204,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						    centralHalfLength,                 // half length
 						    0,                                 // rotation start angle
 						    CLHEP::twopi,                      // rotation finish angle
-						    inputface,                         // input face normal
-						    outputface);                       // output face normal
+						    inputFaceNormal,                   // input face normal
+						    outputFaceNormal);                 // output face normal
       allSolids.push_back(containerSolidOuter);
       containerSolid = new G4SubtractionSolid(name + "_outer_container_solid",
 					      containerSolidOuter,
@@ -215,7 +215,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
     }
 
   // make the whole magnet container solid
-  BuildMagnetContainerSolidAngled(name, centralContainerLength, magnetContainerRadius, inputface, outputface);
+  BuildMagnetContainerSolidAngled(name, centralContainerLength, magnetContainerRadius);
   // make the logical volume too manually as we don't use the BDSMagnetOuterFactoryBase method for this
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
@@ -300,16 +300,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				 length*0.5 - lengthSafetyLarge,       // length
 				 -coilInnerFullAngle*0.5,              // start angle
 				 coilInnerFullAngle,                   // sweep angle
-				 inputface,                            // input face normal
-				 outputface);                          // output face normal
+				 inputFaceNormal,                      // input face normal
+				 outputFaceNormal);                    // output face normal
       coil2Inner = new G4CutTubs(name+"_coil2_inner_solid",            // name
 				 innerCoilInnerRadius,                 // inner radius
 				 innerCoilOuterRadius,                 // outer radius
 				 length*0.5 - lengthSafetyLarge,       // length
 				 CLHEP::pi-coilInnerFullAngle*0.5,     // start angle
 				 coilInnerFullAngle,                   // sweep angle
-				 inputface,                            // input face normal
-				 outputface);                          // output face normal
+				 inputFaceNormal,                      // input face normal
+				 outputFaceNormal);                    // output face normal
       coil1InnerLV =  new G4LogicalVolume(coil1Inner,
 					  nbti,
 					  name+"_coil1_Inner_lv");
@@ -349,16 +349,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						  length*0.5 - lengthSafetyLarge,      // length
 						  CLHEP::pi*0.5-poleInnerFullAngle*0.5,// start angle
 						  poleInnerFullAngle,                  // sweep angle
-						  inputface,                           // input face normal
-						  outputface);                         // output face normal
+						  inputFaceNormal,                     // input face normal
+						  outputFaceNormal);                   // output face normal
       collar1PoleBottomInnerSolid = new G4CutTubs(name+"_collar1_pole_inner_bottom",   // name
 						  innerCoilInnerRadius,                // inner radius
 						  innerCoilOuterRadius,                // outer radius
 						  length*0.5 - lengthSafetyLarge,      // length
 						  CLHEP::pi*1.5-poleInnerFullAngle*0.5,// start angle
 						  poleInnerFullAngle,                  // sweep angle
-						  inputface,                           // input face normal
-						  outputface);                         // output face normal
+						  inputFaceNormal,                     // input face normal
+						  outputFaceNormal);                   // output face normal
       collar1PoleTopInnerLV    = new G4LogicalVolume(collar1PoleTopInnerSolid,
 						     stainlesssteel,
 						     name+"_collar1_pole_top_inner_lv");
@@ -402,16 +402,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 				 length*0.5 - lengthSafetyLarge,       // length
 				 -coilOuterFullAngle*0.5,              // start angle
 				 coilOuterFullAngle,                   // sweep angle
-				 inputface,                            // input face normal
-				 outputface);                          // output face normal
+				 inputFaceNormal,                      // input face normal
+				 outputFaceNormal);                    // output face normal
       coil2Outer = new G4CutTubs(name+"_coil2_outer_solid",            // name
 				 outerCoilInnerRadius,                 // inner radius
 				 outerCoilOuterRadius,                 // outer radius
 				 length*0.5 - lengthSafetyLarge,       // length
 				 CLHEP::pi-coilOuterFullAngle*0.5,     // start angle
 				 coilOuterFullAngle,                   // sweep angle
-				 inputface,                            // input face normal
-				 outputface);                          // output face normal
+				 inputFaceNormal,                      // input face normal
+				 outputFaceNormal);                    // output face normal
       coil1OuterLV =  new G4LogicalVolume(coil1Outer,
 					  nbti,
 					  name+"_coil1_Inner_lv");
@@ -452,16 +452,16 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 						  length*0.5 - lengthSafetyLarge,      // length
 						  CLHEP::pi*0.5-poleOuterFullAngle*0.5,// start angle
 						  poleOuterFullAngle,                  // sweep angle
-						  inputface,                           // input face normal
-						  outputface);                         // output face normal
+						  inputFaceNormal,                     // input face normal
+						  outputFaceNormal);                   // output face normal
       collar1PoleBottomOuterSolid = new G4CutTubs(name+"_collar1_pole_outer_bottom",   // name
 						  outerCoilInnerRadius,                // inner radius
 						  outerCoilOuterRadius,                // outer radius
 						  length*0.5 - lengthSafetyLarge,      // length
 						  CLHEP::pi*1.5-poleOuterFullAngle*0.5,// start angle
 						  poleOuterFullAngle,                  // sweep angle
-						  inputface,                           // input face normal
-						  outputface);                         // output face normal
+						  inputFaceNormal,                     // input face normal
+						  outputFaceNormal);                   // output face normal
 
       collar1PoleTopOuterLV    = new G4LogicalVolume(collar1PoleTopOuterSolid,
 						     stainlesssteel,
@@ -505,32 +505,32 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 			     secondBPHalfLength - lengthSafetyLarge, // length
 			     -coilInnerFullAngle*0.5,                // start angle
 			     coilInnerFullAngle,                     // sweep angle
-			     inputface,                              // input face normal
-			     outputface);                            // output face normal
+			     inputFaceNormal,                        // input face normal
+			     outputFaceNormal);                      // output face normal
   coil3Outer = new G4CutTubs(name+"_coil3_outer_solid",              // name
 			     outerCoilInnerRadiusF,                  // inner radius
 			     outerCoilOuterRadius,                   // outer radius
 			     secondBPHalfLength - lengthSafetyLarge, // length
 			     -coilOuterFullAngle*0.5,                // start angle
 			     coilOuterFullAngle,                     // sweep angle
-			     inputface,                              // input face normal
-			     outputface);                            // output face normal
+			     inputFaceNormal,                        // input face normal
+			     outputFaceNormal);                      // output face normal
   coil4Inner = new G4CutTubs(name+"_coil4_inner_solid",              // name
 			     innerCoilInnerRadiusF,                  // inner radius
 			     innerCoilOuterRadius,                   // outer radius
 			     secondBPHalfLength - lengthSafetyLarge, // length
 			     CLHEP::pi-coilInnerFullAngle*0.5,       // start angle
 			     coilInnerFullAngle,                     // sweep angle
-			     inputface,                              // input face normal
-			     outputface);                            // output face normal
+			     inputFaceNormal,                        // input face normal
+			     outputFaceNormal);                      // output face normal
   coil4Outer = new G4CutTubs(name+"_coil4_outer_solid",              // name
 			     outerCoilInnerRadiusF,                  // inner radius
 			     outerCoilOuterRadius,                   // outer radius
 			     secondBPHalfLength - lengthSafetyLarge, // length
 			     CLHEP::pi-coilOuterFullAngle*0.5,       // start angle
 			     coilOuterFullAngle,                     // sweep angle
-			     inputface,                              // input face normal
-			     outputface);                            // output face normal
+			     inputFaceNormal,                        // input face normal
+			     outputFaceNormal);                      // output face normal
   
   coil3InnerLV =  new G4LogicalVolume(coil3Inner,
 				      nbti,
@@ -606,32 +606,32 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					      secondBPHalfLength - lengthSafetyLarge, // length
 					      CLHEP::pi*0.5-poleInnerFullAngle*0.5,   // start angle
 					      poleInnerFullAngle,                     // sweep angle
-					      inputface,                              // input face normal
-					      outputface);                            // output face normal
+					      inputFaceNormal,                        // input face normal
+					      outputFaceNormal);                      // output face normal
   collar2PoleTopOuterSolid    = new G4CutTubs(name+"_collar2_pole_outer_top",         // name
 					      outerCoilInnerRadiusF,                  // inner radius
 					      outerCoilOuterRadius,                   // outer radius
 					      secondBPHalfLength - lengthSafetyLarge, // length
 					      CLHEP::pi*0.5-poleOuterFullAngle*0.5,   // start angle
 					      poleOuterFullAngle,                     // sweep angle
-					      inputface,                              // input face normal
-					      outputface);                            // output face normal
+					      inputFaceNormal,                        // input face normal
+					      outputFaceNormal);                      // output face normal
   collar2PoleBottomInnerSolid = new G4CutTubs(name+"_collar2_pole_inner_bottom",      // name
 					      innerCoilInnerRadiusF,                  // inner radius
 					      innerCoilOuterRadius,                   // outer radius
 					      secondBPHalfLength - lengthSafetyLarge, // length
 					      CLHEP::pi*1.5-poleInnerFullAngle*0.5,   // start angle
 					      poleInnerFullAngle,                     // sweep angle
-					      inputface,                              // input face normal
-					      outputface);                            // output face normal
+					      inputFaceNormal,                        // input face normal
+					      outputFaceNormal);                      // output face normal
   collar2PoleBottomOuterSolid = new G4CutTubs(name+"_collar2_pole_outer_bottom",      // name
 					      outerCoilInnerRadiusF,                  // inner radius
 					      outerCoilOuterRadius,                   // outer radius
 					      secondBPHalfLength - lengthSafetyLarge, // length
 					      CLHEP::pi*1.5-poleOuterFullAngle*0.5,   // start angle
 					      poleOuterFullAngle,                     // sweep angle
-					      inputface,                              // input face normal
-					      outputface);                            // output face normal
+					      inputFaceNormal,                        // input face normal
+					      outputFaceNormal);                      // output face normal
   
   // collar pole logical volumes
   collar2PoleTopInnerLV    = new G4LogicalVolume(collar2PoleTopInnerSolid,
@@ -708,8 +708,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					   secondBPHalfLength-lengthSafety,  // length
 					   0,                                // starting angle
 					   CLHEP::twopi,                     // angle of sweep
-					   inputface,                        // input face normal
-					   outputface);                      // output face normal
+					   inputFaceNormal,                  // input face normal
+					   outputFaceNormal);                // output face normal
 
   allSolids.push_back(collarAnnulus2);
   // make final solid pointer as collar round active beam pipe optional depending on how big active beam pipe is
@@ -719,14 +719,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   if (buildCollar)
     {
       // building collar around active pipe
-      G4VSolid* collarAnnulus1 = new G4CutTubs(name+"_collar1_annulus_solid",      // name
-					       collarInnerRadius,                  // inner radius
-					       collarOuterRadius,                  // outer radius
-					       length*0.5 - lengthSafetyLarge,     // length
-					       0,                                  // starting angle
-					       CLHEP::twopi,                       // angle of sweep
-					       inputface,                          // input face normal
-					       outputface);                        // output face normal
+      G4VSolid* collarAnnulus1 = new G4CutTubs(name+"_collar1_annulus_solid",  // name
+					       collarInnerRadius,              // inner radius
+					       collarOuterRadius,              // outer radius
+					       length*0.5 - lengthSafetyLarge, // length
+					       0,                              // starting angle
+					       CLHEP::twopi,                   // angle of sweep
+					       inputFaceNormal,           // input face normal
+					       outputFaceNormal);         // output face normal
 
       collars = new G4UnionSolid(name + "_collars_solid", // name
 				 collarAnnulus2,          // solid1
@@ -753,8 +753,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					   centralHalfLength - lengthSafety, // length
 					   0,                                // starting angle
 					   CLHEP::twopi,                     // sweep angle
-					   inputface,                        // input face normal
-					   outputface);                      // output face normal
+					   inputFaceNormal,                  // input face normal
+					   outputFaceNormal);                // output face normal
   G4VSolid* collarCentralPiece = new G4IntersectionSolid(name + "_collar_central_solid", // name
 							 collarBox,                      // solid 1
 							 collarBoxFaces);                // solid 2   
@@ -793,8 +793,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 					 centralHalfLength-2*lengthSafety,// length
 					 0,                               // starting angle
 					 CLHEP::twopi,                    // sweep angle
-					 inputface,                       // input face normal
-					 outputface);                     // output face normal
+					 inputFaceNormal,                 // input face normal
+					 outputFaceNormal);               // output face normal
 
   // need to cut hole out for everything inside - note subtraction solid has to be solid
   G4VSolid* yokeSubtractionCylinder = new G4Tubs(name + "_yoke_subtraction_cyl_solid", // name
@@ -903,6 +903,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV, ext,
 					     magnetContainer);
+
+  SetFaceNormals(outer);
 
   // register objects
   outer->InheritObjects(secondBP);
@@ -1518,6 +1520,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
 					     containerLV, ext,
 					     magnetContainer);
+
+  SetFaceNormals(outer);
   
   // register objects
   outer->InheritObjects(secondBP);
