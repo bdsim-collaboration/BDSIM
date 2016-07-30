@@ -1966,9 +1966,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceInGC->RegisterSolid(endPieceSolidIn);
   endPieceInGC->RegisterSensitiveVolume(ePInLV);
 
+  G4ThreeVector inputFaceNormalR = inputFaceNormal * -1; // just -1 as parallel but opposite
   BDSSimpleComponent* endPieceInSC = new BDSSimpleComponent(name + "_end_piece_in",
 							    endPieceInGC,
-							    ePInLengthZ);
+							    ePInLengthZ,
+							    0/*angle*/,
+							    inputFaceNormal,
+							    inputFaceNormalR);
 
   auto endPieceOutGC = new BDSGeometryComponent(ePContSolidOut,
 						ePContOutLV);
@@ -1980,9 +1984,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceOutGC->RegisterSolid(endPieceSolidOut);
   endPieceOutGC->RegisterSensitiveVolume(ePOutLV);
 
+  
+  G4ThreeVector outputFaceNormalR = outputFaceNormal * -1; // just -1 as parallel but opposite
   BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_out",
-							    endPieceOutGC,
-							    ePOutLengthZ);
+							     endPieceOutGC,
+							     ePOutLengthZ,
+							     0/*angle*/,
+							     outputFaceNormalR,
+							     outputFaceNormal);
 
   // attach to the magnet outer
   outer->SetEndPieceBefore(endPieceInSC);
