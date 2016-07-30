@@ -25,7 +25,6 @@ use,period=IntRegion;
 
 
 option, ngenerate=1;
-randomSeed=-1;
 
 beam,  particle="e-",
        energy=250 * GeV,

@@ -22,11 +22,13 @@ Tesla9Cell: cavitymodel,
 pillbox: cavitymodel,
 	 type = "rectangular",
 	 equatorRadius = 10*cm,
-	 irisRadius = 8*cm,
-	 thickness = 3*cm;
+	 irisRadius = 3*cm,
+	 thickness = 1*cm;
 
 !print, Tesla9Cell;
 
 lat : line = (d1,rf1,rf2,d2,rf3);
 
 include optionsTest.gmad;
+
+option, nSegmentsPerCircle=40;
