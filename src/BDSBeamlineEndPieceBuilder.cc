@@ -95,16 +95,17 @@ void BDS::BuildEndPieceBeamline()
 	  // afterwards - this just sets a precedence of after over before.
 	  if (!endPieces->empty()) // only look backwards if we have already placed an end piece
 	    {
-	      BDSAcceleratorComponent* lastEndPiece = (endPieces->back())->GetAcceleratorComponent();
-	      // OF = outgoing, IF = incoming
-	      // outgoing is end of previous element, incoming is front face of next
+	      // endPieces is a beam line of only end pieces
+	      BDSAcceleratorComponent* prevEndPiece = (endPieces->back())->GetAcceleratorComponent();
+	      // OF = outgoing face, IF = incoming face
+	      // outgoing is end of next element being added, incoming is front face previous already added
 	      BDSExtent extOF = endPieceBefore->GetExtent();
-	      BDSExtent extIF = lastEndPiece->GetExtent();
+	      BDSExtent extIF = prevEndPiece->GetExtent();
 	      G4ThreeVector oFNormal = endPieceBefore->InputFaceNormal();
-	      G4ThreeVector iFNormal = lastEndPiece->OutputFaceNormal();
-	      G4double lastEndPieceL = lastEndPiece->GetChordLength();
+	      G4ThreeVector iFNormal = prevEndPiece->OutputFaceNormal();
+	      G4double lastEndPieceL = prevEndPiece->GetChordLength();
 	      G4double zSeparation   = availableLength - requiredBeforeLength - lastEndPieceL;
-	      G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extOF, extIF);
+	      G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
 	      if (willIntersect)
 		{placeBefore = false;}
 	    }

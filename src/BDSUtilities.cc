@@ -332,11 +332,11 @@ G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
   return G4TwoVector(xp,yp);
 }
 
-G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
-			  const G4ThreeVector& incomingNormal,
+G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
+			  const G4ThreeVector& outgoingNormal,
 			  const G4double&      zSeparation,
-			  const BDSExtent&     outgoingExtent,
-			  const BDSExtent&     incomingExtent)
+			  const BDSExtent&     incomingExtent,
+			  const BDSExtent&     outgoingExtent)
 {  
   // for any two normal vectors of planes - if their cross
   // product is zero, then they're (anti) parallel and will
@@ -362,10 +362,10 @@ G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
   G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YNeg());
  
   // test of they'd overlap
-  G4bool xNegYNegFail = xNegYNegOG > (dz - xNegYNegIC);
-  G4bool xNegYPosFail = xNegYPosOG > (dz - xNegYPosIC);
-  G4bool xPosYPosFail = xPosYPosOG > (dz - xPosYPosIC);
-  G4bool xPosYNegFail = xPosYNegOG > (dz - xPosYNegIC);
+  G4bool xNegYNegFail = xNegYNegIC > (dz + xNegYNegOG);
+  G4bool xNegYPosFail = xNegYPosIC > (dz + xNegYPosOG);
+  G4bool xPosYPosFail = xPosYPosIC > (dz + xPosYPosOG);
+  G4bool xPosYNegFail = xPosYNegIC > (dz + xPosYNegOG);
 
   if (xNegYNegFail || xNegYPosFail || xPosYPosFail || xPosYNegFail)
     {return true;}

@@ -210,7 +210,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 	  BDSExtent extOF = inspectedElement->GetAcceleratorComponent()->GetExtent(); // output face
 	  BDSExtent extIF = component->GetExtent(); // input face
 	  
-	  G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extOF, extIF);
+	  G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
 	  if (willIntersect)
 	    {
 	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;

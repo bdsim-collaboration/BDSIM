@@ -94,11 +94,11 @@ namespace BDS
 
   /// Check if two planes will overlap - as defined by their UNIT normal
   /// vectors at 0,0,0 and the z separation of the two.
-  G4bool WillIntersect(const G4ThreeVector& outgoingNormal,
-		       const G4ThreeVector& incomingNormal,
+  G4bool WillIntersect(const G4ThreeVector& incomingNormal,
+		       const G4ThreeVector& outgoingNormal,
 		       const G4double&      zSeparation,
-		       const BDSExtent&     outgoingExtent,
-		       const BDSExtent&     incomingExtent);
+		       const BDSExtent&     incomingExtent,
+		       const BDSExtent&     outgoingExtent);
 
   /// Given an x and y coordinate, calculate what the z coordinate must be to
   /// lie on the plane defined by the supplied normal vector - assumes plane
