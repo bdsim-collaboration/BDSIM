@@ -389,6 +389,8 @@ G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
 
 G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle)
 {
+  if (!BDS::IsFinite(fullAngle))
+    {return faceNormal;} // no angle -> no rotation
   G4RotationMatrix rm = G4RotationMatrix();
   rm.rotateY(fullAngle*0.5);
   return faceNormal.transform(rm);
