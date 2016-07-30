@@ -172,8 +172,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 
   // Check this won't overlap with any previous geometry. This is only done for elements
   // that aren't drifts as they should be built by the component factory to match any angles.
-  //if (!empty() && (component->GetType() != "drift"))
-  if (!empty())
+  if (!empty() && (component->GetType() != "drift"))
     {// can only look back if there is an element - won't clash if no element; also add drifts always
       G4bool   keepGoing   = true;
       G4bool   checkFaces  = true;
@@ -216,7 +215,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 	    {
 	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
 	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
-		     << clasherName << G4endl;
+		     << clasherName << "\"" << G4endl;
 	      exit(1);
 	    }
 	}
