@@ -1338,7 +1338,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | boxSize                          | default accelerator component full width [m]          |
 +----------------------------------+-------------------------------------------------------+
-| randomSeed                       | the integer seed value for the random number          |
+| seed                             | the integer seed value for the random number          |
 |                                  | generator                                             |
 +----------------------------------+-------------------------------------------------------+
 | ngenerate                        | number of primary particles to simulate               |
@@ -1465,6 +1465,12 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
++----------------------------------+-------------------------------------------------------+
+| **Visualisation Parameters**     |                                                       |
++----------------------------------+-------------------------------------------------------+
+| nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
+|                                  | Note, this does not affect the accuracty of the       |
+|                                  | geometry - only the visualisation (default : 50)      |
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
