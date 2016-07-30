@@ -24,13 +24,15 @@
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleOuterMagField.hh"
+#include "BDSUtilities.hh"
 
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,
 		     G4double            length,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
-		     BDSMagnetOuterInfo* magnetOuterInfoIn):
-  BDSAcceleratorComponent(name, length, 0, type.ToString()),
+		     BDSMagnetOuterInfo* magnetOuterInfoIn,
+		     G4double            angle):
+  BDSAcceleratorComponent(name, length, angle, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),

@@ -37,7 +37,8 @@ public:
 	    G4String            name, 
 	    G4double            length,
 	    BDSBeamPipeInfo*    beamPipeInfo,
-	    BDSMagnetOuterInfo* magnetOuterInfo);
+	    BDSMagnetOuterInfo* magnetOuterInfo,
+	    G4double            angle = 0);
   
   virtual ~BDSMagnet();
   
