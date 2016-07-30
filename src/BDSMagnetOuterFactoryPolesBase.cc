@@ -1882,11 +1882,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						     name + "_end_cont_out_lv"); // name
 
   G4Colour* coilColour = BDSColours::Instance()->GetColour("coil");
-  G4VisAttributes* coilVis = new G4VisAttributes(*coilColour);
-  coilVis->SetVisibility(true);
+  G4VisAttributes* coilVisIn  = new G4VisAttributes(*coilColour);
+  coilVisIn->SetVisibility(true);
+  G4VisAttributes* coilVisOut = new G4VisAttributes(*coilVisIn);
 
-  ePInLV->SetVisAttributes(coilVis);
-  ePOutLV->SetVisAttributes(coilVis);
+  ePInLV->SetVisAttributes(coilVisIn);
+  ePOutLV->SetVisAttributes(coilVisOut);
   ePContInLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   ePContOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
@@ -1960,7 +1961,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceInGC->RegisterPhysicalVolume(ePInTopPv);
   endPieceInGC->RegisterPhysicalVolume(ePInLowPv);
   endPieceInGC->RegisterRotationMatrix(endCoilInRM);
-  endPieceInGC->RegisterVisAttributes(coilVis);
+  endPieceInGC->RegisterVisAttributes(coilVisIn);
   endPieceInGC->RegisterLogicalVolume(ePInLV);
   endPieceInGC->RegisterSolid(endPieceSolidIn);
   endPieceInGC->RegisterSensitiveVolume(ePInLV);
@@ -1974,7 +1975,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   endPieceOutGC->RegisterPhysicalVolume(ePOutTopPv);
   endPieceOutGC->RegisterPhysicalVolume(ePOutLowPv);
   endPieceOutGC->RegisterRotationMatrix(endCoilOutRM);
-  endPieceOutGC->RegisterVisAttributes(coilVis);
+  endPieceOutGC->RegisterVisAttributes(coilVisOut);
   endPieceOutGC->RegisterLogicalVolume(ePOutLV);
   endPieceOutGC->RegisterSolid(endPieceSolidOut);
   endPieceOutGC->RegisterSensitiveVolume(ePOutLV);
