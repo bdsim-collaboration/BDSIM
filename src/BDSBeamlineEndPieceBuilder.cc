@@ -74,8 +74,6 @@ void BDS::BuildEndPieceBeamline()
 		      if (previousNonDriftAccCompEndPiece)
 			{previousNonDriftEndPieceL = previousNonDriftAccCompEndPiece->GetChordLength();}
 		    } // not a drift - can't be used
-		  if (availableLength > requiredBeforeLength)
-		    {keepGoing = false;} // break out if we've got enough space
 		}
 	      else
 		{keepGoing = false;} // quit the loop - no previous element
