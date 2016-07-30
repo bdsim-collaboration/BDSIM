@@ -355,11 +355,11 @@ G4bool BDS::WillIntersect(const G4ThreeVector& outgoingNormal,
   G4double xNegYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YNeg());
   G4double xNegYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YPos());
   G4double xPosYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YPos());
-  G4double xPosYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YNeg());
+  G4double xPosYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YNeg());
   G4double xNegYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YNeg());
   G4double xNegYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YPos());
   G4double xPosYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YPos());
-  G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YNeg());
+  G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YNeg());
  
   // test of they'd overlap
   G4bool xNegYNegFail = xNegYNegOG > (dz - xNegYNegIC);
