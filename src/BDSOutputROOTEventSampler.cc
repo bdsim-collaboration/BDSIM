@@ -104,6 +104,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   this->xp.clear();
   this->yp.clear();
   this->zp.clear();
+  this->t.clear();
 #if 0
   this->X.clear();
   this->Y.clear();

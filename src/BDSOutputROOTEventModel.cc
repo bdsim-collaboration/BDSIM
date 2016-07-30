@@ -13,6 +13,9 @@ BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 #ifndef __ROOTBUILD__
 void BDSOutputROOTEventModel::Fill()
 {
+  for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {samplerNamesUnique.push_back(std::string(name));}
+  
   // get accelerator model
   BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
 
