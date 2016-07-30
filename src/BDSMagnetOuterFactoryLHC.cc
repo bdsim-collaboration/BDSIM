@@ -1532,11 +1532,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSextupole(G4String      name,
-								G4double      length,
-								BDSBeamPipe*  beamPipe,
-								G4double      outerDiameter,
-								G4double      containerLength,
-								G4Material*   outerMaterial)
+							  G4double      length,
+							  BDSBeamPipe*  beamPipe,
+							  G4double      outerDiameter,
+							  G4double      containerLength,
+							  G4Material*   outerMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
