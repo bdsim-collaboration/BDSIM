@@ -1,12 +1,14 @@
-#include "BDSBeamlineEndPieceBuilder.hh"
-
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
 
 void BDS::BuildEndPieceBeamline()
 {
@@ -87,7 +89,25 @@ void BDS::BuildEndPieceBeamline()
 	  // a drift or the magnet is first in the line
 	  if ( (element == firstItem) || driftIsFirstItem )
 	    {placeBefore = true;}
-	  
+
+	  // Now check if the coil volumes will overlap
+	  // This check is only done on before, as something can always be naturally added
+	  // afterwards - this just sets a precedence of after over before.
+	  if (!endPieces->empty()) // only look backwards if we have already placed an end piece
+	    {
+	      BDSAcceleratorComponent* lastEndPiece = (endPieces->back())->GetAcceleratorComponent();
+	      // OF = outgoing, IF = incoming
+	      // outgoing is end of previous element, incoming is front face of next
+	      BDSExtent extOF = endPieceBefore->GetExtent();
+	      BDSExtent extIF = lastEndPiece->GetExtent();
+	      G4ThreeVector oFNormal = endPieceBefore->InputFaceNormal();
+	      G4ThreeVector iFNormal = lastEndPiece->OutputFaceNormal();
+	      G4double lastEndPieceL = lastEndPiece->GetChordLength();
+	      G4double zSeparation   = availableLength - requiredBeforeLength - lastEndPieceL;
+	      G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extOF, extIF);
+	      if (willIntersect)
+		{placeBefore = false;}
+	    }
 	  if (placeBefore)
 	    { // provide a BDSBeamlineElement for the end piece w.r.t. the original beam line
 	      auto beforeEl = beamline->ProvideEndPieceElementBefore(endPieceBefore,
