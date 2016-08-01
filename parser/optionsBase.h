@@ -288,6 +288,9 @@ namespace GMAD
 
     double   printModuloFraction;
 
+    /// Visualisation
+    int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
+
     /// print some properties
     void print() const;
   };

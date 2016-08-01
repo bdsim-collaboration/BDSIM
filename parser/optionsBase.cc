@@ -201,6 +201,9 @@ OptionsBase::OptionsBase()
   nturns                   = 1;
 
   printModuloFraction      = 0.1;
+
+  // visualisation
+  nSegmentsPerCircle       = 50;
 }
 
 

@@ -200,14 +200,11 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
 
-  for(int i=0;i<hc->entries();i++) {
-    G4String samplerName = (*hc)[i]->GetName();
-    G4int    samplerId   = (*hc)[i]->GetSamplerID();
-    //samplerMap[samplerName]->Fill((*hc)[i]);
-    samplerTrees[samplerId+1]->Fill((*hc)[i]);
-  }
-
-
+  for(int i=0;i<hc->entries();i++)
+    {
+      G4int samplerId = (*hc)[i]->GetSamplerID();
+      samplerTrees[samplerId+1]->Fill((*hc)[i]);
+    }
 }
 
 /// write energy deposition hits
