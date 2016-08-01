@@ -347,7 +347,6 @@ G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
     {return false;}
 
   // shortcuts / copies - OG for outgoing and IC for incoming
-  const G4double&  dz  = zSeparation;
   const BDSExtent& eog = outgoingExtent;
   const BDSExtent& eic = incomingExtent;
 
@@ -362,10 +361,10 @@ G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
   G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YNeg());
  
   // test of they'd overlap
-  G4bool xNegYNegFail = xNegYNegIC > (dz + xNegYNegOG);
-  G4bool xNegYPosFail = xNegYPosIC > (dz + xNegYPosOG);
-  G4bool xPosYPosFail = xPosYPosIC > (dz + xPosYPosOG);
-  G4bool xPosYNegFail = xPosYNegIC > (dz + xPosYNegOG);
+  G4bool xNegYNegFail = xNegYNegIC > (zSeparation + xNegYNegOG);
+  G4bool xNegYPosFail = xNegYPosIC > (zSeparation + xNegYPosOG);
+  G4bool xPosYPosFail = xPosYPosIC > (zSeparation + xPosYPosOG);
+  G4bool xPosYNegFail = xPosYNegIC > (zSeparation + xPosYNegOG);
 
   if (xNegYNegFail || xNegYPosFail || xPosYPosFail || xPosYNegFail)
     {return true;}
