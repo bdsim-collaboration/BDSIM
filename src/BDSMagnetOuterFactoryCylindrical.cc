@@ -229,7 +229,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  CleanUp;
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("rfcavity"));
