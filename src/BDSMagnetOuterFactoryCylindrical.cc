@@ -139,6 +139,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateQuadrupole(G4String     
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("quadrupole"));
@@ -151,6 +152,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSextupole(G4String     n
 								  G4double     containerLength,
 								  G4Material*  outerMaterial)
 {
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("sextupole"));
@@ -166,6 +168,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("octupole"));
@@ -181,6 +184,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("decapole"));
@@ -193,6 +197,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSolenoid(G4String     na
 								 G4double     containerLength,
 								 G4Material*  outerMaterial)
 {
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("solenoid"));
@@ -208,6 +213,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMultipole(G4String     n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("multipole"));
@@ -223,6 +229,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp;
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("rfcavity"));
@@ -238,6 +245,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("muspoiler"));
@@ -254,6 +262,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   // in this factory, h and v kickers will look the same so ignore bool vertical
   // have to retain it though for virtual base class compatability
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
@@ -326,7 +335,7 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
 								     BDSBeamPipe* beamPipe,
 								     G4double     magnetContainerLength,
 								     G4double     outerDiameter)
-{
+{ 
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
   G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
