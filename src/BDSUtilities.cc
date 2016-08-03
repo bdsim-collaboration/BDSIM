@@ -372,6 +372,21 @@ G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
     {return false;}
 }
 
+G4bool BDS::WillIntersect(const G4double angleIn,
+			  const G4double angleOut,
+			  const G4double outerDiameter,
+			  const G4double length)
+{
+  // Calculate the z component of triangle with each angle and
+  // axis along length.
+  G4double dzIn  = outerDiameter * tan(-angleIn);
+  G4double dzOut = outerDiameter * tan(-angleOut);
+  if (dzIn > length - dzOut)
+    {return true;}
+  else
+    {return false;}
+}
+
 G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
 {
   // equation of a plane with offset v_0, normal unit n and any point on plane v

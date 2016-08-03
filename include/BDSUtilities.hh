@@ -93,12 +93,21 @@ namespace BDS
   G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
 
   /// Check if two planes will overlap - as defined by their UNIT normal
-  /// vectors at 0,0,0 and the z separation of the two.
+  /// vectors at 0,0,0 and the z separation of the two. Incoming is assumed to have
+  /// a positive z component and outgoing a -ve z component in this convention.
   G4bool WillIntersect(const G4ThreeVector& incomingNormal,
 		       const G4ThreeVector& outgoingNormal,
 		       const G4double&      zSeparation,
 		       const BDSExtent&     incomingExtent,
 		       const BDSExtent&     outgoingExtent);
+
+  /// Checking for "cutted crossed Z planes" for a cylinder with angled faces. This
+  /// utility only works in one dimension unlike the other one with the same name and
+  /// vector arguments.
+  G4bool WillIntersect(const G4double angleIn,
+		       const G4double angleOut,
+		       const G4double outerDiameter,
+		       const G4double length);
 
   /// Given an x and y coordinate, calculate what the z coordinate must be to
   /// lie on the plane defined by the supplied normal vector - assumes plane
