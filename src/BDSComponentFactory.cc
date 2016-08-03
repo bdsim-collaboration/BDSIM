@@ -426,6 +426,8 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   G4double semilength = length / (G4double) nSBends;
   G4double angleIn    = element->e1*CLHEP::rad;
   G4double angleOut   = element->e2*CLHEP::rad;
+  G4double rho        = element->l*CLHEP::m/element->angle;
+  G4double angle      = element->angle;
 
   BDSMagnetType magType = BDSMagnetType::sectorbend;
   BDSMagnetOuterInfo* magnetOuterInfoCheck = PrepareMagnetOuterInfo(element,angleIn,angleOut);
@@ -435,21 +437,31 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
   G4double deltaend   = -element->e2/(0.5*(nSBends-1));
-  G4double fringeLength = 1e-3;
-  
+
   if (BDS::IsFinite(angleIn) && includeFringe)
     {
-    BDSMagnetStrength* infringest = new BDSMagnetStrength();
-    (*infringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
+    BDSMagnetStrength* infringest  = new BDSMagnetStrength();
+    (*infringest)["field"]         = (*st)["field"];
     (*infringest)["polefaceangle"] = element->e1;
-    (*infringest)["length"] = fringeLength;
-    thename = element->name + "_e1_fringe";
-    BDSMagnet* startfringe = CreateDipoleFringe(element, angleIn, thename, magType, infringest);
+    (*infringest)["length"]        = thinElementLength;
+    (*infringest)["angle"]         = -thinElementLength/rho;
+    thename                        = element->name + "_e1_fringe";
+    angle                          = thinElementLength/rho*0.5 + element->e1;
+        
+    BDSMagnet* startfringe = CreateDipoleFringe(element, angle, thename, magType, infringest);
     sbendline->AddComponent(startfringe);
     }
-  for (int i = 0; i < nSBends; ++i)
+
+    for (int i = 0; i < nSBends; ++i)
     {
       thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
+
+      length = semilength;
+      if ((BDS::IsFinite(element->e1)) && (i == 0) && includeFringe)
+        {length -= thinElementLength;}
+      if ((BDS::IsFinite(element->e2)) && (i == nSBends-1) && includeFringe)
+        {length -= thinElementLength;}
+      semiangle = -length/rho;
 
       // Default angles for all segments
       angleIn = -semiangle*0.5;
@@ -487,18 +499,11 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 		 << " intersect within the magnet radius." << G4endl;
           exit(1);
         }
-      
-      if ((BDS::IsFinite(element->e1)) && (i == 0) && includeFringe)
-        {length = semilength - fringeLength;}
-      else if ((BDS::IsFinite(element->e2)) && (i == nSBends-1) && includeFringe)
-        {length = semilength - fringeLength;}
-      else
-        {length = semilength;}
-           
+
       BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st); // copy field strength - ie B
+      (*stSemi)["length"] = length;
       (*stSemi)["angle"]  = semiangle;  // override copied length and angle
-      (*stSemi)["length"] = semilength;
-      
+
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   BDSIntegratorType::dipole,
@@ -527,12 +532,15 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
   //Last element should be fringe if poleface specified
   if (BDS::IsFinite(element->e2) && includeFringe)
     {
-    BDSMagnetStrength* outfringest = new BDSMagnetStrength();
-    (*outfringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
+    BDSMagnetStrength* outfringest  = new BDSMagnetStrength();
+    (*outfringest)["field"]         = (*st)["field"];
     (*outfringest)["polefaceangle"] = element->e2;
-    (*outfringest)["length"] = fringeLength;
-    thename = element->name + "_e2_fringe";
-    BDSMagnet* endfringe = CreateDipoleFringe(element, -element->e2, thename, magType, outfringest);
+    (*outfringest)["length"]        = thinElementLength;
+    (*outfringest)["angle"]         = -thinElementLength/rho;
+    angle                           = thinElementLength/rho*0.5 + element->e2;
+    thename                         = element->name + "_e2_fringe";
+
+    BDSMagnet* endfringe = CreateDipoleFringe(element, -angle, thename, magType, outfringest);
     sbendline->AddComponent(endfringe);
     }
   return sbendline;
