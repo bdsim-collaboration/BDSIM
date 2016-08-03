@@ -274,16 +274,8 @@ protected:
 			   G4double&    boxSizeIn,
 			   G4Material*& outerMaterialIn);
 
-  /// Kicker constructor - only difference between h and vkick is the 90 degree rotation
-  /// If it isn't vertical, then it's a horizontal kicker
-  virtual BDSMagnetOuter* KickerConstructor(G4String     name,
-					    G4double     length,
-					    G4double     angle,
-					    BDSBeamPipe* beamPipe,
-					    G4double     outerDiameter,
-					    G4Material*  outerMaterial,
-					    G4bool       isVertical);
-
+  /// Routine to construct a C shaped dipole magnet with the yoke either to the left or right
+  /// and can optionally be built vertically.
   BDSMagnetOuter* CreateDipole(G4String     name,
 			       G4double     length,
 			       BDSBeamPipe* beamPipe,
