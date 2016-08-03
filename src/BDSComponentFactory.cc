@@ -446,8 +446,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
     (*infringest)["length"]        = thinElementLength;
     (*infringest)["angle"]         = -thinElementLength/rho;
     thename                        = element->name + "_e1_fringe";
-    angle                          = thinElementLength/rho*0.5 + element->e1;
-        
+    angle                          = element->e1;
     BDSMagnet* startfringe = CreateDipoleFringe(element, angle, thename, magType, infringest);
     sbendline->AddComponent(startfringe);
     }
@@ -537,7 +536,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
     (*outfringest)["polefaceangle"] = element->e2;
     (*outfringest)["length"]        = thinElementLength;
     (*outfringest)["angle"]         = -thinElementLength/rho;
-    angle                           = thinElementLength/rho*0.5 + element->e2;
+    angle                           = element->e2;
     thename                         = element->name + "_e2_fringe";
 
     BDSMagnet* endfringe = CreateDipoleFringe(element, -angle, thename, magType, outfringest);
