@@ -89,9 +89,11 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   
   // advance the orbit
   std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalRp);
-
   G4ThreeVector itsFinalPoint = RandRp.first;
   G4ThreeVector itsFinalDir = RandRp.second;
+
+  G4double CosT_ov_2=cos(h/rho/2.0);
+  distChord = fabs(rho)*(1.-CosT_ov_2);
 
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
@@ -256,11 +258,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
   
   CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
   SinT=2*CosT_ov_2*SinT_ov_2;
-  
-  distChord = fabs(rho)*(1.-CosT_ov_2);
-  
+
   G4ThreeVector dPos = rho*(SinT*vhat + (1-CosT)*vnorm);
-      
   G4ThreeVector itsFinalPoint = LocalR+dPos;
   G4ThreeVector itsFinalDir   = CosT*vhat +SinT*vnorm;
   
