@@ -373,6 +373,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       (*st)["angle"] = - element->angle;
       (*st)["field"] = - brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
     }
+  //copy of angle
+  G4double angle = (*st)["angle"];
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
@@ -389,7 +391,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   std::string thename = element->name + "_1_of_1";
 
   // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
-  if (!BDS::IsFinite(element->angle) || (nSBends == 1))
+  if (!BDS::IsFinite(angle) || (nSBends == 1))
     {
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
