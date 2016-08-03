@@ -592,8 +592,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   G4double outerRadius = PrepareOuterDiameter(element)*0.5;
   G4double angle       = element->angle;
   G4double length      = element->l*CLHEP::m;
-  G4double fringeLength = 1e-3;
-  G4String thename = element->name;
+  G4String thename     = element->name;
+  G4double rho         = element->l*CLHEP::m/element->angle;
 
   CheckBendLengthAngleWidthCombo(length, angle, 2*outerRadius, element->name);
 
@@ -619,24 +619,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
-  
+    
   if (BDS::IsFinite(element->e1) && includeFringe)
     {
-    BDSMagnetStrength* infringest = new BDSMagnetStrength();
-    (*infringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
-    (*infringest)["polefaceangle"] = element->e1;
-    (*infringest)["length"] = fringeLength;
-    (*infringest)["angle"] = 2.0*asin(fringeLength/(2.0*(brho/(*st)["field"])));
-    thename = element->name + "_e1_fringe";
-    BDSMagnet* startfringe = CreateDipoleFringe(element, element->e1 +0.5*angle, thename, magType, infringest);
+    BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength();
+    (*fringeStIn)["field"]         = (*st)["field"];
+    (*fringeStIn)["polefaceangle"] = element->e1;
+    (*fringeStIn)["length"]        = thinElementLength;
+    (*fringeStIn)["angle"]         = -thinElementLength/rho;
+    thename                        = element->name + "_e1_fringe";
+    angle                          = 0.5*(length-thinElementLength)/rho + element->e1;
+
+    BDSMagnet* startfringe = CreateDipoleFringe(element, angle, thename, magType, fringeStIn);
     rbendline->AddComponent(startfringe);
     }
     
   if (BDS::IsFinite(element->e1) && includeFringe)
-    {length -= fringeLength;}
+    {length -= thinElementLength;}
   if (BDS::IsFinite(element->e2) && includeFringe)
-    {length -= fringeLength;}
-    
+    {length -= thinElementLength;}
+  angle = -length/rho;
+
+  // override copied length and angle
+  (*st)["length"] = length;
+  (*st)["angle"]  = angle;
+
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       BDSIntegratorType::dipole,
@@ -654,13 +661,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   
   if (BDS::IsFinite(element->e2) && includeFringe)
     {
-    BDSMagnetStrength* outfringest = new BDSMagnetStrength();
-    (*outfringest)["field"] = brho * element->angle / element->l * charge / CLHEP::tesla / CLHEP::m;
-    (*outfringest)["polefaceangle"] = element->e2;
-    (*outfringest)["length"] = fringeLength;
-    (*outfringest)["angle"] = 2.0*asin(fringeLength/(2.0*(brho/(*st)["field"])));
-    thename = element->name + "_e2_fringe";
-    BDSMagnet* endfringe = CreateDipoleFringe(element, -element->e2 -0.5*angle, thename, magType, outfringest);
+    BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength();
+    (*fringeStOut)["field"]         = (*st)["field"];
+    (*fringeStOut)["polefaceangle"] = element->e2;
+    (*fringeStOut)["length"]        = thinElementLength;
+    (*fringeStOut)["angle"]         = -thinElementLength/rho;
+    thename                         = element->name + "_e2_fringe";
+    angle                           = 0.5*(length-thinElementLength)/rho + element->e2;
+
+    BDSMagnet* endfringe = CreateDipoleFringe(element, angle, thename, magType, fringeStOut);
     rbendline->AddComponent(endfringe);
     }
   return rbendline;
