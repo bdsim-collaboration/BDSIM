@@ -186,11 +186,15 @@ void BDSMagnet::BuildOuter()
 					 outerDiameter,chordLength,outerMaterial);
       break;
     case BDSMagnetType::rectangularbend:
-      outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
-						outerDiameter,outerDiameter,chordLength,
-						magnetOuterInfo->angleIn,
-						magnetOuterInfo->angleOut,outerMaterial);
-      break;
+      {
+	G4bool yokeOnLeft = (angle <= 0);
+	outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
+						  outerDiameter,outerDiameter,chordLength,
+						  magnetOuterInfo->angleIn,
+						  magnetOuterInfo->angleOut,
+						  yokeOnLeft,outerMaterial);
+	break;
+      }
     case BDSMagnetType::sectorbend:
       {
 	G4bool yokeOnLeft = (angle <= 0);
