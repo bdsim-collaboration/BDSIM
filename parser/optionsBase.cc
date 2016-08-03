@@ -90,7 +90,7 @@ OptionsBase::OptionsBase()
   xsize=0.0, ysize=0.0;
 
   // magnet geometry
-  magnetGeometryType   = "cylindrical";
+  magnetGeometryType   = "polessquare";
   outerMaterialName    = "iron";
   outerDiameter        = 0.6;
 
