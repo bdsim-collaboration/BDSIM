@@ -34,19 +34,18 @@ public:
   /// is so that intermediate steps can be calculated and therefore the error ascertained
   /// or distance from the chord.  Error calculation is not currently implemented.
   virtual void Stepper(const G4double y[],
-	      	 const G4double dydx[],
+	       const G4double dydx[],
 	       const G4double h,
 	       G4double       yOut[],
 	       G4double       yErr[]);
 
-/*protected:
+protected:
   /// Calcaulte the new particle coordinates for a given step length h.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,
-		    G4double       yOut[],
+		    G4double yOut[],
 		    G4double yErr[]);
-*/
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorFringefield();
