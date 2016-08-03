@@ -810,6 +810,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 {
   CleanUp();
 
+  // Test input parameters
+  TestInputParameters(beamPipe, outerDiameter, material);
+
+  // Test faces
+  if (BDS::WillIntersect(-angleIn, -angleOut, outerDiameter, length))
+    {
+      G4cout << "Error: Faces of magnet (section) named \""
+	     << name << "\" will overlap!" << G4endl;
+      G4cout << "Length of magnet is too short for the angle of the pole faces." << G4endl;
+      exit(1);
+    }
+
   // 1 calculations
   // 2 c shaped solid
   // 3 angled solids for intersection
