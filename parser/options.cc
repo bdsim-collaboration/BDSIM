@@ -194,6 +194,7 @@ void Options::PublishMembers()
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
+  publish("thinElementLength", &Options::thinElementLength);
 
   // tunnel options
   publish("buildTunnel",&Options::buildTunnel);

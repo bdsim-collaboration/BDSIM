@@ -176,6 +176,7 @@ namespace GMAD
     std::string magnetGeometryType;
     std::string outerMaterialName;
     double      outerDiameter;
+    double      thinElementLength;
 
     /// geometry debug, don't split bends into multiple segments
     bool        dontSplitSBends;

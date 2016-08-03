@@ -73,7 +73,7 @@ BDSComponentFactory::BDSComponentFactory()
   
   notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
   includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
-
+  thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
 }
 
 BDSComponentFactory::~BDSComponentFactory()

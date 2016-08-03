@@ -93,6 +93,7 @@ OptionsBase::OptionsBase()
   magnetGeometryType   = "cylindrical";
   outerMaterialName    = "iron";
   outerDiameter        = 0.2;
+  thinElementLength    = 1e-6;
 
   // geometry debugging
   // always split sbends into smaller chunks by default

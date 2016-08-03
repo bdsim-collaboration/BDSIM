@@ -58,8 +58,12 @@ private:
   G4double charge;
   /// rigidity in T*m for beam particles
   G4double brho;
+  /// don't split sbends into multiple segments
   G4bool notSplit;
+  /// include thin fringe field element(s) in dipoles
   G4bool includeFringe;
+  /// length of a thin element
+  G4double thinElementLength;
   
   /// element for storing instead of passing around
   GMAD::Element* element = nullptr;

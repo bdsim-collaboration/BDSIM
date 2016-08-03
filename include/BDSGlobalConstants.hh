@@ -176,6 +176,7 @@ public:
   inline G4double ElossHistoTransBinWidth()  const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
   inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
+  inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
 
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
