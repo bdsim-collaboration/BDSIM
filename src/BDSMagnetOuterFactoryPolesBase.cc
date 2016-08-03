@@ -1130,7 +1130,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   
   // logical volumes
-  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, material);
+  CreateLogicalVolumes(name, length, colour, material);
   // we only use one coil solid here so do that here
   G4LogicalVolume* coilLV = nullptr;
   if (buildPole)

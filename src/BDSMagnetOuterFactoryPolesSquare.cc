@@ -168,9 +168,9 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
     }
 
   // yoke
-  yokeLV   = new G4LogicalVolume(yokeSolid,
-				 outerMaterial,
-				 name + "_yoke_lv");
+  yokeLV = new G4LogicalVolume(yokeSolid,
+			       outerMaterial,
+			       name + "_yoke_lv");
   yokeLV->SetVisAttributes(outerVisAttr);
 
   // container
