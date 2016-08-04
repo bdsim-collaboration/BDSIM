@@ -1,7 +1,8 @@
 #ifndef BDSEXTENT_H
 #define BDSEXTENT_H
 
-#include <utility>
+#include <tuple>   // for std::tie
+#include <utility> // for pair and pair relational operators
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -48,6 +49,25 @@ public:
   inline G4ThreeVector ExtentNegative() const
   {return G4ThreeVector(extentX.first, extentY.first, extentZ.first);}
   /// @}
+
+  /// @{ Comparison operator.
+  inline G4bool operator<(const BDSExtent& r) const;
+  inline G4bool operator>(const BDSExtent& r) const {return r < (*this);}
+  inline G4bool operator<=(const BDSExtent& r) const {return !((*this) > r);}
+  inline G4bool operator>=(const BDSExtent& r) const {return !((*this) < r);}
+  /// @}
+
+  /// @{ Equality operator.
+  inline G4bool operator==(const BDSExtent& r) const;
+  inline G4bool operator!=(const BDSExtent& r) const {return !((*this) == r);}
+  /// @}
+
+  /// @{ Comparison operator for x,y only. Ignores z (length).
+  inline G4bool TransverselyLessThan(const BDSExtent& r) const;
+  inline G4bool TransverselyGreaterThan(const BDSExtent& r)   const {return r.TransverselyLessThan(*this);}
+  inline G4bool TransverselyLessEquals(const BDSExtent& r)    const {return !(this->TransverselyGreaterThan(r));}
+  inline G4bool TransverselyGreaterEquals(const BDSExtent& r) const {return !(this->TransverselyLessThan(r));}
+  /// @}
   
 private:
   /// @{ Negative and positive extent
@@ -56,5 +76,20 @@ private:
   std::pair<G4double, G4double> extentZ;
   /// @}
 };
+
+inline G4bool BDSExtent::operator<(const BDSExtent& r) const
+{
+  return std::tie(extentX, extentY, extentZ) < std::tie(r.extentX, r.extentY, r.extentZ);
+}
+
+inline G4bool BDSExtent::operator==(const BDSExtent& r) const
+{
+  return std::tie(extentX, extentY, extentZ) == std::tie(r.extentX, r.extentY, r.extentZ);
+}
+
+inline G4bool BDSExtent::TransverselyLessThan(const BDSExtent& r) const
+{
+  return std::tie(extentX, extentY) < std::tie(r.extentX, r.extentY);
+}
 
 #endif
