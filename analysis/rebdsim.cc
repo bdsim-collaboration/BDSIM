@@ -12,6 +12,7 @@
 
 #include "Config.hh"
 #include "DataLoader.hh"
+#include "Analysis.hh"
 #include "EventAnalysis.hh"
 #include "RunAnalysis.hh"
 
@@ -56,21 +57,29 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-  DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
-  EventAnalysis evtAnalysis = EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  std::vector<Analysis*> analyses;
 
-  // process events
-  evtAnalysis.Initialise();
-  evtAnalysis.Process();
-  evtAnalysis.SimpleHistograms();
-  evtAnalysis.Terminate();
+  DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+
+  analyses.push_back(evtAnalysis);
+
+  for (auto& analysis : analyses)
+    {
+      analysis->Execute();
+    }
 
   RunAnalysis runAnalysis = RunAnalysis(dl.GetRun(), dl.GetRunTree());
   runAnalysis.Process();
 
   // write output
   TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
-  evtAnalysis.Write(outputFile);
+
+  for (auto& analysis : analyses)
+    {
+      analysis->Write(outputFile);
+    }
+  //  evtAnalysis.Write(outputFile);
   runAnalysis.Write(outputFile);
   outputFile->Close();
 
