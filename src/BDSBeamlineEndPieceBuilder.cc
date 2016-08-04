@@ -60,13 +60,25 @@ void BDS::BuildEndPieceBeamline()
 	  G4double             availableLength = 0;
 	  G4double   previousNonDriftEndPieceL = 0;
 	  G4bool              driftIsFirstItem = false;
+	  BDSExtent        endPieceInnerExtent = endPieceBefore->GetInnerExtent();
+	  G4bool         driftsAreTooBigBefore = false;
 	  while(keepGoing)
 	    {
 	      inspectedElement = beamline->GetPrevious(inspectedElement);
 	      if (inspectedElement)
 		{ // there is a previous element - inspect it
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
-		    {availableLength += inspectedElement->GetChordLength();}
+		    {
+		      // check extents first
+		      auto extPipe = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
+			{
+			  keepGoing             = false;
+			  driftsAreTooBigBefore = true;
+			}
+		      if (keepGoing)
+			{availableLength += inspectedElement->GetChordLength();}
+		    }
 		  else
 		    {
 		      keepGoing = false;
@@ -83,15 +95,19 @@ void BDS::BuildEndPieceBeamline()
 	  if (requiredBeforeLength > (availableLength - previousNonDriftEndPieceL))
 	    {placeBefore = false;}
 
+	  // don't place if the drifts on either side are too big for the end pieces to fit around
+	  if (driftsAreTooBigBefore)
+	    {placeBefore = false;}
+
 	  // place the last item anyway even if there technically isn't space - either too short
 	  // a drift or the magnet is first in the line
-	  if ( (element == firstItem) || driftIsFirstItem )
+	  if ( (element == firstItem) || (driftIsFirstItem && !driftsAreTooBigBefore) )
 	    {placeBefore = true;}
 
 	  // Now check if the coil volumes will overlap
 	  // This check is only done on before, as something can always be naturally added
 	  // afterwards - this just sets a precedence of after over before.
-	  if (!endPieces->empty()) // only look backwards if we have already placed an end piece
+	  if (placeBefore && !endPieces->empty() ) // only look backwards if we have already placed an end piece
 	    {
 	      // endPieces is a beam line of only end pieces
 	      BDSAcceleratorComponent* prevEndPiece = (endPieces->back())->GetAcceleratorComponent();
@@ -126,6 +142,8 @@ void BDS::BuildEndPieceBeamline()
 	  G4double             availableLength = 0;
 	  G4double       nextNonDriftEndPieceL = 0;
 	  G4bool               driftIsLastItem = false;
+	  BDSExtent        endPieceInnerExtent = endPieceAfter->GetInnerExtent();
+	  G4bool          driftsAreTooBigAfter = false;
 	  while(keepGoing)
 	    {
 	      inspectedElement = beamline->GetNext(inspectedElement);
@@ -133,8 +151,18 @@ void BDS::BuildEndPieceBeamline()
 		{ // there is a previous element - inspect it
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
 		    {
-		      availableLength += inspectedElement->GetChordLength();
-		      driftIsLastItem = inspectedElement == lastItem;
+		      // check extents first
+		      auto extPipe = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
+			{
+			  keepGoing            = false;
+			  driftsAreTooBigAfter = true;
+			}
+		      if (keepGoing)
+			{
+			  availableLength += inspectedElement->GetChordLength();
+			  driftIsLastItem = inspectedElement == lastItem;
+			}
 		    }
 		  else
 		    {
@@ -143,8 +171,6 @@ void BDS::BuildEndPieceBeamline()
 		      if (nextNonDriftAccCompEndPiece)
 			{nextNonDriftEndPieceL = nextNonDriftAccCompEndPiece->GetChordLength();}
 		    } // not a drift - can't be used
-		  if (availableLength > requiredAfterLength)
-		    {keepGoing = false;} // break out if we've got enough space
 		}
 	      else
 		{keepGoing = false;} // quit the loop - no previous element
@@ -153,10 +179,14 @@ void BDS::BuildEndPieceBeamline()
 	  // don't place if there isn't enough space for BOTH endpieces - this one and the upcoming one
 	  if (requiredBeforeLength > (availableLength - nextNonDriftEndPieceL))
 	    {placeAfter = false;}
+
+	  // don't place if the drifts on either side are too big for the end pieces to fit around
+	  if (driftsAreTooBigAfter)
+	    {placeAfter = false;}
 	  
 	  // place the last item anyway even if there technically isn't space - either too short
 	  // a drift or the magnet is last in the line
-	  if ( (element == lastItem) || driftIsLastItem )
+	  if ( (element == lastItem) || (driftIsLastItem && !driftsAreTooBigAfter) )
 	    {placeAfter = true;}
 
 	  if (placeAfter)
