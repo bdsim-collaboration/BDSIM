@@ -60,17 +60,17 @@ int main(int argc, char *argv[])
   std::vector<Analysis*> analyses;
 
   DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
+
   EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  RunAnalysis* runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
 
   analyses.push_back(evtAnalysis);
+  analyses.push_back(runAnalysis);
 
   for (auto& analysis : analyses)
     {
       analysis->Execute();
     }
-
-  RunAnalysis runAnalysis = RunAnalysis(dl.GetRun(), dl.GetRunTree());
-  runAnalysis.Process();
 
   // write output
   TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
@@ -79,8 +79,7 @@ int main(int argc, char *argv[])
     {
       analysis->Write(outputFile);
     }
-  //  evtAnalysis.Write(outputFile);
-  runAnalysis.Write(outputFile);
+
   outputFile->Close();
 
   return 0;
