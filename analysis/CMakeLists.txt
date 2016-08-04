@@ -82,7 +82,8 @@ if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	add_executable(edbdsim edbdsim.cc)
 	set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
 	target_link_libraries(edbdsim rebdsimLib ${ROOT_EVELIBRARIES})
-
+	target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
+	#message(STATUS ${ROOT_EVELIBRARIES})
 	# Installation
 	bdsim_install_targets(rebdsim edbdsim rebdsimLib)
 else()
