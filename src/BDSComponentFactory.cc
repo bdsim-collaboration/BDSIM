@@ -636,7 +636,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       thename                        = element->name + "_e1_fringe";
       angle                          = 0.5*(length-thinElementLength)/rho + element->e1;
 
-      BDSMagnet* startfringe = CreateDipoleFringe(element, angle, thename, magType, fringe StIn);
+      BDSMagnet* startfringe = CreateDipoleFringe(element, angle, thename, magType, fringeStIn);
       rbendline->AddComponent(startfringe);
     }
 
