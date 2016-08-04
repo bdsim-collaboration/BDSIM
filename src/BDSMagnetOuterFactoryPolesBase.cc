@@ -1312,12 +1312,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   const G4double connector = 1*CLHEP::mm;
   G4double xmax = poleHalfWidth + coilWidth + connector;
   G4double ymax = poleHalfHeight + coilHeight + cDY + connector;
+  G4double yInn = poleHalfHeight + cDY;
   contEPPoints.push_back(G4TwoVector(xmax + connector,  ymax));
   contEPPoints.push_back(G4TwoVector(-xmax,  ymax));
-  contEPPoints.push_back(G4TwoVector(-xmax,  poleHalfHeight));
-  contEPPoints.push_back(G4TwoVector( xmax,  poleHalfHeight));
-  contEPPoints.push_back(G4TwoVector( xmax, -poleHalfHeight));
-  contEPPoints.push_back(G4TwoVector(-xmax, -poleHalfHeight));
+  contEPPoints.push_back(G4TwoVector(-xmax,  yInn));
+  contEPPoints.push_back(G4TwoVector( xmax,  yInn));
+  contEPPoints.push_back(G4TwoVector( xmax, -yInn));
+  contEPPoints.push_back(G4TwoVector(-xmax, -yInn));
   contEPPoints.push_back(G4TwoVector(-xmax, -ymax));
   contEPPoints.push_back(G4TwoVector(xmax + connector, -ymax));
   
@@ -1340,7 +1341,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
                                      -ymax, ymax,
                                      -ePInLengthZ*0.5, ePInLengthZ*0.5);
     BDSExtent ePExtInner = BDSExtent(-xmax, xmax,
-                                     -poleHalfHeight, poleHalfHeight,
+                                     -yInn, yInn,
                                      -ePInLengthZ*0.5, ePInLengthZ*0.5);
 
   G4VSolid* ePContSolidIn  = new G4ExtrudedSolid(name + "_end_coil_in_solid", // name
