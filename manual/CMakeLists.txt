@@ -30,12 +30,13 @@ if(SPHINX_FOUND)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${BINARY_BUILD_DIR}/source/examples
     # Copy .rst and .png files from examples
     COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples \( -iname *.rst -o -iname *.png \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \;
+    COMMENT "Copying manual files to build directory"
     VERBATIM
   )
 
   # Make HTML manual
   add_custom_target(manual
-      COMMAND ${SPHINX_EXECUTABLE}
+      ${SPHINX_EXECUTABLE}
           -q -b html
           -c "${BINARY_BUILD_DIR}"
           -d "${SPHINX_CACHE_DIR}"
@@ -49,7 +50,7 @@ if(SPHINX_FOUND)
   # The number of LaTeX runs is quite conservative, but I don't expect it
   # to get run often, so the little extra time won't hurt.
   add_custom_target(manual-pdf
-      COMMAND ${SPHINX_EXECUTABLE}
+      ${SPHINX_EXECUTABLE}
           -q -b latex
           -c "${BINARY_BUILD_DIR}"
           -d "${SPHINX_CACHE_DIR}"
