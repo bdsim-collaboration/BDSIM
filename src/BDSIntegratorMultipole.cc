@@ -10,6 +10,7 @@
 #include "G4ThreeVector.hh"
 
 #include <cmath>
+#include <G4TwoVector.hh>
 
 BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength,
 						 G4double                 brho,
@@ -22,11 +23,11 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
   std::vector<G4String> skewKeys = strength->SkewComponentKeys();
   std::vector<G4String>::iterator nkey = normKeys.begin();
   std::vector<G4String>::iterator skey = skewKeys.begin();
-  for (G4int i = 0; i < normKeys.size(); i++, nkey++, skey++)
+  for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
     {
-        bnl.push_back((*strength)[*nkey] * brho);
-        bsl.push_back((*strength)[*skey] * brho);
-        nfact.push_back(Factorial(i+1));
+        bnl.push_back((*strength)[*nkey] / CLHEP::m);
+        bsl.push_back((*strength)[*skey] / CLHEP::m);
+        nfact.push_back(Factorial(i));
     }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
@@ -94,15 +95,14 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
 
   //G4double speedoflight = CLHEP::c_light / (CLHEP::m / CLHEP::second);
   G4double dipoleTerm = b0l*normFactor *zp / vOverc;
-
-  G4int n = 1;
+  G4int n = 0;
   std::list<double>::iterator kn = bnl.begin();
 
   //Sum higher order components into one kick
   for (; kn != bnl.end(); n++, kn++)
     {
-      knReal = (*kn) * normFactor * pow(position,n).real() / nfact[n-1];
-      knImag = (*kn) * normFactor * pow(position,n).imag() / nfact[n-1];
+      knReal = (*kn) * pow(position,n).real() / nfact[n];
+      knImag = (*kn) * pow(position,n).imag() / nfact[n];
       result = {knReal,knImag};
       kick += result;
     }
@@ -112,35 +112,41 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   yp1 += kick.imag();
 
   //Reset n for skewed kicks.
-  n=1;
-  G4double skewAngle = 0;
+  n=0;
   G4double ksReal = 0;
   G4double ksImag = 0;
-  //components of rotated momentum
-  G4double xp1Rot = 0;
-  G4double yp1Rot = 0;
+  G4double skewAngle=0;
 
+  G4TwoVector mom = G4TwoVector(xp1,yp1);
+  G4double momx = mom.x();
+  G4double momy = mom.y();
 
-  //Rotate momentum vector about z axis according to number of poles
-  //then apply each kick seperately and rotate back
+  G4complex skewresult(0,0);
+  G4complex skewkick(0,0);
+
   std::list<double>::iterator ks = bsl.begin();
   for (; ks != bsl.end(); n++, ks++)
   {
-    skewAngle = CLHEP::pi / (2*(n+1));
-    //Rotate momentum vectors
-    xp1Rot = xp1*cos(skewAngle) - yp1 * sin(skewAngle);
-    yp1Rot = xp1*sin(skewAngle) + yp1 * cos(skewAngle);
+    //Rotate momentum vector about z axis according to number of poles
+    //then apply each kick seperately and rotate back
+    skewAngle = CLHEP::pi / (2*(n+2));
+    mom.rotate(skewAngle);
 
     // calculate and apply kick
-    ksReal = (*ks) * normFactor * pow(position,n).real() / nfact[n-1];
-    ksImag = (*ks) * normFactor * pow(position,n).imag() / nfact[n-1];
-    xp1Rot += ksReal;
-    yp1Rot -= ksImag;
+    ksReal = (*ks) * pow(position,n).real() / nfact[n];
+    ksImag = (*ks) * pow(position,n).imag() / nfact[n];
+    skewresult = {ksReal,ksImag};
+    skewkick += skewresult;
 
     // Rotate back
-    xp1 = xp1Rot*cos(-skewAngle) - yp1Rot * sin(-skewAngle);
-    yp1 = xp1Rot*sin(-skewAngle) + yp1Rot * cos(-skewAngle);
+    momx = mom.x() - skewkick.real();
+    momy = mom.y() - skewkick.imag();
+    mom = {momx, momy};
+    mom.rotate(-skewAngle);
   }
+
+  xp1 = mom.x();
+  yp1 = mom.y();
 
   LocalR.setX(x1);
   LocalR.setY(y1);
