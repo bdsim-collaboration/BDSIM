@@ -1,12 +1,19 @@
 file(GLOB rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+
+# Remove mains from dictionary
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/rebdsim.cc)
 list(REMOVE_ITEM rebdsimLibSources ${CMAKE_CURRENT_SOURCE_DIR}/edbdsim.cc)
 
-
 file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
 
-#message(${CMAKE_CURRENT_SOURCE_DIR})
-#message(ROOT DICTS : ${rebdsimLibLinkDefs})
+# For ROOT 5 there is no event display.
+if (${ROOT_MAJOR_VERSION} STREQUAL "5")
+   list(REMOVE_ITEM rebdsimLibSources  ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplay.cc)
+   list(REMOVE_ITEM rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/EventDisplayLinkDef.hh)
+endif()
+
+#message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
+#message(STATUS "ROOT DICTS : ${rebdsimLibLinkDefs}")
 
 foreach(header ${rebdsimLibLinkDefs})
     # remove LinkDef.hh
@@ -65,8 +72,6 @@ endforeach()
 
 
 add_library(rebdsimLib SHARED ${rebdsimLibSources})
-
-target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
 target_link_libraries(rebdsimLib bdsimRootEvent)
 
 add_executable(rebdsim rebdsim.cc)
@@ -76,8 +81,9 @@ target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	add_executable(edbdsim edbdsim.cc)
 	set_target_properties(edbdsim PROPERTIES OUTPUT_NAME "edbdsim" VERSION ${BDSIM_VERSION})
-	target_link_libraries(edbdsim rebdsimLib bdsimRootEvent)
-
+	target_link_libraries(edbdsim rebdsimLib ${ROOT_EVELIBRARIES})
+	target_link_libraries(rebdsimLib ${ROOT_EVELIBRARIES})
+	#message(STATUS ${ROOT_EVELIBRARIES})
 	# Installation
 	bdsim_install_targets(rebdsim edbdsim rebdsimLib)
 else()
