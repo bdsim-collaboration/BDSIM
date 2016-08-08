@@ -32,6 +32,8 @@ class Config
   std::string CalculateOpticalFunctionsFileName() {return calculateOpticalFunctionsFileName;}
   bool        Debug()                             {return bDebug;}
   bool        CalculateOpticalFunctions()         {return bCalculateOpticalFunctions;}
+  bool        ProcessSamplers()                   {return bProcessSamplers;}
+  bool        ProcessLosses()                     {return bProcessLosses;}
   bool        ProcessAllTrees()                   {return bProcessAllTrees;}
   
   std::vector<std::map<std::string, std::string>> GetHistoDefs() { return histos;}
