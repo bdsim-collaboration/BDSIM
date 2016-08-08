@@ -67,8 +67,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDS::CalculateFaces(G4double angleIn,
 }
 
 G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
-                                G4double angleOut,
-                                G4double length)
+					  G4double angleOut,
+					  G4double length)
 {
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
   G4ThreeVector inputface = faces.first;
