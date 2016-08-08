@@ -66,7 +66,7 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*/)
 {
   if(BDSGlobalConstants::Instance()->StopTracks())
     {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
@@ -82,11 +82,15 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   if (enrg==0.) return false;      
 
   G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+
+
+  G4VPhysicalVolume* theVolume = auxNavigator->LocateGlobalPointAndSetup(aStep);
   
   // Get translation and rotation of volume w.r.t the World Volume
   // get the coordinate transform from the read out geometry instead of the actual geometry
   // if it exsits, else assume on axis. The read out geometry is in accelerator s,x,y
   // coordinates along beam line axis
+  /*
   G4AffineTransform tf;
   G4VPhysicalVolume* theVolume;
   G4int geomFlag = -1;
@@ -128,13 +132,15 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     theVolume = aStep->GetPostStepPoint()->GetPhysicalVolume();
     tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
   }
-
+  */
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
 
   //calculate local coordinates
-  G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
-  G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
+  G4ThreeVector posbeforelocal = auxNavigator->ConvertToLocal(posbefore);
+  G4ThreeVector posafterlocal  = auxNavigator->ConvertToLocal(posafter);
+  //G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
+  //G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
 
   // use the second point as the point of energy deposition
   // originally this was the mean of the pre and post step points, but
@@ -205,8 +211,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
                                                        turnstaken,
                                                        eventnumber,
                                                        stepLength,
-                                                       theInfo->GetBeamlineIndex(),
-                                                       geomFlag);
+                                                       theInfo->GetBeamlineIndex());
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
