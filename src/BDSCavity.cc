@@ -264,7 +264,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //Array of inner r coordinates.  zeroes ensures the polycone will be solid. 1 extra point either side for unambiguous  boolean subtraction.
   std::vector<G4double> solidArrayInner(noPoints+2, 0.0); 
 
-  //Define the inner solid which is to be subtracted from the outer and also used to define the vaccum.
+  //Define the inner solid which is to be subtracted from the outer and also used to define the vacuum.
   innerSolid = new G4Polycone(name + "_inner_solid", //name
 			      0.0,                  //start angle
 			      2*CLHEP::pi,          //sweep angle
