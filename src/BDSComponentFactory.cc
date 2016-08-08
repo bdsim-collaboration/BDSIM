@@ -143,6 +143,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       angleIn = element->e1 - 0.5*element->angle;
       angleOut = element->e2 - 0.5*element->angle;
     }
+  else if (element->type == ElementType::_THINMULT)
+    {
+      element->e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
+      element->e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+    }
 
   // check if the component already exists and return that
   // don't use registry for output elements since reliant on unique name
@@ -892,7 +897,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
 
  return new BDSMagnet(BDSMagnetType::multipole,
 		      element->name,
-		      1e-6 * CLHEP::m,
+		      thinElementLength,
 		      PrepareBeamPipeInfo(element),
 		      PrepareMagnetOuterInfo(element),
 		      vacuumField,
