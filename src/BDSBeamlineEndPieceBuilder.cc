@@ -177,7 +177,7 @@ void BDS::BuildEndPieceBeamline()
 	    }
 
 	  // don't place if there isn't enough space for BOTH endpieces - this one and the upcoming one
-	  if (requiredBeforeLength > (availableLength - nextNonDriftEndPieceL))
+	  if (requiredAfterLength > (availableLength - nextNonDriftEndPieceL))
 	    {placeAfter = false;}
 
 	  // don't place if the drifts on either side are too big for the end pieces to fit around
