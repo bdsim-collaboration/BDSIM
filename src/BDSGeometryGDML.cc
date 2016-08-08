@@ -24,7 +24,7 @@ BDSGeometryGDML::~BDSGeometryGDML(){
 void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
   markerVol = marker;
   G4GDMLParser *parser = new G4GDMLParser();
-  parser->Read(GDMLfile);
+  parser->Read(GDMLfile,true);
   
   gdmlWorld = parser->GetWorldVolume()->GetLogicalVolume();
 
