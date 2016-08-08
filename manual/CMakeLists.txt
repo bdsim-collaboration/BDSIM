@@ -22,29 +22,35 @@ if(SPHINX_FOUND)
       "${BINARY_BUILD_DIR}/conf.py"
       @ONLY)
 
-  #make directory for examples
-  execute_process(COMMAND mkdir -p ${BINARY_BUILD_DIR}/source/examples)
+  # Helper target, not meant to be executed standalone
+  add_custom_target(manual-copy-files
+    # Copy sources to build directory
+    ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/source ${CMAKE_CURRENT_BINARY_DIR}/source
+    # Make directory for examples
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${BINARY_BUILD_DIR}/source/examples
+    # Copy .rst and .png files from examples
+    COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples \( -iname *.rst -o -iname *.png \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \;
+    COMMENT "Copying manual files to build directory"
+    VERBATIM
+  )
 
-  #copy .rst and .png files from examples (seems hard to get right syntax in custom_target)
-  execute_process(COMMAND find ${CMAKE_CURRENT_SOURCE_DIR}/../examples \( -iname *.rst -o -iname *.png \) -exec cp {} ${BINARY_BUILD_DIR}/source/examples/. \; )
-
+  # Make HTML manual
   add_custom_target(manual
-      # Copy sources to build directory
-      ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/source ${CMAKE_CURRENT_BINARY_DIR}/source
-      COMMAND ${SPHINX_EXECUTABLE}
+      ${SPHINX_EXECUTABLE}
           -q -b html
           -c "${BINARY_BUILD_DIR}"
           -d "${SPHINX_CACHE_DIR}"
           "${CMAKE_CURRENT_BINARY_DIR}/source"
           "${SPHINX_HTML_DIR}"
-      COMMENT "Building HTML documentation with Sphinx")
+      DEPENDS manual-copy-files
+      COMMENT "Building HTML documentation with Sphinx"
+  )
 
+  # Make PDF manual
   # The number of LaTeX runs is quite conservative, but I don't expect it
   # to get run often, so the little extra time won't hurt.
   add_custom_target(manual-pdf
-      # Copy sources to build directory
-      ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/source ${CMAKE_CURRENT_BINARY_DIR}/source
-      COMMAND ${SPHINX_EXECUTABLE}
+      ${SPHINX_EXECUTABLE}
           -q -b latex
           -c "${BINARY_BUILD_DIR}"
           -d "${SPHINX_CACHE_DIR}"
@@ -55,7 +61,8 @@ if(SPHINX_FOUND)
       COMMAND pdflatex BDSIM
       COMMAND makeindex -s python.ist BDSIM.idx
       COMMAND pdflatex BDSIM
-      COMMAND pdflatex BDSIM
+      COMMAND pdflatex BDSIM 
+      DEPENDS manual-copy-files
       COMMENT "Building LaTeX documentation with Sphinx"
     )
 

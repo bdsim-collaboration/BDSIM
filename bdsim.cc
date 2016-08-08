@@ -127,7 +127,9 @@ int main(int argc,char** argv)
 	  }
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
         bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
+        bdsOutput->FillEvent();
       }
+      bdsOutput->Close();
       G4cout << G4endl;
       delete bdsBunch;
       delete bdsOutput;
