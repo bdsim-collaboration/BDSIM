@@ -1,7 +1,6 @@
 
 beam,  particle="e-",
-       energy=1.5405110 * GeV,
-       distrType="reference",
+       energy=1.5 * GeV,
        X0=0.1*um;
 
 !       distrType="gausstwiss",

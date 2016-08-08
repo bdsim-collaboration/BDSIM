@@ -2,6 +2,7 @@
 #include "BDSBeamPipeFactoryLHC.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
@@ -165,16 +166,19 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CreateBeamPipeAngledInOut(G4String    nameIn
   CleanUp();
 
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   G4double width  = aper3In + beamPipeThicknessIn + lengthSafety;
   G4double height = aper2In + beamPipeThicknessIn + lengthSafety;
   
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, beamPipeThicknessIn, inputface, outputface);
-  CreateContainerSubtractionSolid(nameIn, lengthIn, beamPipeThicknessIn, aper1In, aper2In, aper3In);
+  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, aper2In, aper3In, beamPipeThicknessIn,
+			    inputFaceNormal, outputFaceNormal);
+  CreateContainerSubtractionSolid(nameIn, lengthIn, beamPipeThicknessIn,
+				  aper1In, aper2In, aper3In);
   
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, width, height);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, width, height);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
@@ -194,12 +198,10 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
 					     lengthIn);
   
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerWidthIn,containerWidthIn);
-  std::pair<double,double> extY = std::make_pair(-containerHeightIn,containerHeightIn);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
-
+  BDSExtent ext = BDSExtent(containerWidthIn, containerHeightIn, lengthIn*0.5);
+  
   // build the BDSBeamPipe instance and return it
-  return BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerWidthIn);
+  return BuildBeamPipeAndRegisterVolumes(ext, containerWidthIn);
 }
 
 

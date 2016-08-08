@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
@@ -12,8 +13,6 @@
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
-
-#include <utility>
 
 G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -50,11 +49,10 @@ void BDSMagnetOuterFactoryBase::CleanUp()
   allVisAttributes.clear();
   allUserLimits.clear();
 
-  magContExtentX = std::make_pair(0,0);
-  magContExtentY = std::make_pair(0,0);
-  magContExtentZ = std::make_pair(0,0);
-
   magnetContainer = nullptr;
+
+  inputFaceNormal  = G4ThreeVector(0,0,-1);
+  outputFaceNormal = G4ThreeVector(0,0, 1);
 }
 
 void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
@@ -94,16 +92,8 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
     {poleLV->SetVisAttributes(outerVisAttr);}
   yokeLV->SetVisAttributes(outerVisAttr);
   // container
-  if (visDebug)
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    }
-  else
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    }
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
   // USER LIMITS
 #ifndef NOUSERLIMITS
@@ -122,9 +112,7 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 
 void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      name,
 								G4double      magnetContainerLength,
-								G4double      magnetContainerRadius,
-								G4ThreeVector inputFace,
-								G4ThreeVector outputFace)
+								G4double      magnetContainerRadius)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -136,12 +124,10 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      na
 				       magnetContainerLength * 0.5, // z half length
 				       0,                           // starting angle
 				       CLHEP::twopi,                // sweep angle
-				       inputFace,                   // input face normal vector
-				       outputFace);                 // output fae normal vector
+				       inputFaceNormal,             // input face normal vector
+				       outputFaceNormal);           // output fae normal vector
 
-  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
+  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
 
 
@@ -159,10 +145,8 @@ void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidStraight(G4String name,
 				    magnetContainerLength * 0.5, // z half length
 				    0,                           // starting angle
 				    CLHEP::twopi);               // sweep angle
-  
-  magContExtentX = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentY = std::make_pair(-magnetContainerRadius, magnetContainerRadius);
-  magContExtentX = std::make_pair(-magnetContainerLength*0.5, magnetContainerLength*0.5);
+
+  magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, magnetContainerLength*0.5);
 }
   
 void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
@@ -172,7 +156,13 @@ void BDSMagnetOuterFactoryBase::CreateMagnetContainerComponent()
 #endif
   magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
 					     magnetContainerLV,
-					     magContExtentX,
-					     magContExtentY,
-					     magContExtentZ);
+					     magContExtent);
 }
+
+
+void BDSMagnetOuterFactoryBase::SetFaceNormals(BDSMagnetOuter* outer)
+{
+  outer->SetInputFaceNormal(inputFaceNormal);
+  outer->SetOutputFaceNormal(outputFaceNormal);
+}
+  

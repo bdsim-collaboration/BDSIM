@@ -24,13 +24,15 @@
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
 #include "BDSMultipoleOuterMagField.hh"
+#include "BDSUtilities.hh"
 
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,
 		     G4double            length,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
-		     BDSMagnetOuterInfo* magnetOuterInfoIn):
-  BDSAcceleratorComponent(name, length, 0, type.ToString()),
+		     BDSMagnetOuterInfo* magnetOuterInfoIn,
+		     G4double            angle):
+  BDSAcceleratorComponent(name, length, angle, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
@@ -38,8 +40,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
-  inputface       = G4ThreeVector(0,0,0);
-  outputface      = G4ThreeVector(0,0,0);
+  inputface       = G4ThreeVector(0,0,-1);
+  outputface      = G4ThreeVector(0,0, 1);
   
   itsStepper       = nullptr;
   itsMagField      = nullptr;
@@ -88,6 +90,10 @@ void BDSMagnet::BuildBeampipe()
   RegisterDaughter(beampipe);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+
+  /// Update record of normal vectors now beam pipe has been constructed.
+  SetInputFaceNormal(BDS::RotateToReferenceFrame(beampipe->InputFaceNormal(), angle));
+  SetOutputFaceNormal(BDS::RotateToReferenceFrame(beampipe->OutputFaceNormal(), -angle));
 }
 
 void BDSMagnet::BuildBPFieldMgr()
@@ -146,10 +152,8 @@ void BDSMagnet::BuildOuter()
   // chordLength is provided to the outer factory to make a new container for the whole
   // magnet object based on the shape of the magnet outer geometry.
   
-  //build the right thing depending on the magnet type
-  //saves basically the same function in each derived class
-  // RBEND does its own thing by override this method so isn't here
-  // SBEND overrides this too.
+  // build the right thing depending on the magnet type
+  // saves basically the same function in each derived class
   BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
   switch(magnetType.underlying())
     {
@@ -182,17 +186,25 @@ void BDSMagnet::BuildOuter()
 					 outerDiameter,chordLength,outerMaterial);
       break;
     case BDSMagnetType::rectangularbend:
-      outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
-						outerDiameter,outerDiameter,chordLength,
-						magnetOuterInfo->angleIn,
-						magnetOuterInfo->angleOut,outerMaterial);
-      break;
+      {
+	G4bool yokeOnLeft = (angle <= 0);
+	outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
+						  outerDiameter,outerDiameter,chordLength,
+						  magnetOuterInfo->angleIn,
+						  magnetOuterInfo->angleOut,
+						  yokeOnLeft,outerMaterial);
+	break;
+      }
     case BDSMagnetType::sectorbend:
-      outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
-					   outerDiameter,chordLength,
-					   magnetOuterInfo->angleIn,
-					   magnetOuterInfo->angleOut,outerMaterial);
-      break;
+      {
+	G4bool yokeOnLeft = (angle <= 0);
+	outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
+					     outerDiameter,chordLength,
+					     magnetOuterInfo->angleIn,
+					     magnetOuterInfo->angleOut,
+					     yokeOnLeft,outerMaterial);
+	break;
+      }
     case BDSMagnetType::sextupole:
       outer = theFactory->CreateSextupole(geometryType,name,outerLength,beampipe,
 					  outerDiameter,chordLength,outerMaterial);
@@ -223,9 +235,17 @@ void BDSMagnet::BuildOuter()
       // zero coordinate of the container solid
       SetPlacementOffset(contOffset);
 
+      outer->ClearMagnetContainer();
+      
       RegisterDaughter(outer);
       InheritExtents(container); // update extents
-      outer->ClearMagnetContainer();
+      
+      endPieceBefore = outer->EndPieceBefore();
+      endPieceAfter  = outer->EndPieceAfter();
+
+      /// Update record of normal vectors now beam pipe has been constructed.
+      SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
+      SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
     }
 }
 

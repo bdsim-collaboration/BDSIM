@@ -1,4 +1,5 @@
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
@@ -40,15 +41,10 @@ void BDSTerminator::BuildContainerLogicalVolume()
   //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 
   // visual attributes
-  if (BDSGlobalConstants::Instance()->VisDebug())
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-
+  containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+      
   // register extents with BDSGeometryComponent base class
-  SetExtentX(-radius,radius);
-  SetExtentY(-radius,radius);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
 
 BDSTerminator::~BDSTerminator()
