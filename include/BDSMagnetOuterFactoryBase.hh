@@ -1,8 +1,9 @@
 #ifndef BDSMAGNETOUTERFACTORYBASE_H
 #define BDSMAGNETOUTERFACTORYBASE_H
 
-#include "BDSGeometryComponent.hh"
 #include "BDSBeamPipe.hh"
+#include "BDSExtent.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuter.hh"
 
 #include "globals.hh"         // geant4 globals / types
@@ -31,17 +32,17 @@ class G4VSolid;
  * Each factory should implement a method for every type of magnet - ie for
  * each class that inherits BDSMagnet.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * NOTE each derived class is expected to be a singleton but this can't be specified here
+ * as it'd refer to the abstract base class - must be implemented in each derived class. 
+ * 'In' in argument variables is used to distinguish between that and possible
+ * internal member variables with the same name - avoiding 'itsVariable'.
+ * 
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryBase
 {
 public:
-  /// NOTE each derived class is expected to be a singleton but this can't be specified here
-  /// as it'd refer to the abstract base class - must be implemented in each derived class. 
-  /// 'In' in argument variables is used to distinguish between that and possible
-  /// internal member variables with the same name - avoiding 'itsVariable'.
-
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,                   // name
 					   G4double     length,                 // full length [mm]
@@ -50,6 +51,7 @@ public:
 					   G4double     containerLength,        // full length to make AccComp container
 					   G4double     angleIn,                // input face angle w.r.t. chord
 					   G4double     angleOut,               // output face angle w.r.t. chord
+					   G4bool       yokeOnLeft,             // build magnet yoke on left of bend
 					   G4Material*  outerMaterial = nullptr // material for outer volume
 					   ) = 0;
   
@@ -62,6 +64,7 @@ public:
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord
+						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
 						G4Material*  outerMaterial = nullptr // material for outer volume
 						) = 0;
   
@@ -166,9 +169,7 @@ protected:
   /// of one with angled faces
   void BuildMagnetContainerSolidAngled(G4String      name,
 				       G4double      magnetContainerLength,
-				       G4double      magnetContainerRadius,
-				       G4ThreeVector inputFace,
-				       G4ThreeVector outputFace);
+				       G4double      magnetContainerRadius);
 
   /// Utility function to make cylindrical magnetContainerSolid in the case
   /// of flat faces
@@ -177,17 +178,22 @@ protected:
 					 G4double magnetContainerRadius);
 
   void CreateMagnetContainerComponent();
+
+  /// Copy face normals from members to an instance of outer.
+  void SetFaceNormals(BDSMagnetOuter* outer);
   
   // geometric pointers that will be used to pass around components
   // within the factory (as different parts factorised so they can
   // be overridden by the derived classes.
   G4double           lengthSafety;
-  G4bool             checkOverlaps;      // to avoid using globalconstants a lot
+  G4bool             checkOverlaps; ///< to avoid using globalconstants a lot
   G4bool             visDebug;
-  G4double           nSegmentsPerCircle; // for visualisation improvement
-  G4double           maxStepFactor;      // for user limits
-  G4VSolid*          poleSolid; /// solid for an individual pole that will be placed multiple times
-  G4VSolid*          yokeSolid; /// solid for outer part that connects all poles
+
+  /// For visualisation improvement. Also used for coil end piece geometry
+  G4double           nSegmentsPerCircle;
+  G4double           maxStepFactor;      ///< for user limits
+  G4VSolid*          poleSolid; ///< solid for an individual pole that will be placed multiple times
+  G4VSolid*          yokeSolid; ///< solid for outer part that connects all poles
   G4VSolid*          containerSolid;
   G4VSolid*          magnetContainerSolid;
   G4LogicalVolume*   poleLV;
@@ -205,10 +211,11 @@ protected:
   std::vector<G4VisAttributes*>   allVisAttributes;
   std::vector<G4UserLimits*>      allUserLimits;
 
-  std::pair<G4double, G4double>   magContExtentX;
-  std::pair<G4double, G4double>   magContExtentY;
-  std::pair<G4double, G4double>   magContExtentZ;
+  BDSExtent                       magContExtent;
   BDSGeometryComponent*           magnetContainer;
+
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
 
   /// A larger length safety that can be used where tracking accuracty isn't required
   /// or more tolerante geometry is requried (1um).

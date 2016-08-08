@@ -29,7 +29,7 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4double                 sPositionEndIn,
 				       BDSSamplerType           samplerTypeIn,
 				       G4String                 samplerNameIn,
-G4int indexIn) :
+				       G4int                    indexIn):
   component(componentIn),
   positionStart(positionStartIn), positionMiddle(positionMiddleIn), positionEnd(positionEndIn),
   rotationStart(rotationStartIn), rotationMiddle(rotationMiddleIn), rotationEnd(rotationEndIn),

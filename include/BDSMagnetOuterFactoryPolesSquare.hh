@@ -19,16 +19,16 @@ class G4Material;
  * Most magnets are 2N poles, but sector- and r-bends as well as 
  * muon spoilers, and h/v kickers are unique.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
-
 
 class BDSMagnetOuterFactoryPolesSquare: public BDSMagnetOuterFactoryPolesBase
 {
 public:
-  static BDSMagnetOuterFactoryPolesSquare* Instance(); /// singleton pattern
+  /// Singelton accessor.
+  static BDSMagnetOuterFactoryPolesSquare* Instance();
   
-  ~BDSMagnetOuterFactoryPolesSquare();
+  virtual ~BDSMagnetOuterFactoryPolesSquare();
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class
@@ -37,17 +37,20 @@ private:
 
   virtual void CleanUp();
 
-  virtual void CreatePoleSolid(G4String     name,
-			       G4double     length,
-			       G4int        order);
-
   /// Create yoke that connects poles and container to put them in
   virtual void CreateYokeAndContainerSolid(G4String name,
 					   G4double length,
 					   G4int    order,
 					   G4double magnetContainerRadius);
 
-  /// Build the logical volumes from the solids assigning materials and colours and cuts
+  virtual void IntersectPoleWithYoke(G4String name,
+				     G4double length,
+				     G4int    orderIn);
+
+  /// Build the logical volumes from the solids assigning materials and colours and cuts.
+  /// This doesn't make use of any base class implementation as this class creates a
+  /// vector of unique poles that must all be built individually into logical volumes.
+  /// It does however make use of BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil.
   virtual void CreateLogicalVolumes(G4String    name,
 				    G4double    length,
 				    G4Colour*   colour,
