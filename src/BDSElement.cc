@@ -1,5 +1,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSExecOptions.hh"
 #include "BDSElement.hh"
 #include "BDSGeometryFactory.hh"
@@ -60,9 +61,7 @@ void BDSElement::BuildContainerLogicalVolume()
   // zero field in the marker volume
   containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
-  SetExtentX(-outerDiameter*0.5, outerDiameter*0.5);
-  SetExtentY(-outerDiameter*0.5, outerDiameter*0.5);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(outerDiameter*0.5, outerDiameter*0.5, chordLength*0.5));
 }
 
 void BDSElement::PlaceComponents()

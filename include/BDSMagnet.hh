@@ -43,6 +43,7 @@ public:
 	    BDSBeamPipeInfo*    beamPipeInfo,
 	    BDSMagnetOuterInfo* magnetOuterInfo,
 	    BDSFieldInfo*       vacuumFieldInfoIn,
+        G4double            angle            = 0,
 	    BDSFieldInfo*       outerFieldInfoIn = nullptr);
   
   virtual ~BDSMagnet();

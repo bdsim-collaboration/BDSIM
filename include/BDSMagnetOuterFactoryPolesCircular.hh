@@ -22,13 +22,16 @@
 class BDSMagnetOuterFactoryPolesCircular: public BDSMagnetOuterFactoryPolesBase
 {
 public:
-  static BDSMagnetOuterFactoryPolesCircular* Instance(); /// singleton pattern
+  /// Singleton accessor.
+  static BDSMagnetOuterFactoryPolesCircular* Instance();
   
   virtual ~BDSMagnetOuterFactoryPolesCircular();
 
 private:
   /// Private constructor as singleton - nothing special here - all in parent class
-  BDSMagnetOuterFactoryPolesCircular(){;}; 
+  BDSMagnetOuterFactoryPolesCircular(){;};
+
+  /// Singleton instance.
   static BDSMagnetOuterFactoryPolesCircular* _instance;
 };
 

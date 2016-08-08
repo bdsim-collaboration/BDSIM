@@ -31,6 +31,7 @@ public:
 					   G4double     containerLength, // full length to make AccComp container
 					   G4double     angleIn,         // input face angle w.r.t. chord
 					   G4double     angleOut,        // output face angle w.r.t. chord
+					   G4bool       yokeOnLeft,      // build magnet yoke on left of bend
 					   G4Material*  outerMaterial = nullptr// material for outer volume
 					   );
   
@@ -42,6 +43,7 @@ public:
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord
+						G4bool       yokeOnLeft,        // build magnet yoke on left of bend
 						G4Material*  outerMaterial = nullptr// material for outer volume
 						);
   
@@ -140,14 +142,11 @@ private:
 			       G4double     magnetContainerLength, // magnet object container full length
 			       G4double     boxSize);              // full width
 
-  void CreateCylindricalSolidsAngled(G4String     name,                  // name
-			       G4double         length,                // full length
-			       BDSBeamPipe*     beamPipe,              // beampipe
-			       G4double         magnetContainerLength, // magnet object container full length
-			       G4double         boxSize,               // full width
-                               G4ThreeVector    inputface,             // Normal vector (for poleface implementation)
-                               G4ThreeVector    outputface);           // Normal vector (for poleface implementation)
-
+  void CreateCylindricalSolidsAngled(G4String      name,                  // name
+				     G4double      length,                // full length
+				     BDSBeamPipe*  beamPipe,              // beampipe
+				     G4double      magnetContainerLength, // magnet object container full length
+				     G4double      boxSize);              // full width
 
   /// Only the solids are unique, once we have those, the logical volumes and placement in the
   /// container are the same.  Group all this functionality together

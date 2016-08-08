@@ -19,9 +19,7 @@ BDSSamplerPlane::BDSSamplerPlane(G4String      name,
 			     boxHalfWidth,
 			     chordLength*0.5);
 
-  SetExtentX(-boxHalfWidth, boxHalfWidth);
-  SetExtentY(-boxHalfWidth, boxHalfWidth);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(boxHalfWidth, boxHalfWidth, chordLength*0.5));
 
   CommonConstruction();
 

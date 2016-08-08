@@ -3,6 +3,7 @@
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSColours.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldInfo.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -103,14 +104,11 @@ void BDSCavity::BuildContainerLogicalVolume()
 			      0.0,                         //starting angle
 			      2.0*CLHEP::pi);              //spanning angle
 
-  SetExtentX(-outerRadius, outerRadius);
-  SetExtentY(-outerRadius, outerRadius);
-  SetExtentZ(-chordLength*0.5,chordLength*0.5);
+  SetExtent(BDSExtent(outerRadius, outerRadius,  chordLength*0.5));
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
-
 }
 
 void BDSCavity::BuildEllipticalCavityGeometry()

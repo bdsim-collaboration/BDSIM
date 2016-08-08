@@ -36,6 +36,7 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   delete flatBeamline;
   delete supportsBeamline;
   delete tunnelBeamline;
+  delete endPieceBeamline;
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 

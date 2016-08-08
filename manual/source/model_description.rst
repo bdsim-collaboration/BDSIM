@@ -839,13 +839,6 @@ Example::
 
   option, magnetGeometryType = "polesfacetcrop",
           outerDiameter = 0.5*m;
-	  
-
-.. versionadded:: 0.7
-
-		  `magnetGeometryType` parameter allows different generic magnet geometry
-		  libraries to be used. Before, only cylindrical geometry was available.
-		  Examples of other geometry types are described below.
 
 .. deprecated:: 0.65
 		`boxSize` - this is still accepted by the parser for backwards compatibility
@@ -882,20 +875,12 @@ therefore this geometry is best suited for the most general studies.
 This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
 another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
 can be used to override this on a per element basis.
-		    
-.. |cylindricalquad| image:: figures/cylindrical_quadrupole.png
-			     :width: 60%
-				  
-.. |cylindricalsext| image:: figures/cylindrical_sextupole.png
-			     :width: 60%
-			  
-+--------------------+---------------------+
-| |cylindricalquad|  +  |cylindricalsext|  +
-+--------------------+---------------------+
 
-.. raw:: latex
+.. figure:: figures/cylindrical_quadrupole.png
+	    :width: 40%
 
-    \newpage
+.. figure:: figures/cylindrical_sextupole.png
+	    :width: 40%
     
 
 Poles Circular - "`polescircular`"
@@ -906,21 +891,17 @@ represented by an annulus. Currently no coils are implemented. If a non-symmetri
 geometry is used, the larger of the horizontal and vertical dimensions of the beam pipe will be
 used to create the circular aperture at the pole tips.
 
-.. versionadded:: 0.7
+.. figure:: figures/polescircular_quadrupole.png
+	    :width: 40%
 
-.. |circularquad| image:: figures/polecircular_quadrupole.png
-			  :width: 60%
+.. figure:: figures/polescircular_quadrupole_3d.png
+	    :width: 40%
 
-.. |circularsext| image:: figures/polecircular_sextupole.png
-			  :width: 60%
-			  
-+-----------------+------------------+
-| |circularquad|  +  |circularsext|  +
-+-----------------+------------------+
+.. figure:: figures/polescircular_sextupole.png
+	    :width: 40%
 
-.. raw:: latex
-
-    \newpage
+.. figure:: figures/polescircular_sextupole_3d.png
+	    :width: 40%
 
 
 Poles Square - "`polessquare`"
@@ -930,24 +911,21 @@ This magnet geometry has again, individual poles according to the order of the m
 yoke is an upright square section to which the poles are attached. This geometry behaves in the
 same way as `polescircular` with regard to the beam pipe size.
 
-.. versionadded:: 0.7
-
 `outerDiameter` is the full width of the the magnet horizontally as shown in the figure below,
  **not** the diagonal width.
 
-.. |squarequad| image:: figures/polesquare_quadrupole.png
-			:width: 60%
+.. figure:: figures/polessquare_quadrupole.png
+	    :width: 40%
 
-.. |squaresext| image:: figures/polesquare_sextupole.png
-			:width: 60%
-			  
-+---------------+----------------+
-| |squarequad|  +  |squaresext|  +
-+---------------+----------------+
+.. figure:: figures/polessquare_quadrupole_3d.png
+	    :width: 40%
 
-.. raw:: latex
+.. figure:: figures/polessquare_sextupole.png
+	    :width: 40%
 
-    \newpage
+.. figure:: figures/polessquare_sextupole_3d.png
+	    :width: 40%
+
 
 Poles Faceted - "`polesfacet`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -956,24 +934,20 @@ This magnet geometry is much like `polessquare`, however the yoke is such that t
 joins at a flat piece of yoke and not in a corner. This geometry behaves in the
 same way as `polescircular` with regard to the beam pipe size.
 
-.. versionadded:: 0.7
-
 `outerDiameter` is the full width as shown in the figure.
 
-.. |facetquad| image:: figures/polefacet_quadrupole.png
-		       :width: 60%
+.. figure:: figures/polesfacet_quadrupole.png
+	    :width: 40%
 
-.. |facetsext| image:: figures/polefacet_sextupole.png
-		       :width: 60%
-			  
-+--------------+---------------+
-| |facetquad|  +  |facetsext|  +
-+--------------+---------------+
+.. figure:: figures/polesfacet_quadrupole_3d.png
+	    :width: 40%
 
-.. raw:: latex
+.. figure:: figures/polesfacet_sextupole.png
+	    :width: 40%
 
-    \newpage
-    
+.. figure:: figures/polesfacet_sextupole_3d.png
+	    :width: 40%
+
 
 Poles Faceted with Crop - "`polesfacetcrop`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -982,23 +956,19 @@ This magnet geometry is quite similar to `polesfacet`, but the yoke in between e
 pole is cropped to form another facet. This results in this magnet geometry having
 double the number of poles as sides.
 
-.. versionadded:: 0.7
-
 `outerDiameter` is the full width horizontally as shown in the figure.
 
-.. |facetcropquad| image:: figures/polefacetcrop_quadrupole.png
-			   :width: 60%
+.. figure:: figures/polesfacetcrop_quadrupole.png
+	    :width: 40%
 
-.. |facetcropsext| image:: figures/polefacetcrop_sextupole.png
-			   :width: 60%
-			  
-+------------------+-------------------+
-| |facetcropquad|  +  |facetcropsext|  +
-+------------------+-------------------+
+.. figure:: figures/polesfacetcrop_quadrupole_3d.png
+	    :width: 40%
 
-.. raw:: latex
+.. figure:: figures/polesfacetcrop_sextupole.png
+	    :width: 40%
 
-    \newpage
+.. figure:: figures/polesfacetcrop_sextupole_3d.png
+	    :width: 40%
 
 
 LHC Left & Right - "`lhcleft`" | "`lhcright`"

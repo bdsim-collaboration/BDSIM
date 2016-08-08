@@ -1,6 +1,7 @@
 #include "BDSBeamPipeFactoryPoints.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
@@ -234,14 +235,15 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipeAngledInOut(G4String    nam
   GeneratePoints(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
   
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   // calculate and set the intersection solid radius
-  intersectionRadius = CalculateIntersectionRadius(aper1In, aper2In, aper3In, aper4In, beamPipeThicknessIn);
+  intersectionRadius = CalculateIntersectionRadius(aper1In, aper2In, aper3In, aper4In,
+						   beamPipeThicknessIn);
 
   // create solids based on the member vectors of points
-  CreateSolidsAngled(nameIn, lengthIn, inputface, outputface);
+  CreateSolidsAngled(nameIn, lengthIn, inputFaceNormal, outputFaceNormal);
   
   return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn);
 }
@@ -261,13 +263,12 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CommonFinalConstruction(G4String    nameI
 					     lengthIn);
 
   // record extents
-  std::pair<double,double> extX = std::make_pair(-extentX, extentX);
-  std::pair<double,double> extY = std::make_pair(-extentY, extentY);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5, lengthIn*0.5);
+  BDSExtent ext = BDSExtent(extentX, extentY, lengthIn*0.5);
+  
   // calculate radius if a tube were to be place around it
   G4double containerRadius = std::max(extentX, extentY);
   
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
   
   return aPipe;
 }
