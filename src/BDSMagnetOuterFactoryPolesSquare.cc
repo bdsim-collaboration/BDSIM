@@ -229,11 +229,12 @@ void BDSMagnetOuterFactoryPolesSquare::PlaceComponents(G4String name,
       G4double rotationAngle = (0.5-n)*segmentAngle + CLHEP::pi*0.5;
       rm->rotateZ(-rotationAngle);
       allRotationMatrices.push_back(rm);
+      G4String pvName = name + "_pole_" + std::to_string(n) + "_pv";
       // only need to test the end of one iterator as both should be the same length
       aPlacement = new G4PVPlacement(rm,                 // rotation
 				     (G4ThreeVector)0,   // position
 				     poleLVs[n],         // logical volume
-				     name + "_pole_pv",  // name      
+				     pvName,             // name      
 				     containerLV,        // mother lv to be placed in
 				     false,              // no boolean operation
 				     n,                  // copy number
