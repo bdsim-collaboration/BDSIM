@@ -13,8 +13,13 @@ BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 #ifndef __ROOTBUILD__
 void BDSOutputROOTEventModel::Fill()
 {
+  for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
+    {samplerNamesUnique.push_back(std::string(name));}
+  
   // get accelerator model
-  BDSBeamline *beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  if (!beamline)
+    {return;} // in case of generatePrimariesOnly there is no model - return
 
   double angle;
   CLHEP::Hep3Vector axis;

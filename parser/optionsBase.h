@@ -287,6 +287,9 @@ namespace GMAD
 
     double   printModuloFraction;
 
+    /// Visualisation
+    int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
+
     std::string trackingType;
     int         trackingSteps;
     bool        dontUseAperture;

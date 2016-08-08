@@ -22,7 +22,7 @@ BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
   lengthSafety       = BDSGlobalConstants::Instance()->LengthSafety();
   checkOverlaps      = BDSGlobalConstants::Instance()->CheckOverlaps();
   visDebug           = BDSGlobalConstants::Instance()->VisDebug();
-  nSegmentsPerCircle = 50;
+  nSegmentsPerCircle = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   maxStepFactor      = 0.5;
 
   // initialise variables and pointers that'll be used by the factory

@@ -201,6 +201,9 @@ OptionsBase::OptionsBase()
 
   printModuloFraction      = 0.1;
 
+  // visualisation
+  nSegmentsPerCircle       = 50;
+
   // tracker options
   trackingType             = "hybrid";
   trackingSteps            = 1;
