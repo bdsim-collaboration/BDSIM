@@ -12,7 +12,6 @@
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
-#include "BDSMultipoleOuterMagField.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -34,7 +33,7 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
-             G4double            angle,
+		     G4double            angle,
 		     BDSFieldInfo*       outerFieldInfoIn):
   BDSAcceleratorComponent(name, length, angle, type.ToString()),
   magnetType(type),
@@ -53,14 +52,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,-1);
   outputface      = G4ThreeVector(0,0, 1);
-  
-  itsStepper       = nullptr;
-  itsMagField      = nullptr;
-  itsEqRhs         = nullptr;
-  itsBPFieldMgr    = nullptr;
-  itsOuterFieldMgr = nullptr;
-  itsChordFinder   = nullptr;
-  itsOuterMagField = nullptr;
   
   beampipe = nullptr;
   outer    = nullptr;

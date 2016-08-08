@@ -105,14 +105,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
-
-  G4double magnetContainerRadius = 0.5*containerDiameter;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
   if ((!BDS::IsFinite(angleIn)) && !BDS::IsFinite(angleOut))
     {
       CreateCylindricalSolids(name,length, beamPipe, containerLength, outerDiameter);
-      BuildMagnetContainerSolidStraight(name,containerLength,magnetContainerRadius);
+      BuildMagnetContainerSolidStraight(name,containerLength,0.5*outerDiameter);
     }
   else
     {
@@ -121,7 +119,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
       outputFaceNormal = faces.second;
 
       CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter);
-      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius);
+      BuildMagnetContainerSolidAngled(name, containerLength, 0.5*outerDiameter);
     }
 
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,

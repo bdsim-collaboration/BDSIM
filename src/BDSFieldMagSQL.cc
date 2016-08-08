@@ -171,7 +171,7 @@ G4ThreeVector BDSFieldMagSQL::GetField(const G4ThreeVector &position) const
 }
 
 
-void BDSFieldMagSQL::Prepare(G4VPhysicalVolume *referenceVolume)
+void BDSFieldMagSQL::Prepare(G4VPhysicalVolume* /*referenceVolume*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

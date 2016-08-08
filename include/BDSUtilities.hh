@@ -119,6 +119,11 @@ namespace BDS
   /// component changes the angle continuously between its faces and therefore half
   /// of this angle is used for the rotation.
   G4ThreeVector RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle);
+
+  /// Split a format and file path string around the ":" character. This format
+  /// is used for geometry and field maps
+  std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
+
 }
 
 #endif

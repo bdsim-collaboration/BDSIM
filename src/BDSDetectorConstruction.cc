@@ -154,7 +154,6 @@ void BDSDetectorConstruction::BuildBeamline()
       G4String surveyFilename = BDSGlobalConstants::Instance()->SurveyFileName();
       surveyFilename += ".dat";
       survey = new BDSSurvey(surveyFilename);
-      survey->WriteHeader();
     }
   
   if (verbose || debug)
