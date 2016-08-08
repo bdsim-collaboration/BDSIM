@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+class BDSSimpleComponent;
+
 /**
  * @brief Abstract class that represents a component of an accelerator.
  *
@@ -38,7 +40,7 @@
  * This was significantly reworked in version 0.7 from the original. The indicator
  * author is the maintainer of the new version.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSAcceleratorComponent: public BDSGeometryComponent
@@ -52,41 +54,53 @@ public:
   /// derived class, including extents.
   /// Note, this class has arc length and chord length which are initially set
   /// to be the same, unless angle is != 0 in which case, the chord length is
-  /// calculated from arc length
+  /// calculated from arc length.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
 			  G4bool           precisionRegion = false,
-			  BDSBeamPipeInfo* beamPipeInfo    = nullptr);
+			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
+			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
   
   virtual ~BDSAcceleratorComponent();
 
   /// The name of the component without modification
-  G4String GetName() const;
+  inline G4String GetName() const {return name;}
 
   /// Get a string describing the type of the component
-  G4String GetType() const;
+  inline G4String GetType() const {return type;}
 
   /// Whether precision output is to be recorded for this component
-  G4bool GetPrecisionRegion() const;
+  G4bool GetPrecisionRegion() const {return precisionRegion;}
 
   /// Set whether precision output should be recorded for this component
   void   SetPrecisionRegion(G4bool precisionRegionIn);
 
   /// Access beam pipe information
-  BDSBeamPipeInfo* GetBeamPipeInfo() const;
+  inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
   /// Get the angle the component induces in the reference trajector (rad). 
   /// Note, this is 0 for h and v kickers
-  G4double GetAngle() const;
+  inline G4double GetAngle() const {return angle;}
+
+  /// Access face normal unit vector. This is w.r.t. the incoming reference
+  /// trajectory and NOT the local geometry of the component.
+  inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
+
+  /// Normal unit vector w.r.t. the outgoing reference trajectory and NOT the
+  /// local geometry of the component.
+  inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
   
-  /// Access the length of the component.
-  virtual G4double GetArcLength()   const; // note no z length - this is chord length
-  virtual G4double GetChordLength() const; // only chord OR arc makes it explicit
+  /// @{ Access the length of the component. Note there is no z length - this is chord length.
+  /// Only chord OR arc makes it explicit.
+  virtual G4double GetArcLength()   const {return arcLength;} 
+  virtual G4double GetChordLength() const {return chordLength;}
+  /// @}
   
   /// Access the read out geometry
-  inline G4LogicalVolume* GetReadOutLogicalVolume() const;
+  inline G4LogicalVolume* GetReadOutLogicalVolume() const {return readOutLV;}
 
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
@@ -101,10 +115,10 @@ public:
   ///@}
 
   /// Increment (+1) the number of times this component has been copied.
-  void  IncrementCopyNumber();
+  inline void  IncrementCopyNumber() {copyNumber++;}
 
   /// Get the number of times this component has been copied.
-  G4int GetCopyNumber()const;
+  inline G4int GetCopyNumber() const {return copyNumber;}
 
   /// initialise method
   /// checks if marker logical volume already exists and builds new one if not
@@ -118,6 +132,14 @@ public:
   /// Access the bias list copied from parser
   std::list<std::string> GetBiasVacuumList() const;
   std::list<std::string> GetBiasMaterialList() const;
+
+  /// Whether this component has an optional end piece that should be placed
+  /// independently or not depending on other items in the beamline.
+  BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
+  BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
+
+  void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
+  void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -168,6 +190,9 @@ protected:
   /// A larger length safety that can be used where tracking accuracy isn't required
   /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
+
+  BDSSimpleComponent* endPieceBefore;
+  BDSSimpleComponent* endPieceAfter;
   
 private:
   /// Private default constructor to force use of provided constructors, which
@@ -199,46 +224,19 @@ private:
   /// Copy of bias list from parser for this particlar element
   std::list<std::string> biasVacuumList;
   std::list<std::string> biasMaterialList;
+
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
 };
-
-inline G4String BDSAcceleratorComponent::GetName() const
-{return name;}
-
-inline G4double BDSAcceleratorComponent::GetChordLength() const
-{return chordLength;}
-
-inline G4double BDSAcceleratorComponent::GetArcLength() const
-{return arcLength;}
-
-inline G4double BDSAcceleratorComponent::GetAngle() const
-{return angle;}
-
-inline G4String BDSAcceleratorComponent::GetType() const
-{return type;}
-
-inline G4bool BDSAcceleratorComponent::GetPrecisionRegion() const
-{return precisionRegion;}
 
 inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
 {precisionRegion = precisionRegionIn;}
-
-inline BDSBeamPipeInfo* BDSAcceleratorComponent::GetBeamPipeInfo() const
-{return beamPipeInfo;}
 
 inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
 {itsGFlashVolumes.push_back(aLogVol);}
 
 inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes() const
 {return itsGFlashVolumes;}
-
-inline void BDSAcceleratorComponent::IncrementCopyNumber()
-{copyNumber++;}
-
-inline G4int BDSAcceleratorComponent::GetCopyNumber()const
-{return copyNumber;}
-
-inline G4LogicalVolume* BDSAcceleratorComponent::GetReadOutLogicalVolume() const
-{return readOutLV;}
 
 inline void BDSAcceleratorComponent::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
 {biasVacuumList = biasVacuumListIn;}

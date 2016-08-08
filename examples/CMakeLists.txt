@@ -6,7 +6,7 @@ set(OVERLAP_CHECK "Overlap is detected")
 set(TESTING_PERM_ARGS --batch)
 
 # ROOT output format by default
-set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=root)
+set(TESTING_PERM_ARGS ${TESTING_PERM_ARGS} --output=rootevent)
 
 add_subdirectory(ATF2)
 add_subdirectory(LHC)

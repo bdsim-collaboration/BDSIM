@@ -1,9 +1,9 @@
 #ifndef BDSMAGNETOUTERFACTORYPOLESFACETCROP_H
 #define BDSMAGNETOUTERFACTORYPOLESFACETCROP_H
 
-#include "BDSMagnetOuterFactoryPolesBase.hh"
+#include "BDSMagnetOuterFactoryPolesFacetCommon.hh"
 
-#include "globals.hh"           // geant4 globals / types
+#include "globals.hh" // geant4 globals / types
 
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets
@@ -14,33 +14,27 @@
  * Most magnets are 2N poles, but sector- and r-bends as well as 
  * muon spoilers, and h/v kickers are unique.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
-
-class BDSMagnetOuterFactoryPolesFacetCrop: public BDSMagnetOuterFactoryPolesBase
+class BDSMagnetOuterFactoryPolesFacetCrop: public BDSMagnetOuterFactoryPolesFacetCommon
 {
 public:
-  static BDSMagnetOuterFactoryPolesFacetCrop* Instance(); /// singleton pattern
+  /// Singleton accessory.
+  static BDSMagnetOuterFactoryPolesFacetCrop* Instance();
   
-  ~BDSMagnetOuterFactoryPolesFacetCrop();
+  virtual ~BDSMagnetOuterFactoryPolesFacetCrop();
+
+protected:
+  /// Calculate start angle of polyhedra based on order and segment angle.
+  virtual void CalculateStartAngles();
 
 private:
-  /// Private constructor as singleton - nothing special here - all in parent class
-  BDSMagnetOuterFactoryPolesFacetCrop(){;}; 
-  static BDSMagnetOuterFactoryPolesFacetCrop* _instance;
+  /// Private constructor as singleton
+  BDSMagnetOuterFactoryPolesFacetCrop();
 
-  /// Create pole for magnet of order N where npoles = Nx2
-  virtual void CreatePoleSolid(G4String      name,                 // name
-			       G4double      length,               // length [mm]
-			       G4int         order);               // Nx2 poles
-  
-  /// Create yoke that connects poles and container to put them in
-  virtual void CreateYokeAndContainerSolid(G4String name,
-					   G4double length,
-					   G4int    order,
-					   G4double magnetContainerRadius);
-  
+  /// Singleton instance.
+  static BDSMagnetOuterFactoryPolesFacetCrop* _instance;  
 };
 
 #endif

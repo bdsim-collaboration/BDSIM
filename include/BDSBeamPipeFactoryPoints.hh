@@ -56,6 +56,7 @@ public:
 						 G4double    beamPipeThicknessIn,
 						 G4Material* beamPipeMaterialIn);
 
+protected:
   /// Function to generate transverse points.  Should set member variables vacuumEdge,
   /// beamPipeInnerEdge, beamPipeOuterEdge, containerEdge and containerSubtractionEdge.
   virtual void GeneratePoints(G4double aper1,
@@ -91,7 +92,6 @@ public:
 		   G4double xOffset = 0,
 		   G4double yOffset = 0);
 
-protected:
   /// Vector of x,y coordinates for vacuum extruded solid edge.
   std::vector<G4TwoVector> vacuumEdge;
 
