@@ -18,3 +18,9 @@ BDSMagnetOuterFactoryPolesFacetCrop::~BDSMagnetOuterFactoryPolesFacetCrop()
 {
   _instance = nullptr;
 }
+
+void BDSMagnetOuterFactoryPolesFacetCrop::CalculateStartAngles()
+{
+  polyStartAngle = segmentAngle*0.25;
+  poleIntersectionStartAngle = -segmentAngle*0.25 - CLHEP::halfpi;
+}

@@ -19,13 +19,22 @@
  * @author Laurie Nevay
  */
 
-
 class BDSMagnetOuterFactoryPolesFacetCommon: public BDSMagnetOuterFactoryPolesBase
 {
 public:
   BDSMagnetOuterFactoryPolesFacetCommon(G4double factor);
   
   virtual ~BDSMagnetOuterFactoryPolesFacetCommon();
+
+protected:
+  /// Calculate start angle of polyhedra based on order and segment angle.
+  virtual void CalculateStartAngles();
+  
+  /// Start angle for polyhedra.
+  G4double polyStartAngle;
+
+  /// Start angle for pole intersection.
+  G4double poleIntersectionStartAngle;
 
 private:
   /// Private constructor to force use of supplied one.

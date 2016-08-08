@@ -17,7 +17,6 @@
  * @author Laurie Nevay
  */
 
-
 class BDSMagnetOuterFactoryPolesFacetCrop: public BDSMagnetOuterFactoryPolesFacetCommon
 {
 public:
@@ -25,6 +24,10 @@ public:
   static BDSMagnetOuterFactoryPolesFacetCrop* Instance();
   
   virtual ~BDSMagnetOuterFactoryPolesFacetCrop();
+
+protected:
+  /// Calculate start angle of polyhedra based on order and segment angle.
+  virtual void CalculateStartAngles();
 
 private:
   /// Private constructor as singleton

@@ -17,6 +17,12 @@ BDSMagnetOuterFactoryPolesFacetCommon::BDSMagnetOuterFactoryPolesFacetCommon(G4d
 BDSMagnetOuterFactoryPolesFacetCommon::~BDSMagnetOuterFactoryPolesFacetCommon()
 {;}
 
+void BDSMagnetOuterFactoryPolesFacetCommon::CalculateStartAngles()
+{
+  polyStartAngle = 0;
+  poleIntersectionStartAngle = -segmentAngle*0.5 - CLHEP::halfpi;
+}
+
 void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String name,
 									G4double length,
 									G4int    order,
@@ -32,11 +38,11 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
   G4double zeroRadii[2]    = {0,0};
   G4double poleEnd         = yokeStartRadius - lengthSafetyLarge;
   G4double poleEndRadii[2] = {poleEnd,          poleEnd};
-
-  const G4double polyStartAngle = CLHEP::halfpi;
+  
+  CalculateStartAngles();
   
   // The start angle for G4Polyhedra lies on a vertex / point and is at the top
-  // in the positive y direction. 
+  // in the positive y direction.
   yokeSolid = new G4Polyhedra(name + "_yoke_solid",    // name
 			      polyStartAngle,          // start angle
 			      CLHEP::twopi,            // sweep angle
@@ -47,18 +53,15 @@ void BDSMagnetOuterFactoryPolesFacetCommon::CreateYokeAndContainerSolid(G4String
 			      outerRadii);
 
   // pole intersection solid
-  // note the start angle is 0 here instead of polyStartAngle as a pole is always
-  // built upright and then rotated to the correct position.
   poleIntersectionSolid = new G4Polyhedra(name + "_yoke_intersection_solid", // name
-					  segmentAngle*0.5,                  // start angle
+					  poleIntersectionStartAngle,        // start angle
 					  CLHEP::twopi,                      // sweep angle
 					  factor*2*order,                    // number of sides
 					  2,                                 // number of z planes
 					  zPlanesLong,                       // z plane z coordinates
 					  zeroRadii,
 					  poleEndRadii);
-  allSolids.push_back(poleIntersectionSolid);
-					  
+  allSolids.push_back(poleIntersectionSolid);					  
   
   G4double contInnerRadii[2] = {0, 0}; // solid polyhedra
   G4double contOuterRadii[2] = {yokeFinishRadius + lengthSafety, yokeFinishRadius + lengthSafety};
