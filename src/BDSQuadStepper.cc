@@ -2,6 +2,7 @@
 #include "BDSQuadStepper.hh"
 
 #include "G4AffineTransform.hh"
+#include "G4ClassicalRK4.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
@@ -11,7 +12,9 @@ BDSQuadStepper::BDSQuadStepper(G4Mag_EqRhs* eqRHS):
   G4MagIntegratorStepper(eqRHS, 6),
   fPtrMagEqOfMot(eqRHS),
   itsBGrad(0.0),itsDist(0.0)
-{;}
+{
+  backupStepper = new G4ClassicalRK4(eqRHS,6);
+}
 
 void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 				  G4ThreeVector /*bField*/,
@@ -286,7 +289,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
 
 
 void BDSQuadStepper::Stepper( const G4double yInput[],
-			      const G4double[],
+			      const G4double dydx[],
 			      const G4double hstep,
 			      G4double yOut[],
 			      G4double yErr[]      )
@@ -295,9 +298,20 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
   G4int i;
 
   const G4double *pIn = yInput+3;
+  G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[3]);
   G4ThreeVector GlobalP = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
   G4double InitPMag = GlobalP.mag();
   G4double kappa= - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
+
+  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
+  G4ThreeVector     localP= GlobalAffine.TransformAxis(GlobalP);
+
+  if (localP.z() < 0.9)
+    {
+      backupStepper->Stepper(yInput, dydx, hstep, yOut, yErr);
+      return;
+    }
   
   if(fabs(kappa)<1.e-6) //kappa is small - no error needed for paraxial treatment
     {
@@ -340,5 +354,7 @@ G4double BDSQuadStepper::DistChord()   const
 }
 
 BDSQuadStepper::~BDSQuadStepper()
-{}
+{
+  delete backupStepper;
+}
 
