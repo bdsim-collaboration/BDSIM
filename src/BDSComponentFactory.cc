@@ -670,6 +670,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 		       PrepareBeamPipeInfo(element, angleIn, angleOut),
 		       PrepareMagnetOuterInfo(element, angleIn, angleOut),
 		       vacuumField,
+		       angle,
 		       nullptr);
 
   rbendline->AddComponent(oneBend);
@@ -712,6 +713,7 @@ BDSMagnet* BDSComponentFactory::CreateDipoleFringe(Element* element,
 		       beamPipeInfo,
 		       magnetOuterInfo,
 		       vacuumField,
+               0,
 		       nullptr);
 }
 
@@ -895,6 +897,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
 		      PrepareBeamPipeInfo(element),
 		      PrepareMagnetOuterInfo(element),
 		      vacuumField,
+              0,
 		      nullptr);
 }
 
