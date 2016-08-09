@@ -93,10 +93,12 @@ OptionsBase::OptionsBase()
   magnetGeometryType   = "polessquare";
   outerMaterialName    = "iron";
   outerDiameter        = 0.6;
+  thinElementLength    = 1e-6;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
-  dontSplitSBends      = false; 
+  dontSplitSBends      = false;
+  includeFringeFields  = false;
 
   includeIronMagFields = false;
   sensitiveBeamlineComponents = 1;

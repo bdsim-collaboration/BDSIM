@@ -11,6 +11,8 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSLine.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetType.hh"
 
 class BDSCavityInfo;
 class BDSFieldInfo;
@@ -57,11 +59,12 @@ private:
   BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
-  BDSAcceleratorComponent* CreateQuad();  
+  BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
   BDSAcceleratorComponent* CreateDecapole();
   BDSAcceleratorComponent* CreateMultipole();
+  BDSAcceleratorComponent* CreateThinMultipole();
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
   BDSAcceleratorComponent* CreateRectangularCollimator();
@@ -72,6 +75,12 @@ private:
   BDSAcceleratorComponent* CreateScreen();
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateTransform3D();
+
+  BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
+                G4double angle,
+                G4String name,
+                BDSMagnetType magType,
+                BDSMagnetStrength* st);
 
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element*     element,
@@ -122,6 +131,12 @@ private:
   G4double charge;
   /// rigidity in T*m for beam particles
   G4double brho;
+  /// don't split sbends into multiple segments
+  G4bool notSplit;
+  /// include thin fringe field element(s) in dipoles
+  G4bool includeFringe;
+  /// length of a thin element
+  G4double thinElementLength;
   
   /// element for storing instead of passing around
   GMAD::Element* element = nullptr;

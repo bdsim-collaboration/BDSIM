@@ -182,6 +182,7 @@ void Options::PublishMembers()
   publish("outerDiameter",&Options::outerDiameter);
   publish("boxSize",      &Options::outerDiameter); // for backwards compatability
   publish("includeIronMagFields",&Options::includeIronMagFields);
+  publish("includeFringeFields",&Options::includeFringeFields);
   publish("beampipeRadius",&Options::aper1);
   publish("beampipeThickness",&Options::beampipeThickness);
   publish("apertureType",&Options::apertureType);
@@ -193,6 +194,7 @@ void Options::PublishMembers()
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
+  publish("thinElementLength", &Options::thinElementLength);
 
   // tunnel options
   publish("buildTunnel",&Options::buildTunnel);

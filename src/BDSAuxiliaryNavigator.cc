@@ -99,6 +99,14 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
     {initialised = true;} // else always remains false
 }
 
+void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosition,
+                                                const G4ThreeVector &globalMomentum, const G4double stepLength)
+{
+    G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;
+    G4ThreeVector midPoint = (endPoint - globalPosition) / 2;
+    InitialiseTransform(midPoint);
+}
+
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4double globalPosition[3],
 						    const G4bool&  useCurvilinear) const
 {

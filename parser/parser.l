@@ -85,6 +85,7 @@ sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
 decapole { return DECAPOLE; }
 multipole { return MULTIPOLE; }
+thinmultipole { return THINMULT; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}
 ecol { return ECOL; } 

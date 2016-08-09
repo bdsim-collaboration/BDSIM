@@ -31,6 +31,8 @@
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
+#include "BDSIntegratorFringefield.hh"
+#include "BDSIntegratorMultipole.hh"
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
@@ -262,6 +264,10 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
       integrator = new BDSIntegratorOctupole(strength, brho, eqOfM); break;
     case BDSIntegratorType::decapole:
       integrator = new BDSIntegratorDecapole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::multipole:
+      integrator = new BDSIntegratorMultipole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::fringe:
+      integrator = new BDSIntegratorFringefield(strength, brho, eqOfM); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
@@ -318,6 +324,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
     case BDSIntegratorType::sextupole:
     case BDSIntegratorType::octupole:
     case BDSIntegratorType::decapole:
+    case BDSIntegratorType::fringe:
     case BDSIntegratorType::g4constrk4:
     case BDSIntegratorType::g4exacthelixstepper:
     case BDSIntegratorType::g4helixexpliciteuler:
