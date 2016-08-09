@@ -74,6 +74,9 @@ private:
   /// physics processes, so purposively define for ones where it's a problem.
   void ConstructAllLeptons();
 
+  ///  Construct resonances and quarks - sometimes required explicitly.
+  void ConstructAllShortLived();
+
   /// Interpret the string of physics lists given from the user through the parser.
   void ParsePhysicsList(G4String physListName);
 
