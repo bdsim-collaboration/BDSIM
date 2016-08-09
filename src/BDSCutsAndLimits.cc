@@ -30,20 +30,22 @@ void BDSCutsAndLimits::ConstructParticle(){
 void BDSCutsAndLimits::ConstructProcess(){
   if(_wasActivated) return;
   _wasActivated=true;
-  
+
+  G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
+
   aParticleIterator->reset();
   while( (*aParticleIterator)() ){
     G4ParticleDefinition* particle = aParticleIterator->value();
-    G4ProcessManager *pmanager = particle->GetProcessManager();
+
     if((particle->GetParticleName()=="gamma")||
        (particle->GetParticleName()=="e-")||
        (particle->GetParticleName()=="e+")||
        (particle->GetParticleName()=="proton")){
       particle->SetApplyCutsFlag(true);
     }
-    pmanager->AddProcess(stepLimiter,-1,-1,1);
+    ph->RegisterProcess(stepLimiter,particle);
 #ifndef NOUSERSPECIALCUTS
-    pmanager->AddDiscreteProcess(specialCuts);
+    ph->RegisterProcess(specialCuts,particle);
 #endif
   }
   return;

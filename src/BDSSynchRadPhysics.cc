@@ -25,20 +25,19 @@ void BDSSynchRadPhysics::ConstructProcess()
 
   G4SynchrotronRadiation* synchrotron = new G4SynchrotronRadiation();
   G4AutoDelete::Register(synchrotron);
-  
+  G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
   aParticleIterator->reset();
   while( (*aParticleIterator)() )
-    {
-      G4ParticleDefinition* particle = aParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
+  {
+    G4ParticleDefinition* particle = aParticleIterator->value();
+    G4ProcessManager* pmanager = particle->GetProcessManager();
 
-      // add to charged particles
-      if (particle->GetPDGCharge() != 0)
-	{
-	  pmanager->AddProcess(synchrotron);
-	  pmanager->SetProcessOrderingToLast(synchrotron,idxPostStep);
-	}
+    // add to charged particles
+    if (particle->GetPDGCharge() != 0)
+    {
+      ph->RegisterProcess(synchrotron, particle);
     }
+  }
   return;
 }
 
