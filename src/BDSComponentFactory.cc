@@ -226,8 +226,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     G4cerr << __METHOD_NAME__ << "Awake Spectrometer can't be used - not compiled with AWAKE module!" << G4endl;
     exit(1);
 #endif
-  case ElementType::_TRANSFORM3D:
-    component = CreateTransform3D(); break;
     
     // common types, but nothing to do here
   case ElementType::_MARKER:

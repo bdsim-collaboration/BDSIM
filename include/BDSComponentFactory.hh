@@ -78,7 +78,6 @@ private:
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
 #endif
-  BDSAcceleratorComponent* CreateTransform3D();
 
   BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
                 G4double angle,
