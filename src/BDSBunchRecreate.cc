@@ -47,7 +47,7 @@ void BDSBunchRecreate::SetOptions(const GMAD::Options& options)
 void BDSBunchRecreate::LoadFile(G4String filename)
 {
   file = new TFile(filename.c_str(), "READ");
-  if (!file)
+  if (file->IsZombie())
     {
       G4cout << __METHOD_NAME__ << "Input ROOT file not found \"" << filename << "\"" << G4endl;
       exit(1);
