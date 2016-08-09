@@ -353,10 +353,14 @@ void BDSModularPhysicsList::Em()
 void BDSModularPhysicsList::EmExtra()
 {
   ConstructAllLeptons();
+
+  // These are required by GammaNuclear and MuonNuclear which
+  // are activated by default in G4EmExtraPhysics.
   ConstructAllShortLived();
-  //  Construct resonances and quarks
-  G4ShortLivedConstructor pShortLivedConstructor;
-  pShortLivedConstructor.ConstructParticle();
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllMesons();
+
   if (!physicsActivated["em_extra"])
     {
       auto constructor = new G4EmExtraPhysics();
