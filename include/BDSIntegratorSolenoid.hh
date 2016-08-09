@@ -34,11 +34,11 @@ public:
   /// This is a delegate function that may use the BDSIntegratorSolenoid::AdvanceHelix method.
   /// The reason for this is so that intermediate steps can be calculated and therefore the
   /// error ascertained or distance from the chord.  Error calculation is not currently implemented.
-  void Stepper(const G4double y[],
-	       const G4double dydx[],
-	       const G4double h,
-	       G4double yout[],
-	       G4double yerr[]);
+  virtual void Stepper(const G4double y[],
+		       const G4double dydx[],
+		       const G4double h,
+		       G4double yout[],
+		       G4double yerr[]);
 
 protected:
   /// Calculate the new particle coordinates. A first order Step along a solenoid inside the field.

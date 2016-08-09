@@ -21,11 +21,11 @@ public:
 
   virtual ~BDSIntegratorTeleporter(){;}
   
-  void Stepper(const G4double y[],
-	       const G4double dydx[],
-	       const G4double h,
-	       G4double yout[],
-	       G4double yerr[]);
+  virtual void Stepper(const G4double y[],
+		       const G4double dydx[],
+		       const G4double h,
+		       G4double yout[],
+		       G4double yerr[]);
 
 private:
   /// The offset the teleport should transport particles by
