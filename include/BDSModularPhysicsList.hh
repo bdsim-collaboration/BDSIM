@@ -77,6 +77,15 @@ private:
   ///  Construct resonances and quarks - sometimes required explicitly.
   void ConstructAllShortLived();
 
+  /// Construct mesons.
+  void ConstructAllMesons();
+
+  /// Construct baryons.
+  void ConstructAllBaryons();
+
+  /// Construct ions.
+  void ConstructAllIons();
+
   /// Interpret the string of physics lists given from the user through the parser.
   void ParsePhysicsList(G4String physListName);
 
