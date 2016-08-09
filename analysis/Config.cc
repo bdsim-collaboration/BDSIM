@@ -80,6 +80,12 @@ void Config::ParseInputFile()
       f >> secondTok;
       outputFileName = secondTok;
     }
+    else if(firstTok == "ProcessSamplers") {
+      f >> secondTok;
+      if(atoi(secondTok.c_str()) == 0) {
+	bProcessSamplers = 0;
+      }
+    }
     else if(firstTok == "CalculateOpticalFunctionsFileName") { 
       f >> secondTok;
       calculateOpticalFunctionsFileName = secondTok;
@@ -91,6 +97,7 @@ void Config::ParseInputFile()
       }
       else if(atoi(secondTok.c_str()) == 1) {
         bCalculateOpticalFunctions = 1;
+	bProcessSamplers = 1;
       }
     }
     else if(firstTok == "GdmlFileName") {
