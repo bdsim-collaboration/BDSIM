@@ -88,6 +88,7 @@ void BDSMagnet::BuildBeampipe()
 							    beamPipeInfo);
 
   RegisterDaughter(beampipe);
+  InheritExtents(beampipe);
 
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
 
@@ -235,10 +236,11 @@ void BDSMagnet::BuildOuter()
       // zero coordinate of the container solid
       SetPlacementOffset(contOffset);
 
-      outer->ClearMagnetContainer();
-      
       RegisterDaughter(outer);
       InheritExtents(container); // update extents
+
+      // Only clear after extents etc have been used
+      outer->ClearMagnetContainer();
       
       endPieceBefore = outer->EndPieceBefore();
       endPieceAfter  = outer->EndPieceAfter();
