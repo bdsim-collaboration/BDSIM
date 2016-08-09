@@ -1,6 +1,7 @@
 #ifndef BDSGLOBALCONSTANTS_H
 #define BDSGLOBALCONSTANTS_H 
 
+#include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParticle.hh"
@@ -204,6 +205,7 @@ public:
   inline G4VisAttributes*      GetVisibleDebugVisAttr()  const {return visibleDebugVisAttr;}
   inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
+  inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
 
   // refactor out of classes that use this
   inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
@@ -316,6 +318,8 @@ private:
   BDSParticle initialPoint;
 
   BDSOutputFormat outputFormat;
+
+  BDSIntegratorSetType integratorSet;
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)

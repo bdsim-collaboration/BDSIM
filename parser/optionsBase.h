@@ -255,6 +255,7 @@ namespace GMAD
     std::string defaultBiasMaterial;
 
     /// Tracking related parameters
+    std::string integratorSet;
     double   maximumTrackingTime; ///< maximum tracking time per volume [s]
     double   deltaChord;
     double   chordStepMinimum;

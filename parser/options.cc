@@ -250,14 +250,15 @@ void Options::PublishMembers()
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
 
-  // options which influence tracking 
+  // options which influence tracking
+  publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
-  publish("deltaChord",&Options::deltaChord);
-  publish("chordStepMinimum",&Options::chordStepMinimum);
-  publish("deltaIntersection",&Options::deltaIntersection);
-  publish("minimumEpsilonStep",&Options::minimumEpsilonStep);
-  publish("maximumEpsilonStep",&Options::maximumEpsilonStep);
-  publish("deltaOneStep",&Options::deltaOneStep);
+  publish("deltaChord",         &Options::deltaChord);
+  publish("chordStepMinimum",   &Options::chordStepMinimum);
+  publish("deltaIntersection",  &Options::deltaIntersection);
+  publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
+  publish("maximumEpsilonStep", &Options::maximumEpsilonStep);
+  publish("deltaOneStep",       &Options::deltaOneStep);
 
   // physics processes
   publish("turnOnCerenkov",&Options::turnOnCerenkov);
