@@ -32,6 +32,8 @@
 #include "G4Neutron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
+#include "G4ShortLivedConstructor.hh"
+
 
 // general geant4
 #include "globals.hh"
@@ -120,10 +122,6 @@ void BDSModularPhysicsList::ConstructParticle()
   // ions
   //G4IonConstructor iConstructor;
   //iConstructor.ConstructParticle();
-  
-  //  Construct resonances and quarks
-  //G4ShortLivedConstructor pShortLivedConstructor;
-  //pShortLivedConstructor.ConstructParticle();
 
   G4VModularPhysicsList::ConstructParticle();
 }
@@ -216,6 +214,12 @@ void BDSModularPhysicsList::ConstructAllLeptons()
 {
   G4LeptonConstructor leptons;
   leptons.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllShortLived()
+{
+  G4ShortLivedConstructor pShortLivedConstructor;
+  pShortLivedConstructor.ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConfigurePhysics()
@@ -328,9 +332,15 @@ void BDSModularPhysicsList::Em()
 void BDSModularPhysicsList::EmExtra()
 {
   ConstructAllLeptons();
+  ConstructAllShortLived();
+  //  Construct resonances and quarks
+  G4ShortLivedConstructor pShortLivedConstructor;
+  pShortLivedConstructor.ConstructParticle();
   if (!physicsActivated["em_extra"])
     {
-      constructors.push_back(new G4EmExtraPhysics());
+      auto constructor = new G4EmExtraPhysics();
+      constructor->Synch(true);
+      constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics

@@ -13,7 +13,7 @@
 #include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
 #include "G4FastSimulationManagerProcess.hh"
-
+#include "G4LossTableManager.hh"
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
 #include "G4ios.hh"
