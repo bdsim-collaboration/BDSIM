@@ -1,10 +1,12 @@
 #include "BDSDebug.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -330,6 +332,91 @@ G4String BDS::GetParameterValueString(G4String spec, G4String name)
 
   return value;
 
+}
+
+G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
+{
+  G4double xp = vec.x()*cos(angle) - vec.y()*sin(angle);
+  G4double yp = vec.x()*sin(angle) + vec.y()*cos(angle);
+  return G4TwoVector(xp,yp);
+}
+
+G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
+			  const G4ThreeVector& outgoingNormal,
+			  const G4double&      zSeparation,
+			  const BDSExtent&     incomingExtent,
+			  const BDSExtent&     outgoingExtent)
+{  
+  // for any two normal vectors of planes - if their cross
+  // product is zero, then they're (anti) parallel and will
+  // never intersect
+  G4ThreeVector cross = incomingNormal.cross(outgoingNormal);
+  G4double det = cross.mag2();
+  if (!BDS::IsFinite(det))
+    {return false;}
+
+  // shortcuts / copies - OG for outgoing and IC for incoming
+  const BDSExtent& eog = outgoingExtent;
+  const BDSExtent& eic = incomingExtent;
+
+  // z coordinate of points at maximum extents in x,y
+  G4double xNegYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YNeg());
+  G4double xNegYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YPos());
+  G4double xPosYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YPos());
+  G4double xPosYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YNeg());
+  G4double xNegYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YNeg());
+  G4double xNegYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YPos());
+  G4double xPosYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YPos());
+  G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YNeg());
+ 
+  // test of they'd overlap
+  G4bool xNegYNegFail = xNegYNegIC > (zSeparation + xNegYNegOG);
+  G4bool xNegYPosFail = xNegYPosIC > (zSeparation + xNegYPosOG);
+  G4bool xPosYPosFail = xPosYPosIC > (zSeparation + xPosYPosOG);
+  G4bool xPosYNegFail = xPosYNegIC > (zSeparation + xPosYNegOG);
+
+  if (xNegYNegFail || xNegYPosFail || xPosYPosFail || xPosYNegFail)
+    {return true;}
+  else // shouldn't happen
+    {return false;}
+}
+
+G4bool BDS::WillIntersect(const G4double angleIn,
+			  const G4double angleOut,
+			  const G4double outerDiameter,
+			  const G4double length)
+{
+  // Calculate the z component of triangle with each angle and
+  // axis along length.
+  G4double dzIn  = outerDiameter * tan(angleIn);
+  G4double dzOut = outerDiameter * tan(angleOut);
+  if (dzIn > length - dzOut)
+    {return true;}
+  else
+    {return false;}
+}
+
+G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
+{
+  // equation of a plane with offset v_0, normal unit n and any point on plane v
+  // n.(v-v_0) = 0
+  // for equation of plane that intercepts 0,0,0
+  // n.v = 0;
+  // exanding dot product
+  // n.x()*v.x() + n.y()*v.y() + n.z()*v.z() = 0;
+  // for given x and y can solve for z
+  // v.z = (-n.x*v.x - n.y*v.y ) / n.z;
+
+  return (-normal.x()*x - normal.y()*y) / normal.z();
+}
+
+G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle)
+{
+  if (!BDS::IsFinite(fullAngle))
+    {return faceNormal;} // no angle -> no rotation
+  G4RotationMatrix rm = G4RotationMatrix();
+  rm.rotateY(fullAngle*0.5);
+  return faceNormal.transform(rm);
 }
 
 std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)

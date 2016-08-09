@@ -18,11 +18,15 @@ def main() :
         # make run files 
 #        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"solidhydrogen",100000)
 #        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.01,"carbon",100000)
-        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.01,"aluminium",100000)
+#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.01,"aluminium",100000)
 #        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"copper",100000)
 #        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"tungsten",100000)
-#        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"lead",100000)
+        makeRunFiles("ftfp_bert_hp hadronic_elastic",energy,0.001,"lead",100000)
         
+#        makeRunFile("ftfp_bert_hp hadronic_elastic",energy,0.001,"solidnitrogen",100000)
+#        makeRunFile("ftfp_bert_hp hadronic_elastic",energy,0.001,"solidoxygen",100000)
+
+
         # execute bdsim 
         bdsimProc = _subprocess.Popen("bdsim --file=proton.gmad --output=rootevent --batch",
                                       stdout=_subprocess.PIPE,shell=True);

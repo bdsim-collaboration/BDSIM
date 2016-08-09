@@ -28,7 +28,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
 						 G4bool           precisionRegionIn,
-						 BDSBeamPipeInfo* beamPipeInfoIn):
+						 BDSBeamPipeInfo* beamPipeInfoIn,
+						 G4ThreeVector    inputFaceNormalIn,
+						 G4ThreeVector    outputFaceNormalIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
@@ -38,7 +40,11 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   beamPipeInfo(beamPipeInfoIn),
   readOutLV(nullptr),
   acceleratorVacuumLV(nullptr),
-  copyNumber(-1) // -1 initialisation since it will be incremented when placed 
+  endPieceBefore(nullptr),
+  endPieceAfter(nullptr),
+  copyNumber(-1), // -1 initialisation since it will be incremented when placed
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
@@ -103,12 +109,7 @@ void BDSAcceleratorComponent::Build()
 
   // visual attributes
   if(containerLogicalVolume)
-    {
-    if (BDSGlobalConstants::Instance()->VisDebug())
-      {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-    else
-      {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-    }
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)

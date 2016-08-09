@@ -4,6 +4,7 @@
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSIntegratorSet.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
@@ -99,6 +100,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   // can be copied by various bits of geometry
   InitVisAttributes();
   InitDefaultUserLimits();
+
+  integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 }
 
 void BDSGlobalConstants::CalculateHistogramParameters()

@@ -33,9 +33,6 @@ private:
   /// Write header
   void WriteHeader();
   
-  /// Write summary
-  void WriteSummary(BDSBeamline* beamline);
-  
   /// Output file stream
   std::ofstream survey;
 

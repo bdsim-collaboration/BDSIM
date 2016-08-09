@@ -6,6 +6,8 @@
 #include "globals.hh"         // geant4 globals / types
 #include "G4Material.hh"      // materials
 
+class BDSExtent;
+
 class G4LogicalVolume;
 class G4PVPlacement;
 class G4UserLimits;
@@ -24,7 +26,14 @@ class G4VSolid;
  * Note, any type of aperture (in MADX) requires up to 4 parameters
  * 
  * Default values in constructors result in global defaults being used
- * ie beampipe material will be steel - the default from options
+ * ie beampipe material will be steel - the default from options.
+ *
+ * NOTE each derived class is expected to be a singleton but this can't be specified here
+ * as it'd refer to the abstract base class - must be implemented in each derived class
+ * utilised in BDSBeamPipeFactory.cc
+ *
+ * 'In' in argument variables is used to distinguish between that and possible
+ * internal member variables with the same name - avoiding 'itsVariable'
  * 
  * @author Laurie Nevay
  */
@@ -32,13 +41,6 @@ class G4VSolid;
 class BDSBeamPipeFactoryBase
 {
 public:
-  // NOTE each derived class is expected to be a singleton but this can't be specified here
-  // as it'd refer to the abstract base class - must be implemented in each derived class
-  // utilised in BDSBeamPipeFactory.cc
-
-  // 'In' in argument variables is used to distinguish between that and possible
-  // internal member variables with the same name - avoiding 'itsVariable'
-  
   /// create a flat ended beampipe
   virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                      // name
 				      G4double    lengthIn,                    // length [mm]
@@ -102,10 +104,8 @@ protected:
 			  G4double    lengthIn);
 
   /// build beampipe and register logical volumes
-  BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(std::pair<double,double> extX,
-					       std::pair<double,double> extY,
-					       std::pair<double,double> extZ,
-					       G4double containerRadius);
+  BDSBeamPipe* BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
+					       G4double  containerRadius);
   
   // methods called by CommonConstruction, can be implmented by derived classes
   
@@ -113,29 +113,28 @@ protected:
   virtual void BuildLogicalVolumes(G4String    nameIn,
 				   G4Material* vacuumMaterialIn,
 				   G4Material* beamPipeMaterialIn);
-  /// set visual attributes
+  /// Set visual attributes.
   virtual void          SetVisAttributes();
 
-  /// set user limits
+  /// Set user limits.
   virtual G4UserLimits* SetUserLimits(G4double lengthIn);
 
-  /// place volumes
+  /// Place volumes.
   virtual void          PlaceComponents(G4String nameIn);
 
-protected:
-  /// A local copy of global length safety variable
+  /// A local copy of global length safety variable.
   G4double         lengthSafety;
 
-  /// 1um safety that can be used for larger transverse safety
+  /// 1um safety that can be used for larger transverse safety.
   G4double         lengthSafetyLarge;
   
   G4bool           checkOverlaps;
   G4double         maxStepFactor;
-  G4double         nSegmentsPerCircle; // for visualisation improvement
+  G4double         nSegmentsPerCircle; ///< For visualisation improvement
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;
   G4VSolid*        containerSolid;
-  /// longer (in length) version of container solid for unambiguous subtraction
+  /// Longer (in length) version of container solid for unambiguous subtraction.
   G4VSolid*        containerSubtractionSolid; 
   G4LogicalVolume* vacuumLV;
   G4LogicalVolume* beamPipeLV;
@@ -143,13 +142,18 @@ protected:
   G4PVPlacement*   vacuumPV;
   G4PVPlacement*   beamPipePV;
 
-  // for non standard parts for easy registration - ie not the specific ones above
+  /// @{ For non standard parts for easy registration - ie not the specific ones above.
   std::vector<G4LogicalVolume*>   allLogicalVolumes;
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4VisAttributes*>   allVisAttributes;
   std::vector<G4UserLimits*>      allUserLimits;
+  /// @}
+  
+  /// @{ For recording the face normals in the finished pipe component.
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
 };
 
 #endif

@@ -10,10 +10,18 @@ Module contents
     :show-inheritance:
 
 
-pymad8.Converter module
+pymad8.Input module
 -----------------------
 
-.. automodule:: pymad8.Converter
+.. automodule:: pymad8.Input
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pymad8.Output module
+-----------------------
+
+.. automodule:: pymad8.Output
     :members:
     :undoc-members:
     :show-inheritance:
@@ -38,14 +46,6 @@ pymad8.Plot module
 ------------------
 
 .. automodule:: pymad8.Plot
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pymad8.Saveline module
-----------------------
-
-.. automodule:: pymad8.Saveline
     :members:
     :undoc-members:
     :show-inheritance:

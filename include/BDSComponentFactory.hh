@@ -11,9 +11,12 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSLine.hh"
+#include "BDSMagnet.hh"
+#include "BDSMagnetType.hh"
 
 class BDSCavityInfo;
 class BDSFieldInfo;
+struct BDSIntegratorSet;
 class BDSMagnetStrength;
 class BDSTiltOffset;
 
@@ -50,30 +53,18 @@ public:
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
  
 private:
-  /// length safety from global constants
-  G4double lengthSafety;
-  /// charge from global constants
-  G4double charge;
-  /// rigidity in T*m for beam particles
-  G4double brho;
-  
-  /// element for storing instead of passing around
-  GMAD::Element* element = nullptr;
-  /// element access to previous element (can be nullptr)
-  GMAD::Element* prevElement = nullptr;
-  /// element access to previous element (can be nullptr)
-  GMAD::Element* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
-  BDSAcceleratorComponent* CreateQuad();  
+  BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
   BDSAcceleratorComponent* CreateOctupole();
   BDSAcceleratorComponent* CreateDecapole();
   BDSAcceleratorComponent* CreateMultipole();
+  BDSAcceleratorComponent* CreateThinMultipole();
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
   BDSAcceleratorComponent* CreateRectangularCollimator();
@@ -87,6 +78,14 @@ private:
   BDSAcceleratorComponent* CreateAwakeScreen();
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
 #endif
+  BDSAcceleratorComponent* CreateTransform3D();
+
+  BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
+                G4double angle,
+                G4String name,
+                BDSMagnetType magType,
+                BDSMagnetStrength* st);
+
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element*     element,
 			   G4int              nSbends,
@@ -130,7 +129,30 @@ private:
 
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
+  /// length safety from global constants
+  G4double lengthSafety;
+  /// charge from global constants
+  G4double charge;
+  /// rigidity in T*m for beam particles
+  G4double brho;
+  /// don't split sbends into multiple segments
+  G4bool notSplit;
+  /// include thin fringe field element(s) in dipoles
+  G4bool includeFringe;
+  /// length of a thin element
+  G4double thinElementLength;
+  
+  /// element for storing instead of passing around
+  GMAD::Element* element = nullptr;
+  /// element access to previous element (can be nullptr)
+  GMAD::Element* prevElement = nullptr;
+  /// element access to previous element (can be nullptr)
+  GMAD::Element* nextElement = nullptr;
+  
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
+
+  /// Local copy of reference to integrator set to use.
+  const BDSIntegratorSet* integratorSet;
 };
 #endif

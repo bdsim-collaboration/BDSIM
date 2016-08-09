@@ -4,45 +4,104 @@
 
 #include "globals.hh" // geant4 types / globals
 
-BDSIntegratorSet BDS::GetIntegratorSet(G4String sets)
-{
-  return BDS::GetIntegratorSet(BDS::DetermineIntegratorSetType(sets));
+namespace BDS
+{  
+  const BDSIntegratorSet* integratorsBDSIM =
+    new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
+			 BDSIntegratorType::dipole,         // dipole
+			 BDSIntegratorType::quadrupole,     // quadrupole
+			 BDSIntegratorType::sextupole,      // sextupole
+			 BDSIntegratorType::octupole,       // octupole
+			 BDSIntegratorType::decapole,       // decapole
+			 BDSIntegratorType::multipole,      // multipole
+			 BDSIntegratorType::g4classicalrk4, // muonspoiler
+			 BDSIntegratorType::g4classicalrk4, // rfcavity
+			 BDSIntegratorType::g4classicalrk4, // rf
+			 BDSIntegratorType::g4classicalrk4, // general
+			 BDSIntegratorType::g4classicalrk4, // skew quadrupole
+			 BDSIntegratorType::g4classicalrk4, // skew sextupole
+			 BDSIntegratorType::g4classicalrk4, // skew octupole
+			 BDSIntegratorType::g4classicalrk4);// skew decapole
+  const BDSIntegratorSet* integratorsGeant4 =
+    new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
+			 BDSIntegratorType::g4classicalrk4, // dipole
+			 BDSIntegratorType::g4classicalrk4, // quadrupole
+			 BDSIntegratorType::g4classicalrk4, // sextupole
+			 BDSIntegratorType::g4classicalrk4, // octupole
+			 BDSIntegratorType::g4classicalrk4, // decapole
+			 BDSIntegratorType::g4classicalrk4, // multipole
+			 BDSIntegratorType::g4classicalrk4, // muonspoiler
+			 BDSIntegratorType::g4classicalrk4, // rfcavity
+			 BDSIntegratorType::g4classicalrk4, // rf
+			 BDSIntegratorType::g4classicalrk4, // general
+			 BDSIntegratorType::g4classicalrk4, // skew quadrupole
+			 BDSIntegratorType::g4classicalrk4, // skew sextupole
+			 BDSIntegratorType::g4classicalrk4, // skew octupole
+			 BDSIntegratorType::g4classicalrk4);// skew decapole
 }
 
-BDSIntegratorSet BDS::GetIntegratorSet(BDSIntegratorSetType set)
+const BDSIntegratorSet* BDS::IntegratorSet(G4String sets)
 {
-  BDSIntegratorSet geant4 = BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
-					     BDSIntegratorType::g4classicalrk4, // dipole
-					     BDSIntegratorType::g4classicalrk4, // quadrupole
-					     BDSIntegratorType::g4classicalrk4, // sextupole
-					     BDSIntegratorType::g4classicalrk4, // octupole
-					     BDSIntegratorType::g4classicalrk4, // decapole
-					     BDSIntegratorType::g4classicalrk4, // multipole
-					     BDSIntegratorType::g4classicalrk4, // muonspoiler
-					     BDSIntegratorType::g4classicalrk4, // rfcavity
-					     BDSIntegratorType::g4classicalrk4, // rf
-					     BDSIntegratorType::g4classicalrk4);// general
-  
-  BDSIntegratorSet bdsim  = BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
-					     BDSIntegratorType::dipole,         // dipole
-					     BDSIntegratorType::quadrupole,     // quadrupole
-					     BDSIntegratorType::sextupole,      // sextupole
-					     BDSIntegratorType::octupole,       // octupole
-					     BDSIntegratorType::decapole,       // decapole
-					     BDSIntegratorType::g4classicalrk4, // multipole
-					     BDSIntegratorType::g4classicalrk4, // muonspoiler
-					     BDSIntegratorType::g4classicalrk4, // rfcavity
-					     BDSIntegratorType::g4classicalrk4, // rf
-					     BDSIntegratorType::g4classicalrk4);// general
+  return BDS::IntegratorSet(BDS::DetermineIntegratorSetType(sets));
+}
 
+const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
+{
   switch (set.underlying())
     {
     case BDSIntegratorSetType::geant4:
-      {return geant4; break;}
+      {return BDS::integratorsGeant4; break;}
     case BDSIntegratorSetType::bdsim:
-      {return bdsim;  break;}
+      {return BDS::integratorsBDSIM;  break;}
     default:
-      {return bdsim;  break;}
+      {return BDS::integratorsBDSIM;  break;}
     }
 }
-  
+
+BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
+				  const BDSFieldType      field)
+{
+  switch (field.underlying())
+    {
+    case BDSFieldType::none:
+      {return set->general;     break;}
+    case BDSFieldType::zero:
+      {return set->general;     break;}
+    case BDSFieldType::threed:
+      {return set->general;     break;}
+    case BDSFieldType::xy:
+      {return set->general;     break;}
+    case BDSFieldType::mokka:
+      {return set->general;     break;}
+    case BDSFieldType::solenoid:
+      {return set->solenoid;    break;}
+    case BDSFieldType::dipole:
+      {return set->dipole;      break;}
+    case BDSFieldType::quadrupole:
+      {return set->quadrupole;  break;}
+    case BDSFieldType::sextupole:
+      {return set->sextupole;   break;}
+    case BDSFieldType::octupole:
+      {return set->octupole;    break;}
+    case BDSFieldType::decapole:
+      {return set->decapole;    break;}
+    case BDSFieldType::multipole:
+      {return set->multipole;   break;}
+    case BDSFieldType::muonspoiler:
+      {return set->muonspoiler; break;}
+    case BDSFieldType::rfcavity:
+      {return set->rfcavity;    break;}
+    case BDSFieldType::rf:
+      {return set->rf;          break;}
+    case BDSFieldType::skewquadrupole:
+      {return set->skewQuadrupole; break;}
+    case BDSFieldType::skewsextupole:
+      {return set->skewSextupole;  break;}
+    case BDSFieldType::skewoctupole:
+      {return set->skewOctupole;   break;}
+    case BDSFieldType::skewdecapole:
+      {return set->skewDecapole;   break;}
+    default:
+      {return set->general;     break;}
+    }
+}

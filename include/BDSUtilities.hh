@@ -1,9 +1,12 @@
 #ifndef BDSUTILITIES_H
 #define BDSUTILITIES_H
 
+#include "BDSExtent.hh"
+
 #include "globals.hh"   // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
 
 #include <string>
 #include <utility>
@@ -87,10 +90,41 @@ namespace BDS
   G4int    GetParameterValueInt(G4String spec, G4String name);
   ///@}
 
+  /// Rotate a two vector in polar coordinates by an angle.
+  G4TwoVector Rotate(const G4TwoVector& vec, const G4double& angle);
+
+  /// Check if two planes will overlap - as defined by their UNIT normal
+  /// vectors at 0,0,0 and the z separation of the two. Incoming is assumed to have
+  /// a positive z component and outgoing a -ve z component in this convention.
+  G4bool WillIntersect(const G4ThreeVector& incomingNormal,
+		       const G4ThreeVector& outgoingNormal,
+		       const G4double&      zSeparation,
+		       const BDSExtent&     incomingExtent,
+		       const BDSExtent&     outgoingExtent);
+
+  /// Checking for "cutted crossed Z planes" for a cylinder with angled faces. This
+  /// utility only works in one dimension unlike the other one with the same name and
+  /// vector arguments.
+  G4bool WillIntersect(const G4double angleIn,
+		       const G4double angleOut,
+		       const G4double outerDiameter,
+		       const G4double length);
+
+  /// Given an x and y coordinate, calculate what the z coordinate must be to
+  /// lie on the plane defined by the supplied normal vector - assumes plane
+  /// intercepts 0,0,0. Used in WillIntersect.
+  G4double GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y);
+
+  /// Rotate a face normal vector for a given component to that of the reference
+  /// trajectory on that face.  This takes the component full angle and assumes the
+  /// component changes the angle continuously between its faces and therefore half
+  /// of this angle is used for the rotation.
+  G4ThreeVector RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle);
+
   /// Split a format and file path string around the ":" character. This format
   /// is used for geometry and field maps
   std::pair<G4String, G4String> SplitOnColon(G4String formatAndPath);
-}
 
+}
 
 #endif

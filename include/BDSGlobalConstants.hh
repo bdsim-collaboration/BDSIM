@@ -1,6 +1,7 @@
 #ifndef BDSGLOBALCONSTANTS_H
 #define BDSGLOBALCONSTANTS_H 
 
+#include "BDSIntegratorSetType.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParticle.hh"
@@ -174,7 +175,9 @@ public:
   inline G4bool   TurnOnBirksSaturation()    const {return G4bool  (options.turnOnBirksSaturation);}
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
   inline G4double ElossHistoTransBinWidth()  const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
+  inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
+  inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
 
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}
@@ -202,7 +205,9 @@ public:
   inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
   inline G4VisAttributes*      GetVisibleDebugVisAttr()  const {return visibleDebugVisAttr;}
+  inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
+  inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
 
   // refactor out of classes that use this
   inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
@@ -315,6 +320,8 @@ private:
   BDSParticle initialPoint;
 
   BDSOutputFormat outputFormat;
+
+  BDSIntegratorSetType integratorSet;
 };
 
 inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)

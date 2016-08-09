@@ -51,9 +51,7 @@ void BDSTeleporter::BuildContainerLogicalVolume()
 					       name + "_container_lv");
 
   // register extents with BDSGeometryComponent base class
-  SetExtentX(-radius,radius);
-  SetExtentY(-radius,radius);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
 
 G4ThreeVector BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)

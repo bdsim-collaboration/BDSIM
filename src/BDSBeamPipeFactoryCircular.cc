@@ -2,6 +2,7 @@
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
@@ -97,14 +98,16 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CreateBeamPipeAngledInOut(G4String    n
   CleanUp();
 
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleInIn, angleOutIn);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
 
   G4double containerRadius = aper1In + beamPipeThicknessIn + lengthSafety;
   
-  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn, inputface, outputface);
+  CreateGeneralAngledSolids(nameIn, lengthIn, aper1In, beamPipeThicknessIn,
+			    inputFaceNormal, outputFaceNormal);
   
-  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn, lengthIn, containerRadius);
+  return CommonFinalConstruction(nameIn, vacuumMaterialIn, beamPipeMaterialIn,
+				 lengthIn, containerRadius);
 }
 
 /// only the solids are unique, once we have those, the logical volumes and placement in the
@@ -137,13 +140,9 @@ BDSBeamPipe* BDSBeamPipeFactoryCircular::CommonFinalConstruction(G4String    nam
 
   
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerRadiusIn,containerRadiusIn);
-  std::pair<double,double> extY = std::make_pair(-containerRadiusIn,containerRadiusIn);
-  std::pair<double,double> extZ = std::make_pair(-lengthIn*0.5,lengthIn*0.5);
+  BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);
 
-  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,
-								 containerRadiusIn);
-
+  return BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(ext, containerRadiusIn);
 }
 
 /// the angled ones have degeneracy in the geant4 solids they used so we can avoid code duplication
