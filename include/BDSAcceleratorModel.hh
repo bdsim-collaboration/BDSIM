@@ -90,6 +90,12 @@ public:
   /// Register any physical volumes that should be managed - typically from world placement
   inline void               RegisterPhysicalVolume(std::vector<G4VPhysicalVolume*> physicalVolumes);
 
+  /// Register the beam line of end pieces.
+  inline void               RegisterEndPieceBeamline(BDSBeamline* beamlineIn);
+
+  /// Access the beam line of end pieces.
+  inline BDSBeamline*       GetEndPieceBeamline() const {return endPieceBeamline;}
+  
   /// Register all field objects
   inline void               RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn);
 
@@ -98,15 +104,16 @@ private:
 
   static BDSAcceleratorModel* _instance;
 
-  G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world
-  G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry
-  G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry
-  G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry
-  G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry
+  G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
+  G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry.
+  G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry.
+  G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry.
+  G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry.
 
-  BDSBeamline*       flatBeamline;      ///< Flat beam line
-  BDSBeamline*       supportsBeamline;  ///< Element supports beam line
-  BDSBeamline*       tunnelBeamline;    ///< Tunnel segments beam line
+  BDSBeamline*       flatBeamline;     ///< Flat beam line.
+  BDSBeamline*       supportsBeamline; ///< Element supports beam line.
+  BDSBeamline*       tunnelBeamline;   ///< Tunnel segments beam line.
+  BDSBeamline*       endPieceBeamline; ///< End Pieces beam line.
 
   std::vector<BDSFieldObjects*> fields; ///< All field objects.
 };
@@ -158,6 +165,9 @@ inline void BDSAcceleratorModel::RegisterTunnelBeamline(BDSBeamline* beamlineIn)
 
 inline BDSBeamline* BDSAcceleratorModel::GetTunnelBeamline()
 {return tunnelBeamline;}
+
+inline void BDSAcceleratorModel::RegisterEndPieceBeamline(BDSBeamline* beamlineIn)
+{endPieceBeamline = beamlineIn;}
 
 inline void BDSAcceleratorModel::RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn)
 {fields = fieldsIn;}

@@ -59,6 +59,9 @@ private:
 				       G4double    aper1In,
 				       G4double    aper2In,
 				       G4double    beamPipeThicknessIn);
+
+  /// The angled ones have degeneracy in the geant4 solids they used so we can
+  /// avoid code duplication by grouping common construction tasks.
   void CreateGeneralAngledSolids(G4String      nameIn,
 				 G4double      lengthIn,
 				 G4double      aper1In,

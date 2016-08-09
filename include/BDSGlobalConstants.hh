@@ -204,6 +204,7 @@ public:
   inline BDSParticle           GetInitialPoint()         const {return initialPoint;}
   inline G4VisAttributes*      GetInvisibleVisAttr()     const {return invisibleVisAttr;}
   inline G4VisAttributes*      GetVisibleDebugVisAttr()  const {return visibleDebugVisAttr;}
+  inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
 
   // refactor out of classes that use this

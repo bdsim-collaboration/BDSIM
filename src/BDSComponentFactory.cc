@@ -408,8 +408,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
 					 length,
 					 PrepareBeamPipeInfo(element, -angleIn, -angleOut),
 					 PrepareMagnetOuterInfo(element, -angleIn, -angleOut),
-					 vacuumField,
-					 nullptr);
+					 vacuumField);
       
       oneBend->SetBiasVacuumList(element->biasVacuumList);
       oneBend->SetBiasMaterialList(element->biasMaterialList);
@@ -529,7 +528,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element*           element,
 					 PrepareBeamPipeInfo(element, angleIn, angleOut),
 					 magnetOuterInfo,
 					 vacuumField,
-					 nullptr);
+					 semiangle);
 
       oneBend->SetBiasVacuumList(element->biasVacuumList);
       oneBend->SetBiasMaterialList(element->biasMaterialList);
@@ -751,8 +750,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       nullptr);
+		       vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
@@ -772,8 +770,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       nullptr);
+		       vacuumField);
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
@@ -793,8 +790,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       nullptr);
+		       vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
@@ -814,8 +810,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       nullptr);
+		       vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
@@ -836,8 +831,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       nullptr);
+		       vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
@@ -868,7 +862,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 		      PrepareBeamPipeInfo(element),
 		      PrepareMagnetOuterInfo(element),
 		      vacuumField,
-		      nullptr);
+		      (*st)["angle"]); // multipole could bend beamline
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
@@ -963,8 +957,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       nullptr);
+		       vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -1038,6 +1031,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element),
 		       vacuumField,
+		       0,
 		       outerField);
 }
 

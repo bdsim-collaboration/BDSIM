@@ -33,8 +33,9 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
+		     G4double            angle,
 		     BDSFieldInfo*       outerFieldInfoIn):
-  BDSAcceleratorComponent(name, length, (*vacuumFieldInfoIn->MagnetStrength())["angle"], type.ToString()),
+  BDSAcceleratorComponent(name, length, angle, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
@@ -49,8 +50,13 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
-  inputface       = G4ThreeVector(0,0,0);
-  outputface      = G4ThreeVector(0,0,0);
+  inputface       = G4ThreeVector(0,0,-1);
+  outputface      = G4ThreeVector(0,0, 1);
+  
+  beampipe = nullptr;
+  outer    = nullptr;
+
+  placeBeamPipe = false;
 }
 
 void BDSMagnet::Build()
@@ -77,6 +83,10 @@ void BDSMagnet::BuildBeampipe()
 
   RegisterDaughter(beampipe);
   SetAcceleratorVacuumLogicalVolume(beampipe->GetVacuumLogicalVolume());
+
+  /// Update record of normal vectors now beam pipe has been constructed.
+  SetInputFaceNormal(BDS::RotateToReferenceFrame(beampipe->InputFaceNormal(), angle));
+  SetOutputFaceNormal(BDS::RotateToReferenceFrame(beampipe->OutputFaceNormal(), -angle));
 }
 
 void BDSMagnet::BuildVacuumField()
@@ -110,9 +120,17 @@ void BDSMagnet::BuildOuter()
       // zero coordinate of the container solid
       SetPlacementOffset(contOffset);
 
+      outer->ClearMagnetContainer();
+      
       RegisterDaughter(outer);
       InheritExtents(container); // update extents
-      outer->ClearMagnetContainer();
+      
+      endPieceBefore = outer->EndPieceBefore();
+      endPieceAfter  = outer->EndPieceAfter();
+
+      /// Update record of normal vectors now beam pipe has been constructed.
+      SetInputFaceNormal(BDS::RotateToReferenceFrame(outer->InputFaceNormal(), angle));
+      SetOutputFaceNormal(BDS::RotateToReferenceFrame(outer->OutputFaceNormal(), -angle));
     }
 }
 

@@ -129,10 +129,3 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement)
 
   survey << G4endl;
 }
-
-void BDSSurvey::WriteSummary(BDSBeamline* beamline)
-{  
-  survey << "### Total length = " << beamline->GetTotalChordLength()/CLHEP::m << "m" << G4endl;
-  survey << "### Total arc length = " <<  beamline->GetTotalArcLength()/CLHEP::m << "m" << G4endl;
-  survey.close();
-}
