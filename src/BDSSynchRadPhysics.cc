@@ -3,7 +3,6 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4AutoDelete.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4ProcessManager.hh"
 #include "G4SynchrotronRadiation.hh"
 
 BDSSynchRadPhysics::BDSSynchRadPhysics():
@@ -25,20 +24,18 @@ void BDSSynchRadPhysics::ConstructProcess()
 
   G4SynchrotronRadiation* synchrotron = new G4SynchrotronRadiation();
   G4AutoDelete::Register(synchrotron);
-  
+  G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
   aParticleIterator->reset();
   while( (*aParticleIterator)() )
-    {
-      G4ParticleDefinition* particle = aParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
+  {
+    G4ParticleDefinition* particle = aParticleIterator->value();
 
-      // add to charged particles
-      if (particle->GetPDGCharge() != 0)
-	{
-	  pmanager->AddProcess(synchrotron);
-	  pmanager->SetProcessOrderingToLast(synchrotron,idxPostStep);
-	}
+    // add to charged particles
+    if (particle->GetPDGCharge() != 0)
+    {
+      ph->RegisterProcess(synchrotron, particle);
     }
+  }
   return;
 }
 
