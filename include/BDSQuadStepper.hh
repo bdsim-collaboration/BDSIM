@@ -8,6 +8,8 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+class G4MagIntegratorStepper;
+
 class BDSQuadStepper:
   public G4MagIntegratorStepper, public BDSAuxiliaryNavigator
 {
@@ -56,6 +58,9 @@ private:
   /// from the chord calculated by the in and out points and the true curved path the
   /// particle would take in the field.
   G4double itsDist;
+
+  // use for high amplitude particles
+  G4MagIntegratorStepper* backupStepper;
 };
 
 inline  void BDSQuadStepper::SetBGrad(G4double aBGrad)
