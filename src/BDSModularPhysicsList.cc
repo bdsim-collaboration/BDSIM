@@ -338,7 +338,9 @@ void BDSModularPhysicsList::EmExtra()
   pShortLivedConstructor.ConstructParticle();
   if (!physicsActivated["em_extra"])
     {
-      constructors.push_back(new G4EmExtraPhysics());
+      auto constructor = new G4EmExtraPhysics();
+      constructor->Synch(true);
+      constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics
