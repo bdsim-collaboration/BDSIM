@@ -713,7 +713,7 @@ BDSMagnet* BDSComponentFactory::CreateDipoleFringe(Element* element,
 		       beamPipeInfo,
 		       magnetOuterInfo,
 		       vacuumField,
-               0,
+               (*st)["angle"],
 		       nullptr);
 }
 
