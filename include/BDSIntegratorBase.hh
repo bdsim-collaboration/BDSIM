@@ -32,10 +32,10 @@ public:
   virtual ~BDSIntegratorBase();
 
   /// Estimate maximum distance of curved solution and chord.
-  inline G4double DistChord() const;
+  inline G4double DistChord() const {return distChord;}
 
   /// Geant4 requires that the integrator order must be supplied by the derived class.
-  inline virtual G4int IntegratorOrder() const;
+  inline virtual G4int IntegratorOrder() const {return 2;}
   
 protected:
   /// The equation of motion object that this integrator is constructed w.r.t. This is
@@ -58,11 +58,5 @@ private:
   /// Private default constructor to force use of specific constructor
   BDSIntegratorBase();
 };
-
-inline G4double BDSIntegratorBase::DistChord() const
-{return distChord;}
-
-inline G4int BDSIntegratorBase::IntegratorOrder() const
-{return 2;}
 
 #endif

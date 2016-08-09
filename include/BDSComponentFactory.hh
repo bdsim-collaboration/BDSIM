@@ -50,19 +50,6 @@ public:
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
  
 private:
-  /// length safety from global constants
-  G4double lengthSafety;
-  /// charge from global constants
-  G4double charge;
-  /// rigidity in T*m for beam particles
-  G4double brho;
-  
-  /// element for storing instead of passing around
-  GMAD::Element* element = nullptr;
-  /// element access to previous element (can be nullptr)
-  GMAD::Element* prevElement = nullptr;
-  /// element access to previous element (can be nullptr)
-  GMAD::Element* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
@@ -128,6 +115,20 @@ private:
 
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
+  /// length safety from global constants
+  G4double lengthSafety;
+  /// charge from global constants
+  G4double charge;
+  /// rigidity in T*m for beam particles
+  G4double brho;
+  
+  /// element for storing instead of passing around
+  GMAD::Element* element = nullptr;
+  /// element access to previous element (can be nullptr)
+  GMAD::Element* prevElement = nullptr;
+  /// element access to previous element (can be nullptr)
+  GMAD::Element* nextElement = nullptr;
+  
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
 };
