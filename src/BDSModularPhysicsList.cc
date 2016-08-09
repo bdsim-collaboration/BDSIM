@@ -112,23 +112,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 BDSModularPhysicsList::~BDSModularPhysicsList()
 {;}
 
-void BDSModularPhysicsList::ConstructParticle()
-{
-  // mesons
-  //G4MesonConstructor mConstructor;
-  //mConstructor.ConstructParticle();
-  
-  // baryons
-  //G4BaryonConstructor bConstructor;
-  //bConstructor.ConstructParticle();
-  
-  // ions
-  //G4IonConstructor iConstructor;
-  //iConstructor.ConstructParticle();
-
-  G4VModularPhysicsList::ConstructParticle();
-}
-
 void BDSModularPhysicsList::Print()
 {
   for (const auto& physics : physicsActivated)

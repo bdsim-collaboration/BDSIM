@@ -33,10 +33,6 @@ public:
   BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
 
-  /// Construct required particles. Overlays G4VModularPhysicsList function
-  /// and calls that one.  Adds extra particles.
-  virtual void ConstructParticle();
-
   /// Print out which physics lists are activated.
   void Print();
 
