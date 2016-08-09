@@ -14,6 +14,7 @@
 
 class BDSCavityInfo;
 class BDSFieldInfo;
+struct BDSIntegratorSet;
 class BDSMagnetStrength;
 class BDSTiltOffset;
 
@@ -131,5 +132,8 @@ private:
   
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
+
+  /// Local copy of reference to integrator set to use.
+  const BDSIntegratorSet* integratorSet;
 };
 #endif
