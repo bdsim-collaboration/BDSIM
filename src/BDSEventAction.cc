@@ -80,11 +80,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   CLHEP::HepRandom::saveFullState(ss);
   seedStateAtStart = ss.str();
 
-  //BDSRandom::LoadSeedState(BDSGlobalConstants::Instance()->SeedStateFileName());
-
-  // save the seed state in a file to recover potentially unrecoverable events
-  BDSRandom::WriteSeedState();
-
   // get the current time
   startTime = time(nullptr);
 
