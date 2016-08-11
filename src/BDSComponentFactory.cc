@@ -152,8 +152,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     }
   else if (element->type == ElementType::_THINMULT)
     {
-      element->e1 = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-      element->e2 = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
+      if (nextElement && (BDS::IsFinite(nextElement->e1)))
+      {
+        element->e1 = nextElement->e1 * CLHEP::rad;
+        element->e2 = nextElement->e1 * CLHEP::rad;
+        willModify  = true;
+      }
+      else if (prevElement && (BDS::IsFinite(prevElement->e2)))
+      {
+        element->e1 = prevElement->e2 * CLHEP::rad;
+        element->e2 = prevElement->e2 * CLHEP::rad;
+        willModify  = true;
+      }
     }
 
   // check if the component already exists and return that
