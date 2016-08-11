@@ -27,7 +27,7 @@
 #include "BDSTunnelSD.hh"
 #include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
-
+#include "BDSUtilities.hh"
 #include "parser/options.h"
 
 #include "G4Box.hh"
@@ -163,43 +163,54 @@ void BDSDetectorConstruction::BuildBeamline()
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
 #ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << (*elementIt).name << G4endl;
+      G4cout << "BDSDetectorConstruction creating component " << element.name << G4endl;
 #endif
+      // next and previous elements: vectors of pointers which contains any thin multipoles
+      // and the next non-thinmultipoles
+      std::vector<GMAD::Element *> prevElements;
+      std::vector<GMAD::Element *> nextElements;
 
-      // next and previous element, but ignore samplers or other special elements
-      GMAD::Element* prevElement = nullptr;
-      auto prevIt = elementIt;
-      while (prevIt != beamLine.begin())
+      // populate vectors if beamline has more than two elements (two is minimum, one is user defined and the other is a _Line)
+      // append the element to the vectors, if it's a thinmultipole, then continue iterating and appending
+      // until it's not a multipole.
+      if ((G4int)beamLine.size() > 2)
 	{
-	  --prevIt;
-	  if (prevIt->isSpecial() == false)
-	    {
-	      prevElement = &(*prevIt);
-	      break;
-	    }
-	}
+          auto prevIt = elementIt;
+          while (prevIt != beamLine.begin())
+            {
+              prevIt--;
+              if (!(prevIt->isSpecial())) 
+		{
+                  prevElements.push_back(&(*prevIt));
+                  if (prevIt->type != GMAD::ElementType::_THINMULT)
+		    {break;}
+                }
+            }
+          // reverse previous to make sure last the element is the non thinmultipole element
+	  std::reverse(prevElements.begin(), prevElements.end());
 
-      GMAD::Element* nextElement = nullptr;
-      auto nextIt = elementIt;
-      ++nextIt;
-      while (nextIt != beamLine.end())
-	{
-	  if (nextIt->isSpecial() == false)
+          auto nextIt = elementIt;
+          nextIt++;
+          while (nextIt != beamLine.end())
 	    {
-	      nextElement = &(*nextIt);
-	      break;
+              if (!(nextIt->isSpecial())) 
+		{
+		  nextElements.push_back(&(*nextIt));
+                  if (nextIt->type != GMAD::ElementType::_THINMULT)
+		    {break;}
+		}
+	      nextIt++;
 	    }
-	  ++nextIt;
-	}
-      
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
-      if(temp)
-	{
-	  BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
-	  BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
-	  beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
-	}
     }
+
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElements, nextElements);
+      if(temp)
+      {
+          BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
+          BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
+          beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
+      }
+  }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
