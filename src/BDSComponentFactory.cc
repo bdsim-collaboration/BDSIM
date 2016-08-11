@@ -907,19 +907,28 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
      (*st)[*nkey] = (*kn) ;
      (*st)[*skey] = (*ks) ;
    }
+
+ BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -element->e1, element->e2);
+ BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -element->e1, element->e2);
+ magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
+
  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
 					       BDSIntegratorType::multipole,
 					       st);
 
- return new BDSMagnet(BDSMagnetType::multipole,
+ BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::multipole,
 		      element->name,
 		      thinElementLength,
-		      PrepareBeamPipeInfo(element),
-		      PrepareMagnetOuterInfo(element),
+                      beamPipeInfo,
+                      magnetOuterInfo,
 		      vacuumField,
-              0,
+                      0,
 		      nullptr);
+
+  thinMultipole->SetExtent(BDSExtent(beamPipeInfo->aper1,beamPipeInfo->aper1,thinElementLength*0.5));
+
+  return thinMultipole;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
