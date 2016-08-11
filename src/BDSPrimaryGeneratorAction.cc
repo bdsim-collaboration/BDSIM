@@ -36,13 +36,12 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // save the seed state in a file to recover potentially unrecoverable events
-  std::ofstream f = std::ofstream();
+  std::ofstream f;
   f.open("evtseed.txt");
   std::stringstream ss1;
   CLHEP::HepRandom::saveFullState(ss1);
   f << ss1.str();
   f.close();
-
 
   //this function is called at the begining of event
 
