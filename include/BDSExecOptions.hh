@@ -29,6 +29,8 @@ public:
 
   /// Acessor for convenience for the one thing that's needed before the parser options.
   inline G4String InputFileName() const {return options.inputFileName;}
+
+  inline G4bool CMake() const {return cmake;}  ///< Accessor
   
 private:
   /// Private default constructor to force use of provided one.
@@ -45,6 +47,9 @@ private:
 
   /// The options instance that is populated by parsing the command line options.
   GMAD::Options options;
+
+  /// Whether we're executing from cmake - used for signal handling.
+  G4bool cmake;
 };
 
 #endif
