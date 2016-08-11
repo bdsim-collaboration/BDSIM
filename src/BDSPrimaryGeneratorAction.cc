@@ -35,9 +35,6 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-
-  // BDSRandom::LoadSeedState("saveseed.txt");
-
   // save the seed state in a file to recover potentially unrecoverable events
   std::ofstream f = std::ofstream();
   f.open("evtseed.txt");
