@@ -654,6 +654,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
+  // poleface angles
+  G4double polefaceAngleIn = element->e1 + 0.5*(length-thinElementLength)/rho;
+  G4double polefaceAngleOut = element->e2 + 0.5*(length-thinElementLength)/rho;
+
+  // poleface angles modified if fringefields are
+  if ((prevElement) && (prevElement->type == ElementType::_RBEND)){
+    polefaceAngleIn -= 0.5*element->angle;
+    angleIn += 0.5*(thinElementLength)/rho;}
+  if ((nextElement) && (nextElement->type == ElementType::_RBEND)){
+    polefaceAngleOut -= 0.5*element->angle;
+    angleOut += 0.5*(thinElementLength)/rho;}
+
   // first element should be fringe if poleface specified
   if (BDS::IsFinite(element->e1) && includeFringe)
     {
@@ -663,7 +675,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
       thename                        = element->name + "_e1_fringe";
-      angle                          = element->e1 + 0.5*(length-thinElementLength)/rho;
+      angle                          = polefaceAngleIn;
 
               BDSMagnet* startfringe = CreateDipoleFringe(element, angle, thename, magType, fringeStIn);
       rbendline->AddComponent(startfringe);
@@ -684,7 +696,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					       brho,
 					       BDSIntegratorType::dipole,
 					       st);
-  
+
   BDSMagnet* oneBend = new BDSMagnet(magType,
 		       element->name,
 		       length,
@@ -705,7 +717,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       (*fringeStOut)["length"]        = thinElementLength;
       (*fringeStOut)["angle"]         = -thinElementLength/rho;
       thename                         = element->name + "_e2_fringe";
-      angle                           = element->e2 + 0.5*(length+thinElementLength)/rho;
+      angle                           = polefaceAngleOut;
 
       BDSMagnet* endfringe = CreateDipoleFringe(element, -angle, thename, magType, fringeStOut);
       rbendline->AddComponent(endfringe);
