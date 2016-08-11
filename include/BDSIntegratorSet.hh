@@ -1,6 +1,7 @@
 #ifndef BDSINTEGRATORSET_H
 #define BDSINTEGRATORSET_H
 
+#include "BDSFieldType.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
 
@@ -11,13 +12,19 @@ struct BDSIntegratorSet;
 namespace BDS
 {
   /// @{ Return the appropraiate set of integrators to use for each magnet type.
-  BDSIntegratorSet GetIntegratorSet(G4String             set);
-  BDSIntegratorSet GetIntegratorSet(BDSIntegratorSetType set);
+  const BDSIntegratorSet* IntegratorSet(G4String             set);
+  const BDSIntegratorSet* IntegratorSet(BDSIntegratorSetType set);
   /// @}
+
+  /// Get appropriate integrator from a set based on the field type.
+  BDSIntegratorType Integrator(const BDSIntegratorSet* set,
+			       const BDSFieldType      field);
 }
 
 /**
- * @brief Which integrator to use for each type of magnet / field object
+ * @brief Which integrator to use for each type of magnet / field object.
+ * 
+ * There is one to match every type of field in BDSFieldType.
  * 
  * @author Laurie Nevay
  */
@@ -34,7 +41,11 @@ struct BDSIntegratorSet
 		   BDSIntegratorType muonspoilerIn,
 		   BDSIntegratorType rfcavityIn,
 		   BDSIntegratorType rfIn,
-		   BDSIntegratorType generalIn):
+		   BDSIntegratorType generalIn,
+		   BDSIntegratorType skewQuadrupoleIn,
+		   BDSIntegratorType skewSextupoleIn,
+		   BDSIntegratorType skewOctupoleIn,
+		   BDSIntegratorType skewDecapoleIn):
     solenoid(solenoidIn),
     dipole(dipoleIn),
     quadrupole(quadrupoleIn),
@@ -45,7 +56,11 @@ struct BDSIntegratorSet
     muonspoiler(muonspoilerIn),
     rfcavity(rfcavityIn),
     rf(rfIn),
-    general(generalIn)
+    general(generalIn),
+    skewQuadrupole(skewQuadrupoleIn),
+    skewSextupole(skewSextupoleIn),
+    skewOctupole(skewOctupoleIn),
+    skewDecapole(skewDecapoleIn)
   {;}
 
   BDSIntegratorType solenoid;
@@ -59,7 +74,10 @@ struct BDSIntegratorSet
   BDSIntegratorType rfcavity;
   BDSIntegratorType rf;
   BDSIntegratorType general;
+  BDSIntegratorType skewQuadrupole;
+  BDSIntegratorType skewSextupole;
+  BDSIntegratorType skewOctupole;
+  BDSIntegratorType skewDecapole;
 };
-
 
 #endif

@@ -37,7 +37,7 @@ private:
   /// The nominal non-skewed field.
   BDSFieldMag* const field;
 
-  /// The rotation matrix used to rotation the coordinates.
+  /// The rotation matrix used to rotate the coordinates.
   G4RotationMatrix* rotation;
 
   /// The opposite rotation matrix used to transform the resultant field vector.

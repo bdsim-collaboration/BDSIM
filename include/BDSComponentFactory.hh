@@ -16,6 +16,7 @@
 
 class BDSCavityInfo;
 class BDSFieldInfo;
+struct BDSIntegratorSet;
 class BDSMagnetStrength;
 class BDSTiltOffset;
 
@@ -52,29 +53,6 @@ public:
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
  
 private:
-  /// length safety from global constants
-  G4double lengthSafety;
-  /// charge from global constants
-  G4double charge;
-  /// rigidity in T*m for beam particles
-  G4double brho;
-  /// don't split sbends into multiple segments
-  G4bool notSplit;
-  /// include thin fringe field element(s) in dipoles
-  G4bool includeFringe;
-  /// length of a thin element
-  G4double thinElementLength;
-  
-  /// element for storing instead of passing around
-  GMAD::Element* element = nullptr;
-
-  // vector of previous and next elements
-  std::vector<GMAD::Element*> prevElements;// = nullptr;
-  std::vector<GMAD::Element*> nextElements;// = nullptr;
-
-  /// element access to previous and next element (can be nullptr)
-  GMAD::Element* prevElement = nullptr;
-  GMAD::Element* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
@@ -147,7 +125,34 @@ private:
 
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
+  /// length safety from global constants
+  G4double lengthSafety;
+  /// charge from global constants
+  G4double charge;
+  /// rigidity in T*m for beam particles
+  G4double brho;
+  /// don't split sbends into multiple segments
+  G4bool notSplit;
+  /// include thin fringe field element(s) in dipoles
+  G4bool includeFringe;
+  /// length of a thin element
+  G4double thinElementLength;
+  
+ /// element for storing instead of passing around
+  GMAD::Element* element = nullptr;
+
+  // vector of previous and next elements
+  std::vector<GMAD::Element*> prevElements;// = nullptr;
+  std::vector<GMAD::Element*> nextElements;// = nullptr;
+
+  /// element access to previous and next element (can be nullptr)
+  GMAD::Element* prevElement = nullptr;
+  GMAD::Element* nextElement = nullptr;
+  
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
+
+  /// Local copy of reference to integrator set to use.
+  const BDSIntegratorSet* integratorSet;
 };
 #endif

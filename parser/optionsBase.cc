@@ -175,6 +175,7 @@ OptionsBase::OptionsBase()
   defaultBiasMaterial      = "";
 
   // tracking options
+  integratorSet            = "bdsim";
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = 0.1;
   deltaChord               = 0.00001; // m

@@ -28,6 +28,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldType.hh"
+#include "BDSIntegratorSet.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
@@ -67,6 +68,8 @@ BDSComponentFactory::BDSComponentFactory()
   brho *= (CLHEP::tesla*CLHEP::m);
 
   G4cout << "Rigidity (Brho) : "<< std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+
+  integratorSet = BDS::IntegratorSet(BDSGlobalConstants::Instance()->IntegratorSet());
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();
@@ -326,9 +329,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::rfcavity);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
 					       brho,
-					       BDSIntegratorType::g4classicalrk4,
+					       intType,
 					       nullptr,
 					       true,
 					       G4Transform3D(),

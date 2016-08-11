@@ -156,7 +156,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4cout << "extent negative             " << eN                           << G4endl;
   G4cout << "object placement offset     " << placementOffset              << G4endl;
   G4cout << "has finite placement offset " << hasFinitePlacementOffset     << G4endl;
-  G4cout << "input face normal           " << iFNormal                     << G4endl;
   G4cout << "output face normal          " << oFNormal                     << G4endl;
 #endif
 
@@ -193,6 +192,9 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 	      checkFaces = false; // got to the beginning with only drifts - don't check
 	    }
 	}
+#ifdef BDSDEBUG
+      G4cout << "input face normal           " << iFNormal << G4endl; // matches above debug formatting
+#endif
 
       if (checkFaces)
 	{

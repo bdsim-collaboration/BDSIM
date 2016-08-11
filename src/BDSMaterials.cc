@@ -238,6 +238,16 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["H"],1);
   materials[name] = tmpMaterial;
 
+  tmpMaterial = new G4Material
+    (name="solidnitrogen"      , density=  8.96*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["N"],1);
+  materials[name] = tmpMaterial;
+
+  tmpMaterial = new G4Material
+    (name="solidoxygen"      , density=  8.96*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],1);
+  materials[name] = tmpMaterial;
+
   // composites and alloys
 
   tmpMaterial = new G4Material
