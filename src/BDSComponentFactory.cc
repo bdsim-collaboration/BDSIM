@@ -353,7 +353,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       if (
 	  prevElement &&
 	  prevElement->type != ElementType::_DRIFT &&
-	  !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
+          prevElement->type != ElementType ::_THINMULT &&
+          !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
 	  G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires previous element "
@@ -367,6 +368,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
       if (
 	  nextElement &&
 	  nextElement->type != ElementType::_DRIFT &&
+          nextElement->type != ElementType ::_THINMULT &&
 	  !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
@@ -590,7 +592,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       if (
 	  prevElement &&
 	  prevElement->type != ElementType::_DRIFT &&
-	  !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
+          prevElement->type != ElementType ::_THINMULT &&
+          !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
 	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires previous element "
@@ -604,7 +607,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       if (
 	  nextElement &&
 	  nextElement->type != ElementType::_DRIFT &&
-	  !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
+          nextElement->type != ElementType ::_THINMULT &&
+          !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
 	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires next "
