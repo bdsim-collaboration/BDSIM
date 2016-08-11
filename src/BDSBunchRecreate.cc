@@ -54,6 +54,7 @@ void BDSBunchRecreate::LoadFile(G4String filename)
     }
 
   eventTree = (TTree*)file->Get("Event");
+  eventTree->GetEntry(0);
   entries = (G4int) eventTree->GetEntries();
 
   // prepare vector of samplers to load - empty vector means none.
@@ -64,17 +65,21 @@ void BDSBunchRecreate::LoadFile(G4String filename)
 #else
   primaryLocal = new BDSOutputROOTEventSampler<double>();
 #endif
-  infoLocal = new BDSOutputROOTEventInfo();
-  info      = eventTree->GetBranch("Info.");
-  info->SetAddress(infoLocal);
-  primary = eventTree->GetBranch("Primary.");
-  primary->SetAddress(primaryLocal);
+  primaryLocal->Flush();
+  //infoLocal = new BDSOutputROOTEventInfo();
+  //info      = eventTree->GetBranch("Info.");
+  //info->SetAddress(infoLocal);
+  //primary = eventTree->GetBranch("Primary.");
+  //primary->SetAddress(primaryLocal);
+
+  eventTree->SetBranchAddress("Primary.",&primaryLocal);
   
   // Here we set the particle name from the PDG ID of first useful event in the file.
   // As the bunch is constructed before BDSModularPhysics list this is ok. BDSModularPhysicsList
   // access global constants for the particle name and constructs the particle definition used
   // for every event.
-  primary->GetEntry(currentEventNumber); // load first useful event
+  //G4cout << "N Entries " << primary->GetEntries() << G4endl;
+  eventTree->GetEntry(2); // load first useful event
   G4int particlePDGID = primaryLocal->partID[0]; // get PDG ID of first entry
   G4String particleName = G4ParticleTable::GetParticleTable()->FindParticle(particlePDGID)->GetParticleName();
   BDSGlobalConstants::Instance()->SetParticleName(particleName);
@@ -93,6 +98,9 @@ void BDSBunchRecreate::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   // load the seed state
   if (strongRecreation)
     {
+      gDirectory->pwd();
+      file->cd();
+      gDirectory->pwd();
       info->GetEntry(0);
       BDSRandom::SetSeedState(infoLocal->seedStateAtStart);
     }

@@ -120,8 +120,11 @@ void BDSOutputROOTEvent::Initialise()
   }
 
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
-  // root file
+  // root file - note this sets the current 'directory' to this file!
+  gDirectory->pwd();
+  
   theRootOutputFile      = new TFile(filename,"RECREATE", "BDS output file");
+    gDirectory->pwd();
   // options data tree
   theOptionsOutputTree   = new TTree("Options","BDSIM options");
   // model data tree
@@ -313,9 +316,9 @@ void BDSOutputROOTEvent::FillEvent()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  theRootOutputFile->cd();
   theRootOutputTree->Fill();
-  this->Flush();
-  
+  Flush();
 }
 void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
 					const time_t&  stopTime,
@@ -336,6 +339,7 @@ void BDSOutputROOTEvent::Write(const time_t&  startTime,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  theRootOutputFile->cd();
   runInfo->startTime        = startTime;
   runInfo->stopTime         = stopTime;
   runInfo->duration         = duration;
@@ -353,6 +357,7 @@ void BDSOutputROOTEvent::Close()
 #endif
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
+      theRootOutputFile->cd();
       theRootOutputFile->Write(0,TObject::kOverwrite);
       theRootOutputFile->Close();
       delete theRootOutputFile;
@@ -362,6 +367,9 @@ void BDSOutputROOTEvent::Close()
 
 void BDSOutputROOTEvent::Flush()
 {
+  gDirectory->pwd();
+  theRootOutputFile->cd();
+  gDirectory->pwd();
   // loop over sampler map and clear vectors
   for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
     {(*i)->Flush();}  
