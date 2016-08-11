@@ -83,12 +83,13 @@ BDSComponentFactory::~BDSComponentFactory()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-							      Element* prevElementIn,
-							      Element* nextElementIn)
+                                       std::vector<GMAD::Element*> prevElementIn,
+                                       std::vector<GMAD::Element*> nextElementIn)
 {
-  element     = elementIn;
-  prevElement = prevElementIn;
-  nextElement = nextElementIn;
+  element      = elementIn;
+  // vectors of all next/previous elements plus any thinmultipoles inbetween
+  prevElements = prevElementIn;
+  nextElements = nextElementIn;
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
@@ -98,6 +99,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
+
+  // set next/previous element to be last (and only non thinmultipole) element in the vector
+  if (BDS::IsFinite(prevElements.size()))
+    {prevElement = prevElements.back();}
+  if (BDS::IsFinite(nextElements.size()))
+    {nextElement = nextElements.back();}
 
   if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
     {registered = true;}
