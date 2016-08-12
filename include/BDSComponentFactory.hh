@@ -100,7 +100,7 @@ private:
   BDSAcceleratorComponent* CreateOctupole();
   BDSAcceleratorComponent* CreateDecapole();
   BDSAcceleratorComponent* CreateMultipole();
-  BDSAcceleratorComponent* CreateThinMultipole();
+  BDSAcceleratorComponent* CreateThinMultipole(G4double angleIn);
   BDSAcceleratorComponent* CreateElement();
   BDSAcceleratorComponent* CreateSolenoid();
   BDSAcceleratorComponent* CreateRectangularCollimator();
