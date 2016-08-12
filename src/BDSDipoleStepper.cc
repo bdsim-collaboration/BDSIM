@@ -105,7 +105,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   SinT=2*CosT_ov_2*SinT_ov_2;
     
   itsDist = fabs(R)*(1.-CosT_ov_2);
-  
+
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
   {
@@ -118,7 +118,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
       G4double kappa = - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
       // ignore quadrupolar component for now as this needs fixing
       if(true || fabs(kappa)<1.e-12)
-	{// no gradient
+	{ // no gradient
 	  GlobalPosition = LocalAffine.TransformPoint(itsFinalPoint); 
 	  G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(itsFinalDir);
 	
@@ -252,9 +252,10 @@ void BDSDipoleStepper::Stepper(const G4double yInput[],
 {  
   const G4int nvar = 6 ;
 
-  for(G4int i=0;i<nvar;i++) yErr[i]=0;
+  for(G4int i=0;i<nvar;i++) yErr[i]=1e-10*hstep;
 
   AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  // G4cout << "ds> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
 }
 
 G4double BDSDipoleStepper::DistChord() const 

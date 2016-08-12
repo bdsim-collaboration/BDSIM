@@ -65,7 +65,7 @@ void BDSQuadStepper::AdvanceHelix(const G4double  yIn[],
   
   auxNavigator->LocateGlobalPointAndSetup(GlobalR);
 
-  G4double          h2           =h*h;
+  G4double          h2           = h*h;
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   G4ThreeVector     LocalR       = GlobalAffine.TransformPoint(GlobalR); 
   G4ThreeVector     LocalRp      = GlobalAffine.TransformAxis(InitMomDir);
@@ -294,12 +294,18 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
 			      G4double yOut[],
 			      G4double yErr[]      )
 {
+
+  itsDist  = 0.0;
+  yInitial = G4ThreeVector();
+  yMidPoint= G4ThreeVector();
+  yFinal   = G4ThreeVector();
+
   const G4int nvar = 6 ;
   G4int i;
 
   const G4double *pIn = yInput+3;
   G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[3]);
-  G4ThreeVector GlobalP = G4ThreeVector( pIn[0], pIn[1], pIn[2]);
+  G4ThreeVector GlobalP = G4ThreeVector(pIn[0],    pIn[1],    pIn[2]);
   G4double InitPMag = GlobalP.mag();
   G4double kappa= - fPtrMagEqOfMot->FCof()*itsBGrad/InitPMag;
 
@@ -307,20 +313,27 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   G4ThreeVector     localP= GlobalAffine.TransformAxis(GlobalP);
 
+  // G4cout << "qs> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
+
+  //G4cout << __METHOD_NAME__ << hstep << G4endl;
   if (localP.z() < 0.9)
     {
+      //G4cout << __METHOD_NAME__ << " backup " << G4endl;
       backupStepper->Stepper(yInput, dydx, hstep, yOut, yErr);
       return;
     }
   
   if(fabs(kappa)<1.e-6) //kappa is small - no error needed for paraxial treatment
 	{
-		for(i=0;i<nvar;i++) yErr[i]=0;
+    //G4cout << __METHOD_NAME__ << " single bdsim step " << G4endl;
+    for(i=0;i<nvar;i++) yErr[i]=0;
 		AdvanceHelix(yInput,G4ThreeVector(0,0,0),hstep,yOut);
 	}
   else   //need to compute errors for helical steps
 	{
-		G4double yTemp[7], yIn[7];
+    //G4cout << __METHOD_NAME__ << " double bdsim step " << G4endl;
+
+    G4double yTemp[7], yIn[7];
       
 		//  Saving yInput because yInput and yOut can be aliases for same array
       
