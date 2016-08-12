@@ -36,6 +36,12 @@ OptionsBase::OptionsBase()
   circular              = false;
   seed                  = -1;
   nGenerate             = 1;
+  recreate              = false;
+  recreatePath          = "";
+  startFromEvent        = 0;
+  writeSeedState        = false;
+  useASCIISeedState     = false;
+  seedState             = "";
   generatePrimariesOnly = false;
   exportGeometry        = false;
   exportType            = "gdml";
