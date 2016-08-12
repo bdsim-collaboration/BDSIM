@@ -10,6 +10,7 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
+#include "BDSOutputLoader.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
@@ -25,6 +26,12 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
+  if (options.recreate)
+    {
+      GMAD::Options recreateOptions = BDS::LoadOptions(options.recreatePath);
+      recreateOptions.Amalgamate(options, true); // Give precedence to exec options
+      options = recreateOptions; // Now replace member.
+    }
 }
 
 void BDSExecOptions::Parse(int argc, char **argv)
@@ -50,7 +57,11 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
 					{ "circular", 0, 0, 0 },
-					{ "seed", 1, 0, 0 },
+					{ "seed",           1, 0, 0},
+					{ "recreate",       1, 0, 0},
+					{ "startfromevent", 1, 0, 0},
+					{ "writeseedstate", 0, 0, 0},
+					{ "seedstate",      1, 0, 0},
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
@@ -89,7 +100,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{
 	  Usage();
 	  exit(0);
-	}
+	}      
       else if( !strcmp(optionName , "batch") )
 	{options.set_value("batch",true);}
       else if( !strcmp(optionName , "verbose") )
@@ -175,6 +186,25 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("seed", result);
 	}
+      else if( !strcmp(optionName, "recreate") )
+	{
+	  options.set_value("distrType",    "recreate");
+	  options.set_value("recreate",     true);
+	  options.set_value("recreatePath", std::string(optarg));
+	}
+      else if( !strcmp(optionName, "startfromevent") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("startFromEvent", result);
+	}
+      else if( !strcmp(optionName, "writeseedstate") )
+	{options.set_value("writeSeedState", true);}
+      else if( !strcmp(optionName, "seedstate") )
+	{
+	  options.set_value("useASCIISeedState", true);
+	  options.set_value("seedState", std::string(optarg));
+	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
 	  int result = 1;
@@ -256,7 +286,10 @@ void BDSExecOptions::Usage() const
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
 	<<"                            option in the input gmad file" << G4endl
-        <<"--seed=N                  : the seed to use for the random number generator" <<G4endl
+        <<"--seed=N                  : the seed to use for the random number generator" << G4endl
+	<<"--seedstate=<file>        : use this ASCII file seed state to run an event" << G4endl
+	<<"--recreate=<file>         : the rootevent file to recreate events from" << G4endl
+	<<"--startfromevent=N        : event offset to start from when recreating events" << G4endl
 	<<"--survey=<file>           : print survey info to <file>"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl
 	<<"--verbose_event           : display information for every event "<<G4endl
@@ -267,7 +300,8 @@ void BDSExecOptions::Usage() const
 	<<"--verbose_G4stepping=N    : set Geant4 Stepping manager verbosity level"<<G4endl
 	<<"--verbose_G4tracking=N    : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug               : display all volumes in visualiser"<<G4endl
-	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
+	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))" << G4endl
+	<<"--writeseedstate          : write an ASCII file seed state for each event" << G4endl
 }
 
 void BDSExecOptions::Print() const
