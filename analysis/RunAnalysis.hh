@@ -9,24 +9,16 @@
 
 #include "Run.hh"
 #include "Analysis.hh"
+
 class RunAnalysis : public Analysis
 {
 public:
   RunAnalysis();
   RunAnalysis(Run *r, TChain *c);
-
   virtual ~RunAnalysis();
 
   virtual void Process();
-  virtual void SimpleHistograms()
-  {};
-  virtual void Terminate()
-  {};
-
   virtual void Write(TFile *f);
-
-  BDSOutputROOTEventHistograms  *histoSum;          // bdsim histograms
-
 
 protected:
   Run    *run;

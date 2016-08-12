@@ -12,11 +12,12 @@
 
 #include "Config.hh"
 #include "DataLoader.hh"
+
 #include "Analysis.hh"
 #include "EventAnalysis.hh"
 #include "RunAnalysis.hh"
-
-
+#include "OptionsAnalysis.hh"
+#include "ModelAnalysis.hh"
 
 int main(int argc, char *argv[])
 {
@@ -60,12 +61,15 @@ int main(int argc, char *argv[])
   std::vector<Analysis*> analyses;
 
   DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
-
   EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
   RunAnalysis* runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
+  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree());
+  ModelAnalysis* modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
 
   analyses.push_back(evtAnalysis);
   analyses.push_back(runAnalysis);
+  analyses.push_back(optAnalysis);
+  analyses.push_back(modAnalysis);
 
   for (auto& analysis : analyses)
     {
