@@ -207,7 +207,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_MULT:
     component = CreateMultipole(); break;
   case ElementType::_THINMULT:
-    component = CreateThinMultipole(); break;
+    component = CreateThinMultipole(angleIn); break;
   case ElementType::_ELEMENT:
     component = CreateElement(); break;
   case ElementType::_SOLENOID:
@@ -904,7 +904,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 		      (*st)["angle"]); // multipole could bend beamline
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
+BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angleIn)
   {
  if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -924,8 +924,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole()
      (*st)[*skey] = (*ks) ;
    }
 
- BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -element->e1, element->e2);
- BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -element->e1, element->e2);
+ BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
+ BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
