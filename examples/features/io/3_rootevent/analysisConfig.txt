@@ -1,5 +1,5 @@
 Debug						1
-InputFilePath					./output_1_event.root
+InputFilePath					./output_event*
 OutputFileName					./ana_1.root
 CalculateOpticalFunctions			1
 CalculateOpticalFunctionsFileName		./ana_1.dat
