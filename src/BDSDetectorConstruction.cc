@@ -186,8 +186,6 @@ void BDSDetectorConstruction::BuildBeamline()
 		    {break;}
                 }
             }
-          // reverse previous to make sure last the element is the non thinmultipole element
-	  std::reverse(prevElements.begin(), prevElements.end());
 
           auto nextIt = elementIt;
           nextIt++;
