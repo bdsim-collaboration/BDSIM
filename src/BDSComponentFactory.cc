@@ -161,15 +161,23 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     {
       if (nextElement && (BDS::IsFinite(nextElement->e1)))
       {
-        element->e1 = nextElement->e1 * CLHEP::rad;
-        element->e2 = nextElement->e1 * CLHEP::rad;
+        angleIn += nextElement->e1 * CLHEP::rad;
         willModify  = true;
       }
       else if (prevElement && (BDS::IsFinite(prevElement->e2)))
       {
-        element->e1 = prevElement->e2 * CLHEP::rad;
-        element->e2 = prevElement->e2 * CLHEP::rad;
+        angleIn -= prevElement->e2 * CLHEP::rad;
         willModify  = true;
+      }
+      if (nextElement && (nextElement->type == ElementType::_RBEND))
+      {
+        willModify = true;
+        angleIn += 0.5*nextElement->angle;
+      }
+      if (prevElement && (prevElement->type == ElementType::_RBEND))
+      {
+        willModify = true;
+        angleIn -= 0.5*prevElement->angle;
       }
     }
 
