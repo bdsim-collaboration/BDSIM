@@ -353,6 +353,7 @@ void BDSOutputROOTEvent::Close()
 #endif
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
+      theRootOutputFile->Write(0,TObject::kOverwrite);
       theRootOutputFile->Close();
       delete theRootOutputFile;
       theRootOutputFile = nullptr;

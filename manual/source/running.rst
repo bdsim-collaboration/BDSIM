@@ -92,7 +92,7 @@ default visualisation settings (typically: Qt visualiser, extra convenient butto
 executed a window such as this will appear (depending on the visualiser you use).
 
 .. figure:: figures/visualisation/qtvisualiser.png
-   :width: 70%
+   :width: 90%
    :align: center
    :figclass: align-center
 

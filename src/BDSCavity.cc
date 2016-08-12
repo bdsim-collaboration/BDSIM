@@ -3,6 +3,7 @@
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSColours.hh"
+#include "BDSExtent.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"
@@ -108,14 +109,11 @@ void BDSCavity::BuildContainerLogicalVolume()
 			      0.0,                         //starting angle
 			      2.0*CLHEP::pi);              //spanning angle
 
-  SetExtentX(-outerRadius, outerRadius);
-  SetExtentY(-outerRadius, outerRadius);
-  SetExtentZ(-chordLength*0.5,chordLength*0.5);
+  SetExtent(BDSExtent(outerRadius, outerRadius,  chordLength*0.5));
   
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
 					       emptyMaterial,
 					       name + "_container_lv");
-
 }
 
 void BDSCavity::BuildEllipticalCavityGeometry()
@@ -271,7 +269,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //Array of inner r coordinates.  zeroes ensures the polycone will be solid. 1 extra point either side for unambiguous  boolean subtraction.
   std::vector<G4double> solidArrayInner(noPoints+2, 0.0); 
 
-  //Define the inner solid which is to be subtracted from the outer and also used to define the vaccum.
+  //Define the inner solid which is to be subtracted from the outer and also used to define the vacuum.
   innerSolid = new G4Polycone(name + "_inner_solid", //name
 			      0.0,                  //start angle
 			      2*CLHEP::pi,          //sweep angle

@@ -25,7 +25,7 @@
  * class must implement BuildBPFieldAndStepper() which constructs the field objects that
  * are later attached to the vacuum volume.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnet: public BDSAcceleratorComponent
@@ -37,7 +37,8 @@ public:
 	    G4String            name, 
 	    G4double            length,
 	    BDSBeamPipeInfo*    beamPipeInfo,
-	    BDSMagnetOuterInfo* magnetOuterInfo);
+	    BDSMagnetOuterInfo* magnetOuterInfo,
+	    G4double            angle = 0);
   
   virtual ~BDSMagnet();
   

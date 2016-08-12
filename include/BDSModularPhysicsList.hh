@@ -33,10 +33,6 @@ public:
   BDSModularPhysicsList(G4String physicsList);
   virtual ~BDSModularPhysicsList();
 
-  /// Construct required particles. Overlays G4VModularPhysicsList function
-  /// and calls that one.  Adds extra particles.
-  virtual void ConstructParticle();
-
   /// Print out which physics lists are activated.
   void Print();
 
@@ -73,6 +69,18 @@ private:
   /// yet this results in crashes when they're produced but not defined by
   /// physics processes, so purposively define for ones where it's a problem.
   void ConstructAllLeptons();
+
+  ///  Construct resonances and quarks - sometimes required explicitly.
+  void ConstructAllShortLived();
+
+  /// Construct mesons.
+  void ConstructAllMesons();
+
+  /// Construct baryons.
+  void ConstructAllBaryons();
+
+  /// Construct ions.
+  void ConstructAllIons();
 
   /// Interpret the string of physics lists given from the user through the parser.
   void ParsePhysicsList(G4String physListName);

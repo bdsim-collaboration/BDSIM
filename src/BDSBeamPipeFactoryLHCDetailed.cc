@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
@@ -349,12 +350,14 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipeAngledInOut(G4String  
   CalculateGeometricalParameters(aper1, aper2, aper3, beamPipeThickness, length);
   
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
-  G4ThreeVector inputface  = faces.first;
-  G4ThreeVector outputface = faces.second;
+  inputFaceNormal  = faces.first;
+  outputFaceNormal = faces.second;
   
-  G4double containerRadius = CreateGeneralAngledSolids(name, length, inputface, outputface);
+  G4double containerRadius = CreateGeneralAngledSolids(name, length, inputFaceNormal,
+						       outputFaceNormal);
   
-  return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial, length, containerRadius);
+  return CommonFinalConstruction(name, vacuumMaterial, beamPipeMaterial,
+				 length, containerRadius);
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    name,
@@ -373,12 +376,10 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 					     length);
 		    
   // record extents
-  std::pair<double,double> extX = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(extX,extY,extZ,containerRadius);
+  BDSBeamPipe* aPipe = BuildBeamPipeAndRegisterVolumes(ext,containerRadius);
   
   // register sensitive volumes
   aPipe->RegisterSensitiveVolume(screenLV);

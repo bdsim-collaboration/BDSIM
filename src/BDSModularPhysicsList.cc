@@ -25,19 +25,25 @@
 #include "G4AntiNeutrinoE.hh"
 #include "G4AntiNeutron.hh"
 #include "G4AntiProton.hh"
+#include "G4BaryonConstructor.hh"
 #include "G4Electron.hh"
 #include "G4Gamma.hh"
+#include "G4IonConstructor.hh"
 #include "G4LeptonConstructor.hh"
+#include "G4MesonConstructor.hh"
 #include "G4NeutrinoE.hh"
 #include "G4Neutron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
+#include "G4ShortLivedConstructor.hh"
+
 
 // general geant4
 #include "globals.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
+#include "G4Version.hh"
 
 #include <iterator>
 #include <map>
@@ -106,27 +112,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
 {;}
-
-void BDSModularPhysicsList::ConstructParticle()
-{
-  // mesons
-  //G4MesonConstructor mConstructor;
-  //mConstructor.ConstructParticle();
-  
-  // baryons
-  //G4BaryonConstructor bConstructor;
-  //bConstructor.ConstructParticle();
-  
-  // ions
-  //G4IonConstructor iConstructor;
-  //iConstructor.ConstructParticle();
-  
-  //  Construct resonances and quarks
-  //G4ShortLivedConstructor pShortLivedConstructor;
-  //pShortLivedConstructor.ConstructParticle();
-
-  G4VModularPhysicsList::ConstructParticle();
-}
 
 void BDSModularPhysicsList::Print()
 {
@@ -216,6 +201,30 @@ void BDSModularPhysicsList::ConstructAllLeptons()
 {
   G4LeptonConstructor leptons;
   leptons.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllShortLived()
+{
+  G4ShortLivedConstructor pShortLivedConstructor;
+  pShortLivedConstructor.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllMesons()
+{
+  G4MesonConstructor mConstructor;
+  mConstructor.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllBaryons()
+{
+  G4BaryonConstructor bConstructor;
+  bConstructor.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllIons()
+{
+  G4IonConstructor iConstructor;
+  iConstructor.ConstructParticle();
 }
 
 void BDSModularPhysicsList::ConfigurePhysics()
@@ -328,9 +337,21 @@ void BDSModularPhysicsList::Em()
 void BDSModularPhysicsList::EmExtra()
 {
   ConstructAllLeptons();
+
+  // These are required by GammaNuclear and MuonNuclear which
+  // are activated by default in G4EmExtraPhysics.
+  ConstructAllShortLived();
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllMesons();
+
   if (!physicsActivated["em_extra"])
     {
-      constructors.push_back(new G4EmExtraPhysics());
+      auto constructor = new G4EmExtraPhysics();
+#if G4VERSION_NUMBER > 1009
+      constructor->Synch(true); // introduced geant version 10.1
+#endif
+      constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics

@@ -85,7 +85,7 @@ else()
 endif()
 
 #include(CMakeMacroParseArguments)
-find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 PATHS ${ROOTSYS}/bin)
+find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 HINTS ${ROOTSYS}/bin)
 if(NOT ROOTCINT_EXECUTABLE OR
     NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
   MESSAGE(FATAL_ERROR "rootcint not found")

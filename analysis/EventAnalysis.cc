@@ -47,6 +47,7 @@ void EventAnalysis::Process()
   // loop over events
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
+    std::cout << i << std::endl;
 
     if(i==0)
       {histoSum = new HistogramMerge(event->histos);}
@@ -67,8 +68,9 @@ void EventAnalysis::Process()
 //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
     }
 
-    this->ProcessSamplers();
-
+    if(Config::Instance()->ProcessSamplers()) {
+      this->ProcessSamplers();
+    }
   }
 }
 

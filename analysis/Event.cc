@@ -52,15 +52,18 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     }
   }
 
-  unsigned int nrSamplers = samplerNames.size();
-  samplers.resize(nrSamplers);
-  for(unsigned int i=0;i<nrSamplers;++i)
-  {
-    t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
-    if(Config::Instance())
+  if(Config::Instance()->CalculateOpticalFunctions() || 
+     Config::Instance()->ProcessSamplers()) {
+    unsigned int nrSamplers = samplerNames.size();
+    samplers.resize(nrSamplers);
+    for(unsigned int i=0;i<nrSamplers;++i)
     {
-      if(Config::Instance()->Debug())
-        {std::cout << "Event::SetBranchAddress> " << samplerNames[i] << " " << samplers[i] << std::endl;}
+      t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
+      if(Config::Instance())
+      {
+	if(Config::Instance()->Debug())
+	  {std::cout << "Event::SetBranchAddress> " << samplerNames[i] << " " << samplers[i] << std::endl;}
+      }
     }
   }
 }
