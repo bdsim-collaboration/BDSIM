@@ -92,7 +92,12 @@ void BDSRandom::SetSeedState(G4String seedState)
 {
   std::stringstream ss;
   ss.str(seedState); // set contents of string stream as input string
-  CLHEP::HepRandom::restoreFullState(ss);
+  SetSeedState(ss);
+}
+
+void BDSRandom::SetSeedState(std::stringstream& seedState)
+{
+  CLHEP::HepRandom::restoreFullState(seedState);
 #ifdef BDSEBUG
   BDSRandom::PrintFullSeedState();
 #endif

@@ -23,6 +23,7 @@ namespace BDSRandom
 
   /// Set the seed state from a string.
   void SetSeedState(G4String seedState);
+  void SetSeedState(std::stringstream& seedState);
 }
 
 #endif
