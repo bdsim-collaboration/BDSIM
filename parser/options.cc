@@ -5,7 +5,14 @@
 
 using namespace GMAD;
 
-Options::Options(): OptionsBase()
+Options::Options():
+  OptionsBase()
+{
+  PublishMembers();
+}
+
+Options::Options(const GMAD::OptionsBase& options):
+  OptionsBase(options)
 {
   PublishMembers();
 }
