@@ -109,139 +109,138 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
   {
-      G4ThreeVector dPos = R*(SinT*vhat + (1-CosT)*vnorm);
+    G4ThreeVector dPos = R*(SinT*vhat + (1-CosT)*vnorm);
       
-      itsFinalPoint = LocalR+dPos;
-      itsFinalDir   = CosT*vhat +SinT*vnorm;
+    itsFinalPoint = LocalR+dPos;
+    itsFinalDir   = CosT*vhat +SinT*vnorm;
   
-      // gradient for quadrupolar field
-      G4double kappa = - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das? 
-      // ignore quadrupolar component for now as this needs fixing
-      if(true || fabs(kappa)<1.e-12)
-	{ // no gradient
-	  GlobalPosition = LocalAffine.TransformPoint(itsFinalPoint); 
-	  G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(itsFinalDir);
+    // gradient for quadrupolar field
+    G4double kappa = - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das?
+    // ignore quadrupolar component for now as this needs fixing
+    if(true ||fabs(kappa)<1.e-12)
+    { // no gradient
+      GlobalPosition = LocalAffine.TransformPoint(itsFinalPoint);
+      G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(itsFinalDir);
 	
-	  GlobalTangent*=InitMag;
-	  
-	  yOut[0] = GlobalPosition.x(); 
-	  yOut[1] = GlobalPosition.y(); 
-	  yOut[2] = GlobalPosition.z(); 
-	  
-	  yOut[3] = GlobalTangent.x();
-	  yOut[4] = GlobalTangent.y();
-	  yOut[5] = GlobalTangent.z();
-	  return; 
-	}
-      
-      G4double x1,x1p,y1,y1p,z1p;
-      //G4double z1;
-      
-      G4double NomR = nominalEnergy/CLHEP::GeV/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
-      
-      G4double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
-      
-      G4double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(itsAngle/2);
-
-      if(R<0)
-	{
-	  NominalPath*=-1;
-	  EndNomPath*=-1;
-	}
-
-      G4double x0=LocalR.x() - NominalPath;
-      G4double y0=LocalR.y();
-      G4double z0=LocalR.z();
-
-      G4double theta_in = asin(z0/NomR);
-  
-      LocalRp.rotateY(-theta_in);
-
-      G4double xp=LocalRp.x();
-      G4double yp=LocalRp.y();
-      G4double zp=LocalRp.z();
-      
-      G4double rootK=sqrt(fabs(kappa*zp));
-      G4double rootKh=rootK*h*zp;
-      G4double X11,X12,X21,X22;
-      G4double Y11,Y12,Y21,Y22;
-      
-      if (kappa>0)
-	{
-	  X11= cos(rootKh);
-	  X12= sin(rootKh)/rootK;
-	  X21=-fabs(kappa)*X12;
-	  X22= X11;
-	  
-	  Y11= cosh(rootKh);
-	  Y12= sinh(rootKh)/rootK;
-	  Y21= fabs(kappa)*Y12;
-	  Y22= Y11;
-	}
-      else // if (kappa<0)
-	{
-	  X11= cosh(rootKh);
-	  X12= sinh(rootKh)/rootK;
-	  X21= fabs(kappa)*X12;
-	  X22= X11;
-	  
-	  Y11= cos(rootKh);
-	  Y12= sin(rootKh)/rootK;
-	  Y21= -fabs(kappa)*Y12;
-	  Y22= Y11;
-	}
-      
-      x1  = X11*x0 + X12*xp;    
-      x1p = X21*x0 + X22*xp;
-      
-      y1  = Y11*y0 + Y12*yp;    
-      y1p = Y21*y0 + Y22*yp;
-      
-      z1p = sqrt(1 - x1p*x1p -y1p*y1p);
-
-      /* 
-	 x1 -=(kappa/ (24*R) ) * h2*h2;
-	 x1p-=(kappa/ (6*R) ) * h*h2;
-      */
-      G4double dx=x1-x0;
-      G4double dy=y1-y0;
-      // Linear chord length
-      
-      LocalR.setX(dx +itsInitialR.x() + EndNomPath - NominalPath);
-      LocalR.setY(dy + itsInitialR.y());
-      LocalR.setZ(itsFinalPoint.z());
-      
-
-      LocalRp.setX(x1p);
-      LocalRp.setY(y1p);
-      LocalRp.setZ(z1p);
-      LocalRp.rotateY(theta_in);
-  
-      GlobalPosition=LocalAffine.TransformPoint(LocalR); 
-      
-      LocalRp.rotateY(-h/R);
-      G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp);
-      
       GlobalTangent*=InitMag;
-  
-      // gab: replace += with =
-      yOut[0] = GlobalPosition.x(); 
-      yOut[1] = GlobalPosition.y(); 
-      yOut[2] = GlobalPosition.z(); 
-      
+	  
+      yOut[0] = GlobalPosition.x();
+      yOut[1] = GlobalPosition.y();
+      yOut[2] = GlobalPosition.z();
+	  
       yOut[3] = GlobalTangent.x();
       yOut[4] = GlobalTangent.y();
       yOut[5] = GlobalTangent.z();
+      return;
+    }
       
-    }
-  else
+    G4double x1,x1p,y1,y1p,z1p;
+    //G4double z1;
+      
+    G4double NomR = nominalEnergy/CLHEP::GeV/(0.299792458 * itsBField/CLHEP::tesla) * CLHEP::m;
+      
+    G4double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(itsAngle/2);
+      
+    G4double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(itsAngle/2);
+
+    if(R<0)
     {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
-#endif
-      // use a classical Runge Kutta stepper here
-      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      NominalPath*=-1;
+      EndNomPath*=-1;
     }
+
+    G4double x0=LocalR.x() - NominalPath;
+    G4double y0=LocalR.y();
+    G4double z0=LocalR.z();
+
+    G4double theta_in = asin(z0/NomR);
+  
+    LocalRp.rotateY(-theta_in);
+
+    G4double xp=LocalRp.x();
+    G4double yp=LocalRp.y();
+    G4double zp=LocalRp.z();
+      
+    G4double rootK=sqrt(fabs(kappa*zp));
+    G4double rootKh=rootK*h*zp;
+    G4double X11,X12,X21,X22;
+    G4double Y11,Y12,Y21,Y22;
+      
+    if (kappa>0)
+    {
+      X11= cos(rootKh);
+      X12= sin(rootKh)/rootK;
+      X21=-fabs(kappa)*X12;
+      X22= X11;
+	  
+      Y11= cosh(rootKh);
+      Y12= sinh(rootKh)/rootK;
+      Y21= fabs(kappa)*Y12;
+      Y22= Y11;
+    }
+    else // if (kappa<0)
+    {
+      X11= cosh(rootKh);
+      X12= sinh(rootKh)/rootK;
+      X21= fabs(kappa)*X12;
+      X22= X11;
+
+      Y11= cos(rootKh);
+      Y12= sin(rootKh)/rootK;
+      Y21= -fabs(kappa)*Y12;
+      Y22= Y11;
+    }
+      
+    x1  = X11*x0 + X12*xp;
+    x1p = X21*x0 + X22*xp;
+      
+    y1  = Y11*y0 + Y12*yp;
+    y1p = Y21*y0 + Y22*yp;
+      
+    z1p = sqrt(1 - x1p*x1p -y1p*y1p);
+
+    /*
+	   x1 -=(kappa/ (24*R) ) * h2*h2;
+     x1p-=(kappa/ (6*R) ) * h*h2;
+    */
+    G4double dx=x1-x0;
+    G4double dy=y1-y0;
+    // Linear chord length
+      
+    LocalR.setX(dx +itsInitialR.x() + EndNomPath - NominalPath);
+    LocalR.setY(dy + itsInitialR.y());
+    LocalR.setZ(itsFinalPoint.z());
+      
+
+    LocalRp.setX(x1p);
+    LocalRp.setY(y1p);
+    LocalRp.setZ(z1p);
+    LocalRp.rotateY(theta_in);
+  
+    GlobalPosition=LocalAffine.TransformPoint(LocalR);
+      
+    LocalRp.rotateY(-h/R);
+    G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp);
+      
+    GlobalTangent*=InitMag;
+  
+    // gab: replace += with =
+    yOut[0] = GlobalPosition.x();
+    yOut[1] = GlobalPosition.y();
+    yOut[2] = GlobalPosition.z();
+      
+    yOut[3] = GlobalTangent.x();
+    yOut[4] = GlobalTangent.y();
+    yOut[5] = GlobalTangent.z();
+  }
+  else
+  {
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
+#endif
+    // use a classical Runge Kutta stepper here
+    backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+  }
 }
 
 void BDSDipoleStepper::Stepper(const G4double yInput[],
