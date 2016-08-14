@@ -5,11 +5,23 @@
 
 #include "globals.hh" // geant4 types / globals
 
-namespace BDS
-{
-  /// Load a set of options from an output file.
-  GMAD::Options LoadOptions(G4String filepath);
+class TFile;
 
-}
+class BDSOutputLoader
+{
+public:
+  BDSOutputLoader(G4String filePath);
+  ~BDSOutputLoader();
+
+  GMAD::Options LoadOptions();
+  
+private:
+  BDSOutputLoader();
+
+  TFile* file;
+
+  G4bool validFilePath;
+  G4bool rootEventFile;
+};
 
 #endif

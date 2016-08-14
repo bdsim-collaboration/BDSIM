@@ -28,7 +28,8 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #endif
   if (options.recreate)
     {
-      GMAD::Options recreateOptions = BDS::LoadOptions(options.recreatePath);
+      BDSOutputLoader loader = BDSOutputLoader(options.recreatePath);
+      GMAD::Options recreateOptions = loader.LoadOptions();
       recreateOptions.Amalgamate(options, true); // Give precedence to exec options
       options = recreateOptions; // Now replace member.
     }
@@ -301,7 +302,7 @@ void BDSExecOptions::Usage() const
 	<<"--verbose_G4tracking=N    : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug               : display all volumes in visualiser"<<G4endl
 	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))" << G4endl
-	<<"--writeseedstate          : write an ASCII file seed state for each event" << G4endl
+	<<"--writeseedstate          : write an ASCII file seed state for each event" << G4endl;
 }
 
 void BDSExecOptions::Print() const
