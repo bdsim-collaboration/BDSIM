@@ -1,7 +1,9 @@
 #include "BDSDebug.hh"
 #include "BDSOutputLoader.hh"
+#include "BDSOutputROOTEventInfo.hh"
 
 #include "parser/options.h"
+#include "parser/optionsBase.h"
 
 #include "globals.hh" // geant4 types / globals
 
@@ -12,7 +14,11 @@
 
 BDSOutputLoader::BDSOutputLoader(G4String filePath):
   validFilePath(false),
-  rootEventFile(false)
+  rootEventFile(false),
+  localOptions(nullptr),
+  localEventInfo(nullptr),
+  optionsTree(nullptr),
+  eventTree(nullptr)
 {
   // open file
   file = new TFile(filePath.c_str(), "READ");
@@ -27,23 +33,48 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
       if (rootEventFile)
 	{G4cout << __METHOD_NAME__ << "Not a BDSIM rootevent output format ROOT file" << G4endl;}
     }
+
+  // set up local structure copies.
+  if (validFilePath && rootEventFile)
+    {
+      optionsTree = (TTree*)file->Get("Options");
+      // Note we don't check on optionsTree pointer as we assume it's valid given
+      // we've checked this is a rootevent file.
+      localOptions = new GMAD::OptionsBase();
+      optionsTree->SetBranchAddress("Options.", localOptions); 
+
+      eventTree = (TTree*)file->Get("Event");
+      localEventInfo = new BDSOutputROOTEventInfo();
+      eventTree->SetBranchAddress("Info.", localEventInfo);
+    }
 }
 
 BDSOutputLoader::~BDSOutputLoader()
 {
   delete file; // closes if open
+  delete localOptions;
+  delete localEventInfo;
 }
 
-GMAD::Options BDSOutputLoader::LoadOptions()
+GMAD::OptionsBase BDSOutputLoader::OptionsBaseClass()
 {
   // always change back to this file - assuming other root files could be open
   file->cd();
-
-  GMAD::Options localOptions;
-  TTree* optionsTree = (TTree*)file->Get("Options");
-  optionsTree->SetBranchAddress("Options.", &localOptions);
   optionsTree->GetEntry(0);
+  return *localOptions;
+}
 
-  // Here, we can safely let the TTree* go out of scope
-  return localOptions;
+GMAD::Options BDSOutputLoader::Options()
+{
+  return GMAD::Options(OptionsBaseClass());
+}
+
+G4String BDSOutputLoader::SeedState(G4int eventNumber)
+{
+  // always change back to this file - assuming other root files could be open
+  file->cd();
+  
+  eventTree->GetEntry((int)eventNumber);
+  
+  return G4String(localEventInfo->seedStateAtStart);
 }
