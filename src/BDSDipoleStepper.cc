@@ -79,6 +79,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
 
   G4ThreeVector LocalR           = GlobalAffine.TransformPoint(GlobalPosition); 
   G4ThreeVector LocalRp          = GlobalAffine.TransformAxis(InitMomDir);
+  G4ThreeVector Localv0          = GlobalAffine.TransformAxis(v0);
 
   G4ThreeVector itsInitialR      = LocalR;
   G4ThreeVector itsInitialRp     = LocalRp;
@@ -107,7 +108,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   itsDist = fabs(R)*(1.-CosT_ov_2);
 
   // check for paraxial approximation:
-  if(LocalRp.z() > 0.9)
+  if(LocalRp.z() > 0.9 && Localv0.mag() > 30.0 )
   {
     G4ThreeVector dPos = R*(SinT*vhat + (1-CosT)*vnorm);
       

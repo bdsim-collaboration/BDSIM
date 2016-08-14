@@ -316,7 +316,7 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
   // G4cout << "qs> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
 
   //G4cout << __METHOD_NAME__ << hstep << G4endl;
-  if (localP.z() < 0.9)
+  if (localP.z() < 0.9 || GlobalP.mag() < 30.0 )
     {
       //G4cout << __METHOD_NAME__ << " backup " << G4endl;
       backupStepper->Stepper(yInput, dydx, hstep, yOut, yErr);
