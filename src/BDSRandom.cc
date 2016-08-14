@@ -58,17 +58,14 @@ void BDSRandom::PrintFullSeedState()
   G4cout << G4endl;
 }
 
-void BDSRandom::WriteSeedState()
+void BDSRandom::WriteSeedState(G4String suffix)
 {
-  G4String seedstatefilename = BDSGlobalConstants::Instance()->OutputFileName() + ".seedstate.txt";
-  std::ofstream ofseedstate (seedstatefilename.c_str());
-  if (ofseedstate.is_open())
-    {CLHEP::HepRandom::saveFullState(ofseedstate);}
-  else
-    {
-      G4cout << __METHOD_NAME__ << "cannot open file : " << seedstatefilename << G4endl;
-      exit(1);
-    }
+  G4String baseFileName = BDSGlobalConstants::Instance()->OutputFileName();
+  G4String seedstatefilename = baseFileName + suffix + ".seedstate.txt";
+  std::ofstream ofseedstate;
+  ofseedstate.open(seedstatefilename);
+  CLHEP::HepRandom::saveFullState(ofseedstate);
+  ofseedstate.close();
 }
 
 void BDSRandom::LoadSeedState(G4String inSeedFilename)
