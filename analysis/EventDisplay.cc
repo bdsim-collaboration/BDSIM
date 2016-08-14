@@ -122,10 +122,10 @@ void EventDisplay::DrawModel()
 
   int i=0;
   float vert[8*3];
-  for(auto mp : model->midPos)
+  for(auto mp : model->model->midPos)
   {
-    double modelLength      = model->length[i];
-    TRotation modelRotation = model->midRot[i];
+    double modelLength      = model->model->length[i];
+    TRotation modelRotation = model->model->midRot[i];
 
     // 100 as need cm not m
     TVector3 v1 = 100*(mp + modelRotation*TVector3(-outerDiameter / 2, -outerDiameter / 2, -modelLength / 2));
@@ -228,8 +228,8 @@ void EventDisplay::DrawSamplers()
     TEvePointSet *ps = new TEvePointSet((std::string("Sampler_")+sampler->samplerName.c_str()).c_str());
 
     // Get coordinate tranform for sampler
-    TVector3 mpos = model->endPos[sampler->modelID];
-    TRotation mrot = model->endRot[sampler->modelID];
+    TVector3 mpos = model->model->endPos[sampler->modelID];
+    TRotation mrot = model->model->endRot[sampler->modelID];
 
     // loop over sampler hits
     for(int i=0;i<sampler->n;++i)
