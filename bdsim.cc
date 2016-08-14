@@ -64,7 +64,7 @@ int main(int argc,char** argv)
   /// Initialize executable command line options reader object
   const BDSExecOptions* execOptions = new BDSExecOptions(argc,argv);
   execOptions->Print();
-  G4bool cmake = execOptions->CMake(); // different sig catching for cmake
+  G4bool ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
   
   /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
@@ -288,7 +288,7 @@ int main(int argc,char** argv)
       act.sa_handler = &BDS::HandleAborts;
       sigemptyset(&act.sa_mask);
       act.sa_flags = 0;
-      if (!cmake)
+      if (!ignoreSIGINT)
 	{sigaction(SIGINT,  &act, 0);}
       sigaction(SIGABRT, &act, 0);
       sigaction(SIGTERM, &act, 0);

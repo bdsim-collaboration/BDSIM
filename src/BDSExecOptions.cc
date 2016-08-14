@@ -18,7 +18,7 @@
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv):
   options(GMAD::Options()),
-  cmake(false)
+  ignoreSIGINT(false)
 {
   Parse(argc, argv);
   /// after parsing the absolute path can be reconstructed  
@@ -68,7 +68,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "nGenerate", 1, 0, 0 },
 					{ "exportgeometryto", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
-					{ "cmake", 0, 0, 0},
+					{ "ignoresigint", 0, 0, 0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex  = 0;
@@ -214,8 +214,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
-      else if( !strcmp(optionName, "cmake") )
-	{cmake = true;}
+      else if( !strcmp(optionName, "ignoresigint") )
+	{ignoreSIGINT = true;}
       else if( !strcmp(optionName, "exportgeometryto") )
 	{// TBC - this should be put into geometry classes
 	  std::string fn = optarg;
@@ -331,7 +331,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << options.verboseSteppingLevel<< G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFileName: "    << std::setw(15) << options.visMacroFileName    << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << options.visDebug            << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " cmake: "               << std::setw(15) << cmake                       << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " ignoreSIGINT: "        << std::setw(15) << ignoreSIGINT                << G4endl;
   
   return;
 }
