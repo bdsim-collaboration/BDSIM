@@ -44,11 +44,11 @@ void Options::PublishMembers()
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
   publish("recreate",              &Options::recreate);
-  publish("recreatePath",          &Options::recreatePath);
+  publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
   publish("writeSeedState",        &Options::writeSeedState);
   publish("useASCIISeedState",     &Options::useASCIISeedState);
-  publish("seedState",             &Options::seedState);
+  publish("seedStateFileName",     &Options::seedStateFileName);
   publish("nGenerate",             &Options::nGenerate);
   publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);

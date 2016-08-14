@@ -56,14 +56,14 @@ namespace GMAD
     int  verboseSteppingLevel;
     ///@}
   
-    bool circular;            ///< Flag for circular machine
-    int  seed;                ///< The seed value for the random number generator
-    bool recreate;            ///< Whether to recreate from a file or not.
-    std::string recreatePath; ///< The file path to recreate a run from.
-    int  startFromEvent;      ///< Event to start from when recreating.
-    bool writeSeedState;      ///< Write the seed state each event to a text file.
-    bool useASCIISeedState;   ///< Whether to use the seed state from an ASCII file.
-    std::string seedState;    ///< Seed state file path.
+    bool circular;                 ///< Flag for circular machine
+    int  seed;                     ///< The seed value for the random number generator
+    bool recreate;                 ///< Whether to recreate from a file or not.
+    std::string recreateFileName;  ///< The file path to recreate a run from.
+    int  startFromEvent;           ///< Event to start from when recreating.
+    bool writeSeedState;           ///< Write the seed state each event to a text file.
+    bool useASCIISeedState;        ///< Whether to use the seed state from an ASCII file.
+    std::string seedStateFileName; ///< Seed state file path.
     
     /// String that points to path where files are searched;
     /// based on environment variable or else input filename

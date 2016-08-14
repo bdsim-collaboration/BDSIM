@@ -95,6 +95,12 @@ public:
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
+  inline G4bool   Recreate()               const {return G4bool  (options.recreate);}
+  inline G4String RecreateFileName()       const {return G4String(options.recreateFileName);}
+  inline G4int    StartFromEvent()         const {return G4int   (options.startFromEvent);}
+  inline G4bool   WriteSeedState()         const {return G4bool  (options.writeSeedState);}
+  inline G4bool   UseASCIISeedState()      const {return G4bool  (options.useASCIISeedState);}
+  inline G4String SeedStateFileName()      const {return G4String(options.seedStateFileName);}
   inline G4String BDSIMPath()              const {return G4String(options.bdsimPath);}
   inline G4int    NGenerate()              const {return G4int   (options.nGenerate);}
   inline G4bool   GeneratePrimariesOnly()  const {return G4bool  (options.generatePrimariesOnly);}

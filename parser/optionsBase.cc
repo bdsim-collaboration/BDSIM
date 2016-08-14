@@ -37,11 +37,11 @@ OptionsBase::OptionsBase()
   seed                  = -1;
   nGenerate             = 1;
   recreate              = false;
-  recreatePath          = "";
+  recreateFileName      = "";
   startFromEvent        = 0;
   writeSeedState        = false;
   useASCIISeedState     = false;
-  seedState             = "";
+  seedStateFileName     = "";
   generatePrimariesOnly = false;
   exportGeometry        = false;
   exportType            = "gdml";
