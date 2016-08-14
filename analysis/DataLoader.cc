@@ -26,8 +26,8 @@ DataLoader::~DataLoader()
 
 void DataLoader::CommonCtor()
 {
-  opt = new BDSOutputROOTEventOptions();
-  mod = new BDSOutputROOTEventModel();
+  opt = new Options();
+  mod = new Model();
   evt = new Event();
   run = new Run();
 
@@ -43,7 +43,7 @@ void DataLoader::CommonCtor()
   this->SetBranchAddress();
 }
 
-void DataLoader::BuildInputFileList() 
+void DataLoader::BuildInputFileList()
 {
   std::string inputPath  = Config::Instance()->InputFilePath();
   if(inputPath == "") {
@@ -52,7 +52,7 @@ void DataLoader::BuildInputFileList()
 
   // wild card
   if(inputPath.find("*") != std::string::npos) {
-    glob_t glob_result;    
+    glob_t glob_result;
     glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
     for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
       fileNames.push_back(glob_result.gl_pathv[i]);
@@ -68,15 +68,15 @@ void DataLoader::BuildInputFileList()
     // find all files in directory
     inputPath.append("/*.root");
 
-    glob_t glob_result;    
+    glob_t glob_result;
     glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
     for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
       fileNames.push_back(glob_result.gl_pathv[i]);
     }
-    globfree(&glob_result);    
+    globfree(&glob_result);
   }
 
-  if(Config::Instance()->Debug()) { 
+  if(Config::Instance()->Debug()) {
     for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn) {
       std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;
     }
@@ -118,7 +118,8 @@ void DataLoader::BuildEventBranchNameList()
   }
 
   TTree *et = (TTree*)f->Get("Event");
-
+  if (!et)
+  {return;}
   TObjArray *bl = et->GetListOfBranches();
 
   for(int i=0;i< bl->GetEntries();++i)
@@ -155,10 +156,10 @@ void DataLoader::ChainTrees()
     }
 }
 
-void DataLoader::SetBranchAddress() 
+void DataLoader::SetBranchAddress()
 {
-  optChain->SetBranchAddress("Options.",&opt);
-  modChain->SetBranchAddress("Model.",&mod);
+  mod->SetBranchAddress(modChain);
+  opt->SetBranchAddress(optChain);
   evt->SetBranchAddress(evtChain,this->samplerNames);
   run->SetBranchAddress(runChain);
 }
