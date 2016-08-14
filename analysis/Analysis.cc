@@ -118,9 +118,9 @@ void Analysis::Write(TFile* outputFile)
 {
     // write rebdsim histogram
 
-  //treeName typically has a "." in it, remove before writing for compatability with python (if nothing else).
-  std::string cleanedTreeName = treeName.erase(std::remove(treeName.begin(), treeName.end(), 'a'), str.end());
-  std::string outputDirName = std::string("rebdsim_") + cleanedTreeName + std::string("_Histograms");
+  //treeName typically has a "." at the end, deleting it here:
+  std::string cleanedName = treeName.erase(treeName.size() - 1);
+  std::string outputDirName = std::string("rebdsim_") + cleanedName + std::string("_Histograms");
   TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
   rebdsimDir->cd();
   for(auto h : histograms1D)
