@@ -117,7 +117,10 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 void Analysis::Write(TFile* outputFile)
 {
     // write rebdsim histogram
-  std::string outputDirName = std::string("rebdsim_") + treeName + std::string("_Histograms");
+
+  //treeName typically has a "." in it, remove before writing for compatability with python (if nothing else).
+  std::string cleanedTreeName = treeName.erase(std::remove(treeName.begin(), treeName.end(), 'a'), str.end());
+  std::string outputDirName = std::string("rebdsim_") + cleanedTreeName + std::string("_Histograms");
   TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
   rebdsimDir->cd();
   for(auto h : histograms1D)
