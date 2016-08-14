@@ -7,7 +7,6 @@
 #include "BDSBunchEShell.hh"
 #include "BDSBunchGaussian.hh"
 #include "BDSBunchInterface.hh"
-#include "BDSBunchRecreate.hh"
 #include "BDSBunchRing.hh"
 #include "BDSBunchSquare.hh"
 #include "BDSBunchUserFile.hh"
@@ -50,8 +49,6 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType, G4String d
     bdsBunch = new BDSBunchComposite();
   else if(distribType == "ptc") 
     bdsBunch = new BDSBunchPtc();
-  else if(distribType == "recreate")
-    {bdsBunch = new BDSBunchRecreate();}
   else {
     G4cerr << "distribType \"" << distribType << "\" not found" << G4endl;
     exit(1);
