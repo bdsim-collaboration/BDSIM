@@ -9,6 +9,7 @@
 #include <sstream>
 
 class BDSOutputROOTEventInfo;
+class BDSOutputROOTEventOptions;
 class TFile;
 class TTree;
 
@@ -31,8 +32,8 @@ private:
   G4bool badFilePath;
   G4bool rootEventFile;
 
-  GMAD::OptionsBase*      localOptions;
-  BDSOutputROOTEventInfo* localEventInfo;
+  BDSOutputROOTEventOptions* localOptions;
+  BDSOutputROOTEventInfo*    localEventInfo;
 
   TTree* optionsTree;
   TTree* eventTree;

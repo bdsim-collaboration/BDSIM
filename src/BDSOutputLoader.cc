@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSOutputROOTEventInfo.hh"
+#include "BDSOutputROOTEventOptions.hh"
 
 #include "parser/options.h"
 #include "parser/optionsBase.h"
@@ -44,7 +45,7 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
   optionsTree = (TTree*)file->Get("Options");
   // Note we don't check on optionsTree pointer as we assume it's valid given
   // we've checked this is a rootevent file.
-  localOptions = new GMAD::OptionsBase();
+  localOptions = new BDSOutputROOTEventOptions();
   optionsTree->SetBranchAddress("Options.", &localOptions); 
   
   eventTree = (TTree*)file->Get("Event");
@@ -64,7 +65,7 @@ GMAD::OptionsBase BDSOutputLoader::OptionsBaseClass()
   // always change back to this file - assuming other root files could be open
   file->cd();
   optionsTree->GetEntry(0);
-  return *localOptions;
+  return *(static_cast<GMAD::OptionsBase*>(localOptions));
 }
 
 GMAD::Options BDSOutputLoader::Options()
