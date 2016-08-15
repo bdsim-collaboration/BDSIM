@@ -4,11 +4,13 @@
 #include "BDSAnalysisManager.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Event.hh"
 #include "G4UserEventAction.hh"
 
 #include <ctime>
 #include <string>
-#include <vector>
+
+class G4PrimaryVertex;
 
 class BDSEventAction: public G4UserEventAction
 {
@@ -19,7 +21,10 @@ public:
 public:
   virtual void BeginOfEventAction(const G4Event*);
   virtual void EndOfEventAction(const G4Event*);
-  void         WritePrimaryVertex();
+  void         WritePrimaryVertex(G4int                  eventID,
+				  const G4PrimaryVertex* primaryVertexIn);
+
+  void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
     
 private:
   BDSAnalysisManager* analMan;

@@ -142,7 +142,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
 
   // Record the primary vertex in output
-  WritePrimaryVertex();
+  WritePrimaryVertex(evt->GetEventID(), evt->GetPrimaryVertex());
 
   // Now process each of the hits collections in turn, writing them to output.
   // After this, fill the appropriate histograms with information from this event.
@@ -368,14 +368,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
 }
 
-void BDSEventAction::WritePrimaryVertex()
+void BDSEventAction::WritePrimaryVertex(G4int eventID,
+					const G4PrimaryVertex* primaryVertexIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //Save the primary particle as a hit
-  G4PrimaryVertex*   primaryVertex   = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
-  G4PrimaryParticle* primaryParticle = primaryVertex->GetPrimary();
+  const G4PrimaryVertex*   primaryVertex   = primaryVertexIn;
+  const G4PrimaryParticle* primaryParticle = primaryVertex->GetPrimary();
   G4ThreeVector      momDir          = primaryParticle->GetMomentumDirection();
   G4double           E               = primaryParticle->GetTotalEnergy();
   G4double           xp              = momDir.x();
@@ -387,7 +388,7 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           t               = primaryVertex->GetT0();
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
-  G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4int              nEvent          = eventID;
   G4int              turnstaken      = BDSGlobalConstants::Instance()->TurnsTaken();
   bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }
