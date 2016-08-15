@@ -189,9 +189,8 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "recreate") )
 	{
-	  options.set_value("distrType",    "recreate");
-	  options.set_value("recreate",     true);
-	  options.set_value("recreatePath", std::string(optarg));
+	  options.set_value("recreate", true);
+	  options.set_value("recreateFileName", std::string(optarg));
 	}
       else if( !strcmp(optionName, "startfromevent") )
 	{
