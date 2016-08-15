@@ -108,7 +108,7 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   itsDist = fabs(R)*(1.-CosT_ov_2);
 
   // check for paraxial approximation:
-  if(LocalRp.z() > 0.9 && Localv0.mag() > 30.0 )
+  if(LocalRp.z() > 0.9 && Localv0.mag() > 40.0 )
   {
     G4ThreeVector dPos = R*(SinT*vhat + (1-CosT)*vnorm);
       

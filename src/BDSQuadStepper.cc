@@ -313,15 +313,35 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   G4ThreeVector     localP= GlobalAffine.TransformAxis(GlobalP);
 
-  // G4cout << "qs> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
+  //G4cout << "qs> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
 
   //G4cout << __METHOD_NAME__ << hstep << G4endl;
-  if (localP.z() < 0.9 || GlobalP.mag() < 30.0 )
-    {
-      //G4cout << __METHOD_NAME__ << " backup " << G4endl;
-      backupStepper->Stepper(yInput, dydx, hstep, yOut, yErr);
-      return;
-    }
+
+  if(GlobalP.mag() < 0.04)
+  {
+    G4ThreeVector InitMomDir = GlobalP.unit();
+
+    G4ThreeVector positionMove = hstep * InitMomDir;
+
+    yOut[0] = yInput[0] + positionMove.x();
+    yOut[1] = yInput[1] + positionMove.y();
+    yOut[2] = yInput[2] + positionMove.z();
+
+    yOut[3] = GlobalP.x();
+    yOut[4] = GlobalP.y();
+    yOut[5] = GlobalP.z();
+
+    for(i=0;i<nvar;i++) yErr[i]=0;
+
+    return;
+  }
+
+  if (localP.z() < 0.9 || GlobalP.mag() < 40.0 )
+  {
+    //G4cout << __METHOD_NAME__ << " backup " << G4endl;
+    backupStepper->Stepper(yInput, dydx, hstep, yOut, yErr);
+    return;
+  }
   
   if(fabs(kappa)<1.e-6) //kappa is small - no error needed for paraxial treatment
 	{
@@ -329,6 +349,7 @@ void BDSQuadStepper::Stepper( const G4double yInput[],
     for(i=0;i<nvar;i++) yErr[i]=0;
 		AdvanceHelix(yInput,G4ThreeVector(0,0,0),hstep,yOut);
 	}
+
   else   //need to compute errors for helical steps
 	{
     //G4cout << __METHOD_NAME__ << " double bdsim step " << G4endl;
