@@ -18,6 +18,9 @@ namespace BDSRandom
   /// Write the seed state out to suffix + 'seedstate.txt' in cwd.
   void WriteSeedState(G4String suffix = "");
 
+  /// Get the current full seed state as a string.
+  G4String GetSeedState();
+
   /// Load a seedstate.txt file and restore the engine to this status.
   void LoadSeedState (G4String inSeedFilename);
 

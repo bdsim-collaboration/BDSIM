@@ -68,6 +68,13 @@ void BDSRandom::WriteSeedState(G4String suffix)
   ofseedstate.close();
 }
 
+G4String BDSRandom::GetSeedState()
+{
+  std::stringstream currentState;
+  CLHEP::HepRandom::saveFullState(currentState);
+  return G4String(currentState.str());
+}
+
 void BDSRandom::LoadSeedState(G4String inSeedFilename)
 {
 #ifdef BDSDEBUG
