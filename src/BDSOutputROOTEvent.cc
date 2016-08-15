@@ -124,6 +124,7 @@ void BDSOutputROOTEvent::Initialise()
   gDirectory->pwd();
   
   theRootOutputFile      = new TFile(filename,"RECREATE", "BDS output file");
+  theRootOutputFile->cd();
     gDirectory->pwd();
   // options data tree
   theOptionsOutputTree   = new TTree("Options","BDSIM options");
