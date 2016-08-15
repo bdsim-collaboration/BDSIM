@@ -59,8 +59,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     {BDSRandom::WriteSeedState();}
 
   // Always save seed state in output
-  BDSEventInfo* info = static_cast<BDSEventInfo*>(anEvent->GetUserInformation());
-  info->SetSeedStateAtStart(BDSRandom::GetSeedState());
+  BDSEventInfo* eventInfo = new BDSEventInfo();
+  anEvent->SetUserInformation(eventInfo);
+  eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
   //this function is called at the begining of event
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;

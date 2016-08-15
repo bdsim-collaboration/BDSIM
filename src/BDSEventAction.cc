@@ -12,7 +12,6 @@
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
-#include "G4EventManager.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
@@ -76,8 +75,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
-  eventInfo = new BDSEventInfo();
-  G4EventManager::GetEventManager()->SetUserInformation(eventInfo);
+  // update reference to event info
+  eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());
 
   // get the current time
   startTime = time(nullptr);
