@@ -231,7 +231,7 @@ OptionsBase::OptionsBase()
 
 void OptionsBase::print() const
 {
-  std::cout<<"Options               : " << std::endl;
+  std::cout<<"Options                 " << std::endl;
   std::cout<<"particle              : " << particleName             << std::endl;
   std::cout<<"nominal energy        : " << beamEnergy               << std::endl;
   std::cout<<"n particles           : " << nGenerate                << std::endl;
