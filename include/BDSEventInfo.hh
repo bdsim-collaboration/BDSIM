@@ -30,7 +30,7 @@ public:
   /// @{ Setters
   inline void SetStartTime(time_t startTimeIn) {startTime = startTimeIn;}
   inline void SetStopTime(time_t stopTimeIn)   {stopTime  = stopTimeIn;}
-  inline void SetDuration(float durationIn)    {duration  = durationIn;}
+  inline void SetDuration(G4double durationIn) {duration  = durationIn;}
   inline void SetSeedStateAtStart(G4String seedStateAtStartIn) {seedStateAtStart = seedStateAtStartIn;}
   /// @}
 };
