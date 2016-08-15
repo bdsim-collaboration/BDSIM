@@ -10,6 +10,7 @@
 #include <ctime>
 #include <string>
 
+class BDSEventInfo;
 class G4PrimaryVertex;
 
 class BDSEventAction: public G4UserEventAction
@@ -48,6 +49,10 @@ private:
   G4double stops;  ///< Precise stop time in seconds.
 
   std::string seedStateAtStart; ///< Seed state at start of the event.
+
+  /// A copy of the pointer to event info instance that is registered to the event. Geant4
+  /// deletes this as necessary.
+  BDSEventInfo* eventInfo;
 };
 
 #endif
