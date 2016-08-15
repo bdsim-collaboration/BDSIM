@@ -4,7 +4,6 @@
 #include "BDSEventAction.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
-#include "BDSRunManager.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTunnelHit.hh"
@@ -13,13 +12,13 @@
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
 #include "G4EventManager.hh"
-#include "G4Run.hh"
 #include "G4HCofThisEvent.hh"
-#include "G4TrajectoryContainer.hh"
-#include "G4RichTrajectoryPoint.hh"
-#include "G4SDManager.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "G4RichTrajectoryPoint.hh"
+#include "G4Run.hh"
+#include "G4SDManager.hh"
+#include "G4TrajectoryContainer.hh"
 #include "Randomize.hh" // for G4UniformRand
 
 #include "CLHEP/Random/Random.h"
