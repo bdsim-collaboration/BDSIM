@@ -32,6 +32,22 @@ namespace GMAD
     /// set methods by property name
     template<typename T>
     void set_value(std::string name, T value);
+
+    /// Copy over all options from another instance of options irrespective
+    /// of setKeys.
+    void OverWrite(const Options& optionsIn)
+    {
+      for (auto key : optionsIn.allKeys)
+	{
+	  try
+	    {set(this, &optionsIn, key);}
+	  catch (std::runtime_error)
+	    {
+	      std::cerr << "Error: OverWrite unknown option \"" << key << "\"" << std::endl;
+	      exit(1);
+	    }
+	}
+    }
     
     /// Take another instance of options and copy the values that have
     /// been set (through setKeys, which although private each instance
