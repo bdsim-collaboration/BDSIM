@@ -20,7 +20,7 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
   optionsTree(nullptr),
   eventTree(nullptr)
 {
-  // open file
+  // open file - READ mode to prevent accidental corruption by adding new things
   file = new TFile(filePath.c_str(), "READ");
   
   // check it's a valid file
@@ -30,7 +30,7 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
   else
     {// check it's a rootevent file
       rootEventFile = file->GetListOfKeys()->Contains("Event");
-      if (rootEventFile)
+      if (!rootEventFile)
 	{G4cout << __METHOD_NAME__ << "Not a BDSIM rootevent output format ROOT file" << G4endl;}
     }
 
