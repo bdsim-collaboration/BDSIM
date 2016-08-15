@@ -4,13 +4,16 @@
 #include "G4AffineTransform.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
+#include "G4ClassicalRK4.hh"
 
 BDSSextStepper::BDSSextStepper(G4Mag_EqRhs* eqRHS):
         G4MagIntegratorStepper(eqRHS, 6),
         fPtrMagEqOfMot(eqRHS),
         itsBDblPrime(0.0),
         itsDist(0.0)
-{;}
+{
+  backupStepper = new G4ClassicalRK4(eqRHS,6);
+}
 
 void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
                                    G4ThreeVector,
@@ -147,7 +150,7 @@ void BDSSextStepper::AdvanceHelix( const G4double  yIn[],
 }
 
 void BDSSextStepper::Stepper( const G4double yInput[],
-                              const G4double[],
+                              const G4double dydx[],
                               const G4double hstep,
                               G4double yOut[],
                               G4double yErr[]      )
@@ -160,9 +163,23 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   //  Saving yInput because yInput and yOut can be aliases for same array
   
   for(i=0;i<nvar;i++) yIn[i]=yInput[i];
-  
+
+  const G4double *pIn = yInput+3;
+  G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yIn[1], yInput[3]);
+  G4ThreeVector GlobalP = G4ThreeVector(pIn[0],    pIn[1],    pIn[2]);
+
+  // auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
+  G4ThreeVector     localP= GlobalAffine.TransformAxis(GlobalP);
+
+  if (localP.z() < 0.9 || GlobalP.mag() < 40.0 )
+  {
+    backupStepper->Stepper(yIn, dydx, hstep, yOut, yErr);
+    return;
+  }
+
   G4double h = hstep * 0.5;
-  
+
   // Do two half steps
   AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
   AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 
@@ -188,4 +205,6 @@ G4double BDSSextStepper::DistChord()   const
 }
 
 BDSSextStepper::~BDSSextStepper()
-{}
+{
+  delete backupStepper;
+}
