@@ -52,6 +52,7 @@ public:
 			      const G4float& /*duration*/,
 			      const std::string &/*seedStateAtStart*/)
   {;}
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/){;}
   virtual void FillEvent() {;}
   virtual void Initialise(); ///< open the file
   /// Write to file

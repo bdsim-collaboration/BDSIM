@@ -144,6 +144,7 @@ void BDSOutputROOTEvent::Initialise()
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
   theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
+  gDirectory->pwd();
   theOptionsOutputTree->Fill();
   
   // Build model and write structure
@@ -203,7 +204,6 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
-
   for(int i=0;i<hc->entries();i++)
     {
       G4int samplerId = (*hc)[i]->GetSamplerID();
@@ -330,6 +330,11 @@ void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
   evtInfo->stopTime         = stopTime;
   evtInfo->duration         = duration;
   evtInfo->seedStateAtStart = seedStateAtStart;
+}
+
+void BDSOutputROOTEvent::WriteEventInfo(const BDSOutputROOTEventInfo* info)
+{
+  *evtInfo = *info;
 }
 
 void BDSOutputROOTEvent::Write(const time_t&  startTime,
