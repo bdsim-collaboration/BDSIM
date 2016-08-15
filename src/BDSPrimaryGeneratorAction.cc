@@ -56,7 +56,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   
   // save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
-    {BDSRandom::WriteSeedState("_" + std::to_string(anEvent->GetEventID()));}
+    {BDSRandom::WriteSeedState();}
 
   // Always save seed state in output
   BDSEventInfo* info = static_cast<BDSEventInfo*>(anEvent->GetUserInformation());
