@@ -1,5 +1,6 @@
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticle.hh"
@@ -57,6 +58,9 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState("_" + std::to_string(anEvent->GetEventID()));}
 
+  // Always save seed state in output
+  BDSEventInfo* info = static_cast<BDSEventInfo*>(anEvent->GetUserInformation());
+  info->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
   //this function is called at the begining of event
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
@@ -71,7 +75,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
     }
-#ifdef BDSDEBUG 
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
 	 << x0 << " " << y0 << " " << z0 << " " 
 	 << xp << " " << yp << " " << zp << " " 
