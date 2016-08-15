@@ -144,7 +144,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
 
   // Record the primary vertex in output
-  WritePrimaryVertex(evt->GetEventID(), evt->GetPrimaryVertex());
+  WritePrimaryVertex(event_number, evt->GetPrimaryVertex());
 
   // Now process each of the hits collections in turn, writing them to output.
   // After this, fill the appropriate histograms with information from this event.
