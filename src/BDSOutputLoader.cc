@@ -13,7 +13,7 @@
 
 
 BDSOutputLoader::BDSOutputLoader(G4String filePath):
-  validFilePath(false),
+  badFilePath(true),
   rootEventFile(false),
   localOptions(nullptr),
   localEventInfo(nullptr),
@@ -24,29 +24,32 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
   file = new TFile(filePath.c_str(), "READ");
   
   // check it's a valid file
-  validFilePath = file->IsZombie();
-  if (!validFilePath)
-    {G4cout << __METHOD_NAME__ << "No such file \"" << filePath << "\"" << G4endl;}
+  badFilePath = file->IsZombie();
+  if (badFilePath)
+    {
+      G4cout << __METHOD_NAME__ << "No such file \"" << filePath << "\"" << G4endl;
+      exit(1);
+    }
   else
     {// check it's a rootevent file
       rootEventFile = file->GetListOfKeys()->Contains("Event");
       if (!rootEventFile)
-	{G4cout << __METHOD_NAME__ << "Not a BDSIM rootevent output format ROOT file" << G4endl;}
+	{
+	  G4cout << __METHOD_NAME__ << "Not a BDSIM rootevent output format ROOT file" << G4endl;
+	  exit(1);
+	}
     }
 
   // set up local structure copies.
-  if (validFilePath && rootEventFile)
-    {
-      optionsTree = (TTree*)file->Get("Options");
-      // Note we don't check on optionsTree pointer as we assume it's valid given
-      // we've checked this is a rootevent file.
-      localOptions = new GMAD::OptionsBase();
-      optionsTree->SetBranchAddress("Options.", localOptions); 
-
-      eventTree = (TTree*)file->Get("Event");
-      localEventInfo = new BDSOutputROOTEventInfo();
-      eventTree->SetBranchAddress("Info.", localEventInfo);
-    }
+  optionsTree = (TTree*)file->Get("Options");
+  // Note we don't check on optionsTree pointer as we assume it's valid given
+  // we've checked this is a rootevent file.
+  localOptions = new GMAD::OptionsBase();
+  optionsTree->SetBranchAddress("Options.", &localOptions); 
+  
+  eventTree = (TTree*)file->Get("Event");
+  localEventInfo = new BDSOutputROOTEventInfo();
+  eventTree->SetBranchAddress("Info.", &localEventInfo);
 }
 
 BDSOutputLoader::~BDSOutputLoader()

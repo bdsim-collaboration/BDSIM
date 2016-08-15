@@ -28,7 +28,7 @@ private:
 
   TFile* file;
 
-  G4bool validFilePath;
+  G4bool badFilePath;
   G4bool rootEventFile;
 
   GMAD::OptionsBase*      localOptions;
