@@ -61,9 +61,7 @@ namespace GMAD
 	  for (auto const key : optionsIn.setKeys)
 	    {
 	      try
-		{
-		  set(this, &optionsIn, key);
-		}
+		{set(this, &optionsIn, key);}
 	      catch (std::runtime_error)
 		{
 		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
@@ -80,9 +78,7 @@ namespace GMAD
 	      if (result == ok.end())
 		{//it wasn't found so ok to copy
 		  try
-		    {
-		      set(this, &optionsIn, key);
-		    }
+		    {set(this, &optionsIn, key);}
 		  catch (std::runtime_error)
 		    {
 		      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
