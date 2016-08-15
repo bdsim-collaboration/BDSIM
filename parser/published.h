@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace GMAD
 {
@@ -42,6 +43,9 @@ namespace GMAD
       /// Define AttributeMap of string and class member pointer
       template <typename T>
 	using AttributeMap = typename std::unordered_map<std::string, T C::*>;
+
+      /// Keep record of all keys in class
+      std::vector<std::string> allKeys;
       
       /// Access method to static map for type T and class C
       template <typename T>
@@ -63,6 +67,7 @@ namespace GMAD
     void Published<C>::publish(const std::string& name, T C::*mp)
     {
       attribute_map<T>()[name] = mp;
+      allKeys.push_back(name);
     }
 
   template<typename C>
