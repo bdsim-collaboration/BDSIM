@@ -5,10 +5,12 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 #include "BDSPhysicalVolumeInfo.hh"
@@ -16,6 +18,7 @@
 #include "BDSMaterials.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
+#include "BDSSimpleComponent.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
@@ -70,6 +73,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   
   // construct the component list
   BuildBeamline();
+
+  // construct beamline of end pieces
+  BDS::BuildEndPieceBeamline();
 
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
@@ -149,11 +155,11 @@ void BDSDetectorConstruction::BuildBeamline()
       survey->WriteHeader();
     }
   
-  if (verbose || debug) G4cout << "parsing the beamline element list..."<< G4endl;
-  //for(auto element : BDSParser::Instance()->GetBeamline())
+  if (verbose || debug)
+    {G4cout << "parsing the beamline element list..."<< G4endl;}
+  
   auto beamLine = BDSParser::Instance()->GetBeamline();
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
-
     {
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << (*elementIt).name << G4endl;
@@ -507,10 +513,10 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  
 	  // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
 	  BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-                                                               readOutPVName,
-                                                               element->GetSPositionMiddle(),
-                                                               accComp->GetPrecisionRegion(),
-                                                               element->GetIndex());
+								     readOutPVName,
+								     element->GetSPositionMiddle(),
+								     accComp->GetPrecisionRegion(),
+								     element->GetIndex());
 
 	  BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
 	}
@@ -519,6 +525,28 @@ void BDSDetectorConstruction::ComponentPlacement()
       //looks like it could just be done in its construction rather than
       //in BDSDetectorConstruction
       accComp->PrepareField(elementPV);
+    }
+
+  auto pieces = BDSAcceleratorModel::Instance()->GetEndPieceBeamline();
+  for (auto element : *pieces)
+    {
+      BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
+      
+      // Attach this SD to each volume so that it produce hits using read out geometry
+      for (auto lv : accComp->GetAllSensitiveVolumes())
+	{lv->SetSensitiveDetector(energyCounterSDRO);}
+
+      G4ThreeVector  rp = element->GetReferencePositionMiddle();
+      G4Transform3D* pt = element->GetPlacementTransform();
+      G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();
+      G4int nCopy       = element->GetCopyNo();
+      new G4PVPlacement(*pt,              // placement transform
+			element->GetPlacementName() + "_pv", // name
+			elementLV,        // logical volume
+			worldPV,          // mother volume
+			false,	     // no boolean operation
+			nCopy,            // copy number
+			checkOverlaps);   // overlap checking
     }
 
   // place the tunnel segments & supports if they're built

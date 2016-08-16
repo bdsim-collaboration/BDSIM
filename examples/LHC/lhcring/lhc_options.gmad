@@ -6,4 +6,5 @@ option, beampipeRadius = 50 * cm,
         thresholdCutCharged = 10 * GeV,
         thresholdCutPhotons = 10 * GeV,
 	stopTracks=1,
-	nturns=2;
+	nturns=2,
+	magnetGeometryType="lhcleft";

@@ -3,6 +3,7 @@
 #include "BDSBeamPipe.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
@@ -48,6 +49,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
 								   G4double     containerLength,
 								   G4double     angleIn,
 								   G4double     angleOut,
+								   G4bool       /*yokeOnLeft*/,
 								   G4Material*  outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -58,9 +60,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   
   // test input parameters - set global options as default if not specified
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
-
-  G4ThreeVector inputface;
-  G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
   if (!BDS::IsFinite(angleIn) && !BDS::IsFinite(angleOut))
@@ -72,16 +71,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSectorBend(G4String     
   else
     {
       std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-      inputface = faces.first;
-      outputface = faces.second;
+      inputFaceNormal = faces.first;
+      outputFaceNormal = faces.second;
 
-      CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
+      CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter);
     
       // build the container for the whole magnet object - this outer diameter should be
       // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
       G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
-      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
-				      inputface, outputface);
+      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius);
     }
   return CommonFinalConstructor(name,length,outerDiameter,outerMaterial,
 				BDSColours::Instance()->GetColour("sectorbend"));
@@ -95,6 +93,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
 									G4double     containerLength,
 									G4double     angleIn,
 									G4double     angleOut,
+									G4bool       /*yokeOnLeft*/,
 									G4Material*  outerMaterial)
 {
 #ifdef BDSDEBUG
@@ -109,9 +108,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   TestInputParameters(beamPipe,outerDiameter,outerMaterial);
 
   G4double magnetContainerRadius = 0.5*containerDiameter;
-  
-  G4ThreeVector inputface;
-  G4ThreeVector outputface;
     
   // Simple cylinder if no poleface rotation, otherwise angled.
   if ((!BDS::IsFinite(angleIn)) && !BDS::IsFinite(angleOut))
@@ -122,12 +118,11 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRectangularBend(G4String
   else
     {
       std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
-      inputface = faces.first;
-      outputface = faces.second;
+      inputFaceNormal = faces.first;
+      outputFaceNormal = faces.second;
 
-      CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter, inputface, outputface);
-      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius,
-				  inputface, outputface);
+      CreateCylindricalSolidsAngled(name, length, beamPipe, containerLength, outerDiameter);
+      BuildMagnetContainerSolidAngled(name, containerLength, magnetContainerRadius);
     }
 
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
@@ -144,6 +139,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateQuadrupole(G4String     
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("quadrupole"));
@@ -156,6 +152,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSextupole(G4String     n
 								  G4double     containerLength,
 								  G4Material*  outerMaterial)
 {
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("sextupole"));
@@ -171,6 +168,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateOctupole(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("octupole"));
@@ -186,6 +184,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateDecapole(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("decapole"));
@@ -198,6 +197,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateSolenoid(G4String     na
 								 G4double     containerLength,
 								 G4Material*  outerMaterial)
 {
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("solenoid"));
@@ -213,6 +213,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMultipole(G4String     n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("multipole"));
@@ -228,6 +229,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateRfCavity(G4String     na
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("rfcavity"));
@@ -243,6 +245,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateMuSpoiler(G4String     n
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
   return CommonFinalConstructor(name, length, outerDiameter, outerMaterial,
 				BDSColours::Instance()->GetColour("muspoiler"));
@@ -259,6 +262,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CreateKicker(G4String     name
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  CleanUp();
   // in this factory, h and v kickers will look the same so ignore bool vertical
   // have to retain it though for virtual base class compatability
   CreateCylindricalSolids(name, length, beamPipe, containerLength, outerDiameter);
@@ -274,9 +278,6 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 							       G4double     magnetContainerLength,
 							       G4double     outerDiameter)
 {
-  // clear up variables
-  CleanUp();
-
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
   G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
@@ -330,16 +331,11 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolids(G4String     name
 
 // Function for cylinder with angled faces - for pole face rotation in dipoles.
 void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String     name,
-							       G4double         length,
-							       BDSBeamPipe*     beamPipe,
-							       G4double         magnetContainerLength,
-							       G4double         outerDiameter,
-							       G4ThreeVector    inputface,
-							       G4ThreeVector    outputface)
-{
-  // clear up variables
-  CleanUp();
-
+								     G4double     length,
+								     BDSBeamPipe* beamPipe,
+								     G4double     magnetContainerLength,
+								     G4double     outerDiameter)
+{ 
   // build the container for the whole magnet object - this outer diameter should be
   // larger than the magnet outer piece diameter which is just 'outerDiameter' wide.
   G4double magnetContainerRadius = (0.5 * outerDiameter) + lengthSafety;
@@ -354,29 +350,29 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
 			     length*0.5-2*lengthSafety,   // half length
 			     0,                           // rotation start angle
 			     CLHEP::twopi,                // rotation finish angle
-			     inputface,                   // input face normal
-			     outputface);                 // output face normal);
+			     inputFaceNormal,             // input face normal
+			     outputFaceNormal);           // output face normal);
 
       //container is similar but slightly wider and hollow (to allow placement of beampipe)
-      containerSolid = new G4CutTubs(name + "_container_solid",      // name
+      containerSolid = new G4CutTubs(name + "_container_solid",    // name
 				  beamPipe->GetContainerRadius() + lengthSafety, // inner radius
 				  outerDiameter*0.5 + lengthSafety,// outer radius
-				  length*0.5,                      // half length
-				  0,                               // rotation start angle
-				  CLHEP::twopi,                // rotation finish angle
-				  inputface,                   // input face normal
-				  outputface);                 // output face normal);
+				  length*0.5,         // half length
+				  0,                  // rotation start angle
+				  CLHEP::twopi,       // rotation finish angle
+				  inputFaceNormal,    // input face normal
+				  outputFaceNormal);  // output face normal);
     }
   else
     {
       G4VSolid* yokeSolidCylinder = new G4CutTubs(name + "_yoke_solid_cylinder",// name
-					       0,  // inner radius - for unambiguous subtraction
-					       outerDiameter*0.5,            // outer radius
-					       length*0.5-2*lengthSafety,    // half length
-					       0,                            // rotation start angle
-					       CLHEP::twopi,                // rotation finish angle
-					       inputface,                   // input face normal
-					       outputface);                 // output face normal);
+						  0,  // inner radius - for unambiguous subtraction
+						  outerDiameter*0.5,        // outer radius
+						  length*0.5-2*lengthSafety,// half length
+						  0,                        // rotation start angle
+						  CLHEP::twopi,             // rotation finish angle
+						  inputFaceNormal,          // input face normal
+						  outputFaceNormal);              // output face normal);
       allSolids.push_back(yokeSolidCylinder);
       yokeSolid = new G4SubtractionSolid(name + "_yoke_solid",
 					 yokeSolidCylinder,
@@ -384,13 +380,13 @@ void BDSMagnetOuterFactoryCylindrical::CreateCylindricalSolidsAngled(G4String   
 
       //container is similar but slightly wider
       G4VSolid* containerSolidCylinder = new G4CutTubs(name + "_container_solid_cylinder",// name
-						    0,  // inner radius - for unambiguous subtraction
-						    outerDiameter*0.5 + lengthSafety,  // outer radius
-						    length*0.5,                        // half length
-						    0,                                 // rotation start angle
-						    CLHEP::twopi,                // rotation finish angle
-						    inputface,                   // input face normal
-						    outputface);                 // output face normal);
+						       0,  // inner radius - for unambiguous subtraction
+						       outerDiameter*0.5 + lengthSafety,// outer radius
+						       length*0.5,       // half length
+						       0,                // rotation start angle
+						       CLHEP::twopi,     // rotation finish angle
+						       inputFaceNormal,  // input face normal
+						       outputFaceNormal);// output face normal);
       allSolids.push_back(containerSolidCylinder);
       containerSolid = new G4SubtractionSolid(name + "_container_solid",
 					      containerSolidCylinder,
@@ -456,15 +452,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   // record extents
   // container radius is the same for all methods as all cylindrical
   G4double containerRadius = outerDiameter + lengthSafety;
-  std::pair<double,double> extX = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extY = std::make_pair(-containerRadius,containerRadius);
-  std::pair<double,double> extZ = std::make_pair(-length*0.5,length*0.5);
+  BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
   
   // build the BDSMagnetOuter instance and return it
   BDSMagnetOuter* outer = new BDSMagnetOuter(containerSolid,
-					     containerLV,
-					     extX, extY, extZ,
+					     containerLV, ext,
 					     magnetContainer);
+
+  SetFaceNormals(outer);
   
   // register all objects that go with the final geometry component (from internal vectors)
   outer->RegisterSolid(allSolids);

@@ -1,18 +1,14 @@
-/* BDSIM code.    Version 1.0
-   Author: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 02.12.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-
 #include "BDSElement.hh"
 
 #include "BDS3DMagField.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagFieldSQL.hh"
 #include "BDSUtilities.hh"
 #include "BDSXYMagField.hh"
+
 #include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4Torus.hh"
@@ -88,9 +84,7 @@ void BDSElement::BuildContainerLogicalVolume()
   // zero field in the marker volume
   containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
-  SetExtentX(-outerDiameter*0.5, outerDiameter*0.5);
-  SetExtentY(-outerDiameter*0.5, outerDiameter*0.5);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(outerDiameter*0.5, outerDiameter*0.5, chordLength*0.5));
 }
 
 void BDSElement::PlaceComponents(G4String geometry, G4String bmap)

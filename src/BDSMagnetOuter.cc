@@ -1,27 +1,43 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuter.hh"
+#include "BDSSimpleComponent.hh"
 
-#include <utility>
+#include "G4ThreeVector.hh"
 
+class BDSExtent;
 class G4VSolid;
 class G4LogicalVolume;
 
-BDSMagnetOuter::BDSMagnetOuter(G4VSolid*                    containerSolid,
-			       G4LogicalVolume*             containerLV,
-			       std::pair<G4double,G4double> extentX,
-			       std::pair<G4double,G4double> extentY,
-			       std::pair<G4double,G4double> extentZ,
-			       BDSGeometryComponent*        magnetContainerIn,
-			       G4ThreeVector                placementOffset):
-  BDSGeometryComponent(containerSolid, containerLV, extentX, extentY, extentZ,
+BDSMagnetOuter::BDSMagnetOuter(G4VSolid*             containerSolid,
+			       G4LogicalVolume*      containerLV,
+			       BDSExtent             extent,
+			       BDSGeometryComponent* magnetContainerIn,
+			       G4ThreeVector         placementOffset,
+			       BDSSimpleComponent*   endPieceBeforeIn,
+			       BDSSimpleComponent*   endPieceAfterIn,
+			       G4ThreeVector         inputFaceNormalIn,
+			       G4ThreeVector         outputFaceNormalIn):
+  BDSGeometryComponent(containerSolid, containerLV, extent, BDSExtent(),
 		       placementOffset),
-  magnetContainer(magnetContainerIn)
+  magnetContainer(magnetContainerIn),
+  endPieceBefore(endPieceBeforeIn),
+  endPieceAfter(endPieceAfterIn),
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {;}
 
 BDSMagnetOuter::BDSMagnetOuter(BDSGeometryComponent* componentIn,
-			       BDSGeometryComponent* magnetContainerIn):
+			       BDSGeometryComponent* magnetContainerIn,
+			       BDSSimpleComponent*   endPieceBeforeIn,
+			       BDSSimpleComponent*   endPieceAfterIn,
+			       G4ThreeVector         inputFaceNormalIn,
+			       G4ThreeVector         outputFaceNormalIn):
   BDSGeometryComponent(*componentIn),
-  magnetContainer(magnetContainerIn)
+  magnetContainer(magnetContainerIn),
+  endPieceBefore(endPieceBeforeIn),
+  endPieceAfter(endPieceAfterIn),
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {;}
 
 void BDSMagnetOuter::ClearMagnetContainer()
@@ -33,7 +49,16 @@ void BDSMagnetOuter::ClearMagnetContainer()
     }
 }
 
+void BDSMagnetOuter::ClearEndPieces()
+{
+  if (endPieceAfter && (endPieceAfter != endPieceBefore))
+    {delete endPieceAfter; endPieceAfter = nullptr;}
+  if (endPieceBefore)
+    {delete endPieceBefore; endPieceBefore = nullptr;}
+}
+
 BDSMagnetOuter::~BDSMagnetOuter()
 {
   ClearMagnetContainer();
+  ClearEndPieces();
 }

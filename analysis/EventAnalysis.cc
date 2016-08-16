@@ -7,14 +7,16 @@
 
 ClassImp(EventAnalysis)
 
-EventAnalysis::EventAnalysis()
+EventAnalysis::EventAnalysis():
+  Analysis("Event.")
 {
   event    = nullptr;
   chain    = nullptr;
   histoSum = nullptr;
 }
 
-EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
+EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn):
+  Analysis("Event.")
 {
   chainIn->GetEntry(0);
 
@@ -26,7 +28,7 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     SamplerAnalysis *sa = new SamplerAnalysis(*i);
     this->samplerAnalyses.push_back(sa);
   }
-  
+
 //  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
 //  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
 }
@@ -36,27 +38,26 @@ EventAnalysis::~EventAnalysis()
 
 void EventAnalysis::Process()
 {
+  Initialise();
+
   if(Config::Instance()->Debug())
   {
     std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
   // loop over events
-  int entries = (int)chain->GetEntries();
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
+    std::cout << i << std::endl;
 
     if(i==0)
-    {
-      histoSum = new HistogramMerge(event->histos);
-    }
-
-    histoSum->Add(event->histos);
+      {histoSum = new HistogramMerge(event->histos);}
+    else
+      {histoSum->Add(event->histos);}
 
 
-    std::cout << "\r" << __METHOD_NAME__ << "Event: " << std::setw(5) << i << " of " << entries << std::flush;
     if(Config::Instance()->Debug())
     {
-      std::cout << std::endl;
+      std::cout << __METHOD_NAME__ << i << std::endl;
       std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
       std::cout << __METHOD_NAME__ << "primaries="   << this->event->primaries->n << std::endl;
       std::cout << __METHOD_NAME__ << "eloss="       << this->event->eloss->n   << std::endl;
@@ -67,125 +68,20 @@ void EventAnalysis::Process()
 //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
     }
 
-    this->ProcessSamplers();
-
+    if(Config::Instance()->ProcessSamplers()) {
+      this->ProcessSamplers();
+    }
   }
-  std::cout << std::endl;
-}
-
-void EventAnalysis::ProcessSamplers()
-{
-  G4bool debug = Config::Instance()->Debug();
-  for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
-  {
-    if(debug)
-      {std::cout << "\rEventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::flush;}
-
-    // process samplers
-    (*s)->Process();
-  }
-  if (debug)
-    {std::cout << std::endl;}
-}
-
-void EventAnalysis::Initialise()
-{
-  for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
-    {(*i)->Initialise();}
 }
 
 void EventAnalysis::Terminate()
 {
+  Analysis::Terminate();
+
   for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
   {
     (*i)->Terminate();
     this->opticalFunctions.push_back((*i)->GetOpticalFunctions());
-  }
-
-  histoSum->Terminate();
-}
-
-void EventAnalysis::SimpleHistograms()
-{
-  if(Config::Instance()->Debug())
-    {std::cout << __METHOD_NAME__ << std::endl;}
-
-  // loop over histogram specifications and fill
-  auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
-  for(auto i : hd)
-  {
-    this->FillHistogram(i["treeName"].data(), i["histName"], i["nbins"], i["binning"], i["plot"], i["select"]);
-  }
-}
-
-void EventAnalysis::FillHistogram(std::string treeName, std::string histoName,
-                                  std::string nbins,    std::string binning,
-                                  std::string plot,     std::string selection)
-{
-  if(Config::Instance()->Debug())
-    {std::cout << __METHOD_NAME__ << std::endl;}
-  double xlow=0.0, xhigh=0.0;
-  double ylow=0.0, yhigh=0.0;
-  int ndim = Config::Dimension(nbins);
-  int nxbin=0, nybin=0;
-
-  if(ndim == 1)
-  {
-    nxbin = Config::NBins(nbins,1);
-    Config::Binning(binning,1,xlow,xhigh);
-  }
-  else if(ndim == 2)
-  {
-    nxbin = Config::NBins(nbins,1);
-    nybin = Config::NBins(nbins,2);
-    Config::Binning(binning,1,xlow,xhigh);
-    Config::Binning(binning,2,ylow,yhigh);
-  }
-
-  if (!chain)
-  {std::cout << __METHOD_NAME__ << "Error no tree found by name: " << treeName << std::endl; exit(1);}
-
-  if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << treeName << " " << histoName << " " << plot << std::endl;
-  }
-
-  auto pltSav = histoName;
-  auto pltCmd = plot+" >> "+pltSav;
-
-  // create histograms
-  if(ndim == 1)
-  {
-    auto h = new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);
-    h->AddDirectory(kTRUE);
-  }
-  else if(ndim == 2)
-  {
-    auto h = new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);
-    h->AddDirectory(kTRUE);
-  }
-
-  chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
-
-  if(ndim == 1)
-  {
-    auto h = (TH1*)gDirectory->Get(pltSav.c_str());
-    this->histogramNames.push_back(pltSav);
-    this->histograms1D[pltSav] = h;
-    // std::cout << h << std::endl;
-  }
-  else if(ndim == 2)
-  {
-    auto h = (TH2*)gDirectory->Get(pltSav.c_str());
-    this->histogramNames.push_back(pltSav);
-    this->histograms2D[pltSav] = h;
-    // std::cout << h << std::endl;
-  }
-
-
-  if(Config::Instance()->Debug())
-  {
-    std::cout << __METHOD_NAME__ << "`" << pltSav << "'  `" << pltCmd << "' " << gDirectory->Get(pltSav.c_str()) << std::endl;
   }
 }
 
@@ -196,17 +92,8 @@ void EventAnalysis::Write(TFile *outputFile)
     std::cout << __METHOD_NAME__ << std::endl;
   }
 
-  // write rebdsim histograms
-  TDirectory *rebdsimDir = outputFile->mkdir("rebdsimHistograms");
-  rebdsimDir->cd();
-  for(auto h : histograms1D)
-  {
-    h.second->Write();
-  }
-  for(auto h : histograms2D)
-  {
-    h.second->Write();
-  }
+  //Write rebdsim histograms:
+  Analysis::Write(outputFile);
 
   // write run merged run histograms
   TDirectory *bdsimDir = outputFile->mkdir("bdsimEventMergedHistograms");
@@ -245,7 +132,7 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sigma_yp",&(yOpticsPoint[9]), "Sigma_yp/D");
   opticsTree->Branch("S"       ,&(xOpticsPoint[10]),"S/D");
   opticsTree->Branch("Npart"   ,&(xOpticsPoint[11]),"Npart/D");
-  
+
   opticsTree->Branch("Sig_Emitt_x", &(xOpticsPoint[12]), "Sig_Emitt_x/D");
   opticsTree->Branch("Sig_Emitt_y", &(yOpticsPoint[12]), "Sig_Emitt_y/D");
   opticsTree->Branch("Sig_Alpha_x", &(xOpticsPoint[13]), "Sig_Alpha_x/D");
@@ -267,7 +154,7 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sig_Sigma_xp",&(xOpticsPoint[21]), "Sig_Sigma_xp/D");
   opticsTree->Branch("Sig_Sigma_yp",&(yOpticsPoint[21]), "Sig_Sigma_yp/D");
 
-  
+
   for(auto i : this->opticalFunctions)
   {
     xOpticsPoint = i[0];
@@ -276,4 +163,25 @@ void EventAnalysis::Write(TFile *outputFile)
   }
   opticsTree->Write();
 
+}
+
+void EventAnalysis::ProcessSamplers()
+{
+  for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
+  {
+    if(Config::Instance()->Debug())
+    {
+      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
+    }
+
+    // process samplers
+    (*s)->Process();
+  }
+
+}
+
+void EventAnalysis::Initialise()
+{
+  for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
+    {(*i)->Initialise();}
 }

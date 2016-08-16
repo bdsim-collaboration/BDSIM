@@ -46,9 +46,7 @@ void BDSTeleporter::BuildContainerLogicalVolume()
   containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMagnet.cc
 
   // register extents with BDSGeometryComponent base class
-  SetExtentX(-radius,radius);
-  SetExtentY(-radius,radius);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
   
 void BDSTeleporter::BuildBPFieldAndStepper()

@@ -3,6 +3,10 @@
 #include "BDSBunch.hh"
 #include "BDSParticle.hh"
 #include "BDSDebug.hh"
+#include "BDSRandom.hh"
+#include "BDSGlobalConstants.hh"
+#include "CLHEP/Random/Random.h"
+#include <fstream>
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -31,6 +35,14 @@ BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+  // save the seed state in a file to recover potentially unrecoverable events
+  std::ofstream f;
+  f.open("evtseed.txt");
+  std::stringstream ss1;
+  CLHEP::HepRandom::saveFullState(ss1);
+  f << ss1.str();
+  f.close();
+
   //this function is called at the begining of event
 
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;

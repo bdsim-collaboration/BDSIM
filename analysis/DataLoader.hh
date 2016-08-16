@@ -4,12 +4,13 @@
 #include "Config.hh"
 #include "Event.hh"
 #include "Run.hh"
+#include "Model.hh"
+#include "Options.hh"
 
 #include "TChain.h"
 
-#include "BDSOutputROOTEventOptions.hh"
-#include "BDSOutputROOTEventModel.hh"
 #include "BDSOutputROOTEventRunInfo.hh"
+
 
 /**
  * @brief Loader for a ROOT file using classes used to generate the file.
@@ -47,8 +48,8 @@ public:
   std::vector<std::string>   GetTreeNames()    {return treeNames;};
   std::vector<std::string>   GetBranchNames()  {return branchNames;}
   std::vector<std::string>   GetSamplerNames() {return samplerNames;}
-  BDSOutputROOTEventOptions* GetOptions()      {return opt;}
-  BDSOutputROOTEventModel*   GetModel()        {return mod;}
+  Options*                   GetOptions()      {return opt;}
+  Model*                     GetModel()        {return mod;}
   Event*                     GetEvent()        {return evt;}
   Run*                       GetRun()          {return run;};
   TChain*                    GetOptionsTree()  {return optChain;}
@@ -56,14 +57,15 @@ public:
   TChain*                    GetEventTree()    {return evtChain;}
   TChain*                    GetRunTree()      {return runChain;}
   /// @}
-  
+
 private:
-  BDSOutputROOTEventOptions    *opt;
-  BDSOutputROOTEventModel      *mod;
+  Options                      *opt;
+  Model                        *mod;
   Event                        *evt;
   Run                          *run;
 
   std::vector<std::string>      fileNames;
+  std::vector<std::string>      safeFileNames;
 
   std::vector<std::string>      treeNames;
   std::vector<std::string>      branchNames;  // non-sampler branch names

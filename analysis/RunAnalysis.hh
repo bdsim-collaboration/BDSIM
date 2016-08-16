@@ -8,25 +8,20 @@
 #include "BDSOutputROOTEventHistograms.hh"
 
 #include "Run.hh"
+#include "Analysis.hh"
 
-class RunAnalysis
+class RunAnalysis : public Analysis
 {
 public:
   RunAnalysis();
   RunAnalysis(Run *r, TChain *c);
-
   virtual ~RunAnalysis();
 
-  void Process();
-  void Write(TFile *f);
-
-  BDSOutputROOTEventHistograms  *histoSum;          // bdsim histograms
-
+  virtual void Process();
+  virtual void Write(TFile *f);
 
 protected:
   Run    *run;
-  TChain *chain;
-
 
   ClassDef(RunAnalysis,1);
 };

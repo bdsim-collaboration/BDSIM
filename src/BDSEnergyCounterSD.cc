@@ -154,20 +154,21 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
 
   // get the s coordinate (central s + local z), and precision info
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
+  G4int beamlineIndex = -1;
   if (theInfo)
     {
       sAfter  = theInfo->GetSPos() + z; //z is posafterlocal.z() - saves access
       sBefore = theInfo->GetSPos() + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
+      beamlineIndex   = theInfo->GetBeamlineIndex();
     }
   else
     {
       // need to exit as theInfo is dereferenced later
-      G4cerr << "No volume info for " << theVolume << G4endl;
-      exit(1);
-      // sAfter  = -1000; // unphysical default value to allow easy identification in output
-      // sBefore = -1000;
-      // precisionRegion = false;
+      G4cerr << "No volume info for " << theVolume->GetName() << G4endl;
+      sAfter  = -1000; // unphysical default value to allow easy identification in output
+      sBefore = -1000;
+      precisionRegion = false;
     }
 
   G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
@@ -205,7 +206,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
                                                        turnstaken,
                                                        eventnumber,
                                                        stepLength,
-                                                       theInfo->GetBeamlineIndex(),
+                                                       beamlineIndex,
                                                        geomFlag);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
