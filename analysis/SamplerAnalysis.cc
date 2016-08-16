@@ -24,9 +24,9 @@ void SamplerAnalysis::CommonCtor()
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
   
-  optical.resize(2); // resize to 2 entries initialised to 0
-  varOptical.resize(2);
-  for(int i=0;i<2;++i)
+  optical.resize(3); // resize to 3 entries initialised to 0
+  varOptical.resize(3);
+  for(int i=0;i<3;++i)
     {
       optical[i].resize(24, 0);   //12 for central values and 12 for errors
       varOptical[i].resize(12, 0);
@@ -138,12 +138,20 @@ void SamplerAnalysis::Terminate()
   }
 
   //optical function calculation  
-  for(int i=0;i<2;++i)
+  for(int i=0;i<3;++i)
   {
     int j = 0;
     if(i==1) j = 2;
+    if(i==2) j = 4;
 
-    //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs. 
+    //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs.
+
+    optical[i][6]  = cenMoms[j][j+1][1][0];                                                                                                // mean spatial (transv.)/ mean E (longit.)
+    optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                                // mean divergence (transv.)/ mean t (longit.)
+    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                                          // sigma spatial   (transv.)/ sigma E (longit.)
+    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                                          // sigma divergence (transv.)/ sigma t (longit.)
+
+    if (i==2) continue;    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
 
     optical[i][4]  = (cenMoms[4][4][1][0]*cenMoms[j][4][1][1])/cenMoms[4][4][2][0];                                                        // eta
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];                                                      // eta prime
@@ -166,12 +174,8 @@ void SamplerAnalysis::Terminate()
     optical[i][0]  = sqrt(corrCentMom_2_0*corrCentMom_0_2-pow(corrCentMom_1_1,2));                                                         // emittance
     optical[i][1]  = -corrCentMom_1_1/optical[i][0];                                                                                       // alpha
     optical[i][2]  = corrCentMom_2_0/optical[i][0];                                                                                        // beta
-    
     optical[i][3]  = (1+pow(optical[i][1],2))/optical[i][2];                                                                               // gamma
-    optical[i][6]  = cenMoms[j][j+1][1][0];                                                                                                // mean spatial
-    optical[i][7]  = cenMoms[j][j+1][0][1];                                                                                                // mean divergence
-    optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                                          // sigma spatial
-    optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                                          // sigma divergence 
+
     optical[i][10] = this->S;
     optical[i][11] = npart;
   }
@@ -199,7 +203,7 @@ void SamplerAnalysis::Terminate()
     }
   
   //compute variances of optical functions
-  for(int i=0;i<2;++i)      
+  for(int i=0;i<3;++i)      
     {
       for(int j=0;j<12;++j)
 	{
@@ -214,19 +218,18 @@ void SamplerAnalysis::Terminate()
     }
 
   //compute the sigmas of optical functions
-  for(int i=0;i<2;++i)      
+  for(int i=0;i<3;++i)      
     {
       for(int j=0;j<12;++j)
 	{
 	  if(j==6 || j==7)
 	    {optical[i][j+12]=optical[i][j+2]/sqrt(npart);} //errors of the means 
 	  else if(j == 10 || j == 11)
-	    {optical[i][j+12]= 0.0;}                //no errors on S and Npart
+	    {optical[i][j+12]= 0.0;}                        //no errors on S and Npart
 	  else
 	    {optical[i][j+12]=sqrt(varOptical[i][j]);}
 	}
     }
-
 }
 
 double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
@@ -238,7 +241,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 //Returns a central moment calculated from the corresponding coordinate power sums.
 //Arguments:
 //    powSums: array contatining the coordinate power sums
-//    a, b:  integer identifier for the coordinate (0->x, 1->xp, 2->y, 3->yp, 4->t, 5->dE)
+//    a, b:  integer identifier for the coordinate (0->x, 1->xp, 2->y, 3->yp, 4->E, 5->t)
 //    m, n:  order of the moment wrt to the coordinate
 //    note:  total order of the mixed moment is given by k = m + n
   
@@ -576,7 +579,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
 
     case 9:
       //sigma divergence
-      if(i == 0)
+      if(i == 1)
       {
 	deriv = 1/(2*sqrt(centMoms[a][a+1][0][2]));
       }
