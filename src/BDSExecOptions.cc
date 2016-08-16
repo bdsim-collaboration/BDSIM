@@ -61,9 +61,10 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "circular", 0, 0, 0 },
 					{ "seed",           1, 0, 0},
 					{ "recreate",       1, 0, 0},
-					{ "startfromevent", 1, 0, 0},
+					{ "startFromEvent", 1, 0, 0},
 					{ "writeseedstate", 0, 0, 0},
 					{ "seedstate",      1, 0, 0},
+					{ "seedStateFileName", 1, 0, 0},
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
@@ -193,7 +194,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  options.set_value("recreate", true);
 	  options.set_value("recreateFileName", std::string(optarg));
 	}
-      else if( !strcmp(optionName, "startfromevent") )
+      else if( !strcmp(optionName, "startFromEvent") )
 	{
 	  int result = 0;
 	  conversion = BDS::IsInteger(optarg, result);
@@ -201,10 +202,10 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "writeseedstate") )
 	{options.set_value("writeSeedState", true);}
-      else if( !strcmp(optionName, "seedstate") )
+      else if( !strcmp(optionName, "seedstate")  || !strcmp(optionName, "seedStateFileName"))
 	{
 	  options.set_value("useASCIISeedState", true);
-	  options.set_value("seedState", std::string(optarg));
+	  options.set_value("seedStateFileName", std::string(optarg));
 	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
@@ -288,9 +289,9 @@ void BDSExecOptions::Usage() const
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
 	<<"                            option in the input gmad file" << G4endl
         <<"--seed=N                  : the seed to use for the random number generator" << G4endl
-	<<"--seedstate=<file>        : use this ASCII file seed state to run an event" << G4endl
+	<<"--seedStateFileName=<file>: use this ASCII file seed state to run an event" << G4endl
 	<<"--recreate=<file>         : the rootevent file to recreate events from" << G4endl
-	<<"--startfromevent=N        : event offset to start from when recreating events" << G4endl
+	<<"--startFromEvent=N        : event offset to start from when recreating events" << G4endl
 	<<"--survey=<file>           : print survey info to <file>"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl
 	<<"--verbose_event           : display information for every event "<<G4endl
@@ -320,6 +321,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << options.seed                << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seedstate: "           << std::setw(15) << options.seedStateFileName   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << options.survey              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFileName: "      << std::setw(15) << options.surveyFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << options.verbose             << G4endl;
