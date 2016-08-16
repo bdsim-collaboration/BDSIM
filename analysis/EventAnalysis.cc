@@ -26,7 +26,7 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn)
     SamplerAnalysis *sa = new SamplerAnalysis(*i);
     this->samplerAnalyses.push_back(sa);
   }
-
+  
 //  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
 //  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
 }
@@ -41,6 +41,7 @@ void EventAnalysis::Process()
     std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
   // loop over events
+  int entries = (int)chain->GetEntries();
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
 
@@ -52,9 +53,10 @@ void EventAnalysis::Process()
     histoSum->Add(event->histos);
 
 
+    std::cout << "\r" << __METHOD_NAME__ << "Event: " << std::setw(5) << i << " of " << entries << std::flush;
     if(Config::Instance()->Debug())
     {
-      std::cout << __METHOD_NAME__ << i << std::endl;
+      std::cout << std::endl;
       std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
       std::cout << __METHOD_NAME__ << "primaries="   << this->event->primaries->n << std::endl;
       std::cout << __METHOD_NAME__ << "eloss="       << this->event->eloss->n   << std::endl;
@@ -68,21 +70,22 @@ void EventAnalysis::Process()
     this->ProcessSamplers();
 
   }
+  std::cout << std::endl;
 }
 
 void EventAnalysis::ProcessSamplers()
 {
+  G4bool debug = Config::Instance()->Debug();
   for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
   {
-    if(Config::Instance()->Debug())
-    {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
-    }
+    if(debug)
+      {std::cout << "\rEventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::flush;}
 
     // process samplers
     (*s)->Process();
   }
-
+  if (debug)
+    {std::cout << std::endl;}
 }
 
 void EventAnalysis::Initialise()
