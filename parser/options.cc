@@ -5,7 +5,14 @@
 
 using namespace GMAD;
 
-Options::Options(): OptionsBase()
+Options::Options():
+  OptionsBase()
+{
+  PublishMembers();
+}
+
+Options::Options(const GMAD::OptionsBase& options):
+  OptionsBase(options)
 {
   PublishMembers();
 }
@@ -43,9 +50,12 @@ void Options::PublishMembers()
   publish("verboseSteppingLevel",  &Options::verboseSteppingLevel);
   publish("circular",              &Options::circular);
   publish("seed",                  &Options::seed);
+  publish("recreate",              &Options::recreate);
+  publish("recreateFileName",      &Options::recreateFileName);
+  publish("startFromEvent",        &Options::startFromEvent);
+  publish("writeSeedState",        &Options::writeSeedState);
+  publish("useASCIISeedState",     &Options::useASCIISeedState);
   publish("seedStateFileName",     &Options::seedStateFileName);
-  publish("setSeedState",          &Options::setSeedState);
-  publish("nGenerate",             &Options::nGenerate);
   publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
   publish("exportGeometry",        &Options::exportGeometry);
@@ -60,13 +70,15 @@ void Options::PublishMembers()
   // options for the "beam" command
   publish("particle",&Options::particleName);
 
-  publish("distrType",&Options::distribType);
+  publish("distrType", &Options::distribType);
   publish("xDistrType",&Options::xDistribType);
   publish("yDistrType",&Options::yDistribType);
   publish("zDistrType",&Options::zDistribType);
-  publish("distrFile",&Options::distribFile);
-  publish("distrFileFormat",&Options::distribFileFormat);
-  publish("nlinesIgnore",&Options::nlinesIgnore);
+  publish("distrFile", &Options::distribFile);
+  publish("distrFileFormat",   &Options::distribFileFormat);
+  publish("nlinesIgnore",      &Options::nlinesIgnore);
+  publish("eventOffset",       &Options::eventOffset);
+  publish("recreateSeedState", &Options::recreateSeedState);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
   publish("elossHistoTransBinWidth",&Options::elossHistoTransBinWidth);

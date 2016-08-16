@@ -77,6 +77,7 @@ public:
   /// write event info
   virtual void WriteEventInfo(const time_t &startTime, const time_t &stopTime, const G4float &duration,
                               const std::string &seedStateAtStart);
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info);
 
   virtual void Initialise(); ///< open the file
   virtual void Write(const time_t &startTime, const time_t &stopTime, const G4float &duration,

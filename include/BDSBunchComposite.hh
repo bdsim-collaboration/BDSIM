@@ -7,18 +7,18 @@
 #include "BDSBunchInterface.hh"
 
 /**
- * @brief A distribution that allows mixing of three different distributions in each
- * primary dimension.
+ * @brief A distribution that allows mixing of three different 
+ * distributions in each primary dimension.
  * 
  * @author Stewart Boogert
  */
 
 class BDSBunchComposite: public BDSBunchInterface
 { 
-protected: 
-  BDSBunchInterface *xBunch; 
-  BDSBunchInterface *yBunch;
-  BDSBunchInterface *zBunch;
+protected:
+  BDSBunchInterface* xBunch; 
+  BDSBunchInterface* yBunch;
+  BDSBunchInterface* zBunch;
 
 public:
   BDSBunchComposite(); 

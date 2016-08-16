@@ -67,8 +67,9 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   */
 
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
-  G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
-  
+  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR,GlobalP);
+
+
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
   G4double z0  = LocalR.z();
@@ -108,8 +109,10 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
     }
 
   //apply kick
-  xp1 -= (kick.real() + dipoleTerm);
-  yp1 += kick.imag();
+  if(!std::isnan(kick.real()))
+    xp1 -= (kick.real() + dipoleTerm);
+  if(!std::isnan(kick.imag()))
+    yp1 += kick.imag();
 
   //Reset n for skewed kicks.
   n=0;
@@ -117,7 +120,7 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   G4double ksImag = 0;
   G4double skewAngle=0;
 
-  G4TwoVector mom = G4TwoVector(xp1,yp1);
+  G4ThreeVector mom = G4ThreeVector(xp1,yp1,zp1);
   G4double momx = mom.x();
   G4double momy = mom.y();
 
@@ -130,19 +133,21 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
     //Rotate momentum vector about z axis according to number of poles
     //then apply each kick seperately and rotate back
     skewAngle = CLHEP::pi / (2*(n+2));
-    mom.rotate(skewAngle);
+    mom.rotateZ(skewAngle);
 
     // calculate and apply kick
     ksReal = (*ks) * pow(position,n).real() / nfact[n];
     ksImag = (*ks) * pow(position,n).imag() / nfact[n];
     skewresult = {ksReal,ksImag};
-    skewkick += skewresult;
 
     // Rotate back
-    momx = mom.x() - skewkick.real();
-    momy = mom.y() - skewkick.imag();
-    mom = {momx, momy};
-    mom.rotate(-skewAngle);
+    if(!std::isnan(skewresult.real()))
+      momx = mom.x() - skewresult.real();
+    if(!std::isnan(skewresult.imag()))
+      momy = mom.y() + skewresult.imag();
+
+    mom = {momx, momy, mom.z()};
+    mom.rotateZ(-skewAngle);
   }
 
   xp1 = mom.x();

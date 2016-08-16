@@ -45,4 +45,9 @@ void BDSRunManager::ProcessOneEvent(G4int i_event)
   G4RunManager::ProcessOneEvent(i_event);
 }
 
+void BDSRunManager::AbortRun(G4bool)
+{
+  G4cout << "Terminate run - trying to write and close output file" << G4endl;
+  G4RunManager::AbortRun();
+}
 

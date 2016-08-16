@@ -3,6 +3,8 @@
 
 #include "BDSOutputBase.hh"
 
+class BDSOutputROOTEventInfo;
+
 /**
  * @brief No output class
  * 
@@ -37,6 +39,7 @@ public:
   /// write event info
   virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &)
   {}
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/){;}
   virtual void FillEvent(){}///< fill event structure
   virtual void Initialise(){}; ///< open the file
   virtual void Write(const time_t &, const time_t &, const G4float &, const std::string &)

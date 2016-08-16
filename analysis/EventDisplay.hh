@@ -9,7 +9,7 @@
 
 /**
  * @brief Event viewer using ROOT EVE framework.
- * 
+ *
  * @author Stewart Boogert
  */
 
@@ -21,7 +21,7 @@ public:
 
   /// Singleton accessor / constructor w.r.t. a file.
   static EventDisplay* Instance(TString geoFileName);
-  
+
   virtual ~EventDisplay();
 
   /// Load an entry from the model tree.
@@ -69,9 +69,9 @@ private:
   DataLoader *dataLoader             = nullptr;
   Event      *event                  = nullptr;
   TChain     *eventTree              = nullptr;
-  BDSOutputROOTEventOptions *options = nullptr;
+  Options    *options                = nullptr;
   TChain     *optionsTree            = nullptr;
-  BDSOutputROOTEventModel *model     = nullptr;
+  Model      *model                  = nullptr;
   TChain     *modelTree              = nullptr;
 
   /// Singleton instance.

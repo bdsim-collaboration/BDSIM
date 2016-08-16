@@ -193,11 +193,10 @@ void BDS::HandleAborts(int signal_number)
   if (nrOfCalls>0)
     {exit(1);}
   nrOfCalls++;
-  std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
+  std::cout << std::endl << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
-  std::cout << "Trying to write and close output file" << std::endl;
-  std::cout << "Terminate run" << std::endl;
-  BDSRunManager::GetRunManager()->RunTermination();
+  
+  BDSRunManager::GetRunManager()->AbortRun();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
 }
 

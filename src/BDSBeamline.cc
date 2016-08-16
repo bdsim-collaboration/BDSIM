@@ -161,7 +161,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 
   // Check this won't overlap with any previous geometry. This is only done for elements
   // that aren't drifts as they should be built by the component factory to match any angles.
-  if (!empty() && (component->GetType() != "drift"))
+  if (!empty() && (component->GetType() != "drift") && (component->GetType() != "thinmultipole"))
     {// can only look back if there is an element - won't clash if no element; also add drifts always
       G4bool   keepGoing   = true;
       G4bool   checkFaces  = true;
@@ -174,7 +174,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 	{
 	  if (inspectedElement) // valid element
 	    {// decrement could return nullptr so have to check if valid element
-	      if (inspectedElement->GetType() == "drift") // leave keepGoing true
+	      if ((inspectedElement->GetType() == "drift")||(inspectedElement->GetType() == "thinmultipole")) // leave keepGoing true
 		{
 		  zSeparation += inspectedElement->GetChordLength();
 		  inspectedElement = GetPrevious(inspectedElement); // decrement

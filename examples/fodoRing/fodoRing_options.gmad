@@ -5,4 +5,4 @@
 option,	beampipeThickness=3*mm,
 	outerDiameter=0.5*m,
 	beampipeRadius=3*cm, 
-	ngenerate=100;
+	ngenerate=10;

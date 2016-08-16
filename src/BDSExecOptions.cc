@@ -10,13 +10,15 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSOutputFormat.hh"
+#include "BDSOutputLoader.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/getEnv.h"
 #include "parser/options.h"
 
 BDSExecOptions::BDSExecOptions(int argc, char **argv):
-  options(GMAD::Options())
+  options(GMAD::Options()),
+  ignoreSIGINT(false)
 {
   Parse(argc, argv);
   /// after parsing the absolute path can be reconstructed  
@@ -24,6 +26,14 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "BDSIMPATH set to: " << options.bdsimPath << G4endl;
 #endif
+  if (options.recreate)
+    {
+      BDSOutputLoader loader = BDSOutputLoader(options.recreateFileName);
+      GMAD::Options recreateOptions = loader.Options();
+      // Give precedence to exec options - only ones that have been set.
+      recreateOptions.Amalgamate(options, true);
+      options = recreateOptions; // Now replace member.
+    }
 }
 
 void BDSExecOptions::Parse(int argc, char **argv)
@@ -49,13 +59,18 @@ void BDSExecOptions::Parse(int argc, char **argv)
 					{ "batch", 0, 0, 0 },
 					{ "materials", 0, 0, 0 },
 					{ "circular", 0, 0, 0 },
-					{ "seed", 1, 0, 0 },
-					{ "seedstate",1,0,0 },
+					{ "seed",           1, 0, 0},
+					{ "recreate",       1, 0, 0},
+					{ "startFromEvent", 1, 0, 0},
+					{ "writeseedstate", 0, 0, 0},
+					{ "seedstate",      1, 0, 0},
+					{ "seedStateFileName", 1, 0, 0},
 					{ "survey", 1, 0, 0 },
 					{ "ngenerate", 1, 0, 0 },
 					{ "nGenerate", 1, 0, 0 },
 					{ "exportgeometryto", 1, 0, 0 },
 					{ "generatePrimariesOnly", 0, 0, 0 },
+					{ "ignoresigint", 0, 0, 0},
 					{ 0, 0, 0, 0 }};
   
   int OptionIndex  = 0;
@@ -88,7 +103,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	{
 	  Usage();
 	  exit(0);
-	}
+	}      
       else if( !strcmp(optionName , "batch") )
 	{options.set_value("batch",true);}
       else if( !strcmp(optionName , "verbose") )
@@ -174,19 +189,34 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	  conversion = BDS::IsInteger(optarg, result);
 	  options.set_value("seed", result);
 	}
-      else if( !strcmp(optionName, "seedstate") )
+      else if( !strcmp(optionName, "recreate") )
 	{
+	  options.set_value("recreate", true);
+	  options.set_value("recreateFileName", std::string(optarg));
+	}
+      else if( !strcmp(optionName, "startFromEvent") )
+	{
+	  int result = 0;
+	  conversion = BDS::IsInteger(optarg, result);
+	  options.set_value("startFromEvent", result);
+	}
+      else if( !strcmp(optionName, "writeseedstate") )
+	{options.set_value("writeSeedState", true);}
+      else if( !strcmp(optionName, "seedstate")  || !strcmp(optionName, "seedStateFileName"))
+	{
+	  options.set_value("useASCIISeedState", true);
 	  options.set_value("seedStateFileName", std::string(optarg));
-	  options.set_value("setSeedState",      true);
 	}
       else if( !strcmp(optionName, "ngenerate") || !strcmp(optionName, "nGenerate"))
 	{
 	  int result = 1;
 	  conversion = BDS::IsInteger(optarg, result);
-	  options.set_value("nGenerate", result);
+	  options.set_value("ngenerate", result);
 	}
       else if( !strcmp(optionName, "generatePrimariesOnly") )
 	{options.set_value("generatePrimariesOnly", true);}
+      else if( !strcmp(optionName, "ignoresigint") )
+	{ignoreSIGINT = true;}
       else if( !strcmp(optionName, "exportgeometryto") )
 	{// TBC - this should be put into geometry classes
 	  std::string fn = optarg;
@@ -258,8 +288,10 @@ void BDSExecOptions::Usage() const
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
 	<<"                            option in the input gmad file" << G4endl
-        <<"--seed=N                  : the seed to use for the random number generator" <<G4endl
-	<<"--seedstate=<file>        : file containing CLHEP::Random seed state - overrides other seed options"<<G4endl
+        <<"--seed=N                  : the seed to use for the random number generator" << G4endl
+	<<"--seedStateFileName=<file>: use this ASCII file seed state to run an event" << G4endl
+	<<"--recreate=<file>         : the rootevent file to recreate events from" << G4endl
+	<<"--startFromEvent=N        : event offset to start from when recreating events" << G4endl
 	<<"--survey=<file>           : print survey info to <file>"<<G4endl
 	<<"--verbose                 : display general parameters before run"<<G4endl
 	<<"--verbose_event           : display information for every event "<<G4endl
@@ -270,7 +302,8 @@ void BDSExecOptions::Usage() const
 	<<"--verbose_G4stepping=N    : set Geant4 Stepping manager verbosity level"<<G4endl
 	<<"--verbose_G4tracking=N    : set Geant4 Tracking manager verbosity level [-1:5]"<<G4endl
 	<<"--vis_debug               : display all volumes in visualiser"<<G4endl
-	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))"<<G4endl;
+	<<"--vis_mac=<file>          : file with the visualisation macro script, default provided by BDSIM openGL (OGLSQt))" << G4endl
+	<<"--writeseedstate          : write an ASCII file seed state for each event" << G4endl;
 }
 
 void BDSExecOptions::Print() const
@@ -288,7 +321,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << options.seed                << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " seedStateFileName: "   << std::setw(15) << options.seedStateFileName   << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " seedstate: "           << std::setw(15) << options.seedStateFileName   << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " survey: "              << std::setw(15) << options.survey              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " surveyFileName: "      << std::setw(15) << options.surveyFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " verbose: "             << std::setw(15) << options.verbose             << G4endl;
@@ -300,6 +333,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " verboseSteppingLevel: "<< std::setw(15) << options.verboseSteppingLevel<< G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visMacroFileName: "    << std::setw(15) << options.visMacroFileName    << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " visDebug: "            << std::setw(15) << options.visDebug            << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " ignoreSIGINT: "        << std::setw(15) << ignoreSIGINT                << G4endl;
   
   return;
 }
@@ -337,6 +371,8 @@ G4String BDSExecOptions::GetPath(G4String fileName)
     }
   // add additional slash just to be safe
   fullPath += "/";
-  G4cout << "fullpath :" << fullPath << ":" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "fullpath :" << fullPath << ":" << G4endl;
+#endif
   return fullPath;
 }
