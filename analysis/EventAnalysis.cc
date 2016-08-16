@@ -105,8 +105,10 @@ void EventAnalysis::Write(TFile *outputFile)
 
   std::vector<double> xOpticsPoint;
   std::vector<double> yOpticsPoint;
+  std::vector<double> lOpticsPoint;
   xOpticsPoint.resize(24);
   yOpticsPoint.resize(24);
+  lOpticsPoint.resize(24);
 
   // write optical functions
   TTree *opticsTree = new TTree("optics","optics");
@@ -154,11 +156,21 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("Sig_Sigma_xp",&(xOpticsPoint[21]), "Sig_Sigma_xp/D");
   opticsTree->Branch("Sig_Sigma_yp",&(yOpticsPoint[21]), "Sig_Sigma_yp/D");
 
+  opticsTree->Branch("Mean_E",      &(lOpticsPoint[6]), "Mean_E/D");
+  opticsTree->Branch("Mean_t",      &(lOpticsPoint[7]), "Mean_t/D");
+  opticsTree->Branch("Sigma_E",     &(lOpticsPoint[8]), "Sigma_E/D");
+  opticsTree->Branch("Sigma_t",     &(lOpticsPoint[9]), "Sigma_t/D");
+  opticsTree->Branch("Sig_Mean_E",  &(lOpticsPoint[18]), "Sig_Mean_E/D");
+  opticsTree->Branch("Sig_Mean_t",  &(lOpticsPoint[19]), "Sig_Mean_t/D");
+  opticsTree->Branch("Sig_Sigma_E", &(lOpticsPoint[20]), "Sig_Sigma_E/D");
+  opticsTree->Branch("Sig_Sigma_t", &(lOpticsPoint[21]), "Sig_Sigma_t/D");
+
 
   for(auto i : this->opticalFunctions)
   {
     xOpticsPoint = i[0];
     yOpticsPoint = i[1];
+    lOpticsPoint = i[2];
     opticsTree->Fill();
   }
   opticsTree->Write();
