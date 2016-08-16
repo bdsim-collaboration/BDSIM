@@ -32,19 +32,25 @@ The angular brackets should not be used.
 +----------------------------+----------------------------------------------+
 | --materials                | list materials included in BDSIM by default  |
 +----------------------------+----------------------------------------------+
-| --ngenerate=N              | the number of primary events to simulate     |
-|                            | overrides the ngenerate option in input file |
-+----------------------------+----------------------------------------------+
 | --output=<fmt>             | output format "root", "ascii" (default),     |
 |                            | "combined" or "none"                         |
 +----------------------------+----------------------------------------------+
 | --outfile=<file>           | output file name. Will be appended with _N   |
 |                            | where N = 0, 1, 2, 3...                      |
 +----------------------------+----------------------------------------------+
+| --ngenerate=N              | the number of primary events to simulate     |
+|                            | overrides the ngenerate option in input file |
++----------------------------+----------------------------------------------+
 | --seed=<N>                 | seed for the random number generator         |
 +----------------------------+----------------------------------------------+
-| --seedstate=<file>         | file containing CLHEP::Random seed state     |
+| --seedStateFileName=<file> | file containing CLHEP::Random seed state     |
 |                            | NB \- this overrides other seed value        |
++----------------------------+----------------------------------------------+
+| --recreate=<file>          | the rootevent output file to recreate events |
+|                            | from                                         |
++----------------------------+----------------------------------------------+
+| --startFromEvent=N         | event offset to start from when recreating   |
+|                            | events when using --recreate                 |
 +----------------------------+----------------------------------------------+
 | --survey=<file>            | print survey info to <file>                  |
 +----------------------------+----------------------------------------------+
@@ -127,19 +133,20 @@ Examples
 ========
 ::
 
-   bdsim --file=atf2.gmad --output=root --outfile=test1 --batch --seed=123
+   bdsim --file=atf2.gmad --outfile=run1 --batch --seed=123
 
-This executes BDSIM for the ATF2 example with ROOT output to a file name "test1" in batch
+This executes BDSIM for the ATF2 example with ROOT output to a file name "run1" in batch
 mode with a seed value of 123. The simulation runs the number of events specified by the
 :code:`ngenerate` options parameter in the input gmad file. ::
 
-      bdsim --file=sm.gmad --outfile=test2
+      bdsim --file=sm.gmad --outfile=run2
 
 This executes BDSIM for the simpleMachine example with ASCII output (default) to a file named
-"test2". The program is run interactively and the window in Figure appears. From here, the
+"run2". The program is run interactively and the window in Figure appears. From here, the
 user types::
   
   /run/beamOn 1
+  exit
 
 In the visualiser terminal to run one event and visualise it.
 
