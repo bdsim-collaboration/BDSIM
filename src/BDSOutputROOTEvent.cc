@@ -121,11 +121,9 @@ void BDSOutputROOTEvent::Initialise()
 
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   // root file - note this sets the current 'directory' to this file!
-  gDirectory->pwd();
   
   theRootOutputFile      = new TFile(filename,"RECREATE", "BDS output file");
   theRootOutputFile->cd();
-    gDirectory->pwd();
   // options data tree
   theOptionsOutputTree   = new TTree("Options","BDSIM options");
   // model data tree
@@ -134,7 +132,6 @@ void BDSOutputROOTEvent::Initialise()
   theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
   // event data tree
   theRootOutputTree      = new TTree("Event","BDSIM event");
-
   
   // Build options and write structure
   // Get options
@@ -144,7 +141,6 @@ void BDSOutputROOTEvent::Initialise()
   BDSOutputROOTEventOptions *theOptionsOutput = new BDSOutputROOTEventOptions(ob);
   theOptionsOutputTree->Branch("Options.",     "BDSOutputROOTEventOptions",theOptionsOutput,32000,2);
   theOptionsOutput->Fill();
-  gDirectory->pwd();
   theOptionsOutputTree->Fill();
   
   // Build model and write structure
@@ -373,9 +369,7 @@ void BDSOutputROOTEvent::Close()
 
 void BDSOutputROOTEvent::Flush()
 {
-  gDirectory->pwd();
   theRootOutputFile->cd();
-  gDirectory->pwd();
   // loop over sampler map and clear vectors
   for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
     {(*i)->Flush();}  
