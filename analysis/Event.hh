@@ -40,8 +40,9 @@ public:
   BDSOutputROOTEventHistograms*      GetHistograms()       {return histos;}
   /// @}
 
-  /// Set the branch addresses to address the contents of the file.
-  void SetBranchAddress(TChain *, std::vector<std::string>&);
+  /// Set the branch addresses to address the contents of the file. The vector
+  /// of sampler names is used to turn only the samplers required. 
+  void SetBranchAddress(TChain* t, std::vector<std::string>& samplerNames);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__

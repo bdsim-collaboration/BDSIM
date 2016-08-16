@@ -17,7 +17,7 @@ class BDSBeamline;
 /**
  * @brief The base class for bunch distribution generators.
  *
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchInterface
@@ -67,7 +67,7 @@ public :
 			       G4double& t , G4double&  E, G4double& weight);
 
 private:
-  /// A reference to the fully construct beamline that lazy initiated.
+  /// A reference to the fully constructed beamline that's lazyily instantiated.
   BDSBeamline* beamline;
 };
 

@@ -49,7 +49,10 @@ template<typename Type>
 BDSOutputROOT<Type>::~BDSOutputROOT()
 {
   if (theRootOutputFile && theRootOutputFile->IsOpen())
-    {theRootOutputFile->Write(0,TObject::kOverwrite);}
+    {
+      theRootOutputFile->cd();
+      theRootOutputFile->Write(0,TObject::kOverwrite);
+    }
 }
 
 template<typename Type>
@@ -58,6 +61,7 @@ TTree* BDSOutputROOT<Type>::BuildSamplerTree(G4String name)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  theRootOutputFile->cd();
   TTree* SamplerTree = new TTree(name, "Sampler output");
   
   SamplerTree->Branch("E",          &E,          ("E/"  + type).c_str()); // (GeV)
@@ -109,7 +113,7 @@ void BDSOutputROOT<Type>::Initialise()
   
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
   theRootOutputFile = new TFile(filename,"RECREATE", "BDS output file");
-
+  theRootOutputFile->cd();
   // Build sampler trees and store in samplerTrees
   // clear (for the case of multiple output files)
   samplerTrees.clear();
@@ -250,7 +254,10 @@ void BDSOutputROOT<Type>::WriteRootHit(TTree*   tree,
   process     = processIn;
 
   if (fillTree)
-    {tree->Fill();}
+    {
+      theRootOutputFile->cd();
+      tree->Fill();
+    }
 }
 
 template<typename Type>
@@ -276,7 +283,10 @@ void BDSOutputROOT<Type>::WriteRootHit(TTree*         tree,
   process     = hit->GetProcess();
 
   if (fillTree)
-    {tree->Fill();}
+    {
+      theRootOutputFile->cd();
+      tree->Fill();
+    }
 }
 
 template<typename Type>
@@ -332,7 +342,8 @@ void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   G4String name = "Trajectories";
-  
+
+  theRootOutputFile->cd();
   TTree* TrajTree=(TTree*)gDirectory->Get(name);
   
   if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
@@ -441,6 +452,7 @@ void BDSOutputROOT<Type>::WritePrimaryHit(BDSTrajectoryPoint* phit)
 template<typename Type>
 void BDSOutputROOT<Type>::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits)
 {
+  theRootOutputFile->cd();
   for (G4int i = 0; i < tunnelHits->entries(); i++)
     {
       BDSTunnelHit* hit = (*tunnelHits)[i];
@@ -461,6 +473,7 @@ void BDSOutputROOT<Type>::WriteHistogram(BDSHistogram1D* hIn)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
+  theRootOutputFile->cd();
   G4String hname = hIn->GetName();
   hname = BDS::PrepareSafeName(hname);
 
@@ -514,6 +527,7 @@ void BDSOutputROOT<Type>::Write(const time_t& /*startTime*/,
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, writing." << G4endl;
 #endif
       //Dump all other quantities to file...
+      theRootOutputFile->cd();
       theRootOutputFile->Write();
     }
   G4cout << __METHOD_NAME__ << " ...finished." << G4endl;
@@ -531,6 +545,7 @@ void BDSOutputROOT<Type>::Close()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << " - ROOT file found and open, closing." << G4endl;
 #endif
+      theRootOutputFile->cd();
       theRootOutputFile->Close();
       delete theRootOutputFile;
       theRootOutputFile=nullptr;

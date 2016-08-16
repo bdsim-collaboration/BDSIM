@@ -15,11 +15,18 @@ namespace BDSRandom
   /// Print out seed state to G4cout.
   void PrintFullSeedState();
 
-  /// Write the seed state out to 'seedstate.txt' in cwd.
-  void WriteSeedState();
+  /// Write the seed state out to suffix + 'seedstate.txt' in cwd.
+  void WriteSeedState(G4String suffix = "");
+
+  /// Get the current full seed state as a string.
+  G4String GetSeedState();
 
   /// Load a seedstate.txt file and restore the engine to this status.
   void LoadSeedState (G4String inSeedFilename);
+
+  /// Set the seed state from a string.
+  void SetSeedState(G4String seedState);
+  void SetSeedState(std::stringstream& seedState);
 }
 
 #endif

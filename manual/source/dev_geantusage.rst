@@ -41,6 +41,8 @@ BDSRunAction::EndOfRunAction
 G4UserEventAction
 =================
 
+.. warning:: Note, the Primargy Generator action is called before this method at the start of each event!
+
 BDSEventAction::BeginOfEventAction
 ----------------------------------
 
@@ -86,3 +88,20 @@ G4UserSteppingAction
 ====================
 
 Only :code:`UserSteppingAction` is implemented and only to provide verbose output if required.
+
+
+G4VUserPrimaryGeneratorAction
+=============================
+
+BDSPrimaryGeneratorAction::GeneratePrimaries
+--------------------------------------------
+
+This uses a single particle gun and uses BDSBunch derived classes to generate various distributions
+of single primary particles.
+
+**Strong Reproducibility**
+
+Note, the primary generator action is the first thing to be called per event that advances the random
+number generator.  Therefore, the seed state is saved and restored here.  If strong reproduction is
+requested using the executable flag :code:`--recreate=<file>`, the options will be loaded from the
+output file including the bunch distribution and all will be recreated.

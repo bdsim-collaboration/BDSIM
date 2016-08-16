@@ -2,9 +2,9 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEventAction.hh"
+#include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
-#include "BDSRunManager.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSTrajectory.hh"
 #include "BDSTunnelHit.hh"
@@ -12,14 +12,13 @@
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
-#include "G4EventManager.hh"
-#include "G4Run.hh"
 #include "G4HCofThisEvent.hh"
-#include "G4TrajectoryContainer.hh"
-#include "G4RichTrajectoryPoint.hh"
-#include "G4SDManager.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
+#include "G4RichTrajectoryPoint.hh"
+#include "G4Run.hh"
+#include "G4SDManager.hh"
+#include "G4TrajectoryContainer.hh"
 #include "Randomize.hh" // for G4UniformRand
 
 #include "CLHEP/Random/Random.h"
@@ -49,7 +48,8 @@ BDSEventAction::BDSEventAction():
   stopTime(0),
   starts(0),
   stops(0),
-  seedStateAtStart("")
+  seedStateAtStart(""),
+  eventInfo(nullptr)
 {
   verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
   verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
@@ -75,13 +75,13 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "processing begin of event action" << G4endl;
 #endif
-  // save the random engine state
-  std::stringstream ss;
-  CLHEP::HepRandom::saveFullState(ss);
-  seedStateAtStart = ss.str();
+  // update reference to event info
+  eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());
 
   // get the current time
   startTime = time(nullptr);
+  eventInfo->SetStartTime(startTime);
+  eventInfo->SetStopTime(startTime); // initialise to duration of 0
 
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   starts = (G4double)ms.count()/1000.0;
@@ -125,13 +125,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
   // Get the current time
   stopTime = time(nullptr);
-
+  eventInfo->SetStopTime(stopTime);
+  
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   stops = (G4double)ms.count()/1000.0;
-  G4float duration = stops - starts;
+  eventInfo->SetDuration(stops - starts);
 
   // Record timing in output
-  bdsOutput->WriteEventInfo(startTime, stopTime, (G4float) duration, seedStateAtStart);
+  bdsOutput->WriteEventInfo(eventInfo);
 
   // Get the hits collection of this event - all hits from different SDs.
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
@@ -142,7 +143,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {G4cout << __METHOD_NAME__ << "processing end of event"<<G4endl;}
 
   // Record the primary vertex in output
-  WritePrimaryVertex();
+  WritePrimaryVertex(event_number, evt->GetPrimaryVertex());
 
   // Now process each of the hits collections in turn, writing them to output.
   // After this, fill the appropriate histograms with information from this event.
@@ -368,14 +369,15 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #endif
 }
 
-void BDSEventAction::WritePrimaryVertex()
+void BDSEventAction::WritePrimaryVertex(G4int eventID,
+					const G4PrimaryVertex* primaryVertexIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   //Save the primary particle as a hit
-  G4PrimaryVertex*   primaryVertex   = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetPrimaryVertex();
-  G4PrimaryParticle* primaryParticle = primaryVertex->GetPrimary();
+  const G4PrimaryVertex*   primaryVertex   = primaryVertexIn;
+  const G4PrimaryParticle* primaryParticle = primaryVertex->GetPrimary();
   G4ThreeVector      momDir          = primaryParticle->GetMomentumDirection();
   G4double           E               = primaryParticle->GetTotalEnergy();
   G4double           xp              = momDir.x();
@@ -387,7 +389,7 @@ void BDSEventAction::WritePrimaryVertex()
   G4double           t               = primaryVertex->GetT0();
   G4double           weight          = primaryParticle->GetWeight();
   G4int              PDGType         = primaryParticle->GetPDGcode();
-  G4int              nEvent          = BDSRunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  G4int              nEvent          = eventID;
   G4int              turnstaken      = BDSGlobalConstants::Instance()->TurnsTaken();
   bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, PDGType, nEvent, turnstaken);
 }
