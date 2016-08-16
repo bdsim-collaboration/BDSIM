@@ -233,7 +233,7 @@ public:
   // inline setters
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
-  inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("nGenerate", (int)numberToGenerate);}
+  inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("ngenerate", (int)numberToGenerate);}
 
   // laserwire stuff that probably shouldn't be in global constants
   inline G4double      GetLaserwireWavelength()     const {return itsLaserwireWavelength;}
