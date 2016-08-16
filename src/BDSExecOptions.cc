@@ -368,6 +368,8 @@ G4String BDSExecOptions::GetPath(G4String fileName)
     }
   // add additional slash just to be safe
   fullPath += "/";
-  G4cout << "fullpath :" << fullPath << ":" << G4endl;
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "fullpath :" << fullPath << ":" << G4endl;
+#endif
   return fullPath;
 }
