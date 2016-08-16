@@ -43,9 +43,6 @@ namespace GMAD
       /// Define AttributeMap of string and class member pointer
       template <typename T>
 	using AttributeMap = typename std::unordered_map<std::string, T C::*>;
-
-      /// Keep record of all keys in class
-      std::vector<std::string> allKeys;
       
       /// Access method to static map for type T and class C
       template <typename T>
@@ -65,10 +62,7 @@ namespace GMAD
   template<typename C>
     template<typename T>
     void Published<C>::publish(const std::string& name, T C::*mp)
-    {
-      attribute_map<T>()[name] = mp;
-      allKeys.push_back(name);
-    }
+    {attribute_map<T>()[name] = mp;}
 
   template<typename C>
     void Published<C>::set(C* instance, const std::string& name, double value)

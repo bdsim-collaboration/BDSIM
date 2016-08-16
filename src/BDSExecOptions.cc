@@ -30,7 +30,8 @@ BDSExecOptions::BDSExecOptions(int argc, char **argv):
     {
       BDSOutputLoader loader = BDSOutputLoader(options.recreateFileName);
       GMAD::Options recreateOptions = loader.Options();
-      recreateOptions.Amalgamate(options, true); // Give precedence to exec options
+      // Give precedence to exec options - only ones that have been set.
+      recreateOptions.Amalgamate(options, true);
       options = recreateOptions; // Now replace member.
     }
 }
