@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+class BDSOutputROOTEventInfo;
+
 /**
  * @brief Output base class that defines interface for all output types.
  */
@@ -60,6 +62,8 @@ public:
 			      const time_t&  stopTime,
 			      const G4float& duration,
                               const std::string &seedStateAtStart) = 0;
+
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info) = 0;
 
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;

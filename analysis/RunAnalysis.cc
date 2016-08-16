@@ -5,10 +5,12 @@
 
 ClassImp(RunAnalysis)
 
-RunAnalysis::RunAnalysis()
+RunAnalysis::RunAnalysis():
+  Analysis("Run.")
 {;}
 
-RunAnalysis::RunAnalysis(Run *runIn, TChain *chainIn)
+RunAnalysis::RunAnalysis(Run *runIn, TChain *chainIn):
+  Analysis("Run.")
 {
   if(Config::Instance()->Debug())
   {
@@ -16,9 +18,8 @@ RunAnalysis::RunAnalysis(Run *runIn, TChain *chainIn)
   }
 
   //chainIn->GetEntry(0);
-
-  this->run   = runIn;
-  this->chain = chainIn;
+  run   = runIn;
+  chain = chainIn;
 }
 
 RunAnalysis::~RunAnalysis()
@@ -29,24 +30,21 @@ void RunAnalysis::Process()
   if(Config::Instance()->Debug())
   {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
   // loop over events
-  for(int i=0;i<this->chain->GetEntries();++i)
+  for(int i=0; i < chain->GetEntries(); ++i)
   {
-    this->chain->GetEntry(i);
+    chain->GetEntry(i);
 
     if (i == 0)
-      {histoSum = new BDSOutputROOTEventHistograms(*(run->histos));}
+      {histoSum = new HistogramMerge(run->histos);}
+    else
+      {histoSum->Add(run->histos);}
   }
 }
 
 void RunAnalysis::Write(TFile *outputFile)
 {
-  if(Config::Instance()->Debug())
-    {std::cout << __METHOD_NAME__ << std::endl;}
+  Analysis::Write(outputFile);
   TDirectory *bdsimDir = outputFile->mkdir("bdsimRunMergedHistograms");
   bdsimDir->cd();
-
-  for(auto h : this->histoSum->Get1DHistograms())
-    {h->Write();}
-  for(auto h :this->histoSum->Get2DHistograms())
-    {h->Write();}
+  histoSum->Write(outputFile);
 }

@@ -29,6 +29,8 @@ public:
 
   /// Acessor for convenience for the one thing that's needed before the parser options.
   inline G4String InputFileName() const {return options.inputFileName;}
+
+  inline G4bool IgnoreSIGINT() const {return ignoreSIGINT;}  ///< Accessor
   
 private:
   /// Private default constructor to force use of provided one.
@@ -45,6 +47,9 @@ private:
 
   /// The options instance that is populated by parsing the command line options.
   GMAD::Options options;
+
+  /// Whether to ignore Ctrl-C or not - used for ctest.
+  G4bool ignoreSIGINT;
 };
 
 #endif

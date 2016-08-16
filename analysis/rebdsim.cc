@@ -12,10 +12,12 @@
 
 #include "Config.hh"
 #include "DataLoader.hh"
+
+#include "Analysis.hh"
 #include "EventAnalysis.hh"
 #include "RunAnalysis.hh"
-
-
+#include "OptionsAnalysis.hh"
+#include "ModelAnalysis.hh"
 
 int main(int argc, char *argv[])
 {
@@ -56,22 +58,32 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
+  std::vector<Analysis*> analyses;
+
   DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
-  EventAnalysis evtAnalysis = EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  RunAnalysis* runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
+  OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree());
+  ModelAnalysis* modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
 
-  // process events
-  evtAnalysis.Initialise();
-  evtAnalysis.Process();
-  evtAnalysis.SimpleHistograms();
-  evtAnalysis.Terminate();
+  analyses.push_back(evtAnalysis);
+  analyses.push_back(runAnalysis);
+  analyses.push_back(optAnalysis);
+  analyses.push_back(modAnalysis);
 
-  RunAnalysis runAnalysis = RunAnalysis(dl.GetRun(), dl.GetRunTree());
-  runAnalysis.Process();
+  for (auto& analysis : analyses)
+    {
+      analysis->Execute();
+    }
 
   // write output
   TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
-  evtAnalysis.Write(outputFile);
-  runAnalysis.Write(outputFile);
+
+  for (auto& analysis : analyses)
+    {
+      analysis->Write(outputFile);
+    }
+
   outputFile->Close();
 
   return 0;

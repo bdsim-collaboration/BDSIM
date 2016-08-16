@@ -56,18 +56,16 @@ namespace GMAD
     int  verboseSteppingLevel;
     ///@}
   
-    bool circular;     ///< Flag for circular machine
-    int  seed;         ///< The seed value for the random number generator
-    bool setSeedState; ///< If seed state is specifed - use the state saved in it
-    std::string seedStateFileName; ///< The seed state filename
+    bool circular;                 ///< Flag for circular machine
+    int  seed;                     ///< The seed value for the random number generator
+    int  nGenerate;                ///< The number of primary events to simulate
+    bool recreate;                 ///< Whether to recreate from a file or not.
+    std::string recreateFileName;  ///< The file path to recreate a run from.
+    int  startFromEvent;           ///< Event to start from when recreating.
+    bool writeSeedState;           ///< Write the seed state each event to a text file.
+    bool useASCIISeedState;        ///< Whether to use the seed state from an ASCII file.
+    std::string seedStateFileName; ///< Seed state file path.
     
-    /// String that points to path where files are searched;
-    /// based on environment variable or else input filename
-    std::string bdsimPath;
-    
-    /// The number of primary events to simulate
-    int nGenerate; 
-
     /// Whether to only generate primary coordinates and quit, or not.
     bool generatePrimariesOnly; 
     
@@ -76,6 +74,10 @@ namespace GMAD
     std::string exportType;
     std::string exportFileName;
     ///@}
+
+    /// String that points to path where files are searched;
+    /// based on environment variable or else input filename
+    std::string bdsimPath;
     
     /// list of physics processes
     std::string physicsList;
@@ -92,10 +94,12 @@ namespace GMAD
     ///@}
     
     int nlinesIgnore; ///< ignore first lines in the input bunch file
-
+    int eventOffset;  ///< Event number to start from when recreating from a root file.
+    bool recreateSeedState; ///< Load seed state when recreating events.
+    
     double elossHistoBinWidth;
     double elossHistoTransBinWidth;
-    double defaultRangeCut;
+    
     /// magnetic field flip (+1 default, -1: flip sign)
     double ffact;
     double beamEnergy;
@@ -142,18 +146,18 @@ namespace GMAD
     ///@}
     
     ///@{ for the halo distribution
-    double      haloEmitX             =  0;
-    double      haloEmitY             =  0;
-    double      haloEnvelopeEmitX     =  1e9;
-    double      haloEnvelopeEmitY     =  1e9;
-    double      haloEnvelopeCollMinX  =  1e9;
-    double      haloEnvelopeCollMaxX  = -1e9;
-    double      haloEnvelopeCollMinXp =  1e9;
-    double      haloEnvelopeCollMaxXp = -1e9;
-    double      haloEnvelopeCollMinY  =  1e9;
-    double      haloEnvelopeCollMaxY  = -1e9;
-    double      haloEnvelopeCollMinYp =  1e9;
-    double      haloEnvelopeCollMaxYp = -1e9;
+    double      haloEmitX;
+    double      haloEmitY;
+    double      haloEnvelopeEmitX;
+    double      haloEnvelopeEmitY;
+    double      haloEnvelopeCollMinX;
+    double      haloEnvelopeCollMaxX;
+    double      haloEnvelopeCollMinXp;
+    double      haloEnvelopeCollMaxXp;
+    double      haloEnvelopeCollMinY;
+    double      haloEnvelopeCollMaxY;
+    double      haloEnvelopeCollMinYp;
+    double      haloEnvelopeCollMaxYp;
     double      haloPSWeightParameter;
     std::string haloPSWeightFunction;
     ///@}
@@ -161,14 +165,10 @@ namespace GMAD
     /// for the gaussian, elliptic shell, ring distributions
     double sigmaE;
 
+    int    eventNumberOffset;
+    
     /// bdsim options
-    int       doPlanckScattering;
     int       checkOverlaps;
-    int       numberOfEventsPerNtuple;
-    int       eventNumberOffset;
-    double    vacuumPressure;
-    double    planckScatterFe;
-
     /// for element specification
     double xsize, ysize;
 
@@ -179,9 +179,11 @@ namespace GMAD
     double      thinElementLength;
 
     /// geometry debug, don't split bends into multiple segments
-    bool        dontSplitSBends;
+    bool      dontSplitSBends;
+    
+    bool      includeIronMagFields;
+    bool      sensitiveBeamlineComponents;
 
-    bool        includeIronMagFields;
     bool        includeFringeFields;
 
     ///@{ default beampipe parameters
@@ -193,11 +195,14 @@ namespace GMAD
     double      aper4;
     std::string beampipeMaterial;
     ///@}
-
+    
     /// vacuum material
     std::string vacMaterial;
     /// world volume
     std::string emptyMaterial;
+
+    double    vacuumPressure;
+    bool      sensitiveBeamPipe;
     
     ///@{ tunnel geometry parameters
     bool        buildTunnel;
@@ -223,22 +228,25 @@ namespace GMAD
     ///BLM geometry
     double   blmRad;
     double   blmLength;
+    bool     sensitiveBLMs;
+
+    bool     useEMLPB;
+    bool     useHadLPB;
+    bool     doPlanckScattering;    
+    double   planckScatterFe;
+    bool     turnOnCerenkov;
+    bool     turnOnOpticalAbsorption;
+    bool     turnOnMieScattering;
+    bool     turnOnRayleighScattering;
+    bool     turnOnOpticalSurface;
+    bool     turnOnBirksSaturation;
 
     ///Cross section biasing parameters
     double   scintYieldFactor;
-
-    int      useEMLPB;
-    int      useHadLPB;
-
-    int      sensitiveBeamlineComponents;
-    int      sensitiveBeamPipe;
-    int      sensitiveBLMs;
-
     double   LPBFraction;
-
     double   thresholdCutCharged;
     double   thresholdCutPhotons;
-
+    double   defaultRangeCut;
     double   prodCutPhotons;
     double   prodCutPhotonsP;
     double   prodCutPhotonsA;
@@ -251,13 +259,13 @@ namespace GMAD
     double   prodCutProtons;
     double   prodCutProtonsP;
     double   prodCutProtonsA;
-
+    
     /// Biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
 
     /// Tracking related parameters
-    std::string integratorSet;
+    double   lengthSafety;
     double   maximumTrackingTime; ///< maximum tracking time per volume [s]
     double   deltaChord;
     double   chordStepMinimum;
@@ -265,25 +273,17 @@ namespace GMAD
     double   minimumEpsilonStep;
     double   maximumEpsilonStep;
     double   deltaOneStep;
-    int      turnOnCerenkov;
-    int      turnOnOpticalAbsorption;
-    int      turnOnMieScattering;
-    int      turnOnRayleighScattering;
-    int      turnOnOpticalSurface;
-    int      turnOnBirksSaturation;
-    double   lengthSafety;
+    bool     stopTracks;    
+    bool     stopSecondaries;
+    bool     killNeutrinos;
 
+    int         numberOfEventsPerNtuple;
+    double      trajCutGTZ;
+    double      trajCutLTR;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;
     double      storeTrajectoryEnergyThreshold;
-    
-    double   trajCutGTZ;
-    double   trajCutLTR;
-
-    bool     stopSecondaries;
-    bool     stopTracks;
-    bool     killNeutrinos;
 
     /// Ring parameters
     int      nturns;

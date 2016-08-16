@@ -3,11 +3,20 @@
 
 #include "BDSOutputBase.hh"
 
+#include "globals.hh" // geant4 types / globals
+
+#include <ctime>
+#include <string>
 #include <vector>
 
+class BDSHistogram1D;
+class BDSOutputROOTEventInfo;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
+
 /**
- * @brief Output that holds multiple outputs.
- *
+ * @brief Class that holds multiple outputs.
+ * 
  * @author Jochem Snuverink
  */
 
@@ -53,6 +62,7 @@ public:
 			      const time_t&  stopTime,
 			      const G4float& duration,
                               const std::string& seedStateAtStart);
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info);
   /// Fill event
   virtual void FillEvent() {};
   virtual void Initialise(); ///< open the file
@@ -64,7 +74,7 @@ public:
   virtual void Close();      ///< close the file
 
 private:
-  /// 
+  /// Vector of output instances.
   std::vector<BDSOutputBase*> output;
 };
 

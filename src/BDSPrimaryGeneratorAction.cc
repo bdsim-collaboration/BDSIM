@@ -1,9 +1,15 @@
-#include "BDSGlobalConstants.hh"
-#include "BDSPrimaryGeneratorAction.hh"
 #include "BDSBunch.hh"
-#include "BDSParticle.hh"
 #include "BDSDebug.hh"
+#include "BDSEventInfo.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSOutputLoader.hh"
+#include "BDSParticle.hh"
+#include "BDSPrimaryGeneratorAction.hh"
+#include "BDSRandom.hh"
 
+#include "CLHEP/Random/Random.h"
+
+#include "globals.hh" // geant4 types / globals
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleDefinition.hh"
@@ -11,9 +17,19 @@
 BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   G4VUserPrimaryGeneratorAction(),
   weight(1),
-  bdsBunch(bdsBunchIn)
+  bdsBunch(bdsBunchIn),
+  recreateFile(nullptr)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
+
+  writeASCIISeedState = BDSGlobalConstants::Instance()->WriteSeedState();
+  recreate            = BDSGlobalConstants::Instance()->Recreate();
+  
+  if (recreate)
+    {
+      recreateFile = new BDSOutputLoader(BDSGlobalConstants::Instance()->RecreateFileName());
+      eventOffset  = BDSGlobalConstants::Instance()->StartFromEvent();
+    }
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Primary particle is "
@@ -27,12 +43,27 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
 }
 
 BDSPrimaryGeneratorAction::~BDSPrimaryGeneratorAction()
-{delete particleGun;}
+{
+  delete particleGun;
+  delete recreateFile;
+}
 
 void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  //this function is called at the begining of event
+  // Load seed state if recreating.
+  if (recreate)
+    {BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));}
+  
+  // save the seed state in a file to recover potentially unrecoverable events
+  if (writeASCIISeedState)
+    {BDSRandom::WriteSeedState();}
 
+  // Always save seed state in output
+  BDSEventInfo* eventInfo = new BDSEventInfo();
+  anEvent->SetUserInformation(eventInfo);
+  eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
+
+  //this function is called at the begining of event
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
 
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
@@ -45,7 +76,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
       G4cout << __METHOD_NAME__ << "Particle kinetic energy smaller than 0! This will not be tracked." << G4endl;
       anEvent->SetEventAborted();
     }
-#ifdef BDSDEBUG 
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ 
 	 << x0 << " " << y0 << " " << z0 << " " 
 	 << xp << " " << yp << " " << zp << " " 

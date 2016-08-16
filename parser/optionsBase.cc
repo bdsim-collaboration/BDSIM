@@ -18,26 +18,30 @@ OptionsBase::OptionsBase()
   visMacroFileName      = "";
   visDebug              = false;
   outputFileName        = "output";
-  outputFormat          = "ascii";
+  outputFormat          = "rootevent";
   survey                = false;
   surveyFileName        = "survey.dat";
   gflash                = false;
   gflashemax            = 10000;
   gflashemin            = 0.1;
+  batch                 = false;
   verbose               = false;
   verboseEvent          = false;
   verboseStep           = false;
   verboseEventNumber    = -1;
-  batch                 = false; 
   verboseRunLevel       = 0;
   verboseEventLevel     = 0;
   verboseTrackingLevel  = 0;
   verboseSteppingLevel  = 0;
   circular              = false;
   seed                  = -1;
-  seedStateFileName     = "";
-  setSeedState          = false;
   nGenerate             = 1;
+  recreate              = false;
+  recreateFileName      = "";
+  startFromEvent        = 0;
+  writeSeedState        = false;
+  useASCIISeedState     = false;
+  seedStateFileName     = "";
   generatePrimariesOnly = false;
   exportGeometry        = false;
   exportType            = "gdml";
@@ -56,9 +60,14 @@ OptionsBase::OptionsBase()
   zDistribType          = "";
   distribFile           = "";
   distribFileFormat     = "";
-  haloPSWeightParameter = 1.0;
-  haloPSWeightFunction  = "";
+  
   nlinesIgnore          = 0;
+  eventOffset           = 0;
+  recreateSeedState     = true;
+
+  elossHistoBinWidth      = 1.0; // m
+  elossHistoTransBinWidth = 0.1;
+  
   ffact                 = 1.0;
   beamEnergy            = 0.0;
 
@@ -81,7 +90,23 @@ OptionsBase::OptionsBase()
   shellX=0.0, shellXp=0.0, shellY=0.0, shellYp=0.0;
   shellXWidth=0.0, shellXpWidth=0.0, shellYWidth=0.0, shellYpWidth=0.0;
   Rmin=0.0, Rmax=0.0;
-  sigmaE=0.0;
+
+  haloEmitX             =  0;
+  haloEmitY             =  0;
+  haloEnvelopeEmitX     =  1e9;
+  haloEnvelopeEmitY     =  1e9;
+  haloEnvelopeCollMinX  =  1e9;
+  haloEnvelopeCollMaxX  = -1e9;
+  haloEnvelopeCollMinXp =  1e9;
+  haloEnvelopeCollMaxXp = -1e9;
+  haloEnvelopeCollMinY  =  1e9;
+  haloEnvelopeCollMaxY  = -1e9;
+  haloEnvelopeCollMinYp =  1e9;
+  haloEnvelopeCollMaxYp = -1e9;
+  haloPSWeightParameter = 1.0;
+  haloPSWeightFunction  = "";
+  
+  sigmaE = 0.0;
 
   eventNumberOffset       = 0;
 
@@ -101,7 +126,7 @@ OptionsBase::OptionsBase()
   includeFringeFields  = false;
 
   includeIronMagFields = false;
-  sensitiveBeamlineComponents = 1;
+  sensitiveBeamlineComponents = true;
 
   // beam pipe / aperture
   beampipeThickness    = 0.0025;
@@ -114,7 +139,7 @@ OptionsBase::OptionsBase()
   vacMaterial          = "Vacuum";
   emptyMaterial        = "G4_Galactic";
   vacuumPressure       = 1e-12;
-  sensitiveBeamPipe    = 1;
+  sensitiveBeamPipe    = true;
 
   // tunnel options
   buildTunnel         = false;
@@ -139,19 +164,19 @@ OptionsBase::OptionsBase()
   // beam loss monitors geometry
   blmRad                   = 0.05;
   blmLength                = 0.18;
-  sensitiveBLMs            = 1;
+  sensitiveBLMs            = true;
 
   // physics processes
-  useEMLPB                 = 0;
-  useHadLPB                = 0;
-  doPlanckScattering       = 0;
+  useEMLPB                 = false;
+  useHadLPB                = false;
+  doPlanckScattering       = false;
   planckScatterFe          = 1.0;
-  turnOnCerenkov           = 1;
-  turnOnOpticalAbsorption  = 1;
-  turnOnMieScattering      = 1;
-  turnOnRayleighScattering = 1;
-  turnOnOpticalSurface     = 1;
-  turnOnBirksSaturation    = 1;
+  turnOnCerenkov           = true;
+  turnOnOpticalAbsorption  = true;
+  turnOnMieScattering      = true;
+  turnOnRayleighScattering = true;
+  turnOnOpticalSurface     = true;
+  turnOnBirksSaturation    = true;
   scintYieldFactor         = 1.0;
   LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
@@ -190,8 +215,6 @@ OptionsBase::OptionsBase()
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;
-  elossHistoBinWidth       = 1.0; // m
-  elossHistoTransBinWidth  = 0.1;
   trajCutGTZ               = 0.0;  // minimum z position
   trajCutLTR               = 1e12; // maximum radius in mm, so large default value
   storeTrajectory          = false;
@@ -211,7 +234,7 @@ OptionsBase::OptionsBase()
 
 void OptionsBase::print() const
 {
-  std::cout<<"Options               : " << std::endl;
+  std::cout<<"Options                 " << std::endl;
   std::cout<<"particle              : " << particleName             << std::endl;
   std::cout<<"nominal energy        : " << beamEnergy               << std::endl;
   std::cout<<"n particles           : " << nGenerate                << std::endl;
