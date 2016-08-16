@@ -1,15 +1,6 @@
 include io.gmad;
 
-! now this specification of proton is required here but should be ignored
-! the original job uses an electron so we should be easily able to tell
-! if this worked.
-beam, particle="proton",
-      energy=1*GeV,
-      distrType="recreate",
-      distrFile="output_event.root",
-      eventOffset=3;
-
-! the default is true for this, but explicitly set it as test of parser
-option, recreateSeedState=1;
-
-option, ngenerate=6;
+option, recreate=1, ! 1 = true here
+	recreateFileName="output_event.root",
+	startFromEvent=3,
+	ngenerate=2;
