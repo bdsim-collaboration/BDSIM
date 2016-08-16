@@ -20,6 +20,7 @@ private:
   void postWindowSampler();
   void windowScreenGap();
   void preScreenSampler();
+  void postMountSampler();
   void postScreenSampler();
   void windowLayer();
   void backLayer();

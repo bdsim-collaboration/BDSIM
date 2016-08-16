@@ -31,7 +31,7 @@ extern LogVolMap* LogVol;
 #define DEBUG 1
 //============================================================
 BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName, G4double length=2.7*CLHEP::m, G4String bmapFile = "", G4double BField=0, G4double poleStartZ=62.733*CLHEP::cm, G4String material="lanex", G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap=0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial="G4_Al", G4double mountThickness=0, G4String mountMaterial="G4_BAKELITE", G4double screenEndZ = (258-62.733)*CLHEP::cm, G4String spec="", G4double screenWidth=1*CLHEP::m):
-  BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _BField(BField), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial), _screenWidth(screenWidth)
+  BDSAcceleratorComponent(aName, length, 0, 0, 0,"","",0,0,0,0,0,0,"",bmapFile), _mlScreen(NULL), _camera(NULL), _BField(BField), _poleStartZ(poleStartZ), _screenEndZ(screenEndZ), _material(material), _thickness(thickness), _screenAngle(angle), _windowScreenGap(windowScreenGap), _windowThickness(windowThickness), _windowMaterial(windowMaterial), _mountThickness(mountThickness), _mountMaterial(mountMaterial), _screenWidth(screenWidth)
 {
   //Change sign of angle.
   _screenAngle*=-1;
