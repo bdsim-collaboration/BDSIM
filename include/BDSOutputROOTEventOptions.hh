@@ -18,7 +18,7 @@
  * @author Stewart Boogert
  */
 
-class BDSOutputROOTEventOptions: public TObject, GMAD::OptionsBase
+class BDSOutputROOTEventOptions: public TObject, public GMAD::OptionsBase
 {
 public:
   BDSOutputROOTEventOptions();

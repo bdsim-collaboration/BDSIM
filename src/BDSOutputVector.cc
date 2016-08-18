@@ -138,6 +138,12 @@ void BDSOutputVector::Write(const time_t&  startTime,
     {output[i]->Write(startTime, stopTime, duration, seedStateAtStart);}
 }
 
+void BDSOutputVector::WriteEventInfo(const BDSOutputROOTEventInfo* info)
+{
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteEventInfo(info);}
+}  
+
 void BDSOutputVector::Close()
 {
 #ifdef BDSDEBUG

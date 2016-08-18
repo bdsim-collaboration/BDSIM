@@ -1300,40 +1300,50 @@ as their value.
 +==================================+=======================================================+
 | **Common Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
+| batch                            | run BDISM without the visualiser                      |
++----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
 | beampipeThickness                | default beam pipe thickness [m]                       |
 +----------------------------------+-------------------------------------------------------+
 | beampipeMaterial                 | default beam pipe material                            |
 +----------------------------------+-------------------------------------------------------+
-| boxSize                          | default accelerator component full width [m]          |
+| circular                         | whether the accelerator is circular or not            |
++----------------------------------+-------------------------------------------------------+
+| elossHistoBinWidth               | the width of the histogram bins [m]                   |
++----------------------------------+-------------------------------------------------------+
+| killNeutrinos                    | whether to always stop tracking neutrinos for         |
+|                                  | increased efficiency (default = true)                 |
++----------------------------------+-------------------------------------------------------+
+| ngenerate                        | number of primary particles to simulate               |
++----------------------------------+-------------------------------------------------------+
+| outerDiameter                    | default accelerator component full width [m]          |
++----------------------------------+-------------------------------------------------------+
+| physicsList                      | the physics list to use                               |
++----------------------------------+-------------------------------------------------------+
+| printModuloFraction              | the fraction of events to print out (default 0.1)     |
++----------------------------------+-------------------------------------------------------+
+| recreate                         | whether to run in recreation mode (default 0)         |
++----------------------------------+-------------------------------------------------------+
+| recreateFileName                 | which file to recreate events from                    |
++----------------------------------+-------------------------------------------------------+
+| startFromEvent                   | event number offset to start from when recreating     |
 +----------------------------------+-------------------------------------------------------+
 | seed                             | the integer seed value for the random number          |
 |                                  | generator                                             |
 +----------------------------------+-------------------------------------------------------+
-| ngenerate                        | number of primary particles to simulate               |
-+----------------------------------+-------------------------------------------------------+
-| elossHistoBinWidth               | the width of the histogram bins [m]                   |
-+----------------------------------+-------------------------------------------------------+
-| physicsList                      | the physics list to use                               |
-+----------------------------------+-------------------------------------------------------+
-| thresholdCutCharged              | the minimum energy above which to simulate electron   |
-|                                  | and positrons - any below this energy will be killed  |
-+----------------------------------+-------------------------------------------------------+
-| thresholdCutPhotons              | the minimum energy above which to simulate photons -  |
-|                                  | any below this energy will be killed                  |
+| seedStateFileName                | path to ASCII seed state to load - must be used with  |
+|                                  | :code:`useASCIISeedState` to be effective             |
 +----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | stopTracks                       | whether to stop tracks after                          |
 |                                  | interaction (default = false)                         |
 +----------------------------------+-------------------------------------------------------+
-| killNeutrinos                    | whether to always stop tracking neutrinos for         |
-|                                  | increased efficiency (default = true)                 |
+| useASCIISeedState                | whether to load an ASCII seed state file using        |
+|                                  | :code:`seedStateFileName`                             |
 +----------------------------------+-------------------------------------------------------+
-| circular                         | whether the accelerator is circular or not            |
-+----------------------------------+-------------------------------------------------------+
-| printModuloFraction              | the fraction of events to print out (default 0.1)     |
+| writeseedstate                   | write the seed state of the last event start in ASCII |
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+

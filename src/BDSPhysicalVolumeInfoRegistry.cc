@@ -71,6 +71,8 @@ void BDSPhysicalVolumeInfoRegistry::RegisterInfo(G4VPhysicalVolume*     physical
 BDSPhysicalVolumeInfo* BDSPhysicalVolumeInfoRegistry::GetInfo(G4VPhysicalVolume* physicalVolume,
 							      G4bool             isTunnel)
 {
+  if (!physicalVolume)
+    {return nullptr;}
   if (excludedVolumes.find(physicalVolume) != excludedVolumes.end())
     {// it was found in excluded volumes
       return nullptr;

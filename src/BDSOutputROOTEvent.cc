@@ -120,8 +120,10 @@ void BDSOutputROOTEvent::Initialise()
   }
 
   G4cout << __METHOD_NAME__ << "Setting up new file: "<<filename<<G4endl;
-  // root file
+  // root file - note this sets the current 'directory' to this file!
+  
   theRootOutputFile      = new TFile(filename,"RECREATE", "BDS output file");
+  theRootOutputFile->cd();
   // options data tree
   theOptionsOutputTree   = new TTree("Options","BDSIM options");
   // model data tree
@@ -130,7 +132,6 @@ void BDSOutputROOTEvent::Initialise()
   theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
   // event data tree
   theRootOutputTree      = new TTree("Event","BDSIM event");
-
   
   // Build options and write structure
   // Get options
@@ -199,7 +200,6 @@ void BDSOutputROOTEvent::WriteHits(BDSSamplerHitsCollection* hc)
   G4cout << __METHOD_NAME__ << G4endl;
   G4cout << __METHOD_NAME__ << hc->entries() << std::endl;
 #endif
-
   for(int i=0;i<hc->entries();i++)
     {
       G4int samplerId = (*hc)[i]->GetSamplerID();
@@ -313,9 +313,9 @@ void BDSOutputROOTEvent::FillEvent()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  theRootOutputFile->cd();
   theRootOutputTree->Fill();
-  this->Flush();
-  
+  Flush();
 }
 void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
 					const time_t&  stopTime,
@@ -328,6 +328,11 @@ void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,
   evtInfo->seedStateAtStart = seedStateAtStart;
 }
 
+void BDSOutputROOTEvent::WriteEventInfo(const BDSOutputROOTEventInfo* info)
+{
+  *evtInfo = *info;
+}
+
 void BDSOutputROOTEvent::Write(const time_t&  startTime,
 			       const time_t&  stopTime,
 			       const G4float& duration,
@@ -336,6 +341,7 @@ void BDSOutputROOTEvent::Write(const time_t&  startTime,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
+  theRootOutputFile->cd();
   runInfo->startTime        = startTime;
   runInfo->stopTime         = stopTime;
   runInfo->duration         = duration;
@@ -353,6 +359,7 @@ void BDSOutputROOTEvent::Close()
 #endif
   if(theRootOutputFile && theRootOutputFile->IsOpen())
     {
+      theRootOutputFile->cd();
       theRootOutputFile->Write(0,TObject::kOverwrite);
       theRootOutputFile->Close();
       delete theRootOutputFile;
@@ -362,6 +369,7 @@ void BDSOutputROOTEvent::Close()
 
 void BDSOutputROOTEvent::Flush()
 {
+  theRootOutputFile->cd();
   // loop over sampler map and clear vectors
   for(auto i= samplerTrees.begin() ; i != samplerTrees.end() ;++i)
     {(*i)->Flush();}  

@@ -7,22 +7,22 @@
 #include "BDSBunchInterface.hh"
 
 /**
- * @brief A distribution that allows mixing of three different distributions in each
- * primary dimension.
+ * @brief A distribution that allows mixing of three different 
+ * distributions in each primary dimension.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchComposite: public BDSBunchInterface
 { 
-protected : 
-  BDSBunchInterface *xBunch; 
-  BDSBunchInterface *yBunch;
-  BDSBunchInterface *zBunch;
+protected:
+  BDSBunchInterface* xBunch; 
+  BDSBunchInterface* yBunch;
+  BDSBunchInterface* zBunch;
 
-public :
+public:
   BDSBunchComposite(); 
-  ~BDSBunchComposite();
+  virtual ~BDSBunchComposite();
   void SetOptions(const GMAD::Options& opt); 
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,

@@ -44,6 +44,9 @@ class BDSBeamPipeInfo;
  * Singleton pattern. The (private) constructor requires a GMAD::Options
  * instance, but to maintain the singleton pattern this is accessed through
  * BDSParser singleton instance.
+ *
+ * Note, some options that are used by BDSBunchInterface derived classes 
+ * don't have accessors here as they're only used directly there.
  */
 
 class BDSGlobalConstants
@@ -92,7 +95,11 @@ public:
   inline G4bool   Circular()               const {return G4bool  (options.circular);}
   inline G4int    Seed()                   const {return G4int   (options.seed);}
   inline G4bool   SeedSet()                const {return G4bool  (options.HasBeenSet("seed"));}
-  inline G4bool   SetSeedState()           const {return G4bool  (options.setSeedState);}
+  inline G4bool   Recreate()               const {return G4bool  (options.recreate);}
+  inline G4String RecreateFileName()       const {return G4String(options.recreateFileName);}
+  inline G4int    StartFromEvent()         const {return G4int   (options.startFromEvent);}
+  inline G4bool   WriteSeedState()         const {return G4bool  (options.writeSeedState);}
+  inline G4bool   UseASCIISeedState()      const {return G4bool  (options.useASCIISeedState);}
   inline G4String SeedStateFileName()      const {return G4String(options.seedStateFileName);}
   inline G4String BDSIMPath()              const {return G4String(options.bdsimPath);}
   inline G4int    NGenerate()              const {return G4int   (options.nGenerate);}
@@ -226,7 +233,7 @@ public:
   // inline setters
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
-  inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("nGenerate", (int)numberToGenerate);}
+  inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("ngenerate", (int)numberToGenerate);}
 
   // laserwire stuff that probably shouldn't be in global constants
   inline G4double      GetLaserwireWavelength()     const {return itsLaserwireWavelength;}

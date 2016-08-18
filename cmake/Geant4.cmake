@@ -37,6 +37,24 @@ if (Geant4_FOUND)
       include(${Geant4_USE_FILE})
       message(STATUS "Geant4 Definitions: ${Geant4_DEFINITIONS}")
 
+      # We require geant4 be built against the system clhep (as bdsim will be)
+      # to ensure strong reproducibility
+      # the geant4 config search bit is taken from their cmake script as they don't
+      # export the variable for use by others
+      find_program(GEANT4_CONFIG NAMES geant4-config
+             PATHS $ENV{GEANT4_INSTALL}/bin
+                   ${GEANT4_INSTALL}/bin
+                   /usr/local/bin /opt/local/bin)
+      execute_process(COMMAND ${GEANT4_CONFIG} --has-feature clhep
+                  OUTPUT_VARIABLE _TMP)
+      if($ENV{VERBOSE})
+         message(STATUS "Geant4 config executable:  ${GEANT4_CONFIG}")
+         message(STATUS "Geant4 uses its own clhep: ${_TMP}")
+      endif()
+      if (_TMP MATCHES "yes")
+      	 message(FATAL_ERROR "BDSIM requires Geant4 to be compiled using the system CLHEP so it's the same as BDSIM for strong reproducibility - please reconfigure and reinstall Geant4")
+      endif()
+
       # We don't support multithreading for now
       if ("${Geant4_DEFINITIONS}" MATCHES "G4MULTITHREADED")
 	message(FATAL_ERROR "Currently Geant4 builds with multithreading are not supported at the moment! Please build Geant4 with multithreading off. Exiting")
