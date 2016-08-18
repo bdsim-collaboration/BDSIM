@@ -165,14 +165,19 @@ void BDSSextStepper::Stepper( const G4double yInput[],
   for(i=0;i<nvar;i++) yIn[i]=yInput[i];
 
   const G4double *pIn = yInput+3;
-  G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yIn[1], yInput[3]);
+  G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
   G4ThreeVector GlobalP = G4ThreeVector(pIn[0],    pIn[1],    pIn[2]);
 
-  // auxNavigator->LocateGlobalPointAndSetup(GlobalR);
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-  G4ThreeVector     localP= GlobalAffine.TransformAxis(GlobalP);
+  G4ThreeVector GlobalPDir = GlobalP.unit();
 
-  if (localP.z() < 0.9 || GlobalP.mag() < 40.0 )
+  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
+  G4ThreeVector     localPDir= GlobalAffine.TransformAxis(GlobalPDir);
+
+
+ // G4cout << GlobalR.z() << " " << localPDir.z() << " " << GlobalP.mag() << G4endl;
+
+  if (localPDir.z() < 0.9 || GlobalP.mag() < 40.0 )
   {
     backupStepper->Stepper(yIn, dydx, hstep, yOut, yErr);
     return;
