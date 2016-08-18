@@ -177,7 +177,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldMag* resultantField = field;
   if (info.ProvideGlobal())
-    {resultantField = new BDSFieldMagGlobal(field);}
+    {resultantField = new BDSFieldMagGlobal(field, info.CacheTransforms());}
 
   // Always this equation of motion for magnetic (only) fields
   G4Mag_UsualEqRhs* eqOfM = new G4Mag_UsualEqRhs(resultantField);
@@ -204,7 +204,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldEM* resultantField = field;
   if (info.ProvideGlobal())
-    {resultantField = new BDSFieldEMGlobal(field);}
+    {resultantField = new BDSFieldEMGlobal(field, info.CacheTransforms());}
 
   // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
@@ -231,7 +231,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
   // Optionally provide local to global transform using curvilinear coordinate system.
   BDSFieldE* resultantField = field;
   if (info.ProvideGlobal())
-    {resultantField = new BDSFieldEGlobal(field);}
+    {resultantField = new BDSFieldEGlobal(field, info.CacheTransforms());}
 
   // Equation of motion for em fields
   G4EqMagElectricField* eqOfM = new G4EqMagElectricField(resultantField);
