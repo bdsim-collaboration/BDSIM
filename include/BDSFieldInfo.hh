@@ -20,7 +20,7 @@ class BDSMagnetStrength;
  * to create the desired fully functional field with all required 
  * associated Geant4 objects.
  * 
- * Owns the magnetic strength instance.
+ * Owns the magnetic strength instance & cavity info instance.
  *
  * @author Laurie Nevay
  */
@@ -28,8 +28,8 @@ class BDSMagnetStrength;
 class BDSFieldInfo
 {
 public:
-	/// Default constructor for zero field effictively
-	BDSFieldInfo();
+  /// Default constructor for zero field effectively
+  BDSFieldInfo();
   BDSFieldInfo(BDSFieldType       fieldTypeIn,
 	       G4double           brhoIn,
 	       BDSIntegratorType  integratorTypeIn,

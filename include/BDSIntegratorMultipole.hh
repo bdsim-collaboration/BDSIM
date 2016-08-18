@@ -10,15 +10,9 @@
 #include <list>
 
 /**
- * @brief Integrator that ignores the field and uses the analytical solution to a quadrupole.
+ * @brief Integrator that ignores the field and uses the analytical solution to a multipole.
  * 
- * Analytical solution to a quadrupole field. This integrator will use the analytical solution
- * for a quadrupole (matrix) to transport a particle along a given step length. This will only
- * do so for particles that are considered paraxial. For particles that don't meet this criteria
- * the backupStepper from BDSAuxiliaryNavigator is used to integrate through the quadrupolar
- * field. This ensures the integrator functions correctly with particles with large transverse
- * momenta, or even ones that are travelling backwards such as secondaries.
- * 
+ * @author Will Shields
  */
 
 class BDSIntegratorMultipole: public BDSIntegratorBase
@@ -34,10 +28,10 @@ public:
   /// is so that intermediate steps can be calculated and therefore the error ascertained
   /// or distance from the chord.  Error calculation is not currently implemented.
   virtual void Stepper(const G4double y[],
-	      	 const G4double dydx[],
-	       const G4double h,
-	       G4double       yOut[],
-	       G4double       yErr[]);
+		       const G4double dydx[],
+		       const G4double h,
+		       G4double       yOut[],
+		       G4double       yErr[]);
 
 protected:
   /// Calcaulte the new particle coordinates for a given step length h.
@@ -45,21 +39,23 @@ protected:
 		    const G4double dydx[],
 		    const G4double h,
 		    G4double       yOut[],
-		    G4double yErr[]);
+		    G4double       yErr[]);
 
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorMultipole();
 
+  /// Calculate the factorial of n.
   G4int Factorial(G4int n);
 
   /// Dipole component
   G4double b0l;
-  /// Higher order components
+  /// @{ Higher order components
   std::list<double> bnl;
   std::list<double> bsl;
   std::vector<G4int> nfact;
-
+  /// @}
+  
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
 };

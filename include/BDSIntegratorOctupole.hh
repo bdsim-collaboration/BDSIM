@@ -27,15 +27,15 @@ public:
   virtual void Stepper(const G4double y[],
 		       const G4double dydx[],
 		       const G4double h,
-		       G4double yout[],
-		       G4double yerr[]);
+		       G4double       yout[],
+		       G4double       yerr[]);
 
 protected:
   /// Calcaulte the new particle coordinates. A first order Step along a solenoid inside the field.
-  void AdvanceHelix( const G4double  yIn[],
-		     G4ThreeVector Bfld,
-		     G4double  h,
-		     G4double  yOct[]);
+  void AdvanceHelix(const G4double yIn[],
+		    G4ThreeVector  Bfld,
+		    G4double       h,
+		    G4double       yOct[]);
 
 private:
   /// Private default constructor to enforce use of supplied constructor
