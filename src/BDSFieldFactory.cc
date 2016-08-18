@@ -247,27 +247,28 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
 							     G4Mag_EqRhs*       eqOfM,
 							     BDSMagnetStrength* strength)
 {
-  G4double brho = info.BRho();
+  G4double            brho = info.BRho();
+  G4bool   cacheTransforms = info.CacheTransforms();
   G4MagIntegratorStepper* integrator = nullptr;
   // these ones can only be used for magnetic field
   switch (info.IntegratorType().underlying())
     {
     case BDSIntegratorType::solenoid:
-      integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::dipole:
-      integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorDipole(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::quadrupole:
-      integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::sextupole:
-      integrator = new BDSIntegratorSextupole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorSextupole(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::octupole:
-      integrator = new BDSIntegratorOctupole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorOctupole(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::decapole:
-      integrator = new BDSIntegratorDecapole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorDecapole(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::multipole:
-      integrator = new BDSIntegratorMultipole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorMultipole(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::fringe:
-      integrator = new BDSIntegratorFringefield(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorFringefield(strength, brho, eqOfM, cacheTransforms); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
@@ -296,6 +297,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
     default:
       break; // returns nullptr;
     }
+  
   return integrator;
 }
 
@@ -407,7 +409,7 @@ BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta
 {
   bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
   bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta, false);
   BDSFieldObjects* completeField = new BDSFieldObjects(nullptr, bGlobalField, bEqOfMotion, integrator);
   return completeField;
 }

@@ -11,10 +11,11 @@
 
 BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* strength,
                                                    G4double                 brho,
-                                                   G4Mag_EqRhs*             eqOfMIn):
-        BDSIntegratorDipole(strength, brho, eqOfMIn),
-        angle((*strength)["angle"]),
-        bField((*strength)["field"])
+                                                   G4Mag_EqRhs*             eqOfMIn,
+						   G4bool                   cacheTransforms):
+  BDSIntegratorDipole(strength, brho, eqOfMIn, cacheTransforms),
+  angle((*strength)["angle"]),
+  bField((*strength)["field"])
 {
   polefaceAngle = (*strength)["polefaceangle"];
 }
@@ -75,7 +76,6 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   G4double CosT_ov_2 = cos(h/rho/2.0);
   distChord = fabs(rho)*(1.-CosT_ov_2);
 
-
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
   G4double z0  = LocalR.z();
@@ -129,8 +129,8 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
 void BDSIntegratorFringefield::Stepper(const G4double yInput[],
                                        const G4double dydx[],
                                        const G4double hstep,
-                                       G4double yOut[],
-                                       G4double yErr[])
+                                       G4double       yOut[],
+                                       G4double       yErr[])
 {
   G4double err = 1e-10 * hstep; // very small linear increase with distance
   for(G4int i=0; i<nVariables; i++)

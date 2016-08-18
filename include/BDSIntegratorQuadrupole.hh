@@ -25,7 +25,8 @@ class BDSIntegratorQuadrupole: public BDSIntegratorBase
 public:
   BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
 			  G4double                 brho,
-			  G4Mag_EqRhs*             eqOfMIn);
+			  G4Mag_EqRhs*             eqOfMIn,
+			  G4bool                   cacheTransforms);
   
   virtual ~BDSIntegratorQuadrupole(){;}
 

@@ -6,9 +6,10 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
-BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs* eqRHSIn,
-						 G4ThreeVector teleporterDeltaIn):
-  BDSIntegratorBase(eqRHSIn, 6),
+BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
+						 G4ThreeVector teleporterDeltaIn,
+						 G4bool        cacheTransforms):
+  BDSIntegratorBase(eqRHSIn, 6, cacheTransforms),
   teleporterDelta(teleporterDeltaIn)
 {;}
 
