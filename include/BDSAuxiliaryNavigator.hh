@@ -133,6 +133,11 @@ public:
   G4ThreeVector ConvertToGlobal(const G4ThreeVector& globalPosition,
 				const G4ThreeVector& localPosition,
 				const G4bool&        useCurvilinear = true) const;
+
+  /// Allow transform caching to be turned on or off - off crucial if a logical volume that
+  /// a field is attached to is placed more than once - ie a BDSAcceleratorComponent
+  /// is placed again.
+  inline void CacheTransforms(G4bool cacheTransformIn) {cacheTransforms = cacheTransformIn;}
   
 protected:
   mutable G4bool initialised;
