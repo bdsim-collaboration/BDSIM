@@ -1,5 +1,5 @@
 d1: drift, l=0.05;
-q1: quadrupole, l=0.1, k1=30.0;
+q1: quadrupole, l=0.1, k1=0.1;
 d2: drift, l=0.5;
 q2: quadrupole, l=0.1, k1=0;
 
