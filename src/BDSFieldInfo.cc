@@ -20,7 +20,8 @@ BDSFieldInfo::BDSFieldInfo():
         magneticFieldFilePath(""),
         magneticFieldFormat(BDSFieldFormat::none),
         electricFieldFilePath(""),
-        electricFieldFormat(BDSFieldFormat::none)
+        electricFieldFormat(BDSFieldFormat::none),
+	cacheTransforms(true)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
@@ -33,7 +34,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 			   G4String           magneticFieldFilePathIn,
 			   BDSFieldFormat     magneticFieldFormatIn,
 			   G4String           electricFieldFilePathIn,
-			   BDSFieldFormat     electricFieldFormatIn):
+			   BDSFieldFormat     electricFieldFormatIn,
+			   G4bool             cacheTransformsIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -44,7 +46,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
   magneticFieldFilePath(magneticFieldFilePathIn),
   magneticFieldFormat(magneticFieldFormatIn),
   electricFieldFilePath(electricFieldFilePathIn),
-  electricFieldFormat(electricFieldFormatIn)
+  electricFieldFormat(electricFieldFormatIn),
+  cacheTransforms(cacheTransformsIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -61,7 +64,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   magneticFieldFilePath(other.magneticFieldFilePath),
   magneticFieldFormat(other.magneticFieldFormat),
   electricFieldFilePath(other.electricFieldFilePath),
-  electricFieldFormat(other.electricFieldFormat)
+  electricFieldFormat(other.electricFieldFormat),
+  cacheTransforms(other.cacheTransforms)
 {
   magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
   cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
@@ -78,5 +82,6 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "B map file format: " << info.magneticFieldFormat    << G4endl;
   out << "E map file:        " << info.electricFieldFilePath  << G4endl;
   out << "E map file format: " << info.electricFieldFormat    << G4endl;
+  out << "Transform caching: " << info.cacheTransforms        << G4endl;
   return out;
 }
