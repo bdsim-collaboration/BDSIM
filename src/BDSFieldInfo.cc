@@ -53,6 +53,7 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType       fieldTypeIn,
 BDSFieldInfo::~BDSFieldInfo()
 {
   delete magnetStrength;
+  delete cavityInfo;
 }
 
 BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
