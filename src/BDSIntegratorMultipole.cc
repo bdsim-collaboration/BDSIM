@@ -35,7 +35,7 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
 }
 
 void BDSIntegratorMultipole::Stepper(const G4double yIn[],
-					   const G4double dydx[],
+					   const G4double[] /*dxdy*/,
 					   const G4double h,
 					   G4double       yOut[],
 					   G4double       yErr[])
