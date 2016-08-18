@@ -33,9 +33,11 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitPMag   = GlobalP.mag();
+  G4ThreeVector InitMomDir = GlobalP.unit();
+    
   // quad strength k normalised to charge and momentum of this particle
   // note bPrime was calculated w.r.t. the nominal rigidity.
-  G4double k = eqOfM->FCof()*bPrime/InitPMag;
+  G4double kappa = - eqOfM->FCof()*bPrime/InitPMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
 
   /*
@@ -57,9 +59,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   */
 
   // Check this will have a perceptible effect and if not do a linear step.
-  if(std::abs(k)<1.e-12)
+  if(std::abs(kappa)<1.e-12)
     {
-      G4ThreeVector InitMomDir   = GlobalP.unit();
       G4ThreeVector positionMove = h * InitMomDir;
 
       yOut[0] = yIn[0] + positionMove.x();
@@ -79,7 +80,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
 
   G4double      h2      = pow(h,2);
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
-  G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
+  //G4ThreeVector LocalRp = G4ThreeVector(dydx[0], dydx[1], dydx[2]);
+  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, InitMomDir);
   
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
@@ -101,7 +103,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   LocalRpp.setX(-zp*x0); // can this be replaced by a cross produce?
   LocalRpp.setY( zp*y0); // G4ThreeVector has a cross method
   LocalRpp.setZ( x0*xp - y0*yp);
-  LocalRpp *= k;
+  LocalRpp *= kappa;
   // determine effective curvature 
   G4double R_1 = LocalRpp.mag();
   
@@ -119,40 +121,38 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   distChord= h2/(8*R);
 
   // check for paraxial approximation:
-  if(std::abs(zp)>0.9)
+  if(zp>0.9) // only forwards
     {
 #ifdef BDSDEBUG
       G4cout << "paraxial approximation being used" << G4endl;
 #endif
-      // G4double rootK  = sqrt(std::abs(k*zp));
-      G4double rootK  = sqrt(std::abs(k)); // direction independent
-      G4double rootKh = rootK*h; //*zp
+      G4double rootK  = sqrt(std::abs(kappa*zp)); // direction independent
+      G4double rootKh = rootK*h*zp;
       G4double X11,X12,X21,X22 = 0;
       G4double Y11,Y12,Y21,Y22 = 0;
       
-      if (k>0)
+      if (kappa>0)
 	{
 	  X11= cos(rootKh);
 	  X12= sin(rootKh)/rootK;
-	  X21=-std::abs(k)*X12;
+	  X21=-std::abs(kappa)*X12;
 	  X22= X11;
 	  
-	  G4double sinhk = sinh(rootKh);
 	  Y11= cosh(rootKh);
-	  Y12= sinhk/rootK;
-	  Y21= sqrt(std::abs(k))*Y12;
+	  Y12= sinh(rootKh)/rootK;
+	  Y21= std::abs(kappa)*Y12;
 	  Y22= Y11;
 	}
-      else //if (k<0)
+      else //if (kappa<0)
 	{
 	  X11= cosh(rootKh);
 	  X12= sinh(rootKh)/rootK;
-	  X21= std::abs(k)*X12;
+	  X21= std::abs(kappa)*X12;
 	  X22= X11;
 	  
 	  Y11= cos(rootKh);
 	  Y12= sin(rootKh)/rootK;
-	  Y21= -std::abs(k)*Y12;
+	  Y21= -std::abs(kappa)*Y12;
 	  Y22= Y11;
 	}
       
@@ -168,8 +168,9 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
       G4double dx = x1 - x0;
       G4double dy = y1 - y0;
       
-      // Linear chord length - this is paraxial and only moves directly along z
-      G4double dz = h;
+      // Linear chord length
+      G4double dR2 = dx*dx + dy*dy;
+      G4double dz = std::sqrt(h2 * (1. - h2 / (12 * R * R)) - dR2);
       
       // check for precision problems - enforce conservation
       // this normalises all components such that the distance to the
