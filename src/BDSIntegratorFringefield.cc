@@ -134,7 +134,7 @@ void BDSIntegratorFringefield::Stepper(const G4double yInput[],
 {
   G4double err = 1e-10 * hstep; // very small linear increase with distance
   for(G4int i=0; i<nVariables; i++)
-  {yErr[i] = 0;}
+    {yErr[i] = err;}
 
   AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
 }
