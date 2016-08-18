@@ -17,13 +17,13 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
   BDSAuxiliaryNavigator(true)
 {;}
 
-BDSAuxiliaryNavigator::BDSAuxiliaryNavigator(G4bool useCachingIn):
+BDSAuxiliaryNavigator::BDSAuxiliaryNavigator(G4bool cacheTransformsIn):
   initialised(false),
   globalToLocal(new G4AffineTransform()),
   localToGlobal(new G4AffineTransform()),
   globalToLocalCL(new G4AffineTransform()),
   localToGlobalCL(new G4AffineTransform()),
-  useCaching(useCachingIn)
+  cacheTransforms(cacheTransformsIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -95,7 +95,7 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
   (*localToGlobal) = auxNavigator->GetLocalToGlobalTransform();
   (*globalToLocalCL) = auxNavigatorCL->GetGlobalToLocalTransform();
   (*localToGlobalCL) = auxNavigatorCL->GetLocalToGlobalTransform();
-  if (useCaching)
+  if (cacheTransforms)
     {initialised = true;} // else always remains false
 }
 

@@ -43,7 +43,7 @@ class BDSAuxiliaryNavigator
 {
 public:
   BDSAuxiliaryNavigator();
-  BDSAuxiliaryNavigator(G4bool useCachingIn);
+  BDSAuxiliaryNavigator(G4bool cacheTransformsIn);
   ~BDSAuxiliaryNavigator();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
@@ -165,7 +165,7 @@ private:
   /// instance is more efficient but that instance can only be used for one volume (asuuming
   /// the masss world is being used for the navigator). Whereas, if the caching is not used,
   /// a single instance of this class can be used to locate points anywhere in the setup.
-  G4bool useCaching;
+  G4bool cacheTransforms;
   
   /// Counter to keep track of when the last instance of the class is deleted and
   /// therefore when the navigators can be safely deleted without affecting
