@@ -26,7 +26,7 @@ struct Parameters {
   double ks; int ksset;   /// solenoid
 
   double tscint; int tscintset; ///thickness of scintillating part of screen
-  double pSizeScreen; int pSizeScreenset; ///thickness of screen particles
+  double screenPSize; int screenPSizeset; ///thickness of screen particles
   double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
   double twindow; int twindowset; ///thickness of window
   double tmount; int tmountset; ///thickness of additional backing for scint screen

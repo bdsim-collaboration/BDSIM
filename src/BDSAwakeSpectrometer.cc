@@ -680,12 +680,7 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 void BDSAwakeSpectrometer::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
-<<<<<<< HEAD
-  G4double grainSize = 25*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap ,grainSize, _windowThickness, _windowMaterial, _mountThickness, _mountMaterial, _screenWidth);
-=======
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap ,_screenPSize, _windowThickness, _windowMaterial, _screenWidth);
->>>>>>> f9f23f8db625185128e7c33d73946e403ae5783d
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap , _screenPSize, _windowThickness, _windowMaterial, _mountThickness, _mountMaterial, _screenWidth);
   
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->GetSensitiveComponents()){
