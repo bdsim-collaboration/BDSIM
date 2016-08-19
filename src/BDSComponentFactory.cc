@@ -405,6 +405,51 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
                             ));
 
   }
+  else if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (nSBends > 1)){
+
+    BDSLine* sbendline  = new BDSLine(element->name);
+    if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
+    {
+      BDSAcceleratorComponent* sBendComponent =  BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
+
+      for (G4int n = 0; n < nSBends; n++)
+      {
+        sbendline->AddComponent(sBendComponent);
+      }
+    }
+    else {
+
+      G4double semiangle = element->angle / (G4double) nSBends;
+      G4double semilength = length / (G4double) nSBends;
+      G4double angle = -semiangle*0.5;
+
+      BDSMagnetOuterInfo *magnetOuterInfo = PrepareMagnetOuterInfo(element, angle, angle);
+
+      BDSSectorBend *newSBendComponent = new BDSSectorBend(thename,
+                                                        semilength,
+                                                        semiangle,
+                                                        bField,
+                                                        bPrime,
+                                                        PrepareBeamPipeInfo(element, angle, angle),
+                                                        magnetOuterInfo);
+
+      newSBendComponent->SetBiasVacuumList(element->biasVacuumList);
+      newSBendComponent->SetBiasMaterialList(element->biasMaterialList);
+      newSBendComponent->SetPrecisionRegion(element->precisionRegion);
+      newSBendComponent->Initialise();
+
+      // register component and memory
+      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(newSBendComponent,false);
+
+      for (G4int n = 0; n < nSBends; n++)
+      {
+        sbendline->AddComponent(newSBendComponent);
+      }
+    }
+    return sbendline;
+  }
+
+
   else  //Otherwise, create line of sbend segments
   {
     BDSLine* sbendline = CreateSBendLine(element, nSBends, bField, bPrime);

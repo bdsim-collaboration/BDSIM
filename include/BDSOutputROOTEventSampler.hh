@@ -28,6 +28,7 @@ public:
   std::vector<T>     weight;
   std::vector<int>   partID;
   std::vector<int>   parentID;
+  std::vector<int>   trackID;
   int                modelID;
   std::vector<int>   turnNumber;
   
