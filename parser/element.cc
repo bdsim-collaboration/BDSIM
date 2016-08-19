@@ -114,6 +114,7 @@ void Element::flush() {
   phiAngleIn = 0;
   phiAngleOut = 0;
   tscint = 0;
+  screenPSize = 0;
   windowScreenGap = 0;
   twindow = 0;
   screenEndZ = 0;
