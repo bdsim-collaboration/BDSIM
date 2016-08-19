@@ -123,8 +123,10 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
     case BDSFieldType::rf:
       field = CreateFieldE(info);
       break;
+    case BDSFieldType::none:
+      break; // leave as nullptr
     default:
-      G4cerr << __METHOD_NAME__ << "not a valid field type" << G4endl;
+      G4cerr << __METHOD_NAME__ << "not a valid field type \"" << info.FieldType() << "\"" << G4endl;
       return field;
       break; // this will return nullptr
     }
