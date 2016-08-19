@@ -1,5 +1,8 @@
 #include "BDSBunchRing.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
 
 BDSBunchRing::BDSBunchRing(): 
   rMin(0), rMax(0)

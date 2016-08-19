@@ -1,7 +1,6 @@
 #ifndef BDSDETECTORCONSTRUCTION_H
 #define BDSDETECTORCONSTRUCTION_H 
 
-#include "BDSGlobalConstants.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 

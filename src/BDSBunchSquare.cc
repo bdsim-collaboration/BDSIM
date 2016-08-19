@@ -1,5 +1,10 @@
 #include "BDSBunchSquare.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchSquare::BDSBunchSquare() :
   BDSBunchInterface(), envelopeX(0.0), envelopeY(0.0), 

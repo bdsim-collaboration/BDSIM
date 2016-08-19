@@ -4,11 +4,10 @@
 #include "BDSMagnetGeometryType.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParticle.hh"
-#include "BDSTunnelInfo.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
-#include "G4AffineTransform.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 
 #include "parser/options.h"
 
@@ -22,7 +21,13 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
+
 class BDSBeamPipeInfo;
+class BDSTunnelInfo;
 
 /**
  * @brief A class that holds global options and constants.

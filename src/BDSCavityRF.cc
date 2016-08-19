@@ -1,10 +1,11 @@
 #include "BDSCavityRF.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSCavity.hh"
+#include "BDSCavityField.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
 #include "G4Material.hh"
-#include "BDSCavityField.hh"
 #include "G4FieldManager.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ChordFinder.hh"

@@ -2,7 +2,7 @@
 
 #include "globals.hh"
 
-#include <iostream>
+#include <ostream>
 #include <utility>
 
 BDSBin::BDSBin(G4double xMinIn, G4double xMaxIn):

@@ -1,5 +1,10 @@
 #include "BDSBunchTwiss.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchTwiss::BDSBunchTwiss():
   betaX(0.0), betaY(0.0),

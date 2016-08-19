@@ -2,9 +2,12 @@
 #define BDSBUNCHCOMPOSITE_H 
 
 #include "globals.hh"
-#include "parser/options.h"
 
 #include "BDSBunchInterface.hh"
+
+namespace GMAD {
+  class Options;
+}
 
 /**
  * @brief A distribution that allows mixing of three different 

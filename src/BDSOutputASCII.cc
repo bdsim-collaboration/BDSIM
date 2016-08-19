@@ -9,10 +9,9 @@
 #include <ctime>
 #include <string>
 #include <fstream>
-#include <iostream>
+#include <ios>
 #include <iomanip>
 #include <sys/stat.h>
-
 
 BDSOutputASCII::BDSOutputASCII()
 {

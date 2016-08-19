@@ -34,6 +34,7 @@
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
