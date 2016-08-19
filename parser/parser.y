@@ -644,6 +644,8 @@ parameters:
 		  else
 		  if(!strcmp($1->name,"tscint")) { params.tscint = $3; params.tscintset = 1;} // thickness for a scintillator screen 
 		  else
+		  if(!strcmp($1->name,"screenPSize")) { params.screenPSize = $3; params.screenPSizeset = 1;} // particle size for a scintillator screen
+		  else
 		  if(!strcmp($1->name,"windowScreenGap")) { params.windowScreenGap = $3; params.windowScreenGapset = 1;} // thickness for a scintillator screen 
 		  else
                   if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 

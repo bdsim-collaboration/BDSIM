@@ -17,6 +17,7 @@ void Parameters::flush() {
   bmapZOffset = 0; bmapZOffsetset=0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
+  screenPSize = 25e-6, screenPSizeset = 0;
   windowScreenGap = 0; windowScreenGapset = 0;
   twindow = 0; twindowset = 0;
   tmount = 0; tmountset = 0;
@@ -154,6 +155,7 @@ void Parameters::inherit_properties(struct Element& e)
   if(!taperlengthset) { taperlength = e.taperlength; taperlengthset = 1; }
 
   if(!tscintset) { tscint = e.tscint; tscintset = 1; }
+  if(!screenPSizeset) { screenPSize = e.screenPSize; screenPSizeset = 1; }
   if(!twindowset) { twindow = e.twindow; twindowset = 1; }
   if(!tmountset) { tmount = e.tmount; tmountset = 1; }
   if(!screenEndZset) { screenEndZ = e.screenEndZ; screenEndZset = 1; }
