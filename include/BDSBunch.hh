@@ -1,11 +1,13 @@
 #ifndef BDSBUNCH_H
 #define BDSBUNCH_H
 
-#include <string>
-#include "BDSBunchInterface.hh"
-
 #include "globals.hh"
-#include "parser/options.h"
+
+class BDSBunchInterface;
+
+namespace GMAD {
+  class Options;
+}
 
 /**
  * @brief A delegator class for the BDSIM particle distribution generator.

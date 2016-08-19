@@ -4,13 +4,9 @@
 
 #include "globals.hh"
 
-#include <algorithm>
-#include <cfloat>
-#include <iostream>
-#include <string>
+#include <ostream>
 #include <utility>
 #include <vector>
-
 
 BDSHistogram1D::BDSHistogram1D(G4double xminIn,
 			       G4double xmaxIn,

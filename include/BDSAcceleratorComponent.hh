@@ -6,7 +6,6 @@
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSGeometryComponent.hh"
-#include "BDSGlobalConstants.hh" 
 
 #include <list>
 #include <string>

@@ -46,7 +46,7 @@ Requirements
 
 0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher. See `Geant4 Installation Guide`_
-2) `CMake`_ 2.6.4 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
+2) `CMake`_ 2.8.12 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_

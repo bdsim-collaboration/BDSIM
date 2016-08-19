@@ -1,5 +1,10 @@
 #include "BDSBunchCircle.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchCircle::BDSBunchCircle():
   BDSBunchInterface(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)

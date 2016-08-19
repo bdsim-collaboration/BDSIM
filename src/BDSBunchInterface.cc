@@ -2,6 +2,9 @@
 #include "BDSBeamline.hh"
 #include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
