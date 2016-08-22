@@ -73,5 +73,11 @@ private:
     G4int CalculateNSBendSegments(GMAD::Element const* element,
                                   const G4double aperturePrecision = 1.0);
 
+    BDSMagnet* NewSbendWedge(GMAD::Element* element,
+                               G4bool fadeIn,
+                               G4bool fadeOut,
+                               G4int index,
+                               G4int nSBends,
+                               BDSMagnetStrength* st);
 };
 #endif

@@ -385,3 +385,97 @@ G4int BDSBendBuilder::CalculateNSBendSegments(GMAD::Element const* element,
 #endif
     return nSBends;
 }
+
+BDSMagnet* BDSBendBuilder::NewSbendWedge(Element* element,
+                            G4bool fadeIn,
+                            G4bool fadeOut,
+                            G4int index,
+                            G4int nSBends,
+                            BDSMagnetStrength* st)
+{
+    //calculate their angles and length
+    G4double length      = element->l*CLHEP::m;
+    G4double semiangle  = -element->angle / (G4double) nSBends;
+    G4double semilength = length / (G4double) nSBends;
+    G4double rho        = element->l*CLHEP::m/element->angle;
+
+    // angle increment for sbend elements with poleface rotation(s) specified
+    G4double deltastart = -element->e1/(0.5*(nSBends-1));
+    G4double deltaend   = -element->e2/(0.5*(nSBends-1));
+
+    G4String thename = element->name + "_"+std::to_string(index+1)+"_of_" + std::to_string(nSBends);
+
+    // subtract thinElementLength from first and last elements if fringe & poleface specified
+    length = semilength;
+    if ((BDS::IsFinite(element->e1)) && (index == 0) && includeFringe)
+      {length -= thinElementLength;}
+    if ((BDS::IsFinite(element->e2)) && (index == nSBends-1) && includeFringe)
+      {length -= thinElementLength;}
+    semiangle = -length/rho;
+
+    G4double angleIn  = 0;
+    G4double angleOut = 0;
+
+    // Input and output angles added to or subtracted from the default as appropriate
+    // Note: case of i == 0.5*(nSBends-1) is just the default central wedge.
+    // More detailed methodology/reasons in developer manual
+    if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
+      {
+        if (index < 0.5*(nSBends-1))
+          {
+            angleIn  = -semiangle*0.5 - (element->e1 + (index*deltastart));
+            angleOut = -semiangle*0.5 - ((0.5*(nSBends-3)-index)*deltastart);
+          }
+        else if (index > 0.5*(nSBends-1))
+          {
+            angleIn  = -semiangle*0.5 + (0.5*(nSBends+1)-index)*deltaend;
+            angleOut = -semiangle*0.5 - (0.5*(nSBends-1)-index)*deltaend;
+          }
+      }
+
+    if ((BDS::IsFinite(element->e1)) && (index == 0) && includeFringe)
+      {angleIn += thinElementLength/rho;}
+    if ((BDS::IsFinite(element->e2)) && (index == nSBends-1) && includeFringe)
+      {angleOut += thinElementLength/rho;}
+
+    //set face angles to default if faces do not fade.
+    if (!fadeIn && (index == 0))
+    {angleOut = -0.5*semiangle;}
+    if (!fadeOut && (index == (nSBends-1)))
+    {angleIn = -0.5*semiangle;}
+
+    // Check for intersection of angled faces.
+    G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
+    BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element,angleIn,angleOut);
+    G4double magnetRadius= 0.625*magnetOuterInfo->outerDiameter*CLHEP::mm;
+    // Every geometry type has a completely arbitrary factor of 1.25 except cylindrical
+    if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::cylindrical)
+      {magnetRadius= 0.5*magnetOuterInfo->outerDiameter*CLHEP::mm;}
+
+    //Check if intersection is within radius
+    if ((BDS::IsFinite(intersectionX)) && (std::abs(intersectionX) < magnetRadius))
+      {
+        G4cerr << __METHOD_NAME__ << "Angled faces of element "<< thename
+        << " intersect within the magnet radius." << G4endl;
+        exit(1);
+      }
+
+    BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st); // copy field strength - ie B
+    (*stSemi)["length"] = length;
+    (*stSemi)["angle"]  = semiangle;  // override copied length and angle
+
+    BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+                                                 brho,
+                                                 BDSIntegratorType::dipole,
+                                                 stSemi);
+
+    BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
+                                       thename,
+                                       length,
+                                       PrepareBeamPipeInfo(element, angleIn, angleOut),
+                                       magnetOuterInfo,
+                                       vacuumField,
+                                       semiangle);
+
+    return oneBend;
+}
