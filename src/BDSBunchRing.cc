@@ -4,6 +4,8 @@
 
 #include "parser/options.h"
 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 BDSBunchRing::BDSBunchRing(): 
   rMin(0), rMax(0)
 {
