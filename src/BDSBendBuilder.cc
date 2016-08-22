@@ -96,7 +96,8 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
 
     // register central wedge which will always be used as the
     // middle wedge regardless of poleface rotations
-    G4String centralName = element->name + "_1_of_" + std::to_string(nSBends);
+    G4int centralWedgeNum = 0.5*(nSBends+1);
+    G4String centralName = element->name + "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);
 
     BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
                                                  brho,
@@ -194,7 +195,7 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
             {oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);}
           else
             {
-              if (i == 0)
+              if (i == (nSBends-1))
                 {oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);}
               else
                 {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
