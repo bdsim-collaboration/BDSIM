@@ -8,11 +8,7 @@
 #include "BDSSextMagField.hh"
 #include "BDSSextStepper.hh"
 
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-
-class BDSTiltOffset;
+#include "G4Mag_UsualEqRhs.hh"
 
 BDSSextupole::BDSSextupole(G4String            name,
                            G4double            length,

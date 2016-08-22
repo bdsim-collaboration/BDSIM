@@ -8,8 +8,6 @@
 #include <string>
 #include <vector>
 
-class BDSBeamlineElement;
-
 BDSSamplerRegistry* BDSSamplerRegistry::instance = nullptr;
 
 BDSSamplerRegistry* BDSSamplerRegistry::Instance()

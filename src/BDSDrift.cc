@@ -5,8 +5,6 @@
 
 #include "globals.hh" // geant4 globals / types
 
-class BDSBeamPipeInfo;
-
 BDSDrift::BDSDrift(G4String         name, 
 		   G4double         length,
 		   BDSBeamPipeInfo* beamPipeInfo,
