@@ -257,16 +257,20 @@ BDSLine* BDSBendBuilder::RBendLine(Element* element,
     G4double polefaceAngleOut = element->e2 + 0.5*(length-thinElementLength)/rho;
 
     // poleface angles and main element angles are modified if next/previous is an rbend
-    if ((prevElement) && (prevElement->type == ElementType::_RBEND)){
+    if ((prevElement) && (prevElement->type == ElementType::_RBEND))
+      {
         polefaceAngleIn -= 0.5*element->angle;
-        angleIn += 0.5*(thinElementLength)/rho;}
-    if ((nextElement) && (nextElement->type == ElementType::_RBEND)){
+        angleIn += 0.5*(thinElementLength)/rho;
+      }
+    if ((nextElement) && (nextElement->type == ElementType::_RBEND))
+      {
         polefaceAngleOut -= 0.5*element->angle;
-        angleOut += 0.5*(thinElementLength)/rho;}
+        angleOut += 0.5*(thinElementLength)/rho;
+      }
 
     // first element should be fringe if poleface specified
     if (BDS::IsFinite(element->e1) && includeFringe &&(!prevModifies))
-    {
+      {
         BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength();
         (*fringeStIn)["field"]         = (*st)["field"];
         (*fringeStIn)["polefaceangle"] = element->e1;
@@ -277,25 +281,28 @@ BDSLine* BDSBendBuilder::RBendLine(Element* element,
 
         BDSMagnet* startfringe = DipoleFringe(element, -angle, angle, thename, magType, fringeStIn);
         rbendline->AddComponent(startfringe);
-    }
+      }
 
     // subtract thinElementLength from main rbend element if fringe & poleface(s) specified
     if (BDS::IsFinite(element->e1) && includeFringe && (!prevModifies))
-    {length   -= thinElementLength;
-     angleIn  += 0.5*(thinElementLength)/rho;
-     angleOut -= 0.5*(thinElementLength)/rho;}
+      {
+        length   -= thinElementLength;
+        angleIn  += 0.5*(thinElementLength)/rho;
+        angleOut -= 0.5*(thinElementLength)/rho;
+      }
     if (BDS::IsFinite(element->e2) && includeFringe && (!nextModifies))
-    {length   -= thinElementLength;
-     angleOut += 0.5*(thinElementLength)/rho;
-     angleIn  -= 0.5*(thinElementLength)/rho;}
+      {
+        length   -= thinElementLength;
+        angleOut += 0.5*(thinElementLength)/rho;
+        angleIn  -= 0.5*(thinElementLength)/rho;
+      }
+    
     angle = -length/rho;
 
-    if (nextModifies){
-        angleOut  -= 0.5*(thinElementLength)/rho;
-    }
-    if (prevModifies){
-        angleIn  -= 0.5*(thinElementLength)/rho;
-    }
+    if (nextModifies)
+      {angleOut  -= 0.5*(thinElementLength)/rho;}
+    if (prevModifies)
+      {angleIn  -= 0.5*(thinElementLength)/rho;}
 
     // override copied length and angle
     (*st)["length"] = length;
