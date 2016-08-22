@@ -93,9 +93,12 @@ void BDSMagnet::BuildBeampipe()
 
 void BDSMagnet::BuildVacuumField()
 {
-  BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
-							    beampipe->GetVacuumLogicalVolume(),
-							    true);
+  if (vacuumFieldInfo)
+    {
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+								beampipe->GetVacuumLogicalVolume(),
+								true);
+    }
 }
 
 void BDSMagnet::BuildOuter()
@@ -142,7 +145,7 @@ void BDSMagnet::BuildOuterField()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif  
-  if (outer)
+  if (outer && outerFieldInfo)
     {
       G4LogicalVolume* vol = outer->GetContainerLogicalVolume();
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,

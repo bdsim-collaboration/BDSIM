@@ -16,16 +16,17 @@
 class BDSIntegratorTeleporter: public BDSIntegratorBase
 {
 public:
-  BDSIntegratorTeleporter(G4Mag_EqRhs* eqRHSIn,
-			  G4ThreeVector teleporterDelta);
+  BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
+			  G4ThreeVector teleporterDelta,
+			  G4bool        cacheTransforms);
 
   virtual ~BDSIntegratorTeleporter(){;}
   
   virtual void Stepper(const G4double y[],
 		       const G4double dydx[],
 		       const G4double h,
-		       G4double yout[],
-		       G4double yerr[]);
+		       G4double       yout[],
+		       G4double       yerr[]);
 
 private:
   /// The offset the teleport should transport particles by

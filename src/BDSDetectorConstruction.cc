@@ -147,15 +147,6 @@ void BDSDetectorConstruction::BuildBeamline()
   BDSComponentFactory* theComponentFactory = new BDSComponentFactory();
   BDSBeamline*         beamline            = new BDSBeamline();
   
-  // Write survey file here since has access to both element and beamline
-  BDSSurvey* survey = nullptr;
-  if(BDSGlobalConstants::Instance()->Survey())
-    {
-      G4String surveyFilename = BDSGlobalConstants::Instance()->SurveyFileName();
-      surveyFilename += ".dat";
-      survey = new BDSSurvey(surveyFilename);
-    }
-  
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
   

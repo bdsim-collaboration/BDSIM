@@ -22,7 +22,10 @@ class BDSFieldMagInterpolated3D: public BDSFieldMag
 public:
   BDSFieldMagInterpolated3D(BDSInterpolator3D<T>* interpolatorIn,
 			    G4Transform3D         offset = G4Transform3D::Identity):
-    BDSFieldMag(offset), interpolator(*interpolatorIn)
+    BDSFieldMag(offset),
+    interpolator(*interpolatorIn)
+  {;}
+
   virtual ~BDSFieldMagInterpolated3D();
 
   /// Return the interpolated field value at a given point. Note this doesn't depend

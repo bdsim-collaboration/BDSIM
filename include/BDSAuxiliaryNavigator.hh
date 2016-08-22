@@ -43,7 +43,7 @@ class BDSAuxiliaryNavigator
 {
 public:
   BDSAuxiliaryNavigator();
-  BDSAuxiliaryNavigator(G4bool useCachingIn);
+  BDSAuxiliaryNavigator(G4bool cacheTransformsIn);
   ~BDSAuxiliaryNavigator();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
@@ -75,13 +75,13 @@ public:
   /// const pointer but does change the contents of what it points to.
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
 
-    /// This is used to foricibly initialise the transforms using a position,
-    /// momentum vector and step length.  The free drift of the particle is
-    /// calculated and the the average of the two points is used to locate
-    /// and initialise the transforms (in global coordinates).
-    void InitialiseTransform(const G4ThreeVector& globalPosition,
-    const G4ThreeVector& globalMomentum,
-    const G4double stepLength);
+  /// This is used to foricibly initialise the transforms using a position,
+  /// momentum vector and step length.  The free drift of the particle is
+  /// calculated and the the average of the two points is used to locate
+  /// and initialise the transforms (in global coordinates).
+  void InitialiseTransform(const G4ThreeVector& globalPosition,
+			   const G4ThreeVector& globalMomentum,
+			   const G4double       stepLength);
 
   /// Calculate the local coordinates of a global point.
   G4ThreeVector ConvertToLocal(const G4double globalPoint[3],
@@ -133,6 +133,11 @@ public:
   G4ThreeVector ConvertToGlobal(const G4ThreeVector& globalPosition,
 				const G4ThreeVector& localPosition,
 				const G4bool&        useCurvilinear = true) const;
+
+  /// Allow transform caching to be turned on or off - off crucial if a logical volume that
+  /// a field is attached to is placed more than once - ie a BDSAcceleratorComponent
+  /// is placed again.
+  inline void CacheTransforms(G4bool cacheTransformIn) {cacheTransforms = cacheTransformIn;}
   
 protected:
   mutable G4bool initialised;
@@ -165,7 +170,7 @@ private:
   /// instance is more efficient but that instance can only be used for one volume (asuuming
   /// the masss world is being used for the navigator). Whereas, if the caching is not used,
   /// a single instance of this class can be used to locate points anywhere in the setup.
-  G4bool useCaching;
+  G4bool cacheTransforms;
   
   /// Counter to keep track of when the last instance of the class is deleted and
   /// therefore when the navigators can be safely deleted without affecting

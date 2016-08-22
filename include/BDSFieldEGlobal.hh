@@ -26,7 +26,8 @@
 class BDSFieldEGlobal: public BDSFieldE, public BDSAuxiliaryNavigator
 {
 public:
-  BDSFieldEGlobal(BDSFieldE* fieldIn);
+  BDSFieldEGlobal(BDSFieldE* fieldIn,
+		  G4bool     cacheTransforms);
   virtual ~BDSFieldEGlobal();
 
   /// Get the field - local coordinates. Apply the global to local transform,

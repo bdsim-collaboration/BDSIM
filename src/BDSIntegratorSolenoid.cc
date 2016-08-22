@@ -10,8 +10,9 @@
 
 BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 					     G4double                 brho,
-					     G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6)
+					     G4Mag_EqRhs*             eqOfMIn,
+					     G4bool                   cacheTransforms):
+  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms)
 {
   bField = brho * (*strength)["ks"];
 #ifdef BDSDEBUG

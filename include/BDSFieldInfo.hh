@@ -20,7 +20,7 @@ class BDSMagnetStrength;
  * to create the desired fully functional field with all required 
  * associated Geant4 objects.
  * 
- * Owns the magnetic strength instance.
+ * Owns the magnetic strength instance & cavity info instance.
  *
  * @author Laurie Nevay
  */
@@ -28,8 +28,8 @@ class BDSMagnetStrength;
 class BDSFieldInfo
 {
 public:
-	/// Default constructor for zero field effictively
-	BDSFieldInfo();
+  /// Default constructor for zero field effectively
+  BDSFieldInfo();
   BDSFieldInfo(BDSFieldType       fieldTypeIn,
 	       G4double           brhoIn,
 	       BDSIntegratorType  integratorTypeIn,
@@ -40,7 +40,8 @@ public:
 	       G4String           magneticFieldFilePathIn  = "",
 	       BDSFieldFormat     magneticFieldFormatIn    = BDSFieldFormat::bdsim3d,
 	       G4String           electricFieldFilePathIn  = "",
-	       BDSFieldFormat     electricFieldFormatIn    = BDSFieldFormat::bdsim3d);
+	       BDSFieldFormat     electricFieldFormatIn    = BDSFieldFormat::bdsim3d,
+	       G4bool             cacheTransformsIn        = true);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -58,10 +59,14 @@ public:
   inline BDSFieldFormat     MagneticFormat() const {return magneticFieldFormat;}
   inline G4String           ElectricFile()   const {return electricFieldFilePath;}
   inline BDSFieldFormat     ElectricFormat() const {return electricFieldFormat;}
+  inline G4bool             CacheTransforms()const {return cacheTransforms;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
-  inline void SetTransform(G4Transform3D transformIn);
+  inline void SetTransform(G4Transform3D transformIn) {transform = transformIn;}
+
+  /// Turn on or off transform caching.
+  inline void CacheTransforms(G4bool cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
 
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSFieldInfo const &info);
@@ -79,9 +84,7 @@ private:
   BDSFieldFormat     magneticFieldFormat;
   G4String           electricFieldFilePath;
   BDSFieldFormat     electricFieldFormat;
+  G4bool             cacheTransforms;
 };
-
-void BDSFieldInfo::SetTransform(G4Transform3D transformIn)
-{transform = transformIn;}
 
 #endif
