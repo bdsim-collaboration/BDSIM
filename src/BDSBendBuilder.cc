@@ -140,9 +140,9 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
       {zExtentOut = 0.5*outerDiameter*tan(0.5*std::abs(semiangle) + angleOut);}
 
     //decide if wedge angles fade or not depending on the extents
-    if (zExtentIn < semilength/4.0)
+    if (std::abs(zExtentIn) < semilength/4.0)
       {fadeIn = false;}
-    if (zExtentOut < semilength/4.0)
+    if (std::abs(zExtentOut) < semilength/4.0)
       {fadeOut = false;}
 
     BDSMagnetType magType = BDSMagnetType::sectorbend;
