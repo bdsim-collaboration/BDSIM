@@ -94,10 +94,40 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     G4double semilength = length / (G4double) nSBends;
     G4double rho        = element->l*CLHEP::m/element->angle;
 
+    angle      = element->angle;
+    angleIn    = element->e1*CLHEP::rad;
+    angleOut   = element->e2*CLHEP::rad;
+
+    G4double zExtentIn  = 0;
+    G4double zExtentOut = 0;
+    G4bool fadeIn = true;
+    G4bool fadeOut = true;
+
+    //calculate extent along z due poleface rotation
+    if (angleIn > 0)
+    {zExtentIn = 0.5*outerDiameter*tan(angleIn - 0.5*std::abs(semiangle));}
+    else if (angleIn < 0)
+    {zExtentIn = 0.5*outerDiameter*tan(0.5*std::abs(semiangle) + angleIn);}
+    if (angleOut > 0)
+    {zExtentOut = 0.5*outerDiameter*tan(angleOut - 0.5*std::abs(semiangle));}
+    else if (angleOut < 0)
+    {zExtentOut = 0.5*outerDiameter*tan(0.5*std::abs(semiangle) + angleOut);}
+
+    //decide if wedge angles fade or not depending on the extents
+    if (std::abs(zExtentIn) < semilength/4.0)
+    {fadeIn = false;}
+    if (std::abs(zExtentOut) < semilength/4.0)
+    {fadeOut = false;}
+
     // register central wedge which will always be used as the
     // middle wedge regardless of poleface rotations
     G4int centralWedgeNum = 0.5*(nSBends+1);
-    G4String centralName = element->name + "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);
+
+    G4String centralName = element->name;
+    if (fadeIn)
+      {thename += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
+    else
+      {thename += "_1_of_" + std::to_string(nSBends);}
 
     BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
                                                  brho,
@@ -119,31 +149,6 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(centralWedge,false);
 
     BDSAcceleratorComponent *oneBend = nullptr;
-
-    angle      = element->angle;
-    angleIn    = element->e1*CLHEP::rad;
-    angleOut   = element->e2*CLHEP::rad;
-
-    G4double zExtentIn  = 0;
-    G4double zExtentOut = 0;
-    G4bool fadeIn = true;
-    G4bool fadeOut = true;
-
-    //calculate extent along z due poleface rotation
-    if (angleIn > 0)
-      {zExtentIn = 0.5*outerDiameter*tan(angleIn - 0.5*std::abs(semiangle));}
-    else if (angleIn < 0)
-      {zExtentIn = 0.5*outerDiameter*tan(0.5*std::abs(semiangle) + angleIn);}
-    if (angleOut > 0)
-      {zExtentOut = 0.5*outerDiameter*tan(angleOut - 0.5*std::abs(semiangle));}
-    else if (angleOut < 0)
-      {zExtentOut = 0.5*outerDiameter*tan(0.5*std::abs(semiangle) + angleOut);}
-
-    //decide if wedge angles fade or not depending on the extents
-    if (std::abs(zExtentIn) < semilength/4.0)
-      {fadeIn = false;}
-    if (std::abs(zExtentOut) < semilength/4.0)
-      {fadeOut = false;}
 
     BDSMagnetType magType = BDSMagnetType::sectorbend;
     // check magnet outer info
@@ -173,16 +178,25 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
 
     for (int i = 0; i < nSBends; ++i)
     {
-      if (i < 0.5*(nSBends-1))
+      G4String thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
+      if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(thename))
+        {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(thename);}
+      else if (i < 0.5*(nSBends-1))
         {
           if (!BDS::IsFinite(element->e1))
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeIn)
-            {oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);}
+            {
+              oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);
+              BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
+            }
           else
             {
               if (i == 0)
-                {oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);}
+                {
+                  oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);
+                  BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
+                }
               else
                 {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
             }
@@ -192,11 +206,17 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
           if (!BDS::IsFinite(element->e2))
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeOut)
-            {oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);}
+            {
+              oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);
+              BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
+            }
           else
             {
               if (i == (nSBends-1))
-                {oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);}
+                {
+                  oneBend = NewSbendWedge(element, fadeIn, fadeOut, i, nSBends, st);
+                  BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
+                }
               else
                 {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
             }
