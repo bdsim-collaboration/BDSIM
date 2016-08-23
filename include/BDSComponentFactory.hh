@@ -92,7 +92,7 @@ private:
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
-  BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
+  BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
   BDSAcceleratorComponent* CreateQuad();

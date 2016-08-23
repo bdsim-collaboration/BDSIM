@@ -153,11 +153,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
           angleIn += 0.5*element->angle;
         }
     }
-  else if (element->type == ElementType::_SBEND)
-    {
-      angleIn = element->e1 - 0.5*element->angle;
-      angleOut = element->e2 - 0.5*element->angle;
-    }
   else if (element->type == ElementType::_THINMULT)
     {
       if (nextElement && (BDS::IsFinite(nextElement->e1)))
@@ -202,7 +197,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
-    component = CreateSBend(angleIn,angleOut); break;
+    component = CreateSBend(); break;
   case ElementType::_RBEND:
     component = CreateRBend(angleIn, angleOut); break;
   case ElementType::_HKICK:
@@ -356,8 +351,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 			 vacuumField);
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
-                                    G4double angleOut) {
+BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
+  {
   if (!HasSufficientMinimumLength(element)) { return nullptr; }
 
   PoleFaceRotationsNotTooLarge(element);  // check if poleface is not too large
@@ -414,6 +409,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   G4cout << "Angle " << (*st)["angle"] << G4endl;
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
+
+  G4double angleIn = element->e1 - 0.5*element->angle;
+  G4double angleOut = element->e2 - 0.5*element->angle;
+
 
   BDSLine *sbendline = BDSBendBuilder::Instance()->SBendLine(element,
                                                              angleIn,
