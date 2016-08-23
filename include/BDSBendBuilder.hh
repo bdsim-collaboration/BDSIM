@@ -16,18 +16,22 @@
 
 
 /**
- * @brief A vector of BDSBeamlineElement instances - a beamline.
- * 
- * This will calculate and construct a beamline as BDSAcceleratorComponents
- * are added in sequence - ie it calculates their placement positions and 
- * rotations with respect to the start of the beamline as well as their s
- * position in curvilinear coordinates.
- * 
- * Note, this is not a singleton as geometry hierarchy can be introduced
- * by placing beamline components inside parent volumes and therefore creating
- * a new beamline of parents. It can also be used to create multiple beam lines.
- * 
- * @author Laurie Nevay
+ * @brief A class for building rbends and sbends from individual BDSMagnet* components.
+ *
+ * This will calculate and construct a beamline of BDSMagnet* that are added in
+ * sequence. The rbend and sbend functions should be called by singleton, which
+ * returns a BDSLine*.
+ *
+ * For SBends, the bend is split into multiple wedges. If a small or zero poleface
+ * angle is specified, the end wedges will have faces angled as appropriate, the
+ * remaining wedges will re-use a single identical 'central' wedge several times.
+ * For a stronger angled poleface, the faces of each wedge fade in/out from the
+ * poleface to the cental wedge in the middle. Thin fringefield elements are placed
+ * at the beginning and end of the beamline if required.
+ *
+ * For rbends, a line is returned with a single magnet as the main dipole, but can have
+ * fringefield magnets placed either end if specified.
+ * @author William Shields
  */
 
 class BDSBendBuilder : public BDSComponentFactory
@@ -36,6 +40,7 @@ public:
 
     virtual ~BDSBendBuilder();
 
+    /// Construct beamline for an rbend
     BDSLine* RBendLine(GMAD::Element* element,
                        GMAD::Element* prevElement,
                        GMAD::Element* nextElement,
@@ -44,6 +49,7 @@ public:
                        G4double rho,
                        BDSMagnetStrength* st);
 
+    /// Construct beamline for an rbend
     BDSLine* SBendLine(GMAD::Element*  element,
                              G4double angleIn,
                              G4double angleOut,
@@ -54,6 +60,8 @@ public:
 protected:
     void Build();
 
+    /// Thin magnet for dipole fringe field.
+    /// Is beampipe only, no outer magnet.
     BDSMagnet* DipoleFringe(GMAD::Element *element,
                                   G4double angleIn,
                                   G4double angleOut,
@@ -73,6 +81,9 @@ private:
     G4int CalculateNSBendSegments(GMAD::Element const* element,
                                   const G4double aperturePrecision = 1.0);
 
+    /// Function to return a new magnet wedge for use in an sbend.
+    /// The faces of each wedge are calculated as appropriate depending
+    /// on the poleface angle(s).
     BDSMagnet* NewSbendWedge(GMAD::Element* element,
                                G4bool fadeIn,
                                G4bool fadeOut,
