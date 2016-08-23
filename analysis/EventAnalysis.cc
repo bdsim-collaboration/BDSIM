@@ -44,11 +44,23 @@ void EventAnalysis::Process()
   {
     std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
+  // start progress counter
+  std::cout << "[";
+  std::cout.flush();
   // loop over events
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
-    std::cout << i << std::endl;
-
+    int iMod = (int)this->chain->GetEntries()/50 ;
+    if(i % iMod == 0)
+    {
+      std::cout << "*";
+      std::cout.flush();
+    }
+    if(i == this->chain->GetEntries()-1)
+    {
+      std::cout << "]" << std::endl;
+      std::cout.flush();
+    }
     if(i==0)
       {histoSum = new HistogramMerge(event->histos);}
     else
