@@ -18,6 +18,7 @@ public:
   std::vector<float>        energy;  ///< Energy deposited in step
   std::vector<float>        S;       ///< Global curvilinear S coordinate
   std::vector<float>        weight;  ///< Weight associated with loss
+  std::vector<float>        trackID; ///< TrackID that created the deposit
   std::vector<int>          modelID; ///< Geometry model index
   std::vector<int>          turn;    ///< Turn number
 

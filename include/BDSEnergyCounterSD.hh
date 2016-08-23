@@ -46,6 +46,7 @@ private:
   G4double stepLength;
   G4bool   precisionRegion;
   G4int    ptype;
+  G4int    trackID;
   G4String volName;
   G4int    turnstaken;
   G4int    eventnumber;

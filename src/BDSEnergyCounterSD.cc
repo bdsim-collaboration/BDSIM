@@ -188,6 +188,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   if (weight == 0)
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+  trackID    = aStep->GetTrack()->GetTrackID();
   volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
@@ -201,6 +202,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
                                                        x, y, z,
                                                        volName,
                                                        ptype,
+                                                       trackID,
                                                        weight,
                                                        precisionRegion,
                                                        turnstaken,
@@ -280,7 +282,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   if (weight == 0)
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   
-  ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
+  ptype   = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
+  trackID = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetTrackID();
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
 
   if(verbose && BDSGlobalConstants::Instance()->StopTracks())
@@ -305,7 +308,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       y,
 						       z,
 						       volName, 
-						       ptype, 
+						       ptype,
+                   trackID,
 						       weight, 
 						       0,
 						       turnstaken,

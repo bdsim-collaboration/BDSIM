@@ -38,6 +38,7 @@ public:
 		      G4double zIn               = 0,    // local z
 		      G4String nameIn            = "",   // volume name
 		      G4int    partIDIn          = 0,    // PDG id - particle type
+					G4int    trackID           = -1,
 		      G4double weightIn          = 1,    // weight
 		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
@@ -65,6 +66,7 @@ public:
   inline G4double Getz()               const {return z;} 
   inline G4String GetName()            const {return name;}
   inline G4int    GetPartID()          const {return partID;}
+	inline G4int    GetTrackID()         const {return trackID;}
   inline G4double GetWeight()          const {return weight;} 
   inline G4bool   GetPrecisionRegion() const {return precisionRegion;}
   inline G4int    GetTurnsTaken()      const {return turnsTaken;}
@@ -105,6 +107,7 @@ private:
   
   G4String name;
   G4int    partID;
+	G4int    trackID;
   G4double weight;
   G4bool   precisionRegion; ///< Whether or not the hit is in the precision region
   G4int    turnsTaken;
