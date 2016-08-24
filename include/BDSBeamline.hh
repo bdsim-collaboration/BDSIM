@@ -16,7 +16,7 @@ class BDSBeamlineElement;
 class BDSGeometryComponent;
 class BDSSimpleComponent;
 class BDSTiltOffset;
-class BDSTransform3D; ///< Forward declaration for iterator so it can appear at the top
+class BDSTransform3D;
 namespace CLHEP {
   class HepRotation;
 }

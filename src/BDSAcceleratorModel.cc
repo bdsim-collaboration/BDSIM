@@ -14,7 +14,6 @@ BDSAcceleratorModel* BDSAcceleratorModel::Instance()
   return _instance;
 }
 
-
 BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(nullptr),
   readOutWorldPV(nullptr),

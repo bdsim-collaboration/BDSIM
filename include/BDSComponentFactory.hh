@@ -24,7 +24,7 @@ class BDSTiltOffset;
  * object (that inherits BDSAcceleratorComponent) and returns it. Will return
  * nullptr if invalid type or nothing to be constructed for that particular type.
  * Basic calculations on field strength and angle as well as basic parameter validity
- * (zero length?) are done here.
+ * (zero length) are done here.
  * 
  */
 
