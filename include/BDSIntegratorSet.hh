@@ -7,7 +7,7 @@
 
 #include "globals.hh" // geant4 types / globals
 
-struct BDSIntegratorSet;
+class BDSIntegratorSet;
 
 namespace BDS
 {
@@ -29,8 +29,9 @@ namespace BDS
  * @author Laurie Nevay
  */
 
-struct BDSIntegratorSet
+class BDSIntegratorSet
 {
+public:
   BDSIntegratorSet(BDSIntegratorType solenoidIn,
 		   BDSIntegratorType dipoleIn,
 		   BDSIntegratorType quadrupoleIn,

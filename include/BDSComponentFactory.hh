@@ -1,10 +1,14 @@
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
-#include <map>
+#include "BDSFieldInfo.hh"
 
 #include "globals.hh"
+#include "G4ThreeVector.hh"
 #include "CLHEP/Units/SystemOfUnits.h"
+
+#include <map>
+#include <vector>
 
 namespace GMAD {
   struct Element;
@@ -13,8 +17,10 @@ class BDSAcceleratorComponent;
 class BDSBeamPipe;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
+class BDSIntegratorSet;
 class BDSLine;
-struct BDSMagnetOuterInfo;
+class BDSMagnetOuterInfo;
+class BDSMagnetStrength;
 class BDSTiltOffset;
 
 /**

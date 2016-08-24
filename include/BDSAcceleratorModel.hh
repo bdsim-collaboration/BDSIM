@@ -115,7 +115,8 @@ public:
   {return endPieceBeamline;}
   
   /// Register all field objects
-  inline void               RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn);
+  inline void               RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn)
+  {fields = fieldsIn;}
 
 private:
   BDSAcceleratorModel(); ///< default constructor is private as singleton

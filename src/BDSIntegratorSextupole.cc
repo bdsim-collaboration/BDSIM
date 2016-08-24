@@ -5,7 +5,6 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
-#include "G4ClassicalRK4.hh"
 
 
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
@@ -63,19 +62,19 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 #endif 
   */
    if(fabs(kappa)<1.e-12)
-   {
-     G4ThreeVector positionMove  = (h/InitMag) * v0;
+     {
+       G4ThreeVector positionMove  = (h/InitMag) * v0;
        
-     ySext[0]   = yIn[0] + positionMove.x();
-     ySext[1]   = yIn[1] + positionMove.y();
-     ySext[2]   = yIn[2] + positionMove.z();
+       ySext[0]   = yIn[0] + positionMove.x(); 
+       ySext[1]   = yIn[1] + positionMove.y(); 
+       ySext[2]   = yIn[2] + positionMove.z(); 
 				
-     ySext[3] = v0.x();
-     ySext[4] = v0.y();
-     ySext[5] = v0.z();
+       ySext[3] = v0.x();
+       ySext[4] = v0.y();
+       ySext[5] = v0.z();
 
-     itsDist=0;
-   }
+       distChord=0;
+     }
    else 
      {
        G4ThreeVector LocalR  = ConvertToLocal(GlobalPosition);
@@ -84,75 +83,72 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
        G4double x0=LocalR.x(); 
        G4double y0=LocalR.y();
 
-     // Evaluate field at the approximate midpoint of the step.
-     x0=x0+LocalRp.x()*h/2;
-     y0=y0+LocalRp.y()*h/2;
+       // Evaluate field at the approximate midpoint of the step.
+       x0=x0+LocalRp.x()*h/2;
+       y0=y0+LocalRp.y()*h/2;
        
-     G4double x02My02=(x0*x0-y0*y0);
+       G4double x02My02=(x0*x0-y0*y0);
 
-     G4double xp=LocalRp.x();
-     G4double yp=LocalRp.y();
-     G4double zp=LocalRp.z();
+       G4double xp=LocalRp.x();
+       G4double yp=LocalRp.y();
+       G4double zp=LocalRp.z();
 
-     // local r'' (for curvature)
-     G4ThreeVector LocalRpp;
-     LocalRpp.setX(- zp*x02My02);
-     LocalRpp.setY(2*zp*x0*y0);
-     LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
+       // local r'' (for curvature)
+       G4ThreeVector LocalRpp;
+       LocalRpp.setX(- zp*x02My02);
+       LocalRpp.setY(2*zp*x0*y0);
+       LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
 
-     //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
+       //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
 
-     LocalRpp*=kappa/2; // 2 is actually a 2! factor.
+       LocalRpp*=kappa/2; // 2 is actually a 2! factor.
+       // determine effective curvature
+       G4double R_1 = LocalRpp.mag();
 
-     // determine effective curvature
-     G4double R_1 = LocalRpp.mag();
-
-
-     if(R_1>0.)
-     {
-       G4double h2=h*h;
-       // chord distance (simple quadratic approx)
-       itsDist= h2*R_1/8;
+       if(R_1>0.)
+	 {    
+	   G4double h2=h*h;
+	   // chord distance (simple quadratic approx)
+	   distChord= h2*R_1/8;
 	   
-       G4double dx=LocalRp.x()*h + LocalRpp.x()*h2 /2.;
-       G4double dy=LocalRp.y()*h + LocalRpp.y()*h2 /2.;
+           G4double dx=LocalRp.x()*h + LocalRpp.x()*h2 /2.; 
+	   G4double dy=LocalRp.y()*h + LocalRpp.y()*h2 /2.;
 
-       G4double dz=sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
-
-       // check for precision problems
-       G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-       if(ScaleFac>1.0000001)
+           G4double dz=sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
+	   // check for precision problems
+           G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
+	   if(ScaleFac>1.0000001)
 	     {
-         ScaleFac=sqrt(ScaleFac);
-         dx/=ScaleFac;
-         dy/=ScaleFac;
-         dz/=ScaleFac;
+               ScaleFac=sqrt(ScaleFac);
+               dx/=ScaleFac;
+               dy/=ScaleFac;
+               dz/=ScaleFac;
 	     }
 	   
-       LocalR.setX(LocalR.x()+dx);
-       LocalR.setY(LocalR.y()+dy);
-       LocalR.setZ(LocalR.z()+dz);
+           LocalR.setX(LocalR.x()+dx);
+           LocalR.setY(LocalR.y()+dy);
+           LocalR.setZ(LocalR.z()+dz);
 	  
-	    LocalRp = LocalRp+ h*LocalRpp;
-     }
-     else
-     {LocalR += h*LocalRp;}
+	   LocalRp = LocalRp+ h*LocalRpp;
+	 }
+       else
+	 {LocalR += h*LocalRp;}
+
+       GlobalPosition = ConvertToGlobal(LocalR);
+       G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp) * InitMag;
        
-     GlobalPosition=LocalAffine.TransformPoint(LocalR);
-     G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp)*InitMag;
-       
-     ySext[0]   = GlobalPosition.x();
-     ySext[1]   = GlobalPosition.y();
-     ySext[2]   = GlobalPosition.z();
+       ySext[0]   = GlobalPosition.x(); 
+       ySext[1]   = GlobalPosition.y(); 
+       ySext[2]   = GlobalPosition.z(); 
 				
-     ySext[3] = GlobalTangent.x();
-     ySext[4] = GlobalTangent.y();
-     ySext[5] = GlobalTangent.z();
-   }
+       ySext[3] = GlobalTangent.x();
+       ySext[4] = GlobalTangent.y();
+       ySext[5] = GlobalTangent.z();
+     }
 }
 
 void BDSIntegratorSextupole::Stepper(const G4double yInput[],
-				     const G4double[],
+				     const G4double dydx[],
 				     const G4double hstep,
 				     G4double yOut[],
 				     G4double yErr[])
@@ -162,8 +158,6 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   //  Saving yInput because yInput and yOut can be aliases for same array 
   for(G4int i = 0; i < nVariables; i++)
     {yIn[i]=yInput[i];}
-  
-  for(i=0;i<nvar;i++) yIn[i]=yInput[i];
 
   const G4double *pIn = yInput+3;
   G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
@@ -174,9 +168,6 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   auxNavigator->LocateGlobalPointAndSetup(GlobalR);
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
   G4ThreeVector     localPDir= GlobalAffine.TransformAxis(GlobalPDir);
-
-
- // G4cout << GlobalR.z() << " " << localPDir.z() << " " << GlobalP.mag() << G4endl;
 
   if (localPDir.z() < 0.9 || GlobalP.mag() < 40.0 )
   {

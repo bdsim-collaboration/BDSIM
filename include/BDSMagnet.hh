@@ -3,13 +3,15 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
+#include "BDSFieldInfo.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 
 class BDSBeamPipe;
 class BDSBeamPipeInfo;
 class BDSFieldObjects;
 class BDSMagnetOuter;
-struct BDSMagnetOuterInfo;
+class BDSMagnetOuterInfo;
 
 class G4ChordFinder;
 class G4FieldManager;

@@ -3,22 +3,20 @@
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
-#include "BDSDebug.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMagnet.hh"
-#include "BDSSimpleComponent.hh"
-#include "BDSElement.hh"
-#include "BDSBeamPipeInfo.hh"
 #include "BDSMagnetOuterInfo.hh"
+#include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
 #include "parser/element.h"
 #include "parser/elementtype.h"
-
 
 #include <algorithm>
 #include <iterator>
@@ -26,17 +24,18 @@
 #include <utility>  // for std::pair
 #include <vector>
 
+class BDSBeamPipeInfo;
+
 using namespace GMAD;
 
 BDSBendBuilder* BDSBendBuilder::_instance = nullptr;
 
 BDSBendBuilder* BDSBendBuilder::Instance()
 {
-    if(_instance == nullptr)
+  if(_instance == nullptr)
     {_instance = new BDSBendBuilder();}
-    return _instance;
+  return _instance;
 }
-
 
 BDSBendBuilder::BDSBendBuilder()
 {
@@ -45,15 +44,14 @@ BDSBendBuilder::BDSBendBuilder()
 
 BDSBendBuilder::~BDSBendBuilder()
 {
-    _instance = nullptr;
+  _instance = nullptr;
 }
 
 BDSLine* BDSBendBuilder::SBendLine(Element*  element,
-                                         G4double angleIn,
-                                         G4double angleOut,
-                                         BDSMagnetStrength* st)
+				   G4double angleIn,
+				   G4double angleOut,
+				   BDSMagnetStrength* st)
 {
-
     // Calculate number of sbends to split parent into
     G4int nSBends = CalculateNSBendSegments(element);
 
@@ -401,7 +399,7 @@ BDSMagnet* BDSBendBuilder::DipoleFringe(GMAD::Element* element,
 
 
 G4int BDSBendBuilder::CalculateNSBendSegments(GMAD::Element const* element,
-                              const G4double aperturePrecision)
+					      const G4double aperturePrecision)
 {
     //if maximum distance between arc path and straight path larger than 1mm, split sbend into N chunks,
     //this also works when maximum distance is less than 1mm as there will just be 1 chunk!
