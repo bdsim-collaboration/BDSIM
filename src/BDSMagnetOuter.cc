@@ -4,10 +4,6 @@
 
 #include "G4ThreeVector.hh"
 
-class BDSExtent;
-class G4VSolid;
-class G4LogicalVolume;
-
 BDSMagnetOuter::BDSMagnetOuter(G4VSolid*             containerSolid,
 			       G4LogicalVolume*      containerLV,
 			       BDSExtent             extent,

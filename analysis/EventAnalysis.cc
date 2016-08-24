@@ -1,4 +1,5 @@
 #include "EventAnalysis.hh"
+#include "BDSDebug.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "Config.hh"
 #include "TROOT.h"

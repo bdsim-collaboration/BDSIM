@@ -12,6 +12,8 @@
 #include "BDSComptonEngine.hh"
 #include "BDSMaterials.hh"
 
+class BDSGlobalConstants;
+
 // flag initiated in BDSEventAction
 extern G4bool FireLaserCompton;
 

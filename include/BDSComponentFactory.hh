@@ -2,22 +2,19 @@
 #define BDSCOMPONENTFACTORY_H
 
 #include <map>
-#include <list>
 
 #include "globals.hh"
-#include "parser/element.h"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSLine.hh"
-#include "BDSMagnet.hh"
-#include "BDSMagnetType.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 
+namespace GMAD {
+  struct Element;
+}
+class BDSAcceleratorComponent;
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
 class BDSCavityInfo;
-class BDSFieldInfo;
-struct BDSIntegratorSet;
-class BDSMagnetStrength;
+class BDSLine;
+struct BDSMagnetOuterInfo;
 class BDSTiltOffset;
 
 /**
@@ -27,7 +24,7 @@ class BDSTiltOffset;
  * object (that inherits BDSAcceleratorComponent) and returns it. Will return
  * nullptr if invalid type or nothing to be constructed for that particular type.
  * Basic calculations on field strength and angle as well as basic parameter validity
- * (zero length?) are done here.
+ * (zero length) are done here.
  * 
  */
 

@@ -34,14 +34,6 @@ pymad8.Mad8 module
     :undoc-members:
     :show-inheritance:
 
-pymad8.Mad8Converter module
----------------------------
-
-.. automodule:: pymad8.Mad8Converter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pymad8.Plot module
 ------------------
 

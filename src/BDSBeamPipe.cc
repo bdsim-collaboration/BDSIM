@@ -2,10 +2,6 @@
 
 #include "globals.hh"         // geant4 globals / types
 
-class BDSExtent;
-class G4LogicalVolume;
-class G4VSolid;
-
 BDSBeamPipe::BDSBeamPipe(G4VSolid*        containerSolidIn,
 			 G4LogicalVolume* containerLVIn,
 			 BDSExtent        extentIn,

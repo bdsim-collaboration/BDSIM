@@ -1,5 +1,6 @@
 #include "BDSBunchUserFile.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals

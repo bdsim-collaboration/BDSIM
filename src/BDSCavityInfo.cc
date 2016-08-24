@@ -3,9 +3,6 @@
 
 #include "globals.hh"
 
-class G4Material;
-
-
 BDSCavityInfo::BDSCavityInfo(BDSCavityType cavityTypeIn,
 			     G4Material*   materialIn,
 			     G4Material*   vacuumMaterialIn,

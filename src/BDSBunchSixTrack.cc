@@ -1,7 +1,6 @@
 #include "BDSBunchSixTrack.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
-#include <iostream>
 #include <fstream>
 
 BDSBunchSixTrack::BDSBunchSixTrack()
@@ -73,6 +72,7 @@ void BDSBunchSixTrack::LoadSixTrackFile()
     }
 
   nPart = sixtrackData.size();
+  infile.close();
   return;
 }
 

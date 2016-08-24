@@ -8,6 +8,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetOuter.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"

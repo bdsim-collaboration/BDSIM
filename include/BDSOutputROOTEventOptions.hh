@@ -1,14 +1,7 @@
 #ifndef BDSOUTPUTROOTEVENTOPTIONS_H
 #define BDSOUTPUTROOTEVENTOPTIONS_H
 
-#include <vector>
-#include <string>
-
 #include "TObject.h"
-
-#ifndef __ROOTBUILD__
-#include "BDSGlobalConstants.hh"
-#endif
 
 #include "parser/optionsBase.h"
 

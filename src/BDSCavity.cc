@@ -5,6 +5,7 @@
 #include "BDSColours.hh"
 #include "BDSExtent.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4GenericPolycone.hh"

@@ -29,6 +29,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldType.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorType.hh"
 #include "BDSMagnetOuterInfo.hh"

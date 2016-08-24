@@ -1,7 +1,5 @@
 #include "BDSTunnelSection.hh"
 
-class G4VSolid;
-
 BDSTunnelSection::BDSTunnelSection(G4String              name,
 				   G4double              chordLengthIn,
 				   G4double              angle,

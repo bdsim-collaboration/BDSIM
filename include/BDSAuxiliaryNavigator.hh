@@ -5,6 +5,7 @@
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
 
+class G4AffineTransform;
 class G4Step;
 class G4VPhysicalVolume;
 

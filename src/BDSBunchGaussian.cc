@@ -1,6 +1,10 @@
 #include "BDSBunchGaussian.hh"
-#include <cstring>
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchGaussian::BDSBunchGaussian(): 
   BDSBunchInterface(),

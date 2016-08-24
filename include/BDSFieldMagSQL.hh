@@ -2,7 +2,6 @@
 #define BDSFIELDMAGSQL_H
 
 #include <fstream>
-#include <iostream>
 #include <list>
 #include <map>
 #include <vector>
