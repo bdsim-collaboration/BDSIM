@@ -12,10 +12,7 @@
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"
 
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4Mag_EqRhs.hh"
-#include "G4VPhysicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
 
 BDSRBend::BDSRBend(G4String            name,
 		   G4double            length,

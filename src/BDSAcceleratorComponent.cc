@@ -1,4 +1,5 @@
 #include "BDSAcceleratorComponent.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"

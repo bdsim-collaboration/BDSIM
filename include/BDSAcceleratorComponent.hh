@@ -1,17 +1,17 @@
 #ifndef BDSACCELERATORCOMPONENT_H
 #define BDSACCELERATORCOMPONENT_H
 
-#include "G4LogicalVolume.hh"
 #include "globals.hh"          // geant4 globals / types
 
-#include "BDSBeamPipeInfo.hh"
 #include "BDSGeometryComponent.hh"
 
 #include <list>
 #include <string>
 #include <vector>
 
+class BDSBeamPipeInfo;
 class BDSSimpleComponent;
+class G4LogicalVolume;
 
 /**
  * @brief Abstract class that represents a component of an accelerator.

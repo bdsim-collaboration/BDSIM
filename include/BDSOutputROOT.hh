@@ -2,13 +2,14 @@
 #define BDSOUTPUTROOT_H
 
 #include "BDSOutputBase.hh"
-#include "BDSTrajectory.hh"
 
 #include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
 
 class BDSOutputROOTEventInfo;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
 
 /**
  * @brief Lightweight ROOT output class

@@ -1,11 +1,14 @@
 #include "BDSOutputROOT.hh"
 
 #include "BDSDebug.hh"
+#include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSHistogram.hh"
 #include "BDSSampler.hh"
+#include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTunnelHit.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant types / globals

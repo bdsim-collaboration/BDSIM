@@ -2,20 +2,25 @@
 #define BDSBEAMLINE_H
 
 #include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
-#include "BDSBeamlineElement.hh"
+#include "BDSSamplerType.hh"
 
 #include <iterator>
 #include <ostream>
-#include <utility>    //for std::pair
 #include <vector>
 
+class BDSAcceleratorComponent;
+class BDSBeamlineElement;
 class BDSGeometryComponent;
+class BDSSimpleComponent;
 class BDSTiltOffset;
 class BDSTransform3D; ///< Forward declaration for iterator so it can appear at the top
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief A vector of BDSBeamlineElement instances - a beamline.

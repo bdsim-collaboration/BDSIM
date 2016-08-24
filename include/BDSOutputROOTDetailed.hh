@@ -2,9 +2,8 @@
 #define BDSOUTPUTROOTDETAILED_H
 
 #include "BDSOutputROOT.hh"
-#include "BDSTrajectory.hh"
 
-#include "TTree.h"
+class TTree;
 
 /**
  * @brief ROOT output class

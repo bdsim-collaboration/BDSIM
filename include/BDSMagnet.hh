@@ -3,19 +3,18 @@
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuter.hh"
-#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4LogicalVolume.hh"
-#include "G4MagneticField.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4RotationMatrix.hh"
-#include "G4UserLimits.hh"
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
+class BDSMagnetOuter;
+class BDSMagnetOuterInfo;
+
+class G4ChordFinder;
+class G4FieldManager;
+class G4Mag_UsualEqRhs;
+class G4MagIntegratorStepper;
+class G4MagneticField;
 
 /**
  * @brief Abstract base class that implements features common to all magnets. 

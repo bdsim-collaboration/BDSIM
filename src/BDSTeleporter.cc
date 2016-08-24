@@ -2,6 +2,7 @@
 #include "BDSTeleporter.hh"
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagField.hh"

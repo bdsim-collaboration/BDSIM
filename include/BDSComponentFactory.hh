@@ -2,17 +2,19 @@
 #define BDSCOMPONENTFACTORY_H
 
 #include <map>
-#include <list>
 
 #include "globals.hh"
-#include "parser/element.h"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSLine.hh"
-class BDSCavityInfo;
+#include "CLHEP/Units/SystemOfUnits.h"
 
+namespace GMAD {
+  class Element;
+}
+class BDSAcceleratorComponent;
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
+class BDSCavityInfo;
+class BDSLine;
+class BDSMagnetOuterInfo;
 class BDSTiltOffset;
 
 /**

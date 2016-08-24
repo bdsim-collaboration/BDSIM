@@ -1,5 +1,6 @@
 #include "BDSCollimatorBase.hh"
 
+#include "BDSBeamPipeInfo.hh"
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 

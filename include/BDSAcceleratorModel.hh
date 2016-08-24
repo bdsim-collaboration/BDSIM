@@ -2,10 +2,10 @@
 #define BDSACCELERATORMODEL_H
 
 #include "globals.hh"         // geant4 globals / types
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
 
-#include "BDSBeamline.hh"
+class BDSBeamline;
+class G4LogicalVolume;
+class G4VPhysicalVolume;
 
 /**
  * @brief A holder class for all representations of the
