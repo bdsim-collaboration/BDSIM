@@ -3,6 +3,8 @@
 
 #include "globals.hh"         // geant4 globals / types
 
+#include <vector>
+
 class BDSBeamline;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
