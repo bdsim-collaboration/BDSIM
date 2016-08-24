@@ -16,6 +16,8 @@ Units, unless specified, are SI (ie m, rad), plus energy in GeV and time in nano
 Small letters denote local (to that object) coordinates whereas capitals represent
 global coordinates.
 
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.2\textwidth}|p{0.5\textwidth}|
+	     
 +----------------------+-----------------------------+----------------------------------------------------------------------------+
 | Format               | Syntax                      | Description                                                                |
 +======================+=============================+============================================================================+
@@ -67,6 +69,8 @@ following structure.
 
 The file consists of four ROOT 'trees' each with 'branches' that represent instances
 of the BDSIM classes.  The trees are:
+
+.. tabularcolumns:: |p{0.2\textwidth}|p{0.8\textwidth}|
 
 +-------------+---------------------------------------------------------------------+
 | Tree Name   | Description                                                         |
@@ -126,6 +130,8 @@ Event Tree
 
 This tree contains information on a per event basis.  Everything shown in the above tree has a
 different value per event run in BDSIM.
+
+.. tabularcolumns:: |p{0.15\textwidth}|p{0.35\textwidth}|p{0.4\textwidth}|
 
 +-----------------+----------------------------------+--------------------------------------------------+
 | Branch Name     | Type                             | Description                                      |
@@ -228,6 +234,8 @@ started. The chosen filename will be suffixed with :code:`_N.root` where
 Older Formats
 -------------
 
+.. tabularcolumns:: |p{0.15\textwidth}|p{0.3\textwidth}|p{0.5\textwidth}|
+		    
 +-------------------+-----------------------------+----------------------------------------------------------------------------+
 | Format            | Syntax                      | Description                                                                |
 +===================+=============================+============================================================================+
