@@ -7,14 +7,14 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 
 namespace GMAD {
-  class Element;
+  struct Element;
 }
 class BDSAcceleratorComponent;
 class BDSBeamPipe;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
 class BDSLine;
-class BDSMagnetOuterInfo;
+struct BDSMagnetOuterInfo;
 class BDSTiltOffset;
 
 /**

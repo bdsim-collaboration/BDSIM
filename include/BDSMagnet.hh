@@ -8,7 +8,7 @@
 class BDSBeamPipe;
 class BDSBeamPipeInfo;
 class BDSMagnetOuter;
-class BDSMagnetOuterInfo;
+struct BDSMagnetOuterInfo;
 
 class G4ChordFinder;
 class G4FieldManager;
