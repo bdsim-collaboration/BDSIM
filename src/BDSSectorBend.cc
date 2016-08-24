@@ -11,9 +11,7 @@
 #include "BDSSbendMagField.hh"
 #include "BDSUtilities.hh"        // for calculateorientation
 
-#include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4VPhysicalVolume.hh"
 
 #include "globals.hh"             // geant4 types / globals
 

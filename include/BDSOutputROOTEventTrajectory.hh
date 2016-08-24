@@ -6,7 +6,7 @@
 #include <vector>
 
 #ifndef __ROOTBUILD__
-#include "BDSTrajectory.hh"
+class BDSTrajectory;
 #include "BDSEnergyCounterHit.hh"
 #endif
 

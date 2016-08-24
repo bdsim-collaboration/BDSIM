@@ -3,6 +3,8 @@
 
 #include "BDSOutputBase.hh"
 
+class BDSOutputROOTEventInfo;
+
 /**
  * @brief No output class
  * 
@@ -35,6 +37,7 @@ public:
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
   /// write event info
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/){;}
   virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &){}
   virtual void WriteTrackerBunch(G4String, TRKBunch*, bool){}
   virtual void WriteTrackerPrimaryLoss(TRKBunch*, int){}

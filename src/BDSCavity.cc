@@ -4,6 +4,7 @@
 #include "BDSCavityType.hh"
 #include "BDSColours.hh"
 #include "BDSExtent.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ElectroMagneticField.hh"

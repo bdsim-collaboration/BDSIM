@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace GMAD
 {
@@ -61,9 +62,7 @@ namespace GMAD
   template<typename C>
     template<typename T>
     void Published<C>::publish(const std::string& name, T C::*mp)
-    {
-      attribute_map<T>()[name] = mp;
-    }
+    {attribute_map<T>()[name] = mp;}
 
   template<typename C>
     void Published<C>::set(C* instance, const std::string& name, double value)

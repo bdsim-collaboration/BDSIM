@@ -56,14 +56,25 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     this->histograms1DN[i]    = this->histograms1DN[i]+1;
   }
 
-#if 0
   // loop over 2d histograms
-  auto h2i = h->Get2DHistograms();
+  auto h2i = hIn->Get2DHistograms();
   for(size_t i=0;i<h2i.size();++i)
   {
-    this->histograms2D[i]->Add(h2i[i]);
+    auto h1 = this->histograms2D[i];
+    auto h1e = this->histograms2DError[i];
+    h1e->SetName((std::string(h1->GetName())+"Error").c_str());
+    auto h2  = hIn->Get2DHistograms()[i];
+
+    for(int j=0;j<h1->GetNbinsX()+1;++j)
+    {
+      for(int k=0;k<h1->GetNbinsY()+1;++k)
+      {
+         h1->SetBinContent(j,k,h1->GetBinContent(j,k)+h2->GetBinContent(j,k));
+        h1e->SetBinContent(j,k,h1e->GetBinContent(j,k)+pow(h2->GetBinContent(j,k),2));
+      }
+    }
+    this->histograms2DN[i]    = this->histograms2DN[i]+1;
   }
-#endif
 }
 
 void HistogramMerge::Terminate()
@@ -73,7 +84,7 @@ void HistogramMerge::Terminate()
     std::cout << "terminate " << std::endl;
   }
   // loop over 1d histograms
-  for(unsigned int i=0;i< histograms1D.size();++i)
+  for(unsigned int i=0;i<histograms1D.size();++i)
   {
     auto h1  = histograms1D[i];
     auto h1e = histograms1DError[i];
@@ -85,6 +96,23 @@ void HistogramMerge::Terminate()
       h1->SetBinContent(j,mean);
       h1->SetBinError(j,std);
     }
+  }
+
+  for(unsigned int i=0;i<histograms2D.size();++i)
+  {
+    auto h1  = histograms2D[i];
+    auto h1e = histograms2DError[i];
+    for(int j=0;j<=h1->GetNbinsX();++j)
+    {
+      for(int k=0;k<=h1->GetNbinsY();++j)
+      {
+        double mean = h1->GetBinContent(i,j)/histograms2DN[i];
+        double std  = sqrt(h1e->GetBinContent(j,k)/histograms2DN[i]-pow(mean,2))/sqrt(histograms2DN[i]);
+        h1->SetBinContent(j,k,mean);
+        h1->SetBinError(j,k,std);
+      }
+    }
+
   }
 }
 

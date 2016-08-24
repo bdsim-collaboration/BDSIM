@@ -64,6 +64,7 @@ int main(int argc,char** argv)
   /// Initialize executable command line options reader object
   const BDSExecOptions* execOptions = new BDSExecOptions(argc,argv);
   execOptions->Print();
+  G4bool ignoreSIGINT = execOptions->IgnoreSIGINT(); // different sig catching for cmake
   
   /// Check geant4 exists in the current environment
   if (!BDS::Geant4EnvironmentIsSet())
@@ -96,9 +97,7 @@ int main(int argc,char** argv)
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (globalConstants->SetSeedState()) //optionally load the seed state from file (separate from seed)
-    {BDSRandom::LoadSeedState(globalConstants->SeedStateFileName());}
-
+  
   /// Instantiate the specific type of bunch distribution (class),
   /// get the corresponding parameters from the gmad parser info
   /// and attach to the initialised random number generator.
@@ -283,16 +282,19 @@ int main(int argc,char** argv)
 #endif
       bdsOutput = BDSOutputFactory::CreateOutput(globalConstants->OutputFormat());
       G4cout.precision(10);
-      
-      /// Catch aborts to close output stream/file. perhaps not all are needed.
-      signal(SIGABRT, &BDS::HandleAborts); // aborts
-      signal(SIGTERM, &BDS::HandleAborts); // termination requests
-      signal(SIGSEGV, &BDS::HandleAborts); // segfaults
-      // no interrupts since ctest sends an interrupt signal when interrupted
-      // and then the BDSIM process somehow doesn't get killed
-      // signal(SIGINT,  &BDS::HandleAborts); // interrupts
 
-    /// Run in either interactive or batch mode
+      /// Catch aborts to close output stream/file. perhaps not all are needed.
+      struct sigaction act;
+      act.sa_handler = &BDS::HandleAborts;
+      sigemptyset(&act.sa_mask);
+      act.sa_flags = 0;
+      if (!ignoreSIGINT)
+	{sigaction(SIGINT,  &act, 0);}
+      sigaction(SIGABRT, &act, 0);
+      sigaction(SIGTERM, &act, 0);
+      sigaction(SIGSEGV, &act, 0);
+      
+      /// Run in either interactive or batch mode
       if(!globalConstants->Batch())   // Interactive mode
 	{
 	  BDSVisManager visManager;

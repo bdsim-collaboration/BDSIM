@@ -1,15 +1,15 @@
 #ifndef BDSTELEPORTER_H
 #define BDSTELEPORTER_H
 
-#include "BDSTeleporterStepper.hh"
-#include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "BDSMagField.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "BDSBeamline.hh"
+#include "BDSAcceleratorComponent.hh"
 
+class BDSBeamline;
+class BDSMagField;
+class G4ChordFinder;
+class G4FieldManager;
 class G4MagInt_Driver;
+class G4MagIntegratorStepper;
+class G4Mag_UsualEqRhs;
 
 class BDSTeleporter: public BDSAcceleratorComponent
 {

@@ -8,6 +8,8 @@
 #include "CLHEP/Random/JamesRandom.h"
 
 #include <ctime>
+#include <string>
+#include <sstream>
 
 void BDSRandom::CreateRandomNumberGenerator()
 {
@@ -56,17 +58,21 @@ void BDSRandom::PrintFullSeedState()
   G4cout << G4endl;
 }
 
-void BDSRandom::WriteSeedState()
+void BDSRandom::WriteSeedState(G4String suffix)
 {
-  G4String seedstatefilename = BDSGlobalConstants::Instance()->OutputFileName() + ".seedstate.txt";
-  std::ofstream ofseedstate (seedstatefilename.c_str());
-  if (ofseedstate.is_open())
-    {CLHEP::HepRandom::saveFullState(ofseedstate);}
-  else
-    {
-      G4cout << __METHOD_NAME__ << "cannot open file : " << seedstatefilename << G4endl;
-      exit(1);
-    }
+  G4String baseFileName = BDSGlobalConstants::Instance()->OutputFileName();
+  G4String seedstatefilename = baseFileName + suffix + ".seedstate.txt";
+  std::ofstream ofseedstate;
+  ofseedstate.open(seedstatefilename);
+  CLHEP::HepRandom::saveFullState(ofseedstate);
+  ofseedstate.close();
+}
+
+G4String BDSRandom::GetSeedState()
+{
+  std::stringstream currentState;
+  CLHEP::HepRandom::saveFullState(currentState);
+  return G4String(currentState.str());
 }
 
 void BDSRandom::LoadSeedState(G4String inSeedFilename)
@@ -85,6 +91,21 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
     }
   ifseedstate.close();
 #ifdef BDSDEBUG
+  BDSRandom::PrintFullSeedState();
+#endif
+}
+
+void BDSRandom::SetSeedState(G4String seedState)
+{
+  std::stringstream ss;
+  ss.str(seedState); // set contents of string stream as input string
+  SetSeedState(ss);
+}
+
+void BDSRandom::SetSeedState(std::stringstream& seedState)
+{
+  CLHEP::HepRandom::restoreFullState(seedState);
+#ifdef BDSEBUG
   BDSRandom::PrintFullSeedState();
 #endif
 }

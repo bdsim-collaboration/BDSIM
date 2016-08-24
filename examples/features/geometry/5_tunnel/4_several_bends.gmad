@@ -11,18 +11,7 @@ use,period=l1;
 
 !sample, range=endoftheline;
 
-option, ngenerate=1,
-	physicsList="QGSP_BERT",
-!	physicsList="em",
-	beampipeRadius=10.0*cm,
-	beampipeThickness=3*cm,
-	outerDiameter=0.5*m,
-	defaultRangeCut=1*m,	
-	prodCutPositrons=1*m,
-	prodCutElectrons=1*m,
-	prodCutPhotons=1*m,
-	checkOverlaps=1,
-	elossHistoBinWidth=10*cm;
+include options.gmad;
 
 ! note buildTunnelStraight=0 means it will follow the beam line
 
@@ -42,13 +31,10 @@ option, buildTunnel=1,
 	tunnelOffsetX=0.4*m,
 	tunnelOffsetY=-1.2*m;
 
-option, modularPhysicsListsOn=1;
-
 ! note tunnelAper2 will be ignored by the circular tunnel model
 
 beam, particle="proton",
       energy=100.0*GeV,
       distrType="reference",
-      ngenerate=1,
       X0=0.0,
       Y0=0.0;

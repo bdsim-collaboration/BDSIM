@@ -52,6 +52,9 @@ private:
 
   G4double itsDist;
 
+	// backup stepper
+  G4MagIntegratorStepper* backupStepper;
+
 };
 
 inline  void BDSSextStepper::SetBDblPrime(G4double aBDblPrime)

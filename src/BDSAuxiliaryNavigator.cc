@@ -7,8 +7,6 @@
 #include "G4StepStatus.hh"
 #include "G4ThreeVector.hh"
 
-class G4VPhysicalVolume;
-
 G4Navigator* BDSAuxiliaryNavigator::auxNavigator      = new G4Navigator();
 G4Navigator* BDSAuxiliaryNavigator::auxNavigatorCL    = new G4Navigator();
 G4int        BDSAuxiliaryNavigator::numberOfInstances = 0;

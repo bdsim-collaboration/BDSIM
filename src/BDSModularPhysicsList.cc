@@ -43,6 +43,7 @@
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
+#include "G4Version.hh"
 
 #include <iterator>
 #include <map>
@@ -347,7 +348,9 @@ void BDSModularPhysicsList::EmExtra()
   if (!physicsActivated["em_extra"])
     {
       auto constructor = new G4EmExtraPhysics();
-      constructor->Synch(true);
+#if G4VERSION_NUMBER > 1009
+      constructor->Synch(true); // introduced geant version 10.1
+#endif
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }

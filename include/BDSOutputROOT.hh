@@ -2,11 +2,14 @@
 #define BDSOUTPUTROOT_H
 
 #include "BDSOutputBase.hh"
-#include "BDSTrajectory.hh"
 
 #include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
+
+class BDSOutputROOTEventInfo;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
 
 /**
  * @brief Lightweight ROOT output class
@@ -56,6 +59,7 @@ public:
 			      const time_t&  /*stopTime*/,
 			      const G4float& /*duration*/,
 			      const std::string& /*seedStateAtStart*/) override {}
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/) override {;}
   virtual void FillEvent() override {;} ///< Fill the event
   virtual void Initialise() override; ///< open the file
   virtual void Write(const time_t&  startTime,

@@ -1,21 +1,13 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"               
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
-#include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSMagnet.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
-
-class BDSTiltOffset;
 
 BDSMuSpoiler::BDSMuSpoiler(G4String            name,
 			   G4double            length,

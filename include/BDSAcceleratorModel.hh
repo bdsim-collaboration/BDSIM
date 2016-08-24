@@ -2,10 +2,12 @@
 #define BDSACCELERATORMODEL_H
 
 #include "globals.hh"         // geant4 globals / types
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
 
-#include "BDSBeamline.hh"
+#include <vector>
+
+class BDSBeamline;
+class G4LogicalVolume;
+class G4VPhysicalVolume;
 
 /**
  * @brief A holder class for all representations of the
@@ -29,55 +31,71 @@ public:
   ~BDSAcceleratorModel();
 
   /// Register the physical volume of the world
-  inline void               RegisterWorldPV(G4VPhysicalVolume* worldIn);
+  inline void               RegisterWorldPV(G4VPhysicalVolume* worldIn)
+  {worldPV = worldIn;}    
 
   /// Access the physical volume of the world
-  inline G4VPhysicalVolume* GetWorldPV();
+  inline G4VPhysicalVolume* GetWorldPV() const
+  {return worldPV;}
 
   /// Register the physical volume for the read out geometry
-  inline void               RegisterReadOutWorldPV(G4VPhysicalVolume* readOutWorldIn);
+  inline void               RegisterReadOutWorldPV(G4VPhysicalVolume* readOutWorldIn)
+  {readOutWorldPV = readOutWorldIn;}
 
   /// Access the physical volume for the read out geometry
-  inline G4VPhysicalVolume* GetReadOutWorldPV();
+  inline G4VPhysicalVolume* GetReadOutWorldPV() const
+  {return readOutWorldPV;}
 
   /// Register the logical volume for the read out geometry - needed
   /// for the placement of tunnel read out geometry items
-  inline void               RegisterReadOutWorldLV(G4LogicalVolume* tunnelReadOutWorldin);
+  inline void               RegisterReadOutWorldLV(G4LogicalVolume* readOutWorldIn)
+  {readOutWorldLV = readOutWorldIn;}
 
   /// Access the logical volume for the read out geometry
-  inline G4LogicalVolume*   GetReadOutWorldLV();
+  inline G4LogicalVolume*   GetReadOutWorldLV() const
+  {return readOutWorldLV;}
 
   /// Register the physical volume for the TUNNEL read out geometry
-  inline void               RegisterTunnelReadOutWorldPV(G4VPhysicalVolume* tunnelReadOutWorldIn);
+  inline void               RegisterTunnelReadOutWorldPV(G4VPhysicalVolume* tunnelReadOutWorldPVIn)
+  {tunnelReadOutWorldPV = tunnelReadOutWorldPVIn;}
   
   /// Access the physical volume for the TUNNEL read out geometry
-  inline G4VPhysicalVolume* GetTunnelReadOutWorldPV();
+  inline G4VPhysicalVolume* GetTunnelReadOutWorldPV() const
+  {return tunnelReadOutWorldPV;}
 
   /// Register the logical volume for the TUNNEL read out geometry - needed
   /// for the placement of tunnel read out geometry items
-  inline void               RegisterTunnelReadOutWorldLV(G4LogicalVolume* tunnelReadOutWorldin);
-
+  inline void               RegisterTunnelReadOutWorldLV(G4LogicalVolume* tunnelReadOutWorldIn)
+  {tunnelReadOutWorldLV = tunnelReadOutWorldIn;}
+  
   /// Access the logical volume for the TUNNEL read out geometry
-  inline G4LogicalVolume*   GetTunnelReadOutWorldLV();
+  inline G4LogicalVolume*   GetTunnelReadOutWorldLV() const
+  {return tunnelReadOutWorldLV;}
 
   /// Register the flat beam line - flat means that each element in the beamline represents
   /// one element in the accelerator lattice
-  inline void               RegisterFlatBeamline(BDSBeamline* beamlineIn);
+  inline void               RegisterFlatBeamline(BDSBeamline* beamlineIn)
+  {flatBeamline = beamlineIn;}
 
   /// Access flat beam line
-  inline BDSBeamline*       GetFlatBeamline();
+  inline BDSBeamline*       GetFlatBeamline() const
+  {return flatBeamline;}
 
   /// Register the beam line containing all the magnet supports
-  inline void               RegisterSupportsBeamline(BDSBeamline* beamlineIn);
+  inline void               RegisterSupportsBeamline(BDSBeamline* beamlineIn)
+  {supportsBeamline = beamlineIn;}
 
   /// Access the beam line containing all the magnet supports
-  inline BDSBeamline*       GetSupportsBeamline();
+  inline BDSBeamline*       GetSupportsBeamline() const
+  {return supportsBeamline;}
 
   /// Register the beam line containing all the tunnel segments
-  inline void               RegisterTunnelBeamline(BDSBeamline* beamlineIn);
+  inline void               RegisterTunnelBeamline(BDSBeamline* beamlineIn)
+  {tunnelBeamline = beamlineIn;}
 
   /// Access the beam line containing all the tunnel segments
-  inline BDSBeamline*       GetTunnelBeamline();
+  inline BDSBeamline*       GetTunnelBeamline() const
+  {return tunnelBeamline;}
 
   /// Register any physical volumes that should be managed - typically from world placement
   inline void               RegisterPhysicalVolume(G4VPhysicalVolume* physicalVolume);
@@ -86,10 +104,12 @@ public:
   inline void               RegisterPhysicalVolume(std::vector<G4VPhysicalVolume*> physicalVolumes);
 
   /// Register the beam line of end pieces.
-  inline void               RegisterEndPieceBeamline(BDSBeamline* beamlineIn);
+  inline void               RegisterEndPieceBeamline(BDSBeamline* beamlineIn)
+  {endPieceBeamline = beamlineIn;}
 
   /// Access the beam line of end pieces.
-  inline BDSBeamline*       GetEndPieceBeamline() const {return endPieceBeamline;}
+  inline BDSBeamline*       GetEndPieceBeamline() const
+  {return endPieceBeamline;}
   
 private:
   BDSAcceleratorModel(); ///< default constructor is private as singleton
@@ -107,56 +127,5 @@ private:
   BDSBeamline*       tunnelBeamline;   ///< Tunnel segments beam line.
   BDSBeamline*       endPieceBeamline; ///< End Pieces beam line.
 };
-
-inline void BDSAcceleratorModel::RegisterWorldPV(G4VPhysicalVolume* worldIn)
-{worldPV = worldIn;}
-
-inline G4VPhysicalVolume* BDSAcceleratorModel::GetWorldPV()
-{return worldPV;}
-
-inline void BDSAcceleratorModel::RegisterReadOutWorldPV(G4VPhysicalVolume* readOutWorldIn)
-{readOutWorldPV = readOutWorldIn;}
-
-inline G4VPhysicalVolume* BDSAcceleratorModel::GetReadOutWorldPV()
-{return readOutWorldPV;}
-
-inline void BDSAcceleratorModel::RegisterReadOutWorldLV(G4LogicalVolume* readOutWorldIn)
-{readOutWorldLV = readOutWorldIn;}
-
-inline G4LogicalVolume* BDSAcceleratorModel::GetReadOutWorldLV()
-{return readOutWorldLV;}
-
-inline void BDSAcceleratorModel::RegisterTunnelReadOutWorldPV(G4VPhysicalVolume* worldIn)
-{tunnelReadOutWorldPV = worldIn;}
-
-inline G4VPhysicalVolume* BDSAcceleratorModel::GetTunnelReadOutWorldPV()
-{return tunnelReadOutWorldPV;}
-
-inline void BDSAcceleratorModel::RegisterTunnelReadOutWorldLV(G4LogicalVolume* readOutWorldIn)
-{tunnelReadOutWorldLV = readOutWorldIn;}
-
-inline G4LogicalVolume* BDSAcceleratorModel::GetTunnelReadOutWorldLV()
-{return tunnelReadOutWorldLV;}
-
-inline void BDSAcceleratorModel::RegisterFlatBeamline(BDSBeamline* beamlineIn)
-{flatBeamline = beamlineIn;}
-
-inline BDSBeamline* BDSAcceleratorModel::GetFlatBeamline()
-{return flatBeamline;}
-
-inline void BDSAcceleratorModel::RegisterSupportsBeamline(BDSBeamline* beamlineIn)
-{supportsBeamline = beamlineIn;}
-
-inline BDSBeamline* BDSAcceleratorModel::GetSupportsBeamline()
-{return supportsBeamline;}
-
-inline void BDSAcceleratorModel::RegisterTunnelBeamline(BDSBeamline* beamlineIn)
-{tunnelBeamline = beamlineIn;}
-
-inline BDSBeamline* BDSAcceleratorModel::GetTunnelBeamline()
-{return tunnelBeamline;}
-
-inline void BDSAcceleratorModel::RegisterEndPieceBeamline(BDSBeamline* beamlineIn)
-{endPieceBeamline = beamlineIn;}
 
 #endif

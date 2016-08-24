@@ -37,10 +37,6 @@ simple_testing(exportgeometry "--file=sm.gmad" "")
 # seed
 set(TESTING_ARGS --seed=1729)
 simple_testing(simpleMachineSeed "--file=sm.gmad" "")
-# seed state (uses seedstate from previous test)
-set(TESTING_ARGS --seed=1729 --seedstate=output.seedstate.txt)
-simple_testing(simpleMachineSeedState "--file=sm.gmad" "")
-set_tests_properties(simpleMachineSeedState PROPERTIES DEPENDS simpleMachineSeed)
 # verbose
 set(TESTING_ARGS --verbose)
 simple_testing(simpleMachineVerbose "--file=sm.gmad" "")

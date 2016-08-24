@@ -41,12 +41,14 @@ BDSBunchInterface* BDSBunchFactory::createBunch(G4String distribType, G4String d
   else if(distribType == "halo") 
     bdsBunch = new BDSBunchHalo();
   else if(distribType == "userfile")
-    if(distribFile.rfind("gz") != std::string::npos)  bdsBunch = new BDSBunchUserFile<igzstream>();
-    else                                              bdsBunch = new BDSBunchUserFile<std::ifstream>();
+    if(distribFile.rfind("gz") != std::string::npos)
+      {bdsBunch = new BDSBunchUserFile<igzstream>();}
+    else
+      {bdsBunch = new BDSBunchUserFile<std::ifstream>();}
   else if(distribType == "composite")
     bdsBunch = new BDSBunchComposite();
   else if(distribType == "ptc") 
-    bdsBunch = new BDSBunchPtc(); 
+    bdsBunch = new BDSBunchPtc();
   else {
     G4cerr << "distribType \"" << distribType << "\" not found" << G4endl;
     exit(1);

@@ -3,6 +3,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 
 #include "parser/element.h"

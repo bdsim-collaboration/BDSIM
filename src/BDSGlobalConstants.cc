@@ -10,8 +10,9 @@
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
-#include "G4UniformMagField.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 

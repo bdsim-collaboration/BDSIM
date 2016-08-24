@@ -26,6 +26,8 @@ public:
   /// For additional output
   virtual void ProcessOneEvent(G4int i_event);
 
+
+  virtual void AbortRun(G4bool);
 };
 #endif
 

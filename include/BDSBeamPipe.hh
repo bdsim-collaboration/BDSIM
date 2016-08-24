@@ -4,11 +4,10 @@
 #include "BDSGeometryComponent.hh"
 
 #include "globals.hh"               // geant4 globals / types
-#include "G4LogicalVolume.hh"
-#include "G4VSolid.hh"
-#include <utility>                  // for std::pair
 
 class BDSExtent;
+class G4LogicalVolume;
+class G4VSolid;
 
 /**
  * @brief A holder class for all information required for a

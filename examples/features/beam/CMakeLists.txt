@@ -13,8 +13,5 @@ simple_testing(11_bunchtest_PLACET "--file=11_PLACETTest.gmad" "")
 simple_testing(12_bunchtest_Composite "--file=12_CompositeTest.gmad" "")
 simple_testing(13_bunchtest_EShellWidth "--file=13_EShellWidthTest.gmad" "")
 simple_testing(14_bunchtest_Ptc "--file=14_PtcTest.gmad" "")
-# Six Track test will fail since there is no beamline constructed
-simple_testing(15_bunchtest_SixTrack "--file=15_SixTrack.gmad" "")
-set_tests_properties(15_bunchtest_SixTrack PROPERTIES PASS_REGULAR_EXPRESSION "beamline empty or no line selected")
+simple_testing(15_bunchtest_SixTrack "--file=15_SixTrackTest.gmad" "")
 simple_testing(16_bunchtest_Halo "--file=16_HaloTest.gmad" "")
-
