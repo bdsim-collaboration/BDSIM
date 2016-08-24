@@ -1,3 +1,123 @@
+V0.93 - 2016 / 08 / 24
+======================
+
+New Features
+------------
+
+Analysis
+^^^^^^^^
+
+* New analysis tool 'rebdsim' replaces robdsim.
+* Analysis directory with event, model, event info, options analysis.
+* Histogram merging with correct statistical uncertainties.
+* Deprecated root utilities to :code:`analysis/old/`.
+* Rewritten optical function calculation with validated calculation.
+
+Build
+^^^^^
+
+* Require CMake 2.8.12 or higher.
+* Require Geant4 compiled with external CLHEP - ensures strong reproducibility.
+* Start of bootstrapping scripts in :code:`depend/`.
+* Factorisation of BDSIM's cmake package finding into :code:`cmake/`.
+
+
+Geometry
+^^^^^^^^
+
+* Coil geometry introduced to generic library magnets.
+* Overlap checking between magnets with pole face rotations.
+* Collimator colour can now be controlled.
+* End pieces for coils also introduced
+* Default poled dipole geometry is now a C shaped magnet with yoke on inside of bend.
+
+Output
+^^^^^^
+
+* Switched to rootevent as default and **recommended** format.
+* Include full set of options used in simulation in output.
+* Include software version in output.
+* Store seed state per event.
+* Store histograms per event.
+* Run and event durations stored in output.
+* Output written in event of a crash.
+* Refactor of trajectory information.
+* Write out primary trajectory points.
+
+Parser
+^^^^^^
+
+* Factorised options into optionsBase that is simple struct for easy saving.
+
+Physics
+^^^^^^^
+
+* "Modular physics" list is now the default.
+* Use geant4 helper class for physics lists construction to ensure correct order.
+* Ability to provide a default bias to all types of volumes (vacuum, accelerator, all).
+* Attribute energy deposition (uniformly) randomly along the step it happened for more correct energy deposition - currently only s, not x,y,z - they represent before, after.
+* 'solid' air materials for cross-section validation.
+* Seed states are saved and restored in the primary generator action rather than event action.
+
+Tracking
+^^^^^^^^
+
+* Geant4 Runge kutta stepper for quadrupole and sextupole for increased robustness.
+
+
+General
+^^^^^^^
+
+* Strong recreation for an event by setting seed state issue (#118, #139).
+* A BDSAcceleratorComponent can own an associated end piece(s) (before and after).
+* A BDSAcceleratorComponent can have a input and output angled face.
+* Halo bunch distribution developed significantly.
+* Revised executable options for recreation / using a seed state.
+* Signal handling improved.
+* Templated user bunch file - can now use gzip compressed files.
+* Improved default options for more realistic geometry.
+
+
+Bug Fixes
+---------
+
+Geometry
+^^^^^^^^
+
+* Fix for multiple gdml file loading having conflicting 'world' volumes.
+* Reimplementation of pole geometry fixes gaps in poles (issue #110).
+
+Parser
+^^^^^^
+
+* Fixed issue of parser python interface (issue #133).
+
+Physics
+^^^^^^^
+
+* Modular physics lists are truly modular - fixes segfaults (issue #130).
+
+Tracking
+^^^^^^^^
+
+* Fixes for cavity field values (issue #124).
+* Fix field value transform in sextupoles and above for global / local coordinates.
+* Auxiliary navigator used for transforms more routinely with optional caching.
+
+General
+^^^^^^^
+
+* Issues #115, #127, #129, #131
+
+  
+Utilities
+---------
+* pymadx v0.4
+* pybdsim v0.5
+* pymad8 v0.3
+* robdsim v0.5
+
+
 V0.92 - 2016 / 03 / 29
 ======================
 
