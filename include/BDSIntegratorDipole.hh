@@ -26,7 +26,8 @@ class BDSIntegratorDipole: public BDSIntegratorBase
 public:
   BDSIntegratorDipole(BDSMagnetStrength const* strength,
 		      G4double                 brho,
-		      G4Mag_EqRhs*             eqOfMIn);
+		      G4Mag_EqRhs*             eqOfMIn,
+		      G4bool                   cacheTransforms);
     
   virtual ~BDSIntegratorDipole(){;}
 

@@ -1,8 +1,9 @@
 #ifndef BDSMATERIALS_H
 #define BDSMATERIALS_H
 
-#include <map>
 #include <list>
+#include <map>
+#include <string>
 
 #include "globals.hh"
 #include "G4Material.hh"

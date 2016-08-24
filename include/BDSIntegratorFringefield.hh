@@ -10,23 +10,18 @@
 #include "G4ThreeVector.hh"
 
 /**
- * @brief Integrator that ignores the field and uses the analytical solution to a quadrupole.
- * 
- * Analytical solution to a quadrupole field. This integrator will use the analytical solution
- * for a quadrupole (matrix) to transport a particle along a given step length. This will only
- * do so for particles that are considered paraxial. For particles that don't meet this criteria
- * the backupStepper from BDSAuxiliaryNavigator is used to integrate through the quadrupolar
- * field. This ensures the integrator functions correctly with particles with large transverse
- * momenta, or even ones that are travelling backwards such as secondaries.
- * 
+ * @brief Integrator that ignores the field and uses the analytical solution for a dipole kick.
+ *
+ * @author Will Shields 
  */
 
 class BDSIntegratorFringefield: public BDSIntegratorDipole
 {
 public:
   BDSIntegratorFringefield(BDSMagnetStrength const* strength,
-			  G4double                 brho,
-			  G4Mag_EqRhs*             eqOfMIn);
+			   G4double                 brho,
+			   G4Mag_EqRhs*             eqOfMIn,
+			   G4bool                   cacheTransforms);
   
   virtual ~BDSIntegratorFringefield(){;}
 
@@ -34,18 +29,18 @@ public:
   /// is so that intermediate steps can be calculated and therefore the error ascertained
   /// or distance from the chord.  Error calculation is not currently implemented.
   virtual void Stepper(const G4double y[],
-	       const G4double dydx[],
-	       const G4double h,
-	       G4double       yOut[],
-	       G4double       yErr[]);
+		       const G4double dydx[],
+		       const G4double h,
+		       G4double       yOut[],
+		       G4double       yErr[]);
 
 protected:
   /// Calcaulte the new particle coordinates for a given step length h.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,
-		    G4double yOut[],
-		    G4double yErr[]);
+		    G4double       yOut[],
+		    G4double       yErr[]);
 private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorFringefield();

@@ -1,5 +1,12 @@
 #include "BDSOutputROOTEventModel.hh"
 
+#ifndef __ROOTBUILD__
+#include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
+#include "BDSSamplerRegistry.hh"
+#endif
+
 ClassImp(BDSOutputROOTEventModel)
 
 BDSOutputROOTEventModel::BDSOutputROOTEventModel()

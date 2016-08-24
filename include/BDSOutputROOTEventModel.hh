@@ -7,14 +7,6 @@
 #include "TObject.h"
 #include "TVector3.h"
 #include "TRotation.h"
-#include "TTree.h"
-
-#ifndef __ROOTBUILD__
-#include "BDSAcceleratorModel.hh"
-#include "BDSSamplerRegistry.hh"
-#else
-#include "TTree.h"
-#endif
 
 class BDSOutputROOTEventModel: public TObject
 {

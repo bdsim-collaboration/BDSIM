@@ -9,8 +9,9 @@
 
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 					       G4double                 brho,
-					       G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6)
+					       G4Mag_EqRhs*             eqOfMIn,
+					       G4bool                   cacheTransforms):
+  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime     = brho * (*strength)["k2"];
@@ -147,7 +148,7 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 }
 
 void BDSIntegratorSextupole::Stepper(const G4double yInput[],
-				     const G4double[],
+				     const G4double dydx[],
 				     const G4double hstep,
 				     G4double yOut[],
 				     G4double yErr[])
@@ -157,9 +158,25 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   //  Saving yInput because yInput and yOut can be aliases for same array 
   for(G4int i = 0; i < nVariables; i++)
     {yIn[i]=yInput[i];}
-  
+
+  const G4double *pIn = yInput+3;
+  G4ThreeVector GlobalR = G4ThreeVector(yInput[0], yInput[1], yInput[2]);
+  G4ThreeVector GlobalP = G4ThreeVector(pIn[0],    pIn[1],    pIn[2]);
+
+  G4ThreeVector GlobalPDir = GlobalP.unit();
+
+  auxNavigator->LocateGlobalPointAndSetup(GlobalR);
+  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
+  G4ThreeVector     localPDir= GlobalAffine.TransformAxis(GlobalPDir);
+
+  if (localPDir.z() < 0.9 || GlobalP.mag() < 40.0 )
+  {
+    backupStepper->Stepper(yIn, dydx, hstep, yOut, yErr);
+    return;
+  }
+
   G4double h = hstep * 0.5;
-  
+
   // Do two half steps
   AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
   AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 

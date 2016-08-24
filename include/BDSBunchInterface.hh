@@ -2,8 +2,6 @@
 #define BDSBUNCHINTERFACE_H 
 
 #include "globals.hh"
-#include "parser/options.h"
-#include "BDSGlobalConstants.hh"
 
 namespace CLHEP {
   class HepRandomEngine;
@@ -13,6 +11,10 @@ namespace CLHEP {
 }
 
 class BDSBeamline;
+
+namespace GMAD {
+  class Options;
+}
 
 /**
  * @brief The base class for bunch distribution generators.

@@ -6,8 +6,6 @@
 
 #include "globals.hh" // geant4 types / globals
 
-#include <sstream>
-
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventOptions;
 class TFile;

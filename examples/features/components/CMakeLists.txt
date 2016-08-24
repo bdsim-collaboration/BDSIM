@@ -16,6 +16,8 @@ simple_testing(Component-Laserwire "--file=laser.gmad" ${OVERLAP_CHECK})
  
 simple_testing(Component-Multipole "--file=mult.gmad" ${OVERLAP_CHECK})
 
+simple_testing(Component-ThinMultipole "--file=thinMult.gmad" ${OVERLAP_CHECK})
+
 simple_testing(Component-MuonSpoiler "--file=musp.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Octupole "--file=oct.gmad" ${OVERLAP_CHECK})
@@ -37,6 +39,8 @@ simple_testing(Component-Sampler "--file=sampler.gmad" ${OVERLAP_CHECK})
 simple_testing(Component-SBend "--file=sben.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-SBendPoleFace "--file=sbenPoleFace.gmad" ${OVERLAP_CHECK})
+
+simple_testing(Component-SBendFringefields "--file=sbenFringefields.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Screen "--file=screen.gmad" ${OVERLAP_CHECK})
 

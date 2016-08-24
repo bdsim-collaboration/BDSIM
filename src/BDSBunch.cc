@@ -1,6 +1,8 @@
 #include "BDSBunch.hh"
 #include "BDSBunchFactory.hh"
+#include "BDSBunchInterface.hh"
 #include "BDSDebug.hh"
+#include "parser/options.h"
 
 BDSBunch::BDSBunch()
 {

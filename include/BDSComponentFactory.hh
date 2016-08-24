@@ -1,22 +1,25 @@
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
-#include <map>
-#include <list>
+#include "BDSFieldInfo.hh"
 
 #include "globals.hh"
-#include "parser/element.h"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSLine.hh"
-#include "BDSMagnet.hh"
-#include "BDSMagnetType.hh"
+#include "G4ThreeVector.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
 
+#include <map>
+#include <vector>
+
+namespace GMAD {
+  struct Element;
+}
+class BDSAcceleratorComponent;
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
 class BDSCavityInfo;
-class BDSFieldInfo;
-struct BDSIntegratorSet;
+class BDSIntegratorSet;
+class BDSLine;
+class BDSMagnetOuterInfo;
 class BDSMagnetStrength;
 class BDSTiltOffset;
 
@@ -27,7 +30,7 @@ class BDSTiltOffset;
  * object (that inherits BDSAcceleratorComponent) and returns it. Will return
  * nullptr if invalid type or nothing to be constructed for that particular type.
  * Basic calculations on field strength and angle as well as basic parameter validity
- * (zero length?) are done here.
+ * (zero length) are done here.
  * 
  */
 
@@ -92,7 +95,7 @@ private:
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
-  BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
+  BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
   BDSAcceleratorComponent* CreateQuad();

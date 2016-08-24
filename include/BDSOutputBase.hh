@@ -1,18 +1,24 @@
 #ifndef BDSOutputBase_h
 #define BDSOutputBase_h 
 
-#include "BDSSamplerHit.hh"
-#include "BDSEnergyCounterHit.hh"
-#include "BDSTrajectory.hh"
-#include "BDSTrajectoryPoint.hh"
-#include "BDSTunnelHit.hh"
-#include "BDSHistogram.hh"
-#include "BDSOutputROOTEventHistograms.hh"
+#include "globals.hh"
 
 #include <string>
 #include <vector>
 
+// forward declarations
+template <class T> class G4THitsCollection;
+class BDSEnergyCounterHit;
+typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
+class BDSHistogram1D;
 class BDSOutputROOTEventInfo;
+class BDSSamplerHit;
+typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
+typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
+class BDSTunnelHit;
+typedef G4THitsCollection<BDSTunnelHit> BDSTunnelHitsCollection;
 
 /**
  * @brief Output base class that defines interface for all output types.

@@ -93,7 +93,8 @@ void SamplerAnalysis::Process()
   // loop over all entries
   for(int i=0;i<this->s->n;++i)
   {
-    if (s->parentID[i] != 0) continue; //select only primary particles
+    if (s->parentID[i] != 0)
+      {continue;}              //select only primary particles
     v[0] = s->x[i];
     v[1] = s->xp[i];
     v[2] = s->y[i];
@@ -103,20 +104,20 @@ void SamplerAnalysis::Process()
 
     // power sums
     for(int a=0;a<6;++a)
-    {
-      for(int b=0;b<6;++b)
       {
-        for (int j = 0; j <= 4; ++j)
-        {
-          for (int k = 0; k <= 4; ++k)
-          {
-            powSums[a][b][j][k] += pow(v[a],j)*pow(v[b],k);
-          }
-        }
+	for(int b=0;b<6;++b)
+	  {
+	    for (int j = 0; j <= 4; ++j)
+	      {
+		for (int k = 0; k <= 4; ++k)
+		  {
+		    powSums[a][b][j][k] += pow(v[a],j)*pow(v[b],k);
+		  }
+	      }
+	  }
       }
-    }
+  npart++;  
   }
-  npart++;
 }
 
 void SamplerAnalysis::Terminate()
@@ -132,7 +133,9 @@ void SamplerAnalysis::Terminate()
 	for (int j = 0; j <= 4; ++j)
 	  {
 	    for (int k = 0; k <= 4; ++k)
-	      {cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);}
+	      {
+		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+	      }
 	  }
       }
   }
@@ -141,8 +144,8 @@ void SamplerAnalysis::Terminate()
   for(int i=0;i<3;++i)
   {
     int j = 0;
-    if(i==1) j = 2;
-    if(i==2) j = 4;
+    if(i == 1) j = 2;
+    if(i == 2) j = 4;
 
     //note: optical functions vector not populated in sequential order in order to apply dispersion correction to lattice funcs.
 
@@ -188,7 +191,9 @@ void SamplerAnalysis::Terminate()
       for(int j=0;j<3;++j)
 	{
 	  for(int k=0;k<3;++k)
-	    {covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);}
+	    {
+	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);
+	    }
 	}
     }
   
@@ -198,7 +203,9 @@ void SamplerAnalysis::Terminate()
       for(int j=0;j<12;++j) //loop over optical functions.
 	{
 	  for(int k=0;k<3;++k) //loop over derivative indices
-	    {derivMats[i][j][k]=centMomToDerivative(cenMoms, i, j, k);}
+	    {
+	      derivMats[i][j][k]=centMomToDerivative(cenMoms, i, j, k);
+	    }
 	}
     }
   
@@ -230,7 +237,10 @@ void SamplerAnalysis::Terminate()
 	    {optical[i][j+12]=sqrt(varOptical[i][j]);}
 	}
     }
+  
 }
+
+
 
 double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 					      int         npart,
@@ -332,9 +342,9 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 	      s_3_1 = powSums[a][b][m][n];
       }
 
-      moment = - (3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*pow(s_1_0,2)*s_1_1)/pow(npart,3)
-	       + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) - (3*s_1_0*s_2_1)/pow(npart,2)
-               - (s_0_1*s_3_0)/pow(npart,2) + s_3_1/npart;
+      moment = - (3*s_0_1*pow(s_1_0,3))/pow(npart,4) + (3*s_1_0*s_1_0*s_1_1)/pow(npart,3)
+               + (3*s_0_1*s_1_0*s_2_0)/pow(npart,3) - (3*s_1_0*s_2_1)/(npart*npart)
+               - (s_0_1*s_3_0)/(npart*npart) + s_3_1/npart;
     }
 
    else if(m == 2 && n == 2)
@@ -351,7 +361,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
       s_2_2 = powSums[a][b][m][n];
 
       moment = - (3*pow(s_0_1,2)*pow(s_1_0,2))/pow(npart,4) + (s_0_2*pow(s_1_0,2))/pow(npart,3)
-	       + (4*s_0_1*s_1_0*s_1_1)/pow(npart,3) + (2*s_1_0*s_1_2)/pow(npart,2)
+	       + (4*s_0_1*s_1_0*s_1_1)/pow(npart,3) - (2*s_1_0*s_1_2)/pow(npart,2)
 	       + (pow(s_0_1,2)*s_2_0)/pow(npart,3) - (2*s_0_1*s_2_1)/pow(npart,2) + s_2_2/npart; 
     }
 
@@ -403,11 +413,11 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
       cov = -((npart-2)*pow(m_1_1,2))/(npart*(npart-1)) + (m_0_2*m_2_0)/(npart*(npart-1)) + m_2_2/npart;
     }
 
-  else if((i == 0 && j == 1) || (i == 1 && j == 2) || (i == 1 && j == 0) || (i == 2 && j == 1))
+  else if((i == 0 && j == 2) || (i == 1 && j == 2) || (i == 2 && j == 0) || (i == 2 && j == 1))
   {
     double m_1_1 = 0.0, m_2_0 = 0.0, m_3_1 = 0.0;
 
-    if((i == 0 && j ==1) || (i == 1 && j==0 ))
+    if((i == 0 && j == 2) || (i == 2 && j == 0 ))
     {
       m_1_1 = centMoms[a][a+1][1][1];
       m_2_0 = centMoms[a][a+1][2][0];
@@ -422,7 +432,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
 
     cov = -((npart-3)*m_1_1*m_2_0)/(npart*(npart-1)) + m_3_1/npart;
   }
-  else if((i == 0 && j == 2) || (i == 2 && j == 0) )
+  else if((i == 0 && j == 1) || (i == 1 && j == 0) )
   {
     double m_1_1 = 0.0, m_2_0 = 0.0, m_0_2 = 0.0,  m_2_2 = 0.0;
       
@@ -431,7 +441,7 @@ double SamplerAnalysis::centMomToCovariance(fourDArray &centMoms, int npart,  in
     m_0_2 = centMoms[a][a+1][2][0];
     m_2_2 = centMoms[a][a+1][2][2];
 
-    cov = 2*pow(m_1_1,2)/(npart*(npart-1)) - pow(m_2_0,2)/npart + m_2_2/npart;
+    cov = 2*pow(m_1_1,2)/(npart*(npart-1)) - m_2_0*m_0_2/npart + m_2_2/npart;
   }
 
   return cov;

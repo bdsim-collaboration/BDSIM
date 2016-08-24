@@ -2,6 +2,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
 template<class T>

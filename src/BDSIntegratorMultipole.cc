@@ -13,9 +13,10 @@
 #include <G4TwoVector.hh>
 
 BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength,
-						 G4double                 brho,
-						 G4Mag_EqRhs*             eqOfMIn):
-  BDSIntegratorBase(eqOfMIn, 6),
+					       G4double                 brho,
+					       G4Mag_EqRhs*             eqOfMIn,
+					       G4bool                   cacheTransforms):
+  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   b0l = (*strength)["field"] * brho;
@@ -25,9 +26,9 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
   std::vector<G4String>::iterator skey = skewKeys.begin();
   for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
     {
-        bnl.push_back((*strength)[*nkey] / CLHEP::m);
-        bsl.push_back((*strength)[*skey] / CLHEP::m);
-        nfact.push_back(Factorial(i));
+      bnl.push_back((*strength)[*nkey] / CLHEP::m);
+      bsl.push_back((*strength)[*skey] / CLHEP::m);
+      nfact.push_back(Factorial(i));
     }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
@@ -35,15 +36,15 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
 }
 
 void BDSIntegratorMultipole::Stepper(const G4double yIn[],
-					   const G4double dydx[],
-					   const G4double h,
-					   G4double       yOut[],
-					   G4double       yErr[])
+				     const G4double[] /*dxdy*/,
+				     const G4double h,
+				     G4double       yOut[],
+				     G4double       yErr[])
 {
-  const G4double *pIn      = yIn+3;
-  G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double      InitPMag   = GlobalP.mag();
+  const G4double *pIn    = yIn+3;
+  G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector GlobalP  = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
+  G4double      InitPMag = GlobalP.mag();
 
   //Factor for normalising to particle momentum
   G4double normFactor = eqOfM->FCof()/InitPMag;
@@ -68,7 +69,6 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
 
   G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
   G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR,GlobalP);
-
 
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
@@ -110,9 +110,9 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
 
   //apply kick
   if(!std::isnan(kick.real()))
-    xp1 -= (kick.real() + dipoleTerm);
+    {xp1 -= (kick.real() + dipoleTerm);}
   if(!std::isnan(kick.imag()))
-    yp1 += kick.imag();
+    {yp1 += kick.imag();}
 
   //Reset n for skewed kicks.
   n=0;
@@ -129,26 +129,26 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
 
   std::list<double>::iterator ks = bsl.begin();
   for (; ks != bsl.end(); n++, ks++)
-  {
-    //Rotate momentum vector about z axis according to number of poles
-    //then apply each kick seperately and rotate back
-    skewAngle = CLHEP::pi / (2*(n+2));
-    mom.rotateZ(skewAngle);
+    {
+      //Rotate momentum vector about z axis according to number of poles
+      //then apply each kick seperately and rotate back
+      skewAngle = CLHEP::pi / (2*(n+2));
+      mom.rotateZ(skewAngle);
+      
+      // calculate and apply kick
+      ksReal = (*ks) * pow(position,n).real() / nfact[n];
+      ksImag = (*ks) * pow(position,n).imag() / nfact[n];
+      skewresult = {ksReal,ksImag};
+      
+      // Rotate back
+      if(!std::isnan(skewresult.real()))
+	{momx = mom.x() - skewresult.real();}
+      if(!std::isnan(skewresult.imag()))
+	{momy = mom.y() + skewresult.imag();}
 
-    // calculate and apply kick
-    ksReal = (*ks) * pow(position,n).real() / nfact[n];
-    ksImag = (*ks) * pow(position,n).imag() / nfact[n];
-    skewresult = {ksReal,ksImag};
-
-    // Rotate back
-    if(!std::isnan(skewresult.real()))
-      momx = mom.x() - skewresult.real();
-    if(!std::isnan(skewresult.imag()))
-      momy = mom.y() + skewresult.imag();
-
-    mom = {momx, momy, mom.z()};
-    mom.rotateZ(-skewAngle);
-  }
+      mom = {momx, momy, mom.z()};
+      mom.rotateZ(-skewAngle);
+    }
 
   xp1 = mom.x();
   yp1 = mom.y();
@@ -173,13 +173,13 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   yOut[5] = GlobalP.z();
 
   for(G4int i = 0; i < nVariables; i++)
-  {yErr[i] = 0;}
+    {yErr[i] = 0;}
 }
 
 G4int BDSIntegratorMultipole::Factorial(G4int n)
 {
   G4int result = 1;
-  for (G4int i = 1; i <= n; i++){
-    result *= i;}
+  for (G4int i = 1; i <= n; i++)
+    {result *= i;}
   return result;
 }

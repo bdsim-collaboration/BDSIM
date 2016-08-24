@@ -7,6 +7,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"

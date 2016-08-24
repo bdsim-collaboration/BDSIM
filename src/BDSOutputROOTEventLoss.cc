@@ -1,6 +1,11 @@
 #include "BDSOutputROOTEventLoss.hh"
 
-#include "CLHEP/Units/PhysicalConstants.h"
+#ifndef __ROOTBUILD__
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSTunnelHit.hh"
+#include "BDSTrajectoryPoint.hh"
+#endif
 
 ClassImp(BDSOutputROOTEventLoss)
 

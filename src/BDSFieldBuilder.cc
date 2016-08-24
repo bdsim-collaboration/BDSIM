@@ -52,8 +52,11 @@ std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
   for (G4int i = 0; i < (G4int)infos.size(); i++)
     {
       BDSFieldObjects* field = BDSFieldFactory::Instance()->CreateField(*(infos[i]));
-      fields.push_back(field);
-      field->AttachToVolume(lvs[i], propagators[i]);
+      if (field)
+	{
+	  fields.push_back(field);
+	  field->AttachToVolume(lvs[i], propagators[i]);
+	}
     }
   return fields;
 }

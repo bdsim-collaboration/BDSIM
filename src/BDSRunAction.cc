@@ -1,6 +1,7 @@
 #include "BDSAcceleratorModel.hh"
-#include "BDSBeamline.hh"
 #include "BDSAnalysisManager.hh"
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 

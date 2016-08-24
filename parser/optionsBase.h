@@ -1,8 +1,6 @@
 #ifndef OPTIONSBASE_H
 #define OPTIONSBASE_H
 
-#include <iomanip>
-#include <iostream>
 #include <string>
 
 namespace GMAD

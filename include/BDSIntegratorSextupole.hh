@@ -17,7 +17,8 @@ class BDSIntegratorSextupole: public BDSIntegratorBase
 public:
   BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 			 G4double                 brho,
-			 G4Mag_EqRhs*             eqOfMIn);
+			 G4Mag_EqRhs*             eqOfMIn,
+			 G4bool                   cacheTransforms);
   
   virtual ~BDSIntegratorSextupole(){;}
 
@@ -27,15 +28,15 @@ public:
   virtual void Stepper(const G4double y[],
 		       const G4double dydx[],
 		       const G4double h,
-		       G4double yout[],
-		       G4double yerr[]);
+		       G4double       yout[],
+		       G4double       yerr[]);
 
 protected:
   /// Calcaulte the new particle coordinates. A first order Step along a solenoid inside the field.
-  void AdvanceHelix( const G4double  yIn[],
-		     G4ThreeVector Bfld,
-		     G4double  h,
-		     G4double  ySext[]);
+  void AdvanceHelix(const G4double yIn[],
+		    G4ThreeVector  Bfld,
+		    G4double       h,
+		    G4double       ySext[]);
 
 private:
   /// 2nd derivative of the field

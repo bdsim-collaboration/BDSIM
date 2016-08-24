@@ -1,8 +1,6 @@
 #ifndef ANALYSIS_OPTIONS_H
 #define ANALYSIS_OPTIONS_H
 
-#include <vector>
-
 #include "TROOT.h"
 #include "TChain.h"
 

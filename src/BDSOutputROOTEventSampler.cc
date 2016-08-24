@@ -1,8 +1,11 @@
-#include "CLHEP/Units/PhysicalConstants.h"
-
 #include "BDSOutputROOTEventSampler.hh"
 
 #include "TTree.h"
+
+#ifndef __ROOTBUILD__ 
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "BDSSamplerHit.hh"
+#endif
 
 templateClassImp(BDSOutputROOTEventSampler)
 
@@ -83,6 +86,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Fill(BDSSamplerHit *hit)
   this->weight.push_back((float &&) hit->GetWeight());
   this->partID.push_back(hit->GetPDGtype());
   this->parentID.push_back(hit->GetParentID());
+  this->trackID.push_back(hit->GetTrackID());
   this->turnNumber.push_back(hit->GetTurnsTaken());
 
 }
@@ -116,6 +120,7 @@ template <class T> void BDSOutputROOTEventSampler<T>::Flush()
   this->weight.clear();
   this->partID.clear();
   this->parentID.clear();
+  this->trackID.clear();
   this->turnNumber.clear();
   this->S = 0.0;
   this->modelID = -1;
