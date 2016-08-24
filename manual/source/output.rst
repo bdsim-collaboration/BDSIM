@@ -4,32 +4,34 @@
 Output
 ======
 
-Output from BDSIM can be in various formats.
+This section describes the output from BDSIM, which can be in various formats. This
+section only describes the structure. Loading and analysis instructions can be found
+in :ref:`output-analysis-section`.
 
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| Format            | Syntax                      | Description                                                                |
-+===================+=============================+============================================================================+
-| None              | --output=none               | No output is written                                                       |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ASCII             | --output=ascii              | A series of text files in a folder are written                             |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT              | --output=root               | A root file with a tree for each sampler is written with float precision   |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT              | --output=rootdouble         | A root file with a tree for each sampler is written with double precision  |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT (detailed)   | --output=rootdetailed       | Similar to the above ROOT format but with extra variables for more detail  |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT (detailed)   | --output=rootdetaileddouble | Similar to the above ROOT format but with extra variables for more detail  |
-|                   |                             | with double precision                                                      |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| ROOT (per event)  | --output=rootevent          | A root file with a per event structure format                              |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
-| Multiple          | --output=combined           | All formats written at once                                                |
-+-------------------+-----------------------------+----------------------------------------------------------------------------+
+The default and recommended format 'rootevent' is written to a ROOT file. This format
+is preferred as it lends itself nicely to particle physics information, is compressed
+binary interally, and can store and load complex structures.
 
-.. note:: Where double precision is used, the data is typically 2x as big. This is only recommended
-	  where variable precision is exteremely important - ie comparing different particle coordinates
-	  for tracking accuracy. Histograms are stored to double precision irrespective.
+Units, unless specified, are SI (ie m, rad), plus energy in GeV and time in nanoseconds.
+Small letters denote local (to that object) coordinates whereas capitals represent
+global coordinates.
+
++----------------------+-----------------------------+----------------------------------------------------------------------------+
+| Format               | Syntax                      | Description                                                                |
++======================+=============================+============================================================================+
+| None                 | --output=none               | No output is written                                                       |
++----------------------+-----------------------------+----------------------------------------------------------------------------+
+| ROOT Event (Default) | --output=rootevent          | A ROOT file with details of the model built, options used, seed states,    |
+|                      |                             | and event by event information (default and recommended).                  |
++----------------------+-----------------------------+----------------------------------------------------------------------------+
+| ASCII                | --output=ascii              | A series of text files in a folder are written                             |
++----------------------+-----------------------------+----------------------------------------------------------------------------+
+| Multiple             | --output=combined           | All formats written at once                                                |
++----------------------+-----------------------------+----------------------------------------------------------------------------+
+
+.. note:: Since v0.93 rootevent is the default and recommended format.  The other formats still exist but do not contain as much
+	  information and are not actively developed.  They are descirbed in `older formats`_.  The output name will be suffixed
+	  with :code:`_event` before adding the :code:`.root` extension.
 
 Details about each one are listed below in `output format differences`_.
 As a general guideline, the following naming conventions are used:
@@ -47,21 +49,149 @@ PE         per element
 	  last point that particle existed - in the case of a primary it
 	  is where it stopped being a primary.
 
-.. note:: Energy loss is the energy deposited by particles along their step
+.. note:: Energy loss is the energy deposited by particles along their step.
+
+Structure Of Output
+-------------------
+
+This describes the default and recommended ROOT event format.
+
+BDSIM uses a series of classes to accumulate information about a Geant4 Run and Event.
+These are stored directly in the file so that the same classes can be used by the output
+analysis tool (rebdsim) to read and process the data. A BDISM ROOT event file has the
+following structure.
+
+.. figure:: figures/rootevent_contents.png
+	    :width: 40%
+	    :align: center
+
+The file consists of four ROOT 'trees' each with 'branches' that represent instances
+of the BDSIM classes.  The trees are:
+
++-------------+---------------------------------------------------------------------+
+| Tree Name   | Description                                                         |
++=============+=====================================================================+
+| Options     | A record of all options used by BDSIM.                              |
++-------------+---------------------------------------------------------------------+
+| Model       | A record of the lengths and placement transforms of every element   |
+|             | built by BDSIM in the accelerator beam line suitable for recreating |
+|             | global coordinates or visualising trajectories.                     |
++-------------+---------------------------------------------------------------------+
+| Run         | Information collected per Run.                                      |
++-------------+---------------------------------------------------------------------+
+| Event       | Information collected per Event                                     |
++-------------+---------------------------------------------------------------------+
+
+Options Tree
+^^^^^^^^^^^^
+
+.. figure:: figures/rootevent_options_tree.png
+	    :width: 50%
+	    :align: center
+
+The options tree contains a single branch called "Options." (note the "."). This branch
+represents an instance of :code:`parser/OptionsBase.hh`. The Tree typically contains one
+entry as only one set of options were used per execution of BDSIM.
+
+Model Tree
+^^^^^^^^^^
+
+.. figure:: figures/rootevent_model_tree.png
+	    :width: 40%
+	    :align: center
+
+This tree contains a single branch called "Model.".  This branch represents and instance
+of :code:`include/BDSOutputROOTEventModel.hh`. There is also typically one entry as there
+is one model.  Note some variables here appear as 'leaf' icons and some as 'branch icons.
+This is because some of the variables are vectors.
+
+
+Run Tree
+^^^^^^^^
+
+.. figure:: figures/rootevent_run_tree.png
+	    :width: 40%
+	    :align: center
+
+This tree contains two branches called "Histos." and "Info." which represent instances of
+:code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`
+respectively. Hitos. contains two vectors of 1D and 2D histograms that are produced per run.
+
+Event Tree
+^^^^^^^^^^
+
+.. figure:: figures/rootevent_event_tree.png
+	    :width: 40%
+	    :align: center
+
+This tree contains information on a per event basis.  Everything shown in the above tree has a
+different value per event run in BDSIM.
+
++-----------------+----------------------------------+--------------------------------------------------+
+| Branch Name     | Type                             | Description                                      |
++=================+==================================+==================================================+
+| Info            | BDSOutputROOTEventInfo           | Per event information.                           |
++-----------------+----------------------------------+--------------------------------------------------+
+| Primary         | BDSOutputROOTEventSampler<float> | A record of the coordinates at the start of the  |
+|                 |                                  | simulation, before tracking.                     |
++-----------------+----------------------------------+--------------------------------------------------+
+| Eloss           | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the          |
+|                 |                                  | accelerator material.                            |
++-----------------+----------------------------------+--------------------------------------------------+
+| PrimaryFirstHit | BDSOutputROOTEventLoss           | Energy deposit 'hit' representing the first      |
+|                 |                                  | the process associated with the primary step is  |
+|                 |                                  | not tracking - ie the first interaction.         |
++-----------------+----------------------------------+--------------------------------------------------+
+| PrimaryLastHit  | BDSOutputROOTEventLoss           | Similar to PrimaryFirstHit, but the last point   |
+|                 |                                  | of this type on the primary trajectory.          |
++-----------------+----------------------------------+--------------------------------------------------+
+| TunnelHit       | BDSOutputROOTEventLoss           | Coordinates of energy deposition in the tunnel   |
+|                 |                                  | material.                                        |
++-----------------+----------------------------------+--------------------------------------------------+
+| Trajectory      | BDSOutputROOTEventTrajectory     | A record of all the steps the primary particle   |
+|                 |                                  | took and the associated physics processes.       |
++-----------------+----------------------------------+--------------------------------------------------+
+| Histos          | BDSOutputROOTEventHistograms     | Per event histograms in vectors.                 |
++-----------------+----------------------------------+--------------------------------------------------+
+| Sampler_xxxxx   | BDSOutputROOTEventSampler<float> | A dynamically generated branch created per       |
+|                 |                                  | sampler (here named 'xxxxx') that contains a     |
+|                 |                                  | record of all particles that passed through the  |
+|                 |                                  | sampler during the event. Note this includes     |
+|                 |                                  | both primary and secondary particles. More       |
+|                 |                                  | in `Histograms`_.                                |
++-----------------+----------------------------------+--------------------------------------------------+
+
+.. warning:: A common issue is apparently half of the particles missing in the first sampler in
+	     the beam line. If a sampler is placed at the beginning of the beam line and a bunch
+	     distribution with a finite z width is used, approximately half of the particles will
+	     start in front of the sampler, never pass through it and never be registered. For this
+	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
+	     confusion. The primary output (either separate file in ASCII or as a tree in root) records
+	     all primary coordinates before they enter the tracking in the geometry, so it always
+	     contains all primary particles.
+
+Histograms
+----------
+
+BDSIM produces six histograms by default during the simulation. These are: primary
+hits per bin width; primary losses per bin width; energy loss per metre (GeV);
+primary hits per element; primary losses per element; and Energy loss per element.
+
+The per element histograms are integrated across the length of each element so they
+will have a different bin width. The other histograms are evenly binned according
+to the option :code:`elossHistoBinWidth` (in metres).
+
 
 Output Format Differences
 -------------------------
 
-ROOT
-^^^^
+ROOT Event
+^^^^^^^^^^
 
-With the ROOT format, everything is recorded in one single file. If the
-number of events simulated exceeds :code:`nperfile` a new file will be
-started. The chosen filename will be suffixed with :code:`_N.root` where
-:code:`N` is an integer.
+With the ROOT format, everything is recorded in one single file. This is
+the most developed format and the one from which a simulation can be strongly
+reproduced.
 
-* Histograms are stored as TH1F objects within the file
-* Each sampler has its own Tree
 
 ASCII Output
 ^^^^^^^^^^^^
@@ -81,75 +211,36 @@ The ASCII output is relatively limited compared to the root output.
   0 as they are undefined in these cases.
 * In all files, local `x` and `y` are used whereas global `Z` is used.
 
-Histograms
-----------
 
-BDSIM produces six histograms by default during the simulation. These are: primary
-hits per bin width; primary losses per bin width; energy loss per metre (GeV);
-primary hits per element; primary losses per element; and Energy loss per element.
+ROOT
+^^^^
 
-The per element histograms are integrated across the length of each element so they
-will have a different bin width. The other histograms are evenly binned according
-to the option :code:`elossHistoBinWidth` (in metres).
-
-.. note:: Histograms are only written to disk once all events have been simulated.
-
-Samplers
---------
-
-Samplers record the particle position at the start of each element.  The following
-variables are recorded:
-
-=============== ============= ===================================
-Variable Name   Units         Meaning
-=============== ============= ===================================
-E0              GeV           Initial primary energy
-x0              m             Initial primary global x position
-y0              m             Initial primary global y position
-z0              m             Initial primary global z position
-xp0             rad           Initial primary global x' position
-yp0             rad           Initial primary global y' position
-zp0             rad           Initial primary global z' position
-t0              ns            Initial primary global time
-E               GeV           Total current energy
-x               m             Local x position
-y               m             Local y position
-z               m             Local z position
-xp              rad           Local x' position
-yp              rad           Local y' position
-zp              rad           Local z' position
-t               ns            Time of flight
-X               m             Global x position
-Y               m             Global y position
-Z               m             Global z position
-Xp              rad           Global x' position
-Yp              rad           Global y' position
-Zp              rad           Global z' position
-s               m             Curvilinear S
-weight          NA            Weight
-partID          NA            PDG ID number
-nEvent          NA            Event number
-parentID        NA            Parent ID (0 means primary)
-trackID         NA            Track ID
-turnnumber      NA            Turns completed
-=============== ============= ===================================
-
-.. note:: `rad` is not strictly correct for the prime units but is used in the small angle approximation.
-	  The prime is the differential of that position
-
-
-Primary Coordinates
--------------------
-
-The primary coordinates for each event are recorded in a similar fashion to the samplers
-in their own file / tree.
-
-.. warning:: A common issue is apparently half of the particles missing in the first sampler in
-	     the beam line. If a sampler is placed at the beginning of the beam line and a bunch
-	     distribution with a finite z width is used, approximately half of the particles will
-	     start in front of the sampler, never pass through it and never be registered. For this
-	     reason, putting a sampler at the beginning of a beam line should be avoided to avoid
-	     confusion. The primary output (either separate file in ASCII or as a tree in root) records
-	     all primary coordinates before they enter the tracking in the geometry, so it always
-	     contains all primary particles.
+Older version of ROOT output that is no longer maintained. If the
+number of events simulated exceeds :code:`nperfile` a new file will be
+started. The chosen filename will be suffixed with :code:`_N.root` where
+:code:`N` is an integer.
+      
+* Histograms are stored as TH1F objects within the file
+* Each sampler has its own Tree
+* Histograms are accumulated across a run not per event.
 	     
+
+Older Formats
+-------------
+
++-------------------+-----------------------------+----------------------------------------------------------------------------+
+| Format            | Syntax                      | Description                                                                |
++===================+=============================+============================================================================+
+| ROOT              | --output=root               | A root file with a tree for each sampler is written with float precision   |
++-------------------+-----------------------------+----------------------------------------------------------------------------+
+| ROOT              | --output=rootdouble         | A root file with a tree for each sampler is written with double precision  |
++-------------------+-----------------------------+----------------------------------------------------------------------------+
+| ROOT (detailed)   | --output=rootdetailed       | Similar to the above ROOT format but with extra variables for more detail  |
++-------------------+-----------------------------+----------------------------------------------------------------------------+
+| ROOT (detailed)   | --output=rootdetaileddouble | Similar to the above ROOT format but with extra variables for more detail  |
+|                   |                             | with double precision                                                      |
++-------------------+-----------------------------+----------------------------------------------------------------------------+
+
+.. note:: Where double precision is used, the data is typically 2x as big. This is only recommended
+	  where variable precision is exteremely important - ie comparing different particle coordinates
+	  for tracking accuracy. Histograms are stored to double precision irrespective.
