@@ -5,15 +5,19 @@
 #include <list>
 
 #include "globals.hh"
-#include "parser/element.h"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSLine.hh"
-class BDSCavityInfo;
+#include "CLHEP/Units/PhysicalConstants.h"
 
+namespace GMAD {
+  struct Element;
+}
+class BDSAcceleratorComponent;
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
+class BDSCavityInfo;
+class BDSLine;
 class BDSTiltOffset;
+
+struct BDSMagnetOuterInfo;
 
 /**
  * @brief Factory to produce all types of BDSAcceleratorComponents.
