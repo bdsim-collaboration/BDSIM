@@ -112,10 +112,10 @@ General
   
 Utilities
 ---------
-* pymadx v0.4
-* pybdsim v0.5
-* pymad8 v0.3
-* robdsim v0.5
+* pymadx v0.6
+* pybdsim v0.7
+* pymad8 v0.41
+* robdsim v0.7
 
 
 V0.92 - 2016 / 03 / 29
