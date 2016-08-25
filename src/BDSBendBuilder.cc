@@ -77,7 +77,8 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
                                            length,
                                            PrepareBeamPipeInfo(element, -angleIn, -angleOut),
                                            PrepareMagnetOuterInfo(element, -angleIn, -angleOut),
-                                           vacuumField);
+                                           vacuumField,
+                                           angle);
 
         oneBend->SetBiasVacuumList(element->biasVacuumList);
         oneBend->SetBiasMaterialList(element->biasMaterialList);
