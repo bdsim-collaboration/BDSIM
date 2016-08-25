@@ -4,7 +4,7 @@
 #include <map>
 
 #include "globals.hh"
-#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 namespace GMAD {
   struct Element;
