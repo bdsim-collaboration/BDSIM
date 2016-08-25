@@ -4,7 +4,7 @@
 #include <map>
 
 #include "globals.hh"
-#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 namespace GMAD {
   struct Element;
@@ -14,8 +14,9 @@ class BDSBeamPipe;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
 class BDSLine;
-struct BDSMagnetOuterInfo;
 class BDSTiltOffset;
+
+struct BDSMagnetOuterInfo;
 
 /**
  * @brief Factory to produce all types of BDSAcceleratorComponents.

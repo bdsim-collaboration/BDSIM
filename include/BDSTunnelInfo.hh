@@ -14,7 +14,7 @@ class G4Material;
  * arguments to all constructors plus aggregates common tasks
  * in the component factory.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 struct BDSTunnelInfo
