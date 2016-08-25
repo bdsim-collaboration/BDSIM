@@ -25,27 +25,9 @@ BDSSectorBend::BDSSectorBend(G4String            name,
 			     BDSBeamPipeInfo*    beamPipeInfo,
 			     BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sectorbend, name, arcLength,
-	    beamPipeInfo, magnetOuterInfo),
+	    beamPipeInfo, magnetOuterInfo, angleIn),
   itsBField(bField),itsBGrad(bGrad)
 {
-  /// BDSMagnet doesn't provide the ability to pass down angle to BDSAcceleratorComponent
-  /// - this results in a wrongly chord length
-  angle       = angleIn;
-  if (BDS::IsFinite(angle))
-    {
-      chordLength = 2.0 * arcLength * sin(0.5*angleIn) / angleIn;
-      // prepare normal vectors for input and output planes
-      // calculate components of normal vectors (in the end mag(normal) = 1)
-      G4int orientation   = BDS::CalculateOrientation(angleIn);
-      G4double in_z = cos(0.5*fabs(angleIn)); 
-      G4double in_x = sin(0.5*fabs(angleIn));
-      inputface     = G4ThreeVector(-orientation*in_x, 0.0, -1.0*in_z);
-      //-1 as pointing down in z for normal
-      outputface    = G4ThreeVector(-orientation*in_x, 0.0, in_z);
-    }
-  else
-    {chordLength = arcLength;}
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
   G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
@@ -60,23 +42,23 @@ void BDSSectorBend::Build()
 #endif
   BDSMagnet::Build();
   
-  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
+  if(BDSGlobalConstants::Instance()->IncludeIronMagFields())
     {
       G4double polePos[4];
       G4double Bfield[3];
       
       //coordinate in GetFieldValue
       polePos[0]=0.;
-      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius();
+      polePos[1]= BDSGlobalConstants::Instance()->MagnetPoleRadius();
       polePos[2]=0.;
       polePos[3]=-999.;//flag to use polePos rather than local track
       
       itsMagField->GetFieldValue(polePos,Bfield);
       G4double BFldIron=
 	sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-	BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-	(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-	 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+            BDSGlobalConstants::Instance()->MagnetPoleSize()/
+	(BDSGlobalConstants::Instance()->ComponentBoxSize()/2-
+            BDSGlobalConstants::Instance()->MagnetPoleRadius());
       
       // Magnetic flux from a pole is divided in two directions
       BFldIron/=2.;

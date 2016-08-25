@@ -8,6 +8,8 @@
 #include "TFile.h"
 #include "TTree.h"
 
+class BDSOutputROOTEventInfo;
+
 /**
  * @brief Lightweight ROOT output class
  * 
@@ -28,9 +30,9 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) override;
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*) override;
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss) override;
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*) override;
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phit) override;
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection*) override;
   /// write a trajectory 
@@ -51,16 +53,23 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) override;
+  /// write event info
+  virtual void WriteEventInfo(const time_t&  /*startTime*/,
+			      const time_t&  /*stopTime*/,
+			      const G4float& /*duration*/,
+			      const std::string& /*seedStateAtStart*/) override {}
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/) override {;}
   virtual void FillEvent() override {;} ///< Fill the event
-  virtual void Commit() override;  ///< close the file
-  virtual void Write()  override;  ///< close and open new file
+  virtual void Initialise() override; ///< open the file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+		     const std::string& seedStateAtStart) override;      ///< write to file
+  virtual void Close() override;      ///< close the file
 
 protected:
   /// The number type identifier string to put into root.
   G4String type;
-  
-  /// Output initialisation
-  void Init(); 
   
   virtual TTree* BuildSamplerTree(G4String name);
   
@@ -92,6 +101,9 @@ protected:
   
   /// Fill members so that trees can be written
   void FillHit(BDSEnergyCounterHit* hit);
+
+	/// Fill members so that tree can be written but based on Trajectory Point
+	void FillHit(BDSTrajectoryPoint* hit);
 
   /// Members for writing to TTrees
   /// Local parameters

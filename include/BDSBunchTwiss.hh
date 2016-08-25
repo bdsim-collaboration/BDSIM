@@ -48,19 +48,6 @@ public:
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);
 
-  /// @{ Accessor
-  G4double GetBetaX()  const {return betaX;}
-  G4double GetBetaY()  const {return betaY;}
-  G4double GetAlphaX() const {return alphaX;}
-  G4double GetAlphaY() const {return alphaY;} 
-  G4double GetEmitX()  const {return emitX;}
-  G4double GetEmitY()  const {return emitY;}
-  G4double GetDispX()  const {return dispX;}
-  G4double GetDispY()  const {return dispY;} 
-  G4double GetDispXP() const {return dispXP;}
-  G4double GetDispYP() const {return dispYP;}
-  /// @}
-
 private:
   /// @{ Setter
   void SetBetaX(double newBetaX)   {betaX  = newBetaX;}

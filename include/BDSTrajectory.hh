@@ -5,6 +5,10 @@
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
+#include "G4TrajectoryContainer.hh"
+
+#include "BDSTrajectoryPoint.hh"
+#include "BDSDebug.hh"
 
 #include <map>
 #include <ostream>
@@ -12,15 +16,28 @@
 /**
  * @brief Trajectory information from track including last scatter etc.
  * 
- * @author L. Deacon.
+ * BDSTrajectory stores BDSTrajectoryPoints
+ *
+ * @author S. Boogert
  */
+
+typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
+
+class BDSTrajectory; // forward declaration so namespaced method can be at top
+
+namespace BDS
+{
+  /// Search the trajectory container for the primary trajectory.
+  BDSTrajectory* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
+}
 
 class BDSTrajectory: public G4Trajectory
 {
 public:
   BDSTrajectory(const G4Track* aTrack);
-  BDSTrajectory(BDSTrajectory &);
-  virtual ~BDSTrajectory(){;}
+  /// copy constructor is not needed
+  BDSTrajectory(BDSTrajectory &) = delete;
+  virtual ~BDSTrajectory();
 
   inline void* operator new(size_t);
   inline void operator delete(void*);
@@ -34,26 +51,36 @@ public:
   /// Merge another trajectory into this one.
   virtual void MergeTrajectory(G4VTrajectory* secondTrajectory);
 
-  /// @{ Acessor
-  inline G4ThreeVector GetPositionOfLastScatter(G4Track* aTrack) const;
-  inline G4ThreeVector GetMomDirAtLastScatter(G4Track* aTrack)   const;
-  inline G4double      GetTimeAtLastScatter(G4Track* aTrack)     const;
-  inline G4double      GetTimeAtVertex(G4Track* aTrack)          const;
-  inline G4double      GetEnergyAtLastScatter(G4Track* aTrack)   const;
-  /// @}
-  
+  G4VTrajectoryPoint* GetPoint(G4int i) const {return fpBDSPointsContainer[i];}
+
+  virtual int GetPointEntries()    const {return fpBDSPointsContainer.size();}
+
+  G4int GetCreatorProcessType()    const {return creatorProcessType;}
+  G4int GetCreatorProcessSubType() const {return creatorProcessSubType;}
+
+  //  void DrawTrajectory() const { G4VTrajectory::DrawTrajectory(); }
+
   /// Output stream
   friend std::ostream& operator<< (std::ostream &out, BDSTrajectory const &t);
-  
+
+  /// Find the first point in a trajectory where the post step process isn't fTransportation
+  /// AND the post step process isn't fGeneral in combination with the post step process subtype
+  /// isn't step_limiter.
+  static BDSTrajectoryPoint* FirstInteraction(BDSTrajectory* trajectory);
+  static BDSTrajectoryPoint* LastInteraction(BDSTrajectory*  trajectory);
+
+protected:
+  G4int          creatorProcessType;
+  G4int          creatorProcessSubType;
+  G4double       weight;
+
+  /// Container of all points. This is really a vector so all memory is dynamically
+  /// allocated and there's no need to make this dynamically allocated itself a la
+  /// all Geant4 examples.
+  BDSTrajectoryPointsContainer fpBDSPointsContainer;
+
 private:
-  /// Private trajectory to force use of supplied one.
   BDSTrajectory();
-  
-  std::map<G4int,G4ThreeVector> positionOfLastScatter;
-  std::map<G4int,G4ThreeVector> momDirAtLastScatter;
-  std::map<G4int,G4double>      energyAtLastScatter;
-  std::map<G4int,G4double>      timeAtLastScatter;
-  std::map<G4int,G4double>      timeAtVertex;
 };
 
 extern G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
@@ -68,19 +95,5 @@ inline void* BDSTrajectory::operator new(size_t)
 inline void BDSTrajectory::operator delete(void* aTrajectory)
 {bdsTrajectoryAllocator.FreeSingle((BDSTrajectory*)aTrajectory);}
 
-inline G4ThreeVector BDSTrajectory::GetPositionOfLastScatter(G4Track* aTrack) const
-{return positionOfLastScatter.at(aTrack->GetTrackID());}
-
-inline G4ThreeVector BDSTrajectory::GetMomDirAtLastScatter(G4Track* aTrack) const
-{return momDirAtLastScatter.at(aTrack->GetTrackID());}
-
-inline G4double BDSTrajectory::GetEnergyAtLastScatter(G4Track* aTrack) const
-{return energyAtLastScatter.at(aTrack->GetTrackID());}
-
-inline G4double BDSTrajectory::GetTimeAtLastScatter(G4Track* aTrack) const
-{return timeAtLastScatter.at(aTrack->GetTrackID());}
-
-inline G4double BDSTrajectory::GetTimeAtVertex(G4Track* aTrack) const
-{return timeAtVertex.at(aTrack->GetTrackID());}
 
 #endif

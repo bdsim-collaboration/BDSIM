@@ -1,3 +1,4 @@
+add_subdirectory(beam)
 add_subdirectory(components)
 add_subdirectory(fields)
 add_subdirectory(geometry)

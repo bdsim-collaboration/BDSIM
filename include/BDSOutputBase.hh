@@ -4,13 +4,19 @@
 #include "BDSSamplerHit.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
+#include "BDSTrajectoryPoint.hh"
 #include "BDSTunnelHit.hh"
 #include "BDSHistogram.hh"
+#include "BDSOutputROOTEventHistograms.hh"
 
-#include "G4Trajectory.hh"
+#include <string>
 #include <vector>
 
-// virtual base class
+class BDSOutputROOTEventInfo;
+
+/**
+ * @brief Output base class that defines interface for all output types.
+ */
 
 class BDSOutputBase
 {
@@ -26,10 +32,10 @@ public:
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*) = 0;
   
   /// write where primaries stop being primaries
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit* ploss) = 0;
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss) = 0;
 
   /// write where primaries impact
-  virtual void WritePrimaryHit(BDSEnergyCounterHit* phits) = 0;
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phits) = 0;
 
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits) = 0;
@@ -51,18 +57,38 @@ public:
 			    G4int    nEvent, 
 			    G4int    TurnsTaken) = 0;
 
+  /// Write additional information about event such as timing.
+  virtual void WriteEventInfo(const time_t&  startTime,
+			      const time_t&  stopTime,
+			      const G4float& duration,
+                              const std::string &seedStateAtStart) = 0;
+
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info) = 0;
+
   /// write a histgoram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn) = 0;
   
   /// write a complete event
   virtual void FillEvent() = 0;
 
-  /// write and close and open new file
-  virtual void Commit()=0;
+  /// open new file
+  virtual void Initialise()=0;
   
-  /// write and close the file
-  virtual void Write()=0;
+  /// write the data to file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+                     const std::string& seedStateAtStart) = 0;
 
+  /// close file
+  virtual void Close() = 0;
+
+  /// write, close and open new file
+  void Commit(const time_t&  startTime,
+	      const time_t&  stopTime,
+	      const G4float& duration,
+              const std::string& seedStateAtStart);
+  
 protected:
   /// current event number
   int eventNumber;

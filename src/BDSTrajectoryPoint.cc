@@ -1,67 +1,114 @@
-#include "BDSTrajectoryPoint.hh"
-#include <map>
 #include "G4Allocator.hh"
 #include "G4ProcessType.hh"
 #include "G4Step.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
-
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4NavigationHistory.hh"
+
+#include "BDSAuxiliaryNavigator.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSPhysicalVolumeInfo.hh"
+#include "BDSProcessMap.hh"
+#include "BDSTrajectoryPoint.hh"
 
 #include <ostream>
 
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
+// Don't use transform caching in the aux navigator as it's used for all over the geometry here.
+BDSAuxiliaryNavigator* BDSTrajectoryPoint::auxNavigator = new BDSAuxiliaryNavigator(false);
+G4int BDSTrajectoryPoint::numberOfPoints = 0;
+
 BDSTrajectoryPoint::BDSTrajectoryPoint():
   G4TrajectoryPoint(G4ThreeVector())
 {
-  currentProcess      = nullptr;
-  isScatteringProcess = false;
-  trackID             = -1;
-  vertexPosition      = G4ThreeVector();
+  InitialiseVariables();
+}
+
+BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
+  G4TrajectoryPoint(track->GetPosition())
+{
+  InitialiseVariables();
+  preWeight  = track->GetWeight();
+  postWeight = preWeight;
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   G4TrajectoryPoint(step->GetPostStepPoint()->GetPosition())
 {
-  G4Track* aTrack      = step->GetTrack();
-  currentProcess      = nullptr;
-  isScatteringProcess = false;
-  trackID             = -1;
-  vertexPosition      = aTrack->GetVertexPosition();
-  trackID             = aTrack->GetTrackID();
-  currentProcess      = aTrack->GetStep()->GetPostStepPoint()->GetProcessDefinedStep();
-
-  G4ProcessType ptype = fNotDefined;
-  if(currentProcess)
-    {ptype = currentProcess->GetProcessType();}
+  InitialiseVariables();
   
-  isScatteringProcess = false;
-  // If the process type is not undefined or transportation...
-  if(!((ptype == fNotDefined) || (ptype == fTransportation))) 
+  const G4StepPoint* prePoint    = step->GetPreStepPoint();
+  const G4StepPoint* postPoint   = step->GetPostStepPoint();
+  const G4VProcess*  preProcess  = prePoint->GetProcessDefinedStep();
+  const G4VProcess*  postProcess = postPoint->GetProcessDefinedStep();
+
+  if(preProcess)
     {
-      // ...and the particle changed momentum during the step, then this is a "scattering"
-      // (momentum-changing non-transportation) process.
-      const G4Step* step    = aTrack->GetStep();
-      G4ThreeVector pBefore = step->GetPreStepPoint()->GetMomentum();
-      G4ThreeVector pAfter  = step->GetPostStepPoint()->GetMomentum();
-      G4ThreeVector deltaP  = pAfter - pBefore;
-      if (deltaP.x() != 0 || deltaP.y() != 0 || deltaP.z() != 0)
-	{isScatteringProcess = true;}
+      preProcessType    = preProcess->GetProcessType();
+      preProcessSubType = preProcess->GetProcessSubType();
     }
+  
+  if(postProcess)
+    {
+      postProcessType    = postProcess->GetProcessType();
+      postProcessSubType = postProcess->GetProcessSubType();
+    }
+
+  preWeight  = prePoint->GetWeight();
+  postWeight = postPoint->GetWeight();
+  energy     = step->GetTotalEnergyDeposit();
+  preEnergy  = prePoint->GetKineticEnergy();
+  postEnergy = postPoint->GetKineticEnergy();
+
+  // s position for pre and post step point
+  G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);
+  BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
+
+#ifdef BDSDEBUG
+  G4cout << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
+#endif
+  if (info)
+  {
+    prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
+    postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
+
+    G4double sCentre = info->GetSPos();
+    preS             = sCentre + prePosLocal.z();
+    postS            = sCentre + postPosLocal.z();
+    beamlineIndex    = info->GetBeamlineIndex();
+    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+  }
+}
+
+BDSTrajectoryPoint::~BDSTrajectoryPoint()
+{
+  if (numberOfPoints == 0)
+    {delete auxNavigator; auxNavigator = nullptr;}
+  numberOfPoints--;
+}
+
+void BDSTrajectoryPoint::InitialiseVariables()
+{
+  numberOfPoints++;
+  preProcessType     = -1;
+  preProcessSubType  = -1;
+  postProcessType    = -1;
+  postProcessSubType = -1;
+  preS               = -1000;
+  postS              = -1000;
+  beamlineIndex      = -1;
+  turnstaken         = 0;
+  prePosLocal        = G4ThreeVector();
+  postPosLocal       = G4ThreeVector();
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)
 {
-  if(p.currentProcess)
-    {
-      out << "BDSTrajectoryPoint: ";
-      out << "current process = " << p.currentProcess->GetProcessName() << ", that ";
-      G4String result = "isn't";
-      if (p.isScatteringProcess)
-	{result = "is";}
-      out << result << " a scattering process" << G4endl;
-    }
+  out << p.GetPosition();
   return out;
 }

@@ -7,7 +7,9 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
+#include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
 #include "BDSUtilities.hh"
@@ -59,8 +61,8 @@ BDSBeamline::~BDSBeamline()
 
 void BDSBeamline::PrintAllComponents(std::ostream& out) const
 {
-  for (const_iterator it = begin(); it != end(); ++it)
-    {out << *(it);}
+  for (const auto& element : *this)
+    {out << element;}
 }
 
 void BDSBeamline::PrintMemoryConsumption() const
@@ -151,6 +153,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
   G4ThreeVector placementOffset   = component->GetPlacementOffset();
   G4bool hasFinitePlacementOffset = BDS::IsFinite(placementOffset);
+  G4ThreeVector oFNormal = component->InputFaceNormal();
   
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
@@ -164,7 +167,62 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4cout << "extent negative             " << eN                           << G4endl;
   G4cout << "object placement offset     " << placementOffset              << G4endl;
   G4cout << "has finite placement offset " << hasFinitePlacementOffset     << G4endl;
+  G4cout << "output face normal          " << oFNormal                     << G4endl;
 #endif
+
+  // Check this won't overlap with any previous geometry. This is only done for elements
+  // that aren't drifts as they should be built by the component factory to match any angles.
+  if (!empty() && (component->GetType() != "drift"))
+    {// can only look back if there is an element - won't clash if no element; also add drifts always
+      G4bool   keepGoing   = true;
+      G4bool   checkFaces  = true;
+      G4double zSeparation = 0;
+      BDSBeamlineElement* inspectedElement = back(); // remember we haven't added this new element yet
+      // find previous non drift output face.
+      G4ThreeVector iFNormal;
+      G4String clasherName = "Unknown";
+      while (keepGoing)
+	{
+	  if (inspectedElement) // valid element
+	    {// decrement could return nullptr so have to check if valid element
+	      if (inspectedElement->GetType() == "drift") // leave keepGoing true
+		{
+		  zSeparation += inspectedElement->GetChordLength();
+		  inspectedElement = GetPrevious(inspectedElement); // decrement
+		}
+	      else
+		{
+		  keepGoing   = false; // found a non drift - stop here
+		  iFNormal    = inspectedElement->GetAcceleratorComponent()->OutputFaceNormal();
+		  clasherName = inspectedElement->GetAcceleratorComponent()->GetName();
+		}
+	    }
+	  else
+	    {
+	      keepGoing  = false;
+	      checkFaces = false; // got to the beginning with only drifts - don't check
+	    }
+	}
+#ifdef BDSDEBUG
+      G4cout << "input face normal           " << iFNormal << G4endl; // matches above debug formatting
+#endif
+
+      if (checkFaces)
+	{
+	  // now do checks
+	  BDSExtent extOF = inspectedElement->GetAcceleratorComponent()->GetExtent(); // output face
+	  BDSExtent extIF = component->GetExtent(); // input face
+	  
+	  G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
+	  if (willIntersect)
+	    {
+	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
+	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
+		     << clasherName << "\"" << G4endl;
+	      exit(1);
+	    }
+	}
+    }
   
   // Calculate the reference placement rotation
   // rotations are done first as they're required to transform the spatial displacements.
@@ -341,7 +399,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 						       sPositionMiddle,
 						       sPositionEnd,
 						       samplerType,
-						       samplerName);
+						       samplerName,
+                                                       (G4int)beamline.size());
 
   // calculate extents for world size determination
   UpdateExtents(element);
@@ -535,6 +594,46 @@ G4Transform3D BDSBeamline::GetGlobalEuclideanTransform(G4double s, G4double x, G
   return result;
 }
 
+BDSBeamlineElement* BDSBeamline::GetPrevious(BDSBeamlineElement* element)
+{
+  // search for element
+  auto result = find(beamline.begin(), beamline.end(), element);
+  if (result != beamline.end())
+    {// found
+      return GetPrevious(result - beamline.begin());
+    }
+  else
+    {return nullptr;}
+}
+
+BDSBeamlineElement* BDSBeamline::GetPrevious(G4int index)
+{
+  if (index < 1 || index > (G4int)(beamline.size()-1))
+    {return nullptr;} // invalid index - inc beginning or end
+  else
+    {return beamline[index-1];}
+}
+
+BDSBeamlineElement* BDSBeamline::GetNext(BDSBeamlineElement* element)
+{
+  // search for element
+  auto result = find(beamline.begin(), beamline.end(), element);
+  if (result != beamline.end())
+    {// found
+      return GetNext(result - beamline.begin());
+    }
+  else
+    {return nullptr;}
+}
+
+BDSBeamlineElement* BDSBeamline::GetNext(G4int index)
+{
+  if (index < 0 || index > (G4int)(beamline.size()-2))
+    {return nullptr;} // invalid index - inc beginning or end
+  else
+    {return beamline[index+1];}
+}
+
 void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
 {
   // check if base name already registered (can be single component placed multiple times)
@@ -632,4 +731,79 @@ void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
   G4cout << "new global extent +ve:         " << maximumExtentPositive << G4endl;
   G4cout << "new global extent -ve:         " << maximumExtentNegative << G4endl;
 #endif
+}
+
+BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
+							      G4int               index) const
+{
+  if (!IndexOK(index))
+    {return nullptr;}
+
+  G4double endPieceLength      = endPiece->GetChordLength();
+  BDSBeamlineElement*  element = beamline[index];
+  G4RotationMatrix* elRotStart = element->GetReferenceRotationMiddle();
+  G4ThreeVector     elPosStart = element->GetPositionStart();
+  G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
+  G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
+  G4double         elSPosStart = element->GetSPositionStart();
+  BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
+						      positionStart,
+						      positionMiddle,
+						      elPosStart,
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      positionStart,// for now the same
+						      positionMiddle,
+						      elPosStart,
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      new G4RotationMatrix(*elRotStart),
+						      elSPosStart - endPieceLength,
+						      elSPosStart - 0.5*endPieceLength,
+						      elSPosStart);
+  return result;
+}
+
+BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
+							     G4int               index,
+							     G4bool              flip) const
+{
+  if (!IndexOK(index))
+    {return nullptr;}
+
+  G4double endPieceLength      = endPiece->GetChordLength();
+  BDSBeamlineElement*  element = beamline[index];
+  G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetReferenceRotationMiddle()));
+  G4ThreeVector       elPosEnd = element->GetPositionEnd();
+  G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotEnd);
+  G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*elRotEnd);
+  if (flip)
+    {elRotEnd->rotateY(CLHEP::pi);}
+  G4double           elSPosEnd = element->GetSPositionEnd();
+  BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
+						      elPosEnd,
+						      positionMiddle,
+						      positionEnd,
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      elPosEnd,
+						      positionMiddle,
+						      positionEnd,
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      new G4RotationMatrix(*elRotEnd),
+						      elSPosEnd,
+						      elSPosEnd + 0.5*endPieceLength,
+						      elSPosEnd + endPieceLength);
+  return result;
+}
+
+G4bool BDSBeamline::IndexOK(G4int index) const
+{
+  if (index < 0 || index > (G4int)(beamline.size()-1))
+    {return false;}
+  else
+    {return true;}
 }

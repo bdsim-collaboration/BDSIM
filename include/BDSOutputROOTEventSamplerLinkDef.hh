@@ -1,3 +1,2 @@
-#ifdef __CINT__
-#pragma link C++ class BDSOutputROOTEventSampler;
-#endif
+#pragma link C++ class BDSOutputROOTEventSampler<float>+;
+#pragma link C++ class BDSOutputROOTEventSampler<double>+;

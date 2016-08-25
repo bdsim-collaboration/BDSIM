@@ -22,7 +22,7 @@
  * Each instance of this class owns the position vectors and rotation matrices
  * BUT NOT the accelerator component - this is owned by the component registry.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamlineElement
@@ -45,36 +45,40 @@ public:
 		     G4double                 sPositionMiddle,
 		     G4double                 sPositionEnd,
 		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
-		     G4String                 samplerNameIn = "");
+		     G4String                 samplerNameIn = "",
+		     G4int                    indexIn       = -1);
 
   ~BDSBeamlineElement();
   
   ///@{ Accessor
-  inline BDSAcceleratorComponent* GetAcceleratorComponent()      const;
-  inline G4String                 GetName()                      const;
-  inline G4String                 GetPlacementName()             const;
-  inline G4int                    GetCopyNo()                    const;
-  inline G4LogicalVolume*         GetContainerLogicalVolume()    const;
-  inline G4ThreeVector            GetPositionStart()             const;
-  inline G4ThreeVector            GetPositionMiddle()            const;
-  inline G4ThreeVector            GetPositionEnd()               const;
-  inline G4RotationMatrix*        GetRotationStart()             const;
-  inline G4RotationMatrix*        GetRotationMiddle()            const;
-  inline G4RotationMatrix*        GetRotationEnd()               const;
-  inline G4ThreeVector            GetReferencePositionStart()    const;
-  inline G4ThreeVector            GetReferencePositionMiddle()   const;
-  inline G4ThreeVector            GetReferencePositionEnd()      const;
-  inline G4RotationMatrix*        GetReferenceRotationStart()    const;
-  inline G4RotationMatrix*        GetReferenceRotationMiddle()   const;
-  inline G4RotationMatrix*        GetReferenceRotationEnd()      const;
-  inline G4double                 GetSPositionStart()            const;
-  inline G4double                 GetSPositionMiddle()           const;
-  inline G4double                 GetSPositionEnd()              const;
-  inline G4Transform3D*           GetPlacementTransform()        const;
-  inline G4Transform3D*           GetReadOutPlacementTransform() const;
-  inline BDSSamplerType           GetSamplerType()               const;
-  inline G4String                 GetSamplerName()               const;
-  inline G4Transform3D*           GetSamplerPlacementTransform() const;
+  inline BDSAcceleratorComponent* GetAcceleratorComponent() const {return component;}
+  inline G4String          GetName()                      const {return component->GetName();}
+  inline G4String          GetType()                      const {return component->GetType();}
+  inline G4double          GetChordLength()               const {return component->GetChordLength();}
+  inline G4String          GetPlacementName()             const;
+  inline G4int             GetCopyNo()                    const;
+  inline G4LogicalVolume*  GetContainerLogicalVolume()    const;
+  inline G4ThreeVector     GetPositionStart()             const;
+  inline G4ThreeVector     GetPositionMiddle()            const;
+  inline G4ThreeVector     GetPositionEnd()               const;
+  inline G4RotationMatrix* GetRotationStart()             const;
+  inline G4RotationMatrix* GetRotationMiddle()            const;
+  inline G4RotationMatrix* GetRotationEnd()               const;
+  inline G4ThreeVector     GetReferencePositionStart()    const;
+  inline G4ThreeVector     GetReferencePositionMiddle()   const;
+  inline G4ThreeVector     GetReferencePositionEnd()      const;
+  inline G4RotationMatrix* GetReferenceRotationStart()    const;
+  inline G4RotationMatrix* GetReferenceRotationMiddle()   const;
+  inline G4RotationMatrix* GetReferenceRotationEnd()      const;
+  inline G4double          GetSPositionStart()            const;
+  inline G4double          GetSPositionMiddle()           const;
+  inline G4double          GetSPositionEnd()              const;
+  inline G4Transform3D*    GetPlacementTransform()        const;
+  inline G4Transform3D*    GetReadOutPlacementTransform() const;
+  inline BDSSamplerType    GetSamplerType()               const;
+  inline G4String          GetSamplerName()               const;
+  inline G4Transform3D*    GetSamplerPlacementTransform() const;
+  inline G4int             GetIndex()                     const;
   ///@}
   
   ///@{ Reassign the end variable as required when applying a transform
@@ -155,13 +159,10 @@ private:
   /// end of the element overlapping with the outgoing boundary as defined by the
   /// reference position at the end and the reference rotation at the end.
   G4Transform3D*    samplerPlacementTransform;
+
+  /// Index of this item in the beamline - saves keeping track of iterators and conversion.
+  G4int index;
 };
-
-inline BDSAcceleratorComponent* BDSBeamlineElement::GetAcceleratorComponent() const
-{return component;}
-
-inline G4String                 BDSBeamlineElement::GetName() const
-{return component->GetName();}
 
 inline G4String                 BDSBeamlineElement::GetPlacementName() const
 {return placementName;}
@@ -231,5 +232,8 @@ inline G4String                 BDSBeamlineElement::GetSamplerName() const
 
 inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform() const
 {return samplerPlacementTransform;}
+
+inline G4int                    BDSBeamlineElement::GetIndex() const
+{return index;}
 
 #endif

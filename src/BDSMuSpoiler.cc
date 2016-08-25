@@ -1,21 +1,13 @@
 #include "BDSGlobalConstants.hh" 
 
 #include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"               
-#include "G4Tubs.hh"
-#include "G4VisAttributes.hh"
-#include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
-#include "BDSMagnet.hh"
 #include "BDSMuSpoiler.hh"
 #include "BDSMuSpoilerMagField.hh"
-
-class BDSTiltOffset;
 
 BDSMuSpoiler::BDSMuSpoiler(G4String            name,
 			   G4double            length,
@@ -43,12 +35,12 @@ void BDSMuSpoiler::BuildOuterFieldManager(G4int    /*nPoles*/,
   itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
 
   // these options are always non-zero so always set them
-  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
+  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
+  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
 
   // NOTE this one was commented out - but no reason why - reinstated for v0.81
-  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 
 BDSMuSpoiler::~BDSMuSpoiler()

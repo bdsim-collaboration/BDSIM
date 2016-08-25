@@ -8,42 +8,38 @@
 #include "BDSSextMagField.hh"
 #include "BDSSextStepper.hh"
 
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VPhysicalVolume.hh"
-
-class BDSTiltOffset;
+#include "G4Mag_UsualEqRhs.hh"
 
 BDSSextupole::BDSSextupole(G4String            name,
-			   G4double            length,
-			   G4double            bDblPrime,
-			   BDSBeamPipeInfo*    beamPipeInfo,
-			   BDSMagnetOuterInfo* magnetOuterInfo):
+                           G4double            length,
+                           G4double            bDblPrime,
+                           BDSBeamPipeInfo*    beamPipeInfo,
+                           BDSMagnetOuterInfo* magnetOuterInfo):
   BDSMagnet(BDSMagnetType::sextupole, name, length,
-	    beamPipeInfo, magnetOuterInfo),
-   itsBDblPrime(bDblPrime)
+            beamPipeInfo, magnetOuterInfo),
+  itsBDblPrime(bDblPrime)
 {;}
 
 void BDSSextupole::Build()
 {
   BDSMagnet::Build();
-  if(BDSGlobalConstants::Instance()->GetIncludeIronMagFields())
-    {
-      G4double polePos[4];
-      G4double Bfield[3];
+  if(BDSGlobalConstants::Instance()->IncludeIronMagFields())
+  {
+    G4double polePos[4];
+    G4double Bfield[3];
       
-      //coordinate in GetFieldValue
-      polePos[0]=-BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*sin(CLHEP::pi/6);
-      polePos[1]=BDSGlobalConstants::Instance()->GetMagnetPoleRadius()*cos(CLHEP::pi/6);
-      polePos[2]=0.;
-      polePos[3]=-999.;//flag to use polePos rather than local track
+    //coordinate in GetFieldValue
+    polePos[0]=-BDSGlobalConstants::Instance()->MagnetPoleRadius()*sin(CLHEP::pi/6);
+    polePos[1]= BDSGlobalConstants::Instance()->MagnetPoleRadius()*cos(CLHEP::pi/6);
+    polePos[2]=0.;
+    polePos[3]=-999.;//flag to use polePos rather than local track
       
-      itsMagField->GetFieldValue(polePos,Bfield);
-      G4double BFldIron=
-	sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
-	BDSGlobalConstants::Instance()->GetMagnetPoleSize()/
-	(BDSGlobalConstants::Instance()->GetComponentBoxSize()/2-
-	 BDSGlobalConstants::Instance()->GetMagnetPoleRadius());
+    itsMagField->GetFieldValue(polePos,Bfield);
+    G4double BFldIron =
+            sqrt(Bfield[0]*Bfield[0]+Bfield[1]*Bfield[1])*
+                    BDSGlobalConstants::Instance()->MagnetPoleSize()/
+                    (BDSGlobalConstants::Instance()->ComponentBoxSize()/2-
+                     BDSGlobalConstants::Instance()->MagnetPoleRadius());
       
       // Magnetic flux from a pole is divided in two directions
       BFldIron/=2.;

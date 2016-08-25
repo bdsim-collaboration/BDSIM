@@ -1,5 +1,4 @@
 #include "BDSGlobalConstants.hh"
-#include "BDSPhotonCounter.hh"
 #include "BDSRunManager.hh"
 #include "BDSStackingAction.hh"
 
@@ -13,7 +12,11 @@
 #include "G4ParticleTypes.hh"
 
 BDSStackingAction::BDSStackingAction()
-{;}
+{
+  killNeutrinos   = BDSGlobalConstants::Instance()->KillNeutrinos();
+  stopSecondaries = BDSGlobalConstants::Instance()->StopSecondaries();
+  stopTracks      = BDSGlobalConstants::Instance()->StopTracks();
+}
 
 BDSStackingAction::~BDSStackingAction()
 {;}
@@ -26,63 +29,52 @@ G4ClassificationOfNewTrack BDSStackingAction::ClassifyNewTrack(const G4Track * a
   G4cout<<"StackingAction: ClassifyNewtrack "<<aTrack->GetTrackID()<<
     " "<<aTrack->GetDefinition()->GetParticleName()<<G4endl;
   G4StackManager* SM = G4EventManager::GetEventManager()->GetStackManager();
-  G4cout<<"N total tracks : "<<SM->GetNTotalTrack() << G4endl;
-  G4cout<<"N waiting tracks : "<<SM->GetNWaitingTrack() << G4endl;
-  G4cout<<"N urgent tracks : "<<SM->GetNUrgentTrack() << G4endl;
-  G4cout<<"N postponed tracks : "<<SM->GetNPostponedTrack() << G4endl;
+  G4cout<<"N total tracks :     " << SM->GetNTotalTrack()     << G4endl;
+  G4cout<<"N waiting tracks :   " << SM->GetNWaitingTrack()   << G4endl;
+  G4cout<<"N urgent tracks :    " << SM->GetNUrgentTrack()    << G4endl;
+  G4cout<<"N postponed tracks : " << SM->GetNPostponedTrack() << G4endl;
   G4cout<<"Events to process : "<<
     BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed()<<G4endl;
   G4cout<<"Number of event : "<<
     BDSRunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent()<<G4endl;
 #endif
 
-  //Kill all neutrinos
-  G4bool killNeutrinos = true;
-  if( killNeutrinos ){
-    G4int pdgNr = aTrack->GetParticleDefinition()->GetPDGEncoding();
-    if( abs(pdgNr) == 12 || abs(pdgNr) == 14 || abs(pdgNr) == 16) {
-      return fKill;
+  // Kill all neutrinos
+  if(killNeutrinos)
+    {
+      G4int pdgNr = std::abs(aTrack->GetParticleDefinition()->GetPDGEncoding());
+      if( pdgNr == 12 || pdgNr == 14 || pdgNr == 16)
+	{return fKill;}
     }
-  }
 
   // kill secondaries
-  if(BDSGlobalConstants::Instance()->GetStopSecondaries() && (aTrack->GetParentID() > 0) )
+  if(stopSecondaries && (aTrack->GetParentID() > 0) )
     {return fKill;}
   
-  if(BDSGlobalConstants::Instance()->GetStopTracks()) // if tracks killed after interaction
+  if(stopTracks) // if tracks killed after interaction
     {
+      G4int parentID = aTrack->GetParentID();
+      // note this definition getter will be deprecated in G4 soon.
+      G4ParticleDefinition* definition = aTrack->GetDefinition();
       // kill secondary electrons      
-      if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Electron::ElectronDefinition() ) ) {
-	return fKill;
-      }
+      if( (parentID > 0) && (definition == G4Electron::ElectronDefinition() ) )
+	{return fKill;}
       
       // kill secondary photons      
-      if( (aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Gamma::GammaDefinition()))
-	{
-	  return fKill;
-	}
+      if( (parentID > 0) && (definition == G4Gamma::GammaDefinition()))
+	{return fKill;}
       
       // kill secondary positrons
-      if((aTrack->GetParentID() > 0) && (aTrack->GetDefinition() == G4Positron::PositronDefinition()))
-	{
-	  return fKill;
-	}
+      if((parentID > 0) && (definition == G4Positron::PositronDefinition()))
+	{return fKill;}
 
       // kill secondary protons/antiprotons
-      if( (aTrack->GetParentID() > 0) && 
-	  ( (aTrack->GetDefinition() == G4Proton::ProtonDefinition() ) ||
-	    (aTrack->GetDefinition() == G4AntiProton::AntiProtonDefinition()) ) )
-	{
-	  return fKill;
-	}
+      if( (parentID > 0) && 
+	  ( (definition == G4Proton::ProtonDefinition() ) ||
+	    (definition == G4AntiProton::AntiProtonDefinition()) ) )
+	{return fKill;}
     }
-
   return classification;
-}
-
-void BDSStackingAction::countPhoton(const G4Track* aTrack)
-{
-  BDSPhotonCounter::Instance()->countPhoton(aTrack);
 }
 
 void BDSStackingAction::NewStage()

@@ -1,15 +1,18 @@
 #include "BDSEnergyCounterHit.hh"
-#include "G4ios.hh"
+
+#include "globals.hh" // geant4 types / globals
+#include "G4Allocator.hh"
 
 G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn, 
-					 G4double energyIn, 
+BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
+					 G4double energyIn,
 					 G4double XIn, 
 					 G4double YIn, 
 					 G4double ZIn,
-					 G4double SBeforeIn,
-					 G4double SAfterIn,
+					 G4double sBeforeIn,
+					 G4double sAfterIn,
+					 G4double sHitIn,
 					 G4double xIn,
 					 G4double yIn,
 					 G4double zIn,
@@ -19,14 +22,17 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 					 G4bool   precisionRegionIn, 
 					 G4int    turnsTakenIn,
 					 G4int    eventNoIn,
-					 G4double stepLengthIn):
+					 G4double stepLengthIn,
+					 G4int    beamlineIndexIn,
+                                         G4int    geomFlagIn):
   copyNumber(nCopyIn),
   energy(energyIn),
   X(XIn),
   Y(YIn),
   Z(ZIn),
-  SBefore(SBeforeIn),
-  SAfter(SAfterIn),
+  sBefore(sBeforeIn),
+  sAfter(sAfterIn),
+  sHit(sHitIn),
   x(xIn),
   y(yIn),
   z(zIn),
@@ -36,7 +42,9 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
   precisionRegion(precisionRegionIn),
   turnsTaken(turnsTakenIn),
   eventNo(eventNoIn),
-  stepLength(stepLengthIn)
+  stepLength(stepLengthIn),
+  beamlineIndex(beamlineIndexIn),
+  geomFlag(geomFlagIn)
 {;}
 
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
@@ -51,8 +59,8 @@ BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* h
     {
       spos = (*hc)[i]->GetSBefore();
       if (spos < sposMin) {
-	sposMin = spos; //keep for testing
-	indexofHit = i; //record which hit it was
+	      sposMin = spos; //keep for testing
+	      indexofHit = i; //record which hit it was
       }
     }
   if (indexofHit != -1)
@@ -71,8 +79,8 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
     {
       spos = (*hc)[i]->GetSAfter();
       if (spos > sposMax) {
-	sposMax = spos; //keep for testing
-	indexofHit = i; //record which hit it was
+	      sposMax = spos; //keep for testing
+	      indexofHit = i; //record which hit it was
       }
     }
   if (indexofHit != -1)

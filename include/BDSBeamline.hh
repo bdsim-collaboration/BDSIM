@@ -13,10 +13,9 @@
 #include <utility>    //for std::pair
 #include <vector>
 
+class BDSGeometryComponent;
 class BDSTiltOffset;
-
-/// Forward declaration for iterator so it can appear at the top
-class BDSTransform3D;
+class BDSTransform3D; ///< Forward declaration for iterator so it can appear at the top
 
 /**
  * @brief A vector of BDSBeamlineElement instances - a beamline.
@@ -30,7 +29,7 @@ class BDSTransform3D;
  * by placing beamline components inside parent volumes and therefore creating
  * a new beamline of parents. It can also be used to create multiple beam lines.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamline
@@ -83,27 +82,30 @@ public:
   /// Once the beamline element has been constructed and all positions and rotations
   /// use these to update the world extent of this beam line.
   void UpdateExtents(BDSBeamlineElement* element);
-  
-  BDSBeamlineElement* GetFirstItem(); ///< Return a reference to the first element
-  BDSBeamlineElement* GetLastItem();  ///< Return a reference to the last element
+
+  /// Return a reference to the first element
+  inline BDSBeamlineElement* GetFirstItem() {return front();} 
+
+  /// Return a reference to the last element
+  inline BDSBeamlineElement* GetLastItem() {return back();}
 
   /// Get an element by name. Returns null pointer if not found.
   BDSBeamlineElement* GetElement(G4String name);
   
   /// Get the total length of the beamline - the sum of the chord length of each element
-  inline G4double     GetTotalChordLength() const;
+  inline G4double     GetTotalChordLength() const {return totalChordLength;}
 
   /// Get the total ARC length for the beamline - ie the maximum s position
-  inline G4double     GetTotalArcLength() const;
+  inline G4double     GetTotalArcLength() const {return totalArcLength;}
 
   /// Get the number of elements
   BeamlineVector::size_type size() const {return beamline.size();}
 
   /// Get the maximum positive extent in all dimensions  
-  G4ThreeVector GetMaximumExtentPositive() const;
+  G4ThreeVector GetMaximumExtentPositive() const {return maximumExtentPositive;}
 
   /// Get the maximum negative extent in all dimensions
-  G4ThreeVector GetMaximumExtentNegative() const;
+  G4ThreeVector GetMaximumExtentNegative() const {return maximumExtentNegative;}
 
   /// Get the maximum extent absolute in each dimension
   G4ThreeVector GetMaximumExtentAbsolute() const;
@@ -114,7 +116,7 @@ public:
 					    G4double x = 0,
 					    G4double y = 0);
 
-  ///@{ iterator mechanics
+  ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
   iterator       begin()       {return beamline.begin();}
@@ -123,12 +125,22 @@ public:
   const_iterator end()   const {return beamline.end();}
   G4bool         empty() const {return beamline.empty();}
   ///@}
+
+  /// Return a pointer to the previous element. First this beamline is
+  /// searched for the vector. If there is no such element or no previous
+  /// element because it's the beginning, then a nullptr is returned. The
+  /// caller should test on this.
+  BDSBeamlineElement* GetPrevious(BDSBeamlineElement* element);
+  BDSBeamlineElement* GetNext(BDSBeamlineElement* element);
+
+  BDSBeamlineElement* GetPrevious(G4int index);
+  BDSBeamlineElement* GetNext(G4int index);
   
   // Accessors in a similar style to std::vector
   /// Return a reference to the first element
-  BDSBeamlineElement* front() const;
+  inline BDSBeamlineElement* front() const {return beamline.front();}
   /// Return a reference to the last element
-  BDSBeamlineElement* back()  const;
+  inline BDSBeamlineElement* back() const {return beamline.back();}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, BDSBeamline const &bl);
@@ -136,6 +148,18 @@ public:
   /// Feedback about memory consumption for this beamline instance - container size,
   /// size of all BDSBeamlineElement() and size of all BDSAcceleratorComponent() stored.
   void PrintMemoryConsumption() const;
+
+  BDSBeamlineElement* ProvideEndPieceElementBefore(BDSSimpleComponent* endPiece,
+						   G4int    index) const;
+  /// Calculate the placements for an end piece w.r.t. a particlar beam line element
+  /// The optional flip flag is used for when the 'before' piece is used again and
+  /// must be rotated.
+  BDSBeamlineElement* ProvideEndPieceElementAfter(BDSSimpleComponent* endPiece,
+						  G4int               index,
+						  G4bool              flip = false) const;
+
+  /// Whether the supplied index will lie within the beam line vector.
+  G4bool IndexOK(G4int index) const;
   
 private:
   /// Add a single component and calculate its position and rotation with respect
@@ -182,29 +206,5 @@ private:
   BDSBeamline& operator=(const BDSBeamline&);
   BDSBeamline(BDSBeamline&);
 };
-
-inline BDSBeamlineElement* BDSBeamline::GetFirstItem()
-{return front();}
-
-inline BDSBeamlineElement* BDSBeamline::GetLastItem()
-{return back();}
-
-inline G4double BDSBeamline::GetTotalChordLength() const
-{return totalChordLength;}
-
-inline G4double BDSBeamline::GetTotalArcLength() const
-{return totalArcLength;}
-
-inline G4ThreeVector BDSBeamline::GetMaximumExtentPositive() const
-{return maximumExtentPositive;}
-
-inline G4ThreeVector BDSBeamline::GetMaximumExtentNegative() const
-{return maximumExtentNegative;}
-
-inline BDSBeamlineElement* BDSBeamline::front() const
-{return beamline.front();}
-
-inline BDSBeamlineElement* BDSBeamline::back() const
-{return beamline.back();}
 
 #endif

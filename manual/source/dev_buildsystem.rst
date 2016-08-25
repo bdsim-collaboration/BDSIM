@@ -19,9 +19,36 @@ The test system is based on CTest, which works in combination with CMake. Tests 
 :code:`CMakeLists.txt` file beside each example declaring the main gmad file as well as any
 optional command line arguments.
 
+Useful ctest commands (can all be combined):
+
+* ctest -N : print tests without execution
+* ctest -R <regexp> : execute tests that match regexp
+* ctest -E LONG : execute tests that don't have LONG in name (opposite of -R)
+* ctest -I 5,5 : only execute test 5
+* ctest -VV : print output to screen
+
+For example to find the test command for the sextupole component test:
+
+ctest -R Component-Sextupole -N -VV
+
+Test Server
+===========
+
+The test server is based on CDash. Submissions to the `BDSIM test server <http://abp-cdash.web.cern.ch/abp-cdash/index.php?project=BDSIM>`_ can be done with the example configuration file cmake/cdash_bdsim.cmake. Adjust it to your settings and run::
+
+  ctest --timeout 900 -S cdash_bdsim.cmake
+
 Comparison of output is being added currently.
 
 Package System
 ==============
 
-The package system is based on CPack, which works in combination with CMake. One can package the libraries with :code:`cpack`. A packed .tar.gz and a Mac OS .dmg is created. The source can be packed with :code:`make dist`. It is recommended to pack the libraries after each release version.
+The package system is based on CPack, which works in combination with CMake.
+One can package the binaries and libraries with :code:`cpack`. A packed .tar.gz and a Mac OS .dmg is created.
+The source can be packed with :code:`make dist`.
+It is recommended to pack the libraries after each release version and put the binaries and libraries on the `BDSIM Download page <https://twiki.ph.rhul.ac.uk/twiki/bin/view/PP/JAI/BDsimDownload>`_.
+
+Static Code Analysis
+====================
+
+The code of BDSIM is analysed by the static analysis tool Coverity. Its analysis is available with CERN credentials at `CERN's Coverity site <https://coverity.cern.ch>`_.

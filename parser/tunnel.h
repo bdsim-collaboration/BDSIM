@@ -1,5 +1,5 @@
-#ifndef __TUNNEL_H
-#define __TUNNEL_H
+#ifndef TUNNEL_H
+#define TUNNEL_H
 
 #include <iomanip>
 #include <iostream>
@@ -7,13 +7,16 @@
 
 #include "published.h"
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief Tunnel class for parser
    * 
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   * @author Jochem Snuverink
    */
-  struct Tunnel: public Published<Tunnel> {
+  class Tunnel: public Published<Tunnel> {
+
+  public:
     std::string name; ///< name
     /// geometry type
     std::string type;
@@ -43,14 +46,17 @@ namespace GMAD {
     Tunnel();
     /// reset
     void clear();
-    /// Publish members
-    void PublishMembers();
     /// print some properties
     void print()const;
     /// set methods by property name
     template <typename T>
       void set_value(std::string name, T value);
+
+  private:
+    /// Publish members
+    void PublishMembers();
   };
+  
   template <typename T>
     void Tunnel::set_value(std::string name, T value)
     {

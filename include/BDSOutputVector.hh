@@ -3,16 +3,29 @@
 
 #include "BDSOutputBase.hh"
 
+#include "globals.hh" // geant4 types / globals
+
+#include <ctime>
+#include <string>
 #include <vector>
 
-// class that holds multiple outputs
+class BDSHistogram1D;
+class BDSOutputROOTEventInfo;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
 
-class BDSOutputVector: public BDSOutputBase {
+/**
+ * @brief Class that holds multiple outputs.
+ * 
+ * @author Jochem Snuverink
+ */
 
+class BDSOutputVector: public BDSOutputBase
+{
 public: 
 
   BDSOutputVector();
-  ~BDSOutputVector();
+  virtual ~BDSOutputVector();
 
   /// add output type
   void Add(BDSOutputBase*);
@@ -22,9 +35,9 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*);
   /// make primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*);
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint* ploss);
   /// make primary hits histo - where primaries impact
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*);
+  virtual void WritePrimaryHit(BDSTrajectoryPoint* phits);
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection*);
   /// write a trajectory 
@@ -45,15 +58,24 @@ public:
 
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D* histogramIn);
+  /// write event info
+  virtual void WriteEventInfo(const time_t&  startTime,
+			      const time_t&  stopTime,
+			      const G4float& duration,
+                              const std::string& seedStateAtStart);
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* info);
   /// Fill event
   virtual void FillEvent() {};
-  /// write and close and open new file
-  virtual void Commit();
-  /// write and close the file
-  virtual void Write();
+  virtual void Initialise(); ///< open the file
+  /// Write to file
+  virtual void Write(const time_t&  startTime,
+		     const time_t&  stopTime,
+		     const G4float& duration,
+		     const std::string& seedStateAtStart);
+  virtual void Close();      ///< close the file
 
 private:
-  /// 
+  /// Vector of output instances.
   std::vector<BDSOutputBase*> output;
 };
 

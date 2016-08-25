@@ -2,15 +2,23 @@
 #include "G4Navigator.hh"
 #include "CLHEP/Units/PhysicalConstants.h" 
 #include "globals.hh"
+
 #include <cmath>
+
+#include "TMath.h"
+
+const G4double BDSCavityField::j0FirstZero = 2.404825557695772768622;
 
 BDSCavityField::BDSCavityField(G4double eFieldMaxIn,
 				 G4double cavityRadiusIn,
 				 G4double frequencyIn,
 				 G4double phaseIn):
-  eFieldMax(eFieldMaxIn),cavityRadius(cavityRadiusIn),frequency(frequencyIn),phase(phaseIn)
-{
-}
+  eFieldMax(eFieldMaxIn),
+  cavityRadius(cavityRadiusIn),
+  frequency(frequencyIn),
+  phase(phaseIn),
+  normalisedCavityRadius(j0FirstZero/cavityRadiusIn)
+{;}
 
 G4bool BDSCavityField::DoesFieldChangeEnergy() const
 {
@@ -19,53 +27,59 @@ G4bool BDSCavityField::DoesFieldChangeEnergy() const
 
 void BDSCavityField::GetFieldValue(const G4double Point[4],G4double *Bfield ) const
 {
-  G4ThreeVector LocalR;  //Vector to hold the local coordinates
+  G4ThreeVector position;  //Vector to hold the local coordinates
   G4ThreeVector GlobalR; //Vector to hold the global coordinates
   //Initializing GlobalR.  (GetFieldValue is given global coordinates)
   GlobalR.setX(Point[0]); 
   GlobalR.setY(Point[1]);
   GlobalR.setZ(Point[2]);
 
-
+  G4double t = Point[3];
+  
   auxNavigator->LocateGlobalPointAndSetup(GlobalR); //Give navigator global coordinates
   G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform(); //transform to local
-  LocalR = GlobalAffine.TransformPoint(GlobalR);  //initialize LocalR with local coords
+  position = GlobalAffine.TransformPoint(GlobalR);  //initialize position with local coords
   
- 
   G4RotationMatrix globalToLocalMatrix = auxNavigator->NetRotation();   //Matrix of Global to Local
   G4RotationMatrix localToGlobalMatrix = globalToLocalMatrix.inverse();  //Find the inverse of this transform to be used later
-  G4double radialDistance = pow(LocalR.x()*LocalR.x() +  LocalR.y()*LocalR.y(),0.5);
 
-  //Calculating the magnitudes of the Fields:
+  //Converting from Local Cartesian to Local Cylindrical
+  G4double phi = atan2(position.y(),position.x());
+  G4double r = std::sqrt(pow(position.x(),2) +  pow(position.y(),2));
 
-  
-  //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J0 arg between 0 and 3 
-  double J0r = 0.999999999-2.249999879*pow((2.405*radialDistance/(3*cavityRadius)),2)+1.265623060*pow((2.405*radialDistance/(3*cavityRadius)),4)-0.316394552*pow((2.405*radialDistance/(3*cavityRadius)),6)+0.044460948*pow((2.405*radialDistance/(3*cavityRadius)),8)-0.003954479*pow((2.405*radialDistance/(3*cavityRadius)),10)+0.000212950*pow((2.405*radialDistance/(3*cavityRadius)),12); 
+  G4double rNormalised = normalisedCavityRadius * r;
 
-  //J0(2.405*z/cavityRadius) ..  Uses polynomial approximation suitable for J1 arg between 0 and 3 
-  double J1r = (2.405*radialDistance/(3*cavityRadius))*(0.500000000-0.562499992*pow((2.405*radialDistance/(3*cavityRadius)),2)+0.210937377*pow((2.405*radialDistance/(3*cavityRadius)),4)-0.039550040*pow((2.405*radialDistance/(3*cavityRadius)),6)+0.004447331*pow((2.405*radialDistance/(3*cavityRadius)),8)-0.000330547*pow((2.405*radialDistance/(3*cavityRadius)),10)+0.000015525*pow((2.405*radialDistance/(3*cavityRadius)),12));
+  // In case a point outside the cavity is queried, ensure the bessel will return 0
+  if (rNormalised > j0FirstZero)
+    {rNormalised = j0FirstZero - 1e-6;}
 
-  //|E|
-  G4double eMagnitude = eFieldMax*J0r*cos(frequency*Point[3]);
-  //|H|
-  G4double hMagnitude = (eFieldMax/(pow(CLHEP::mu0/CLHEP::epsilon0,0.5))*J1r*sin(frequency*Point[3]));
+  //Source for calculating the TM010 mode: Gerigk, Frank. "Cavity types." arXiv preprint arXiv:1111.4897 (2011).
 
+  G4double J0r = TMath::BesselJ0(rNormalised);
+  G4double J1r = TMath::BesselJ1(rNormalised);
 
-  //Angle of the position vector.
-  G4double angle = atan2(LocalR.y(),LocalR.x()) + CLHEP::pi*0.5; //Add pi/2 so that the vector is perpendicular to position.
+  //Calculating free-space impedance and scale factor for Bphi:
+  G4double Z0 = std::sqrt(CLHEP::mu0/CLHEP::epsilon0);
+  G4double Bmax = -eFieldMax/Z0;
 
-  //normalization factor
-  G4double normalization = pow(tan(angle)*tan(angle)+1,0.5);
+  //Calculating field components.  Frequency in rad/s or /s?
+  G4double Ez = eFieldMax * J0r * cos(frequency*t);
+  G4double Bphi = Bmax * J1r * sin(frequency*t);
+
+  //Converting Bphi into cartesian coordinates:
+
+  G4double Bx = Bphi*sin(phi);
+  G4double By = Bphi*cos(phi);
 
   //Local B and E fields:
-  G4ThreeVector LocalB = G4ThreeVector(tan(angle)*hMagnitude/normalization, //x
-				       hMagnitude/normalization,            //y
-				       0);                                  //z
+  G4ThreeVector LocalB = G4ThreeVector(Bx,                          //x
+				       By,                          //y
+				       0);                          //z
 
-  G4ThreeVector LocalE = G4ThreeVector(0,                                   //x
-				       0,                                   //y
-				       eMagnitude);                         //z
-
+  G4ThreeVector LocalE = G4ThreeVector(0,                           //x
+				       0,                           //y
+				       Ez);                         //z
+  
   //Converting back to global coordinates:
   G4ThreeVector GlobalB = localToGlobalMatrix*LocalB; //Multiply the localB field by the local2Global matrix to get back into global coordinates
   G4ThreeVector GlobalE = localToGlobalMatrix*LocalE;

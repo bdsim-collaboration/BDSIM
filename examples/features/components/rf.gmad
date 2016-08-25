@@ -2,6 +2,7 @@ d1: drift, l=0.5;
 rf1 : rf, l=115.4*mm, gradient = 10 * MV / m, cavityModel = "Tesla9Cell", material = "Niobium";
 rf2 : rf, l=115.4*mm, gradient = 10 * MV / m, cavityModel = "Tesla9Cell", material = "Niobium";
 d2: drift, l=0.5;
+rf3: rfcavity, material="copper", cavityModel = "pillbox", gradient=100.0, l=0.1*m;
 
 Tesla9Cell: cavitymodel,
 	    type = "elliptical",
@@ -18,6 +19,16 @@ Tesla9Cell: cavitymodel,
 	    numberOfPoints = 24,
 	    numberOfCells = 1;
 
+pillbox: cavitymodel,
+	 type = "rectangular",
+	 equatorRadius = 10*cm,
+	 irisRadius = 3*cm,
+	 thickness = 1*cm;
+
 !print, Tesla9Cell;
 
-lat : line = (d1,rf1,rf2,d2);
+lat : line = (d1,rf1,rf2,d2,rf3);
+
+include optionsTest.gmad;
+
+option, nSegmentsPerCircle=40;

@@ -117,6 +117,7 @@ Useful Commands
 * :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
+* :code:`if () {} else {};` if-else construct
 
 Lattice Description
 -------------------
@@ -736,6 +737,21 @@ then attach a sampler to the marker.
 Examples::
 
    m1: marker;
+
+
+Colours
+-------
+
+A few items allow you to define a custom colour for them to aid in visualisation. Currently,
+only `rcol`_ and `ecol`_ respond to this. The colour can be defined in with an RGB colour code
+where the RGB values are space delimited and given from 0 to 255. Once the colour name has
+been defined it may be used again without having to redefine the components. Once defined, a
+colour may not be redefined.
+
+Examples::
+
+  col1: rcol, l=0.2*m, xsize=5*cm, ysize=4*cm, colour="crimson:220  20 60", material="copper";
+  col2: rcol, l=0.2*m, xsize=10*cm, ysize=6*cm, colour="crimson", material="Iron";
    
 
 Aperture Parameters
@@ -823,13 +839,6 @@ Example::
 
   option, magnetGeometryType = "polesfacetcrop",
           outerDiameter = 0.5*m;
-	  
-
-.. versionadded:: 0.7
-
-		  `magnetGeometryType` parameter allows different generic magnet geometry
-		  libraries to be used. Before, only cylindrical geometry was available.
-		  Examples of other geometry types are described below.
 
 .. deprecated:: 0.65
 		`boxSize` - this is still accepted by the parser for backwards compatibility
@@ -866,20 +875,12 @@ therefore this geometry is best suited for the most general studies.
 This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
 another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
 can be used to override this on a per element basis.
-		    
-.. |cylindricalquad| image:: figures/cylindrical_quadrupole.png
-			     :width: 60%
-				  
-.. |cylindricalsext| image:: figures/cylindrical_sextupole.png
-			     :width: 60%
-			  
-+--------------------+---------------------+
-| |cylindricalquad|  +  |cylindricalsext|  +
-+--------------------+---------------------+
 
-.. raw:: latex
+.. figure:: figures/cylindrical_quadrupole.png
+	    :width: 40%
 
-    \newpage
+.. figure:: figures/cylindrical_sextupole.png
+	    :width: 40%
     
 
 Poles Circular - "`polescircular`"
@@ -890,21 +891,17 @@ represented by an annulus. Currently no coils are implemented. If a non-symmetri
 geometry is used, the larger of the horizontal and vertical dimensions of the beam pipe will be
 used to create the circular aperture at the pole tips.
 
-.. versionadded:: 0.7
+.. figure:: figures/polescircular_quadrupole.png
+	    :width: 40%
 
-.. |circularquad| image:: figures/polecircular_quadrupole.png
-			  :width: 60%
+.. figure:: figures/polescircular_quadrupole_3d.png
+	    :width: 40%
 
-.. |circularsext| image:: figures/polecircular_sextupole.png
-			  :width: 60%
-			  
-+-----------------+------------------+
-| |circularquad|  +  |circularsext|  +
-+-----------------+------------------+
+.. figure:: figures/polescircular_sextupole.png
+	    :width: 40%
 
-.. raw:: latex
-
-    \newpage
+.. figure:: figures/polescircular_sextupole_3d.png
+	    :width: 40%
 
 
 Poles Square - "`polessquare`"
@@ -914,24 +911,21 @@ This magnet geometry has again, individual poles according to the order of the m
 yoke is an upright square section to which the poles are attached. This geometry behaves in the
 same way as `polescircular` with regard to the beam pipe size.
 
-.. versionadded:: 0.7
-
 `outerDiameter` is the full width of the the magnet horizontally as shown in the figure below,
  **not** the diagonal width.
 
-.. |squarequad| image:: figures/polesquare_quadrupole.png
-			:width: 60%
+.. figure:: figures/polessquare_quadrupole.png
+	    :width: 40%
 
-.. |squaresext| image:: figures/polesquare_sextupole.png
-			:width: 60%
-			  
-+---------------+----------------+
-| |squarequad|  +  |squaresext|  +
-+---------------+----------------+
+.. figure:: figures/polessquare_quadrupole_3d.png
+	    :width: 40%
 
-.. raw:: latex
+.. figure:: figures/polessquare_sextupole.png
+	    :width: 40%
 
-    \newpage
+.. figure:: figures/polessquare_sextupole_3d.png
+	    :width: 40%
+
 
 Poles Faceted - "`polesfacet`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -940,24 +934,20 @@ This magnet geometry is much like `polessquare`, however the yoke is such that t
 joins at a flat piece of yoke and not in a corner. This geometry behaves in the
 same way as `polescircular` with regard to the beam pipe size.
 
-.. versionadded:: 0.7
-
 `outerDiameter` is the full width as shown in the figure.
 
-.. |facetquad| image:: figures/polefacet_quadrupole.png
-		       :width: 60%
+.. figure:: figures/polesfacet_quadrupole.png
+	    :width: 40%
 
-.. |facetsext| image:: figures/polefacet_sextupole.png
-		       :width: 60%
-			  
-+--------------+---------------+
-| |facetquad|  +  |facetsext|  +
-+--------------+---------------+
+.. figure:: figures/polesfacet_quadrupole_3d.png
+	    :width: 40%
 
-.. raw:: latex
+.. figure:: figures/polesfacet_sextupole.png
+	    :width: 40%
 
-    \newpage
-    
+.. figure:: figures/polesfacet_sextupole_3d.png
+	    :width: 40%
+
 
 Poles Faceted with Crop - "`polesfacetcrop`"
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -966,23 +956,19 @@ This magnet geometry is quite similar to `polesfacet`, but the yoke in between e
 pole is cropped to form another facet. This results in this magnet geometry having
 double the number of poles as sides.
 
-.. versionadded:: 0.7
-
 `outerDiameter` is the full width horizontally as shown in the figure.
 
-.. |facetcropquad| image:: figures/polefacetcrop_quadrupole.png
-			   :width: 60%
+.. figure:: figures/polesfacetcrop_quadrupole.png
+	    :width: 40%
 
-.. |facetcropsext| image:: figures/polefacetcrop_sextupole.png
-			   :width: 60%
-			  
-+------------------+-------------------+
-| |facetcropquad|  +  |facetcropsext|  +
-+------------------+-------------------+
+.. figure:: figures/polesfacetcrop_quadrupole_3d.png
+	    :width: 40%
 
-.. raw:: latex
+.. figure:: figures/polesfacetcrop_sextupole.png
+	    :width: 40%
 
-    \newpage
+.. figure:: figures/polesfacetcrop_sextupole_3d.png
+	    :width: 40%
 
 
 LHC Left & Right - "`lhcleft`" | "`lhcright`"
@@ -1187,8 +1173,6 @@ Physics Lists In BDSIM
    * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
 
-
-.. table check in latex before commit
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +---------------------------+------------------------------------------------------------------------+
@@ -1222,12 +1206,11 @@ Physics Lists In BDSIM
 | qgsp_bert                 | Quark-Gluon String Precompound Model with Bertini Cascade model.       |
 |                           | This is based on `G4HadronPhysicsQGSP_BERT` class and includes         |
 |                           | hadronic elastic and inelastic processes. Suitable for high energy     |
-|                           | (>10 GeV). This includes and uses `G4EmStandardPhysics`.               |
+|                           | (>10 GeV).                                                             |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bert_hp              | Similar to `QGSP_BERT` but with the addition of data driven high       |
 |                           | precision neutron models to transport neutrons below 20 MeV down to    |
-|                           | thermal energies. This includes and uses `G4EmStandardPhysics`. This   |
-|                           | is provided by `G4HadronPhysicsQGSP_BERT_HP`.                          |
+|                           | thermal energies.  This is provided by `G4HadronPhysicsQGSP_BERT_HP`.  |
 +---------------------------+------------------------------------------------------------------------+
 | qgsp_bic                  | Like `QGSP`, but using Geant4 Binary cascade for primary protons and   |
 |                           | neutrons with energies below ~10GeV, thus replacing the use of the LEP |
@@ -1310,10 +1293,14 @@ options in BDSIM
 Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
 as their value.
 
+.. tabularcolumns:: |p{5cm}|p{10cm}|
+
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Function                                              |
 +==================================+=======================================================+
 | **Common Parameters**            |                                                       |
++----------------------------------+-------------------------------------------------------+
+| batch                            | run BDISM without the visualiser                      |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
@@ -1321,31 +1308,42 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | beampipeMaterial                 | default beam pipe material                            |
 +----------------------------------+-------------------------------------------------------+
-| boxSize                          | default accelerator component full width [m]          |
-+----------------------------------+-------------------------------------------------------+
-| randomSeed                       | the integer seed value for the random number          |
-|                                  | generator                                             |
-+----------------------------------+-------------------------------------------------------+
-| ngenerate                        | number of primary particles to simulate               |
+| circular                         | whether the accelerator is circular or not            |
 +----------------------------------+-------------------------------------------------------+
 | elossHistoBinWidth               | the width of the histogram bins [m]                   |
 +----------------------------------+-------------------------------------------------------+
+| killNeutrinos                    | whether to always stop tracking neutrinos for         |
+|                                  | increased efficiency (default = true)                 |
++----------------------------------+-------------------------------------------------------+
+| ngenerate                        | number of primary particles to simulate               |
++----------------------------------+-------------------------------------------------------+
+| outerDiameter                    | default accelerator component full width [m]          |
++----------------------------------+-------------------------------------------------------+
 | physicsList                      | the physics list to use                               |
 +----------------------------------+-------------------------------------------------------+
-| thresholdCutCharged              | the minimum energy above which to simulate electron   |
-|                                  | and positrons - any below this energy will be killed  |
+| printModuloFraction              | the fraction of events to print out (default 0.1)     |
 +----------------------------------+-------------------------------------------------------+
-| thresholdCutPhotons              | the minimum energy above which to simulate photons -  |
-|                                  | any below this energy will be killed                  |
+| recreate                         | whether to run in recreation mode (default 0)         |
++----------------------------------+-------------------------------------------------------+
+| recreateFileName                 | which file to recreate events from                    |
++----------------------------------+-------------------------------------------------------+
+| startFromEvent                   | event number offset to start from when recreating     |
++----------------------------------+-------------------------------------------------------+
+| seed                             | the integer seed value for the random number          |
+|                                  | generator                                             |
++----------------------------------+-------------------------------------------------------+
+| seedStateFileName                | path to ASCII seed state to load - must be used with  |
+|                                  | :code:`useASCIISeedState` to be effective             |
 +----------------------------------+-------------------------------------------------------+
 | stopSecondaries                  | whether to stop secondaries or not (default = false)  |
 +----------------------------------+-------------------------------------------------------+
 | stopTracks                       | whether to stop tracks after                          |
 |                                  | interaction (default = false)                         |
 +----------------------------------+-------------------------------------------------------+
-| circular                         | whether the accelerator is circular or not            |
+| useASCIISeedState                | whether to load an ASCII seed state file using        |
+|                                  | :code:`seedStateFileName`                             |
 +----------------------------------+-------------------------------------------------------+
-| printModuloFraction              | the fraction of events to print out (default 0.1)     |
+| writeseedstate                   | write the seed state of the last event start in ASCII |
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
@@ -1432,9 +1430,11 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
 +----------------------------------+-------------------------------------------------------+
-| storeMuonTrajectories            | whether to store muon trajectories in the output      |
+| storeTrajectoryDepth             | maximum depth (secondaries) of stored trajectories    |
 +----------------------------------+-------------------------------------------------------+
-| storeNeutronTrajectories         | whether to store neutron trajectories in the output   |
+| storeTrajectoryEnergyThreshold   | minimum energy of stored trajectories                 |
++----------------------------------+-------------------------------------------------------+
+| storeTrajectoryParticle          | store trajectories of these particles                 |
 +----------------------------------+-------------------------------------------------------+
 | trajCutGTZ                       | global z position cut (minimum) for storing           |
 |                                  | trajectories                                          |
@@ -1445,6 +1445,12 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
++----------------------------------+-------------------------------------------------------+
+| **Visualisation Parameters**     |                                                       |
++----------------------------------+-------------------------------------------------------+
+| nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
+|                                  | Note, this does not affect the accuracty of the       |
+|                                  | geometry - only the visualisation (default : 50)      |
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.

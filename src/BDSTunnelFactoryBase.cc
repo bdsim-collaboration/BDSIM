@@ -1,9 +1,10 @@
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"          // for vis debug flag
+#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSTunnelInfo.hh"
 #include "BDSTunnelFactoryBase.hh"
 #include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"            // for calculateorientation
@@ -29,7 +30,7 @@ BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   // use large length safety for tunnel construction to avoid stuck particles
   // will not make difference to tracking so is acceptable to have 1um gap.
   lengthSafety  = 1*CLHEP::um;
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   defaultModel  = BDSGlobalConstants::Instance()->TunnelInfo();
 }
 
@@ -166,7 +167,7 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 					       G4Material* tunnelSoilMaterial)
 {  
   // build logical volumes
-  G4Material* emptyMaterial    = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial    = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    name + "_container_lv");
@@ -203,7 +204,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
   G4VisAttributes* tunnelVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("tunnel"));
   if (visible)
     {tunnelVisAttr->SetVisibility(true);}
-  tunnelVisAttr->SetForceLineSegmentsPerCircle(100);
+  tunnelVisAttr->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle()*2);
   tunnelLV->SetVisAttributes(tunnelVisAttr);
   visAttributesToBeRegistered.push_back(tunnelVisAttr);
   if (floorLV)
@@ -211,7 +212,7 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       G4VisAttributes* floorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("tunnelfloor"));
       if (visible)
 	{floorVisAttr->SetVisibility(true);}
-      floorVisAttr->SetForceLineSegmentsPerCircle(100);
+      floorVisAttr->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle()*2);
       floorLV->SetVisAttributes(floorVisAttr);
       visAttributesToBeRegistered.push_back(floorVisAttr);
     }
@@ -221,21 +222,13 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
       G4VisAttributes* soilVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("soil"));
       if (visible)
 	{soilVisAttr->SetVisibility(true);}
-      soilVisAttr->SetForceLineSegmentsPerCircle(50);
+      soilVisAttr->SetForceLineSegmentsPerCircle(BDSGlobalConstants::Instance()->NSegmentsPerCircle());
       soilLV->SetVisAttributes(soilVisAttr);
       visAttributesToBeRegistered.push_back(soilVisAttr);
     }
   // container & read out
-  if (BDSExecOptions::Instance()->GetVisDebug())
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-      readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-    }
-  else
-    {
-      containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-      readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-    }
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
 void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*/,
@@ -260,9 +253,7 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*
   // we fiddle the extents here as the extents of the read out don't exist and
   // this is relatively safe as nothing will be placed against the outside edge
   // of the soil.
-  tunnelComponent->SetExtentX(std::make_pair(-readOutRadius, readOutRadius));
-  tunnelComponent->SetExtentY(std::make_pair(-readOutRadius, readOutRadius));
-  tunnelComponent->SetExtentZ(std::make_pair(-containerZRadius, containerZRadius));
+  tunnelComponent->SetExtent(BDSExtent(readOutRadius, readOutRadius, containerZRadius));
 }
 
 void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,
@@ -298,7 +289,7 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   G4UserLimits* tunnelUserLimits = new G4UserLimits("tunnel_cuts");
   G4double maxStepFactor = 0.5; // fraction of length for maximum step size
   tunnelUserLimits->SetMaxAllowedStep(length * maxStepFactor);
-  tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
   if (soilLV)

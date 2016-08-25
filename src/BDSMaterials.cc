@@ -1,21 +1,4 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added GABs LCBeamGasPlugMat Material
-   Added LCLead
-
-   Modified 13.09.07 by S.P.Malton, Royal Holloway, Univ. of London.
-   Created maps of materials and elements
-   Added Initialise function
-   Added Add/GetElement/Material functions
-   Cleanup in destructor
-   Added ListMaterials function
-*/
-
-#include "BDSExecOptions.hh"
+#include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "G4NistManager.hh"
@@ -250,6 +233,21 @@ void BDSMaterials::Initialise()
   tmpMaterial->AddElement(elements["V"],1);
   materials[name] = tmpMaterial; 
 
+  tmpMaterial = new G4Material
+    (name="solidhydrogen"      , density=  8.96*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["H"],1);
+  materials[name] = tmpMaterial;
+
+  tmpMaterial = new G4Material
+    (name="solidnitrogen"      , density=  8.96*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["N"],1);
+  materials[name] = tmpMaterial;
+
+  tmpMaterial = new G4Material
+    (name="solidoxygen"      , density=  8.96*CLHEP::g/CLHEP::cm3, 1, kStateSolid);
+  tmpMaterial->AddElement(elements["O"],1);
+  materials[name] = tmpMaterial;
+
   // composites and alloys
 
   tmpMaterial = new G4Material
@@ -284,8 +282,8 @@ void BDSMaterials::Initialise()
   materials[name] = tmpMaterial; 
 
   //Stainless Steel 316L
-  tmpMaterial = new G4Material
-    (name="stainlesssteel"   , density=  8000 *CLHEP::kg/CLHEP::m3, 10, kStateSolid, 295*CLHEP::kelvin);
+  tmpMaterial = new G4Material(name="stainlesssteel", density=8000 *CLHEP::kg/CLHEP::m3,
+			       10, kStateSolid, 295*CLHEP::kelvin);
   tmpMaterial->AddElement(elements["C"], fractionmass=0.0003);
   tmpMaterial->AddElement(elements["Mn"], fractionmass=0.02);
   tmpMaterial->AddElement(elements["Si"], fractionmass=0.0075);
@@ -917,15 +915,14 @@ void BDSMaterials::Initialise()
 void BDSMaterials::AddMaterial(G4Material* aMaterial, G4String aName)
 {
   aName.toLower();
-  if(materials.insert(make_pair(aName,aMaterial)).second){
+  if(materials.insert(make_pair(aName,aMaterial)).second)
+    {
 #ifdef BDSDEBUG
-    G4cout << "New material : " << aName << " added to material table" << G4endl;
+      G4cout << "New material : " << aName << " added to material table" << G4endl;
 #endif
-
-  }else{
-    G4String exceptionString = "Material "+aName+" already exists\n";
-    G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "Material \"" << aName << "\" already exists" << G4endl; exit(1);}
 }
 
 // add material
@@ -939,20 +936,24 @@ void BDSMaterials::AddMaterial(G4String aName,
 {
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsZ, itsA*CLHEP::g/CLHEP::mole, itsDensity*CLHEP::g/CLHEP::cm3, itsState, itsTemp*CLHEP::kelvin, itsPressure*CLHEP::atmosphere);
-  if(materials.insert(make_pair(aName,tmpMaterial)).second){
+  if(materials.insert(make_pair(aName,tmpMaterial)).second)
+    {
 #ifdef BDSDEBUG
-    G4cout << "New material : " << aName << " added to material table" << G4endl;
+      G4cout << "New material : " << aName << " added to material table" << G4endl;
 #endif
-  }else{
-    G4String exceptionString = "Material "+aName+" already exists\n";
-    G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "Material \"" << aName << "\" already exists" << G4endl; exit(1);}
 }
 
-template <typename Type> void BDSMaterials::AddMaterial(
-G4String aName, G4double itsDensity, G4State itsState,
-G4double itsTemp, G4double itsPressure,
-std::list<std::string> itsComponents, std::list<Type> itsComponentsFractions)
+template <typename Type>
+void BDSMaterials::AddMaterial(G4String aName,
+			       G4double itsDensity,
+			       G4State  itsState,
+			       G4double itsTemp,
+			       G4double itsPressure,
+			       std::list<std::string> itsComponents,
+			       std::list<Type> itsComponentsFractions)
 {
   aName.toLower();
   G4Material* tmpMaterial = new G4Material(aName, itsDensity*CLHEP::g/CLHEP::cm3, 
@@ -970,39 +971,39 @@ std::list<std::string> itsComponents, std::list<Type> itsComponentsFractions)
       tmpMaterial->AddElement(GetElement((G4String)*sIter),(*dIter));
     } else tmpMaterial->AddMaterial(GetMaterial((G4String)*sIter),(*dIter));
   }
-  if(materials.insert(make_pair(aName,tmpMaterial)).second){
+  if(materials.insert(make_pair(aName,tmpMaterial)).second)
+    {
 #ifdef BDSDEBUG
-    G4cout << "New material : " << aName << " added to material table" << G4endl;
+      G4cout << "New material : " << aName << " added to material table" << G4endl;
 #endif
-  }else{
-    G4String exceptionString = "Material "+aName+" already exists\n";
-    G4Exception(exceptionString.c_str(), "-1", FatalException, "");  
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "Material \"" << aName << "\" already exists" << G4endl; exit(1);}
 }
 
 void BDSMaterials::AddElement(G4Element* aElement, G4String aSymbol)
 {
-  if(elements.insert(make_pair(aSymbol,aElement)).second){
+  if(elements.insert(make_pair(aSymbol,aElement)).second)
+    {
 #ifdef BDSDEBUG
-    G4cout << "New atom : " << aSymbol << G4endl;
+      G4cout << "New atom : " << aSymbol << G4endl;
 #endif
-  }else{
-    G4String exceptionString = "Atom "+aSymbol+" already exists\n";
-    G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" already exists" << G4endl; exit(1);}
 }
 
 void BDSMaterials::AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA)
 {
   G4Element* tmpElement = new G4Element(aName, aSymbol, itsZ, itsA*CLHEP::g/CLHEP::mole);
-  if(elements.insert(make_pair(aSymbol,tmpElement)).second){
+  if(elements.insert(make_pair(aSymbol,tmpElement)).second)
+    {
 #ifdef BDSDEBUG
-    G4cout << "New atom : " << aSymbol << G4endl;
+      G4cout << "New atom : " << aSymbol << G4endl;
 #endif
-  }else{
-    G4String exceptionString = "Atom "+aSymbol+" already exists\n";
-    G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "Atom \"" << aSymbol << "\" already exists" << G4endl; exit(1);}
 }
 
 G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
@@ -1010,24 +1011,28 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aMaterial, 3);
 #ifdef BDSDEBUG
-  G4cout << "BDSMaterials::GetMaterial() - " << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
+  G4cout << __METHOD_NAME__ << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
 #endif
-  if (!cmpStr1.compareTo(cmpStr2)){
+  if (!cmpStr1.compareTo(cmpStr2))
+    {
 #ifdef BDSDEBUG
-    G4cout << "Using NIST material " << aMaterial << G4endl;
+      G4cout << "Using NIST material " << aMaterial << G4endl;
 #endif
-    return G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
-  } else {
-    // find material regardless of capitalisation
-    aMaterial.toLower();
-    std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
-    if(iter != materials.end()) return (*iter).second;
-    else{
-      G4String exceptionString = "BDSMaterials::GetMaterial - Material \""+aMaterial+"\" not known. Aborting.";
-      G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-      exit(1);
+      return G4NistManager::Instance()->FindOrBuildMaterial(aMaterial, true, true);
     }
-  }
+  else
+    {
+      // find material regardless of capitalisation
+      aMaterial.toLower();
+      std::map<G4String,G4Material*>::iterator iter = materials.find(aMaterial);
+      if(iter != materials.end()) return (*iter).second;
+      else
+	{
+	  ListMaterials();
+	  G4cout << __METHOD_NAME__ << "\"" << aMaterial << "\" is unknown." << G4endl;
+	  exit(1);
+	}
+    }
 }
 
 G4Element* BDSMaterials::GetElement(G4String aSymbol)
@@ -1037,20 +1042,24 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 #ifdef BDSDEBUG
   G4cout << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
 #endif
-  if (!cmpStr1.compareTo(cmpStr2)){
+  if (!cmpStr1.compareTo(cmpStr2))
+    {
 #ifdef BDSDEBUG
-    G4cout << "Using NIST material " << aSymbol << G4endl;
+      G4cout << "Using NIST material " << aSymbol << G4endl;
 #endif
-    return G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
-  } else {
-    std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
-    if(iter != elements.end()) return (*iter).second;
-    else{
-      G4String exceptionString="BDSMaterials::GetElement - Element "+aSymbol+" not known. Aborting.";
-      G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-      exit(1);
+      return G4NistManager::Instance()->FindOrBuildElement(aSymbol, true);
     }
-  }
+  else
+    {
+      std::map<G4String,G4Element*>::iterator iter = elements.find(aSymbol);
+      if(iter != elements.end())
+	{return (*iter).second;}
+      else
+	{
+	  G4cout << __METHOD_NAME__ << "\"" <<  aSymbol << " unkknown." << G4endl;
+	  exit(1);
+	}
+    }
 }
 
 G4bool BDSMaterials::CheckMaterial(G4String aMaterial)
@@ -1068,7 +1077,8 @@ G4bool BDSMaterials::CheckElement(G4String aSymbol)
   else return false;
 }
 
-void BDSMaterials::ListMaterials(){
+void BDSMaterials::ListMaterials()
+{
   // would be better if automatically generated, but not trivial due to instantisation dependency of BDSGlobalConstants
   G4cout << "Available elements are:" << G4endl;
   G4cout << "Aluminium  - Al" << G4endl;
@@ -1172,7 +1182,8 @@ void BDSMaterials::ListMaterials(){
   G4NistManager::Instance()->ListMaterials(list);
 }
 
-BDSMaterials::~BDSMaterials(){
+BDSMaterials::~BDSMaterials()
+{
   std::map<G4String,G4Material*>::iterator mIter;
   for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
     delete (*mIter).second;
@@ -1201,12 +1212,10 @@ BDSMaterials::~BDSMaterials(){
   _instance = nullptr;
 }
 
-void BDSMaterials::PrepareRequiredMaterials()
+void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 {
   // This function uses the list from the parser and prepares
   // the necessary materials for this run.
-  
-  G4bool verbose = BDSExecOptions::Instance()->GetVerbose();
 #ifdef BDSDEBUG
   G4bool debug = true;
 #else
@@ -1299,15 +1308,19 @@ void BDSMaterials::PrepareRequiredMaterials()
 		    it.components,
 		    it.componentsFractions);
       }
-      else {
-	G4Exception("Badly defined material - number of components is not equal to number of weights or mass fractions!", "-1", FatalErrorInArgument, "");
+      else
+	{
+	  G4cout << __METHOD_NAME__
+		 << "Badly defined material - number of components is not equal to number of weights or mass fractions!" << G4endl;
+	  exit(1);
+	}
+    }
+    else
+      {
+	G4cout << __METHOD_NAME__ << "Badly defined material - need more information!" << G4endl;
 	exit(1);
       }
-    }
-    else {
-      G4Exception("Badly defined material - need more information!", "-1", FatalErrorInArgument, "");
-      exit(1);
-    }
   }
-  if (verbose || debug) G4cout << "size of material list: "<< BDSParser::Instance()->GetMaterials().size() << G4endl;
+  if (verbose || debug)
+    {G4cout << "size of material list: "<< BDSParser::Instance()->GetMaterials().size() << G4endl;}
 }

@@ -16,16 +16,10 @@ From the GIT Repository
 
 To download the source from the git repository, use the command::
 
-  git clone https://bitbucket.org/jairhul/bdsim
+  git clone --recursive https://bitbucket.org/jairhul/bdsim
 
 This will create a directory called ``bdsim``, inside which all the code, examples
-and documentation is provided. To obtain the python utilities that come with BDSIM,
-use the following commands::
-
-  cd bdsim
-  git submodule init
-  git submodule update
-
+and documentation is provided. Also the python utilities that come with BDSIM will be present.
 
 From precompiled sources
 ------------------------
@@ -52,7 +46,7 @@ Requirements
 
 0) A recent compiler. Proven compiler versions are gcc 4.9 or higher, or clang 6 or higher.
 1) `Geant4`_ installed or access to **AFS** [#macafsnote]_. Version 4.10 or higher. See `Geant4 Installation Guide`_
-2) `CMake`_ 2.6.4 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
+2) `CMake`_ 2.8.12 or higher (Geant4.10.2 - the latest - requires `CMake`_ 3.3 or higher.)
 3) Flex 2.5.37 or higher
 4) Bison 2.3 or higher
 5) `CLHEP`_ 2.1.3.1 or higher, see also `CLHEP Installation Guide`_
@@ -135,6 +129,12 @@ For version 0.6 and older::
   
   source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
   source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
+
+If compiling independently, GCC 4.9 can be found with::
+
+  source /afs/cern.ch/sw/lcg/external/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
+
+but this must be sourced before using the software once compiled.
 
 After this, `Building`_ can be started.
   

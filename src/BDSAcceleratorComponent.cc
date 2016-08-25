@@ -1,6 +1,5 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSReadOutGeometry.hh"
@@ -20,8 +19,6 @@ G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
 
-class BDSBeamPipeInfo;
-
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 
 BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
@@ -29,7 +26,9 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
 						 G4bool           precisionRegionIn,
-						 BDSBeamPipeInfo* beamPipeInfoIn):
+						 BDSBeamPipeInfo* beamPipeInfoIn,
+						 G4ThreeVector    inputFaceNormalIn,
+						 G4ThreeVector    outputFaceNormalIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
@@ -39,17 +38,21 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   beamPipeInfo(beamPipeInfoIn),
   readOutLV(nullptr),
   acceleratorVacuumLV(nullptr),
-  copyNumber(-1) // -1 initialisation since it will be incremented when placed 
+  endPieceBefore(nullptr),
+  endPieceAfter(nullptr),
+  copyNumber(-1), // -1 initialisation since it will be incremented when placed
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
 #endif
   // initialise static members
   if (!emptyMaterial)
-    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());}
+    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
   if (lengthSafety < 0)
-    {lengthSafety = BDSGlobalConstants::Instance()->GetLengthSafety();}
-  checkOverlaps = BDSGlobalConstants::Instance()->GetCheckOverlaps();
+    {lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();}
+  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
@@ -104,12 +107,7 @@ void BDSAcceleratorComponent::Build()
 
   // visual attributes
   if(containerLogicalVolume)
-    {
-    if (BDSExecOptions::Instance()->GetVisDebug())
-      {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-    else
-      {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
-    }
+    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
@@ -127,7 +125,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   if (!BDS::IsFinite(chordLength)) return nullptr;
 
   G4double roRadius = 0;
-  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->GetSamplerDiameter()*0.5;
+  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
   
   G4VSolid* roSolid = nullptr;
   if (!BDS::IsFinite(angle))

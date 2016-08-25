@@ -1,3 +1,4 @@
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerCylinder.hh"
 #include "BDSSDManager.hh"
@@ -19,9 +20,7 @@ BDSSamplerCylinder::BDSSamplerCylinder(G4String      name,
 			      0,                    // start angle
 			      CLHEP::twopi);        // sweep angle
 
-  SetExtentX(-radius, radius);
-  SetExtentY(-radius, radius);
-  SetExtentZ(-length*0.5, length*0.5);
+  SetExtent(BDSExtent(radius, radius, length*0.5));
 
   CommonConstruction();
 

@@ -29,18 +29,12 @@ protected :
 
 public: 
   BDSBunchSquare(); 
-  ~BDSBunchSquare(); 
+  virtual ~BDSBunchSquare(); 
   void SetOptions(const GMAD::Options& opt);
   void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		       G4double& xp, G4double& yp, G4double& zp,
 		       G4double& t , G4double&  E, G4double& weight);  
   
-  G4double GetEnvelopeX() {return envelopeX;}
-  G4double GetEnvelopeY() {return envelopeY;}
-  G4double GetEnvelopeXp(){return envelopeXp;}
-  G4double GetEnvelopeYp(){return envelopeYp;}
-  G4double GetEnvelopeT() {return envelopeT;}
-  G4double GetEnvelopeE() {return envelopeE;}
 protected:
   void SetEnvelopeX(G4double envelopeXIn)  {envelopeX = envelopeXIn;}
   void SetEnvelopeY(G4double envelopeYIn)  {envelopeY = envelopeYIn;}

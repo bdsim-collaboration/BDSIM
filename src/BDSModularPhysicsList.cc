@@ -1,6 +1,5 @@
 #include "BDSCutsAndLimits.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
@@ -20,26 +19,31 @@
 #include "G4HadronPhysicsQGSP_BIC.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
 #include "G4OpticalPhysics.hh"
-#include "G4OpticalProcessIndex.hh"
 #include "G4SynchrotronRadiation.hh"
 
 // particles
 #include "G4AntiNeutrinoE.hh"
 #include "G4AntiNeutron.hh"
 #include "G4AntiProton.hh"
+#include "G4BaryonConstructor.hh"
 #include "G4Electron.hh"
 #include "G4Gamma.hh"
+#include "G4IonConstructor.hh"
 #include "G4LeptonConstructor.hh"
+#include "G4MesonConstructor.hh"
 #include "G4NeutrinoE.hh"
 #include "G4Neutron.hh"
 #include "G4Positron.hh"
 #include "G4Proton.hh"
+#include "G4ShortLivedConstructor.hh"
+
 
 // general geant4
 #include "globals.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 #include "G4ProcessVector.hh"
+#include "G4Version.hh"
 
 #include <iterator>
 #include <map>
@@ -49,7 +53,7 @@
 #include <utility>
 #include <vector>
 
-#include "G4MesonConstructor.hh"
+//#include "G4MesonConstructor.hh"
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   opticalPhysics(nullptr)
@@ -58,7 +62,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   globals = BDSGlobalConstants::Instance();
   
   SetVerboseLevel(1);
@@ -71,6 +75,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("hadronic",         &BDSModularPhysicsList::QGSPBERT));
   physicsConstructors.insert(std::make_pair("hadronic_hp",      &BDSModularPhysicsList::QGSPBERTHP));
   physicsConstructors.insert(std::make_pair("synchrad",         &BDSModularPhysicsList::SynchRad));
+  physicsConstructors.insert(std::make_pair("parameterisation", &BDSModularPhysicsList::ParameterisationPhysics));
   physicsConstructors.insert(std::make_pair("muon",             &BDSModularPhysicsList::Muon));
   physicsConstructors.insert(std::make_pair("optical",          &BDSModularPhysicsList::Optical));
   physicsConstructors.insert(std::make_pair("decay",            &BDSModularPhysicsList::Decay));
@@ -91,7 +96,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   ParsePhysicsList(physicsList);
   ConfigurePhysics();
 
-  // register the phyiscs constructors with base class mechanics.
+  // register the physics constructors with base class mechanics.
   for(auto physics : constructors)
     {RegisterPhysics(physics);}
   
@@ -107,27 +112,6 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
 
 BDSModularPhysicsList::~BDSModularPhysicsList()
 {;}
-
-void BDSModularPhysicsList::ConstructParticle()
-{
-  // mesons
-  //G4MesonConstructor mConstructor;
-  //mConstructor.ConstructParticle();
-  
-  // baryons
-  //G4BaryonConstructor bConstructor;
-  //bConstructor.ConstructParticle();
-  
-  // ions
-  //G4IonConstructor iConstructor;
-  //iConstructor.ConstructParticle();
-  
-  //  Construct resonances and quarks
-  //G4ShortLivedConstructor pShortLivedConstructor;
-  //pShortLivedConstructor.ConstructParticle();
-
-  G4VModularPhysicsList::ConstructParticle();
-}
 
 void BDSModularPhysicsList::Print()
 {
@@ -150,7 +134,7 @@ void BDSModularPhysicsList::PrintDefinedParticles() const
 
 void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
 {
-  auto particleName = globals->GetParticleName();
+  auto particleName = globals->ParticleName();
   G4cout << "Register physics processes by name for the primary particle \"" << particleName << "\":" << G4endl;
   
   auto pl = G4ParticleTable::GetParticleTable()->FindParticle(particleName)->GetProcessManager()->GetProcessList();
@@ -158,7 +142,6 @@ void BDSModularPhysicsList::PrintPrimaryParticleProcesses() const
     {G4cout << "\"" << (*pl)[i]->GetProcessName() << "\"" << G4endl;}
 }
 
-//Parse the physicsList option
 void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
 {
 #ifdef BDSDEBUG
@@ -220,6 +203,30 @@ void BDSModularPhysicsList::ConstructAllLeptons()
   leptons.ConstructParticle();
 }
 
+void BDSModularPhysicsList::ConstructAllShortLived()
+{
+  G4ShortLivedConstructor pShortLivedConstructor;
+  pShortLivedConstructor.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllMesons()
+{
+  G4MesonConstructor mConstructor;
+  mConstructor.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllBaryons()
+{
+  G4BaryonConstructor bConstructor;
+  bConstructor.ConstructParticle();
+}
+
+void BDSModularPhysicsList::ConstructAllIons()
+{
+  G4IonConstructor iConstructor;
+  iConstructor.ConstructParticle();
+}
+
 void BDSModularPhysicsList::ConfigurePhysics()
 {
   if(verbose || debug) 
@@ -234,15 +241,15 @@ void BDSModularPhysicsList::ConfigureOptical()
     {G4cout << __METHOD_NAME__ << G4endl;}
   if (!opticalPhysics)
     {return;}
-  opticalPhysics->Configure(kCerenkov,      globals->GetTurnOnCerenkov());           ///< Cerenkov process index                                   
+  opticalPhysics->Configure(kCerenkov, globals->TurnOnCerenkov());           ///< Cerenkov process index
   opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
-  opticalPhysics->Configure(kAbsorption,    globals->GetTurnOnOpticalAbsorption());  ///< Absorption process index                                 
-  opticalPhysics->Configure(kRayleigh,      globals->GetTurnOnRayleighScattering()); ///< Rayleigh scattering process index                        
-  opticalPhysics->Configure(kMieHG,         globals->GetTurnOnMieScattering());      ///< Mie scattering process index                             
-  opticalPhysics->Configure(kBoundary,      globals->GetTurnOnOpticalSurface());     ///< Boundary process index                                   
+  opticalPhysics->Configure(kAbsorption, globals->TurnOnOpticalAbsorption());  ///< Absorption process index
+  opticalPhysics->Configure(kRayleigh, globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
+  opticalPhysics->Configure(kMieHG, globals->TurnOnMieScattering());      ///< Mie scattering process index
+  opticalPhysics->Configure(kBoundary, globals->TurnOnOpticalSurface());     ///< Boundary process index
   opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
 // opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
-  opticalPhysics->SetScintillationYieldFactor(globals->GetScintYieldFactor());
+  opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
 }
 
 void BDSModularPhysicsList::SetCuts()
@@ -251,14 +258,14 @@ void BDSModularPhysicsList::SetCuts()
     {G4cout << __METHOD_NAME__ << G4endl;}
 
   G4VUserPhysicsList::SetCuts();  
-  G4double defaultRangeCut  = globals->GetDefaultRangeCut(); 
+  G4double defaultRangeCut  = globals->DefaultRangeCut();
   SetDefaultCutValue(defaultRangeCut);
   SetCutsWithDefault();
 
-  G4double prodCutPhotons   = globals->GetProdCutPhotons();
-  G4double prodCutElectrons = globals->GetProdCutElectrons();
-  G4double prodCutPositrons = globals->GetProdCutPositrons();
-  G4double prodCutProtons   = globals->GetProdCutProtons();
+  G4double prodCutPhotons   = globals->ProdCutPhotons();
+  G4double prodCutElectrons = globals->ProdCutElectrons();
+  G4double prodCutPositrons = globals->ProdCutPositrons();
+  G4double prodCutProtons   = globals->ProdCutProtons();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Default production range cut  " << defaultRangeCut  << " mm" << G4endl;
@@ -290,16 +297,16 @@ void BDSModularPhysicsList::SetParticleDefinition()
 
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  globals->SetParticleDefinition(particleTable->FindParticle(globals->GetParticleName()));  
+  globals->SetParticleDefinition(particleTable->FindParticle(globals->ParticleName()));
   
   if(!globals->GetParticleDefinition()) 
     {G4Exception("Particle not found, quitting!", "-1", FatalException, ""); exit(1);}
   
   // set kinetic beam parameters other than total energy
-  globals->SetBeamMomentum(sqrt(pow(globals->GetBeamTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetBeamKineticEnergy(globals->GetBeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
-  globals->SetParticleMomentum(sqrt(pow(globals->GetParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
-  globals->SetParticleKineticEnergy(globals->GetParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+  globals->SetBeamMomentum(sqrt(pow(globals->BeamTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+  globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
+  globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 
@@ -309,11 +316,11 @@ void BDSModularPhysicsList::SetParticleDefinition()
   G4cout << __METHOD_NAME__ << "Charge : " 
 	 << globals->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << globals->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << globals->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
-	 << globals->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
 void BDSModularPhysicsList::Em()
@@ -330,9 +337,21 @@ void BDSModularPhysicsList::Em()
 void BDSModularPhysicsList::EmExtra()
 {
   ConstructAllLeptons();
+
+  // These are required by GammaNuclear and MuonNuclear which
+  // are activated by default in G4EmExtraPhysics.
+  ConstructAllShortLived();
+  ConstructAllBaryons();
+  ConstructAllIons();
+  ConstructAllMesons();
+
   if (!physicsActivated["em_extra"])
     {
-      constructors.push_back(new G4EmExtraPhysics());
+      auto constructor = new G4EmExtraPhysics();
+#if G4VERSION_NUMBER > 1009
+      constructor->Synch(true); // introduced geant version 10.1
+#endif
+      constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
   ParameterisationPhysics(); // requires parameterisation physics
@@ -352,10 +371,10 @@ void BDSModularPhysicsList::EmLow()
 void BDSModularPhysicsList::HadronicElastic()
 {
   ConstructAllLeptons();
-  if (!physicsActivated["hadronicelastic"])
+  if (!physicsActivated["hadronic_elastic"])
     {
       constructors.push_back(new G4HadronElasticPhysics());
-      physicsActivated["hadronicelastic"];
+      physicsActivated["hadronic_elastic"] = true;
     }
 }
 							  

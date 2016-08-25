@@ -1,11 +1,9 @@
-#include "BDSTunnelHit.hh"
-#include "BDSTunnelSD.hh"
-
-#include "BDSExecOptions.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSTunnelHit.hh"
+#include "BDSTunnelSD.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
@@ -37,7 +35,7 @@ BDSTunnelSD::BDSTunnelSD(G4String name)
    r(0.0),
    theta(0.0)
 {
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
   collectionName.insert("tunnel_hits");
 }
 
@@ -62,7 +60,7 @@ void BDSTunnelSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 {
-  if(BDSGlobalConstants::Instance()->GetStopTracks())
+  if(BDSGlobalConstants::Instance()->StopTracks())
     {energy = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
     //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
@@ -125,7 +123,7 @@ G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
   
   G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
     {
       G4cout << "BDSTunnelSD: Current Volume: " 
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
@@ -147,7 +145,7 @@ G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
     {precisionRegion=true;}
   //G4bool precisionRegion = get this info from the logical volume in future
   
-  G4int turnstaken    = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int turnstaken    = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
   //do analysis / output in end of event action
@@ -173,7 +171,7 @@ G4bool BDSTunnelSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
 
   // this will kill all particles - both primaries and secondaries, but if it's being
   // recorded in an SD that means it's hit something, so ok
-  if(BDSGlobalConstants::Instance()->GetStopTracks())
+  if(BDSGlobalConstants::Instance()->StopTracks())
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;
@@ -225,7 +223,7 @@ G4bool BDSTunnelSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutT
   
   G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
-  if(verbose && BDSGlobalConstants::Instance()->GetStopTracks()) 
+  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
     {
       G4cout << " BDSTunnelSD: Current Volume: " <<  volName 
 	     << " Event: "    << event_number 
@@ -239,7 +237,7 @@ G4bool BDSTunnelSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutT
     {G4cerr << "Error: BDSTunnelSD: weight = 0" << G4endl; exit(1);}
   int ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
 
-  G4int turnstaken = BDSGlobalConstants::Instance()->GetTurnsTaken();
+  G4int turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   // see explanation in other processhits function
   BDSTunnelHit* hit = new BDSTunnelHit(nCopy,

@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSPhysicsList.hh"
 
@@ -14,7 +13,7 @@
 #include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
 #include "G4FastSimulationManagerProcess.hh"
-
+#include "G4LossTableManager.hh"
 #include "G4Material.hh"
 #include "G4MaterialTable.hh"
 #include "G4ios.hh"
@@ -44,7 +43,6 @@
 #include "G4GammaConversion.hh"
 #include "G4GammaConversionToMuons.hh"
 #include "G4PhotoElectricEffect.hh"
-#include "BDSXSBias.hh" //added by L.D. 16/11/09
 #include "BDSGammaConversion_LPB.hh" //added by M.D. Salt, R.B. Appleby, 15/10/09
 
 // charged particles
@@ -200,19 +198,19 @@ BDSPhysicsList::BDSPhysicsList(G4String physicsListNameIn):
   theHadPhysList1              = nullptr;
   theHadPhysList2              = nullptr;
 
-  verbose = BDSExecOptions::Instance()->GetVerbose();
+  verbose = BDSGlobalConstants::Instance()->Verbose();
 
   // construct particles
 
-  defaultCutValue = BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m;  
-  SetDefaultCutValue(BDSGlobalConstants::Instance()->GetDefaultRangeCut()*CLHEP::m);
+  defaultCutValue = BDSGlobalConstants::Instance()->DefaultRangeCut()*CLHEP::m;
+  SetDefaultCutValue(BDSGlobalConstants::Instance()->DefaultRangeCut()*CLHEP::m);
 
   G4cout  << __METHOD_NAME__ << "Charged Thresholdcut = " 
-	  << BDSGlobalConstants::Instance()->GetThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
+	  << BDSGlobalConstants::Instance()->ThresholdCutCharged()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout  << __METHOD_NAME__ << "Photon Thresholdcut  = " 
-	  << BDSGlobalConstants::Instance()->GetThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
+	  << BDSGlobalConstants::Instance()->ThresholdCutPhotons()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout  << __METHOD_NAME__ << "Default range cut    = " 
-	  << BDSGlobalConstants::Instance()->GetDefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
+	  << BDSGlobalConstants::Instance()->DefaultRangeCut()/CLHEP::m<<" m"<<G4endl;
 
   //This is the GEANT4 physics list verbose level.
   SetVerboseLevel(1);   
@@ -245,11 +243,7 @@ void BDSPhysicsList::ConstructProcess()
   bool plistFound=false;
   //standard physics lists
   if(physicsListName.contains("QGSP_BERT")){
-    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();    
-    //    theReferenceHadronicPhysList_xsbias = new BDSXSBias(); 
-    //    theReferenceHadronicPhysList_xsbias->RegisterProcess(theReferenceHadronicPhysList); 
-    //    theReferenceHadronicPhysList_xsbias->eFactor(1);    
- 
+    theReferenceHadronicPhysList = new G4HadronPhysicsQGSP_BERT();     
     theReferenceEmPhysList = new G4EmStandardPhysics();
     theReferenceHadronicPhysList->ConstructProcess();
     theReferenceEmPhysList->ConstructProcess();
@@ -294,7 +288,7 @@ void BDSPhysicsList::ConstructProcess()
   //Some options
   //-------------------------------------------
   //Build planck scattering if option is set
-  if(BDSGlobalConstants::Instance()->GetDoPlanckScattering())
+  if(BDSGlobalConstants::Instance()->DoPlanckScattering())
     {
       BDSPlanckScatterBuilder* psbuild = new BDSPlanckScatterBuilder();
       psbuild->Build();
@@ -302,7 +296,7 @@ void BDSPhysicsList::ConstructProcess()
     }
   
   //A flag to switch on hadronic lead particle biasing
-  if (BDSGlobalConstants::Instance()->GetUseHadLPB())
+  if (BDSGlobalConstants::Instance()->UseHadLPB())
     {setenv("SwitchLeadBiasOn","1",1);}
   
   //Synchrotron radiation
@@ -488,7 +482,7 @@ void BDSPhysicsList::ConstructParticle()
   // set primary particle definition and kinetic beam parameters other than total energy
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   BDSGlobalConstants::Instance()->SetParticleDefinition(particleTable->
-                                    FindParticle(BDSGlobalConstants::Instance()->GetParticleName()) );  
+                                    FindParticle(BDSGlobalConstants::Instance()->ParticleName()) );
   
   if(!BDSGlobalConstants::Instance()->GetParticleDefinition()) 
     {
@@ -497,17 +491,17 @@ void BDSPhysicsList::ConstructParticle()
     }
   
   // set kinetic beam parameters other than total energy
-  BDSGlobalConstants::Instance()->SetBeamMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetBeamTotalEnergy(),2)-
+  BDSGlobalConstants::Instance()->SetBeamMomentum( sqrt(pow(BDSGlobalConstants::Instance()->BeamTotalEnergy(),2)-
                                     pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
   
-  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->GetBeamTotalEnergy() - 
+  BDSGlobalConstants::Instance()->SetBeamKineticEnergy(BDSGlobalConstants::Instance()->BeamTotalEnergy() -
                                    BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
 
 
-  BDSGlobalConstants::Instance()->SetParticleMomentum( sqrt(pow(BDSGlobalConstants::Instance()->GetParticleTotalEnergy(),2)-
+  BDSGlobalConstants::Instance()->SetParticleMomentum( sqrt(pow(BDSGlobalConstants::Instance()->ParticleTotalEnergy(),2)-
                                     pow(BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass(),2)) );
   
-  BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->GetParticleTotalEnergy() - 
+  BDSGlobalConstants::Instance()->SetParticleKineticEnergy(BDSGlobalConstants::Instance()->ParticleTotalEnergy() -
                                    BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() );
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
@@ -518,21 +512,21 @@ void BDSPhysicsList::ConstructParticle()
   G4cout << __METHOD_NAME__ << "Charge : " 
 	 << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
-	 << BDSGlobalConstants::Instance()->GetBeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
-	 << BDSGlobalConstants::Instance()->GetBeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
+	 << BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
 }
 
 void BDSPhysicsList::SetCuts()
 {
   SetCutsWithDefault();   
 
-  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->GetProdCutPhotons();
-  G4double prodCutElectrons = BDSGlobalConstants::Instance()->GetProdCutElectrons();
-  G4double prodCutPositrons = BDSGlobalConstants::Instance()->GetProdCutPositrons();
-  G4double prodCutProtons   = BDSGlobalConstants::Instance()->GetProdCutProtons();  
+  G4double prodCutPhotons   = BDSGlobalConstants::Instance()->ProdCutPhotons();
+  G4double prodCutElectrons = BDSGlobalConstants::Instance()->ProdCutElectrons();
+  G4double prodCutPositrons = BDSGlobalConstants::Instance()->ProdCutPositrons();
+  G4double prodCutProtons   = BDSGlobalConstants::Instance()->ProdCutProtons();
   
   G4cout << __METHOD_NAME__ << "Photon   production range cut (mm) " << prodCutPhotons   << G4endl;
   G4cout << __METHOD_NAME__ << "Electron production range cut (mm) " << prodCutElectrons << G4endl;
@@ -581,16 +575,7 @@ void BDSPhysicsList::ConstructEMMisc()
       // gamma         
       pmanager->AddDiscreteProcess(new G4PhotoElectricEffect);
       pmanager->AddDiscreteProcess(new G4ComptonScattering);
-      // if(0){
-      // 	G4GammaConversion* gammaconversion = new G4GammaConversion();
-      // 	gammaconversion->SetLambdaFactor(1/1.0e-20);
-      // 	BDSXSBias* gammaconversion_xsbias = new BDSXSBias();
-      // 	gammaconversion_xsbias->RegisterProcess(gammaconversion);
-      // 	gammaconversion_xsbias->eFactor(1e-20);
-      // 	pmanager->AddDiscreteProcess(gammaconversion_xsbias);
-	
-      // } else 
-      if (BDSGlobalConstants::Instance()->GetUseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
+      if (BDSGlobalConstants::Instance()->UseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
 	  G4GammaConversion* gammaconversion = new G4GammaConversion();
 	  GammaConversion_LPB* gammaconversion_lpb = new GammaConversion_LPB();
 	  gammaconversion_lpb->RegisterProcess(gammaconversion);
@@ -602,15 +587,7 @@ void BDSPhysicsList::ConstructEMMisc()
       
     } else if (particleName == "e-") {
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
-      // if(0){
-      // 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
-      // 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
-      // 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
-      // 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-      // 	ebremsstrahlung_xsbias->eFactor(1e-20);
-      // 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);     
-      // }	else 
-      if(BDSGlobalConstants::Instance()->GetUseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
+      if(BDSGlobalConstants::Instance()->UseEMLPB()){ //added by M.D. Salt, R.B. Appleby, 15/10/09
 	  
         G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
         eBremsstrahlung_LPB* ebremsstrahlung_lpb = new eBremsstrahlung_LPB();
@@ -621,7 +598,7 @@ void BDSPhysicsList::ConstructEMMisc()
         pmanager->AddProcess(ebremsstrahlung,   -1, 3,3);     
       }
             
-      if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
+      if(BDSGlobalConstants::Instance()->TurnOnCerenkov()){
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
@@ -630,15 +607,7 @@ void BDSPhysicsList::ConstructEMMisc()
     } else if (particleName == "e+") {
       //positron
       pmanager->AddProcess(new G4eIonisation,       -1, 2,2);
-      // if(0){
-      // 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
-      // 	ebremsstrahlung->SetLambdaFactor(1/1.0e-20);
-      // 	BDSXSBias* ebremsstrahlung_xsbias = new BDSXSBias();
-      // 	ebremsstrahlung_xsbias->RegisterProcess(ebremsstrahlung);
-      // 	ebremsstrahlung_xsbias->eFactor(1e-20);
-      // 	pmanager->AddDiscreteProcess(ebremsstrahlung_xsbias);      
-      // } else 
-      if (BDSGlobalConstants::Instance()->GetUseEMLPB()){
+      if (BDSGlobalConstants::Instance()->UseEMLPB()){
 	G4eBremsstrahlung* ebremsstrahlung = new G4eBremsstrahlung();
 	eBremsstrahlung_LPB* ebremsstrahlung_lpb = new eBremsstrahlung_LPB();
         ebremsstrahlung_lpb->RegisterProcess(ebremsstrahlung);
@@ -647,7 +616,7 @@ void BDSPhysicsList::ConstructEMMisc()
         pmanager->AddProcess(new G4eBremsstrahlung,   -1, 3,3);
       }
       pmanager->AddProcess(new G4eplusAnnihilation,  0,-1,4);
-      if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){      
+      if(BDSGlobalConstants::Instance()->TurnOnCerenkov()){
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
@@ -657,7 +626,7 @@ void BDSPhysicsList::ConstructEMMisc()
 	       (particle->GetParticleName() != "chargedgeantino")) {
       //all others charged particles except geantino
       pmanager->AddProcess(new G4hIonisation,       -1, 2,2);
-           if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
+           if(BDSGlobalConstants::Instance()->TurnOnCerenkov()){
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
@@ -746,7 +715,7 @@ void BDSPhysicsList::ConstructMuon()
       pmanager->AddProcess(new G4MuIonisation,      -1, 2,2);
       pmanager->AddProcess(new G4MuBremsstrahlung,  -1, 3,3);
       pmanager->AddProcess(new G4MuPairProduction,  -1, 4,4);
-      if(BDSGlobalConstants::Instance()->GetTurnOnCerenkov()){
+      if(BDSGlobalConstants::Instance()->TurnOnCerenkov()){
         G4Cerenkov* theCerenkovProcess = new G4Cerenkov;
         pmanager->AddProcess(theCerenkovProcess);
         pmanager->SetProcessOrdering(theCerenkovProcess,idxPostStep);
@@ -783,8 +752,8 @@ void BDSPhysicsList::ConstructOptical()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  bool bCerOn=BDSGlobalConstants::Instance()->GetTurnOnCerenkov();
-  bool bBirksOn=BDSGlobalConstants::Instance()->GetTurnOnBirksSaturation();
+  bool bCerOn= BDSGlobalConstants::Instance()->TurnOnCerenkov();
+  bool bBirksOn= BDSGlobalConstants::Instance()->TurnOnBirksSaturation();
 
 //  theCerenkovProcess->DumpPhysicsTable();
 //  theScintillationProcess->DumpPhysicsTable();
@@ -797,21 +766,21 @@ void BDSPhysicsList::ConstructOptical()
   }
   
   theScintillationProcess        = new G4Scintillation("Scintillation");
-  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
+  if(BDSGlobalConstants::Instance()->TurnOnOpticalAbsorption()){
     theAbsorptionProcess         = new G4OpAbsorption();
   }
-  if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
+  if(BDSGlobalConstants::Instance()->TurnOnRayleighScattering()){
     theRayleighScatteringProcess = new G4OpRayleigh();
   }
-  if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
+  if(BDSGlobalConstants::Instance()->TurnOnMieScattering()){
     theMieHGScatteringProcess    = new G4OpMieHG();
   }
-  if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
+  if(BDSGlobalConstants::Instance()->TurnOnOpticalSurface()){
     theBoundaryProcess           = new G4OpBoundaryProcess();
   }
 
   SetVerboseLevel(1);
-  theScintillationProcess->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->GetScintYieldFactor());
+  theScintillationProcess->SetScintillationYieldFactor(BDSGlobalConstants::Instance()->ScintYieldFactor());
   theScintillationProcess->SetTrackSecondariesFirst(true);
 
   // Use Birks Correction in the Scintillation process
@@ -844,16 +813,16 @@ void BDSPhysicsList::ConstructOptical()
 #ifdef BDSDEBUG
       G4cout << "AddDiscreteProcess to OpticalPhoton " << G4endl;
 #endif
-      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalAbsorption()){
+      if(BDSGlobalConstants::Instance()->TurnOnOpticalAbsorption()){
 	pmanager->AddDiscreteProcess(theAbsorptionProcess);
       }
-      if(BDSGlobalConstants::Instance()->GetTurnOnRayleighScattering()){
+      if(BDSGlobalConstants::Instance()->TurnOnRayleighScattering()){
 	pmanager->AddDiscreteProcess(theRayleighScatteringProcess);
       }
-      if(BDSGlobalConstants::Instance()->GetTurnOnMieScattering()){
+      if(BDSGlobalConstants::Instance()->TurnOnMieScattering()){
 	pmanager->AddDiscreteProcess(theMieHGScatteringProcess);
       }
-      if(BDSGlobalConstants::Instance()->GetTurnOnOpticalSurface()){
+      if(BDSGlobalConstants::Instance()->TurnOnOpticalSurface()){
 	pmanager->AddDiscreteProcess(theBoundaryProcess);
       }
     }

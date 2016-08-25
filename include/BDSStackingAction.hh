@@ -2,21 +2,32 @@
 #define BDSSTACKINGACTION_H
 
 #include "globals.hh"
+#include "G4ClassificationOfNewTrack.hh"
 #include "G4UserStackingAction.hh"
 
 class G4Track;
 
-class BDSStackingAction : public G4UserStackingAction
-{
-  public:
-    BDSStackingAction();
-    virtual ~BDSStackingAction();
+/**
+ * @brief BDSIM's Geant4 stacking action.
+ */
 
-  public:
+class BDSStackingAction: public G4UserStackingAction
+{
+public:
+  BDSStackingAction();
+  virtual ~BDSStackingAction();
+
+  /// Decide whether to kill tracks if they're neutrinos or we're killing all secondaries. Note
+  /// the even won't conserve energy with the stopSecondaries on.
   virtual G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track* aTrack);
-  virtual void NewStage();
-  virtual void PrepareNewEvent();
-  void countPhoton(const G4Track* aTrack);  
+  
+  virtual void NewStage(); ///< We don't do anything here.
+  virtual void PrepareNewEvent(); ///< We don't do anything here.
+
+private:
+  G4bool killNeutrinos; ///< Local copy of whether to kill neutrinos for tracking efficiency.
+  G4bool stopSecondaries; ///< Whether partilces with parentID > 0 will be killed.
+  G4bool stopTracks;
  };
 
 #endif

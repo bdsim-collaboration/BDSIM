@@ -2,7 +2,6 @@
 
 #include "BDSColours.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 
@@ -16,11 +15,11 @@
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
 {
-  lengthSafety              = BDSGlobalConstants::Instance()->GetLengthSafety();
-  lengthSafetyLarge         = 1*CLHEP::um;
-  checkOverlaps             = BDSGlobalConstants::Instance()->GetCheckOverlaps();
-  maxStepFactor             = 0.5; // fraction of length for maximum step size
-  nSegmentsPerCircle        = 50;
+  lengthSafety        = BDSGlobalConstants::Instance()->LengthSafety();
+  lengthSafetyLarge   = 1*CLHEP::um;
+  checkOverlaps       = BDSGlobalConstants::Instance()->CheckOverlaps();
+  maxStepFactor       = 0.5; // fraction of length for maximum step size
+  nSegmentsPerCircle  = BDSGlobalConstants::Instance()->NSegmentsPerCircle();
   CleanUp();
 }
 
@@ -42,6 +41,9 @@ void BDSBeamPipeFactoryBase::CleanUp()
   allSolids.clear();
   allVisAttributes.clear();
   allUserLimits.clear();
+
+  inputFaceNormal  = G4ThreeVector(0,0,-1);
+  outputFaceNormal = G4ThreeVector(0,0, 1);
 }
 
 
@@ -111,7 +113,7 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
 				   beamPipeMaterialIn,
 				   nameIn + "_beampipe_lv");
 
-  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->GetEmptyMaterial());
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
 				    emptyMaterial,
 				    nameIn + "_container_lv");
@@ -135,10 +137,7 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   // vacuum
   vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
   // container
-  if (BDSExecOptions::Instance()->GetVisDebug())
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());}
-  else
-    {containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());}
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
 G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
@@ -150,7 +149,7 @@ G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
   // set user limits based on bdsim user specified parameters
   G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
   beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
-  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->GetMaxTime());
+  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
   allUserLimits.push_back(beamPipeUserLimits);
   //attach cuts to volumes
   vacuumLV->SetUserLimits(beamPipeUserLimits);
@@ -189,15 +188,14 @@ void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
   allPhysicalVolumes.push_back(beamPipePV);
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(std::pair<double,double> extX,
-								     std::pair<double,double> extY,
-								     std::pair<double,double> extZ,
-								     G4double containerRadius)
+BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent extent,
+								     G4double  containerRadius)
 {  
   // build the BDSBeamPipe instance and return it
-  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extX,extY,extZ,
+  BDSBeamPipe* aPipe = new BDSBeamPipe(containerSolid,containerLV,extent,
 				       containerSubtractionSolid,
-				       vacuumLV,false,containerRadius);
+				       vacuumLV,false,containerRadius,
+				       inputFaceNormal, outputFaceNormal);
 
   // register objects
   aPipe->RegisterSolid(allSolids);

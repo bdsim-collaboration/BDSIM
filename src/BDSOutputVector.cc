@@ -43,22 +43,22 @@ void BDSOutputVector::WriteEnergyLoss(BDSEnergyCounterHitsCollection* a)
     {output[i]->WriteEnergyLoss(a);}
 }
 
-void BDSOutputVector::WritePrimaryLoss(BDSEnergyCounterHit* a)
+void BDSOutputVector::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->WritePrimaryLoss(a);}
+    {output[i]->WritePrimaryLoss(ploss);}
 }
 
-void BDSOutputVector::WritePrimaryHit(BDSEnergyCounterHit* a)
+void BDSOutputVector::WritePrimaryHit(BDSTrajectoryPoint* phit)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->WritePrimaryHit(a);}
+    {output[i]->WritePrimaryHit(phit);}
 }
 
 void BDSOutputVector::WriteTunnelHits(BDSTunnelHitsCollection* a)
@@ -108,20 +108,47 @@ void BDSOutputVector::WriteHistogram(BDSHistogram1D* histogramIn)
     {output[i]->WriteHistogram(histogramIn);}
 }
 
-void BDSOutputVector::Commit()
+void BDSOutputVector::WriteEventInfo(const time_t&  startTime,
+				     const time_t&  stopTime,
+				     const G4float& duration,
+                                     const std::string& seedStateAtStart)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->Commit();}
+  for (auto out : output)
+    { out->WriteEventInfo(startTime, stopTime, duration, seedStateAtStart);}
 }
 
-void BDSOutputVector::Write()
+void BDSOutputVector::Initialise()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   for (unsigned int i=0; i<output.size(); i++)
-    {output[i]->Write();}
+    {output[i]->Initialise();}
+}
+
+void BDSOutputVector::Write(const time_t&  startTime,
+			    const time_t&  stopTime,
+			    const G4float& duration,
+                            const std::string& seedStateAtStart)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->Write(startTime, stopTime, duration, seedStateAtStart);}
+}
+
+void BDSOutputVector::WriteEventInfo(const BDSOutputROOTEventInfo* info)
+{
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->WriteEventInfo(info);}
+}  
+
+void BDSOutputVector::Close()
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  for (unsigned int i=0; i<output.size(); i++)
+    {output[i]->Close();}
 }

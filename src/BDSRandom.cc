@@ -1,5 +1,4 @@
 #include "BDSRandom.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 
@@ -9,6 +8,8 @@
 #include "CLHEP/Random/JamesRandom.h"
 
 #include <ctime>
+#include <string>
+#include <sstream>
 
 void BDSRandom::CreateRandomNumberGenerator()
 {
@@ -24,25 +25,17 @@ void BDSRandom::SetSeed()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "set the seed" << G4endl;
   G4cout << __METHOD_NAME__ << "seed from BDSGlobalConstants = " 
-	 << BDSGlobalConstants::Instance()->GetRandomSeed() << G4endl
-         << __METHOD_NAME__ << "seed from BDSExecOptions = "
-         << BDSExecOptions::Instance()->GetSeed() << G4endl
-         << __METHOD_NAME__ << "seed set in exec options : "
-	 << BDSExecOptions::Instance()->IsSeedSet() << G4endl;
+         << BDSGlobalConstants::Instance()->Seed() << G4endl
+         << __METHOD_NAME__ << "seed set in GMAD options: "
+	 << BDSGlobalConstants::Instance()->SeedSet() << G4endl;
 #endif
-  // get seed from options if set
-  // override with seed from execoptions if specifed
-  
   // if seed positive set it, else use the time
   long seed = 0;
-  if(BDSGlobalConstants::Instance()->GetRandomSeed()<=0)
-    seed = time(nullptr);
+
+  if(BDSGlobalConstants::Instance()->Seed() < 0)
+    {seed = time(nullptr);}
   else
-    seed = BDSGlobalConstants::Instance()->GetRandomSeed();
-  
-  // if the seed was set by command line (exec) option - override the general option
-  if(BDSExecOptions::Instance()->IsSeedSet())
-    {seed = BDSExecOptions::Instance()->GetSeed();}
+    {seed = BDSGlobalConstants::Instance()->Seed();}
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "selected seed = " << seed << G4endl;
@@ -65,20 +58,21 @@ void BDSRandom::PrintFullSeedState()
   G4cout << G4endl;
 }
 
-void BDSRandom::WriteSeedState()
+void BDSRandom::WriteSeedState(G4String suffix)
 {
-  // get the full seed state and write it to a file
-  // Print generator full state to output 
+  G4String baseFileName = BDSGlobalConstants::Instance()->OutputFileName();
+  G4String seedstatefilename = baseFileName + suffix + ".seedstate.txt";
+  std::ofstream ofseedstate;
+  ofseedstate.open(seedstatefilename);
+  CLHEP::HepRandom::saveFullState(ofseedstate);
+  ofseedstate.close();
+}
 
-  G4String seedstatefilename = BDSExecOptions::Instance()->GetOutputFilename() + ".seedstate.txt";
-  std::ofstream ofseedstate (seedstatefilename.c_str());
-  if (ofseedstate.is_open())
-    {CLHEP::HepRandom::saveFullState(ofseedstate);}
-  else
-    {
-      G4cout << __METHOD_NAME__ << "cannot open file : " << seedstatefilename << G4endl;
-      exit(1);
-    }
+G4String BDSRandom::GetSeedState()
+{
+  std::stringstream currentState;
+  CLHEP::HepRandom::saveFullState(currentState);
+  return G4String(currentState.str());
 }
 
 void BDSRandom::LoadSeedState(G4String inSeedFilename)
@@ -97,6 +91,21 @@ void BDSRandom::LoadSeedState(G4String inSeedFilename)
     }
   ifseedstate.close();
 #ifdef BDSDEBUG
+  BDSRandom::PrintFullSeedState();
+#endif
+}
+
+void BDSRandom::SetSeedState(G4String seedState)
+{
+  std::stringstream ss;
+  ss.str(seedState); // set contents of string stream as input string
+  SetSeedState(ss);
+}
+
+void BDSRandom::SetSeedState(std::stringstream& seedState)
+{
+  CLHEP::HepRandom::restoreFullState(seedState);
+#ifdef BDSEBUG
   BDSRandom::PrintFullSeedState();
 #endif
 }

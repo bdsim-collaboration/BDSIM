@@ -4,15 +4,9 @@
 #include "BDSGeometryComponent.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
-
-#include <vector>
 
 /**
  * @brief Base class and registry of sampler instances.
- * 
- * Retruns G4Transform3D identity in case none is set, which can be tested
- * against G4Transfrom3D::Identity.
  * 
  * @author Laurie Nevay
  */

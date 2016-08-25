@@ -19,7 +19,6 @@ public:
   virtual void ConstructParticle();
   
 private:
-  G4bool activated;
   G4bool verbose;
 #ifdef BDSDEBUG 
   bool debug = true;

@@ -3,16 +3,18 @@
 
 #include "BDSOutputBase.hh"
 
+class BDSOutputROOTEventInfo;
+
 /**
  * @brief No output class
  * 
  * Write no output
  *
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  */
 
-class BDSOutputNone : public BDSOutputBase {
-
+class BDSOutputNone: public BDSOutputBase
+{
 public: 
 
   BDSOutputNone():BDSOutputBase(){} ///< default constructor
@@ -23,9 +25,9 @@ public:
   /// make energy loss histo
   virtual void WriteEnergyLoss(BDSEnergyCounterHitsCollection*){}
   /// write primary loss histo
-  virtual void WritePrimaryLoss(BDSEnergyCounterHit*){}
+  virtual void WritePrimaryLoss(BDSTrajectoryPoint*){}
   /// write primary hits histo
-  virtual void WritePrimaryHit(BDSEnergyCounterHit*){}
+  virtual void WritePrimaryHit(BDSTrajectoryPoint*){}
   /// write tunnel hits
   virtual void WriteTunnelHits(BDSTunnelHitsCollection*){}
   /// write a trajectory
@@ -34,9 +36,15 @@ public:
   virtual void WritePrimary(G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4double,G4int,G4int,G4int){}
   /// write a histogram
   virtual void WriteHistogram(BDSHistogram1D*){}
+  /// write event info
+  virtual void WriteEventInfo(const time_t &, const time_t &, const G4float &, const std::string &)
+  {}
+  virtual void WriteEventInfo(const BDSOutputROOTEventInfo* /*info*/){;}
   virtual void FillEvent(){}///< fill event structure
-  virtual void Commit(){}  ///< close the file
-  virtual void Write(){}   ///< close and open new file
+  virtual void Initialise(){}; ///< open the file
+  virtual void Write(const time_t &, const time_t &, const G4float &, const std::string &)
+  {};      ///< write to file
+  virtual void Close(){};      ///< close the file
 };
 
 extern BDSOutputBase* bdsOutput;

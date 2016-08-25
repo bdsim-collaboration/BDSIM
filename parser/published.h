@@ -1,9 +1,10 @@
-#ifndef __PUBLISH_H
-#define __PUBLISH_H
+#ifndef PUBLISHED_H
+#define PUBLISHED_H
 
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace GMAD
 {
@@ -18,7 +19,7 @@ namespace GMAD
    * 
    * adapted into a class from http://stackoverflow.com/questions/19557881/convert-string-character-to-class-member-method-in-c
    *
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+   * @author Jochem Snuverink
    */
 
   template<typename C>
@@ -61,9 +62,7 @@ namespace GMAD
   template<typename C>
     template<typename T>
     void Published<C>::publish(const std::string& name, T C::*mp)
-    {
-      attribute_map<T>()[name] = mp;
-    }
+    {attribute_map<T>()[name] = mp;}
 
   template<typename C>
     void Published<C>::set(C* instance, const std::string& name, double value)

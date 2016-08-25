@@ -2,6 +2,7 @@
 #define BDSBUNCHUSERFILE_H 
 
 #include "BDSBunchInterface.hh"
+#include "gzstream.h"
 #include <fstream>
 #include <list>
 
@@ -9,7 +10,7 @@
  * @brief A bunch distribution that reads a user specified column file.
  * 
  */
-
+template <class T>
 class BDSBunchUserFile: public BDSBunchInterface
 { 
 private:
@@ -17,8 +18,8 @@ private:
   void OpenBunchFile();
   void CloseBunchFile();
   void skip(G4int nvalues);
-  std::ifstream InputBunchFile;
-  template <typename Type> G4bool ReadValue(Type &value);
+  T InputBunchFile;
+	template <typename Type> G4bool ReadValue(Type &value);
   struct Doublet {
     G4String name;
     G4double unit; ///< relative to SI units, i.e. mm=0.001 etc.
@@ -39,7 +40,7 @@ protected :
   
 public: 
   BDSBunchUserFile();
-  ~BDSBunchUserFile();
+  virtual ~BDSBunchUserFile();
   virtual void SetOptions(const GMAD::Options& opt);
   virtual void GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 			       G4double& xp, G4double& yp, G4double& zp,

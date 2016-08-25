@@ -8,7 +8,7 @@ class BDSOutputBase;
 /**
  * @brief factory class for BDSOutput
  * 
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  */
 
 class BDSOutputFactory {

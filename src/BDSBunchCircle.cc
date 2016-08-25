@@ -1,5 +1,10 @@
 #include "BDSBunchCircle.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchCircle::BDSBunchCircle():
   BDSBunchInterface(), envelopeR(0.0), envelopeRp(0.0), envelopeT(0.0), envelopeE(0.0)
@@ -54,7 +59,7 @@ void BDSBunchCircle::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   
   zp = CalculateZp(xp,yp,Zp0);
   t = 0.0;
-  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
+  E = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
   weight = 1.0;
   return; 

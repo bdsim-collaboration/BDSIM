@@ -1,10 +1,12 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGeometryComponent.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
+#include "G4TwoVector.hh"
 
 #include <algorithm>
 #include <cmath>
@@ -65,8 +67,8 @@ std::pair<G4ThreeVector,G4ThreeVector> BDS::CalculateFaces(G4double angleIn,
 }
 
 G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
-                                G4double angleOut,
-                                G4double length)
+					  G4double angleOut,
+					  G4double length)
 {
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn,angleOut);
   G4ThreeVector inputface = faces.first;
@@ -75,20 +77,30 @@ G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
   std::swap(inputface[0],inputface[2]);
   std::swap(outputface[0],outputface[2]);
 
-  if (angleIn > 0){
-    // Rotate input clockwise, output counterclockwise
-    inputface[0] *= -1.0;
-    outputface[2] *= -1.0;
-  }
-  else if (angleIn < 0){
-    // Rotate input counterclockwise, output clockwise
-    inputface[2] *= -1.0;
-    outputface[0] *= -1.0;
-  }
+  if (angleIn > 0)
+    {
+      // Rotate input clockwise, output counterclockwise
+      inputface[0] *= -1.0;
+      outputface[2] *= -1.0;
+    }
+  else if (angleIn < 0)
+    {
+      // Rotate input counterclockwise, output clockwise
+      inputface[2] *= -1.0;
+      outputface[0] *= -1.0;
+    }
   // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
   G4double intersectionRadius = length / ((inputface[2] / inputface[0]) - (outputface[2] / outputface[0]));
 
   return intersectionRadius;
+}
+
+void BDS::EnsureInLimits(G4double& value, G4double lowerLimit, G4double upperLimit)
+{
+  if (value < lowerLimit)
+    {value = lowerLimit;}
+  if (value > upperLimit)
+    {value = upperLimit;}
 }
 
 G4bool BDS::FileExists(G4String fileName)
@@ -104,20 +116,18 @@ std::string BDS::GetBDSIMExecPath()
 #ifdef __linux__
   // get path from /proc/self/exe
   ssize_t len = ::readlink("/proc/self/exe", path, sizeof(path) - 1);
-  if (len != -1) {
-    path[len] = '\0';
-  }
+  if (len != -1)
+    {path[len] = '\0';}
 #elif __APPLE__
   uint32_t size = sizeof(path);
   if (_NSGetExecutablePath(path, &size) != 0)
-    std::cout << "buffer too small; need size " << size << std::endl;
+    {std::cout << "buffer too small; need size " << size << std::endl;}
 #endif
   std::string bdsimPath(path);
   // remove executable from path
   std::string::size_type found = bdsimPath.rfind("/"); // find the last '/'
-  if (found != std::string::npos){
-    bdsimPath = bdsimPath.substr(0,found+1); // the path is the bit before that, including the '/'
-  }
+  if (found != std::string::npos)
+    {bdsimPath = bdsimPath.substr(0,found+1);} // the path is the bit before that, including the '/'
   return bdsimPath;
 }
 
@@ -136,28 +146,31 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // split input into path and filename
   G4String inputFilepath, inputFilename;
   G4String::size_type found = fileName.rfind("/"); // find the last '/'
-  if (found != G4String::npos){
-    inputFilepath = fileName.substr(0,found); // the path is the bit before that
-    inputFilename = fileName.substr(found); // the rest
-  } else {
-    // no slash, only filename
-    inputFilepath = "";
-    inputFilename = fileName;
-  }
+  if (found != G4String::npos)
+    {
+      inputFilepath = fileName.substr(0,found); // the path is the bit before that
+      inputFilename = fileName.substr(found); // the rest
+    }
+  else
+    {
+      // no slash, only filename
+      inputFilepath = "";
+      inputFilename = fileName;
+    }
   
   // need to know whether it's an absolute or relative path
-  if ((fileName.substr(0,1)) == "/"){
-    fullPath = inputFilepath;
-  } else {
-    // the main file has a relative path or just the file name, add bdsimpath
-    fullPath = BDSExecOptions::Instance()->GetBDSIMPATH() + "/" + inputFilepath;
-  }
+  if ((fileName.substr(0,1)) == "/")
+    {fullPath = inputFilepath;}
+  else
+    {
+      // the main file has a relative path or just the file name, add bdsimpath
+      fullPath = BDSGlobalConstants::Instance()->BDSIMPath() + "/" + inputFilepath;
+    }
   // add additional slash just to be safe
   fullPath += "/";
   // add filename if not excluded
-  if (!excludeNameFromPath) {
-    fullPath += inputFilename;
-  }
+  if (!excludeNameFromPath)
+    {fullPath += inputFilename;}
   return fullPath;
 }
 
@@ -169,13 +182,13 @@ void BDS::HandleAborts(int signal_number)
   */
   // prevent recursive calling
   static int nrOfCalls=0;
-  if (nrOfCalls>0) exit(1);
+  if (nrOfCalls>0)
+    {exit(1);}
   nrOfCalls++;
-  std::cout << "BDSIM is about to crash or was interrupted! " << std::endl;
+  std::cout << std::endl << "BDSIM is about to crash or was interrupted! " << std::endl;
   std::cout << "With signal: " << strsignal(signal_number) << std::endl;
-  std::cout << "Trying to write and close output file" << std::endl;
-  std::cout << "Terminate run" << std::endl;
-  BDSRunManager::GetRunManager()->RunTermination();
+  
+  BDSRunManager::GetRunManager()->AbortRun();
   std::cout << "Ave, Imperator, morituri te salutant!" << std::endl;
 }
 
@@ -203,7 +216,8 @@ G4bool BDS::IsInteger(const char* ch, int& convertedInteger)
   // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
   // convert to string
   std::string s(ch);
-  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
+    {return false;}
   
   char * p;
   convertedInteger = std::strtol(ch, &p, 10);
@@ -216,7 +230,8 @@ G4bool BDS::IsNumber(const char* ch, double& convertedNumber)
   // from http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
   // convert to string
   std::string s(ch);
-  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false;
+  if(s.empty() || ((!std::isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
+    {return false;}
   
   char * p;
   convertedNumber = std::strtod(ch, &p);
@@ -285,7 +300,7 @@ G4double BDS::GetParameterValue(const G4String spec, const G4String name)
       std::string val = spec.substr(pos + param.length(), llen);
       
       value = atof(val.c_str());
-  }
+    }
   return value;
 }
 
@@ -307,4 +322,89 @@ G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
       value = spec.substr(pos + param.length(), llen);
     }
   return value;
+}
+
+G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
+{
+  G4double xp = vec.x()*cos(angle) - vec.y()*sin(angle);
+  G4double yp = vec.x()*sin(angle) + vec.y()*cos(angle);
+  return G4TwoVector(xp,yp);
+}
+
+G4bool BDS::WillIntersect(const G4ThreeVector& incomingNormal,
+			  const G4ThreeVector& outgoingNormal,
+			  const G4double&      zSeparation,
+			  const BDSExtent&     incomingExtent,
+			  const BDSExtent&     outgoingExtent)
+{  
+  // for any two normal vectors of planes - if their cross
+  // product is zero, then they're (anti) parallel and will
+  // never intersect
+  G4ThreeVector cross = incomingNormal.cross(outgoingNormal);
+  G4double det = cross.mag2();
+  if (!BDS::IsFinite(det))
+    {return false;}
+
+  // shortcuts / copies - OG for outgoing and IC for incoming
+  const BDSExtent& eog = outgoingExtent;
+  const BDSExtent& eic = incomingExtent;
+
+  // z coordinate of points at maximum extents in x,y
+  G4double xNegYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YNeg());
+  G4double xNegYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XNeg(), eog.YPos());
+  G4double xPosYPosOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YPos());
+  G4double xPosYNegOG = BDS::GetZOfPointOnPlane(outgoingNormal, eog.XPos(), eog.YNeg());
+  G4double xNegYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YNeg());
+  G4double xNegYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XNeg(), eic.YPos());
+  G4double xPosYPosIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YPos());
+  G4double xPosYNegIC = BDS::GetZOfPointOnPlane(incomingNormal, eic.XPos(), eic.YNeg());
+ 
+  // test of they'd overlap
+  G4bool xNegYNegFail = xNegYNegIC > (zSeparation + xNegYNegOG);
+  G4bool xNegYPosFail = xNegYPosIC > (zSeparation + xNegYPosOG);
+  G4bool xPosYPosFail = xPosYPosIC > (zSeparation + xPosYPosOG);
+  G4bool xPosYNegFail = xPosYNegIC > (zSeparation + xPosYNegOG);
+
+  if (xNegYNegFail || xNegYPosFail || xPosYPosFail || xPosYNegFail)
+    {return true;}
+  else // shouldn't happen
+    {return false;}
+}
+
+G4bool BDS::WillIntersect(const G4double angleIn,
+			  const G4double angleOut,
+			  const G4double outerDiameter,
+			  const G4double length)
+{
+  // Calculate the z component of triangle with each angle and
+  // axis along length.
+  G4double dzIn  = outerDiameter * tan(angleIn);
+  G4double dzOut = outerDiameter * tan(angleOut);
+  if (dzIn > length - dzOut)
+    {return true;}
+  else
+    {return false;}
+}
+
+G4double BDS::GetZOfPointOnPlane(G4ThreeVector normal, G4double x, G4double y)
+{
+  // equation of a plane with offset v_0, normal unit n and any point on plane v
+  // n.(v-v_0) = 0
+  // for equation of plane that intercepts 0,0,0
+  // n.v = 0;
+  // exanding dot product
+  // n.x()*v.x() + n.y()*v.y() + n.z()*v.z() = 0;
+  // for given x and y can solve for z
+  // v.z = (-n.x*v.x - n.y*v.y ) / n.z;
+
+  return (-normal.x()*x - normal.y()*y) / normal.z();
+}
+
+G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double fullAngle)
+{
+  if (!BDS::IsFinite(fullAngle))
+    {return faceNormal;} // no angle -> no rotation
+  G4RotationMatrix rm = G4RotationMatrix();
+  rm.rotateY(fullAngle*0.5);
+  return faceNormal.transform(rm);
 }

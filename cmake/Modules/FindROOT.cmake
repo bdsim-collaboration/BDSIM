@@ -56,6 +56,11 @@ else()
     OUTPUT_VARIABLE ROOT_LIBRARIES
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --evelibs
+    OUTPUT_VARIABLE ROOT_EVELIBRARIES
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
   # Hack to remove c++11 lib in favour of the one provided already
   if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     SET(C11 "-stdlib=libc++")
@@ -67,32 +72,6 @@ else()
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --libdir
     OUTPUT_VARIABLE ROOT_LIBRARY_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-  # hack to get correct libraries
-
-  if (APPLE)
-     file(GLOB ROOT_LIBRARIES_GLOB ${ROOT_LIBRARY_DIR}/lib*.dylib)
-  else()
-     set(ROOT_LIBRARY_NAMES libCore.so libCint.so libRIO.so libNet.so libHist.so libGraf.so libGraf3d.so libGpad.so libTree.so libRint.so libPostscript.so libMatrix.so libPhysics.so libMathCore.so libThread.so)
-     foreach (library_temp ${ROOT_LIBRARY_NAMES})
-	unset(ROOT_LIBRARY_temp)
-	unset(ROOT_LIBRARY_temp CACHE)
-     	find_library(ROOT_LIBRARY_temp NAMES ${library_temp} PATHS ${ROOT_LIBRARY_DIR})
-	# prevent trailing space character
-        if (ROOT_LIBRARIES_GLOB)
-           set(ROOT_LIBRARIES_GLOB "${ROOT_LIBRARIES_GLOB};${ROOT_LIBRARY_temp}")
-        else()
-           set(ROOT_LIBRARIES_GLOB "${ROOT_LIBRARY_temp}")
-     	endif()
-     	#message(STATUS "library_temp: ${library_temp} ${ROOT_LIBRARY_temp}")
-     endforeach()
-  endif()
-  # remove from CACHE
-  unset(ROOT_LIBRARY_temp CACHE)
-  if($ENV{VERBOSE})
-    message(STATUS "ROOT_LIBRARY_NAMES: ${ROOT_LIBRARY_NAMES}")
-    message(STATUS "ROOT_LIBRARIES_GLOB: ${ROOT_LIBRARIES_GLOB}")
-  endif()
 
   # Make variables changeble to the advanced user
   mark_as_advanced(ROOT_CONFIG_EXECUTABLE)
@@ -106,7 +85,7 @@ else()
 endif()
 
 #include(CMakeMacroParseArguments)
-find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 PATHS ${ROOTSYS}/bin)
+find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 HINTS ${ROOTSYS}/bin)
 if(NOT ROOTCINT_EXECUTABLE OR
     NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
   MESSAGE(FATAL_ERROR "rootcint not found")

@@ -3,9 +3,10 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTunnelFactory.hh"
+#include "BDSTunnelInfo.hh"
 #include "BDSTunnelSection.hh"
 #include "BDSUtilities.hh"  // for isfinite function
 

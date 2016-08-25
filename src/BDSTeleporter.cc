@@ -35,7 +35,7 @@ void BDSTeleporter::Build()
 
 void BDSTeleporter::BuildContainerLogicalVolume()
 {
-  G4double radius = BDSGlobalConstants::Instance()->GetSamplerDiameter() * 0.5;
+  G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   containerSolid = new G4Box(name+"_container_solid",
 			     radius,
 			     radius,
@@ -46,9 +46,7 @@ void BDSTeleporter::BuildContainerLogicalVolume()
   containerLogicalVolume->SetFieldManager(itsFieldManager,false); // modelled from BDSMagnet.cc
 
   // register extents with BDSGeometryComponent base class
-  SetExtentX(-radius,radius);
-  SetExtentY(-radius,radius);
-  SetExtentZ(-chordLength*0.5, chordLength*0.5);
+  SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
   
 void BDSTeleporter::BuildBPFieldAndStepper()
@@ -74,10 +72,10 @@ void BDSTeleporter::BuildBPFieldMgr()
   itsFieldManager->SetDetectorField(itsMagField);
   itsFieldManager->SetChordFinder(itsChordFinder);
   // set limits for field (always non zero, so always set)
-  itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->GetDeltaIntersection());
-  itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->GetMinimumEpsilonStep());
-  itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->GetMaximumEpsilonStep());
-  itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->GetDeltaOneStep());
+  itsFieldManager->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
+  itsFieldManager->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
+  itsFieldManager->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
+  itsFieldManager->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
 }
 
 void BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)

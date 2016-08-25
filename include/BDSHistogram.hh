@@ -8,15 +8,15 @@
 
 #include "BDSBin.hh"
 
+class BDSHistogram1D;
+
+typedef BDSHistogram1D BDSHistogram;
+
 /**
  * @brief a 1D histogram class
  * 
  * @author Laurie Nevay 
 */
-
-class BDSHistogram1D;
-
-typedef BDSHistogram1D BDSHistogram;
 
 class BDSHistogram1D
 {
@@ -79,12 +79,15 @@ public:
   inline const BDSBin& GetOverflowBin()  const {return overflow;}
   inline const BDSBin& GetFirstBin()     const {return bins.front();}
   inline const BDSBin& GetLastBin()      const {return bins.back();}
-  inline G4String GetName()     const {return name;}
-  inline G4String GetTitle()    const {return title;}
-  inline G4String GetXLabel()   const {return xlabel;}
-  inline G4String GetYLabel()   const {return ylabel;}
-  inline size_t   GetNBins()    const {return bins.size();}
-  inline G4int    GetNEntries() const {return entries;}
+  inline G4String GetName()            const {return name;}
+  inline G4String GetTitle()           const {return title;}
+  inline G4String GetXLabel()          const {return xlabel;}
+  inline G4String GetYLabel()          const {return ylabel;}
+  inline size_t   GetNBins()           const {return bins.size();}
+  inline G4int    GetNEntries()        const {return entries;}
+  inline G4bool   GetEquidistantBins() const {return equidistantBins;}
+  inline G4double GetXMin()            const {return xmin;}
+  inline G4double GetXMax()            const {return xmax;}
   /// @}
 
   ///@{ iterator mechanics

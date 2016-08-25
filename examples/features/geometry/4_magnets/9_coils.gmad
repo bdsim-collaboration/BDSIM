@@ -1,0 +1,31 @@
+! This example is designed to produce various circumstances that should
+! show / test the behaviour of whether coil end pieces to magnets are
+! placed or not.
+
+! There should be no end of a magnet without a coil in this example
+
+! this drift is purposively small compared to q1's length
+d1: drift, l=0.05*m; 
+d2: drift, l=0.5*m;
+q1: quadrupole, l=0.5*m, k1=0.2;
+
+! Features
+! 1) a coil should be placed at the beginning of the line even if there's no drift before
+! 2) a magnet with ample drift space should have coils on either side
+! 3) a magnet with multiple drifts that add up to sufficient space should have
+!    coils on both sides - ie the d1 drift is too small on its own, but d1+d2 is ok
+! 4) multiple quads back to back should have coils only on each end
+! 5) even with a drift that is too small, the coil should be placed at the end of the beam line
+! 6) the last drift is too short to 'contain' the coil from the last quad but should be placed
+!    anyway as it's the end of the beam line.
+
+l1: line = (q1, d2, q1, d2, d1, q1, d1, d2, q1, q1, q1,d1);
+
+use, l1;
+
+! most options should suffice
+option, magnetGeometryType="polescircular",
+	checkOverlaps=1;
+
+beam, particle="e-",
+      energy=10*GeV;

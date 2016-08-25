@@ -1,0 +1,11 @@
+a = 1;
+b = 0;
+c = 2;
+d = -1;
+
+!b should print
+if (a) {print, b} else {print, d};
+! c should print
+if (b) {print, a} else {print, c};
+! d should print;
+print, d;

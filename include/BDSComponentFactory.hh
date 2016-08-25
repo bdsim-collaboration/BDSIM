@@ -5,15 +5,19 @@
 #include <list>
 
 #include "globals.hh"
-#include "parser/element.h"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeInfo.hh"
-#include "BDSMagnetOuterInfo.hh"
-#include "BDSLine.hh"
-class BDSCavityInfo;
+#include "CLHEP/Units/PhysicalConstants.h"
 
+namespace GMAD {
+  struct Element;
+}
+class BDSAcceleratorComponent;
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
+class BDSCavityInfo;
+class BDSLine;
 class BDSTiltOffset;
+
+struct BDSMagnetOuterInfo;
 
 /**
  * @brief Factory to produce all types of BDSAcceleratorComponents.
@@ -124,6 +128,8 @@ private:
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
+
+  G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;

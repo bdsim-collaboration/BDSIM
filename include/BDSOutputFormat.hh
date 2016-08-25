@@ -4,9 +4,13 @@
 #include "BDSTypeSafeEnum.hh"
 #include "globals.hh" // geant4 types / globals
 
+/**
+ * @brief Type definition for all output formats.
+ */
+
 struct outputformats_def {
   enum type {none, ascii, root, rootdouble, rootdetailed,
-	     rootdetaileddouble, rootevent, combined};
+	     rootdetaileddouble, rootevent, combined, rootcombined};
 };
 
 typedef BDSTypeSafeEnum<outputformats_def, int> BDSOutputFormat;

@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTrackingAction.hh"
 #include "BDSTrajectory.hh"
@@ -10,28 +11,38 @@
 
 BDSTrackingAction::BDSTrackingAction():
   interactive(false)
-{;}
+{
+  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
+}
 
 BDSTrackingAction::BDSTrackingAction(G4bool batchMode):
   interactive(!batchMode)
-{;}
+{
+  storeTrajectory = BDSGlobalConstants::Instance()->StoreTrajectory();
+}
 
 void BDSTrackingAction::PreUserTrackingAction(const G4Track* track)
 {
-  if (interactive || (track->GetParentID() == 0))
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << " TrackID=" << track->GetTrackID()
+	 << " ParentID=" << track->GetParentID() << G4endl;
+#endif
+
+  if (interactive || storeTrajectory || track->GetParentID() == 0)
     {
       fpTrackingManager->SetStoreTrajectory(1);
-      fpTrackingManager->SetTrajectory(new BDSTrajectory(track));
+      BDSTrajectory* bdsTraj = new BDSTrajectory(track);
+      fpTrackingManager->SetTrajectory(bdsTraj);
     }
   else
     {fpTrackingManager->SetStoreTrajectory(0);}
   
   /*
-    if(track->GetDefinition()->GetParticleName()=="neutron")
-    {
+  if(track->GetDefinition()->ParticleName()=="neutron")
+  {
     BDSNeutronTrackInfo* Info= new BDSNeutronTrackInfo();
     Info->SetIsLogged(false);
     fpTrackingManager->SetUserTrackInformation(Info);
-    }
+  }
   */
 }

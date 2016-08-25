@@ -1,5 +1,5 @@
-#ifndef __REGION_H
-#define __REGION_H
+#ifndef REGION_H
+#define REGION_H
 
 #include <iomanip>
 #include <iostream>
@@ -7,11 +7,12 @@
 
 #include "published.h"
 
-namespace GMAD {
+namespace GMAD
+{
   /**
    * @brief Region class for parser
    * 
-   * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk> 
+   * @author Jochem Snuverink
    */
   class Region : public Published<Region> {
   public:
@@ -26,14 +27,17 @@ namespace GMAD {
     Region();
     /// reset
     void clear();
-    /// publish members
-    void PublishMembers();
     /// print some properties
     void print()const;
     /// set methods by property name
     template <typename T>
       void set_value(std::string name, T value);
+
+  private:
+    /// publish members
+    void PublishMembers();
   };
+  
   template <typename T>
     void Region::set_value(std::string name, T value)
     {

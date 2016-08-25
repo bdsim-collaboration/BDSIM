@@ -13,7 +13,6 @@ BDSOutputROOTDetailed<Type>::BDSOutputROOTDetailed()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "output format ROOT detailed"<<G4endl;
 #endif
-  this->Init(); // activate the output
 }
 
 template<typename Type>
