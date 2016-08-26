@@ -154,6 +154,7 @@ The following elements may be defined
 * `octupole`_
 * `decapole`_
 * `multipole`_
+* `thinmultipole`_
 * `vkick`_
 * `hkick`_
 * `rf`_
@@ -463,6 +464,21 @@ parameter         description                  default     required
 Examples::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
+
+thinmultipole
+^^^^^^^^^^^^^
+
+.. TODO: add picture
+
+`thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
+For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
+tube. A thinmultipole can be placed next to a bending magnet with finite poleface rotation angles.
+
+Examples::
+
+   THINOCTUPOLE1 : thinmultipole , knl={ 0,0,1 } , ksl={ 0,0,0 };
+
+.. note:: The length of the thin multipole can be changed by setting `thinElementLength` (see `options`_).
 
 vkick
 ^^^^^
