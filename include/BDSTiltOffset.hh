@@ -42,7 +42,7 @@ public:
   G4bool HasFiniteTilt()   const;
   ///@}
 
-  /// output stream
+  /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSTiltOffset const &to);
   
 private:

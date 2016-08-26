@@ -65,7 +65,7 @@ public:
 
   /// @{ Comparison operator for x,y only. Ignores z (length).
   inline G4bool TransverselyLessThan(const BDSExtent& r) const;
-  inline G4bool TransverselyGreaterThan(const BDSExtent& r)   const {return r.TransverselyLessThan(*this);}
+  inline G4bool TransverselyGreaterThan(const BDSExtent& r)   const {return !r.TransverselyLessThan(*this);}
   inline G4bool TransverselyLessEquals(const BDSExtent& r)    const {return !(this->TransverselyGreaterThan(r));}
   inline G4bool TransverselyGreaterEquals(const BDSExtent& r) const {return !(this->TransverselyLessThan(r));}
   /// @}
