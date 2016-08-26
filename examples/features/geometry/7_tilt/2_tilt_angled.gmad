@@ -7,3 +7,5 @@ use, l1;
 
 beam, particle="e-",
       energy=1*GeV;
+
+option, checkOverlaps=1;
