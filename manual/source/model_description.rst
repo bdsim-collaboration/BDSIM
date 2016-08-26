@@ -278,6 +278,12 @@ parameter         description                  default     required
 	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
 	  element must be longer than the projected length from the rotation, given by
 	  :math:`2 \tan(\mathrm{eX})`.
+
+.. note:: If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the
+      fringefield element can be set by the option `thinElementLength` (see `options`_).
+
 	  
 
 Examples::
@@ -331,6 +337,11 @@ parameter         description                  default     required
 	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
 	  element must be longer than the projected length from the rotation, given by
 	  :math:`2 \tan(\mathrm{eX})`.
+
+.. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+      fringefield element can be set by the option `thinElementLength` (see `options`_).
 
 Examples::
 
@@ -1328,6 +1339,10 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | elossHistoBinWidth               | the width of the histogram bins [m]                   |
 +----------------------------------+-------------------------------------------------------+
+| includeFringeFields              | place thin fringefield elements on the end of bending |
+|                                  | magnets with finite poleface angles. The length of the|
+|                                  | total element is conserved. (default = false)         |
++----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true)                 |
 +----------------------------------+-------------------------------------------------------+
@@ -1375,6 +1390,9 @@ as their value.
 | vacuumMaterial                   | the material to use for the beam pipe vacuum          |
 +----------------------------------+-------------------------------------------------------+
 | vacuumPressure                   | the pressure of the vacuum gas [bar]                  |
++----------------------------------+-------------------------------------------------------+
+| thinElementLength                | the length of all thinmultipoles and dipole           |
+|                                  | fringefields in a lattice (default 1e-6) [m]          |
 +----------------------------------+-------------------------------------------------------+
 | **Tracking Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
