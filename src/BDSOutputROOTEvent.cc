@@ -5,7 +5,6 @@
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSSampler.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"

@@ -2,13 +2,11 @@
 #define OPTIONSANALYSIS_H
 
 #include "TROOT.h"
-#include "TFile.h"
-#include "TChain.h"
 
-#include "OptionsAnalysis.hh"
 #include "Analysis.hh"
-#include "Options.hh"
 
+class Options;
+class TChain;
 
 class OptionsAnalysis : public Analysis
 {

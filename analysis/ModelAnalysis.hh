@@ -4,8 +4,8 @@
 #include "TROOT.h"
 
 #include "Analysis.hh"
-#include "Model.hh"
 
+class Model;
 class TChain;
 
 class ModelAnalysis : public Analysis

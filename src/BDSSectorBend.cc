@@ -9,7 +9,6 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
-#include "BDSUtilities.hh"        // for calculateorientation
 
 #include "G4Mag_UsualEqRhs.hh"
 

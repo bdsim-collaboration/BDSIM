@@ -18,12 +18,10 @@
 #include "BDSMaterials.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
-#include "BDSSimpleComponent.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
-#include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
@@ -44,6 +42,7 @@
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4VSensitiveDetector.hh"
 #include "globals.hh"
 
 #include <iterator>

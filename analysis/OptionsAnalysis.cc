@@ -1,8 +1,9 @@
 #include "OptionsAnalysis.hh"
 
-#include "rebdsim.hh"
-#include "Config.hh"
 #include "TROOT.h"
+#include "TChain.h"
+
+#include "Options.hh"
 
 ClassImp(OptionsAnalysis)
 
