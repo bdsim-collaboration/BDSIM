@@ -249,16 +249,24 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
       // handed coordinate system
       // rotate about cumulative local y axis of beamline
       // middle rotated by half angle in local x,z plane
-      G4ThreeVector unitY = G4ThreeVector(0,1,0);
-      referenceRotationMiddle->rotate(angle*0.5, unitY.transform(*previousReferenceRotationEnd));
+      G4ThreeVector rotationAxisOfBend = G4ThreeVector(0,1,0); // nominally about local unit Y
+      G4ThreeVector rotationAxisOfBendEnd = rotationAxisOfBend; // a copy
+      if (hasFiniteTilt)
+	{
+	  G4double tilt = tiltOffset->GetTilt();
+	  G4RotationMatrix rotationAxisRM = G4RotationMatrix();
+	  rotationAxisRM.rotateZ(tilt);
+	  rotationAxisOfBend.transform(rotationAxisRM);
+	  rotationAxisOfBendEnd.transform(rotationAxisRM);
+	}
+      referenceRotationMiddle->rotate(angle*0.5, rotationAxisOfBend.transform(*previousReferenceRotationEnd));
       // end rotated by full angle in local x,z plane
-      G4ThreeVector unitYEnd = G4ThreeVector(0,1,0);
-      referenceRotationEnd->rotate(angle, unitYEnd.transform(*previousReferenceRotationEnd));
+      referenceRotationEnd->rotate(angle, rotationAxisOfBendEnd.transform(*previousReferenceRotationEnd));
     }
   
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
-  if (hasFiniteTilt  && !hasFiniteAngle)
+  if (hasFiniteTilt)
     {
       G4double tilt = tiltOffset->GetTilt();
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
