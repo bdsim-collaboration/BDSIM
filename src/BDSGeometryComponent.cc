@@ -71,6 +71,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
 void BDSGeometryComponent::InheritExtents(BDSGeometryComponent const * const anotherComponent)
 {
   outerExtent = anotherComponent->GetExtent();
+  innerExtent = anotherComponent->GetInnerExtent();
 }
 
 void BDSGeometryComponent::RegisterDaughter(BDSGeometryComponent* anotherComponent)
