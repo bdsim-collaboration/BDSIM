@@ -5,6 +5,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -27,6 +28,7 @@ void BDS::BuildEndPieceBeamline()
   for (auto element : *beamline)
     {
       const auto accComponent   = element->GetAcceleratorComponent();
+      const auto accComponentTO = element->GetTiltOffset();
       const auto endPieceBefore = accComponent->EndPieceBefore();
       const auto endPieceAfter  = accComponent->EndPieceAfter();
       
@@ -61,6 +63,8 @@ void BDS::BuildEndPieceBeamline()
 	  G4double   previousNonDriftEndPieceL = 0;
 	  G4bool              driftIsFirstItem = false;
 	  BDSExtent        endPieceInnerExtent = endPieceBefore->GetInnerExtent();
+	  if (accComponentTO) // could be nullptr
+	    {endPieceInnerExtent = endPieceInnerExtent.Tilted(accComponentTO->GetTilt());}
 	  G4bool         driftsAreTooBigBefore = false;
 	  while(keepGoing)
 	    {
