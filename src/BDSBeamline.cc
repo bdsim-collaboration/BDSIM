@@ -276,14 +276,6 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
     }
   else
     {
-      // note, don't apply tilt if the object has finite angle as this will cause
-      // geometry overlaps
-      if (hasFiniteAngle && hasFiniteTilt)
-	{
-	  G4String name = component->GetName();
-	  G4cout << __METHOD_NAME__ << "WARNING - element has tilt, but this will cause geometry"
-		 << " overlaps: " << name << " - omitting tilt" << G4endl;
-	}
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
       rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
       rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
