@@ -1,6 +1,7 @@
 #ifndef BDSEXTENT_H
 #define BDSEXTENT_H
 
+#include <ostream>
 #include <tuple>   // for std::tie
 #include <utility> // for pair and pair relational operators
 
@@ -71,6 +72,9 @@ public:
 
   /// Provide a new copy of this extent but rotated along Z by a given tilt angle.
   BDSExtent Tilted(G4double angle) const;
+
+  /// Output stream.
+  friend std::ostream& operator<< (std::ostream &out, BDSExtent const &ext);
   
 private:
   /// @{ Negative and positive extent

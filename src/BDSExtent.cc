@@ -5,6 +5,7 @@
 #include "G4TwoVector.hh"
 
 #include <algorithm>
+#include <ostream>
 #include <utility>
 
 BDSExtent::BDSExtent():
@@ -59,4 +60,12 @@ BDSExtent BDSExtent::Tilted(G4double angle) const
 			       yMin, yMax,
 			       extentZ.first, extentZ.second);
   return result;
+}
+
+std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
+{
+  out << ext.extentX.first << " " << ext.extentX.second << " ";
+  out << ext.extentY.first << " " << ext.extentY.second << " ";
+  out << ext.extentZ.first << " " << ext.extentZ.second;
+  return out;
 }
