@@ -139,6 +139,9 @@ public:
 
   void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
   void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
+
+  // Update the read out geometry volume given new face normals incase of a tilt.
+  void UpdateReadOutVolumeWithTilt(G4double tilt);
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -208,8 +211,6 @@ private:
 				      G4double chordLength,
 				      G4double angle);
 
- 
-
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
 
@@ -226,6 +227,7 @@ private:
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
+  G4double      readOutRadius;    ///< radius of read out volume solid
 };
 
 inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
