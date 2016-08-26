@@ -51,6 +51,11 @@ BDSExtent BDSExtent::Tilted(G4double angle) const
   G4TwoVector botLeft  = G4TwoVector(extentX.first,  extentY.first);
   G4TwoVector topLeft  = G4TwoVector(extentX.first,  extentY.second);
 
+  topRight.rotate(angle);
+  botRight.rotate(angle);
+  botLeft.rotate(angle);
+  topLeft.rotate(angle);
+  
   G4double xMin = std::min(botLeft.x(),  topLeft.x());
   G4double xMax = std::max(topRight.x(), botRight.x());
   G4double yMin = std::min(botRight.y(), botLeft.y());
