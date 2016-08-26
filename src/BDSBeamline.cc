@@ -146,8 +146,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4double      angle    = component->GetAngle();
   G4bool hasFiniteLength = BDS::IsFinite(length);
   G4bool hasFiniteAngle  = BDS::IsFinite(angle);
-  G4bool hasFiniteTilt   = BDS::IsFinite(tiltOffset->GetTilt());
-  G4bool hasFiniteOffset = BDS::IsFinite(tiltOffset->GetXOffset()) || BDS::IsFinite(tiltOffset->GetYOffset());
+  G4bool hasFiniteTilt   = tiltOffset->HasFiniteTilt();
+  G4bool hasFiniteOffset = tiltOffset->HasFiniteOffset();
   G4ThreeVector offset   = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
   G4ThreeVector eP       = component->GetExtentPositive() + offset;
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
