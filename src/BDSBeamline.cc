@@ -254,6 +254,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
       if (hasFiniteTilt)
 	{
 	  G4double tilt = tiltOffset->GetTilt();
+	  component->UpdateReadOutVolumeWithTilt(tilt);
 	  G4RotationMatrix rotationAxisRM = G4RotationMatrix();
 	  rotationAxisRM.rotateZ(tilt);
 	  rotationAxisOfBend.transform(rotationAxisRM);
