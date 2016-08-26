@@ -1,7 +1,10 @@
 #include "BDSExtent.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4TwoVector.hh"
 
+#include <algorithm>
 #include <utility>
 
 BDSExtent::BDSExtent():
@@ -34,3 +37,26 @@ BDSExtent::BDSExtent(G4double extXIn, G4double extYIn, G4double extZIn):
 
 BDSExtent::~BDSExtent()
 {;}
+
+BDSExtent BDSExtent::Tilted(G4double angle) const
+{
+  if (!BDS::IsFinite(angle))
+    {return BDSExtent(*this);}
+
+  // rotate each vector (from origin to each corner) by angle
+  // and check - safer than checking based on +ve / -ve angle
+  G4TwoVector topRight = G4TwoVector(extentX.second, extentY.second);
+  G4TwoVector botRight = G4TwoVector(extentX.second, extentY.first);
+  G4TwoVector botLeft  = G4TwoVector(extentX.first,  extentY.first);
+  G4TwoVector topLeft  = G4TwoVector(extentX.first,  extentY.second);
+
+  G4double xMin = std::min(botLeft.x(),  topLeft.x());
+  G4double xMax = std::max(topRight.x(), botRight.x());
+  G4double yMin = std::min(botRight.y(), botLeft.y());
+  G4double yMax = std::max(topRight.y(), topLeft.y());
+
+  BDSExtent result = BDSExtent(xMin, xMax,
+			       yMin, yMax,
+			       extentZ.first, extentZ.second);
+  return result;
+}

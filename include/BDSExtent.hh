@@ -68,6 +68,9 @@ public:
   inline G4bool TransverselyLessEquals(const BDSExtent& r)    const {return !(this->TransverselyGreaterThan(r));}
   inline G4bool TransverselyGreaterEquals(const BDSExtent& r) const {return !(this->TransverselyLessThan(r));}
   /// @}
+
+  /// Provide a new copy of this extent but rotated along Z by a given tilt angle.
+  BDSExtent Tilted(G4double angle) const;
   
 private:
   /// @{ Negative and positive extent
