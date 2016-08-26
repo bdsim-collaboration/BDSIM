@@ -658,8 +658,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angleIn)
   {
- if(!HasSufficientMinimumLength(element))
-    {return nullptr;}
 
  BDSMagnetStrength* st = new BDSMagnetStrength();
  std::list<double>::iterator kn = element->knl.begin();
