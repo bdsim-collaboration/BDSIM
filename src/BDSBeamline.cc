@@ -382,25 +382,27 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 #endif
   
   // construct beamline element
-  BDSBeamlineElement* element = new BDSBeamlineElement(component,
-						       positionStart,
-						       positionMiddle,
-						       positionEnd,
-						       rotationStart,
-						       rotationMiddle,
-						       rotationEnd,
-						       referencePositionStart,
-						       referencePositionMiddle,
-						       referencePositionEnd,
-						       referenceRotationStart,
-						       referenceRotationMiddle,
-						       referenceRotationEnd,
-						       sPositionStart,
-						       sPositionMiddle,
-						       sPositionEnd,
-						       samplerType,
-						       samplerName,
-                                                       (G4int)beamline.size());
+    BDSBeamlineElement* element;
+    element = new BDSBeamlineElement(component,
+                                     positionStart,
+                                     positionMiddle,
+                                     positionEnd,
+                                     rotationStart,
+                                     rotationMiddle,
+                                     rotationEnd,
+                                     referencePositionStart,
+                                     referencePositionMiddle,
+                                     referencePositionEnd,
+                                     referenceRotationStart,
+                                     referenceRotationMiddle,
+                                     referenceRotationEnd,
+                                     sPositionStart,
+                                     sPositionMiddle,
+                                     sPositionEnd,
+                                     new BDSTiltOffset(*tiltOffset),
+                                     samplerType,
+                                     samplerName,
+                                     (G4int)beamline.size());
 
   // calculate extents for world size determination
   UpdateExtents(element);
@@ -746,6 +748,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
+  BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      positionStart,
 						      positionMiddle,
@@ -761,7 +764,8 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      new G4RotationMatrix(*elRotStart),
 						      elSPosStart - endPieceLength,
 						      elSPosStart - 0.5*endPieceLength,
-						      elSPosStart);
+						      elSPosStart,
+						      new BDSTiltOffset(*elTiltOffset));
   return result;
 }
 
@@ -781,6 +785,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
   if (flip)
     {elRotEnd->rotateY(CLHEP::pi);}
   G4double           elSPosEnd = element->GetSPositionEnd();
+  BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
 						      positionMiddle,
@@ -796,7 +801,8 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 						      new G4RotationMatrix(*elRotEnd),
 						      elSPosEnd,
 						      elSPosEnd + 0.5*endPieceLength,
-						      elSPosEnd + endPieceLength);
+						      elSPosEnd + endPieceLength,
+						      new BDSTiltOffset(*elTiltOffset));
   return result;
 }
 
