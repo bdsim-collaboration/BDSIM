@@ -1,4 +1,4 @@
-d1: drift, l=0.5*m, apertureType="rectangular", aper1=2*cm, aper2=4*cm;
+d1: drift, l=0.5*m, apertureType="rectangular", aper1=4*cm, aper2=2*cm;
 coll: rcol1, l=2*m, xsize=3*cm, ysize=1*cm, tilt=pi/4;
 
 l1: line=(d1,coll,d1);
