@@ -330,8 +330,8 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4ThreeVector positionStart, positionMiddle, positionEnd;
   if (hasFiniteOffset || hasFinitePlacementOffset)
     {
-      if (hasFiniteOffset && hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
-	{
+      if (hasFiniteOffset && hasFiniteAngle) 
+	{// do not allow x offsets for bends as this will cause overlaps
 	  G4String name = component->GetName();
 	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
 		 << " overlaps: " << name << " - omitting x offset" << G4endl;
@@ -658,16 +658,6 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
       // not registered
       components[element->GetName()] = element;
     }
-  // else - already registered - pass it by
-  /*
-  search = components.find(element->GetPlacementName());
-  if (search == component.edn())
-    {
-      //not registered
-      components[element->GetPlacementName()] = element;
-      }*/ //
-  // UNCOMMENT WHEN MERGED WITH TUNNEL BR for better placement names
-  // else - already registered - pass it by
 }
 
 BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
@@ -680,7 +670,6 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
   else
     {return search->second;}
 }
-
 
 void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 {
