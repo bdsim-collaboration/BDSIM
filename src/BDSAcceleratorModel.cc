@@ -1,5 +1,6 @@
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
+#include "BDSBeamline.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
 BDSAcceleratorModel* BDSAcceleratorModel::_instance = nullptr;
@@ -12,7 +13,6 @@ BDSAcceleratorModel* BDSAcceleratorModel::Instance()
     }
   return _instance;
 }
-
 
 BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(nullptr),

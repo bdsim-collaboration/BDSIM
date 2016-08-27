@@ -4,7 +4,8 @@
 #include "TROOT.h"
 #include <vector>
 #ifndef __ROOTBUILD__ 
-#include "BDSSamplerHit.hh"
+#include "globals.hh"
+class BDSSamplerHit;
 #endif
 
 #include "TObject.h"

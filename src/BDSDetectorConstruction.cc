@@ -18,15 +18,15 @@
 #include "BDSMaterials.hh"
 #include "BDSSamplerType.hh"
 #include "BDSSDManager.hh"
-#include "BDSSimpleComponent.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSTunnelSD.hh"
-#include "BDSTunnelType.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
+#include "parser/element.h"
 #include "parser/options.h"
+#include "parser/physicsbiasing.h"
 
 #include "G4Box.hh"
 #include "G4Electron.hh"
@@ -42,14 +42,13 @@
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4VSensitiveDetector.hh"
 #include "globals.hh"
 
 #include <iterator>
 #include <list>
 #include <map>
 #include <vector>
-
-typedef std::vector<G4LogicalVolume*>::iterator BDSLVIterator;
 
 BDSDetectorConstruction::BDSDetectorConstruction():
   precisionRegion(nullptr),gasRegion(nullptr),
@@ -627,7 +626,6 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
   const auto& biasObjectList = BDSParser::Instance()->GetBiasing();
   for(std::string const & bs : biasList)
     {
-      GMAD::FastList<GMAD::PhysicsBiasing>::FastListConstIterator result;
       if (bs.empty() && defaultBias.empty())
 	{continue;} // no bias specified and no default
 
@@ -641,7 +639,7 @@ BDSBOptrMultiParticleChangeCrossSection* BDSDetectorConstruction::BuildCrossSect
 	  bias = bs;
 	}
       
-      result = biasObjectList.find(bias);
+      auto result = biasObjectList.find(bias);
       if (result == biasObjectList.end())
 	{
 	  G4cout << "Error: bias named \"" << bias << "\" not found for element named \""

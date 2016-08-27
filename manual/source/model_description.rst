@@ -1173,8 +1173,6 @@ Physics Lists In BDSIM
    * `Reference Physics Lists <http://geant4.cern.ch/support/proc_mod_catalog/physics_lists/referencePL.shtml>`_
    * `Physics Reference Manual <http://geant4.web.cern.ch/geant4/UserDocumentation/UsersGuides/PhysicsReferenceManual/fo/PhysicsReferenceManual.pdf>`_
 
-
-.. table check in latex before commit
 .. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +---------------------------+------------------------------------------------------------------------+
@@ -1294,6 +1292,8 @@ options in BDSIM
 
 Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
 as their value.
+
+.. tabularcolumns:: |p{5cm}|p{10cm}|
 
 +----------------------------------+-------------------------------------------------------+
 | Option                           | Function                                              |

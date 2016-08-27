@@ -2,6 +2,10 @@
 
 #include "BDSOutputROOTEventTrajectory.hh"
 
+#ifndef __ROOTBUILD__
+#include "BDSTrajectory.hh"
+#endif
+
 #if 0
   0  fNotDefined,
   1  fTransportation,

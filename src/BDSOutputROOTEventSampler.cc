@@ -1,8 +1,11 @@
-#include "CLHEP/Units/PhysicalConstants.h"
-
 #include "BDSOutputROOTEventSampler.hh"
 
 #include "TTree.h"
+
+#ifndef __ROOTBUILD__ 
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "BDSSamplerHit.hh"
+#endif
 
 templateClassImp(BDSOutputROOTEventSampler)
 

@@ -27,7 +27,7 @@ namespace CLHEP {
 typedef CLHEP::HepRotation G4RotationMatrix;
 
 class BDSBeamPipeInfo;
-class BDSTunnelInfo;
+struct BDSTunnelInfo;
 
 /**
  * @brief A class that holds global options and constants.
@@ -42,7 +42,7 @@ class BDSTunnelInfo;
  * checks.
  *
  * This is almost entirely constant apart from a very few variables 
- * that by necessity can be updated. Generally, this is not used as
+ * that by necessity can be updated. Generally, this is not used
  * as a way to dynamically pass around information at a global level
  * but purely as constants.
  * 

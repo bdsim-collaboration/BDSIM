@@ -2,9 +2,9 @@
 #define BDSOUTPUTROOTEVENTLOSS_H
 
 #ifndef __ROOTBUILD__
-#include "BDSEnergyCounterHit.hh"
-#include "BDSTunnelHit.hh"
-#include "BDSTrajectoryPoint.hh"
+class BDSEnergyCounterHit;
+class BDSTunnelHit;
+class BDSTrajectoryPoint;
 #endif
 
 #include "TObject.h"
