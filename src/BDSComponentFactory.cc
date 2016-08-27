@@ -1257,6 +1257,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 							  const G4double angleOut) const
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
 					      element->apertureType,
 					      element->aper1 * CLHEP::m,
@@ -1266,8 +1267,8 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->vacuumMaterial,
 					      element->beampipeThickness * CLHEP::m,
 					      element->beampipeMaterial,
-					      angleIn,
-					      angleOut);
+					      faces.first,
+					      faces.second);
   return info;
 }
 
