@@ -91,9 +91,6 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
 {
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
-  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
-  if (!tiltOffset)
-    {tiltOffset  = new BDSTiltOffset();}
 
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
@@ -146,9 +143,20 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4double      angle    = component->GetAngle();
   G4bool hasFiniteLength = BDS::IsFinite(length);
   G4bool hasFiniteAngle  = BDS::IsFinite(angle);
-  G4bool hasFiniteTilt   = tiltOffset->HasFiniteTilt();
-  G4bool hasFiniteOffset = tiltOffset->HasFiniteOffset();
-  G4ThreeVector offset   = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
+  G4bool hasFiniteTilt, hasFiniteOffset;
+  G4ThreeVector offset;
+  if (tiltOffset)
+    {
+      hasFiniteTilt   = tiltOffset->HasFiniteTilt();
+      hasFiniteOffset = tiltOffset->HasFiniteOffset();
+      offset          = tiltOffset->GetOffset(); // returns 3Vector
+    }
+  else
+    {
+      hasFiniteTilt   = false;
+      hasFiniteOffset = false;
+      offset          = G4ThreeVector();
+    }
   G4ThreeVector eP       = component->GetExtentPositive() + offset;
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
   G4ThreeVector placementOffset   = component->GetPlacementOffset();
@@ -383,27 +391,31 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 #endif
   
   // construct beamline element
-    BDSBeamlineElement* element;
-    element = new BDSBeamlineElement(component,
-                                     positionStart,
-                                     positionMiddle,
-                                     positionEnd,
-                                     rotationStart,
-                                     rotationMiddle,
-                                     rotationEnd,
-                                     referencePositionStart,
-                                     referencePositionMiddle,
-                                     referencePositionEnd,
-                                     referenceRotationStart,
-                                     referenceRotationMiddle,
-                                     referenceRotationEnd,
-                                     sPositionStart,
-                                     sPositionMiddle,
-                                     sPositionEnd,
-                                     new BDSTiltOffset(*tiltOffset),
-                                     samplerType,
-                                     samplerName,
-                                     (G4int)beamline.size());
+  BDSTiltOffset* tiltOffsetToStore = nullptr;
+  if (tiltOffset)
+    {tiltOffsetToStore = new BDSTiltOffset(*tiltOffset);} // copy as can be used multiple times
+  
+  BDSBeamlineElement* element;
+  element = new BDSBeamlineElement(component,
+				   positionStart,
+				   positionMiddle,
+				   positionEnd,
+				   rotationStart,
+				   rotationMiddle,
+				   rotationEnd,
+				   referencePositionStart,
+				   referencePositionMiddle,
+				   referencePositionEnd,
+				   referenceRotationStart,
+				   referenceRotationMiddle,
+				   referenceRotationEnd,
+				   sPositionStart,
+				   sPositionMiddle,
+				   sPositionEnd,
+				   tiltOffsetToStore,
+				   samplerType,
+				   samplerName,
+				   (G4int)beamline.size());
 
   // calculate extents for world size determination
   UpdateExtents(element);
