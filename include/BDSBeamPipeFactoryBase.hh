@@ -132,6 +132,7 @@ protected:
   /// @{ For recording the face normals in the finished pipe component.
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
+  /// @}
 };
 
 #endif

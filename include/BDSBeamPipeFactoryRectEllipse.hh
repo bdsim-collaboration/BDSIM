@@ -21,15 +21,15 @@
  * horizontal and vertical semi-axes of the ellipse. Note, will aper1,2 should be
  * < aper1,2 otherwise an elliptical tube will be more efficient.
  * 
- * Singleton pattern
+ * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryRectEllipse: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryRectEllipse* Instance(); ///< singleton accessor
+  static BDSBeamPipeFactoryRectEllipse* Instance(); ///< Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryRectEllipse();
 
@@ -56,8 +56,8 @@ public:
 				      G4Material*   beamPipeMaterialIn  = nullptr);
 
 private:
-  BDSBeamPipeFactoryRectEllipse(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryRectEllipse* _instance;
+  BDSBeamPipeFactoryRectEllipse(); ///< Private default constructor - singleton pattern.
+  static BDSBeamPipeFactoryRectEllipse* _instance; ///< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around

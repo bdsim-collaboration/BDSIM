@@ -7,15 +7,15 @@
 /**
  * @brief Factory for rectangular beam pipes
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryRectangular: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryRectangular* Instance(); /// singleton accessor
+  static BDSBeamPipeFactoryRectangular* Instance(); /// Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryRectangular();
 
@@ -42,8 +42,8 @@ public:
 				      G4Material*   beamPipeMaterialIn  = nullptr);
 
 private:
-  BDSBeamPipeFactoryRectangular(); /// private default constructor - singelton pattern
-  static BDSBeamPipeFactoryRectangular* _instance;
+  BDSBeamPipeFactoryRectangular(); ///< Private default constructor - singelton pattern.
+  static BDSBeamPipeFactoryRectangular* _instance; ////< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around

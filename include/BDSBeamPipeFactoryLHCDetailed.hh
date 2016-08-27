@@ -7,15 +7,15 @@
 /**
  * @brief Factory for detailed lhc aperture model beam pipes
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryLHCDetailed: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryLHCDetailed* Instance(); ///< singleton accessor
+  static BDSBeamPipeFactoryLHCDetailed* Instance(); ///< Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryLHCDetailed();
 

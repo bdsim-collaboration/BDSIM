@@ -9,13 +9,13 @@
  * 
  * singleton pattern
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryLHC: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryLHC* Instance(); ///< singleton accessor
+  static BDSBeamPipeFactoryLHC* Instance(); ///< Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryLHC();
 
@@ -42,8 +42,8 @@ public:
 				      G4Material*   beamPipeMaterialIn  = nullptr);
 
 private:
-  BDSBeamPipeFactoryLHC(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryLHC* _instance;
+  BDSBeamPipeFactoryLHC(); ///< Private default constructor - singleton pattern.
+  static BDSBeamPipeFactoryLHC* _instance; ///< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around

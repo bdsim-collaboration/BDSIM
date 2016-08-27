@@ -185,15 +185,15 @@ void BDSBeamPipeFactoryPoints::CreateSolidsAngled(G4String      name,
   // only used transversely
 }
 
-BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String    nameIn,              // name
-						      G4double    lengthIn,            // length [mm]
-						      G4double    aper1In,             // aperture parameter 1
-						      G4double    aper2In,             // aperture parameter 2
-						      G4double    aper3In,             // aperture parameter 3
-						      G4double    aper4In,             // aperture parameter 4
-						      G4Material* vacuumMaterialIn,    // vacuum material
-						      G4double    beamPipeThicknessIn, // beampipe thickness [mm]
-						      G4Material* beamPipeMaterialIn)  // beampipe material
+BDSBeamPipe* BDSBeamPipeFactoryPoints::CreateBeamPipe(G4String    nameIn,
+						      G4double    lengthIn,
+						      G4double    aper1In,
+						      G4double    aper2In,
+						      G4double    aper3In,
+						      G4double    aper4In,
+						      G4Material* vacuumMaterialIn,
+						      G4double    beamPipeThicknessIn,
+						      G4Material* beamPipeMaterialIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

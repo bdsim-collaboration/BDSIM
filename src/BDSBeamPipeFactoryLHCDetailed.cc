@@ -34,13 +34,13 @@ BDSBeamPipeFactoryLHCDetailed* BDSBeamPipeFactoryLHCDetailed::Instance()
   return _instance;
 }
 
-BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed():BDSBeamPipeFactoryBase()
+BDSBeamPipeFactoryLHCDetailed::BDSBeamPipeFactoryLHCDetailed()
 {
-  coldBoreThickness         = 1.5*CLHEP::mm;
-  coolingPipeThickness      = 0.53*CLHEP::mm;
-  coolingPipeRadius         = 3.7*CLHEP::mm*0.5; // will be overwritten if needs be to fit inside beampipe
-  coolingPipeOffset         = 0.0;  //initialised only
-  copperSkinThickness       = 75*CLHEP::um;
+  coldBoreThickness    = 1.5*CLHEP::mm;
+  coolingPipeThickness = 0.53*CLHEP::mm;
+  coolingPipeRadius    = 3.7*CLHEP::mm*0.5; // will be overwritten if needs be to fit inside beampipe
+  coolingPipeOffset    = 0.0;  //initialised only
+  copperSkinThickness  = 75*CLHEP::um;
   CleanUp();
 }
 
@@ -157,15 +157,15 @@ void BDSBeamPipeFactoryLHCDetailed::CalculateGeometricalParameters(G4double aper
 }
   
 
-BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,              // name
-							   G4double    length,            // length [mm]
-							   G4double    aper1,             // rect half width
-							   G4double    aper2,             // rect half height
-							   G4double    aper3,             // radius of circle
-							   G4double    /*aper4*/,         // aperture parameter 4
-							   G4Material* vacuumMaterial,    // vacuum material
-							   G4double    beamPipeThickness, // beampipe thickness [mm]
-							   G4Material* beamPipeMaterial)  // beampipe material
+BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CreateBeamPipe(G4String    name,
+							   G4double    length,
+							   G4double    aper1,
+							   G4double    aper2,
+							   G4double    aper3,
+							   G4double    /*aper4*/,
+							   G4Material* vacuumMaterial,
+							   G4double    beamPipeThickness,
+							   G4Material* beamPipeMaterial)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
