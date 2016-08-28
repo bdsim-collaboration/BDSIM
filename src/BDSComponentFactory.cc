@@ -1303,7 +1303,7 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) con
 #endif
   G4double xOffset = element->offsetX * CLHEP::m;
   G4double yOffset = element->offsetY * CLHEP::m;
-  G4double tilt    = element->tilt;
+  G4double tilt    = element->tilt    * CLHEP::rad;
 
   return new BDSTiltOffset(xOffset, yOffset, tilt);
 }
