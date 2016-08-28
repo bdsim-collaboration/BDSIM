@@ -84,6 +84,8 @@ public:
   void   SetPrecisionRegion(G4bool precisionRegionIn)
   {precisionRegion = precisionRegionIn;}
 
+  // Accessors
+  
   /// The name of the component without modification
   inline G4String GetName() const {return name;}
 
@@ -106,13 +108,12 @@ public:
   /// Access beam pipe information
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
-  /// Access face normal unit vector. This is w.r.t. the incoming reference
-  /// trajectory and NOT the local geometry of the component.
+  /// @{ Access face normal unit vector. This is w.r.t. the incoming / outgoing reference
+  /// trajectory and NOT the local geometry of the component. Ie for an SBend with no
+  /// pole face rotation this is incoming (0,0,-1). Does not account for tilt.
   inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
-
-  /// Normal unit vector w.r.t. the outgoing reference trajectory and NOT the
-  /// local geometry of the component.
   inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
+  /// @}
   
   /// Access the read out geometry
   inline G4LogicalVolume* GetReadOutLogicalVolume() const {return readOutLV;}
@@ -171,7 +172,8 @@ protected:
   /// this class (BDSAcceleratorComponent) - therefore, the derived class should also deal with
   /// memory management of this volume - whether this is by using the inherited
   /// (from BDSGeometryComponent) RegisterLogicalVolume() or by manually deleting itself.
-  inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn) {acceleratorVacuumLV = accVacLVIn;}
+  inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn)
+  {acceleratorVacuumLV = accVacLVIn;}
   
   ///@{ Const protected member variable that may not be changed by derived classes
   const G4String   name;

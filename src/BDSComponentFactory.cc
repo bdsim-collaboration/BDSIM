@@ -93,6 +93,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4double angleOut = 0.0;
   G4bool registered    = false;
   // Used for multiple instances of the same element but different poleface rotations.
+  // Ie only a drift is modified to match the pole face rotation of a magnet.
   G4bool willModify = false;
 
 #ifdef BDSDEBUG
