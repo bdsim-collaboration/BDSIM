@@ -7,11 +7,10 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "BDSTiltOffset.hh"
 #include "G4Transform3D.hh"
 
 #include <ostream>
-
-class BDSTiltOffset;
 
 /**
  * @brief A class that holds a fully constructed BDSAcceleratorComponent
@@ -93,6 +92,9 @@ public:
   G4ThreeVector InputFaceNormal()  const;
   G4ThreeVector OutputFaceNormal() const;
   /// @}
+
+  /// Convenience accessor.
+  inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
   
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);
