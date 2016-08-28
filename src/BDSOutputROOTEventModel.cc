@@ -36,6 +36,7 @@ void BDSOutputROOTEventModel::Fill()
     // Name
     this->componentName.push_back((*i)->GetName());
     this->placementName.push_back((*i)->GetPlacementName());
+    this->componentType.push_back((*i)->GetType());
 
     // Length
     this->length.push_back((float &&) (*i)->GetAcceleratorComponent()->GetArcLength() / CLHEP::m);

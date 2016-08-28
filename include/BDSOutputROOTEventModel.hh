@@ -15,6 +15,7 @@ public:
 
   std::vector<std::string> componentName;
   std::vector<std::string> placementName;
+  std::vector<std::string> componentType;
   std::vector<float>       length;
   std::vector<TVector3>    staPos;
   std::vector<TVector3>    midPos;
