@@ -6,6 +6,7 @@
 #include "globals.hh"         // geant4 types / globals
 #include "G4ThreeVector.hh"
 
+class BDSExtent;
 class G4Material;
 
 /**
@@ -63,6 +64,10 @@ public:
   /// Function to check relevant aperture values are set.  This is really a dispatch function
   /// for other aperture specific methods below
   void CheckApertureInfo();
+
+  /// Return a BDSExtent instance indicative of the size - not guaranteed to be the exact same
+  /// as the one returned by the beam pipe factory (for simplicity).
+  BDSExtent IndicativeExtent() const;
 
   ///@{ Public member for direct access
   BDSBeamPipeType beamPipeType;

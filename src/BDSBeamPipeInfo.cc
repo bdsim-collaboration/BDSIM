@@ -133,6 +133,17 @@ void BDSBeamPipeInfo::CheckApertureInfo()
     }
 }
 
+BDSExtent BDSBeamPipeInfo::IndicativeExtent() const
+{
+  // There is a potential problem here where the defaults used are much larger
+  // than the specified ones and they're picked up and cause a false positive.
+  G4double maxParam = std::max(std::max(aper1, aper2), std::max(aper3, aper4));
+  BDSExtent result = BDSExtent(-maxParam, maxParam,
+			       -maxParam, maxParam,
+			       0,0); // z not know from beam pipe info instance
+  return result;
+}
+
 void BDSBeamPipeInfo::CheckRequiredParametersSet(G4bool setAper1,
 						 G4bool setAper2,
 						 G4bool setAper3,
