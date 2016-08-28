@@ -155,13 +155,27 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
     }
 
+  // Create normal vectors for drifts
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
+
+  // current element tilt
+  G4double currentTilt  = element->tilt * CLHEP::rad;
+  G4double prevTilt = 0;
+  G4double nextTilt     = 0;
+  if (prevElement)
+    {prevTilt = prevElement->tilt * CLHEP::rad;}
+  if (nextElement)
+    {nextTilt = nextElement->tilt * CLHEP::rad;}
+  G4ThreeVector inputFaceNormal  = faces.first.rotateZ(prevTilt - currentTilt);
+  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt + currentTilt);
+  
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory - creating " << element->type << G4endl;
 #endif
   switch(element->type){
   case ElementType::_DRIFT:
-    component = CreateDrift(angleIn,angleOut); break;
+    component = CreateDrift(inputFaceNormal, outputFaceNormal); break;
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
@@ -258,8 +272,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter()
   
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn,
-							  G4double angleOut)
+BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4ThreeVector inputFaceNormal,
+							  G4ThreeVector outputFaceNormal)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -270,31 +284,35 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn,
 	 << " l= " << element->l << "m"
 	 << G4endl;
 #endif
+  const G4double length = element->l*CLHEP::m;
 
   // Beampipeinfo needed here to get aper1 for check.
-  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, angleIn, angleOut);
+  BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, inputFaceNormal,
+						      outputFaceNormal);
 
-  G4double projLengthIn  = 2.0 * std::abs(tan(angleIn))  * (beamPipeInfo->aper1*CLHEP::mm) ;
-  G4double projLengthOut = 2.0 * std::abs(tan(angleOut)) * (beamPipeInfo->aper1*CLHEP::mm) ;
-  G4double elementLength = element->l * CLHEP::m;
+  const BDSExtent indicativeExtent = beamPipeInfo->IndicativeExtent();
+  G4bool facesWillIntersect = BDS::WillIntersect(inputFaceNormal, outputFaceNormal,
+						 length, indicativeExtent, indicativeExtent);
 
-  if (projLengthIn > elementLength)
+  if (facesWillIntersect)
     {
-      G4cerr << __METHOD_NAME__ << "Drift " << element->name
-	     << " is too short for outgoing Poleface angle from "
-	     << prevElement->name << G4endl;
-      exit(1);
-    }
-  if (projLengthOut > elementLength)
-    {
-      G4cerr << __METHOD_NAME__ << "Drift " << element->name
-	     << " is too short for incoming Poleface angle from "
-	     << nextElement->name << G4endl;
+      G4cerr << __METHOD_NAME__ << "Drift \"" << element->name
+	     << "\" is too short for angled faces between \"";
+      if (prevElement)
+	{G4cerr << prevElement->name;}
+      else
+	{G4cerr << "none";}
+      G4cerr << "\" and \"";
+      if (nextElement)
+	{G4cerr << nextElement->name;}
+      else
+	{G4cerr << "none";}
+      G4cerr << "\"" << G4endl;
       exit(1);
     }
 
   return (new BDSDrift( element->name,
-			element->l*CLHEP::m,
+			length,
 			beamPipeInfo));
 }
 
@@ -395,35 +413,36 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
   std::string thename = element->name + "_1_of_1";
 
   // Single element for zero bend angle or dontSplitSBends=1, therefore nSBends = 1
-  if ((!BDS::IsFinite(element->angle)) || (nSBends == 1)){
-    return (new BDSSectorBend(thename,
-                            length,
-                            element->angle,
-                            bField,
-                            bPrime,
-                            PrepareBeamPipeInfo(element,-angleIn, -angleOut),
-                            PrepareMagnetOuterInfo(element,-angleIn,-angleOut)
-                            ));
-
-  }
-  else if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (nSBends > 1)){
-
-    BDSLine* sbendline  = new BDSLine(element->name);
-    if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
+  if ((!BDS::IsFinite(element->angle)) || (nSBends == 1))
     {
-      BDSAcceleratorComponent* sBendComponent =  BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
-
-      for (G4int n = 0; n < nSBends; n++)
-      {
-        sbendline->AddComponent(sBendComponent);
-      }
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(-angleIn, -angleOut);
+      BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element, faces.first, faces.second);
+      return (new BDSSectorBend(thename,
+				length,
+				element->angle,
+				bField,
+				bPrime,
+				bpInfo,
+				PrepareMagnetOuterInfo(element,-angleIn,-angleOut)));
     }
-    else {
+  else if ((!BDS::IsFinite(element->e1) && !BDS::IsFinite(element->e2)) && (nSBends > 1))
+    {
+      BDSLine* sbendline  = new BDSLine(element->name);
+      if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
+	{
+	  BDSAcceleratorComponent* sBendComponent =  BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
+	  
+	  for (G4int n = 0; n < nSBends; n++)
+	    {sbendline->AddComponent(sBendComponent);}
+	}
+      else {
 
       G4double semiangle = element->angle / (G4double) nSBends;
       G4double semilength = length / (G4double) nSBends;
       G4double angle = -semiangle*0.5;
 
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angle, angle);
+      BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element, faces.first, faces.second);
       BDSMagnetOuterInfo *magnetOuterInfo = PrepareMagnetOuterInfo(element, angle, angle);
 
       BDSSectorBend *newSBendComponent = new BDSSectorBend(thename,
@@ -431,7 +450,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend(G4double angleIn,
                                                         semiangle,
                                                         bField,
                                                         bPrime,
-                                                        PrepareBeamPipeInfo(element, angle, angle),
+							   bpInfo,
                                                         magnetOuterInfo);
 
       newSBendComponent->SetBiasVacuumList(element->biasVacuumList);
@@ -516,6 +535,9 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
       if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::cylindrical){
         magnetRadius= 0.5*magnetOuterInfo->outerDiameter*CLHEP::mm;}
 
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
+      BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element, faces.first, faces.second);
+      
       //Check if intersection is within radius
       if ((BDS::IsFinite(intersectionX)) && (std::abs(intersectionX) < magnetRadius))
         {
@@ -528,7 +550,7 @@ BDSLine* BDSComponentFactory::CreateSBendLine(Element const* element,
                              semiangle,
                              bField,
                              bPrime,
-                             PrepareBeamPipeInfo(element, angleIn, angleOut),
+						 bpInfo,
                              magnetOuterInfo);
 
       oneBend->SetBiasVacuumList(element->biasVacuumList);
@@ -632,12 +654,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // Brho is already in G4 units, but k1 is not -> multiply k1 by m^-2
   G4double bPrime = - brho * (element->k1 / CLHEP::m2);
 
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element, faces.first, faces.second);
+  
   return (new BDSRBend( element->name,
 			element->l*CLHEP::m,
 			bField,
 			bPrime,
 			element->angle,
-			PrepareBeamPipeInfo(element,angleIn,angleOut),
+			bpInfo,
 			PrepareMagnetOuterInfo(element,angleIn,angleOut)));
 }
 
@@ -1254,11 +1279,10 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
 }
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
-							  const G4double angleIn,
-							  const G4double angleOut) const
+							  const G4ThreeVector inputFaceNormal,
+							  const G4ThreeVector outputFaceNormal) const
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
-  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
 					      element->apertureType,
 					      element->aper1 * CLHEP::m,
@@ -1268,8 +1292,8 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->vacuumMaterial,
 					      element->beampipeThickness * CLHEP::m,
 					      element->beampipeMaterial,
-					      faces.first,
-					      faces.second);
+					      inputFaceNormal,
+					      outputFaceNormal);
   return info;
 }
 

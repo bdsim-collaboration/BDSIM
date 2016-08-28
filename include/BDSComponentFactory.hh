@@ -4,6 +4,7 @@
 #include <map>
 
 #include "globals.hh"
+#include "G4ThreeVector.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
 namespace GMAD {
@@ -26,7 +27,6 @@ struct BDSMagnetOuterInfo;
  * nullptr if invalid type or nothing to be constructed for that particular type.
  * Basic calculations on field strength and angle as well as basic parameter validity
  * (zero length) are done here.
- * 
  */
 
 class BDSComponentFactory
@@ -64,7 +64,7 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element* nextElement = nullptr;
   
-  BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
+  BDSAcceleratorComponent* CreateDrift(G4ThreeVector inputFaceNormal, G4ThreeVector outputFaceNormal);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
@@ -106,8 +106,8 @@ private:
 					     const G4double angleOut) const;
   G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
   BDSBeamPipeInfo*    PrepareBeamPipeInfo   (GMAD::Element const* element,
-					     const G4double angleIn  = 0,
-					     const G4double angleOut = 0) const;
+					     const G4ThreeVector inputFaceNormal = G4ThreeVector(0,0,-1),
+					     const G4ThreeVector outputFaceNormal = G4ThreeVector(0,0,1)) const;
 
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
