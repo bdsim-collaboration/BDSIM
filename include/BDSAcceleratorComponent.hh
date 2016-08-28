@@ -65,8 +65,37 @@ public:
   
   virtual ~BDSAcceleratorComponent();
 
+  /// Two stage construction - first instantiate class, and then second, call this
+  /// method to run Build() which constructs geometry.  This allows common construction
+  /// tasks to be done in one place in BDSComponentFactory rather than pass as arguments
+  /// through the constructors of all derived classes. Also builds read out geometry.
+  virtual void Initialise();
+
+  // Communal constructions tasks
+  
+  /// @{ Copy the bias list to this element
+  void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
+  {biasVacuumList = biasVacuumListIn;}
+  void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
+  {biasMaterialList = biasMaterialListIn;}
+  /// @}
+  
+  /// Set whether precision output should be recorded for this component
+  void   SetPrecisionRegion(G4bool precisionRegionIn)
+  {precisionRegion = precisionRegionIn;}
+
   /// The name of the component without modification
   inline G4String GetName() const {return name;}
+
+  /// @{ Access the length of the component. Note there is no z length - this is chord length.
+  /// Only chord OR arc makes it explicit.
+  virtual G4double GetArcLength()   const {return arcLength;} 
+  virtual G4double GetChordLength() const {return chordLength;}
+  /// @}
+
+  /// Get the angle the component induces in the reference trajectory (rad). 
+  /// Note, this is 0 for h and v kickers.
+  inline G4double GetAngle() const {return angle;}
 
   /// Get a string describing the type of the component
   inline G4String GetType() const {return type;}
@@ -74,15 +103,8 @@ public:
   /// Whether precision output is to be recorded for this component
   G4bool GetPrecisionRegion() const {return precisionRegion;}
 
-  /// Set whether precision output should be recorded for this component
-  void   SetPrecisionRegion(G4bool precisionRegionIn);
-
   /// Access beam pipe information
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
-
-  /// Get the angle the component induces in the reference trajector (rad). 
-  /// Note, this is 0 for h and v kickers
-  inline G4double GetAngle() const {return angle;}
 
   /// Access face normal unit vector. This is w.r.t. the incoming reference
   /// trajectory and NOT the local geometry of the component.
@@ -92,26 +114,12 @@ public:
   /// local geometry of the component.
   inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
   
-  /// @{ Access the length of the component. Note there is no z length - this is chord length.
-  /// Only chord OR arc makes it explicit.
-  virtual G4double GetArcLength()   const {return arcLength;} 
-  virtual G4double GetChordLength() const {return chordLength;}
-  /// @}
-  
   /// Access the read out geometry
   inline G4LogicalVolume* GetReadOutLogicalVolume() const {return readOutLV;}
 
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
   inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}
-  
-  // in case a mapped field is provided creates a field mesh in global coordinates
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
-
-  ///@{ This function should be revisited given recent changes (v0.7)
-  void             SetGFlashVolumes(G4LogicalVolume* aLogVol);
-  std::vector<G4LogicalVolume*> GetGFlashVolumes() const;
-  ///@}
 
   /// Increment (+1) the number of times this component has been copied.
   inline void  IncrementCopyNumber() {copyNumber++;}
@@ -119,19 +127,11 @@ public:
   /// Get the number of times this component has been copied.
   inline G4int GetCopyNumber() const {return copyNumber;}
 
-  /// initialise method
-  /// checks if marker logical volume already exists and builds new one if not
-  /// can't be in constructor as calls virtual methods
-  virtual void Initialise();
-
-  /// Copy the bias list to this element
-  void SetBiasVacuumList(std::list<std::string> biasVacuumListIn);
-  void SetBiasMaterialList(std::list<std::string> biasMaterialListIn);
-
-  /// Access the bias list copied from parser
-  std::list<std::string> GetBiasVacuumList() const;
-  std::list<std::string> GetBiasMaterialList() const;
-
+  /// @{ Access the bias list copied from parser
+  std::list<std::string> GetBiasVacuumList()   const {return biasVacuumList;}
+  std::list<std::string> GetBiasMaterialList() const {return biasMaterialList;}
+  /// @}
+  
   /// Whether this component has an optional end piece that should be placed
   /// independently or not depending on other items in the beamline.
   BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
@@ -142,6 +142,18 @@ public:
 
   // Update the read out geometry volume given new face normals incase of a tilt.
   void UpdateReadOutVolumeWithTilt(G4double tilt);
+
+  // to be deprecated public methods
+  
+  // in case a mapped field is provided creates a field mesh in global coordinates
+  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
+
+  ///@{ This function should be revisited given recent changes (v0.7)
+  void SetGFlashVolumes(G4LogicalVolume* aLogVol)
+  {itsGFlashVolumes.push_back(aLogVol);}
+  std::vector<G4LogicalVolume*> GetGFlashVolumes() const
+  {return itsGFlashVolumes;}
+  ///@}
   
 protected:
   /// Build the container only. Should be overridden by derived class to add more geometry
@@ -157,8 +169,8 @@ protected:
   /// Assign the accelerator tracking volume - only callable by derived classes - ie not public.
   /// This is just setting a reference to the accelerator volume and it is not deleted by
   /// this class (BDSAcceleratorComponent) - therefore, the derived class should also deal with
-  /// memory management of this volume - whether this is by using the inherited (from BDSGeometryComponent)
-  /// RegisterLogicalVolume() or by manually deleting itself.
+  /// memory management of this volume - whether this is by using the inherited
+  /// (from BDSGeometryComponent) RegisterLogicalVolume() or by manually deleting itself.
   inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn) {acceleratorVacuumLV = accVacLVIn;}
   
   ///@{ Const protected member variable that may not be changed by derived classes
@@ -227,28 +239,7 @@ private:
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
-  G4double      readOutRadius;    ///< radius of read out volume solid
+  G4double      readOutRadius;    ///< Radius of read out volume solid.
 };
-
-inline void   BDSAcceleratorComponent::SetPrecisionRegion(G4bool precisionRegionIn)
-{precisionRegion = precisionRegionIn;}
-
-inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
-{itsGFlashVolumes.push_back(aLogVol);}
-
-inline std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes() const
-{return itsGFlashVolumes;}
-
-inline void BDSAcceleratorComponent::SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
-{biasVacuumList = biasVacuumListIn;}
-
-inline std::list<std::string> BDSAcceleratorComponent::GetBiasVacuumList() const
-{return biasVacuumList;}
-
-inline void BDSAcceleratorComponent::SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
-{biasMaterialList = biasMaterialListIn;}
-
-inline std::list<std::string> BDSAcceleratorComponent::GetBiasMaterialList() const
-{return biasMaterialList;}
 
 #endif
