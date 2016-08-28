@@ -63,8 +63,6 @@ void BDS::BuildEndPieceBeamline()
 	  G4double   previousNonDriftEndPieceL = 0;
 	  G4bool              driftIsFirstItem = false;
 	  BDSExtent        endPieceInnerExtent = endPieceBefore->GetInnerExtent();
-	  if (accComponentTO) // could be nullptr
-	    {endPieceInnerExtent = endPieceInnerExtent.Tilted(accComponentTO->GetTilt());}
 	  G4bool         driftsAreTooBigBefore = false;
 	  while(keepGoing)
 	    {
@@ -74,7 +72,10 @@ void BDS::BuildEndPieceBeamline()
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
 		    {
 		      // check extents first
-		      auto extPipe = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      G4double  tiltPipe = inspectedElement->GetTilt();
+		      if (accComponentTO) // could be nullptr
+			{extPipe = extPipe.Tilted(accComponentTO->GetTilt() - tiltPipe);}
 		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
 			{
 			  keepGoing             = false;
@@ -156,7 +157,10 @@ void BDS::BuildEndPieceBeamline()
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
 		    {
 		      // check extents first
-		      auto extPipe = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      G4double  tiltPipe = inspectedElement->GetTilt();
+		      if (accComponentTO) // could be nullptr
+			{extPipe = extPipe.Tilted(accComponentTO->GetTilt() - tiltPipe);}
 		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
 			{
 			  keepGoing            = false;
