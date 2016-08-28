@@ -1,0 +1,13 @@
+d1: drift, l=0.5*m, apertureType="rectangular", aper1=4*cm, aper2=2*cm, tilt=-pi/6;
+sb1: sbend, l=2*m, angle=0.02, e1=0.1, e2=-0.2, tilt=pi/4;
+
+! note this uses the same drift twice with different pole faces
+! meeting it so they should be uniquely built without overlaps
+l1: line=(d1,sb1,d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, checkOverlaps=1;
