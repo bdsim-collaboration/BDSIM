@@ -1,43 +1,76 @@
 #include "BDSExtent.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4TwoVector.hh"
 
-#include <algorithm>
 #include <ostream>
 #include <utility>
 
 BDSExtent::BDSExtent():
-  extentX(std::make_pair(0.0,0.0)),
-  extentY(std::make_pair(0.0,0.0)),
-  extentZ(std::make_pair(0.0,0.0))
+  extXNeg(0.0),
+  extXPos(0.0),
+  extYNeg(0.0),
+  extYPos(0.0),
+  extZNeg(0.0),
+  extZPos(0.0)
 {;}
 
 BDSExtent::BDSExtent(std::pair<G4double, G4double> extXIn,
 		     std::pair<G4double, G4double> extYIn,
 		     std::pair<G4double, G4double> extZIn):
-  extentX(extXIn),
-  extentY(extYIn),
-  extentZ(extZIn)
+  extXNeg(extXIn.first),
+  extXPos(extXIn.second),
+  extYNeg(extYIn.first),
+  extYPos(extYIn.second),
+  extZNeg(extZIn.first),
+  extZPos(extZIn.second)
 {;}
 
 BDSExtent::BDSExtent(G4double extXNegIn, G4double extXPosIn,
 		     G4double extYNegIn, G4double extYPosIn,
 		     G4double extZNegIn, G4double extZPosIn):
-  extentX(std::make_pair(extXNegIn, extXPosIn)),
-  extentY(std::make_pair(extYNegIn, extYPosIn)),
-  extentZ(std::make_pair(extZNegIn, extZPosIn))
+  extXNeg(extXNegIn),
+  extXPos(extXPosIn),
+  extYNeg(extYNegIn),
+  extYPos(extYPosIn),
+  extZNeg(extZNegIn),
+  extZPos(extZPosIn)
 {;}
 
 BDSExtent::BDSExtent(G4double extXIn, G4double extYIn, G4double extZIn):
-  extentX(std::make_pair(-extXIn, extXIn)),
-  extentY(std::make_pair(-extYIn, extYIn)),
-  extentZ(std::make_pair(-extZIn, extZIn))
+  extXNeg(-std::abs(extXIn)),
+  extXPos( std::abs(extXIn)),
+  extYNeg(-std::abs(extYIn)),
+  extYPos( std::abs(extYIn)),
+  extZNeg(-std::abs(extZIn)),
+  extZPos( std::abs(extZIn))
 {;}
 
 BDSExtent::~BDSExtent()
 {;}
+
+BDSExtent BDSExtent::TiltOffset(const BDSTiltOffset* tiltOffset) const
+{
+  if (!tiltOffset)
+    {return BDSExtent(*this);}
+  BDSExtent tilted = Tilted(tiltOffset->GetTilt());
+  BDSExtent offset = tilted.Offset(tiltOffset->GetOffset());
+  return offset;
+}
+
+BDSExtent BDSExtent::Offset(G4ThreeVector offset) const
+{
+  return Offset(offset.x(), offset.y(), offset.z());
+}
+
+BDSExtent BDSExtent::Offset(G4double dx, G4double dy, G4double dz) const
+{
+  return BDSExtent(extXNeg + dx, extXPos + dx,
+		   extYNeg + dy, extYPos + dy,
+		   extZNeg + dz, extZPos + dz);
+}
 
 BDSExtent BDSExtent::Tilted(G4double angle) const
 {
@@ -46,10 +79,10 @@ BDSExtent BDSExtent::Tilted(G4double angle) const
 
   // rotate each vector (from origin to each corner) by angle
   // and check - safer than checking based on +ve / -ve angle
-  G4TwoVector topRight = G4TwoVector(extentX.second, extentY.second);
-  G4TwoVector botRight = G4TwoVector(extentX.second, extentY.first);
-  G4TwoVector botLeft  = G4TwoVector(extentX.first,  extentY.first);
-  G4TwoVector topLeft  = G4TwoVector(extentX.first,  extentY.second);
+  G4TwoVector topRight = G4TwoVector(extXPos, extYPos);
+  G4TwoVector botRight = G4TwoVector(extXPos, extYNeg);
+  G4TwoVector botLeft  = G4TwoVector(extXNeg, extYNeg);
+  G4TwoVector topLeft  = G4TwoVector(extXNeg, extYPos);
 
   topRight.rotate(angle);
   botRight.rotate(angle);
@@ -63,14 +96,14 @@ BDSExtent BDSExtent::Tilted(G4double angle) const
 
   BDSExtent result = BDSExtent(xMin, xMax,
 			       yMin, yMax,
-			       extentZ.first, extentZ.second);
+			       extZNeg, extZPos);
   return result;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
 {
-  out << ext.extentX.first << " " << ext.extentX.second << " ";
-  out << ext.extentY.first << " " << ext.extentY.second << " ";
-  out << ext.extentZ.first << " " << ext.extentZ.second;
+  out << ext.extXNeg << " " << ext.extXPos << " ";
+  out << ext.extYNeg << " " << ext.extYPos << " ";
+  out << ext.extZNeg << " " << ext.extZPos;
   return out;
 }
