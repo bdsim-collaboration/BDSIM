@@ -88,6 +88,11 @@ public:
   inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
   inline G4int             GetIndex()                     const {return index;}
   ///@}
+
+  /// @{ Return face normal accounting for placement tilt of this component.
+  G4ThreeVector InputFaceNormal()  const;
+  G4ThreeVector OutputFaceNormal() const;
+  /// @}
   
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);

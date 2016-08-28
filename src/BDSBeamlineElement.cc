@@ -4,14 +4,13 @@
 #include "BDSDebug.hh"
 #include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
+#include "BDSTiltOffset.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 
 #include <ostream>
-
-class BDSTiltOffset;
 
 BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
 				       G4ThreeVector            positionStartIn,
@@ -99,6 +98,30 @@ BDSBeamlineElement::~BDSBeamlineElement()
   delete placementTransform;
   delete readOutPlacementTransform;
   delete samplerPlacementTransform;
+}
+
+G4ThreeVector BDSBeamlineElement::InputFaceNormal() const
+{
+  G4ThreeVector inputFNLocal = component->InputFaceNormal();
+  if (!tiltOffset) // no tilt so the same as local
+    {return inputFNLocal;}
+  else
+    {
+      G4ThreeVector inputFNGlobal = inputFNLocal.rotateZ(tiltOffset->GetTilt());
+      return inputFNGlobal;
+    }
+}
+
+G4ThreeVector BDSBeamlineElement::OutputFaceNormal() const
+{
+  G4ThreeVector outputFNLocal = component->OutputFaceNormal();
+  if (!tiltOffset) // no tilt so the same as local
+    {return outputFNLocal;}
+  else
+    {
+      G4ThreeVector outputFNGlobal = outputFNLocal.rotateZ(-tiltOffset->GetTilt());
+      return outputFNGlobal;
+    }
 }
 
 std::ostream& operator<< (std::ostream& out, BDSBeamlineElement const &e)
