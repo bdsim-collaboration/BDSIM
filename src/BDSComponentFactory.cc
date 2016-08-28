@@ -106,14 +106,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #endif
 
   // set next/previous element to be last (and only non thinmultipole) element in the vector
-  if (BDS::IsFinite(prevElements.size()))
-    {prevElement = prevElements.back();}
-  else
+  if (prevElements.empty())
     {prevElement = nullptr;}
-  if (BDS::IsFinite(nextElements.size()))
-    {nextElement = nextElements.back();}
   else
+    {prevElement = prevElements.back();}
+  if (nextElements.empty())
     {nextElement = nullptr;}
+  else
+    {nextElement = nextElements.back();}
 
   if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
     {registered = true;}
