@@ -43,8 +43,8 @@ public:
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
   BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
-                           std::vector<GMAD::Element*> prevElementIn,
-                           std::vector<GMAD::Element*> nextElementIn);
+                           const std::vector<GMAD::Element*>& prevElementIn,
+                           const std::vector<GMAD::Element*>& nextElementIn);
   
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
@@ -140,11 +140,7 @@ private:
   
  /// element for storing instead of passing around
   GMAD::Element* element = nullptr;
-
-  // vector of previous and next elements
-  std::vector<GMAD::Element*> prevElements;// = nullptr;
-  std::vector<GMAD::Element*> nextElements;// = nullptr;
-
+    
   /// element access to previous and next element (can be nullptr)
   GMAD::Element* prevElement = nullptr;
   GMAD::Element* nextElement = nullptr;

@@ -88,13 +88,11 @@ BDSComponentFactory::~BDSComponentFactory()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-                                       std::vector<GMAD::Element*> prevElementIn,
-                                       std::vector<GMAD::Element*> nextElementIn)
+                                       const std::vector<GMAD::Element*>& prevElements,
+                                       const std::vector<GMAD::Element*>& nextElements)
 {
   element      = elementIn;
-  // vectors of all next/previous elements plus any thinmultipoles inbetween
-  prevElements = prevElementIn;
-  nextElements = nextElementIn;
+
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
