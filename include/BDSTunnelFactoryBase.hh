@@ -2,17 +2,17 @@
 #define BDSTUNNELFACTORYBASE_H
 
 #include "globals.hh"  // geant4 globals / types
-#include "G4Material.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
 
-#include "BDSGeometryComponent.hh"
 #include "BDSTunnelSection.hh"
-#include "BDSTunnelType.hh"
 
 #include <vector>
 
+class G4UserLimits;
+class G4Material;
+class G4VisAttributes;
+class G4VSolid;
+
+class BDSGeometryComponent;
 struct BDSTunnelInfo;
 
 /**

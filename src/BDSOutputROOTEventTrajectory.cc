@@ -3,6 +3,7 @@
 #include "BDSOutputROOTEventTrajectory.hh"
 
 #ifndef __ROOTBUILD__
+#include "BDSDebug.hh"
 #include "BDSTrajectory.hh"
 #endif
 

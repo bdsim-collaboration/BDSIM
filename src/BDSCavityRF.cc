@@ -2,6 +2,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSCavity.hh"
 #include "BDSCavityField.hh"
+#include "BDSCavityInfo.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"

@@ -1,15 +1,16 @@
 #ifndef BDSTRAJECTORYPOINT_H
 #define BDSTRAJECTORYPOINT_H
 
-#include "BDSAuxiliaryNavigator.hh"
-
 #include "globals.hh" // geant4 types / globals
 #include "G4Allocator.hh"
-#include "G4Step.hh"
 #include "G4TrajectoryPoint.hh"
-#include "G4Track.hh"
 
 #include <ostream>
+
+class G4Step;
+class G4Track;
+
+class BDSAuxiliaryNavigator;
 
 /**
  * @brief A Point in a trajectory with extra information.

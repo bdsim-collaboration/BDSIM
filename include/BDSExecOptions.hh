@@ -1,8 +1,6 @@
 #ifndef BDSEXECOPTIONS_H
 #define BDSEXECOPTIONS_H
 
-#include <getopt.h>
-
 #include "globals.hh" // geant4 types / globals
 
 #include "parser/options.h"
@@ -40,7 +38,7 @@ private:
    * @param[in] argc command line input number of variables
    * @param[in] argv array of char* of the input parameters
    */
-  void Parse(int arcg, char **argv);
+  void Parse(int argc, char **argv);
   
   /// Helper method to set the BDSIMPath correctly
   G4String GetPath(G4String filename);
