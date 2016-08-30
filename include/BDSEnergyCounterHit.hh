@@ -47,7 +47,7 @@ public:
 		      G4int    beamlineIndexIn   = -1,
 		      G4int    geomFlag          = -1);
   
-  ~BDSEnergyCounterHit();
+  virtual ~BDSEnergyCounterHit();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

@@ -12,7 +12,7 @@ class BDSLWCalorimeterSD: public G4VSensitiveDetector
 {
 public:
   BDSLWCalorimeterSD(G4String name);
-  ~BDSLWCalorimeterSD();
+  virtual ~BDSLWCalorimeterSD();
   
   virtual void Initialize(G4HCofThisEvent*HCE);
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);

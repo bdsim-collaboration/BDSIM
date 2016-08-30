@@ -20,7 +20,7 @@ class BDSEnergyCounterSD: public G4VSensitiveDetector, public G4VGFlashSensitive
 
 public:
   BDSEnergyCounterSD(G4String name);
-  ~BDSEnergyCounterSD();
+  virtual ~BDSEnergyCounterSD();
 
   virtual void Initialize(G4HCofThisEvent*HCE);
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
