@@ -3,7 +3,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "BDSReadOutGeometry.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -11,7 +10,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4UserLimits.hh"
-#include "G4VReadOutGeometry.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
