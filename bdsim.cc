@@ -33,9 +33,9 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh" // Parser
-#include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
@@ -149,7 +149,9 @@ int main(int argc,char** argv)
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld    = new BDSDetectorConstruction();
   BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
+  BDSParallelWorldCurvilinear* curvilinearWorld = new BDSParallelWorldCurvilinear();
   realWorld->RegisterParallelWorld(samplerWorld);
+  realWorld->RegisterParallelWorld(curvilinearWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
