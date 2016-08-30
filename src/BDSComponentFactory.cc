@@ -366,8 +366,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
             prevElement->type != ElementType::_THINMULT &&
             !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1))
             ) {
-      G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires previous element "
-      << "to be a Drift or SBend with opposite outcoming poleface" << G4endl;
+      G4cerr << __METHOD_NAME__ << "SBend " << element->name << " has a non-zero incoming poleface "
+       << "which requires the previous element to be a Drift or SBend with opposite outcoming poleface" << G4endl;
       exit(1);
     }
   }
@@ -379,8 +379,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
             nextElement->type != ElementType::_THINMULT &&
             !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2))
             ) {
-      G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires next element to "
-      << "be a Drift or SBend with opposite incoming poleface" << G4endl;
+      G4cerr << __METHOD_NAME__ << "SBend " << element->name << " has a non-zero outgoing poleface  "
+        << " which requires the next element to be a Drift or SBend with opposite incoming poleface" << G4endl;
       exit(1);
     }
   }
@@ -440,8 +440,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
           !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires previous element "
-		 << "to be a Drift or RBend with opposite outcoming poleface" << G4endl;
+        G4cerr << __METHOD_NAME__ << "RBend " << element->name << " has a non-zero incoming poleface "
+        << "which requires the previous element to be a Drift or RBend with opposite outcoming poleface" << G4endl;
 	  exit(1);
 	}
     }
@@ -455,8 +455,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
           !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "RBend with non-zero outgoing poleface requires next "
-		 << "element to be a Drift or RBend with opposite incoming poleface" << G4endl;
+        G4cerr << __METHOD_NAME__ << "RBend " << element->name << " has a non-zero outgoing poleface  "
+        << " which requires the next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
 	  exit(1);
 	}
     }
