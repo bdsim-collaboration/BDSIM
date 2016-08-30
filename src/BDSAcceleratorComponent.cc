@@ -170,6 +170,8 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
 						    emptyMaterial,    // material
 						    name + "_ro_lv"); // name
 
+  // always debug visualisation for read out geometry - only viewed via explicit commands
+  readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
   return readOutLV;
 }
 
