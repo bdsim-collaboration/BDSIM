@@ -3,7 +3,6 @@
 #ifndef __ROOTBUILD__
 #include "CLHEP/Units/SystemOfUnits.h"
 #include "BDSEnergyCounterHit.hh"
-#include "BDSTunnelHit.hh"
 #include "BDSTrajectoryPoint.hh"
 #endif
 
@@ -75,26 +74,6 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
   }
 }
 
-void BDSOutputROOTEventLoss::Fill(BDSTunnelHit *hit)
-{
-  this->n++;
-  this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
-  this->S.push_back     ( (float &&)      (hit->GetS() / CLHEP::m));
-  this->weight.push_back( (float &&) hit->GetWeight());
-  this->turn.push_back( hit->GetTurnsTaken());
-
-  if(this->storeLocal) {
-    this->x.push_back( (float &&) (hit->Getx() / CLHEP::m));
-    this->y.push_back( (float &&) (hit->Gety() / CLHEP::m));
-    this->z.push_back( (float &&) (hit->Getz() / CLHEP::m));
-  }
-
-  if(this->storeGlobal) {
-    this->X.push_back( (float &&) (hit->GetX() / CLHEP::m));
-    this->Y.push_back( (float &&) (hit->GetY() / CLHEP::m));
-    this->Z.push_back( (float &&) (hit->GetZ() / CLHEP::m));
-  }
-}
 #endif
 
 void BDSOutputROOTEventLoss::Flush()
@@ -112,7 +91,5 @@ void BDSOutputROOTEventLoss::Flush()
   this->X.clear();
   this->Y.clear();
   this->Z.clear();
-
-
   // this->geomFlag.clear();
 }

@@ -259,7 +259,7 @@ void BDSOutputROOTEvent::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 }
 
 /// write tunnel hits
-void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* hc)
+void BDSOutputROOTEvent::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -267,7 +267,7 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* hc)
   G4int n_hit = hc->entries();
   for(G4int i=0;i<n_hit;i++)
     {
-      BDSTunnelHit *hit = (*hc)[i];
+      BDSEnergyCounterHit *hit = (*hc)[i];
       tHit->Fill(hit);
     }
 }

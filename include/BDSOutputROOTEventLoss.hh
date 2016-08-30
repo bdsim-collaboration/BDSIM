@@ -40,7 +40,6 @@ public:
 #ifndef __ROOTBUILD__
   void Fill(BDSTrajectoryPoint* hit);
   void Fill(BDSEnergyCounterHit* hit);
-  void Fill(BDSTunnelHit* hit);
 #endif
   virtual void Flush();
 
