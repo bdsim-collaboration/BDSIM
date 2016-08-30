@@ -229,112 +229,112 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Save interesting trajectories
 
   if(BDSGlobalConstants::Instance()->StoreTrajectory())
-  {
-    std::vector<BDSTrajectory*> interestingTrajectories;
-
-    G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
-    TrajectoryVector* trajVec = trajCont->GetVector();
-
+    {
+      std::vector<BDSTrajectory*> interestingTrajectories;
+      
+      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
+      TrajectoryVector* trajVec = trajCont->GetVector();
+      
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
+      G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
 #endif
-    for (auto iT1 : *trajVec)
-	  {
-	    BDSTrajectory* traj = (BDSTrajectory*) (iT1);
-
-	    G4int parentID=traj->GetParentID();
-	    // always store primaries
-	    if(parentID==0)
-      {
-        interestingTrajectories.push_back(traj);
-        continue;
-      }
-
-	    // check on energy (if energy threshold is not negative
-	    if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
-          traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
-      {
-        interestingTrajectories.push_back(traj);
-        continue;
-      }
-
-      // check on particle if not empty string
-	    if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
+      for (auto iT1 : *trajVec)
+	{
+	  BDSTrajectory* traj = (BDSTrajectory*) (iT1);
+	  
+	  G4int parentID=traj->GetParentID();
+	  // always store primaries
+	  if(parentID==0)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
+	  
+	  // check on energy (if energy threshold is not negative
+	  if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
+	      traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
+	  
+	  // check on particle if not empty string
+	  if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty())
+	    {
 	      G4String particleName = traj->GetParticleName();
-        //G4cout << particleName << G4endl;
+	      //G4cout << particleName << G4endl;
 	      std::size_t found = BDSGlobalConstants::Instance()->StoreTrajectoryParticle().find(particleName);
 	      if (found != std::string::npos)
-        {
-          interestingTrajectories.push_back(traj);
-          continue;
-        }
+		{
+		  interestingTrajectories.push_back(traj);
+		  continue;
+		}
 	    }
-
-      // check on depth
-	    // depth = 0 means only primaries
+	  
+	  // check on depth
+	  // depth = 0 means only primaries
 #if 0
-	    const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
-	    // check directly for primaries and secondaries
-	    if (parentID == 0 ||(depth > 0 && parentID == 1))
+	  const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
+	  // check directly for primaries and secondaries
+	  if (parentID == 0 ||(depth > 0 && parentID == 1))
 	    {
-          interestingTrajectories.push_back(traj);
-          continue;
+	      interestingTrajectories.push_back(traj);
+	      continue;
 	    }
-
-      G4bool depthCheck = false;
-	    // starting loop with tertiaries
-	    for (G4int i=1; i<depth; i++)
+	  
+	  G4bool depthCheck = false;
+	  // starting loop with tertiaries
+	  for (G4int i=1; i<depth; i++)
 	    {
 	      // find track of parentID
 	      // looping over vector seems only way?
 	      for(auto iT2 : *trajVec)
+		{
+		  BDSTrajectory* tr2 = (BDSTrajectory*) (iT2);
+		  if(tr2->GetTrackID()==parentID)
 		    {
-		      BDSTrajectory* tr2 = (BDSTrajectory*) (iT2);
-		      if(tr2->GetTrackID()==parentID)
-		      {
-		        parentID = tr2->GetParentID();
-		        break;
-		      }
-		    }
-	      // best to stop at parentID == 1
-	      if (parentID == 1)
-		    {
-		      depthCheck = true;
+		      parentID = tr2->GetParentID();
 		      break;
 		    }
+		}
+	      // best to stop at parentID == 1
+	      if (parentID == 1)
+		{
+		  depthCheck = true;
+		  break;
+		}
 	    }
-	    if(depthCheck == true)
-      {
-          interestingTrajectories.push_back(traj);
-          continue;
-      }
+	  if(depthCheck == true)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
 #endif
-
+	  
 #if 0
-      // clear out trajectories that don't reach point x
-      BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
-      G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
-      G4bool greaterThanZInteresting = trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
-      G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) + std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));
-      G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
-      if (greaterThanZInteresting && withinRInteresting)
-      {
-        interestingTrajectories.push_back(traj);
-        continue;
-      }
+	  // clear out trajectories that don't reach point x
+	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
+	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
+	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
+	  G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) + std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));
+	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
+	  if (greaterThanZInteresting && withinRInteresting)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
 #endif
-    }
-
-    //Output interesting trajectories
+	}
+      
+      //Output interesting trajectories
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTrajectories.size() << G4endl;
+      G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTrajectories.size() << G4endl;
 #endif
-
-
-    bdsOutput->WriteTrajectory(interestingTrajectories);
-    interestingTrajectories.clear();
-  }
-
+      
+      bdsOutput->WriteTrajectory(interestingTrajectories);
+      interestingTrajectories.clear();
+    }
+  
   bdsOutput->FillEvent();
 
 #ifdef BDSDEBUG
