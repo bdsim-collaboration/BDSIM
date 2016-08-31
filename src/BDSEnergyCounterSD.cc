@@ -189,6 +189,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   trackID    = aStep->GetTrack()->GetTrackID();
+  parentID   = aStep->GetTrack()->GetParentID();
   volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
@@ -203,6 +204,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
                                                        volName,
                                                        ptype,
                                                        trackID,
+                                                       parentID,
                                                        weight,
                                                        precisionRegion,
                                                        turnstaken,
@@ -284,6 +286,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   
   ptype   = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
   trackID = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetTrackID();
+  parentID= aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetParentID();
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
 
   if(verbose && BDSGlobalConstants::Instance()->StopTracks())
@@ -297,25 +300,26 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
   
   // see explanation in other processhits function
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
-						       enrg,
-						       X,
-						       Y,
-						       Z,
-						       Z /*SBefore*/,
-						       Z /*SAfter*/,
-						       sHit,
-						       x,
-						       y,
-						       z,
-						       volName, 
-						       ptype,
-                   trackID,
-						       weight, 
-						       0,
-						       turnstaken,
-						       eventnumber,
-						       stepLength,
-						       theInfo->GetBeamlineIndex());
+                                                       enrg,
+                                                       X,
+                                                       Y,
+                                                       Z,
+                                                       Z /*SBefore*/,
+                                                       Z /*SAfter*/,
+                                                       sHit,
+                                                       x,
+                                                       y,
+                                                       z,
+                                                       volName,
+                                                       ptype,
+                                                       trackID,
+                                                       parentID,
+                                                       weight,
+                                                       0,
+                                                       turnstaken,
+                                                       eventnumber,
+                                                       stepLength,
+                                                       theInfo->GetBeamlineIndex());
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
