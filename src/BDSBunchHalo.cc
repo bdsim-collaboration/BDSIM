@@ -177,8 +177,8 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       }
       else if (weightFunction == "oneoverr")
       {
-        wx = pow(emitX / fabs(emitXSp), weightParameter);
-        wy = pow(emitY / fabs(emitYSp), weightParameter);
+        wx = pow(fabs(emitXSp) / emitX, weightParameter);
+        wy = pow(fabs(emitYSp) / emitY, weightParameter);
       }
       else if (weightFunction == "exp")
       {
