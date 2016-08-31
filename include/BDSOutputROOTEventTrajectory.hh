@@ -22,6 +22,7 @@ public:
   void Flush();
 
   int n;
+  std::vector<int> partID;
   std::vector<unsigned int> trackID;
   std::vector<unsigned int> parentID;
   std::vector<std::vector<int>> preProcessTypes;
