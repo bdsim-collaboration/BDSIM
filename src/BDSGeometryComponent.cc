@@ -5,9 +5,11 @@
 #include "globals.hh"              // geant4 globals / types
 #include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4VSolid.hh"
 #include <vector>
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,

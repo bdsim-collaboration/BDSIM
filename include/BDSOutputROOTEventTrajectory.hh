@@ -6,8 +6,10 @@
 #include <vector>
 
 #ifndef __ROOTBUILD__
+class BDSEnergyCounterHit;
 class BDSTrajectory;
-#include "BDSEnergyCounterHit.hh"
+template <class T> class G4THitsCollection;
+typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 #endif
 
 class BDSOutputROOTEventTrajectory : public TObject
