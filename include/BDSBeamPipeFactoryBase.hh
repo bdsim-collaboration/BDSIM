@@ -4,11 +4,11 @@
 #include "BDSBeamPipe.hh"
 
 #include "globals.hh"         // geant4 globals / types
-#include "G4Material.hh"      // materials
 
 class BDSExtent;
 
 class G4LogicalVolume;
+class G4Material;
 class G4PVPlacement;
 class G4UserLimits;
 class G4VSolid;

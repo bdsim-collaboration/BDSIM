@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 
+#include <ctime>
 #include <string>
 #include <vector>
 

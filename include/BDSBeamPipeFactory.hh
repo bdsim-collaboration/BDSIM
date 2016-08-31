@@ -1,13 +1,15 @@
 #ifndef BDSBEAMPIPEFACTORY_H
 #define BDSBEAMPIPEFACTORY_H
 
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactoryBase.hh"
-#include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4Material.hh"
+
+class G4Material;
+
+class BDSBeamPipe;
+class BDSBeamPipeInfo;
+class BDSBeamPipeFactoryBase;
 
 /**
  * @brief The main interface for using the beam pipe factories. 
