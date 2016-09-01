@@ -25,10 +25,9 @@ public:
 		   G4double              chordLength,
 		   G4double              angle,
 		   BDSGeometryComponent* tunnelGeometry,
-		   G4VSolid*             innerIntersectionSolidIn,
-		   G4LogicalVolume*      readOutLVIn);
+		   G4VSolid*             innerIntersectionSolidIn);
 
-  ~BDSTunnelSection();
+  virtual ~BDSTunnelSection();
 
   /// Override BDSAcceleratorComponent::Initialise() method to avoid doing
   /// anything. Doing this avoids wrong and useless read out volume being created.

@@ -214,7 +214,7 @@ BDSTunnelSection* BDSTunnelFactoryRectAboveGround::CreateTunnelSectionAngled(G4S
 					   faceSolid);
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius,
-		     containerYRadius, visible, inputFace, outputFace);
+		     containerYRadius, visible);
   
   return tunnelSection;
 }
