@@ -13,7 +13,7 @@
 
 #include <vector>
 
-struct BDSTunnelInfo;
+class BDSTunnelInfo;
 
 /**
  * @brief Abstract base class for tunnel factory classes
