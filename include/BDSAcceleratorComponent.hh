@@ -175,6 +175,7 @@ protected:
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
   static G4bool      checkOverlaps;
+  static G4double    readOutRadius; ///< Default read out volume radius - greater of sampler diameter and tunnel dimensions.
 
   /// Read out geometry volume. Protected so derived classes can fiddle if they require.
   /// This is a possibility as derived classes can override Initialise which calls the

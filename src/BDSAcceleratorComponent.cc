@@ -1,8 +1,10 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
@@ -17,6 +19,7 @@
 G4Material* BDSAcceleratorComponent::emptyMaterial = nullptr;
 G4double    BDSAcceleratorComponent::lengthSafety  = -1;
 G4bool      BDSAcceleratorComponent::checkOverlaps = false;
+G4double    BDSAcceleratorComponent::readOutRadius = -1;
 
 G4double const BDSAcceleratorComponent::lengthSafetyLarge = 1*CLHEP::um;
 
@@ -47,11 +50,23 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
 #endif
   // initialise static members
+  const auto globals = BDSGlobalConstants::Instance(); // shortcut
   if (!emptyMaterial)
-    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());}
+    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());}
   if (lengthSafety < 0)
-    {lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();}
-  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+    {lengthSafety = globals->LengthSafety();}
+  checkOverlaps = globals->CheckOverlaps();
+  if(readOutRadius < 0)
+    {
+      readOutRadius = globals->SamplerDiameter()*0.5;
+      if (globals->BuildTunnel() || globals->BuildTunnelStraight())
+	{// query the default tunnel model
+	  BDSExtent tunnelExtent = globals->TunnelInfo()->IndicativeExtent();
+	  tunnelExtent = tunnelExtent.Shift(globals->TunnelOffsetX(), globals->TunnelOffsetY());
+	  G4double maxTunnelR =  tunnelExtent.MaximumAbs();
+	  readOutRadius = std::max(readOutRadius, maxTunnelR);
+	}
+    }
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
@@ -122,18 +137,14 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   if (!BDS::IsFinite(chordLength)) return nullptr;
-
-  G4double roRadius = 0;
-  G4double roRadiusFromSampler = BDSGlobalConstants::Instance()->SamplerDiameter()*0.5;
   
   G4VSolid* roSolid = nullptr;
   if (!BDS::IsFinite(angle))
     {
       //angle is zero - build a box
-      roRadius = roRadiusFromSampler;
       roSolid = new G4Box(name + "_ro_solid", // name
-			  roRadius,           // x half width
-			  roRadius,           // y half width
+			  readOutRadius,      // x half width
+			  readOutRadius,      // y half width
 			  chordLength*0.5);   // z half width
     }
   else
@@ -142,7 +153,7 @@ G4LogicalVolume* BDSAcceleratorComponent::BuildReadOutVolume(G4String name,
       // factor of 0.95 here is arbitrary tolerance as g4 cut tubs seems to fail
       // with cutting entranace / exit planes close to limit.  
       G4double roRadiusFromAngleLength =  std::abs(chordLength / angle) * 0.8; // s = r*theta -> r = s/theta
-      roRadius = std::min(roRadiusFromSampler,roRadiusFromAngleLength);
+      G4double roRadius = std::min(readOutRadius,roRadiusFromAngleLength);
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << roRadiusFromSampler
 	     << " mm, max possible radius: " << roRadiusFromAngleLength << " mm" << G4endl;
