@@ -26,9 +26,9 @@ BDSParallelWorldCurvilinear::~BDSParallelWorldCurvilinear()
 
 void BDSParallelWorldCurvilinear::Construct()
 {// general abbreviation: 'cl' == curvilinear
-  //#ifdef BDSDEBUG
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-  //#endif
+#endif
 
   G4VPhysicalVolume* clWorld   = GetWorld();
   G4LogicalVolume*   clWorldLV = clWorld->GetLogicalVolume();
@@ -63,11 +63,11 @@ void BDSParallelWorldCurvilinear::Construct()
       G4int    nCopy         = element->GetCopyNo();
       G4Transform3D* ropt    = element->GetReadOutPlacementTransform();
 
-      //#ifdef BDSDEBUG
+#ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "placing read out geometry" << G4endl;
       G4cout << "placement transform position: " << ropt->getTranslation()  << G4endl;
       G4cout << "placement transform rotation: " << ropt->getRotation()  << G4endl; 
-      //#endif
+#endif
       G4PVPlacement* readOutPV = new G4PVPlacement(*ropt,          // placement transform
 						   readOutPVName,  // name
 						   readOutLV,      // logical volume
