@@ -288,6 +288,10 @@ void BDSDetectorConstruction::BuildWorld()
     {beamline = BDSAcceleratorModel::Instance()->GetTunnelBeamline();}
   else
     {beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();}
+
+  // Note, the curivlinear parallel world geometry will expand to match the tunnel
+  // geometry and the 5m margin below should definitely accommodate this so it's safe
+  // not use BDSExtents and a BDSBeamline for the curvilinear ('readout') parallel geometry.
   G4ThreeVector worldR      = beamline->GetMaximumExtentAbsolute();
   G4ThreeVector maxpositive = beamline->GetMaximumExtentPositive();
   G4ThreeVector maxnegative = beamline->GetMaximumExtentNegative();
