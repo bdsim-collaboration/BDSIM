@@ -35,11 +35,11 @@ public:
 
   BDSOutputROOTEventModel();
   virtual ~BDSOutputROOTEventModel();
+  int findNearestElement(TVector3 vPoint);
 
 #ifndef __ROOTBUILD__   
   virtual void Fill();
 #endif
-
 
   ClassDef(BDSOutputROOTEventModel,1);
 };
