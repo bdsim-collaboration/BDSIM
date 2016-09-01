@@ -19,6 +19,7 @@ BDSOutputROOTEventModel::~BDSOutputROOTEventModel()
 
 int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
 {
+  // TODO : Better search using lower
   double dMin = 1e50;
   int iMin = -1;
   for(int i=0;i<(int)this->midRefPos.size();i++)
