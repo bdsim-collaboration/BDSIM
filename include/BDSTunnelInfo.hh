@@ -53,6 +53,8 @@ public:
 		G4bool   sensitiveIn,
 		G4bool   visible = true);
 
+  BDSExtent IndicativeExtent() const;
+
   BDSTunnelType type;
   G4double      thickness;
   G4double      soilThickness;
