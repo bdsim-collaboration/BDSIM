@@ -10,7 +10,7 @@ class G4VSolid;
 /**
  * @brief Class that represents a section of tunnel.
  *
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTunnelSection: public BDSAcceleratorComponent
