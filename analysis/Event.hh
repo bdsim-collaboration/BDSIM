@@ -5,11 +5,12 @@
 
 #include "TROOT.h"
 
+#include "BDSOutputROOTEventSampler.hh"
+
 class BDSOutputROOTEventHistograms;
 class BDSOutputROOTEventInfo;
 class BDSOutputROOTEventLoss;
 class BDSOutputROOTEventTrajectory;
-template<class T> class BDSOutputROOTEventSampler;
 
 class TChain;
 
