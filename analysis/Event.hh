@@ -4,14 +4,14 @@
 #include <vector>
 
 #include "TROOT.h"
-#include "TTree.h"
-#include "TChain.h"
 
-#include "BDSOutputROOTEventSampler.hh"
-#include "BDSOutputROOTEventLoss.hh"
-#include "BDSOutputROOTEventTrajectory.hh"
-#include "BDSOutputROOTEventHistograms.hh"
-#include "BDSOutputROOTEventInfo.hh"
+class BDSOutputROOTEventHistograms;
+class BDSOutputROOTEventInfo;
+class BDSOutputROOTEventLoss;
+class BDSOutputROOTEventTrajectory;
+template<class T> class BDSOutputROOTEventSampler;
+
+class TChain;
 
 /**
  * @brief Event loader.
