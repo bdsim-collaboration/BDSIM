@@ -33,8 +33,19 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   G4TrajectoryPoint(track->GetPosition())
 {
   InitialiseVariables();
+
+  // Need to store the creator process
+  const G4VProcess* creatorProcess = track->GetCreatorProcess();
+  if(creatorProcess) {
+    preProcessType = track->GetCreatorProcess()->GetProcessType();
+    preProcessSubType = track->GetCreatorProcess()->GetProcessSubType();
+    postProcessType = preProcessType;
+    postProcessSubType = preProcessSubType;
+  }
+
   preWeight  = track->GetWeight();
   postWeight = preWeight;
+
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
