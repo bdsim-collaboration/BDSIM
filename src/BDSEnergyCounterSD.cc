@@ -85,35 +85,37 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // Get translation and rotation of volume w.r.t the World Volume
   G4VPhysicalVolume* theVolume = auxNavigator->LocateGlobalPointAndSetup(aStep);
 
+  // attribute the energy deposition to a uniformly random position along the step - correct!
+  // random distance - store to use twice to ensure global and local represent the same point
+  G4double randDist = G4UniformRand();
+  
+  // global coordinate positions of the step
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
-
-  //calculate local coordinates
+  G4ThreeVector eDepPos   = posbefore + randDist*(posafter - posbefore);
+  
+  // calculate local coordinates
   G4ThreeVector posbeforelocal  = auxNavigator->ConvertToLocal(posbefore);
   G4ThreeVector posafterlocal   = auxNavigator->ConvertToLocal(posafter);
-
-  // use the second point as the point of energy deposition
-  // originally this was the mean of the pre and post step points, but
-  // that appears to give uneven energy deposition about volume edges.
-  // this also gave edge effects
-  // now store both SAfter (post step point) and SBefore (pre step point)
+  G4ThreeVector eDepPosLocal    = posbeforelocal + randDist*(posafterlocal - posbeforelocal);
+  
   // global
-  X = posafter.x();
-  Y = posafter.y();
-  Z = posafter.z();
+  X = eDepPos.x();
+  Y = eDepPos.y();
+  Z = eDepPos.z();
   // local
-  x = posafterlocal.x();
-  y = posafterlocal.y();
-  z = posafterlocal.z();
+  x = eDepPosLocal.x();
+  y = eDepPosLocal.y();
+  z = eDepPosLocal.z();
 
-  stepLength = (posafter - posbefore).mag(); 
+  stepLength = (posafter - posbefore).mag(); // note this is of the full step
 
   // get the s coordinate (central s + local z), and precision info
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
   G4int beamlineIndex = -1;
   if (theInfo)
     {
-      sAfter  = theInfo->GetSPos() + z; //z is posafterlocal.z() - saves access
+      sAfter  = theInfo->GetSPos() + z; //z is eDepPosLocal.z() - saves access
       sBefore = theInfo->GetSPos() + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
       beamlineIndex   = theInfo->GetBeamlineIndex();
@@ -126,9 +128,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       sBefore = -1000;
       precisionRegion = false;
     }
-
-  // TBC - note the x,y,z should reflect the exact same s coordinate randomly chosen along the step
-  G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
+  
+  G4double sHit = sBefore + randDist*(sAfter - sBefore);
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
