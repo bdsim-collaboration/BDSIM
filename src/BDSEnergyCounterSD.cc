@@ -43,7 +43,6 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    auxNavigator(new BDSAuxiliaryNavigator())
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
-  itsName = name;
   collectionName.insert("energy_counter");
 }
 

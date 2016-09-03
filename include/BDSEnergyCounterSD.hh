@@ -9,7 +9,6 @@
 #include "G4VSensitiveDetector.hh"
 #include "G4VGFlashSensitiveDetector.hh" // G4VSensitiveDetector is required before this due to missing header
 
-
 class G4VProcess;
 class G4Step;
 class G4HCofThisEvent;
@@ -26,7 +25,6 @@ class G4TouchableHistory;
 
 class BDSEnergyCounterSD: public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
 {
-
 public:
   BDSEnergyCounterSD(G4String name);
   virtual ~BDSEnergyCounterSD();
@@ -35,12 +33,11 @@ public:
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
   virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
   
-  G4String GetName();
-  
 private:
   /// assignment and copy constructor not implemented nor used
   BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
   BDSEnergyCounterSD(BDSEnergyCounterSD&);
+  BDSEnergyCounterSD() = delete;
 
   G4bool   verbose;
   G4String itsName;
@@ -64,9 +61,6 @@ private:
   /// Navigator for checking points in read out geometry
   BDSAuxiliaryNavigator* auxNavigator;
 };
-
-inline G4String BDSEnergyCounterSD::GetName()
-{return itsName;}
 
 #endif
 
