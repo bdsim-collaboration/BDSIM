@@ -15,6 +15,15 @@ class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
 
+/**
+ * @brief Generates BDSEnergyCounterHits from step information - uses curvilinear coords.
+ *
+ * This class interrogates a G4Step and generates an energy deposition hit if there was
+ * a change in energy. This assigns the energy deposition to a point randomly (uniformly)
+ * along the step.  It also uses a BDSAuxiliaryNavigator instance to use transforms from
+ * the curvilinear parallel world for curvilinear coordinates.
+ */
+
 class BDSEnergyCounterSD: public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
 {
 
