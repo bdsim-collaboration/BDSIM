@@ -359,6 +359,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 
   BDSBeamline*      beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
+  G4VSensitiveDetector* tunnelECSD = BDSSDManager::Instance()->GetEnergyCounterTunnelSD();
   
   for(auto element : *beamline)
     {
@@ -472,6 +473,8 @@ void BDSDetectorConstruction::ComponentPlacement()
       
       for (auto element : *tunnel)
 	{
+	  // Make sensitive volumes sensitive
+	  element->GetAcceleratorComponent()->SetSensitiveDetector(tunnelECSD);
 	  new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
 			    element->GetPlacementName() + "_pv",  // placement name
 			    element->GetContainerLogicalVolume(), // volume to be placed
