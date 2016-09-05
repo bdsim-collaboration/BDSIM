@@ -56,29 +56,14 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 }
 
 G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const* const step,
-								    G4bool useCurvilinear)
+								    G4bool useCurvilinear) const
 { // const pointer to const G4Step
   // 'pos' = post but has same length as pre so code looks better
   G4StepPoint* preStepPoint = step->GetPreStepPoint();
   G4StepPoint* posStepPoint = step->GetPostStepPoint();
-  G4StepStatus preStatus    = preStepPoint->GetStepStatus();
-  G4StepStatus posStatus    = posStepPoint->GetStepStatus();
 
-  G4ThreeVector position;
-  if (preStatus == G4StepStatus::fGeomBoundary && posStatus == G4StepStatus::fGeomBoundary)
-    {// both are on a boundary - use average - assume chord is inside the solid if points are
-      position = (posStepPoint->GetPosition() - preStepPoint->GetPosition())/2.0;
-    }
-  else if (posStatus == G4StepStatus::fGeomBoundary)
-    {// pos on boundary - use pre
-      position = preStepPoint->GetPosition();
-    }
-  else
-    {// pre on boundary - use post
-      position = posStepPoint->GetPosition();
-    }
-  // order this way as it's more common the post point is on the boundary and belongs to
-  // next volume
+  // average the points - the mid point should always lie inside the volume given the way G4 does tracking.
+  G4ThreeVector position = (posStepPoint->GetPosition() + preStepPoint->GetPosition())/2.0;
   
   G4Navigator* nav = Navigator(useCurvilinear);  // select navigator
   G4VPhysicalVolume* selectedVol = nav->LocateGlobalPointAndSetup(position);

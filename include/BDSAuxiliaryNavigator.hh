@@ -66,7 +66,7 @@ public:
   /// A safe way to locate and setup a point inside a volume. Very const
   /// access to step.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(G4Step const* const step,
-					       G4bool useCurvilinear = true);
+					       G4bool useCurvilinear = true) const;
 
   /// Locate the supplied point the in the geometry and get and store
   /// the transform to that volume in the member variable. This function
