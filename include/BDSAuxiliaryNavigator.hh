@@ -1,6 +1,8 @@
 #ifndef BDSAUXILIARYNAVIGATOR_H
 #define BDSAUXILIARYNAVIGATOR_H
 
+#include "BDSStep.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
@@ -75,6 +77,13 @@ public:
   /// implement and have to keep const. This function doesn't change the
   /// const pointer but does change the contents of what it points to.
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
+
+  /// Calculate the local coordinates for both a pre and post step point. The mid point
+  /// of the step is used for the volume (and therefore transform) lookup which should
+  /// ensure the correct volume is found - avoiding potential boundary issues between
+  /// parallel worlds.
+  BDSStep ConvertToLocal(G4Step const* const step,
+			 G4bool useCurvilinear = true) const;
 
   /// Calculate the local coordinates of a global point.
   G4ThreeVector ConvertToLocal(const G4double globalPoint[3],

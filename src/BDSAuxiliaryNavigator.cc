@@ -1,5 +1,6 @@
-#include "BDSDebug.hh"
 #include "BDSAuxiliaryNavigator.hh"
+#include "BDSDebug.hh"
+#include "BDSStep.hh"
 
 #include "G4Navigator.hh"
 #include "G4Step.hh"
@@ -80,6 +81,26 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
   (*localToGlobalCL) = auxNavigatorCL->GetLocalToGlobalTransform();
   if (useCaching)
     {initialised = true;} // else always remains false
+}
+
+BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
+					      G4bool useCurvilinear) const
+{
+  auto selectedVol = LocateGlobalPointAndSetup(step, useCurvilinear);
+  if (useCurvilinear)
+    {
+      (*globalToLocalCL) = auxNavigatorCL->GetGlobalToLocalTransform();
+      (*localToGlobalCL) = auxNavigatorCL->GetLocalToGlobalTransform();
+    }
+  else
+    {
+      (*globalToLocal) = auxNavigator->GetGlobalToLocalTransform();
+      (*localToGlobal) = auxNavigator->GetLocalToGlobalTransform();
+    }
+
+  G4ThreeVector pre = GlobalToLocal(useCurvilinear)->TransformPoint(step->GetPreStepPoint()->GetPosition());
+  G4ThreeVector pos = GlobalToLocal(useCurvilinear)->TransformPoint(step->GetPostStepPoint()->GetPosition());
+  return BDSStep(pre, pos, selectedVol);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4double globalPosition[3],
