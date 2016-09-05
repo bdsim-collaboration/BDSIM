@@ -35,7 +35,7 @@ public:
 
   /// Overriden from G4VSensitiveDetector.  Creates hit instances and appends them to the
   /// hits collection.
-  virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
+  virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH);
 
   /// Hits collection ID - an integer look up for the hits collection
   /// provided by G4SDManager (a registry) that is given to the
@@ -44,7 +44,7 @@ public:
   
 private:
   /// The hits collection for this sensitive detector class that's owned
-  BDSSamplerHitsCollection *SamplerCollection;
+  BDSSamplerHitsCollection* SamplerCollection;
 
   /// A string describing whether it's a plane or cylindrical sampler.
   G4String itsType;
