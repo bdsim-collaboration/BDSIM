@@ -6,6 +6,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSDManager.hh"
 #include "BDSTrajectory.hh"
 
 #include "globals.hh"                  // geant4 types / globals
@@ -37,6 +38,7 @@ BDSEventAction::BDSEventAction():
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
+  tunnelEnergyCounterCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -56,7 +58,8 @@ BDSEventAction::BDSEventAction():
       if (printModulo < 0)
 	{printModulo = 1;}
     }
-  else printModulo=1;
+  else
+    {printModulo=1;}
 }
 
 BDSEventAction::~BDSEventAction()
@@ -79,7 +82,8 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   starts = (G4double)ms.count()/1000.0;
 
   // get pointer to analysis manager
-  analMan = BDSAnalysisManager::Instance();
+  if (!analMan)
+    {analMan = BDSAnalysisManager::Instance();}
 
   // number feedback
   G4int event_number = evt->GetEventID();
@@ -88,16 +92,17 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   if(verboseEvent)
     {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
-  // get hit collection IDs for easy access
-  G4SDManager* g4SDMan = G4SDManager::GetSDMpointer();
+  // cache hit collection IDs for quicker access
   if(samplerCollID_plane < 0)
-    {samplerCollID_plane  = g4SDMan->GetCollectionID("Sampler_plane");}
-  if(samplerCollID_cylin < 0)
-    {samplerCollID_cylin  = g4SDMan->GetCollectionID("Sampler_cylinder");}
-  if(energyCounterCollID < 0)
-    {energyCounterCollID  = g4SDMan->GetCollectionID("energy_counter/energy_counter");}
-  //if (lWCalorimeterCollID<1)
-  //{lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");}
+    { // if one is -1 then all need initialised.
+      G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
+      BDSSDManager* bdsSDMan = BDSSDManager::Instance();
+      samplerCollID_plane       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerPlaneSD()->GetName());
+      samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
+      energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
+      tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
+      //lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
+    }
   FireLaserCompton=true;
 
 #ifdef BDSDEBUG
@@ -163,7 +168,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //    {bdsOutput->WriteHits(SampHC);}
 
   // energy deposition collections - eloss, tunnel hits
-  BDSEnergyCounterHitsCollection* energyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
+  BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
+  BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
   
   // fill histograms
 #ifdef BDSDEBUG
@@ -187,6 +193,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	  perElementELoss->Fill(sHit, eW);
 	}
     }
+
+  if (tunnelEnergyCounterHits)
+   {bdsOutput->WriteTunnelHits(tunnelEnergyCounterHits);}
 
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();

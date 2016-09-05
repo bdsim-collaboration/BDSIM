@@ -37,6 +37,7 @@ private:
   G4int samplerCollID_cylin;
   //G4int lWCalorimeterCollID;
   G4int energyCounterCollID; ///< Collection ID for energy deposition hits for read out geometry.
+  G4int tunnelEnergyCounterCollID; ///< Collection ID for the tunnel energy deposition.
   
   G4int printModulo;
 
