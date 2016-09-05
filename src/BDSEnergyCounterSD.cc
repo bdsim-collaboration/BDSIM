@@ -229,7 +229,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
       precisionRegion = false;
     }
 
-  G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
+  G4double sHit = sBefore; // both before and after the same here.
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();  
   weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
@@ -255,8 +255,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
 						       X,
 						       Y,
 						       Z,
-						       Z /*SBefore*/,
-						       Z /*SAfter*/,
+						       sBefore,
+						       sAfter,
 						       sHit,
 						       x,
 						       y,
