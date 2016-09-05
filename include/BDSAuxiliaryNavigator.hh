@@ -58,7 +58,7 @@ public:
 
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
-					       const G4ThreeVector* direction = 0,
+					       const G4ThreeVector* direction = nullptr,
 					       const G4bool pRelativeSearch   = true,
 					       const G4bool ignoreDirection   = true,
 					       G4bool useCurvilinear          = true);
