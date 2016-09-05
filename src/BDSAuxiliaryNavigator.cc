@@ -13,7 +13,7 @@ G4Navigator* BDSAuxiliaryNavigator::auxNavigatorCL    = new G4Navigator();
 G4int        BDSAuxiliaryNavigator::numberOfInstances = 0;
 
 BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
-  BDSAuxiliaryNavigator(true)
+  BDSAuxiliaryNavigator(false)
 {;}
 
 BDSAuxiliaryNavigator::BDSAuxiliaryNavigator(G4bool useCachingIn):
