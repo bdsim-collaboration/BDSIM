@@ -30,21 +30,24 @@ BDSSDManager::BDSSDManager()
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   
   // sampler plane
-  samplerPlane = new BDSSamplerSD("sampler_plane","plane");
+  samplerPlane = new BDSSamplerSD("plane");
   SDMan->AddNewDetector(samplerPlane);
 
   // Sampler cylindrical
-  samplerCylinder = new BDSSamplerSD("sampler_cylinder","cylinder");
+  samplerCylinder = new BDSSamplerSD("cylinder");
   SDMan->AddNewDetector(samplerCylinder);
 
   // Terminator sd to measure how many times that primary has passed through the terminator
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
-
+  
   // Lw calorimeter
   lwCalorimeter = new BDSLWCalorimeterSD("lw_calorimeter");
   SDMan->AddNewDetector(lwCalorimeter);
 
-  eCounter = new BDSEnergyCounterSD("energy_counter");
+  eCounter = new BDSEnergyCounterSD("general");
   SDMan->AddNewDetector(eCounter);
+
+  tunnelECounter = new BDSEnergyCounterSD("tunnel");
+  SDMan->AddNewDetector(tunnelECounter);
 }

@@ -42,6 +42,10 @@ public:
   inline BDSEnergyCounterSD* GetEnergyCounterSD() const
   {return eCounter;}
 
+  /// SD for tunnel energy counter
+  inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const
+  {return tunnelECounter;}
+
   /// SD for a laserwire calorimeter
   inline BDSLWCalorimeterSD* GetLWCalorimeterSD() const
   {return lwCalorimeter;}
@@ -57,6 +61,7 @@ private:
   BDSTerminatorSD*    terminator;
   BDSLWCalorimeterSD* lwCalorimeter;
   BDSEnergyCounterSD* eCounter;
+  BDSEnergyCounterSD* tunnelECounter;
   /// @}
 };
 
