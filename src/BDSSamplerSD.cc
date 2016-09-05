@@ -22,16 +22,15 @@
 
 #include <vector>
 
-BDSSamplerSD::BDSSamplerSD(G4String name, G4String type):
-  G4VSensitiveDetector(name),
+BDSSamplerSD::BDSSamplerSD(G4String name):
+  G4VSensitiveDetector("sampler/" + name),
   itsHCID(-1),
   SamplerCollection(nullptr),
-  itsType(type),
+  itsCollectionName(name),
   registry(nullptr),
   globals(nullptr)
 {
-  itsCollectionName="Sampler_"+type;
-  collectionName.insert(itsCollectionName);
+  collectionName.insert(name);
 }
 
 BDSSamplerSD::~BDSSamplerSD()
@@ -40,18 +39,18 @@ BDSSamplerSD::~BDSSamplerSD()
 void BDSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 {
   // Create Sampler hits collection
-  SamplerCollection = new BDSSamplerHitsCollection(SensitiveDetectorName,itsCollectionName);
+  SamplerCollection = new BDSSamplerHitsCollection(GetName(),itsCollectionName);
 
   // Record id for use in EventAction to save time - slow string lookup by collection name
   if (itsHCID < 0)
-    {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(itsCollectionName);}
+    {itsHCID = G4SDManager::GetSDMpointer()->GetCollectionID(SamplerCollection);}
   HCE->AddHitsCollection(itsHCID,SamplerCollection);
 
   registry = BDSSamplerRegistry::Instance(); // cache pointer to registry
   globals  = BDSGlobalConstants::Instance(); // cache pointer to globals
 }
 
-G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH */)
+G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*/)
 {
   // Do not store hit if the particle pre step point is not on the boundary
   G4StepPoint* postStepPoint = aStep->GetPostStepPoint();

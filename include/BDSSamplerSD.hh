@@ -25,9 +25,8 @@ class G4TouchableHistory;
 class BDSSamplerSD: public G4VSensitiveDetector
 { 
 public:
-  /// Construct a sampler with name and type (plane/cylinder). Optionally, the primariesOnly
-  /// flag is whether to only record primary hits in this sampler.
-  BDSSamplerSD(G4String name, G4String type);
+  /// Construct a sampler with name and type (plane/cylinder).
+  BDSSamplerSD(G4String name);
   ~BDSSamplerSD();
 
   /// Overriden from G4VSensitiveDetector. Creates hits collection and registers it with
