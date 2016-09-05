@@ -8,7 +8,6 @@
 #include "BDSParallelWorldCurvilinear.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
-#include "BDSSDManager.hh"
 
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
@@ -44,9 +43,7 @@ void BDSParallelWorldCurvilinear::Construct()
 
   // place things in curvilinear world
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  
-  G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
-  G4bool checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
+  G4bool  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   for (const auto element : *beamline)
     {
       // read out geometry logical volume - note may not exist for each item - must be tested
@@ -55,8 +52,6 @@ void BDSParallelWorldCurvilinear::Construct()
 
       if (!readOutLV)
 	{continue;} // no read out geometry for this component
-
-      readOutLV->SetSensitiveDetector(eCSD);
 
       G4String name          = element->GetName(); 
       G4String readOutPVName = element->GetPlacementName() + "_ro_pv";

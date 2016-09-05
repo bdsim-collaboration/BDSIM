@@ -14,6 +14,7 @@
 class G4UserLimits;
 class G4VisAttributes;
 class G4VPlacement;
+class G4VSensitiveDetector;
 
 /**
  * @brief A generic geometry component for a bdsim model.
@@ -154,6 +155,9 @@ public:
   
   /// Access all sensitive volumes belonging to this component
   virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
+
+  /// Attach a sensitive detector class to all registered sensitive volumes in this component.
+  void SetSensitiveDetector(G4VSensitiveDetector* sd);
 
 protected:
   

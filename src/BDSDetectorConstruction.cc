@@ -357,7 +357,8 @@ void BDSDetectorConstruction::ComponentPlacement()
 
   int G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
 
-  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamline*      beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
   
   for(auto element : *beamline)
     {
@@ -387,17 +388,17 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  elementLV->SetRegion(precisionRegion);
 	  precisionRegion->AddRootLogicalVolume(elementLV);
 	}
+
+      // Make sensitive volumes sensitive
+      accComp->SetSensitiveDetector(eCSD);
       
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "setting up sensitive volumes with read out geometry" << G4endl;
-#endif
       //set gflash parameterisation on volume if required
       //TBC - so glash is only used for 'element' types - perhaps this should be used
       //for other volumes too.  The logic of the if statement needs checked.
       //The check of the precision region really compares the region pointer of the
       //logical volume with that of our 'precision region' region. Unclear what the default
       //region value is in geant4 but it's not our region - no region by default.
-      for (auto lv : accComp->GetAllSensitiveVolumes())
+      for (auto& lv : accComp->GetAllSensitiveVolumes())
 	{
 	  if(gflash && (lv->GetRegion() != precisionRegion) && (accComp->GetType()=="element"))
 	    {SetGFlashOnVolume(lv);}
@@ -433,6 +434,9 @@ void BDSDetectorConstruction::ComponentPlacement()
     {
       BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
 
+      // Make sensitive component sensitive
+      accComp->SetSensitiveDetector(eCSD);
+      
       G4ThreeVector  rp = element->GetReferencePositionMiddle();
       G4Transform3D* pt = element->GetPlacementTransform();
       G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();

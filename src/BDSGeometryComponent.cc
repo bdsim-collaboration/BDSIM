@@ -10,6 +10,8 @@
 #include "G4VPhysicalVolume.hh"
 #include <vector>
 
+class G4VSensitiveDetector;
+
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					   G4LogicalVolume* containerLVIn):
   containerSolid(containerSolidIn),
@@ -358,3 +360,8 @@ std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() con
   return result;
 }
 
+void BDSGeometryComponent::SetSensitiveDetector(G4VSensitiveDetector* sd)
+{
+  for (auto& lv : GetAllSensitiveVolumes())
+    {lv->SetSensitiveDetector(sd);}
+}
