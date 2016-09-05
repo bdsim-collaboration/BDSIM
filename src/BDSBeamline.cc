@@ -89,6 +89,8 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
 							   BDSSamplerType           samplerType,
 							   G4String                 samplerName)
 {
+  if (!component)
+    {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
   std::vector<BDSBeamlineElement*> addedComponents;
   BDSBeamlineElement* element = nullptr;
   // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
@@ -504,6 +506,11 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
 
 void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
 {
+  if (!element)
+    {G4cerr << __METHOD_NAME__ << "invalid BDSBeamlineElement" << G4endl; exit(1);}
+  if (!(element->GetAcceleratorComponent()))
+    {G4cerr << __METHOD_NAME__ << "invalid BDSAcceleratorComponent" << G4endl; exit(1);}
+  
   // update world extent for this beam line
   UpdateExtents(element);
   
@@ -513,8 +520,7 @@ void BDSBeamline::AddBeamlineElement(BDSBeamlineElement* element)
   // register it by name
   RegisterElement(element);
 
-  // no need to update any internal variables - that's done by
-  // AddSingleComponent()
+  // no need to update any internal variables - that's done by AddSingleComponent()
 }
 
 G4ThreeVector BDSBeamline::GetMaximumExtentAbsolute() const

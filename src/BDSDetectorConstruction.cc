@@ -363,9 +363,6 @@ void BDSDetectorConstruction::ComponentPlacement()
   for(auto element : *beamline)
     {
       BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
-      // do a few checks to see everything's valid before dodgy placement could happen
-      if (!accComp)
-	{G4cerr << __METHOD_NAME__ << "beamline element does not contain valid BDSAcceleratorComponent" << G4endl; exit(1);}
       
       // check we can get the container logical volume to be placed
       G4LogicalVolume* elementLV = accComp->GetContainerLogicalVolume();
