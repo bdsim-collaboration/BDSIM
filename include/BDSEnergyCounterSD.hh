@@ -40,7 +40,7 @@ private:
   BDSEnergyCounterSD() = delete;
 
   G4bool   verbose;
-  G4String itsName;
+  G4String colName; ///< Collection name.
   BDSEnergyCounterHitsCollection* energyCounterCollection;
   G4int    HCIDe;
 

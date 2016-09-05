@@ -20,30 +20,31 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
-  :G4VSensitiveDetector(name),
-   energyCounterCollection(nullptr),
-   HCIDe(-1),
-   enrg(0.0),
-   weight(0.0),
-   X(0.0),
-   Y(0.0),
-   Z(0.0),
-   sBefore(0.0),
-   sAfter(0.0),
-   x(0.0),
-   y(0.0),
-   z(0.0),
-   stepLength(0.0),
-   precisionRegion(false),
-   ptype(0),
-   volName(""),
-   turnstaken(0),
-   eventnumber(0),
-   auxNavigator(new BDSAuxiliaryNavigator(false))
+BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name):
+  G4VSensitiveDetector("energy_counter/"+name),
+  colName(name),
+  energyCounterCollection(nullptr),
+  HCIDe(-1),
+  enrg(0.0),
+  weight(0.0),
+  X(0.0),
+  Y(0.0),
+  Z(0.0),
+  sBefore(0.0),
+  sAfter(0.0),
+  x(0.0),
+  y(0.0),
+  z(0.0),
+  stepLength(0.0),
+  precisionRegion(false),
+  ptype(0),
+  volName(""),
+  turnstaken(0),
+  eventnumber(0),
+  auxNavigator(new BDSAuxiliaryNavigator(false))
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
-  collectionName.insert("energy_counter");
+  collectionName.insert(colName);
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
@@ -53,13 +54,13 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
-  energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
+  energyCounterCollection = new BDSEnergyCounterHitsCollection(GetName(),colName);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "HCID energy:    " << HCIDe << G4endl;
+  G4cout << __METHOD_NAME__ << "Energy Counter SD Hits Collection ID: " << HCIDe << G4endl;
 #endif
 }
 
