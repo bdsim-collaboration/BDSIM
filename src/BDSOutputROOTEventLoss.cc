@@ -91,5 +91,4 @@ void BDSOutputROOTEventLoss::Flush()
   this->X.clear();
   this->Y.clear();
   this->Z.clear();
-  // this->geomFlag.clear();
 }
