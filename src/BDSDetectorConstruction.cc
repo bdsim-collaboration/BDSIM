@@ -468,7 +468,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 					checkOverlaps);                             // overlap checking
 					}*/
       
-      BDSBeamline* tunnel                     = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
+      BDSBeamline* tunnel = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
       
       for (auto element : *tunnel)
 	{
