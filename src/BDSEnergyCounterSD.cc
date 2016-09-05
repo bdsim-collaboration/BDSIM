@@ -40,7 +40,7 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
    volName(""),
    turnstaken(0),
    eventnumber(0),
-   auxNavigator(new BDSAuxiliaryNavigator())
+   auxNavigator(new BDSAuxiliaryNavigator(false))
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
   collectionName.insert("energy_counter");
@@ -81,9 +81,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
   G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
   
-  // Get translation and rotation of volume w.r.t the World Volume
-  G4VPhysicalVolume* theVolume = auxNavigator->LocateGlobalPointAndSetup(aStep);
-
   // attribute the energy deposition to a uniformly random position along the step - correct!
   // random distance - store to use twice to ensure global and local represent the same point
   G4double randDist = G4UniformRand();
@@ -92,11 +89,13 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
   G4ThreeVector eDepPos   = posbefore + randDist*(posafter - posbefore);
-  
+
   // calculate local coordinates
-  G4ThreeVector posbeforelocal  = auxNavigator->ConvertToLocal(posbefore);
-  G4ThreeVector posafterlocal   = auxNavigator->ConvertToLocal(posafter);
-  G4ThreeVector eDepPosLocal    = posbeforelocal + randDist*(posafterlocal - posbeforelocal);
+  BDSStep stepLocal = auxNavigator->ConvertToLocal(aStep);
+  const G4ThreeVector& posbeforelocal = stepLocal.PreStepPoint();
+  const G4ThreeVector& posafterlocal  = stepLocal.PostStepPoint();
+  G4ThreeVector eDepPosLocal = posbeforelocal + randDist*(posafterlocal - posbeforelocal);
+  stepLength = (posafterlocal - posbeforelocal).mag();
   
   // global
   X = eDepPos.x();
@@ -107,22 +106,26 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   y = eDepPosLocal.y();
   z = eDepPosLocal.z();
 
-  stepLength = (posafter - posbefore).mag(); // note this is of the full step
-
   // get the s coordinate (central s + local z), and precision info
-  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
   G4int beamlineIndex = -1;
   if (theInfo)
     {
-      sAfter  = theInfo->GetSPos() + z; //z is eDepPosLocal.z() - saves access
-      sBefore = theInfo->GetSPos() + posbeforelocal.z();
+      G4double sCentre = theInfo->GetSPos();
+      sAfter  = sCentre + posafterlocal.z();
+      sBefore = sCentre + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
       beamlineIndex   = theInfo->GetBeamlineIndex();
     }
   else
     {
       // need to exit as theInfo is dereferenced later
-      G4cerr << "No volume info for " << theVolume->GetName() << G4endl;
+      G4cerr << "No volume info for ";
+      auto vol = stepLocal.VolumeForTransform();
+      if (vol)
+	{G4cerr << vol->GetName() << G4endl;}
+      else
+	{G4cerr << "Unkown" << G4endl;}
       sAfter  = -1000; // unphysical default value to allow easy identification in output
       sBefore = -1000;
       precisionRegion = false;
