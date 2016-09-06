@@ -131,6 +131,7 @@ private:
   void FTFP();
   void FTFPBERT();
   void FTFPBERTHP();
+  void LaserWire();
   /// @}
 };
 
