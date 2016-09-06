@@ -47,6 +47,13 @@ public:
   inline BDSBeamline*       GetFlatBeamline() const
   {return flatBeamline;}
 
+  /// Register the curvilinear geometry beam line.
+  inline void RegisterCurvilinearBeamline(BDSBeamline* beamlineIn)
+  {curvilinearBeamline = beamlineIn;}
+
+  inline BDSBeamline*       GetCurvilinearBeamline() const
+  {return curvilinearBeamline;}
+
   /// Register the beam line containing all the magnet supports
   inline void               RegisterSupportsBeamline(BDSBeamline* beamlineIn)
   {supportsBeamline = beamlineIn;}
@@ -82,11 +89,12 @@ private:
 
   static BDSAcceleratorModel* _instance;
 
-  G4VPhysicalVolume* worldPV;          ///< Physical volume of the mass world.
-  BDSBeamline*       flatBeamline;     ///< Flat beam line.
-  BDSBeamline*       supportsBeamline; ///< Element supports beam line.
-  BDSBeamline*       tunnelBeamline;   ///< Tunnel segments beam line.
-  BDSBeamline*       endPieceBeamline; ///< End Pieces beam line.
+  G4VPhysicalVolume* worldPV;             ///< Physical volume of the mass world.
+  BDSBeamline*       flatBeamline;        ///< Flat beam line.
+  BDSBeamline*       curvilinearBeamline; ///< Curvilinear geometry beamline.
+  BDSBeamline*       supportsBeamline;    ///< Element supports beam line.
+  BDSBeamline*       tunnelBeamline;      ///< Tunnel segments beam line.
+  BDSBeamline*       endPieceBeamline;    ///< End Pieces beam line.
 };
 
 #endif

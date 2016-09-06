@@ -15,6 +15,7 @@ BDSAcceleratorModel* BDSAcceleratorModel::Instance()
 BDSAcceleratorModel::BDSAcceleratorModel():
   worldPV(nullptr),
   flatBeamline(nullptr),
+  curvilinearBeamline(nullptr),
   supportsBeamline(nullptr),
   tunnelBeamline(nullptr)
 {
@@ -26,6 +27,7 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
 {
   delete worldPV;
   delete flatBeamline;
+  delete curvilinearBeamline;
   delete supportsBeamline;
   delete tunnelBeamline;
   delete endPieceBeamline;
