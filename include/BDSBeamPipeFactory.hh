@@ -16,7 +16,7 @@
  * one in BDSBeamPipeFactoryBase but with the addition of a BDSBeamPipeType enum as an argument. This
  * factory dispatches the call to the correct factory and should be the only one used by the caller.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactory
