@@ -1,9 +1,9 @@
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSTunnelFactoryBase.hh"
 #include "BDSTunnelFactoryRectAboveGround.hh"
-
-#include "BDSDebug.hh"
 #include "BDSTunnelInfo.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
@@ -230,10 +230,10 @@ void BDSTunnelFactoryRectAboveGround::TestInputParameters(G4double&    length,
 {
   CommontTestInputParameters(length, tunnelThickness, tunnelSoilThickness, tunnelMaterial, tunnelSoilMaterial);
   
-  if (tunnel1 < 1e-10)
+  if (!BDS::IsFinite(tunnel1))
     {tunnel1 = defaultModel->aper1;}
 
-  if (tunnel2 < 1e-10)
+  if (!BDS::IsFinite(tunnel2))
     {tunnel2 = defaultModel->aper2;}
 }
 
@@ -247,7 +247,7 @@ G4VSolid* BDSTunnelFactoryRectAboveGround::BuildContainerStraight(G4String name,
   G4VSolid* containerSolidL; // local
   
   containerXRadius = slabXHalfWidth + lengthSafety;
-  containerYRadius = slabYHalfWidth + lengthSafety;
+  containerYRadius = tunnel2 + tunnelThickness + lengthSafety;
   
   // have to do a subtraction
   G4VSolid* tunnelContainerOuterSlab = new G4Box(name + "_cont_slab_solid",     // name
