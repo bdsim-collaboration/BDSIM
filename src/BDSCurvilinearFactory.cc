@@ -6,6 +6,7 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
@@ -81,6 +82,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
 						      element->GetSPositionEnd(),
+						      new BDSTiltOffset(*(element->GetTiltOffset())),
 						      element->GetSamplerType(),
 						      element->GetSamplerName(),
 						      element->GetIndex());

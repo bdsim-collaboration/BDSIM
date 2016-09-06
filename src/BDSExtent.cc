@@ -118,24 +118,24 @@ BDSExtent BDSExtent::Shift(G4double x, G4double y) const
 
 BDSExtent BDSExtent::ShiftX(G4double x) const
 {
-  BDSExtent result = BDSExtent(extentX.first + x, extentX.second + x,
-			       extentY.first, extentY.second,
-			       extentZ.first, extentZ.second);
+  BDSExtent result = BDSExtent(extXNeg + x, extXPos + x,
+			       extYNeg, extYPos,
+			       extZNeg, extZPos);
   return result;
 }
 
 BDSExtent BDSExtent::ShiftY(G4double y) const
 {
-  BDSExtent result = BDSExtent(extentX.first, extentX.second,
-			       extentY.first + y, extentY.second + y,
-			       extentZ.first, extentZ.second);
+  BDSExtent result = BDSExtent(extXNeg, extXPos,
+			       extYNeg + y, extYPos + y,
+			       extZNeg, extZPos);
   return result;
 }
 
 G4double BDSExtent::MaximumAbs() const
 {
-  std::vector<G4double> exts = {std::abs(extentX.first), extentX.second,
-				std::abs(extentY.first), extentY.second,
-				std::abs(extentZ.first), extentZ.second};
+  std::vector<G4double> exts = {std::abs(extXNeg), extXPos,
+				std::abs(extYNeg), extYPos,
+				std::abs(extZNeg), extXPos};
   return *std::max_element(exts.begin(), exts.end());
 }
