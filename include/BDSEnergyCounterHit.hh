@@ -42,7 +42,7 @@ public:
 		      G4String nameIn            = "",   // volume name
 		      G4int    partIDIn          = 0,    // PDG id - particle type
 		      G4int    trackID           = -1,   // Track ID
-              G4int    parentID          = -1;   // Parent ID
+		      G4int    parentID          = -1,   // Parent ID
 		      G4double weightIn          = 1,    // weight
 		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
