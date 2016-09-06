@@ -64,7 +64,9 @@ sample, range=mk1;
 !sample, range=mk2;
 !sample, range=mk3;
 
-option, ngenerate=1000, physicsList="lw",modularPhysicsListsOn=0,seed=-1;
+option, ngenerate=1000,
+	physicsList="lw",
+	seed=-1;
 
 beam,  particle="e-",
        energy=250,
