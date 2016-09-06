@@ -61,8 +61,6 @@ option, buildTunnel=1,
 	tunnelOffsetX=0.4*m,
 	tunnelOffsetY=-1.2*m;
 
-option, modularPhysicsListsOn=1;
-
 ! note tunnelAper2 will be ignored by the circular tunnel model
 
 beam, particle="proton",
