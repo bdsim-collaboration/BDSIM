@@ -158,8 +158,8 @@ G4VBiasingOperation* BDSBOptrChangeCrossSection::ProposeOccurenceBiasingOperatio
   XStransformation = fXSScale[callingProcess];
 
   // STB Just return the operation before the multiple sampling check
-  operation->SetBiasedCrossSection( XStransformation * analogXS );
-  operation->Sample();
+  //operation->SetBiasedCrossSection( XStransformation * analogXS );
+  //operation->Sample();
 
   // now setup the operation to be returned to the process: this
   // consists in setting the biased cross-section, and in asking

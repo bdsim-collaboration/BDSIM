@@ -57,7 +57,9 @@ void BDSOutputROOTEventLoss::Fill(BDSEnergyCounterHit *hit)
   this->energy.push_back( (float &&) (hit->GetEnergy() / CLHEP::GeV));
   this->S.push_back     ( (float &&) (hit->GetSHit()   / CLHEP::m));
   this->weight.push_back( (float &&)  hit->GetWeight());
-  this->trackID.push_back( hit->GetTrackID());
+  //this->partID.push_back( hit->GetPartID());
+  //this->trackID.push_back( hit->GetTrackID());
+  //this->parentID.push_back( hit->GetParentID() );
   this->modelID.push_back( (unsigned int)hit->GetBeamlineIndex());
   this->turn.push_back( hit->GetTurnsTaken());
 
@@ -82,7 +84,9 @@ void BDSOutputROOTEventLoss::Flush()
   this->energy.clear();
   this->S.clear();
   this->weight.clear();
+  this->partID.clear();
   this->trackID.clear();
+  this->parentID.clear();
   this->modelID.clear();
   this->turn.clear();
   this->x.clear();

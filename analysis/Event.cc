@@ -1,6 +1,12 @@
 #include "Config.hh"
 #include "Event.hh"
 
+#include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventInfo.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
+
+#include "TChain.h"
 
 ClassImp(Event)
 

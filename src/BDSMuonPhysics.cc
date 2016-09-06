@@ -21,6 +21,8 @@
 #include "G4ProcessManager.hh"
 #include "G4Scintillation.hh"
 
+// TODO : use G4PhysicsListHelper to set ordering of these processes (just to be sure)
+
 BDSMuonPhysics::BDSMuonPhysics():
   G4VPhysicsConstructor("BDSMuonPhysics")
 {
@@ -57,7 +59,8 @@ void BDSMuonPhysics::ConstructProcess()
 
   G4Cerenkov*        cer = nullptr;
   G4Scintillation* scint = nullptr;
-  if (BDSGlobalConstants::Instance()->TurnOnCerenkov()) {
+  if (BDSGlobalConstants::Instance()->TurnOnCerenkov())
+  {
     cer = new G4Cerenkov();
     // reduce memory profile
     cer->SetTrackSecondariesFirst(true);
@@ -76,54 +79,54 @@ void BDSMuonPhysics::ConstructProcess()
   aParticleIterator->reset();
 
   while( (*aParticleIterator)() )
-    {
-      G4ParticleDefinition* particle = aParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      G4String particleName = particle->GetParticleName();
+  {
+    G4ParticleDefinition* particle = aParticleIterator->value();
+    G4ProcessManager* pmanager = particle->GetProcessManager();
+    G4String particleName = particle->GetParticleName();
       
     if(particleName == "gamma")
-      {
-	G4GammaConversionToMuons* gamConvToMu = new G4GammaConversionToMuons();
-	pmanager->AddDiscreteProcess(gamConvToMu);
-      }      
+    {
+      G4GammaConversionToMuons* gamConvToMu = new G4GammaConversionToMuons();
+      pmanager->AddDiscreteProcess(gamConvToMu);
+    }
     if(particleName == "e+")
-      {
-	// Processes for positron annihilation
-	G4AnnihiToMuPair* anni = new G4AnnihiToMuPair();
-	pmanager->AddDiscreteProcess(anni);
-	G4eeToHadrons* eetohadrons = new G4eeToHadrons();
-	pmanager->AddDiscreteProcess(eetohadrons);
-      }
+    {
+      // Processes for positron annihilation
+	    G4AnnihiToMuPair* anni = new G4AnnihiToMuPair();
+      pmanager->AddDiscreteProcess(anni);
+      G4eeToHadrons* eetohadrons = new G4eeToHadrons();
+      pmanager->AddDiscreteProcess(eetohadrons);
+    }
     if(particleName == "pi+" || particleName == "pi-") 
-      {
-	G4PionDecayMakeSpin *pdms = new G4PionDecayMakeSpin();
-	pmanager->AddDiscreteProcess(pdms);	
-      }
+    {
+      G4PionDecayMakeSpin *pdms = new G4PionDecayMakeSpin();
+      pmanager->AddDiscreteProcess(pdms);
+    }
     if(particleName == "mu+" || particleName == "mu-")
-      {
-	G4MuMultipleScattering* mumsc = new G4MuMultipleScattering();
-	pmanager->AddProcess(mumsc);
-	G4MuIonisation*         muion = new G4MuIonisation();
-	pmanager->AddProcess(muion);
-	G4MuBremsstrahlung*     mubrm = new G4MuBremsstrahlung();
-	pmanager->AddProcess(mubrm);
-	G4MuPairProduction*     mupar = new G4MuPairProduction();
-	pmanager->AddProcess(mupar);
-      }
+    {
+      G4MuMultipleScattering* mumsc = new G4MuMultipleScattering();
+      pmanager->AddProcess(mumsc);
+      G4MuIonisation*         muion = new G4MuIonisation();
+      pmanager->AddProcess(muion);
+      G4MuBremsstrahlung*     mubrm = new G4MuBremsstrahlung();
+      pmanager->AddProcess(mubrm);
+      G4MuPairProduction*     mupar = new G4MuPairProduction();
+      pmanager->AddProcess(mupar);
+    }
 
     // turn on Cerenkov for all particles, needed for Geant4 10.1
     if (BDSGlobalConstants::Instance()->TurnOnCerenkov())
+    {
+      if (cer->IsApplicable(*particle))
       {
-	if (cer->IsApplicable(*particle))
-	  {
-	    pmanager->AddProcess(cer);
-	    pmanager->SetProcessOrdering(cer,idxPostStep);
-	    // Cerenkov also needs scintillation it seems, for 10.1 and 10.2
-	    pmanager->AddProcess(scint);
-	    pmanager->SetProcessOrderingToLast(scint,idxAtRest);
-	    pmanager->SetProcessOrderingToLast(scint,idxPostStep);
-	  }
-      }
+        pmanager->AddProcess(cer);
+        pmanager->SetProcessOrdering(cer,idxPostStep);
+        // Cerenkov also needs scintillation it seems, for 10.1 and 10.2
+	      pmanager->AddProcess(scint);
+        pmanager->SetProcessOrderingToLast(scint,idxAtRest);
+        pmanager->SetProcessOrderingToLast(scint,idxPostStep);
+	    }
     }
+  }
 }
 

@@ -1,17 +1,18 @@
 #ifndef BDSTRAJECTORY_H
 #define BDSTRAJECTORY_H
 
-#include "G4Trajectory.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4ThreeVector.hh"
-#include "G4TrajectoryContainer.hh"
-
 #include "BDSTrajectoryPoint.hh"
-#include "BDSDebug.hh"
+#include "G4Trajectory.hh"
 
-#include <map>
 #include <ostream>
+#include <vector>
+
+class G4Step;
+class G4Track;
+class G4TrajectoryContainer;
+class G4VTrajectoryPoint;
+
+typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
 /**
  * @brief Trajectory information from track including last scatter etc.
@@ -20,8 +21,6 @@
  *
  * @author S. Boogert
  */
-
-typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
 class BDSTrajectory; // forward declaration so namespaced method can be at top
 

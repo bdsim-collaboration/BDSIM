@@ -5,11 +5,18 @@
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include <ostream>
+
+namespace HepGeom {
+  class Transform3D;
+}
+typedef HepGeom::Transform3D G4Transform3D;
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief A class that holds a fully constructed BDSAcceleratorComponent

@@ -5,16 +5,20 @@
 
 #include "globals.hh"           // geant4 globals / types
 #include "G4LogicalVolume.hh"
-#include "G4RotationMatrix.hh"
-#include "G4VSolid.hh"
 
 #include <utility>              //for std::pair
 #include <vector>
 
 class G4UserLimits;
 class G4VisAttributes;
+class G4VPhysicalVolume;
 class G4VPlacement;
 class G4VSensitiveDetector;
+class G4VSolid;
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief A generic geometry component for a bdsim model.

@@ -92,6 +92,10 @@ OptionsBase::OptionsBase()
 
   haloEmitX             =  0;
   haloEmitY             =  0;
+
+  // TODO : check if we really need default arguments here as
+  // yields incorrect behaviour when collimators are not used
+#if 0
   haloEnvelopeEmitX     =  1e9;
   haloEnvelopeEmitY     =  1e9;
   haloEnvelopeCollMinX  =  1e9;
@@ -102,6 +106,18 @@ OptionsBase::OptionsBase()
   haloEnvelopeCollMaxY  = -1e9;
   haloEnvelopeCollMinYp =  1e9;
   haloEnvelopeCollMaxYp = -1e9;
+#endif
+  haloEnvelopeEmitX     =  0;
+  haloEnvelopeEmitY     =  0;
+  haloEnvelopeCollMinX  =  0;
+  haloEnvelopeCollMaxX  =  0;
+  haloEnvelopeCollMinXp =  0;
+  haloEnvelopeCollMaxXp =  0;
+  haloEnvelopeCollMinY  =  0;
+  haloEnvelopeCollMaxY  =  0;
+  haloEnvelopeCollMinYp =  0;
+  haloEnvelopeCollMaxYp =  0;
+
   haloPSWeightParameter = 1.0;
   haloPSWeightFunction  = "";
   

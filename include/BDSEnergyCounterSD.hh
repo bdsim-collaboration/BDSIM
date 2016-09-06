@@ -53,6 +53,7 @@ private:
   G4bool   precisionRegion;
   G4int    ptype;
   G4int    trackID;
+  G4int    parentID;
   G4String volName;
   G4int    turnstaken;
   G4int    eventnumber;

@@ -2,22 +2,20 @@
 #define BDSCAVITY_H
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSCavityInfo.hh"
 
-#include "G4VSolid.hh"
-#include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
 #include "globals.hh" // geant4 globals / types
 
-//Field header files
-#include "G4FieldManager.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4ChordFinder.hh"
-#include "G4MagIntegratorDriver.hh"
-#include "G4ElectroMagneticField.hh"
-#include "G4EqMagElectricField.hh"
-
+class G4FieldManager;
+class G4ChordFinder;
+class G4ElectroMagneticField;
+class G4EqMagElectricField;
+class G4LogicalVolume;
+class G4MagInt_Driver;
+class G4MagIntegratorStepper;
 class G4Material;
+class G4VSolid;
+
+class BDSCavityInfo;
 
 /** 
  * @brief Cavity class

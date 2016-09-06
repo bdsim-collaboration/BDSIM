@@ -4,6 +4,7 @@
 #include "parser/options.h"
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
+#include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"

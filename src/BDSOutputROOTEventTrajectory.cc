@@ -3,6 +3,8 @@
 #include "BDSOutputROOTEventTrajectory.hh"
 
 #ifndef __ROOTBUILD__
+#include "BDSDebug.hh"
+#include "BDSEnergyCounterHit.hh"
 #include "BDSTrajectory.hh"
 #endif
 
@@ -88,6 +90,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
   for(auto iT = trajVec.begin(); iT != trajVec.end(); ++iT)
   {
     BDSTrajectory* traj = *iT;
+    partID.push_back( (int &&) traj->GetPDGEncoding() );
     trackID.push_back( (unsigned int &&) traj->GetTrackID() );
     parentID.push_back((unsigned int &&) traj->GetParentID());
 #ifdef BDSDEBUG
@@ -140,6 +143,7 @@ void BDSOutputROOTEventTrajectory::Fill(BDSEnergyCounterHitsCollection *phc)
 
 void BDSOutputROOTEventTrajectory::Flush()
 {
+  partID.clear();
   trackID.clear();
   parentID.clear();
   trajectories.clear();

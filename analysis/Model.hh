@@ -1,12 +1,10 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <vector>
-
 #include "TROOT.h"
-#include "TChain.h"
 
-#include "BDSOutputROOTEventModel.hh"
+class BDSOutputROOTEventModel;
+class TChain;
 
 class Model
 {
