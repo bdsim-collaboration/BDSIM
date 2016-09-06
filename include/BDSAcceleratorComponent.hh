@@ -97,9 +97,6 @@ public:
   virtual G4double GetArcLength()   const {return arcLength;} 
   virtual G4double GetChordLength() const {return chordLength;}
   /// @}
-  
-  /// Access the read out geometry
-  inline G4LogicalVolume* GetReadOutLogicalVolume() const {return readOutLV;}
 
   /// Access the vacuum volume the main beam goes through in this component if any. Default is
   /// nullptr.
@@ -175,12 +172,6 @@ protected:
   static G4double    lengthSafety;
   static G4Material* emptyMaterial;
   static G4bool      checkOverlaps;
-  static G4double    readOutRadius; ///< Default read out volume radius - greater of sampler diameter and tunnel dimensions.
-
-  /// Read out geometry volume. Protected so derived classes can fiddle if they require.
-  /// This is a possibility as derived classes can override Initialise which calls the
-  /// BuildReadOutVolume construction.
-  G4LogicalVolume* readOutLV;
 
   /// The logical volume in this component that is the volume the beam passes through that
   /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned

@@ -8,6 +8,7 @@
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
 #include "BDSComponentFactory.hh"
+#include "BDSCurvilinearFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSGeometryComponent.hh"
@@ -259,8 +260,13 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
   beamline->PrintMemoryConsumption();
 #endif
+
+  // Build curvilinear geometry w.r.t. beam line.
+  BDSBeamline* clBeamline = BDSCurvilinearFactory::Instance()->BuildCurvilinearBeamLine(beamline);
+  
   // register the beamline in the holder class for the full model
   BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);
+  BDSAcceleratorModel::Instance()->RegisterCurvilinearBeamline(clBeamline);
 }
 
 void BDSDetectorConstruction::BuildTunnel()
@@ -282,23 +288,22 @@ void BDSDetectorConstruction::BuildWorld()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  BDSBeamline* beamline;
-  // remember, the tunnel may not exist...
-  if (BDSGlobalConstants::Instance()->BuildTunnel())
-    {beamline = BDSAcceleratorModel::Instance()->GetTunnelBeamline();}
-  else
-    {beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();}
 
-  // Note, the curivlinear parallel world geometry will expand to match the tunnel
-  // geometry and the 5m margin below should definitely accommodate this so it's safe
-  // not use BDSExtents and a BDSBeamline for the curvilinear ('readout') parallel geometry.
-  G4ThreeVector worldR      = beamline->GetMaximumExtentAbsolute();
-  G4ThreeVector maxpositive = beamline->GetMaximumExtentPositive();
-  G4ThreeVector maxnegative = beamline->GetMaximumExtentNegative();
+  // These beamlines should always exist so are safe to access.
+  G4ThreeVector beamlineExtent = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetMaximumExtentAbsolute();
+  G4ThreeVector clExtent       = BDSAcceleratorModel::Instance()->GetCurvilinearBeamline()->GetMaximumExtentAbsolute();
+
+  G4ThreeVector tunnelExtent = G4ThreeVector(0,0,0);
+  BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
+  if (tunnelBeamline)
+    {tunnelExtent = tunnelBeamline->GetMaximumExtentAbsolute();}
+
+  // Expand to maximum extents of each beam line.
+  G4ThreeVector worldR;
+  for (G4int i = 0; i < 3; i++)
+    {worldR[i] = std::max(beamlineExtent[i], std::max(clExtent[i], tunnelExtent[i]));}
 
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "world extent positive: " << maxpositive << G4endl;
-  G4cout << __METHOD_NAME__ << "world extent negative: " << maxnegative << G4endl;
   G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
 #endif
   worldR += G4ThreeVector(5000,5000,5000); //add 5m extra in every dimension
@@ -354,13 +359,17 @@ void BDSDetectorConstruction::ComponentPlacement()
 {
   if (verbose || debug)
     {G4cout << G4endl << __METHOD_NAME__ << "- starting placement procedure" << G4endl;}
-
   int G4precision = G4cout.precision(15);// set default output formats for BDSDetector:
+
+  // 0 - mass world placement
+  // 1 - end piece placement
+  // 2 - tunnel placement 
 
   BDSBeamline*      beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
   G4VSensitiveDetector* tunnelECSD = BDSSDManager::Instance()->GetEnergyCounterTunnelSD();
-  
+
+  // 0 - mass world placement
   for(auto element : *beamline)
     {
       BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
@@ -427,6 +436,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       accComp->PrepareField(elementPV);
     }
 
+  // 1 - end piece placmeent
   auto pieces = BDSAcceleratorModel::Instance()->GetEndPieceBeamline();
   for (auto element : *pieces)
     {
@@ -448,7 +458,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 			checkOverlaps);   // overlap checking
     }
 
-  // place the tunnel segments & supports if they're built
+  // 2 - place the tunnel segments & supports if they're built
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {
       // place supports

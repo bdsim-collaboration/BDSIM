@@ -42,30 +42,25 @@ void BDSParallelWorldCurvilinear::Construct()
   clWorldLV->SetVisAttributes(clWorldVis);
 
   // place things in curvilinear world
-  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
+  BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetCurvilinearBeamline();
   G4bool  checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   for (const auto element : *beamline)
     {
-      // read out geometry logical volume - note may not exist for each item - must be tested
-      auto accComp = element->GetAcceleratorComponent();
-      G4LogicalVolume* readOutLV = accComp->GetReadOutLogicalVolume();
-
-      if (!readOutLV)
-	{continue;} // no read out geometry for this component
-
-      G4String name          = element->GetName(); 
-      G4String readOutPVName = element->GetPlacementName() + "_ro_pv";
-      G4int    nCopy         = element->GetCopyNo();
-      G4Transform3D* ropt    = element->GetReadOutPlacementTransform();
-
+      G4String name        = element->GetName(); 
+      G4String clPVName    = element->GetPlacementName() + "_cl_pv";
+      G4int    nCopy       = element->GetCopyNo();
+      G4Transform3D*  clpt = element->GetReadOutPlacementTransform();
+      BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();
+      G4LogicalVolume*             vol = accComp->GetContainerLogicalVolume();
+      
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "placing read out geometry" << G4endl;
-      G4cout << "placement transform position: " << ropt->getTranslation()  << G4endl;
-      G4cout << "placement transform rotation: " << ropt->getRotation()  << G4endl; 
+      G4cout << __METHOD_NAME__ << "placing curvilinear geometry" << G4endl;
+      G4cout << "placement transform position: " << clpt->getTranslation()  << G4endl;
+      G4cout << "placement transform rotation: " << clpt->getRotation()     << G4endl; 
 #endif
-      G4PVPlacement* readOutPV = new G4PVPlacement(*ropt,          // placement transform
-						   readOutPVName,  // name
-						   readOutLV,      // logical volume
+      G4PVPlacement* readOutPV = new G4PVPlacement(*clpt,          // placement transform
+						   clPVName,       // name
+						   vol,            // logical volume
 						   clWorld,        // mother  volume
 						   false,	   // no boolean operation
 						   nCopy,          // copy number
@@ -78,12 +73,11 @@ void BDSParallelWorldCurvilinear::Construct()
       
       // use the readOutLV name as this is what's accessed in BDSEnergyCounterSD
       BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
-								 readOutPVName,
+								 clPVName,
 								 element->GetSPositionMiddle(),
 								 accComp->GetPrecisionRegion(),
 								 element->GetIndex());
       
       BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);
     }
-
 }
