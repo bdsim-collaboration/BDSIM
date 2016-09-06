@@ -1,5 +1,6 @@
 class BDSAcceleratorComponent;
 class BDSBeamline;
+class BDSBeamlineElement;
 class BDSSimpleComponent;
 
 /**
@@ -27,9 +28,12 @@ private:
   BDSCurvilinearFactory(); ///< Private constructor as singleton pattern.
   static BDSCurvilinearFactory* instance; ///< Singleton instance.
 
+  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
+					   BDSBeamlineElement const* const element);
+
   /// Build a single component.
   BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element);
 
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
-  G4bool   checkOverlaps;     ///< Whether to check overlaps
+  G4bool   checkOverlaps;     ///< Whether to check overlaps.
 };

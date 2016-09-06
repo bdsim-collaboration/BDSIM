@@ -53,8 +53,36 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
     {
       BDSSimpleComponent* temp = BuildCurvilinearComponent(element);
       if (temp)
-	{result->AddComponent(temp);}
+	{
+	  BDSBeamlineElement* tempEl = BuildBeamLineElement(temp, element);
+	  result->AddBeamlineElement(tempEl);
+	}
     }
+  return result;
+}
+
+BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleComponent* component,
+								BDSBeamlineElement const* const element)
+{
+  BDSBeamlineElement* result = new BDSBeamlineElement(component,
+						      element->GetPositionStart(),
+						      element->GetPositionMiddle(),
+						      element->GetPositionEnd(),
+						      element->GetRotationStart(),
+						      element->GetRotationMiddle(),
+						      element->GetRotationEnd(),
+						      element->GetReferencePositionStart(),
+						      element->GetReferencePositionMiddle(),
+						      element->GetReferencePositionEnd(),
+						      element->GetReferenceRotationStart(),
+						      element->GetReferenceRotationMiddle(),
+						      element->GetReferenceRotationEnd(),
+						      element->GetSPositionStart(),
+						      element->GetSPositionMiddle(),
+						      element->GetSPositionEnd(),
+						      element->GetSamplerType(),
+						      element->GetSamplerName(),
+						      element->GetIndex());
   return result;
 }
 
@@ -92,7 +120,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
       G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << curvilinearRadius
 	     << " mm, max possible radius: " << radiusFromAngleLength << " mm" << G4endl;
 #endif
-      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(-0.5*angle,-0.5*angle);
+      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(-0.5*angle, -0.5*angle);
       inputface = faces.first;
       outputface = faces.second;
 
