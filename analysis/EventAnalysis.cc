@@ -1,7 +1,11 @@
 #include "EventAnalysis.hh"
 #include "BDSDebug.hh"
 #include "BDSOutputROOTEventHistograms.hh"
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
 #include "Config.hh"
+#include "Event.hh"
+#include "SamplerAnalysis.hh"
 #include "TROOT.h"
 #include "TDirectory.h"
 #include "TFile.h"
@@ -45,10 +49,13 @@ void EventAnalysis::Process()
   {
     std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
+
   // loop over events
   for(int i=0;i<this->chain->GetEntries();++i) {
     this->chain->GetEntry(i);
-    std::cout << i << std::endl;
+    std::cout << "\r";
+    std::cout << i;
+    std::cout.flush();
 
     if(i==0)
       {histoSum = new HistogramMerge(event->histos);}

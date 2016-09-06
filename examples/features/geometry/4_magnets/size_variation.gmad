@@ -38,3 +38,5 @@ option, checkOverlaps=1;
 
 beam, particle="e-",
       energy=1*GeV;
+
+option, samplerDiameter=3.5*m;

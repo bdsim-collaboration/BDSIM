@@ -1,52 +1,50 @@
+#include "BDSAuxiliaryNavigator.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSUtilities.hh"
 
+#include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
-#include "G4ios.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Navigator.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4RotationMatrix.hh"
 #include "G4SDManager.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
-#include "G4TouchableHistory.hh"
 #include "G4Track.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4VTouchable.hh"
 
-
-BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name)
-  :G4VSensitiveDetector(name),
-   energyCounterCollection(nullptr),
-   HCIDe(-1),
-   enrg(0.0),
-   weight(0.0),
-   X(0.0),
-   Y(0.0),
-   Z(0.0),
-   sBefore(0.0),
-   sAfter(0.0),
-   x(0.0),
-   y(0.0),
-   z(0.0),
-   stepLength(0.0),
-   precisionRegion(false),
-   ptype(0),
-   volName(""),
-   turnstaken(0),
-   eventnumber(0),
-   auxNavigator(new BDSAuxiliaryNavigator())
+BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name):
+  G4VSensitiveDetector("energy_counter/"+name),
+  colName(name),
+  energyCounterCollection(nullptr),
+  HCIDe(-1),
+  enrg(0.0),
+  weight(0.0),
+  X(0.0),
+  Y(0.0),
+  Z(0.0),
+  sBefore(0.0),
+  sAfter(0.0),
+  x(0.0),
+  y(0.0),
+  z(0.0),
+  stepLength(0.0),
+  precisionRegion(false),
+  ptype(0),
+  volName(""),
+  turnstaken(0),
+  eventnumber(0),
+  auxNavigator(new BDSAuxiliaryNavigator(false))
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
-  itsName = name;
-  collectionName.insert("energy_counter");
+  collectionName.insert(colName);
 }
 
 BDSEnergyCounterSD::~BDSEnergyCounterSD()
@@ -56,17 +54,17 @@ BDSEnergyCounterSD::~BDSEnergyCounterSD()
 
 void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 {
-  energyCounterCollection = new BDSEnergyCounterHitsCollection(SensitiveDetectorName,collectionName[0]);
+  energyCounterCollection = new BDSEnergyCounterHitsCollection(GetName(),colName);
   if (HCIDe < 0)
     {HCIDe = G4SDManager::GetSDMpointer()->GetCollectionID(energyCounterCollection);}
   HCE->AddHitsCollection(HCIDe,energyCounterCollection);
   
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "HCID energy:    " << HCIDe << G4endl;
+  G4cout << __METHOD_NAME__ << "Energy Counter SD Hits Collection ID: " << HCIDe << G4endl;
 #endif
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOutTH)
+G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
   if(BDSGlobalConstants::Instance()->StopTracks())
     {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
@@ -76,102 +74,65 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   else
     {enrg = aStep->GetTotalEnergyDeposit();}
 #ifdef BDSDEBUG
-  G4cout << "BDSEnergyCounterSD> enrg = " << enrg << G4endl;
+  G4cout << "BDSEnergyCounterSD> energy = " << enrg << G4endl;
 #endif
   //if the energy is 0, don't do anything
-  if (enrg==0.) return false;      
+  if (!BDS::IsFinite(enrg))
+    {return false;}
 
   G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
   
-  // Get translation and rotation of volume w.r.t the World Volume
-  // get the coordinate transform from the read out geometry instead of the actual geometry
-  // if it exsits, else assume on axis. The read out geometry is in accelerator s,x,y
-  // coordinates along beam line axis
-  G4AffineTransform tf;
-  G4VPhysicalVolume* theVolume;
-  G4int geomFlag = -1;
-  if (readOutTH)
-  {
-    tf = readOutTH->GetHistory()->GetTopTransform();
-    G4StepPoint *preeP = aStep->GetPreStepPoint();
-    G4StepPoint *postP = aStep->GetPostStepPoint();
-    G4bool preeOnBound = (preeP->GetStepStatus() == fGeomBoundary);
-    G4bool postOnBound = (postP->GetStepStatus() == fGeomBoundary);
-    if (preeOnBound)
-    {
-      geomFlag = 1;
-      theVolume = auxNavigator->LocateGlobalPointAndSetup(postP->GetPosition());
-      tf = postP->GetTouchableHandle()->GetHistory()->GetTopTransform();
-      if (postOnBound)
-      {
-        geomFlag = 2;
-        theVolume = auxNavigator->LocateGlobalPointAndSetup((preeP->GetPosition() + postP->GetPosition()) / 2.0);
-        tf = preeP->GetTouchableHandle()->GetHistory()->GetTopTransform();
-      }
-    }
-    else if (postOnBound)
-    {
-      geomFlag = 3;
-      theVolume = auxNavigator->LocateGlobalPointAndSetup(preeP->GetPosition());
-      tf = preeP->GetTouchableHandle()->GetHistory()->GetTopTransform();
-    }
-    else
-    {
-      geomFlag = 4;
-      theVolume = readOutTH->GetVolume();
-      tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-    }
-  }
-  else
-  {
-    geomFlag = 5;
-    theVolume = aStep->GetPostStepPoint()->GetPhysicalVolume();
-    tf = (aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform());
-  }
-
+  // attribute the energy deposition to a uniformly random position along the step - correct!
+  // random distance - store to use twice to ensure global and local represent the same point
+  G4double randDist = G4UniformRand();
+  
+  // global coordinate positions of the step
   G4ThreeVector posbefore = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector posafter  = aStep->GetPostStepPoint()->GetPosition();
+  G4ThreeVector eDepPos   = posbefore + randDist*(posafter - posbefore);
 
-  //calculate local coordinates
-  G4ThreeVector posbeforelocal  = tf.TransformPoint(posbefore);
-  G4ThreeVector posafterlocal   = tf.TransformPoint(posafter);
-
-  // use the second point as the point of energy deposition
-  // originally this was the mean of the pre and post step points, but
-  // that appears to give uneven energy deposition about volume edges.
-  // this also gave edge effects
-  // now store both SAfter (post step point) and SBefore (pre step point)
+  // calculate local coordinates
+  BDSStep stepLocal = auxNavigator->ConvertToLocal(aStep);
+  const G4ThreeVector& posbeforelocal = stepLocal.PreStepPoint();
+  const G4ThreeVector& posafterlocal  = stepLocal.PostStepPoint();
+  G4ThreeVector eDepPosLocal = posbeforelocal + randDist*(posafterlocal - posbeforelocal);
+  stepLength = (posafterlocal - posbeforelocal).mag();
+  
   // global
-  X = posafter.x();
-  Y = posafter.y();
-  Z = posafter.z();
+  X = eDepPos.x();
+  Y = eDepPos.y();
+  Z = eDepPos.z();
   // local
-  x = posafterlocal.x();
-  y = posafterlocal.y();
-  z = posafterlocal.z();
-
-  stepLength = (posafter - posbefore).mag(); 
+  x = eDepPosLocal.x();
+  y = eDepPosLocal.y();
+  z = eDepPosLocal.z();
 
   // get the s coordinate (central s + local z), and precision info
-  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(theVolume);
+  BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
   G4int beamlineIndex = -1;
   if (theInfo)
     {
-      sAfter  = theInfo->GetSPos() + z; //z is posafterlocal.z() - saves access
-      sBefore = theInfo->GetSPos() + posbeforelocal.z();
+      G4double sCentre = theInfo->GetSPos();
+      sAfter  = sCentre + posafterlocal.z();
+      sBefore = sCentre + posbeforelocal.z();
       precisionRegion = theInfo->GetPrecisionRegion();
       beamlineIndex   = theInfo->GetBeamlineIndex();
     }
   else
     {
       // need to exit as theInfo is dereferenced later
-      G4cerr << "No volume info for " << theVolume->GetName() << G4endl;
+      G4cerr << "No volume info for ";
+      auto vol = stepLocal.VolumeForTransform();
+      if (vol)
+	{G4cerr << vol->GetName() << G4endl;}
+      else
+	{G4cerr << "Unkown" << G4endl;}
       sAfter  = -1000; // unphysical default value to allow easy identification in output
       sBefore = -1000;
       precisionRegion = false;
     }
-
-  G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
+  
+  G4double sHit = sBefore + randDist*(sAfter - sBefore);
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
@@ -188,6 +149,8 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   if (weight == 0)
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
+  trackID    = aStep->GetTrack()->GetTrackID();
+  parentID   = aStep->GetTrack()->GetParentID();
   volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
@@ -201,13 +164,14 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
                                                        x, y, z,
                                                        volName,
                                                        ptype,
+                                                       trackID,
+                                                       parentID,
                                                        weight,
                                                        precisionRegion,
                                                        turnstaken,
                                                        eventnumber,
                                                        stepLength,
-                                                       beamlineIndex,
-                                                       geomFlag);
+                                                       beamlineIndex);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
@@ -220,29 +184,25 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory* readOu
   return true;
 }
 
-G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* readOutTH)
+G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
 { 
   enrg = aSpot->GetEnergySpot()->GetEnergy();
 #ifdef BDSDEBUG
-  G4cout << "BDSEnergyCounterSD>gflash enrg = " << enrg << G4endl;
+  G4cout << "BDSEnergyCounterSD> gflash energy = " << enrg << G4endl;
 #endif
-  if (enrg==0.) return false;
+  if (!BDS::IsFinite(enrg))
+    {return false;}
 
-  G4VPhysicalVolume* currentVolume;
-  if (readOutTH)
-    {currentVolume = readOutTH->GetVolume();}
-  else
-    {currentVolume = aSpot->GetTouchableHandle()->GetVolume();}
-  
-  G4String           volName        = currentVolume->GetName();
-  G4int              nCopy          = currentVolume->GetCopyNo();
+  G4VPhysicalVolume* currentVolume = aSpot->GetTouchableHandle()->GetVolume();
+  G4String           volName       = currentVolume->GetName();
+  G4int              nCopy         = currentVolume->GetCopyNo();
   
   // Get Translation and Rotation of Sampler Volume w.r.t the World Volume
-  G4AffineTransform tf = (aSpot->GetTouchableHandle()->GetHistory()->GetTopTransform());
   G4ThreeVector pos    = aSpot->GetPosition();
+  auxNavigator->LocateGlobalPointAndSetup(pos);
 
   //calculate local coordinates
-  G4ThreeVector poslocal = tf.TransformPoint(pos);
+  G4ThreeVector poslocal = auxNavigator->ConvertToLocal(pos);
   
   //global
   X = pos.x();
@@ -267,20 +227,21 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
     {
       // need to exit as theInfo is dereferenced later
       G4cerr << "No volume info for " << currentVolume << G4endl;
-      exit(1);
-      // sAfter  = -1000; // unphysical default value to allow easy identification in output
-      // sBefore = -1000;
-      // precisionRegion = false;
+      sAfter  = -1000; // unphysical default value to allow easy identification in output
+      sBefore = -1000;
+      precisionRegion = false;
     }
 
-  G4double sHit = sBefore + G4UniformRand()*(sAfter - sBefore);
+  G4double sHit = sBefore; // both before and after the same here.
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();  
   weight = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetWeight();
-  if (weight == 0)
+  if (!BDS::IsFinite(weight))
     {G4cerr << "Error: BDSEnergyCounterSD: weight = 0" << G4endl; exit(1);}
   
-  ptype = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
+  ptype   = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetDefinition()->GetPDGEncoding();
+  trackID = aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetTrackID();
+  parentID= aSpot->GetOriginatorTrack()->GetPrimaryTrack()->GetParentID();
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
 
   if(verbose && BDSGlobalConstants::Instance()->StopTracks())
@@ -298,14 +259,16 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot*aSpot, G4TouchableHistory* r
 						       X,
 						       Y,
 						       Z,
-						       Z /*SBefore*/,
-						       Z /*SAfter*/,
+						       sBefore,
+						       sAfter,
 						       sHit,
 						       x,
 						       y,
 						       z,
 						       volName, 
-						       ptype, 
+						       ptype,
+						       trackID,
+                               parentID,
 						       weight, 
 						       0,
 						       turnstaken,

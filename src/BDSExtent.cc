@@ -5,8 +5,10 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4TwoVector.hh"
 
+#include <algorithm>
 #include <ostream>
 #include <utility>
+#include <vector>
 
 BDSExtent::BDSExtent():
   extXNeg(0.0),
@@ -106,4 +108,34 @@ std::ostream& operator<< (std::ostream& out, BDSExtent const& ext)
   out << ext.extYNeg << " " << ext.extYPos << " ";
   out << ext.extZNeg << " " << ext.extZPos;
   return out;
+}
+
+BDSExtent BDSExtent::Shift(G4double x, G4double y) const
+{
+  BDSExtent xShifted = ShiftX(x);
+  return xShifted.ShiftY(y);
+}
+
+BDSExtent BDSExtent::ShiftX(G4double x) const
+{
+  BDSExtent result = BDSExtent(extentX.first + x, extentX.second + x,
+			       extentY.first, extentY.second,
+			       extentZ.first, extentZ.second);
+  return result;
+}
+
+BDSExtent BDSExtent::ShiftY(G4double y) const
+{
+  BDSExtent result = BDSExtent(extentX.first, extentX.second,
+			       extentY.first + y, extentY.second + y,
+			       extentZ.first, extentZ.second);
+  return result;
+}
+
+G4double BDSExtent::MaximumAbs() const
+{
+  std::vector<G4double> exts = {std::abs(extentX.first), extentX.second,
+				std::abs(extentY.first), extentY.second,
+				std::abs(extentZ.first), extentZ.second};
+  return *std::max_element(exts.begin(), exts.end());
 }

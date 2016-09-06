@@ -29,7 +29,7 @@ public:
   /// write primary hits histo
   virtual void WritePrimaryHit(BDSTrajectoryPoint*){}
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection*){}
+  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection*){}
   /// write a trajectory
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &){}
   /// write primary hit

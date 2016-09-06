@@ -49,7 +49,7 @@ public:
   virtual void WritePrimaryHit(BDSTrajectoryPoint* phits);
 
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits);
+  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection* tunnelHits);
   
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec);

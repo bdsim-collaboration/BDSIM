@@ -66,34 +66,34 @@ void  BDSBunchHalo::SetOptions(const GMAD::Options& opt)
   SetWeightFunction(opt.haloPSWeightFunction);
   
   if (BDS::IsFinite(envelopeCollMinX) ||  BDS::IsFinite(envelopeCollMaxX))
-    {
-      G4double distCutOutX = std::abs(envelopeCollMinX) + std::abs(envelopeCollMaxX);
-      if (distCutOutX > 0.5*envelopeX)
-	{
+  {
+    G4double distCutOutX = std::abs(envelopeCollMinX) + std::abs(envelopeCollMaxX);
+    if (distCutOutX > 0.5*envelopeX)
+	  {
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "using two lobe method of generation in X." << G4endl;
 #endif
-	  twoLobeX = true;
-	  xMinDist = envelopeX - std::abs(envelopeCollMinX);
-	  xMaxDist = envelopeX - std::abs(envelopeCollMaxX);
-	  xMinMaxRatio = xMinDist / (xMinDist + xMaxDist);
-	}
+	    twoLobeX = true;
+	    xMinDist = envelopeX - std::abs(envelopeCollMinX);
+	    xMaxDist = envelopeX - std::abs(envelopeCollMaxX);
+	    xMinMaxRatio = xMinDist / (xMinDist + xMaxDist);
     }
+  }
   
   if (BDS::IsFinite(envelopeCollMinY) ||  BDS::IsFinite(envelopeCollMaxY))
-    {
-      G4double distCutOutY = std::abs(envelopeCollMinY) + std::abs(envelopeCollMaxY);
-      if (distCutOutY > 0.5*envelopeY)
-	{
+  {
+    G4double distCutOutY = std::abs(envelopeCollMinY) + std::abs(envelopeCollMaxY);
+    if (distCutOutY > 0.5*envelopeY)
+	  {
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "using two lobe method of generation in Y." << G4endl;
 #endif
-	  twoLobeY = true;
-	  yMinDist = envelopeY - std::abs(envelopeCollMinY);
-	  yMaxDist = envelopeY - std::abs(envelopeCollMaxY);
-	  yMinMaxRatio = yMinDist / (yMinDist + yMaxDist);
-	}
-    }
+	    twoLobeY = true;
+	    yMinDist = envelopeY - std::abs(envelopeCollMinY);
+	    yMaxDist = envelopeY - std::abs(envelopeCollMaxY);
+	    yMinMaxRatio = yMinDist / (yMinDist + yMaxDist);
+	  }
+  }
 }
 
 void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
@@ -118,28 +118,30 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     // Generate x,y spatial in optionally two lobes for increased efficiency.
     G4double dx = 0;
     if (twoLobeX)
-      {
-	// choose with random uniform distribution each side proportioned by area of each lobe
-	G4bool positiveSide = FlatGen->shoot() > xMinMaxRatio;
-	if (positiveSide)
-	  {dx = envelopeCollMaxX + xMaxDist*FlatGen->shoot();}
-	else
-	  {dx = -(envelopeCollMaxX + xMinDist*FlatGen->shoot());}
-      }
+    {
+	    // choose with random uniform distribution each side proportioned by area of each lobe
+	    G4bool positiveSide = FlatGen->shoot() > xMinMaxRatio;
+	    if (positiveSide)
+	    {dx = envelopeCollMaxX + xMaxDist*FlatGen->shoot();}
+	    else
+	    {dx = -(envelopeCollMaxX + xMinDist*FlatGen->shoot());}
+    }
     else
-      {dx = envelopeX  * (1 - 2 * FlatGen->shoot());}
+    {dx = envelopeX  * (1 - 2 * FlatGen->shoot());}
+
     G4double dy = 0;
     if (twoLobeY)
-      {
-	// choose with random uniform distribution each side proportioned by area of each lobe
-	G4bool positiveSide = FlatGen->shoot() > yMinMaxRatio;
-	if (positiveSide)
-	  {dy = envelopeCollMaxY + yMaxDist*FlatGen->shoot();}
-	else
-	  {dy = -(envelopeCollMaxY + yMinDist*FlatGen->shoot());}
-      }
+    {
+
+	    // choose with random uniform distribution each side proportioned by area of each lobe
+	    G4bool positiveSide = FlatGen->shoot() > yMinMaxRatio;
+	    if (positiveSide)
+	    {dy = envelopeCollMaxY + yMaxDist*FlatGen->shoot();}
+	    else
+	    {dy = -(envelopeCollMaxY + yMinDist*FlatGen->shoot());}
+    }
     else
-      {dy = envelopeY  * (1 - 2 * FlatGen->shoot());}
+    {dy = envelopeY  * (1 - 2 * FlatGen->shoot());}
     
     G4double dxp = envelopeXp * (1 - 2 * FlatGen->shoot());
     G4double dyp = envelopeYp * (1 - 2 * FlatGen->shoot());
@@ -160,12 +162,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
     if ((emitXSp < emitX || emitYSp < emitY) || (emitXSp > envelopeEmitX || emitYSp > envelopeEmitY)  ||
         ((dx  > envelopeCollMinX)  && (dx < envelopeCollMaxX)) ||
         ((dy  > envelopeCollMinY)  && (dy < envelopeCollMaxY)))
-    //      (dxp > envelopeCollMinXp || dxp < envelopeCollMaxXp) ||
-    //    (dyp > envelopeCollMinYp || dxp < envelopeCollMaxYp))
     {
-      // #ifdef BDSDEBUG
-      //      G4cout << __METHOD_NAME__ << "inside> " << G4endl;
-      // #endif
       continue;
     }
     else
@@ -180,8 +177,8 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
       }
       else if (weightFunction == "oneoverr")
       {
-        wx = pow(emitX / fabs(emitXSp), weightParameter);
-        wy = pow(emitY / fabs(emitYSp), weightParameter);
+        wx = pow(fabs(emitXSp) / emitX, weightParameter);
+        wy = pow(fabs(emitYSp) / emitY, weightParameter);
       }
       else if (weightFunction == "exp")
       {
@@ -194,7 +191,7 @@ void BDSBunchHalo::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
  #endif
       // reject
       if(FlatGen->shoot() > wx && FlatGen->shoot() > wy)
-	{continue;}
+	    {continue;}
 
       // add to reference orbit 
       x0 += dx * CLHEP::m;

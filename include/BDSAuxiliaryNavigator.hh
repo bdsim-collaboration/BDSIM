@@ -1,6 +1,8 @@
 #ifndef BDSAUXILIARYNAVIGATOR_H
 #define BDSAUXILIARYNAVIGATOR_H
 
+#include "BDSStep.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
@@ -58,7 +60,7 @@ public:
 
   /// A wrapper for the underlying static navigator instance located within this class.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(const G4ThreeVector& point,
-					       const G4ThreeVector* direction = 0,
+					       const G4ThreeVector* direction = nullptr,
 					       const G4bool pRelativeSearch   = true,
 					       const G4bool ignoreDirection   = true,
 					       G4bool useCurvilinear          = true);
@@ -66,7 +68,7 @@ public:
   /// A safe way to locate and setup a point inside a volume. Very const
   /// access to step.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(G4Step const* const step,
-					       G4bool useCurvilinear = true);
+					       G4bool useCurvilinear = true) const;
 
   /// Locate the supplied point the in the geometry and get and store
   /// the transform to that volume in the member variable. This function
@@ -75,6 +77,13 @@ public:
   /// implement and have to keep const. This function doesn't change the
   /// const pointer but does change the contents of what it points to.
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
+
+  /// Calculate the local coordinates for both a pre and post step point. The mid point
+  /// of the step is used for the volume (and therefore transform) lookup which should
+  /// ensure the correct volume is found - avoiding potential boundary issues between
+  /// parallel worlds.
+  BDSStep ConvertToLocal(G4Step const* const step,
+			 G4bool useCurvilinear = true) const;
 
   /// Calculate the local coordinates of a global point.
   G4ThreeVector ConvertToLocal(const G4double globalPoint[3],

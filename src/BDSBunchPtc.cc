@@ -3,6 +3,8 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
+#include "CLHEP/Units/PhysicalConstants.h"
+
 #include <fstream>
 #include <regex>
 

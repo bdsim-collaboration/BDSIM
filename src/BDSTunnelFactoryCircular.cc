@@ -324,10 +324,8 @@ BDSTunnelSection* BDSTunnelFactoryCircular::CreateTunnelSectionAngled(G4String  
 					outputFace);                         // output face normal vector
     }
 
-  BuildReadOutVolumeAngled(name, length, containerRadius, inputFace, outputFace);
-
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerRadius,
-		     containerRadius, visible, inputFace, outputFace);
+		     containerRadius, visible);
 
   return tunnelSection;
 }

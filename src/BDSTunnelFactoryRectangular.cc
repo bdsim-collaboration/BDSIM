@@ -316,7 +316,7 @@ BDSTunnelSection* BDSTunnelFactoryRectangular::CreateTunnelSectionAngled(G4Strin
 					   faceSolid);
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerX,
-		     containerY, visible, inputFace, outputFace);
+		     containerY, visible);
 
   return tunnelSection;
 }

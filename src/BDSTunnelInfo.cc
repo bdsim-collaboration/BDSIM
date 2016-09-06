@@ -1,6 +1,9 @@
+#include "BDSExtent.hh"
 #include "BDSMaterials.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSTunnelType.hh"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 BDSTunnelInfo::BDSTunnelInfo(BDSTunnelType typeIn,
 			     G4double      thicknessIn,
@@ -39,4 +42,15 @@ BDSTunnelInfo::BDSTunnelInfo(G4String typeIn,
   type         = BDS::DetermineTunnelType(typeIn);
   material     = BDSMaterials::Instance()->GetMaterial(materialIn);
   soilMaterial = BDSMaterials::Instance()->GetMaterial(soilMaterialIn);
+}
+
+BDSExtent BDSTunnelInfo::IndicativeExtent() const
+{
+  G4double maxParam = std::max(aper1, aper2);
+  maxParam += thickness + soilThickness + 1*CLHEP::cm;
+
+  BDSExtent result = BDSExtent(-maxParam, maxParam,
+			       -maxParam, maxParam,
+			       0,0);
+  return result;
 }

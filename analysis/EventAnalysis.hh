@@ -2,16 +2,14 @@
 #define EVENTANALYSIS_H
 
 #include <vector>
-#include <map>
 
-#include "TChain.h"
-#include "TH1D.h"
-#include "TH2D.h"
-#include "TFile.h"
-
-#include "Event.hh"
 #include "Analysis.hh"
-#include "SamplerAnalysis.hh"
+#include "TROOT.h"
+
+class Event;
+class SamplerAnalysis;
+class TChain;
+class TFile;
 
 /**
  * @brief Event level analysis.

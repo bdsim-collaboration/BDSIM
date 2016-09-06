@@ -3,7 +3,6 @@
 
 #include "BDSCavity.hh"
 
-#include "G4Material.hh"
 #include "globals.hh" // geant4 globals / types
 
 class BDSCavityInfo;

@@ -1,5 +1,7 @@
 #include "Model.hh"
 
+#include "BDSOutputROOTEventModel.hh"
+
 #include "TChain.h"
 #include "TROOT.h"
 
