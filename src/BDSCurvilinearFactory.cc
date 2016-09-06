@@ -13,6 +13,7 @@
 #include "G4Box.hh"
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"
 
@@ -68,15 +69,15 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      element->GetPositionStart(),
 						      element->GetPositionMiddle(),
 						      element->GetPositionEnd(),
-						      element->GetRotationStart(),
-						      element->GetRotationMiddle(),
-						      element->GetRotationEnd(),
+						      new G4RotationMatrix(*(element->GetRotationStart())),
+						      new G4RotationMatrix(*(element->GetRotationMiddle())),
+						      new G4RotationMatrix(*(element->GetRotationEnd())),
 						      element->GetReferencePositionStart(),
 						      element->GetReferencePositionMiddle(),
 						      element->GetReferencePositionEnd(),
-						      element->GetReferenceRotationStart(),
-						      element->GetReferenceRotationMiddle(),
-						      element->GetReferenceRotationEnd(),
+						      new G4RotationMatrix(*(element->GetReferenceRotationStart())),
+						      new G4RotationMatrix(*(element->GetReferenceRotationMiddle())),
+						      new G4RotationMatrix(*(element->GetReferenceRotationEnd())),
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
 						      element->GetSPositionEnd(),
