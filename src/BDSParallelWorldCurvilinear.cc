@@ -21,7 +21,9 @@ BDSParallelWorldCurvilinear::BDSParallelWorldCurvilinear():
 {;}
 
 BDSParallelWorldCurvilinear::~BDSParallelWorldCurvilinear()
-{;}
+{
+  delete clWorldVis;
+}
 
 void BDSParallelWorldCurvilinear::Construct()
 {// general abbreviation: 'cl' == curvilinear
