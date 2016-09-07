@@ -343,7 +343,8 @@ void BDSOutputROOTEvent::Write(const time_t&  startTime,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  theRootOutputFile->cd();
+  if (theRootOutputFile)
+    {theRootOutputFile->cd();}
   runInfo->startTime        = startTime;
   runInfo->stopTime         = stopTime;
   runInfo->duration         = duration;
