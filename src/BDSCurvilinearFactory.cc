@@ -127,6 +127,17 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
       inputface = faces.first;
       outputface = faces.second;
 
+      BDSTiltOffset* to = element->GetTiltOffset();
+      if (to)
+	{// could be nullptr
+	  G4double tilt = to->GetTilt();
+	  if (BDS::IsFinite(tilt))
+	    {// rotate normal faces
+	      inputface = inputface.rotateZ(tilt);
+	      outputface = outputface.rotateZ(tilt);
+	    }
+	}
+
       solid = new G4CutTubs(name + "_cl_solid", // name
 			    0,                  // inner radius
 			    radiusLocal,        // outer radius
