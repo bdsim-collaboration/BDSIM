@@ -10,7 +10,6 @@
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"
@@ -18,6 +17,7 @@
 #include <cmath>                           // sin, cos, fabs
 #include <utility>                         // for std::pair
 
+class G4Material;
 
 BDSTunnelFactoryRectangular* BDSTunnelFactoryRectangular::_instance = nullptr;
 
