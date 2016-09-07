@@ -9,6 +9,7 @@
 #include "BDSSDManager.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSpectrVacChamb.hh"
+#include "BDSTunnelInfo.hh"
 #include "BDSCCDCamera.hh"
 #include "G4Box.hh"
 #include "G4VisAttributes.hh"

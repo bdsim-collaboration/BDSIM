@@ -2,6 +2,7 @@
 #define BDSCOMPONENTFACTORY_H
 
 #include "BDSFieldInfo.hh"
+#include "BDSMagnetType.hh"
 
 #include "globals.hh"
 #include "G4ThreeVector.hh"
@@ -19,6 +20,7 @@ class BDSBeamPipeInfo;
 class BDSCavityInfo;
 class BDSIntegratorSet;
 class BDSLine;
+class BDSMagnet;
 class BDSMagnetOuterInfo;
 class BDSMagnetStrength;
 class BDSTiltOffset;
@@ -119,10 +121,10 @@ private:
 #endif
 
   BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
-                G4double angle,
-                G4String name,
-                BDSMagnetType magType,
-                BDSMagnetStrength* st);
+				G4double angle,
+				G4String name,
+				BDSMagnetType magType,
+				BDSMagnetStrength* st);
 
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element*     element,
