@@ -1,21 +1,17 @@
 #include "ModelAnalysis.hh"
 
 #include "TROOT.h"
-#include "rebdsim.hh"
-#include "Config.hh"
 #include "Model.hh"
 #include "TChain.h"
-
 
 ClassImp(ModelAnalysis)
 
 ModelAnalysis::ModelAnalysis():
-  Analysis("Model.")
+Analysis("Model.", nullptr),
+  model(nullptr)
 {}
 
-ModelAnalysis::ModelAnalysis(Model* modelIn, TChain *chainIn):
-  Analysis("Model.")
-{
-  model   = modelIn;
-  chain = chainIn;
-}
+ModelAnalysis::ModelAnalysis(Model* modelIn, TChain* chain, bool debug):
+  Analysis("Model.", chain, debug),
+  model(modelIn)
+{;}

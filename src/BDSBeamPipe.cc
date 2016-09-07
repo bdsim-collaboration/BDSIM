@@ -1,6 +1,7 @@
 #include "BDSBeamPipe.hh"
 
 #include "globals.hh"         // geant4 globals / types
+#include "G4VSolid.hh"
 
 BDSBeamPipe::BDSBeamPipe(G4VSolid*        containerSolidIn,
 			 G4LogicalVolume* containerLVIn,

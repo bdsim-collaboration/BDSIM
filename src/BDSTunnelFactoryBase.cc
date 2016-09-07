@@ -22,10 +22,10 @@
 BDSTunnelFactoryBase::BDSTunnelFactoryBase():
   tunnelComponent(nullptr),tunnelSection(nullptr),
   containerSolid(nullptr), tunnelSolid(nullptr), soilSolid(nullptr), floorSolid(nullptr),
-  intersectionSolid(nullptr), readOutSolid(nullptr),
+  intersectionSolid(nullptr),
   containerLV(nullptr), tunnelLV(nullptr), soilLV(nullptr), floorLV(nullptr),
-  readOutLV(nullptr), floorDisplacement(G4ThreeVector(0,0,0)),
-  cumulativeAngle(0), readOutRadius(0)
+  floorDisplacement(G4ThreeVector(0,0,0)),
+  cumulativeAngle(0)
 {
   // use large length safety for tunnel construction to avoid stuck particles
   // will not make difference to tracking so is acceptable to have 1um gap.
@@ -119,29 +119,6 @@ void BDSTunnelFactoryBase::CommontTestInputParameters(G4double&    length,
     {tunnelSoilMaterial = defaultModel->soilMaterial;}
 }
 
-void BDSTunnelFactoryBase::CommonConstruction(G4String      name,
-					      G4Material*   tunnelMaterial,
-					      G4Material*   tunnelSoilMaterial,
-					      G4double      length,
-					      G4double      containerXRadius,
-					      G4double      containerYRadius,
-					      G4bool        visible,
-					      G4ThreeVector inputFace,
-					      G4ThreeVector outputFace)
-
-{
-  readOutRadius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeAngled(name, length, readOutRadius, inputFace, outputFace);
-  BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
-  SetVisAttributes(visible);
-  SetUserLimits(length);
-  PlaceComponents(name);
-  PrepareGeometryComponent(containerXRadius, containerYRadius, 0.5*length);
-  SetSensitiveVolumes();
-  PrepareTunnelSection(name, length);
-}
-
-
 void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 					      G4Material* tunnelMaterial,
 					      G4Material* tunnelSoilMaterial,
@@ -151,8 +128,6 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 					      G4bool      visible)
 
 {
-  readOutRadius = std::max(containerXRadius, containerYRadius);
-  BuildReadOutVolumeStraight(name, length, readOutRadius);
   BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
   SetVisAttributes(visible);
   SetUserLimits(length);
@@ -189,9 +164,6 @@ void BDSTunnelFactoryBase::BuildLogicalVolumes(G4String   name,
 					tunnelMaterial,
 					name + "_floor_lv");
     }
-  readOutLV = new G4LogicalVolume(readOutSolid,
-				  emptyMaterial,
-				  name + "_readout_lv");
 }
 
 void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
@@ -228,11 +200,10 @@ void BDSTunnelFactoryBase::SetVisAttributes(G4bool visible)
     }
   // container & read out
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
-  readOutLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
-void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*/,
-						    G4double /*containerYRadius*/,
+void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
+						    G4double containerYRadius,
 						    G4double containerZRadius)
 {
   // prepare final object and register logical volumes
@@ -253,7 +224,7 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double /*containerXRadius*
   // we fiddle the extents here as the extents of the read out don't exist and
   // this is relatively safe as nothing will be placed against the outside edge
   // of the soil.
-  tunnelComponent->SetExtent(BDSExtent(readOutRadius, readOutRadius, containerZRadius));
+  tunnelComponent->SetExtent(BDSExtent(containerXRadius, containerYRadius, containerZRadius));
 }
 
 void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,
@@ -263,8 +234,7 @@ void BDSTunnelFactoryBase::PrepareTunnelSection(G4String name,
 				       chordLength,
 				       cumulativeAngle,
 				       tunnelComponent,
-				       intersectionSolid,
-				       readOutLV);
+				       intersectionSolid);
 }
   
 
@@ -274,7 +244,6 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
   // As they use a (tunnel specific) read out geometry, the require attaching
   // only once the beamline has been constructed - done in BDSDetectorConstruction.
   // World must be already constructed, which requires beam line to be already constructed.
-  tunnelComponent->RegisterSensitiveVolume(readOutLV);
   tunnelComponent->RegisterSensitiveVolume(tunnelLV);
   if (soilLV)
     {tunnelComponent->RegisterSensitiveVolume(soilLV);}
@@ -347,44 +316,13 @@ void BDSTunnelFactoryBase::TidyUp()
   soilSolid         = nullptr;
   floorSolid        = nullptr;
   intersectionSolid = nullptr;
-  readOutSolid      = nullptr;
   containerLV       = nullptr;
   tunnelLV          = nullptr;
   soilLV            = nullptr;
   floorLV           = nullptr;
-  readOutLV         = nullptr;
   floorDisplacement = G4ThreeVector(0,0,0);
   cumulativeAngle   = 0;
-  readOutRadius     = 0;
   solidsToBeRegistered.clear();
   visAttributesToBeRegistered.clear();
   userLimitsToBeRegistered.clear();
-}
-
-void BDSTunnelFactoryBase::BuildReadOutVolumeStraight(G4String name,
-						      G4double length,
-						      G4double radius)
-{
-  readOutSolid = new G4Tubs(name + "_readout_solid", // name
-			    0,                       // inner radius
-			    radius,                  // outer radius
-			    0.5*length,              // z half length
-			    0,                       // starting angle
-			    CLHEP::twopi);           // sweep angle
-}
-
-void BDSTunnelFactoryBase::BuildReadOutVolumeAngled(G4String      name,
-						    G4double      length,
-						    G4double      radius,
-						    G4ThreeVector inputFace,
-						    G4ThreeVector outputFace)
-{
-  readOutSolid = new G4CutTubs(name + "_readout_solid", // name
-			       0,                       // inner radius
-			       radius,                  // outer radius
-			       0.5*length,              // z half length
-			       0,                       // starting angle
-			       CLHEP::twopi,            // sweep angle
-			       inputFace,               // input face normal vector
-			       outputFace);             // output face normal vector
 }

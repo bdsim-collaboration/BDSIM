@@ -67,7 +67,7 @@ BDSComponentFactory::BDSComponentFactory()
   G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
 
   // rigidity (in T*m)
-  brho = BDSGlobalConstants::Instance()->FFact()*( momentum / 0.299792458);
+  brho = BDSGlobalConstants::Instance()->FFact()*( momentum / BDSGlobalConstants::Instance()->COverGeV());
   
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);
@@ -91,13 +91,11 @@ BDSComponentFactory::~BDSComponentFactory()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-                                       std::vector<GMAD::Element*> prevElementIn,
-                                       std::vector<GMAD::Element*> nextElementIn)
+                                       const std::vector<GMAD::Element*>& prevElements,
+                                       const std::vector<GMAD::Element*>& nextElements)
 {
   element      = elementIn;
-  // vectors of all next/previous elements plus any thinmultipoles inbetween
-  prevElements = prevElementIn;
-  nextElements = nextElementIn;
+
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
@@ -109,14 +107,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #endif
 
   // set next/previous element to be last (and only non thinmultipole) element in the vector
-  if (BDS::IsFinite(prevElements.size()))
-    {prevElement = prevElements.back();}
-  else
+  if (prevElements.empty())
     {prevElement = nullptr;}
-  if (BDS::IsFinite(nextElements.size()))
-    {nextElement = nextElements.back();}
   else
+    {prevElement = prevElements.back();}
+  if (nextElements.empty())
     {nextElement = nullptr;}
+  else
+    {nextElement = nextElements.back();}
 
   if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
     {registered = true;}
@@ -383,8 +381,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
             prevElement->type != ElementType::_THINMULT &&
             !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1))
             ) {
-      G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires previous element "
-      << "to be a Drift or SBend with opposite outcoming poleface" << G4endl;
+      G4cerr << __METHOD_NAME__ << "SBend " << element->name << " has a non-zero incoming poleface "
+       << "which requires the previous element to be a Drift or SBend with opposite outcoming poleface" << G4endl;
       exit(1);
     }
   }
@@ -396,8 +394,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
             nextElement->type != ElementType::_THINMULT &&
             !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2))
             ) {
-      G4cerr << __METHOD_NAME__ << "SBend with non-zero incoming poleface requires next element to "
-      << "be a Drift or SBend with opposite incoming poleface" << G4endl;
+      G4cerr << __METHOD_NAME__ << "SBend " << element->name << " has a non-zero outgoing poleface  "
+        << " which requires the next element to be a Drift or SBend with opposite incoming poleface" << G4endl;
       exit(1);
     }
   }
@@ -457,8 +455,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
           !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires previous element "
-		 << "to be a Drift or RBend with opposite outcoming poleface" << G4endl;
+        G4cerr << __METHOD_NAME__ << "RBend " << element->name << " has a non-zero incoming poleface "
+        << "which requires the previous element to be a Drift or RBend with opposite outcoming poleface" << G4endl;
 	  exit(1);
 	}
     }
@@ -472,8 +470,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
           !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "RBend with non-zero outgoing poleface requires next "
-		 << "element to be a Drift or RBend with opposite incoming poleface" << G4endl;
+        G4cerr << __METHOD_NAME__ << "RBend " << element->name << " has a non-zero outgoing poleface  "
+        << " which requires the next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
 	  exit(1);
 	}
     }
@@ -673,8 +671,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angleIn)
   {
- if(!HasSufficientMinimumLength(element))
-    {return nullptr;}
 
  BDSMagnetStrength* st = new BDSMagnetStrength();
  std::list<double>::iterator kn = element->knl.begin();

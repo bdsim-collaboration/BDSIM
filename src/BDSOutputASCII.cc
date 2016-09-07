@@ -256,7 +256,7 @@ void BDSOutputASCII::WritePrimaryLoss(BDSTrajectoryPoint* /*ploss*/)
 void BDSOutputASCII::WritePrimaryHit(BDSTrajectoryPoint* /*phit*/)
 {;}
 
-void BDSOutputASCII::WriteTunnelHits(BDSTunnelHitsCollection* /*hits*/)
+void BDSOutputASCII::WriteTunnelHits(BDSEnergyCounterHitsCollection* /*hits*/)
 {;}
 
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)

@@ -2,15 +2,16 @@
 #define BDSCAVITY_H
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSCavityInfo.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
+class BDSCavityInfo;
 class BDSFieldInfo;
 class G4Material;
+class G4VSolid;
 
 /**
  * @brief Base class for cavities.

@@ -21,6 +21,7 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 {
   bPrime = brho * (*strength)["k1"];
   nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  cOverGeV = BDSGlobalConstants::Instance()->COverGeV();
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B Field " << bField << G4endl;
@@ -60,7 +61,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector v0    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag        = v0.mag();
   G4ThreeVector InitMomDir     = v0.unit();
-  G4double rho = InitMag/CLHEP::GeV/(0.299792458 * bField/CLHEP::tesla * charge) * CLHEP::m;
+  G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
   // in case of zero field (though what if there is a quadrupole part..)
   // or neutral particles do a linear step:

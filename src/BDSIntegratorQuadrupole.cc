@@ -191,7 +191,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   LocalRp.setZ(zp1);
 
   GlobalR = ConvertToGlobal(LocalR);
-  GlobalP = ConvertAxisToGlobal(LocalRp);
+  GlobalP = InitPMag*ConvertAxisToGlobal(LocalRp);
 
   yOut[0] = GlobalR.x();
   yOut[1] = GlobalR.y();

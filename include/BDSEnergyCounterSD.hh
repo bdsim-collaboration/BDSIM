@@ -9,11 +9,19 @@
 #include "G4VSensitiveDetector.hh"
 #include "G4VGFlashSensitiveDetector.hh" // G4VSensitiveDetector is required before this due to missing header
 
-
 class G4VProcess;
 class G4Step;
 class G4HCofThisEvent;
 class G4TouchableHistory;
+
+/**
+ * @brief Generates BDSEnergyCounterHits from step information - uses curvilinear coords.
+ *
+ * This class interrogates a G4Step and generates an energy deposition hit if there was
+ * a change in energy. This assigns the energy deposition to a point randomly (uniformly)
+ * along the step.  It also uses a BDSAuxiliaryNavigator instance to use transforms from
+ * the curvilinear parallel world for curvilinear coordinates.
+ */
 
 class BDSEnergyCounterSD: public G4VSensitiveDetector, public G4VGFlashSensitiveDetector
 {
@@ -25,15 +33,14 @@ public:
   virtual G4bool ProcessHits(G4Step*aStep,G4TouchableHistory*ROhist);
   virtual G4bool ProcessHits(G4GFlashSpot*aSpot ,G4TouchableHistory* ROhist);
   
-  G4String GetName();
-  
 private:
   /// assignment and copy constructor not implemented nor used
   BDSEnergyCounterSD& operator=(const BDSEnergyCounterSD&);
   BDSEnergyCounterSD(BDSEnergyCounterSD&);
+  BDSEnergyCounterSD() = delete;
 
   G4bool   verbose;
-  G4String itsName;
+  G4String colName; ///< Collection name.
   BDSEnergyCounterHitsCollection* energyCounterCollection;
   G4int    HCIDe;
 
@@ -45,6 +52,8 @@ private:
   G4double stepLength;
   G4bool   precisionRegion;
   G4int    ptype;
+  G4int    trackID;
+  G4int    parentID;
   G4String volName;
   G4int    turnstaken;
   G4int    eventnumber;
@@ -53,9 +62,6 @@ private:
   /// Navigator for checking points in read out geometry
   BDSAuxiliaryNavigator* auxNavigator;
 };
-
-inline G4String BDSEnergyCounterSD::GetName()
-{return itsName;}
 
 #endif
 

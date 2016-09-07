@@ -15,6 +15,7 @@ public:
 
   std::vector<std::string> componentName;
   std::vector<std::string> placementName;
+  std::vector<std::string> componentType;
   std::vector<float>       length;
   std::vector<TVector3>    staPos;
   std::vector<TVector3>    midPos;
@@ -32,13 +33,17 @@ public:
   std::vector<float>       midS;
   std::vector<float>       endS;
 
+  /// Default constructor
   BDSOutputROOTEventModel();
+  /// Destructor
   virtual ~BDSOutputROOTEventModel();
+  /// Find element index closest to vPoint
+  int findNearestElement(TVector3 vPoint);
 
-#ifndef __ROOTBUILD__   
+#ifndef __ROOTBUILD__
+  /// Fill root output
   virtual void Fill();
 #endif
-
 
   ClassDef(BDSOutputROOTEventModel,1);
 };

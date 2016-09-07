@@ -25,8 +25,7 @@ public:
 		   G4double              chordLength,
 		   G4double              angle,
 		   BDSGeometryComponent* tunnelGeometry,
-		   G4VSolid*             innerIntersectionSolidIn,
-		   G4LogicalVolume*      readOutLVIn);
+		   G4VSolid*             innerIntersectionSolidIn);
 
   virtual ~BDSTunnelSection();
 

@@ -33,9 +33,9 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSOutputBase.hh" 
 #include "BDSOutputFactory.hh"
+#include "BDSParallelWorldCurvilinear.hh"
 #include "BDSParallelWorldSampler.hh"
 #include "BDSParser.hh" // Parser
-#include "BDSPhysicsList.hh"
 #include "BDSPrimaryGeneratorAction.hh"
 #include "BDSRandom.hh" // for random number generator from CLHEP
 #include "BDSRunAction.hh"
@@ -149,7 +149,9 @@ int main(int argc,char** argv)
   /// Register the geometry and parallel world construction methods with run manager.
   BDSDetectorConstruction* realWorld    = new BDSDetectorConstruction();
   BDSParallelWorldSampler* samplerWorld = new BDSParallelWorldSampler();
+  BDSParallelWorldCurvilinear* curvilinearWorld = new BDSParallelWorldCurvilinear();
   realWorld->RegisterParallelWorld(samplerWorld);
+  realWorld->RegisterParallelWorld(curvilinearWorld);
   runManager->SetUserInitialization(realWorld);  
 
   /// For geometry sampling, phys list must be initialized before detector.
@@ -158,30 +160,24 @@ int main(int argc,char** argv)
   G4cout << __FUNCTION__ << "> Constructing physics processes" << G4endl;
 #endif
   G4String physicsListName = BDSParser::Instance()->GetOptions().physicsList;
-  if(BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
-    {
-      G4ParallelWorldPhysics* pWorld  = new G4ParallelWorldPhysics(samplerWorld->GetName());
-      BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
-      physList->RegisterPhysics(pWorld);
-      // Biasing - TBC should only bias required particles to be biased
-      G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
-      physBias->Bias("e-");
-      physBias->Bias("e+");
-      physBias->Bias("gamma");
-      physBias->Bias("proton");
-      physBias->Bias("mu-");
-      physBias->Bias("mu+");
-      physBias->Bias("pi-");
-      physBias->Bias("pi+");
-      physList->RegisterPhysics(physBias);
-      runManager->SetUserInitialization(physList);
-    }
-  else
-    { 
-      BDSPhysicsList* physList = new BDSPhysicsList(physicsListName);
-      runManager->SetUserInitialization(physList);
-    }
-
+  G4ParallelWorldPhysics* sampWorld = new G4ParallelWorldPhysics(samplerWorld->GetName());
+  G4ParallelWorldPhysics* sensWorld = new G4ParallelWorldPhysics(curvilinearWorld->GetName());
+  BDSModularPhysicsList* physList = new BDSModularPhysicsList(physicsListName);
+  physList->RegisterPhysics(sampWorld);
+  physList->RegisterPhysics(sensWorld);
+  // Biasing - TBC should only bias required particles to be biased
+  G4GenericBiasingPhysics* physBias = new G4GenericBiasingPhysics();
+  physBias->Bias("e-");
+  physBias->Bias("e+");
+  physBias->Bias("gamma");
+  physBias->Bias("proton");
+  physBias->Bias("mu-");
+  physBias->Bias("mu+");
+  physBias->Bias("pi-");
+  physBias->Bias("pi+");
+  physList->RegisterPhysics(physBias);
+  runManager->SetUserInitialization(physList);
+  
   /// Set the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
 #ifdef BDSDEBUG
@@ -242,8 +238,7 @@ int main(int argc,char** argv)
   runManager->Initialize();
 
   /// Implement bias operations on all volumes only after G4RunManager::Initialize()
-  if (BDSParser::Instance()->GetOptions().modularPhysicsListsOn)
-    {realWorld->BuildPhysicsBias();}
+  realWorld->BuildPhysicsBias();
 
 #ifdef BDSDEBUG
   auto physics = runManager->GetUserPhysicsList();

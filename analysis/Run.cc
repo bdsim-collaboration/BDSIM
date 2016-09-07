@@ -1,5 +1,8 @@
 #include "Run.hh"
 
+#include "BDSOutputROOTEventRunInfo.hh"
+#include "BDSOutputROOTEventHistograms.hh"
+
 ClassImp(Run)
 
 Run::Run()

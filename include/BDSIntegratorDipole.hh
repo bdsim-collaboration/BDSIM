@@ -48,6 +48,9 @@ protected:
 		    G4double yOut[],
 		    G4double yErr[]);
 
+  /// scaling factor in brho calculation
+  G4double cOverGeV;
+
   std::pair<G4ThreeVector,G4ThreeVector> updatePandR(G4double rho,
 													 G4double h,
 													 G4ThreeVector LocalR,

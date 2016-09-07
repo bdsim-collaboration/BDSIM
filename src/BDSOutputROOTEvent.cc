@@ -4,8 +4,8 @@
 #include "parser/options.h"
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
+#include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSSampler.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -260,7 +260,7 @@ void BDSOutputROOTEvent::WritePrimaryLoss(BDSTrajectoryPoint* ploss)
 }
 
 /// write tunnel hits
-void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* hc)
+void BDSOutputROOTEvent::WriteTunnelHits(BDSEnergyCounterHitsCollection* hc)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
@@ -268,7 +268,7 @@ void BDSOutputROOTEvent::WriteTunnelHits(BDSTunnelHitsCollection* hc)
   G4int n_hit = hc->entries();
   for(G4int i=0;i<n_hit;i++)
     {
-      BDSTunnelHit *hit = (*hc)[i];
+      BDSEnergyCounterHit *hit = (*hc)[i];
       tHit->Fill(hit);
     }
 }
@@ -343,7 +343,8 @@ void BDSOutputROOTEvent::Write(const time_t&  startTime,
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  theRootOutputFile->cd();
+  if (theRootOutputFile)
+    {theRootOutputFile->cd();}
   runInfo->startTime        = startTime;
   runInfo->stopTime         = stopTime;
   runInfo->duration         = duration;

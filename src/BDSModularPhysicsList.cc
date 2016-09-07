@@ -1,6 +1,7 @@
 #include "BDSCutsAndLimits.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSLaserWirePhysics.hh"
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
 #include "BDSParameterisationPhysics.hh"
@@ -85,6 +86,7 @@ BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   physicsConstructors.insert(std::make_pair("qgsp_bic_hp",      &BDSModularPhysicsList::QGSPBICHP));
   physicsConstructors.insert(std::make_pair("ftfp_bert",        &BDSModularPhysicsList::FTFPBERT));
   physicsConstructors.insert(std::make_pair("ftfp_bert_hp",     &BDSModularPhysicsList::FTFPBERTHP));
+  physicsConstructors.insert(std::make_pair("lw",               &BDSModularPhysicsList::LaserWire));
 
   // prepare vector of valid names for searching when parsing physics list string
   for (const auto& constructor : physicsConstructors)
@@ -493,5 +495,14 @@ void BDSModularPhysicsList::FTFPBERTHP()
     {
       constructors.push_back(new G4HadronPhysicsFTFP_BERT_HP());
       physicsActivated["ftfp_bert_hp"] = true;
+    }
+}
+
+void BDSModularPhysicsList::LaserWire()
+{
+  if(!physicsActivated["lw"])
+    {
+      constructors.push_back(new BDSLaserWirePhysics());
+      physicsActivated["lw"] = true;
     }
 }
