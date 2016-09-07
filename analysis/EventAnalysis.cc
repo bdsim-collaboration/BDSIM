@@ -39,7 +39,7 @@ void EventAnalysis::Process()
 {
   Initialise();
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
@@ -57,7 +57,7 @@ void EventAnalysis::Process()
       {histoSum->Add(event->histos);}
 
 
-    if(Config::Instance()->Debug())
+    if(debug)
     {
       std::cout << __METHOD_NAME__ << i << std::endl;
       std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
@@ -89,7 +89,7 @@ void EventAnalysis::Terminate()
 
 void EventAnalysis::Write(TFile *outputFile)
 {
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     std::cout << __METHOD_NAME__ << std::endl;
   }
@@ -183,7 +183,7 @@ void EventAnalysis::ProcessSamplers()
 {
   for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
   {
-    if(Config::Instance()->Debug())
+    if(debug)
     {
       std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
     }

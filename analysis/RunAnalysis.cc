@@ -26,8 +26,8 @@ RunAnalysis::~RunAnalysis()
 
 void RunAnalysis::Process()
 {
-  if(Config::Instance()->Debug())
-  {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
+  if (debug)
+    {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
   // loop over events
   for(int i=0; i < chain->GetEntries(); ++i)
   {
