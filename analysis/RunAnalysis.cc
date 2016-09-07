@@ -6,20 +6,19 @@
 ClassImp(RunAnalysis)
 
 RunAnalysis::RunAnalysis():
-  Analysis("Run.")
+Analysis("Run.", nullptr),
+  run(nullptr)
 {;}
 
-RunAnalysis::RunAnalysis(Run *runIn, TChain *chainIn):
-  Analysis("Run.")
+RunAnalysis::RunAnalysis(Run* runIn, TChain* chain, bool debug):
+  Analysis("Run.", chain, debug),
+  run(runIn)
 {
-  if(Config::Instance()->Debug())
+  if (debug)
   {
-    std::cout << __METHOD_NAME__ << " " << runIn << " " << chainIn <<  " " << chainIn->GetEntries() << std::endl;
+    std::cout << __METHOD_NAME__ << " " << runIn << " " << chain <<  " "
+	      << chain->GetEntries() << std::endl;
   }
-
-  //chainIn->GetEntry(0);
-  run   = runIn;
-  chain = chainIn;
 }
 
 RunAnalysis::~RunAnalysis()

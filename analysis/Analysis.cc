@@ -2,14 +2,22 @@
 #include "Config.hh"
 #include "rebdsim.hh"
 
-Analysis::Analysis(std::string treeNameIn):
-  treeName(treeNameIn)
+Analysis::Analysis(std::string treeNameIn,
+		   TChain*     chainIn,
+		   bool        debugIn):
+  treeName(treeNameIn),
+  chain(chainIn),
+  histoSum(nullptr),
+  debug(debugIn)
 {
+  if (chain)
+    {chain->GetEntry(0);}  
 }
 
 Analysis::~Analysis()
 {
   delete chain;
+  delete histoSum;
 }
 
 void Analysis::Execute()

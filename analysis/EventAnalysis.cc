@@ -13,20 +13,14 @@
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-  Analysis("Event.")
-{
-  event    = nullptr;
-  chain    = nullptr;
-  histoSum = nullptr;
-}
+Analysis("Event.", nullptr),
+  event(nullptr)
+{;}
 
-EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn):
-  Analysis("Event.")
+EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
+  Analysis("Event.", chain, debug),
+  event(eventIn)
 {
-  chainIn->GetEntry(0);
-
-  this->event = eventIn;
-  this->chain = chainIn;
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
