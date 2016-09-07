@@ -3,19 +3,22 @@
 #include "rebdsim.hh"
 
 
-SamplerAnalysis::SamplerAnalysis()
+SamplerAnalysis::SamplerAnalysis():
+  s(nullptr),
+  S(0)
 {
-  this->CommonCtor();
+  CommonCtor();
 }
 
 #ifndef __ROOTDOUBLE__
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn)
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn):
 #else 
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn)
+  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn):
 #endif
+  s(samplerIn),
+  S(0)
 {
-  this->s = samplerIn;
-  this->CommonCtor();
+  CommonCtor();
 }
 
 void SamplerAnalysis::CommonCtor()
