@@ -112,14 +112,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	  {angleIn += -0.5*(prevElement->angle);}
+	{angleIn += -0.5*(prevElement->angle);}
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-      {angleOut += 0.5*nextElement->angle;}
+	{angleOut += 0.5*nextElement->angle;}
 
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-      {willModify = true;}
+	{willModify = true;}
     }
   else if (element->type == ElementType::_RBEND)
     {
