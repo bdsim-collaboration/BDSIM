@@ -12,7 +12,7 @@ class OptionsAnalysis : public Analysis
 {
 public:
   OptionsAnalysis();
-  OptionsAnalysis(Options* optionsIn, TChain* chainIn);
+  OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug = false);
   virtual ~OptionsAnalysis();
 
   virtual void Process(){};

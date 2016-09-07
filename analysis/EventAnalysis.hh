@@ -21,7 +21,7 @@ class EventAnalysis : public Analysis
 {
 public:
   EventAnalysis();
-  EventAnalysis(Event* eventIn, TChain* chainIn);
+  EventAnalysis(Event* eventIn, TChain* chain, bool debug = false);
   virtual ~EventAnalysis();
 
   virtual void Process();
@@ -33,7 +33,7 @@ public:
   virtual void Write(TFile *outputFileName);
 
 protected:
-  Event  *event;
+  Event* event;
   std::vector<SamplerAnalysis*> samplerAnalyses;
   std::vector<std::vector<std::vector<double>>> opticalFunctions; ///< optical functions from all samplers
   ClassDef(EventAnalysis,1);

@@ -34,7 +34,9 @@
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
   BDSMagnetOuterFactoryPolesBase(1.1)
-{;}
+{
+  CleanUp();
+}
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn):
   poleFraction(0.7),
@@ -73,9 +75,11 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
   poleIntersectionSolid = nullptr;
   coilLeftSolid         = nullptr;
   coilRightSolid        = nullptr;
+  endPieceContainerSolid = nullptr;
   coilLeftLV            = nullptr;
   coilRightLV           = nullptr;
   endPieceCoilLV        = nullptr;
+  endPieceContainerLV   = nullptr;
   endPiece              = nullptr;
   leftPoints.clear();
   rightPoints.clear();

@@ -42,7 +42,8 @@ BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component
   containerLogicalVolume(component.containerLogicalVolume),
   outerExtent(component.outerExtent),
   innerExtent(component.innerExtent),
-  placementOffset(component.placementOffset)
+  placementOffset(component.placementOffset),
+  placementRotation(component.placementRotation)
 {;}
 
 BDSGeometryComponent::~BDSGeometryComponent()

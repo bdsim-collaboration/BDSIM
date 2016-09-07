@@ -7,10 +7,9 @@
 
 ClassImp(Model)
 
-Model::Model()
-{
-  model = nullptr;
-}
+Model::Model():
+model(nullptr)
+{;}
 
 Model::~Model()
 {

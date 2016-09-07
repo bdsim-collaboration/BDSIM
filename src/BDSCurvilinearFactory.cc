@@ -1,6 +1,7 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSCurvilinearFactory.hh"
 #include "BDSGeometryComponent.hh"

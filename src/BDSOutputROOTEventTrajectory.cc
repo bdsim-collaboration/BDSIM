@@ -73,7 +73,8 @@
 
 ClassImp(BDSOutputROOTEventTrajectory)
 
-BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory()
+BDSOutputROOTEventTrajectory::BDSOutputROOTEventTrajectory():
+  n(0)
 {;}
 
 BDSOutputROOTEventTrajectory::~BDSOutputROOTEventTrajectory()
@@ -108,7 +109,7 @@ void BDSOutputROOTEventTrajectory::Fill(std::vector<BDSTrajectory*> &trajVec)
 
     for(auto i = 0; i< traj->GetPointEntries();++i)
     {
-      BDSTrajectoryPoint *point = dynamic_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
+      BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(traj->GetPoint(i));
       G4ThreeVector      pos = point->GetPosition();
       trajectory.push_back(TVector3(pos.getX() / CLHEP::m,
                                     pos.getY() / CLHEP::m,
@@ -143,10 +144,10 @@ void BDSOutputROOTEventTrajectory::Fill(BDSEnergyCounterHitsCollection *phc)
 
 void BDSOutputROOTEventTrajectory::Flush()
 {
+  n = 0;
   partID.clear();
   trackID.clear();
   parentID.clear();
-  trajectories.clear();
   preProcessTypes.clear();
   preProcessSubTypes.clear();
   postProcessTypes.clear();
@@ -154,6 +155,7 @@ void BDSOutputROOTEventTrajectory::Flush()
   preWeights.clear();
   postWeights.clear();
   energys.clear();
+  trajectories.clear();
 }
 
 int BDSOutputROOTEventTrajectory::primary()

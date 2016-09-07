@@ -254,6 +254,9 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
     }
   
   // see explanation in other processhits function
+  G4int index = -1;
+  if (theInfo)
+    {index = theInfo->GetBeamlineIndex();}
   BDSEnergyCounterHit* ECHit = new BDSEnergyCounterHit(nCopy,
 						       enrg,
 						       X,
@@ -268,13 +271,13 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
 						       volName, 
 						       ptype,
 						       trackID,
-                               parentID,
+						       parentID,
 						       weight, 
 						       0,
 						       turnstaken,
 						       eventnumber,
 						       stepLength,
-						       theInfo->GetBeamlineIndex());
+						       index);
   
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);

@@ -6,7 +6,6 @@
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 
 #include <cmath>
 #include <utility>                         // for std::pair

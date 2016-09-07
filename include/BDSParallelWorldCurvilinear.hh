@@ -18,7 +18,7 @@ public:
   virtual ~BDSParallelWorldCurvilinear();
 
   /// Construct the required parallel world geometry. This must
-  /// overload the pure virutal method in G4VUserParallelWorld.
+  /// overload the pure virtual method in G4VUserParallelWorld.
   virtual void Construct();
 
 private:
