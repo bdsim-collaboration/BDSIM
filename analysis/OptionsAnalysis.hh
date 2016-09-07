@@ -2,19 +2,17 @@
 #define OPTIONSANALYSIS_H
 
 #include "TROOT.h"
-#include "TFile.h"
-#include "TChain.h"
 
-#include "OptionsAnalysis.hh"
 #include "Analysis.hh"
-#include "Options.hh"
 
+class Options;
+class TChain;
 
 class OptionsAnalysis : public Analysis
 {
 public:
   OptionsAnalysis();
-  OptionsAnalysis(Options* optionsIn, TChain* chainIn);
+  OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug = false);
   virtual ~OptionsAnalysis();
 
   virtual void Process(){};

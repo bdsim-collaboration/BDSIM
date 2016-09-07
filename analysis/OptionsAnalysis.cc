@@ -1,26 +1,23 @@
 #include "OptionsAnalysis.hh"
 
-#include "rebdsim.hh"
-#include "Config.hh"
 #include "TROOT.h"
+#include "TChain.h"
+
+#include "Options.hh"
 
 ClassImp(OptionsAnalysis)
 
 OptionsAnalysis::OptionsAnalysis():
-  Analysis("Options.")
-{
-  options = nullptr;
-}
+Analysis("Options.", nullptr),
+  options(nullptr)
+{;}
+
+OptionsAnalysis::OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug):
+  Analysis("Options.", chain, debug),
+  options(optionsIn)
+{;}
 
 OptionsAnalysis::~OptionsAnalysis()
 {
   delete options;
-}
-
-OptionsAnalysis::OptionsAnalysis(Options* optionsIn, TChain* chainIn):
-  Analysis("Options.")
-{
-  chainIn->GetEntry(0);
-  chain = chainIn;
-  options = optionsIn;
 }

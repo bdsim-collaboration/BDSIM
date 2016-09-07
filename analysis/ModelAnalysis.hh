@@ -4,22 +4,22 @@
 #include "TROOT.h"
 
 #include "Analysis.hh"
-#include "Model.hh"
 
+class Model;
 class TChain;
 
 class ModelAnalysis : public Analysis
 {
 public:
   ModelAnalysis();
-  ModelAnalysis(Model *modelIn, TChain *chainIn);
+  ModelAnalysis(Model* model, TChain* chain, bool debug = false);
   virtual ~ModelAnalysis(){};
 
   virtual void Process(){};
   virtual void Terminate(){};
 
 protected:
-  Model    *model;
+  Model* model;
   ClassDef(ModelAnalysis,1);
 };
 

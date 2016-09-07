@@ -79,7 +79,6 @@ namespace GMAD
     
     /// list of physics processes
     std::string physicsList;
-    int         modularPhysicsListsOn;
 
     ///@{ beam parameters
     std::string particleName;

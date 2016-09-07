@@ -1,6 +1,7 @@
 #include "BDSExecOptions.hh"
 
 #include <cstdlib>
+#include <getopt.h>
 #include <iomanip>
 #include <string>
 #include <unistd.h>
@@ -9,7 +10,6 @@
 
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
-#include "BDSOutputFormat.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSUtilities.hh"
 

@@ -4,12 +4,16 @@
 #include "BDSExtent.hh"
 
 #include "globals.hh"   // geant4 globals / types
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
 #include <string>
 #include <utility>
+
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief Various utility functions that have no specific place - 
