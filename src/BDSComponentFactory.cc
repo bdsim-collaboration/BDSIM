@@ -167,7 +167,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   if (nextElement)
     {nextTilt = nextElement->tilt * CLHEP::rad;}
   G4ThreeVector inputFaceNormal  = faces.first.rotateZ(prevTilt - currentTilt);
-  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt + currentTilt);
+  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt - currentTilt);
   
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
