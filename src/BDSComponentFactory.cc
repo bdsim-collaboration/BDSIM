@@ -1263,7 +1263,14 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   else
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
   info->outerMaterial = outerMaterial;
-  
+
+  if ((element->angle < 0) && (element->yokeOnInside))
+    {info->yokeOnLeft = true;}
+  else if ((element->angle > 0) && (!(element->yokeOnInside)))
+    {info->yokeOnLeft = true;}
+  else
+    {info->yokeOnLeft = false;}
+      
   return info;
 }
 
