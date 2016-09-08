@@ -536,12 +536,7 @@ parameter         description                        default     required
 `outerDiameter`   outer full width [m]               global      no
 ================  =================================  ==========  ===========
 
-.. note:: `rcol` and `ecol` do not currently implement tilt, so if an angled collimator
-	  is required, a `transform3d` should before and afterwards in the sequence to
-	  rotate the coordinate frame before and afterwards. See `transform3d`_ for further
-	  details and examples.
-
-	  The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
+.. note:: The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
 	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
 
 
@@ -1014,23 +1009,29 @@ Offsets & Tilts - Component Misalignment
 To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
 and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
 
-.. note:: Components that have a finite angle (rbend and sbend) will only respond to vertical offsets as
-	  horizontal offsets and rotations may lead to overlapping geometry. This limitation will be addressed
-	  in possible future releases, but necessitates significant changes to the geometry construction.
+.. note:: Components that have a finite angle (rbend and sbend) will only respond to tilt and not vertical or
+	  horizontal offsets. This is because these would change the length of the bend about its central axis.
+	  This is not currently handled but may be implemented in future releases.
+
+.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
+	  axis) to be rotated without rotating the reference frame of the beam. Ie a dipole with a :math:`\pi/2`
+	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
+	  matches the behaviour of MAD8 and MADX.
 
 .. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
 	  
 The misalignments can be controlled through the following parameters
 
-+--------------+-----------------------------------------------------------------------------------+
-| Parameter    | Default value                                                                     | 
-+==============+===================================================================================+
-| `offsetX`    | horizontal displacement of the component [m]                                      |
-+--------------+-----------------------------------------------------------------------------------+
-| `offsetY`    | vertical displacement of the component [m]                                        |
-+--------------+-----------------------------------------------------------------------------------+
-| `tilt`       | rotation of component clockwise facing in the direction of the beamline `z` [rad] |
-+--------------+-----------------------------------------------------------------------------------+
++--------------+------------------------------------------------------------------------------------+
+| Parameter    | Default value                                                                      | 
++==============+====================================================================================+
+| `offsetX`    | hHorizontal displacement of the component [m].                                     |
++--------------+------------------------------------------------------------------------------------+
+| `offsetY`    | Vertical displacement of the component [m].                                        |
++--------------+------------------------------------------------------------------------------------+
+| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
+|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
++--------------+------------------------------------------------------------------------------------+
 
 Examples::
 
