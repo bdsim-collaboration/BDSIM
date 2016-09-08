@@ -77,14 +77,18 @@ int main(int argc, char *argv[])
     }
 
   // write output
-  TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
-
-  for (auto& analysis : analyses)
+  try
     {
-      analysis->Write(outputFile);
+      TFile* outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
+      for (auto& analysis : analyses)
+	{analysis->Write(outputFile);}
+
+      outputFile->Close();
     }
-
-  outputFile->Close();
-
+  catch (std::string error)
+    {
+      std::cout << error << std::endl;
+      exit(1);
+    }
   return 0;
 }

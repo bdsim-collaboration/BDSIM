@@ -14,14 +14,14 @@ class RunAnalysis : public Analysis
 {
 public:
   RunAnalysis();
-  RunAnalysis(Run *r, TChain *c);
+  RunAnalysis(Run *r, TChain *c, bool debug = false);
   virtual ~RunAnalysis();
 
   virtual void Process();
   virtual void Write(TFile *f);
 
 protected:
-  Run    *run;
+  Run* run;
 
   ClassDef(RunAnalysis,1);
 };

@@ -13,20 +13,14 @@
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-  Analysis("Event.")
-{
-  event    = nullptr;
-  chain    = nullptr;
-  histoSum = nullptr;
-}
+Analysis("Event.", nullptr),
+  event(nullptr)
+{;}
 
-EventAnalysis::EventAnalysis(Event *eventIn, TChain *chainIn):
-  Analysis("Event.")
+EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
+  Analysis("Event.", chain, debug),
+  event(eventIn)
 {
-  chainIn->GetEntry(0);
-
-  this->event = eventIn;
-  this->chain = chainIn;
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
@@ -45,7 +39,7 @@ void EventAnalysis::Process()
 {
   Initialise();
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
   }
@@ -63,7 +57,7 @@ void EventAnalysis::Process()
       {histoSum->Add(event->histos);}
 
 
-    if(Config::Instance()->Debug())
+    if(debug)
     {
       std::cout << __METHOD_NAME__ << i << std::endl;
       std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
@@ -95,7 +89,7 @@ void EventAnalysis::Terminate()
 
 void EventAnalysis::Write(TFile *outputFile)
 {
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     std::cout << __METHOD_NAME__ << std::endl;
   }
@@ -189,7 +183,7 @@ void EventAnalysis::ProcessSamplers()
 {
   for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
   {
-    if(Config::Instance()->Debug())
+    if(debug)
     {
       std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
     }

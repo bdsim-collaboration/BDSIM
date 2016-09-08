@@ -17,7 +17,8 @@ BDSAcceleratorModel::BDSAcceleratorModel():
   flatBeamline(nullptr),
   curvilinearBeamline(nullptr),
   supportsBeamline(nullptr),
-  tunnelBeamline(nullptr)
+  tunnelBeamline(nullptr),
+  endPieceBeamline(nullptr)
 {
   BDSAcceleratorComponentRegistry::Instance();
   BDSPhysicalVolumeInfoRegistry::Instance();
