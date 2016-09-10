@@ -69,28 +69,16 @@ public:
   G4VPhysicalVolume* LocateGlobalPointAndSetup(G4Step const* const step,
 					       G4bool useCurvilinear = true) const;
 
-  /// Locate the supplied point the in the geometry and get and store
-  /// the transform to that volume in the member variable. This function
-  /// has to be const as it's called the first time in GetField which is
-  /// a pure virtual const function from G4MagneticField that we have to
-  /// implement and have to keep const. This function doesn't change the
-  /// const pointer but does change the contents of what it points to.
-  void InitialiseTransform(const G4ThreeVector& globalPosition) const;
-
-  /// This is used to foricibly initialise the transforms using a position,
-  /// momentum vector and step length.  The free drift of the particle is
-  /// calculated and the the average of the two points is used to locate
-  /// and initialise the transforms (in global coordinates).
-  void InitialiseTransform(const G4ThreeVector& globalPosition,
-			   const G4ThreeVector& globalMomentum,
-			   const G4double       stepLength);
-
   /// Calculate the local coordinates for both a pre and post step point. The mid point
   /// of the step is used for the volume (and therefore transform) lookup which should
   /// ensure the correct volume is found - avoiding potential boundary issues between
   /// parallel worlds.
   BDSStep ConvertToLocal(G4Step const* const step,
 			 G4bool useCurvilinear = true) const;
+
+  BDSStep ConvertToLocal(const G4ThreeVector& globalPosition,
+			 const G4ThreeVector& globalDirection,
+			 const G4bool&        useCurvilinear = true) const;
 
   /// Calculate the local coordinates of a global point.
   G4ThreeVector ConvertToLocal(const G4double globalPoint[3],
@@ -144,12 +132,10 @@ public:
 				const G4bool&        useCurvilinear = true) const;
   
 protected:
-  mutable G4bool initialised;
-
-  G4AffineTransform* const globalToLocal;
-  G4AffineTransform* const localToGlobal;
-  G4AffineTransform* const globalToLocalCL;
-  G4AffineTransform* const localToGlobalCL;
+  mutable G4AffineTransform globalToLocal;
+  mutable G4AffineTransform localToGlobal;
+  mutable G4AffineTransform globalToLocalCL;
+  mutable G4AffineTransform localToGlobalCL;
   
   /// Navgiator object for safe navigation in the real (mass) world without affecting
   /// tracking of the particle.
@@ -166,15 +152,25 @@ private:
   G4Navigator* Navigator(G4bool curvilinear) const;
 
   /// @{ Utility function to select appropriate transfrom.
-  G4AffineTransform* GlobalToLocal(G4bool curvilinear) const;
-  G4AffineTransform* LocalToGlobal(G4bool curvilinear) const;
+  const G4AffineTransform& GlobalToLocal(G4bool curvilinear) const;
+  const G4AffineTransform& LocalToGlobal(G4bool curvilinear) const;
   /// @}
-  
-  /// Whether caching of transforms should be used. If used, use of a BDSAuxiliaryNavigator
-  /// instance is more efficient but that instance can only be used for one volume (asuuming
-  /// the masss world is being used for the navigator). Whereas, if the caching is not used,
-  /// a single instance of this class can be used to locate points anywhere in the setup.
-  G4bool useCaching;
+
+    /// Locate the supplied point the in the geometry and get and store
+  /// the transform to that volume in the member variable. This function
+  /// has to be const as it's called the first time in GetField which is
+  /// a pure virtual const function from G4MagneticField that we have to
+  /// implement and have to keep const. This function doesn't change the
+  /// const pointer but does change the contents of what it points to.
+  void InitialiseTransform(const G4ThreeVector& globalPosition) const;
+
+  /// This is used to foricibly initialise the transforms using a position,
+  /// momentum vector and step length.  The free drift of the particle is
+  /// calculated and the the average of the two points is used to locate
+  /// and initialise the transforms (in global coordinates).
+  void InitialiseTransform(const G4ThreeVector& globalPosition,
+			   const G4ThreeVector& globalMomentum,
+			   const G4double       stepLength);
   
   /// Counter to keep track of when the last instance of the class is deleted and
   /// therefore when the navigators can be safely deleted without affecting

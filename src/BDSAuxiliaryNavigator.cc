@@ -13,10 +13,10 @@ G4Navigator* BDSAuxiliaryNavigator::auxNavigatorCL    = new G4Navigator();
 G4int        BDSAuxiliaryNavigator::numberOfInstances = 0;
 
 BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
-  globalToLocal(new G4AffineTransform()),
-  localToGlobal(new G4AffineTransform()),
-  globalToLocalCL(new G4AffineTransform()),
-  localToGlobalCL(new G4AffineTransform())
+  globalToLocal(G4AffineTransform()),
+  localToGlobal(G4AffineTransform()),
+  globalToLocalCL(G4AffineTransform()),
+  localToGlobalCL(G4AffineTransform())
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -26,11 +26,7 @@ BDSAuxiliaryNavigator::BDSAuxiliaryNavigator():
 
 BDSAuxiliaryNavigator::~BDSAuxiliaryNavigator()
 {
-  delete globalToLocal;
-  delete localToGlobal;
-  delete globalToLocalCL;
-  delete localToGlobalCL;
-  // Only delete navigator objects
+  // Only delete static navigator objects when last instance is deleted
   if (numberOfInstances == 1)
     {
       delete auxNavigator;   auxNavigator   = nullptr;
@@ -69,10 +65,10 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
 {
   auto result = auxNavigator->LocateGlobalPointAndSetup(globalPosition);
   auto resultcl = auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
-  (*globalToLocal) = auxNavigator->GetGlobalToLocalTransform();
-  (*localToGlobal) = auxNavigator->GetLocalToGlobalTransform();
-  (*globalToLocalCL) = auxNavigatorCL->GetGlobalToLocalTransform();
-  (*localToGlobalCL) = auxNavigatorCL->GetLocalToGlobalTransform();
+  globalToLocal = auxNavigator->GetGlobalToLocalTransform();
+  localToGlobal = auxNavigator->GetLocalToGlobalTransform();
+  globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+  localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
 }
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosition,
@@ -90,17 +86,17 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
   auto selectedVol = LocateGlobalPointAndSetup(step, useCurvilinear);
   if (useCurvilinear)
     {
-      (*globalToLocalCL) = auxNavigatorCL->GetGlobalToLocalTransform();
-      (*localToGlobalCL) = auxNavigatorCL->GetLocalToGlobalTransform();
+      globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+      localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
     }
   else
     {
-      (*globalToLocal) = auxNavigator->GetGlobalToLocalTransform();
-      (*localToGlobal) = auxNavigator->GetLocalToGlobalTransform();
+      globalToLocal = auxNavigator->GetGlobalToLocalTransform();
+      localToGlobal = auxNavigator->GetLocalToGlobalTransform();
     }
 
-  G4ThreeVector pre = GlobalToLocal(useCurvilinear)->TransformPoint(step->GetPreStepPoint()->GetPosition());
-  G4ThreeVector pos = GlobalToLocal(useCurvilinear)->TransformPoint(step->GetPostStepPoint()->GetPosition());
+  G4ThreeVector pre = GlobalToLocal(useCurvilinear).TransformPoint(step->GetPreStepPoint()->GetPosition());
+  G4ThreeVector pos = GlobalToLocal(useCurvilinear).TransformPoint(step->GetPostStepPoint()->GetPosition());
   return BDSStep(pre, pos, selectedVol);
 }
 
@@ -115,7 +111,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalP
 						    const G4bool&        useCurvilinear) const
 {
   InitialiseTransform(globalPosition);
-  return GlobalToLocal(useCurvilinear)->TransformPoint(globalPosition);
+  return GlobalToLocal(useCurvilinear).TransformPoint(globalPosition);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4double globalPosition[3],
@@ -132,32 +128,32 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToLocal(const G4ThreeVector& glo
 							const G4bool&        useCurvilinear) const
 {
   InitialiseTransform(globalPosition);
-  return GlobalToLocal(useCurvilinear)->TransformAxis(globalAxis);
+  return GlobalToLocal(useCurvilinear).TransformAxis(globalAxis);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& localAxis,
 							 const G4bool&        useCurvilinear) const
-{return LocalToGlobal(useCurvilinear)->TransformAxis(localAxis);}
+{return LocalToGlobal(useCurvilinear).TransformAxis(localAxis);}
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSAuxiliaryNavigator::ConvertAxisToGlobal(const std::pair<G4ThreeVector, G4ThreeVector>& localAxis,
 										   const G4bool& useCurvilinear) const
 {
-  G4AffineTransform* lToG = LocalToGlobal(useCurvilinear);
-  G4ThreeVector globalB = lToG->TransformAxis(localAxis.first);
-  G4ThreeVector globalE = lToG->TransformAxis(localAxis.second);
+  const G4AffineTransform& lToG = LocalToGlobal(useCurvilinear);
+  G4ThreeVector globalB = lToG.TransformAxis(localAxis.first);
+  G4ThreeVector globalE = lToG.TransformAxis(localAxis.second);
   return std::make_pair(globalB, globalE);
 }										 
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& localPosition,
 						     const G4bool&        useCurvilinear) const
-{return LocalToGlobal(useCurvilinear)->TransformPoint(localPosition);}
+{return LocalToGlobal(useCurvilinear).TransformPoint(localPosition);}
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& globalPosition,
 							 const G4ThreeVector& localAxis,
 							 const G4bool&        useCurvilinear) const
 {
   InitialiseTransform(globalPosition);
-  return LocalToGlobal(useCurvilinear)->TransformAxis(localAxis);
+  return LocalToGlobal(useCurvilinear).TransformAxis(localAxis);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& globalPosition,
@@ -165,7 +161,7 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& global
 						     const G4bool&        useCurvilinear) const
 {
   InitialiseTransform(globalPosition);
-  return LocalToGlobal(useCurvilinear)->TransformPoint(localPosition);
+  return LocalToGlobal(useCurvilinear).TransformPoint(localPosition);
 }
 
 G4Navigator* BDSAuxiliaryNavigator::Navigator(G4bool curvilinear) const
@@ -174,12 +170,12 @@ G4Navigator* BDSAuxiliaryNavigator::Navigator(G4bool curvilinear) const
   return curvilinear ? auxNavigatorCL : auxNavigator;
 }
 
-G4AffineTransform* BDSAuxiliaryNavigator::GlobalToLocal(G4bool curvilinear) const
+const G4AffineTransform& BDSAuxiliaryNavigator::GlobalToLocal(G4bool curvilinear) const
 {
   return curvilinear ? globalToLocalCL : globalToLocal;
 }
 
-G4AffineTransform* BDSAuxiliaryNavigator::LocalToGlobal(G4bool curvilinear) const
+const G4AffineTransform& BDSAuxiliaryNavigator::LocalToGlobal(G4bool curvilinear) const
 {
   return curvilinear ? localToGlobalCL : localToGlobal;
 }
