@@ -152,6 +152,16 @@ G4ThreeVector BDSAuxiliaryNavigator::ConvertAxisToGlobal(const G4ThreeVector& gl
   return LocalToGlobal(useCurvilinear).TransformAxis(localAxis);
 }
 
+BDSStep BDSAuxiliaryNavigator::ConvertToGlobalStep(const G4ThreeVector& localPosition,
+					       const G4ThreeVector& localDirection,
+					       const G4bool&        useCurvilinear) const
+{
+  const G4AffineTransform& aff = LocalToGlobal(useCurvilinear);
+  G4ThreeVector globalPos = aff.TransformPoint(localPosition);
+  G4ThreeVector globalDir = aff.TransformAxis(localDirection);
+  return BDSStep(globalPos, globalDir);
+}
+
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToGlobal(const G4ThreeVector& globalPosition,
 						     const G4ThreeVector& localPosition,
 						     const G4bool&        useCurvilinear) const
