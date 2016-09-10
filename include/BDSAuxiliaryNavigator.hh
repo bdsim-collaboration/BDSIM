@@ -72,10 +72,16 @@ public:
   /// Calculate the local coordinates for both a pre and post step point. The mid point
   /// of the step is used for the volume (and therefore transform) lookup which should
   /// ensure the correct volume is found - avoiding potential boundary issues between
-  /// parallel worlds.
+  /// parallel worlds. This uses LocateGlobalPointAndSetup.
   BDSStep ConvertToLocal(G4Step const* const step,
 			 G4bool useCurvilinear = true) const;
 
+  /// Calcualte the local coordinates for a position and direction along a step
+  /// length.  This is similar to the same function but for a G4Step but split
+  /// apart. The direction vector can be used as the momentum vector without being
+  /// a unit vector.  The 'post step' vector in the BDSStep instance will be the
+  /// direction vector (of same magnitude) but rotated to the local frame.
+  /// This uses LocateGlobalPointAndSetup.
   BDSStep ConvertToLocal(const G4ThreeVector& globalPosition,
 			 const G4ThreeVector& globalDirection,
 			 const G4double       stepLength     = 0,
