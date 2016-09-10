@@ -39,7 +39,7 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(const G4Thre
 								    const G4ThreeVector* direction,
 								    const G4bool pRelativeSearch,
 								    const G4bool ignoreDirection,
-								    G4bool useCurvilinear)
+								    G4bool useCurvilinear) const
 {
   G4Navigator* nav = Navigator(useCurvilinear);
   return nav->LocateGlobalPointAndSetup(point, direction,

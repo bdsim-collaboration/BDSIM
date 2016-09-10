@@ -61,7 +61,7 @@ public:
 					       const G4ThreeVector* direction = nullptr,
 					       const G4bool pRelativeSearch   = true,
 					       const G4bool ignoreDirection   = true,
-					       G4bool useCurvilinear          = true);
+					       G4bool useCurvilinear          = true) const;
 
   /// A safe way to locate and setup a point inside a volume. This uses the mid
   /// point of the step to locate the volume rather than the edges which may lie
