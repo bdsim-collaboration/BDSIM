@@ -98,10 +98,11 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosit
 }
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosition,
-                                                const G4ThreeVector &globalMomentum, const G4double stepLength)
+                                                const G4ThreeVector &globalMomentum,
+						const G4double stepLength)
 {
     G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;
-    G4ThreeVector midPoint = (endPoint - globalPosition) / 2;
+    G4ThreeVector midPoint = (endPoint + globalPosition) / 2;
     InitialiseTransform(midPoint);
 }
 
