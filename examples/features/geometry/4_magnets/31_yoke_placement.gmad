@@ -1,6 +1,6 @@
 sb1: sbend, l=3*m, angle=0.2;
 d1: drift, l=0.5*m;
-sb2: sbend, l=3*m, angle=0.2, yokeOnInside=false;
+sb2: sbend, l=3*m, angle=0.2, yokeOnInside=0;
 
 l1: line=(d1,sb1,d1,sb2,d1,sb1,d1);
 
