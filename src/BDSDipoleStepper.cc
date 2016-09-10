@@ -14,8 +14,8 @@ BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs* eqRHS):
   fPtrMagEqOfMot(eqRHS),
   itsBGrad(0.0),itsBField(0.0),itsDist(0.0)
 {
-  backupStepper   = new G4ClassicalRK4(eqRHS,6);
-  nominalEnergy   = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  backupStepper = new G4ClassicalRK4(eqRHS,6);
+  nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 }
 
 
@@ -94,6 +94,12 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   
   G4double Theta   = h/R;
 
+  // Note, local z axis is along the chord of the small linear section of magnet. For
+  // the analytical solution to a dipole, we need true curvilinear coordinates - ie a
+  // paritlce with (x,x') = (0,0) will have a finite x' from the global to 'local'
+  // transform but needs to be then rotated by the bend angle (theta) / 2 which would
+  // give (x,x')_{local curvilinear} = (0,0). The result should also be rotated back
+  // (in the z,x plane).
   G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
   CosT_ov_2=cos(Theta/2);
   SinT_ov_2=sin(Theta/2);
@@ -250,7 +256,7 @@ void BDSDipoleStepper::Stepper(const G4double yInput[],
 
   for(G4int i=0;i<nvar;i++) yErr[i]=1e-10*hstep;
 
-  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  AdvanceHelix(yInput,dydx,G4ThreeVector(),hstep,yOut,yErr);
   // G4cout << "ds> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
 }
 
