@@ -219,7 +219,7 @@ protected:
   G4ThreeVector outputFaceNormal;
 
   /// A larger length safety that can be used where tracking accuracty isn't required
-  /// or more tolerante geometry is requried (1um).
+  /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
 };
 

@@ -536,7 +536,7 @@ parameter         description                        default     required
 `outerDiameter`   outer full width [m]               global      no
 ================  =================================  ==========  ===========
 
-.. note:: The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
+.. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
 	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
 
 
@@ -1226,18 +1226,18 @@ Physics Lists In BDSIM
 | ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
 |                           | is based on the FRITIOF description of string excitation and           |
 |                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                           | FTF phyiscs lists require `G4HadronElasticPhysics` to work correctly.  |
+|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
 +---------------------------+------------------------------------------------------------------------+
 | ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
 |                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
 +---------------------------+------------------------------------------------------------------------+
 | decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
 +---------------------------+------------------------------------------------------------------------+
-| muon                      | Proivdes muon production and scattering processes. Gamma to muons,     |
+| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
 |                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                           | multiple scattering for muons, muon brehmstrahhlung, pair production   |
-|                           | and Cherenkov light are all provided. Provided by BDSIM phyiscs        |
-|                           | builder (a la Geant4) `BDSMuonPhyiscs`.                                |
+|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                           | builder (a la Geant4) `BDSMuonPhysics`.                                |
 +---------------------------+------------------------------------------------------------------------+
 
 Physics Biasing
@@ -1301,7 +1301,7 @@ as their value.
 +==================================+=======================================================+
 | **Common Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| batch                            | run BDISM without the visualiser                      |
+| batch                            | run BDSIM without the visualiser                      |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
@@ -1450,7 +1450,7 @@ as their value.
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
-|                                  | Note, this does not affect the accuracty of the       |
+|                                  | Note, this does not affect the accuracy of the       |
 |                                  | geometry - only the visualisation (default : 50)      |
 +----------------------------------+-------------------------------------------------------+
 
