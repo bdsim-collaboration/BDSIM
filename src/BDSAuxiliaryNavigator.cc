@@ -65,20 +65,29 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
 					      G4bool useCurvilinear) const
 {
   auto selectedVol = LocateGlobalPointAndSetup(step, useCurvilinear);
-  if (useCurvilinear)
-    {
-      globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
-      localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
-    }
-  else
-    {
-      globalToLocal = auxNavigator->GetGlobalToLocalTransform();
-      localToGlobal = auxNavigator->GetLocalToGlobalTransform();
-    }
+
+  useCurvilinear ? InitialiseTransform(false, true) : InitialiseTransform(true, false);
 
   G4ThreeVector pre = GlobalToLocal(useCurvilinear).TransformPoint(step->GetPreStepPoint()->GetPosition());
   G4ThreeVector pos = GlobalToLocal(useCurvilinear).TransformPoint(step->GetPostStepPoint()->GetPosition());
   return BDSStep(pre, pos, selectedVol);
+}
+
+BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPosition,
+					      const G4ThreeVector& globalDirection,
+					      const G4bool&        useCurvilinear) const
+{
+  auto selectedVol = LocateGlobalPointAndSetup(globalPosition,
+					       &globalDirection,
+					       true,  // relative search
+					       false, // don't ignore direction, ie use it
+					       useCurvilinear);
+
+  useCurvilinear ? InitialiseTransform(false, true) : InitialiseTransform(true, false);
+  const G4AffineTransform& aff = GlobalToLocal(useCurvilinear);
+  G4ThreeVector localPos = aff.TransformPoint(globalPosition);
+  G4ThreeVector localDir = aff.TransformAxis(globalDirection);
+  return BDSStep(localPos, localDir, selectedVol);
 }
 
 G4ThreeVector BDSAuxiliaryNavigator::ConvertToLocal(const G4double globalPosition[3],
@@ -161,6 +170,15 @@ const G4AffineTransform& BDSAuxiliaryNavigator::LocalToGlobal(G4bool curvilinear
   return curvilinear ? localToGlobalCL : localToGlobal;
 }
 
+void BDSAuxiliaryNavigator::InitialiseTransform(const G4bool& massWorld,
+						const G4bool& curvilinearWorld) const
+{
+  globalToLocal   = auxNavigator->GetGlobalToLocalTransform();
+  localToGlobal   = auxNavigator->GetLocalToGlobalTransform();
+  globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+  localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+}
+
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
 {
   auto result = auxNavigator->LocateGlobalPointAndSetup(globalPosition);
@@ -175,7 +193,7 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosit
                                                 const G4ThreeVector &globalMomentum,
 						const G4double stepLength)
 {
-    G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;
-    G4ThreeVector midPoint = (endPoint + globalPosition) / 2;
-    InitialiseTransform(midPoint);
+  G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;
+  G4ThreeVector midPoint = (endPoint + globalPosition) / 2;
+  InitialiseTransform(midPoint);
 }

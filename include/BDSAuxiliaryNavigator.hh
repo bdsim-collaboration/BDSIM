@@ -156,7 +156,10 @@ private:
   const G4AffineTransform& LocalToGlobal(G4bool curvilinear) const;
   /// @}
 
-    /// Locate the supplied point the in the geometry and get and store
+  void InitialiseTransform(const G4bool& massworld        = true,
+			   const G4bool& curvilinearWorld = true) const;
+  
+  /// Locate the supplied point the in the geometry and get and store
   /// the transform to that volume in the member variable. This function
   /// has to be const as it's called the first time in GetField which is
   /// a pure virtual const function from G4MagneticField that we have to
