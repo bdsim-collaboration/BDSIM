@@ -70,23 +70,19 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
       itsDist=0;
       return;
     }
-
   //G4double h2=h*h;
   
   // global to local
-  G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-
-  G4ThreeVector LocalR           = GlobalAffine.TransformPoint(GlobalPosition); 
-  G4ThreeVector LocalRp          = GlobalAffine.TransformAxis(InitMomDir);
-  G4ThreeVector Localv0          = GlobalAffine.TransformAxis(v0);
-
-  G4ThreeVector itsInitialR      = LocalR;
-  G4ThreeVector itsInitialRp     = LocalRp;
+  BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+  G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector      LocalRp = Localv0.unit();
+  G4ThreeVector itsInitialR  = LocalR;
+  G4ThreeVector itsInitialRp = LocalRp;
   
   // advance the orbit
   G4ThreeVector itsFinalPoint,itsFinalDir;
-  G4ThreeVector yhat(0.,1.,0.);
+  G4ThreeVector yhat(0.,1.,0.); // note this is LOCAL y unit vector
   G4ThreeVector vhat  = LocalRp;
   G4ThreeVector vnorm = vhat.cross(yhat);
   
@@ -119,11 +115,11 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
     G4double kappa = - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das?
     // ignore quadrupolar component for now as this needs fixing
     if(true ||fabs(kappa)<1.e-12)
-    { // no gradient
-      GlobalPosition = LocalAffine.TransformPoint(itsFinalPoint);
-      G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(itsFinalDir);
-	
-      GlobalTangent*=InitMag;
+    { // no gradient - true as graident turned off just now now via this true.
+      BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
+      GlobalPosition = globalPosDir.PreStepPoint();
+      G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
 	  
       yOut[0] = GlobalPosition.x();
       yOut[1] = GlobalPosition.y();
