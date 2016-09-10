@@ -257,6 +257,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
 
 .. note:: For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
 	  is represented by a straight (chord) section and even nominal energy particles
@@ -315,6 +316,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
 
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
@@ -819,15 +821,19 @@ The magnet geometry is controlled by the following parameters.
 .. note:: These can all be specified using the `option` command as well as on a per element basis.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| parameter             | description                                                  | default       | required  |
+| Parameter             | Description                                                  | Default       | Required  |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
 |                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
 |                       | `polesfacetcrop`, `lhcleft`, `lhcright` and `none`           |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerDiameter`       | **full** horizontal width of the magnet (m)                  | 1 m           | no        |
+| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 1 m           | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerMaterial`       | material of the magnet                                       | "iron"        | no        |
+| `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `yokeOnInside`        | Whether the yoke of a dipole appears on the inside of the    | 1             | no        |
+|                       | bend and if false, it's on the outside. Applicable only to   |               |           |
+|                       | dipoles.                                                     |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 
 Example::
@@ -1450,7 +1456,7 @@ as their value.
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
-|                                  | Note, this does not affect the accuracy of the       |
+|                                  | Note, this does not affect the accuracy of the        |
 |                                  | geometry - only the visualisation (default : 50)      |
 +----------------------------------+-------------------------------------------------------+
 
