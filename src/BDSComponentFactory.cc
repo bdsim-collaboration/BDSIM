@@ -64,7 +64,7 @@ BDSComponentFactory::BDSComponentFactory()
   G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
 
   // rigidity (in T*m)
-  brho = BDSGlobalConstants::Instance()->FFact()*( momentum / 0.299792458);
+  brho = BDSGlobalConstants::Instance()->FFact()*( momentum / BDSGlobalConstants::Instance()->COverGeV());
   
   // rigidity (in Geant4 units)
   brho *= (CLHEP::tesla*CLHEP::m);

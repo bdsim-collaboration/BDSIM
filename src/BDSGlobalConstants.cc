@@ -86,6 +86,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
     
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
 
+  cOverGeV = CLHEP::c_light /CLHEP::GeV;
+
   CalculateHistogramParameters();
   
   InitRotationMatrices();

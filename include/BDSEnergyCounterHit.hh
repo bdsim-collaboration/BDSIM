@@ -11,8 +11,11 @@ class BDSEnergyCounterHit;
 typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 extern G4Allocator<BDSEnergyCounterHit> BDSEnergyCounterHitAllocator;
 
-//LowestSPosPrimaryHit declaration at the bottom of this file
-//HighestSPosPrimaryHit declaration at the bottom of this file
+namespace BDS
+{
+  BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
+  BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
+}
 
 /**
  * @brief Information recorded for a single piece of energy deposition.
@@ -38,6 +41,8 @@ public:
 		      G4double zIn               = 0,    // local z
 		      G4String nameIn            = "",   // volume name
 		      G4int    partIDIn          = 0,    // PDG id - particle type
+		      G4int    trackID           = -1,   // Track ID
+		      G4int    parentID          = -1,   // Parent ID
 		      G4double weightIn          = 1,    // weight
 		      G4bool   precisionRegionIn = false,// is it in the precision region
 		      G4int    turnsTakenIn      = 1,    // turns taken if circular
@@ -53,7 +58,7 @@ public:
 
   inline G4int    GetCopyNumber()      const {return copyNumber;}
   inline G4double GetEnergy()          const {return energy;}
-  inline void     SetEnergy(G4double energyIn);
+  inline void     SetEnergy(G4double energyIn) {energy = energyIn;}
   inline G4double GetX()               const {return X;} 
   inline G4double GetY()               const {return Y;}
   inline G4double GetZ()               const {return Z;}
@@ -65,6 +70,8 @@ public:
   inline G4double Getz()               const {return z;} 
   inline G4String GetName()            const {return name;}
   inline G4int    GetPartID()          const {return partID;}
+  inline G4int    GetTrackID()         const {return trackID;}
+  inline G4int    GetParentID()        const {return parentID;}
   inline G4double GetWeight()          const {return weight;} 
   inline G4bool   GetPrecisionRegion() const {return precisionRegion;}
   inline G4int    GetTurnsTaken()      const {return turnsTaken;}
@@ -105,6 +112,8 @@ private:
   
   G4String name;
   G4int    partID;
+  G4int    trackID;
+  G4int    parentID;
   G4double weight;
   G4bool   precisionRegion; ///< Whether or not the hit is in the precision region
   G4int    turnsTaken;
@@ -113,9 +122,6 @@ private:
   G4int    beamlineIndex;
   G4int    geomFlag;
 };
-
-inline void     BDSEnergyCounterHit::SetEnergy(G4double energyIn)
-{energy = energyIn;}
 
 inline void* BDSEnergyCounterHit::operator new(size_t)
 {
@@ -127,12 +133,6 @@ inline void* BDSEnergyCounterHit::operator new(size_t)
 inline void BDSEnergyCounterHit::operator delete(void *aHit)
 {
  BDSEnergyCounterHitAllocator.FreeSingle((BDSEnergyCounterHit*) aHit);
-}
-
-namespace BDS
-{
-  BDSEnergyCounterHit* LowestSPosPrimaryHit (BDSEnergyCounterHitsCollection* HC);
-  BDSEnergyCounterHit* HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* HC);
 }
 
 #endif

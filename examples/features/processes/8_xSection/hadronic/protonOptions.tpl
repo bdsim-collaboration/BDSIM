@@ -9,7 +9,6 @@ option, beampipeRadius = 10 * cm,
 	prodCutPositrons=1000*m,
 	elossHistoBinWidth = 0.01;
 
-option,modularPhysicsListsOn=1;
 option,physicsList="__PHYSICSLISTS__";
 option,storeTrajectories=1;
 option,storeTrajectoryEnergyThreshold=-1;

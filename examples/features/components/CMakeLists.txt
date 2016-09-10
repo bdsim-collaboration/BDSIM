@@ -12,7 +12,7 @@ simple_testing(Component-GDML "--file=gdml.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-HKick "--file=hkick.gmad" ${OVERLAP_CHECK})
 
-simple_testing(Component-Laserwire "--file=laser.gmad" ${OVERLAP_CHECK})
+simple_testing(Component-LaserWire "--file=laser.gmad" ${OVERLAP_CHECK})
  
 simple_testing(Component-Multipole "--file=mult.gmad" ${OVERLAP_CHECK})
 

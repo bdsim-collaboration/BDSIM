@@ -28,7 +28,7 @@ namespace CLHEP {
 typedef CLHEP::HepRotation G4RotationMatrix;
 
 class BDSBeamPipeInfo;
-struct BDSTunnelInfo;
+class BDSTunnelInfo;
 
 /**
  * @brief A class that holds global options and constants.
@@ -220,6 +220,7 @@ public:
   inline G4VisAttributes*      GetContainerVisAttr()     const {return options.visDebug ? visibleDebugVisAttr : invisibleVisAttr;}
   inline G4UserLimits*         GetDefaultUserLimits()    const {return defaultUserLimits;}
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
+  inline G4double              COverGeV()                const {return cOverGeV;}
 
   // refactor out of classes that use this
   inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
@@ -327,7 +328,10 @@ private:
   G4ThreeVector teleporterdelta;
   G4double      teleporterlength;
   ///@}
-  
+
+  /// speed of light / 1 GeV, used for scaling in brho calculation
+  G4double cOverGeV;
+
   /// initial particle for production of sampler hit
   BDSParticle initialPoint;
 

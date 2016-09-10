@@ -118,15 +118,18 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     if (std::abs(zExtentOut) < semilength/4.0)
     {fadeOut = false;}
 
-    // register central wedge which will always be used as the
-    // middle wedge regardless of poleface rotations
+    //if the element faces fade in, the middle wedges should be numbered as such
+    //if not, it'll be repeated from the first segment onwards
     G4int centralWedgeNum = 0.5*(nSBends+1);
-
     G4String centralName = element->name;
     if (fadeIn)
       {thename += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
     else
       {thename += "_1_of_" + std::to_string(nSBends);}
+
+
+    // register the central wedge which will always be used as the
+    // middle wedge regardless of poleface rotations
 
     BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
                                                  brho,
@@ -147,6 +150,7 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     centralWedge->Initialise();
     BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(centralWedge,false);
 
+    //oneBend can be accComp or BDSMagnet depending on registration/reusage or new magnet
     BDSAcceleratorComponent *oneBend = nullptr;
 
     BDSMagnetType magType = BDSMagnetType::sectorbend;
@@ -235,6 +239,7 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
 	 << G4endl;
 #endif
     }
+
     //Last element should be fringe if poleface specified
     if (BDS::IsFinite(element->e2) && includeFringe)
     {
@@ -328,6 +333,7 @@ BDSLine* BDSBendBuilder::RBendLine(Element* element,
     
     angle = -length/rho;
 
+    //change angle in the case that the next/prev element modifies
     if (nextModifies)
       {angleOut  -= 0.5*(thinElementLength)/rho;}
     if (prevModifies)

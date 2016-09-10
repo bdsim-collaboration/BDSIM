@@ -62,7 +62,7 @@ void BDSParallelWorldSampler::Construct()
     {
       if (element->GetSamplerType() == BDSSamplerType::none)
 	{continue;}
-      // esle must be a valid sampler
+      // else must be a valid sampler
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Sampler type: " << element->GetSamplerType() << G4endl;
 #endif
