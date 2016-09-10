@@ -75,9 +75,15 @@ BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
 
 BDSStep BDSAuxiliaryNavigator::ConvertToLocal(const G4ThreeVector& globalPosition,
 					      const G4ThreeVector& globalDirection,
+					      const G4double       stepLength,
 					      const G4bool&        useCurvilinear) const
 {
-  auto selectedVol = LocateGlobalPointAndSetup(globalPosition,
+  G4ThreeVector point;
+  if (stepLength > 0) // calculate mid point
+    {point = globalPosition + globalDirection.unit()*(stepLength * 0.5);}
+  else
+    {point = globalPosition;}
+  auto selectedVol = LocateGlobalPointAndSetup(point,
 					       &globalDirection,
 					       true,  // relative search
 					       false, // don't ignore direction, ie use it
@@ -173,10 +179,16 @@ const G4AffineTransform& BDSAuxiliaryNavigator::LocalToGlobal(G4bool curvilinear
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4bool& massWorld,
 						const G4bool& curvilinearWorld) const
 {
-  globalToLocal   = auxNavigator->GetGlobalToLocalTransform();
-  localToGlobal   = auxNavigator->GetLocalToGlobalTransform();
-  globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
-  localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+  if (massWorld)
+    {
+      globalToLocal   = auxNavigator->GetGlobalToLocalTransform();
+      localToGlobal   = auxNavigator->GetLocalToGlobalTransform();
+    }
+  if (curvilinearWorld)
+    {
+      globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+      localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+    }
 }
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const

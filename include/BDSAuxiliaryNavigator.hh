@@ -78,6 +78,7 @@ public:
 
   BDSStep ConvertToLocal(const G4ThreeVector& globalPosition,
 			 const G4ThreeVector& globalDirection,
+			 const G4double       stepLength     = 0,
 			 const G4bool&        useCurvilinear = true) const;
 
   /// Calculate the local coordinates of a global point.
