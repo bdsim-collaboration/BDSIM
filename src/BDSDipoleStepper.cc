@@ -219,15 +219,13 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
     LocalRp.setY(y1p);
     LocalRp.setZ(z1p);
     LocalRp.rotateY(theta_in);
-  
-    GlobalPosition=LocalAffine.TransformPoint(LocalR);
-      
     LocalRp.rotateY(-h/R);
-    G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp);
-      
-    GlobalTangent*=InitMag;
-  
-    // gab: replace += with =
+
+    BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
+    GlobalPosition = globalPosDir.PreStepPoint();
+    G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+    GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
+    
     yOut[0] = GlobalPosition.x();
     yOut[1] = GlobalPosition.y();
     yOut[2] = GlobalPosition.z();
