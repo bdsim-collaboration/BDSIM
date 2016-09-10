@@ -12,8 +12,7 @@ class G4Step;
 class G4VPhysicalVolume;
 
 /**
- * @brief Extra G4Navigator object common to all steppers to get coordinate
- * transforms.
+ * @brief Extra G4Navigator to get coordinate transforms.
  * 
  * All BDSIM steppers and magnetic fields require the ability 
  * to convert from global to local coordinates. The prescribed method 
@@ -46,7 +45,6 @@ class BDSAuxiliaryNavigator
 {
 public:
   BDSAuxiliaryNavigator();
-  BDSAuxiliaryNavigator(G4bool useCachingIn);
   ~BDSAuxiliaryNavigator();
 
   /// Setup the navigator w.r.t. to a world volume - typically real world.
@@ -65,8 +63,9 @@ public:
 					       const G4bool ignoreDirection   = true,
 					       G4bool useCurvilinear          = true);
 
-  /// A safe way to locate and setup a point inside a volume. Very const
-  /// access to step.
+  /// A safe way to locate and setup a point inside a volume. This uses the mid
+  /// point of the step to locate the volume rather than the edges which may lie
+  /// on a boundary and typically find the world or previous volume.
   G4VPhysicalVolume* LocateGlobalPointAndSetup(G4Step const* const step,
 					       G4bool useCurvilinear = true) const;
 
@@ -77,6 +76,14 @@ public:
   /// implement and have to keep const. This function doesn't change the
   /// const pointer but does change the contents of what it points to.
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
+
+  /// This is used to foricibly initialise the transforms using a position,
+  /// momentum vector and step length.  The free drift of the particle is
+  /// calculated and the the average of the two points is used to locate
+  /// and initialise the transforms (in global coordinates).
+  void InitialiseTransform(const G4ThreeVector& globalPosition,
+			   const G4ThreeVector& globalMomentum,
+			   const G4double       stepLength);
 
   /// Calculate the local coordinates for both a pre and post step point. The mid point
   /// of the step is used for the volume (and therefore transform) lookup which should
