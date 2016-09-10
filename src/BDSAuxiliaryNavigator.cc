@@ -203,8 +203,8 @@ void BDSAuxiliaryNavigator::InitialiseTransform(const G4bool& massWorld,
 
 void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
 {
-  auto result = auxNavigator->LocateGlobalPointAndSetup(globalPosition);
-  auto resultcl = auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
+  auxNavigator->LocateGlobalPointAndSetup(globalPosition);
+  auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
   globalToLocal = auxNavigator->GetGlobalToLocalTransform();
   localToGlobal = auxNavigator->GetLocalToGlobalTransform();
   globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
