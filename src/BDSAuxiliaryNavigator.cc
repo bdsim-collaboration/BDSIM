@@ -61,25 +61,6 @@ G4VPhysicalVolume* BDSAuxiliaryNavigator::LocateGlobalPointAndSetup(G4Step const
   return selectedVol;
 }
 
-void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
-{
-  auto result = auxNavigator->LocateGlobalPointAndSetup(globalPosition);
-  auto resultcl = auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
-  globalToLocal = auxNavigator->GetGlobalToLocalTransform();
-  localToGlobal = auxNavigator->GetLocalToGlobalTransform();
-  globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
-  localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
-}
-
-void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosition,
-                                                const G4ThreeVector &globalMomentum,
-						const G4double stepLength)
-{
-    G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;
-    G4ThreeVector midPoint = (endPoint + globalPosition) / 2;
-    InitialiseTransform(midPoint);
-}
-
 BDSStep BDSAuxiliaryNavigator::ConvertToLocal(G4Step const* const step,
 					      G4bool useCurvilinear) const
 {
@@ -178,4 +159,23 @@ const G4AffineTransform& BDSAuxiliaryNavigator::GlobalToLocal(G4bool curvilinear
 const G4AffineTransform& BDSAuxiliaryNavigator::LocalToGlobal(G4bool curvilinear) const
 {
   return curvilinear ? localToGlobalCL : localToGlobal;
+}
+
+void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector& globalPosition) const
+{
+  auto result = auxNavigator->LocateGlobalPointAndSetup(globalPosition);
+  auto resultcl = auxNavigatorCL->LocateGlobalPointAndSetup(globalPosition);
+  globalToLocal = auxNavigator->GetGlobalToLocalTransform();
+  localToGlobal = auxNavigator->GetLocalToGlobalTransform();
+  globalToLocalCL = auxNavigatorCL->GetGlobalToLocalTransform();
+  localToGlobalCL = auxNavigatorCL->GetLocalToGlobalTransform();
+}
+
+void BDSAuxiliaryNavigator::InitialiseTransform(const G4ThreeVector &globalPosition,
+                                                const G4ThreeVector &globalMomentum,
+						const G4double stepLength)
+{
+    G4ThreeVector endPoint = globalPosition + globalMomentum.unit()*stepLength;
+    G4ThreeVector midPoint = (endPoint + globalPosition) / 2;
+    InitialiseTransform(midPoint);
 }
