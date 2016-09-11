@@ -224,6 +224,9 @@ add_subdirectory(test)
 # Include directory for analysis
 add_subdirectory(analysis)
 
+# Include directory for comparator
+add_subdirectory(comparator)
+
 # Manual
 add_subdirectory(manual)
 
