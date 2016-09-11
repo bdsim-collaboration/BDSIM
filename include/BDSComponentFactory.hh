@@ -41,9 +41,9 @@ public:
 
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
-                           const std::vector<GMAD::Element*>& prevElementIn,
-                           const std::vector<GMAD::Element*>& nextElementIn);
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element*                     elementIn,
+					   const std::vector<GMAD::Element*>& prevElementIn,
+					   const std::vector<GMAD::Element*>& nextElementIn);
   
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();

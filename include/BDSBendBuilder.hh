@@ -31,6 +31,7 @@
  *
  * For rbends, a line is returned with a single magnet as the main dipole, but can have
  * fringefield magnets placed either end if specified.
+ *
  * @author William Shields
  */
 
