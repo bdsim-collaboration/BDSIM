@@ -42,6 +42,8 @@ private:
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
   void ProcessSamplers();
+
+  int printModulo; ///< Cache of print modulo fraction
 };
 
 #endif

@@ -11,6 +11,8 @@
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
 #include "G4UserLimits.hh"
 #include "G4VSolid.hh"
 
@@ -42,7 +44,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   endPieceAfter(nullptr),
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  outputFaceNormal(outputFaceNormalIn),
+  readOutRadius(0)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;

@@ -258,6 +258,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
 
 .. note:: For large angles (> 100 mrad) particles may hit the aperture as the beam pipe is
 	  is represented by a straight (chord) section and even nominal energy particles
@@ -322,6 +323,7 @@ parameter         description                  default     required
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
+* `yokeOnInside` from the `magnet geometry parameters`_ may be specified.
 
 .. note:: As of v0.64 a combined quadrupole component is not possible, but is under
 	  development
@@ -563,12 +565,7 @@ parameter         description                        default     required
 `outerDiameter`   outer full width [m]               global      no
 ================  =================================  ==========  ===========
 
-.. note:: `rcol` and `ecol` do not currently implement tilt, so if an angled collimator
-	  is required, a `transform3d` should before and afterwards in the sequence to
-	  rotate the coordinate frame before and afterwards. See `transform3d`_ for further
-	  details and examples.
-
-	  The collimator can be tapered by specifiying an exit aperture size with `xsizeOut` and
+.. note:: The collimator can be tapered by specifying an exit aperture size with `xsizeOut` and
 	  `ysizeOut`, with the `xsize` and `ysize` parameters then defining the entrance aperture.
 
 
@@ -851,15 +848,19 @@ The magnet geometry is controlled by the following parameters.
 .. note:: These can all be specified using the `option` command as well as on a per element basis.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| parameter             | description                                                  | default       | required  |
+| Parameter             | Description                                                  | Default       | Required  |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
 |                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
 |                       | `polesfacetcrop`, `lhcleft`, `lhcright` and `none`           |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerDiameter`       | **full** horizontal width of the magnet (m)                  | 1 m           | no        |
+| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 1 m           | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerMaterial`       | material of the magnet                                       | "iron"        | no        |
+| `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
++-----------------------+--------------------------------------------------------------+---------------+-----------+
+| `yokeOnInside`        | Whether the yoke of a dipole appears on the inside of the    | 1             | no        |
+|                       | bend and if false, it's on the outside. Applicable only to   |               |           |
+|                       | dipoles.                                                     |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 
 Example::
@@ -1041,23 +1042,29 @@ Offsets & Tilts - Component Misalignment
 To simulate a real accelerator it may be necessary to introduce measured placement offsets or misalignments
 and rotations. Every component can be displaced transversely and rotated along the axis of the beam propagation.
 
-.. note:: Components that have a finite angle (rbend and sbend) will only respond to vertical offsets as
-	  horizontal offsets and rotations may lead to overlapping geometry. This limitation will be addressed
-	  in possible future releases, but necessitates significant changes to the geometry construction.
+.. note:: Components that have a finite angle (rbend and sbend) will only respond to tilt and not vertical or
+	  horizontal offsets. This is because these would change the length of the bend about its central axis.
+	  This is not currently handled but may be implemented in future releases.
+
+.. note:: A tilt on a component with a finite angle causes the axis the angle is induced in (typically the y
+	  axis) to be rotated without rotating the reference frame of the beam. Ie a dipole with a :math:`\pi/2`
+	  will become a vertical bend without flipping x and y in the sampler or subsequent components. This
+	  matches the behaviour of MAD8 and MADX.
 
 .. note:: A right-handed coordinate system is used and the beamline built along the `z` direction.
 	  
 The misalignments can be controlled through the following parameters
 
-+--------------+-----------------------------------------------------------------------------------+
-| Parameter    | Default value                                                                     | 
-+==============+===================================================================================+
-| `offsetX`    | horizontal displacement of the component [m]                                      |
-+--------------+-----------------------------------------------------------------------------------+
-| `offsetY`    | vertical displacement of the component [m]                                        |
-+--------------+-----------------------------------------------------------------------------------+
-| `tilt`       | rotation of component clockwise facing in the direction of the beamline `z` [rad] |
-+--------------+-----------------------------------------------------------------------------------+
++--------------+------------------------------------------------------------------------------------+
+| Parameter    | Default value                                                                      | 
++==============+====================================================================================+
+| `offsetX`    | hHorizontal displacement of the component [m].                                     |
++--------------+------------------------------------------------------------------------------------+
+| `offsetY`    | Vertical displacement of the component [m].                                        |
++--------------+------------------------------------------------------------------------------------+
+| `tilt`       | Rotation of component clockwise facing in the direction of the beamline `z` [rad]. |
+|              | In the case of an rbend or sbend, this rotates the axis about which the beam bends |
++--------------+------------------------------------------------------------------------------------+
 
 Examples::
 
@@ -1252,18 +1259,18 @@ Physics Lists In BDSIM
 | ftfp_bert                 | Fritiof Precompound Model with Bertini Cascade Model. The FTF model    |
 |                           | is based on the FRITIOF description of string excitation and           |
 |                           | fragmentation. This is provided by `G4HadronPhysicsFTFP_BERT`. All     |
-|                           | FTF phyiscs lists require `G4HadronElasticPhysics` to work correctly.  |
+|                           | FTF physics lists require `G4HadronElasticPhysics` to work correctly.  |
 +---------------------------+------------------------------------------------------------------------+
 | ftfp_bert_hp              | Similar to `FTFP_BERT` but with the high precision neutron package.    |
 |                           | This is provided by `G4HadronPhysicsFTFP_BERT_HP`.                     |
 +---------------------------+------------------------------------------------------------------------+
 | decay                     | Provides radioactive decay processes using `G4DecayPhysics`.           |
 +---------------------------+------------------------------------------------------------------------+
-| muon                      | Proivdes muon production and scattering processes. Gamma to muons,     |
+| muon                      | Provides muon production and scattering processes. Gamma to muons,     |
 |                           | annihilation to muon pair, 'ee' to hadrons, pion decay to muons,       |
-|                           | multiple scattering for muons, muon brehmstrahhlung, pair production   |
-|                           | and Cherenkov light are all provided. Provided by BDSIM phyiscs        |
-|                           | builder (a la Geant4) `BDSMuonPhyiscs`.                                |
+|                           | multiple scattering for muons, muon bremsstrahlung, pair production    |
+|                           | and Cherenkov light are all provided. Provided by BDSIM physics        |
+|                           | builder (a la Geant4) `BDSMuonPhysics`.                                |
 +---------------------------+------------------------------------------------------------------------+
 
 Physics Biasing
@@ -1327,7 +1334,7 @@ as their value.
 +==================================+=======================================================+
 | **Common Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| batch                            | run BDISM without the visualiser                      |
+| batch                            | run BDSIM without the visualiser                      |
 +----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
@@ -1483,7 +1490,7 @@ as their value.
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
-|                                  | Note, this does not affect the accuracty of the       |
+|                                  | Note, this does not affect the accuracy of the        |
 |                                  | geometry - only the visualisation (default : 50)      |
 +----------------------------------+-------------------------------------------------------+
 

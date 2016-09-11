@@ -28,7 +28,7 @@ class G4Material;
 class BDSBeamPipeFactoryOctagonal: public BDSBeamPipeFactoryPoints
 {
 public:
-  static BDSBeamPipeFactoryOctagonal* Instance(); ///< singleton accessor
+  static BDSBeamPipeFactoryOctagonal* Instance(); ///< Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryOctagonal();
   

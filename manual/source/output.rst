@@ -10,7 +10,7 @@ in :ref:`output-analysis-section`.
 
 The default and recommended format 'rootevent' is written to a ROOT file. This format
 is preferred as it lends itself nicely to particle physics information, is compressed
-binary interally, and can store and load complex structures.
+binary internally, and can store and load complex structures.
 
 Units, unless specified, are SI (ie m, rad), plus energy in GeV and time in nanoseconds.
 Small letters denote local (to that object) coordinates whereas capitals represent
@@ -32,7 +32,7 @@ global coordinates.
 +----------------------+-----------------------------+----------------------------------------------------------------------------+
 
 .. note:: Since v0.93 rootevent is the default and recommended format.  The other formats still exist but do not contain as much
-	  information and are not actively developed.  They are descirbed in `older formats`_.  The output name will be suffixed
+	  information and are not actively developed.  They are described in `older formats`_.  The output name will be suffixed
 	  with :code:`_event` before adding the :code:`.root` extension.
 
 Details about each one are listed below in `output format differences`_.
@@ -60,7 +60,7 @@ This describes the default and recommended ROOT event format.
 
 BDSIM uses a series of classes to accumulate information about a Geant4 Run and Event.
 These are stored directly in the file so that the same classes can be used by the output
-analysis tool (rebdsim) to read and process the data. A BDISM ROOT event file has the
+analysis tool (rebdsim) to read and process the data. A BDSIM ROOT event file has the
 following structure.
 
 .. figure:: figures/rootevent_contents.png
@@ -119,7 +119,7 @@ Run Tree
 
 This tree contains two branches called "Histos." and "Info." which represent instances of
 :code:`include/BDSOutputROOTEventHistograms.hh` and :code:`include/BSOutputROOTEventInfo`
-respectively. Hitos. contains two vectors of 1D and 2D histograms that are produced per run.
+respectively. Histos contains two vectors of 1D and 2D histograms that are produced per run.
 
 Event Tree
 ^^^^^^^^^^
@@ -250,5 +250,5 @@ Older Formats
 +-------------------+-----------------------------+----------------------------------------------------------------------------+
 
 .. note:: Where double precision is used, the data is typically 2x as big. This is only recommended
-	  where variable precision is exteremely important - ie comparing different particle coordinates
+	  where variable precision is extremely important - ie comparing different particle coordinates
 	  for tracking accuracy. Histograms are stored to double precision irrespective.
