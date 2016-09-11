@@ -17,8 +17,7 @@ class BDSIntegratorSextupole: public BDSIntegratorBase
 public:
   BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 			 G4double                 brho,
-			 G4Mag_EqRhs*             eqOfMIn,
-			 G4bool                   cacheTransforms);
+			 G4Mag_EqRhs*             eqOfMIn);
   
   virtual ~BDSIntegratorSextupole(){;}
 

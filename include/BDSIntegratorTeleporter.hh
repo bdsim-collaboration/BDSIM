@@ -17,8 +17,7 @@ class BDSIntegratorTeleporter: public BDSIntegratorBase
 {
 public:
   BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
-			  G4ThreeVector teleporterDelta,
-			  G4bool        cacheTransforms);
+			  G4ThreeVector teleporterDelta);
 
   virtual ~BDSIntegratorTeleporter(){;}
   

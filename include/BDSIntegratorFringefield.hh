@@ -20,8 +20,7 @@ class BDSIntegratorFringefield: public BDSIntegratorDipole
 public:
   BDSIntegratorFringefield(BDSMagnetStrength const* strength,
 			   G4double                 brho,
-			   G4Mag_EqRhs*             eqOfMIn,
-			   G4bool                   cacheTransforms);
+			   G4Mag_EqRhs*             eqOfMIn);
   
   virtual ~BDSIntegratorFringefield(){;}
 

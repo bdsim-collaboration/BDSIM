@@ -9,9 +9,8 @@
 
 BDSIntegratorOctupole::BDSIntegratorOctupole(BDSMagnetStrength const* strength,
 					     G4double                 brho,
-					     G4Mag_EqRhs*             eqOfMIn,
-					     G4bool                   cacheTransforms):
-  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms),
+					     G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
   bTriplePrime(0.0),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
