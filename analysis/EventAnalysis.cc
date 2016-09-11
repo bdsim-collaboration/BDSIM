@@ -60,8 +60,7 @@ void EventAnalysis::Process()
       // event analysis feedback
       if (i % printModulo == 0)
 	{
-	  std::cout << "\r";
-	  std::cout << i;
+	  std::cout << "\rEvent #" << std::setw(6) << i << " of " << entries;
 	  std::cout.flush();
 	}
       
@@ -86,7 +85,7 @@ void EventAnalysis::Process()
       if(Config::Instance()->ProcessSamplers())
 	{ProcessSamplers();}
     }
-  std::cout << "\r" << entries << std::endl;
+  std::cout << "\rComplete                                       " << std::endl;
 }
 
 void EventAnalysis::Terminate()
