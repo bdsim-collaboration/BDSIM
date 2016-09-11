@@ -18,6 +18,5 @@ Model::~Model()
 
 void Model::SetBranchAddress(TChain *t)
 {
-  t->GetEntry(0);  // Pointers don't appear to be valid without this
   t->SetBranchAddress("Model.",&model);
 }

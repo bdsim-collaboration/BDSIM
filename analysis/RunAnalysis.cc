@@ -6,12 +6,12 @@
 ClassImp(RunAnalysis)
 
 RunAnalysis::RunAnalysis():
-Analysis("Run.", nullptr),
+Analysis("Run.", nullptr, "bdsimRunMergedHistograms"),
   run(nullptr)
 {;}
 
 RunAnalysis::RunAnalysis(Run* runIn, TChain* chain, bool debug):
-  Analysis("Run.", chain, debug),
+  Analysis("Run.", chain, "bdsimRunMergedHistograms", debug),
   run(runIn)
 {
   if (debug)
@@ -38,12 +38,4 @@ void RunAnalysis::Process()
     else
       {histoSum->Add(run->histos);}
   }
-}
-
-void RunAnalysis::Write(TFile *outputFile)
-{
-  Analysis::Write(outputFile);
-  TDirectory *bdsimDir = outputFile->mkdir("bdsimRunMergedHistograms");
-  bdsimDir->cd();
-  histoSum->Write(outputFile);
 }
