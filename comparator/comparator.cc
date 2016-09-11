@@ -1,3 +1,7 @@
+/**
+ * @file comparator.cc
+ */
+
 #include "Compare.hh"
 #include "Result.hh"
 
@@ -26,30 +30,29 @@ int main(int argc, char* argv[])
       return _EXIT_INCORRECT_ARGS;    
     }
 
-  // open files 
-  
+  // try to open files - check validity
   TFile *f1 = new TFile(argv[1]);
   TFile *f2 = new TFile(argv[2]);
 
-  if(f1->IsZombie()) {
-    std::cout << "error : could not open " << argv[1] << std::endl;    
-    return _EXIT_FILE_NOT_FOUND;
-  }
-
-  if(f2->IsZombie()) {
-    std::cout << "error : could not open " << argv[2] << std::endl;    
-    return _EXIT_FILE_NOT_FOUND;
-  }
+  if(f1->IsZombie())
+    {
+      std::cout << "error : could not open " << argv[1] << std::endl;    
+      return _EXIT_FILE_NOT_FOUND;
+    }
+  if(f2->IsZombie())
+    {
+      std::cout << "error : could not open " << argv[2] << std::endl;    
+      return _EXIT_FILE_NOT_FOUND;
+    }
 
   std::vector<Result*> res = Compare::Files(f1,f2);
-
   Compare::PrintResults(res);
-  //  Compare::PrintFailure(res);
 
   if(!Compare::CheckResults(res))
     {std::cout << "Tests passed" << std::endl;}
   else
     {
+      Compare::PrintFailure(res);
       std::cout << "Tests failed" << std::endl;
       return _EXIT_FAILED;
     }
@@ -59,6 +62,6 @@ int main(int argc, char* argv[])
 
 void usage()
 { 
-  std::cout << "usage : robdsimComp rootFile1 rootFile2 " << std::endl;
-  std::cout << "Compares rootFile2 to rootFile1 - ie rootFile1 is the reference." << std::endl;
+  std::cout << "Usage: comparator <root file 1> <root file 2>" << std::endl;
+  std::cout << "Compares <root file 2> to <root file 1> - ie <root file 1> is the reference." << std::endl;
 }
