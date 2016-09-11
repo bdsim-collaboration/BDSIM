@@ -18,5 +18,6 @@ Model::~Model()
 
 void Model::SetBranchAddress(TChain *t)
 {
+  t->GetEntry(0);  // initialises local copy of class
   t->SetBranchAddress("Model.",&model);
 }
