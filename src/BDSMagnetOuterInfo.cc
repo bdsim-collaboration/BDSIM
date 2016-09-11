@@ -5,7 +5,7 @@
 #include "G4Material.hh"
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo():
-  name          = "not specified";
+  name("not_specified"),
   geometryType(BDSMagnetGeometryType::cylindrical),
   outerDiameter(0),
   outerMaterial(nullptr),

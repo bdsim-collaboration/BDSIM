@@ -32,7 +32,8 @@ public:
 		     G4double              angleInIn = 0,
 		     G4double              angleOutIn = 0,
 		     G4bool                yokeOnLeft = false);
-		  
+
+  G4String              name;
   BDSMagnetGeometryType geometryType;
   G4double              outerDiameter;
   G4Material*           outerMaterial;

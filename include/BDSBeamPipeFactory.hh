@@ -33,12 +33,6 @@ public:
   BDSBeamPipe* CreateBeamPipe(G4String         name,
 			      G4double         length,
 			      BDSBeamPipeInfo* bpi);
-
-  BDSBeamPipe* CreateBeamPipeAngled(G4String         name,
-				    G4double         length,
-				    BDSBeamPipeInfo* bpi,
-				    G4double         angleIn,
-				    G4double         angleOut);
   
   BDSBeamPipe* CreateBeamPipe(BDSBeamPipeType beamPipeTypeIn,            // aperture type
 			      G4String        nameIn,                    // name

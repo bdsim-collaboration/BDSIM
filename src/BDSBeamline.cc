@@ -91,8 +91,6 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 {
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
-  std::vector<BDSBeamlineElement*> addedComponents;
-  BDSBeamlineElement* element = nullptr;
 
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {

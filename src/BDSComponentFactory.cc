@@ -48,6 +48,7 @@
 
 #include <cmath>
 #include <string>
+#include <utility>
 using namespace GMAD;
 
 
@@ -1129,6 +1130,26 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 					      element->beampipeMaterial,
 					      inputFaceNormal,
 					      outputFaceNormal);
+  return info;
+}
+
+BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
+							  const G4double angleIn,
+							  const G4double angleOut) const
+{
+  auto faces = BDS::CalculateFaces(angleIn, angleOut);
+  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
+  BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
+					      element->apertureType,
+					      element->aper1 * CLHEP::m,
+					      element->aper2 * CLHEP::m,
+					      element->aper3 * CLHEP::m,
+					      element->aper4 * CLHEP::m,
+					      element->vacuumMaterial,
+					      element->beampipeThickness * CLHEP::m,
+					      element->beampipeMaterial,
+					      faces.first,
+					      faces.second);
   return info;
 }
 

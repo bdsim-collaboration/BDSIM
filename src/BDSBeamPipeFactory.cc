@@ -129,29 +129,6 @@ BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(G4String         name,
 			    bpi->beamPipeMaterial);
     }
 }
-
-BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipeAngled(G4String         name,
-						      G4double         length,
-						      BDSBeamPipeInfo* bpi,
-						      G4double         angleIn,
-						      G4double         angleOut)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "using beam pipe information" << G4endl;
-#endif
-  return CreateBeamPipeAngledInOut(bpi->beamPipeType,
-				   name,
-				   length,
-				   angleIn,
-				   angleOut,
-				   bpi->aper1,
-				   bpi->aper2,
-				   bpi->aper3,
-				   bpi->aper4,
-				   bpi->vacuumMaterial,
-				   bpi->beamPipeThickness,
-				   bpi->beamPipeMaterial);
-}
   
 BDSBeamPipe* BDSBeamPipeFactory::CreateBeamPipe(BDSBeamPipeType beamPipeType,
 						G4String        name,
