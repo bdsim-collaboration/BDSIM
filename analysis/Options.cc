@@ -16,5 +16,6 @@ Options::~Options()
 
 void Options::SetBranchAddress(TChain *t)
 {
+  t->GetEntry(0);  // Initialises local copy of class
   t->SetBranchAddress("Options.",&options);
 }

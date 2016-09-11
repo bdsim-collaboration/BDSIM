@@ -34,6 +34,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
     if(Config::Instance()->Debug()) std::cout << "Event::SetBranchAddress" << std::endl;
   }
 
+  t->GetEntry(0); // this initialises the local variables it would seem.
   t->SetBranchAddress("Primary.",&primaries);
   t->SetBranchAddress("Eloss.",&eloss);
   t->SetBranchAddress("PrimaryFirstHit.",&primaryFirstHit);
@@ -59,7 +60,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
   if(Config::Instance()->CalculateOpticalFunctions() || 
      Config::Instance()->ProcessSamplers()) {
     unsigned int nrSamplers = samplerNames.size();
-    samplers.resize(nrSamplers);
+    samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
     for(unsigned int i=0;i<nrSamplers;++i)
     {
       t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
