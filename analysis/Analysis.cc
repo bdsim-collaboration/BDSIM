@@ -47,9 +47,7 @@ void Analysis::SimpleHistograms()
 void Analysis::Terminate()
 {
   if (histoSum)
-  {
-    histoSum->Terminate();
-  }
+    {histoSum->Terminate();}
 }
 
 void Analysis::FillHistogram(std::string treeName, std::string histoName,
@@ -131,13 +129,9 @@ void Analysis::Write(TFile* outputFile)
   TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
   rebdsimDir->cd();
   for(auto h : histograms1D)
-  {
-    h.second->Write();
-  }
+    {h.second->Write();}
   for(auto h : histograms2D)
-  {
-    h.second->Write();
-  }
+    {h.second->Write();}
   outputFile->cd("/");
 
   // Merged Histograms for this analysis instance (could be run, event etc)

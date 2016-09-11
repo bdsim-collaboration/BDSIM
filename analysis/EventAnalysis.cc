@@ -97,9 +97,7 @@ void EventAnalysis::Terminate()
 void EventAnalysis::Write(TFile *outputFile)
 {
   if(debug)
-  {
-    std::cout << __METHOD_NAME__ << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << std::endl;}
 
   //Write rebdsim histograms:
   Analysis::Write(outputFile);

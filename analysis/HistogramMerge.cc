@@ -80,9 +80,8 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
 void HistogramMerge::Terminate()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << "terminate " << std::endl;
-  }
+    {std::cout << "HistogramMerge::Terminate" << std::endl;}
+  
   // loop over 1d histograms
   for(unsigned int i=0;i<histograms1D.size();++i)
   {

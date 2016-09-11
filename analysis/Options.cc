@@ -6,7 +6,7 @@ ClassImp(Options)
 
 Options::Options()
 {
-  options   = nullptr;
+  options = nullptr;
 }
 
 Options::~Options()
