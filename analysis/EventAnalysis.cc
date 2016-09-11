@@ -35,8 +35,11 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
     this->samplerAnalyses.push_back(sa);
   }
 
-//  std::cout << __METHOD_NAME__ << " " << this->event->histos->Get1DHistogram(0) << std::endl;
-//  std::cout << __METHOD_NAME__ << histoSum->Get1DHistogram(0) << std::endl;
+  double fraction = Config::Instance()->PrintModuloFraction();
+  int    nEntries = chain->GetEntries();
+  printModulo = (int)ceil(nEntries*fraction);
+  if (printModulo < 0)
+    {printModulo = 1;}
 }
 
 EventAnalysis::~EventAnalysis()
@@ -50,35 +53,40 @@ void EventAnalysis::Process()
     {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
 
   // loop over events
-  for(int i=0;i<this->chain->GetEntries();++i) {
-    this->chain->GetEntry(i);
-    std::cout << "\r";
-    std::cout << i;
-    std::cout.flush();
-
-    if(i==0)
-      {histoSum = new HistogramMerge(event->histos);}
-    else
-      {histoSum->Add(event->histos);}
-
-
-    if(debug)
+  const int entries = chain->GetEntries();
+  for(int i=0; i<entries; ++i)
     {
-      std::cout << __METHOD_NAME__ << i << std::endl;
-      std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
-      std::cout << __METHOD_NAME__ << "primaries="   << this->event->primaries->n << std::endl;
-      std::cout << __METHOD_NAME__ << "eloss="       << this->event->eloss->n   << std::endl;
-      std::cout << __METHOD_NAME__ << "nprimary="    << this->event->primaryFirstHit->n << std::endl;
-      std::cout << __METHOD_NAME__ << "nlast="       << this->event->primaryLastHit->n  << std::endl;
-      std::cout << __METHOD_NAME__ << "ntunnel="     << this->event->tunnelHit->n << std::endl;
-      std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
-//      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
-    }
+      this->chain->GetEntry(i);
+      // event analysis feedback
+      if (i % printModulo == 0)
+	{
+	  std::cout << "\r";
+	  std::cout << i;
+	  std::cout.flush();
+	}
+      
+      if(i==0)
+	{histoSum = new HistogramMerge(event->histos);}
+      else
+	{histoSum->Add(event->histos);}
 
-    if(Config::Instance()->ProcessSamplers()) {
-      this->ProcessSamplers();
+      if(debug)
+	{
+	  std::cout << __METHOD_NAME__ << i << std::endl;
+	  std::cout << __METHOD_NAME__ << "Vector lengths" << std::endl;
+	  std::cout << __METHOD_NAME__ << "primaries=" << this->event->primaries->n << std::endl;
+	  std::cout << __METHOD_NAME__ << "eloss=" << this->event->eloss->n << std::endl;
+	  std::cout << __METHOD_NAME__ << "nprimary=" << this->event->primaryFirstHit->n << std::endl;
+	  std::cout << __METHOD_NAME__ << "nlast=" << this->event->primaryLastHit->n << std::endl;
+	  std::cout << __METHOD_NAME__ << "ntunnel=" << this->event->tunnelHit->n << std::endl;
+	  std::cout << __METHOD_NAME__ << "ntrajectory=" << this->event->trajectory->n << std::endl;
+	  //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
+	}
+      
+      if(Config::Instance()->ProcessSamplers())
+	{ProcessSamplers();}
     }
-  }
+  std::cout << "\r" << entries << std::endl;
 }
 
 void EventAnalysis::Terminate()
