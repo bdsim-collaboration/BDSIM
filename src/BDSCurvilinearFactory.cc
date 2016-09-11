@@ -67,6 +67,10 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
 BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleComponent* component,
 								BDSBeamlineElement const* const element)
 {
+  BDSTiltOffset* copyTiltOffset = nullptr;
+  BDSTiltOffset* existingTiltOffset = element->GetTiltOffset();
+  if (existingTiltOffset)
+    {copyTiltOffset = new BDSTiltOffset(*existingTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(component,
 						      element->GetPositionStart(),
 						      element->GetPositionMiddle(),
@@ -83,7 +87,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
 						      element->GetSPositionEnd(),
-						      new BDSTiltOffset(*(element->GetTiltOffset())),
+						      copyTiltOffset,
 						      element->GetSamplerType(),
 						      element->GetSamplerName(),
 						      element->GetIndex());
