@@ -12,7 +12,7 @@
  * This reduces the number of argument to all magnet constructors 
  * plus aggregates common tasks in the component factory.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 struct BDSMagnetOuterInfo
@@ -25,13 +25,15 @@ struct BDSMagnetOuterInfo
 		     G4double              outerDiameterIn,
 		     G4Material*           outerMaterialIn,
 		     G4double              angleInIn = 0,
-		     G4double              angleOutIn = 0);
+		     G4double              angleOutIn = 0,
+		     G4bool                yokeOnLeft = false);
 		  
   BDSMagnetGeometryType geometryType;
   G4double              outerDiameter;
   G4Material*           outerMaterial;
   G4double              angleIn;
   G4double              angleOut;
+  G4bool                yokeOnLeft;
 };
 
 #endif

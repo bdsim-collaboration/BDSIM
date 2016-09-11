@@ -6,7 +6,7 @@ ClassImp(Options)
 
 Options::Options()
 {
-  options   = nullptr;
+  options = nullptr;
 }
 
 Options::~Options()
@@ -16,6 +16,6 @@ Options::~Options()
 
 void Options::SetBranchAddress(TChain *t)
 {
-  t->GetEntry(0);  // Pointers don't appear to be valid without this
+  t->GetEntry(0);  // Initialises local copy of class
   t->SetBranchAddress("Options.",&options);
 }

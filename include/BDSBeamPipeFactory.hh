@@ -4,6 +4,7 @@
 #include "BDSBeamPipeType.hh"
 
 #include "globals.hh"           // geant4 globals / types
+#include "G4ThreeVector.hh"
 
 class G4Material;
 
@@ -24,7 +25,7 @@ class BDSBeamPipeFactoryBase;
 class BDSBeamPipeFactory
 {
 public:
-  static BDSBeamPipeFactory* Instance(); /// singleton pattern
+  static BDSBeamPipeFactory* Instance(); ///< Singleton accessor.
   
   ~BDSBeamPipeFactory();
 
@@ -39,54 +40,28 @@ public:
 			      G4double        aper2 = 0,                 // aperture parameter 2
 			      G4double        aper3 = 0,                 // aperture parameter 3
 			      G4double        aper4 = 0,                 // aperture parameter 4
-			      G4Material*     vacuumMaterialIn = nullptr,   // vacuum material
+			      G4Material*     vacuumMaterialIn = nullptr,// vacuum material
 			      G4double        beamPipeThicknessIn = 0,   // beampipe thickness [mm]
-			      G4Material*     beamPipeMaterialIn = nullptr  // beampipe material
-			      );
+			      G4Material*     beamPipeMaterialIn = nullptr); // beampipe material
 
-  BDSBeamPipe* CreateBeamPipeAngledIn(   BDSBeamPipeType beamPipeTypeIn,
-				         G4String        nameIn,
-				         G4double        lengthIn,
-				         G4double        angleInIn,   // the normal angle of the input face
-				         G4double        aper1 = 0,
-				         G4double        aper2 = 0,
-				         G4double        aper3 = 0,
-				         G4double        aper4 = 0,
-					 G4Material*     vacuumMaterialIn = nullptr,
-				         G4double        beamPipeThicknessIn = 0,
-				         G4Material*     beamPipeMaterialIn = nullptr
-				         );
-
-  BDSBeamPipe* CreateBeamPipeAngledOut(  BDSBeamPipeType beamPipeTypeIn,
-				         G4String        nameIn,
-				         G4double        lengthIn,
-				         G4double        angleOutIn, // the normal angle of the output face
-				         G4double        aper1 = 0,
-				         G4double        aper2 = 0,
-				         G4double        aper3 = 0,
-				         G4double        aper4 = 0,
-					 G4Material*     vacuumMaterialIn = nullptr,
-				         G4double        beamPipeThicknessIn = 0,
-				         G4Material*     beamPipeMaterialIn = nullptr
-				         );
-
-  BDSBeamPipe* CreateBeamPipeAngledInOut(BDSBeamPipeType beamPipeTypeIn,
-					 G4String        nameIn,
-					 G4double        lengthIn,
-					 G4double        angleInIn,  // the normal angle of the input face
-					 G4double        angleOutIn, // the normal angle of the output face
-					 G4double        aper1 = 0,
-					 G4double        aper2 = 0,
-					 G4double        aper3 = 0,
-					 G4double        aper4 = 0,
-					 G4Material*     vacuumMaterialIn = nullptr,
-					 G4double        beamPipeThicknessIn = 0,
-					 G4Material*     beamPipeMaterialIn = nullptr
-					 );
+  BDSBeamPipe* CreateBeamPipe(BDSBeamPipeType beamPipeType,
+			      G4String        name,
+			      G4double        length,
+			      G4ThreeVector   inputFaceNormal,
+			      G4ThreeVector   outputFaceNormal,
+			      G4double        aper1,
+			      G4double        aper2,
+			      G4double        aper3,
+			      G4double        aper4,
+			      G4Material*     vacuumMaterial,
+			      G4double        beamPipeThickness,
+			      G4Material*     beamPipeMaterial);
 
 private:
-  BDSBeamPipeFactory();
-  static BDSBeamPipeFactory* _instance;
+  BDSBeamPipeFactory(); ///< Private constructor as singleton pattern.
+  static BDSBeamPipeFactory* _instance; ///< Singleton instance pointer.
+
+  /// Return the appropriate factory singleton pointer given a type.
   BDSBeamPipeFactoryBase* GetAppropriateFactory(BDSBeamPipeType beamPipeTypeIn);
 
 };
