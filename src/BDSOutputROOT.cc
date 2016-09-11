@@ -8,10 +8,10 @@
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectory.hh"
-#include "BDSTunnelHit.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant types / globals
+#include "G4TwoVector.hh"
 
 #include <string>
 #include <vector>
@@ -453,16 +453,17 @@ void BDSOutputROOT<Type>::WritePrimaryHit(BDSTrajectoryPoint* phit)
 }
 
 template<typename Type>
-void BDSOutputROOT<Type>::WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits)
+void BDSOutputROOT<Type>::WriteTunnelHits(BDSEnergyCounterHitsCollection* tunnelHits)
 {
   theRootOutputFile->cd();
   for (G4int i = 0; i < tunnelHits->entries(); i++)
     {
-      BDSTunnelHit* hit = (*tunnelHits)[i];
+      BDSEnergyCounterHit* hit = (*tunnelHits)[i];
       E_tun     = hit->GetEnergy()/CLHEP::GeV;
-      S_tun     = hit->GetS()/CLHEP::m;
-      r_tun     = hit->Getr()/CLHEP::m;
-      angle_tun = hit->Gettheta();
+      S_tun     = hit->GetSHit()/CLHEP::m;
+      G4TwoVector xy = G4TwoVector(hit->Getx()/CLHEP::m, hit->Gety()/CLHEP::m);
+      r_tun     = xy.r();
+      angle_tun = xy.phi();
       TunnelLossTree->Fill();
 
       // x,y,w -> angle,s,energy

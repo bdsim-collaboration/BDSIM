@@ -59,8 +59,8 @@ Parser* Parser::Instance()
 Parser* Parser::Instance(std::string name)
 {
   if(instance) {
-    std::cerr << "Parser is already initialized!" << std::endl;
-    exit(1);
+    std::cerr << "Warning parser was already initialized!" << std::endl;
+    delete instance;
   }
   instance = new Parser(name);
   return instance;

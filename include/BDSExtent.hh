@@ -68,6 +68,15 @@ public:
   inline G4bool TransverselyLessEquals(const BDSExtent& r)    const {return !(this->TransverselyGreaterThan(r));}
   inline G4bool TransverselyGreaterEquals(const BDSExtent& r) const {return !(this->TransverselyLessThan(r));}
   /// @}
+
+  /// Return a copy of this extent shifted in x and y by a given amount.
+  BDSExtent Shift(G4double x, G4double y) const;
+
+  BDSExtent ShiftX(G4double x) const;  ///< Return a copy of this extent shift in x only.
+  BDSExtent ShiftY(G4double y) const;  ///< Return a copy of this extent shift in y only.
+
+  /// Return the maximum absolute value considering all dimensions.
+  G4double MaximumAbs() const;
   
 private:
   /// @{ Negative and positive extent

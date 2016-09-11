@@ -80,7 +80,7 @@ BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(BDSTrajectory* trajectory)
   // loop over trajectory to find non transportation step
   for (G4int i=0; i < trajectory->GetPointEntries(); ++i)
     {
-      BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+      BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
       auto processType    = point->GetPostProcessType();
       auto processSubType = point->GetPostProcessSubType();
 
@@ -105,7 +105,7 @@ BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(BDSTrajectory* trajectory)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
 #endif
-  return dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(0));
+  return static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(0));
 }
 
 BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)

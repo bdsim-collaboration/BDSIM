@@ -18,7 +18,8 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
   G4VUserPrimaryGeneratorAction(),
   weight(1),
   bdsBunch(bdsBunchIn),
-  recreateFile(nullptr)
+  recreateFile(nullptr),
+  eventOffset(0)
 {
   particleGun  = new G4ParticleGun(1); // 1-particle gun
 

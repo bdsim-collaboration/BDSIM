@@ -33,8 +33,19 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Track* track):
   G4TrajectoryPoint(track->GetPosition())
 {
   InitialiseVariables();
+
+  // Need to store the creator process
+  const G4VProcess* creatorProcess = track->GetCreatorProcess();
+  if(creatorProcess) {
+    preProcessType = track->GetCreatorProcess()->GetProcessType();
+    preProcessSubType = track->GetCreatorProcess()->GetProcessSubType();
+    postProcessType = preProcessType;
+    postProcessSubType = preProcessSubType;
+  }
+
   preWeight  = track->GetWeight();
   postWeight = preWeight;
+
 }
 
 BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
@@ -70,19 +81,19 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
   BDSPhysicalVolumeInfo* info = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(curvilinearVol);
 
 #ifdef BDSDEBUG
-  G4cout << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
+  G4cout << __METHOD_NAME__ << BDSProcessMap::Instance()->GetProcessName(postProcessType, postProcessSubType) << G4endl;
 #endif
   if (info)
-  {
-    prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
-    postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
-
-    G4double sCentre = info->GetSPos();
-    preS             = sCentre + prePosLocal.z();
-    postS            = sCentre + postPosLocal.z();
-    beamlineIndex    = info->GetBeamlineIndex();
-    turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
-  }
+    {
+      prePosLocal  = auxNavigator->ConvertToLocal(prePoint->GetPosition());
+      postPosLocal = auxNavigator->ConvertToLocal(postPoint->GetPosition());
+      
+      G4double sCentre = info->GetSPos();
+      preS             = sCentre + prePosLocal.z();
+      postS            = sCentre + postPosLocal.z();
+      beamlineIndex    = info->GetBeamlineIndex();
+      turnstaken       = BDSGlobalConstants::Instance()->TurnsTaken();
+    }
 }
 
 BDSTrajectoryPoint::~BDSTrajectoryPoint()

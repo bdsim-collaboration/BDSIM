@@ -3,8 +3,8 @@
 
 #include "TChain.h"
 
-#include "BDSOutputROOTEventRunInfo.hh"
-#include "BDSOutputROOTEventHistograms.hh"
+class BDSOutputROOTEventHistograms;
+class BDSOutputROOTEventRunInfo;
 
 /**
  * @brief Class to overlay a run from a ROOT file with.

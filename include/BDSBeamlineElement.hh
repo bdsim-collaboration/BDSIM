@@ -5,11 +5,18 @@
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include <ostream>
+
+namespace HepGeom {
+  class Transform3D;
+}
+typedef HepGeom::Transform3D G4Transform3D;
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief A class that holds a fully constructed BDSAcceleratorComponent
@@ -54,7 +61,9 @@ public:
   inline BDSAcceleratorComponent* GetAcceleratorComponent() const {return component;}
   inline G4String          GetName()                      const {return component->GetName();}
   inline G4String          GetType()                      const {return component->GetType();}
+  inline G4double          GetArcLength()                 const {return component->GetArcLength();}
   inline G4double          GetChordLength()               const {return component->GetChordLength();}
+  inline G4double          GetAngle()                     const {return component->GetAngle();}
   inline G4String          GetPlacementName()             const;
   inline G4int             GetCopyNo()                    const;
   inline G4LogicalVolume*  GetContainerLogicalVolume()    const;

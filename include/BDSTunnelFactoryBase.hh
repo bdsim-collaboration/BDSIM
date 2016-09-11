@@ -2,18 +2,18 @@
 #define BDSTUNNELFACTORYBASE_H
 
 #include "globals.hh"  // geant4 globals / types
-#include "G4Material.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
 
-#include "BDSGeometryComponent.hh"
 #include "BDSTunnelSection.hh"
-#include "BDSTunnelType.hh"
 
 #include <vector>
 
-struct BDSTunnelInfo;
+class G4UserLimits;
+class G4Material;
+class G4VisAttributes;
+class G4VSolid;
+
+class BDSGeometryComponent;
+class BDSTunnelInfo;
 
 /**
  * @brief Abstract base class for tunnel factory classes
@@ -119,17 +119,6 @@ protected:
 				  G4double&    tunnelSoilThickness,
 				  G4Material*& tunnelMaterial,
 				  G4Material*& tunnelSoilMaterial);
-
-
-  virtual void CommonConstruction(G4String      name,
-				  G4Material*   tunnelMaterial,
-				  G4Material*   tunnelSoilMaterial,
-				  G4double      length,
-				  G4double      containerXRadius,
-				  G4double      contianerYRadius,
-				  G4bool        visible,
-				  G4ThreeVector inputFace,
-				  G4ThreeVector outputFace);
   
   virtual void CommonConstruction(G4String    name,
 				  G4Material* tunnelMaterial,
@@ -168,18 +157,6 @@ protected:
   /// Reset factory members for next usage - avoids previously
   /// constructed parts being accidently used in new object
   virtual void TidyUp();
-
-  /// Utility function to build straight section of read out volume for tunnel
-  virtual void BuildReadOutVolumeStraight(G4String name,
-					  G4double length,
-					  G4double radius);
-
-  /// Utility function to build angled section of read out volume for tunnel
-  virtual void BuildReadOutVolumeAngled(G4String      name,
-					G4double      length,
-					G4double      radius,
-					G4ThreeVector inputFace,
-					G4ThreeVector outputFace);
     
   BDSGeometryComponent* tunnelComponent;
   BDSTunnelSection*     tunnelSection;
@@ -190,12 +167,10 @@ protected:
   G4VSolid*        soilSolid;
   G4VSolid*        floorSolid;
   G4VSolid*        intersectionSolid;
-  G4VSolid*        readOutSolid;
   G4LogicalVolume* containerLV;
   G4LogicalVolume* tunnelLV;
   G4LogicalVolume* soilLV;
   G4LogicalVolume* floorLV;
-  G4LogicalVolume* readOutLV;
   G4ThreeVector    floorDisplacement;
   G4bool           checkOverlaps;
   BDSTunnelInfo*   defaultModel;
@@ -204,8 +179,6 @@ protected:
   /// after going through the tunnel - only really needed to fulfill
   /// BDSAcceleratorComponent inheritance - unsed further downstream.
   G4double         cumulativeAngle;
-
-  G4double         readOutRadius;
 
   /// vectors of components that should be registered with the finished product
   /// which then owns the objects, rather than the factory derived from this class.

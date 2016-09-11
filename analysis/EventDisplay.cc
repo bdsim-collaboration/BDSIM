@@ -15,6 +15,10 @@
 #include "TEveScene.h"
 #include "TEveEventManager.h"
 
+#include "BDSOutputROOTEventLoss.hh"
+#include "BDSOutputROOTEventModel.hh"
+#include "BDSOutputROOTEventTrajectory.hh"
+#include "Model.hh"
 #include "parser/optionsBase.h"
 
 ClassImp(EventDisplay)
