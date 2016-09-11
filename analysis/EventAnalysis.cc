@@ -47,9 +47,7 @@ void EventAnalysis::Process()
   Initialise();
 
   if(debug)
-  {
-    std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
 
   // loop over events
   for(int i=0;i<this->chain->GetEntries();++i) {

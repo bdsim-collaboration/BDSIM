@@ -74,11 +74,6 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string> &samplerNames)
 
 Event::~Event()
 {
-  if(Config::Instance())
-  {
-    if(Config::Instance()->Debug())
-      {std::cout << "Event::~Event>" << std::endl;}
-  }
   delete primaries;
   delete eloss;
   delete primaryFirstHit;
