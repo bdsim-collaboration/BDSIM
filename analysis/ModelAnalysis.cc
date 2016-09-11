@@ -7,11 +7,11 @@
 ClassImp(ModelAnalysis)
 
 ModelAnalysis::ModelAnalysis():
-Analysis("Model.", nullptr),
+Analysis("Model.", nullptr, "bdsimModelMergedHistograms"),
   model(nullptr)
 {}
 
 ModelAnalysis::ModelAnalysis(Model* modelIn, TChain* chain, bool debug):
-  Analysis("Model.", chain, debug),
+  Analysis("Model.", chain, "bdsimModelMergedHistograms", debug),
   model(modelIn)
 {;}

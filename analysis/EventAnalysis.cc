@@ -1,24 +1,31 @@
-#include "EventAnalysis.hh"
 #include "BDSDebug.hh"
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "Config.hh"
 #include "Event.hh"
+#include "EventAnalysis.hh"
+#include "HistogramMerge.hh"
 #include "SamplerAnalysis.hh"
+
 #include "TROOT.h"
+#include "TChain.h"
 #include "TDirectory.h"
 #include "TFile.h"
+
+#include <cmath>
+#include <iostream>
+#include <vector>
 
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-Analysis("Event.", nullptr),
+Analysis("Event.", nullptr, "bdsimEventMergedHistograms"),
   event(nullptr)
 {;}
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
-  Analysis("Event.", chain, debug),
+  Analysis("Event.", chain, "bdsimEventMergedHistograms", debug),
   event(eventIn)
 {
   // create sampler analyses
@@ -96,12 +103,6 @@ void EventAnalysis::Write(TFile *outputFile)
 
   //Write rebdsim histograms:
   Analysis::Write(outputFile);
-
-  // write run merged run histograms
-  TDirectory *bdsimDir = outputFile->mkdir("bdsimEventMergedHistograms");
-  bdsimDir->cd();
-  this->histoSum->Write(outputFile);
-
 
   outputFile->cd("/");
 

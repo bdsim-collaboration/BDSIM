@@ -2,17 +2,18 @@
 #include "Config.hh"
 #include "rebdsim.hh"
 
+#include "TChain.h"
+
 Analysis::Analysis(std::string treeNameIn,
 		   TChain*     chainIn,
+		   std::string mergedHistogramNameIn,
 		   bool        debugIn):
   treeName(treeNameIn),
   chain(chainIn),
+  mergedHistogramName(mergedHistogramNameIn),
   histoSum(nullptr),
   debug(debugIn)
-{
-  if (chain)
-    {chain->GetEntry(0);}  
-}
+{;}
 
 Analysis::~Analysis()
 {
@@ -138,4 +139,12 @@ void Analysis::Write(TFile* outputFile)
     h.second->Write();
   }
   outputFile->cd("/");
+
+  // Merged Histograms for this analysis instance (could be run, event etc)
+  if (histoSum)
+    {
+      TDirectory* bdsimDir = outputFile->mkdir(mergedHistogramName.c_str());
+      bdsimDir->cd();
+      histoSum->Write(outputFile);
+    }
 }
