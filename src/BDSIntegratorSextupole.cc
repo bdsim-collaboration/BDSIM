@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorSextupole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
@@ -9,9 +10,8 @@
 
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 					       G4double                 brho,
-					       G4Mag_EqRhs*             eqOfMIn,
-					       G4bool                   cacheTransforms):
-  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms)
+					       G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
   bDoublePrime     = brho * (*strength)["k2"];
@@ -77,8 +77,11 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
      }
    else 
      {
-       G4ThreeVector LocalR  = ConvertToLocal(GlobalPosition);
-       G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalPosition, InitMomDir);
+       // global to local
+       BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+       G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
+       G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
+       G4ThreeVector      LocalRp = Localv0.unit();
               
        G4double x0=LocalR.x(); 
        G4double y0=LocalR.y();
@@ -134,12 +137,14 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
        else
 	 {LocalR += h*LocalRp;}
 
-       GlobalPosition = ConvertToGlobal(LocalR);
-       G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp) * InitMag;
+       BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+       GlobalPosition = globalPosDir.PreStepPoint();
+       G4ThreeVector GlobalTangent = globalPosDir.PostStepPoint();	
+       GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
        
-       ySext[0]   = GlobalPosition.x(); 
-       ySext[1]   = GlobalPosition.y(); 
-       ySext[2]   = GlobalPosition.z(); 
+       ySext[0] = GlobalPosition.x(); 
+       ySext[1] = GlobalPosition.y(); 
+       ySext[2] = GlobalPosition.z(); 
 				
        ySext[3] = GlobalTangent.x();
        ySext[4] = GlobalTangent.y();

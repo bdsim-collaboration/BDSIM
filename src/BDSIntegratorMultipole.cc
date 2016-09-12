@@ -1,8 +1,9 @@
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorMultipole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
 #include "BDSUtilities.hh"
-#include "BDSGlobalConstants.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -14,9 +15,8 @@
 
 BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength,
 					       G4double                 brho,
-					       G4Mag_EqRhs*             eqOfMIn,
-					       G4bool                   cacheTransforms):
-  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms),
+					       G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   b0l = (*strength)["field"] * brho;
@@ -67,8 +67,11 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
          #endif
   */
 
-  G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
-  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR,GlobalP);
+  // global to local
+  BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
+  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector LocalRp = Localv0.unit();
 
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
@@ -161,8 +164,11 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
 
-  GlobalR = ConvertToGlobal(LocalR);
-  GlobalP = ConvertAxisToGlobal(LocalRp);
+  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+  GlobalP = globalPosDir.PreStepPoint();
+  GlobalP = globalPosDir.PostStepPoint();	
+  // TBC - this normalisation seemed to be missing originally - is this correct?
+  //GlobalP*=InitMag; // multiply the unit direction by magnitude to get momentum
 
   yOut[0] = GlobalR.x();
   yOut[1] = GlobalR.y();

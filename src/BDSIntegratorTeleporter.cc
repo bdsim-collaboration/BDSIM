@@ -1,15 +1,15 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSIntegratorTeleporter.hh"
+#include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 BDSIntegratorTeleporter::BDSIntegratorTeleporter(G4Mag_EqRhs*  eqRHSIn,
-						 G4ThreeVector teleporterDeltaIn,
-						 G4bool        cacheTransforms):
-  BDSIntegratorBase(eqRHSIn, 6, cacheTransforms),
+						 G4ThreeVector teleporterDeltaIn):
+  BDSIntegratorBase(eqRHSIn, 6),
   teleporterDelta(teleporterDeltaIn)
 {;}
 
@@ -30,13 +30,19 @@ void BDSIntegratorTeleporter::Stepper(const G4double yIn[],
   // must test for this to avoid backwards going particles getting stuck
   if (turnstaken > 0 && yIn[5] > 0)
     {
-      G4ThreeVector localPosition = ConvertToLocal(yIn);
+      G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+      G4ThreeVector             v0 = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+      // global to local
+      BDSStep   localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+      G4ThreeVector localPosition = localPosMom.PreStepPoint();
+      G4ThreeVector localMomentum = localPosMom.PostStepPoint();
       G4ThreeVector localPositionAfter;
       localPositionAfter[0] = localPosition.x() - teleporterDelta.x();
       localPositionAfter[1] = localPosition.y() - teleporterDelta.y();
       localPositionAfter[2] = localPosition.z() + h;
 
-      G4ThreeVector globalPosition = ConvertToGlobal(localPositionAfter);
+      BDSStep globalPosDir = ConvertToGlobalStep(localPositionAfter, localMomentum, false);
+      G4ThreeVector globalPosition = globalPosDir.PreStepPoint();
       yOut[0] = globalPosition[0];
       yOut[1] = globalPosition[1];
       yOut[2] = globalPosition[2];

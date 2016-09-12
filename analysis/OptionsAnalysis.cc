@@ -1,19 +1,19 @@
+#include "Options.hh"
 #include "OptionsAnalysis.hh"
 
 #include "TROOT.h"
-#include "TChain.h"
 
-#include "Options.hh"
+class TChain;
 
 ClassImp(OptionsAnalysis)
 
 OptionsAnalysis::OptionsAnalysis():
-Analysis("Options.", nullptr),
+Analysis("Options.", nullptr, "bdsimOptionsMergedHistograms"),
   options(nullptr)
 {;}
 
 OptionsAnalysis::OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug):
-  Analysis("Options.", chain, debug),
+  Analysis("Options.", chain, "bdsimOptionsMergedHistograms", debug),
   options(optionsIn)
 {;}
 

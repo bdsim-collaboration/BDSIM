@@ -7,6 +7,7 @@
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
@@ -82,6 +83,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
 						      element->GetSPositionEnd(),
+						      new BDSTiltOffset(*(element->GetTiltOffset())),
 						      element->GetSamplerType(),
 						      element->GetSamplerName(),
 						      element->GetIndex());
@@ -125,6 +127,17 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
       std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(-0.5*angle, -0.5*angle);
       inputface = faces.first;
       outputface = faces.second;
+
+      BDSTiltOffset* to = element->GetTiltOffset();
+      if (to)
+	{// could be nullptr
+	  G4double tilt = to->GetTilt();
+	  if (BDS::IsFinite(tilt))
+	    {// rotate normal faces
+	      inputface = inputface.rotateZ(tilt);
+	      outputface = outputface.rotateZ(tilt);
+	    }
+	}
 
       solid = new G4CutTubs(name + "_cl_solid", // name
 			    0,                  // inner radius

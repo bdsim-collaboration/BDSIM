@@ -20,8 +20,7 @@ class BDSIntegratorMultipole: public BDSIntegratorBase
 public:
   BDSIntegratorMultipole(BDSMagnetStrength const* strength,
 			 G4double                 brho,
-			 G4Mag_EqRhs*             eqOfMIn,
-			 G4bool                   cacheTransforms);
+			 G4Mag_EqRhs*             eqOfMIn);
   
   virtual ~BDSIntegratorMultipole(){;}
 

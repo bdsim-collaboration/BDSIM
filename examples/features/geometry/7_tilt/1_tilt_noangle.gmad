@@ -1,0 +1,11 @@
+d1: drift, l=0.5*m, apertureType="rectangular", aper1=4*cm, aper2=2*cm;
+coll: rcol, l=2*m, xsize=3*cm, ysize=1*cm, tilt=pi/4;
+
+l1: line=(d1,coll,d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, checkOverlaps=1;

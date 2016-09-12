@@ -18,7 +18,6 @@ public:
   virtual ~RunAnalysis();
 
   virtual void Process();
-  virtual void Write(TFile *f);
 
 protected:
   Run* run;

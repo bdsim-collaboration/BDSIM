@@ -27,8 +27,7 @@
 class BDSFieldEMGlobal: public BDSFieldEM, public BDSAuxiliaryNavigator
 {
 public:
-  BDSFieldEMGlobal(BDSFieldEM* fieldIn,
-		   G4bool      cacheTransforms);
+  BDSFieldEMGlobal(BDSFieldEM* fieldIn);
   virtual ~BDSFieldEMGlobal();
 
   /// Get the field - local coordinates. First G4ThreeVector is B field, second is E Field
