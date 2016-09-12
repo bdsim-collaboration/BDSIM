@@ -39,12 +39,15 @@ namespace Compare
   /// Print failures from a serious of tests.
   void PrintFailure(std::vector<Result*> results);
 
-  /// Check the results from a serious of tests and return true if all passed.
-  bool CheckResults(std::vector<Result*> results);
+  /// Check the results from a serious of tests and return true if any failed.
+  bool AnyFailed(std::vector<Result*> results);
 
   /// Simply print out feedback warning that a matching object wasn't found and
   /// no comparison is being done.
   void PrintNoMatching(std::string className, std::string objectName);
+
+  /// Loop over results and print any failed ones. Returns true if all passed.
+  bool Summarise(std::vector<Result*> results);
 }
   
 #endif

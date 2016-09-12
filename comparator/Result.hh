@@ -20,13 +20,15 @@ class Result
 public:
   std::string name;    ///< Name of object being compared in files.
   std::string objtype; ///< Name of class of object being compared in files.
-  int         iStatus; ///< Whether it passed or not.
+  int         passed;  ///< Whether it passed or not.
 
   /// Print the result of the test - ie information store in the class.
   virtual std::string print() const
   {
     std::stringstream ss;
-    ss << name << " " << objtype << " " << iStatus << " " ;
+    ss << "Comparison of \"" << name << "\" of type " << objtype << " ";
+    passed ? ss<<"Passed" : ss<<"Failed";
+    ss << "\n";
     return ss.str();
   }
 

@@ -4,6 +4,7 @@
 #include "ResultHistogram2D.hh"
 #include "ResultTree.hh"
 
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,6 +15,8 @@
 #include "TH1.h"
 #include "TObjArray.h"
 #include "TTree.h"
+
+#define CHI2TOLERANCE 40
 
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
@@ -85,7 +88,8 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
   // Take difference between histograms
   ResultHistogram* c = new ResultHistogram();
   c->name      = h1->GetName();
-  c->objtype   = "TH";
+  c->tolerance = CHI2TOLERANCE;
+  c->objtype   = "TH1";
   c->h1Entries = h1->GetEntries();
   c->h2Entries = h2->GetEntries();
   c->h1NXBins  = h1->GetNbinsX();
@@ -109,9 +113,9 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
   // chi2 per dof
   c->chi2 /= ndof;
 
-  c->iStatus = 0;
-  if(c->chi2 > 40.0)
-    {c->iStatus = 1;}
+  c->passed = true;
+  if(c->chi2 > CHI2TOLERANCE)
+    {c->passed = false;}
 
   results.push_back(c);
 }
@@ -143,19 +147,43 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
       t2->GetEntry(i);
 
       if(std::abs((t1v - t2v )/t1v) > 0.01)
-	{c->iStatus = 1;}
+	{
+	  c->passed = false;
+	  c->offendingBranches.push_back(std::string(b2->GetName()));
+	}
       else
-	{c->iStatus = 0;}
+	{c->passed = true;}
     }
   }
   results.push_back(c);
 }
 
-bool Compare::CheckResults(std::vector<Result*> results)
+bool Compare::Summarise(std::vector<Result*> results)
+{
+  bool allPassed = true;
+  const int titleWidth = 20;
+  const int fullWidth  = titleWidth + 22;
+  std::cout << "Comparison: " << std::setw(titleWidth) << "Object Name" << "   " << "Result" << std::endl;
+  std::cout << std::setfill('-') << std::setw(fullWidth) << " " << std::endl;
+  std::cout << std::setfill(' ');
+  for (const auto& result : results)
+    {
+      if (!(result->passed))
+	{
+	  allPassed = false;
+	  std::cout << *result << std::endl;
+	}
+      else
+	{std::cout << "Comparison: " << std::setw(20) << result->name << " : Passed" << std::endl;}
+    }
+  return allPassed;
+}
+
+bool Compare::AnyFailed(std::vector<Result*> results)
 {
   for(auto result : results)
     {   
-      if(result->iStatus != 0)
+      if(!(result->passed))
 	{return true;}
     }
   return false;
@@ -171,7 +199,7 @@ void Compare::PrintFailure(std::vector<Result*> results)
 {
   for(auto result : results)
     { 
-      if(result->iStatus != 0)
+      if(!(result->passed))
 	{std::cout << *result << std::endl;}
     }
 }  

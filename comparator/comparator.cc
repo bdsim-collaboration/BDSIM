@@ -45,23 +45,17 @@ int main(int argc, char* argv[])
       return _EXIT_FILE_NOT_FOUND;
     }
 
-  std::vector<Result*> res = Compare::Files(f1,f2);
-  Compare::PrintResults(res);
+  std::vector<Result*> results = Compare::Files(f1,f2);
 
-  if(!Compare::CheckResults(res))
-    {std::cout << "Tests passed" << std::endl;}
+  bool allPassed = Compare::Summarise(results);
+  if (!allPassed)
+    {return _EXIT_FAILED;}
   else
-    {
-      Compare::PrintFailure(res);
-      std::cout << "Tests failed" << std::endl;
-      return _EXIT_FAILED;
-    }
-  
-  return _EXIT_SUCCESS;
+    {return _EXIT_SUCCESS;}
 }
 
 void usage()
 { 
-  std::cout << "Usage: comparator <root file 1> <root file 2>" << std::endl;
-  std::cout << "Compares <root file 2> to <root file 1> - ie <root file 1> is the reference." << std::endl;
+  std::cout << "Usage: comparator <rootfile1> <rootfile2>" << std::endl;
+  std::cout << "Compares <rootfile2> to <rootfile1> - ie <rootfile1> is the reference." << std::endl;
 }
