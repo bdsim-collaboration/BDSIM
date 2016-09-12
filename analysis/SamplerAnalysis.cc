@@ -137,7 +137,7 @@ void SamplerAnalysis::Terminate()
 	  {
 	    for (int k = 0; k <= 4; ++k)
 	      {
-		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, (int)npart, a, b, j, k);
 	      }
 	  }
       }
@@ -195,7 +195,7 @@ void SamplerAnalysis::Terminate()
 	{
 	  for(int k=0;k<3;++k)
 	    {
-	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);
+	      covMats[i][j][k]=centMomToCovariance(cenMoms, (int)npart, i, j, k);
 	    }
 	}
     }
