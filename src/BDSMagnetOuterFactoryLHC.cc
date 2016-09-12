@@ -846,18 +846,18 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   G4Material* vacuumMaterial   = defaultModel->vacuumMaterial;
   
   //use beampipe factories to create another beampipe (note no magnetic field for now...)  
-  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipeAngledInOut(BDSBeamPipeType::lhcdetailed,
-										    name,
-										    2*secondBPHalfLength-2*lengthSafety,
-										    angleIn,           // entrane angle
-										    angleOut,          // exit angle
-										    2.202*CLHEP::cm,   // aper1
-										    1.714*CLHEP::cm,   // aper2
-										    2.202*CLHEP::cm,   // aper3
-										    0,                 // aper4
-										    vacuumMaterial,    // vacuum material
-										    1*CLHEP::mm,       // beampipeThickness
-										    beamPipeMaterial); // beampipe material
+  BDSBeamPipe* secondBP = BDSBeamPipeFactory::Instance()->CreateBeamPipe(BDSBeamPipeType::lhcdetailed,
+									 name,
+									 2*secondBPHalfLength-2*lengthSafety,
+									 inputFaceNormal,
+									 outputFaceNormal,
+									 2.202*CLHEP::cm,
+									 1.714*CLHEP::cm,
+									 2.202*CLHEP::cm,
+									 0,
+									 vacuumMaterial,
+									 1*CLHEP::mm,
+									 beamPipeMaterial);
   
   secondBPLV = secondBP->GetContainerLogicalVolume();
   secondBPPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation

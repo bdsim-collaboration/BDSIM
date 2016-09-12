@@ -5,11 +5,19 @@
 #include "BDSSamplerType.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
+#include "BDSTiltOffset.hh"
 
 #include <ostream>
+
+namespace HepGeom {
+  class Transform3D;
+}
+typedef HepGeom::Transform3D G4Transform3D;
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief A class that holds a fully constructed BDSAcceleratorComponent
@@ -21,6 +29,10 @@
  * 
  * Each instance of this class owns the position vectors and rotation matrices
  * BUT NOT the accelerator component - this is owned by the component registry.
+ *
+ * This also owns an instance of BDSTiltOffset that the instance of this class
+ * was prepared with for reference.  This is optional so can be nullptr and
+ * therefore should ALWAYS be tested on.
  * 
  * @author Laurie Nevay
  */
@@ -28,22 +40,23 @@
 class BDSBeamlineElement
 {
 public:
-  BDSBeamlineElement(BDSAcceleratorComponent* component,
-		     G4ThreeVector            positionStart,
-		     G4ThreeVector            positionMiddle,
-		     G4ThreeVector            positionEnd,
-		     G4RotationMatrix*        rotationStart,
-		     G4RotationMatrix*        rotationMiddle,
-		     G4RotationMatrix*        rotationEnd,
-		     G4ThreeVector            referencePositionStart,
-		     G4ThreeVector            referencePositionMiddle,
-		     G4ThreeVector            referencePositionEnd,
-		     G4RotationMatrix*        referenceRotationStart,
-		     G4RotationMatrix*        referenceRotationMiddle,
-		     G4RotationMatrix*        referenceRotationEnd,
-		     G4double                 sPositionStart,
-		     G4double                 sPositionMiddle,
-		     G4double                 sPositionEnd,
+  BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
+		     G4ThreeVector            positionStartIn,
+		     G4ThreeVector            positionMiddleIn,
+		     G4ThreeVector            positionEndIn,
+		     G4RotationMatrix*        rotationStartIn,
+		     G4RotationMatrix*        rotationMiddleIn,
+		     G4RotationMatrix*        rotationEndIn,
+		     G4ThreeVector            referencePositionStartIn,
+		     G4ThreeVector            referencePositionMiddleIn,
+		     G4ThreeVector            referencePositionEndIn,
+		     G4RotationMatrix*        referenceRotationStartIn,
+		     G4RotationMatrix*        referenceRotationMiddleIn,
+		     G4RotationMatrix*        referenceRotationEndIn,
+		     G4double                 sPositionStartIn,
+		     G4double                 sPositionMiddleIn,
+		     G4double                 sPositionEndIn,
+		     BDSTiltOffset*           tiltOffsetIn  = nullptr,
 		     BDSSamplerType           samplerTypeIn = BDSSamplerType::none,
 		     G4String                 samplerNameIn = "",
 		     G4int                    indexIn       = -1);
@@ -54,32 +67,43 @@ public:
   inline BDSAcceleratorComponent* GetAcceleratorComponent() const {return component;}
   inline G4String          GetName()                      const {return component->GetName();}
   inline G4String          GetType()                      const {return component->GetType();}
+  inline G4double          GetArcLength()                 const {return component->GetArcLength();}
   inline G4double          GetChordLength()               const {return component->GetChordLength();}
-  inline G4String          GetPlacementName()             const;
-  inline G4int             GetCopyNo()                    const;
-  inline G4LogicalVolume*  GetContainerLogicalVolume()    const;
-  inline G4ThreeVector     GetPositionStart()             const;
-  inline G4ThreeVector     GetPositionMiddle()            const;
-  inline G4ThreeVector     GetPositionEnd()               const;
-  inline G4RotationMatrix* GetRotationStart()             const;
-  inline G4RotationMatrix* GetRotationMiddle()            const;
-  inline G4RotationMatrix* GetRotationEnd()               const;
-  inline G4ThreeVector     GetReferencePositionStart()    const;
-  inline G4ThreeVector     GetReferencePositionMiddle()   const;
-  inline G4ThreeVector     GetReferencePositionEnd()      const;
-  inline G4RotationMatrix* GetReferenceRotationStart()    const;
-  inline G4RotationMatrix* GetReferenceRotationMiddle()   const;
-  inline G4RotationMatrix* GetReferenceRotationEnd()      const;
-  inline G4double          GetSPositionStart()            const;
-  inline G4double          GetSPositionMiddle()           const;
-  inline G4double          GetSPositionEnd()              const;
-  inline G4Transform3D*    GetPlacementTransform()        const;
-  inline G4Transform3D*    GetReadOutPlacementTransform() const;
-  inline BDSSamplerType    GetSamplerType()               const;
-  inline G4String          GetSamplerName()               const;
-  inline G4Transform3D*    GetSamplerPlacementTransform() const;
-  inline G4int             GetIndex()                     const;
+  inline G4double          GetAngle()                     const {return component->GetAngle();}
+  inline G4String          GetPlacementName()             const {return placementName;}
+  inline G4int             GetCopyNo()                    const {return copyNumber;}
+  inline G4LogicalVolume*  GetContainerLogicalVolume()    const {return component->GetContainerLogicalVolume();}
+  inline G4ThreeVector     GetPositionStart()             const {return positionStart;}
+  inline G4ThreeVector     GetPositionMiddle()            const {return positionMiddle;}
+  inline G4ThreeVector     GetPositionEnd()               const {return positionEnd;}
+  inline G4RotationMatrix* GetRotationStart()             const {return rotationStart;}
+  inline G4RotationMatrix* GetRotationMiddle()            const {return rotationMiddle;}
+  inline G4RotationMatrix* GetRotationEnd()               const {return rotationEnd;}
+  inline G4ThreeVector     GetReferencePositionStart()    const {return referencePositionStart;}
+  inline G4ThreeVector     GetReferencePositionMiddle()   const {return referencePositionMiddle;}
+  inline G4ThreeVector     GetReferencePositionEnd()      const {return referencePositionEnd;}
+  inline G4RotationMatrix* GetReferenceRotationStart()    const {return referenceRotationStart;}
+  inline G4RotationMatrix* GetReferenceRotationMiddle()   const {return referenceRotationMiddle;}
+  inline G4RotationMatrix* GetReferenceRotationEnd()      const {return referenceRotationEnd;}
+  inline G4double          GetSPositionStart()            const {return sPositionStart;}
+  inline G4double          GetSPositionMiddle()           const {return sPositionMiddle;}
+  inline G4double          GetSPositionEnd()              const {return sPositionEnd;}
+  inline BDSTiltOffset*    GetTiltOffset()                const {return tiltOffset;}
+  inline G4Transform3D*    GetPlacementTransform()        const {return placementTransform;}
+  inline G4Transform3D*    GetReadOutPlacementTransform() const {return readOutPlacementTransform;}
+  inline BDSSamplerType    GetSamplerType()               const {return samplerType;}
+  inline G4String          GetSamplerName()               const {return samplerName;}
+  inline G4Transform3D*    GetSamplerPlacementTransform() const {return samplerPlacementTransform;}
+  inline G4int             GetIndex()                     const {return index;}
   ///@}
+
+  /// @{ Return face normal accounting for placement tilt of this component.
+  G4ThreeVector InputFaceNormal()  const;
+  G4ThreeVector OutputFaceNormal() const;
+  /// @}
+
+  /// Convenience accessor.
+  inline G4double          GetTilt() const {return tiltOffset ? tiltOffset->GetTilt() : 0.0;}
   
   ///@{ Reassign the end variable as required when applying a transform
   inline void SetReferencePositionEnd(G4ThreeVector     newReferencePositionEnd);
@@ -137,6 +161,9 @@ private:
   G4double          sPositionEnd;
   ///@}
 
+  /// The tilt and offset this element was constructed with. Default is nullptr.
+  BDSTiltOffset*    tiltOffset;
+
   /// Transform made from positionMiddle and rotationMiddle. By using them as
   /// a transform, the rotation matrix is the correct way around (inversion).
   G4Transform3D*    placementTransform;
@@ -163,77 +190,5 @@ private:
   /// Index of this item in the beamline - saves keeping track of iterators and conversion.
   G4int index;
 };
-
-inline G4String                 BDSBeamlineElement::GetPlacementName() const
-{return placementName;}
-
-inline G4int                    BDSBeamlineElement::GetCopyNo() const
-{return copyNumber;}
-
-inline G4LogicalVolume*         BDSBeamlineElement::GetContainerLogicalVolume() const
-{return component->GetContainerLogicalVolume();}
-
-inline G4ThreeVector            BDSBeamlineElement::GetPositionStart() const
-{return positionStart;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetPositionMiddle() const
-{return positionMiddle;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetPositionEnd() const
-{return positionEnd;}
-
-inline G4RotationMatrix*        BDSBeamlineElement::GetRotationStart() const
-{return rotationStart;}
-
-inline G4RotationMatrix*        BDSBeamlineElement::GetRotationMiddle() const
-{return rotationMiddle;}
-
-inline G4RotationMatrix*        BDSBeamlineElement::GetRotationEnd() const
-{return rotationEnd;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetReferencePositionStart() const
-{return referencePositionStart;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetReferencePositionMiddle() const
-{return referencePositionMiddle;}
-
-inline G4ThreeVector            BDSBeamlineElement::GetReferencePositionEnd() const
-{return referencePositionEnd;}
-
-inline G4RotationMatrix*        BDSBeamlineElement::GetReferenceRotationStart() const
-{return referenceRotationStart;}
-
-inline G4RotationMatrix*        BDSBeamlineElement::GetReferenceRotationMiddle() const
-{return referenceRotationMiddle;}
-
-inline G4RotationMatrix*        BDSBeamlineElement::GetReferenceRotationEnd() const
-{return referenceRotationEnd;}
-
-inline G4double                 BDSBeamlineElement::GetSPositionStart() const
-{return sPositionStart;}
-
-inline G4double                 BDSBeamlineElement::GetSPositionMiddle() const
-{return sPositionMiddle;}
-
-inline G4double                 BDSBeamlineElement::GetSPositionEnd() const
-{return sPositionEnd;}
-
-inline G4Transform3D*           BDSBeamlineElement::GetPlacementTransform() const
-{return placementTransform;}
-
-inline G4Transform3D*           BDSBeamlineElement::GetReadOutPlacementTransform() const
-{return readOutPlacementTransform;}
-
-inline BDSSamplerType           BDSBeamlineElement::GetSamplerType() const
-{return samplerType;}
-
-inline G4String                 BDSBeamlineElement::GetSamplerName() const
-{return samplerName;}
-
-inline G4Transform3D*           BDSBeamlineElement::GetSamplerPlacementTransform() const
-{return samplerPlacementTransform;}
-
-inline G4int                    BDSBeamlineElement::GetIndex() const
-{return index;}
 
 #endif

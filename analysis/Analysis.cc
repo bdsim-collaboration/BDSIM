@@ -2,14 +2,23 @@
 #include "Config.hh"
 #include "rebdsim.hh"
 
-Analysis::Analysis(std::string treeNameIn):
-  treeName(treeNameIn)
-{
-}
+#include "TChain.h"
+
+Analysis::Analysis(std::string treeNameIn,
+		   TChain*     chainIn,
+		   std::string mergedHistogramNameIn,
+		   bool        debugIn):
+  treeName(treeNameIn),
+  chain(chainIn),
+  mergedHistogramName(mergedHistogramNameIn),
+  histoSum(nullptr),
+  debug(debugIn)
+{;}
 
 Analysis::~Analysis()
 {
   delete chain;
+  delete histoSum;
 }
 
 void Analysis::Execute()
@@ -21,7 +30,7 @@ void Analysis::Execute()
 
 void Analysis::SimpleHistograms()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
 
   // loop over histogram specifications and fill
@@ -38,16 +47,14 @@ void Analysis::SimpleHistograms()
 void Analysis::Terminate()
 {
   if (histoSum)
-  {
-    histoSum->Terminate();
-  }
+    {histoSum->Terminate();}
 }
 
 void Analysis::FillHistogram(std::string treeName, std::string histoName,
 			     std::string nbins,    std::string binning,
 			     std::string plot,     std::string selection)
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   double xlow=0.0, xhigh=0.0;
   double ylow=0.0, yhigh=0.0;
@@ -70,7 +77,7 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
   if (!chain)
   {std::cout << __METHOD_NAME__ << "Error no tree found by name: " << treeName << std::endl; exit(1);}
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     std::cout << __METHOD_NAME__ << treeName << " " << histoName << " " << plot << std::endl;
   }
@@ -108,7 +115,7 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
   }
 
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     std::cout << __METHOD_NAME__ << "`" << pltSav << "'  `" << pltCmd << "' " << gDirectory->Get(pltSav.c_str()) << std::endl;
   }
@@ -116,20 +123,22 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 
 void Analysis::Write(TFile* outputFile)
 {
-    // write rebdsim histogram
-
   //treeName typically has a "." at the end, deleting it here:
   std::string cleanedName = treeName.erase(treeName.size() - 1);
   std::string outputDirName = std::string("rebdsim_") + cleanedName + std::string("_Histograms");
   TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
   rebdsimDir->cd();
   for(auto h : histograms1D)
-  {
-    h.second->Write();
-  }
+    {h.second->Write();}
   for(auto h : histograms2D)
-  {
-    h.second->Write();
-  }
+    {h.second->Write();}
   outputFile->cd("/");
+
+  // Merged Histograms for this analysis instance (could be run, event etc)
+  if (histoSum)
+    {
+      TDirectory* bdsimDir = outputFile->mkdir(mergedHistogramName.c_str());
+      bdsimDir->cd();
+      histoSum->Write(outputFile);
+    }
 }

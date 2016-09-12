@@ -1,0 +1,14 @@
+d1: drift, l=0.5*m, apertureType="rectangular", aper1=4*cm, aper2=2*cm;
+
+! note the bend is rotated not by a multiple of pi/2 - ie horizontal or vertical.
+sb1: sbend, l=2*m, angle=0.2, tilt=pi/3;
+
+
+l1: line=(d1,sb1,d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=1*GeV;
+
+option, checkOverlaps=1;

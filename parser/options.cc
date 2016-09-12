@@ -65,7 +65,6 @@ void Options::PublishMembers()
   
   // options which influence the tracking
   publish("physicsList",&Options::physicsList);
-  publish("modularPhysicsListsOn",&Options::modularPhysicsListsOn);
 
   // options for the "beam" command
   publish("particle",&Options::particleName);

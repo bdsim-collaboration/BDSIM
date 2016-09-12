@@ -15,18 +15,14 @@
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4CutTubs.hh"
-#include "G4EllipticalTube.hh"
 #include "G4ExtrudedSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
-#include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4TwoVector.hh"
-#include "G4UnionSolid.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -38,7 +34,9 @@
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase():
   BDSMagnetOuterFactoryPolesBase(1.1)
-{;}
+{
+  CleanUp();
+}
 
 BDSMagnetOuterFactoryPolesBase::BDSMagnetOuterFactoryPolesBase(G4double poleStopFactorIn):
   poleFraction(0.7),
@@ -77,9 +75,11 @@ void BDSMagnetOuterFactoryPolesBase::CleanUp()
   poleIntersectionSolid = nullptr;
   coilLeftSolid         = nullptr;
   coilRightSolid        = nullptr;
+  endPieceContainerSolid = nullptr;
   coilLeftLV            = nullptr;
   coilRightLV           = nullptr;
   endPieceCoilLV        = nullptr;
+  endPieceContainerLV   = nullptr;
   endPiece              = nullptr;
   leftPoints.clear();
   rightPoints.clear();

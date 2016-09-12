@@ -1,1 +1,1 @@
-simple_testing(Laser-Wire "--file=lw.gmad" "")
+simple_testing(LaserWire "--file=lw.gmad" "")

@@ -2,6 +2,9 @@
 #define BDSTILTOFFSET_H
 
 #include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+
+#include <ostream>
 
 /**
  * @brief A holder for any placement offsets and rotations for a
@@ -13,7 +16,7 @@
  * geometry or padding space (perhaps acceptable for very low angles), 
  * but for now is left to be implemented in future.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTiltOffset
@@ -26,12 +29,20 @@ public:
 		G4double tiltIn);
 
   ///@{ Accessor
-  inline G4double GetXOffset() const;
-  inline G4double GetYOffset() const;
-  inline G4double GetTilt()    const;
+  inline G4double GetXOffset() const {return dx;}
+  inline G4double GetYOffset() const {return dy;}
+  inline G4double GetTilt()    const {return tilt;}
   ///@}
 
-  /// output stream
+  /// More advance accessor for offset - only in x,y.
+  G4ThreeVector GetOffset() const {return G4ThreeVector(dx, dy, 0);}
+  
+  ///@{ Inspector.
+  G4bool HasFiniteOffset() const;
+  G4bool HasFiniteTilt()   const;
+  ///@}
+
+  /// Output stream.
   friend std::ostream& operator<< (std::ostream &out, BDSTiltOffset const &to);
   
 private:
@@ -42,14 +53,5 @@ private:
   /// Tilt angle (rad) - rotation angle about Z axis
   G4double tilt;
 };
-
-inline G4double BDSTiltOffset::GetXOffset() const
-{return dx;}
-
-inline G4double BDSTiltOffset::GetYOffset() const
-{return dy;}
-
-inline G4double BDSTiltOffset::GetTilt() const
-{return tilt;}
 
 #endif

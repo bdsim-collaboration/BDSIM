@@ -3,12 +3,15 @@
 #include "BDSGeometryComponent.hh"
 
 #include "globals.hh"              // geant4 globals / types
-#include "G4VSolid.hh"
 #include "G4LogicalVolume.hh"
+#include "G4RotationMatrix.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
+#include "G4VSolid.hh"
 #include <vector>
+
+class G4VSensitiveDetector;
 
 BDSGeometryComponent::BDSGeometryComponent(G4VSolid*        containerSolidIn,
 					   G4LogicalVolume* containerLVIn):
@@ -39,7 +42,8 @@ BDSGeometryComponent::BDSGeometryComponent(const BDSGeometryComponent& component
   containerLogicalVolume(component.containerLogicalVolume),
   outerExtent(component.outerExtent),
   innerExtent(component.innerExtent),
-  placementOffset(component.placementOffset)
+  placementOffset(component.placementOffset),
+  placementRotation(component.placementRotation)
 {;}
 
 BDSGeometryComponent::~BDSGeometryComponent()
@@ -71,6 +75,7 @@ BDSGeometryComponent::~BDSGeometryComponent()
 void BDSGeometryComponent::InheritExtents(BDSGeometryComponent const * const anotherComponent)
 {
   outerExtent = anotherComponent->GetExtent();
+  innerExtent = anotherComponent->GetInnerExtent();
 }
 
 void BDSGeometryComponent::RegisterDaughter(BDSGeometryComponent* anotherComponent)
@@ -358,3 +363,8 @@ std::vector<G4LogicalVolume*> BDSGeometryComponent::GetAllSensitiveVolumes() con
   return result;
 }
 
+void BDSGeometryComponent::SetSensitiveDetector(G4VSensitiveDetector* sd)
+{
+  for (auto& lv : GetAllSensitiveVolumes())
+    {lv->SetSensitiveDetector(sd);}
+}

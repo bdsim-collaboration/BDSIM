@@ -24,7 +24,9 @@ namespace {
   }
 }
 
-Element::Element():lst(nullptr) {
+Element::Element():
+  lst(nullptr)
+{
   flush();
 
   PublishMembers();
@@ -98,6 +100,7 @@ void Element::PublishMembers()
   publish("bmap",&Element::bmapFile);
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
+  publish("yokeOnInside", &Element::yokeOnInside);
   publish("apertureType",&Element::apertureType);
   publish("magnetGeometryType",&Element::magnetGeometryType);
   publish("beampipeMaterial",&Element::beampipeMaterial);
@@ -237,6 +240,7 @@ void Element::flush() {
   magnetGeometryType  = "";
   outerMaterial = "";
   outerDiameter = 0;
+  yokeOnInside  = true;
   
   tilt = 0;
   xsize = 0;

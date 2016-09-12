@@ -1,26 +1,23 @@
+#include "Options.hh"
 #include "OptionsAnalysis.hh"
 
-#include "rebdsim.hh"
-#include "Config.hh"
 #include "TROOT.h"
+
+class TChain;
 
 ClassImp(OptionsAnalysis)
 
 OptionsAnalysis::OptionsAnalysis():
-  Analysis("Options.")
-{
-  options = nullptr;
-}
+Analysis("Options.", nullptr, "bdsimOptionsMergedHistograms"),
+  options(nullptr)
+{;}
+
+OptionsAnalysis::OptionsAnalysis(Options* optionsIn, TChain* chain, bool debug):
+  Analysis("Options.", chain, "bdsimOptionsMergedHistograms", debug),
+  options(optionsIn)
+{;}
 
 OptionsAnalysis::~OptionsAnalysis()
 {
   delete options;
-}
-
-OptionsAnalysis::OptionsAnalysis(Options* optionsIn, TChain* chainIn):
-  Analysis("Options.")
-{
-  chainIn->GetEntry(0);
-  chain = chainIn;
-  options = optionsIn;
 }

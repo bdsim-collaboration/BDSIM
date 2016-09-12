@@ -4,12 +4,16 @@
 #include "BDSExtent.hh"
 
 #include "globals.hh"   // geant4 globals / types
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4TwoVector.hh"
 
 #include <string>
 #include <utility>
+
+namespace CLHEP {
+  class HepRotation;
+}
+typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief Various utility functions that have no specific place - 
@@ -40,8 +44,8 @@ namespace BDS
 
   /// Calculate the radial distance that the two planes inputface and outputface intersect one another
   G4double CalculateFacesOverlapRadius(G4double angleInIn,
-                            G4double angleOutIn,
-                            G4double lengthIn);
+				       G4double angleOutIn,
+				       G4double lengthIn);
 
   /// Ensure a variable passed by reference is capped within lowerLimit and upperLimit.
   /// If it's outside these it is defaulted to those limit values.

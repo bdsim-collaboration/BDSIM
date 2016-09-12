@@ -6,20 +6,19 @@
 ClassImp(RunAnalysis)
 
 RunAnalysis::RunAnalysis():
-  Analysis("Run.")
+Analysis("Run.", nullptr, "bdsimRunMergedHistograms"),
+  run(nullptr)
 {;}
 
-RunAnalysis::RunAnalysis(Run *runIn, TChain *chainIn):
-  Analysis("Run.")
+RunAnalysis::RunAnalysis(Run* runIn, TChain* chain, bool debug):
+  Analysis("Run.", chain, "bdsimRunMergedHistograms", debug),
+  run(runIn)
 {
-  if(Config::Instance()->Debug())
+  if (debug)
   {
-    std::cout << __METHOD_NAME__ << " " << runIn << " " << chainIn <<  " " << chainIn->GetEntries() << std::endl;
+    std::cout << __METHOD_NAME__ << " " << runIn << " " << chain <<  " "
+	      << chain->GetEntries() << std::endl;
   }
-
-  //chainIn->GetEntry(0);
-  run   = runIn;
-  chain = chainIn;
 }
 
 RunAnalysis::~RunAnalysis()
@@ -27,8 +26,8 @@ RunAnalysis::~RunAnalysis()
 
 void RunAnalysis::Process()
 {
-  if(Config::Instance()->Debug())
-  {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
+  if (debug)
+    {std::cout << __METHOD_NAME__ << this->chain->GetEntries() << " " << std::endl;}
   // loop over events
   for(int i=0; i < chain->GetEntries(); ++i)
   {
@@ -39,12 +38,4 @@ void RunAnalysis::Process()
     else
       {histoSum->Add(run->histos);}
   }
-}
-
-void RunAnalysis::Write(TFile *outputFile)
-{
-  Analysis::Write(outputFile);
-  TDirectory *bdsimDir = outputFile->mkdir("bdsimRunMergedHistograms");
-  bdsimDir->cd();
-  histoSum->Write(outputFile);
 }

@@ -38,40 +38,6 @@ public:
   inline G4VPhysicalVolume* GetWorldPV() const
   {return worldPV;}
 
-  /// Register the physical volume for the read out geometry
-  inline void               RegisterReadOutWorldPV(G4VPhysicalVolume* readOutWorldIn)
-  {readOutWorldPV = readOutWorldIn;}
-
-  /// Access the physical volume for the read out geometry
-  inline G4VPhysicalVolume* GetReadOutWorldPV() const
-  {return readOutWorldPV;}
-
-  /// Register the logical volume for the read out geometry - needed
-  /// for the placement of tunnel read out geometry items
-  inline void               RegisterReadOutWorldLV(G4LogicalVolume* readOutWorldIn)
-  {readOutWorldLV = readOutWorldIn;}
-
-  /// Access the logical volume for the read out geometry
-  inline G4LogicalVolume*   GetReadOutWorldLV() const
-  {return readOutWorldLV;}
-
-  /// Register the physical volume for the TUNNEL read out geometry
-  inline void               RegisterTunnelReadOutWorldPV(G4VPhysicalVolume* tunnelReadOutWorldPVIn)
-  {tunnelReadOutWorldPV = tunnelReadOutWorldPVIn;}
-  
-  /// Access the physical volume for the TUNNEL read out geometry
-  inline G4VPhysicalVolume* GetTunnelReadOutWorldPV() const
-  {return tunnelReadOutWorldPV;}
-
-  /// Register the logical volume for the TUNNEL read out geometry - needed
-  /// for the placement of tunnel read out geometry items
-  inline void               RegisterTunnelReadOutWorldLV(G4LogicalVolume* tunnelReadOutWorldIn)
-  {tunnelReadOutWorldLV = tunnelReadOutWorldIn;}
-  
-  /// Access the logical volume for the TUNNEL read out geometry
-  inline G4LogicalVolume*   GetTunnelReadOutWorldLV() const
-  {return tunnelReadOutWorldLV;}
-
   /// Register the flat beam line - flat means that each element in the beamline represents
   /// one element in the accelerator lattice
   inline void               RegisterFlatBeamline(BDSBeamline* beamlineIn)
@@ -80,6 +46,13 @@ public:
   /// Access flat beam line
   inline BDSBeamline*       GetFlatBeamline() const
   {return flatBeamline;}
+
+  /// Register the curvilinear geometry beam line.
+  inline void RegisterCurvilinearBeamline(BDSBeamline* beamlineIn)
+  {curvilinearBeamline = beamlineIn;}
+
+  inline BDSBeamline*       GetCurvilinearBeamline() const
+  {return curvilinearBeamline;}
 
   /// Register the beam line containing all the magnet supports
   inline void               RegisterSupportsBeamline(BDSBeamline* beamlineIn)
@@ -112,20 +85,16 @@ public:
   {return endPieceBeamline;}
   
 private:
-  BDSAcceleratorModel(); ///< default constructor is private as singleton
+  BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
   static BDSAcceleratorModel* _instance;
 
-  G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
-  G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry.
-  G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry.
-  G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry.
-  G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry.
-
-  BDSBeamline*       flatBeamline;     ///< Flat beam line.
-  BDSBeamline*       supportsBeamline; ///< Element supports beam line.
-  BDSBeamline*       tunnelBeamline;   ///< Tunnel segments beam line.
-  BDSBeamline*       endPieceBeamline; ///< End Pieces beam line.
+  G4VPhysicalVolume* worldPV;             ///< Physical volume of the mass world.
+  BDSBeamline*       flatBeamline;        ///< Flat beam line.
+  BDSBeamline*       curvilinearBeamline; ///< Curvilinear geometry beamline.
+  BDSBeamline*       supportsBeamline;    ///< Element supports beam line.
+  BDSBeamline*       tunnelBeamline;      ///< Tunnel segments beam line.
+  BDSBeamline*       endPieceBeamline;    ///< End Pieces beam line.
 };
 
 #endif

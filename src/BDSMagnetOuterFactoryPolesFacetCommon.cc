@@ -11,7 +11,10 @@
 #include <vector>
 
 BDSMagnetOuterFactoryPolesFacetCommon::BDSMagnetOuterFactoryPolesFacetCommon(G4double factorIn):
-  BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/2), factor(factorIn)
+  BDSMagnetOuterFactoryPolesBase(/*poleStopFactor=*/2),
+  polyStartAngle(0),
+  poleIntersectionStartAngle(0),
+  factor(factorIn)
 {;}
 
 BDSMagnetOuterFactoryPolesFacetCommon::~BDSMagnetOuterFactoryPolesFacetCommon()

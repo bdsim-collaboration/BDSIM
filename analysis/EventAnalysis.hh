@@ -2,16 +2,14 @@
 #define EVENTANALYSIS_H
 
 #include <vector>
-#include <map>
 
-#include "TChain.h"
-#include "TH1D.h"
-#include "TH2D.h"
-#include "TFile.h"
-
-#include "Event.hh"
 #include "Analysis.hh"
-#include "SamplerAnalysis.hh"
+#include "TROOT.h"
+
+class Event;
+class SamplerAnalysis;
+class TChain;
+class TFile;
 
 /**
  * @brief Event level analysis.
@@ -23,7 +21,7 @@ class EventAnalysis : public Analysis
 {
 public:
   EventAnalysis();
-  EventAnalysis(Event* eventIn, TChain* chainIn);
+  EventAnalysis(Event* eventIn, TChain* chain, bool debug = false);
   virtual ~EventAnalysis();
 
   virtual void Process();
@@ -35,7 +33,7 @@ public:
   virtual void Write(TFile *outputFileName);
 
 protected:
-  Event  *event;
+  Event* event;
   std::vector<SamplerAnalysis*> samplerAnalyses;
   std::vector<std::vector<std::vector<double>>> opticalFunctions; ///< optical functions from all samplers
   ClassDef(EventAnalysis,1);
@@ -44,6 +42,8 @@ private:
   /// Initialise each sampler analysis object in samplerAnalysis.
   void Initialise();
   void ProcessSamplers();
+
+  int printModulo; ///< Cache of print modulo fraction
 };
 
 #endif

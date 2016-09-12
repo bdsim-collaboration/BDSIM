@@ -61,7 +61,7 @@ void BDSOutputVector::WritePrimaryHit(BDSTrajectoryPoint* phit)
     {output[i]->WritePrimaryHit(phit);}
 }
 
-void BDSOutputVector::WriteTunnelHits(BDSTunnelHitsCollection* a)
+void BDSOutputVector::WriteTunnelHits(BDSEnergyCounterHitsCollection* a)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

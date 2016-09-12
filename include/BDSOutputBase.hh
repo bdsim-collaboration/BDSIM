@@ -3,6 +3,7 @@
 
 #include "globals.hh"
 
+#include <ctime>
 #include <string>
 #include <vector>
 
@@ -17,8 +18,6 @@ typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
 class BDSTrajectory;
 class BDSTrajectoryPoint;
 typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
-class BDSTunnelHit;
-typedef G4THitsCollection<BDSTunnelHit> BDSTunnelHitsCollection;
 
 class TRKBunch;
 
@@ -46,7 +45,7 @@ public:
   virtual void WritePrimaryHit(BDSTrajectoryPoint* phits) = 0;
 
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits) = 0;
+  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection* tunnelHits) = 0;
   
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) = 0;

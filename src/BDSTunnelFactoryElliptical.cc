@@ -432,7 +432,7 @@ BDSTunnelSection* BDSTunnelFactoryElliptical::CreateTunnelSectionAngled(G4String
     }
   
   CommonConstruction(name, tunnelMaterial, tunnelSoilMaterial, length, containerXRadius,
-		     containerYRadius, visible, inputFace, outputFace);
+		     containerYRadius, visible);
 
   return tunnelSection;
 }

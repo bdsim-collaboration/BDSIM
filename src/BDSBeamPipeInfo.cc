@@ -16,33 +16,33 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeType beamPipeTypeIn,
 				 G4Material*     vacuumMaterialIn,
 				 G4double        beamPipeThicknessIn,
 				 G4Material*     beamPipeMaterialIn,
-				 G4double        angleInIn,
-				 G4double        angleOutIn):
+				 G4ThreeVector   inputFaceNormalIn,
+				 G4ThreeVector   outputFaceNormalIn):
   beamPipeType(beamPipeTypeIn),
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   vacuumMaterial(vacuumMaterialIn),
   beamPipeThickness(beamPipeThicknessIn),
   beamPipeMaterial(beamPipeMaterialIn),
-  angleIn(angleInIn),
-  angleOut(angleOutIn)
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {
   CheckApertureInfo();
 }
 
-BDSBeamPipeInfo::BDSBeamPipeInfo(G4String beamPipeTypeIn,
-				 G4double aper1In,
-				 G4double aper2In,
-				 G4double aper3In,
-				 G4double aper4In,
-				 G4String vacuumMaterialIn,
-				 G4double beamPipeThicknessIn,
-				 G4String beamPipeMaterialIn,
-				 G4double angleInIn,
-				 G4double angleOutIn):
+BDSBeamPipeInfo::BDSBeamPipeInfo(G4String      beamPipeTypeIn,
+				 G4double      aper1In,
+				 G4double      aper2In,
+				 G4double      aper3In,
+				 G4double      aper4In,
+				 G4String      vacuumMaterialIn,
+				 G4double      beamPipeThicknessIn,
+				 G4String      beamPipeMaterialIn,
+				 G4ThreeVector inputFaceNormalIn,
+				 G4ThreeVector outputFaceNormalIn):
   aper1(aper1In), aper2(aper2In), aper3(aper3In), aper4(aper4In),
   beamPipeThickness(beamPipeThicknessIn),
-  angleIn(angleInIn),
-  angleOut(angleOutIn)
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "vacuum material: " << vacuumMaterialIn << G4endl;
@@ -62,10 +62,10 @@ BDSBeamPipeInfo::BDSBeamPipeInfo(BDSBeamPipeInfo* defaultInfo,
 				 G4String         vacuumMaterialIn,
 				 G4double         beamPipeThicknessIn,
 				 G4String         beamPipeMaterialIn,
-				 G4double         angleInIn,
-				 G4double         angleOutIn):
-  angleIn(angleInIn),
-  angleOut(angleOutIn)
+				 G4ThreeVector    inputFaceNormalIn,
+				 G4ThreeVector    outputFaceNormalIn):
+  inputFaceNormal(inputFaceNormalIn),
+  outputFaceNormal(outputFaceNormalIn)
 {
   if (beamPipeTypeIn == "")
     {beamPipeType = defaultInfo->beamPipeType;}
@@ -131,6 +131,17 @@ void BDSBeamPipeInfo::CheckApertureInfo()
     default:
       InfoOKForCircular();
     }
+}
+
+BDSExtent BDSBeamPipeInfo::IndicativeExtent() const
+{
+  // There is a potential problem here where the defaults used are much larger
+  // than the specified ones and they're picked up and cause a false positive.
+  G4double maxParam = std::max(std::max(aper1, aper2), std::max(aper3, aper4));
+  BDSExtent result = BDSExtent(-maxParam, maxParam,
+			       -maxParam, maxParam,
+			       0,0); // z not know from beam pipe info instance
+  return result;
 }
 
 void BDSBeamPipeInfo::CheckRequiredParametersSet(G4bool setAper1,

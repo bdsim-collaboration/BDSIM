@@ -1,16 +1,17 @@
 #ifndef DATALOADER_H
 #define DATALOADER_H
 
-#include "Config.hh"
-#include "Event.hh"
-#include "Run.hh"
-#include "Model.hh"
-#include "Options.hh"
+#include "TROOT.h"
 
-#include "TChain.h"
+#include <map>
+#include <string>
+#include <vector>
 
-#include "BDSOutputROOTEventRunInfo.hh"
-
+class Event;
+class Options;
+class Model;
+class Run;
+class TChain;
 
 /**
  * @brief Loader for a ROOT file using classes used to generate the file.

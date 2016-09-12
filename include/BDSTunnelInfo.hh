@@ -4,6 +4,7 @@
 #include "BDSTunnelType.hh"
 #include "globals.hh"         // geant4 types / globals
 
+class BDSExtent;
 class G4Material;
 
 /**
@@ -17,12 +18,13 @@ class G4Material;
  * @author Laurie Nevay
  */
 
-struct BDSTunnelInfo
+class BDSTunnelInfo
 {
-  /// default constructor, not needed
+public:
+  /// Default constructor, not needed.
   BDSTunnelInfo() = delete;
 
-  /// extra constructor to assign all members at once
+  /// Extra constructor to assign all members at once.
   BDSTunnelInfo(BDSTunnelType typeIn,
 		G4double      thicknessIn,
 		G4double      soilThicknessIn,
@@ -50,6 +52,8 @@ struct BDSTunnelInfo
 		G4double aper2In,
 		G4bool   sensitiveIn,
 		G4bool   visible = true);
+
+  BDSExtent IndicativeExtent() const;
 
   BDSTunnelType type;
   G4double      thickness;

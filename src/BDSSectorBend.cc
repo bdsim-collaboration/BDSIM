@@ -9,7 +9,6 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
-#include "BDSUtilities.hh"        // for calculateorientation
 
 #include "G4Mag_UsualEqRhs.hh"
 
@@ -27,8 +26,10 @@ BDSSectorBend::BDSSectorBend(G4String            name,
   itsBField(bField),itsBGrad(bGrad)
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "angle:        " << angle     << G4endl;
-  G4cout << __METHOD_NAME__ << "arc length:   " << arcLength << G4endl;
+  G4cout << __METHOD_NAME__ << "name:         " << name        << G4endl;
+  G4cout << __METHOD_NAME__ << "angle:        " << angle       << G4endl;
+  G4cout << __METHOD_NAME__ << "field:        " << itsBField   << G4endl;
+  G4cout << __METHOD_NAME__ << "arc length:   " << arcLength   << G4endl;
   G4cout << __METHOD_NAME__ << "chord length: " << chordLength << G4endl;
 #endif
 }

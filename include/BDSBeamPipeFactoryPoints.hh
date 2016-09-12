@@ -23,7 +23,7 @@ class G4Material;
  * faces, a G4ExtrudedSolid intersected with a G4CutTubs (cylinder with 
  * angled faces).
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryPoints: public BDSBeamPipeFactoryBase
@@ -44,18 +44,18 @@ public:
 				      G4Material* beamPipeMaterialIn);
 
   /// Required overloaded method from BDSBeamPipeFactoryBase to build angled piece of beam pipe
-  virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
-						 G4double    lengthIn,
-						 G4double    angleInIn,
-						 G4double    angleOutIn,
-						 G4double    aper1In,
-						 G4double    aper2In,
-						 G4double    aper3In,
-						 G4double    aper4In,
-						 G4Material* vacuumMaterialIn,
-						 G4double    beamPipeThicknessIn,
-						 G4Material* beamPipeMaterialIn);
-
+  virtual BDSBeamPipe* CreateBeamPipe(G4String      nameIn,
+				      G4double      lengthIn,
+				      G4ThreeVector inputFaceNormalIn,
+				      G4ThreeVector outputFaceNormalIn,
+				      G4double      aper1In,
+				      G4double      aper2In,
+				      G4double      aper3In,
+				      G4double      aper4In,
+				      G4Material*   vacuumMaterialIn,
+				      G4double      beamPipeThicknessIn,
+				      G4Material*   beamPipeMaterialIn);
+  
 protected:
   /// Function to generate transverse points.  Should set member variables vacuumEdge,
   /// beamPipeInnerEdge, beamPipeOuterEdge, containerEdge and containerSubtractionEdge.

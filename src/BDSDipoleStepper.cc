@@ -14,8 +14,8 @@ BDSDipoleStepper::BDSDipoleStepper(G4Mag_EqRhs* eqRHS):
   fPtrMagEqOfMot(eqRHS),
   itsBGrad(0.0),itsBField(0.0),itsDist(0.0)
 {
-  backupStepper   = new G4ClassicalRK4(eqRHS,6);
-  nominalEnergy   = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  backupStepper = new G4ClassicalRK4(eqRHS,6);
+  nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
 }
 
 
@@ -70,23 +70,19 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
       itsDist=0;
       return;
     }
-
   //G4double h2=h*h;
   
   // global to local
-  G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
-  G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-
-  G4ThreeVector LocalR           = GlobalAffine.TransformPoint(GlobalPosition); 
-  G4ThreeVector LocalRp          = GlobalAffine.TransformAxis(InitMomDir);
-  G4ThreeVector Localv0          = GlobalAffine.TransformAxis(v0);
-
-  G4ThreeVector itsInitialR      = LocalR;
-  G4ThreeVector itsInitialRp     = LocalRp;
+  BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+  G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector      LocalRp = Localv0.unit();
+  G4ThreeVector itsInitialR  = LocalR;
+  G4ThreeVector itsInitialRp = LocalRp;
   
   // advance the orbit
   G4ThreeVector itsFinalPoint,itsFinalDir;
-  G4ThreeVector yhat(0.,1.,0.);
+  G4ThreeVector yhat(0.,1.,0.); // note this is LOCAL y unit vector
   G4ThreeVector vhat  = LocalRp;
   G4ThreeVector vnorm = vhat.cross(yhat);
   
@@ -98,6 +94,12 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
   
   G4double Theta   = h/R;
 
+  // Note, local z axis is along the chord of the small linear section of magnet. For
+  // the analytical solution to a dipole, we need true curvilinear coordinates - ie a
+  // paritlce with (x,x') = (0,0) will have a finite x' from the global to 'local'
+  // transform but needs to be then rotated by the bend angle (theta) / 2 which would
+  // give (x,x')_{local curvilinear} = (0,0). The result should also be rotated back
+  // (in the z,x plane).
   G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
   CosT_ov_2=cos(Theta/2);
   SinT_ov_2=sin(Theta/2);
@@ -119,11 +121,11 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
     G4double kappa = - fPtrMagEqOfMot->FCof()* ( itsBGrad) /InitMag; // was ist das?
     // ignore quadrupolar component for now as this needs fixing
     if(true ||fabs(kappa)<1.e-12)
-    { // no gradient
-      GlobalPosition = LocalAffine.TransformPoint(itsFinalPoint);
-      G4ThreeVector GlobalTangent = LocalAffine.TransformAxis(itsFinalDir);
-	
-      GlobalTangent*=InitMag;
+    { // no gradient - true as graident turned off just now now via this true.
+      BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
+      GlobalPosition = globalPosDir.PreStepPoint();
+      G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
 	  
       yOut[0] = GlobalPosition.x();
       yOut[1] = GlobalPosition.y();
@@ -217,15 +219,13 @@ void BDSDipoleStepper::AdvanceHelix(const G4double  yIn[],
     LocalRp.setY(y1p);
     LocalRp.setZ(z1p);
     LocalRp.rotateY(theta_in);
-  
-    GlobalPosition=LocalAffine.TransformPoint(LocalR);
-      
     LocalRp.rotateY(-h/R);
-    G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp);
-      
-    GlobalTangent*=InitMag;
-  
-    // gab: replace += with =
+
+    BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
+    GlobalPosition = globalPosDir.PreStepPoint();
+    G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+    GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
+    
     yOut[0] = GlobalPosition.x();
     yOut[1] = GlobalPosition.y();
     yOut[2] = GlobalPosition.z();
@@ -254,7 +254,7 @@ void BDSDipoleStepper::Stepper(const G4double yInput[],
 
   for(G4int i=0;i<nvar;i++) yErr[i]=1e-10*hstep;
 
-  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  AdvanceHelix(yInput,dydx,G4ThreeVector(),hstep,yOut,yErr);
   // G4cout << "ds> " << hstep << " " << yInput[0] << " " << yInput[1] << " " << yInput[2] << " " << yInput[3] << " " << yInput[4] << " " << yInput[5] << " " << yOut[0] << " " << yOut[1] << " " << yOut[2] << " " << yOut[3] << " " << yOut[4] << " " << yOut[5] << G4endl;
 }
 

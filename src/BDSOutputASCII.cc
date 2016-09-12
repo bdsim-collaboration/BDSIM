@@ -318,7 +318,7 @@ void BDSOutputASCII::WriteTrackerPrimaryLoss(TRKBunch* lostBunch, int turnsTaken
 }
 
 
-void BDSOutputASCII::WriteTunnelHits(BDSTunnelHitsCollection* /*hits*/)
+void BDSOutputASCII::WriteTunnelHits(BDSEnergyCounterHitsCollection* /*hits*/)
 {;}
 
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)
