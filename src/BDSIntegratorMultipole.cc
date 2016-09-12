@@ -26,8 +26,8 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
   std::vector<G4String>::iterator skey = skewKeys.begin();
   for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
     {
-      bnl.push_back((*strength)[*nkey] / CLHEP::m);
-      bsl.push_back((*strength)[*skey] / CLHEP::m);
+      bnl.push_back((*strength)[*nkey]);// / pow(CLHEP::m,i));
+      bsl.push_back((*strength)[*skey]);// / pow(CLHEP::m,i));
       nfact.push_back(Factorial(i));
     }
 #ifdef BDSDEBUG
@@ -96,7 +96,7 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
 
   //G4double speedoflight = CLHEP::c_light / (CLHEP::m / CLHEP::second);
   G4double dipoleTerm = b0l*normFactor *zp / vOverc;
-  G4int n = 0;
+  G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
 
   //Sum higher order components into one kick
