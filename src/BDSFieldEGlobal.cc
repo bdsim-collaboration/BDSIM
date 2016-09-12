@@ -5,9 +5,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-BDSFieldEGlobal::BDSFieldEGlobal(BDSFieldE* fieldIn,
-				 G4bool     cacheTransforms):
-  BDSAuxiliaryNavigator(cacheTransforms),
+BDSFieldEGlobal::BDSFieldEGlobal(BDSFieldE* fieldIn):
   field(fieldIn)
 {;}
 

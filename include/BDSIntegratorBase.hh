@@ -27,8 +27,7 @@ class BDSIntegratorBase: public G4MagIntegratorStepper, public BDSAuxiliaryNavig
 {
 public:
   BDSIntegratorBase(G4Mag_EqRhs* eqOfMIn,
-		    G4int        nVariablesIn,
-		    G4bool       cacheTransforms);
+		    G4int        nVariablesIn);
   
   virtual ~BDSIntegratorBase();
 

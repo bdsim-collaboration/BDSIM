@@ -47,6 +47,7 @@ namespace GMAD
     std::string magnetGeometryType;
     std::string outerMaterial;
     double outerDiameter;
+    bool   yokeOnInside;
 
     double tilt; ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser

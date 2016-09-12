@@ -41,7 +41,7 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name):
   volName(""),
   turnstaken(0),
   eventnumber(0),
-  auxNavigator(new BDSAuxiliaryNavigator(false))
+  auxNavigator(new BDSAuxiliaryNavigator())
 {
   verbose = BDSGlobalConstants::Instance()->Verbose();
   collectionName.insert(colName);

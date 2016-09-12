@@ -33,6 +33,7 @@ class Config
   bool        ProcessSamplers()                   {return bProcessSamplers;}
   bool        ProcessLosses()                     {return bProcessLosses;}
   bool        ProcessAllTrees()                   {return bProcessAllTrees;}
+  double      PrintModuloFraction()               {return printModuloFraction;}
   
   std::vector<std::map<std::string, std::string>> GetHistoDefs() { return histos;}
   std::map<std::string, std::string>              GetHistoDef(int i) { return histos[i];}
@@ -63,6 +64,7 @@ class Config
   bool bEventDisplay                            = false;
   bool bProcessLosses                           = false;
   bool bProcessSamplers                         = false;
+  double  printModuloFraction                   = 0.01; // 10% print out rate
 
   std::vector<std::map<std::string, std::string>>  histos;
 

@@ -12,9 +12,8 @@
 
 BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 					 G4double                  brho,
-					 G4Mag_EqRhs*              eqOfMIn,
-					 G4bool                    cacheTransforms):
-  BDSIntegratorBase(eqOfMIn, 6, cacheTransforms),
+					 G4Mag_EqRhs*              eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
   angle((*strength)["angle"]),
   length((*strength)["length"]),
   bField((*strength)["field"])

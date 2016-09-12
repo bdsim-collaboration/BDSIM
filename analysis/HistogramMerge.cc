@@ -80,9 +80,8 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
 void HistogramMerge::Terminate()
 {
   if(Config::Instance()->Debug())
-  {
-    std::cout << "terminate " << std::endl;
-  }
+    {std::cout << "HistogramMerge::Terminate" << std::endl;}
+  
   // loop over 1d histograms
   for(unsigned int i=0;i<histograms1D.size();++i)
   {
@@ -120,9 +119,8 @@ void HistogramMerge::Write(TFile* /*outputFile*/)
 {
   // ROOT just writes object to the open file
   // is there a way to do this explictly?  kDirectory?
-  // TBC commented out outputFile to prevent compiler warning
-  for(auto h : histograms1D)
-  {h->Write();}
-  for(auto h : histograms2D)
-  {h->Write();}
+  for (auto h : histograms1D)
+    { h->Write(); }
+  for (auto h : histograms2D)
+    { h->Write(); }
 }

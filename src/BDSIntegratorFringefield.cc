@@ -11,9 +11,8 @@
 
 BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* strength,
                                                    G4double                 brho,
-                                                   G4Mag_EqRhs*             eqOfMIn,
-						   G4bool                   cacheTransforms):
-  BDSIntegratorDipole(strength, brho, eqOfMIn, cacheTransforms),
+                                                   G4Mag_EqRhs*             eqOfMIn):
+  BDSIntegratorDipole(strength, brho, eqOfMIn),
   angle((*strength)["angle"]),
   bField((*strength)["field"])
 {

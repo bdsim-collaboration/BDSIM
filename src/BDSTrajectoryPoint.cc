@@ -20,7 +20,7 @@
 G4Allocator<BDSTrajectoryPoint> bdsTrajectoryPointAllocator;
 
 // Don't use transform caching in the aux navigator as it's used for all over the geometry here.
-BDSAuxiliaryNavigator* BDSTrajectoryPoint::auxNavigator = new BDSAuxiliaryNavigator(false);
+BDSAuxiliaryNavigator* BDSTrajectoryPoint::auxNavigator = new BDSAuxiliaryNavigator();
 G4int BDSTrajectoryPoint::numberOfPoints = 0;
 
 BDSTrajectoryPoint::BDSTrajectoryPoint():

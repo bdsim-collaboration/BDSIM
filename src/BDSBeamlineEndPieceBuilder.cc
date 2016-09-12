@@ -5,6 +5,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSExtent.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSTiltOffset.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
@@ -27,6 +28,7 @@ void BDS::BuildEndPieceBeamline()
   for (auto element : *beamline)
     {
       const auto accComponent   = element->GetAcceleratorComponent();
+      const auto accComponentTO = element->GetTiltOffset();
       const auto endPieceBefore = accComponent->EndPieceBefore();
       const auto endPieceAfter  = accComponent->EndPieceAfter();
       
@@ -70,7 +72,10 @@ void BDS::BuildEndPieceBeamline()
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
 		    {
 		      // check extents first
-		      auto extPipe = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      G4double  tiltPipe = inspectedElement->GetTilt();
+		      if (accComponentTO) // could be nullptr
+			{extPipe = extPipe.Tilted(accComponentTO->GetTilt() - tiltPipe);}
 		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
 			{
 			  keepGoing             = false;
@@ -152,7 +157,10 @@ void BDS::BuildEndPieceBeamline()
 		  if (inspectedElement->GetType() == "drift") // leave keepGoing true here to keep going
 		    {
 		      // check extents first
-		      auto extPipe = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      BDSExtent extPipe  = inspectedElement->GetAcceleratorComponent()->GetExtent();
+		      G4double  tiltPipe = inspectedElement->GetTilt();
+		      if (accComponentTO) // could be nullptr
+			{extPipe = extPipe.Tilted(accComponentTO->GetTilt() - tiltPipe);}
 		      if (extPipe.TransverselyGreaterThan(endPieceInnerExtent))
 			{
 			  keepGoing            = false;

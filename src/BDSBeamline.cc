@@ -91,11 +91,7 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 {
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
-  
-  // if default nullptr is supplied as tilt offset use a default 0,0,0,0 one
-  if (!tiltOffset)
-    {tiltOffset  = new BDSTiltOffset();}
-  
+
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       G4int size = (G4int)line->size();
@@ -139,9 +135,20 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4double      angle    = component->GetAngle();
   G4bool hasFiniteLength = BDS::IsFinite(length);
   G4bool hasFiniteAngle  = BDS::IsFinite(angle);
-  G4bool hasFiniteTilt   = BDS::IsFinite(tiltOffset->GetTilt());
-  G4bool hasFiniteOffset = BDS::IsFinite(tiltOffset->GetXOffset()) || BDS::IsFinite(tiltOffset->GetYOffset());
-  G4ThreeVector offset   = G4ThreeVector(tiltOffset->GetXOffset(), tiltOffset->GetYOffset(), 0);
+  G4bool hasFiniteTilt, hasFiniteOffset;
+  G4ThreeVector offset;
+  if (tiltOffset)
+    {
+      hasFiniteTilt   = tiltOffset->HasFiniteTilt();
+      hasFiniteOffset = tiltOffset->HasFiniteOffset();
+      offset          = tiltOffset->GetOffset(); // returns 3Vector
+    }
+  else
+    {
+      hasFiniteTilt   = false;
+      hasFiniteOffset = false;
+      offset          = G4ThreeVector();
+    }
   G4ThreeVector eP       = component->GetExtentPositive() + offset;
   G4ThreeVector eN       = component->GetExtentNegative() + offset;
   G4ThreeVector placementOffset   = component->GetPlacementOffset();
@@ -242,16 +249,24 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       // handed coordinate system
       // rotate about cumulative local y axis of beamline
       // middle rotated by half angle in local x,z plane
-      G4ThreeVector unitY = G4ThreeVector(0,1,0);
-      referenceRotationMiddle->rotate(angle*0.5, unitY.transform(*previousReferenceRotationEnd));
+      G4ThreeVector rotationAxisOfBend = G4ThreeVector(0,1,0); // nominally about local unit Y
+      G4ThreeVector rotationAxisOfBendEnd = rotationAxisOfBend; // a copy
+      if (hasFiniteTilt)
+	{
+	  G4double tilt = tiltOffset->GetTilt();
+	  G4RotationMatrix rotationAxisRM = G4RotationMatrix();
+	  rotationAxisRM.rotateZ(tilt);
+	  rotationAxisOfBend.transform(rotationAxisRM);
+	  rotationAxisOfBendEnd.transform(rotationAxisRM);
+	}
+      referenceRotationMiddle->rotate(angle*0.5, rotationAxisOfBend.transform(*previousReferenceRotationEnd));
       // end rotated by full angle in local x,z plane
-      G4ThreeVector unitYEnd = G4ThreeVector(0,1,0);
-      referenceRotationEnd->rotate(angle, unitYEnd.transform(*previousReferenceRotationEnd));
+      referenceRotationEnd->rotate(angle, rotationAxisOfBendEnd.transform(*previousReferenceRotationEnd));
     }
   
   // add the tilt to the rotation matrices (around z axis)
   G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
-  if (hasFiniteTilt  && !hasFiniteAngle)
+  if (hasFiniteTilt)
     {
       G4double tilt = tiltOffset->GetTilt();
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
@@ -269,14 +284,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
     }
   else
     {
-      // note, don't apply tilt if the object has finite angle as this will cause
-      // geometry overlaps
-      if (hasFiniteAngle && hasFiniteTilt)
-	{
-	  G4String name = component->GetName();
-	  G4cout << __METHOD_NAME__ << "WARNING - element has tilt, but this will cause geometry"
-		 << " overlaps: " << name << " - omitting tilt" << G4endl;
-	}
       rotationStart  = new G4RotationMatrix(*referenceRotationStart);
       rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
       rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
@@ -314,8 +321,8 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4ThreeVector positionStart, positionMiddle, positionEnd;
   if (hasFiniteOffset || hasFinitePlacementOffset)
     {
-      if (hasFiniteOffset && hasFiniteAngle) // do not allow x offsets for bends as this will cause overlaps
-	{
+      if (hasFiniteOffset && hasFiniteAngle) 
+	{// do not allow x offsets for bends as this will cause overlaps
 	  G4String name = component->GetName();
 	  G4cout << __METHOD_NAME__ << "WARNING - element has x offset, but this will cause geometry"
 		 << " overlaps: " << name << " - omitting x offset" << G4endl;
@@ -375,25 +382,31 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 #endif
   
   // construct beamline element
-  BDSBeamlineElement* element = new BDSBeamlineElement(component,
-						       positionStart,
-						       positionMiddle,
-						       positionEnd,
-						       rotationStart,
-						       rotationMiddle,
-						       rotationEnd,
-						       referencePositionStart,
-						       referencePositionMiddle,
-						       referencePositionEnd,
-						       referenceRotationStart,
-						       referenceRotationMiddle,
-						       referenceRotationEnd,
-						       sPositionStart,
-						       sPositionMiddle,
-						       sPositionEnd,
-						       samplerType,
-						       samplerName,
-                                                       (G4int)beamline.size());
+  BDSTiltOffset* tiltOffsetToStore = nullptr;
+  if (tiltOffset)
+    {tiltOffsetToStore = new BDSTiltOffset(*tiltOffset);} // copy as can be used multiple times
+  
+  BDSBeamlineElement* element;
+  element = new BDSBeamlineElement(component,
+				   positionStart,
+				   positionMiddle,
+				   positionEnd,
+				   rotationStart,
+				   rotationMiddle,
+				   rotationEnd,
+				   referencePositionStart,
+				   referencePositionMiddle,
+				   referencePositionEnd,
+				   referenceRotationStart,
+				   referenceRotationMiddle,
+				   referenceRotationEnd,
+				   sPositionStart,
+				   sPositionMiddle,
+				   sPositionEnd,
+				   tiltOffsetToStore,
+				   samplerType,
+				   samplerName,
+				   (G4int)beamline.size());
 
   // calculate extents for world size determination
   UpdateExtents(element);
@@ -639,16 +652,6 @@ void BDSBeamline::RegisterElement(BDSBeamlineElement* element)
       // not registered
       components[element->GetName()] = element;
     }
-  // else - already registered - pass it by
-  /*
-  search = components.find(element->GetPlacementName());
-  if (search == component.edn())
-    {
-      //not registered
-      components[element->GetPlacementName()] = element;
-      }*/ //
-  // UNCOMMENT WHEN MERGED WITH TUNNEL BR for better placement names
-  // else - already registered - pass it by
 }
 
 BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
@@ -661,7 +664,6 @@ BDSBeamlineElement* BDSBeamline::GetElement(G4String name)
   else
     {return search->second;}
 }
-
 
 void BDSBeamline::UpdateExtents(BDSBeamlineElement* element)
 {
@@ -737,11 +739,12 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
-  G4RotationMatrix* elRotStart = element->GetReferenceRotationMiddle();
+  G4RotationMatrix* elRotStart = element->GetRotationMiddle();
   G4ThreeVector     elPosStart = element->GetPositionStart();
   G4ThreeVector positionMiddle = elPosStart - G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotStart);
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
+  BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      positionStart,
 						      positionMiddle,
@@ -757,7 +760,8 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      new G4RotationMatrix(*elRotStart),
 						      elSPosStart - endPieceLength,
 						      elSPosStart - 0.5*endPieceLength,
-						      elSPosStart);
+						      elSPosStart,
+						      new BDSTiltOffset(*elTiltOffset));
   return result;
 }
 
@@ -770,13 +774,14 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 
   G4double endPieceLength      = endPiece->GetChordLength();
   BDSBeamlineElement*  element = beamline[index];
-  G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetReferenceRotationMiddle()));
+  G4RotationMatrix*   elRotEnd = new G4RotationMatrix(*(element->GetRotationMiddle()));
   G4ThreeVector       elPosEnd = element->GetPositionEnd();
   G4ThreeVector positionMiddle = elPosEnd + G4ThreeVector(0,0,endPieceLength*0.5).transform(*elRotEnd);
   G4ThreeVector    positionEnd = elPosEnd + G4ThreeVector(0,0,endPieceLength).transform(*elRotEnd);
   if (flip)
     {elRotEnd->rotateY(CLHEP::pi);}
   G4double           elSPosEnd = element->GetSPositionEnd();
+  BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
 						      positionMiddle,
@@ -792,7 +797,8 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 						      new G4RotationMatrix(*elRotEnd),
 						      elSPosEnd,
 						      elSPosEnd + 0.5*endPieceLength,
-						      elSPosEnd + endPieceLength);
+						      elSPosEnd + endPieceLength,
+						      new BDSTiltOffset(*elTiltOffset));
   return result;
 }
 

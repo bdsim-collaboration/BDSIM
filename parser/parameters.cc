@@ -33,6 +33,7 @@ Parameters::Parameters() {
   setMap["magnetGeometryType"] = false;
   setMap["outerMaterial"] = false;
   setMap["outerDiameter"] = false;
+  setMap["yokeOnInside"]  = false;
   setMap["tilt"] = false;
   setMap["xsize"] = false;
   setMap["ysize"] = false;

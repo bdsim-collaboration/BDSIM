@@ -74,7 +74,7 @@ particle motion in magnetic fields such as that of a quadrupole or sector-bend h
 analytical solutions that can be used in place of numerical integration. BDSIM
 uses these to provide fast and accurate thick lens tracking in vacuum.
 
-BDSIM provides a library of fairly generic magnet gemoetry styles that will cover
+BDSIM provides a library of fairly generic magnet geometry styles that will cover
 most cases. Should a more detailed geometry be required, the user may supply
 this in various formats as well as magnetic field maps. Alternatively, if the user
 wishes to write their own Geant4 geometry for a particular component this can be

@@ -61,10 +61,10 @@ int main(int argc, char *argv[])
   std::vector<Analysis*> analyses;
 
   DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
-  RunAnalysis* runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
+  EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree());
-  ModelAnalysis* modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
+  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
 
   analyses.push_back(evtAnalysis);
   analyses.push_back(runAnalysis);
@@ -72,9 +72,7 @@ int main(int argc, char *argv[])
   analyses.push_back(modAnalysis);
 
   for (auto& analysis : analyses)
-    {
-      analysis->Execute();
-    }
+    {analysis->Execute();}
 
   // write output
   try

@@ -4,30 +4,31 @@
 #include "globals.hh"             // geant4 globals / types
 #include "G4Material.hh"
 
-BDSMagnetOuterInfo::BDSMagnetOuterInfo()
-{
-  name          = "not specified";
-  geometryType  = BDSMagnetGeometryType::cylindrical;
-  outerDiameter = 0;
-  outerMaterial = nullptr;
-  angleIn       = 0;
-  angleOut      = 0;
-}
+BDSMagnetOuterInfo::BDSMagnetOuterInfo():
+  name("not_specified"),
+  geometryType(BDSMagnetGeometryType::cylindrical),
+  outerDiameter(0),
+  outerMaterial(nullptr),
+  angleIn(0),
+  angleOut(0),
+  yokeOnLeft(false)
+{;}
 
 BDSMagnetOuterInfo::BDSMagnetOuterInfo(G4String              nameIn,
 				       BDSMagnetGeometryType geometryTypeIn,
 				       G4double              outerDiameterIn,
 				       G4Material*           outerMaterialIn,
 				       G4double              angleInIn,
-				       G4double              angleOutIn)
-{
-  name          = nameIn;
-  geometryType  = geometryTypeIn;
-  outerDiameter = outerDiameterIn;
-  outerMaterial = outerMaterialIn;
-  angleIn       = angleInIn;
-  angleOut      = angleOutIn;
-}
+				       G4double              angleOutIn,
+				       G4bool                yokeOnLeftIn):
+  name(nameIn),
+  geometryType(geometryTypeIn),
+  outerDiameter(outerDiameterIn),
+  outerMaterial(outerMaterialIn),
+  angleIn(angleInIn),
+  angleOut(angleOutIn),
+  yokeOnLeft(yokeOnLeftIn)
+{;}
   
 std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info)
 {
