@@ -267,9 +267,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
-      double s_1_0 = 0.0;
-      
-      s_1_0 = powSums[a][b][m][n];
+      double s_1_0 = powSums[a][b][m][n];
 
       moment = s_1_0/npart;
     }
