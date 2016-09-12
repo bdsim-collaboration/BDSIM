@@ -6,6 +6,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -17,7 +18,8 @@
 #include "TTree.h"
 
 #define CHI2TOLERANCE 40
-
+#define TREETOLERANCE 0.05
+#define OPTICSSIGMATOLERANCE 5
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
@@ -126,39 +128,102 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 }
 
 void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
-{ 
-  ResultTree* c = new ResultTree();  
+{
+  if (!strcmp(t1->GetName() , "optics"))
+    {
+      Compare::Optics(t1, t1, results);
+      return;
+    }
+  
+  ResultTree* c = new ResultTree();
   c->name       = t1->GetName();
   c->objtype    = "TTree";
-  c->t1NEntries = t1->GetEntries();
-  c->t2NEntries = t2->GetEntries();
+  c->t1NEntries = (int)t1->GetEntries();
+  c->t2NEntries = (int)t2->GetEntries();
 
   TObjArray *oa1 = t1->GetListOfBranches(); 
-  TObjArray *oa2 = t2->GetListOfBranches(); 
+  TObjArray *oa2 = t2->GetListOfBranches();
   
-  for(int j = 0; j<oa1->GetSize(); ++j) {
-    for(int i = 0; i<t1->GetEntries(); ++i) {
-
-      double t1v = 0;
-      double t2v = 0;
-
-      TBranch *b1 = (TBranch*)((*oa1)[j]);
-      TBranch *b2 = (TBranch*)((*oa2)[j]);
-
+  for(int j = 0; j<oa1->GetSize(); ++j)
+    {// loop over branches
+      bool branchFailed = false;
+      TBranch* b1 = (TBranch*)((*oa1)[j]);
+      TBranch* b2 = (TBranch*)((*oa2)[j]);
+      double  t1v = 0;
+      double  t2v = 0;
       b1->SetAddress(&t1v);
       b2->SetAddress(&t2v);
+      for(int i = 0; i<t1->GetEntries(); ++i)
+	{// loop over entries	  
+	  t1->GetEntry(i);
+	  t2->GetEntry(i);
+	  
+	  if(std::abs((t1v - t2v )/t1v) > TREETOLERANCE)
+	    {
+	      c->passed    = false;
+	      branchFailed = true;
+	    }
+	  else
+	    {c->passed = true;}
+	}
+      if (branchFailed)
+	{c->offendingBranches.push_back(std::string(b2->GetName()));}
+  }
+  results.push_back(c);
+}
 
-      t1->GetEntry(i);
-      t2->GetEntry(i);
+void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
+{
+  ResultTree* c = new ResultTree();
+  c->name       = t1->GetName();
+  c->objtype    = "TTree(optics)";
+  c->t1NEntries = (int)t1->GetEntries();
+  c->t2NEntries = (int)t2->GetEntries();
 
-      if(std::abs((t1v - t2v )/t1v) > 0.01)
+  TObjArray *oa1 = t1->GetListOfBranches(); 
+  TObjArray *oa2 = t2->GetListOfBranches();
+  
+  for(int j = 0; j<oa1->GetSize(); ++j)
+    {// loop over branches
+      TBranch* temp = (TBranch*)(*oa1)[j];
+      std::string branchName = std::string(temp->GetName());
+      if (Compare::StringStartsWith(branchName, "Sig_"))
+	{continue;} // skip this branch
+      
+      bool branchFailed = false;
+      std::string errBranchName = "Sig_" + branchName;
+      TBranch* b1    = t1->GetBranch(branchName.c_str());
+      TBranch* b1err = t1->GetBranch(errBranchName.c_str());
+      if (!b1err)
+	{continue;} // There's no appropriate error branch - don't compare
+      
+      TBranch* b2    = (TBranch*)((*oa2)[j]);
+      double  t1v = 0;
+      double  t1e = 0;
+      double  t2v = 0;
+      b1->SetAddress(&t1v);
+      b1err->SetAddress(&t1e);
+      b2->SetAddress(&t2v);
+      for(int i = 0; i<t1->GetEntries(); ++i)
+	{// loop over entries	  
+	  t1->GetEntry(i);
+	  t2->GetEntry(i);
+
+	  if (t1e < 1e-15)
+	    {t1e = 1e-9;}
+		   
+	  // Difference in values > error in reference optics calculation
+	  branchFailed = std::abs(t1v - t2v) > (OPTICSSIGMATOLERANCE * t1e);
+	  if (branchFailed)
+	    {std::cout << t1v << " " << t2v << " " << t1e << std::endl;}
+	}
+      if (branchFailed)
 	{
-	  c->passed = false;
 	  c->offendingBranches.push_back(std::string(b2->GetName()));
+	  c->passed = false;
 	}
       else
-	{c->passed = true;}
-    }
+	{c->passed = false;}
   }
   results.push_back(c);
 }
@@ -214,4 +279,18 @@ void Compare::PrintFailure(std::vector<Result*> results)
 void Compare::PrintNoMatching(std::string className, std::string objectName)
 {
   std::cout << "Comparison file has no " << className << " called " << objectName << ". Skipping" << std::endl;
+}
+
+bool Compare::StringStartsWith(std::string aString, std::string prefix)
+{
+  try
+    {
+      if (aString.compare(0, prefix.length(), prefix) == 0)
+	{return true;}
+      else
+	{return false;}
+    }
+  catch(const std::out_of_range&)
+    {return false;} // if string isn't as long as prefix
+  return false; // for static analysis warning
 }

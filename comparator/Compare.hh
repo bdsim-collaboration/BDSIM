@@ -33,6 +33,10 @@ namespace Compare
   /// Compare two TTrees.
   void Trees(TTree* t1, TTree* t2, std::vector<Result*>& results);
 
+  /// Compare an optics TTree specifically. This relies on the known variable
+  /// names in the tree and naming scheme.
+  void Optics(TTree* t1, TTree* t2, std::vector<Result*>& results);
+
   /// Print results from a serious of tests.
   void PrintResults(std::vector<Result*> results);
 
@@ -48,6 +52,9 @@ namespace Compare
 
   /// Loop over results and print any failed ones. Returns true if all passed.
   bool Summarise(std::vector<Result*> results);
+
+  /// Check wether a string is prefixed with another string.
+  bool StringStartsWith(std::string aString, std::string prefix);
 }
   
 #endif
