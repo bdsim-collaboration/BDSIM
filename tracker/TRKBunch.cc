@@ -11,8 +11,11 @@
 
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "parser/options.h"
+
+#include "CLHEP/Units/SystemOfUnits.h"
 
 TRKBunch::TRKBunch(const GMAD::Options& opt)
 {

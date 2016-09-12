@@ -40,9 +40,6 @@ int main (int argc, char** argv)
   /// Initialise random numbers
   BDSRandom::CreateRandomNumberGenerator();
   BDSRandom::SetSeed(); // set the seed from options or from exec options
-  if (globalConstants->SetSeedState()) //optionally load the seed state from file
-    {BDSRandom::LoadSeedState(globalConstants->SeedStateFileName());}
-  BDSRandom::WriteSeedState(); //write the current state once set / loaded
 
   /// Build bunch
   TRKBunch* bunch = new TRKBunch(options);
