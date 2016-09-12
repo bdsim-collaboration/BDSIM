@@ -7,9 +7,12 @@
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4ElectroMagneticField.hh"
+#include "G4ChordFinder.hh"
+#include "G4FieldManager.hh"
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
+#include "G4MagIntegratorDriver.hh"
+#include "G4MagIntegratorStepper.hh"
 #include "G4Polycone.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
@@ -17,6 +20,7 @@
 #include "G4Tubs.hh"
 #include "G4UnionSolid.hh"
 #include "G4VisAttributes.hh"
+#include "G4VSolid.hh"
 
 #include <cmath>
 #include <vector>

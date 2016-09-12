@@ -2,9 +2,10 @@
 #include "BDSHistogram.hh"
 #include "BDSOutputROOT.hh"
 #include "BDSOutputROOTDetailed.hh"
+#include "BDSSamplerHit.hh"
 
 #include "globals.hh" // geant4 types / globals
-
+#include "CLHEP/Units/SystemOfUnits.h"
 #include <string>
 
 template<typename Type>

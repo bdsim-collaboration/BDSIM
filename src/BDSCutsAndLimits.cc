@@ -5,7 +5,6 @@
 #include "G4Proton.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
-#include "G4ProcessManager.hh"
 
 BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits"),_wasActivated(false)
 {

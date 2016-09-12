@@ -6,8 +6,10 @@
 #include <vector>
 
 #ifndef __ROOTBUILD__
-#include "BDSTrajectory.hh"
-#include "BDSEnergyCounterHit.hh"
+class BDSEnergyCounterHit;
+class BDSTrajectory;
+template <class T> class G4THitsCollection;
+typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
 #endif
 
 class BDSOutputROOTEventTrajectory : public TObject
@@ -22,6 +24,7 @@ public:
   void Flush();
 
   int n;
+  std::vector<int> partID;
   std::vector<unsigned int> trackID;
   std::vector<unsigned int> parentID;
   std::vector<std::vector<int>> preProcessTypes;

@@ -1,7 +1,7 @@
 General Information
 ===================
 
-BDSIM version 0.93, Geant4 toolkit for radiation transport in accelerators
+BDSIM version 0.94, Geant4 toolkit for radiation transport in accelerators
 
 The official web site is:
 	http://www.pp.rhul.ac.uk/bdsim
@@ -18,6 +18,7 @@ Stewart Boogert       <stewart.boogert@rhul.ac.uk>
 Lawrence Deacon       <ucaplde@ucl.ac.uk>
 Regina Kwee-Hinzmann  <regina.kwee@rhul.ac.uk>
 Hector Garcia Morales <hector.garciamorales@rhul.ac.uk>
+Stephen Gibson        <stephen.gibson@rhul.ac.uk>
 Laurie Nevay          <laurie.nevay@rhul.ac.uk>
 Will Shields          <william.shields.2010@live.rhul.ac.uk>
 Jochem Snuverink      <jochem.snuverink@psi.ch>
@@ -26,6 +27,7 @@ Stuart Walker         <Stuart.Walker@live.rhul.ac.uk>
 History
 ==================
 
+v0.94: 14.09.16
 v0.93: 24.08.16
 v0.92: 29.03.16
 v0.91: 17.12.15

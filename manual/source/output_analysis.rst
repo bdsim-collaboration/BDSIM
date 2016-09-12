@@ -149,8 +149,8 @@ Extracting data from ROOT file ::
 
 .. _ROOTOutputAnalysis:
 
-ROOT Output (robdsim)
----------------------
+Old ROOT Output (robdsim)
+-------------------------
 To use the ROOT analysis (and the Python interface)::
 
    export ROBDSIM=<bdsim-build-dir>/utils/robdsim

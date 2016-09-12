@@ -2,13 +2,14 @@
 #define BDSOUTPUTROOT_H
 
 #include "BDSOutputBase.hh"
-#include "BDSTrajectory.hh"
 
 #include "TH2F.h"
 #include "TFile.h"
 #include "TTree.h"
 
 class BDSOutputROOTEventInfo;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
 
 /**
  * @brief Lightweight ROOT output class
@@ -34,7 +35,7 @@ public:
   /// write primary hits histo
   virtual void WritePrimaryHit(BDSTrajectoryPoint* phit) override;
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection*) override;
+  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection*) override;
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) override;
   /// write primary hit

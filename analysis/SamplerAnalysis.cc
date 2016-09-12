@@ -3,19 +3,22 @@
 #include "rebdsim.hh"
 
 
-SamplerAnalysis::SamplerAnalysis()
+SamplerAnalysis::SamplerAnalysis():
+  s(nullptr),
+  S(0)
 {
-  this->CommonCtor();
+  CommonCtor();
 }
 
 #ifndef __ROOTDOUBLE__
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn)
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn):
 #else 
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn)
+  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn):
 #endif
+  s(samplerIn),
+  S(0)
 {
-  this->s = samplerIn;
-  this->CommonCtor();
+  CommonCtor();
 }
 
 void SamplerAnalysis::CommonCtor()
@@ -134,7 +137,7 @@ void SamplerAnalysis::Terminate()
 	  {
 	    for (int k = 0; k <= 4; ++k)
 	      {
-		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, npart, a, b, j, k);
+		cenMoms[a][b][j][k] = powSumToCentralMoment(powSums, (int)npart, a, b, j, k);
 	      }
 	  }
       }
@@ -192,7 +195,7 @@ void SamplerAnalysis::Terminate()
 	{
 	  for(int k=0;k<3;++k)
 	    {
-	      covMats[i][j][k]=centMomToCovariance(cenMoms, npart, i, j, k);
+	      covMats[i][j][k]=centMomToCovariance(cenMoms, (int)npart, i, j, k);
 	    }
 	}
     }

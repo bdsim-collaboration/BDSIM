@@ -22,13 +22,13 @@ class G4Material;
  * 
  * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryOctagonal: public BDSBeamPipeFactoryPoints
 {
 public:
-  static BDSBeamPipeFactoryOctagonal* Instance(); ///< singleton accessor
+  static BDSBeamPipeFactoryOctagonal* Instance(); ///< Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryOctagonal();
   

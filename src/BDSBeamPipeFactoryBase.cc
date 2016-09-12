@@ -45,35 +45,6 @@ void BDSBeamPipeFactoryBase::CleanUp()
   inputFaceNormal  = G4ThreeVector(0,0,-1);
   outputFaceNormal = G4ThreeVector(0,0, 1);
 }
-
-
-BDSBeamPipe* BDSBeamPipeFactoryBase::CreateBeamPipeAngledIn(G4String    nameIn,
-							    G4double    lengthIn,
-							    G4double    angleInIn, // the normal angle of the input face
-							    G4double    aper1,
-							    G4double    aper2,
-							    G4double    aper3,
-							    G4double    aper4,
-							    G4Material* vacuumMaterialIn,
-							    G4double    beamPipeThicknessIn,
-							    G4Material* beamPipeMaterialIn)
-{
-  return CreateBeamPipeAngledInOut(nameIn,lengthIn,angleInIn,0,aper1,aper2,aper3,aper4,vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-}
-
-BDSBeamPipe* BDSBeamPipeFactoryBase::CreateBeamPipeAngledOut(G4String    nameIn,
-							     G4double    lengthIn,
-							     G4double    angleOutIn, // the normal angle of the output face
-							     G4double    aper1,
-							     G4double    aper2,
-							     G4double    aper3,
-							     G4double    aper4,
-							     G4Material* vacuumMaterialIn,
-							     G4double    beamPipeThicknessIn,
-							     G4Material* beamPipeMaterialIn)
-{
-  return CreateBeamPipeAngledInOut(nameIn,lengthIn,0,angleOutIn,aper1,aper2,aper3,aper4,vacuumMaterialIn,beamPipeThicknessIn,beamPipeMaterialIn);
-}
   
 void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* vacuumMaterialIn,

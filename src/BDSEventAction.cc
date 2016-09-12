@@ -6,22 +6,17 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSDManager.hh"
 #include "BDSTrajectory.hh"
-#include "BDSTunnelHit.hh"
-#include "BDSRandom.hh"
 
 #include "globals.hh"                  // geant4 types / globals
 #include "G4Event.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4PrimaryVertex.hh"
 #include "G4PrimaryParticle.hh"
-#include "G4RichTrajectoryPoint.hh"
 #include "G4Run.hh"
 #include "G4SDManager.hh"
 #include "G4TrajectoryContainer.hh"
-#include "Randomize.hh" // for G4UniformRand
-
-#include "CLHEP/Random/Random.h"
 
 #include <algorithm>
 #include <chrono>
@@ -43,7 +38,7 @@ BDSEventAction::BDSEventAction():
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
-  tunnelCollID(-1),
+  tunnelEnergyCounterCollID(-1),
   startTime(0),
   stopTime(0),
   starts(0),
@@ -54,7 +49,6 @@ BDSEventAction::BDSEventAction():
   verboseEvent       = BDSGlobalConstants::Instance()->VerboseEvent();
   verboseEventNumber = BDSGlobalConstants::Instance()->VerboseEventNumber();
   isBatch            = BDSGlobalConstants::Instance()->Batch();
-  useTunnel          = BDSGlobalConstants::Instance()->BuildTunnel();
 
   if(isBatch)
     {
@@ -64,7 +58,8 @@ BDSEventAction::BDSEventAction():
       if (printModulo < 0)
 	{printModulo = 1;}
     }
-  else printModulo=1;
+  else
+    {printModulo=1;}
 }
 
 BDSEventAction::~BDSEventAction()
@@ -87,30 +82,27 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   starts = (G4double)ms.count()/1000.0;
 
   // get pointer to analysis manager
-  analMan = BDSAnalysisManager::Instance();
+  if (!analMan)
+    {analMan = BDSAnalysisManager::Instance();}
 
   // number feedback
   G4int event_number = evt->GetEventID();
   if (event_number%printModulo == 0)
-    {G4cout << "\n---> Begin of event: " << event_number << G4endl;}
+    {G4cout << "---> Begin of event: " << event_number << G4endl;}
   if(verboseEvent)
     {G4cout << __METHOD_NAME__ << "event #" << event_number << G4endl;}
 
-  // get hit collection IDs for easy access
-  G4SDManager* g4SDMan = G4SDManager::GetSDMpointer();
+  // cache hit collection IDs for quicker access
   if(samplerCollID_plane < 0)
-    {samplerCollID_plane  = g4SDMan->GetCollectionID("Sampler_plane");}
-  if(samplerCollID_cylin < 0)
-    {samplerCollID_cylin  = g4SDMan->GetCollectionID("Sampler_cylinder");}
-  if(energyCounterCollID < 0)
-    {energyCounterCollID  = g4SDMan->GetCollectionID("ec_on_axis_read_out/energy_counter");}
-  if (useTunnel)
-    {
-      if(tunnelCollID < 0)
-	{tunnelCollID = g4SDMan->GetCollectionID("tunnel_hits");} // defined in BDSSDManager.cc
+    { // if one is -1 then all need initialised.
+      G4SDManager*  g4SDMan  = G4SDManager::GetSDMpointer();
+      BDSSDManager* bdsSDMan = BDSSDManager::Instance();
+      samplerCollID_plane       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerPlaneSD()->GetName());
+      samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
+      energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
+      tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
+      //lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
     }
-  //if (lWCalorimeterCollID<1)
-  //{lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");}
   FireLaserCompton=true;
 
 #ifdef BDSDEBUG
@@ -176,11 +168,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //    {bdsOutput->WriteHits(SampHC);}
 
   // energy deposition collections - eloss, tunnel hits
-  BDSEnergyCounterHitsCollection* energyCounterHits  = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
-  BDSTunnelHitsCollection*        tunnelHits         = nullptr;
-  if (useTunnel)
-    {tunnelHits = (BDSTunnelHitsCollection*)(HCE->GetHC(tunnelCollID));}
-
+  BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
+  BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
+  
   // fill histograms
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filling histograms & writing energy loss hits" << G4endl;
@@ -204,6 +194,9 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 	}
     }
 
+  if (tunnelEnergyCounterHits)
+   {bdsOutput->WriteTunnelHits(tunnelEnergyCounterHits);}
+
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   BDSTrajectory*         primary  = BDS::GetPrimaryTrajectory(trajCont);
@@ -211,17 +204,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   BDSTrajectoryPoint* primaryLastInt  = BDSTrajectory::LastInteraction(primary);
   bdsOutput->WritePrimaryHit(primaryFirstInt);
   bdsOutput->WritePrimaryLoss(primaryLastInt);
-
-
-  // we should only try and access the tunnel hits collection if it was actually
-  // instantiated which won't happen if the tunnel isn't build and placed. During
-  // placement the SD is attached, which is done on demand as it's a read out one,
-  // so without placement, accessing this will cause a segfault.
-  if (useTunnel)
-  {
-    if (tunnelHits)
-      {bdsOutput->WriteTunnelHits(tunnelHits);} // write hits
-  }
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "finished writing energy loss" << G4endl;
@@ -256,112 +238,112 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // Save interesting trajectories
 
   if(BDSGlobalConstants::Instance()->StoreTrajectory())
-  {
-    std::vector<BDSTrajectory*> interestingTrajectories;
-
-    G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
-    TrajectoryVector* trajVec = trajCont->GetVector();
-
+    {
+      std::vector<BDSTrajectory*> interestingTrajectories;
+      
+      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
+      TrajectoryVector* trajVec = trajCont->GetVector();
+      
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
+      G4cout << __METHOD_NAME__ << "trajectories ntrajectory=" << trajCont->size() << " storeTrajectoryEnergyThreshold=" << BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold() << G4endl;
 #endif
-    for (auto iT1 : *trajVec)
-	  {
-	    BDSTrajectory* traj = (BDSTrajectory*) (iT1);
-
-	    G4int parentID=traj->GetParentID();
-	    // always store primaries
-	    if(parentID==0)
-      {
-        interestingTrajectories.push_back(traj);
-        continue;
-      }
-
-	    // check on energy (if energy threshold is not negative
-	    if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
-          traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
-      {
-        interestingTrajectories.push_back(traj);
-        continue;
-      }
-
-      // check on particle if not empty string
-	    if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty()) {
+      for (auto iT1 : *trajVec)
+	{
+	  BDSTrajectory* traj = (BDSTrajectory*) (iT1);
+	  
+	  G4int parentID=traj->GetParentID();
+	  // always store primaries
+	  if(parentID==0)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
+	  
+	  // check on energy (if energy threshold is not negative
+	  if (BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV >= 0 &&
+	      traj->GetInitialKineticEnergy() > BDSGlobalConstants::Instance()->StoreTrajectoryEnergyThreshold()*CLHEP::GeV)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
+	  
+	  // check on particle if not empty string
+	  if (!BDSGlobalConstants::Instance()->StoreTrajectoryParticle().empty())
+	    {
 	      G4String particleName = traj->GetParticleName();
-        //G4cout << particleName << G4endl;
+	      //G4cout << particleName << G4endl;
 	      std::size_t found = BDSGlobalConstants::Instance()->StoreTrajectoryParticle().find(particleName);
 	      if (found != std::string::npos)
-        {
-          interestingTrajectories.push_back(traj);
-          continue;
-        }
+		{
+		  interestingTrajectories.push_back(traj);
+		  continue;
+		}
 	    }
-
-      // check on depth
-	    // depth = 0 means only primaries
+	  
+	  // check on depth
+	  // depth = 0 means only primaries
 #if 0
-	    const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
-	    // check directly for primaries and secondaries
-	    if (parentID == 0 ||(depth > 0 && parentID == 1))
+	  const G4int depth = BDSGlobalConstants::Instance()->StoreTrajectoryDepth();
+	  // check directly for primaries and secondaries
+	  if (parentID == 0 ||(depth > 0 && parentID == 1))
 	    {
-          interestingTrajectories.push_back(traj);
-          continue;
+	      interestingTrajectories.push_back(traj);
+	      continue;
 	    }
-
-      G4bool depthCheck = false;
-	    // starting loop with tertiaries
-	    for (G4int i=1; i<depth; i++)
+	  
+	  G4bool depthCheck = false;
+	  // starting loop with tertiaries
+	  for (G4int i=1; i<depth; i++)
 	    {
 	      // find track of parentID
 	      // looping over vector seems only way?
 	      for(auto iT2 : *trajVec)
+		{
+		  BDSTrajectory* tr2 = (BDSTrajectory*) (iT2);
+		  if(tr2->GetTrackID()==parentID)
 		    {
-		      BDSTrajectory* tr2 = (BDSTrajectory*) (iT2);
-		      if(tr2->GetTrackID()==parentID)
-		      {
-		        parentID = tr2->GetParentID();
-		        break;
-		      }
-		    }
-	      // best to stop at parentID == 1
-	      if (parentID == 1)
-		    {
-		      depthCheck = true;
+		      parentID = tr2->GetParentID();
 		      break;
 		    }
+		}
+	      // best to stop at parentID == 1
+	      if (parentID == 1)
+		{
+		  depthCheck = true;
+		  break;
+		}
 	    }
-	    if(depthCheck == true)
-      {
-          interestingTrajectories.push_back(traj);
-          continue;
-      }
+	  if(depthCheck == true)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
 #endif
-
+	  
 #if 0
-      // clear out trajectories that don't reach point x
-      BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
-      G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
-      G4bool greaterThanZInteresting = trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
-      G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) + std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));
-      G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
-      if (greaterThanZInteresting && withinRInteresting)
-      {
-        interestingTrajectories.push_back(traj);
-        continue;
-      }
+	  // clear out trajectories that don't reach point x
+	  BDSTrajectoryPoint* trajEndPoint = (BDSTrajectoryPoint*)traj->GetPoint(traj->GetPointEntries() - 1);
+	  G4ThreeVector trajEndPointThreeVector = trajEndPoint->GetPosition();
+	  G4bool greaterThanZInteresting = trajEndPointThreeVector.z() / CLHEP::m > BDSGlobalConstants::Instance()->TrajCutGTZ();
+	  G4double radius = std::sqrt(std::pow(trajEndPointThreeVector.x() / CLHEP::m, 2) + std::pow(trajEndPointThreeVector.y() / CLHEP::m, 2));
+	  G4bool withinRInteresting = radius < BDSGlobalConstants::Instance()->TrajCutLTR();
+	  if (greaterThanZInteresting && withinRInteresting)
+	    {
+	      interestingTrajectories.push_back(traj);
+	      continue;
+	    }
 #endif
-    }
-
-    //Output interesting trajectories
+	}
+      
+      //Output interesting trajectories
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTrajectories.size() << G4endl;
+      G4cout << __METHOD_NAME__ << "storing trajectories nInterestingTrajectory=" << interestingTrajectories.size() << G4endl;
 #endif
-
-
-    bdsOutput->WriteTrajectory(interestingTrajectories);
-    interestingTrajectories.clear();
-  }
-
+      
+      bdsOutput->WriteTrajectory(interestingTrajectories);
+      interestingTrajectories.clear();
+    }
+  
   bdsOutput->FillEvent();
 
 #ifdef BDSDEBUG

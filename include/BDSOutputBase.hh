@@ -1,18 +1,23 @@
 #ifndef BDSOutputBase_h
 #define BDSOutputBase_h 
 
-#include "BDSSamplerHit.hh"
-#include "BDSEnergyCounterHit.hh"
-#include "BDSTrajectory.hh"
-#include "BDSTrajectoryPoint.hh"
-#include "BDSTunnelHit.hh"
-#include "BDSHistogram.hh"
-#include "BDSOutputROOTEventHistograms.hh"
+#include "globals.hh"
 
+#include <ctime>
 #include <string>
 #include <vector>
 
+// forward declarations
+template <class T> class G4THitsCollection;
+class BDSEnergyCounterHit;
+typedef G4THitsCollection<BDSEnergyCounterHit> BDSEnergyCounterHitsCollection;
+class BDSHistogram1D;
 class BDSOutputROOTEventInfo;
+class BDSSamplerHit;
+typedef G4THitsCollection<BDSSamplerHit> BDSSamplerHitsCollection;
+class BDSTrajectory;
+class BDSTrajectoryPoint;
+typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
 /**
  * @brief Output base class that defines interface for all output types.
@@ -38,7 +43,7 @@ public:
   virtual void WritePrimaryHit(BDSTrajectoryPoint* phits) = 0;
 
   /// write tunnel hits
-  virtual void WriteTunnelHits(BDSTunnelHitsCollection* tunnelHits) = 0;
+  virtual void WriteTunnelHits(BDSEnergyCounterHitsCollection* tunnelHits) = 0;
   
   /// write a trajectory 
   virtual void WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec) = 0;

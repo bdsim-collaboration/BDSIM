@@ -1,6 +1,9 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputASCII.hh"
+#include "BDSEnergyCounterHit.hh"
+#include "BDSHistogram.hh"
+#include "BDSSamplerHit.hh"
 #include "BDSUtilities.hh"       // for BDS::non_alpha
 
 #include "globals.hh" // geant4 types / globals
@@ -253,7 +256,7 @@ void BDSOutputASCII::WritePrimaryLoss(BDSTrajectoryPoint* /*ploss*/)
 void BDSOutputASCII::WritePrimaryHit(BDSTrajectoryPoint* /*phit*/)
 {;}
 
-void BDSOutputASCII::WriteTunnelHits(BDSTunnelHitsCollection* /*hits*/)
+void BDSOutputASCII::WriteTunnelHits(BDSEnergyCounterHitsCollection* /*hits*/)
 {;}
 
 void BDSOutputASCII::WriteHistogram(BDSHistogram1D* histogramIn)

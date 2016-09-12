@@ -7,45 +7,43 @@
 /**
  * @brief Factory for rectangular beam pipes
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryRectangular: public BDSBeamPipeFactoryBase
 {
 public:
-  static BDSBeamPipeFactoryRectangular* Instance(); /// singleton accessor
+  static BDSBeamPipeFactoryRectangular* Instance(); /// Singleton accessor.
   
   virtual ~BDSBeamPipeFactoryRectangular();
 
-  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,                     // name
-				      G4double    lengthIn,                   // length [mm]
-				      G4double    aper1 = 0,                  // aperture parameter 1
-				      G4double    aper2 = 0,                  // aperture parameter 2
-				      G4double    aper3 = 0,                  // aperture parameter 3
-				      G4double    aper4 = 0,                  // aperture parameter 4
-				      G4Material* vacuumMaterialIn = nullptr,    // vacuum material
-				      G4double    beamPipeThicknessIn = 0,    // beampipe thickness [mm]
-				      G4Material* beamPipeMaterialIn = nullptr   // beampipe material
-				      );
+  virtual BDSBeamPipe* CreateBeamPipe(G4String    nameIn,
+				      G4double    lengthIn,
+				      G4double    aper1               = 0,
+				      G4double    aper2               = 0,
+				      G4double    aper3               = 0,
+				      G4double    aper4               = 0,
+				      G4Material* vacuumMaterialIn    = nullptr,
+				      G4double    beamPipeThicknessIn = 0,
+				      G4Material* beamPipeMaterialIn  = nullptr);
   
-  virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
-						 G4double    lengthIn,
-						 G4double    angleInIn,  // the normal angle of the input face
-						 G4double    angleOutIn, // the normal angle of the output face
-						 G4double    aper1 = 0,
-						 G4double    aper2 = 0,
-						 G4double    aper3 = 0,
-						 G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = nullptr,
-						 G4double    beamPipeThicknessIn = 0,
-						 G4Material* beamPipeMaterialIn = nullptr
-						 );
+  virtual BDSBeamPipe* CreateBeamPipe(G4String      nameIn,
+				      G4double      lengthIn,
+				      G4ThreeVector inputFaceNormalIn,
+				      G4ThreeVector outputFaceNormalIn,
+				      G4double      aper1               = 0,
+				      G4double      aper2               = 0,
+				      G4double      aper3               = 0,
+				      G4double      aper4               = 0,
+				      G4Material*   vacuumMaterialIn    = nullptr,
+				      G4double      beamPipeThicknessIn = 0,
+				      G4Material*   beamPipeMaterialIn  = nullptr);
 
 private:
-  BDSBeamPipeFactoryRectangular(); /// private default constructor - singelton pattern
-  static BDSBeamPipeFactoryRectangular* _instance;
+  BDSBeamPipeFactoryRectangular(); ///< Private default constructor - singelton pattern.
+  static BDSBeamPipeFactoryRectangular* _instance; ////< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around

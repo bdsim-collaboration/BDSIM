@@ -61,10 +61,10 @@ int main(int argc, char *argv[])
   std::vector<Analysis*> analyses;
 
   DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
-  EventAnalysis* evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
-  RunAnalysis* runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
+  EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
+  RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree());
-  ModelAnalysis* modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
+  ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
 
   analyses.push_back(evtAnalysis);
   analyses.push_back(runAnalysis);
@@ -72,19 +72,21 @@ int main(int argc, char *argv[])
   analyses.push_back(modAnalysis);
 
   for (auto& analysis : analyses)
-    {
-      analysis->Execute();
-    }
+    {analysis->Execute();}
 
   // write output
-  TFile *outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
-
-  for (auto& analysis : analyses)
+  try
     {
-      analysis->Write(outputFile);
+      TFile* outputFile = new TFile(Config::Instance()->OutputFileName().c_str(),"RECREATE");
+      for (auto& analysis : analyses)
+	{analysis->Write(outputFile);}
+
+      outputFile->Close();
     }
-
-  outputFile->Close();
-
+  catch (std::string error)
+    {
+      std::cout << error << std::endl;
+      exit(1);
+    }
   return 0;
 }

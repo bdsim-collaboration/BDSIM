@@ -4,11 +4,11 @@
 #include "BDSBeamPipe.hh"
 
 #include "globals.hh"         // geant4 globals / types
-#include "G4Material.hh"      // materials
 
 class BDSExtent;
 
 class G4LogicalVolume;
+class G4Material;
 class G4PVPlacement;
 class G4UserLimits;
 class G4VSolid;
@@ -53,42 +53,20 @@ public:
 				      G4Material* beamPipeMaterialIn = nullptr // beampipe material
 				      ) = 0;
 
-  /// create beampipe with an angled face on input side only
-  virtual BDSBeamPipe* CreateBeamPipeAngledIn(   G4String    nameIn,
-					         G4double    lengthIn,
-					         G4double    angleInIn, // the normal angle of the input face
-					         G4double    aper1 = 0,
-					         G4double    aper2 = 0,
-					         G4double    aper3 = 0,
-					         G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = nullptr,
-					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = nullptr);
-
-  /// create beampipe with an angled face on output side only
-  virtual BDSBeamPipe* CreateBeamPipeAngledOut(  G4String    nameIn,
-					         G4double    lengthIn,
-					         G4double    angleOutIn, // the normal angle of the output face
-					         G4double    aper1 = 0,
-					         G4double    aper2 = 0,
-					         G4double    aper3 = 0,
-					         G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = nullptr,
-					         G4double    beamPipeThicknessIn = 0,
-					         G4Material* beamPipeMaterialIn = nullptr);
-  
-  /// create beampipe with an angled face on both input adn output sides
-  virtual BDSBeamPipe* CreateBeamPipeAngledInOut(G4String    nameIn,
-						 G4double    lengthIn,
-						 G4double    angleInIn,  // the normal angle of the input face
-						 G4double    angleOutIn, // the normal angle of the output face
-						 G4double    aper1 = 0,
-						 G4double    aper2 = 0,
-						 G4double    aper3 = 0,
-						 G4double    aper4 = 0,
-						 G4Material* vacuumMaterialIn = nullptr,
-						 G4double    beamPipeThicknessIn = 0,
-						 G4Material* beamPipeMaterialIn = nullptr) = 0;
+  /// Create a beam pipe with angled faces as described by unit normal vectors. The input
+  /// face normal vector must have a negative z component and the output face a positive
+  /// z component.
+  virtual BDSBeamPipe* CreateBeamPipe(G4String      nameIn,
+				      G4double      lengthIn,
+				      G4ThreeVector inputFaceNormalIn,
+				      G4ThreeVector outputFaceNormalIn,
+				      G4double      aper1               = 0,
+				      G4double      aper2               = 0,
+				      G4double      aper3               = 0,
+				      G4double      aper4               = 0,
+				      G4Material*   vacuumMaterialIn    = nullptr,
+				      G4double      beamPipeThicknessIn = 0,
+				      G4Material*   beamPipeMaterialIn  = nullptr) = 0;
 
 protected:
   /// base constructor
@@ -154,6 +132,7 @@ protected:
   /// @{ For recording the face normals in the finished pipe component.
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
+  /// @}
 };
 
 #endif

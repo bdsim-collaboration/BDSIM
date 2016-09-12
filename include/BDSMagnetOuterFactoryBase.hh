@@ -1,17 +1,18 @@
 #ifndef BDSMAGNETOUTERFACTORYBASE_H
 #define BDSMAGNETOUTERFACTORYBASE_H
 
-#include "BDSBeamPipe.hh"
 #include "BDSExtent.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuter.hh"
 
 #include "globals.hh"         // geant4 globals / types
-#include "G4Material.hh"
 
 #include <vector>
 
+class BDSBeamPipe;
+class BDSGeometryComponent;
+
 class G4Colour;
+class G4Material;
 class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
@@ -218,7 +219,7 @@ protected:
   G4ThreeVector outputFaceNormal;
 
   /// A larger length safety that can be used where tracking accuracty isn't required
-  /// or more tolerante geometry is requried (1um).
+  /// or more tolerant geometry is required (1um).
   static G4double const lengthSafetyLarge;
 };
 

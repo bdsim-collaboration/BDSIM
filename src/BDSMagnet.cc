@@ -4,13 +4,15 @@
 #include <cstdlib>
 
 #include "G4Box.hh"
+#include "G4ChordFinder.hh"
 #include "G4CutTubs.hh"
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
+#include "G4Mag_UsualEqRhs.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4MagneticField.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
-#include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include "BDSBeamPipe.hh"
@@ -20,6 +22,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetOuter.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
@@ -188,22 +191,22 @@ void BDSMagnet::BuildOuter()
       break;
     case BDSMagnetType::rectangularbend:
       {
-	G4bool yokeOnLeft = (angle <= 0);
 	outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
 						  outerDiameter,outerDiameter,chordLength,
 						  magnetOuterInfo->angleIn,
 						  magnetOuterInfo->angleOut,
-						  yokeOnLeft,outerMaterial);
+						  magnetOuterInfo->yokeOnLeft,
+						  outerMaterial);
 	break;
       }
     case BDSMagnetType::sectorbend:
       {
-	G4bool yokeOnLeft = (angle <= 0);
 	outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
 					     outerDiameter,chordLength,
 					     magnetOuterInfo->angleIn,
 					     magnetOuterInfo->angleOut,
-					     yokeOnLeft,outerMaterial);
+					     magnetOuterInfo->yokeOnLeft,
+					     outerMaterial);
 	break;
       }
     case BDSMagnetType::sextupole:
