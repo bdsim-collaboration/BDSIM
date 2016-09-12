@@ -1,3 +1,85 @@
+V0.94 - 2016 / 09 / 13
+======================
+
+New Features
+------------
+
+Analysis
+^^^^^^^^
+
+* Analysis class have been refactored to allow analysis on any tree in the BDSIM
+  ROOT event output format using rebdsim.
+
+Geometry
+^^^^^^^^
+
+* Tilted dipoles are now supported.
+* The Read Out geometry has been moved to the Geant4 parallel world scheme.
+* The parallel sensitive geometry for tunnel hits has been deprecated and the
+  functionality now provided by the new parallel read out geometry.
+* The read out geometry construction has moved out of BDSAcceleratorComponent
+  to its own geometry factory.
+* Beam pipes are now constructed with arbitrary 3-vector surface normals rather
+  than angled faces described by an angle only in the x-z plane.
+* The side of the yoke of a dipole with poled geometry can now be controlled with
+  the :code:`yokeOnLeft` option.
+* New interfaces to the auxiliary navigator have been written that use the mid-point
+  of a step to much more robustly locate the required volume in the parallel
+  curvilinear geometry.
+* Overlap checking between adjacent dipoles with pole face rotations (and even tilts)
+  prevents overlaps in geometry.
+
+Output
+^^^^^^
+
+* Tunnel hits are now of the same type as general energy loss hits.
+* The track ID can now be optionally written out to energy deposition hits.
+
+Parser
+^^^^^^
+
+* The option :code:`modularPhysicsListsOn` has been deprecated.
+* New per element parameter :code:`yokeOnLeft`.
+  
+Physics
+^^^^^^^
+
+* The modular physics lists are now compulsory and the old physics construction has
+  been deprecated.
+* The existing BDSIM laserwire compton scattering process construction was moved to
+  the modular physics list scheme.
+
+
+Bug Fixes
+---------
+
+Geometry
+^^^^^^^^
+
+* Extent inheritance with BDSGeoemetryComponent was fixed resolving rare overlaps.
+* Poled geometry variable clean up fixed to ensure components from factories aren't
+  related to each other - could cause rare crash on exit.
+* Fixed extents and possible overlaps in tunnel 'rectaboveground' geometry.
+
+Output
+^^^^^^
+
+* Energy deposition coordinates are randomly chosen along the step of the deposition. The
+  x,y,z coordinates now match the random point where as they were the post step point previously.
+
+Physics
+^^^^^^^
+
+* Fixed an issue that would cause infinite loops with strong process biasing.
+
+General
+^^^^^^^
+
+* Initialisation of variables fixed throughout.
+* Includes reduced to significantly improve compilation speed.
+* Removed executable permission on all source files.
+  
+
 V0.93 - 2016 / 08 / 24
 ======================
 
