@@ -62,7 +62,10 @@ void EventAnalysis::Process()
       if (i % printModulo == 0)
 	{
 	  std::cout << "\rEvent #" << std::setw(6) << i << " of " << entries;
-	  std::cout.flush();
+	  if (!debug)
+	    {std::cout.flush();}
+	  else
+	    {std::cout << std::endl;}
 	}
       
       if(i==0)
