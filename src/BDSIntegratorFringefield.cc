@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorFringefield.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
@@ -43,8 +44,8 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalP = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4ThreeVector GlobalR = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
 
-  G4double      InitMag        = GlobalP.mag();
-  G4ThreeVector InitMomDir     = GlobalP.unit();
+  G4double      InitMag    = GlobalP.mag();
+  G4ThreeVector InitMomDir = GlobalP.unit();
 
   if(bField==0 || eqOfM->FCof()==0)
     {
@@ -62,9 +63,11 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
       return;
     }
 
-  G4ThreeVector globalPositionIn(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector LocalR  = ConvertToLocal(globalPositionIn);
-  G4ThreeVector LocalP = ConvertAxisToLocal(globalPositionIn, InitMomDir);
+  // global to local
+  BDSStep   localPosMom = ConvertToLocal(GlobalP, GlobalR, h, false);
+  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector LocalP = Localv0.unit();
 
   G4double      charge  = (eqOfM->FCof())/CLHEP::c_light;
   G4double      rho = InitMag/CLHEP::GeV/(0.299792458 * bField/CLHEP::tesla * charge) * CLHEP::m;
@@ -99,30 +102,32 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   LocalP.setY(yp1);
   LocalP.setZ(zp1);
 
-  if(true){
-    GlobalR = ConvertToGlobal(LocalR);
-    GlobalP = ConvertAxisToGlobal(GlobalP, LocalP);
-    GlobalP *= InitMag;
-
-    yOut[0] = GlobalR.x();
-    yOut[1] = GlobalR.y();
-    yOut[2] = GlobalR.z();
-
-    yOut[3] = GlobalP.x();
-    yOut[4] = GlobalP.y();
-    yOut[5] = GlobalP.z();
-    return;
-  }
+  if(true)
+    {
+      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalP, false);
+      GlobalP = globalPosDir.PreStepPoint();
+      GlobalR = globalPosDir.PostStepPoint();	
+      GlobalR*=InitMag; // multiply the unit direction by magnitude to get momentum
+      
+      yOut[0] = GlobalR.x();
+      yOut[1] = GlobalR.y();
+      yOut[2] = GlobalR.z();
+      
+      yOut[3] = GlobalP.x();
+      yOut[4] = GlobalP.y();
+      yOut[5] = GlobalP.z();
+      return;
+    }
   else
-  {
+    {
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
+      G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
 #endif
-    G4cout << "Using Runge Kutta "<< G4endl;
-
-    // use a classical Runge Kutta stepper here
-    backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
-  }
+      G4cout << "Using Runge Kutta "<< G4endl;
+      
+      // use a classical Runge Kutta stepper here
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+    }
 }
 
 void BDSIntegratorFringefield::Stepper(const G4double yInput[],

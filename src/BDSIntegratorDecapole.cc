@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorDecapole.hh"
+#include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
@@ -52,8 +53,11 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
     }
   else 
     {
-      G4ThreeVector LocalR  = ConvertToLocal(yIn);
-      G4ThreeVector LocalRp = ConvertAxisToLocal(yIn, pIn);
+      // global to local
+      BDSStep   localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+      G4ThreeVector LocalR  = localPosMom.PreStepPoint();
+      G4ThreeVector Localv0 = localPosMom.PostStepPoint();
+      G4ThreeVector LocalRp = Localv0.unit();
 
       G4double x0=LocalR.x(); 
       G4double y0=LocalR.y();
@@ -106,9 +110,11 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 	}
       else
 	{LocalR += h*LocalRp;}
-      
-      GlobalPosition = ConvertToGlobal(LocalR);
-      G4ThreeVector GlobalTangent = ConvertAxisToGlobal(LocalRp) * InitMag;
+
+      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+      GlobalPosition = globalPosDir.PreStepPoint();
+      G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
       
       yDec[0] = GlobalPosition.x(); 
       yDec[1] = GlobalPosition.y(); 

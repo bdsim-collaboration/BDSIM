@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -27,10 +28,10 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 					 G4double        yOct[])
 {
   const G4double *pIn = yIn+3;
-  G4ThreeVector v0 = G4ThreeVector(pIn[0], pIn[1], pIn[2]);  
-  G4ThreeVector InitMomDir = v0.unit();
-
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
+  G4ThreeVector             v0 = G4ThreeVector(pIn[0], pIn[1], pIn[2]);  
+  G4ThreeVector     InitMomDir = v0.unit();
+
   G4double InitMag = v0.mag();
   G4double kappa   = -eqOfM->FCof()*bTriplePrime/InitMag;
 
@@ -52,10 +53,11 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
     }
   else 
     {
-      G4AffineTransform LocalAffine  = auxNavigator->GetLocalToGlobalTransform();
-      G4AffineTransform GlobalAffine = auxNavigator->GetGlobalToLocalTransform();
-      G4ThreeVector LocalR=GlobalAffine.TransformPoint(GlobalPosition); 
-      G4ThreeVector LocalRp=GlobalAffine.TransformAxis(InitMomDir);
+      // global to local
+      BDSStep   localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+      G4ThreeVector LocalR  = localPosMom.PreStepPoint();
+      G4ThreeVector Localv0 = localPosMom.PostStepPoint();
+      G4ThreeVector LocalRp = Localv0.unit();
       
       G4double x0=LocalR.x(); 
       G4double y0=LocalR.y();
@@ -115,9 +117,11 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 	}
       else
 	{LocalR += h*LocalRp;}
-       
-      GlobalPosition=LocalAffine.TransformPoint(LocalR); 
-      G4ThreeVector GlobalTangent=LocalAffine.TransformAxis(LocalRp)*InitMag;
+
+      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+      GlobalPosition = globalPosDir.PreStepPoint();
+      G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
       
       yOct[0]   = GlobalPosition.x(); 
       yOct[1]   = GlobalPosition.y(); 
@@ -134,12 +138,7 @@ void BDSIntegratorOctupole::Stepper(const G4double yInput[],
 				    const G4double hstep,
 				    G4double yOut[],
 				    G4double yErr[])
-{  
-  //const G4double *pIn = yInput+3;
-  //G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
-  //G4double InitMag=v0.mag();
-  //G4double kappa=  -fPtrMagEqOfMot->FCof()*bTriplePrime/InitMag;
-  
+{
   G4double yTemp[7], yIn[7];
   
   //  Saving yInput because yInput and yOut can be aliases for same array
