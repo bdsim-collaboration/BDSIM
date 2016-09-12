@@ -54,6 +54,9 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 			     std::string nbins,    std::string binning,
 			     std::string plot,     std::string selection)
 {
+  TH1::AddDirectory(kTRUE);
+  TH2::AddDirectory(kTRUE);
+  
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   double xlow=0.0, xhigh=0.0;
@@ -87,15 +90,9 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 
   // create histograms
   if(ndim == 1)
-  {
-    auto h = new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);
-    h->AddDirectory(kTRUE);
-  }
+    {auto h = new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);}
   else if(ndim == 2)
-  {
-    auto h = new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);
-    h->AddDirectory(kTRUE);
-  }
+    {auto h = new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);}
 
   chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
 
