@@ -5,57 +5,82 @@
 #include "ResultTree.hh"
 
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "TBranch.h"
+#include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TObjArray.h"
 #include "TTree.h"
 
 
-std::vector<Result*> Compare::Files(TFile *f1, TFile *f2)
+std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
-  std::vector<Result*> res;
-  
-  // get list of keys for file 1 
-  TList *f1k = f1->GetListOfKeys();
-  
-  // loop over keys 
-  for(int i = 0; i < f1k->GetEntries(); ++i) {
-    TObject *ko = f1k->At(i);
-    TObject *f1o = f1->Get(ko->GetName());
-    
-    if(std::string(f1o->ClassName()) == "TH1D") { 
-      //      std::cout << "Compare TH1D" << std::endl;
-      TH1 *f1h = (TH1*)f1->Get(ko->GetName());
-      TH1 *f2h = (TH1*)f2->Get(ko->GetName());
-      if (!f2h)
-	{
-	  std::cout << "No matching histrogram named \"" << ko->GetName() << "\"" << std::endl;
-	  continue;
-	}
-      ResultHistogram *hcr = Compare::Histograms(f1h,f2h);
-      res.push_back(hcr);
-    }
-    else if(std::string(f1o->ClassName()) == "TTree")
-      {
-	TTree *f1t = (TTree*)f1->Get(ko->GetName());
-	TTree *f2t = (TTree*)f2->Get(ko->GetName());
-	if (!f2t)
-	  {
-	    std::cout << "No matching tree named \"" << ko->GetName() << "\"" << std::endl;
-	    continue;
-	  }
-	ResultTree *tcr = Compare::Trees(f1t,f2t);
-	res.push_back(tcr);
-      }
-  }
-   
-  return res;
+  std::vector<Result*> results;
+  // A TFile inherits TDirectory, so we simply use the TDirectory function.
+  Compare::Directories((TDirectory*)f1, (TDirectory*)f2, results);
+  return results;
 }
 
-ResultHistogram* Compare::Histograms(TH1* h1, TH1* h2)
+void Compare::Directories(TDirectory* d1,
+			  TDirectory* d2,
+			  std::vector<Result*>& results)
+{
+  // record original directory in file.
+  TDirectory* originalDirectory = TDirectory::CurrentDirectory();
+  
+  d1->cd(); // change into the directory
+  
+  // get list of keys for file 1 & loop over
+  TList* d1k = d1->GetListOfKeys();
+  for(int i = 0; i < d1k->GetEntries(); ++i)
+    {
+      TObject* keyObject = d1k->At(i); // key object in list of keys
+      TObject* d1o       = d1->Get(keyObject->GetName()); // object in file
+
+      std::string objectName = std::string(keyObject->GetName());
+      std::string className  = std::string(d1o->ClassName());
+
+      if (className == "TDirectory" || className == "TDirectoryFile") // recursion!
+	{
+	  TDirectory* subD1 = (TDirectory*)d1->Get(objectName.c_str());
+	  TDirectory* subD2 = (TDirectory*)d2->Get(objectName.c_str());
+	  if (!subD2)
+	    {
+	      Compare::PrintNoMatching(className, objectName);
+	      continue;
+	    }
+	  Compare::Directories(subD1, subD2, results);
+	}
+      else if(className == "TH1D")
+	{
+	  TH1* d1h = (TH1*)d1->Get(objectName.c_str());
+	  TH1* d2h = (TH1*)d2->Get(objectName.c_str());
+	  if (!d2h)
+	    {
+	      Compare::PrintNoMatching(className, objectName);
+	      continue;
+	    }
+	  Compare::Histograms(d1h, d2h, results);
+	}
+      else if(className == "TTree")
+	{
+	  TTree* d1t = (TTree*)d1->Get(objectName.c_str());
+	  TTree* d2t = (TTree*)d2->Get(objectName.c_str());
+	  if (!d2t)
+	    {
+	      Compare::PrintNoMatching(className, objectName);
+	      continue;
+	    }
+	  Compare::Trees(d1t, d2t, results);
+	}
+    }
+  originalDirectory->cd();
+}
+
+void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 {
   // Take difference between histograms
   ResultHistogram* c = new ResultHistogram();
@@ -88,11 +113,10 @@ ResultHistogram* Compare::Histograms(TH1* h1, TH1* h2)
   if(c->chi2 > 40.0)
     {c->iStatus = 1;}
 
-  return c;
+  results.push_back(c);
 }
 
-
-ResultTree* Compare::Trees(TTree* t1, TTree* t2)
+void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 { 
   ResultTree* c = new ResultTree();  
   c->name       = t1->GetName();
@@ -118,16 +142,13 @@ ResultTree* Compare::Trees(TTree* t1, TTree* t2)
       t1->GetEntry(i);
       t2->GetEntry(i);
 
-      if(std::abs((t1v - t2v )/t1v) > 0.01) {
-	c->iStatus = 1;
-      }
-      else {
-	c->iStatus = 0;
-      }
+      if(std::abs((t1v - t2v )/t1v) > 0.01)
+	{c->iStatus = 1;}
+      else
+	{c->iStatus = 0;}
     }
-    
   }
-  return c;
+  results.push_back(c);
 }
 
 bool Compare::CheckResults(std::vector<Result*> results)
@@ -154,3 +175,8 @@ void Compare::PrintFailure(std::vector<Result*> results)
 	{std::cout << *result << std::endl;}
     }
 }  
+
+void Compare::PrintNoMatching(std::string className, std::string objectName)
+{
+  std::cout << "Comparison file has no " << className << " called " << objectName << ". Skipping" << std::endl;
+}
