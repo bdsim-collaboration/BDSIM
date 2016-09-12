@@ -17,8 +17,8 @@ public:
   {
     std::stringstream ss; 
     ss << Result::print();
-    ss << "File 1/2 entries " << t1NEntries << "/" << t2NEntries << "\n";
-    ss << "Offending branches : ";
+    ss << "File (1/2) entries (" << t1NEntries << "/" << t2NEntries << ")\n";
+    ss << "Offending branches: ";
     for (const auto& name : offendingBranches)
       {ss << name << " ";}
     ss << "\n";

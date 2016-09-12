@@ -49,7 +49,10 @@ int main(int argc, char* argv[])
 
   bool allPassed = Compare::Summarise(results);
   if (!allPassed)
-    {return _EXIT_FAILED;}
+    {
+      std::cout << "TESTS_FAILED" << std::endl; // key to look for
+      return _EXIT_FAILED;
+    }
   else
     {return _EXIT_SUCCESS;}
 }

@@ -79,6 +79,11 @@ void Compare::Directories(TDirectory* d1,
 	    }
 	  Compare::Trees(d1t, d2t, results);
 	}
+      else
+	{
+	  std::cout << "No comparison written for object named " << objectName
+		    << " of type " << className << std::endl;
+	}
     }
   originalDirectory->cd();
 }
@@ -163,7 +168,9 @@ bool Compare::Summarise(std::vector<Result*> results)
   bool allPassed = true;
   const int titleWidth = 20;
   const int fullWidth  = titleWidth + 22;
-  std::cout << "Comparison: " << std::setw(titleWidth) << "Object Name" << "   " << "Result" << std::endl;
+  std::cout << std::endl;
+  std::cout << "Comparison: " << std::setw(titleWidth) << "Object Name" << "   "
+	    << "Result" << std::endl;
   std::cout << std::setfill('-') << std::setw(fullWidth) << " " << std::endl;
   std::cout << std::setfill(' ');
   for (const auto& result : results)
