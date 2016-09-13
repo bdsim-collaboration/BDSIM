@@ -105,7 +105,7 @@ void HistogramMerge::Terminate()
     auto h1e = histograms2DError[i];
     for(int j=0;j<=h1->GetNbinsX();++j)
     {
-      for(int k=0;k<=h1->GetNbinsY();++j)
+      for(int k=0;k<=h1->GetNbinsY();++k)
       {
         double mean = h1->GetBinContent(i,j)/histograms2DN[i];
         double std  = sqrt(h1e->GetBinContent(j,k)/histograms2DN[i]-pow(mean,2))/sqrt(histograms2DN[i]);
