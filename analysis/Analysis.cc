@@ -122,7 +122,7 @@ void Analysis::Write(TFile* outputFile)
 {
   //treeName typically has a "." at the end, deleting it here:
   std::string cleanedName = treeName.erase(treeName.size() - 1);
-  std::string outputDirName = std::string("rebdsim_") + cleanedName + std::string("_Histograms");
+  std::string outputDirName = cleanedName + std::string("Histograms");
   TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
   rebdsimDir->cd();
   for(auto h : histograms1D)
