@@ -96,6 +96,7 @@ void HistogramMerge::Terminate()
       h1->SetBinContent(j,mean);
       h1->SetBinError(j,std);
     }
+    h1->SetEntries(histograms1DN[i]);
   }
 
   for(unsigned int i=0;i<histograms2D.size();++i)
@@ -112,7 +113,7 @@ void HistogramMerge::Terminate()
         h1->SetBinError(j,k,std);
       }
     }
-
+    h1->SetEntries(histograms2DN[i]);
   }
 }
 
