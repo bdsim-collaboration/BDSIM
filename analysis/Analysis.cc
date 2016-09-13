@@ -90,9 +90,9 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 
   // create histograms
   if(ndim == 1)
-    {auto h = new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);}
+    {new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);}
   else if(ndim == 2)
-    {auto h = new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);}
+    {new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);}
 
   chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
 
