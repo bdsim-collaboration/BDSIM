@@ -34,6 +34,15 @@ macro(simple_testing test_name args expression)
     endif()
 endmacro()
 
+# same macro but with a label of LONG to reduce syntax in tests
+macro(simple_testing_long test_name args expression)
+    _run_test(${test_name} ${args})
+    if(NOT "${expression}" STREQUAL "")
+        set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "${expression}")
+    endif()
+    set_tests_properties(${test_name} PROPERTIES LABELS LONG)
+endmacro()
+
 # a macro that adds a simple test
 # and then add a second test that compares two files
 # (e.g. an output file and a reference file)
