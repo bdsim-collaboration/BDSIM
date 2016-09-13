@@ -32,6 +32,7 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
     this->histograms2DN.push_back(0);
     this->histograms2DError.push_back(chE);
   }
+  Add(h);
 }
 
 HistogramMerge::~HistogramMerge()
