@@ -3,9 +3,6 @@ file(GLOB comparatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 # Remove mains from dictionary
 list(REMOVE_ITEM comparatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/comparator.cc)
 
-file(GLOB rebdsimLibLinkDefs ${CMAKE_CURRENT_SOURCE_DIR}/*LinkDef.hh)
-
-
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_library(comparator SHARED ${comparatorLibSources})
