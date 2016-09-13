@@ -54,7 +54,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
       h1->SetBinContent(j,h1->GetBinContent(j)+h2->GetBinContent(j));
       h1e->SetBinContent(j,h1e->GetBinContent(j)+pow(h2->GetBinContent(j),2));
     }
-    this->histograms1DN[i]    = this->histograms1DN[i]+1;
+    histograms1DN[i] = histograms1DN[i]+1;
   }
 
   // loop over 2d histograms
@@ -74,7 +74,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
         h1e->SetBinContent(j,k,h1e->GetBinContent(j,k)+pow(h2->GetBinContent(j,k),2));
       }
     }
-    this->histograms2DN[i]    = this->histograms2DN[i]+1;
+    histograms2DN[i] = histograms2DN[i]+1;
   }
 }
 
