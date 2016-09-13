@@ -83,14 +83,17 @@ void DataLoader::BuildInputFileList()
 	{fileNames.push_back(glob_result.gl_pathv[i]);}
       globfree(&glob_result);
     }
-    globfree(&glob_result);
-  }
-
-  if(Config::Instance()->Debug()) {
-    for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn) {
-      std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;
+  
+  if(Config::Instance()->Debug())
+    {
+      for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
+	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
     }
-  }
+  if (fileNames.size() == 0)
+    {
+      std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
+      exit(1);
+    }
 }
 
 void DataLoader::BuildTreeNameList()
