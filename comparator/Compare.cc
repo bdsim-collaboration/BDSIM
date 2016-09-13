@@ -133,7 +133,7 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 {
  if (!strcmp(t1->GetName() , "optics"))
     {
-      Compare::Optics(t1, t1, results);
+      Compare::Optics(t1, t2, results);
       return;
     }
   
