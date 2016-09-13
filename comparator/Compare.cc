@@ -185,14 +185,13 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
   
   for(int j = 0; j<oa1->GetSize(); ++j)
     {// loop over branches
-      TBranch* temp = (TBranch*)(*oa1)[j];
-      std::string branchName = std::string(temp->GetName());
+      TBranch* b1 = (TBranch*)(*oa1)[j];
+      std::string branchName = std::string(b1->GetName());
       if (Compare::StringStartsWith(branchName, "Sig_"))
 	{continue;} // skip this branch
-      
+
       bool branchFailed = false;
       std::string errBranchName = "Sig_" + branchName;
-      TBranch* b1    = t1->GetBranch(branchName.c_str());
       TBranch* b1err = t1->GetBranch(errBranchName.c_str());
       if (!b1err)
 	{continue;} // There's no appropriate error branch - don't compare
@@ -209,8 +208,8 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	  t1->GetEntry(i);
 	  t2->GetEntry(i);
 
-	  if (t1e < 1e-15)
-	    {t1e = 1e-9;}
+	  //if (t1v < 1e-15)
+	   // { std::cout << " ";}
 		   
 	  // Difference in values > error in reference optics calculation
 	  branchFailed = std::abs(t1v - t2v) > (OPTICSSIGMATOLERANCE * t1e);
@@ -219,6 +218,7 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	}
       if (branchFailed)
 	{
+	  std::cout << "Branch was " << branchName << std::endl << std::endl;
 	  c->offendingBranches.push_back(std::string(b2->GetName()));
 	  c->passed = false;
 	}
