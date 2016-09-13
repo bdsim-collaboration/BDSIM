@@ -4,6 +4,7 @@
 #include "ResultHistogram2D.hh"
 #include "ResultTree.hh"
 
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
@@ -19,7 +20,7 @@
 
 #define CHI2TOLERANCE 40
 #define TREETOLERANCE 0.05
-#define OPTICSSIGMATOLERANCE 5
+#define OPTICSSIGMATOLERANCE 10
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
@@ -178,12 +179,12 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 {
   ResultTree* c = new ResultTree();
   c->name       = t1->GetName();
+  c->passed     = true; // set default to pass
   c->objtype    = "TTree(optics)";
   c->t1NEntries = (int)t1->GetEntries();
   c->t2NEntries = (int)t2->GetEntries();
 
   TObjArray *oa1 = t1->GetListOfBranches(); 
-  TObjArray *oa2 = t2->GetListOfBranches();
   
   for(int j = 0; j<oa1->GetSize(); ++j)
     {// loop over branches
@@ -194,39 +195,48 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 
       bool branchFailed = false;
       std::string errBranchName = "Sig_" + branchName;
+      
       TBranch* b1err = t1->GetBranch(errBranchName.c_str());
-      if (!b1err)
+      TBranch* b2err = t2->GetBranch(errBranchName.c_str());     
+      if (!b1err || !b2err)
 	{continue;} // There's no appropriate error branch - don't compare
       
-      TBranch* b2    = (TBranch*)((*oa2)[j]);
-      double  t1v = 0;
-      double  t1e = 0;
-      double  t2v = 0;
+      TBranch* b2 = t2->GetBranch(branchName.c_str());
+      double t1v = 0;
+      double t1e = 0;
+      double t2v = 0;
+      double t2e = 0;
       b1->SetAddress(&t1v);
       b1err->SetAddress(&t1e);
       b2->SetAddress(&t2v);
+      b2err->SetAddress(&t2e);
       for(int i = 0; i<t1->GetEntries(); ++i)
-	{// loop over entries	  
+	{// loop over entries
 	  t1->GetEntry(i);
 	  t2->GetEntry(i);
-
-	  //if (t1v < 1e-15)
-	   // { std::cout << " ";}
-		   
-	  // Difference in values > error in reference optics calculation
-	  branchFailed = std::abs(t1v - t2v) > (OPTICSSIGMATOLERANCE * t1e);
+	  
+	  if (!std::isnormal(t1e) || !std::isnormal(t2e))
+	    {break;} // skip test when errors are 0
+	  
+	  // Here only one entry so ndof = 1
+	  double chi2 = std::pow(t1v - t2v, 2) / (std::pow(t1e,2) + std::pow(t2e,2));
+	  
+	  branchFailed = chi2 > OPTICSSIGMATOLERANCE;
+	  
 	  if (branchFailed)
-	    {std::cout << t1v << " " << t2v << " " << t1e << std::endl;}
+	    {
+	      std::cout << t1v << " " << t2v << " " << t1e << " "
+			<< t2e << " " << chi2 << std::endl;
+	      break; // skip testing rest of branch entries
+	    }
 	}
       if (branchFailed)
 	{
 	  std::cout << "Branch was " << branchName << std::endl << std::endl;
-	  c->offendingBranches.push_back(std::string(b2->GetName()));
+	  c->offendingBranches.push_back(branchName);
 	  c->passed = false;
 	}
-      else
-	{c->passed = false;}
-  }
+    }
   results.push_back(c);
 }
 
