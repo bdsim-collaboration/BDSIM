@@ -110,16 +110,18 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
   c->chi2   = 0.0;
   int ndof = 0; 
-  for(int i=0;i < h1->GetNbinsX(); i++) { 
-    //    std::cout << h1->GetBinContent(i) << " " << h2->GetBinContent(i) << " " << h1->GetBinError(i) << std::endl;
-    if(h1->GetBinError(i) > 0) {
-      c->chi2 += std::pow(h1->GetBinContent(i)-h2->GetBinContent(i),2)/(std::pow(h1->GetBinError(i),2)+std::pow(h2->GetBinError(i),2));
-      ndof++;
+  for(int i=0;i < h1->GetNbinsX(); i++)
+    { 
+      //    std::cout << h1->GetBinContent(i) << " " << h2->GetBinContent(i) << " " << h1->GetBinError(i) << std::endl;
+      if(h1->GetBinError(i) > 0)
+	{
+	  c->chi2 += std::pow(h1->GetBinContent(i)-h2->GetBinContent(i),2)/(std::pow(h1->GetBinError(i),2)+std::pow(h2->GetBinError(i),2));
+	  ndof++;
+	}
     }
-  }
   // chi2 per dof
   c->chi2 /= ndof;
-
+  
   c->passed = true;
   if(c->chi2 > CHI2TOLERANCE)
     {c->passed = false;}
@@ -129,7 +131,7 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
 
 void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
 {
-  if (!strcmp(t1->GetName() , "optics"))
+ if (!strcmp(t1->GetName() , "optics"))
     {
       Compare::Optics(t1, t1, results);
       return;
@@ -153,7 +155,7 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
       double  t2v = 0;
       b1->SetAddress(&t1v);
       b2->SetAddress(&t2v);
-      for(int i = 0; i<t1->GetEntries(); ++i)
+        for(int i = 0; i<t1->GetEntries(); ++i)
 	{// loop over entries	  
 	  t1->GetEntry(i);
 	  t2->GetEntry(i);
@@ -250,31 +252,6 @@ bool Compare::Summarise(std::vector<Result*> results)
     }
   return allPassed;
 }
-
-bool Compare::AnyFailed(std::vector<Result*> results)
-{
-  for(auto result : results)
-    {   
-      if(!(result->passed))
-	{return true;}
-    }
-  return false;
-}
-
-void Compare::PrintResults(std::vector<Result*> results)
-{
-  for(auto result : results)
-    {std::cout << *result << std::endl;}  
-}
-
-void Compare::PrintFailure(std::vector<Result*> results)
-{
-  for(auto result : results)
-    { 
-      if(!(result->passed))
-	{std::cout << *result << std::endl;}
-    }
-}  
 
 void Compare::PrintNoMatching(std::string className, std::string objectName)
 {

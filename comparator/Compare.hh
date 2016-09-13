@@ -37,15 +37,6 @@ namespace Compare
   /// names in the tree and naming scheme.
   void Optics(TTree* t1, TTree* t2, std::vector<Result*>& results);
 
-  /// Print results from a serious of tests.
-  void PrintResults(std::vector<Result*> results);
-
-  /// Print failures from a serious of tests.
-  void PrintFailure(std::vector<Result*> results);
-
-  /// Check the results from a serious of tests and return true if any failed.
-  bool AnyFailed(std::vector<Result*> results);
-
   /// Simply print out feedback warning that a matching object wasn't found and
   /// no comparison is being done.
   void PrintNoMatching(std::string className, std::string objectName);
