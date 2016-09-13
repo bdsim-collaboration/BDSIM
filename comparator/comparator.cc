@@ -3,17 +3,16 @@
  */
 
 #include "Compare.hh"
-#include "Result.hh"
 
 #include <cmath>
 #include <iostream>
-#include <string>
 #include <vector>
-#include <sstream>
 
 #include "TFile.h"
 #include "TH1.h"
 #include "TTree.h"
+
+class Result;
 
 void usage();
 
