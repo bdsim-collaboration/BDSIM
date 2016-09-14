@@ -17,10 +17,11 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
   BDSIntegratorBase(eqOfMIn, 6),
   angle((*strength)["angle"]),
   length((*strength)["length"]),
-  bField((*strength)["field"])
+  bField((*strength)["field"]),
+  brho(brho)
 {
   bPrime = brho * (*strength)["k1"];
-  nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
+  nominalMom = BDSGlobalConstants::Instance()->BeamMomentum();
   cOverGeV = BDSGlobalConstants::Instance()->COverGeV();
 
 #ifdef BDSDEBUG
