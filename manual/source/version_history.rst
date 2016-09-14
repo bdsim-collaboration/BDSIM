@@ -78,6 +78,13 @@ General
 * Initialisation of variables fixed throughout.
 * Includes reduced to significantly improve compilation speed.
 * Removed executable permission on all source files.
+
+Utilities
+---------
+* pymadx v0.6
+* pybdsim v0.8
+* pymad8 v0.5
+* robdsim v0.7
   
 
 V0.93 - 2016 / 08 / 24
