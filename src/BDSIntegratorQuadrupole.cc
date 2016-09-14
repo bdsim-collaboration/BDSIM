@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
@@ -85,8 +86,11 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
 #endif
   
   G4double      h2      = pow(h,2);
-  G4ThreeVector LocalR  = ConvertToLocal(GlobalR);
-  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, InitMomDir);
+
+  BDSStep       localPosMom = ConvertToLocal(GlobalR, InitMomDir, h, false);
+  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector LocalRp = Localv0.unit();
 
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
@@ -188,9 +192,11 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   LocalRp.setX(xp1);
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
-
-  GlobalR = ConvertToGlobal(LocalR);
-  GlobalP = InitPMag*ConvertAxisToGlobal(LocalRp);
+  
+  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+  GlobalR = globalPosDir.PreStepPoint();
+  GlobalP = globalPosDir.PostStepPoint();	
+  GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
 
   yOut[0] = GlobalR.x();
   yOut[1] = GlobalR.y();

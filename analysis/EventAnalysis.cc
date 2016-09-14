@@ -21,12 +21,12 @@
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-Analysis("Event.", nullptr, "bdsimEventMergedHistograms"),
+Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr)
 {;}
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
-  Analysis("Event.", chain, "bdsimEventMergedHistograms", debug),
+  Analysis("Event.", chain, "EventHistogramsMerged", debug),
   event(eventIn)
 {
   // create sampler analyses
@@ -62,7 +62,10 @@ void EventAnalysis::Process()
       if (i % printModulo == 0)
 	{
 	  std::cout << "\rEvent #" << std::setw(6) << i << " of " << entries;
-	  std::cout.flush();
+	  if (!debug)
+	    {std::cout.flush();}
+	  else
+	    {std::cout << std::endl;}
 	}
       
       if(i==0)

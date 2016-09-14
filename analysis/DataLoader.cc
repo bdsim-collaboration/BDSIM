@@ -56,41 +56,44 @@ void DataLoader::CommonCtor()
 void DataLoader::BuildInputFileList()
 {
   std::string inputPath  = Config::Instance()->InputFilePath();
-  if(inputPath == "") {
-    throw std::string("DataLoader::BuildInputFileList> DataLoader needs to be constructed after Config");
-  }
+  if(inputPath == "")
+    {throw std::string("DataLoader::BuildInputFileList> DataLoader needs to be constructed after Config");}
 
   // wild card
-  if(inputPath.find("*") != std::string::npos) {
-    glob_t glob_result;
-    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-    for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
-      fileNames.push_back(glob_result.gl_pathv[i]);
+  if(inputPath.find("*") != std::string::npos)
+    {
+      glob_t glob_result;
+      glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
+      for(unsigned int i=0;i<glob_result.gl_pathc;++i)
+	{fileNames.push_back(glob_result.gl_pathv[i]);}
+      globfree(&glob_result);
     }
-    globfree(&glob_result);
-  }
   // single file
-  else if(inputPath.find(".root") != std::string::npos) {
-    fileNames.push_back(inputPath);
-  }
+  else if(inputPath.find(".root") != std::string::npos)
+    {fileNames.push_back(inputPath);}
   // directory
-  else if(inputPath[inputPath.length()-1] == std::string("/")) {
-    // find all files in directory
-    inputPath.append("/*.root");
-
-    glob_t glob_result;
-    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-    for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
-      fileNames.push_back(glob_result.gl_pathv[i]);
+  else if(inputPath[inputPath.length()-1] == std::string("/"))
+    {
+      // find all files in directory
+      inputPath.append("/*.root");
+      
+      glob_t glob_result;
+      glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
+      for(unsigned int i=0;i<glob_result.gl_pathc;++i)
+	{fileNames.push_back(glob_result.gl_pathv[i]);}
+      globfree(&glob_result);
     }
-    globfree(&glob_result);
-  }
-
-  if(Config::Instance()->Debug()) {
-    for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn) {
-      std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;
+  
+  if(Config::Instance()->Debug())
+    {
+      for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
+	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
     }
-  }
+  if (fileNames.size() == 0)
+    {
+      std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
+      exit(1);
+    }
 }
 
 void DataLoader::BuildTreeNameList()

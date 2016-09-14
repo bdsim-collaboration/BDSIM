@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals.hh
 #include "G4ClassicalRK4.hh"
@@ -48,8 +49,10 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
          << " k  = " << kappa/(1./CLHEP::m2) << " m^-2" << G4endl
          << G4endl; 
 #endif
-  G4ThreeVector LocalR = ConvertToLocal(GlobalR);
-  G4ThreeVector LocalRp = ConvertAxisToLocal(GlobalR, InitMomDir);
+  BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
+  G4ThreeVector LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector LocalRp = Localv0.unit();
   
   G4double x1,xp1,y1,yp1,z1,zp1; //output coordinates to be
   
@@ -207,8 +210,10 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	     << G4endl; 
 #endif
       
-      GlobalR = ConvertToGlobal(LocalR);
-      GlobalP = ConvertAxisToGlobal(GlobalR, LocalRp);
+      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+      GlobalR = globalPosDir.PreStepPoint();
+      GlobalP = globalPosDir.PostStepPoint();	
+      GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
             
       yOut[0] = GlobalR.x(); 
       yOut[1] = GlobalR.y(); 
