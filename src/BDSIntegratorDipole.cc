@@ -62,7 +62,8 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector v0    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag        = v0.mag();
   G4ThreeVector InitMomDir     = v0.unit();
-  G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
+  G4double rho = -length/angle;
+  //G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
   // in case of zero field (though what if there is a quadrupole part..)
   // or neutral particles do a linear step:
