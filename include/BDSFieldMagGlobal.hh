@@ -26,7 +26,7 @@
 class BDSFieldMagGlobal: public BDSFieldMag, public BDSAuxiliaryNavigator
 {
 public:
-  BDSFieldMagGlobal(BDSFieldMag* fieldIn);
+  BDSFieldMagGlobal(BDSFieldMag* field);
   virtual ~BDSFieldMagGlobal();
 
   /// Apply the global to local transform, query the wrapped field object

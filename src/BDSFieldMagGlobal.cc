@@ -5,19 +5,17 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-BDSFieldMagGlobal::BDSFieldMagGlobal(BDSFieldMag* fieldIn):
-  field(fieldIn)
+BDSFieldMagGlobal::BDSFieldMagGlobal(BDSFieldMag* field):
+  BDSFieldMag(*field)
 {;}
 
 BDSFieldMagGlobal::~BDSFieldMagGlobal()
-{
-  delete field;
-}
+{;}
 
 G4ThreeVector BDSFieldMagGlobal::GetField(const G4ThreeVector &position) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
-  G4ThreeVector localField    = field->GetFieldTransformed(localPosition);
+  G4ThreeVector localField    = GetFieldTransformed(localPosition);
   G4ThreeVector globalField   = ConvertAxisToGlobal(localField);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Local Position: " << localPosition << G4endl;
