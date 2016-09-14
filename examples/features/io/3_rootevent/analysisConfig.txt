@@ -1,4 +1,4 @@
-Debug						1
+Debug						0
 InputFilePath					./output_event.root
 OutputFileName					./ana_1.root
 CalculateOpticalFunctions			1

@@ -91,6 +91,8 @@ endif(DOXYGEN_FOUND)
 enable_testing()
 include(CTest)
 include(bdsim_test_macros)
+include(comparator_test_macros)
+include(rebdsim_test_macros)
 
 # This module sets up installation:
 include(bdsim_install)
@@ -223,6 +225,9 @@ add_subdirectory(test)
 
 # Include directory for analysis
 add_subdirectory(analysis)
+
+# Include directory for comparator
+add_subdirectory(comparator)
 
 # Manual
 add_subdirectory(manual)
