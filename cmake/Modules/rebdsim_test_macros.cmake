@@ -1,14 +1,8 @@
 # rebdsim ctests
 
-# run an analysis
+# run an analysis - 'rebdsim' gets expanded by cmake to full path of executable target
 macro(_rebdsimAnalTest testName configFile)
-  add_test(NAME ${testName} COMMAND ${rebdsimBinary} ${configFile})
-endmacro()
-
-# run a comparison job
-macro(_comparatorTest testName refFile testFile)
-  add_test(NAME ${testName} COMMAND ${comparatorBinary} ${refFile} ${testFile})
-  set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "TEST_FAILED")
+  add_test(NAME ${testName} COMMAND rebdsim ${configFile})
 endmacro()
 
 # run analysis then a comparison
