@@ -90,11 +90,25 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector      LocalRp = Localv0.unit();
   G4ThreeVector itsInitialR  = LocalR;
   G4ThreeVector itsInitialRp = LocalRp;
-  
+
+  // relative mom. spread
+  momSpread = (nominalMom - InitMag)/nominalMom;
+
+  G4double halftheta = h/(rho*2.0);
+
+  // rotate momentum by half angle so as to point the central trajectory
+  // along the chord of the dipole, and renormalize to unity.
+  LocalRp.rotateY(-halftheta);
+  LocalRp = LocalRp.unit();
+
   // advance the orbit
   std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalRp);
   G4ThreeVector itsFinalPoint = RandRp.first;
   G4ThreeVector itsFinalDir = RandRp.second;
+
+  // rotate again by half angle to point the central trajectory
+  // along the curvilinear, thus rotating by the whole dipole angle
+  itsFinalDir.rotateY(-halftheta);
 
   G4double CosT_ov_2=cos(h/rho/2.0);
   distChord = fabs(rho)*(1.-CosT_ov_2);
@@ -102,123 +116,19 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
   {
-    // gradient for quadrupolar field
-    G4double kappa = - eqOfM->FCof() * bPrime / InitMag; // was ist das?
-    // ignore quadrupolar component for now as this needs fixing
-    if(true || fabs(kappa)<1.e-12)
-      {
 	BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
-	GlobalPosition = globalPosDir.PreStepPoint();
+	G4ThreeVector GlobalPositionOut = globalPosDir.PreStepPoint();
 	G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
 	GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
-      
-	yOut[0] = GlobalPosition.x(); 
-	yOut[1] = GlobalPosition.y(); 
-	yOut[2] = GlobalPosition.z(); 
+
+	yOut[0] = GlobalPositionOut.x();
+	yOut[1] = GlobalPositionOut.y();
+	yOut[2] = GlobalPositionOut.z();
 	
 	yOut[3] = GlobalTangent.x();
 	yOut[4] = GlobalTangent.y();
 	yOut[5] = GlobalTangent.z();
 	return;
-      }
-    
-    G4double x1,x1p,y1,y1p,z1p;
-    //G4double z1;
-    
-    G4double NomR = nominalEnergy/CLHEP::GeV/(0.299792458 * bField/CLHEP::tesla) * CLHEP::m;
-    
-    G4double NominalPath = sqrt(NomR*NomR - LocalR.z()*LocalR.z()) - fabs(NomR)*cos(angle/2);
-    
-    G4double EndNomPath = sqrt(NomR*NomR - itsFinalPoint.z()*itsFinalPoint.z()) - fabs(NomR)*cos(angle/2);
-
-    if(rho<0)
-      {
-	NominalPath*=-1;
-	EndNomPath*=-1;
-      }
-    
-    G4double x0=LocalR.x() - NominalPath;
-    G4double y0=LocalR.y();
-    G4double z0=LocalR.z();
-    
-    G4double theta_in = asin(z0/NomR);
-    
-    LocalRp.rotateY(-theta_in);
-    
-    G4double xp=LocalRp.x();
-    G4double yp=LocalRp.y();
-    G4double zp=LocalRp.z();
-    
-    G4double rootK=sqrt(fabs(kappa*zp));
-    G4double rootKh=rootK*h*zp;
-    G4double X11,X12,X21,X22;
-    G4double Y11,Y12,Y21,Y22;
-    
-    if (kappa>0)
-      {
-	X11= cos(rootKh);
-	X12= sin(rootKh)/rootK;
-	X21=-fabs(kappa)*X12;
-	X22= X11;
-	
-	Y11= cosh(rootKh);
-	Y12= sinh(rootKh)/rootK;
-	Y21= fabs(kappa)*Y12;
-	Y22= Y11;
-      }
-    else // if (kappa<0)
-      {
-	X11= cosh(rootKh);
-	X12= sinh(rootKh)/rootK;
-	X21= fabs(kappa)*X12;
-	X22= X11;
-	
-	Y11= cos(rootKh);
-	Y12= sin(rootKh)/rootK;
-	Y21= -fabs(kappa)*Y12;
-	Y22= Y11;
-      }
-    
-    x1  = X11*x0 + X12*xp;    
-    x1p = X21*x0 + X22*xp;
-    
-    y1  = Y11*y0 + Y12*yp;    
-    y1p = Y21*y0 + Y22*yp;
-    
-    z1p = sqrt(1 - x1p*x1p -y1p*y1p);
-    
-    /* 
-       x1 -=(kappa/ (24*R) ) * h2*h2;
-       x1p-=(kappa/ (6*R) ) * h*h2;
-    */
-    G4double dx=x1-x0;
-    G4double dy=y1-y0;
-    // Linear chord length
-    
-    LocalR.setX(dx +itsInitialR.x() + EndNomPath - NominalPath);
-    LocalR.setY(dy + itsInitialR.y());
-    LocalR.setZ(itsFinalPoint.z());
-    
-    
-    LocalRp.setX(x1p);
-    LocalRp.setY(y1p);
-    LocalRp.setZ(z1p);
-    LocalRp.rotateY(theta_in); 
-    LocalRp.rotateY(-h/rho);
-
-    BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
-    GlobalPosition = globalPosDir.PreStepPoint();
-    G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
-    GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
-    
-    yOut[0] = GlobalPosition.x(); 
-    yOut[1] = GlobalPosition.y(); 
-    yOut[2] = GlobalPosition.z(); 
-    
-    yOut[3] = GlobalTangent.x();
-    yOut[4] = GlobalTangent.y();
-    yOut[5] = GlobalTangent.z();
-    
   }
   else
     {
@@ -248,23 +158,75 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
                                             G4ThreeVector LocalR,
                                             G4ThreeVector LocalRp)
 {
-  G4ThreeVector yhat(0.,1.,0.);
-  G4ThreeVector vhat  = LocalRp;
-  G4ThreeVector vnorm = vhat.cross(yhat);
+    // see the developer manual for details on the matrix elements and
+    // conditional statements.
     
-  G4double Theta   = h/rho;
+    // quad, dipole, and combined magnet strengths
+    G4double K1 = -bPrime/brho;
+    G4double k0 = 1.0 / rho;
+    G4double K = K1 + pow(k0,2);
+    G4double rootK = sqrt(std::abs(K));
+    G4double theta = h*rootK;
 
-  G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
-  CosT_ov_2=cos(Theta/2);
-  SinT_ov_2=sin(Theta/2);
-  
-  CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
-  SinT=2*CosT_ov_2*SinT_ov_2;
+    G4double xCosTerm, yCosTerm, xSinTerm, ySinTerm;
 
-  G4ThreeVector dPos = rho*(SinT*vhat + (1-CosT)*vnorm);
-  G4ThreeVector itsFinalPoint = LocalR+dPos;
-  G4ThreeVector itsFinalDir   = CosT*vhat +SinT*vnorm;
-  
+    // sign for matrix terms which depend on the sign of K1
+    G4double sign  = (signbit(K1)) ? (-1.0) : (1.0);
+
+    if (K1 <= 0)
+      {
+        xCosTerm = cos(theta);
+        yCosTerm = cosh(theta);
+        xSinTerm = sin(theta);
+        ySinTerm = sinh(theta);
+      }
+    else
+      {
+        xCosTerm = cosh(theta);
+        yCosTerm = cos(theta);
+        xSinTerm = sinh(theta);
+        ySinTerm = sin(theta);
+      }
+
+    // matrix terms
+    G4double X11 = xCosTerm;
+    G4double X12 = (1.0/rootK) * xSinTerm;
+    G4double X21 = sign * rootK * xSinTerm;
+    G4double X22 = X11;
+
+    G4double X16 = -sign*(1.0/rootK) * (1-xCosTerm);
+    G4double X26 = -sign*xSinTerm;
+
+    G4double Y11 = yCosTerm;
+    G4double Y12 = (1.0/rootK) * ySinTerm;
+    G4double Y21 = -1.0*sign* rootK * ySinTerm;
+    G4double Y22 = Y11;
+
+    G4double x1, y1, z1, xp1, yp1, zp1;
+    x1  = LocalR.x()*X11 + LocalRp.x()*X12;
+    y1  = LocalR.y()*Y11 + LocalRp.y()*Y12;
+    z1  = LocalR.z()     + h;
+    xp1 = LocalR.x()*X21 + LocalRp.x()*X22;
+    yp1 = LocalR.y()*Y21 + LocalRp.y()*Y22;
+
+    if (K1 < 0){
+      x1  -= X16*momSpread;
+      xp1 -= X26*momSpread;
+    }
+    else if (K1 > 0){
+        x1  += X16*momSpread;
+        xp1 += X26*momSpread;
+    }
+    else{
+        x1  += X16*momSpread;
+        xp1 -= X26*momSpread;
+    }
+    // calculate zp1 separately to ensure momentum conservation.
+    zp1 = sqrt(1.0 - (pow(xp1,2) + pow(yp1,2)));
+
+    G4ThreeVector itsFinalPoint   = G4ThreeVector(x1,y1,z1);
+    G4ThreeVector itsFinalDir     = G4ThreeVector(xp1,yp1,zp1);
+
   return std::make_pair(itsFinalPoint,itsFinalDir);
 
 }
