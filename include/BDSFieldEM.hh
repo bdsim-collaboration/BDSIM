@@ -45,7 +45,7 @@ public:
   /// the coordinate system of the geometry.  Ie an offset aperture.  This is
   /// a public interface to allow the transform to be set after construction so
   /// that derived classes don't need modified constructors.
-  void SetTransform(const G4Transform3D& transformIn)
+  virtual void SetTransform(const G4Transform3D& transformIn)
   {transform = transformIn.inverse();}
 
   /// Required overload by Geant4.
