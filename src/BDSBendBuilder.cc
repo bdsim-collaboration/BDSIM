@@ -62,6 +62,9 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     //copy of angle
     G4double angle = (*st)["angle"];
 
+    (*st)["length"] = length/nSBends;
+    (*st)["angle"]  = angle/nSBends;  // override copied length and angle
+
     BDSLine* sbendline  = new BDSLine(element->name);
 
     // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1

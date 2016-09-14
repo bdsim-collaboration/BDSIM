@@ -126,7 +126,13 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement)
     {st = nullStrength;}
   
   for (auto const key : magnetKeys)
-    {survey << " " << setw(12) << (*st)[key];}
+    {
+      //Unscale k1 for quadrupoles
+      G4double magStr = (*st)[key];
+      if ((acceleratorComponent->GetType() == "quadrupole") && (key == "k1"))
+        {magStr *= CLHEP::m2;}
+
+      survey << " " << setw(12) << magStr;}
 
   survey << G4endl;
 }
