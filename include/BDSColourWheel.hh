@@ -1,20 +1,35 @@
-#ifndef __BDS_COLOUR_WHEEL_HH
-#define __BDS_COLOUR_WHEEL_HH
+#ifndef BDSCOLOURWHEEL_H
+#define BDSCOLOURWHEEL_H
+
 #include "G4Colour.hh"
+
 #include <list>
 #include <iterator>
 
-class BDSColourWheel{
+/**
+ * @brief Three colours that are supplied sequentially.
+ *
+ * @author Lawrence Deacon.
+ */
+
+class BDSColourWheel
+{
 public:
   BDSColourWheel();
   ~BDSColourWheel();
-  G4Colour colour();
-  void spin();
-  void reset();
+
+  /// Return current colour.
+  G4Colour Colour();
+
+  /// Iterate colour choice from RGB.
+  void Spin();
+
+  /// Start sequence again.
+  void Reset();
   
 private:
-  std::list<G4Colour> _palette;
-  std::list<G4Colour>::const_iterator _colour_it;
+  std::list<G4Colour> palette;
+  std::list<G4Colour>::const_iterator colour_it;
 };
 
 #endif

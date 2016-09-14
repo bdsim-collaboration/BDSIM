@@ -24,16 +24,24 @@ class BDSScreenLayer;
 class BDSMultilayerScreen 
 {
 public:
-  BDSMultilayerScreen(G4TwoVector xysize, G4String name); //X-Y size
+  BDSMultilayerScreen(G4TwoVector xysize,
+		      G4String    name);
   virtual ~BDSMultilayerScreen();
 
-  inline const G4ThreeVector& GetSize()const{return size;}
+  inline const G4ThreeVector& GetSize() const {return size;}
+
   void screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler=0, G4double grooveWidth=0, G4double grooveSpatialFrequency=0);
+
   void screenLayer(BDSScreenLayer* layer, G4int isSampler=0);
+
   inline BDSScreenLayer* screenLayer(G4int layer){return screenLayers[layer];}
+
   BDSScreenLayer* screenLayer(G4String layer);
+
   BDSScreenLayer* lastLayer();
+
   inline G4double nLayers()const{return screenLayers.size();}
+
   void build();
   inline void SetPhys(G4PVPlacement* physIn){phys = physIn;}
   virtual void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
@@ -44,6 +52,7 @@ private:
   G4TwoVector xysize;
   G4String name;
   G4ThreeVector size;
+
   // Geometrical objects:
   G4LogicalVolume* log;
   G4PVPlacement* phys;

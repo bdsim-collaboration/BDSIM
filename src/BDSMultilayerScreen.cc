@@ -15,40 +15,53 @@
 #include "G4PVPlacement.hh"               
 #include "G4VSolid.hh"
 
-BDSMultilayerScreen::BDSMultilayerScreen (G4TwoVector xysize, G4String name):
-  xysize(xysize), name(name), colourWheel(new BDSColourWheel())
+BDSMultilayerScreen::BDSMultilayerScreen(G4TwoVector xysize,
+					 G4String name):
+  xysize(xysize),
+  name(name),
+  log(nullptr),
+  phys(nullptr),
+  solid(nullptr),
+  colourWheel(new BDSColourWheel())
 {
   size.setX(xysize.x()); 
   size.setY(xysize.y());
   size.setZ(0);
-  solid=nullptr;
-  log=nullptr;
-  phys=nullptr;
 }
 
-void BDSMultilayerScreen::screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler, G4double grooveWidth, G4double grooveSpatialFrequency)
+void BDSMultilayerScreen::screenLayer(G4double thickness,
+				      G4String material,
+				      G4String name,
+				      G4int    isSampler,
+				      G4double grooveWidth,
+				      G4double grooveSpatialFrequency)
 {
   G4String layerName = name;
-  if(isSampler){
-    G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
-    G4String tempString = "Sampler_" + std::to_string(nThisSampler);
+  if(isSampler)
+    {
+      G4int nThisSampler = BDSSamplerRegistry::Instance()->NumberOfExistingSamplers() + 1;
+      G4String tempString = "Sampler_" + std::to_string(nThisSampler);
     layerName = tempString + "_" + layerName;
-  } else {
-      layerName=name;
-  }
+    }
+  else
+    {layerName=name;}
+  
   G4ThreeVector layerSize(xysize.x(), xysize.y(), thickness);
-  screenLayer(new BDSScreenLayer(layerSize, layerName, material, grooveWidth,grooveSpatialFrequency), isSampler);
+  screenLayer(new BDSScreenLayer(layerSize, layerName, material,
+				 grooveWidth,grooveSpatialFrequency), isSampler);
 }
 
 void BDSMultilayerScreen::screenLayer(BDSScreenLayer* layer, G4int isSampler)
 {
-  colourWheel->spin();
-  layer->SetColour(colourWheel->colour());
-  if(isSampler) layer->sampler();
+  colourWheel->Spin();
+  layer->SetColour(colourWheel->Colour());
+  if(isSampler)
+    {layer->sampler();}
   screenLayers.push_back(layer);
 }
 
-BDSScreenLayer* BDSMultilayerScreen::lastLayer(){
+BDSScreenLayer* BDSMultilayerScreen::lastLayer()
+{
   return screenLayer(nLayers()-1);
 }
 
@@ -69,7 +82,8 @@ void BDSMultilayerScreen::buildMotherVolume()
   log->SetVisAttributes(visAtt);
 }
 
-void BDSMultilayerScreen::computeDimensions(){
+void BDSMultilayerScreen::computeDimensions()
+{
   G4cout << "Compute dimensions..." << G4endl;
   G4cout << "...z size..." << G4endl;
   G4double temp=0;
@@ -93,7 +107,8 @@ void BDSMultilayerScreen::computeDimensions(){
   G4cout << "...finsished." << G4endl;
 }
 
-void BDSMultilayerScreen::placeLayers(){
+void BDSMultilayerScreen::placeLayers()
+{
   G4ThreeVector pos;
   pos.setX(0);
   pos.setY(0);
@@ -116,7 +131,8 @@ void BDSMultilayerScreen::placeLayers(){
 }
 
 
-BDSScreenLayer* BDSMultilayerScreen::screenLayer(G4String layer){
+BDSScreenLayer* BDSMultilayerScreen::screenLayer(G4String layer)
+{
   for(unsigned int i=0; i<screenLayers.size(); i++){
     if(screenLayer(i)->GetName()==layer){
       screenLayer(i);

@@ -1,18 +1,22 @@
 #include "BDSProgressBar.hh"
 
-BDSProgressBar::BDSProgressBar( double maxCount ) {
-  _maxCount = maxCount;
-  _nTicmarksInBar=50;
-  _countsPerTicmark=_maxCount/_nTicmarksInBar;
-  reset();
+BDSProgressBar::BDSProgressBar(double maxCountIn):
+  maxCount(maxCountIn),
+  nTicMarksInBar(50),
+  countsPerTicMark(maxCountIn)
+{
+  countsPerTicMark = maxCount / nTicMarksInBar;
+  Reset();
 }
 
-void BDSProgressBar::reset() {
-  _ticmark = 0;
-  _nextTicmarkCount = 0;  
-  _count = 0;
+void BDSProgressBar::Reset()
+{
+  ticMark          = 0;
+  nextTicMarkCount = 0;  
+  count            = 0;
 
   std::cout << std::endl;
-  if ( !_maxCount ) _maxCount = 1;  
+  if (!maxCount)
+    {maxCount = 1;}
 }
 
