@@ -50,6 +50,11 @@ macro(bdsim_install_analysis_headers)
     DESTINATION include/bdsim/analysis
     COMPONENT Headers)
 endmacro()
+macro(bdsim_install_comparator_headers)
+  install(FILES ${ARGN}
+    DESTINATION include/bdsim/comparator
+    COMPONENT Headers)
+endmacro()
 macro(bdsim_install_macros)
   install(FILES ${ARGN}
     DESTINATION share/bdsim/analysis

@@ -32,6 +32,7 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
     this->histograms2DN.push_back(0);
     this->histograms2DError.push_back(chE);
   }
+  Add(h);
 }
 
 HistogramMerge::~HistogramMerge()
@@ -53,7 +54,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
       h1->SetBinContent(j,h1->GetBinContent(j)+h2->GetBinContent(j));
       h1e->SetBinContent(j,h1e->GetBinContent(j)+pow(h2->GetBinContent(j),2));
     }
-    this->histograms1DN[i]    = this->histograms1DN[i]+1;
+    histograms1DN[i] = histograms1DN[i]+1;
   }
 
   // loop over 2d histograms
@@ -73,7 +74,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
         h1e->SetBinContent(j,k,h1e->GetBinContent(j,k)+pow(h2->GetBinContent(j,k),2));
       }
     }
-    this->histograms2DN[i]    = this->histograms2DN[i]+1;
+    histograms2DN[i] = histograms2DN[i]+1;
   }
 }
 
@@ -95,6 +96,7 @@ void HistogramMerge::Terminate()
       h1->SetBinContent(j,mean);
       h1->SetBinError(j,std);
     }
+    h1->SetEntries(histograms1DN[i]);
   }
 
   for(unsigned int i=0;i<histograms2D.size();++i)
@@ -103,7 +105,7 @@ void HistogramMerge::Terminate()
     auto h1e = histograms2DError[i];
     for(int j=0;j<=h1->GetNbinsX();++j)
     {
-      for(int k=0;k<=h1->GetNbinsY();++j)
+      for(int k=0;k<=h1->GetNbinsY();++k)
       {
         double mean = h1->GetBinContent(i,j)/histograms2DN[i];
         double std  = sqrt(h1e->GetBinContent(j,k)/histograms2DN[i]-pow(mean,2))/sqrt(histograms2DN[i]);
@@ -111,7 +113,7 @@ void HistogramMerge::Terminate()
         h1->SetBinError(j,k,std);
       }
     }
-
+    h1->SetEntries(histograms2DN[i]);
   }
 }
 
