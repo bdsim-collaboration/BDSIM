@@ -14,7 +14,7 @@
 struct fieldtypes_def
 {
   enum type {none, zero, threed, xy, mokka,
-	     solenoid, dipole, quadrupole, sextupole, octupole, decapole,
+	     solenoid, dipole, quadrupole, dipolequadrupole, sextupole, octupole, decapole,
 	     fringe, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
 	     rfcavity, rf};

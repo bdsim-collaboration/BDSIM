@@ -11,6 +11,7 @@
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
 #include "BDSFieldMagDecapole.hh"
+#include "BDSFieldMagDipoleQuadrupole.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
@@ -153,6 +154,8 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
       field = new BDSFieldMagSBend(strength, brho); break;
     case BDSFieldType::quadrupole:
       field = new BDSFieldMagQuadrupole(strength, brho); break;
+    case BDSFieldType::dipolequadrupole:
+      field = new BDSFieldMagDipoleQuadrupole(strength, brho); break;
     case BDSFieldType::sextupole:
       field = new BDSFieldMagSextupole(strength, brho); break;
     case BDSFieldType::octupole:
