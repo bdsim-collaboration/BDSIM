@@ -30,6 +30,7 @@ protected:
 private:
   void ParseFileFormat();
   void OpenBunchFile();
+  void SkipLines();
   void CloseBunchFile();
   void skip(G4int nvalues);
   T InputBunchFile;
@@ -38,7 +39,7 @@ private:
     G4String name;
     G4double unit; ///< relative to SI units, i.e. mm=0.001 etc.
   };
-  std::list<struct Doublet> fields;
+  std::list<Doublet> fields;
   void SetDistribFile(G4String filename);
   void SetBunchFormat(G4String val) {bunchFormat=val;}
   void SetNLinesIgnore(G4int val)   {nlinesIgnore=val;}

@@ -92,6 +92,16 @@ void Element::PublishMembers()
   publish("waveLength",&Element::waveLength);
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
+  publish("windowScreenGap",&Element::windowScreenGap);
+  publish("screenXSize",&Element::screenXSize);
+  publish("screenYSize",&Element::screenYSize);
+  publish("screenEndZ",&Element::screenEndZ);
+  publish("poleStartZ",&Element::poleStartZ);
+  publish("screenWidth",&Element::screenWidth);
+  publish("layerThicknesses",&Element::layerThicknesses);
+  publish("layerMaterials",&Element::layerMaterials);
+  publish("layerIsSampler",&Element::layerIsSampler);
+  
   publish("numberWedges",&Element::numberWedges);
   publish("wedgeLength",&Element::wedgeLength);
   publish("degraderHeight",&Element::degraderHeight);
@@ -259,6 +269,16 @@ void Element::flush() {
   offsetY = 0;
   tscint = 0.0003;
   twindow = 0;
+  windowScreenGap = 0;
+  screenXSize = 0;
+  screenYSize = 0;
+  screenEndZ = 0;
+  poleStartZ = 0;
+  screenWidth = 0;
+  layerThicknesses.clear();
+  layerMaterials.clear();
+  layerIsSampler.clear();
+  
   xdir = 0;
   ydir = 0;
   zdir = 0;

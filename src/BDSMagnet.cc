@@ -47,7 +47,8 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   magnetOuterOffset(G4ThreeVector(0,0,0)),
   outer(nullptr),
   vacuumField(nullptr),
-  outerField(nullptr)
+  outerField(nullptr),
+  beamPipePlacementTransform(G4Transform3D())
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
@@ -82,6 +83,8 @@ void BDSMagnet::BuildBeampipe()
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
 
+  beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();
+  
   RegisterDaughter(beampipe);
   InheritExtents(beampipe);
 
@@ -96,6 +99,8 @@ void BDSMagnet::BuildVacuumField()
 {
   if (vacuumFieldInfo)
     {
+      G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
+      vacuumFieldInfo->SetTransform(newFieldTransform);
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
 								beampipe->GetVacuumLogicalVolume(),
 								true);

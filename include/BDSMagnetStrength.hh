@@ -51,10 +51,12 @@ public:
   static const std::vector<G4String> AllKeys() {return keys;}
 
   /// Accessor for normal component keys - k1 - k12
-  inline std::vector<G4String> NormalComponentKeys() const;
+  inline std::vector<G4String> NormalComponentKeys() const
+  {return normalComponentKeys;}
 
   /// Accessor for skew component keys - k1 - k12
-  inline std::vector<G4String> SkewComponentKeys() const;
+  inline std::vector<G4String> SkewComponentKeys() const
+  {return skewComponentKeys;}
 
   /// Accessor for all normal components - k1 - k12
   std::vector<G4double> NormalComponents() const;
@@ -62,6 +64,14 @@ public:
   /// Accessor for all skew components - k1 - k12
   std::vector<G4double> SkewComponents() const;
 
+  /// Retrieve the order of a given key - default 1 - no exception.
+  static G4int Order(G4String key);
+
+  /// Return the strength value, but normalised out of Geant4 units (unlike []).
+  /// This uses the static order map to multiply by a factor of
+  /// CLHEP::m ^ order - the opposite of the typical calculation in BDSComponentFactory.
+  G4double GetValueNormalised(const G4String key) const;
+  
   ///@{ iterator mechanics
   typedef StrengthMap::iterator       iterator;
   typedef StrengthMap::const_iterator const_iterator;
@@ -89,18 +99,17 @@ private:
   /// Vector of the normal component strength parameters
   static const std::vector<G4String> skewComponentKeys;
 
+  /// Return the order of a given component.  Useful to dynamically calculate normalisation.
+  /// Only the keys that would produce a result > 1 are stored, the accessor method defaults
+  /// to 1.
+  static const std::map<G4String, G4int> order;
+
   /// Keep a single copy of 0.0 as it needs to be returned as a reference not a value
   static const G4double zero;
 
   /// Dummy variable that can be overwritten
   static G4double variable;
 };
-
-inline std::vector<G4String> BDSMagnetStrength::NormalComponentKeys() const
-{return normalComponentKeys;}
-
-inline std::vector<G4String> BDSMagnetStrength::SkewComponentKeys() const
-{return skewComponentKeys;}
 
 
 #endif

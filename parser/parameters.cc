@@ -46,6 +46,15 @@ Parameters::Parameters() {
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
   setMap["twindow"] = false;
+  setMap["windowScreenGap"] = false;
+  setMap["screenXSize"] = false;
+  setMap["screenYSize"] = false;
+  setMap["screenEndZ"] = false;
+  setMap["poleStartZ"] = false;
+  setMap["screenWidth"] = false;
+  setMap["layerThicknesses"] = false;
+  setMap["layerMaterials"] = false;
+  setMap["layerIsSampler"] = false;
   setMap["bmapXOffset"] = false;
   setMap["bmapYOffset"] = false;
   setMap["bmapZOffset"] = false;
@@ -139,6 +148,18 @@ void Parameters::set_value(std::string property, Array* value)
   else if(property=="blmLocTheta") 
     {
       value->set_vector(blmLocTheta);
+    }
+  else if(property=="layerThicknesses")
+    {
+      value->set_vector(layerThicknesses);
+    }
+  else if(property=="layerMaterials")
+    {
+      value->set_vector(layerMaterials);
+    }
+  else if(property=="layerIsSampler")
+    {
+      value->set_vector(layerIsSampler);
     }
   else
     {

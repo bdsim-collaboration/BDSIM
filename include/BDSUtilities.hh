@@ -89,8 +89,9 @@ namespace BDS
   G4bool Geant4EnvironmentIsSet();
     
   ///@{ Get parameter value from the specification ('spec') string
-  G4double GetParameterValue      (const G4String spec, const G4String name);
-  G4String GetParameterValueString(const G4String spec, const G4String name);
+  G4double GetParameterValueDouble(G4String spec, G4String name);
+  G4String GetParameterValueString(G4String spec, G4String name);
+  G4int    GetParameterValueInt(G4String spec, G4String name);
   ///@}
 
   /// Rotate a two vector in polar coordinates by an angle.

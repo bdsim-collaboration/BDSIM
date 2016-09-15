@@ -59,7 +59,7 @@
 %token <dval> NUMBER
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
-%token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN THINMULT
+%token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
@@ -257,6 +257,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | LASER       {$$=static_cast<int>(ElementType::_LASER);}
           | SCREEN      {$$=static_cast<int>(ElementType::_SCREEN);}
           | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
+          | AWAKESPECTROMETER {$$=static_cast<int>(ElementType::_AWAKESPECTROMETER);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
 
@@ -287,6 +288,7 @@ error_noparams : DRIFT
                | LASER
                | SCREEN
                | AWAKESCREEN
+               | AWAKESPECTROMETER
                | TRANSFORM3D
                | ELEMENT
                | MATERIAL

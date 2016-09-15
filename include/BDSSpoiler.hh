@@ -26,11 +26,11 @@ public:
   ~BDSSpoiler();
 
 protected:
+  virtual void BuildContainerLogicalVolume();
 
 private:
 
   virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
   void BuildInnerSpoiler();
   virtual void SetVisAttributes();
 

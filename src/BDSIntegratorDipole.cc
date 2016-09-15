@@ -4,11 +4,13 @@
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 
-#include <utility>
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
+
+#include <cmath>
+#include <utility>
 
 
 BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
@@ -42,9 +44,9 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   //backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
   //return;
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
-      
-  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
+  
 #ifdef BDSDEBUG
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
   G4cout << "BDSIntegratorDipole: step= " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
          << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
@@ -183,7 +185,7 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     {G4double dummy = 1;}
 
     // sign for matrix terms which depend on the sign of K1
-    G4double sign  = (signbit(K1)) ? (-1.0) : (1.0);
+    G4double sign  = (std::signbit(K1)) ? (-1.0) : (1.0);
 
     if (n > 0)
       {

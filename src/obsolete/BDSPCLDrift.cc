@@ -153,8 +153,8 @@ void BDSPCLDrift::BuildBeampipe(){
 
 #endif
 
-   itsInnerBeamPipeLogicalVolume->SetFieldManager(itsBPFieldMgr,false);
-   itsOuterBeamPipeLogicalVolume->SetFieldManager(itsBPFieldMgr,false);
+   itsInnerBeamPipeLogicalVolume->SetFieldManager(itsFieldMgr,false);
+   itsOuterBeamPipeLogicalVolume->SetFieldManager(itsFieldMgr,false);
 
   
   // now protect the fields inside the marker volume by giving the

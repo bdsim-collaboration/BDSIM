@@ -2,6 +2,7 @@
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "G4NistManager.hh"
+#include "BDSDebug.hh"
 
 #include <list>
 #include <map>
@@ -385,6 +386,14 @@ void BDSMaterials::Initialise()
   tmpMaterial->SetMaterialPropertiesTable(fsMaterialPropertiesTable);
   materials[name] = tmpMaterial; 
 
+  //Perspex.
+  tmpMaterial = new G4Material
+    (name="perspex", density = 1.18*CLHEP::g/CLHEP::cm3, 3, kStateSolid, 300*CLHEP::kelvin);
+  tmpMaterial->AddMaterial(GetMaterial("G4_C"),fractionmass=0.59984);
+  tmpMaterial->AddMaterial(GetMaterial("G4_O"),fractionmass=0.31961);
+  tmpMaterial->AddMaterial(GetMaterial("G4_H"),fractionmass=0.08055);
+  materials[name] = tmpMaterial;
+
   //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
   tmpMaterial = new G4Material
     (name="invar"         , density=  8.1  *CLHEP::kg/CLHEP::m3, 2, kStateSolid, 2*CLHEP::kelvin);
@@ -583,15 +592,44 @@ void BDSMaterials::Initialise()
   //Put into the materials array.
   materials[name]=tmpMaterial;
 
-  //PET (Dacron)
-  tmpMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_DACRON",true,true);
+  //PET 
+  G4double pet_density=1.4*CLHEP::g/CLHEP::cm3;
+  G4int pet_nelements=3;
+  G4State pet_state=kStateSolid;
   name="pet";
+  tmpMaterial= new G4Material(name,pet_density,
+			      pet_nelements,
+			      pet_state
+			      );
+  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("C",true),10);
+  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("H",true),8);
+  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("O",true),4);
   const G4int Pet_NUMENTRIES = 3; //Number of entries in the material properties table
   G4double Pet_RIND[Pet_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
   G4double Pet_Energy[Pet_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
   petMaterialPropertiesTable=new G4MaterialPropertiesTable();
   petMaterialPropertiesTable->AddProperty("RINDEX",Pet_Energy, Pet_RIND, Pet_NUMENTRIES);
   tmpMaterial->SetMaterialPropertiesTable(petMaterialPropertiesTable);
+  materials[name]=tmpMaterial;
+
+
+  //Opaque PET (Dacron)
+  name="pet_opaque";
+  tmpMaterial= new G4Material(name,pet_density,
+			      pet_nelements,
+			      pet_state
+			      );
+  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("C",true),10);
+  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("H",true),8);
+  tmpMaterial->AddElement(G4NistManager::Instance()->FindOrBuildElement("O",true),4);
+  const G4int Pet_Opaque_NUMENTRIES = 3; //Number of entries in the material properties table
+  G4double Pet_Opaque_RIND[Pet_Opaque_NUMENTRIES] = {1.570,1.570,1.570};//Assume constant refractive index.
+  G4double Pet_Opaque_Energy[Pet_Opaque_NUMENTRIES] = {2.0*CLHEP::eV,7.0*CLHEP::eV,7.14*CLHEP::eV}; //The energies.
+  G4double Pet_Opaque_abslen[]={1*CLHEP::um, 1*CLHEP::um, 1*CLHEP::um};
+  pet_opaqueMaterialPropertiesTable=new G4MaterialPropertiesTable();
+  pet_opaqueMaterialPropertiesTable->AddProperty("RINDEX",Pet_Opaque_Energy, Pet_Opaque_RIND, Pet_Opaque_NUMENTRIES);
+  pet_opaqueMaterialPropertiesTable->AddProperty("ABSLENGTH",Pet_Opaque_Energy, Pet_Opaque_abslen, Pet_Opaque_NUMENTRIES);
+  tmpMaterial->SetMaterialPropertiesTable(pet_opaqueMaterialPropertiesTable);
   materials[name]=tmpMaterial;
 
   //Cellulose
@@ -790,6 +828,30 @@ void BDSMaterials::Initialise()
   mptMedex->AddConstProperty("MIEHG_BACKWARD", 0.93);
   mptMedex->AddConstProperty("MIEHG_FORWARD_RATIO", 1.0);
   tmpMaterial->SetMaterialPropertiesTable(mptMedex);
+  materials[name]=tmpMaterial;
+
+  //carbon fiber
+  G4double frac_graph=0.5;
+  G4double frac_poly=0.5;
+  G4Material* graph=GetMaterial("G4_GRAPHITE");
+  G4Material* poly=GetMaterial("G4_POLYACRYLONITRILE");
+  G4double dens_graph=graph->GetDensity();
+  G4double dens_poly=poly->GetDensity();
+
+  G4double dens_cf =frac_graph*dens_graph+frac_poly*dens_poly;
+  G4double frac_graph_bw=frac_graph*dens_graph/dens_cf;
+  G4double frac_poly_bw=frac_poly*dens_poly/dens_cf;
+  tmpMaterial = new G4Material(name="carbonfiber", density=dens_cf, 2);
+  tmpMaterial->AddMaterial(graph, frac_graph_bw);
+  tmpMaterial->AddMaterial(poly, frac_poly_bw);
+  G4MaterialPropertiesTable* mptCarbonfiber = new G4MaterialPropertiesTable();
+  const G4int nentCarbonfiber=2;
+  G4double energytab_cf[]={2.239*CLHEP::eV, 2.241*CLHEP::eV};
+  G4double carbonfiberRindextab[]={2.6, 2.6};
+  G4double carbonfiberAbslen[]={2.1*CLHEP::um, 2.1*CLHEP::um};
+  mptCarbonfiber->AddProperty("RINDEX",energytab_cf, carbonfiberRindextab, nentCarbonfiber); //Average refractive index of bulk material
+  mptCarbonfiber->AddProperty("ABSLENGTH", energytab_cf, carbonfiberAbslen, nentCarbonfiber);
+  tmpMaterial->SetMaterialPropertiesTable(mptCarbonfiber);
   materials[name]=tmpMaterial;
 
   // liquid materials
@@ -1124,7 +1186,9 @@ void BDSMaterials::ListMaterials()
   G4cout << "AralditeF" << G4endl;
   G4cout << "AwakePlasma" << G4endl;
   G4cout << "Beryllium" << G4endl;
+  G4cout << "BN5000" << G4endl;
   G4cout << "CalciumCarbonate" << G4endl;
+  G4cout << "CarbonFiber" << G4endl;
   G4cout << "CarbonMonoxide" << G4endl;
   G4cout << "BP_CarbonMonoxide" << G4endl;
   G4cout << "CarbonSteel" << G4endl;
@@ -1133,13 +1197,12 @@ void BDSMaterials::ListMaterials()
   G4cout << "Concrete" << G4endl;
   G4cout << "LHCConcrete" << G4endl;
   G4cout << "Copper" << G4endl;
+  G4cout << "DY061" << G4endl;
+  G4cout << "EpoxyResin3" << G4endl;
   G4cout << "FusedSilica" << G4endl;
   G4cout << "Graphite" << G4endl;
   G4cout << "GraphiteFoam" << G4endl;
   G4cout << "HY906" << G4endl;
-  G4cout << "DY061" << G4endl;
-  G4cout << "BN5000" << G4endl;
-  G4cout << "EpoxyResin3" << G4endl;
   G4cout << "Invar" << G4endl;
   G4cout << "Iron" << G4endl;
   G4cout << "WeightIron" << G4endl;
@@ -1160,6 +1223,7 @@ void BDSMaterials::ListMaterials()
   G4cout << "NbTi" << G4endl;
   G4cout << "Niobium" << G4endl;
   G4cout << "Nitrogen" << G4endl;  
+  G4cout << "Perspex" << G4endl;
   G4cout << "PET" << G4endl;
   G4cout << "PolyUrethane" << G4endl;
   G4cout << "Quartz" << G4endl;
@@ -1185,8 +1249,9 @@ void BDSMaterials::ListMaterials()
 BDSMaterials::~BDSMaterials()
 {
   std::map<G4String,G4Material*>::iterator mIter;
-  for(mIter = materials.begin(); mIter!=materials.end(); mIter++)
+  for(mIter = materials.begin(); mIter!=materials.end(); mIter++){
     delete (*mIter).second;
+  }
   materials.clear();
 
   std::map<G4String,G4Element*>::iterator eIter;
@@ -1206,9 +1271,9 @@ BDSMaterials::~BDSMaterials()
   delete mptPETLanex;
   delete mpt_YAG;
   delete petMaterialPropertiesTable;
+  delete pet_opaqueMaterialPropertiesTable;
   delete ups923a_mt;
-  delete vacMaterialPropertiesTable;
-
+  delete vacMaterialPropertiesTable;  
   _instance = nullptr;
 }
 
