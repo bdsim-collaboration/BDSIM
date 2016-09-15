@@ -4,11 +4,13 @@
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 
-#include <utility>
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
+
+#include <cmath>
+#include <utility>
 
 
 BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
