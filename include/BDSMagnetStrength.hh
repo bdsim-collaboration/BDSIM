@@ -51,10 +51,12 @@ public:
   static const std::vector<G4String> AllKeys() {return keys;}
 
   /// Accessor for normal component keys - k1 - k12
-  inline std::vector<G4String> NormalComponentKeys() const;
+  inline std::vector<G4String> NormalComponentKeys() const
+  {return normalComponentKeys;}
 
   /// Accessor for skew component keys - k1 - k12
-  inline std::vector<G4String> SkewComponentKeys() const;
+  inline std::vector<G4String> SkewComponentKeys() const
+  {return skewComponentKeys;}
 
   /// Accessor for all normal components - k1 - k12
   std::vector<G4double> NormalComponents() const;
@@ -95,12 +97,6 @@ private:
   /// Dummy variable that can be overwritten
   static G4double variable;
 };
-
-inline std::vector<G4String> BDSMagnetStrength::NormalComponentKeys() const
-{return normalComponentKeys;}
-
-inline std::vector<G4String> BDSMagnetStrength::SkewComponentKeys() const
-{return skewComponentKeys;}
 
 
 #endif
