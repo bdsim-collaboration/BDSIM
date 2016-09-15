@@ -59,7 +59,7 @@ public:
   inline G4String          GetName()   const {return containerLogicalVolume->GetName();}
   inline G4VSolid*         GetContainerSolid()         const {return containerSolid;}
   inline G4LogicalVolume*  GetContainerLogicalVolume() const {return containerLogicalVolume;}
-  inline G4Transform3D     GetPlacementTransform()     const {return G4Transform3D(*placementRotation, placementOffset);}
+  inline G4Transform3D     GetPlacementTransform()     const;
   inline G4ThreeVector     GetPlacementOffset()        const {return placementOffset;}
   inline G4RotationMatrix* GetPlacementRotation()      const {return placementRotation;}
   inline BDSExtent         GetExtent()                 const {return outerExtent;}
@@ -208,5 +208,13 @@ protected:
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
 };
+
+inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const
+{
+  if (!placementRotation)
+  {return G4Transform3D(G4RotationMatrix(), placementOffset);}
+  else
+  {return G4Transform3D(*placementRotation, placementOffset);}
+}
 
 #endif
