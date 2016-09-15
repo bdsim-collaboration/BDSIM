@@ -156,51 +156,67 @@ void BDSIntegratorDipole::Stepper(const G4double yInput[],
 std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double rho,
                                             G4double h,
                                             G4ThreeVector LocalR,
-                                            G4ThreeVector LocalRp)
-{
+                                            G4ThreeVector LocalRp) {
     // see the developer manual for details on the matrix elements and
     // conditional statements.
-    
+
     // quad, dipole, and combined magnet strengths
-    G4double K1 = -bPrime/brho;
-    G4double k0 = 1.0 / rho;
-    G4double K = K1 + pow(k0,2);
+    G4double K1 = bPrime / brho;
+    G4double k0 = 1.0 / pow(rho,2);
+    G4double K = K1 + k0;//pow(k0, 2);
     G4double rootK = sqrt(std::abs(K));
-    G4double theta = h*rootK;
+    G4double theta = h * rootK;
+
+    G4double rootKy = rootK;
+    G4double thetaY = theta;
+
+
+    G4double n = bPrime / brho;// * pow(rho, 2);
+    //G4double kx2 = (1 - n) / pow(rho, 2);
+    G4double kx2 = n + k0;// / pow(rho, 2);
+    G4double rootKx = sqrt(std::abs(kx2));
+    G4double thetaX = h * rootKx;
 
     G4double xCosTerm, yCosTerm, xSinTerm, ySinTerm;
+
+    if (bPrime != 0)
+    {G4double dummy = 1;}
 
     // sign for matrix terms which depend on the sign of K1
     G4double sign  = (signbit(K1)) ? (-1.0) : (1.0);
 
-    if (K1 <= 0)
+    if (n > 0)
       {
-        xCosTerm = cos(theta);
-        yCosTerm = cosh(theta);
-        xSinTerm = sin(theta);
-        ySinTerm = sinh(theta);
+        xCosTerm = cos(thetaX);
+        yCosTerm = cosh(thetaY);
+        xSinTerm = sin(thetaX);
+        ySinTerm = sinh(thetaY);
       }
     else
       {
-        xCosTerm = cosh(theta);
-        yCosTerm = cos(theta);
-        xSinTerm = sinh(theta);
-        ySinTerm = sin(theta);
+        xCosTerm = cosh(thetaX);
+        yCosTerm = cos(thetaY);
+        xSinTerm = sinh(thetaX);
+        ySinTerm = sin(thetaY);
       }
 
     // matrix terms
     G4double X11 = xCosTerm;
-    G4double X12 = (1.0/rootK) * xSinTerm;
-    G4double X21 = sign * rootK * xSinTerm;
+    G4double X12 = (1.0/rootKx) * xSinTerm;
+    G4double X21 = -sign * rootKx * xSinTerm ;
     G4double X22 = X11;
 
-    G4double X16 = -sign*(1.0/rootK) * (1-xCosTerm);
-    G4double X26 = -sign*xSinTerm;
+    G4double X16 = -sign * (1.0/rootKx) * (1-xCosTerm);
+    G4double X26 = -sign * xSinTerm;
 
     G4double Y11 = yCosTerm;
-    G4double Y12 = (1.0/rootK) * ySinTerm;
-    G4double Y21 = -1.0*sign* rootK * ySinTerm;
+    G4double Y12 = (1.0/rootKy) * ySinTerm;
+    G4double Y21 = 1.0*sign* rootKy * ySinTerm;
     G4double Y22 = Y11;
+
+    G4double term1 = LocalR.x() * X21;
+    G4double term2 = LocalRp.x()* X22;
+    G4double term3 = LocalR.x() * X26;
 
     G4double x1, y1, z1, xp1, yp1, zp1;
     x1  = LocalR.x()*X11 + LocalRp.x()*X12;
