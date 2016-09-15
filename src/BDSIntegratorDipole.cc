@@ -44,9 +44,9 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   //backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
   //return;
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
-      
-  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
+  
 #ifdef BDSDEBUG
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
   G4cout << "BDSIntegratorDipole: step= " << h/CLHEP::m << " m" << G4endl
          << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
          << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
