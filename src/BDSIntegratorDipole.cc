@@ -173,7 +173,7 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     G4double xCosTerm, yCosTerm, xSinTerm, ySinTerm;
 
     // sign for matrix terms which depend on the sign of K1
-    G4double sign  = (signbit(K1)) ? (-1.0) : (1.0);
+    G4double sign  = (std::signbit(K1)) ? (-1.0) : (1.0);
 
     if (K1 <= 0)
       {
