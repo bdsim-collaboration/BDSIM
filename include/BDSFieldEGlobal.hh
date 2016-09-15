@@ -12,7 +12,7 @@
 /**
  * @brief A base class for electric fields in local to be used in global coordinates.
  * 
- * This base class provides the inheritance and utility functions
+ * This base class provides the aggregative inheritance and utility functions
  * for magnetic fields in local coordinates to be used in global coordinates.
  * 
  * Constness is particularly important here as member functions are called
@@ -26,7 +26,7 @@
 class BDSFieldEGlobal: public BDSFieldE, public BDSAuxiliaryNavigator
 {
 public:
-  BDSFieldEGlobal(BDSFieldE* field);
+  BDSFieldEGlobal(BDSFieldE* fieldIn);
   virtual ~BDSFieldEGlobal();
 
   /// Get the field - local coordinates. Apply the global to local transform,
@@ -41,6 +41,9 @@ public:
 private:
   /// Private default constructor to force use of supplied constructor
   BDSFieldEGlobal();
+
+  /// The field on which this is based.
+  BDSFieldE* field;
 };
 
 #endif
