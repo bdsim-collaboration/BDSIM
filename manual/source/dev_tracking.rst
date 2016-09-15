@@ -29,8 +29,8 @@ l parameter which are not needed in this stepper.
     -\sqrt{K}\sin{\Theta}   & \cos{\Theta}                  & 0                     & 0                              & 0 & \sin{\Theta}                       \\
     0                       & 0                             & \cosh{\Theta}         & \frac{\sinh{\Theta}}{\sqrt{K}} & 0 & 0                                  \\
     0                       & 0                             & \sqrt{K}\sinh{\Theta} & \cosh{\Theta}                  & 0 & 0                                  \\
-    0                       &                               & 0                     &                                & 1 & 0                                  \\
-    0                       &                               & 0                     &                                & 0 & 1                                  \\
+    0                       & 0                             & 0                     & 0                              & 1 & 0                                  \\
+    0                       & 0                             & 0                     & 0                              & 0 & 1                                  \\
    \end{pmatrix}
    \begin{pmatrix}
    x_0    \\
