@@ -2,7 +2,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometryLCDD.hh"
 #include "BDSGeometryType.hh"
-#include "BDSMySQLWrapper.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSFieldMagDetectorSolenoid.hh"
