@@ -1,1 +1,1 @@
-sql/leadTarget.sql
+leadTarget.sql
