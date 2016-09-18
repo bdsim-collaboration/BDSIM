@@ -15,15 +15,30 @@
 #include "BDSGeometryGDML.hh"
 #endif
 
+#include <string>
+#include <unordered_map>
 #include <utility>
 
 class BDSGeometry;
+
+BDSGeometryFactory* BDSGeometryFactory::instance = nullptr;
+
+BDSGeometryFactory* BDSGeometryFactory::Instance()
+{
+  if (!instance)
+    {instance = new BDSGeometryFactory();}
+  return instance;
+}
 
 BDSGeometryFactory::BDSGeometryFactory()
 {;}
 
 BDSGeometryFactory::~BDSGeometryFactory()
-{;}
+{
+  instance = nullptr;
+  for (auto& geom : storage)
+    {delete geom;}
+}
 
 BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 {
@@ -35,31 +50,39 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
   G4String fileName = BDS::GetFullPath(ff.second);
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
 
+
+  BDSGeometry* result = nullptr;
   switch(format.underlying())
     {
     case BDSGeometryType::gmad:
-      {return BuildGMAD(fileName); break;}
+      {result = BuildGMAD(fileName); break;}
       
 #ifdef USE_LCDD
     case BDSGeometryType::lcdd:
-      {return BuildLCDD(fileName); break;}
+      {result = BuildLCDD(fileName); break;}
 #endif
 
     case BDSGeometryType::mokka:
-      {return BuildMokka(fileName); break;}
+      {result = BuildMokka(fileName); break;}
 
 #ifdef USE_GDML
     case BDSGeometryType::gdml:
-      {return BuildGDML(fileName); break;}
+      {result =  BuildGDML(fileName); break;}
 #endif
       
     default:
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "no geometry format specified - not building anything" << G4endl;
 #endif
-      return nullptr;
       break;
     }
+
+  if (result)
+    {
+      registry[(std::string)fileName] = nullptr;
+
+    }
+  return result;
 }
 
 BDSGeometry* BDSGeometryFactory::BuildGMAD(G4String fileName)
