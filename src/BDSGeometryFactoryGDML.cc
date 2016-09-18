@@ -5,6 +5,7 @@
 #include "globals.hh"
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include <vector>
 
@@ -55,4 +56,19 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName)
 
   delete parser;
   return result;
+}
+
+void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*         volume,
+						      std::vector<G4VPhysicalVolume*>& pvs,
+						      std::vector<G4LogicalVolume*>&   lvs)
+{
+  const auto& lv = volume->GetLogicalVolume();
+  lvs.push_back(lv);
+  for (G4int i = 0; i < lv->GetNoDaughters(); i++)
+    {
+      const auto& pv = lv->GetDaughter(i);
+      pvs.push_back(pv);
+      lvs.push_back(lv);
+      GetAllLogicalAndPhysical(pv, pvs, lvs); // recurse into daughter
+    }
 }
