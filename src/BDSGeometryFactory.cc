@@ -47,11 +47,18 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 #endif
   
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
-  G4String fileName = BDS::GetFullPath(ff.second);
+  G4String      fileName = BDS::GetFullPath(ff.second);
+
+  const auto search = registry.find(fileName);
+  if (search != registry.end())
+    {// it was found already in registry
+      return search->second;
+    }
+  // else wasn't found so continue
+  
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
-
-
   BDSGeometry* result = nullptr;
+  
   switch(format.underlying())
     {
     case BDSGeometryType::gmad:
@@ -79,8 +86,8 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 
   if (result)
     {
-      registry[(std::string)fileName] = nullptr;
-
+      registry[(std::string)fileName] = result;
+      storage.push_back(result);
     }
   return result;
 }
