@@ -28,31 +28,35 @@ BDSGeometryFactoryGDML* BDSGeometryFactoryGDML::Instance()
   return instance;
 }
 
-BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName)
+BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
+						   std::map<G4String, G4Colour*>* mapping)
 {
   std::vector<G4VPhysicalVolume*> physicalVolumes;
   std::vector<G4LogicalVolume*>   logicalVolumes;
   
   G4GDMLParser* parser = new G4GDMLParser();
   parser->Read(fileName, /*validate=*/true);
-  
-  G4LogicalVolume* containerLV    = parser->GetWorldVolume()->GetLogicalVolume();
-  G4VSolid*        containerSolid = containerLV->GetSolid();
 
-  for (G4int i = 0; i < containerLV->GetNoDaughters(); i++)
-    {
-      auto aPV = containerLV->GetDaughter(i);
-      physicalVolumes.push_back(aPV);
-      logicalVolumes.push_back(aPV->GetLogicalVolume());
-    }
+  G4VPhysicalVolume* containerPV = parser->GetWorldVolume();
+  G4LogicalVolume*   containerLV = containerPV->GetLogicalVolume();
+  G4VSolid*       containerSolid = containerLV->GetSolid();
 
+  // record all pvs and lvs used in this loaded geometry
+  std::vector<G4VPhysicalVolume*> pvs;
+  std::vector<G4LogicalVolume*>  lvs;
+  GetAllLogicalAndPhysical(containerPV, pvs, lvs);
+
+  auto vises = ApplyColourMapping(lvs, mapping);
+
+  /// Now overwrite container lv vis attributes
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
   BDSExtent defaultExtent = BDSExtent(1*CLHEP::m, 1*CLHEP::m, 1*CLHEP::m);
   
   BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, containerLV, defaultExtent);
-  result->RegisterLogicalVolume(logicalVolumes);
-  result->RegisterPhysicalVolume(physicalVolumes);
+  result->RegisterLogicalVolume(lvs);
+  result->RegisterPhysicalVolume(pvs);
+  result->RegisterVisAttributes(vises);
 
   delete parser;
   return result;
