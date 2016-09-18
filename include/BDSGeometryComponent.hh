@@ -157,10 +157,10 @@ public:
   void InheritObjects(BDSGeometryComponent* component);
 
   /// Access all logical volumes belonging to this component
-  std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
+  std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
-  virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
+  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
   void SetSensitiveDetector(G4VSensitiveDetector* sd);
