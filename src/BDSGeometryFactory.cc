@@ -58,7 +58,8 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
     }
 }
 
-BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileName)
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileName,
+						       std::map<G4String, G4Colour*>* colourMapping)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String      fileName = BDS::GetFullPath(ff.second);
@@ -72,12 +73,10 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileNam
   
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
   BDSGeometryFactoryBase* fac = GetAppropriateFactory(format);
-  BDSGeometryExternal* result = fac->Build(fileName);
+  BDSGeometryExternal* result = fac->Build(fileName, colourMapping);
 
   if (result)
     {
-      BDSGeometryFactoryBase::ColourCode(result, nullptr/*TBC*/);
-      BDSGeometryFactoryBase::SetVisibleWithAlpha(result, 1.0);
       registry[(std::string)fileName] = result;
       storage.push_back(result);
     }

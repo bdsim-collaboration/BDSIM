@@ -5,7 +5,13 @@
 
 #include "globals.hh"
 
+#include <map>
+#include <vector>
+
 class BDSGeometryExternal;
+class G4Colour;
+class G4LogicalVolume;
+class G4VPhysicalVolume;
 
 class BDSGeometryFactoryGDML: public BDSGeometryFactoryBase
 {
@@ -14,7 +20,8 @@ public:
 
   virtual ~BDSGeometryFactoryGDML();
 
-  virtual BDSGeometryExternal* Build(G4String fileName);
+  virtual BDSGeometryExternal* Build(G4String fileName,
+				     std::map<G4String, G4Colour*>* colourMapping = nullptr);
 
 private:
   /// Private default constructor as singleton.

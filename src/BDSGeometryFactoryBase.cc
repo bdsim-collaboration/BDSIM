@@ -5,10 +5,12 @@
 #include "globals.hh"
 #include "G4Colour.hh"
 #include "G4LogicalVolume.hh"
+#include "G4String.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <map>
+#include <vector>
 
 BDSGeometryFactoryBase::BDSGeometryFactoryBase()
 {;}
@@ -16,52 +18,48 @@ BDSGeometryFactoryBase::BDSGeometryFactoryBase()
 BDSGeometryFactoryBase::~BDSGeometryFactoryBase()
 {;}
 
-void BDSGeometryFactoryBase::ColourCode(BDSGeometryExternal* /*component*/,
-					std::map<G4String, G4Colour*>* /*mapping*/)
-{return;}
-
-void BDSGeometryFactoryBase::SetVisibleWithAlpha(BDSGeometryExternal* component,
-						 G4double             alpha)
+std::vector<G4VisAttributes*> BDSGeometryFactoryBase::ApplyColourMapping(std::vector<G4LogicalVolume*>& lvs,
+									 std::map<G4String, G4Colour*>* mapping)
 {
-  G4VisAttributes* newVis = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
-  newVis->SetVisibility(true);
-  G4bool registered = false;
+  std::vector<G4VisAttributes*> visAttributes; // empty vector
 
-  std::map<const G4VisAttributes*, G4VisAttributes*> alreadySetVis;
-  for (auto& lv : component->GetAllLogicalVolumes())
+  // no mapping, just return.
+  if (!mapping)
+    {return visAttributes;}
+  
+  if (mapping->size() == 1)
+    {// only one colour for all - simpler
+      G4VisAttributes* vis = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
+      vis->SetVisibility(true);
+      visAttributes.push_back(vis);
+      for (auto lv : lvs)
+	{lv->SetVisAttributes(*vis);}
+      return visAttributes;
+    }
+
+  // else iterate over all lvs and required vis attributes
+  // prepare required vis attributes
+  std::map<G4String, G4VisAttributes*> attMap;
+  visAttributes.reserve(mapping->size()); // expand but don't initialise
+  for (const auto& it : *mapping)
     {
-      const auto& vis = lv->GetVisAttributes();
-      if (vis)
-	{// update vis attributes while saving memory - they could all have the same vis attributes or mix
-	  auto search = alreadySetVis.find(vis);
-	  if (search != alreadySetVis.end())
-	    {// was found
-	      lv->SetVisAttributes(search->second);
-	    }
-	  else
-	    {// wasn't found.  Can't fiddle a vis attributs, so copy and reregister with new alpha
-	      G4VisAttributes* localNewVis = new G4VisAttributes(*vis);
-	      localNewVis->SetVisibility(true);
-	      const G4Colour& c = vis->GetColour();
-	      G4Colour newColour = G4Colour(c.GetRed(), c.GetGreen(), c.GetBlue(), alpha);
-	      localNewVis->SetColour(newColour);
-	      lv->SetVisAttributes(localNewVis);
-	      alreadySetVis[vis] = localNewVis;
-	    } 
-	}
-      else
-	{	  
-	  lv->SetVisAttributes(newVis);
-	  if (!registered)
-	    {
-	      component->RegisterVisAttributes(newVis);
-	      registered = true;
-	    }
-	}
+      G4VisAttributes* vis = new G4VisAttributes(*(it.second));
+      vis->SetVisibility(true);
+      visAttributes.push_back(vis);
+      attMap[it.first] = vis;
     }
 
-  if (!registered)
-    {// wasn't used, so clean up
-      delete newVis;
+  for (auto lv : lvs)
+    {// iterate over all volumes
+      const G4String& name = lv->GetName();
+      for (const auto& it : attMap)
+	{// iterate over all mappings to find first one that matches substring
+	  if (name.contains(it.first))
+	    {
+	      lv->SetVisAttributes(it.second);
+	      break;
+	    }
+	}
     }
+  return visAttributes;
 }

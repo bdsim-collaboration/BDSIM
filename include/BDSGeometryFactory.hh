@@ -28,7 +28,8 @@ public:
   
   BDSGeometry* BuildGeometryOld(G4String formatAndFilePath);
 
-  BDSGeometryExternal* BuildGeometry(G4String formatAndFilePath);
+  BDSGeometryExternal* BuildGeometry(G4String formatAndFilePath,
+				     std::map<G4String, G4Colour*>* colourMapping = nullptr);
   
   //BDSGeometry* BuildGeometry(BDSGeometryType type, G4String file);
  
