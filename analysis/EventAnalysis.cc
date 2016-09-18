@@ -29,6 +29,8 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
   Analysis("Event.", chain, "EventHistogramsMerged", debug),
   event(eventIn)
 {
+  SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
+  samplerAnalyses.push_back(sa);
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
