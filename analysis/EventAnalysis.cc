@@ -46,7 +46,10 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
 }
 
 EventAnalysis::~EventAnalysis()
-{;}
+{
+  for (auto& sa : samplerAnalyses)
+    {delete sa;}
+}
 
 void EventAnalysis::Process()
 {
