@@ -72,7 +72,7 @@ void BDSElement::PlaceComponents()
   
   BDSGeometryFactory* gFact = BDSGeometryFactory::Instance();
   
-  geometry = gFact->BuildGeometry(geometryFileName);
+  geometry = gFact->BuildGeometryOld(geometryFileName);
   geometry->Construct(containerLogicalVolume);
 
   RegisterSensitiveVolume(geometry->GetSensitiveComponents());

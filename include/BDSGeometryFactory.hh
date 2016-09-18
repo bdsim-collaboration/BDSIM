@@ -24,7 +24,7 @@ public:
   
   ~BDSGeometryFactory();
   
-  BDSGeometry* BuildGeometry(G4String formatAndFilePath);
+  BDSGeometry* BuildGeometryOld(G4String formatAndFilePath);
 
   BDSGeometry* BuildGeometry(BDSGeometryType type, G4String file);
  

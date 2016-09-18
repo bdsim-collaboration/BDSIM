@@ -83,12 +83,6 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 #endif
       break;
     }
-
-  if (result)
-    {
-      registry[(std::string)fileName] = result;
-      storage.push_back(result);
-    }
   return result;
 }
 
