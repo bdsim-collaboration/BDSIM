@@ -1,6 +1,7 @@
 #ifndef BDSGEOMETRYFACTORY_H
 #define BDSGEOMETRYFACTORY_H
 
+#include "BDSGeometryFactoryBase.hh"
 #include "BDSGeometryType.hh"
 
 #include "globals.hh"
@@ -9,6 +10,7 @@
 #include <unordered_map>
 
 class BDSGeometry;
+class BDSGeometryExternal;
 
 /**
  * @brief Interface to external geometry construction.
@@ -26,7 +28,9 @@ public:
   
   BDSGeometry* BuildGeometryOld(G4String formatAndFilePath);
 
-  BDSGeometry* BuildGeometry(BDSGeometryType type, G4String file);
+  BDSGeometryExternal* BuildGeometry(G4String formatAndFilePath);
+  
+  //BDSGeometry* BuildGeometry(BDSGeometryType type, G4String file);
  
 private:
   /// Private accessor as singleton
@@ -38,12 +42,13 @@ private:
   /// A registry of all previously constructed components. We must use an
   /// std::string (which G4String inherits from) so provide implicit hasher
   /// for the storage in the unordered map (which isn't provided for G4String).
-  std::unordered_map<std::string, BDSGeometry*> registry;
+  std::unordered_map<std::string, BDSGeometryExternal*> registry;
 
   /// This is where the geometry components are stored. By storing the
   /// pointers in a vector, they may be more efficiently iterated over.
-  std::vector<BDSGeometry*> storage;
+  std::vector<BDSGeometryExternal*> storage;
 
+  BDSGeometryFactoryBase* GetAppropriateFactory(BDSGeometryType type);
   
   BDSGeometry* BuildGMAD(G4String fileName);
   

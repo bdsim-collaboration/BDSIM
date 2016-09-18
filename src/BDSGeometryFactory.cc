@@ -1,6 +1,9 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
+#include "BDSGeometryFactoryBase.hh"
+#include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryGMAD.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
@@ -40,13 +43,24 @@ BDSGeometryFactory::~BDSGeometryFactory()
     {delete geom;}
 }
 
-BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
+BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryType type)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "format and path: " << formatAndFilePath << G4endl;
-#endif
-  
-  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
+  switch(type.underlying())
+    {
+    case BDSGeometryType::gdml:
+      {return BDSGeometryFactoryGDML::Instance(); break;}
+    default:
+      {
+	G4cout << "Unsupported factory type " << type;
+	return nullptr;
+	break;
+      }
+    }
+}
+
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileName)
+{
+  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String      fileName = BDS::GetFullPath(ff.second);
 
   const auto search = registry.find(fileName);
@@ -56,6 +70,29 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
     }
   // else wasn't found so continue
   
+  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+  BDSGeometryFactoryBase* fac = GetAppropriateFactory(format);
+  BDSGeometryExternal* result = fac->Build(fileName);
+
+  if (result)
+    {
+      BDSGeometryFactoryBase::ColourCode(result, nullptr/*TBC*/);
+      BDSGeometryFactoryBase::SetVisibleWithAlpha(result, 1.0);
+      registry[(std::string)fileName] = result;
+      storage.push_back(result);
+    }
+  
+  return result;
+}
+
+BDSGeometry* BDSGeometryFactory::BuildGeometryOld(G4String formatAndFilePath)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "format and path: " << formatAndFilePath << G4endl;
+#endif
+  
+  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
+  G4String      fileName = BDS::GetFullPath(ff.second);
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
   BDSGeometry* result = nullptr;
   
