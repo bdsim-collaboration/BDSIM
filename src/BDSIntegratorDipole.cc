@@ -181,9 +181,6 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
 
     G4double xCosTerm, yCosTerm, xSinTerm, ySinTerm;
 
-    if (bPrime != 0)
-    {G4double dummy = 1;}
-
     // sign for matrix terms which depend on the sign of K1
     G4double sign  = (std::signbit(K1)) ? (-1.0) : (1.0);
 
@@ -215,10 +212,6 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     G4double Y12 = (1.0/rootKy) * ySinTerm;
     G4double Y21 = 1.0*sign* rootKy * ySinTerm;
     G4double Y22 = Y11;
-
-    G4double term1 = LocalR.x() * X21;
-    G4double term2 = LocalRp.x()* X22;
-    G4double term3 = LocalR.x() * X26;
 
     G4double x1, y1, z1, xp1, yp1, zp1;
     x1  = LocalR.x()*X11 + LocalRp.x()*X12;
