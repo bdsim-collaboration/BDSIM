@@ -1,8 +1,11 @@
+#include "BDSBeamPipe.hh"
+#include "BDSColours.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGeometryExternal.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
@@ -15,13 +18,17 @@
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryNone.hh"
 #include "BDSMagnetGeometryType.hh"
-
-#include "globals.hh"                        // geant4 globals / types
-
-#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+
+#include "globals.hh"         // geant4 globals / types
+#include "G4Box.hh"
+#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
+#include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
+
+#include <algorithm>
+#include <cmath>
 
 BDSMagnetOuterFactory* BDSMagnetOuterFactory::_instance = nullptr;
 
@@ -360,7 +367,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
 						      G4double            length,
 						      BDSBeamPipe*        beampipe)
 {
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(info->geometryTypeAndPath);
+  std::map<G4String, G4Colour*> defaultMap = {
+    {"coil", BDSColours::Instance()->GetColour("coil")},
+    {"yoke", BDSColours::Instance()->GetColour("quadrupole")},
+    {"quad", BDSColours::Instance()->GetColour("quadrupole")},
+    {"sext", BDSColours::Instance()->GetColour("sextupole")},
+    {"oct",  BDSColours::Instance()->GetColour("octupole")},
+    {"dec",  BDSColours::Instance()->GetColour("decapole")}
+  };
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(info->geometryTypeAndPath, &defaultMap);
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
@@ -377,7 +392,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
       exit(1);
     }
     
-  BDSGeometryComponent* container = CreateContainer(name, length, geom);
+  BDSGeometryComponent* container = CreateContainer(name, length, geom, beampipe);
   
   BDSMagnetOuter* outer = new BDSMagnetOuter(geom, container);
   return outer;
@@ -385,29 +400,51 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
 
 BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainer(G4String             name,
 							     G4double             length,
-							     BDSGeometryExternal* external)
+							     BDSGeometryExternal* external,
+							     BDSBeamPipe*         beampipe)
 {
-  G4double magnetContainerRadius = 3*CLHEP::m;
-  G4VSolid* magnetContainerSolid = new G4Tubs(name + "_container_solid",   // name
-				    0,                           // inner radius
-				    magnetContainerRadius,       // outer radius
-				    length * 0.5, // z half length
-				    0,                           // starting angle
-				    CLHEP::twopi);               // sweep angle
+  G4ThreeVector  inputFace = beampipe->InputFaceNormal();
+  G4ThreeVector outputFace = beampipe->OutputFaceNormal();
+
+  BDSExtent outer = external->GetExtent();
+  G4VSolid* containerSolid;
+  BDSExtent containerExt;
+  if ((inputFace.z() > -1) || (outputFace.z() < 1))
+    {// use a cut tubs for angled face
+      G4double posR = std::sqrt(std::pow(outer.XPos(),2) + std::pow(outer.YPos(),2));
+      G4double negR = std::sqrt(std::pow(outer.XNeg(),2) + std::pow(outer.YNeg(),2));
+      G4double magnetContainerRadius = std::max(posR, negR) + 1*CLHEP::mm; // generous margin
+      containerSolid = new G4CutTubs(name + "_container_solid",   // name
+				     0,                           // inner radius
+				     magnetContainerRadius,       // outer radius
+				     length * 0.5,                // z half length
+				     0,                           // starting angle
+				     CLHEP::twopi,                // sweep angle
+				     inputFace,
+				     outputFace);
+      containerExt = BDSExtent(magnetContainerRadius, magnetContainerRadius, 0.5*length);
+    }
+  else
+    {// flat faces so use a box
+      G4double radius = outer.MaximumAbsTransverse() + 1*CLHEP::mm; // generous margin
+      containerSolid = new G4Box(name + "_container_solid", // name
+				 radius,
+				 radius,
+				 length*0.5);
+      containerExt = BDSExtent(radius, radius, length*0.5);
+    }
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
-  G4LogicalVolume* magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
-							   emptyMaterial,
-							   name + "_container_lv");
+  G4LogicalVolume* containerLV = new G4LogicalVolume(containerSolid,
+						     emptyMaterial,
+						     name + "_container_lv");
 
-  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+  containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
-  BDSExtent magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, length*0.5);
-
-  BDSGeometryComponent* magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
-								   magnetContainerLV,
-								   magContExtent);
+  BDSGeometryComponent* container = new BDSGeometryComponent(containerSolid,
+							     containerLV,
+							     containerExt);
   
-  return magnetContainer;
+  return container;
 }
 						      

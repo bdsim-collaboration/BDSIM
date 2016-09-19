@@ -163,10 +163,15 @@ private:
 				 BDSMagnetOuterInfo* info,
 				 G4double            length,
 				 BDSBeamPipe*        beampipe);
-  
+
+  /// Create a container based on an external geometry component. Exists here as the
+  /// using the external factory exists here and doesn't belong in a derived factory.
+  /// Uses the beam pipe instance to get the surface normals as the container must match.
+  /// Here, length is the full length of the final object desired.
   BDSGeometryComponent* CreateContainer(G4String             name,
 					G4double             length,
-					BDSGeometryExternal* external);
+					BDSGeometryExternal* external,
+					BDSBeamPipe*         beampipe);
 
 };
 
