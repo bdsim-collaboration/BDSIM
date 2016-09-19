@@ -17,7 +17,7 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 					 G4double                  brho,
 					 G4Mag_EqRhs*              eqOfMIn):
   BDSIntegratorBase(eqOfMIn, 6),
-  angle((*strength)["angle"]),
+  angle(-(*strength)["angle"]),
   length((*strength)["length"]),
   bField((*strength)["field"]),
   brho(brho)
@@ -64,7 +64,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector v0    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag        = v0.mag();
   G4ThreeVector InitMomDir     = v0.unit();
-  G4double rho = -length/angle;
+  G4double rho = length/std::abs(angle);
   //G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
   // in case of zero field (though what if there is a quadrupole part..)
@@ -93,14 +93,54 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector itsInitialR  = LocalR;
   G4ThreeVector itsInitialRp = LocalRp;
 
+  G4double lengthCovered = 0;
+  G4double angleCoveredSoFar = 0;
+
+  // calculate length and angle already completed by the stepper
+  if (LocalR.z() < 0)
+    {lengthCovered = std::abs(length)/2.0 - std::abs(LocalR.z());}
+  else
+    {lengthCovered = std::abs(length)/2.0 + std::abs(LocalR.z());}
+  angleCoveredSoFar = lengthCovered/rho;
+
+  // cludge to counter the start position not being equal to -length/2.
+  // This arises from the container length being equal to the chord length,
+  // not the element length, therefore a small fraction of the dipole does
+  // not bend the particles trajectory accordingly.
+  G4bool needToUpdateAngle=false;
+  G4double target = 0.01*length;
+  G4double temp = length/2.0 - std::abs(LocalR.z());
+  if ((temp < target) && (LocalR.z() < 0))
+    {needToUpdateAngle=true;}
+
+  // update the particle direction according to cludge.
+  if (needToUpdateAngle)
+    {LocalRp.rotateY(-angleCoveredSoFar);}
+
+  // temporary copy of the rotated momentum for debugging purposes.
+  G4ThreeVector LocalRp2 = LocalRp;
+
   // relative mom. spread
   momSpread = (nominalMom - InitMag)/nominalMom;
 
   G4double halftheta = h/(rho*2.0);
+  G4double halfangle = angle/2.0;
 
-  // rotate momentum by half angle so as to point the central trajectory
+  G4double angleCoveredByThisStep = 2.0*halftheta;
+  G4double angleToRotateByToGetToChord = 0;
+
+  // calculate rotation angle to point along the chord
+  if (angleCoveredSoFar < halfangle)
+    {angleToRotateByToGetToChord = halfangle - angleCoveredSoFar;}
+  else if (angleCoveredSoFar > halfangle)
+    {angleToRotateByToGetToChord = angleCoveredSoFar - halfangle;}
+
+  // rotate momentum so as to point the central trajectory
   // along the chord of the dipole, and renormalize to unity.
-  LocalRp.rotateY(-halftheta);
+  if (LocalR.z()<0)
+    {LocalRp.rotateY(-angleToRotateByToGetToChord);}
+  else
+    {LocalRp.rotateY(angleToRotateByToGetToChord);}
   LocalRp = LocalRp.unit();
 
   // advance the orbit
@@ -108,9 +148,13 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector itsFinalPoint = RandRp.first;
   G4ThreeVector itsFinalDir = RandRp.second;
 
-  // rotate again by half angle to point the central trajectory
-  // along the curvilinear, thus rotating by the whole dipole angle
-  itsFinalDir.rotateY(-halftheta);
+  // rotate the momentum back to the original direction at the start, then rotate by the
+  // angle of the dipole that would've been covered in this step
+  if (LocalR.z() > 0)
+    {itsFinalDir.rotateY(-angleToRotateByToGetToChord);}
+  else
+    {itsFinalDir.rotateY(angleToRotateByToGetToChord);}
+  itsFinalDir.rotateY(-angleCoveredByThisStep);
 
   G4double CosT_ov_2=cos(h/rho/2.0);
   distChord = fabs(rho)*(1.-CosT_ov_2);
@@ -162,6 +206,10 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     // see the developer manual for details on the matrix elements and
     // conditional statements.
 
+    // temporary copy of the input position and momentum for debugging purposes
+    G4ThreeVector RCopy = LocalR;
+    G4ThreeVector RpCopy = LocalRp;
+
     // quad, dipole, and combined magnet strengths
     G4double K1 = bPrime / brho;
     G4double k0 = 1.0 / pow(rho,2);
@@ -180,9 +228,6 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     G4double thetaX = h * rootKx;
 
     G4double xCosTerm, yCosTerm, xSinTerm, ySinTerm;
-
-    if (bPrime != 0)
-    {G4double dummy = 1;}
 
     // sign for matrix terms which depend on the sign of K1
     G4double sign  = (std::signbit(K1)) ? (-1.0) : (1.0);
@@ -215,10 +260,6 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     G4double Y12 = (1.0/rootKy) * ySinTerm;
     G4double Y21 = 1.0*sign* rootKy * ySinTerm;
     G4double Y22 = Y11;
-
-    G4double term1 = LocalR.x() * X21;
-    G4double term2 = LocalRp.x()* X22;
-    G4double term3 = LocalR.x() * X26;
 
     G4double x1, y1, z1, xp1, yp1, zp1;
     x1  = LocalR.x()*X11 + LocalRp.x()*X12;

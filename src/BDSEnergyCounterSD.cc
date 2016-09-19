@@ -38,6 +38,8 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name):
   stepLength(0.0),
   precisionRegion(false),
   ptype(0),
+  trackID(-1),
+  parentID(-1),
   volName(""),
   turnstaken(0),
   eventnumber(0),

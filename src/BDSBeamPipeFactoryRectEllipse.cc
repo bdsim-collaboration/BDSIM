@@ -12,7 +12,6 @@
 #include "G4EllipticalTube.hh"
 #include "G4IntersectionSolid.hh"
 #include "G4LogicalVolume.hh"
-#include "G4Material.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"

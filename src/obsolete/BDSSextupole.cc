@@ -1,7 +1,6 @@
 #include "BDSSextupole.hh"
 
 #include "BDSGlobalConstants.hh" 
-#include "BDSBeamPipeInfo.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetOuterInfo.hh"
