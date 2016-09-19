@@ -3,9 +3,6 @@
 
 #include "BDSRBend.hh"
 
-#include "BDSBeamPipe.hh"
-#include "BDSBeamPipeFactory.hh"
-#include "BDSBeamPipeInfo.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
