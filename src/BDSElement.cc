@@ -70,7 +70,7 @@ void BDSElement::PlaceComponents()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   
-  BDSGeometryFactory* gFact = new BDSGeometryFactory();
+  BDSGeometryFactory* gFact = BDSGeometryFactory::Instance();
   
   geometry = gFact->BuildGeometry(geometryFileName);
   geometry->Construct(containerLogicalVolume);

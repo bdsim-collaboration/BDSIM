@@ -16,7 +16,7 @@ class BDSGeometry
 {
 public:
   BDSGeometry();
-  ~BDSGeometry();
+  virtual ~BDSGeometry();
   BDSGeometry(BDSGeometryType format, G4String file);
 
   /// Delegated initialisation of variables for multiple constructors (saves duplication).

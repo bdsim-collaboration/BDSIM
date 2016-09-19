@@ -15,15 +15,30 @@
 #include "BDSGeometryGDML.hh"
 #endif
 
+#include <string>
+#include <unordered_map>
 #include <utility>
 
 class BDSGeometry;
+
+BDSGeometryFactory* BDSGeometryFactory::instance = nullptr;
+
+BDSGeometryFactory* BDSGeometryFactory::Instance()
+{
+  if (!instance)
+    {instance = new BDSGeometryFactory();}
+  return instance;
+}
 
 BDSGeometryFactory::BDSGeometryFactory()
 {;}
 
 BDSGeometryFactory::~BDSGeometryFactory()
-{;}
+{
+  instance = nullptr;
+  for (auto& geom : storage)
+    {delete geom;}
+}
 
 BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 {
@@ -32,34 +47,49 @@ BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
 #endif
   
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
-  G4String fileName = BDS::GetFullPath(ff.second);
-  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+  G4String      fileName = BDS::GetFullPath(ff.second);
 
+  const auto search = registry.find(fileName);
+  if (search != registry.end())
+    {// it was found already in registry
+      return search->second;
+    }
+  // else wasn't found so continue
+  
+  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+  BDSGeometry* result = nullptr;
+  
   switch(format.underlying())
     {
     case BDSGeometryType::gmad:
-      {return BuildGMAD(fileName); break;}
+      {result = BuildGMAD(fileName); break;}
       
 #ifdef USE_LCDD
     case BDSGeometryType::lcdd:
-      {return BuildLCDD(fileName); break;}
+      {result = BuildLCDD(fileName); break;}
 #endif
 
     case BDSGeometryType::mokka:
-      {return BuildMokka(fileName); break;}
+      {result = BuildMokka(fileName); break;}
 
 #ifdef USE_GDML
     case BDSGeometryType::gdml:
-      {return BuildGDML(fileName); break;}
+      {result =  BuildGDML(fileName); break;}
 #endif
       
     default:
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "no geometry format specified - not building anything" << G4endl;
 #endif
-      return nullptr;
       break;
     }
+
+  if (result)
+    {
+      registry[(std::string)fileName] = result;
+      storage.push_back(result);
+    }
+  return result;
 }
 
 BDSGeometry* BDSGeometryFactory::BuildGMAD(G4String fileName)
