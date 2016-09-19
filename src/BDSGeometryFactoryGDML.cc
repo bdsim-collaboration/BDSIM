@@ -1,5 +1,6 @@
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
+#include "BDSGeometryInspector.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
@@ -43,7 +44,7 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
 
   // record all pvs and lvs used in this loaded geometry
   std::vector<G4VPhysicalVolume*> pvs;
-  std::vector<G4LogicalVolume*>  lvs;
+  std::vector<G4LogicalVolume*>   lvs;
   GetAllLogicalAndPhysical(containerPV, pvs, lvs);
 
   auto vises = ApplyColourMapping(lvs, mapping);
@@ -51,9 +52,11 @@ BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
   /// Now overwrite container lv vis attributes
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
-  BDSExtent defaultExtent = BDSExtent(1*CLHEP::m, 1*CLHEP::m, 1*CLHEP::m);
+  std::pair<BDSExtent, BDSExtent> outerInner = BDS::DetermineExtents(containerSolid);
   
-  BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, containerLV, defaultExtent);
+  BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, containerLV,
+							outerInner.first,/*outer*/
+							outerInner.second);/*inner*/
   result->RegisterLogicalVolume(lvs);
   result->RegisterPhysicalVolume(pvs);
   result->RegisterVisAttributes(vises);

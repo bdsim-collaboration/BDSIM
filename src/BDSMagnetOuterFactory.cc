@@ -364,15 +364,19 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
 
   BDSExtent bpExtent = beampipe->GetExtent();
   BDSExtent magInner = geom->GetInnerExtent();
-
-  /*
+  
   if (magInner.TransverselyLessThan(bpExtent))
     {
-      G4cout << info->geometryTypeAndPath << " will not fit around beam pipe \""
-      << name << "\"" <<G4endl;
+      G4cout << info->geometryTypeAndPath
+	     << " will not fit around beam pipe in element \"" << name << "\"" <<G4endl;
+      G4cout << "Determined extents to be: " << G4endl;
+      G4cout << "External geometry inner "   << G4endl;
+      G4cout << magInner                     << G4endl;
+      G4cout << "Beam pipe outer "           << G4endl;
+      G4cout << bpExtent                     << G4endl;
       exit(1);
     }
-  */
+    
   BDSGeometryComponent* container = CreateContainer(name, length, geom);
   
   BDSMagnetOuter* outer = new BDSMagnetOuter(geom, container);
