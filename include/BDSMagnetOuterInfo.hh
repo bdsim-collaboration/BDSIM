@@ -29,9 +29,10 @@ public:
 		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              outerDiameterIn,
 		     G4Material*           outerMaterialIn,
-		     G4double              angleInIn = 0,
-		     G4double              angleOutIn = 0,
-		     G4bool                yokeOnLeft = false);
+		     G4double              angleInIn             = 0,
+		     G4double              angleOutIn            = 0,
+		     G4bool                yokeOnLeft            = false,
+		     G4String              geometryTypeAndPathIn = "");
 
   G4String              name;
   BDSMagnetGeometryType geometryType;
@@ -40,6 +41,7 @@ public:
   G4double              angleIn;
   G4double              angleOut;
   G4bool                yokeOnLeft;
+  G4String              geometryTypeAndPath;
 
   /// Output stream operator implementation.
   friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
