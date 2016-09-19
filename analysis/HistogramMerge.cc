@@ -10,10 +10,10 @@ HistogramMerge::HistogramMerge()
 HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
 {
   auto h1i = h->Get1DHistograms();
-  for(auto h : h1i)
+  for(auto hist : h1i)
   {
-    auto ch  = (TH1D*)h->Clone();
-    auto chE = (TH1D*)h->Clone();
+    auto ch  = (TH1D*)hist->Clone();
+    auto chE = (TH1D*)hist->Clone();
     ch->Reset();
     chE->Reset();
     this->histograms1D.push_back(ch);
@@ -22,10 +22,10 @@ HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
   }
 
   auto h2i = h->Get2DHistograms();
-  for(auto h : h2i)
+  for(auto hist : h2i)
   {
-    auto ch  = (TH2D*)h->Clone();
-    auto chE = (TH2D*)h->Clone();
+    auto ch  = (TH2D*)hist->Clone();
+    auto chE = (TH2D*)hist->Clone();
     ch->Reset();
     chE->Reset();
     this->histograms2D.push_back(ch);
@@ -70,7 +70,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     {
       for(int k=0;k<h1->GetNbinsY()+1;++k)
       {
-         h1->SetBinContent(j,k,h1->GetBinContent(j,k)+h2->GetBinContent(j,k));
+        h1->SetBinContent(j,k,h1->GetBinContent(j,k)+h2->GetBinContent(j,k));
         h1e->SetBinContent(j,k,h1e->GetBinContent(j,k)+pow(h2->GetBinContent(j,k),2));
       }
     }
