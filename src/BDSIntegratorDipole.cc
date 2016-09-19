@@ -162,6 +162,10 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double
     // see the developer manual for details on the matrix elements and
     // conditional statements.
 
+    // temporary copy of the input position and momentum for debugging purposes
+    G4ThreeVector RCopy = LocalR;
+    G4ThreeVector RpCopy = LocalRp;
+
     // quad, dipole, and combined magnet strengths
     G4double K1 = bPrime / brho;
     G4double k0 = 1.0 / pow(rho,2);
