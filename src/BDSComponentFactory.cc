@@ -1187,7 +1187,10 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   if (element->magnetGeometryType == "")
     {info->geometryType = BDSGlobalConstants::Instance()->GetMagnetGeometryType();}
   else
-    {info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);}
+    {
+      info->geometryType = BDS::DetermineMagnetGeometryType(element->magnetGeometryType);
+      info->geometryTypeAndPath = element->magnetGeometryType;
+    }
 
   // set face angles w.r.t. chord
   info->angleIn  = angleIn;
