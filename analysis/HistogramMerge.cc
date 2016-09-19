@@ -88,32 +88,34 @@ void HistogramMerge::Terminate()
   {
     auto h1  = histograms1D[i];
     auto h1e = histograms1DError[i];
+    int entries = histograms1DN[i];
 
     for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
-      double mean = h1->GetBinContent(j)/histograms1DN[i];
-      double std  = sqrt(h1e->GetBinContent(j)/histograms1DN[i]-pow(mean,2))/sqrt(histograms1DN[i]);
+      double mean = h1->GetBinContent(j)/entries;
+      double std  = sqrt((h1e->GetBinContent(j)/entries-pow(mean,2))/entries);
       h1->SetBinContent(j,mean);
       h1->SetBinError(j,std);
     }
-    h1->SetEntries(histograms1DN[i]);
+    h1->SetEntries(entries);
   }
 
   for(unsigned int i=0;i<histograms2D.size();++i)
   {
     auto h1  = histograms2D[i];
     auto h1e = histograms2DError[i];
-    for(int j=0;j<=h1->GetNbinsX();++j)
+    int entries = histograms2DN[i];
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
-      for(int k=0;k<=h1->GetNbinsY();++k)
+      for(int k=0;k<=h1->GetNbinsY()+1;++k)
       {
-        double mean = h1->GetBinContent(i,j)/histograms2DN[i];
-        double std  = sqrt(h1e->GetBinContent(j,k)/histograms2DN[i]-pow(mean,2))/sqrt(histograms2DN[i]);
+        double mean = h1->GetBinContent(j,k)/entries;
+        double std  = sqrt((h1e->GetBinContent(j,k)/entries-pow(mean,2))/entries);
         h1->SetBinContent(j,k,mean);
         h1->SetBinError(j,k,std);
       }
     }
-    h1->SetEntries(histograms2DN[i]);
+    h1->SetEntries(entries);
   }
 }
 
