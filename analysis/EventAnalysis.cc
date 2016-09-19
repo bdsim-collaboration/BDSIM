@@ -21,8 +21,9 @@
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-Analysis("Event.", nullptr, "EventHistogramsMerged"),
-  event(nullptr)
+  Analysis("Event.", nullptr, "EventHistogramsMerged"),
+  event(nullptr),
+  printModulo(1)
 {;}
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
