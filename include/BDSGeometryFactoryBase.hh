@@ -9,6 +9,7 @@
 
 class G4Colour;
 class G4LogicalVolume;
+class G4VisAttributes;
 class BDSGeometryExternal;
 
 class BDSGeometryFactoryBase
