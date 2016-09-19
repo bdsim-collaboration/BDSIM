@@ -159,6 +159,15 @@ private:
   static BDSMagnetOuterFactory* _instance;
   BDSMagnetOuterFactoryBase* GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn);
 
+  BDSMagnetOuter* CreateExternal(G4String            name,
+				 BDSMagnetOuterInfo* info,
+				 G4double            length,
+				 BDSBeamPipe*        beampipe);
+  
+  BDSGeometryComponent* CreateContainer(G4String             name,
+					G4double             length,
+					BDSGeometryExternal* external);
+
 };
 
 

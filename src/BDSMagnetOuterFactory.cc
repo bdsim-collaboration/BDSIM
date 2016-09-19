@@ -1,4 +1,8 @@
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
+#include "BDSGeometryComponent.hh"
+#include "BDSGeometryFactory.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterFactoryBase.hh"
@@ -13,6 +17,11 @@
 #include "BDSMagnetGeometryType.hh"
 
 #include "globals.hh"                        // geant4 globals / types
+
+#include "BDSGlobalConstants.hh"
+#include "BDSMaterials.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Tubs.hh"
 
 BDSMagnetOuterFactory* BDSMagnetOuterFactory::_instance = nullptr;
 
@@ -83,6 +92,9 @@ BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagne
 #endif
     return BDSMagnetOuterFactoryLHCRight::Instance();
     break;
+  case BDSMagnetGeometryType::external:
+    return nullptr;
+    break;
   default:
     G4cerr << __METHOD_NAME__ << "unknown type \"" << magnetTypeIn << G4endl;
     exit(1);
@@ -102,6 +114,12 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   G4double outerDiameter                = outerInfo->outerDiameter;
   G4Material* outerMaterial             = outerInfo->outerMaterial;
   BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
+
+  if (geometryType == BDSMagnetGeometryType::external)
+    {
+      outer = CreateExternal(name, outerInfo, outerLength, beampipe);
+      return outer;
+    }
   
   switch(magnetType.underlying())
     {
@@ -336,3 +354,56 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateKicker(BDSMagnetGeometryType magnet
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
   return factory->CreateKicker(name, length, beamPipe, outerDiameter, containerLength, vertical, outerMaterial);
 }
+
+BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
+						      BDSMagnetOuterInfo* info,
+						      G4double            length,
+						      BDSBeamPipe*        beampipe)
+{
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(info->geometryTypeAndPath);
+
+  BDSExtent bpExtent = beampipe->GetExtent();
+  BDSExtent magInner = geom->GetInnerExtent();
+
+  /*
+  if (magInner.TransverselyLessThan(bpExtent))
+    {
+      G4cout << info->geometryTypeAndPath << " will not fit around beam pipe \""
+      << name << "\"" <<G4endl;
+      exit(1);
+    }
+  */
+  BDSGeometryComponent* container = CreateContainer(name, length, geom);
+  
+  BDSMagnetOuter* outer = new BDSMagnetOuter(geom, container);
+  return outer;
+}
+
+BDSGeometryComponent* BDSMagnetOuterFactory::CreateContainer(G4String             name,
+							     G4double             length,
+							     BDSGeometryExternal* external)
+{
+  G4double magnetContainerRadius = 3*CLHEP::m;
+  G4VSolid* magnetContainerSolid = new G4Tubs(name + "_container_solid",   // name
+				    0,                           // inner radius
+				    magnetContainerRadius,       // outer radius
+				    length * 0.5, // z half length
+				    0,                           // starting angle
+				    CLHEP::twopi);               // sweep angle
+
+  G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
+  G4LogicalVolume* magnetContainerLV = new G4LogicalVolume(magnetContainerSolid,
+							   emptyMaterial,
+							   name + "_container_lv");
+
+  magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
+
+  BDSExtent magContExtent = BDSExtent(magnetContainerRadius, magnetContainerRadius, length*0.5);
+
+  BDSGeometryComponent* magnetContainer = new BDSGeometryComponent(magnetContainerSolid,
+								   magnetContainerLV,
+								   magContExtent);
+  
+  return magnetContainer;
+}
+						      
