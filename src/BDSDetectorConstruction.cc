@@ -34,7 +34,6 @@
 #include "G4Box.hh"
 #include "G4Electron.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MagneticField.hh"
 #include "G4Material.hh"
 #include "G4Navigator.hh"
 #include "G4Positron.hh"
