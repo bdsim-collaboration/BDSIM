@@ -93,14 +93,54 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector itsInitialR  = LocalR;
   G4ThreeVector itsInitialRp = LocalRp;
 
+  G4double lengthCovered = 0;
+  G4double angleCoveredSoFar = 0;
+
+  // calculate length and angle already completed by the stepper
+  if (LocalR.z() < 0)
+    {lengthCovered = std::abs(length)/2.0 - std::abs(LocalR.z());}
+  else
+    {lengthCovered = std::abs(length)/2.0 + std::abs(LocalR.z());}
+  angleCoveredSoFar = lengthCovered/rho;
+
+  // cludge to counter the start position not being equal to -length/2.
+  // This arises from the container length being equal to the chord length,
+  // not the element length, therefore a small fraction of the dipole does
+  // not bend the particles trajectory accordingly.
+  G4bool needToUpdateAngle=false;
+  G4double target = 0.01*length;
+  G4double temp = length/2.0 - std::abs(LocalR.z());
+  if ((temp < target) && (LocalR.z() < 0))
+    {needToUpdateAngle=true;}
+
+  // update the particle direction according to cludge.
+  if (needToUpdateAngle)
+    {LocalRp.rotateY(-angleCoveredSoFar);}
+
+  // temporary copy of the rotated momentum for debugging purposes.
+  G4ThreeVector LocalRp2 = LocalRp;
+
   // relative mom. spread
   momSpread = (nominalMom - InitMag)/nominalMom;
 
   G4double halftheta = h/(rho*2.0);
+  G4double halfangle = angle/2.0;
 
-  // rotate momentum by half angle so as to point the central trajectory
+  G4double angleCoveredByThisStep = 2.0*halftheta;
+  G4double angleToRotateByToGetToChord = 0;
+
+  // calculate rotation angle to point along the chord
+  if (angleCoveredSoFar < halfangle)
+    {angleToRotateByToGetToChord = halfangle - angleCoveredSoFar;}
+  else if (angleCoveredSoFar > halfangle)
+    {angleToRotateByToGetToChord = angleCoveredSoFar - halfangle;}
+
+  // rotate momentum so as to point the central trajectory
   // along the chord of the dipole, and renormalize to unity.
-  LocalRp.rotateY(-halftheta);
+  if (LocalR.z()<0)
+    {LocalRp.rotateY(-angleToRotateByToGetToChord);}
+  else
+    {LocalRp.rotateY(angleToRotateByToGetToChord);}
   LocalRp = LocalRp.unit();
 
   // advance the orbit
@@ -108,9 +148,13 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector itsFinalPoint = RandRp.first;
   G4ThreeVector itsFinalDir = RandRp.second;
 
-  // rotate again by half angle to point the central trajectory
-  // along the curvilinear, thus rotating by the whole dipole angle
-  itsFinalDir.rotateY(-halftheta);
+  // rotate the momentum back to the original direction at the start, then rotate by the
+  // angle of the dipole that would've been covered in this step
+  if (LocalR.z() > 0)
+    {itsFinalDir.rotateY(-angleToRotateByToGetToChord);}
+  else
+    {itsFinalDir.rotateY(angleToRotateByToGetToChord);}
+  itsFinalDir.rotateY(-angleCoveredByThisStep);
 
   G4double CosT_ov_2=cos(h/rho/2.0);
   distChord = fabs(rho)*(1.-CosT_ov_2);
