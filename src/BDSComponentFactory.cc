@@ -1,3 +1,4 @@
+
 #include "BDSComponentFactory.hh"
 
 // elements
@@ -1336,7 +1337,10 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) con
   G4double yOffset = element->offsetY * CLHEP::m;
   G4double tilt    = element->tilt    * CLHEP::rad;
 
-  return new BDSTiltOffset(xOffset, yOffset, tilt);
+  BDSTiltOffset* result = nullptr;
+  if (BDS::IsFinite(xOffset) || BDS::IsFinite(yOffset) || BDS::IsFinite(tilt))
+    {result = new BDSTiltOffset(xOffset, yOffset, tilt);}
+  return result;
 }
 
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,
