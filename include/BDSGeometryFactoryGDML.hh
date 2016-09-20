@@ -1,3 +1,5 @@
+#ifdef USE_GDML
+
 #ifndef BDSGEOMETRYFACTORYGDML_H
 #define BDSGEOMETRYFACTORYGDML_H
 
@@ -36,5 +38,7 @@ private:
 				std::vector<G4VPhysicalVolume*>& pvs,
 				std::vector<G4LogicalVolume*>&   lvs);
 };
+
+#endif
 
 #endif

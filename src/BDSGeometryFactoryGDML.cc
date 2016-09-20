@@ -1,3 +1,4 @@
+#ifdef USE_GDML
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryGDML.hh"
 #include "BDSGeometryInspector.hh"
@@ -79,3 +80,4 @@ void BDSGeometryFactoryGDML::GetAllLogicalAndPhysical(const G4VPhysicalVolume*  
       GetAllLogicalAndPhysical(pv, pvs, lvs); // recurse into daughter
     }
 }
+#endif

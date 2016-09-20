@@ -3,7 +3,9 @@
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGeometryFactoryBase.hh"
+#ifdef USE_GDML
 #include "BDSGeometryFactoryGDML.hh"
+#endif
 #include "BDSGeometryGMAD.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
@@ -44,8 +46,10 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
 {
   switch(type.underlying())
     {
+#ifdef USE_GDML
     case BDSGeometryType::gdml:
       {return BDSGeometryFactoryGDML::Instance(); break;}
+#endif
     default:
       {
 	G4cout << "Unsupported factory type " << type;
@@ -69,9 +73,11 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileNam
   // else wasn't found so continue
   
   BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
-  BDSGeometryFactoryBase* fac = GetAppropriateFactory(format);
-  BDSGeometryExternal* result = fac->Build(fileName, colourMapping);
-
+  BDSGeometryFactoryBase* factory = GetAppropriateFactory(format);
+  if (!factory)
+    {return nullptr;}
+  
+  BDSGeometryExternal* result = factory->Build(fileName, colourMapping);
   if (result)
     {
       registry[(std::string)fileName] = result;
