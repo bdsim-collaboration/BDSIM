@@ -759,6 +759,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      positionStart,
 						      positionMiddle,
@@ -775,7 +778,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      elSPosStart - endPieceLength,
 						      elSPosStart - 0.5*endPieceLength,
 						      elSPosStart,
-						      new BDSTiltOffset(*elTiltOffset));
+                                                      forEndPiece);
   return result;
 }
 
@@ -796,6 +799,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
     {elRotEnd->rotateY(CLHEP::pi);}
   G4double           elSPosEnd = element->GetSPositionEnd();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
 						      positionMiddle,
@@ -812,7 +818,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 						      elSPosEnd,
 						      elSPosEnd + 0.5*endPieceLength,
 						      elSPosEnd + endPieceLength,
-						      new BDSTiltOffset(*elTiltOffset));
+						      forEndPiece);
   return result;
 }
 
