@@ -113,7 +113,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
   // loop over trajectory backwards to find non transportation step
   for (G4int i = trajectory->GetPointEntries()-1; i >= 0; --i)
   {
-    BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+    BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
     auto processType = point->GetPostProcessType();
     auto processSubType = point->GetPostProcessSubType();
 
@@ -138,7 +138,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
 #endif
-  return dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
+  return static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
 } 
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
