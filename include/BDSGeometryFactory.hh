@@ -15,6 +15,10 @@ class BDSGeometryExternal;
 /**
  * @brief Interface to external geometry construction.
  *
+ * A factory that uses the correct derived singleton factory of
+ * BDSGeometryFactoryBase to construct the required geometry with
+ * extents.
+ *
  * @author Lawrence Deacon, Laurie Nevay
  */
 
