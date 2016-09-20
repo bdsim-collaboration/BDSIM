@@ -58,10 +58,6 @@ private:
 #endif
   
   BDSGeometry* BuildMokka(G4String fileName);
-  
-#ifdef USE_GDML
-  BDSGeometry* BuildGDML(G4String fileName);
-#endif
 };
 
 #endif

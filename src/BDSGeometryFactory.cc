@@ -14,9 +14,6 @@
 #include "BDSGeometryLCDD.hh"
 #endif
 #include "BDSGeometrySQL.hh"
-#ifdef USE_GDML
-#include "BDSGeometryGDML.hh"
-#endif
 
 #include <string>
 #include <unordered_map>
@@ -107,11 +104,6 @@ BDSGeometry* BDSGeometryFactory::BuildGeometryOld(G4String formatAndFilePath)
 
     case BDSGeometryType::mokka:
       {result = BuildMokka(fileName); break;}
-
-#ifdef USE_GDML
-    case BDSGeometryType::gdml:
-      {result =  BuildGDML(fileName); break;}
-#endif
       
     default:
 #ifdef BDSDEBUG
@@ -132,10 +124,3 @@ BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
 
 BDSGeometry* BDSGeometryFactory::BuildMokka(G4String fileName)
 {return new BDSGeometrySQL(fileName);}
-
-#ifdef USE_GDML
-BDSGeometry* BDSGeometryFactory::BuildGDML(G4String fileName)
-{return new BDSGeometryGDML(fileName);}
-#endif
-
-
