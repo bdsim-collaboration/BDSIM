@@ -1,0 +1,13 @@
+d1: drift, l=0.6*m;
+q1: quadrupole, k1=0.3, l=0.2;
+q2: quadrupole, k1=-0.3, l=0.3, offsetX=-0.2;
+
+l1: line = (d1,q1,d1,q2,d1);
+
+use, l1;
+
+beam, particle="e-",
+      energy=3*GeV,
+      X0=1*mm;
+
+option, checkOverlaps=1;
