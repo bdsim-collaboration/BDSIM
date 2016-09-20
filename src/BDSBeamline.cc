@@ -158,7 +158,10 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
   G4cout << "angle                       " << angle       << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;
+  if (tiltOffset)
+    {G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;}
+  else
+    {G4cout << "no tilt offset" << G4endl;}
   G4cout << "has finite length           " << hasFiniteLength              << G4endl;
   G4cout << "has finite angle            " << hasFiniteAngle               << G4endl;
   G4cout << "has finite tilt             " << hasFiniteTilt                << G4endl;
@@ -745,6 +748,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      positionStart,
 						      positionMiddle,
@@ -761,7 +767,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      elSPosStart - endPieceLength,
 						      elSPosStart - 0.5*endPieceLength,
 						      elSPosStart,
-						      new BDSTiltOffset(*elTiltOffset));
+                                                      forEndPiece);
   return result;
 }
 
@@ -782,6 +788,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
     {elRotEnd->rotateY(CLHEP::pi);}
   G4double           elSPosEnd = element->GetSPositionEnd();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
 						      positionMiddle,
@@ -798,7 +807,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 						      elSPosEnd,
 						      elSPosEnd + 0.5*endPieceLength,
 						      elSPosEnd + endPieceLength,
-						      new BDSTiltOffset(*elTiltOffset));
+						      forEndPiece);
   return result;
 }
 
