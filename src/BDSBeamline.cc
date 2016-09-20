@@ -168,7 +168,10 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
   G4cout << "angle                       " << angle       << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;
+  if (tiltOffset)
+    {G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;}
+  else
+    {G4cout << "no tilt offset" << G4endl;}
   G4cout << "has finite length           " << hasFiniteLength              << G4endl;
   G4cout << "has finite angle            " << hasFiniteAngle               << G4endl;
   G4cout << "has finite tilt             " << hasFiniteTilt                << G4endl;
