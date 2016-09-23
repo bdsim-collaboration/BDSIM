@@ -7,18 +7,14 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
-#include "G4Box.hh"
 #include "G4EllipticalTube.hh"
 #include "G4CutTubs.hh"
 #include "G4IntersectionSolid.hh"
-#include "G4LogicalVolume.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>                           // sin, cos, fabs
-#include <utility>                         // for std::pair
-
 
 BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::_instance = nullptr;
 
