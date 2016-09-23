@@ -84,7 +84,8 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
   # add 'make doxygen' to ctest
-  add_test(Doxygen_LONG make doc)
+  add_test(Doxygen make doc)
+  set_tests_properties(Doxygen PROPERTIES LABELS LONG)
 endif(DOXYGEN_FOUND)
 
 # enable Testing with ctest
