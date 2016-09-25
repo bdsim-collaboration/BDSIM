@@ -10,10 +10,10 @@
 template<>
 std::map<BDSInterpolatorType, std::string>* BDSInterpolatorType::dictionary =
   new std::map<BDSInterpolatorType, std::string> ({
-      {BDSInterpolatorType::solenoid,   "nearest2D"},
-      {BDSInterpolatorType::dipole,     "linear2D"},
-      {BDSInterpolatorType::quadrupole, "nearest3D"},
-      {BDSInterpolatorType::sextupole,  "linear3D"}
+      {BDSInterpolatorType::nearest2D,  "nearest2D"},
+      {BDSInterpolatorType::linear2D,   "linear2D"},
+      {BDSInterpolatorType::nearest3D,  "nearest3D"},
+      {BDSInterpolatorType::linear3D,   "linear3D"}
     });
 
 BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
