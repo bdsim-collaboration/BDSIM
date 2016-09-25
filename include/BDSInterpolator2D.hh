@@ -1,67 +1,45 @@
 #ifndef BDSINTERPOLATOR2D_H
 #define BDSINTERPOLATOR2D_H
 
-#include "BDSThreeVector.hh"
-#include "BDSTwoVector.hh"
+#include "BDSFieldData.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
-template<typename T>
+/**
+ * @brief Interface for all 2D interpolators.
+ *
+ * Derived class should not own data - so multiple interpolators could be used on same data.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSInterpolator2D
 {
 public:
-  BDSInterpolator2D();
-  ~BDSInterpolator2D();
+  BDSInterpolator2D(){;}
+  virtual ~BDSInterpolator2D(){;}
 
-  G4ThreeVector GetInterpolatedValueV(G4double x, G4double y) const;
+  /// Public interface to a 2D interpolator. Returns Geant4 type as that's what will be needed.
+  G4ThreeVector GetInterpolatedValue(G4double x, G4double y) const
+  {
+    BDSThreeVectorF r = GetInterpolatedValueT(x,y);
+    return G4ThreeVector(r.x(), r.y(), r.z());
+  }
+
+  /// Alternative public interface to allow use of a 3-vector position (ignores z).
+  /// Returns Geant4 type as that's what will be needed.
+  G4ThreeVector GetInterpolatedValue(G4ThreeVector position) const
+  {
+    BDSThreeVectorF r = GetInterpolatedValueT(position.x(), position.y());
+    return G4ThreeVector(r.x(), r.y(), r.z());
+  }
 
 protected:
-  virtual T GetInterpolatedValue(G4double x, G4double y) const = 0;
+  /// Each derived class should implement this function. Note T suffix (was templated)
+  /// to distinguish it from GetInterpolatedValue which returns Geant4 types and is
+  /// the main interface to should have the clean name.
+  virtual BDSThreeVectorF GetInterpolatedValueT(G4double x, G4double y) const = 0;
 };
-
-template <>
-G4ThreeVector BDSInterpolator2D<G4double>::GetInterpolatedValueV(G4double x, G4double y) const
-{return G4ThreeVector(GetInterpolatedValue(x,y),0,0);}
-
-template <>
-G4ThreeVector BDSInterpolator2D<G4float>::GetInterpolatedValueV(G4double x, G4double y) const
-{return G4ThreeVector(GetInterpolatedValue(x,y),0,0);}
-
-template <>
-G4ThreeVector BDSInterpolator2D<G4int>::GetInterpolatedValueV(G4double x, G4double y) const
-{return G4ThreeVector(GetInterpolatedValue(x,y),0,0);}
-
-template <>
-G4ThreeVector BDSInterpolator2D<G4long>::GetInterpolatedValueV(G4double x, G4double y) const
-{return G4ThreeVector(GetInterpolatedValue(x,y),0,0);}
-
-template <>
-G4ThreeVector BDSInterpolator2D<BDSTwoVector<G4float> >::GetInterpolatedValueV(G4double x, G4double y) const
-{
-  BDSTwoVector<G4float> result = GetInterpolatedValue(x,y);
-  return G4ThreeVector(result[0],result[1],0);
-}
-
-template <>
-G4ThreeVector BDSInterpolator2D<BDSThreeVector<G4float> >::GetInterpolatedValueV(G4double x, G4double y) const
-{
-  BDSThreeVector<G4float> result = GetInterpolatedValue(x,y);
-  return G4ThreeVector(result[0], result[1], result[2]);
-}
-
-template <>
-G4ThreeVector BDSInterpolator2D<BDSTwoVector<G4double> >::GetInterpolatedValueV(G4double x, G4double y) const
-{
-  BDSTwoVector<G4double> result = GetInterpolatedValue(x,y);
-  return G4ThreeVector(result[0],result[1],0);
-}
-
-template <>
-G4ThreeVector BDSInterpolator2D<BDSThreeVector<G4double> >::GetInterpolatedValueV(G4double x, G4double y) const
-{
-  BDSThreeVector<G4double> result = GetInterpolatedValue(x,y);
-  return G4ThreeVector(result[0], result[1], result[2]);
-}
 
 #endif
