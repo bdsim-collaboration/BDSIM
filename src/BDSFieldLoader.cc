@@ -37,22 +37,54 @@ BDSFieldLoader::~BDSFieldLoader()
 
 BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
 {
-  G4String       filepath = info.MagneticFile();
-  BDSFieldFormat format   = info.MagneticFormat();
-  return LoadMagField(filepath, format);
-}
-
-BDSFieldMag* BDSFieldLoader::LoadMagField(G4String filePath, BDSFieldFormat format)
-{
+  G4String                    filePath = info.MagneticFile();
+  BDSFieldFormat              format   = info.MagneticFormat();
+  BDSInterpolatorType interpolatorType = info.MagneticInterpolatorType();
+  G4Transform3D              transform = info.Transform();
+  
   BDSFieldMag* result = nullptr;
   switch (format.underlying())
     {
     case BDSFieldFormat::bdsim2d:
-      result = LoadBDSIM2D(filePath); break;
+      {result = LoadBDSIM2D(filePath); break;}
     case BDSFieldFormat::bdsim3d:
-      result = LoadBDSIM3D(filePath); break;
+      {result = LoadBDSIM3D(filePath); break;}
+    case BDSFieldFormat::poissonsuperfishB:
+      {result = LoadPoissonSuperFishB(filePath, interpolatorType, transform); break;}
     default:
       break;
+    }
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
+						   BDSInterpolatorType interpolatorType,
+						   G4Transform3D       transform)
+{
+  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
+  BDSArray2DCoords*   array = loader->LoadMag2D(filePath);
+  delete loader;
+  BDSInterpolator2D* ar = CreateInterpolator2D(array, interpolatorType);
+  BDSFieldMag* result = new BDSFieldMagInterpolated2D(ar, transform); 
+  return result;
+}
+
+BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   array,
+							BDSInterpolatorType interpolatorType)
+{
+  BDSInterpolator2D* result = nullptr;
+  switch (interpolatorType.underlying())
+    {
+    case BDSInterpolatorType::nearest2D:
+      {result = new BDSInterpolator2DNearest(array); break;}
+    case BDSInterpolatorType::linear2D:
+      {result = new BDSInterpolator2DLinear(array); break;}
+    default:
+      {
+	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	exit(1);
+	break;
+      }
     }
   return result;
 }
@@ -67,15 +99,15 @@ BDSFieldEM* BDSFieldLoader::LoadEMField(G4String /*filePath*/, BDSFieldFormat /*
   return nullptr;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String filePath)
+BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String /*filePath*/)
 {
   return nullptr;
 }
 
 BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
 {
-  G4double lenUnit   = CLHEP::cm;
-  G4double fieldUnit = CLHEP::tesla; 
+  //G4double lenUnit   = CLHEP::cm;
+  //G4double fieldUnit = CLHEP::tesla; 
   
   G4cout << "Reading field map from " << filePath << G4endl; 
 
