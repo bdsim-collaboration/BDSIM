@@ -1,15 +1,14 @@
-#include "BDSFieldData.hh"
+#include "BDSArray2DCoords.hh"
+#include "BDSFieldValue.hh"
 #include "BDSInterpolator2DNearest.hh"
 
-#include "globals.hh" // geant4 types / gloals
-
-BDSInterpolator2DNearest::BDSInterpolator2DNearest(BDSArray2DCoords3VF* arrayIn):
+BDSInterpolator2DNearest::BDSInterpolator2DNearest(BDSArray2DCoords* arrayIn):
   array(arrayIn)
 {;}
 
 BDSInterpolator2DNearest::~BDSInterpolator2DNearest()
 {;}
 
-BDSThreeVectorF BDSInterpolator2DNearest::GetInterpolatedValueT(G4double x,
-								G4double y) const
-{return (*array)(array->NearestXY(x,y));}
+BDSFieldValue BDSInterpolator2DNearest::GetInterpolatedValueT(G4double x,
+							      G4double y) const
+{return (*array)(array->NearestX(x), array->NearestY(y));}

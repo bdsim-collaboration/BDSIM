@@ -1,7 +1,7 @@
 #ifndef BDSINTERPOLATOR2D_H
 #define BDSINTERPOLATOR2D_H
 
-#include "BDSFieldData.hh"
+#include "BDSFieldValue.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
@@ -23,7 +23,7 @@ public:
   /// Public interface to a 2D interpolator. Returns Geant4 type as that's what will be needed.
   G4ThreeVector GetInterpolatedValue(G4double x, G4double y) const
   {
-    BDSThreeVectorF r = GetInterpolatedValueT(x,y);
+    BDSFieldValue r = GetInterpolatedValueT(x,y);
     return G4ThreeVector(r.x(), r.y(), r.z());
   }
 
@@ -31,7 +31,7 @@ public:
   /// Returns Geant4 type as that's what will be needed.
   G4ThreeVector GetInterpolatedValue(G4ThreeVector position) const
   {
-    BDSThreeVectorF r = GetInterpolatedValueT(position.x(), position.y());
+    BDSFieldValue r = GetInterpolatedValueT(position.x(), position.y());
     return G4ThreeVector(r.x(), r.y(), r.z());
   }
 
@@ -39,7 +39,7 @@ protected:
   /// Each derived class should implement this function. Note T suffix (was templated)
   /// to distinguish it from GetInterpolatedValue which returns Geant4 types and is
   /// the main interface to should have the clean name.
-  virtual BDSThreeVectorF GetInterpolatedValueT(G4double x, G4double y) const = 0;
+  virtual BDSFieldValue GetInterpolatedValueT(G4double x, G4double y) const = 0;
 };
 
 #endif

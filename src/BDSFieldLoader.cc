@@ -1,7 +1,18 @@
 #include "BDSFieldE.hh"
 #include "BDSFieldEM.hh"
+#include "BDSFieldFormat.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSFieldLoaderPoisson.hh"
 #include "BDSFieldMag.hh"
+#include "BDSFieldMagInterpolated2D.hh"
+#include "BDSFieldValue.hh"
+#include "BDSInterpolator2DLinear.hh"
+#include "BDSInterpolator2DNearest.hh"
+#include "BDSInterpolatorType.hh"
+#include "BDSThreeVector.hh"
+
+#include "globals.hh" // geant4 types / globals
 
 #include <algorithm>
 #include <fstream>

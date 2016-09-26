@@ -16,12 +16,11 @@
  * @author Laurie Nevay
  */
 
-template<typename T>
 class BDSFieldMagInterpolated3D: public BDSFieldMag
 {
 public:
-  BDSFieldMagInterpolated3D(BDSInterpolator3D<T>* interpolatorIn,
-			    G4Transform3D         offset = G4Transform3D::Identity):
+  BDSFieldMagInterpolated3D(BDSInterpolator3D* interpolatorIn,
+			    G4Transform3D      offset = G4Transform3D::Identity):
     BDSFieldMag(offset),
     interpolator(*interpolatorIn)
   {;}
@@ -37,7 +36,7 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldMagInterpolated3D();
 
-  BDSInterpolator3D<T> interpolator;
+  BDSInterpolator3D* interpolator;
 };
 
 #endif

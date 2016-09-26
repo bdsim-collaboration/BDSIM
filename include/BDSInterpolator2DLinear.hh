@@ -1,10 +1,12 @@
 #ifndef BDSINTERPOLATE2DLINEAR_H
 #define BDSINTERPOLATE2DLINEAR_H
 
-#include "BDSFieldData.hh"
+#include "BDSFieldValue.hh"
 #include "BDSInterpolator2D.hh"
 
-#include "globals.hh" // geant4 types / globals
+#include "G4Types.hh"
+
+class BDSArray2DCoords;
 
 /** 
  * @brief Linear interpolation over 2d array.
@@ -22,18 +24,18 @@
 class BDSInterpolator2DLinear: public BDSInterpolator2D
 {
 public:
-  BDSInterpolator2DLinear(BDSArray2DCoords3VF* arrayIn);
+  BDSInterpolator2DLinear(BDSArray2DCoords* arrayIn);
   virtual ~BDSInterpolator2DLinear();
 
 protected:
-  virtual BDSThreeVectorF GetInterpolatedValueT(G4double x, G4double y) const;
+  virtual BDSFieldValue GetInterpolatedValueT(G4double x, G4double y) const;
 
 private:
   /// Private default constructor to force use of provided one.
   BDSInterpolator2DLinear() = delete;
 
   /// The field data
-  BDSArray2DCoords3VF* array;
+  BDSArray2DCoords* array;
 };
 
 #endif
