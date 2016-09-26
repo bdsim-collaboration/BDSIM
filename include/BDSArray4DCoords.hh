@@ -25,10 +25,15 @@ public:
   inline G4double ZStep() const {return zStep;}
   inline G4double TStep() const {return tStep;}
 
-  virtual G4bool OutsideCoords(const G4double x,
-			       const G4double y,
-			       const G4double z,
-			       const G4double t) const;
+  G4bool OutsideCoords(const G4double x,
+		       const G4double y,
+		       const G4double z,
+		       const G4double t) const;
+
+  void OutsideCoordsWarn(const G4double x,
+			 const G4double y,
+			 const G4double z,
+			 const G4double t) const;
   
   inline G4double ArrayCoordsFromX(const G4double x) const {return (x - xMin) / xStep;}
   inline G4double ArrayCoordsFromY(const G4double y) const {return (y - yMin) / yStep;}
@@ -76,6 +81,13 @@ public:
 				NearestY(y),
 				NearestZ(z),
 				NearestT(t));
+  }
+  inline BDSFourVector<G4int> NearestXYZT(const BDSFourVector<G4double> pos) const
+  {
+    return BDSFourVector<G4int>(NearestX(pos[0]),
+				NearestY(pos[1]),
+				NearestZ(pos[2]),
+				NearestT(pos[3]));
   }
 
   friend std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a);
