@@ -14,18 +14,6 @@ public:
   BDSArray1D(G4int nX);
   virtual ~BDSArray1D();
 
-  /// Setter & (technically, a non-const) accessor.
-  virtual BDSFieldValue& operator()(const G4int x,
-				    const G4int y,
-				    const G4int z,
-				    const G4int t);
-
-  /// Accessor only.
-  virtual const BDSFieldValue& operator()(const G4int x,
-					  const G4int y,
-					  const G4int z,
-					  const G4int t) const;
-
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray2D const &a);
 

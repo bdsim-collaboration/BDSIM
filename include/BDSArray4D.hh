@@ -20,17 +20,17 @@ public:
 
   /// Setter & (technically, a non-const) accessor.
   virtual BDSFieldValue& operator()(const G4int x,
-				    const G4int y,
-				    const G4int z,
-				    const G4int t);
+				    const G4int y = 0,
+				    const G4int z = 0,
+				    const G4int t = 0);
   BDSFieldValue& operator()(const BDSFourVector<G4int> pos)
   {return operator()(pos.x(), pos.y(), pos.z(), pos.t());}
 
   /// Accessor only.
   virtual const BDSFieldValue& operator()(const G4int x,
-					  const G4int y,
-					  const G4int z,
-					  const G4int t) const;
+					  const G4int y = 0,
+					  const G4int z = 0,
+					  const G4int t = 0) const;
   const BDSFieldValue& operator()(const BDSFourVector<G4int> pos) const
   {return operator()(pos.x(), pos.y(), pos.z(), pos.t());}
 

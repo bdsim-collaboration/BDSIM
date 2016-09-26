@@ -8,22 +8,6 @@ BDSArray2D::BDSArray2D(G4int nX, G4int nY):
   BDSArray3D(nX, nY, 1)
 {;}
 
-BDSFieldValue& BDSArray2D::operator()(const G4int x,
-				      const G4int y,
-				      const G4int /*z*/,
-				      const G4int /*t*/)
-{
-  return BDSArray4D::operator()(x,y,0,0);
-}
-
-const BDSFieldValue& BDSArray2D::operator()(const G4int x,
-					    const G4int y,
-					    const G4int /*z*/,
-					    const G4int /*t*/) const
-{
-  return BDSArray4D::operator()(x,y,0,0);
-}
-
 std::ostream& operator<< (std::ostream& out, BDSArray2D const &a)
 {
   out << "#x = " << a.sizeX() << ", ";

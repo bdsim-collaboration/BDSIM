@@ -22,23 +22,6 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nX, G4int nY, G4int nZ, G4int nT,
   tStep = (tMax - tMin) / (G4double)nT;
 }
 
-BDSFieldValue& BDSArray4DCoords::operator()(const G4double x,
-					    const G4double y,
-					    const G4double z,
-					    const G4double t)
-{
-
-  return BDSArray4D::operator()(0,0,0,0);
-}
-
-const BDSFieldValue& BDSArray4DCoords::operator()(const G4double x,
-						  const G4double y,
-						  const G4double z,
-						  const G4double t) const
-{
-  return BDSArray4D::operator()(0,0,0,0);
-}
-
 G4bool BDSArray4DCoords::OutsideCoords(const G4double x,
 				       const G4double y,
 				       const G4double z,
@@ -49,6 +32,19 @@ G4bool BDSArray4DCoords::OutsideCoords(const G4double x,
   G4bool rz = z < zMin || z > zMax;
   G4bool rt = t < tMin || t > tMax;
   return rx || ry || rz || rt;
+}
+
+void BDSArray4DCoords::OutsideCoordsWarn(const G4double x,
+					 const G4double y,
+					 const G4double z,
+					 const G4double t) const
+{
+  if (Outside(x,y,z,t))
+    {
+      G4cerr << "(" << x << ", " << y << ", " << z << ", " << t
+	     << ") is outside array" << G4endl;
+      exit(1);
+    }
 }
 
 std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a)

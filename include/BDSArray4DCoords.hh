@@ -19,16 +19,6 @@ public:
 		   G4double tMinIn, G4double tMaxIn);
 
   virtual ~BDSArray4DCoords(){;} 
-
-  BDSFieldValue& operator()(const G4double x,
-			    const G4double y = 0,
-			    const G4double z = 0,
-			    const G4double t = 0);
-
-  const BDSFieldValue& operator()(const G4double x,
-				  const G4double y = 0,
-				  const G4double z = 0,
-				  const G4double t = 0) const;
   
   inline G4double XStep() const {return xStep;}
   inline G4double YStep() const {return yStep;}
