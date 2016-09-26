@@ -13,7 +13,7 @@ BDSFieldValue& BDSArray2D::operator()(const G4int x,
 				      const G4int /*z*/,
 				      const G4int /*t*/)
 {
-  return BDSArray3D::operator()(x,y,0,0);
+  return BDSArray4D::operator()(x,y,0,0);
 }
 
 const BDSFieldValue& BDSArray2D::operator()(const G4int x,
@@ -21,7 +21,7 @@ const BDSFieldValue& BDSArray2D::operator()(const G4int x,
 					    const G4int /*z*/,
 					    const G4int /*t*/) const
 {
-  return BDSArray3D::operator()(x,y,0,0);
+  return BDSArray4D::operator()(x,y,0,0);
 }
 
 std::ostream& operator<< (std::ostream& out, BDSArray2D const &a)
