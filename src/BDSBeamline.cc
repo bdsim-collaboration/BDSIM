@@ -247,7 +247,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // rotation matrices appropriately
   if (hasFiniteAngle)
     {
-      G4double angle = component->GetAngle();
       // remember our definition of angle - +ve angle bends in -ve x direction in right
       // handed coordinate system
       // rotate about cumulative local y axis of beamline

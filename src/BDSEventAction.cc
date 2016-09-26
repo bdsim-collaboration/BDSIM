@@ -175,7 +175,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filling histograms & writing energy loss hits" << G4endl;
 #endif
-  BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
@@ -241,7 +240,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
       
-      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
       TrajectoryVector* trajVec = trajCont->GetVector();
       
 #ifdef BDSDEBUG

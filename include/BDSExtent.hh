@@ -2,7 +2,6 @@
 #define BDSEXTENT_H
 
 #include <ostream>
-#include <tuple>   // for std::tie
 #include <utility> // for pair and pair relational operators
 
 #include "globals.hh" // geant4 types / globals
