@@ -72,11 +72,7 @@ private:
   G4double bField;
 
   /// Total beam energy
-  G4double nominalMom;
-
-  G4double momSpread;
-
-  G4double brho;
+  G4double nominalEnergy; 
 };
 
 #endif 
