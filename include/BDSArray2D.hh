@@ -1,10 +1,12 @@
 #ifndef BDSARRAY2D_H
 #define BDSARRAY2D_H
 
-#include "globals.hh" // geant4 types / globals
+#include "BDSArray3D.hh"
+#include "BDSFieldValue.hh"
+
+#include "G4Types.hh"
 
 #include <ostream>
-#include <vector>
 
 /**
  * @brief A 2D array managed interally as a 1D array.
@@ -35,64 +37,30 @@
  * @author Laurie Nevay
  */
 
-template <typename T>
-class BDSArray2D
+class BDSArray2D: public BDSArray3D
 {
 public:
-  BDSArray2D(G4int nXIn, G4int nYIn):
-    nX(nXIn), nY(nYIn),
-    data(std::vector<T>(nX*nY))
-  {;}
+  BDSArray2D(G4int nXIn, G4int nYIn);
+  virtual ~BDSArray2D(){;}
 
-  ~BDSArray2D(){;}
+  /// Setter & (technically, a non-const) accessor.
+  virtual BDSFieldValue& operator()(const G4int x,
+				    const G4int y,
+				    const G4int z,
+				    const G4int t);
 
-  inline G4int sizeX() const {return nX;}
-  inline G4int sizeY() const {return nY;}
-
-  T& operator()(const G4int x, const G4int y)
-  {
-    // nX,nY are at least 1 but the index would be 0 hence +1
-    if ((x+1 > nX) || (y+1 > nY))
-      {G4cout << "Index (" << x << "," << y << ") is outside range of array" << G4endl; exit(1);}
-    return data[x*nX + y];
-  }
-
-  const T& operator()(const G4int x, const G4int y) const
-  {
-    // nX,nY are at least 1 but the index would be 0 hence +1
-    if ((x+1 > nX) || (y+1 > nY))
-      {G4cout << "Index (" << x << "," << y << ") is outside range of array" << G4endl; exit(1);}
-    return data[x*nX + y];
-  }
+  /// Accessor only.
+  virtual const BDSFieldValue& operator()(const G4int x,
+					  const G4int y,
+					  const G4int z,
+					  const G4int t) const;
 
   /// Output stream.
-  friend std::ostream& operator<< (std::ostream& out, BDSArray2D const &a)
-  {
-    out << "#x = " << a.nX << ", ";
-    out << "#y = " << a.nY << G4endl;
-
-    for (G4int y = 0; y < a.nY; y++)
-      {
-	out << "[ ";
-	for (G4int x = 0; x < a.nX; x++)
-	  {out << a(x,y) << "\t";}
-	out << "]" << G4endl;
-      }
-    return out;
-  }
+  friend std::ostream& operator<< (std::ostream& out, BDSArray2D const &a);
   
 private:
   /// Private default constructor to force use of provided one.
-  BDSArray2D();
-
-  /// Number of entries in 0th dimension - x (at least 1).
-  G4int nX;
-
-  /// Number of entries in 1st dimension - y (at least 1).
-  G4int nY;
-
-  /// Data for array in 1D vector.
-  std::vector<T> data;
+  BDSArray2D() = delete;
 };
 
 #endif

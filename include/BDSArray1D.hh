@@ -1,18 +1,18 @@
-#ifndef BDSARRAY3D_H
-#define BDSARRAY3D_H
+#ifndef BDSARRAY1D_H
+#define BDSARRAY1D_H
 
-#include "BDSArray4D.hh"
+#include "BDSArray2D.hh"
 #include "BDSFieldValue.hh"
 
 #include "G4Types.hh"
 
 #include <ostream>
 
-class BDSArray3D: public BDSArray4D
+class BDSArray1D: public BDSArray2D
 {
 public:
-  BDSArray3D(G4int nX, G4int nY, G4int nZ);
-  virtual ~BDSArray3D(){;}
+  BDSArray1D(G4int nX);
+  virtual ~BDSArray1D();
 
   /// Setter & (technically, a non-const) accessor.
   virtual BDSFieldValue& operator()(const G4int x,
@@ -27,10 +27,11 @@ public:
 					  const G4int t) const;
 
   /// Output stream.
-  friend std::ostream& operator<< (std::ostream& out, BDSArray3D const &a);
+  friend std::ostream& operator<< (std::ostream& out, BDSArray2D const &a);
 
 private:
-  BDSArray3D() = delete;
+  /// Private default constructor to force use of provided one.
+  BDSArray1D() = delete;
 };
 
 #endif
