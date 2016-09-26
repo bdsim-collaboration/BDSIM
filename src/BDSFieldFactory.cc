@@ -142,41 +142,42 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::zero:
-      break;
+      {break;}
     case BDSFieldType::threed:
     case BDSFieldType::xy:
-      field = BDSFieldLoader::Instance()->LoadMagField(info); break;
     case BDSFieldType::mokka:
-      break;
+      {field = BDSFieldLoader::Instance()->LoadMagField(info); break;}
     case BDSFieldType::solenoid:
-      field = new BDSFieldMagSolenoid(strength, brho); break;
+      {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-      field = new BDSFieldMagSBend(strength, brho); break;
+      {field = new BDSFieldMagSBend(strength, brho); break;}
     case BDSFieldType::quadrupole:
-      field = new BDSFieldMagQuadrupole(strength, brho); break;
+      {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::dipolequadrupole:
-      field = new BDSFieldMagDipoleQuadrupole(strength, brho); break;
+      {field = new BDSFieldMagDipoleQuadrupole(strength, brho); break;}
     case BDSFieldType::sextupole:
-      field = new BDSFieldMagSextupole(strength, brho); break;
+      {field = new BDSFieldMagSextupole(strength, brho); break;}
     case BDSFieldType::octupole:
-      field = new BDSFieldMagOctupole(strength, brho); break;
+      {field = new BDSFieldMagOctupole(strength, brho); break;}
     case BDSFieldType::decapole:
-      field = new BDSFieldMagDecapole(strength, brho); break;
+      {field = new BDSFieldMagDecapole(strength, brho); break;}
     case BDSFieldType::multipole:
-      field = new BDSFieldMagMultipole(strength, brho); break;
+      {field = new BDSFieldMagMultipole(strength, brho); break;}
     case BDSFieldType::muonspoiler:
-      field = new BDSFieldMagMuonSpoiler(strength, brho); break;
+      {field = new BDSFieldMagMuonSpoiler(strength, brho); break;}
     case BDSFieldType::skewquadrupole:
-      field = new BDSFieldMagSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::halfpi); break;
+      {field = new BDSFieldMagSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::halfpi); break;}
     case BDSFieldType::skewsextupole:
-      field = new BDSFieldMagSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;
+      {field = new BDSFieldMagSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;}
     case BDSFieldType::skewoctupole:
-      field = new BDSFieldMagSkew(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;
+      {field = new BDSFieldMagSkew(new BDSFieldMagOctupole(strength, brho), CLHEP::pi/8.); break;}
     case BDSFieldType::skewdecapole:
-      field = new BDSFieldMagSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;
+      {field = new BDSFieldMagSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
     default:
-      return nullptr;
-      break;
+      {
+	return nullptr;
+	break;
+      }
     }
   
   // Optionally provide local to global transform using curvilinear coordinate system.
