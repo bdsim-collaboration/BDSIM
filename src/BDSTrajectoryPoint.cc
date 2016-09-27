@@ -110,6 +110,11 @@ void BDSTrajectoryPoint::InitialiseVariables()
   preProcessSubType  = -1;
   postProcessType    = -1;
   postProcessSubType = -1;
+  preWeight          = -1.;
+  postWeight         = -1.;
+  preEnergy          = -1.;
+  postEnergy         = -1.;
+  energy             = -1.;
   preS               = -1000;
   postS              = -1000;
   beamlineIndex      = -1;

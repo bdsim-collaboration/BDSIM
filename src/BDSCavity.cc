@@ -8,7 +8,6 @@
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorDriver.hh"

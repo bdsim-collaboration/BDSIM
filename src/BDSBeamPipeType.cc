@@ -1,6 +1,5 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSDebug.hh"
 
 #include "globals.hh"

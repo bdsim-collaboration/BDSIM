@@ -30,13 +30,13 @@ simple_testing(Component-RBendPoleFace "--file=rbenPoleFace.gmad" ${OVERLAP_CHEC
 
 simple_testing(Component-RCollimator "--file=rcol.gmad" ${OVERLAP_CHECK})
 
-simple_testing(Component-RF_LONG "--file=rf.gmad" ${OVERLAP_CHECK})
+simple_testing(Component-RF "--file=rf.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Sampler "--file=sampler.gmad" ${OVERLAP_CHECK})
  
 simple_testing(Component-SBend "--file=sben.gmad" ${OVERLAP_CHECK})
 
-simple_testing(Component-SBendPoleFace "--file=sbenPoleFace.gmad" ${OVERLAP_CHECK})
+simple_testing_long(Component-SBendPoleFace "--file=sbenPoleFace.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Sextupole "--file=sext.gmad" ${OVERLAP_CHECK})
 
