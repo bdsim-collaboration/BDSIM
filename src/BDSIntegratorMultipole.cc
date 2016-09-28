@@ -30,9 +30,6 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
       bsl.push_back((*strength)[*skey]);// / pow(CLHEP::m,i));
       nfact.push_back(Factorial(i));
     }
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
-#endif
 }
 
 void BDSIntegratorMultipole::Stepper(const G4double yIn[],

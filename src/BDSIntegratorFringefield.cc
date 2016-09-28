@@ -34,7 +34,7 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
          << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
          << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
          << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " q  = " << charge/CLHEP::eplus << " e" << G4endl
+    //<< " q  = " << charge/CLHEP::eplus << " e" << G4endl
 	 << " B  = " << bField/(CLHEP::tesla) << " T" << G4endl
     //         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
          << G4endl;
