@@ -230,13 +230,10 @@ void Options::PublishMembers()
   publish("blmLength",&Options::blmLength);
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
-  publish("useEMLPB",&Options::useEMLPB);
-  publish("useHadLPB",&Options::useHadLPB);
 
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",&Options::sensitiveBLMs);
-  publish("LPBFraction",&Options::LPBFraction);
 
   publish("thresholdCutCharged",&Options::thresholdCutCharged);
   publish("thresholdCutPhotons",&Options::thresholdCutPhotons);

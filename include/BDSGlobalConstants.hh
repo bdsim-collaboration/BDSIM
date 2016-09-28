@@ -159,9 +159,6 @@ public:
   inline G4bool   SensitiveBLMs()            const {return G4bool  (options.sensitiveBLMs);}
   inline G4bool   CheckOverlaps()            const {return G4bool  (options.checkOverlaps);}
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
-  inline G4bool   UseEMLPB()                 const {return G4bool  (options.useEMLPB);}
-  inline G4bool   UseHadLPB()                const {return G4bool  (options.useHadLPB);}
-  inline G4double LPBFraction()              const {return G4double(options.LPBFraction);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
