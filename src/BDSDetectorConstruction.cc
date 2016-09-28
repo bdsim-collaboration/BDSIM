@@ -153,7 +153,7 @@ void BDSDetectorConstruction::BuildBeamline()
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
 #ifdef BDSDEBUG
-      G4cout << "BDSDetectorConstruction creating component " << element.name << G4endl;
+      G4cout << "BDSDetectorConstruction creating component " << elementIt->name << G4endl;
 #endif
       // next and previous elements: vectors of pointers which contains any thin multipoles
       // and the next non-thinmultipoles
