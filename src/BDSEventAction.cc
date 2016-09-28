@@ -1,11 +1,13 @@
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTrajectory.hh"
 

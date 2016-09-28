@@ -1,9 +1,9 @@
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
-#include "BDSEnergyCounterSD.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSTerminatorSD.hh"
+class BDSEnergyCounterSD;
+class BDSSamplerSD;
+class BDSTerminatorSD;
 
 /**
  * @brief A singleton class that holds all required sensitive
