@@ -1,0 +1,16 @@
+psolve: field, name="psolve",
+	       type="poisson",
+	       scaling = 3.0,
+	       integrator = "g4classicalrk4",
+	       magneticFile = "poisson2d:OUTSF7.TXT",
+	       magneticInterpolator = "nearest2D";
+
+
+q1: quadrupole, l=20*cm, k1=0.3, fieldOuter="psolve";
+
+
+beam, particle="e-",
+      energy=1.3*GeV;
+
+option, aper1=12*mm,
+	beampipeThickness=1*mm;
