@@ -10,6 +10,7 @@
 #include "cavitymodel.h"
 #include "element.h"
 #include "elementtype.h"
+#include "field.h"
 #include "fastlist.h"
 #include "material.h"
 #include "options.h"
@@ -168,6 +169,8 @@ namespace GMAD
     Material material;
     /// Region instance;
     Region region;
+    /// Field instance;
+    Field field;
     /// Tunnel instance
     Tunnel tunnel;
     /// PhysicsBiasing instance 
@@ -189,6 +192,8 @@ namespace GMAD
     std::vector<Material> material_list;
     /// List of parser defined regions
     std::vector<Region> region_list;
+    /// List of parser defined fields
+    std::vector<Field>  field_list;
     /// List of parser defined tunnels
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects

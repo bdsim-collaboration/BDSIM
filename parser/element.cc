@@ -89,6 +89,9 @@ void Element::PublishMembers()
   publish("gradient",&Element::gradient);
   publish("precisionRegion",&Element::precisionRegion);
   publish("region",&Element::region);
+  publish("fieldOuter", &Element::fieldOuter);
+  publish("fieldInner", &Element::fieldInner);
+  publish("fieldAll",   &Element::fieldAll);
   publish("waveLength",&Element::waveLength);
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
@@ -303,6 +306,9 @@ void Element::flush() {
   
   precisionRegion = false;
   region = "";
+  fieldOuter = "";
+  fieldInner = "";
+  fieldAll   = "";
 
   geometryFile ="";
   bmapFile = "";

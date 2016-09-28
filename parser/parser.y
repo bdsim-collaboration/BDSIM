@@ -62,7 +62,7 @@
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION FIELD CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -209,6 +209,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->Add<Region>();
            }
        }
+     | VARIABLE ':' field
+       {
+	 if(execute)
+	   {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : field" << std::endl;
+	     Parser::Instance()->SetValue<Field>("name", *($1));
+	     Parser::Instance()->Add<Field>();
+	   }
+       }
      | VARIABLE ':' cavitymodel
        {
          if(execute)
@@ -264,6 +273,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
 atom : ATOM ',' atom_options
 material : MATERIAL ',' material_options
 region : REGION ',' region_options
+field : FIELD ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
 tunnel : TUNNEL ',' tunnel_options
 xsecbias : XSECBIAS ',' xsecbias_options
@@ -294,6 +304,7 @@ error_noparams : DRIFT
                | MATERIAL
                | ATOM
                | REGION
+               | FIELD
                | CAVITYMODEL
                | TUNNEL
                | XSECBIAS
@@ -666,6 +677,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->Add<Region>();
 	      }
           }
+        | FIELD ',' field_options // field
+	  {
+	    if(execute)
+	      {
+		if(ECHO_GRAMMAR) printf("command -> FIELD\n");
+		Parser::Instance()->Add<Field>();
+	      }
+	  }
         | CAVITYMODEL ',' cavitymodel_options // cavitymodel
           {
 	    if(execute)
@@ -821,6 +840,20 @@ region_options : paramassign '=' aexpr region_options_extend
 		      if(execute)
 			Parser::Instance()->SetValue<Region>(*$1,*$3);
 		    }
+
+field_options_extend : /* nothing */
+                      | ',' field_options
+
+field_options : paramassign '=' aexpr field_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Field>((*$1),$3);
+		    }
+                 | paramassign '=' string field_options_extend
+                   {
+		     if(execute)
+		       Parser::Instance()->SetValue<Field>((*$1),*$3);
+		   }
 
 tunnel_options_extend : /* nothing */
                       | ',' tunnel_options

@@ -106,7 +106,10 @@ namespace GMAD
     
     bool precisionRegion; ///< precision region range cuts or not
     std::string region; ///< region with range cuts
-      
+    std::string fieldOuter;  ///< Outer field.
+    std::string fieldInner;  ///< Inner field.
+    std::string fieldAll;    ///< Field for everything.
+    
     std::string geometryFile;
     std::string bmapFile;
     std::string material;

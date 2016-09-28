@@ -648,6 +648,12 @@ namespace GMAD {
   std::vector<Region>& Parser::GetList<Region>(){return region_list;}
 
   template<>
+  Field& Parser::GetGlobal(){return field;}
+
+  template<>
+  std::vector<Field>& Parser::GetList<Field>(){return field_list;}
+  
+  template<>
   Atom& Parser::GetGlobal(){return atom;}
 
   template<>
