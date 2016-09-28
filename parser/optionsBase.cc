@@ -182,10 +182,6 @@ OptionsBase::OptionsBase()
   sensitiveBLMs            = true;
 
   // physics processes
-  useEMLPB                 = false;
-  useHadLPB                = false;
-  doPlanckScattering       = false;
-  planckScatterFe          = 1.0;
   turnOnCerenkov           = true;
   turnOnOpticalAbsorption  = true;
   turnOnMieScattering      = true;
@@ -193,7 +189,6 @@ OptionsBase::OptionsBase()
   turnOnOpticalSurface     = true;
   turnOnBirksSaturation    = true;
   scintYieldFactor         = 1.0;
-  LPBFraction              = 0.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
   defaultRangeCut          = 1e-3;

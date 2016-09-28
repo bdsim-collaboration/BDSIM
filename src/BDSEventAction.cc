@@ -1,11 +1,13 @@
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTrajectory.hh"
 
@@ -101,7 +103,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
       energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
       tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
-      //lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
     }
   FireLaserCompton=true;
 
@@ -158,14 +159,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {SampHC = (BDSSamplerHitsCollection*)(HCE->GetHC(samplerCollID_cylin));}
   if(SampHC)
     {bdsOutput->WriteHits(SampHC);}
-
-  // LASERWIRE - TO FIX / REIMPLEMENT
-  // remember to uncomment LWCalHC above if using this
-  // BDSLWCalorimeterHitsCollection* LWCalHC=nullptr;
-  // if(LWCalorimeterCollID >= 0)
-  //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
-  // if (LWCalHC)
-  //    {bdsOutput->WriteHits(SampHC);}
 
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));

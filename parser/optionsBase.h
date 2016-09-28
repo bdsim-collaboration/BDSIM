@@ -227,10 +227,6 @@ namespace GMAD
     double   blmLength;
     bool     sensitiveBLMs;
 
-    bool     useEMLPB;
-    bool     useHadLPB;
-    bool     doPlanckScattering;    
-    double   planckScatterFe;
     bool     turnOnCerenkov;
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;
@@ -240,7 +236,6 @@ namespace GMAD
 
     ///Cross section biasing parameters
     double   scintYieldFactor;
-    double   LPBFraction;
     double   thresholdCutCharged;
     double   thresholdCutPhotons;
     double   defaultRangeCut;

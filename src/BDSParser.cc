@@ -57,11 +57,6 @@ void BDSParser::CheckOptions()
   if (!BDS::IsFinite(options.E0))
     {options.E0 = options.beamEnergy;}
 
-  if(options.LPBFraction > 1.0) // safety checks
-    {options.LPBFraction = 1.0;}
-  if(options.LPBFraction < 0.0)
-    {options.LPBFraction = 0.0;}
-
   if (options.lengthSafety < 1e-15)
     { // protect against poor lengthSafety choices that would cause potential overlaps
       std::cerr << "Dangerously low \"lengthSafety\" value of: " << options.lengthSafety
