@@ -179,12 +179,10 @@ void Options::PublishMembers()
 
   publish("sigmaE",&Options::sigmaE);
 
-  publish("doPlanckScattering",&Options::doPlanckScattering);
   publish("checkOverlaps",&Options::checkOverlaps);
   publish("nperfile",&Options::numberOfEventsPerNtuple);
   publish("eventNumberOffset",&Options::eventNumberOffset);
   publish("vacuumPressure",&Options::vacuumPressure);
-  publish("planckScatterFe",&Options::planckScatterFe);
   publish("xsize",&Options::xsize);
   publish("ysize",&Options::ysize);
   // options which influence the geometry

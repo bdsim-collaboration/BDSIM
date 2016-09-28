@@ -226,8 +226,6 @@ namespace GMAD
 
     bool     useEMLPB;
     bool     useHadLPB;
-    bool     doPlanckScattering;    
-    double   planckScatterFe;
     bool     turnOnCerenkov;
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;

@@ -182,8 +182,6 @@ OptionsBase::OptionsBase()
   // physics processes
   useEMLPB                 = false;
   useHadLPB                = false;
-  doPlanckScattering       = false;
-  planckScatterFe          = 1.0;
   turnOnCerenkov           = true;
   turnOnOpticalAbsorption  = true;
   turnOnMieScattering      = true;

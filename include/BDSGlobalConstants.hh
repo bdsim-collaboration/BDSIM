@@ -115,7 +115,6 @@ public:
 
   // regular options from here on
   inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
-  inline G4double PlanckScatterFraction()    const {return G4double(options.planckScatterFe);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
   inline G4double ComponentBoxSize()         const {return OuterDiameter();}
@@ -153,7 +152,6 @@ public:
   inline G4double MaximumEpsilonStep()       const {return G4double(options.maximumEpsilonStep);}
   inline G4double MaxTime()                  const {return G4double(options.maximumTrackingTime)*CLHEP::s;}
   inline G4int    TurnsToTake()              const {return G4int   (options.nturns);}
-  inline G4bool   DoPlanckScattering()       const {return G4bool  (options.doPlanckScattering);}
   inline G4double FFact()                    const {return G4double(options.ffact);}
   inline G4double ParticleTotalEnergy()      const {return G4double(options.E0)*CLHEP::GeV;}
   inline G4bool   SensitiveComponents()      const {return G4bool  (options.sensitiveBeamlineComponents);}
