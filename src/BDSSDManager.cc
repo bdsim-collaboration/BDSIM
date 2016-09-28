@@ -1,6 +1,5 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
-#include "BDSLWCalorimeterSD.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminatorSD.hh"
@@ -41,10 +40,6 @@ BDSSDManager::BDSSDManager()
   terminator  = new BDSTerminatorSD("terminator");
   SDMan->AddNewDetector(terminator);
   
-  // Lw calorimeter
-  lwCalorimeter = new BDSLWCalorimeterSD("lw_calorimeter");
-  SDMan->AddNewDetector(lwCalorimeter);
-
   eCounter = new BDSEnergyCounterSD("general");
   SDMan->AddNewDetector(eCounter);
 
