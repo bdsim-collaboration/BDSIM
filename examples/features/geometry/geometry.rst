@@ -10,3 +10,4 @@ Geometry
    3_beampipes
    4_magnets
    5_tunnel
+   9_gdml
