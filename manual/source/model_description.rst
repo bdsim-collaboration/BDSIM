@@ -2067,9 +2067,15 @@ Regions
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
-can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
+can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example::
 
-.. TODO region example missing
+  precisionRegion: region, prodCutProtons=1*m,
+                           prodCutElectrons=10*m,
+			   prodCutPositrons=10*m,
+			   prodCutPhotons = 1*mm;
+
+  d1: drift, l=10*m, region="precisionRegion";
+
 
 .. rubric:: Footnotes
 
