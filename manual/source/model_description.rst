@@ -2094,9 +2094,6 @@ element in GMAD. The following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
 +======================+=================================================================+
-| name                 | The name the field object will be identified by when attaching  |
-|                      | to accelerator elements.                                        |
-+----------------------+-----------------------------------------------------------------+
 | type                 | One of "xy", "threed", "mokka". (more to come)                  |
 +----------------------+-----------------------------------------------------------------+
 | scaling              | A numerical scaling factor that all field vectors in the data   |
@@ -2117,16 +2114,15 @@ element in GMAD. The following parameters can be specified.
 
 Example::
 
-  uniformfield: field, name="uniField",
-	      	     type="poisson",
-		     scaling = 3.0,
-		     integrator = "g4classicalrk4",
-		     magneticFile = "poisson2d:/Path/To/File.TXT",
-		     magneticInterpolator = "nearest2D",
-		     electricFile = "poisson2d:/Another/File.TX",
-		     electricInterpolator = "linear2D";
+  somefield: field, type="poisson",
+		    scaling = 3.0,
+		    integrator = "g4classicalrk4",
+		    magneticFile = "poisson2d:/Path/To/File.TXT",
+		    magneticInterpolator = "nearest2D",
+		    electricFile = "poisson2d:/Another/File.TX",
+		    electricInterpolator = "linear2D";
 
-  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="uniField";
+  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
 
 
 Integrators

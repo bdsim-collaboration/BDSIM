@@ -1,5 +1,4 @@
-uniformfield: field, name="uniField",
-	      	     type="poisson",
+uniformfield: field, type="poisson",
 		     scaling = 3.0,
 		     integrator = "g4classicalrk4",
 		     magneticFile = "poisson2d:/Path/To/File.TXT",
@@ -7,4 +6,4 @@ uniformfield: field, name="uniField",
 		     electricFile = "poisson2d:/Another/File.TX",
 		     electricInterpolator = "linear2D";
 
-d1: drift, l=0.5*m, aper1=4*cm, fieldAll="uniField";
+d1: drift, l=0.5*m, aper1=4*cm, fieldAll="uniformfield";
