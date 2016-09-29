@@ -53,7 +53,6 @@
 #include <vector>
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  precisionRegion(nullptr),gasRegion(nullptr),
   worldPV(nullptr),worldUserLimits(nullptr),
   theHitMaker(nullptr),theParticleBounds(nullptr)
 {  
@@ -105,7 +104,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   for (auto i : biasObjects)
     {delete i;}
 #endif
-  delete precisionRegion;
   delete worldUserLimits;
   
   // gflash stuff
@@ -119,26 +117,17 @@ void BDSDetectorConstruction::InitialiseRegions()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-
-  // does this belong in BDSPhysicsList ??  Regions are required at construction
-  // time, but the only other place production cuts are set is in the physics list.
-
-  // gas region
-  gasRegion   = new G4Region("gasRegion");
-  G4ProductionCuts* theGasProductionCuts = new G4ProductionCuts();
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"gamma");
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"e-");
-  theGasProductionCuts->SetProductionCut(1*CLHEP::m,"e+");
-  gasRegion->SetProductionCuts(theGasProductionCuts);
-
-  // precision region
-  precisionRegion = new G4Region("precisionRegion");
-  G4ProductionCuts* precisionProductionCuts = new G4ProductionCuts();
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPhotonsP(),  "gamma");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutElectronsP(),"e-");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutPositronsP(),"e+");
-  precisionProductionCuts->SetProductionCut(BDSGlobalConstants::Instance()->ProdCutProtonsP(),  "proton");
-  precisionRegion->SetProductionCuts(precisionProductionCuts);
+  for (const GMAD::Region& r : BDSParser::Instance()->GetRegions())
+    {
+      G4Region* region = new G4Region(G4String(r.name));
+      G4ProductionCuts* cuts = new G4ProductionCuts();
+      cuts->SetProductionCut(r.prodCutPhotons*CLHEP::m,   "gamma");
+      cuts->SetProductionCut(r.prodCutElectrons*CLHEP::m, "e-");
+      cuts->SetProductionCut(r.prodCutPositrons*CLHEP::m, "e+");
+      cuts->SetProductionCut(r.prodCutProtons*CLHEP::m,   "proton");
+      region->SetProductionCuts(cuts);
+      BDSAcceleratorModel::Instance()->RegisterRegion(region, cuts);
+    }
 }
 
 void BDSDetectorConstruction::BuildBeamline()
@@ -357,7 +346,7 @@ void BDSDetectorConstruction::ComponentPlacement()
   BDSBeamline*      beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
   G4VSensitiveDetector* eCSD = BDSSDManager::Instance()->GetEnergyCounterSD();
   G4VSensitiveDetector* tunnelECSD = BDSSDManager::Instance()->GetEnergyCounterTunnelSD();
-
+  
   // 0 - mass world placement
   for(auto element : *beamline)
     {
@@ -376,13 +365,15 @@ void BDSDetectorConstruction::ComponentPlacement()
 	{G4cout << __METHOD_NAME__ << "placement of component named: " << name << G4endl;}
       
       // add the volume to one of the regions
-      if(accComp->GetPrecisionRegion())
+      const G4String regionName = accComp->GetRegion();
+      if(!regionName.empty()) // ie string is defined so we should attach region
 	{
 #ifdef BDSDEBUG
 	  G4cout << __METHOD_NAME__ << "element is in the precision region" << G4endl;
 #endif
-	  elementLV->SetRegion(precisionRegion);
-	  precisionRegion->AddRootLogicalVolume(elementLV);
+	  G4Region* region = BDSAcceleratorModel::Instance()->Region(regionName);
+	  elementLV->SetRegion(region);
+	  region->AddRootLogicalVolume(elementLV);
 	}
 
       // Make sensitive volumes sensitive
@@ -396,7 +387,7 @@ void BDSDetectorConstruction::ComponentPlacement()
       //region value is in geant4 but it's not our region - no region by default.
       for (auto& lv : accComp->GetAllSensitiveVolumes())
 	{
-	  if(gflash && (lv->GetRegion() != precisionRegion) && (accComp->GetType()=="element"))
+	  if(gflash && (accComp->GetType()=="element"))
 	    {SetGFlashOnVolume(lv);}
 	}
       

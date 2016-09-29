@@ -3,11 +3,14 @@
 
 #include "globals.hh"         // geant4 globals / types
 
+#include <map>
 #include <vector>
 
 class BDSBeamline;
 class BDSFieldObjects;
 class G4LogicalVolume;
+class G4ProductionCuts;
+class G4Region;
 class G4VPhysicalVolume;
 
 /**
@@ -91,6 +94,15 @@ public:
   inline void               RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn)
   {fields = fieldsIn;}
 
+  /// Register a region and associated production cut as G4Region doesn't seem to delete
+  /// it - note, no checking for double registration.
+  void RegisterRegion(G4Region* region, G4ProductionCuts* cut);
+
+  /// Access region information. Will exit if not found.
+  G4Region*         Region(G4String name) const;
+  /// Simpler accessor for production cuts vs regions.
+  G4ProductionCuts* ProductionCuts(G4String name) {return cuts.at(name);}
+
 private:
   BDSAcceleratorModel(); ///< Default constructor is private as singleton.
 
@@ -109,6 +121,8 @@ private:
   BDSBeamline*       endPieceBeamline;     ///< End Pieces beam line.
 
   std::vector<BDSFieldObjects*> fields;    ///< All field objects.
+  std::map<G4String, G4Region*> regions;      ///< All regions.
+  std::map<G4String, G4ProductionCuts*> cuts; ///< Cuts corresponding to the regions.
 };
 
 #endif

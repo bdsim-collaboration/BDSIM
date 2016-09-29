@@ -5,7 +5,6 @@
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Region.hh"
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
 
@@ -20,6 +19,7 @@
 
 class G4Box;
 class G4LogicalVolume;
+class G4Region;
 class G4VPhysicalVolume;
 class G4UniformMagField;
 class G4UserLimits;
@@ -101,9 +101,6 @@ private:
 
   G4bool verbose;
   G4bool checkOverlaps;
-
-  G4Region*          precisionRegion;
-  G4Region*          gasRegion;
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
