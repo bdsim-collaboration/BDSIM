@@ -46,6 +46,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4GeometryTolerance.hh"
+#include "G4ParticleDefinition.hh"
 #include "G4Transform3D.hh"
 
 #include "parser/elementtype.h"
