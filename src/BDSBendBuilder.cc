@@ -149,7 +149,7 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
 
     centralWedge->SetBiasVacuumList(element->biasVacuumList);
     centralWedge->SetBiasMaterialList(element->biasMaterialList);
-    centralWedge->SetPrecisionRegion(element->precisionRegion);
+    centralWedge->SetRegion(element->region);
     centralWedge->Initialise();
     BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(centralWedge,false);
 
@@ -159,13 +159,14 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     BDSMagnetType magType = BDSMagnetType::sectorbend;
     // check magnet outer info
     BDSMagnetOuterInfo* magnetOuterInfoCheck = PrepareMagnetOuterInfo(element,angleIn,angleOut);
-    CheckBendLengthAngleWidthCombo(semilength, semiangle, magnetOuterInfoCheck->outerDiameter, thename);
+    CheckBendLengthAngleWidthCombo(semilength, semiangle,
+				   magnetOuterInfoCheck->outerDiameter, thename);
     // clean up
     delete magnetOuterInfoCheck;
 
     // first element should be fringe if poleface specified
     if (BDS::IsFinite(angleIn) && includeFringe)
-    {
+      {
         BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength();
         (*fringeStIn)["field"]         = (*st)["field"];
         (*fringeStIn)["length"]        = thinElementLength;
@@ -175,7 +176,7 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
         angle                          = -element->e1 - 0.5*((*fringeStIn)["angle"]);
         BDSMagnet* startfringe = DipoleFringe(element, angle, -angle, thename, magType, fringeStIn);
         sbendline->AddComponent(startfringe);
-    }
+      }
 
     //logic for wedge elements in the beamline:
     //  reuse central wedge for all wedges of in/out half if no poleface angle(s)
@@ -183,7 +184,7 @@ BDSLine* BDSBendBuilder::SBendLine(Element*  element,
     //  otherwise fade in/out faces for all wedges in app. halves.
 
     for (int i = 0; i < nSBends; ++i)
-    {
+      {
       G4String thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
       if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(thename))
         {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(thename);}

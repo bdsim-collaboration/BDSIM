@@ -58,7 +58,7 @@ public:
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  G4bool           precisionRegion = false,
+			  G4String         region          = "",
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
 			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
 			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
@@ -81,8 +81,7 @@ public:
   /// @}
   
   /// Set whether precision output should be recorded for this component
-  void   SetPrecisionRegion(G4bool precisionRegionIn)
-  {precisionRegion = precisionRegionIn;}
+  void SetRegion(G4String regionIn) {region = regionIn;}
 
   // Accessors
   
@@ -103,7 +102,7 @@ public:
   inline G4String GetType() const {return type;}
 
   /// Whether precision output is to be recorded for this component
-  G4bool GetPrecisionRegion() const {return precisionRegion;}
+  G4bool GetRegion() const {return region;}
 
   /// Access beam pipe information
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
@@ -181,7 +180,7 @@ protected:
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
-  G4bool           precisionRegion;
+  G4String         region;
   BDSBeamPipeInfo* beamPipeInfo;
   ///@}
 

@@ -87,7 +87,6 @@ void Element::PublishMembers()
   publish("theta",&Element::theta);
   publish("psi",&Element::psi);
   publish("gradient",&Element::gradient);
-  publish("precisionRegion",&Element::precisionRegion);
   publish("region",&Element::region);
   publish("fieldOuter", &Element::fieldOuter);
   publish("fieldInner", &Element::fieldInner);
@@ -304,8 +303,7 @@ void Element::flush() {
   samplerType = "none"; // allowed "none", "plane", "cylinder"
   samplerRadius = 0;
   
-  precisionRegion = false;
-  region = "";
+  region     = "";
   fieldOuter = "";
   fieldInner = "";
   fieldAll   = "";

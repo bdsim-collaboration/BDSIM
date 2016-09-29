@@ -104,8 +104,7 @@ namespace GMAD
     std::string samplerType; ///< element has a sampler of this type (default "none")
     double samplerRadius; ///< radius for cylindrical sampler
     
-    bool precisionRegion; ///< precision region range cuts or not
-    std::string region; ///< region with range cuts
+    std::string region;      ///< region with range cuts
     std::string fieldOuter;  ///< Outer field.
     std::string fieldInner;  ///< Inner field.
     std::string fieldAll;    ///< Field for everything.

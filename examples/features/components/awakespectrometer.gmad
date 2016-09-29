@@ -2,7 +2,7 @@ psz=1005*mm;
 sez=257.661*cm-psz;
 screenAngle=-45*pi/180;
 
-mySpectrometer: awakespectrometer, l=4.4284*m, precisionRegion=1,
+mySpectrometer: awakespectrometer, l=4.4284*m,
 twindow=1*cm, windowmaterial="G4_Al",tscint=850*mum,
 windowScreenGap=65*mm,
 scintmaterial="lanex", angle=screenAngle,poleStartZ=psz,

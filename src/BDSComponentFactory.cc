@@ -291,7 +291,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     {
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
-      component->SetPrecisionRegion(element->precisionRegion);
+      component->SetRegion(element->region);
       component->Initialise();
       // register component and memory
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,willModify);
