@@ -7,6 +7,7 @@
 #include "BDSBeamline.hh"
 #include "BDSBeamlineEndPieceBuilder.hh"
 #include "BDSBeamlineElement.hh"
+#include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSCurvilinearFactory.hh"
 #include "BDSDebug.hh"
@@ -77,6 +78,9 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   // construct beamline of end pieces
   BDS::BuildEndPieceBeamline();
 
+  // construct placement geometry from parser
+  BDS::BuildPlacementGeometry();
+  
   // build the tunnel and supports
   if (BDSGlobalConstants::Instance()->BuildTunnel())
     {BuildTunnel();}
@@ -269,7 +273,11 @@ void BDSDetectorConstruction::BuildWorld()
 
   // These beamlines should always exist so are safe to access.
   G4ThreeVector beamlineExtent = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetMaximumExtentAbsolute();
-  G4ThreeVector clExtent       = BDSAcceleratorModel::Instance()->GetCurvilinearBeamline()->GetMaximumExtentAbsolute();
+  G4ThreeVector clExtent = BDSAcceleratorModel::Instance()->GetCurvilinearBeamline()->GetMaximumExtentAbsolute();
+  G4ThreeVector plExtent;
+  BDSBeamline* plBeamline = BDSAcceleratorModel::Instance()->GetPlacementBeamline();
+  if (plBeamline) // optional placements beam line
+    {plExtent = plBeamline->GetMaximumExtentAbsolute();}
 
   G4ThreeVector tunnelExtent = G4ThreeVector(0,0,0);
   BDSBeamline* tunnelBeamline = BDSAcceleratorModel::Instance()->GetTunnelBeamline();
@@ -279,7 +287,7 @@ void BDSDetectorConstruction::BuildWorld()
   // Expand to maximum extents of each beam line.
   G4ThreeVector worldR;
   for (G4int i = 0; i < 3; i++)
-    {worldR[i] = std::max(beamlineExtent[i], std::max(clExtent[i], tunnelExtent[i]));}
+    {worldR[i] = std::max(std::max(beamlineExtent[i],plExtent[i]), std::max(clExtent[i], tunnelExtent[i]));}
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "world extent absolute: " << worldR      << G4endl;
@@ -473,6 +481,19 @@ void BDSDetectorConstruction::ComponentPlacement()
 			    0,                                        // copy number
 			    checkOverlaps);                           // overlap checking
 	}
+    }
+
+  /// Single placement geometry.
+  BDSBeamline* placementBL = BDSAcceleratorModel::Instance()->GetPlacementBeamline();
+  for (auto element : *placementBL)
+    {
+      new G4PVPlacement(*element->GetPlacementTransform(),
+			element->GetPlacementName() + "_pv",
+			element->GetContainerLogicalVolume(),
+			worldPV,
+			false,
+			0,
+			checkOverlaps);
     }
   
   // set precision back
