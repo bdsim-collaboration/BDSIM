@@ -89,6 +89,10 @@ public:
   /// Access the beam line of end pieces.
   inline BDSBeamline*       GetEndPieceBeamline() const
   {return endPieceBeamline;}
+
+  inline void RegisterPlacementBeamline(BDSBeamline* beamlineIn) {placementBeamline = beamlineIn;}
+
+  inline BDSBeamline* GetPlacementBeamline() const {return placementBeamline;}
   
   /// Register all field objects
   inline void               RegisterFields(std::vector<BDSFieldObjects*>& fieldsIn)
@@ -119,6 +123,7 @@ private:
   BDSBeamline*       supportsBeamline;     ///< Element supports beam line.
   BDSBeamline*       tunnelBeamline;       ///< Tunnel segments beam line.
   BDSBeamline*       endPieceBeamline;     ///< End Pieces beam line.
+  BDSBeamline*       placementBeamline;    ///< Placement geometry beam line.
 
   std::vector<BDSFieldObjects*> fields;    ///< All field objects.
   std::map<G4String, G4Region*> regions;      ///< All regions.
