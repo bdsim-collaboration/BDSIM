@@ -40,6 +40,7 @@
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
+#include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
 

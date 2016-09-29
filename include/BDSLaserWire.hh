@@ -10,8 +10,6 @@
 #include "globals.hh"  // geant4 types / globals
 #include "BDSAcceleratorComponent.hh"
 
-#include "BDSLaserCompton.hh"
-
 class BDSLaserWire :public BDSAcceleratorComponent
 {
 public:
@@ -30,7 +28,6 @@ public:
 private:
   virtual void BuildContainerLogicalVolume();
 
-  BDSLaserCompton* itsLaserCompton; // not used atm, JS
   G4ThreeVector itsLaserDirection;
   G4double itsLaserWavelength;
 };
