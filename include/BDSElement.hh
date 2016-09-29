@@ -4,6 +4,7 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
+class BDSGeometry;
 class BDSMagField;
 class G4CachedMagneticField;
 class G4ChordFinder;
@@ -22,8 +23,6 @@ class G4VPhysicalVolume;
  * from an external file (each) and can be specified in various formats.
  *
  */
-
-class BDSGeometry;
 
 class BDSElement: public BDSAcceleratorComponent
 {

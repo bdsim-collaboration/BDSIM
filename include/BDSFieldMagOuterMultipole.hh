@@ -6,6 +6,11 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
+/**
+ * @brief A simple parameterisation of N-Pole outer yoke magnetic field.
+ *
+ */
+
 class BDSFieldMagOuterMultipole: public BDSFieldMag
 {
 public:

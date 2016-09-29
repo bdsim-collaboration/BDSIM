@@ -13,6 +13,10 @@
 class BDSEventInfo;
 class G4PrimaryVertex;
 
+/**
+ * @brief Process information at the event level.
+ */
+
 class BDSEventAction: public G4UserEventAction
 {
 public:
