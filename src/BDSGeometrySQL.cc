@@ -1,3 +1,4 @@
+#include "BDSAcceleratorModel.hh"
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSGeometrySQL.hh"
@@ -54,31 +55,6 @@ BDSGeometrySQL::BDSGeometrySQL(G4String filePath):
   hasFields = false;
   nPoleField = 0;
   hasUniformField = false;
-
-  //Set up the precision region
-  G4String pRegName = "precisionRegionSQL";
-  precisionRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(pRegName);
-  //  if(!precisionRegionSQL->IsModified()){
-  
-  G4ProductionCuts* theProductionCuts = new G4ProductionCuts();
-  BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  // production cuts are always non-zero so always set
-  theProductionCuts->SetProductionCut(globals->ProdCutPhotonsP(),"gamma");
-  theProductionCuts->SetProductionCut(globals->ProdCutElectronsP(),"e-");
-  theProductionCuts->SetProductionCut(globals->ProdCutPositronsP(),"e+");
-  precisionRegionSQL->SetProductionCuts(theProductionCuts);
-  //  }
-  
-  //Set up the approximation region
-  G4String vRegName = "approximationRegionSQL";
-  approximationRegionSQL = G4RegionStore::GetInstance()->FindOrCreateRegion(vRegName);
-  //  if(!approximationRegionSQL->IsModified()){
-  G4ProductionCuts* approxProductionCuts = new G4ProductionCuts();
-  approxProductionCuts->SetProductionCut(globals->ProdCutPhotonsA(),"gamma");
-  approxProductionCuts->SetProductionCut(globals->ProdCutElectronsA(),"e-");
-  approxProductionCuts->SetProductionCut(globals->ProdCutPositronsA(),"e+");
-  approximationRegionSQL->SetProductionCuts(approxProductionCuts);
-    //  }
 }
 
 BDSGeometrySQL::~BDSGeometrySQL()
@@ -289,15 +265,24 @@ void BDSGeometrySQL::SetLogVolAtt(G4LogicalVolume* logVol, G4double k){
   SetLogVolRegion(logVol);
 }
 
-void BDSGeometrySQL::SetLogVolRegion(G4LogicalVolume* logVol){
-  if(PrecisionRegion){
-    logVol->SetRegion(precisionRegionSQL);
-    precisionRegionSQL->AddRootLogicalVolume(logVol);
-  }
-  if(ApproximationRegion){
-    logVol->SetRegion(approximationRegionSQL);
-    approximationRegionSQL->AddRootLogicalVolume(logVol);
-  }
+void BDSGeometrySQL::SetLogVolRegion(G4LogicalVolume* logVol)
+{
+  G4Region* region = nullptr;
+  if(PrecisionRegion)
+    {
+      G4cout << "Approximation region should be define in gmad syntax now!" << G4endl;
+      region = BDSAcceleratorModel::Instance()->Region("precision");
+    }
+  if(ApproximationRegion)
+    {
+      G4cout << "Approximation region should be define in gmad syntax now!" << G4endl;
+      region = BDSAcceleratorModel::Instance()->Region("approximation");
+    }
+  if (region)
+    {
+      logVol->SetRegion(region);
+      region->AddRootLogicalVolume(logVol);
+    }
 }
 
 G4LogicalVolume* BDSGeometrySQL::BuildCone(BDSMySQLTable* aSQLTable, G4int k)
