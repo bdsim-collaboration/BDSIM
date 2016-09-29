@@ -1321,7 +1321,7 @@ Multiple options can be defined at once using the following syntax::
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius as these will have a large impact on the outcome of the simulation.
 
-options in BDSIM
+Options in BDSIM
 ^^^^^^^^^^^^^^^^ 
 
 Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
@@ -1423,19 +1423,11 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | standard overall production cuts for photons          |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPhotonsP                  | precision production cuts for photons                 |
-+----------------------------------+-------------------------------------------------------+
 | prodCutElectrons                 | standard overall production cuts for electrons        |
-+----------------------------------+-------------------------------------------------------+
-| prodCutElectronsP                | precision production cuts for electrons               |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositrons                 | standard overall production cuts for positrons        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPositronsP                | precision production cuts for positrons               |
-+----------------------------------+-------------------------------------------------------+
 | prodCutProtons                   | standard overall production cuts for protons          |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtonsP                  | precision production cuts for protons                 |
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+

@@ -241,18 +241,10 @@ void Options::PublishMembers()
   publish("thresholdCutPhotons",&Options::thresholdCutPhotons);
 
   publish("prodCutPhotons",&Options::prodCutPhotons);
-  publish("prodCutPhotonsP",&Options::prodCutPhotonsP);
-  publish("prodCutPhotonsA",&Options::prodCutPhotonsA);
   publish("prodCutElectrons",&Options::prodCutElectrons);
-  publish("prodCutElectronsP",&Options::prodCutElectronsP);
-  publish("prodCutElectronsA",&Options::prodCutElectronsA);
   publish("prodCutPositrons",&Options::prodCutPositrons);
-  publish("prodCutPositronsP",&Options::prodCutPositronsP);
-  publish("prodCutPositronsA",&Options::prodCutPositronsA);
   publish("prodCutProtons",&Options::prodCutProtons);
   publish("prodCutHadrons",&Options::prodCutProtons); // backwards compatability
-  publish("prodCutProtonsP",&Options::prodCutProtonsP);
-  publish("prodCutProtonsA",&Options::prodCutProtonsA);
 
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);

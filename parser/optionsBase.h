@@ -240,17 +240,9 @@ namespace GMAD
     double   thresholdCutPhotons;
     double   defaultRangeCut;
     double   prodCutPhotons;
-    double   prodCutPhotonsP;
-    double   prodCutPhotonsA;
     double   prodCutElectrons;
-    double   prodCutElectronsP;
-    double   prodCutElectronsA;
     double   prodCutPositrons;
-    double   prodCutPositronsP;
-    double   prodCutPositronsA;
     double   prodCutProtons;
-    double   prodCutProtonsP;
-    double   prodCutProtonsA;
     
     /// Biasing options
     std::string defaultBiasVacuum;

@@ -134,17 +134,9 @@ public:
   inline G4double ThresholdCutCharged()      const {return G4double(options.thresholdCutCharged)*CLHEP::GeV;}
   inline G4double ThresholdCutPhotons()      const {return G4double(options.thresholdCutPhotons)*CLHEP::GeV;}
   inline G4double ProdCutPhotons()           const {return G4double(options.prodCutPhotons)*CLHEP::m;}
-  inline G4double ProdCutPhotonsP()          const {return G4double(options.prodCutPhotonsP)*CLHEP::m;}
-  inline G4double ProdCutPhotonsA()          const {return G4double(options.prodCutPhotonsA)*CLHEP::m;}
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
-  inline G4double ProdCutElectronsP()        const {return G4double(options.prodCutElectronsP)*CLHEP::m;}
-  inline G4double ProdCutElectronsA()        const {return G4double(options.prodCutElectronsA)*CLHEP::m;}
   inline G4double ProdCutPositrons()         const {return G4double(options.prodCutPositrons)*CLHEP::m;}
-  inline G4double ProdCutPositronsP()        const {return G4double(options.prodCutPositronsP)*CLHEP::m;}
-  inline G4double ProdCutPositronsA()        const {return G4double(options.prodCutPositronsA)*CLHEP::m;}
   inline G4double ProdCutProtons()           const {return G4double(options.prodCutProtons)*CLHEP::m;}
-  inline G4double ProdCutProtonsP()          const {return G4double(options.prodCutProtonsP)*CLHEP::m;}
-  inline G4double ProdCutProtonsA()          const {return G4double(options.prodCutProtonsA)*CLHEP::m;}
   inline G4double DeltaChord()               const {return G4double(options.deltaChord)*CLHEP::m;}
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}

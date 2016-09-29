@@ -193,17 +193,9 @@ OptionsBase::OptionsBase()
   thresholdCutPhotons      = 0.0;
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
-  prodCutPhotonsP          = 1e-3;
-  prodCutPhotonsA          = 1e-3;
   prodCutElectrons         = 1e-3;
-  prodCutElectronsP        = 1e-3;
-  prodCutElectronsA        = 1e-3;
   prodCutPositrons         = 1e-3;
-  prodCutPositronsP        = 1e-3;
-  prodCutPositronsA        = 1e-3;
   prodCutProtons           = 1e-3;
-  prodCutProtonsP          = 1e-3;
-  prodCutProtonsA          = 1e-3;
 
   // biasing options
   defaultBiasVacuum        = "";
