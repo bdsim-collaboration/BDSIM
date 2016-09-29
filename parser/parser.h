@@ -16,6 +16,7 @@
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
+#include "placement.h"
 #include "region.h"
 #include "symbolmap.h"
 #include "tunnel.h"
@@ -165,16 +166,18 @@ namespace GMAD
     Options options;
     /// Atom instance;
     Atom atom;
-    /// Material instance;
-    Material material;
-    /// Region instance;
-    Region region;
     /// Field instance;
     Field field;
-    /// Tunnel instance
-    Tunnel tunnel;
+    /// Material instance;
+    Material material;
     /// PhysicsBiasing instance 
     PhysicsBiasing xsecbias;
+    /// Placement instance
+    Placement placement;
+    /// Region instance;
+    Region region;
+    /// Tunnel instance
+    Tunnel tunnel;
     /// RF Cavity model instance
     CavityModel cavitymodel;
     
@@ -198,6 +201,8 @@ namespace GMAD
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects
     FastList<PhysicsBiasing> xsecbias_list;
+    /// List of parser defined placements.
+    std::vector<Placement> placement_list;
     /// List of parser defined rf cavity models
     std::vector<CavityModel> cavitymodel_list;
     

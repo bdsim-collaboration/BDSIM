@@ -62,7 +62,7 @@
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION FIELD CAVITYMODEL TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -209,6 +209,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->Add<Region>();
            }
        }
+     | VARIABLE ':' placement
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : placement" << std::endl;
+	     Parser::Instance()->SetValue<Placement>("name",*($1));
+	     Parser::Instance()->Add<Placement>();
+           }
+       }
      | VARIABLE ':' field
        {
 	 if(execute)
@@ -273,6 +282,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
 atom : ATOM ',' atom_options
 material : MATERIAL ',' material_options
 region : REGION ',' region_options
+placement : PLACEMENT ',' placement_options
 field : FIELD ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
 tunnel : TUNNEL ',' tunnel_options
@@ -304,6 +314,7 @@ error_noparams : DRIFT
                | MATERIAL
                | ATOM
                | REGION
+               | PLACEMENT
                | FIELD
                | CAVITYMODEL
                | TUNNEL
@@ -677,6 +688,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->Add<Region>();
 	      }
           }
+        | PLACEMENT ',' placement_options // placement
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> PLACEMENT\n");
+		Parser::Instance()->Add<Placement>();
+	      }
+          }
         | FIELD ',' field_options // field
 	  {
 	    if(execute)
@@ -839,6 +858,20 @@ region_options : paramassign '=' aexpr region_options_extend
                     {
 		      if(execute)
 			Parser::Instance()->SetValue<Region>(*$1,*$3);
+		    }
+
+placement_options_extend : /* nothing */
+                      | ',' placement_options
+
+placement_options : paramassign '=' aexpr placement_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Placement>((*$1),$3);
+		    }
+                 | paramassign '=' string placement_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Placement>(*$1,*$3);
 		    }
 
 field_options_extend : /* nothing */

@@ -678,6 +678,12 @@ namespace GMAD {
   std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
 
   template<>
+  Placement& Parser::GetGlobal(){return placement;}
+
+  template<>
+  std::vector<Placement>& Parser::GetList<Placement>() {return placement_list;}
+  
+  template<>
   PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
 
   template<>

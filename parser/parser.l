@@ -101,6 +101,7 @@ degrader { return DEGRADER;}
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
 field { return FIELD; }
+placement { return PLACEMENT; }
 tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }
