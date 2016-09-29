@@ -24,6 +24,7 @@ void Placement::clear()
   angle = 0;
   checkOverlaps = true;
   sensitive     = false;
+  axisAngle     = false;
 }
 
 void Placement::PublishMembers()
@@ -42,6 +43,7 @@ void Placement::PublishMembers()
   publish("angle",         &Placement::angle);
   publish("checkOverlaps", &Placement::checkOverlaps);
   publish("sensitive",     &Placement::sensitive);
+  publish("axisAngle",     &Placement::axisAngle);
 }
 
 void Placement::print()const
@@ -60,5 +62,6 @@ void Placement::print()const
     	    << "axisZ "         << axisZ         << std::endl
     	    << "angle "         << angle         << std::endl
 	    << "checkOverlaps " << checkOverlaps << std::endl
-	    << "sensitive "     << sensitive     << std::endl;
+	    << "sensitive "     << sensitive     << std::endl
+	    << "axisAngle "     << axisAngle     << std::endl;
 }

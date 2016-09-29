@@ -35,6 +35,7 @@ namespace GMAD
     /// @}
     bool   checkOverlaps; ///< Whether to recursively check overlaps when placing.
     bool   sensitive;     ///< Whether to record hits or not.
+    bool   axisAngle;     ///< Flag to use the axis angle construction of rotation.
     
     /// constructor
     Placement();
