@@ -141,8 +141,8 @@ void BDSMaterials::Initialise()
   AddMaterial(name="bn5000"        , density=  1.925, kStateSolid, 300, 1, {"B","Ni","O","Ca","Si"}, 
 	      std::list<double>{0.383249242, 0.472071387, 0.0366276887, 0.0228923054, 0.0851593762});
 
-  //Calcium carbonate
-  AddMaterial(name="calciumCarbonate", density=1.201, kStateSolid, 300, 1, {"Ca","O","C"}, std::list<int>{1,3,1});
+  //Calcium carbonate (calcite)
+  AddMaterial(name="calciumCarbonate", density=2.711, kStateSolid, 300, 1, {"Ca","O","C"}, std::list<int>{1,3,1});
 
   //Clay
   AddMaterial(name="clay"          , density=  1.746, kStateSolid, 300, 1, {"Al","O","Si","H"}, std::list<int>{1,9,2,4});
@@ -188,7 +188,7 @@ void BDSMaterials::Initialise()
   AddMaterial(tmpMaterial,name);
 
   //Invar.Temperature 2 kelvin. LDeacon 6th Feburary 2006
-  AddMaterial(name="invar" , density=  8.1e-3, kStateSolid, 2, 1, {"Ni","Fe"}, std::list<double>{0.35,0.65});
+  AddMaterial(name="invar" , density=  8.1 , kStateSolid, 2, 1, {"Ni","Fe"}, std::list<double>{0.35,0.65});
 
   //Kapton polyimide film
   AddMaterial(name="kapton", density=  1.42, kStateSolid, 295, 1, {"H","C","N","O"}, 
