@@ -43,7 +43,7 @@ void BDS::BuildPlacementGeometry()
 					   placement.y*CLHEP::m,
 					   placement.z*CLHEP::m);
 
-      G4RotationMatrix* rm = nullptr;
+      G4RotationMatrix* rm = new G4RotationMatrix();
       if (placement.axisAngle)
 	{
 	  G4ThreeVector axis = G4ThreeVector(placement.axisX,
