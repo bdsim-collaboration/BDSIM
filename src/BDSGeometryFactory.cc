@@ -65,6 +65,9 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileNam
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
   G4String      fileName = BDS::GetFullPath(ff.second);
 
+  if (!BDS::FileExists(fileName))
+    {G4cerr << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
+  
   const auto search = registry.find(fileName);
   if (search != registry.end())
     {// it was found already in registry
