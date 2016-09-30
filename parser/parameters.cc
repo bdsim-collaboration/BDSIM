@@ -72,7 +72,6 @@ Parameters::Parameters() {
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
   setMap["r"] = false; // for samplerRadius
-  setMap["precisionRegion"] = false;
   setMap["region"] = false;
   setMap["fieldOuter"] = false;
   setMap["fieldInner"] = false;
