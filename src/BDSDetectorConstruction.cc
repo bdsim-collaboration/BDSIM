@@ -485,15 +485,18 @@ void BDSDetectorConstruction::ComponentPlacement()
 
   /// Single placement geometry.
   BDSBeamline* placementBL = BDSAcceleratorModel::Instance()->GetPlacementBeamline();
-  for (auto element : *placementBL)
+  if (placementBL)
     {
-      new G4PVPlacement(*element->GetPlacementTransform(),
-			element->GetPlacementName() + "_pv",
-			element->GetContainerLogicalVolume(),
-			worldPV,
-			false,
-			0,
-			checkOverlaps);
+      for (auto element : *placementBL)
+	{
+	  new G4PVPlacement(*element->GetPlacementTransform(),
+			    element->GetPlacementName() + "_pv",
+			    element->GetContainerLogicalVolume(),
+			    worldPV,
+			    false,
+			    0,
+			    checkOverlaps);
+	}
     }
   
   // set precision back
