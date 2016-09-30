@@ -102,7 +102,7 @@ public:
   inline G4String GetType() const {return type;}
 
   /// Whether precision output is to be recorded for this component
-  G4bool GetRegion() const {return region;}
+  G4String GetRegion() const {return region;}
 
   /// Access beam pipe information
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
