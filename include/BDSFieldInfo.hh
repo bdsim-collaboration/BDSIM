@@ -44,7 +44,8 @@ public:
 	       G4String            electricFieldFilePathIn    = "",
 	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim3d,
 	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3D,
-	       G4bool              cacheTransformsIn          = false);
+	       G4bool              cacheTransformsIn          = false,
+	       G4double            scalingIn                  = 1.0);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -65,6 +66,7 @@ public:
   inline BDSFieldFormat      ElectricFormat()           const {return electricFieldFormat;}
   inline BDSInterpolatorType ElectricInterpolatorType() const {return electricInterpolatorType;}
   inline G4bool              CacheTransforms()          const {return cacheTransforms;}
+  inline G4double            Scaling()                  const {return scaling;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -92,6 +94,7 @@ private:
   BDSFieldFormat      electricFieldFormat;
   BDSInterpolatorType electricInterpolatorType;
   G4bool              cacheTransforms;
+  G4double            scaling;
 };
 
 #endif

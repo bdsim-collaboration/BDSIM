@@ -24,7 +24,8 @@ BDSFieldInfo::BDSFieldInfo():
         electricFieldFilePath(""),
         electricFieldFormat(BDSFieldFormat::none),
 	electricInterpolatorType(BDSInterpolatorType::nearest3D),
-	cacheTransforms(true)
+	cacheTransforms(true),
+	scaling(1.0)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
@@ -40,7 +41,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
 			   G4String            electricFieldFilePathIn,
 			   BDSFieldFormat      electricFieldFormatIn,
 			   BDSInterpolatorType electricInterpolatorTypeIn,
-			   G4bool              cacheTransformsIn):
+			   G4bool              cacheTransformsIn,
+			   G4double            scalingIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -54,7 +56,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
   electricFieldFilePath(electricFieldFilePathIn),
   electricFieldFormat(electricFieldFormatIn),
   electricInterpolatorType(electricInterpolatorTypeIn),
-  cacheTransforms(cacheTransformsIn)
+  cacheTransforms(cacheTransformsIn),
+  scaling(scalingIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -75,7 +78,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   electricFieldFilePath(other.electricFieldFilePath),
   electricFieldFormat(other.electricFieldFormat),
   electricInterpolatorType(other.electricInterpolatorType),
-  cacheTransforms(other.cacheTransforms)
+  cacheTransforms(other.cacheTransforms),
+  scaling(other.scaling)
 {
   magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
   cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
@@ -95,5 +99,6 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E map file format: " << info.electricFieldFormat      << G4endl;
   out << "E interpolator     " << info.electricInterpolatorType << G4endl;
   out << "Transform caching: " << info.cacheTransforms          << G4endl;
+  out << "Scaling:           " << info.scaling                  << G4endl;
   return out;
 }
