@@ -33,6 +33,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   beamKineticEnergy(0.0),
   particleMomentum(0.0),
   particleKineticEnergy(0.0),
+  brho(0.0),
   sMax(0.0),
   turnsTaken(0),
   teleporterlength(0.0)

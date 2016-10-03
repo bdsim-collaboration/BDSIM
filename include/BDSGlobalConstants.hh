@@ -185,6 +185,7 @@ public:
   inline G4double ParticleKineticEnergy()    const {return particleKineticEnergy;}
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return particleName;}
+  inline G4double BRho()                     const {return brho;}
   inline G4double TeleporterLength()         const {return teleporterlength;}
   inline G4double SMax()                     const {return sMax;}
   inline G4double SMaxHistograms()           const {return sMaxHistograms;}
@@ -215,22 +216,22 @@ public:
   inline G4double LWCalWidth()         const {return itsLWCalWidth;}
   inline G4double LWCalOffset()        const {return itsLWCalOffset;}
 
-  // Setters
+  /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
-  inline void SetParticleName(G4String aParticleName);
-  inline void SetBeamKineticEnergy(G4double val);
-  inline void SetBeamMomentum(G4double val);
-  inline void SetParticleKineticEnergy(G4double val);
-  inline void SetParticleMomentum(G4double val);
+  inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
+  inline void SetBeamKineticEnergy(G4double value)    {beamKineticEnergy = value;}
+  inline void SetBeamMomentum(G4double value)         {beamMomentum = value;}
+  inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
+  inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
+  inline void SetBRho(G4double value)                 {brho = value;}
   inline void SetTeleporterDelta(G4ThreeVector newteleporterdelta);
   inline void SetTeleporterLength(G4double newteleporterlength);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void SetSMax(G4double sMaxIn);
-  
-  // inline setters
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
   inline void ResetTurnNumber()      {turnsTaken = 0;}
   inline void SetNumberToGenerate(G4int numberToGenerate) {options.set_value("ngenerate", (int)numberToGenerate);}
+  /// @}
 
   // laserwire stuff that probably shouldn't be in global constants
   inline G4double      GetLaserwireWavelength()     const {return itsLaserwireWavelength;}
@@ -255,6 +256,9 @@ private:
 
   /// Particle energy
   G4double particleMomentum, particleKineticEnergy;
+
+  /// BRho calculated from supplied parameters and particle type.
+  G4double brho;
 
   /// Particle name
   G4String particleName;
@@ -333,17 +337,8 @@ inline void BDSGlobalConstants::SetSMax(G4double sMaxIn)
   CalculateHistogramParameters();
 }
 
-inline void BDSGlobalConstants::SetBeamKineticEnergy(G4double val)
-{beamKineticEnergy = val;}
-
-inline void BDSGlobalConstants::SetBeamMomentum(G4double val)
-{beamMomentum = val;}
-
 inline void BDSGlobalConstants::SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition)
 {beamParticleDefinition = aBeamParticleDefinition;}
-
-inline void BDSGlobalConstants::SetParticleName(G4String aParticleName)
-{particleName = aParticleName;}
 
 inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double aWavelength)
 {lwWavelength[aName]=aWavelength;}
@@ -356,12 +351,6 @@ inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterde
 
 inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength)
 {teleporterlength = newteleporterlength;}
-
-inline void BDSGlobalConstants::SetParticleKineticEnergy(G4double val)
-{particleKineticEnergy = val;}
-
-inline void BDSGlobalConstants::SetParticleMomentum(G4double val)
-{particleMomentum = val;}
 
 inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
 {initialPoint = particle;}

@@ -60,31 +60,16 @@ using namespace GMAD;
 
 BDSComponentFactory::BDSComponentFactory()
 {
-  lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();
-  
-  // compute magnetic rigidity brho
-  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
-  // charge (in e units)
-  charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
-
-  // momentum (in GeV/c)
-  G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum()/CLHEP::GeV;
-
-  // rigidity (in T*m)
-  brho = BDSGlobalConstants::Instance()->FFact()*( momentum / BDSGlobalConstants::Instance()->COverGeV());
-  
-  // rigidity (in Geant4 units)
-  brho *= (CLHEP::tesla*CLHEP::m);
-
-  G4cout << "Rigidity (Brho) : "<< std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
-
+  lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
+  charge        = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
+  brho          = BDSGlobalConstants::Instance()->BRho();
   integratorSet = BDS::IntegratorSet(BDSGlobalConstants::Instance()->IntegratorSet());
 
   // prepare rf cavity model info from parser
   PrepareCavityModels();
   
-  notSplit = BDSGlobalConstants::Instance()->DontSplitSBends();
-  includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
+  notSplit          = BDSGlobalConstants::Instance()->DontSplitSBends();
+  includeFringe     = BDSGlobalConstants::Instance()->IncludeFringeFields();
   thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
 }
 
