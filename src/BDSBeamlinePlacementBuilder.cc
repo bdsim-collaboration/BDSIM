@@ -43,7 +43,7 @@ void BDS::BuildPlacementGeometry()
 					   placement.y*CLHEP::m,
 					   placement.z*CLHEP::m);
 
-      G4RotationMatrix* rm = new G4RotationMatrix();
+      G4RotationMatrix* rm = nullptr;
       if (placement.axisAngle)
 	{
 	  G4ThreeVector axis = G4ThreeVector(placement.axisX,
@@ -62,6 +62,8 @@ void BDS::BuildPlacementGeometry()
 								placement.psi*CLHEP::rad);
 	      rm = new G4RotationMatrix(ang);
 	    }
+	  else
+	    {rm = new G4RotationMatrix();}
 	}
       
       /// Here we're assuming the length is along z which may not be true, but
