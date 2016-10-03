@@ -764,7 +764,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 	 << " l = " << element->l << "m"
 	 << " outerDiameter = "  << element->outerDiameter << "m"
 	 << " B Field Offset = " << bFieldOffset << " m"
-	 << " precision region " << element->precisionRegion
+	 << " precision region " << element->region
 	 << G4endl;
 #endif
 
@@ -962,7 +962,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 	 << " name= "<< element->name
 	 << " l=" << element->l/CLHEP::m<<"m"
 	 << " angle=" << element->angle/CLHEP::rad<<"rad"
-	 << " precision region " << element->precisionRegion
+	 << " precision region " << element->region
 	 << G4endl;
 #endif
   G4TwoVector size;
