@@ -21,13 +21,12 @@
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSkew.hh"
 #include "BDSFieldMagSolenoid.hh"
+#include "BDSFieldMagSQL.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
-
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
-
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorOctupole.hh"
@@ -38,16 +37,20 @@
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
 #include "BDSIntegratorType.hh"
-
-#include "BDSFieldMagSQL.hh"
 #include "BDSMagnetType.hh"
+#include "BDSParser.hh"
 #include "BDSUtilities.hh"
+
+#include "parser/field.h"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4EquationOfMotion.hh"
 #include "G4EqMagElectricField.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4Mag_UsualEqRhs.hh"
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
+#include "G4Transform3D.hh"
 #include "G4UniformMagField.hh"
 // geant4 integrators
 #include "G4CashKarpRKF45.hh"
@@ -66,8 +69,13 @@
 #include "G4SimpleHeum.hh"
 #include "G4SimpleRunge.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+#include "CLHEP/Vector/EulerAngles.h"
+
+#include <map>
 #include <typeinfo>
 #include <utility>
+#include <vector>
 
 BDSFieldFactory* BDSFieldFactory::instance = nullptr;
 
@@ -88,6 +96,79 @@ BDSFieldFactory::BDSFieldFactory()
   fileName          = "";
   geometry          = nullptr;
   cacheLength       = 1*CLHEP::um;
+
+  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), 0);
+  //BDSGlobalConstants::Instance()->BRho());
+}
+
+BDSFieldFactory::~BDSFieldFactory()
+{
+  for (auto info : parserDefinitions)
+    {delete info.second;}
+}
+
+void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& definitions,
+					      const G4double defaultBRho)
+{
+  for (const auto& definition : definitions)
+    {
+      BDSFieldType    fieldType = BDS::DetermineFieldType(definition.type);
+      BDSIntegratorType intType = BDS::DetermineIntegratorType(definition.integrator);
+
+      G4ThreeVector offset = G4ThreeVector(definition.x*CLHEP::m,
+					   definition.y*CLHEP::m,
+					   definition.z*CLHEP::m);
+
+      G4RotationMatrix* rm = nullptr;
+      if (definition.axisAngle)
+	{
+	  G4ThreeVector axis = G4ThreeVector(definition.axisX,
+					     definition.axisY,
+					     definition.axisZ);
+	  rm = new G4RotationMatrix(axis, definition.angle*CLHEP::rad);
+	}
+      else
+	{
+	  if (BDS::IsFinite(definition.phi)   ||
+	      BDS::IsFinite(definition.theta) ||
+	      BDS::IsFinite(definition.psi))
+	    {// only build if finite
+	      CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(definition.phi*CLHEP::rad,
+								definition.theta*CLHEP::rad,
+								definition.psi*CLHEP::rad);
+	      rm = new G4RotationMatrix(ang);
+	    }
+	  else
+	    {rm = new G4RotationMatrix();}
+	}
+      
+      G4Transform3D transform = G4Transform3D(*rm, offset);
+
+      std::pair<G4String, G4String> bf = BDS::SplitOnColon(G4String(definition.magneticFile));
+      BDSFieldFormat magFormat = BDS::DetermineFieldFormat(bf.first);
+      std::pair<G4String, G4String> ef = BDS::SplitOnColon(G4String(definition.electricFile));
+      BDSFieldFormat eleFormat = BDS::DetermineFieldFormat(ef.first);
+
+      BDSInterpolatorType magIntType = BDS::DetermineInterpolatorType(G4String(definition.magneticInterpolator));
+      BDSInterpolatorType eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));
+      
+      BDSFieldInfo* info = new BDSFieldInfo(fieldType,
+					    defaultBRho,
+					    intType,
+					    nullptr, /*for now, no parameterised strenghts*/
+					    G4bool(definition.globalTransform),
+					    transform,
+					    nullptr, /* no cavity info*/
+					    bf.second,
+					    magFormat,
+					    magIntType,
+					    ef.second,
+					    eleFormat,
+					    eleIntType,
+					    false); // don't cache transforms
+
+      parserDefinitions[G4String(definition.name)] = info;
+    }
 }
 
 BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)

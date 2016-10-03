@@ -18,6 +18,14 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+#include <map>
+#include <vector>
+
+namespace GMAD
+{
+  class Field;
+}
+
 class BDSField;
 class BDSGeometry;
 
@@ -35,6 +43,9 @@ class BDSGeometry;
  * 4 chord finder
  * 5 field manager
  * 6 package it up
+ *
+ * This also makes use of BDSParser singleton class to create a series of BDSFieldInfo 
+ * field specfications as defined by the parser.
  * 
  * @author Laurie Nevay
  */
@@ -151,8 +162,13 @@ private:
   /// Reset all pointers to nullptr that are temporarily used during construction
   /// to avoid mistaken contamination between uses of the factory
   void CleanUp();
-  
-  //BDSMagFieldMesh* CreateMagFieldLCDD();
-  //BDSMagFieldMesh* CreateMagFieldSQL();
+
+
+  /// Prepare all required definitions that can be used dynamically.
+  void PrepareFieldDefinitions(const std::vector<GMAD::Field>& definitions,
+			       const G4double defaultBRho);
+
+  /// BDSFieldInfo definitions prepare from parser vector of definitions.
+  std::map<G4String, BDSFieldInfo*> parserDefinitions;
 };
 #endif
