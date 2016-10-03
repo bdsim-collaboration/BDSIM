@@ -7,6 +7,10 @@ psolve: field, type="poisson",
 
 q1: quadrupole, l=20*cm, k1=0.3, fieldOuter="psolve";
 
+l1: line=(q1);
+
+use, l1;
+
 
 beam, particle="e-",
       energy=1.3*GeV;
