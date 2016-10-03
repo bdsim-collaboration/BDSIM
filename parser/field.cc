@@ -19,6 +19,17 @@ void Field::clear()
   magneticInterpolator = "nearest";
   electricFile         = "";
   electricInterpolator = "";
+  x         = 0;
+  y         = 0;
+  z         = 0;
+  phi       = 0;
+  theta     = 0;
+  psi       = 0;
+  axisX     = 0;
+  axisY     = 0;
+  axisZ     = 0;
+  angle     = 0;
+  axisAngle = false;
 }
 
 void Field::PublishMembers()
@@ -31,6 +42,17 @@ void Field::PublishMembers()
   publish("magneticInterpolator", &Field::magneticInterpolator);
   publish("electricFile",         &Field::electricFile);
   publish("electricInterpolator", &Field::electricInterpolator);
+  publish("x",                    &Field::x);
+  publish("y",                    &Field::y);
+  publish("z",                    &Field::z);
+  publish("phi",                  &Field::phi);
+  publish("theta",                &Field::theta);
+  publish("psi",                  &Field::psi);
+  publish("axisX",                &Field::axisX);
+  publish("axisY",                &Field::axisY);
+  publish("axisZ",                &Field::axisZ);
+  publish("angle",                &Field::angle);
+  publish("axisAngle",            &Field::axisAngle);
 }
 
 void Field::print()const
@@ -43,5 +65,10 @@ void Field::print()const
 	    << "magneticFile "         << magneticFile         << std::endl
 	    << "magneticInterpolator " << magneticInterpolator << std::endl
 	    << "electricFile "         << electricFile         << std::endl
-	    << "electricInterpolator " << electricInterpolator << std::endl;
+	    << "electricInterpolator " << electricInterpolator << std::endl
+	    << "x, y, z "              << x     << " " << y     << " " << z     << std::endl
+	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
+	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
+	    << "angle "                << angle                << std::endl
+	    << "axisAngle "            << axisAngle            << std::endl;
 }

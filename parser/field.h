@@ -27,6 +27,22 @@ namespace GMAD
     std::string magneticInterpolator; ///< Interpolator for the magnetic field.
     std::string electricFile;         ///< File for the electric field map.
     std::string electricInterpolator; ///< Interpolator for the electric field.
+
+    double x; ///< Offset in x.
+    double y; ///< Offset in y.
+    double z; ///< Offset in z.
+    /// @{ Euler angle for rotation.
+    double phi;
+    double theta;
+    double psi;
+    /// @}
+    /// @{ Axis angle rotation.
+    double axisX;
+    double axisY;
+    double axisZ;
+    double angle;
+    /// @}
+    bool   axisAngle; ///< Flag to use the axis angle construction of rotation.
     
     /// Constructor
     Field();
