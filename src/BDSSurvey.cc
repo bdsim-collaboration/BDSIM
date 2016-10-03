@@ -121,15 +121,15 @@ void BDSSurvey::Write(BDSBeamlineElement* beamlineElement)
 
   BDSMagnetStrength const* st;
   if (BDSMagnet* magCast = dynamic_cast<BDSMagnet*>(acceleratorComponent))
-  {
+    {
       st = magCast->MagnetStrength();
       if (!st)
-      { st = nullStrength; }
-  }
+	{st = nullStrength;}
+    }
   else
     {st = nullStrength;}
   
   for (auto const key : magnetKeys)
-    {survey << " " << setw(12) << st->GetValueNormalised(key);}
+    {survey << " " << setw(12) << (*st)[key];}
   survey << G4endl;
 }

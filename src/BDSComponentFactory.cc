@@ -580,7 +580,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["k1"] = element->k1 / CLHEP::m2;
+  (*st)["k1"] = element->k1;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::quadrupole,
 					       brho,
 					       BDSIntegratorType::quadrupole,
@@ -600,7 +600,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["k2"] = element->k2 / CLHEP::m3;
+  (*st)["k2"] = element->k2;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::sextupole,
 					       brho,
 					       BDSIntegratorType::sextupole,
@@ -620,7 +620,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["k3"] = element->k3 / (CLHEP::m3*CLHEP::m);
+  (*st)["k3"] = element->k3;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::octupole,
 					       brho,
 					       BDSIntegratorType::octupole,
@@ -640,7 +640,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  (*st)["k4"] = element->k4 / (CLHEP::m3*CLHEP::m2);
+  (*st)["k4"] = element->k4;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::decapole,
 					       brho,
 					       BDSIntegratorType::decapole,
@@ -699,8 +699,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   //Don't divide by element length, keep strengths as knl/ksl
   for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
    {
-     (*st)[*nkey] = (*kn) ;
-     (*st)[*skey] = (*ks) ;
+     (*st)[*nkey] = (*kn);
+     (*st)[*skey] = (*ks);
    }
   
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
@@ -770,12 +770,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
   if (BDS::IsFinite(element->B))
     {
       (*st)["field"] = element->B * CLHEP::tesla;
-      (*st)["ks"]    = (*st)["field"] / brho / CLHEP::m;
+      (*st)["ks"]    = (*st)["field"] / brho;
     }
   else
     {
       (*st)["field"] = (element->ks / CLHEP::m) * brho;
-      (*st)["ks"]    = element->ks / CLHEP::m;
+      (*st)["ks"]    = element->ks;
     }
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::solenoid,
 					       brho,
@@ -1076,13 +1076,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 	
 #ifdef BDSDEBUG 
   G4cout << "---->creating Transform3d,"
-	 << " name= " << element->name
-	 << " xdir= " << element->xdir/CLHEP::m << "m"
-	 << " ydir= " << element->ydir/CLHEP::m << "m"
-	 << " zdir= " << element->zdir/CLHEP::m << "m"
-	 << " phi= " << element->phi/CLHEP::rad << "rad"
+	 << " name= "  << element->name
+	 << " xdir= "  << element->xdir/CLHEP::m    << "m"
+	 << " ydir= "  << element->ydir/CLHEP::m    << "m"
+	 << " zdir= "  << element->zdir/CLHEP::m    << "m"
+	 << " phi= "   << element->phi/CLHEP::rad   << "rad"
 	 << " theta= " << element->theta/CLHEP::rad << "rad"
-	 << " psi= " << element->psi/CLHEP::rad << "rad"
+	 << " psi= "   << element->psi/CLHEP::rad   << "rad"
 	 << G4endl;
 #endif
 	

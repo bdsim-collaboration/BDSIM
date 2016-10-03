@@ -11,7 +11,7 @@ BDSFieldMagSextupole::BDSFieldMagSextupole(BDSMagnetStrength const* strength,
 					   G4double          const   brho)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
-  bDoublePrime     = brho * (*strength)["k2"];
+  bDoublePrime     = brho * (*strength)["k2"] / CLHEP::m3;
   halfBDoublePrime = bDoublePrime*0.5;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;

@@ -11,7 +11,7 @@ BDSFieldMagDecapole::BDSFieldMagDecapole(BDSMagnetStrength const* strength,
 					 G4double          const  brho)
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
-  bQuadruplePrime = brho * (*strength)["k4"];
+  bQuadruplePrime = brho * (*strength)["k4"]  / (CLHEP::m3*CLHEP::m2);
   bQPNormed       = bQuadruplePrime / 24.;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'''' = " << bQuadruplePrime << G4endl;

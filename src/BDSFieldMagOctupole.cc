@@ -12,7 +12,7 @@ BDSFieldMagOctupole::BDSFieldMagOctupole(BDSMagnetStrength const* strength,
 					 G4double          const   brho)
 {
   // B''' = d^3By/dx^3 = Brho * (1/Brho d^3By/dx^3) = Brho * k3
-  bTriplePrime = brho * (*strength)["k3"];
+  bTriplePrime = brho * (*strength)["k3"]  / (CLHEP::m3*CLHEP::m);
   bTPNormed    = bTriplePrime / 6.; 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B''' = " << bTriplePrime << G4endl;

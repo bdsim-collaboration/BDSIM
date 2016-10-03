@@ -11,10 +11,10 @@
 #include <vector>
 
 const std::vector<G4String> BDSMagnetStrength::keys = {
-  "field",// constant field
-  "polefaceangle",//required for fringe field
-  "angle", "length",
-  "ks",
+  "field",           // constant field in G4units
+  "polefaceangle",   // required for fringe field (rad)
+  "angle", "length", // (rad, mm)
+  "ks",              // not in G4 units
   "k1", "k1s",
   "k2", "k2s",
   "k3", "k3s",
@@ -34,19 +34,6 @@ const std::vector<G4String> BDSMagnetStrength::normalComponentKeys = {
 
 const std::vector<G4String> BDSMagnetStrength::skewComponentKeys = {
   "k1s", "k2s", "k3s", "k4s", "k5s", "k6s", "k7s", "k8s", "k9s", "k10s", "k11s", "k12s"};
-
-const std::map<G4String, G4int> BDSMagnetStrength::order = {
-  {"k1"  , 1},  {"k1s"  , 1},
-  {"k2"  , 2},  {"k2s"  , 2},
-  {"k3"  , 3},  {"k3s"  , 3},
-  {"k4"  , 4},  {"k4s"  , 4},
-  {"k5"  , 5},  {"k5s"  , 5},
-  {"k6"  , 6},  {"k6s"  , 6},
-  {"k7"  , 7},  {"k7s"  , 7},
-  {"k8"  , 8},  {"k8s"  , 8},
-  {"k9"  , 9},  {"k9s"  , 9},
-  {"k10" , 10}, {"k10s" , 10}
-};
 
 const G4double BDSMagnetStrength::zero     = 0.0;
 G4double       BDSMagnetStrength::variable = 0.0;
@@ -120,14 +107,6 @@ std::vector<G4double> BDSMagnetStrength::SkewComponents() const
   return result;
 }
 
-G4int BDSMagnetStrength::Order(G4String key)
-{
-  try
-    {return order.at(key);}
-  catch (std::out_of_range)
-    {return 1;}
-}
-
 G4bool BDSMagnetStrength::ValidKey(const G4String key) const
 {
   if (std::find(keys.begin(), keys.end(), key) != keys.end())
@@ -143,13 +122,4 @@ const G4double& BDSMagnetStrength::GetValue(const G4String key) const
     {return it->second;}
   else
     {return zero;}
-}
-
-G4double BDSMagnetStrength::GetValueNormalised(const G4String key) const
-{
-  G4double result = GetValue(key);
-  auto it = order.find(key);
-  if (it != order.end())
-    {result *= pow(CLHEP::m, it->second + 1);}
-  return result;
 }
