@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSMaterials.hh"
 #include "BDSParser.hh"
+#include "G4Version.hh"
 #include "G4NistManager.hh"
 
 #include <list>
@@ -84,8 +85,12 @@ void BDSMaterials::Initialise()
   // Define materials
   //
 
-  //default Geant4 temperature = 273.15 K (NTP_Temperature)
+  //default Geant4 temperature = 293.15 K (NTP_Temperature)
   //default Geant4 pressure = 1atm
+
+#if G4VERSION_NUMBER < 1011
+  G4double NTP_Temperature = 293.15;
+#endif
 
   // convention: material name in small letters (to be able to find materials regardless of capitalisation
   
