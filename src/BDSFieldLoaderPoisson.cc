@@ -49,9 +49,12 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
   G4int indX = 0;
   G4int indY = 0;
   
-  while (std::getline(file, line) && 
-	 std::find_if_not(line.begin(), line.end(), isspace) != line.end())
+  while (std::getline(file, line))
     {// read a line only if it's not a blank one
+
+      // Skip a line if it's only whitespace
+      if (std::all_of(line.begin(), line.end(), isspace))
+	{continue;}
 
       if (intoData)
 	{
