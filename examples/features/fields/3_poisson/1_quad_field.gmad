@@ -13,8 +13,8 @@ use, l1;
 
 
 beam, particle="e-",
-      energy=1.3*GeV,
-      X0=10*mm,
+      energy=13*GeV,
+      X0=20*mm,
       Y0=5*mm;
 
 option, aper1=12*mm,
