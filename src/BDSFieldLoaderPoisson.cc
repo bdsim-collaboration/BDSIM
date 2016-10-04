@@ -60,15 +60,15 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 	{
 	  // General data entry
 	  std::istringstream liness(line);
-	  G4double value;
-	  std::vector<G4double> lineData(nColumns);
+	  G4double value = 0;
+	  std::vector<G4float> lineData(nColumns); // reserve to avoid copying as it expands
 	  for (G4int i = 0; i < nColumns; ++i)
 	    {
 	      liness >> value;
-	      lineData.push_back(value);
+	      lineData[i] = value;
 	    }
 	  // Construct field value
-	  BDSFieldValue fv(lineData[0], lineData[1], lineData[2]);
+	  BDSFieldValue fv = BDSFieldValue(lineData[2], lineData[3], 0);
 	  // we could use the gradients here, but we don't
 	  
 	  // Copy into array.
