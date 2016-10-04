@@ -1,0 +1,37 @@
+d1: drift, l=20*m;
+c1: rcol, l=1*m, xsize=1*mm, ysize=1*mm, offsetX=5*mm, offsetY=3*mm, material="copper";
+endoftheline: marker;
+
+l1: line = (d1, c1, d1, endoftheline);
+use,period=l1;
+
+!sample, range=endoftheline;
+
+include options.gmad;
+
+! note buildTunnelStraight=0 means it will follow the beam line
+! this is the straight case
+
+option, buildTunnel=1,
+	buildTunnelStraight=0,
+	tunnelType="circular",
+	tunnelThickness=1*m,
+	tunnelSoilThickness=5*m,
+	tunnelMaterial="concrete",
+	soilMaterial="soil",
+	buildTunnelFloor=1,
+	tunnelFloorOffset=1.2*m,
+	tunnelAper1=3*m,
+	tunnelAper2=12*m,
+	tunnelSensitive=1,
+	tunnelVisible=1,
+	tunnelOffsetX=0.4*m,
+	tunnelOffsetY=-1.2*m;
+
+! note tunnelAper2 will be ignored by the circular tunnel model
+
+beam, particle="proton",
+      energy=100.0*GeV,
+      distrType="reference",
+      X0=0.0,
+      Y0=0.0;

@@ -14,6 +14,11 @@
 # Temporary editor files #
 ##########################
 *~
+# clion (jetbrains C++ ide)
+.idea
+# Emacs autosave files
+.#*
+*#
 
 # Packages #
 ############

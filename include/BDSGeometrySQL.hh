@@ -1,38 +1,28 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
+#ifndef BDSGEOMETRYSQL_H
+#define BDSGEOMETRYSQL_H
 
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 13.04.2005
-*/
-
-
-#ifndef BDSGeometrySQL_h
-#define BDSGeometrySQL_h 1
-
-#include "globals.hh"
+#include "BDSGeometry.hh"
 #include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VisAttributes.hh"
-#include "G4UserLimits.hh"
 #include "BDSMySQLTable.hh"
+
+#include "globals.hh" // geant4 globals / types
+#include "G4LogicalVolume.hh"
+#include "G4Region.hh"
+#include "G4UserLimits.hh"
+#include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-//#include "BDSSamplerSD.hh"
+
 #include <fstream>
 #include <vector>
-//#include "BDSMagFieldSQL.hh"
-#include "G4Region.hh"
-#include "BDSGeometry.hh"
+#include <list>
 
 class BDSGeometrySQL: public BDSGeometry
 {
 public:
-  BDSGeometrySQL(G4String DBfile);
-  ~BDSGeometrySQL();
+  BDSGeometrySQL(G4String filePath);
+  virtual ~BDSGeometrySQL();
 
-  virtual void Construct(G4LogicalVolume *marker);
+  virtual void Construct(G4LogicalVolume* containerLogicalVolume);
 
   // For List of uniform fields for volumes
   std::list<G4ThreeVector> UniformField;
@@ -45,46 +35,42 @@ public:
   std::list<G4String> Sextvol;
   std::list<G4double> OctBgrad;
   std::list<G4String> Octvol;
-
-
+  
   std::vector<G4LogicalVolume*> VOL_LIST;
 
-
-
-
 private:
-  G4int _NVariables;
-  G4double _VisRed; 
-  G4double _VisGreen;
-  G4double _VisBlue;
-  G4double _VisAlpha;
-  G4String _VisType;
-  G4String _Material;
-  G4String _TableName;
-  G4String _Name;
+  G4int NVariables;
+  G4double VisRed; 
+  G4double VisGreen;
+  G4double VisBlue;
+  G4double VisAlpha;
+  G4String VisType;
+  G4String Material;
+  G4String TableName;
+  G4String Name;
 
-  G4double _PosX;
-  G4double _PosY;
-  G4double _PosZ;
-  G4double _RotPsi;
-  G4double _RotTheta;
-  G4double _RotPhi;
-  G4double _K1,_K2,_K3,_K4;
-  G4String _PARENTNAME;
-  G4String _InheritStyle;
-  G4String _Parameterisation;
-  G4String _MagType;
-  G4int _align_in;
-  G4int _align_out;
-  G4int _SetSensitive;
-  G4int _PrecisionRegion;
-  G4int _ApproximationRegion;
-  G4double _FieldX, _FieldY, _FieldZ;
+  G4double PosX;
+  G4double PosY;
+  G4double PosZ;
+  G4double RotPsi;
+  G4double RotTheta;
+  G4double RotPhi;
+  G4double K1,K2,K3,K4;
+  G4String PARENTNAME;
+  G4String InheritStyle;
+  G4String Parameterisation;
+  G4String MagType;
+  G4int align_in;
+  G4int align_out;
+  G4int SetSensitive;
+  G4int PrecisionRegion;
+  G4int ApproximationRegion;
+  G4double FieldX, FieldY, FieldZ;
 
-  G4double _lengthUserLimit;
+  G4double lengthUserLimit;
 
-  G4Region* _precisionRegionSQL;
-  G4Region* _approximationRegionSQL;
+  G4Region* precisionRegionSQL;
+  G4Region* approximationRegionSQL;
 
   void BuildSQLObjects(G4String file);
   void SetCommonParams(BDSMySQLTable*,G4int);
@@ -102,7 +88,7 @@ private:
   G4LogicalVolume* BuildSampler(BDSMySQLTable* aSQLTable, G4int k);
   G4LogicalVolume* BuildTube(BDSMySQLTable* aSQLTable, G4int k);
   G4LogicalVolume* BuildEllipticalTube(BDSMySQLTable* aSQLTable, G4int k);
-  G4LogicalVolume* BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k);
+  //G4LogicalVolume* BuildPCLTube(BDSMySQLTable* aSQLTable, G4int k);
   G4RotationMatrix* RotateComponent(G4double psi,
 				    G4double phi,
 				    G4double theta);
@@ -112,8 +98,15 @@ private:
   std::ifstream ifs;
   G4LogicalVolume* itsMarkerVol;
   std::vector<BDSMySQLTable*> itsSQLTable;
-  //  BDSMagFieldSQL* itsMagField;
+  //  BDSFieldMagSQL* itsMagField;
   //  BDSSamplerSD* SensDet;
+
+  void  SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
+
+  /// As the samplers are regsitered and placed in a separate loop, we need to
+  /// store a cache of the copy numbers (for lookup in the output) w.r.t. the
+  /// particular logical volume (referenced by pointer);
+  std::map<G4LogicalVolume*, G4int> samplerIDs;
 
 protected:
 };

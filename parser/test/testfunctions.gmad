@@ -1,0 +1,15 @@
+one = sin(pi/2);
+
+print, one;
+
+e = exp(one);
+
+print, e;
+
+loge = log(e);
+
+print, loge;
+
+anotherpi = 4*atan(loge);
+
+print, anotherpi;

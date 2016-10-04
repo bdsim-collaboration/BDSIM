@@ -1,6 +1,12 @@
-#include "BDSGeometryFactory.hh"
+#include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
-#include "ggmad.hh"
+#include "BDSGeometryFactory.hh"
+#include "BDSGeometryGMAD.hh"
+#include "BDSGeometryType.hh"
+#include "BDSUtilities.hh"
+
+#include "globals.hh" // geant4 types / globals
+
 #ifdef USE_LCDD
 #include "BDSGeometryLCDD.hh"
 #endif
@@ -8,78 +14,68 @@
 #ifdef USE_GDML
 #include "BDSGeometryGDML.hh"
 #endif
-#include "BDSDebug.hh"
 
+#include <utility>
 
-BDSGeometryFactory::BDSGeometryFactory(){
-  _gFormat=new BDSGeometryFormat();
-}
-BDSGeometryFactory::~BDSGeometryFactory(){}
+class BDSGeometry;
 
-BDSGeometry* BDSGeometryFactory::buildGeometry(G4String geometry=""){
-  _geometry=geometry;
-  parseFormatAndFilename();
-  if (_gFormat->compare("gmad")) {
-    return buildGmad();
-  } 
+BDSGeometryFactory::BDSGeometryFactory()
+{;}
+
+BDSGeometryFactory::~BDSGeometryFactory()
+{;}
+
+BDSGeometry* BDSGeometryFactory::BuildGeometry(G4String formatAndFilePath)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "format and path: " << formatAndFilePath << G4endl;
+#endif
+  
+  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
+  G4String fileName = BDS::GetFullPath(ff.second);
+  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+
+  switch(format.underlying())
+    {
+    case BDSGeometryType::gmad:
+      {return BuildGMAD(fileName); break;}
+      
 #ifdef USE_LCDD
-  else if (_gFormat->compare("lcdd")) {
-    return buildLCDD();
-  }
-#endif
-  else if (_gFormat->compare("mokka")) {
-    return buildMokka();
-  }
-#ifdef USE_GDML
-  else if (_gFormat->compare("gdml")) {
-    return buildGDML();
-  }
-#endif
-  else if (_gFormat->compare("none")) {
-    return buildNone();
-  }
-  G4String exceptionString = (G4String)__METHOD_NAME__ + (G4String)" - error - reached end of method without building.";
-  G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  return NULL;
-}
-
-void BDSGeometryFactory::parseFormatAndFilename(){
-  if(_geometry != ""){
-    G4int pos = _geometry.find(":");
-    if(pos<0) {
-      G4cerr<<"WARNING: invalid geometry reference format : "<<_geometry<<G4endl;
-    }
-    else {
-      G4String format = _geometry.substr(0,pos);
-      _gFormat->spec(format);
-      _gFile = BDSExecOptions::Instance()->GetBDSIMPATH() + _geometry.substr(pos+1,_geometry.length() - pos); 
-    }
-  }
-}
-
-BDSGeometry* BDSGeometryFactory::buildGmad(){
-  return new GGmadDriver(_gFile);
-}
-
-#ifdef USE_LCDD
-BDSGeometry* BDSGeometryFactory::buildLCDD(){
-  return new BDSGeometryLCDD(_gFile);
-}
+    case BDSGeometryType::lcdd:
+      {return BuildLCDD(fileName); break;}
 #endif
 
-BDSGeometry* BDSGeometryFactory::buildMokka(){
-  return new BDSGeometrySQL(_gFile);
-}
+    case BDSGeometryType::mokka:
+      {return BuildMokka(fileName); break;}
 
 #ifdef USE_GDML
-BDSGeometry* BDSGeometryFactory::buildGDML(){
-  return new BDSGeometryGDML(_gFile);
+    case BDSGeometryType::gdml:
+      {return BuildGDML(fileName); break;}
+#endif
+      
+    default:
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "no geometry format specified - not building anything" << G4endl;
+#endif
+      return nullptr;
+      break;
+    }
 }
+
+BDSGeometry* BDSGeometryFactory::BuildGMAD(G4String fileName)
+{return new BDSGeometryGMAD(fileName);}
+
+#ifdef USE_LCDD
+BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
+{return new BDSGeometryLCDD(fileName);}
 #endif
 
-BDSGeometry* BDSGeometryFactory::buildNone(){
-  return NULL;
-}
+BDSGeometry* BDSGeometryFactory::BuildMokka(G4String fileName)
+{return new BDSGeometrySQL(fileName);}
 
+#ifdef USE_GDML
+BDSGeometry* BDSGeometryFactory::BuildGDML(G4String fileName)
+{return new BDSGeometryGDML(fileName);}
+#endif
 
 

@@ -1,0 +1,34 @@
+!include optics.gmad;
+
+! some beamline parameters
+
+option, beampipeRadius = 10 * cm,
+        boxSize = 1.0 * m,
+        tunnelRadius= 1.0 * m,
+        beampipeThickness = 0.1 * cm,
+        thresholdCutCharged = 100 * KeV,
+        thresholdCutPhotons = 100 * KeV;
+!        thresholdCutCharged = 1 * MeV,
+!        thresholdCutPhotons = 10 * KeV;
+
+! beamline definiton
+
+
+tester:element,l=1*m,geometry="mokka:examples/Mokka/General/polycone_geomlist.sql";
+
+
+
+
+test:line=(tester);
+
+
+use,period=test;
+
+option, ngenerate=1, turnInteractions=0,
+useEMHadronic=0;
+
+beam,  particle="e-",
+       energy=250 * GeV,
+       nparticles=1e+3,
+       distrType="guineapig_slac",
+       distrFile="testbeam.dat";

@@ -1,50 +1,67 @@
 #ifdef USE_GDML
-#include "BDSGlobalConstants.hh"
+#include "BDSColours.hh"
 #include "BDSGeometryGDML.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
-#include "G4Colour.hh"
+
 #include "G4GDMLParser.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
-#include "G4VPhysicalVolume.hh"
 #include <cstdlib>
 #include <cstring>
 
-BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfile):itsMarkerVol(NULL){
-  itsGDMLfile = GDMLfile;
+BDSGeometryGDML::BDSGeometryGDML(G4String GDMLfileIn):
+  markerVol(nullptr),
+  gdmlWorld(nullptr)
+{
+  GDMLfile = GDMLfileIn;
 }
 
-BDSGeometryGDML::~BDSGeometryGDML(){
-}
+BDSGeometryGDML::~BDSGeometryGDML()
+{;}
 
-void BDSGeometryGDML::Construct(G4LogicalVolume *marker){
-  itsMarkerVol = marker;
+void BDSGeometryGDML::Construct(G4LogicalVolume *marker)
+{
+  markerVol = marker;
   G4GDMLParser *parser = new G4GDMLParser();
-  parser->Read(itsGDMLfile);
+  parser->Read(GDMLfile,true);
   
-  G4LogicalVolume* topvol = parser->GetWorldVolume()->GetLogicalVolume();
+  gdmlWorld = parser->GetWorldVolume()->GetLogicalVolume();
 
-  G4VisAttributes* VisAtt = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
-  VisAtt->SetVisibility(false);
-  VisAtt->SetForceSolid(true);
+  G4VisAttributes* visAtt = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
+  visAtt->SetVisibility(false);
 
-  G4VisAttributes* VisAtt2 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
-  VisAtt2->SetVisibility(false);
-  VisAtt2->SetForceSolid(true);
+  G4VisAttributes* visAtt2 = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
+  visAtt2->SetVisibility(true);
 
-    for (int i=0; i<topvol->GetNoDaughters(); i++){
-    topvol->GetDaughter(i)->GetLogicalVolume()->SetVisAttributes(VisAtt);
-   }
+  for (int i=0; i<gdmlWorld->GetNoDaughters(); i++){
 
-    topvol->SetVisAttributes(VisAtt2);
+    // Set visibility 
+    gdmlWorld->GetDaughter(i)->GetLogicalVolume()->SetVisAttributes(visAtt2);
+
+    // Get all daugters and add to logical and sensitive vols
+    logicalVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
+    sensitiveVols.push_back(gdmlWorld->GetDaughter(i)->GetLogicalVolume());
+  }
+
+  gdmlWorld->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   
-  new G4PVPlacement(NULL,
+  new G4PVPlacement(nullptr,
                     G4ThreeVector(0.,0.,0.),
-                    topvol,
-                    topvol->GetName()+"_PhysiComp",
-                    itsMarkerVol,
+                    gdmlWorld,
+                    gdmlWorld->GetName()+"_pv",
+                    markerVol,
                     false,
-                    0, BDSGlobalConstants::Instance()->GetCheckOverlaps());
+                    0,
+                    BDSGlobalConstants::Instance()->CheckOverlaps());
 }
 #endif
+
+std::vector<G4LogicalVolume*> BDSGeometryGDML::GetAllLogicalVolumes() const { 
+  return logicalVols;
+}
+  
+std::vector<G4LogicalVolume*> BDSGeometryGDML::GetAllSensitiveVolumes() const {
+  return sensitiveVols;
+}

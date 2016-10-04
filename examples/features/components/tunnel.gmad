@@ -1,0 +1,35 @@
+tunnel, name="t1", type="circular", aper1=2.0*m, aper2=3.0*m, offsetX=0.0*m, offsetY=0.5*m, thickness=20*cm, soilThickness=10*cm, floorOffset=1*m, material="Concrete", soilMaterial="Soil", startElement="d1", endElement="d1";
+
+d1: drift, l=1.2*m, apertureType="lhcdetailed", aper1=2.202*cm, aper2=1.714*cm, aper3=2.202*cm, beampipeThickness=1*mm;
+
+lat : line = (d1,d1,d1,d1,d1,d1,d1,d1);
+
+include optionsTest.gmad;
+
+option, beampipeThickness = 1*cm;
+
+option, tunnelThickness = 0.25*m,
+	buildTunnel     = 1,
+	tunnelType      = "circular",
+	tunnelAper1     = 1.5*m,
+	tunnelAper2     = 3*m,
+	tunnelVisible   = 1,
+	tunnelFloorOffset = 1.2*m,
+	tunnelMaterial    = "concrete",
+	tunnelSoilThickness = 2*m,
+	tunnelOffsetX = -1*m,
+	tunnelOffsetY = 20*cm;
+
+option, tunnelThickness = 0.5*m,
+	buildTunnel     = 1,
+	buildTunnelStraight=1,
+	tunnelType      = "square",
+	tunnelAper1     = 3*m,
+	tunnelAper2     = 1.5*m,
+	tunnelVisible   = 1,
+	tunnelOffsetX   = 1*m,
+	tunnelFloorOffset = 1*m,
+	tunnelMaterial    = "concrete",
+	tunnelSoilThickness = 2*m,
+	tunnelOffsetX = 1*m;
+

@@ -25,9 +25,14 @@ macro(bdsim_install_headers)
       DESTINATION include/bdsim
       COMPONENT Headers)
 endmacro()
+macro(bdsim_install_libs)
+    install(FILES ${ARGN}
+      DESTINATION lib
+      COMPONENT Libraries)
+endmacro()
 macro(bdsim_install_doc)
     install(FILES ${ARGN}
-        DESTINATION share/${PROJECT_NAME}/doc/${DOC_POSTFIX}
+        DESTINATION share/bdsim/doc/${DOC_POSTFIX}
         COMPONENT Documentation)
 endmacro()
 macro(bdsim_install_scripts)
@@ -35,35 +40,64 @@ macro(bdsim_install_scripts)
         DESTINATION ${SCRIPT_DEST}
         COMPONENT Scripts)
 endmacro()
+macro(bdsim_install_vis)
+    install(FILES ${ARGN}
+        DESTINATION share/bdsim/vis/
+        COMPONENT Visualisation)
+endmacro()
+macro(bdsim_install_analysis_headers)
+  install(FILES ${ARGN}
+    DESTINATION include/bdsim/analysis
+    COMPONENT Headers)
+endmacro()
+macro(bdsim_install_comparator_headers)
+  install(FILES ${ARGN}
+    DESTINATION include/bdsim/comparator
+    COMPONENT Headers)
+endmacro()
+macro(bdsim_install_macros)
+  install(FILES ${ARGN}
+    DESTINATION share/bdsim/analysis
+    COMPONENT Scripts)
+endmacro()
 
 # This macro fixes the MACOSX_BUNDLES
 # since we do not make a "traditional app"
 macro(bdsim_install_bundle)
   if(APPLE)
     foreach(bundle_name ${ARGN})
-    set(APPS "\${CMAKE_INSTALL_PREFIX}/${bundle_name}")
-    set(DIRS "")
-    install(CODE "
-      set(BU_CHMOD_BUNDLE_ITEMS 1)
+      set(APPS "\${CMAKE_INSTALL_PREFIX}/${bundle_name}")
+      set(DIRS "")
+      install(CODE "
       include(BundleUtilities)
       fixup_bundle(\"${APPS}.app\"   \"\"   \"${DIRS}\")
-      execute_process(COMMAND mv \"${APPS}.app/Contents\" \"${APPS}\"  )
-      execute_process(COMMAND rm -rf \"${APPS}.app\" )
       " COMPONENT Runtime)
     endforeach()
   endif()
 endmacro()
 
-# add rpath to the binaries/libraries when installing
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+# set MACOSX_RPATH explicitly (CMP0042)
+set(CMAKE_MACOSX_RPATH ON)
 
 # CPack boilerplate for this project
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
 set(CPACK_PACKAGE_VENDOR "RHUL")
-set(CPACK_PACKAGE_CONTACT "Jochem Snuverink")
 set(CPACK_BUNDLE_NAME "${CPACK_PACKAGE_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "BDSIM - Beam Physics Simulation Tool")
 set(CPACK_PACKAGE_VERSION ${BDSIM_VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${BDSIM_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${BDSIM_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${BDSIM_VERSION_PATCH})
+
+# Name
+set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-${BDSIM_VERSION})
+
+if (UNIX)
+  set(CPACK_GENERATOR "TGZ")
+endif()
+
+if (APPLE)
+  set(CPACK_GENERATOR "${CPACK_GENERATOR};DragNDrop")
+endif()
+
+set(CPACK_PACKAGE_FILE_NAME "${ARCHIVE_NAME}")

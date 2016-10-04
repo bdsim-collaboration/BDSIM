@@ -1,44 +1,32 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 5.3.2005
-   Copyright (c) 2005 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSSAMPLERCYLINDER_H
+#define BDSSAMPLERCYLINDER_H
 
-#ifndef BDSSamplerCylinder_h
-#define BDSSamplerCylinder_h 1
+#include "BDSSampler.hh"
 
-#include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSSamplerSD.hh"
+#include "globals.hh" // geant4 types / globals
+#include "G4Transform3D.hh"
 
-class BDSSamplerCylinder :public BDSAcceleratorComponent
+class BDSSamplerSD;
+
+/** 
+ * @brief Cylindrical sampler around an object.
+ * 
+ * Creates a hollow very thin (1um thick) cylinder around an object
+ * without end caps that acts as a sampler.
+ */
+
+class BDSSamplerCylinder: public BDSSampler
 {
 public:
-  BDSSamplerCylinder(G4String aName,G4double aLength, G4double aRadius);
-  ~BDSSamplerCylinder();
+  BDSSamplerCylinder(G4String name,
+		     G4double lengthIn,
+		     G4double radiusIn);
 
-  static int GetNSamplers();
-  static void AddExternalSampler(G4String outputName);
-
-  /// names of samplers for output
-  static std::vector <G4String> outputNames;
-
-  /// access for external classes to sensitive detector
-  static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
+  virtual ~BDSSamplerCylinder(){;}
 
 private:
-  virtual void Initialise();
-  virtual void BuildMarkerLogicalVolume();
-  virtual void SetVisAttributes();
-
-  G4double itsRadius;
-
-  /// id of sampler
-  int nThisSampler;
-  /// number of total Samplers
-  static int nSamplers;
-  /// pointer to sensitive detector, only one for all cylindrical samplers
-  static BDSSamplerSD* SensitiveDetector;
+  /// Private default constructor to ensure use of provided one.
+  BDSSamplerCylinder();
 };
 
 #endif

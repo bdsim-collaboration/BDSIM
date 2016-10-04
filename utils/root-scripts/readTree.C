@@ -11,7 +11,7 @@
   cout << "Number of Samplers: " << nsamps << endl;
   Float_t factor;
   Char_t ChainName[256];
-  TNtuple *ntuple = new TNtuple("ntuple","nutple","r:x:xp:y:yp:z:z0:E:E0:part:nev:n");
+  TNtuple *ntuple = new TNtuple("ntuple","ntuple","r:x:xp:y:yp:z:z0:E:E0:part:nev:n");
   
   for (Int_t j=jstar; j <=jend ; j++)
     {

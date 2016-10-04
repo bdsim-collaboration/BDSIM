@@ -1,91 +1,150 @@
 #include "BDSTrajectory.hh"
+
+#include "BDSDebug.hh"
+#include "BDSProcessMap.hh"
 #include "BDSTrajectoryPoint.hh"
+
+#include "globals.hh" // geant4 globals / types
+#include "G4Allocator.hh"
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4VProcess.hh"
+#include "G4TrajectoryContainer.hh"  // also provides TrajectoryVector type(def)
+#include "G4TransportationProcessType.hh"
+
 #include <map>
+#include <ostream>
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
-
-BDSTrajectory::BDSTrajectory():G4Trajectory(){
+BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
+{
+  TrajectoryVector* trajVec = trajCont->GetVector();
+  BDSTrajectory*    primary = nullptr;
+  for (const auto iT1 : *trajVec)
+    {
+      BDSTrajectory* traj = (BDSTrajectory*)iT1;
+      if(traj->GetParentID() == 0)
+	{primary = traj; break;}
+    }
+  return primary;
 }
 
-BDSTrajectory::BDSTrajectory(const G4Track* aTrack):G4Trajectory(aTrack){
-  _positionOfLastScatter[aTrack->GetTrackID()]=aTrack->GetPosition();
-  _momDirAtLastScatter[aTrack->GetTrackID()]=aTrack->GetMomentumDirection();
-  _energyAtLastScatter[aTrack->GetTrackID()]=aTrack->GetTotalEnergy();
-  _timeAtLastScatter[aTrack->GetTrackID()]=aTrack->GetGlobalTime();
-  _timeAtVertex[aTrack->GetTrackID()]=aTrack->GetGlobalTime();
+BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
+  G4Trajectory(aTrack)
+{
+  const G4VProcess *proc = aTrack->GetCreatorProcess();
+  if(proc)
+    {
+      creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
+      creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
+    }
+  else
+    {
+      creatorProcessType    = -1;
+      creatorProcessSubType = -1;
+    }
+  weight = aTrack->GetWeight();
+
+  fpBDSPointsContainer = BDSTrajectoryPointsContainer();
+  // this is for the first point of the track
+  fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aTrack));
 }
 
-BDSTrajectory::~BDSTrajectory(){
+BDSTrajectory::~BDSTrajectory()
+{
+  // clean points container
+  for (auto i : fpBDSPointsContainer)
+    {delete i;}
 }
 
-void BDSTrajectory::AppendStep(const G4Step* aStep){
-  G4Track* aTrack = aStep->GetTrack();
-  BDSTrajectoryPoint* tempTP = new BDSTrajectoryPoint(aTrack);
-  if(tempTP->isScatteringProcess()){
-    _positionOfLastScatter[aTrack->GetTrackID()]=aTrack->GetPosition();
-    _momDirAtLastScatter[aTrack->GetTrackID()]=aTrack->GetMomentumDirection();
-    _energyAtLastScatter[aTrack->GetTrackID()]=aTrack->GetTotalEnergy();
-    _timeAtLastScatter[aTrack->GetTrackID()]=aTrack->GetGlobalTime();
-  }
-  delete tempTP;
+void BDSTrajectory::AppendStep(const G4Step* aStep)
+{
+  // we do not use G4Trajectory::AppendStep here as that would
+  // duplicate position information in its own vector of positions
+  // which we prevent access to be overrideing GetPoint
+  fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
 }
 
-void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory){
-  if(!secondTrajectory) return;
-
-  BDSTrajectory* seco = (BDSTrajectory*)secondTrajectory;
-  for(std::map<G4int, G4ThreeVector>::iterator iter = seco->_positionOfLastScatter.begin();
-      iter!=seco->_positionOfLastScatter.end();
-      iter++){
-    _positionOfLastScatter.insert(*iter);
-  }
-  seco->_positionOfLastScatter.clear();
+void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  // this checks if nullptr and we don't do anything here
+  G4Trajectory::MergeTrajectory(secondTrajectory);
 }
 
-void BDSTrajectory::printData(){
+BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(BDSTrajectory* trajectory)
+{
+  // loop over trajectory to find non transportation step
+  for (G4int i=0; i < trajectory->GetPointEntries(); ++i)
+    {
+      BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+      auto processType    = point->GetPostProcessType();
+      auto processSubType = point->GetPostProcessSubType();
+
+      // test against things we want to exclude like tracking - these are not
+      // points of scattering
+      G4bool initialised       = processType != -1;
+      G4bool notTransportation = processType != fTransportation;
+      G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
+      G4bool notParallel       = processType != fParallel;
+
+      if (initialised && notTransportation && notGeneral && notParallel)
+	{
+#ifdef BDSDEBUG
+	  G4cout << "First primary interaction point found at "
+		 << point->GetPreS()/CLHEP::m
+		 << " m - "
+		 << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
+#endif
+	  return point;
+	}
+    }
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
+#endif
+  return static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(0));
 }
 
-void BDSTrajectory::printDataOfSteps(){
-  BDSTrajectoryPoint* tj;
-  for(int i = 0; i<GetPointEntries(); i++){
-    tj = (BDSTrajectoryPoint*)GetPoint(i);
-    if(i>0){
-      G4cout << "BDSTrajectory: Data for trajectory point : " << i << G4endl;
-      tj->printData();
+BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
+{
+  // loop over trajectory backwards to find non transportation step
+  for (G4int i = trajectory->GetPointEntries()-1; i >= 0; --i)
+  {
+    BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+    auto processType = point->GetPostProcessType();
+    auto processSubType = point->GetPostProcessSubType();
+
+    // test against things we want to exclude like tracking - these are not
+    // points of scattering
+    G4bool initialised       = processType != -1;
+    G4bool notTransportation = processType != fTransportation;
+    G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
+    G4bool notParallel       = processType != fParallel;
+
+    if (initialised && notTransportation && notGeneral && notParallel)
+    {
+#ifdef BDSDEBUG
+      G4cout << "First primary interaction point found at "
+		 << point->GetPreS()/CLHEP::m
+		 << " m - "
+		 << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
+#endif
+      return point;
     }
   }
-}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
+#endif
+  return dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
+} 
 
-void BDSTrajectory::printDataOfSteps(G4Step* aStep){
-  G4int trackID = aStep->GetTrack()->GetTrackID();
-  BDSTrajectoryPoint* tj;
-  for(int i = 0; i<GetPointEntries(); i++){
-    tj = (BDSTrajectoryPoint*)GetPoint(i);
-    if(tj->GetTrackID() == trackID){
-      G4cout << "BDSTrajectory: Data for trajectory point : " << i << G4endl;
-      tj->printData();
-    }
-  }
-}
-
-G4ThreeVector BDSTrajectory::GetPositionOfLastScatter(G4Track* aTrack){
-  return _positionOfLastScatter[aTrack->GetTrackID()];
-}
-
-G4ThreeVector BDSTrajectory::GetMomDirAtLastScatter(G4Track* aTrack){
-  return _momDirAtLastScatter[aTrack->GetTrackID()];
-}
-
-G4double BDSTrajectory::GetEnergyAtLastScatter(G4Track* aTrack){
-  return _energyAtLastScatter[aTrack->GetTrackID()];
-}
-
-G4double BDSTrajectory::GetTimeAtLastScatter(G4Track* aTrack){
-  return _timeAtLastScatter[aTrack->GetTrackID()];
-}
-
-G4double BDSTrajectory::GetTimeAtVertex(G4Track* aTrack){
-  return _timeAtVertex[aTrack->GetTrackID()];
+std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
+{
+  for(G4int i = 0; i < t.GetPointEntries(); i++)
+    {out << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
+  return out;
 }
 

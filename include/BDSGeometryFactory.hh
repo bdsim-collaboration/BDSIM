@@ -1,32 +1,30 @@
-#ifndef __BDSGEOMETRYFACTORY_
-#define __BDSGEOMETRYFACTORY_
+#ifndef BDSGEOMETRYFACTORY_H
+#define BDSGEOMETRYFACTORY_H
 
 #include "globals.hh"
-#include "BDSGeometry.hh"
-#include "BDSGeometryFormat.hh"
 
-class BDSGeometryFactory{
+class BDSGeometry;
+
+class BDSGeometryFactory
+{
 public:
   BDSGeometryFactory();
   ~BDSGeometryFactory();
   
-  BDSGeometry* buildGeometry(G4String geometry);
+  BDSGeometry* BuildGeometry(G4String formatAndFilePath);
  
 private:
-  G4String _geometry;
-  G4String _gFile;
-  BDSGeometryFormat* _gFormat;
-
-  void parseFormatAndFilename();
-
-  BDSGeometry* buildGmad();
+  BDSGeometry* BuildGMAD(G4String fileName);
+  
 #ifdef USE_LCDD
-  BDSGeometry* buildLCDD();
+  BDSGeometry* BuildLCDD(G4String fileName);
 #endif
-  BDSGeometry* buildMokka();
+  
+  BDSGeometry* BuildMokka(G4String fileName);
+  
 #ifdef USE_GDML
-  BDSGeometry* buildGDML();
+  BDSGeometry* BuildGDML(G4String fileName);
 #endif
-  BDSGeometry* buildNone();
 };
+
 #endif

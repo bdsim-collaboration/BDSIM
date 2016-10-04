@@ -1,0 +1,16 @@
+! standard options for runing bdsim
+
+option, beampipeRadius = 1 * cm,
+        outerDiameter = 1.9 * m,
+        samplerDiameter = 2.0*m,
+        beampipeThickness = 0.5 * mm,
+	prodCutPhotons = 1*m,
+	prodCutElectrons = 1*m,
+	prodCutPositrons = 1*m,
+	defaultRangeCut = 1*m;
+
+
+option,physicsList="FTFP_BERT";
+!option, ffact=1.00006400499999999999;
+option, ffact=1.0000640014297218494195;
+

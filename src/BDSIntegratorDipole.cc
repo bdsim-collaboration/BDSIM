@@ -1,0 +1,232 @@
+#include "BDSDebug.hh"
+#include "BDSIntegratorDipole.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSMagnetStrength.hh"
+#include "BDSStep.hh"
+
+#include <utility>
+#include "globals.hh" // geant4 types / globals
+#include "G4AffineTransform.hh"
+#include "G4Mag_EqRhs.hh"
+#include "G4ThreeVector.hh"
+
+
+BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
+					 G4double                  brho,
+					 G4Mag_EqRhs*              eqOfMIn):
+  BDSIntegratorBase(eqOfMIn, 6),
+  angle((*strength)["angle"]),
+  length((*strength)["length"]),
+  bField((*strength)["field"]),
+  brho(brho)
+{
+  bPrime = brho * (*strength)["k1"];
+  nominalMom = BDSGlobalConstants::Instance()->BeamMomentum();
+  cOverGeV = BDSGlobalConstants::Instance()->COverGeV();
+
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "B Field " << bField << G4endl;
+  G4cout << __METHOD_NAME__ << "B'      " << bPrime << G4endl;
+#endif
+}
+
+void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
+				       const G4double dydx[],
+				       G4ThreeVector  /*bField*/,
+				       G4double  h,
+				       G4double yOut[],
+				       G4double yErr[])
+{
+  // UNCOMMENT TO USE ONLY the g4 stepper for testing
+  // use a classical Runge Kutta stepper here
+  //backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+  //return;
+  G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
+      
+  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
+#ifdef BDSDEBUG
+  G4cout << "BDSIntegratorDipole: step= " << h/CLHEP::m << " m" << G4endl
+         << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
+         << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
+         << " z  = " << yIn[2]/CLHEP::m     << " m" << G4endl
+         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
+         << " q  = " << charge/CLHEP::eplus << " e" << G4endl
+	 << " B  = " << bField/(CLHEP::tesla) << " T" << G4endl
+    //         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
+         << G4endl; 
+#endif
+
+  const G4double *pIn = yIn+3;
+  G4ThreeVector v0    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
+  G4double      InitMag        = v0.mag();
+  G4ThreeVector InitMomDir     = v0.unit();
+  G4double rho = -length/angle;
+  //G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
+
+  // in case of zero field (though what if there is a quadrupole part..)
+  // or neutral particles do a linear step:
+  if(bField==0 || eqOfM->FCof()==0)
+    {
+      G4ThreeVector positionMove = h * InitMomDir;
+      
+      yOut[0] = yIn[0] + positionMove.x();
+      yOut[1] = yIn[1] + positionMove.y();
+      yOut[2] = yIn[2] + positionMove.z();
+      
+      yOut[3] = v0.x();
+      yOut[4] = v0.y();
+      yOut[5] = v0.z();
+      
+      distChord = 0;
+      return;
+    }
+
+  // global to local
+  BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
+  G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
+  G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
+  G4ThreeVector      LocalRp = Localv0.unit();
+  G4ThreeVector itsInitialR  = LocalR;
+  G4ThreeVector itsInitialRp = LocalRp;
+
+  // relative mom. spread
+  momSpread = (nominalMom - InitMag)/nominalMom;
+
+  G4double halftheta = h/(rho*2.0);
+
+  // rotate momentum by half angle so as to point the central trajectory
+  // along the chord of the dipole, and renormalize to unity.
+  LocalRp.rotateY(-halftheta);
+  LocalRp = LocalRp.unit();
+
+  // advance the orbit
+  std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalRp);
+  G4ThreeVector itsFinalPoint = RandRp.first;
+  G4ThreeVector itsFinalDir = RandRp.second;
+
+  // rotate again by half angle to point the central trajectory
+  // along the curvilinear, thus rotating by the whole dipole angle
+  itsFinalDir.rotateY(-halftheta);
+
+  G4double CosT_ov_2=cos(h/rho/2.0);
+  distChord = fabs(rho)*(1.-CosT_ov_2);
+
+  // check for paraxial approximation:
+  if(LocalRp.z() > 0.9)
+  {
+	BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
+	G4ThreeVector GlobalPositionOut = globalPosDir.PreStepPoint();
+	G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+	GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
+
+	yOut[0] = GlobalPositionOut.x();
+	yOut[1] = GlobalPositionOut.y();
+	yOut[2] = GlobalPositionOut.z();
+	
+	yOut[3] = GlobalTangent.x();
+	yOut[4] = GlobalTangent.y();
+	yOut[5] = GlobalTangent.z();
+	return;
+  }
+  else
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << " local helical steps - using G4ClassicalRK4" << G4endl;
+#endif
+      // use a classical Runge Kutta stepper here
+      backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+    }
+}
+
+void BDSIntegratorDipole::Stepper(const G4double yInput[],
+				  const G4double dydx[],
+				  const G4double hstep,
+				  G4double yOut[],
+				  G4double yErr[])
+{
+  G4double err = 1e-10 * hstep; // very small linear increase with distance
+  for(G4int i=0; i<nVariables; i++)
+    {yErr[i] = err;}
+
+  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+}
+
+std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double rho,
+                                            G4double h,
+                                            G4ThreeVector LocalR,
+                                            G4ThreeVector LocalRp)
+{
+    // see the developer manual for details on the matrix elements and
+    // conditional statements.
+    
+    // quad, dipole, and combined magnet strengths
+    G4double K1 = -bPrime/brho;
+    G4double k0 = 1.0 / rho;
+    G4double K = K1 + pow(k0,2);
+    G4double rootK = sqrt(std::abs(K));
+    G4double theta = h*rootK;
+
+    G4double xCosTerm, yCosTerm, xSinTerm, ySinTerm;
+
+    // sign for matrix terms which depend on the sign of K1
+    G4double sign  = (signbit(K1)) ? (-1.0) : (1.0);
+
+    if (K1 <= 0)
+      {
+        xCosTerm = cos(theta);
+        yCosTerm = cosh(theta);
+        xSinTerm = sin(theta);
+        ySinTerm = sinh(theta);
+      }
+    else
+      {
+        xCosTerm = cosh(theta);
+        yCosTerm = cos(theta);
+        xSinTerm = sinh(theta);
+        ySinTerm = sin(theta);
+      }
+
+    // matrix terms
+    G4double X11 = xCosTerm;
+    G4double X12 = (1.0/rootK) * xSinTerm;
+    G4double X21 = sign * rootK * xSinTerm;
+    G4double X22 = X11;
+
+    G4double X16 = -sign*(1.0/rootK) * (1-xCosTerm);
+    G4double X26 = -sign*xSinTerm;
+
+    G4double Y11 = yCosTerm;
+    G4double Y12 = (1.0/rootK) * ySinTerm;
+    G4double Y21 = -1.0*sign* rootK * ySinTerm;
+    G4double Y22 = Y11;
+
+    G4double x1, y1, z1, xp1, yp1, zp1;
+    x1  = LocalR.x()*X11 + LocalRp.x()*X12;
+    y1  = LocalR.y()*Y11 + LocalRp.y()*Y12;
+    z1  = LocalR.z()     + h;
+    xp1 = LocalR.x()*X21 + LocalRp.x()*X22;
+    yp1 = LocalR.y()*Y21 + LocalRp.y()*Y22;
+
+    if (K1 < 0){
+      x1  -= X16*momSpread;
+      xp1 -= X26*momSpread;
+    }
+    else if (K1 > 0){
+        x1  += X16*momSpread;
+        xp1 += X26*momSpread;
+    }
+    else{
+        x1  += X16*momSpread;
+        xp1 -= X26*momSpread;
+    }
+    // calculate zp1 separately to ensure momentum conservation.
+    zp1 = sqrt(1.0 - (pow(xp1,2) + pow(yp1,2)));
+
+    G4ThreeVector itsFinalPoint   = G4ThreeVector(x1,y1,z1);
+    G4ThreeVector itsFinalDir     = G4ThreeVector(xp1,yp1,zp1);
+
+  return std::make_pair(itsFinalPoint,itsFinalDir);
+
+}

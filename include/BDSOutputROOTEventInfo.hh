@@ -1,0 +1,29 @@
+#ifndef BDSOUTPUTROOTEVENTINFO_H
+#define BDSOUTPUTROOTEVENTINFO_H
+
+#include "TROOT.h"
+
+#include <ctime>
+
+/**
+ * @brief Information pertaining to an individual event.
+ *
+ * @author Stewart Boogert
+ */
+
+class BDSOutputROOTEventInfo
+{  
+public:
+  BDSOutputROOTEventInfo();
+
+  virtual ~BDSOutputROOTEventInfo();
+
+  ClassDef(BDSOutputROOTEventInfo,1);
+  
+  time_t startTime; ///< Time stamp at start of event.
+  time_t stopTime;  ///< Time stamp at end of event.
+  float  duration;  ///< Number of seconds event took to complete simulation (not writing out).
+  std::string seedStateAtStart; ///< Seed state at the start of the event.
+};
+
+#endif

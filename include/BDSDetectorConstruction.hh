@@ -1,31 +1,22 @@
-/** BDSIM, v0.1   
+#ifndef BDSDETECTORCONSTRUCTION_H
+#define BDSDETECTORCONSTRUCTION_H 
 
-Last modified 15.11.2005 by Ilya Agapov
-
-**/
-
-//==============================================================
-
-#ifndef BDSDetectorConstruction_h
-#define BDSDetectorConstruction_h 
-
+#include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
-#include "G4VUserDetectorConstruction.hh"
-#include "globals.hh"
 
-//#include "BDSWorld.hh"
-
+#include "globals.hh" // geant4 types / globals
 #include "G4Region.hh"
+#include "G4Version.hh"
+#include "G4VUserDetectorConstruction.hh"
 
-#include "G4GeometrySampler.hh"
+#include <list>
+#include <string>
 
 //GFlash parameterisation
 #include "GFlashHomoShowerParameterisation.hh"
 #include "BDSShowerModel.hh"
 #include "GFlashHitMaker.hh"
 #include "GFlashParticleBounds.hh"
-#include "BDSUniformMagField.hh"
-#include "BDSColourWheel.hh"
 
 class G4Box;
 class G4LogicalVolume;
@@ -34,79 +25,95 @@ class G4UniformMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
 
-class ElementList;
+#if G4VERSION_NUMBER > 1009
+class BDSBOptrMultiParticleChangeCrossSection;
+#endif
 
-//==============================================================
+/**
+ * @brief Class that constructs a Geant4 model of an accelerator.
+ *
+ * Mandatory class that must be supplied for a valid Geant4 simulation.
+ * As construction is based on user input (via the parser) for a potentially
+ * large number of items, the construction process is factorised into key steps
+ * with member functions and makes use of factories for components and tunnel segments.
+ * 
+ * Maintained by Laurie Nevay & Jochem Snuverink
+ */
 
-class BDSDetectorConstruction : public G4VUserDetectorConstruction
+class BDSDetectorConstruction: public G4VUserDetectorConstruction
 {
 public:
-  
   BDSDetectorConstruction();
-  ~BDSDetectorConstruction();
+  virtual ~BDSDetectorConstruction();
 
-public:
-     
+  /// Overridden Geant4 method that must be implemented. Constructs the Geant4 geometry
+  /// and returns the finished world physical volume.
   virtual G4VPhysicalVolume* Construct();
 
-  inline G4VPhysicalVolume* GetWorldVolume(){
-    return physiWorld;
-  }
+  virtual void ConstructSDandField();
 
-public:
-
-  G4double* GetWorldSize();
-  G4double GetWorldSizeX();
-  G4double GetWorldSizeY();
-  G4double GetWorldSizeZ();
+  /// Create biasing operations 
+  void BuildPhysicsBias();
   
 private:
   /// assignment and copy constructor not implemented nor used
   BDSDetectorConstruction& operator=(const BDSDetectorConstruction&);
   BDSDetectorConstruction(BDSDetectorConstruction&);
 
-  G4VPhysicalVolume* ConstructBDS(ElementList& beamline_list);
-
-  void SetMagField(const G4double afield);
+  /// Create and set parameters for various G4Regions
+  void InitialiseRegions();
   
-  /// converts parser beamline_list to BDSAcceleratorComponent with help of BDSComponentFactory
+  /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
+  /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
   void BuildBeamline();
-  /// build world volume, and calculate positions
-  void BuildWorld();
-  /// placements
-  void ComponentPlacement();
-  /// build tunnel from _TUNNEL elements
-  void BuildTunnel();
 
-  void SetWorldSizeX(G4double);
-  void SetWorldSizeY(G4double);
-  void SetWorldSizeZ(G4double);
+  /// Build the tunnel around the already constructed flat beam line.
+  void BuildTunnel();
+  
+  /// Build the world volume using the extent of the BDSBeamline instance created
+  /// in BuildBeamline()
+  void BuildWorld();
+  
+  /// Iterate over the beamline and place each BDSAcceleratorComponent in the world volume
+  void ComponentPlacement();
+
+  /// Initialise GFlash particle bounds - parameterised energy deposition.
+  void InitialiseGFlash();
+  
+  /// Function to add the volume to the gflash parameterisation model
+  void SetGFlashOnVolume(G4LogicalVolume* volume);
+
+#if G4VERSION_NUMBER > 1009
+  /// Function that creates physics biasing cross section
+  BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
+								 G4String defaultBias,
+								 G4String elementName);
+
+  /// List of bias objects - for memory management
+  std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;
+#endif
+
+#ifdef BDSDEBUG
+  bool debug = true;
+#else
+  bool debug = false;
+#endif
 
   G4bool verbose;
+  G4bool checkOverlaps;
 
-  G4int    gflash;
-  G4double gflashemax;
-  G4double gflashemin;
-    
-  G4GeometrySampler* itsGeometrySampler;
+  G4Region*          precisionRegion;
+  G4Region*          gasRegion;
 
-  G4Region* precisionRegion;
-  G4Region* gasRegion;
+  /// World physical volume
+  G4VPhysicalVolume* worldPV;
+  /// World user limits  
+  G4UserLimits* worldUserLimits;
 
-  //  BDSWorld* _world;
-
-  G4Box*             solidWorld;    //pointer to the solid World 
-  G4LogicalVolume*   logicWorld;    //pointer to the logical World
-  G4VPhysicalVolume* physiWorld;    //pointer to the physical World
-  std::vector<G4double> itsWorldSize;
-  std::vector< G4VPhysicalVolume * > fPhysicalVolumeVector; //a vector with all the physical volumes
-
-  BDSMagField* magField;      //pointer to the magnetic field
-  G4UserLimits* BDSUserLimits;
-
-  G4VSensitiveDetector *  BDSSensitiveDetector;
+  // All fields
+  std::vector<BDSFieldObjects*> fields;
   
-  // Gflash members                                                                                                                                                     
+  // Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;
@@ -114,9 +121,8 @@ private:
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
 
-  G4RotationMatrix* _globalRotation;
-
-  BDSColourWheel* _colourWheel;
+  /// Whether or not to use the GFlash shower parameterisation.
+  G4bool gflash;
 };
 
 #endif

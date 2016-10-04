@@ -1,105 +1,115 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 12.10.2005
-*/
-
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 
-#include <cstdlib>
 #include "BDSMySQLWrapper.hh"
 #include "BDSMySQLTable.hh"
 
-#include<iostream>
-#include<boost/tokenizer.hpp>
+#include "globals.hh"
+#include <cstdlib>
+#include <iostream>
+#include <regex>
+#include <string>
+#include <vector>
 
-#include"globals.hh"
-#include<string>
-#include<vector>
-#include<sstream>
 
-BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
-  : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
-  
+BDSMySQLWrapper::BDSMySQLWrapper(const G4String& SQLFileName):
+  ifs(SQLFileName.c_str()),
+  ComponentN(0),
+  tableN(-1)
 {
   _startOfFile=true;
   BeginTokens();
 
-  if(ifs) {
+  if(ifs)
+    {
 #ifdef BDSDEBUG
-    G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
+      G4cout << __METHOD_NAME__ << "loading SQL Filename: " << SQLFileName << G4endl;
 #endif
-  }
-  else {
-    G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
-    exit(1);
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "unable to load SQL file: " << SQLFileName << G4endl; exit(1);}
 }
 
 BDSMySQLWrapper::~BDSMySQLWrapper()
-{
-}
+{;}
 
-std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
+std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable()
 {
   ComponentN=0;
   tableN=-1;
-  while(NextToken()){
-    ParseComponent();
-  }
+  while(NextToken())
+    {ParseComponent();}
   return table;
 }
 
-void BDSMySQLWrapper::TokenizeLine(){
-  std::string token;
+void BDSMySQLWrapper::TokenizeLine()
+{
+  // empty old tokens
   _tokens.clear();
-  typedef boost::tokenizer<boost::char_separator<char> > tokenizer;  
-  // http://www.boost.org/doc/libs/1_55_0b1/libs/tokenizer/char_separator.htm
-  // separate with , and space, keep ; ( ) and \n
-  boost::char_separator<char> sep(", ",";()\n"); 
-  tokenizer tok(_currentLine, sep);
-  for(tokenizer::iterator tok_iter=tok.begin(); tok_iter != tok.end(); ++tok_iter){
-    token = *tok_iter;
-    RemoveQuotesFromLine(token);
-    RemoveWhitespace(token);
-    _tokens.push_back(token);
+
+  // Separate with comma and space, separate and keep with ; ( ) and \n
+  // Done in 2 steps, once for dropped delimiters and then for the kept delimiters
+  // Delimiters are spaces, tabs (changed from earlier versions) and/or commas, but no newlines
+  std::regex drop_delimiters("[ \t,]+");
+
+  std::string &s = _currentLine;
+  // Specifying -1 as the fourth argument makes the function skip over any patterns matching
+  // the regex_obj, causing the iterator to iterate through the tokens—which consist of text
+  // between each occurrence of the pattern.
+  std::sregex_token_iterator tok_iter(s.begin(), s.end(), drop_delimiters, -1);
+  
+  // default constructor = end-of-sequence:
+  std::sregex_token_iterator rend;
+  for (; tok_iter!=rend; ++tok_iter) {
+    std::string subtoken = *tok_iter;
+    //    G4cout << __METHOD_NAME__ << " - subtoken: = <" << subtoken << ">" << G4endl;
+
+    // keep ; ( ) 
+    std::regex keep_delimiters("[;\\(\\)]");
+    // delimiters (0) and remaining (-1)
+    std::sregex_token_iterator tok_iter2(subtoken.begin(), subtoken.end(), keep_delimiters, {-1, 0});
+
+    for (; tok_iter2!=rend; ++tok_iter2) { 
+    
+      std::string token = *tok_iter2;
+      
+      // only put non-empty tokens, but put empty strings ""
+      if (token.empty())
+	{continue;}
+      RemoveQuotesFromLine(token);
+      RemoveWhitespace(token);
+      _tokens.push_back(token);
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
+	G4cout << __METHOD_NAME__ << "- token: = <" << token << ">" << G4endl;
 #endif
+    }
   }
   BeginTokens();
 }
 
-bool BDSMySQLWrapper::NextToken(){
+bool BDSMySQLWrapper::NextToken()
+{
   std::string line;
   ++_tokens_iter;
-  if(_startOfFile){
-    --_tokens_iter;
-  }
+  if(_startOfFile)
+    {--_tokens_iter;}
   if(_startOfFile || EndTokens()){
     if(ifs.good()){
       ReadLine();
       TokenizeLine();
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
+      G4cout << __METHOD_NAME__ << "- Token() = " << Token() << G4endl;
 #endif
     }else{
       return false;
     }
   } else {
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
+    G4cout << __METHOD_NAME__ << "- Token() = " << Token() << G4endl;
 #endif
   }
   return true;
 }
-
-
 
 G4int BDSMySQLWrapper::ParseComponent()
 {
@@ -115,11 +125,11 @@ G4int BDSMySQLWrapper::ParseComponent()
   return 0;
 }
 
+void BDSMySQLWrapper::CreateDatabase()
+{;}
 
-void BDSMySQLWrapper::CreateDatabase(){
-}
-
-void BDSMySQLWrapper::CreateTable(){
+void BDSMySQLWrapper::CreateTable()
+{
   G4String varname;
   G4String vartype;
 
@@ -156,8 +166,8 @@ void BDSMySQLWrapper::CreateTable(){
   }
 }
 
-
-void BDSMySQLWrapper::Create(){
+void BDSMySQLWrapper::Create()
+{
   _NEXT
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " reading input: " << Token() << G4endl;

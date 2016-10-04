@@ -1,0 +1,20 @@
+! standard options for runing bdsim
+
+option, beampipeRadius = 10 * cm,
+        outerDiameter = 1.9 * m,
+        samplerDiameter = 2.0*m,
+        beampipeThickness = 0.5 * mm,
+	elossHistoBinWidth = 0.01,
+	prodCutPhotons=0.1*m,
+	prodCutElectrons=0.1*m,
+	prodCutPositrons=0.1*m,
+	defaultRangeCut=0.1*m;
+
+! option,magnetGeometryType="none";
+! option,apertureType="rectangular";
+! option,aper2=15*cm;
+
+option,physicsList="em synchrad";
+
+
+

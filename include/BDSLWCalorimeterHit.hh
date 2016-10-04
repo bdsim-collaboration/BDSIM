@@ -1,11 +1,5 @@
-/* BDSIM code for LW Calorimeter.    Version 1.0
-   Author: John Carter, Royal Holloway, Univ. of London.
-   Last modified 26.7.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSLWCalorimeterHit_h
-#define BDSLWCalorimeterHit_h 1
+#ifndef BDSLWCALORIMETERHIT_H
+#define BDSLWCALORIMETERHIT_H
 
 #include "G4VHit.hh"
 #include "G4THitsCollection.hh"
@@ -17,7 +11,7 @@ class BDSLWCalorimeterHit :public G4VHit
 public:
   BDSLWCalorimeterHit(G4int nCopy, G4double Energy=0, G4int nEvent=0);
 
-  ~BDSLWCalorimeterHit();
+  virtual ~BDSLWCalorimeterHit();
 
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

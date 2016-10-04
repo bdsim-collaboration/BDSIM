@@ -1,127 +1,40 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-#include "BDSGlobalConstants.hh" 
-
+#include "BDSAcceleratorComponent.hh"
 #include "BDSDrift.hh"
+#include "BDSBeamPipe.hh"
+#include "BDSBeamPipeFactory.hh"
 
-#include "BDSDriftStepper.hh"
-#include "BDSMagField.hh"
-#include "BDSDebug.hh"
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Tubs.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4MagneticField.hh"
-#include "BDSUniformMagField.hh"
+#include "globals.hh" // geant4 globals / types
 
-#include <map>
-
-//============================================================
-BDSDrift::BDSDrift (G4String aName, 
-		    G4double aLength, 
- 		    G4double aperX, 
-		    G4double aperY, 
-		    G4String tunnelMaterial, 
-		    G4bool   aperset, 
-		    G4double aper, 
-		    G4double tunnelOffsetX):BDSMultipole(aName, 
-							 aLength, 
-							 aper, 
-							 aper, 
-							 tunnelMaterial, 
-							 "", 
-							 aperX, 
-							 aperY, 
-							 0, 
-							 0, 
-							 tunnelOffsetX),
-					    itsStartOuterR(0.0),
-					    itsEndOuterR(0.0),
-					    itsAperset(aperset){
-  init();
-					    }
-
-BDSDrift::BDSDrift (G4String aName, 
-		    G4double aLength, 
-                    std::list<G4double> blmLocZ, 
-		    std::list<G4double> blmLocTheta, 
-		    G4double aperX, 
-		    G4double aperY, 
-		    G4String tunnelMaterial, 
-		    G4bool   aperset, 
-		    G4double aper, 
-		    G4double tunnelOffsetX, 
-		    G4double phiAngleIn, 
-		    G4double phiAngleOut):
-  BDSMultipole(aName, 
-	       aLength, 
-	       aper, 
-	       aper, 
-	       blmLocZ, 
-	       blmLocTheta, 
-	       tunnelMaterial, 
-	       "", 
-	       aperX, 
-	       aperY, 
-	       0, 
-	       0, 
-	       tunnelOffsetX, 
-	       phiAngleIn, 
-	       phiAngleOut),
-  itsStartOuterR(0.0),
-  itsEndOuterR(0.0),
-  itsAperset(aperset)
-{
-  init();
-}
-
-void BDSDrift::init(){
-  if(!itsAperset){
-    itsStartOuterR=itsXAper + BDSGlobalConstants::Instance()->GetBeampipeThickness();
-    itsEndOuterR=itsYAper + BDSGlobalConstants::Instance()->GetBeampipeThickness();
-    SetStartOuterRadius(itsStartOuterR);
-    SetEndOuterRadius(itsEndOuterR);
-  }
-}
-
-void BDSDrift::BuildBeampipe(G4String materialName) {
-  if (itsAperset){
-    BDSMultipole::BuildBeampipe(materialName);
-  } else {
-    BDSMultipole::BuildBeampipe(itsXAper, itsYAper, materialName);
-  }
-}
-
-void BDSDrift::Build() {
-  BDSMultipole::Build();
-
-  G4VisAttributes* VisAtt1 = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
-  VisAtt1->SetVisibility(false);
-  VisAtt1->SetForceSolid(true);
-  itsMarkerLogicalVolume->SetVisAttributes(VisAtt1);
-}
-
-
-void BDSDrift::BuildBPFieldAndStepper(){
-    // set up the magnetic field and stepper
-  //  itsMagField = new BDSMagField(); //Zero magnetic field.
-  G4ThreeVector zeroVec;
-  itsMagField=new BDSUniformMagField(zeroVec);
-  itsEqRhs    = new G4Mag_UsualEqRhs(itsMagField);
-  itsStepper  = new BDSDriftStepper(itsEqRhs);
-}
-
-void BDSDrift::BuildBLMs(){
-  itsBlmLocationR = std::max(itsStartOuterR, itsEndOuterR) - itsBpRadius;
-  BDSAcceleratorComponent::BuildBLMs(); // resets itsBlmLocationR! -- JS
-}
+BDSDrift::BDSDrift(G4String         name, 
+		   G4double         length,
+		   BDSBeamPipeInfo* beamPipeInfo,
+		   G4int            precisionRegion):
+  BDSAcceleratorComponent(name, length, 0, "drift", precisionRegion, beamPipeInfo)
+{;}
 
 BDSDrift::~BDSDrift()
+{;}
+
+void BDSDrift::Build()
 {
+  BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
+  BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
+					      chordLength,
+					      beamPipeInfo);;
+
+  RegisterDaughter(pipe);
+  
+  // make the beam pipe container, this object's container
+  containerLogicalVolume = pipe->GetContainerLogicalVolume();
+  containerSolid         = pipe->GetContainerSolid();
+
+  // register vacuum volume (for biasing)
+  SetAcceleratorVacuumLogicalVolume(pipe->GetVacuumLogicalVolume());
+
+  // update extents
+  InheritExtents(pipe);
+
+  // update faces
+  SetInputFaceNormal(pipe->InputFaceNormal());
+  SetOutputFaceNormal(pipe->OutputFaceNormal());
 }

@@ -1,73 +1,97 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-//==========================================================
-//==========================================================
-
-#include "BDSExecOptions.hh"
+#include "BDSAcceleratorModel.hh"
+#include "BDSAnalysisManager.hh"
+#include "BDSBeamline.hh"
+#include "BDSBeamlineElement.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSOutputBase.hh" 
 #include "BDSRunAction.hh"
-#include "BDSRunManager.hh"
 
+#include "globals.hh"               // geant4 globals / types
 #include "G4Run.hh"
-//#include "G4UImanager.hh"
-//#include "G4VVisManager.hh"
-#include "G4ios.hh"
-#define BDSDEBUG 1
+
+#include "CLHEP/Random/Random.h"
+
+#include <sstream>
+#include <string>
+
 extern BDSOutputBase* bdsOutput;         // output interface
 
-//==========================================================
-
 BDSRunAction::BDSRunAction()
-{
-}
-
-//==========================================================
+{;}
 
 BDSRunAction::~BDSRunAction()
-{}
-
-//==========================================================
+{;}
 
 void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  //Get the current time
-  starttime = time(NULL);
+  // save the random engine state
+  std::stringstream ss;
+  CLHEP::HepRandom::saveFullState(ss);
+  seedStateAtStart = ss.str();
+  
+  // get the current time
+  starttime = time(nullptr);
 
-  //Output feedback
-  G4cout << "### Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
+  // construct output histograms
+  // calculate histogram dimensions
+  const G4double smin   = 0.0;
+  const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
+  const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
+  const G4String slabel = "s [m]";
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
+  G4cout << "s minimum: " << smin     << " m" << G4endl;
+  G4cout << "s maximum: " << smax     << " m" << G4endl;
+  G4cout << "# of bins: " << nbins    << G4endl;
+#endif
+  // create the histograms
+  BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",
+						    nbins,smin,smax,slabel,
+						    "Number of Primaries"); //0
+  BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",
+						    nbins,smin,smax,slabel,
+						    "Number of Primaries"); //1
+  BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss",
+						    nbins,smin,smax,slabel,"GeV"); //2
+  // prepare bin edges for a by-element histogram
+  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetSPositionEndOfEach();
+  
+  // create per element ("pe") bin width histograms
+  BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
+						    binedges,slabel, "Number of Primaries / Element"); //3
+  BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",
+						    binedges,slabel, "Number of Primaries / Element"); //4
+  BDSAnalysisManager::Instance()->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,
+						    binedges,slabel,"GeV"); //5
+  
+  // Output feedback
+  G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;
 
-  //  if (G4VVisManager::GetConcreteInstance())
-  //    {
-      //      G4UImanager* UI = G4UImanager::GetUIpointer(); 
-      //  UI->ApplyCommand("/vis/scene/notifyHandlers");
-  //    } 
-
-
+  bdsOutput->Initialise(); // open file
 }
-
-//==========================================================
 
 void BDSRunAction::EndOfRunAction(const G4Run* aRun)
 {
-  //Get the current time
-  stoptime = time(NULL);
+  // Get the current time
+  stoptime = time(nullptr);
+  // run duration
+  G4float duration = difftime(stoptime,starttime);
 
-  //Output feedback
-  G4cout << "### Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
+  // Output feedback
+  G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
   
   // Write output
-  if(BDSExecOptions::Instance()->GetBatch()) {  // Non-interactive mode
-    bdsOutput->Write(); // write last file
-  } else {
-    bdsOutput->Commit(); // write and open new file
-  }
+  // write histograms to output - do this before potentially closing / opening new files
+  for (int i=0; i<BDSAnalysisManager::Instance()->NumberOfHistograms(); i++)
+    {bdsOutput->WriteHistogram(BDSAnalysisManager::Instance()->GetHistogram(i));}
 
+  bdsOutput->Write(starttime, stoptime, duration, seedStateAtStart); // write last file
+  bdsOutput->Close();
+
+  // delete analysis manager
+  delete BDSAnalysisManager::Instance();
+  
   // note difftime only calculates to the integer second
-  G4cout << "Run Duration >> " << difftime(stoptime,starttime) << " s" << G4endl;
+  G4cout << "Run Duration >> " << (int)duration << " s" << G4endl;
 }
-//==========================================================

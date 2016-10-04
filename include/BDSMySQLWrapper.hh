@@ -1,16 +1,5 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 12.10.2005
-*/
-
-
-#ifndef BDSMySQLWrapper_h
-#define BDSMySQLWrapper_h 1
+#ifndef BDSMYSQLWRAPPER_H
+#define BDSMYSQLWRAPPER_H
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSMySQLTable.hh"

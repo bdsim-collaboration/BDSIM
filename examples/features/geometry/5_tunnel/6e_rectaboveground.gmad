@@ -1,0 +1,3 @@
+include 6_very_long_following.gmad;
+
+option, tunnelType="rectaboveground";

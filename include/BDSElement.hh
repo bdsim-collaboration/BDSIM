@@ -1,36 +1,47 @@
-/* BDSIM code.    Version 1.0
-   Author: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 02.12.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
-
-#ifndef BDSElement_h
-#define BDSElement_h 
+#ifndef BDSELEMENT_H
+#define BDSELEMENT_H
 
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
 
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4Mag_EqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4MagneticField.hh"
-#include "G4UniformMagField.hh"
-#include "BDSMagField.hh"
-#include "G4CachedMagneticField.hh"
+class BDSMagField;
+class G4CachedMagneticField;
+class G4ChordFinder;
+class G4EqMagElectricField;
+class G4LogicalVolume;
+class G4Mag_UsualEqRhs;
+class G4MagIntegratorStepper;
+class G4UniformMagField;
+class G4VPhysicalVolume;
 
-#include "G4EqMagElectricField.hh"
+/**
+ * @brief A class for a generic piece of external geometry.
+ * 
+ * Allows any arbritary geometry and magnetic field map to be used
+ * as an accelerator component in the beamline. Geometry and magnetic fields are imported
+ * from an external file (each) and can be specified in various formats.
+ *
+ */
 
-class BDSElement :public BDSAcceleratorComponent
+class BDSGeometry;
+
+class BDSElement: public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aBmapZOffset, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
-  ~BDSElement();
+  BDSElement(G4String      name,
+	     G4double      length,
+	     G4double      outerDiameterIn,
+	     G4String      geometry,
+	     G4String      bmap,
+	     G4ThreeVector bMapOffsetIn);
+  virtual ~BDSElement();
 
+  /// Creates a field mesh in global coordinates in case it is given by map
+  //void PrepareField(G4VPhysicalVolume *referenceVolume);
+
+  /// Rotates and positions the marker volume before it is placed in
+  /// BDSDetectorConstruction. It aligns the marker volume so that the
+  /// the beamline goes through the specified daugther volume (e.g. for mokka)
   void AlignComponent(G4ThreeVector& TargetPos, 
 		      G4RotationMatrix *TargetRot,
 		      G4RotationMatrix& globalRotation,
@@ -41,17 +52,32 @@ public:
 		      G4ThreeVector& localZ); 
    
 private:
-
-  void SetVisAttributes();  
-  void PlaceComponents();
-  void BuildMagField(G4bool forceToAllDaughters=false);
+  /// Overridden method of BDSAcceleratorComponent that defines the build procedure
+  /// for this object. Calls BDSAcceleratorComponent::Build() first that builds the
+  /// container volume (using BuildContainerLogicalVolume() provided here). Then builds
+  /// the geometry and magnetic field maps from the supplied file.
   virtual void Build();
-  //  virtual void BuildFieldAndStepper();
-  G4String itsGeometry;
-  G4String itsFieldVolName;
 
-  G4CachedMagneticField *itsCachedMagField;
-  G4double itsOuterR;
+  /// Required implementation from BDSAcceleratorComponent that builds the container volume.
+  /// Here, this method uses the outerDiameter parameter from the constructor.
+  virtual void BuildContainerLogicalVolume();
+
+  /// Load the geometry and place the components inside the container logical volume.
+  void PlaceComponents();
+
+  /// Build the magnetic field
+  //void BuildMagField(G4bool forceToAllDaughters = false);
+
+  G4double outerDiameter;
+  G4String geometryFileName;
+  G4String bMapFileName;
+
+  /// Displacement of b field coordinates from geometry coordinates
+  G4ThreeVector bMapOffset;
+
+  G4String itsFieldVolName;
+  //G4CachedMagneticField *itsCachedMagField;
+
   // Volume to align incoming beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_in_volume;
@@ -59,7 +85,8 @@ private:
   // (set during Geometery construction)
   G4VPhysicalVolume* align_out_volume;
 
-  G4VisAttributes* _visAttDebug;
+
+  BDSGeometry* geometry;
 };
 
 

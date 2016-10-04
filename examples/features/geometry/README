@@ -1,0 +1,10 @@
+Geometry features examples 
+   * Material GDML output 
+   * Geometry GDML output
+   * GDML loading
+   * GDML on-the-fly editing
+   * STL to GDML conversion and loading 
+   * openSCAD to STL generation
+
+ggmad           : Example of element with user-defined ggmad geometry 
+Mokka           : International Linear Collider Detector 

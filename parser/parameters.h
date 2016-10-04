@@ -1,144 +1,73 @@
-#ifndef __PARAMETERS_H
-#define __PARAMETERS_H
+#ifndef PARAMETERS_H
+#define PARAMETERS_H
 
-#include <list>
 #include <string>
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include "element.h"
 
-struct Element;
+namespace GMAD
+{
+  class Array;
 
-/**
- * @brief Parameters - used in the parser
- * 
- * @author I. Agapov
- */
+  /**
+   * @brief Parameters - Element class with booleans
+   * 
+   * This is a temporary storage class of the parameters before the actual Element is created. 
+   * The booleans are needed for inheritance and extension of already created Elements.
+   * The class is a singleton.
+   *
+   * @author Jochem Snuverink (based on I. Agapov)
+   */
 
-struct Parameters {
+  struct Parameters : public Element {
 
-  /// length, multipole coefficients
+    /// Map that holds booleans for every member of element
+    std::map<std::string,bool> setMap;
 
-  double B;  int Bset;    /// magnetic field
-  double l;  int lset;    /// length
-  double bmapZOffset; int bmapZOffsetset; //offset of the field map magnet field
-  double k0; int k0set;   /// dipole 
-  double k1; int k1set;   /// quadrupole
-  double k2; int k2set;   /// sextupole
-  double k3; int k3set;   /// octupole
-  double ks; int ksset;   /// solenoid
+    /// Reset the parameters to defaults and setMap
+    void flush();
 
-  double tscint; int tscintset; ///thickness of scintillating part of screen
-  double screenPSize; int screenPSizeset; ///thickness of screen particles
-  double windowScreenGap; int windowScreenGapset; ///air gap between window and screen
-  double twindow; int twindowset; ///thickness of window
-  double tmount; int tmountset; ///thickness of additional backing for scint screen
-  double screenEndZ; int screenEndZset;//z position of end of screen relative to beginning of magnet pole
-  double screenWidth; int screenWidthset;//width of the scintillator screen
-  double poleStartZ; int poleStartZset;//z position of beginning of magnet pole relative to beginning of element
+    /// Copy parameters into temporary buffer params from element e
+    /// Parameters already set in params have priority and are not overridden
+    void inherit_properties(Element& e);
 
-  std::list<double> knl;           /// multipole expansion coefficients
-  std::list<double> ksl;           /// skew multipole expansion
-  
-  int knlset; int kslset;
+    /// Set method by property name and value
+    template <typename T>
+    void set_value(std::string property, T value);
+    // Template overloading for Array pointers
+    /// Set method for lists
+    void set_value(std::string property, Array* value);
 
-  ///List of beam loss monitor locations
-  std::list<double> blmLocZ;
-  std::list<double> blmLocTheta;
-  int blmLocZset; int blmLocThetaset;
+    /// Constructor
+    Parameters();
+  };
 
-
-  ///For MADX style sequences
-  /* double at; int atset;///"at" and "from" define position in beam line */
-  /* char from[256]; int fromset; */
-  /* char refer[64]; int referset; */
-  /* double absp; int abspset;///pos. from beg. of line */
-  
-  /// placement, geometrical sizes etc.
-
-  double r; int rset; ///radius, i.e cylindrical sampler
-  
-  double angle; int angleset;   /// bending angle
-  double phiAngleIn; int phiAngleInset;   /// incoming bending angle for element
-  double phiAngleOut; int phiAngleOutset;   /// outgoing bending angle for element
-  double beampipeThickness; int beampipeThicknessset;  
-  double aper; int aperset;   /// aperture (circular)
-  double aperX; int aperXset;   /// aperture (elliptical)
-  double aperY; int aperYset;   
-  double phi, theta, psi; /// for 3d transforms
-  int phiset, thetaset, psiset;
-  double tunnelRadius, tunnelOffsetX, floorBeamlineHeight, beamlineCeilingHeight, tunnelThickness, tunnelSoilThickness;
-  int tunnelRadiusset, tunnelOffsetXset, floorBeamlineHeightset, beamlineCeilingHeightset, tunnelThicknessset, tunnelSoilThicknessset;
-  int tunnelType, tunnelTypeset;
-
-  ///which precision physics region the element is in (0 = none)
-  int precisionRegion; int precisionRegionset;
-
-  double aperYUp; int aperYUpset;  
-  double aperYDown; int aperYDownset; 
-  double aperDy; int aperDyset;
-  
-  double flatlength; int flatlengthset;
-  double taperlength; int taperlengthset;
-  double gradient; int gradientset;
-
-  double outR; int outRset; /// outer radius of magnets
-  double inR, bpRad; int inRset, bpRadset;/// inner radius and beam pipe radius of muon spoiler
-  double hgap, hgapset;
-  double xsize, ysize; int xsizeset, ysizeset; /// aperture (or laser spotsize for laser)
-  double screenXSize, screenYSize;   int screenXSizeset, screenYSizeset; //screen dimensions.
-  double xdir, ydir, zdir, waveLength; int xdirset, ydirset, zdirset, waveLengthset;
-
-  double tilt; int tiltset;   /// tilt
-
-  /// for external geometry and field definition files
-  std::string geometry; int geomset;
-  std::string bmap; int bmapset;
-  //  std::string emap; int emapset;
-  std::string material; int materialset;
-  std::string tunnelMaterial; int tunnelmaterialset;
-  std::string tunnelSoilMaterial; int tunnelSoilMaterialset;
-  std::string tunnelCavityMaterial; int tunnelcavitymaterialset;
-
-  /// string to pass a custom type specification
-  std::string spec; int specset;
-
-  /// material properties
-  double A; int Aset;
-  double Z; int Zset;
-  double density; int densityset;
-  double temper; int temperset;
-  double pressure; int pressureset;
-  std::string state; int stateset;
-  std::string symbol; int symbolset;
-  std::list<const char*> components; int componentsset;
-  std::list<double> componentsFractions; int componentsFractionsset;
-  std::list<int> componentsWeights; int componentsWeightsset;
-
-  //For the layers of a multi -layer diagnostics screen.
-  std::list<const char*> layerMaterials; int layerMaterialsset;
-  std::list<double> layerThicknesses; int layerThicknessesset;
-  std::list<int> layerIsSampler; int layerIsSamplerset;
-  //For a spectrometer scintillator screen.
-  std::string  scintmaterial;  int scintmaterialset;
-  std::string  windowmaterial;  int windowmaterialset;
-  std::string  mountmaterial;  int mountmaterialset;
-  std::string  vacuummaterial;  int vacuummaterialset;
-  std::string  airmaterial;  int airmaterialset;
-
-  // position of an element withing a sequence
-  double at; int atset;
-
-
-  //// reset the parameters to defaults
-  void flush();
-
-  /// copy parameters into temporary buffer params from element e
-  /// parameters already set in params have priority and are not overridden
-  void inherit_properties(struct Element& e);
-
-  /// print multipole expansion array
-  void print()const;
-
-  /// constructor
-  Parameters();
-};
+  template <typename T>
+    void Parameters::set_value(std::string property, T value)
+    {
+#ifdef BDSDEBUG
+      std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+#endif
+      // member method can throw runtime_error, catch and exit gracefully
+      try {
+	Published<Element>::set(this,property,value);
+      }
+      catch(std::runtime_error) {
+	// not implemented mad parameters will be ignored
+	if (property == "fint" || property == "fintx" ||
+	    property == "hgap" || property == "harmon" || property == "lag" || property == "volt")
+	  {return;}
+	
+	std::cerr << "Error: parser> unknown option \"" << property << "\" with value " << value  << std::endl;
+	exit(1);
+      }
+      // record property set
+      // property name can be different, so look up in alternate names
+      std::string publishedName = getPublishedName(property);
+      setMap.at(publishedName) = true;
+    }
+}
 
 #endif

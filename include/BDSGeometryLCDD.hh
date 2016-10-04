@@ -1,51 +1,51 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 13.04.2005
-*/
-
 #ifdef USE_LCDD
 
-#ifndef BDSGeometryLCDD_h
-#define BDSGeometryLCDD_h 1
+#ifndef BDSGEOMETRYLCDD_H
+#define BDSGEOMETRYLCDD_H
 
-#include "globals.hh"
+#include "BDSColours.hh"
 #include "BDSGeometry.hh"
 #include "BDSMaterials.hh"
-#include "G4UniformMagField.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VSolid.hh"
+
+#include "globals.hh"
+#include "G4Box.hh"
 #include "G4Cons.hh"
-#include "G4Tubs.hh"
+#include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4Mag_UsualEqRhs.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
+#include "G4PVPlacement.hh"
+#include "G4QuadrangularFacet.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4Box.hh"
+#include "G4TessellatedSolid.hh"
 #include "G4Trd.hh"
+#include "G4TriangularFacet.hh"
+#include "G4Tubs.hh"
+#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4FieldManager.hh"
+#include "G4VSolid.hh"
+
+#include "BDSMagFieldMesh.hh"
 #include "BDSSamplerSD.hh"
+
 #include <fstream>
-#include <vector>
 #include <map>
-#include "BDSMagField.hh"
-#include "G4TessellatedSolid.hh"
-#include "G4TriangularFacet.hh"
-#include "G4QuadrangularFacet.hh"
+#include <vector>
 
 // Headers required for XML parsing
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
+
+/**
+ * @brief LCDD geometry format loader.
+ * 
+ * @author J. C. Carter
+ **/
 
 struct POS_REF{
   G4String name;
@@ -67,11 +67,11 @@ struct VIS_REF{
   G4VisAttributes* value;
 };
 
-class BDSGeometryLCDD : public BDSGeometry
+class BDSGeometryLCDD: public BDSGeometry
 {
 public:
   BDSGeometryLCDD(G4String LCDDfile);
-  ~BDSGeometryLCDD();
+  virtual ~BDSGeometryLCDD();
 
   inline G4String GetFieldVolName(){return itsFieldVolName;}
 
@@ -97,9 +97,9 @@ public:
   std::vector<G4LogicalVolume*> VOL_LIST;
   G4String parseStrChar(xmlChar* value);
   G4double parseDblChar(xmlChar* value);
-  G4bool parseBoolChar(xmlChar* value);
+  G4bool   parseBoolChar(xmlChar* value);
 
-  G4bool stripwhitespace(G4String& str);
+  G4bool   stripwhitespace(G4String& str);
 
   // used for parsing strings for math calculations
   G4bool EvaluateExpression(const char*, G4double& result);
@@ -117,11 +117,11 @@ private:
 #endif
   G4String itsFieldVolName;
   // Fetching of imported objects
-  G4VisAttributes* GetVisByName(G4String name);
-  G4VSolid* GetSolidByName(G4String name);
-  G4LogicalVolume* GetLogVolByName(G4String name);
-  G4ThreeVector GetPosition(G4String name);
-  G4ThreeVector GetPosition(xmlNodePtr cur, G4double lunit=0.0);
+  G4VisAttributes*  GetVisByName(G4String name);
+  G4VSolid*         GetSolidByName(G4String name);
+  G4LogicalVolume*  GetLogVolByName(G4String name);
+  G4ThreeVector     GetPosition(G4String name);
+  G4ThreeVector     GetPosition(xmlNodePtr cur, G4double lunit=0.0);
   G4RotationMatrix* GetRotation(G4String name);
   G4RotationMatrix* GetRotation(xmlNodePtr cur, G4double aunit=0.0);
 
@@ -149,7 +149,7 @@ private:
 
   G4double visRed, visGreen, visBlue;
 
-  G4bool _fieldIsUniform;
+  G4bool fieldIsUniform;
 };
 
 inline G4ThreeVector BDSGeometryLCDD::GetPosition(xmlNodePtr cur, G4double lunit)
@@ -258,7 +258,7 @@ inline G4VisAttributes* BDSGeometryLCDD::GetVisByName(G4String name)
     {
       G4cout << "Couldn't find visref: " << name<<G4endl;
       G4cout << "Using default Vis settings" << G4endl;
-      return new G4VisAttributes(G4Colour(1.0,1.0,1.0));
+      return new G4VisAttributes(*BDSColours::Instance()->GetColour("warning"));
     } 
   
   return VIS_LIST[ID].value;
@@ -305,7 +305,7 @@ inline G4LogicalVolume* BDSGeometryLCDD::GetLogVolByName(G4String name)
 
 inline G4String BDSGeometryLCDD::parseStrChar(xmlChar* value)
 {
-  if(value==NULL) return "";
+  if(value==nullptr) return "";
   G4String val = G4String((char*)value);
 #ifdef BDSDEBUG
   G4cout << "BDSGeometryLCDD:parseStrChar> value = " << value << G4endl;
@@ -316,7 +316,7 @@ inline G4String BDSGeometryLCDD::parseStrChar(xmlChar* value)
 
 inline G4bool BDSGeometryLCDD::parseBoolChar(xmlChar* value)
 {
-  if(value==NULL) return false;
+  if(value==nullptr) return false;
 #ifdef BDSDEBUG
   G4cout << "BDSGeometryLCDD:parseBoolChar> value = " << value << G4endl;
 #endif
@@ -330,7 +330,7 @@ inline G4bool BDSGeometryLCDD::parseBoolChar(xmlChar* value)
 
 inline G4double BDSGeometryLCDD::parseDblChar(xmlChar* value)
 {
-  if(value==NULL) return 0.0;
+  if(value==nullptr) return 0.0;
   G4String val = G4String((char*)value);
   stripwhitespace(val);
 #ifdef BDSDEBUG
@@ -677,23 +677,23 @@ inline void BDSGeometryLCDD::BuildPolycone(xmlNodePtr cur)
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   
   G4int numZPlanes = 0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	numZPlanes++;
       tempcur = tempcur->next;
     }
   
-  G4double* zPlanes = NULL;
-  G4double* rInner = NULL;
-  G4double* rOuter = NULL;
+  G4double* zPlanes = nullptr;
+  G4double* rInner = nullptr;
+  G4double* rOuter = nullptr;
   zPlanes = new G4double[numZPlanes];
   rInner = new G4double[numZPlanes];
   rOuter = new G4double[numZPlanes];
   
   tempcur = cur->xmlChildrenNode;
   G4int i=0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	{
@@ -715,11 +715,11 @@ inline void BDSGeometryLCDD::BuildPolycone(xmlNodePtr cur)
 		       );
   
   delete [] rInner;
-  rInner = NULL;
+  rInner = nullptr;
   delete [] rOuter;
-  rOuter = NULL;
+  rOuter = nullptr;
   delete [] zPlanes;
-  zPlanes = NULL;
+  zPlanes = nullptr;
 }
 
 inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
@@ -727,23 +727,23 @@ inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   
   G4int numZPlanes = 0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	numZPlanes++;
       tempcur = tempcur->next;
     }
   
-  G4double* zPlanes = NULL;
-  G4double* rInner = NULL;
-  G4double* rOuter = NULL;
+  G4double* zPlanes = nullptr;
+  G4double* rInner = nullptr;
+  G4double* rOuter = nullptr;
   zPlanes = new G4double[numZPlanes];
   rInner = new G4double[numZPlanes];
   rOuter = new G4double[numZPlanes];
   
   tempcur = cur->xmlChildrenNode;
   G4int i=0;
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"zplane")))
 	{
@@ -766,11 +766,11 @@ inline void BDSGeometryLCDD::BuildPolyhedra(xmlNodePtr cur)
 		       );
   
   delete [] rInner;
-  rInner = NULL;
+  rInner = nullptr;
   delete [] rOuter;
-  rOuter = NULL;
+  rOuter = nullptr;
   delete [] zPlanes;
-  zPlanes = NULL;
+  zPlanes = nullptr;
 }
 
 
@@ -786,13 +786,13 @@ inline void BDSGeometryLCDD::BuildSubtraction(xmlNodePtr cur)
   
   G4ThreeVector PlacementPoint = G4ThreeVector(0.,0.,0.);
 
-  G4RotationMatrix* componentRotation = NULL;
+  G4RotationMatrix* componentRotation = nullptr;
 
   G4ThreeVector FirstPlacementPoint = G4ThreeVector(0.,0.,0.);
 
   xmlNodePtr tempcur = cur->xmlChildrenNode;
   
-  while(tempcur!=NULL)
+  while(tempcur!=nullptr)
     {
       if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"first")))
 	firstname = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"));
@@ -859,7 +859,7 @@ inline void BDSGeometryLCDD::BuildTessellated(xmlNodePtr cur){
   G4FacetVertexType iType=ABSOLUTE;
   G4ThreeVector vertex[4];
 
-  while(tempcur!=NULL) {
+  while(tempcur!=nullptr) {
     
     if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"triangular")) || (!xmlStrcmp(tempcur->name, (const xmlChar *)"quadrangular"))){
       sType = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"type"));

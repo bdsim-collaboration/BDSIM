@@ -1,33 +1,31 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSRUNACTION_H
+#define BDSRUNACTION_H
 
-#ifndef BDSRunAction_h
-#define BDSRunAction_h 1
-
+#include "globals.hh" // geant4 types / globals
 #include "G4UserRunAction.hh"
-#include "globals.hh"
-#include <ctime>
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+#include <ctime>
+#include <string>
 
 class G4Run;
 
-class BDSRunAction : public G4UserRunAction
+/**
+ * @brief Control over the beginning and end of run actions.
+ */
+
+class BDSRunAction: public G4UserRunAction
 {
 public:
   BDSRunAction();
-  ~BDSRunAction();
+  virtual ~BDSRunAction();
   
-public:
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
 
 private:
   time_t starttime;
   time_t stoptime;
+  std::string seedStateAtStart; ///< Seed state at start of the run.
 };
 
 #endif

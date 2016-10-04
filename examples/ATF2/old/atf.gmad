@@ -15,6 +15,6 @@ use ,period=ext;
 !sample, range = startl;
 !sample, range = endl;
 
-option, ngenerate=2000;
+option, ngenerate=100;
 
 !print, line;

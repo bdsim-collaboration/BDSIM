@@ -1,26 +1,31 @@
 #include "BDSColourWheel.hh"
 
-BDSColourWheel::~BDSColourWheel(){
+#include "G4Colour.hh"
+
+BDSColourWheel::BDSColourWheel()
+{
+  palette.push_back(G4Colour(1.0, 0.0, 0.0, 0.4));
+  palette.push_back(G4Colour(0.0, 1.0, 0.0, 0.4));
+  palette.push_back(G4Colour(0.0, 0.0, 1.0, 0.4));
+  Reset();
 }
 
-BDSColourWheel::BDSColourWheel(){
-  _palette.push_back(G4Colour(1.0, 0.0, 0.0, 0.4));
-  _palette.push_back(G4Colour(0.0, 1.0, 0.0, 0.4));
-  _palette.push_back(G4Colour(0.0, 0.0, 1.0, 0.4));
-  reset();
+BDSColourWheel::~BDSColourWheel()
+{;}
+
+void BDSColourWheel::Spin()
+{
+  colour_it++;
+  if(colour_it == palette.end())
+    {Reset();}
 }
 
-void BDSColourWheel::spin(){
-  _colour_it++;
-  if(_colour_it == _palette.end()){
-    reset();
-  }
+void BDSColourWheel::Reset()
+{
+  colour_it = palette.begin();
 }
 
-void BDSColourWheel::reset(){
-  _colour_it=_palette.begin();
-}
-
-G4Colour BDSColourWheel::colour(){
-  return (*_colour_it);
+G4Colour BDSColourWheel::Colour()
+{
+  return (*colour_it);
 }

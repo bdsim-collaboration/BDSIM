@@ -1,91 +1,69 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-//      ------------ BDSLaserCompton physics process --------
-//                     by Grahame Blair, 18 October 2001
+#include "BDSComptonEngine.hh"
 #include "BDSGlobalConstants.hh" 
-
 #include "BDSLaserCompton.hh"
-#include "G4ios.hh"
+
+#include "globals.hh"
 #include "G4Gamma.hh"
+
 #include "CLHEP/Units/PhysicalConstants.h"
 
-BDSLaserCompton::BDSLaserCompton(const G4String& processName)
-  :  G4VDiscreteProcess(processName),//isInitialised(false),
-     itsLaserEnergy(0.0)
+BDSLaserCompton::BDSLaserCompton(const G4String& processName):
+  G4VDiscreteProcess(processName),
+  laserEnergy(0.0)
 {
-  itsLaserWavelength=BDSGlobalConstants::Instance()->GetLaserwireWavelength();
-  itsLaserDirection=BDSGlobalConstants::Instance()->GetLaserwireDir();
-
-
-  //	if(itsLaserWavelength<=0.)
-  //	 {G4Exception("BDSLaserCompton: Invalid Wavelength");}
-  // itsLaserEnergy=CLHEP::twopi*CLHEP::hbarc/itsLaserWavelength;
- // point laserwire in x:     P_x        Py Pz   E
- //G4LorentzVector Laser4mom(itsLaserEnergy,0,0,itsLaserEnergy);
- //itsComptonEngine=new BDSComptonEngine(Laser4mom);
-  itsComptonEngine=new BDSComptonEngine();
+  globals = BDSGlobalConstants::Instance();
+  laserWavelength = globals->GetLaserwireWavelength();
+  laserDirection  = globals->GetLaserwireDir();
+  comptonEngine   = new BDSComptonEngine();
 } 
 
- 
 BDSLaserCompton::~BDSLaserCompton()
 {
-  delete itsComptonEngine;
+  delete comptonEngine;
 }
-
 
 G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
 						 const G4Step& stepData)
 {
- 
- 
  aParticleChange.Initialize(trackData);
  
  // ensure that Laserwire can only occur once in an event
  G4cout << "FireLaserCompton == " << FireLaserCompton << G4endl;
- if(!FireLaserCompton){
-   return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
- }
- G4Material* aMaterial=trackData.GetMaterial() ;
  
- if(aMaterial==BDSMaterials::Instance()->GetMaterial("LaserVac"))
+ if(!FireLaserCompton)
+   {return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);}
+ 
+ G4Material* aMaterial = trackData.GetMaterial();
+ 
+ if (aMaterial == BDSMaterials::Instance()->GetMaterial("LaserVac"))
    {
-     itsLaserWavelength=BDSGlobalConstants::Instance()->GetLaserwireWavelength();
-     itsLaserDirection=BDSGlobalConstants::Instance()->GetLaserwireDir();
+     laserWavelength = globals->GetLaserwireWavelength();
+     laserDirection  = globals->GetLaserwireDir();
      
-     //G4cout << "&&&&&" << itsLaserDirection << "&&&&&\n";
-     if(itsLaserWavelength<=0.)
-       {G4Exception("BDSLaserCompton::PostStepDoIt - Invalid Wavelength", "-1", FatalException, "");}
-     itsLaserEnergy=CLHEP::twopi*CLHEP::hbarc/itsLaserWavelength;
+     laserEnergy = CLHEP::twopi*CLHEP::hbarc/laserWavelength;
+     
      // point laserwire in x:     P_x        Py Pz   E
-     G4LorentzVector Laser4mom(itsLaserEnergy*itsLaserDirection.unit(),itsLaserEnergy);
+     G4LorentzVector Laser4mom(laserEnergy*laserDirection.unit(),laserEnergy);
      
-     const G4DynamicParticle* aDynamicParticle=trackData.GetDynamicParticle();
+     const G4DynamicParticle* aDynamicParticle = trackData.GetDynamicParticle();
      
-     itsComptonEngine->
-       SetIncomingElectron4Vec(aDynamicParticle->Get4Momentum());
-     itsComptonEngine->SetIncomingPhoton4Vec(Laser4mom);
+     comptonEngine->SetIncomingElectron4Vec(aDynamicParticle->Get4Momentum());
+     comptonEngine->SetIncomingPhoton4Vec(Laser4mom);
+     comptonEngine->PerformCompton();
      
-     itsComptonEngine->PerformCompton();
-     
-     if(BDSGlobalConstants::Instance()->GetLaserwireTrackPhotons())
+     if(globals->GetLaserwireTrackPhotons())
        {
-
 	 // create G4DynamicParticle object for the Gamma 
-	 G4LorentzVector ScatGam=itsComptonEngine->GetScatteredGamma();
-	 //      G4cout<<" Gamma Energy="<<ScatGam.e()/GeV<<" GeV"<<G4endl;
-	 G4DynamicParticle* aGamma= 
-	   new G4DynamicParticle (G4Gamma::Gamma(), 
-				  ScatGam.vect().unit(),// direction 
-				  ScatGam.e());
+	 G4LorentzVector ScatGam = comptonEngine->GetScatteredGamma();
+	 G4DynamicParticle* aGamma = new G4DynamicParticle (G4Gamma::Gamma(), 
+							    ScatGam.vect().unit(),// direction 
+							    ScatGam.e());
 	 
 	 aParticleChange.SetNumberOfSecondaries(1);
 	 aParticleChange.AddSecondary(aGamma); 
-	 if(!BDSGlobalConstants::Instance()->GetLaserwireTrackElectrons())
+	 if(!globals->GetLaserwireTrackElectrons())
 	   {
-	     aParticleChange.ProposeEnergy( 0. );
+	     aParticleChange.ProposeEnergy(0.);
 	     aParticleChange.ProposeLocalEnergyDeposit (0.);
 	     aParticleChange.ProposeTrackStatus(fStopAndKill);
 	   }
@@ -95,18 +73,10 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
 	 aParticleChange.SetNumberOfSecondaries(0);
      	 aParticleChange.ProposeLocalEnergyDeposit (0.);
        }
-     //
-     // Update the incident particle 
-     //
-
     
-     G4double NewKinEnergy=
-       itsComptonEngine->GetScatteredElectron().e()-CLHEP::electron_mass_c2;
+     G4double NewKinEnergy = comptonEngine->GetScatteredElectron().e()-CLHEP::electron_mass_c2;
      
-     //  G4double NewKinEnergy=0; // tmp to track photon only
-     
-     G4LorentzVector ScatEl=itsComptonEngine->GetScatteredElectron();
-     
+     G4LorentzVector ScatEl = comptonEngine->GetScatteredElectron();
      
      if (NewKinEnergy > 0.)
        {
@@ -124,7 +94,7 @@ G4VParticleChange* BDSLaserCompton::PostStepDoIt(const G4Track& trackData,
        }    
    }
  
- FireLaserCompton=false;
+ FireLaserCompton = false;
  
  return G4VDiscreteProcess::PostStepDoIt(trackData,stepData);
 }

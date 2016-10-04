@@ -1,41 +1,36 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSSAMPLER_H
+#define BDSSAMPLER_H
 
-#ifndef BDSSampler_h
-#define BDSSampler_h 
+#include "BDSGeometryComponent.hh"
 
-#include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSSamplerSD.hh"
+#include "globals.hh" // geant4 types / globals
 
-class BDSSampler : public BDSAcceleratorComponent
+/**
+ * @brief Base class and registry of sampler instances.
+ * 
+ * @author Laurie Nevay
+ */
+
+class BDSSampler: public BDSGeometryComponent
 {
 public:
-  BDSSampler(G4String aName,G4double aLength);
-  ~BDSSampler();
+  BDSSampler(G4String      nameIn);
+  virtual ~BDSSampler(){;}
 
-  static int GetNSamplers();
-  static void AddExternalSampler(G4String outputName);
+  /// Return the name of this sampler.
+  inline G4String GetName() const;
+  
+protected:
+  /// Common construction tasks such as creating a logical volume from the solid
+  /// and visualisation options.
+  void CommonConstruction();
 
-  /// names of samplers for output
-  static std::vector <G4String> outputNames;
-
-  /// access for external classes to sensitive detector
-  static BDSSamplerSD* GetSensitiveDetector(){return SensitiveDetector;}
-
-private:
-  virtual void Initialise();
-  virtual void BuildMarkerLogicalVolume();
-
-  /// id of sampler
-  int nThisSampler;
-  /// number of total Samplers
-  static int nSamplers;
-  /// pointer to sensitive detector, only one for all samplers
-  static BDSSamplerSD* SensitiveDetector;
+private:  
+  /// Name of this sampler
+  G4String name;
 };
+
+inline G4String BDSSampler::GetName() const
+{return name;}
 
 #endif

@@ -1,0 +1,14 @@
+l_ldump1=246*mm;
+w_ldump1=1*cm;
+perpScreenAngle=0;
+def_aper=35*mm;
+
+scr: screen, l=l_ldump1, precisionRegion=1, layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], screenXSize=w_ldump1, screenYSize=w_ldump1, angle=perpScreenAngle, aper=def_aper;
+
+d1: drift, l=0.5;
+d2: drift, l=0.5;
+
+lat : line = (d1,scr,d2);
+com : line = (scr);
+
+include optionsTest.gmad;

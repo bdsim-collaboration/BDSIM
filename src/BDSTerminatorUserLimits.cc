@@ -1,38 +1,24 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
-/*
-
-This class is to give dynamic user limits to a certain volume.
-In the case of a ring, we want to cut ALL particles at the end 
-of the ring after a certain number of turns.
- */
-
-#include "G4ios.hh"
-#include "BDSTerminatorUserLimits.hh"
-#include "G4UserLimits.hh"
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSExecOptions.hh"
+#include "BDSTerminatorUserLimits.hh"
 
-// basic inheritance - just use everything normally from G4UserLimits but 
-// replace one function in inherited class
-// default values are defined in G4UserLimits so all particles continue
+#include "globals.hh" // geant4 types / globals
+#include "G4UserLimits.hh"
+
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(G4double ustepMax,
 						 G4double utrakMax,
 						 G4double utimeMax,
 						 G4double uekinMin,
 						 G4double urangMin):
   G4UserLimits(ustepMax,
-		 utrakMax,
-		 utimeMax,
-		 uekinMin,
-		 urangMin), keeprunningEK(0.0), stoprunningEK(DBL_MAX)
-{
-  verbose = BDSExecOptions::Instance()->GetVerbose();
-}
+	       utrakMax,
+	       utimeMax,
+	       uekinMin,
+	       urangMin),
+  keeprunningEK(0.0),
+  stoprunningEK(DBL_MAX),
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
+{}
 
 BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 						 G4double ustepMax,
@@ -45,19 +31,24 @@ BDSTerminatorUserLimits::BDSTerminatorUserLimits(const G4String& type,
 	       utrakMax,
 	       utimeMax,
 	       uekinMin,
-	       urangMin), keeprunningEK(0.0), stoprunningEK(DBL_MAX)
-{
-  verbose = BDSExecOptions::Instance()->GetVerbose();
-}
+	       urangMin),
+  keeprunningEK(0.0),
+  stoprunningEK(DBL_MAX),
+  turnsToTake(BDSGlobalConstants::Instance()->TurnsToTake())
+{}
 
-inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track&)
+inline G4double BDSTerminatorUserLimits::GetUserMinEkine(const G4Track& /*trk*/)
 {
   // does the number of turns passed == number of turns to take
-if (BDSGlobalConstants::Instance()->GetTurnsTaken() == BDSGlobalConstants::Instance()->GetTurnsToTake())
+  G4int turnsTaken = BDSGlobalConstants::Instance()->TurnsTaken();
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "turns taken : " << turnsTaken << G4endl;
+#endif
+  if (turnsTaken >= turnsToTake)
     {
-      if (verbose){
-	G4cout << "Requested number of turns completed - stopping all particles" << G4endl;
-      }
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Requested number of turns completed - stopping all particles" << G4endl;
+#endif
       return stoprunningEK;
     } // yes - stop: return DBL_MAX eV so no particles will be tracked
   else

@@ -1,88 +1,71 @@
 #include "BDSBunchComposite.hh"
+#include "BDSBunchFactory.hh"
+#include "BDSBunchInterface.hh"
+#include "BDSDebug.hh"
+#include "parser/options.h"
 
-#include "BDSBunchGaussian.hh"
-#include "BDSBunchSquare.hh"
-#include "BDSBunchCircle.hh"
-#include "BDSBunchRing.hh"
-#include "BDSBunchEShell.hh"
-#include "BDSBunchTwiss.hh"
-#include "BDSBunchUserFile.hh"
-
-BDSBunchComposite::BDSBunchComposite() {
-  xBunch = NULL;
-  yBunch = NULL;
+BDSBunchComposite::BDSBunchComposite()
+{
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  xBunch = nullptr;
+  yBunch = nullptr;
+  zBunch = nullptr;
 }
 
-BDSBunchComposite::~BDSBunchComposite() {
+BDSBunchComposite::~BDSBunchComposite()
+{
   delete xBunch;
   delete yBunch;
+  delete zBunch;
 }
 
-void BDSBunchComposite::SetOptions(struct Options& opt) {
+void BDSBunchComposite::SetOptions(const GMAD::Options& opt)
+{
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   BDSBunchInterface::SetOptions(opt);
   
+  delete xBunch;
+  delete yBunch;
+  delete zBunch;
 
-  if (opt.xDistribType == "reference") 
-    xBunch = new BDSBunchInterface();
-  else if(opt.xDistribType == "gauss" || opt.xDistribType == "gaussmatrix") 
-    xBunch = new BDSBunchGaussian(); 
-  else if(opt.xDistribType == "square") 
-    xBunch = new BDSBunchSquare();
-  else if(opt.xDistribType == "circle") 
-    xBunch = new BDSBunchCircle();
-  else if(opt.xDistribType == "ring") 
-    xBunch = new BDSBunchRing();
-  else if(opt.xDistribType == "eshell") 
-    xBunch = new BDSBunchEShell();
-  else if(opt.xDistribType == "gausstwiss") 
-    xBunch = new BDSBunchTwiss();
-  else {
-    G4cerr << "xDistribType not found " << opt.xDistribType << G4endl;
-    exit(1);
-  }
+  xBunch = BDSBunchFactory::createBunch(opt.xDistribType);
+  yBunch = BDSBunchFactory::createBunch(opt.yDistribType);
+  zBunch = BDSBunchFactory::createBunch(opt.zDistribType);
 
-  if (opt.yDistribType == "reference") 
-    yBunch = new BDSBunchInterface();
-  else if(opt.yDistribType == "gauss" || opt.yDistribType == "gaussmatrix") 
-    yBunch = new BDSBunchGaussian(); 
-  else if(opt.yDistribType == "square") 
-    yBunch = new BDSBunchSquare();
-  else if(opt.yDistribType == "circle") 
-    yBunch = new BDSBunchCircle();
-  else if(opt.yDistribType == "ring") 
-    yBunch = new BDSBunchRing();
-  else if(opt.yDistribType == "eshell") 
-    yBunch = new BDSBunchEShell();
-  else if(opt.yDistribType == "gausstwiss") 
-    yBunch = new BDSBunchTwiss();
-  else {
-    G4cerr << "yDistribType not found " << opt.yDistribType << G4endl;
-    exit(1);
-  }
-
- 
   xBunch->SetOptions(opt);
   yBunch->SetOptions(opt);
-  
+  zBunch->SetOptions(opt);
 }
 
 void BDSBunchComposite::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 					G4double& xp, G4double& yp, G4double& zp,
-					G4double& t , G4double&  E, G4double& weight) { 
+					G4double& t , G4double&  E, G4double& weight)
+{ 
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   G4double xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight;
   G4double yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight;
+  G4double zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight;
   
   xBunch->GetNextParticle(xx0, xy0, xz0, xxp, xyp, xzp, xt, xE, xWeight);
   yBunch->GetNextParticle(yx0, yy0, yz0, yxp, yyp, yzp, yt, yE, yWeight);
+  zBunch->GetNextParticle(zx0, zy0, zz0, zxp, zyp, zzp, zt, zE, zWeight);
 
   x0 = xx0;
   xp = xxp;
   y0 = yy0;
   yp = yyp;
-  z0 = xz0;
-  zp = xzp; // Is this correct?
-  t  = xt;
-  E  = xE; 
+  z0 = zz0;
+  zp = zzp; 
+  t  = zt;
+  E  = zE; 
   weight = xWeight;
 
   return;

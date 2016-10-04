@@ -1,73 +1,31 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 25.12.2003
-   Copyright (c) 2003 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
-//====================================================
-//  Class description here ...
-//
-//====================================================
-
 #include "BDSSteppingAction.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSDebug.hh"
 
 #include "G4AffineTransform.hh"
-#include "G4NavigationHistory.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 #include "G4EventManager.hh"
 #include "G4Event.hh"
 
-extern G4int event_number;
-
-//====================================================
-
-BDSSteppingAction::BDSSteppingAction():_step(NULL)
-{ 
-}
-
-//====================================================
+BDSSteppingAction::BDSSteppingAction():_step(nullptr)
+{;}
 
 BDSSteppingAction::~BDSSteppingAction()
-{}
+{;}
 
-//====================================================
-
-
-void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep){
+void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
+{
   _step = ThisStep;
-  if(BDSExecOptions::Instance()->GetVerboseStep() || (event_number == BDSExecOptions::Instance()->GetVerboseEventNumber())) {
+  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  if(BDSGlobalConstants::Instance()->VerboseStep() || (event_number == BDSGlobalConstants::Instance()->VerboseEventNumber())) {
     VerboseSteppingAction();
   }
-  if (BDSGlobalConstants::Instance()->GetThresholdCutPhotons() > 0 || BDSGlobalConstants::Instance()->GetThresholdCutCharged() > 0) {
-    ThresholdCutSteppingAction();
-  }
 }
 
-void BDSSteppingAction::ThresholdCutSteppingAction(){
-  // -------------  kill tracks according to cuts -------------------
-  G4int pdgNr = _step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-  // this cuts apply to default region
-  if (pdgNr == 22) {
-    if(_step->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutPhotons())
-      {
-	_step->GetTrack()->SetTrackStatus(fStopAndKill);
-      }
-  } else if (abs(pdgNr) == 11) {
-    if(_step->GetTrack()->GetKineticEnergy()<BDSGlobalConstants::Instance()->GetThresholdCutCharged())
-      {
-	_step->GetTrack()->SetTrackStatus(fStopAndKill);
-      }
-  }
-}
-  
 void BDSSteppingAction::VerboseSteppingAction()
 { 
-  // ------------  output in case of verbose step ---------------------
-
+  //output in case of verbose step
   int ID=_step->GetTrack()->GetTrackID();
   int G4precision = G4cout.precision();
   G4cout.precision(10);
@@ -106,5 +64,3 @@ void BDSSteppingAction::VerboseSteppingAction()
   // set precision back
   G4cout.precision(G4precision);
 }
-  
-//====================================================

@@ -1,13 +1,14 @@
-#ifndef __BDS_PARAMETERISATION_PHYSICS_HH_
-#define __BDS_PARAMETERISATION_PHYSICS_HH_
+#ifndef BDSPARAMETERISATIONPHYSICS_H
+#define BDSPARAMETERISATIONPHYSICS_H
 
 #include "G4VPhysicsConstructor.hh"
 #include "G4FastSimulationManagerProcess.hh"
 
-class BDSParameterisationPhysics: public G4VPhysicsConstructor {
+class BDSParameterisationPhysics: public G4VPhysicsConstructor
+{
 public:
   BDSParameterisationPhysics();
-  ~BDSParameterisationPhysics();
+  virtual ~BDSParameterisationPhysics();
   void ConstructProcess();
   void ConstructParticle();
   

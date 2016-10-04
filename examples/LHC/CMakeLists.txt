@@ -1,1 +1,1 @@
-add_subdirectory(ring)
+add_subdirectory(lhcring)

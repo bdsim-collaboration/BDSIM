@@ -27,9 +27,8 @@ BDSPlanckScatterBuilder::
 void BDSPlanckScatterBuilder::Build()
 {
 
-  G4ProcessManager * pManager = 0;
+  G4ProcessManager * pManager = nullptr;
   
-
   pManager = G4Electron::Electron()->GetProcessManager();
   pManager->AddProcess(&thePlanckScatterProcess);
   pManager->SetProcessOrderingToLast(&thePlanckScatterProcess,idxPostStep);

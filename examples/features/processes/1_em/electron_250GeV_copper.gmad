@@ -1,0 +1,7 @@
+include electronOptions.gmad;
+
+length = 5*cm;
+
+segment: rcol, xsize=0, ysize=0, l=length, material="Copper";
+
+include lattice.gmad;

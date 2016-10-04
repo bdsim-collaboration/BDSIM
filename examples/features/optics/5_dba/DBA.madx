@@ -1,0 +1,121 @@
+//MADX Example6: DBA cell
+
+
+TITLE,'Example 6: DBA.MADX';
+
+BEAM, PARTICLE=PROTON,ENERGY=10.0, EX=1e-6, EY=1e-6;
+
+// ***** drifts
+D1D2:      DRIFT, Type=D1D2, L=.4377500E+01;
+D1BCentre: DRIFT, Type=D1BCentre, L=.1000000E+01;
+D1BEnd2:   DRIFT, Type=D1BEnd2, L=.1877500E+01;
+KD1:       DRIFT, Type=KD1,  L=.8930000E+00;
+KD2:       DRIFT, Type=KD2,  L=.4010000E+00;
+D2B:       DRIFT, Type=D2B,  L=.1500000E+00;
+D3B:       DRIFT, Type=D3B,  L=.2350000E+00;
+D4B:       DRIFT, Type=D4B,  L=.4650000E+00;
+D4Ba:      DRIFT, Type=D4Ba, L=.1765000E+00;
+D4Bb:      DRIFT, Type=D4Bb, L=.2885000E+00;
+D5B:       DRIFT, Type=D5B,  L=.2000000E+00;
+D6B:       DRIFT, Type=D6B,  L=.6675000E+00;
+D6Ba:      DRIFT, Type=D6Ba, L=.1125000E+00;
+D6Bb:      DRIFT, Type=D6Bb, L=.5550000E+00;
+D1A:       DRIFT, Type=D1A,  L=.2385000E+00;
+D1Aa:      DRIFT, Type=D1Aa, L=.1225000E+00;
+D1Ab:      DRIFT, Type=D1Ab, L=.1160000E+00;
+D2A:       DRIFT, Type=D2A,  L=.1990000E+00;
+D3A:       DRIFT, Type=D3A,  L=.4250000E+00;
+D3Aa:      DRIFT, Type=D3Aa, L=.1615000E+00;
+D3Ab:      DRIFT, Type=D3Ab, L=.2635000E+00;
+D4A:       DRIFT, Type=D4A,  L=.5875000E+00;
+D4Aa:      DRIFT, Type=D4Aa, L=.1050000E+00;
+D4Ab:      DRIFT, Type=D4Ab, L=.4825000E+00;
+
+// ***** Quads
+// QF and QD valus set to have the tune at (27.2256,12.3632)
+Q1D:     QUADRUPOLE, Type=Q1D , L=0.400, K1=-.7126250E+00;///1.0005;
+Q2D:     QUADRUPOLE, Type=Q2D , L=0.600, K1= .1272800E+01;///1.0005;
+Q3D:     QUADRUPOLE, Type=Q3D , L=0.300, K1=-.1007140E+01;///1.0005;
+Q2AD:    QUADRUPOLE, Type=Q2AD, L=0.400, K1=-.9896300E+00;///1.0005;
+Q1AD:    QUADRUPOLE, Type=Q1AD, L=0.400, K1= .1263560E+01;///1.0005;
+Q1AB:    QUADRUPOLE, Type=Q1AB, L=0.400, K1= .1286190E+01;///1.0005;
+Q2AB:    QUADRUPOLE, Type=Q2AB, L=0.400, K1=-.1044950E+01;///1.0005;
+Q3B:     QUADRUPOLE, Type=Q3B , L=0.300, K1=-.8843700E+00;///1.0005;
+Q2B:     QUADRUPOLE, Type=Q2B , L=0.600, K1= .1475330E+01;///1.0005;
+Q1B:     QUADRUPOLE, Type=Q1B , L=0.400, K1=-.1246210E+01;///1.0005;
+
+// ***** Sext
+// Fitted values to produce normalized chromaticities 0,0 
+TS1A:     SEXTUPOLE, Type=S1A , L= .3, K2=0.;//  2*19.29;//  2* 5.449444/.3;
+TS2A:     SEXTUPOLE, Type=S2A , L= .2, K2=0.;//  -2*18.08;// -2* 3.349528/.2; 
+TS1B:     SEXTUPOLE, Type=S1B , L= .3, K2=0.;//   2*10.50;//  2* 3.148519/.3; 
+TS2B:     SEXTUPOLE, Type=S2B , L= .3, K2=0.;//  -2*16.64;// -2* 4.993126/.3; 
+TS1C:     SEXTUPOLE, Type=S1C , L= .3, K2=0.;//   2*8.49;//  2* 2.546022/.3; 
+TS2C:     SEXTUPOLE, Type=S2C , L= .3, K2=0.;//  -2*10.88;// -2* 3.263168/.3; 
+TS1D:     SEXTUPOLE, Type=S1D , L= .3, K2=0.;//   2*6.90;//  2* 2.069871/.3;
+TS2D:     SEXTUPOLE, Type=S2D , L= .3, K2=0.;//  -2*16.76;// -2* 5.028928/.3; 
+//DSEXT1:    DRIFT, Type=DSEXT  , L=0.15 - 1.5e-8;
+//DSEXT2:    DRIFT, Type=DSEXT  , L=0.10 - 1.5e-8;
+DSEXT1:    DRIFT, Type=DSEXT  , L=0.;
+DSEXT2:    DRIFT, Type=DSEXT  , L=0.;
+
+// ***** Correctors inside the SEXTUPOLEs
+HSTR:  DRIFT, Type=HSTR, L=0.;//, VKick=0, HKick=0;
+VSTR:  DRIFT, Type=VSTR, L=0.;//, VKick=0, HKick=0;
+
+S1A: Line=(DSEXT1,TS1A,HSTR,VSTR,DSEXT1);
+S2A: Line=(DSEXT2,TS2A,HSTR,VSTR,DSEXT2);
+S1B: Line=(DSEXT1,TS1B,HSTR,VSTR,DSEXT1);
+S2B: Line=(DSEXT1,TS2B,HSTR,VSTR,DSEXT1);
+S1C: Line=(DSEXT1,TS1C,HSTR,VSTR,DSEXT1);
+S2C: Line=(DSEXT1,TS2C,HSTR,VSTR,DSEXT1);
+S1D: Line=(DSEXT1,TS1D,HSTR,VSTR,DSEXT1);
+S2D: Line=(DSEXT1,TS2D,HSTR,VSTR,DSEXT1);
+
+// ***** Bending
+//A=0.13089969;
+A=2.*pi/48.;
+N=100;
+//BB: sbend, Type=BB, L=0.936, K1=0., Angle=A, E1=A/2, E2=A/2;
+BB: rbend, Type=BB, L=0.936, K1=0., Angle=A,ptcrbend,truerbend;
+BBs: sbend, Type=BB, L=0.936/N, K1=0., Angle=A/N;//, E1=A/2, E2=0;
+BBm: sbend, Type=BB, L=0.936/N, K1=0., Angle=A/N, E1=0, E2=0;
+BBe: sbend, Type=BB, L=0.936/N, K1=0., Angle=A/N;//, E1=0, E2=A/2;
+
+
+// ***** BPM
+BPM: monitor, Type=BPM, L=0;
+
+// ***** Fast correctors
+K1HC: KICKER, Type=K1HC, L=0., VKick=0, HKick=0;
+K1VC: KICKER, Type=K1VC, L=0., VKick=0, HKick=0;
+K1:   Line=(K1HC,K1VC);
+
+// ***** Begin Lattice
+SPERIOD: Line= (D1D2,&
+ BPM,     K1,        KD1,       K1,       KD2,&
+ Q1D,     D2B,       S1D,       D3B,      Q2D,      D4B,&
+ Q3D,     D5B,       S2D,       D6Ba,     BPM,      D6Bb,    BB,&
+ D4A,     Q2AD,      D3Aa,      BPM,      D3Ab,     S2A,     D2A,&
+ Q1AD,    D1Aa,      BPM,       D1Ab,     S1A,      D1A,     Q1AB,&
+ D2A,     S2A,       D3A,       Q2AB,     D4Aa,     BPM,     D4Ab,&
+ BB,      D6B,       S2C,       D5B,      Q3B,      D4Ba,    BPM,&
+ D4Bb,    Q2B,       D3B,       S1C,      D2B,      Q1B,&
+ KD2,     K1,        KD1,       K1,       BPM,&
+ D1BEnd2, D1BCentre, D1BCentre, D1BEnd2);
+
+USE, PERIOD=SPERIOD;
+
+SELECT, FLAG=TWISS,CLEAR;
+
+TWISS,SAVE,BETX=11.611,BETY=5.295, FILE=DBA.tfs;
+PLOT,HAXIS=S,VAXIS=BETX,BETY;
+
+SAVEBETA, LABEL=start, PLACE=D1D2, SEQUENCE=SPERIOD;
+
+Value, TABLE(SUMM,Q1);
+Value, TABLE(SUMM,Q2);
+WRITE,TABLE=SUMM,FILE=print.dat;
+
+
+

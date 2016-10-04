@@ -1,0 +1,3 @@
+include 5_several_bends_back_and_forth.gmad;
+
+option, tunnelType="elliptical";

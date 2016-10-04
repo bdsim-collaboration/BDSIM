@@ -1,43 +1,31 @@
 #include "BDSGeometry.hh"
+#include "BDSGeometryType.hh"
+#include "BDSUtilities.hh"
 
-BDSGeometry::BDSGeometry(){
-  init();
+#include "globals.hh" // geant4 globals / types
+
+BDSGeometry::BDSGeometry()
+{
+  format = BDSGeometryType::gdml;
+  file   = "";
+  Init();
+}
+
+BDSGeometry::BDSGeometry(BDSGeometryType formatIn, G4String fileIn):
+  format(formatIn),
+  file(fileIn)
+{
+  containingDir = BDS::GetFullPath(fileIn,true); // strip of the file name effictively
+  Init();
 }
 
 BDSGeometry::~BDSGeometry()
-{;}
+{;} // doesn't seem to own anything
 
-
-/*
-BDSGeometry::BDSGeometry(const char* format, G4String file){
-  BDSGeometry((G4String)format,file);
-}
-
-BDSGeometry::BDSGeometry(G4String format, G4String file){
-  BDSGeometry(new BDSGeometryFormat(format), file);
-}
-*/
-
-BDSGeometry::BDSGeometry(BDSGeometryFormat* format, G4String file):_format(format),_file(file)
+void BDSGeometry::Init()
 {
-  init();
-}
-
-
-void BDSGeometry::init(){
-  _align_in_volume=NULL;
-  _align_out_volume=NULL;
-  _format=NULL;
-  _file="";
-  _length=0;
-  _field=NULL;
-}
-
-
-BDSGeometryFormat* BDSGeometry::format() const{
-  return _format;
-}
-
-G4String BDSGeometry::file() const{
-  return _file;
+  alignInVolume  = nullptr;
+  alignOutVolume = nullptr;
+  length         = 0;
+  field          = nullptr;
 }

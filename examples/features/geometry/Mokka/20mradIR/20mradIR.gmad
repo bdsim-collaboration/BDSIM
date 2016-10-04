@@ -1,0 +1,29 @@
+!include optics.gmad;
+
+! some beamline parameters
+
+option, beampipeRadius = 10 * cm,
+        boxSize = 1.0 * m,
+        tunnelRadius= 1.0 * m,
+        beampipeThickness = 0.1 * cm,
+        thresholdCutCharged = 100 * KeV,
+        thresholdCutPhotons = 100 * KeV;
+
+
+! 20mrad Interaction Regions: Coded in half.
+! Approximate geometry model
+
+
+ir:element,outerDiameter=20*m,l=7.85*m,geometry="mokka:geomlist.sql",bmap="mokka:../FieldMaps/SiD_fields.txt";
+
+IntRegion:line=(ir);
+
+use,period=IntRegion;
+
+
+option, ngenerate=1,
+	physicsList="em";
+
+beam,  particle="e-",
+       energy=250 * GeV,
+       distrType="reference";

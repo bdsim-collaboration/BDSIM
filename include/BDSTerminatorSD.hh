@@ -1,31 +1,23 @@
-/* BDSIM
-   Author: L. Nevay,
-   Last modified 15/04/2014
-   Copyright (c) 2014.  ALL RIGHTS RESERVED.
-*/
-
-#ifndef BDSTerminatorSD_h
-#define BDSTerminatorSD_h
+#ifndef BDSTERMINATORSD_H
+#define BDSTERMINATORSD_H
 
 #include "G4VSensitiveDetector.hh"
+
+/**
+ * @brief Sensitivity that measures primary particle turns for terminator.
+ *
+ * @author Laurie Nevay
+ */
 
 class BDSTerminatorSD: public G4VSensitiveDetector
 {
 public:
   BDSTerminatorSD(G4String name);
-  ~BDSTerminatorSD();
+  virtual ~BDSTerminatorSD();
 
-  void   Initialize (G4HCofThisEvent* HCE);
-  G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
-  void   EndOfEvent (G4HCofThisEvent* HCE);
-  void   clear      ();
-  void   DrawAll();
-  void   PrintAll   ();
-  
-  G4int  itsHCID;
-
-private:
-  G4bool verbose;
+  virtual void   Initialize (G4HCofThisEvent* HCE);
+  virtual G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist);
+  virtual void   EndOfEvent (G4HCofThisEvent* HCE);
 };
 
 #endif

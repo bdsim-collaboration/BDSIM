@@ -1,0 +1,15 @@
+d1: drift, l=0.5;
+q : rfcavity, gradient=500, l=1.0;
+d2: drift, l=0.5;
+m : marker;
+
+l : line = (d1,q,d2,m);
+
+use, period=l;
+
+sample, range=d1;
+sample, range=q;
+sample, range=d2;
+sample, range=m;
+
+

@@ -1,0 +1,7 @@
+include electronOptions.gmad 
+
+length = 15*cm;
+
+segment: rcol, xsize=0, ysize=0, l=length, material="Titanium";
+
+include lattice.gmad;

@@ -1,12 +1,12 @@
 [submodule "utils/pybdsim"]
 	path = utils/pybdsim
-	url = https://bitbucket.org/nevay/pybdsim.git
-[submodule "utils/pyfluka"]
-	path = utils/pyfluka
-	url = https://bitbucket.org/nevay/pyfluka.git
-[submodule "utils/pymadx"]
-	path = utils/pymadx
-	url = https://bitbucket.org/stewartboogert/pymadx
+	url = https://bitbucket.org/jairhul/pybdsim.git
+[submodule "utils/robdsim"]
+	path = utils/robdsim
+	url = https://bitbucket.org/jairhul/robdsim.git
 [submodule "utils/pymad8"]
 	path = utils/pymad8
-	url = https://bitbucket.org/stewartboogert/pymad8
+	url = https://bitbucket.org/jairhul/pymad8
+[submodule "utils/pymadx"]
+	path = utils/pymadx
+	url = https://bitbucket.org/jairhul/pymadx

@@ -1,0 +1,10 @@
+d0: drift, l=0.5;
+d1: drift, l=0.5;
+d2: drift, l=0.5;
+
+lat : line = (d0,d1,d1,d2,d2);
+
+include optionsTest.gmad;
+
+csample, range=d1, l=0.01, r=0.1;
+csample, range=d2, l=0.01, r=0.1;
