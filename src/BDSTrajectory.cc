@@ -23,7 +23,7 @@ BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
   BDSTrajectory*    primary = nullptr;
   for (const auto iT1 : *trajVec)
     {
-      BDSTrajectory* traj = (BDSTrajectory*)iT1;
+      BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
       if(traj->GetParentID() == 0)
 	{primary = traj; break;}
     }
@@ -144,7 +144,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {
   for(G4int i = 0; i < t.GetPointEntries(); i++)
-    {out << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
+    {out << *(static_cast<BDSTrajectoryPoint*>(t.GetPoint(i))) << G4endl;}
   return out;
 }
 

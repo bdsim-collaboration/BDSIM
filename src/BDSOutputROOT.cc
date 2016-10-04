@@ -347,15 +347,16 @@ void BDSOutputROOT<Type>::WriteTrajectory(std::vector<BDSTrajectory*> &TrajVec)
   G4String name = "Trajectories";
 
   theRootOutputFile->cd();
-  TTree* TrajTree=(TTree*)gDirectory->Get(name);
+  TTree* TrajTree = dynamic_cast<TTree*>(gDirectory->Get(name));
   
-  if(TrajTree == nullptr) { G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
+  if(!TrajTree)
+    {G4cerr<<"TrajTree=nullptr"<<G4endl; return;}
   
   for(BDSTrajectory* Traj : TrajVec)
     {
       for(G4int j=0; j<Traj->GetPointEntries(); j++)
 	{
-	  G4TrajectoryPoint* TrajPoint=(G4TrajectoryPoint*)Traj->GetPoint(j);
+	  G4TrajectoryPoint* TrajPoint = static_cast<G4TrajectoryPoint*>(Traj->GetPoint(j));
 	  G4ThreeVector TrajPos=TrajPoint->GetPosition();
 	  
 	  x = TrajPos.x() / CLHEP::m;
