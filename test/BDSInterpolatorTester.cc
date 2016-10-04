@@ -13,6 +13,8 @@
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <fstream>
 #include <ostream>
 #include <string>
@@ -55,9 +57,9 @@ int main(int /*argc*/, char** /*argv*/)
 	  G4ThreeVector result = field->GetField(G4ThreeVector(x,y,0));
 	  ofile << x          << "\t"
 		<< y          << "\t"
-		<< result.x() << "\t"
-		<< result.y() << "\t"
-		<< result.z() << "\n";
+		<< result.x() / CLHEP::tesla << "\t"
+		<< result.y() / CLHEP::tesla << "\t"
+		<< result.z() / CLHEP::tesla << "\n";
 	  i++;
 	}
     }
