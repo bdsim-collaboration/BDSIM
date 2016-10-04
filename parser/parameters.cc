@@ -73,9 +73,9 @@ Parameters::Parameters() {
   setMap["samplerType"] = false;
   setMap["r"] = false; // for samplerRadius
   setMap["region"] = false;
-  setMap["fieldOuter"] = false;
-  setMap["fieldInner"] = false;
-  setMap["fieldAll"]   = false;
+  setMap["fieldOuter"]  = false;
+  setMap["fieldVacuum"] = false;
+  setMap["fieldAll"]    = false;
 
   setMap["geometry"] = false; // for geometryFile
   setMap["bmap"] = false; // for bmapFile

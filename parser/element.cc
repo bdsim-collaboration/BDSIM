@@ -88,9 +88,9 @@ void Element::PublishMembers()
   publish("psi",&Element::psi);
   publish("gradient",&Element::gradient);
   publish("region",&Element::region);
-  publish("fieldOuter", &Element::fieldOuter);
-  publish("fieldInner", &Element::fieldInner);
-  publish("fieldAll",   &Element::fieldAll);
+  publish("fieldOuter",  &Element::fieldOuter);
+  publish("fieldVacuum", &Element::fieldVacuum);
+  publish("fieldAll",    &Element::fieldAll);
   publish("waveLength",&Element::waveLength);
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
@@ -303,10 +303,10 @@ void Element::flush() {
   samplerType = "none"; // allowed "none", "plane", "cylinder"
   samplerRadius = 0;
   
-  region     = "";
-  fieldOuter = "";
-  fieldInner = "";
-  fieldAll   = "";
+  region      = "";
+  fieldOuter  = "";
+  fieldVacuum = "";
+  fieldAll    = "";
 
   geometryFile ="";
   bmapFile = "";
