@@ -28,9 +28,6 @@ protected:
 private:
   /// Private default constructor to force use of provided one.
   BDSInterpolator2DNearest() = delete;
-
-  /// The field data.
-  BDSArray2DCoords* array;
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include <cmath>
 
 BDSInterpolator2DLinear::BDSInterpolator2DLinear(BDSArray2DCoords* arrayIn):
-  array(arrayIn)
+  BDSInterpolator2D(arrayIn)
 {;}
 
 BDSInterpolator2DLinear::~BDSInterpolator2DLinear()

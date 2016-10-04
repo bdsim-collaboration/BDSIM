@@ -2,8 +2,9 @@
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator2DNearest.hh"
 
+
 BDSInterpolator2DNearest::BDSInterpolator2DNearest(BDSArray2DCoords* arrayIn):
-  array(arrayIn)
+  BDSInterpolator2D(arrayIn)
 {;}
 
 BDSInterpolator2DNearest::~BDSInterpolator2DNearest()
