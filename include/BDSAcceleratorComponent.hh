@@ -10,6 +10,7 @@
 #include <vector>
 
 class BDSBeamPipeInfo;
+class BDSFieldInfo;
 class BDSSimpleComponent;
 class G4LogicalVolume;
 
@@ -53,14 +54,18 @@ public:
   /// derived class, including extents.
   /// Note, this class has arc length and chord length which are initially set
   /// to be the same, unless angle is != 0 in which case, the chord length is
-  /// calculated from arc length.
+  /// calculated from arc length. An associated beam pipe info instance can be
+  /// attached if the component has a beam pipe. The input and output face normals
+  /// should also be specified if non-zero. Additionally, a field info instance
+  /// that represents a 'global' field for this component may be specified.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
 			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
+			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1),
+			  BDSFieldInfo* fieldInfoIn        = nullptr);
   
   virtual ~BDSAcceleratorComponent();
 
@@ -231,6 +236,7 @@ private:
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
+  BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
   G4double      readOutRadius;    ///< Radius of read out volume solid.
 };
 

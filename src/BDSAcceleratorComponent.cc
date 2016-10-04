@@ -2,6 +2,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSTunnelInfo.hh"
@@ -27,7 +28,8 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4String         typeIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn,
 						 G4ThreeVector    inputFaceNormalIn,
-						 G4ThreeVector    outputFaceNormalIn):
+						 G4ThreeVector    outputFaceNormalIn,
+						 BDSFieldInfo*    fieldInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
@@ -40,6 +42,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn),
+  fieldInfo(fieldInfoIn),
   readOutRadius(0)
 {
 #ifdef BDSDEBUG
