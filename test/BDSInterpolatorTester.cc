@@ -20,11 +20,11 @@
 int main(int /*argc*/, char** /*argv*/)
 {
   double xmin = 0;
-  double xmax = 50;
-  int    nX   = 1000;
+  double xmax = 25;
+  int    nX   = 100;
   double ymin = 0;
-  double ymax = 50;
-  int    nY   = 1000;
+  double ymax = 20;
+  int    nY   = 100;
   std::string outputName = "outfile.dat";
   
   BDSFieldInfo* info = new BDSFieldInfo(BDSFieldType::xy,
@@ -42,9 +42,7 @@ int main(int /*argc*/, char** /*argv*/)
 
   double xStep = (xmax - xmin) / (double)nX;
   double yStep = (ymax - ymin) / (double)nY;
-  int nQueries = nX * nY;
-  int modulo   = (int)( (double)nQueries *0.01);
-
+  
   std::ofstream ofile;
   ofile.open(outputName);
 
@@ -53,10 +51,7 @@ int main(int /*argc*/, char** /*argv*/)
     {
       for (double x = xmin; x < xmax; x += xStep)
 	{
-	  if (i/modulo == 0)
-	    {
-	      std::cout << "\r" << i << "             ";
-	    }
+	  std::cout << "\r" << i;
 	  G4ThreeVector result = field->GetField(G4ThreeVector(x,y,0));
 	  ofile << x          << "\t"
 		<< y          << "\t"
@@ -69,10 +64,10 @@ int main(int /*argc*/, char** /*argv*/)
   ofile.close();
   std::cout << std::endl;
 
-  if (BDSFieldMagInterpolated2D* f = dynamic_cast<BDSFieldMagInterpolated2D*>(field))
-    {
-      std::cout << *(f->Interpolator()->Array()) << std::endl;
-    }
+  std::ofstream ofile2;
+  ofile2.open("test.dat");
+  ofile2 << *(dynamic_cast<BDSFieldMagInterpolated2D*>(field)->Interpolator()->Array());
+  ofile2.close();
 
   return 0;
 }
