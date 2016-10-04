@@ -75,9 +75,9 @@ BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   arra
   BDSInterpolator2D* result = nullptr;
   switch (interpolatorType.underlying())
     {
-    case BDSInterpolatorType::nearest2D:
+    case BDSInterpolatorType::nearest2d:
       {result = new BDSInterpolator2DNearest(array); break;}
-    case BDSInterpolatorType::linear2D:
+    case BDSInterpolatorType::linear2d:
       {result = new BDSInterpolator2DLinear(array); break;}
     default:
       {

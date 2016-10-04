@@ -13,7 +13,7 @@
 
 struct interpolatortypes_def
 {
-  enum type {none, nearest2D, linear2D, nearest3D, linear3D};
+  enum type {none, nearest2d, linear2d, nearest3d, linear3d};
 };
 
 typedef BDSTypeSafeEnum<interpolatortypes_def,int> BDSInterpolatorType;

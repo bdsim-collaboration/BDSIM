@@ -40,10 +40,10 @@ public:
 	       BDSCavityInfo*      cavityInfoIn               = nullptr,
 	       G4String            magneticFieldFilePathIn    = "",
 	       BDSFieldFormat      magneticFieldFormatIn      = BDSFieldFormat::bdsim3d,
-	       BDSInterpolatorType magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3D,
+	       BDSInterpolatorType magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
 	       G4String            electricFieldFilePathIn    = "",
 	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim3d,
-	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3D,
+	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
 	       G4bool              cacheTransformsIn          = false,
 	       G4double            scalingIn                  = 1.0);
   ~BDSFieldInfo();

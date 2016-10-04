@@ -20,10 +20,10 @@ BDSFieldInfo::BDSFieldInfo():
         cavityInfo(nullptr),
         magneticFieldFilePath(""),
         magneticFieldFormat(BDSFieldFormat::none),
-	magneticInterpolatorType(BDSInterpolatorType::nearest3D),
+	magneticInterpolatorType(BDSInterpolatorType::nearest3d),
         electricFieldFilePath(""),
         electricFieldFormat(BDSFieldFormat::none),
-	electricInterpolatorType(BDSInterpolatorType::nearest3D),
+	electricInterpolatorType(BDSInterpolatorType::nearest3d),
 	cacheTransforms(true),
 	scaling(1.0)
 {;}
