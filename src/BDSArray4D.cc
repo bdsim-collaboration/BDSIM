@@ -74,20 +74,14 @@ std::ostream& operator<< (std::ostream& out, BDSArray4D const &a)
   
   for (G4int t = 0; t < a.nT; t++)
     {
-      out << "[ " << G4endl;
       for (G4int z = 0; z < a.nZ; z++)
 	{
-	  out << "[ ";
 	  for (G4int y = 0; y < a.nY; y++)
 	    {
-	      out << "[ ";
 	      for (G4int x = 0; x < a.nX; x++)
-		{out << a(x,y,z,t) << "\t";}
-	      out << "]" << G4endl;
+		{out << a(x,y,z,t) << G4endl;}
 	    }
-	  out << "]" << G4endl;
 	}
-      out << G4endl << "]" << G4endl;
     }
   return out;
 }
