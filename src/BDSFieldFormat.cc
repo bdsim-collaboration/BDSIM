@@ -9,19 +9,19 @@
 template<>
 std::map<BDSFieldFormat, std::string>* BDSFieldFormat::dictionary =
   new std::map<BDSFieldFormat, std::string> ({
-      {BDSFieldFormat::none,              "none"},
-      {BDSFieldFormat::bdsim2d,           "bdsim2d"},
-      {BDSFieldFormat::bdsim3d,           "bdsim3d"},
-      {BDSFieldFormat::poissonsuperfishB, "poissonsuperfishB"}
+      {BDSFieldFormat::none,      "none"},
+      {BDSFieldFormat::bdsim2d,   "bdsim2d"},
+      {BDSFieldFormat::bdsim3d,   "bdsim3d"},
+      {BDSFieldFormat::poisson2d, "poisson2d"}
 });	
 
 BDSFieldFormat BDS::DetermineFieldFormat(G4String bFormat)
 {
   std::map<G4String, BDSFieldFormat> formats;
-  formats["none"]              = BDSFieldFormat::none;
-  formats["bdsim3d"]           = BDSFieldFormat::bdsim2d;
-  formats["bdsim3d"]           = BDSFieldFormat::bdsim3d;
-  formats["poissonsuperfishB"] = BDSFieldFormat::poissonsuperfishB;
+  formats["none"]      = BDSFieldFormat::none;
+  formats["bdsim3d"]   = BDSFieldFormat::bdsim2d;
+  formats["bdsim3d"]   = BDSFieldFormat::bdsim3d;
+  formats["poisson2d"] = BDSFieldFormat::poisson2d;
   
   bFormat.toLower();
 
@@ -29,8 +29,8 @@ BDSFieldFormat BDS::DetermineFieldFormat(G4String bFormat)
   if (result == formats.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << bFormat << " is not a valid field format" << G4endl;
-
+      G4cerr << __METHOD_NAME__ << "\"" << bFormat
+	     << "\" is not a valid field format" << G4endl;
       G4cout << "Available field formats are:" << G4endl;
       for (auto it : formats)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}

@@ -49,7 +49,7 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
       {result = LoadBDSIM2D(filePath); break;}
     case BDSFieldFormat::bdsim3d:
       {result = LoadBDSIM3D(filePath); break;}
-    case BDSFieldFormat::poissonsuperfishB:
+    case BDSFieldFormat::poisson2d:
       {result = LoadPoissonSuperFishB(filePath, interpolatorType, transform); break;}
     default:
       break;
