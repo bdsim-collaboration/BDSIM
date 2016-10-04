@@ -84,7 +84,7 @@ public:
   {biasMaterialList = biasMaterialListIn;}
   /// @}
   
-  /// Set whether precision output should be recorded for this component
+  /// Set the region name for this component.
   void SetRegion(G4String regionIn) {region = regionIn;}
 
   // Accessors
@@ -105,7 +105,7 @@ public:
   /// Get a string describing the type of the component
   inline G4String GetType() const {return type;}
 
-  /// Whether precision output is to be recorded for this component
+  /// Get the region name for this component.
   G4String GetRegion() const {return region;}
 
   /// Access beam pipe information
