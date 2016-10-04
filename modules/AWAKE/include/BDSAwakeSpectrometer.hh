@@ -16,10 +16,8 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
-
-class BDSFieldInfo;
-class BDSSpectrVacChamb;
-class G4MagIntegratorStepper;
+#include "BDS3DMagField.hh"
+#include "BDSSpectrVacChamb.hh"
 
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
 {
@@ -35,10 +33,13 @@ public:
 		       G4double poleStartZ,
 		       G4String material,
 		       G4double thickness,
+		       G4double screenPsize,
 		       G4double windowScreenGap,
 		       G4double angle,
 		       G4double windowThickness,
 		       G4String windowMaterial,
+	           G4double mountThickness,
+	           G4String mountMaterial,
 		       G4double screenEnd,
 		       G4String spec,
 		       G4double screenWidth);
@@ -206,10 +207,13 @@ private:
   G4double _cameraScreenDist;
   G4String _material;
   G4double _thickness;
+  G4double _screenPSize;
   G4double _windowScreenGap;
   G4double _screenAngle;
   G4double _windowThickness;
   G4String _windowMaterial;
+  G4double _mountThickness;
+  G4String _mountMaterial;
 
   G4double _screenEndZ;
   G4double _poleStartZ;

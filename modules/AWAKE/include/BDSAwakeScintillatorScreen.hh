@@ -19,7 +19,8 @@ Work in progress.
 class BDSAwakeScintillatorScreen :public BDSAcceleratorComponent
 {
 public:
-  BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double angle, G4double windowThickness, G4double windowScreenGap, G4String windowMaterial);
+  BDSAwakeScintillatorScreen(G4String aName, G4String material, G4double thickness, G4double windowScreenGap, G4double angle, G4double windowThickness, G4String windowMaterial,
+			     G4double mountThickness, G4String mountMaterial);
   virtual ~BDSAwakeScintillatorScreen();
 
 protected:
@@ -121,6 +122,8 @@ private:
   G4double _screenAngle;
   G4double _windowThickness;
   G4String _windowMaterial;
+  G4double _mountThickness;
+  G4String _mountMaterial;
 };
 
 #endif
