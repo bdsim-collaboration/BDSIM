@@ -1492,7 +1492,7 @@ in the following sections. The beam is defined using the following syntax::
         energy=4.0*TeV,
 	distrType="reference";
 
-Energy is in `GeV` by default. The particle may be one of the following:
+Energy is in `GeV` by default. The particle is typically one of the following:
 
 * `e-`
 * `e+`
@@ -1501,7 +1501,8 @@ Energy is in `GeV` by default. The particle may be one of the following:
 * `mu-`
 * `mu+`
 
-Many particles can be used and are taken from the Geant4 particle table directly.
+However, many particles can be used and are taken from the Geant4 particle table directly
+and therefore the Geant4 naming scheme should be used.
 
 Available input distributions and their associated parameters are described in the following
 section.
