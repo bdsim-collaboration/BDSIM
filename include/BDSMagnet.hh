@@ -123,10 +123,6 @@ protected:
   /// The assembled outer magnet geometry
   BDSMagnetOuter* outer;
 
-  /// The fields associated with this magnet
-  BDSFieldObjects* vacuumField;
-  BDSFieldObjects* outerField;
-
   /// Used to pass the placement offset to the field so that it can be offset from the
   /// local coordinates of the solid appropriately.
   G4Transform3D beamPipePlacementTransform;

@@ -46,8 +46,6 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   placeBeamPipe(false),
   magnetOuterOffset(G4ThreeVector(0,0,0)),
   outer(nullptr),
-  vacuumField(nullptr),
-  outerField(nullptr),
   beamPipePlacementTransform(G4Transform3D())
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
@@ -237,9 +235,7 @@ void BDSMagnet::PlaceComponents()
 BDSMagnet::~BDSMagnet()
 {
   delete beamPipeInfo;
-  delete magnetOuterInfo;  
-  delete vacuumField;
-  delete outerField;
+  delete magnetOuterInfo;
   delete vacuumFieldInfo;
   delete outerFieldInfo;
 }
