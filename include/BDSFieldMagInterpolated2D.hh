@@ -30,6 +30,8 @@ public:
   /// on the z position, only x & y.
   virtual G4ThreeVector GetField(const G4ThreeVector& position) const;
 
+  inline const BDSInterpolator2D* Interpolator() const {return interpolator;}
+
 private:
   /// Private default constructor to force use of provided one.
   BDSFieldMagInterpolated2D() = delete;

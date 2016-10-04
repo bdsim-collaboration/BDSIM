@@ -29,6 +29,8 @@ public:
   /// Returns Geant4 type as that's what will be needed.
   G4ThreeVector GetInterpolatedValue(G4ThreeVector position) const;
 
+  inline const BDSArray2DCoords* Array() const {return array;}
+
 protected:
   /// Each derived class should implement this function. Note T suffix (was templated)
   /// to distinguish it from GetInterpolatedValue which returns Geant4 types and is
