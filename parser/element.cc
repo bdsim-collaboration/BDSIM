@@ -92,6 +92,7 @@ void Element::PublishMembers()
   publish("waveLength",&Element::waveLength);
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
+  publish("tmount",&Element::tmount);
   publish("windowScreenGap",&Element::windowScreenGap);
   publish("screenXSize",&Element::screenXSize);
   publish("screenYSize",&Element::screenYSize);
@@ -120,6 +121,7 @@ void Element::PublishMembers()
   publish("vacuumMaterial",&Element::vacuumMaterial);
   publish("scintmaterial",&Element::scintmaterial);
   publish("windowmaterial",&Element::windowmaterial);
+  publish("mountmaterial",&Element::mountmaterial);
   publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
   publish("cavityModel",&Element::cavityModel);

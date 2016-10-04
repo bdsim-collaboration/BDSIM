@@ -62,7 +62,7 @@ namespace GMAD
     double tmount; ///<thickness of the screen mount
     double windowScreenGap; ///< air gap between window and screen
     double screenXSize, screenYSize;
-	double screenPSize; //Phosphor particle size in screen
+    double screenPSize; //Phosphor particle size in screen
     double screenEndZ;
     double poleStartZ;
     double screenWidth;

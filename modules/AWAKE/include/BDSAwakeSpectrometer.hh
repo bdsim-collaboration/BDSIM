@@ -16,8 +16,10 @@ Work in progress.
 #include "G4VSolid.hh"
 #include "BDSAwakeMultilayerScreen.hh"
 #include "BDSCCDCamera.hh"
-#include "BDS3DMagField.hh"
-#include "BDSSpectrVacChamb.hh"
+
+class BDSFieldInfo;
+class BDSSpectrVacChamb;
+class G4MagIntegratorStepper;
 
 class BDSAwakeSpectrometer :public BDSAcceleratorComponent
 {

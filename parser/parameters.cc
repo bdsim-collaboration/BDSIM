@@ -46,6 +46,7 @@ Parameters::Parameters() {
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
   setMap["twindow"] = false;
+  setMap["tmount"] = false;
   setMap["windowScreenGap"] = false;
   setMap["screenXSize"] = false;
   setMap["screenYSize"] = false;
