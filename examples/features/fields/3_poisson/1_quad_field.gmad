@@ -1,4 +1,4 @@
-psolve: field, type="poisson",
+psolve: field, type="xy",
 	       scaling = 3.0,
 	       integrator = "g4classicalrk4",
 	       magneticFile = "poisson2d:OUTSF7.TXT",
