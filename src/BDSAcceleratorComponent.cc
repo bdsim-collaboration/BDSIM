@@ -110,6 +110,12 @@ void BDSAcceleratorComponent::Build()
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
+void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
+{
+  delete fieldInfo; // clear up existing definition if there is one
+  fieldInfo = fieldInfoIn;
+}
+
 void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
 {//do nothing by default
   return;

@@ -46,8 +46,13 @@ public:
 	    BDSFieldInfo*       outerFieldInfoIn = nullptr);
   
   virtual ~BDSMagnet();
-
+  
   inline BDSMagnetStrength* MagnetStrength() const {return vacuumFieldInfo->MagnetStrength();}
+
+  /// @ { Delete existing field info and replace.
+  void SetOuterField(BDSFieldInfo* outerFieldInfoIn);
+  void SetVacuumField(BDSFieldInfo* vacuumFieldInfoIn);
+  /// @}
   
 protected:
   /// Overridden method of BDSAcceleratorComponent to not only build container, but

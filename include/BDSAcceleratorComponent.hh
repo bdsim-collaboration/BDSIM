@@ -87,6 +87,9 @@ public:
   /// Set the region name for this component.
   void SetRegion(G4String regionIn) {region = regionIn;}
 
+  /// Set the field definition for the whole component.
+  void SetField(BDSFieldInfo* fieldInfoIn);
+
   // Accessors
   
   /// The name of the component without modification

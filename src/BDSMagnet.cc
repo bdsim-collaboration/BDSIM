@@ -232,6 +232,18 @@ void BDSMagnet::PlaceComponents()
     }
 }
 
+void BDSMagnet::SetOuterField(BDSFieldInfo* outerFieldInfoIn)
+{
+  delete outerFieldInfo;
+  outerFieldInfo = outerFieldInfoIn;
+}
+
+void BDSMagnet::SetVacuumField(BDSFieldInfo* vacuumFieldInfoIn)
+{
+  delete vacuumFieldInfo;
+  vacuumFieldInfo = vacuumFieldInfoIn;
+}
+
 BDSMagnet::~BDSMagnet()
 {
   delete beamPipeInfo;
