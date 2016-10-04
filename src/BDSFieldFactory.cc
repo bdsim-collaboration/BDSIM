@@ -172,6 +172,20 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
     }
 }
 
+BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
+{
+  auto result = parserDefinitions.find(name);
+  if (result == parserDefinitions.end())
+    {// not a valid key
+      G4cerr << __METHOD_NAME__ << "\"" << name << "\" is not a valid field specifier" << G4endl;
+      G4cout << "Defined field speicifiers are:" << G4endl;
+      for (const auto& it : parserDefinitions)
+	{G4cout << "\"" << it.first << "\"" << G4endl;}
+      exit(1);
+    }
+  return result->second;
+}
+
 BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
 {
 #ifdef BDSDEBUG

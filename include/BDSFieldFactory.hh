@@ -61,6 +61,10 @@ public:
   /// Main interface to field factory.
   BDSFieldObjects* CreateField(BDSFieldInfo& info);
 
+  /// Return a BDSFieldInfo instance from the parser definitions. Will
+  /// exit if no matching field definition found.
+  BDSFieldInfo* GetDefinition(G4String name) const;
+
 private:
   /// Create a purely magnetic field.
   BDSFieldObjects* CreateFieldMag(BDSFieldInfo& info);
