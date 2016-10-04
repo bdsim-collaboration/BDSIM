@@ -32,6 +32,7 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldFactory.hh"
 #include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
@@ -273,12 +274,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   }
 
   // note this test will only be reached (and therefore the component registered)
-  // if it both didn't exist and has been constructed
+  // if it both the component didn't exist and it has been constructed
   if (component)
     {
       component->SetBiasVacuumList(element->biasVacuumList);
       component->SetBiasMaterialList(element->biasMaterialList);
       component->SetRegion(element->region);
+      SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory
       BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,willModify);
@@ -1357,4 +1359,28 @@ G4String BDSComponentFactory::PrepareColour(Element const* element, const G4Stri
   if (colour == "")
     {colour = fallback;}
   return colour;
+}
+
+void BDSComponentFactory::SetFieldDefinitions(Element const* element,
+					      BDSAcceleratorComponent* component) const
+{
+  if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(component))
+    {
+      if (!(element->fieldAll.empty()))
+	{
+	  G4cerr << "Error: Magnet named \"" << element->name
+		 << "\" is a magnet, but has fieldAll defined." << G4endl
+		 << "Can only have fieldOuter or fieldInner specified." << G4endl;
+	  exit(1);
+	}
+      if (!(element->fieldOuter.empty())) // ie variable isn't ""
+	{mag->SetOuterField(BDSFieldFactory::Instance()->GetDefinition(element->fieldOuter));}
+      if (!(element->fieldVacuum.empty()))
+	{mag->SetVacuumField(BDSFieldFactory::Instance()->GetDefinition(element->fieldVacuum));}
+    }
+  else
+    {
+      if (!(element->fieldAll.empty()))
+	{component->SetField(BDSFieldFactory::Instance()->GetDefinition(element->fieldAll));}
+    }
 }

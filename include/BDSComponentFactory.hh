@@ -156,6 +156,12 @@ private:
   void PrepareCavityModels();
 
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
+
+  /// Set the field definition on a BDSAcceleratorComponent from the string definition
+  /// name in a parser element. In the case of a BDSMagnet, (exclusively) set the vacuum
+  /// and outer field in place of the one general field.
+  void SetFieldDefinitions(GMAD::Element const* element,
+			   BDSAcceleratorComponent* component) const;
   
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
