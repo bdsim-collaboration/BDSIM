@@ -145,13 +145,32 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       
       G4Transform3D transform = G4Transform3D(*rm, offset);
 
-      std::pair<G4String, G4String> bf = BDS::SplitOnColon(G4String(definition.magneticFile));
-      BDSFieldFormat magFormat = BDS::DetermineFieldFormat(bf.first);
-      std::pair<G4String, G4String> ef = BDS::SplitOnColon(G4String(definition.electricFile));
-      BDSFieldFormat eleFormat = BDS::DetermineFieldFormat(ef.first);
-
-      BDSInterpolatorType magIntType = BDS::DetermineInterpolatorType(G4String(definition.magneticInterpolator));
-      BDSInterpolatorType eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));
+      BDSFieldFormat magFormat = BDSFieldFormat::none;
+      G4String       magFile   = "";
+      G4bool  magFileSpecified = !definition.magneticFile.empty();
+      if (magFileSpecified)
+	{
+	  std::pair<G4String, G4String> bf = BDS::SplitOnColon(G4String(definition.magneticFile));
+	  magFormat = BDS::DetermineFieldFormat(bf.first);
+	  magFile   = bf.second;
+	}
+      
+      BDSFieldFormat eleFormat = BDSFieldFormat::none;
+      G4String       eleFile   = "";
+      G4bool  eleFileSpecified = !definition.electricFile.empty();
+      if (eleFileSpecified)
+	{
+	  std::pair<G4String, G4String> ef = BDS::SplitOnColon(G4String(definition.electricFile));
+	  eleFormat = BDS::DetermineFieldFormat(ef.first);
+	  eleFile   = ef.second;
+	}
+      
+      BDSInterpolatorType magIntType = BDSInterpolatorType::nearest3d;
+      if (magFileSpecified) // will warn if no interpolator specified (default "")
+	{magIntType = BDS::DetermineInterpolatorType(G4String(definition.magneticInterpolator));}
+      BDSInterpolatorType eleIntType = BDSInterpolatorType::nearest2d;
+      if (eleFileSpecified)
+	{eleIntType = BDS::DetermineInterpolatorType(G4String(definition.electricInterpolator));}
       
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
@@ -160,10 +179,10 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    G4bool(definition.globalTransform),
 					    transform,
 					    nullptr, /* no cavity info*/
-					    bf.second,
+					    magFile,
 					    magFormat,
 					    magIntType,
-					    ef.second,
+					    eleFile,
 					    eleFormat,
 					    eleIntType,
 					    false,   /*don't cache transforms*/
