@@ -14,8 +14,8 @@ use, l1;
 
 beam, particle="e-",
       energy=1.3*GeV,
-      X0=-30*mm,
-      Y0=2*mm;
+      X0=10*mm,
+      Y0=5*mm;
 
 option, aper1=12*mm,
 	beampipeThickness=1*mm;
