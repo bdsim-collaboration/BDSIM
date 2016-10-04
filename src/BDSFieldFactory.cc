@@ -27,6 +27,7 @@
 #include "BDSGeometry.hh"
 #include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
+#include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorOctupole.hh"
@@ -97,8 +98,8 @@ BDSFieldFactory::BDSFieldFactory()
   geometry          = nullptr;
   cacheLength       = 1*CLHEP::um;
 
-  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(), 0);
-  //BDSGlobalConstants::Instance()->BRho());
+  PrepareFieldDefinitions(BDSParser::Instance()->GetFields(),
+			  BDSGlobalConstants::Instance()->BRho());
 }
 
 BDSFieldFactory::~BDSFieldFactory()
