@@ -95,6 +95,7 @@ void Element::PublishMembers()
   publish("windowScreenGap",&Element::windowScreenGap);
   publish("screenXSize",&Element::screenXSize);
   publish("screenYSize",&Element::screenYSize);
+  publish("screenPSize",&Element::screenPSize);
   publish("screenEndZ",&Element::screenEndZ);
   publish("poleStartZ",&Element::poleStartZ);
   publish("screenWidth",&Element::screenWidth);
