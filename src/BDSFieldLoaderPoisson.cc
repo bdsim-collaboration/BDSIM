@@ -25,7 +25,7 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 
   // test if valid file
   if (!file.is_open())
-    {G4cerr << "Invalid file name \"" << fileName << "\"" << G4endl; exit(1);}
+    {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
   else
     {G4cout << "Loading \"" << fileName << "\"" << G4endl;}
 

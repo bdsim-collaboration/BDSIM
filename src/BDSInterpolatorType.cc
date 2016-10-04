@@ -30,7 +30,8 @@ BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
   if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << interpolatorType << " is not a valid field type" << G4endl;
+      G4cerr << __METHOD_NAME__ << "\"" << interpolatorType
+	     << "\" is not a valid field type" << G4endl;
 
       G4cout << "Available interpolator types are:" << G4endl;
       for (auto it : types)
