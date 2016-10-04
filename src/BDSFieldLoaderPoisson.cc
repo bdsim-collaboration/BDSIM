@@ -93,20 +93,20 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 	  std::regex minValues("\\(([0-9eE.+-]+),([0-9eE.+-]+)\\)");
 	  std::smatch match;
 	  std::regex_search(line, match, minValues);
-	  xMin = std::stod(match[0]);
-	  xMax = std::stod(match[1]);
+	  xMin = std::stod(match[1]);
+	  xMax = std::stod(match[2]);
 	  continue;
 	}
 
       // Max
       std::regex max("^.*?\\(Xmax,Ymax\\)\\s*=\\s*", std::regex_constants::icase);
-      if (std::regex_search(line, min))
+      if (std::regex_search(line, max))
 	{// found line beginning with '(Xmax,YMax)'
 	  std::regex maxValues("\\(([0-9eE.+-]+),([0-9eE.+-]+)\\)");
 	  std::smatch match;
 	  std::regex_search(line, match, maxValues);
-	  xMin = std::stod(match[0]);
-	  xMax = std::stod(match[1]);
+	  xMin = std::stod(match[1]);
+	  xMax = std::stod(match[2]);
 	  continue;
 	}
 
@@ -117,18 +117,18 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 	  std::regex nStepValues(":\\s*([0-9eE.+-]+)\\s*([0-9eE.+-]+)");
 	  std::smatch match;
 	  std::regex_search(line, match, nStepValues);
-	  nX = std::stoi(match[0]) + 1;
-	  nY = std::stoi(match[1]) + 1; // number of increments, so number of points is +1
+	  nX = std::stoi(match[1]) + 1;
+	  nY = std::stoi(match[2]) + 1; // number of increments, so number of points is +1
 	  pastNStep = true;
 	  continue;
 	}
       
       // Columns
-      std::regex noParenthesis("(^((?!\\().)*$)");
       std::regex noNumbers("^(\\D)*$");
-      if (pastNStep &&
-	  std::regex_search(line, noNumbers) &&
-	  std::regex_search(line, noParenthesis))
+      G4bool noNumbersR = std::regex_search(line, noNumbers);
+      G4bool hasParenthesis = (line.find("(") != std::string::npos) || (line.find(")") != std::string::npos);
+      G4bool hasNoParenthesis = !hasParenthesis;
+      if (pastNStep && noNumbersR && hasNoParenthesis)
 	{
 	  std::istringstream liness(line);
 	  for (G4String key; liness >> key;)
@@ -138,9 +138,7 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 	}
       
       // Units
-      if (pastNStep &&
-	  std::regex_search(line, noNumbers) &&
-	  !std::regex_search(line, noParenthesis)) // not no parenthesis - ie there are!
+      if (pastNStep && noNumbersR && hasParenthesis)
 	{
 	  // match text inside (XXX) parenthesis, ie strip them off
 	  std::regex unitsRE("[\\(](\\w+\\-*\\/*\\w*)[\\)]");
