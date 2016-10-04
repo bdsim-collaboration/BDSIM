@@ -10,7 +10,7 @@ BDSSimpleComponent::BDSSimpleComponent(G4String              name,
 				       G4double              angle,
 				       G4ThreeVector         inputFaceNormal,
 				       G4ThreeVector         outputFaceNormal):
-  BDSAcceleratorComponent(name, length, angle, "simpleComponent", "", nullptr,
+  BDSAcceleratorComponent(name, length, angle, "simpleComponent", nullptr,
 			  inputFaceNormal, outputFaceNormal)
 {
   InheritObjects(component);

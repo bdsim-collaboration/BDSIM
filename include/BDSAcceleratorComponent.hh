@@ -58,7 +58,6 @@ public:
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  G4String         region          = "",
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
 			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
 			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
