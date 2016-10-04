@@ -9,7 +9,8 @@
 
 BDSArray4D::BDSArray4D(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn):
   nX(nXIn), nY(nYIn), nZ(nZIn), nT(nTIn),
-  data(std::vector<BDSFieldValue>(nTIn*nZIn*nYIn*nXIn))
+  data(std::vector<BDSFieldValue>(nTIn*nZIn*nYIn*nXIn)),
+  defaultValue(BDSFieldValue())
 {;}
 
 BDSFieldValue& BDSArray4D::operator()(const G4int x,
@@ -17,18 +18,26 @@ BDSFieldValue& BDSArray4D::operator()(const G4int x,
 				      const G4int z,
 				      const G4int t)
 {
-  OutsideWarn(x,y,z,t);
+  OutsideWarn(x,y,z,t); // keep as a warning as can't assign to invalid index
   return data[t*nT + z*nZ + y*nY + z];
 }
 
-/// Accessor only.
+const BDSFieldValue& BDSArray4D::GetConst(const G4int x,
+					  const G4int y,
+					  const G4int z,
+					  const G4int t) const
+{
+  if (Outside(x,y,z,t))
+    {return defaultValue;}
+  return data[t*nT + z*nZ + y*nY + z];
+}
+  
 const BDSFieldValue& BDSArray4D::operator()(const G4int x,
 					    const G4int y,
 					    const G4int z,
 					    const G4int t) const
 {
-  OutsideWarn(x,y,z,t);
-  return data[t*nT + z*nZ + y*nY + z];
+  return GetConst(x,y,z,t);
 }
 
 G4bool BDSArray4D::Outside(const G4int x,

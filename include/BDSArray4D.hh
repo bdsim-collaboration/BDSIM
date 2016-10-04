@@ -27,6 +27,10 @@ public:
   {return operator()(pos.x(), pos.y(), pos.z(), pos.t());}
 
   /// Accessor only.
+  const BDSFieldValue& GetConst(const G4int x,
+				const G4int y = 0,
+				const G4int z = 0,
+				const G4int t = 0) const;
   virtual const BDSFieldValue& operator()(const G4int x,
 					  const G4int y = 0,
 					  const G4int z = 0,
@@ -50,12 +54,18 @@ public:
 private:
   BDSArray4D() = delete;
 
+  /// @{ Dimension
   const G4int nX;
   const G4int nY;
   const G4int nZ;
   const G4int nT;
+  /// @}
 
+  /// A 1D array representing all the data.
   std::vector<BDSFieldValue> data;
+
+  /// Need to store a default value so it can be return by reference.
+  BDSFieldValue defaultValue;
 };
 
 #endif
