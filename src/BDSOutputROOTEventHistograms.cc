@@ -13,21 +13,15 @@ BDSOutputROOTEventHistograms::BDSOutputROOTEventHistograms(const BDSOutputROOTEv
 {
   // loop over 1d histograms
   for(auto h : rhs.histograms1D)
-  {
-    this->histograms1D.push_back((TH1D*)h->Clone());
-  }
+    {histograms1D.push_back(static_cast<TH1D*>(h->Clone()));}
 
   // loop over 2d histograms
   for(auto h : rhs.histograms2D)
-  {
-    this->histograms2D.push_back((TH2D*)h->Clone());
-  }
+    {histograms2D.push_back(static_cast<TH2D*>(h->Clone()));}
 }
 
 BDSOutputROOTEventHistograms::~BDSOutputROOTEventHistograms()
-{
-
-}
+{;}
 
 #ifndef __ROOTBUILD__
 

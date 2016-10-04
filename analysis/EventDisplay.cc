@@ -17,9 +17,10 @@
 
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventModel.hh"
+#include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "Model.hh"
-#include "parser/optionsBase.h"
+#include "Options.hh"
 
 ClassImp(EventDisplay)
 
@@ -116,7 +117,7 @@ void EventDisplay::Draw()
 void EventDisplay::DrawModel()
 {
   std::cout << "EventDisplay::DrawModel>" << std::endl;
-  GMAD::OptionsBase *ob = (GMAD::OptionsBase*)options;
+  BDSOutputROOTEventOptions *ob = options->options;
   std::cout << "EventDisplay::DrawModel> outerDiameter" << ob->outerDiameter << std::endl;
   double outerDiameter = ob->outerDiameter; // need cm
 
