@@ -40,4 +40,4 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
   
   result *= factor;
   return result;
-  }
+}
