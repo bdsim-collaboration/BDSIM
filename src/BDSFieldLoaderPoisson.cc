@@ -94,7 +94,7 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 	  std::smatch match;
 	  std::regex_search(line, match, minValues);
 	  xMin = std::stod(match[1]);
-	  xMax = std::stod(match[2]);
+	  yMin = std::stod(match[2]);
 	  continue;
 	}
 
@@ -105,8 +105,8 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
 	  std::regex maxValues("\\(([0-9eE.+-]+),([0-9eE.+-]+)\\)");
 	  std::smatch match;
 	  std::regex_search(line, match, maxValues);
-	  xMin = std::stod(match[1]);
-	  xMax = std::stod(match[2]);
+	  xMax = std::stod(match[1]);
+	  yMax = std::stod(match[2]);
 	  continue;
 	}
 
