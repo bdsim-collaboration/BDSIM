@@ -30,10 +30,13 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 					    G4double poleStartZ=62.733*CLHEP::cm,
 					    G4String material="lanex",
 					    G4double thickness = 0.3 * CLHEP::mm,
+                        G4double screenPSize=25*CLHEP::um,
 					    G4double windowScreenGap=0,
 					    G4double angle = -45*CLHEP::pi/180.0,
 					    G4double windowThickness=0,
 					    G4String windowMaterial="G4_Al",
+                        G4double mountThickness=0, 
+                        G4String mountMaterial="G4_BAKELITE",
 					    G4double screenEndZ = (258-62.733)*CLHEP::cm,
 					    G4String spec="",
 					    G4double screenWidth=1*CLHEP::m):
@@ -44,10 +47,13 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
   _camera(nullptr),
   _material(material),
   _thickness(thickness),
+  _screenPSize(screenPSize),
   _windowScreenGap(windowScreenGap),
   _screenAngle(angle),
   _windowThickness(windowThickness),
   _windowMaterial(windowMaterial),
+  _mountThickness(mountThickness), 
+ _mountMaterial(mountMaterial),
   _screenEndZ(screenEndZ),
   _poleStartZ(poleStartZ)
 {
@@ -712,8 +718,7 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 void BDSAwakeSpectrometer::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
-  G4double grainSize = 25*1e-6*CLHEP::m;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap ,grainSize, _windowThickness, _windowMaterial, _screenWidth);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap , _screenPSize, _windowThickness, _windowMaterial, _mountThickness, _mountMaterial, _screenWidth);
   
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->SensitiveComponents()){

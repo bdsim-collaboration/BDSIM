@@ -46,9 +46,11 @@ Parameters::Parameters() {
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
   setMap["twindow"] = false;
+  setMap["tmount"] = false;
   setMap["windowScreenGap"] = false;
   setMap["screenXSize"] = false;
   setMap["screenYSize"] = false;
+  setMap["screenPSize"] = false;
   setMap["screenEndZ"] = false;
   setMap["poleStartZ"] = false;
   setMap["screenWidth"] = false;
@@ -82,6 +84,7 @@ Parameters::Parameters() {
   setMap["material"] = false;
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
+  setMap["mountmaterial"] = false;
   setMap["airmaterial"] = false;
   setMap["spec"] = false;
   setMap["cavityModel"] = false;
@@ -96,6 +99,7 @@ Parameters::Parameters() {
 }
 
 void Parameters::flush() {
+
   Element::flush();
 
   for (auto& i : setMap)
@@ -108,7 +112,7 @@ void Parameters::inherit_properties(Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
-  // this is used for the inheritance / newinstance mechanism
+ // this is used for the inheritance / newinstance mechanism
 
   for (auto& i : setMap)
     {

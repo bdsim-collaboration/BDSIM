@@ -59,8 +59,10 @@ namespace GMAD
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
     double twindow; ///<thickness of window
+    double tmount; ///<thickness of the screen mount
     double windowScreenGap; ///< air gap between window and screen
     double screenXSize, screenYSize;
+    double screenPSize; //Phosphor particle size in screen
     double screenEndZ;
     double poleStartZ;
     double screenWidth;
@@ -114,6 +116,7 @@ namespace GMAD
     std::string material;
     std::string windowmaterial;
     std::string scintmaterial;
+    std::string mountmaterial;
     std::string airmaterial;
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities

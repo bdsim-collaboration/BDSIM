@@ -13,8 +13,9 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial, G4double width):
-  BDSMultilayerScreen(G4TwoVector(width,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _windowScreenGap(windowScreenGap), _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial)
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial, G4double mountThickness, G4String mountMaterial, G4double width):
+  BDSMultilayerScreen(G4TwoVector(width,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _windowScreenGap(windowScreenGap), _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial),
+_mountThickness(mountThickness),_mountMaterial(mountMaterial)
 {
   _ss.str("");
   _binderLayerCount=0;
@@ -47,6 +48,8 @@ void BDSAwakeMultilayerScreen::layers()
   thinAirLayer();
   preScreenSampler();
   thinAirLayer();
+  mountLayer();
+  postMountSampler();
   backLayer();
   substrateLayer();
   if(_firstLayerThickness>1e-9){
@@ -73,7 +76,7 @@ void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bo
 {
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),1*CLHEP::um),
 					   name,
-                                           material,
+					   material,
 					   0,
 					   0);
   sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
@@ -91,6 +94,10 @@ void BDSAwakeMultilayerScreen::postWindowSampler(){
 
 void BDSAwakeMultilayerScreen::preScreenSampler(){
   sampler((G4String)"preScreenSampler");
+}
+
+void BDSAwakeMultilayerScreen::postMountSampler(){
+  sampler((G4String)"postMountSampler");
 }
 
 void BDSAwakeMultilayerScreen::postScreenSampler(){
@@ -127,6 +134,17 @@ void BDSAwakeMultilayerScreen::backLayer(){
   BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),10*CLHEP::um),(G4String)"backingLayer","cellulose",0,0);
   sl->SetColour(G4Colour(0.5,0.0,0.5,0.3));
   screenLayer(sl);
+}
+
+void BDSAwakeMultilayerScreen::mountLayer(){
+#ifdef BDSDEBUG
+  std::cout << __METHOD_NAME__ << " mount thickness: " << _mountThickness << std::endl;
+#endif
+  if(_mountThickness>0){
+        BDSScreenLayer* sl =  new BDSScreenLayer(G4ThreeVector(GetSize().x(),GetSize().y(),_mountThickness),(G4String)"mountLayer",_mountMaterial.data(),0,0);
+    sl->SetColour(G4Colour(1.0,0.0,0.3,0.0));
+    screenLayer(sl);
+  }
 }
 
 void BDSAwakeMultilayerScreen::substrateLayer(){

@@ -131,6 +131,7 @@ void BDSBunchUserFile<T>::ParseFileFormat()
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
 #ifdef BDSDEBUG 
+
 	G4cout<< __METHOD_NAME__ <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name=name;
@@ -352,6 +353,7 @@ void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& 
       else if(it->name=="z") { 
 	ReadValue(z0); z0 *= ( CLHEP::m * it->unit ); 
 #ifdef BDSDEBUG 
+
 	G4cout<< __METHOD_NAME__ << z0 <<G4endl;
 #endif
       }
