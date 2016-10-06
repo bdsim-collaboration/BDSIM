@@ -10,6 +10,8 @@
 #include "BDSInterpolator2D.hh"
 #include "BDSInterpolatorType.hh"
 
+#include "BDSFieldMagReflectedQuad.hh"
+
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
 
@@ -21,13 +23,14 @@
 
 int main(int /*argc*/, char** /*argv*/)
 {
-  double xmin = 0;
+  double xmin = -25;
   double xmax = 25;
   int    nX   = 100;
-  double ymin = 0;
-  double ymax = 20;
+  double ymin = -25;
+  double ymax = 25;
   int    nY   = 100;
-  std::string outputName = "outfile.dat";
+  std::string outputName = "queried.dat";
+  std::string arrayName  = "array.dat";
   
   BDSFieldInfo* info = new BDSFieldInfo(BDSFieldType::xy,
 					0,
@@ -37,7 +40,7 @@ int main(int /*argc*/, char** /*argv*/)
 					G4Transform3D(),
 					nullptr,
 					"OUTSF7.TXT",
-					BDSFieldFormat::poisson2d,
+					BDSFieldFormat::poisson2dquad,
 					BDSInterpolatorType::nearest2d);
   
   BDSFieldMag* field = BDSFieldLoader::Instance()->LoadMagField(*info);
@@ -67,7 +70,7 @@ int main(int /*argc*/, char** /*argv*/)
   std::cout << std::endl;
 
   std::ofstream ofile2;
-  ofile2.open("test.dat");
+  ofile2.open(arrayName);
   ofile2 << *(dynamic_cast<BDSFieldMagInterpolated2D*>(field)->Interpolator()->Array());
   ofile2.close();
 
