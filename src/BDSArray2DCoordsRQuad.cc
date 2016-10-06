@@ -103,7 +103,7 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
       swapResult = true;
     }
 
-  returnValue = BDSArray2DCoords::GetConst(x,y,z,t);
+  returnValue = BDSArray2DCoords::GetConst(xi,yi,z,t);
 
   if (swapResult)
     {
