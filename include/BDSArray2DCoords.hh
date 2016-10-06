@@ -16,6 +16,9 @@ public:
   virtual ~BDSArray2DCoords(){;}
 
   friend std::ostream& operator<< (std::ostream& out, BDSArray2DCoords const &a);
+
+private:
+  BDSArray2DCoords() = delete;
 };
 
 #endif
