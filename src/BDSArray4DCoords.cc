@@ -47,12 +47,16 @@ void BDSArray4DCoords::OutsideCoordsWarn(const G4double x,
     }
 }
 
+std::ostream& BDSArray4DCoords::Print(std::ostream& out) const
+{
+  out << "X: (" << xMin << ", " << xMax << ")" << G4endl;
+  out << "Y: (" << yMin << ", " << yMax << ")" << G4endl;
+  out << "Z: (" << zMin << ", " << zMax << ")" << G4endl;
+  out << "T: (" << tMin << ", " << tMax << ")" << G4endl;
+  return BDSArray4D::Print(out);
+}
+
 std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a)
 {
-  out << "X: (" << a.xMin << ", " << a.xMax << ")" << G4endl;
-  out << "Y: (" << a.yMin << ", " << a.yMax << ")" << G4endl;
-  out << "Z: (" << a.zMin << ", " << a.zMax << ")" << G4endl;
-  out << "T: (" << a.tMin << ", " << a.tMax << ")" << G4endl;
-  out << static_cast<BDSArray4D const&>(a);
-  return out;
+  return a.Print(out);
 }

@@ -13,7 +13,5 @@ BDSArray1DCoords::BDSArray1DCoords(G4int nXIn,
 
 std::ostream& operator<< (std::ostream& out, BDSArray1DCoords const &a)
 {
-  out << "X: (" << a.xMin << ", " << a.xMax << ")" << G4endl;
-  out << static_cast<BDSArray4D const&>(a);
-  return out;
+  return a.Print(out);
 }

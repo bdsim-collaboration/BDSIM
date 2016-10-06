@@ -65,23 +65,28 @@ void BDSArray4D::OutsideWarn(const G4int x,
     }
 }
 
-std::ostream& operator<< (std::ostream& out, BDSArray4D const &a)
+std::ostream& BDSArray4D::Print(std::ostream& out) const
 {
-  out << "#x = " << a.nX << ", ";
-  out << "#y = " << a.nY << ", ";
-  out << "#z = " << a.nZ << ", ";
-  out << "#t = " << a.nT << G4endl;
+  out << "#x = " << nX << ", ";
+  out << "#y = " << nY << ", ";
+  out << "#z = " << nZ << ", ";
+  out << "#t = " << nT << G4endl;
   
-  for (G4int t = 0; t < a.nT; t++)
+  for (G4int t = 0; t < nT; t++)
     {
-      for (G4int z = 0; z < a.nZ; z++)
+      for (G4int z = 0; z < nZ; z++)
 	{
-	  for (G4int y = 0; y < a.nY; y++)
+	  for (G4int y = 0; y < nY; y++)
 	    {
-	      for (G4int x = 0; x < a.nX; x++)
-		{out << a(x,y,z,t) << G4endl;}
+	      for (G4int x = 0; x < nX; x++)
+		{out << BDSArray4D::GetConst(x,y,z,t) << G4endl;}
 	    }
 	}
     }
   return out;
+}
+
+std::ostream& operator<< (std::ostream& out, BDSArray4D const &a)
+{
+  return a.Print(out);
 }

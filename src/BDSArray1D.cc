@@ -10,12 +10,5 @@ BDSArray1D::BDSArray1D(G4int nX):
 
 std::ostream& operator<< (std::ostream& out, BDSArray1D const &a)
 {
-  out << "#x = " << a.sizeX() << G4endl;
-  
-  out << "[ ";
-  for (G4int x = 0; x < a.sizeX(); x++)
-    {out << a(x,0,0,0) << "\t";}
-  out << "]" << G4endl;
-  return out;
+  return a.Print(out);
 }
-

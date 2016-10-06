@@ -48,6 +48,8 @@ public:
 			   const G4int z,
 			   const G4int t) const;
 
+  virtual std::ostream& Print(std::ostream& out) const;
+  
   /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray4D const &a);
 

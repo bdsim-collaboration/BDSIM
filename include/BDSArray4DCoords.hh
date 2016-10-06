@@ -94,6 +94,8 @@ public:
 				NearestT(pos[3]));
   }
 
+  virtual std::ostream& Print(std::ostream& out) const;
+  
   friend std::ostream& operator<< (std::ostream& out, BDSArray4DCoords const &a);
 
 protected:

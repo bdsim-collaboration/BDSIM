@@ -130,22 +130,27 @@ G4bool BDSArray2DCoordsRQuad::Outside(const G4int x,
   return rx || ry || rz || rt;
 }
 
-std::ostream& operator<< (std::ostream& out, BDSArray2DCoordsRQuad const &a)
+std::ostream& BDSArray2DCoordsRQuad::Print(std::ostream& out) const
 {
-  out << *(static_cast<const BDSArray2DCoords*>(&a));
+  std::ostream& out2 = BDSArray2DCoords::Print(out);
 
-  out << G4endl << "REFLECTED VERSION" << G4endl;
+  out2 << G4endl << "REFLECTED VERSION" << G4endl;
   
-  for (G4int t = 0; t < a.nT; t++)
+  for (G4int t = 0; t < nT; t++)
     {
-      for (G4int z = 0; z < a.nZ; z++)
+      for (G4int z = 0; z < nZ; z++)
 	{
-	  for (G4int y = 0; y < 2*a.nY; y++)
+	  for (G4int y = 0; y < 2*nY; y++)
 	    {
-	      for (G4int x = 0; x < 2*a.nX; x++)
-		{out << a.GetConst(x,y,z,t) << G4endl;}
+	      for (G4int x = 0; x < 2*nX; x++)
+		{out2 << GetConst(x,y,z,t) << G4endl;}
 	    }
 	}
     }
-  return out;
+  return out2;
+}
+
+std::ostream& operator<< (std::ostream& out, BDSArray2DCoordsRQuad const &a)
+{
+  return a.Print(out);
 }
