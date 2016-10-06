@@ -1,4 +1,5 @@
 #include "BDSArray2DCoords.hh"
+#include "BDSArray2DCoordsRQuad.hh"
 #include "BDSFieldFormat.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
@@ -9,8 +10,6 @@
 #include "BDSIntegratorType.hh"
 #include "BDSInterpolator2D.hh"
 #include "BDSInterpolatorType.hh"
-
-#include "BDSFieldMagReflectedQuad.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
@@ -71,7 +70,8 @@ int main(int /*argc*/, char** /*argv*/)
 
   std::ofstream ofile2;
   ofile2.open(arrayName);
-  ofile2 << *(dynamic_cast<BDSFieldMagInterpolated2D*>(field)->Interpolator()->Array());
+  auto r = dynamic_cast<BDSFieldMagInterpolated2D*>(field)->Interpolator()->Array();
+  ofile2 << *(dynamic_cast<const BDSArray2DCoordsRQuad*>(r));
   ofile2.close();
 
   return 0;

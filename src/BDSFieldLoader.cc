@@ -13,8 +13,6 @@
 #include "BDSInterpolatorType.hh"
 #include "BDSThreeVector.hh"
 
-#include "BDSFieldMagReflectedQuad.hh"
-
 #include "globals.hh" // geant4 types / globals
 
 #include <algorithm>
