@@ -9,8 +9,8 @@
 
 BDSArray4D::BDSArray4D(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn):
   nX(nXIn), nY(nYIn), nZ(nZIn), nT(nTIn),
-  data(std::vector<BDSFieldValue>(nTIn*nZIn*nYIn*nXIn)),
-  defaultValue(BDSFieldValue())
+  defaultValue(BDSFieldValue()),
+  data(std::vector<BDSFieldValue>(nTIn*nZIn*nYIn*nXIn))
 {;}
 
 BDSFieldValue& BDSArray4D::operator()(const G4int x,

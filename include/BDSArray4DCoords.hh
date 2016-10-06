@@ -25,20 +25,22 @@ public:
   inline G4double ZStep() const {return zStep;}
   inline G4double TStep() const {return tStep;}
 
-  G4bool OutsideCoords(const G4double x,
-		       const G4double y,
-		       const G4double z,
-		       const G4double t) const;
+  virtual G4bool OutsideCoords(const G4double x,
+			       const G4double y,
+			       const G4double z,
+			       const G4double t) const;
 
   void OutsideCoordsWarn(const G4double x,
 			 const G4double y,
 			 const G4double z,
 			 const G4double t) const;
-  
-  inline G4double ArrayCoordsFromX(const G4double x) const {return (x - xMin) / xStep;}
-  inline G4double ArrayCoordsFromY(const G4double y) const {return (y - yMin) / yStep;}
-  inline G4double ArrayCoordsFromZ(const G4double z) const {return (z - zMin) / zStep;}
-  inline G4double ArrayCoordsFromT(const G4double t) const {return (t - tMin) / tStep;}
+
+  /// @{ Not much point in being both virtual and inline (in our use case) but has to be virtual.
+  virtual G4double ArrayCoordsFromX(const G4double x) const {return (x - xMin) / xStep;}
+  virtual G4double ArrayCoordsFromY(const G4double y) const {return (y - yMin) / yStep;}
+  virtual G4double ArrayCoordsFromZ(const G4double z) const {return (z - zMin) / zStep;}
+  virtual G4double ArrayCoordsFromT(const G4double t) const {return (t - tMin) / tStep;}
+  /// @}
 
   inline BDSFourVector<G4double> ArrayCoordsFromXYZT(const G4double x,
 						     const G4double y,
@@ -67,11 +69,13 @@ public:
 				   TFromArrayCoords(t));
   }
 
-  inline G4int NearestX(const G4double x) const {return (G4int)round((x - xMin) / xStep);}
-  inline G4int NearestY(const G4double y) const {return (G4int)round((y - yMin) / yStep);}
-  inline G4int NearestZ(const G4double z) const {return (G4int)round((z - zMin) / zStep);}
-  inline G4int NearestT(const G4double t) const {return (G4int)round((t - tMin) / tStep);}
-
+  /// @{ Not much point in being both virtual and inline (in our use case) but has to be virtual.
+  virtual G4int NearestX(const G4double x) const {return (G4int)round((x - xMin) / xStep);}
+  virtual G4int NearestY(const G4double y) const {return (G4int)round((y - yMin) / yStep);}
+  virtual G4int NearestZ(const G4double z) const {return (G4int)round((z - zMin) / zStep);}
+  virtual G4int NearestT(const G4double t) const {return (G4int)round((t - tMin) / tStep);}
+  /// @}
+  
   inline BDSFourVector<G4int> NearestXYZT(const G4double x,
 					  const G4double y,
 					  const G4double z,
