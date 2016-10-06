@@ -1,3 +1,4 @@
+#include "BDSArray2DCoordsRQuad.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEM.hh"
 #include "BDSFieldFormat.hh"
@@ -12,10 +13,14 @@
 #include "BDSInterpolatorType.hh"
 #include "BDSThreeVector.hh"
 
+#include "BDSFieldMagReflectedQuad.hh"
+
 #include "globals.hh" // geant4 types / globals
 
 #include <algorithm>
 #include <fstream>
+
+class BDSArray2DCoords;
 
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;
 
@@ -51,6 +56,8 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
       {result = LoadBDSIM3D(filePath); break;}
     case BDSFieldFormat::poisson2d:
       {result = LoadPoissonSuperFishB(filePath, interpolatorType, transform); break;}
+    case BDSFieldFormat::poisson2dquad:
+      {result = LoadPoissonSuperFishBQuad(filePath, interpolatorType, transform); break;}
     default:
       break;
     }
@@ -62,10 +69,23 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 						   G4Transform3D       transform)
 {
   BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
-  BDSArray2DCoords*   array = loader->LoadMag2D(filePath);
+  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
   delete loader;
-  BDSInterpolator2D* ar = CreateInterpolator2D(array, interpolatorType);
-  BDSFieldMag* result = new BDSFieldMagInterpolated2D(ar, transform); 
+  BDSInterpolator2D*         ar = CreateInterpolator2D(array, interpolatorType);
+  BDSFieldMag* result = new BDSFieldMagInterpolated2D(ar, transform);
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            filePath,
+						       BDSInterpolatorType interpolatorType,
+						       G4Transform3D       transform)
+{
+  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
+  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
+  delete loader;
+  BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
+  BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
+  BDSFieldMag* result = new BDSFieldMagInterpolated2D(ar, transform);
   return result;
 }
 

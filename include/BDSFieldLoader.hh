@@ -17,6 +17,10 @@ class BDSInterpolator2D;
 
 /**
  * @brief A loader for various field map formats.
+ *
+ * A factory to use the appropriate file loader for different field map formats
+ * and constructo into required field including the correct interpolator and possilbe
+ * reflections.
  * 
  * @author Laurie Nevay
  */
@@ -44,11 +48,19 @@ private:
   
   BDSFieldMag* LoadBDSIM2D(G4String filePath);
   BDSFieldMag* LoadBDSIM3D(G4String filePath);
-  
+
+  /// Load a 2D poisson superfish B field map.
   BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
 				     BDSInterpolatorType interpolatorType,
 				     G4Transform3D       transform);
 
+  /// Similar to LoadPoissonSuperFishB() but the data below y = x is reflected
+  /// and the data relfected from one quadrant to all four at the array level.
+  BDSFieldMag* LoadPoissonSuperFishBQuad(G4String            filePath,
+					 BDSInterpolatorType interpolatorType,
+					 G4Transform3D       transform);
+
+  /// Create the appropriate 2D interpolator for an array.
   BDSInterpolator2D* CreateInterpolator2D(BDSArray2DCoords*    array,
   					  BDSInterpolatorType  interpolatorType);
   
