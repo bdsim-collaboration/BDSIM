@@ -86,7 +86,7 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
     {
       if (y < nY)
 	{// D quadrant
-	  xi = x - nX; // just offset index
+	  xi = x - nX; xr = -1;// just offset index, flip x component
 	  yi = nY - y;
 	}
       else
