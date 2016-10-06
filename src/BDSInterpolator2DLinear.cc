@@ -23,10 +23,10 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
   G4double y1 = floor(yarr);
   G4double y2 = ceil(yarr);
   
-  BDSFieldValue Q11 = (*array)(x1,y1);
-  BDSFieldValue Q12 = (*array)(x1,y2);
-  BDSFieldValue Q22 = (*array)(x2,y2);
-  BDSFieldValue Q21 = (*array)(x2,y1);
+  BDSFieldValue Q11 = array->GetConst(x1,y1);
+  BDSFieldValue Q12 = array->GetConst(x1,y2);
+  BDSFieldValue Q22 = array->GetConst(x2,y2);
+  BDSFieldValue Q21 = array->GetConst(x2,y1);
   
   G4double x2mx = x2 - x;
   G4double y2my = y2 - y;
