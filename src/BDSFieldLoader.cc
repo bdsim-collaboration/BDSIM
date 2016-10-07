@@ -68,9 +68,9 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 {
   BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
   BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
-  delete loader;
   BDSInterpolator2D*         ar = CreateInterpolator2D(array, interpolatorType);
-  BDSFieldMag* result = new BDSFieldMagInterpolated2D(ar, transform);
+  BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform);
+  delete loader;
   return result;
 }
 
@@ -80,10 +80,17 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
 {
   BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
   BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
-  delete loader;
+  if (array->XStep() != array->YStep())
+    {
+      G4cerr << G4endl
+	     << "Warning - asymmetric grid spacing for reflected quadrupole will result in"
+	     << " a distorted field map - please regenerate the map with even spatial samples."
+	     << G4endl;
+    }
   BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
   BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
-  BDSFieldMag* result = new BDSFieldMagInterpolated2D(ar, transform);
+  BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform);
+  delete loader;
   return result;
 }
 
