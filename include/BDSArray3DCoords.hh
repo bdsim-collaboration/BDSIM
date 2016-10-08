@@ -7,6 +7,12 @@
 
 #include <ostream>
 
+/**
+ * @brief 3D array with spatial mapping derived from BDSArray4DCoords.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSArray3DCoords: public BDSArray4DCoords
 {
 public:
@@ -16,9 +22,12 @@ public:
 		   G4double zMinIn, G4double zMaxIn);
   virtual ~BDSArray3DCoords(){;}
 
+  /// Output stream.
   friend std::ostream& operator<< (std::ostream& out, BDSArray3DCoords const &a);
 
 private:
+  /// No default constructor as the array is not adjustable after construction and
+  /// therefore the size must be known at construction time.
   BDSArray3DCoords() = delete;
 };
 

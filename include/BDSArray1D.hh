@@ -8,6 +8,12 @@
 
 #include <ostream>
 
+/**
+ * @brief 1D array for compleness in array system.
+ * 
+ * @author Laurie Nevay
+ */
+
 class BDSArray1D: public BDSArray2D
 {
 public:
@@ -18,7 +24,8 @@ public:
   friend std::ostream& operator<< (std::ostream& out, BDSArray2D const &a);
 
 private:
-  /// Private default constructor to force use of provided one.
+  /// No default constructor as the array is not adjustable after construction and
+  /// therefore the size must be known at construction time.
   BDSArray1D() = delete;
 };
 

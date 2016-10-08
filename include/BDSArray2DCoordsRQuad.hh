@@ -10,6 +10,10 @@
 
 /**
  * @brief A wrapper to achieve 2D reflection of a minimal quadrupole field solve.
+ *
+ * NOTE: This should only be used for arrays where the spatial spacing is the same
+ * in both x and y - ie xStep and yStep are the same, otherwise the field map will be
+ * distorted.
  * 
  * This allows a small 2pi/8 segment between the x axis and y=x in the positive
  * quadrant to be reflected to represent a quadrupole.  Ie relfected about y=z
@@ -34,6 +38,8 @@
  *
  * Note, by return a reference to a non-const member returnValue that may be updated by another
  * query, thread safety could be an issue.
+ *
+ * The reflection *includes* the diagonal line in the array.
  * 
  * @author Laurie Nevay
  */
@@ -41,6 +47,7 @@
 class BDSArray2DCoordsRQuad: public BDSArray2DCoords
 {
 public:
+  /// Wrap an existing BDSArray2DCoords instance.
   BDSArray2DCoordsRQuad(BDSArray2DCoords* arrayIn);
   virtual ~BDSArray2DCoordsRQuad(){;}
 
@@ -69,8 +76,11 @@ public:
 			 const G4int t) const;
   /// @}
 
+  /// This prints out the raw underlying data, then the reflected version as would normally
+  /// be queried.
   virtual std::ostream& Print(std::ostream& out) const;
-  
+
+  /// Delegate function to call polymorphic Print().
   friend std::ostream& operator<< (std::ostream& out, BDSArray2DCoordsRQuad const &a);
 
 private:
