@@ -451,10 +451,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4double angleOut = element->e2 - 0.5*element->angle;
 
 
-  BDSLine *sbendline = BDSBendBuilder::Instance()->SBendLine(element,
-                                                             angleIn,
-                                                             angleOut,
-                                                             st);
+  BDSLine *sbendline = BDS::BuildSBendLine(element,
+					   angleIn,
+					   angleOut,
+					   st,
+					   brho);
   return sbendline;
 }
 
@@ -529,13 +530,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
 
-  BDSLine* rbendline = BDSBendBuilder::Instance()->RBendLine(element,
-                                                             prevElement,
-                                                             nextElement,
-                                                             angleIn,
-                                                             angleOut,
-                                                             brho,
-                                                             st);
+  BDSLine* rbendline = BDS::BuildRBendLine(element,
+					   prevElement,
+					   nextElement,
+					   angleIn,
+					   angleOut,
+					   brho,
+					   st);
   return rbendline;
 }
 
@@ -1151,7 +1152,7 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
     }
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element) const
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element)
 {
   // input and output face angles
   G4double angleIn  = 0;
@@ -1171,7 +1172,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
 								const G4double angleIn,
-								const G4double angleOut) const
+								const G4double angleOut)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
@@ -1236,7 +1237,7 @@ G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
 							  const G4ThreeVector inputFaceNormal,
-							  const G4ThreeVector outputFaceNormal) const
+							  const G4ThreeVector outputFaceNormal)
 {
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
   BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
@@ -1255,7 +1256,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 
 BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element,
 							  const G4double angleIn,
-							  const G4double angleOut) const
+							  const G4double angleOut)
 {
   auto faces = BDS::CalculateFaces(angleIn, angleOut);
   BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();

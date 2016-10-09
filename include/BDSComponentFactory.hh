@@ -56,6 +56,37 @@ public:
   /// Create the tilt and offset information object by inspecting the parser element
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
 
+  /// Prepare the recipe for a piece of beam pipe. Static and public so it can be used by
+  /// SBendBuilder.
+  static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* element,
+					      const G4ThreeVector inputFaceNormal  = G4ThreeVector(0,0,-1),
+					      const G4ThreeVector outputFaceNormal = G4ThreeVector(0,0,1));
+
+  /// Interface to other PrepareBeamPipeInfo() for convenience to avoid preparing
+  /// face normal vectors repeatedly.
+  static BDSBeamPipeInfo* PrepareBeamPipeInfo(GMAD::Element const* element,
+					      G4double angleIn,
+					      G4double angleOut);
+
+  /// Prepare the recipe for magnet outer geometry.
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element);
+  /// Interface to other PrepareMagnetOuterInfo() for convenience to avoid preparing
+  /// face normal vectors repeatedly.
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
+						    const G4double angleIn,
+						    const G4double angleOut);
+
+  /// Utility function to check if the combination of outer diameter, angle and length
+  /// will result in overlapping entrance and exit faces and therefore whether to abort.
+  static void CheckBendLengthAngleWidthCombo(G4double chordLength,
+					     G4double angle,
+					     G4double outerDiameter,
+					     G4String name = "not given");
+
+  /// Check whether the pole face rotation angles are too big for practical construction.
+  static void PoleFaceRotationsNotTooLarge(GMAD::Element* element,
+					   G4double       maxAngle = 0.5*CLHEP::halfpi);
+  
 protected:
   /// length safety from global constants
   G4double lengthSafety;
@@ -70,34 +101,13 @@ protected:
   /// length of a thin element
   G4double thinElementLength;
   
-  /// Utility function to check if the combination of outer diameter, angle and length
-  /// will result in overlapping entrance and exit faces and therefore whether to abort.
-  void CheckBendLengthAngleWidthCombo(G4double chordLength,
-				      G4double angle,
-				      G4double outerDiameter,
-				      G4String name = "not given");
-  
   ///@{ Utility function to prepare model info
-  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element) const;
-  BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
-					     const G4double angleIn,
-					     const G4double angleOut) const;
-  G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
-  BDSBeamPipeInfo*    PrepareBeamPipeInfo   (GMAD::Element const* element,
-					     const G4ThreeVector inputFaceNormal  = G4ThreeVector(0,0,-1),
-					     const G4ThreeVector outputFaceNormal = G4ThreeVector(0,0,1)) const;
 
-  // A legacy one for now...
-  BDSBeamPipeInfo*    PrepareBeamPipeInfo(GMAD::Element const* element,
-					  G4double angleIn,
-					  G4double angleOut) const;
+  G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
+
 
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
-
-  /// Check whether the pole face rotation angles are too big for practical construction.
-  void   PoleFaceRotationsNotTooLarge(GMAD::Element* element,
-				      G4double maxAngle=0.5*CLHEP::halfpi);
 
 private: 
   /// element for storing instead of passing around
