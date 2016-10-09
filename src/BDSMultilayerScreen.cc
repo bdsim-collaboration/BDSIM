@@ -74,10 +74,12 @@ void BDSMultilayerScreen::build()
 void BDSMultilayerScreen::buildMotherVolume()
 {
   computeDimensions();
+    // Make container marginally bigger to avoid overlaps
+    G4double lengthSafetyLarge = 1*CLHEP::um;
   solid  = new G4Box((name+"_solid").c_str(),
-		     size.x()/2.0,
-		     size.y()/2.0,
-		     size.z()/2.0);
+		     size.x()/2.0 + lengthSafetyLarge,
+		     size.y()/2.0 + lengthSafetyLarge,
+		     size.z()/2.0 + lengthSafetyLarge);
   G4Material* mat = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());
   
   log = new G4LogicalVolume(solid,
