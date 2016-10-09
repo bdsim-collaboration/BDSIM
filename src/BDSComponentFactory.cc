@@ -170,10 +170,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       }
     }
 
-  // check if the component already exists and return that
-  // don't use registry for output elements since reliant on unique name
+  // Check if the component already exists and return that.
+  // Don't use the registry for output elements since reliant on unique name
   // this cannot apply for sbends as it now uses individual wedge component
   // registration logic in BDSBendBuilder rather than the element as a whole.
+
+  // TBC - this is difficult to understand.  Also, why not RBEND too?
   if (registered && !willModify && (element->type != ElementType::_SBEND))
     {
 #ifdef BDSDEBUG
