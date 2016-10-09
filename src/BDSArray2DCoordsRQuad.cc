@@ -33,7 +33,7 @@ G4double BDSArray2DCoordsRQuad::ArrayCoordsFromX(const G4double x) const
 
 G4double BDSArray2DCoordsRQuad::ArrayCoordsFromY(const G4double y) const
 {
-  return (y + yMax) / xStep;
+  return (y + yMax) / yStep;
 }
 
 G4int BDSArray2DCoordsRQuad::NearestX(const G4double x) const
