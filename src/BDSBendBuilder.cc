@@ -1,7 +1,5 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4RotationMatrix.hh"
-#include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
@@ -12,17 +10,14 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSMagnetStrength.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
 
-#include <algorithm>
-#include <iterator>
-
 class BDSBeamPipeInfo;
+class BDSMagnetStrengh;
 
 using namespace GMAD;
 
@@ -120,7 +115,6 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
     {thename += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
   else
     {thename += "_1_of_" + std::to_string(nSBends);}
-  
   
   // register the central wedge which will always be used as the
   // middle wedge regardless of poleface rotations
@@ -336,7 +330,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   
   //change angle in the case that the next/prev element modifies
   if (nextModifies)
-    {angleOut  -= 0.5*(thinElementLength)/rho;}
+    {angleOut -= 0.5*(thinElementLength)/rho;}
   if (prevModifies)
     {angleIn  -= 0.5*(thinElementLength)/rho;}
   
