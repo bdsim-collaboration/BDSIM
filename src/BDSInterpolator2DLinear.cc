@@ -27,11 +27,12 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
   BDSFieldValue Q12 = array->GetConst(x1,y2);
   BDSFieldValue Q22 = array->GetConst(x2,y2);
   BDSFieldValue Q21 = array->GetConst(x2,y1);
-  
-  G4double x2mx = x2 - x;
-  G4double y2my = y2 - y;
-  G4double xmx1 = x  - x1;
-  G4double ymy1 = y  - y1;
+
+  // Calculate gradients in spatial coordinates
+  G4double x2mx = array->XFromArrayCoords(x2) - x;
+  G4double y2my = array->YFromArrayCoords(y2) - y;
+  G4double xmx1 = x  - array->XFromArrayCoords(x1);
+  G4double ymy1 = y  - array->YFromArrayCoords(y1);
   G4double factor = 1./(array->XStep()*array->YStep());
   BDSFieldValue result = (Q11 * x2mx * y2my) +
     (Q21 * xmx1 * y2my) +
