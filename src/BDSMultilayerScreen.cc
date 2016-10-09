@@ -118,10 +118,7 @@ void BDSMultilayerScreen::computeDimensions()
 
 void BDSMultilayerScreen::placeLayers()
 {
-  G4ThreeVector pos;
-  pos.setX(0);
-  pos.setY(0);
-  pos.setZ(0);
+  G4ThreeVector pos(0,0,0);
 
   for(unsigned int i=0; i<screenLayers.size(); i++){
     pos.setZ(screenLayerZPos[i]);
