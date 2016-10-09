@@ -84,7 +84,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
                                        const std::vector<GMAD::Element*>& prevElements,
                                        const std::vector<GMAD::Element*>& nextElements)
 {
-  element      = elementIn;
+  element = elementIn;
 
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
@@ -119,7 +119,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{angleIn += -0.5*(prevElement->angle);} // won't work if only field set TBC
+	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
 	{angleOut += 0.5*nextElement->angle;} // won't work if only field set TBC
