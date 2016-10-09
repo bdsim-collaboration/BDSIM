@@ -9,6 +9,8 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 
 BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* strength,
@@ -18,7 +20,7 @@ BDSIntegratorQuadrupole::BDSIntegratorQuadrupole(BDSMagnetStrength const* streng
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B' = dBy/dx = Brho * (1/Brho dBy/dx) = Brho * k1
-  bPrime = - brho * (*strength)["k1"];
+  bPrime = - brho * (*strength)["k1"] / CLHEP::m2;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B' = " << bPrime << G4endl;
 #endif

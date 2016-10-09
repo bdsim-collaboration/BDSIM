@@ -7,6 +7,10 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <cmath>
+
 
 BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength,
 					       G4double                 brho,
@@ -14,7 +18,7 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
   BDSIntegratorBase(eqOfMIn, 6)
 {
   // B'' = d^2By/dx^2 = Brho * (1/Brho d^2By/dx^2) = Brho * k2
-  bDoublePrime     = brho * (*strength)["k2"];
+  bDoublePrime     = brho * (*strength)["k2"] / CLHEP::m3;
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'' = " << bDoublePrime << G4endl;
 #endif

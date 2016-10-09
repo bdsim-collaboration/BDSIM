@@ -8,6 +8,10 @@
 #include "G4MagIntegratorStepper.hh"
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
+#include <cmath>
+
 
 BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
 					     G4double                 brho,
@@ -16,7 +20,7 @@ BDSIntegratorDecapole::BDSIntegratorDecapole(BDSMagnetStrength const* strength,
   yInitial(0), yMidPoint(0), yFinal(0)
 {
   // B'''' = d^4By/dx^4 = Brho * (1/Brho d^4By/dx^4) = Brho * k4
-  bQuadruplePrime = brho * (*strength)["k4"];
+  bQuadruplePrime = brho * (*strength)["k4"] / (CLHEP::m3*CLHEP::m2);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "B'''' = " << bQuadruplePrime << G4endl;
 #endif
