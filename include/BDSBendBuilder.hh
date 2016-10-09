@@ -18,9 +18,8 @@
 /**
  * @brief A class for building rbends and sbends from individual BDSMagnet* components.
  *
- * This will calculate and construct a beamline of BDSMagnet* that are added in
- * sequence. The rbend and sbend functions should be called by singleton, which
- * returns a BDSLine*.
+ * This calculates and constructs a BDSLine* of BDSMagnet*.  This class inherits
+ * BDSComponent factory so it can use many of the 
  *
  * For SBends, the bend is split into multiple wedges. If a small or zero poleface
  * angle is specified, the end wedges will have faces angled as appropriate, the
