@@ -5,6 +5,7 @@
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
 
 BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(BDSMagnetStrength const* strength,
 					     G4double          const  brho)

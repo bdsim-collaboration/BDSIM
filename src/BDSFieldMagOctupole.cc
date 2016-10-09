@@ -6,6 +6,8 @@
 #include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 #include <cmath>
 
 BDSFieldMagOctupole::BDSFieldMagOctupole(BDSMagnetStrength const* strength,
