@@ -32,12 +32,10 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
   G4double y2my = y2 - yarr;
   G4double xmx1 = xarr - x1;
   G4double ymy1 = yarr - y1;
-  G4double factor = 1./(array->XStep()*array->YStep());
   BDSFieldValue result = (Q11 * x2mx * y2my) +
     (Q21 * xmx1 * y2my) +
     (Q12 * x2mx * ymy1) +
     (Q22 * xmx1 * ymy1);
   
-  result *= factor;
   return result;
 }
