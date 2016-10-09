@@ -74,9 +74,16 @@ void BDSMultilayerScreen::build()
 void BDSMultilayerScreen::buildMotherVolume()
 {
   computeDimensions();
-  solid  = new G4Box((name+"_solid").c_str(),size.x()/2.0,size.y()/2.0,size.z()/2.0);
-  log = new G4LogicalVolume(solid,BDSMaterials::Instance()->GetMaterial(
-          BDSGlobalConstants::Instance()->VacuumMaterial()),(name+"_log").c_str(),0,0,0);
+  solid  = new G4Box((name+"_solid").c_str(),
+		     size.x()/2.0,
+		     size.y()/2.0,
+		     size.z()/2.0);
+  G4Material* mat = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());
+  
+  log = new G4LogicalVolume(solid,
+			    mat,
+			    (name+"_log").c_str());
+  
   G4VisAttributes* visAtt = new G4VisAttributes(G4Colour(0.0,0.0,1.0,0.3));
   visAtt->SetForceWireframe(true);
   log->SetVisAttributes(visAtt);

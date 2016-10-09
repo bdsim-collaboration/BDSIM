@@ -3,13 +3,14 @@
 
 #include "globals.hh"
 #include "G4Colour.hh"
+#include "G4ThreeVector.hh"
 
 class G4LogicalVolume;
 class G4PVPlacement;
 class G4VSolid;
 
 /** 
- * @brief
+ * @brief An individual screen layer for a multilayer screen.
  *
  * @author Lawrence Deacon
  */
@@ -17,17 +18,19 @@ class G4VSolid;
 class BDSScreenLayer 
 {
 public:
-  BDSScreenLayer(G4ThreeVector size,
+  BDSScreenLayer(G4ThreeVector size,  // full widths in each dimension
 		 G4String name,
 		 G4String material,
 		 G4double grooveWidth,
 		 G4double grooveSpatialFrequency);
   ~BDSScreenLayer();
-  inline G4LogicalVolume* GetLog(){return log;}
-  inline G4String GetName(){return name;}
-  inline G4ThreeVector GetSize(){return size;}
+  /// @{ Accessor
+  inline G4LogicalVolume* GetLog()  const {return log;}
+  inline G4String         GetName() const {return name;}
+  inline G4ThreeVector    GetSize() const {return size;}
+  inline G4PVPlacement*   GetPhys() const {return phys;}
+  /// @}
   void SetPhys(G4PVPlacement* phys);
-  inline G4PVPlacement* GetPhys(){return phys;}
   void SetColour(G4Colour col);
   void backInternalMirror();
   void frontInternalMirror();

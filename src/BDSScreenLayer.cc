@@ -20,11 +20,11 @@
 BDSScreenLayer::BDSScreenLayer()
 {}
 
-BDSScreenLayer::BDSScreenLayer (G4ThreeVector sizeIn,
-				G4String nameIn,
-				G4String materialIn, 
-				G4double grooveWidthIn,
-				G4double grooveSpatialFrequencyIn):
+BDSScreenLayer::BDSScreenLayer(G4ThreeVector sizeIn,
+			       G4String nameIn,
+			       G4String materialIn, 
+			       G4double grooveWidthIn,
+			       G4double grooveSpatialFrequencyIn):
   size(sizeIn),
   name(nameIn),
   material(materialIn),
@@ -36,23 +36,36 @@ BDSScreenLayer::BDSScreenLayer (G4ThreeVector sizeIn,
   build();
 }
 
-void BDSScreenLayer::build(){
+void BDSScreenLayer::build()
+{
   buildGroove();
   buildScreen();
   visAtt();
 }
 
-void BDSScreenLayer::buildGroove(){
-  if (!BDS::IsFinite(grooveWidth)){ //There may or may not be grooves in the screen layer.
-    return;
-  }
-  grooveSolid = new G4Box((name+"_grooveSolid").c_str(),grooveWidth/2.0, size.y()/2.0, size.z()/2.0);
-  grooveLog = new G4LogicalVolume(grooveSolid,BDSMaterials::Instance()->GetMaterial("air"),(name+"_grooveLog").c_str(),0,0,0);
+void BDSScreenLayer::buildGroove()
+{
+  if (!BDS::IsFinite(grooveWidth)) //There may or may not be grooves in the screen layer.
+    {return;}
+    
+  grooveSolid = new G4Box((name+"_grooveSolid").c_str(),
+			  grooveWidth/2.0,
+			  size.y()/2.0,
+			  size.z()/2.0);
+  grooveLog = new G4LogicalVolume(grooveSolid,
+				  BDSMaterials::Instance()->GetMaterial("air"),
+				  (name+"_grooveLog").c_str());
 }
 
-void BDSScreenLayer::buildScreen(){
-  solid  = new G4Box((name+"_solid").c_str(),size.x()/2.0,size.y()/2.0,size.z()/2.0);
-  log = new G4LogicalVolume(solid,BDSMaterials::Instance()->GetMaterial(material),(name+"_log").c_str(),0,0,0);
+void BDSScreenLayer::buildScreen()
+{
+  solid  = new G4Box((name+"_solid").c_str(),
+		     size.x()/2.0,
+		     size.y()/2.0,
+		     size.z()/2.0);
+  log = new G4LogicalVolume(solid,
+			    BDSMaterials::Instance()->GetMaterial(material),
+			    (name+"_log").c_str());
   cutGrooves();
 
 #ifndef NOUSERLIMITS
@@ -64,22 +77,23 @@ void BDSScreenLayer::buildScreen(){
 
 }
 
-void BDSScreenLayer::cutGrooves(){
-  if(grooveWidth>0){
-    for(G4double xPosition=-size.x()/2.0+grooveWidth/2.0;
-	xPosition<((size.x()/2.0)-grooveWidth/2.0);
-	xPosition+=grooveSpatialFrequency){
-      cutGroove(xPosition);
+void BDSScreenLayer::cutGrooves()
+{
+  if(grooveWidth>0)
+    {
+      for(G4double xPosition=-size.x()/2.0+grooveWidth/2.0;
+	  xPosition<((size.x()/2.0)-grooveWidth/2.0);
+	  xPosition+=grooveSpatialFrequency)
+	{cutGroove(xPosition);}
     }
-  }
 }
 
-void BDSScreenLayer::cutGroove(G4double xPosition){
-  if (!grooveLog) return;
-  G4ThreeVector pos;
-  pos.setX(xPosition);
-  pos.setY(0);
-  pos.setZ(0);
+void BDSScreenLayer::cutGroove(G4double xPosition)
+{
+  if (!grooveLog)
+    {return;}
+  G4ThreeVector pos(xPosition, 0, 0);
+  
   //Create a new physical volume placement for each groove in the screen.
   new G4PVPlacement(nullptr,
 		    pos,
@@ -88,8 +102,8 @@ void BDSScreenLayer::cutGroove(G4double xPosition){
 		    log,
 		    true,
 		    nGrooves,
-		    false
-		    );
+		    false);
+  
   nGrooves++; //Increment the counter for the number of grooves in the screen.
 }
 
@@ -100,34 +114,38 @@ void BDSScreenLayer::visAtt()
   G4VisAttributes* visAttGroove=new G4VisAttributes(G4Colour(0.0,0.0,0.0));
   visAttGroove->SetForceSolid(true);
   log->SetVisAttributes(visAtt);
-  if(grooveLog){
-    grooveLog->SetVisAttributes(visAttGroove);
-  }
+  if(grooveLog)
+    {grooveLog->SetVisAttributes(visAttGroove);}
 }
 
-void BDSScreenLayer::SetPhys(G4PVPlacement* physIn){
-  if(physIn->GetLogicalVolume() != GetLog()){
-    G4cerr << "BDSScreenLayer - error: physical volume placement does not match logical volume. Exiting." << G4endl;
-    exit(1);
-  }
+void BDSScreenLayer::SetPhys(G4PVPlacement* physIn)
+{
+  if(physIn->GetLogicalVolume() != GetLog())
+    {
+      G4cerr << "BDSScreenLayer - error: physical volume placement does not match logical volume. Exiting." << G4endl;
+      exit(1);
+    }
   phys=physIn;
 }
 
-void BDSScreenLayer::SetColour(G4Colour col){
+void BDSScreenLayer::SetColour(G4Colour col)
+{
   colour=col;
   visAtt();
 }
 
-void BDSScreenLayer::backInternalMirror(){
+void BDSScreenLayer::backInternalMirror()
+{
   internalMirror = new InternalMirror(InternalMirror::BACK, size,material,log,phys);
 }
 
-void BDSScreenLayer::frontInternalMirror(){
+void BDSScreenLayer::frontInternalMirror()
+{
   internalMirror = new InternalMirror(InternalMirror::FRONT,size,material,log,phys);
 }
 
-BDSScreenLayer::InternalMirror::~InternalMirror(){
-}
+BDSScreenLayer::InternalMirror::~InternalMirror()
+{;}
 
 BDSScreenLayer::InternalMirror::InternalMirror(G4int varsideIn,
 					       G4ThreeVector sizeIn,
@@ -147,24 +165,31 @@ BDSScreenLayer::InternalMirror::InternalMirror(G4int varsideIn,
   optical();
 }
 
-void BDSScreenLayer::InternalMirror::geom(){
-  solid = new G4Box("internalMirrorSolid",motherSize.x()/2.0,motherSize.y()/2.0,thickness);
-  log = new G4LogicalVolume(solid,BDSMaterials::Instance()->GetMaterial("titanium"),"internalMirrorLog",0,0,0);
+void BDSScreenLayer::InternalMirror::geom()
+{
+  solid = new G4Box("internalMirrorSolid",
+		    motherSize.x()/2.0,
+		    motherSize.y()/2.0,
+		    thickness);
+  log = new G4LogicalVolume(solid,
+			    BDSMaterials::Instance()->GetMaterial("titanium"),
+			    "internalMirrorLog");
 }
 
-void BDSScreenLayer::InternalMirror::place(){
+void BDSScreenLayer::InternalMirror::place()
+{
   phys=new G4PVPlacement(nullptr,  //Create a new physical volume placement for each groove in the screen.
-			  G4ThreeVector(0,0,pos),
-			  log,
-			  "internalMirrorPhys",
-			  motherLog,
-			  false,
-			  0,
-			  true
-			  );
+			 G4ThreeVector(0,0,pos),
+			 log,
+			 "internalMirrorPhys",
+			 motherLog,
+			 false,
+			 0,
+			 true);
 }
 
-void BDSScreenLayer::InternalMirror::optical(){
+void BDSScreenLayer::InternalMirror::optical()
+{
   G4OpticalSurface* OpSurface=new G4OpticalSurface("OpSurface");
   /*G4LogicalBorderSurface* LogSurface = */
   new G4LogicalBorderSurface("LogSurface", motherPhys, phys, OpSurface);
