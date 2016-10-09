@@ -3,6 +3,7 @@
 #include "BDSExtent.hh"
 #include "BDSExecOptions.hh"
 #include "BDSElement.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSFieldFactory.hh"
@@ -24,23 +25,13 @@ BDSElement::BDSElement(G4String      name,
   outerDiameter(outerDiameterIn),
   geometryFileName(geometry),
   bMapFileName(bmap),
-  bMapOffset(bMapOffsetIn)
+  bMapOffset(bMapOffsetIn),
+  itsFieldVolName(""),
+  align_in_volume(nullptr),
+  align_out_volume(nullptr)
 {
-  itsFieldVolName="";
-
   // WARNING: ALign in and out will only apply to the first instance of the
   //          element. Subsequent copies will have no alignment set.
-  align_in_volume  = nullptr;
-  align_out_volume = nullptr;
-}
-
-void BDSElement::Build()
-{
-  // base class build - builds container volume
-  BDSAcceleratorComponent::Build();
-
-  // construct the input geometry and b fields and place in the container
-  PlaceComponents();
 }
 
 void BDSElement::BuildContainerLogicalVolume()
@@ -48,54 +39,26 @@ void BDSElement::BuildContainerLogicalVolume()
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-  
-  containerSolid = new G4Box(name + "_container_solid",
-			     outerDiameter*0.5,
-			     outerDiameter*0.5,   
-			     chordLength*0.5);
-  
-  containerLogicalVolume = new G4LogicalVolume(containerSolid,
-					       emptyMaterial,
-					       name + "_container_lv");
-  
-  // zero field in the marker volume
-  containerLogicalVolume->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);
 
-  SetExtent(BDSExtent(outerDiameter*0.5, outerDiameter*0.5, chordLength*0.5));
-}
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(geometryFileName);
+  
+  if (!geom)
+    {G4cerr << __METHOD_NAME__ << "Error loading geometry" << G4endl; exit(1);}
+  
+  // We don't registe the geometry as a daughter as the geometry factory retains
+  // ownership of the geometry and will clean it up at the end.
+  
+  // make the beam pipe container, this object's container
+  containerLogicalVolume = geom->GetContainerLogicalVolume();
+  containerSolid         = geom->GetContainerSolid();
+  
+  // update extents
+  InheritExtents(geom);
 
-void BDSElement::PlaceComponents()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
-  BDSGeometryFactory* gFact = BDSGeometryFactory::Instance();
-  
-  geometry = gFact->BuildGeometryOld(geometryFileName);
-  geometry->Construct(containerLogicalVolume);
-
-  RegisterSensitiveVolume(geometry->GetSensitiveComponents());
-  
-  for(G4int id=0; id<(G4int)geometry->GetGFlashComponents().size(); id++){
-    SetGFlashVolumes(geometry->GetGFlashComponents()[id]);
-  }
-  
-  align_in_volume  = geometry->GetAlignInVolume();
-  align_out_volume = geometry->GetAlignOutVolume();
-  
-#ifdef USE_LCDD
-  /*
-  G4cout << __METHOD_NAME__ << " - setting lcdd vis attributes." << G4endl;
-  if(geom->format()->spec()==(G4String)"lcdd") {
-    //Make marker visible (temp debug)
-    G4VisAttributes* VisAttLCDD = new G4VisAttributes(*BDSColours::Instance()->GetColour("warning"));
-    VisAttLCDD->SetForceSolid(true);  
-    VisAttLCDD->SetVisibility(false);
-    itsMarkerLogicalVolume->SetVisAttributes(VisAttLCDD);
-  }
-  */
-#endif
+  const BDSExtent geomExtent = geom->GetExtent();
+  BDSExtent nominalExt = BDSExtent(outerDiameter*0.5, outerDiameter*0.5, chordLength*0.5);
+  if (nominalExt.TransverselyGreaterThan(geomExtent))
+    {SetExtent(nominalExt);}
 }
 
 void BDSElement::AlignComponent(G4ThreeVector& TargetPos, 

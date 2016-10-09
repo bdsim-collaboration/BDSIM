@@ -51,18 +51,10 @@ public:
 		      G4ThreeVector& localZ); 
    
 private:
-  /// Overridden method of BDSAcceleratorComponent that defines the build procedure
-  /// for this object. Calls BDSAcceleratorComponent::Build() first that builds the
-  /// container volume (using BuildContainerLogicalVolume() provided here). Then builds
-  /// the geometry and magnetic field maps from the supplied file.
-  virtual void Build();
 
   /// Required implementation from BDSAcceleratorComponent that builds the container volume.
-  /// Here, this method uses the outerDiameter parameter from the constructor.
-  virtual void BuildContainerLogicalVolume();
-
   /// Load the geometry and place the components inside the container logical volume.
-  void PlaceComponents();
+  virtual void BuildContainerLogicalVolume();
 
   /// Build the magnetic field
   //void BuildMagField(G4bool forceToAllDaughters = false);
@@ -83,9 +75,6 @@ private:
   // Volume to align outgoing beamline on inside the marker volume
   // (set during Geometery construction)
   G4VPhysicalVolume* align_out_volume;
-
-
-  BDSGeometry* geometry;
 };
 
 
