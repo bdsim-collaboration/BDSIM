@@ -179,12 +179,10 @@ void Options::PublishMembers()
 
   publish("sigmaE",&Options::sigmaE);
 
-  publish("doPlanckScattering",&Options::doPlanckScattering);
   publish("checkOverlaps",&Options::checkOverlaps);
   publish("nperfile",&Options::numberOfEventsPerNtuple);
   publish("eventNumberOffset",&Options::eventNumberOffset);
   publish("vacuumPressure",&Options::vacuumPressure);
-  publish("planckScatterFe",&Options::planckScatterFe);
   publish("xsize",&Options::xsize);
   publish("ysize",&Options::ysize);
   // options which influence the geometry
@@ -232,13 +230,10 @@ void Options::PublishMembers()
   publish("blmLength",&Options::blmLength);
   
   publish("scintYieldFactor",&Options::scintYieldFactor);
-  publish("useEMLPB",&Options::useEMLPB);
-  publish("useHadLPB",&Options::useHadLPB);
 
   publish("sensitiveBeamlineComponents",&Options::sensitiveBeamlineComponents);
   publish("sensitiveBeamPipe",&Options::sensitiveBeamPipe);
   publish("sensitiveBLMs",&Options::sensitiveBLMs);
-  publish("LPBFraction",&Options::LPBFraction);
 
   publish("thresholdCutCharged",&Options::thresholdCutCharged);
   publish("thresholdCutPhotons",&Options::thresholdCutPhotons);

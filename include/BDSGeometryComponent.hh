@@ -54,7 +54,7 @@ public:
   BDSGeometryComponent(const BDSGeometryComponent& component);
   virtual ~BDSGeometryComponent();
 
-  /// @Accessor - see member for more info
+  /// @{ Accessor - see member for more info
   inline G4String          GetName()   const {return containerLogicalVolume->GetName();}
   inline G4VSolid*         GetContainerSolid()         const {return containerSolid;}
   inline G4LogicalVolume*  GetContainerLogicalVolume() const {return containerLogicalVolume;}

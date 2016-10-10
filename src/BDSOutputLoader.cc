@@ -42,13 +42,13 @@ BDSOutputLoader::BDSOutputLoader(G4String filePath):
     }
 
   // set up local structure copies.
-  optionsTree = (TTree*)file->Get("Options");
+  optionsTree = static_cast<TTree*>(file->Get("Options"));
   // Note we don't check on optionsTree pointer as we assume it's valid given
   // we've checked this is a rootevent file.
   localOptions = new BDSOutputROOTEventOptions();
   optionsTree->SetBranchAddress("Options.", &localOptions); 
   
-  eventTree = (TTree*)file->Get("Event");
+  eventTree = static_cast<TTree*>(file->Get("Event"));
   localEventInfo = new BDSOutputROOTEventInfo();
   eventTree->SetBranchAddress("Info.", &localEventInfo);
 }

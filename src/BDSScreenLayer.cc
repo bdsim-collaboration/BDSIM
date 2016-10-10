@@ -72,7 +72,8 @@ void BDSScreenLayer::cutGroove(G4double xPosition){
   pos.setX(xPosition);
   pos.setY(0);
   pos.setZ(0);
-  new G4PVPlacement((G4RotationMatrix*)nullptr,  //Create a new physical volume placement for each groove in the screen.
+  //Create a new physical volume placement for each groove in the screen.
+  new G4PVPlacement(nullptr,
 		    pos,
 		    _grooveLog,
 		    (G4String)(_name+"_groove"),
@@ -134,8 +135,10 @@ void BDSScreenLayer::InternalMirror::geom(){
   _log = new G4LogicalVolume(_solid,BDSMaterials::Instance()->GetMaterial("titanium"),"internalMirrorLog",0,0,0);
 }
 
-void BDSScreenLayer::InternalMirror::place(){
-  _phys=new G4PVPlacement((G4RotationMatrix*)nullptr,  //Create a new physical volume placement for each groove in the screen.
+void BDSScreenLayer::InternalMirror::place()
+{
+  //Create a new physical volume placement for each groove in the screen.
+  _phys=new G4PVPlacement(nullptr,
 			  G4ThreeVector(0,0,_pos),
 			  _log,
 			  "internalMirrorPhys",

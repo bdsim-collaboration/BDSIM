@@ -275,8 +275,8 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
   // PLACEMENT
   // place the components inside the container
   // note we don't need the pointer for anything - it's registered upon construction with g4
-  new G4PVPlacement((G4RotationMatrix*)0,     // no rotation
-		    (G4ThreeVector)0,         // position
+  new G4PVPlacement(nullptr,                  // no rotation
+		    G4ThreeVector(),          // position
 		    tunnelLV,                 // lv to be placed
 		    name + "_tunnel_pv",      // name
 		    containerLV,              // mother lv to be place in
@@ -285,8 +285,8 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
 		    checkOverlaps);           // whether to check overlaps
   if (soilLV)
     {
-      new G4PVPlacement((G4RotationMatrix*)0, // no rotation
-			(G4ThreeVector)0,     // position
+      new G4PVPlacement(nullptr,              // no rotation
+			G4ThreeVector(),      // position
 			soilLV,               // lv to be placed
 			name + "_soil_pv",    // name
 			containerLV,          // mother lv to be place in
@@ -296,7 +296,7 @@ void BDSTunnelFactoryBase::PlaceComponents(G4String name)
     }
   if (floorLV)
     {
-      new G4PVPlacement((G4RotationMatrix*)0, // no rotation
+      new G4PVPlacement(nullptr,              // no rotation
 			floorDisplacement,    // position
 			floorLV,              // lv to be placed
 			name + "_floor_pv",   // name
