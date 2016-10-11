@@ -67,6 +67,16 @@ protected:
   /// @}
 
   BDSExtent Extent() const {return BDSExtent(xmin, xmax, ymin, ymax, zmin, zmax);}
+
+  /// @{ Transient vector for construction.
+  std::vector<G4RotationMatrix*>  rotations;
+  std::vector<G4VPhysicalVolume*> pvs;
+  std::vector<G4LogicalVolume*>   lvs;
+  std::vector<G4VSolid*>          solids;
+  /// @}
+
+  /// Cache of whether to check overlaps or not.
+  const G4bool checkOverlaps;
 };
 
 #endif

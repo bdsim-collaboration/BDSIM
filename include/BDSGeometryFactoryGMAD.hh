@@ -34,10 +34,6 @@ public:
   /// optional colour mapping.
   virtual BDSGeometryExternal* Build(G4String fileName,
 				     std::map<G4String, G4Colour*>* colourMapping = nullptr);
-
-protected:
-  /// Clear all transient vectors without deleting the objects the pointers point to.
-  virtual void CleanUp();
   
 private:
   /// Private default constructor as singleton.
@@ -75,16 +71,6 @@ private:
 	      G4double         x0 = 0,
 	      G4double         y0 = 0,
 	      G4double         z0 = 0);
-
-  /// Cache of whether to check overlaps or not.
-  const G4bool checkOverlaps;
-
-  /// @{ Transient vector for construction.
-  std::vector<G4RotationMatrix*>  rotations;
-  std::vector<G4VPhysicalVolume*> pvs;
-  std::vector<G4LogicalVolume*>   lvs;
-  std::vector<G4VSolid*>          solids;
-  /// @}
 };
 
 #endif

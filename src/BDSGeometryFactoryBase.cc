@@ -1,6 +1,7 @@
 #include "BDSColours.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactoryBase.hh"
+#include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
 #include "G4Colour.hh"
@@ -12,7 +13,8 @@
 #include <map>
 #include <vector>
 
-BDSGeometryFactoryBase::BDSGeometryFactoryBase()
+BDSGeometryFactoryBase::BDSGeometryFactoryBase():
+  checkOverlaps(BDSGlobalConstants::Instance()->CheckOverlaps())
 {
   CleanUp();
 }
@@ -74,6 +76,11 @@ void BDSGeometryFactoryBase::CleanUp()
   ymax = 0;
   zmin = 0;
   zmax = 0;
+
+  rotations.clear();
+  pvs.empty();
+  lvs.empty();
+  solids.empty();
 }
 
 void BDSGeometryFactoryBase::ExpandExtent(G4double x0, G4double rx,

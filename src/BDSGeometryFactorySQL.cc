@@ -137,11 +137,21 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
   // Close Geomlist file
   ifs.close();
 
+  // update solid
+  delete containerSolid; // delete existing solid
+  containerSolid = new G4Box("container_solid",
+			     (xmax - xmin)*0.5,
+			     (xmax - xmin)*0.5,
+			     (xmax - xmin)*0.5);
+  itsMarkerVol->SetSolid(containerSolid); // update container solid
+
   ApplyColourMapping(VOL_LIST, colourMapping);
 
-  // update container solid
-  // check length
-  BDSGeometryExternal* result = new BDSGeometryExternal(nullptr, nullptr);
+  BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, itsMarkerVol, Extent());
+  result->RegisterRotationMatrix(rotations);
+  result->RegisterSolid(solids);
+  result->RegisterLogicalVolume(lvs);
+  result->RegisterPhysicalVolume(pvs);
 
   return result;
 }

@@ -24,8 +24,7 @@
 
 BDSGeometryFactoryGMAD* BDSGeometryFactoryGMAD::instance = nullptr;
 
-BDSGeometryFactoryGMAD::BDSGeometryFactoryGMAD():
-  checkOverlaps(BDSGlobalConstants::Instance()->CheckOverlaps())
+BDSGeometryFactoryGMAD::BDSGeometryFactoryGMAD()
 {;}
 
 BDSGeometryFactoryGMAD::~BDSGeometryFactoryGMAD()
@@ -38,15 +37,6 @@ BDSGeometryFactoryGMAD* BDSGeometryFactoryGMAD::Instance()
   if (!instance)
     {instance = new BDSGeometryFactoryGMAD();}
   return instance;
-}
-
-void BDSGeometryFactoryGMAD::CleanUp()
-{
-  BDSGeometryFactoryBase::CleanUp();
-  rotations.clear();
-  pvs.empty();
-  lvs.empty();
-  solids.empty();
 }
 
 BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String fileName,
