@@ -6,6 +6,7 @@
 #include "BDSGeometryFactoryGDML.hh"
 #endif
 #include "BDSGeometryFactoryGMAD.hh"
+#include "BDSGeometryFactorySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
 
@@ -14,7 +15,6 @@
 #ifdef USE_LCDD
 #include "BDSGeometryLCDD.hh"
 #endif
-#include "BDSGeometrySQL.hh"
 
 #include <string>
 #include <unordered_map>
@@ -51,6 +51,8 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
 #endif
     case BDSGeometryType::gmad:
       {return BDSGeometryFactoryGMAD::Instance(); break;}
+    case BDSGeometryType::mokka:
+      {return BDSGeometryFactorySQL::Instance(); break;}
     default:
       {
 	G4cout << "Unsupported factory type " << type;
@@ -64,7 +66,7 @@ BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileNam
 						       std::map<G4String, G4Colour*>* colourMapping)
 {
   std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
-  G4String      fileName = BDS::GetFullPath(ff.second);
+  G4String fileName = BDS::GetFullPath(ff.second);
 
   const auto search = registry.find(fileName);
   if (search != registry.end())
@@ -107,13 +109,10 @@ BDSGeometry* BDSGeometryFactory::BuildGeometryOld(G4String formatAndFilePath)
     case BDSGeometryType::lcdd:
       {result = BuildLCDD(fileName); break;}
 #endif
-
-    case BDSGeometryType::mokka:
-      {result = BuildMokka(fileName); break;}
-      
     default:
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "no geometry format specified - not building anything" << G4endl;
+      G4cout << __METHOD_NAME__
+	     << "no geometry format specified - not building anything" << G4endl;
 #endif
       break;
     }
@@ -124,6 +123,3 @@ BDSGeometry* BDSGeometryFactory::BuildGeometryOld(G4String formatAndFilePath)
 BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
 {return new BDSGeometryLCDD(fileName);}
 #endif
-
-BDSGeometry* BDSGeometryFactory::BuildMokka(G4String fileName)
-{return new BDSGeometrySQL(fileName);}

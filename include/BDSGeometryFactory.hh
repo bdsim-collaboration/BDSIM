@@ -53,13 +53,12 @@ private:
   /// pointers in a vector, they may be more efficiently iterated over.
   std::vector<BDSGeometryExternal*> storage;
 
+  /// Get the appropriate geometry factory
   BDSGeometryFactoryBase* GetAppropriateFactory(BDSGeometryType type);
   
 #ifdef USE_LCDD
   BDSGeometry* BuildLCDD(G4String fileName);
 #endif
-  
-  BDSGeometry* BuildMokka(G4String fileName);
 };
 
 #endif
