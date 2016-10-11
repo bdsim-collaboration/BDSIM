@@ -25,7 +25,6 @@
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
 #include "BDSGeometry.hh"
-#include "BDSGeometrySQL.hh"
 #include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDecapole.hh"

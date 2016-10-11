@@ -2,7 +2,6 @@
 #include "BDSDebug.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactorySQL.hh"
-#include "BDSGeometrySQL.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMySQLWrapper.hh"
@@ -49,7 +48,9 @@ BDSGeometryFactorySQL::BDSGeometryFactorySQL()
 }
 
 BDSGeometryFactorySQL::~BDSGeometryFactorySQL()
-{;}
+{
+  instance = nullptr;
+}
 
 BDSGeometryFactorySQL* BDSGeometryFactorySQL::Instance()
 {
@@ -105,7 +106,6 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
   ifs.open(fileName);
   if (!ifs.good())
     {G4cerr << __METHOD_NAME__ << "Error opening input file \"" << fileName << G4endl; exit(1);}
-  
 
   //hasFields = false;
   //nPoleField = 0;
