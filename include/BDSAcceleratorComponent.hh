@@ -147,11 +147,6 @@ public:
   // Update the read out geometry volume given new face normals incase of a tilt.
   void UpdateReadOutVolumeWithTilt(G4double tilt);
 
-  // to be deprecated public methods
-  
-  // in case a mapped field is provided creates a field mesh in global coordinates
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
-
   ///@{ This function should be revisited given recent changes (v0.7)
   void SetGFlashVolumes(G4LogicalVolume* aLogVol)
   {itsGFlashVolumes.push_back(aLogVol);}

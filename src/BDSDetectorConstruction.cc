@@ -410,18 +410,13 @@ void BDSDetectorConstruction::ComponentPlacement()
       G4cout << "placement transform position: " << pt->getTranslation()  << G4endl;
       G4cout << "placement transform rotation: " << pt->getRotation()  << G4endl; 
 #endif
-      G4PVPlacement* elementPV = new G4PVPlacement(*pt,              // placement transform
-                                                   element->GetPlacementName() + "_pv", // name
-						   elementLV,        // logical volume
-						   worldPV,          // mother volume
-						   false,	     // no boolean operation
-						   nCopy,            // copy number
-						   checkOverlaps);   // overlap checking
-      
-      //this does nothing by default - only used by BDSElement
-      //looks like it could just be done in its construction rather than
-      //in BDSDetectorConstruction
-      accComp->PrepareField(elementPV);
+      new G4PVPlacement(*pt,              // placement transform
+			element->GetPlacementName() + "_pv", // name
+			elementLV,        // logical volume
+			worldPV,          // mother volume
+			false,	     // no boolean operation
+			nCopy,            // copy number
+			checkOverlaps);   // overlap checking
     }
 
   // 1 - end piece placmeent
