@@ -9,6 +9,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 
+#include <utility>
 #include <vector>
 
 class G4VSolid;
@@ -33,6 +34,8 @@ BDSGeometryFactoryGDML* BDSGeometryFactoryGDML::Instance()
 BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
 						   std::map<G4String, G4Colour*>* mapping)
 {
+  CleanUp();
+  
   std::vector<G4VPhysicalVolume*> physicalVolumes;
   std::vector<G4LogicalVolume*>   logicalVolumes;
   
