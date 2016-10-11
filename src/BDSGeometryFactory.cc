@@ -1,12 +1,11 @@
 #include "BDSDebug.hh"
-#include "BDSExecOptions.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
 #include "BDSGeometryFactoryBase.hh"
 #ifdef USE_GDML
 #include "BDSGeometryFactoryGDML.hh"
 #endif
-#include "BDSGeometryGMAD.hh"
+#include "BDSGeometryFactoryGMAD.hh"
 #include "BDSGeometryType.hh"
 #include "BDSUtilities.hh"
 
@@ -50,6 +49,8 @@ BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryTyp
     case BDSGeometryType::gdml:
       {return BDSGeometryFactoryGDML::Instance(); break;}
 #endif
+    case BDSGeometryType::gmad:
+      {return BDSGeometryFactoryGMAD::Instance(); break;}
     default:
       {
 	G4cout << "Unsupported factory type " << type;
@@ -101,10 +102,7 @@ BDSGeometry* BDSGeometryFactory::BuildGeometryOld(G4String formatAndFilePath)
   BDSGeometry* result = nullptr;
   
   switch(format.underlying())
-    {
-    case BDSGeometryType::gmad:
-      {result = BuildGMAD(fileName); break;}
-      
+    { 
 #ifdef USE_LCDD
     case BDSGeometryType::lcdd:
       {result = BuildLCDD(fileName); break;}
@@ -121,9 +119,6 @@ BDSGeometry* BDSGeometryFactory::BuildGeometryOld(G4String formatAndFilePath)
     }
   return result;
 }
-
-BDSGeometry* BDSGeometryFactory::BuildGMAD(G4String fileName)
-{return new BDSGeometryGMAD(fileName);}
 
 #ifdef USE_LCDD
 BDSGeometry* BDSGeometryFactory::BuildLCDD(G4String fileName)
