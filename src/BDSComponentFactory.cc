@@ -737,17 +737,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 {
   if(!HasSufficientMinimumLength(element)) 
     {return nullptr;}
-
-  if(!BDS::IsFinite(element->outerDiameter))
-    {
-      G4cerr << __METHOD_NAME__ << "\"outerDiameter\" must be set for component named \""
-	     << element->name << "\"" << G4endl;
-      exit(1);
-    }
-
-  G4ThreeVector bFieldOffset = G4ThreeVector(element->bmapXOffset * CLHEP::m,
-					     element->bmapYOffset * CLHEP::m,
-					     element->bmapZOffset * CLHEP::m);
+  
 #ifdef BDSDEBUG 
   G4cout << "---->creating Element,"
 	 << " name = " << element->name
@@ -762,8 +752,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 			 element->l * CLHEP::m,
 			 element->outerDiameter * CLHEP::m,
 			 element->geometryFile,
-			 element->bmapFile,
-			 bFieldOffset));
+			 element->bmapFile));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
