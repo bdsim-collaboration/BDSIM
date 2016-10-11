@@ -37,6 +37,34 @@ public:
   /// precidence order.
   virtual std::vector<G4VisAttributes*> ApplyColourMapping(std::vector<G4LogicalVolume*>& lvs,
 							   std::map<G4String, G4Colour*>* mapping);
+
+protected:
+
+  /// Initialise variables - used to reset variables before each use of the factory.
+  /// Derived factory class should also call this base class one too.
+  virtual void CleanUp();
+
+  /// Expand the accumulated extents with a symmetric extent in each dimension
+  /// (rx,ry,rz) about the offset x0,y0,z0.
+  void ExpandExtent(G4double xO, G4double rx,
+		    G4double y0, G4double ry,
+		    G4double z0, G4double rz);
+
+  /// Expand the extent but asymmetrically.
+  void ExpandExtent(G4double x0, G4double xLow, G4double xHigh,
+		    G4double y0, G4double yLow, G4double yHigh,
+		    G4double z0, G4double zLow, G4double zHigh);
+
+  /// @{ Extent in one dimension.
+  G4double xmin;
+  G4double xmax;
+  G4double ymin;
+  G4double ymax;
+  G4double zmin;
+  G4double zmax;
+  /// @}
+
+  BDSExtent Extent() const {return BDSExtent(xmin, xmax, ymin, ymax, zmin, zmax);}
 };
 
 #endif
