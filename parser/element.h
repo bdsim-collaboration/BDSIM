@@ -69,9 +69,6 @@ namespace GMAD
     std::list<double> layerThicknesses;
     std::list<std::string> layerMaterials;
     std::list<int> layerIsSampler;
-    double bmapXOffset; ///< offset of the field map magnet field X
-    double bmapYOffset; ///< offset of the field map magnet field Y
-    double bmapZOffset; ///< offset of the field map magnet field Z
     double xdir;
     double ydir;
     double zdir;

@@ -35,9 +35,6 @@ Element::Element():
 void Element::PublishMembers()
 {
   publish("l",&Element::l);
-  publish("bmapXOffset",&Element::bmapXOffset);
-  publish("bmapYOffset",&Element::bmapYOffset);
-  publish("bmapZOffset",&Element::bmapZOffset);
   publish("B",&Element::B);
   publish("ks",&Element::ks);
   publish("k0",&Element::k0);
@@ -228,9 +225,6 @@ void Element::flush() {
   type = ElementType::_NONE;
   name = "";
   l = 0;
-  bmapXOffset = 0;
-  bmapYOffset = 0;
-  bmapZOffset = 0;
   ks = 0;
   k0 = 0;
   k1 = 0;

@@ -57,9 +57,6 @@ Parameters::Parameters() {
   setMap["layerThicknesses"] = false;
   setMap["layerMaterials"] = false;
   setMap["layerIsSampler"] = false;
-  setMap["bmapXOffset"] = false;
-  setMap["bmapYOffset"] = false;
-  setMap["bmapZOffset"] = false;
   setMap["xdir"] = false;
   setMap["ydir"] = false;
   setMap["zdir"] = false; 
