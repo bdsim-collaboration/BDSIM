@@ -194,6 +194,11 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 
 BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
 {
+  // Here we test if the string is empty and return nullptr. We do this so
+  // this method can be used without exiting when no key is specified at all.
+  // If a key is given and not found, then that requires the users attention.
+  if (name.empty())
+    {return nullptr;}
   auto result = parserDefinitions.find(name);
   if (result == parserDefinitions.end())
     {// not a valid key
