@@ -1,6 +1,8 @@
 #ifndef BDSGEOMETRYFACTORYBASE_H
 #define BDSGEOMETRYFACTORYBASE_H
 
+#include "BDSExtent.hh"
+
 #include "globals.hh"
 #include "G4String.hh"
 

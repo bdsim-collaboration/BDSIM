@@ -13,8 +13,8 @@ std::map<BDSGeometryType, std::string>* BDSGeometryType::dictionary =
    {BDSGeometryType::xy,     "xy"},
    {BDSGeometryType::mokka,  "mokka"},
    {BDSGeometryType::lcdd,   "lcdd"},
-   {BDSGeometryType::gmad, "gmad"},
-   {BDSGeometryType::gdml, "gdml"}
+   {BDSGeometryType::gmad,   "gmad"},
+   {BDSGeometryType::gdml,   "gdml"}
 });	
 
 BDSGeometryType BDS::DetermineGeometryType(G4String geometryType)
