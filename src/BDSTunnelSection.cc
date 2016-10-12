@@ -10,7 +10,7 @@ BDSTunnelSection::BDSTunnelSection(G4String              name,
   BDSAcceleratorComponent(name, chordLengthIn, angle, "tunnel"),
   innerIntersectionSolid(innerIntersectionSolidIn)
 {
-  // chordLength is calcualted from the angle and the arcLength by BDSAcceleratorComponent
+  // chordLength is calculated from the angle and the arcLength by BDSAcceleratorComponent
   // but here we only have chord length.  Just reassign chord length.
   chordLength = chordLengthIn;
 

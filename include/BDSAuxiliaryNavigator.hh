@@ -76,7 +76,7 @@ public:
   BDSStep ConvertToLocal(G4Step const* const step,
 			 G4bool useCurvilinear = true) const;
 
-  /// Calcualte the local coordinates for a position and direction along a step
+  /// Calculate the local coordinates for a position and direction along a step
   /// length.  This is similar to the same function but for a G4Step but split
   /// apart. The direction vector can be used as the momentum vector without being
   /// a unit vector.  The 'post step' vector in the BDSStep instance will be the
