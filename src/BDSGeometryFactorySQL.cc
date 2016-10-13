@@ -341,6 +341,7 @@ G4VisAttributes* BDSGeometryFactorySQL::VisAtt()
     case 'i': VisAtt->SetVisibility(false); break;
     case 's': VisAtt->SetForceSolid(true); break;
     }
+  vises.push_back(VisAtt);
   return VisAtt;
 }
 

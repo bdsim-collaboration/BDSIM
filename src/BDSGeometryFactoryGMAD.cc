@@ -73,7 +73,8 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String fileName,
   G4String materialName;
 
   G4VisAttributes*   visAttr = new G4VisAttributes(true, G4Colour(0.2,0.2,0.2));
-  visAttr->SetForceSolid(true);						 
+  visAttr->SetForceSolid(true);
+  vises.push_back(visAttr);
 
   G4int count = 0;
 
@@ -265,7 +266,7 @@ BDSGeometryExternal* BDSGeometryFactoryGMAD::Build(G4String fileName,
 
   BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, containerLV, Extent());
   result->RegisterRotationMatrix(rotations);
-  result->RegisterVisAttributes(visAttr);
+  result->RegisterVisAttributes(vises);
   result->RegisterSolid(solids);
   result->RegisterLogicalVolume(lvs);
   result->RegisterPhysicalVolume(pvs);
