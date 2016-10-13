@@ -83,6 +83,15 @@ void BDSGeometryFactoryBase::CleanUp()
   solids.clear();
   vises.clear();
 }
+
+void BDSGeometryFactoryBase::ExpandExtent(const BDSExtent& ext)
+{
+  xmin = std::min(ext.XNeg(), xmin);
+  xmax = std::max(ext.XPos(), xmax);
+  ymin = std::min(ext.YNeg(), ymin);
+  ymax = std::max(ext.YPos(), ymax);
+  zmin = std::min(ext.ZNeg(), zmin);
+  zmax = std::max(ext.ZPos(), zmax);
 }
 
 void BDSGeometryFactoryBase::ExpandExtent(G4double x0, G4double rx,

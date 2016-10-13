@@ -46,6 +46,9 @@ protected:
   /// Derived factory class should also call this base class one too.
   virtual void CleanUp();
 
+  /// Expand the acuumulated extents using a (possibly asymmetric) extent instance.
+  void ExpandExtent(const BDSExtent& extent);
+  
   /// Expand the accumulated extents with a symmetric extent in each dimension
   /// (rx,ry,rz) about the offset x0,y0,z0.
   void ExpandExtent(G4double xO, G4double rx,
@@ -73,6 +76,7 @@ protected:
   std::vector<G4VPhysicalVolume*> pvs;
   std::vector<G4LogicalVolume*>   lvs;
   std::vector<G4VSolid*>          solids;
+  std::vector<G4VisAttributes*>   vises;
   /// @}
 
   /// Cache of whether to check overlaps or not.
