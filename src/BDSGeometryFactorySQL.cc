@@ -482,9 +482,10 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, 
   
   if(aSQLTable->GetVariable("NZPLANES")!=nullptr)
     {numZplanes = aSQLTable->GetVariable("NZPLANES")->GetIntValue(k);}
-  rInner = new G4double[numZplanes+1];
-  rOuter = new G4double[numZplanes+1];
-  zPos = new G4double[numZplanes+1];
+
+  std::vector<G4double> rInner = std::vector<G4double>(numZplanes+1);
+  std::vector<G4double> rOuter = std::vector<G4double>(numZplanes+1);
+  std::vector<G4double> zPos   = std::vector<G4double>(numZplanes+1);
       
   for(G4int planenum=0; planenum<numZplanes; planenum++)
     {
@@ -509,23 +510,16 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, 
 					 sphi,
 					 dphi,
 					 numZplanes,
-					 zPos,
-					 rInner,
-					 rOuter);
-
+					 zPos.data(),
+					 rInner.data(),
+					 rOuter.data());
+  solids.push_back(aPolyCone);
   G4LogicalVolume* aPolyConeVol = 
     new G4LogicalVolume(aPolyCone,
 			BDSMaterials::Instance()->GetMaterial(Material),
 			Name+"_LogVol");
 
   lengthUserLimit=fabs(zPos[0]-zPos[numZplanes-1])/2;
-  
-  delete [] rInner;
-  rInner = nullptr;
-  delete [] rOuter;
-  rOuter = nullptr;
-  delete [] zPos;
-  zPos = nullptr;
   
   return aPolyConeVol;
 }
