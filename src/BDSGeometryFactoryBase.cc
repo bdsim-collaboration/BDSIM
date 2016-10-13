@@ -78,9 +78,11 @@ void BDSGeometryFactoryBase::CleanUp()
   zmax = 0;
 
   rotations.clear();
-  pvs.empty();
-  lvs.empty();
-  solids.empty();
+  pvs.clear();
+  lvs.clear();
+  solids.clear();
+  vises.clear();
+}
 }
 
 void BDSGeometryFactoryBase::ExpandExtent(G4double x0, G4double rx,
