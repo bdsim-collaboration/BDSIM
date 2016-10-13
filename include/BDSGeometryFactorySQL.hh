@@ -9,6 +9,7 @@
 
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <vector>
 
 class BDSMySQLTable;
@@ -21,6 +22,10 @@ class G4VisAttributes;
 
 /**
  * @brief Geometry factory for SQL geometry.
+ *
+ * The extents are accumulated during the construction of the solids in a vector
+ * then these are used to expand the extent of the full element using the placement
+ * offset that's done at a later stage.
  *
  * @author Lawrence Deacon.
  */
@@ -48,8 +53,9 @@ private:
   /// Singleton instance
   static BDSGeometryFactorySQL* instance;
 
+  std::unordered_map<G4VSolid*, BDSExtent> unShiftedExtents;
 
-    // For List of uniform fields for volumes
+  // For List of uniform fields for volumes
   std::list<G4ThreeVector> UniformField;
   std::list<G4String> Fieldvol; 
 

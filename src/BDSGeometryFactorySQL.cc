@@ -33,11 +33,13 @@
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
 
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <list>
 #include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 BDSGeometryFactorySQL* BDSGeometryFactorySQL::instance = nullptr;
@@ -62,6 +64,8 @@ BDSGeometryFactorySQL* BDSGeometryFactorySQL::Instance()
 void BDSGeometryFactorySQL::CleanUp()
 {
   BDSGeometryFactoryBase::CleanUp();
+
+  unShiftedExtents.clear();
   
   precisionRegionSQL     = nullptr;
   approximationRegionSQL = nullptr;
@@ -424,10 +428,15 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildCone(BDSMySQLTable* aSQLTable, G4in
 			     length/2,
 			     sphi,
 			     dphi);
+  solids.push_back(aCone);
+
+  G4double maxR = std::max(rOuterStart, rOuterEnd);
+  unShiftedExtents[aCone] = BDSExtent(maxR, maxR, length*0.5);
   
   G4LogicalVolume* aConeVol = new G4LogicalVolume(aCone,
 						  BDSMaterials::Instance()->GetMaterial(Material),
 						  Name+"_LogVol");
+
   lengthUserLimit=length;
   return aConeVol;
 }
@@ -456,6 +465,11 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildEllipticalCone(BDSMySQLTable* aSQLT
 							   pySemiAxis,
 							   lengthZ/2,
 							   pzTopCut);
+  solids.push_back(aEllipticalCone);
+
+  G4double maxX = pxSemiAxis*lengthZ*0.5;
+  G4double maxY = pySemiAxis*lengthZ*0.5;
+  unShiftedExtents[aEllipticalCone] = BDSExtent(maxX, maxY, lengthZ*0.5);
   
   G4LogicalVolume* aEllipticalConeVol = 
     new G4LogicalVolume(aEllipticalCone,
@@ -468,10 +482,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildEllipticalCone(BDSMySQLTable* aSQLT
 
 G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, G4int k)
 {
-  G4int numZplanes;
-  G4double* rInner = nullptr;
-  G4double* rOuter = nullptr;
-  G4double* zPos = nullptr;
+  G4int    numZplanes;
   G4double sphi;
   G4double dphi;
   
@@ -514,6 +525,11 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, 
 					 rInner.data(),
 					 rOuter.data());
   solids.push_back(aPolyCone);
+
+  G4double maxR = *std::max_element(rOuter.begin(), rOuter.end());
+  G4double maxZ = *std::max_element(zPos.begin(), zPos.end());
+  unShiftedExtents[aPolyCone] = BDSExtent(maxR, maxR, maxZ);
+  
   G4LogicalVolume* aPolyConeVol = 
     new G4LogicalVolume(aPolyCone,
 			BDSMaterials::Instance()->GetMaterial(Material),
@@ -547,6 +563,9 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int
 			  lengthX/2,
 			  lengthY/2,
 			  lengthZ/2);
+  solids.push_back(aBox);
+
+  unShiftedExtents[aBox] = BDSExtent(lengthX*0.5, lengthY*0.5, lengthZ*0.5);
   
   G4LogicalVolume* aBoxVol = 
     new G4LogicalVolume(aBox,
@@ -591,7 +610,8 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildTrap(BDSMySQLTable* aSQLTable, G4in
 			     lengthXMinus/2,
 			     lengthXMinus/2,
 			     0);
-  
+  solids.push_back(aTrap);
+  unShiftedExtents[aTrap] = BDSExtent();
   
   G4LogicalVolume* aTrapVol = 
     new G4LogicalVolume(aTrap,
@@ -950,6 +970,12 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
       auto result = samplerIDs.find(volume);
       if (result != samplerIDs.end())
 	{copyNumber = result->second;}
+
+      /// Offset extent of individual solid and expand it.
+      G4VSolid* solid = volume->GetSolid();
+      BDSExtent ext = unShiftedExtents[solid];
+      BDSExtent extShifted = ext.Offset(PlacementPoint);
+      ExpandExtent(extShifted);
       
       G4VPhysicalVolume* PhysiComp = 
 	new G4PVPlacement(RotateComponent(RotPsi,RotPhi,RotTheta),
