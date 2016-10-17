@@ -1,5 +1,6 @@
 #include "BDSArray2DCoords.hh"
 #include "BDSArray2DCoordsRQuad.hh"
+#include "BDSArray4D.hh"
 #include "BDSFieldFormat.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
@@ -76,7 +77,7 @@ int main(int /*argc*/, char** /*argv*/)
 					       false,
 					       G4Transform3D(),
 					       nullptr,
-					       "OUTSF7.TXT",
+					       "square120x120_2mm.TXT",
 					       BDSFieldFormat::poisson2dquad,
 					       BDSInterpolatorType::nearest2d);
   
@@ -90,11 +91,21 @@ int main(int /*argc*/, char** /*argv*/)
 					      false,
 					      G4Transform3D(),
 					      nullptr,
-					      "OUTSF7.TXT",
+					      "square120x120_2mm.TXT",
 					      BDSFieldFormat::poisson2dquad,
 					      BDSInterpolatorType::linear2d);
   
   BDSFieldMag* linear = BDSFieldLoader::Instance()->LoadMagField(*infoLinear);
+
+  // Get the raw data
+  BDSFieldMagInterpolated2D* fieldInterp = dynamic_cast<BDSFieldMagInterpolated2D*>(nearest);
+  auto interp = fieldInterp->Interpolator();
+  auto arrCoords = interp->Array();
+  const BDSArray4D* arr = dynamic_cast<const BDSArray4D*>(arrCoords);
+  std::ofstream ofile;
+  ofile.open("raw.dat");
+  ofile << *arr;
+  ofile.close();
 
   // Query across full range of magnet including just outside range too.
   Query(nearest, ymin, ymax, xmin, xmax, nX, nY, "nearest");
