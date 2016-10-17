@@ -68,6 +68,7 @@ if(SPHINX_FOUND)
 
     # add building to ctest
     add_test(Manual make manual)
-    add_test(Manual-pdf_LONG make manual-pdf)
+    add_test(Manual-pdf make manual-pdf)
+    set_tests_properties(Manual-pdf PROPERTIES LABELS LONG)
 
 endif()

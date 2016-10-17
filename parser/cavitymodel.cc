@@ -22,6 +22,7 @@ void CavityModel::clear()
   thickness              = 0.0;
   frequency              = 0.0;
   phase                  = 0.0;
+  eField                 = 0.0;
   numberOfPoints         = 24;
   numberOfCells          = 1;
 }
@@ -40,6 +41,7 @@ void CavityModel::PublishMembers()
   publish("thickness",          &CavityModel::thickness);
   publish("frequency",          &CavityModel::frequency);
   publish("phase",              &CavityModel::phase);
+  publish("efield",             &CavityModel::eField);
   publish("numberOfPoints",     &CavityModel::numberOfPoints);
   publish("numberOfCells",      &CavityModel::numberOfCells);
 }
@@ -59,6 +61,7 @@ void CavityModel::print()const
 	    << "thickness "              << thickness << " " << std::endl
 	    << "frequency "              << frequency << " " << std::endl
 	    << "phase "                  << phase << " " << std::endl
+	    << "eField "                 << eField << " " << std::endl
 	    << "numberOfPoints "         << numberOfPoints << " " << std::endl
 	    << "numberOfCells "          << numberOfCells << " " << std::endl
 	    << std::endl;

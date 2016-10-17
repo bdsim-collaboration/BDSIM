@@ -1,0 +1,2 @@
+include sbenPoleFace.gmad;
+option, includeFringeFields=1;

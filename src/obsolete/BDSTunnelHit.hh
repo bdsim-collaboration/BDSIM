@@ -6,17 +6,16 @@
 #include "G4Allocator.hh"
 #include "G4ThreeVector.hh"
 
-/**
- * @brief A class that contains all information pertaining to a particle
- * hit in a section of tunnel.
- * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
- */
-
 class BDSTunnelHit;
 
 typedef G4THitsCollection<BDSTunnelHit> BDSTunnelHitsCollection;
 extern G4Allocator<BDSTunnelHit> BDSTunnelHitAllocator;
+
+/**
+ * @brief Information for a particle hit in a section of tunnel.
+ * 
+ * @author Laurie Nevay
+ */
 
 class BDSTunnelHit: public G4VHit
 {
@@ -42,7 +41,7 @@ public:
 	       G4int    turnsTakenIn      = 1,    // turns taken if circular
 	       G4int    eventNoIn         = 0);   // event number
 
-  ~BDSTunnelHit();
+  virtual ~BDSTunnelHit();
   
   inline void* operator new(size_t) ;
   inline void operator delete(void *aHit);

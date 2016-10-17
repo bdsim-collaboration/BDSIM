@@ -1,32 +1,32 @@
 #include "BDSPhysicalVolumeInfo.hh"
-#include "globals.hh"
+#include "G4Types.hh"
 #include "G4String.hh"
 
-BDSPhysicalVolumeInfo::BDSPhysicalVolumeInfo(G4double sPosAtMiddleOfElement) :
-    spos(sPosAtMiddleOfElement)
+#include <ostream>
+
+BDSPhysicalVolumeInfo::BDSPhysicalVolumeInfo(G4double sPosAtMiddleOfElement):
+  spos(sPosAtMiddleOfElement)
 {
-  name = "unknown";
+  name          = "unknown";
   placementName = "unknown";
-  precisionRegion = false;
   beamlineIndex = -1;
 }
 
 BDSPhysicalVolumeInfo::BDSPhysicalVolumeInfo(G4String nameIn,
                                              G4String placementNameIn,
                                              G4double sPosIn,
-                                             G4bool precisionRegionIn,
-                                             G4int beamlineIndexIn) :
-    name(nameIn), placementName(placementNameIn),
-    spos(sPosIn), precisionRegion(precisionRegionIn),
+                                             G4int    beamlineIndexIn):
+    name(nameIn),
+    placementName(placementNameIn),
+    spos(sPosIn),
     beamlineIndex(beamlineIndexIn)
-{ ; }
+{;}
 
 BDSPhysicalVolumeInfo::~BDSPhysicalVolumeInfo()
-{ ; }
+{;}
 
 std::ostream &operator<<(std::ostream &out, BDSPhysicalVolumeInfo const &info)
 {
-  out << "Name: \"" << info.name << "\" S pos: " << info.spos << " mm Precision: "
-  << info.precisionRegion;
+  out << "Name: \"" << info.name << "\" S pos: " << info.spos << " mm Precision: ";
   return out;
 }

@@ -25,7 +25,7 @@ void BDSSpoiler::Build()
   BuildInnerSpoiler();
 }
 
-void BDSSpoiler::BuildMarkerLogicalVolume()
+void BDSSpoiler::BuildContainerLogicalVolume()
 {
   containerSolid = new G4Box(name,
 							 BDSGlobalConstants::Instance()->ComponentBoxSize()/2,

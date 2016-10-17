@@ -1,4 +1,5 @@
 #include "BDSGeometryComponent.hh"
+#include "BDSGeometryExternal.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSSimpleComponent.hh"
 
@@ -34,6 +35,16 @@ BDSMagnetOuter::BDSMagnetOuter(BDSGeometryComponent* componentIn,
   endPieceAfter(endPieceAfterIn),
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn)
+{;}
+
+BDSMagnetOuter::BDSMagnetOuter(BDSGeometryExternal*  external,
+			       BDSGeometryComponent* magnetContainerIn):
+  BDSGeometryComponent(*(static_cast<BDSGeometryComponent*>(external))),
+  magnetContainer(magnetContainerIn),
+  endPieceBefore(nullptr),
+  endPieceAfter(nullptr),
+  inputFaceNormal(G4ThreeVector(0,0,-1)),
+  outputFaceNormal(G4ThreeVector(0,0,1))
 {;}
 
 void BDSMagnetOuter::ClearMagnetContainer()

@@ -1,14 +1,14 @@
 # long tests for output analysis
 set(TESTING_ARGS --outfile=proton_6500GeV_copper)
-simple_testing(proton_6500GeV_copper_LONG "--file=proton_6500GeV_copper.gmad" "")
+simple_testing_long(proton_6500GeV_copper_LONG "--file=proton_6500GeV_copper.gmad" "")
 set(TESTING_ARGS --outfile=proton_6500GeV_graphite)
-simple_testing(proton_6500GeV_graphite_LONG "--file=proton_6500GeV_graphite.gmad" "")
+simple_testing_long(proton_6500GeV_graphite_LONG "--file=proton_6500GeV_graphite.gmad" "")
 set(TESTING_ARGS --outfile=proton_6500GeV_stainless)
-simple_testing(proton_6500GeV_stainless_LONG "--file=proton_6500GeV_stainless.gmad" "")
+simple_testing_long(proton_6500GeV_stainless_LONG "--file=proton_6500GeV_stainless.gmad" "")
 set(TESTING_ARGS --outfile=proton_6500GeV_titanium)
-simple_testing(proton_6500GeV_titanium_LONG "--file=proton_6500GeV_titanium.gmad" "")
+simple_testing_long(proton_6500GeV_titanium_LONG "--file=proton_6500GeV_titanium.gmad" "")
 set(TESTING_ARGS --outfile=proton_6500GeV_tungsten)
-simple_testing(proton_6500GeV_tungsten_LONG "--file=proton_6500GeV_tungsten.gmad" "")
+simple_testing_long(proton_6500GeV_tungsten_LONG "--file=proton_6500GeV_tungsten.gmad" "")
 
 # short tests
 set(TESTING_ARGS  --ngenerate=1)

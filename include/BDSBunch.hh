@@ -9,6 +9,8 @@ namespace GMAD {
   class Options;
 }
 
+// can become a singleton? - JS
+
 /**
  * @brief A delegator class for the BDSIM particle distribution generator.
  * 

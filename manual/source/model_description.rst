@@ -154,6 +154,7 @@ The following elements may be defined
 * `octupole`_
 * `decapole`_
 * `multipole`_
+* `thinmultipole`_
 * `vkick`_
 * `hkick`_
 * `rf`_
@@ -278,6 +279,12 @@ parameter         description                  default     required
 	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
 	  element must be longer than the projected length from the rotation, given by
 	  :math:`2 \tan(\mathrm{eX})`.
+
+.. note:: If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the
+      fringefield element can be set by the option `thinElementLength` (see `options`_).
+
 	  
 
 Examples::
@@ -332,6 +339,11 @@ parameter         description                  default     required
 	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
 	  element must be longer than the projected length from the rotation, given by
 	  :math:`2 \tan(\mathrm{eX})`.
+
+.. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+      fringefield element can be set by the option `thinElementLength` (see `options`_).
 
 Examples::
 
@@ -465,6 +477,21 @@ parameter         description                  default     required
 Examples::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
+
+thinmultipole
+^^^^^^^^^^^^^
+
+.. TODO: add picture
+
+`thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
+For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
+tube. A thinmultipole can be placed next to a bending magnet with finite poleface rotation angles.
+
+Examples::
+
+   THINOCTUPOLE1 : thinmultipole , knl={ 0,0,1 } , ksl={ 0,0,0 };
+
+.. note:: The length of the thin multipole can be changed by setting `thinElementLength` (see `options`_).
 
 vkick
 ^^^^^
@@ -1294,7 +1321,7 @@ Multiple options can be defined at once using the following syntax::
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius as these will have a large impact on the outcome of the simulation.
 
-options in BDSIM
+Options in BDSIM
 ^^^^^^^^^^^^^^^^ 
 
 Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
@@ -1318,6 +1345,10 @@ as their value.
 | circular                         | whether the accelerator is circular or not            |
 +----------------------------------+-------------------------------------------------------+
 | elossHistoBinWidth               | the width of the histogram bins [m]                   |
++----------------------------------+-------------------------------------------------------+
+| includeFringeFields              | place thin fringefield elements on the end of bending |
+|                                  | magnets with finite poleface angles. The length of the|
+|                                  | total element is conserved. (default = false)         |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true)                 |
@@ -1367,6 +1398,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | vacuumPressure                   | the pressure of the vacuum gas [bar]                  |
 +----------------------------------+-------------------------------------------------------+
+| thinElementLength                | the length of all thinmultipoles and dipole           |
+|                                  | fringefields in a lattice (default 1e-6) [m]          |
++----------------------------------+-------------------------------------------------------+
 | **Tracking Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | deltaChord                       | chord finder precision                                |
@@ -1387,31 +1421,13 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | whether to use synchrotron radiation processes        |
 +----------------------------------+-------------------------------------------------------+
-| srTrackPhotons                   | whether to track synchrotron radiation photons        |
-+----------------------------------+-------------------------------------------------------+
-| srLowX                           | minimum synchrotron radiation energy as a fraction of |
-|                                  | `E critical` ( 0 > `srLowX` > 1 )                     |
-+----------------------------------+-------------------------------------------------------+
-| srLowGamE                        | lowest synchrotron photon energy to track             |
-+----------------------------------+-------------------------------------------------------+
-| srMultiplicity                   | a factor multiplying the number of synchrotron        |
-|                                  | photons                                               |
-+----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | standard overall production cuts for photons          |
-+----------------------------------+-------------------------------------------------------+
-| prodCutPhotonsP                  | precision production cuts for photons                 |
 +----------------------------------+-------------------------------------------------------+
 | prodCutElectrons                 | standard overall production cuts for electrons        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutElectronsP                | precision production cuts for electrons               |
-+----------------------------------+-------------------------------------------------------+
 | prodCutPositrons                 | standard overall production cuts for positrons        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPositronsP                | precision production cuts for positrons               |
-+----------------------------------+-------------------------------------------------------+
 | prodCutProtons                   | standard overall production cuts for protons          |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtonsP                  | precision production cuts for protons                 |
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
@@ -1426,12 +1442,6 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | eetoHadronsFe                    | the cross-section enhancement factor for the          |
 |                                  | electron-positron annihilation to hadrons process     |
-+----------------------------------+-------------------------------------------------------+
-| useEMLPB                         | whether to use electromagnetic lead particle biasing  |
-|                                  | (default = 0)                                         |
-+----------------------------------+-------------------------------------------------------+
-| LPBFraction                      | the fraction of electromagnetic process in which      |
-|                                  | lead particle biasing is used ( 0 < LPBFraction < 1)  |
 +----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
@@ -1448,7 +1458,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | trajCutLTR                       | radius cut for storing trajectories (maximum)         |
 +----------------------------------+-------------------------------------------------------+
-| nperfile                         | number of evens to record per output file             |
+| nperfile                         | number of events to record per output file            |
 +----------------------------------+-------------------------------------------------------+
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |
@@ -1482,7 +1492,7 @@ in the following sections. The beam is defined using the following syntax::
         energy=4.0*TeV,
 	distrType="reference";
 
-Energy is in `GeV` by default. The particle may be one of the following:
+Energy is in `GeV` by default. The particle is typically one of the following:
 
 * `e-`
 * `e+`
@@ -1491,7 +1501,8 @@ Energy is in `GeV` by default. The particle may be one of the following:
 * `mu-`
 * `mu+`
 
-Many particles can be used and are taken from the Geant4 particle table directly.
+However, many particles can be used and are taken from the Geant4 particle table directly
+and therefore the Geant4 naming scheme should be used.
 
 Available input distributions and their associated parameters are described in the following
 section.
@@ -2057,11 +2068,133 @@ Regions
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
-can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
+can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example::
 
-.. TODO region example missing
+  precisionRegion: region, prodCutProtons=1*m,
+                           prodCutElectrons=10*m,
+			   prodCutPositrons=10*m,
+			   prodCutPhotons = 1*mm;
+
+  d1: drift, l=10*m, region="precisionRegion";
+
 
 .. rubric:: Footnotes
 
 .. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
 		      The distinction is kept for clarity, and this might be changed in the future.
+
+
+Fields
+------
+
+An electro-magnetic (or pure electric or magnetic) field can be defined and then attached to an
+element in GMAD. The following parameters can be specified.
+
++----------------------+-----------------------------------------------------------------+
+| **Parameter**        | **Description**                                                 |
++======================+=================================================================+
+| type                 | One of "xy", "threed", "mokka". (more to come)                  |
++----------------------+-----------------------------------------------------------------+
+| scaling              | A numerical scaling factor that all field vectors in the data   |
+|                      | will be multiplied by.                                          |
++----------------------+-----------------------------------------------------------------+
+| integrator           | The integrator used to calculate the motion of the particle     |
+|                      | in the field. See below for full list of supported integrators. |
++----------------------+-----------------------------------------------------------------+
+| magneticFile         | "format:filePath"                                               |
++----------------------+-----------------------------------------------------------------+
+| magneticInterpolator | Which interpolator to use - see below for a full list.          |
++----------------------+-----------------------------------------------------------------+
+| electricFile         | "format:filePath"                                               |
++----------------------+-----------------------------------------------------------------+
+| electricInterpolator | Which interpolator to use - see below for a full list.          |
++----------------------+-----------------------------------------------------------------+
+
+
+Example::
+
+  somefield: field, type="poisson",
+		    scaling = 3.0,
+		    integrator = "g4classicalrk4",
+		    magneticFile = "poisson2d:/Path/To/File.TXT",
+		    magneticInterpolator = "nearest2D",
+		    electricFile = "poisson2d:/Another/File.TX",
+		    electricInterpolator = "linear2D";
+
+  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
+
+
+Integrators
+^^^^^^^^^^^
+
+The following integrators are provided.  The majority are interfaces to Geant4 ones.
+
++----------------------+----------+------------------+
+|  **String**          | **B/EM** | **Time Varying** |
++======================+==========+==================+
+| g4cashkarprkf45      | EM       | Y                |
++----------------------+----------+------------------+
+| g4classicalrk4       | EM       | Y                |
++----------------------+----------+------------------+
+| g4constrk4           | B        | N                |
++----------------------+----------+------------------+
+| g4expliciteuler      | EM       | Y                |
++----------------------+----------+------------------+
+| g4impliciteuler      | EM       | Y                |
++----------------------+----------+------------------+
+| g4simpleheum         | EM       | Y                |
++----------------------+----------+------------------+
+| g4simplerunge        | EM       | Y                |
++----------------------+----------+------------------+
+| g4exacthelixstepper  | B        | N                |
++----------------------+----------+------------------+
+| g4helixexpliciteuler | B        | N                |
++----------------------+----------+------------------+
+| g4helixheum          | B        | N                |
++----------------------+----------+------------------+
+| g4heliximpliciteuler | B        | N                |
++----------------------+----------+------------------+
+| g4helixmixedstepper  | B        | N                |
++----------------------+----------+------------------+
+| g4helixsimplerunge   | B        | N                |
++----------------------+----------+------------------+
+| g4nystromrk4         | B        | N                |
++----------------------+----------+------------------+
+| g4rkg3stepper        | B        | N                |
++----------------------+----------+------------------+
+
+The following are currently only usable by BDSIM.
+
++----------------------+----------+------------------+
+| none                 | NA       | N                |
++----------------------+----------+------------------+
+| solenoid             | B        | N                |
++----------------------+----------+------------------+
+| dipole               | B        | N                |
++----------------------+----------+------------------+
+| quadrupole           | B        | N                |
++----------------------+----------+------------------+
+| sextupole            | B        | N                |
++----------------------+----------+------------------+
+| multipole            | B        | N                |
++----------------------+----------+------------------+
+| octupole             | B        | N                |
++----------------------+----------+------------------+
+| decapole             | B        | N                |
++----------------------+----------+------------------+
+| fringe               | B        | N                |
++----------------------+----------+------------------+
+
+Interpolators
+^^^^^^^^^^^^^
++------------+-------------------------------+
+| **String** | **Description**               |
++============+===============================+
+| nearest2D  | Nearest neighbour in 2D only. |
++------------+-------------------------------+
+| linear2D   | Linear interpolation in 2D.   |
++------------+-------------------------------+
+| nearest3D  | Nearest neighbour in 3D.      |
++------------+-------------------------------+
+| linear3D   | Linear interpolation in 3D.   |
++------------+-------------------------------+

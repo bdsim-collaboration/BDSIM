@@ -6,11 +6,12 @@
 #include "BDSBeamline.hh"
 
 /**
- * @brief A class that constructs the necessary tunnel segments
- * to fit around a beamline. It uses a beam line instance - the flat beam line
+ * @brief A class that constructs tunnel segments around a beamline. 
+ *
+ * It uses a beam line instance - the flat beam line
  * and creates a new beam line of tunnel segments that can then be placed.
  * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTunnelBuilder

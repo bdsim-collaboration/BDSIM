@@ -1,10 +1,12 @@
 #include "BDSSteppingAction.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSDebug.hh"
 
 #include "G4AffineTransform.hh"
-#include "G4NavigationHistory.hh"
 #include "G4Track.hh"
 #include "G4VProcess.hh"
+#include "G4EventManager.hh"
+#include "G4Event.hh"
 
 BDSSteppingAction::BDSSteppingAction():_step(nullptr)
 {;}
@@ -15,13 +17,12 @@ BDSSteppingAction::~BDSSteppingAction()
 void BDSSteppingAction::UserSteppingAction(const G4Step* ThisStep)
 {
   _step = ThisStep;
-  if(BDSGlobalConstants::Instance()->VerboseStep())
-    {VerboseSteppingAction();}
+  G4int event_number = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
+  if(BDSGlobalConstants::Instance()->VerboseStep() || (event_number == BDSGlobalConstants::Instance()->VerboseEventNumber())) {
+    VerboseSteppingAction();
+  }
 }
 
-void BDSSteppingAction::ThresholdCutSteppingAction()
-{;}
-  
 void BDSSteppingAction::VerboseSteppingAction()
 { 
   //output in case of verbose step
@@ -49,16 +50,18 @@ void BDSSteppingAction::VerboseSteppingAction()
   if(_step->GetTrack()->GetMaterial()->GetName() !="LCVacuum")
     G4cout<<"material="<<_step->GetTrack()->GetMaterial()->GetName()<<G4endl;
 
-  G4VProcess* proc=(G4VProcess*)(_step->GetPostStepPoint()->
-				 GetProcessDefinedStep() );
+  const G4VProcess* proc = static_cast<const G4VProcess*>((_step->GetPostStepPoint()->
+					      GetProcessDefinedStep()));
 
-  if(proc)G4cout<<" post-step process="<<proc->GetProcessName()<<G4endl<<G4endl;
+  if (proc)
+    {G4cout<<" post-step process="<<proc->GetProcessName()<<G4endl<<G4endl;}
 
 
-  proc=(G4VProcess*)(_step->GetPreStepPoint()->
-		     GetProcessDefinedStep() );
+  proc = static_cast<const G4VProcess*>((_step->GetPreStepPoint()->
+				   GetProcessDefinedStep()));
 
-  if(proc)G4cout<<" pre-step process="<<proc->GetProcessName()<<G4endl<<G4endl;
+  if (proc)
+    {G4cout<<" pre-step process="<<proc->GetProcessName()<<G4endl<<G4endl;}
 
   // set precision back
   G4cout.precision(G4precision);

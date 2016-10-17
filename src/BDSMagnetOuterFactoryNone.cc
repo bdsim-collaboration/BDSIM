@@ -1,6 +1,5 @@
 #include "BDSMagnetOuterFactoryNone.hh"
 
-#include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
 #include "BDSMagnetOuter.hh"
 
@@ -49,7 +48,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 								 G4double      /*length*/,
 								 BDSBeamPipe*  /*beamPipe*/,
 								 G4double      /*outerDiameter*/,
-								 G4double      /*containerDiameter*/,
 								 G4double      /*containerLength*/,
 								 G4double      /*angleIn*/,
 								 G4double      /*angleOut*/,

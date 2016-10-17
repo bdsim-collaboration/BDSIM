@@ -4,11 +4,10 @@
 #include "BDSCavityType.hh"
 #include "BDSColours.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4ChordFinder.hh"
-#include "G4FieldManager.hh"
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
 #include "G4MagIntegratorDriver.hh"
@@ -25,14 +24,13 @@
 #include <cmath>
 #include <vector>
 
-BDSCavity::BDSCavity(G4String       name,
-		     G4double       length,
-		     G4double       fieldAmplitudeIn,
-		     BDSCavityInfo* cavityInfoIn):
-  BDSAcceleratorComponent(name, length, 0, "cavity_"+cavityInfoIn->cavityType.ToString()),
-  fieldAmplitude(fieldAmplitudeIn),
-  cavityInfo(cavityInfoIn)
+BDSCavity::BDSCavity(G4String      name,
+		     G4double      length,
+		     BDSFieldInfo* vacuumField):
+  BDSAcceleratorComponent(name, length, 0,
+			  "cavity_"+vacuumField->CavityInfo()->cavityType.ToString())
 {
+  cavityInfo   = vacuumField->CavityInfo(); // create shortcut for convenience
   cavityRadius = cavityInfo->equatorRadius;
   thickness    = cavityInfo->thickness;
   irisRadius   = cavityInfo->irisRadius;
@@ -46,7 +44,7 @@ BDSCavity::BDSCavity(G4String       name,
 
 BDSCavity::~BDSCavity()
 {
-  delete cavityInfo;
+  delete vacuumField;
 }
 
 void BDSCavity::Build()
@@ -69,14 +67,10 @@ void BDSCavity::Build()
   
   BDSAcceleratorComponent::Build();
   BuildField();
-  AttachField();
   PlaceComponents();
 }
 
 void BDSCavity::BuildField()
-{;}
-
-void BDSCavity::AttachField()
 {;}
 
 void BDSCavity::PlaceComponents()
@@ -141,7 +135,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis; //equator ellipse horizontal semiaxis
   G4double tangentAngle     = cavityInfo->tangentLineAngle;
   G4double irisRadius       = cavityInfo->irisRadius;
-  unsigned int noPoints            = cavityInfo->numberOfPoints;
+  unsigned int noPoints     = cavityInfo->numberOfPoints;
 
   //Calculatecartesian coordinates (z, r) from parameters.
   //2D spherical coordinates, z along the beamline:
@@ -151,12 +145,16 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double re = equatorRadius - equatorRSemiAxis;  //r coord of equator ellipse centre.
   G4double m = tan(tangentAngle + 0.5*CLHEP::pi);  //gradient of line connecting the ellipses.  Add a pi/2 because angle is defined from the vertical, clockwise.
    
-  // gradient from tangentAngle.  Find the derivative of ellipses.  equate and solve for the parameter.
-  G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));  //atan finds solution in the first quadrant.
-  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; //Add pi to get desired solution (third quadrant)
+  // Gradient from tangentAngle. Find the derivative of ellipses. Equate
+  // and solve for the parameter.
+  // atan finds solution in the first quadrant.
+  G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));
+  // Add pi to get desired solution (third quadrant)
+  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; 
  
-       
-  noPoints = noPoints - (noPoints % 4);  //rounding down to a multiple of 4.  This is so that number of points are share equally and consistently between the constituent ellipses.
+  // Rounding down to a multiple of 4. This is so that number of points are
+  // share equally and consistently between the constituent ellipses.
+  noPoints = noPoints - (noPoints % 4);  
 
   //Vector Definitions:
   //Parametric equation parameters:
@@ -168,16 +166,14 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //rOuterCoord      --> the values of radius for the outer geometry
   //zInnerCoord      --> the values of z for the inner geometry
   //zOuterCoord      --> the values of z for the outer goemetry
-
-    
+  
   //Vector declaration:
   std::vector<G4double> equatorParameter;
-  std::vector<G4double> irisParameter;   
+  std::vector<G4double> irisParameter;
   std::vector<G4double> rInnerCoord;
   std::vector<G4double> rOuterCoord;
-  std::vector<G4double> zInnerCoord;     
-  std::vector<G4double> zOuterCoord;     
- 
+  std::vector<G4double> zInnerCoord; 
+  std::vector<G4double> zOuterCoord;
     
   //---Generating values for the parameters used to define the ellipse shapes---
     
@@ -256,17 +252,13 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4cout << "Length of zInnerCoord = " << zInnerCoord.size() << G4endl;
   G4cout << "Length of rInnerCoord = " << rInnerCoord.size() << G4endl;
   for (G4int i = 0; i < (G4int)zInnerCoord.size(); i++)
-    {
-      G4cout << "(" << zInnerCoord[i] << "," << rInnerCoord[i] << ")" << G4endl;
-    };
+    {G4cout << "(" << zInnerCoord[i] << "," << rInnerCoord[i] << ")" << G4endl;};
   
   G4cout << "Now printing the values of (zOuterCoord,rOuterCoord):" << G4endl;
   G4cout << "Length of zOuterCoord = " << zOuterCoord.size() << G4endl;
   G4cout << "Length of rOuterCoord = " << rOuterCoord.size() << G4endl;
   for (G4int i = 0; i < (G4int)zOuterCoord.size(); i++)
-    {
-      G4cout << "(" << zOuterCoord[i] << "," << rOuterCoord[i] << ")" << G4endl;
-    };
+    {G4cout << "(" << zOuterCoord[i] << "," << rOuterCoord[i] << ")" << G4endl;};
 #endif
 
   //Array of inner r coordinates.  zeroes ensures the polycone will be solid.
@@ -323,7 +315,6 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   for (unsigned int i = 0; i < noPoints; i++)
     {
       rInnerCoord[i] = rInnerCoord[i] - lengthSafety;
-      
       if (i == 0 || (i == zInnerCoord.size() - 1)) 
 	{zInnerCoord[i] = zInnerCoord[i]- lengthSafety;}
     }
@@ -374,9 +365,7 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
 				 cavityInfo->material, // material
 				 name + "_cavity_lv"); // name
-
   
-
   //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
   //thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
 

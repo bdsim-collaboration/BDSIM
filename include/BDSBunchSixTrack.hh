@@ -9,7 +9,7 @@
 /**
  * @brief A bunch distribution that reads a SixTrack hits file.
  * 
- * @author Regina Kwee-Hinzmann <Regina.Kwee@rhul.ac.uk>
+ * @author Regina Kwee-Hinzmann
  */
 
 class BDSBunchSixTrack: public BDSBunchInterface

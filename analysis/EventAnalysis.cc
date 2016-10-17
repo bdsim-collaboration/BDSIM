@@ -21,14 +21,17 @@
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-Analysis("Event.", nullptr, "bdsimEventMergedHistograms"),
-  event(nullptr)
+  Analysis("Event.", nullptr, "EventHistogramsMerged"),
+  event(nullptr),
+  printModulo(1)
 {;}
 
 EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
-  Analysis("Event.", chain, "bdsimEventMergedHistograms", debug),
+  Analysis("Event.", chain, "EventHistogramsMerged", debug),
   event(eventIn)
 {
+  SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
+  samplerAnalyses.push_back(sa);
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
@@ -44,7 +47,10 @@ EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
 }
 
 EventAnalysis::~EventAnalysis()
-{;}
+{
+  for (auto& sa : samplerAnalyses)
+    {delete sa;}
+}
 
 void EventAnalysis::Process()
 {

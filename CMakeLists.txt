@@ -5,7 +5,7 @@ project(bdsim)
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 9 )
-set( BDSIM_PATCH_LEVEL 4 )
+set( BDSIM_PATCH_LEVEL develop )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -84,13 +84,16 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
   # add 'make doxygen' to ctest
-  add_test(Doxygen_LONG make doc)
+  add_test(Doxygen make doc)
+  set_tests_properties(Doxygen PROPERTIES LABELS LONG)
 endif(DOXYGEN_FOUND)
 
 # enable Testing with ctest
 enable_testing()
 include(CTest)
 include(bdsim_test_macros)
+include(comparator_test_macros)
+include(rebdsim_test_macros)
 
 # This module sets up installation:
 include(bdsim_install)
@@ -106,6 +109,16 @@ endif()
 if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
+
+# Add Modules
+option(USE_AWAKE "Use AWAKE Module" OFF)
+if (USE_AWAKE)
+  add_definitions("-DUSE_AWAKE")
+  message(STATUS "AWAKE module ON")
+  add_subdirectory(modules/AWAKE)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/modules/AWAKE/include)
+endif()
+
 if($ENV{VERBOSE})
   message(STATUS "ROOT dictionaries ${root_dicts}")
   message(STATUS "BDSIM sources ${bdsim_sources}")
@@ -223,6 +236,9 @@ add_subdirectory(test)
 
 # Include directory for analysis
 add_subdirectory(analysis)
+
+# Include directory for comparator
+add_subdirectory(comparator)
 
 # Manual
 add_subdirectory(manual)

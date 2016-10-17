@@ -1,5 +1,7 @@
 #include "BDSTunnelHit.hh"
 
+#include "globals.hh" // geant4 types / globals
+
 G4Allocator<BDSTunnelHit> BDSTunnelHitAllocator;
 
 BDSTunnelHit::BDSTunnelHit(G4int    nCopyIn, 

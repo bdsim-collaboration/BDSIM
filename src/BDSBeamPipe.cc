@@ -17,8 +17,8 @@ BDSBeamPipe::BDSBeamPipe(G4VSolid*        containerSolidIn,
   vacuumLogicalVolume(vacuumLVIn),
   containerIsCircular(containerIsCircularIn),
   containerRadius(containerRadiusIn),
-  inputFaceNormal(inputFaceNormalIn),
-  outputFaceNormal(outputFaceNormalIn)
+  inputFaceNormal(inputFaceNormalIn.unit()),
+  outputFaceNormal(outputFaceNormalIn.unit())
 {;}
 
 BDSBeamPipe::~BDSBeamPipe()

@@ -19,6 +19,8 @@
 
 #include <signal.h>
 #include <unistd.h>
+#include <utility>
+
 #ifdef __APPLE__
 #include <mach-o/dyld.h> // for executable path
 #endif
@@ -80,13 +82,13 @@ G4double BDS::CalculateFacesOverlapRadius(G4double angleIn,
   if (angleIn > 0)
     {
       // Rotate input clockwise, output counterclockwise
-      inputface[0] *= -1.0;
+      inputface[0]  *= -1.0;
       outputface[2] *= -1.0;
     }
   else if (angleIn < 0)
     {
       // Rotate input counterclockwise, output clockwise
-      inputface[2] *= -1.0;
+      inputface[2]  *= -1.0;
       outputface[0] *= -1.0;
     }
   // offset of outputface vector origin from inputface vector origin is (0, 0, semilength)
@@ -133,6 +135,9 @@ std::string BDS::GetBDSIMExecPath()
 
 G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
 {
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << fileName << " strip name off?: " << excludeNameFromPath << G4endl;
+#endif
   //Return fullPath of a file:
   //mirror what is done in parser.l (i.e. if no environment varible set, assume base filename path is that of the gmad file).
   // 1) if absolute path (starting with a slash) return that
@@ -171,6 +176,9 @@ G4String BDS::GetFullPath(G4String fileName, bool excludeNameFromPath)
   // add filename if not excluded
   if (!excludeNameFromPath)
     {fullPath += inputFilename;}
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "determined full path to be: " << fullPath << G4endl;
+#endif
   return fullPath;
 }
 
@@ -277,34 +285,32 @@ G4bool BDS::Geant4EnvironmentIsSet()
 	  G4cout << " - found" << G4endl;
 #endif
 	}
-
     }
   return result;
 }
 
-G4double BDS::GetParameterValue(const G4String spec, const G4String name)
+//Get a value of type double form the spec string.
+G4double BDS::GetParameterValueDouble(G4String spec, G4String name)
 {
-  G4double value = 0;
-
-  std::string delimiters = "&";
-  std::string param = name + "=";
-
-  int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      int pos2 = spec.find("&",pos);
-      int pos3 = spec.length();
-      int tend = pos2 < 0 ? pos3 : pos2; 
-      int llen = tend - pos - param.length();
-      
-      std::string val = spec.substr(pos + param.length(), llen);
-      
-      value = atof(val.c_str());
-    }
-  return value;
+  try{
+    return (G4double)std::stol(GetParameterValueString(spec,name).c_str());
+  }catch(std::invalid_argument& e){
+    throw e;
+  }
 }
 
-G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
+//Get a value of type int form the spec string.
+G4int BDS::GetParameterValueInt(G4String spec, G4String name)
+{
+  try{
+    return (G4int)std::stoi(GetParameterValueString(spec,name).c_str());
+  }catch(std::invalid_argument& e){
+    throw e;
+  }
+}
+
+//Get a value of type string from the spec string (all other types derived from this).
+G4String BDS::GetParameterValueString(G4String spec, G4String name)
 {
   G4String value = "";
 
@@ -314,14 +320,17 @@ G4String BDS::GetParameterValueString(const G4String spec, const G4String name)
   int pos = spec.find(param);
   if( pos >= 0 )
     {
+      
       int pos2 = spec.find("&",pos);
       int pos3 = spec.length();
       int tend = pos2 < 0 ? pos3 : pos2; 
       int llen = tend - pos - param.length();
       
       value = spec.substr(pos + param.length(), llen);
-    }
+  }
+
   return value;
+
 }
 
 G4TwoVector BDS::Rotate(const G4TwoVector& vec, const G4double& angle)
@@ -407,4 +416,33 @@ G4ThreeVector BDS::RotateToReferenceFrame(G4ThreeVector faceNormal, G4double ful
   G4RotationMatrix rm = G4RotationMatrix();
   rm.rotateY(fullAngle*0.5);
   return faceNormal.transform(rm);
+}
+
+std::pair<G4String, G4String> BDS::SplitOnColon(G4String formatAndPath)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << formatAndPath << G4endl;
+#endif
+  if(!formatAndPath.empty())
+    {
+      std::size_t found = formatAndPath.find(":");
+      if (found == std::string::npos)
+	{
+	  G4cerr << __METHOD_NAME__ << "invalid specifier \""
+		 << formatAndPath << "\"" << G4endl;
+	  G4cerr << "Missing \":\" to separate format and file path" << G4endl;
+	  exit(1);
+	}
+      else
+	{
+	  G4String format   = formatAndPath.substr(0,found);
+	  G4String filePath = formatAndPath.substr(found+1); // get everything after ":"
+#ifdef BDSDEBUG
+	G4cout << __METHOD_NAME__ << "format: " << format   << G4endl;
+	G4cout << __METHOD_NAME__ << "file:   " << filePath << G4endl;
+#endif
+	return std::make_pair(format,filePath);
+	}
+    }
+  return std::make_pair("","");
 }

@@ -1,11 +1,13 @@
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTrajectory.hh"
 
@@ -21,9 +23,6 @@
 #include <algorithm>
 #include <chrono>
 #include <ctime>
-#include <list>
-#include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -101,7 +100,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
       energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
       tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
-      //lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
     }
   FireLaserCompton=true;
 
@@ -159,14 +157,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(SampHC)
     {bdsOutput->WriteHits(SampHC);}
 
-  // LASERWIRE - TO FIX / REIMPLEMENT
-  // remember to uncomment LWCalHC above if using this
-  // BDSLWCalorimeterHitsCollection* LWCalHC=nullptr;
-  // if(LWCalorimeterCollID >= 0)
-  //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
-  // if (LWCalHC)
-  //    {bdsOutput->WriteHits(SampHC);}
-
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
@@ -175,7 +165,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filling histograms & writing energy loss hits" << G4endl;
 #endif
-  BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
@@ -241,7 +230,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
       
-      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
       TrajectoryVector* trajVec = trajCont->GetVector();
       
 #ifdef BDSDEBUG

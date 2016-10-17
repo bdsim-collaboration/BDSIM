@@ -85,6 +85,7 @@ sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
 decapole { return DECAPOLE; }
 multipole { return MULTIPOLE; }
+thinmultipole { return THINMULT; }
 solenoid { return SOLENOID; }
 rcol { return RCOL;}
 ecol { return ECOL; } 
@@ -92,12 +93,15 @@ muspoiler { return MUSPOILER; }
 element { return ELEMENT; }
 screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
+awakespectrometer { return AWAKESPECTROMETER; }
 transform3d { return TRANSFORM3D ; }
 laser { return LASER; }
 degrader { return DEGRADER;}
 
 cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
+field { return FIELD; }
+placement { return PLACEMENT; }
 tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }

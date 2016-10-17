@@ -1,6 +1,5 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
-#include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSDebug.hh"
 
 #include "globals.hh"
@@ -36,21 +35,20 @@ BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
 
   apertureType.toLower();
 
-  if ( types.find(apertureType) == types.end() )
+  auto result = types.find(apertureType);
+  if (result == types.end())
     {
       // it's not a valid key
-      G4cerr << __METHOD_NAME__ << " " << apertureType << "is not a valid apertureType" << G4endl;
+      G4cerr << __METHOD_NAME__ << apertureType << " is not a valid apertureType" << G4endl;
 
       G4cout << "Available geometry types are:" << G4endl;
-      std::map<G4String, BDSBeamPipeType>::iterator it = types.begin();
-      for (; it != types.end(); ++it)
-	{G4cout << "\"" << (*it).first << "\"" << G4endl;}
+      for (auto it : types)
+	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
-
-  BDSBeamPipeType returnValue = types[apertureType];
+  
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "determined aperture type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << "determined aperture type to be " << result->second  << G4endl;
 #endif
-  return returnValue;
+  return result->second;
 }

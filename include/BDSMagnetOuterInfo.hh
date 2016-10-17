@@ -2,8 +2,11 @@
 #define BDSMAGNETOUTERINFO_H
 
 #include "BDSMagnetGeometryType.hh"
+
 #include "globals.hh"         // geant4 types / globals
 #include "G4Material.hh"
+
+#include <ostream>
 
 /**
  * @brief Holder struct of all information required to
@@ -15,25 +18,34 @@
  * @author Laurie Nevay
  */
 
-struct BDSMagnetOuterInfo
+class BDSMagnetOuterInfo
 {
+public:
   /// default constructor
   BDSMagnetOuterInfo();
 
   /// extra constructor to assign all members at once
-  BDSMagnetOuterInfo(BDSMagnetGeometryType geometryTypeIn,
+  BDSMagnetOuterInfo(G4String              nameIn,
+		     BDSMagnetGeometryType geometryTypeIn,
 		     G4double              outerDiameterIn,
 		     G4Material*           outerMaterialIn,
-		     G4double              angleInIn = 0,
-		     G4double              angleOutIn = 0,
-		     G4bool                yokeOnLeft = false);
-		  
+		     G4double              angleInIn             = 0,
+		     G4double              angleOutIn            = 0,
+		     G4bool                yokeOnLeft            = false,
+		     G4String              geometryTypeAndPathIn = "");
+
+  G4String              name;
   BDSMagnetGeometryType geometryType;
   G4double              outerDiameter;
   G4Material*           outerMaterial;
   G4double              angleIn;
   G4double              angleOut;
   G4bool                yokeOnLeft;
+  G4String              geometryTypeAndPath;
+
+  /// Output stream operator implementation.
+  friend std::ostream& operator<< (std::ostream& out, BDSMagnetOuterInfo const& info);
+
 };
 
 #endif

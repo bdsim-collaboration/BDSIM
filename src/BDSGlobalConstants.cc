@@ -4,6 +4,7 @@
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSIntegratorSet.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
@@ -32,6 +33,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   beamKineticEnergy(0.0),
   particleMomentum(0.0),
   particleKineticEnergy(0.0),
+  brho(0.0),
   sMax(0.0),
   turnsTaken(0),
   teleporterlength(0.0)
@@ -85,6 +87,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
     
   teleporterdelta     = G4ThreeVector(0.,0.,0.);
 
+  cOverGeV = CLHEP::c_light /CLHEP::GeV;
+
   CalculateHistogramParameters();
   
   InitRotationMatrices();
@@ -100,6 +104,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   // can be copied by various bits of geometry
   InitVisAttributes();
   InitDefaultUserLimits();
+
+  integratorSet = BDS::DetermineIntegratorSetType(options.integratorSet);
 }
 
 void BDSGlobalConstants::CalculateHistogramParameters()

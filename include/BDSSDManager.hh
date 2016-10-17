@@ -1,11 +1,9 @@
 #ifndef BDSSDMANAGER_H
 #define BDSSDMANAGER_H
 
-#include "BDSEnergyCounterSD.hh"
-#include "BDSLWCalorimeterSD.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSTerminatorSD.hh"
-
+class BDSEnergyCounterSD;
+class BDSSamplerSD;
+class BDSTerminatorSD;
 
 /**
  * @brief A singleton class that holds all required sensitive
@@ -46,10 +44,6 @@ public:
   inline BDSEnergyCounterSD* GetEnergyCounterTunnelSD() const
   {return tunnelECounter;}
 
-  /// SD for a laserwire calorimeter
-  inline BDSLWCalorimeterSD* GetLWCalorimeterSD() const
-  {return lwCalorimeter;}
-  
 private:
   /// Private default constructor for singleton.
   BDSSDManager(); 
@@ -59,7 +53,6 @@ private:
   BDSSamplerSD*       samplerPlane;
   BDSSamplerSD*       samplerCylinder;
   BDSTerminatorSD*    terminator;
-  BDSLWCalorimeterSD* lwCalorimeter;
   BDSEnergyCounterSD* eCounter;
   BDSEnergyCounterSD* tunnelECounter;
   /// @}

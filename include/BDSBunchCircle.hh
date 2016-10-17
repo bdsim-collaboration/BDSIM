@@ -4,7 +4,8 @@
 #include "BDSBunchInterface.hh"
 #include "Randomize.hh"
 
-namespace CLHEP {
+namespace CLHEP
+{
   class RandFlat;
 }
 

@@ -2,7 +2,6 @@
 #define BDSEXTENT_H
 
 #include <ostream>
-#include <tuple>   // for std::tie
 #include <utility> // for pair and pair relational operators
 
 #include "globals.hh" // geant4 types / globals
@@ -38,7 +37,7 @@ public:
   inline std::pair<G4double, G4double> ExtentX() const {return std::make_pair(extXNeg, extXPos);}
   inline std::pair<G4double, G4double> ExtentY() const {return std::make_pair(extYNeg, extYPos);}
   inline std::pair<G4double, G4double> ExtentZ() const {return std::make_pair(extZNeg, extZPos);}
-
+  
   inline G4double XPos() const {return extXNeg;}
   inline G4double XNeg() const {return extXPos;}
   inline G4double YPos() const {return extYNeg;}
@@ -51,6 +50,12 @@ public:
 
   inline G4ThreeVector ExtentNegative() const
   {return G4ThreeVector(extXNeg, extYNeg, extZNeg);}
+  /// @}
+
+  /// @{ The difference in a dimension.
+  inline G4double DX() const {return extXPos - extXNeg;}
+  inline G4double DY() const {return extYPos - extYNeg;}
+  inline G4double DZ() const {return extZPos - extZPos;}
   /// @}
 
   /// @{ Comparison operator.
@@ -94,6 +99,9 @@ public:
 
   /// Return the maximum absolute value considering all dimensions.
   G4double MaximumAbs() const;
+
+  /// Return the maximum abosolute value considering only x,y.
+  G4double MaximumAbsTransverse() const;
   
 private:
   /// @{ Extent.

@@ -5,21 +5,22 @@
 
 #include "BDSTunnelType.hh"
 
+class BDSTunnelFactoryBase;
+class BDSTunnelSection;
+
+class G4Material;
+
 /**
- * @brief A singleton class that provides an interface to all
- * tunnel factories. Each function of a BDSTunnelFactoryBase derived
+ * @brief A singleton class that provides an interface to all tunnel factories.
+ *
+ *  Each function of a BDSTunnelFactoryBase derived
  * class is implemented here, but with the wrapper for BDSTunnelType
  * which is used in this class to utilise the appropriate factory. Note,
  * this class does not own the other factories or keep references to them - 
  * they are accessed through (global) singleton accessors.
  * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
-
-class BDSTunnelFactoryBase;
-class BDSTunnelSection;
-
-class G4Material;
 
 class BDSTunnelFactory
 {

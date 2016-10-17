@@ -133,8 +133,14 @@ add_test(gmad-material ${gmadBinary} material.gmad)
 # test cavitymodel
 add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
 
+# test field
+add_test(gmad-field ${gmadBinary} field.gmad)
+
 # test physics biasing
 add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
+
+# test plaecment
+add_test(gmad-placement ${gmadBinary} placement.gmad)
 
 # test regions
 add_test(gmad-region ${gmadBinary} region.gmad)

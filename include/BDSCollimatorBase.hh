@@ -10,7 +10,7 @@ class G4VSolid;
 /**
  * @brief Base class for collimators with common construction
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSCollimatorBase: public BDSAcceleratorComponent
@@ -20,14 +20,14 @@ public:
 		    G4double length,
 		    G4double outerDiameter,
 		    G4String type,
-		    G4double xApertureIn = 0,
-		    G4double yApertureIn = 0,
-		    G4double xOutApertureIn = 0,
-		    G4double yOutApertureIn = 0,
+		    G4double xApertureIn        = 0,
+		    G4double yApertureIn        = 0,
+		    G4double xOutApertureIn     = 0,
+		    G4double yOutApertureIn     = 0,
 		    G4String collimatorMaterial = "copper",
 		    G4String vacuumMaterial     = "vacuum",
 		    G4String colourIn           = "collimator");
-  ~BDSCollimatorBase();
+  virtual ~BDSCollimatorBase();
 
 protected:
   virtual void Build();

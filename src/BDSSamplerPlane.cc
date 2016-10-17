@@ -1,5 +1,6 @@
 #include "BDSGlobalConstants.hh" 
 #include "BDSSamplerPlane.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 
 #include "globals.hh" // geant4 types / globals

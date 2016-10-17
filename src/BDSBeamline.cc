@@ -84,15 +84,13 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
   return out;
 }
 
-std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
+void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 							   BDSTiltOffset*           tiltOffset,
 							   BDSSamplerType           samplerType,
 							   G4String                 samplerName)
 {
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
-  std::vector<BDSBeamlineElement*> addedComponents;
-  BDSBeamlineElement* element = nullptr;
 
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
@@ -100,26 +98,18 @@ std::vector<BDSBeamlineElement*> BDSBeamline::AddComponent(BDSAcceleratorCompone
       for (G4int i = 0; i < size; ++i)
 	{
 	  if (i < size-1)
-	    {element = AddSingleComponent((*line)[i], tiltOffset);}
+	    {AddSingleComponent((*line)[i], tiltOffset);}
 	  else // only attach the desired sampler to the last one in the line
-	    {element = AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
-	  if (element)
-	    {addedComponents.push_back(element);}
+	    {AddSingleComponent((*line)[i], tiltOffset, samplerType, samplerName);}
 	}
     }
   else
-    {
-      element = AddSingleComponent(component, tiltOffset, samplerType, samplerName);
-      if (element)
-	{addedComponents.push_back(element);}
-    }
+    {AddSingleComponent(component, tiltOffset, samplerType, samplerName);}
   // free memory - as once the rotations are calculated, this is no longer needed
   delete tiltOffset;
-  
-  return addedComponents;
 }
 
-BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
+void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 						    BDSTiltOffset*           tiltOffset,
 						    BDSSamplerType           samplerType,
 						    G4String                 samplerName)
@@ -136,7 +126,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   if (BDSTransform3D* transform = dynamic_cast<BDSTransform3D*>(component))
     {
       ApplyTransform3D(transform);
-      return nullptr;
+      return;
     }
 
   // if it's not a transform3d instance, continue as normal
@@ -168,7 +158,10 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 #ifdef BDSDEBUG
   G4cout << "chord length                " << length      << " mm"         << G4endl;
   G4cout << "angle                       " << angle       << " rad"        << G4endl;
-  G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;
+  if (tiltOffset)
+    {G4cout << "tilt offsetX offsetY        " << *tiltOffset << " rad mm mm " << G4endl;}
+  else
+    {G4cout << "no tilt offset" << G4endl;}
   G4cout << "has finite length           " << hasFiniteLength              << G4endl;
   G4cout << "has finite angle            " << hasFiniteAngle               << G4endl;
   G4cout << "has finite tilt             " << hasFiniteTilt                << G4endl;
@@ -182,7 +175,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 
   // Check this won't overlap with any previous geometry. This is only done for elements
   // that aren't drifts as they should be built by the component factory to match any angles.
-  if (!empty() && (component->GetType() != "drift"))
+  if (!empty() && (component->GetType() != "drift") && (component->GetType() != "thinmultipole"))
     {// can only look back if there is an element - won't clash if no element; also add drifts always
       G4bool   keepGoing   = true;
       G4bool   checkFaces  = true;
@@ -195,7 +188,7 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
 	{
 	  if (inspectedElement) // valid element
 	    {// decrement could return nullptr so have to check if valid element
-	      if (inspectedElement->GetType() == "drift") // leave keepGoing true
+	      if ((inspectedElement->GetType() == "drift")||(inspectedElement->GetType() == "thinmultipole")) // leave keepGoing true
 		{
 		  zSeparation += inspectedElement->GetChordLength();
 		  inspectedElement = GetPrevious(inspectedElement); // decrement
@@ -254,7 +247,6 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   // rotation matrices appropriately
   if (hasFiniteAngle)
     {
-      G4double angle = component->GetAngle();
       // remember our definition of angle - +ve angle bends in -ve x direction in right
       // handed coordinate system
       // rotate about cumulative local y axis of beamline
@@ -434,7 +426,6 @@ BDSBeamlineElement* BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* com
   G4cout << *element;
   G4cout << __METHOD_NAME__ << "component added" << G4endl;
 #endif
-  return element;
 }
 
 void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
@@ -756,6 +747,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
   G4ThreeVector  positionStart = elPosStart - G4ThreeVector(0,0,endPieceLength).transform(*elRotStart);
   G4double         elSPosStart = element->GetSPositionStart();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      positionStart,
 						      positionMiddle,
@@ -772,7 +766,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementBefore(BDSSimpleComponent
 						      elSPosStart - endPieceLength,
 						      elSPosStart - 0.5*endPieceLength,
 						      elSPosStart,
-						      new BDSTiltOffset(*elTiltOffset));
+                                                      forEndPiece);
   return result;
 }
 
@@ -793,6 +787,9 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
     {elRotEnd->rotateY(CLHEP::pi);}
   G4double           elSPosEnd = element->GetSPositionEnd();
   BDSTiltOffset*  elTiltOffset = element->GetTiltOffset();
+  BDSTiltOffset*   forEndPiece = nullptr;
+  if (elTiltOffset)
+    {forEndPiece = new BDSTiltOffset(*elTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(endPiece,
 						      elPosEnd,
 						      positionMiddle,
@@ -809,7 +806,7 @@ BDSBeamlineElement* BDSBeamline::ProvideEndPieceElementAfter(BDSSimpleComponent*
 						      elSPosEnd,
 						      elSPosEnd + 0.5*endPieceLength,
 						      elSPosEnd + endPieceLength,
-						      new BDSTiltOffset(*elTiltOffset));
+						      forEndPiece);
   return result;
 }
 
@@ -819,4 +816,13 @@ G4bool BDSBeamline::IndexOK(G4int index) const
     {return false;}
   else
     {return true;}
+}
+
+std::vector<G4double> BDSBeamline::GetSPositionEndOfEach()
+{
+  std::vector<G4double> sEnd;
+  sEnd.reserve(beamline.size());
+  for (auto element : beamline)
+    {sEnd.push_back(element->GetSPositionEnd()/CLHEP::m);}
+  return sEnd;
 }

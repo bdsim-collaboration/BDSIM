@@ -13,7 +13,6 @@ namespace GMAD
    * @brief Atom class
    * 
    * @author Jochem Snuverink
-   *
    */
 
   struct Atom : public Published<Atom>{
@@ -30,9 +29,9 @@ namespace GMAD
     void clear();
     /// printout
     void print()const;
-    /// set methods by property name
+    /// set methods by property name and value
     template <typename T>
-      void set_value(std::string name, T value);
+      void set_value(std::string property, T value);
 
   private:
     /// publish members so these can be looked up from parser
@@ -40,17 +39,17 @@ namespace GMAD
   };
 
   template <typename T>
-    void Atom::set_value(std::string name, T value)
+    void Atom::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+      std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
-	set(this,name,value);
+	set(this,property,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: parser> unknown atom option \"" << name << "\" with value " << value << std::endl;
+	std::cerr << "Error: parser> unknown atom option \"" << property << "\" with value " << value << std::endl;
 	exit(1);
       }
     }

@@ -6,6 +6,7 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 
+class BDSGeometryExternal;
 class BDSSimpleComponent;
 class G4LogicalVolume;
 class G4VSolid;
@@ -41,6 +42,8 @@ public:
 		 BDSSimpleComponent*   endPieceAfterIn    = nullptr,
 		 G4ThreeVector         inputFaceNormalIn  = G4ThreeVector(0,0,-1),
 		 G4ThreeVector         outputFaceNormalIn = G4ThreeVector(0,0, 1));
+  BDSMagnetOuter(BDSGeometryExternal*  external,
+		 BDSGeometryComponent* magnetContainerIn);
   virtual ~BDSMagnetOuter();
 
   /// Access the magnet container - a BDSGeometryComponent instance that has a suggested

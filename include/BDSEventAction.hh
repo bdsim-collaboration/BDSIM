@@ -13,6 +13,10 @@
 class BDSEventInfo;
 class G4PrimaryVertex;
 
+/**
+ * @brief Process information at the event level.
+ */
+
 class BDSEventAction: public G4UserEventAction
 {
 public:
@@ -35,7 +39,6 @@ private:
 
   G4int samplerCollID_plane;
   G4int samplerCollID_cylin;
-  //G4int lWCalorimeterCollID;
   G4int energyCounterCollID; ///< Collection ID for energy deposition hits for read out geometry.
   G4int tunnelEnergyCounterCollID; ///< Collection ID for the tunnel energy deposition.
   

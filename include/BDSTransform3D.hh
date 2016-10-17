@@ -4,6 +4,19 @@
 #include "globals.hh"
 #include "BDSAcceleratorComponent.hh"
 
+/**
+ * @brief Transform in beam line that takes up no space.
+ *
+ * This applies a transformation to cumulative curvlinear
+ * coordinates as the beam line is built allowing an aribtrary
+ * rotation or displacement of the reference coordinates from
+ * that point on. A tilt or offset should be used instead of 
+ * two of these in conjunction (sandwiching) to offset a particular
+ * BDSAcceleratorComponent.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSTransform3D: public BDSAcceleratorComponent
 {
 public:
@@ -11,7 +24,7 @@ public:
 		 G4double y, G4double z, G4double phi,
 		 G4double theta, G4double psi);
 
-  ~BDSTransform3D();
+  virtual ~BDSTransform3D();
 
   ///@{ Access the change in reference coordinates this component should induce
   inline G4double GetDX() const;

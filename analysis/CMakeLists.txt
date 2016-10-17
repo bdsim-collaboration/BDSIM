@@ -108,3 +108,9 @@ foreach(header ${rebdsimLibLinkDefs})
 endforeach()
 bdsim_install_analysis_headers(${rebdsimHeaders})
 #message(STATUS "rebdsimHeaders ${rebdsimHeaders}")
+
+get_target_property(rebdsimBinaryName rebdsim OUTPUT_NAME)
+set(rebdsimBinary ${CMAKE_CURRENT_BINARY_DIR}/${rebdsimBinaryName} CACHE STRING "rebdsim binary")
+
+# load test macros
+include(rebdsim_test_macros)

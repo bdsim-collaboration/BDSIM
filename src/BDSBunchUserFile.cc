@@ -1,24 +1,26 @@
 #include "BDSBunchUserFile.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4ParticleTable.hh"
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSUtilities.hh"
 
-#include "G4ParticleDefinition.hh"
-#include "G4ParticleTable.hh"
-
-template <class T>BDSBunchUserFile<T>::BDSBunchUserFile():nlinesIgnore(0)
+template<class T>
+BDSBunchUserFile<T>::BDSBunchUserFile():nlinesIgnore(0)
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
 }
 
-template <class T>BDSBunchUserFile<T>::~BDSBunchUserFile()
+template<class T>
+BDSBunchUserFile<T>::~BDSBunchUserFile()
 {
   CloseBunchFile();
 }
 
-template <class T> void BDSBunchUserFile<T>::OpenBunchFile()
+template<class T>
+void BDSBunchUserFile<T>::OpenBunchFile()
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -31,7 +33,8 @@ template <class T> void BDSBunchUserFile<T>::OpenBunchFile()
     }
 }
 
-template <class T> void BDSBunchUserFile<T>::CloseBunchFile()
+template<class T>
+void BDSBunchUserFile<T>::CloseBunchFile()
 {
 #ifdef BDSDEBUG 
   G4cout << __METHOD_NAME__ << G4endl;
@@ -39,7 +42,8 @@ template <class T> void BDSBunchUserFile<T>::CloseBunchFile()
   InputBunchFile.close();
 }
 
-template <class T>void BDSBunchUserFile<T>::ParseFileFormat()
+template<class T>
+void BDSBunchUserFile<T>::ParseFileFormat()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -61,11 +65,17 @@ template <class T>void BDSBunchUserFile<T>::ParseFileFormat()
     G4cout<< __METHOD_NAME__ <<"pos -> "<<pos<<G4endl;
 #endif
     if(token.substr(0,1)=="E" || token.substr(0,1)=="P") {
-      G4String name = token.substr(0,1);
+      G4String name,rest;
+      if(token.substr(0,2)=="Ek") {//Kinetic energy (longer name).
+	name = token.substr(0,2);
+	rest = token.substr(2);
+      } else {
+	name = token.substr(0,1);
+	rest = token.substr(1);
+      }
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ << name << "!"<<G4endl;
 #endif
-      G4String rest = token.substr(1);
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ <<"rest ->"<<rest<<G4endl;
 #endif
@@ -121,6 +131,7 @@ template <class T>void BDSBunchUserFile<T>::ParseFileFormat()
       } else {
 	G4String fmt = rest.substr(pos1+1,pos2-1);
 #ifdef BDSDEBUG 
+
 	G4cout<< __METHOD_NAME__ <<"fmt ->"<<fmt<<G4endl;
 #endif
 	sd.name=name;
@@ -180,26 +191,40 @@ template <class T>void BDSBunchUserFile<T>::ParseFileFormat()
   return;
 }
 
-template <class T> void BDSBunchUserFile<T>::skip(G4int nvalues){
+template<class T>
+void BDSBunchUserFile<T>::skip(G4int nvalues){
   G4double dummy_val;
   for(G4int i=0;i<nvalues;i++) ReadValue(dummy_val);
 }
 
-template <class T> void BDSBunchUserFile<T>::SetDistribFile(G4String filename){
+template<class T>
+void BDSBunchUserFile<T>::SetDistribFile(G4String filename){
   distribFile = BDS::GetFullPath(filename);
 }
 
-template <class T> void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt) {
+template<class T>
+void BDSBunchUserFile<T>::SkipLines()
+{
+  //Skip the a number of lines defined by the user option.
+  G4cout << __METHOD_NAME__ << " - skipping " << nlinesIgnore << " lines" << G4endl;
+  skip((G4int)(nlinesIgnore * fields.size()));
+}
+
+template<class T>
+void BDSBunchUserFile<T>::SetOptions(const GMAD::Options& opt)
+{
   BDSBunchInterface::SetOptions(opt);
   SetDistribFile((G4String)opt.distribFile); 
   SetBunchFormat((G4String)opt.distribFileFormat); 
   SetNLinesIgnore(opt.nlinesIgnore);
   ParseFileFormat();
-  OpenBunchFile(); //
+  OpenBunchFile(); 
+  SkipLines();
   return; 
 }
 
-template <class T> G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="GeV") unit=1;
@@ -213,7 +238,8 @@ template <class T> G4double BDSBunchUserFile<T>::ParseEnergyUnit(G4String &fmt)
   return unit;
 }
 
-template <class T> G4double BDSBunchUserFile<T>::ParseLengthUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseLengthUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="m") unit=1;
@@ -228,7 +254,8 @@ template <class T> G4double BDSBunchUserFile<T>::ParseLengthUnit(G4String &fmt)
   return unit;
 }
 
-template <class T> G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="rad") unit=1;
@@ -240,8 +267,8 @@ template <class T> G4double BDSBunchUserFile<T>::ParseAngleUnit(G4String &fmt)
   }
   return unit;
 }
-
-template <class T> G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
+template<class T>
+G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
 {
   G4double unit=1.;
   if(fmt=="s") unit=1;
@@ -257,7 +284,8 @@ template <class T> G4double BDSBunchUserFile<T>::ParseTimeUnit(G4String &fmt)
   return unit;
 }
 
-template <class T> void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
+template<class T>
+void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		     G4double& xp, G4double& yp, G4double& zp,
 		     G4double& t , G4double&  E, G4double& weight)
 {
@@ -269,28 +297,31 @@ template <class T> void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4dou
   bool tdef = false; //keeps record whether t has been read from file
   
   G4int type;
-  
-  //Skip the a number of lines defined by the user option.
-#ifdef BDSDEBUG 
-  G4cout << __METHOD_NAME__ << "UDEF_BUNCH: skipping " << nlinesIgnore << " lines" << G4endl;
-#endif
-  skip((G4int)(nlinesIgnore * fields.size()));
-  
-  typename std::list<struct BDSBunchUserFile<T>::Doublet>::iterator it;
-  for(it=fields.begin();it!=fields.end();it++)
+
+  for(auto it=fields.begin();it!=fields.end();it++)
     {
 #ifdef BDSDEBUG 
       G4cout<< __METHOD_NAME__ <<it->name<<"  ->  "<<it->unit<<G4endl;
 #endif
-      if(it->name=="E") { 
+      if(it->name=="Ek") { 
 	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
+#ifdef BDSDEBUG 
+	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+#endif
+	E+=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
 #ifdef BDSDEBUG 
 	G4cout << "******** Particle Mass = " << BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass() << G4endl;
 	G4cout << "******** Particle Total Energy = " << E << G4endl;
+	G4cout<< __METHOD_NAME__ << E <<G4endl;
 #endif
-	E-=BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGMass();
+      }
+      else if(it->name=="E") { 
+	ReadValue(E); E *= ( CLHEP::GeV * it->unit ); 
 #ifdef BDSDEBUG 
-	G4cout << "******** Particle Kinetic Energy = " << E << G4endl;
+
+#endif
+#ifdef BDSDEBUG 
+	G4cout << "******** Particle Total Energy = " << E << G4endl;
 	G4cout<< __METHOD_NAME__ << E <<G4endl;
 #endif
       }
@@ -322,6 +353,7 @@ template <class T> void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4dou
       else if(it->name=="z") { 
 	ReadValue(z0); z0 *= ( CLHEP::m * it->unit ); 
 #ifdef BDSDEBUG 
+
 	G4cout<< __METHOD_NAME__ << z0 <<G4endl;
 #endif
       }
@@ -362,7 +394,9 @@ template <class T> void BDSBunchUserFile<T>::GetNextParticle(G4double& x0, G4dou
   z0=z0+Z0*CLHEP::m;
 }
 
-template <class T> template <typename Type> G4bool  BDSBunchUserFile<T>::ReadValue(Type &value)
+template <class T>
+template <typename Type>
+G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
 {
   InputBunchFile>>value; 
   if (InputBunchFile.eof()){ //If the end of the file is reached go back to the beginning of the file.
@@ -375,5 +409,7 @@ template <class T> template <typename Type> G4bool  BDSBunchUserFile<T>::ReadVal
   return !InputBunchFile.eof();
 }
 
-template class BDSBunchUserFile<std::ifstream>;
-template class BDSBunchUserFile<igzstream>;
+
+template BDSBunchUserFile<igzstream>::BDSBunchUserFile();
+
+template BDSBunchUserFile<std::ifstream>::BDSBunchUserFile();

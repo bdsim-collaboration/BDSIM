@@ -3,39 +3,49 @@
 #ifndef BDSGEOMETRYLCDD_H
 #define BDSGEOMETRYLCDD_H
 
-#include "globals.hh"
+#include "BDSColours.hh"
+#include "BDSGeometry.hh"
 #include "BDSMaterials.hh"
-#include "G4UniformMagField.hh"
-#include "G4LogicalVolume.hh"
-#include "G4VSolid.hh"
+
+#include "globals.hh"
+#include "G4Box.hh"
 #include "G4Cons.hh"
-#include "G4Tubs.hh"
+#include "G4FieldManager.hh"
+#include "G4LogicalVolume.hh"
+#include "G4MagIntegratorStepper.hh"
+#include "G4Mag_UsualEqRhs.hh"
 #include "G4Polycone.hh"
 #include "G4Polyhedra.hh"
+#include "G4PVPlacement.hh"
+#include "G4QuadrangularFacet.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4Box.hh"
+#include "G4TessellatedSolid.hh"
 #include "G4Trd.hh"
+#include "G4TriangularFacet.hh"
+#include "G4Tubs.hh"
+#include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4FieldManager.hh"
+#include "G4VSolid.hh"
+
+#include "BDSMagFieldMesh.hh"
 #include "BDSSamplerSD.hh"
+
 #include <fstream>
-#include <vector>
 #include <map>
-#include "BDSColours.hh"
-#include "BDSMagField.hh"
-#include "G4TessellatedSolid.hh"
-#include "G4TriangularFacet.hh"
-#include "G4QuadrangularFacet.hh"
+#include <vector>
 
 // Headers required for XML parsing
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
+
+/**
+ * @brief LCDD geometry format loader.
+ * 
+ * @author J. C. Carter
+ **/
 
 struct POS_REF{
   G4String name;
@@ -57,11 +67,11 @@ struct VIS_REF{
   G4VisAttributes* value;
 };
 
-class BDSGeometryLCDD
+class BDSGeometryLCDD: public BDSGeometry
 {
 public:
   BDSGeometryLCDD(G4String LCDDfile);
-  ~BDSGeometryLCDD();
+  virtual ~BDSGeometryLCDD();
 
   inline G4String GetFieldVolName(){return itsFieldVolName;}
 
@@ -78,21 +88,18 @@ public:
   void parsePHYSVOL(xmlNodePtr cur, G4String volume_name);
   void parseFIELDS(xmlNodePtr cur);
 
-  BDSMagField* GetField();
-  G4UniformMagField* GetUniformField();
-  G4bool GetFieldIsUniform();
+
 
   G4RotationMatrix* RotateComponent(G4ThreeVector rotvalues);
 
-  void Construct(G4LogicalVolume *marker);
-  std::vector<G4LogicalVolume*> SensitiveComponents;           //For registering the sensitive components
+  virtual void Construct(G4LogicalVolume *marker);
   //  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
   std::vector<G4LogicalVolume*> VOL_LIST;
   G4String parseStrChar(xmlChar* value);
   G4double parseDblChar(xmlChar* value);
-  G4bool parseBoolChar(xmlChar* value);
+  G4bool   parseBoolChar(xmlChar* value);
 
-  G4bool stripwhitespace(G4String& str);
+  G4bool   stripwhitespace(G4String& str);
 
   // used for parsing strings for math calculations
   G4bool EvaluateExpression(const char*, G4double& result);
@@ -108,14 +115,13 @@ private:
 #ifndef NOUSERLIMITS
   G4UserLimits* itsUserLimits;
 #endif
-  G4bool itsFieldIsUniform;
   G4String itsFieldVolName;
   // Fetching of imported objects
-  G4VisAttributes* GetVisByName(G4String name);
-  G4VSolid* GetSolidByName(G4String name);
-  G4LogicalVolume* GetLogVolByName(G4String name);
-  G4ThreeVector GetPosition(G4String name);
-  G4ThreeVector GetPosition(xmlNodePtr cur, G4double lunit=0.0);
+  G4VisAttributes*  GetVisByName(G4String name);
+  G4VSolid*         GetSolidByName(G4String name);
+  G4LogicalVolume*  GetLogVolByName(G4String name);
+  G4ThreeVector     GetPosition(G4String name);
+  G4ThreeVector     GetPosition(xmlNodePtr cur, G4double lunit=0.0);
   G4RotationMatrix* GetRotation(G4String name);
   G4RotationMatrix* GetRotation(xmlNodePtr cur, G4double aunit=0.0);
 
@@ -143,11 +149,7 @@ private:
 
   G4double visRed, visGreen, visBlue;
 
-  //The magnetic field
-  BDSMagField* itsMagField;
-  G4UniformMagField* itsUniformMagField;
-
-protected:
+  G4bool fieldIsUniform;
 };
 
 inline G4ThreeVector BDSGeometryLCDD::GetPosition(xmlNodePtr cur, G4double lunit)
@@ -835,7 +837,6 @@ inline void BDSGeometryLCDD::BuildSubtraction(xmlNodePtr cur)
     }
   else
     {
-      // following will crash if componentRotation == nullptr! - JS
       G4Transform3D transform(*componentRotation,PlacementPoint);
       SOLID_LIST.push_back(new G4SubtractionSolid(name,
 						  GetSolidByName(firstname),

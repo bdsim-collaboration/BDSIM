@@ -1,0 +1,7 @@
+beam,  particle="e-",
+       distrType="userfile",
+       distrFileFormat="x[mum]:xp[mrad]:y[mum]:yp[mrad]:z[cm]:Ek[MeV]",
+       distrFile="beam/test/testBeam_0_to_10GeV.txt";
+
+option,ngenerate=100000;
+option,nperfile=100000;

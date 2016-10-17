@@ -1,6 +1,11 @@
 #ifdef USE_LCDD
 #include "BDSGlobalConstants.hh" 
 #include "BDSGeometryLCDD.hh"
+#include "BDSGeometryType.hh"
+#include "BDSMaterials.hh"
+#include "BDSSamplerSD.hh"
+#include "BDSFieldMagDetectorSolenoid.hh"
+
 #include "G4Box.hh"
 #include "G4Colour.hh"
 #include "G4Tubs.hh"
@@ -12,26 +17,26 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4UserLimits.hh"
-#include "BDSMaterials.hh"
-#include "BDSSamplerSD.hh"
-#include "BDSDetectorSolenoidMagField.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4TessellatedSolid.hh"
-#include "G4UniformMagField.hh"
 
 #include <cstdlib>
 #include <cstring>
 #include <list>
 
+
 BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
-  itsMarkerVol(nullptr),itsMagField(nullptr),itsUniformMagField(nullptr)
+  itsMarkerVol(nullptr),
+  fieldIsUniform(false)
 {
 #ifndef NOUSERLIMITS
   itsUserLimits = new G4UserLimits();
   itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+  if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0){
+    itsUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
+  }
 #endif
 
-  itsFieldIsUniform=false;
   itsFieldVolName="";
   itsLCDDfile = LCDDfile;
   visRed = visGreen = visBlue = 0.0;
@@ -109,11 +114,7 @@ BDSGeometryLCDD::BDSGeometryLCDD(G4String LCDDfile):
 
 BDSGeometryLCDD::~BDSGeometryLCDD()
 {
-  delete itsUniformMagField;
-  delete itsMagField;
-#ifndef NOUSERLIMITS
   delete itsUserLimits;
-#endif
 }
 
 void BDSGeometryLCDD::Construct(G4LogicalVolume *marker)
@@ -121,20 +122,6 @@ void BDSGeometryLCDD::Construct(G4LogicalVolume *marker)
   itsMarkerVol = marker;
   parseDoc();
 
-}
-
-G4bool BDSGeometryLCDD::GetFieldIsUniform(){
-  return itsFieldIsUniform;
-}
-
-BDSMagField* BDSGeometryLCDD::GetField()
-{
-  return itsMagField;
-}
-
-G4UniformMagField* BDSGeometryLCDD::GetUniformField()
-{
-  return itsUniformMagField;
 }
 
 void BDSGeometryLCDD::parseDoc()
@@ -204,11 +191,11 @@ void BDSGeometryLCDD::parseDoc()
 	 }
        cur = cur->next;
      }
-   if((!itsMagField) && (!itsUniformMagField)){
+   if(!field){
 #ifdef BDSDEBUG
      G4cout << "BDSGeometryLCDD.cc> No magnetic fields defined. Making default (zero) BDSMagField" << G4endl;
 #endif
-     itsMagField = new BDSMagField();
+     //field = new BDSMagFieldMesh();
    }
 
    xmlFreeDoc(doc);
@@ -386,29 +373,30 @@ void BDSGeometryLCDD::parseFIELDS(xmlNodePtr cur)
   tempcur=tempcur->next;
   while (tempcur != nullptr){
     if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"solenoid"))){
-      if(itsFieldIsUniform==true){
+      if(fieldIsUniform==true){
 	G4Exception("BDSGeometryLCDD::parseFIELDS> making solenoid field but already built dipole field...", "-1", FatalException, "");
       } 
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
-      G4double lunit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"lunit"));
-      G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
-      G4double outer_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_radius")) * lunit;
-      G4double inner_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_radius")) * lunit;
-      G4double inner_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_field")) * funit;
-      G4double outer_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_field")) * funit;
-      G4double zmax = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmax")) * lunit;
-      G4double zmin = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmin")) * lunit;
+      //G4double lunit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"lunit"));
+      //G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
+      //G4double outer_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_radius")) * lunit;
+      //G4double inner_radius = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_radius")) * lunit;
+      //G4double inner_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"inner_field")) * funit;
+      //G4double outer_field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"outer_field")) * funit;
+      //G4double zmax = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmax")) * lunit;
+      //G4double zmin = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"zmin")) * lunit;
 
       //Make the magnetic field
-      itsMagField = new BDSDetectorSolenoidMagField(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
+      //field = new BDSFieldMagDetectorSolenoid(inner_field, outer_field, inner_radius, outer_radius, zmin, zmax);
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"bdsimdipole"))){
       G4String name = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"name"));
       itsFieldVolName = parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"volume"));
       G4double funit = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"funit"));
       G4double field = parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"field")) * funit;
       const G4ThreeVector fieldVec(0,field,0);
-      itsUniformMagField=new G4UniformMagField(fieldVec);
-      itsFieldIsUniform=true;
+      //field=new BDSUniformMagField(fieldVec); TBC
+      G4cout << "REIMPLEMENT UNIFORM FIELD" << G4endl; exit(1);
+      fieldIsUniform=true;
     }else if ((!xmlStrcmp(tempcur->name, (const xmlChar *)"text"))){
     }  else {
       G4cout << tempcur->name << G4endl;
@@ -575,8 +563,7 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 	       G4Exception("BDSGeometry LCDD: Ill defined material fractions.", "-1", FatalException, "");
 	     }
 	     
-	     std::list<std::string> components;
-	     std::list<G4String> stComponents;
+	     std::list<G4String> components;
 	     std::list<G4int> weights;
 	     std::list<G4double> fractions;
 
@@ -592,56 +579,50 @@ void BDSGeometryLCDD::parseMATERIALS(xmlNodePtr cur)
 #ifdef BDSDEBUG
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - component = " << parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")) << G4endl;
 #endif
-		 components.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
-		 stComponents.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
+		 components.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")));
 #ifdef BDSDEBUG
 		 G4cout << components.back() << G4endl;
 		 G4cout << "BDSGeometryLCDD::parseMATERIALS - fraction = " << parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")) << G4endl;
 #endif
 		 fractions.push_back(parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
 	       } else if (!xmlStrcmp(tempcur->name, (const xmlChar *)"composite")){
-		 components.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
-		 stComponents.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref"))); 
+		 components.push_back(parseStrChar(xmlGetProp(tempcur,(const xmlChar*)"ref")));
 		 weights.push_back((G4int)parseDblChar(xmlGetProp(tempcur,(const xmlChar*)"n")));
 	       }
 	       tempcur = tempcur->next;
 	     }
 
-	     std::list<G4String>::iterator sIter;
+#ifdef BDSDEBUG
 	     std::list<G4String>::iterator stIter;
-
-	     //for(sIter = components.begin(), stIter = stComponents.begin();
-	     //	 sIter != components.end(), stIter!= stComponents.end();
-	     //	 sIter++, stIter++){
-	     // G4cout << "String element: " << *stIter << G4endl;
-	     // 
-	     // G4cout << "Element: " << *sIter << G4endl;
-	     //}
-
-	     components.clear();
-
-	     for(stIter = stComponents.begin();
-	     	 stIter!= stComponents.end();
+	     for(stIter = components.begin();
+	     	 stIter!= components.end();
 	     	 stIter++){
-#ifdef BDSDEBUG
 	       G4cout << "String element: " << *stIter << G4endl;
-#endif
-	       components.push_back(*stIter);
-#ifdef BDSDEBUG
-	       G4cout << "Element: " << components.back() << G4endl;
-#endif
 	     }
+#endif
 
 	     if (weights.size()>0){
 #ifdef BDSDEBUG
 	       G4cout << "Size of weights: " << weights.size() << G4endl;
 #endif
-	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, weights);
+	       BDSMaterials::Instance()->AddMaterial(name,
+						     value*unit/(CLHEP::g/CLHEP::cm3),
+						     kStateSolid,
+						     300,
+						     1,
+						     components,
+						     weights);
 	     } else if(fractions.size()>0){
 #ifdef BDSDEBUG
 	       G4cout << "Size of fractions: " << fractions.size() << G4endl;
 #endif
-	       BDSMaterials::Instance()->AddMaterial(name, value*unit/(CLHEP::g/CLHEP::cm3), kStateSolid, 300, 1, components, fractions);
+	       BDSMaterials::Instance()->AddMaterial(name,
+						     value*unit/(CLHEP::g/CLHEP::cm3),
+						     kStateSolid,
+						     300,
+						     1,
+						     components,
+						     fractions);
 	     } else G4Exception("BDSGeometry LCDD: Ill defined material fractions - list of fractions and weights empty.", "-1", FatalException, "");
 
 	   }
@@ -772,7 +753,7 @@ void BDSGeometryLCDD::parseVOLUME(xmlNodePtr cur)
       alogvol->SetUserLimits(itsUserLimits);
 #endif
       
-      SensitiveComponents.push_back(alogvol);
+      sensitiveComponents.push_back(alogvol);
       LOGVOL_LIST.push_back(alogvol);
 
       if(visref==""){ //Default vis settings

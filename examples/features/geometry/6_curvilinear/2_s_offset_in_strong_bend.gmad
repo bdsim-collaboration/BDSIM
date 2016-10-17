@@ -11,8 +11,4 @@ sample, range=m1;
 
 beam, particle="e-",
       energy=1*GeV,
-      distrType="reference",
       S0 = 12.6*m;
-
-option, physicsList="em",
-	ngenerate=1;

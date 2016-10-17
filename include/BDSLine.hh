@@ -3,8 +3,8 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-#include <vector>
 #include <iterator>
+#include <vector>
 
 /**
  * @brief a class that hold multiple accelerator components
@@ -27,19 +27,27 @@ private:
   
 public:
   BDSLine(G4String name);
-  ~BDSLine(){};
+  virtual ~BDSLine(){;}
 
+  /// Add a component to the line.
   void AddComponent(BDSAcceleratorComponent* component);
 
+  /// @{ Iterator mechanics
   typedef BDSLineVector::iterator       iterator;
   typedef BDSLineVector::const_iterator const_iterator;
-  iterator begin() {return line.begin();}
-  iterator end()   {return line.end();}
-  G4bool   empty() {return line.empty();}
-  size_t   size() const {return line.size();}
+  iterator       begin()       {return line.begin();}
+  iterator       end()         {return line.end();}
+  const_iterator begin() const {return line.begin();}
+  const_iterator end()   const {return line.end();}
+  G4bool         empty() const {return line.empty();}
+  /// @}
+
+  /// Size of line
+  size_t size() const {return line.size();}
 
   /// Accessor for part - exposes functionality of the vector for iteration by index.
   BDSAcceleratorComponent * const& operator[](G4int index) const {return line.at(index);}
+
   
   /// Override the BDSAccelerator::Initialise() function to loop over the
   /// line and call that function belonging to each member

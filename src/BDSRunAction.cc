@@ -39,15 +39,6 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   const G4double smax   = BDSGlobalConstants::Instance()->SMaxHistograms() / CLHEP::m;
   const G4int    nbins  = BDSGlobalConstants::Instance()->NBins();
   const G4String slabel = "s [m]";
-
-  // prepare bin edges for a by-element histogram
-  std::vector<double> binedges;
-  binedges.push_back(0.0);
-  BDSBeamline* beamline  = BDSAcceleratorModel::Instance()->GetFlatBeamline();
-  BDSBeamline::iterator it = beamline->begin();
-  for(; it != beamline->end(); ++it)
-    {binedges.push_back((*it)->GetSPositionEnd()/CLHEP::m);}
-
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "histogram parameters calculated to be: " << G4endl;
   G4cout << "s minimum: " << smin     << " m" << G4endl;
@@ -63,7 +54,8 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
 						    "Number of Primaries"); //1
   BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss",
 						    nbins,smin,smax,slabel,"GeV"); //2
-
+  // prepare bin edges for a by-element histogram
+  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetSPositionEndOfEach();
   
   // create per element ("pe") bin width histograms
   BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",

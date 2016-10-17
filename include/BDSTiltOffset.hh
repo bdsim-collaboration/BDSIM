@@ -7,8 +7,7 @@
 #include <ostream>
 
 /**
- * @brief A holder for any placement offsets and rotations for a
- * BDSAcceleratorComponent.
+ * @brief A holder for any placement offsets and rotations for a BDSAcceleratorComponent.
  * 
  * Note, no rotation variables are provided other than along the beam
  * axis (z) as this would cause overlapping volumes between a component
