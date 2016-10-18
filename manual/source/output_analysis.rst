@@ -14,7 +14,7 @@ Setup
 
 Once BDSIM has been installed the following environmental variables must be updated to allow the analysis
 tool, 'rebdsim' (root event BDSIM), to function.  These can be set manually or added to your :code:`.profile` or
-:code:`.bashrc` file.::
+:code:`.bashrc` file::
 
    export BDSIM=<bdsim-INSTALL-dir>
    export PATH=$PATH:$BDSIM/bin
@@ -56,8 +56,8 @@ specified) is the output file name that the resultant analysis will be written t
 Examples::
 
   rebdsim analysisConfig.txt
-  rebdsim analysisConfig.txt output_event-23.root
-  rebdsim analysisConfig.txt output_event-45.root results.root
+  rebdsim analysisConfig.txt output_event.root
+  rebdsim analysisConfig.txt output_event.root results.root
 
 See `Preparing an Analysis Configuration File`_ for details on the analysis configuration.
 
@@ -66,20 +66,20 @@ Interactively in ROOT
 =====================
 
 When using ROOT's interpreter, you can use the functionality of the BDSIM classes
-dynamically.  First you must load the shared library to provide the classes.::
+dynamically. First you must load the shared library to provide the classes::
 
   root> gSystem->Load("<bdsim-install-dir>/lib/librebdsimLib");
 
-..note:: Unforunately, the classes loaded are not exposed for tab completion.
+.. note:: Unforunately, ROOT does not show the loaded classes with tab completion in the interpreter.
 
 Loading this library exposes all classes that are found in :code:`<bdsim>/analysis`. If you
 are familiar with ROOT, you may use the ROOT file as you would any other given the
-classes provided by the library.::
+classes provided by the library::
 
-  root> TFile* f = new TFile("output_event-23.root", "READ");
+  root> TFile* f = new TFile("output_event.root", "READ");
   root> TTree* eventTree = (TTree*)f->Get("Event");
   root> BDSOutputROOTEventLoss* elosslocal = new BDSOutputROOTEventLoss();
-  root> eventTree->SetBranchAddress("Eloss", &elosslocal);
+  root> eventTree->SetBranchAddress("Eloss.", &elosslocal);
   root> eventTree->GetEntry(0);
   root> cout << elosslocal->n << endl;
         345
@@ -93,7 +93,7 @@ The analysis configuration file is a simple text file. This can be prepared by c
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
 
-An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt`.::
+An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt`::
 
   Debug                               1
   InputFilePath                       ./output_event.root
