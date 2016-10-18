@@ -93,7 +93,7 @@ The analysis configuration file is a simple text file. This can be prepared by c
 and editing an example. The text file acts as a thin interface to an analysis in ROOT
 that would commonly use the :code:`TTree->Draw()` method.
 
-An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt`::
+An example can be found in :code:`<bdsim>/examples/features/io/3_rootevent/analysisConfig.txt` ::
 
   Debug                               1
   InputFilePath                       ./output_event.root
