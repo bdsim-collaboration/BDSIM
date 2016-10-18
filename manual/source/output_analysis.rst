@@ -70,7 +70,7 @@ dynamically.  First you must load the shared library to provide the classes.::
 
   root> gSystem->Load("<bdsim-install-dir>/lib/librebdsimLib");
 
-..note:: Unforunately, the classes loaded are not exposed for tab completion.
+.. note:: Unforunately, ROOT does not show the loaded classes with tab completion in the interpreter.
 
 Loading this library exposes all classes that are found in :code:`<bdsim>/analysis`. If you
 are familiar with ROOT, you may use the ROOT file as you would any other given the
