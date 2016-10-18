@@ -80,7 +80,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
 {
   BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
   BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
-  if ((array->XStep() - array->YStep()) > 1e-9)
+  if (std::abs(array->XStep() - array->YStep()) > 1e-9)
     {
       G4cerr << G4endl
 	     << "Warning - asymmetric grid spacing for reflected quadrupole will result in"
