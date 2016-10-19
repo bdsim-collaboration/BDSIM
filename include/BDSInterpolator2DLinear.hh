@@ -16,7 +16,7 @@ class BDSArray2DCoords;
  * This uses a bilinear algorithm to interpolate a 2d array and return
  * the value at any arbitrary point. If the point lies outside the array
  * the default value for the templated parameter is returned (typically 0).
- * Therefore, the field drops abruptly to 0 outside the specified region.
+ * Therefore, the field drops to 0 outside the specified region.
  * 
  * @author Laurie Nevay
  */

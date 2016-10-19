@@ -68,7 +68,7 @@ private:
   BDSInterpolator2D* CreateInterpolator2D(BDSArray2DCoords*    array,
   					  BDSInterpolatorType  interpolatorType) const;
 
-  /// Create the appropriate 2D interpolator for an array.
+  /// Create the appropriate 3D interpolator for an array.
   BDSInterpolator3D* CreateInterpolator3D(BDSArray3DCoords*    array,
   					  BDSInterpolatorType  interpolatorType) const;
 
