@@ -7,6 +7,7 @@
 #include "G4String.hh"
 #include "G4Transform3D.hh"
 
+class BDSArray1DCoords;
 class BDSArray2DCoords;
 class BDSArray3DCoords;
 class BDSArray4DCoords;
@@ -15,6 +16,7 @@ class BDSFieldLoaderBase;
 class BDSFieldMag;
 class BDSFieldE;
 class BDSFieldEM;
+class BDSInterpolator1D;
 class BDSInterpolator2D;
 class BDSInterpolator3D;
 class BDSInterpolator4D;
@@ -64,6 +66,10 @@ private:
 					 BDSInterpolatorType interpolatorType,
 					 G4Transform3D       transform);
 
+  /// Create the appropriate 1D interpolator for an array.
+  BDSInterpolator1D* CreateInterpolator1D(BDSArray1DCoords*    array,
+  					  BDSInterpolatorType  interpolatorType) const;
+  
   /// Create the appropriate 2D interpolator for an array.
   BDSInterpolator2D* CreateInterpolator2D(BDSArray2DCoords*    array,
   					  BDSInterpolatorType  interpolatorType) const;
