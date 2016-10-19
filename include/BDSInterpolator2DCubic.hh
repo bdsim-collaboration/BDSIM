@@ -33,21 +33,6 @@ protected:
 private:
   /// Private default constructor to force use of provided one.
   BDSInterpolator2DCubic() = delete;
-
-  /// Cubic interpolation in 1 dimension.
-  BDSFieldValue CubicInterpolate(const BDSFieldValue p[4],
-				 const G4double      x) const;
-
-  /// Cubic interpolation in 2 dimensions.
-  BDSFieldValue BiCubicInterpolate(const BDSFieldValue p[4][4],
-				   const G4double      x,
-				   const G4double      y) const;
-
-  /// Cubic interpolation in 3 dimensions.
-  BDSFieldValue TriCubicInterpolate(const BDSFieldValue p[4][4][4],
-				    const G4double      x,
-				    const G4double      y,
-				    const G4double      z) const;
 };
 
 #endif

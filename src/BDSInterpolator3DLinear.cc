@@ -1,6 +1,7 @@
 #include "BDSArray3DCoords.hh"
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator3DLinear.hh"
+#include "BDSInterpolatorRoutines.hh"
 
 #include "globals.hh"
 
@@ -12,13 +13,6 @@ BDSInterpolator3DLinear::BDSInterpolator3DLinear(BDSArray3DCoords* arrayIn):
 
 BDSInterpolator3DLinear::~BDSInterpolator3DLinear()
 {;}
-
-BDSFieldValue BDSInterpolator3DLinear::Interpolate1D(const BDSFieldValue& v1,
-						     const BDSFieldValue& v2,
-						     const G4double       dist) const
-{
-  return v1*(1.-dist) + v2*dist;
-}
 
 BDSFieldValue BDSInterpolator3DLinear::GetInterpolatedValueT(G4double x,
 							     G4double y,
@@ -53,17 +47,17 @@ BDSFieldValue BDSInterpolator3DLinear::GetInterpolatedValueT(G4double x,
   BDSFieldValue C111 = array->GetConst(x1,y1,z1);
 
   // Interpolate along x
-  BDSFieldValue C00  = Interpolate1D(C000, C100, xDist);
-  BDSFieldValue C01  = Interpolate1D(C001, C101, xDist);
-  BDSFieldValue C10  = Interpolate1D(C010, C110, xDist);
-  BDSFieldValue C11  = Interpolate1D(C011, C111, xDist);
+  BDSFieldValue C00  = BDS::Linear1D(C000, C100, xDist);
+  BDSFieldValue C01  = BDS::Linear1D(C001, C101, xDist);
+  BDSFieldValue C10  = BDS::Linear1D(C010, C110, xDist);
+  BDSFieldValue C11  = BDS::Linear1D(C011, C111, xDist);
 
   // Interpolate along y
-  BDSFieldValue C0   = Interpolate1D(C00, C10, yDist);
-  BDSFieldValue C1   = Interpolate1D(C01, C11, yDist);
+  BDSFieldValue C0   = BDS::Linear1D(C00, C10, yDist);
+  BDSFieldValue C1   = BDS::Linear1D(C01, C11, yDist);
 
   // Interpolate along z
-  BDSFieldValue C    = Interpolate1D(C0, C1, zDist);
+  BDSFieldValue C    = BDS::Linear1D(C0, C1, zDist);
 
   return C;
 }
