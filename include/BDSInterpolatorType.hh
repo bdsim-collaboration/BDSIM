@@ -16,7 +16,7 @@ struct interpolatortypes_def
   enum type
     {
       none,
-      nearest2d, linear2d,
+      nearest2d, linear2d, cubic2d,
       nearest3d, linear3d,
       nearest4d, linear4d
     };

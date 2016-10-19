@@ -11,6 +11,7 @@
 #include "BDSInterpolator2D.hh"
 #include "BDSInterpolator2DLinear.hh"
 #include "BDSInterpolator2DNearest.hh"
+#include "BDSInterpolator2DCubic.hh"
 #include "BDSInterpolator3D.hh"
 #include "BDSInterpolator3DLinear.hh"
 #include "BDSInterpolator3DNearest.hh"
@@ -113,6 +114,8 @@ BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   arra
       {result = new BDSInterpolator2DNearest(array); break;}
     case BDSInterpolatorType::linear2d:
       {result = new BDSInterpolator2DLinear(array); break;}
+    case BDSInterpolatorType::cubic2d:
+      {result = new BDSInterpolator2DCubic(array); break;}
     default:
       {
 	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
