@@ -95,12 +95,14 @@ For more details consult documentation on http://www.pp.rhul.ac.uk/bdsim/manual/
 Directories
 ===================
 
-parser/          : gmad parser
-examples/        : sample lattices
-manual/          : documentation
-include/         : header files
-src/             : source files
+analysis/        : analysis source files
 cmake/           : cmake configuration files
+depend/          : bootstrapping scripts
+examples/        : sample lattices
+include/         : header files
+manual/          : documentation
+parser/          : gmad parser
+src/             : source files
 test/            : various test libraries
 utils/           : various "useful" scripts
 vis/             : default visualisation files
