@@ -58,37 +58,17 @@ BDSFieldValue BDSInterpolator2DCubic::GetInterpolatedValueT(G4double x, G4double
   // 00 10 20 30
   
   G4double x1 = floor(xarr);
-  G4double x2 = ceil(xarr);
   G4double y1 = floor(yarr);
-  G4double y2 = ceil(yarr);
 
-  // Central values
-  BDSFieldValue Q11 = array->GetConst(x1,y1);
-  BDSFieldValue Q12 = array->GetConst(x1,y2);
-  BDSFieldValue Q22 = array->GetConst(x2,y2);
-  BDSFieldValue Q21 = array->GetConst(x2,y1);
+  BDSFieldValue localData[4][4];
 
-  // Surrounding values
-  BDSFieldValue Q00 = array->GetConst(x1-1, y1-1);
-  BDSFieldValue Q10 = array->GetConst(x1,   y1-1);
-  BDSFieldValue Q20 = array->GetConst(x2,   y1-1);
-  BDSFieldValue Q30 = array->GetConst(x2+1, y1-1);
-  BDSFieldValue Q31 = array->GetConst(x2+1, y1);
-  BDSFieldValue Q32 = array->GetConst(x2+1, y2);
-  BDSFieldValue Q33 = array->GetConst(x2+1, y2+1);
-  BDSFieldValue Q23 = array->GetConst(x2,   y2+1);
-  BDSFieldValue Q13 = array->GetConst(x1,   y2+1);
-  BDSFieldValue Q03 = array->GetConst(x1-1, y2+1);
-  BDSFieldValue Q02 = array->GetConst(x1-1, y2);
-  BDSFieldValue Q01 = array->GetConst(x1-1, y1);
-
-  BDSFieldValue localData[4][4] =
+  G4double x0 = x1-1;
+  G4double y0 = y1-1;
+  for (int i = 0; i < 4; i++)
     {
-      {Q03, Q13, Q23, Q33},
-      {Q02, Q12, Q22, Q32},
-      {Q01, Q11, Q21, Q31},
-      {Q00, Q10, Q20, Q30}
-    };
+      for (int j = 0; j < 4; j++)
+	{localData[i][j] = array->GetConst(x0+i, y0+j);}
+    }
 
   return BiCubicInterpolate(localData, xarr-x1, yarr-y1);
 }
