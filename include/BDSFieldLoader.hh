@@ -9,6 +9,7 @@
 
 class BDSArray2DCoords;
 class BDSArray3DCoords;
+class BDSArray4DCoords;
 class BDSFieldInfo;
 class BDSFieldLoaderBase;
 class BDSFieldMag;
@@ -16,6 +17,7 @@ class BDSFieldE;
 class BDSFieldEM;
 class BDSInterpolator2D;
 class BDSInterpolator3D;
+class BDSInterpolator4D;
 
 /**
  * @brief A loader for various field map formats.
@@ -68,6 +70,10 @@ private:
 
   /// Create the appropriate 2D interpolator for an array.
   BDSInterpolator3D* CreateInterpolator3D(BDSArray3DCoords*    array,
+  					  BDSInterpolatorType  interpolatorType) const;
+
+  /// Create the appropriate 4D interpolator for an array.
+  BDSInterpolator4D* CreateInterpolator4D(BDSArray4DCoords*    array,
   					  BDSInterpolatorType  interpolatorType) const;
   
 };

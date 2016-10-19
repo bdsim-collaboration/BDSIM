@@ -14,6 +14,9 @@
 #include "BDSInterpolator3D.hh"
 #include "BDSInterpolator3DLinear.hh"
 #include "BDSInterpolator3DNearest.hh"
+#include "BDSInterpolator4D.hh"
+#include "BDSInterpolator4DLinear.hh"
+#include "BDSInterpolator4DNearest.hh"
 #include "BDSInterpolatorType.hh"
 #include "BDSThreeVector.hh"
 
@@ -23,6 +26,8 @@
 #include <fstream>
 
 class BDSArray2DCoords;
+class BDSArray3DCoords;
+class BDSArray4DCoords;
 
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;
 
@@ -136,6 +141,26 @@ BDSInterpolator3D* BDSFieldLoader::CreateInterpolator3D(BDSArray3DCoords*   arra
       }
     }
   return result;
+}
+
+BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   array,
+							BDSInterpolatorType interpolatorType) const
+{
+  BDSInterpolator4D* result = nullptr;
+  switch (interpolatorType.underlying())
+    {
+    case BDSInterpolatorType::nearest4d:
+      {result = new BDSInterpolator4DNearest(array); break;}
+    case BDSInterpolatorType::linear4d:
+      {result = new BDSInterpolator4DLinear(array); break;}
+    default:
+      {
+	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	exit(1);
+	break;
+      }
+    }
+  return result;	
 }
 
 BDSFieldE* BDSFieldLoader::LoadEField(G4String /*filePath*/, BDSFieldFormat /*format*/)
