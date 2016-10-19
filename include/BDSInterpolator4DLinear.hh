@@ -18,6 +18,9 @@ class BDSArray4DCoords;
  * the default value for the templated parameter is returned (typically 0).
  * Therefore, the field drops to 0 outside the specified region.
  * 
+ * This is based on an extension of the trilinear algorithm described in 
+ * BDSInterpolator3DLinear.hh.
+ * 
  * @author Laurie Nevay
  */
 

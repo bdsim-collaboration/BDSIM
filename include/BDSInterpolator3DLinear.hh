@@ -17,6 +17,9 @@ class BDSArray3DCoords;
  * the value at any arbitrary point. If the point lies outside the array
  * the default value for the templated parameter is returned (typically 0).
  * Therefore, the field drops to 0 outside the specified region.
+ *
+ * This is based on the following article:
+ * https://en.wikipedia.org/wiki/Trilinear_interpolation
  * 
  * @author Laurie Nevay
  */
