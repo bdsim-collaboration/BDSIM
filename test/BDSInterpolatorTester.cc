@@ -65,12 +65,37 @@ int main(int /*argc*/, char** /*argv*/)
   double ymin = -25*CLHEP::cm;
   double ymax = 25*CLHEP::cm;
   int    nY   = 100;
-  std::string outputNameNearest = "nearest.dat";
-  std::string outputNameLinear  = "linear.dat";
-  std::string arrayName         = "array.dat";
 
-  // Nearest Neighbour
-  BDSFieldInfo* infoNearest = new BDSFieldInfo(BDSFieldType::xy,
+  // 2D Nearest Neighbour
+  BDSFieldInfo* infoBiNearest = new BDSFieldInfo(BDSFieldType::xy,
+						 0,
+						 BDSIntegratorType::g4classicalrk4,
+						 nullptr,
+						 false,
+						 G4Transform3D(),
+						 nullptr,
+						 "square120x120_2mm.TXT",
+						 BDSFieldFormat::poisson2dquad,
+						 BDSInterpolatorType::nearest2d);
+  
+  BDSFieldMag* biNearest = BDSFieldLoader::Instance()->LoadMagField(*infoBiNearest);
+
+  // 2D Linear
+  BDSFieldInfo* infoBiLinear = new BDSFieldInfo(BDSFieldType::xy,
+						0,
+						BDSIntegratorType::g4classicalrk4,
+						nullptr,
+						false,
+						G4Transform3D(),
+						nullptr,
+						"square120x120_2mm.TXT",
+						BDSFieldFormat::poisson2dquad,
+						BDSInterpolatorType::linear2d);
+  
+  BDSFieldMag* biLinear = BDSFieldLoader::Instance()->LoadMagField(*infoBiLinear);
+
+  // 2D Cubic
+  BDSFieldInfo* infoBiCubic = new BDSFieldInfo(BDSFieldType::xy,
 					       0,
 					       BDSIntegratorType::g4classicalrk4,
 					       nullptr,
@@ -79,26 +104,12 @@ int main(int /*argc*/, char** /*argv*/)
 					       nullptr,
 					       "square120x120_2mm.TXT",
 					       BDSFieldFormat::poisson2dquad,
-					       BDSInterpolatorType::nearest2d);
+					       BDSInterpolatorType::cubic2d);
   
-  BDSFieldMag* nearest = BDSFieldLoader::Instance()->LoadMagField(*infoNearest);
-
-  // Nearest Neighbour
-  BDSFieldInfo* infoLinear = new BDSFieldInfo(BDSFieldType::xy,
-					      0,
-					      BDSIntegratorType::g4classicalrk4,
-					      nullptr,
-					      false,
-					      G4Transform3D(),
-					      nullptr,
-					      "square120x120_2mm.TXT",
-					      BDSFieldFormat::poisson2dquad,
-					      BDSInterpolatorType::linear2d);
-  
-  BDSFieldMag* linear = BDSFieldLoader::Instance()->LoadMagField(*infoLinear);
+  BDSFieldMag* biCubic = BDSFieldLoader::Instance()->LoadMagField(*infoBiCubic);
 
   // Get the raw data
-  BDSFieldMagInterpolated2D* fieldInterp = dynamic_cast<BDSFieldMagInterpolated2D*>(nearest);
+  BDSFieldMagInterpolated2D* fieldInterp = dynamic_cast<BDSFieldMagInterpolated2D*>(biNearest);
   auto interp = fieldInterp->Interpolator();
   auto arrCoords = interp->Array();
   const BDSArray4D* arr = dynamic_cast<const BDSArray4D*>(arrCoords);
@@ -108,15 +119,18 @@ int main(int /*argc*/, char** /*argv*/)
   ofile.close();
 
   // Query across full range of magnet including just outside range too.
-  Query(nearest, ymin, ymax, xmin, xmax, nX, nY, "nearest");
-  Query(linear, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "linear");
+  Query(biNearest, ymin, ymax, xmin, xmax, nX, nY, "nearest");
+  Query(biLinear, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "linear");
+  Query(biCubic, ymin, ymax, xmin, xmax, 3*nX, 3*nY, "cubic");
 
   // Now query in small region where there's large variation.
-  Query(nearest, 50, 110, 110, 170, nX, nY, "nearest_zoom");
-  Query(linear, 50, 110, 110, 170, nX, nY, "linear_zoom");
+  Query(biNearest, 50, 110, 110, 170, nX, nY, "nearest_zoom");
+  Query(biLinear, 50, 110, 110, 170, nX, nY, "linear_zoom");
+  Query(biCubic, 50, 110, 110, 170, nX, nY, "cubic_zoom");
 
-  G4cout << nearest->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
-  G4cout << linear->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
+  G4cout << biNearest->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
+  G4cout << biLinear->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
+  G4cout << biCubic->GetField(G4ThreeVector(130, 74, 0)) << G4endl;
 
   return 0;
 }
