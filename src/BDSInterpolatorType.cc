@@ -13,7 +13,9 @@ std::map<BDSInterpolatorType, std::string>* BDSInterpolatorType::dictionary =
       {BDSInterpolatorType::nearest2d,  "nearest2d"},
       {BDSInterpolatorType::linear2d,   "linear2d"},
       {BDSInterpolatorType::nearest3d,  "nearest3d"},
-      {BDSInterpolatorType::linear3d,   "linear3d"}
+      {BDSInterpolatorType::linear3d,   "linear3d"},
+      {BDSInterpolatorType::nearest4d,  "nearest4d"},
+      {BDSInterpolatorType::linear4d,   "linear4d"}
     });
 
 BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
@@ -23,6 +25,8 @@ BDSInterpolatorType BDS::DetermineInterpolatorType(G4String interpolatorType)
   types["linear2d"]  = BDSInterpolatorType::linear2d;
   types["nearest3d"] = BDSInterpolatorType::nearest3d;
   types["linear3d"]  = BDSInterpolatorType::linear3d;
+  types["nearest4d"] = BDSInterpolatorType::nearest4d;
+  types["linear4d"]  = BDSInterpolatorType::linear4d;
 
   interpolatorType.toLower();
 
