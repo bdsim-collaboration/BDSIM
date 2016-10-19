@@ -214,6 +214,7 @@ void BDSGeometryFactorySQL::BuildSQLObjects(G4String file)
 	  //Set the user limits and visual attributes
 	  SetLogVolAtt(logVol, lengthUserLimit);
 	  VOL_LIST.push_back(logVol);
+	  lvs.push_back(logVol);
 	}
       PlaceComponents(itsSQLTable[i], VOL_LIST);
     }
@@ -654,7 +655,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildTorus(BDSMySQLTable* aSQLTable, G4i
 				rSwept,
 				sphi,
 				dphi);
-  
+  solids.push_back(aTorus);
 
   G4LogicalVolume* aTorusVol = 
     new G4LogicalVolume(aTorus,
@@ -706,7 +707,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildSampler(BDSMySQLTable* aSQLTable, G
 				length/2,
 				0,
 				CLHEP::twopi*CLHEP::radian);
-
+  solids.push_back(aSampler);
   G4LogicalVolume* aSamplerVol = 
     new G4LogicalVolume(aSampler,
 			BDSMaterials::Instance()->GetMaterial(Material),
@@ -755,7 +756,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildTube(BDSMySQLTable* aSQLTable, G4in
 			     length/2,
 			     sphi,
 			     dphi);
-  
+  solids.push_back(aTubs);
   G4LogicalVolume* aTubsVol = 
     new G4LogicalVolume(aTubs,
 			BDSMaterials::Instance()->GetMaterial(Material),
@@ -789,7 +790,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildEllipticalTube(BDSMySQLTable* aSQLT
 							   lengthZ/2
 							   );
   
-  
+  solids.push_back(aEllipticalTube);
   G4LogicalVolume* aEllipticalTubeVol = 
     new G4LogicalVolume(aEllipticalTube,
 			BDSMaterials::Instance()->GetMaterial(Material),

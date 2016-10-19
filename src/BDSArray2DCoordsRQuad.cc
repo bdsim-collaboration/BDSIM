@@ -73,12 +73,12 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
     {
       if (y < nY)
 	{// C quadrant - coordinate flip is a subtraction in array coords
-	  xi = nX - x; xr = -1; // flip
-	  yi = nY - y; yr = -1; // flip
+	  xi = nX - 1 - x; xr = -1; // flip
+	  yi = nY - 1 - y; yr = -1; // flip
 	}
       else
 	{// B quadrant
-	  xi = nX - x; // flip
+	  xi = nX - 1 - x; // flip
 	  yi = y - nY; yr = -1; // just offset index, but flip result
 	}
     }
@@ -87,7 +87,7 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
       if (y < nY)
 	{// D quadrant
 	  xi = x - nX; xr = -1;// just offset index, flip x component
-	  yi = nY - y;
+	  yi = nY - 1 - y;
 	}
       else
 	{// A quadrant
@@ -123,10 +123,10 @@ G4bool BDSArray2DCoordsRQuad::Outside(const G4int x,
 				      const G4int z,
 				      const G4int t) const
 {
-  G4bool rx = x < 0 || x > 2*nX;
-  G4bool ry = y < 0 || y > 2*nY;
-  G4bool rz = z < 0 || z > 2*nZ;
-  G4bool rt = t < 0 || t > 2*nT;
+  G4bool rx = x < 0 || x > 2*(nX-1);
+  G4bool ry = y < 0 || y > 2*(nY-1);
+  G4bool rz = z < 0 || z > 2*(nZ-1);
+  G4bool rt = t < 0 || t > 2*(nT-1);
   return rx || ry || rz || rt;
 }
 

@@ -67,8 +67,8 @@ public:
   /// @{ Overridden from BDSArray4D.
   virtual const BDSFieldValue& GetConst(const G4int x,
 					const G4int y,
-					const G4int z,
-					const G4int t) const;
+					const G4int z = 0,
+					const G4int t = 0) const;
 
   virtual G4bool Outside(const G4int x,
 			 const G4int y,
