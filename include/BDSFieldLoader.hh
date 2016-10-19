@@ -8,12 +8,14 @@
 #include "G4Transform3D.hh"
 
 class BDSArray2DCoords;
+class BDSArray3DCoords;
 class BDSFieldInfo;
 class BDSFieldLoaderBase;
 class BDSFieldMag;
 class BDSFieldE;
 class BDSFieldEM;
 class BDSInterpolator2D;
+class BDSInterpolator3D;
 
 /**
  * @brief A loader for various field map formats.
@@ -62,7 +64,11 @@ private:
 
   /// Create the appropriate 2D interpolator for an array.
   BDSInterpolator2D* CreateInterpolator2D(BDSArray2DCoords*    array,
-  					  BDSInterpolatorType  interpolatorType);
+  					  BDSInterpolatorType  interpolatorType) const;
+
+  /// Create the appropriate 2D interpolator for an array.
+  BDSInterpolator3D* CreateInterpolator3D(BDSArray3DCoords*    array,
+  					  BDSInterpolatorType  interpolatorType) const;
   
 };
 
