@@ -37,7 +37,7 @@ def Run(filepath,nparticles,verbose):
     l.Run("@CMAKE_BINARY_DIR@/bdsim", "@MADX_EXECUTABLE@")
 
     # load and compare the tracking output from both simualtions
-    l.Compare(addPrimaries=False)                                
+    l.Compare(rebdsim="@CMAKE_BINARY_DIR@/analysis/rebdsim", addPrimaries=False)                                
 
     
 def Clean(filepath):

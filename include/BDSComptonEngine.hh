@@ -9,7 +9,7 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 
 /**
- * @brief Engine to calcualte product of compton scattering process.
+ * @brief Engine to calculate product of compton scattering process.
  *
  * @author Grahame Blair.
  */

@@ -64,7 +64,7 @@ private:
   void InitialiseRegions();
   
   /// Convert the parser beamline_list to BDSAcceleratorComponents with help of BDSComponentFactory
-  /// and put in BDSBeamline container that calcualtes coordinates and extent of beamline
+  /// and put in BDSBeamline container that calculates coordinates and extent of beamline
   void BuildBeamline();
 
   /// Build the tunnel around the already constructed flat beam line.
