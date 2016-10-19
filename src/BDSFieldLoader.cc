@@ -8,14 +8,20 @@
 #include "BDSFieldMag.hh"
 #include "BDSFieldMagInterpolated2D.hh"
 #include "BDSFieldValue.hh"
+#include "BDSInterpolator1D.hh"
+#include "BDSInterpolator1DCubic.hh"
+#include "BDSInterpolator1DLinear.hh"
+#include "BDSInterpolator1DNearest.hh"
 #include "BDSInterpolator2D.hh"
+#include "BDSInterpolator2DCubic.hh"
 #include "BDSInterpolator2DLinear.hh"
 #include "BDSInterpolator2DNearest.hh"
-#include "BDSInterpolator2DCubic.hh"
 #include "BDSInterpolator3D.hh"
+#include "BDSInterpolator3DCubic.hh"
 #include "BDSInterpolator3DLinear.hh"
 #include "BDSInterpolator3DNearest.hh"
 #include "BDSInterpolator4D.hh"
+#include "BDSInterpolator4DCubic.hh"
 #include "BDSInterpolator4DLinear.hh"
 #include "BDSInterpolator4DNearest.hh"
 #include "BDSInterpolatorType.hh"
@@ -26,6 +32,7 @@
 #include <algorithm>
 #include <fstream>
 
+class BDSArray1DCoords;
 class BDSArray2DCoords;
 class BDSArray3DCoords;
 class BDSArray4DCoords;
@@ -104,6 +111,28 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
   return result;
 }
 
+BDSInterpolator1D* BDSFieldLoader::CreateInterpolator1D(BDSArray1DCoords*   array,
+							BDSInterpolatorType interpolatorType) const
+{
+  BDSInterpolator1D* result = nullptr;
+  switch (interpolatorType.underlying())
+    {
+    case BDSInterpolatorType::nearest2d:
+      {result = new BDSInterpolator1DNearest(array); break;}
+    case BDSInterpolatorType::linear2d:
+      {result = new BDSInterpolator1DLinear(array); break;}
+    case BDSInterpolatorType::cubic2d:
+      {result = new BDSInterpolator1DCubic(array); break;}
+    default:
+      {
+	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	exit(1);
+	break;
+      }
+    }
+  return result;
+}
+
 BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   array,
 							BDSInterpolatorType interpolatorType) const
 {
@@ -136,6 +165,8 @@ BDSInterpolator3D* BDSFieldLoader::CreateInterpolator3D(BDSArray3DCoords*   arra
       {result = new BDSInterpolator3DNearest(array); break;}
     case BDSInterpolatorType::linear3d:
       {result = new BDSInterpolator3DLinear(array); break;}
+    case BDSInterpolatorType::cubic3d:
+      {result = new BDSInterpolator3DCubic(array); break;}
     default:
       {
 	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
@@ -156,6 +187,8 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
       {result = new BDSInterpolator4DNearest(array); break;}
     case BDSInterpolatorType::linear4d:
       {result = new BDSInterpolator4DLinear(array); break;}
+    case BDSInterpolatorType::cubic4d:
+      {result = new BDSInterpolator4DCubic(array); break;}
     default:
       {
 	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
