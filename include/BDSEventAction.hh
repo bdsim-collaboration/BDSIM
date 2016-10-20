@@ -28,18 +28,16 @@ public:
   void StoreSeedState(G4String seedState) {seedStateAtStart = seedState;}
     
 private:
-  BDSAnalysisManager* analMan;
-  G4bool verboseEvent;
-  G4int  verboseEventNumber;
+  G4bool verboseEvent;       ///< Copy of BDSGlobalConstants::VerboseEvent()
+  G4int  verboseEventNumber; ///< Copy of BDSGlobalConstants::VerboseEventNumber()
   G4bool isBatch;
+  G4int  printModulo;
 
   G4int samplerCollID_plane;
   G4int samplerCollID_cylin;
   G4int energyCounterCollID; ///< Collection ID for energy deposition hits for read out geometry.
   G4int tunnelEnergyCounterCollID; ///< Collection ID for the tunnel energy deposition.
   
-  G4int printModulo;
-
   time_t startTime; ///< Time at the start of the event.
   time_t stopTime;  ///< Time at the end of the event.
 
