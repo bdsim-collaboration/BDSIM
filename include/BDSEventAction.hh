@@ -1,16 +1,14 @@
 #ifndef BDSEVENTACTION_H
 #define BDSEVENTACTION_H
 
-#include "BDSAnalysisManager.hh"
-
 #include "globals.hh" // geant4 types / globals
-#include "G4Event.hh"
 #include "G4UserEventAction.hh"
 
 #include <ctime>
 #include <string>
 
 class BDSEventInfo;
+class G4Event;
 class G4PrimaryVertex;
 
 class BDSEventAction: public G4UserEventAction
