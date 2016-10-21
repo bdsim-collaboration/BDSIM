@@ -26,6 +26,8 @@ void Query(BDSFieldMag* field,
 	   G4int nX, G4int nY,
 	   G4String outputName)
 {
+  G4cout << "Querying " << outputName << G4endl;
+  
   double xStep = (xmax - xmin) / (double)nX;
   double yStep = (ymax - ymin) / (double)nY;
   
@@ -37,7 +39,8 @@ void Query(BDSFieldMag* field,
     {
       for (double x = xmin; x < xmax; x += xStep)
 	{
-	  std::cout << "\r" << i;
+	  if (i%1000 == 0)
+	    {std::cout << "\r" << i;}
 	  G4ThreeVector result = field->GetField(G4ThreeVector(x,y,0));
 	  ofile << x          << "\t"
 		<< y          << "\t"
