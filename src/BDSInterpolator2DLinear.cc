@@ -1,6 +1,7 @@
 #include "BDSArray2DCoords.hh"
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator2DLinear.hh"
+#include "BDSInterpolatorRoutines.hh"
 
 #include "globals.hh"
 
@@ -19,10 +20,18 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
   G4double yarr = array->ArrayCoordsFromY(y);
   
   G4double x1 = floor(xarr);
-  G4double x2 = ceil(xarr);
+  //G4double x2 = ceil(xarr);
   G4double y1 = floor(yarr);
-  G4double y2 = ceil(yarr);
-  
+  //G4double y2 = ceil(yarr);
+
+  BDSFieldValue localData[2][2];
+  for (int i = 0; i < 2; i++)
+    {
+      for (int j = 0; j < 2; j++)
+	{localData[i][j] = array->GetConst(x1+i, y1+i);}
+    }
+
+  /*
   BDSFieldValue Q11 = array->GetConst(x1,y1);
   BDSFieldValue Q12 = array->GetConst(x1,y2);
   BDSFieldValue Q22 = array->GetConst(x2,y2);
@@ -36,6 +45,9 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
     (Q21 * xmx1 * y2my) +
     (Q12 * x2mx * ymy1) +
     (Q22 * xmx1 * ymy1);
+  */
+
+  BDSFieldValue result = BDS::Linear2D(localData, xarr-x1, yarr-y1);
   
   return result;
 }

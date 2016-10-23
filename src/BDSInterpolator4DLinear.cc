@@ -1,6 +1,7 @@
 #include "BDSArray4DCoords.hh"
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator4DLinear.hh"
+#include "BDSInterpolatorRoutines.hh"
 
 #include "globals.hh"
 
@@ -31,13 +32,32 @@ BDSFieldValue BDSInterpolator4DLinear::GetInterpolatedValueT(G4double x,
   G4double tarr = array->ArrayCoordsFromT(t);
   
   G4double x0 = floor(xarr);
-  G4double x1 = ceil(xarr);
+  //G4double x1 = ceil(xarr);
   G4double y0 = floor(yarr);
-  G4double y1 = ceil(yarr);
+  //G4double y1 = ceil(yarr);
   G4double z0 = floor(zarr);
-  G4double z1 = floor(zarr);
+  //G4double z1 = ceil(zarr);
   G4double t0 = floor(tarr);
-  G4double t1 = floor(tarr);
+  //G4double t1 = ceil(tarr);
+
+  BDSFieldValue localData[2][2][2][2];
+
+  for (int i = 0; i < 2; i++)
+    {
+      for (int j = 0; j < 2; j++)
+	{
+	  for (int k = 0; k < 2; k++)
+	    {
+	      for (int l = 0; l < 2; l++)
+		{localData[i][j][k][l] = array->GetConst(x0+i, y0+i, z0+i);}
+	    }
+	}
+    }
+
+  BDSFieldValue result = BDS::Linear4D(localData, xarr-x0, yarr-y0, zarr-z0, tarr-t0);
+
+  return result;
+  /*
 
   // The fractional part will give us the normalised distance between x0 and the point.
   // ie if x were in spatial coords, xDist = (x-x0)/(x1-x0) where x is an arbitrary point
@@ -97,4 +117,5 @@ BDSFieldValue BDSInterpolator4DLinear::GetInterpolatedValueT(G4double x,
   BDSFieldValue C = Interpolate1D(C___0, C___1, tDist);
   
   return C;
+  */
 }
