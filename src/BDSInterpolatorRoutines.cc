@@ -10,6 +10,45 @@ BDSFieldValue BDS::Linear1D(const BDSFieldValue& v1,
   return v1*(1.-dist) + v2*dist;
 }
 
+BDSFieldValue BDS::Linear1D(const BDSFieldValue p[2],
+			    const G4double      x)
+{
+  return p[0]*(1.-x) + p[2]*x;
+}
+
+BDSFieldValue BDS::Linear2D(const BDSFieldValue p[2][2],
+			    const G4double      x,
+			    const G4double      y)
+{
+  BDSFieldValue arr[2];
+  arr[0] = BDS::Linear1D(p[0], y);
+  arr[1] = BDS::Linear1D(p[1], y);
+  return BDS::Linear1D(arr, x);
+}
+
+BDSFieldValue BDS::Linear3D(const BDSFieldValue p[2][2][2],
+			    const G4double      x,
+			    const G4double      y,
+			    const G4double      z)
+{
+  BDSFieldValue arr[2];
+  arr[0] = BDS::Linear2D(p[0], y, z);
+  arr[1] = BDS::Linear2D(p[1], y, z);
+  return BDS::Linear1D(arr, x);
+}
+
+BDSFieldValue BDS::Linear4D(const BDSFieldValue p[2][2][2][2],
+			    const G4double      x,
+			    const G4double      y,
+			    const G4double      z,
+			    const G4double      t)
+{
+  BDSFieldValue arr[2];
+  arr[0] = BDS::Linear3D(p[0], y, z, t);
+  arr[1] = BDS::Linear3D(p[1], y, z, t);
+  return BDS::Linear1D(arr, x);
+}
+
 BDSFieldValue BDS::Cubic1D(const BDSFieldValue p[4],
 			   const G4double      x)
 {
