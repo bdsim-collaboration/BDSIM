@@ -1036,6 +1036,123 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 +-----------------------------+-----------------------+
 
 
+
+Fields
+------
+
+An electro-magnetic (or pure electric or magnetic) field can be defined and then attached to an
+element in GMAD. The following parameters can be specified.
+
++----------------------+-----------------------------------------------------------------+
+| **Parameter**        | **Description**                                                 |
++======================+=================================================================+
+| type                 | One of "xy", "threed", "mokka". (more to come)                  |
++----------------------+-----------------------------------------------------------------+
+| scaling              | A numerical scaling factor that all field vectors in the data   |
+|                      | will be multiplied by.                                          |
++----------------------+-----------------------------------------------------------------+
+| integrator           | The integrator used to calculate the motion of the particle     |
+|                      | in the field. See below for full list of supported integrators. |
++----------------------+-----------------------------------------------------------------+
+| magneticFile         | "format:filePath"                                               |
++----------------------+-----------------------------------------------------------------+
+| magneticInterpolator | Which interpolator to use - see below for a full list.          |
++----------------------+-----------------------------------------------------------------+
+| electricFile         | "format:filePath"                                               |
++----------------------+-----------------------------------------------------------------+
+| electricInterpolator | Which interpolator to use - see below for a full list.          |
++----------------------+-----------------------------------------------------------------+
+
+
+Example::
+
+  somefield: field, type="poisson",
+		    scaling = 3.0,
+		    integrator = "g4classicalrk4",
+		    magneticFile = "poisson2d:/Path/To/File.TXT",
+		    magneticInterpolator = "nearest2D",
+		    electricFile = "poisson2d:/Another/File.TX",
+		    electricInterpolator = "linear2D";
+
+  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
+
+
+Integrators
+^^^^^^^^^^^
+
+The following integrators are provided.  The majority are interfaces to Geant4 ones.
+
++----------------------+----------+------------------+
+|  **String**          | **B/EM** | **Time Varying** |
++======================+==========+==================+
+| g4cashkarprkf45      | EM       | Y                |
++----------------------+----------+------------------+
+| g4classicalrk4       | EM       | Y                |
++----------------------+----------+------------------+
+| g4constrk4           | B        | N                |
++----------------------+----------+------------------+
+| g4expliciteuler      | EM       | Y                |
++----------------------+----------+------------------+
+| g4impliciteuler      | EM       | Y                |
++----------------------+----------+------------------+
+| g4simpleheum         | EM       | Y                |
++----------------------+----------+------------------+
+| g4simplerunge        | EM       | Y                |
++----------------------+----------+------------------+
+| g4exacthelixstepper  | B        | N                |
++----------------------+----------+------------------+
+| g4helixexpliciteuler | B        | N                |
++----------------------+----------+------------------+
+| g4helixheum          | B        | N                |
++----------------------+----------+------------------+
+| g4heliximpliciteuler | B        | N                |
++----------------------+----------+------------------+
+| g4helixmixedstepper  | B        | N                |
++----------------------+----------+------------------+
+| g4helixsimplerunge   | B        | N                |
++----------------------+----------+------------------+
+| g4nystromrk4         | B        | N                |
++----------------------+----------+------------------+
+| g4rkg3stepper        | B        | N                |
++----------------------+----------+------------------+
+
+The following are currently only usable by BDSIM.
+
++----------------------+----------+------------------+
+| none                 | NA       | N                |
++----------------------+----------+------------------+
+| solenoid             | B        | N                |
++----------------------+----------+------------------+
+| dipole               | B        | N                |
++----------------------+----------+------------------+
+| quadrupole           | B        | N                |
++----------------------+----------+------------------+
+| sextupole            | B        | N                |
++----------------------+----------+------------------+
+| multipole            | B        | N                |
++----------------------+----------+------------------+
+| octupole             | B        | N                |
++----------------------+----------+------------------+
+| decapole             | B        | N                |
++----------------------+----------+------------------+
+| fringe               | B        | N                |
++----------------------+----------+------------------+
+
+Interpolators
+^^^^^^^^^^^^^
++------------+-------------------------------+
+| **String** | **Description**               |
++============+===============================+
+| nearest2D  | Nearest neighbour in 2D only. |
++------------+-------------------------------+
+| linear2D   | Linear interpolation in 2D.   |
++------------+-------------------------------+
+| nearest3D  | Nearest neighbour in 3D.      |
++------------+-------------------------------+
+| linear3D   | Linear interpolation in 3D.   |
++------------+-------------------------------+
+
+
 Offsets & Tilts - Component Misalignment
 ----------------------------------------
 
@@ -2082,119 +2199,3 @@ can be set to the precision region by setting the attribute *precisionRegion* eq
 
 .. [#beamcommandnote] Note, the *beam* command is actually currently equivalent to the *option* command.
 		      The distinction is kept for clarity, and this might be changed in the future.
-
-
-Fields
-------
-
-An electro-magnetic (or pure electric or magnetic) field can be defined and then attached to an
-element in GMAD. The following parameters can be specified.
-
-+----------------------+-----------------------------------------------------------------+
-| **Parameter**        | **Description**                                                 |
-+======================+=================================================================+
-| type                 | One of "xy", "threed", "mokka". (more to come)                  |
-+----------------------+-----------------------------------------------------------------+
-| scaling              | A numerical scaling factor that all field vectors in the data   |
-|                      | will be multiplied by.                                          |
-+----------------------+-----------------------------------------------------------------+
-| integrator           | The integrator used to calculate the motion of the particle     |
-|                      | in the field. See below for full list of supported integrators. |
-+----------------------+-----------------------------------------------------------------+
-| magneticFile         | "format:filePath"                                               |
-+----------------------+-----------------------------------------------------------------+
-| magneticInterpolator | Which interpolator to use - see below for a full list.          |
-+----------------------+-----------------------------------------------------------------+
-| electricFile         | "format:filePath"                                               |
-+----------------------+-----------------------------------------------------------------+
-| electricInterpolator | Which interpolator to use - see below for a full list.          |
-+----------------------+-----------------------------------------------------------------+
-
-
-Example::
-
-  somefield: field, type="poisson",
-		    scaling = 3.0,
-		    integrator = "g4classicalrk4",
-		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
-		    electricInterpolator = "linear2D";
-
-  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
-
-
-Integrators
-^^^^^^^^^^^
-
-The following integrators are provided.  The majority are interfaces to Geant4 ones.
-
-+----------------------+----------+------------------+
-|  **String**          | **B/EM** | **Time Varying** |
-+======================+==========+==================+
-| g4cashkarprkf45      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4classicalrk4       | EM       | Y                |
-+----------------------+----------+------------------+
-| g4constrk4           | B        | N                |
-+----------------------+----------+------------------+
-| g4expliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4impliciteuler      | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simpleheum         | EM       | Y                |
-+----------------------+----------+------------------+
-| g4simplerunge        | EM       | Y                |
-+----------------------+----------+------------------+
-| g4exacthelixstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixexpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixheum          | B        | N                |
-+----------------------+----------+------------------+
-| g4heliximpliciteuler | B        | N                |
-+----------------------+----------+------------------+
-| g4helixmixedstepper  | B        | N                |
-+----------------------+----------+------------------+
-| g4helixsimplerunge   | B        | N                |
-+----------------------+----------+------------------+
-| g4nystromrk4         | B        | N                |
-+----------------------+----------+------------------+
-| g4rkg3stepper        | B        | N                |
-+----------------------+----------+------------------+
-
-The following are currently only usable by BDSIM.
-
-+----------------------+----------+------------------+
-| none                 | NA       | N                |
-+----------------------+----------+------------------+
-| solenoid             | B        | N                |
-+----------------------+----------+------------------+
-| dipole               | B        | N                |
-+----------------------+----------+------------------+
-| quadrupole           | B        | N                |
-+----------------------+----------+------------------+
-| sextupole            | B        | N                |
-+----------------------+----------+------------------+
-| multipole            | B        | N                |
-+----------------------+----------+------------------+
-| octupole             | B        | N                |
-+----------------------+----------+------------------+
-| decapole             | B        | N                |
-+----------------------+----------+------------------+
-| fringe               | B        | N                |
-+----------------------+----------+------------------+
-
-Interpolators
-^^^^^^^^^^^^^
-+------------+-------------------------------+
-| **String** | **Description**               |
-+============+===============================+
-| nearest2D  | Nearest neighbour in 2D only. |
-+------------+-------------------------------+
-| linear2D   | Linear interpolation in 2D.   |
-+------------+-------------------------------+
-| nearest3D  | Nearest neighbour in 3D.      |
-+------------+-------------------------------+
-| linear3D   | Linear interpolation in 3D.   |
-+------------+-------------------------------+
