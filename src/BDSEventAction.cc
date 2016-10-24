@@ -33,7 +33,6 @@ extern BDSOutputBase* bdsOutput;       // output interface
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
-  analMan(nullptr),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
@@ -79,10 +78,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 
   milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
   starts = (G4double)ms.count()/1000.0;
-
-  // get pointer to analysis manager
-  if (!analMan)
-    {analMan = BDSAnalysisManager::Instance();}
 
   // number feedback
   G4int event_number = evt->GetEventID();
@@ -168,6 +163,7 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
+      BDSAnalysisManager* analMan     = BDSAnalysisManager::Instance();
       BDSHistogram1D* generalELoss    = analMan->GetHistogram(2);
       BDSHistogram1D* perElementELoss = analMan->GetHistogram(5);
 
