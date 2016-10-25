@@ -2,7 +2,6 @@
 #define BDSBUNCHUSERFILE_H 
 
 #include "BDSBunchInterface.hh"
-#include "gzstream.h"
 #include <fstream>
 #include <list>
 
