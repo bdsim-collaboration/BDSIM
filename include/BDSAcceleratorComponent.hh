@@ -47,8 +47,8 @@ class BDSAcceleratorComponent: public BDSGeometryComponent
 public:
   /// Constructor - this is the minimum information needed to create a
   /// BDSAcceleratorComponent instance. Methods in the class will allow
-  /// the derived class to associate the appropraite volumes to the members
-  /// of BDSGeometryComponent - the base class.  The developer of a derived
+  /// the derived class to associate the appropriate volumes to the members
+  /// of BDSGeometryComponent - the base class. The developer of a derived
   /// class should take care to set all members of BDSGeometryComponent in the
   /// derived class, including extents.
   /// Note, this class has arc length and chord length which are initially set
