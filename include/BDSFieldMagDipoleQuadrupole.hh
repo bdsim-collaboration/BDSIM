@@ -28,7 +28,8 @@ public:
   virtual ~BDSFieldMagDipoleQuadrupole();
 
   /// Access the field value.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+				 const G4double       t = 0) const;
 
   virtual void SetTransform(const G4Transform3D& transformIn);
   

@@ -20,10 +20,11 @@ BDSFieldMagDipoleQuadrupole::~BDSFieldMagDipoleQuadrupole()
   delete dipole;
 }
 
-G4ThreeVector BDSFieldMagDipoleQuadrupole::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagDipoleQuadrupole::GetField(const G4ThreeVector &position,
+						    const G4double       t) const
 {  
-  G4ThreeVector   quadField = quad->GetFieldTransformed(position);
-  G4ThreeVector dipoleField = dipole->GetFieldTransformed(position);
+  G4ThreeVector   quadField = quad->GetFieldTransformed(position, t);
+  G4ThreeVector dipoleField = dipole->GetFieldTransformed(position, t);
   return quadField + dipoleField;
 }
 

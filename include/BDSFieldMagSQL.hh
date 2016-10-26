@@ -41,8 +41,9 @@ public:  // with description
   virtual ~BDSFieldMagSQL();
   // Constructor and destructor. No actions.
 
-	/// Get the magnetic field vector in local coordinates.
-	virtual G4ThreeVector GetField(const G4ThreeVector &position) const;
+  /// Get the magnetic field vector in local coordinates.
+  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+				 const G4double       t = 0) const;
 
   void  GetFieldValue( const G4double Point[4],G4double *Bfield ) const;
 

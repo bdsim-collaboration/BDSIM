@@ -17,7 +17,8 @@ BDSFieldMagQuadrupole::BDSFieldMagQuadrupole(BDSMagnetStrength const* strength,
 #endif
 }
 
-G4ThreeVector BDSFieldMagQuadrupole::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagQuadrupole::GetField(const G4ThreeVector &position,
+					      const G4double       /*t*/) const
 {  
   G4ThreeVector field;
   field[0] = position.y() * bPrime; // B_x = B' * y;

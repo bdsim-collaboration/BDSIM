@@ -21,10 +21,11 @@ BDSFieldMagSkew::~BDSFieldMagSkew()
   delete antiRotation;
 }
 
-G4ThreeVector BDSFieldMagSkew::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagSkew::GetField(const G4ThreeVector &position,
+					const G4double       t) const
 {
   G4ThreeVector rotatedPosition(position);
   rotatedPosition           = rotatedPosition.transform(*rotation);
-  G4ThreeVector normalField = field->GetField(rotatedPosition);
+  G4ThreeVector normalField = field->GetField(rotatedPosition, t);
   return (*antiRotation)*normalField;
 }
