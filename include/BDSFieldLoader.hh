@@ -12,7 +12,6 @@ class BDSArray2DCoords;
 class BDSArray3DCoords;
 class BDSArray4DCoords;
 class BDSFieldInfo;
-class BDSFieldLoaderBase;
 class BDSFieldMag;
 class BDSFieldE;
 class BDSFieldEM;
