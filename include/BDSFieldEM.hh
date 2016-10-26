@@ -27,7 +27,7 @@ public:
   /// Get the field - local coordinates. First G4ThreeVector is B field, second is E Field
   /// x,y,z respectively.
   virtual std::pair<G4ThreeVector,G4ThreeVector> GetField(const G4ThreeVector& position,
-							       const G4double& t) const = 0;
+							       const G4double& t = 0) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4ElectroMagneticField
   /// inheritance and allow a BDSFieldEM instance to be passed around in the field

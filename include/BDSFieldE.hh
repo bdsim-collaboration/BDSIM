@@ -24,7 +24,7 @@ public:
 
   /// Get the field - local coordinates.
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
-				 const G4double&      t) const = 0;
+				 const G4double&      t = 0) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4ElectricField
   /// inheritance and allow a BDSFieldE instance to be passed around in the field
