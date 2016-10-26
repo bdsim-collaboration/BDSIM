@@ -65,10 +65,14 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
   BDSFieldMag* result = nullptr;
   switch (format.underlying())
     {
+    case BDSFieldFormat::bdsim1d:
+      {result = LoadBDSIM1D(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::bdsim2d:
-      {result = LoadBDSIM2D(filePath); break;}
+      {result = LoadBDSIM2D(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::bdsim3d:
-      {result = LoadBDSIM3D(filePath); break;}
+      {result = LoadBDSIM3D(filePath, interpolatorType, transform); break;}
+    case BDSFieldFormat::bdsim4d:
+      {result = LoadBDSIM4D(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::poisson2d:
       {result = LoadPoissonSuperFishB(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::poisson2dquad:
@@ -209,11 +213,35 @@ BDSFieldEM* BDSFieldLoader::LoadEMField(G4String /*filePath*/, BDSFieldFormat /*
   return nullptr;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String /*filePath*/)
+BDSFieldMag* BDSFieldLoader::LoadBDSIM1D(G4String            /*filePath*/,
+					 BDSInterpolatorType interpolatorType,
+					 G4Transform3D       transform)
 {
   return nullptr;
 }
 
+BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String            /*filePath*/,
+					 BDSInterpolatorType interpolatorType,
+					 G4Transform3D       transform)
+{
+  return nullptr;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String            /*filePath*/,
+					 BDSInterpolatorType interpolatorType,
+					 G4Transform3D       transform)
+{
+  return nullptr;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadBDSIM4D(G4String            /*filePath*/,
+					 BDSInterpolatorType interpolatorType,
+					 G4Transform3D       transform)
+{
+  return nullptr;
+}
+
+/*
 BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
 {
   //G4double lenUnit   = CLHEP::cm;
@@ -241,7 +269,6 @@ BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
 	 << G4endl;
 #endif
 
-  /*
   // Set up storage space for table
   xField.resize( nx );
   yField.resize( nx );
@@ -294,10 +321,9 @@ BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
     }
      progDis->increment(inc);
   }
-  */
-  file.close();
-
-  /*
+  
+  //file.close();
+  
   maxx = xval * _lenUnit + fXoffset;
   maxy = yval * _lenUnit + fYoffset;
   maxz = zval * _lenUnit + fZoffset;
@@ -322,6 +348,7 @@ BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
   dx = maxx - minx;
   dy = maxy - miny;
   dz = maxz - minz;
-  */
+
   return nullptr;
 }
+*/

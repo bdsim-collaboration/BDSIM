@@ -51,9 +51,18 @@ private:
   /// Singleton instance
   static BDSFieldLoader* instance;
 
-  
-  BDSFieldMag* LoadBDSIM2D(G4String filePath);
-  BDSFieldMag* LoadBDSIM3D(G4String filePath);
+  BDSFieldMag* LoadBDSIM1D(G4String            filePath,
+			   BDSInterpolatorType interpolatorType,
+			   G4Transform3D       transform);
+  BDSFieldMag* LoadBDSIM2D(G4String            filePath,
+			   BDSInterpolatorType interpolatorType,
+			   G4Transform3D       transform);
+  BDSFieldMag* LoadBDSIM3D(G4String            filePath,
+			   BDSInterpolatorType interpolatorType,
+			   G4Transform3D       transform);
+  BDSFieldMag* LoadBDSIM4D(G4String            filePath,
+			   BDSInterpolatorType interpolatorType,
+			   G4Transform3D       transform);
 
   /// Load a 2D poisson superfish B field map.
   BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
