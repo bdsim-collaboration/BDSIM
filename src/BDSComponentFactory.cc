@@ -455,7 +455,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 					   angleIn,
 					   angleOut,
 					   st,
-					   brho);
+					   brho,
+					   integratorSet);
   return sbendline;
 }
 
@@ -536,7 +537,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					   angleIn,
 					   angleOut,
 					   brho,
-					   st);
+					   st,
+					   integratorSet);
   return rbendline;
 }
 
@@ -586,9 +588,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k1"] = element->k1;
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::quadrupole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::quadrupole,
 					       brho,
-					       BDSIntegratorType::quadrupole,
+					       intType,
 					       st);
 
   return new BDSMagnet(BDSMagnetType::quadrupole,
@@ -606,9 +609,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k2"] = element->k2;
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::sextupole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::sextupole,
 					       brho,
-					       BDSIntegratorType::sextupole,
+					       intType,
 					       st);
 
   return new BDSMagnet(BDSMagnetType::sextupole,
@@ -626,9 +630,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k3"] = element->k3;
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::octupole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::octupole,
 					       brho,
-					       BDSIntegratorType::octupole,
+					       intType,
 					       st);
 
   return new BDSMagnet(BDSMagnetType::octupole,
@@ -677,9 +682,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
       (*st)[*nkey] = (*kn) / element->l;
       (*st)[*skey] = (*ks) / element->l;
     }
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::multipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
-					       BDSIntegratorType::g4classicalrk4,
+					       intType,
 					       st);
   
   return new BDSMagnet(BDSMagnetType::multipole,
@@ -711,10 +717,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
-  
+
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::multipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
-					       BDSIntegratorType::multipole,
+					       intType,
 					       st);
   
   BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::multipole,
@@ -771,9 +778,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
       (*st)["field"] = (element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::solenoid);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::solenoid,
 					       brho,
-					       BDSIntegratorType::solenoid,
+					       intType,
 					       st);
 
   return new BDSMagnet(BDSMagnetType::solenoid,
@@ -843,11 +851,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["field"] = element->B * CLHEP::tesla;
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::muonspoiler);
   BDSFieldInfo* outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
 					      brho,
-					      BDSIntegratorType::g4classicalrk4,
+					      intType,
 					      st);
-    BDSFieldInfo* vacuumField = new BDSFieldInfo();
+  BDSFieldInfo* vacuumField = new BDSFieldInfo();
 
   return new BDSMagnet(BDSMagnetType::muonspoiler,
 		       element->name,
