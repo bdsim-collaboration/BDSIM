@@ -15,7 +15,7 @@ struct fieldformats_def
   enum type
     {
       none,
-      bdism1d, bdsim2d, bdsim3d, bdsim4d,
+      bdsim1d, bdsim2d, bdsim3d, bdsim4d,
       poisson2d, poisson2dquad
     };
 };
