@@ -10,8 +10,8 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 BDSFieldLoaderPoisson::BDSFieldLoaderPoisson()
@@ -25,13 +25,13 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
   std::ifstream file;
   file.open(fileName);
 
-  // test if valid file
+  // test if file is valid
   if (!file.is_open())
     {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
   else
     {G4cout << "Loading \"" << fileName << "\"" << G4endl;}
 
-  // Pointer to where result will be stored.  Can't be constrcuted until we know
+  // Pointer to where result will be stored.  Can't be constructed until we know
   // the dimensions.
   BDSArray2DCoords* result = nullptr;
   G4int       nX = 0;
