@@ -31,6 +31,7 @@ namespace GMAD
     double x; ///< Offset in x.
     double y; ///< Offset in y.
     double z; ///< Offset in z.
+    double t; ///< Offset in t.
     /// @{ Euler angle for rotation.
     double phi;
     double theta;
