@@ -4,9 +4,13 @@
 #include "BDSFieldFormat.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSFieldLoaderBDSIM.hh"
 #include "BDSFieldLoaderPoisson.hh"
 #include "BDSFieldMag.hh"
+#include "BDSFieldMagInterpolated1D.hh"
 #include "BDSFieldMagInterpolated2D.hh"
+#include "BDSFieldMagInterpolated3D.hh"
+#include "BDSFieldMagInterpolated4D.hh"
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator1D.hh"
 #include "BDSInterpolator1DCubic.hh"
@@ -213,32 +217,52 @@ BDSFieldEM* BDSFieldLoader::LoadEMField(G4String /*filePath*/, BDSFieldFormat /*
   return nullptr;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM1D(G4String            /*filePath*/,
+BDSFieldMag* BDSFieldLoader::LoadBDSIM1D(G4String            filePath,
 					 BDSInterpolatorType interpolatorType,
 					 G4Transform3D       transform)
 {
-  return nullptr;
+  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
+  BDSArray1DCoords*     array = loader->Load1D(filePath);
+  BDSInterpolator1D*       ar = CreateInterpolator1D(array, interpolatorType);
+  BDSFieldMag*         result = new BDSFieldMagInterpolated1D(ar, transform);
+  delete loader;
+  return result;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String            /*filePath*/,
+BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String            filePath,
 					 BDSInterpolatorType interpolatorType,
 					 G4Transform3D       transform)
 {
-  return nullptr;
+  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
+  BDSArray2DCoords*     array = loader->Load2D(filePath);
+  BDSInterpolator2D*       ar = CreateInterpolator2D(array, interpolatorType);
+  BDSFieldMag*         result = new BDSFieldMagInterpolated2D(ar, transform);
+  delete loader;
+  return result;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String            /*filePath*/,
+BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String            filePath,
 					 BDSInterpolatorType interpolatorType,
 					 G4Transform3D       transform)
 {
-  return nullptr;
+  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
+  BDSArray3DCoords*     array = loader->Load3D(filePath);
+  BDSInterpolator3D*       ar = CreateInterpolator3D(array, interpolatorType);
+  BDSFieldMag*         result = new BDSFieldMagInterpolated3D(ar, transform);
+  delete loader;
+  return result;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM4D(G4String            /*filePath*/,
+BDSFieldMag* BDSFieldLoader::LoadBDSIM4D(G4String            filePath,
 					 BDSInterpolatorType interpolatorType,
 					 G4Transform3D       transform)
 {
-  return nullptr;
+  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
+  BDSArray4DCoords*     array = loader->Load4D(filePath);
+  BDSInterpolator4D*       ar = CreateInterpolator4D(array, interpolatorType);
+  BDSFieldMag*         result = new BDSFieldMagInterpolated4D(ar, transform);
+  delete loader;
+  return result;
 }
 
 /*
