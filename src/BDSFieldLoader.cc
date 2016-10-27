@@ -1,3 +1,7 @@
+#include "BDSArray1DCoords.hh"
+#include "BDSArray2DCoords.hh"
+#include "BDSArray3DCoords.hh"
+#include "BDSArray4DCoords.hh"
 #include "BDSArray2DCoordsRQuad.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEM.hh"
@@ -36,11 +40,6 @@
 #include <algorithm>
 #include <fstream>
 
-class BDSArray1DCoords;
-class BDSArray2DCoords;
-class BDSArray3DCoords;
-class BDSArray4DCoords;
-
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;
 
 BDSFieldLoader* BDSFieldLoader::Instance()
@@ -55,8 +54,19 @@ BDSFieldLoader::BDSFieldLoader()
 
 BDSFieldLoader::~BDSFieldLoader()
 {
-  delete instance;
   instance = nullptr;
+}
+
+void BDSFieldLoader::DeleteArrays()
+{
+  for (auto a : arrays1d)
+    {delete a.second;}
+  for (auto a : arrays2d)
+    {delete a.second;}
+  for (auto a : arrays3d)
+    {delete a.second;}
+  for (auto a : arrays4d)
+    {delete a.second;}
 }
 
 BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
@@ -70,13 +80,13 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
   switch (format.underlying())
     {
     case BDSFieldFormat::bdsim1d:
-      {result = LoadBDSIM1D(filePath, interpolatorType, transform); break;}
+      {result = LoadBDSIM1DB(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::bdsim2d:
-      {result = LoadBDSIM2D(filePath, interpolatorType, transform); break;}
+      {result = LoadBDSIM2DB(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::bdsim3d:
-      {result = LoadBDSIM3D(filePath, interpolatorType, transform); break;}
+      {result = LoadBDSIM3DB(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::bdsim4d:
-      {result = LoadBDSIM4D(filePath, interpolatorType, transform); break;}
+      {result = LoadBDSIM4DB(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::poisson2d:
       {result = LoadPoissonSuperFishB(filePath, interpolatorType, transform); break;}
     case BDSFieldFormat::poisson2dquad:
@@ -87,46 +97,97 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
   return result;
 }
 
-BDSFieldE* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
+BDSFieldE* BDSFieldLoader::LoadEField(const BDSFieldInfo& /*info*/)
 {
   return nullptr;
 }
 
-BDSFieldEM* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
+BDSFieldEM* BDSFieldLoader::LoadEMField(const BDSFieldInfo& /*info*/)
 {
   return nullptr;
 }
-  
 
-BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
-						   BDSInterpolatorType interpolatorType,
-						   G4Transform3D       transform)
+BDSArray1DCoords* BDSFieldLoader::Get1DCached(G4String filePath)
 {
-  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
-  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
-  BDSInterpolator2D*         ar = CreateInterpolator2D(array, interpolatorType);
-  BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform);
-  delete loader;
+  auto result = arrays1d.find(filePath);
+  if (result != arrays1d.end())
+    {return result->second;}
+  else
+    {return nullptr;}
+}
+
+BDSArray2DCoords* BDSFieldLoader::Get2DCached(G4String filePath)
+{
+  auto result = arrays2d.find(filePath);
+  if (result != arrays2d.end())
+    {return result->second;}
+  else
+    {return nullptr;}
+}
+
+BDSArray3DCoords* BDSFieldLoader::Get3DCached(G4String filePath)
+{
+  auto result = arrays3d.find(filePath);
+  if (result != arrays3d.end())
+    {return result->second;}
+  else
+    {return nullptr;}
+}
+
+BDSArray4DCoords* BDSFieldLoader::Get4DCached(G4String filePath)
+{
+  auto result = arrays4d.find(filePath);
+  if (result != arrays4d.end())
+    {return result->second;}
+  else
+    {return nullptr;}
+}
+
+BDSArray1DCoords* BDSFieldLoader::LoadBDSIM1D(G4String filePath)
+{
+  BDSArray1DCoords* cached = Get1DCached(filePath);
+  if (cached)
+    {return cached;}
+
+  BDSFieldLoaderBDSIM loader;
+  BDSArray1DCoords* result = loader.Load1D(filePath);
+  arrays1d[filePath] = result;
   return result;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            filePath,
-						       BDSInterpolatorType interpolatorType,
-						       G4Transform3D       transform)
+BDSArray2DCoords* BDSFieldLoader::LoadBDSIM2D(G4String filePath)
 {
-  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
-  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
-  if (std::abs(array->XStep() - array->YStep()) > 1e-9)
-    {
-      G4cerr << G4endl
-	     << "Warning - asymmetric grid spacing for reflected quadrupole will result in"
-	     << " a distorted field map - please regenerate the map with even spatial samples."
-	     << G4endl;
-    }
-  BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
-  BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
-  BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform);
-  delete loader;
+  BDSArray2DCoords* cached = Get2DCached(filePath);
+  if (cached)
+    {return cached;}
+  
+  BDSFieldLoaderBDSIM loader;
+  BDSArray2DCoords* result = loader.Load2D(filePath);
+  arrays2d[filePath] = result;
+  return result;
+}
+
+BDSArray3DCoords* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
+{
+  BDSArray3DCoords* cached = Get3DCached(filePath);
+  if (cached)
+    {return cached;}
+  
+  BDSFieldLoaderBDSIM loader;
+  BDSArray3DCoords* result = loader.Load3D(filePath);
+  arrays3d[filePath] = result;
+  return result;
+}
+
+BDSArray4DCoords* BDSFieldLoader::LoadBDSIM4D(G4String filePath)
+{
+  BDSArray4DCoords* cached = Get4DCached(filePath);
+  if (cached)
+    {return cached;}
+  
+  BDSFieldLoaderBDSIM loader;
+  BDSArray4DCoords* result = loader.Load4D(filePath);
+  arrays4d[filePath] = result;
   return result;
 }
 
@@ -218,50 +279,74 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
   return result;	
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM1D(G4String            filePath,
-					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform)
+BDSFieldMag* BDSFieldLoader::LoadBDSIM1DB(G4String            filePath,
+					  BDSInterpolatorType interpolatorType,
+					  G4Transform3D       transform)
 {
-  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
-  BDSArray1DCoords*     array = loader->Load1D(filePath);
-  BDSInterpolator1D*       ar = CreateInterpolator1D(array, interpolatorType);
-  BDSFieldMag*         result = new BDSFieldMagInterpolated1D(ar, transform);
+  BDSArray1DCoords* array = LoadBDSIM1D(filePath);
+  BDSInterpolator1D*   ar = CreateInterpolator1D(array, interpolatorType);
+  BDSFieldMag*     result = new BDSFieldMagInterpolated1D(ar, transform);
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadBDSIM2DB(G4String            filePath,
+					  BDSInterpolatorType interpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray2DCoords* array = LoadBDSIM2D(filePath);
+  BDSInterpolator2D*   ar = CreateInterpolator2D(array, interpolatorType);
+  BDSFieldMag*     result = new BDSFieldMagInterpolated2D(ar, transform);
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadBDSIM3DB(G4String            filePath,
+					  BDSInterpolatorType interpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray3DCoords* array = LoadBDSIM3D(filePath);
+  BDSInterpolator3D*   ar = CreateInterpolator3D(array, interpolatorType);
+  BDSFieldMag*     result = new BDSFieldMagInterpolated3D(ar, transform);
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadBDSIM4DB(G4String            filePath,
+					  BDSInterpolatorType interpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray4DCoords* array = LoadBDSIM4D(filePath);
+  BDSInterpolator4D*   ar = CreateInterpolator4D(array, interpolatorType);
+  BDSFieldMag*     result = new BDSFieldMagInterpolated4D(ar, transform);
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
+						   BDSInterpolatorType interpolatorType,
+						   G4Transform3D       transform)
+{
+  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
+  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
+  BDSInterpolator2D*         ar = CreateInterpolator2D(array, interpolatorType);
+  BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform);
   delete loader;
   return result;
 }
 
-BDSFieldMag* BDSFieldLoader::LoadBDSIM2D(G4String            filePath,
-					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform)
+BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            filePath,
+						       BDSInterpolatorType interpolatorType,
+						       G4Transform3D       transform)
 {
-  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
-  BDSArray2DCoords*     array = loader->Load2D(filePath);
-  BDSInterpolator2D*       ar = CreateInterpolator2D(array, interpolatorType);
-  BDSFieldMag*         result = new BDSFieldMagInterpolated2D(ar, transform);
-  delete loader;
-  return result;
-}
-
-BDSFieldMag* BDSFieldLoader::LoadBDSIM3D(G4String            filePath,
-					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform)
-{
-  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
-  BDSArray3DCoords*     array = loader->Load3D(filePath);
-  BDSInterpolator3D*       ar = CreateInterpolator3D(array, interpolatorType);
-  BDSFieldMag*         result = new BDSFieldMagInterpolated3D(ar, transform);
-  delete loader;
-  return result;
-}
-
-BDSFieldMag* BDSFieldLoader::LoadBDSIM4D(G4String            filePath,
-					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform)
-{
-  BDSFieldLoaderBDSIM* loader = new BDSFieldLoaderBDSIM();
-  BDSArray4DCoords*     array = loader->Load4D(filePath);
-  BDSInterpolator4D*       ar = CreateInterpolator4D(array, interpolatorType);
-  BDSFieldMag*         result = new BDSFieldMagInterpolated4D(ar, transform);
+  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
+  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
+  if (std::abs(array->XStep() - array->YStep()) > 1e-9)
+    {
+      G4cerr << G4endl
+	     << "Warning - asymmetric grid spacing for reflected quadrupole will result in"
+	     << " a distorted field map - please regenerate the map with even spatial samples."
+	     << G4endl;
+    }
+  BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
+  BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
+  BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform);
   delete loader;
   return result;
 }

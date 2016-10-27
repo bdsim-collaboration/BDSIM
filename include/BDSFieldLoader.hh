@@ -38,6 +38,8 @@ public:
 
   ~BDSFieldLoader();
 
+  void DeleteArrays();
+
   BDSFieldMag* LoadMagField(const BDSFieldInfo& info);
   BDSFieldE*   LoadEField(const BDSFieldInfo& info);
   BDSFieldEM*  LoadEMField(const BDSFieldInfo& info);
@@ -49,29 +51,15 @@ private:
   /// Singleton instance
   static BDSFieldLoader* instance;
 
-  BDSFieldMag* LoadBDSIM1D(G4String            filePath,
-			   BDSInterpolatorType interpolatorType,
-			   G4Transform3D       transform);
-  BDSFieldMag* LoadBDSIM2D(G4String            filePath,
-			   BDSInterpolatorType interpolatorType,
-			   G4Transform3D       transform);
-  BDSFieldMag* LoadBDSIM3D(G4String            filePath,
-			   BDSInterpolatorType interpolatorType,
-			   G4Transform3D       transform);
-  BDSFieldMag* LoadBDSIM4D(G4String            filePath,
-			   BDSInterpolatorType interpolatorType,
-			   G4Transform3D       transform);
+  BDSArray1DCoords* Get1DCached(G4String filePath);
+  BDSArray2DCoords* Get2DCached(G4String filePath);
+  BDSArray3DCoords* Get3DCached(G4String filePath);
+  BDSArray4DCoords* Get4DCached(G4String filePath);
 
-  /// Load a 2D poisson superfish B field map.
-  BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
-				     BDSInterpolatorType interpolatorType,
-				     G4Transform3D       transform);
-
-  /// Similar to LoadPoissonSuperFishB() but the data below y = x is reflected
-  /// and the data relfected from one quadrant to all four at the array level.
-  BDSFieldMag* LoadPoissonSuperFishBQuad(G4String            filePath,
-					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform);
+  BDSArray1DCoords* LoadBDSIM1D(G4String filePath);
+  BDSArray2DCoords* LoadBDSIM2D(G4String filePath);
+  BDSArray3DCoords* LoadBDSIM3D(G4String filePath);
+  BDSArray4DCoords* LoadBDSIM4D(G4String filePath);
 
   /// Create the appropriate 1D interpolator for an array.
   BDSInterpolator1D* CreateInterpolator1D(BDSArray1DCoords*    array,
@@ -88,7 +76,37 @@ private:
   /// Create the appropriate 4D interpolator for an array.
   BDSInterpolator4D* CreateInterpolator4D(BDSArray4DCoords*    array,
   					  BDSInterpolatorType  interpolatorType) const;
-  
+
+  BDSFieldMag* LoadBDSIM1DB(G4String            filePath,
+			    BDSInterpolatorType interpolatorType,
+			    G4Transform3D       transform);
+  BDSFieldMag* LoadBDSIM2DB(G4String            filePath,
+			    BDSInterpolatorType interpolatorType,
+			    G4Transform3D       transform);
+  BDSFieldMag* LoadBDSIM3DB(G4String            filePath,
+			    BDSInterpolatorType interpolatorType,
+			    G4Transform3D       transform);
+  BDSFieldMag* LoadBDSIM4DB(G4String            filePath,
+			    BDSInterpolatorType interpolatorType,
+			    G4Transform3D       transform);
+
+  /// Load a 2D poisson superfish B field map.
+  BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
+				     BDSInterpolatorType interpolatorType,
+				     G4Transform3D       transform);
+
+  /// Similar to LoadPoissonSuperFishB() but the data below y = x is reflected
+  /// and the data relfected from one quadrant to all four at the array level.
+  BDSFieldMag* LoadPoissonSuperFishBQuad(G4String            filePath,
+					 BDSInterpolatorType interpolatorType,
+					 G4Transform3D       transform);
+
+  /// @{ Map of cached field map array.
+  std::map<G4String, BDSArray1DCoords*> arrays1d;
+  std::map<G4String, BDSArray2DCoords*> arrays2d;
+  std::map<G4String, BDSArray3DCoords*> arrays3d;
+  std::map<G4String, BDSArray4DCoords*> arrays4d;
+  /// @}
 };
 
 #endif
