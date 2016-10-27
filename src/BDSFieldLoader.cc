@@ -58,6 +58,7 @@ BDSFieldLoader::BDSFieldLoader()
 
 BDSFieldLoader::~BDSFieldLoader()
 {
+  DeleteArrays();
   instance = nullptr;
 }
 
