@@ -361,7 +361,7 @@ void BDSModularPhysicsList::EmExtra()
   if (!physicsActivated["em_extra"])
     {
       auto constructor = new G4EmExtraPhysics();
-#if G4VERSION_NUMBER > 1009
+#if G4VERSION_NUMBER > 1012
       constructor->Synch(true); // introduced geant version 10.1
 #endif
       constructors.push_back(constructor);

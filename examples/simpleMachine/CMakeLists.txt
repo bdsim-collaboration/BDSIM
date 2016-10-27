@@ -19,6 +19,10 @@ simple_testing(simpleMachineROOTDetailed "--file=sm.gmad" "")
 # root event output format
 set(TESTING_ARGS --output=rootevent)
 simple_testing(simpleMachineROOTEvent "--file=sm.gmad" "")
+# unknown output format
+set(TESTING_ARGS --output=abcd)
+simple_testing(simpleMachineUnknownOutputFormat "--file=sm.gmad" "")
+set_tests_properties(simpleMachineUnknownOutputFormat PROPERTIES WILL_FAIL 1)
 
 # Test other arguments
 # print help
