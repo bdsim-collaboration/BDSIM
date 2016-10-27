@@ -6,6 +6,7 @@
 #include "BDSFieldValue.hh"
 
 #include "globals.hh"
+#include "G4String.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
@@ -33,7 +34,10 @@ void BDSFieldLoaderBDSIM::CleanUp()
   nColumns = 0;
   lineData.clear();
   fv = BDSFieldValue();
-  for (const std::string s : {"nx", "ny", "nz"})
+  std::vector<G4String> allKeys = {"nx", "ny", "nz", "nt",
+				   "xmin", "xmax", "ymin", "ymax",
+				   "zmin", "zmax", "tmin", "tmax"};
+  for (const std::string s : allKeys)
     {header[s] = 0;}
   result = nullptr;
 }
@@ -133,7 +137,9 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	  std::regex keyValue("(\\w)\\s*>\\s*(\\d*)");
 	  std::smatch match;
 	  std::regex_search(line, match, keyValue);
-	  header[match[1]] = std::stod(match[2]);
+	  G4String key = G4String(match[1]);
+	  key.toLower();
+	  header[key] = std::stod(match[2]);
 	  continue;
 	}
       
@@ -169,42 +175,42 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	    {
 	    case 1:
 	      {
-		nX = G4int(header["nX"]);
+		nX = G4int(header["nx"]);
 		result = new BDSArray1DCoords(nX,
-					      header["xMin"], header["xMax"]);
+					      header["xmin"]*CLHEP::cm, header["xmax"]*CLHEP::cm);
 		break;
 	      }
 	    case 2:
 	      {
-		nX = G4int(header["nX"]);
-		nY = G4int(header["nY"]);
+		nX = G4int(header["nx"]);
+		nY = G4int(header["ny"]);
 		result = new BDSArray2DCoords(nX, nY,
-					      header["xMin"], header["xMax"],
-					      header["yMin"], header["yMax"]);
+					      header["xmin"]*CLHEP::cm, header["xmax"]*CLHEP::cm,
+					      header["ymin"]*CLHEP::cm, header["ymax"]*CLHEP::cm);
 		break;
 	      }
 	    case 3:
 	      {
-		nX = G4int(header["nX"]);
-		nY = G4int(header["nY"]);
-		nZ = G4int(header["nZ"]);
+		nX = G4int(header["nx"]);
+		nY = G4int(header["ny"]);
+		nZ = G4int(header["nz"]);
 		result = new BDSArray3DCoords(nX, nY, nZ,
-					      header["xMin"], header["xMax"],
-					      header["yMin"], header["yMax"],
-					      header["zMin"], header["zMax"]);
+					      header["xmin"]*CLHEP::cm, header["xmax"]*CLHEP::cm,
+					      header["ymin"]*CLHEP::cm, header["ymax"]*CLHEP::cm,
+					      header["zmin"]*CLHEP::cm, header["zmax"]*CLHEP::cm);
 		break;
 	      }
 	    case 4:
 	      {
-		nX = G4int(header["nX"]);
-		nY = G4int(header["nY"]);
-		nZ = G4int(header["nZ"]);
-		nT = G4int(header["nT"]);
+		nX = G4int(header["nx"]);
+		nY = G4int(header["ny"]);
+		nZ = G4int(header["nz"]);
+		nT = G4int(header["nt"]);
 		result = new BDSArray4DCoords(nX, nY, nZ, nT,
-					      header["xMin"], header["xMax"],
-					      header["yMin"], header["yMax"],
-					      header["zMin"], header["zMax"],
-					      header["tMin"], header["tMax"]);
+					      header["xmin"]*CLHEP::cm, header["xmax"]*CLHEP::cm,
+					      header["ymin"]*CLHEP::cm, header["ymax"]*CLHEP::cm,
+					      header["zmin"]*CLHEP::cm, header["zmax"]*CLHEP::cm,
+					      header["tmin"]*CLHEP::cm, header["tmax"]*CLHEP::cm);
 		break;
 	      }
 	    default:
