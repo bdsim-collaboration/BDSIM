@@ -39,9 +39,8 @@ public:
   ~BDSFieldLoader();
 
   BDSFieldMag* LoadMagField(const BDSFieldInfo& info);
-  
-  BDSFieldE*   LoadEField  (G4String filePath, BDSFieldFormat format);
-  BDSFieldEM*  LoadEMField (G4String filePath, BDSFieldFormat format);
+  BDSFieldE*   LoadEField(const BDSFieldInfo& info);
+  BDSFieldEM*  LoadEMField(const BDSFieldInfo& info);
 
 private:
   /// Private default constructor as singleton

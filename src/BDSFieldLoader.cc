@@ -87,6 +87,17 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
   return result;
 }
 
+BDSFieldE* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
+{
+  return nullptr;
+}
+
+BDSFieldEM* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
+{
+  return nullptr;
+}
+  
+
 BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 						   BDSInterpolatorType interpolatorType,
 						   G4Transform3D       transform)
@@ -205,16 +216,6 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
       }
     }
   return result;	
-}
-
-BDSFieldE* BDSFieldLoader::LoadEField(G4String /*filePath*/, BDSFieldFormat /*format*/)
-{
-  return nullptr;
-}
-
-BDSFieldEM* BDSFieldLoader::LoadEMField(G4String /*filePath*/, BDSFieldFormat /*format*/)
-{
-  return nullptr;
 }
 
 BDSFieldMag* BDSFieldLoader::LoadBDSIM1D(G4String            filePath,
