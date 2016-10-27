@@ -15,7 +15,7 @@ BDSFieldEM::BDSFieldEM(G4Transform3D transformIn):
 {;}
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEM::GetFieldTransformed(const G4ThreeVector& position,
-								       const G4double&      t) const
+								       const G4double       t) const
 {
   if (transform != G4Transform3D::Identity)
     {

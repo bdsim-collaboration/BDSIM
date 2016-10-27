@@ -24,7 +24,7 @@ public:
 
   /// Get the field - local coordinates.
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
-				 const G4double&      t = 0) const = 0;
+				 const G4double       t = 0) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4ElectricField
   /// inheritance and allow a BDSFieldE instance to be passed around in the field
@@ -35,7 +35,7 @@ public:
 
   /// Get the field value after applying transform for local offset.
   G4ThreeVector GetFieldTransformed(const G4ThreeVector& position,
-				    const G4double&      t) const;
+				    const G4double       t) const;
 
   /// Set the transform applied before evaluating the field. This can be used
   /// to account for any difference between the field coordinate system and

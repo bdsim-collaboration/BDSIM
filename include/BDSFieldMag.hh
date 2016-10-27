@@ -29,7 +29,7 @@ public:
 
   /// Get the magnetic field vector in local coordinates. The derived class does
   /// not need to apply the transform.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position,
+  virtual G4ThreeVector GetField(const G4ThreeVector& position,
 				 const G4double       t = 0) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4MagneticField

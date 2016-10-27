@@ -13,7 +13,7 @@ BDSFieldE::BDSFieldE(G4Transform3D transformIn):
 {;}
 
 G4ThreeVector BDSFieldE::GetFieldTransformed(const G4ThreeVector& position,
-					     const G4double&      t) const
+					     const G4double       t) const
 {
   if (transform != G4Transform3D::Identity)
     {

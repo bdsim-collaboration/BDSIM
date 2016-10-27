@@ -15,7 +15,7 @@ BDSFieldEGlobal::~BDSFieldEGlobal()
 }
 
 G4ThreeVector BDSFieldEGlobal::GetField(const G4ThreeVector& position,
-					const G4double&      t) const
+					const G4double       t) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
   G4ThreeVector localField    = field->GetFieldTransformed(localPosition, t);

@@ -23,7 +23,7 @@ BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSCavityInfo const* info):
 }
 
 std::pair<G4ThreeVector, G4ThreeVector> BDSFieldEMRFCavity::GetField(const G4ThreeVector &position,
-                                                                     const G4double& t) const
+                                                                     const G4double       t) const
 {
 
   //Converting from Local Cartesian to Local Cylindrical
