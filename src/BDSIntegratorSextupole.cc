@@ -74,8 +74,8 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
       
       // local r'' (for curvature)
       G4ThreeVector LocalRpp;
-      LocalRpp.setX(- zp*x02My02);
-      LocalRpp.setY(2*zp*x0*y0);
+      LocalRpp.setX(zp*x02My02);
+      LocalRpp.setY(-2*zp*x0*y0);
       LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
       
       //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
