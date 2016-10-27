@@ -101,6 +101,19 @@ private:
 					 BDSInterpolatorType interpolatorType,
 					 G4Transform3D       transform);
 
+  BDSFieldE* LoadBDSIM1DE(G4String            filePath,
+			  BDSInterpolatorType interpolatorType,
+			  G4Transform3D       transform);
+  BDSFieldE* LoadBDSIM2DE(G4String            filePath,
+			  BDSInterpolatorType interpolatorType,
+			  G4Transform3D       transform);
+  BDSFieldE* LoadBDSIM3DE(G4String            filePath,
+			  BDSInterpolatorType interpolatorType,
+			  G4Transform3D       transform);
+  BDSFieldE* LoadBDSIM4DE(G4String            filePath,
+			  BDSInterpolatorType interpolatorType,
+			  G4Transform3D       transform);
+
   /// @{ Map of cached field map array.
   std::map<G4String, BDSArray1DCoords*> arrays1d;
   std::map<G4String, BDSArray2DCoords*> arrays2d;
