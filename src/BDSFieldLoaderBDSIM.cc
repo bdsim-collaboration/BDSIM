@@ -153,11 +153,11 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	  std::istringstream restOfLineSS(restOfLine);
 	  while (restOfLineSS >> columnName)
 	    {
-	      if (columnName.find("Bx"))
+	      if (columnName.find("Fx"))
 		{xIndex = nColumns;}
-	      if (columnName.find("By"))
+	      if (columnName.find("Fy"))
 		{yIndex = nColumns;}
-	      if (columnName.find("Bz"))
+	      if (columnName.find("Fz"))
 		{zIndex = nColumns;}
 	      nColumns++;
 	    }
