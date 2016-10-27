@@ -3,6 +3,7 @@
 #include "BDSArray3DCoords.hh"
 #include "BDSArray4DCoords.hh"
 #include "BDSArray2DCoordsRQuad.hh"
+#include "BDSDebug.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEM.hh"
 #include "BDSFieldFormat.hh"
@@ -19,6 +20,10 @@
 #include "BDSFieldEInterpolated2D.hh"
 #include "BDSFieldEInterpolated3D.hh"
 #include "BDSFieldEInterpolated4D.hh"
+#include "BDSFieldEMInterpolated1D.hh"
+#include "BDSFieldEMInterpolated2D.hh"
+#include "BDSFieldEMInterpolated3D.hh"
+#include "BDSFieldEMInterpolated4D.hh"
 #include "BDSFieldValue.hh"
 #include "BDSInterpolator1D.hh"
 #include "BDSInterpolator1DCubic.hh"
@@ -126,9 +131,42 @@ BDSFieldE* BDSFieldLoader::LoadEField(const BDSFieldInfo& info)
   return result;
 }
 
-BDSFieldEM* BDSFieldLoader::LoadEMField(const BDSFieldInfo& /*info*/)
+BDSFieldEM* BDSFieldLoader::LoadEMField(const BDSFieldInfo& info)
 {
-  return nullptr;
+  G4String           eFilePath = info.ElectricFile();
+  G4String           bFilePath = info.MagneticFile();
+  BDSFieldFormat     eFormat   = info.ElectricFormat();
+  BDSFieldFormat     bFormat   = info.MagneticFormat();
+  BDSInterpolatorType eIntType = info.ElectricInterpolatorType();
+  BDSInterpolatorType bIntType = info.MagneticInterpolatorType();
+  G4Transform3D      transform = info.Transform();
+
+  // As the different dimension interpolators don't inherit each other, it's very
+  // very hard to make a compact polymorphic construction routine here.  In future,
+  // if we use delayed construction with setters, we could piece together the BDSFieldEM
+  // one bit at a time. This is more an issue with the number of dimensions than anything.
+  if (bFormat != eFormat)
+    {
+      G4cerr << __METHOD_NAME__ << "different formats for E and B fields are not currently "
+	    << "supported for an EM field " << G4endl;
+      exit(1);
+    }
+  
+  BDSFieldEM* result = nullptr;
+  switch (eFormat.underlying())
+    {
+    case BDSFieldFormat::bdsim1d:
+      {result = LoadBDSIM1DEM(eFilePath, bFilePath, eIntType, bIntType, transform); break;}
+    case BDSFieldFormat::bdsim2d:
+      {result = LoadBDSIM2DEM(eFilePath, bFilePath, eIntType, bIntType, transform); break;}
+    case BDSFieldFormat::bdsim3d:
+      {result = LoadBDSIM3DEM(eFilePath, bFilePath, eIntType, bIntType, transform); break;}
+    case BDSFieldFormat::bdsim4d:
+      {result = LoadBDSIM4DEM(eFilePath, bFilePath, eIntType, bIntType, transform); break;}
+    default:
+      break;
+    }
+  return result;  
 }
 
 BDSArray1DCoords* BDSFieldLoader::Get1DCached(G4String filePath)
@@ -412,6 +450,62 @@ BDSFieldE* BDSFieldLoader::LoadBDSIM4DE(G4String            filePath,
   BDSArray4DCoords* array = LoadBDSIM4D(filePath);
   BDSInterpolator4D*   ar = CreateInterpolator4D(array, interpolatorType);
   BDSFieldE*       result = new BDSFieldEInterpolated4D(ar, transform);
+  return result;
+}
+
+BDSFieldEM* BDSFieldLoader::LoadBDSIM1DEM(G4String            eFilePath,
+					  G4String            bFilePath,
+					  BDSInterpolatorType eInterpolatorType,
+					  BDSInterpolatorType bInterpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray1DCoords* eArray = LoadBDSIM1D(eFilePath);
+  BDSArray1DCoords* bArray = LoadBDSIM1D(bFilePath);
+  BDSInterpolator1D*  eInt = CreateInterpolator1D(eArray, eInterpolatorType);
+  BDSInterpolator1D*  bInt = CreateInterpolator1D(bArray, bInterpolatorType);
+  BDSFieldEM*       result = new BDSFieldEMInterpolated1D(eInt, bInt, transform);
+  return result;
+}
+
+BDSFieldEM* BDSFieldLoader::LoadBDSIM3DEM(G4String            eFilePath,
+					  G4String            bFilePath,
+					  BDSInterpolatorType eInterpolatorType,
+					  BDSInterpolatorType bInterpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray2DCoords* eArray = LoadBDSIM2D(eFilePath);
+  BDSArray2DCoords* bArray = LoadBDSIM2D(bFilePath);
+  BDSInterpolator2D*  eInt = CreateInterpolator2D(eArray, eInterpolatorType);
+  BDSInterpolator2D*  bInt = CreateInterpolator2D(bArray, bInterpolatorType);
+  BDSFieldEM*       result = new BDSFieldEMInterpolated2D(eInt, bInt, transform);
+  return result;
+}
+
+BDSFieldEM* BDSFieldLoader::LoadBDSIM2DEM(G4String            eFilePath,
+					  G4String            bFilePath,
+					  BDSInterpolatorType eInterpolatorType,
+					  BDSInterpolatorType bInterpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray3DCoords* eArray = LoadBDSIM3D(eFilePath);
+  BDSArray3DCoords* bArray = LoadBDSIM3D(bFilePath);
+  BDSInterpolator3D*  eInt = CreateInterpolator3D(eArray, eInterpolatorType);
+  BDSInterpolator3D*  bInt = CreateInterpolator3D(bArray, bInterpolatorType);
+  BDSFieldEM*       result = new BDSFieldEMInterpolated3D(eInt, bInt, transform);
+  return result;
+}
+
+BDSFieldEM* BDSFieldLoader::LoadBDSIM4DEM(G4String            eFilePath,
+					  G4String            bFilePath,
+					  BDSInterpolatorType eInterpolatorType,
+					  BDSInterpolatorType bInterpolatorType,
+					  G4Transform3D       transform)
+{
+  BDSArray4DCoords* eArray = LoadBDSIM4D(eFilePath);
+  BDSArray4DCoords* bArray = LoadBDSIM4D(bFilePath);
+  BDSInterpolator4D*  eInt = CreateInterpolator4D(eArray, eInterpolatorType);
+  BDSInterpolator4D*  bInt = CreateInterpolator4D(bArray, bInterpolatorType);
+  BDSFieldEM*       result = new BDSFieldEMInterpolated4D(eInt, bInt, transform);
   return result;
 }
 
