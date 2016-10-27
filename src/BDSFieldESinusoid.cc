@@ -14,7 +14,7 @@ BDSFieldESinusoid::BDSFieldESinusoid(BDSCavityInfo const* info)
 }
 
 G4ThreeVector BDSFieldESinusoid::GetField(const G4ThreeVector& /*position*/,
-					  const G4double&      t) const
+					  const G4double       t) const
 {
   G4ThreeVector field = G4ThreeVector(0, 0, eField*sin(frequency*t + phase));
   return field;

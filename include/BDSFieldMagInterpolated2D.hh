@@ -2,10 +2,11 @@
 #define BDSFIELDMAGINTERPOLATED2D_H
 
 #include "BDSFieldMag.hh"
-#include "BDSInterpolator2D.hh"
 
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
+
+class BDSInterpolator2D;
 
 /**
  * @brief A 2D field from an interpolated array with any interpolation.
@@ -28,7 +29,8 @@ public:
 
   /// Return the interpolated field value at a given point. Note this doesn't depend
   /// on the z position, only x & y.
-  virtual G4ThreeVector GetField(const G4ThreeVector& position) const;
+  virtual G4ThreeVector GetField(const G4ThreeVector& position,
+				 const G4double       t = 0) const;
 
   inline const BDSInterpolator2D* Interpolator() const {return interpolator;}
 

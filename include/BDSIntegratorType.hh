@@ -15,7 +15,7 @@ struct integratortypes_def
 {
 
   enum type {none, solenoid, dipole, quadrupole, sextupole,
-	     multipole, octupole, decapole, fringe,
+	     multipole, octupole, decapole, dipolefringe,
 	     g4cashkarprkf45, g4classicalrk4, g4constrk4, g4expliciteuler,
 	     g4impliciteuler, g4simpleheum, g4simplerunge,
 	     g4exacthelixstepper, g4helixexpliciteuler, g4helixheum,

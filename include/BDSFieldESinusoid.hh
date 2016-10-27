@@ -23,7 +23,7 @@ public:
 
   /// Accessor for field value.
   virtual G4ThreeVector GetField(const G4ThreeVector& position,
-				 const G4double&      t) const;
+				 const G4double       t) const;
 
 private:
   /// Private default constructor to force use of supplied one.

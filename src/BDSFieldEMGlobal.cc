@@ -15,7 +15,7 @@ BDSFieldEMGlobal::~BDSFieldEMGlobal()
 }
 
 std::pair<G4ThreeVector,G4ThreeVector> BDSFieldEMGlobal::GetField(const G4ThreeVector& position,
-								  const G4double&      t) const
+								  const G4double       t) const
 {
   G4ThreeVector localPosition = ConvertToLocal(position);
   auto          localField    = field->GetFieldTransformed(localPosition, t);

@@ -22,6 +22,7 @@ void Field::clear()
   x         = 0;
   y         = 0;
   z         = 0;
+  t         = 0;
   phi       = 0;
   theta     = 0;
   psi       = 0;
@@ -46,6 +47,7 @@ void Field::PublishMembers()
   publish("x",                    &Field::x);
   publish("y",                    &Field::y);
   publish("z",                    &Field::z);
+  publish("t",                    &Field::t);
   publish("phi",                  &Field::phi);
   publish("theta",                &Field::theta);
   publish("psi",                  &Field::psi);
@@ -68,7 +70,7 @@ void Field::print()const
 	    << "magneticInterpolator " << magneticInterpolator << std::endl
 	    << "electricFile "         << electricFile         << std::endl
 	    << "electricInterpolator " << electricInterpolator << std::endl
-	    << "x, y, z "              << x     << " " << y     << " " << z     << std::endl
+	    << "x, y, z,t "            << x << " " << y << " " << z << " " << t << std::endl
 	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
 	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
 	    << "angle "                << angle                << std::endl

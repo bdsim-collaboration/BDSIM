@@ -25,7 +25,8 @@ BDSFieldInfo::BDSFieldInfo():
         electricFieldFormat(BDSFieldFormat::none),
 	electricInterpolatorType(BDSInterpolatorType::nearest3d),
 	cacheTransforms(true),
-	scaling(1.0)
+	scaling(1.0),
+	timeOffset(0)
 {;}
 
 BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
@@ -42,7 +43,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
 			   BDSFieldFormat      electricFieldFormatIn,
 			   BDSInterpolatorType electricInterpolatorTypeIn,
 			   G4bool              cacheTransformsIn,
-			   G4double            scalingIn):
+			   G4double            scalingIn,
+			   G4double            timeOffsetIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
   integratorType(integratorTypeIn),
@@ -57,7 +59,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
   electricFieldFormat(electricFieldFormatIn),
   electricInterpolatorType(electricInterpolatorTypeIn),
   cacheTransforms(cacheTransformsIn),
-  scaling(scalingIn)
+  scaling(scalingIn),
+  timeOffset(timeOffsetIn)
 {;}
 
 BDSFieldInfo::~BDSFieldInfo()
@@ -79,7 +82,8 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   electricFieldFormat(other.electricFieldFormat),
   electricInterpolatorType(other.electricInterpolatorType),
   cacheTransforms(other.cacheTransforms),
-  scaling(other.scaling)
+  scaling(other.scaling),
+  timeOffset(other.timeOffset)
 {
   magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
   cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
@@ -100,5 +104,6 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E interpolator     " << info.electricInterpolatorType << G4endl;
   out << "Transform caching: " << info.cacheTransforms          << G4endl;
   out << "Scaling:           " << info.scaling                  << G4endl;
+  out << "t offset           " << info.timeOffset               << G4endl;
   return out;
 }

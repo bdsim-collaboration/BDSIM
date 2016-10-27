@@ -20,7 +20,8 @@ BDSFieldMagDecapole::BDSFieldMagDecapole(BDSMagnetStrength const* strength,
 #endif
 }
 
-G4ThreeVector BDSFieldMagDecapole::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagDecapole::GetField(const G4ThreeVector &position,
+					    const G4double       /*t*/) const
 {
   // B_x = 4xy(x^2-y^2) * ( B''''/4!)
   // B_y = (x^4 - 6x^2y^2 + y^4) * ( B''''/4!)

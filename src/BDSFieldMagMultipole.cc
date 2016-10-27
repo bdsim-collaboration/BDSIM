@@ -28,7 +28,8 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
     {order = (G4int)normalComponents.size();}
 }
 
-G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
+					     const G4double       /*t*/) const
 {
   // Translate carteasian to polar coordinates
   G4double r   = sqrt(pow(position.x(),2) + pow(position.y(),2));

@@ -46,23 +46,9 @@ public:
 		   BDSIntegratorType skewQuadrupoleIn,
 		   BDSIntegratorType skewSextupoleIn,
 		   BDSIntegratorType skewOctupoleIn,
-		   BDSIntegratorType skewDecapoleIn):
-    solenoid(solenoidIn),
-    dipole(dipoleIn),
-    quadrupole(quadrupoleIn),
-    sextupole(sextupoleIn),
-    octupole(octupoleIn),
-    decapole(decapoleIn),
-    multipole(multipoleIn),
-    muonspoiler(muonspoilerIn),
-    rfcavity(rfcavityIn),
-    rf(rfIn),
-    general(generalIn),
-    skewQuadrupole(skewQuadrupoleIn),
-    skewSextupole(skewSextupoleIn),
-    skewOctupole(skewOctupoleIn),
-    skewDecapole(skewDecapoleIn)
-  {;}
+		   BDSIntegratorType skewDecapoleIn,
+		   BDSIntegratorType dipolefringeIn,
+		   BDSIntegratorType multipolethinIn);
 
   BDSIntegratorType solenoid;
   BDSIntegratorType dipole;
@@ -79,6 +65,8 @@ public:
   BDSIntegratorType skewSextupole;
   BDSIntegratorType skewOctupole;
   BDSIntegratorType skewDecapole;
+  BDSIntegratorType dipolefringe;
+  BDSIntegratorType multipolethin;
 };
 
 #endif

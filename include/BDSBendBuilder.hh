@@ -5,6 +5,7 @@
 
 #include "globals.hh" // geant4 globals / types
 
+class BDSIntegratorSet;
 class BDSLine;
 class BDSMagnet;
 class BDSMagnetStrength;
@@ -27,7 +28,8 @@ namespace BDS
 			  G4double           angleIn,
 			  G4double           angleOut,
 			  BDSMagnetStrength* st,
-			  G4double           brho);
+			  G4double           brho,
+			  const BDSIntegratorSet* integratorSet);
 
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
@@ -38,7 +40,8 @@ namespace BDS
 			  G4double           angelIn,
 			  G4double           angleOut,
 			  G4double           brho,
-			  BDSMagnetStrength* st);
+			  BDSMagnetStrength* st,
+			  const BDSIntegratorSet* integratorSet);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
@@ -53,7 +56,8 @@ namespace BDS
 			       G4String           name,
 			       BDSMagnetType      magType,
 			       BDSMagnetStrength* st,
-			       G4double           brho);
+			       G4double           brho,
+			       const BDSIntegratorSet* integratorSet);
 
   /// Function to return a new magnet wedge for use in an sbend.
   /// The faces of each wedge are calculated as appropriate depending
@@ -64,7 +68,8 @@ namespace BDS
 			     G4int              index,
 			     G4int              nSBends,
 			     BDSMagnetStrength* st,
-			     G4double           brho);
+			     G4double           brho,
+			     const BDSIntegratorSet* integratorSet);
 }
 
 #endif

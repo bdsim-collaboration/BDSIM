@@ -115,6 +115,7 @@ public:
   inline G4String ExportFileName()         const {return G4String(options.exportFileName);}  
 
   // regular options from here on
+  G4int PrintModulo()                        const;
   inline G4double PrintModuloFraction()      const {return G4double(options.printModuloFraction);}
   inline G4double LengthSafety()             const {return G4double(options.lengthSafety*CLHEP::m);}
   inline G4double OuterDiameter()            const {return G4double(options.outerDiameter)*CLHEP::m;}
@@ -213,8 +214,6 @@ public:
   // refactor out of classes that use this
   inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
   inline G4double MagnetPoleRadius()   const {return itsMagnetPoleRadius;}
-  inline G4double LWCalWidth()         const {return itsLWCalWidth;}
-  inline G4double LWCalOffset()        const {return itsLWCalOffset;}
 
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
@@ -294,8 +293,6 @@ private:
   G4ThreeVector itsLaserwireDir;
   G4bool        itsLaserwireTrackPhotons;
   G4bool        itsLaserwireTrackElectrons;
-  G4double      itsLWCalWidth;
-  G4double      itsLWCalOffset;
   
   /// rotation
   void InitRotationMatrices();

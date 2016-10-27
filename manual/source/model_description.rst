@@ -1094,6 +1094,8 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | z                    | z offset from element it's attached to.                         |
 +----------------------+-----------------------------------------------------------------+
+| t                    | t offset from **Global** t in seconds.                          |
++----------------------+-----------------------------------------------------------------+
 | phi                  | Euler phi rotation from the element the field is attached to.   |
 +----------------------+-----------------------------------------------------------------+
 | theta                | Euler theta rotation from the element the field is attached to. |

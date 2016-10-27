@@ -92,7 +92,7 @@ BDSFieldFactory::BDSFieldFactory()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   offset            = G4ThreeVector(0,0,0);
-  format            = BDSFieldType::zero;
+  format            = BDSFieldType::none;
   fileName          = "";
   geometry          = nullptr;
   cacheLength       = 1*CLHEP::um;
@@ -185,7 +185,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    eleFormat,
 					    eleIntType,
 					    false,   /*don't cache transforms*/
-					    G4double(definition.scaling));
+					    G4double(definition.scaling),
+					    G4double(definition.t*CLHEP::s));
 
       parserDefinitions[G4String(definition.name)] = info;
     }
@@ -220,9 +221,10 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   BDSFieldObjects* field = nullptr;
   switch (info.FieldType().underlying())
     {
-    case BDSFieldType::zero:
-    case BDSFieldType::threed:
-    case BDSFieldType::xy:
+    case BDSFieldType::bmap1d:
+    case BDSFieldType::bmap2d:
+    case BDSFieldType::bmap3d:
+    case BDSFieldType::bmap4d:
     case BDSFieldType::mokka:
     case BDSFieldType::solenoid:
     case BDSFieldType::dipole:
@@ -236,14 +238,30 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
     case BDSFieldType::skewsextupole:
     case BDSFieldType::skewoctupole:
     case BDSFieldType::skewdecapole:
-      field = CreateFieldMag(info);
-      break;
+    case BDSFieldType::dipolefringe:
+    case BDSFieldType::multipolethin:
+      {
+	field = CreateFieldMag(info);
+	break;
+      }
     case BDSFieldType::rfcavity:
-      field = CreateFieldEM(info);
-      break;
+    case BDSFieldType::ebmap1d:
+    case BDSFieldType::ebmap2d:
+    case BDSFieldType::ebmap3d:
+    case BDSFieldType::ebmap4d:
+      {
+	field = CreateFieldEM(info);
+	break;
+      }
     case BDSFieldType::rf:
-      field = CreateFieldE(info);
-      break;
+    case BDSFieldType::emap1d:
+    case BDSFieldType::emap2d:
+    case BDSFieldType::emap3d:
+    case BDSFieldType::emap4d:
+      {
+	field = CreateFieldE(info);
+	break;
+      }
     case BDSFieldType::none:
       break; // leave as nullptr
     default:
@@ -261,15 +279,16 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
     {
-    case BDSFieldType::zero:
-      {break;}
-    case BDSFieldType::threed:
-    case BDSFieldType::xy:
+    case BDSFieldType::bmap1d:
+    case BDSFieldType::bmap2d:
+    case BDSFieldType::bmap3d:
+    case BDSFieldType::bmap4d:
     case BDSFieldType::mokka:
       {field = BDSFieldLoader::Instance()->LoadMagField(info); break;}
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
+    case BDSFieldType::dipolefringe:
       {field = new BDSFieldMagSBend(strength, brho); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
@@ -282,6 +301,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::decapole:
       {field = new BDSFieldMagDecapole(strength, brho); break;}
     case BDSFieldType::multipole:
+    case BDSFieldType::multipolethin:
       {field = new BDSFieldMagMultipole(strength, brho); break;}
     case BDSFieldType::muonspoiler:
       {field = new BDSFieldMagMuonSpoiler(strength, brho); break;}
@@ -294,7 +314,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::skewdecapole:
       {field = new BDSFieldMagSkew(new BDSFieldMagDecapole(strength, brho), CLHEP::pi/10.); break;}
     default:
-      {
+      {// there is no need for case BDSFieldType::none as this won't be used in this function.
 	return nullptr;
 	break;
       }
@@ -324,7 +344,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rfcavity:
-      field = new BDSFieldEMRFCavity(info.CavityInfo()); break;
+      {field = new BDSFieldEMRFCavity(info.CavityInfo()); break;}
+    case BDSFieldType::ebmap1d:
+    case BDSFieldType::ebmap2d:
+    case BDSFieldType::ebmap3d:
+    case BDSFieldType::ebmap4d:
+      {field = BDSFieldLoader::Instance()->LoadEMField(info); break;}
     default:
       return nullptr;
       break;
@@ -354,7 +379,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
   switch (info.FieldType().underlying())
     {
     case BDSFieldType::rf:
-      field = new BDSFieldESinusoid(info.CavityInfo()); break;
+      {field = new BDSFieldESinusoid(info.CavityInfo()); break;}
+    case BDSFieldType::emap1d:
+    case BDSFieldType::emap2d:
+    case BDSFieldType::emap3d:
+    case BDSFieldType::emap4d:
+      {field = BDSFieldLoader::Instance()->LoadEField(info); break;}
     default:
       return nullptr;
       break;
@@ -401,7 +431,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
       integrator = new BDSIntegratorDecapole(strength, brho, eqOfM); break;
     case BDSIntegratorType::multipole:
       integrator = new BDSIntegratorMultipole(strength, brho, eqOfM); break;
-    case BDSIntegratorType::fringe:
+    case BDSIntegratorType::dipolefringe:
       integrator = new BDSIntegratorFringefield(strength, brho, eqOfM); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
@@ -460,7 +490,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
     case BDSIntegratorType::sextupole:
     case BDSIntegratorType::octupole:
     case BDSIntegratorType::decapole:
-    case BDSIntegratorType::fringe:
+    case BDSIntegratorType::dipolefringe:
     case BDSIntegratorType::g4constrk4:
     case BDSIntegratorType::g4exacthelixstepper:
     case BDSIntegratorType::g4helixexpliciteuler:

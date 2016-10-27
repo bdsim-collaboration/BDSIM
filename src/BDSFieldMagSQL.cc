@@ -55,7 +55,8 @@ BDSFieldMagSQL::BDSFieldMagSQL(const G4String& aFieldFile,
 BDSFieldMagSQL::~BDSFieldMagSQL()
 {;}
 
-G4ThreeVector BDSFieldMagSQL::GetField(const G4ThreeVector &position) const
+G4ThreeVector BDSFieldMagSQL::GetField(const G4ThreeVector &position,
+				       const G4double       /*t*/) const
 {
   G4ThreeVector LocalR, LocalB, RLocalR, FieldB, NPoleB;
 

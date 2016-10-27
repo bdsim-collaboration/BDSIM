@@ -29,7 +29,8 @@ public:
 
   /// Get the magnetic field vector in local coordinates. The derived class does
   /// not need to apply the transform.
-  virtual G4ThreeVector GetField(const G4ThreeVector &position) const = 0;
+  virtual G4ThreeVector GetField(const G4ThreeVector& position,
+				 const G4double       t = 0) const = 0;
   
   /// Implement interface to this class's GetField to fulfill G4MagneticField
   /// inheritance and allow a BDSFieldMag instance to be passed around in the field
@@ -39,7 +40,8 @@ public:
 			     G4double* field) const;
   
   /// Get the field value after applying transform for local offset.
-  G4ThreeVector GetFieldTransformed(const G4ThreeVector& position) const;
+  G4ThreeVector GetFieldTransformed(const G4ThreeVector& position,
+				    const G4double       t) const;
 
   /// Set the transform applied before evaluating the field. This can be used
   /// to account for any difference between the field coordinate system and

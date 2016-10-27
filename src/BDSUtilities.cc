@@ -1,5 +1,5 @@
 #include "BDSDebug.hh"
-#include "BDSGeometryComponent.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSRunManager.hh"
 #include "BDSUtilities.hh"

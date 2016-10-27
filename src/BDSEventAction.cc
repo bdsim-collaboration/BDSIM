@@ -49,13 +49,7 @@ BDSEventAction::BDSEventAction():
   isBatch            = BDSGlobalConstants::Instance()->Batch();
 
   if(isBatch)
-    {
-      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
-      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
-      printModulo = (G4int)ceil(nGenerate * fraction);
-      if (printModulo < 0)
-	{printModulo = 1;}
-    }
+    {printModulo = BDSGlobalConstants::Instance()->PrintModulo();}
   else
     {printModulo=1;}
 }

@@ -39,13 +39,14 @@ public:
 	       G4Transform3D       transformIn                = G4Transform3D(),
 	       BDSCavityInfo*      cavityInfoIn               = nullptr,
 	       G4String            magneticFieldFilePathIn    = "",
-	       BDSFieldFormat      magneticFieldFormatIn      = BDSFieldFormat::bdsim3d,
+	       BDSFieldFormat      magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
 	       BDSInterpolatorType magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
 	       G4String            electricFieldFilePathIn    = "",
-	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim3d,
+	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim1d,
 	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
 	       G4bool              cacheTransformsIn          = false,
-	       G4double            scalingIn                  = 1.0);
+	       G4double            scalingIn                  = 1.0,
+	       G4double            timeOffsetIn               = 0);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -67,6 +68,7 @@ public:
   inline BDSInterpolatorType ElectricInterpolatorType() const {return electricInterpolatorType;}
   inline G4bool              CacheTransforms()          const {return cacheTransforms;}
   inline G4double            Scaling()                  const {return scaling;}
+  inline G4double            TimeOffset()               const {return timeOffset;}
   /// @}
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
@@ -95,6 +97,7 @@ private:
   BDSInterpolatorType electricInterpolatorType;
   G4bool              cacheTransforms;
   G4double            scaling;
+  G4double            timeOffset;
 };
 
 #endif

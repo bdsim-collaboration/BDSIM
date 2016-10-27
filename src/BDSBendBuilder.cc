@@ -6,7 +6,10 @@
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldType.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSIntegratorSet.hh"
+#include "BDSIntegratorType.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
@@ -25,7 +28,8 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
 			     G4double           angleIn,
 			     G4double           angleOut,
 			     BDSMagnetStrength* st,
-			     G4double           brho)
+			     G4double           brho,
+			     const BDSIntegratorSet* integratorSet)
 {
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -48,9 +52,10 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
   if (!BDS::IsFinite(angle) || (nSBends == 1))
     {
+      BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
-						   BDSIntegratorType::dipole,
+						   intType,
 						   st);
       // prepare one sbend segment
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
@@ -118,10 +123,11 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   
   // register the central wedge which will always be used as the
   // middle wedge regardless of poleface rotations
-  
+
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
-					       BDSIntegratorType::dipole,
+					       intType,
 					       st);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -0.5*semiangle, -0.5*semiangle);
@@ -163,7 +169,8 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       thename                        = element->name + "_e1_fringe";
       angle                          = -element->e1 - 0.5*((*fringeStIn)["angle"]);
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angle, -angle,
-						      thename, magType, fringeStIn, brho);
+						      thename, magType, fringeStIn, brho,
+						      integratorSet);
       sbendline->AddComponent(startfringe);
     }
   
@@ -183,14 +190,14 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeIn)
             {
-              oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho);
+              oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
               BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
             }
           else
             {
               if (i == 0)
                 {
-                  oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho);
+                  oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
                   BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
                 }
               else
@@ -203,14 +210,14 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeOut)
             {
-              oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho);
+              oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
               BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
             }
           else
             {
               if (i == (nSBends-1))
                 {
-                  oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho);
+                  oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
                   BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
                 }
               else
@@ -245,7 +252,8 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       thename                         = element->name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, angle, -angle,
-						    thename, magType, fringeStOut, brho);
+						    thename, magType, fringeStOut, brho,
+						    integratorSet);
       sbendline->AddComponent(endfringe);
     }
   return sbendline;
@@ -257,7 +265,8 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
 			     G4double           angleIn,
 			     G4double           angleOut,
 			     G4double           brho,
-			     BDSMagnetStrength* st)
+			     BDSMagnetStrength* st,
+			     const BDSIntegratorSet* integratorSet)
 {
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -308,7 +317,8 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
       angle                          = polefaceAngleIn;
       
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, -angle, angle,
-						      thename, magType, fringeStIn, brho);
+						      thename, magType, fringeStIn, brho,
+						      integratorSet);
       rbendline->AddComponent(startfringe);
     }
   
@@ -337,10 +347,11 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   // override copied length and angle
   (*st)["length"] = length;
   (*st)["angle"]  = angle;
-  
+
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
-					       BDSIntegratorType::dipole,
+					       intType,
 					       st);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
@@ -368,7 +379,8 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
       angle = polefaceAngleOut;
       
       BDSMagnet *endfringe = BDS::BuildDipoleFringe(element, angle, -angle,
-						    thename, magType, fringeStOut, brho);
+						    thename, magType, fringeStOut, brho,
+						    integratorSet);
       rbendline->AddComponent(endfringe);
     }
   
@@ -381,15 +393,17 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 				  G4String           name,
 				  BDSMagnetType      magType,
 				  BDSMagnetStrength* st,
-				  G4double           brho)
+				  G4double           brho,
+				  const BDSIntegratorSet* integratorSet)
 {
   auto beamPipeInfo    = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
-  
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipolefringe);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipolefringe,
 					       brho,
-					       BDSIntegratorType::fringe,
+					       intType,
 					       st);
   
   return new BDSMagnet(magType,
@@ -431,7 +445,8 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
 				G4int              index,
 				G4int              nSBends,
 				BDSMagnetStrength* st,
-				G4double           brho)
+				G4double           brho,
+				const BDSIntegratorSet* integratorSet)
 {
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -506,10 +521,11 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
   BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st); // copy field strength - ie B
   (*stSemi)["length"] = length;
   (*stSemi)["angle"]  = semiangle;  // override copied length and angle
-  
+
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
-					       BDSIntegratorType::dipole,
+					       intType,
 					       stSemi);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
