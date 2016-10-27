@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorSetType.hh"
 #include "BDSIntegratorType.hh"
@@ -104,15 +105,25 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
 {
   switch (field.underlying())
     {
-    case BDSFieldType::none:
-      {return set->general;     break;}
-    case BDSFieldType::zero:
-      {return set->general;     break;}
-    case BDSFieldType::threed:
-      {return set->general;     break;}
-    case BDSFieldType::xy:
-      {return set->general;     break;}
     case BDSFieldType::mokka:
+    case BDSFieldType::bmap1d:
+    case BDSFieldType::bmap2d:
+    case BDSFieldType::bmap3d:
+    case BDSFieldType::bmap4d:
+    case BDSFieldType::ebmap1d:
+    case BDSFieldType::ebmap2d:
+    case BDSFieldType::ebmap3d:
+    case BDSFieldType::ebmap4d:
+    case BDSFieldType::emap1d:
+    case BDSFieldType::emap2d:
+    case BDSFieldType::emap3d:
+    case BDSFieldType::emap4d:
+      {
+	G4cout << __METHOD_NAME__ << "Warning - this is overriding the specified field maps integrator" << G4endl;
+	return set->general;
+	break;
+      }
+    case BDSFieldType::none:
       {return set->general;     break;}
     case BDSFieldType::solenoid:
       {return set->solenoid;    break;}

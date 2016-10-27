@@ -70,7 +70,7 @@ int main(int /*argc*/, char** /*argv*/)
   int    nY   = 100;
 
   // 2D Nearest Neighbour
-  BDSFieldInfo* infoBiNearest = new BDSFieldInfo(BDSFieldType::xy,
+  BDSFieldInfo* infoBiNearest = new BDSFieldInfo(BDSFieldType::bmap2d,
 						 0,
 						 BDSIntegratorType::g4classicalrk4,
 						 nullptr,
@@ -84,7 +84,7 @@ int main(int /*argc*/, char** /*argv*/)
   BDSFieldMag* biNearest = BDSFieldLoader::Instance()->LoadMagField(*infoBiNearest);
 
   // 2D Linear
-  BDSFieldInfo* infoBiLinear = new BDSFieldInfo(BDSFieldType::xy,
+  BDSFieldInfo* infoBiLinear = new BDSFieldInfo(BDSFieldType::bmap2d,
 						0,
 						BDSIntegratorType::g4classicalrk4,
 						nullptr,
@@ -98,7 +98,7 @@ int main(int /*argc*/, char** /*argv*/)
   BDSFieldMag* biLinear = BDSFieldLoader::Instance()->LoadMagField(*infoBiLinear);
 
   // 2D Cubic
-  BDSFieldInfo* infoBiCubic = new BDSFieldInfo(BDSFieldType::xy,
+  BDSFieldInfo* infoBiCubic = new BDSFieldInfo(BDSFieldType::bmap2d,
 					       0,
 					       BDSIntegratorType::g4classicalrk4,
 					       nullptr,
