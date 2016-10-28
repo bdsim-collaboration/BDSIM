@@ -102,6 +102,7 @@ cavitymodel {return CAVITYMODEL; }
 cutsregion { return REGION; }
 field { return FIELD; }
 placement { return PLACEMENT; }
+query { return QUERY; }
 tunnel { return TUNNEL; }
 xsecbias {return XSECBIAS; }
 xsecBias {return XSECBIAS; }

@@ -17,6 +17,7 @@
 #include "parameters.h"
 #include "physicsbiasing.h"
 #include "placement.h"
+#include "query.h"
 #include "region.h"
 #include "symbolmap.h"
 #include "tunnel.h"
@@ -174,6 +175,8 @@ namespace GMAD
     PhysicsBiasing xsecbias;
     /// Placement instance
     Placement placement;
+    /// Query instance
+    Query query;
     /// Region instance;
     Region region;
     /// Tunnel instance
@@ -191,12 +194,14 @@ namespace GMAD
     FastList<Element>   beamline_list;
     /// List of parser defined atoms
     std::vector<Atom>   atom_list;
-    /// List of parser defined materials
-    std::vector<Material> material_list;
-    /// List of parser defined regions
-    std::vector<Region> region_list;
     /// List of parser defined fields
     std::vector<Field>  field_list;
+    /// List of parser defined materials
+    std::vector<Material> material_list;
+    /// List of parser defined query objects
+    std::vector<Query> query_list;
+    /// List of parser defined regions
+    std::vector<Region> region_list;
     /// List of parser defined tunnels
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects
