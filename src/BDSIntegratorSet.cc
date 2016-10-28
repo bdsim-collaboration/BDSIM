@@ -61,7 +61,7 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew octupole
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
-			 BDSIntegratorType::multipole);     // thin multipole
+			 BDSIntegratorType::multipolethin); // thin multipole
   const BDSIntegratorSet* integratorsGeant4 =
     new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
 			 BDSIntegratorType::g4classicalrk4, // dipole
@@ -79,7 +79,7 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew octupole
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
-			 BDSIntegratorType::multipole);     // thin multipole
+			 BDSIntegratorType::multipolethin); // thin multipole
 }
 
 const BDSIntegratorSet* BDS::IntegratorSet(G4String sets)
@@ -139,6 +139,8 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
       {return set->decapole;    break;}
     case BDSFieldType::multipole:
       {return set->multipole;   break;}
+    case BDSFieldType::multipolethin:
+      {return set->multipolethin;  break;}
     case BDSFieldType::muonspoiler:
       {return set->muonspoiler; break;}
     case BDSFieldType::rfcavity:

@@ -13,7 +13,7 @@
 #include <cmath>
 #include <G4TwoVector.hh>
 
-BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength,
+BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
 					       G4double                 brho,
 					       G4Mag_EqRhs*             eqOfMIn):
   BDSIntegratorBase(eqOfMIn, 6),
@@ -32,7 +32,7 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
     }
 }
 
-void BDSIntegratorMultipole::Stepper(const G4double yIn[],
+void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 				     const G4double[] /*dxdy*/,
 				     const G4double h,
 				     G4double       yOut[],
@@ -179,7 +179,7 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
     {yErr[i] = 0;}
 }
 
-G4int BDSIntegratorMultipole::Factorial(G4int n)
+G4int BDSIntegratorMultipoleThin::Factorial(G4int n)
 {
   G4int result = 1;
   for (G4int i = 1; i <= n; i++)

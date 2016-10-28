@@ -30,7 +30,7 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::sextupole,        "sextupole"},
       {BDSFieldType::octupole,         "octupole"},
       {BDSFieldType::decapole,         "decapole"},
-      {BDSFieldType::multipole,        "multipole"},
+      {BDSFieldType::multipolethin,    "multipolethin"},
       {BDSFieldType::fringe,           "fringe"},
       {BDSFieldType::muonspoiler,      "muonspoiler"},
       {BDSFieldType::rfcavity,         "rfcavity"},

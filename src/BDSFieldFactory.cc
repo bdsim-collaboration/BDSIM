@@ -429,8 +429,8 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
       integrator = new BDSIntegratorOctupole(strength, brho, eqOfM); break;
     case BDSIntegratorType::decapole:
       integrator = new BDSIntegratorDecapole(strength, brho, eqOfM); break;
-    case BDSIntegratorType::multipole:
-      integrator = new BDSIntegratorMultipole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::multipolethin:
+      integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
       integrator = new BDSIntegratorFringefield(strength, brho, eqOfM); break;
     case BDSIntegratorType::g4constrk4:
