@@ -231,6 +231,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
     case BDSFieldType::solenoid:
     case BDSFieldType::dipole:
     case BDSFieldType::quadrupole:
+    case BDSFieldType::dipolequadrupole:
     case BDSFieldType::sextupole:
     case BDSFieldType::octupole:
     case BDSFieldType::decapole:
@@ -240,8 +241,6 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
     case BDSFieldType::skewsextupole:
     case BDSFieldType::skewoctupole:
     case BDSFieldType::skewdecapole:
-    case BDSFieldType::dipolefringe:
-    case BDSFieldType::multipolethin:
       {
 	field = CreateFieldMag(info);
 	break;
@@ -288,7 +287,6 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-    case BDSFieldType::dipolefringe:
       {field = new BDSFieldMagSBend(strength, brho); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
@@ -301,7 +299,6 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::decapole:
       {field = new BDSFieldMagDecapole(strength, brho); break;}
     case BDSFieldType::multipole:
-    case BDSFieldType::multipolethin:
       {field = new BDSFieldMagMultipole(strength, brho); break;}
     case BDSFieldType::muonspoiler:
       {field = new BDSFieldMagMuonSpoiler(strength, brho); break;}
