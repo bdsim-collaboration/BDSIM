@@ -41,7 +41,9 @@ public:
   /// Main interface overrides base class method to construct a file with
   /// optional colour mapping.
   virtual BDSGeometryExternal* Build(G4String fileName,
-				     std::map<G4String, G4Colour*>* colourMapping = nullptr);
+				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
+				     G4double suggestedLength        = 0,
+				     G4double suggestedOuterDiameter = 0);
 
 protected:
   virtual void CleanUp();

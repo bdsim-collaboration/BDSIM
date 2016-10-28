@@ -36,7 +36,8 @@ void BDSElement::BuildContainerLogicalVolume()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
 
-  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(geometryFileName);
+  BDSGeometryExternal* geom = BDSGeometryFactory::Instance()->BuildGeometry(geometryFileName, nullptr,
+									    chordLength, outerDiameter);
   
   if (!geom)
     {

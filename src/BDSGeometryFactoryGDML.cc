@@ -32,7 +32,9 @@ BDSGeometryFactoryGDML* BDSGeometryFactoryGDML::Instance()
 }
 
 BDSGeometryExternal* BDSGeometryFactoryGDML::Build(G4String fileName,
-						   std::map<G4String, G4Colour*>* mapping)
+						   std::map<G4String, G4Colour*>* mapping,
+						   G4double /*suggestedLength*/,
+						   G4double /*suggestedOuterDiameter*/)
 {
   CleanUp();
   
