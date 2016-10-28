@@ -1,4 +1,3 @@
-
 #include "BDSComponentFactory.hh"
 
 // elements
@@ -1186,7 +1185,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
 {
-  if(element->l*CLHEP::m < 4*lengthSafety)
+  if(element->l*CLHEP::m < 1e-7)
     {
       G4cerr << "---->NOT creating element, "
              << " name = " << element->name
