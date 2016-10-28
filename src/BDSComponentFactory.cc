@@ -718,8 +718,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::multipole);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
+  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::multipolethin);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipolethin,
 					       brho,
 					       intType,
 					       st);
