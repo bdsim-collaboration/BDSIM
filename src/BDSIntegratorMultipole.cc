@@ -93,6 +93,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4double knReal = 0;
   G4double knImag = 0;
   G4double vOverc = 1;
+  G4double momx;
+  G4double momy;
 
   //G4double speedoflight = CLHEP::c_light / (CLHEP::m / CLHEP::second);
   G4double dipoleTerm = b0l*normFactor *zp / vOverc;
@@ -102,17 +104,24 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //Sum higher order components into one kick
   for (; kn != bnl.end(); n++, kn++)
     {
+      momx = 0; //reset to zero
+      momy = 0;
       knReal = (*kn) * pow(position,n).real() / nfact[n];
       knImag = (*kn) * pow(position,n).imag() / nfact[n];
-      result = {knReal,knImag};
+      if (!std::isnan(knReal)){
+        momx = knReal;
+      }
+      if (!std::isnan(knImag)) {
+        momy = knImag;
+      }
+      result = {momx,momy};
       kick += result;
     }
 
   //apply kick
-  if(!std::isnan(kick.real()))
-    {xp1 -= (kick.real() + dipoleTerm);}
-  if(!std::isnan(kick.imag()))
-    {yp1 += kick.imag();}
+
+  xp1 -= (kick.real() + dipoleTerm);
+  yp1 += kick.imag();
 
   //Reset n for skewed kicks.
   n=0;
@@ -121,8 +130,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4double skewAngle=0;
 
   G4ThreeVector mom = G4ThreeVector(xp1,yp1,zp1);
-  G4double momx = mom.x();
-  G4double momy = mom.y();
+  momx = mom.x();
+  momy = mom.y();
 
   G4complex skewresult(0,0);
   G4complex skewkick(0,0);
