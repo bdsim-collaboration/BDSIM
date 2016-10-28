@@ -1,13 +1,15 @@
 #include "HistogramMerge.hh"
-#include "Config.hh"
 #include "rebdsim.hh"
 
 ClassImp(HistogramMerge)
 
-HistogramMerge::HistogramMerge()
+HistogramMerge::HistogramMerge():
+debug(false)
 {;}
 
-HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms *h)
+HistogramMerge::HistogramMerge(BDSOutputROOTEventHistograms* h,
+			       bool debugIn):
+  debug(debugIn)
 {
   auto h1i = h->Get1DHistograms();
   for(auto hist : h1i)
@@ -80,7 +82,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
 
 void HistogramMerge::Terminate()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << "HistogramMerge::Terminate" << std::endl;}
   
   // loop over 1d histograms

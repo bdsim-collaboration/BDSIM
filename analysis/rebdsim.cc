@@ -60,12 +60,18 @@ int main(int argc, char *argv[])
 
   std::vector<Analysis*> analyses;
 
-  DataLoader dl = DataLoader(); // this can throw but only if used before config so safe here
+  DataLoader dl = DataLoader(Config::Instance()->InputFilePath(),
+			     Config::Instance()->Debug(),
+			     Config::Instance()->ProcessSamplers());
+  
   EventAnalysis*   evtAnalysis = new EventAnalysis(dl.GetEvent(), dl.GetEventTree());
   RunAnalysis*     runAnalysis = new RunAnalysis(dl.GetRun(), dl.GetRunTree());
   OptionsAnalysis* optAnalysis = new OptionsAnalysis(dl.GetOptions(), dl.GetOptionsTree());
   ModelAnalysis*   modAnalysis = new ModelAnalysis(dl.GetModel(), dl.GetModelTree());
 
+  evtAnalysis->SetPrintModuloFraction(Config::Instance()->PrintModuloFraction());
+  evtAnalysis->SetProcessSamplers(Config::Instance()->ProcessSamplers());
+  
   analyses.push_back(evtAnalysis);
   analyses.push_back(runAnalysis);
   analyses.push_back(optAnalysis);
