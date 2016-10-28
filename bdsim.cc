@@ -174,22 +174,10 @@ int main(int argc,char** argv)
   
   /// Set the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
-	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
-	 << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m" << G4endl;
-#endif
-  // This sets the tolerances for the geometry (1e-11 times this value)
-  // Note, this doesn't actually have any affect on the size of the geometry,
-  // and is only used to calculate the tolerance in geant4. This is really misleading
-  // naming on the part of geant4. There is no way to just set a tolerance directly.
-  G4double worldMaximumExtent=1000*CLHEP::m;
-  G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
   G4cout << __FUNCTION__ << "> Geometry Tolerances: "     << G4endl;
-  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance() << " mm"   << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance()          << " rad" << G4endl;
-  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
 
   /// Set user action classes
 #ifdef BDSDEBUG 
