@@ -139,8 +139,6 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
       {return set->decapole;    break;}
     case BDSFieldType::multipole:
       {return set->multipole;   break;}
-    case BDSFieldType::multipolethin:
-      {return set->multipolethin;  break;}
     case BDSFieldType::muonspoiler:
       {return set->muonspoiler; break;}
     case BDSFieldType::rfcavity:

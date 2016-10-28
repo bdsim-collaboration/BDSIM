@@ -400,8 +400,8 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipolefringe);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipolefringe,
+  BDSIntegratorType intType = integratorSet->dipolefringe;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
 					       st);
