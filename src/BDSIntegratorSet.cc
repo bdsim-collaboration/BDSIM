@@ -105,7 +105,8 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
 {
   switch (field.underlying())
     {
-    case BDSFieldType::mokka:
+    case BDSFieldType::none:
+      {return set->general;     break;}// shouldn't really happen, but for completeness.
     case BDSFieldType::bmap1d:
     case BDSFieldType::bmap2d:
     case BDSFieldType::bmap3d:
@@ -118,13 +119,12 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
     case BDSFieldType::emap2d:
     case BDSFieldType::emap3d:
     case BDSFieldType::emap4d:
+    case BDSFieldType::mokka:
       {
 	G4cout << __METHOD_NAME__ << "Warning - this is overriding the specified field maps integrator" << G4endl;
 	return set->general;
 	break;
       }
-    case BDSFieldType::none:
-      {return set->general;     break;}
     case BDSFieldType::solenoid:
       {return set->solenoid;    break;}
     case BDSFieldType::dipole:
@@ -141,10 +141,6 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
       {return set->multipole;   break;}
     case BDSFieldType::muonspoiler:
       {return set->muonspoiler; break;}
-    case BDSFieldType::rfcavity:
-      {return set->rfcavity;    break;}
-    case BDSFieldType::rf:
-      {return set->rf;          break;}
     case BDSFieldType::skewquadrupole:
       {return set->skewQuadrupole; break;}
     case BDSFieldType::skewsextupole:
@@ -153,6 +149,10 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
       {return set->skewOctupole;   break;}
     case BDSFieldType::skewdecapole:
       {return set->skewDecapole;   break;}
+    case BDSFieldType::rfcavity:
+      {return set->rfcavity;    break;}
+    case BDSFieldType::rf:
+      {return set->rf;          break;}
     default:
       {return set->general;     break;}
     }

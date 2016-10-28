@@ -221,6 +221,8 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   BDSFieldObjects* field = nullptr;
   switch (info.FieldType().underlying())
     {
+    case BDSFieldType::none:
+      {break;} // leave as nullptr
     case BDSFieldType::bmap1d:
     case BDSFieldType::bmap2d:
     case BDSFieldType::bmap3d:
@@ -262,8 +264,6 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
 	field = CreateFieldE(info);
 	break;
       }
-    case BDSFieldType::none:
-      break; // leave as nullptr
     default:
       G4cerr << __METHOD_NAME__ << "not a valid field type \"" << info.FieldType() << "\"" << G4endl;
       return field;
