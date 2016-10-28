@@ -22,8 +22,3 @@ simple_testing(IO_SeedState "--file=io.gmad --writeseedstate" "")
 
 # use ascii seed state
 simple_testing(IO_Load_ASCII_SeedState "--file=io.gmad --seedStateFileName=output.seedstate.txt --ngenerate=1" "")
-
-# seed state (uses seedstate from previous test)
-#set(TESTING_ARGS --ngenerate=14)
-#simple_testing(rooteventRecreateRepeat "--file=io_recreate.gmad" "")
-#set_tests_properties(ro PROPERTIES DEPENDS IO_ROOTEVENT1)
