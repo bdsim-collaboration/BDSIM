@@ -1,4 +1,3 @@
-#include "Config.hh"
 #include "Event.hh"
 
 #include "BDSOutputROOTEventHistograms.hh"
@@ -10,9 +9,19 @@
 
 ClassImp(Event)
 
-Event::Event()
+Event::Event():
+  debug(false),
+  processSamplers(false)
 {
-  this->CommonCtor();
+  CommonCtor();
+}
+
+Event::Event(bool debugIn,
+	     bool processSamplersIn):
+  debug(debugIn),
+  processSamplers(processSamplersIn)
+{
+  CommonCtor();
 }
 
 void Event::CommonCtor()
@@ -29,10 +38,8 @@ void Event::CommonCtor()
 
 void Event::SetBranchAddress(TChain *t, std::vector<std::string>& samplerNames)
 {
-  if(Config::Instance())
-  {
-    if(Config::Instance()->Debug()) std::cout << "Event::SetBranchAddress" << std::endl;
-  }
+  if(debug)
+    {std::cout << "Event::SetBranchAddress" << std::endl;}
 
   t->GetEntry(0); // this initialises the local variables it would seem.
   t->SetBranchAddress("Primary.",&primaries);
@@ -43,9 +50,7 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string>& samplerNames)
   t->SetBranchAddress("Trajectory.",&trajectory);
   t->SetBranchAddress("Histos.",&histos);
 
-  if(Config::Instance())
-  {
-    if(Config::Instance()->Debug())
+  if(debug)
     {
       std::cout << "Event::SetBranchAddress> Primary.         " << primaries << std::endl;
       std::cout << "Event::SetBranchAddress> Eloss.           " << eloss << std::endl;
@@ -55,22 +60,18 @@ void Event::SetBranchAddress(TChain *t, std::vector<std::string>& samplerNames)
       std::cout << "Event::SetBranchAddress> Trajectory.      " << trajectory << std::endl;
       std::cout << "Event::SetBranchAddress> Histos.          " << histos << std::endl;
     }
-  }
 
-  if(Config::Instance()->CalculateOpticalFunctions() || 
-     Config::Instance()->ProcessSamplers()) {
-    unsigned int nrSamplers = samplerNames.size();
-    samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
-    for(unsigned int i=0;i<nrSamplers;++i)
+  if (processSamplers)
     {
-      t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
-      if(Config::Instance())
-      {
-	if(Config::Instance()->Debug())
-	  {std::cout << "Event::SetBranchAddress> " << samplerNames[i] << " " << samplers[i] << std::endl;}
-      }
+      unsigned int nrSamplers = samplerNames.size();
+      samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
+      for(unsigned int i=0;i<nrSamplers;++i)
+	{
+	  t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
+	  if(debug)
+	    {std::cout << "Event::SetBranchAddress> " << samplerNames[i] << " " << samplers[i] << std::endl;}
+	}
     }
-  }
 }
 
 Event::~Event()

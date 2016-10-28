@@ -1,30 +1,33 @@
 #include "SamplerAnalysis.hh"
-#include "Config.hh"
 #include "rebdsim.hh"
 
 #include <cmath>
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
-  S(0)
+  S(0),
+  debug(false)
 {
   CommonCtor();
 }
 
 #ifndef __ROOTDOUBLE__
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn):
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
+				 bool debugIn):
 #else 
-  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn):
+  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
+				   bool debugIn):
 #endif
   s(samplerIn),
-  S(0)
+  S(0),
+  debug(debugIn)
 {
   CommonCtor();
 }
 
 void SamplerAnalysis::CommonCtor()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
   
@@ -79,14 +82,14 @@ SamplerAnalysis::~SamplerAnalysis()
 
 void SamplerAnalysis::Initialise()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
 }
 
 void SamplerAnalysis::Process()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
 
   std::vector<double> v;
@@ -126,7 +129,7 @@ void SamplerAnalysis::Process()
 
 void SamplerAnalysis::Terminate()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
 
   // central moments

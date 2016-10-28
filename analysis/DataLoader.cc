@@ -1,6 +1,5 @@
 #include "DataLoader.hh"
 
-#include "Config.hh"
 #include "Event.hh"
 #include "Model.hh"
 #include "Options.hh"
@@ -16,9 +15,13 @@
 
 ClassImp(DataLoader)
 
-DataLoader::DataLoader()
+DataLoader::DataLoader(std::string fileName,
+		       bool        debugIn,
+		       bool        processSamplersIn):
+  debug(debugIn),
+  processSamplers(processSamplersIn)
 {
-  this->CommonCtor();
+  CommonCtor(fileName);
 }
 
 DataLoader::~DataLoader()
@@ -34,11 +37,11 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor()
+void DataLoader::CommonCtor(std::string fileName)
 {
   opt = new Options();
   mod = new Model();
-  evt = new Event();
+  evt = new Event(debug, processSamplers);
   run = new Run();
 
   optChain = new TChain("Options","Options");
@@ -46,18 +49,17 @@ void DataLoader::CommonCtor()
   evtChain = new TChain("Event","Event");
   runChain = new TChain("Run","Run");
 
-  this->BuildInputFileList();
+  this->BuildInputFileList(fileName);
   this->BuildTreeNameList();
   this->BuildEventBranchNameList();
   this->ChainTrees();
   this->SetBranchAddress();
 }
 
-void DataLoader::BuildInputFileList()
+void DataLoader::BuildInputFileList(std::string inputPath)
 {
-  std::string inputPath  = Config::Instance()->InputFilePath();
   if(inputPath == "")
-    {throw std::string("DataLoader::BuildInputFileList> DataLoader needs to be constructed after Config");}
+    {throw std::string("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
   if(inputPath.find("*") != std::string::npos)
@@ -84,7 +86,7 @@ void DataLoader::BuildInputFileList()
       globfree(&glob_result);
     }
   
-  if(Config::Instance()->Debug())
+  if(debug)
     {
       for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
 	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
@@ -114,7 +116,7 @@ void DataLoader::BuildTreeNameList()
   f->Close();
   delete f;
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     for(auto i = this->treeNames.begin(); i != this->treeNames.end(); ++i)
       std::cout << "DataLoader::BuildTreeNameList> " <<  *i << std::endl;
@@ -147,7 +149,7 @@ void DataLoader::BuildEventBranchNameList()
   f->Close();
   delete f;
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     for(auto i = this->branchNames.begin(); i != this->branchNames.end(); ++i)
       {std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;}

@@ -22,15 +22,17 @@ class TChain;
 class DataLoader
 {
 public:
-  DataLoader();
+  DataLoader(std::string fileName,
+	     bool        debugIn           = false,
+	     bool        processSamplersIn = false);
   virtual ~DataLoader();
 
   /// Create an instance of each class in the file to be overlaid by loading
   /// the ROOT file.
-  void CommonCtor();
+  void CommonCtor(std::string fileName);
 
   /// Build up the input file list.
-  void BuildInputFileList();
+  void BuildInputFileList(std::string inputPath);
 
   /// Open the first file in the file list and map the trees in it.
   void BuildTreeNameList();
@@ -60,6 +62,10 @@ public:
   /// @}
 
 private:
+  DataLoader() = delete;
+  
+  bool debug;
+  bool processSamplers;
   Options                      *opt;
   Model                        *mod;
   Event                        *evt;
