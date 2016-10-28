@@ -44,7 +44,7 @@ class Config
   
  protected:
   /// Private constructor for singleton pattern.
-  Config();
+  Config() = delete;
   /// Desired constructor, also private for singleton pattern.
   Config(std::string fileNameIn,
 	 std::string inputFilePathIn,
