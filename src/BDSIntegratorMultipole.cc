@@ -35,8 +35,7 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
 void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 				     const G4double[] /*dxdy*/,
 				     const G4double h,
-				     G4double       yOut[],
-				     G4double       yErr[])
+				     G4double       yOut[])
 {
   const G4double *pIn    = yIn+3;
   G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -184,8 +183,32 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
 
-  for(G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+  //for(G4int i = 0; i < nVariables; i++)
+  //  {yErr[i] = 0;}
+}
+
+void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
+                                     const G4double[] /*dydx[]*/,
+                                     const G4double hstep,
+                                     G4double yOut[],
+                                     G4double yErr[]) {
+  G4double yTemp[7];
+  G4double h = hstep * 0.5;
+
+  AdvanceHelix(yInput, 0, h, yTemp);
+  AdvanceHelix(yTemp, 0, h, yOut);
+
+  h = hstep;
+  AdvanceHelix(yInput, 0, h, yTemp);
+
+  for (G4int i = 0; i < nVariables; i++) {
+    yErr[i] = yOut[i] - yTemp[i];
+    // if error small, set error to 0
+    // this is done to prevent Geant4 going to smaller and smaller steps
+    // ideally use some of the global constants instead of hardcoding here
+    // could look at step size as well instead.
+    if (std::abs(yErr[i]) < 1e-7) { yErr[i] = 0; }
+  }
 }
 
 G4int BDSIntegratorMultipoleThin::Factorial(G4int n)

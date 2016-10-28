@@ -38,8 +38,7 @@ protected:
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,
-		    G4double       yOut[],
-		    G4double       yErr[]);
+		    G4double       yOut[]);
 
 private:
   /// Private default constructor to enforce use of supplied constructor
