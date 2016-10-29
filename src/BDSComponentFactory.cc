@@ -749,7 +749,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 	 << " name = " << element->name
 	 << " l = " << element->l << "m"
 	 << " outerDiameter = "  << element->outerDiameter << "m"
-	 << " B Field Offset = " << bFieldOffset << " m"
 	 << " precision region " << element->region
 	 << G4endl;
 #endif

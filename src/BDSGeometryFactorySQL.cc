@@ -105,7 +105,6 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
   // strip of the file name effictively
   G4String containingDir = BDS::GetFullPath(fileName, true);
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "loading SQL file: " << filePath << G4endl;
   G4cout << __METHOD_NAME__ << "containing directory: " << containingDir << G4endl;
 #endif
   std::ifstream ifs;
