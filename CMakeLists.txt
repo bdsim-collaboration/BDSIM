@@ -240,6 +240,9 @@ add_subdirectory(analysis)
 # Include directory for comparator
 add_subdirectory(comparator)
 
+# Include directory for interpolator
+add_subdirectory(interpolator)
+
 # Manual
 add_subdirectory(manual)
 
