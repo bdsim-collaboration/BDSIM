@@ -23,7 +23,8 @@ public:
 
   /// Construct w.r.t. a set of event histograms. Each histogram
   /// is cloned in preparation for accumulation.
-  HistogramMerge(BDSOutputROOTEventHistograms *h);
+  HistogramMerge(BDSOutputROOTEventHistograms *h,
+		 bool debugIn = false);
   
   virtual ~HistogramMerge();
 
@@ -39,6 +40,7 @@ public:
   void Write(TFile *outputFile);
 
 private:
+  bool debug;
   std::vector<TH1D*> histograms1D;
   std::vector<int> histograms1DN;
   std::vector<TH1D*> histograms1DError;

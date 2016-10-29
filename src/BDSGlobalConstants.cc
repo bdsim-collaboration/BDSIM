@@ -91,8 +91,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   
   // options that are never used (no set method):
   // refactor out of classes that use this
-  itsLWCalWidth       = 0.0;
-  itsLWCalOffset      = 0.0;
   itsMagnetPoleRadius = 0.0;
   itsMagnetPoleSize   = 0.0;
 
@@ -150,6 +148,16 @@ void BDSGlobalConstants::InitRotationMatrices()
   rotYM90X90->rotateX( pi_ov_2);
   rotYM90XM90->rotateY(-pi_ov_2);
   rotYM90XM90->rotateX(-pi_ov_2);
+}
+
+G4int BDSGlobalConstants::PrintModulo()const
+{
+  G4int nGenerate = NGenerate();
+  G4double fraction = PrintModuloFraction();
+  G4int printModulo = (G4int)ceil(nGenerate * fraction);
+  if (printModulo < 0)
+    {printModulo = 1;}
+  return printModulo;
 }
 
 BDSGlobalConstants::~BDSGlobalConstants()

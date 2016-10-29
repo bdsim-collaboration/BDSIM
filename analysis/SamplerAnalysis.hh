@@ -16,9 +16,11 @@ public:
 
   // Note compile time float / double templating.
 #ifndef __ROOTDOUBLE__
-  SamplerAnalysis(BDSOutputROOTEventSampler<float>*);
+  SamplerAnalysis(BDSOutputROOTEventSampler<float>* samplerIn,
+		  bool debugIn = false);
 #else 
-  SamplerAnalysis(BDSOutputROOTEventSampler<double>*);
+  SamplerAnalysis(BDSOutputROOTEventSampler<double>* samplerIn,
+		  bool debugIn = false);
 #endif
   /// Initialisation of arrays for optical function calculations
   void CommonCtor();
@@ -60,6 +62,9 @@ protected:
   static double powSumToCentralMoment(fourDArray &powSum, int npart ,int i, int j, int m, int n);
   static double centMomToCovariance(fourDArray &centMoms, int npart ,int k, int i, int j);
   static double centMomToDerivative(fourDArray &centMoms, int k, int t, int i);
+
+private:
+  bool debug;
 };
 
 #endif

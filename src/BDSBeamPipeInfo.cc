@@ -1,6 +1,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
+#include "BDSExtent.hh"
 #include "BDSMaterials.hh"
 #include "BDSUtilities.hh"
 

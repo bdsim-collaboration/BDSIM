@@ -45,10 +45,10 @@ void BDSParser::AmalgamateOptions(const GMAD::Options& optionsIn)
 
 void BDSParser::CheckOptions()
 {
-  if (options.nGenerate < 0) // run at least 1 event!
+  if (options.nGenerate <= 0) // run at least 1 event!
     {options.nGenerate = 1;}
   
-  if (options.beamEnergy == 0)
+  if (options.beamEnergy <= 0)
     {
       std::cerr << __METHOD_NAME__ << "Error: option \"beam, energy\" is not defined or must be greater than 0" << std::endl;
       exit(1);
