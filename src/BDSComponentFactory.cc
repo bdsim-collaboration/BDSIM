@@ -1,4 +1,3 @@
-
 #include "BDSComponentFactory.hh"
 
 // elements
@@ -718,8 +717,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::multipolethin);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipolethin,
+  BDSIntegratorType intType = integratorSet->multipolethin;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
 					       brho,
 					       intType,
 					       st);
@@ -1122,7 +1121,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
 {
-  if(element->l*CLHEP::m < 4*lengthSafety)
+  if(element->l*CLHEP::m < 1e-7)
     {
       G4cerr << "---->NOT creating element, "
              << " name = " << element->name

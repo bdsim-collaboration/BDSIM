@@ -24,6 +24,8 @@ class Event
 {
 public:
   Event();
+  Event(bool debugIn,
+	bool procesSamplersIn = false);
   void CommonCtor();
   virtual ~Event();
 
@@ -67,6 +69,9 @@ public:
 
 private:
   ClassDef(Event,1);
+
+  bool debug           = false;
+  bool processSamplers = false;
 };
 
 #endif

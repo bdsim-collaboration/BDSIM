@@ -34,14 +34,18 @@ void Analysis::SimpleHistograms()
     {std::cout << __METHOD_NAME__ << std::endl;}
 
   // loop over histogram specifications and fill
-  auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
-  for(auto i : hd)
-  {
-    if (i["treeName"] == treeName)
-      {
-	FillHistogram(i["treeName"].data(), i["histName"], i["nbins"], i["binning"], i["plot"], i["select"]);
-      }
-  }
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
+      for(auto i : hd)
+	{
+	  if (i["treeName"] == treeName)
+	    {
+	      FillHistogram(i["treeName"].data(), i["histName"], i["nbins"], i["binning"], i["plot"], i["select"]);
+	    }
+	}
+    }
 }
 
 void Analysis::Terminate()

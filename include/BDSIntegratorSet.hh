@@ -24,7 +24,11 @@ namespace BDS
 /**
  * @brief Which integrator to use for each type of magnet / field object.
  * 
- * There is one to match every type of field in BDSFieldType.
+ * There is one to match every type of field in BDSFieldType. There are also
+ * a few others such as dipolefring and multipolethin that can be used in
+ * explicity circumstances as these do not have a different physical field, 
+ * merely a different integrator in different situations. These should be 
+ * accessed directly rather than through the utility method BDS::Integrator().
  * 
  * @author Laurie Nevay
  */

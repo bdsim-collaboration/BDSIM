@@ -17,12 +17,19 @@ class TFile;
  * @author Stewart Boogert
  */
 
-class EventAnalysis : public Analysis
+class EventAnalysis: public Analysis
 {
 public:
   EventAnalysis();
-  EventAnalysis(Event* eventIn, TChain* chain, bool debug = false);
+  EventAnalysis(Event*  eventIn,
+		TChain* chain,
+		bool    processSamplersIn   = false,
+		bool    debug               = false,
+		double  printModuloFraction = 0.01);
   virtual ~EventAnalysis();
+
+  void SetPrintModuloFraction(double fraction);
+  void SetProcessSamplers(bool procesSamplersIn) {processSamplers = procesSamplersIn;} 
 
   virtual void Process();
 
@@ -43,7 +50,8 @@ private:
   void Initialise();
   void ProcessSamplers();
 
-  int printModulo; ///< Cache of print modulo fraction
+  int  printModulo;     ///< Cache of print modulo fraction
+  bool processSamplers; ///< Whether to process samplers.
 };
 
 #endif

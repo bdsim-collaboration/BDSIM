@@ -13,14 +13,15 @@
 
 struct fieldtypes_def
 {
-  enum type {none, mokka,
+  enum type {none,
 	     bmap1d,  bmap2d,  bmap3d,  bmap4d,
 	     emap1d,  emap2d,  emap3d,  emap4d,
 	     ebmap1d, ebmap2d, ebmap3d, ebmap4d,
+	     mokka,
 	     solenoid, dipole, quadrupole, dipolequadrupole, sextupole,
-	     octupole, decapole,fringe, multipole, muonspoiler,
+	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
-	     rfcavity, rf, dipolefringe, multipolethin};
+	     rfcavity, rf};
 };
 
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;

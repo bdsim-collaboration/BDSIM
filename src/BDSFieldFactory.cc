@@ -221,6 +221,8 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   BDSFieldObjects* field = nullptr;
   switch (info.FieldType().underlying())
     {
+    case BDSFieldType::none:
+      {break;} // leave as nullptr
     case BDSFieldType::bmap1d:
     case BDSFieldType::bmap2d:
     case BDSFieldType::bmap3d:
@@ -229,6 +231,7 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
     case BDSFieldType::solenoid:
     case BDSFieldType::dipole:
     case BDSFieldType::quadrupole:
+    case BDSFieldType::dipolequadrupole:
     case BDSFieldType::sextupole:
     case BDSFieldType::octupole:
     case BDSFieldType::decapole:
@@ -238,8 +241,6 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
     case BDSFieldType::skewsextupole:
     case BDSFieldType::skewoctupole:
     case BDSFieldType::skewdecapole:
-    case BDSFieldType::dipolefringe:
-    case BDSFieldType::multipolethin:
       {
 	field = CreateFieldMag(info);
 	break;
@@ -262,8 +263,6 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
 	field = CreateFieldE(info);
 	break;
       }
-    case BDSFieldType::none:
-      break; // leave as nullptr
     default:
       G4cerr << __METHOD_NAME__ << "not a valid field type \"" << info.FieldType() << "\"" << G4endl;
       return field;
@@ -288,7 +287,6 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::solenoid:
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
-    case BDSFieldType::dipolefringe:
       {field = new BDSFieldMagSBend(strength, brho); break;}
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
@@ -301,7 +299,6 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::decapole:
       {field = new BDSFieldMagDecapole(strength, brho); break;}
     case BDSFieldType::multipole:
-    case BDSFieldType::multipolethin:
       {field = new BDSFieldMagMultipole(strength, brho); break;}
     case BDSFieldType::muonspoiler:
       {field = new BDSFieldMagMuonSpoiler(strength, brho); break;}
@@ -429,8 +426,8 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
       integrator = new BDSIntegratorOctupole(strength, brho, eqOfM); break;
     case BDSIntegratorType::decapole:
       integrator = new BDSIntegratorDecapole(strength, brho, eqOfM); break;
-    case BDSIntegratorType::multipole:
-      integrator = new BDSIntegratorMultipole(strength, brho, eqOfM); break;
+    case BDSIntegratorType::multipolethin:
+      integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
       integrator = new BDSIntegratorFringefield(strength, brho, eqOfM); break;
     case BDSIntegratorType::g4constrk4:

@@ -17,7 +17,7 @@ std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
       {BDSIntegratorType::sextupole,            "sextupole"},
       {BDSIntegratorType::octupole,             "octupole"},
       {BDSIntegratorType::decapole,             "decapole"},
-      {BDSIntegratorType::multipole,            "multipole"},
+      {BDSIntegratorType::multipolethin,        "multipolethin"},
       {BDSIntegratorType::decapole,             "decapole"},
       {BDSIntegratorType::dipolefringe,         "dipolefringe"},
       {BDSIntegratorType::g4cashkarprkf45,      "g4cashkarprkf45"},
@@ -47,7 +47,7 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
   types["sextupole"]            = BDSIntegratorType::sextupole;
   types["octupole"]             = BDSIntegratorType::octupole;
   types["decapole"]             = BDSIntegratorType::decapole;
-  types["multipole"]            = BDSIntegratorType::multipole;
+  types["multipolethin"]        = BDSIntegratorType::multipole;
   types["dipolefringe"]         = BDSIntegratorType::dipolefringe;
   types["g4cashkarprkf45"]      = BDSIntegratorType::g4cashkarprkf45;
   types["g4classicalrk4"]       = BDSIntegratorType::g4classicalrk4;
