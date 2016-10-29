@@ -62,7 +62,7 @@ public:
   /// @}
 
 private:
-  DataLoader() = delete;
+  DataLoader();
   
   bool debug;
   bool processSamplers;
