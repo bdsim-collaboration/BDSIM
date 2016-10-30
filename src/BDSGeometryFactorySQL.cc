@@ -105,6 +105,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
   // strip of the file name effictively
   G4String containingDir = BDS::GetFullPath(fileName, true);
 #ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "loading SQL file:     " << fileName      << G4endl;
   G4cout << __METHOD_NAME__ << "containing directory: " << containingDir << G4endl;
 #endif
   std::ifstream ifs;
@@ -554,7 +555,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int
   G4double lengthY;
   G4double lengthZ;
 
-  lengthX = lengthY = lengthZ = 10.*CLHEP::mm;
+  lengthX = lengthY = lengthZ = 1.*CLHEP::mm;
   
   if(aSQLTable->GetVariable("LENGTHX")!=nullptr)
     {lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);}
