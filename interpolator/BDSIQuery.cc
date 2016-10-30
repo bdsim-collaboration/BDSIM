@@ -1,5 +1,7 @@
 #include "BDSIQuery.hh"
 
+#include "parser/query.h"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Field.hh"
 #include "G4ThreeVector.hh"
@@ -10,7 +12,41 @@
 #include <fstream>
 #include <iostream>
 
+void BDSI::Query(G4Field* field,
+		 const GMAD::Query& params)
+{
+  switch (params.nDimensions)
+    {
+    case 1:
+      {BDSI::Query1D(field, params); break;}
+    case 2:
+      {BDSI::Query2D(field, params); break;}
+    case 3:
+      {BDSI::Query3D(field, params); break;}
+    case 4:
+      {BDSI::Query4D(field, params); break;}
+    default:
+      {
+	G4cout << "Invalid number of dimensions in query definition:" << G4endl;
+	params.print();
+	break;
+      }
+    }
+}
 
+void BDSI::Query1D(G4Field* field, const GMAD::Query& params)
+{;}
+
+void BDSI::Query2D(G4Field* field, const GMAD::Query& params)
+{;}
+
+void BDSI::Query3D(G4Field* field, const GMAD::Query& params)
+{;}
+
+void BDSI::Query4D(G4Field* field, const GMAD::Query& params)
+{;}
+
+/*
 void BDSI::Query2D(G4Field* field,
 		   G4String outputName,
 		   G4int    nX,   G4int    nY,
@@ -55,3 +91,5 @@ void BDSI::Query2D(G4Field* field,
   ofile.close();
   std::cout << std::endl;
 }
+
+*/
