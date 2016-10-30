@@ -44,6 +44,11 @@ int main(int argc, char** argv)
       // geant4 field - we only need the BDSFieldMag* instance.
       BDSFieldMag* field = BDSFieldLoader::Instance()->LoadMagField(*recipe);
 
+      if (!field)
+	{
+	  G4cout << "No field constructed - skipping" << G4endl;
+	  continue;
+	}
       BDSI::Query(field, q);
     }
 
