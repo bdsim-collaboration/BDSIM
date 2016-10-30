@@ -47,7 +47,10 @@ int main(int argc, char** argv)
       BDSI::Query(field, q);
     }
 
+  delete BDSFieldFactory::Instance();
   delete BDSFieldLoader::Instance();
+  delete BDSGlobalConstants::Instance();
+  delete BDSParser::Instance();
 
   return 0;
 }
