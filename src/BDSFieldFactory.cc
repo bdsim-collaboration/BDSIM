@@ -1,5 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSExecOptions.hh"
+#include "BDSFieldClassType.hh"
 #include "BDSFieldE.hh"
 #include "BDSFieldEGlobal.hh"
 #include "BDSFieldESinusoid.hh"
@@ -219,54 +220,20 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
-  switch (info.FieldType().underlying())
+
+  if (info.FieldType() == BDSFieldType::none)
+    {return field;} // as nullptr
+  BDSFieldClassType clas = BDS::DetermineFieldClassType(info.FieldType());
+  switch (clas.underlying())
     {
-    case BDSFieldType::none:
-      {break;} // leave as nullptr
-    case BDSFieldType::bmap1d:
-    case BDSFieldType::bmap2d:
-    case BDSFieldType::bmap3d:
-    case BDSFieldType::bmap4d:
-    case BDSFieldType::mokka:
-    case BDSFieldType::solenoid:
-    case BDSFieldType::dipole:
-    case BDSFieldType::quadrupole:
-    case BDSFieldType::dipolequadrupole:
-    case BDSFieldType::sextupole:
-    case BDSFieldType::octupole:
-    case BDSFieldType::decapole:
-    case BDSFieldType::multipole:
-    case BDSFieldType::muonspoiler:
-    case BDSFieldType::skewquadrupole:
-    case BDSFieldType::skewsextupole:
-    case BDSFieldType::skewoctupole:
-    case BDSFieldType::skewdecapole:
-      {
-	field = CreateFieldMag(info);
-	break;
-      }
-    case BDSFieldType::rfcavity:
-    case BDSFieldType::ebmap1d:
-    case BDSFieldType::ebmap2d:
-    case BDSFieldType::ebmap3d:
-    case BDSFieldType::ebmap4d:
-      {
-	field = CreateFieldEM(info);
-	break;
-      }
-    case BDSFieldType::rf:
-    case BDSFieldType::emap1d:
-    case BDSFieldType::emap2d:
-    case BDSFieldType::emap3d:
-    case BDSFieldType::emap4d:
-      {
-	field = CreateFieldE(info);
-	break;
-      }
+    case BDSFieldClassType::magnetic:
+      {field = CreateFieldMag(info); break;}
+    case BDSFieldClassType::electromagnetic:
+      {field = CreateFieldEM(info); break;}
+    case BDSFieldClassType::electric:
+      {field = CreateFieldE(info); break;}
     default:
-      G4cerr << __METHOD_NAME__ << "not a valid field type \"" << info.FieldType() << "\"" << G4endl;
-      return field;
-      break; // this will return nullptr
+      {break;} // this will return nullptr
     }
   return field;
 }
