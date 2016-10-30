@@ -652,6 +652,12 @@ namespace GMAD {
 
   template<>
   std::vector<Field>& Parser::GetList<Field>(){return field_list;}
+
+  template<>
+  Query& Parser::GetGlobal(){return query;}
+  
+  template<>
+  std::vector<Query>& Parser::GetList<Query>(){return query_list;}
   
   template<>
   Atom& Parser::GetGlobal(){return atom;}

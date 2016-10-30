@@ -15,7 +15,7 @@
  * @author Jochem Snuverink
  */
   
-class BDSParser : private GMAD::Parser
+class BDSParser: private GMAD::Parser
 {
 public:
   /// No default constructor
@@ -53,11 +53,14 @@ public:
   /// Return material list
   inline const std::vector<GMAD::Material>& GetMaterials() const {return material_list;}
   
-  /// Return region list
-  inline const std::vector<GMAD::Region>& GetRegions() const {return region_list;}
-  
   /// Return the vector of placement objects.
   inline const std::vector<GMAD::Placement>& GetPlacements() const {return placement_list;}
+
+  /// Query list
+  inline const std::vector<GMAD::Query>& GetQuery() const {return query_list;}
+  
+  /// Return region list
+  inline const std::vector<GMAD::Region>& GetRegions() const {return region_list;}
 
 protected:
   /// Constructor from filename

@@ -98,12 +98,14 @@ void BDSGeometryFactorySQL::CleanUp()
 }
 
 BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
-						  std::map<G4String, G4Colour*>* colourMapping)
+						  std::map<G4String, G4Colour*>* colourMapping,
+						  G4double suggestedLength,
+						  G4double suggestedOuterDiameter)
 {
   // strip of the file name effictively
   G4String containingDir = BDS::GetFullPath(fileName, true);
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "loading SQL file: " << filePath << G4endl;
+  G4cout << __METHOD_NAME__ << "loading SQL file:     " << fileName      << G4endl;
   G4cout << __METHOD_NAME__ << "containing directory: " << containingDir << G4endl;
 #endif
   std::ifstream ifs;
@@ -115,10 +117,12 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
   //nPoleField = 0;
   //hasUniformField = false;
 
+  G4double outerR = suggestedOuterDiameter*0.5;
   G4VSolid* containerSolid = new G4Box("container_solid",
-				       1*CLHEP::km,
-				       1*CLHEP::km,
-				       1*CLHEP::km);
+				       outerR,
+				       outerR,
+				       suggestedLength*0.5);
+  
   const G4String emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
   G4Material* emptyMaterial  = BDSMaterials::Instance()->GetMaterial(emptyMaterialName);
   
@@ -142,13 +146,13 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
   ifs.close();
 
   // update solid
-  delete containerSolid; // delete existing solid
+  /*delete containerSolid; // delete existing solid
   containerSolid = new G4Box("container_solid",
 			     (xmax - xmin)*0.5,
 			     (xmax - xmin)*0.5,
 			     (xmax - xmin)*0.5);
   itsMarkerVol->SetSolid(containerSolid); // update container solid
-
+  */
   ApplyColourMapping(VOL_LIST, colourMapping);
 
   BDSGeometryExternal* result = new BDSGeometryExternal(containerSolid, itsMarkerVol, Extent());
@@ -551,7 +555,7 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int
   G4double lengthY;
   G4double lengthZ;
 
-  lengthX = lengthY = lengthZ = 10.*CLHEP::mm;
+  lengthX = lengthY = lengthZ = 1.*CLHEP::mm;
   
   if(aSQLTable->GetVariable("LENGTHX")!=nullptr)
     {lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);}

@@ -1,3 +1,4 @@
 add_subdirectory(1_field_transforms)
 add_subdirectory(2_ironmagfields)
 add_subdirectory(3_poisson)
+add_subdirectory(4_bdsimformat)

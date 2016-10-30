@@ -13,7 +13,7 @@
 #include <cmath>
 #include <G4TwoVector.hh>
 
-BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength,
+BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
 					       G4double                 brho,
 					       G4Mag_EqRhs*             eqOfMIn):
   BDSIntegratorBase(eqOfMIn, 6),
@@ -32,11 +32,10 @@ BDSIntegratorMultipole::BDSIntegratorMultipole(BDSMagnetStrength const* strength
     }
 }
 
-void BDSIntegratorMultipole::Stepper(const G4double yIn[],
+void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 				     const G4double[] /*dxdy*/,
 				     const G4double h,
-				     G4double       yOut[],
-				     G4double       yErr[])
+				     G4double       yOut[])
 {
   const G4double *pIn    = yIn+3;
   G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -93,6 +92,8 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   G4double knReal = 0;
   G4double knImag = 0;
   G4double vOverc = 1;
+  G4double momx;
+  G4double momy;
 
   //G4double speedoflight = CLHEP::c_light / (CLHEP::m / CLHEP::second);
   G4double dipoleTerm = b0l*normFactor *zp / vOverc;
@@ -102,17 +103,24 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   //Sum higher order components into one kick
   for (; kn != bnl.end(); n++, kn++)
     {
+      momx = 0; //reset to zero
+      momy = 0;
       knReal = (*kn) * pow(position,n).real() / nfact[n];
       knImag = (*kn) * pow(position,n).imag() / nfact[n];
-      result = {knReal,knImag};
+      if (!std::isnan(knReal)){
+        momx = knReal;
+      }
+      if (!std::isnan(knImag)) {
+        momy = knImag;
+      }
+      result = {momx,momy};
       kick += result;
     }
 
   //apply kick
-  if(!std::isnan(kick.real()))
-    {xp1 -= (kick.real() + dipoleTerm);}
-  if(!std::isnan(kick.imag()))
-    {yp1 += kick.imag();}
+
+  xp1 -= (kick.real() + dipoleTerm);
+  yp1 += kick.imag();
 
   //Reset n for skewed kicks.
   n=0;
@@ -121,8 +129,8 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   G4double skewAngle=0;
 
   G4ThreeVector mom = G4ThreeVector(xp1,yp1,zp1);
-  G4double momx = mom.x();
-  G4double momy = mom.y();
+  momx = mom.x();
+  momy = mom.y();
 
   G4complex skewresult(0,0);
   G4complex skewkick(0,0);
@@ -175,11 +183,35 @@ void BDSIntegratorMultipole::Stepper(const G4double yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
 
-  for(G4int i = 0; i < nVariables; i++)
-    {yErr[i] = 0;}
+  //for(G4int i = 0; i < nVariables; i++)
+  //  {yErr[i] = 0;}
 }
 
-G4int BDSIntegratorMultipole::Factorial(G4int n)
+void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
+                                     const G4double[] /*dydx[]*/,
+                                     const G4double hstep,
+                                     G4double yOut[],
+                                     G4double yErr[]) {
+  G4double yTemp[7];
+  G4double h = hstep * 0.5;
+
+  AdvanceHelix(yInput, 0, h, yTemp);
+  AdvanceHelix(yTemp, 0, h, yOut);
+
+  h = hstep;
+  AdvanceHelix(yInput, 0, h, yTemp);
+
+  for (G4int i = 0; i < nVariables; i++) {
+    yErr[i] = yOut[i] - yTemp[i];
+    // if error small, set error to 0
+    // this is done to prevent Geant4 going to smaller and smaller steps
+    // ideally use some of the global constants instead of hardcoding here
+    // could look at step size as well instead.
+    if (std::abs(yErr[i]) < 1e-7) { yErr[i] = 0; }
+  }
+}
+
+G4int BDSIntegratorMultipoleThin::Factorial(G4int n)
 {
   G4int result = 1;
   for (G4int i = 1; i <= n; i++)

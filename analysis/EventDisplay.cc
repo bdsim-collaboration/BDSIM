@@ -22,6 +22,7 @@
 #include "Model.hh"
 #include "Options.hh"
 
+
 ClassImp(EventDisplay)
 
 EventDisplay* EventDisplay::_instance = nullptr;
@@ -34,18 +35,21 @@ EventDisplay* EventDisplay::Instance()
   return _instance;
 }
 
-EventDisplay* EventDisplay::Instance(TString geoFileName)
+EventDisplay* EventDisplay::Instance(TString geoFileName,
+				     TString dataFileName)
 {
-  _instance = new EventDisplay(geoFileName);
+  _instance = new EventDisplay(geoFileName, dataFileName);
   return _instance;
 }
 
-EventDisplay::EventDisplay(TString geoFileNameIn):
-  geoFileName(geoFileNameIn)
+EventDisplay::EventDisplay(TString geoFileNameIn,
+			   TString dataFileNameIn):
+  geoFileName(geoFileNameIn),
+  dataFileName(dataFileNameIn)
 {
   std::cout << "EventDisplay::EventDisplay(" << geoFileName << ")" << std::endl;
   TEveManager::Create();
-  dataLoader = new DataLoader();
+  dataLoader = new DataLoader(std::string(dataFileName.Data()));
   event      = dataLoader->GetEvent();
   eventTree  = dataLoader->GetEventTree();
 

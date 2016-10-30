@@ -31,11 +31,13 @@ std::map<BDSFieldType, std::string>* BDSFieldType::dictionary =
       {BDSFieldType::octupole,         "octupole"},
       {BDSFieldType::decapole,         "decapole"},
       {BDSFieldType::multipole,        "multipole"},
-      {BDSFieldType::fringe,           "fringe"},
       {BDSFieldType::muonspoiler,      "muonspoiler"},
+      {BDSFieldType::skewquadrupole,   "skewquadrupole"},
+      {BDSFieldType::skewsextupole,    "skewsextupole"},
+      {BDSFieldType::skewoctupole,     "skewoctupole"},
+      {BDSFieldType::skewdecapole,     "skewdecapole"},
       {BDSFieldType::rfcavity,         "rfcavity"},
       {BDSFieldType::rf,               "rf"},
-      {BDSFieldType::dipolefringe,     "dipolefringe"}
 });	
 
 BDSFieldType BDS::DetermineFieldType(G4String bType)
@@ -63,12 +65,13 @@ BDSFieldType BDS::DetermineFieldType(G4String bType)
   types["octupole"]         = BDSFieldType::octupole;
   types["decapole"]         = BDSFieldType::decapole;
   types["multipole"]        = BDSFieldType::multipole;
-  types["fringe"]           = BDSFieldType::fringe;
   types["muonspoiler"]      = BDSFieldType::muonspoiler;
+  types["skewquadrupole"]   = BDSFieldType::skewquadrupole;
+  types["skewsextupole"]    = BDSFieldType::skewsextupole;
+  types["skewoctupole"]     = BDSFieldType::skewoctupole;
+  types["skewdecapole"]     = BDSFieldType::skewdecapole;
   types["rfcavity"]         = BDSFieldType::rfcavity;
   types["rf"]               = BDSFieldType::rf;
-  types["dipolefringe"]     = BDSFieldType::dipolefringe;
-  types["multipolethin"]    = BDSFieldType::multipolethin;
   
   bType.toLower();
 

@@ -53,7 +53,7 @@ private:
   G4int nColumns;                ///< Number of columns to read.
   std::vector<G4float> lineData; ///< Vector to store line data during loading.
   BDSFieldValue fv;              ///< Temporary field value.
-  std::map<std::string, double> header; ///< Header keys and values
+  std::map<G4String, double> header; ///< Header keys and values
   BDSArray4DCoords* result;
 };
 

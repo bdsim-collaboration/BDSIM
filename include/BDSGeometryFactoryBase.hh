@@ -28,7 +28,9 @@ public:
 
   /// Main method to load and construct geometry.
   virtual BDSGeometryExternal* Build(G4String fileName,
-				     std::map<G4String, G4Colour*>* colourMapping = nullptr) = 0;
+				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
+				     G4double suggestedLength        = 0,
+				     G4double suggestedOuterDiameter = 0) = 0;
 
 
   /// Apply a colour mapping to a set of logical volumes.  This applies a colour from the map

@@ -62,7 +62,7 @@
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
 %token <ival> VKICK HKICK
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -218,6 +218,15 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->Add<Placement>();
            }
        }
+     | VARIABLE ':' query
+       {
+	 if(execute)
+	   {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : query" << std::endl;
+	     Parser::Instance()->SetValue<Query>("name", *($1));
+	     Parser::Instance()->Add<Query>();
+	   }
+       }
      | VARIABLE ':' field
        {
 	 if(execute)
@@ -285,6 +294,7 @@ region : REGION ',' region_options
 placement : PLACEMENT ',' placement_options
 field : FIELD ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
+query : QUERY ',' query_options
 tunnel : TUNNEL ',' tunnel_options
 xsecbias : XSECBIAS ',' xsecbias_options
 
@@ -317,6 +327,7 @@ error_noparams : DRIFT
                | PLACEMENT
                | FIELD
                | CAVITYMODEL
+               | QUERY
                | TUNNEL
                | XSECBIAS
 
@@ -713,6 +724,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->Add<CavityModel>();
 	      }
           }
+        | QUERY ',' query_options // query
+	  {
+	    if(execute)
+	      {
+		if(ECHO_GRAMMAR) printf("command -> QUERY\n");
+		Parser::Instance()->Add<Query>();
+	      }
+	  }
         | XSECBIAS ',' xsecbias_options // xsecbias
           {
 	    if(execute)
@@ -874,6 +893,20 @@ placement_options : paramassign '=' aexpr placement_options_extend
 		      if(execute)
 			Parser::Instance()->SetValue<Placement>(*$1,*$3);
 		    }
+
+query_options_extend : /* nothing */
+                      | ',' query_options
+
+query_options : paramassign '=' aexpr query_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Query>((*$1),$3);
+		    }
+                 | paramassign '=' string query_options_extend
+                   {
+		     if(execute)
+		       Parser::Instance()->SetValue<Query>((*$1),*$3);
+		   }
 
 field_options_extend : /* nothing */
                       | ',' field_options

@@ -7,6 +7,7 @@
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
@@ -57,6 +58,10 @@ BDSMagnet::BDSMagnet(BDSMagnetType       type,
   outer    = nullptr;
 
   placeBeamPipe = false;
+
+  // It's not possible to build advanced outer geometry for a very thin magnet.
+  if (length < 1e-4*CLHEP::m) // 100um minimum length for geometry
+    {magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;}
 }
 
 void BDSMagnet::Build()
