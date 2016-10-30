@@ -24,6 +24,8 @@ struct fieldtypes_def
 	     rfcavity, rf};
 };
 
+// NOTE - when adding a new field type, BDSFieldClassType should also be updated
+
 typedef BDSTypeSafeEnum<fieldtypes_def,int> BDSFieldType;
 
 namespace BDS
