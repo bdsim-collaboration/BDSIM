@@ -19,6 +19,7 @@ namespace GMAD
   {
   public:
     std::string name;   ///< Name of object.
+    int nDimensions;    ///< Number of dimensions to query.
     int nx;             ///< Number of samples in x.
     int ny;             ///< Number of samples in y.
     int nz;             ///< Number of samples in z.
