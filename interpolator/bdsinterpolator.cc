@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	  G4cout << "No field constructed - skipping" << G4endl;
 	  continue;
 	}
-      BDSI::Query(field, q);
+      BDSI::Query(field, q, recipe->FieldType());
     }
 
   delete BDSFieldFactory::Instance();
