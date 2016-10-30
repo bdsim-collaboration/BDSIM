@@ -5,6 +5,10 @@
 #include <fstream>
 #include <list>
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
 /**
  * @brief A bunch distribution that reads a user specified column file.
  * 

@@ -7,7 +7,10 @@
 
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
-//#include "gzstream.h"
+
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
 
 template <class T>
 BDSBunchUserFile<T>::BDSBunchUserFile():nlinesIgnore(0)
@@ -414,4 +417,7 @@ G4bool BDSBunchUserFile<T>::ReadValue(Type &value)
 }
 
 template class BDSBunchUserFile<std::ifstream>;
-//template class BDSBunchUserFile<igzstream>;
+
+#ifdef USE_GZSTREAM
+template class BDSBunchUserFile<igzstream>;
+#endif
