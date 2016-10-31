@@ -50,7 +50,7 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
   
   std::ofstream ofile;
   ofile.open(outputName);
@@ -62,16 +62,16 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4double totalN = (G4double)nX;
 
-  G4int i = 0;
-  for (G4double x = xmin; x < xmax; x += xStep)
+  G4double i = 0;
+  for (G4double x = xmin; x < xmax+1e-9; x += xStep)
     {
-      G4double percentage = ((G4double)i / totalN) *100;
-      std::cout << "\r" << floor(percentage) << "%";
       G4double result[6] = {0,0,0,0,0,0};
       G4double coords[4] = {x,0,0,0};
       field->GetFieldValue(coords, result);
       WriteOut(ofile, 1, coords, result, type);
-      i++;
+      i += 1;
+      G4double percentage = (i / totalN) *100;
+      std::cout << "\r" << floor(percentage) << "%";
     }
   
   ofile.close();
