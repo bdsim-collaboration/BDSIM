@@ -5,21 +5,21 @@
 
 #include "globals.hh"
 
-BDSArray4DCoords::BDSArray4DCoords(G4int nX, G4int nY, G4int nZ, G4int nT,
+BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn,
 				   G4double xMinIn, G4double xMaxIn,
 				   G4double yMinIn, G4double yMaxIn,
 				   G4double zMinIn, G4double zMaxIn,
 				   G4double tMinIn, G4double tMaxIn):
-  BDSArray4D(nX,nY,nZ,nT),
+  BDSArray4D(nXIn,nYIn,nZIn,nTIn),
   xMin(xMinIn), xMax(xMaxIn),
   yMin(yMinIn), yMax(yMaxIn),
   zMin(zMinIn), zMax(zMaxIn),
   tMin(tMinIn), tMax(tMaxIn)
 {
-  xStep = (xMax - xMin) / (G4double)nX;
-  yStep = (yMax - yMin) / (G4double)nY;
-  zStep = (zMax - zMin) / (G4double)nZ;
-  tStep = (tMax - tMin) / (G4double)nT;
+  xStep = (xMax - xMin) / ((G4double)nX - 1);
+  yStep = (yMax - yMin) / ((G4double)nY - 1);
+  zStep = (zMax - zMin) / ((G4double)nZ - 1);
+  tStep = (tMax - tMin) / ((G4double)nT - 1);
 }
 
 G4bool BDSArray4DCoords::OutsideCoords(const G4double x,

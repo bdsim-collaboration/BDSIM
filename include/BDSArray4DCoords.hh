@@ -30,7 +30,7 @@ public:
   /// Constructor similar to BDSArray4D but with spatial limits in each dimension.
   /// The distance between the UNIFORMLY spaced data in spatial coordinates is
   /// calculated using the extents and the number of entries.
-  BDSArray4DCoords(G4int nX, G4int nY, G4int nZ, G4int nT,
+  BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTIn,
 		   G4double xMinIn, G4double xMaxIn,
 		   G4double yMinIn, G4double yMaxIn,
 		   G4double zMinIn, G4double zMaxIn,
