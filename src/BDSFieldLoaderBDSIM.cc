@@ -256,6 +256,8 @@ void BDSFieldLoaderBDSIM::ProcessData(const std::string& line,
   for (G4int i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
+      if (i < xIndex)// x is the first
+	{value *= CLHEP::cm;}
       lineData[i] = value;
     }
   
