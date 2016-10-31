@@ -210,7 +210,7 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 					      header["xmin"]*CLHEP::cm, header["xmax"]*CLHEP::cm,
 					      header["ymin"]*CLHEP::cm, header["ymax"]*CLHEP::cm,
 					      header["zmin"]*CLHEP::cm, header["zmax"]*CLHEP::cm,
-					      header["tmin"]*CLHEP::cm, header["tmax"]*CLHEP::cm);
+					      header["tmin"]*CLHEP::s,  header["tmax"]*CLHEP::s);
 		break;
 	      }
 	    default:
