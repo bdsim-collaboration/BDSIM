@@ -56,8 +56,8 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
-  ofile << "xmin> " << xmin/CLHEP::m << "\n";
-  ofile << "xmax> " << xmax/CLHEP::m << "\n";
+  ofile << "xmin> " << xmin/CLHEP::cm << "\n";
+  ofile << "xmax> " << xmax/CLHEP::cm << "\n";
   ofile << "! X     Fx    Fy    Fz\n";
   
   G4double totalN = (G4double)nX;
@@ -98,10 +98,10 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
 
   ofile << "nx> "   << nX << "\n";
   ofile << "ny> "   << nY << "\n";
-  ofile << "xmin> " << xmin/CLHEP::m << "\n";
-  ofile << "xmax> " << xmax/CLHEP::m << "\n";
-  ofile << "ymin> " << ymin/CLHEP::m << "\n";
-  ofile << "ymax> " << ymax/CLHEP::m << "\n";
+  ofile << "xmin> " << xmin/CLHEP::cm << "\n";
+  ofile << "xmax> " << xmax/CLHEP::cm << "\n";
+  ofile << "ymin> " << ymin/CLHEP::cm << "\n";
+  ofile << "ymax> " << ymax/CLHEP::cm << "\n";
   ofile << "! X     Y     Fx    Fy    Fz\n";
   
   G4double totalN = (G4double)nX * (G4double)nY;
@@ -149,12 +149,12 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   ofile << "nx> "   << nX << "\n";
   ofile << "ny> "   << nY << "\n";
   ofile << "nz> "   << nZ << "\n";
-  ofile << "xmin> " << xmin/CLHEP::m << "\n";
-  ofile << "xmax> " << xmax/CLHEP::m << "\n";
-  ofile << "ymin> " << ymin/CLHEP::m << "\n";
-  ofile << "ymax> " << ymax/CLHEP::m << "\n";
-  ofile << "zmin> " << zmin/CLHEP::m << "\n";
-  ofile << "zmax> " << zmax/CLHEP::m << "\n";
+  ofile << "xmin> " << xmin/CLHEP::cm << "\n";
+  ofile << "xmax> " << xmax/CLHEP::cm << "\n";
+  ofile << "ymin> " << ymin/CLHEP::cm << "\n";
+  ofile << "ymax> " << ymax/CLHEP::cm << "\n";
+  ofile << "zmin> " << zmin/CLHEP::cm << "\n";
+  ofile << "zmax> " << zmax/CLHEP::cm << "\n";
   ofile << "! X     Y     Z     Fx    Fy    Fz\n";
   
   G4double totalN = (G4double)nX * (G4double)nY * (G4double)nZ;
@@ -209,12 +209,12 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   ofile << "nx> "   << nX << "\n";
   ofile << "ny> "   << nY << "\n";
   ofile << "nz> "   << nZ << "\n";
-  ofile << "xmin> " << xmin/CLHEP::m << "\n";
-  ofile << "xmax> " << xmax/CLHEP::m << "\n";
-  ofile << "ymin> " << ymin/CLHEP::m << "\n";
-  ofile << "ymax> " << ymax/CLHEP::m << "\n";
-  ofile << "zmin> " << zmin/CLHEP::m << "\n";
-  ofile << "zmax> " << zmax/CLHEP::m << "\n";
+  ofile << "xmin> " << xmin/CLHEP::cm << "\n";
+  ofile << "xmax> " << xmax/CLHEP::cm << "\n";
+  ofile << "ymin> " << ymin/CLHEP::cm << "\n";
+  ofile << "ymax> " << ymax/CLHEP::cm << "\n";
+  ofile << "zmin> " << zmin/CLHEP::cm << "\n";
+  ofile << "zmax> " << zmax/CLHEP::cm << "\n";
   ofile << "tmin> " << tmin/CLHEP::s << "\n";
   ofile << "tmax> " << tmax/CLHEP::s << "\n";
   ofile << "! X     Y     Z     Fx    Fy    Fz\n";
@@ -253,7 +253,7 @@ void BDSI::WriteOut(std::ofstream& out,
 {
   // write coordinates
   for (G4int i = 0; i < nDim; i++)
-    {out << coords[i]/CLHEP::m << "\t";}
+    {out << coords[i]/CLHEP::cm << "\t";}
 
   // write field components
   switch (type.underlying())
