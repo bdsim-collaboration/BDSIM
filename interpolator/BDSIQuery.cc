@@ -53,7 +53,7 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double xStep = (xmax - xmin) / (G4double)nX;
   
   std::ofstream ofile;
-  ofile.open(outputName+".dat");
+  ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
   ofile << "xmin> " << xmin/CLHEP::m << "\n";
@@ -94,7 +94,7 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double yStep = (ymax - ymin) / (G4double)nY;
   
   std::ofstream ofile;
-  ofile.open(outputName+".dat");
+  ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
   ofile << "ny> "   << nY << "\n";
@@ -144,7 +144,7 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double zStep = (ymax - ymin) / (G4double)nZ;
   
   std::ofstream ofile;
-  ofile.open(outputName+".dat");
+  ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
   ofile << "ny> "   << nY << "\n";
@@ -204,7 +204,7 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double tStep = (tmax - tmin) / (G4double)nT;
   
   std::ofstream ofile;
-  ofile.open(outputName+".dat");
+  ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
   ofile << "ny> "   << nY << "\n";
