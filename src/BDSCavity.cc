@@ -331,12 +331,11 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   
   //Take lengthsafety from all r points and the end z points, to avoid overlap with the cavity.
   for (unsigned int i = 0; i < noPoints; i++)
-    {
-      rInnerCoord[i] = rInnerCoord[i] - lengthSafety;
-      
-      if (i == 0 || (i == zInnerCoord.size() - 1)) 
-	{zInnerCoord[i] = zInnerCoord[i]- lengthSafety;}
-    }
+    {rInnerCoord[i] = rInnerCoord[i] - lengthSafetyLarge;}
+  
+  zInnerCoord[0]                    = zInnerCoord[0] + 2*lengthSafety;
+  G4int lastInd = (G4int)zInnerCoord.size() - 1;
+  zInnerCoord[lastInd] = zInnerCoord[lastInd] - 2*lengthSafety; // last element
   
   //Initializing the vacuum solid.
   vacuumSolid = new G4Polycone(name + "_inner_solid", //name
@@ -423,5 +422,5 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   cavityLV->SetVisAttributes(cavityVis);
   RegisterVisAttributes(cavityVis);
   
-  vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
+  //vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
 }
