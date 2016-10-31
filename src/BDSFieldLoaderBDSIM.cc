@@ -11,6 +11,7 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -137,10 +138,23 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	  std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
 	  std::smatch match;
 	  std::regex_search(line, match, keyValue);
-	  G4String key = G4String(match[1]);
-	  key.toLower();
-	  header[key] = std::stod(match[2]);
-	  continue;
+	  if (match.size() < 2)
+	    {G4cerr << "Invalid key definition in field format:\n" << line << G4endl; exit(1);}
+	  else
+	    {
+	      G4String key = G4String(match[1]);
+	      key.toLower();
+	      G4double value = 0;
+	      try
+		{value = std::stod(match[2]);}
+	      catch (std::invalid_argument)
+		{G4cerr << "Invalid argument "    << match[2] << G4endl; exit(1);}
+	      catch (std::out_of_range)
+		{G4cerr << "Number out of range " << match[2] << G4endl; exit(1);}
+		    
+	      header[key] = value;
+	      continue;
+	    }
 	}
       
       // if starts with '!' - columns
@@ -169,6 +183,9 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	    }
 	  lineData.resize(nColumns+1); // +1 for default value
 	  intoData = true;
+
+	  if (nColumns < (nDim + 3)) // 3 for field components
+	    {G4cerr << "Too few columns for " << nDim << "D field loading" << G4endl; exit(1);}
 	  
 	  // we have all the information now, so initialise the container
 	  switch (nDim)
