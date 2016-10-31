@@ -170,7 +170,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   LocalRp.setZ(zp1);
 
   BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-  GlobalP = globalPosDir.PreStepPoint();
+  GlobalR = globalPosDir.PreStepPoint();
   GlobalP = globalPosDir.PostStepPoint();	
   // TBC - this normalisation seemed to be missing originally - is this correct?
   //GlobalP*=InitMag; // multiply the unit direction by magnitude to get momentum
