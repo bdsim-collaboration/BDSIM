@@ -70,7 +70,7 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
       G4double result[6] = {0,0,0,0,0,0};
       G4double coords[4] = {x,0,0,0};
       field->GetFieldValue(coords, result);
-      WriteOut(ofile, 2, coords, result, type);
+      WriteOut(ofile, 1, coords, result, type);
       i++;
     }
   
@@ -171,7 +171,7 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
 	      G4double result[6] = {0,0,0,0,0,0};
 	      G4double coords[4] = {x,y,z,0};
 	      field->GetFieldValue(coords, result);
-	      WriteOut(ofile, 2, coords, result, type);
+	      WriteOut(ofile, 3, coords, result, type);
 	      i++;
 	    }
 	}
@@ -235,7 +235,7 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
 		  G4double result[6] = {0,0,0,0,0,0};
 		  G4double coords[4] = {x,y,z,t};
 		  field->GetFieldValue(coords, result);
-		  WriteOut(ofile, 2, coords, result, type);
+		  WriteOut(ofile, 4, coords, result, type);
 		  i++;
 		}
 	    }
