@@ -132,7 +132,7 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	}
 
       // key definition
-      if (line.find(">"))
+      if (line.find(">") != std::string::npos)
 	{// must be key definition
 	  std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
 	  std::smatch match;
