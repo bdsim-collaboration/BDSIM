@@ -1,6 +1,7 @@
 #include "BDSArray4DCoords.hh"
 #include "BDSFieldValue.hh"
 
+#include <cmath>
 #include <ostream>
 
 #include "globals.hh"
@@ -20,6 +21,14 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
   yStep = (yMax - yMin) / ((G4double)nY - 1);
   zStep = (zMax - zMin) / ((G4double)nZ - 1);
   tStep = (tMax - tMin) / ((G4double)nT - 1);
+  if (std::isnan(xStep))
+    {xStep = 0;}
+  if (std::isnan(yStep))
+    {yStep = 0;}
+  if (std::isnan(zStep))
+    {zStep = 0;}
+  if (std::isnan(tStep))
+    {tStep = 0;}
 }
 
 G4bool BDSArray4DCoords::OutsideCoords(const G4double x,
