@@ -62,8 +62,12 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   std::ofstream ofile;
   ofile.open(outputName+".dat");
 
-  ofile << "nx> " << nX << "\n";
-  ofile << "ny> " << nY << "\n";
+  ofile << "nx> "   << nX   << "\n";
+  ofile << "ny> "   << nY   << "\n";
+  ofile << "xmin> " << xmin << "\n";
+  ofile << "xmax> " << xmax << "\n";
+  ofile << "ymin> " << ymin << "\n";
+  ofile << "ymax> " << ymax << "\n";
   ofile << "! X     Y     Fx    Fy    Fz\n";
   
   G4double totalN = (G4double)nX * (G4double)nY;
@@ -93,12 +97,15 @@ void BDSI::WriteOut(std::ofstream& out,
 		    const G4double result[6],
 		    const BDSFieldClassType type)
 {
+  // write coordinates
+  for (G4int i = 0; i < nDim; i++)
+	  {out << coords[i] << "\t";}
+
+  // write field components
   switch (type.underlying())
     {
     case BDSFieldClassType::magnetic:
-      {
-	for (G4int i = 0; i < nDim; i++)
-	  {out << coords[i] << "\t";}
+      {	
 	out << result[0] / CLHEP::tesla << "\t"
 	    << result[1] / CLHEP::tesla << "\t"
 	    << result[2] / CLHEP::tesla << "\n";
@@ -106,8 +113,6 @@ void BDSI::WriteOut(std::ofstream& out,
       }
     case BDSFieldClassType::electric:
       {
-	for (G4int i = 0; i < nDim; i++)
-	  {out << coords[i] << "\t";}
 	out << result[3] / CLHEP::volt << "\t"
 	    << result[4] / CLHEP::volt << "\t"
 	    << result[5] / CLHEP::volt << "\n";
@@ -115,8 +120,6 @@ void BDSI::WriteOut(std::ofstream& out,
       }
     case BDSFieldClassType::electromagnetic:
       {
-	for (G4int i = 0; i < nDim; i++)
-	  {out << coords[i] << "\t";}
 	out << result[0] / CLHEP::tesla << "\t"
 	    << result[1] / CLHEP::tesla << "\t"
 	    << result[2] / CLHEP::tesla << "\t"
