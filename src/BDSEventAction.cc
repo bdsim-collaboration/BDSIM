@@ -65,14 +65,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
   // update reference to event info
   eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());
 
-  // get the current time
-  startTime = time(nullptr);
-  eventInfo->SetStartTime(startTime);
-  eventInfo->SetStopTime(startTime); // initialise to duration of 0
-
-  milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-  starts = (G4double)ms.count()/1000.0;
-
   // number feedback
   G4int event_number = evt->GetEventID();
   if (event_number%printModulo == 0)
@@ -92,9 +84,13 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
     }
   FireLaserCompton=true;
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "begin of event action done" << G4endl;
-#endif
+  // get the current time - last thing before we hand off to geant4
+  startTime = time(nullptr);
+  eventInfo->SetStartTime(startTime);
+  eventInfo->SetStopTime(startTime); // initialise to duration of 0
+
+  milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+  starts = (G4double)ms.count()/1000.0;
 }
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
