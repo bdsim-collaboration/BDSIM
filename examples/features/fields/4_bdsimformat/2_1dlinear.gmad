@@ -1,0 +1,11 @@
+f1: field, type="bmap1d",
+                 integrator = "g4classicalrk4",
+                 magneticFile = "bdsim1d:1dexample.dat",
+		 magneticInterpolator = "linear1D";
+
+q1: query, nDimensions=1,
+    	   nx = 100,
+	   xmin = -40*cm,
+	   xmax = 40*cm,
+	   outfile = "1d_interpolated_linear.dat",
+	   fieldObject = "f1";

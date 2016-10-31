@@ -1,12 +1,11 @@
 f1: field, type="bmap1d",
-                 scaling = 3.0,
                  integrator = "g4classicalrk4",
                  magneticFile = "bdsim1d:1dexample.dat",
-		 magneticInterpolator = "linear1D";
+		 magneticInterpolator = "cubic1D";
 
 q1: query, nDimensions=1,
     	   nx = 100,
 	   xmin = -40*cm,
 	   xmax = 40*cm,
-	   outfile = "1d_interpolated_linear.dat",
+	   outfile = "1d_interpolated_cubic.dat",
 	   fieldObject = "f1";
