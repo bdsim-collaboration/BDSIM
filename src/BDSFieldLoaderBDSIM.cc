@@ -165,21 +165,22 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
  	{
 	  // we only need to record the number of columns and which ones are
 	  // the x,y,z field component ones.
-	  std::regex afterExclamation("\\!(.*)");
+	  std::regex afterExclamation("\\s*!\\s*(.+)");
 	  std::smatch match;
 	  std::regex_search(line, match, afterExclamation);
-	  std::string restOfLine = match[0];
+	  std::string restOfLine = match[1];
 	  std::string columnName;
 	  std::istringstream restOfLineSS(restOfLine);
 	  while (restOfLineSS >> columnName)
 	    {
-	      if (columnName.find("Fx"))
-		{xIndex = nColumns;}
-	      if (columnName.find("Fy"))
-		{yIndex = nColumns;}
-	      if (columnName.find("Fz"))
-		{zIndex = nColumns;}
-	      nColumns++;
+            nColumns++;
+	      if (columnName.find("Fx") != std::string::npos)
+		{xIndex = nColumns; continue;}
+	      if (columnName.find("Fy") != std::string::npos)
+		{yIndex = nColumns; continue;}
+	      if (columnName.find("Fz") != std::string::npos)
+		{zIndex = nColumns; continue;}
+
 	    }
 	  lineData.resize(nColumns+1); // +1 for default value
 	  intoData = true;
