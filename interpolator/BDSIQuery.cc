@@ -75,11 +75,10 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4int i = 0;
   for (G4double y = ymin; y < ymax; y += yStep)
     {
+      G4double percentage = ((G4double)i / totalN) *100;
+      std::cout << "\r" << floor(percentage) << "%";
       for (G4double x = xmin; x < xmax; x += xStep)
 	{
-	  G4double percentage = ((G4double)i / totalN) *100;
-	  if (std::remainder(percentage,1) == 0)
-	    {std::cout << "\r" << percentage << "%";}
 	  G4double result[6] = {0,0,0,0,0,0};
 	  G4double coords[4] = {x,y,0,0};
 	  field->GetFieldValue(coords, result);
