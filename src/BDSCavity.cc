@@ -143,8 +143,8 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double irisRadius       = cavityInfo->irisRadius;
   unsigned int noPoints            = cavityInfo->numberOfPoints;
 
-  //Calculatecartesian coordinates (z, r) from parameters.
-  //2D spherical coordinates, z along the beamline:
+  //Calculate cartesian coordinates (z, r) from parameters.
+  //2D cylindrical coordinates, z along the beamline:
   G4double zi = chordLength/2;                    // z coord of iris ellipse centre
   G4double ri = irisRadius + irisRSemiAxis;       // r coord of iris ellipse centre
   G4double ze = 0.0;                              // z coord of equator ellipse centre
