@@ -1,6 +1,6 @@
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSIntegratorMultipole.hh"
+#include "BDSIntegratorMultipoleThin.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
 #include "BDSUtilities.hh"
