@@ -11,6 +11,7 @@
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <algorithm>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -78,7 +79,7 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
   if (!file.is_open())
     {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
   else
-    {G4cout << "Loading \"" << fileName << "\"" << G4endl;}
+    {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
 
   // temporary variables
   std::vector<G4String> keys;
@@ -132,15 +133,28 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 	}
 
       // key definition
-      if (line.find(">"))
+      if (line.find(">") != std::string::npos)
 	{// must be key definition
-	  std::regex keyValue("(\\w)\\s*>\\s*(\\d*)");
+	  std::regex keyValue("(\\w*)\\s*>\\s*([0-9eE.+-]+)");
 	  std::smatch match;
 	  std::regex_search(line, match, keyValue);
-	  G4String key = G4String(match[1]);
-	  key.toLower();
-	  header[key] = std::stod(match[2]);
-	  continue;
+	  if (match.size() < 2)
+	    {G4cerr << "Invalid key definition in field format:\n" << line << G4endl; exit(1);}
+	  else
+	    {
+	      G4String key = G4String(match[1]);
+	      key.toLower();
+	      G4double value = 0;
+	      try
+		{value = std::stod(match[2]);}
+	      catch (std::invalid_argument)
+		{G4cerr << "Invalid argument "    << match[2] << G4endl; exit(1);}
+	      catch (std::out_of_range)
+		{G4cerr << "Number out of range " << match[2] << G4endl; exit(1);}
+		    
+	      header[key] = value;
+	      continue;
+	    }
 	}
       
       // if starts with '!' - columns
@@ -151,24 +165,28 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
  	{
 	  // we only need to record the number of columns and which ones are
 	  // the x,y,z field component ones.
-	  std::regex afterExclamation("\\!(.*)");
+	  std::regex afterExclamation("\\s*!\\s*(.+)");
 	  std::smatch match;
 	  std::regex_search(line, match, afterExclamation);
-	  std::string restOfLine = match[0];
+	  std::string restOfLine = match[1];
 	  std::string columnName;
 	  std::istringstream restOfLineSS(restOfLine);
 	  while (restOfLineSS >> columnName)
 	    {
-	      if (columnName.find("Fx"))
-		{xIndex = nColumns;}
-	      if (columnName.find("Fy"))
-		{yIndex = nColumns;}
-	      if (columnName.find("Fz"))
-		{zIndex = nColumns;}
-	      nColumns++;
+            nColumns++;
+	      if (columnName.find("Fx") != std::string::npos)
+		{xIndex = nColumns; continue;}
+	      if (columnName.find("Fy") != std::string::npos)
+		{yIndex = nColumns; continue;}
+	      if (columnName.find("Fz") != std::string::npos)
+		{zIndex = nColumns; continue;}
+
 	    }
 	  lineData.resize(nColumns+1); // +1 for default value
 	  intoData = true;
+
+	  if (nColumns < (nDim + 3)) // 3 for field components
+	    {G4cerr << "Too few columns for " << nDim << "D field loading" << G4endl; exit(1);}
 	  
 	  // we have all the information now, so initialise the container
 	  switch (nDim)
@@ -210,7 +228,7 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
 					      header["xmin"]*CLHEP::cm, header["xmax"]*CLHEP::cm,
 					      header["ymin"]*CLHEP::cm, header["ymax"]*CLHEP::cm,
 					      header["zmin"]*CLHEP::cm, header["zmax"]*CLHEP::cm,
-					      header["tmin"]*CLHEP::cm, header["tmax"]*CLHEP::cm);
+					      header["tmin"]*CLHEP::s,  header["tmax"]*CLHEP::s);
 		break;
 	      }
 	    default:
@@ -238,6 +256,8 @@ void BDSFieldLoaderBDSIM::ProcessData(const std::string& line,
   for (G4int i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
+      if (i < xIndex)// x is the first
+	{value *= CLHEP::cm;}
       lineData[i] = value;
     }
   

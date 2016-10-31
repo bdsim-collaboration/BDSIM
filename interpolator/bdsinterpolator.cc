@@ -3,6 +3,7 @@
 #include "BDSExecOptions.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldLoader.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 
@@ -11,8 +12,6 @@
 #include "G4ThreeVector.hh"
 
 #include "parser/query.h"
-
-
 
 int main(int argc, char** argv)
 {
@@ -41,8 +40,22 @@ int main(int argc, char** argv)
     {
       BDSFieldInfo* recipe = BDSFieldFactory::Instance()->GetDefinition(G4String(q.fieldObject));
 
+      // We don't need to use the full interface of BDSFieldFactory to manufacture a complete
+      // geant4 field - we only need the BDSFieldMag* instance.
+      BDSFieldMag* field = BDSFieldLoader::Instance()->LoadMagField(*recipe);
 
+      if (!field)
+	{
+	  G4cout << "No field constructed - skipping" << G4endl;
+	  continue;
+	}
+      BDSI::Query(field, q, recipe->FieldType());
     }
+
+  delete BDSFieldFactory::Instance();
+  delete BDSFieldLoader::Instance();
+  delete BDSGlobalConstants::Instance();
+  delete BDSParser::Instance();
 
   return 0;
 }

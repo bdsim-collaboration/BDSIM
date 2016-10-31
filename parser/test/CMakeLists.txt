@@ -136,6 +136,9 @@ add_test(gmad-cavitymodel ${gmadBinary} cavitymodel.gmad)
 # test field
 add_test(gmad-field ${gmadBinary} field.gmad)
 
+# test query
+add_test(gmad-query ${gmadBinary} query.gmad)
+
 # test physics biasing
 add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
 

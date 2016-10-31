@@ -11,6 +11,7 @@ list(REMOVE_ITEM interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdsinterpola
 
 add_library(interpolator SHARED ${interpolatorLibSources})
 target_link_libraries(interpolator bdsim)
+target_link_libraries(interpolator gmad)
 
 add_executable(interpolatorexec ${CMAKE_BINARY_DIR}/interpolator/bdsinterpolator.cc)
 set_target_properties(interpolatorexec PROPERTIES OUTPUT_NAME "bdsinterpolator" VERSION ${BDSIM_VERSION})

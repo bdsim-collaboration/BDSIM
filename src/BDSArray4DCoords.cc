@@ -16,7 +16,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nX, G4int nY, G4int nZ, G4int nT,
   zMin(zMinIn), zMax(zMaxIn),
   tMin(tMinIn), tMax(tMaxIn)
 {
-  xStep = (xMax - xMin) / (G4double)nY;
+  xStep = (xMax - xMin) / (G4double)nX;
   yStep = (yMax - yMin) / (G4double)nY;
   zStep = (zMax - zMin) / (G4double)nZ;
   tStep = (tMax - tMin) / (G4double)nT;

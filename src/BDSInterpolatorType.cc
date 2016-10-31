@@ -10,11 +10,11 @@
 template<>
 std::map<BDSInterpolatorType, std::string>* BDSInterpolatorType::dictionary =
   new std::map<BDSInterpolatorType, std::string> ({
-      {BDSInterpolatorType::nearest2d,  "nearest1d"},
+      {BDSInterpolatorType::nearest1d,  "nearest1d"},
       {BDSInterpolatorType::nearest2d,  "nearest2d"},
       {BDSInterpolatorType::nearest3d,  "nearest3d"},
       {BDSInterpolatorType::nearest4d,  "nearest4d"},
-      {BDSInterpolatorType::linear2d,   "linear1d"},
+      {BDSInterpolatorType::linear1d,   "linear1d"},
       {BDSInterpolatorType::linear2d,   "linear2d"},
       {BDSInterpolatorType::linear3d,   "linear3d"},
       {BDSInterpolatorType::linear4d,   "linear4d"},

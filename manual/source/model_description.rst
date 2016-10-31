@@ -1179,9 +1179,8 @@ Only part of the field is specified here.::
 BDSIM Field Format 2D
 ^^^^^^^^^^^^^^^^^^^^^
 
-Only part of the field entries are shown here.::
+Only part of the field entries are shown here.
 
-  
    
 +--------------------+-------------------------------------------------------------------+
 | **Parameter**      | ** Description**                                                  |
