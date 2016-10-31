@@ -78,7 +78,7 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
   if (!file.is_open())
     {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
   else
-    {G4cout << "Loading \"" << fileName << "\"" << G4endl;}
+    {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
 
   // temporary variables
   std::vector<G4String> keys;

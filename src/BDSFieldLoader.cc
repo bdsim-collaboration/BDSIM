@@ -267,7 +267,7 @@ BDSInterpolator1D* BDSFieldLoader::CreateInterpolator1D(BDSArray1DCoords*   arra
       {result = new BDSInterpolator1DCubic(array); break;}
     default:
       {
-	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	G4cout << "Invalid interpolator type for 1D field: " << interpolatorType << G4endl;
 	exit(1);
 	break;
       }
@@ -289,7 +289,7 @@ BDSInterpolator2D* BDSFieldLoader::CreateInterpolator2D(BDSArray2DCoords*   arra
       {result = new BDSInterpolator2DCubic(array); break;}
     default:
       {
-	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	G4cout << "Invalid interpolator type for 2D field: " << interpolatorType << G4endl;
 	exit(1);
 	break;
       }
@@ -311,7 +311,7 @@ BDSInterpolator3D* BDSFieldLoader::CreateInterpolator3D(BDSArray3DCoords*   arra
       {result = new BDSInterpolator3DCubic(array); break;}
     default:
       {
-	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	G4cout << "Invalid interpolator type for 3D field: " << interpolatorType << G4endl;
 	exit(1);
 	break;
       }
@@ -333,7 +333,7 @@ BDSInterpolator4D* BDSFieldLoader::CreateInterpolator4D(BDSArray4DCoords*   arra
       {result = new BDSInterpolator4DCubic(array); break;}
     default:
       {
-	G4cout << "Invalid interpolator type " << interpolatorType << G4endl;
+	G4cout << "Invalid interpolator type for 4D field: " << interpolatorType << G4endl;
 	exit(1);
 	break;
       }
