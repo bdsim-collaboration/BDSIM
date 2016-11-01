@@ -1,8 +1,0 @@
-
-! parent file must define a field object called 'theField'
-
-q1: query, fieldObject="theField",
-    	   outfile="1d.dat",
-	   nx=100,
-	   xmin=-30*cm,
-	   xmax=30*cm;

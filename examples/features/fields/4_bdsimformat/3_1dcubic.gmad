@@ -4,8 +4,8 @@ f1: field, type="bmap1d",
 		 magneticInterpolator = "cubic1D";
 
 q1: query, nDimensions=1,
-    	   nx = 100,
-	   xmin = -40*cm,
-	   xmax = 40*cm,
+    	   nx = 200,
+	   xmin = -60*cm,
+	   xmax = 60*cm,
 	   outfile = "1d_interpolated_cubic.dat",
 	   fieldObject = "f1";
