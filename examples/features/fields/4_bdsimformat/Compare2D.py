@@ -22,12 +22,12 @@ def _Plot(a, filename, title):
     xmax = np.max(a[:,:,0])
     ymin = np.min(a[:,:,1])
     ymax = np.max(a[:,:,1])
-    ax.imshow(a[:,:,2], interpolation='None',extent=(xmin,xmax,ymin,ymax), vmin=-4, vmax=4)
+    ax.imshow(a[:,:,2], interpolation='None',extent=(xmin,xmax,ymin,ymax), vmin=-4, vmax=4, origin='lower')
     ax.set_xlabel('X (cm)')
     ax.set_ylabel('Y (cm)')
     ax.set_title('X-Component',size='medium')
     
-    im = ax2.imshow(a[:,:,3], interpolation='None',extent=(xmin,xmax,ymin,ymax), vmin=-4, vmax=4)
+    im = ax2.imshow(a[:,:,3], interpolation='None',extent=(xmin,xmax,ymin,ymax), vmin=-4, vmax=4, origin='lower')
     ax2.set_xlabel('X (cm)')
     ax2.set_title('Y-Component',size='medium')
 
