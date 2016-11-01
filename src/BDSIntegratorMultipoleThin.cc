@@ -26,9 +26,9 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
   std::vector<G4String>::iterator skey = skewKeys.begin();
   for (G4double i = 0; i < normKeys.size(); i++, nkey++, skey++)
     {
-      bnl.push_back((*strength)[*nkey]);// / pow(CLHEP::m,i));
-      bsl.push_back((*strength)[*skey]);// / pow(CLHEP::m,i));
-      nfact.push_back(Factorial(i));
+      bnl.push_back((*strength)[*nkey] / pow(CLHEP::m,i+1));
+      bsl.push_back((*strength)[*skey] / pow(CLHEP::m,i+1));
+      nfact.push_back(Factorial(i+1));
     }
 }
 
@@ -40,10 +40,10 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   const G4double *pIn    = yIn+3;
   G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP  = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double      InitPMag = GlobalP.mag();
+  G4double      InitMag = GlobalP.mag();
 
   //Factor for normalising to particle momentum
-  G4double normFactor = eqOfM->FCof()/InitPMag;
+  G4double normFactor = eqOfM->FCof()/InitMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   /*
   // this is excessive for debug - only uncomment if debugging this tracking code
@@ -173,7 +173,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   GlobalR = globalPosDir.PreStepPoint();
   GlobalP = globalPosDir.PostStepPoint();	
   // TBC - this normalisation seemed to be missing originally - is this correct?
-  //GlobalP*=InitMag; // multiply the unit direction by magnitude to get momentum
+  GlobalP*=InitMag; // multiply the unit direction by magnitude to get momentum
 
   yOut[0] = GlobalR.x();
   yOut[1] = GlobalR.y();
