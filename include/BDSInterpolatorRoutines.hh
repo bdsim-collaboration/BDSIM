@@ -7,12 +7,6 @@
 
 namespace BDS
 {
-  /// Interpolate between to field values for a given normalised distance between
-  /// 0,1.
-  BDSFieldValue Linear1D(const BDSFieldValue& v1,
-			 const BDSFieldValue& v2,
-			 const G4double       dist);
-
   /// Linear interpolation in 1 dimension.
   BDSFieldValue Linear1D(const BDSFieldValue p[2],
 			 const G4double      x);

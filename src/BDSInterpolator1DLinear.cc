@@ -19,9 +19,10 @@ BDSFieldValue BDSInterpolator1DLinear::GetInterpolatedValueT(G4double x) const
   G4double xarr = array->ArrayCoordsFromX(x);
   G4double x1 = floor(xarr);
 
-  BDSFieldValue Q1 = array->GetConst(x1);
-  BDSFieldValue Q2 = array->GetConst(x1+1);
-  BDSFieldValue result = BDS::Linear1D(Q1, Q2, xarr-x1);
+  BDSFieldValue values[2];
+  values[0] = array->GetConst(x1);
+  values[1] = array->GetConst(x1+1);
+  BDSFieldValue result = BDS::Linear1D(values, xarr-x1);
   
   return result;
 }

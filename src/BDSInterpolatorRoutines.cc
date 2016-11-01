@@ -3,12 +3,6 @@
 
 #include "G4Types.hh"
 
-BDSFieldValue BDS::Linear1D(const BDSFieldValue& v1,
-			    const BDSFieldValue& v2,
-			    const G4double       dist)
-{
-  return v1*(1.-dist) + v2*dist;
-}
 
 BDSFieldValue BDS::Linear1D(const BDSFieldValue p[2],
 			    const G4double      x)
