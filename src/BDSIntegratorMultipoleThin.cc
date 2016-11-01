@@ -183,8 +183,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
 
-  //for(G4int i = 0; i < nVariables; i++)
-  //  {yErr[i] = 0;}
 }
 
 void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
