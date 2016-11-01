@@ -1,5 +1,17 @@
 #include "BDSFieldClassType.hh"
 #include "BDSFieldType.hh"
+#include "BDSFieldMagInterpolated1D.hh"
+#include "BDSFieldMagInterpolated2D.hh"
+#include "BDSFieldMagInterpolated3D.hh"
+#include "BDSFieldMagInterpolated4D.hh"
+#include "BDSInterpolator1D.hh"
+#include "BDSInterpolator2D.hh"
+#include "BDSInterpolator3D.hh"
+#include "BDSInterpolator4D.hh"
+#include "BDSArray1DCoords.hh"
+#include "BDSArray2DCoords.hh"
+#include "BDSArray3DCoords.hh"
+#include "BDSArray4DCoords.hh"
 
 #include "BDSIQuery.hh"
 
@@ -76,6 +88,16 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   ofile.close();
   std::cout << std::endl;
+
+  BDSFieldMagInterpolated1D* magInt = dynamic_cast<BDSFieldMagInterpolated1D*>(field);
+  if (magInt)
+    {
+      const BDSArray1DCoords* data = magInt->Interpolator()->Array();
+      std::ofstream ofile;
+      ofile.open("raw_" + outputName);
+      ofile << *data;
+      ofile.close();
+    }
 }
 
 void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClassType type)
@@ -122,6 +144,16 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     }
   ofile.close();
   std::cout << std::endl;
+
+  BDSFieldMagInterpolated2D* magInt = dynamic_cast<BDSFieldMagInterpolated2D*>(field);
+  if (magInt)
+    {
+      const BDSArray2DCoords* data = magInt->Interpolator()->Array();
+      std::ofstream ofile;
+      ofile.open("raw_" + outputName);
+      ofile << *data;
+      ofile.close();
+    }
 }
 
 void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClassType type)
@@ -178,6 +210,16 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     }
   ofile.close();
   std::cout << std::endl;
+
+  BDSFieldMagInterpolated3D* magInt = dynamic_cast<BDSFieldMagInterpolated3D*>(field);
+  if (magInt)
+    {
+      const BDSArray3DCoords* data = magInt->Interpolator()->Array();
+      std::ofstream ofile;
+      ofile.open("raw_" + outputName);
+      ofile << *data;
+      ofile.close();
+    }
 }
 
 void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClassType type)
@@ -243,6 +285,16 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     }
   ofile.close();
   std::cout << std::endl;
+
+  BDSFieldMagInterpolated4D* magInt = dynamic_cast<BDSFieldMagInterpolated4D*>(field);
+  if (magInt)
+    {
+      const BDSArray4DCoords* data = magInt->Interpolator()->Array();
+      std::ofstream ofile;
+      ofile.open("raw_" + outputName);
+      ofile << *data;
+      ofile.close();
+    }
 }
 
 void BDSI::WriteOut(std::ofstream& out,
