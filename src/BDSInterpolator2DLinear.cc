@@ -26,9 +26,9 @@ BDSFieldValue BDSInterpolator2DLinear::GetInterpolatedValueT(G4double x, G4doubl
   for (int i = 0; i < 2; i++)
     {
       for (int j = 0; j < 2; j++)
-	{localData[i][j] = array->GetConst(x1+i, y1+i);}
+	{localData[i][j] = array->GetConst(x1+i, y1+j);}
     }
-
+  
   BDSFieldValue result = BDS::Linear2D(localData, xarr-x1, yarr-y1);
   
   return result;

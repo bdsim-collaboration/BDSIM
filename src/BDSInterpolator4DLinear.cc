@@ -45,7 +45,7 @@ BDSFieldValue BDSInterpolator4DLinear::GetInterpolatedValueT(G4double x,
 	  for (int k = 0; k < 2; k++)
 	    {
 	      for (int l = 0; l < 2; l++)
-		{localData[i][j][k][l] = array->GetConst(x0+i, y0+i, z0+i);}
+		{localData[i][j][k][l] = array->GetConst(x0+i, y0+j, z0+k, t0+l);}
 	    }
 	}
     }
