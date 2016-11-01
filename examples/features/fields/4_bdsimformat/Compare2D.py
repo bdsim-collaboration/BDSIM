@@ -2,12 +2,15 @@ import pybdsim
 import matplotlib.pyplot as plt
 import numpy as np
 
-def Compare2D(original):#, nearest, linear, cubic):
+def Compare2D(original, nearest, linear, cubic):
     a = pybdsim.Field.Load(original)
-    #n = pybdsim.Field.Load(nearest)
-    #l = pybdsim.Field.Load(linear)
-    #c = pybdsim.Field.Load(cubic)
+    n = pybdsim.Field.Load(nearest)
+    l = pybdsim.Field.Load(linear)
+    c = pybdsim.Field.Load(cubic)
     _Plot(a, 'original', 'Original')
+    _Plot(n, 'nearest',  'Nearest')
+    _Plot(l, 'linear',   'Linear')
+    _Plot(c, 'cubic',    'Cubic')
 
 def _Plot(a, filename, title):
     f   = plt.figure(figsize=(7.5,4))
