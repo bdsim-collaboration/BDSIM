@@ -40,10 +40,10 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   const G4double *pIn    = yIn+3;
   G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP  = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double      InitPMag = GlobalP.mag();
+  G4double      InitMag = GlobalP.mag();
 
   //Factor for normalising to particle momentum
-  G4double normFactor = eqOfM->FCof()/InitPMag;
+  G4double normFactor = eqOfM->FCof()/InitMag;
   // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
   /*
   // this is excessive for debug - only uncomment if debugging this tracking code
