@@ -7,7 +7,7 @@
 BDSFieldValue BDS::Linear1D(const BDSFieldValue p[2],
 			    const G4double      x)
 {
-  return p[0]*(1.-x) + p[2]*x;
+  return p[0]*(1.-x) + p[1]*x;
 }
 
 BDSFieldValue BDS::Linear2D(const BDSFieldValue p[2][2],
