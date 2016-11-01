@@ -17,18 +17,22 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
   zMin(zMinIn), zMax(zMaxIn),
   tMin(tMinIn), tMax(tMaxIn)
 {
-  xStep = (xMax - xMin) / ((G4double)nX - 1);
-  yStep = (yMax - yMin) / ((G4double)nY - 1);
-  zStep = (zMax - zMin) / ((G4double)nZ - 1);
-  tStep = (tMax - tMin) / ((G4double)nT - 1);
-  if (std::isnan(xStep))
-    {xStep = 0;}
-  if (std::isnan(yStep))
-    {yStep = 0;}
-  if (std::isnan(zStep))
-    {zStep = 0;}
-  if (std::isnan(tStep))
-    {tStep = 0;}
+  if (nX > 1)
+    {xStep = (xMax - xMin) / ((G4double)nX - 1);}
+  else
+    {xStep = 1;}
+  if (nY > 1)
+    {yStep = (yMax - yMin) / ((G4double)nY - 1);}
+  else
+    {yStep = 1;}
+  if (nZ > 1)
+    {zStep = (zMax - zMin) / ((G4double)nZ - 1);}
+  else
+    {zStep = 1;}
+  if (nT > 1)
+    {tStep = (tMax - tMin) / ((G4double)nT - 1);}
+  else
+    {tStep = 1;}
 }
 
 G4bool BDSArray4DCoords::OutsideCoords(const G4double x,
