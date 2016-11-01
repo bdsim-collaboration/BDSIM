@@ -370,13 +370,13 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   //Last element should be fringe if poleface specified
   if (BDS::IsFinite(element->e2) && includeFringe && (!nextModifies))
     {
-      BDSMagnetStrength* fringeStOut = new BDSMagnetStrength();
-      (*fringeStOut)["field"] = (*st)["field"];
+      BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength();
+      (*fringeStOut)["field"]         = (*st)["field"];
       (*fringeStOut)["polefaceangle"] = element->e2;
-      (*fringeStOut)["length"] = thinElementLength;
-      (*fringeStOut)["angle"] = -thinElementLength / rho;
-      thename = element->name + "_e2_fringe";
-      angle = polefaceAngleOut;
+      (*fringeStOut)["length"]        = thinElementLength;
+      (*fringeStOut)["angle"]         = -thinElementLength / rho;
+      thename                         = element->name + "_e2_fringe";
+      angle                           = polefaceAngleOut;
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, angle, -angle,
 						    thename, magType, fringeStOut, brho,
