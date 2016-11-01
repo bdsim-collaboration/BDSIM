@@ -28,6 +28,8 @@ public:
   /// Alternative public interface to allow use of a 3-vector position.
   /// Returns Geant4 type as that's what will be needed.
   G4ThreeVector GetInterpolatedValue(G4ThreeVector position, G4double t) const;
+
+  inline const BDSArray4DCoords* Array() const {return array;}
   
 protected:
   /// Each derived class should implement this function. Note T suffix (was templated)
