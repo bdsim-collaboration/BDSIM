@@ -23,11 +23,8 @@ BDSFieldValue BDSInterpolator3DLinear::GetInterpolatedValueT(G4double x,
   G4double zarr = array->ArrayCoordsFromY(z);
   
   G4double x0 = floor(xarr);
-  //G4double x1 = ceil(xarr);
   G4double y0 = floor(yarr);
-  //G4double y1 = ceil(yarr);
   G4double z0 = floor(zarr);
-  //G4double z1 = floor(zarr);
 
   BDSFieldValue localData[2][2][2];
 
@@ -43,39 +40,4 @@ BDSFieldValue BDSInterpolator3DLinear::GetInterpolatedValueT(G4double x,
   BDSFieldValue result = BDS::Linear3D(localData, xarr-x0, yarr-y0, zarr-z0);
 
   return result;
-
-  /*
-  
-  // The fractional part will give us the normalised distance between x0 and the point.
-  // ie if x were in spatial coords, xDist = (x-x0)/(x1-x0) where x is an arbitrary point
-  // between lattice points x0 and x1.
-  G4double xDist = xarr - x0;
-  G4double yDist = yarr - y0;
-  G4double zDist = zarr - z0;
-
-  // Get the values we requires - indices are x,y,z
-  BDSFieldValue C000 = array->GetConst(x0,y0,z0);
-  BDSFieldValue C001 = array->GetConst(x0,y0,z1);
-  BDSFieldValue C010 = array->GetConst(x0,y1,z0);
-  BDSFieldValue C011 = array->GetConst(x0,y1,z1);
-  BDSFieldValue C100 = array->GetConst(x1,y0,z0);
-  BDSFieldValue C101 = array->GetConst(x1,y0,z1);
-  BDSFieldValue C110 = array->GetConst(x1,y1,z0);
-  BDSFieldValue C111 = array->GetConst(x1,y1,z1);
-
-  // Interpolate along x
-  BDSFieldValue C00  = BDS::Linear1D(C000, C100, xDist);
-  BDSFieldValue C01  = BDS::Linear1D(C001, C101, xDist);
-  BDSFieldValue C10  = BDS::Linear1D(C010, C110, xDist);
-  BDSFieldValue C11  = BDS::Linear1D(C011, C111, xDist);
-
-  // Interpolate along y
-  BDSFieldValue C0   = BDS::Linear1D(C00, C10, yDist);
-  BDSFieldValue C1   = BDS::Linear1D(C01, C11, yDist);
-
-  // Interpolate along z
-  BDSFieldValue C    = BDS::Linear1D(C0, C1, zDist);
-
-  return C;
-  */
 }
