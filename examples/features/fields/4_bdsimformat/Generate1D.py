@@ -8,13 +8,25 @@ import tarfile
 def main():
     # generate x and y points along their own axes
     x = _np.arange(-30, 30, 7.5)
+    
+    # define functions for each field component
+    def fx(xv):
+        return 4*_np.cos(0.08*xv)
+    def fy(xv):
+        return 2*_np.sin(0.1*xv)
+    def fz(xv):
+        return 3*_np.sin(0.02*xv + 0.2)
 
-    # calculate some example field value at each coordinate
-    xv = 4*_np.cos(0.08*x)
-    yv = 2*_np.sin(0.1*x)
+    data = []
+    # loop over and build up 2d lists of lists
+    for xi in x:
+        data.append([xi,fx(xi),fy(xi),fz(xi)])
+
+    # convert to numpy array
+    data = _np.array(data)
 
     # construct a BDSIM format field object and write it out
-    f = pybdsim.Field.Field1D(x,xv,yv,_np.zeros_like(xv))
+    f = pybdsim.Field.Field1D(data)
     f.Write('1dexample.dat')
 
     # compress the result
@@ -22,11 +34,12 @@ def main():
     tar.add('1dexample.dat')
     tar.close()
 
-    Plot(x,xv,yv)
-
-def Plot(x,xv,yv):
+    #Plot(data[:,0],data[:,1],data[:,2],data[:,3])
+    return data
     
-    mag = _np.sqrt(xv**2 + yv**2)
+def Plot(x,xv,yv,zv):
+    
+    mag = _np.sqrt(xv**2 + yv**2 + zv**2)
 
     _plt.figure()
     _plt.quiver(x, _np.zeros_like(x), xv, yv, mag, cmap=_plt.cm.magma, pivot='mid', scale=None)

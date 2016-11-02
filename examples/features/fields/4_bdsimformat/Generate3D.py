@@ -12,25 +12,30 @@ def main():
     y = _np.arange(-25, 25, 7.2)
     z = _np.arange(-35, 35, 8)
 
-    # create a mesh of coordinates using these 1d x and y coords
-    xu,yu,zu = _np.meshgrid(y,x,z)
+    # define functions for each dimension
+    def fx(x,y,z):
+        return 4*_np.cos(0.08*x)*_np.sin(0.1*y) + z
+    def fy(x,y,z):
+        return 2*_np.sin(0.08*x)*_np.cos(0.1*y) - 2*z
+    def fz(x,y,z):
+        return 3*_np.cos(0.05*x)*0.4*z
+    
+    data = []
+    # loop over and build up 3d lists of lists of lists
+    for xi in x:
+        u = []
+        for yi in y:
+            v = []
+            for zi in z:
+                v.append([xi,yi,zi,fx(xi,yi,zi),fy(xi,yi,zi),fz(xi,yi,zi)])
+            u.append(v)
+        data.append(u)
 
-    # calculate some example field value at each coordinate
-    xv = 4*_np.cos(0.08*xu)*_np.sin(0.1*yu)
-    yv = 2*_np.sin(0.08*xu)*_np.cos(0.1*yu)
-    zv = 3*_np.cos(0.09*zu+1.4)
-
-    # restructure into correct shape of array
-    magf = xv[:,:,:,_np.newaxis]
-
-    # stack in the coordinates in front of the field x component
-    magfyx  = _np.insert(magf,0,(xu,yu,zu),axis=3)
-
-    # stack in the field y and z components after the field x component
-    magfyxb = _np.insert(magfyx, 4, (yv,zv),axis=3)
+    # convert to numpy array
+    data = _np.array(data)
 
     # construct a BDSIM format field object and write it out
-    f = pybdsim.Field.Field3D(magfyxb)
+    f = pybdsim.Field.Field3D(data)
     f.Write('3dexample.dat')
 
     # compress the result
@@ -38,9 +43,8 @@ def main():
     tar.add('3dexample.dat')
     tar.close()
 
-    Plot(magfyxb)
-
-    return magfyxb
+    #Plot(data)
+    return data
 
 def Plot(array):
 

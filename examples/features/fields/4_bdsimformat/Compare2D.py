@@ -14,9 +14,9 @@ def Compare2D(original, nearest, linear, cubic):
 
 def _Plot(a, filename, title):
     f   = plt.figure(figsize=(7.5,4))
-    ax  = f.add_subplot(121)
-    ax2 = f.add_subplot(122)
-
+    ax  = f.add_subplot(131)
+    ax2 = f.add_subplot(132)
+    ax3 = f.add_subplot(133)
 
     xmin = np.min(a[:,:,0])
     xmax = np.max(a[:,:,0])
@@ -30,8 +30,14 @@ def _Plot(a, filename, title):
     im = ax2.imshow(a[:,:,3], interpolation='None',extent=(xmin,xmax,ymin,ymax), vmin=-4, vmax=4, origin='lower')
     ax2.set_xlabel('X (cm)')
     ax2.set_title('Y-Component',size='medium')
+    ax2.get_yaxis().set_ticks([])
 
-    f.subplots_adjust(left=0.09, right=0.85, top=0.86, bottom=0.12, wspace=0.2)
+    im = ax3.imshow(a[:,:,4], interpolation='None',extent=(xmin,xmax,ymin,ymax), vmin=-4, vmax=4, origin='lower')
+    ax3.set_xlabel('X (cm)')
+    ax3.set_title('Z-Component',size='medium')
+    ax3.get_yaxis().set_ticks([])
+
+    f.subplots_adjust(left=0.09, right=0.85, top=0.86, bottom=0.12, wspace=0.02)
     cbar_ax = f.add_axes([0.88, 0.15, 0.05, 0.7])
     f.colorbar(im, cax=cbar_ax)
 

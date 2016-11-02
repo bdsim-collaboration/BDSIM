@@ -9,17 +9,15 @@ def main():
     # generate x and y points along their own axes
     x = _np.arange(-30, 30, 5.6)
     y = _np.arange(-25, 25, 6.8)
-
-    # define functions for each dimension
+    
+    # define functions for each field component
     def fx(x,y):
         return 4*_np.cos(0.08*x)*_np.sin(0.1*y)
     def fy(x,y):
         return 2*_np.sin(0.08*x)*_np.cos(0.1*y)
     def fz(x,y):
         return 3*_np.cos(0.05*x)
-
-    xu = []
-    yu = []
+    
     data = []
     # loop over and build up 3d lists of lists of lists
     for xi in x:

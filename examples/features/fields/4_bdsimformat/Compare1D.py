@@ -35,4 +35,18 @@ def Compare1D(original, nearest, linear, cubic):
     plt.tight_layout()
     plt.savefig('1d_interpolated_y.pdf')
 
+    plt.figure()
+    plt.plot(a[:,0], a[:,3], 'bo', label='Original', mec='b', alpha=0.8)
+    plt.plot(n[:,0], n[:,3], 'b:', label='Nearest')
+    plt.plot(l[:,0], l[:,3], 'r--',label='Linear')
+    plt.plot(c[:,0], c[:,3], '-',  label='Cubic', color='grey')
+    plt.xlabel('Z (cm)')
+    plt.ylabel('Field (T)')
+    plt.title('Z-Component of B Field')
+    plt.legend(numpoints=1)
+    plt.xlim(-65,65)
+    plt.ylim(-2.5,2.5)
+    plt.tight_layout()
+    plt.savefig('1d_interpolated_z.pdf')
+
     plt.draw()
