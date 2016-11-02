@@ -109,6 +109,14 @@ void Compare::Histograms(TH1* h1, TH1* h2, std::vector<Result*>& results)
   c->h1Integral= h1->Integral();
   c->h2Integral= h2->Integral();
 
+  // check for a bad comparison
+  if (c->h1NXBins != c->h2NXBins)
+    {
+      c->passed = false;
+      results.push_back(c);
+      return;
+    }
+
   c->chi2   = 0.0;
   int ndof = 0; 
   for(int i=0;i < h1->GetNbinsX(); i++)
