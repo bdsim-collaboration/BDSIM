@@ -23,10 +23,8 @@
 #include "BDSFieldMagSextupole.hh"
 #include "BDSFieldMagSkew.hh"
 #include "BDSFieldMagSolenoid.hh"
-#include "BDSFieldMagSQL.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
-#include "BDSGeometry.hh"
 #include "BDSGeometryType.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDecapole.hh"
@@ -96,7 +94,6 @@ BDSFieldFactory::BDSFieldFactory()
   offset            = G4ThreeVector(0,0,0);
   format            = BDSFieldType::none;
   fileName          = "";
-  geometry          = nullptr;
   cacheLength       = 1*CLHEP::um;
 
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(),
@@ -491,49 +488,6 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(BDSFieldInfo&       i
   return CreateIntegratorEM(info,eqOfM);
 }
 
-BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFilePath,
-						      G4ThreeVector offsetIn,
-						      BDSGeometry*  geometryIn)
-  
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  offset            = offsetIn;
-  geometry          = geometryIn;
-
-  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFilePath);
-  fileName = BDS::GetFullPath(ff.first);
-  format   = BDS::DetermineFieldType(ff.second);
-  /*
-  if (format == BDSFieldType::threed)
-    {return CreateMagField3D();}
-  
-  else if (format == BDSFieldType::xy)
-    {return CreateMagFieldXY();}
-  
-  else if (format == BDSFieldType::zero)
-    {
-    if(geometry)
-      {
-	if (geometry->Format() == BDSGeometryType::lcdd)
-	  {return CreateMagFieldLCDD();}
-      }
-    }
-
-  // this logic seems unclear
-  else if (format == BDSFieldType::mokka || format == BDSFieldType::zero)
-    {
-      if(geometry)
-	{
-	  if (geometry->Format() == BDSGeometryType::mokka)
-	    {return CreateMagFieldSQL();}
-	}
-    }
-  */
-  return nullptr;
-}
-
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
 {
   bGlobalField = new BDSFieldMagDummy(); //Zero magnetic field.
@@ -571,29 +525,3 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      t
     }
   return completeField;
 }
-
-/*
-BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldSQL()
-{
-  if(geometry->HasFields() || !fileName.empty())
-    {
-      // Check for field file or volumes with fields
-      // as there may be cases where there are no formats given
-      // in gmad file but fields might be set to volumes in SQL files
-      return new BDSFieldMagSQL(fileName,
-				geometry->Length(),
-				geometry->QuadVolBgrad(),
-				geometry->SextVolBgrad(),
-				geometry->OctVolBgrad(),
-				geometry->UniformFieldVolField(),
-				geometry->NPoleField(),
-				geometry->HasUniformField());
-    }
-  else
-    {return nullptr;}
-}
-
-
-BDSMagFieldMesh* BDSFieldFactory::CreateMagFieldLCDD()
-{return (BDSMagFieldMesh*)(geometry->Field());}
-*/

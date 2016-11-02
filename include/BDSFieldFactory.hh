@@ -2,20 +2,13 @@
 #define BDSFIELDFACTORY_H
 
 #include "BDSFieldInfo.hh"
-#include "BDSFieldMag.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
-#include "BDSGeometry.hh"
-#include "BDSMagFieldMesh.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4AffineTransform.hh"
-#include "G4EquationOfMotion.hh"
-#include "G4Field.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
 #include <map>
@@ -27,7 +20,13 @@ namespace GMAD
 }
 
 class BDSField;
-class BDSGeometry;
+class BDSFieldMag;
+class BDSFieldObjects;
+
+class G4EquationOfMotion;
+class G4Field;
+class G4MagIntegratorStepper;
+class G4Mag_EqRhs;
 
 /**
  * @brief Factory that produces fields and their associated objects.
@@ -91,13 +90,6 @@ private:
   /// on their examples. examples/extended/field/field02/src/F02ElectricFieldSetup.cc
   G4MagIntegratorStepper* CreateIntegratorE(BDSFieldInfo& info,
 					    G4EquationOfMotion* eqOfM);
-  
-
-  /// Create a field based on a mesh of coordinates with field 3 vectors. This only
-  /// produces the field object itself.
-  BDSMagFieldMesh* CreateMagneticField(G4String      formatAndFilePath,
-				       G4ThreeVector offsetIn   = G4ThreeVector(0,0,0),
-				       BDSGeometry*  geometryIn = nullptr);
 
   /// Create only a local field object
   BDSField* CreateFieldMagLocal(BDSFieldType       type,
@@ -122,13 +114,6 @@ private:
 				       BDSMagnetStrength* const strength,
 				       const G4double           brho);
 
-  /// Create a field from a mesh of coordinates with field 3 vectors. All associated
-  /// objects are created and packaged together.
-  BDSFieldObjects* CreateFieldMesh(BDSFieldType       type,
-				   G4String           filename,
-				   G4ThreeVector      localOffset = G4ThreeVector(0,0,0),
-				   G4AffineTransform* transform   = nullptr);
-
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.
   BDSFieldObjects* CreateTeleporter(G4ThreeVector teleporterDelta);
@@ -143,7 +128,6 @@ private:
   G4ThreeVector offset;
   BDSFieldType  format;
   G4String      fileName;
-  BDSGeometry*  geometry;
   G4double      cacheLength;
 
   ///@{ Variable to allow different functions to access different parts during construction
