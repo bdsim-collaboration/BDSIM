@@ -17,6 +17,7 @@ BDSArray4DCoords::BDSArray4DCoords(G4int nXIn, G4int nYIn, G4int nZIn, G4int nTI
   zMin(zMinIn), zMax(zMaxIn),
   tMin(tMinIn), tMax(tMaxIn)
 {
+  // There are 1 fewer differences than the points.
   if (nX > 1)
     {xStep = (xMax - xMin) / ((G4double)nX - 1);}
   else
