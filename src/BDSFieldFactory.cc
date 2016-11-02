@@ -7,12 +7,13 @@
 #include "BDSFieldEM.hh"
 #include "BDSFieldEMGlobal.hh"
 #include "BDSFieldEMRFCavity.hh"
-#include "BDSFieldMag.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSFieldMag.hh"
 #include "BDSFieldMagDecapole.hh"
 #include "BDSFieldMagDipoleQuadrupole.hh"
+#include "BDSFieldMagDummy.hh"
 #include "BDSFieldMagGlobal.hh"
 #include "BDSFieldMagMultipole.hh"
 #include "BDSFieldMagMuonSpoiler.hh"
@@ -535,13 +536,13 @@ BDSMagFieldMesh* BDSFieldFactory::CreateMagneticField(G4String      formatAndFil
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
 {
-  bGlobalField = new BDSMagFieldMesh(); //Zero magnetic field.
+  bGlobalField = new BDSFieldMagDummy(); //Zero magnetic field.
   bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
   integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  BDSFieldObjects* completeField = new BDSFieldObjects(nullptr, bGlobalField, bEqOfMotion, integrator);
+  BDSFieldObjects* completeField = new BDSFieldObjects(nullptr, bGlobalField,
+						       bEqOfMotion, integrator);
   return completeField;
 }
-
 
 BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      type,
 						      BDSMagnetStrength* const /*strength*/,
