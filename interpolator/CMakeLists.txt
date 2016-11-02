@@ -8,7 +8,7 @@ file(GLOB interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 list(REMOVE_ITEM interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdsinterpolator.cc)
 
 # Build library
-add_library(interpolator SHARED ${interpolatorLibSources})
+add_library(interpolator STATIC ${interpolatorLibSources})
 
 # Build executable and link against needed libraries
 add_executable(interpolatorexec ${CMAKE_BINARY_DIR}/interpolator/bdsinterpolator.cc)
