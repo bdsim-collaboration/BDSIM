@@ -69,6 +69,8 @@ void Element::PublishMembers()
   publish("tilt",&Element::tilt);
   publish("e1",&Element::e1);
   publish("e2",&Element::e2);
+  publish("fint",&Element::fint);
+  publish("fintx",&Element::fintx);
   publish("offsetX",&Element::offsetX);
   publish("offsetY",&Element::offsetY);
   publish("x",&Element::xdir);
@@ -264,6 +266,8 @@ void Element::flush() {
   B = 0;
   e1 = 0;
   e2 = 0;
+  fint = 0;
+  fintx = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;

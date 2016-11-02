@@ -42,6 +42,8 @@ Parameters::Parameters() {
   setMap["B"]  = false;
   setMap["e1"] = false;
   setMap["e2"] = false;
+  setMap["fint"] = false;
+  setMap["fintx"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;

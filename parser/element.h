@@ -55,6 +55,8 @@ namespace GMAD
     double B; ///< magnetic field
     double e1; ///< input pole face rotation for bends
     double e2; ///< output pole face rotation for bends
+    double fint; ///< fringe field integral at the dipole entrance
+    double fintx;  ///< fringe field integral at the dipole exit
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
