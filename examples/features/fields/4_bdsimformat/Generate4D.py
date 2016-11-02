@@ -7,10 +7,11 @@ import pybdsim
 import tarfile
 
 def main():
-    # generate x,y,z points along their own axes
+    # generate x,y,z,t points along their own axes
     x = _np.arange(-30, 30, 6.1)
     y = _np.arange(-25, 25, 7.2)
     z = _np.arange(-35, 35, 8)
+    t = _np.arange(-2e-9, 2e-9, 5e-10)
 
     # define functions for each dimension
     def fx(x,y,z):
@@ -19,6 +20,10 @@ def main():
         return 2*_np.sin(0.08*x)*_np.cos(0.1*y) - 2*z
     def fz(x,y,z):
         return 3*_np.cos(0.05*x)*0.4*z
+    # overal modulation in time
+    def ft(fxc,fyc,fzc,t):
+        factor = _np.sin(t/1e-9)
+        return fxc*factor, fyc*factor, fzc*factor
     
     data = []
     # loop over and build up 3d lists of lists of lists
@@ -27,7 +32,14 @@ def main():
         for yi in y:
             v = []
             for zi in z:
-                v.append([xi,yi,zi,fx(xi,yi,zi),fy(xi,yi,zi),fz(xi,yi,zi)])
+                w = []          
+                for ti in t:
+                    xc = fx(xi,yi,zi)
+                    yc = fy(yi,yi,zi)
+                    zc = fz(zi,yi,zi)
+                    xc,yc,zc = ft(xc,yc,zc,ti)
+                    w.append([xi,yi,zi,ti,xc,yc,zc])
+                v.append(w)
             u.append(v)
         data.append(u)
 
@@ -35,32 +47,16 @@ def main():
     data = _np.array(data)
 
     # construct a BDSIM format field object and write it out
-    f = pybdsim.Field.Field3D(data)
-    f.Write('3dexample.dat')
+    f = pybdsim.Field.Field4D(data)
+    f.Write('4dexample.dat')
 
     # compress the result
-    tar = tarfile.open("3dexample.tar.gz", "w:gz")
-    tar.add('3dexample.dat')
+    tar = tarfile.open("4dexample.tar.gz", "w:gz")
+    tar.add('4dexample.dat')
     tar.close()
 
     #Plot(data)
     return data
-
-def Plot(array):
-
-    a = array #shortcut
-    #mag = _np.sqrt(a[:,:,:,3]**2 + a[:,:,:,4]**2 + a[:,:,:,5]**2)
-    
-    fig = _plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.quiver(a[:,:,:,0], a[:,:,:,1], a[:,:,:,2], a[:,:,:,3], a[:,:,:,4], a[:,:,:,5], length=2, cmap=_plt.cm.magma)
-    _plt.xlabel('X Index')
-    _plt.ylabel('Y Index')
-    ax.set_zlabel('Z Index')
-    _plt.suptitle('3D Example Data')
-    _plt.savefig('3dexample.png',dpi=400)
-
-    _plt.show()
     
 if __name__ == "__main__":
     main()
