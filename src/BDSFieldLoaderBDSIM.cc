@@ -20,17 +20,23 @@
 #include <string>
 #include <vector>
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
 
-BDSFieldLoaderBDSIM::BDSFieldLoaderBDSIM():
+template <class T>
+BDSFieldLoaderBDSIM<T>::BDSFieldLoaderBDSIM():
   nColumns(0),
   fv(BDSFieldValue()),
   result(nullptr)
 {;}
 
-BDSFieldLoaderBDSIM::~BDSFieldLoaderBDSIM()
+template <class T>
+BDSFieldLoaderBDSIM<T>::~BDSFieldLoaderBDSIM()
 {;}
 
-void BDSFieldLoaderBDSIM::CleanUp()
+template <class T>
+void BDSFieldLoaderBDSIM<T>::CleanUp()
 {
   nColumns = 0;
   lineData.clear();
@@ -43,40 +49,50 @@ void BDSFieldLoaderBDSIM::CleanUp()
   result = nullptr;
 }
 
-BDSArray1DCoords* BDSFieldLoaderBDSIM::Load1D(G4String fileName)
+template <class T>
+BDSArray1DCoords* BDSFieldLoaderBDSIM<T>::Load1D(G4String fileName)
 {
   Load(fileName,1);
   return static_cast<BDSArray1DCoords*>(result);
 }
 
-BDSArray2DCoords* BDSFieldLoaderBDSIM::Load2D(G4String fileName)
+template <class T>
+BDSArray2DCoords* BDSFieldLoaderBDSIM<T>::Load2D(G4String fileName)
 {
   Load(fileName,2);
   return static_cast<BDSArray2DCoords*>(result);
 }
 
-BDSArray3DCoords* BDSFieldLoaderBDSIM::Load3D(G4String fileName)
+template <class T>
+BDSArray3DCoords* BDSFieldLoaderBDSIM<T>::Load3D(G4String fileName)
 {
   Load(fileName,3);
   return static_cast<BDSArray3DCoords*>(result);
 }
 
-BDSArray4DCoords* BDSFieldLoaderBDSIM::Load4D(G4String fileName)
+template <class T>
+BDSArray4DCoords* BDSFieldLoaderBDSIM<T>::Load4D(G4String fileName)
 {
   Load(fileName,4);
   return result;
 }
 
-void BDSFieldLoaderBDSIM::Load(G4String fileName,
-			       const G4int nDim)
+template <class T>
+void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
+				  const G4int nDim)
 {
   CleanUp();
   
-  std::ifstream file;
   file.open(fileName);
 
   // test if file is valid
-  if (!file.is_open())
+  bool validFile = false;
+#ifdef USE_GZSTREAM
+  validFile = file.rdbuf()->is_open();
+#else
+  validFile = file.is_open();
+#endif
+  if (!validFile)
     {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
   else
     {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
@@ -241,10 +257,11 @@ void BDSFieldLoaderBDSIM::Load(G4String fileName,
   file.close();
 }
 
-void BDSFieldLoaderBDSIM::ProcessData(const std::string& line,
-				      const G4int xIndex,
-				      const G4int yIndex,
-				      const G4int zIndex)
+template <class T>
+void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
+					 const G4int xIndex,
+					 const G4int yIndex,
+					 const G4int zIndex)
 {
   std::istringstream liness(line);
   G4double value = 0;
@@ -266,3 +283,10 @@ void BDSFieldLoaderBDSIM::ProcessData(const std::string& line,
 		     lineData[yIndex]*CLHEP::tesla,
 		     lineData[zIndex]*CLHEP::tesla);
 }
+
+
+template class BDSFieldLoaderBDSIM<std::ifstream>;
+
+#ifdef USE_GZSTREAM
+template class BDSFieldLoaderBDSIM<igzstream>;
+#endif

@@ -49,6 +49,10 @@
 #include <algorithm>
 #include <fstream>
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
 BDSFieldLoader* BDSFieldLoader::instance = nullptr;
 
 BDSFieldLoader* BDSFieldLoader::Instance()
@@ -211,8 +215,23 @@ BDSArray1DCoords* BDSFieldLoader::LoadBDSIM1D(G4String filePath)
   if (cached)
     {return cached;}
 
-  BDSFieldLoaderBDSIM loader;
-  BDSArray1DCoords* result = loader.Load1D(filePath);
+  // Don't want to template this class and there's no base class pointer
+  // for BDSFieldLoader so unfortunately, there's a wee bit of repetition.
+  BDSArray1DCoords* result = nullptr;
+  if (filePath.rfind("gz") != std::string::npos)
+    {
+#ifdef USE_GZSTREAM
+      BDSFieldLoaderBDSIM<igzstream> loader;
+      result = loader.Load1D(filePath);
+#else
+      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+#endif
+    }
+  else
+    {
+      BDSFieldLoaderBDSIM<std::ifstream> loader;
+      result = loader.Load1D(filePath);
+    }
   arrays1d[filePath] = result;
   return result;
 }
@@ -223,8 +242,21 @@ BDSArray2DCoords* BDSFieldLoader::LoadBDSIM2D(G4String filePath)
   if (cached)
     {return cached;}
   
-  BDSFieldLoaderBDSIM loader;
-  BDSArray2DCoords* result = loader.Load2D(filePath);
+  BDSArray2DCoords* result = nullptr;
+  if (filePath.rfind("gz") != std::string::npos)
+    {
+#ifdef USE_GZSTREAM
+      BDSFieldLoaderBDSIM<igzstream> loader;
+      result = loader.Load2D(filePath);
+#else
+      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+#endif
+    }
+  else
+    {
+      BDSFieldLoaderBDSIM<std::ifstream> loader;
+      result = loader.Load2D(filePath);
+    }
   arrays2d[filePath] = result;
   return result;
 }
@@ -234,9 +266,22 @@ BDSArray3DCoords* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
   BDSArray3DCoords* cached = Get3DCached(filePath);
   if (cached)
     {return cached;}
-  
-  BDSFieldLoaderBDSIM loader;
-  BDSArray3DCoords* result = loader.Load3D(filePath);
+
+  BDSArray3DCoords* result = nullptr;
+  if (filePath.rfind("gz") != std::string::npos )
+    {
+#ifdef USE_GZSTREAM
+  BDSFieldLoaderBDSIM<igzstream> loader;
+  result = loader.Load3D(filePath);
+#else
+  G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+#endif
+    }
+  else
+    {
+      BDSFieldLoaderBDSIM<std::ifstream> loader;
+      result = loader.Load2D(filePath);
+}
   arrays3d[filePath] = result;
   return result;
 }
@@ -246,9 +291,22 @@ BDSArray4DCoords* BDSFieldLoader::LoadBDSIM4D(G4String filePath)
   BDSArray4DCoords* cached = Get4DCached(filePath);
   if (cached)
     {return cached;}
-  
-  BDSFieldLoaderBDSIM loader;
-  BDSArray4DCoords* result = loader.Load4D(filePath);
+
+  BDSArray4DCoords* result = nullptr;
+  if (filePath.rfind("gz") != std::string::npos)
+    {
+#ifdef USE_GZSTREAM
+  BDSFieldLoaderBDSIM<igzstream> loader;
+      result = loader.Load4D(filePath);
+#else
+      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+#endif
+    }
+  else
+    {
+      BDSFieldLoaderBDSIM<std::ifstream> loader;
+      result = loader.Load4D(filePath);
+    }
   arrays4d[filePath] = result;
   return result;
 }

@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
 class BDSArray4DCoords;
 class BDSArray3DCoords;
 class BDSArray2DCoords;
@@ -25,6 +29,7 @@ class BDSArray1DCoords;
  * @author Laurie Nevay
  */
 
+template <class T>
 class BDSFieldLoaderBDSIM
 {
 public:
@@ -50,7 +55,10 @@ private:
 		   const G4int xIndex,
 		   const G4int yIndex = 0,
 		   const G4int zIndex = 0);
-		   
+
+  /// Templated iostream for std::ifstream and gzstream as well
+  T file;
+  
   /// Number of columns to read.
   G4int nColumns;                ///< Number of columns to read.
   std::vector<G4float> lineData; ///< Vector to store line data during loading.
