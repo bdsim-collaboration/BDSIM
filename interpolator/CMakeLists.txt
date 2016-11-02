@@ -4,15 +4,13 @@ configure_file(${CMAKE_SOURCE_DIR}/interpolator/bdsinterpolator.cc ${CMAKE_BINAR
 
 file(GLOB interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
-# Remove mains from dictionary
+# Remove main from library
 list(REMOVE_ITEM interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/bdsinterpolator.cc)
 
-#message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
-
+# Build library
 add_library(interpolator SHARED ${interpolatorLibSources})
-target_link_libraries(interpolator bdsim)
-target_link_libraries(interpolator gmad)
 
+# Build executable and link against needed libraries
 add_executable(interpolatorexec ${CMAKE_BINARY_DIR}/interpolator/bdsinterpolator.cc)
 set_target_properties(interpolatorexec PROPERTIES OUTPUT_NAME "bdsinterpolator" VERSION ${BDSIM_VERSION})
 target_link_libraries(interpolatorexec interpolator bdsim gmad ${CLHEP_LIBRARIES})
