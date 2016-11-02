@@ -51,11 +51,13 @@ public:
 			       const G4double z,
 			       const G4double t) const;
 
-  /// Uses OutsideCoords but warns and exits if the coordinates are outside the array.
-  void OutsideCoordsWarn(const G4double x,
-			 const G4double y,
-			 const G4double z,
-			 const G4double t) const;
+  /// Whether the spatial coordinates lie outside the range of the array or not and
+  /// warn and exit if so.  Sses OutsideCoords but warns and exits if the coordinates
+  /// are outside the array.
+  virtual void OutsideCoordsWarn(const G4double x,
+				 const G4double y,
+				 const G4double z,
+				 const G4double t) const;
 
   /// @{ Not much point in being both virtual and inline (in our use case) but has to be virtual.
   virtual G4double ArrayCoordsFromX(const G4double x) const {return (x - xMin) / xStep;}

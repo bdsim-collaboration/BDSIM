@@ -53,7 +53,7 @@ void BDSArray4DCoords::OutsideCoordsWarn(const G4double x,
 					 const G4double z,
 					 const G4double t) const
 {
-  if (Outside(x,y,z,t))
+  if (OutsideCoords(x,y,z,t))
     {
       G4cerr << "(" << x << ", " << y << ", " << z << ", " << t
 	     << ") is outside array" << G4endl;
