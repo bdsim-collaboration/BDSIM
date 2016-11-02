@@ -781,19 +781,19 @@ void BDSMagnetOuterFactoryPolesBase::CreateEndPiece(G4String name)
   // user limits - don't register as using global one
   endPieceCoilLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
-  // geometry component
-  auto endPieceGC = new BDSGeometryComponent(endPieceContainerSolid,
-					     endPieceContainerLV);
-  endPieceGC->RegisterSolid(endPieceCoilSolid);
-  endPieceGC->RegisterLogicalVolume(endPieceCoilLV);
-  endPieceGC->RegisterVisAttributes(endPieceCoilVis);
-  endPieceGC->RegisterSensitiveVolume(endPieceCoilLV);
-  endPieceGC->SetExtent(BDSExtent(endPieceOuterR, endPieceOuterR, endPieceLength*0.5));
-  endPieceGC->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
-
+  // package it all up
   endPiece = new BDSSimpleComponent(name + "_end_piece",
-				    endPieceGC,
-				    endPieceLength);
+				    endPieceLength,
+				    0,
+				    endPieceContainerSolid,
+				    endPieceContainerLV);
+
+  endPiece->RegisterSolid(endPieceCoilSolid);
+  endPiece->RegisterLogicalVolume(endPieceCoilLV);
+  endPiece->RegisterVisAttributes(endPieceCoilVis);
+  endPiece->RegisterSensitiveVolume(endPieceCoilLV);
+  endPiece->SetExtent(BDSExtent(endPieceOuterR, endPieceOuterR, endPieceLength*0.5));
+  endPiece->SetInnerExtent(BDSExtent(endPieceInnerR, endPieceInnerR, endPieceLength*0.5));
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
@@ -1500,45 +1500,43 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 						checkOverlaps);     // check overlaps
   
   // packaging - geometry component
-  auto endPieceInGC = new BDSGeometryComponent(ePContSolidIn,
-					       ePContInLV);
-  endPieceInGC->RegisterPhysicalVolume(ePInTopPv);
-  endPieceInGC->RegisterPhysicalVolume(ePInLowPv);
-  endPieceInGC->RegisterRotationMatrix(endCoilInRM);
-  endPieceInGC->RegisterVisAttributes(coilVisIn);
-  endPieceInGC->RegisterLogicalVolume(ePInLV);
-  endPieceInGC->RegisterSolid(endPieceSolidIn);
-  endPieceInGC->RegisterSensitiveVolume(ePInLV);
-  endPieceInGC->SetExtent(ePExtOuter);
-  endPieceInGC->SetInnerExtent(ePExtInner);
-
   G4ThreeVector inputFaceNormalR = inputFaceNormal * -1; // just -1 as parallel but opposite
   BDSSimpleComponent* endPieceInSC = new BDSSimpleComponent(name + "_end_piece_in",
-							    endPieceInGC,
 							    ePInLengthZ,
 							    0/*angle*/,
+							    ePContSolidIn,
+							    ePContInLV,
 							    inputFaceNormal,
 							    inputFaceNormalR);
-
-  auto endPieceOutGC = new BDSGeometryComponent(ePContSolidOut,
-						ePContOutLV);
-  endPieceOutGC->RegisterPhysicalVolume(ePOutTopPv);
-  endPieceOutGC->RegisterPhysicalVolume(ePOutLowPv);
-  endPieceOutGC->RegisterRotationMatrix(endCoilOutRM);
-  endPieceOutGC->RegisterVisAttributes(coilVisOut);
-  endPieceOutGC->RegisterLogicalVolume(ePOutLV);
-  endPieceOutGC->RegisterSolid(endPieceSolidOut);
-  endPieceOutGC->RegisterSensitiveVolume(ePOutLV);
-  endPieceOutGC->SetExtent(ePExtOuter);
-  endPieceOutGC->SetInnerExtent(ePExtInner);
+  
+  endPieceInSC->RegisterPhysicalVolume(ePInTopPv);
+  endPieceInSC->RegisterPhysicalVolume(ePInLowPv);
+  endPieceInSC->RegisterRotationMatrix(endCoilInRM);
+  endPieceInSC->RegisterVisAttributes(coilVisIn);
+  endPieceInSC->RegisterLogicalVolume(ePInLV);
+  endPieceInSC->RegisterSolid(endPieceSolidIn);
+  endPieceInSC->RegisterSensitiveVolume(ePInLV);
+  endPieceInSC->SetExtent(ePExtOuter);
+  endPieceInSC->SetInnerExtent(ePExtInner);
   
   G4ThreeVector outputFaceNormalR = outputFaceNormal * -1; // just -1 as parallel but opposite
   BDSSimpleComponent* endPieceOutSC = new BDSSimpleComponent(name + "_end_piece_out",
-							     endPieceOutGC,
 							     ePOutLengthZ,
 							     0/*angle*/,
+							     ePContSolidOut,
+							     ePContOutLV,
 							     outputFaceNormalR,
 							     outputFaceNormal);
+  
+  endPieceOutSC->RegisterPhysicalVolume(ePOutTopPv);
+  endPieceOutSC->RegisterPhysicalVolume(ePOutLowPv);
+  endPieceOutSC->RegisterRotationMatrix(endCoilOutRM);
+  endPieceOutSC->RegisterVisAttributes(coilVisOut);
+  endPieceOutSC->RegisterLogicalVolume(ePOutLV);
+  endPieceOutSC->RegisterSolid(endPieceSolidOut);
+  endPieceOutSC->RegisterSensitiveVolume(ePOutLV);
+  endPieceOutSC->SetExtent(ePExtOuter);
+  endPieceOutSC->SetInnerExtent(ePExtInner);
 
   // attach to the magnet outer
   outer->SetEndPieceBefore(endPieceInSC);
