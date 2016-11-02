@@ -79,7 +79,7 @@ BDSArray4DCoords* BDSFieldLoaderBDSIM<T>::Load4D(G4String fileName)
 
 template <class T>
 void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
-				  const G4int nDim)
+				  const unsigned long nDim)
 {
   CleanUp();
   
@@ -98,10 +98,9 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
     {G4cout << "BDSIM field format - loading \"" << fileName << "\"" << G4endl;}
 
   // temporary variables
-  std::vector<G4String> keys;
-  G4int xIndex = 0;
-  G4int yIndex = 0;
-  G4int zIndex = 0;
+  unsigned long xIndex = 0;
+  unsigned long yIndex = 0;
+  unsigned long zIndex = 0;
   G4bool intoData     = false;
   G4bool dataFinished = false; // just in case there's empty stuff at the end of the file
   std::string line;
@@ -268,9 +267,9 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 
 template <class T>
 void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
-					 const G4int xIndex,
-					 const G4int yIndex,
-					 const G4int zIndex)
+					 const unsigned long xIndex,
+					 const unsigned long yIndex,
+					 const unsigned long zIndex)
 {
   std::istringstream liness(line);
   G4float value = 0;
@@ -279,7 +278,7 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
   lineData[0] = 0;
   
   // read all columns - indices shifted +1 for default value offset
-  for (G4int i = 1; i < nColumns+1; ++i)
+  for (unsigned long i = 1; i < nColumns+1; ++i)
     {
       liness >> value;
       if (i < xIndex)// x is the first

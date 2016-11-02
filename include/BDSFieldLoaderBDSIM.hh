@@ -47,20 +47,20 @@ private:
 
   /// General loader for any number of dimensions.
   void Load(G4String fileName,
-	    const G4int nDim);
+	    const unsigned long nDim);
 
   /// Process on line of data. Index of 0 corresponds to a default value of field of 0.
   /// This allows various dimensional loading to use the same function.
   void ProcessData(const std::string& line,
-		   const G4int xIndex,
-		   const G4int yIndex = 0,
-		   const G4int zIndex = 0);
+		   const unsigned long xIndex,
+		   const unsigned long yIndex = 0,
+		   const unsigned long zIndex = 0);
 
   /// Templated iostream for std::ifstream and gzstream as well
   T file;
   
   /// Number of columns to read.
-  G4int nColumns;                ///< Number of columns to read.
+  unsigned long nColumns;                ///< Number of columns to read.
   std::vector<G4float> lineData; ///< Vector to store line data during loading.
   BDSFieldValue fv;              ///< Temporary field value.
   std::map<G4String, double> header; ///< Header keys and values
