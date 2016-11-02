@@ -16,3 +16,4 @@ interpolator_test("interpolator-4d-nearest" "4d_nearest.gmad")
 interpolator_test("interpolator-4d-linear"  "4d_linear.gmad")
 interpolator_test("interpolator-4d-cubic"   "4d_cubic.gmad")
 
+interpolator_test("interpolator-1d-nearest-gz" "1d_nearest_gz.gmad")
