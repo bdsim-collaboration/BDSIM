@@ -273,7 +273,7 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
 					 const G4int zIndex)
 {
   std::istringstream liness(line);
-  G4double value = 0;
+  G4float value = 0;
 
   // put a default value in.
   lineData[0] = 0;
@@ -288,9 +288,9 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
     }
   
   // Construct field value
-  fv = BDSFieldValue(lineData[xIndex]*CLHEP::tesla,
-		     lineData[yIndex]*CLHEP::tesla,
-		     lineData[zIndex]*CLHEP::tesla);
+  fv = BDSFieldValue(lineData[xIndex]*G4float(CLHEP::tesla),
+		     lineData[yIndex]*G4float(CLHEP::tesla),
+		     lineData[zIndex]*G4float(CLHEP::tesla));
 }
 
 
