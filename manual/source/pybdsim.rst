@@ -66,10 +66,15 @@ pybdsim.Data module
 pybdsim.Field module
 --------------------
 
-.. automodule:: pybdism.Field
+.. automodule:: pybdsim.Field
 		:members:
 		:undoc-members:
 		:show-inheritance:
+
+.. automodule:: pybdsim.Field._Field
+		:members:
+		:show-inheritance:
+
 
 pybdsim.Gmad module
 -------------------
