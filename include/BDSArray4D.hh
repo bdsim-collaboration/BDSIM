@@ -12,7 +12,7 @@
  * 
  * Data represents T,Z,Y,X dimensions. The data is stored 
  * as a (1D) vector and stored in that order. This means that
- * adjacent X values are store next to each other. Storing the data
+ * adjacent X values are stored next to each other. Storing the data
  * as a 1D vector improves performance for random access (through
  * behind the scenes caching) and significantly improves performance 
  * for copying.

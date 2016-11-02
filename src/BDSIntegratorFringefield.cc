@@ -64,7 +64,7 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
     }
 
   // global to local
-  BDSStep   localPosMom = ConvertToLocal(GlobalP, GlobalR, h, false);
+  BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();
   G4ThreeVector Localv0 = localPosMom.PostStepPoint();
   G4ThreeVector LocalP = Localv0.unit();
@@ -105,9 +105,9 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   if(true)
     {
       BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalP, false);
-      GlobalP = globalPosDir.PreStepPoint();
-      GlobalR = globalPosDir.PostStepPoint();	
-      GlobalR*=InitMag; // multiply the unit direction by magnitude to get momentum
+      GlobalR = globalPosDir.PreStepPoint();
+      GlobalP = globalPosDir.PostStepPoint();
+      GlobalP*=InitMag; // multiply the unit direction by magnitude to get momentum
       
       yOut[0] = GlobalR.x();
       yOut[1] = GlobalR.y();

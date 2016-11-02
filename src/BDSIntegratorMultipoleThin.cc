@@ -37,10 +37,11 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 				     const G4double h,
 				     G4double       yOut[])
 {
-  const G4double *pIn    = yIn+3;
-  G4ThreeVector GlobalR  = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
-  G4ThreeVector GlobalP  = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
-  G4double      InitMag = GlobalP.mag();
+  const G4double *pIn      = yIn+3;
+  G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
+  G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
+  G4double      InitMag    = GlobalP.mag();
+  G4ThreeVector InitMomDir = GlobalP.unit();
 
   //Factor for normalising to particle momentum
   G4double normFactor = eqOfM->FCof()/InitMag;
@@ -68,6 +69,21 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();
   G4ThreeVector Localv0 = localPosMom.PostStepPoint();
   G4ThreeVector LocalRp = Localv0.unit();
+
+  if (LocalRp.z() < 0.9) //for non paraxial, advance particle as if in a drift
+  {
+    G4ThreeVector positionMove = h * InitMomDir;
+
+    yOut[0] = yIn[0] + positionMove.x();
+    yOut[1] = yIn[1] + positionMove.y();
+    yOut[2] = yIn[2] + positionMove.z();
+
+    yOut[3] = GlobalP.x();
+    yOut[4] = GlobalP.y();
+    yOut[5] = GlobalP.z();
+
+    return;
+  }
 
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();
@@ -183,8 +199,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
 
-  //for(G4int i = 0; i < nVariables; i++)
-  //  {yErr[i] = 0;}
 }
 
 void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
