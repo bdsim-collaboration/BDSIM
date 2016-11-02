@@ -102,7 +102,8 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
   G4int xIndex = 0;
   G4int yIndex = 0;
   G4int zIndex = 0;
-  G4bool intoData = false;
+  G4bool intoData     = false;
+  G4bool dataFinished = false; // just in case there's empty stuff at the end of the file
   std::string line;
   G4int indX = 0; // ind of 0 will be index to default value in line data
   G4int indY = 0;
@@ -123,6 +124,9 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
       // Process a line of field data
       if (intoData)
 	{
+	  if (dataFinished)
+	    {continue;} // just keep skipping lines after the appropriate amount of data is loaded
+	  
 	  ProcessData(line, xIndex, yIndex, zIndex); // changes member fv
 	    
 	  // Copy into array - we can always use 4d coords even for lower d arrays
@@ -144,7 +148,12 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	    {// we've copmleted one set of z
 	      indZ = 0; // reset back to 0
 	      indT++;   // advance t
-	    }     
+	    }
+	  if (indT == nT)
+	    {// we've completed one set of t
+	      indT = 0;
+	      dataFinished = true;
+	    }
 	  continue;
 	}
 
