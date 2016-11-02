@@ -18,6 +18,7 @@ BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* stre
   bField((*strength)["field"])
 {
   polefaceAngle = (*strength)["polefaceangle"];
+  fint = (*strength)["fint"];
 }
 
 void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],

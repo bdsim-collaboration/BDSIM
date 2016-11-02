@@ -48,7 +48,8 @@ private:
   G4double angle;
   G4double polefaceAngle;
   G4double bField;
-
+  /// Fringe field integral
+  G4double fint;
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
 };
