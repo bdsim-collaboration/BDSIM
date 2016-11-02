@@ -264,12 +264,12 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4double ymax = G4double(params.ymax*CLHEP::m);
   G4double zmin = G4double(params.zmin*CLHEP::m);
   G4double zmax = G4double(params.zmax*CLHEP::m);
-  G4double tmin = G4double(params.zmin*CLHEP::s);
-  G4double tmax = G4double(params.zmax*CLHEP::s);
+  G4double tmin = G4double(params.tmin*CLHEP::s);
+  G4double tmax = G4double(params.tmax*CLHEP::s);
   G4int    nX   = G4int(params.nx);
   G4int    nY   = G4int(params.ny);
   G4int    nZ   = G4int(params.nz);
-  G4int    nT   = G4int(params.nz);
+  G4int    nT   = G4int(params.nt);
   G4String outputName = G4String(params.outfile);
   
   G4cout << "Querying " << outputName << G4endl;
