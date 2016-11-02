@@ -54,20 +54,6 @@ if(USE_GDML)
     message(STATUS "GDML support ON")
 endif()
 
-# LCDD (on by default if xml libraries are found)
-include(cmake/XML.cmake)
-
-if(XML_LIBRARIES)
-    option( USE_LCDD "Include LCDD support."  ON )
-else()
-    option( USE_LCDD "Include LCDD support."  OFF )
-endif()
-if(USE_LCDD)
-    add_definitions("-DUSE_LCDD")
-    include_directories(${XML_INCLUDE_DIR})
-    message(STATUS "LCDD support ON")
-endif()
-
 # Find GEANT4
 include(cmake/Geant4.cmake)
 
@@ -104,9 +90,6 @@ string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
 
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
-if(NOT USE_LCDD)
-  list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
-endif()
 if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
@@ -156,10 +139,6 @@ endif()
 
 # link against ROOT
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
-
-if(USE_LCDD)
-    target_link_libraries(bdsim ${XML_LIBRARIES})
-endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)

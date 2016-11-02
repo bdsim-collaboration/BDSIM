@@ -29,15 +29,14 @@ public:
   static BDSGeometryFactory* Instance();
   
   ~BDSGeometryFactory();
-  
-  BDSGeometry* BuildGeometryOld(G4String formatAndFilePath);
 
+  /// Determine the geometry format, load it and build the geometry. Optional suggested
+  /// length and outerDiameter are in for some cases where it is not possible to query
+  /// the geometry file for the extent information.
   BDSGeometryExternal* BuildGeometry(G4String formatAndFilePath,
 				     std::map<G4String, G4Colour*>* colourMapping = nullptr,
 				     G4double suggestedLength        = 0,
 				     G4double suggestedOuterDiameter = 0);
-  
-  //BDSGeometry* BuildGeometry(BDSGeometryType type, G4String file);
  
 private:
   /// Private accessor as singleton
@@ -57,10 +56,6 @@ private:
 
   /// Get the appropriate geometry factory
   BDSGeometryFactoryBase* GetAppropriateFactory(BDSGeometryType type);
-  
-#ifdef USE_LCDD
-  BDSGeometry* BuildLCDD(G4String fileName);
-#endif
 };
 
 #endif
