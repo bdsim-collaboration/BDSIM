@@ -4,10 +4,12 @@
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSFieldLoader.hh"
+#include "BDSFieldMag.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSParser.hh"
 
 #include "globals.hh"      // geant4 types / globals
+#include "G4Field.hh"
 #include "G4String.hh"
 #include "G4ThreeVector.hh"
 
