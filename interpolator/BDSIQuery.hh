@@ -23,7 +23,7 @@ namespace BDSI
   void Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClassType type);
   void Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClassType type);
 
-  void WriteOut(std::ofstream& out,
+  void WriteOut(std::ostream* out,
 		const G4int    nDim,
 		const G4double coords[4],
 		const G4double result[6],

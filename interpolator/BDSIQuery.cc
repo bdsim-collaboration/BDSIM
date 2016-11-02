@@ -28,6 +28,10 @@
 #include <fstream>
 #include <iostream>
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
 void BDSI::Query(G4Field* field,
 		 const GMAD::Query& params,
 		 const BDSFieldType fieldType)
@@ -63,8 +67,13 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4cout << "Querying " << outputName << G4endl;
   
   double xStep = (xmax - xmin) / ((G4double)nX - 1);
-  
+
+#ifdef USE_GZSTREAM
+  ogzstream ofile;
+  outputName += ".tar.gz";
+#else
   std::ofstream ofile;
+#endif
   ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
@@ -80,7 +89,7 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
       G4double result[6] = {0,0,0,0,0,0};
       G4double coords[4] = {x,0,0,0};
       field->GetFieldValue(coords, result);
-      WriteOut(ofile, 1, coords, result, type);
+      WriteOut(&ofile, 1, coords, result, type);
       i += 1;
       G4double percentage = (i / totalN) *100;
       std::cout << "\r" << floor(percentage) << "%";
@@ -93,8 +102,13 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray1DCoords* data = magInt->Interpolator()->Array();
+#ifdef USE_GZSTREAM
+      ogzstream ofile;
+#else
       std::ofstream ofile;
-      ofile.open("raw_" + outputName);
+#endif
+      G4String name = "raw_" + outputName;
+      ofile.open(name);
       ofile << *data;
       ofile.close();
     }
@@ -115,7 +129,12 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double xStep = (xmax - xmin) / (G4double)nX;
   double yStep = (ymax - ymin) / (G4double)nY;
   
+#ifdef USE_GZSTREAM
+  ogzstream ofile;
+  outputName += ".tar.gz";
+#else
   std::ofstream ofile;
+#endif
   ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
@@ -138,7 +157,7 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
 	  G4double result[6] = {0,0,0,0,0,0};
 	  G4double coords[4] = {x,y,0,0};
 	  field->GetFieldValue(coords, result);
-	  WriteOut(ofile, 2, coords, result, type);
+	  WriteOut(&ofile, 2, coords, result, type);
 	  i++;
 	}
     }
@@ -149,8 +168,13 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray2DCoords* data = magInt->Interpolator()->Array();
+#ifdef USE_GZSTREAM
+      ogzstream ofile;
+#else
       std::ofstream ofile;
-      ofile.open("raw_" + outputName);
+#endif
+      G4String name = "raw_" + outputName;
+      ofile.open(name);
       ofile << *data;
       ofile.close();
     }
@@ -175,7 +199,12 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double yStep = (ymax - ymin) / (G4double)nY;
   double zStep = (ymax - ymin) / (G4double)nZ;
   
+#ifdef USE_GZSTREAM
+  ogzstream ofile;
+  outputName += ".tar.gz";
+#else
   std::ofstream ofile;
+#endif
   ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
@@ -203,7 +232,7 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
 	      G4double result[6] = {0,0,0,0,0,0};
 	      G4double coords[4] = {x,y,z,0};
 	      field->GetFieldValue(coords, result);
-	      WriteOut(ofile, 3, coords, result, type);
+	      WriteOut(&ofile, 3, coords, result, type);
 	      i++;
 	    }
 	}
@@ -215,8 +244,13 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray3DCoords* data = magInt->Interpolator()->Array();
+#ifdef USE_GZSTREAM
+      ogzstream ofile;
+#else
       std::ofstream ofile;
-      ofile.open("raw_" + outputName);
+#endif
+      G4String name = "raw_" + outputName;
+      ofile.open(name);
       ofile << *data;
       ofile.close();
     }
@@ -245,7 +279,12 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double zStep = (ymax - ymin) / (G4double)nZ;
   double tStep = (tmax - tmin) / (G4double)nT;
   
+#ifdef USE_GZSTREAM
+  ogzstream ofile;
+  outputName += ".tar.gz";
+#else
   std::ofstream ofile;
+#endif
   ofile.open(outputName);
 
   ofile << "nx> "   << nX << "\n";
@@ -277,7 +316,7 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
 		  G4double result[6] = {0,0,0,0,0,0};
 		  G4double coords[4] = {x,y,z,t};
 		  field->GetFieldValue(coords, result);
-		  WriteOut(ofile, 4, coords, result, type);
+		  WriteOut(&ofile, 4, coords, result, type);
 		  i++;
 		}
 	    }
@@ -290,14 +329,19 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray4DCoords* data = magInt->Interpolator()->Array();
+#ifdef USE_GZSTREAM
+      ogzstream ofile;
+#else
       std::ofstream ofile;
-      ofile.open("raw_" + outputName);
+#endif
+      G4String name = "raw_" + outputName;
+      ofile.open(name);
       ofile << *data;
       ofile.close();
     }
 }
 
-void BDSI::WriteOut(std::ofstream& out,
+void BDSI::WriteOut(std::ostream* out,
 		    const G4int    nDim,
 		    const G4double coords[4],
 		    const G4double result[6],
@@ -305,33 +349,33 @@ void BDSI::WriteOut(std::ofstream& out,
 {
   // write coordinates
   for (G4int i = 0; i < nDim; i++)
-    {out << coords[i]/CLHEP::cm << "\t";}
+    {*out << coords[i]/CLHEP::cm << "\t";}
 
   // write field components
   switch (type.underlying())
     {
     case BDSFieldClassType::magnetic:
       {	
-	out << result[0] / CLHEP::tesla << "\t"
-	    << result[1] / CLHEP::tesla << "\t"
-	    << result[2] / CLHEP::tesla << "\n";
+	*out << result[0] / CLHEP::tesla << "\t"
+	     << result[1] / CLHEP::tesla << "\t"
+	     << result[2] / CLHEP::tesla << "\n";
 	break;
       }
     case BDSFieldClassType::electric:
       {
-	out << result[3] / CLHEP::volt << "\t"
-	    << result[4] / CLHEP::volt << "\t"
-	    << result[5] / CLHEP::volt << "\n";
+	*out << result[3] / CLHEP::volt << "\t"
+	     << result[4] / CLHEP::volt << "\t"
+	     << result[5] / CLHEP::volt << "\n";
 	break;
       }
     case BDSFieldClassType::electromagnetic:
       {
-	out << result[0] / CLHEP::tesla << "\t"
-	    << result[1] / CLHEP::tesla << "\t"
-	    << result[2] / CLHEP::tesla << "\t"
-	    << result[3] / CLHEP::volt  << "\t"
-	    << result[4] / CLHEP::volt  << "\t"
-	    << result[5] / CLHEP::volt  << "\n";
+	*out << result[0] / CLHEP::tesla << "\t"
+	     << result[1] / CLHEP::tesla << "\t"
+	     << result[2] / CLHEP::tesla << "\t"
+	     << result[3] / CLHEP::volt  << "\t"
+	     << result[4] / CLHEP::volt  << "\t"
+	     << result[5] / CLHEP::volt  << "\n";
 	break;
       }
     default:

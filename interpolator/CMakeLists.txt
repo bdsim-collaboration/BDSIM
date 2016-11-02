@@ -2,6 +2,10 @@
 string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${CMAKE_SOURCE_DIR}/interpolator/bdsinterpolator.cc ${CMAKE_BINARY_DIR}/interpolator/bdsinterpolator.cc @ONLY)
 
+if(USE_GZSTREAM)
+  include_directories(${CMAKE_BINARY_DIR}/src-external/gzstream)
+endif()
+
 file(GLOB interpolatorLibSources ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
 # Remove main from library
