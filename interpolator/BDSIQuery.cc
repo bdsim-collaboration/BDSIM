@@ -92,7 +92,7 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
       WriteOut(&ofile, 1, coords, result, type);
       i += 1;
       G4double percentage = (i / totalN) *100;
-      std::cout << "\r" << floor(percentage) << "%";
+      std::cout << "\r" << floor(percentage) << "%" << std::flush;
     }
   
   ofile.close();
@@ -151,7 +151,7 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   for (G4double y = ymin; y < ymax; y += yStep)
     {
       G4double percentage = ((G4double)i / totalN) *100;
-      std::cout << "\r" << floor(percentage) << "%";
+      std::cout << "\r" << floor(percentage) << "%" << std::flush;
       for (G4double x = xmin; x < xmax; x += xStep)
 	{
 	  G4double result[6] = {0,0,0,0,0,0};
@@ -224,7 +224,7 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   for (G4double z = zmin; z < zmax; z += zStep)
     {
       G4double percentage = ((G4double)i / totalN) *100;
-      std::cout << "\r" << floor(percentage) << "%";
+      std::cout << "\r" << floor(percentage) << "%" << std::flush;
       for (G4double y = ymin; y < ymax; y += yStep)
 	{
 	  for (G4double x = xmin; x < xmax; x += xStep)
@@ -300,13 +300,13 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   ofile << "tmax> " << tmax/CLHEP::s << "\n";
   ofile << "! X     Y     Z     Fx    Fy    Fz\n";
   
-  G4double totalN = (G4double)nX * (G4double)nY * (G4double)nZ;
+  G4double totalN = (G4double)nX * (G4double)nY * (G4double)nZ * (G4double)nT;
 
   G4int i = 0;
   for (G4double t = tmin; t < tmax; t += tStep)
     {
-      G4double percentage = ((G4double)i / totalN) *100;
-      std::cout << "\r" << floor(percentage) << "%";
+      G4double percentage = ((G4double)i / totalN) * 100;
+      std::cout << "\r" << floor(percentage) << "%" << std::flush;
       for (G4double z = zmin; z < zmax; z += zStep)
 	{
 	  for (G4double y = ymin; y < ymax; y += yStep)
