@@ -3,10 +3,10 @@ f1: field, type="bmap3d",
 		 magneticInterpolator = "cubic3D";
 
 q1: query, nDimensions=3,
-    	   nx = 200,
+    	   nx = 100,
 	   xmin = -30*cm,
 	   xmax = 30*cm,
-	   ny = 200,
+	   ny = 100,
 	   ymin = -50*cm,
 	   ymax = 50*cm,
 	   nz = 100,
