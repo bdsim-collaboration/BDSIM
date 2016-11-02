@@ -40,7 +40,7 @@ simple_testing(Component-SBend "--file=sben.gmad" ${OVERLAP_CHECK})
 
 simple_testing_long(Component-SBendPoleFace "--file=sbenPoleFace.gmad" ${OVERLAP_CHECK})
 
-simple_testing(Component-SBendFringefields "--file=sbenFringefields.gmad" ${OVERLAP_CHECK})
+simple_testing_long(Component-SBendFringefields "--file=sbenFringefields.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Screen "--file=screen.gmad" ${OVERLAP_CHECK})
 
