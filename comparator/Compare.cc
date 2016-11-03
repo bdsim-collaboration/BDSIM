@@ -1,8 +1,15 @@
 #include "Compare.hh"
 #include "Result.hh"
+#include "ResultEvent.hh"
+#include "ResultEventTree.hh"
 #include "ResultHistogram.hh"
 #include "ResultHistogram2D.hh"
+#include "ResultSampler.hh"
 #include "ResultTree.hh"
+
+#include "analysis/Event.hh"
+
+#include "BDSOutputROOTEventSampler.hh"
 
 #include <cmath>
 #include <iomanip>
@@ -12,6 +19,7 @@
 #include <vector>
 
 #include "TBranch.h"
+#include "TChain.h"
 #include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
@@ -145,6 +153,12 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
       Compare::Optics(t1, t2, results);
       return;
     }
+ else if (!strcmp(t1->GetName(), "Event"))
+   {
+     std::vector<std::string> names;
+     Compare::EventTree(t1, t2, results, names);
+     return;
+   }
   
   ResultTree* c = new ResultTree();
   c->name       = t1->GetName();
@@ -246,6 +260,106 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	}
     }
   results.push_back(c);
+}
+
+void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
+			std::vector<std::string> samplerNames)
+{
+  ResultEventTree* e = new ResultEventTree();
+  e->name            = t1->GetName();
+  e->passed          = true; // set deafault to pass
+  e->objtype         = "TTree(Event)";
+  e->t1NEntries      = (int)t1->GetEntries();
+  e->t2NEntries      = (int)t2->GetEntries();
+
+  // Don't proceed if uneven number of entries of the even tree
+  // ie different number of events
+  if (e->t1NEntries != e->t2NEntries)
+    {
+      e->passed = false;
+      return;
+    }
+
+  Event* evtLocal1 = new Event();
+  Event* evtLocal2 = new Event();
+  evtLocal1->SetBranchAddress(t1, samplerNames);
+  evtLocal1->SetBranchAddress(t2, samplerNames);
+
+  for (auto i = 0; i < t1->GetEntries(); i++)
+    {
+      ResultEvent eventResult;
+      eventResult.name    = std::to_string(i);
+      eventResult.passed  = true; // default true
+      eventResult.objtype = "Event of Event Tree";
+      
+      t1->GetEntry(i);
+      t2->GetEntry(i);
+
+      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), eventResult);
+      for (auto i = 0; i < (int)evtLocal1->samplers.size(); i++)
+	{
+	  Compare::Sampler(evtLocal1->samplers[i], evtLocal2->samplers[i], eventResult);
+	}
+
+      e->eventResults.push_back(eventResult);
+    }
+  results.push_back(e);
+}
+
+#ifdef __ROOTDOUBLE__
+void Compare::Sampler(BDSOutputROOTEventSampler<double>* e1,
+		      BDSOutputROOTEventSampler<double>* e2,
+		      ResultEvent& results)
+#else
+void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
+		      BDSOutputROOTEventSampler<float>* e2,
+		      ResultEvent& results)
+#endif
+{
+  ResultSampler result(e1->samplerName);
+  
+  if (e1->n != e2->n)
+    {
+      result.passed = false;
+      result.offendingLeaves.push_back("n");
+    }
+  else
+    {
+      for (int i = 0; i < e1->n; i++)
+	{
+	  if (Diff(e1->x, e2->x, i))
+	    {result.passed = false; result.offendingLeaves.push_back("x");}
+	  if (Diff(e1->y, e2->y, i))
+	    {result.passed = false; result.offendingLeaves.push_back("y");}
+	  //if (Diff(e1->z, e2->z, i))
+	  //  {result.passed = false; result.offendingLeaves.push_back("z");}
+	  if (Diff(e1->xp, e2->xp, i))
+	    {result.passed = false; result.offendingLeaves.push_back("xp");}
+	  if (Diff(e1->yp, e2->yp, i))
+	    {result.passed = false; result.offendingLeaves.push_back("yp");}
+	  if (Diff(e1->zp, e2->xp, i))
+	    {result.passed = false; result.offendingLeaves.push_back("zp");}
+	  if (Diff(e1->t, e2->t, i))
+	    {result.passed = false; result.offendingLeaves.push_back("t");}
+	  //if (Diff(e1->S, e2->S, i))
+	  // {result.passed = false; result.offendingLeaves.push_back("S");}
+	}
+    }
+
+  // update parent result status
+  if (!result.passed)
+    {results.passed = false;}
+  results.samplerResults.push_back(result);
+}
+
+#ifdef __ROOTDOUBLE__
+bool Compare::Diff(std::vector<double>& v1, std::vector<double>& v2, int i)
+#else
+bool Compare::Diff(std::vector<float>& v1, std::vector<float>& v2, int i)
+#endif
+{
+  double tol = 1e-10;
+  return std::abs(v1[i] - v2[i]) > tol;
 }
 
 bool Compare::Summarise(std::vector<Result*> results)

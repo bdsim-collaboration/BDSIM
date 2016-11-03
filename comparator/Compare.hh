@@ -1,9 +1,13 @@
 #ifndef COMPCOMPARE_H
 #define COMPCOMPARE_H
 
-#include "Result.hh"
-
 #include <vector>
+
+#include "ResultEvent.hh"
+
+#include "BDSOutputROOTEventSampler.hh"
+
+class Result;
 
 class TDirectory;
 class TFile;
@@ -36,6 +40,25 @@ namespace Compare
   /// Compare an optics TTree specifically. This relies on the known variable
   /// names in the tree and naming scheme.
   void Optics(TTree* t1, TTree* t2, std::vector<Result*>& results);
+
+  void EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
+		 std::vector<std::string> samplerNames);
+
+#ifdef __ROOTDOUBLE__
+  void Sampler(BDSOutputROOTEventSampler<double>* e1,
+	       BDSOutputROOTEventSampler<double>* e2,
+	       ResultEvent& results);
+#else
+  void Sampler(BDSOutputROOTEventSampler<float>* e1,
+	       BDSOutputROOTEventSampler<float>* e2,
+	       ResultEvent& results);
+#endif
+  
+#ifdef __ROOTDOUBLE__
+  bool Diff(std::vector<double>& v1, std::vector<double>& v2, int i);
+#else
+  bool Diff(std::vector<float>& v1, std::vector<float>& v2, int i);
+#endif
 
   /// Simply print out feedback warning that a matching object wasn't found and
   /// no comparison is being done.
