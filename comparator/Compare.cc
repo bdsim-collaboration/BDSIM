@@ -173,6 +173,12 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
      Compare::EventTree(t1, t2, results, names);
      return;
    }
+ else if (!strcmp(t1->GetName(), "Options"))  // ignore an Options tree
+   {return;}
+ else if (!strcmp(t1->GetName(), "Model"))    // ignore a Model tree
+   {return;}
+ else if (!strcmp(t1->GetName(), "Run"))      // ignore a Run tree
+   {return;}
   
   ResultTree* c = new ResultTree();
   c->name       = t1->GetName();
