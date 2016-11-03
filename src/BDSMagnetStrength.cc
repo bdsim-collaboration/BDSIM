@@ -14,7 +14,7 @@ const std::vector<G4String> BDSMagnetStrength::keys = {
   "field",           // constant field in G4units
   "polefaceangle",   // required for fringe field (rad)
   "angle", "length", // (rad, mm)
-  "fint",            // fringe field integrals
+  "fringecorr",      // fringe field correction term
   "ks",              // not in G4 units
   "k1", "k1s",
   "k2", "k2s",
