@@ -91,7 +91,7 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   G4double y1  = y0;
   G4double z1  = z0;  // new z position will be along z by step length h
   G4double xp1 = xp;
-  G4double kick =(y0 * tan(polefaceAngle)/rho);
+  G4double kick =(y0 * tan(polefaceAngle - fringeCorr)/rho);
   G4double yp1 = yp - kick;
   G4double zp1 = zp;
 
