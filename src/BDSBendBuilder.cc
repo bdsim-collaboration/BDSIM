@@ -3,6 +3,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
+#include <BDSBeamPipeInfo.hh>
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -400,7 +401,7 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 				  G4double           brho,
 				  const BDSIntegratorSet* integratorSet)
 {
-  auto beamPipeInfo    = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
+  BDSBeamPipeInfo* beamPipeInfo    = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
@@ -409,7 +410,16 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 					       brho,
 					       intType,
 					       st);
-  
+  //magnet total vertical aperture size
+  G4double vertGap = 0;
+  if (element->apertureType == "racetrack")
+    {vertGap = 2.0 * (beamPipeInfo->aper3 + beamPipeInfo->aper2);}
+  else if ((element->apertureType == "circular") || (element->apertureType ==""))
+    {vertGap = 2.0 * beamPipeInfo->aper1;}
+  else
+    {vertGap = 2.0 * beamPipeInfo->aper2;}
+  (*st)["fringecorr"] *= vertGap;
+
   return new BDSMagnet(magType,
 		       name,
 		       (*st)["length"],
