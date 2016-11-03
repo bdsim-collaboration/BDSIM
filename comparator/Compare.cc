@@ -297,6 +297,7 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
   if (e->t1NEntries != e->t2NEntries)
     {
       e->passed = false;
+      results.push_back(e);
       return;
     }
 
