@@ -23,12 +23,22 @@ class BDSGeometryComponent;
 class BDSSimpleComponent: public BDSAcceleratorComponent
 {
 public:
+  /// Constructor that keeps the component as a daughter geometry component.
   BDSSimpleComponent(G4String              name,
 		     BDSGeometryComponent* componentIn,
 		     G4double              length,
 		     G4double              angle = 0,
 		     G4ThreeVector inputFaceNormal  = G4ThreeVector(0,0,-1),
 		     G4ThreeVector outputFaceNormal = G4ThreeVector(0,0, 1));
+
+  /// Alternate constructor that doesn't use a daughter geometry component.
+  BDSSimpleComponent(G4String              name,
+		     G4double              length,
+		     G4double              angle,
+		     G4VSolid*             containerSolidIn,
+		     G4LogicalVolume*      containerLogicalVolumeIn,
+		     G4ThreeVector         inputFaceNormal  = G4ThreeVector(0,0,-1),
+		     G4ThreeVector         outputFaceNormal = G4ThreeVector(0,0, 1));
 
   /// Default destructor suffices as this calls base class which
   /// clears everything up.

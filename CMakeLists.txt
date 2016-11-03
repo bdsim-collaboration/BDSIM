@@ -94,6 +94,7 @@ include(CTest)
 include(bdsim_test_macros)
 include(comparator_test_macros)
 include(rebdsim_test_macros)
+include(root_test_macros)
 
 # This module sets up installation:
 include(bdsim_install)
@@ -125,8 +126,8 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/parser)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # external sources
-#add_subdirectory(src-external)
-# link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
+add_subdirectory(src-external)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 
 # BDSIM library and binaries
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
@@ -137,7 +138,11 @@ set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_V
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
-#target_link_libraries(bdsim gzstream)
+if (USE_GZSTREAM)
+  #preprocessor flag
+  add_definitions("-DUSE_GZSTREAM")
+  target_link_libraries(bdsim gzstream)
+endif()
 
 # link against ROOT
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
