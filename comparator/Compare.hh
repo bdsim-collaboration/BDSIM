@@ -47,11 +47,11 @@ namespace Compare
 #ifdef __ROOTDOUBLE__
   void Sampler(BDSOutputROOTEventSampler<double>* e1,
 	       BDSOutputROOTEventSampler<double>* e2,
-	       ResultEvent& results);
+	       ResultEvent* results);
 #else
   void Sampler(BDSOutputROOTEventSampler<float>* e1,
 	       BDSOutputROOTEventSampler<float>* e2,
-	       ResultEvent& results);
+	       ResultEvent* results);
 #endif
   
 #ifdef __ROOTDOUBLE__

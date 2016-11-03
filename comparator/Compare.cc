@@ -285,19 +285,19 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 			std::vector<std::string> samplerNames)
 {
-  ResultEventTree* e = new ResultEventTree();
-  e->name            = t1->GetName();
-  e->passed          = true; // set deafault to pass
-  e->objtype         = "TTree(Event)";
-  e->t1NEntries      = (int)t1->GetEntries();
-  e->t2NEntries      = (int)t2->GetEntries();
+  ResultEventTree* ret = new ResultEventTree();
+  ret->name            = t1->GetName();
+  ret->passed          = true; // set deafault to pass
+  ret->objtype         = "TTree(Event)";
+  ret->t1NEntries      = (int)t1->GetEntries();
+  ret->t2NEntries      = (int)t2->GetEntries();
 
   // Don't proceed if uneven number of entries of the even tree
   // ie different number of events
-  if (e->t1NEntries != e->t2NEntries)
+  if (ret->t1NEntries != ret->t2NEntries)
     {
-      e->passed = false;
-      results.push_back(e);
+      ret->passed = false;
+      results.push_back(ret);
       return;
     }
 
@@ -308,23 +308,28 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 
   for (auto i = 0; i < t1->GetEntries(); i++)
     {
-      ResultEvent eventResult;
-      eventResult.name    = std::to_string(i);
-      eventResult.passed  = true; // default true
-      eventResult.objtype = "Event of Event Tree";
+      ResultEvent* re = new ResultEvent();
+      re->name    = std::to_string(i);
+      re->passed  = true; // default true
+      re->objtype = "Event of Event Tree";
       
       t1->GetEntry(i);
       t2->GetEntry(i);
 
-      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), eventResult);
+      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), re);
       for (auto i = 0; i < (int)evtLocal1->samplers.size(); i++)
 	{
-	  Compare::Sampler(evtLocal1->samplers[i], evtLocal2->samplers[i], eventResult);
+	  Compare::Sampler(evtLocal1->samplers[i], evtLocal2->samplers[i], re);
 	}
 
-      e->eventResults.push_back(eventResult);
+      ret->eventResults.push_back(*re);
+      if (!re->passed)
+	{
+	  ret->passed = false;
+	  break;
+	}
     }
-  results.push_back(e);
+  results.push_back(ret);
 
   delete evtLocal1;
   delete evtLocal2;
@@ -333,47 +338,47 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 #ifdef __ROOTDOUBLE__
 void Compare::Sampler(BDSOutputROOTEventSampler<double>* e1,
 		      BDSOutputROOTEventSampler<double>* e2,
-		      ResultEvent& results)
+		      ResultEvent* re)
 #else
 void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 		      BDSOutputROOTEventSampler<float>* e2,
-		      ResultEvent& results)
+		      ResultEvent* re)
 #endif
 {
-  ResultSampler result(e1->samplerName);
+  ResultSampler rs(e1->samplerName);
   
   if (e1->n != e2->n)
     {
-      result.passed = false;
-      result.offendingLeaves.push_back("n");
+      rs.passed = false;
+      rs.offendingLeaves.push_back("n");
     }
   else
     {
       for (int i = 0; i < e1->n; i++)
 	{
 	  if (Diff(e1->x, e2->x, i))
-	    {result.passed = false; result.offendingLeaves.push_back("x");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("x");}
 	  if (Diff(e1->y, e2->y, i))
-	    {result.passed = false; result.offendingLeaves.push_back("y");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("y");}
 	  if (Diff(e1->z, e2->z))
-	    {result.passed = false; result.offendingLeaves.push_back("z");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("z");}
 	  if (Diff(e1->xp, e2->xp, i))
-	    {result.passed = false; result.offendingLeaves.push_back("xp");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("xp");}
 	  if (Diff(e1->yp, e2->yp, i))
-	    {result.passed = false; result.offendingLeaves.push_back("yp");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("yp");}
 	  if (Diff(e1->zp, e2->xp, i))
-	    {result.passed = false; result.offendingLeaves.push_back("zp");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
 	  if (Diff(e1->t, e2->t, i))
-	    {result.passed = false; result.offendingLeaves.push_back("t");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("t");}
 	  if (Diff(e1->S, e2->S))
-	    {result.passed = false; result.offendingLeaves.push_back("S");}
+	    {rs.passed = false; rs.offendingLeaves.push_back("S");}
 	}
     }
 
   // update parent result status
-  if (!result.passed)
-    {results.passed = false;}
-  results.samplerResults.push_back(result);
+  if (!rs.passed)
+    {re->passed = false;}
+  re->samplerResults.push_back(rs);
 }
 
 #ifdef __ROOTDOUBLE__
