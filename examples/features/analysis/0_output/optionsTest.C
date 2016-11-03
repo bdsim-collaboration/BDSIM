@@ -1,5 +1,5 @@
 {
   gROOT->ProcessLine(".x loadLibraries.C");
-  gROOT->ProcessLine(".L createOptions.C");
+  gROOT->ProcessLine(".x createOptions.C");
   return 0;
 }

@@ -1,5 +1,5 @@
 {
   gROOT->ProcessLine(".x loadLibraries.C");
-  gROOT->ProcessLine(".L createRun.C");
+  gROOT->ProcessLine(".x createRun.C");
   return 0;
 }
