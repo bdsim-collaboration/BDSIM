@@ -19,7 +19,7 @@ public :
   virtual ~Run();
 
   /// Map the ROOT file to members in this class.
-  void SetBranchAddress(TChain *);
+  void SetBranchAddress(TTree *);
   
   /// @{ Member that ROOT can map file data to locally.
   BDSOutputROOTEventRunInfo*    info;

@@ -2,8 +2,8 @@
 
 #include "BDSOutputROOTEventModel.hh"
 
-#include "TChain.h"
 #include "TROOT.h"
+#include "TTree.h"
 
 ClassImp(Model)
 
@@ -16,7 +16,7 @@ Model::~Model()
   delete model;
 }
 
-void Model::SetBranchAddress(TChain *t)
+void Model::SetBranchAddress(TTree *t)
 {
   t->GetEntry(0);  // initialises local copy of class
   t->SetBranchAddress("Model.",&model);
