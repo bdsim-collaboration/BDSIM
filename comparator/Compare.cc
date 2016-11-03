@@ -8,6 +8,7 @@
 #include "ResultTree.hh"
 
 #include "analysis/Event.hh"
+#include "analysis/Model.hh"
 
 #include "BDSOutputROOTEventSampler.hh"
 
@@ -317,6 +318,9 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
       e->eventResults.push_back(eventResult);
     }
   results.push_back(e);
+
+  delete evtLocal1;
+  delete evtLocal2;
 }
 
 #ifdef __ROOTDOUBLE__
