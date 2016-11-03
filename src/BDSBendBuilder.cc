@@ -166,7 +166,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
       (*fringeStIn)["polefaceangle"] = element->e1;
-      (*fringeStIn)["fint"]          = element->fint;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e1,element->fint);
       thename                        = element->name + "_e1_fringe";
       angle                          = -element->e1 - 0.5*((*fringeStIn)["angle"]);
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angle, -angle,
@@ -248,7 +248,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       (*fringeStOut)["angle"]         = -thinElementLength/rho;
       (*fringeStOut)["field"]         = (*st)["field"];
       (*fringeStOut)["polefaceangle"] = element->e2;
-      (*fringeStOut)["fint"]          = element->fintx;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e2,element->fintx);
       (*fringeStOut)["length"]        = thinElementLength;
       angle                           = element->e2+ 0.5*((*fringeStOut)["angle"]);
       thename                         = element->name + "_e2_fringe";
@@ -315,7 +315,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
       (*fringeStIn)["polefaceangle"] = element->e1;
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
-      (*fringeStIn)["fint"]          = element->fint;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e1,element->fint);
       thename                        = element->name + "_e1_fringe";
       angle                          = polefaceAngleIn;
       
@@ -378,7 +378,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
       (*fringeStOut)["polefaceangle"] = element->e2;
       (*fringeStOut)["length"]        = thinElementLength;
       (*fringeStOut)["angle"]         = -thinElementLength / rho;
-      (*fringeStOut)["fint"]          = element->fintx;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e2,element->fintx);
       thename                         = element->name + "_e2_fringe";
       angle                           = polefaceAngleOut;
       
