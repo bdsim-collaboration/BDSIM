@@ -94,6 +94,7 @@ include(CTest)
 include(bdsim_test_macros)
 include(comparator_test_macros)
 include(rebdsim_test_macros)
+include(root_test_macros)
 
 # This module sets up installation:
 include(bdsim_install)
