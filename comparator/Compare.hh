@@ -55,9 +55,15 @@ namespace Compare
 #endif
   
 #ifdef __ROOTDOUBLE__
-  bool Diff(std::vector<double>& v1, std::vector<double>& v2, int i);
+  bool Diff(const std::vector<double>& v1, const std::vector<double>& v2, int i);
 #else
-  bool Diff(std::vector<float>& v1, std::vector<float>& v2, int i);
+  bool Diff(const std::vector<float>& v1, const std::vector<float>& v2, int i);
+#endif
+
+#ifdef __ROOTDOUBLE__
+  bool Diff(const double& v1, const double& v2);
+#else
+  bool Diff(const float& v1, const float& v2);
 #endif
 
   /// Simply print out feedback warning that a matching object wasn't found and

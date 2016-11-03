@@ -29,6 +29,7 @@
 #define CHI2TOLERANCE 40
 #define TREETOLERANCE 0.05
 #define OPTICSSIGMATOLERANCE 10
+#define EVENTTREETOLERANCE 1e-10
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
@@ -331,8 +332,8 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {result.passed = false; result.offendingLeaves.push_back("x");}
 	  if (Diff(e1->y, e2->y, i))
 	    {result.passed = false; result.offendingLeaves.push_back("y");}
-	  //if (Diff(e1->z, e2->z, i))
-	  //  {result.passed = false; result.offendingLeaves.push_back("z");}
+	  if (Diff(e1->z, e2->z))
+	    {result.passed = false; result.offendingLeaves.push_back("z");}
 	  if (Diff(e1->xp, e2->xp, i))
 	    {result.passed = false; result.offendingLeaves.push_back("xp");}
 	  if (Diff(e1->yp, e2->yp, i))
@@ -341,8 +342,8 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {result.passed = false; result.offendingLeaves.push_back("zp");}
 	  if (Diff(e1->t, e2->t, i))
 	    {result.passed = false; result.offendingLeaves.push_back("t");}
-	  //if (Diff(e1->S, e2->S, i))
-	  // {result.passed = false; result.offendingLeaves.push_back("S");}
+	  if (Diff(e1->S, e2->S))
+	    {result.passed = false; result.offendingLeaves.push_back("S");}
 	}
     }
 
@@ -353,13 +354,21 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 }
 
 #ifdef __ROOTDOUBLE__
-bool Compare::Diff(std::vector<double>& v1, std::vector<double>& v2, int i)
+bool Compare::Diff(const std::vector<double>& v1, const std::vector<double>& v2, int i)
 #else
-bool Compare::Diff(std::vector<float>& v1, std::vector<float>& v2, int i)
+bool Compare::Diff(const std::vector<float>& v1, const std::vector<float>& v2, int i)
 #endif
 {
-  double tol = 1e-10;
-  return std::abs(v1[i] - v2[i]) > tol;
+  return std::abs(v1[i] - v2[i]) > EVENTTREETOLERANCE;
+}
+
+#ifdef __ROOTDOUBLE__
+bool Compare::Diff(const double& v1, const double& v2)
+#else
+bool Compare::Diff(const float& v1, const float& v2)
+#endif
+{
+  return std::abs(v1 - v2) > EVENTTREETOLERANCE;
 }
 
 bool Compare::Summarise(std::vector<Result*> results)
