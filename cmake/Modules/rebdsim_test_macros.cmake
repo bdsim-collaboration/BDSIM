@@ -23,3 +23,7 @@ macro(rebdsim_test_long testName)
   set_tests_properties(${testName}_ANALYSIS PROPERTIES LABELS LONG)
   set_tests_properties(${testName}_COMPARE PROPERTIES LABELS LONG)
 endmacro()
+
+macro(rebdsim_optics_test testName inputFile outputFileName)
+  add_test(NAME ${testName} COMMAND rebdsimOptics ${inputFile} ${outputFile})
+endmacro()
