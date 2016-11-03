@@ -6,6 +6,8 @@
 
   cout << "Loading librebdsimLib"     << endl;
   gSystem->Load("@CMAKE_BINARY_DIR@/analysis/librebdsimLib");
+
+  gSystem->AddIncludePath("-I/Users/nevay/physics/reps/bdsim-develop-build/analysis/");
   
   cout << "BDISM libraries loading complete" << endl;
   return 0;
