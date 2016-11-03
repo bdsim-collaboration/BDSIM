@@ -12,6 +12,8 @@ public:
   Model();
   virtual ~Model();
 
+  std::vector<std::string> SamplerNames() const;
+
   /// Set the branch addresses to address the contents of the file.
   void SetBranchAddress(TTree *c);
 

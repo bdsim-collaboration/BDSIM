@@ -21,3 +21,8 @@ void Model::SetBranchAddress(TTree *t)
   t->GetEntry(0);  // initialises local copy of class
   t->SetBranchAddress("Model.",&model);
 }
+
+std::vector<std::string> Model::SamplerNames() const
+{
+  return model->samplerNamesUnique;
+}
