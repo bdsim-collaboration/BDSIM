@@ -366,7 +366,7 @@ void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
 	    {rs.passed = false; rs.offendingLeaves.push_back("xp");}
 	  if (Diff(e1->yp, e2->yp, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("yp");}
-	  if (Diff(e1->zp, e2->xp, i))
+	  if (Diff(e1->zp, e2->zp, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
 	  if (Diff(e1->t, e2->t, i))
 	    {rs.passed = false; rs.offendingLeaves.push_back("t");}
