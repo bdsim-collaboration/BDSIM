@@ -70,6 +70,11 @@ namespace BDS
 			     BDSMagnetStrength* st,
 			     G4double           brho,
 			     const BDSIntegratorSet* integratorSet);
+
+  /// Function to calculate the value of the fringe field correction term.
+  G4double CalculateFringeFieldCorrection(G4double rho,
+                 G4double polefaceAngle,
+				 G4double fint);
 }
 
 #endif
