@@ -156,7 +156,19 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
     }
  else if (!strcmp(t1->GetName(), "Event"))
    {
-     std::vector<std::string> names;
+     // We need the sampler names which are in the Model tree. If we have an
+     // event tree, we must have a Model tree too!
+     TDirectory* dir = t1->GetDirectory();
+     TTree* modTree = dynamic_cast<TTree*>(dir->Get("Model"));
+     if (!modTree)
+       {return;} // shouldnt' really happen, but we can't compare the samplers
+
+     Model* mod = new Model();
+     mod->SetBranchAddress(modTree);
+     modTree->GetEntry(0);
+     std::vector<std::string> names = mod->SamplerNames();
+     delete mod;
+     
      Compare::EventTree(t1, t2, results, names);
      return;
    }
