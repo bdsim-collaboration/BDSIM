@@ -69,8 +69,9 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double xStep = (xmax - xmin) / ((G4double)nX - 1);
 
 #ifdef USE_GZSTREAM
-  ogzstream ofile;
-  outputName += ".tar.gz";
+  //ogzstream ofile;
+  //outputName += ".tar.gz";
+  std::ofstream ofile;
 #else
   std::ofstream ofile;
 #endif
@@ -103,7 +104,8 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     {
       const BDSArray1DCoords* data = magInt->Interpolator()->Array();
 #ifdef USE_GZSTREAM
-      ogzstream ofile;
+      //ogzstream ofile;
+      std::ofstream ofile;
 #else
       std::ofstream ofile;
 #endif
@@ -130,8 +132,9 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double yStep = (ymax - ymin) / (G4double)nY;
   
 #ifdef USE_GZSTREAM
-  ogzstream ofile;
-  outputName += ".tar.gz";
+  //ogzstream ofile;
+  //outputName += ".tar.gz";
+  std::ofstream ofile;
 #else
   std::ofstream ofile;
 #endif
@@ -169,7 +172,8 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     {
       const BDSArray2DCoords* data = magInt->Interpolator()->Array();
 #ifdef USE_GZSTREAM
-      ogzstream ofile;
+      //ogzstream ofile;
+      std::ofstream ofile;
 #else
       std::ofstream ofile;
 #endif
@@ -200,8 +204,9 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double zStep = (ymax - ymin) / (G4double)nZ;
   
 #ifdef USE_GZSTREAM
-  ogzstream ofile;
-  outputName += ".tar.gz";
+  //ogzstream ofile;
+  //outputName += ".tar.gz";
+  std::ofstream ofile;
 #else
   std::ofstream ofile;
 #endif
@@ -245,7 +250,8 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     {
       const BDSArray3DCoords* data = magInt->Interpolator()->Array();
 #ifdef USE_GZSTREAM
-      ogzstream ofile;
+      //ogzstream ofile;
+      std::ofstream ofile;
 #else
       std::ofstream ofile;
 #endif
@@ -280,8 +286,9 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   double tStep = (tmax - tmin) / (G4double)nT;
   
 #ifdef USE_GZSTREAM
-  ogzstream ofile;
-  outputName += ".tar.gz";
+  //ogzstream ofile;
+  //outputName += ".tar.gz";
+  std::ofstream ofile;
 #else
   std::ofstream ofile;
 #endif
@@ -330,7 +337,8 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
     {
       const BDSArray4DCoords* data = magInt->Interpolator()->Array();
 #ifdef USE_GZSTREAM
-      ogzstream ofile;
+      //ogzstream ofile;
+      std::ofstream ofile;
 #else
       std::ofstream ofile;
 #endif
