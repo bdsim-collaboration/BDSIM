@@ -361,6 +361,10 @@ Generally:
  * Any lines beyond the amount of data specified by the dimensions will be ignored.
  * One cannot put a comment after the data in the line.
 
+There are python scripts in :code:`bdsim/examples/features/fields/4_bdsimformat` called
+:code:`Generate1D.py` etc., that were used to create the example data sets there that
+have sinusoidally oscillating data.
+   
 .. Note:: The units are :math:`cm` for spatial coodinates and :math:`s` for temporal.
 
 BDSIM Field Format 1D
