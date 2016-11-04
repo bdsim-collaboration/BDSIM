@@ -50,3 +50,80 @@ def Compare1D(original, nearest, linear, cubic):
     plt.savefig('1d_interpolated_z.pdf')
 
     plt.draw()
+
+def PlotOriginal():
+    a = pybdsim.Field.Load("1dexample.tar.gz")
+
+    plt.figure(figsize=(6,4))
+    plt.plot(a[:,0], a[:,1], 'bo', label='X', mec='b')
+    plt.plot(a[:,0], a[:,2], 'rs', label='Y', mec='r')
+    plt.plot(a[:,0], a[:,3], 'g^', label='Z', mec='g')
+    plt.xlabel('Distance (cm)')
+    plt.ylabel('Field Component (T)')
+    plt.tight_layout()
+    plt.legend(numpoints=1, loc=2)
+    plt.xlim(-35,30)
+    plt.ylim(-4.8,5)
+    plt.savefig('original_data.pdf')
+
+
+def PlotNearest():
+    a = pybdsim.Field.Load("1d_interpolated_nearest.dat")
+    o = pybdsim.Field.Load("1dexample.tar.gz")
+
+    plt.figure(figsize=(6,4))
+    plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
+    plt.plot(o[:,0], o[:,2], 'rs', alpha=0.2, mec='r')
+    plt.plot(o[:,0], o[:,3], 'g^', alpha=0.2, mec='g')
+    
+    plt.plot(a[:,0], a[:,1], 'b', label='X')
+    plt.plot(a[:,0], a[:,2], 'r', label='Y')
+    plt.plot(a[:,0], a[:,3], 'g', label='Z')
+    plt.xlabel('Distance (cm)')
+    plt.ylabel('Field Component (T)')
+    plt.tight_layout()
+    plt.legend(numpoints=1, loc=2)
+    plt.xlim(-50,40)
+    plt.ylim(-4.8,5)
+    plt.savefig('1d_nearest_xyz.pdf')
+
+def PlotLinear():
+    a = pybdsim.Field.Load("1d_interpolated_linear.dat")
+    o = pybdsim.Field.Load("1dexample.tar.gz")
+
+    plt.figure(figsize=(6,4))
+    plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
+    plt.plot(o[:,0], o[:,2], 'rs', alpha=0.2, mec='r')
+    plt.plot(o[:,0], o[:,3], 'g^', alpha=0.2, mec='g')
+    
+    plt.plot(a[:,0], a[:,1], 'b', label='X')
+    plt.plot(a[:,0], a[:,2], 'r', label='Y')
+    plt.plot(a[:,0], a[:,3], 'g', label='Z')
+    plt.xlabel('Distance (cm)')
+    plt.ylabel('Field Component (T)')
+    plt.tight_layout()
+    plt.legend(numpoints=1, loc=2)
+    plt.xlim(-50,40)
+    plt.ylim(-4.8,5)
+    plt.savefig('1d_linear_xyz.pdf')
+
+def PlotCubic():
+    a = pybdsim.Field.Load("1d_interpolated_cubic.dat")
+    o = pybdsim.Field.Load("1dexample.tar.gz")
+
+    plt.figure(figsize=(6,4))
+    plt.plot(o[:,0], o[:,1], 'bo', alpha=0.2, mec='b')
+    plt.plot(o[:,0], o[:,2], 'rs', alpha=0.2, mec='r')
+    plt.plot(o[:,0], o[:,3], 'g^', alpha=0.2, mec='g')
+    
+    plt.plot(a[:,0], a[:,1], 'b', label='X')
+    plt.plot(a[:,0], a[:,2], 'r', label='Y')
+    plt.plot(a[:,0], a[:,3], 'g', label='Z')
+    plt.xlabel('Distance (cm)')
+    plt.ylabel('Field Component (T)')
+    plt.tight_layout()
+    plt.legend(numpoints=1, loc=2)
+    plt.xlim(-50,40)
+    plt.ylim(-4.8,5)
+    plt.savefig('1d_cubic_xyz.pdf')
+    
