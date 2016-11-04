@@ -325,3 +325,154 @@ according to
 	    Example field map of a muon spoiler with field :math:`B = 1.3~(\mathrm{T})`. Note, the
 	    variation shown in the graph is only numerical differences. The field is constant and this
 	    is purely due to the plotting vector field algorithm.
+
+
+.. _field-map-formats:
+
+Field Map File Formats
+======================
+
+
+BDSIM Field Format
+------------------
+
+The field should be in an ASCII text file with the extension :code:`.dat`. A compressed
+file using *tar* and *gzip* may be also used. The tar should contain only one file that
+is the field. In this case, the file should have :code:`.tar.gz` extension.  Below is an
+example of the required format in each 1D, 2D, 3D and 4D case.
+
+The pybdsim utility may be used to prepare fields in the correct format in Python if a
+Python numpy array is provided.  If the user has a custom field format, it would be
+advisable to write a script to load this data into a Python numpy array and use the
+provided file writers in pybdsim.
+
+Generally:
+
+ * A series of keys define the dimensions of the grid.
+ * The keys at the beginning do not have to be in any order.
+ * Empty lines will be skipped.
+ * A line starting with :code:`!` denotes the column header row.
+ * There can only be 1 column row.
+ * The order in the file must be keys, column row, data.
+ * A line starting with :code:`#` will be ignored as a comment line.
+ * The order of the data must loop in the highest dimensions first and then lower,
+   so the order should be :math:`t`, then :math:`z`, then :math:`y`, then :math:`x`.
+ * Python classes are provided to write numpy arrays to this format.
+ * Any lines beyond the amount of data specified by the dimensions will be ignored.
+ * One cannot put a comment after the data in the line.
+
+.. Note:: The units are :math:`cm` for spatial coodinates and :math:`s` for temporal.
+
+BDSIM Field Format 1D
+---------------------
+
++--------------------+-------------------------------------------------------------------+
+| **Parameter**      | **Description**                                                   |
++--------------------+-------------------------------------------------------------------+
+| xmin               | The lower spatial coordinate in x associated with the field map.  |
++--------------------+-------------------------------------------------------------------+
+| xmax               | The upper spatial coordinate in x associated with the field map.  |
++--------------------+-------------------------------------------------------------------+
+| nx                 | Number of elements in x - 1 counting.                             |
++--------------------+-------------------------------------------------------------------+
+
+Example syntax is shown below and there is an example in
+:code:`bdsim/examples/features/fields/4_bdsimformat/1dexample.tar.gz`. Only part of the
+field is specified here: ::
+
+   xmin> -30.0
+   nx> 47
+   xmax> 29.8
+   ! X	            Bx	            By	            Bz
+   -3.0000000E+01	 1.3970775E+00	 0.0000000E+00	 0.0000000E+00
+   -2.8700000E+01	 2.5843272E+00	 0.0000000E+00	 0.0000000E+00
+   -2.7400000E+01	 3.5978584E+00	 0.0000000E+00	 0.0000000E+00
+   -2.6100000E+01	 4.3695413E+00	 0.0000000E+00	 0.0000000E+00
+   -2.4800000E+01	 4.8475035E+00	 0.0000000E+00	 0.0000000E+00
+   -2.3500000E+01	 4.9996163E+00	 0.0000000E+00	 0.0000000E+00
+   -2.2200000E+01	 4.8156547E+00	 0.0000000E+00	 0.0000000E+00
+   -2.0900000E+01	 4.3079845E+00	 0.0000000E+00	 0.0000000E+00
+
+   
+BDSIM Field Format 2D
+---------------------
+
+All of the 1D parameters, plus:
+   
++--------------------+---------------------------------------------------------------------------+
+| **Parameter**      | **Description**                                                           |
++--------------------+---------------------------------------------------------------------------+
+| ymin               | The lower spatial coordinate in :math:`y` associated with the field map.  |
++--------------------+---------------------------------------------------------------------------+
+| ymax               | The upper spatial coordinate in :math:`y` associated with the field map.  |
++--------------------+---------------------------------------------------------------------------+
+| ny                 | Number of elements in y - 1 counting.                                     |
++--------------------+---------------------------------------------------------------------------+
+
+Example syntax is shown below and there is an example in
+:code:`bdsim/examples/features/fields/4_bdsimformat/2dexample.tar.gz`.
+
+
+BDSIM Field Format 3D
+---------------------
+
+All of the 1D & 2D parameters, plus:
+   
++--------------------+---------------------------------------------------------------------------+
+| **Parameter**      | **Description**                                                           |
++--------------------+---------------------------------------------------------------------------+
+| zmin               | The lower spatial coordinate in :math:`z` associated with the field map.  |
++--------------------+---------------------------------------------------------------------------+
+| zmax               | The upper spatial coordinate in :math:`z` associated with the field map.  |
++--------------------+---------------------------------------------------------------------------+
+| nz                 | Number of elements in z - 1 counting.                                     |
++--------------------+---------------------------------------------------------------------------+
+
+Example syntax is shown below and there is an example in
+:code:`bdsim/examples/features/fields/4_bdsimformat/3dexample.tar.gz`.
+
+BDSIM Field Format 4D
+---------------------
+
+All of the 1D, 2D & 3D parameters, plus:
+   
++--------------------+---------------------------------------------------------------------------+
+| **Parameter**      | **Description**                                                           |
++--------------------+---------------------------------------------------------------------------+
+| tmin               | The lower spatial coordinate in :math:`t` associated with the field map.  |
++--------------------+---------------------------------------------------------------------------+
+| tmax               | The upper spatial coordinate in :math:`t` associated with the field map.  |
++--------------------+---------------------------------------------------------------------------+
+| nt                 | Number of elements in t - 1 counting.                                     |
++--------------------+---------------------------------------------------------------------------+
+
+Example syntax is shown below and there is an example in
+:code:`bdsim/examples/features/fields/4_bdsimformat/tdexample.tar.gz`.
+      
+
+.. _field-map-file-preparation:
+
+BDSIM Field Map File Preparation
+================================
+
+The Python BDSIM utility *pybdsim* may be used to prepare a BDSIM format field map file
+from a Python numpy array.
+
+The pybdsim field classes are fully documented here :ref:`pybdsim-field-module`.
+
+
+.. _field-interpolators:
+
+Field Map Interpolators
+=======================
+
+A variety of interpolators are provided with BDSIM.
+
+Nearest Neightbour
+------------------
+
+Linear
+------
+
+Cubic
+-----

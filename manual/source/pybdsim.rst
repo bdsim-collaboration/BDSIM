@@ -63,6 +63,9 @@ pybdsim.Data module
 		:undoc-members:
 		:show-inheritance:
 
+
+.. _pybdsim-field-module:
+
 pybdsim.Field module
 --------------------
 

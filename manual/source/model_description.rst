@@ -1040,20 +1040,31 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 Fields
 ------
 
-BDSIM provides the facility to overlay an electro-magnetic (or pure electric or magnetic) field
-on an element as defined by an externally provided field map. One must define a field 'object'
-in the parser and then 'attach' it to an element. Magnetic and electric field maps are specified
-in separate files and may have different interpolators. Fields may have up to 4 dimensions. Currently,
-these are in order x,y,z,t. Specifying a 3D field for example, will only be x,y,z and cannot be used for
-x,y,t for example. The functionality for dimensional flexibility can be added if required.
+BDSIM provides the facility to overlay a pure magnetic, pure electric or combined electro-magnetic fields
+on an element as defined by an externally provided field map. This can be done for only the vacuum
+volume; only the volume outside the vacuum (ie the yoke); each separately; or one full map for the whole
+element.  BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
+can be chosen given knowledge of the smoothness of the field or the application. BDSIM also provides
+a selection of 1-4D interpolators that are used to provide the field value inbetween the data points
+in the supplied field map.
 
-.. Note:: Currently only regular (evenly spaced) grids are supported with field maps. It would require
-	  significant development to extend this to irregular grids. It's strongly recommended the user
-	  resample any existing field map into a regular grid.
+To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
 
-Example::
+* Magnetic and electric field maps are specified in separate files and may have different interpolators.
+* Fields may have up to 4 dimensions.
 
-  somefield: field, type="poisson",
+Currently, the dimensions are in order :math:`x,y,z,t`. For example, specifying a 3D field, will only be
+:math:`x,y,z` and cannot currently be used for :math:`x,y,t` field maps for example. The functionality
+for dimensional flexibility can be added if required (see :ref:`feature-request`).
+
+.. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
+	  require significant development to extend this to irregular grids. It's strongly
+	  recommended the user resample any existing field map into a regular grid.
+
+Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
+a drift pipe where it covers the full volume of the drift (not outside it though)::
+
+  somefield: field, type="ebmap2d",
 		    scaling = 3.0,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
@@ -1069,10 +1080,10 @@ When defining a field, the following parameters can be specified.
 +----------------------+-----------------------------------------------------------------+
 | **Parameter**        | **Description**                                                 |
 +======================+=================================================================+
-| type                 | One of "xy", "threed", "mokka". (more to come)                  |
+| type                 | See type table below.                                           |
 +----------------------+-----------------------------------------------------------------+
 | scaling              | A numerical scaling factor that all field vectors in the data   |
-|                      | will be multiplied by.                                          |
+|                      | will be multiplied by. Ie. both E&M.                            |
 +----------------------+-----------------------------------------------------------------+
 | integrator           | The integrator used to calculate the motion of the particle     |
 |                      | in the field. See below for full list of supported integrators. |
@@ -1080,11 +1091,11 @@ When defining a field, the following parameters can be specified.
 | globalTransform      | boolean. Whether a transform from local curvilinear coordinates |
 |                      | to global coordinates should be provided (default true).        |
 +----------------------+-----------------------------------------------------------------+
-| magneticFile         | "format:filePath"                                               |
+| magneticFile         | "format:filePath" - see formats below .                         |
 +----------------------+-----------------------------------------------------------------+
 | magneticInterpolator | Which interpolator to use - see below for a full list.          |
 +----------------------+-----------------------------------------------------------------+
-| electricFile         | "format:filePath"                                               |
+| electricFile         | "format:filePath" - see formats below.                          |
 +----------------------+-----------------------------------------------------------------+
 | electricInterpolator | Which interpolator to use - see below for a full list.          |
 +----------------------+-----------------------------------------------------------------+
@@ -1117,86 +1128,77 @@ When defining a field, the following parameters can be specified.
 
 .. Note:: A right handed coordinate system is used in Geant4, so +ve x is out of a ring.
 
-Example::
+Field Types
+^^^^^^^^^^^
 
-  somefield: field, type="poisson",
-		    scaling = 3.0,
-		    integrator = "g4classicalrk4",
-		    magneticFile = "poisson2d:/Path/To/File.TXT",
-		    magneticInterpolator = "nearest2D",
-		    electricFile = "poisson2d:/Another/File.TX",
-		    electricInterpolator = "linear2D";
+* These are not case sensitive.
 
-  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
++------------------+----------------------------------+
+| **Type String**  | **Description**                  |
++==================+==================================+
+| bmap1d           | 1D magnetic only field map.      |
++------------------+----------------------------------+
+| bmap2d           | 2D magnetic only field map.      |
++------------------+----------------------------------+
+| bmap3d           | 3D magnetic only field map.      |
++------------------+----------------------------------+
+| bmap4d           | 4D magnetic only field map.      |
++------------------+----------------------------------+
+| emap1d           | 1D electric only field map.      |
++------------------+----------------------------------+
+| emap2d           | 2D electric only field map.      |
++------------------+----------------------------------+
+| emap3d           | 3D electric only field map.      |
++------------------+----------------------------------+
+| emap4d           | 4D electric only field map.      |
++------------------+----------------------------------+
+| ebmap1d          | 1D electric-magnetic field map.  |
++------------------+----------------------------------+
+| ebmap2d          | 2D electric-magnetic field map.  |
++------------------+----------------------------------+
+| ebmap3d          | 3D electric-magnetic field map.  |
++------------------+----------------------------------+
+| ebmap4d          | 4D electric-magnetic field map.  |
++------------------+----------------------------------+
+
 
 Formats
 ^^^^^^^
+
++------------------+--------------------------------------------+
+| **Format**       | **Description**                            |
++==================+============================================+
+| bdsim1d          | 1D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim2d          | 2D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim3d          | 3D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim4d          | 4D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| poisson2d        | 2D Poisson Superfish SF7 file.             |
++------------------+--------------------------------------------+
+| poisson2dquad    | 2D Poisson Superfish SF7 file              |
+|                  | for 1/8th of quadrupole.                   |
++------------------+--------------------------------------------+
 
 Field maps in the following formats are accepted:
 
   * BDSIM's own format
   * Superfish Poisson 2D SF7
 
-BDSIM Field Format
-^^^^^^^^^^^^^^^^^^
-
-The field should be in an ASCII text file with the extension :code:`.dat`. A compressed file using *tar* and *gzip*
-may be also used. The tar should contain only one file that is the field. In this case, the file should have
-:code:`.tar.gz` extension.  Below is an example of the required format in each 1D, 2D, 3D and 4D case.
-
-The pybdsim utility may be used to prepare fields in the correct format in Python if a Python numpy array is
-provided.  If the user has a custom field format, it would be advisable to write a script to load this data
-into a Python numpy array and use the provided file writers in pybdsim.
-
-Generally:
-
- * A series of keys define the dimensions of the grid.
- * The keys at the beginning do not have to be in any order.
- * Empty lines will be skipped.
- * A line starting with :code:`!` denotes the column header row.
- * A line starting with :code:`#` will be ignored as a comment line.
- * The field must be specified in increasing x, then y, then z, then t.
-
-BDSIM Field Format 1D
-^^^^^^^^^^^^^^^^^^^^^
-
-Only part of the field is specified here.::
-
-   xmin> -30.0
-   nx> 47
-   xmax> 29.8
-   ! X	            Bx	            By	            Bz
-   -3.0000000E+01	 1.3970775E+00	 0.0000000E+00	 0.0000000E+00
-   -2.8700000E+01	 2.5843272E+00	 0.0000000E+00	 0.0000000E+00
-   -2.7400000E+01	 3.5978584E+00	 0.0000000E+00	 0.0000000E+00
-   -2.6100000E+01	 4.3695413E+00	 0.0000000E+00	 0.0000000E+00
-   -2.4800000E+01	 4.8475035E+00	 0.0000000E+00	 0.0000000E+00
-   -2.3500000E+01	 4.9996163E+00	 0.0000000E+00	 0.0000000E+00
-   -2.2200000E+01	 4.8156547E+00	 0.0000000E+00	 0.0000000E+00
-   -2.0900000E+01	 4.3079845E+00	 0.0000000E+00	 0.0000000E+00
-
-
-BDSIM Field Format 2D
-^^^^^^^^^^^^^^^^^^^^^
-
-Only part of the field entries are shown here.
-
-   
-+--------------------+-------------------------------------------------------------------+
-| **Parameter**      | ** Description**                                                  |
-+--------------------+-------------------------------------------------------------------+
-| xmin               | The lower spatial coordinate in x associated with the field map.  |
-+--------------------+-------------------------------------------------------------------+
-| xmax               | The upper spatial coordinate in x associated with the field map.  |
-+--------------------+-------------------------------------------------------------------+
-| nx                 | Number of elements in x - 1 counting.                             |
-+--------------------+-------------------------------------------------------------------+
+These are described in detail below. More field formats can be added
+relatively easily - see :ref:`feature-request`. A detailed description
+of the formats is given in :ref:`field-map-formats`. A preparation guide
+for BDSIM format files is provided here :ref:`field-map-file-preparation`.
 
 
 Integrators
 ^^^^^^^^^^^
 
 The following integrators are provided.  The majority are interfaces to Geant4 ones.
+*g4classicalrk4* is typically the recommended default and is very robust.
+*g4cakskarprkf45* is similar but slightly less CPU-intensive.
 
 +----------------------+----------+------------------+
 |  **String**          | **B/EM** | **Time Varying** |
@@ -1232,40 +1234,41 @@ The following integrators are provided.  The majority are interfaces to Geant4 o
 | g4rkg3stepper        | B        | N                |
 +----------------------+----------+------------------+
 
-The following are currently only usable by BDSIM.
-
-+----------------------+----------+------------------+
-| none                 | NA       | N                |
-+----------------------+----------+------------------+
-| solenoid             | B        | N                |
-+----------------------+----------+------------------+
-| dipole               | B        | N                |
-+----------------------+----------+------------------+
-| quadrupole           | B        | N                |
-+----------------------+----------+------------------+
-| sextupole            | B        | N                |
-+----------------------+----------+------------------+
-| multipole            | B        | N                |
-+----------------------+----------+------------------+
-| octupole             | B        | N                |
-+----------------------+----------+------------------+
-| decapole             | B        | N                |
-+----------------------+----------+------------------+
-| fringe               | B        | N                |
-+----------------------+----------+------------------+
-
 Interpolators
 ^^^^^^^^^^^^^
+
+There are many algorithms which one can use to inteprolate the field map data. The field
+may be queried at any point inside the volume, so an interpolator is required. A
+mathematical description as well as example plots are shown in :ref:`field-interpolators`.
+
+* This string is case-insensitive.
+
 +------------+-------------------------------+
 | **String** | **Description**               |
 +============+===============================+
-| nearest2D  | Nearest neighbour in 2D only. |
+| nearest1d  | Nearest neighbour in 1D.      |
 +------------+-------------------------------+
-| linear2D   | Linear interpolation in 2D.   |
+| nearest2d  | Nearest neighbour in 2D.      |
 +------------+-------------------------------+
-| nearest3D  | Nearest neighbour in 3D.      |
+| nearest3d  | Nearest neighbour in 3D.      |
 +------------+-------------------------------+
-| linear3D   | Linear interpolation in 3D.   |
+| nearest4d  | Nearest neighbour in 4D.      |
++------------+-------------------------------+
+| linear1d   | Linear interpolation in 1D.   |
++------------+-------------------------------+
+| linear2d   | Linear interpolation in 2D.   |
++------------+-------------------------------+
+| linear3d   | Linear interpolation in 3D.   |
++------------+-------------------------------+
+| linear4d   | Linear interpolation in 4D.   |
++------------+-------------------------------+
+| cubic1d    | Cubic interpolation in 1D.    |
++------------+-------------------------------+
+| cubic2d    | Cubic interpolation in 2D.    |
++------------+-------------------------------+
+| cubic3d    | Cubic interpolation in 3D.    |
++------------+-------------------------------+
+| cubic4d    | Cubic interpolation in 4D.    |
 +------------+-------------------------------+
 
 
