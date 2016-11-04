@@ -199,8 +199,9 @@ returned field vector is then anti-rotated to give the correct skew field at the
 location.
 
 .. math::
-
    \mathbf{B}_{skew}(x,y) = R(-\theta) \mathbf{B}(x',y')
+
+.. math::
    
    \begin{bmatrix}
    x' \\
@@ -276,7 +277,7 @@ to carteasian. The field is calculated using an array of strength parameters :ma
 the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a nominal rigidity :math:`B\rho`.
 
 .. note:: Currently the dipole component is not implemented. :math:`k_1` is the quadrupole strength,
-	  :math:`k_2` is the sextupole strength, :math:`etc.`.
+	  :math:`k_2` is the sextupole strength, *etc*.
 
 .. math::
 
@@ -287,7 +288,9 @@ the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a
    B_r      (\mathrm{skewed}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{ks_i}{i!} \, r^i \cos(i \phi) \\
    B_{\phi} (\mathrm{skewed}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} -\frac{ks_i}{i!} \, r^i \sin(i \phi) \\
    \end{eqnarray}
-   
+
+
+.. math::
    \begin{eqnarray}
    B_x & = & B_r \cos \phi - B_{\phi} \sin \phi \\
    B_y & = & B_r \sin \phi + B_{\phi} \cos \phi \\
