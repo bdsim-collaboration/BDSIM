@@ -6,5 +6,5 @@ q1: query, nDimensions=1,
     	   nx = 200,
 	   xmin = -60*cm,
 	   xmax = 60*cm,
-	   outfile = "1d_interpolated_nearest.tar.gz",
+	   outfile = "1d_interpolated_nearest_gz",
 	   fieldObject = "f1";
