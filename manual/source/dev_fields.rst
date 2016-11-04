@@ -354,9 +354,9 @@ Generally:
  * A series of keys define the dimensions of the grid.
  * The keys at the beginning do not have to be in any order.
  * Empty lines will be skipped.
- * A line starting with :code:`!` denotes the column header row.
- * There can only be 1 column row.
- * The order in the file must be keys, column row, data.
+ * A line starting with :code:`!` denotes the column name definition row.
+ * There can only be 1 column name definition row.
+ * The order in the file must be keys, column name definition row, data.
  * A line starting with :code:`#` will be ignored as a comment line.
  * The order of the data must loop in the highest dimensions first and then lower,
    so the order should be :math:`t`, then :math:`z`, then :math:`y`, then :math:`x`.
@@ -473,13 +473,135 @@ The pybdsim field classes are fully documented here :ref:`pybdsim-field-module`.
 Field Map Interpolators
 =======================
 
-A variety of interpolators are provided with BDSIM.
+A variety of interpolators are provided with BDSIM.  An example data set in 1D was generated
+with simple :math:`x,y,z` field vector components that are different amplitude and phased
+sinusoids shown below.
+
+.. figure:: dev_figures/field_raw.pdf
+	    :width: 80%
+	    :align: center
+
+	    Example 1D field value components.
 
 Nearest Neightbour
 ------------------
 
+The nearest neighbour algorithm returns the field value of the closest defined point in
+the map and returns that value. Therefore, the interpolated map contains only the values
+of the original map. This only serves the purpose of being able to query the map at any
+set of coordinates and provides a 'pixelated' appearance and sharp discontinuities
+half way between points in the map.  This is intended only for completeness and debugging.
+
+.. figure:: dev_figures/field_nearest.pdf
+	    :width: 80%
+	    :align: center
+
+	    Example 1D field value components with nearest neighbour interpolation.
+
 Linear
 ------
 
+In this case, the interpolated value lies on a straight line between two given points.
+The field value :math:`f` at point :math:`x_i` lying between :math:`x_a` and :math:`x_b`
+is given by
+
+.. math::
+
+   \begin{eqnarray}
+   xd     &=& \frac{(x_i - x_a)}{(x_b - x_a)}\\
+   f(x_i) &=& f(x_a)\,(1-xd) + f(x_b)\,xd
+   \end{eqnarray}
+
+Here, :math:`xd` will lie in the range :math:`[0,1]`. This is of course a 1D equation and
+version of linear interpolation. See _`Linear & Cubic Higher Dimension Interpolation` for
+further details for 2,3 & 4D interpolation.
+   
+   
+.. figure:: dev_figures/field_linear.pdf
+	    :width: 80%
+	    :align: center
+
+	    Example 1D field value components with linear interpolation.
+
 Cubic
 -----
+
+In this case, the surrounding four map entries of any given point are used in combination
+to give a small section of a cubic polynomial.  For a given point :math:`x_i`, the closest
+point which is on the lower valued side is here called :math:`m_1` (m for map), and the
+closest point which is on the higher valued side is called :math:`m_2`. Points further
+outside these (in a 1D case) are called :math:`m_0` and :math:`m_3` respectively. (On a
+linear number scale from low to hight they would be :math:`m_0, m_1, m_2, m_3`.) The
+field value :math:`f(x_i)` is given by
+
+.. math::
+   xd = \frac{(x_i - x_a)}{(x_b - x_a)}
+
+.. math::
+   f(x_i) = m_1 + \frac{1}{2}\,xd\,(m_2 - m_0 + xd\,(\,2m_0 - 5 m_1 + 4 m_2 - m_3 + xd\,(\,3\,(m_1 - m_2) + m_3 - m_0)))
+
+
+Here, :math:`xd` will lie in the range :math:`[0,1]`.
+
+This is of course a 1D equation and version of cubic interpolation.
+See :ref:`higher-dim-interpolation` for further details for 2,3 & 4D interpolation.
+One could of course, cache the gradient at each point, but here it is calculated dynamically.
+This allows the 1D interpolation case to be used in different dimensions for different gradients
+and is not prohibitively slow.
+
+.. figure:: dev_figures/field_cubic.pdf
+	    :width: 80%
+	    :align: center
+
+	    Example 1D field value components with cubic interpolation.
+
+
+
+.. Note:: Although the :math:`x,y,z` components are shown individually, they are in fact part of
+	  a 3-vector class that is used for interpolation.  Ie, the components are not interpolated
+	  individually.
+
+
+.. _higher-dim-interpolation:
+
+Linear & Cubic Higher Dimension Interpolation
+---------------------------------------------
+
+To interpolate both in a cubic polynomial and linear at greater than 1 dimension, the
+1D interplator can be used iteratively. In the case of 2D interpolation this would be called
+*bilinear* and *bicubic*, and in the case of 3D, *trilinear* and *tricubic* interpolation.
+Below is a diagram of a cube representing a point :math:`C` at an arbitrary point inside the
+8 corners that represent the closest values of the regular field map. The diagram shows this
+approximately in the centre of the cube, but it could lie anywhere inside the 8 points.
+
+.. figure:: dev_figures/interpolation_cube.svg
+	    :width: 50%
+	    :align: center
+
+	    Field map value coordinates for 3D interpolation. This diagram was created by
+	    "Marmelad" from Wikipedia [#f1]_.
+
+.. [#f1] `Marmelad Cubic Diagram Wikipedia <https://commons.wikimedia.org/wiki/File:3D_interpolation2.svg>`_. 
+
+
+:math:`C_{00}` can be found by interpolating between :math:`C_{000}` and :math:`C_{100}`.
+:math:`C_{10}, C_{01}, C_{11}` can be found in a similar manner with each of their edges.
+:math:`C_0` and :math:`C_1` can be found by then interpolating between :math:`C_{00}` and
+:math:`C_{10}` for example (in the case of :math:`C_0`).  :math:`C` can then be found by
+interpolating between :math:`C_0` and :math:`C_1` giving the desired value.
+
+One may interpolate the dimensions in any order and arrive at the same result. By doing
+it in such a way, the 2D interpolator can use the 1D interpolator; the 3D interpolator
+can use the 2D interpolator etc. By ensuring the 1D case is correct, there is a much
+lower likelihood of implementation faults occuring for higher dimensional interpolators.
+
+Implementation Specifics
+------------------------
+
+To implement this iterative algorithm, *C* arrays were used as subsets can be easily
+passed arround due to their underlying pointer nature in *C*. A small section of
+code from :code:`bdsim/src/BDSInterpolatorRoutines.cc` is shown below:
+
+.. figure:: dev_figures/interpolation_code_snippet.png
+	    :width: 90%
+	    :align: center
