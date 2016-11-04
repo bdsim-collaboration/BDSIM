@@ -3,6 +3,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
+#include <BDSBeamPipeInfo.hh>
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -166,7 +167,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
       (*fringeStIn)["polefaceangle"] = element->e1;
-      (*fringeStIn)["fint"]          = element->fint;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e1,element->fint);
       thename                        = element->name + "_e1_fringe";
       angle                          = -element->e1 - 0.5*((*fringeStIn)["angle"]);
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angle, -angle,
@@ -248,7 +249,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       (*fringeStOut)["angle"]         = -thinElementLength/rho;
       (*fringeStOut)["field"]         = (*st)["field"];
       (*fringeStOut)["polefaceangle"] = element->e2;
-      (*fringeStOut)["fint"]          = element->fintx;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e2,element->fintx);
       (*fringeStOut)["length"]        = thinElementLength;
       angle                           = element->e2+ 0.5*((*fringeStOut)["angle"]);
       thename                         = element->name + "_e2_fringe";
@@ -315,7 +316,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
       (*fringeStIn)["polefaceangle"] = element->e1;
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
-      (*fringeStIn)["fint"]          = element->fint;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e1,element->fint);
       thename                        = element->name + "_e1_fringe";
       angle                          = polefaceAngleIn;
       
@@ -378,7 +379,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
       (*fringeStOut)["polefaceangle"] = element->e2;
       (*fringeStOut)["length"]        = thinElementLength;
       (*fringeStOut)["angle"]         = -thinElementLength / rho;
-      (*fringeStOut)["fint"]          = element->fintx;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e2,element->fintx);
       thename                         = element->name + "_e2_fringe";
       angle                           = polefaceAngleOut;
       
@@ -400,7 +401,7 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 				  G4double           brho,
 				  const BDSIntegratorSet* integratorSet)
 {
-  auto beamPipeInfo    = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
+  BDSBeamPipeInfo* beamPipeInfo    = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
@@ -409,7 +410,16 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 					       brho,
 					       intType,
 					       st);
-  
+  //magnet total vertical aperture size
+  G4double vertGap = 0;
+  if (element->apertureType == "racetrack")
+    {vertGap = 2.0 * (beamPipeInfo->aper3 + beamPipeInfo->aper2);}
+  else if ((element->apertureType == "circular") || (element->apertureType ==""))
+    {vertGap = 2.0 * beamPipeInfo->aper1;}
+  else
+    {vertGap = 2.0 * beamPipeInfo->aper2;}
+  (*st)["fringecorr"] *= vertGap;
+
   return new BDSMagnet(magType,
 		       name,
 		       (*st)["length"],
@@ -542,4 +552,14 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
 				     semiangle);
   
   return oneBend;
+}
+
+G4double BDS::CalculateFringeFieldCorrection(G4double rho,
+                G4double polefaceAngle,
+                G4double fint)
+{
+  G4double term1 = fint/rho;
+  G4double term2 = (1.0 + pow(sin(polefaceAngle),2)) / cos(polefaceAngle);
+  G4double corrValue = term1*term2;
+  return corrValue;
 }
