@@ -1,8 +1,16 @@
 #include "Compare.hh"
 #include "Result.hh"
+#include "ResultEvent.hh"
+#include "ResultEventTree.hh"
 #include "ResultHistogram.hh"
 #include "ResultHistogram2D.hh"
+#include "ResultSampler.hh"
 #include "ResultTree.hh"
+
+#include "analysis/Event.hh"
+#include "analysis/Model.hh"
+
+#include "BDSOutputROOTEventSampler.hh"
 
 #include <cmath>
 #include <iomanip>
@@ -12,6 +20,7 @@
 #include <vector>
 
 #include "TBranch.h"
+#include "TChain.h"
 #include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
@@ -21,6 +30,7 @@
 #define CHI2TOLERANCE 40
 #define TREETOLERANCE 0.05
 #define OPTICSSIGMATOLERANCE 10
+#define EVENTTREETOLERANCE 1e-10
 
 std::vector<Result*> Compare::Files(TFile* f1, TFile* f2)
 {
@@ -145,6 +155,30 @@ void Compare::Trees(TTree* t1, TTree* t2, std::vector<Result*>& results)
       Compare::Optics(t1, t2, results);
       return;
     }
+ else if (!strcmp(t1->GetName(), "Event"))
+   {
+     // We need the sampler names which are in the Model tree. If we have an
+     // event tree, we must have a Model tree too!
+     TDirectory* dir = t1->GetDirectory();
+     TTree* modTree = dynamic_cast<TTree*>(dir->Get("Model"));
+     if (!modTree)
+       {return;} // shouldnt' really happen, but we can't compare the samplers
+
+     Model* mod = new Model();
+     mod->SetBranchAddress(modTree);
+     modTree->GetEntry(0);
+     std::vector<std::string> names = mod->SamplerNames();
+     delete mod;
+     
+     Compare::EventTree(t1, t2, results, names);
+     return;
+   }
+ else if (!strcmp(t1->GetName(), "Options"))  // ignore an Options tree
+   {return;}
+ else if (!strcmp(t1->GetName(), "Model"))    // ignore a Model tree
+   {return;}
+ else if (!strcmp(t1->GetName(), "Run"))      // ignore a Run tree
+   {return;}
   
   ResultTree* c = new ResultTree();
   c->name       = t1->GetName();
@@ -246,6 +280,123 @@ void Compare::Optics(TTree* t1, TTree* t2, std::vector<Result*>& results)
 	}
     }
   results.push_back(c);
+}
+
+void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
+			std::vector<std::string> samplerNames)
+{
+  ResultEventTree* ret = new ResultEventTree();
+  ret->name            = t1->GetName();
+  ret->passed          = true; // set deafault to pass
+  ret->objtype         = "TTree(Event)";
+  ret->t1NEntries      = (int)t1->GetEntries();
+  ret->t2NEntries      = (int)t2->GetEntries();
+
+  // Don't proceed if uneven number of entries of the even tree
+  // ie different number of events
+  if (ret->t1NEntries != ret->t2NEntries)
+    {
+      ret->passed = false;
+      results.push_back(ret);
+      return;
+    }
+
+  Event* evtLocal1 = new Event();
+  Event* evtLocal2 = new Event();
+  evtLocal1->SetBranchAddress(t1, samplerNames);
+  evtLocal2->SetBranchAddress(t2, samplerNames);
+
+  for (auto i = 0; i < t1->GetEntries(); i++)
+    {
+      ResultEvent* re = new ResultEvent();
+      re->name    = std::to_string(i);
+      re->passed  = true; // default true
+      re->objtype = "Event of Event Tree";
+      
+      t1->GetEntry(i);
+      t2->GetEntry(i);
+
+      Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), re);
+      for (auto i = 0; i < (int)evtLocal1->samplers.size(); i++)
+	{
+	  Compare::Sampler(evtLocal1->samplers[i], evtLocal2->samplers[i], re);
+	}
+
+      ret->eventResults.push_back(*re);
+      if (!re->passed)
+	{
+	  ret->passed = false;
+	  break;
+	}
+    }
+  results.push_back(ret);
+
+  delete evtLocal1;
+  delete evtLocal2;
+}
+
+#ifdef __ROOTDOUBLE__
+void Compare::Sampler(BDSOutputROOTEventSampler<double>* e1,
+		      BDSOutputROOTEventSampler<double>* e2,
+		      ResultEvent* re)
+#else
+void Compare::Sampler(BDSOutputROOTEventSampler<float>* e1,
+		      BDSOutputROOTEventSampler<float>* e2,
+		      ResultEvent* re)
+#endif
+{
+  ResultSampler rs(e1->samplerName);
+  
+  if (e1->n != e2->n)
+    {
+      rs.passed = false;
+      rs.offendingLeaves.push_back("n");
+    }
+  else
+    {
+      for (int i = 0; i < e1->n; i++)
+	{
+	  if (Diff(e1->x, e2->x, i))
+	    {rs.passed = false; rs.offendingLeaves.push_back("x");}
+	  if (Diff(e1->y, e2->y, i))
+	    {rs.passed = false; rs.offendingLeaves.push_back("y");}
+	  if (Diff(e1->z, e2->z))
+	    {rs.passed = false; rs.offendingLeaves.push_back("z");}
+	  if (Diff(e1->xp, e2->xp, i))
+	    {rs.passed = false; rs.offendingLeaves.push_back("xp");}
+	  if (Diff(e1->yp, e2->yp, i))
+	    {rs.passed = false; rs.offendingLeaves.push_back("yp");}
+	  if (Diff(e1->zp, e2->zp, i))
+	    {rs.passed = false; rs.offendingLeaves.push_back("zp");}
+	  if (Diff(e1->t, e2->t, i))
+	    {rs.passed = false; rs.offendingLeaves.push_back("t");}
+	  if (Diff(e1->S, e2->S))
+	    {rs.passed = false; rs.offendingLeaves.push_back("S");}
+	}
+    }
+
+  // update parent result status
+  if (!rs.passed)
+    {re->passed = false;}
+  re->samplerResults.push_back(rs);
+}
+
+#ifdef __ROOTDOUBLE__
+bool Compare::Diff(const std::vector<double>& v1, const std::vector<double>& v2, int i)
+#else
+bool Compare::Diff(const std::vector<float>& v1, const std::vector<float>& v2, int i)
+#endif
+{
+  return std::abs(v1[i] - v2[i]) > EVENTTREETOLERANCE;
+}
+
+#ifdef __ROOTDOUBLE__
+bool Compare::Diff(const double& v1, const double& v2)
+#else
+bool Compare::Diff(const float& v1, const float& v2)
+#endif
+{
+  return std::abs(v1 - v2) > EVENTTREETOLERANCE;
 }
 
 bool Compare::Summarise(std::vector<Result*> results)

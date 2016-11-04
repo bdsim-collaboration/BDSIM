@@ -36,7 +36,7 @@ void Event::CommonCtor()
   info            = nullptr;
 }
 
-void Event::SetBranchAddress(TChain *t, std::vector<std::string>& samplerNames)
+void Event::SetBranchAddress(TTree *t, std::vector<std::string>& samplerNames)
 {
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
