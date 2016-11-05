@@ -472,7 +472,7 @@ The pybdsim field classes are fully documented here :ref:`pybdsim-field-module`.
 Field Map Interpolators
 =======================
 
-A variety of interpolators are provided with BDSIM.  An example data set in 1D was generated
+A variety of interpolators are provided with BDSIM.  Example data sets in 1D & 2D were generated
 with simple :math:`x,y,z` field vector components that are different amplitude and phased
 sinusoids shown below.
 
@@ -481,6 +481,12 @@ sinusoids shown below.
 	    :align: center
 
 	    Example 1D field value components.
+
+.. figure:: dev_figures/field_raw2d.png
+	    :width: 70%
+	    :align: center
+
+	    Example 2D field value components.
 
 Nearest Neightbour
 ------------------
@@ -496,6 +502,12 @@ half way between points in the map.  This is intended only for completeness and 
 	    :align: center
 
 	    Example 1D field value components with nearest neighbour interpolation.
+
+.. figure:: dev_figures/field_nearest2d.png
+	    :width: 70%
+	    :align: center
+
+	    Example 2D field value components with nearest neighbour interpolation.
 
 Linear
 ------
@@ -521,6 +533,12 @@ further details for 2,3 & 4D interpolation.
 	    :align: center
 
 	    Example 1D field value components with linear interpolation.
+
+.. figure:: dev_figures/field_linear2d.png
+	    :width: 70%
+	    :align: center
+
+	    Example 2D field value components with linear interpolation.
 
 Cubic
 -----
@@ -553,6 +571,13 @@ and is not prohibitively slow.
 	    :align: center
 
 	    Example 1D field value components with cubic interpolation.
+
+	    
+.. figure:: dev_figures/field_cubic2d.png
+	    :width: 70%
+	    :align: center
+
+	    Example 2D field value components with cubic interpolation.
 
 
 
