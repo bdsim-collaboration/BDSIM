@@ -16,13 +16,15 @@ that follow the beam line. However, in practice, Geant4 requires that the fields
 and coordinates be calculated in global carteasian coordinates. The simplest solution
 in Geant4 is to get the transformation from the global coordinates to the local
 coordinates of the volume being queried for the field and tracking.  However, if
-the field is 'attached' to not just a simple single shape, but a nested set of volumes,
-the local coordinates of that volume are not the same as the accelerator curvilinear
-coordinates. To get round this, the read out world is used for transformations.
+the field is 'attached' to not just a simple single shape or volume, but a nested set
+of volumes, the local coordinates of that volume are not necessarily the same as
+the accelerator curvilinear coordinates. To get around this, a parallel geometry
+with simple shapes is used so that when their local coordinates are queried, they
+represent the curvilinear coordinates of the beam line.
 
-To query a point (it's not simple / available to query a volume directly) in the
-geometry, one should use a G4Navigator instance.  There is the singleton main
-G4Navigator available to the developer, but this must never be used. Querying a point
+Generally, to query a point in the geometry, one should use a G4Navigator instance.
+There is the singleton G4Navigator from Geant4 available to the developer, but this
+must **never** be used. Querying a point
 in the geometry with this navigator changes the state of the navigator and therefore
 the perceived location in the geometry hierarchy of the particle in question from that
 point on. To avoid this, an extra navigator is created and used. Whilst these are not
@@ -40,14 +42,11 @@ if the developer wants to simply make use of (or test alone for that matter) a s
 Important Points
 ----------------
 
-* A field object that uses curvlinear coordinates should only be attached to one volume,
-  as it can only have one transform. Therefore, if attached to multiple volumes, only
-  one will provide correct results.
-* The fields use BDSAuxiliary navigator which uses the read out geometry - it's not only
-  for sensitivity - it's really for curvilinear coordinates.
+* The fields use BDSAuxiliary navigator which use the parallel curvilinear geometry.
 * Using BDSAuxiliaryNavigator requires an accelerator to be built - ie, it requires a world
   volume, and read out world, contents in both, the geometry to be 'closed' by Geant4 and
-  a valid run manager instantiated.
+  a valid run manager instantiated. One may generally use the field classes, but without the
+  auxilliary navigator in this case.
 
 
 Pure Magnetic Fields From Equations
@@ -578,8 +577,7 @@ approximately in the centre of the cube, but it could lie anywhere inside the 8 
 	    :width: 50%
 	    :align: center
 
-	    Field map value coordinates for 3D interpolation. This diagram was created by
-	    "Marmelad" from Wikipedia [#f1]_.
+	    Field map value coordinates for 3D interpolation. [#f1]_.
 
 .. [#f1] `Marmelad Cubic Diagram Wikipedia <https://commons.wikimedia.org/wiki/File:3D_interpolation2.svg>`_. 
 
@@ -598,7 +596,7 @@ lower likelihood of implementation faults occuring for higher dimensional interp
 Implementation Specifics
 ------------------------
 
-To implement this iterative algorithm, *C* arrays were used as subsets can be easily
+To implement this iterative algorithm, *C* arrays are used, as sub-arrays can be easily
 passed arround due to their underlying pointer nature in *C*. A small section of
 code from :code:`bdsim/src/BDSInterpolatorRoutines.cc` is shown below:
 
