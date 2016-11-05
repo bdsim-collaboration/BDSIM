@@ -79,64 +79,78 @@ private:
 
   BDSFieldMag* LoadBDSIM1DB(G4String            filePath,
 			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
   BDSFieldMag* LoadBDSIM2DB(G4String            filePath,
 			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
   BDSFieldMag* LoadBDSIM3DB(G4String            filePath,
 			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
   BDSFieldMag* LoadBDSIM4DB(G4String            filePath,
 			    BDSInterpolatorType interpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
 
   /// Load a 2D poisson superfish B field map.
   BDSFieldMag* LoadPoissonSuperFishB(G4String            filePath,
 				     BDSInterpolatorType interpolatorType,
-				     G4Transform3D       transform);
+				     G4Transform3D       transform,
+				     G4double            scaling);
 
   /// Similar to LoadPoissonSuperFishB() but the data below y = x is reflected
   /// and the data relfected from one quadrant to all four at the array level.
   BDSFieldMag* LoadPoissonSuperFishBQuad(G4String            filePath,
 					 BDSInterpolatorType interpolatorType,
-					 G4Transform3D       transform);
+					 G4Transform3D       transform,
+					 G4double            scaling);
 
   BDSFieldE* LoadBDSIM1DE(G4String            filePath,
 			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform);
+			  G4Transform3D       transform,
+			  G4double            scaling);
   BDSFieldE* LoadBDSIM2DE(G4String            filePath,
 			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform);
+			  G4Transform3D       transform,
+			  G4double            scaling);
   BDSFieldE* LoadBDSIM3DE(G4String            filePath,
 			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform);
+			  G4Transform3D       transform,
+			  G4double            scaling);
   BDSFieldE* LoadBDSIM4DE(G4String            filePath,
 			  BDSInterpolatorType interpolatorType,
-			  G4Transform3D       transform);
+			  G4Transform3D       transform,
+			  G4double            scaling);
 
   BDSFieldEM* LoadBDSIM1DEM(G4String            eFilePath,
 			    G4String            bFilePath,
 			    BDSInterpolatorType eInterpolatorType,
 			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
 
   BDSFieldEM* LoadBDSIM2DEM(G4String            eFilePath,
 			    G4String            bFilePath,
 			    BDSInterpolatorType eInterpolatorType,
 			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
   
   BDSFieldEM* LoadBDSIM3DEM(G4String            eFilePath,
 			    G4String            bFilePath,
 			    BDSInterpolatorType eInterpolatorType,
 			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
 
   BDSFieldEM* LoadBDSIM4DEM(G4String            eFilePath,
 			    G4String            bFilePath,
 			    BDSInterpolatorType eInterpolatorType,
 			    BDSInterpolatorType bInterpolatorType,
-			    G4Transform3D       transform);
+			    G4Transform3D       transform,
+			    G4double            scaling);
 
   /// @{ Map of cached field map array.
   std::map<G4String, BDSArray1DCoords*> arrays1d;

@@ -23,7 +23,8 @@ class BDSFieldEInterpolated1D: public BDSFieldE
 {
 public:
   BDSFieldEInterpolated1D(BDSInterpolator1D* interpolatorIn,
-			    G4Transform3D      offset = G4Transform3D::Identity);
+			  G4Transform3D      offset    = G4Transform3D::Identity,
+			  G4double           scalingIn = 1.0);
 
   virtual ~BDSFieldEInterpolated1D();
 
@@ -37,7 +38,8 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldEInterpolated1D() = delete;
 
-  BDSInterpolator1D* interpolator;
+  BDSInterpolator1D* interpolator; ///< Interpolator the field is based on.
+  G4double           scaling;      ///< Field value scaling.
 };
 
 #endif

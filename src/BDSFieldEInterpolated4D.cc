@@ -5,9 +5,11 @@
 #include "G4Types.hh"
 
 BDSFieldEInterpolated4D::BDSFieldEInterpolated4D(BDSInterpolator4D* interpolatorIn,
-						 G4Transform3D      offset):
+						 G4Transform3D      offset,
+						 G4double           scalingIn):
   BDSFieldE(offset),
-  interpolator(interpolatorIn)
+  interpolator(interpolatorIn),
+  scaling(scalingIn)
 {;}
 
 BDSFieldEInterpolated4D::~BDSFieldEInterpolated4D()
@@ -18,5 +20,5 @@ BDSFieldEInterpolated4D::~BDSFieldEInterpolated4D()
 G4ThreeVector BDSFieldEInterpolated4D::GetField(const G4ThreeVector& position,
 						const G4double       t) const
 {
-  return interpolator->GetInterpolatedValue(position[0], position[1], position[2], t);
+  return interpolator->GetInterpolatedValue(position[0], position[1], position[2], t) * scaling;
 }

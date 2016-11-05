@@ -23,7 +23,8 @@ class BDSFieldMagInterpolated2D: public BDSFieldMag
 {
 public:
   BDSFieldMagInterpolated2D(BDSInterpolator2D* interpolatorIn,
-			    G4Transform3D      offset = G4Transform3D::Identity);
+			    G4Transform3D      offset    = G4Transform3D::Identity,
+			    G4double           scalingIn = 1.0);
 
   virtual ~BDSFieldMagInterpolated2D();
 
@@ -38,7 +39,8 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldMagInterpolated2D() = delete;
 
-  BDSInterpolator2D* interpolator;
+  BDSInterpolator2D* interpolator; ///< Interpolator the field is based on.
+  G4double           scaling;      ///< Field value scaling.
 };
 
 #endif

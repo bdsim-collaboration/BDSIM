@@ -26,7 +26,8 @@ class BDSFieldEMInterpolated2D: public BDSFieldEM
 public:
   BDSFieldEMInterpolated2D(BDSInterpolator2D* eInterpolatorIn,
 			   BDSInterpolator2D* bInterpolatorIn,
-  			   G4Transform3D      offset = G4Transform3D::Identity);
+  			   G4Transform3D      offset    = G4Transform3D::Identity,
+			   G4double           scalingIn = 1.0);
 
   virtual ~BDSFieldEMInterpolated2D();
 
@@ -41,8 +42,9 @@ private:
   /// Private default constructor to force use of provided one.
   BDSFieldEMInterpolated2D() = delete;
 
-  BDSInterpolator2D* eInterpolator;
-  BDSInterpolator2D* bInterpolator;
+  BDSInterpolator2D* eInterpolator; ///< E Interpolator the field is based on.
+  BDSInterpolator2D* bInterpolator; ///< B Interpolator the field is based on.
+  G4double           scaling;       ///< Field value scaling.
 };
 
 #endif
