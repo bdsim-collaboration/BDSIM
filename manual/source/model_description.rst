@@ -4,6 +4,23 @@
 Model Description - Input Syntax
 ================================
 
+Lattice Description
+-------------------
+
+A model of the accelerator is given to BDSIM via input text files in the :ref:`gmad-syntax`.
+The overall program structure should follow:
+
+1) Component definition (see :ref:`lattice-elements`).
+2) Sequence definition using defined components (see :ref:`lattice-sequence`).
+3) Which sequence to use (see :ref:`the-use-command`).
+4) Where to record output (see :ref:`sampler-output`).
+5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`).
+6) A beam distribution (see :ref:`beam-parameters`).
+   
+These are described in the following sections.
+
+.. _gmad-syntax:
+
 GMAD Syntax
 -----------
 
@@ -119,20 +136,7 @@ Useful Commands
 * :code:`if () {};` if construct
 * :code:`if () {} else {};` if-else construct
 
-Lattice Description
--------------------
-
-A model of the accelerator is given to BDSIM via input text files in the GMAD language.
-The overall program structure should follow:
-
-1) Component definition
-2) Sequence definition (of the already defined components)
-3) Which sequence to use
-4) Where to record output (samplers)
-5) A beam distribution
-6) Options, including which physics lists, number to simulate etc.
-
-These are described in the following sections
+.. _lattice-elements:
 
 Lattice Elements
 ----------------
@@ -1307,6 +1311,7 @@ Examples::
   d1: drift, l=1*m, offsetX=1*cm;
   d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
 
+.. _lattice-sequence:
 
 Lattice Sequence
 ----------------
@@ -1340,6 +1345,8 @@ or within another line by::
 
 Reversing a line also reverses all nested lines within.
 
+.. _the-use-command:
+
 use - Defining which Line to Use
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1357,6 +1364,8 @@ Examples::
    use, period=fodo;
 
 
+.. _sampler-output:
+   
 Samplers - Output
 -----------------
 
@@ -1538,7 +1547,8 @@ vacuum respectively::
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
 
-
+.. _bdsim-options:
+  
 Options
 -------
 
@@ -1570,8 +1580,6 @@ as their value.
 +==================================+=======================================================+
 | **Common Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| batch                            | run BDSIM without the visualiser                      |
-+----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
 | beampipeThickness                | default beam pipe thickness [m]                       |
@@ -1582,14 +1590,16 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | elossHistoBinWidth               | the width of the histogram bins [m]                   |
 +----------------------------------+-------------------------------------------------------+
-| includeFringeFields              | place thin fringefield elements on the end of bending |
-|                                  | magnets with finite poleface angles. The length of the|
-|                                  | total element is conserved. (default = false)         |
+| eventNumberOffset                | event the recreation should start from                |
 +----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true)                 |
 +----------------------------------+-------------------------------------------------------+
 | ngenerate                        | number of primary particles to simulate               |
++----------------------------------+-------------------------------------------------------+
+| nturns                           | the number of revolutions particles are allowed to    |
+|                                  | complete in a circular accelerator - requires         |
+|                                  | --circular executable option to work                  |
 +----------------------------------+-------------------------------------------------------+
 | outerDiameter                    | default accelerator component full width [m]          |
 +----------------------------------+-------------------------------------------------------+
@@ -1617,14 +1627,32 @@ as their value.
 | useASCIISeedState                | whether to load an ASCII seed state file using        |
 |                                  | :code:`seedStateFileName`                             |
 +----------------------------------+-------------------------------------------------------+
-| writeseedstate                   | write the seed state of the last event start in ASCII |
+| writeSeedState                   | write the seed state of the last event start in ASCII |
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
+| aper1                            | default aper1 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| aper2                            | default aper2 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| aper3                            | default aper3 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| aper4                            | default aper4 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
+|                                  | during geometry construction (slower)                 |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
++----------------------------------+-------------------------------------------------------+
+| magnetGeometryType               | the default magnet geometry style to use              |
++----------------------------------+-------------------------------------------------------+
+| outerDiameter                    | the default full width of a magnet                    |
++----------------------------------+-------------------------------------------------------+
+| outerMaterial                    | the default material to use for the yoke of magnet    |
+|                                  | geometry.                                             |
++----------------------------------+-------------------------------------------------------+
+| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamlineComponents      | whether all beam line components record energy loss   |
 +----------------------------------+-------------------------------------------------------+
@@ -1645,7 +1673,16 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | chordStepMinimum                 | minimum step size                                     |
 +----------------------------------+-------------------------------------------------------+
+| includeFringeFields              | place thin fringefield elements on the end of bending |
+|                                  | magnets with finite poleface angles. The length of the|
+|                                  | total element is conserved. (default = false)         |
++----------------------------------+-------------------------------------------------------+
+| integratorSet                    | set of tracking routines to use (bdsim|geant4)        |
++----------------------------------+-------------------------------------------------------+
 | lengthSafety                     | element overlap safety (caution!)                     |
++----------------------------------+-------------------------------------------------------+
+| maximumTrackingTime              | the maximum time of flight allowed for any particle   |
+|                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
 | minimumEpsilonStep               | minimum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
@@ -1654,6 +1691,12 @@ as their value.
 | deltaOneStep                     | set position error acceptable in an integration step  |
 +----------------------------------+-------------------------------------------------------+
 | **Physics Processes Parameters** |                                                       |
++----------------------------------+-------------------------------------------------------+
+| defaultBiasVacuum                | name of bias object to be attached to vacuum volumes  |
+|                                  | by default                                            |
++----------------------------------+-------------------------------------------------------+
+| defaultBiasMaterial              | name of bias object to be attached to general         |
+|                                  | material of components outside the vacuum by default  |
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | whether to use synchrotron radiation processes        |
 +----------------------------------+-------------------------------------------------------+
@@ -1708,6 +1751,8 @@ as their value.
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
 
+.. _beam-parameters:
+  
 Beam Parameters
 ---------------
 
