@@ -90,7 +90,7 @@ solenoid { return SOLENOID; }
 rcol { return RCOL;}
 ecol { return ECOL; } 
 muspoiler { return MUSPOILER; }
-sheild {return SHIELD; }
+shield {return SHIELD; }
 element { return ELEMENT; }
 screen { return SCREEN; }
 awakescreen { return AWAKESCREEN; }
