@@ -162,16 +162,11 @@ slightly in order for them to sit correctly on the sbend reference trajectory. A
 specified, the input face angle of a segment cannot be the opposite sign of the output face angle of the previous element.
 Therefore the input and output faces have to be increased/decreased differently.
 
-.. |overlap| image:: dev_figures/poleface_notation_sbend_devel_prob1.pdf
-			     :width: 75%
+.. figure:: dev_figures/poleface_notation_sbend_devel_prob1.pdf
+   :width: 50%
 
-.. |overlapcheck| image:: dev_figures/poleface_notation_sbend_devel_prob2.pdf
-			     :width: 75%
-
-+------------------------+----------------------------+
-|    Element Overlap     |    Element Overlap Check   |
-|       |overlap|        |       |overlapcheck|       |
-+------------------------+----------------------------+
+.. figure:: dev_figures/poleface_notation_sbend_devel_prob2.pdf
+   :width: 50%
 
 
 In certain circumstances, the situation may occur where the angles of both input and output face angles are such so that
