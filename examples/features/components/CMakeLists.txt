@@ -46,6 +46,8 @@ simple_testing(Component-Screen "--file=screen.gmad" ${OVERLAP_CHECK})
 
 simple_testing(Component-Sextupole "--file=sext.gmad" ${OVERLAP_CHECK})
 
+simple_testing(Component-Shield    "--file=shield.gmad" ${OVERLAP_CHECK})
+
 simple_testing(Component-Solenoid "--file=sole.gmad" ${OVERLAP_CHECK})
 
 set(TESTING_ARGS --circular)
