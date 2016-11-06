@@ -38,6 +38,11 @@ BDSColours::BDSColours()
   colours["default"]          = new G4Colour(1,     1,     1);     // white
   colours["warning"]          = new G4Colour(1,     0.078, 0.576); // hot warning pink
 
+  // tunnel
+  colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice gray
+  colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
+  colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
+  
   // elements
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
@@ -55,11 +60,7 @@ BDSColours::BDSColours()
   colours["vkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
   colours["hkicker"]          = new G4Colour(0,     0.4,   0.8);   // blue
   colours["degrader"]         = new G4Colour(0.625, 0.625, 0.625); // silver
-
-  // tunnel
-  colours["tunnel"]           = new G4Colour(0.545, 0.533, 0.470); // a nice gray
-  colours["tunnelfloor"]      = new G4Colour(0.5,   0.5,   0.45);  // another gray
-  colours["soil"]             = new G4Colour(0.545, 0.353, 0, 0.4); // brown 
+  colours["shield"]           = colours["tunnel"];
   
   // element parts
   colours["coil"]             = new G4Colour(0.722, 0.451, 0.2);   // copper

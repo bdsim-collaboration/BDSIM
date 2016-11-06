@@ -15,6 +15,7 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSSamplerPlane.hh"
+#include "BDSShield.hh"
 #include "BDSScreen.hh"
 #include "BDSTerminator.hh"
 #include "BDSTeleporter.hh"
@@ -236,6 +237,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = CreateRectangularCollimator(); break; 
   case ElementType::_MUSPOILER:    
     component = CreateMuSpoiler(); break;
+  case ElementType::_SHIELD:
+    component = CreateShield(); break;
   case ElementType::_DEGRADER:
     component = CreateDegrader(); break;
   case ElementType::_LASER:
@@ -864,6 +867,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       vacuumField,
 		       0,
 		       outerField);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
+{
+  if(!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
+
+  G4Material* material = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);
+  BDSShield* shield = new BDSShield(element->name,
+				    element->l*CLHEP::m,
+				    element->outerDiameter*CLHEP::m,
+				    element->xsize*CLHEP::m,
+				    element->ysize*CLHEP::m,
+				    material,
+				    bpInfo);
+  return shield;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
