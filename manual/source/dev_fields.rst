@@ -65,9 +65,8 @@ The dipole field is constructed with a magnitude :math:`|B|` and a unit vector
 is :math:`(0,1,0)` - unit y.
 
 .. math::
-
    \mathbf{B} = \hat{\mathbf{b}} \cdot |B|
-   
+
 
 .. figure:: dev_figures/sectorbend_radial.pdf
 	    :width: 70%
@@ -84,17 +83,14 @@ a nominal rigidity :math:`B\rho`. Although the rigidity is included in :math:`k_
 required to calculate the field gradient internally.
 
 .. math::
-
    k_1 = \frac{1}{B\rho} \frac{\partial B_y}{\partial x}
 
 The field is described by
 
 .. math::
-   \begin{eqnarray}
-   B_x & = & \frac{\partial B_y}{\partial x} y \\
-   B_y & = & \frac{\partial B_y}{\partial x} x \\
-   B_z & = & 0
-   \end{eqnarray}
+   B_x & = \frac{\partial B_y}{\partial x} y \\
+   B_y & = \frac{\partial B_y}{\partial x} x \\
+   B_z & = 0
    
    
 .. figure:: dev_figures/quadrupole_radial.pdf
@@ -116,11 +112,9 @@ to a nominal rigidity :math:`B\rho`.
 The field is described by
 
 .. math::
-   \begin{eqnarray}
-   B_x & = & \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \,2xy \\
-   B_y & = & \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \, (x^2 - y^2) \\
-   B_z & = & 0 \\
-   \end{eqnarray}
+   B_x & = \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \,2xy \\
+   B_y & = \frac{1}{2!} \frac{\partial^2 B_y}{\partial x^2} \, (x^2 - y^2) \\
+   B_z & = 0
    
 
 .. figure:: dev_figures/sextupole_radial.pdf
@@ -143,11 +137,9 @@ a nominal rigidity :math:`B\rho`.
 The field is described by
 
 .. math::
-   \begin{eqnarray}
-   B_x & = & \frac{1}{3!} \frac{\partial^3 B_y}{\partial x^3} \,(3x^2 y - y^3) \\
-   B_y & = & \frac{1}{3!} \frac{\partial^3 B_y}{\partial x^3} \, (x^3 - 3xy^2) \\
-   B_z & = & 0 \\
-   \end{eqnarray}
+   B_x & = \frac{1}{3!} \frac{\partial^3 B_y}{\partial x^3} \,(3x^2 y - y^3) \\
+   B_y & = \frac{1}{3!} \frac{\partial^3 B_y}{\partial x^3} \, (x^3 - 3xy^2) \\
+   B_z & = 0
 
 
 .. figure:: dev_figures/octupole_radial.pdf
@@ -170,11 +162,10 @@ a nominal rigidity :math:`B\rho`.
 The field is described by
 
 .. math::
-   \begin{eqnarray}
-   B_x & = & \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, 4xy(x^2 - y^2) \\
-   B_y & = & \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, (x^4 - 6x^2y^2 + y^4) \\ 
-   B_z & = & 0 \\
-   \end{eqnarray}
+   B_x & = \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, 4xy(x^2 - y^2) \\
+   B_y & = \frac{1}{4!} \frac{\partial^4 B_y}{\partial x^4} \, (x^4 - 6x^2y^2 + y^4) \\ 
+   B_z & = 0
+
 
 .. figure:: dev_figures/decapole_radial.pdf
 	    :width: 70%
@@ -279,21 +270,16 @@ the skewed strength parmeters :math:`ks_1,ks_2,\dotsc ks_{12}` with respect to a
 	  :math:`k_2` is the sextupole strength, *etc*.
 
 .. math::
-
-   \begin{eqnarray}
-   r                          & = & \sqrt{x^2 + y^2} \\
-   B_r      (\mathrm{normal}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \,r^i \sin(i \phi) \\
-   B_{\phi} (\mathrm{normal}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \, r^i \cos(i \phi) \\
-   B_r      (\mathrm{skewed}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{ks_i}{i!} \, r^i \cos(i \phi) \\
-   B_{\phi} (\mathrm{skewed}) & = & \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} -\frac{ks_i}{i!} \, r^i \sin(i \phi) \\
-   \end{eqnarray}
-
+   
+   r                          & = \sqrt{x^2 + y^2} \\
+   B_r      (\mathrm{normal}) & = \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \,r^i \sin(i \phi) \\
+   B_{\phi} (\mathrm{normal}) & = \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{k_i}{i!} \, r^i \cos(i \phi) \\
+   B_r      (\mathrm{skewed}) & = \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} \frac{ks_i}{i!} \, r^i \cos(i \phi) \\
+   B_{\phi} (\mathrm{skewed}) & = \frac{1}{B\rho} \displaystyle\sum_{i=1}^{12} -\frac{ks_i}{i!} \, r^i \sin(i \phi)
 
 .. math::
-   \begin{eqnarray}
-   B_x & = & B_r \cos \phi - B_{\phi} \sin \phi \\
-   B_y & = & B_r \sin \phi + B_{\phi} \cos \phi \\
-   \end{eqnarray}
+   B_x & = B_r \cos \phi - B_{\phi} \sin \phi \\
+   B_y & = B_r \sin \phi + B_{\phi} \cos \phi \\
 
       
 .. figure:: dev_figures/multipole_radial.pdf
@@ -312,13 +298,12 @@ A muon spoiler field is provided that gives a constant toroidal field. It is con
 according to
 
 .. math::
+   
+   r   & = \sqrt{x^2 + y^2} \\
+   B_x & = \frac{y}{r} B \\
+   B_y & = \frac{-x}{r} B \\
+   B_z & = 0
 
-   \begin{eqnarray}
-   r & = & \sqrt{x^2 + y^2} \\
-   B_x & = & \frac{y}{r} B \\
-   B_y & = & \frac{-x}{r} B \\
-   B_z & = & 0
-   \end{eqnarray}
 
 .. figure:: dev_figures/muon_spoiler_radial2.pdf
 	    :width: 70%
@@ -518,10 +503,9 @@ is given by
 
 .. math::
 
-   \begin{eqnarray}
-   xd     &=& \frac{(x_i - x_a)}{(x_b - x_a)}\\
-   f(x_i) &=& f(x_a)\,(1-xd) + f(x_b)\,xd
-   \end{eqnarray}
+   xd     &= \frac{(x_i - x_a)}{(x_b - x_a)}\\
+   f(x_i) &= f(x_a)\,(1-xd) + f(x_b)\,xd
+
 
 Here, :math:`xd` will lie in the range :math:`[0,1]`. This is of course a 1D equation and
 version of linear interpolation. See _`Linear & Cubic Higher Dimension Interpolation` for
