@@ -60,7 +60,7 @@ void BDSShield::BuildShield()
   G4VSolid* innerSolid = new G4Box(name+"_inner_solid",
 				   xAper,
 				   yAper,
-				   chordLength*0.5 - 2*lengthSafety);
+				   chordLength); // extra long for unambiguous subtraction
 
   G4VSolid* spoilerSolid = new G4SubtractionSolid(name+"spoiler_solid",
 						  outerSolid,   // this
@@ -103,7 +103,7 @@ void BDSShield::BuildBeamPipe()
     {return;}
   
   // check beam pipe fits
-  if ((xAper > beamPipeInfo->aper1) || (yAper > beamPipeInfo->aper2))
+  if ((xAper < beamPipeInfo->aper1*2) || (yAper < beamPipeInfo->aper2*2))
     {
       G4cout << "Shield will not fit around beam pipe - not building beam pipe!" << G4endl;
       return;

@@ -876,7 +876,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
 
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
-  G4Material* material = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);
+  G4Material* material = BDSMaterials::Instance()->GetMaterial(element->material);
   BDSShield* shield = new BDSShield(element->name,
 				    element->l*CLHEP::m,
 				    element->outerDiameter*CLHEP::m,
