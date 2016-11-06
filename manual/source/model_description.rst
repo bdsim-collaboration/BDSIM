@@ -166,6 +166,7 @@ The following elements may be defined
 * `ecol`_
 * `degrader`_
 * `muspoiler`_
+* `shield`_
 * `solenoid`_
 * `laser`_
 * `transform3d`_
@@ -647,6 +648,29 @@ parameter         description                   default     required
 `material`        outer material                Iron        no
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
+
+shield
+^^^^^^
+
+.. figure:: figures/shield.png
+	    :width: 30%
+	    :align: right
+
+`shield` defines a square block of material with a square aperture. The user may choose
+the outer width, and inner horizontal and vertical apertures of the block. A beam pipe
+is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
+are greater than the aperture, the beam pipe will not be created.
+
+================  ==============================  ==========  ===========
+parameter         description                     default     required
+`l`               length [m]                      0           yes
+`material`        outer material                  Iron        no
+`outerDiameter`   outer full width [m]            global      no
+`xsize`           horizontal inner aperture [m]   0           no
+`ysize`           vertical inner aperture [m]     0           no
+================  ==============================  ==========  ===========
+
+* The `aperture parameters`_ may also be specified.
 
 solenoid
 ^^^^^^^^

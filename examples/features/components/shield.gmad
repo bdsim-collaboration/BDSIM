@@ -1,19 +1,17 @@
-d1: drift, l=0.5;
+d1: drift, l=0.2, aper1=3*cm, aper2=1.5*cm, apertureType="rectangular";
 
-sh1 : shield, l=3*m,
+sh1 : shield, l=0.2*m,
       	      aper1=3*cm,
 	      aper2=1.5*cm,
 	      apertureType="rectangular",
-	      outerDiameter=240*cm,
+	      outerDiameter=50*cm,
 	      beampipeThickness=1*mm,
-	      xsize=10*cm,
-	      ysize=10*cm,
+	      xsize=7*cm,
+	      ysize=7*cm,
 	      outerMaterial="concrete",
 	      beampipeMaterial="stainlesssteel";
 
-d2: drift, l=0.5;
-
-lat : line = (d1,sh1,d2);
+lat : line = (d1,sh1,d1);
 com : line = (sh1);
 
 include optionsTest.gmad;
