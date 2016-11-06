@@ -582,7 +582,7 @@ Below is a diagram of a cube representing a point :math:`C` at an arbitrary poin
 8 corners that represent the closest values of the regular field map. The diagram shows this
 approximately in the centre of the cube, but it could lie anywhere inside the 8 points.
 
-.. figure:: dev_figures/interpolation_cube.svg
+.. figure:: dev_figures/interpolation_cube.pdf
 	    :width: 50%
 	    :align: center
 
