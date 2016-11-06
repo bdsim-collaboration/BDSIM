@@ -60,7 +60,7 @@
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
-%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
+%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER
 %token <ival> VKICK HKICK
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
@@ -280,6 +280,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | ECOL        {$$=static_cast<int>(ElementType::_ECOL);}
           | RCOL        {$$=static_cast<int>(ElementType::_RCOL);}
           | MUSPOILER   {$$=static_cast<int>(ElementType::_MUSPOILER);}
+          | SHIELD      {$$=static_cast<int>(ElementType::_SHIELD);}
           | DEGRADER    {$$=static_cast<int>(ElementType::_DEGRADER);}
           | LASER       {$$=static_cast<int>(ElementType::_LASER);}
           | SCREEN      {$$=static_cast<int>(ElementType::_SCREEN);}
@@ -314,6 +315,7 @@ error_noparams : DRIFT
                | SOLENOID
                | ECOL
                | MUSPOILER
+               | SHIELD
                | RCOL
                | LASER
                | SCREEN
