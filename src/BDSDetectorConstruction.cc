@@ -490,7 +490,7 @@ void BDSDetectorConstruction::ComponentPlacement()
 			    worldPV,
 			    false,
 			    0,
-			    checkOverlaps);
+			    true);
 	}
     }
   
