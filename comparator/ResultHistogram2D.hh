@@ -6,6 +6,12 @@
 #include <sstream>
 #include <string>
 
+/**
+ * @brief Result of comparing 2 2D histograms.
+ *
+ * @author Stewart Boogert.
+ */
+
 class ResultHistogram2D: public ResultHistogram
 {
 public:
