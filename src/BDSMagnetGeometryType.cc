@@ -22,6 +22,10 @@ std::map<BDSMagnetGeometryType, std::string>* BDSMagnetGeometryType::dictionary 
 
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
+  // If it contains a colon ":" it must be external geometry format format:filepath
+  if (geometryType.contains(":"))
+    {return BDSMagnetGeometryType::external;}
+  
   std::map<G4String, BDSMagnetGeometryType> types;
   types["none"]            = BDSMagnetGeometryType::none;
   types["cylindrical"]     = BDSMagnetGeometryType::cylindrical;
@@ -34,10 +38,6 @@ BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
   types["format:filepath"] = BDSMagnetGeometryType::external;
 
   geometryType.toLower();
-
-  // If it contains a colon ":" it must be external geometry format format:filepath
-  if (geometryType.contains(":"))
-    {return BDSMagnetGeometryType::external;}
   
   auto result = types.find(geometryType);
   if (result == types.end())
