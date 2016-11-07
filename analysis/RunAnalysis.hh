@@ -1,5 +1,5 @@
-#ifndef __RUNANALYSIS_H
-#define __RUNANALYSIS_H
+#ifndef RUNANALYSIS_H
+#define RUNANALYSIS_H
 
 #include "TROOT.h"
 #include "TFile.h"
