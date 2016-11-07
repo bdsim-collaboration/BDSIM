@@ -1,1 +1,1 @@
-simple_testing(field_outer "--file=1_field_outer.gmad" "")
+simple_testing(field_outer_quad "--file=1_quad_field.gmad" "")

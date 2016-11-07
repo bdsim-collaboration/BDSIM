@@ -1,8 +1,7 @@
-psolve: field, type="xy",
-	       scaling = 3.0,
+psolve: field, type="bmap2d",
 	       integrator = "g4classicalrk4",
-	       magneticFile = "poisson2d:OUTSF7.TXT",
-	       magneticInterpolator = "nearest2D";
+	       magneticFile = "poisson2dquad:OUTSF7.tar.gz",
+	       magneticInterpolator = "cubic2D";
 
 
 q1: quadrupole, l=20*cm, k1=0.3, fieldOuter="psolve";
