@@ -38,6 +38,7 @@
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnetGeometryType.hh"
+#include "BDSMaterials.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
 
@@ -599,7 +600,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 	  !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) )
 	  )
 	{
-	  G4cerr << __METHOD_NAME__ << "RBend with non-zero incoming poleface requires next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
+	  G4cerr << __METHOD_NAME__ << "RBend with non-zero outgoing poleface requires next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
 	  exit(1);
 	}
     }
@@ -1184,7 +1185,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
 {
-  if(element->l*CLHEP::m < 4*lengthSafety)
+  if(element->l*CLHEP::m < 1e-7)
     {
       G4cerr << "---->NOT creating element, "
              << " name = " << element->name
@@ -1336,7 +1337,10 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) con
   G4double yOffset = element->offsetY * CLHEP::m;
   G4double tilt    = element->tilt    * CLHEP::rad;
 
-  return new BDSTiltOffset(xOffset, yOffset, tilt);
+  BDSTiltOffset* result = nullptr;
+  if (BDS::IsFinite(xOffset) || BDS::IsFinite(yOffset) || BDS::IsFinite(tilt))
+    {result = new BDSTiltOffset(xOffset, yOffset, tilt);}
+  return result;
 }
 
 void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,

@@ -1,0 +1,16 @@
+d1: drift, l=1*m;
+
+l1: line = (d1, d1, d1);
+use,period=l1;
+
+option, ngenerate=1,
+	physicsList="em";
+
+beam, particle="proton",
+      energy=10.0*GeV,
+      X0=0.001,
+      Y0=0.001;
+
+option, outerDiameter = 1,
+	beampipeThickness = 0.5,
+	aper1 = 0.01;

@@ -13,6 +13,12 @@
 class TChain;
 class TFile;
 
+/**
+ * @brief Base class for any TTree analysis.
+ *
+ * @author Stuart Walker.
+ */
+
 class Analysis
 {
 public:

@@ -6,12 +6,12 @@
 ClassImp(RunAnalysis)
 
 RunAnalysis::RunAnalysis():
-Analysis("Run.", nullptr, "bdsimRunMergedHistograms"),
+Analysis("Run.", nullptr, "RunHistogramsMerged"),
   run(nullptr)
 {;}
 
 RunAnalysis::RunAnalysis(Run* runIn, TChain* chain, bool debug):
-  Analysis("Run.", chain, "bdsimRunMergedHistograms", debug),
+  Analysis("Run.", chain, "RunHistogramsMerged", debug),
   run(runIn)
 {
   if (debug)

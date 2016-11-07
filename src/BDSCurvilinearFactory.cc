@@ -161,15 +161,19 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
   // always debug visualisation for read out geometry - only viewed via explicit commands
   lv->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 
-  BDSExtent extent = BDSExtent(radiusLocal, radiusLocal, chordLength*0.5);
+  G4ThreeVector inputFaceLocal  = BDS::RotateToReferenceFrame(inputface, angle);
+  G4ThreeVector outputFaceLocal = BDS::RotateToReferenceFrame(outputface, -angle);
   
-  BDSGeometryComponent* component = new BDSGeometryComponent(solid, lv, extent);
+  BDSSimpleComponent* result = new BDSSimpleComponent(name + "_cl",
+						      arcLength,
+						      angle,
+						      solid,
+						      lv,
+						      inputFaceLocal,
+						      outputFaceLocal);
 
-    G4ThreeVector inputFaceLocal  = BDS::RotateToReferenceFrame(inputface, angle);
-    G4ThreeVector outputFaceLocal = BDS::RotateToReferenceFrame(outputface, -angle);
-  
-  BDSSimpleComponent* result = new BDSSimpleComponent(name + "_cl", component, arcLength, angle,
-						      inputFaceLocal, outputFaceLocal);
+  BDSExtent extent = BDSExtent(radiusLocal, radiusLocal, chordLength*0.5);
+  result->SetExtent(extent);
   return result;
 }
   

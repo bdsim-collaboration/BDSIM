@@ -1,7 +1,7 @@
 #include "Options.hh"
 #include "BDSOutputROOTEventOptions.hh"
 
-#include "TChain.h"
+#include "TTree.h"
 
 ClassImp(Options)
 
@@ -15,7 +15,7 @@ Options::~Options()
   delete options;
 }
 
-void Options::SetBranchAddress(TChain *t)
+void Options::SetBranchAddress(TTree *t)
 {
   t->SetBranchAddress("Options.",&options);
 }

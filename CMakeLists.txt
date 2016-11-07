@@ -5,7 +5,7 @@ project(bdsim)
 # project version
 set( BDSIM_MAJOR_VERSION 0 )
 set( BDSIM_MINOR_VERSION 9 )
-set( BDSIM_PATCH_LEVEL 4 )
+set( BDSIM_PATCH_LEVEL 5 )
 set( BDSIM_VERSION ${BDSIM_MAJOR_VERSION}.${BDSIM_MINOR_VERSION}.${BDSIM_PATCH_LEVEL})
 
 message(STATUS "Configuring BDSIM ${BDSIM_VERSION}")
@@ -84,13 +84,17 @@ if(DOXYGEN_FOUND)
     COMMENT "Generating API documentation with Doxygen" VERBATIM
   )
   # add 'make doxygen' to ctest
-  add_test(Doxygen_LONG make doc)
+  add_test(Doxygen make doc)
+  set_tests_properties(Doxygen PROPERTIES LABELS LONG)
 endif(DOXYGEN_FOUND)
 
 # enable Testing with ctest
 enable_testing()
 include(CTest)
 include(bdsim_test_macros)
+include(comparator_test_macros)
+include(rebdsim_test_macros)
+include(root_test_macros)
 
 # This module sets up installation:
 include(bdsim_install)
@@ -123,7 +127,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # external sources
 add_subdirectory(src-external)
-# link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 
 # BDSIM library and binaries
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
@@ -134,7 +138,11 @@ set_target_properties(bdsimexec PROPERTIES OUTPUT_NAME "bdsim" VERSION ${BDSIM_V
 target_link_libraries(bdsimexec bdsim gmad)
 target_link_libraries(bdsim ${CLHEP_LIBRARIES})
 target_link_libraries(bdsim ${Geant4_LIBRARIES})
-target_link_libraries(bdsim gzstream)
+if (USE_GZSTREAM)
+  #preprocessor flag
+  add_definitions("-DUSE_GZSTREAM")
+  target_link_libraries(bdsim gzstream)
+endif()
 
 # link against ROOT
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
@@ -223,6 +231,9 @@ add_subdirectory(test)
 
 # Include directory for analysis
 add_subdirectory(analysis)
+
+# Include directory for comparator
+add_subdirectory(comparator)
 
 # Manual
 add_subdirectory(manual)

@@ -3,12 +3,8 @@
 #include "BDSMultipoleMagField.hh"
 #include "BDSMultipole.hh"
 
-#include "G4FieldManager.hh"
-#include "G4HelixImplicitEuler.hh"
 #include "G4SimpleRunge.hh"
-#include "G4LogicalVolume.hh"
 #include "G4Mag_UsualEqRhs.hh"
-#include "G4VPhysicalVolume.hh"
 
 BDSMultipole::BDSMultipole(G4String            name,
 			   G4double            length,

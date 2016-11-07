@@ -3,6 +3,7 @@
 
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
   execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  string(STRIP ${GCC_VERSION} GCC_VERSION)
   if($ENV{VERBOSE})
 	message(STATUS "GNU compiler detected")
 	message(STATUS "GCC Version is ${GCC_VERSION}")

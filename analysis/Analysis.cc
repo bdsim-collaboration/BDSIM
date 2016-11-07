@@ -34,14 +34,18 @@ void Analysis::SimpleHistograms()
     {std::cout << __METHOD_NAME__ << std::endl;}
 
   // loop over histogram specifications and fill
-  auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
-  for(auto i : hd)
-  {
-    if (i["treeName"] == treeName)
-      {
-	FillHistogram(i["treeName"].data(), i["histName"], i["nbins"], i["binning"], i["plot"], i["select"]);
-      }
-  }
+  auto c = Config::Instance();
+  if (c)
+    {
+      auto hd = Config::Instance()->GetHistoDefs();  // histogram definitions
+      for(auto i : hd)
+	{
+	  if (i["treeName"] == treeName)
+	    {
+	      FillHistogram(i["treeName"].data(), i["histName"], i["nbins"], i["binning"], i["plot"], i["select"]);
+	    }
+	}
+    }
 }
 
 void Analysis::Terminate()
@@ -54,6 +58,9 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 			     std::string nbins,    std::string binning,
 			     std::string plot,     std::string selection)
 {
+  TH1::AddDirectory(kTRUE);
+  TH2::AddDirectory(kTRUE);
+  
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   double xlow=0.0, xhigh=0.0;
@@ -87,15 +94,9 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 
   // create histograms
   if(ndim == 1)
-  {
-    auto h = new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);
-    h->AddDirectory(kTRUE);
-  }
+    {new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);}
   else if(ndim == 2)
-  {
-    auto h = new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);
-    h->AddDirectory(kTRUE);
-  }
+    {new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);}
 
   chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
 
@@ -125,7 +126,7 @@ void Analysis::Write(TFile* outputFile)
 {
   //treeName typically has a "." at the end, deleting it here:
   std::string cleanedName = treeName.erase(treeName.size() - 1);
-  std::string outputDirName = std::string("rebdsim_") + cleanedName + std::string("_Histograms");
+  std::string outputDirName = cleanedName + std::string("Histograms");
   TDirectory *rebdsimDir = outputFile->mkdir(outputDirName.c_str());
   rebdsimDir->cd();
   for(auto h : histograms1D)

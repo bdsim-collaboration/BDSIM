@@ -3,10 +3,8 @@
 
 #include "BDSSectorBend.hh"
 
-#include "BDSBeamPipeInfo.hh"
 #include "BDSDipoleStepper.hh"
 #include "BDSMagnet.hh"
-#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetType.hh"
 #include "BDSSbendMagField.hh"
 

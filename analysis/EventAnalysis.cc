@@ -2,7 +2,6 @@
 #include "BDSOutputROOTEventHistograms.hh"
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
-#include "Config.hh"
 #include "Event.hh"
 #include "EventAnalysis.hh"
 #include "HistogramMerge.hh"
@@ -21,30 +20,47 @@
 ClassImp(EventAnalysis)
 
 EventAnalysis::EventAnalysis():
-Analysis("Event.", nullptr, "bdsimEventMergedHistograms"),
-  event(nullptr)
+  Analysis("Event.", nullptr, "EventHistogramsMerged"),
+  event(nullptr),
+  printModulo(1)
 {;}
 
-EventAnalysis::EventAnalysis(Event *eventIn, TChain* chain, bool debug):
-  Analysis("Event.", chain, "bdsimEventMergedHistograms", debug),
-  event(eventIn)
+EventAnalysis::EventAnalysis(Event*  eventIn,
+			     TChain* chain,
+			     bool    processSamplersIn,
+			     bool    debug,
+			     double  printModuloFraction):
+  Analysis("Event.", chain, "EventHistogramsMerged", debug),
+  event(eventIn),
+  processSamplers(processSamplersIn)
 {
+  // Analyse the primary sampler in the optics too.
+  SamplerAnalysis* sa = new SamplerAnalysis(event->GetPrimaries());
+  samplerAnalyses.push_back(sa);
+  
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
     SamplerAnalysis *sa = new SamplerAnalysis(*i);
     this->samplerAnalyses.push_back(sa);
   }
+  
+  SetPrintModuloFraction(printModuloFraction);
+}
 
-  double fraction = Config::Instance()->PrintModuloFraction();
+void EventAnalysis::SetPrintModuloFraction(double fraction)
+{
   int    nEntries = chain->GetEntries();
-  printModulo = (int)ceil(nEntries*fraction);
+  printModulo = (int)ceil(nEntries * fraction);
   if (printModulo < 0)
     {printModulo = 1;}
 }
 
 EventAnalysis::~EventAnalysis()
-{;}
+{
+  for (auto& sa : samplerAnalyses)
+    {delete sa;}
+}
 
 void EventAnalysis::Process()
 {
@@ -86,7 +102,7 @@ void EventAnalysis::Process()
 	  //      std::cout << "EventAnalysis::Process> " << this->event->sampler->samplerName << std::endl;
 	}
       
-      if(Config::Instance()->ProcessSamplers())
+      if(processSamplers)
 	{ProcessSamplers();}
     }
   std::cout << "\rComplete                                       " << std::endl;

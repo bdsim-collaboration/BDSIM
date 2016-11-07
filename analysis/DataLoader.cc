@@ -1,6 +1,5 @@
 #include "DataLoader.hh"
 
-#include "Config.hh"
 #include "Event.hh"
 #include "Model.hh"
 #include "Options.hh"
@@ -16,9 +15,13 @@
 
 ClassImp(DataLoader)
 
-DataLoader::DataLoader()
+DataLoader::DataLoader(std::string fileName,
+		       bool        debugIn,
+		       bool        processSamplersIn):
+  debug(debugIn),
+  processSamplers(processSamplersIn)
 {
-  this->CommonCtor();
+  CommonCtor(fileName);
 }
 
 DataLoader::~DataLoader()
@@ -34,11 +37,11 @@ DataLoader::~DataLoader()
   delete runChain;
 }
 
-void DataLoader::CommonCtor()
+void DataLoader::CommonCtor(std::string fileName)
 {
   opt = new Options();
   mod = new Model();
-  evt = new Event();
+  evt = new Event(debug, processSamplers);
   run = new Run();
 
   optChain = new TChain("Options","Options");
@@ -46,51 +49,53 @@ void DataLoader::CommonCtor()
   evtChain = new TChain("Event","Event");
   runChain = new TChain("Run","Run");
 
-  this->BuildInputFileList();
+  this->BuildInputFileList(fileName);
   this->BuildTreeNameList();
   this->BuildEventBranchNameList();
   this->ChainTrees();
   this->SetBranchAddress();
 }
 
-void DataLoader::BuildInputFileList()
+void DataLoader::BuildInputFileList(std::string inputPath)
 {
-  std::string inputPath  = Config::Instance()->InputFilePath();
-  if(inputPath == "") {
-    throw std::string("DataLoader::BuildInputFileList> DataLoader needs to be constructed after Config");
-  }
+  if(inputPath == "")
+    {throw std::string("DataLoader::BuildInputFileList> no file specified");}
 
   // wild card
-  if(inputPath.find("*") != std::string::npos) {
-    glob_t glob_result;
-    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-    for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
-      fileNames.push_back(glob_result.gl_pathv[i]);
+  if(inputPath.find("*") != std::string::npos)
+    {
+      glob_t glob_result;
+      glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
+      for(unsigned int i=0;i<glob_result.gl_pathc;++i)
+	{fileNames.push_back(glob_result.gl_pathv[i]);}
+      globfree(&glob_result);
     }
-    globfree(&glob_result);
-  }
   // single file
-  else if(inputPath.find(".root") != std::string::npos) {
-    fileNames.push_back(inputPath);
-  }
+  else if(inputPath.find(".root") != std::string::npos)
+    {fileNames.push_back(inputPath);}
   // directory
-  else if(inputPath[inputPath.length()-1] == std::string("/")) {
-    // find all files in directory
-    inputPath.append("/*.root");
-
-    glob_t glob_result;
-    glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
-    for(unsigned int i=0;i<glob_result.gl_pathc;++i) {
-      fileNames.push_back(glob_result.gl_pathv[i]);
+  else if(inputPath[inputPath.length()-1] == std::string("/"))
+    {
+      // find all files in directory
+      inputPath.append("/*.root");
+      
+      glob_t glob_result;
+      glob(inputPath.c_str(),GLOB_TILDE,nullptr,&glob_result);
+      for(unsigned int i=0;i<glob_result.gl_pathc;++i)
+	{fileNames.push_back(glob_result.gl_pathv[i]);}
+      globfree(&glob_result);
     }
-    globfree(&glob_result);
-  }
-
-  if(Config::Instance()->Debug()) {
-    for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn) {
-      std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;
+  
+  if(debug)
+    {
+      for(auto fn = fileNames.begin();fn != fileNames.end(); ++fn)
+	{std::cout << "DataLoader::BuildInputFileList> " << *fn << std::endl;}
     }
-  }
+  if (fileNames.size() == 0)
+    {
+      std::cout << "DataLoader - No valid files found - check input file path / name" << std::endl;
+      exit(1);
+    }
 }
 
 void DataLoader::BuildTreeNameList()
@@ -111,7 +116,7 @@ void DataLoader::BuildTreeNameList()
   f->Close();
   delete f;
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     for(auto i = this->treeNames.begin(); i != this->treeNames.end(); ++i)
       std::cout << "DataLoader::BuildTreeNameList> " <<  *i << std::endl;
@@ -144,7 +149,7 @@ void DataLoader::BuildEventBranchNameList()
   f->Close();
   delete f;
 
-  if(Config::Instance()->Debug())
+  if(debug)
   {
     for(auto i = this->branchNames.begin(); i != this->branchNames.end(); ++i)
       {std::cout << "DataLoader::BuildEventBranchNameList> Non-sampler : " <<  *i << std::endl;}

@@ -55,23 +55,23 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   G4cout << "# of bins: " << nbins    << G4endl;
 #endif
   // create the histograms
-  BDSAnalysisManager::Instance()->Create1DHistogram("PhitsHisto","Primary Hits",
-						    nbins,smin,smax,slabel,
-						    "Number of Primaries"); //0
-  BDSAnalysisManager::Instance()->Create1DHistogram("PlossHisto","Primary Loss",
-						    nbins,smin,smax,slabel,
-						    "Number of Primaries"); //1
-  BDSAnalysisManager::Instance()->Create1DHistogram("ElossHisto","Energy Loss",
-						    nbins,smin,smax,slabel,"GeV"); //2
-
+  BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
+  analMan->Create1DHistogram("PhitsHisto","Primary Hits",
+			     nbins,smin,smax,slabel,
+			     "Number of Primaries"); //0
+  analMan->Create1DHistogram("PlossHisto","Primary Loss",
+			     nbins,smin,smax,slabel,
+			     "Number of Primaries"); //1
+  analMan->Create1DHistogram("ElossHisto","Energy Loss",
+			     nbins,smin,smax,slabel,"GeV"); //2
   
   // create per element ("pe") bin width histograms
-  BDSAnalysisManager::Instance()->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
-						    binedges,slabel, "Number of Primaries / Element"); //3
-  BDSAnalysisManager::Instance()->Create1DHistogram("PlossPEHisto","Primary Loss per Element",
-						    binedges,slabel, "Number of Primaries / Element"); //4
-  BDSAnalysisManager::Instance()->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,
-						    binedges,slabel,"GeV"); //5
+  analMan->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
+			     binedges,slabel, "Number of Primaries / Element"); //3
+  analMan->Create1DHistogram("PlossPEHisto","Primary Loss per Element",
+			     binedges,slabel, "Number of Primaries / Element"); //4
+  analMan->Create1DHistogram("ElossPEHisto","Energy Loss per Element" ,
+			     binedges,slabel,"GeV"); //5
   
   // Output feedback
   G4cout << __METHOD_NAME__ << " Run " << aRun->GetRunID() << " start. Time is " << asctime(localtime(&starttime)) << G4endl;

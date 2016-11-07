@@ -13,6 +13,7 @@
 #include "G4CachedMagneticField.hh"
 #include "G4ChordFinder.hh"
 #include "G4EqMagElectricField.hh"
+#include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VisAttributes.hh"
 #include "G4LogicalVolume.hh"

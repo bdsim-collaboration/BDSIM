@@ -1,29 +1,33 @@
 #include "SamplerAnalysis.hh"
-#include "Config.hh"
 #include "rebdsim.hh"
 
+#include <cmath>
 
 SamplerAnalysis::SamplerAnalysis():
   s(nullptr),
-  S(0)
+  S(0),
+  debug(false)
 {
   CommonCtor();
 }
 
 #ifndef __ROOTDOUBLE__
-SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn):
+SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<float> *samplerIn,
+				 bool debugIn):
 #else 
-  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn):
+  SamplerAnalysis::SamplerAnalysis(BDSOutputROOTEventSampler<double> *samplerIn,
+				   bool debugIn):
 #endif
   s(samplerIn),
-  S(0)
+  S(0),
+  debug(debugIn)
 {
   CommonCtor();
 }
 
 void SamplerAnalysis::CommonCtor()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
   
@@ -78,14 +82,14 @@ SamplerAnalysis::~SamplerAnalysis()
 
 void SamplerAnalysis::Initialise()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   npart = 0;
 }
 
 void SamplerAnalysis::Process()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
 
   std::vector<double> v;
@@ -125,7 +129,7 @@ void SamplerAnalysis::Process()
 
 void SamplerAnalysis::Terminate()
 {
-  if(Config::Instance()->Debug())
+  if(debug)
     {std::cout << " " << __METHOD_NAME__ << this->s->modelID << " " << npart << std::flush;}
 
   // central moments
@@ -162,8 +166,11 @@ void SamplerAnalysis::Terminate()
     optical[i][4]  = (cenMoms[4][4][1][0]*cenMoms[j][4][1][1])/cenMoms[4][4][2][0];                                                        // eta
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];                                                      // eta prime
 
-    if(optical[i][4] != optical[i][4]) {optical[i][4]=0;}       //check for nans (expected if dE=0) and set disp=0 if found
-    if(optical[i][5] != optical[i][5]) {optical[i][5]=0;}
+    // check for nans (expected if dE=0) and set disp=0 if found
+    if (std::isnan(optical[i][4]))
+      {optical[i][4] = 0;}
+    if (std::isnan(optical[i][5]))
+      {optical[i][5] = 0;}
 
     double corrCentMom_2_0 = 0.0, corrCentMom_0_2 = 0.0, corrCentMom_1_1 = 0.0; //temp variables to store dispersion corrected moments
     
@@ -263,9 +270,7 @@ double SamplerAnalysis::powSumToCentralMoment(fourDArray &powSums,
 
   if((m == 1 && n == 0) || (m == 0 && n == 1))
     {
-      double s_1_0 = 0.0;
-      
-      s_1_0 = powSums[a][b][m][n];
+      double s_1_0 = powSums[a][b][m][n];
 
       moment = s_1_0/npart;
     }

@@ -17,9 +17,11 @@
 
 #include "BDSOutputROOTEventLoss.hh"
 #include "BDSOutputROOTEventModel.hh"
+#include "BDSOutputROOTEventOptions.hh"
 #include "BDSOutputROOTEventTrajectory.hh"
 #include "Model.hh"
-#include "parser/optionsBase.h"
+#include "Options.hh"
+
 
 ClassImp(EventDisplay)
 
@@ -33,18 +35,21 @@ EventDisplay* EventDisplay::Instance()
   return _instance;
 }
 
-EventDisplay* EventDisplay::Instance(TString geoFileName)
+EventDisplay* EventDisplay::Instance(TString geoFileName,
+				     TString dataFileName)
 {
-  _instance = new EventDisplay(geoFileName);
+  _instance = new EventDisplay(geoFileName, dataFileName);
   return _instance;
 }
 
-EventDisplay::EventDisplay(TString geoFileNameIn):
-  geoFileName(geoFileNameIn)
+EventDisplay::EventDisplay(TString geoFileNameIn,
+			   TString dataFileNameIn):
+  geoFileName(geoFileNameIn),
+  dataFileName(dataFileNameIn)
 {
   std::cout << "EventDisplay::EventDisplay(" << geoFileName << ")" << std::endl;
   TEveManager::Create();
-  dataLoader = new DataLoader();
+  dataLoader = new DataLoader(std::string(dataFileName.Data()));
   event      = dataLoader->GetEvent();
   eventTree  = dataLoader->GetEventTree();
 
@@ -116,7 +121,7 @@ void EventDisplay::Draw()
 void EventDisplay::DrawModel()
 {
   std::cout << "EventDisplay::DrawModel>" << std::endl;
-  GMAD::OptionsBase *ob = (GMAD::OptionsBase*)options;
+  BDSOutputROOTEventOptions *ob = options->options;
   std::cout << "EventDisplay::DrawModel> outerDiameter" << ob->outerDiameter << std::endl;
   double outerDiameter = ob->outerDiameter; // need cm
 
