@@ -161,7 +161,9 @@ void SamplerAnalysis::Terminate()
     optical[i][8]  = sqrt(cenMoms[j][j+1][2][0]);                                                                                          // sigma spatial   (transv.)/ sigma E (longit.)
     optical[i][9]  = sqrt(cenMoms[j][j+1][0][2]);                                                                                          // sigma divergence (transv.)/ sigma t (longit.)
 
-    if (i==2) continue;    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
+    //tranverse optical function calculation skipped for longitudinal plane, only mean and sigma of longit. coordinates recorded
+    if (i==2)
+      {continue;}
 
     optical[i][4]  = (cenMoms[4][4][1][0]*cenMoms[j][4][1][1])/cenMoms[4][4][2][0];                                                        // eta
     optical[i][5]  = (cenMoms[4][4][1][0]*cenMoms[j+1][4][1][1])/cenMoms[4][4][2][0];                                                      // eta prime
