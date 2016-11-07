@@ -18,7 +18,7 @@ Contents:
    installation
    running
    model_description
-   extendedgeometry
+   externalgeometry
    model_preparation
    output
    output_analysis

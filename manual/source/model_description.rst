@@ -863,6 +863,8 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
 
+.. _magnet-geometry-parameters:
+
 Magnet Geometry Parameters
 --------------------------
 
@@ -871,30 +873,43 @@ beam pipe. This geometry typically represents the magnetic poles and yoke of the
 are several geometry types to choose from. The possible different styles are described below and
 syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
 
+* Externally provided geometry can also be wrapped around the beam pipe (detailed below).
+
 The magnet geometry is controlled by the following parameters.
 
-.. note:: These can all be specified using the `option` command as well as on a per element basis.
+.. note:: These can all be specified using the `option` command as well as on a per element
+	  basis, but in this case they act as a default that will be used if none are
+	  specified by the element.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
-|                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
-|                       | `polesfacetcrop`, `lhcleft`, `lhcright` and `none`           |               |           |
+| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `cylindrical` | no        |
+|                       | | `cylindrical`, `polescircular`, `polessquare`,             |               |           |
+|                       | | `polesfacet`, `polesfacetcrop`, `lhcleft`, `lhcright`,     |               |           |
+|                       | | `none` and `format:path`.                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 1 m           | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `yokeOnInside`        | Whether the yoke of a dipole appears on the inside of the    | 1             | no        |
-|                       | bend and if false, it's on the outside. Applicable only to   |               |           |
-|                       | dipoles.                                                     |               |           |
+| `yokeOnInside`        | | Whether the yoke of a dipole appears on the inside of the  | 1             | no        |
+|                       | | bend and if false, it's on the outside. Applicable only    |               |           |
+|                       | | to dipoles.                                                |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 
 Example::
 
   option, magnetGeometryType = "polesfacetcrop",
           outerDiameter = 0.5*m;
+
+::
+
+   m1: quadrupole, l=0.3*m,
+                   k1=0.03,
+		   magnetGeometryType="gdml:geometryfiles/quad.gdml",
+		   outerDiameter = 0.5*m;
+
 
 .. deprecated:: 0.65
 		`boxSize` - this is still accepted by the parser for backwards compatibility
@@ -1299,6 +1314,137 @@ mathematical description as well as example plots are shown in :ref:`field-inter
 | cubic4d    | Cubic interpolation in 4D.    |
 +------------+-------------------------------+
 
+.. _externally-provided-geometry:
+
+Externally Proivded Geometry
+----------------------------
+
+BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
+by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
+geometry can be used in three ways:
+
+1) A placement of a piece of geometry unrelated to the beam line.
+2) Wrapped around the beam pipe in a BDSIM magnet element.
+3) As a general element in the beam line where the geometry constitutes the whole object.
+
+These are discussed in order.
+
+Placements
+^^^^^^^^^^
+
+Geometry provided in an external file, may be placed in 3D geometry at any location with
+any rotation, however the user is responsible for ensuring that the geometry does not
+overlap with any other geometry.
+
+.. Note:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
+	  incorrect results and there may not always be warnings provided. For this reason
+	  BDSIM will **always** use the Geant4 overlap checker when placing external geoemtry
+	  into the world volume. This only ensures the container doesn't overlap with BDSIM
+	  geometry, not that the internal geometry is valid.
+
+.. Note:: Currently sensitivity (ie. read out of hits) is not support and is being implemented.
+
+The following parameters may be specified.
+
++----------------+--------------------------------------------------------------------+
+| **Parameter**  |  **Description**                                                   |
++----------------+--------------------------------------------------------------------+
+| geometryFile   | :code:`format:file` - which geometry format and file to use.       |
++----------------+--------------------------------------------------------------------+
+| x              | Offset in global x.                                                |
++----------------+--------------------------------------------------------------------+
+| y              | Offset in global y.                                                |
++----------------+--------------------------------------------------------------------+
+| z              | Offset in global z.                                                |
++----------------+--------------------------------------------------------------------+
+| phi            | Euler angle phi for rotation.                                      |
++----------------+--------------------------------------------------------------------+
+| theta          | Euler angle theta for rotation.                                    |
++----------------+--------------------------------------------------------------------+
+| psi            | Euler angle psi for rotation.                                      |
++----------------+--------------------------------------------------------------------+
+| axisX          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| axisY          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| axisZ          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| angle          | Axis angle angle to rotate about unit vector.                      |
++----------------+--------------------------------------------------------------------+
+| axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
++----------------+--------------------------------------------------------------------+
+| sensititve     | **unsupported** - in future whether geometry records hits.         |
++----------------+--------------------------------------------------------------------+
+
+* The file path provided in :code:`geometryFile` should either be relative to where bdsim
+  is executed from or an absolute path.
+
+Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
+rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
+directly, which is also the same as a :code:`CLHEP::HepRotation`.
+
+.. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
+	  the default units for offsets and angles in BDSIM.
+
+The following is an example syntax is used to place a piece of geometry::
+
+  leadblock, placement, x = 10*m,
+                        y = 3*cm,
+			z = 12*m,
+			geometryFile="gdml:mygeometry/detector.gdml;
+
+
+
+External Magnet Geometry
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
+will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
+yoke geometry will be loaded from the file provided. The external geometry must have a cut out
+in its container volume for the beam pipe to fit. Ie, both the beam pipe and the yoke exist
+at the same level in the geometry hierarchy (both are placed in one container for the magnet).
+The beam pipe is not placed 'inside' the yoke.
+
+This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
+`decapole`, `multipole`, `muonspoiler`, `vkick`, `hkick` element types in BDSIM.
+
+Example::
+
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+
+Element
+^^^^^^^
+
+A general piece of geometry may be placed in the beam line along with any externally provided
+field map using the `element` beam line element.  See `element`_.
+
+.. _geometry-formats:
+
+Geometry Formats
+^^^^^^^^^^^^^^^^
+
+The following geometry formats are supported. More may be added in collaboration with the BDSIM
+developers - please see :ref:`feature-request`. The syntax and preparation of these geometry
+formats is described in more detail in :ref:`external-geometry-formats`.
+
++----------------------+---------------------------------------------------------------------+
+| **Format String**    | **Description**                                                     |
++======================+=====================================================================+
+| gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
+|                      | | persistency format - recommended.                                 |
++----------------------+---------------------------------------------------------------------+
+| ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
+|                      | | geometry classes.                                                 |
++----------------------+---------------------------------------------------------------------+
+| mokka                | | An SQL style description of geometry.                             |
++----------------------+---------------------------------------------------------------------+
+
+.. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+
+
+.. _offsets-and-tilts:
 
 Offsets & Tilts - Component Misalignment
 ----------------------------------------
