@@ -1,22 +1,33 @@
-.. _extendedgeometry:
+.. _external-geometry-formats:
 
-=================
-Extended Geometry
-=================
+=========================
+External Geometry Formats
+=========================
 
-The element with user-defined physical geometry (see also :ref:`element`) is defined by::
-  
-  <element_name> : element, geometry=format:filename, attributes
-  
-where `format` must be set to `gmad`_, `mokka`_, `gdml`_ and `filename` must
-point to a file that contains the geometry descriptions. For example::
-  
-  colli : element, geometry="gmad:colli.geo"
+Currently, three formats are supported by BDSIM. GDML is recommended as this is thoroughly
+supported by Geant4 and the geometry extent can be automatically determined.
 
-gmad
+More can be added in collaboration with the BDSIM development team - please see :ref:`feature-request`.
+
+GDML
 ----
 
-ggmad is a simple format used as G4geometry wrapper. It can be used for specifying more or less simple geometries like collimators. Example::
+GDML (Geometry Description Markup Language) is an XML schema for detector description.
+To use Geant4 and BDSIM needs to be built with GDML usage on (default true). For more
+information we refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and
+`manual <http://gdml.web.cern.ch/GDML/doc/GDMLmanual.pdf>`_.
+
+This format is widely supported and other geometry software may be able to export
+geoemtry in GDML format.
+
+* A BDSIM provided python tool is also under development to allow simple programatic
+  construction of GDML geometry as well as visualisation and overlap checking.
+
+ggmad
+-----
+
+ggmad is a simple format used as wrapper to (some) Geant4 geometry classes. It can
+be used for specifying more or less simple geometries like collimators. Example::
 
   Cons {
   x0=0,
@@ -114,11 +125,13 @@ material   Material name
 ========== ============================
 
 
-
 Mokka
 -----
 
-As well as using the GMAD format to describe user-defined physical geometry it is also possible to use a Mokka style format. This format is currently in the form of a dumped MySQL database format. Note that throughout any of the Mokka files, a `#` may be used to represent a commented line. There are three key stages, which are detailed in the following sections, that are required to setting up the Mokka geometry:
+This format is currently in the form of a dumped MySQL database format. Note that throughout
+any of the Mokka files, a `#` may be used to represent a commented line. There are three key
+stages, which are detailed in the following sections, that are required to setting up the
+Mokka geometry:
 
 * `Describing the geometry`_
 * `Creating a geometry list`_
@@ -127,13 +140,21 @@ As well as using the GMAD format to describe user-defined physical geometry it i
 Describing the geometry
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-An object must be described by creating a MySQL file containing commands that would typically be used for uploading/creating a database and a corresponding new table into a MySQL database. BDSIM supports only a few such commands - specifically the CREATE TABLE and INSERT INTO commands. When writing a table to describe a solid there are some parameters that are common to all solid types (such as NAME and MATERIAL) and some that are more specific (such as those relating to radii for cone objects). A full list of the standard and specific table parameters, as well as some basic examples, are given below with each solid type. All files containing geometry descriptions must have the following database creation commands at the top of the file::
+An object must be described by creating a MySQL file containing commands that would typically
+be used for uploading/creating a database and a corresponding new table into a MySQL database.
+BDSIM supports only a few such commands - specifically the CREATE TABLE and INSERT INTO commands.
+When writing a table to describe a solid there are some parameters that are common to all solid
+types (such as NAME and MATERIAL) and some that are more specific (such as those relating to radii
+for cone objects). A full list of the standard and specific table parameters, as well as some
+basic examples, are given below with each solid type. All files containing geometry descriptions
+must have the following database creation commands at the top of the file::
 
   DROP DATABASE IF EXISTS DATABASE_NAME;
   CREATE DATABASE DATABASE_NAME;
   USE DATABASE_NAME;
 
-A table must be created to allow for the insertion of the geometry descriptions. A table is created using the following, MySQL compliant, commands::
+A table must be created to allow for the insertion of the geometry descriptions. A table is
+created using the following, MySQL compliant, commands::
 
   CREATE TABLE TABLE-NAME_GEOMETRY-TYPE (
   TABLE-PARAMETER VARIABLE-TYPE,
@@ -141,13 +162,19 @@ A table must be created to allow for the insertion of the geometry descriptions.
   TABLE-PARAMETER VARIABLE-TYPE
   );
 
-Once a table has been created values must be entered into it in order to define the solids and position them. The insertion command must appear after the table creation and must the MySQL compliant table insertion command::
+Once a table has been created values must be entered into it in order to define the solids and
+position them. The insertion command must appear after the table creation and must the MySQL
+compliant table insertion command::
 
   INSERT INTO TABLE-NAME_GEOMETRY-TYPE VALUES(value1, value2, "char-value", ...);
 
-The values must be inserted in the same order as their corresponding parameter types are described in the table creation. Note that ALL length types must be specified in mm and that ALL angles must be in radians.
+The values must be inserted in the same order as their corresponding parameter types are described
+in the table creation. Note that ALL length types must be specified in mm and that ALL angles
+must be in radians.
 
-An example of two simple boxes with no visual attributes set is shown below. The first box is a simple vacuum cube whilst the second is an iron box with length x = 10mm, length y = 150mm, length z = 50mm, positioned at x=1m, y=0, z=0.5m and with zero rotation::
+An example of two simple boxes with no visual attributes set is shown below. The first box is a
+simple vacuum cube whilst the second is an iron box with length x = 10mm, length y = 150mm,
+length z = 50mm, positioned at x=1m, y=0, z=0.5m and with zero rotation::
 
   CREATE TABLE mytable_BOX (
   NAME VARCHAR(32),
@@ -241,7 +268,8 @@ The following is a list of table parameters that are common to all solid types e
 'Box' Solid Types
 _________________
 
-Append _BOX to the table name in order to make use of the G4Box solid type. The following table parameters are specific to the box solid:
+Append _BOX to the table name in order to make use of the G4Box solid type. The following table
+parameters are specific to the box solid:
 
 * | LENGTHX, LENGTHY, LENGTHZ
   | Variable type: DOUBLE(10,3)
@@ -251,7 +279,9 @@ Append _BOX to the table name in order to make use of the G4Box solid type. The 
 ’Trapezoid’ Solid Types
 _______________________
 
-Append _TRAP to the table name in order to make use of the G4Trd solid type - which is defined as a trapezoid with the X and Y dimensions varying along z functions. The following table parameters are specific to the trapezoid solid:
+Append _TRAP to the table name in order to make use of the G4Trd solid type - which is defined as a
+trapezoid with the X and Y dimensions varying along z functions. The following table parameters
+are specific to the trapezoid solid:
 
 * | LENGTHXPLUS
   | Variable type: DOUBLE(10,3)
@@ -277,7 +307,8 @@ Append _TRAP to the table name in order to make use of the G4Trd solid type - wh
 ’Cone’ Solid Types
 __________________
 
-Append _CONE to the table name in order to make use of the G4Cons solid type. The following table parameters are specific to the cone solid:
+Append _CONE to the table name in order to make use of the G4Cons solid type. The following
+table parameters are specific to the cone solid:
 
 * | LENGTH
   | Variable type: DOUBLE(10,3)
@@ -311,7 +342,8 @@ Append _CONE to the table name in order to make use of the G4Cons solid type. Th
 ’Torus’ Solid Types
 ___________________
 
-Append _TORUS to the table name in order to make use of the G4Torus solid type. The following table parameters are specific to the torus solid:
+Append _TORUS to the table name in order to make use of the G4Torus solid type. The following table
+parameters are specific to the torus solid:
 
 * | RINNER
   | Variable type: DOUBLE(10,3)
@@ -337,7 +369,8 @@ Append _TORUS to the table name in order to make use of the G4Torus solid type. 
 ’Polycone’ Solid Types
 ______________________
 
-Append _POLYCONE to the table name in order to make use of the G4Polycone solid type. The following table parameters are specific to the polycone solid:
+Append _POLYCONE to the table name in order to make use of the G4Polycone solid type. The following table
+parameters are specific to the polycone solid:
 
 * | NZPLANES
   | Variable type: INTEGER(11)
@@ -367,7 +400,8 @@ Append _POLYCONE to the table name in order to make use of the G4Polycone solid 
 ’Elliptical Cone’ Solid Types
 _____________________________
 
-Append _ELLIPTICALCONE to the table name in order to make use of the G4Ellipticalcone solid type. The following table parameters are specific to the elliptical cone solid:
+Append _ELLIPTICALCONE to the table name in order to make use of the G4Ellipticalcone solid type. The
+following table parameters are specific to the elliptical cone solid:
 
 * | XSEMIAXIS
   | Variable type: DOUBLE(10,3)
@@ -386,7 +420,8 @@ Append _ELLIPTICALCONE to the table name in order to make use of the G4Elliptica
   | Required parameter
   | This value will be used to specify the upper cut plane level.
 
-Note that the above parameters are used to define an elliptical cone with the following parametric equations (in the usual Geant4 way)::
+Note that the above parameters are used to define an elliptical cone with the following parametric
+equations (in the usual Geant4 way)::
 
   X = XSEMIAXIS * (LENGTHZ - u) / u * Cos(v)
   Y = YSEMIAXIS * (LENGTHZ - u) / u * Sin(v)
@@ -399,7 +434,9 @@ where v is between 0 and 2 * |pgr| and u between 0 and h respectively.
 Creating a geometry list
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-A geometry list is a simple file consisting of a list of file names that contain geometry descriptions. This is the file that should be passed to the GMAD file when defining the Mokka element. An example of a geometry list containing ’boxes.sql’ and ’cones.sql’ would be::
+A geometry list is a simple file consisting of a list of file names that contain geometry
+descriptions. This is the file that should be passed to the GMAD file when defining the
+Mokka element. An example of a geometry list containing ’boxes.sql’ and ’cones.sql’ would be::
 
   # ’#’ symbols can be used for commenting out an entire line
   /directory/boxes.sql
@@ -411,8 +448,3 @@ Defining a Mokka element
 The Mokka element can be defined by the following command::
 
   collimator : element, geometry=mokka:coll_geomlist.sql
-
-GDML
-----
-
-GDML (Geometry Description Markup Language) is an XML schema for detector description. To use Geant4 and BDSIM needs to be built with GDML usage on (default true). For more information we refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and `manual <http://gdml.web.cern.ch/GDML/doc/GDMLmanual.pdf>`_.
