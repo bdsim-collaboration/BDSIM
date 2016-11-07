@@ -413,11 +413,11 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
   //magnet total vertical aperture size
   G4double vertGap = 0;
   if (element->apertureType == "racetrack")
-    {vertGap = 2.0 * (beamPipeInfo->aper3 + beamPipeInfo->aper2);}
+    {vertGap = beamPipeInfo->aper3 + beamPipeInfo->aper2;}
   else if ((element->apertureType == "circular") || (element->apertureType ==""))
-    {vertGap = 2.0 * beamPipeInfo->aper1;}
+    {vertGap = beamPipeInfo->aper1;}
   else
-    {vertGap = 2.0 * beamPipeInfo->aper2;}
+    {vertGap = beamPipeInfo->aper2;}
   (*st)["fringecorr"] *= vertGap;
 
   return new BDSMagnet(magType,
