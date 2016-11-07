@@ -757,12 +757,15 @@ parameter         description                      default     required
 `geometry`        filename of geometry             NA          yes
 `l`               length                           NA          yes
 `outerDiameter`   diameter of component [m]        NA          yes
-`bmap`            filename of magnetic field map   NA          no
+`fieldAll`        name of field object to use      NA          no
 ================  ===============================  ==========  ===========
 
-`geometry` and `bmap` require the input string to be of the format `format:filename`, where
-`format` is the geometry format being used (`gdml` | `gmad` | `mokka`) and filename is the filename of
-the geometry file.
+`geometry` should be of the format `format:filename`, where `format` is the geometry
+format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
+file. See :ref:`externally-provided-geometry` for more details.
+
+`fieldAll` should refer to the name of a field object the user has defined in the input
+gmad file. The syntax for this is described in :ref:`field-maps`.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken as the length
@@ -770,12 +773,23 @@ the geometry file.
 	  than the size required for the geometry, the beam may be mismatched into the rest of
 	  the accelerator. A common practice is to add a picometre to the length of the geometry.
 
-Examples::
+Simple example::
 
-   detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
-   detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
+  detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
 
-For specific details on the geometry format, see :ref:`extendedgeometry`
+Example with field::
+
+  somefield: field, type="ebmap2d",
+		    scaling = 3.0,
+		    integrator = "g4classicalrk4",
+		    magneticFile = "poisson2d:/Path/To/File.TXT",
+		    magneticInterpolator = "nearest2D",
+		    electricFile = "poisson2d:/Another/File.TX",
+		    electricInterpolator = "linear2D";
+  
+   detec: element, geometry="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
+
+
 
 marker
 ^^^^^^
@@ -1078,7 +1092,7 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
 
-
+.. _field-maps:
 
 Fields
 ------
