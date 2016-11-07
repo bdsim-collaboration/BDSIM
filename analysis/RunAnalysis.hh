@@ -10,6 +10,12 @@
 #include "Run.hh"
 #include "Analysis.hh"
 
+/**
+ * @brief Analysis of a run.
+ *
+ * @author Stuart Walker.
+ */
+
 class RunAnalysis : public Analysis
 {
 public:

@@ -6,6 +6,12 @@
 #include <sstream>
 #include <string>
 
+/** 
+ * @brief Result of comparing 2 TTrees. 
+ * 
+ * @author Stewart Boogert.
+ */
+
 class ResultTree: public Result
 { 
 public:

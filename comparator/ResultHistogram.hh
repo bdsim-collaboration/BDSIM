@@ -7,6 +7,12 @@
 #include <sstream>
 #include <string>
 
+/**
+ * @brief Result of comparing 2 histograms.
+ *
+ * @author Stewart Boogert.
+ */
+
 class ResultHistogram: public Result
 { 
 public:

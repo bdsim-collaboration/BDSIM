@@ -8,6 +8,12 @@
 class Options;
 class TChain;
 
+/**
+ * @brief Analysis of the options tree.
+ * 
+ * @author Stuart Walker.
+ */
+
 class OptionsAnalysis : public Analysis
 {
 public:

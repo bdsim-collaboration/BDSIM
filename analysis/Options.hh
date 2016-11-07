@@ -7,6 +7,12 @@
 
 class TTree;
 
+/**
+ * @brief Options loader.
+ *
+ * @author Stuart Walker.
+ */
+
 class Options
 {
 public:
