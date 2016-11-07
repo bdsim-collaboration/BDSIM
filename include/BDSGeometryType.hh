@@ -13,7 +13,7 @@
 
 struct geometrytypes_def
 {
-  enum type {threed, xy, mokka, gmad, gdml};
+  enum type {mokka, gmad, gdml};
 };
 
 typedef BDSTypeSafeEnum<geometrytypes_def,int> BDSGeometryType;
