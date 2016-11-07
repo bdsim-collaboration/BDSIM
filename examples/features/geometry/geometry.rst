@@ -10,3 +10,5 @@ Geometry
    3_beampipes
    4_magnets
    5_tunnel
+   6_curvilinear
+   9_gdml

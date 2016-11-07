@@ -9,7 +9,7 @@
  * 
  * singleton pattern
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryCircular: public BDSBeamPipeFactoryBase

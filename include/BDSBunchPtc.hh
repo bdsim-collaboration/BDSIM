@@ -9,7 +9,7 @@
 /**
  * @brief A bunch distribution that reads a PTC inrays file.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchPtc: public BDSBunchInterface

@@ -8,7 +8,7 @@
  *
  * @author L. Deacon
  * 
-**/
+ */
 
 class BDSPhotonCounter 
 {

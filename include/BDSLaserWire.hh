@@ -17,7 +17,7 @@ public:
 	       G4double aLength,
 	       G4double aWavelength,
 	       G4ThreeVector aDirection);
-  ~BDSLaserWire();
+  virtual ~BDSLaserWire();
 
   inline void SetLaserDirection(G4ThreeVector aDirection);
   inline G4ThreeVector GetLaserDirection();

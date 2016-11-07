@@ -15,8 +15,8 @@ typedef BDSHistogram1D BDSHistogram;
 /**
  * @brief a 1D histogram class
  * 
- * @author Laurie Nevay 
-*/
+ * @author Laurie Nevay
+ */
 
 class BDSHistogram1D
 {

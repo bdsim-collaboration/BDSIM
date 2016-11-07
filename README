@@ -102,6 +102,7 @@ comparator/      : tool for comparison of results
 configuration/   : software version information for compilation
 depend/          : build environment
 examples/        : sample lattices
+include/         : header files
 manual/          : documentation
 parser/          : gmad parser
 include/         : header files

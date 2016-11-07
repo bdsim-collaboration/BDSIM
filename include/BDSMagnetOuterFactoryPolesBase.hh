@@ -50,7 +50,6 @@ public:
 						G4double     length,            // length [mm]
 						BDSBeamPipe* beamPipe,          // beampipe
 						G4double     outerDiameter,     // full width
-						G4double     containerDiameter, // full width to make AccComp contianer
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord

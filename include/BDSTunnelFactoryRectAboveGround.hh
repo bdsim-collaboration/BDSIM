@@ -10,13 +10,12 @@
 class BDSTunnelSection;
 
 /**
- * @brief Factory for rectangular tunnel segments above ground - ie there
- * is no soil. Builds tunnel, floor (optional) and concrete slab that it
- * all sits on.
+ * @brief Factory for rectangular tunnel segments above ground.
  * 
- * singleton pattern
+ * There is no soil. Builds tunnel, floor (optional) and concrete 
+ * slab that it all sits on. Singleton pattern
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTunnelFactoryRectAboveGround: public BDSTunnelFactoryBase

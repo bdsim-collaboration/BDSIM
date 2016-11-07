@@ -1,0 +1,5 @@
+include 10_UserFile_gz.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=10;

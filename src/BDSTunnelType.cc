@@ -27,17 +27,21 @@ BDSTunnelType BDS::DetermineTunnelType(G4String tunnelType)
   types["rectaboveground"] = BDSTunnelType::rectaboveground;
 
   tunnelType.toLower();
-  
-  if ( types.find(tunnelType) == types.end() )
+
+  auto result = types.find(tunnelType);
+  if (result == types.end() )
     {
       // it's not a valid key
       G4cerr << __METHOD_NAME__ << " " << tunnelType << " is not a valid tunnel type" << G4endl;
+
+      G4cout << "Available tunnel types are:" << G4endl;
+      for (auto it : types)
+	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
-
-  BDSTunnelType returnValue = types[tunnelType];
+  
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined tunnel type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << " determined tunnel type to be " << result->second << G4endl;
 #endif
-  return returnValue;
+  return result->second;
 }

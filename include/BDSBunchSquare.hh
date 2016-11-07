@@ -12,7 +12,7 @@ namespace CLHEP {
  * @brief A bunch distribution that produces an uncorrelated uniform
  * random distribution within a square in phase space.
  * 
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchSquare: public BDSBunchInterface

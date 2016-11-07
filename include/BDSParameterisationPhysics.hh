@@ -8,7 +8,7 @@ class BDSParameterisationPhysics: public G4VPhysicsConstructor
 {
 public:
   BDSParameterisationPhysics();
-  ~BDSParameterisationPhysics();
+  virtual ~BDSParameterisationPhysics();
   void ConstructProcess();
   void ConstructParticle();
   

@@ -95,10 +95,11 @@ The two images below show the direction of bending for positive and negative ang
 .. |sbendneg| image:: dev_figures/sbend_negative_angle.png
 			     :width: 83%
 
-+-+-+------------------------+----------------------------+
-| | | Positive bending angle |  Negative bending angle    |
-| | |      |sbendpos|        |         |sbendneg|         |
-+-+-+------------------------+----------------------------+
++------------------------+----------------------------+
+| Positive bending angle |  Negative bending angle    |
+|      |sbendpos|        |         |sbendneg|         |
++------------------------+----------------------------+
+
 
 Angles of Rectangular Bend Faces
 --------------------------------
@@ -116,6 +117,7 @@ segments, the result would be similar to the sequence shown in the figure below.
 	   :align: center
 
 	   An example sequence of rbend magnets (without pole face angles).
+
 	  
 To split an rbend into multiple segments to create a straight final magnet would require an indefinite look ahead
 (beyond the current one element look ahead), to determine the total length and angle. This would then be followed
@@ -144,6 +146,7 @@ transparent to highlight the changes in the face angles.
        Reference system for an sbend with pole face rotation, with screenshot partially showing
        an example sbend and the change in inputface and outputface angles along the magnet.
 
+
 When there is no pole face angle specified, each sbend segment will have the same input and output angle of 0.5 times the
 total bending angle, divided by the number of sbends. With a finite pole face angle(s), the input and output face angle of
 each segment increases or decreases as appropriate from the first wedge (with the user specified e1) until the central wedge
@@ -165,10 +168,11 @@ Therefore the input and output faces have to be increased/decreased differently.
 .. |overlapcheck| image:: dev_figures/poleface_notation_sbend_devel_prob2.pdf
 			     :width: 75%
 
-+-+-+------------------------++----------------------------+
-| | |    Element Overlap     ||    Element Overlap Check   |
-| | |       |overlap|        ||       |overlapcheck|       |
-+-+-+------------------------++----------------------------+
++------------------------+----------------------------+
+|    Element Overlap     |    Element Overlap Check   |
+|       |overlap|        |       |overlapcheck|       |
++------------------------+----------------------------+
+
 
 In certain circumstances, the situation may occur where the angles of both input and output face angles are such so that
 they cause the faces to intersect within the magnet radius. For any segment that is created, the radial distance where the

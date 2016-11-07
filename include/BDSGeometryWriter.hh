@@ -9,7 +9,7 @@ class G4VPhysicalVolume;
  * @brief A class for writing fully constructed geometry from BDSIM
  * out to other formats.
  * 
- * @author Laurie Nevay <Laurie.Nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSGeometryWriter

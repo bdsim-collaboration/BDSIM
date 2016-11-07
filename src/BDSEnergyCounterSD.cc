@@ -36,7 +36,6 @@ BDSEnergyCounterSD::BDSEnergyCounterSD(G4String name):
   y(0.0),
   z(0.0),
   stepLength(0.0),
-  precisionRegion(false),
   ptype(0),
   trackID(-1),
   parentID(-1),
@@ -117,7 +116,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
       G4double sCentre = theInfo->GetSPos();
       sAfter  = sCentre + posafterlocal.z();
       sBefore = sCentre + posbeforelocal.z();
-      precisionRegion = theInfo->GetPrecisionRegion();
       beamlineIndex   = theInfo->GetBeamlineIndex();
     }
   else
@@ -131,7 +129,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 	{G4cerr << "Unkown" << G4endl;}
       sAfter  = -1000; // unphysical default value to allow easy identification in output
       sBefore = -1000;
-      precisionRegion = false;
     }
   
   G4double sHit = sBefore + randDist*(sAfter - sBefore);
@@ -169,7 +166,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
                                                        trackID,
                                                        parentID,
                                                        weight,
-                                                       precisionRegion,
                                                        turnstaken,
                                                        eventnumber,
                                                        stepLength,
@@ -223,7 +219,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
     {
       sAfter  = theInfo->GetSPos() + z; 
       sBefore = theInfo->GetSPos() + z; // no pre/post step for spot
-      precisionRegion = theInfo->GetPrecisionRegion();
     }
   else
     {
@@ -231,7 +226,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4GFlashSpot* aSpot, G4TouchableHistory*)
       G4cerr << "No volume info for " << currentVolume << G4endl;
       sAfter  = -1000; // unphysical default value to allow easy identification in output
       sBefore = -1000;
-      precisionRegion = false;
     }
 
   G4double sHit = sBefore; // both before and after the same here.

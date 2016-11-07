@@ -4,33 +4,29 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
+#include "G4LogicalVolume.hh"
+#include "G4Tubs.hh"
+#include "G4VSolid.hh"
 
-class G4FieldManager;
-class G4ChordFinder;
-class G4ElectroMagneticField;
-class G4EqMagElectricField;
-class G4LogicalVolume;
-class G4MagInt_Driver;
-class G4MagIntegratorStepper;
+class BDSCavityInfo;
+class BDSFieldInfo;
 class G4Material;
 class G4VSolid;
 
-class BDSCavityInfo;
-
-/** 
- * @brief Cavity class
- *  
+/**
+ * @brief Base class for cavities.
+ * 
  * @author Stuart Walker
  */
+
 class BDSCavity: public BDSAcceleratorComponent
 {
 public:
-  BDSCavity(G4String       name,
-	    G4double       length,
-	    G4double       fieldAmplitude,
-	    BDSCavityInfo* cavityInfoIn);
+  BDSCavity(G4String      name,
+	    G4double      length,
+	    BDSFieldInfo* vacuumField);
 
-  ~BDSCavity();
+  virtual ~BDSCavity();
 
 protected:
   BDSCavity();
@@ -44,13 +40,14 @@ protected:
   /// Creates field objects - doesn't nothing by default and derived classes can override.
   virtual void BuildField();
 
-  /// Attach the created field to the vacuum logical volume - only if field exists. Does
-  /// nothing by default as no field by default.
-  virtual void AttachField();
+  /// Initialises physical volumes.
+  void PlaceComponents();
 
-  void PlaceComponents();    ///<initializes physical volumes
-  void BuildEllipticalCavityGeometry();  ///<Builds the geometry and the vacuum of this shape.
-  void BuildPillBoxCavityGeometry();   ///<Builds the pillbox geometry and the vacuum to go indoors.
+  /// Builds the geometry and the vacuum of this shape.
+  void BuildEllipticalCavityGeometry(); 
+
+  /// Builds the pillbox geometry and the vacuum to go indoors.
+  void BuildPillBoxCavityGeometry(); 
   
   //Solids  
   G4VSolid* cavitySolid = nullptr; ///<Set by e.g BuildEllipticalCavityGeometry
@@ -60,20 +57,15 @@ protected:
   G4LogicalVolume* cavityLV = nullptr; ///<Set at same time as cavitySolid
   G4LogicalVolume* vacuumLV = nullptr; ///<Set at same time as vacuumSolid
  
-  G4double cavityRadius; ///<largest value of r from z.
-  G4double irisRadius;   ///<radius of the iris (aperture).
-  G4double thickness;    ///<thickness.  Constant thickness.  Any deviation is an artifact.
-  
-  G4int nvar = 8; ///<to integrate over position, momentum, energy and time (8)
-  
-  G4ElectroMagneticField* itsField = nullptr;    ///<field object
-  G4FieldManager* itsFieldManager = nullptr;    ///<field manager
-  G4MagIntegratorStepper* itsStepper = nullptr; ///<stepper
-  G4ChordFinder* itsChordFinder = nullptr;      ///<chord finder
-  G4MagInt_Driver* itsIntgrDriver = nullptr;  ///<Provides a driver that talks to the Integrator Stepper, and insures that 
-  
+  G4double cavityRadius; ///< Largest value of r from z.
+  G4double irisRadius;   ///< Radius of the iris (aperture).
+  G4double thickness;    ///< Thickness. Constant thickness. Any deviation is an artifact.
 
-  G4double       fieldAmplitude;
+  /// Field information - also includes cavity info as cavity info contains both
+  /// field information and geometrical information.
+  BDSFieldInfo* vacuumField = nullptr;
+
+  /// Convenience shortcut to cavity information inside field information object.
   BDSCavityInfo* cavityInfo = nullptr;
   
 };

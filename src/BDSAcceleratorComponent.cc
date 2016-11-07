@@ -2,6 +2,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSTunnelInfo.hh"
@@ -25,16 +26,15 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
 						 G4double         arcLengthIn,
 						 G4double         angleIn,
 						 G4String         typeIn,
-						 G4bool           precisionRegionIn,
 						 BDSBeamPipeInfo* beamPipeInfoIn,
 						 G4ThreeVector    inputFaceNormalIn,
-						 G4ThreeVector    outputFaceNormalIn):
+						 G4ThreeVector    outputFaceNormalIn,
+						 BDSFieldInfo*    fieldInfoIn):
   BDSGeometryComponent(nullptr,nullptr),
   name(nameIn),
   arcLength(arcLengthIn),
   type(typeIn),
   angle(angleIn),
-  precisionRegion(precisionRegionIn),
   beamPipeInfo(beamPipeInfoIn),
   acceleratorVacuumLV(nullptr),
   endPieceBefore(nullptr),
@@ -42,6 +42,7 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   copyNumber(-1), // -1 initialisation since it will be incremented when placed
   inputFaceNormal(inputFaceNormalIn),
   outputFaceNormal(outputFaceNormalIn),
+  fieldInfo(fieldInfoIn),
   readOutRadius(0)
 {
 #ifdef BDSDEBUG
@@ -109,8 +110,8 @@ void BDSAcceleratorComponent::Build()
     {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
-void BDSAcceleratorComponent::PrepareField(G4VPhysicalVolume*)
-{//do nothing by default
-  return;
+void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)
+{
+  delete fieldInfo; // clear up existing definition if there is one
+  fieldInfo = fieldInfoIn;
 }
-

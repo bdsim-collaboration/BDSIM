@@ -29,7 +29,7 @@ typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::const_iterator BDS
  * volumes. This can be revisited and simplified if we force / require that every
  * element has a read out volume.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSPhysicalVolumeInfoRegistry

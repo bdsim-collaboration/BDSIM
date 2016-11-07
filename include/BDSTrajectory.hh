@@ -14,14 +14,6 @@ class G4VTrajectoryPoint;
 
 typedef std::vector<BDSTrajectoryPoint*>  BDSTrajectoryPointsContainer;
 
-/**
- * @brief Trajectory information from track including last scatter etc.
- * 
- * BDSTrajectory stores BDSTrajectoryPoints
- *
- * @author S. Boogert
- */
-
 class BDSTrajectory; // forward declaration so namespaced method can be at top
 
 namespace BDS
@@ -29,6 +21,14 @@ namespace BDS
   /// Search the trajectory container for the primary trajectory.
   BDSTrajectory* GetPrimaryTrajectory(G4TrajectoryContainer* trajCon);
 }
+
+/**
+ * @brief Trajectory information from track including last scatter etc.
+ * 
+ * BDSTrajectory stores BDSTrajectoryPoints
+ *
+ * @author S. Boogert
+ */
 
 class BDSTrajectory: public G4Trajectory
 {

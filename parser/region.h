@@ -21,7 +21,7 @@ namespace GMAD
     double   prodCutPhotons;
     double   prodCutElectrons;
     double   prodCutPositrons;
-    double   prodCutHadrons;
+    double   prodCutProtons;
 
     /// constructor
     Region();

@@ -12,7 +12,7 @@ beam,  particle="e-",
 
 myPipe1 : drift, l=0.01; 
 
-mainCol: rcol, l=0.05*10, xsize=0, ysize=0, material="copper", precisionRegion=0, outerDiameter=0.05*m;
+mainCol: rcol, l=0.05*10, xsize=0, ysize=0, material="copper", outerDiameter=0.05*m;
 
 myCol1: mainCol;
 myCol2: mainCol;

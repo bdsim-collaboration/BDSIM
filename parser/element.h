@@ -55,11 +55,22 @@ namespace GMAD
     double B; ///< magnetic field
     double e1; ///< input pole face rotation for bends
     double e2; ///< output pole face rotation for bends
+    double fint; ///< fringe field integral at the dipole entrance
+    double fintx;  ///< fringe field integral at the dipole exit
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
     double twindow; ///<thickness of window
-    double bmapZOffset; ///< offset of the field map magnet field
+    double tmount; ///<thickness of the screen mount
+    double windowScreenGap; ///< air gap between window and screen
+    double screenXSize, screenYSize;
+    double screenPSize; //Phosphor particle size in screen
+    double screenEndZ;
+    double poleStartZ;
+    double screenWidth;
+    std::list<double> layerThicknesses;
+    std::list<std::string> layerMaterials;
+    std::list<int> layerIsSampler;
     double xdir;
     double ydir;
     double zdir;
@@ -94,14 +105,16 @@ namespace GMAD
     std::string samplerType; ///< element has a sampler of this type (default "none")
     double samplerRadius; ///< radius for cylindrical sampler
     
-    bool precisionRegion; ///< precision region range cuts or not
-    std::string region; ///< region with range cuts
-      
+    std::string region;      ///< region with range cuts
+    std::string fieldOuter;  ///< Outer field.
+    std::string fieldVacuum; ///< Vacuum field.
+    std::string fieldAll;    ///< Field for everything.
+    
     std::string geometryFile;
-    std::string bmapFile;
     std::string material;
     std::string windowmaterial;
     std::string scintmaterial;
+    std::string mountmaterial;
     std::string airmaterial;
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities

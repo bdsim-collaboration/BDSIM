@@ -9,7 +9,7 @@ std::map<BDSMagnetType, std::string>* BDSMagnetType::dictionary =
   {BDSMagnetType::decapole,        "decapole"},
   {BDSMagnetType::hkicker,         "hkick"},
   {BDSMagnetType::vkicker,         "vkick"},
-  {BDSMagnetType::muspoiler,       "muspoiler"},
+  {BDSMagnetType::muonspoiler,     "muonspoiler"},
   {BDSMagnetType::octupole,        "octupole"},
   {BDSMagnetType::quadrupole,      "quadrupole"},
   {BDSMagnetType::sectorbend,      "sbend"},

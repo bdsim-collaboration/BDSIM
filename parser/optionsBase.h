@@ -173,12 +173,15 @@ namespace GMAD
     std::string magnetGeometryType;
     std::string outerMaterialName;
     double      outerDiameter;
+    double      thinElementLength;
 
     /// geometry debug, don't split bends into multiple segments
     bool      dontSplitSBends;
     
     bool      includeIronMagFields;
     bool      sensitiveBeamlineComponents;
+
+    bool        includeFringeFields;
 
     ///@{ default beampipe parameters
     double      beampipeThickness;
@@ -237,23 +240,16 @@ namespace GMAD
     double   thresholdCutPhotons;
     double   defaultRangeCut;
     double   prodCutPhotons;
-    double   prodCutPhotonsP;
-    double   prodCutPhotonsA;
     double   prodCutElectrons;
-    double   prodCutElectronsP;
-    double   prodCutElectronsA;
     double   prodCutPositrons;
-    double   prodCutPositronsP;
-    double   prodCutPositronsA;
     double   prodCutProtons;
-    double   prodCutProtonsP;
-    double   prodCutProtonsA;
     
     /// Biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
 
     /// Tracking related parameters
+    std::string integratorSet;
     double   lengthSafety;
     double   maximumTrackingTime; ///< maximum tracking time per volume [s]
     double   deltaChord;

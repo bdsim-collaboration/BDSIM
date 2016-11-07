@@ -5,6 +5,7 @@
 
 #include "globals.hh"           // geant4 globals / types
 #include "G4LogicalVolume.hh"
+#include "G4Transform3D.hh"
 
 #include <utility>              //for std::pair
 #include <vector>
@@ -58,6 +59,7 @@ public:
   inline G4String          GetName()   const {return containerLogicalVolume->GetName();}
   inline G4VSolid*         GetContainerSolid()         const {return containerSolid;}
   inline G4LogicalVolume*  GetContainerLogicalVolume() const {return containerLogicalVolume;}
+  inline G4Transform3D     GetPlacementTransform()     const;
   inline G4ThreeVector     GetPlacementOffset()        const {return placementOffset;}
   inline G4RotationMatrix* GetPlacementRotation()      const {return placementRotation;}
   inline BDSExtent         GetExtent()                 const {return outerExtent;}
@@ -155,10 +157,10 @@ public:
   void InheritObjects(BDSGeometryComponent* component);
 
   /// Access all logical volumes belonging to this component
-  std::vector<G4LogicalVolume*>   GetAllLogicalVolumes() const;
+  std::vector<G4LogicalVolume*> GetAllLogicalVolumes() const;
   
   /// Access all sensitive volumes belonging to this component
-  virtual std::vector<G4LogicalVolume*>   GetAllSensitiveVolumes() const;
+  virtual std::vector<G4LogicalVolume*> GetAllSensitiveVolumes() const;
 
   /// Attach a sensitive detector class to all registered sensitive volumes in this component.
   void SetSensitiveDetector(G4VSensitiveDetector* sd);
@@ -206,5 +208,13 @@ protected:
   /// piece of geometry uses this class.
   G4RotationMatrix*             placementRotation;
 };
+
+inline G4Transform3D BDSGeometryComponent::GetPlacementTransform() const
+{
+  if (!placementRotation)
+  {return G4Transform3D(G4RotationMatrix(), placementOffset);}
+  else
+  {return G4Transform3D(*placementRotation, placementOffset);}
+}
 
 #endif

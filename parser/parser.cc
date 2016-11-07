@@ -163,7 +163,9 @@ void Parser::Initialise()
   add_var("KeV",1e-6,reserved); // for compatibility
   add_var("eV" ,1e-9,reserved);
 
-  add_var("MV",1.0,reserved);
+  add_var("V" ,1.0, reserved);
+  add_var("kV",1e+3,reserved);
+  add_var("MV",1e+6,reserved);
 
   add_var("Tesla",1.0,reserved);
 
@@ -646,6 +648,18 @@ namespace GMAD {
   std::vector<Region>& Parser::GetList<Region>(){return region_list;}
 
   template<>
+  Field& Parser::GetGlobal(){return field;}
+
+  template<>
+  std::vector<Field>& Parser::GetList<Field>(){return field_list;}
+
+  template<>
+  Query& Parser::GetGlobal(){return query;}
+  
+  template<>
+  std::vector<Query>& Parser::GetList<Query>(){return query_list;}
+  
+  template<>
   Atom& Parser::GetGlobal(){return atom;}
 
   template<>
@@ -669,6 +683,12 @@ namespace GMAD {
   template<>
   std::vector<CavityModel>& Parser::GetList<CavityModel>(){return cavitymodel_list;}
 
+  template<>
+  Placement& Parser::GetGlobal(){return placement;}
+
+  template<>
+  std::vector<Placement>& Parser::GetList<Placement>() {return placement_list;}
+  
   template<>
   PhysicsBiasing& Parser::GetGlobal(){return xsecbias;}
 

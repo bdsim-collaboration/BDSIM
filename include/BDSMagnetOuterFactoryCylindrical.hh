@@ -13,7 +13,7 @@
 /**
  * @brief Factory that produces cylindrical magnet geometry.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryCylindrical: public BDSMagnetOuterFactoryBase
@@ -21,7 +21,7 @@ class BDSMagnetOuterFactoryCylindrical: public BDSMagnetOuterFactoryBase
 public:
   static BDSMagnetOuterFactoryCylindrical* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryCylindrical();
+  virtual ~BDSMagnetOuterFactoryCylindrical();
   
   /// sector bend outer volume
   virtual BDSMagnetOuter* CreateSectorBend(G4String     name,            // name
@@ -40,7 +40,6 @@ public:
 						G4double     length,            // length
 						BDSBeamPipe* beamPipe,          // beampipe
 						G4double     outerDiameter,     // full width
-						G4double     containerDiameter, // full width to make AccComp contianer
 						G4double     containerLength,   // full length to make AccComp container
 						G4double     angleIn,           // input face angle w.r.t. chord
 						G4double     angleOut,          // output face angle w.r.t. chord

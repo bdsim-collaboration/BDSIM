@@ -1,0 +1,15 @@
+uniformfield: field, type="poisson",
+		     scaling = 3.0,
+		     integrator = "g4classicalrk4",
+		     magneticFile = "poisson2d:/Path/To/File.TXT",
+		     magneticInterpolator = "nearest2D",
+		     electricFile = "poisson2d:/Another/File.TX",
+		     electricInterpolator = "linear2D",
+		     x=1,y=0.3,z=3.5,
+		     phi=0,
+		     theta=0,
+		     psi=pi,
+		     axisX=0, axisY=0, axisZ=0, angle=0,
+		     axisAngle=0;
+
+d1: drift, l=0.5*m, aper1=4*cm, fieldAll="uniformfield";

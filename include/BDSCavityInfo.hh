@@ -7,14 +7,16 @@
 class G4Material;
 
 /**
- * @brief Holder struct of all Geometrical (only) information required to
- * create an RF cavity. Geant4 units are assumed by classes that use instances
- * of this class.
+ * @brief Holder for all Geometrical information required to create an RF cavity. 
  * 
+ * Geant4 units are assumed by classes that use instances of this class.
  * This reduces the number of argument to constructors 
  * plus aggregates common tasks in the component factory.
+ *
+ * Note, compiler provided copy constructor is sufficient as only pointers
+ * to materials owned by BDSMaterials are kept - shallow copy is required then.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSCavityInfo
@@ -24,6 +26,7 @@ public:
   BDSCavityInfo(BDSCavityType cavityTypeIn,
 		G4Material*   materialIn,
 		G4Material*   vacuumMaterialIn,
+		G4double      eFieldIn,
 		G4double      frequencyIn,
 		G4double      phaseIn,
 		G4double      irisRadiusIn,
@@ -45,6 +48,9 @@ public:
 
   /// Vacuum Material
   G4Material* vacuumMaterial;
+
+  /// Peak Electric Field
+  G4double eField;
 
   /// Frequency in MHz
   G4double frequency;

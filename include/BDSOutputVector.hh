@@ -23,7 +23,6 @@ class BDSTrajectoryPoint;
 class BDSOutputVector: public BDSOutputBase
 {
 public: 
-
   BDSOutputVector();
   virtual ~BDSOutputVector();
 

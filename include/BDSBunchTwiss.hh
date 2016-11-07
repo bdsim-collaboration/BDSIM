@@ -15,8 +15,8 @@
 
 class BDSBunchTwiss: public BDSBunchInterface
 {
-private : 
-  /// @{Twiss parameters
+private: 
+  /// @{ Twiss parameters
   G4double betaX;
   G4double betaY;
   G4double alphaX;

@@ -42,11 +42,23 @@ Parameters::Parameters() {
   setMap["B"]  = false;
   setMap["e1"] = false;
   setMap["e2"] = false;
+  setMap["fint"] = false;
+  setMap["fintx"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;
   setMap["twindow"] = false;
-  setMap["bmapZOffset"]=false;
+  setMap["tmount"] = false;
+  setMap["windowScreenGap"] = false;
+  setMap["screenXSize"] = false;
+  setMap["screenYSize"] = false;
+  setMap["screenPSize"] = false;
+  setMap["screenEndZ"] = false;
+  setMap["poleStartZ"] = false;
+  setMap["screenWidth"] = false;
+  setMap["layerThicknesses"] = false;
+  setMap["layerMaterials"] = false;
+  setMap["layerIsSampler"] = false;
   setMap["xdir"] = false;
   setMap["ydir"] = false;
   setMap["zdir"] = false; 
@@ -61,14 +73,16 @@ Parameters::Parameters() {
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
   setMap["r"] = false; // for samplerRadius
-  setMap["precisionRegion"] = false;
   setMap["region"] = false;
+  setMap["fieldOuter"]  = false;
+  setMap["fieldVacuum"] = false;
+  setMap["fieldAll"]    = false;
 
   setMap["geometry"] = false; // for geometryFile
-  setMap["bmap"] = false; // for bmapFile
   setMap["material"] = false;
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
+  setMap["mountmaterial"] = false;
   setMap["airmaterial"] = false;
   setMap["spec"] = false;
   setMap["cavityModel"] = false;
@@ -83,6 +97,7 @@ Parameters::Parameters() {
 }
 
 void Parameters::flush() {
+
   Element::flush();
 
   for (auto& i : setMap)
@@ -95,7 +110,7 @@ void Parameters::inherit_properties(Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden
-  // this is used for the inheritance / newinstance mechanism
+ // this is used for the inheritance / newinstance mechanism
 
   for (auto& i : setMap)
     {
@@ -137,6 +152,18 @@ void Parameters::set_value(std::string property, Array* value)
   else if(property=="blmLocTheta") 
     {
       value->set_vector(blmLocTheta);
+    }
+  else if(property=="layerThicknesses")
+    {
+      value->set_vector(layerThicknesses);
+    }
+  else if(property=="layerMaterials")
+    {
+      value->set_vector(layerMaterials);
+    }
+  else if(property=="layerIsSampler")
+    {
+      value->set_vector(layerIsSampler);
     }
   else
     {

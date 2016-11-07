@@ -28,6 +28,7 @@
 #include "BDSColours.hh"
 #include "BDSDetectorConstruction.hh"   
 #include "BDSEventAction.hh"
+#include "BDSFieldLoader.hh"
 #include "BDSGeometryWriter.hh"
 #include "BDSMaterials.hh"
 #include "BDSModularPhysicsList.hh"
@@ -299,6 +300,7 @@ int main(int argc,char** argv)
 
   // instances not used in this file, but no other good location for deletion
   delete BDSColours::Instance();
+  delete BDSFieldLoader::Instance();
   delete BDSSDManager::Instance();
   delete BDSSamplerRegistry::Instance();
   
