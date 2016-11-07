@@ -38,7 +38,7 @@ std::string GMAD::typestr(ElementType type) {
   case ElementType::_RCOL : 
     return "rcol";
   case ElementType::_SHIELD:
-    return "sheild";
+    return "shield";
   case ElementType::_VKICK :
     return "vkick";
   case ElementType::_HKICK :

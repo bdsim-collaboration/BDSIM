@@ -8,7 +8,7 @@ sh1 : shield, l=0.2*m,
 	      beampipeThickness=1*mm,
 	      xsize=7*cm,
 	      ysize=7*cm,
-	      outerMaterial="concrete",
+	      material="concrete",
 	      beampipeMaterial="stainlesssteel";
 
 lat : line = (d1,sh1,d1);
