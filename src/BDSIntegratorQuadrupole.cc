@@ -230,7 +230,13 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
 
   // ok it's forwards pointing - proceed with our paraxial treatment
   if(std::abs(kappa) < 1e-9) //kappa is small - no error needed for paraxial treatment
-    {AdvanceHelix(yInput,dydx,h,yOut,yErr);}
+    {
+      AdvanceHelix(yInput,dydx,h,yOut,yErr);
+      for(G4int i = 0; i < nVariables; i++)
+      {
+        yErr[i] = 0;
+      }
+    }
   else
     {
       // Compute errors by making two half steps
