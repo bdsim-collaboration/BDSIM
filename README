@@ -9,8 +9,6 @@ The official web site is:
 The official Geant4 web site is:
 	http://geant4.web.cern.ch
 
-Written by G.A. Blair
-
 Currently maintained and developed by (alphabetically):
 
 Andrey Abramov        <Andrey.Abramov.2012@live.rhul.ac.uk>
@@ -24,8 +22,10 @@ Will Shields          <william.shields.2010@live.rhul.ac.uk>
 Jochem Snuverink      <jochem.snuverink@psi.ch>
 Stuart Walker         <Stuart.Walker@live.rhul.ac.uk>
 
+Written by G.A. Blair
+
 History
-==================
+=======
 
 v0.94: 14.09.16
 v0.93: 24.08.16
@@ -48,7 +48,7 @@ v0.1 : 15.11.05
 Beta : 05.05.05
 
 Installation
-===================
+============
 
 System requirements:
 
@@ -58,14 +58,14 @@ tested on:
     compiler: gcc 4.9, clang
    
 mandatory:
-    Geant versions Geant4.10 or greater
+    Geant versions Geant4.10 or greater (10.2.p02 recommended)
 
     CLHEP (recommended version 2.1.3.1 or greater)
 
     ROOT 5.x, 6.x
 
 optional: 
-    OpenGL (Mesa)
+    OpenGL
 
 to compile, see http://www.pp.rhul.ac.uk/bdsim/manual/installation.html
 
@@ -76,7 +76,7 @@ to compile, see http://www.pp.rhul.ac.uk/bdsim/manual/installation.html
    %  make install
 
 Getting Started
-===================
+===============
 
 to run:
     bdsim [options]
@@ -93,14 +93,19 @@ Some input examples are available in ./examples/ directory.
 For more details consult documentation on http://www.pp.rhul.ac.uk/bdsim/manual/
 
 Directories
-===================
+===========
 
-parser/          : gmad parser
+analysis/        : analysis tools
+cmake/           : cmake configuration files
+comparator/      : tool for comparison of results
+configuration/   : software version information for compilation
+depend/          : build environment
 examples/        : sample lattices
 manual/          : documentation
+parser/          : gmad parser
 include/         : header files
 src/             : source files
-cmake/           : cmake configuration files
+src-external/    : third party source code
 test/            : various test libraries
 utils/           : various "useful" scripts
 vis/             : default visualisation files
