@@ -111,7 +111,6 @@ namespace GMAD
     std::string fieldAll;    ///< Field for everything.
     
     std::string geometryFile;
-    std::string bmapFile;
     std::string material;
     std::string windowmaterial;
     std::string scintmaterial;

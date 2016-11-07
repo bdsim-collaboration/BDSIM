@@ -112,7 +112,7 @@ void Element::PublishMembers()
   publish("degraderOffset",&Element::degraderOffset);
 
   publish("geometry",&Element::geometryFile);
-  publish("bmap",&Element::bmapFile);
+  publish("bmap",    &Element::fieldAll);
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
@@ -200,7 +200,7 @@ void Element::print(int & ident)const{
     
   case ElementType::_ELEMENT:
     printf("\ngeometry file : %s\n",geometryFile.c_str());
-    printf("B map file : %s\n",bmapFile.c_str());
+    printf("Field object : %s\n", fieldAll.c_str());
     break;
     
   case ElementType::_SCREEN:
@@ -313,7 +313,6 @@ void Element::flush() {
   fieldAll    = "";
 
   geometryFile ="";
-  bmapFile = "";
   material="";  
   windowmaterial = "vacuum";
   mountmaterial="";

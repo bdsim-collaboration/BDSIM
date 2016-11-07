@@ -755,12 +755,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
 	 << " precision region " << element->region
 	 << G4endl;
 #endif
-
+  
   return (new BDSElement(element->name,
 			 element->l * CLHEP::m,
 			 element->outerDiameter * CLHEP::m,
 			 element->geometryFile,
-			 element->bmapFile));
+			 element->fieldAll));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
@@ -1059,7 +1059,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 	 << G4endl;
 #endif
   BDSFieldInfo* awakeField = nullptr;
-  if (element->bmapFile.empty())
+  if (element->fieldAll.empty())
     {
       BDSMagnetStrength* awakeStrength = new BDSMagnetStrength(); 
       (*awakeStrength)["field"] = element->B;
@@ -1070,16 +1070,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 				    awakeStrength);
     }
   else
-    {
-      awakeField = new BDSFieldInfo(BDSFieldType::threed,
-				    brho,
-				    BDSIntegratorType::g4nystromrk4,
-				    nullptr,
-				    true,
-				    G4Transform3D(),
-				    nullptr,
-				    element->bmapFile);
-    }
+    {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
   return (new BDSAwakeSpectrometer(element->name,
 				   element->l*1e3,
 				   awakeField,

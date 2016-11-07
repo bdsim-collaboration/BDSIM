@@ -79,7 +79,6 @@ Parameters::Parameters() {
   setMap["fieldAll"]    = false;
 
   setMap["geometry"] = false; // for geometryFile
-  setMap["bmap"] = false; // for bmapFile
   setMap["material"] = false;
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
