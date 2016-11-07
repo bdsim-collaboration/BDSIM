@@ -23,11 +23,11 @@ BDSElement::BDSElement(G4String      name,
 		       G4double      length,
 		       G4double      outerDiameterIn,
 		       G4String      geometry,
-		       G4String      bmap):
+		       G4String      fieldNameIn):
   BDSAcceleratorComponent(name, length, 0, "element"),
   outerDiameter(outerDiameterIn),
   geometryFileName(geometry),
-  bMapFileName(bmap)
+  fieldName(fieldNameIn)
 {;}
 
 void BDSElement::BuildContainerLogicalVolume()
@@ -72,7 +72,8 @@ void BDSElement::BuildContainerLogicalVolume()
     }
 
   // Get the field definition from the parser
-  auto fieldInfo = BDSFieldFactory::Instance()->GetDefinition(bMapFileName);
+  // Note, the field factory manages the deletion of this info instance.
+  auto fieldInfo = BDSFieldFactory::Instance()->GetDefinition(fieldName);
 
   // In case there was no field, the info might but nullptr - check
   if (fieldInfo)
@@ -82,6 +83,3 @@ void BDSElement::BuildContainerLogicalVolume()
 								true);
     }
 }
-
-BDSElement::~BDSElement()
-{;}

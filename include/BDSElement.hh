@@ -21,17 +21,17 @@ public:
 	     G4double length,
 	     G4double outerDiameterIn,
 	     G4String geometry,
-	     G4String bmap);
-  virtual ~BDSElement();
+	     G4String fieldNameIn = "");
+  virtual ~BDSElement(){;}
    
 private:
-  /// Required implementation from BDSAcceleratorComponent that builds the container volume.
-  /// Load the geometry and place the components inside the container logical volume.
+  /// This does the full construction.  Loads the external geometry and field if there is
+  /// one.
   virtual void BuildContainerLogicalVolume();
 
   G4double outerDiameter;
   G4String geometryFileName;
-  G4String bMapFileName;
+  G4String fieldName;
 };
 
 #endif
