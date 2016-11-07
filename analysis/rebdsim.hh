@@ -1,5 +1,5 @@
-#ifndef REBDISM_H
-#define REBDISM_H
+#ifndef REBDSIM_H
+#define REBDSIM_H
 
 #include <string>
 
