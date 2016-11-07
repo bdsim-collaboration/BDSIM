@@ -1,11 +1,13 @@
 #include "BDSAnalysisManager.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
+#include "BDSEnergyCounterSD.hh"
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSDManager.hh"
 #include "BDSTrajectory.hh"
 
@@ -21,9 +23,6 @@
 #include <algorithm>
 #include <chrono>
 #include <ctime>
-#include <list>
-#include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -34,7 +33,6 @@ extern BDSOutputBase* bdsOutput;       // output interface
 G4bool FireLaserCompton;  // bool to ensure that Laserwire can only occur once in an event
 
 BDSEventAction::BDSEventAction():
-  analMan(nullptr),
   samplerCollID_plane(-1),
   samplerCollID_cylin(-1),
   energyCounterCollID(-1),
@@ -51,13 +49,7 @@ BDSEventAction::BDSEventAction():
   isBatch            = BDSGlobalConstants::Instance()->Batch();
 
   if(isBatch)
-    {
-      G4int nGenerate = BDSGlobalConstants::Instance()->NGenerate();
-      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
-      printModulo = (G4int)ceil(nGenerate * fraction);
-      if (printModulo < 0)
-	{printModulo = 1;}
-    }
+    {printModulo = BDSGlobalConstants::Instance()->PrintModulo();}
   else
     {printModulo=1;}
 }
@@ -72,18 +64,6 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
 #endif
   // update reference to event info
   eventInfo = static_cast<BDSEventInfo*>(evt->GetUserInformation());
-
-  // get the current time
-  startTime = time(nullptr);
-  eventInfo->SetStartTime(startTime);
-  eventInfo->SetStopTime(startTime); // initialise to duration of 0
-
-  milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-  starts = (G4double)ms.count()/1000.0;
-
-  // get pointer to analysis manager
-  if (!analMan)
-    {analMan = BDSAnalysisManager::Instance();}
 
   // number feedback
   G4int event_number = evt->GetEventID();
@@ -101,13 +81,16 @@ void BDSEventAction::BeginOfEventAction(const G4Event* evt)
       samplerCollID_cylin       = g4SDMan->GetCollectionID(bdsSDMan->GetSamplerCylinderSD()->GetName());
       energyCounterCollID       = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterSD()->GetName());
       tunnelEnergyCounterCollID = g4SDMan->GetCollectionID(bdsSDMan->GetEnergyCounterTunnelSD()->GetName());
-      //lWCalorimeterCollID = G4SDManager::GetSDMpointer()->GetCollectionID("LWCalorimeterCollection");
     }
   FireLaserCompton=true;
 
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "begin of event action done" << G4endl;
-#endif
+  // get the current time - last thing before we hand off to geant4
+  startTime = time(nullptr);
+  eventInfo->SetStartTime(startTime);
+  eventInfo->SetStopTime(startTime); // initialise to duration of 0
+
+  milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+  starts = (G4double)ms.count()/1000.0;
 }
 
 void BDSEventAction::EndOfEventAction(const G4Event* evt)
@@ -159,14 +142,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   if(SampHC)
     {bdsOutput->WriteHits(SampHC);}
 
-  // LASERWIRE - TO FIX / REIMPLEMENT
-  // remember to uncomment LWCalHC above if using this
-  // BDSLWCalorimeterHitsCollection* LWCalHC=nullptr;
-  // if(LWCalorimeterCollID >= 0)
-  //   LWCalHC=(BDSLWCalorimeterHitsCollection*)(evt->GetHCofThisEvent()->GetHC(LWCalorimeterCollID));
-  // if (LWCalHC)
-  //    {bdsOutput->WriteHits(SampHC);}
-
   // energy deposition collections - eloss, tunnel hits
   BDSEnergyCounterHitsCollection* energyCounterHits       = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(energyCounterCollID));
   BDSEnergyCounterHitsCollection* tunnelEnergyCounterHits = (BDSEnergyCounterHitsCollection*)(HCE->GetHC(tunnelEnergyCounterCollID));
@@ -175,10 +150,10 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filling histograms & writing energy loss hits" << G4endl;
 #endif
-  BDSAnalysisManager* analMan = BDSAnalysisManager::Instance();
   //if we have energy deposition hits, write them
   if(energyCounterHits)
     {
+      BDSAnalysisManager* analMan     = BDSAnalysisManager::Instance();
       BDSHistogram1D* generalELoss    = analMan->GetHistogram(2);
       BDSHistogram1D* perElementELoss = analMan->GetHistogram(5);
 
@@ -241,7 +216,6 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     {
       std::vector<BDSTrajectory*> interestingTrajectories;
       
-      G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
       TrajectoryVector* trajVec = trajCont->GetVector();
       
 #ifdef BDSDEBUG

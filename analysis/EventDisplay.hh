@@ -20,7 +20,8 @@ public:
   static EventDisplay* Instance();
 
   /// Singleton accessor / constructor w.r.t. a file.
-  static EventDisplay* Instance(TString geoFileName);
+  static EventDisplay* Instance(TString geoFileName,
+				TString dataFileName);
 
   virtual ~EventDisplay();
 
@@ -59,12 +60,14 @@ private:
   EventDisplay();
 
   /// Supplied constructor for loading a file.
-  EventDisplay(TString geoFileNameIn);
+  EventDisplay(TString geoFileNameIn,
+	       TString dataFileNameIn);
 
   /// Load the geometry from gdml file.
   void LoadGeometry();
 
   TString geoFileName    = "";
+  TString dataFileName   = "";
 
   DataLoader *dataLoader             = nullptr;
   Event      *event                  = nullptr;

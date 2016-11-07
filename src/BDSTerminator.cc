@@ -3,6 +3,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
+#include "BDSTerminatorSD.hh"
 #include "BDSTerminatorUserLimits.hh"
 
 #include "G4Box.hh"

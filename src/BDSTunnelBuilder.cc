@@ -218,7 +218,7 @@ BDSBeamline* BDSTunnelBuilder::BuildTunnelSections(BDSBeamline* flatBeamline)
 	  // get unit y by calculating x unit (starting element) cross direction of mid point (unit)
 	  G4ThreeVector unitXPrevious = G4ThreeVector(1,0,0).transform(*startRot);
 	  G4ThreeVector newUnitY      = newUnitZ.cross(unitXPrevious).unit();
-	  // get unit x by calcualting y unit (starting element) cross direction of mid point (unit)
+	  // get unit x by calculating y unit (starting element) cross direction of mid point (unit)
 	  G4ThreeVector unitYPrevious = G4ThreeVector(0,1,0).transform(*startRot);
 	  G4ThreeVector newUnitX      = unitYPrevious.cross(newUnitZ).unit();
 	  

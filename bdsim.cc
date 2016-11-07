@@ -115,17 +115,11 @@ int main(int argc,char** argv)
       bdsOutput->Initialise();
       G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0, weight=1.0;
       const G4int nToGenerate = globalConstants->NGenerate();
-      G4double fraction = BDSGlobalConstants::Instance()->PrintModuloFraction();
-      G4int printModulo = (G4int)ceil(nToGenerate * fraction);
-      if (printModulo < 0)
-	{printModulo = 1;}
-      
+      const G4int printModulo = BDSGlobalConstants::Instance()->PrintModulo();
       for (G4int i = 0; i < nToGenerate; i++)
       {
 	if (i%printModulo == 0)
-	  {
-	    G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;
-	  }
+	  {G4cout << "\r Primary> " << std::fixed << i << " of " << nToGenerate << G4endl;}
         bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight);
         bdsOutput->WritePrimary(E, x0, y0, z0, xp, yp, zp, t, weight, 1, i, 1);
         bdsOutput->FillEvent();
@@ -180,22 +174,10 @@ int main(int argc,char** argv)
   
   /// Set the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
-#ifdef BDSDEBUG
-  G4cout << __FUNCTION__ << "> Default geometry tolerances: surface " 
-	 << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m " 
-	 << theGeometryTolerance->GetAngularTolerance() << " rad " 
-	 << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m" << G4endl;
-#endif
-  // This sets the tolerances for the geometry (1e-11 times this value)
-  // Note, this doesn't actually have any affect on the size of the geometry,
-  // and is only used to calculate the tolerance in geant4. This is really misleading
-  // naming on the part of geant4. There is no way to just set a tolerance directly.
-  G4double worldMaximumExtent=1000*CLHEP::m;
-  G4GeometryManager::GetInstance()->SetWorldMaximumExtent(worldMaximumExtent); 
   G4cout << __FUNCTION__ << "> Geometry Tolerances: "     << G4endl;
-  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance()/CLHEP::m << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance() << " mm"   << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Angular: " << std::setw(10) << theGeometryTolerance->GetAngularTolerance()          << " rad" << G4endl;
-  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()/CLHEP::m  << " m"   << G4endl;
+  G4cout << __FUNCTION__ << ">" << std::setw(22) << "Radial: "  << std::setw(10) << theGeometryTolerance->GetRadialTolerance()  << " mm"   << G4endl;
 
   /// Set user action classes
 #ifdef BDSDEBUG 

@@ -7,18 +7,31 @@ simple_testing(simpleMachine "--file=sm.gmad" ${OVERLAP_CHECK})
 # All output formats
 set(TESTING_ARGS --output=combined)
 simple_testing(simpleMachineCombined "--file=sm.gmad" "")
+# All root formats
+set(TESTING_ARGS --output=rootcombined)
+simple_testing(simpleMachineROOTCombined "--file=sm.gmad" "")
 # no output formats
 set(TESTING_ARGS --output=none)
 simple_testing(simpleMachineNone "--file=sm.gmad" "")
 # root (reduced) output format
 set(TESTING_ARGS --output=root)
 simple_testing(simpleMachineROOT "--file=sm.gmad" "")
+# root (reduced) output format in double precision
+set(TESTING_ARGS --output=rootdouble)
+simple_testing(simpleMachineROOTDouble "--file=sm.gmad" "")
 # root detailed output format
 set(TESTING_ARGS --output=rootdetailed)
 simple_testing(simpleMachineROOTDetailed "--file=sm.gmad" "")
+# root detailed output format in double precision
+set(TESTING_ARGS --output=rootdetaileddouble)
+simple_testing(simpleMachineROOTDetailedDouble "--file=sm.gmad" "")
 # root event output format
 set(TESTING_ARGS --output=rootevent)
 simple_testing(simpleMachineROOTEvent "--file=sm.gmad" "")
+# unknown output format
+set(TESTING_ARGS --output=abcd)
+simple_testing(simpleMachineUnknownOutputFormat "--file=sm.gmad" "")
+set_tests_properties(simpleMachineUnknownOutputFormat PROPERTIES WILL_FAIL 1)
 
 # Test other arguments
 # print help

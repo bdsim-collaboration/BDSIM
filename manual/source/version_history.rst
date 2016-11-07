@@ -1,3 +1,42 @@
+V0.95 - 2016 / 11 / 07
+======================
+
+New Features
+------------
+
+* Comparator program introduced for statistical comparison against reference results.
+* rebdsim analysis examples and tests added.
+* ROOT examples and tests added for analysis code usage in ROOT.
+* Discrete optics only program rebdsimOptics added.
+* Update clhep in AFS build to 2.3.1.0 for apple and 2.3.3.0 for RHL6.
+* Reduced compilation time.
+
+Bug Fixes
+---------
+
+* Fix geometry tolernace issue that would cause Geant4 runtime errors for
+  regular geometry for some particularly large spatial size models.
+* Fix for linker error with ZLIB and gzstream. Issues #9, #155, #158.
+* Fix nan errors in certain circumstances when caclculating optical functions.
+* Fix shadowing compilation warnings.
+* Fix geometry overlaps in rf cavity geometry. Issue #136.
+* Coverity fixes for uninitialised variables / small memory leaks. Issues #152, #156.
+* Fix potential magnet geometry errors when creating very thin components.
+* Fix negative interaction warnings due to biasing. Issue #141.
+
+General
+-------
+
+* Deprecate BDSIM Plank scattering, laserwire calorimeter, e bremsstrahlung
+  lead particle biasing.
+
+Utilities
+---------
+* pymadx v0.7
+* pybdsim v0.9
+* pymad8 v0.6
+* robdsim v0.7
+
 V0.94 - 2016 / 09 / 13
 ======================
 

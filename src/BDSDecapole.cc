@@ -10,7 +10,6 @@
 #include "BDSDecMagField.hh"
 #include "BDSDecStepper.hh"
 #include "BDSMagnet.hh"
-#include "BDSMagnetOuterInfo.hh"
 
 #include "G4Mag_UsualEqRhs.hh"
 

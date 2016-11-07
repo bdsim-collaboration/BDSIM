@@ -1387,16 +1387,6 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | whether to use synchrotron radiation processes        |
 +----------------------------------+-------------------------------------------------------+
-| srTrackPhotons                   | whether to track synchrotron radiation photons        |
-+----------------------------------+-------------------------------------------------------+
-| srLowX                           | minimum synchrotron radiation energy as a fraction of |
-|                                  | `E critical` ( 0 > `srLowX` > 1 )                     |
-+----------------------------------+-------------------------------------------------------+
-| srLowGamE                        | lowest synchrotron photon energy to track             |
-+----------------------------------+-------------------------------------------------------+
-| srMultiplicity                   | a factor multiplying the number of synchrotron        |
-|                                  | photons                                               |
-+----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | standard overall production cuts for photons          |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotonsP                  | precision production cuts for photons                 |
@@ -1427,12 +1417,6 @@ as their value.
 | eetoHadronsFe                    | the cross-section enhancement factor for the          |
 |                                  | electron-positron annihilation to hadrons process     |
 +----------------------------------+-------------------------------------------------------+
-| useEMLPB                         | whether to use electromagnetic lead particle biasing  |
-|                                  | (default = 0)                                         |
-+----------------------------------+-------------------------------------------------------+
-| LPBFraction                      | the fraction of electromagnetic process in which      |
-|                                  | lead particle biasing is used ( 0 < LPBFraction < 1)  |
-+----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
@@ -1448,7 +1432,7 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | trajCutLTR                       | radius cut for storing trajectories (maximum)         |
 +----------------------------------+-------------------------------------------------------+
-| nperfile                         | number of evens to record per output file             |
+| nperfile                         | number of events to record per output file            |
 +----------------------------------+-------------------------------------------------------+
 | nlinesIgnore                     | number of lines to ignore when reading user bunch     |
 |                                  | input files                                           |

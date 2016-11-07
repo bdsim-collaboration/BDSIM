@@ -11,7 +11,6 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
 #include "BDSDebug.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                        // geant4 globals / types
 

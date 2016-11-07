@@ -7,14 +7,11 @@
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
 
-#include "G4Box.hh"
-#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4UserLimits.hh"
-#include "G4VSolid.hh"
 
 #include <cmath>
 

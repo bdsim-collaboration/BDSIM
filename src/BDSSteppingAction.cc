@@ -49,16 +49,18 @@ void BDSSteppingAction::VerboseSteppingAction()
   if(_step->GetTrack()->GetMaterial()->GetName() !="LCVacuum")
     G4cout<<"material="<<_step->GetTrack()->GetMaterial()->GetName()<<G4endl;
 
-  G4VProcess* proc=(G4VProcess*)(_step->GetPostStepPoint()->
-				 GetProcessDefinedStep() );
+  const G4VProcess* proc = static_cast<const G4VProcess*>((_step->GetPostStepPoint()->
+					      GetProcessDefinedStep()));
 
-  if(proc)G4cout<<" post-step process="<<proc->GetProcessName()<<G4endl<<G4endl;
+  if (proc)
+    {G4cout<<" post-step process="<<proc->GetProcessName()<<G4endl<<G4endl;}
 
 
-  proc=(G4VProcess*)(_step->GetPreStepPoint()->
-		     GetProcessDefinedStep() );
+  proc = static_cast<const G4VProcess*>((_step->GetPreStepPoint()->
+				   GetProcessDefinedStep()));
 
-  if(proc)G4cout<<" pre-step process="<<proc->GetProcessName()<<G4endl<<G4endl;
+  if (proc)
+    {G4cout<<" pre-step process="<<proc->GetProcessName()<<G4endl<<G4endl;}
 
   // set precision back
   G4cout.precision(G4precision);

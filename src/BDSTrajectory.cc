@@ -23,7 +23,7 @@ BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
   BDSTrajectory*    primary = nullptr;
   for (const auto iT1 : *trajVec)
     {
-      BDSTrajectory* traj = (BDSTrajectory*)iT1;
+      BDSTrajectory* traj = static_cast<BDSTrajectory*>(iT1);
       if(traj->GetParentID() == 0)
 	{primary = traj; break;}
     }
@@ -113,7 +113,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
   // loop over trajectory backwards to find non transportation step
   for (G4int i = trajectory->GetPointEntries()-1; i >= 0; --i)
   {
-    BDSTrajectoryPoint* point = dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+    BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
     auto processType = point->GetPostProcessType();
     auto processSubType = point->GetPostProcessSubType();
 
@@ -138,13 +138,13 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
 #endif
-  return dynamic_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
+  return static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
 } 
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)
 {
   for(G4int i = 0; i < t.GetPointEntries(); i++)
-    {out << *(BDSTrajectoryPoint*)t.GetPoint(i) << G4endl;}
+    {out << *(static_cast<BDSTrajectoryPoint*>(t.GetPoint(i))) << G4endl;}
   return out;
 }
 

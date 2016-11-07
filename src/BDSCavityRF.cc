@@ -6,7 +6,6 @@
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh"
-#include "G4Material.hh"
 #include "G4FieldManager.hh"
 #include "G4MagIntegratorStepper.hh"
 #include "G4ChordFinder.hh"
