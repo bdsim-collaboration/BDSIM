@@ -4,7 +4,6 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4LogicalVolume.hh"
 
 class BDSBeamPipeInfo;
 
@@ -34,24 +33,24 @@ protected:
   /// Build a container volume for everything.
   virtual void BuildContainerLogicalVolume();
 
-  /// Do common BDSAcceleratorComponent::Build then build and place the spoiler,
+  /// Do common BDSAcceleratorComponent::Build then build and place the shield,
   /// then the beampipe if it exists.
   virtual void Build();
 
 private:
   BDSShield() = delete;
   
-  /// Build the outer spoiler geoemtry.
+  /// Build the outer shield geoemtry.
   void BuildShield();
 
   /// Build a beam pipe in the hole if required.
   void BuildBeamPipe();
   
-  G4double         outerDiameter; ///< Outer size of spoiler.
-  G4double         xAper;         ///< Inner horizontal full width of spoiler.
-  G4double         yAper;         ///< Inner vertical full width of spoiler.
+  G4double         outerDiameter; ///< Outer size of shield.
+  G4double         xAper;         ///< Inner horizontal full width of shield.
+  G4double         yAper;         ///< Inner vertical full width of shield.
   G4Material*      material;      ///< Shield material.
-  BDSBeamPipeInfo* beamPipeInfo; ///< Model for beam pipe.
+  BDSBeamPipeInfo* beamPipeInfo;  ///< Model for beam pipe.
 };
 
 #endif

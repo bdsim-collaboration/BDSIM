@@ -62,38 +62,38 @@ void BDSShield::BuildShield()
 				   yAper,
 				   chordLength); // extra long for unambiguous subtraction
 
-  G4VSolid* spoilerSolid = new G4SubtractionSolid(name+"spoiler_solid",
-						  outerSolid,   // this
-						  innerSolid);  // minus this
+  G4VSolid* shieldSolid = new G4SubtractionSolid(name+"shield_solid",
+						 outerSolid,   // this
+						 innerSolid);  // minus this
   
 
-  G4LogicalVolume* spoilerLV = new G4LogicalVolume(spoilerSolid,
-						   material,
-						   name+"_spoiler_lv");
+  G4LogicalVolume* shieldLV = new G4LogicalVolume(shieldSolid,
+						  material,
+						  name+"_shield_lv");
   
   RegisterSolid(outerSolid);
   RegisterSolid(innerSolid);
-  RegisterSolid(spoilerSolid);
-  RegisterLogicalVolume(spoilerLV);
-  RegisterSensitiveVolume(spoilerLV);
+  RegisterSolid(shieldSolid);
+  RegisterLogicalVolume(shieldLV);
+  RegisterSensitiveVolume(shieldLV);
 
-  G4VisAttributes* spoilerVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("shield"));
-  spoilerVisAttr->SetVisibility(true);
+  G4VisAttributes* shieldVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("shield"));
+  shieldVisAttr->SetVisibility(true);
 
-  spoilerLV->SetVisAttributes(spoilerVisAttr);
+  shieldLV->SetVisAttributes(shieldVisAttr);
 
-  RegisterVisAttributes(spoilerVisAttr);
+  RegisterVisAttributes(shieldVisAttr);
 
-  G4PVPlacement* spoilerPV = new G4PVPlacement(nullptr,
-					       G4ThreeVector(),
-					       spoilerLV,
-					       name + "_spoiler_pv",
-					       containerLogicalVolume,
-					       false,
-					       0,
-					       checkOverlaps);
+  G4PVPlacement* shieldPV = new G4PVPlacement(nullptr,
+					      G4ThreeVector(),
+					      shieldLV,
+					      name + "_shield_pv",
+					      containerLogicalVolume,
+					      false,
+					      0,
+					      checkOverlaps);
 
-  RegisterPhysicalVolume(spoilerPV);
+  RegisterPhysicalVolume(shieldPV);
 }
 
 void BDSShield::BuildBeamPipe()
