@@ -56,10 +56,13 @@ private:
   BDSArray3DCoords* Get3DCached(G4String filePath);
   BDSArray4DCoords* Get4DCached(G4String filePath);
 
+  /// @{ Utility function to use the right templated loader class (gz or normal).
+  BDSArray2DCoords* LoadPoissonMag2D(G4String filePath);
   BDSArray1DCoords* LoadBDSIM1D(G4String filePath);
   BDSArray2DCoords* LoadBDSIM2D(G4String filePath);
   BDSArray3DCoords* LoadBDSIM3D(G4String filePath);
   BDSArray4DCoords* LoadBDSIM4D(G4String filePath);
+  /// @}
 
   /// Create the appropriate 1D interpolator for an array.
   BDSInterpolator1D* CreateInterpolator1D(BDSArray1DCoords*    array,

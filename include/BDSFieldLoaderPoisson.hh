@@ -3,6 +3,10 @@
 
 #include "G4String.hh"
 
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
 class BDSArray2DCoords;
 
 /**
@@ -11,6 +15,7 @@ class BDSArray2DCoords;
  * @author Laurie Nevay
  */
 
+template <class T>
 class BDSFieldLoaderPoisson
 {
 public:
@@ -20,6 +25,9 @@ public:
   /// Load the 2D array of 3-Vector field values.
   BDSArray2DCoords* LoadMag2D(G4String fileName);
 
+private:
+  /// Templated iostream for std::ifstream and gzstream as well.
+  T file;
 };
 
 #endif

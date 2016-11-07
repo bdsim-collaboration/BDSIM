@@ -212,6 +212,31 @@ BDSArray4DCoords* BDSFieldLoader::Get4DCached(G4String filePath)
     {return nullptr;}
 }
 
+BDSArray2DCoords* BDSFieldLoader::LoadPoissonMag2D(G4String filePath)
+{
+  BDSArray2DCoords* cached = Get2DCached(filePath);
+  if (cached)
+    {return cached;}
+
+  BDSArray2DCoords* result = nullptr;
+  if (filePath.rfind("gz") != std::string::npos)
+    {
+#ifdef USE_GZSTREAM
+      BDSFieldLoaderPoisson<igzstream> loader;
+      result = loader.LoadMag2D(filePath);
+#else
+      G4cout << "Compressed file loading - but BDSIM not compiled with ZLIB." << G4endl; exit(1);
+#endif
+    }
+  else
+    {
+      BDSFieldLoaderPoisson<std::ifstream> loader;
+      result = loader.LoadMag2D(filePath);
+    }
+  arrays2d[filePath] = result;
+  return result;  
+}
+
 BDSArray1DCoords* BDSFieldLoader::LoadBDSIM1D(G4String filePath)
 {
   BDSArray1DCoords* cached = Get1DCached(filePath);
@@ -451,11 +476,9 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 						   G4Transform3D       transform,
 						   G4double            scaling)
 {
-  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
-  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
+  BDSArray2DCoords*       array = LoadPoissonMag2D(filePath);
   BDSInterpolator2D*         ar = CreateInterpolator2D(array, interpolatorType);
   BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform, scaling);
-  delete loader;
   return result;
 }
 
@@ -464,8 +487,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
 						       G4Transform3D       transform,
 						       G4double            scaling)
 {
-  BDSFieldLoaderPoisson* loader = new BDSFieldLoaderPoisson();
-  BDSArray2DCoords*       array = loader->LoadMag2D(filePath);
+  BDSArray2DCoords*       array = LoadPoissonMag2D(filePath);
   if (std::abs(array->XStep() - array->YStep()) > 1e-9)
     {
       G4cerr << G4endl
@@ -476,7 +498,6 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
   BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
   BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
   BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform, scaling);
-  delete loader;
   return result;
 }
 

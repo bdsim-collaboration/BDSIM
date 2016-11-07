@@ -14,19 +14,31 @@
 #include <string>
 #include <vector>
 
-BDSFieldLoaderPoisson::BDSFieldLoaderPoisson()
+#ifdef USE_GZSTREAM
+#include "gzstream.h"
+#endif
+
+template <class T>
+BDSFieldLoaderPoisson<T>::BDSFieldLoaderPoisson()
 {;}
 
-BDSFieldLoaderPoisson::~BDSFieldLoaderPoisson()
+template <class T>
+BDSFieldLoaderPoisson<T>::~BDSFieldLoaderPoisson()
 {;}
 
-BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
+template <class T>
+BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
 {
-  std::ifstream file;
   file.open(fileName);
 
   // test if file is valid
-  if (!file.is_open())
+  bool validFile = false;
+#ifdef USE_GZSTREAM
+  validFile = file.rdbuf()->is_open();
+#else
+  validFile = file.is_open();
+#endif
+  if (!validFile)
     {G4cerr << "Invalid file name or no such file named \"" << fileName << "\"" << G4endl; exit(1);}
   else
     {G4cout << "Loading \"" << fileName << "\"" << G4endl;}
@@ -159,3 +171,10 @@ BDSArray2DCoords* BDSFieldLoaderPoisson::LoadMag2D(G4String fileName)
   
   return result;
 }
+
+
+template class BDSFieldLoaderPoisson<std::ifstream>;
+
+#ifdef USE_GZSTREAM
+template class BDSFieldLoaderPoisson<igzstream>;
+#endif
