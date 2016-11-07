@@ -1,72 +1,20 @@
-!some beamline parameters
-
 option, beampipeRadius = 3.8 * cm,
-        boxSize = 2.0 * m,
-        tunnelRadius = 2.0*m,
-        beampipeThickness = 0.1 * cm,
-        thresholdCutCharged = 1 * MeV,
-        thresholdCutPhotons = 1 * MeV;
-
-
-! beamline definiton
+        beampipeThickness = 0.1 * cm;
 
 laser1 : laser, l=10*cm,
 		x=1, y=0, z=0, ! set direction of laser to {1,0,0} wrt beam axis
 		waveLength=532e-9*m; ! set wavelength of laser to 532nm
+
 !		spotsize=1e-6*m, intensity=10e6, position={0,0,0}; ! not yet implemented
 
-d1: drift,l=0.00000000000001*mm;
-segmentation: drift, l=12478.4*mm;
+d1: drift,l=0.2*cm;
 
-mk1: marker;
-!mk2: marker;
-!mk3: marker;
+l1: line = (d1,laser1,d1);
 
-cryoModule: element, l=12.4784*m, outerDiameter=12.5*m, geometry="mokka:cryo1_geomlist.sql";
-!cryoModule : drift, l=12.4784*m;
-!cryoModule2:element, l=11.6784*m, geometry="mokka:cryo2_geomlist.sql";
+use, l1;
 
-!gap1: element, l=0.33*m,geometry="mokka:cryo/cavity/gap1_geomlist.sql";
-
-!gap2: element, l=1.620*m,geometry="mokka:cryo/cavity/gap2_geomlist.sql";
-
-!gap3: element, l=0.8*m, geometry="mokka:cryo/cavity/gap3_geomlist.sql";
-
-rb1:sbend, l=0.5*m, angle = 2e-6, outerDiameter=2*m;
-
-!vrot: transform3d, psi=pi/2;
-!ivrot: transform3d, psi=-pi/2;
-
-!hrot1: transform3d, theta=5.6e-4;
-hrot2: transform3d, theta=2e-6; !rotation of each cryomodule with the earth's curvature
-
-mod1: line = (cryoModule,hrot2);
-mod10: line = (mod1, mod1, mod1, mod1, mod1, mod1, mod1, mod1, mod1, mod1);
-mod100: line = (mod10, mod10, mod10, mod10, mod10, mod10, mod10 ,mod10, mod10, mod10);
-
-modb1: line = (cryoModule,rb1);
-modb10: line = (modb1, modb1, modb1, modb1, modb1, modb1, modb1, modb1, modb1, modb1);
-modb100: line = (modb10, modb10, modb10, modb10, modb10, modb10, modb10 ,modb10, modb10, modb10);
-withSeg40: line = (modb10, modb10, modb10, modb1, modb1, modb1, modb1, modb1, modb1, modb1, modb1, 
-segmentation);
-
-part1: line = (laser1,mk1,modb10, modb10,mk2, modb10, modb1,modb1,modb1,modb1,modb1,modb1,modb1,modb1,mk3);  
-
-part2: line = (laser1, mk1, withSeg40, withSeg40, withSeg40,mk2, withSeg40, withSeg40, withSeg40, withSeg40,mk3);
-
-test: line = (part1);
-
-test2 : line = (laser1,modb1,mk1);
-
-!use,period=mod1;
-use,period=test2;
-sample, range=mk1;
-!sample, range=mk2;
-!sample, range=mk3;
-
-option, ngenerate=1000,
-	physicsList="lw",
-	seed=-1;
+option, ngenerate=100,
+	physicsList="lw";
 
 beam,  particle="e-",
        energy=250,
