@@ -46,8 +46,8 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
   // Pointer to where result will be stored.  Can't be constructed until we know
   // the dimensions.
   BDSArray2DCoords* result = nullptr;
-  G4int       nX = 0;
-  G4int       nY = 0;
+  G4int       nX = 1;
+  G4int       nY = 1;
   G4double  xMin = 0;
   G4double  yMin = 0;
   G4double  xMax = 0;
@@ -57,8 +57,9 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
   std::vector<G4String> units;
 
   // temporary variables
-  G4bool intoData  = false;
-  G4bool pastNStep = false;
+  G4bool intoData     = false;
+  G4bool pastNStep    = false;
+  G4bool dataFinished = false;
   std::string line;
   G4int indX = 0;
   G4int indY = 0;
@@ -72,6 +73,9 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
 
       if (intoData)
 	{
+	  if (dataFinished)
+	    {continue;} // just keep skipping lines after the appropriate amount of data is loaded
+	  
 	  // General data entry
 	  std::istringstream liness(line);
 	  G4double value = 0;
@@ -90,9 +94,14 @@ BDSArray2DCoords* BDSFieldLoaderPoisson<T>::LoadMag2D(G4String fileName)
 
 	  indX++;
 	  if (indX == nX)
-	    {
+	    {// we've completed one set of x
 	      indX = 0;
 	      indY++;
+	    }
+	  if (indY == nY)
+	    {// we've completed one set of y
+	      indY = 0;
+	      dataFinished = true;
 	    }
 
 	  continue;
