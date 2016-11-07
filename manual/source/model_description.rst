@@ -17,7 +17,13 @@ The overall program structure should follow:
 5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`).
 6) A beam distribution (see :ref:`beam-parameters`).
    
-These are described in the following sections.
+These are described in the following sections. Aside from these standard parameters, more
+detail may be added to the model through:
+
+ * :ref:`magnet-geometry-parameters`.
+ * Custom :ref:`field-maps`.
+ * Adding :ref:`externally-provided-geometry`.
+ * :ref:`offsets-and-tilts`.
 
 .. _gmad-syntax:
 
@@ -141,7 +147,8 @@ Useful Commands
 Lattice Elements
 ----------------
 
-Any element in BDSIM is described with the following pattern::
+BDSIM provides a variety of different elements each with their own funciton, geometry and
+potentially fields. Any element in BDSIM is described with the following pattern::
 
   name: type, parameter=value, parameter="string";
 
@@ -175,7 +182,7 @@ The following elements may be defined
 
 .. TODO add screen, awakescreen
 
-These are detailed in the following sections.
+These are detailed in the following sections. 
 
 Simple example, extend and copy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -277,7 +284,7 @@ parameter         description                  default     required
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm \pi/4` radians.
+.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 
 .. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
 	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
