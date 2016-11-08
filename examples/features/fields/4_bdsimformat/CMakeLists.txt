@@ -19,7 +19,7 @@ interpolator_test("interpolator-4d-cubic-gz"   "4d_cubic.gmad")
 interpolator_test("interpolator-1d-nearest-gz" "1d_nearest_gz.gmad")
 
 #field tests
-simple_testing(b-field-1d "--file=b_field_1d.gmad" "")
-simple_testing(b-field-2d "--file=b_field_2d.gmad" "")
-simple_testing(b-field-3d "--file=b_field_3d.gmad" "")
-simple_testing(b-field-4d "--file=b_field_4d.gmad" "")
+simple_testing(b-fieldmap-1d "--file=b_field_1d.gmad" "")
+simple_testing(b-fieldmap-2d "--file=b_field_2d.gmad" "")
+simple_testing(b-fieldmap-3d "--file=b_field_3d.gmad" "")
+simple_testing(b-fieldmap-4d "--file=b_field_4d.gmad" "")
