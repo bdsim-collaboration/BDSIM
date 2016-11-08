@@ -1872,12 +1872,18 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | lengthSafety                     | element overlap safety (caution!)                     |
 +----------------------------------+-------------------------------------------------------+
+| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
++----------------------------------+-------------------------------------------------------+
 | maximumTrackingTime              | the maximum time of flight allowed for any particle   |
 |                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
 | minimumEpsilonStep               | minimum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
-| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
+| minimumRadiusOfCurvature         | minimum tolerable radius of curvature of a particle   |
+|                                  | below which, the energy will be decreased by 2% on    |
+|                                  | each use of the integrator to prevent infinite        |
+|                                  | loops - should be just greater than width of beam     |
+|                                  | pipe.                                                 |
 +----------------------------------+-------------------------------------------------------+
 | deltaOneStep                     | set position error acceptable in an integration step  |
 +----------------------------------+-------------------------------------------------------+

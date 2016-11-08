@@ -283,6 +283,7 @@ void Options::PublishMembers()
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",     &Options::stopTracks);
   publish("killNeutrinos",  &Options::killNeutrinos);
+  publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
