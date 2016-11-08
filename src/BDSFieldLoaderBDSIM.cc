@@ -287,9 +287,9 @@ void BDSFieldLoaderBDSIM<T>::ProcessData(const std::string& line,
     }
   
   // Construct field value
-  fv = BDSFieldValue(lineData[xIndex]*G4float(CLHEP::tesla),
-		     lineData[yIndex]*G4float(CLHEP::tesla),
-		     lineData[zIndex]*G4float(CLHEP::tesla));
+  fv = BDSFieldValue(lineData[xIndex],
+		     lineData[yIndex],
+		     lineData[zIndex]);
 }
 
 
