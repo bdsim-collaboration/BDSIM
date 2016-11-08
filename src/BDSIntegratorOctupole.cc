@@ -146,7 +146,6 @@ void BDSIntegratorOctupole::Stepper(const G4double yInput[],
   G4double yTemp[7], yIn[7];
   
   //  Saving yInput because yInput and yOut can be aliases for same array
-  
   for(G4int i = 0; i < nVariables; i++)
     {yIn[i] = yInput[i];}
   
