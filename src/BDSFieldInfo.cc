@@ -94,7 +94,9 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Field type:        " << info.fieldType                << G4endl;
   out << "Rigidity:          " << info.brho                     << G4endl;
   out << "Integrator:        " << info.integratorType           << G4endl;
-  out << "Magnet strength:   " << *(info.magnetStrength)        << G4endl;
+  if (info.magnetStrength) {
+    out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;
+  }
   out << "Global transform?  " << info.provideGlobalTransform   << G4endl;
   out << "B map file:        " << info.magneticFieldFilePath    << G4endl;
   out << "B map file format: " << info.magneticFieldFormat      << G4endl;
