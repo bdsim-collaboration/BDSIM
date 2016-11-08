@@ -21,3 +21,5 @@ beam, particle="proton",
       E0=0.95*GeV,
       envelopeE=0.01,
       S0=0.5*m;
+
+option, ngenerate=500;
