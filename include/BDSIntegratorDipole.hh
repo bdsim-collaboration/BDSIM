@@ -72,7 +72,10 @@ private:
   G4double bField;
 
   /// Total beam energy
-  G4double nominalEnergy; 
+  G4double nominalEnergy;
+
+  /// Minimum tolerable radius of curvature - used to prevent spiraling particles.
+  const G4double minimumRadiusOfCurvature;
 };
 
 #endif 
