@@ -435,17 +435,17 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
     {
       // do the EM ones first, then complain
     case BDSIntegratorType::g4cashkarprkf45:
-      integrator = new G4CashKarpRKF45(eqOfM); break;
+      integrator = new G4CashKarpRKF45(eqOfM, 8); break;
     case BDSIntegratorType::g4classicalrk4:
-      integrator = new G4ClassicalRK4(eqOfM); break;
+      integrator = new G4ClassicalRK4(eqOfM, 8); break;
     case BDSIntegratorType::g4expliciteuler:
-      integrator = new G4ExplicitEuler(eqOfM); break;
+      integrator = new G4ExplicitEuler(eqOfM, 8); break;
     case BDSIntegratorType::g4impliciteuler:
-      integrator = new G4ImplicitEuler(eqOfM); break;
+      integrator = new G4ImplicitEuler(eqOfM, 8); break;
     case BDSIntegratorType::g4simpleheum:
-      integrator = new G4SimpleHeum(eqOfM); break;
+      integrator = new G4SimpleHeum(eqOfM, 8); break;
     case BDSIntegratorType::g4simplerunge:
-      integrator = new G4SimpleRunge(eqOfM); break;
+      integrator = new G4SimpleRunge(eqOfM, 8); break;
     case BDSIntegratorType::solenoid:
     case BDSIntegratorType::dipole:
     case BDSIntegratorType::quadrupole:
