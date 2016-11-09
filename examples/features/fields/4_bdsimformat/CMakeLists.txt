@@ -23,3 +23,13 @@ simple_testing(b-fieldmap-1d "--file=b_field_1d.gmad" "")
 simple_testing(b-fieldmap-2d "--file=b_field_2d.gmad" "")
 simple_testing(b-fieldmap-3d "--file=b_field_3d.gmad" "")
 simple_testing(b-fieldmap-4d "--file=b_field_4d.gmad" "")
+
+simple_testing(e-fieldmap-1d "--file=e_field_1d.gmad" "")
+simple_testing(e-fieldmap-2d "--file=e_field_2d.gmad" "")
+simple_testing(e-fieldmap-3d "--file=e_field_3d.gmad" "")
+simple_testing(e-fieldmap-4d "--file=e_field_4d.gmad" "")
+
+simple_testing(em-fieldmap-1d "--file=em_field_1d.gmad" "")
+simple_testing(em-fieldmap-2d "--file=em_field_2d.gmad" "")
+simple_testing(em-fieldmap-3d "--file=em_field_3d.gmad" "")
+simple_testing(em-fieldmap-4d "--file=em_field_4d.gmad" "")

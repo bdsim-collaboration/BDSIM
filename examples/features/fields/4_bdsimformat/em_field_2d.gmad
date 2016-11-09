@@ -1,7 +1,10 @@
-f1: field, type="emap1d",
-    	   electricFile="bdsim1d:1dexample.tar.gz",
-	   electricInterpolator="cubic1d",
-	   eScaling=0.5,
+f1: field, type="ebmap2d",
+    	   magneticFile="bdsim2d:2dexample.tar.gz",
+	   magneticInterpolator="cubic2d",
+    	   electricFile="bdsim2d:2dexample.tar.gz",
+	   electricInterpolator="cubic2d",
+	   bScaling=0.0005,
+	   eScaling=1e3,
 	   integrator="g4classicalrk4";
 
 
