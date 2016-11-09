@@ -3,7 +3,8 @@ f1: field, type="ebmap1d",
 	   magneticInterpolator="cubic1d",
     	   electricFile="bdsim1d:1dexample.tar.gz",
 	   electricInterpolator="cubic1d",
-	   scaling=0.0000005,
+	   bScaling=0.0005,
+	   eScaling=1e3,
 	   integrator="g4classicalrk4";
 
 
