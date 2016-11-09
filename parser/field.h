@@ -20,7 +20,8 @@ namespace GMAD
   public:
     std::string name;                 ///< Name.
     std::string type;                 ///< Type.
-    double      scaling;              ///< Scaling factor.
+    double      eScaling;             ///< E Field Scaling factor.
+    double      bScaling;             ///< B Field Scaling factor.
     std::string integrator;           ///< Which integrator to use.
     bool        globalTransform;      ///< Provide global to curvilinear coordinate transform.
     std::string magneticFile;         ///< File for magnetic field map.

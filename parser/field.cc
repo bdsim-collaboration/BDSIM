@@ -12,7 +12,8 @@ void Field::clear()
 {
   name                 = "";
   type                 = "";
-  scaling              = 1.0;
+  eScaling             = 1.0;
+  bScaling             = 1.0;
   integrator           = "g4classicalrk4";
   globalTransform      = true;
   magneticFile         = "";
@@ -31,14 +32,14 @@ void Field::clear()
   axisZ     = 0;
   angle     = 0;
   axisAngle = false;
-  scaling   = 1.0;
 }
 
 void Field::PublishMembers()
 {
   publish("name",                 &Field::name);
   publish("type",                 &Field::type);
-  publish("scaling",              &Field::scaling);
+  publish("eScaling",             &Field::eScaling);
+  publish("bScaling",             &Field::bScaling);
   publish("integrator",           &Field::integrator);
   publish("magneticFile",         &Field::magneticFile);
   publish("magneticInterpolator", &Field::magneticInterpolator);
@@ -56,7 +57,6 @@ void Field::PublishMembers()
   publish("axisZ",                &Field::axisZ);
   publish("angle",                &Field::angle);
   publish("axisAngle",            &Field::axisAngle);
-  publish("scaling",              &Field::scaling);
 }
 
 void Field::print()const
@@ -64,7 +64,8 @@ void Field::print()const
   std::cout << "field: "
 	    << "name "                 << name                 << std::endl
 	    << "type "                 << type                 << std::endl
-	    << "scaling "              << scaling              << std::endl
+	    << "eScaling "             << eScaling             << std::endl
+    	    << "bScaling "             << bScaling             << std::endl
 	    << "integrator "           << integrator           << std::endl
 	    << "magneticFile "         << magneticFile         << std::endl
 	    << "magneticInterpolator " << magneticInterpolator << std::endl
@@ -74,6 +75,5 @@ void Field::print()const
 	    << "phi, theta, psi "      << phi   << " " << theta << " " << psi   << std::endl
 	    << "axisX, Y, Z "          << axisX << " " << axisY << " " << axisZ << std::endl
 	    << "angle "                << angle                << std::endl
-	    << "axisAngle "            << axisAngle            << std::endl
-	    << "scaling "              << scaling              << std::endl;
+	    << "axisAngle "            << axisAngle            << std::endl;
 }
