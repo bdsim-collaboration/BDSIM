@@ -95,9 +95,6 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
   //Screen width 1m by default.
   if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
 
-  //Set as part of precision region (for energy loss monitoring)
-  precisionRegion=1;
-
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
   _screenRotationMatrix->rotateY(-CLHEP::pi/2.0+_screenAngle);
