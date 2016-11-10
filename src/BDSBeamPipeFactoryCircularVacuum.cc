@@ -81,7 +81,7 @@ BDSBeamPipe* BDSBeamPipeFactoryCircularVacuum::CreateBeamPipe(G4String      name
   containerSolid = new G4CutTubs(nameIn + "_container_solid",  // name
 				 0,                            // inner radius
 				 aper1In,                      // outer radius
-				 lengthIn,                     // half length
+				 lengthIn*0.5,                 // half length
 				 0,                            // rotation start angle
 				 CLHEP::twopi,                 // rotation finish angle
 				 inputFaceNormal,              // input face normal
