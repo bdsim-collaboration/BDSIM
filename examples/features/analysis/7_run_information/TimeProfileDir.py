@@ -12,7 +12,7 @@ the mean time [stdev/sqrt(nfiles)] and a list of files with total run duration f
                                        
 options: dirpath, ofilename, verbose 
 
-Example: ~/auser/myscripts/timeProfileDir.py                            to process current working direcctory              
+Example: ./TimeProfileDir.py                            to process current working direcctory              
 
 Notes: 
 1. No quotation marks needed for option strings (eg. --filepath="/path/file" -> --filepath=/path/file)

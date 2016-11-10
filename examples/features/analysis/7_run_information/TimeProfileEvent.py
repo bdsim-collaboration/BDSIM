@@ -13,7 +13,7 @@ the mean time [stdev/sqrt(nparticles)].
                                        
 options: dirpath, ofilename, verbose 
 
-Example: ~/myscripts/timeProfileEvent.py --filepath=afile_event.root            to process a file in the current working dir              
+Example: ./TimeProfileEvent.py --filepath=afile_event.root            to process a file in the current working dir              
 
 Notes: 
 1. No quotation marks needed for option strings (eg. --filepath="/path/file" -> --filepath=/path/file)
