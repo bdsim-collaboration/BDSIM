@@ -14,13 +14,13 @@
 
 #include "globals.hh"                        // geant4 globals / types
 
-BDSBeamPipeFactory* BDSBeamPipeFactory::_instance = nullptr;
+BDSBeamPipeFactory* BDSBeamPipeFactory::instance = nullptr;
 
 BDSBeamPipeFactory* BDSBeamPipeFactory::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactory();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactory();}
+  return instance;
 }
 
 BDSBeamPipeFactory::BDSBeamPipeFactory()
@@ -28,7 +28,7 @@ BDSBeamPipeFactory::BDSBeamPipeFactory()
 
 BDSBeamPipeFactory::~BDSBeamPipeFactory()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)

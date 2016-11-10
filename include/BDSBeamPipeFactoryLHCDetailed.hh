@@ -49,7 +49,7 @@ public:
 
 private:
   BDSBeamPipeFactoryLHCDetailed(); ///< Private default constructor - singleton pattern.
-  static BDSBeamPipeFactoryLHCDetailed* _instance; ///< Singleton instance.
+  static BDSBeamPipeFactoryLHCDetailed* instance; ///< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
