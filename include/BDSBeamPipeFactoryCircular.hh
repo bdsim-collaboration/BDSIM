@@ -5,9 +5,9 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief factory for circular beam pipes
+ * @brief Factory for circular beam pipes.
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
  * @author Laurie Nevay
  */

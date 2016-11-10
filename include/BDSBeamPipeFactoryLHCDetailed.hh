@@ -5,7 +5,7 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief Factory for detailed lhc aperture model beam pipes
+ * @brief Factory for detailed lhc aperture model beam pipes.
  * 
  * Singleton pattern.
  * 

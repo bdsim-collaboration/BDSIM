@@ -5,7 +5,7 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief Factory for rectangular beam pipes
+ * @brief Factory for rectangular beam pipes.
  * 
  * Singleton pattern.
  * 

@@ -5,9 +5,9 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief Factory for elliptical beam pipes
+ * @brief Factory for elliptical beam pipes.
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
  * @author Laurie Nevay
  */

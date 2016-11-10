@@ -1,4 +1,3 @@
-#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
 #include "BDSBeamPipe.hh"
 #include "BDSDebug.hh"
