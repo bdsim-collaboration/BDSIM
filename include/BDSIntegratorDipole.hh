@@ -50,15 +50,6 @@ protected:
   /// scaling factor in brho calculation
   G4double cOverGeV;
 
-  std::pair<G4ThreeVector,G4ThreeVector> updatePandR(G4double rho,
-													 G4double h,
-													 G4ThreeVector LocalR,
-													 G4ThreeVector LocalRP);
-
-private:
-  /// Data stored in order to find the chord.
-  G4ThreeVector yInitial, yMidPoint, yFinal;
-
   /// Angle that the dipole induces in the reference trajectory
   const G4double angle;
 
@@ -70,6 +61,16 @@ private:
 
   /// Uniform magnetic field in global Y direction
   G4double bField;
+
+
+  std::pair<G4ThreeVector,G4ThreeVector> updatePandR(G4double rho,
+													 G4double h,
+													 G4ThreeVector LocalR,
+													 G4ThreeVector LocalRP);
+
+private:
+  /// Data stored in order to find the chord.
+  G4ThreeVector yInitial, yMidPoint, yFinal;
 
   /// Total beam energy
   G4double nominalEnergy;

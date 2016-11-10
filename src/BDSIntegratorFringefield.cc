@@ -14,12 +14,9 @@ BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* stre
                                                    G4double                 brho,
                                                    G4Mag_EqRhs*             eqOfMIn):
   BDSIntegratorDipole(strength, brho, eqOfMIn),
-  angle((*strength)["angle"]),
-  bField((*strength)["field"])
-{
-  polefaceAngle = (*strength)["polefaceangle"];
-  fringeCorr = (*strength)["fringecorr"];
-}
+  polefaceAngle((*strength)["polefaceangle"]),
+  fringeCorr((*strength)["fringecorr"])
+{}
 
 void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
                                             const G4double dydx[],
