@@ -44,10 +44,8 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorFringefield();
   
-  /// B Field Gradient
-  G4double angle;
+  /// Poleface rotation angle
   G4double polefaceAngle;
-  G4double bField;
   /// Fringe field correction term
   G4double fringeCorr;
   /// Data stored in order to find the chord.
