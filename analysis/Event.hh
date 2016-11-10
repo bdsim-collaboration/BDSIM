@@ -42,6 +42,7 @@ public:
   BDSOutputROOTEventLoss*            GetTunnelHit()        {return tunnelHit;}
   BDSOutputROOTEventTrajectory*      GetTrajectory()       {return trajectory;}
   BDSOutputROOTEventHistograms*      GetHistograms()       {return histos;}
+  BDSOutputROOTEventInfo*            GetInfo()             {return info;}
   /// @}
 
   /// Set the branch addresses to address the contents of the file. The vector
