@@ -36,7 +36,7 @@ void Event::CommonCtor()
   info            = nullptr;
 }
 
-void Event::SetBranchAddress(TTree *t, std::vector<std::string>& samplerNames)
+void Event::SetBranchAddress(TTree *t, std::vector<std::string>* samplerNames)
 {
   if(debug)
     {std::cout << "Event::SetBranchAddress" << std::endl;}
@@ -61,15 +61,15 @@ void Event::SetBranchAddress(TTree *t, std::vector<std::string>& samplerNames)
       std::cout << "Event::SetBranchAddress> Histos.          " << histos << std::endl;
     }
 
-  if (processSamplers)
+  if (processSamplers && samplerNames)
     {
-      unsigned int nrSamplers = samplerNames.size();
+      unsigned int nrSamplers = samplerNames->size();
       samplers.resize(nrSamplers); // reserve and nominally instantiate instances.
       for(unsigned int i=0;i<nrSamplers;++i)
 	{
-	  t->SetBranchAddress(samplerNames[i].c_str(),&samplers[i]);
+	  t->SetBranchAddress((*samplerNames)[i].c_str(),&samplers[i]);
 	  if(debug)
-	    {std::cout << "Event::SetBranchAddress> " << samplerNames[i] << " " << samplers[i] << std::endl;}
+	    {std::cout << "Event::SetBranchAddress> " << (*samplerNames)[i] << " " << samplers[i] << std::endl;}
 	}
     }
 }

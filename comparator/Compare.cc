@@ -303,8 +303,8 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
 
   Event* evtLocal1 = new Event();
   Event* evtLocal2 = new Event();
-  evtLocal1->SetBranchAddress(t1, samplerNames);
-  evtLocal2->SetBranchAddress(t2, samplerNames);
+  evtLocal1->SetBranchAddress(t1, &samplerNames);
+  evtLocal2->SetBranchAddress(t2, &samplerNames);
 
   for (auto i = 0; i < t1->GetEntries(); i++)
     {
