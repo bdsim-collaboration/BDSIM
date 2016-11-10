@@ -172,7 +172,8 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   aPipe->RegisterSolid(allSolids);
   aPipe->RegisterLogicalVolume(allLogicalVolumes); //using geometry component base class method
   aPipe->RegisterPhysicalVolume(allPhysicalVolumes);
-  aPipe->RegisterSensitiveVolume(beamPipeLV);
+  if (beamPipeLV)// in the case of the circular vacuum, there isn't a beampipeLV
+    {aPipe->RegisterSensitiveVolume(beamPipeLV);}
   aPipe->RegisterVisAttributes(allVisAttributes);
   aPipe->RegisterUserLimits(allUserLimits);
   

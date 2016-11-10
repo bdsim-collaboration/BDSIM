@@ -7,6 +7,7 @@
 #include "BDSUtilities.hh"
 #include "BDSSampler.hh"
 #include "BDSSDManager.hh"
+#include "BDSSamplerSD.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSSpectrVacChamb.hh"
 #include "BDSTunnelInfo.hh"
@@ -30,13 +31,13 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 					    G4double poleStartZ=62.733*CLHEP::cm,
 					    G4String material="lanex",
 					    G4double thickness = 0.3 * CLHEP::mm,
-                        G4double screenPSize=25*CLHEP::um,
+					    G4double screenPSize=25*CLHEP::um,
 					    G4double windowScreenGap=0,
 					    G4double angle = -45*CLHEP::pi/180.0,
 					    G4double windowThickness=0,
 					    G4String windowMaterial="G4_Al",
-                        G4double mountThickness=0, 
-                        G4String mountMaterial="G4_BAKELITE",
+					    G4double mountThickness=0, 
+					    G4String mountMaterial="G4_BAKELITE",
 					    G4double screenEndZ = (258-62.733)*CLHEP::cm,
 					    G4String spec="",
 					    G4double screenWidth=1*CLHEP::m):
@@ -94,9 +95,6 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 
   //Screen width 1m by default.
   if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
-
-  //Set as part of precision region (for energy loss monitoring)
-  precisionRegion=1;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();

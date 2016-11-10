@@ -19,13 +19,13 @@
 #include <cmath>
 #include <utility>                         // for std::pair
 
-BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::_instance = nullptr;
+BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::instance = nullptr;
 
 BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryRectEllipse();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryRectEllipse();}
+  return instance;
 }
 
 BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
@@ -33,7 +33,7 @@ BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
 
 BDSBeamPipeFactoryRectEllipse::~BDSBeamPipeFactoryRectEllipse()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,

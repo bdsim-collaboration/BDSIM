@@ -416,7 +416,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // append it to the beam line
   beamline.push_back(element);
 
-  // register the s position at the end for curvlinear transform
+  // register the s position at the end for curvilinear transform
   sEnd.push_back(sPositionEnd);
 
   // register it by name
@@ -818,11 +818,13 @@ G4bool BDSBeamline::IndexOK(G4int index) const
     {return true;}
 }
 
-std::vector<G4double> BDSBeamline::GetSPositionEndOfEach()
+std::vector<G4double> BDSBeamline::GetEdgeSPositions()const
 {
-  std::vector<G4double> sEnd;
-  sEnd.reserve(beamline.size());
+  std::vector<G4double> sPos;
+  sPos.reserve(beamline.size()+1);
+  // add start position
+  sPos.push_back(0.0);
   for (auto element : beamline)
-    {sEnd.push_back(element->GetSPositionEnd()/CLHEP::m);}
-  return sEnd;
+    {sPos.push_back(element->GetSPositionEnd()/CLHEP::m);}
+  return sPos;
 }

@@ -27,12 +27,24 @@ Work in progress.
 //#include "BDSOutputBase.hh"
 
 //============================================================
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap = 0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, "awakescintillatorscreen"), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _windowScreenGap(windowScreenGap),_screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName,
+							G4String material,
+							G4double thickness = 0.3 * CLHEP::mm,
+							G4double windowScreenGap = 0,
+							G4double angle = -45*CLHEP::pi/180.0,
+							G4double windowThickness=0,
+							G4String windowMaterial=""):
+  BDSAcceleratorComponent(aName, 1.0, 0, "awakescintillatorscreen"),
+  _mlScreen(nullptr),
+  _camera(nullptr),
+  _material(material),
+  _thickness(thickness),
+  _windowScreenGap(windowScreenGap),
+  _screenAngle(angle),
+  _windowThickness(windowThickness),
+  _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
-  //Set as part of precision region (for energy loss monitoring)
-  precisionRegion=1;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();

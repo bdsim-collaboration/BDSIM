@@ -787,7 +787,8 @@ Simple example::
 Example with field::
 
   somefield: field, type="ebmap2d",
-		    scaling = 3.0,
+		    eScaling = 3.1e3,
+		    bScaling = 0.5,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
 		    magneticInterpolator = "nearest2D",
@@ -1129,7 +1130,8 @@ Here is example syntax to define a field object named 'somefield' in the parser 
 a drift pipe where it covers the full volume of the drift (not outside it though)::
 
   somefield: field, type="ebmap2d",
-		    scaling = 3.0,
+		    eScaling = 3.0,
+		    bScaling = 0.4,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
 		    magneticInterpolator = "nearest2D",
@@ -1146,8 +1148,11 @@ When defining a field, the following parameters can be specified.
 +======================+=================================================================+
 | type                 | See type table below.                                           |
 +----------------------+-----------------------------------------------------------------+
-| scaling              | A numerical scaling factor that all field vectors in the data   |
-|                      | will be multiplied by. Ie. both E&M.                            |
+| eScaling             | A numerical scaling factor that all electric field vectors      |
+|                      | amplitudes will be multiplied by.                               |
++----------------------+-----------------------------------------------------------------+
+| bScaling             | A numerical scaling factor that all magnetic field vectors      |
+|                      | amplitudes will be multiplied by.                               |
 +----------------------+-----------------------------------------------------------------+
 | integrator           | The integrator used to calculate the motion of the particle     |
 |                      | in the field. See below for full list of supported integrators. |
@@ -1872,12 +1877,18 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | lengthSafety                     | element overlap safety (caution!)                     |
 +----------------------------------+-------------------------------------------------------+
+| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
++----------------------------------+-------------------------------------------------------+
 | maximumTrackingTime              | the maximum time of flight allowed for any particle   |
 |                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
 | minimumEpsilonStep               | minimum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
-| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
+| minimumRadiusOfCurvature         | minimum tolerable radius of curvature of a particle   |
+|                                  | below which, the energy will be decreased by 2% on    |
+|                                  | each use of the integrator to prevent infinite        |
+|                                  | loops - should be just greater than width of beam     |
+|                                  | pipe.                                                 |
 +----------------------------------+-------------------------------------------------------+
 | deltaOneStep                     | set position error acceptable in an integration step  |
 +----------------------------------+-------------------------------------------------------+

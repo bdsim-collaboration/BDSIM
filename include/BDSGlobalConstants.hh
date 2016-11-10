@@ -161,6 +161,7 @@ public:
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
+  inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}

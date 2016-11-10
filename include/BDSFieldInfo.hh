@@ -45,7 +45,8 @@ public:
 	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim1d,
 	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
 	       G4bool              cacheTransformsIn          = false,
-	       G4double            scalingIn                  = 1.0,
+	       G4double            eScalingIn                 = 1.0,
+	       G4double            bScalingIn                 = 1.0,
 	       G4double            timeOffsetIn               = 0);
   ~BDSFieldInfo();
 
@@ -67,7 +68,8 @@ public:
   inline BDSFieldFormat      ElectricFormat()           const {return electricFieldFormat;}
   inline BDSInterpolatorType ElectricInterpolatorType() const {return electricInterpolatorType;}
   inline G4bool              CacheTransforms()          const {return cacheTransforms;}
-  inline G4double            Scaling()                  const {return scaling;}
+  inline G4double            EScaling()                 const {return eScaling;}
+  inline G4double            BScaling()                 const {return bScaling;}
   inline G4double            TimeOffset()               const {return timeOffset;}
   /// @}
 
@@ -96,7 +98,8 @@ private:
   BDSFieldFormat      electricFieldFormat;
   BDSInterpolatorType electricInterpolatorType;
   G4bool              cacheTransforms;
-  G4double            scaling;
+  G4double            eScaling;
+  G4double            bScaling;
   G4double            timeOffset;
 };
 

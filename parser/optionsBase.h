@@ -261,6 +261,7 @@ namespace GMAD
     bool     stopTracks;    
     bool     stopSecondaries;
     bool     killNeutrinos;
+    double   minimumRadiusOfCurvature; ///< Minimum allowed radius of curvature. 
 
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;

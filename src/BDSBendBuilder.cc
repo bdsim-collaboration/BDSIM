@@ -401,7 +401,8 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 				  G4double           brho,
 				  const BDSIntegratorSet* integratorSet)
 {
-  BDSBeamPipeInfo* beamPipeInfo    = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
+  BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
+  beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 

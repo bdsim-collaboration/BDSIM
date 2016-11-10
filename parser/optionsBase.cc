@@ -214,6 +214,7 @@ OptionsBase::OptionsBase()
   stopTracks               = false;
   stopSecondaries          = false;
   killNeutrinos            = true;
+  minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;

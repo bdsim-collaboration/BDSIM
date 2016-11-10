@@ -10,28 +10,30 @@
 template<>
 std::map<BDSBeamPipeType, std::string>* BDSBeamPipeType::dictionary =
   new std::map<BDSBeamPipeType, std::string> ({
-   {BDSBeamPipeType::circular,   "circular"},
-   {BDSBeamPipeType::elliptical, "elliptical"},
-   {BDSBeamPipeType::lhc,        "lhc"},
-   {BDSBeamPipeType::lhcdetailed,"lhcdetailed"},
-   {BDSBeamPipeType::rectangular,"rectangular"},
-   {BDSBeamPipeType::rectellipse,"rectellipse"},
-   {BDSBeamPipeType::racetrack,  "racetrack"},
-   {BDSBeamPipeType::octagonal,  "octagonal"}
+   {BDSBeamPipeType::circular,       "circular"},
+   {BDSBeamPipeType::elliptical,     "elliptical"},
+   {BDSBeamPipeType::lhc,            "lhc"},
+   {BDSBeamPipeType::lhcdetailed,    "lhcdetailed"},
+   {BDSBeamPipeType::rectangular,    "rectangular"},
+   {BDSBeamPipeType::rectellipse,    "rectellipse"},
+   {BDSBeamPipeType::racetrack,      "racetrack"},
+   {BDSBeamPipeType::octagonal,      "octagonal"},
+   {BDSBeamPipeType::circularvacuum, "circularvacuum"}
 });	
 
 BDSBeamPipeType BDS::DetermineBeamPipeType(G4String apertureType)
 {
   std::map<G4String, BDSBeamPipeType> types;
-  types["circular"]    = BDSBeamPipeType::circular;
-  types["elliptical"]  = BDSBeamPipeType::elliptical;
-  types["rectangular"] = BDSBeamPipeType::rectangular;
-  types["lhc"]         = BDSBeamPipeType::lhc;
-  types["lhcscreen"]   = BDSBeamPipeType::lhc; // shortcut for madx compatability
-  types["lhcdetailed"] = BDSBeamPipeType::lhcdetailed;
-  types["rectellipse"] = BDSBeamPipeType::rectellipse;
-  types["racetrack"]   = BDSBeamPipeType::racetrack;
-  types["octagonal"]   = BDSBeamPipeType::octagonal;
+  types["circular"]       = BDSBeamPipeType::circular;
+  types["elliptical"]     = BDSBeamPipeType::elliptical;
+  types["rectangular"]    = BDSBeamPipeType::rectangular;
+  types["lhc"]            = BDSBeamPipeType::lhc;
+  types["lhcscreen"]      = BDSBeamPipeType::lhc; // shortcut for madx compatability
+  types["lhcdetailed"]    = BDSBeamPipeType::lhcdetailed;
+  types["rectellipse"]    = BDSBeamPipeType::rectellipse;
+  types["racetrack"]      = BDSBeamPipeType::racetrack;
+  types["octagonal"]      = BDSBeamPipeType::octagonal;
+  types["circularvacuum"] = BDSBeamPipeType::circularvacuum;
 
   apertureType.toLower();
 

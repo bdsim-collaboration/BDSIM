@@ -17,7 +17,8 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
   BDSIntegratorBase(eqOfMIn, 6),
   angle((*strength)["angle"]),
   length((*strength)["length"]),
-  bField((*strength)["field"])
+  bField((*strength)["field"]),
+  minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
   bPrime = brho * (*strength)["k1"];
   nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
@@ -31,7 +32,7 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 
 void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 				       const G4double dydx[],
-				       G4ThreeVector  /*bField*/,
+				       G4ThreeVector  /*fieldVector*/,
 				       G4double  h,
 				       G4double yOut[],
 				       G4double yErr[])
@@ -109,7 +110,16 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 	GlobalPosition = globalPosDir.PreStepPoint();
 	G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
 	GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
-      
+
+	// If the radius of curvature is too small, reduce the momentum by 2%. This will
+	// cause artificial spiralling for what must be particles well below the design momenta.
+	// Nominally adding a small z increment along the axis of the helix wasn't reliable,
+	// as there can be inconsistencies in the field vectors resulting in 0 additional offset,
+	// plus Geant4 complained about clearly wrong motion. This way works and produces no
+	// errors.  The particle would be lost approximately in the current location anyway.
+	if (rho < minimumRadiusOfCurvature)
+	  {GlobalTangent *= 0.98;}
+	
 	yOut[0] = GlobalPosition.x(); 
 	yOut[1] = GlobalPosition.y(); 
 	yOut[2] = GlobalPosition.z(); 

@@ -25,7 +25,8 @@ BDSFieldInfo::BDSFieldInfo():
         electricFieldFormat(BDSFieldFormat::none),
 	electricInterpolatorType(BDSInterpolatorType::nearest3d),
 	cacheTransforms(true),
-	scaling(1.0),
+	eScaling(1.0),
+	bScaling(1.0),
 	timeOffset(0)
 {;}
 
@@ -43,7 +44,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
 			   BDSFieldFormat      electricFieldFormatIn,
 			   BDSInterpolatorType electricInterpolatorTypeIn,
 			   G4bool              cacheTransformsIn,
-			   G4double            scalingIn,
+			   G4double            eScalingIn,
+			   G4double            bScalingIn,
 			   G4double            timeOffsetIn):
   fieldType(fieldTypeIn),
   brho(brhoIn),
@@ -59,7 +61,8 @@ BDSFieldInfo::BDSFieldInfo(BDSFieldType        fieldTypeIn,
   electricFieldFormat(electricFieldFormatIn),
   electricInterpolatorType(electricInterpolatorTypeIn),
   cacheTransforms(cacheTransformsIn),
-  scaling(scalingIn),
+  eScaling(eScalingIn),
+  bScaling(bScalingIn),
   timeOffset(timeOffsetIn)
 {;}
 
@@ -82,10 +85,14 @@ BDSFieldInfo::BDSFieldInfo(const BDSFieldInfo& other):
   electricFieldFormat(other.electricFieldFormat),
   electricInterpolatorType(other.electricInterpolatorType),
   cacheTransforms(other.cacheTransforms),
-  scaling(other.scaling),
+  eScaling(other.eScaling),
+  bScaling(other.bScaling),
   timeOffset(other.timeOffset)
 {
-  magnetStrength = new BDSMagnetStrength(*other.magnetStrength);
+  if (other.magnetStrength)
+    {magnetStrength = new BDSMagnetStrength(*other.magnetStrength);}
+  else
+    {magnetStrength = other.magnetStrength;} // also nullptr
   cavityInfo     = new BDSCavityInfo(*other.cavityInfo);
 }
 
@@ -94,7 +101,6 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "Field type:        " << info.fieldType                << G4endl;
   out << "Rigidity:          " << info.brho                     << G4endl;
   out << "Integrator:        " << info.integratorType           << G4endl;
-  out << "Magnet strength:   " << *(info.magnetStrength)        << G4endl;
   out << "Global transform?  " << info.provideGlobalTransform   << G4endl;
   out << "B map file:        " << info.magneticFieldFilePath    << G4endl;
   out << "B map file format: " << info.magneticFieldFormat      << G4endl;
@@ -103,7 +109,10 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   out << "E map file format: " << info.electricFieldFormat      << G4endl;
   out << "E interpolator     " << info.electricInterpolatorType << G4endl;
   out << "Transform caching: " << info.cacheTransforms          << G4endl;
-  out << "Scaling:           " << info.scaling                  << G4endl;
+  out << "E Scaling:         " << info.eScaling                 << G4endl;
+  out << "B Scaling:         " << info.bScaling                 << G4endl;
   out << "t offset           " << info.timeOffset               << G4endl;
+  if (info.magnetStrength)
+    {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   return out;
 }
