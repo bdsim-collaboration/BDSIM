@@ -38,7 +38,7 @@ protected :
   G4double sigmaE;
   ///@}
   
-  /// whether to ignore z and use s and transform for curvlinear coordinates
+  /// whether to ignore z and use s and transform for curvilinear coordinates
   G4bool   useCurvilinear;
 
   /// Create multidimensional Gaussian random number generator

@@ -149,7 +149,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       // ( w sin^2(wL)    , (-1/2)sin(2wL)  , (-w/2)sin(2wL) , cos^2(wL)      ) (y')
       
       G4double w       = kappa;
-      //need the length along curvlinear s -> project h on z
+      //need the length along curvilinear s -> project h on z
       G4ThreeVector positionMove = h * InitMomDir; 
       G4double dz      = positionMove.z();
       G4double wL      = kappa*dz; 
