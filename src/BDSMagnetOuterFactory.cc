@@ -30,13 +30,13 @@
 #include <algorithm>
 #include <cmath>
 
-BDSMagnetOuterFactory* BDSMagnetOuterFactory::_instance = nullptr;
+BDSMagnetOuterFactory* BDSMagnetOuterFactory::instance = nullptr;
 
 BDSMagnetOuterFactory* BDSMagnetOuterFactory::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSMagnetOuterFactory();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSMagnetOuterFactory();}
+  return instance;
 }
 
 BDSMagnetOuterFactory::BDSMagnetOuterFactory()
@@ -44,7 +44,15 @@ BDSMagnetOuterFactory::BDSMagnetOuterFactory()
 
 BDSMagnetOuterFactory::~BDSMagnetOuterFactory()
 {
-  _instance = nullptr;
+  delete BDSMagnetOuterFactoryNone::Instance();
+  delete BDSMagnetOuterFactoryCylindrical::Instance();
+  delete BDSMagnetOuterFactoryPolesCircular::Instance();
+  delete BDSMagnetOuterFactoryPolesSquare::Instance();
+  delete BDSMagnetOuterFactoryPolesFacet::Instance();
+  delete BDSMagnetOuterFactoryPolesFacetCrop::Instance();
+  delete BDSMagnetOuterFactoryLHCRight::Instance();
+  delete BDSMagnetOuterFactoryLHCLeft::Instance();
+  instance = nullptr;
 }
 
 BDSMagnetOuterFactoryBase* BDSMagnetOuterFactory::GetAppropriateFactory(BDSMagnetGeometryType magnetTypeIn)
