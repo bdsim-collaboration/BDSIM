@@ -8,13 +8,13 @@
 #include <cmath>
 
 
-BDSBeamPipeFactoryOctagonal* BDSBeamPipeFactoryOctagonal::_instance = nullptr;
+BDSBeamPipeFactoryOctagonal* BDSBeamPipeFactoryOctagonal::instance = nullptr;
 
 BDSBeamPipeFactoryOctagonal* BDSBeamPipeFactoryOctagonal::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryOctagonal();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryOctagonal();}
+  return instance;
 }
 
 BDSBeamPipeFactoryOctagonal::BDSBeamPipeFactoryOctagonal()
@@ -22,7 +22,7 @@ BDSBeamPipeFactoryOctagonal::BDSBeamPipeFactoryOctagonal()
 
 BDSBeamPipeFactoryOctagonal::~BDSBeamPipeFactoryOctagonal()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSBeamPipeFactoryOctagonal::GenerateOctagonal(std::vector<G4TwoVector>& vec,

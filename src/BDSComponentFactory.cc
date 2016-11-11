@@ -25,8 +25,9 @@
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
-#include "BDSBeamPipeType.hh"
+#include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
+#include "BDSBeamPipeType.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
@@ -37,6 +38,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSMagnetOuterFactory.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetStrength.hh"
@@ -78,6 +80,11 @@ BDSComponentFactory::~BDSComponentFactory()
 {
   for(auto info : cavityInfos)
     {delete info.second;}
+
+  // Deleted here although not used directly here as new geometry can only be
+  // created through this class.
+  delete BDSBeamPipeFactory::Instance();
+  delete BDSMagnetOuterFactory::Instance();
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,

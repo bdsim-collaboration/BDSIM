@@ -5,9 +5,9 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief factory for circular beam pipes
+ * @brief Factory for circular beam pipes.
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
  * @author Laurie Nevay
  */
@@ -43,7 +43,7 @@ public:
 
 private:
   BDSBeamPipeFactoryCircular(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryCircular* _instance;
+  static BDSBeamPipeFactoryCircular* instance;
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around

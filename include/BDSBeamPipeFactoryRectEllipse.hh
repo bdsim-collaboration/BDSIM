@@ -57,7 +57,7 @@ public:
 
 private:
   BDSBeamPipeFactoryRectEllipse(); ///< Private default constructor - singleton pattern.
-  static BDSBeamPipeFactoryRectEllipse* _instance; ///< Singleton instance.
+  static BDSBeamPipeFactoryRectEllipse* instance; ///< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
