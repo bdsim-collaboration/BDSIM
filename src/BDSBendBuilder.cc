@@ -406,11 +406,6 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
-  BDSIntegratorType intType = integratorSet->dipolefringe;
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
-					       brho,
-					       intType,
-					       st);
   //magnet total vertical aperture size
   G4double vertGap = 0;
   if (element->apertureType == "racetrack")
@@ -420,6 +415,13 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
   else
     {vertGap = beamPipeInfo->aper2;}
   (*st)["fringecorr"] *= vertGap;
+
+
+  BDSIntegratorType intType = integratorSet->dipolefringe;
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+					       brho,
+					       intType,
+					       st);
 
   return new BDSMagnet(magType,
 		       name,

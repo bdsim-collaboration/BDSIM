@@ -29,6 +29,15 @@ BDSBeamPipeFactory::BDSBeamPipeFactory()
 
 BDSBeamPipeFactory::~BDSBeamPipeFactory()
 {
+  delete BDSBeamPipeFactoryCircular::Instance();
+  delete BDSBeamPipeFactoryElliptical::Instance();
+  delete BDSBeamPipeFactoryRectangular::Instance();
+  delete BDSBeamPipeFactoryLHC::Instance();
+  delete BDSBeamPipeFactoryLHCDetailed::Instance();
+  delete BDSBeamPipeFactoryRectEllipse::Instance();
+  delete BDSBeamPipeFactoryRaceTrack::Instance();
+  delete BDSBeamPipeFactoryOctagonal::Instance();
+  delete BDSBeamPipeFactoryCircularVacuum::Instance();
   instance = nullptr;
 }
 
