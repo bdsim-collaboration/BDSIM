@@ -154,24 +154,28 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   std::list<double>::iterator ks = bsl.begin();
   for (; ks != bsl.end(); n++, ks++)
     {
-      //Rotate momentum vector about z axis according to number of poles
-      //then apply each kick seperately and rotate back
-      skewAngle = CLHEP::pi / (2*(n+2));
-      mom.rotateZ(skewAngle);
-      
-      // calculate and apply kick
-      ksReal = (*ks) * pow(position,n).real() / nfact[n];
-      ksImag = (*ks) * pow(position,n).imag() / nfact[n];
-      skewresult = {ksReal,ksImag};
-      
-      // Rotate back
-      if(!std::isnan(skewresult.real()))
-	{momx = mom.x() - skewresult.real();}
-      if(!std::isnan(skewresult.imag()))
-	{momy = mom.y() + skewresult.imag();}
+      if (BDS::IsFinite(*ks))
+        {
+          //Rotate momentum vector about z axis according to number of poles
+          //then apply each kick seperately and rotate back
+          //skewAngle = CLHEP::pi / (2 * n);
+          skewAngle = CLHEP::pi / 2;
+          mom.rotateZ(skewAngle);
 
-      mom = {momx, momy, mom.z()};
-      mom.rotateZ(-skewAngle);
+          // calculate and apply kick
+          ksReal = (*ks) * pow(position, n).real() / nfact[n];
+          ksImag = (*ks) * pow(position, n).imag() / nfact[n];
+          skewresult = {ksReal, ksImag};
+
+          // Rotate back
+          if (!std::isnan(skewresult.real()))
+            {momx = mom.x() - skewresult.real();}
+          if (!std::isnan(skewresult.imag()))
+            {momy = mom.y() + skewresult.imag();}
+
+          mom = {momx, momy, mom.z()};
+          mom.rotateZ(-skewAngle);
+        }
     }
 
   xp1 = mom.x();
