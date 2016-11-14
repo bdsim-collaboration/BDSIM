@@ -133,103 +133,103 @@
 		</volume>
 		<volume name="world_volume_lv">
 			<materialref ref="G4_Galactic"/>
+			<solidref ref="world_sub"/>
 			<physvol name="yoke_volume_ref0_pv">
 				<volumeref ref="yoke_volume_ref0_lv"/>
-				<scale name="yoke_volume_ref0_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume_ref0_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume_ref0_rot" x="0" y="0" z="0"/>
+				<scale name="yoke_volume_ref0_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume0_pv">
 				<volumeref ref="yoke_volume0_lv"/>
-				<scale name="yoke_volume0_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume0_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume0_rot" x="0" y="0" z="0"/>
+				<scale name="yoke_volume0_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume0_pv">
 				<volumeref ref="coil_volume0_lv"/>
-				<scale name="coil_volume0_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume0_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume0_rot" x="0" y="0" z="0"/>
+				<scale name="coil_volume0_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume_ref0_pv">
 				<volumeref ref="coil_volume_ref0_lv"/>
-				<scale name="coil_volume_ref0_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume_ref0_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume_ref0_rot" x="0" y="0" z="0"/>
+				<scale name="coil_volume_ref0_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume_ref1_pv">
 				<volumeref ref="yoke_volume_ref1_lv"/>
-				<scale name="yoke_volume_ref1_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume_ref1_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume_ref1_rot" x="0" y="0" z="1.57079632679"/>
+				<scale name="yoke_volume_ref1_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume1_pv">
 				<volumeref ref="yoke_volume1_lv"/>
-				<scale name="yoke_volume1_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume1_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume1_rot" x="0" y="0" z="1.57079632679"/>
+				<scale name="yoke_volume1_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume1_pv">
 				<volumeref ref="coil_volume1_lv"/>
-				<scale name="coil_volume1_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume1_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume1_rot" x="0" y="0" z="1.57079632679"/>
+				<scale name="coil_volume1_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume_ref1_pv">
 				<volumeref ref="coil_volume_ref1_lv"/>
-				<scale name="coil_volume_ref1_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume_ref1_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume_ref1_rot" x="0" y="0" z="1.57079632679"/>
+				<scale name="coil_volume_ref1_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume_ref2_pv">
 				<volumeref ref="yoke_volume_ref2_lv"/>
-				<scale name="yoke_volume_ref2_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume_ref2_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume_ref2_rot" x="0" y="0" z="3.14159265359"/>
+				<scale name="yoke_volume_ref2_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume2_pv">
 				<volumeref ref="yoke_volume2_lv"/>
-				<scale name="yoke_volume2_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume2_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume2_rot" x="0" y="0" z="3.14159265359"/>
+				<scale name="yoke_volume2_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume2_pv">
 				<volumeref ref="coil_volume2_lv"/>
-				<scale name="coil_volume2_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume2_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume2_rot" x="0" y="0" z="3.14159265359"/>
+				<scale name="coil_volume2_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume_ref2_pv">
 				<volumeref ref="coil_volume_ref2_lv"/>
-				<scale name="coil_volume_ref2_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume_ref2_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume_ref2_rot" x="0" y="0" z="3.14159265359"/>
+				<scale name="coil_volume_ref2_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume_ref3_pv">
 				<volumeref ref="yoke_volume_ref3_lv"/>
-				<scale name="yoke_volume_ref3_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume_ref3_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume_ref3_rot" x="0" y="0" z="4.71238898038"/>
+				<scale name="yoke_volume_ref3_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="yoke_volume3_pv">
 				<volumeref ref="yoke_volume3_lv"/>
-				<scale name="yoke_volume3_sca" x="1" y="1" z="1"/>
 				<position name="yoke_volume3_pos" x="0" y="0" z="0"/>
 				<rotation name="yoke_volume3_rot" x="0" y="0" z="4.71238898038"/>
+				<scale name="yoke_volume3_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume3_pv">
 				<volumeref ref="coil_volume3_lv"/>
-				<scale name="coil_volume3_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume3_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume3_rot" x="0" y="0" z="4.71238898038"/>
+				<scale name="coil_volume3_sca" x="1" y="1" z="1"/>
 			</physvol>
 			<physvol name="coil_volume_ref3_pv">
 				<volumeref ref="coil_volume_ref3_lv"/>
-				<scale name="coil_volume_ref3_sca" x="1" y="1" z="1"/>
 				<position name="coil_volume_ref3_pos" x="0" y="0" z="0"/>
 				<rotation name="coil_volume_ref3_rot" x="0" y="0" z="4.71238898038"/>
+				<scale name="coil_volume_ref3_sca" x="1" y="1" z="1"/>
 			</physvol>
-			<solidref ref="world_sub"/>
 		</volume>
 	</structure>
 	<setup name="Default" version="1.0">
