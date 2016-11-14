@@ -28,7 +28,7 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
     {
       bnl.push_back((*strength)[*nkey] / pow(CLHEP::m,i+1));
       bsl.push_back((*strength)[*skey] / pow(CLHEP::m,i+1));
-      nfact.push_back(Factorial(i+1));
+      nfact.push_back(Factorial(i));
     }
 }
 
@@ -139,7 +139,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yp1 += kick.imag();
 
   //Reset n for skewed kicks.
-  n=0;
+  n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
   G4double skewAngle=0;
