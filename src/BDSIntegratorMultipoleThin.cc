@@ -210,22 +210,17 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
                                      const G4double hstep,
                                      G4double yOut[],
                                      G4double yErr[]) {
-  G4double yTemp[7];
-  G4double h = hstep * 0.5;
+  AdvanceHelix(yInput, 0, hstep, yOut);
 
-  AdvanceHelix(yInput, 0, h, yTemp);
-  AdvanceHelix(yTemp, 0, h, yOut);
-
-  h = hstep;
-  AdvanceHelix(yInput, 0, h, yTemp);
+  // The two half-step method cannot be used as the
+  // multipole kick will be applied twice meaning
+  // the xp and yp values in the output arrays will be
+  // out by a factor of two. This could potentially
+  // lead to an incorrectly large error, therefore the
+  // error is set to 0 here.
 
   for (G4int i = 0; i < nVariables; i++) {
-    yErr[i] = yOut[i] - yTemp[i];
-    // if error small, set error to 0
-    // this is done to prevent Geant4 going to smaller and smaller steps
-    // ideally use some of the global constants instead of hardcoding here
-    // could look at step size as well instead.
-    if (std::abs(yErr[i]) < 1e-7) { yErr[i] = 0; }
+    yErr[i] = 0;
   }
 }
 
