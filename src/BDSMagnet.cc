@@ -17,11 +17,9 @@
 #include "BDSUtilities.hh"
 
 #include "G4Box.hh"
-#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
-#include "G4UserLimits.hh"
 #include "G4VPhysicalVolume.hh"
 
 #include <cstdlib>

@@ -1,9 +1,7 @@
 #include "BDSBeamPipeFactoryCircularVacuum.hh"
 #include "BDSBeamPipe.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 globals / types
 #include "G4CutTubs.hh"
@@ -11,7 +9,6 @@
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
 #include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>

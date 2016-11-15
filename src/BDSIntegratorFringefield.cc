@@ -2,7 +2,6 @@
 #include "BDSIntegratorFringefield.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
-#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"

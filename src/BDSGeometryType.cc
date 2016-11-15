@@ -1,5 +1,4 @@
 #include "BDSGeometryType.hh"
-#include "BDSBeamPipeFactoryLHCDetailed.hh"
 #include "BDSDebug.hh"
 #include "globals.hh"
 

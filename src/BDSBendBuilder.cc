@@ -3,7 +3,7 @@
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSAcceleratorComponentRegistry.hh"
-#include <BDSBeamPipeInfo.hh>
+#include "BDSBeamPipeInfo.hh"
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
 #include "BDSDebug.hh"
@@ -14,7 +14,6 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"
-#include "BDSSimpleComponent.hh"
 #include "BDSUtilities.hh"
 
 #include "parser/element.h"

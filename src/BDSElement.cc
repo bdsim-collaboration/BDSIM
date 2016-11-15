@@ -7,11 +7,8 @@
 #include "BDSFieldFactory.hh"
 #include "BDSGeometryExternal.hh"
 #include "BDSGeometryFactory.hh"
-#include "BDSGlobalConstants.hh"
-#include "BDSFieldFactory.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4Box.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 

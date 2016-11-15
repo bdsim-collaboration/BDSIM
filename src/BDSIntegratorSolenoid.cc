@@ -4,7 +4,6 @@
 #include "BDSStep.hh"
 
 #include "globals.hh" // geant4 types / globals.hh
-#include "G4ClassicalRK4.hh"
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 

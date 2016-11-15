@@ -29,7 +29,7 @@
 #include <iostream>
 
 #ifdef USE_GZSTREAM
-#include "gzstream.h"
+//#include "gzstream.h"
 #endif
 
 void BDSI::Query(G4Field* field,

@@ -4,7 +4,7 @@
 
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
-#include "BDSIntegratorSet.hh"
+#include "BDSIntegratorSetType.hh"
 #include "BDSOutputFormat.hh"
 #include "BDSParser.hh"
 #include "BDSTunnelInfo.hh"
