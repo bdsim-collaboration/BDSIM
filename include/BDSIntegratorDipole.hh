@@ -55,9 +55,6 @@ protected:
   /// Arc length of the magnetic field.
   const G4double length;
 
-  /// Quadrupolar field gradient - B'
-  G4double bPrime;
-
   /// Uniform magnetic field in global Y direction
   G4double bField;
 
