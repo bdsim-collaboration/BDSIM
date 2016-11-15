@@ -26,9 +26,10 @@
 
 BDSCavity::BDSCavity(G4String      name,
 		     G4double      length,
-		     BDSFieldInfo* vacuumField):
+		     BDSFieldInfo* vacuumFieldIn):
   BDSAcceleratorComponent(name, length, 0,
-			  "cavity_"+vacuumField->CavityInfo()->cavityType.ToString())
+			  "cavity_"+vacuumFieldIn->CavityInfo()->cavityType.ToString()),
+  vacuumField(vacuumFieldIn)
 {
   cavityInfo   = vacuumField->CavityInfo(); // create shortcut for convenience
   cavityRadius = cavityInfo->equatorRadius;
