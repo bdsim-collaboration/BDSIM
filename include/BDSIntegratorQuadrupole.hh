@@ -39,7 +39,7 @@ public:
 		       G4double       yErr[]);
 
 protected:
-  /// Calcaulte the new particle coordinates for a given step length h.
+  /// Calculate the new particle coordinates for a given step length h.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,
