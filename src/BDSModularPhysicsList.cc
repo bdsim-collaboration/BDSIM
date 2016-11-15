@@ -120,7 +120,7 @@ void BDSModularPhysicsList::Print()
   for (const auto& physics : physicsActivated)
     {
       G4String result = (physics.second ? "activated" : "inactive");
-      G4cout << "\"" << physics.first << "\" : " << result << G4endl;
+      G4cout << std::setw(25) << ("\"" + physics.first + "\" : ") << result << G4endl;
     }
 }
 

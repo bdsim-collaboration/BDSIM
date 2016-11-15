@@ -173,7 +173,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
 					    intType,
-					    nullptr, /*for now, no parameterised strenghts*/
+					    nullptr, /*for now, no parameterised strengths*/
 					    G4bool(definition.globalTransform),
 					    transform,
 					    nullptr, /* no cavity info*/
