@@ -1054,11 +1054,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   G4cout << "---->creating AWAKE spectrometer,"
 	 << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
 	 << "tscint = " << element->tscint*1e3/CLHEP::um << " um"
-     << "screenPSize = " << _element.screenPSize*1e3/CLHEP::um << " um"
+	 << "screenPSize = " << element->screenPSize*1e3/CLHEP::um << " um"
 	 << "windowScreenGap = " << element->windowScreenGap*1e3/CLHEP::um << " um"
 	 << "windowmaterial = " << element->windowmaterial << " um"
-     << "tmount = " << element->tmount*1e3/CLHEP::um << " um"
-     << "mountmaterial = " << _element.mountmaterial << " um"	
+	 << "tmount = " << element->tmount*1e3/CLHEP::um << " um"
+	 << "mountmaterial = " << element->mountmaterial << " um"	
 	 << "scintmaterial = " << element->scintmaterial << " um"
 	 << G4endl;
 #endif
