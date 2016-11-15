@@ -2,7 +2,6 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
-#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -65,7 +64,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   if(std::abs(kappa)<1.e-12)
     {
 #ifdef BDSDEBUG
-      G4cout << "Zero strenght quadrupole - advancing as a drift" << G4endl;
+      G4cout << "Zero strength quadrupole - advancing as a drift" << G4endl;
 #endif
       G4ThreeVector positionMove = h * InitMomDir;
 

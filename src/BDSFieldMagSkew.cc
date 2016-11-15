@@ -1,5 +1,4 @@
 #include "BDSFieldMagSkew.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"

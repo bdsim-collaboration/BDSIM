@@ -28,7 +28,7 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
     {
       bnl.push_back((*strength)[*nkey] / pow(CLHEP::m,i+1));
       bsl.push_back((*strength)[*skey] / pow(CLHEP::m,i+1));
-      nfact.push_back(Factorial(i+1));
+      nfact.push_back(Factorial(i));
     }
 }
 
@@ -139,7 +139,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yp1 += kick.imag();
 
   //Reset n for skewed kicks.
-  n=0;
+  n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
   G4double skewAngle=0;
@@ -154,24 +154,28 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   std::list<double>::iterator ks = bsl.begin();
   for (; ks != bsl.end(); n++, ks++)
     {
-      //Rotate momentum vector about z axis according to number of poles
-      //then apply each kick seperately and rotate back
-      skewAngle = CLHEP::pi / (2*(n+2));
-      mom.rotateZ(skewAngle);
-      
-      // calculate and apply kick
-      ksReal = (*ks) * pow(position,n).real() / nfact[n];
-      ksImag = (*ks) * pow(position,n).imag() / nfact[n];
-      skewresult = {ksReal,ksImag};
-      
-      // Rotate back
-      if(!std::isnan(skewresult.real()))
-	{momx = mom.x() - skewresult.real();}
-      if(!std::isnan(skewresult.imag()))
-	{momy = mom.y() + skewresult.imag();}
+      if (BDS::IsFinite(*ks))
+        {
+          //Rotate momentum vector about z axis according to number of poles
+          //then apply each kick seperately and rotate back
+          //skewAngle = CLHEP::pi / (2 * n);
+          skewAngle = CLHEP::pi / 2;
+          mom.rotateZ(skewAngle);
 
-      mom = {momx, momy, mom.z()};
-      mom.rotateZ(-skewAngle);
+          // calculate and apply kick
+          ksReal = (*ks) * pow(position, n).real() / nfact[n];
+          ksImag = (*ks) * pow(position, n).imag() / nfact[n];
+          skewresult = {ksReal, ksImag};
+
+          // Rotate back
+          if (!std::isnan(skewresult.real()))
+            {momx = mom.x() - skewresult.real();}
+          if (!std::isnan(skewresult.imag()))
+            {momy = mom.y() + skewresult.imag();}
+
+          mom = {momx, momy, mom.z()};
+          mom.rotateZ(-skewAngle);
+        }
     }
 
   xp1 = mom.x();
@@ -206,22 +210,17 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
                                      const G4double hstep,
                                      G4double yOut[],
                                      G4double yErr[]) {
-  G4double yTemp[7];
-  G4double h = hstep * 0.5;
+  AdvanceHelix(yInput, 0, hstep, yOut);
 
-  AdvanceHelix(yInput, 0, h, yTemp);
-  AdvanceHelix(yTemp, 0, h, yOut);
-
-  h = hstep;
-  AdvanceHelix(yInput, 0, h, yTemp);
+  // The two half-step method cannot be used as the
+  // multipole kick will be applied twice meaning
+  // the xp and yp values in the output arrays will be
+  // out by a factor of two. This could potentially
+  // lead to an incorrectly large error, therefore the
+  // error is set to 0 here.
 
   for (G4int i = 0; i < nVariables; i++) {
-    yErr[i] = yOut[i] - yTemp[i];
-    // if error small, set error to 0
-    // this is done to prevent Geant4 going to smaller and smaller steps
-    // ideally use some of the global constants instead of hardcoding here
-    // could look at step size as well instead.
-    if (std::abs(yErr[i]) < 1e-7) { yErr[i] = 0; }
+    yErr[i] = 0;
   }
 }
 

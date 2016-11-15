@@ -345,9 +345,8 @@ G4String BDSExecOptions::GetPath(G4String fileName)
   G4String fullPath = getEnv("BDSIMPATH");
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filename = " << fileName << G4endl;
-  G4cout << __METHOD_NAME__ << "fullpath = " << fullPath << G4endl;
 #endif
-  if(fullPath.length()<=0)
+  if(fullPath.empty())
     {
       G4String inputFilepath = "";
       // get the path part of the supplied path to the main input file
@@ -372,7 +371,7 @@ G4String BDSExecOptions::GetPath(G4String fileName)
   // add additional slash just to be safe
   fullPath += "/";
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "fullpath :" << fullPath << ":" << G4endl;
+  G4cout << __METHOD_NAME__ << "fullpath = " << fullPath << G4endl;
 #endif
   return fullPath;
 }

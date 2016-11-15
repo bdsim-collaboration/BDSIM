@@ -3,8 +3,8 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
-#include "BDSGeometryFactory.hh"
 #include "BDSGeometryExternal.hh"
+#include "BDSGeometryFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterFactory.hh"
@@ -25,7 +25,6 @@
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
-#include "G4Tubs.hh"
 
 #include <algorithm>
 #include <cmath>

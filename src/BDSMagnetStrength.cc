@@ -2,8 +2,6 @@
 
 #include "globals.hh" // geant4 globals / types
 
-#include "CLHEP/Units/SystemOfUnits.h"
-
 #include <algorithm>
 #include <cmath>
 #include <map>

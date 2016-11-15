@@ -26,7 +26,6 @@
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
-#include "BDSUtilities.hh"
 
 #include "parser/element.h"
 #include "parser/options.h"

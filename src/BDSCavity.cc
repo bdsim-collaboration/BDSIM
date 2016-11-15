@@ -10,8 +10,6 @@
 #include "globals.hh" // geant4 globals / types
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MagIntegratorDriver.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4Polycone.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
@@ -26,9 +24,10 @@
 
 BDSCavity::BDSCavity(G4String      name,
 		     G4double      length,
-		     BDSFieldInfo* vacuumField):
+		     BDSFieldInfo* vacuumFieldIn):
   BDSAcceleratorComponent(name, length, 0,
-			  "cavity_"+vacuumField->CavityInfo()->cavityType.ToString())
+			  "cavity_"+vacuumFieldIn->CavityInfo()->cavityType.ToString()),
+  vacuumField(vacuumFieldIn)
 {
   cavityInfo   = vacuumField->CavityInfo(); // create shortcut for convenience
   cavityRadius = cavityInfo->equatorRadius;
