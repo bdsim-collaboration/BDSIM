@@ -46,16 +46,16 @@ protected:
 		    G4double yOut[],
 		    G4double yErr[]);
 
-  /// scaling factor in brho calculation
+  /// Scaling factor in brho calculation.
   G4double cOverGeV;
 
-  /// Angle that the dipole induces in the reference trajectory
+  /// Angle that the dipole induces in the reference trajectory.
   const G4double angle;
 
   /// Arc length of the magnetic field.
   const G4double length;
 
-  /// Uniform magnetic field in global Y direction
+  /// Uniform magnetic field in global Y direction.
   G4double bField;
 
   std::pair<G4ThreeVector,G4ThreeVector> UpdatePandR(G4double rho,

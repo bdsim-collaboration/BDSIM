@@ -136,19 +136,18 @@ std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double
   G4ThreeVector vhat  = LocalRp;
   G4ThreeVector vnorm = vhat.cross(yhat);
     
-  G4double Theta   = h/rho;
+  G4double Theta = h/rho;
 
   G4double CosT_ov_2, SinT_ov_2, CosT, SinT;
-  CosT_ov_2=cos(Theta/2);
-  SinT_ov_2=sin(Theta/2);
+  CosT_ov_2 = cos(Theta/2);
+  SinT_ov_2 = sin(Theta/2);
   
-  CosT=(CosT_ov_2*CosT_ov_2)- (SinT_ov_2*SinT_ov_2);
-  SinT=2*CosT_ov_2*SinT_ov_2;
+  CosT = (CosT_ov_2*CosT_ov_2) - (SinT_ov_2*SinT_ov_2);
+  SinT = 2*CosT_ov_2*SinT_ov_2;
 
   G4ThreeVector dPos = rho*(SinT*vhat + (1-CosT)*vnorm);
   G4ThreeVector itsFinalPoint = LocalR+dPos;
-  G4ThreeVector itsFinalDir   = CosT*vhat +SinT*vnorm;
+  G4ThreeVector itsFinalDir   = CosT*vhat + SinT*vnorm;
   
   return std::make_pair(itsFinalPoint,itsFinalDir);
-
 }

@@ -16,7 +16,7 @@ BDSIntegratorFringefield::BDSIntegratorFringefield(BDSMagnetStrength const* stre
   BDSIntegratorDipole(strength, brho, eqOfMIn),
   polefaceAngle((*strength)["polefaceangle"]),
   fringeCorr((*strength)["fringecorr"])
-{}
+{;}
 
 void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
                                             const G4double dydx[],
@@ -24,20 +24,6 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
                                             G4double       yOut[],
                                             G4double       yErr[])
 {
-#ifdef BDSDEBUG
-  G4cout << "BDSIntegratorDipole: step= " << h/CLHEP::m << " m" << G4endl
-         << " x  = " << yIn[0]/CLHEP::m     << " m" << G4endl
-         << " y  = " << yIn[1]/CLHEP::m     << " m" << G4endl
-         << " z  = " << yIn[2]/CLHEP::m     << " m" << G4endl
-         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
-    //<< " q  = " << charge/CLHEP::eplus << " e" << G4endl
-	 << " B  = " << bField/(CLHEP::tesla) << " T" << G4endl
-    //         << " k= " << kappa/(1./CLHEP::m2) << "m^-2" << G4endl
-         << G4endl;
-#endif
-
   const G4double *pIn   = yIn+3;
   G4ThreeVector GlobalP = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4ThreeVector GlobalR = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
