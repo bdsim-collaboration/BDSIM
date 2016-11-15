@@ -51,7 +51,6 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
-#include "G4UniformMagField.hh"
 // geant4 integrators
 #include "G4CashKarpRKF45.hh"
 #include "G4ClassicalRK4.hh"
@@ -73,7 +72,6 @@
 #include "CLHEP/Vector/EulerAngles.h"
 
 #include <map>
-#include <typeinfo>
 #include <utility>
 #include <vector>
 
@@ -118,13 +116,13 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					   definition.y*CLHEP::m,
 					   definition.z*CLHEP::m);
 
-      G4RotationMatrix* rm = nullptr;
+      G4RotationMatrix rm;
       if (definition.axisAngle)
 	{
 	  G4ThreeVector axis = G4ThreeVector(definition.axisX,
 					     definition.axisY,
 					     definition.axisZ);
-	  rm = new G4RotationMatrix(axis, definition.angle*CLHEP::rad);
+	  rm = G4RotationMatrix(axis, definition.angle*CLHEP::rad);
 	}
       else
 	{
@@ -135,13 +133,12 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	      CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(definition.phi*CLHEP::rad,
 								definition.theta*CLHEP::rad,
 								definition.psi*CLHEP::rad);
-	      rm = new G4RotationMatrix(ang);
+	      rm = G4RotationMatrix(ang);
 	    }
-	  else
-	    {rm = new G4RotationMatrix();}
+	  // else rm is default rotation matrix
 	}
       
-      G4Transform3D transform = G4Transform3D(*rm, offset);
+      G4Transform3D transform = G4Transform3D(rm, offset);
 
       BDSFieldFormat magFormat = BDSFieldFormat::none;
       G4String       magFile   = "";
@@ -491,11 +488,11 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(BDSFieldInfo&       i
 
 BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
 {
-  bGlobalField = new BDSFieldMagDummy(); //Zero magnetic field.
-  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  BDSFieldObjects* completeField = new BDSFieldObjects(nullptr, bGlobalField,
-						       bEqOfMotion, integrator);
+  G4MagneticField* bGlobalField      = new BDSFieldMagDummy(); //Zero magnetic field.
+  G4Mag_EqRhs*     bEqOfMotion       = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  BDSFieldObjects* completeField     = new BDSFieldObjects(nullptr, bGlobalField,
+							   bEqOfMotion, integrator);
   return completeField;
 }
 
