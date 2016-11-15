@@ -50,7 +50,6 @@ private:
   G4double X,Y,Z,sBefore,sAfter; // global coordinates
   G4double x,y,z;   // local coordinates
   G4double stepLength;
-  G4bool   precisionRegion;
   G4int    ptype;
   G4int    trackID;
   G4int    parentID;

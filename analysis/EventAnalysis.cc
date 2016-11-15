@@ -22,7 +22,8 @@ ClassImp(EventAnalysis)
 EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
-  printModulo(1)
+  printModulo(1),
+  processSamplers(false)
 {;}
 
 EventAnalysis::EventAnalysis(Event*  eventIn,

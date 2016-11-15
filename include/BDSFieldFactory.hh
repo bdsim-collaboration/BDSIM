@@ -131,15 +131,15 @@ private:
   G4double      cacheLength;
 
   ///@{ Variable to allow different functions to access different parts during construction
-  G4Field*                field;
-  BDSFieldMag*            bdsField;
-  G4MagneticField*        bGlobalField;
-  G4EquationOfMotion*     eqOfMotion;
+  //G4Field*                field;
+  // BDSFieldMag*            bdsField;
+  // G4MagneticField*        bGlobalField;
+  // G4EquationOfMotion*     eqOfMotion;
   /// B Fields require at least this level in the inheritance - use G4Mag_EqRhs instead
   /// of G4EquationOfMotion for b fields
-  G4Mag_EqRhs*            bEqOfMotion;
-  G4MagIntegratorStepper* integrator;
-  BDSFieldObjects*        completeField;
+  // G4Mag_EqRhs*            bEqOfMotion;
+  // G4MagIntegratorStepper* integrator;
+  BDSFieldObjects*        completeField = nullptr;
   ///@}
   
   /// Splits the G4String member variable formatAndName on the ":" character.
