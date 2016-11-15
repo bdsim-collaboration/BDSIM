@@ -90,7 +90,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4ThreeVector itsInitialRp = LocalRp;
   
   // advance the orbit
-  std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalRp);
+  std::pair<G4ThreeVector,G4ThreeVector> RandRp = UpdatePandR(rho,h,LocalR,LocalRp);
   G4ThreeVector itsFinalPoint = RandRp.first;
   G4ThreeVector itsFinalDir = RandRp.second;
 
@@ -247,13 +247,13 @@ void BDSIntegratorDipole::Stepper(const G4double yInput[],
   for(G4int i=0; i<nVariables; i++)
     {yErr[i] = err;}
 
-  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
 }
 
-std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::updatePandR(G4double rho,
-                                            G4double h,
-                                            G4ThreeVector LocalR,
-                                            G4ThreeVector LocalRp)
+std::pair<G4ThreeVector,G4ThreeVector> BDSIntegratorDipole::UpdatePandR(G4double rho,
+									G4double h,
+									G4ThreeVector LocalR,
+									G4ThreeVector LocalRp)
 {
   G4ThreeVector yhat(0.,1.,0.);
   G4ThreeVector vhat  = LocalRp;

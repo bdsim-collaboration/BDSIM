@@ -61,12 +61,11 @@ protected:
   /// Uniform magnetic field in global Y direction
   G4double bField;
 
-
-  std::pair<G4ThreeVector,G4ThreeVector> updatePandR(G4double rho,
-													 G4double h,
-													 G4ThreeVector LocalR,
-													 G4ThreeVector LocalRP);
-
+  std::pair<G4ThreeVector,G4ThreeVector> UpdatePandR(G4double rho,
+						     G4double h,
+						     G4ThreeVector LocalR,
+						     G4ThreeVector LocalRP);
+  
 private:
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;

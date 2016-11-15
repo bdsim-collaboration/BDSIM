@@ -70,7 +70,7 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   G4double      charge  = (eqOfM->FCof())/CLHEP::c_light;
   G4double      rho = InitMag/CLHEP::GeV/(0.299792458 * bField/CLHEP::tesla * charge) * CLHEP::m;
 
-  std::pair<G4ThreeVector,G4ThreeVector> RandRp = updatePandR(rho,h,LocalR,LocalP);
+  std::pair<G4ThreeVector,G4ThreeVector> RandRp = UpdatePandR(rho,h,LocalR,LocalP);
   LocalR = RandRp.first;
   LocalP = RandRp.second;
   G4double CosT_ov_2 = cos(h/rho/2.0);
