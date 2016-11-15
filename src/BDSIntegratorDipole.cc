@@ -32,7 +32,6 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
 
 void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 				       const G4double dydx[],
-				       G4ThreeVector  /*fieldVector*/,
 				       G4double  h,
 				       G4double yOut[],
 				       G4double yErr[])
