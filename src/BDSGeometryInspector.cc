@@ -14,8 +14,10 @@
 
 #include <utility>
 
-// length safety large - done as define as these are all unbound methods
-#define LSL 1*CLHEP::um
+namespace BDS
+{
+  const G4double lengthSafetyLarge = 1*CLHEP::um;
+}
 
 std::pair<BDSExtent, BDSExtent> BDS::DetermineExtents(const G4VSolid* solid)
 {
@@ -128,7 +130,7 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectBox(const G4VSolid* solidIn)
   G4double dz = solid->GetZHalfLength();
 
   // accurate along z, but margin in x,y
-  BDSExtent outer(dx + LSL, dy + LSL ,dz); // symmetric +/-
+  BDSExtent outer(dx + BDS::lengthSafetyLarge, dy + BDS::lengthSafetyLarge ,dz); // symmetric +/-
   BDSExtent inner = BDSExtent();
   return std::make_pair(outer, inner);
 }
@@ -143,7 +145,7 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectTubs(const G4VSolid* solidIn)
   G4double outerR = solid->GetOuterRadius();
   G4double zHalfL = solid->GetZHalfLength();
 
-  BDSExtent outer(outerR + LSL, outerR + LSL, zHalfL);
+  BDSExtent outer(outerR + BDS::lengthSafetyLarge, outerR + BDS::lengthSafetyLarge, zHalfL);
   BDSExtent inner(innerR, innerR, zHalfL);
   return std::make_pair(outer, inner);
 }
@@ -164,7 +166,7 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectCutTubs(const G4VSolid* solidIn)
   
   G4double innerR = solid->GetInnerRadius();
   G4double outerR = solid->GetOuterRadius();
-  outerR += LSL;
+  outerR += BDS::lengthSafetyLarge;
   
   BDSExtent outer(-outerR, outerR,
 		  -outerR, outerR,
