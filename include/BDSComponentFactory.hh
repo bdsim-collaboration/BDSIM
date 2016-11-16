@@ -87,7 +87,7 @@ public:
   static void PoleFaceRotationsNotTooLarge(GMAD::Element* element,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
-protected:
+private:
   /// length safety from global constants
   G4double lengthSafety;
   /// charge from global constants
@@ -109,7 +109,6 @@ protected:
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
 
-private: 
   /// element for storing instead of passing around
   GMAD::Element* element = nullptr;
   /// element access to previous element (can be nullptr)
@@ -143,19 +142,9 @@ private:
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
 #endif
 
-  /// Creates line of components for sbend
-  BDSLine* CreateSBendLine(GMAD::Element*     element,
-			   G4int              nSbends,
-			   BDSMagnetStrength* st);
-
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
   
-  /// Utility function to calculate the number of segments an sbend should be split into.
-  /// Based on aperture error tolerance - default is 1mm.
-  G4int CalculateNSBendSegments(GMAD::Element const* element,
-				const G4double aperturePrecision = 1.0) const;
-
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
