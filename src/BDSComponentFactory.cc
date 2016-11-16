@@ -85,11 +85,12 @@ BDSComponentFactory::~BDSComponentFactory()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-                                       const std::vector<GMAD::Element*>& prevElements,
-                                       const std::vector<GMAD::Element*>& nextElements)
+							      Element* prevElementIn,
+							      Element* nextElementIn)
 {
   element = elementIn;
-
+  prevElement = prevElementIn;
+  nextElement = nextElementIn;
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
@@ -100,16 +101,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
-
-  // set next/previous element to be last (and only non thinmultipole) element in the vector
-  if (prevElements.empty())
-    {prevElement = nullptr;}
-  else
-    {prevElement = prevElements.back();}
-  if (nextElements.empty())
-    {nextElement = nullptr;}
-  else
-    {nextElement = nextElements.back();}
 
   if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
     {registered = true;}
@@ -1150,12 +1141,12 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
 {
   if (std::abs(element->e1) > maxAngle)
     {
-      G4cerr << __METHOD_NAME__ << "Pole face angle e1: " << element->e1 << " is greater than pi/4" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Pole face angle e1: " << element->e1 << " is greater than " << maxAngle << G4endl;
       exit(1);
     }
   if (std::abs(element->e2) > maxAngle)
     {
-      G4cerr << __METHOD_NAME__ << "Pole face angle e2: " << element->e2 << " is greater than pi/4" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Pole face angle e2: " << element->e2 << " is greater than " << maxAngle << G4endl;
       exit(1);
     }
 }
