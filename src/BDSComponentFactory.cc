@@ -70,8 +70,6 @@ BDSComponentFactory::BDSComponentFactory()
   // prepare rf cavity model info from parser
   PrepareCavityModels();
   
-  notSplit          = BDSGlobalConstants::Instance()->DontSplitSBends();
-  includeFringe     = BDSGlobalConstants::Instance()->IncludeFringeFields();
   thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
 }
 
