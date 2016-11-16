@@ -81,6 +81,7 @@ target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsimOptics rebdsimLib bdsimRootEvent)
+bdsim_install_targets(rebdsimOptics)
 
 if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	add_executable(edbdsim edbdsim.cc)
