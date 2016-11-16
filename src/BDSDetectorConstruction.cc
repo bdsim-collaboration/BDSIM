@@ -147,43 +147,33 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << elementIt->name << G4endl;
 #endif
-      // next and previous elements: vectors of pointers which contains any thin multipoles
-      // and the next non-thinmultipoles
-      std::vector<GMAD::Element *> prevElements;
-      std::vector<GMAD::Element *> nextElements;
-
-      // populate vectors if beamline has more than two elements (two is minimum, one is user defined and the other is a _Line)
-      // append the element to the vectors, if it's a thinmultipole, then continue iterating and appending
-      // until it's not a multipole.
-      if ((G4int)beamLine.size() > 2)
+      // find next and previous element, but ignore special elements or thin multipoles.
+      GMAD::Element* prevElement = nullptr;
+      auto prevIt = elementIt;
+      while (prevIt != beamLine.begin())
 	{
-          auto prevIt = elementIt;
-          while (prevIt != beamLine.begin())
-            {
-              prevIt--;
-              if (!(prevIt->isSpecial())) 
-		{
-                  prevElements.push_back(&(*prevIt));
-                  if (prevIt->type != GMAD::ElementType::_THINMULT)
-		    {break;}
-                }
-            }
-
-          auto nextIt = elementIt;
-          nextIt++;
-          while (nextIt != beamLine.end())
+	  --prevIt;
+	  if (prevIt->isSpecial() == false && prevIt->type != GMAD::ElementType::_THINMULT)
 	    {
-              if (!(nextIt->isSpecial())) 
-		{
-		  nextElements.push_back(&(*nextIt));
-                  if (nextIt->type != GMAD::ElementType::_THINMULT)
-		    {break;}
-		}
-	      nextIt++;
+	      prevElement = &(*prevIt);
+	      break;
 	    }
-    }
+	}
 
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElements, nextElements);
+      GMAD::Element* nextElement = nullptr;
+      auto nextIt = elementIt;
+      ++nextIt;
+      while (nextIt != beamLine.end())
+	{
+	  if (nextIt->isSpecial() == false && nextIt->type != GMAD::ElementType::_THINMULT)
+	    {
+	      nextElement = &(*nextIt);
+	      break;
+	    }
+	  ++nextIt;
+	}
+
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
       {
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
@@ -200,14 +190,14 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      G4ThreeVector teleporterDetla = BDS::CalculateAndSetTeleporterDelta(beamline);
+      G4ThreeVector teleporterDelta = BDS::CalculateAndSetTeleporterDelta(beamline);
       BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
       if (terminator)
         {
 	  terminator->Initialise();
 	  beamline->AddComponent(terminator);
 	}
-      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDetla);
+      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
       if (teleporter)
 	{
 	  teleporter->Initialise();
@@ -470,10 +460,10 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
 			    element->GetPlacementName() + "_pv",  // placement name
 			    element->GetContainerLogicalVolume(), // volume to be placed
-			    worldPV,                                  // volume to place it in
-			    false,                                    // no boolean operation
-			    0,                                        // copy number
-			    checkOverlaps);                           // overlap checking
+			    worldPV,                              // volume to place it in
+			    false,                                // no boolean operation
+			    0,                                    // copy number
+			    checkOverlaps);                       // overlap checking
 	}
     }
 

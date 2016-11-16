@@ -9,7 +9,6 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 
 #include <map>
-#include <vector>
 
 namespace GMAD {
   struct Element;
@@ -43,15 +42,15 @@ public:
 
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element*                     elementIn,
-					   const std::vector<GMAD::Element*>& prevElementIn,
-					   const std::vector<GMAD::Element*>& nextElementIn);
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
+					   GMAD::Element* prevElementIn,
+					   GMAD::Element* nextElementIn);
   
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
 
   /// Public creation method for ring logic
-  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDetla);
+  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
@@ -87,17 +86,13 @@ public:
   static void PoleFaceRotationsNotTooLarge(GMAD::Element* element,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
-protected:
+private:
   /// length safety from global constants
   G4double lengthSafety;
   /// charge from global constants
   G4double charge;
   /// rigidity in T*m for beam particles
   G4double brho;
-  /// don't split sbends into multiple segments
-  G4bool notSplit;
-  /// include thin fringe field element(s) in dipoles
-  G4bool includeFringe;
   /// length of a thin element
   G4double thinElementLength;
   
@@ -109,7 +104,6 @@ protected:
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
 
-private: 
   /// element for storing instead of passing around
   GMAD::Element* element = nullptr;
   /// element access to previous element (can be nullptr)
@@ -117,7 +111,7 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element* nextElement = nullptr;
   
-  BDSAcceleratorComponent* CreateDrift(G4ThreeVector inputFaceNormal, G4ThreeVector outputFaceNormal);
+  BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
@@ -143,29 +137,14 @@ private:
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
 #endif
 
-  BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
-				G4double angle,
-				G4String name,
-				BDSMagnetType magType,
-				BDSMagnetStrength* st);
-
-  /// Creates line of components for sbend
-  BDSLine* CreateSBendLine(GMAD::Element*     element,
-			   G4int              nSbends,
-			   BDSMagnetStrength* st);
-
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
   
-  /// Utility function to calculate the number of segments an sbend should be split into.
-  /// Based on aperture error tolerance - default is 1mm.
-  G4int CalculateNSBendSegments(GMAD::Element const* element,
-				const G4double aperturePrecision = 1.0) const;
-
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
 
+  /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
   /// Set the field definition on a BDSAcceleratorComponent from the string definition

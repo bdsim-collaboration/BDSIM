@@ -15,19 +15,19 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSSamplerPlane.hh"
-#include "BDSShield.hh"
 #include "BDSScreen.hh"
-#include "BDSTerminator.hh"
+#include "BDSShield.hh"
 #include "BDSTeleporter.hh"
+#include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
-#include "BDSBendBuilder.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
+#include "BDSBendBuilder.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
@@ -60,7 +60,6 @@
 #include <utility>
 using namespace GMAD;
 
-
 BDSComponentFactory::BDSComponentFactory()
 {
   lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
@@ -71,8 +70,6 @@ BDSComponentFactory::BDSComponentFactory()
   // prepare rf cavity model info from parser
   PrepareCavityModels();
   
-  notSplit          = BDSGlobalConstants::Instance()->DontSplitSBends();
-  includeFringe     = BDSGlobalConstants::Instance()->IncludeFringeFields();
   thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
 }
 
@@ -88,11 +85,12 @@ BDSComponentFactory::~BDSComponentFactory()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-                                       const std::vector<GMAD::Element*>& prevElements,
-                                       const std::vector<GMAD::Element*>& nextElements)
+							      Element* prevElementIn,
+							      Element* nextElementIn)
 {
   element = elementIn;
-
+  prevElement = prevElementIn;
+  nextElement = nextElementIn;
   G4double angleIn  = 0.0;
   G4double angleOut = 0.0;
   G4bool registered = false;
@@ -103,16 +101,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
 #endif
-
-  // set next/previous element to be last (and only non thinmultipole) element in the vector
-  if (prevElements.empty())
-    {prevElement = nullptr;}
-  else
-    {prevElement = prevElements.back();}
-  if (nextElements.empty())
-    {nextElement = nullptr;}
-  else
-    {nextElement = nextElements.back();}
 
   if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(element->name))
     {registered = true;}
@@ -191,27 +179,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
     }
 
-  // Create normal vectors for drifts
-  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
-
-  // current element tilt
-  G4double currentTilt  = element->tilt * CLHEP::rad;
-  G4double prevTilt = 0;
-  G4double nextTilt     = 0;
-  if (prevElement)
-    {prevTilt = prevElement->tilt * CLHEP::rad;}
-  if (nextElement)
-    {nextTilt = nextElement->tilt * CLHEP::rad;}
-  G4ThreeVector inputFaceNormal  = faces.first.rotateZ(prevTilt - currentTilt);
-  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt - currentTilt);
-  
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory - creating " << element->type << G4endl;
 #endif
   switch(element->type){
   case ElementType::_DRIFT:
-    component = CreateDrift(inputFaceNormal, outputFaceNormal); break;
+    component = CreateDrift(angleIn, angleOut); break;
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
@@ -300,7 +274,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   return component;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDetla)
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
 {
   // This relies on things being added to the beamline immediately
   // after they've been created
@@ -322,11 +296,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVect
 
   return( new BDSTeleporter(name,
 			    teleporterLength,
-			    teleporterDetla));
+			    teleporterDelta));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4ThreeVector inputFaceNormal,
-							  G4ThreeVector outputFaceNormal)
+BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -337,6 +310,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4ThreeVector inputFac
 	 << " l= " << element->l << "m"
 	 << G4endl;
 #endif
+  // Create normal vectors
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
+
+  // current element tilt
+  G4double currentTilt  = element->tilt * CLHEP::rad;
+  G4double prevTilt = 0;
+  G4double nextTilt = 0;
+  if (prevElement)
+    {prevTilt = prevElement->tilt * CLHEP::rad;}
+  if (nextElement)
+    {nextTilt = nextElement->tilt * CLHEP::rad;}
+  G4ThreeVector inputFaceNormal  = faces.first.rotateZ(prevTilt - currentTilt);
+  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt - currentTilt);
+
   const G4double length = element->l*CLHEP::m;
 
   // Beampipeinfo needed here to get aper1 for check.
@@ -456,7 +443,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
 
-  G4double angleIn = element->e1 - 0.5*element->angle;
+  G4double angleIn  = element->e1 - 0.5*element->angle;
   G4double angleOut = element->e2 - 0.5*element->angle;
 
 
@@ -1013,7 +1000,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
       itt != element->layerThicknesses.end();
       itt++, itm++)
     {
-      G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
+      G4cout << __METHOD_NAME__ << " - screen layer: thickness: " << 
 	*(itt)<< ", material "  << (*itm) << 
 	", isSampler: "  << (*itIsSampler) << G4endl;
       if(element->layerIsSampler.size()>0)
@@ -1054,11 +1041,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   G4cout << "---->creating AWAKE spectrometer,"
 	 << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
 	 << "tscint = " << element->tscint*1e3/CLHEP::um << " um"
-     << "screenPSize = " << _element.screenPSize*1e3/CLHEP::um << " um"
+	 << "screenPSize = " << element->screenPSize*1e3/CLHEP::um << " um"
 	 << "windowScreenGap = " << element->windowScreenGap*1e3/CLHEP::um << " um"
 	 << "windowmaterial = " << element->windowmaterial << " um"
-     << "tmount = " << element->tmount*1e3/CLHEP::um << " um"
-     << "mountmaterial = " << _element.mountmaterial << " um"	
+	 << "tmount = " << element->tmount*1e3/CLHEP::um << " um"
+	 << "mountmaterial = " << element->mountmaterial << " um"	
 	 << "scintmaterial = " << element->scintmaterial << " um"
 	 << G4endl;
 #endif
@@ -1092,7 +1079,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 				   element->spec,
 				   element->screenWidth*1e3));
 }
-#endif
+#endif // end of USE_AWAKE
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
@@ -1154,12 +1141,12 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
 {
   if (std::abs(element->e1) > maxAngle)
     {
-      G4cerr << __METHOD_NAME__ << "Pole face angle e1: " << element->e1 << " is greater than pi/4" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Pole face angle e1: " << element->e1 << " is greater than " << maxAngle << G4endl;
       exit(1);
     }
   if (std::abs(element->e2) > maxAngle)
     {
-      G4cerr << __METHOD_NAME__ << "Pole face angle e2: " << element->e2 << " is greater than pi/4" << G4endl;
+      G4cerr << __METHOD_NAME__ << "Pole face angle e2: " << element->e2 << " is greater than " << maxAngle << G4endl;
       exit(1);
     }
 }
@@ -1271,18 +1258,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 							  const G4double angleOut)
 {
   auto faces = BDS::CalculateFaces(angleIn, angleOut);
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
-  BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
-					      element->apertureType,
-					      element->aper1 * CLHEP::m,
-					      element->aper2 * CLHEP::m,
-					      element->aper3 * CLHEP::m,
-					      element->aper4 * CLHEP::m,
-					      element->vacuumMaterial,
-					      element->beampipeThickness * CLHEP::m,
-					      element->beampipeMaterial,
-					      faces.first,
-					      faces.second);
+  BDSBeamPipeInfo* info = PrepareBeamPipeInfo(element, faces.first, faces.second);
   return info;
 }
 
