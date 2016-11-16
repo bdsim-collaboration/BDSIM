@@ -51,7 +51,7 @@ public:
   BDSAcceleratorComponent* CreateTerminator();
 
   /// Public creation method for ring logic
-  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDetla);
+  BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element
   BDSTiltOffset*           CreateTiltOffset(GMAD::Element const* element) const;
@@ -117,7 +117,7 @@ private:
   /// element access to previous element (can be nullptr)
   GMAD::Element* nextElement = nullptr;
   
-  BDSAcceleratorComponent* CreateDrift(G4ThreeVector inputFaceNormal, G4ThreeVector outputFaceNormal);
+  BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend();
   BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);

@@ -15,19 +15,19 @@
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSSamplerPlane.hh"
-#include "BDSShield.hh"
 #include "BDSScreen.hh"
-#include "BDSTerminator.hh"
+#include "BDSShield.hh"
 #include "BDSTeleporter.hh"
+#include "BDSTerminator.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
-#include "BDSBendBuilder.hh"
 
 // general
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBeamPipeType.hh"
+#include "BDSBendBuilder.hh"
 #include "BDSCavityInfo.hh"
 #include "BDSCavityType.hh"
 #include "BDSDebug.hh"
@@ -59,7 +59,6 @@
 #include <string>
 #include <utility>
 using namespace GMAD;
-
 
 BDSComponentFactory::BDSComponentFactory()
 {
@@ -191,27 +190,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
     }
 
-  // Create normal vectors for drifts
-  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
-
-  // current element tilt
-  G4double currentTilt  = element->tilt * CLHEP::rad;
-  G4double prevTilt = 0;
-  G4double nextTilt     = 0;
-  if (prevElement)
-    {prevTilt = prevElement->tilt * CLHEP::rad;}
-  if (nextElement)
-    {nextTilt = nextElement->tilt * CLHEP::rad;}
-  G4ThreeVector inputFaceNormal  = faces.first.rotateZ(prevTilt - currentTilt);
-  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt - currentTilt);
-  
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
   G4cout << "BDSComponentFactory - creating " << element->type << G4endl;
 #endif
   switch(element->type){
   case ElementType::_DRIFT:
-    component = CreateDrift(inputFaceNormal, outputFaceNormal); break;
+    component = CreateDrift(angleIn, angleOut); break;
   case ElementType::_RF:
     component = CreateRF(); break;
   case ElementType::_SBEND:
@@ -300,7 +285,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   return component;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDetla)
+BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
 {
   // This relies on things being added to the beamline immediately
   // after they've been created
@@ -322,11 +307,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVect
 
   return( new BDSTeleporter(name,
 			    teleporterLength,
-			    teleporterDetla));
+			    teleporterDelta));
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4ThreeVector inputFaceNormal,
-							  G4ThreeVector outputFaceNormal)
+BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -337,6 +321,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4ThreeVector inputFac
 	 << " l= " << element->l << "m"
 	 << G4endl;
 #endif
+  // Create normal vectors
+  std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
+
+  // current element tilt
+  G4double currentTilt  = element->tilt * CLHEP::rad;
+  G4double prevTilt = 0;
+  G4double nextTilt = 0;
+  if (prevElement)
+    {prevTilt = prevElement->tilt * CLHEP::rad;}
+  if (nextElement)
+    {nextTilt = nextElement->tilt * CLHEP::rad;}
+  G4ThreeVector inputFaceNormal  = faces.first.rotateZ(prevTilt - currentTilt);
+  G4ThreeVector outputFaceNormal = faces.second.rotateZ(nextTilt - currentTilt);
+
   const G4double length = element->l*CLHEP::m;
 
   // Beampipeinfo needed here to get aper1 for check.
@@ -1013,7 +1011,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
       itt != element->layerThicknesses.end();
       itt++, itm++)
     {
-      G4cout << __METHOD_NAME__ << " - screeen layer: thickness: " << 
+      G4cout << __METHOD_NAME__ << " - screen layer: thickness: " << 
 	*(itt)<< ", material "  << (*itm) << 
 	", isSampler: "  << (*itIsSampler) << G4endl;
       if(element->layerIsSampler.size()>0)
