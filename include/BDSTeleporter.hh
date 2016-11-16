@@ -29,7 +29,7 @@ class BDSTeleporter: public BDSAcceleratorComponent
 public:
   BDSTeleporter(const G4String      name,
 		const G4double      length,
-		const G4ThreeVector teleporterDetlaIn);  
+		const G4ThreeVector teleporterDeltaIn);
   virtual ~BDSTeleporter();
 
 private:
