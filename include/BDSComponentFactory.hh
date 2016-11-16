@@ -143,12 +143,6 @@ private:
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
 #endif
 
-  BDSMagnet* CreateDipoleFringe(GMAD::Element* element,
-				G4double angle,
-				G4String name,
-				BDSMagnetType magType,
-				BDSMagnetStrength* st);
-
   /// Creates line of components for sbend
   BDSLine* CreateSBendLine(GMAD::Element*     element,
 			   G4int              nSbends,
@@ -166,6 +160,7 @@ private:
   /// This class deletes them upon destruction.
   void PrepareCavityModels();
 
+  /// Checks if colour is specified for element, else uses fallback color
   G4String PrepareColour(GMAD::Element const* element, const G4String fallback) const;
 
   /// Set the field definition on a BDSAcceleratorComponent from the string definition

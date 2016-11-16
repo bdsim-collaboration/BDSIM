@@ -454,7 +454,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
 
-  G4double angleIn = element->e1 - 0.5*element->angle;
+  G4double angleIn  = element->e1 - 0.5*element->angle;
   G4double angleOut = element->e2 - 0.5*element->angle;
 
 
@@ -1090,7 +1090,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 				   element->spec,
 				   element->screenWidth*1e3));
 }
-#endif
+#endif // end of USE_AWAKE
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
@@ -1269,18 +1269,7 @@ BDSBeamPipeInfo* BDSComponentFactory::PrepareBeamPipeInfo(Element const* element
 							  const G4double angleOut)
 {
   auto faces = BDS::CalculateFaces(angleIn, angleOut);
-  BDSBeamPipeInfo* defaultModel = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel();
-  BDSBeamPipeInfo* info = new BDSBeamPipeInfo(defaultModel,
-					      element->apertureType,
-					      element->aper1 * CLHEP::m,
-					      element->aper2 * CLHEP::m,
-					      element->aper3 * CLHEP::m,
-					      element->aper4 * CLHEP::m,
-					      element->vacuumMaterial,
-					      element->beampipeThickness * CLHEP::m,
-					      element->beampipeMaterial,
-					      faces.first,
-					      faces.second);
+  BDSBeamPipeInfo* info = PrepareBeamPipeInfo(element, faces.first, faces.second);
   return info;
 }
 
