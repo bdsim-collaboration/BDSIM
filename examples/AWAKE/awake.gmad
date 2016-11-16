@@ -13,13 +13,15 @@ include options.gmad;
 !include beam/background/0p2mm_alu_window_bg_full/outBeampipe/neutrons.gmad
 
 ! Careful here
-precision: region, prodCutProtons=1*mm,
-	   	   prodCutPhotons=1*m,
-		   prodCutElectrons=1*m,
-		   prodCutPositrons=1*m;
+precReg: cutsregion, prodCutProtons=10*um,
+	 	 prodCutPhotons=10*um,
+	   	 prodCutElectrons=10*um,
+		 prodCutPositrons=10*um;
 
 beamEnergy=2*GeV;     !400GeV protons: 1.3GeV electrons
-beam, energy=beamEnergy; !Required for bdsim to calculate appropriate quad strength
+
+!Required for bdsim to calculate appropriate quad strength
+beam, energy=beamEnergy;
 
 beam, particle="e-",
       energy=beamEnergy;
@@ -87,7 +89,7 @@ w_ldump1=1*cm;
 diagScreenAngle=45*pi/180.0;
 perpScreenAngle=0;
 
-ldump1_s: screen, l=l_ldump1, region="precision", layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], screenXSize=w_ldump1, screenYSize=w_ldump1, angle=perpScreenAngle, aper=def_aper;
+ldump1_s: screen, l=l_ldump1, region="precReg", layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], screenXSize=w_ldump1, screenYSize=w_ldump1, angle=perpScreenAngle, aper=def_aper;
 ldump1_d: drift, l=l_ldump1, aper=def_aper;
 
 d2: drift, aper=def_aper, l=84*mm;
@@ -99,7 +101,7 @@ d3: drift, aper=def_aper, l=84*mm;
 !BTV1 (BI screen)
 l_btv1=350*mm;
 w_btv1=w_ldump1;
-btv1_s: screen, l=l_btv1, region="precision", layerThicknesses={ 0.3*mm, 300*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+btv1_s: screen, l=l_btv1, region="precReg", layerThicknesses={ 0.3*mm, 300*nm }, layerMaterials=["G4_Si","G4_Ag"], 
 	 screenXSize=w_btv1, screenYSize=w_btv1, angle=diagScreenAngle, aper=def_aper;	     
 btv1_d: drift, l=l_btv1, aper=def_aper;
 
@@ -110,7 +112,7 @@ dtab1: drift, aper=def_aper, l=280*mm;
 !otr screen
 l_otr=200*mm;
 w_otr=w_ldump1;
-otr_s: screen, l=l_otr, region="precision", layerThicknesses={ 0.15*mm, 100*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+otr_s: screen, l=l_otr, region="precReg", layerThicknesses={ 0.15*mm, 100*nm }, layerMaterials=["G4_Si","G4_Ag"], 
 	 screenXSize=w_otr, screenYSize=w_otr, angle=diagScreenAngle, aper=def_aper;
 otr_d: drift, l=l_otr, aper=def_aper;
 
@@ -120,7 +122,7 @@ l_ctr=l_otr;
 w_ctr=w_ldump1;
 d4: drift,l=500*mm - l_otr/2.0 - l_ctr/2.0, aper=def_aper;
 !, tunnelOffsetX=tunOffX;
-ctr_s: screen, l=l_ctr, region="precision", layerThicknesses={ 0.15*mm, 100*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+ctr_s: screen, l=l_ctr, region="precReg", layerThicknesses={ 0.15*mm, 100*nm }, layerMaterials=["G4_Si","G4_Ag"], 
 	 screenXSize=w_ctr, screenYSize=w_ctr, angle=diagScreenAngle, aper=def_aper;
 ctr_d: drift, l=l_ctr, aper=def_aper;
 
@@ -171,7 +173,7 @@ sez=257.661*cm-psz;
 screenAngle=-45*pi/180;
 
 
-mySpectrometer: awakespectrometer, l=4.4284*m-quad_length_diff/2, region="precision",
+mySpectrometer: awakespectrometer, l=4.4284*m-quad_length_diff/2, region="precReg",
 twindow=1*cm, windowmaterial="G4_Al",tscint=850*mum,
 windowScreenGap=65*mm,
 scintmaterial="lanex", angle=screenAngle,poleStartZ=psz,
@@ -209,7 +211,7 @@ d8: drift,l=1*mum, aper=def_aper;
 diagScreenAngle=45*pi/180.0;
 l_btv2=448*mm;
 w_btv2=w_ldump1;
-btv2_s: screen, l=l_btv2, region="precision", layerThicknesses={ 0.3*mm, 300*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+btv2_s: screen, l=l_btv2, region="precReg", layerThicknesses={ 0.3*mm, 300*nm }, layerMaterials=["G4_Si","G4_Ag"], 
 	 screenXSize=w_btv2, screenYSize=w_btv2, angle=diagScreenAngle, aper=def_aper;	     
 btv2_d: drift, l=l_btv2, aper=def_aper;
 
@@ -218,7 +220,7 @@ d9: drift, aper=def_aper, l=123*mm;
 l_ldump2=l_ldump1;
 w_ldump2=w_ldump1;
 !laser dump
-ldump2_s: screen, l=l_ldump2, region="precision", layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], 
+ldump2_s: screen, l=l_ldump2, region="precReg", layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], 
 	 screenXSize=w_ldump2, screenYSize=w_ldump2, angle=diagScreenAngle, aper=def_aper;
 ldump2_d: drift, l=ldump2_s["l"], aper=def_aper;
 
