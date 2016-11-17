@@ -12,12 +12,12 @@ namespace CLHEP {
 /**
  * @brief A halo distribution based on both twiss parameters and sigmas.
  *
- * @author Stewart Boogert <Stewart.Boogert@rhul.ac.uk>
+ * @author Stewart Boogert
  */
 
 class BDSBunchHalo: public BDSBunchInterface
 {
-private : 
+private: 
   /* Twiss parameters */
   G4double betaX;
   G4double betaY;

@@ -22,7 +22,8 @@ ClassImp(EventAnalysis)
 EventAnalysis::EventAnalysis():
   Analysis("Event.", nullptr, "EventHistogramsMerged"),
   event(nullptr),
-  printModulo(1)
+  printModulo(1),
+  processSamplers(false)
 {;}
 
 EventAnalysis::EventAnalysis(Event*  eventIn,
@@ -112,11 +113,11 @@ void EventAnalysis::Terminate()
 {
   Analysis::Terminate();
 
-  for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
-  {
-    (*i)->Terminate();
-    this->opticalFunctions.push_back((*i)->GetOpticalFunctions());
-  }
+  for (auto samplerAnalysis : samplerAnalyses)
+    {
+      samplerAnalysis->Terminate();
+      opticalFunctions.push_back(samplerAnalysis->GetOpticalFunctions());
+    }
 }
 
 void EventAnalysis::Write(TFile *outputFile)

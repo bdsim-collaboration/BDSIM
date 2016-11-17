@@ -175,6 +175,6 @@ void DataLoader::SetBranchAddress()
 {
   mod->SetBranchAddress(modChain);
   opt->SetBranchAddress(optChain);
-  evt->SetBranchAddress(evtChain,this->samplerNames);
+  evt->SetBranchAddress(evtChain, &samplerNames);
   run->SetBranchAddress(runChain);
 }

@@ -22,9 +22,8 @@ class BDSDrift: public BDSAcceleratorComponent
 public:
   BDSDrift(G4String         name, 
 	   G4double         length,
-	   BDSBeamPipeInfo* beamPipeInfo,
-	   G4int            precisionRegion = 0);
-  ~BDSDrift();
+	   BDSBeamPipeInfo* beamPipeInfo);
+  virtual ~BDSDrift();
 
 protected:
   void Build();

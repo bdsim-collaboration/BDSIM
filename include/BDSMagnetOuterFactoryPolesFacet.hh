@@ -6,7 +6,9 @@
 #include "globals.hh" // geant4 globals / types
 
 /**
- * @brief Factory class for outer volume of magnets. Produces magnets
+ * @brief Factory class for outer volume of magnets. 
+ *
+ * Produces magnets
  * with 2N-poles around the beampipe with a faceted yoke - the yoke 
  * is perpendiular to the pole direction where the pole joins the yoke.
  * 

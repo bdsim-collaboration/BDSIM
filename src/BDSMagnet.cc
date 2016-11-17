@@ -1,59 +1,56 @@
-#include "BDSGlobalConstants.hh" 
-#include "BDSDebug.hh"
-
-#include <cstdlib>
-
-#include "G4Box.hh"
-#include "G4ChordFinder.hh"
-#include "G4CutTubs.hh"
-#include "G4FieldManager.hh"
-#include "G4LogicalVolume.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4MagneticField.hh"
-#include "G4Material.hh"
-#include "G4PVPlacement.hh"
-#include "G4VPhysicalVolume.hh"
-
 #include "BDSBeamPipe.hh"
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
+#include "BDSExecOptions.hh"
+#include "BDSFieldBuilder.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMagnetOuter.hh"
 #include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetOuterFactory.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSMagnet.hh"
-#include "BDSMultipoleOuterMagField.hh"
 #include "BDSUtilities.hh"
+
+#include "G4Box.hh"
+#include "G4LogicalVolume.hh"
+#include "G4Material.hh"
+#include "G4PVPlacement.hh"
+#include "G4VPhysicalVolume.hh"
+
+#include <cstdlib>
+#include <cmath>
+#include <string>
+
 
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,
 		     G4double            length,
 		     BDSBeamPipeInfo*    beamPipeInfoIn,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
-		     G4double            angle):
+		     BDSFieldInfo*       vacuumFieldInfoIn,
+		     G4double            angle,
+		     BDSFieldInfo*       outerFieldInfoIn):
   BDSAcceleratorComponent(name, length, angle, type.ToString()),
   magnetType(type),
   beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
-  magnetOuterOffset(G4ThreeVector(0,0,0))
+  vacuumFieldInfo(vacuumFieldInfoIn),
+  outerFieldInfo(outerFieldInfoIn),
+  beampipe(nullptr),
+  placeBeamPipe(false),
+  magnetOuterOffset(G4ThreeVector(0,0,0)),
+  outer(nullptr),
+  beamPipePlacementTransform(G4Transform3D())
 {
   outerDiameter   = magnetOuterInfo->outerDiameter;
   containerRadius = 0.5*outerDiameter;
   inputface       = G4ThreeVector(0,0,-1);
   outputface      = G4ThreeVector(0,0, 1);
-  
-  itsStepper       = nullptr;
-  itsMagField      = nullptr;
-  itsEqRhs         = nullptr;
-  itsBPFieldMgr    = nullptr;
-  itsOuterFieldMgr = nullptr;
-  itsChordFinder   = nullptr;
-  itsOuterMagField = nullptr;
   
   beampipe = nullptr;
   outer    = nullptr;
@@ -70,19 +67,12 @@ void BDSMagnet::Build()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif  
-  BuildBeampipe();           // build beam pipe without placing it
-  BuildBPFieldAndStepper();  // build magnetic field - provided by derived class
-  BuildBPFieldMgr();         // build the field manager - done here
-  AttachFieldToBeamPipe();   // attach the magnetic field to the vacuum
-  BuildOuter();              // build outer and update container solid
-  //BuildOuterFieldManager(..) // unused currently - uncomment when reimplemented!!!
-  //AttachFieldToOuter();
-  
-  // calls BuildContainerLogicalVolume() (implemented in this class) which
-  // builds the container if needed
-  BDSAcceleratorComponent::Build(); 
-
-  PlaceComponents();    // place things (if needed) in container
+  BuildBeampipe();
+  BuildVacuumField();
+  BuildOuter();
+  BuildOuterField();
+  BDSAcceleratorComponent::Build(); // build container
+  PlaceComponents(); // place things (if needed) in container
 }
 
 void BDSMagnet::BuildBeampipe()
@@ -90,11 +80,12 @@ void BDSMagnet::BuildBeampipe()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  
   beampipe = BDSBeamPipeFactory::Instance()->CreateBeamPipe(name,
 							    chordLength - lengthSafety,
 							    beamPipeInfo);
 
+  beamPipePlacementTransform = beampipe->GetPlacementTransform().inverse();
+  
   RegisterDaughter(beampipe);
   InheritExtents(beampipe);
 
@@ -105,132 +96,29 @@ void BDSMagnet::BuildBeampipe()
   SetOutputFaceNormal(BDS::RotateToReferenceFrame(beampipe->OutputFaceNormal(), -angle));
 }
 
-void BDSMagnet::BuildBPFieldMgr()
+void BDSMagnet::BuildVacuumField()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  if (itsMagField && itsEqRhs && itsStepper)
+  if (vacuumFieldInfo)
     {
-      itsChordFinder = new G4ChordFinder(itsMagField,
-                                         BDSGlobalConstants::Instance()->ChordStepMinimum(),
-					 itsStepper);
-      
-      itsChordFinder->SetDeltaChord(BDSGlobalConstants::Instance()->DeltaChord());
-      itsBPFieldMgr = new G4FieldManager();
-      itsBPFieldMgr->SetDetectorField(itsMagField);
-      itsBPFieldMgr->SetChordFinder(itsChordFinder);
-      
-      // these options are always non-zero so always set them
-      itsBPFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
-      itsBPFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
-      itsBPFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
-      itsBPFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
+      G4Transform3D newFieldTransform = vacuumFieldInfo->Transform() * beamPipePlacementTransform;
+      vacuumFieldInfo->SetTransform(newFieldTransform);
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
+								beampipe->GetVacuumLogicalVolume(),
+								true);
     }
-}
-
-void BDSMagnet::AttachFieldToBeamPipe()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // SET FIELD
-  if(itsBPFieldMgr)
-    {
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "field exists and attaching" << G4endl;
-#endif
-      beampipe->GetVacuumLogicalVolume()->SetFieldManager(itsBPFieldMgr,false);
-    }
-#ifdef BDSDEBUG
-  else
-    {G4cout << __METHOD_NAME__ << "no field for beam pipe!" << G4endl;}
-#endif
 }
 
 void BDSMagnet::BuildOuter()
 {
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
+  G4cout << __METHOD_NAME__ <<  *magnetOuterInfo << G4endl;
 #endif
-  G4Material* outerMaterial          = magnetOuterInfo->outerMaterial;
-  BDSMagnetGeometryType geometryType = magnetOuterInfo->geometryType;
-  G4double outerDiameter             = magnetOuterInfo->outerDiameter - lengthSafetyLarge;
-  G4double outerLength               = chordLength - 2*lengthSafety;
-  
-  // chordLength is provided to the outer factory to make a new container for the whole
-  // magnet object based on the shape of the magnet outer geometry.
-  
-  // build the right thing depending on the magnet type
-  // saves basically the same function in each derived class
-  BDSMagnetOuterFactory* theFactory  = BDSMagnetOuterFactory::Instance();
-  switch(magnetType.underlying())
-    {
-    case BDSMagnetType::decapole:
-      outer = theFactory->CreateDecapole(geometryType,name,outerLength,beampipe,
-					 outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::vkicker:
-      outer = theFactory->CreateKicker(geometryType,name,outerLength,beampipe,
-				       outerDiameter,chordLength,true,outerMaterial);
-      break;
-    case BDSMagnetType::hkicker:
-      outer = theFactory->CreateKicker(geometryType,name,outerLength,beampipe,
-				       outerDiameter,chordLength,false,outerMaterial);
-      break;
-    case BDSMagnetType::muspoiler:
-      outer = theFactory->CreateMuSpoiler(geometryType,name,outerLength,beampipe,
-					  outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::octupole:
-      outer = theFactory->CreateOctupole(geometryType,name,outerLength,beampipe,
-					 outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::quadrupole:
-      outer = theFactory->CreateQuadrupole(geometryType,name,outerLength,beampipe,
-					   outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::rfcavity:
-      outer = theFactory->CreateRfCavity(geometryType,name,outerLength,beampipe,
-					 outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::rectangularbend:
-      {
-	outer = theFactory->CreateRectangularBend(geometryType,name,outerLength,beampipe,
-						  outerDiameter,outerDiameter,chordLength,
-						  magnetOuterInfo->angleIn,
-						  magnetOuterInfo->angleOut,
-						  magnetOuterInfo->yokeOnLeft,
-						  outerMaterial);
-	break;
-      }
-    case BDSMagnetType::sectorbend:
-      {
-	outer = theFactory->CreateSectorBend(geometryType,name,outerLength,beampipe,
-					     outerDiameter,chordLength,
-					     magnetOuterInfo->angleIn,
-					     magnetOuterInfo->angleOut,
-					     magnetOuterInfo->yokeOnLeft,
-					     outerMaterial);
-	break;
-      }
-    case BDSMagnetType::sextupole:
-      outer = theFactory->CreateSextupole(geometryType,name,outerLength,beampipe,
-					  outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::solenoid:
-      outer = theFactory->CreateSolenoid(geometryType,name,outerLength,beampipe,
-					 outerDiameter,chordLength,outerMaterial);
-      break;
-    case BDSMagnetType::multipole:
-      outer = theFactory->CreateMultipole(geometryType,name,outerLength,beampipe,
-					  outerDiameter,chordLength,outerMaterial);
-      break;
-    default:
-      G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
-      outer = nullptr;
-      break;
-    }
+  G4double outerLength = chordLength - 2*lengthSafety;
+  outer = BDSMagnetOuterFactory::Instance()->CreateMagnetOuter(magnetType,
+							       magnetOuterInfo,
+							       outerLength,
+							       chordLength,
+							       beampipe);
 
   if(outer)
     {
@@ -259,39 +147,17 @@ void BDSMagnet::BuildOuter()
     }
 }
 
-void BDSMagnet::BuildOuterFieldManager(G4int    nPoles,
-				       G4double poleField,
-				       G4double phiOffset)
+void BDSMagnet::BuildOuterField()
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  if(nPoles<=0 || nPoles>10 || nPoles%2 !=0)
-    G4Exception("BDSMagnet: Invalid number of poles", "-1", FatalException, "");
-  if (poleField==0) return;
-
-  itsOuterMagField = new BDSMultipoleOuterMagField(nPoles,poleField,phiOffset);
-  itsOuterFieldMgr = new G4FieldManager(itsOuterMagField);
-
-  // these options are always non-zero so always set them
-  itsOuterFieldMgr->SetDeltaIntersection(BDSGlobalConstants::Instance()->DeltaIntersection());
-  itsOuterFieldMgr->SetMinimumEpsilonStep(BDSGlobalConstants::Instance()->MinimumEpsilonStep());
-  itsOuterFieldMgr->SetMaximumEpsilonStep(BDSGlobalConstants::Instance()->MaximumEpsilonStep());
-  itsOuterFieldMgr->SetDeltaOneStep(BDSGlobalConstants::Instance()->DeltaOneStep());
-}
-
-void BDSMagnet::AttachFieldToOuter()
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  
-  if (outer)
+#endif  
+  if (outer && outerFieldInfo)
     {
-      if (itsOuterFieldMgr)
-	{outer->GetContainerLogicalVolume()->SetFieldManager(itsOuterFieldMgr,false);}
-      else
-	{outer->GetContainerLogicalVolume()->SetFieldManager(BDSGlobalConstants::Instance()->GetZeroFieldManager(),false);}
+      G4LogicalVolume* vol = outer->GetContainerLogicalVolume();
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+								vol,
+								true);
     }
 }
 
@@ -338,7 +204,7 @@ void BDSMagnet::PlaceComponents()
     {
       G4ThreeVector beamPipeOffset = -1*GetPlacementOffset();
       // place beampipe
-      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                       // rotation
+      G4PVPlacement* beamPipePV = new G4PVPlacement(nullptr,                 // rotation
 						    beamPipeOffset,          // position in container
 						    beampipe->GetContainerLogicalVolume(),  // its logical volume
 						    name + "_beampipe_pv",   // its name
@@ -356,7 +222,7 @@ void BDSMagnet::PlaceComponents()
       G4ThreeVector outerOffset = outer->GetPlacementOffset();
       
       // place outer volume
-      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                      // rotation
+      G4PVPlacement* magnetOuterPV = new G4PVPlacement(nullptr,                // rotation
 						       outerOffset,            // at normally (0,0,0)
 						       outer->GetContainerLogicalVolume(), // its logical volume
 						       name+"_outer_pv",       // its name
@@ -369,13 +235,22 @@ void BDSMagnet::PlaceComponents()
     }
 }
 
+void BDSMagnet::SetOuterField(BDSFieldInfo* outerFieldInfoIn)
+{
+  delete outerFieldInfo;
+  outerFieldInfo = outerFieldInfoIn;
+}
+
+void BDSMagnet::SetVacuumField(BDSFieldInfo* vacuumFieldInfoIn)
+{
+  delete vacuumFieldInfo;
+  vacuumFieldInfo = vacuumFieldInfoIn;
+}
+
 BDSMagnet::~BDSMagnet()
 {
   delete beamPipeInfo;
   delete magnetOuterInfo;
-  delete itsBPFieldMgr;
-  delete itsChordFinder;
-  delete itsMagField;
-  delete itsEqRhs;
-  delete itsStepper;
+  delete vacuumFieldInfo;
+  delete outerFieldInfo;
 }

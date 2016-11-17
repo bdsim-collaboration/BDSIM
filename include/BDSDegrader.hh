@@ -5,54 +5,52 @@
 #include "BDSAcceleratorComponent.hh"
 
 /**
- * @brief A class for a degrader. Based upon wedge design used in the PSI medical accelerator.
+ * @brief Degrader based on wedge design used in the PSI medical accelerator.
  * 
- * @author Will Shields <william.shields.2010@live.rhul.ac.uk>
+ * @author Will Shields
  */
 
 class BDSDegrader: public BDSAcceleratorComponent
 {
 public:
-    BDSDegrader(G4String name, 
-                G4double   length,
-                G4double   outerDiameter,
-                G4int      numberWedges,
-                G4double   wedgeLength,
-                G4double   degraderHeight,
-                G4double   degraderOffset,
-                G4String   degraderMaterial     = "carbon");
-    ~BDSDegrader();
-    
-
+  BDSDegrader(G4String name, 
+	      G4double   length,
+	      G4double   outerDiameter,
+	      G4int      numberWedges,
+	      G4double   wedgeLength,
+	      G4double   degraderHeight,
+	      G4double   degraderOffset,
+	      G4String   degraderMaterial     = "carbon");
+  virtual ~BDSDegrader();
+  
 protected:
-    void Build();
-    
-    void BuildContainerLogicalVolume();
-    
-    G4double outerDiameter;
-    G4int numberWedges;
-    G4double wedgeLength;
-    G4double degraderHeight;
-    G4double degraderOffset;
-    G4String degraderMaterial;
-
-    
-    bool isOdd( G4int integer )
-    {
-        if ( integer % 2 != 0 )
-        return true;
-        else
-        return false;
-    }
-
-    bool isEven( G4int integer )
-    {
-        if ( integer % 2 == 0 )
-        return true;
-        else
-        return false;
-    }
-    
+  void Build();
+  
+  void BuildContainerLogicalVolume();
+  
+  G4double outerDiameter;
+  G4int numberWedges;
+  G4double wedgeLength;
+  G4double degraderHeight;
+  G4double degraderOffset;
+  G4String degraderMaterial;
+  
+  
+  bool isOdd(G4int integer)
+  {
+    if (integer % 2 != 0)
+      return true;
+    else
+      return false;
+  }
+  
+  bool isEven(G4int integer)
+  {
+    if (integer % 2 == 0)
+      return true;
+    else
+      return false;
+  }
 };
 
 #endif

@@ -8,6 +8,12 @@
 class Model;
 class TChain;
 
+/**
+ * @brief Analysis of the model tree.
+ *
+ * @author Stuart Walker.
+ */
+
 class ModelAnalysis : public Analysis
 {
 public:

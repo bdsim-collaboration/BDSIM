@@ -10,15 +10,16 @@ class BDSTunnelSection;
 /**
  * @brief Factory for square tunnel segments. Builds floor, tunnel and soil.
  * 
- * singleton pattern
+ * Singleton pattern
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSTunnelFactorySquare: public BDSTunnelFactoryBase
 {
 public:
-  static BDSTunnelFactorySquare* Instance(); /// singleton accessor
+  /// Singleton accessor
+  static BDSTunnelFactorySquare* Instance();
   
   virtual ~BDSTunnelFactorySquare();
   

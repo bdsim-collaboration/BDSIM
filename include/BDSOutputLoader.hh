@@ -11,6 +11,12 @@ class BDSOutputROOTEventOptions;
 class TFile;
 class TTree;
 
+/**
+ * @brief Loader of ROOT Event output for receating events.
+ *
+ * @author Laurie Nevay
+ */
+
 class BDSOutputLoader
 {
 public:

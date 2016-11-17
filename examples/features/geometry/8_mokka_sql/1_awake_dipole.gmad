@@ -1,0 +1,44 @@
+precRegion: cutsregion, prodCutElectrons = 10*um,
+	    		prodCutPositrons = 10*um,
+		    	prodCutPhotons = 10*um;
+
+! CERN mbps dipole
+mbps: element, l=3*m, geometry="mokka:geom/mbps_geomlist.sql", outerDiameter=5*m, region="precRegion";
+
+mk1: marker;
+
+beam, energy=1.3*GeV,
+      particle="e-",
+      distrType="reference";
+
+l1: line = (mbps,mk1);
+use, period = l1;
+
+sample, range = mk1;
+
+rangeCut = 1*mm;
+precRangeCut = 10*um;
+
+option, beampipeRadius = 35*mm,
+        outerDiameter  = 50*cm,
+        tunnelRadius   = 4.55*m,
+	tunnelMaterial = "lhcconcrete",
+	buildTunnel    = 1,	
+	tunnelThickness = 0.25*m,
+	tunnelSoilThickness = 3*m,
+	tunnelOffsetX = 1.75*m,
+	showTunnel    = 1,
+        beampipeThickness = 2*mm,
+	defaultRangeCut  = rangeCut,	
+	prodCutPositrons = rangeCut,
+	prodCutElectrons = rangeCut,
+	prodCutPhotons   = rangeCut,
+	elossHistoBinWidth = 0.1*cm,		
+        turnOnOpticalAbsorption = 1,
+        turnOnMieScattering = 1,
+        turnOnOpticalSurface = 1,
+        scintYieldFactor = 0.01;
+	maximumTrackingTime=1e-3*s;
+
+option, physicsList = "hadronic optical synchrad";
+option, ngenerate = 1;

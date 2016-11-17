@@ -4,8 +4,11 @@
 #include "G4UserSteppingAction.hh"
 #include "G4Types.hh"
 
+/**
+ * @brief Provide extra output for Geant4 through a verbose stepping action.
+ */
 
-class BDSSteppingAction : public G4UserSteppingAction
+class BDSSteppingAction: public G4UserSteppingAction
 {
 public:
   BDSSteppingAction();
@@ -14,7 +17,6 @@ public:
   virtual void UserSteppingAction(const G4Step*);
 
 private:
-  void ThresholdCutSteppingAction();
   void VerboseSteppingAction();
   const G4Step* _step;
 };

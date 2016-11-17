@@ -4,14 +4,12 @@
 #include "BDSCavityType.hh"
 #include "BDSColours.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4ChordFinder.hh"
 #include "G4GenericPolycone.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MagIntegratorDriver.hh"
-#include "G4MagIntegratorStepper.hh"
 #include "G4Polycone.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
@@ -24,14 +22,14 @@
 #include <cmath>
 #include <vector>
 
-BDSCavity::BDSCavity(G4String       name,
-		     G4double       length,
-		     G4double       fieldAmplitudeIn,
-		     BDSCavityInfo* cavityInfoIn):
-  BDSAcceleratorComponent(name, length, 0, "cavity_"+cavityInfoIn->cavityType.ToString()),
-  fieldAmplitude(fieldAmplitudeIn),
-  cavityInfo(cavityInfoIn)
+BDSCavity::BDSCavity(G4String      name,
+		     G4double      length,
+		     BDSFieldInfo* vacuumFieldIn):
+  BDSAcceleratorComponent(name, length, 0,
+			  "cavity_"+vacuumFieldIn->CavityInfo()->cavityType.ToString()),
+  vacuumField(vacuumFieldIn)
 {
+  cavityInfo   = vacuumField->CavityInfo(); // create shortcut for convenience
   cavityRadius = cavityInfo->equatorRadius;
   thickness    = cavityInfo->thickness;
   irisRadius   = cavityInfo->irisRadius;
@@ -45,7 +43,7 @@ BDSCavity::BDSCavity(G4String       name,
 
 BDSCavity::~BDSCavity()
 {
-  delete cavityInfo;
+  delete vacuumField;
 }
 
 void BDSCavity::Build()
@@ -68,14 +66,10 @@ void BDSCavity::Build()
   
   BDSAcceleratorComponent::Build();
   BuildField();
-  AttachField();
   PlaceComponents();
 }
 
 void BDSCavity::BuildField()
-{;}
-
-void BDSCavity::AttachField()
 {;}
 
 void BDSCavity::PlaceComponents()
@@ -141,7 +135,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   G4double equatorZSemiAxis = cavityInfo->equatorEllipseSemiAxis; //equator ellipse horizontal semiaxis
   G4double tangentAngle     = cavityInfo->tangentLineAngle;
   G4double irisRadius       = cavityInfo->irisRadius;
-  unsigned int noPoints            = cavityInfo->numberOfPoints;
+  unsigned int noPoints     = cavityInfo->numberOfPoints;
 
   //Calculate cartesian coordinates (z, r) from parameters.
   //2D cylindrical coordinates, z along the beamline:
@@ -153,14 +147,15 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   // Add a pi/2 because angle is defined from the vertical, clockwise.
   G4double m = tan(tangentAngle + 0.5*CLHEP::pi); 
    
-  // gradient from tangentAngle.  Find the derivative of ellipses.  equate and solve for the parameter.
+  // Gradient from tangentAngle. Find the derivative of ellipses. Equate
+  // and solve for the parameter.
   // atan finds solution in the first quadrant.
   G4double equatorParameterTangentPoint = atan(-equatorRSemiAxis/(m*equatorZSemiAxis));
-  //Add pi to get desired solution (third quadrant)
-  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi;
+  // Add pi to get desired solution (third quadrant)
+  G4double irisParameterTangentPoint = atan(-irisRSemiAxis/(m*irisZSemiAxis)) + CLHEP::pi; 
  
-  // rounding down to a multiple of 4.  This is so that number of points are share
-  // equally and consistently between the constituent ellipses.
+  // Rounding down to a multiple of 4. This is so that number of points are
+  // share equally and consistently between the constituent ellipses.
   noPoints = noPoints - (noPoints % 4);  
 
   //Vector Definitions:
@@ -173,7 +168,7 @@ void BDSCavity::BuildEllipticalCavityGeometry()
   //rOuterCoord      --> the values of radius for the outer geometry
   //zInnerCoord      --> the values of z for the inner geometry
   //zOuterCoord      --> the values of z for the outer goemetry
-    
+  
   //Vector declaration:
   std::vector<G4double> equatorParameter;
   std::vector<G4double> irisParameter;
@@ -382,9 +377,7 @@ void BDSCavity::BuildPillBoxCavityGeometry()
   cavityLV = new G4LogicalVolume(cavitySolid,          // solid
 				 cavityInfo->material, // material
 				 name + "_cavity_lv"); // name
-
   
-
   //Vacuum:  Union of two solids.  One cylinder (VacuumInnerCavity) to fill the centre, and a longer,
   //thinner cylinder (vacuumAperture) to fill the ends provided by the thickness.
 

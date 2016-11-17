@@ -10,6 +10,7 @@
 #include <vector>
 
 class BDSBeamPipeInfo;
+class BDSFieldInfo;
 class BDSSimpleComponent;
 class G4LogicalVolume;
 
@@ -53,15 +54,18 @@ public:
   /// derived class, including extents.
   /// Note, this class has arc length and chord length which are initially set
   /// to be the same, unless angle is != 0 in which case, the chord length is
-  /// calculated from arc length.
+  /// calculated from arc length. An associated beam pipe info instance can be
+  /// attached if the component has a beam pipe. The input and output face normals
+  /// should also be specified if non-zero. Additionally, a field info instance
+  /// that represents a 'global' field for this component may be specified.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
 			  G4String         type,
-			  G4bool           precisionRegion = false,
 			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
 			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
-			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1));
+			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1),
+			  BDSFieldInfo* fieldInfoIn        = nullptr);
   
   virtual ~BDSAcceleratorComponent();
 
@@ -80,9 +84,11 @@ public:
   {biasMaterialList = biasMaterialListIn;}
   /// @}
   
-  /// Set whether precision output should be recorded for this component
-  void   SetPrecisionRegion(G4bool precisionRegionIn)
-  {precisionRegion = precisionRegionIn;}
+  /// Set the region name for this component.
+  void SetRegion(G4String regionIn) {region = regionIn;}
+
+  /// Set the field definition for the whole component.
+  void SetField(BDSFieldInfo* fieldInfoIn);
 
   // Accessors
   
@@ -102,8 +108,8 @@ public:
   /// Get a string describing the type of the component
   inline G4String GetType() const {return type;}
 
-  /// Whether precision output is to be recorded for this component
-  G4bool GetPrecisionRegion() const {return precisionRegion;}
+  /// Get the region name for this component.
+  G4String GetRegion() const {return region;}
 
   /// Access beam pipe information
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
@@ -141,11 +147,6 @@ public:
   // Update the read out geometry volume given new face normals incase of a tilt.
   void UpdateReadOutVolumeWithTilt(G4double tilt);
 
-  // to be deprecated public methods
-  
-  // in case a mapped field is provided creates a field mesh in global coordinates
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume);
-
   ///@{ This function should be revisited given recent changes (v0.7)
   void SetGFlashVolumes(G4LogicalVolume* aLogVol)
   {itsGFlashVolumes.push_back(aLogVol);}
@@ -181,7 +182,7 @@ protected:
   ///@{ Protected member variable that can be modified by derived classes.
   G4double         chordLength;
   G4double         angle;
-  G4bool           precisionRegion;
+  G4String         region;
   BDSBeamPipeInfo* beamPipeInfo;
   ///@}
 
@@ -233,6 +234,7 @@ private:
 
   G4ThreeVector inputFaceNormal;
   G4ThreeVector outputFaceNormal;
+  BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
   G4double      readOutRadius;    ///< Radius of read out volume solid.
 };
 

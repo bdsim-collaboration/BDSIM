@@ -32,11 +32,14 @@ namespace GMAD
     _ELEMENT     = 20,
     _SCREEN      = 21,
     _AWAKESCREEN = 22,
+    _AWAKESPECTROMETER = 23,
+    _SHIELD      = 24,
     _VKICK       = 31,
     _HKICK       = 32,
     _TRANSFORM3D = 61,
     _MUSPOILER   = 62,
     _DEGRADER    = 63,
+    _THINMULT    = 64
   };
 
   /// conversion from enum to string

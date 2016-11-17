@@ -59,10 +59,10 @@
 %token <dval> NUMBER
 %token <symp> NUMVAR STRVAR VECVAR FUNC
 %token <str> STR VARIABLE
-%token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN
-%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER DEGRADER
+%token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
+%token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER
 %token <ival> VKICK HKICK
-%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION CAVITYMODEL TUNNEL
+%token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
@@ -209,6 +209,33 @@ decl : VARIABLE ':' component_with_params
 	     Parser::Instance()->Add<Region>();
            }
        }
+     | VARIABLE ':' placement
+       {
+         if(execute)
+           {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : placement" << std::endl;
+	     Parser::Instance()->SetValue<Placement>("name",*($1));
+	     Parser::Instance()->Add<Placement>();
+           }
+       }
+     | VARIABLE ':' query
+       {
+	 if(execute)
+	   {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : query" << std::endl;
+	     Parser::Instance()->SetValue<Query>("name", *($1));
+	     Parser::Instance()->Add<Query>();
+	   }
+       }
+     | VARIABLE ':' field
+       {
+	 if(execute)
+	   {
+	     if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *($1) << " : field" << std::endl;
+	     Parser::Instance()->SetValue<Field>("name", *($1));
+	     Parser::Instance()->Add<Field>();
+	   }
+       }
      | VARIABLE ':' cavitymodel
        {
          if(execute)
@@ -248,21 +275,27 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | OCTUPOLE    {$$=static_cast<int>(ElementType::_OCTUPOLE);}
           | DECAPOLE    {$$=static_cast<int>(ElementType::_DECAPOLE);}
           | MULTIPOLE   {$$=static_cast<int>(ElementType::_MULT);}
+          | THINMULT    {$$=static_cast<int>(ElementType::_THINMULT);}
           | SOLENOID    {$$=static_cast<int>(ElementType::_SOLENOID);}
           | ECOL        {$$=static_cast<int>(ElementType::_ECOL);}
           | RCOL        {$$=static_cast<int>(ElementType::_RCOL);}
           | MUSPOILER   {$$=static_cast<int>(ElementType::_MUSPOILER);}
+          | SHIELD      {$$=static_cast<int>(ElementType::_SHIELD);}
           | DEGRADER    {$$=static_cast<int>(ElementType::_DEGRADER);}
           | LASER       {$$=static_cast<int>(ElementType::_LASER);}
           | SCREEN      {$$=static_cast<int>(ElementType::_SCREEN);}
           | AWAKESCREEN {$$=static_cast<int>(ElementType::_AWAKESCREEN);}
+          | AWAKESPECTROMETER {$$=static_cast<int>(ElementType::_AWAKESPECTROMETER);}
           | TRANSFORM3D {$$=static_cast<int>(ElementType::_TRANSFORM3D);}
           | ELEMENT     {$$=static_cast<int>(ElementType::_ELEMENT);}
 
 atom : ATOM ',' atom_options
 material : MATERIAL ',' material_options
 region : REGION ',' region_options
+placement : PLACEMENT ',' placement_options
+field : FIELD ',' field_options
 cavitymodel : CAVITYMODEL ',' cavitymodel_options
+query : QUERY ',' query_options
 tunnel : TUNNEL ',' tunnel_options
 xsecbias : XSECBIAS ',' xsecbias_options
 
@@ -278,19 +311,25 @@ error_noparams : DRIFT
                | OCTUPOLE
                | DECAPOLE
                | MULTIPOLE
+               | THINMULT
                | SOLENOID
                | ECOL
                | MUSPOILER
+               | SHIELD
                | RCOL
                | LASER
                | SCREEN
                | AWAKESCREEN
+               | AWAKESPECTROMETER
                | TRANSFORM3D
                | ELEMENT
                | MATERIAL
                | ATOM
                | REGION
+               | PLACEMENT
+               | FIELD
                | CAVITYMODEL
+               | QUERY
                | TUNNEL
                | XSECBIAS
 
@@ -351,6 +390,7 @@ parameters: paramassign '=' aexpr parameters_extend
 	    }
           | paramassign '=' string parameters_extend
             {
+
 	      if(execute) {
 		Parser::Instance()->SetValue<Parameters>(*($1),*$3);
 	      }
@@ -662,6 +702,22 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->Add<Region>();
 	      }
           }
+        | PLACEMENT ',' placement_options // placement
+          {
+	    if(execute)
+	      {  
+		if(ECHO_GRAMMAR) printf("command -> PLACEMENT\n");
+		Parser::Instance()->Add<Placement>();
+	      }
+          }
+        | FIELD ',' field_options // field
+	  {
+	    if(execute)
+	      {
+		if(ECHO_GRAMMAR) printf("command -> FIELD\n");
+		Parser::Instance()->Add<Field>();
+	      }
+	  }
         | CAVITYMODEL ',' cavitymodel_options // cavitymodel
           {
 	    if(execute)
@@ -670,6 +726,14 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 		Parser::Instance()->Add<CavityModel>();
 	      }
           }
+        | QUERY ',' query_options // query
+	  {
+	    if(execute)
+	      {
+		if(ECHO_GRAMMAR) printf("command -> QUERY\n");
+		Parser::Instance()->Add<Query>();
+	      }
+	  }
         | XSECBIAS ',' xsecbias_options // xsecbias
           {
 	    if(execute)
@@ -817,6 +881,48 @@ region_options : paramassign '=' aexpr region_options_extend
 		      if(execute)
 			Parser::Instance()->SetValue<Region>(*$1,*$3);
 		    }
+
+placement_options_extend : /* nothing */
+                      | ',' placement_options
+
+placement_options : paramassign '=' aexpr placement_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Placement>((*$1),$3);
+		    }
+                 | paramassign '=' string placement_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Placement>(*$1,*$3);
+		    }
+
+query_options_extend : /* nothing */
+                      | ',' query_options
+
+query_options : paramassign '=' aexpr query_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Query>((*$1),$3);
+		    }
+                 | paramassign '=' string query_options_extend
+                   {
+		     if(execute)
+		       Parser::Instance()->SetValue<Query>((*$1),*$3);
+		   }
+
+field_options_extend : /* nothing */
+                      | ',' field_options
+
+field_options : paramassign '=' aexpr field_options_extend
+                    {
+		      if(execute)
+			Parser::Instance()->SetValue<Field>((*$1),$3);
+		    }
+                 | paramassign '=' string field_options_extend
+                   {
+		     if(execute)
+		       Parser::Instance()->SetValue<Field>((*$1),*$3);
+		   }
 
 tunnel_options_extend : /* nothing */
                       | ',' tunnel_options

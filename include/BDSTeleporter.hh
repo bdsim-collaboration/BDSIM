@@ -3,41 +3,53 @@
 
 #include "BDSAcceleratorComponent.hh"
 
+#include "globals.hh" // geant4 types / globals
+#include "G4ThreeVector.hh"
+
 class BDSBeamline;
-class BDSMagField;
-class G4ChordFinder;
-class G4FieldManager;
-class G4MagInt_Driver;
-class G4MagIntegratorStepper;
-class G4Mag_UsualEqRhs;
+class BDSFieldObjects;
+
+/**
+ * @brief An element that unnaturally shifts the beam across its length - a fudge volume.
+ * 
+ * In some circular lattices, the input lattice doesn't match perfectly at the end, typically
+ * due to numerical rounding issues accumulated over thousands of components. This is not
+ * because of the geometry construction, but purely in the input MADX or gmad description.
+ * Normal tracking programs don't show this offset as they really track through a sequence
+ * of maps or functions and just apply them in a loop - it is defacto periodic. However, 
+ * with real 3D geometry in global carteasian coordinates, we must artificially make the
+ * lattice periodic. Enter the teleporter. This transports particles across its length
+ * while maintaining the exact same transverse coordinates, which is normally unphysical.
+ * 
+ * @author Laurie Nevay
+ */
 
 class BDSTeleporter: public BDSAcceleratorComponent
 {
 public:
-  BDSTeleporter(G4String name,
-		G4double length);  
-  ~BDSTeleporter();
-
-protected:
-  G4ChordFinder*          itsChordFinder;
-  G4FieldManager*         itsFieldManager;
-  G4MagIntegratorStepper* itsStepper;
-  BDSMagField*            itsMagField;
-  G4Mag_UsualEqRhs*       itsEqRhs;
-  G4MagInt_Driver*        magIntDriver;
+  BDSTeleporter(const G4String      name,
+		const G4double      length,
+		const G4ThreeVector teleporterDeltaIn);
+  virtual ~BDSTeleporter();
 
 private:
+  /// Overridden method from BDSAcceleratorComponent that dictates the construction.
   virtual void Build();
+
+  /// Overridden method from BDSAcceleratorComponent that creates the container volume.
+  /// This is the only piece of geometry for the teleporter.
   virtual void BuildContainerLogicalVolume();
-  /// define field and stepper
-  void BuildBPFieldAndStepper();
-  /// build and set field manager and chord finder
-  void BuildBPFieldMgr();
+
+  /// Teleporter 'field'
+  BDSFieldObjects* vacuumField;
+
+  /// Teleporter offset - the different between the end and beginning of the beamline
+  G4ThreeVector teleporterDelta;
 };
 
-namespace BDS {
-  void CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
+namespace BDS
+{
+  G4ThreeVector CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
 }
-
 
 #endif

@@ -10,11 +10,14 @@
 #include "cavitymodel.h"
 #include "element.h"
 #include "elementtype.h"
+#include "field.h"
 #include "fastlist.h"
 #include "material.h"
 #include "options.h"
 #include "parameters.h"
 #include "physicsbiasing.h"
+#include "placement.h"
+#include "query.h"
 #include "region.h"
 #include "symbolmap.h"
 #include "tunnel.h"
@@ -164,14 +167,20 @@ namespace GMAD
     Options options;
     /// Atom instance;
     Atom atom;
+    /// Field instance;
+    Field field;
     /// Material instance;
     Material material;
+    /// PhysicsBiasing instance 
+    PhysicsBiasing xsecbias;
+    /// Placement instance
+    Placement placement;
+    /// Query instance
+    Query query;
     /// Region instance;
     Region region;
     /// Tunnel instance
     Tunnel tunnel;
-    /// PhysicsBiasing instance 
-    PhysicsBiasing xsecbias;
     /// RF Cavity model instance
     CavityModel cavitymodel;
     
@@ -185,14 +194,20 @@ namespace GMAD
     FastList<Element>   beamline_list;
     /// List of parser defined atoms
     std::vector<Atom>   atom_list;
+    /// List of parser defined fields
+    std::vector<Field>  field_list;
     /// List of parser defined materials
     std::vector<Material> material_list;
+    /// List of parser defined query objects
+    std::vector<Query> query_list;
     /// List of parser defined regions
     std::vector<Region> region_list;
     /// List of parser defined tunnels
     std::vector<Tunnel> tunnel_list;
     /// List of parser defined cross section biasing objects
     FastList<PhysicsBiasing> xsecbias_list;
+    /// List of parser defined placements.
+    std::vector<Placement> placement_list;
     /// List of parser defined rf cavity models
     std::vector<CavityModel> cavitymodel_list;
     

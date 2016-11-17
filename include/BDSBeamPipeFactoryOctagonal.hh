@@ -34,7 +34,7 @@ public:
   
 private:
   BDSBeamPipeFactoryOctagonal(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryOctagonal* _instance;
+  static BDSBeamPipeFactoryOctagonal* instance;
 
   /// Generate quarters of a circle to represent the edges joined by straight lines.
   /// Overloaded (required) from BDSBeamPipeFactoryPoints

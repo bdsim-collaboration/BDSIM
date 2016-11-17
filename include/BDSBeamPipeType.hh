@@ -8,16 +8,20 @@
  * @brief Type definition for beampipes - used for comparison
  * in factory methods
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
-struct beampipetypes_def {
-  enum type {circular, rectangular, elliptical, lhc, lhcdetailed, rectellipse, racetrack, octagonal};
+struct beampipetypes_def
+{
+  enum type {circular, rectangular, elliptical, lhc,
+	     lhcdetailed, rectellipse, racetrack, octagonal,
+	     circularvacuum};
 };
 
 typedef BDSTypeSafeEnum<beampipetypes_def,int> BDSBeamPipeType;
 
-namespace BDS {
+namespace BDS
+{
   /// function that gives corresponding enum value for string (case-insensitive)
   BDSBeamPipeType DetermineBeamPipeType(G4String apertureType);
 }

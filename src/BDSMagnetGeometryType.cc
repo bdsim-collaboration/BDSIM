@@ -1,5 +1,6 @@
 #include "BDSMagnetGeometryType.hh"
 #include "BDSDebug.hh"
+
 #include "globals.hh"
 
 #include <map>
@@ -16,35 +17,42 @@ std::map<BDSMagnetGeometryType, std::string>* BDSMagnetGeometryType::dictionary 
    {BDSMagnetGeometryType::polesfacetcrop,"polesfacetcrop"},
    {BDSMagnetGeometryType::lhcleft,       "lhcleft"},
    {BDSMagnetGeometryType::lhcright,      "lhcright"},
-});	
+   {BDSMagnetGeometryType::external,      "external"}
+});
 
 BDSMagnetGeometryType BDS::DetermineMagnetGeometryType(G4String geometryType)
 {
+  // If it contains a colon ":" it must be external geometry format format:filepath
+  if (geometryType.contains(":"))
+    {return BDSMagnetGeometryType::external;}
+  
   std::map<G4String, BDSMagnetGeometryType> types;
-  types["none"]              = BDSMagnetGeometryType::none;
-  types["cylindrical"]       = BDSMagnetGeometryType::cylindrical;
-  types["polescircular"]     = BDSMagnetGeometryType::polescircular;
-  types["polessquare"]       = BDSMagnetGeometryType::polessquare;
-  types["polesfacet"]        = BDSMagnetGeometryType::polesfacet;
-  types["polesfacetcrop"]    = BDSMagnetGeometryType::polesfacetcrop;
-  types["lhcleft"]           = BDSMagnetGeometryType::lhcleft;
-  types["lhcright"]          = BDSMagnetGeometryType::lhcright;
+  types["none"]            = BDSMagnetGeometryType::none;
+  types["cylindrical"]     = BDSMagnetGeometryType::cylindrical;
+  types["polescircular"]   = BDSMagnetGeometryType::polescircular;
+  types["polessquare"]     = BDSMagnetGeometryType::polessquare;
+  types["polesfacet"]      = BDSMagnetGeometryType::polesfacet;
+  types["polesfacetcrop"]  = BDSMagnetGeometryType::polesfacetcrop;
+  types["lhcleft"]         = BDSMagnetGeometryType::lhcleft;
+  types["lhcright"]        = BDSMagnetGeometryType::lhcright;
+  types["format:filepath"] = BDSMagnetGeometryType::external;
 
   geometryType.toLower();
   
-  if (types.find(geometryType) == types.end())
+  auto result = types.find(geometryType);
+  if (result == types.end())
     {
       // it's not a valid key
       G4cout << __METHOD_NAME__ << "\"" << geometryType << "\" is not a valid geometry type" << G4endl;
-      G4cout << "Available geometry types are:" << G4endl;
+      
+      G4cout << "Available magnet geometry types are:" << G4endl;
       for (auto it : types)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
     }
-
-  BDSMagnetGeometryType returnValue = types[geometryType];
+  
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " determined geometry type to be " << returnValue << G4endl;
+  G4cout << __METHOD_NAME__ << " determined geometry type to be " << result->second << G4endl;
 #endif
-  return returnValue;
+  return result->second;
 }

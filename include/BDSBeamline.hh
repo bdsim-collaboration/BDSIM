@@ -60,10 +60,10 @@ public:
   /// in which case, loop over it and apply
   /// AddSingleComponent(BDSAcceleratorComponent* component) to each component
   /// Returns vector of components added
-  std::vector<BDSBeamlineElement*> AddComponent(BDSAcceleratorComponent* component,
-						BDSTiltOffset* tiltOffset  = nullptr,
-						BDSSamplerType samplerType = BDSSamplerType::none,
-						G4String       samplerNameIn = "");
+  void AddComponent(BDSAcceleratorComponent* component,
+		    BDSTiltOffset* tiltOffset  = nullptr,
+		    BDSSamplerType samplerType = BDSSamplerType::none,
+		    G4String       samplerNameIn = "");
 
   /// Apply a Transform3D rotation and translation to the reference
   /// coordinates. Special method for the special case of unique component
@@ -121,6 +121,10 @@ public:
 					    G4double x = 0,
 					    G4double y = 0);
 
+  /// Get the global s position of each element all in one - used for histograms.
+  /// For convenience, s positions are converted to metres in this function.
+  std::vector<G4double> GetEdgeSPositions() const;
+
   ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
   typedef BeamlineVector::const_iterator const_iterator;
@@ -170,7 +174,7 @@ private:
   /// Add a single component and calculate its position and rotation with respect
   /// to the beginning of the beamline
   /// Returns pointer to component added
-  BDSBeamlineElement* AddSingleComponent(BDSAcceleratorComponent* component,
+  void AddSingleComponent(BDSAcceleratorComponent* component,
 					 BDSTiltOffset* tiltOffset  = nullptr,
 					 BDSSamplerType samplerType = BDSSamplerType::none,
 					 G4String       samplerNameIn = "");
@@ -179,7 +183,9 @@ private:
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
 
+  /// Sum of all chord lengths
   G4double totalChordLength;
+  /// Sum of all arc lengths
   G4double totalArcLength;
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension

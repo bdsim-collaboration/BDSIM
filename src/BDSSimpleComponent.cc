@@ -10,7 +10,7 @@ BDSSimpleComponent::BDSSimpleComponent(G4String              name,
 				       G4double              angle,
 				       G4ThreeVector         inputFaceNormal,
 				       G4ThreeVector         outputFaceNormal):
-  BDSAcceleratorComponent(name, length, angle, "simpleComponent", false, nullptr,
+  BDSAcceleratorComponent(name, length, angle, "simpleComponent", nullptr,
 			  inputFaceNormal, outputFaceNormal)
 {
   RegisterDaughter(component);
@@ -26,7 +26,7 @@ BDSSimpleComponent::BDSSimpleComponent(G4String              name,
 				       G4LogicalVolume*      containerLogicalVolumeIn,
 				       G4ThreeVector         inputFaceNormal,
 				       G4ThreeVector         outputFaceNormal):
-  BDSAcceleratorComponent(name, length, angle, "simpleComponent", false, nullptr,
+  BDSAcceleratorComponent(name, length, angle, "simpleComponent", nullptr,
 			  inputFaceNormal, outputFaceNormal)
 {
   containerSolid         = containerSolidIn;

@@ -17,14 +17,14 @@
  * and this is a dummy class required by Geant4 that simply gets the 
  * already constructed world and returns it.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSReadOutGeometry: public G4VReadOutGeometry
 {
  public:
   BDSReadOutGeometry(G4String name);
-  ~BDSReadOutGeometry();
+  virtual ~BDSReadOutGeometry();
 
 private:
   G4VPhysicalVolume* Build();

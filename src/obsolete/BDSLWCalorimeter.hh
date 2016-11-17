@@ -18,7 +18,7 @@ public:
 		   G4double         length,
 		   BDSBeamPipeInfo* beamPipeInfo,
 		   G4int            precisionRegion = 0);
-  ~BDSLWCalorimeter();
+  virtual ~BDSLWCalorimeter();
 
   /// Access all sensitive volumes belonging to this component including
   /// those belonging to the beam pipe

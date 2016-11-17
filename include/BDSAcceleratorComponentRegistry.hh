@@ -17,7 +17,7 @@
  * for iterating than an unordered map, which will be required to apply 
  * wrapper physics processes - relatively common.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSAcceleratorComponentRegistry

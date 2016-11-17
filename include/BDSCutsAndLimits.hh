@@ -10,7 +10,7 @@ class BDSCutsAndLimits: public G4VPhysicsConstructor
 {
 public:
   BDSCutsAndLimits();
-  ~BDSCutsAndLimits();
+  virtual ~BDSCutsAndLimits();
   void ConstructProcess();
   void ConstructParticle();
 private:

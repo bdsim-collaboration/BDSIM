@@ -1,0 +1,315 @@
+option,physicsList="hadronic optical";
+!option,physicsList="";
+!option,physicsList="em";
+include options.gmad;
+!include beam/proton/baseline.gmad
+!include beam/witness/onAxisInjection/jul14/e_beam.gmad
+!option, nperfile=10000, ngenerate=10000;
+!include beam/test/testBeam_0_to_10GeV.gmad
+!include beam/test/testBeam_4_to_0GeV.gmad
+!include beam/test/testBeam_170MeV_to_2GeV.gmad
+!include beam/test/testBeam_1GeV.gmad
+!include beam/witness/onAxisInjection/jul14/e_beam.gmad
+!include beam/background/0p2mm_alu_window_bg_full/outBeampipe/neutrons.gmad
+
+! Careful here
+precReg: cutsregion, prodCutProtons=10*um,
+	 	 prodCutPhotons=10*um,
+	   	 prodCutElectrons=10*um,
+		 prodCutPositrons=10*um;
+
+beamEnergy=2*GeV;     !400GeV protons: 1.3GeV electrons
+
+!Required for bdsim to calculate appropriate quad strength
+beam, energy=beamEnergy;
+
+beam, particle="e-",
+      energy=beamEnergy;
+
+!      distrType="gausstwiss",
+!      emitx=1e-10*m,
+!      emity=1e-10*m,
+!      betx=1e-6*m,
+!      bety=1e-6*m,
+!      alfx=0.0,
+!      alfy=0.0,
+!      X0=0.000,
+!      Y0=0.000;
+
+!beam, distrType="square",
+!particle="e-",
+!energy=2*GeV,
+!envelopeX=0*35*mm,
+!envelopeY=0*35*mm,
+!envelopeXp=0*20*mrad,
+!envelopeYp=0*20*mrad,
+!envelopeE=0.1*GeV;
+
+!option, ngenerate=1000, nperfile=1000;
+
+
+!quad geometry
+quad_physical_length=32*cm;
+quadStrength=4.29;
+quad_physical_length=285*mm;
+quad_effective_length=310*mm;
+quad_length_diff=quad_effective_length-quad_physical_length;
+aper_quad=70*mm;
+
+!dipole geometry
+!dipole_field_length;
+
+!option, nlinesIgnore=1715;
+
+!beamline elements
+def_aper=35*mm;
+
+dPlasma: drift, aper=def_aper, l=10*m;
+irisAper=5*mm;
+!Graduated iris, as described by Patric in SBL meeting 4th april 2016.
+iris2a: ecol, xsize=irisAper, ysize=irisAper, material="G4_Cu", l=0.2*mm, outerDiameter=2*10*mm;
+iris2b: ecol, xsize=10*mm, ysize=10*mm, material="G4_Cu", l=0.4*mm, outerDiameter=2*20*mm;
+iris2c: ecol, xsize=20*mm, ysize=20*mm, material="G4_Cu", l=0.6*mm, outerDiameter=2*def_aper;
+mIris2In: marker;
+mIris2Out: marker;
+
+!Final plasma cell iris:
+lineIris2: line=(mIris2In, 
+iris2a, iris2b, iris2c, 
+mIris2Out);
+
+!d1a: drift,l=3.9*m/2.0-l_screen1/2.0, aper=def_aper;
+!, 	tunnelOffsetX=tunOffX;
+d1: drift,l=1139*mm-lineIris2["l"], aper=def_aper;
+!, tunnelOffsetX=tunOffX;
+
+l_ldump1=246*mm;
+w_ldump1=1*cm;
+!laser dump
+diagScreenAngle=45*pi/180.0;
+perpScreenAngle=0;
+
+ldump1_s: screen, l=l_ldump1, region="precReg", layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], screenXSize=w_ldump1, screenYSize=w_ldump1, angle=perpScreenAngle, aper=def_aper;
+ldump1_d: drift, l=l_ldump1, aper=def_aper;
+
+d2: drift, aper=def_aper, l=84*mm;
+
+bpm1: drift, aper=def_aper, l=248*mm;
+
+d3: drift, aper=def_aper, l=84*mm;
+
+!BTV1 (BI screen)
+l_btv1=350*mm;
+w_btv1=w_ldump1;
+btv1_s: screen, l=l_btv1, region="precReg", layerThicknesses={ 0.3*mm, 300*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+	 screenXSize=w_btv1, screenYSize=w_btv1, angle=diagScreenAngle, aper=def_aper;	     
+btv1_d: drift, l=l_btv1, aper=def_aper;
+
+!d4: drift, aper=def_aper, l=135*mm;
+
+dtab1: drift, aper=def_aper, l=280*mm;
+
+!otr screen
+l_otr=200*mm;
+w_otr=w_ldump1;
+otr_s: screen, l=l_otr, region="precReg", layerThicknesses={ 0.15*mm, 100*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+	 screenXSize=w_otr, screenYSize=w_otr, angle=diagScreenAngle, aper=def_aper;
+otr_d: drift, l=l_otr, aper=def_aper;
+
+dtab2: drift, aper=def_aper, l=280*mm;
+
+l_ctr=l_otr;
+w_ctr=w_ldump1;
+d4: drift,l=500*mm - l_otr/2.0 - l_ctr/2.0, aper=def_aper;
+!, tunnelOffsetX=tunOffX;
+ctr_s: screen, l=l_ctr, region="precReg", layerThicknesses={ 0.15*mm, 100*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+	 screenXSize=w_ctr, screenYSize=w_ctr, angle=diagScreenAngle, aper=def_aper;
+ctr_d: drift, l=l_ctr, aper=def_aper;
+
+
+dtab3: drift, aper=def_aper,l=280*mm;
+
+ctab3: drift, aper=def_aper,l=l_otr;
+
+l_diagnosticTable=2*m;
+
+dtab4: drift, aper=def_aper, l=l_diagnosticTable-dtab1["l"] - otr_d["l"] - dtab2["l"] -
+ctr_d["l"] - dtab3["l"] - ctab3["l"];
+
+min: marker;
+mout:marker;
+motr_in: marker;
+motr_out: marker;
+mctr_in: marker;
+mctr_out: marker;
+mctab3_in: marker;
+mctab3_out: marker;
+
+
+diagnosticTable: line=(dtab1, motr_in, otr_d, motr_out, dtab2,
+mctr_in, ctr_d, mctr_out, dtab3, mctab3_in, ctab3, mctab3_out, dtab4);
+
+
+
+d5: drift, aper=def_aper, l=345*mm-quad_length_diff/2;
+
+!baseline quad correction factor: subtract 7 percent
+quadCorrFactor=0.93;
+
+qf0: drift, l=quad_effective_length, aper=def_aper;
+!k1=quadCorrFactor*quadStrength;
+!,tunnelOffsetX=tunOffX;!, material="vacuum";
+d6: drift,l=210*mm-quad_length_diff, aper=def_aper;
+!,tunnelOffsetX=tunOffX;
+qd0: drift, l=quad_effective_length, aper=def_aper;
+!k1=-1*quadStrength;
+!,tunnelOffsetX=tunOffX;!, material="vacuum";
+d7: drift,l=1*mum, aper=def_aper;
+!,tunnelOffsetX=tunOffX;
+
+
+psz=1005*mm;
+sez=257.661*cm-psz;
+screenAngle=-45*pi/180;
+
+
+mySpectrometer: awakespectrometer, l=4.4284*m-quad_length_diff/2, region="precReg",
+twindow=1*cm, windowmaterial="G4_Al",tscint=850*mum,
+windowScreenGap=65*mm,
+scintmaterial="lanex", angle=screenAngle,poleStartZ=psz,
+screenEndZ=sez,
+spec="vacuumChamberType=1&magnetGeometryType=1",
+!&strutSizeX=4&strutSizeZ=25&strutMaterial=G4_Ti",
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_320A_3.bmap";
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_650A_4.bmap";
+B=0.5*0.00154;
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_40A_3.bmap";
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_100A_2.bmap";
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_240A_3.bmap";
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_400A_2.bmap";
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_540A_2.bmap";
+!bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_320A_3.bmap",
+!B=-0.00154 ,
+!bmap="3D:fieldMaps/hb4/3D/bdsim/Uniform_1.54T.bmap";
+!HB4_MAP3D_650A.bmap";
+!Uniform_1.54T.bmap";
+!Uniform_1.47T.bmap";
+!HB4_MAP3D_540A.bmap";
+!"3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_100A.bmap";
+!"3D:fieldMaps/hb4/3D/bdsim/testBmap7.bmap";
+!, fieldZOffset=0.12275*m;
+
+mSpectrIn : marker;
+mSpectrOut: marker;
+
+lSpectrometer: line = (mSpectrIn,mySpectrometer,mSpectrOut);
+
+d8: drift,l=1*mum, aper=def_aper;
+!,tunnelOffsetX=tunOffX;
+
+!BTV2 (BI screen)
+diagScreenAngle=45*pi/180.0;
+l_btv2=448*mm;
+w_btv2=w_ldump1;
+btv2_s: screen, l=l_btv2, region="precReg", layerThicknesses={ 0.3*mm, 300*nm }, layerMaterials=["G4_Si","G4_Ag"], 
+	 screenXSize=w_btv2, screenYSize=w_btv2, angle=diagScreenAngle, aper=def_aper;	     
+btv2_d: drift, l=l_btv2, aper=def_aper;
+
+d9: drift, aper=def_aper, l=123*mm;
+
+l_ldump2=l_ldump1;
+w_ldump2=w_ldump1;
+!laser dump
+ldump2_s: screen, l=l_ldump2, region="precReg", layerThicknesses={ 0.2*mm }, layerMaterials=["G4_Al"], 
+	 screenXSize=w_ldump2, screenYSize=w_ldump2, angle=diagScreenAngle, aper=def_aper;
+ldump2_d: drift, l=ldump2_s["l"], aper=def_aper;
+
+d10: drift, aper=def_aper, l=1670*mm-ldump2_s["l"]-d9["l"];
+
+!downstream of the screen (tunnel dimensions etc.)
+tunRad_2=3.3*1000*m;
+tunOffX_2=1.4*m;
+beamCeilH_2=3.8*1000*m;
+floorBeamH_2=1.6*1000*m;
+thid9a=tunRad*1000*m-tunRad_2+tunOffX*1000-tunOffX_2*1000+tunThi*1000;
+
+!d9a: drift,l=ld9a, aper=def_aper;
+!!,tunnelOffsetX=tunOffX_2, 
+!!tunnelRadius=tunRad_2, tunnelThickness = thid9a, beamlineCeilingHeight=beamCeilH_2, 
+!!floorBeamlineHeight=floorBeamH_2, tunnelType=0;
+
+!d9b: drift,l=ld9b, aper=def_aper;
+!!,tunnelOffsetX=tunOffX_2, 
+!!tunnelRadius=tunRad_2, beamlineCeilingHeight=beamCeilH_2, 
+!!floorBeamlineHeight=floorBeamH_2, tunnelType=0;
+
+!d9: line = (d9a, d9b);
+
+tunRad_3=1e3*(bpRad+bpThi+1*mm);
+doorWidth=0*1e3*1*m;
+!tunThi_3=tunRad_2-tunRad_3+2*tunOffX_2-doorWidth;
+!d10: drift,l=0.5*m, aper=bpRad;
+!,tunnelOffsetX=0, tunnelRadius=tunRad_3, beamlineCeilingHeight=tunRad_3, floorBeamlineHeight=tunRad_3, tunnelType=1, tunnelThickness=tunThi_3, tunnelSoilThickness=1*mm;
+
+
+
+endwall: ecol, l=80*cm, xsize=def_aper, ysize=def_aper, outerDiameter=2*1e-3*(tunRad_2+tunOffX_2-doorWidth), material="concrete";!!, tunnelOffsetX=0, tunnelRadius=1000*10*m, beamlineCeilingHeight=1000*10*m, floorBeamlineHeight=1000*10*m, buildTunnel=0;
+
+mbtv1_in: marker;
+mbtv1_out: marker;
+mldump_in: marker;
+mldump_out: marker;
+msptr_in: marker;
+msptr_out: marker;
+mbtv2_in: marker;
+mbtv2_out: marker;
+mldump2_in: marker;
+mldump2_out: marker;
+mendwall: marker;
+
+mqf0: marker;
+
+upstream: line=(
+lineIris2, 
+d1, mldump_in, ldump1_d, mldump_out, d2, bpm1, d3, mbtv1_in, btv1_d,
+mbtv1_out, d4, diagnosticTable,
+d5, mqf0, qf0, d6, qd0,d7,lSpectrometer);
+
+downstream: line=(d8, mbtv2_in, btv2_d, mbtv2_out,
+d9, mldump2_in, ldump2_d, mldump2_out);
+
+endwallLine: line=(d10, mendwall, endwall);
+
+awakesbl: line=(min, upstream, downstream, mout);
+
+
+use, period=awakesbl;
+!use, period=lineIris2;
+
+!sample, range=mIris2In;
+!sample, range=mIris2Out;
+
+sample, range = min;
+sample, range = mout;
+sample, range = motr_in;
+sample, range = motr_out;
+sample, range = mctr_in;
+sample, range = mctr_out;
+sample, range = mctab3_in;
+sample, range = mctab3_out;
+
+sample, range = mqf0;
+
+sample, range = mSpectrIn ;
+sample, range = mSpectrOut;
+
+sample, range = mbtv1_in;
+sample, range = mbtv1_out;
+sample, range = mldump_in;
+sample, range = mldump_out;
+
+sample, range = mbtv2_in;
+sample, range = mbtv2_out;
+sample, range = mldump2_in;
+sample, range = mldump2_out;
+!sample, range = mendwall;

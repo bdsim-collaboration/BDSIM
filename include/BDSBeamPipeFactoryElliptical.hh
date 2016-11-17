@@ -5,11 +5,11 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief Factory for elliptical beam pipes
+ * @brief Factory for elliptical beam pipes.
  * 
- * singleton pattern
+ * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryElliptical: public BDSBeamPipeFactoryBase
@@ -43,7 +43,7 @@ public:
 
 private:
   BDSBeamPipeFactoryElliptical(); ///< Private default constructor - singelton pattern.
-  static BDSBeamPipeFactoryElliptical* _instance; ///< Singleton instance.
+  static BDSBeamPipeFactoryElliptical* instance; ///< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around

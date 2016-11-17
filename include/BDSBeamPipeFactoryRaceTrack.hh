@@ -24,7 +24,7 @@ class G4Material;
  * 
  * Singleton pattern.
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSBeamPipeFactoryRaceTrack: public BDSBeamPipeFactoryPoints
@@ -36,7 +36,7 @@ public:
   
 private:
   BDSBeamPipeFactoryRaceTrack(); ///< private default constructor - singleton pattern
-  static BDSBeamPipeFactoryRaceTrack* _instance;
+  static BDSBeamPipeFactoryRaceTrack* instance;
 
   /// Generate quarters of a circle to represent the edges joined by straight lines.
   /// Overloaded (required) from BDSBeamPipeFactoryPoints

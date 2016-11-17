@@ -4,8 +4,8 @@
 #include "G4ios.hh" 
 #include "globals.hh"
 
-#include "G4Track.hh"
-#include "G4Step.hh"
+#include "G4LorentzVector.hh"
+#include "G4ThreeVector.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
 /**
@@ -26,10 +26,6 @@ public:
   ~BDSComptonEngine();
 
   void PerformCompton();
-  void PerformHighEnergyCompton();
-  void PerformHighEnergyCompton2();
-  G4double ComptonDifferentialCrossSection(G4double costh=0, G4double gamma2=0);
-  G4double PeakAmplitudeOfComptonDifferentialCrossSection(G4double gamma2=0);
   void SetIncomingPhoton4Vec(G4LorentzVector inGam);
   void SetIncomingElectron4Vec(G4LorentzVector inEl);
 

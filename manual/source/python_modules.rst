@@ -1,3 +1,5 @@
+.. _python-packages:
+
 ***************
 Python Packages
 ***************

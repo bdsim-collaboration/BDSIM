@@ -133,10 +133,12 @@ OptionsBase::OptionsBase()
   magnetGeometryType   = "polessquare";
   outerMaterialName    = "iron";
   outerDiameter        = 0.6;
+  thinElementLength    = 1e-6;
 
   // geometry debugging
   // always split sbends into smaller chunks by default
-  dontSplitSBends      = false; 
+  dontSplitSBends      = false;
+  includeFringeFields  = false;
 
   includeIronMagFields = false;
   sensitiveBeamlineComponents = true;
@@ -191,23 +193,16 @@ OptionsBase::OptionsBase()
   thresholdCutPhotons      = 0.0;
   defaultRangeCut          = 1e-3;
   prodCutPhotons           = 1e-3;
-  prodCutPhotonsP          = 1e-3;
-  prodCutPhotonsA          = 1e-3;
   prodCutElectrons         = 1e-3;
-  prodCutElectronsP        = 1e-3;
-  prodCutElectronsA        = 1e-3;
   prodCutPositrons         = 1e-3;
-  prodCutPositronsP        = 1e-3;
-  prodCutPositronsA        = 1e-3;
   prodCutProtons           = 1e-3;
-  prodCutProtonsP          = 1e-3;
-  prodCutProtonsA          = 1e-3;
 
   // biasing options
   defaultBiasVacuum        = "";
   defaultBiasMaterial      = "";
 
   // tracking options
+  integratorSet            = "bdsim";
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = 0.1;
   deltaChord               = 0.00001; // m
@@ -219,6 +214,7 @@ OptionsBase::OptionsBase()
   stopTracks               = false;
   stopSecondaries          = false;
   killNeutrinos            = true;
+  minimumRadiusOfCurvature = 0.05; // 5cm - typical aperture
 
   // output / analysis options
   numberOfEventsPerNtuple  = 0;

@@ -4,7 +4,6 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4EllipticalTube.hh"
@@ -16,13 +15,13 @@
 
 #include <cmath>                           // sin, cos, fabs
 
-BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::_instance = nullptr;
+BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::instance = nullptr;
 
 BDSBeamPipeFactoryElliptical* BDSBeamPipeFactoryElliptical::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryElliptical();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryElliptical();}
+  return instance;
 }
 
 BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
@@ -30,7 +29,7 @@ BDSBeamPipeFactoryElliptical::BDSBeamPipeFactoryElliptical()
 
 BDSBeamPipeFactoryElliptical::~BDSBeamPipeFactoryElliptical()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryElliptical::CreateBeamPipe(G4String    nameIn,

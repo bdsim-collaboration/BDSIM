@@ -77,7 +77,6 @@ void BDSParallelWorldCurvilinear::Construct()
       BDSPhysicalVolumeInfo* theinfo = new BDSPhysicalVolumeInfo(name,
 								 clPVName,
 								 element->GetSPositionMiddle(),
-								 accComp->GetPrecisionRegion(),
 								 element->GetIndex());
       
       BDSPhysicalVolumeInfoRegistry::Instance()->RegisterInfo(readOutPV, theinfo, true);

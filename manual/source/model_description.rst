@@ -4,6 +4,29 @@
 Model Description - Input Syntax
 ================================
 
+Lattice Description
+-------------------
+
+A model of the accelerator is given to BDSIM via input text files in the :ref:`gmad-syntax`.
+The overall program structure should follow:
+
+1) Component definition (see :ref:`lattice-elements`).
+2) Sequence definition using defined components (see :ref:`lattice-sequence`).
+3) Which sequence to use (see :ref:`the-use-command`).
+4) Where to record output (see :ref:`sampler-output`).
+5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`).
+6) A beam distribution (see :ref:`beam-parameters`).
+   
+These are described in the following sections. Aside from these standard parameters, more
+detail may be added to the model through:
+
+ * :ref:`magnet-geometry-parameters`.
+ * Custom :ref:`field-maps`.
+ * Adding :ref:`externally-provided-geometry`.
+ * :ref:`offsets-and-tilts`.
+
+.. _gmad-syntax:
+
 GMAD Syntax
 -----------
 
@@ -119,25 +142,13 @@ Useful Commands
 * :code:`if () {};` if construct
 * :code:`if () {} else {};` if-else construct
 
-Lattice Description
--------------------
-
-A model of the accelerator is given to BDSIM via input text files in the GMAD language.
-The overall program structure should follow:
-
-1) Component definition
-2) Sequence definition (of the already defined components)
-3) Which sequence to use
-4) Where to record output (samplers)
-5) A beam distribution
-6) Options, including which physics lists, number to simulate etc.
-
-These are described in the following sections
+.. _lattice-elements:
 
 Lattice Elements
 ----------------
 
-Any element in BDSIM is described with the following pattern::
+BDSIM provides a variety of different elements each with their own funciton, geometry and
+potentially fields. Any element in BDSIM is described with the following pattern::
 
   name: type, parameter=value, parameter="string";
 
@@ -154,6 +165,7 @@ The following elements may be defined
 * `octupole`_
 * `decapole`_
 * `multipole`_
+* `thinmultipole`_
 * `vkick`_
 * `hkick`_
 * `rf`_
@@ -161,6 +173,7 @@ The following elements may be defined
 * `ecol`_
 * `degrader`_
 * `muspoiler`_
+* `shield`_
 * `solenoid`_
 * `laser`_
 * `transform3d`_
@@ -169,7 +182,7 @@ The following elements may be defined
 
 .. TODO add screen, awakescreen
 
-These are detailed in the following sections.
+These are detailed in the following sections. 
 
 Simple example, extend and copy
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -271,13 +284,19 @@ parameter         description                  default     required
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm \pi/4` radians.
+.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 
 .. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
 	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
 	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
 	  element must be longer than the projected length from the rotation, given by
 	  :math:`2 \tan(\mathrm{eX})`.
+
+.. note:: If an rbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the rbend. The length of the
+      fringefield element can be set by the option `thinElementLength` (see `options`_).
+
 	  
 
 Examples::
@@ -332,6 +351,11 @@ parameter         description                  default     required
 	  :math:`e2 = 0.1` can be followed by an sbend with :math:`e1 = -0.1`). The preceding / succeeding
 	  element must be longer than the projected length from the rotation, given by
 	  :math:`2 \tan(\mathrm{eX})`.
+
+.. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
+      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+      fringefield element can be set by the option `thinElementLength` (see `options`_).
 
 Examples::
 
@@ -465,6 +489,21 @@ parameter         description                  default     required
 Examples::
 
    OCTUPOLE1 : multipole, l=0.5*m , knl={ 0,0,1 } , ksl={ 0,0,0 };
+
+thinmultipole
+^^^^^^^^^^^^^
+
+.. TODO: add picture
+
+`thinmultipole` is the same a multipole, but is set to have a default length of 1 micron.
+For thin multipoles, the length parameter is not required. The element will appear as a thin length of drift
+tube. A thinmultipole can be placed next to a bending magnet with finite poleface rotation angles.
+
+Examples::
+
+   THINOCTUPOLE1 : thinmultipole , knl={ 0,0,1 } , ksl={ 0,0,0 };
+
+.. note:: The length of the thin multipole can be changed by setting `thinElementLength` (see `options`_).
 
 vkick
 ^^^^^
@@ -617,6 +656,29 @@ parameter         description                   default     required
 `outerDiameter`   outer full width [m]          global      no
 ================  ============================  ==========  ===========
 
+shield
+^^^^^^
+
+.. figure:: figures/shield.png
+	    :width: 30%
+	    :align: right
+
+`shield` defines a square block of material with a square aperture. The user may choose
+the outer width, and inner horizontal and vertical apertures of the block. A beam pipe
+is also placed inside the aperture.  If the beam pipe dimensions (including thickness)
+are greater than the aperture, the beam pipe will not be created.
+
+================  ==============================  ==========  ===========
+parameter         description                     default     required
+`l`               length [m]                      0           yes
+`material`        outer material                  Iron        no
+`outerDiameter`   outer full width [m]            global      no
+`xsize`           horizontal inner aperture [m]   0           no
+`ysize`           vertical inner aperture [m]     0           no
+================  ==============================  ==========  ===========
+
+* The `aperture parameters`_ may also be specified.
+
 solenoid
 ^^^^^^^^
 
@@ -702,12 +764,15 @@ parameter         description                      default     required
 `geometry`        filename of geometry             NA          yes
 `l`               length                           NA          yes
 `outerDiameter`   diameter of component [m]        NA          yes
-`bmap`            filename of magnetic field map   NA          no
+`fieldAll`        name of field object to use      NA          no
 ================  ===============================  ==========  ===========
 
-`geometry` and `bmap` require the input string to be of the format `format:filename`, where
-`format` is the geometry format being used (`gdml` | `gmad` | `mokka`) and filename is the filename of
-the geometry file.
+`geometry` should be of the format `format:filename`, where `format` is the geometry
+format being used (`gdml` | `gmad` | `mokka`) and filename is the path to the geometry
+file. See :ref:`externally-provided-geometry` for more details.
+
+`fieldAll` should refer to the name of a field object the user has defined in the input
+gmad file. The syntax for this is described in :ref:`field-maps`.
 
 .. note:: The length must be larger than the geometry so that it is contained within it and
 	  no overlapping geometry will be produced. However, care must be taken as the length
@@ -715,12 +780,24 @@ the geometry file.
 	  than the size required for the geometry, the beam may be mismatched into the rest of
 	  the accelerator. A common practice is to add a picometre to the length of the geometry.
 
-Examples::
+Simple example::
 
-   detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
-   detec: element, geometry="mokka:qq.sql", bmap ="mokka:qq.bmap", l=5*m, outerDiameter=0.76*m;
+  detector: element, geometry="gdml:atlasreduced.gmdl", outerDiameter=10*m,l=44*m;
 
-For specific details on the geometry format, see :ref:`extendedgeometry`
+Example with field::
+
+  somefield: field, type="ebmap2d",
+		    eScaling = 3.1e3,
+		    bScaling = 0.5,
+		    integrator = "g4classicalrk4",
+		    magneticFile = "poisson2d:/Path/To/File.TXT",
+		    magneticInterpolator = "nearest2D",
+		    electricFile = "poisson2d:/Another/File.TX",
+		    electricInterpolator = "linear2D";
+  
+   detec: element, geometry="mokka:qq.sql", fieldAll="somefield", l=5*m, outerDiameter=0.76*m;
+
+
 
 marker
 ^^^^^^
@@ -808,6 +885,8 @@ can be used to specify the aperture shape (*aper1*, *aper2*, *aper3*, *aper4*).
 These are used differently for each aperture model and match the MADX aperture definitions.
 The required parameters and their meaning are given in the following table.
 
+.. _magnet-geometry-parameters:
+
 Magnet Geometry Parameters
 --------------------------
 
@@ -816,30 +895,43 @@ beam pipe. This geometry typically represents the magnetic poles and yoke of the
 are several geometry types to choose from. The possible different styles are described below and
 syntax **examples** can be found in *examples/features/geometry/4_magnets/*.
 
+* Externally provided geometry can also be wrapped around the beam pipe (detailed below).
+
 The magnet geometry is controlled by the following parameters.
 
-.. note:: These can all be specified using the `option` command as well as on a per element basis.
+.. note:: These can all be specified using the `option` command as well as on a per element
+	  basis, but in this case they act as a default that will be used if none are
+	  specified by the element.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `magnetGeometryType`  | The style of magnet geometry to use. One of:                 | `cylindrical` | no        |
-|                       | `cylindrical`, `polescircular`, `polessquare`, `polesfacet`, |               |           |
-|                       | `polesfacetcrop`, `lhcleft`, `lhcright` and `none`           |               |           |
+| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `cylindrical` | no        |
+|                       | | `cylindrical`, `polescircular`, `polessquare`,             |               |           |
+|                       | | `polesfacet`, `polesfacetcrop`, `lhcleft`, `lhcright`,     |               |           |
+|                       | | `none` and `format:path`.                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 1 m           | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `yokeOnInside`        | Whether the yoke of a dipole appears on the inside of the    | 1             | no        |
-|                       | bend and if false, it's on the outside. Applicable only to   |               |           |
-|                       | dipoles.                                                     |               |           |
+| `yokeOnInside`        | | Whether the yoke of a dipole appears on the inside of the  | 1             | no        |
+|                       | | bend and if false, it's on the outside. Applicable only    |               |           |
+|                       | | to dipoles.                                                |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 
 Example::
 
   option, magnetGeometryType = "polesfacetcrop",
           outerDiameter = 0.5*m;
+
+::
+
+   m1: quadrupole, l=0.3*m,
+                   k1=0.03,
+		   magnetGeometryType="gdml:geometryfiles/quad.gdml",
+		   outerDiameter = 0.5*m;
+
 
 .. deprecated:: 0.65
 		`boxSize` - this is still accepted by the parser for backwards compatibility
@@ -1008,6 +1100,377 @@ beam pipes and both `sbend` and `quadrupole` geometries.
 | |lhcleft_quadrupole_square| | |lhcleft_sextupole|   |
 +-----------------------------+-----------------------+
 
+.. _field-maps:
+
+Fields
+------
+
+BDSIM provides the facility to overlay a pure magnetic, pure electric or combined electro-magnetic fields
+on an element as defined by an externally provided field map. This can be done for only the vacuum
+volume; only the volume outside the vacuum (ie the yoke); each separately; or one full map for the whole
+element.  BDSIM allows any Geant4 integrator to be used to calculate the motion of the particle, which
+can be chosen given knowledge of the smoothness of the field or the application. BDSIM also provides
+a selection of 1-4D interpolators that are used to provide the field value inbetween the data points
+in the supplied field map.
+
+To overlay a field, one must define a field 'object' in the parser and then 'attach' it to an element.
+
+* Magnetic and electric field maps are specified in separate files and may have different interpolators.
+* Fields may have up to 4 dimensions.
+
+Currently, the dimensions are in order :math:`x,y,z,t`. For example, specifying a 3D field, will only be
+:math:`x,y,z` and cannot currently be used for :math:`x,y,t` field maps for example. The functionality
+for dimensional flexibility can be added if required (see :ref:`feature-request`).
+
+.. Note:: Currently only **regular** (evenly spaced) grids are supported with field maps. It would
+	  require significant development to extend this to irregular grids. It's strongly
+	  recommended the user resample any existing field map into a regular grid.
+
+Here is example syntax to define a field object named 'somefield' in the parser and overlay it onto
+a drift pipe where it covers the full volume of the drift (not outside it though)::
+
+  somefield: field, type="ebmap2d",
+		    eScaling = 3.0,
+		    bScaling = 0.4,
+		    integrator = "g4classicalrk4",
+		    magneticFile = "poisson2d:/Path/To/File.TXT",
+		    magneticInterpolator = "nearest2D",
+		    electricFile = "poisson2d:/Another/File.TX",
+		    electricInterpolator = "linear2D";
+
+  d1: drift, l=0.5*m, aper1=4*cm, fieldAll="somefield";
+
+  
+When defining a field, the following parameters can be specified.
+
++----------------------+-----------------------------------------------------------------+
+| **Parameter**        | **Description**                                                 |
++======================+=================================================================+
+| type                 | See type table below.                                           |
++----------------------+-----------------------------------------------------------------+
+| eScaling             | A numerical scaling factor that all electric field vectors      |
+|                      | amplitudes will be multiplied by.                               |
++----------------------+-----------------------------------------------------------------+
+| bScaling             | A numerical scaling factor that all magnetic field vectors      |
+|                      | amplitudes will be multiplied by.                               |
++----------------------+-----------------------------------------------------------------+
+| integrator           | The integrator used to calculate the motion of the particle     |
+|                      | in the field. See below for full list of supported integrators. |
++----------------------+-----------------------------------------------------------------+
+| globalTransform      | boolean. Whether a transform from local curvilinear coordinates |
+|                      | to global coordinates should be provided (default true).        |
++----------------------+-----------------------------------------------------------------+
+| magneticFile         | "format:filePath" - see formats below .                         |
++----------------------+-----------------------------------------------------------------+
+| magneticInterpolator | Which interpolator to use - see below for a full list.          |
++----------------------+-----------------------------------------------------------------+
+| electricFile         | "format:filePath" - see formats below.                          |
++----------------------+-----------------------------------------------------------------+
+| electricInterpolator | Which interpolator to use - see below for a full list.          |
++----------------------+-----------------------------------------------------------------+
+| x                    | x offset from element it's attached to.                         |
++----------------------+-----------------------------------------------------------------+
+| y                    | y offset from element it's attached to.                         |
++----------------------+-----------------------------------------------------------------+
+| z                    | z offset from element it's attached to.                         |
++----------------------+-----------------------------------------------------------------+
+| t                    | t offset from **Global** t in seconds.                          |
++----------------------+-----------------------------------------------------------------+
+| phi                  | Euler phi rotation from the element the field is attached to.   |
++----------------------+-----------------------------------------------------------------+
+| theta                | Euler theta rotation from the element the field is attached to. |
++----------------------+-----------------------------------------------------------------+
+| psi                  | Euler psi rotation from the element the field is attached to.   |
++----------------------+-----------------------------------------------------------------+
+| axisX                | x component of axis defining axis / angle rotation.             |
++----------------------+-----------------------------------------------------------------+
+| axisY                | y component of axis defining axis / angle rotation.             |
++----------------------+-----------------------------------------------------------------+
+| axisZ                | z component of axis defining axis / angle rotation.             |
++----------------------+-----------------------------------------------------------------+
+| angle                | angle (rad) of defining axis / angle rotation.                  |
++----------------------+-----------------------------------------------------------------+
+
+.. Note:: Either axis angle (with unit axis 3-vector) or Euler angles can be used to provide
+	  the rotation between the element the field maps is attached to and the coordinates
+	  of the field map.
+
+.. Note:: A right handed coordinate system is used in Geant4, so +ve x is out of a ring.
+
+Field Types
+^^^^^^^^^^^
+
+* These are not case sensitive.
+
++------------------+----------------------------------+
+| **Type String**  | **Description**                  |
++==================+==================================+
+| bmap1d           | 1D magnetic only field map.      |
++------------------+----------------------------------+
+| bmap2d           | 2D magnetic only field map.      |
++------------------+----------------------------------+
+| bmap3d           | 3D magnetic only field map.      |
++------------------+----------------------------------+
+| bmap4d           | 4D magnetic only field map.      |
++------------------+----------------------------------+
+| emap1d           | 1D electric only field map.      |
++------------------+----------------------------------+
+| emap2d           | 2D electric only field map.      |
++------------------+----------------------------------+
+| emap3d           | 3D electric only field map.      |
++------------------+----------------------------------+
+| emap4d           | 4D electric only field map.      |
++------------------+----------------------------------+
+| ebmap1d          | 1D electric-magnetic field map.  |
++------------------+----------------------------------+
+| ebmap2d          | 2D electric-magnetic field map.  |
++------------------+----------------------------------+
+| ebmap3d          | 3D electric-magnetic field map.  |
++------------------+----------------------------------+
+| ebmap4d          | 4D electric-magnetic field map.  |
++------------------+----------------------------------+
+
+
+Formats
+^^^^^^^
+
++------------------+--------------------------------------------+
+| **Format**       | **Description**                            |
++==================+============================================+
+| bdsim1d          | 1D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim2d          | 2D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim3d          | 3D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| bdsim4d          | 4D BDSIM format file. (Units :math:`cm,s`) |
++------------------+--------------------------------------------+
+| poisson2d        | 2D Poisson Superfish SF7 file.             |
++------------------+--------------------------------------------+
+| poisson2dquad    | 2D Poisson Superfish SF7 file              |
+|                  | for 1/8th of quadrupole.                   |
++------------------+--------------------------------------------+
+
+Field maps in the following formats are accepted:
+
+  * BDSIM's own format (both uncompressed :code:`.dat` and gzip compressed :code:`.tar.gz`)
+  * Superfish Poisson 2D SF7
+
+These are described in detail below. More field formats can be added
+relatively easily - see :ref:`feature-request`. A detailed description
+of the formats is given in :ref:`field-map-formats`. A preparation guide
+for BDSIM format files is provided here :ref:`field-map-file-preparation`.
+
+
+Integrators
+^^^^^^^^^^^
+
+The following integrators are provided.  The majority are interfaces to Geant4 ones.
+*g4classicalrk4* is typically the recommended default and is very robust.
+*g4cakskarprkf45* is similar but slightly less CPU-intensive.
+
++----------------------+----------+------------------+
+|  **String**          | **B/EM** | **Time Varying** |
++======================+==========+==================+
+| g4cashkarprkf45      | EM       | Y                |
++----------------------+----------+------------------+
+| g4classicalrk4       | EM       | Y                |
++----------------------+----------+------------------+
+| g4constrk4           | B        | N                |
++----------------------+----------+------------------+
+| g4expliciteuler      | EM       | Y                |
++----------------------+----------+------------------+
+| g4impliciteuler      | EM       | Y                |
++----------------------+----------+------------------+
+| g4simpleheum         | EM       | Y                |
++----------------------+----------+------------------+
+| g4simplerunge        | EM       | Y                |
++----------------------+----------+------------------+
+| g4exacthelixstepper  | B        | N                |
++----------------------+----------+------------------+
+| g4helixexpliciteuler | B        | N                |
++----------------------+----------+------------------+
+| g4helixheum          | B        | N                |
++----------------------+----------+------------------+
+| g4heliximpliciteuler | B        | N                |
++----------------------+----------+------------------+
+| g4helixmixedstepper  | B        | N                |
++----------------------+----------+------------------+
+| g4helixsimplerunge   | B        | N                |
++----------------------+----------+------------------+
+| g4nystromrk4         | B        | N                |
++----------------------+----------+------------------+
+| g4rkg3stepper        | B        | N                |
++----------------------+----------+------------------+
+
+Interpolators
+^^^^^^^^^^^^^
+
+There are many algorithms which one can use to inteprolate the field map data. The field
+may be queried at any point inside the volume, so an interpolator is required. A
+mathematical description as well as example plots are shown in :ref:`field-interpolators`.
+
+* This string is case-insensitive.
+
++------------+-------------------------------+
+| **String** | **Description**               |
++============+===============================+
+| nearest1d  | Nearest neighbour in 1D.      |
++------------+-------------------------------+
+| nearest2d  | Nearest neighbour in 2D.      |
++------------+-------------------------------+
+| nearest3d  | Nearest neighbour in 3D.      |
++------------+-------------------------------+
+| nearest4d  | Nearest neighbour in 4D.      |
++------------+-------------------------------+
+| linear1d   | Linear interpolation in 1D.   |
++------------+-------------------------------+
+| linear2d   | Linear interpolation in 2D.   |
++------------+-------------------------------+
+| linear3d   | Linear interpolation in 3D.   |
++------------+-------------------------------+
+| linear4d   | Linear interpolation in 4D.   |
++------------+-------------------------------+
+| cubic1d    | Cubic interpolation in 1D.    |
++------------+-------------------------------+
+| cubic2d    | Cubic interpolation in 2D.    |
++------------+-------------------------------+
+| cubic3d    | Cubic interpolation in 3D.    |
++------------+-------------------------------+
+| cubic4d    | Cubic interpolation in 4D.    |
++------------+-------------------------------+
+
+.. _externally-provided-geometry:
+
+Externally Proivded Geometry
+----------------------------
+
+BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
+by BDSIM. A variety of formats are supported (see :ref:`geometry-formats`). External
+geometry can be used in three ways:
+
+1) A placement of a piece of geometry unrelated to the beam line.
+2) Wrapped around the beam pipe in a BDSIM magnet element.
+3) As a general element in the beam line where the geometry constitutes the whole object.
+
+These are discussed in order.
+
+Placements
+^^^^^^^^^^
+
+Geometry provided in an external file, may be placed in 3D geometry at any location with
+any rotation, however the user is responsible for ensuring that the geometry does not
+overlap with any other geometry.
+
+.. Note:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
+	  incorrect results and there may not always be warnings provided. For this reason
+	  BDSIM will **always** use the Geant4 overlap checker when placing external geoemtry
+	  into the world volume. This only ensures the container doesn't overlap with BDSIM
+	  geometry, not that the internal geometry is valid.
+
+.. Note:: Currently sensitivity (ie. read out of hits) is not support and is being implemented.
+
+The following parameters may be specified.
+
++----------------+--------------------------------------------------------------------+
+| **Parameter**  |  **Description**                                                   |
++----------------+--------------------------------------------------------------------+
+| geometryFile   | :code:`format:file` - which geometry format and file to use.       |
++----------------+--------------------------------------------------------------------+
+| x              | Offset in global x.                                                |
++----------------+--------------------------------------------------------------------+
+| y              | Offset in global y.                                                |
++----------------+--------------------------------------------------------------------+
+| z              | Offset in global z.                                                |
++----------------+--------------------------------------------------------------------+
+| phi            | Euler angle phi for rotation.                                      |
++----------------+--------------------------------------------------------------------+
+| theta          | Euler angle theta for rotation.                                    |
++----------------+--------------------------------------------------------------------+
+| psi            | Euler angle psi for rotation.                                      |
++----------------+--------------------------------------------------------------------+
+| axisX          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| axisY          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| axisZ          | Axis angle rotation x component of unit vector.                    |
++----------------+--------------------------------------------------------------------+
+| angle          | Axis angle angle to rotate about unit vector.                      |
++----------------+--------------------------------------------------------------------+
+| axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
++----------------+--------------------------------------------------------------------+
+| sensititve     | **unsupported** - in future whether geometry records hits.         |
++----------------+--------------------------------------------------------------------+
+
+* The file path provided in :code:`geometryFile` should either be relative to where bdsim
+  is executed from or an absolute path.
+
+Two styles of rotation can be used. Either a set of 3 Euler angles or the axis angle
+rotation scheme where a **unit** vector is provided in :math:`x,y,z` and an angle to
+rotate about that. These variables are used to construct a :code:`G4RotationMatrix`
+directly, which is also the same as a :code:`CLHEP::HepRotation`.
+
+.. Note:: Geant4 uses a right-handed coordinate system and :math:`m` and :math:`rad` are
+	  the default units for offsets and angles in BDSIM.
+
+The following is an example syntax is used to place a piece of geometry::
+
+  leadblock, placement, x = 10*m,
+                        y = 3*cm,
+			z = 12*m,
+			geometryFile="gdml:mygeometry/detector.gdml;
+
+
+
+External Magnet Geometry
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+A geometry file may be placed around a beam pipe inside a BDSIM magnet instance. The beam pipe
+will be constructed as normal and will use the appropriate BDSIM tracking routines, but the
+yoke geometry will be loaded from the file provided. The external geometry must have a cut out
+in its container volume for the beam pipe to fit. Ie, both the beam pipe and the yoke exist
+at the same level in the geometry hierarchy (both are placed in one container for the magnet).
+The beam pipe is not placed 'inside' the yoke.
+
+This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
+`decapole`, `multipole`, `muonspoiler`, `vkick`, `hkick` element types in BDSIM.
+
+Example::
+
+  q1: quadrupole, l=20*cm, k1=0.0235, magnetGeometryType="gdml:mygeometry/atf2quad.gdml";
+
+
+Element
+^^^^^^^
+
+A general piece of geometry may be placed in the beam line along with any externally provided
+field map using the `element` beam line element.  See `element`_.
+
+.. _geometry-formats:
+
+Geometry Formats
+^^^^^^^^^^^^^^^^
+
+The following geometry formats are supported. More may be added in collaboration with the BDSIM
+developers - please see :ref:`feature-request`. The syntax and preparation of these geometry
+formats is described in more detail in :ref:`external-geometry-formats`.
+
++----------------------+---------------------------------------------------------------------+
+| **Format String**    | **Description**                                                     |
++======================+=====================================================================+
+| gdml                 | | Geometry Description Markup Language - Geant4's official geometry |
+|                      | | persistency format - recommended.                                 |
++----------------------+---------------------------------------------------------------------+
+| ggmad                | | Simple text interface provided by BDSIM to some simple Geant4     |
+|                      | | geometry classes.                                                 |
++----------------------+---------------------------------------------------------------------+
+| mokka                | | An SQL style description of geometry.                             |
++----------------------+---------------------------------------------------------------------+
+
+.. Note:: BDSIM must be compiled with the GDML build option in CMake turned on for gdml loading to work.
+
+
+.. _offsets-and-tilts:
 
 Offsets & Tilts - Component Misalignment
 ----------------------------------------
@@ -1044,6 +1507,7 @@ Examples::
   d1: drift, l=1*m, offsetX=1*cm;
   d2: drift, l=0.5*m, offsetY = 0.3*cm, tilt=0.003;
 
+.. _lattice-sequence:
 
 Lattice Sequence
 ----------------
@@ -1077,6 +1541,8 @@ or within another line by::
 
 Reversing a line also reverses all nested lines within.
 
+.. _the-use-command:
+
 use - Defining which Line to Use
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1094,6 +1560,8 @@ Examples::
    use, period=fodo;
 
 
+.. _sampler-output:
+   
 Samplers - Output
 -----------------
 
@@ -1275,7 +1743,8 @@ vacuum respectively::
   q1: quadrupole, l=1*m, material="Iron", biasVacuum="biasDef1 biasDef2"; ! uses the process biasDef1 and biasDef2
   q2: quadrupole, l=0.5*m, biasMaterial="biasDef2";
 
-
+.. _bdsim-options:
+  
 Options
 -------
 
@@ -1294,7 +1763,7 @@ Multiple options can be defined at once using the following syntax::
 	  all cases.  However, we do recommend you select an appropriate physics list and beam pipe
 	  radius as these will have a large impact on the outcome of the simulation.
 
-options in BDSIM
+Options in BDSIM
 ^^^^^^^^^^^^^^^^ 
 
 Below is a full list of all options in BDSIM. If the option is boolean, 1 (true) or 0 (false) can be used
@@ -1307,8 +1776,6 @@ as their value.
 +==================================+=======================================================+
 | **Common Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| batch                            | run BDSIM without the visualiser                      |
-+----------------------------------+-------------------------------------------------------+
 | beampipeRadius                   | default beam pipe inner radius [m]                    |
 +----------------------------------+-------------------------------------------------------+
 | beampipeThickness                | default beam pipe thickness [m]                       |
@@ -1319,10 +1786,16 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | elossHistoBinWidth               | the width of the histogram bins [m]                   |
 +----------------------------------+-------------------------------------------------------+
+| eventNumberOffset                | event the recreation should start from                |
++----------------------------------+-------------------------------------------------------+
 | killNeutrinos                    | whether to always stop tracking neutrinos for         |
 |                                  | increased efficiency (default = true)                 |
 +----------------------------------+-------------------------------------------------------+
 | ngenerate                        | number of primary particles to simulate               |
++----------------------------------+-------------------------------------------------------+
+| nturns                           | the number of revolutions particles are allowed to    |
+|                                  | complete in a circular accelerator - requires         |
+|                                  | --circular executable option to work                  |
 +----------------------------------+-------------------------------------------------------+
 | outerDiameter                    | default accelerator component full width [m]          |
 +----------------------------------+-------------------------------------------------------+
@@ -1350,14 +1823,32 @@ as their value.
 | useASCIISeedState                | whether to load an ASCII seed state file using        |
 |                                  | :code:`seedStateFileName`                             |
 +----------------------------------+-------------------------------------------------------+
-| writeseedstate                   | write the seed state of the last event start in ASCII |
+| writeSeedState                   | write the seed state of the last event start in ASCII |
 +----------------------------------+-------------------------------------------------------+
 | **Geometry Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
+| aper1                            | default aper1 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| aper2                            | default aper2 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| aper3                            | default aper3 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| aper4                            | default aper4 parameter                               |
++----------------------------------+-------------------------------------------------------+
+| checkOverlaps                    | Whether to run Geant4's geometry overlap checker      |
+|                                  | during geometry construction (slower)                 |
 +----------------------------------+-------------------------------------------------------+
 | includeIronMagFields             | whether to include magnetic fields in the magnet      |
 |                                  | poles                                                 |
++----------------------------------+-------------------------------------------------------+
+| magnetGeometryType               | the default magnet geometry style to use              |
++----------------------------------+-------------------------------------------------------+
+| outerDiameter                    | the default full width of a magnet                    |
++----------------------------------+-------------------------------------------------------+
+| outerMaterial                    | the default material to use for the yoke of magnet    |
+|                                  | geometry.                                             |
++----------------------------------+-------------------------------------------------------+
+| samplerDiameter                  | diameter of samplers (default 5 m) [m]                |
 +----------------------------------+-------------------------------------------------------+
 | sensitiveBeamlineComponents      | whether all beam line components record energy loss   |
 +----------------------------------+-------------------------------------------------------+
@@ -1367,6 +1858,9 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | vacuumPressure                   | the pressure of the vacuum gas [bar]                  |
 +----------------------------------+-------------------------------------------------------+
+| thinElementLength                | the length of all thinmultipoles and dipole           |
+|                                  | fringefields in a lattice (default 1e-6) [m]          |
++----------------------------------+-------------------------------------------------------+
 | **Tracking Parameters**          |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | deltaChord                       | chord finder precision                                |
@@ -1375,33 +1869,46 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | chordStepMinimum                 | minimum step size                                     |
 +----------------------------------+-------------------------------------------------------+
+| includeFringeFields              | place thin fringefield elements on the end of bending |
+|                                  | magnets with finite poleface angles. The length of the|
+|                                  | total element is conserved. (default = false)         |
++----------------------------------+-------------------------------------------------------+
+| integratorSet                    | set of tracking routines to use (bdsim|geant4)        |
++----------------------------------+-------------------------------------------------------+
 | lengthSafety                     | element overlap safety (caution!)                     |
++----------------------------------+-------------------------------------------------------+
+| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
++----------------------------------+-------------------------------------------------------+
+| maximumTrackingTime              | the maximum time of flight allowed for any particle   |
+|                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
 | minimumEpsilonStep               | minimum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
-| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
+| minimumRadiusOfCurvature         | minimum tolerable radius of curvature of a particle   |
+|                                  | below which, the energy will be decreased by 2% on    |
+|                                  | each use of the integrator to prevent infinite        |
+|                                  | loops - should be just greater than width of beam     |
+|                                  | pipe.                                                 |
 +----------------------------------+-------------------------------------------------------+
 | deltaOneStep                     | set position error acceptable in an integration step  |
 +----------------------------------+-------------------------------------------------------+
 | **Physics Processes Parameters** |                                                       |
 +----------------------------------+-------------------------------------------------------+
+| defaultBiasVacuum                | name of bias object to be attached to vacuum volumes  |
+|                                  | by default                                            |
++----------------------------------+-------------------------------------------------------+
+| defaultBiasMaterial              | name of bias object to be attached to general         |
+|                                  | material of components outside the vacuum by default  |
++----------------------------------+-------------------------------------------------------+
 | synchRadOn                       | whether to use synchrotron radiation processes        |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPhotons                   | standard overall production cuts for photons          |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPhotonsP                  | precision production cuts for photons                 |
-+----------------------------------+-------------------------------------------------------+
 | prodCutElectrons                 | standard overall production cuts for electrons        |
-+----------------------------------+-------------------------------------------------------+
-| prodCutElectronsP                | precision production cuts for electrons               |
 +----------------------------------+-------------------------------------------------------+
 | prodCutPositrons                 | standard overall production cuts for positrons        |
 +----------------------------------+-------------------------------------------------------+
-| prodCutPositronsP                | precision production cuts for positrons               |
-+----------------------------------+-------------------------------------------------------+
 | prodCutProtons                   | standard overall production cuts for protons          |
-+----------------------------------+-------------------------------------------------------+
-| prodCutProtonsP                  | precision production cuts for protons                 |
 +----------------------------------+-------------------------------------------------------+
 | turnOnCerenkov                   | whether to produce cerenkov radiation                 |
 +----------------------------------+-------------------------------------------------------+
@@ -1446,6 +1953,8 @@ as their value.
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
 
+.. _beam-parameters:
+  
 Beam Parameters
 ---------------
 
@@ -1466,7 +1975,7 @@ in the following sections. The beam is defined using the following syntax::
         energy=4.0*TeV,
 	distrType="reference";
 
-Energy is in `GeV` by default. The particle may be one of the following:
+Energy is in `GeV` by default. The particle is typically one of the following:
 
 * `e-`
 * `e+`
@@ -1475,7 +1984,8 @@ Energy is in `GeV` by default. The particle may be one of the following:
 * `mu-`
 * `mu+`
 
-Many particles can be used and are taken from the Geant4 particle table directly.
+However, many particles can be used and are taken from the Geant4 particle table directly
+and therefore the Geant4 naming scheme should be used.
 
 Available input distributions and their associated parameters are described in the following
 section.
@@ -2041,9 +2551,15 @@ Regions
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
 In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
 These are the default region, the precision region and the approximation region. Beamline elements 
-can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example:
+can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example::
 
-.. TODO region example missing
+  precisionRegion: region, prodCutProtons=1*m,
+                           prodCutElectrons=10*m,
+			   prodCutPositrons=10*m,
+			   prodCutPhotons = 1*mm;
+
+  d1: drift, l=10*m, region="precisionRegion";
+
 
 .. rubric:: Footnotes
 

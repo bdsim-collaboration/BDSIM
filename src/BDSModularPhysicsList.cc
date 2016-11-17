@@ -120,7 +120,7 @@ void BDSModularPhysicsList::Print()
   for (const auto& physics : physicsActivated)
     {
       G4String result = (physics.second ? "activated" : "inactive");
-      G4cout << "\"" << physics.first << "\" : " << result << G4endl;
+      G4cout << std::setw(25) << ("\"" + physics.first + "\" : ") << result << G4endl;
     }
 }
 
@@ -309,6 +309,15 @@ void BDSModularPhysicsList::SetParticleDefinition()
   globals->SetBeamKineticEnergy(globals->BeamTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
   globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
+
+  // compute magnetic rigidity brho
+  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
+  // charge (in e units)
+  // rigidity (in T*m)
+  G4double brho = globals->FFact()*(globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV());
+  // rigidity (in Geant4 units)
+  brho *= CLHEP::tesla*CLHEP::m;
+  globals->SetBRho(brho);
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
   G4cout << __METHOD_NAME__ << "Particle : " 
@@ -323,6 +332,8 @@ void BDSModularPhysicsList::SetParticleDefinition()
 	 << globals->BeamKineticEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Momentum : "
 	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "
+	 << std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 }
 
 void BDSModularPhysicsList::Em()

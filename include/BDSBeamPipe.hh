@@ -15,6 +15,8 @@ class G4VSolid;
  * 
  * This does not implement the construction of the beampipe but merely
  * holds all relevant objects and information. 
+ *
+ * Face normals are ensured to be unit.
  * 
  * @author Laurie Nevay
  */

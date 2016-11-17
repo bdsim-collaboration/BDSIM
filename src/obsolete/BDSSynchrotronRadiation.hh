@@ -11,13 +11,12 @@
 #include "G4Electron.hh"
 #include "G4Positron.hh"
 
-class BDSSynchrotronRadiation : public G4VDiscreteProcess 
+class BDSSynchrotronRadiation: public G4VDiscreteProcess 
 { 
 public:
- 
   BDSSynchrotronRadiation(const G4String& processName = "BDSSynchRad");
  
-  ~BDSSynchrotronRadiation();
+  virtual ~BDSSynchrotronRadiation();
 
   G4bool IsApplicable(const G4ParticleDefinition&);
   

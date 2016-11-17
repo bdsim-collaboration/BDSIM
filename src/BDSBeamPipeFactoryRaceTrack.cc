@@ -8,13 +8,13 @@
 #include <cmath>
 
 
-BDSBeamPipeFactoryRaceTrack* BDSBeamPipeFactoryRaceTrack::_instance = nullptr;
+BDSBeamPipeFactoryRaceTrack* BDSBeamPipeFactoryRaceTrack::instance = nullptr;
 
 BDSBeamPipeFactoryRaceTrack* BDSBeamPipeFactoryRaceTrack::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryRaceTrack();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryRaceTrack();}
+  return instance;
 }
 
 BDSBeamPipeFactoryRaceTrack::BDSBeamPipeFactoryRaceTrack()
@@ -22,7 +22,7 @@ BDSBeamPipeFactoryRaceTrack::BDSBeamPipeFactoryRaceTrack()
 
 BDSBeamPipeFactoryRaceTrack::~BDSBeamPipeFactoryRaceTrack()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 void BDSBeamPipeFactoryRaceTrack::GenerateRaceTrack(std::vector<G4TwoVector>& vec,

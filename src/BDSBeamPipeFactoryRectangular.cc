@@ -4,7 +4,6 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                 // geant4 globals / types
 #include "G4Box.hh"
@@ -17,13 +16,13 @@
 
 #include <cmath>                           // sin, cos, fabs
 
-BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::_instance = nullptr;
+BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::instance = nullptr;
 
 BDSBeamPipeFactoryRectangular* BDSBeamPipeFactoryRectangular::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryRectangular();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryRectangular();}
+  return instance;
 }
 
 BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
@@ -31,7 +30,7 @@ BDSBeamPipeFactoryRectangular::BDSBeamPipeFactoryRectangular()
 
 BDSBeamPipeFactoryRectangular::~BDSBeamPipeFactoryRectangular()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectangular::CreateBeamPipe(G4String    nameIn,

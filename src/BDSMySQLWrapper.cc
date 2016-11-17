@@ -1,13 +1,3 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 12.10.2005
-*/
-
 #include "BDSGlobalConstants.hh" 
 #include "BDSDebug.hh"
 
@@ -21,39 +11,39 @@
 #include <string>
 #include <vector>
 
-BDSMySQLWrapper::BDSMySQLWrapper (const G4String& SQLFileName)
-  : ifs(SQLFileName.c_str()), ComponentN(0), tableN(-1)
-  
+
+BDSMySQLWrapper::BDSMySQLWrapper(const G4String& SQLFileName):
+  ifs(SQLFileName.c_str()),
+  ComponentN(0),
+  tableN(-1)
 {
   _startOfFile=true;
   BeginTokens();
 
-  if(ifs) {
+  if(ifs)
+    {
 #ifdef BDSDEBUG
-    G4cout<<"BDSMySQLWrapper contructor: Loading SQL Filename="<<SQLFileName<<G4endl;
+      G4cout << __METHOD_NAME__ << "loading SQL Filename: " << SQLFileName << G4endl;
 #endif
-  }
-  else {
-    G4cout<<"BDSMySQLWrapper constructor: Unable to load SQL file: "<<SQLFileName<<G4endl;
-    exit(1);
-  }
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "unable to load SQL file: " << SQLFileName << G4endl; exit(1);}
 }
 
 BDSMySQLWrapper::~BDSMySQLWrapper()
-{
-}
+{;}
 
-std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable ()
+std::vector<BDSMySQLTable*> BDSMySQLWrapper::ConstructTable()
 {
   ComponentN=0;
   tableN=-1;
-  while(NextToken()){
-    ParseComponent();
-  }
+  while(NextToken())
+    {ParseComponent();}
   return table;
 }
 
-void BDSMySQLWrapper::TokenizeLine(){
+void BDSMySQLWrapper::TokenizeLine()
+{
   // empty old tokens
   _tokens.clear();
 
@@ -84,45 +74,42 @@ void BDSMySQLWrapper::TokenizeLine(){
       std::string token = *tok_iter2;
       
       // only put non-empty tokens, but put empty strings ""
-      if (token.empty()) {
-	continue;
-      }
+      if (token.empty())
+	{continue;}
       RemoveQuotesFromLine(token);
       RemoveWhitespace(token);
       _tokens.push_back(token);
 #ifdef BDSDEBUG
-	G4cout << __METHOD_NAME__ << " - token: = <" << token << ">" << G4endl;
+	G4cout << __METHOD_NAME__ << "- token: = <" << token << ">" << G4endl;
 #endif
     }
   }
   BeginTokens();
 }
 
-bool BDSMySQLWrapper::NextToken(){
+bool BDSMySQLWrapper::NextToken()
+{
   std::string line;
   ++_tokens_iter;
-  if(_startOfFile){
-    --_tokens_iter;
-  }
+  if(_startOfFile)
+    {--_tokens_iter;}
   if(_startOfFile || EndTokens()){
     if(ifs.good()){
       ReadLine();
       TokenizeLine();
 #ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
+      G4cout << __METHOD_NAME__ << "- Token() = " << Token() << G4endl;
 #endif
     }else{
       return false;
     }
   } else {
 #ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << " - Token() = " << Token() << G4endl;
+    G4cout << __METHOD_NAME__ << "- Token() = " << Token() << G4endl;
 #endif
   }
   return true;
 }
-
-
 
 G4int BDSMySQLWrapper::ParseComponent()
 {
@@ -138,11 +125,11 @@ G4int BDSMySQLWrapper::ParseComponent()
   return 0;
 }
 
+void BDSMySQLWrapper::CreateDatabase()
+{;}
 
-void BDSMySQLWrapper::CreateDatabase(){
-}
-
-void BDSMySQLWrapper::CreateTable(){
+void BDSMySQLWrapper::CreateTable()
+{
   G4String varname;
   G4String vartype;
 
@@ -179,8 +166,8 @@ void BDSMySQLWrapper::CreateTable(){
   }
 }
 
-
-void BDSMySQLWrapper::Create(){
+void BDSMySQLWrapper::Create()
+{
   _NEXT
 #ifdef BDSDEBUG
     G4cout << __METHOD_NAME__ << " reading input: " << Token() << G4endl;

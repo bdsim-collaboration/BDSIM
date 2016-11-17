@@ -54,20 +54,6 @@ if(USE_GDML)
     message(STATUS "GDML support ON")
 endif()
 
-# LCDD (on by default if xml libraries are found)
-include(cmake/XML.cmake)
-
-if(XML_LIBRARIES)
-    option( USE_LCDD "Include LCDD support."  ON )
-else()
-    option( USE_LCDD "Include LCDD support."  OFF )
-endif()
-if(USE_LCDD)
-    add_definitions("-DUSE_LCDD")
-    include_directories(${XML_INCLUDE_DIR})
-    message(STATUS "LCDD support ON")
-endif()
-
 # Find GEANT4
 include(cmake/Geant4.cmake)
 
@@ -93,6 +79,7 @@ enable_testing()
 include(CTest)
 include(bdsim_test_macros)
 include(comparator_test_macros)
+include(interpolator_test_macros)
 include(rebdsim_test_macros)
 include(root_test_macros)
 
@@ -104,12 +91,19 @@ string(TIMESTAMP CURRENT_YEAR %Y)
 configure_file(${CMAKE_SOURCE_DIR}/bdsim.cc ${CMAKE_BINARY_DIR}/bdsim.cc @ONLY)
 
 BDSIM_COLLATE_APPLICATION_SOURCES(bdsim_sources)
-if(NOT USE_LCDD)
-  list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryLCDD.cc)
-endif()
 if(NOT USE_GDML)
   list(REMOVE_ITEM bdsim_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/BDSGeometryGDML.cc)
 endif()
+
+# Add Modules
+option(USE_AWAKE "Use AWAKE Module" OFF)
+if (USE_AWAKE)
+  add_definitions("-DUSE_AWAKE")
+  message(STATUS "AWAKE module ON")
+  add_subdirectory(modules/AWAKE)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/modules/AWAKE/include)
+endif()
+
 if($ENV{VERBOSE})
   message(STATUS "ROOT dictionaries ${root_dicts}")
   message(STATUS "BDSIM sources ${bdsim_sources}")
@@ -146,10 +140,6 @@ endif()
 
 # link against ROOT
 target_link_libraries(bdsim ${ROOT_LIBRARIES})
-
-if(USE_LCDD)
-    target_link_libraries(bdsim ${XML_LIBRARIES})
-endif()
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "DebugCoverage")
     target_link_libraries(bdsim gcov)
@@ -234,6 +224,9 @@ add_subdirectory(analysis)
 
 # Include directory for comparator
 add_subdirectory(comparator)
+
+# Include directory for interpolator
+add_subdirectory(interpolator)
 
 # Manual
 add_subdirectory(manual)

@@ -9,7 +9,7 @@
  * This factory gets everything from the LHC factory and 
  * simply has it's own singleton accessor
  * 
- * @author Laurie Nevay <laurie.nevay@rhul.ac.uk>
+ * @author Laurie Nevay
  */
 
 class BDSMagnetOuterFactoryLHCLeft: public BDSMagnetOuterFactoryLHC
@@ -17,7 +17,7 @@ class BDSMagnetOuterFactoryLHCLeft: public BDSMagnetOuterFactoryLHC
 public:
   static BDSMagnetOuterFactoryLHCLeft* Instance(); /// singleton pattern
   
-  ~BDSMagnetOuterFactoryLHCLeft();
+  virtual ~BDSMagnetOuterFactoryLHCLeft();
 
 private:
   BDSMagnetOuterFactoryLHCLeft(); //private constructor as singleton

@@ -191,6 +191,7 @@ void Options::PublishMembers()
   publish("outerDiameter",&Options::outerDiameter);
   publish("boxSize",      &Options::outerDiameter); // for backwards compatability
   publish("includeIronMagFields",&Options::includeIronMagFields);
+  publish("includeFringeFields",&Options::includeFringeFields);
   publish("beampipeRadius",&Options::aper1);
   publish("beampipeThickness",&Options::beampipeThickness);
   publish("apertureType",&Options::apertureType);
@@ -202,6 +203,7 @@ void Options::PublishMembers()
   publish("vacuumMaterial",&Options::vacMaterial);
   publish("emptyMaterial",&Options::emptyMaterial);
   publish("dontSplitSBends", &Options::dontSplitSBends);
+  publish("thinElementLength", &Options::thinElementLength);
 
   // tunnel options
   publish("buildTunnel",&Options::buildTunnel);
@@ -239,31 +241,24 @@ void Options::PublishMembers()
   publish("thresholdCutPhotons",&Options::thresholdCutPhotons);
 
   publish("prodCutPhotons",&Options::prodCutPhotons);
-  publish("prodCutPhotonsP",&Options::prodCutPhotonsP);
-  publish("prodCutPhotonsA",&Options::prodCutPhotonsA);
   publish("prodCutElectrons",&Options::prodCutElectrons);
-  publish("prodCutElectronsP",&Options::prodCutElectronsP);
-  publish("prodCutElectronsA",&Options::prodCutElectronsA);
   publish("prodCutPositrons",&Options::prodCutPositrons);
-  publish("prodCutPositronsP",&Options::prodCutPositronsP);
-  publish("prodCutPositronsA",&Options::prodCutPositronsA);
   publish("prodCutProtons",&Options::prodCutProtons);
   publish("prodCutHadrons",&Options::prodCutProtons); // backwards compatability
-  publish("prodCutProtonsP",&Options::prodCutProtonsP);
-  publish("prodCutProtonsA",&Options::prodCutProtonsA);
 
   // bias options
   publish("defaultBiasVacuum",   &Options::defaultBiasVacuum);
   publish("defaultBiasMaterial", &Options::defaultBiasMaterial);
 
-  // options which influence tracking 
+  // options which influence tracking
+  publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
-  publish("deltaChord",&Options::deltaChord);
-  publish("chordStepMinimum",&Options::chordStepMinimum);
-  publish("deltaIntersection",&Options::deltaIntersection);
-  publish("minimumEpsilonStep",&Options::minimumEpsilonStep);
-  publish("maximumEpsilonStep",&Options::maximumEpsilonStep);
-  publish("deltaOneStep",&Options::deltaOneStep);
+  publish("deltaChord",         &Options::deltaChord);
+  publish("chordStepMinimum",   &Options::chordStepMinimum);
+  publish("deltaIntersection",  &Options::deltaIntersection);
+  publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
+  publish("maximumEpsilonStep", &Options::maximumEpsilonStep);
+  publish("deltaOneStep",       &Options::deltaOneStep);
 
   // physics processes
   publish("turnOnCerenkov",&Options::turnOnCerenkov);
@@ -288,6 +283,7 @@ void Options::PublishMembers()
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",     &Options::stopTracks);
   publish("killNeutrinos",  &Options::killNeutrinos);
+  publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);

@@ -35,7 +35,6 @@ Element::Element():
 void Element::PublishMembers()
 {
   publish("l",&Element::l);
-  publish("bmapZOffset",&Element::bmapZOffset);
   publish("B",&Element::B);
   publish("ks",&Element::ks);
   publish("k0",&Element::k0);
@@ -47,18 +46,18 @@ void Element::PublishMembers()
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper",&Element::aper1);
   alternativeNames["aper"] = "aper1";
-  publish("aperture",&Element::aper1);
+  publish("aperture", &Element::aper1);
   alternativeNames["aperture"] = "aper1";
-  publish("aper1",&Element::aper1);
+  publish("aper1",    &Element::aper1);
   publish("aperture1",&Element::aper1);
   alternativeNames["aperture1"] = "aper1";
-  publish("aper2",&Element::aper2);
+  publish("aper2",    &Element::aper2);
   publish("aperture2",&Element::aper2);
   alternativeNames["aperture2"] = "aper2";
-  publish("aper3",&Element::aper3);
+  publish("aper3",    &Element::aper3);
   publish("aperture3",&Element::aper3);
   alternativeNames["aperture3"] = "aper3";
-  publish("aper4",&Element::aper4);
+  publish("aper4",    &Element::aper4);
   publish("aperture4",&Element::aper4);
   alternativeNames["aperture4"] = "aper4";
   publish("outerDiameter",&Element::outerDiameter);
@@ -70,6 +69,8 @@ void Element::PublishMembers()
   publish("tilt",&Element::tilt);
   publish("e1",&Element::e1);
   publish("e2",&Element::e2);
+  publish("fint",&Element::fint);
+  publish("fintx",&Element::fintx);
   publish("offsetX",&Element::offsetX);
   publish("offsetY",&Element::offsetY);
   publish("x",&Element::xdir);
@@ -85,11 +86,25 @@ void Element::PublishMembers()
   publish("theta",&Element::theta);
   publish("psi",&Element::psi);
   publish("gradient",&Element::gradient);
-  publish("precisionRegion",&Element::precisionRegion);
   publish("region",&Element::region);
+  publish("fieldOuter",  &Element::fieldOuter);
+  publish("fieldVacuum", &Element::fieldVacuum);
+  publish("fieldAll",    &Element::fieldAll);
   publish("waveLength",&Element::waveLength);
   publish("tscint",&Element::tscint);
   publish("twindow",&Element::twindow);
+  publish("tmount",&Element::tmount);
+  publish("windowScreenGap",&Element::windowScreenGap);
+  publish("screenXSize",&Element::screenXSize);
+  publish("screenYSize",&Element::screenYSize);
+  publish("screenPSize",&Element::screenPSize);
+  publish("screenEndZ",&Element::screenEndZ);
+  publish("poleStartZ",&Element::poleStartZ);
+  publish("screenWidth",&Element::screenWidth);
+  publish("layerThicknesses",&Element::layerThicknesses);
+  publish("layerMaterials",&Element::layerMaterials);
+  publish("layerIsSampler",&Element::layerIsSampler);
+  
   publish("numberWedges",&Element::numberWedges);
   publish("wedgeLength",&Element::wedgeLength);
   publish("degraderHeight",&Element::degraderHeight);
@@ -97,7 +112,7 @@ void Element::PublishMembers()
   publish("degraderOffset",&Element::degraderOffset);
 
   publish("geometry",&Element::geometryFile);
-  publish("bmap",&Element::bmapFile);
+  publish("bmap",    &Element::fieldAll);
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
@@ -107,6 +122,7 @@ void Element::PublishMembers()
   publish("vacuumMaterial",&Element::vacuumMaterial);
   publish("scintmaterial",&Element::scintmaterial);
   publish("windowmaterial",&Element::windowmaterial);
+  publish("mountmaterial",&Element::mountmaterial);
   publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
   publish("cavityModel",&Element::cavityModel);
@@ -184,7 +200,7 @@ void Element::print(int & ident)const{
     
   case ElementType::_ELEMENT:
     printf("\ngeometry file : %s\n",geometryFile.c_str());
-    printf("B map file : %s\n",bmapFile.c_str());
+    printf("Field object : %s\n", fieldAll.c_str());
     break;
     
   case ElementType::_SCREEN:
@@ -250,11 +266,25 @@ void Element::flush() {
   B = 0;
   e1 = 0;
   e2 = 0;
+  fint = 0;
+  fintx = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
   twindow = 0;
-  bmapZOffset = 0;
+  tmount = 0;
+  screenPSize = 0;
+  windowScreenGap = 0;
+  screenXSize = 0;
+  screenYSize = 0;
+
+  screenEndZ = 0;
+  poleStartZ = 0;
+  screenWidth = 0;
+  layerThicknesses.clear();
+  layerMaterials.clear();
+  layerIsSampler.clear();
+  
   xdir = 0;
   ydir = 0;
   zdir = 0;
@@ -277,13 +307,15 @@ void Element::flush() {
   samplerType = "none"; // allowed "none", "plane", "cylinder"
   samplerRadius = 0;
   
-  precisionRegion = false;
-  region = "";
+  region      = "";
+  fieldOuter  = "";
+  fieldVacuum = "";
+  fieldAll    = "";
 
   geometryFile ="";
-  bmapFile = "";
   material="";  
   windowmaterial = "vacuum";
+  mountmaterial="";
   scintmaterial = "";
   airmaterial="";
   spec = "";
