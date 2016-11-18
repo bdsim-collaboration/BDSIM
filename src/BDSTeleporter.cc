@@ -4,6 +4,7 @@
 #include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTeleporter.hh"
 

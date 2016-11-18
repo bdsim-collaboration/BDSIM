@@ -9,7 +9,7 @@
  * @brief Null B field - for special cases where we need a valid object.
  * 
  * Simply returns 0,0,0,0,0,0 for all field components.  Used for teleporter
- * or speicially written tracking routines that may ignore the 'field' but
+ * or specifically written tracking routines that may ignore the 'field' but
  * still need a valid object that can be called by Geant4 in order to fit
  * into its scheme.
  *

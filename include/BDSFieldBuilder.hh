@@ -1,12 +1,12 @@
 #ifndef BDSFIELDBUILDER_H
 #define BDSFIELDBUILDER_H
 
-#include "BDSFieldInfo.hh"
-#include "BDSFieldObjects.hh"
-
-#include "G4LogicalVolume.hh"
-
+#include "globals.hh" //G4 global constants & types
 #include <vector>
+
+class BDSFieldInfo;
+class BDSFieldObjects;
+class G4LogicalVolume;
 
 /**
  * @brief Register for all fields to be built and volumes to be attached to.

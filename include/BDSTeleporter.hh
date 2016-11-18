@@ -17,7 +17,7 @@ class BDSFieldObjects;
  * because of the geometry construction, but purely in the input MADX or gmad description.
  * Normal tracking programs don't show this offset as they really track through a sequence
  * of maps or functions and just apply them in a loop - it is defacto periodic. However, 
- * with real 3D geometry in global carteasian coordinates, we must artificially make the
+ * with real 3D geometry in global cartesian coordinates, we must artificially make the
  * lattice periodic. Enter the teleporter. This transports particles across its length
  * while maintaining the exact same transverse coordinates, which is normally unphysical.
  * 
@@ -43,7 +43,7 @@ private:
   /// Teleporter 'field'
   BDSFieldObjects* vacuumField;
 
-  /// Teleporter offset - the different between the end and beginning of the beamline
+  /// Teleporter offset - the difference between the end and beginning of the beamline
   G4ThreeVector teleporterDelta;
 };
 
