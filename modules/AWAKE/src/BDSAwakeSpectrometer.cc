@@ -54,7 +54,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
   _windowThickness(windowThickness),
   _windowMaterial(windowMaterial),
   _mountThickness(mountThickness), 
- _mountMaterial(mountMaterial),
+  _mountMaterial(mountMaterial),
   _screenEndZ(screenEndZ),
   _poleStartZ(poleStartZ)
 {
@@ -148,9 +148,6 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
 		  itsCoilSize.y(),
 		  itsCoilSize.x()
 		  );
-  
-
-
 
   //Yoke apertures.
   itsAperture1Size.set(
@@ -176,7 +173,6 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
   //  itsBmapZOffset=(-itsLength/2.0 + 62.733*CLHEP::cm)*0.5;
   itsBmapZOffset=0.5*itsPolePos.z();
   itsBmapXOffset=0.5*itsPolePos.x();
-
 
   //The position of the yoke relative to the marker volume
   itsYokePos.set(
@@ -282,7 +278,6 @@ void BDSAwakeSpectrometer::MagnetDefaults(){
 		      itsPolePos.y()-(itsPoleSize.y()+itsPoleAperture)/2.0,
 		      itsPolePos.z()
 		      );
-  
 }
 
 void BDSAwakeSpectrometer::SetVisAttributes()
@@ -716,7 +711,15 @@ void BDSAwakeSpectrometer::PlaceCamera(){
 void BDSAwakeSpectrometer::BuildScreen()
 {
   G4cout << "Building BDSAwakeMultilayerScreen...." << G4endl;
-  _mlScreen = new BDSAwakeMultilayerScreen(_material,_thickness, _windowScreenGap , _screenPSize, _windowThickness, _windowMaterial, _mountThickness, _mountMaterial, _screenWidth);
+  _mlScreen = new BDSAwakeMultilayerScreen(_material,
+					   _thickness,
+					   _windowScreenGap,
+					   _screenPSize,
+					   _windowThickness,
+					   _windowMaterial,
+					   _mountThickness,
+					   _mountMaterial,
+					   _screenWidth);
   
   G4cout << "finished." << G4endl;
   //  if(BDSGlobalConstants::Instance()->SensitiveComponents()){
@@ -799,7 +802,8 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   std::cout << __METHOD_END__ << std::endl;
 }
 
-void BDSAwakeSpectrometer::BuildContainerLogicalVolume(){
+void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
+{
   containerSolid=new G4Box( name+"_marker_solid",
 			    BDSGlobalConstants::Instance()->TunnelInfo()->aper1/2, // size to be fixed
 			    BDSGlobalConstants::Instance()->TunnelInfo()->aper2/2,
