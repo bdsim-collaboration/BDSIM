@@ -30,7 +30,12 @@ public:
 
   inline const G4ThreeVector& GetSize() const {return size;}
 
-  void screenLayer(G4double thickness, G4String material, G4String name, G4int isSampler=0, G4double grooveWidth=0, G4double grooveSpatialFrequency=0);
+  void screenLayer(G4double thickness,
+		   G4String material,
+		   G4String name,
+		   G4int    isSampler=0,
+		   G4double grooveWidth=0,
+		   G4double grooveSpatialFrequency=0);
 
   void screenLayer(BDSScreenLayer* layer, G4int isSampler=0);
 

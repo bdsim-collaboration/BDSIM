@@ -74,7 +74,6 @@ void BDSScreenLayer::buildScreen()
   itsScoringPlaneUserLimits->SetMaxAllowedStep(size.z()*maxStepFactor);
   log->SetUserLimits(itsScoringPlaneUserLimits);
 #endif
-
 }
 
 void BDSScreenLayer::cutGrooves()
