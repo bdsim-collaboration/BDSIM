@@ -213,21 +213,12 @@ void EventAnalysis::Write(TFile *outputFile)
 
 void EventAnalysis::ProcessSamplers()
 {
-  for(auto s = this->samplerAnalyses.begin(); s != this->samplerAnalyses.end(); ++s)
-  {
-    if(debug)
-    {
-      std::cout << "EventAnalysis::ProcessSamplers> " << (*s)->s->samplerName << " " << (*s)->s->n <<std::endl;
-    }
-
-    // process samplers
-    (*s)->Process();
-  }
-
+  for(auto s : samplerAnalyses)
+    {s->Process();}
 }
 
 void EventAnalysis::Initialise()
 {
-  for(auto i = this->samplerAnalyses.begin(); i != this->samplerAnalyses.end(); ++i)
-    {(*i)->Initialise();}
+  for (auto s : samplerAnalyses)
+    {s->Initialise();}
 }

@@ -90,7 +90,7 @@ void SamplerAnalysis::Initialise()
 void SamplerAnalysis::Process()
 {
   if(debug)
-    {std::cout << __METHOD_NAME__ << std::endl;}
+    {std::cout << __METHOD_NAME__ << "\"" << s->samplerName << "\" with " << s->n << " entries" << std::endl;}
 
   std::vector<double> v;
   v.resize(6);
