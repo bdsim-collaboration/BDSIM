@@ -92,6 +92,7 @@ private:
   G4LogicalVolume* itsMiddleCoilLog;
   G4ThreeVector itsAperture1Size;
   G4ThreeVector itsAperture2Size;
+  G4double _magnetOffsetX;
   G4double itsPoleAperture;
   G4double itsCoilAperture;
   G4ThreeVector itsAperture1Pos;
