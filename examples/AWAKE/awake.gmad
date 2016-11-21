@@ -173,16 +173,23 @@ sez=257.661*cm-psz;
 screenAngle=-45*pi/180;
 
 
-mySpectrometer: awakespectrometer, l=4.4284*m-quad_length_diff/2, region="precReg",
-twindow=1*cm, windowmaterial="G4_Al",tscint=850*mum,
-windowScreenGap=65*mm,
-scintmaterial="lanex", angle=screenAngle,poleStartZ=psz,
-screenEndZ=sez,
-spec="vacuumChamberType=1&magnetGeometryType=1",
+mySpectrometer: awakespectrometer, l=4.4284*m-quad_length_diff/2,
+				   region="precReg",
+				   twindow=1*cm,
+				   windowmaterial="G4_Al",
+				   tscint=850*mum,
+				   windowScreenGap=65*mm,
+				   scintmaterial="lanex",
+				   angle=screenAngle,poleStartZ=psz,
+				   screenEndZ=sez,
+				   spec="vacuumChamberType=1&magnetGeometryType=1",
+				   screenPSize=25*um,
+				   B=0.5*0.00154;
+				   
 !&strutSizeX=4&strutSizeZ=25&strutMaterial=G4_Ti",
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_320A_3.bmap";
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_650A_4.bmap";
-B=0.5*0.00154;
+
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_40A_3.bmap";
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_100A_2.bmap";
 !bmap="3D:fieldMaps/hb4/3D/bdsim/HB4_MAP3D_240A_3.bmap";
