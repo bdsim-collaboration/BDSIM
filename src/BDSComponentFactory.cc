@@ -38,7 +38,6 @@
 #include <list>
 #include <sstream>
 
-
 #ifdef BDSDEBUG
 bool debug1 = true;
 #else
@@ -1407,13 +1406,15 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeScreen(){
 #ifdef BDSDEBUG 
         G4cout << "---->creating Awake Screen,"
 	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	       << "tmount = " << _element.tmount*1e3/CLHEP::um << " um"
 	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
 	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
 	       << "windowmaterial = " << _element.windowmaterial << " um"
+	       << "windowmaterial = " << _element.mountmaterial << " um"
 	       << "scintmaterial = " << _element.scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial)); //Name
+	return (new BDSAwakeScintillatorScreen(_element.name, _element.scintmaterial, _element.tscint*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial,_element.tmount*1e3, _element.mountmaterial)); //Name
 }
 
 
@@ -1422,14 +1423,17 @@ BDSAcceleratorComponent* BDSComponentFactory::createAwakeSpectrometer(){
 #ifdef BDSDEBUG 
         G4cout << "---->creating AWAKE spectrometer,"
 	       << "twindow = " << _element.twindow*1e3/CLHEP::um << " um"
+	       << "tmount = " << _element.tmount*1e3/CLHEP::um << " um"
 	       << "tscint = " << _element.tscint*1e3/CLHEP::um << " um"
 	       << "screenPSize = " << _element.screenPSize*1e3/CLHEP::um << " um"
 	       << "windowScreenGap = " << _element.windowScreenGap*1e3/CLHEP::um << " um"
 	       << "windowmaterial = " << _element.windowmaterial << " um"
+	       << "mountmaterial = " << _element.mountmaterial << " um"
 	       << "scintmaterial = " << _element.scintmaterial << " um"
                << G4endl;
 #endif
-	return (new BDSAwakeSpectrometer(_element.name, _element.magnetOffsetX*1e3, _element.l*1e3,  _element.bmapFile, _element.B,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.screenPSize*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.screenEndZ*1e3, _element.spec, _element.screenWidth*1e3));
+
+	return (new BDSAwakeSpectrometer(_element.name,_element.magnetOffsetX*1e3,  _element.l*1e3,  _element.bmapFile, _element.B,  _element.poleStartZ*1e3, _element.scintmaterial, _element.tscint*1e3, _element.screenPSize*1e3, _element.windowScreenGap*1e3,_element.angle, _element.twindow*1e3, _element.windowmaterial, _element.tmount*1e3, _element.mountmaterial, _element.screenEndZ*1e3, _element.spec, _element.screenWidth*1e3));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::createTransform3D(){

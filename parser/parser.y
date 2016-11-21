@@ -652,13 +652,13 @@ parameters:
 		  else
                   if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
                   else
+                  if(!strcmp($1->name,"tmount")) { params.tmount = $3; params.tmountset = 1;} // thickness for a scintillator screen mount 
+		  else
                   if(!strcmp($1->name,"screenEndZ")) { params.screenEndZ = $3; params.screenEndZset = 1;} // z distance from start of pole to screen 
                   else
                   if(!strcmp($1->name,"screenWidth")) { params.screenWidth = $3; params.screenWidthset = 1;} // width of screen
 		  else
                   if(!strcmp($1->name,"poleStartZ")) { params.poleStartZ = $3; params.poleStartZset = 1;} // z distance from start of element to start of pole 
-		  else
-                  if(!strcmp($1->name,"twindow")) { params.twindow = $3; params.twindowset = 1;} // thickness for a scintillator screen window 
 		  else
                   if(VERBOSE) printf("Warning : unknown parameter %s\n",$1->name);
 		  
@@ -990,6 +990,12 @@ parameters:
 		       params.windowmaterial = $3; 
 		     } // material for a scintillator screen window
 		   else
+		   if(!strcmp($1->name,"mountmaterial")) 
+		     {
+		       params.mountmaterialset = 1;
+		       params.mountmaterial = $3; 
+		     } // material for a scintillator screen mount
+		   else
 		   if(!strcmp($1->name,"vacuummaterial")) 
 		     {
 		       params.vacuummaterialset = 1;
@@ -1064,6 +1070,11 @@ parameters:
 			   {	 
 			     params.windowmaterialset = 1;
 			     params.windowmaterial = $3;
+			   }
+			 if(!strcmp($1->name,"mountmaterial")) 
+			   {	 
+			     params.mountmaterialset = 1;
+			     params.mountmaterial = $3;
 			   }
 			 if(!strcmp($1->name,"vacuummaterial")) 
 			   {	 
