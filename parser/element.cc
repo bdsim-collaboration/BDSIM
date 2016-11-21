@@ -98,6 +98,7 @@ void Element::print(int & ident)const{
 
 void Element::flush() {
   l = 0;
+  magnetOffsetX = 0;
   bmapZOffset = 0;
   B = 0;
   ks = 0;

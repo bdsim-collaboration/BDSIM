@@ -15,6 +15,7 @@ Parameters::Parameters() {
 void Parameters::flush() {
   l=0; lset = 0;
   bmapZOffset = 0; bmapZOffsetset=0;
+  magnetOffsetX = 0; magnetOffsetXset=0;
   r = 0; rset = 0;
   tscint = 0.0003; tscintset = 0;
   screenPSize = 25e-6, screenPSizeset = 0;
@@ -128,6 +129,7 @@ void Parameters::inherit_properties(struct Element& e)
   
   if(!lset) { l = e.l; lset = 1; }
   if(!bmapZOffsetset) { bmapZOffset = e.bmapZOffset; bmapZOffsetset = 1; }
+  if(!magnetOffsetXset) { magnetOffsetX = e.magnetOffsetX; magnetOffsetXset = 1; }
   if(!Bset) { B = e.B; Bset = 1; }
   if(!ksset) { ks = e.ks; ksset = 1; }
   if(!k0set) { k0 = e.k0; k0set = 1; }

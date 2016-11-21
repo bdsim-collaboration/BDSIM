@@ -17,7 +17,7 @@ struct Element {
   std::string name;
 
   double inR; double bpRad; /// inner radius and beam pipe radius of muon spoiler  
-  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, screenPSize, windowScreenGap, twindow, bmapZOffset; // l in meter
+  double l,ks,k0,k1,k2,k3,angle,beampipeThickness,aper,aperX, aperY, tilt,xsize,ysize,r,outR,hgap,B, phiAngleIn, phiAngleOut, tscint, screenPSize, windowScreenGap, twindow, bmapZOffset, magnetOffsetX; // l in meter
   double screenXSize, screenYSize;
   double screenEndZ, poleStartZ, screenWidth;
   double xdir, ydir, zdir, waveLength; /// for laser wire and 3d transforms

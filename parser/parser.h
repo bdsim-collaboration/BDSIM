@@ -570,6 +570,7 @@ int write_table(struct Parameters params,const char* name, int type, std::list<s
     e.windowmaterial = std::string(params.windowmaterial);
     e.vacuummaterial = std::string(params.vacuummaterial);
     e.spec = std::string(params.spec); 
+    e.magnetOffsetX = params.magnetOffsetX;
     break;
 
   default:

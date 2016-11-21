@@ -19,6 +19,7 @@ struct Parameters {
   double B;  int Bset;    /// magnetic field
   double l;  int lset;    /// length
   double bmapZOffset; int bmapZOffsetset; //offset of the field map magnet field
+  double magnetOffsetX; int magnetOffsetXset; //x offset of the spectrometer magnet
   double k0; int k0set;   /// dipole 
   double k1; int k1set;   /// quadrupole
   double k2; int k2set;   /// sextupole

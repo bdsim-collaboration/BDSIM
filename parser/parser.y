@@ -529,7 +529,9 @@ parameters:
 		  if(!strcmp($1->name,"l")) { params.l = $3; params.lset = 1;} // length
 		  else
 		  if(!strcmp($1->name,"bmapZOffset")) { params.bmapZOffset = $3; params.bmapZOffsetset = 1;} // field map z offset
-		    else
+		  else
+		  if(!strcmp($1->name,"magnetOffsetX")) { params.magnetOffsetX = $3; params.magnetOffsetXset = 1;} // field map z offset
+		  else
 	          if(!strcmp($1->name,"B")) { params.B = $3; params.Bset = 1;} // dipole field
 		    else 
 		  if(!strcmp($1->name,"ks")) { params.ks = $3; params.ksset = 1;} // solenoid strength
