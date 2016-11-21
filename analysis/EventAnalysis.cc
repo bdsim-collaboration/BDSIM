@@ -200,8 +200,15 @@ void EventAnalysis::Write(TFile *outputFile)
     lOpticsPoint = i[2];
     opticsTree->Fill();
   }
-  opticsTree->Write();
 
+  for(const auto entry : opticalFunctions)
+    {
+      xOpticsPoint = entry[0];
+      yOpticsPoint = entry[1];
+      lOpticsPoint = entry[2];
+      opticsTree->Fill();
+    }
+  opticsTree->Write();
 }
 
 void EventAnalysis::ProcessSamplers()
