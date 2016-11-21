@@ -268,6 +268,7 @@ void Element::flush() {
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
+  magnetOffsetX=0.13;
   twindow = 0;
   tmount = 0;
   screenPSize = 0;

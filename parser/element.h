@@ -58,7 +58,7 @@ namespace GMAD
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen
-    double twindow; ///<thickness of window
+    double twindow, tmount; ///<thickness of window
     double windowScreenGap; ///< air gap between window and screen
     double screenXSize, screenYSize;
 	double screenPSize; //Phosphor particle size in screen
