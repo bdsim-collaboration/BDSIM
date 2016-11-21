@@ -361,7 +361,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::rfcavity);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::rfcavity);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::rfcavity,
 					       brho,
 					       intType,
@@ -581,18 +581,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k1"] = element->k1;
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::quadrupole);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::quadrupole,
-					       brho,
-					       intType,
-					       st);
 
-  return new BDSMagnet(BDSMagnetType::quadrupole,
-		       element->name,
-		       element->l * CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
-		       vacuumField);
+  return CreateMagnet(st, BDSFieldType::quadrupole, BDSMagnetType::quadrupole);
 }  
   
 BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
@@ -602,18 +592,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSextupole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k2"] = element->k2;
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::sextupole);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::sextupole,
-					       brho,
-					       intType,
-					       st);
 
-  return new BDSMagnet(BDSMagnetType::sextupole,
-		       element->name,
-		       element->l * CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
-		       vacuumField);
+  return CreateMagnet(st, BDSFieldType::sextupole, BDSMagnetType::sextupole);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
@@ -623,18 +603,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateOctupole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k3"] = element->k3;
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::octupole);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::octupole,
-					       brho,
-					       intType,
-					       st);
 
-  return new BDSMagnet(BDSMagnetType::octupole,
-		       element->name,
-		       element->l * CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
-		       vacuumField);
+  return CreateMagnet(st, BDSFieldType::octupole, BDSMagnetType::octupole);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
@@ -644,18 +614,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDecapole()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["k4"] = element->k4;
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::decapole,
-					       brho,
-					       BDSIntegratorType::decapole,
-					       st);
-  
 
-  return new BDSMagnet(BDSMagnetType::decapole,
-		       element->name,
-		       element->l * CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
-		       vacuumField);
+  return CreateMagnet(st, BDSFieldType::decapole, BDSMagnetType::decapole);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
@@ -663,50 +623,16 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMultipole()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
   
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  std::list<double>::iterator kn = element->knl.begin();
-  std::list<double>::iterator ks = element->ksl.begin();
-  std::vector<G4String> normKeys = st->NormalComponentKeys();
-  std::vector<G4String> skewKeys = st->SkewComponentKeys();
-  std::vector<G4String>::iterator nkey = normKeys.begin();
-  std::vector<G4String>::iterator skey = skewKeys.begin();
-  for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
-    {
-      (*st)[*nkey] = (*kn) / element->l;
-      (*st)[*skey] = (*ks) / element->l;
-    }
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::multipole);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::multipole,
-					       brho,
-					       intType,
-					       st);
-  
-  return new BDSMagnet(BDSMagnetType::multipole,
-		       element->name,
-		       element->l * CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
-		       vacuumField,
-		       (*st)["angle"]); // multipole could bend beamline
+  BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
+
+
+  return CreateMagnet(st, BDSFieldType::multipole, BDSMagnetType::multipole,
+		      (*st)["angle"]); // multipole could bend beamline
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angleIn)
 {
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  std::list<double>::iterator kn = element->knl.begin();
-  std::list<double>::iterator ks = element->ksl.begin();
-  std::vector<G4String> normKeys = st->NormalComponentKeys();
-  std::vector<G4String> skewKeys = st->SkewComponentKeys();
-  std::vector<G4String>::iterator nkey = normKeys.begin();
-  std::vector<G4String>::iterator skey = skewKeys.begin();
-  
-  //Don't divide by element length, keep strengths as knl/ksl
-  for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
-   {
-     (*st)[*nkey] = (*kn);
-     (*st)[*skey] = (*ks);
-   }
-  
+  BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
   BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
@@ -722,9 +648,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					    thinElementLength,
 					    beamPipeInfo,
 					    magnetOuterInfo,
-					    vacuumField,
-					    0,
-					    nullptr);
+					    vacuumField);
   
   thinMultipole->SetExtent(BDSExtent(beamPipeInfo->aper1,
 				     beamPipeInfo->aper1,
@@ -770,18 +694,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSolenoid()
       (*st)["field"] = (element->ks / CLHEP::m) * brho;
       (*st)["ks"]    = element->ks;
     }
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::solenoid);
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::solenoid,
-					       brho,
-					       intType,
-					       st);
 
-  return new BDSMagnet(BDSMagnetType::solenoid,
-		       element->name,
-		       element->l*CLHEP::m,
-		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
-		       vacuumField);
+  return CreateMagnet(st, BDSFieldType::solenoid, BDSMagnetType::solenoid);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
@@ -843,7 +757,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   (*st)["field"] = element->B * CLHEP::tesla;
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::muonspoiler);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::muonspoiler);
   BDSFieldInfo* outerField = new BDSFieldInfo(BDSFieldType::muonspoiler,
 					      brho,
 					      intType,
@@ -1017,21 +931,21 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 #ifdef USE_AWAKE
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
 {
-#ifdef BDSDEBUG 
+#ifdef BDSDEBUG
   G4cout << "---->creating Awake Screen,"
-	 << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
-	 << "tscint = " << element->tscint*1e3/CLHEP::um << " um"
-	 << "windowScreenGap = " << element->windowScreenGap*1e3/CLHEP::um << " um"
+	 << "twindow = " << element->twindow*CLHEP::m/CLHEP::um << " um"
+	 << "tscint = " << element->tscint*CLHEP::m/CLHEP::um << " um"
+	 << "windowScreenGap = " << element->windowScreenGap*CLHEP::m/CLHEP::um << " um"
 	 << "windowmaterial = " << element->windowmaterial << " um"
 	 << "scintmaterial = " << element->scintmaterial << " um"
 	 << G4endl;
 #endif
   return (new BDSAwakeScintillatorScreen(element->name,
 					 element->scintmaterial,
-					 element->tscint*1e3,
-					 element->windowScreenGap*1e3,
+					 element->tscint*CLHEP::m,
+					 element->windowScreenGap*CLHEP::m,
 					 element->angle,
-					 element->twindow*1e3,
+					 element->twindow*CLHEP::m,
 					 element->windowmaterial));
 }
 
@@ -1039,12 +953,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 {
 #ifdef BDSDEBUG 
   G4cout << "---->creating AWAKE spectrometer,"
-	 << "twindow = " << element->twindow*1e3/CLHEP::um << " um"
-	 << "tscint = " << element->tscint*1e3/CLHEP::um << " um"
-	 << "screenPSize = " << element->screenPSize*1e3/CLHEP::um << " um"
-	 << "windowScreenGap = " << element->windowScreenGap*1e3/CLHEP::um << " um"
+	 << "twindow = " << element->twindow*CLHEP::m/CLHEP::um << " um"
+	 << "tscint = " << element->tscint*CLHEP::m/CLHEP::um << " um"
+	 << "screenPSize = " << element->screenPSize*CLHEP::m/CLHEP::um << " um"
+	 << "windowScreenGap = " << element->windowScreenGap*CLHEP::m/CLHEP::um << " um"
 	 << "windowmaterial = " << element->windowmaterial << " um"
-	 << "tmount = " << element->tmount*1e3/CLHEP::um << " um"
+	 << "tmount = " << element->tmount*CLHEP::m/CLHEP::um << " um"
 	 << "mountmaterial = " << element->mountmaterial << " um"	
 	 << "scintmaterial = " << element->scintmaterial << " um"
 	 << G4endl;
@@ -1063,21 +977,21 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   else
     {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
   return (new BDSAwakeSpectrometer(element->name,
-				   element->l*1e3,
+				   element->l*CLHEP::m,
 				   awakeField,
-				   element->poleStartZ*1e3,
+				   element->poleStartZ*CLHEP::m,
 				   element->scintmaterial,
-				   element->tscint*1e3,
-				   element->screenPSize*1e3,
-				   element->windowScreenGap*1e3,
+				   element->tscint*CLHEP::m,
+				   element->screenPSize*CLHEP::m,
+				   element->windowScreenGap*CLHEP::m,
 				   element->angle,
-				   element->twindow*1e3,
+				   element->twindow*CLHEP::m,
 				   element->windowmaterial,
-				   element->tmount*1e3,
+				   element->tmount*CLHEP::m,
 				   element->mountmaterial,
-				   element->screenEndZ*1e3,
+				   element->screenEndZ*CLHEP::m,
 				   element->spec,
-				   element->screenWidth*1e3));
+				   element->screenWidth*CLHEP::m));
 }
 #endif // end of USE_AWAKE
 
@@ -1119,6 +1033,26 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
   
   return new BDSTerminator("terminator", 
 			   length);
+}
+
+BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
+					     BDSFieldType fieldType,
+					     BDSMagnetType magnetType,
+					     G4double angle) const
+{
+  BDSIntegratorType intType = integratorSet->Integrator(fieldType);
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(fieldType,
+					       brho,
+					       intType,
+					       st);
+
+  return new BDSMagnet(magnetType,
+		       element->name,
+		       element->l * CLHEP::m,
+		       PrepareBeamPipeInfo(element),
+		       PrepareMagnetOuterInfo(element),
+		       vacuumField,
+		       angle);
 }
 
 G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
@@ -1380,4 +1314,21 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
       if (!(element->fieldAll.empty()))
 	{component->SetField(BDSFieldFactory::Instance()->GetDefinition(element->fieldAll));}
     }
+}
+
+BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Element const* element) const
+{
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  auto kn = element->knl.begin();
+  auto ks = element->ksl.begin();
+  std::vector<G4String> normKeys = st->NormalComponentKeys();
+  std::vector<G4String> skewKeys = st->SkewComponentKeys();
+  auto nkey = normKeys.begin();
+  auto skey = skewKeys.begin();
+  for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
+    {
+      (*st)[*nkey] = (*kn) / element->l;
+      (*st)[*skey] = (*ks) / element->l;
+    }
+  return st;
 }

@@ -29,7 +29,7 @@ void BDSCollimatorElliptical::BuildInnerCollimator()
   G4bool tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
   G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
   
-  // Swap variables around if exit size is large than entrance size
+  // Swap variables around if exit size is larger than entrance size
   if(tapered && isOutLarger)
     {
         std::swap(xAperture,xOutAperture);

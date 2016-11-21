@@ -1,7 +1,7 @@
 #ifndef BDSCOMPONENTFACTORY_H
 #define BDSCOMPONENTFACTORY_H
 
-#include "BDSFieldInfo.hh"
+#include "BDSFieldType.hh"
 #include "BDSMagnetType.hh"
 
 #include "globals.hh"
@@ -14,11 +14,9 @@ namespace GMAD {
   struct Element;
 }
 class BDSAcceleratorComponent;
-class BDSBeamPipe;
 class BDSBeamPipeInfo;
 class BDSCavityInfo;
 class BDSIntegratorSet;
-class BDSLine;
 class BDSMagnet;
 class BDSMagnetOuterInfo;
 class BDSMagnetStrength;
@@ -97,9 +95,7 @@ private:
   G4double thinElementLength;
   
   ///@{ Utility function to prepare model info
-
   G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
-
 
   BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
   ///@}
@@ -137,6 +133,12 @@ private:
   BDSAcceleratorComponent* CreateAwakeSpectrometer();
 #endif
 
+  /// Helper method for common magnet construction
+  BDSMagnet* CreateMagnet(BDSMagnetStrength* st,
+			  BDSFieldType fieldType,
+			  BDSMagnetType magnetType,
+			  G4double angle = 0.0) const;
+
   /// Test the component length is sufficient for practical construction.
   G4bool HasSufficientMinimumLength(GMAD::Element* element);
   
@@ -153,6 +155,9 @@ private:
   void SetFieldDefinitions(GMAD::Element const* element,
 			   BDSAcceleratorComponent* component) const;
   
+  /// Prepare magnet strength for multipoles
+  BDSMagnetStrength* PrepareMagnetStrengthForMultipoles(GMAD::Element const* element) const;
+
   /// Map of cavity model info instances by name
   std::map<G4String, BDSCavityInfo*> cavityInfos;
 

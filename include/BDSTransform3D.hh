@@ -42,7 +42,7 @@ private:
   /// Contractual function overload from virtual base class
   /// BDSAcceleratorComponent. In this case has null implementation
   /// as the transform only inherits BDSAcceleratorComponent so that
-  /// is compatable with the beamline
+  /// is compatible with the beamline
   virtual void BuildContainerLogicalVolume(){;};
 
   G4double dx;

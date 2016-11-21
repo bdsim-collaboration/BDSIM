@@ -100,13 +100,12 @@ const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
     }
 }
 
-BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
-				  const BDSFieldType      field)
+BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
 {
   switch (field.underlying())
     {
     case BDSFieldType::none:
-      {return set->general;     break;}// shouldn't really happen, but for completeness.
+      {return general;     break;}// shouldn't really happen, but for completeness.
     case BDSFieldType::bmap1d:
     case BDSFieldType::bmap2d:
     case BDSFieldType::bmap3d:
@@ -122,38 +121,38 @@ BDSIntegratorType BDS::Integrator(const BDSIntegratorSet* set,
     case BDSFieldType::mokka:
       {
 	G4cout << __METHOD_NAME__ << "Warning - this is overriding the specified field maps integrator" << G4endl;
-	return set->general;
+	return general;
 	break;
       }
     case BDSFieldType::solenoid:
-      {return set->solenoid;    break;}
+      {return solenoid;    break;}
     case BDSFieldType::dipole:
-      {return set->dipole;      break;}
+      {return dipole;      break;}
     case BDSFieldType::quadrupole:
-      {return set->quadrupole;  break;}
+      {return quadrupole;  break;}
     case BDSFieldType::sextupole:
-      {return set->sextupole;   break;}
+      {return sextupole;   break;}
     case BDSFieldType::octupole:
-      {return set->octupole;    break;}
+      {return octupole;    break;}
     case BDSFieldType::decapole:
-      {return set->decapole;    break;}
+      {return decapole;    break;}
     case BDSFieldType::multipole:
-      {return set->multipole;   break;}
+      {return multipole;   break;}
     case BDSFieldType::muonspoiler:
-      {return set->muonspoiler; break;}
+      {return muonspoiler; break;}
     case BDSFieldType::skewquadrupole:
-      {return set->skewQuadrupole; break;}
+      {return skewQuadrupole; break;}
     case BDSFieldType::skewsextupole:
-      {return set->skewSextupole;  break;}
+      {return skewSextupole;  break;}
     case BDSFieldType::skewoctupole:
-      {return set->skewOctupole;   break;}
+      {return skewOctupole;   break;}
     case BDSFieldType::skewdecapole:
-      {return set->skewDecapole;   break;}
+      {return skewDecapole;   break;}
     case BDSFieldType::rfcavity:
-      {return set->rfcavity;    break;}
+      {return rfcavity;    break;}
     case BDSFieldType::rf:
-      {return set->rf;          break;}
+      {return rf;          break;}
     default:
-      {return set->general;     break;}
+      {return general;     break;}
     }
 }

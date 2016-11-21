@@ -28,7 +28,7 @@ void BDSCollimatorRectangular::BuildInnerCollimator()
   G4bool tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
   G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
   
-  // Swap variables around if exit size is large than entrance size
+  // Swap variables around if exit size is larger than entrance size
   // Needed due to rotation required in tapered elliptical collimator
   if(tapered && isOutLarger)
     {
