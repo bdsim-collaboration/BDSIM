@@ -1319,6 +1319,10 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Element const* element) const
 {
   BDSMagnetStrength* st = new BDSMagnetStrength();
+  G4double length = element->l;
+  // component strength is only normalised by length for thick multipoles
+  if (element->type == ElementType::_THINMULT)
+    {length = 1;}
   auto kn = element->knl.begin();
   auto ks = element->ksl.begin();
   std::vector<G4String> normKeys = st->NormalComponentKeys();
@@ -1327,8 +1331,8 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   auto skey = skewKeys.begin();
   for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
     {
-      (*st)[*nkey] = (*kn) / element->l;
-      (*st)[*skey] = (*ks) / element->l;
+      (*st)[*nkey] = (*kn) / length;
+      (*st)[*skey] = (*ks) / length;
     }
   return st;
 }
