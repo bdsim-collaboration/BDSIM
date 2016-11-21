@@ -162,44 +162,36 @@ void EventAnalysis::Write(TFile *outputFile)
   opticsTree->Branch("S"       ,&(xOpticsPoint[10]),"S/D");
   opticsTree->Branch("Npart"   ,&(xOpticsPoint[11]),"Npart/D");
 
-  opticsTree->Branch("Sig_Emitt_x", &(xOpticsPoint[12]), "Sig_Emitt_x/D");
-  opticsTree->Branch("Sig_Emitt_y", &(yOpticsPoint[12]), "Sig_Emitt_y/D");
-  opticsTree->Branch("Sig_Alpha_x", &(xOpticsPoint[13]), "Sig_Alpha_x/D");
-  opticsTree->Branch("Sig_Alpha_y", &(yOpticsPoint[13]), "Sig_Alpha_y/D");
-  opticsTree->Branch("Sig_Beta_x",  &(xOpticsPoint[14]), "Sig_Beta_x/D");
-  opticsTree->Branch("Sig_Beta_y",  &(yOpticsPoint[14]), "Sig_Beta_y/D");
-  opticsTree->Branch("Sig_Gamma_x", &(xOpticsPoint[15]), "Sig_Gamma_x/D");
-  opticsTree->Branch("Sig_Gamma_y", &(yOpticsPoint[15]), "Sig_Gamma_y/D");
-  opticsTree->Branch("Sig_Disp_x",  &(xOpticsPoint[16]), "Sig_Disp_x/D");
-  opticsTree->Branch("Sig_Disp_y",  &(yOpticsPoint[16]), "Sig_Disp_y/D");
-  opticsTree->Branch("Sig_Disp_xp", &(xOpticsPoint[17]), "Sig_Disp_xp/D");
-  opticsTree->Branch("Sig_Disp_yp", &(yOpticsPoint[17]), "Sig_Disp_yp/D");
-  opticsTree->Branch("Sig_Mean_x",  &(xOpticsPoint[18]), "Sig_Mean_x/D");
-  opticsTree->Branch("Sig_Mean_y",  &(yOpticsPoint[18]), "Sig_Mean_y/D");
-  opticsTree->Branch("Sig_Mean_xp", &(xOpticsPoint[19]), "Sig_Mean_xp/D");
-  opticsTree->Branch("Sig_Mean_yp", &(yOpticsPoint[19]), "Sig_Mean_yp/D");
-  opticsTree->Branch("Sig_Sigma_x", &(xOpticsPoint[20]), "Sig_Sigma_x/D");
-  opticsTree->Branch("Sig_Sigma_y", &(yOpticsPoint[20]), "Sig_Sigma_y/D");
-  opticsTree->Branch("Sig_Sigma_xp",&(xOpticsPoint[21]), "Sig_Sigma_xp/D");
-  opticsTree->Branch("Sig_Sigma_yp",&(yOpticsPoint[21]), "Sig_Sigma_yp/D");
+  opticsTree->Branch("Sigma_Emitt_x", &(xOpticsPoint[12]), "Sigma_Emitt_x/D");
+  opticsTree->Branch("Sigma_Emitt_y", &(yOpticsPoint[12]), "Sigma_Emitt_y/D");
+  opticsTree->Branch("Sigma_Alpha_x", &(xOpticsPoint[13]), "Sigma_Alpha_x/D");
+  opticsTree->Branch("Sigma_Alpha_y", &(yOpticsPoint[13]), "Sigma_Alpha_y/D");
+  opticsTree->Branch("Sigma_Beta_x",  &(xOpticsPoint[14]), "Sigma_Beta_x/D");
+  opticsTree->Branch("Sigma_Beta_y",  &(yOpticsPoint[14]), "Sigma_Beta_y/D");
+  opticsTree->Branch("Sigma_Gamma_x", &(xOpticsPoint[15]), "Sigma_Gamma_x/D");
+  opticsTree->Branch("Sigma_Gamma_y", &(yOpticsPoint[15]), "Sigma_Gamma_y/D");
+  opticsTree->Branch("Sigma_Disp_x",  &(xOpticsPoint[16]), "Sigma_Disp_x/D");
+  opticsTree->Branch("Sigma_Disp_y",  &(yOpticsPoint[16]), "Sigma_Disp_y/D");
+  opticsTree->Branch("Sigma_Disp_xp", &(xOpticsPoint[17]), "Sigma_Disp_xp/D");
+  opticsTree->Branch("Sigma_Disp_yp", &(yOpticsPoint[17]), "Sigma_Disp_yp/D");
+  opticsTree->Branch("Sigma_Mean_x",  &(xOpticsPoint[18]), "Sigma_Mean_x/D");
+  opticsTree->Branch("Sigma_Mean_y",  &(yOpticsPoint[18]), "Sigma_Mean_y/D");
+  opticsTree->Branch("Sigma_Mean_xp", &(xOpticsPoint[19]), "Sigma_Mean_xp/D");
+  opticsTree->Branch("Sigma_Mean_yp", &(yOpticsPoint[19]), "Sigma_Mean_yp/D");
+  opticsTree->Branch("Sigma_Sigma_x", &(xOpticsPoint[20]), "Sigma_Sigma_x/D");
+  opticsTree->Branch("Sigma_Sigma_y", &(yOpticsPoint[20]), "Sigma_Sigma_y/D");
+  opticsTree->Branch("Sigma_Sigma_xp",&(xOpticsPoint[21]), "Sigma_Sigma_xp/D");
+  opticsTree->Branch("Sigma_Sigma_yp",&(yOpticsPoint[21]), "Sigma_Sigma_yp/D");
 
-  opticsTree->Branch("Mean_E",      &(lOpticsPoint[6]), "Mean_E/D");
-  opticsTree->Branch("Mean_t",      &(lOpticsPoint[7]), "Mean_t/D");
-  opticsTree->Branch("Sigma_E",     &(lOpticsPoint[8]), "Sigma_E/D");
-  opticsTree->Branch("Sigma_t",     &(lOpticsPoint[9]), "Sigma_t/D");
-  opticsTree->Branch("Sig_Mean_E",  &(lOpticsPoint[18]), "Sig_Mean_E/D");
-  opticsTree->Branch("Sig_Mean_t",  &(lOpticsPoint[19]), "Sig_Mean_t/D");
-  opticsTree->Branch("Sig_Sigma_E", &(lOpticsPoint[20]), "Sig_Sigma_E/D");
-  opticsTree->Branch("Sig_Sigma_t", &(lOpticsPoint[21]), "Sig_Sigma_t/D");
+  opticsTree->Branch("Mean_E",        &(lOpticsPoint[6]),  "Mean_E/D");
+  opticsTree->Branch("Mean_t",        &(lOpticsPoint[7]),  "Mean_t/D");
+  opticsTree->Branch("Sigma_E",       &(lOpticsPoint[8]),  "Sigma_E/D");
+  opticsTree->Branch("Sigma_t",       &(lOpticsPoint[9]),  "Sigma_t/D");
+  opticsTree->Branch("Sigma_Mean_E",  &(lOpticsPoint[18]), "Sigma_Mean_E/D");
+  opticsTree->Branch("Sigma_Mean_t",  &(lOpticsPoint[19]), "Sigma_Mean_t/D");
+  opticsTree->Branch("Sigma_Sigma_E", &(lOpticsPoint[20]), "Sigma_Sigma_E/D");
+  opticsTree->Branch("Sigma_Sigma_t", &(lOpticsPoint[21]), "Sigma_Sigma_t/D");
 
-
-  for(auto i : this->opticalFunctions)
-  {
-    xOpticsPoint = i[0];
-    yOpticsPoint = i[1];
-    lOpticsPoint = i[2];
-    opticsTree->Fill();
-  }
 
   for(const auto entry : opticalFunctions)
     {
