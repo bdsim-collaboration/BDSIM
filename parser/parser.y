@@ -128,7 +128,7 @@ atomic_stmt :
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << $3 << std::endl;
+	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << static_cast<ElementType>($3) << std::endl;
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
 	   Parser::Instance()->ClearParams();
