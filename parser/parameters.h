@@ -48,7 +48,7 @@ namespace GMAD
     void Parameters::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+      std::cout << "element> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
@@ -59,7 +59,7 @@ namespace GMAD
 	if (property == "hgap" || property == "harmon" || property == "lag" || property == "volt")
 	  {return;}
 	
-	std::cerr << "Error: parser> unknown option \"" << property << "\" with value " << value  << std::endl;
+	std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
 	exit(1);
       }
       // record property set
