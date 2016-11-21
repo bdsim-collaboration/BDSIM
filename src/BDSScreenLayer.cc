@@ -1,5 +1,6 @@
 #include "BDSScreenLayer.hh"
 
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh" 
 #include "BDSMaterials.hh"
 #include "BDSSamplerRegistry.hh"
@@ -31,6 +32,8 @@ BDSScreenLayer::BDSScreenLayer(G4ThreeVector sizeIn,
   grooveWidth(grooveWidthIn),
   grooveSpatialFrequency(grooveSpatialFrequencyIn)
 {
+  if (!BDS::IsFinite(size.z()))
+    {G4cerr << __METHOD_NAME__ << "Insufficent length for screen layer \"" << name << "\"" << G4endl; exit(1);}
   samplerID=0;
   colour=G4Colour(0.1,0.8,0.1,0.3);
   build();
