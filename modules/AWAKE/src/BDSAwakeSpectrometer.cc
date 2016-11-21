@@ -660,32 +660,33 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
 #endif
 }
 
-void BDSAwakeSpectrometer::Build(){
-      SetVisAttributes(); 
-      BuildScreen();
-      BuildCamera();	
-      CalculateLengths();
-      BuildContainerLogicalVolume();
-      //      BuildScreenScoringPlane();
-      //      BuildCameraScoringPlane();
-      PlaceScreen();
-      //      PlaceCamera();
-      //      }
-      RegisterSensitiveVolume(containerLogicalVolume);
-      switch(_magnetGeometryType){
-      case 0:
-	break;
-      case 1:
-	BuildMagnet();
-	PlaceMagnet();
-	break;
-      default:
-	G4String exceptionString = (G4String)"magnetGeometryType: " + _magnetGeometryType + (G4String)" unknown.";
-	G4Exception(exceptionString.c_str(), "-1", FatalErrorInArgument, "");
-      }
-      BuildVacuumChamber();
-      PlaceVacuumChamber();
-      BuildField();
+void BDSAwakeSpectrometer::Build()
+{
+  SetVisAttributes(); 
+  BuildScreen();
+  BuildCamera();	
+  CalculateLengths();
+  BuildContainerLogicalVolume();
+  //      BuildScreenScoringPlane();
+  //      BuildCameraScoringPlane();
+  PlaceScreen();
+  //      PlaceCamera();
+  //      }
+  RegisterSensitiveVolume(containerLogicalVolume);
+  switch(_magnetGeometryType){
+  case 0:
+    break;
+  case 1:
+    BuildMagnet();
+    PlaceMagnet();
+    break;
+  default:
+    G4String exceptionString = (G4String)"magnetGeometryType: " + _magnetGeometryType + (G4String)" unknown.";
+    G4Exception(exceptionString.c_str(), "-1", FatalErrorInArgument, "");
+  }
+  BuildVacuumChamber();
+  PlaceVacuumChamber();
+  BuildField();
 }
 
 void BDSAwakeSpectrometer::PlaceMagnet(){
