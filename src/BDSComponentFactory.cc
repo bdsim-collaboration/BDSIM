@@ -419,19 +419,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
       (*st)["field"] = element->B;
-      (*st)["angle"] = -element->angle;
+      (*st)["angle"] = element->angle;
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["field"] = element->B;
-      (*st)["angle"] = (*st)["field"] * length * charge * ffact / brho;
+      G4double angle = (*st)["field"] * length * charge * ffact / brho ;
+      (*st)["angle"] = angle;
+      element->angle = angle;
+
     }
   else
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["angle"] = -element->angle;
-      (*st)["field"] = -brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+      (*st)["angle"] = element->angle;
+      G4double field = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m
+      (*st)["field"] = field;
+      element->B     = field;
     }
 
   // Quadrupole component
@@ -505,24 +510,29 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   BDSMagnetStrength* st = new BDSMagnetStrength();
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
-      (*st)["field"] = element->B;
-      (*st)["angle"] = - element->angle;
+      (*st)["field"] = element->B * CLHEP::tesla;
+      (*st)["angle"] = element->angle;
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["field"] = element->B * CLHEP::tesla;
-      (*st)["angle"] = charge * ffact * -2.0*asin(length*0.5 / (brho / (*st)["field"]));
+      (*st)["field"] = element->B;
+      G4double angle = charge * ffact * 2.0*asin(length*0.5 / (brho / (*st)["field"]));
+      (*st)["angle"] = angle;
+      element->angle = angle;
     }
   else
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["angle"] = - element->angle;
-      (*st)["field"] = - brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+      (*st)["angle"] = element->angle;
+      G4double field = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+      (*st)["field"] = field;
+      element->B     = field;
     }
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
+  G4double temp = CLHEP::m;
 
   BDSLine* rbendline = BDS::BuildRBendLine(element,
 					   prevElement,
