@@ -426,6 +426,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["field"] = element->B;
       G4double angle = (*st)["field"] * length * charge * ffact / brho ;
+      //G4double angle = charge * ffact * 2.0*asin(length*0.5 / (brho / (*st)["field"]));
       (*st)["angle"] = angle;
       element->angle = angle;
 
@@ -434,7 +435,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["angle"] = element->angle;
-      G4double field = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m
+      G4double field = brho * (*st)["angle"] / (length * charge * ffact);
       (*st)["field"] = field;
       element->B     = field;
     }
@@ -510,14 +511,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   BDSMagnetStrength* st = new BDSMagnetStrength();
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
-      (*st)["field"] = element->B * CLHEP::tesla;
+      (*st)["field"] = element->B;
       (*st)["angle"] = element->angle;
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["field"] = element->B;
-      G4double angle = charge * ffact * 2.0*asin(length*0.5 / (brho / (*st)["field"]));
+      G4double angle = (*st)["field"] * length * charge * ffact / brho;
+      //G4double angle = charge * ffact * 2.0*asin(length*0.5 / (brho / (*st)["field"]));
       (*st)["angle"] = angle;
       element->angle = angle;
     }
@@ -525,7 +527,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     {// only angle - calculate B field
       G4double ffact = BDSGlobalConstants::Instance()->FFact();
       (*st)["angle"] = element->angle;
-      G4double field = brho * (*st)["angle"] / length * charge * ffact / CLHEP::tesla / CLHEP::m;
+      G4double field = brho * (*st)["angle"] / (length * charge * ffact);
       (*st)["field"] = field;
       element->B     = field;
     }
