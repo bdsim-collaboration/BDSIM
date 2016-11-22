@@ -9,6 +9,8 @@
 
 namespace GMAD
 {
+  extern bool willExit;
+
   class Array;
 
   /**
@@ -60,7 +62,10 @@ namespace GMAD
 	  {return;}
 	
 	std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
-	exit(1);
+	// don't exit here, but flag willExit instead
+	//exit(1);
+	willExit = true;
+	return;
       }
       // record property set
       // property name can be different, so look up in alternate names
