@@ -534,7 +534,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
-  G4double temp = CLHEP::m;
 
   BDSLine* rbendline = BDS::BuildRBendLine(element,
 					   prevElement,
