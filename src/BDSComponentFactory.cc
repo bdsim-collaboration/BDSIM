@@ -114,11 +114,15 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       // Normal vector of rbend is from the magnet, angle of the rbend has to be
       // taken into account regardless of poleface rotation
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{angleIn += 0.5*(prevElement->angle);} // won't work if only field set TBC
-
+	{
+	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
+          angleIn += 0.5*(angleAndField.first);
+	} 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{angleOut += 0.5*nextElement->angle;} // won't work if only field set TBC
-
+        {
+	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
+          angleOut += 0.5*angleAndField.first;
+	}
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
 	{willModify = true;}
@@ -133,12 +137,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       if (nextElement && (nextElement->type == ElementType::_RBEND))
         {
           willModify = true;
-          angleOut += 0.5*element->angle;
+          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
+          angleOut += 0.5*angleAndField.first;
         }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
         {
           willModify = true;
-          angleIn += 0.5*element->angle;
+          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
+          angleIn += 0.5*angleAndField.first;
         }
     }
   else if (element->type == ElementType::_THINMULT)
@@ -156,12 +162,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       if (nextElement && (nextElement->type == ElementType::_RBEND))
       {
         willModify = true;
-        angleIn += 0.5*nextElement->angle;
+        std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
+        angleIn += 0.5*angleAndField.first;
       }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
       {
         willModify = true;
-        angleIn -= 0.5*prevElement->angle;
+        std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
+        angleIn -= 0.5*angleAndField.first;
       }
     }
 
@@ -413,32 +421,13 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 	}
     }
 
-  G4double length = element->l * CLHEP::m;
   BDSMagnetStrength *st = new BDSMagnetStrength();
-  if (BDS::IsFinite(element->B) &&
-      BDS::IsFinite(element->angle))
-    {// both are specified and should be used - under or overpowered dipole by design
-      (*st)["field"] = element->B;
-      (*st)["angle"] = element->angle;
-    }
-  else if (BDS::IsFinite(element->B))
-    {// only B field - calculate angle
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["field"] = element->B;
-      G4double angle = (*st)["field"] * length * charge * ffact / brho ;
-      //G4double angle = charge * ffact * 2.0*asin(length*0.5 / (brho / (*st)["field"]));
-      (*st)["angle"] = angle;
-      element->angle = angle;
 
-    }
-  else
-    {// only angle - calculate B field
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["angle"] = element->angle;
-      G4double field = brho * (*st)["angle"] / (length * charge * ffact);
-      (*st)["field"] = field;
-      element->B     = field;
-    }
+  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
+  element->angle = angleAndField.first;
+  element->B     = angleAndField.second;
+  (*st)["angle"] = angleAndField.first;
+  (*st)["field"] = angleAndField.second;
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -498,39 +487,22 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 	}
     }
 
+  BDSMagnetStrength *st = new BDSMagnetStrength();
+
+  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
+  element->angle = angleAndField.first;
+  element->B     = angleAndField.second;
+  (*st)["angle"] = angleAndField.first;
+  (*st)["field"] = angleAndField.second;
+
   // calculate length of central straight length and edge sections
   // unfortunately, this has to be duplicated here as we need to
   // calculated the magnetic field length (less than the full length)
   // in case we need to calculate the field
   G4double outerRadius = PrepareOuterDiameter(element)*0.5;
-  G4double angle       = element->angle;
   G4double length      = element->l*CLHEP::m;
+  CheckBendLengthAngleWidthCombo(length, element->angle, 2*outerRadius, element->name);
 
-  CheckBendLengthAngleWidthCombo(length, angle, 2*outerRadius, element->name);
-
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
-    {// both are specified and should be used - under or overpowered dipole by design
-      (*st)["field"] = element->B;
-      (*st)["angle"] = element->angle;
-    }
-  else if (BDS::IsFinite(element->B))
-    {// only B field - calculate angle
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["field"] = element->B;
-      G4double angle = (*st)["field"] * length * charge * ffact / brho;
-      //G4double angle = charge * ffact * 2.0*asin(length*0.5 / (brho / (*st)["field"]));
-      (*st)["angle"] = angle;
-      element->angle = angle;
-    }
-  else
-    {// only angle - calculate B field
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["angle"] = element->angle;
-      G4double field = brho * (*st)["angle"] / (length * charge * ffact);
-      (*st)["field"] = field;
-      element->B     = field;
-    }
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
     {(*st)["k1"] = element->k1 / CLHEP::m2;}
