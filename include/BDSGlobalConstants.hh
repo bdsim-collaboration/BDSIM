@@ -73,9 +73,6 @@ public:
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
 
-  /// Access the underlying parser options.
-  const GMAD::Options& Options() const {return options;}
-
   // Options that access GMAD::options instance
   // Executable options
   inline G4String InputFileName()          const {return G4String(options.inputFileName);}
