@@ -495,13 +495,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   (*st)["angle"] = angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
-  // calculate length of central straight length and edge sections
-  // unfortunately, this has to be duplicated here as we need to
-  // calculated the magnetic field length (less than the full length)
-  // in case we need to calculate the field
-  G4double outerRadius = PrepareOuterDiameter(element)*0.5;
-  G4double length      = element->l*CLHEP::m;
-  CheckBendLengthAngleWidthCombo(length, element->angle, 2*outerRadius, element->name);
+  // Check the faces won't overlap due to too strong an angle with too short a magnet
+  G4double outerDiameter = PrepareOuterDiameter(element);
+  G4double length        = element->l*CLHEP::m;
+  CheckBendLengthAngleWidthCombo(length, (*st)["angle"], outerDiameter, element->name);
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -517,7 +514,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					   integratorSet);
   return rbendline;
 }
-
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 {
