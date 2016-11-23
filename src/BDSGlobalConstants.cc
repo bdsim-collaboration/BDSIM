@@ -77,8 +77,8 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   // defaults - parameters of the laserwire process
   itsLaserwireWavelength = 0.532 * CLHEP::micrometer;
   itsLaserwireDir = G4ThreeVector(1,0,0);
-  itsLaserwireTrackPhotons = 1;
-  itsLaserwireTrackElectrons = 1;
+  itsLaserwireTrackPhotons = true;
+  itsLaserwireTrackElectrons = true;
   
   zeroMagField = new G4UniformMagField(G4ThreeVector());
   zeroFieldManager=new G4FieldManager();
@@ -93,11 +93,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   
   InitRotationMatrices();
   
-  // options that are never used (no set method):
-  // refactor out of classes that use this
-  itsMagnetPoleRadius = 0.0;
-  itsMagnetPoleSize   = 0.0;
-
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
   InitVisAttributes();
