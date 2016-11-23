@@ -163,5 +163,9 @@ private:
 
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
+
+  /// Calculate field and angle of a bend
+  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element);
+
 };
 #endif
