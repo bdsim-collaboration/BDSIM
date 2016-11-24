@@ -426,7 +426,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
   element->angle = angleAndField.first;
   element->B     = angleAndField.second;
-  (*st)["angle"] = angleAndField.first;
+  (*st)["angle"] = -angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
   // Quadrupole component
