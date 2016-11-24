@@ -172,7 +172,6 @@ void Element::print(int ident)const{
   std::cout << "name  = " << name << " : " << type << std::endl;
   if (l>0.0) {std::cout << "l     = " << l << "m" << std::endl;}
 
-  std::list<double>::const_iterator it;
   switch(type) {
   case ElementType::_DRIFT:
     break;
@@ -199,11 +198,12 @@ void Element::print(int ident)const{
     break;
 
   case ElementType::_MULT:
+  case ElementType::_THINMULT:
     printf(" , knl={");
-    for(it=knl.begin();it!=knl.end();++it)
+    for(auto it=knl.begin();it!=knl.end();++it)
       printf("%.10g, ",(*it));
     printf("},  ksl={");
-    for(it=ksl.begin();it!=ksl.end();++it)
+    for(auto it=ksl.begin();it!=ksl.end();++it)
       printf("%.10g, ",(*it));
     printf("}");
     break;
@@ -223,20 +223,20 @@ void Element::print(int ident)const{
     break;
     
   case ElementType::_AWAKESCREEN:
-    std::cout << "twindow         = " << twindow*1e-6         << " um" << std::endl
-	      << "tscint          = " << tscint*1e-6          << " um" << std::endl
-	      << "windowScreenGap = " << windowScreenGap*1e-6 << " um" << std::endl
+    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+	      << "tscint          = " << tscint*1e6          << " um" << std::endl
+	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
 	      << "windowmaterial  = " << windowmaterial       << std::endl
 	      << "scintmaterial   = " << scintmaterial        << std::endl;
       break;
 
   case ElementType::_AWAKESPECTROMETER:
-    std::cout << "twindow         = " << twindow*1e-6         << " um" << std::endl
-	      << "tscint          = " << tscint*1e-6          << " um" << std::endl
-	      << "screenPSize     = " << screenPSize*1e-6     << " um" << std::endl
-	      << "windowScreenGap = " << windowScreenGap*1e-6 << " um" << std::endl
+    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+	      << "tscint          = " << tscint*1e6          << " um" << std::endl
+	      << "screenPSize     = " << screenPSize*1e6     << " um" << std::endl
+	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
 	      << "windowmaterial  = " << windowmaterial       << std::endl
-	      << "tmount          = " << tmount*1e-6          << " um" << std::endl
+	      << "tmount          = " << tmount*1e6          << " um" << std::endl
 	      << "mountmaterial   = " << mountmaterial        << std::endl
 	      << "scintmaterial   = " << scintmaterial        << std::endl;
     break;
