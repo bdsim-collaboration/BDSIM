@@ -3,7 +3,6 @@
 #include "BDSParser.hh"
 #include "G4Version.hh"
 #include "G4NistManager.hh"
-#include "BDSDebug.hh"
 
 #include <list>
 #include <map>
@@ -996,12 +995,8 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
   for(auto it : BDSParser::Instance()->GetAtoms())
   {
 #ifdef BDSDEBUG
-    G4cout << "---->adding Atom, "
-           << "name= " << it.name << " "
-           << "symbol= " << it.symbol << " "
-           << "Z= " << it.Z << " "
-           << "A= " << it.A << "g/mole "
-           << G4endl;
+    G4cout << "---->adding Atom, ";
+    it.print();
 #endif
 
     AddElement(it.name,it.symbol,it.Z,it.A);
@@ -1024,18 +1019,12 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
       itsState = kStateSolid;
     }
 
-    if(it.Z != 0) {
 #ifdef BDSDEBUG  
-      G4cout << "---->adding Material, "
-             << "name= "<< it.name << " "
-             << "Z= " << it.Z << " "
-             << "A= " << it.A << "g/mole "
-             << "density= "<< it.density << "g/cm3 "
-	     << "state= " << it.state << " "
-	     << "T= " << it.temper << "K "
-	     << "P= " << it.pressure << "atm "
-             << G4endl;
+    G4cout << "---->adding Material, ";
+    it.print();
 #endif
+
+    if(it.Z != 0) {
       AddMaterial(it.name,
 		  it.Z,
 		  it.A,
@@ -1045,16 +1034,6 @@ void BDSMaterials::PrepareRequiredMaterials(G4bool verbose)
 		  it.pressure);
     }
     else if(it.components.size() != 0){
-#ifdef BDSDEBUG 
-      G4cout << "---->adding Material, "
-	     << "name= "<< it.name << " "
-	     << "density= "<< it.density << "g/cm3 "
-	     << "state= " << it.state << " "
-	     << "T= " << it.temper << "K "
-	     << "P= " << it.pressure << "atm "
-	     << "ncomponents= " << it.components.size() << " "
-	     << G4endl;
-#endif
       std::list<G4String> tempComponents;
       for (auto jt : it.components)
 	{tempComponents.push_back(G4String(jt));}
