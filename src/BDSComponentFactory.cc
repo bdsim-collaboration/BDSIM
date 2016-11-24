@@ -1233,13 +1233,13 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
     }
     else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
-        field = element->B;
+        field = element->B * CLHEP::tesla;
         angle = field * length * charge * ffact / brho ;
         //angle = charge * ffact * 2.0*asin(length*0.5 / (brho / field));
     }
     else
     {// only angle - calculate B field
-        angle = element->angle;
+        angle = element->angle * CLHEP::rad;
         field = brho * angle / length * charge * ffact;
     }
 
