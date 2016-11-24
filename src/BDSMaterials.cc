@@ -25,12 +25,8 @@ void BDSMaterials::Initialise()
 {
   G4String name, symbol;             //a=mass of a mole;
   G4double a, z, density;            //z=mean number of protons;
-  //G4int iz, n;                       //iz=number of protons  in an isotope;
-                                   // n=number of nucleons in an isotope;
 
-  //G4double abundance;
   G4double fractionmass;
- //G4int ncomponents;
   G4double temperature, pressure;
 
   //
@@ -657,8 +653,13 @@ void BDSMaterials::Initialise()
 
   //Default vacuum (same composition as residual vacuum in warm sections of LHC).
   // can be overridden by vacMaterial option
-  G4double vacpressure=BDSParser::Instance()->GetOptions().vacuumPressure*CLHEP::bar;
-  density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere))  * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3) ;
+  G4double vacpressure;
+  // check if parser is initialised (in case list materials is asked by command line) 
+  if (BDSParser::IsInitialised())
+    {vacpressure=BDSParser::Instance()->GetOptions().vacuumPressure*CLHEP::bar;}
+  else
+    {vacpressure=1e-12*CLHEP::bar;}
+  density = (CLHEP::STP_Temperature/temperature) * (vacpressure/(1.*CLHEP::atmosphere)) * 29*CLHEP::g/(22.4*1.e-3*CLHEP::m3);
 #ifdef BDSDEBUG 
   G4cout<< " ***************** defining Vacuum"<<G4endl;
   G4cout<< "pressure="<<vacpressure/CLHEP::bar<<" bar"<<G4endl;
@@ -774,9 +775,9 @@ G4Material* BDSMaterials::GetMaterial(G4String aMaterial)
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aMaterial, 3);
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
-#endif
+// #ifdef BDSDEBUG
+//   G4cout << __METHOD_NAME__ << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
+// #endif
   if (!cmpStr1.compareTo(cmpStr2))
     {
 #ifdef BDSDEBUG
@@ -803,9 +804,9 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 {
   G4String cmpStr1 ("G4_");
   G4String cmpStr2 (aSymbol, 3);
-#ifdef BDSDEBUG
-  G4cout << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
-#endif
+// #ifdef BDSDEBUG
+//   G4cout << cmpStr1 << " " << cmpStr2 << " " << cmpStr1.compareTo(cmpStr2) << G4endl;
+// #endif
   if (!cmpStr1.compareTo(cmpStr2))
     {
 #ifdef BDSDEBUG
@@ -820,7 +821,7 @@ G4Element* BDSMaterials::GetElement(G4String aSymbol)
 	{return (*iter).second;}
       else
 	{
-	  G4cout << __METHOD_NAME__ << "\"" <<  aSymbol << " unkknown." << G4endl;
+	  G4cout << __METHOD_NAME__ << "\"" <<  aSymbol << " unknown." << G4endl;
 	  exit(1);
 	}
     }
@@ -843,109 +844,18 @@ G4bool BDSMaterials::CheckElement(G4String aSymbol)
 
 void BDSMaterials::ListMaterials()
 {
-  // would be better if automatically generated, but not trivial due to instantiation dependency of BDSGlobalConstants
   G4cout << "Available elements are:" << G4endl;
-  G4cout << "Aluminium  - Al" << G4endl;
-  G4cout << "Barium     - Ba" << G4endl;
-  G4cout << "Beryllium  - Be" << G4endl;
-  G4cout << "Boron      - B" << G4endl;
-  G4cout << "Calcium    - Ca" << G4endl;
-  G4cout << "Carbon     - C" << G4endl;
-  G4cout << "Chromium   - Cr" << G4endl;
-  G4cout << "Cobalt     - Co" << G4endl;
-  G4cout << "Copper     - Cu" << G4endl;
-  G4cout << "Europium   - Eu" << G4endl;
-  G4cout << "Helium     - He" << G4endl;
-  G4cout << "Hydrogen   - H" << G4endl;
-  G4cout << "Iron       - Fe" << G4endl;
-  G4cout << "Lead       - Pb" << G4endl;
-  G4cout << "Magnesium  - Mg" << G4endl;
-  G4cout << "Manganese  - Mn" << G4endl;
-  G4cout << "Molybdenum - Mo" << G4endl;
-  G4cout << "Nickel     - Ni" << G4endl;
-  G4cout << "Niobium    - Nb" << G4endl;
-  G4cout << "Nitrogen   - N" << G4endl;
-  G4cout << "Oxygen     - O" << G4endl;
-  G4cout << "Potassium  - K" << G4endl;
-  G4cout << "Phosphorus - P" << G4endl;
-  G4cout << "Rubidium   - Rb" << G4endl;
-  G4cout << "Samarium   - Sm" << G4endl;
-  G4cout << "Silicon    - Si" << G4endl;
-  G4cout << "Sodium     - Na" << G4endl;
-  G4cout << "Strontium  - Sr" << G4endl;
-  G4cout << "Sulphur    - S" << G4endl;
-  G4cout << "Titanium   - Ti" << G4endl;
-  G4cout << "Tungsten   - W" << G4endl;
-  G4cout << "Uranium    - U" << G4endl;
-  G4cout << "Vanadium   - V" << G4endl;
-  G4cout << "Yttrium    - Y" << G4endl;
-  G4cout << "Zinc       - Zn" << G4endl;
-  G4cout << "Zirkonium  - Zr" << G4endl;
+  for (auto element : elements) {
+    G4cout << std::left << std::setw(12) << element.second->GetName() << " - " << element.second->GetSymbol() << G4endl;
+  }
   G4cout << "***************" << G4endl;
   G4cout << "Available materials are:" << G4endl;
-  G4cout << "Air" << G4endl;
-  G4cout << "Aluminium" << G4endl;
-  G4cout << "AralditeF" << G4endl;
-  G4cout << "AwakePlasma" << G4endl;
-  G4cout << "Beryllium" << G4endl;
-  G4cout << "BN5000" << G4endl;
-  G4cout << "CalciumCarbonate" << G4endl;
-  G4cout << "CarbonFiber" << G4endl;
-  G4cout << "CarbonMonoxide" << G4endl;
-  G4cout << "BP_CarbonMonoxide" << G4endl;
-  G4cout << "CarbonSteel" << G4endl;
-  G4cout << "Cellulose" << G4endl;
-  G4cout << "Clay" << G4endl;
-  G4cout << "Concrete" << G4endl;
-  G4cout << "LHCConcrete" << G4endl;
-  G4cout << "Copper" << G4endl;
-  G4cout << "DY061" << G4endl;
-  G4cout << "EpoxyResin3" << G4endl;
-  G4cout << "FusedSilica" << G4endl;
-  G4cout << "Graphite" << G4endl;
-  G4cout << "GraphiteFoam" << G4endl;
-  G4cout << "HY906" << G4endl;
-  G4cout << "Invar" << G4endl;
-  G4cout << "Iron" << G4endl;
-  G4cout << "WeightIron" << G4endl;
-  G4cout << "Kapton" << G4endl;
-  G4cout << "Lanex" << G4endl;
-  G4cout << "Lanex2" << G4endl;
-  G4cout << "GOS_Lanex" << G4endl;
-  G4cout << "GOS_ri1" << G4endl;
-  G4cout << "PET_Lanex" << G4endl;
-  G4cout << "LaserVac" << G4endl;
-  G4cout << "Lead" << G4endl;
-  G4cout << "LeadTungstate" << G4endl;
-  G4cout << "LiquidHelium" << G4endl;
-  G4cout << "Marl" << G4endl;
-  G4cout << "ClayousMarl" << G4endl;
-  G4cout << "LimousMarl" << G4endl;
-  G4cout << "N-BK7" << G4endl;
-  G4cout << "NbTi" << G4endl;
-  G4cout << "Niobium" << G4endl;
-  G4cout << "Nitrogen" << G4endl;  
-  G4cout << "Perspex" << G4endl;
-  G4cout << "PET" << G4endl;
-  G4cout << "PolyUrethane" << G4endl;
-  G4cout << "Quartz" << G4endl;
-  G4cout << "Silicon" << G4endl;
-  G4cout << "SmCo" << G4endl;
-  G4cout << "Soil" << G4endl;
-  G4cout << "StainlessSteel" << G4endl;
-  G4cout << "Titanium" << G4endl;
-  G4cout << "TitaniumAlloy" << G4endl;
-  G4cout << "Tungsten" << G4endl;
-  G4cout << "Uranium" << G4endl;
-  G4cout << "UPS923A" << G4endl;
-  G4cout << "Vacuum" << G4endl;
-  G4cout << "Vanadium" << G4endl;
-  G4cout << "Water" << G4endl;
-  G4cout << "YAG" << G4endl;
+  for (auto material : materials) {
+    G4cout << material.second->GetName() << G4endl;
+  }
   G4cout << "****************************" << G4endl;
   G4cout << "Available NIST materials are:" << G4endl;
-  G4String list="all";
-  G4NistManager::Instance()->ListMaterials(list);
+  G4NistManager::Instance()->ListMaterials("all");
 }
 
 BDSMaterials::~BDSMaterials()
