@@ -169,8 +169,11 @@ void Element::print(int ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  std::cout << "name  = " << name << " : " << type << std::endl;
-  if (l>0.0) {std::cout << "l     = " << l << "m" << std::endl;}
+  std::cout << name << " : " << type << std::endl;
+  if (l>0.0)
+    {std::cout << "l     = " << l << "m" << std::endl;}
+  if (samplerType != "none")
+    {std::cout << "samplerType = " << samplerType << std::endl;}
 
   switch(type) {
   case ElementType::_DRIFT:
@@ -226,8 +229,8 @@ void Element::print(int ident)const{
     std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
 	      << "tscint          = " << tscint*1e6          << " um" << std::endl
 	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
-	      << "windowmaterial  = " << windowmaterial       << std::endl
-	      << "scintmaterial   = " << scintmaterial        << std::endl;
+	      << "windowmaterial  = " << windowmaterial      << std::endl
+	      << "scintmaterial   = " << scintmaterial       << std::endl;
       break;
 
   case ElementType::_AWAKESPECTROMETER:
@@ -235,10 +238,10 @@ void Element::print(int ident)const{
 	      << "tscint          = " << tscint*1e6          << " um" << std::endl
 	      << "screenPSize     = " << screenPSize*1e6     << " um" << std::endl
 	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
-	      << "windowmaterial  = " << windowmaterial       << std::endl
+	      << "windowmaterial  = " << windowmaterial      << std::endl
 	      << "tmount          = " << tmount*1e6          << " um" << std::endl
-	      << "mountmaterial   = " << mountmaterial        << std::endl
-	      << "scintmaterial   = " << scintmaterial        << std::endl;
+	      << "mountmaterial   = " << mountmaterial       << std::endl
+	      << "scintmaterial   = " << scintmaterial       << std::endl;
     break;
 
   case ElementType::_LASER:
@@ -269,7 +272,7 @@ void Element::print(int ident)const{
   
   if(lst != nullptr)
     {
-      ::print(*lst,ident++);
+      ::print(*lst,++ident);
     }
 }
 
