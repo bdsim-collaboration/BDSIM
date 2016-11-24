@@ -1916,15 +1916,6 @@ as their value.
 | defaultRangeCut                  | the default predicted range at which a particle is    |
 |                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
-| gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
-|                                  | muon process                                          |
-+----------------------------------+-------------------------------------------------------+
-| annihiToMuFe                     | the cross-section enhancement factor for the          |
-|                                  | electron-positron annihilation to muon process        |
-+----------------------------------+-------------------------------------------------------+
-| eetoHadronsFe                    | the cross-section enhancement factor for the          |
-|                                  | electron-positron annihilation to hadrons process     |
-+----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
@@ -1947,9 +1938,10 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
-|                                  | Note, this does not affect the accuracy of the        |
-|                                  | geometry - only the visualisation (default : 50)      |
+| nSegmentsPerCircle               | the number of facets per 2 :math:`\pi` in the         |
+|                                  | visualiser. Note, this does not affect the accuracy   |
+|                                  | of the geometry - only the visualisation (default =   |
+|                                  | 50)                                                   |
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
