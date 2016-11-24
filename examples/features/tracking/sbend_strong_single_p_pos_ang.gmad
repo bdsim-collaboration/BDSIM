@@ -1,4 +1,4 @@
-sb1 : sbend, l=2.5*m, angle = -0.3, aper1=20*cm;
+sb1 : sbend, l=2.5*m, angle = 0.3, aper1=20*cm;
 
 lat : line = (sb1);
 
@@ -8,5 +8,5 @@ option, checkOverlaps=1,
 	dontSplitSBends=1,
 	magnetGeometryType="cylindrical";
 
-beam, particle="e-",
-      energy=3*GeV;
+beam, particle="proton",
+      energy=300*GeV;
