@@ -123,7 +123,7 @@ namespace GMAD
     std::list <Element> *lst;
 
     /// print method
-    void print(int &ident)const;
+    void print(int ident=0)const;
 
     /// flush method
     void flush();

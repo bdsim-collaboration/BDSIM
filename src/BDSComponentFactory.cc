@@ -189,7 +189,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory - creating " << element->type << G4endl;
+  G4cout << "BDSComponentFactory - creating ";
+  element->print();
 #endif
   switch(element->type){
   case ElementType::_DRIFT:
@@ -258,10 +259,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
     component = nullptr;
     break;
   default:
-#ifdef BDSDEBUG
-    G4cout << __METHOD_NAME__ << "type: " << element->type << G4endl; 
-#endif
-    G4cerr << __METHOD_NAME__ << "unknown type" << G4endl;
+    G4cerr << __METHOD_NAME__ << "unknown type " << element->type << G4endl;
     exit(1);
     break;
   }
@@ -312,12 +310,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-#ifdef BDSDEBUG
-  G4cout << "---->creating Drift,"
-	 << " name= " << element->name
-	 << " l= " << element->l << "m"
-	 << G4endl;
-#endif
   // Create normal vectors
   std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(angleIn, angleOut);
 
@@ -641,15 +633,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   if(!HasSufficientMinimumLength(element)) 
     {return nullptr;}
   
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Element,"
-	 << " name = " << element->name
-	 << " l = " << element->l << "m"
-	 << " outerDiameter = "  << element->outerDiameter << "m"
-	 << " precision region " << element->region
-	 << G4endl;
-#endif
-  
   return (new BDSElement(element->name,
 			 element->l * CLHEP::m,
 			 element->outerDiameter * CLHEP::m,
@@ -682,15 +665,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-#ifdef BDSDEBUG 
-  G4cout << "--->creating " << element->type << ","
-	 << " name = " << element->name  << ","
-	 << " x half aperture = " << element->xsize <<" m,"
-	 << " y half aperture = " << element->ysize <<" m,"
-	 << " material = \"" << element->material << "\""
-	 << G4endl;
-#endif
-  
   return new BDSCollimatorRectangular(element->name,
 				      element->l*CLHEP::m,
 				      element->outerDiameter*CLHEP::m,
@@ -708,15 +682,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-#ifdef BDSDEBUG 
-  G4cout << "--->creating " << element->type << ","
-	 << " name = " << element->name 
-	 << " x half aperture = " << element->xsize <<" m,"
-	 << " y half aperture = " << element->ysize <<" m,"
-	 << " material = \"" << element->material << "\""
-	 << G4endl;
-#endif
-  
   return new BDSCollimatorElliptical(element->name,
 				     element->l*CLHEP::m,
 				     element->outerDiameter*CLHEP::m,
@@ -776,13 +741,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-#ifdef BDSDEBUG
-  G4cout << "---->creating degrader,"
-	 << " name = "   << element->name
-	 << " length = " << element->l
-	 << G4endl;
-#endif
-
   G4double degraderOffset;
   if ((element->materialThickness <= 0) && (element->degraderOffset <= 0))
     {
@@ -821,19 +779,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 	
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Laser,"
-	 << " name= "<< element->name
-	 << " l=" << element->l <<"m"
-	 << " lambda= " << element->waveLength << "m"
-	 << " xSigma= " << element->xsize << "m"
-	 << " ySigma= " << element->ysize << "m"
-	 << " xdir= " << element->xdir
-	 << " ydir= " << element->ydir
-	 << " zdir= " << element->zdir
-	 << G4endl;
-#endif
-
   G4double length = element->l*CLHEP::m;
   G4double lambda = element->waveLength*CLHEP::m;
 	
@@ -848,14 +793,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 	
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Screen,"
-	 << " name= "<< element->name
-	 << " l=" << element->l/CLHEP::m<<"m"
-	 << " angle=" << element->angle/CLHEP::rad<<"rad"
-	 << " precision region " << element->region
-	 << G4endl;
-#endif
   G4TwoVector size;
   size.setX(element->screenXSize*CLHEP::m);
   size.setY(element->screenYSize*CLHEP::m);
@@ -870,14 +807,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
     {
       std::stringstream ss;
       ss << "Material and thicknesses lists are of unequal size.";
-      ss<< element->layerMaterials.size() << " and " << element->layerThicknesses.size();
+      ss << element->layerMaterials.size() << " and " << element->layerThicknesses.size();
       G4Exception(ss.str().c_str(), "-1", FatalException, "");
     }
   if( (element->layerThicknesses.size() != element->layerIsSampler.size()) && ( element->layerIsSampler.size() !=0 ))
     {
       std::stringstream ss;
       ss << "Material and isSampler lists are of unequal size.";
-      ss<< element->layerMaterials.size() << " and " << element->layerIsSampler.size();
+      ss << element->layerMaterials.size() << " and " << element->layerIsSampler.size();
       G4Exception(ss.str().c_str(), "-1", FatalException, "");
     }
 
@@ -893,9 +830,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
       itt != element->layerThicknesses.end();
       itt++, itm++)
     {
-      G4cout << __METHOD_NAME__ << " - screen layer: thickness: " << 
-	*(itt)<< ", material "  << (*itm) << 
-	", isSampler: "  << (*itIsSampler) << G4endl;
+      G4cout << __METHOD_NAME__ << " - screen layer: thickness: " 
+	     << *(itt) << ", material "  << (*itm)
+	     <<	", isSampler: "  << (*itIsSampler) << G4endl;
       if(element->layerIsSampler.size()>0)
 	{
 	  theScreen->screenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
@@ -910,15 +847,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 #ifdef USE_AWAKE
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
 {
-#ifdef BDSDEBUG
-  G4cout << "---->creating Awake Screen,"
-	 << "twindow = " << element->twindow*CLHEP::m/CLHEP::um << " um"
-	 << "tscint = " << element->tscint*CLHEP::m/CLHEP::um << " um"
-	 << "windowScreenGap = " << element->windowScreenGap*CLHEP::m/CLHEP::um << " um"
-	 << "windowmaterial = " << element->windowmaterial << " um"
-	 << "scintmaterial = " << element->scintmaterial << " um"
-	 << G4endl;
-#endif
   return (new BDSAwakeScintillatorScreen(element->name,
 					 element->scintmaterial,
 					 element->tscint*CLHEP::m,
@@ -930,18 +858,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 {
-#ifdef BDSDEBUG 
-  G4cout << "---->creating AWAKE spectrometer,"
-	 << "twindow = " << element->twindow*CLHEP::m/CLHEP::um << " um"
-	 << "tscint = " << element->tscint*CLHEP::m/CLHEP::um << " um"
-	 << "screenPSize = " << element->screenPSize*CLHEP::m/CLHEP::um << " um"
-	 << "windowScreenGap = " << element->windowScreenGap*CLHEP::m/CLHEP::um << " um"
-	 << "windowmaterial = " << element->windowmaterial << " um"
-	 << "tmount = " << element->tmount*CLHEP::m/CLHEP::um << " um"
-	 << "mountmaterial = " << element->mountmaterial << " um"	
-	 << "scintmaterial = " << element->scintmaterial << " um"
-	 << G4endl;
-#endif
   BDSFieldInfo* awakeField = nullptr;
   if (element->fieldAll.empty())
     {
@@ -976,19 +892,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
-	
-#ifdef BDSDEBUG 
-  G4cout << "---->creating Transform3d,"
-	 << " name= "  << element->name
-	 << " xdir= "  << element->xdir/CLHEP::m    << "m"
-	 << " ydir= "  << element->ydir/CLHEP::m    << "m"
-	 << " zdir= "  << element->zdir/CLHEP::m    << "m"
-	 << " phi= "   << element->phi/CLHEP::rad   << "rad"
-	 << " theta= " << element->theta/CLHEP::rad << "rad"
-	 << " psi= "   << element->psi/CLHEP::rad   << "rad"
-	 << G4endl;
-#endif
-	
   return (new BDSTransform3D( element->name,
 			      element->xdir *CLHEP::m,
 			      element->ydir *CLHEP::m,
