@@ -178,7 +178,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "materials") )
 	{
-	  BDSMaterials::ListMaterials();
+	  BDSMaterials::Instance()->ListMaterials();
 	  exit(0);// return after printing material list
 	}
       else if( !strcmp(optionName, "circular") )

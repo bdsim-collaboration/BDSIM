@@ -24,6 +24,8 @@ public:
   static BDSParser* Instance(std::string filename);
   /// Access method
   static BDSParser* Instance();
+  /// Returns if parser is initialised
+  static bool IsInitialised();
   /// Destructor
   virtual ~BDSParser();
   
