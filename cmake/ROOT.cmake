@@ -49,6 +49,7 @@ foreach(header ${linkHeaders})
       -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
       )
     add_custom_command(
@@ -74,6 +75,7 @@ foreach(header ${linkHeaders})
       -D__ROOTBUILD__
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
       )
     set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)
