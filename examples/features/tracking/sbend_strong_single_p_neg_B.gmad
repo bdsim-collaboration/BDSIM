@@ -1,4 +1,4 @@
-sb1 : sbend, l=2.5*m, B = 1.200830725, aper1=20*cm;
+sb1 : sbend, l=2.5*m, B = -120.0830725, aper1=20*cm;
 
 lat : line = (sb1);
 
