@@ -1240,7 +1240,7 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
     else
     {// only angle - calculate B field
         angle = element->angle * CLHEP::rad;
-        field = brho * angle / length * charge * ffact;
+        field = brho * angle / length * charge * ffact;  //field in mT
     }
 
   return std::make_pair(angle,field);
