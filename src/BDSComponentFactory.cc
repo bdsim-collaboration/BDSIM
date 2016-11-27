@@ -1220,9 +1220,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
 }
 
 std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element const* element)
-{
-  GMAD::ElementType type = element->type;
-  
+{  
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
@@ -1236,13 +1234,7 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-      if (type == GMAD::ElementType::_SBEND)
-	{angle = charge * ffact * field * length / brho ;}
-      else // rbend
-	{
-	  G4double bendingRadius = brho / field; // in mm as brho already in g4 units
-	  angle = charge * ffact * 2.0*asin(length*0.5 / bendingRadius);
-	}
+      angle = charge * ffact * field * length / brho ;
     }
   else
     {// only angle - calculate B field
