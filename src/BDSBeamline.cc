@@ -300,7 +300,8 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   G4ThreeVector referencePositionStart, referencePositionMiddle, referencePositionEnd;
   if (hasFiniteLength)
     {
-      referencePositionStart  = previousReferencePositionEnd;
+      referencePositionStart = previousReferencePositionEnd;
+      
       // calculate delta to mid point
       G4ThreeVector md = G4ThreeVector(0, 0, 0.5 * length);
       md.transform(*referenceRotationMiddle);
