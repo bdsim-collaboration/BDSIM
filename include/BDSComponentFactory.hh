@@ -40,7 +40,7 @@ public:
 
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
 					   GMAD::Element* prevElementIn,
 					   GMAD::Element* nextElementIn);
   
@@ -84,7 +84,7 @@ public:
 					     G4String name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
-  static void PoleFaceRotationsNotTooLarge(GMAD::Element* element,
+  static void PoleFaceRotationsNotTooLarge(GMAD::Element const* element,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
 private:
@@ -104,7 +104,7 @@ private:
   ///@}
 
   /// element for storing instead of passing around
-  GMAD::Element* element = nullptr;
+  GMAD::Element const* element = nullptr;
   /// element access to previous element (can be nullptr)
   GMAD::Element* prevElement = nullptr;
   /// element access to previous element (can be nullptr)
@@ -143,7 +143,7 @@ private:
 			  G4double angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
-  G4bool HasSufficientMinimumLength(GMAD::Element* element);
+  G4bool HasSufficientMinimumLength(GMAD::Element const* element);
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.

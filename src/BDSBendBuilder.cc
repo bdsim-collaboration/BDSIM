@@ -24,7 +24,7 @@ class BDSMagnetStrengh;
 
 using namespace GMAD;
 
-BDSLine* BDS::BuildSBendLine(Element*           element,
+BDSLine* BDS::BuildSBendLine(Element const* element,
 			     G4double           angleIn,
 			     G4double           angleOut,
 			     BDSMagnetStrength* st,
@@ -260,7 +260,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   return sbendline;
 }
 
-BDSLine* BDS::BuildRBendLine(Element*           element,
+BDSLine* BDS::BuildRBendLine(Element const* element,
 			     Element*           prevElement,
 			     Element*           nextElement,
 			     G4double           angleIn,
@@ -390,7 +390,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   return rbendline;
 }
 
-BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
+BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element const* element,
 				  G4double           angleIn,
 				  G4double           angleOut,
 				  G4String           name,
@@ -455,7 +455,7 @@ G4int BDS::CalculateNSBendSegments(GMAD::Element const* element,
   return nSBends;
 }
 
-BDSMagnet* BDS::BuildSBendWedge(Element*           element,
+BDSMagnet* BDS::BuildSBendWedge(Element const* element,
 				G4bool             fadeIn,
 				G4bool             fadeOut,
 				G4int              index,

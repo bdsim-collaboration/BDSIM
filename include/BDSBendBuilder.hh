@@ -24,7 +24,7 @@ namespace BDS
   /// poleface, the faces of each wedge fade in/out from the poleface to the cental
   /// wedge in the middle. Thin fringefield elements are placed at the beginning and
   /// end of the beamline if required.
-  BDSLine* BuildSBendLine(GMAD::Element*     element,
+  BDSLine* BuildSBendLine(GMAD::Element const* element,
 			  G4double           angleIn,
 			  G4double           angleOut,
 			  BDSMagnetStrength* st,
@@ -34,7 +34,7 @@ namespace BDS
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
   /// either end if specified.
-  BDSLine* BuildRBendLine(GMAD::Element*     element,
+  BDSLine* BuildRBendLine(GMAD::Element const* element,
 			  GMAD::Element*     prevElement,
 			  GMAD::Element*     nextElement,
 			  G4double           angelIn,
@@ -51,7 +51,7 @@ namespace BDS
 
   /// Thin magnet for dipole fringe field.
   /// Is beampipe only, no outer magnet.
-  BDSMagnet* BuildDipoleFringe(GMAD::Element*     element,
+  BDSMagnet* BuildDipoleFringe(GMAD::Element const* element,
 			       G4double           angleIn,
 			       G4double           angleOut,
 			       G4String           name,
@@ -63,7 +63,7 @@ namespace BDS
   /// Function to return a new magnet wedge for use in an sbend.
   /// The faces of each wedge are calculated as appropriate depending
   /// on the poleface angle(s).
-  BDSMagnet* BuildSBendWedge(GMAD::Element*     element,
+  BDSMagnet* BuildSBendWedge(GMAD::Element const* element,
 			     G4bool             fadeIn,
 			     G4bool             fadeOut,
 			     G4int              index,

@@ -84,7 +84,7 @@ BDSComponentFactory::~BDSComponentFactory()
   delete BDSMagnetOuterFactory::Instance();
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
+BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
 							      Element* prevElementIn,
 							      Element* nextElementIn)
 {
@@ -933,7 +933,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       angle);
 }
 
-G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
+G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element)
 {
   if(element->l*CLHEP::m < 1e-7)
     {
@@ -948,7 +948,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
+void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 						       G4double maxAngle)
 {
   if (std::abs(element->e1) > maxAngle)
