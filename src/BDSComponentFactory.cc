@@ -942,7 +942,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
+void BDSComponentFactory::PoleFaceRotationsNotTooLarge(const Element* element,
 						       G4double maxAngle)
 {
   if (std::abs(element->e1) > maxAngle)

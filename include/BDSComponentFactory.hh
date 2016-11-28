@@ -81,7 +81,7 @@ public:
 					     G4String name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
-  static void PoleFaceRotationsNotTooLarge(GMAD::Element* element,
+  static void PoleFaceRotationsNotTooLarge(const GMAD::Element* element,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
 private:
