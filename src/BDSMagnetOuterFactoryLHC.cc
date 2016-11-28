@@ -1173,7 +1173,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       allLogicalVolumes.push_back(pole1LV);
 
       // coil placements
-      coil1PV = new G4PVPlacement(nullptr,                  // rotation
+      coil1PV = new G4PVPlacement(nullptr,            // rotation
 				  -dipolePosition,    // position
 				  coil1LV,            // logical volume
 				  name + "_coil1_pv", // name
@@ -1211,7 +1211,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       allPhysicalVolumes.push_back(coil4PV);
 
       // pole placements
-      pole1PV = new G4PVPlacement(nullptr,                  // rotation
+      pole1PV = new G4PVPlacement(nullptr,            // rotation
 				  -dipolePosition,    // position
 				  pole1LV,            // logical volume
 				  name + "_pole1_pv", // name
@@ -1278,7 +1278,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allLogicalVolumes.push_back(pole2LV);
   
   // fixed coil placements
-  coil5PV = new G4PVPlacement(nullptr,                  // rotation
+  coil5PV = new G4PVPlacement(nullptr,            // rotation
 			      dipolePosition,     // position
 			      coil2LV,            // logical volume
 			      name + "_coil5_pv", // name
@@ -1316,8 +1316,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(coil8PV);
   
   // fixed pole placements
-  pole5PV = new G4PVPlacement(nullptr,                  // rotation
-			      dipolePosition,    // position
+  pole5PV = new G4PVPlacement(nullptr,            // rotation
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole5_pv", // name
 			      containerLV,        // mother volume
@@ -1325,7 +1325,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			      0,                  // copy number
 			      checkOverlaps);
   pole6PV = new G4PVPlacement(coil2rm,            // rotation
-			      dipolePosition,    // position
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole6_pv", // name
 			      containerLV,        // mother volume
@@ -1333,7 +1333,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			      0,                  // copy number
 			      checkOverlaps);
   pole7PV = new G4PVPlacement(coil3rm,            // rotation
-			      dipolePosition,    // position
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole7_pv", // name
 			      containerLV,        // mother volume
@@ -1341,7 +1341,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			      0,                  // copy number
 			      checkOverlaps);
   pole8PV = new G4PVPlacement(coil4rm,            // rotation
-			      dipolePosition,    // position
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole8_pv", // name
 			      containerLV,        // mother volume
@@ -1399,7 +1399,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   collarsLV->SetVisAttributes(collarVisAtt);
   allLogicalVolumes.push_back(collarsLV); 
 
-  G4PVPlacement* collarPV = new G4PVPlacement(nullptr,                  // rotation
+  G4PVPlacement* collarPV = new G4PVPlacement(nullptr,            // rotation
 					      dipolePosition,     // position
 					      collarsLV,          // its logical volume
 					      name+"_collars_pv", // its name
