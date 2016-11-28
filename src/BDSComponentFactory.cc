@@ -85,8 +85,8 @@ BDSComponentFactory::~BDSComponentFactory()
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
-							      Element* prevElementIn,
-							      Element* nextElementIn)
+							      Element const* prevElementIn,
+							      Element const* nextElementIn)
 {
   element = elementIn;
   prevElement = prevElementIn;

@@ -35,12 +35,12 @@ namespace BDS
   /// magnet as the main dipole, but can have fringefield magnets placed
   /// either end if specified.
   BDSLine* BuildRBendLine(GMAD::Element const* element,
-			  GMAD::Element*     prevElement,
-			  GMAD::Element*     nextElement,
-			  G4double           angelIn,
-			  G4double           angleOut,
-			  G4double           brho,
-			  BDSMagnetStrength* st,
+			  GMAD::Element const* prevElement,
+			  GMAD::Element const* nextElement,
+			  G4double             angelIn,
+			  G4double             angleOut,
+			  G4double             brho,
+			  BDSMagnetStrength*   st,
 			  const BDSIntegratorSet* integratorSet);
 
   /// Utility function to calculate the number of segments an sbend should be split into.

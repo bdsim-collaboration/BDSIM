@@ -261,8 +261,8 @@ BDSLine* BDS::BuildSBendLine(Element const* element,
 }
 
 BDSLine* BDS::BuildRBendLine(Element const* element,
-			     Element*           prevElement,
-			     Element*           nextElement,
+			     Element const*     prevElement,
+			     Element const*     nextElement,
 			     G4double           angleIn,
 			     G4double           angleOut,
 			     G4double           brho,

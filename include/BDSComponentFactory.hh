@@ -41,8 +41,8 @@ public:
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
   BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
-					   GMAD::Element* prevElementIn,
-					   GMAD::Element* nextElementIn);
+					   GMAD::Element const* prevElementIn,
+					   GMAD::Element const* nextElementIn);
   
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
@@ -106,9 +106,9 @@ private:
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* prevElement = nullptr;
+  GMAD::Element const* prevElement = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* nextElement = nullptr;
+  GMAD::Element const* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
