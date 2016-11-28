@@ -391,7 +391,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   return rbendline;
 }
 
-BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
+BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element* element,
 				  G4double           angleIn,
 				  G4double           angleOut,
 				  G4String           name,
@@ -457,7 +457,7 @@ G4int BDS::CalculateNSBendSegments(const G4double length,
   return nSBends;
 }
 
-BDSMagnet* BDS::BuildSBendWedge(Element*           element,
+BDSMagnet* BDS::BuildSBendWedge(const Element*     element,
 				G4bool             fadeIn,
 				G4bool             fadeOut,
 				G4int              index,

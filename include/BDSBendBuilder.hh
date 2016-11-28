@@ -53,7 +53,7 @@ namespace BDS
 
   /// Thin magnet for dipole fringe field.
   /// Is beampipe only, no outer magnet.
-  BDSMagnet* BuildDipoleFringe(GMAD::Element*     element,
+  BDSMagnet* BuildDipoleFringe(const GMAD::Element* element,
 			       G4double           angleIn,
 			       G4double           angleOut,
 			       G4String           name,
@@ -65,7 +65,7 @@ namespace BDS
   /// Function to return a new magnet wedge for use in an sbend.
   /// The faces of each wedge are calculated as appropriate depending
   /// on the poleface angle(s).
-  BDSMagnet* BuildSBendWedge(GMAD::Element*     element,
+  BDSMagnet* BuildSBendWedge(const GMAD::Element* element,
 			     G4bool             fadeIn,
 			     G4bool             fadeOut,
 			     G4int              index,
