@@ -77,7 +77,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
     }
   
   //calculate their angles and length
-  G4double semiangle  = -angle  / (G4double) nSBends; // why introduce -ve here?
+  G4double semiangle  = -angle / (G4double) nSBends; // why introduce -ve here?
   G4double semilength = length / (G4double) nSBends;
   G4double rho        = length / angle;
   
