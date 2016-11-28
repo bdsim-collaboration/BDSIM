@@ -24,11 +24,9 @@ namespace BDS
   /// poleface, the faces of each wedge fade in/out from the poleface to the cental
   /// wedge in the middle. Thin fringefield elements are placed at the beginning and
   /// end of the beamline if required.
-  BDSLine* BuildSBendLine(GMAD::Element*     element,
-			  G4double           angleIn,
-			  G4double           angleOut,
+  BDSLine* BuildSBendLine(const GMAD::Element*     element,
 			  BDSMagnetStrength* st,
-			  G4double           brho,
+			  const G4double     brho,
 			  const BDSIntegratorSet* integratorSet);
 
   /// Construct beamline for an rbend.  A line is returned with a single

@@ -24,34 +24,33 @@ class BDSMagnetStrengh;
 
 using namespace GMAD;
 
-BDSLine* BDS::BuildSBendLine(Element*           element,
-			     G4double           angleIn,
-			     G4double           angleOut,
+BDSLine* BDS::BuildSBendLine(const Element*     element,
 			     BDSMagnetStrength* st,
-			     G4double           brho,
+			     const G4double     brho,
 			     const BDSIntegratorSet* integratorSet)
 {
+  const G4String     name = element->name;
+  const G4double   length = element->l  * CLHEP::m;
+  const G4double    angle = (*st)["angle"];
+  const G4double       e1 = element->e1 * CLHEP::rad;
+  const G4double       e2 = element->e2 * CLHEP::rad;
+  const G4double  angleIn = e1 - 0.5 * angle;
+  const G4double angleOut = e2 - 0.5 * angle;
+  
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
   // Calculate number of sbends to split parent into
-  G4int nSBends = BDS::CalculateNSBendSegments(element);
+  G4int nSBends = BDS::CalculateNSBendSegments(length, angle, e1, e2);
   
-  //Zero angle bend only needs one element.
-  std::string thename = element->name + "_1_of_1";
-  
-  G4double length = element->l * CLHEP::m;
-  //copy of angle
-  G4double angle = (*st)["angle"];
-  
-  (*st)["length"] = length/nSBends;
-  (*st)["angle"]  = angle/nSBends;  // override copied length and angle
-  
-  BDSLine* sbendline  = new BDSLine(element->name);
+  BDSLine* sbendline  = new BDSLine(name);
   
   // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
   if (!BDS::IsFinite(angle) || (nSBends == 1))
     {
+      //Zero angle bend only needs one element.
+      std::string thename = name + "_1_of_1";
+      
       BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
@@ -77,13 +76,9 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
     }
   
   //calculate their angles and length
-  G4double semiangle  = -element->angle / (G4double) nSBends;
+  G4double semiangle  = -angle  / (G4double) nSBends; // why introduce -ve here?
   G4double semilength = length / (G4double) nSBends;
-  G4double rho        = element->l*CLHEP::m/element->angle;
-  
-  angle      = element->angle;
-  angleIn    = element->e1*CLHEP::rad;
-  angleOut   = element->e2*CLHEP::rad;
+  G4double rho        = length / angle;
   
   G4double zExtentIn  = 0;
   G4double zExtentOut = 0;
@@ -115,11 +110,11 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   //if the element faces fade in, the middle wedges should be numbered as such
   //if not, it'll be repeated from the first segment onwards
   G4int centralWedgeNum = 0.5*(nSBends+1);
-  G4String centralName = element->name;
+  G4String  centralName = name;
   if (fadeIn)
-    {thename += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
+    {centralName += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
   else
-    {thename += "_1_of_" + std::to_string(nSBends);}
+    {centralName += "_1_of_" + std::to_string(nSBends);}
   
   // register the central wedge which will always be used as the
   // middle wedge regardless of poleface rotations
@@ -147,14 +142,14 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(centralWedge,false);
   
   //oneBend can be accComp or BDSMagnet depending on registration/reusage or new magnet
-  BDSAcceleratorComponent *oneBend = nullptr;
+  BDSAcceleratorComponent* oneBend = nullptr;
   
   BDSMagnetType magType = BDSMagnetType::sectorbend;
   // check magnet outer info
   BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element,angleIn,angleOut);
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semilength, semiangle,
 						      magnetOuterInfoCheck->outerDiameter,
-						      thename);
+						      name + "_semi");
   // clean up
   delete magnetOuterInfoCheck;
   
@@ -165,29 +160,29 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       (*fringeStIn)["field"]         = (*st)["field"];
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
-      (*fringeStIn)["polefaceangle"] = element->e1;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e1,element->fint);
-      thename                        = element->name + "_e1_fringe";
-      angle                          = -element->e1 - 0.5*((*fringeStIn)["angle"]);
-      BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, angle, -angle,
-						      thename, magType, fringeStIn, brho,
+      (*fringeStIn)["polefaceangle"] = e1;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho, e1, element->fint);
+      G4String segmentName           = name + "_e1_fringe";
+      G4double fringeAngle           = -e1 - 0.5*((*fringeStIn)["angle"]);
+      BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, fringeAngle, -fringeAngle,
+						      segmentName, magType, fringeStIn, brho,
 						      integratorSet);
       sbendline->AddComponent(startfringe);
     }
   
-  //logic for wedge elements in the beamline:
-  //  reuse central wedge for all wedges of in/out half if no poleface angle(s)
-  //  if small poleface, new first/last wedge, reuse central wedge for remainder of in/out half
-  //  otherwise fade in/out faces for all wedges in app. halves.
+  // logic for wedge elements in the beamline:
+  // reuse central wedge for all wedges of in/out half if no poleface angle(s)
+  // if small poleface, new first/last wedge, reuse central wedge for remainder of in/out half
+  // otherwise fade in/out faces for all wedges in app. halves.
   
   for (int i = 0; i < nSBends; ++i)
     {
-      G4String thename = element->name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
+      G4String thename = name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
       if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(thename))
         {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(thename);}
       else if (i < 0.5*(nSBends-1))
         {
-          if (!BDS::IsFinite(element->e1))
+          if (!BDS::IsFinite(e1))
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeIn)
             {
@@ -207,7 +202,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
         }
       else if (i > 0.5*(nSBends-1))
         {
-          if (!BDS::IsFinite(element->e2))
+          if (!BDS::IsFinite(e2))
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeOut)
             {
@@ -250,11 +245,11 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
       (*fringeStOut)["polefaceangle"] = element->e2;
       (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e2,element->fintx);
       (*fringeStOut)["length"]        = thinElementLength;
-      angle                           = element->e2+ 0.5*((*fringeStOut)["angle"]);
-      thename                         = element->name + "_e2_fringe";
+      G4double fringeAngle            = e2+ 0.5*((*fringeStOut)["angle"]);
+      G4String segmentName            = name + "_e2_fringe";
       
-      BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, angle, -angle,
-						    thename, magType, fringeStOut, brho,
+      BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeAngle, -fringeAngle,
+						    segmentName, magType, fringeStOut, brho,
 						    integratorSet);
       sbendline->AddComponent(endfringe);
     }

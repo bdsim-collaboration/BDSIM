@@ -429,18 +429,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Angle " << (*st)["angle"] << G4endl;
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
-
-  G4double angleIn  = element->e1 - 0.5*element->angle;
-  G4double angleOut = element->e2 - 0.5*element->angle;
-
-
-  BDSLine *sbendline = BDS::BuildSBendLine(element,
-					   angleIn,
-					   angleOut,
-					   st,
-					   brho,
-					   integratorSet);
-  return sbendline;
+  
+  BDSLine* sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
+  
+  return sBendLine;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
