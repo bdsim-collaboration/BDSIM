@@ -35,7 +35,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
   // Calculate number of sbends to split parent into
-  G4int nSBends = BDS::CalculateNSBendSegments(element);
+  G4int nSBends = BDS::CalculateNSBendSegments(element,st);
   
   //Zero angle bend only needs one element.
   std::string thename = element->name + "_1_of_1";
@@ -433,6 +433,7 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 }
 
 G4int BDS::CalculateNSBendSegments(GMAD::Element const* element,
+                   BDSMagnetStrength* st,
 				   const G4double aperturePrecision)
 {
   // Split a bend into equal segments such that the maximum distance between the
