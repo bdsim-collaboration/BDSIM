@@ -149,8 +149,6 @@ private:
   //  G4Mag_UsualEqRhs* itsEqRhs;
   
 private:
-  G4double itsOuterR;
-
   G4RotationMatrix* _screenRotationMatrix;
   G4RotationMatrix* _vacRotationMatrix;
   G4RotationMatrix* _magRotationMatrix;

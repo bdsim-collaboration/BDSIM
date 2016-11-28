@@ -37,6 +37,7 @@ foreach(header ${rebdsimLibLinkDefs})
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
         add_custom_command(
@@ -64,6 +65,7 @@ foreach(header ${rebdsimLibLinkDefs})
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
     endif()

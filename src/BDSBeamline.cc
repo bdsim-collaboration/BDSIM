@@ -85,9 +85,9 @@ std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 }
 
 void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
-							   BDSTiltOffset*           tiltOffset,
-							   BDSSamplerType           samplerType,
-							   G4String                 samplerName)
+			       BDSTiltOffset*           tiltOffset,
+			       BDSSamplerType           samplerType,
+			       G4String                 samplerName)
 {
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
@@ -110,9 +110,9 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
 }
 
 void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
-						    BDSTiltOffset*           tiltOffset,
-						    BDSSamplerType           samplerType,
-						    G4String                 samplerName)
+				     BDSTiltOffset*           tiltOffset,
+				     BDSSamplerType           samplerType,
+				     G4String                 samplerName)
 {
 #ifdef BDSDEBUG
   G4cout << G4endl << __METHOD_NAME__ << "adding component to beamline and calculating coordinates" << G4endl;
@@ -266,14 +266,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       referenceRotationEnd->rotate(angle, rotationAxisOfBendEnd.transform(*previousReferenceRotationEnd));
     }
   
+  G4RotationMatrix* rotationStart  = new G4RotationMatrix(*referenceRotationStart);
+  G4RotationMatrix* rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
+  G4RotationMatrix* rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
   // add the tilt to the rotation matrices (around z axis)
-  G4RotationMatrix* rotationStart, *rotationMiddle, *rotationEnd;
   if (hasFiniteTilt)
     {
       G4double tilt = tiltOffset->GetTilt();
-      rotationStart  = new G4RotationMatrix(*referenceRotationStart);
-      rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
-      rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
 
       // transform a unit z vector with the rotation matrices to get the local axes
       // of rotation to apply the tilt.
@@ -283,12 +282,6 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
       rotationMiddle->rotate(tilt, unitZ.transform(*referenceRotationMiddle));
       unitZ = G4ThreeVector(0,0,1);
       rotationEnd   ->rotate(tilt, unitZ.transform(*referenceRotationEnd));
-    }
-  else
-    {
-      rotationStart  = new G4RotationMatrix(*referenceRotationStart);
-      rotationMiddle = new G4RotationMatrix(*referenceRotationMiddle);
-      rotationEnd    = new G4RotationMatrix(*referenceRotationEnd);
     }
   
   // calculate the reference placement position
@@ -455,7 +448,7 @@ void BDSBeamline::ApplyTransform3D(BDSTransform3D* component)
   // test validity for overlaps
   if (dz < 0)
     {
-      G4cerr << __METHOD_NAME__ << "Problemm with Transform3d: " << component->GetName() << G4endl;
+      G4cerr << __METHOD_NAME__ << "Problem with Transform3d: " << component->GetName() << G4endl;
       G4cerr << __METHOD_NAME__ << "dz = " << dz << " < 0 -> will overlap previous element" << G4endl;
     } 
 
