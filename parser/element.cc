@@ -165,61 +165,114 @@ bool Element::isSpecial()const {
   return isSpecial;
 }
 
-void Element::print(int & ident)const{
+void Element::print(int ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  std::cout << "->" << name << " : " << type << std::endl;
+  std::cout << name << " : " << type << std::endl;
+  if (l>0.0)
+    {std::cout << "l     = " << l << "m" << std::endl;}
+  if (samplerType != "none")
+    {std::cout << "samplerType = " << samplerType << std::endl;}
 
-  std::list<double>::const_iterator it;
   switch(type) {
   case ElementType::_DRIFT:
+    break;
   case ElementType::_SBEND:
   case ElementType::_RBEND:
+    std::cout << "B     = " << B     << std::endl
+	      << "angle = " << angle << std::endl
+	      << "k1    = " << k1    << std::endl;
+    break;
   case ElementType::_QUAD:
+    std::cout << "k1    = " << k1    << std::endl;
+    break;
   case ElementType::_SEXTUPOLE:
+    std::cout << "k2    = " << k2    << std::endl;
+    break;
   case ElementType::_OCTUPOLE:
+    std::cout << "k3    = " << k3    << std::endl;
+    break;
   case ElementType::_DECAPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, k4=%.10g, angle=%.10g,tilt=%.10g,samplerType=%s ",
-	   l,k0,k1,k2,k3,k4,angle,tilt,samplerType.c_str());
+    std::cout << "k4    = " << k4 << std::endl;
     break;
-    
   case ElementType::_SOLENOID:
-    printf(", l=%.10g, ks=%.10g ", l, ks);
+    std::cout << "ks    = " << ks << std::endl;
     break;
-    
+
   case ElementType::_MULT:
+  case ElementType::_THINMULT:
     printf(" , knl={");
-    for(it=knl.begin();it!=knl.end();++it)
+    for(auto it=knl.begin();it!=knl.end();++it)
       printf("%.10g, ",(*it));
     printf("},  ksl={");
-    for(it=ksl.begin();it!=ksl.end();++it)
+    for(auto it=ksl.begin();it!=ksl.end();++it)
       printf("%.10g, ",(*it));
     printf("}");
     break;
     
+  case ElementType::_ECOL:
+  case ElementType::_RCOL:
+    std::cout << "x half aperture = " << xsize <<" m" << std::endl
+	      << "y half aperture = " << ysize <<" m" << std::endl
+	      << "material = \""      << material << "\"" << std::endl;
+    break;
+
   case ElementType::_ELEMENT:
-    printf("\ngeometry file : %s\n",geometryFile.c_str());
-    printf("Field object : %s\n", fieldAll.c_str());
+    std::cout << "outerDiameter = "  << outerDiameter << "m" << std::endl
+	      << "precision region " << region << std::endl
+	      << "Geometry file : "  << geometryFile << std::endl
+	      << "Field object  : "  << fieldAll << std::endl;
     break;
     
+  case ElementType::_AWAKESCREEN:
+    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+	      << "tscint          = " << tscint*1e6          << " um" << std::endl
+	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
+	      << "windowmaterial  = " << windowmaterial      << std::endl
+	      << "scintmaterial   = " << scintmaterial       << std::endl;
+      break;
+
+  case ElementType::_AWAKESPECTROMETER:
+    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+	      << "tscint          = " << tscint*1e6          << " um" << std::endl
+	      << "screenPSize     = " << screenPSize*1e6     << " um" << std::endl
+	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
+	      << "windowmaterial  = " << windowmaterial      << std::endl
+	      << "tmount          = " << tmount*1e6          << " um" << std::endl
+	      << "mountmaterial   = " << mountmaterial       << std::endl
+	      << "scintmaterial   = " << scintmaterial       << std::endl;
+    break;
+
+  case ElementType::_LASER:
+    std::cout << "lambda = " << waveLength << "m" << std::endl
+	      << "xSigma = " << xsize << "m" << std::endl
+	      << "ySigma = " << ysize << "m" << std::endl
+	      << "xdir = "   << xdir << std::endl
+	      << "ydir = "   << ydir << std::endl
+	      << "zdir = "   << zdir << std::endl;
+    break;
+
   case ElementType::_SCREEN:
+    std::cout << "angle=" << angle <<"rad" << std::endl
+	      << "precision region " << region << std::endl;
     break;
     
   case ElementType::_TRANSFORM3D:
-    printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
-	   xdir, ydir, zdir, phi, theta, psi);
+    std::cout << "xdir= "  << xdir    << "m" << std::endl
+	      << "ydir= "  << ydir    << "m" << std::endl
+	      << "zdir= "  << zdir    << "m" << std::endl
+	      << "phi= "   << phi   << "rad" << std::endl
+	      << "theta= " << theta << "rad" << std::endl
+	      << "psi= "   << psi   << "rad" << std::endl;
     break;
   default:
     break;
   }
   
-  printf("\n");
-  
   if(lst != nullptr)
     {
       ::print(*lst,++ident);
-      ident--;
     }
 }
 

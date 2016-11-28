@@ -29,6 +29,14 @@ set_tests_properties(gmad-nosemicolon PROPERTIES WILL_FAIL 1)
 add_test(gmad-undefinedElement ${gmadBinary} undefinedelement.gmad)
 set_tests_properties(gmad-undefinedElement PROPERTIES WILL_FAIL 1)
 
+# use undefined option
+add_test(gmad-undefinedOption ${gmadBinary} undefinedOption.gmad)
+set_tests_properties(gmad-undefinedOption PROPERTIES WILL_FAIL 1)
+
+# use undefined element with undefined option (issue #161)
+add_test(gmad-undefinedElementAndOption ${gmadBinary} undefinedElementAndOption.gmad)
+set_tests_properties(gmad-undefinedElementAndOption PROPERTIES PASS_REGULAR_EXPRESSION "not been defined")
+
 # duplicate name
 add_test(gmad-duplicateName ${gmadBinary} duplicateName.gmad)
 set_tests_properties(gmad-duplicateName PROPERTIES WILL_FAIL 1)
@@ -142,7 +150,7 @@ add_test(gmad-query ${gmadBinary} query.gmad)
 # test physics biasing
 add_test(gmad-physicsbiasing ${gmadBinary} physicsbiasing.gmad)
 
-# test plaecment
+# test placement
 add_test(gmad-placement ${gmadBinary} placement.gmad)
 
 # test regions

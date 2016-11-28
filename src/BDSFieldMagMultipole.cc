@@ -31,13 +31,13 @@ BDSFieldMagMultipole::BDSFieldMagMultipole(BDSMagnetStrength const* strength,
 G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
 					     const G4double       /*t*/) const
 {
-  // Translate carteasian to polar coordinates
+  // Translate cartesian to polar coordinates
   G4double r   = sqrt(pow(position.x(),2) + pow(position.y(),2));
   G4double phi = 0;
   if (BDS::IsFinite(std::abs(r)))
     {phi = atan2(position.y(),position.x());}
 
-  // compute B field in cylindrical coordinates first then convert to carteasian
+  // compute B field in cylindrical coordinates first then convert to cartesian
   // Bx = Br * cos(phi) - Bphi * sin(phi)
   // By = Br * sin(phi) + Bphi * cos(phi)
   // where, if n=1 is for dipole:
@@ -69,12 +69,12 @@ G4ThreeVector BDSFieldMagMultipole::GetField(const G4ThreeVector &position,
       ffact *= o;
     }
 
-  G4ThreeVector carteasianField;
-  carteasianField[0] = (br * cos(phi) - bphi * sin(phi)); // B_x
-  carteasianField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
-  carteasianField[2] = 0;                                 // B_z
+  G4ThreeVector cartesianField;
+  cartesianField[0] = (br * cos(phi) - bphi * sin(phi)); // B_x
+  cartesianField[1] = (br * sin(phi) + bphi * cos(phi)); // B_y
+  cartesianField[2] = 0;                                 // B_z
 
-  return carteasianField;
+  return cartesianField;
 }
 
 

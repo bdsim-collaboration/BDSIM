@@ -88,7 +88,7 @@ namespace GMAD
   void Options::set_value(std::string name, T value)
   {
 #ifdef BDSDEBUG
-    std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+    std::cout << "options> Setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
     // member method can throw runtime_error, catch and exit gracefully
     try
@@ -98,7 +98,7 @@ namespace GMAD
       }
     catch (std::runtime_error)
     {
-      std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value << std::endl;
+      std::cerr << "Error: options> unknown option \"" << name << "\" with value " << value << std::endl;
       exit(1);
     }
   }

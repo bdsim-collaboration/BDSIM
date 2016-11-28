@@ -52,7 +52,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
   if (!BDS::IsFinite(angle) || (nSBends == 1))
     {
-      BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
+      BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
       BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 						   brho,
 						   intType,
@@ -124,7 +124,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   // register the central wedge which will always be used as the
   // middle wedge regardless of poleface rotations
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
@@ -351,7 +351,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   (*st)["length"] = length;
   (*st)["angle"]  = angle;
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
@@ -538,7 +538,7 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
   (*stSemi)["length"] = length;
   (*stSemi)["angle"]  = semiangle;  // override copied length and angle
 
-  BDSIntegratorType intType = BDS::Integrator(integratorSet, BDSFieldType::dipole);
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
@@ -557,8 +557,8 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
 }
 
 G4double BDS::CalculateFringeFieldCorrection(G4double rho,
-                G4double polefaceAngle,
-                G4double fint)
+					     G4double polefaceAngle,
+					     G4double fint)
 {
   G4double term1 = fint/rho;
   G4double term2 = (1.0 + pow(sin(polefaceAngle),2)) / cos(polefaceAngle);

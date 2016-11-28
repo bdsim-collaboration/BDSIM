@@ -122,7 +122,7 @@ void Parameters::inherit_properties(Element& e)
 	    Published<Element>::set(this,(Element*)&e,property);
 	  }
 	  catch(std::runtime_error) {
-	    std::cerr << "Error: parser> unknown property \"" << property << "\" from element " << e.name  << std::endl;
+	    std::cerr << "Error: element> unknown property \"" << property << "\" from element " << e.name  << std::endl;
 	    exit(1);
 	  }
 	  
@@ -135,7 +135,7 @@ void Parameters::inherit_properties(Element& e)
 void Parameters::set_value(std::string property, Array* value)
 {
 #ifdef BDSDEBUG
-  std::cout << "parser> Setting value " << std::setw(25) << std::left << property << std::endl;
+  std::cout << "element> Setting value " << std::setw(25) << std::left << property << std::endl;
 #endif
   if(property=="knl") 
     {
@@ -167,8 +167,11 @@ void Parameters::set_value(std::string property, Array* value)
     }
   else
     {
-      std::cerr << "Error: parser> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
-      exit(1);
+      std::cerr << "Error: element> unknown parameter option \"" << property << "\", or doesn't expect vector type" << std::endl;
+      // don't exit here, but flag willExit instead
+      //exit(1);
+      willExit = true;
+      return;
     }
 
   setMap.at(property) = true;

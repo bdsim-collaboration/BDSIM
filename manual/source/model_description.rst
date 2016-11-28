@@ -97,6 +97,7 @@ Some useful predefined values / units are:
 Name        Value
 ==========  =================================
 pi          3.14159265358979
+degrees     :math:`\pi` / 180
 GeV         1
 eV          :math:`10^{-9}`
 keV         :math:`10^{-6}`
@@ -344,7 +345,7 @@ parameter         description                  default     required
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm pi/4` radians.
+.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 
 .. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
 	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
@@ -1915,15 +1916,6 @@ as their value.
 | defaultRangeCut                  | the default predicted range at which a particle is    |
 |                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
-| gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
-|                                  | muon process                                          |
-+----------------------------------+-------------------------------------------------------+
-| annihiToMuFe                     | the cross-section enhancement factor for the          |
-|                                  | electron-positron annihilation to muon process        |
-+----------------------------------+-------------------------------------------------------+
-| eetoHadronsFe                    | the cross-section enhancement factor for the          |
-|                                  | electron-positron annihilation to hadrons process     |
-+----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
@@ -1946,9 +1938,10 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
-|                                  | Note, this does not affect the accuracy of the        |
-|                                  | geometry - only the visualisation (default : 50)      |
+| nSegmentsPerCircle               | the number of facets per 2 :math:`\pi` in the         |
+|                                  | visualiser. Note, this does not affect the accuracy   |
+|                                  | of the geometry - only the visualisation (default =   |
+|                                  | 50)                                                   |
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.

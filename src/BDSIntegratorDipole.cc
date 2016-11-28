@@ -92,7 +92,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       // as there can be inconsistencies in the field vectors resulting in 0 additional offset,
       // plus Geant4 complained about clearly wrong motion. This way works and produces no
       // errors.  The particle would be lost approximately in the current location anyway.
-      if (rho < minimumRadiusOfCurvature)
+      if (std::abs(rho) < minimumRadiusOfCurvature)
 	{GlobalTangent *= 0.98;}
       
       yOut[0] = GlobalPosition.x(); 

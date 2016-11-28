@@ -61,14 +61,14 @@ namespace GMAD
     void Tunnel::set_value(std::string property, T value)
     {
 #ifdef BDSDEBUG
-      std::cout << "parser> Setting value " << std::setw(25) << std::left << property << value << std::endl;
+      std::cout << "tunnel> Setting value " << std::setw(25) << std::left << property << value << std::endl;
 #endif
       // member method can throw runtime_error, catch and exit gracefully
       try {
 	set(this,property,value);
       }
       catch(std::runtime_error) {
-	std::cerr << "Error: parser> unknown option \"" << property << "\" with value " << value  << std::endl;
+	std::cerr << "Error: tunnel> unknown option \"" << property << "\" with value " << value  << std::endl;
 	exit(1);
       }
     }

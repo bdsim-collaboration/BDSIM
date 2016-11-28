@@ -29,6 +29,8 @@
        3) compile bison with "-t" flag. This is automatically done when CMAKE_BUILD_TYPE equals Debug
     */
 
+    /// bool to delay exit until full line is parsed to give possibly more meaningful message
+    bool willExit = false;
     bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
@@ -94,6 +96,7 @@ input :
       | input stmt ';'
        { 
 	 if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
+	 if(willExit) exit(1);
        }
 
 // deconstruct statements into atomic statements
@@ -128,7 +131,7 @@ atomic_stmt :
 decl : VARIABLE ':' component_with_params
        {
 	 if(execute) {
-	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << $3 << std::endl;
+	   if(ECHO_GRAMMAR) std::cout << "decl -> VARIABLE " << *$1 << " : " << static_cast<ElementType>($3) << std::endl;
 	   // check parameters and write into element table
 	   Parser::Instance()->write_table($1,static_cast<ElementType>($3));
 	   Parser::Instance()->ClearParams();

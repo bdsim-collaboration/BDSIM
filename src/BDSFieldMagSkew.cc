@@ -10,7 +10,7 @@ BDSFieldMagSkew::BDSFieldMagSkew(BDSFieldMag* fieldIn,
   rotation = new G4RotationMatrix();
   antiRotation = new G4RotationMatrix();
   rotation->rotateZ(angle);
-  rotation->rotateZ(-angle);
+  antiRotation->rotateZ(-angle);
 }
 
 BDSFieldMagSkew::~BDSFieldMagSkew()

@@ -13,19 +13,38 @@
 #include "BDSSamplerRegistry.hh"
 #include "BDSScreenLayer.hh"
 
-BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material, G4double thickness, G4double windowScreenGap, G4double dgrain, G4double windowThickness, G4String windowMaterial, G4double mountThickness, G4String mountMaterial, G4double width):
-  BDSMultilayerScreen(G4TwoVector(width,8*CLHEP::cm),(G4String)"AwakeMultilayerScreen"),_material(material),_thickness(thickness), _windowScreenGap(windowScreenGap), _dgrain(dgrain), _windowThickness(windowThickness),_windowMaterial(windowMaterial),
-_mountThickness(mountThickness),_mountMaterial(mountMaterial)
+BDSAwakeMultilayerScreen::BDSAwakeMultilayerScreen(G4String material,
+						   G4double thickness,
+						   G4double windowScreenGap,
+						   G4double dgrain,
+						   G4double windowThickness,
+						   G4String windowMaterial,
+						   G4double mountThickness,
+						   G4String mountMaterial,
+						   G4double width):
+  BDSMultilayerScreen(G4TwoVector(width, 8*CLHEP::cm), "AwakeMultilayerScreen"),
+  _material(material),
+  _thickness(thickness),
+  _windowScreenGap(windowScreenGap),
+  _gapWidth(0),
+  _gapSpacing(0),
+  _dgrain(dgrain),
+  _windowThickness(windowThickness),
+  _windowMaterial(windowMaterial),
+  _mountThickness(mountThickness),
+  _mountMaterial(mountMaterial),
+  _layerThickness(0),
+  _binderLayerThickness(0)
 {
   _ss.str("");
-  _binderLayerCount=0;
-  _scintLayerCount=0;
-  _fillFactor=0.5;
-  _layerThickness=_dgrain;
-  _binderLayerThickness=_dgrain*(1-_fillFactor)/_fillFactor;
-  _nScintLayers=_thickness/(_layerThickness+_binderLayerThickness);
-  G4double modulo = (_nScintLayers-floor(_nScintLayers));
-  _firstLayerThickness = _layerThickness*modulo;
+  _binderLayerCount = 0;
+  _scintLayerCount  = 0;
+  _fillFactor       = 0.5;
+  _layerThickness   = _dgrain;
+  _binderLayerThickness = _dgrain*(1-_fillFactor)/_fillFactor;
+  _nScintLayers         = _thickness/(_layerThickness+_binderLayerThickness);
+  G4double modulo       = (_nScintLayers-floor(_nScintLayers));
+  _firstLayerThickness  = _layerThickness*modulo;
   _firstBinderLayerThickness = _binderLayerThickness*modulo;
   layers();
 }
@@ -80,7 +99,8 @@ void BDSAwakeMultilayerScreen::sampler(G4String name, const char* material, G4bo
 					   0,
 					   0);
   sl->SetColour(G4Colour(1.0,0.0,0.0,0.3));
-  if(bSampler) sl->sampler();
+  if(bSampler)
+    {sl->sampler();}
   screenLayer(sl);
 }
 

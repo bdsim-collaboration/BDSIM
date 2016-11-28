@@ -73,9 +73,6 @@ public:
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
 
-  /// Access the underlying parser options.
-  const GMAD::Options& Options() const {return options;}
-
   // Options that access GMAD::options instance
   // Executable options
   inline G4String InputFileName()          const {return G4String(options.inputFileName);}
@@ -211,10 +208,6 @@ public:
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4double              COverGeV()                const {return cOverGeV;}
 
-  // refactor out of classes that use this
-  inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
-  inline G4double MagnetPoleRadius()   const {return itsMagnetPoleRadius;}
-
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
   inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
@@ -276,8 +269,6 @@ private:
   
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
-  G4double itsMagnetPoleSize;
-  G4double itsMagnetPoleRadius;
   ///@}
 
   /// Default beam pipe model information

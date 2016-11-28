@@ -529,7 +529,7 @@ int Parser::copy_element_to_params(std::string elementName)
   std::list<Element>::iterator iterEnd = element_list.end();
   if(it == iterEnd)
     {
-      std::cout << "type " << elementName << " has not been defined" << std::endl;
+      std::cout << "Error: type " << elementName << " has not been defined" << std::endl;
       if (PEDANTIC) exit(1);
       type = static_cast<int>(ElementType::_NONE);
     }

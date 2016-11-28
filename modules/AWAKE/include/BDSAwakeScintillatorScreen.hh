@@ -62,7 +62,6 @@ private:
   G4VSolid* itsCameraScoringPlaneSolid;
   G4VSolid* itsScreenScoringPlaneSolid;
                     
-  G4double itsOuterR;
   G4double itsXLength;
   G4double itsYLength;
 

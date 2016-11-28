@@ -27,6 +27,11 @@ BDSParser* BDSParser::Instance(std::string name)
   return instance;
 }
 
+bool BDSParser::IsInitialised()
+{
+  return instance ? true : false;
+}
+
 BDSParser::~BDSParser()
 {
   instance = nullptr;
