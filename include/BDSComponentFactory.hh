@@ -66,10 +66,13 @@ public:
 					      G4double angleOut);
 
   /// Prepare the recipe for magnet outer geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element);
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
+                          BDSMagnetStrength* st);
+
   /// Interface to other PrepareMagnetOuterInfo() for convenience to avoid preparing
   /// face normal vectors repeatedly.
   static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
+                            BDSMagnetStrength* st,
 						    const G4double angleIn,
 						    const G4double angleOut);
 

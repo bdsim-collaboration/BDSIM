@@ -59,7 +59,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
 						   st);
       // prepare one sbend segment
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
-      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn, -angleOut);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, -angleIn, -angleOut);
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 thename,
 					 length,
@@ -131,7 +131,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
 					       st);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -0.5*semiangle, -0.5*semiangle);
-  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -0.5*semiangle, -0.5*semiangle);
+  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, -0.5*semiangle, -0.5*semiangle);
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
 					  centralName,
 					  semilength,
@@ -151,7 +151,7 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
   
   BDSMagnetType magType = BDSMagnetType::sectorbend;
   // check magnet outer info
-  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element,angleIn,angleOut);
+  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element,st,angleIn,angleOut);
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semilength, semiangle,
 						      magnetOuterInfoCheck->outerDiameter,
 						      thename);
@@ -358,7 +358,7 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
 					       st);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
-  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
+  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
   BDSMagnet* oneBend = new BDSMagnet(magType,
 				     element->name,
 				     length,
@@ -402,7 +402,7 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
+  auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   //magnet total vertical aperture size
@@ -520,7 +520,7 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
   
   // Check for intersection of angled faces.
   G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
-  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element,angleIn,angleOut);
+  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
   G4double magnetRadius= 0.625*magnetOuterInfo->outerDiameter*CLHEP::mm;
   // Every geometry type has a completely arbitrary factor of 1.25 except cylindrical
   if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::cylindrical)

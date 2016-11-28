@@ -541,7 +541,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField);
 }
 
@@ -605,7 +605,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, st, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipolethin;
@@ -712,7 +712,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField,
 		       0,
 		       outerField);
@@ -932,7 +932,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       element->name,
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField,
 		       angle);
 }
@@ -967,7 +967,8 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
     }
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
+                                BDSMagnetStrength* st)
 {
   // input and output face angles
   G4double angleIn  = 0;
@@ -982,10 +983,11 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
       angleIn  = (element->angle*0.5) + element->e1;
       angleOut = (element->angle*0.5) + element->e2;
     }
-  return PrepareMagnetOuterInfo(element, angleIn, angleOut);
+  return PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
+                                BDSMagnetStrength* st,
 								const G4double angleIn,
 								const G4double angleOut)
 {
