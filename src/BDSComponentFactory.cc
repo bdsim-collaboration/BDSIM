@@ -413,11 +413,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 	}
     }
 
-  BDSMagnetStrength *st = new BDSMagnetStrength();
+  BDSMagnetStrength* st = new BDSMagnetStrength();
 
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  element->angle = angleAndField.first;
-  element->B     = angleAndField.second;
   (*st)["angle"] = -angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
