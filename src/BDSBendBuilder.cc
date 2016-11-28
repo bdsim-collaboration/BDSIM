@@ -432,16 +432,18 @@ BDSMagnet* BDS::BuildDipoleFringe(GMAD::Element*     element,
 		       nullptr);
 }
 
-G4int BDS::CalculateNSBendSegments(GMAD::Element const* element,
+G4int BDS::CalculateNSBendSegments(const G4double length,
+				   const G4double angle,
+				   const G4double e1,
+				   const G4double e2,
 				   const G4double aperturePrecision)
 {
   // Split a bend into equal segments such that the maximum distance between the
   // chord and arc is 1mm.
-
-  G4double length = element->l*CLHEP::m;
+  
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   // add poleface rotations onto angle as absolute number (just to be safe)
-  G4double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
+  G4double totalAngle = std::abs(angle) + std::abse1) + std::abs(e2);
   G4int nSBends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
   if (nSBends==0)
     {nSBends = 1;} // can happen in case angle = 0

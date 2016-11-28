@@ -45,7 +45,10 @@ namespace BDS
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.
-  G4int CalculateNSBendSegments(GMAD::Element const* element,
+  G4int CalculateNSBendSegments(const G4double length,
+				const G4double angle,
+				const G4double e1 = 0,
+				const G4double e2 = 0,
 				const G4double aperturePrecision = 1.0);
 
   /// Thin magnet for dipole fringe field.
