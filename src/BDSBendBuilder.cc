@@ -438,7 +438,7 @@ G4int BDS::CalculateNSBendSegments(const G4double length,
   
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   // add poleface rotations onto angle as absolute number (just to be safe)
-  G4double totalAngle = std::abs(angle) + std::abse1) + std::abs(e2);
+  G4double totalAngle = std::abs(angle) + std::abs(e1) + std::abs(e2);
   G4int nSBends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
   if (nSBends==0)
     {nSBends = 1;} // can happen in case angle = 0
