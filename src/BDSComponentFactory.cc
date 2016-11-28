@@ -430,8 +430,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
 
-  G4double angleIn  = element->e1 - 0.5*element->angle;
-  G4double angleOut = element->e2 - 0.5*element->angle;
+  G4double angleIn  = 0.5*(*st)["angle"] + element->e1*CLHEP::rad;
+  G4double angleOut = 0.5*(*st)["angle"] + element->e2*CLHEP::rad;
 
 
   BDSLine *sbendline = BDS::BuildSBendLine(element,
@@ -484,7 +484,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
   element->angle = angleAndField.first;
   element->B     = angleAndField.second;
-  (*st)["angle"] = angleAndField.first;
+  (*st)["angle"] = -angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
@@ -980,8 +980,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
     }
   else if (element->type == ElementType::_SBEND)
     {
-      angleIn  = (element->angle*0.5) + element->e1;
-      angleOut = (element->angle*0.5) + element->e2;
+      angleIn  = (-(*st)["angle"]*0.5) + element->e1*CLHEP::rad;
+      angleOut = (-(*st)["angle"]*0.5) + element->e2*CLHEP::rad;
     }
   return PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
 }
