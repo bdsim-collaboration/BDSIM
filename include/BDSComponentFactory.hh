@@ -66,13 +66,13 @@ public:
 					      G4double angleOut);
 
   /// Prepare the recipe for magnet outer geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
-                          BDSMagnetStrength* st);
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+						    const BDSMagnetStrength* st);
 
   /// Interface to other PrepareMagnetOuterInfo() for convenience to avoid preparing
   /// face normal vectors repeatedly.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
-                            BDSMagnetStrength* st,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+						    const BDSMagnetStrength* st,
 						    const G4double angleIn,
 						    const G4double angleOut);
 
@@ -85,7 +85,7 @@ public:
 
   /// Check whether the pole face rotation angles are too big for practical construction.
   static void PoleFaceRotationsNotTooLarge(GMAD::Element const* element,
-					   G4double       maxAngle = 0.5*CLHEP::halfpi);
+					   G4double maxAngle = 0.5*CLHEP::halfpi);
   
 private:
   /// length safety from global constants

@@ -963,8 +963,8 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
     }
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
-                                BDSMagnetStrength* st)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+								const BDSMagnetStrength* st)
 {
   // input and output face angles
   G4double angleIn  = 0;
@@ -982,8 +982,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
   return PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
-                                BDSMagnetStrength* st,
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+								const BDSMagnetStrength* st,
 								const G4double angleIn,
 								const G4double angleOut)
 {
