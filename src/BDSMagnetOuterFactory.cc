@@ -137,12 +137,12 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     case BDSMagnetType::sectorbend:
       outer = CreateSectorBend(geometryType,name,outerLength,beampipe,
 			       outerDiameter,chordLength,outerInfo->angleIn,
-			       outerInfo->angleOut,outerMaterial);
+			       outerInfo->angleOut,outerInfo->yokeOnLeft,outerMaterial);
       break;
     case BDSMagnetType::rectangularbend:
       outer = CreateRectangularBend(geometryType,name,outerLength,beampipe,
 				    outerDiameter,chordLength,outerInfo->angleIn,
-				    outerInfo->angleOut,outerMaterial);
+				    outerInfo->angleOut,outerInfo->yokeOnLeft,outerMaterial);
       break;
     case BDSMagnetType::sextupole:
       outer = CreateSextupole(geometryType,name,outerLength,beampipe,
