@@ -77,11 +77,10 @@ BDSLine* BDS::BuildSBendLine(Element*           element,
     }
   
   //calculate their angles and length
-  G4double semiangle  = -element->angle / (G4double) nSBends;
+  G4double semiangle  = (*st)["angle"];
   G4double semilength = length / (G4double) nSBends;
-  G4double rho        = element->l*CLHEP::m/element->angle;
+  G4double rho        = -element->l*CLHEP::m/((*st)["angle"] * nSBends);
   
-  angle      = element->angle;
   angleIn    = element->e1*CLHEP::rad;
   angleOut   = element->e2*CLHEP::rad;
   
@@ -276,10 +275,10 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   
   BDSComponentFactory::PoleFaceRotationsNotTooLarge(element);
   
-  G4double angle       = element->angle;
+  G4double angle       = -(*st)["angle"];
   G4double length      = element->l*CLHEP::m;
   G4String thename     = element->name;
-  G4double rho         = element->l*CLHEP::m/element->angle;
+  G4double rho         = element->l*CLHEP::m/angle;
   G4bool prevModifies  = false;
   G4bool nextModifies  = false;
   
@@ -298,12 +297,12 @@ BDSLine* BDS::BuildRBendLine(Element*           element,
   // poleface angles and main element angles are modified if next/previous is an rbend
   if ((prevElement) && (prevElement->type == ElementType::_RBEND))
     {
-      polefaceAngleIn -= 0.5*element->angle;
+      polefaceAngleIn += 0.5*(*st)["angle"];
       angleIn += 0.5*(thinElementLength)/rho;
     }
   if ((nextElement) && (nextElement->type == ElementType::_RBEND))
     {
-      polefaceAngleOut -= 0.5*element->angle;
+      polefaceAngleOut += 0.5*(*st)["angle"];
       angleOut += 0.5*(thinElementLength)/rho;
     }
   
@@ -442,7 +441,7 @@ G4int BDS::CalculateNSBendSegments(GMAD::Element const* element,
   G4double length = element->l*CLHEP::m;
   // from formula: L/2 / N tan (angle/N) < precision. (L=physical length)
   // add poleface rotations onto angle as absolute number (just to be safe)
-  G4double totalAngle = std::abs(element->angle) + std::abs(element->e1) + std::abs(element->e2);
+  G4double totalAngle = std::abs((*st)["angle"]) + std::abs(element->e1) + std::abs(element->e2);
   G4int nSBends = (G4int) ceil(std::sqrt(length*totalAngle/2/aperturePrecision));
   if (nSBends==0)
     {nSBends = 1;} // can happen in case angle = 0
@@ -470,9 +469,9 @@ BDSMagnet* BDS::BuildSBendWedge(Element*           element,
   
   //calculate their angles and length
   G4double length     = element->l*CLHEP::m;
-  G4double semiangle  = -element->angle / (G4double) nSBends;
+  G4double semiangle  = -(*st)["angle"];
   G4double semilength = length / (G4double) nSBends;
-  G4double rho        = element->l*CLHEP::m/element->angle;
+  G4double rho        = element->l*CLHEP::m/ (semiangle * nSBends);
   
   // angle increment for sbend elements with poleface rotation(s) specified
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
