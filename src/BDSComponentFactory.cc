@@ -96,7 +96,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   G4bool registered = false;
   // Used for multiple instances of the same element but different poleface rotations.
   // Ie only a drift is modified to match the pole face rotation of a magnet.
-  G4bool willModify = false;
+  G4bool differentFromDefinition = false;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
@@ -125,24 +125,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 	}
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-	{willModify = true;}
+	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_RBEND)
     {
       // angleIn and angleOut have to be multiplied by minus one for rbends for
       // some reason. Cannot figure out why yet.
-      angleIn  = -1.0 * element->e1;
-      angleOut = -1.0 * element->e2;
+      angleIn  = -1.0 * element->e1 * CLHEP::rad;
+      angleOut = -1.0 * element->e2 * CLHEP::rad;
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
         {
-          willModify = true;
+          differentFromDefinition = true;
           std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
           angleOut += 0.5*angleAndField.first;
         }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
         {
-          willModify = true;
+          differentFromDefinition = true;
           std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
           angleIn += 0.5*angleAndField.first;
         }
@@ -150,36 +150,36 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   else if (element->type == ElementType::_THINMULT)
     {
       if (nextElement && (BDS::IsFinite(nextElement->e1)))
-      {
-        angleIn += nextElement->e1 * CLHEP::rad;
-        willModify  = true;
-      }
+	{
+	  angleIn += nextElement->e1 * CLHEP::rad;
+	  differentFromDefinition  = true;
+	}
       else if (prevElement && (BDS::IsFinite(prevElement->e2)))
-      {
-        angleIn -= prevElement->e2 * CLHEP::rad;
-        willModify  = true;
-      }
+	{
+	  angleIn -= prevElement->e2 * CLHEP::rad;
+	  differentFromDefinition  = true;
+	}
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-      {
-        willModify = true;
-        std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
-        angleIn += 0.5*angleAndField.first;
-      }
+	{
+	  differentFromDefinition = true;
+	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
+	  angleIn += 0.5*angleAndField.first;
+	}
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-      {
-        willModify = true;
-        std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
-        angleIn -= 0.5*angleAndField.first;
-      }
+	{
+	  differentFromDefinition = true;
+	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
+	  angleIn -= 0.5*angleAndField.first;
+	}
     }
-
+  
   // Check if the component already exists and return that.
   // Don't use the registry for output elements since reliant on unique name
   // this cannot apply for sbends as it now uses individual wedge component
   // registration logic in BDSBendBuilder rather than the element as a whole.
 
   // TBC - this is difficult to understand.  Also, why not RBEND too?
-  if (registered && !willModify && (element->type != ElementType::_SBEND))
+  if (registered && !differentFromDefinition && (element->type != ElementType::_SBEND))
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -274,7 +274,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory
-      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,willModify);
+      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,differentFromDefinition);
     }
   
   return component;
