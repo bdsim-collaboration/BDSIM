@@ -2,7 +2,6 @@
 #include "G4RotationMatrix.hh"
 
 #include "BDSAcceleratorComponent.hh"
-#include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSBeamPipeInfo.hh"
 #include "BDSBendBuilder.hh"
 #include "BDSComponentFactory.hh"
@@ -137,12 +136,6 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 					  vacuumField,
 					  semiangle);
   
-  centralWedge->SetBiasVacuumList(element->biasVacuumList);
-  centralWedge->SetBiasMaterialList(element->biasMaterialList);
-  centralWedge->SetRegion(element->region);
-  centralWedge->Initialise();
-  BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(centralWedge,false);
-  
   //oneBend can be accComp or BDSMagnet depending on registration/reusage or new magnet
   BDSAcceleratorComponent* oneBend = nullptr;
   
@@ -224,9 +217,6 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
         }
       else
         {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
-      
-      oneBend->SetBiasVacuumList(element->biasVacuumList);
-      oneBend->SetBiasMaterialList(element->biasMaterialList);
       sbendline->AddComponent(oneBend);
       
 #ifdef BDSDEBUG
