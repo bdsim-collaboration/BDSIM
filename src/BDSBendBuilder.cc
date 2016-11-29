@@ -156,7 +156,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   delete magnetOuterInfoCheck;
   
   // first element should be fringe if poleface specified
-  if (BDS::IsFinite(angleIn) && includeFringe)
+  if (BDS::IsFinite(e1) && includeFringe) // note angleIn is always non zero for non-zero bend
     {
       BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength();
       (*fringeStIn)["field"]         = (*st)["field"];
