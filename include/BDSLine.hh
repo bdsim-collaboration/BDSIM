@@ -7,7 +7,7 @@
 #include <vector>
 
 /**
- * @brief a class that hold multiple accelerator components
+ * @brief A class that hold multiple accelerator components.
  * 
  * Not physically used in Geant4, only as placeholder.
  * Therefore virtual methods are not specified, but could be in the future.
@@ -47,11 +47,18 @@ public:
 
   /// Accessor for part - exposes functionality of the vector for iteration by index.
   BDSAcceleratorComponent * const& operator[](G4int index) const {return line.at(index);}
-
   
   /// Override the BDSAccelerator::Initialise() function to loop over the
   /// line and call that function belonging to each member
   virtual void Initialise();
+
+  /// @{ Copy the bias list to each component.
+  virtual void SetBiasVacuumList(std::list<std::string> biasVacuumList);
+  virtual void SetBiasMaterialList(std::list<std::string> biasMaterialList);
+  /// @}
+
+  /// Set the region name for each component.
+  virtual void SetRegion(G4String region);
 
 private:
   /// define pure virtual method
