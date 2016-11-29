@@ -34,8 +34,8 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   const G4double    angle = (*st)["angle"];
   const G4double       e1 = element->e1 * CLHEP::rad;
   const G4double       e2 = element->e2 * CLHEP::rad;
-  const G4double  angleIn = e1 - 0.5 * angle;
-  const G4double angleOut = e2 - 0.5 * angle;
+  const G4double  angleIn = 0.5 * angle + e1;
+  const G4double angleOut = 0.5 * angle + e2;
   
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -77,7 +77,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
     }
   
   //calculate their angles and length
-  G4double semiangle  = -angle / (G4double) nSBends; // why introduce -ve here?
+  G4double semiangle  = angle  / (G4double) nSBends;
   G4double semilength = length / (G4double) nSBends;
   G4double rho        = length / angle;
   
