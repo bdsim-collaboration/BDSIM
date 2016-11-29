@@ -1171,6 +1171,14 @@ G4String BDSComponentFactory::PrepareColour(Element const* element, const G4Stri
 void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 					      BDSAcceleratorComponent* component) const
 {
+  // Test for a line. And if so apply to each sub-component.
+  // TBC - for a sbend split into segments, a BDSLine would be used - how would setting
+  // an outer magnetic field work for this??
+  if (BDSLine* line = dynamic_cast<BDSLine*>(component))
+    {
+      for (auto comp : *line)
+	{SetFieldDefinitions(element, comp);}
+    }
   if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(component))
     {
       if (!(element->fieldAll.empty()))
