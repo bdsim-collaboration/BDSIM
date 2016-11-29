@@ -58,7 +58,7 @@ namespace GMAD
       }
       catch(std::runtime_error) {
 	// not implemented mad parameters will be ignored
-	if (property == "hgap" || property == "harmon" || property == "lag" || property == "volt")
+	if (property == "harmon" || property == "lag" || property == "volt")
 	  {return;}
 	
 	std::cerr << "Error: element> unknown option \"" << property << "\" with value " << value  << std::endl;
