@@ -174,12 +174,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     }
   
   // Check if the component already exists and return that.
-  // Don't use the registry for output elements since reliant on unique name
-  // this cannot apply for sbends as it now uses individual wedge component
-  // registration logic in BDSBendBuilder rather than the element as a whole.
-
-  // TBC - this is difficult to understand.  Also, why not RBEND too?
-  if (registered && !differentFromDefinition && (element->type != ElementType::_SBEND))
+  // Don't use the registry for output elements since reliant on unique name.
+  if (registered && !differentFromDefinition)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
