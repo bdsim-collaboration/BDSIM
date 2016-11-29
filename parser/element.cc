@@ -71,6 +71,7 @@ void Element::PublishMembers()
   publish("e2",&Element::e2);
   publish("fint",&Element::fint);
   publish("fintx",&Element::fintx);
+  publish("hgap", &Element::hgap);
   publish("offsetX",&Element::offsetX);
   publish("offsetY",&Element::offsetY);
   publish("x",&Element::xdir);
@@ -321,6 +322,7 @@ void Element::flush() {
   e2 = 0;
   fint = 0;
   fintx = 0;
+  hgap  = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
