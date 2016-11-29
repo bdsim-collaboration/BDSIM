@@ -169,54 +169,43 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   // reuse central wedge for all wedges of in/out half if no poleface angle(s)
   // if small poleface, new first/last wedge, reuse central wedge for remainder of in/out half
   // otherwise fade in/out faces for all wedges in app. halves.
-  
-  for (int i = 0; i < nSBends; ++i)
+  // 'central' one is definitely used for the central part, but also it's just a segment
+  // with even incoming and outgoing face angles w.r.t. the chord.
+  for (G4int i = 0; i < nSBends; ++i)
     {
       G4String thename = name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
-      if (BDSAcceleratorComponentRegistry::Instance()->IsRegistered(thename))
-        {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(thename);}
-      else if (i < 0.5*(nSBends-1))
-        {
-          if (!BDS::IsFinite(e1))
-            {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
-          else if (fadeIn)
-            {
-              oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
-              BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
-            }
+      if (i < 0.5*(nSBends-1))
+        {// first half of magnet
+          if (!BDS::IsFinite(e1)) // no pole face rotation so just repeat central segment
+            {oneBend = centralWedge;}
+          else if (fadeIn) // build incremented angled segment
+            {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
           else
-            {
-              if (i == 0)
-                {
-                  oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
-                  BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
-                }
-              else
-                {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
+            {// finite pole face, but not strong so build one angled, then repeat the rest to save memory
+              if (i == 0) // the first one is unique
+                {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
+              else // others afterwards are a repeat of the even angled one
+                {oneBend = centralWedge;}
             }
         }
       else if (i > 0.5*(nSBends-1))
-        {
-          if (!BDS::IsFinite(e2))
-            {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
-          else if (fadeOut)
-            {
-              oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
-              BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
-            }
+        {// second half of magnet
+          if (!BDS::IsFinite(e2)) // no pole face rotation so just repeat central segment
+            {oneBend = centralWedge;}
+          else if (fadeOut) // build incremented angled segment
+            {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
           else
-            {
-              if (i == (nSBends-1))
-                {
-                  oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
-                  BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
-                }
-              else
-                {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
+            {// finite pole face, but not strong so build only one unique angled on output face
+              if (i == (nSBends-1)) // one from end - TBC - why isn't this the last one?
+                {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
+              else // after central, but before unique end piece - even angled.
+                {oneBend = centralWedge;}
             }
         }
-      else
-        {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
+      else // the middle piece
+        {oneBend = centralWedge;}
+
+      // append to the line
       sbendline->AddComponent(oneBend);
       
 #ifdef BDSDEBUG
@@ -407,7 +396,6 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element* element,
   else
     {vertGap = beamPipeInfo->aper2;}
   (*st)["fringecorr"] *= vertGap;
-
 
   BDSIntegratorType intType = integratorSet->dipolefringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
