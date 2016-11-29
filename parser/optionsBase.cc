@@ -40,8 +40,6 @@ OptionsBase::OptionsBase()
   recreateFileName      = "";
   startFromEvent        = 0;
   writeSeedState        = false;
-  useASCIISeedState     = false;
-  seedStateFileName     = "";
   generatePrimariesOnly = false;
   exportGeometry        = false;
   exportType            = "gdml";
@@ -65,7 +63,6 @@ OptionsBase::OptionsBase()
   recreateSeedState     = true;
 
   elossHistoBinWidth      = 1.0; // m
-  elossHistoTransBinWidth = 0.1;
   
   ffact                 = 1.0;
   beamEnergy            = 0.0;
@@ -187,7 +184,6 @@ OptionsBase::OptionsBase()
   turnOnMieScattering      = true;
   turnOnRayleighScattering = true;
   turnOnOpticalSurface     = true;
-  turnOnBirksSaturation    = true;
   scintYieldFactor         = 1.0;
   thresholdCutCharged      = 0.0;
   thresholdCutPhotons      = 0.0;
@@ -205,7 +201,6 @@ OptionsBase::OptionsBase()
   integratorSet            = "bdsim";
   lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
   maximumTrackingTime      = 0.1;
-  deltaChord               = 0.00001; // m
   chordStepMinimum         = 0.000001;// m
   deltaIntersection        = 0.00001;
   minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0
@@ -248,6 +243,5 @@ void OptionsBase::print() const
   std::cout<<"Mie scattering on     : " << turnOnMieScattering      << std::endl;
   std::cout<<"Rayleigh scatering on : " << turnOnRayleighScattering << std::endl;
   std::cout<<"Optical surface on    : " << turnOnOpticalSurface     << std::endl;
-  std::cout<<"Birks saturation on   : " << turnOnBirksSaturation    << std::endl;
 }
 

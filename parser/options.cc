@@ -54,8 +54,6 @@ void Options::PublishMembers()
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
   publish("writeSeedState",        &Options::writeSeedState);
-  publish("useASCIISeedState",     &Options::useASCIISeedState);
-  publish("seedStateFileName",     &Options::seedStateFileName);
   publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
   publish("exportGeometry",        &Options::exportGeometry);
@@ -80,7 +78,6 @@ void Options::PublishMembers()
   publish("recreateSeedState", &Options::recreateSeedState);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
-  publish("elossHistoTransBinWidth",&Options::elossHistoTransBinWidth);
   publish("defaultRangeCut",&Options::defaultRangeCut);
   publish("ffact",&Options::ffact);
   publish("bv",   &Options::ffact); // MadX naming
@@ -253,7 +250,6 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
-  publish("deltaChord",         &Options::deltaChord);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
@@ -266,7 +262,6 @@ void Options::PublishMembers()
   publish("turnOnMieScattering",&Options::turnOnMieScattering);
   publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);
   publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
-  publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
   publish("lengthSafety",&Options::lengthSafety);
 

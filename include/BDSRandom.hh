@@ -21,9 +21,6 @@ namespace BDSRandom
   /// Get the current full seed state as a string.
   G4String GetSeedState();
 
-  /// Load a seedstate.txt file and restore the engine to this status.
-  void LoadSeedState (G4String inSeedFilename);
-
   /// Set the seed state from a string.
   void SetSeedState(G4String seedState);
   void SetSeedState(std::stringstream& seedState);
