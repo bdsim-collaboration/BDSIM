@@ -297,6 +297,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       (*fringeStIn)["length"]        = thinElementLength;
       (*fringeStIn)["angle"]         = -thinElementLength/rho;
       (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho, e1, element->fint);
+      (*fringeStIn)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
       thename                        = name + "_e1_fringe";
       G4double fringeAngle           = polefaceAngleIn;
       
@@ -361,6 +362,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       (*fringeStOut)["length"]        = thinElementLength;
       (*fringeStOut)["angle"]         = -thinElementLength / rho;
       (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho, e2, element->fintx);
+      (*fringeStOut)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
       thename                         = name + "_e2_fringe";
       G4double fringeAngle            = polefaceAngleOut;
       
@@ -386,16 +388,6 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element* element,
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
-
-  //magnet total vertical aperture size
-  G4double vertGap = 0;
-  if (element->apertureType == "racetrack")
-    {vertGap = beamPipeInfo->aper3 + beamPipeInfo->aper2;}
-  else if ((element->apertureType == "circular") || (element->apertureType ==""))
-    {vertGap = beamPipeInfo->aper1;}
-  else
-    {vertGap = beamPipeInfo->aper2;}
-  (*st)["fringecorr"] *= vertGap;
 
   BDSIntegratorType intType = integratorSet->dipolefringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
