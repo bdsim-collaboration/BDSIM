@@ -444,7 +444,7 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   
   //calculate their angles and length
   G4double length     = element->l*CLHEP::m;
-  G4double semiangle  = -(*st)["angle"] / (G4double) nSBends;
+  G4double semiangle  = (*st)["angle"] / (G4double) nSBends;
   G4double semilength = length / (G4double) nSBends;
   G4double rho        = length / (*st)["angle"];
   
@@ -460,7 +460,9 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
     {length -= thinElementLength;}
   if ((BDS::IsFinite(element->e2)) && (index == nSBends-1) && includeFringe)
     {length -= thinElementLength;}
-  semiangle = -length/rho;
+
+  // overwritten length use to overwrite semiangle
+  semiangle = length/rho;
   
   G4double angleIn  = 0;
   G4double angleOut = 0;
@@ -472,13 +474,13 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
     {
       if (index < 0.5*(nSBends-1))
 	{
-	  angleIn  = -semiangle*0.5 - (element->e1 + (index*deltastart));
-	  angleOut = -semiangle*0.5 - ((0.5*(nSBends-3)-index)*deltastart);
+	  angleIn  = semiangle*0.5 - (element->e1 + (index*deltastart));
+	  angleOut = semiangle*0.5 - ((0.5*(nSBends-3)-index)*deltastart);
 	}
       else if (index > 0.5*(nSBends-1))
 	{
-	  angleIn  = -semiangle*0.5 + (0.5*(nSBends+1)-index)*deltaend;
-	  angleOut = -semiangle*0.5 - (0.5*(nSBends-1)-index)*deltaend;
+	  angleIn  = semiangle*0.5 + (0.5*(nSBends+1)-index)*deltaend;
+	  angleOut = semiangle*0.5 - (0.5*(nSBends-1)-index)*deltaend;
 	}
     }
   
@@ -489,9 +491,9 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   
   //set face angles to default if faces do not fade.
   if (!fadeIn && (index == 0))
-    {angleOut = -0.5*semiangle;}
+    {angleOut = 0.5*semiangle;}
   if (!fadeOut && (index == (nSBends-1)))
-    {angleIn = -0.5*semiangle;}
+    {angleIn = 0.5*semiangle;}
   
   // Check for intersection of angled faces.
   G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
