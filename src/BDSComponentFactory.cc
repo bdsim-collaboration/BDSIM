@@ -957,16 +957,6 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   // input and output face angles
   G4double angleIn  = 0;
   G4double angleOut = 0;
-  if (element->type == ElementType::_RBEND)
-    {
-      angleIn  = -1.0*element->e1*CLHEP::rad;
-      angleOut = -1.0*element->e2*CLHEP::rad;
-    }
-  else if (element->type == ElementType::_SBEND)
-    {
-      angleIn  = (-(*st)["angle"]*0.5) + element->e1*CLHEP::rad;
-      angleOut = (-(*st)["angle"]*0.5) + element->e2*CLHEP::rad;
-    }
 
   G4bool yokeOnLeft;
   if (((*st)["angle"] < 0) && (element->yokeOnInside))
