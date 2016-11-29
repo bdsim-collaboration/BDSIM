@@ -589,7 +589,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, st, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipolethin;
@@ -954,25 +954,13 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
 								const BDSMagnetStrength* st)
 {
-  // input and output face angles
-  G4double angleIn  = 0;
-  G4double angleOut = 0;
-
-  G4bool yokeOnLeft;
-  if (((*st)["angle"] < 0) && (element->yokeOnInside))
-    {yokeOnLeft = true;}
-  else if (((*st)["angle"] > 0) && (!(element->yokeOnInside)))
-    {yokeOnLeft = true;}
-  else
-    {yokeOnLeft = false;}
-  
-  return PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
+  return PrepareMagnetOuterInfo(element, st, 0, 0);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+                                const BDSMagnetStrength* st,
 								const G4double angleIn,
-								const G4double angleOut,
-								const G4bool   yokeOnLeft)
+								const G4double angleOut)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
@@ -1014,8 +1002,16 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
   info->outerMaterial = outerMaterial;
 
-  info->yokeOnLeft = yokeOnLeft;
-      
+  // yoke on left calculation must be here. This is crucial for rbends and sbends
+  // which have face angles and must call this function.
+
+  if (((*st)["angle"] < 0) && (element->yokeOnInside))
+    {info->yokeOnLeft = true;}
+  else if (((*st)["angle"] > 0) && (!(element->yokeOnInside)))
+    {info->yokeOnLeft = true;}
+  else
+    {info->yokeOnLeft = false;}
+
   return info;
 }
 
