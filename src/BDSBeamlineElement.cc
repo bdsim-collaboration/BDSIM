@@ -80,9 +80,10 @@ BDSBeamlineElement::BDSBeamlineElement(BDSAcceleratorComponent* componentIn,
       // track->GetVolume(). empirically found good results with 2um (at least 1.5um)
       // however, this is too far for optical accuracy. Since tolerance was fixed at 1pm,
       // the sampler itself can be smaller and we no long need to back off so much.
-      dZLocal *= 0.5*BDSSamplerPlane::ChordLength();
+      G4double lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();
+      dZLocal *= 0.5*BDSSamplerPlane::ChordLength() - 3*lengthSafety;
       dZLocal.transform(*referenceRotationEnd);
-      G4ThreeVector samplerPosition = referencePositionEnd + dZLocal;
+      G4ThreeVector samplerPosition = referencePositionEnd - dZLocal;
       samplerPlacementTransform = new G4Transform3D(*referenceRotationEnd, samplerPosition);
     }
   else if (samplerType == BDSSamplerType::cylinder)
