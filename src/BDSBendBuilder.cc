@@ -446,7 +446,7 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   G4double length     = element->l*CLHEP::m;
   G4double semiangle  = -(*st)["angle"] / (G4double) nSBends;
   G4double semilength = length / (G4double) nSBends;
-  G4double rho        = element->l*CLHEP::m/ (semiangle * nSBends); // semi-rho
+  G4double rho        = length / (*st)["angle"];
   
   // angle increment for sbend elements with poleface rotation(s) specified
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
