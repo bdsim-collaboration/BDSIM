@@ -45,8 +45,8 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       // if line then also add constituents
       if (BDSLine* line = dynamic_cast<BDSLine*>(component))
 	{
-	  for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	    {allocatedComponents.push_back(*i);}
+	  for (const auto element : *line)
+	    {allocatedComponents.push_back(element);}
 	}
       return;
     }
@@ -67,8 +67,8 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       // register the line object itself
       registry[component->GetName()] = component;
       // now add all the components of the line individually using this very function
-      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	{RegisterComponent(*i,isModified);}
+      for (const auto element : *line)
+	{RegisterComponent(element, false);}
     }
   else
     {
