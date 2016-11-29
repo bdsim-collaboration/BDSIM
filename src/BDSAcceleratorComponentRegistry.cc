@@ -33,9 +33,12 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
   _instance = nullptr;
 }
 
-void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component, bool isModified)
+void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component,
+							bool isModified)
 {
-  // if modified then store in vector and return
+  // If the component was modified beyond its original element definition in the parser,
+  // ie a drift was modified to match a pole face of a bend, then store if for memory
+  // management, but not in the registry
   if (isModified)
     {
       allocatedComponents.push_back(component);
