@@ -84,9 +84,9 @@ BDSComponentFactory::~BDSComponentFactory()
   delete BDSMagnetOuterFactory::Instance();
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-							      Element* prevElementIn,
-							      Element* nextElementIn)
+BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
+							      Element const* prevElementIn,
+							      Element const* nextElementIn)
 {
   element = elementIn;
   prevElement = prevElementIn;
@@ -529,7 +529,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField);
 }
 
@@ -593,7 +593,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, st, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipolethin;
@@ -700,7 +700,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField,
 		       0,
 		       outerField);
@@ -920,12 +920,12 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       element->name,
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField,
 		       angle);
 }
 
-G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
+G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element)
 {
   if(element->l*CLHEP::m < 1e-7)
     {
@@ -940,7 +940,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-void BDSComponentFactory::PoleFaceRotationsNotTooLarge(const Element* element,
+void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 						       G4double maxAngle)
 {
   if (std::abs(element->e1) > maxAngle)
@@ -955,7 +955,8 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(const Element* element,
     }
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element)
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+								const BDSMagnetStrength* st)
 {
   // input and output face angles
   G4double angleIn  = 0;
@@ -967,13 +968,14 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
     }
   else if (element->type == ElementType::_SBEND)
     {
-      angleIn  = (element->angle*0.5) + element->e1;
-      angleOut = (element->angle*0.5) + element->e2;
+      angleIn  = (-(*st)["angle"]*0.5) + element->e1*CLHEP::rad;
+      angleOut = (-(*st)["angle"]*0.5) + element->e2*CLHEP::rad;
     }
-  return PrepareMagnetOuterInfo(element, angleIn, angleOut);
+  return PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+								const BDSMagnetStrength* st,
 								const G4double angleIn,
 								const G4double angleOut)
 {
@@ -1017,9 +1019,9 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
   info->outerMaterial = outerMaterial;
 
-  if ((element->angle < 0) && (element->yokeOnInside))
+  if (((*st)["angle"] < 0) && (element->yokeOnInside))
     {info->yokeOnLeft = true;}
-  else if ((element->angle > 0) && (!(element->yokeOnInside)))
+  else if (((*st)["angle"] > 0) && (!(element->yokeOnInside)))
     {info->yokeOnLeft = true;}
   else
     {info->yokeOnLeft = false;}

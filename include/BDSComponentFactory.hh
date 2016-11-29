@@ -40,9 +40,9 @@ public:
 
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
-					   GMAD::Element* prevElementIn,
-					   GMAD::Element* nextElementIn);
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
+					   GMAD::Element const* prevElementIn,
+					   GMAD::Element const* nextElementIn);
   
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
@@ -66,10 +66,13 @@ public:
 					      G4double angleOut);
 
   /// Prepare the recipe for magnet outer geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element);
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+						    const BDSMagnetStrength* st);
+
   /// Interface to other PrepareMagnetOuterInfo() for convenience to avoid preparing
   /// face normal vectors repeatedly.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+						    const BDSMagnetStrength* st,
 						    const G4double angleIn,
 						    const G4double angleOut);
 
@@ -101,11 +104,11 @@ private:
   ///@}
 
   /// element for storing instead of passing around
-  GMAD::Element* element = nullptr;
+  GMAD::Element const* element = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* prevElement = nullptr;
+  GMAD::Element const* prevElement = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* nextElement = nullptr;
+  GMAD::Element const* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
@@ -140,7 +143,7 @@ private:
 			  G4double angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
-  G4bool HasSufficientMinimumLength(GMAD::Element* element);
+  G4bool HasSufficientMinimumLength(GMAD::Element const* element);
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.
