@@ -324,15 +324,18 @@ typically split into several co-joined `sbend` magnets, the number depending on 
 length and bending angle. Pole face rotations can be applied to both the input
 and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`angle`           angle [rad]                  0           yes, or `B`
-`B`               magnetic field [T]           0           yes
-`e1`              input poleface angle [rad]   0           no
-`e2`              output poleface angle [rad]  0           no
-`material`        magnet outer material        Iron        no
-================  ===========================  ==========  ===========
+================  ====================================  ==========  ===========
+parameter         description                           default     required
+`l`               length [m]                            0           yes
+`angle`           angle [rad]                           0           yes, or `B`
+`B`               magnetic field [T]                    0           yes
+`e1`              input poleface angle [rad]            0           no
+`e2`              output poleface angle [rad]           0           no
+`material`        magnet outer material                 Iron        no
+`fint`            fringe field integral for exit face   0           no
+`fintx`           fringe field integral for entrance    0           no
+`hgap`            vertical gap for fringe field [m]     0           no
+================  ====================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -354,9 +357,12 @@ parameter         description                  default     required
 	  :math:`2 \tan(\mathrm{eX})`.
 
 .. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
-      fringefield element can be set by the option `thinElementLength` (see `options`_).
+	  specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+	  at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+	  fringefield element can be set by the option `thinElementLength` (see `options`_).
+
+.. note:: Unlike MADX, `fint` is used exclusively for the input face fringe field integral and `fintx` for
+	  the exit face.  
 
 Examples::
 
