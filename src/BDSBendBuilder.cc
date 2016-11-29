@@ -474,13 +474,13 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
     {
       if (index < 0.5*(nSBends-1))
 	{
-	  angleIn  = semiangle*0.5 - (element->e1 + (index*deltastart));
-	  angleOut = semiangle*0.5 - ((0.5*(nSBends-3)-index)*deltastart);
+	  angleIn  = -semiangle*0.5 - (element->e1 + (index*deltastart));
+	  angleOut = -semiangle*0.5 - ((0.5*(nSBends-3)-index)*deltastart);
 	}
       else if (index > 0.5*(nSBends-1))
 	{
-	  angleIn  = semiangle*0.5 + (0.5*(nSBends+1)-index)*deltaend;
-	  angleOut = semiangle*0.5 - (0.5*(nSBends-1)-index)*deltaend;
+	  angleIn  = -semiangle*0.5 + (0.5*(nSBends+1)-index)*deltaend;
+	  angleOut = -semiangle*0.5 - (0.5*(nSBends-1)-index)*deltaend;
 	}
     }
   
@@ -491,9 +491,9 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   
   //set face angles to default if faces do not fade.
   if (!fadeIn && (index == 0))
-    {angleOut = 0.5*semiangle;}
+    {angleOut = -0.5*semiangle;}
   if (!fadeOut && (index == (nSBends-1)))
-    {angleIn = 0.5*semiangle;}
+    {angleIn = -0.5*semiangle;}
   
   // Check for intersection of angled faces.
   G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
