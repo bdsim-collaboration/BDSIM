@@ -593,7 +593,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, st, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipolethin;
@@ -971,13 +971,22 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
       angleIn  = (-(*st)["angle"]*0.5) + element->e1*CLHEP::rad;
       angleOut = (-(*st)["angle"]*0.5) + element->e2*CLHEP::rad;
     }
-  return PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
+
+  G4bool yokeOnLeft;
+  if (((*st)["angle"] < 0) && (element->yokeOnInside))
+    {yokeOnLeft = true;}
+  else if (((*st)["angle"] > 0) && (!(element->yokeOnInside)))
+    {yokeOnLeft = true;}
+  else
+    {yokeOnLeft = false;}
+  
+  return PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-								const BDSMagnetStrength* st,
 								const G4double angleIn,
-								const G4double angleOut)
+								const G4double angleOut,
+								const G4bool   yokeOnLeft)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
 
@@ -1019,12 +1028,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
   info->outerMaterial = outerMaterial;
 
-  if (((*st)["angle"] < 0) && (element->yokeOnInside))
-    {info->yokeOnLeft = true;}
-  else if (((*st)["angle"] > 0) && (!(element->yokeOnInside)))
-    {info->yokeOnLeft = true;}
-  else
-    {info->yokeOnLeft = false;}
+  info->yokeOnLeft = yokeOnLeft;
       
   return info;
 }

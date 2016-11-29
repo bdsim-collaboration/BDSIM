@@ -65,16 +65,20 @@ public:
 					      G4double angleIn,
 					      G4double angleOut);
 
-  /// Prepare the recipe for magnet outer geometry.
+  /// Prepare the recipe for magnet outer geometry for an element. This uses a
+  /// strength instance which (we assume) represents the element and is used to determine
+  /// the exact angles for the incoming and outgoing faces as well as which side the yok
+  /// is on.
   static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
 						    const BDSMagnetStrength* st);
 
-  /// Interface to other PrepareMagnetOuterInfo() for convenience to avoid preparing
-  /// face normal vectors repeatedly.
+  /// Prepare magnet outer info - a recipe for a piece of outer magnet geometry. The angle
+  /// in and out are the face angles relative to a chord for a straight section of outer
+  /// magnet geometry.
   static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
-						    const BDSMagnetStrength* st,
 						    const G4double angleIn,
-						    const G4double angleOut);
+						    const G4double angleOut,
+						    const G4bool   yokeOnLeft = false);
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
