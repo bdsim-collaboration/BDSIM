@@ -60,17 +60,17 @@ namespace BDS
 			       G4double           brho,
 			       const BDSIntegratorSet* integratorSet);
 
-  /// Function to return a new magnet wedge for use in an sbend.
-  /// The faces of each wedge are calculated as appropriate depending
+  /// Function to return a single secotr bend section.
+  /// The faces of each are calculated as appropriate depending
   /// on the poleface angle(s).
-  BDSMagnet* BuildSBendWedge(const GMAD::Element* element,
-			     G4bool             fadeIn,
-			     G4bool             fadeOut,
-			     G4int              index,
-			     G4int              nSBends,
-			     BDSMagnetStrength* st,
-			     G4double           brho,
-			     const BDSIntegratorSet* integratorSet);
+  BDSMagnet* BuildSBend(const GMAD::Element* element,
+			G4bool             fadeIn,
+			G4bool             fadeOut,
+			G4int              index,
+			G4int              nSBends,
+			BDSMagnetStrength* st,
+			G4double           brho,
+			const BDSIntegratorSet* integratorSet);
 
   /// Function to calculate the value of the fringe field correction term.
   G4double CalculateFringeFieldCorrection(G4double rho,

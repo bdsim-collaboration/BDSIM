@@ -188,14 +188,14 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeIn)
             {
-              oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
+              oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
               BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
             }
           else
             {
               if (i == 0)
                 {
-                  oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
+                  oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
                   BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
                 }
               else
@@ -208,14 +208,14 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
             {oneBend = BDSAcceleratorComponentRegistry::Instance()->GetComponent(centralName);}
           else if (fadeOut)
             {
-              oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
+              oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
               BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
             }
           else
             {
               if (i == (nSBends-1))
                 {
-                  oneBend = BDS::BuildSBendWedge(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
+                  oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);
                   BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(oneBend,false);
                 }
               else
@@ -460,14 +460,14 @@ G4int BDS::CalculateNSBendSegments(const G4double length,
   return nSBends;
 }
 
-BDSMagnet* BDS::BuildSBendWedge(const Element*     element,
-				G4bool             fadeIn,
-				G4bool             fadeOut,
-				G4int              index,
-				G4int              nSBends,
-				BDSMagnetStrength* st,
-				G4double           brho,
-				const BDSIntegratorSet* integratorSet)
+BDSMagnet* BDS::BuildSBend(const Element*     element,
+			   G4bool             fadeIn,
+			   G4bool             fadeOut,
+			   G4int              index,
+			   G4int              nSBends,
+			   BDSMagnetStrength* st,
+			   G4double           brho,
+			   const BDSIntegratorSet* integratorSet)
 {
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
