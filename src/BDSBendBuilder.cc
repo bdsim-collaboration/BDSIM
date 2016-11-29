@@ -239,7 +239,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
     }
   
   //Last element should be fringe if poleface specified
-  if (BDS::IsFinite(element->e2) && includeFringe)
+  if (BDS::IsFinite(e2) && includeFringe)
     {
       BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength();
       (*fringeStOut)["angle"]         = -thinElementLength/rho;
