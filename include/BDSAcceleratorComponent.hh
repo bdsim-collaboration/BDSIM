@@ -78,14 +78,14 @@ public:
   // Communal constructions tasks
   
   /// @{ Copy the bias list to this element
-  void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
+  virtual void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
   {biasVacuumList = biasVacuumListIn;}
-  void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
+  virtual void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
   {biasMaterialList = biasMaterialListIn;}
   /// @}
   
   /// Set the region name for this component.
-  void SetRegion(G4String regionIn) {region = regionIn;}
+  virtual void SetRegion(G4String regionIn) {region = regionIn;}
 
   /// Set the field definition for the whole component.
   void SetField(BDSFieldInfo* fieldInfoIn);
