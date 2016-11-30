@@ -76,10 +76,8 @@ rf { return RF; }
 rfcavity { return RF; }
 sbend { return SBEND; } 
 rbend {return RBEND; }
-hkick { return HKICK; }
-hkicker { return HKICK; }
-vkick { return VKICK; }
-vkicker { return VKICK; }
+hkicker { return HKICKER; }
+vkicker { return VKICKER; }
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }

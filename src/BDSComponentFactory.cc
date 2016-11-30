@@ -197,9 +197,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateSBend(); break;
   case ElementType::_RBEND:
     component = CreateRBend(angleIn, angleOut); break;
-  case ElementType::_HKICK:
+  case ElementType::_HKICKER:
     component = CreateKicker(false); break;
-  case ElementType::_VKICK:
+  case ElementType::_VKICKER:
     component = CreateKicker(true); break;
   case ElementType::_QUAD:
     component = CreateQuad(); break;
@@ -498,7 +498,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   auto angleAndField = CalculateAngleAndField(element);
-  // MADX definition is that +ve hkick (here angle) increases p_x, corresponding
+  // MADX definition is that +ve hkicker (here angle) increases p_x, corresponding
   // to deflection in +ve x, which is opposite to the convention of bends.
   // Hence -ve factor here.
   (*st)["angle"] = -angleAndField.first;
