@@ -281,7 +281,8 @@ void Element::print(int ident)const{
     }
 }
 
-void Element::flush() {
+void Element::flush()
+{
   type = ElementType::_NONE;
   name = "";
   l = 0;
