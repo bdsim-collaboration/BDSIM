@@ -517,7 +517,13 @@ vkick
 
 .. TODO: add picture
 
-`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`.
+`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. Either angle
+or the field `B` may be specified.  Unlike MADX, this is not a fractional momentum kick, but the angle of
+deflection.
+
+.. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
+	  coordinate system, this corresponds to a deflection in positive x, which is the opposite
+	  convention to that of an sector bend.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -531,7 +537,13 @@ hkick
 
 .. TODO: add picture
 
-`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`.
+`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. Either angle
+or the field `B` may be specified. Unlike MADX, this is not a fractional momentum kick, but the angle of
+deflection.
+
+.. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
+	  coordinate system, this corresponds to a deflection in positive y, which is the opposite
+	  convention to that of an sector bend that has been rotated.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
