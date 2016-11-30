@@ -290,6 +290,14 @@ void Element::flush() {
   k3 = 0;
   k4 = 0;
   angle = 0;
+  B = 0;
+  e1 = 0;
+  e2 = 0;
+  fint = 0;
+  fintx = 0;
+  hgap  = 0;
+  hkick = 0;
+  vkick = 0;
   
   // degrader
   numberWedges = 1;
@@ -319,12 +327,6 @@ void Element::flush() {
   ysize = 0;
   xsizeOut = 0;
   ysizeOut = 0;
-  B = 0;
-  e1 = 0;
-  e2 = 0;
-  fint = 0;
-  fintx = 0;
-  hgap  = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;
