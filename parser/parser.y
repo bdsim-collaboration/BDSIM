@@ -994,7 +994,7 @@ beam_parameters : option_parameters
 
 int yyerror(const char *s)
 {
-  std::cout << s << " at line " << GMAD::line_num << " (might not be exact!), file " << yyfilename << std::endl;
+  std::cout << s << " at line " << GMAD::line_num << " of file " << yyfilename << std::endl;
   std::cout << "symbol '" << yytext << "' unexpected" << std::endl;
   exit(1);
 }
