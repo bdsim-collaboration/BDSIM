@@ -35,6 +35,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   const G4double       e2 = element->e2 * CLHEP::rad;
   const G4double  angleIn = 0.5 * angle + e1;
   const G4double angleOut = 0.5 * angle + e2;
+  const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
   
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -57,7 +58,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 						   st);
       // prepare one sbend segment
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
-      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, -angleIn, -angleOut);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn, -angleOut, yokeOnLeft);
       mgInfo->name = thename;
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 thename,
@@ -126,7 +127,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 					       st);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -0.5*semiangle, -0.5*semiangle);
-  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, -0.5*semiangle, -0.5*semiangle);
+  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -0.5*semiangle, -0.5*semiangle, yokeOnLeft);
   mgInfo->name = centralName;
   BDSMagnet* centralWedge = new BDSMagnet(BDSMagnetType::sectorbend,
 					  centralName,
@@ -141,7 +142,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   
   BDSMagnetType magType = BDSMagnetType::sectorbend;
   // check magnet outer info
-  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element,st,angleIn,angleOut);
+  BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   BDSComponentFactory::CheckBendLengthAngleWidthCombo(semilength, semiangle,
 						      magnetOuterInfoCheck->outerDiameter,
 						      name + "_semi");
@@ -179,11 +180,11 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
           if (!BDS::IsFinite(e1)) // no pole face rotation so just repeat central segment
             {oneBend = centralWedge;}
           else if (fadeIn) // build incremented angled segment
-            {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
+            {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet, yokeOnLeft);}
           else
             {// finite pole face, but not strong so build one angled, then repeat the rest to save memory
               if (i == 0) // the first one is unique
-                {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
+                {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet, yokeOnLeft);}
               else // others afterwards are a repeat of the even angled one
                 {oneBend = centralWedge;}
             }
@@ -193,11 +194,11 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
           if (!BDS::IsFinite(e2)) // no pole face rotation so just repeat central segment
             {oneBend = centralWedge;}
           else if (fadeOut) // build incremented angled segment
-            {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
+            {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet, yokeOnLeft);}
           else
             {// finite pole face, but not strong so build only one unique angled on output face
               if (i == (nSBends-1)) // one from end - TBC - why isn't this the last one?
-                {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet);}
+                {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet, yokeOnLeft);}
               else // after central, but before unique end piece - even angled.
                 {oneBend = centralWedge;}
             }
@@ -258,6 +259,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   const G4double  rho = length / angle;
   const G4double   e1 = element->e1 * CLHEP::rad;
   const G4double   e2 = element->e2 * CLHEP::rad;
+  const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
 
   G4bool prevModifies  = false;
   G4bool nextModifies  = false;
@@ -340,7 +342,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 					       st);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
-  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
+  auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   mgInfo->name = element->name;
   BDSMagnet* oneBend = new BDSMagnet(magType,
 				     element->name,
@@ -386,7 +388,7 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element* element,
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
-  auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
+  auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->dipolefringe;
@@ -437,7 +439,8 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
 			   G4int              nSBends,
 			   BDSMagnetStrength* st,
 			   G4double           brho,
-			   const BDSIntegratorSet* integratorSet)
+			   const BDSIntegratorSet* integratorSet,
+			   const G4bool       yokeOnLeft)
 {
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
@@ -497,7 +500,7 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   
   // Check for intersection of angled faces.
   G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
-  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, st, angleIn, angleOut);
+  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   magnetOuterInfo->name = thename;
   G4double magnetRadius= 0.625*magnetOuterInfo->outerDiameter*CLHEP::mm;
   // Every geometry type has a completely arbitrary factor of 1.25 except cylindrical

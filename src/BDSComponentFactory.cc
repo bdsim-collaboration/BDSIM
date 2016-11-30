@@ -520,12 +520,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 					       st,
 					       true,
 					       fieldRotation);
+
+  G4bool yokeOnLeft = YokeOnLeft(element, st);
   
   return new BDSMagnet(t,
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element, st),
+		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
 		       vacuumField);
 }
 
@@ -589,7 +591,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 {
   BDSMagnetStrength* st = PrepareMagnetStrengthForMultipoles(element);
   BDSBeamPipeInfo* beamPipeInfo = PrepareBeamPipeInfo(element, -angleIn, angleIn);
-  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, st, -angleIn, angleIn);
+  BDSMagnetOuterInfo* magnetOuterInfo = PrepareMagnetOuterInfo(element, -angleIn, angleIn);
   magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
 
   BDSIntegratorType intType = integratorSet->multipolethin;
@@ -951,21 +953,35 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
     }
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-								const BDSMagnetStrength* st)
+G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
+				       const BDSMagnetStrength* st)
 {
-  return PrepareMagnetOuterInfo(element, st, 0, 0);
+  G4double angle = (*st)["angle"];
+  G4bool yokeOnLeft;
+  if ((angle < 0) && (element->yokeOnInside))
+    {yokeOnLeft = true;}
+  else if ((angle > 0) && (!(element->yokeOnInside)))
+    {yokeOnLeft = true;}
+  else
+    {yokeOnLeft = false;}
+  return yokeOnLeft;
 }
 
 BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
-                                const BDSMagnetStrength* st,
+								const BDSMagnetStrength* st)
+{
+  G4bool yokeOnLeft = YokeOnLeft(element,st);
+  G4double    angle = (*st)["angle"];
+  
+  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft);
+}
+
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
 								const G4double angleIn,
-								const G4double angleOut)
+								const G4double angleOut,
+								const G4bool   yokeOnLeft)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
-
-  // angle - we can't set here as we can't rely on the angle being specified in element
-  // as only the field may be specified. Therefore, must be set in above CreateXXXX methods
   
   // name
   info->name = element->name;
@@ -1002,15 +1018,8 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
   info->outerMaterial = outerMaterial;
 
-  // yoke on left calculation must be here. This is crucial for rbends and sbends
-  // which have face angles and must call this function.
-
-  if (((*st)["angle"] < 0) && (element->yokeOnInside))
-    {info->yokeOnLeft = true;}
-  else if (((*st)["angle"] > 0) && (!(element->yokeOnInside)))
-    {info->yokeOnLeft = true;}
-  else
-    {info->yokeOnLeft = false;}
+  // yoke direction
+  info->yokeOnLeft = yokeOnLeft;
 
   return info;
 }
