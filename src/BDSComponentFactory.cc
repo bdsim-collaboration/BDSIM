@@ -498,15 +498,18 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
   auto angleAndField = CalculateAngleAndField(element);
-  (*st)["angle"] = angleAndField.first;
-  (*st)["field"] = angleAndField.second;
+  // MADX definition is that +ve hkick (here angle) increases p_x, corresponding
+  // to deflection in +ve x, which is opposite to the convention of bends.
+  // Hence -ve factor here.
+  (*st)["angle"] = -angleAndField.first;
+  (*st)["field"] = -angleAndField.second;
   
   G4Transform3D fieldRotation = G4Transform3D();  
   BDSMagnetType t = BDSMagnetType::hkicker;
   if (isVertical)
     {
       t = BDSMagnetType::vkicker;
-      fieldRotation = G4RotateZ3D(CLHEP::halfpi);
+      fieldRotation = G4RotateZ3D(-CLHEP::halfpi);
     }
   
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
