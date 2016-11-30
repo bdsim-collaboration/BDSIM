@@ -63,7 +63,7 @@ set_tests_properties(gmad-overwriteVariableString PROPERTIES PASS_REGULAR_EXPRES
 
 # try to use an undeclared variable
 add_test(gmad-undeclaredVariable ${gmadBinary} undeclaredVariable.gmad)
-set_tests_properties(gmad-undeclaredVariable PROPERTIES WILL_FAIL 1)
+set_tests_properties(gmad-undeclaredVariable PROPERTIES PASS_REGULAR_EXPRESSION "is not declared")
 
 # recursive inclusion
 add_test(gmad-recursiveinclusion ${gmadBinary} recursiveinclusion.gmad)

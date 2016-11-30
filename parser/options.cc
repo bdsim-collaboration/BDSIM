@@ -54,6 +54,8 @@ void Options::PublishMembers()
   publish("recreateFileName",      &Options::recreateFileName);
   publish("startFromEvent",        &Options::startFromEvent);
   publish("writeSeedState",        &Options::writeSeedState);
+  publish("useASCIISeedState",     &Options::useASCIISeedState);
+  publish("seedStateFileName",     &Options::seedStateFileName);
   publish("ngenerate",             &Options::nGenerate);
   publish("generatePrimariesOnly", &Options::generatePrimariesOnly);
   publish("exportGeometry",        &Options::exportGeometry);

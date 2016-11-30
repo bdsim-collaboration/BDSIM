@@ -67,8 +67,8 @@ std::string yyfilename;
 "<>" { return NE; }
 "==" { return EQ; }
 
-"!".*$    {line_num++;}    // comments - ignore
-"!".*     {line_num++;}    // comments at end of file (without return) - ignore
+"!".*$    {}    // comments - ignore
+"!".*     {}    // comments at end of file (without return) - ignore
 
 marker { return MARKER; } // reserved elements
 drift { return DRIFT; }
