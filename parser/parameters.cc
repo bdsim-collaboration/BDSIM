@@ -28,6 +28,8 @@ Parameters::Parameters() {
   setMap["fint"] = false;
   setMap["fintx"] = false;
   setMap["hgap"]  = false;
+  setMap["hkick"] = false;
+  setMap["vkick"] = false;
   
   setMap["beampipeThickness"] = false;
   setMap["aper1"] = false;

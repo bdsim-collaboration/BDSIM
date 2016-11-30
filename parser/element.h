@@ -37,6 +37,8 @@ namespace GMAD
     double fint; ///< fringe field integral at the dipole entrance
     double fintx;  ///< fringe field integral at the dipole exit
     double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
+    double hkick;  ///< fractional delta px for hkicker
+    double vkick;  ///< fractional delta py for vkicker
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;

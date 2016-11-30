@@ -48,6 +48,8 @@ void Element::PublishMembers()
   publish("fint", &Element::fint);
   publish("fintx",&Element::fintx);
   publish("hgap", &Element::hgap);
+  publish("hkick",&Element::hkick);
+  publish("vkick",&Element::vkick);
   
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper",&Element::aper1);
