@@ -533,7 +533,28 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateGeneralKicker()
 {
-  return nullptr;
+  if (!HasSufficientMinimumLength(element))
+    {return nullptr;}
+
+  BDSMagnetStrength* st = new BDSMagnetStrength();
+  // calculate magnitude of required B field.
+
+  // calculate direction of B field.
+
+  
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+					       brho,
+					       BDSIntegratorType::g4classicalrk4,
+					       st,
+					       true);
+
+  // For now, only use a hkicker geometry
+  return new BDSMagnet(BDSMagnetType::hkicker,
+		       element->name,
+		       element->l*CLHEP::m,
+		       PrepareBeamPipeInfo(element),
+		       PrepareMagnetOuterInfo(element, 0, 0),
+		       vacuumField);
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
