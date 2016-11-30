@@ -14,7 +14,7 @@ mySpectrometer: awakespectrometer,
 		screenEndZ=sez,
 		spec="vacuumChamberType=1&magnetGeometryType=1",
 		screenPSize=25*um,
-		B=-0.00154;
+		B=0.00154;
 
 d1: drift, l=0.5;
 d2: drift, l=0.5;
