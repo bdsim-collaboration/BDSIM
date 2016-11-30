@@ -61,7 +61,9 @@ namespace GMAD
     std::string recreateFileName;  ///< The file path to recreate a run from.
     int  startFromEvent;           ///< Event to start from when recreating.
     bool writeSeedState;           ///< Write the seed state each event to a text file.
-    
+    bool useASCIISeedState;        ///< Whether to use the seed state from an ASCII file.
+    std::string seedStateFileName; ///< Seed state file path.
+
     /// Whether to only generate primary coordinates and quit, or not.
     bool generatePrimariesOnly; 
     

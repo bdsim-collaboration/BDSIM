@@ -40,6 +40,8 @@ OptionsBase::OptionsBase()
   recreateFileName      = "";
   startFromEvent        = 0;
   writeSeedState        = false;
+  useASCIISeedState     = false;
+  seedStateFileName     = "";
   generatePrimariesOnly = false;
   exportGeometry        = false;
   exportType            = "gdml";

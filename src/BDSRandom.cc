@@ -75,6 +75,26 @@ G4String BDSRandom::GetSeedState()
   return G4String(currentState.str());
 }
 
+void BDSRandom::LoadSeedState(G4String inSeedFilename)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << "loading file: " << inSeedFilename << G4endl;
+#endif
+  std::ifstream ifseedstate;
+  ifseedstate.open(inSeedFilename);
+  if (ifseedstate.is_open())
+    {CLHEP::HepRandom::restoreFullState(ifseedstate);}
+  else
+    {
+      G4cout << __METHOD_NAME__ << "cannot open file : " << inSeedFilename << G4endl;
+      exit(1);
+    }
+  ifseedstate.close();
+#ifdef BDSDEBUG
+  BDSRandom::PrintFullSeedState();
+#endif
+}
+
 void BDSRandom::SetSeedState(G4String seedState)
 {
   std::stringstream ss;
