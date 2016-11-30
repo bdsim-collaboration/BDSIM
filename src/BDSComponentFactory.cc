@@ -201,6 +201,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
     component = CreateKicker(false); break;
   case ElementType::_VKICKER:
     component = CreateKicker(true); break;
+  case ElementType::_KICKER:
+    component = CreateGeneralKicker(); break;
   case ElementType::_QUAD:
     component = CreateQuad(); break;
   case ElementType::_SEXTUPOLE:
@@ -527,6 +529,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
 		       vacuumField);
+}
+
+BDSAcceleratorComponent* BDSComponentFactory::CreateGeneralKicker()
+{
+  return nullptr;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateQuad()
