@@ -34,6 +34,13 @@
     bool execute = true;
     int element_count = -1; // for samplers , ranges etc. -1 means add to all
     ElementType element_type = ElementType::_NONE; // for samplers, ranges etc.
+
+    /// helper method for undeclared variables
+    void undeclaredVariable(std::string s)
+    {
+      std::string errorstring = "ERROR: " + s + " is not declared";
+      yyerror(errorstring.c_str());
+    }
   }
 %}
 
@@ -123,9 +130,9 @@ else_clause: ELSE
 
 // atomic statements can be an mathematical expression, a declaration or a command
 atomic_stmt : 
-            | expr { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
-            | command  { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
-            | decl  { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
+            | expr    { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
+            | command { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
+            | decl    { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
 
 // instantiate an object
 decl : VARIABLE ':' component_with_params
@@ -393,7 +400,6 @@ parameters: paramassign '=' aexpr parameters_extend
 	    }
           | paramassign '=' string parameters_extend
             {
-
 	      if(execute) {
 		Parser::Instance()->SetValue<Parameters>(*($1),*$3);
 	      }
@@ -446,7 +452,7 @@ rev_element_seq :
 	      }
 
 expr : aexpr 
-       { // check type ??
+       {
 	 if(ECHO_GRAMMAR) printf("expr -> aexpr\n");
 	 if(execute) 
 	   {
@@ -491,17 +497,24 @@ aexpr  : NUMBER               { $$ = $1;                         }
 	   $$ = $2->Product($4);
          } 
        // boolean stuff
-        | aexpr '<' aexpr { $$ = ($1 < $3 )? 1 : 0; } 
-        | aexpr LE aexpr { $$ = ($1 <= $3 )? 1 : 0; } 
-        | aexpr '>' aexpr { $$ = ($1 > $3 )? 1 : 0; } 
-        | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; } 
-        | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; } 
-	| aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
-        | VARIABLE '[' string ']' 
-          { 
-	    if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl; 
-	    $$ = Parser::Instance()->property_lookup(*($1),*($3));
-	  }// element attributes
+       | aexpr '<' aexpr { $$ = ($1 < $3 )? 1 : 0; }
+       | aexpr LE aexpr { $$ = ($1 <= $3 )? 1 : 0; }
+       | aexpr '>' aexpr { $$ = ($1 > $3 )? 1 : 0; }
+       | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; }
+       | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; }
+       | aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
+       | VARIABLE '[' string ']'
+         {
+	   if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl;
+	   $$ = Parser::Instance()->property_lookup(*($1),*($3));
+	 }// element attributes
+       // undeclared variable
+       | VARIABLE
+         {
+	   if(execute) {
+	     undeclaredVariable(*$1);
+	   }
+	 }
 
 symdecl : VARIABLE '='
         {
