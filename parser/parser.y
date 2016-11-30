@@ -103,7 +103,7 @@ input :
       | input stmt ';'
        { 
 	 if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
-	 if(willExit) exit(1);
+	 if(willExit) yyerror("Error");
        }
 
 // deconstruct statements into atomic statements
