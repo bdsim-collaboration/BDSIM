@@ -497,16 +497,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  G4double length = element->l*CLHEP::m;
+  auto angleAndField = CalculateAngleAndField(element);
+  (*st)["angle"] = angleAndField.first;
+  (*st)["field"] = angleAndField.second;
   
-  // magnetic field
-  if(BDS::IsFinite(element->B))
-    {
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["field"] = - brho * element->angle / length * charge * ffact / CLHEP::tesla / CLHEP::m;
-    }
-  G4Transform3D fieldRotation = G4Transform3D();
-  
+  G4Transform3D fieldRotation = G4Transform3D();  
   BDSMagnetType t = BDSMagnetType::hkicker;
   if (isVertical)
     {
