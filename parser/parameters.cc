@@ -22,6 +22,13 @@ Parameters::Parameters() {
   setMap["k3"] = false;
   setMap["k4"] = false;
   setMap["angle"] = false;
+  setMap["B"]  = false;
+  setMap["e1"] = false;
+  setMap["e2"] = false;
+  setMap["fint"] = false;
+  setMap["fintx"] = false;
+  setMap["hgap"]  = false;
+  
   setMap["beampipeThickness"] = false;
   setMap["aper1"] = false;
   setMap["aper2"] = false;
@@ -39,12 +46,6 @@ Parameters::Parameters() {
   setMap["ysize"] = false;
   setMap["xsizeOut"] = false;
   setMap["ysizeOut"] = false;
-  setMap["B"]  = false;
-  setMap["e1"] = false;
-  setMap["e2"] = false;
-  setMap["fint"] = false;
-  setMap["fintx"] = false;
-  setMap["hgap"]  = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;

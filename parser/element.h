@@ -31,6 +31,12 @@ namespace GMAD
     double k3; ///< octupole
     double k4; ///< decapole
     double angle; ///< bending angle
+    double B; ///< magnetic field
+    double e1; ///< input pole face rotation for bends
+    double e2; ///< output pole face rotation for bends
+    double fint; ///< fringe field integral at the dipole entrance
+    double fintx;  ///< fringe field integral at the dipole exit
+    double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
 
     ///@{ beampipe information, new aperture model
     double beampipeThickness;
@@ -48,16 +54,10 @@ namespace GMAD
     std::string outerMaterial;
     double outerDiameter;
     bool   yokeOnInside;
-
     double tilt; ///< tilt
     double xsize, ysize; ///< collimator aperture or laser spotsize for laser
     double xsizeOut, ysizeOut; ///< collimator aperture or laser spotsize for laser
-    double B; ///< magnetic field
-    double e1; ///< input pole face rotation for bends
-    double e2; ///< output pole face rotation for bends
-    double fint; ///< fringe field integral at the dipole entrance
-    double fintx;  ///< fringe field integral at the dipole exit
-    double hgap;   ///< half distance of pole separation for purposes of fringe fields - 'half gap'
+
     double offsetX; ///< offset X
     double offsetY; ///< offset Y
     double tscint; ///<thickness of scintillating part of screen

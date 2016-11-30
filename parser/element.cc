@@ -34,15 +34,21 @@ Element::Element():
 
 void Element::PublishMembers()
 {
-  publish("l",&Element::l);
-  publish("B",&Element::B);
-  publish("ks",&Element::ks);
-  publish("k0",&Element::k0);
-  publish("k1",&Element::k1);
-  publish("k2",&Element::k2);
-  publish("k3",&Element::k3);
-  publish("k4",&Element::k4);
+  publish("l",    &Element::l);
+  publish("ks",   &Element::ks);
+  publish("k0",   &Element::k0);
+  publish("k1",   &Element::k1);
+  publish("k2",   &Element::k2);
+  publish("k3",   &Element::k3);
+  publish("k4",   &Element::k4);
   publish("angle",&Element::angle);
+  publish("B",    &Element::B);
+  publish("e1",   &Element::e1);
+  publish("e2",   &Element::e2);
+  publish("fint", &Element::fint);
+  publish("fintx",&Element::fintx);
+  publish("hgap", &Element::hgap);
+  
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper",&Element::aper1);
   alternativeNames["aper"] = "aper1";
@@ -67,11 +73,7 @@ void Element::PublishMembers()
   publish("xsizeOut",&Element::xsizeOut);
   publish("ysizeOut",&Element::ysizeOut);
   publish("tilt",&Element::tilt);
-  publish("e1",&Element::e1);
-  publish("e2",&Element::e2);
-  publish("fint",&Element::fint);
-  publish("fintx",&Element::fintx);
-  publish("hgap", &Element::hgap);
+
   publish("offsetX",&Element::offsetX);
   publish("offsetY",&Element::offsetY);
   publish("x",&Element::xdir);
