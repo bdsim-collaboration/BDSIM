@@ -5,11 +5,13 @@
 #include "G4Transform3D.hh"
 
 BDSFieldMag::BDSFieldMag():
-  transform(G4Transform3D::Identity)
+  transform(G4Transform3D::Identity),
+  inverseTransform(G4Transform3D::Identity)
 {;}
 
 BDSFieldMag::BDSFieldMag(G4Transform3D transformIn):
-  transform(transformIn.inverse())
+  transform(transformIn),
+  inverseTransform(transformIn.inverse())
 {;}
 
 G4ThreeVector BDSFieldMag::GetFieldTransformed(const G4ThreeVector& position,
@@ -17,8 +19,10 @@ G4ThreeVector BDSFieldMag::GetFieldTransformed(const G4ThreeVector& position,
 {
   if (transform != G4Transform3D::Identity)
     {
-      G4ThreeVector transformedPosition = transform * (HepGeom::Point3D<G4double>)position;
-      return GetField(transformedPosition, t);
+      G4ThreeVector transformedPosition = inverseTransform * (HepGeom::Point3D<G4double>)position;
+      G4ThreeVector field = GetField(transformedPosition, t);
+      G4ThreeVector transformedField = transform * (HepGeom::Vector3D<G4double>)field;
+      return transformedField;
     }
   else
     {return GetField(position, t);}
