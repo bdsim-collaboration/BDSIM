@@ -36,6 +36,7 @@ namespace GMAD
     _SHIELD      = 24,
     _VKICKER     = 31,
     _HKICKER     = 32,
+    _KICKER      = 33,
     _TRANSFORM3D = 61,
     _MUSPOILER   = 62,
     _DEGRADER    = 63,

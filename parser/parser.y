@@ -63,7 +63,7 @@
 %token <str> STR VARIABLE
 %token <ival> MARKER ELEMENT DRIFT RF RBEND SBEND QUADRUPOLE SEXTUPOLE OCTUPOLE DECAPOLE MULTIPOLE SCREEN AWAKESCREEN AWAKESPECTROMETER THINMULT
 %token <ival> SOLENOID RCOL ECOL LINE LASER TRANSFORM3D MUSPOILER SHIELD DEGRADER
-%token <ival> VKICKER HKICKER
+%token <ival> VKICKER HKICKER KICKER
 %token ALL ATOM MATERIAL PERIOD XSECBIAS REGION PLACEMENT FIELD CAVITYMODEL QUERY TUNNEL
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
@@ -273,6 +273,7 @@ component : DRIFT       {$$=static_cast<int>(ElementType::_DRIFT);}
           | RBEND       {$$=static_cast<int>(ElementType::_RBEND);}
           | VKICKER     {$$=static_cast<int>(ElementType::_VKICKER);}
           | HKICKER     {$$=static_cast<int>(ElementType::_HKICKER);}
+          | KICKER      {$$=static_cast<int>(ElementType::_KICKER);}
           | QUADRUPOLE  {$$=static_cast<int>(ElementType::_QUAD);}
           | SEXTUPOLE   {$$=static_cast<int>(ElementType::_SEXTUPOLE);}
           | OCTUPOLE    {$$=static_cast<int>(ElementType::_OCTUPOLE);}
@@ -309,6 +310,7 @@ error_noparams : DRIFT
                | RBEND
                | VKICKER
                | HKICKER
+               | KICKER
                | QUADRUPOLE
                | SEXTUPOLE
                | OCTUPOLE

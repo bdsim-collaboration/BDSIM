@@ -43,6 +43,8 @@ std::string GMAD::typestr(ElementType type) {
     return "vkicker";
   case ElementType::_HKICKER :
     return "hkicker";
+  case ElementType::_KICKER :
+    return "kicker";
   case ElementType::_LINE :
     return "line";
   case ElementType::_REV_LINE :

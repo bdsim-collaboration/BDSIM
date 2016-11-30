@@ -78,6 +78,7 @@ sbend { return SBEND; }
 rbend {return RBEND; }
 hkicker { return HKICKER; }
 vkicker { return VKICKER; }
+kicker  { return KICKER;  }
 quadrupole { return QUADRUPOLE; }
 sextupole { return SEXTUPOLE; }
 octupole { return OCTUPOLE; }
