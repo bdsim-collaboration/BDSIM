@@ -536,15 +536,25 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateGeneralKicker()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  // calculate magnitude of required B field.
+  BDSMagnetStrength*   st = new BDSMagnetStrength();
+  G4double         length = element->l * CLHEP::m;
+  G4double         angleX = asin(element->hkick);
+  G4double         angleY = asin(element->vkick);
+  G4double         fieldX = FieldFromAngle(angleX, length);
+  G4double         fieldY = FieldFromAngle(angleY, length);
+  G4ThreeVector     field = G4ThreeVector(fieldX, fieldY, 0);
+  G4double       fieldMag = field.mag();
+  G4ThreeVector unitField = field.unit();
 
-  // calculate direction of B field.
+  (*st)["field"] = fieldMag;
+  (*st)["bx"]    = unitField.x();
+  (*st)["by"]    = unitField.y();
 
+  BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole3d);
   
-  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
+  BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole3d,
 					       brho,
-					       BDSIntegratorType::g4classicalrk4,
+					       intType,
 					       st,
 					       true);
 
