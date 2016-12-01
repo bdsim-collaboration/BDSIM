@@ -256,6 +256,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
 	G4ThreeVector unitDirection = G4ThreeVector((*strength)["bx"], (*strength)["by"], (*strength)["bz"]);
 	unitDirection = unitDirection.unit(); // ensure unit vector
 	field = new BDSFieldMagSBend(strength, brho, unitDirection);
+	break;
       }
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
