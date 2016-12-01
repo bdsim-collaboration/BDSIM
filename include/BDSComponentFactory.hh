@@ -177,7 +177,17 @@ private:
   const BDSIntegratorSet* integratorSet;
 
   /// Calculate field and angle of a bend
-  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element);
+  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element) const;
+
+  /// Calculate the field from a given angle through a length of field - uses member
+  /// rigidity and charge. Length & angle in g4 m / rad units.
+  G4double FieldFromAngle(const G4double angle,
+			  const G4double length) const;
+
+  /// Calculate the angle through a length of field - uses member
+  /// rigidity and charge. Length & field in g4 m / tesla units
+  G4double AngleFromField(const G4double field,
+			  const G4double length) const;
 
 };
 #endif

@@ -1238,12 +1238,11 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   return st;
 }
 
-std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element const* element)
+std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element const* element) const
 {  
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
   
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
@@ -1253,13 +1252,29 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-      angle = charge * ffact * field * length / brho ;
+      //angle = charge * ffact * field * length / brho;
+      angle = AngleFromField(field, length);
     }
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      field = brho * angle / length / charge * ffact;
+      field = FieldFromAngle(angle, length);
+      //field = brho * angle / length / charge * ffact;
     }
   
   return std::make_pair(angle,field);
+}
+
+G4double BDSComponentFactory::FieldFromAngle(const G4double angle,
+					     const G4double length) const
+{
+  const G4double ffact  = BDSGlobalConstants::Instance()->FFact();
+  return brho * angle / length / charge / ffact;
+}
+
+G4double BDSComponentFactory::AngleFromField(const G4double field,
+					     const G4double length) const
+{
+  const G4double ffact  = BDSGlobalConstants::Instance()->FFact();
+  return charge * ffact * field * length / brho;
 }
