@@ -8,6 +8,7 @@
 
 BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType dipoleIn,
+				   BDSIntegratorType dipole3dIn,
 				   BDSIntegratorType quadrupoleIn,
 				   BDSIntegratorType sextupoleIn,
 				   BDSIntegratorType octupoleIn,
@@ -25,6 +26,7 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 				   BDSIntegratorType multipolethinIn):
   solenoid(solenoidIn),
   dipole(dipoleIn),
+  dipole3d(dipole3dIn),
   quadrupole(quadrupoleIn),
   sextupole(sextupoleIn),
   octupole(octupoleIn),
@@ -43,10 +45,12 @@ BDSIntegratorSet::BDSIntegratorSet(BDSIntegratorType solenoidIn,
 {;}
 
 namespace BDS
-{  
+{
+  /// Default bdsim set of integrators
   const BDSIntegratorSet* integratorsBDSIM =
     new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipole,         // dipole
+			 BDSIntegratorType::g4exacthelixstepper, // dipole3d
 			 BDSIntegratorType::quadrupole,     // quadrupole
 			 BDSIntegratorType::sextupole,      // sextupole
 			 BDSIntegratorType::octupole,       // octupole
@@ -62,9 +66,31 @@ namespace BDS
 			 BDSIntegratorType::g4classicalrk4, // skew decapole
 			 BDSIntegratorType::dipolefringe,   // dipole fringe field
 			 BDSIntegratorType::multipolethin); // thin multipole
-  const BDSIntegratorSet* integratorsGeant4 =
+  /// All RK4 but with exact solutions for dipole fields.
+  const BDSIntegratorSet* integratorsGeant4Exact =
+    new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
+			 BDSIntegratorType::g4exacthelixstepper, // dipole
+			 BDSIntegratorType::g4exacthelixstepper, // dipole3d
+			 BDSIntegratorType::g4classicalrk4, // quadrupole
+			 BDSIntegratorType::g4classicalrk4, // sextupole
+			 BDSIntegratorType::g4classicalrk4, // octupole
+			 BDSIntegratorType::g4classicalrk4, // decapole
+			 BDSIntegratorType::g4classicalrk4, // multipole
+			 BDSIntegratorType::g4classicalrk4, // muonspoiler
+			 BDSIntegratorType::g4classicalrk4, // rfcavity
+			 BDSIntegratorType::g4classicalrk4, // rf
+			 BDSIntegratorType::g4classicalrk4, // general
+			 BDSIntegratorType::g4classicalrk4, // skew quadrupole
+			 BDSIntegratorType::g4classicalrk4, // skew sextupole
+			 BDSIntegratorType::g4classicalrk4, // skew octupole
+			 BDSIntegratorType::g4classicalrk4, // skew decapole
+			 BDSIntegratorType::dipolefringe,   // dipole fringe field
+			 BDSIntegratorType::multipolethin); // thin multipole
+  /// All 4th Order Runge Kutte.
+  const BDSIntegratorSet* integratorsGeant4rk4 =
     new BDSIntegratorSet(BDSIntegratorType::g4classicalrk4, // solenoid
 			 BDSIntegratorType::g4classicalrk4, // dipole
+			 BDSIntegratorType::g4classicalrk4, // dipole3d
 			 BDSIntegratorType::g4classicalrk4, // quadrupole
 			 BDSIntegratorType::g4classicalrk4, // sextupole
 			 BDSIntegratorType::g4classicalrk4, // octupole
@@ -91,10 +117,12 @@ const BDSIntegratorSet* BDS::IntegratorSet(BDSIntegratorSetType set)
 {
   switch (set.underlying())
     {
-    case BDSIntegratorSetType::geant4:
-      {return BDS::integratorsGeant4; break;}
     case BDSIntegratorSetType::bdsim:
       {return BDS::integratorsBDSIM;  break;}
+    case BDSIntegratorSetType::geant4exact:
+      {return BDS::integratorsGeant4Exact; break;}
+    case BDSIntegratorSetType::geant4rk4:
+      {return BDS::integratorsGeant4rk4; break;}
     default:
       {return BDS::integratorsBDSIM;  break;}
     }
@@ -105,7 +133,7 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
   switch (field.underlying())
     {
     case BDSFieldType::none:
-      {return general;     break;}// shouldn't really happen, but for completeness.
+      {return general; break;}// shouldn't really happen, but for completeness.
     case BDSFieldType::bmap1d:
     case BDSFieldType::bmap2d:
     case BDSFieldType::bmap3d:
@@ -128,6 +156,8 @@ BDSIntegratorType BDSIntegratorSet::Integrator(const BDSFieldType field) const
       {return solenoid;    break;}
     case BDSFieldType::dipole:
       {return dipole;      break;}
+    case BDSFieldType::dipole3d:
+      {return dipole3d;    break;}
     case BDSFieldType::quadrupole:
       {return quadrupole;  break;}
     case BDSFieldType::sextupole:
