@@ -167,8 +167,9 @@ The following elements may be defined
 * `decapole`_
 * `multipole`_
 * `thinmultipole`_
-* `vkick`_
-* `hkick`_
+* `vkicker`_
+* `hkicker`_
+* `kicker`_
 * `rf`_
 * `rcol`_
 * `ecol`_
@@ -512,12 +513,12 @@ Examples::
 
 .. note:: The length of the thin multipole can be changed by setting `thinElementLength` (see `options`_).
 
-vkick
-^^^^^
+vkicker
+^^^^^^^
 
 .. TODO: add picture
 
-`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. Either angle
+`vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. Either angle
 or the field `B` may be specified.  Unlike MADX, this is not a fractional momentum kick, but the angle of
 deflection.
 
@@ -530,14 +531,14 @@ deflection.
 
 Examples::
 
-   KX15v: vkick, angle=0.01*mrad;
+   KX15v: vkicker, angle=0.01*mrad;
 
-hkick
-^^^^^
+hkicker
+^^^^^^^
 
 .. TODO: add picture
 
-`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. Either angle
+`hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. Either angle
 or the field `B` may be specified. Unlike MADX, this is not a fractional momentum kick, but the angle of
 deflection.
 
@@ -550,7 +551,21 @@ deflection.
 
 Examples::
 
-   KX17h: hkick, angle=0.01;
+   KX17h: hkicker, angle=0.01;
+
+kicker
+^^^^^^
+
+.. TODO: add picture
+
+`kicker` defines a combined horizontal and vertical kicker.  The parameters `hkick` and `vkick`
+define the fractional momentum (:math:`\delta_p / p`) change in the horizontal and vertical respectively.
+These are used to calculate an appropriate dipole field. This must have a finite length to be built.
+
+Example::
+
+  kick1: kicker, l=0.45*m, hkick=1.23e-4, vkick=0;
+
 
 rf
 ^^^^
@@ -1452,7 +1467,7 @@ at the same level in the geometry hierarchy (both are placed in one container fo
 The beam pipe is not placed 'inside' the yoke.
 
 This will work for `solenoid`, `sbend`, `rbend`, `quadrupole`, `sextupole`, `octupole`,
-`decapole`, `multipole`, `muonspoiler`, `vkick`, `hkick` element types in BDSIM.
+`decapole`, `multipole`, `muonspoiler`, `vkicker`, `hkicker` element types in BDSIM.
 
 Example::
 
