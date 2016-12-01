@@ -3,6 +3,7 @@
 #include "BDSBeamline.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
+#include "globals.hh"
 #include "G4ProductionCuts.hh"
 #include "G4Region.hh"
 
@@ -32,6 +33,7 @@ BDSAcceleratorModel::BDSAcceleratorModel():
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
+  G4cout << "Deleting Model" << G4endl;
   delete worldPV;
   delete flatBeamline;
   delete curvilinearBeamline;
@@ -45,7 +47,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
     {delete r.second;}
   for (auto c : cuts)
     {delete c.second;}
-  
+
+  G4cout << "Deletion complete" << G4endl;
   _instance = nullptr;
 }
 
