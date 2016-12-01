@@ -8,6 +8,8 @@
  * @brief Type definition for field formats - 
  * used for comparison in factory methods.
  * 
+ * dipole3d - a uniform field specified by a unit vector and field magnitude
+ * 
  * @author Laurie Nevay
  */
 
@@ -21,7 +23,8 @@ struct fieldtypes_def
 	     solenoid, dipole, quadrupole, dipolequadrupole, sextupole,
 	     octupole, decapole, multipole, muonspoiler,
              skewquadrupole, skewsextupole, skewoctupole, skewdecapole,
-	     rfcavity, rf};
+	     rfcavity, rf,
+             dipole3d};
 };
 
 // NOTE - when adding a new field type, BDSFieldClassType should also be updated

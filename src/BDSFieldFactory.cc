@@ -251,6 +251,12 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
       {field = new BDSFieldMagSolenoid(strength, brho); break;}
     case BDSFieldType::dipole:
       {field = new BDSFieldMagSBend(strength, brho); break;}
+    case BDSFieldType::dipole3d:
+      {
+	G4ThreeVector unitDirection = G4ThreeVector((*strength)["bx"], (*strength)["by"], (*strength)["bz"]);
+	unitDirection = unitDirection.unit(); // ensure unit vector
+	field = new BDSFieldMagSBend(strength, brho, unitDirection);
+      }
     case BDSFieldType::quadrupole:
       {field = new BDSFieldMagQuadrupole(strength, brho); break;}
     case BDSFieldType::dipolequadrupole:
