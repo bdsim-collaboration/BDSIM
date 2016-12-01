@@ -50,7 +50,7 @@ namespace BDS
   const BDSIntegratorSet* integratorsBDSIM =
     new BDSIntegratorSet(BDSIntegratorType::solenoid,       // solenoid
 			 BDSIntegratorType::dipole,         // dipole
-			 BDSIntegratorType::g4exacthelixstepper, // dipole3d
+			 BDSIntegratorType::g4classicalrk4, // dipole3d
 			 BDSIntegratorType::quadrupole,     // quadrupole
 			 BDSIntegratorType::sextupole,      // sextupole
 			 BDSIntegratorType::octupole,       // octupole
