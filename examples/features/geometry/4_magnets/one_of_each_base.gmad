@@ -8,8 +8,8 @@ sol1: solenoid, l=0.5*m, k0=1.31, outerDiameter=1.234*m;
 sb1: sbend, l=0.5*m, angle=0.1, apertureType="elliptical", aper1=2*cm, aper2=3*cm, beampipeThickness=0.1*cm, outerDiameter=0.80*m;
 rb1: rbend, l=2.5*m, angle= 0.1, outerDiameter=0.5*m;
 endoftheline: marker;
-hk1: hkick, l=0.2*m, outerDiameter=0.4*m, angle=0.1*mrad;
-vk1: vkick, l=0.2*m, outerDiameter=0.3*m;
+hk1: hkicker, l=0.2*m, outerDiameter=0.4*m, angle=0.1*mrad;
+vk1: vkicker, l=0.2*m, outerDiameter=0.3*m, angle=-0.1*mrad;
 rf1 : rfcavity, l=0.5*m, gradient = 10 * MV / m, outerDiameter=0.3*mm, material = "Copper", cavityModel = "Tesla9Cell";
 Tesla9Cell: cavitymodel,
        type="elliptical",
@@ -38,8 +38,6 @@ use,period=l1;
 !sample, range=endoftheline;
 
 option, ngenerate=1,
-!	physicsList="QGSP_BERT",
-	physicsList="em",
 	beampipeRadius=4.0*cm,
 	beampipeThickness=0.5*cm,
 	outerDiameter=1.0*m,
