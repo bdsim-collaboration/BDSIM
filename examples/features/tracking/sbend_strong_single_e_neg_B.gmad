@@ -4,6 +4,8 @@ lat : line = (sb1);
 
 use, lat;
 
+sample, range=sb1;
+
 option, checkOverlaps=1,
 	dontSplitSBends=1,
 	magnetGeometryType="cylindrical";

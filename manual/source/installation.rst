@@ -77,8 +77,9 @@ The following sections detail the setup process for different operating systems.
 
 - `Mac OSX`_
 - `Linux`_
-.. - `Linux with AFS Access`_
 
+.. - `Linux with AFS Access`_
+   
 Mac OSX
 -------
 
