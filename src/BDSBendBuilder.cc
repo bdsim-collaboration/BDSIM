@@ -250,8 +250,6 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
-  BDSComponentFactory::PoleFaceRotationsNotTooLarge(element);
-  
   G4double      angle = (*st)["angle"];
   G4double     length = element->l*CLHEP::m;
   const G4String name = element->name;
