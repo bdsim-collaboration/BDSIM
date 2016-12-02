@@ -251,10 +251,12 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
   G4double      angle = (*st)["angle"];
-  G4double     length = element->l*CLHEP::m;
+  G4double bendingRadius = brho / (*st)["field"];
+  G4double     length = bendingRadius * angle; // arc length
+  //G4double     length = element->l*CLHEP::m;
   const G4String name = element->name;
   G4String    thename = element->name;
-  const G4double  rho = length / angle;
+  const G4double  rho = bendingRadius; //length / angle;
   const G4double   e1 = element->e1 * CLHEP::rad;
   const G4double   e2 = element->e2 * CLHEP::rad;
   const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
