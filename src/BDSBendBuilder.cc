@@ -267,25 +267,22 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   BDSLine* rbendline  = new BDSLine(name);
   
   BDSMagnetType magType = BDSMagnetType::rectangularbend;
-  
-  // booleans for modification by previous/next element
-  if ((prevElement) && (prevElement->type == ElementType ::_RBEND))
-    {prevModifies = true;}
-  if ((nextElement) && (nextElement->type == ElementType ::_RBEND))
-    {nextModifies = true;}
-  
+
   // poleface angles
   G4double polefaceAngleIn  = e1 + 0.5*(length-thinElementLength)/rho;
   G4double polefaceAngleOut = e2 + 0.5*(length-thinElementLength)/rho;
-  
+
   // poleface angles and main element angles are modified if next/previous is an rbend
-  if ((prevElement) && (prevElement->type == ElementType::_RBEND))
+  // booleans for modification by previous/next element
+  if ((prevElement) && (prevElement->type == ElementType ::_RBEND))
     {
+      prevModifies = true;
       polefaceAngleIn -= 0.5 * angle;
       angleIn += 0.5*(thinElementLength)/rho;
     }
-  if ((nextElement) && (nextElement->type == ElementType::_RBEND))
+  if ((nextElement) && (nextElement->type == ElementType ::_RBEND))
     {
+      nextModifies = true;
       polefaceAngleOut -= 0.5 * angle;
       angleOut += 0.5*(thinElementLength)/rho;
     }
@@ -322,7 +319,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       angleOut += 0.5*(thinElementLength)/rho;
       angleIn  -= 0.5*(thinElementLength)/rho;
     }
-  
+
+  // update the angle as part of the bending covered by the thin fringe part. Length is now shorter.
   angle = -length/rho;
   
   //change angle in the case that the next/prev element modifies
