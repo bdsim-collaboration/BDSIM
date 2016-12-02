@@ -103,19 +103,8 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 	}
       else
 	{LocalR += h*LocalRp;}
-      
-      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-      GlobalPosition = globalPosDir.PreStepPoint();
-      G4ThreeVector GlobalTangent = globalPosDir.PostStepPoint();	
-      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
-      
-      ySext[0] = GlobalPosition.x(); 
-      ySext[1] = GlobalPosition.y(); 
-      ySext[2] = GlobalPosition.z(); 
-      
-      ySext[3] = GlobalTangent.x();
-      ySext[4] = GlobalTangent.y();
-      ySext[5] = GlobalTangent.z();
+
+      ConvertToGlobal(LocalR,LocalRp,InitMag,ySext);
     }
 }
 

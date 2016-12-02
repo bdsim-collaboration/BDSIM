@@ -191,18 +191,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	     << G4endl; 
 #endif
       
-      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-      GlobalR = globalPosDir.PreStepPoint();
-      GlobalP = globalPosDir.PostStepPoint();	
-      GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
-            
-      yOut[0] = GlobalR.x(); 
-      yOut[1] = GlobalR.y(); 
-      yOut[2] = GlobalR.z(); 
-      
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 
       for(G4int i = 0; i < nVariables; i++)
 	{yErr[i]=0;} //set error to be zero - not strictly correct

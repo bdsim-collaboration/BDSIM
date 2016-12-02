@@ -105,17 +105,7 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
       else
 	{LocalR += h*LocalRp;}
 
-      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-      GlobalPosition = globalPosDir.PreStepPoint();
-      G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
-      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
-      
-      yDec[0] = GlobalPosition.x(); 
-      yDec[1] = GlobalPosition.y(); 
-      yDec[2] = GlobalPosition.z(); 				
-      yDec[3] = GlobalTangent.x();
-      yDec[4] = GlobalTangent.y();
-      yDec[5] = GlobalTangent.z();
+      ConvertToGlobal(LocalR,LocalRp,InitMag,yDec);
     }
 }
 

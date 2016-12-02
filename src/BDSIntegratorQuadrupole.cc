@@ -184,18 +184,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
   
-  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-  GlobalR = globalPosDir.PreStepPoint();
-  GlobalP = globalPosDir.PostStepPoint();	
-  GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
-
-  yOut[0] = GlobalR.x();
-  yOut[1] = GlobalR.y();
-  yOut[2] = GlobalR.z();
-
-  yOut[3] = GlobalP.x();
-  yOut[4] = GlobalP.y();
-  yOut[5] = GlobalP.z();
+  ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 }
 
 void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],

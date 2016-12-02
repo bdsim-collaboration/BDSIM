@@ -36,3 +36,22 @@ void BDSIntegratorBase::AdvanceDrift(const G4double yIn[],
 
   distChord=0;
 }
+
+void BDSIntegratorBase::ConvertToGlobal(const G4ThreeVector& LocalR,
+					const G4ThreeVector& LocalRp,
+					const G4double InitMag,
+					G4double yOut[])
+{
+  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
+  G4ThreeVector GlobalPosition = globalPosDir.PreStepPoint();
+  G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
+  GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
+
+  yOut[0] = GlobalPosition.x();
+  yOut[1] = GlobalPosition.y();
+  yOut[2] = GlobalPosition.z();
+
+  yOut[3] = GlobalTangent.x();
+  yOut[4] = GlobalTangent.y();
+  yOut[5] = GlobalTangent.z();
+}

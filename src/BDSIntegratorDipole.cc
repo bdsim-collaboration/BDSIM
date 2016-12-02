@@ -71,11 +71,8 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
     {
-      BDSStep globalPosDir = ConvertToGlobalStep(itsFinalPoint, itsFinalDir, false);
-      GlobalPosition = globalPosDir.PreStepPoint();
-      G4ThreeVector GlobalTangent  = globalPosDir.PostStepPoint();	
-      GlobalTangent *= InitMag; // multiply the unit direction by magnitude to get momentum
-      
+      ConvertToGlobal(itsFinalPoint,itsFinalDir,InitMag,yOut);
+
       // If the radius of curvature is too small, reduce the momentum by 2%. This will
       // cause artificial spiralling for what must be particles well below the design momenta.
       // Nominally adding a small z increment along the axis of the helix wasn't reliable,
@@ -83,15 +80,12 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
       // plus Geant4 complained about clearly wrong motion. This way works and produces no
       // errors.  The particle would be lost approximately in the current location anyway.
       if (std::abs(rho) < minimumRadiusOfCurvature)
-	{GlobalTangent *= 0.98;}
-      
-      yOut[0] = GlobalPosition.x(); 
-      yOut[1] = GlobalPosition.y(); 
-      yOut[2] = GlobalPosition.z(); 
-      
-      yOut[3] = GlobalTangent.x();
-      yOut[4] = GlobalTangent.y();
-      yOut[5] = GlobalTangent.z();
+	{
+	  G4double momentumReduction = 0.98;
+	  yOut[3] *= momentumReduction;
+	  yOut[4] *= momentumReduction;
+	  yOut[5] *= momentumReduction;
+	}
       return;
     }
   else
