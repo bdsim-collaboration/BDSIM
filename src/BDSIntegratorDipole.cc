@@ -42,17 +42,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   // In case of zero field or neutral particles do a linear step:
   if(bField==0 || eqOfM->FCof()==0)
     {
-      G4ThreeVector positionMove = h * InitMomDir;
-      
-      yOut[0] = yIn[0] + positionMove.x();
-      yOut[1] = yIn[1] + positionMove.y();
-      yOut[2] = yIn[2] + positionMove.z();
-      
-      yOut[3] = v0.x();
-      yOut[4] = v0.y();
-      yOut[5] = v0.z();
-      
-      distChord = 0;
+      AdvanceDrift(yIn,v0,h,yOut);
       return;
     }
 

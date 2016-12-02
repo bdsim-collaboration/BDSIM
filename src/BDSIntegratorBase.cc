@@ -17,3 +17,22 @@ BDSIntegratorBase::~BDSIntegratorBase()
 {
   delete backupStepper;
 }
+
+void BDSIntegratorBase::AdvanceDrift(const G4double yIn[],
+				     const G4ThreeVector& GlobalP,
+				     const G4double h,
+				     G4double yOut[])
+{
+  G4ThreeVector InitMomDir = GlobalP.unit();
+  G4ThreeVector positionMove = h * InitMomDir;
+  
+  yOut[0] = yIn[0] + positionMove.x();
+  yOut[1] = yIn[1] + positionMove.y();
+  yOut[2] = yIn[2] + positionMove.z();
+
+  yOut[3] = GlobalP.x();
+  yOut[4] = GlobalP.y();
+  yOut[5] = GlobalP.z();
+
+  distChord=0;
+}

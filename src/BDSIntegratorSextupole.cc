@@ -39,17 +39,8 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 
   if(fabs(kappa)<1.e-12)
     {
-      G4ThreeVector positionMove  = (h/InitMag) * v0;
-      
-      ySext[0]   = yIn[0] + positionMove.x(); 
-      ySext[1]   = yIn[1] + positionMove.y(); 
-      ySext[2]   = yIn[2] + positionMove.z(); 
-      
-      ySext[3] = v0.x();
-      ySext[4] = v0.y();
-      ySext[5] = v0.z();
-      
-      distChord=0;
+      // very low strength - treat as a drift
+      AdvanceDrift(yIn,v0,h,ySext);
     }
   else 
     {

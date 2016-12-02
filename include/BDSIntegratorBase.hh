@@ -54,6 +54,12 @@ protected:
   /// Variable used to record the distance from the chord calculated during the step.
   G4double distChord;
 
+  /// Advance as drift (for when field strength is very low)
+  void AdvanceDrift(const G4double yIn[],
+		    const G4ThreeVector& GlobalP,
+		    const G4double h,
+		    G4double yOut[]);
+
 private:
   /// Private default constructor to force use of specific constructor
   BDSIntegratorBase();

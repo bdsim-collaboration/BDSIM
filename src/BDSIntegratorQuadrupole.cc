@@ -66,17 +66,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
 #ifdef BDSDEBUG
       G4cout << "Zero strength quadrupole - advancing as a drift" << G4endl;
 #endif
-      G4ThreeVector positionMove = h * InitMomDir;
-
-      yOut[0] = yIn[0] + positionMove.x();
-      yOut[1] = yIn[1] + positionMove.y();
-      yOut[2] = yIn[2] + positionMove.z();
-				
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
-
-      distChord=0;
+      AdvanceDrift(yIn,GlobalP,h,yOut);
 
       for(G4int i = 0; i < nVariables; i++)
 	{yErr[i] = 0;}

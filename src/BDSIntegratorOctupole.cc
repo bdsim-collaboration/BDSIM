@@ -43,17 +43,7 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
   // check that the approximations are valid, else do a linear step:
   if(fabs(kappa)<1.e-20)
     {
-      G4ThreeVector positionMove  = (h/InitMag) * v0;
-      
-      yOct[0]   = yIn[0] + positionMove.x(); 
-      yOct[1]   = yIn[1] + positionMove.y(); 
-      yOct[2]   = yIn[2] + positionMove.z(); 
-				
-      yOct[3] = v0.x();
-      yOct[4] = v0.y();
-      yOct[5] = v0.z();
-
-      distChord=0;
+      AdvanceDrift(yIn,v0,h,yOct);
     }
   else 
     {
