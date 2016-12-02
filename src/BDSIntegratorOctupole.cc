@@ -55,7 +55,6 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
       
       G4double x0=LocalR.x(); 
       G4double y0=LocalR.y();
-      G4double z0=LocalR.z();
 
       //G4double x02My02=(x0*x0-y0*y0);
 
@@ -81,36 +80,7 @@ void BDSIntegratorOctupole::AdvanceHelix(const G4double  yIn[],
 
       LocalRpp*=kappa/6; // 6 is actually a 3! factor.;
 
-      // determine effective curvature
-      G4double R_1 = LocalRpp.mag();
-      if(R_1>0.)
-	{
-	  // chord distance (simple quadratic approx)
-          G4double h2=h*h;
-	  distChord= h2*R_1/8;
-
-	  G4double dx=LocalRp.x()*h + LocalRpp.x()*h2/2; 
-	  G4double dy=LocalRp.y()*h + LocalRpp.y()*h2/2; 
-
-	  G4double dz=sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
-	  // check for precision problems
-	  G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-	  if(ScaleFac>1.0000001)
-	    {
-	      ScaleFac=sqrt(ScaleFac);
-	      dx/=ScaleFac;
-	      dy/=ScaleFac;
-	      dz/=ScaleFac;
-	    }
-
-	  LocalR.setX(x0+dx);
-	  LocalR.setY(y0+dy);
-	  LocalR.setZ(z0+dz);
-
-	  LocalRp = LocalRp+ h*LocalRpp;
-	}
-      else
-	{LocalR += h*LocalRp;}
+      AdvanceChord(h,LocalR,LocalRp,LocalRpp);
 
       ConvertToGlobal(LocalR,LocalRp,InitMag,yOct);
     }

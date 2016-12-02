@@ -60,6 +60,12 @@ protected:
 		    const G4double h,
 		    G4double yOut[]);
 
+  /// Advance chord by quadratic approximation
+  void AdvanceChord(const G4double h,
+		    G4ThreeVector& LocalR,
+		    G4ThreeVector& LocalRp,
+		    const G4ThreeVector& LocalRpp);
+
   /// Convert final local position and direction to global frame
   void ConvertToGlobal(const G4ThreeVector& LocalR,
 		       const G4ThreeVector& LocalRp,

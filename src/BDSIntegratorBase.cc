@@ -37,6 +37,42 @@ void BDSIntegratorBase::AdvanceDrift(const G4double yIn[],
   distChord=0;
 }
 
+void BDSIntegratorBase::AdvanceChord(const G4double h,
+				     G4ThreeVector& LocalR,
+				     G4ThreeVector& LocalRp,
+				     const G4ThreeVector& LocalRpp)
+{
+  // determine effective curvature
+  G4double R_1 = LocalRpp.mag();
+  if(R_1>0.)
+    {
+      // chord distance (simple quadratic approx)
+      G4double h2 = h*h;
+      distChord = h2*R_1/8;
+      
+      G4double dx = LocalRp.x()*h + LocalRpp.x()*h2/2;
+      G4double dy = LocalRp.y()*h + LocalRpp.y()*h2/2;
+      G4double dz = sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
+      // check for precision problems
+      G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
+      if(ScaleFac>1.0000001)
+	{
+	  ScaleFac=sqrt(ScaleFac);
+	  dx/=ScaleFac;
+	  dy/=ScaleFac;
+	  dz/=ScaleFac;
+	}
+      
+      LocalR.setX(LocalR.x()+dx);
+      LocalR.setY(LocalR.y()+dy);
+      LocalR.setZ(LocalR.z()+dz);
+      
+      LocalRp = LocalRp + h*LocalRpp;
+    }
+  else
+    {LocalR += h*LocalRp;}
+}
+
 void BDSIntegratorBase::ConvertToGlobal(const G4ThreeVector& LocalR,
 					const G4ThreeVector& LocalRp,
 					const G4double InitMag,
