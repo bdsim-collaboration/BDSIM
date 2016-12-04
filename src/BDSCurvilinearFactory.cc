@@ -17,6 +17,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
@@ -42,6 +43,7 @@ BDSCurvilinearFactory::BDSCurvilinearFactory()
       curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);
     }
   checkOverlaps = globals->CheckOverlaps();
+  lengthSafety  = globals->LengthSafety();
 }
 
 BDSCurvilinearFactory::~BDSCurvilinearFactory()
@@ -67,17 +69,13 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
 BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleComponent* component,
 								BDSBeamlineElement const* const element)
 {
-  BDSTiltOffset* copyTiltOffset = nullptr;
-  BDSTiltOffset* existingTiltOffset = element->GetTiltOffset();
-  if (existingTiltOffset)
-    {copyTiltOffset = new BDSTiltOffset(*existingTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(component,
-						      element->GetPositionStart(),
-						      element->GetPositionMiddle(),
-						      element->GetPositionEnd(),
-						      new G4RotationMatrix(*(element->GetRotationStart())),
-						      new G4RotationMatrix(*(element->GetRotationMiddle())),
-						      new G4RotationMatrix(*(element->GetRotationEnd())),
+						      element->GetReferencePositionStart(),
+						      element->GetReferencePositionMiddle(),
+						      element->GetReferencePositionEnd(),
+						      new G4RotationMatrix(*(element->GetReferenceRotationStart())),
+						      new G4RotationMatrix(*(element->GetReferenceRotationMiddle())),
+						      new G4RotationMatrix(*(element->GetReferenceRotationEnd())),
 						      element->GetReferencePositionStart(),
 						      element->GetReferencePositionMiddle(),
 						      element->GetReferencePositionEnd(),
@@ -86,11 +84,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      new G4RotationMatrix(*(element->GetReferenceRotationEnd())),
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
-						      element->GetSPositionEnd(),
-						      copyTiltOffset,
-						      element->GetSamplerType(),
-						      element->GetSamplerName(),
-						      element->GetIndex());
+						      element->GetSPositionEnd());
   return result;
 }
 
@@ -109,12 +103,14 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
   G4ThreeVector outputface = G4ThreeVector(0, 0, 1);
   G4double     radiusLocal = curvilinearRadius;
   if (!BDS::IsFinite(angle))
-    {
-      //angle is zero - build a box
-      solid = new G4Box(name + "_cl_solid", // name
-			radiusLocal,        // x half width
-			radiusLocal,        // y half width
-			chordLength*0.5);   // z half width
+    { // angle is zero
+      G4double halfLength = chordLength * 0.5 - lengthSafety;
+      solid = new G4Tubs(name + "_cl_solid", // name
+			 0,                  // inner radius
+			 radiusLocal,        // outer radius
+			 halfLength,         // z half width
+			 0,                  // start angle
+			 CLHEP::twopi);      // sweep angle
     }
   else
     {
@@ -132,21 +128,11 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
       inputface = faces.first;
       outputface = faces.second;
 
-      BDSTiltOffset* to = element->GetTiltOffset();
-      if (to)
-	{// could be nullptr
-	  G4double tilt = to->GetTilt();
-	  if (BDS::IsFinite(tilt))
-	    {// rotate normal faces
-	      inputface = inputface.rotateZ(tilt);
-	      outputface = outputface.rotateZ(tilt);
-	    }
-	}
-
+      G4double halfLength = chordLength * 0.5 - lengthSafety;
       solid = new G4CutTubs(name + "_cl_solid", // name
 			    0,                  // inner radius
 			    radiusLocal,        // outer radius
-			    chordLength*0.5,    // half length (z)
+			    halfLength,         // half length (z)
 			    0,                  // rotation start angle
 			    CLHEP::twopi,       // rotation sweep angle
 			    inputface,          // input face normal vector

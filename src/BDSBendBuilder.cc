@@ -80,6 +80,10 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   G4double semiangle  = angle  / (G4double) nSBends;
   G4double semilength = length / (G4double) nSBends;
   G4double rho        = length / angle;
+
+  BDSMagnetStrength* centralStrength = new BDSMagnetStrength(*st);
+  (*centralStrength)["angle"] = semiangle;
+  (*centralStrength)["length"] = semilength;
   
   G4double zExtentIn  = 0;
   G4double zExtentOut = 0;
@@ -124,7 +128,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
-					       st);
+					       centralStrength);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -0.5*semiangle, -0.5*semiangle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -0.5*semiangle, -0.5*semiangle, yokeOnLeft);
@@ -250,13 +254,13 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
-  BDSComponentFactory::PoleFaceRotationsNotTooLarge(element);
-  
   G4double      angle = (*st)["angle"];
-  G4double     length = element->l*CLHEP::m;
+  G4double bendingRadius = brho / (*st)["field"];
+  G4double     length = bendingRadius * angle; // arc length
+  //G4double     length = element->l*CLHEP::m;
   const G4String name = element->name;
   G4String    thename = element->name;
-  const G4double  rho = length / angle;
+  const G4double  rho = bendingRadius; //length / angle;
   const G4double   e1 = element->e1 * CLHEP::rad;
   const G4double   e2 = element->e2 * CLHEP::rad;
   const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
@@ -267,25 +271,22 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   BDSLine* rbendline  = new BDSLine(name);
   
   BDSMagnetType magType = BDSMagnetType::rectangularbend;
-  
-  // booleans for modification by previous/next element
-  if ((prevElement) && (prevElement->type == ElementType ::_RBEND))
-    {prevModifies = true;}
-  if ((nextElement) && (nextElement->type == ElementType ::_RBEND))
-    {nextModifies = true;}
-  
+
   // poleface angles
   G4double polefaceAngleIn  = e1 + 0.5*(length-thinElementLength)/rho;
   G4double polefaceAngleOut = e2 + 0.5*(length-thinElementLength)/rho;
-  
+
   // poleface angles and main element angles are modified if next/previous is an rbend
-  if ((prevElement) && (prevElement->type == ElementType::_RBEND))
+  // booleans for modification by previous/next element
+  if ((prevElement) && (prevElement->type == ElementType ::_RBEND))
     {
+      prevModifies = true;
       polefaceAngleIn -= 0.5 * angle;
       angleIn += 0.5*(thinElementLength)/rho;
     }
-  if ((nextElement) && (nextElement->type == ElementType::_RBEND))
+  if ((nextElement) && (nextElement->type == ElementType ::_RBEND))
     {
+      nextModifies = true;
       polefaceAngleOut -= 0.5 * angle;
       angleOut += 0.5*(thinElementLength)/rho;
     }
@@ -322,7 +323,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       angleOut += 0.5*(thinElementLength)/rho;
       angleIn  -= 0.5*(thinElementLength)/rho;
     }
-  
+
+  // update the angle as part of the bending covered by the thin fringe part. Length is now shorter.
   angle = -length/rho;
   
   //change angle in the case that the next/prev element modifies

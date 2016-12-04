@@ -175,12 +175,12 @@ void BDSDetectorConstruction::BuildBeamline()
 
       BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
-      {
+	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
-      }
-  }
+	}
+    }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic

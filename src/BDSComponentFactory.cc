@@ -469,14 +469,44 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
 
-  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  (*st)["angle"] = angleAndField.first;
-  (*st)["field"] = angleAndField.second;
+  // 'l' in the element represents the chord length for an rbend - must calculate arc length
+  // for the field calculation and the accelerator component.
+  G4double angle  = 0;
+  G4double field  = 0;  
+  G4double chordLength = element->l * CLHEP::m;
+  G4double arcLength   = chordLength;
+  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
+  
+  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      field = element->B * CLHEP::tesla;
+      angle = element->angle * CLHEP::rad;
+      G4double bendingRadius = brho / field;
+      arcLength = bendingRadius * angle;
+    }
+  else if (BDS::IsFinite(element->B))
+    {// only B field - calculate angle
+      field = element->B * CLHEP::tesla;
+
+      G4double bendingRadius = brho / field; // in mm as brho already in g4 units
+      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
+      arcLength = bendingRadius * angle;
+    }
+  else
+    {// only angle - calculate B field
+      angle = element->angle * CLHEP::rad;
+      G4double bendingRadius = chordLength * 0.5 / sin(angle*0.5);
+      arcLength = bendingRadius * angle;
+      field = brho * angle / arcLength / charge * ffact;
+    }
+  
+  (*st)["angle"]  = angle;
+  (*st)["field"]  = field;
+  (*st)["length"] = arcLength;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
-  G4double length        = element->l*CLHEP::m;
-  CheckBendLengthAngleWidthCombo(length, (*st)["angle"], outerDiameter, element->name);
+  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], outerDiameter, element->name);
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
