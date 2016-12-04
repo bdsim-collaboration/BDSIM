@@ -58,15 +58,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   if (fabs(kappa)<1e-12)
     {
       // very low strength - treat as a drift
-      G4ThreeVector positionMove = h * InitMomDir;
-
-      yOut[0] = yIn[0] + positionMove.x(); 
-      yOut[1] = yIn[1] + positionMove.y(); 
-      yOut[2] = yIn[2] + positionMove.z(); 
-				
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      AdvanceDrift(yIn,GlobalP,h,yOut);
       
       yErr[0] = 0; // 0 error as a drift
       yErr[1] = 0; // must set here as we return after this
@@ -75,7 +67,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yErr[4] = 0;
       yErr[5] = 0;
 
-      distChord=0;
       return;
     }
   
@@ -103,15 +94,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   if (R_1<1e-15)
     {
       // very large radius of curvature - treat as drift
-      G4ThreeVector positionMove = h * InitMomDir;
-      
-      yOut[0] = yIn[0] + positionMove.x(); 
-      yOut[1] = yIn[1] + positionMove.y(); 
-      yOut[2] = yIn[2] + positionMove.z(); 
-      
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      AdvanceDrift(yIn,GlobalP,h,yOut);
 
       yErr[0] = 0; // 0 error as a drift
       yErr[1] = 0; // must set here as we return after this
@@ -120,7 +103,6 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
       yErr[4] = 0;
       yErr[5] = 0;
 
-      distChord=0;
       return;
     }
 
@@ -209,18 +191,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 	     << G4endl; 
 #endif
       
-      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-      GlobalR = globalPosDir.PreStepPoint();
-      GlobalP = globalPosDir.PostStepPoint();	
-      GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
-            
-      yOut[0] = GlobalR.x(); 
-      yOut[1] = GlobalR.y(); 
-      yOut[2] = GlobalR.z(); 
-      
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
+      ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 
       for(G4int i = 0; i < nVariables; i++)
 	{yErr[i]=0;} //set error to be zero - not strictly correct

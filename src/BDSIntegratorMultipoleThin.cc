@@ -72,16 +72,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 
   if (LocalRp.z() < 0.9) //for non paraxial, advance particle as if in a drift
   {
-    G4ThreeVector positionMove = h * InitMomDir;
-
-    yOut[0] = yIn[0] + positionMove.x();
-    yOut[1] = yIn[1] + positionMove.y();
-    yOut[2] = yIn[2] + positionMove.z();
-
-    yOut[3] = GlobalP.x();
-    yOut[4] = GlobalP.y();
-    yOut[5] = GlobalP.z();
-
+    AdvanceDrift(yIn,GlobalP,h,yOut);
     return;
   }
 
@@ -189,20 +180,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
 
-  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-  GlobalR = globalPosDir.PreStepPoint();
-  GlobalP = globalPosDir.PostStepPoint();	
-  // TBC - this normalisation seemed to be missing originally - is this correct?
-  GlobalP*=InitMag; // multiply the unit direction by magnitude to get momentum
-
-  yOut[0] = GlobalR.x();
-  yOut[1] = GlobalR.y();
-  yOut[2] = GlobalR.z();
-
-  yOut[3] = GlobalP.x();
-  yOut[4] = GlobalP.y();
-  yOut[5] = GlobalP.z();
-
+  ConvertToGlobal(LocalR,LocalRp,InitMag,yOut);
 }
 
 void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
