@@ -80,6 +80,10 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   G4double semiangle  = angle  / (G4double) nSBends;
   G4double semilength = length / (G4double) nSBends;
   G4double rho        = length / angle;
+
+  BDSMagnetStrength* centralStrength = new BDSMagnetStrength(*st);
+  (*centralStrength)["angle"] = semiangle;
+  (*centralStrength)["length"] = semilength;
   
   G4double zExtentIn  = 0;
   G4double zExtentOut = 0;
@@ -124,7 +128,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
-					       st);
+					       centralStrength);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -0.5*semiangle, -0.5*semiangle);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -0.5*semiangle, -0.5*semiangle, yokeOnLeft);
