@@ -84,9 +84,9 @@ BDSComponentFactory::~BDSComponentFactory()
   delete BDSMagnetOuterFactory::Instance();
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn,
-							      Element* prevElementIn,
-							      Element* nextElementIn)
+BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* elementIn,
+							      Element const* prevElementIn,
+							      Element const* nextElementIn)
 {
   element = elementIn;
   prevElement = prevElementIn;
@@ -96,7 +96,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   G4bool registered = false;
   // Used for multiple instances of the same element but different poleface rotations.
   // Ie only a drift is modified to match the pole face rotation of a magnet.
-  G4bool willModify = false;
+  G4bool differentFromDefinition = false;
 
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "named: \"" << element->name << "\"" << G4endl;  
@@ -125,24 +125,24 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
 	}
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
-	{willModify = true;}
+	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_RBEND)
     {
       // angleIn and angleOut have to be multiplied by minus one for rbends for
       // some reason. Cannot figure out why yet.
-      angleIn  = -1.0 * element->e1;
-      angleOut = -1.0 * element->e2;
+      angleIn  = -1.0 * element->e1 * CLHEP::rad;
+      angleOut = -1.0 * element->e2 * CLHEP::rad;
 
       if (nextElement && (nextElement->type == ElementType::_RBEND))
         {
-          willModify = true;
+          differentFromDefinition = true;
           std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
           angleOut += 0.5*angleAndField.first;
         }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
         {
-          willModify = true;
+          differentFromDefinition = true;
           std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
           angleIn += 0.5*angleAndField.first;
         }
@@ -150,36 +150,32 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
   else if (element->type == ElementType::_THINMULT)
     {
       if (nextElement && (BDS::IsFinite(nextElement->e1)))
-      {
-        angleIn += nextElement->e1 * CLHEP::rad;
-        willModify  = true;
-      }
+	{
+	  angleIn += nextElement->e1 * CLHEP::rad;
+	  differentFromDefinition  = true;
+	}
       else if (prevElement && (BDS::IsFinite(prevElement->e2)))
-      {
-        angleIn -= prevElement->e2 * CLHEP::rad;
-        willModify  = true;
-      }
+	{
+	  angleIn -= prevElement->e2 * CLHEP::rad;
+	  differentFromDefinition  = true;
+	}
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-      {
-        willModify = true;
-        std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
-        angleIn += 0.5*angleAndField.first;
-      }
+	{
+	  differentFromDefinition = true;
+	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
+	  angleIn += 0.5*angleAndField.first;
+	}
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-      {
-        willModify = true;
-        std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
-        angleIn -= 0.5*angleAndField.first;
-      }
+	{
+	  differentFromDefinition = true;
+	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
+	  angleIn -= 0.5*angleAndField.first;
+	}
     }
-
+  
   // Check if the component already exists and return that.
-  // Don't use the registry for output elements since reliant on unique name
-  // this cannot apply for sbends as it now uses individual wedge component
-  // registration logic in BDSBendBuilder rather than the element as a whole.
-
-  // TBC - this is difficult to understand.  Also, why not RBEND too?
-  if (registered && !willModify && (element->type != ElementType::_SBEND))
+  // Don't use the registry for output elements since reliant on unique name.
+  if (registered && !differentFromDefinition)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "using already manufactured component" << G4endl;
@@ -274,7 +270,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element* elementIn
       SetFieldDefinitions(element, component);
       component->Initialise();
       // register component and memory
-      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,willModify);
+      BDSAcceleratorComponentRegistry::Instance()->RegisterComponent(component,differentFromDefinition);
     }
   
   return component;
@@ -413,11 +409,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
 	}
     }
 
-  BDSMagnetStrength *st = new BDSMagnetStrength();
+  BDSMagnetStrength* st = new BDSMagnetStrength();
 
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  element->angle = angleAndField.first;
-  element->B     = angleAndField.second;
   (*st)["angle"] = -angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
@@ -429,18 +423,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Angle " << (*st)["angle"] << G4endl;
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
-
-  G4double angleIn  = element->e1 - 0.5*element->angle;
-  G4double angleOut = element->e2 - 0.5*element->angle;
-
-
-  BDSLine *sbendline = BDS::BuildSBendLine(element,
-					   angleIn,
-					   angleOut,
-					   st,
-					   brho,
-					   integratorSet);
-  return sbendline;
+  
+  BDSLine* sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
+  
+  return sBendLine;
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
@@ -479,11 +465,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 	}
     }
 
-  BDSMagnetStrength *st = new BDSMagnetStrength();
+  BDSMagnetStrength* st = new BDSMagnetStrength();
 
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  element->angle = angleAndField.first;
-  element->B     = angleAndField.second;
   (*st)["angle"] = angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
@@ -513,21 +497,19 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
     {return nullptr;}
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-  G4double length = element->l*CLHEP::m;
+  auto angleAndField = CalculateAngleAndField(element);
+  // MADX definition is that +ve hkick (here angle) increases p_x, corresponding
+  // to deflection in +ve x, which is opposite to the convention of bends.
+  // Hence -ve factor here.
+  (*st)["angle"] = -angleAndField.first;
+  (*st)["field"] = -angleAndField.second;
   
-  // magnetic field
-  if(BDS::IsFinite(element->B))
-    {
-      G4double ffact = BDSGlobalConstants::Instance()->FFact();
-      (*st)["field"] = - brho * element->angle / length * charge * ffact / CLHEP::tesla / CLHEP::m;
-    }
-  G4Transform3D fieldRotation = G4Transform3D();
-  
+  G4Transform3D fieldRotation = G4Transform3D();  
   BDSMagnetType t = BDSMagnetType::hkicker;
   if (isVertical)
     {
       t = BDSMagnetType::vkicker;
-      fieldRotation = G4RotateZ3D(CLHEP::halfpi);
+      fieldRotation = G4RotateZ3D(-CLHEP::halfpi);
     }
   
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -536,12 +518,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
 					       st,
 					       true,
 					       fieldRotation);
+
+  G4bool yokeOnLeft = YokeOnLeft(element, st);
   
   return new BDSMagnet(t,
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
 		       vacuumField);
 }
 
@@ -712,7 +696,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
 		       element->name,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField,
 		       0,
 		       outerField);
@@ -932,12 +916,12 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 		       element->name,
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
-		       PrepareMagnetOuterInfo(element),
+		       PrepareMagnetOuterInfo(element, st),
 		       vacuumField,
 		       angle);
 }
 
-G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
+G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element)
 {
   if(element->l*CLHEP::m < 1e-7)
     {
@@ -952,7 +936,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element* element)
     {return true;}
 }
 
-void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
+void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element const* element,
 						       G4double maxAngle)
 {
   if (std::abs(element->e1) > maxAngle)
@@ -967,32 +951,35 @@ void BDSComponentFactory::PoleFaceRotationsNotTooLarge(Element* element,
     }
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element)
+G4bool BDSComponentFactory::YokeOnLeft(const Element*           element,
+				       const BDSMagnetStrength* st)
 {
-  // input and output face angles
-  G4double angleIn  = 0;
-  G4double angleOut = 0;
-  if (element->type == ElementType::_RBEND)
-    {
-      angleIn  = -1.0*element->e1*CLHEP::rad;
-      angleOut = -1.0*element->e2*CLHEP::rad;
-    }
-  else if (element->type == ElementType::_SBEND)
-    {
-      angleIn  = (element->angle*0.5) + element->e1;
-      angleOut = (element->angle*0.5) + element->e2;
-    }
-  return PrepareMagnetOuterInfo(element, angleIn, angleOut);
+  G4double angle = (*st)["angle"];
+  G4bool yokeOnLeft;
+  if ((angle < 0) && (element->yokeOnInside))
+    {yokeOnLeft = true;}
+  else if ((angle > 0) && (!(element->yokeOnInside)))
+    {yokeOnLeft = true;}
+  else
+    {yokeOnLeft = false;}
+  return yokeOnLeft;
 }
 
-BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* element,
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
+								const BDSMagnetStrength* st)
+{
+  G4bool yokeOnLeft = YokeOnLeft(element,st);
+  G4double    angle = (*st)["angle"];
+  
+  return PrepareMagnetOuterInfo(element, 0.5*angle, 0.5*angle, yokeOnLeft);
+}
+
+BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* element,
 								const G4double angleIn,
-								const G4double angleOut)
+								const G4double angleOut,
+								const G4bool   yokeOnLeft)
 {
   BDSMagnetOuterInfo* info = new BDSMagnetOuterInfo();
-
-  // angle - we can't set here as we can't rely on the angle being specified in element
-  // as only the field may be specified. Therefore, must be set in above CreateXXXX methods
   
   // name
   info->name = element->name;
@@ -1029,13 +1016,9 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(Element const* e
     {outerMaterial = BDSMaterials::Instance()->GetMaterial(element->outerMaterial);}
   info->outerMaterial = outerMaterial;
 
-  if ((element->angle < 0) && (element->yokeOnInside))
-    {info->yokeOnLeft = true;}
-  else if ((element->angle > 0) && (!(element->yokeOnInside)))
-    {info->yokeOnLeft = true;}
-  else
-    {info->yokeOnLeft = false;}
-      
+  // yoke direction
+  info->yokeOnLeft = yokeOnLeft;
+
   return info;
 }
 
@@ -1177,6 +1160,14 @@ G4String BDSComponentFactory::PrepareColour(Element const* element, const G4Stri
 void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 					      BDSAcceleratorComponent* component) const
 {
+  // Test for a line. And if so apply to each sub-component.
+  // TBC - for a sbend split into segments, a BDSLine would be used - how would setting
+  // an outer magnetic field work for this??
+  if (BDSLine* line = dynamic_cast<BDSLine*>(component))
+    {
+      for (auto comp : *line)
+	{SetFieldDefinitions(element, comp);}
+    }
   if (BDSMagnet* mag = dynamic_cast<BDSMagnet*>(component))
     {
       if (!(element->fieldAll.empty()))
@@ -1239,7 +1230,7 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      field = brho * angle / length * charge * ffact;
+      field = brho * angle / length / charge * ffact;
     }
   
   return std::make_pair(angle,field);

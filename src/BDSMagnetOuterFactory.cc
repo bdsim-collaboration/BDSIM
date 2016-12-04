@@ -97,6 +97,8 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   G4double outerDiameter                = outerInfo->outerDiameter;
   G4Material* outerMaterial             = outerInfo->outerMaterial;
   BDSMagnetGeometryType geometryType    = outerInfo->geometryType;
+  G4bool yokeOnLeft                     = outerInfo->yokeOnLeft;
+  G4bool buildEndPiece                  = outerInfo->buildEndPieces;
 
   if (geometryType == BDSMagnetGeometryType::external)
     {
@@ -108,53 +110,55 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     {
     case BDSMagnetType::decapole:
       outer = CreateDecapole(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial);
+			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::vkicker:
       outer = CreateKicker(geometryType,name,outerLength,beampipe,
-			   outerDiameter,chordLength,true,outerMaterial);
+			   outerDiameter,chordLength,true,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::hkicker:
       outer = CreateKicker(geometryType,name,outerLength,beampipe,
-			   outerDiameter,chordLength,false,outerMaterial);
+			   outerDiameter,chordLength,false,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::muonspoiler:
       outer = CreateMuSpoiler(geometryType,name,outerLength,beampipe,
-			      outerDiameter,chordLength,outerMaterial);
+			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::octupole:
       outer = CreateOctupole(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial);
+			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::quadrupole:
       outer = CreateQuadrupole(geometryType,name,outerLength,beampipe,
-			       outerDiameter,chordLength,outerMaterial);
+			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::rfcavity:
       outer = CreateRfCavity(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial);
+			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::sectorbend:
       outer = CreateSectorBend(geometryType,name,outerLength,beampipe,
 			       outerDiameter,chordLength,outerInfo->angleIn,
-			       outerInfo->angleOut,outerMaterial);
+			       outerInfo->angleOut,yokeOnLeft,outerMaterial,
+			       buildEndPiece);
       break;
     case BDSMagnetType::rectangularbend:
       outer = CreateRectangularBend(geometryType,name,outerLength,beampipe,
 				    outerDiameter,chordLength,outerInfo->angleIn,
-				    outerInfo->angleOut,outerMaterial);
+				    outerInfo->angleOut,yokeOnLeft,outerMaterial,
+				    buildEndPiece);
       break;
     case BDSMagnetType::sextupole:
       outer = CreateSextupole(geometryType,name,outerLength,beampipe,
-			      outerDiameter,chordLength,outerMaterial);
+			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::solenoid:
       outer = CreateSolenoid(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial);
+			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     case BDSMagnetType::multipole:
       outer = CreateMultipole(geometryType,name,outerLength,beampipe,
-			      outerDiameter,chordLength,outerMaterial);
+			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     default:
       G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
@@ -172,14 +176,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateSectorBend(BDSMagnetGeometryType ma
 							G4double      angleIn,
 							G4double      angleOut,
 							G4bool        yokeOnLeft,
-							G4Material*   outerMaterial)
+							G4Material*   outerMaterial,
+							G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
   return factory->CreateSectorBend(name, length, beamPipe, outerDiameter, containerLength,
-				   angleIn, angleOut, yokeOnLeft, outerMaterial);
+				   angleIn, angleOut, yokeOnLeft, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryType magnetType,
@@ -191,14 +196,16 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateRectangularBend(BDSMagnetGeometryTy
 							     G4double      angleIn,
 							     G4double      angleOut,
 							     G4bool        yokeOnLeft,
-							     G4Material*   outerMaterial)
+							     G4Material*   outerMaterial,
+							     G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
   return factory->CreateRectangularBend(name, length, beamPipe, outerDiameter,
-					containerLength, angleIn, angleOut, yokeOnLeft, outerMaterial);
+					containerLength, angleIn, angleOut, yokeOnLeft,
+					outerMaterial, buildEndPiece);
 }
   
 
@@ -208,13 +215,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateQuadrupole(BDSMagnetGeometryType ma
 							BDSBeamPipe*  beamPipe,
 							G4double      outerDiameter,
 							G4double      containerLength,
-							G4Material*   outerMaterial)
+							G4Material*   outerMaterial,
+							G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateQuadrupole(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateQuadrupole(name, length, beamPipe, outerDiameter,
+				   containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateSextupole(BDSMagnetGeometryType magnetType,
@@ -223,13 +232,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateSextupole(BDSMagnetGeometryType mag
 						       BDSBeamPipe*  beamPipe,
 						       G4double      outerDiameter,
 						       G4double      containerLength,
-						       G4Material*   outerMaterial)
+						       G4Material*   outerMaterial,
+						       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateSextupole(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateSextupole(name, length, beamPipe, outerDiameter,
+				  containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateOctupole(BDSMagnetGeometryType magnetType,
@@ -238,13 +249,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateOctupole(BDSMagnetGeometryType magn
 						      BDSBeamPipe*  beamPipe,
 						      G4double      outerDiameter,
 						      G4double      containerLength,
-						      G4Material*   outerMaterial)
+						      G4Material*   outerMaterial,
+						      G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateOctupole(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateOctupole(name, length, beamPipe, outerDiameter,
+				 containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateDecapole(BDSMagnetGeometryType magnetType,
@@ -253,13 +266,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateDecapole(BDSMagnetGeometryType magn
 						      BDSBeamPipe*  beamPipe,
 						      G4double      outerDiameter,
 						      G4double      containerLength,
-						      G4Material*   outerMaterial)
+						      G4Material*   outerMaterial,
+						      G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateDecapole(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateDecapole(name, length, beamPipe, outerDiameter,
+				 containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateSolenoid(BDSMagnetGeometryType magnetType,
@@ -268,13 +283,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateSolenoid(BDSMagnetGeometryType magn
 						      BDSBeamPipe*  beamPipe,
 						      G4double      outerDiameter,
 						      G4double      containerLength,
-						      G4Material*   outerMaterial)
+						      G4Material*   outerMaterial,
+						      G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateSolenoid(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateSolenoid(name, length, beamPipe, outerDiameter,
+				 containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateMultipole(BDSMagnetGeometryType magnetType,
@@ -283,13 +300,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMultipole(BDSMagnetGeometryType mag
 						       BDSBeamPipe*  beamPipe,
 						       G4double      outerDiameter,
 						       G4double      containerLength,
-						       G4Material*   outerMaterial)
+						       G4Material*   outerMaterial,
+						       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateMultipole(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateMultipole(name, length, beamPipe, outerDiameter,
+				  containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateRfCavity(BDSMagnetGeometryType magnetType,
@@ -298,13 +317,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateRfCavity(BDSMagnetGeometryType magn
 						      BDSBeamPipe*  beamPipe,
 						      G4double      outerDiameter,
 						      G4double      containerLength,
-						      G4Material*   outerMaterial)
+						      G4Material*   outerMaterial,
+						      G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateRfCavity(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateRfCavity(name, length, beamPipe, outerDiameter,
+				 containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateMuSpoiler(BDSMagnetGeometryType magnetType,
@@ -313,13 +334,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMuSpoiler(BDSMagnetGeometryType mag
 						       BDSBeamPipe*  beamPipe,
 						       G4double      outerDiameter,
 						       G4double      containerLength,
-						       G4Material*   outerMaterial)
+						       G4Material*   outerMaterial,
+						       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateMuSpoiler(name, length, beamPipe, outerDiameter, containerLength, outerMaterial);
+  return factory->CreateMuSpoiler(name, length, beamPipe, outerDiameter,
+				  containerLength, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateKicker(BDSMagnetGeometryType magnetType,
@@ -329,13 +352,15 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateKicker(BDSMagnetGeometryType magnet
 						    G4double      outerDiameter,
 						    G4double      containerLength,
 						    G4bool        vertical,
-						    G4Material*   outerMaterial)
+						    G4Material*   outerMaterial,
+						    G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   BDSMagnetOuterFactoryBase* factory = GetAppropriateFactory(magnetType);
-  return factory->CreateKicker(name, length, beamPipe, outerDiameter, containerLength, vertical, outerMaterial);
+  return factory->CreateKicker(name, length, beamPipe, outerDiameter,
+			       containerLength, vertical, outerMaterial, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,

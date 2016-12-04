@@ -40,9 +40,9 @@ public:
 
   /// Create component from parser Element
   /// Pointers to next and previous Element for lookup
-  BDSAcceleratorComponent* CreateComponent(GMAD::Element* elementIn,
-					   GMAD::Element* prevElementIn,
-					   GMAD::Element* nextElementIn);
+  BDSAcceleratorComponent* CreateComponent(GMAD::Element const* elementIn,
+					   GMAD::Element const* prevElementIn,
+					   GMAD::Element const* nextElementIn);
   
   /// Public creation method for ring logic
   BDSAcceleratorComponent* CreateTerminator();
@@ -65,13 +65,24 @@ public:
 					      G4double angleIn,
 					      G4double angleOut);
 
-  /// Prepare the recipe for magnet outer geometry.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element);
-  /// Interface to other PrepareMagnetOuterInfo() for convenience to avoid preparing
-  /// face normal vectors repeatedly.
-  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(GMAD::Element const* element,
+  /// Determine which side the yoke of an asymmetric bend should go on based on the angle
+  /// of the bend and the overriding setting in the element.
+  static G4bool YokeOnLeft(const GMAD::Element*     element,
+			   const BDSMagnetStrength* st);
+  
+  /// Prepare the recipe for magnet outer geometry for an element. This uses a
+  /// strength instance which (we assume) represents the element. Evenly splits angle
+  /// between input and output faces.
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
+						    const BDSMagnetStrength* st);
+
+  /// Prepare the recipe for magnet outer geometry with full control of the angled faces
+  /// and which side the yoke is on. The angle in and out are the face angles relative
+  /// to a chord for a straight section of outer magnet geometry.
+  static BDSMagnetOuterInfo* PrepareMagnetOuterInfo(const GMAD::Element* element,
 						    const G4double angleIn,
-						    const G4double angleOut);
+						    const G4double angleOut,
+						    const G4bool   yokeOnLeft = false);
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
@@ -81,7 +92,7 @@ public:
 					     G4String name = "not given");
 
   /// Check whether the pole face rotation angles are too big for practical construction.
-  static void PoleFaceRotationsNotTooLarge(GMAD::Element* element,
+  static void PoleFaceRotationsNotTooLarge(const GMAD::Element* element,
 					   G4double       maxAngle = 0.5*CLHEP::halfpi);
   
 private:
@@ -101,11 +112,11 @@ private:
   ///@}
 
   /// element for storing instead of passing around
-  GMAD::Element* element = nullptr;
+  GMAD::Element const* element = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* prevElement = nullptr;
+  GMAD::Element const* prevElement = nullptr;
   /// element access to previous element (can be nullptr)
-  GMAD::Element* nextElement = nullptr;
+  GMAD::Element const* nextElement = nullptr;
   
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
@@ -140,7 +151,7 @@ private:
 			  G4double angle = 0.0) const;
 
   /// Test the component length is sufficient for practical construction.
-  G4bool HasSufficientMinimumLength(GMAD::Element* element);
+  G4bool HasSufficientMinimumLength(GMAD::Element const* element);
   
   /// Prepare all RF cavity models in the component factory. Kept here and copies delivered.
   /// This class deletes them upon destruction.

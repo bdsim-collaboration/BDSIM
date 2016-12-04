@@ -33,17 +33,20 @@ BDSAcceleratorComponentRegistry::~BDSAcceleratorComponentRegistry()
   _instance = nullptr;
 }
 
-void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component, bool isModified)
+void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent* component,
+							bool isModified)
 {
-  // if modified then store in vector and return
+  // If the component was modified beyond its original element definition in the parser,
+  // ie a drift was modified to match a pole face of a bend, then store if for memory
+  // management, but not in the registry
   if (isModified)
     {
       allocatedComponents.push_back(component);
       // if line then also add constituents
       if (BDSLine* line = dynamic_cast<BDSLine*>(component))
 	{
-	  for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	    {allocatedComponents.push_back(*i);}
+	  for (const auto element : *line)
+	    {allocatedComponents.push_back(element);}
 	}
       return;
     }
@@ -64,8 +67,8 @@ void BDSAcceleratorComponentRegistry::RegisterComponent(BDSAcceleratorComponent*
       // register the line object itself
       registry[component->GetName()] = component;
       // now add all the components of the line individually using this very function
-      for (BDSLine::iterator i = line->begin(); i != line->end(); ++i)
-	{RegisterComponent(*i,isModified);}
+      for (const auto element : *line)
+	{RegisterComponent(element, false);}
     }
   else
     {

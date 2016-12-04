@@ -39,17 +39,8 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
 
   if(fabs(kappa)<1.e-12)
     {
-      G4ThreeVector positionMove  = (h/InitMag) * v0;
-      
-      ySext[0]   = yIn[0] + positionMove.x(); 
-      ySext[1]   = yIn[1] + positionMove.y(); 
-      ySext[2]   = yIn[2] + positionMove.z(); 
-      
-      ySext[3] = v0.x();
-      ySext[4] = v0.y();
-      ySext[5] = v0.z();
-      
-      distChord=0;
+      // very low strength - treat as a drift
+      AdvanceDrift(yIn,v0,h,ySext);
     }
   else 
     {
@@ -81,50 +72,10 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
       //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
       
       LocalRpp*=kappa/2; // 2 is actually a 2! factor.
-      // determine effective curvature
-      G4double R_1 = LocalRpp.mag();
-      
-      if(R_1>0.)
-	{    
-	  G4double h2=h*h;
-	  // chord distance (simple quadratic approx)
-	  distChord= h2*R_1/8;
-	  
-	  G4double dx=LocalRp.x()*h + LocalRpp.x()*h2 /2.; 
-	  G4double dy=LocalRp.y()*h + LocalRpp.y()*h2 /2.;
-	  
-	  G4double dz=sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
-	  // check for precision problems
-	  G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;
-	  if(ScaleFac>1.0000001)
-	    {
-	      ScaleFac=sqrt(ScaleFac);
-	      dx/=ScaleFac;
-	      dy/=ScaleFac;
-	      dz/=ScaleFac;
-	    }
-	  
-	  LocalR.setX(LocalR.x()+dx);
-	  LocalR.setY(LocalR.y()+dy);
-	  LocalR.setZ(LocalR.z()+dz);
-	  
-	  LocalRp = LocalRp+ h*LocalRpp;
-	}
-      else
-	{LocalR += h*LocalRp;}
-      
-      BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-      GlobalPosition = globalPosDir.PreStepPoint();
-      G4ThreeVector GlobalTangent = globalPosDir.PostStepPoint();	
-      GlobalTangent*=InitMag; // multiply the unit direction by magnitude to get momentum
-      
-      ySext[0] = GlobalPosition.x(); 
-      ySext[1] = GlobalPosition.y(); 
-      ySext[2] = GlobalPosition.z(); 
-      
-      ySext[3] = GlobalTangent.x();
-      ySext[4] = GlobalTangent.y();
-      ySext[5] = GlobalTangent.z();
+
+      AdvanceChord(h,LocalR,LocalRp,LocalRpp);
+
+      ConvertToGlobal(LocalR,LocalRp,InitMag,ySext);
     }
 }
 

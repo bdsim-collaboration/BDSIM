@@ -48,7 +48,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
 							   G4double      angleIn,
 							   G4double      angleOut,
 							   G4bool        /*yokeOnLeft*/,
-							   G4Material*   outerMaterial)
+							   G4Material*   outerMaterial,
+							   G4bool        /*buildEndPiece*/)
 
 {
 #ifdef BDSDEBUG
@@ -927,8 +928,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 								G4double      containerLength,
 								G4double      angleIn,
 								G4double      angleOut,
-								G4bool        /*yokeOnLeft*/,
-								G4Material*   outerMaterial)
+								G4bool        yokeOnLeft,
+								G4Material*   outerMaterial,
+								G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -940,7 +942,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRectangularBend(G4String      na
 									     containerLength,
 									     angleIn,
 									     angleOut,
-									     outerMaterial);
+									     yokeOnLeft,
+									     outerMaterial,
+									     buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
@@ -948,7 +952,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 							   BDSBeamPipe*  beamPipe,
 							   G4double      outerDiameter,
 							   G4double      containerLength,
-							   G4Material*   outerMaterial)
+							   G4Material*   outerMaterial,
+							   G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -1168,7 +1173,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       allLogicalVolumes.push_back(pole1LV);
 
       // coil placements
-      coil1PV = new G4PVPlacement(nullptr,                  // rotation
+      coil1PV = new G4PVPlacement(nullptr,            // rotation
 				  -dipolePosition,    // position
 				  coil1LV,            // logical volume
 				  name + "_coil1_pv", // name
@@ -1206,7 +1211,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
       allPhysicalVolumes.push_back(coil4PV);
 
       // pole placements
-      pole1PV = new G4PVPlacement(nullptr,                  // rotation
+      pole1PV = new G4PVPlacement(nullptr,            // rotation
 				  -dipolePosition,    // position
 				  pole1LV,            // logical volume
 				  name + "_pole1_pv", // name
@@ -1273,7 +1278,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allLogicalVolumes.push_back(pole2LV);
   
   // fixed coil placements
-  coil5PV = new G4PVPlacement(nullptr,                  // rotation
+  coil5PV = new G4PVPlacement(nullptr,            // rotation
 			      dipolePosition,     // position
 			      coil2LV,            // logical volume
 			      name + "_coil5_pv", // name
@@ -1311,8 +1316,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   allPhysicalVolumes.push_back(coil8PV);
   
   // fixed pole placements
-  pole5PV = new G4PVPlacement(nullptr,                  // rotation
-			      dipolePosition,    // position
+  pole5PV = new G4PVPlacement(nullptr,            // rotation
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole5_pv", // name
 			      containerLV,        // mother volume
@@ -1320,7 +1325,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			      0,                  // copy number
 			      checkOverlaps);
   pole6PV = new G4PVPlacement(coil2rm,            // rotation
-			      dipolePosition,    // position
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole6_pv", // name
 			      containerLV,        // mother volume
@@ -1328,7 +1333,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			      0,                  // copy number
 			      checkOverlaps);
   pole7PV = new G4PVPlacement(coil3rm,            // rotation
-			      dipolePosition,    // position
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole7_pv", // name
 			      containerLV,        // mother volume
@@ -1336,7 +1341,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
 			      0,                  // copy number
 			      checkOverlaps);
   pole8PV = new G4PVPlacement(coil4rm,            // rotation
-			      dipolePosition,    // position
+			      dipolePosition,     // position
 			      pole2LV,            // logical volume
 			      name + "_pole8_pv", // name
 			      containerLV,        // mother volume
@@ -1394,7 +1399,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   collarsLV->SetVisAttributes(collarVisAtt);
   allLogicalVolumes.push_back(collarsLV); 
 
-  G4PVPlacement* collarPV = new G4PVPlacement(nullptr,                  // rotation
+  G4PVPlacement* collarPV = new G4PVPlacement(nullptr,            // rotation
 					      dipolePosition,     // position
 					      collarsLV,          // its logical volume
 					      name+"_collars_pv", // its name
@@ -1538,13 +1543,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSextupole(G4String      name,
 							  BDSBeamPipe*  beamPipe,
 							  G4double      outerDiameter,
 							  G4double      containerLength,
-							  G4Material*   outerMaterial)
+							  G4Material*   outerMaterial,
+							  G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSextupole(name,length,beamPipe,outerDiameter,
-								       containerLength,outerMaterial);
+								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateOctupole(G4String      name,
@@ -1552,13 +1558,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateOctupole(G4String      name,
 							 BDSBeamPipe*  beamPipe,
 							 G4double      outerDiameter,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial)
+							 G4Material*   outerMaterial,
+							 G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateOctupole(name,length,beamPipe,outerDiameter,
-								      containerLength,outerMaterial);
+								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateDecapole(G4String      name,
@@ -1566,13 +1573,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateDecapole(G4String      name,
 							 BDSBeamPipe*  beamPipe,
 							 G4double      outerDiameter,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial)
+							 G4Material*   outerMaterial,
+							 G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateDecapole(name,length,beamPipe,outerDiameter,
-								      containerLength,outerMaterial);
+								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSolenoid(G4String      name,
@@ -1580,13 +1588,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSolenoid(G4String      name,
 							 BDSBeamPipe*  beamPipe,
 							 G4double      outerDiameter,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial)
+							 G4Material*   outerMaterial,
+							 G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,outerDiameter,
-								      containerLength,outerMaterial);
+								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMultipole(G4String      name,
@@ -1594,13 +1603,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMultipole(G4String      name,
 							  BDSBeamPipe*  beamPipe,
 							  G4double      outerDiameter,
 							  G4double      containerLength,
-							  G4Material*   outerMaterial)
+							  G4Material*   outerMaterial,
+							  G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,outerDiameter,
-								       containerLength,outerMaterial);
+								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRfCavity(G4String      name,
@@ -1608,13 +1618,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateRfCavity(G4String      name,
 							 BDSBeamPipe*  beamPipe,
 							 G4double      outerDiameter,
 							 G4double      containerLength,
-							 G4Material*   outerMaterial)
+							 G4Material*   outerMaterial,
+							 G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,outerDiameter,
-								      containerLength,outerMaterial);
+								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuSpoiler(G4String      name,
@@ -1622,13 +1633,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateMuSpoiler(G4String      name,
 							  BDSBeamPipe*  beamPipe,
 							  G4double      outerDiameter,
 							  G4double      containerLength,
-							  G4Material*   outerMaterial)
+							  G4Material*   outerMaterial,
+							  G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,outerDiameter,
-								       containerLength,outerMaterial);
+								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
@@ -1637,13 +1649,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateKicker(G4String      name,
 						       G4double      outerDiameter,
 						       G4double      containerLength,
 						       G4bool        vertical,
-						       G4Material*   outerMaterial)
+						       G4Material*   outerMaterial,
+						       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateKicker(name,length,beamPipe,outerDiameter,
-								    containerLength,vertical,outerMaterial);
+								    containerLength,vertical,outerMaterial,buildEndPiece);
 }
 
 /// functions below here are private to this particular factory

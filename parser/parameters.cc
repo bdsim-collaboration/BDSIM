@@ -11,17 +11,27 @@
 
 using namespace GMAD;
 
-Parameters::Parameters() {
+Parameters::Parameters()
+{
   // fill setMap, needs to match published member names
   // usually same but some exceptions, those are commented
-  setMap["l"] = false;
-  setMap["ks"] = false;
-  setMap["k0"] = false;
-  setMap["k1"] = false;
-  setMap["k2"] = false;
-  setMap["k3"] = false;
-  setMap["k4"] = false;
+  setMap["l"]     = false;
+  setMap["ks"]    = false;
+  setMap["k0"]    = false;
+  setMap["k1"]    = false;
+  setMap["k2"]    = false;
+  setMap["k3"]    = false;
+  setMap["k4"]    = false;
   setMap["angle"] = false;
+  setMap["B"]     = false;
+  setMap["e1"]    = false;
+  setMap["e2"]    = false;
+  setMap["fint"]  = false;
+  setMap["fintx"] = false;
+  setMap["hgap"]  = false;
+  setMap["hkick"] = false;
+  setMap["vkick"] = false;
+  
   setMap["beampipeThickness"] = false;
   setMap["aper1"] = false;
   setMap["aper2"] = false;
@@ -39,11 +49,6 @@ Parameters::Parameters() {
   setMap["ysize"] = false;
   setMap["xsizeOut"] = false;
   setMap["ysizeOut"] = false;
-  setMap["B"]  = false;
-  setMap["e1"] = false;
-  setMap["e2"] = false;
-  setMap["fint"] = false;
-  setMap["fintx"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;

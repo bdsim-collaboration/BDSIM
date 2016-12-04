@@ -46,7 +46,8 @@ public:
 				   G4double     angleIn,               // input face angle w.r.t. chord
 				   G4double     angleOut,              // output face angle w.r.t. chord
 				   G4bool       yokeOnLeft,            // build magnet yoke on left of bend
-				   G4Material*  outerMaterial = nullptr// material for outer volume
+				   G4Material*  outerMaterial = nullptr,// material for outer volume
+				   G4bool       buildEndPiece = false
 				   );
   
   /// rectangular bend outer volume
@@ -59,7 +60,8 @@ public:
 					G4double     angleIn,               // input face angle w.r.t. chord
 					G4double     angleOut,              // output face angle w.r.t. chord
 					G4bool       yokeOnLeft,            // build magnet yoke on left of bend
-					G4Material*  outerMaterial = nullptr// material for outer volume
+					G4Material*  outerMaterial = nullptr,// material for outer volume
+					G4bool       buildEndPiece = false
 					);
   
   /// quadrupole outer volume
@@ -69,7 +71,8 @@ public:
 				   BDSBeamPipe* beamPipe,              // beampipe
 				   G4double     outerDiameter,         // full width
 				   G4double     containerLength,       // full length to make AccComp container
-				   G4Material*  outerMaterial = nullptr// material for outer volume
+				   G4Material*  outerMaterial = nullptr,// material for outer volume
+				   G4bool       buildEndPiece = false
 				   );
   
 
@@ -80,7 +83,8 @@ public:
 				  BDSBeamPipe* beamPipe,              // beampipe
 				  G4double     outerDiameter,         // full width
 				  G4double     containerLength,       // full length to make AccComp container
-				  G4Material*  outerMaterial = nullptr// material for outer volume
+				  G4Material*  outerMaterial = nullptr,// material for outer volume
+				  G4bool       buildEndPiece = false
 				  );
   
   /// octupole outer volume
@@ -90,7 +94,8 @@ public:
 				 BDSBeamPipe* beamPipe,              // beampipe
 				 G4double     outerDiameter,         // full width
 				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr// material for outer volume
+				 G4Material*  outerMaterial = nullptr,// material for outer volume
+				 G4bool       buildEndPiece = false
 				 );
   
   /// decapole outer volume
@@ -100,7 +105,8 @@ public:
 				 BDSBeamPipe* beamPipe,              // beampipe
 				 G4double     outerDiameter,         // full width
 				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr// material for outer volume
+				 G4Material*  outerMaterial = nullptr,// material for outer volume
+				 G4bool       buildEndPiece = false
 				 );
   
   /// solenoid  outer volume
@@ -110,7 +116,8 @@ public:
 				 BDSBeamPipe* beamPipe,              // beampipe
 				 G4double     outerDiameter,         // full width
 				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr// material for outer volume
+				 G4Material*  outerMaterial = nullptr,// material for outer volume
+				 G4bool       buildEndPiece = false
 				 );
   
   /// general multipole outer volume - could be any 2N order multipole
@@ -120,7 +127,8 @@ public:
 				  BDSBeamPipe* beamPipe,              // beampipe
 				  G4double     outerDiameter,         // full width
 				  G4double     containerLength,       // full length to make AccComp container
-				  G4Material*  outerMaterial = nullptr// material for outer volume
+				  G4Material*  outerMaterial = nullptr,// material for outer volume
+				  G4bool       buildEndPiece = false
 				  );
   
   /// RF cavity outer volume
@@ -130,7 +138,8 @@ public:
 				 BDSBeamPipe* beamPipe,              // beampipe
 				 G4double     outerDiameter,         // full width
 				 G4double     containerLength,       // full length to make AccComp container
-				 G4Material*  outerMaterial = nullptr// material for outer volume
+				 G4Material*  outerMaterial = nullptr,// material for outer volume
+				 G4bool       buildEndPiece = false
 				 );
   
   /// muon spoiler outer volume
@@ -140,7 +149,8 @@ public:
 				  BDSBeamPipe* beamPipe,              // beampipe
 				  G4double     outerDiameter,         // full width
 				  G4double     containerLength,       // full length to make AccComp container
-				  G4Material*  outerMaterial = nullptr// material for outer volume
+				  G4Material*  outerMaterial = nullptr,// material for outer volume
+				  G4bool       buildEndPiece = false
 				  );
   
   /// horizontal and vertical kicker outer volume
@@ -151,7 +161,8 @@ public:
 			       G4double     outerDiameter,         // full width
 			       G4double     containerLength,       // full length to make AccComp container
 			       G4bool       vertical = true,       // is it a vertical kicker?
-			       G4Material*  outerMaterial = nullptr// material for outer volume
+			       G4Material*  outerMaterial = nullptr,// material for outer volume
+			       G4bool       buildEndPiece = false
 			       );
   
 private:

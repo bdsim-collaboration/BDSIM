@@ -63,7 +63,7 @@ namespace GMAD
     bool writeSeedState;           ///< Write the seed state each event to a text file.
     bool useASCIISeedState;        ///< Whether to use the seed state from an ASCII file.
     std::string seedStateFileName; ///< Seed state file path.
-    
+
     /// Whether to only generate primary coordinates and quit, or not.
     bool generatePrimariesOnly; 
     
@@ -95,7 +95,6 @@ namespace GMAD
     bool recreateSeedState; ///< Load seed state when recreating events.
     
     double elossHistoBinWidth;
-    double elossHistoTransBinWidth;
     
     /// magnetic field flip (+1 default, -1: flip sign)
     double ffact;
@@ -227,14 +226,15 @@ namespace GMAD
     double   blmLength;
     bool     sensitiveBLMs;
 
+    ///@{ Physics processes
     bool     turnOnCerenkov;
     bool     turnOnOpticalAbsorption;
     bool     turnOnMieScattering;
     bool     turnOnRayleighScattering;
     bool     turnOnOpticalSurface;
-    bool     turnOnBirksSaturation;
+    ///@}
 
-    ///Cross section biasing parameters
+    ///@{Cross section biasing parameters
     double   scintYieldFactor;
     double   thresholdCutCharged;
     double   thresholdCutPhotons;
@@ -243,7 +243,8 @@ namespace GMAD
     double   prodCutElectrons;
     double   prodCutPositrons;
     double   prodCutProtons;
-    
+    ///@}
+
     /// Biasing options
     std::string defaultBiasVacuum;
     std::string defaultBiasMaterial;
@@ -252,7 +253,6 @@ namespace GMAD
     std::string integratorSet;
     double   lengthSafety;
     double   maximumTrackingTime; ///< maximum tracking time per volume [s]
-    double   deltaChord;
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;

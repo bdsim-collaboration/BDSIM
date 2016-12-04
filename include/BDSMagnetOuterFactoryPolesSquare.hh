@@ -71,7 +71,8 @@ private:
 					    G4int        order,
 					    G4double     outerDiameter,
 					    G4Material*  outerMaterial,
-					    G4double     magnetContainerLength);
+					    G4double     magnetContainerLength,
+					    G4bool       buildEndPiece);
   
   /// Poles have to be different lengths to fit in a square - have to be unique
   /// therefore keep a vector of them

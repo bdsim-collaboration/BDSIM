@@ -26,20 +26,20 @@ From precompiled sources
 
 BDSIM may also be downloaded from pre-compiled sources. These are available on: http://www.pp.rhul.ac.uk/bdsim/download
 
-AFS
----
+.. AFS
+   ---
 
-With AFS connection you can get the latest released bdsim version from::
-  
-  /afs/cern.ch/user/j/jsnuveri/public/bdsim
-
-The latest develop version (updated daily) is available under::
-
-  /afs/cern.ch/user/j/jsnuveri/public/bdsim-develop
-
-As usual the Geant4 environment script needs to be loaded::
-  
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10.2-setup.sh
+   With AFS connection you can get the latest released bdsim version from::
+   
+   /afs/cern.ch/user/j/jsnuveri/public/bdsim
+   
+   The latest develop version (updated daily) is available under::
+   
+   /afs/cern.ch/user/j/jsnuveri/public/bdsim-develop
+   
+   As usual the Geant4 environment script needs to be loaded::
+   
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10.2-setup.sh
 
 Requirements
 ============
@@ -77,8 +77,9 @@ The following sections detail the setup process for different operating systems.
 
 - `Mac OSX`_
 - `Linux`_
-- `Linux with AFS Access`_
 
+.. - `Linux with AFS Access`_
+   
 Mac OSX
 -------
 
@@ -102,42 +103,46 @@ can check the compiler version with::
 
   gcc --version
 
-After this, `Building`_ can be started.
-
-Linux with AFS Access
----------------------
-
-When the machine has AFS connection, the latest stable release binary is available::
-
-   /afs/cern.ch/user/j/jsnuveri/public/bdsim
-
-Before using the binary you must source the geant4 setup::
-
-   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
-
-When compiling BDSIM from source, the dependent packages like Geant4 can
-be taken from AFS and don't need to be compiled and installed locally. The same
-compiler version needs to be used for BDSIM as the one that was used for Geant4.
-The following scripts must be sourced before using CMake.  
-
-For the versions 0.61 and onwards::
-
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc49-setup.sh
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
-
-For version 0.6 and older::
-  
-  source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
-  source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
-
-If compiling independently, GCC 4.9 can be found with::
+With AFS access version 4.9 can be found here::
 
   source /afs/cern.ch/sw/lcg/external/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
 
-but this must be sourced before using the software once compiled.
-
 After this, `Building`_ can be started.
-  
+
+.. Linux with AFS Access
+   ---------------------
+   
+   When the machine has AFS connection, the latest stable release binary is available::
+   
+   /afs/cern.ch/user/j/jsnuveri/public/bdsim
+   
+   Before using the binary you must source the geant4 setup::
+   
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
+   
+   When compiling BDSIM from source, the dependent packages like Geant4 can
+   be taken from AFS and don't need to be compiled and installed locally. The same
+   compiler version needs to be used for BDSIM as the one that was used for Geant4.
+   The following scripts must be sourced before using CMake.  
+   
+   For the versions 0.61 and onwards::
+   
+   source /afs/cern.ch/user/j/jsnuveri/public/gcc49-setup.sh
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.10-setup.sh
+   
+   For version 0.6 and older::
+   
+   source /afs/cern.ch/user/j/jsnuveri/public/gcc46-setup.sh
+   source /afs/cern.ch/user/j/jsnuveri/public/geant4.9.6-setup.sh
+   
+   If compiling independently, GCC 4.9 can be found with::
+   
+   source /afs/cern.ch/sw/lcg/external/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
+   
+   but this must be sourced before using the software once compiled.
+   
+   After this, `Building`_ can be started.
+
 Building
 --------
 

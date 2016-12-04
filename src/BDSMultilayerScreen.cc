@@ -74,12 +74,14 @@ void BDSMultilayerScreen::build()
 void BDSMultilayerScreen::buildMotherVolume()
 {
   computeDimensions();
-    // Make container marginally bigger to avoid overlaps
-    G4double lengthSafetyLarge = 1*CLHEP::um;
+  
+  // Make container marginally bigger to avoid overlaps
+  G4double lengthSafety = BDSGlobalConstants::Instance()->LengthSafety();
+  
   solid  = new G4Box((name+"_solid").c_str(),
-		     size.x()/2.0 + lengthSafetyLarge,
-		     size.y()/2.0 + lengthSafetyLarge,
-		     size.z()/2.0 + lengthSafetyLarge);
+		     size.x()/2.0 + lengthSafety,
+		     size.y()/2.0 + lengthSafety,
+		     size.z()/2.0 + lengthSafety);
   G4Material* mat = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());
   
   log = new G4LogicalVolume(solid,
@@ -117,21 +119,23 @@ void BDSMultilayerScreen::placeLayers()
 {
   G4ThreeVector pos(0,0,0);
 
-  for(unsigned int i=0; i<screenLayers.size(); i++){
-    pos.setZ(screenLayerZPos[i]);
-    G4cout << __METHOD_NAME__ <<": placing screen layer with ID: " << screenLayers[i]->GetSamplerID() << G4endl;
-    //Create a new physical volume placement for each groove in the screen.
-    screenLayers[i]->SetPhys(new G4PVPlacement((G4RotationMatrix*)nullptr,
-					       pos,
-					       screenLayers[i]->GetLog(),
-					       screenLayers[i]->GetName(),
-					       log,
-					       false,
-					       screenLayers[i]->GetSamplerID(),
-					       true
-					     )
-			   );
-  }
+  for(unsigned int i=0; i<screenLayers.size(); i++)
+    {
+      pos.setZ(screenLayerZPos[i]);
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << ": placing screen layer with ID: "
+	     << screenLayers[i]->GetSamplerID() << G4endl;
+#endif
+      //Create a new physical volume placement for each groove in the screen.
+      screenLayers[i]->SetPhys(new G4PVPlacement((G4RotationMatrix*)nullptr,
+						 pos,
+						 screenLayers[i]->GetLog(),
+						 screenLayers[i]->GetName(),
+						 log,
+						 false,
+						 screenLayers[i]->GetSamplerID(),
+						 true));
+    }
 }
 
 

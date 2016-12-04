@@ -769,8 +769,11 @@ void BDSAwakeSpectrometer::CalculateLengths(){
   _poleStartZ += _startZPos;
   //Screen position
   _screenEndZ += _poleStartZ;
-  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0;
-  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness;
+
+  // backing off x and z by 10nm here to avoid overlaps
+  G4double someSafety = 10*CLHEP::nm;
+  _screenCentreZ = _screenEndZ -_screen_z_dim/2.0 + someSafety;
+  _screenCentreX = _screen_x_dim/2.0 + _vacInnerWidth/2.0 + _vacThickness + someSafety;
   
   /*
   itsXLength = itsYLength = BDSGlobalConstants::Instance()->ComponentBoxSize()/2;

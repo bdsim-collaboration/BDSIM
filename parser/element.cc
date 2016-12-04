@@ -34,15 +34,23 @@ Element::Element():
 
 void Element::PublishMembers()
 {
-  publish("l",&Element::l);
-  publish("B",&Element::B);
-  publish("ks",&Element::ks);
-  publish("k0",&Element::k0);
-  publish("k1",&Element::k1);
-  publish("k2",&Element::k2);
-  publish("k3",&Element::k3);
-  publish("k4",&Element::k4);
+  publish("l",    &Element::l);
+  publish("ks",   &Element::ks);
+  publish("k0",   &Element::k0);
+  publish("k1",   &Element::k1);
+  publish("k2",   &Element::k2);
+  publish("k3",   &Element::k3);
+  publish("k4",   &Element::k4);
   publish("angle",&Element::angle);
+  publish("B",    &Element::B);
+  publish("e1",   &Element::e1);
+  publish("e2",   &Element::e2);
+  publish("fint", &Element::fint);
+  publish("fintx",&Element::fintx);
+  publish("hgap", &Element::hgap);
+  publish("hkick",&Element::hkick);
+  publish("vkick",&Element::vkick);
+  
   publish("beampipeThickness",&Element::beampipeThickness);
   publish("aper",&Element::aper1);
   alternativeNames["aper"] = "aper1";
@@ -67,10 +75,7 @@ void Element::PublishMembers()
   publish("xsizeOut",&Element::xsizeOut);
   publish("ysizeOut",&Element::ysizeOut);
   publish("tilt",&Element::tilt);
-  publish("e1",&Element::e1);
-  publish("e2",&Element::e2);
-  publish("fint",&Element::fint);
-  publish("fintx",&Element::fintx);
+
   publish("offsetX",&Element::offsetX);
   publish("offsetY",&Element::offsetY);
   publish("x",&Element::xdir);
@@ -276,7 +281,8 @@ void Element::print(int ident)const{
     }
 }
 
-void Element::flush() {
+void Element::flush()
+{
   type = ElementType::_NONE;
   name = "";
   l = 0;
@@ -287,6 +293,14 @@ void Element::flush() {
   k3 = 0;
   k4 = 0;
   angle = 0;
+  B = 0;
+  e1 = 0;
+  e2 = 0;
+  fint = 0;
+  fintx = 0;
+  hgap  = 0;
+  hkick = 0;
+  vkick = 0;
   
   // degrader
   numberWedges = 1;
@@ -316,11 +330,6 @@ void Element::flush() {
   ysize = 0;
   xsizeOut = 0;
   ysizeOut = 0;
-  B = 0;
-  e1 = 0;
-  e2 = 0;
-  fint = 0;
-  fintx = 0;
   offsetX = 0;
   offsetY = 0;
   tscint = 0.0003;

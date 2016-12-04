@@ -50,12 +50,18 @@ simple_testing(exportgeometry "--file=sm.gmad" "")
 # seed
 set(TESTING_ARGS --seed=1729)
 simple_testing(simpleMachineSeed "--file=sm.gmad" "")
+# skip events
+set(TESTING_ARGS --startFromEvent=10)
+simple_testing(simpleMachineStartFromEvent "--file=sm.gmad" "")
 # verbose
 set(TESTING_ARGS --verbose)
 simple_testing(simpleMachineVerbose "--file=sm.gmad" "")
 # verbose event
 set(TESTING_ARGS --verbose_event)
 simple_testing(simpleMachineVerboseEvent "--file=sm.gmad" "")
+# verbose event number
+set(TESTING_ARGS --verbose_event_num=0)
+simple_testing(simpleMachineVerboseEventNumber "--file=sm.gmad" "")
 # verbose step
 set(TESTING_ARGS --verbose_step)
 simple_testing(simpleMachineVerboseStep "--file=sm.gmad" "")
