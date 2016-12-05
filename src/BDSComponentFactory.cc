@@ -497,10 +497,12 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
       arcLength = bendingRadius * angle;
       field = brho * angle / arcLength / charge * ffact;
     }
+
+  arcLength = std::abs(arcLength); // ensure positive despite angle.
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
-  (*st)["length"] = std::abs(arcLength);
+  (*st)["length"] = arcLength;
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
