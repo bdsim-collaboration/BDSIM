@@ -256,7 +256,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   
   G4double      angle = (*st)["angle"];
   G4double bendingRadius = brho / (*st)["field"];
-  G4double     length = bendingRadius * angle; // arc length
+  G4double     length = std::abs(bendingRadius * angle); // arc length
   //G4double     length = element->l*CLHEP::m;
   const G4String name = element->name;
   G4String    thename = element->name;
