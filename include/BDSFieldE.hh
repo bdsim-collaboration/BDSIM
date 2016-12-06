@@ -10,7 +10,7 @@
  * @brief Interface for BDSIM electric fields that may or may not be local.
  * 
  * Defines abstract interface for all derived electric fields. More common
- * to use G4ThreeVectors than arrays so provides common functionality
+ * to use G4ThreeVectors than arrays so provides common functionality.
  * 
  * @author Laurie Nevay
  */
@@ -18,6 +18,10 @@
 class BDSFieldE: public G4ElectricField
 {
 public:
+  /// Constructor takes transform in, which is inverted and applied to positions
+  /// before querying the 'pure' derived field object. This allows local offset,
+  /// translations, reflections and scalings to be applied if requried - ie for
+  /// misalignment from the local coordinates.
   BDSFieldE();
   BDSFieldE(G4Transform3D transformIn);
   virtual ~BDSFieldE(){;}
@@ -48,6 +52,9 @@ public:
 private:
   /// Transform to apply for the field relative to the local coordinates of the geometry.
   G4Transform3D transform;
+
+  /// The complimentary transform used to initially rotate the point of query.
+  G4Transform3D inverseTransform;
 };
 
 #endif
