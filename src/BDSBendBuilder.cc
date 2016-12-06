@@ -249,15 +249,17 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     G4double                angleOut,
 			     const G4double          brho,
 			     BDSMagnetStrength*      st,
-			     const BDSIntegratorSet* integratorSet)
+			     const BDSIntegratorSet* integratorSet,
+			     const G4double          charge)
 {
   G4bool       includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
-  
+
+  // Angle here is in the 'strength' convention of +ve angle -> -ve x deflection
   G4double      angle = (*st)["angle"];
-  G4double bendingRadius = brho / (*st)["field"];
+  // Here we need bending radius to be in correct global carteasian convention, hence -ve.
+  G4double bendingRadius = -charge * brho / (*st)["field"];
   G4double     length = std::abs(bendingRadius * angle); // arc length
-  //G4double     length = element->l*CLHEP::m;
   const G4String name = element->name;
   G4String    thename = element->name;
   const G4double  rho = bendingRadius; //length / angle;
@@ -324,7 +326,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       angleIn  -= 0.5*(thinElementLength)/rho;
     }
 
-  // update the angle as part of the bending covered by the thin fringe part. Length is now shorter.
+  // update the angle as part of the bending covered by the thin fringe part.
+  // Length is now shorter.
   angle = -length/rho;
   
   //change angle in the case that the next/prev element modifies
@@ -346,13 +349,17 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   mgInfo->name = element->name;
+
+  // Here we change from the strength angle convention of +ve angle corresponds to
+  // deflection in negative x, to correct 3d +ve angle corresponds to deflection in
+  // positive x. Hence angle sign flip for construction.
   BDSMagnet* oneBend = new BDSMagnet(magType,
 				     element->name,
 				     length,
 				     bpInfo,
 				     mgInfo,
 				     vacuumField,
-				     angle,
+				     -angle,
 				     nullptr);
   
   rbendline->AddComponent(oneBend);

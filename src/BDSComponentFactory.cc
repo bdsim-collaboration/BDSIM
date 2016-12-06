@@ -485,7 +485,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-
       G4double bendingRadius = brho / field; // in mm as brho already in g4 units
       angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
       arcLength = bendingRadius * angle;
@@ -493,9 +492,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      G4double bendingRadius = chordLength * 0.5 / sin(angle*0.5);
+      // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+      G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle)*0.5);
       arcLength = bendingRadius * angle;
-      field = brho * angle / arcLength / charge * ffact;
+      field = brho * angle / std::abs(arcLength) / charge * ffact;
     }
 
   arcLength = std::abs(arcLength); // ensure positive despite angle.
@@ -519,7 +519,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					   angleOut,
 					   brho,
 					   st,
-					   integratorSet);
+					   integratorSet,
+					   charge);
   return rbendline;
 }
 
