@@ -69,13 +69,17 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
 BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleComponent* component,
 								BDSBeamlineElement const* const element)
 {
+  BDSTiltOffset* copyTiltOffset = nullptr;
+  BDSTiltOffset* existingTiltOffset = element->GetTiltOffset();
+  if (existingTiltOffset)
+    {copyTiltOffset = new BDSTiltOffset(*existingTiltOffset);}
   BDSBeamlineElement* result = new BDSBeamlineElement(component,
-						      element->GetReferencePositionStart(),
-						      element->GetReferencePositionMiddle(),
-						      element->GetReferencePositionEnd(),
-						      new G4RotationMatrix(*(element->GetReferenceRotationStart())),
-						      new G4RotationMatrix(*(element->GetReferenceRotationMiddle())),
-						      new G4RotationMatrix(*(element->GetReferenceRotationEnd())),
+						      element->GetPositionStart(),
+						      element->GetPositionMiddle(),
+						      element->GetPositionEnd(),
+						      new G4RotationMatrix(*(element->GetRotationStart())),
+						      new G4RotationMatrix(*(element->GetRotationMiddle())),
+						      new G4RotationMatrix(*(element->GetRotationEnd())),
 						      element->GetReferencePositionStart(),
 						      element->GetReferencePositionMiddle(),
 						      element->GetReferencePositionEnd(),
@@ -84,7 +88,11 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      new G4RotationMatrix(*(element->GetReferenceRotationEnd())),
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
-						      element->GetSPositionEnd());
+						      element->GetSPositionEnd(),
+						      copyTiltOffset,
+						      element->GetSamplerType(),
+						      element->GetSamplerName(),
+						      element->GetIndex());
   return result;
 }
 
@@ -128,6 +136,16 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
       inputface = faces.first;
       outputface = faces.second;
 
+      BDSTiltOffset* to = element->GetTiltOffset();
+      if (to)
+	{// could be nullptr
+	  G4double tilt = to->GetTilt();
+	  if (BDS::IsFinite(tilt))
+	    {// rotate normal faces
+	      inputface = inputface.rotateZ(tilt);
+	      outputface = outputface.rotateZ(tilt);
+	    }
+	}
       G4double halfLength = chordLength * 0.5 - lengthSafety;
       solid = new G4CutTubs(name + "_cl_solid", // name
 			    0,                  // inner radius
