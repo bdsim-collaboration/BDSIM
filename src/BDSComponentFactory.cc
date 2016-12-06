@@ -638,7 +638,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					       intType,
 					       st);
   
-  BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::multipole,
+  BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::thinmultipole,
 					    element->name,
 					    thinElementLength,
 					    beamPipeInfo,
