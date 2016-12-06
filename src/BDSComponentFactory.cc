@@ -333,7 +333,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   if (facesWillIntersect)
     {
       G4cerr << __METHOD_NAME__ << "Drift \"" << element->name
-	     << "\" is too short for angled faces between \"";
+	     << "\" between \"";
       if (prevElement)
 	{G4cerr << prevElement->name;}
       else
@@ -343,7 +343,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 	{G4cerr << nextElement->name;}
       else
 	{G4cerr << "none";}
-      G4cerr << "\"" << G4endl;
+      G4cerr << "\" is too short given its width and the angle of its faces." << G4endl;
       exit(1);
     }
 
