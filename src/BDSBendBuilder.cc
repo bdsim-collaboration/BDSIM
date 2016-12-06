@@ -259,7 +259,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4double      angle = (*st)["angle"];
   // Here we need bending radius to be in correct global carteasian convention, hence -ve.
   G4double bendingRadius = -charge * brho / (*st)["field"];
-  G4double     length = std::abs(bendingRadius * angle); // arc length
+  G4double  arcLength = std::abs(bendingRadius * angle); // arc length
   const G4String name = element->name;
   G4String    thename = element->name;
   const G4double  rho = bendingRadius; //length / angle;
@@ -275,8 +275,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   BDSMagnetType magType = BDSMagnetType::rectangularbend;
 
   // poleface angles
-  G4double polefaceAngleIn  = e1 + 0.5*(length-thinElementLength)/rho;
-  G4double polefaceAngleOut = e2 + 0.5*(length-thinElementLength)/rho;
+  G4double polefaceAngleIn  = e1 + 0.5*(arcLength-thinElementLength)/rho;
+  G4double polefaceAngleOut = e2 + 0.5*(arcLength-thinElementLength)/rho;
 
   // poleface angles and main element angles are modified if next/previous is an rbend
   // booleans for modification by previous/next element
@@ -315,20 +315,20 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // subtract thinElementLength from main rbend element if fringe & poleface(s) specified
   if (BDS::IsFinite(e1) && includeFringe && (!prevModifies))
     {
-      length   -= thinElementLength;
-      angleIn  += 0.5*(thinElementLength)/rho;
-      angleOut -= 0.5*(thinElementLength)/rho;
+      arcLength -= thinElementLength;
+      angleIn   += 0.5*(thinElementLength)/rho;
+      angleOut  -= 0.5*(thinElementLength)/rho;
     }
   if (BDS::IsFinite(e2) && includeFringe && (!nextModifies))
     {
-      length   -= thinElementLength;
-      angleOut += 0.5*(thinElementLength)/rho;
-      angleIn  -= 0.5*(thinElementLength)/rho;
+      arcLength -= thinElementLength;
+      angleOut  += 0.5*(thinElementLength)/rho;
+      angleIn   -= 0.5*(thinElementLength)/rho;
     }
 
   // update the angle as part of the bending covered by the thin fringe part.
   // Length is now shorter.
-  angle = -length/rho;
+  angle = -arcLength/rho;
   
   //change angle in the case that the next/prev element modifies
   if (nextModifies)
@@ -337,7 +337,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
     {angleIn  -= 0.5*(thinElementLength)/rho;}
   
   // override copied length and angle
-  (*st)["length"] = length;
+  (*st)["length"] = arcLength;
   (*st)["angle"]  = angle;
 
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
@@ -355,7 +355,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // positive x. Hence angle sign flip for construction.
   BDSMagnet* oneBend = new BDSMagnet(magType,
 				     element->name,
-				     length,
+				     arcLength,
 				     bpInfo,
 				     mgInfo,
 				     vacuumField,
