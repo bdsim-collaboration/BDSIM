@@ -274,7 +274,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   
   BDSMagnetType magType = BDSMagnetType::rectangularbend;
 
-  // poleface angles
+  // poleface angles - these variables are only used for the thin fringe element faces
   G4double polefaceAngleIn  = e1 + 0.5*(arcLength-thinElementLength)/rho;
   G4double polefaceAngleOut = e2 + 0.5*(arcLength-thinElementLength)/rho;
 
