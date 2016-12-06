@@ -187,5 +187,14 @@ private:
 
   /// Calculate field and angle of a bend
   std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element);
+
+  /// Calculate the field and angle of an rbend from information in the element noting the
+  /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
+  /// are updated as output.
+  void CalculateAngleAndFieldRBend(const GMAD::Element* element,
+				   G4double& arcLength,
+				   G4double& chordLength,
+				   G4double& field,
+				   G4double& angle);
 };
 #endif

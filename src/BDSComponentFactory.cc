@@ -467,45 +467,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
 
-  // 'l' in the element represents the chord length for an rbend - must calculate arc length
-  // for the field calculation and the accelerator component.
-  G4double angle  = 0;
-  G4double field  = 0;  
-  G4double chordLength = element->l * CLHEP::m;
-  G4double arcLength   = chordLength;
-  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
-  
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
-    {// both are specified and should be used - under or overpowered dipole by design
-      field = element->B * CLHEP::tesla;
-      // note, angle must be finite for this part to be used so we're protected against
-      // infinite bending radius and therefore nan arcLength.
-      angle = element->angle * CLHEP::rad;
-      G4double bendingRadius = brho / field;
-      arcLength = bendingRadius * angle;
-    }
-  else if (BDS::IsFinite(element->B))
-    {// only B field - calculate angle
-      field = element->B * CLHEP::tesla;
-      G4double bendingRadius = brho / field; // in mm as brho already in g4 units
-      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
-      arcLength = bendingRadius * angle;
-    }
-  else
-  {// (assume) only angle - calculate B field
-      angle = element->angle * CLHEP::rad;
-      if (BDS::IsFinite(angle))
-	{
-	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
-	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
-	  arcLength = bendingRadius * angle;
-	  field = brho * angle / std::abs(arcLength) / charge * ffact;
-        }
-      else
-	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
-    }
-
-  arcLength = std::abs(arcLength); // ensure positive despite angle.
+  G4double arcLength   = 0;
+  G4double chordLength = 0;
+  G4double field       = 0;
+  G4double angle       = 0;
+  CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
@@ -1274,4 +1240,50 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
     }
   
   return std::make_pair(angle,field);
+}
+
+void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
+						      G4double& arcLength,
+						      G4double& chordLength,
+						      G4double& field,
+						      G4double& angle)
+{
+  // 'l' in the element represents the chord length for an rbend - must calculate arc length
+  // for the field calculation and the accelerator component.
+  chordLength = element->l * CLHEP::m;
+  G4double arcLengthLocal = chordLength;
+  G4double ffact = BDSGlobalConstants::Instance()->FFact();
+  
+  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      field = element->B * CLHEP::tesla;
+      // note, angle must be finite for this part to be used so we're protected against
+      // infinite bending radius and therefore nan arcLength.
+      angle = element->angle * CLHEP::rad;
+      G4double bendingRadius = brho / field;
+      arcLengthLocal = bendingRadius * angle;
+    }
+  else if (BDS::IsFinite(element->B))
+    {// only B field - calculate angle
+      field = element->B * CLHEP::tesla;
+      G4double bendingRadius = brho / field; // in mm as brho already in g4 units
+      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
+      arcLengthLocal = bendingRadius * angle;
+    }
+  else
+    {// (assume) only angle - calculate B field
+      angle = element->angle * CLHEP::rad;
+      if (BDS::IsFinite(angle))
+	{
+	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
+	  arcLengthLocal = bendingRadius * angle;
+	  field = brho * angle / std::abs(arcLengthLocal) / charge * ffact;
+        }
+      else
+	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
+    }
+
+  // Ensure positive length despite sign of angle or charge.
+  arcLength = std::abs(arcLengthLocal);
 }
