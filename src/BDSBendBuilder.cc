@@ -256,13 +256,17 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
 
   // Angle here is in the 'strength' convention of +ve angle -> -ve x deflection
-  G4double      angle = (*st)["angle"];
-  // Here we need bending radius to be in correct global carteasian convention, hence -ve.
-  G4double bendingRadius = -charge * brho / (*st)["field"];
-  G4double  arcLength = std::abs(bendingRadius * angle); // arc length
+  G4double         angle = (*st)["angle"];
+  G4double bendingRadius = DBL_MAX; // default for zero angle
+  G4double     arcLength = (*st)["length"];
+  if (BDS::IsFinite(angle))
+    {// avoid bad calculations for zero angle
+      // Here we need bending radius to be in correct global carteasian convention, hence -ve.
+      bendingRadius = -charge * brho / (*st)["field"];
+      arcLength = std::abs(bendingRadius * angle); // arc length
+    }
   const G4String name = element->name;
   G4String    thename = element->name;
-  const G4double  rho = bendingRadius; //length / angle;
   const G4double   e1 = element->e1 * CLHEP::rad;
   const G4double   e2 = element->e2 * CLHEP::rad;
   const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
@@ -275,22 +279,27 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   BDSMagnetType magType = BDSMagnetType::rectangularbend;
 
   // poleface angles - these variables are only used for the thin fringe element faces
-  G4double polefaceAngleIn  = e1 + 0.5*(arcLength-thinElementLength)/rho;
-  G4double polefaceAngleOut = e2 + 0.5*(arcLength-thinElementLength)/rho;
-
+  G4double polefaceAngleIn  = e1;
+  G4double polefaceAngleOut = e2;
+  if (BDS::IsFinite(angle))
+    {
+      polefaceAngleIn += 0.5*(arcLength-thinElementLength)/bendingRadius;
+      polefaceAngleIn += 0.5*(arcLength-thinElementLength)/bendingRadius;
+    }
+  
   // poleface angles and main element angles are modified if next/previous is an rbend
   // booleans for modification by previous/next element
   if ((prevElement) && (prevElement->type == ElementType ::_RBEND))
     {
       prevModifies = true;
       polefaceAngleIn -= 0.5 * angle;
-      angleIn += 0.5*(thinElementLength)/rho;
+      angleIn += 0.5*(thinElementLength)/bendingRadius;
     }
   if ((nextElement) && (nextElement->type == ElementType ::_RBEND))
     {
       nextModifies = true;
       polefaceAngleOut -= 0.5 * angle;
-      angleOut += 0.5*(thinElementLength)/rho;
+      angleOut += 0.5*(thinElementLength)/bendingRadius;
     }
   
   // first element should be fringe if poleface specified
@@ -300,13 +309,15 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       (*fringeStIn)["field"]         = (*st)["field"];
       (*fringeStIn)["polefaceangle"] = e1;
       (*fringeStIn)["length"]        = thinElementLength;
-      (*fringeStIn)["angle"]         = -thinElementLength/rho;
-      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(rho, e1, element->fint);
+      G4double fringeAngle = 0;
+      if (BDS::IsFinite(angle))
+        {fringeAngle = -thinElementLength / bendingRadius;}
+      (*fringeStIn)["angle"]         = fringeAngle;
+      (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e1, element->fint);
       (*fringeStIn)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
       thename                        = name + "_e1_fringe";
-      G4double fringeAngle           = polefaceAngleIn;
       
-      BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, -fringeAngle, fringeAngle,
+      BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, -polefaceAngleIn, polefaceAngleIn,
 						      thename, magType, fringeStIn, brho,
 						      integratorSet);
       rbendline->AddComponent(startfringe);
@@ -316,29 +327,29 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   if (BDS::IsFinite(e1) && includeFringe && (!prevModifies))
     {
       arcLength -= thinElementLength;
-      angleIn   += 0.5*(thinElementLength)/rho;
-      angleOut  -= 0.5*(thinElementLength)/rho;
+      angleIn   += 0.5*(thinElementLength)/bendingRadius;
+      angleOut  -= 0.5*(thinElementLength)/bendingRadius;
     }
   if (BDS::IsFinite(e2) && includeFringe && (!nextModifies))
     {
       arcLength -= thinElementLength;
-      angleOut  += 0.5*(thinElementLength)/rho;
-      angleIn   -= 0.5*(thinElementLength)/rho;
+      angleOut  += 0.5*(thinElementLength)/bendingRadius;
+      angleIn   -= 0.5*(thinElementLength)/bendingRadius;
     }
 
   // update the angle as part of the bending covered by the thin fringe part.
   // Length is now shorter.
-  angle = -arcLength/rho;
+  G4double centralSectionAngle = -arcLength/bendingRadius;
   
   //change angle in the case that the next/prev element modifies
   if (nextModifies)
-    {angleOut -= 0.5*(thinElementLength)/rho;}
+    {angleOut -= 0.5*(thinElementLength)/bendingRadius;}
   if (prevModifies)
-    {angleIn  -= 0.5*(thinElementLength)/rho;}
+    {angleIn  -= 0.5*(thinElementLength)/bendingRadius;}
   
   // override copied length and angle
   (*st)["length"] = arcLength;
-  (*st)["angle"]  = angle;
+  (*st)["angle"]  = centralSectionAngle;
 
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -359,7 +370,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 				     bpInfo,
 				     mgInfo,
 				     vacuumField,
-				     -angle,
+				     -centralSectionAngle,
 				     nullptr);
   
   rbendline->AddComponent(oneBend);
@@ -371,13 +382,15 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       (*fringeStOut)["field"]         = (*st)["field"];
       (*fringeStOut)["polefaceangle"] = e2;
       (*fringeStOut)["length"]        = thinElementLength;
-      (*fringeStOut)["angle"]         = -thinElementLength / rho;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho, e2, element->fintx);
+      G4double fringeAngle = 0;
+      if (BDS::IsFinite(angle))
+        {fringeAngle = -thinElementLength / bendingRadius;}
+      (*fringeStOut)["angle"]         = fringeAngle;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e2, element->fintx);
       (*fringeStOut)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
       thename                         = name + "_e2_fringe";
-      G4double fringeAngle            = polefaceAngleOut;
       
-      BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeAngle, -fringeAngle,
+      BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, polefaceAngleOut, -polefaceAngleOut,
 						    thename, magType, fringeStOut, brho,
 						    integratorSet);
       rbendline->AddComponent(endfringe);
