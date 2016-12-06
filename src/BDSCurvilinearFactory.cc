@@ -89,10 +89,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
 						      element->GetSPositionEnd(),
-						      copyTiltOffset,
-						      element->GetSamplerType(),
-						      element->GetSamplerName(),
-						      element->GetIndex());
+						      copyTiltOffset);
   return result;
 }
 
