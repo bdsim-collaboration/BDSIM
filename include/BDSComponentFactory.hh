@@ -10,7 +10,8 @@
 
 #include <map>
 
-namespace GMAD {
+namespace GMAD
+{
   struct Element;
 }
 class BDSAcceleratorComponent;
@@ -25,11 +26,20 @@ class BDSTiltOffset;
 /**
  * @brief Factory to produce all types of BDSAcceleratorComponents.
  * 
- * Creates from a parser Element the appropriate
- * object (that inherits BDSAcceleratorComponent) and returns it. Will return
- * nullptr if invalid type or nothing to be constructed for that particular type.
- * Basic calculations on field strength and angle as well as basic parameter validity
- * (zero length) are done here.
+ * Creates from a parser Element the appropriate object (that inherits 
+ * BDSAcceleratorComponent) and returns it. Will return nullptr if invalid 
+ * type or nothing to be constructed for that particular type. Calculations 
+ * on field strength and angle as well as basic parameter validity (minimum 
+ * length) are done here.
+ *
+ * The main interface requires both a previous and next GMAD::Element that the
+ * element is constructed with respect to. This is so that drifts can be matched
+ * to the faces of bends with pole face rotations etc.  If required in future, a
+ * simple interface for a single element could be added that uses this one with 
+ * nullptrs.
+ * 
+ * Functions for common functionality, checks and preparation of recipe classes 
+ * are provided publicly (and statically) for use elsewhere.
  */
 
 class BDSComponentFactory
@@ -177,6 +187,5 @@ private:
 
   /// Calculate field and angle of a bend
   std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element);
-
 };
 #endif
