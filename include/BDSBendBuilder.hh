@@ -39,7 +39,8 @@ namespace BDS
 			  G4double                angleOut,
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
-			  const BDSIntegratorSet* integratorSet);
+			  const BDSIntegratorSet* integratorSet,
+			  const G4double          charge);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.

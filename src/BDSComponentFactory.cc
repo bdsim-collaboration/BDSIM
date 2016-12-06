@@ -480,6 +480,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
+      // note, angle must be finite for this part to be used so we're protected against
+      // infinite bending radius and therefore nan arcLength.
       angle = element->angle * CLHEP::rad;
       G4double bendingRadius = brho / field;
       arcLength = bendingRadius * angle;
@@ -487,18 +489,25 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-
       G4double bendingRadius = brho / field; // in mm as brho already in g4 units
       angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
       arcLength = bendingRadius * angle;
     }
   else
-    {// only angle - calculate B field
+  {// (assume) only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      G4double bendingRadius = chordLength * 0.5 / sin(angle*0.5);
-      arcLength = bendingRadius * angle;
-      field = brho * angle / arcLength / charge * ffact;
+      if (BDS::IsFinite(angle))
+	{
+	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
+	  arcLength = bendingRadius * angle;
+	  field = brho * angle / std::abs(arcLength) / charge * ffact;
+        }
+      else
+	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
     }
+
+  arcLength = std::abs(arcLength); // ensure positive despite angle.
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
@@ -519,7 +528,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
 					   angleOut,
 					   brho,
 					   st,
-					   integratorSet);
+					   integratorSet,
+					   charge);
   return rbendline;
 }
 
