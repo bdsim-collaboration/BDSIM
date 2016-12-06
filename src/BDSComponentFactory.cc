@@ -134,17 +134,17 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       angleIn  = -1.0 * element->e1 * CLHEP::rad;
       angleOut = -1.0 * element->e2 * CLHEP::rad;
 
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-        {
-          differentFromDefinition = true;
-          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-          angleOut += 0.5*angleAndField.first;
-        }
       if (prevElement && (prevElement->type == ElementType::_RBEND))
         {
           differentFromDefinition = true;
           std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
           angleIn += 0.5*angleAndField.first;
+        }
+      if (nextElement && (nextElement->type == ElementType::_RBEND))
+        {
+          differentFromDefinition = true;
+          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
+          angleOut += 0.5*angleAndField.first;
         }
     }
   else if (element->type == ElementType::_THINMULT)
