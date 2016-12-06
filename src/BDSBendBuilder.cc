@@ -283,8 +283,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4double polefaceAngleOut = e2;
   if (BDS::IsFinite(angle))
     {
-      polefaceAngleIn += 0.5*(arcLength-thinElementLength)/bendingRadius;
-      polefaceAngleIn += 0.5*(arcLength-thinElementLength)/bendingRadius;
+      polefaceAngleIn  += 0.5*(arcLength-thinElementLength)/bendingRadius;
+      polefaceAngleOut += 0.5*(arcLength-thinElementLength)/bendingRadius;
     }
   
   // poleface angles and main element angles are modified if next/previous is an rbend
