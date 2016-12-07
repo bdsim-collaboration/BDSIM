@@ -128,6 +128,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 
   xp1 -= (kick.real() + dipoleTerm);
   yp1 += kick.imag();
+  zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
 
   //Reset n for skewed kicks.
   n=1;
@@ -171,6 +172,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 
   xp1 = mom.x();
   yp1 = mom.y();
+  zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
 
   LocalR.setX(x1);
   LocalR.setY(y1);
