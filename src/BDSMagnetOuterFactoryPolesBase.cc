@@ -984,7 +984,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (buildPole)
     {extXPos += coilWidth + lsl;}
 
-  if (!yokeOnLeft)
+  if (yokeOnLeft)
     {
       // flip x component so geometry is reflected horizontally
       for (auto& vec : yokePoints)
