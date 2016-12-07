@@ -185,17 +185,19 @@ private:
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
 
-  /// Calculate field and angle of a bend
-  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element);
+  /// Calculate field and angle of a bend. Note, this uses the MADX convention
+  /// of +ve angle -> deflection in -ve x.
+  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element) const;
 
   /// Calculate the field and angle of an rbend from information in the element noting the
   /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
-  /// are updated as output.
+  /// are updated as output. Note, this uses the MADX convention of +ve angle -> deflection
+  /// in -ve x.
   void CalculateAngleAndFieldRBend(const GMAD::Element* element,
 				   G4double& arcLength,
 				   G4double& chordLength,
 				   G4double& field,
-				   G4double& angle);
+				   G4double& angle) const;
 
   /// Calculate the angle of a bend whether it's an rbend or an sbend.
   G4double BendAngle(const GMAD::Element* element) const;

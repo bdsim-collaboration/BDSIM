@@ -466,11 +466,8 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     }
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-
-  G4double arcLength   = 0;
-  G4double chordLength = 0;
-  G4double field       = 0;
-  G4double angle       = 0;
+  
+  G4double arcLength   = 0, chordLength = 0, field = 0, angle = 0;
   CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
   (*st)["angle"]  = angle;
@@ -1216,7 +1213,7 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   return st;
 }
 
-std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element const* element)
+std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element const* element) const
 {  
   G4double angle  = 0;
   G4double field  = 0;  
@@ -1246,7 +1243,7 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
 						      G4double& arcLength,
 						      G4double& chordLength,
 						      G4double& field,
-						      G4double& angle)
+						      G4double& angle) const
 {
   // 'l' in the element represents the chord length for an rbend - must calculate arc length
   // for the field calculation and the accelerator component.
