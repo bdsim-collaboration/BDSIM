@@ -261,8 +261,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4double     arcLength = (*st)["length"];
   if (BDS::IsFinite(angle))
     {// avoid bad calculations for zero angle
-      // Here we need bending radius to be in correct global carteasian convention, hence -ve.
-      bendingRadius = -charge * brho / (*st)["field"];
+      // Here we need bending radius to be in correct global cartesian convention, hence -ve.
+      bendingRadius = - brho / (*st)["field"] / charge;
       arcLength = std::abs(bendingRadius * angle); // arc length
     }
   const G4String name = element->name;
@@ -283,8 +283,8 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4double polefaceAngleOut = e2;
   if (BDS::IsFinite(angle))
     {
-      polefaceAngleIn += 0.5*(arcLength-thinElementLength)/bendingRadius;
-      polefaceAngleIn += 0.5*(arcLength-thinElementLength)/bendingRadius;
+      polefaceAngleIn  += 0.5*(arcLength-thinElementLength)/bendingRadius;
+      polefaceAngleOut += 0.5*(arcLength-thinElementLength)/bendingRadius;
     }
   
   // poleface angles and main element angles are modified if next/previous is an rbend
