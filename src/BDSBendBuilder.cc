@@ -266,9 +266,12 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       arcLength = std::abs(bendingRadius * angle); // arc length
     }
   const G4String name = element->name;
-  G4String    thename = element->name;
-  const G4double   e1 = element->e1 * CLHEP::rad;
-  const G4double   e2 = element->e2 * CLHEP::rad;
+  G4String    thename = name; // copy
+
+  // face rotations
+  G4double factor = angle < 0 ? -1 : 1; // convention - +ve e1 / e2 reduces outside of bend
+  const G4double   e1 = factor * element->e1 * CLHEP::rad;
+  const G4double   e2 = factor * element->e2 * CLHEP::rad;
   const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
 
   G4bool prevModifies  = false;
