@@ -35,8 +35,6 @@ namespace BDS
   BDSLine* BuildRBendLine(const GMAD::Element*    element,
 			  const GMAD::Element*    prevElement,
 			  const GMAD::Element*    nextElement,
-			  G4double                angleIn,
-			  G4double                angleOut,
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
 			  const BDSIntegratorSet* integratorSet,

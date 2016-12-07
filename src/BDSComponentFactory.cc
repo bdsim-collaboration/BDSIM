@@ -107,6 +107,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
   if (element->type == ElementType::_DRIFT)
     {
+      // minues are to go from 'strength convention' to 3d cartesian.
       if (prevElement)
         {angleIn  = OutgoingFaceAngle(prevElement);}
       if (nextElement)
@@ -156,7 +157,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
-    component = CreateRBend(angleIn, angleOut); break;
+    component = CreateRBend(); break;
   case ElementType::_HKICK:
     component = CreateKicker(false); break;
   case ElementType::_VKICK:
@@ -389,8 +390,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   return sBendLine;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
-							  G4double angleOut)
+BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -445,8 +445,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   BDSLine* rbendline = BDS::BuildRBendLine(element,
 					   prevElement,
 					   nextElement,
-					   angleIn,
-					   angleOut,
 					   brho,
 					   st,
 					   integratorSet,
