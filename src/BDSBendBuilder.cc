@@ -275,8 +275,6 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   G4bool nextModifies  = false;
     
   BDSLine* rbendline  = new BDSLine(name);
-  
-  BDSMagnetType magType = BDSMagnetType::rectangularbend;
 
   // poleface angles - these variables are only used for the thin fringe element faces
   G4double polefaceAngleIn  = e1;
@@ -318,7 +316,9 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       thename                        = name + "_e1_fringe";
       
       BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, -polefaceAngleIn, polefaceAngleIn,
-						      thename, magType, fringeStIn, brho,
+						      thename,
+						      BDSMagnetType::rectangularbend,
+						      fringeStIn, brho,
 						      integratorSet);
       rbendline->AddComponent(startfringe);
     }
@@ -364,7 +364,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // Here we change from the strength angle convention of +ve angle corresponds to
   // deflection in negative x, to correct 3d +ve angle corresponds to deflection in
   // positive x. Hence angle sign flip for construction.
-  BDSMagnet* oneBend = new BDSMagnet(magType,
+  BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::rectangularbend,
 				     element->name,
 				     arcLength,
 				     bpInfo,
@@ -391,7 +391,9 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
       thename                         = name + "_e2_fringe";
       
       BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, polefaceAngleOut, -polefaceAngleOut,
-						    thename, magType, fringeStOut, brho,
+						    thename,
+						    BDSMagnetType::rectangularbend,
+						    fringeStOut, brho,
 						    integratorSet);
       rbendline->AddComponent(endfringe);
     }
