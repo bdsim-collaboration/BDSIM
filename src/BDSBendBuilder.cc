@@ -268,9 +268,11 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
 
   // face rotations
-  G4double factor = angle < 0 ? -1 : 1; // convention - +ve e1 / e2 reduces outside of bend
-  const G4double e1 = factor * element->e1 * CLHEP::rad;
-  const G4double e2 = factor * element->e2 * CLHEP::rad;
+  // convention - +ve e1 / e2 reduces outside of bend
+  // extra factor of -1 for 'strength' to cartesian
+  G4double factor = angle < 0 ? -1 : 1; 
+  const G4double e1 = -factor * element->e1 * CLHEP::rad;
+  const G4double e2 = -factor * element->e2 * CLHEP::rad;
 
   if (!BDS::IsFinite(e1))
     {buildFringeIncoming = false;}
