@@ -107,70 +107,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
   if (element->type == ElementType::_DRIFT)
     {
-      // Match poleface from previous and next element
-      angleIn  = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-
-      // Normal vector of rbend is from the magnet, angle of the rbend has to be
-      // taken into account regardless of poleface rotation
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
-          angleIn += 0.5*(angleAndField.first);
-	} 
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-        {
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
-          angleOut += 0.5*angleAndField.first;
-	}
+      if (prevElement)
+        {angleIn  = OutgoingFaceAngle(prevElement);}
+      if (nextElement)
+        {angleOut = IncomingFaceAngle(nextElement);}
+      
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
 	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_RBEND)
-    {
-      // angleIn and angleOut have to be multiplied by minus one for rbends for
-      // some reason. Cannot figure out why yet.
-      angleIn  = -1.0 * element->e1 * CLHEP::rad;
-      angleOut = -1.0 * element->e2 * CLHEP::rad;
-
+    {// bend builder will construct it to match - but here we just now it's different
+      // match a previous rbend with half the angle
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-        {
-          differentFromDefinition = true;
-          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-          angleIn += 0.5*angleAndField.first;
-        }
+	{differentFromDefinition = true;}
+      // match the upcoming rbend with half the angle
       if (nextElement && (nextElement->type == ElementType::_RBEND))
-        {
-          differentFromDefinition = true;
-          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-          angleOut += 0.5*angleAndField.first;
-        }
+	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_THINMULT)
-    {
-      if (nextElement && (BDS::IsFinite(nextElement->e1)))
-	{
-	  angleIn += nextElement->e1 * CLHEP::rad;
-	  differentFromDefinition  = true;
-	}
-      else if (prevElement && (BDS::IsFinite(prevElement->e2)))
-	{
-	  angleIn -= prevElement->e2 * CLHEP::rad;
-	  differentFromDefinition  = true;
-	}
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{
-	  differentFromDefinition = true;
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
-	  angleIn += 0.5*angleAndField.first;
-	}
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{
-	  differentFromDefinition = true;
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
-	  angleIn -= 0.5*angleAndField.first;
-	}
+    {// thinmultipole only uses one angle - so angleIn
+      if (prevElement)
+	{angleIn = OutgoingFaceAngle(prevElement);}
+      if (nextElement)
+	{angleIn = IncomingFaceAngle(nextElement);}
     }
   
   // Check if the component already exists and return that.
