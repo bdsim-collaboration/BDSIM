@@ -1287,3 +1287,79 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
   // Ensure positive length despite sign of angle or charge.
   arcLength = std::abs(arcLengthLocal);
 }
+
+G4double BDSComponentFactory::BendAngle(const Element* element) const
+{
+  G4double bendAngle = 0;
+  if (element->type == ElementType::_RBEND)
+    {
+      G4double arcLength = 0, chordLength = 0, field = 0;
+      CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, bendAngle);
+    }
+  else if (element->type == ElementType::_SBEND)
+    {
+      auto angleAndField = CalculateAngleAndField(element);
+      bendAngle = angleAndField.first;
+    }
+  return bendAngle;
+}
+
+G4double BDSComponentFactory::OutgoingFaceAngle(const Element* element) const
+{
+  // note thin multipoles will match the faces of any magnets, but not contain
+  // the face angles themselves in the GMAD::Element. this is ok though as
+  // detector construction will not give a thin multipole as a previous element
+  // - it'll be skipped while looking backwards.
+  G4double outgoingFaceAngle = 0;
+  G4double bendAngle         = BendAngle(element);
+
+  if (element->type == ElementType::_RBEND)
+    {
+      // angle is w.r.t. outoing reference trajectory so rbend face is angled
+      // by half the bend angle
+      outgoingFaceAngle += 0.5 * bendAngle;
+    }
+  // for an sbend, the output face or nominally normal to the outoing
+  // reference trajectory - so zero here - only changes with e1/e2.
+  // we need angle though to decide which way it goes
+  
+  // +ve e1/e2 shorten the outside of the bend - so flips with angle
+  G4double e2 = element->e2*CLHEP::rad;
+  if (BDS::IsFinite(e2))
+    {// so if the angle is 0, +1 will be returned
+      G4double factor = bendAngle < 0 ? -1 : 1;
+      outgoingFaceAngle += factor * element->e2*CLHEP::rad;
+    }
+  
+  return outgoingFaceAngle;
+}
+
+G4double BDSComponentFactory::IncomingFaceAngle(const Element* element) const
+{
+  // note thin multipoles will match the faces of any magnets, but not contain
+  // the face angles themselves in the GMAD::Element. this is ok though as
+  // detector construction will not give a thin multipole as a next element
+  // - it'll be skipped while looking forwards.
+  G4double incomingFaceAngle = 0;
+  G4double bendAngle         = BendAngle(element);
+
+  if (element->type == ElementType::_RBEND)
+    {
+      // angle is w.r.t. outoing reference trajectory so rbend face is angled
+      // by half the bend angle
+      incomingFaceAngle += 0.5 * bendAngle;
+    }
+  // for an sbend, the output face or nominally normal to the outoing
+  // reference trajectory - so zero here - only changes with e1/e2.
+  // we need angle though to decide which way it goes
+
+  // +ve e1/e2 shorten the outside of the bend - so flips with angle
+  G4double e1 = element->e2*CLHEP::rad;
+  if (BDS::IsFinite(e1))
+    {// so if the angle is 0, +1 will be returned
+      G4double factor = bendAngle < 0 ? -1 : 1;
+      incomingFaceAngle += factor * element->e1*CLHEP::rad;
+    }
+  
+  return incomingFaceAngle;
+}

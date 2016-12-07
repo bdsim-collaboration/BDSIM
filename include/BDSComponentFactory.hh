@@ -196,5 +196,22 @@ private:
 				   G4double& chordLength,
 				   G4double& field,
 				   G4double& angle);
+
+  /// Calculate the angle of a bend whether it's an rbend or an sbend.
+  G4double BendAngle(const GMAD::Element* element) const;
+
+  /// Calculate the outgoing angle of the face (in the horizontal plane) for
+  /// a given element. Calculates the bend angle and applies e1 / e2 pole face
+  /// rotations the correct way depending on sign of angle. The angle is w.r.t.
+  /// outgoing curvilinear coordinates, so for an rbend with e2=0, the returned
+  /// angle will be half the bend angle. For an sbend, with e2=0, it'll be 0.
+  G4double OutgoingFaceAngle(const GMAD::Element* element) const;
+
+  /// Calculate the incoming angel of the face (in the horizontal plane) for
+  /// a given element. Calculates the bend angle and applies e1 / e2 pole face
+  /// rotations the correct way depending on sign of angle. The angle is w.r.t.
+  /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
+  /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
+  G4double IncomingFaceAngle(const GMAD::Element* element) const; 
 };
 #endif
