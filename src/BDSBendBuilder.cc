@@ -1,5 +1,4 @@
 #include "globals.hh" // geant4 globals / types
-#include "G4RotationMatrix.hh"
 
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamPipeInfo.hh"
@@ -17,9 +16,6 @@
 
 #include "parser/element.h"
 #include "parser/elementtype.h"
-
-class BDSBeamPipeInfo;
-class BDSMagnetStrengh;
 
 using namespace GMAD;
 
@@ -201,7 +197,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
             {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet, yokeOnLeft);}
           else
             {// finite pole face, but not strong so build only one unique angled on output face
-              if (i == (nSBends-1)) // one from end - TBC - why isn't this the last one?
+              if (i == (nSBends-1)) // last one
                 {oneBend = BDS::BuildSBend(element, fadeIn, fadeOut, i, nSBends, st, brho, integratorSet, yokeOnLeft);}
               else // after central, but before unique end piece - even angled.
                 {oneBend = centralWedge;}
@@ -228,8 +224,8 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
       BDSMagnetStrength* fringeStOut  = new BDSMagnetStrength();
       (*fringeStOut)["angle"]         = -thinElementLength/rho;
       (*fringeStOut)["field"]         = (*st)["field"];
-      (*fringeStOut)["polefaceangle"] = element->e2;
-      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho,element->e2,element->fintx);
+      (*fringeStOut)["polefaceangle"] = e2;
+      (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(rho, e2, element->fintx);
       (*fringeStOut)["length"]        = thinElementLength;
       G4double fringeAngle            = e2+ 0.5*((*fringeStOut)["angle"]);
       G4String segmentName            = name + "_e2_fringe";
