@@ -107,70 +107,31 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
   if (element->type == ElementType::_DRIFT)
     {
-      // Match poleface from previous and next element
-      angleIn  = (prevElement) ? ( prevElement->e2 * CLHEP::rad ) : 0.0;
-      angleOut = (nextElement) ? ( nextElement->e1 * CLHEP::rad ) : 0.0;
-
-      // Normal vector of rbend is from the magnet, angle of the rbend has to be
-      // taken into account regardless of poleface rotation
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
-          angleIn += 0.5*(angleAndField.first);
-	} 
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-        {
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
-          angleOut += 0.5*angleAndField.first;
-	}
+      // minues are to go from 'strength convention' to 3d cartesian.
+      if (prevElement)
+        {angleIn  = OutgoingFaceAngle(prevElement);}
+      if (nextElement)
+        {angleOut = IncomingFaceAngle(nextElement);}
+      
       //if drift has been modified at all
       if (BDS::IsFinite(angleIn) || BDS::IsFinite(angleOut))
 	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_RBEND)
-    {
-      // angleIn and angleOut have to be multiplied by minus one for rbends for
-      // some reason. Cannot figure out why yet.
-      angleIn  = -1.0 * element->e1 * CLHEP::rad;
-      angleOut = -1.0 * element->e2 * CLHEP::rad;
-
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-        {
-          differentFromDefinition = true;
-          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-          angleOut += 0.5*angleAndField.first;
-        }
+    {// bend builder will construct it to match - but here we just now it's different
+      // match a previous rbend with half the angle
       if (prevElement && (prevElement->type == ElementType::_RBEND))
-        {
-          differentFromDefinition = true;
-          std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-          angleIn += 0.5*angleAndField.first;
-        }
+	{differentFromDefinition = true;}
+      // match the upcoming rbend with half the angle
+      if (nextElement && (nextElement->type == ElementType::_RBEND))
+	{differentFromDefinition = true;}
     }
   else if (element->type == ElementType::_THINMULT)
-    {
-      if (nextElement && (BDS::IsFinite(nextElement->e1)))
-	{
-	  angleIn += nextElement->e1 * CLHEP::rad;
-	  differentFromDefinition  = true;
-	}
-      else if (prevElement && (BDS::IsFinite(prevElement->e2)))
-	{
-	  angleIn -= prevElement->e2 * CLHEP::rad;
-	  differentFromDefinition  = true;
-	}
-      if (nextElement && (nextElement->type == ElementType::_RBEND))
-	{
-	  differentFromDefinition = true;
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(nextElement);
-	  angleIn += 0.5*angleAndField.first;
-	}
-      if (prevElement && (prevElement->type == ElementType::_RBEND))
-	{
-	  differentFromDefinition = true;
-	  std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(prevElement);
-	  angleIn -= 0.5*angleAndField.first;
-	}
+    {// thinmultipole only uses one angle - so angleIn
+      if (prevElement)
+	{angleIn = OutgoingFaceAngle(prevElement);}
+      if (nextElement)
+	{angleIn = IncomingFaceAngle(nextElement);}
     }
   
   // Check if the component already exists and return that.
@@ -196,7 +157,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   case ElementType::_SBEND:
     component = CreateSBend(); break;
   case ElementType::_RBEND:
-    component = CreateRBend(angleIn, angleOut); break;
+    component = CreateRBend(); break;
   case ElementType::_HKICKER:
     component = CreateKicker(false); break;
   case ElementType::_VKICKER:
@@ -335,7 +296,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
   if (facesWillIntersect)
     {
       G4cerr << __METHOD_NAME__ << "Drift \"" << element->name
-	     << "\" is too short for angled faces between \"";
+	     << "\" between \"";
       if (prevElement)
 	{G4cerr << prevElement->name;}
       else
@@ -345,7 +306,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 	{G4cerr << nextElement->name;}
       else
 	{G4cerr << "none";}
-      G4cerr << "\"" << G4endl;
+      G4cerr << "\" is too short given its width and the angle of its faces." << G4endl;
       exit(1);
     }
 
@@ -431,8 +392,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   return sBendLine;
 }
 
-BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
-							  G4double angleOut)
+BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 {
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
@@ -468,46 +428,9 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
     }
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-
-  // 'l' in the element represents the chord length for an rbend - must calculate arc length
-  // for the field calculation and the accelerator component.
-  G4double angle  = 0;
-  G4double field  = 0;  
-  G4double chordLength = element->l * CLHEP::m;
-  G4double arcLength   = chordLength;
-  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
   
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
-    {// both are specified and should be used - under or overpowered dipole by design
-      field = element->B * CLHEP::tesla;
-      // note, angle must be finite for this part to be used so we're protected against
-      // infinite bending radius and therefore nan arcLength.
-      angle = element->angle * CLHEP::rad;
-      G4double bendingRadius = brho / field;
-      arcLength = bendingRadius * angle;
-    }
-  else if (BDS::IsFinite(element->B))
-    {// only B field - calculate angle
-      field = element->B * CLHEP::tesla;
-      G4double bendingRadius = brho / field; // in mm as brho already in g4 units
-      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
-      arcLength = bendingRadius * angle;
-    }
-  else
-  {// (assume) only angle - calculate B field
-      angle = element->angle * CLHEP::rad;
-      if (BDS::IsFinite(angle))
-	{
-	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
-	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
-	  arcLength = bendingRadius * angle;
-	  field = brho * angle / std::abs(arcLength) / charge * ffact;
-        }
-      else
-	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
-    }
-
-  arcLength = std::abs(arcLength); // ensure positive despite angle.
+  G4double arcLength   = 0, chordLength = 0, field = 0, angle = 0;
+  CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
   (*st)["angle"]  = angle;
   (*st)["field"]  = field;
@@ -524,8 +447,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend(G4double angleIn,
   BDSLine* rbendline = BDS::BuildRBendLine(element,
 					   prevElement,
 					   nextElement,
-					   angleIn,
-					   angleOut,
 					   brho,
 					   st,
 					   integratorSet,
@@ -676,7 +597,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					       intType,
 					       st);
   
-  BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::multipole,
+  BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::thinmultipole,
 					    element->name,
 					    thinElementLength,
 					    beamPipeInfo,
@@ -1327,4 +1248,126 @@ G4double BDSComponentFactory::AngleFromField(const G4double field,
 {
   const G4double ffact  = BDSGlobalConstants::Instance()->FFact();
   return charge * ffact * field * length / brho;
+}
+
+void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
+						      G4double& arcLength,
+						      G4double& chordLength,
+						      G4double& field,
+						      G4double& angle) const
+{
+  // 'l' in the element represents the chord length for an rbend - must calculate arc length
+  // for the field calculation and the accelerator component.
+  chordLength = element->l * CLHEP::m;
+  G4double arcLengthLocal = chordLength;
+  G4double ffact = BDSGlobalConstants::Instance()->FFact();
+  
+  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+    {// both are specified and should be used - under or overpowered dipole by design
+      field = element->B * CLHEP::tesla;
+      // note, angle must be finite for this part to be used so we're protected against
+      // infinite bending radius and therefore nan arcLength.
+      angle = element->angle * CLHEP::rad;
+      G4double bendingRadius = brho / field;
+      arcLengthLocal = bendingRadius * angle;
+    }
+  else if (BDS::IsFinite(element->B))
+    {// only B field - calculate angle
+      field = element->B * CLHEP::tesla;
+      G4double bendingRadius = brho / field; // in mm as brho already in g4 units
+      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
+      arcLengthLocal = bendingRadius * angle;
+    }
+  else
+    {// (assume) only angle - calculate B field
+      angle = element->angle * CLHEP::rad;
+      if (BDS::IsFinite(angle))
+	{
+	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
+	  arcLengthLocal = bendingRadius * angle;
+	  field = brho * angle / std::abs(arcLengthLocal) / charge * ffact;
+        }
+      else
+	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
+    }
+
+  // Ensure positive length despite sign of angle or charge.
+  arcLength = std::abs(arcLengthLocal);
+}
+
+G4double BDSComponentFactory::BendAngle(const Element* element) const
+{
+  G4double bendAngle = 0;
+  if (element->type == ElementType::_RBEND)
+    {
+      G4double arcLength = 0, chordLength = 0, field = 0;
+      CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, bendAngle);
+    }
+  else if (element->type == ElementType::_SBEND)
+    {
+      auto angleAndField = CalculateAngleAndField(element);
+      bendAngle = angleAndField.first;
+    }
+  return bendAngle;
+}
+
+G4double BDSComponentFactory::OutgoingFaceAngle(const Element* element) const
+{
+  // note thin multipoles will match the faces of any magnets, but not contain
+  // the face angles themselves in the GMAD::Element. this is ok though as
+  // detector construction will not give a thin multipole as a previous element
+  // - it'll be skipped while looking backwards.
+  G4double outgoingFaceAngle = 0;
+  G4double bendAngle         = BendAngle(element);
+
+  if (element->type == ElementType::_RBEND)
+    {
+      // angle is w.r.t. outoing reference trajectory so rbend face is angled
+      // by half the bend angle
+      outgoingFaceAngle += 0.5 * bendAngle;
+    }
+  // for an sbend, the output face or nominally normal to the outoing
+  // reference trajectory - so zero here - only changes with e1/e2.
+  // we need angle though to decide which way it goes
+  
+  // +ve e1/e2 shorten the outside of the bend - so flips with angle
+  G4double e2 = element->e2*CLHEP::rad;
+  if (BDS::IsFinite(e2))
+    {// so if the angle is 0, +1 will be returned
+      G4double factor = bendAngle < 0 ? -1 : 1;
+      outgoingFaceAngle += factor * element->e2*CLHEP::rad;
+    }
+  
+  return outgoingFaceAngle;
+}
+
+G4double BDSComponentFactory::IncomingFaceAngle(const Element* element) const
+{
+  // note thin multipoles will match the faces of any magnets, but not contain
+  // the face angles themselves in the GMAD::Element. this is ok though as
+  // detector construction will not give a thin multipole as a next element
+  // - it'll be skipped while looking forwards.
+  G4double incomingFaceAngle = 0;
+  G4double bendAngle         = BendAngle(element);
+
+  if (element->type == ElementType::_RBEND)
+    {
+      // angle is w.r.t. outoing reference trajectory so rbend face is angled
+      // by half the bend angle
+      incomingFaceAngle += 0.5 * bendAngle;
+    }
+  // for an sbend, the output face or nominally normal to the outoing
+  // reference trajectory - so zero here - only changes with e1/e2.
+  // we need angle though to decide which way it goes
+
+  // +ve e1/e2 shorten the outside of the bend - so flips with angle
+  G4double e1 = element->e2*CLHEP::rad;
+  if (BDS::IsFinite(e1))
+    {// so if the angle is 0, +1 will be returned
+      G4double factor = bendAngle < 0 ? -1 : 1;
+      incomingFaceAngle += factor * element->e1*CLHEP::rad;
+    }
+  
+  return incomingFaceAngle;
 }
