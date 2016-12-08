@@ -107,7 +107,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
   if (element->type == ElementType::_DRIFT)
     {
-      // minues are to go from 'strength convention' to 3d cartesian.
+      // minuses are to go from 'strength convention' to 3d cartesian.
       if (prevElement)
         {angleIn  = OutgoingFaceAngle(prevElement);}
       if (nextElement)
@@ -1270,11 +1270,11 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* element) const
 
   if (element->type == ElementType::_RBEND)
     {
-      // angle is w.r.t. outoing reference trajectory so rbend face is angled
+      // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
       outgoingFaceAngle += 0.5 * bendAngle;
     }
-  // for an sbend, the output face or nominally normal to the outoing
+  // for an sbend, the output face or nominally normal to the outgoing
   // reference trajectory - so zero here - only changes with e1/e2.
   // we need angle though to decide which way it goes
   
@@ -1283,7 +1283,7 @@ G4double BDSComponentFactory::OutgoingFaceAngle(const Element* element) const
   if (BDS::IsFinite(e2))
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
-      outgoingFaceAngle += factor * element->e2*CLHEP::rad;
+      outgoingFaceAngle += factor * e2;
     }
   
   return outgoingFaceAngle;
@@ -1300,20 +1300,20 @@ G4double BDSComponentFactory::IncomingFaceAngle(const Element* element) const
 
   if (element->type == ElementType::_RBEND)
     {
-      // angle is w.r.t. outoing reference trajectory so rbend face is angled
+      // angle is w.r.t. outgoing reference trajectory so rbend face is angled
       // by half the bend angle
       incomingFaceAngle += 0.5 * bendAngle;
     }
-  // for an sbend, the output face or nominally normal to the outoing
+  // for an sbend, the output face or nominally normal to the outgoing
   // reference trajectory - so zero here - only changes with e1/e2.
   // we need angle though to decide which way it goes
 
   // +ve e1/e2 shorten the outside of the bend - so flips with angle
-  G4double e1 = element->e2*CLHEP::rad;
+  G4double e1 = element->e1*CLHEP::rad;
   if (BDS::IsFinite(e1))
     {// so if the angle is 0, +1 will be returned
       G4double factor = bendAngle < 0 ? -1 : 1;
-      incomingFaceAngle += factor * element->e1*CLHEP::rad;
+      incomingFaceAngle += factor * e1;
     }
   
   return incomingFaceAngle;
