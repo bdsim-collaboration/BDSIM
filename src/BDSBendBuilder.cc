@@ -26,9 +26,16 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 {
   const G4String     name = element->name;
   const G4double   length = element->l  * CLHEP::m;
-  const G4double    angle = (*st)["angle"];
-  const G4double       e1 = element->e1 * CLHEP::rad;
-  const G4double       e2 = element->e2 * CLHEP::rad;
+  // minus here changes from MADX strength convention to 3d cartesian.
+  const G4double    angle = -(*st)["angle"];
+
+  // face rotations
+  // convention - +ve e1 / e2 reduces outside of bend
+  // no extra factor of -1 for 'strength' to cartesian as 'angle' already converted
+  G4double factor = angle < 0 ? -1 : 1; 
+  const G4double e1 = factor * element->e1 * CLHEP::rad;
+  const G4double e2 = factor * element->e2 * CLHEP::rad;
+
   const G4double  angleIn = 0.5 * angle + e1;
   const G4double angleOut = 0.5 * angle + e2;
   const G4bool yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);

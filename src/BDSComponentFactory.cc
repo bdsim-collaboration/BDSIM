@@ -373,7 +373,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   BDSMagnetStrength* st = new BDSMagnetStrength();
 
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  (*st)["angle"] = -angleAndField.first;
+  (*st)["angle"] = angleAndField.first;
   (*st)["field"] = angleAndField.second;
 
   // Quadrupole component
