@@ -481,21 +481,29 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
   //calculate their angles and length
-  const G4double length     = element->l*CLHEP::m;
-  const G4double semilength = length / (G4double) nSBends;
-  const G4double rho        = length / (*st)["angle"];
+  const G4double arcLength  = element->l*CLHEP::m;
+  const G4double semilength = arcLength / (G4double) nSBends;
+  const G4double angle      = (*st)["angle"];
+  const G4double rho        = arcLength / angle;
+
+  // face rotations
+  // convention - +ve e1 / e2 reduces outside of bend
+  // extra factor of -1 for 'strength' to cartesian
+  G4double factor = angle < 0 ? -1 : 1; 
+  const G4double e1 = -factor * element->e1 * CLHEP::rad;
+  const G4double e2 = -factor * element->e2 * CLHEP::rad;
   
   // angle increment for sbend elements with poleface rotation(s) specified
-  G4double deltastart = -element->e1/(0.5*(nSBends-1));
-  G4double deltaend   = -element->e2/(0.5*(nSBends-1));
+  G4double deltastart = e1/(0.5*(nSBends-1));
+  G4double deltaend   = e2/(0.5*(nSBends-1));
 
   G4String thename = element->name + "_"+std::to_string(index+1)+"_of_" + std::to_string(nSBends);
   
   // subtract thinElementLength from first and last elements if fringe & poleface specified
   G4double bendArcLength = semilength;
-  if ((BDS::IsFinite(element->e1)) && (index == 0) && includeFringe)
+  if ((BDS::IsFinite(e1)) && (index == 0) && includeFringe)
     {bendArcLength -= thinElementLength;}
-  if ((BDS::IsFinite(element->e2)) && (index == nSBends-1) && includeFringe)
+  if ((BDS::IsFinite(e2)) && (index == nSBends-1) && includeFringe)
     {bendArcLength -= thinElementLength;}
 
   // overwritten length use to overwrite semiangle
@@ -507,11 +515,11 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   // Input and output angles added to or subtracted from the default as appropriate
   // Note: case of i == 0.5*(nSBends-1) is just the default central wedge.
   // More detailed methodology/reasons in developer manual
-  if ((BDS::IsFinite(element->e1))||(BDS::IsFinite(element->e2)))
+  if ((BDS::IsFinite(e1))||(BDS::IsFinite(e2)))
     {
       if (index < 0.5*(nSBends-1))
 	{
-	  angleIn  = -semiangle*0.5 - (element->e1 + (index*deltastart));
+	  angleIn  = -semiangle*0.5 - (e1 + (index*deltastart));
 	  angleOut = -semiangle*0.5 - ((0.5*(nSBends-3)-index)*deltastart);
 	}
       else if (index > 0.5*(nSBends-1))
@@ -521,9 +529,9 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
 	}
     }
   
-  if ((BDS::IsFinite(element->e1)) && (index == 0) && includeFringe)
+  if ((BDS::IsFinite(e1)) && (index == 0) && includeFringe)
     {angleIn += thinElementLength/rho;}
-  if ((BDS::IsFinite(element->e2)) && (index == nSBends-1) && includeFringe)
+  if ((BDS::IsFinite(e2)) && (index == nSBends-1) && includeFringe)
     {angleOut += thinElementLength/rho;}
   
   //set face angles to default if faces do not fade.
