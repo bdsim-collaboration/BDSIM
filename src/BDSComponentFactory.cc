@@ -983,14 +983,13 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   return info;
 }
 
-G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element) const
+G4double BDSComponentFactory::PrepareOuterDiameter(Element const* element)
 {
   G4double outerDiameter = element->outerDiameter*CLHEP::m;
   if (outerDiameter < 1e-6)
     {//outerDiameter not set - use global option as default
       outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
     }
-  // returns in metres
   return outerDiameter;
 }
 

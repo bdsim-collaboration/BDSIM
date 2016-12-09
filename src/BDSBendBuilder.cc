@@ -90,11 +90,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   G4bool fadeIn = true;
   G4bool fadeOut = true;
 
-  G4double outerDiameter = element->outerDiameter*CLHEP::m;
-  if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
-    }
+  G4double outerDiameter = BDSComponentFactory::PrepareOuterDiameter(element);
   
   //calculate extent along z due poleface rotation
   if (angleIn > 0)
