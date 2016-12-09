@@ -71,9 +71,6 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 					 vacuumField,
 					 angle);
       
-      oneBend->SetBiasVacuumList(element->biasVacuumList);
-      oneBend->SetBiasMaterialList(element->biasMaterialList);
-      
       sbendline->AddComponent(oneBend);
       
       return sbendline;
