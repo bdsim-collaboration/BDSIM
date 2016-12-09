@@ -481,10 +481,9 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   G4double thinElementLength = BDSGlobalConstants::Instance()->ThinElementLength();
   
   //calculate their angles and length
-  G4double length     = element->l*CLHEP::m;
-  G4double semiangle  = (*st)["angle"] / (G4double) nSBends;
-  G4double semilength = length / (G4double) nSBends;
-  G4double rho        = length / (*st)["angle"];
+  const G4double length     = element->l*CLHEP::m;
+  const G4double semilength = length / (G4double) nSBends;
+  const G4double rho        = length / (*st)["angle"];
   
   // angle increment for sbend elements with poleface rotation(s) specified
   G4double deltastart = -element->e1/(0.5*(nSBends-1));
@@ -493,14 +492,14 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   G4String thename = element->name + "_"+std::to_string(index+1)+"_of_" + std::to_string(nSBends);
   
   // subtract thinElementLength from first and last elements if fringe & poleface specified
-  length = semilength;
+  G4double bendArcLength = semilength;
   if ((BDS::IsFinite(element->e1)) && (index == 0) && includeFringe)
-    {length -= thinElementLength;}
+    {bendArcLength -= thinElementLength;}
   if ((BDS::IsFinite(element->e2)) && (index == nSBends-1) && includeFringe)
-    {length -= thinElementLength;}
+    {bendArcLength -= thinElementLength;}
 
   // overwritten length use to overwrite semiangle
-  semiangle = length/rho;
+  const G4double semiangle = bendArcLength/rho;
   
   G4double angleIn  = 0;
   G4double angleOut = 0;
@@ -554,7 +553,7 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
     }
   
   BDSMagnetStrength* stSemi = new BDSMagnetStrength(*st); // copy field strength - ie B
-  (*stSemi)["length"] = length;
+  (*stSemi)["length"] = bendArcLength;
   (*stSemi)["angle"]  = semiangle;  // override copied length and angle
 
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
@@ -566,7 +565,7 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 				     thename,
-				     length,
+				     bendArcLength,
 				     bpInfo,
 				     magnetOuterInfo,
 				     vacuumField,
