@@ -422,8 +422,9 @@ BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element* element,
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;
   auto magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut);
-  magnetOuterInfo->geometryType = BDSMagnetGeometryType::none;
-  magnetOuterInfo->name         = name;
+  magnetOuterInfo->geometryType   = BDSMagnetGeometryType::none;
+  magnetOuterInfo->name           = name;
+  magnetOuterInfo->buildEndPieces = false;
 
   BDSIntegratorType intType = integratorSet->dipolefringe;
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -535,7 +536,10 @@ BDSMagnet* BDS::BuildSBend(const Element*     element,
   // Check for intersection of angled faces.
   G4double intersectionX = BDS::CalculateFacesOverlapRadius(angleIn,angleOut,semilength);
   auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
-  magnetOuterInfo->name = thename;
+  magnetOuterInfo->name           = thename;
+  // this function is only used for sections in the magnet that aren't the central or repeated ones.
+  magnetOuterInfo->buildEndPieces = false;
+  
   G4double magnetRadius= 0.625*magnetOuterInfo->outerDiameter*CLHEP::mm;
   // Every geometry type has a completely arbitrary factor of 1.25 except cylindrical
   if (magnetOuterInfo->geometryType == BDSMagnetGeometryType::cylindrical)
