@@ -120,9 +120,6 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
     {centralName += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
   else
     {centralName += "_1_of_" + std::to_string(nSBends);}
-  
-  // register the central wedge which will always be used as the
-  // middle wedge regardless of poleface rotations
 
   BDSIntegratorType intType = integratorSet->Integrator(BDSFieldType::dipole);
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
@@ -140,10 +137,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 					  mgInfo,
 					  vacuumField,
 					  semiangle);
-  
-  //oneBend can be accComp or BDSMagnet depending on registration/reusage or new magnet
-  BDSAcceleratorComponent* oneBend = nullptr;
-  
+    
   BDSMagnetType magType = BDSMagnetType::sectorbend;
   // check magnet outer info
   BDSMagnetOuterInfo* magnetOuterInfoCheck = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
@@ -176,6 +170,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   // otherwise fade in/out faces for all wedges in app. halves.
   // 'central' one is definitely used for the central part, but also it's just a segment
   // with even incoming and outgoing face angles w.r.t. the chord.
+  BDSMagnet* oneBend = nullptr;
   for (G4int i = 0; i < nSBends; ++i)
     {
       G4String thename = name + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
