@@ -48,7 +48,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   
   BDSLine* sbendline  = new BDSLine(name);
   
-  // Single element if no poleface and zero bend angle or dontSplitSBends=1, therefore nSBends = 1
+  // Single element if no poleface and zero bend angle or dontSplitSBends=1
   if (!BDS::IsFinite(angle) || (nSBends == 1))
     {
       //Zero angle bend only needs one element.
@@ -61,7 +61,8 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
 						   st);
       // prepare one sbend segment
       auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
-      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn, -angleOut, yokeOnLeft);
+      auto mgInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn,
+								-angleOut, yokeOnLeft);
       mgInfo->name = thename;
       BDSMagnet* oneBend = new BDSMagnet(BDSMagnetType::sectorbend,
 					 thename,
@@ -110,7 +111,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
   
   //if the element faces fade in, the middle wedges should be numbered as such
   //if not, it'll be repeated from the first segment onwards
-  G4int centralWedgeNum = 0.5*(nSBends+1);
+  G4int centralWedgeNum = 0.5*(nSBends+1); // nSBends always odd, so this gives the middle one
   G4String  centralName = name;
   if (fadeIn)
     {centralName += "_"+std::to_string(centralWedgeNum)+"_of_" + std::to_string(nSBends);}
