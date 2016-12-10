@@ -200,7 +200,7 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
   return result->second;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << info << G4endl;
@@ -226,9 +226,9 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   return field;
 }
       
-BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo& info)
 {
-  BDSMagnetStrength* strength = info.MagnetStrength();
+  const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
@@ -290,7 +290,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
   return completeField;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
 {
   BDSFieldEM* field = nullptr;
   switch (info.FieldType().underlying())
@@ -325,7 +325,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
   return completeField;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
 {
   BDSFieldE* field = nullptr;
   switch (info.FieldType().underlying())
@@ -360,9 +360,9 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
   return completeField;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      info,
-							     G4Mag_EqRhs*       eqOfM,
-							     BDSMagnetStrength* strength)
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&      info,
+							     G4Mag_EqRhs*             eqOfM,
+							     const BDSMagnetStrength* strength)
 {
   G4double                      brho = info.BRho();
   G4MagIntegratorStepper* integrator = nullptr;
@@ -417,7 +417,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
   return integrator;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       info,
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& info,
 							    G4EquationOfMotion* eqOfM)
 {
   G4MagIntegratorStepper* integrator = nullptr;
@@ -472,13 +472,13 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
   return integrator;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(BDSFieldInfo&       info,
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& info,
 							   G4EquationOfMotion* eqOfM)
 {
   return CreateIntegratorEM(info,eqOfM);
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
+BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
 {
   G4MagneticField* bGlobalField      = new BDSFieldMagDummy(); //Zero magnetic field.
   G4Mag_EqRhs*     bEqOfMotion       = new G4Mag_UsualEqRhs(bGlobalField);
