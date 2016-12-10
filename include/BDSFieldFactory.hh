@@ -108,12 +108,6 @@ private:
 					  BDSMagnetStrength* const strength,
 					  const G4double           brho);
 
-  /// Create the corresponding outer magnetic field for the yoke of the magnet. All
-  /// associated objects are create and packaged together.
-  BDSFieldObjects* CreateFieldMagOuter(const BDSMagnetType      type,
-				       BDSMagnetStrength* const strength,
-				       const G4double           brho);
-
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.
   BDSFieldObjects* CreateTeleporter(G4ThreeVector teleporterDelta);
@@ -125,23 +119,6 @@ private:
   /// Instance - singleton patter
   static BDSFieldFactory* instance;
   
-  G4ThreeVector offset;
-  BDSFieldType  format;
-  G4String      fileName;
-  G4double      cacheLength;
-
-  ///@{ Variable to allow different functions to access different parts during construction
-  //G4Field*                field;
-  // BDSFieldMag*            bdsField;
-  // G4MagneticField*        bGlobalField;
-  // G4EquationOfMotion*     eqOfMotion;
-  /// B Fields require at least this level in the inheritance - use G4Mag_EqRhs instead
-  /// of G4EquationOfMotion for b fields
-  // G4Mag_EqRhs*            bEqOfMotion;
-  // G4MagIntegratorStepper* integrator;
-  BDSFieldObjects*        completeField = nullptr;
-  ///@}
-  
   /// Splits the G4String member variable formatAndName on the ":" character.
   /// Whatever is before is taken as the fromat string and whatever is after is
   /// taken as the filepath.
@@ -150,7 +127,6 @@ private:
   /// Reset all pointers to nullptr that are temporarily used during construction
   /// to avoid mistaken contamination between uses of the factory
   void CleanUp();
-
 
   /// Prepare all required definitions that can be used dynamically.
   void PrepareFieldDefinitions(const std::vector<GMAD::Field>& definitions,
