@@ -337,38 +337,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   if (!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  PoleFaceRotationsNotTooLarge(element);  // check if poleface is not too large
+  PoleFaceRotationsNotTooLarge(element);
 
-  // require drift next to non-zero poleface or sbend with matching poleface
-  if (BDS::IsFinite(element->e1))
-    {
-      if (prevElement &&
-          prevElement->type != ElementType::_DRIFT &&
-	  prevElement->type != ElementType::_THINMULT &&
-	  !(prevElement->type == ElementType::_SBEND && !BDS::IsFinite(prevElement->e2 + element->e1)))
-	{
-	  G4cerr << __METHOD_NAME__ << "SBend " << element->name
-		 << " has a non-zero incoming poleface "
-		 << "which requires the previous element to be a Drift or SBend"
-		 << " with opposite outcoming poleface" << G4endl;
-	  exit(1);
-	}
-    }
-
-  if (BDS::IsFinite(element->e2))
-    {
-      if (nextElement &&
-	  nextElement->type != ElementType::_DRIFT &&
-	  nextElement->type != ElementType::_THINMULT &&
-	  !(nextElement->type == ElementType::_SBEND && !BDS::IsFinite(nextElement->e1 + element->e2)))
-	{
-	  G4cerr << __METHOD_NAME__ << "SBend " << element->name
-		 << " has a non-zero outgoing poleface  "
-		 << " which requires the next element to be a Drift or SBend"
-		 << " with opposite incoming poleface" << G4endl;
-	  exit(1);
-	}
-    }
+  // don't check here on whether the possibly next / previous sbend will clash with
+  // pole face angles - let that be checked after element construction in the beamline
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
 
@@ -396,37 +368,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
     {return nullptr;}
 
   PoleFaceRotationsNotTooLarge(element);
-  
-  // require drift next to non-zero poleface or rbend with matching poleface
-  if (BDS::IsFinite(element->e1))
-    {
-      if (prevElement &&
-	  prevElement->type != ElementType::_DRIFT &&
-          prevElement->type != ElementType ::_THINMULT &&
-          !(prevElement->type == ElementType::_RBEND && !BDS::IsFinite(prevElement->e2 + element->e1) ))
-	{
-	  G4cerr << __METHOD_NAME__ << "RBend " << element->name
-		 << " has a non-zero incoming poleface "
-		 << "which requires the previous element to be a Drift or RBend"
-		 << " with opposite outcoming poleface" << G4endl;
-	  exit(1);
-	}
-    }
 
-  if (BDS::IsFinite(element->e2))
-    {
-      if (nextElement &&
-	  nextElement->type != ElementType::_DRIFT &&
-          nextElement->type != ElementType ::_THINMULT &&
-          !(nextElement->type == ElementType::_RBEND && !BDS::IsFinite(nextElement->e1 + element->e2) ))
-	{
-	  G4cerr << __METHOD_NAME__ << "RBend with non-zero outgoing poleface requires next element to be a Drift or RBend with opposite incoming poleface" << G4endl;
-	  exit(1);
-	}
-    }
+  // don't check here on whether the possibly next / previous sbend will clash with
+  // pole face angles - let that be checked after element construction in the beamline
 
-  BDSMagnetStrength* st = new BDSMagnetStrength();
-  
+  BDSMagnetStrength* st = new BDSMagnetStrength();  
   G4double arcLength   = 0, chordLength = 0, field = 0, angle = 0;
   CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
