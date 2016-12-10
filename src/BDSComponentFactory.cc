@@ -343,10 +343,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   // pole face angles - let that be checked after element construction in the beamline
 
   BDSMagnetStrength* st = new BDSMagnetStrength();
-
   std::pair<G4double,G4double> angleAndField = CalculateAngleAndField(element);
-  (*st)["angle"] = angleAndField.first;
-  (*st)["field"] = angleAndField.second;
+  (*st)["angle"]  = angleAndField.first;
+  (*st)["field"]  = angleAndField.second;
+  (*st)["length"] = element->l * CLHEP::m;
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
