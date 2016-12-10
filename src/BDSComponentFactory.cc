@@ -357,7 +357,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
   
-  BDSLine* sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
+  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet, charge);
   
   return sBendLine;
 }
