@@ -34,9 +34,9 @@ public:
   /// which logical volume to attach it to. The same field specification (info)
   /// can be registered for multiple logical volumes as this builder does not
   /// retain ownership of anything.
-  void RegisterFieldForConstruction(BDSFieldInfo* info,
-				    G4LogicalVolume* logicalVolume,
-				    G4bool           propagateToDaughters = false);
+  void RegisterFieldForConstruction(const BDSFieldInfo* info,
+				    G4LogicalVolume*    logicalVolume,
+				    G4bool              propagateToDaughters = false);
 
   std::vector<BDSFieldObjects*> CreateAndAttachAll();
 
@@ -48,9 +48,9 @@ private:
   static BDSFieldBuilder* instance;
   
   /// @{ Register of components to build.
-  std::vector<BDSFieldInfo*>    infos;
-  std::vector<G4LogicalVolume*> lvs;
-  std::vector<G4bool>           propagators;
+  std::vector<const BDSFieldInfo*> infos;
+  std::vector<G4LogicalVolume*>    lvs;
+  std::vector<G4bool>              propagators;
   /// @}
 };
 
