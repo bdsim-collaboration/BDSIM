@@ -100,7 +100,7 @@ public:
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
-  static void CheckBendLengthAngleWidthCombo(G4double chordLength,
+  static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
 					     G4double outerDiameter,
 					     G4String name = "not given");

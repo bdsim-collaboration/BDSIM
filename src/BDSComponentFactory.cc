@@ -1036,12 +1036,12 @@ BDSTiltOffset* BDSComponentFactory::CreateTiltOffset(Element const* element) con
   return result;
 }
 
-void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double chordLength,
+void BDSComponentFactory::CheckBendLengthAngleWidthCombo(G4double arcLength,
 							 G4double angle,
 							 G4double outerDiameter,
 							 G4String name)
 {
-  G4double radiusFromAngleLength =  std::abs(chordLength / angle); // s = r*theta -> r = s/theta
+  G4double radiusFromAngleLength =  std::abs(arcLength / angle); // s = r*theta -> r = s/theta
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "radius from angle and length: " << radiusFromAngleLength << G4endl;
 #endif
