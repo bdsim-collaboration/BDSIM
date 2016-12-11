@@ -243,7 +243,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
                 {
 		  name = baseName + "_3_of_" + std::to_string(nSBends);
 		  segmentAngleIn  = 0.5*semiAngle;
-		  segmentAngleOut = 0.5*semiAngle + e2;
+		  segmentAngleOut = 0.5*semiAngle - e2;
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 						  segmentAngleIn, segmentAngleOut, semiStrength,
 						  brho, integratorSet, yokeOnLeft);
@@ -276,10 +276,11 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       (*fringeStOut)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e2, element->fintx);
       (*fringeStOut)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
       (*fringeStOut)["length"]        = thinElementArcLength;
-      G4double fringeAngle            = 0.5*oneFringeAngle + e2; // minus for convention flip
+      G4double fringeAngleIn          = 0.5*oneFringeAngle + e2;
+      G4double fringeAngleOut         = 0.5*oneFringeAngle - e2;
       G4String segmentName            = baseName + "_e2_fringe";
       
-      BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeAngle, fringeAngle,
+      BDSMagnet* endfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
 						    segmentName, fringeStOut, brho,
 						    integratorSet);
       sbendline->AddComponent(endfringe);
