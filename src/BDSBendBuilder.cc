@@ -448,17 +448,17 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
     {
       centralArcLength      -= thinElementArcLength;
       centralAngle          -= oneFringeAngle;
-      angleIn                = -e1 - (0.5*angle - 0.5*oneFringeAngle);
-      fringeInOutputAngle    = e1 + (0.5*angle - 0.5*oneFringeAngle);
-      centralInputFaceAngle  = -e1;
+      angleIn                = e1 + (0.5*oneFringeAngle - 0.5*angle);
+      fringeInOutputAngle    = - (e1 + (0.5*oneFringeAngle - 0.5*angle));
+      centralInputFaceAngle  = e1;
     }
   if (buildFringeOutgoing)
     {
       centralArcLength       -= thinElementArcLength;
       centralAngle           -= oneFringeAngle;
-      centralOutputFaceAngle = -e2;
-      fringeOutInputAngle    = e2 + (0.5*angle - 0.5*oneFringeAngle);
-      angleOut               = -e2 - (0.5*angle - 0.5*oneFringeAngle);
+      centralOutputFaceAngle = e2;
+      fringeOutInputAngle    = - (e2 + (0.5*oneFringeAngle - 0.5*angle));
+      angleOut               = e2 + (0.5*oneFringeAngle - 0.5*angle);
     }
   
   if (buildFringeIncoming)
