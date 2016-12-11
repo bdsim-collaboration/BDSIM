@@ -526,13 +526,13 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   return rbendline;
 }
 
-BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*    element,
-				  G4double                angleIn,
-				  G4double                angleOut,
-				  G4String                name,
-				  BDSMagnetStrength*      st,
-				  G4double                brho,
-				  const BDSIntegratorSet* integratorSet)
+BDSMagnet* BDS::BuildDipoleFringe(const GMAD::Element*     element,
+				  G4double                 angleIn,
+				  G4double                 angleOut,
+				  G4String                 name,
+				  const BDSMagnetStrength* st,
+				  G4double                 brho,
+				  const BDSIntegratorSet*  integratorSet)
 {
   BDSBeamPipeInfo* beamPipeInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   beamPipeInfo->beamPipeType = BDSBeamPipeType::circularvacuum;

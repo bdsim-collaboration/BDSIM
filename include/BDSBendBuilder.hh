@@ -52,13 +52,13 @@ namespace BDS
 
   /// Thin magnet for dipole fringe field.
   /// Is beampipe only, no outer magnet.
-  BDSMagnet* BuildDipoleFringe(const GMAD::Element*    element,
-			       G4double                angleIn,
-			       G4double                angleOut,
-			       G4String                name,
-			       BDSMagnetStrength*      st,
-			       G4double                brho,
-			       const BDSIntegratorSet* integratorSet);
+  BDSMagnet* BuildDipoleFringe(const GMAD::Element*     element,
+			       G4double                 angleIn,
+			       G4double                 angleOut,
+			       G4String                 name,
+			       const BDSMagnetStrength* st,
+			       G4double                 brho,
+			       const BDSIntegratorSet*  integratorSet);
 
   /// Function to return a single secotr bend section.
   BDSMagnet* BuildSingleSBend(const GMAD::Element*     element,
