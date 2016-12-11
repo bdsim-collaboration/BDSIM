@@ -434,10 +434,10 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // angleIn / fringeInOutputAngle / centralInputFaceAngle / centralOutputFaceAngle
   // fringeOutInputAngle / angleOut
 
-  G4double fringeInOutputAngle = 0;
+  G4double fringeInOutputAngle    = 0;
   G4double centralInputFaceAngle  = angleIn;
   G4double centralOutputFaceAngle = angleOut;
-  G4double fringeOutInputAngle = 0;
+  G4double fringeOutInputAngle    = 0;
   G4double centralArcLength       = arcLength; // full length to start with
   G4double centralAngle           = angle;
   G4double oneFringeAngle         = 0;
