@@ -222,7 +222,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 	      G4cout << "Error - angled faces of objects will cause overlap in beam line geometry" << G4endl;
 	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
 		     << clasherName << "\"" << G4endl;
-	      exit(1);
+	      //exit(1);
 	    }
 	}
     }
