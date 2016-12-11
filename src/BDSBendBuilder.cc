@@ -316,18 +316,17 @@ void BDS::UpdateSegmentAngles(const G4int index,
       // if e1 was 0, each would have 1/2 of semiAngle
       segmentAngleIn  = 0.5*semiAngle - inputFaceAngle;
       segmentAngleOut = 0.5*semiAngle + outputFaceAngle;
-      //segmentAngleOut *= -1;
     }
   else
     {// second half - fade from 0 to e2
       G4double delta = e2 / (G4double) numberToFadeOver;
       G4int secondHalfIndex = index - ((nSBends + 1) / 2);
-      G4double inputFaceAngle  = e2 + ( (G4double)secondHalfIndex * delta);
-      G4double outputFaceAngle = e2 + ( (G4double)(secondHalfIndex + 1) * delta);
+      // here we fade from 0 contribution to maximum (opposite of above if statement)
+      G4double inputFaceAngle  = e2 - ( (G4double)(numberToFadeOver - secondHalfIndex) * delta);
+      G4double outputFaceAngle = e2 - ( (G4double)(numberToFadeOver - (secondHalfIndex + 1)) * delta);
       // if e1 was 0, each would have 1/2 of semiAngle
       segmentAngleIn  = 0.5*semiAngle + inputFaceAngle;
-      segmentAngleOut = 0.5*semiAngle + outputFaceAngle;
-      //segmentAngleOut *= -1;
+      segmentAngleOut = 0.5*semiAngle - outputFaceAngle;
     }
 
   return;
