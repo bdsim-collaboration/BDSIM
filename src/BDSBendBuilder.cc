@@ -372,11 +372,14 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     const BDSIntegratorSet* integratorSet,
 			     const G4double          charge)
 {
-  G4bool          includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
-  G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
-  const G4bool       yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
-  G4bool    buildFringeIncoming = includeFringe;
-  G4bool    buildFringeOutgoing = includeFringe;
+  const G4String name = element->name;
+  BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
+  
+  const G4bool          includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
+  const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
+  const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element, st);
+  G4bool          buildFringeIncoming = includeFringe;
+  G4bool          buildFringeOutgoing = includeFringe;
   
   // Angle here is in the 'strength' convention of +ve angle -> -ve x deflection
   const G4double       angle = (*st)["angle"];
@@ -386,8 +389,6 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
     {bendingRadius = - brho / (*st)["field"] / charge;}
-  const G4String name = element->name;
-  BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
 
   // face rotations
   // convention - +ve e1 / e2 reduces outside of bend
@@ -396,13 +397,11 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   const G4double e1 = -factor * element->e1 * CLHEP::rad;
   const G4double e2 = -factor * element->e2 * CLHEP::rad;
 
+  // don't build the fringe element if there's no face angle - no physical effect
   if (!BDS::IsFinite(e1))
     {buildFringeIncoming = false;}
   if (!BDS::IsFinite(e2))
     {buildFringeIncoming = false;}
-
-  //buildFringeIncoming = true;
-  //buildFringeOutgoing = true;
 
   // default face angles for an rbend are 0 - ie parallel faces, plus any pole face rotation
   // angle in and out of total rbend are nominally the face angles.
@@ -460,8 +459,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   if (buildFringeIncoming)
     {
       
-      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength();
-      (*fringeStIn)["field"]         = (*st)["field"];
+      BDSMagnetStrength* fringeStIn  = new BDSMagnetStrength(*st);
       (*fringeStIn)["polefaceangle"] = e1;
       (*fringeStIn)["length"]        = thinElementArcLength;
       (*fringeStIn)["angle"]         = oneFringeAngle;
