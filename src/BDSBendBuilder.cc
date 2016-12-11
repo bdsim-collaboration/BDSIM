@@ -30,11 +30,10 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   const G4double thinElementArcLength = BDSGlobalConstants::Instance()->ThinElementLength();
   const G4bool             yokeOnLeft = BDSComponentFactory::YokeOnLeft(element,st);
   G4bool          buildFringeIncoming = includeFringe;
-  G4bool          buildFringeOutgoing = includeFringe;
-  
-  const G4double arcLength = element->l  * CLHEP::m;
-  const G4double     angle = (*st)["angle"];
-  G4double bendingRadius = DBL_MAX; // default for zero angle
+  G4bool          buildFringeOutgoing = includeFringe;  
+  const G4double            arcLength = element->l  * CLHEP::m;
+  const G4double                angle = (*st)["angle"];
+  G4double              bendingRadius = DBL_MAX; // default for zero angle
   // Avoid bad calculations for zero angle. Here we need bending radius to be in
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
@@ -42,7 +41,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 
   // face rotations
   // convention: +ve e1 / e2 reduces outside of bend
-  G4double factor = angle < 0 ? -1 : 1; 
+  G4double   factor = angle < 0 ? -1 : 1; 
   const G4double e1 = factor * element->e1 * CLHEP::rad;
   const G4double e2 = factor * element->e2 * CLHEP::rad;
   
@@ -51,13 +50,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
     {buildFringeIncoming = false;}
   if (!BDS::IsFinite(e2))
     {buildFringeOutgoing = false;}
-
-  buildFringeIncoming = true;
-  buildFringeOutgoing = true;
   
   // Calculate number of sbends to split parent into
   G4int nSBends = BDS::CalculateNSBendSegments(arcLength, angle, e1, e2);
-  //nSBends=9;
 
   const G4double  angleIn = 0.5 * angle + e1;
   const G4double angleOut = 0.5 * angle + e2;
