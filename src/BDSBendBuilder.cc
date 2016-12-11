@@ -191,17 +191,20 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   // with even incoming and outgoing face angles w.r.t. the chord.
   G4double segmentAngleIn  = 0;
   G4double segmentAngleOut = 0;
+  G4int    numberOfUniqueComponents = 1; // used for naming purposes
   BDSMagnet* oneBend = nullptr;
   const G4int numSegmentsEitherSide = (nSBends - 1) / 2;
   for (G4int i = 0; i < nSBends; ++i)
     {
-      G4String name = baseName + "_"+std::to_string(i+1)+"_of_" + std::to_string(nSBends);
+      G4String name = baseName;
       if (i < numSegmentsEitherSide)
         {// first half of magnet
           if (!BDS::IsFinite(e1)) // no pole face rotation so just repeat central segment
             {oneBend = centralWedge;}
           else if (fadeIn) // build incremented angled segment
             {
+	      name += "_"+std::to_string(numberOfUniqueComponents);
+	      numberOfUniqueComponents++;
 	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,e1,e2,segmentAngleIn,segmentAngleOut);
 	      oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 					      segmentAngleIn, segmentAngleOut, semiStrength,
@@ -211,6 +214,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
             {// finite pole face, but not strong so build one angled, then repeat the rest to save memory
               if (i == 0) // the first one is unique
                 {
+		  name += "_"+std::to_string(numberOfUniqueComponents);
+		  numberOfUniqueComponents++;
 		  segmentAngleIn  = 0.5*semiAngle - e1; // whole pole face angle
 		  segmentAngleOut = 0.5*semiAngle;      // even matching angle
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
@@ -227,6 +232,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
             {oneBend = centralWedge;}
           else if (fadeOut) // build incremented angled segment
 	    {
+	      name += "_"+std::to_string(numberOfUniqueComponents);
+	      numberOfUniqueComponents++;
 	      BDS::UpdateSegmentAngles(i,nSBends,semiAngle,e1,e2,segmentAngleIn,segmentAngleOut);
 	      oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 					      segmentAngleIn, segmentAngleOut, semiStrength,
@@ -236,7 +243,8 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
             {// finite pole face, but not strong so build only one unique angled on output face
               if (i == (nSBends-1)) // last one
                 {
-		  name = baseName + "_3_of_" + std::to_string(nSBends);
+		  name += "_"+std::to_string(numberOfUniqueComponents);
+		  numberOfUniqueComponents++;
 		  segmentAngleIn  = 0.5*semiAngle;
 		  segmentAngleOut = 0.5*semiAngle - e2;
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
