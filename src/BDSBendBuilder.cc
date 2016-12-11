@@ -180,8 +180,9 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
       (*fringeStIn)["fringecorr"]    = CalculateFringeFieldCorrection(bendingRadius, e1, element->fint);
       (*fringeStIn)["fringecorr"]   *= 2*element->hgap*CLHEP::m;
       G4String segmentName           = baseName + "_e1_fringe";
-      G4double fringeAngle           = 0.5*oneFringeAngle + e1;
-      BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, fringeAngle, fringeAngle,
+      G4double fringeAngleIn         = 0.5*oneFringeAngle - e1;
+      G4double fringeAngleOut        = 0.5*oneFringeAngle + e1;
+      BDSMagnet* startfringe = BDS::BuildDipoleFringe(element, fringeAngleIn, fringeAngleOut,
 						      segmentName, fringeStIn, brho,
 						      integratorSet);
       sbendline->AddComponent(startfringe);
@@ -215,7 +216,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
             {// finite pole face, but not strong so build one angled, then repeat the rest to save memory
               if (i == 0) // the first one is unique
                 {
-		  segmentAngleIn  = 0.5*semiAngle + e1; // whole pole face angle
+		  segmentAngleIn  = 0.5*semiAngle - e1; // whole pole face angle
 		  segmentAngleOut = 0.5*semiAngle;      // even matching angle
 		  oneBend = BDS::BuildSingleSBend(element, name, semiArcLength, semiAngle,
 						  segmentAngleIn, segmentAngleOut, semiStrength,
@@ -342,7 +343,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 const BDSIntegratorSet*  integratorSet,
 				 const G4bool             yokeOnLeft)
 {
-  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, -angleIn, -angleOut, yokeOnLeft);
+  auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   // set the name to the desired one rather than the one from the element
   magnetOuterInfo->name = name;
   
@@ -352,7 +353,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 					       intType,
 					       strength);
 
-  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, -angleIn, -angleOut);
+  auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   BDSMagnet* magnet = new BDSMagnet(BDSMagnetType::sectorbend,
 				    name,
 				    arcLength,
