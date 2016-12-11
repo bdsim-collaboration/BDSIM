@@ -33,7 +33,7 @@ BDSAcceleratorModel::BDSAcceleratorModel():
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
-  G4cout << "Deleting Model" << G4endl;
+  G4cout << "Deleting model" << G4endl;
   delete worldPV;
   delete flatBeamline;
   delete curvilinearBeamline;
