@@ -343,6 +343,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
 				 const BDSIntegratorSet*  integratorSet,
 				 const G4bool             yokeOnLeft)
 {
+  BDSMagnetStrength* strengthCopy = new BDSMagnetStrength(*strength);
   auto  magnetOuterInfo = BDSComponentFactory::PrepareMagnetOuterInfo(element, angleIn, angleOut, yokeOnLeft);
   // set the name to the desired one rather than the one from the element
   magnetOuterInfo->name = name;
@@ -351,7 +352,7 @@ BDSMagnet* BDS::BuildSingleSBend(const GMAD::Element*     element,
   BDSFieldInfo* vacuumField = new BDSFieldInfo(BDSFieldType::dipole,
 					       brho,
 					       intType,
-					       strength);
+					       strengthCopy);
 
   auto bpInfo = BDSComponentFactory::PrepareBeamPipeInfo(element, angleIn, angleOut);
   BDSMagnet* magnet = new BDSMagnet(BDSMagnetType::sectorbend,
