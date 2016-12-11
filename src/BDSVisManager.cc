@@ -17,6 +17,7 @@
 #endif
 
 #include "G4TrajectoryDrawByCharge.hh"
+#include "G4Version.hh"
 
 #include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
@@ -107,17 +108,20 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   UIManager->ApplyCommand("/control/execute " + visMacroFilename);
   
   // add default gui
-  if (session2->IsGUI()) {
-    // Add icons
-    std::string iconMacroFilename = visPath + "icons.mac";
-    UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
-    // add menus
-    std::string guiMacroFilename  = visPath + "gui.mac";
-    UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
-    // add run icon:
-    std::string runButtonFilename = visPath + "run.png";
-    UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
-  }
+  if (session2->IsGUI())
+    {
+#if G4VERSION_NUMBER < 1030
+      // Add icons
+      std::string iconMacroFilename = visPath + "icons.mac";
+      UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
+#endif
+      // add menus
+      std::string guiMacroFilename  = visPath + "gui.mac";
+      UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
+      // add run icon:
+      std::string runButtonFilename = visPath + "run.png";
+      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
+    }
 #endif
   session2->SessionStart();
   delete session2;
