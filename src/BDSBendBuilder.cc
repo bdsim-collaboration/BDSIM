@@ -314,7 +314,7 @@ void BDS::UpdateSegmentAngles(const G4int index,
       G4double inputFaceAngle  = e1 - ((G4double)index * delta);
       G4double outputFaceAngle = e1 - ((G4double)(index+1) * delta);
       // if e1 was 0, each would have 1/2 of semiAngle
-      segmentAngleIn  = 0.5*semiAngle + inputFaceAngle;
+      segmentAngleIn  = 0.5*semiAngle - inputFaceAngle;
       segmentAngleOut = 0.5*semiAngle + outputFaceAngle;
       //segmentAngleOut *= -1;
     }
