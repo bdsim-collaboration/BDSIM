@@ -24,11 +24,13 @@ namespace BDS
   /// poleface, the faces of each wedge fade in/out from the poleface to the cental
   /// wedge in the middle. Thin fringefield elements are placed at the beginning and
   /// end of the beamline if required.
-  BDSLine* BuildSBendLine(const GMAD::Element*     element,
-			  BDSMagnetStrength* st,
-			  const G4double     brho,
-			  const BDSIntegratorSet* integratorSet);
 
+  BDSAcceleratorComponent* BuildSBendLine(const GMAD::Element*    element,
+					  BDSMagnetStrength*      st,
+					  const G4double          brho,
+					  const BDSIntegratorSet* integratorSet,
+					  const G4double          charge);
+  
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
   /// either end if specified.
@@ -50,32 +52,38 @@ namespace BDS
 
   /// Thin magnet for dipole fringe field.
   /// Is beampipe only, no outer magnet.
-  BDSMagnet* BuildDipoleFringe(const GMAD::Element* element,
-			       G4double           angleIn,
-			       G4double           angleOut,
-			       G4String           name,
-			       BDSMagnetType      magType,
-			       BDSMagnetStrength* st,
-			       G4double           brho,
+  BDSMagnet* BuildDipoleFringe(const GMAD::Element*    element,
+			       G4double                angleIn,
+			       G4double                angleOut,
+			       G4String                name,
+			       BDSMagnetStrength*      st,
+			       G4double                brho,
 			       const BDSIntegratorSet* integratorSet);
 
   /// Function to return a single secotr bend section.
-  /// The faces of each are calculated as appropriate depending
-  /// on the poleface angle(s).
-  BDSMagnet* BuildSBend(const GMAD::Element* element,
-			G4bool             fadeIn,
-			G4bool             fadeOut,
-			G4int              index,
-			G4int              nSBends,
-			BDSMagnetStrength* st,
-			G4double           brho,
-			const BDSIntegratorSet* integratorSet,
-			const G4bool            yokeOnLeft);
-
+  BDSMagnet* BuildSingleSBend(const GMAD::Element*     element,
+			      const G4String           name,
+			      const G4double           arcLength,
+			      const G4double           angle,
+			      const G4double           angleIn,
+			      const G4double           angleOut,
+			      const BDSMagnetStrength* strength,
+			      const G4double           brho,
+			      const BDSIntegratorSet*  integratorSet,
+			      const G4bool             yokeOnLeft);
+  
   /// Function to calculate the value of the fringe field correction term.
   G4double CalculateFringeFieldCorrection(G4double rho,
 					  G4double polefaceAngle,
 					  G4double fint);
+
+  void UpdateSegmentAngles(const G4int    index,
+			   const G4int    nSBends,
+			   const G4double semiAngle,
+			   const G4double e1,
+			   const G4double e2,
+			   G4double&      segmentAngleIn,
+			   G4double&      segmentAngleOut);
 }
 
 #endif
