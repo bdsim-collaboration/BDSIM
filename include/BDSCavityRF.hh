@@ -23,9 +23,9 @@ class BDSFieldInfo;
 class BDSCavityRF: public BDSCavity
 {
 public:
-  BDSCavityRF(G4String      name,
-	      G4double      length,
-	      BDSFieldInfo* vacuumFieldIn);
+  BDSCavityRF(G4String            name,
+	      G4double            length,
+	      const BDSFieldInfo* vacuumFieldIn);
 
   virtual ~BDSCavityRF(){;}
     

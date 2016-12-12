@@ -18,5 +18,6 @@ std::map<BDSMagnetType, std::string>* BDSMagnetType::dictionary =
   {BDSMagnetType::sextupole,       "sextupole"},
   {BDSMagnetType::solenoid,        "solenoid"},
   {BDSMagnetType::multipole,       "multipole"},
-  {BDSMagnetType::thinmultipole,    "thinmultipole"}
+  {BDSMagnetType::thinmultipole,   "thinmultipole"},
+  {BDSMagnetType::dipolefringe,    "dipolefringe"}
 });

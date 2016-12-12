@@ -29,9 +29,9 @@ BDSFieldBuilder::BDSFieldBuilder()
   propagators.reserve(defaultSize);
 }
   
-void BDSFieldBuilder::RegisterFieldForConstruction(BDSFieldInfo*    info,
-						   G4LogicalVolume* logicalVolume,
-						   G4bool           propagateToDaughters)
+void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
+						   G4LogicalVolume*    logicalVolume,
+						   G4bool              propagateToDaughters)
 {
   if (info)
     {

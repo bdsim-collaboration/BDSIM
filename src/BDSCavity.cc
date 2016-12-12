@@ -22,9 +22,9 @@
 #include <cmath>
 #include <vector>
 
-BDSCavity::BDSCavity(G4String      name,
-		     G4double      length,
-		     BDSFieldInfo* vacuumFieldIn):
+BDSCavity::BDSCavity(G4String            name,
+		     G4double            length,
+		     const BDSFieldInfo* vacuumFieldIn):
   BDSAcceleratorComponent(name, length, 0,
 			  "cavity_"+vacuumFieldIn->CavityInfo()->cavityType.ToString()),
   vacuumField(vacuumFieldIn)
