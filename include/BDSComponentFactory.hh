@@ -79,6 +79,10 @@ public:
   /// of the bend and the overriding setting in the element.
   static G4bool YokeOnLeft(const GMAD::Element*     element,
 			   const BDSMagnetStrength* st);
+
+  /// Prepare the element outer diameter in Geant4 units - if not set, use the global
+  /// default.
+  static G4double PrepareOuterDiameter  (GMAD::Element const* element);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
@@ -96,7 +100,7 @@ public:
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
-  static void CheckBendLengthAngleWidthCombo(G4double chordLength,
+  static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
 					     G4double outerDiameter,
 					     G4String name = "not given");
@@ -115,11 +119,8 @@ private:
   /// length of a thin element
   G4double thinElementLength;
   
-  ///@{ Utility function to prepare model info
-  G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
-
-  BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
-  ///@}
+  /// Utility function to prepare model info
+  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;

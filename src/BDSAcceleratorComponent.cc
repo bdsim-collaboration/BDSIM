@@ -55,6 +55,14 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   if (lengthSafety < 0)
     {lengthSafety = globals->LengthSafety();}
   checkOverlaps = globals->CheckOverlaps();
+
+  // Prevent negative length components.
+  if (arcLength < 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Negative length for component named \""
+	     << name << "\" with length " << arcLength << G4endl;
+      exit(1);
+    }
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))

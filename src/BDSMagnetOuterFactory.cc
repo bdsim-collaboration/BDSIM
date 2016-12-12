@@ -109,57 +109,84 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   switch(magnetType.underlying())
     {
     case BDSMagnetType::decapole:
-      outer = CreateDecapole(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
-    case BDSMagnetType::vkicker:
-      outer = CreateKicker(geometryType,name,outerLength,beampipe,
-			   outerDiameter,chordLength,true,outerMaterial,buildEndPiece);
-      break;
-    case BDSMagnetType::hkicker:
-      outer = CreateKicker(geometryType,name,outerLength,beampipe,
-			   outerDiameter,chordLength,false,outerMaterial,buildEndPiece);
-      break;
-    case BDSMagnetType::muonspoiler:
-      outer = CreateMuSpoiler(geometryType,name,outerLength,beampipe,
-			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
-    case BDSMagnetType::octupole:
-      outer = CreateOctupole(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
-    case BDSMagnetType::quadrupole:
-      outer = CreateQuadrupole(geometryType,name,outerLength,beampipe,
+      {
+	outer = CreateDecapole(geometryType,name,outerLength,beampipe,
 			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
+	break;
+      }
+    case BDSMagnetType::vkicker:
+      {
+	outer = CreateKicker(geometryType,name,outerLength,beampipe,
+			     outerDiameter,chordLength,true,outerMaterial,buildEndPiece);
+	break;
+      }
+    case BDSMagnetType::hkicker:
+      {
+	outer = CreateKicker(geometryType,name,outerLength,beampipe,
+			     outerDiameter,chordLength,false,outerMaterial,buildEndPiece);
+	break;
+      }
+    case BDSMagnetType::muonspoiler:
+      {
+	outer = CreateMuSpoiler(geometryType,name,outerLength,beampipe,
+				outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
+    case BDSMagnetType::octupole:
+      {
+	outer = CreateOctupole(geometryType,name,outerLength,beampipe,
+			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
+    case BDSMagnetType::quadrupole:
+      {
+	outer = CreateQuadrupole(geometryType,name,outerLength,beampipe,
+				 outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
     case BDSMagnetType::rfcavity:
-      outer = CreateRfCavity(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
+      {
+	outer = CreateRfCavity(geometryType,name,outerLength,beampipe,
+			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
     case BDSMagnetType::sectorbend:
-      outer = CreateSectorBend(geometryType,name,outerLength,beampipe,
-			       outerDiameter,chordLength,outerInfo->angleIn,
-			       outerInfo->angleOut,yokeOnLeft,outerMaterial,
-			       buildEndPiece);
-      break;
+      {
+	outer = CreateSectorBend(geometryType,name,outerLength,beampipe,
+				 outerDiameter,chordLength,outerInfo->angleIn,
+				 outerInfo->angleOut,yokeOnLeft,outerMaterial,
+				 buildEndPiece);
+	break;
+      }
     case BDSMagnetType::rectangularbend:
-      outer = CreateRectangularBend(geometryType,name,outerLength,beampipe,
-				    outerDiameter,chordLength,outerInfo->angleIn,
-				    outerInfo->angleOut,yokeOnLeft,outerMaterial,
-				    buildEndPiece);
-      break;
+      {
+	outer = CreateRectangularBend(geometryType,name,outerLength,beampipe,
+				      outerDiameter,chordLength,outerInfo->angleIn,
+				      outerInfo->angleOut,yokeOnLeft,outerMaterial,
+				      buildEndPiece);
+	break;
+      }
     case BDSMagnetType::sextupole:
-      outer = CreateSextupole(geometryType,name,outerLength,beampipe,
-			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
+      {
+	outer = CreateSextupole(geometryType,name,outerLength,beampipe,
+				outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
     case BDSMagnetType::solenoid:
-      outer = CreateSolenoid(geometryType,name,outerLength,beampipe,
-			     outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
+      {
+	outer = CreateSolenoid(geometryType,name,outerLength,beampipe,
+			       outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
     case BDSMagnetType::multipole:
-      outer = CreateMultipole(geometryType,name,outerLength,beampipe,
-			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
-      break;
+      {
+	outer = CreateMultipole(geometryType,name,outerLength,beampipe,
+				outerDiameter,chordLength,outerMaterial,buildEndPiece);
+	break;
+      }
+    case BDSMagnetType::thinmultipole:
+    case BDSMagnetType::dipolefringe:
+      {break;} // leave as nullptr - no outer geometry for dipole fringe or thin multipole
     default:
       G4cout << __METHOD_NAME__ << "unknown magnet type " << magnetType << " - no outer volume built" << G4endl;
       break;

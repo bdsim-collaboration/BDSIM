@@ -41,6 +41,9 @@ private:
 
   /// The offset in the file to read events from when setting the seed.
   G4int  eventOffset;
+
+  /// Whether to use the ascii seed state each time.
+  G4bool useASCIISeedState;
 };
 
 #endif
