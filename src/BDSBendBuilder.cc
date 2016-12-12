@@ -260,14 +260,6 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 
       // append to the line
       sbendline->AddComponent(oneBend);
-      
-#ifdef BDSDEBUG
-      G4cout << "---->creating sbend line,"
-	     << " element= " << thename
-	     << " angleIn= " << angleIn
-	     << " angleOut= " << angleOut << "m"
-	     << G4endl;
-#endif
     }
   
   //Last element should be fringe if poleface specified
