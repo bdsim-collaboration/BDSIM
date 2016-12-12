@@ -10,7 +10,8 @@
 
 #include <map>
 
-namespace GMAD {
+namespace GMAD
+{
   struct Element;
 }
 class BDSAcceleratorComponent;
@@ -25,11 +26,20 @@ class BDSTiltOffset;
 /**
  * @brief Factory to produce all types of BDSAcceleratorComponents.
  * 
- * Creates from a parser Element the appropriate
- * object (that inherits BDSAcceleratorComponent) and returns it. Will return
- * nullptr if invalid type or nothing to be constructed for that particular type.
- * Basic calculations on field strength and angle as well as basic parameter validity
- * (zero length) are done here.
+ * Creates from a parser Element the appropriate object (that inherits 
+ * BDSAcceleratorComponent) and returns it. Will return nullptr if invalid 
+ * type or nothing to be constructed for that particular type. Calculations 
+ * on field strength and angle as well as basic parameter validity (minimum 
+ * length) are done here.
+ *
+ * The main interface requires both a previous and next GMAD::Element that the
+ * element is constructed with respect to. This is so that drifts can be matched
+ * to the faces of bends with pole face rotations etc.  If required in future, a
+ * simple interface for a single element could be added that uses this one with 
+ * nullptrs.
+ * 
+ * Functions for common functionality, checks and preparation of recipe classes 
+ * are provided publicly (and statically) for use elsewhere.
  */
 
 class BDSComponentFactory
@@ -69,6 +79,10 @@ public:
   /// of the bend and the overriding setting in the element.
   static G4bool YokeOnLeft(const GMAD::Element*     element,
 			   const BDSMagnetStrength* st);
+
+  /// Prepare the element outer diameter in Geant4 units - if not set, use the global
+  /// default.
+  static G4double PrepareOuterDiameter  (GMAD::Element const* element);
   
   /// Prepare the recipe for magnet outer geometry for an element. This uses a
   /// strength instance which (we assume) represents the element. Evenly splits angle
@@ -86,7 +100,7 @@ public:
 
   /// Utility function to check if the combination of outer diameter, angle and length
   /// will result in overlapping entrance and exit faces and therefore whether to abort.
-  static void CheckBendLengthAngleWidthCombo(G4double chordLength,
+  static void CheckBendLengthAngleWidthCombo(G4double arcLength,
 					     G4double angle,
 					     G4double outerDiameter,
 					     G4String name = "not given");
@@ -105,11 +119,8 @@ private:
   /// length of a thin element
   G4double thinElementLength;
   
-  ///@{ Utility function to prepare model info
-  G4double            PrepareOuterDiameter  (GMAD::Element const* element) const;
-
-  BDSCavityInfo*      PrepareCavityModelInfo(GMAD::Element const* element) const;
-  ///@}
+  /// Utility function to prepare model info
+  BDSCavityInfo* PrepareCavityModelInfo(GMAD::Element const* element) const;
 
   /// element for storing instead of passing around
   GMAD::Element const* element = nullptr;
@@ -121,7 +132,7 @@ private:
   BDSAcceleratorComponent* CreateDrift(G4double angleIn, G4double angleOut);
   BDSAcceleratorComponent* CreateRF();
   BDSAcceleratorComponent* CreateSBend();
-  BDSAcceleratorComponent* CreateRBend(G4double angleIn, G4double angleOut);
+  BDSAcceleratorComponent* CreateRBend();
   BDSAcceleratorComponent* CreateKicker(G4bool isVertical);
   BDSAcceleratorComponent* CreateQuad();
   BDSAcceleratorComponent* CreateSextupole();
@@ -175,8 +186,35 @@ private:
   /// Local copy of reference to integrator set to use.
   const BDSIntegratorSet* integratorSet;
 
-  /// Calculate field and angle of a bend
-  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element);
+  /// Calculate field and angle of a bend. Note, this uses the MADX convention
+  /// of +ve angle -> deflection in -ve x.
+  std::pair<G4double,G4double> CalculateAngleAndField(GMAD::Element const* element) const;
 
+  /// Calculate the field and angle of an rbend from information in the element noting the
+  /// 'l' in an element is the chord length of an rbend. Variables passed by reference and
+  /// are updated as output. Note, this uses the MADX convention of +ve angle -> deflection
+  /// in -ve x.
+  void CalculateAngleAndFieldRBend(const GMAD::Element* element,
+				   G4double& arcLength,
+				   G4double& chordLength,
+				   G4double& field,
+				   G4double& angle) const;
+
+  /// Calculate the angle of a bend whether it's an rbend or an sbend.
+  G4double BendAngle(const GMAD::Element* element) const;
+
+  /// Calculate the outgoing angle of the face (in the horizontal plane) for
+  /// a given element. Calculates the bend angle and applies e1 / e2 pole face
+  /// rotations the correct way depending on sign of angle. The angle is w.r.t.
+  /// outgoing curvilinear coordinates, so for an rbend with e2=0, the returned
+  /// angle will be half the bend angle. For an sbend, with e2=0, it'll be 0.
+  G4double OutgoingFaceAngle(const GMAD::Element* element) const;
+
+  /// Calculate the incoming angel of the face (in the horizontal plane) for
+  /// a given element. Calculates the bend angle and applies e1 / e2 pole face
+  /// rotations the correct way depending on sign of angle. The angle is w.r.t.
+  /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
+  /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
+  G4double IncomingFaceAngle(const GMAD::Element* element) const; 
 };
 #endif

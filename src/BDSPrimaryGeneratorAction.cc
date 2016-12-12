@@ -25,6 +25,7 @@ BDSPrimaryGeneratorAction::BDSPrimaryGeneratorAction(BDSBunch* bdsBunchIn):
 
   writeASCIISeedState = BDSGlobalConstants::Instance()->WriteSeedState();
   recreate            = BDSGlobalConstants::Instance()->Recreate();
+  useASCIISeedState   = BDSGlobalConstants::Instance()->UseASCIISeedState();
   
   if (recreate)
     {
@@ -58,6 +59,12 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState();}
+
+  if (useASCIISeedState)
+    {
+      G4String fileName = BDSGlobalConstants::Instance()->SeedStateFileName();
+      BDSRandom::LoadSeedState(fileName);
+    }
 
   // Always save seed state in output
   BDSEventInfo* eventInfo = new BDSEventInfo();

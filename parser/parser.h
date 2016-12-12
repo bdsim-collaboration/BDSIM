@@ -2,7 +2,6 @@
 #define PARSER_H
 
 #include <list>
-#include <map>
 #include <string>
 #include <vector>
 

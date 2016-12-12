@@ -36,4 +36,5 @@ private:
 
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
   G4bool   checkOverlaps;     ///< Whether to check overlaps.
+  G4double lengthSafety;      ///< Length safety.
 };

@@ -17,6 +17,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
+#include "G4Tubs.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
@@ -42,6 +43,7 @@ BDSCurvilinearFactory::BDSCurvilinearFactory()
       curvilinearRadius = std::max(curvilinearRadius, maxTunnelR);
     }
   checkOverlaps = globals->CheckOverlaps();
+  lengthSafety  = globals->LengthSafety();
 }
 
 BDSCurvilinearFactory::~BDSCurvilinearFactory()
@@ -87,10 +89,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
 						      element->GetSPositionStart(),
 						      element->GetSPositionMiddle(),
 						      element->GetSPositionEnd(),
-						      copyTiltOffset,
-						      element->GetSamplerType(),
-						      element->GetSamplerName(),
-						      element->GetIndex());
+						      copyTiltOffset);
   return result;
 }
 
@@ -109,12 +108,14 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
   G4ThreeVector outputface = G4ThreeVector(0, 0, 1);
   G4double     radiusLocal = curvilinearRadius;
   if (!BDS::IsFinite(angle))
-    {
-      //angle is zero - build a box
-      solid = new G4Box(name + "_cl_solid", // name
-			radiusLocal,        // x half width
-			radiusLocal,        // y half width
-			chordLength*0.5);   // z half width
+    { // angle is zero
+      G4double halfLength = chordLength * 0.5 - lengthSafety;
+      solid = new G4Tubs(name + "_cl_solid", // name
+			 0,                  // inner radius
+			 radiusLocal,        // outer radius
+			 halfLength,         // z half width
+			 0,                  // start angle
+			 CLHEP::twopi);      // sweep angle
     }
   else
     {
@@ -142,11 +143,11 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
 	      outputface = outputface.rotateZ(tilt);
 	    }
 	}
-
+      G4double halfLength = chordLength * 0.5 - lengthSafety;
       solid = new G4CutTubs(name + "_cl_solid", // name
 			    0,                  // inner radius
 			    radiusLocal,        // outer radius
-			    chordLength*0.5,    // half length (z)
+			    halfLength,         // half length (z)
 			    0,                  // rotation start angle
 			    CLHEP::twopi,       // rotation sweep angle
 			    inputface,          // input face normal vector
