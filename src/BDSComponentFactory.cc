@@ -146,7 +146,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
-  G4cout << "BDSComponentFactory - creating ";
+  G4cout << __METHOD_NAME__ << " - creating " << G4endl;
   element->print();
 #endif
   switch(element->type){

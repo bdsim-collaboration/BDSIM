@@ -21,7 +21,7 @@ MACRO(COPY_FILE_IF_CHANGED in_file out_file target)
     configure_file(${in_file} ${out_file} COPYONLY)
   ELSEIF(${in_file} IS_NEWER_THAN ${out_file})
     #message(STATUS "copying")
-    # this will only effictively be run after successfuly compilation even if called earlier
+    # this will only effectively be run after successful compilation even if called earlier
     ADD_CUSTOM_COMMAND (
       TARGET     ${target}
       POST_BUILD 

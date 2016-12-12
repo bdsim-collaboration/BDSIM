@@ -1,14 +1,13 @@
 #ifndef BDSPARSER_H
 #define BDSPARSER_H
 
-#include <map>
 #include <string>
 #include <vector>
 
 #include "parser/parser.h"
 
 /**
- * @brief Entry to parser objects
+ * @brief Const entry to parser objects
  *
  * Singleton pattern
  *

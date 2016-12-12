@@ -213,7 +213,7 @@ BDSLine* BDS::BuildSBendLine(const Element*     element,
       G4cout << "---->creating sbend line,"
 	     << " element= " << thename
 	     << " angleIn= " << angleIn
-	     << " angleOut= " << angleOut << "m"
+	     << " angleOut= " << angleOut
 	     << G4endl;
 #endif
     }

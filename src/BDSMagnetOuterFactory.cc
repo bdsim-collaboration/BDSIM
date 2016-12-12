@@ -161,7 +161,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
 			      outerDiameter,chordLength,outerMaterial,buildEndPiece);
       break;
     default:
-      G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
+      G4cout << __METHOD_NAME__ << "unknown magnet type " << magnetType << " - no outer volume built" << G4endl;
       break;
     }
   return outer;
