@@ -104,8 +104,6 @@ private:
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
-  /// World user limits  
-  G4UserLimits* worldUserLimits;
 
   // All fields
   std::vector<BDSFieldObjects*> fields;

@@ -13,8 +13,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4OpticalSurface.hh"
 #include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
-#include "G4UserLimits.hh"
+#include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -71,12 +70,7 @@ void BDSScreenLayer::buildScreen()
 			    (name+"_log").c_str());
   cutGrooves();
 
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(size.z()*maxStepFactor);
-  log->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSScreenLayer::cutGrooves()
@@ -230,13 +224,7 @@ void BDSScreenLayer::sampler()
   log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
   
-
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(size.z()*maxStepFactor);
-  log->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 BDSScreenLayer::~BDSScreenLayer()

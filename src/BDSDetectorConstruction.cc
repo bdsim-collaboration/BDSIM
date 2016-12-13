@@ -40,7 +40,6 @@
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
-#include "G4UserLimits.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
@@ -53,8 +52,9 @@
 #include <vector>
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  worldPV(nullptr),worldUserLimits(nullptr),
-  theHitMaker(nullptr),theParticleBounds(nullptr)
+  worldPV(nullptr),
+  theHitMaker(nullptr),
+  theParticleBounds(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -107,7 +107,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   for (auto i : biasObjects)
     {delete i;}
 #endif
-  delete worldUserLimits;
   
   // gflash stuff
   gFlashRegion.clear();
@@ -302,11 +301,7 @@ void BDSDetectorConstruction::BuildWorld()
   worldLV->SetVisAttributes(debugWorldVis);
 	
   // set limits
-#ifndef NOUSERLIMITS
-  worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
-  worldLV->SetUserLimits(worldUserLimits);
-#endif
+  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // place the world
   worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
@@ -661,9 +656,6 @@ void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
   }
   volume->SetRegion(gFlashRegion.back());
   gFlashRegion.back()->AddRootLogicalVolume(volume);
-  //gFlashRegion.back()->SetUserLimits(new G4UserLimits(accComp->GetChordLength()/10.0));
-  //volume->SetUserLimits(new G4UserLimits(accComp->GetChordLength()/10.0));
-
 }
 
 void BDSDetectorConstruction::ConstructSDandField()

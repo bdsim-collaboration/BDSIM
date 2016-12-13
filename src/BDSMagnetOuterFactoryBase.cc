@@ -11,7 +11,6 @@
 #include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
@@ -40,14 +39,12 @@ void BDSMagnetOuterFactoryBase::CleanUp()
   magnetContainerLV    = nullptr;
   yokePV               = nullptr;
   outerVisAttributes   = nullptr;
-  outerUserLimits      = nullptr;
 
   allLogicalVolumes.clear();
   allPhysicalVolumes.clear();
   allRotationMatrices.clear();
   allSolids.clear();
   allVisAttributes.clear();
-  allUserLimits.clear();
 
   magnetContainer = nullptr;
 
@@ -56,7 +53,6 @@ void BDSMagnetOuterFactoryBase::CleanUp()
 }
 
 void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
-						     G4double    length,
 						     G4Colour*   colour,
 						     G4Material* outerMaterial)
 {
@@ -65,14 +61,14 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
 #endif
   if (poleSolid)
     {
-      poleLV   = new G4LogicalVolume(poleSolid,
-				     outerMaterial,
-				     name + "_pole_lv");
+      poleLV = new G4LogicalVolume(poleSolid,
+				   outerMaterial,
+				   name + "_pole_lv");
     }
   
-  yokeLV   = new G4LogicalVolume(yokeSolid,
-				 outerMaterial,
-				 name + "_yoke_lv");
+  yokeLV = new G4LogicalVolume(yokeSolid,
+			       outerMaterial,
+			       name + "_yoke_lv");
 
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
   containerLV = new G4LogicalVolume(containerSolid,
@@ -96,18 +92,12 @@ void BDSMagnetOuterFactoryBase::CreateLogicalVolumes(G4String    name,
   magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
   // USER LIMITS
-#ifndef NOUSERLIMITS
-  G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  allUserLimits.push_back(outerUserLimits);
-  //attach cuts to volumes
+  auto outerUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   if (poleLV)
     {poleLV->SetUserLimits(outerUserLimits);}
   yokeLV->SetUserLimits(outerUserLimits);
   containerLV->SetUserLimits(outerUserLimits);
   magnetContainerLV->SetUserLimits(outerUserLimits);
-#endif
 }
 
 void BDSMagnetOuterFactoryBase::BuildMagnetContainerSolidAngled(G4String      name,
