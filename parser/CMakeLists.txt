@@ -36,11 +36,14 @@ if($ENV{VERBOSE})
   message(STATUS "GMAD parser sources ${GMAD_PARSER_SOURCES}")
 endif()
 
-add_library(gmad STATIC ${GMAD_PARSER_SOURCES}
-  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# Object library, will be used by both static and shared library
+add_library(gmadLib OBJECT ${GMAD_PARSER_SOURCES} ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+# Shared libraries need PIC
+set_target_properties(gmadLib PROPERTIES POSITION_INDEPENDENT_CODE 1)
+# Static library for BDSIM
+add_library(gmad STATIC $<TARGET_OBJECTS:gmadLib>)
 # For Python a shared library is needed
-add_library(gmadShared SHARED ${GMAD_PARSER_SOURCES}
-  ${BISON_PARSER_OUTPUTS} ${FLEX_SCANNER_OUTPUTS})
+add_library(gmadShared SHARED $<TARGET_OBJECTS:gmadLib>)
 
 if($ENV{VERBOSE})
   message(STATUS "BISON_PARSER_OUTPUTS ${BISON_PARSER_OUTPUTS}") 
