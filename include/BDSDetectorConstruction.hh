@@ -1,29 +1,25 @@
 #ifndef BDSDETECTORCONSTRUCTION_H
 #define BDSDETECTORCONSTRUCTION_H 
 
-#include "BDSFieldObjects.hh"
-#include "BDSGlobalConstants.hh"
-
 #include "globals.hh" // geant4 types / globals
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
 
 #include <list>
 #include <string>
+#include <vector>
 
-//GFlash parameterisation
-#include "GFlashHomoShowerParameterisation.hh"
-#include "BDSShowerModel.hh"
-#include "GFlashHitMaker.hh"
-#include "GFlashParticleBounds.hh"
-
-class G4Box;
+class GFlashHomoShowerParameterisation;
+class GFlashHitMaker;
+class GFlashParticleBounds;
 class G4LogicalVolume;
 class G4Region;
 class G4VPhysicalVolume;
-class G4UniformMagField;
 class G4UserLimits;
 class G4VSensitiveDetector;
+
+class BDSFieldObjects;
+class BDSShowerModel;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;

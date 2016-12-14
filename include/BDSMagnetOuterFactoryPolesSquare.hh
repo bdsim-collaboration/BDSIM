@@ -1,7 +1,6 @@
 #ifndef BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 #define BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 
-#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuterFactoryPolesBase.hh"
 #include "BDSBeamPipe.hh"
 
@@ -10,6 +9,7 @@
 #include <vector>
 
 class G4Colour;
+class G4LogicalVolume;
 class G4Material;
 
 /**

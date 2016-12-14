@@ -21,6 +21,7 @@
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
 #include "BDSSamplerType.hh"
+#include "BDSShowerModel.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
@@ -33,6 +34,9 @@
 
 #include "G4Box.hh"
 #include "G4Electron.hh"
+#include "GFlashHomoShowerParameterisation.hh"
+#include "GFlashHitMaker.hh"
+#include "GFlashParticleBounds.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4Navigator.hh"
