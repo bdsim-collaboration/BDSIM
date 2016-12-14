@@ -15,8 +15,6 @@ class GFlashParticleBounds;
 class G4LogicalVolume;
 class G4Region;
 class G4VPhysicalVolume;
-class G4UserLimits;
-class G4VSensitiveDetector;
 
 class BDSFieldObjects;
 class BDSShowerModel;
