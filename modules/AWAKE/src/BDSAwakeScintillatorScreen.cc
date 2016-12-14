@@ -16,7 +16,6 @@ Work in progress.
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4UserLimits.hh"
 #include "BDSDebug.hh"
 
 #include "BDSAwakeMultilayerScreen.hh"
@@ -223,12 +222,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
-  itsCameraScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 //void BDSAwakeScintillatorScreen::BuildFresnelLens(){
@@ -304,12 +298,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
-  itsScreenScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSAwakeScintillatorScreen::Build()
@@ -438,12 +427,7 @@ void BDSAwakeScintillatorScreen::BuildContainerLogicalVolume()
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
+  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){
