@@ -353,6 +353,7 @@ G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double var)
   G4UserLimits* UserLimits = new G4UserLimits();
   UserLimits->SetMaxAllowedStep(var*0.5);
   UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+  // note, this is different from all other geometry - TBC
   if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0)
     {UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());}
   return UserLimits;
@@ -362,9 +363,7 @@ G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double var)
 void BDSGeometryFactorySQL::SetLogVolAtt(G4LogicalVolume* logVol, G4double k)
 {
   logVol->SetVisAttributes(VisAtt());
-#ifndef NOUSERLIMITS
   logVol->SetUserLimits(UserLimits(k));
-#endif
   SetLogVolRegion(logVol);
 }
 

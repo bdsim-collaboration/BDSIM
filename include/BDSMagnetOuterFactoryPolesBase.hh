@@ -259,7 +259,6 @@ protected:
 				     G4int    order);
 
   virtual void CreateLogicalVolumes(G4String    name,
-				    G4double    length,
 				    G4Colour*   colour,
 				    G4Material* outerMaterial);
 

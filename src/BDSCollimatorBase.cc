@@ -13,7 +13,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
-#include "G4UserLimits.hh"
 
 #include <map>
 
@@ -142,14 +141,9 @@ void BDSCollimatorBase::Build()
     }
   else
     {colRotate = nullptr;}
-
-
-#ifndef NOUSERLIMITS
-  G4UserLimits* collimatorUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  collimatorUserLimits->SetMaxAllowedStep(chordLength * 0.5);
-  RegisterUserLimits(collimatorUserLimits);
-  collimatorLV->SetUserLimits(collimatorUserLimits);
-#endif
+  
+  // user limits
+  collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // register with base class (BDSGeometryComponent)
   RegisterLogicalVolume(collimatorLV);
@@ -178,9 +172,7 @@ void BDSCollimatorBase::Build()
 						      name + "_vacuum_lv"); // name
 
       vacuumLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetInvisibleVisAttr());
-#ifndef NOUSERLIMITS
       vacuumLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
-#endif
       SetAcceleratorVacuumLogicalVolume(vacuumLV);
       RegisterLogicalVolume(vacuumLV);
 

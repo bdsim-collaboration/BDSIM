@@ -184,14 +184,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHC::CommonFinalConstruction(G4String    nameIn,
 							    G4double    containerWidthIn,
 							    G4double    containerHeightIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
   
   // record extents
   BDSExtent ext = BDSExtent(containerWidthIn, containerHeightIn, lengthIn*0.5);

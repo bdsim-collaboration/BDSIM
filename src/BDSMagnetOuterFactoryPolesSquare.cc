@@ -17,7 +17,6 @@
 #include "G4PVPlacement.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -145,7 +144,6 @@ void BDSMagnetOuterFactoryPolesSquare::IntersectPoleWithYoke(G4String name,
 }
 
 void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
-							    G4double    length,
 							    G4Colour*   colour,
 							    G4Material* outerMaterial)
 {
@@ -180,20 +178,9 @@ void BDSMagnetOuterFactoryPolesSquare::CreateLogicalVolumes(G4String    name,
 				    name + "_container_lv");
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-#ifndef NOUSERLIMITS
-  G4UserLimits* outerUserLimits = new G4UserLimits("outer_cuts");
-  outerUserLimits->SetMaxAllowedStep( length * maxStepFactor );
-  outerUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  allUserLimits.push_back(outerUserLimits);
-  //attach cuts to volumes
-  yokeLV->SetUserLimits(outerUserLimits);
-  containerLV->SetUserLimits(outerUserLimits);
-  std::vector<G4LogicalVolume*>::iterator j;
-  for(j = poleLVs.begin(); j != poleLVs.end(); ++j)
-    {(*j)->SetUserLimits(outerUserLimits);}
-#endif
+  // user limits
+  for (auto lv : poleLVs)
+    {lv->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());}
 
   // create logical volumes for the coils using base class method
   CreateLogicalVolumesCoil(name);
