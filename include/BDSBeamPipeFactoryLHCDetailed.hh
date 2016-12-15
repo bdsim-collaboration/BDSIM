@@ -69,9 +69,9 @@ private:
   virtual void          BuildLogicalVolumes(G4String    nameIn,
 					    G4Material* vacuumMaterialIn,
 					    G4Material* beamPipeMaterialIn);
-  virtual void          SetVisAttributes();
-  virtual G4UserLimits* SetUserLimits(G4double lengthIn);
-  virtual void          PlaceComponents(G4String nameIn);
+  virtual void  SetVisAttributes();
+  virtual void  SetUserLimits();
+  virtual void  PlaceComponents(G4String nameIn);
 
   /// Utility function to initialise the geometry parameters
   void InitialiseGeometricalParameters();

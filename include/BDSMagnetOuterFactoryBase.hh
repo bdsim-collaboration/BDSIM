@@ -13,7 +13,6 @@ class BDSGeometryComponent;
 
 class G4Colour;
 class G4Material;
-class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 class G4VSolid;
@@ -172,7 +171,6 @@ protected:
   /// Create logical volumes for yoke, container and magnet container - derived classes can override to
   /// extend as they need.
   virtual void CreateLogicalVolumes(G4String    name,
-				    G4double    length,
 				    G4Colour*   colour,
 				    G4Material* outerMaterial);
 
@@ -213,14 +211,12 @@ protected:
   G4LogicalVolume*   magnetContainerLV;
   G4VPhysicalVolume* yokePV;
   G4VisAttributes*   outerVisAttributes;
-  G4UserLimits*      outerUserLimits;
 
   std::vector<G4LogicalVolume*>   allLogicalVolumes;
   std::vector<G4VPhysicalVolume*> allPhysicalVolumes;
   std::vector<G4RotationMatrix*>  allRotationMatrices;
   std::vector<G4VSolid*>          allSolids;
   std::vector<G4VisAttributes*>   allVisAttributes;
-  std::vector<G4UserLimits*>      allUserLimits;
 
   BDSExtent                       magContExtent;
   BDSGeometryComponent*           magnetContainer;

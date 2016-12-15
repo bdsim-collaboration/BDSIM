@@ -7,7 +7,6 @@
 
 #include <vector>
 
-class G4UserLimits;
 class G4Material;
 class G4VisAttributes;
 class G4VSolid;
@@ -137,7 +136,7 @@ protected:
   virtual void SetVisAttributes(G4bool visible);
   
   /// Set user limits for all logical volumes in the tunnel section
-  virtual void SetUserLimits(G4double length);
+  virtual void SetUserLimits();
   
   /// Prepare the assembled geometry component
   virtual void PrepareGeometryComponent(G4double containerXRadius,
@@ -184,7 +183,6 @@ protected:
   /// which then owns the objects, rather than the factory derived from this class.
   std::vector<G4VSolid*>        solidsToBeRegistered;
   std::vector<G4VisAttributes*> visAttributesToBeRegistered;
-  std::vector<G4UserLimits*>    userLimitsToBeRegistered;
 };
 
 #endif

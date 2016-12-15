@@ -10,7 +10,6 @@
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
 #include "G4ThreeVector.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 
 BDSBeamPipeFactoryBase::BDSBeamPipeFactoryBase()
@@ -40,7 +39,6 @@ void BDSBeamPipeFactoryBase::CleanUp()
   allRotationMatrices.clear();
   allSolids.clear();
   allVisAttributes.clear();
-  allUserLimits.clear();
 
   inputFaceNormal  = G4ThreeVector(0,0,-1);
   outputFaceNormal = G4ThreeVector(0,0, 1);
@@ -48,8 +46,7 @@ void BDSBeamPipeFactoryBase::CleanUp()
   
 void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
 						G4Material* vacuumMaterialIn,
-						G4Material* beamPipeMaterialIn,
-						G4double    lengthIn)
+						G4Material* beamPipeMaterialIn)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -60,10 +57,8 @@ void BDSBeamPipeFactoryBase::CommonConstruction(G4String    nameIn,
   BuildLogicalVolumes(nameIn,vacuumMaterialIn,beamPipeMaterialIn);
   /// set visual attributes
   SetVisAttributes();
-#ifndef NOUSERLIMITS
   /// set user limits
-  SetUserLimits(lengthIn);
-#endif
+  SetUserLimits();
   /// place volumes
   PlaceComponents(nameIn);
 }
@@ -94,12 +89,6 @@ void BDSBeamPipeFactoryBase::BuildLogicalVolumes(G4String    nameIn,
 
 void BDSBeamPipeFactoryBase::SetVisAttributes()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // VISUAL ATTRIBUTES
-  // set visual attributes
-  // beampipe
   G4VisAttributes* pipeVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("beampipe"));
   pipeVisAttr->SetVisibility(true);
   pipeVisAttr->SetForceLineSegmentsPerCircle(nSegmentsPerCircle);
@@ -111,33 +100,19 @@ void BDSBeamPipeFactoryBase::SetVisAttributes()
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 }
 
-G4UserLimits* BDSBeamPipeFactoryBase::SetUserLimits(G4double lengthIn)
+void BDSBeamPipeFactoryBase::SetUserLimits()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-  G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
-  beamPipeUserLimits->SetMaxAllowedStep( lengthIn * maxStepFactor );
-  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  allUserLimits.push_back(beamPipeUserLimits);
-  //attach cuts to volumes
+  auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   vacuumLV->SetUserLimits(beamPipeUserLimits);
   beamPipeLV->SetUserLimits(beamPipeUserLimits);
   containerLV->SetUserLimits(beamPipeUserLimits);
-  return beamPipeUserLimits;
 }
 
 void BDSBeamPipeFactoryBase::PlaceComponents(G4String nameIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
   // PLACEMENT
   // place the components inside the container
-  // note we don't need the pointer for anything - it's registered upon construction with g4
-  
+  // note we don't need the pointer for anything - it's registered upon construction with g4  
   vacuumPV = new G4PVPlacement((G4RotationMatrix*)nullptr,   // no rotation
 			       (G4ThreeVector)0,             // position
 			       vacuumLV,                     // lv to be placed
@@ -175,7 +150,6 @@ BDSBeamPipe* BDSBeamPipeFactoryBase::BuildBeamPipeAndRegisterVolumes(BDSExtent e
   if (beamPipeLV)// in the case of the circular vacuum, there isn't a beampipeLV
     {aPipe->RegisterSensitiveVolume(beamPipeLV);}
   aPipe->RegisterVisAttributes(allVisAttributes);
-  aPipe->RegisterUserLimits(allUserLimits);
   
   return aPipe;
 }

@@ -3,9 +3,9 @@
 
 #include "globals.hh"
 
-BDSCavityRF::BDSCavityRF(G4String      name,
-			 G4double      length,
-			 BDSFieldInfo* vacuumFieldIn):
+BDSCavityRF::BDSCavityRF(G4String            name,
+			 G4double            length,
+			 const BDSFieldInfo* vacuumFieldIn):
   BDSCavity(name, length, vacuumFieldIn)
 {;}
 

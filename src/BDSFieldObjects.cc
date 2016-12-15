@@ -14,7 +14,7 @@ class BDSFieldInfo;
 class G4EquationOfMotion;
 class G4MagIntegratorStepper;
 
-BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4Field*                fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn,
@@ -29,7 +29,7 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   magIntDriver(nullptr)
 {;}
 
-BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4ElectroMagneticField* fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn):
@@ -51,7 +51,7 @@ BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
   fieldManager->SetDeltaOneStep(globals->DeltaOneStep());
 }
 
-BDSFieldObjects::BDSFieldObjects(BDSFieldInfo*           infoIn,
+BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4MagneticField*        fieldIn,
 				 G4EquationOfMotion*     equationOfMotionIn,
 				 G4MagIntegratorStepper* magIntegratorStepperIn):

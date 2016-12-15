@@ -15,7 +15,7 @@
  * the motion based on the design rigidity and a strength parameter.
  * 
  * This also provides a general 4th order Runge Kutta integrator that can be used
- * by the derived class if the coordinates are non-parraxial for example.
+ * by the derived class if the coordinates are non-paraxial for example.
  *
  * The derived class must also satisfy G4MagIntegratorStepper.hh's virtual method
  * Stepper.

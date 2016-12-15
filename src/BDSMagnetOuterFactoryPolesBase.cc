@@ -284,7 +284,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   if (buildPole)
     {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
-  CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
+  CreateLogicalVolumes(name, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
   if (buildPole && buildEndPiece)
     {CreateEndPiece(name);}
@@ -305,7 +305,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   
   // Register logical volumes and set sensitivity
   // test if poleLV exists first as some derived classes use their own vector of
@@ -582,11 +581,10 @@ void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
-							  G4double    length,
 							  G4Colour*   colour,
 							  G4Material* outerMaterial)
 {
-  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, colour, outerMaterial);
   CreateLogicalVolumesCoil(name);
 }
 
@@ -984,7 +982,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (buildPole)
     {extXPos += coilWidth + lsl;}
 
-  if (!yokeOnLeft)
+  if (yokeOnLeft)
     {
       // flip x component so geometry is reflected horizontally
       for (auto& vec : yokePoints)
@@ -1154,7 +1152,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   
   // logical volumes
-  CreateLogicalVolumes(name, length, colour, material);
+  CreateLogicalVolumes(name, colour, material);
   // we only use one coil solid here so do that here
   G4LogicalVolume* coilLV = nullptr;
   if (buildPole)
@@ -1245,7 +1243,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   
   outer->RegisterSolid(yokeSolid);
   outer->RegisterLogicalVolume(yokeLV);

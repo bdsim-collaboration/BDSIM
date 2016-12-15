@@ -42,7 +42,6 @@
 #include "BDSInterpolator4DLinear.hh"
 #include "BDSInterpolator4DNearest.hh"
 #include "BDSInterpolatorType.hh"
-#include "BDSThreeVector.hh"
 
 #include "globals.hh" // geant4 types / globals
 

@@ -14,8 +14,8 @@
 #include <G4TwoVector.hh>
 
 BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* strength,
-					       G4double                 brho,
-					       G4Mag_EqRhs*             eqOfMIn):
+						       G4double                 brho,
+						       G4Mag_EqRhs*             eqOfMIn):
   BDSIntegratorBase(eqOfMIn, 6),
   yInitial(0), yMidPoint(0), yFinal(0)
 {
@@ -33,9 +33,9 @@ BDSIntegratorMultipoleThin::BDSIntegratorMultipoleThin(BDSMagnetStrength const* 
 }
 
 void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
-				     const G4double[] /*dxdy*/,
-				     const G4double h,
-				     G4double       yOut[])
+					      const G4double[] /*dxdy*/,
+					      const G4double h,
+					      G4double       yOut[])
 {
   const G4double *pIn      = yIn+3;
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
@@ -43,6 +43,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4double      InitMag    = GlobalP.mag();
   G4ThreeVector InitMomDir = GlobalP.unit();
 
+<<<<<<< HEAD
   /*
   // this is excessive for debug - only uncomment if debugging this tracking code
 #ifdef BDSDEBUG
@@ -60,6 +61,11 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
          << G4endl;
          #endif
   */
+=======
+  //Factor for normalising to particle momentum
+  G4double normFactor = eqOfM->FCof()/InitMag;
+  // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
+>>>>>>> 7c6b5d2751316ce1920f170ad89c14912cacbb2f
 
   // global to local
   BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
@@ -108,12 +114,10 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
       momy = 0;
       knReal = (*kn) * pow(position,n).real() / nfact[n];
       knImag = (*kn) * pow(position,n).imag() / nfact[n];
-      if (!std::isnan(knReal)){
-        momx = knReal;
-      }
-      if (!std::isnan(knImag)) {
-        momy = knImag;
-      }
+      if (!std::isnan(knReal))
+	{momx = knReal;}
+      if (!std::isnan(knImag))
+	{momy = knImag;}
       result = {momx,momy};
       kick += result;
     }
@@ -145,7 +149,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
           //Rotate momentum vector about z axis according to number of poles
           //then apply each kick seperately and rotate back
           //skewAngle = CLHEP::pi / (2 * n);
-          skewAngle = CLHEP::pi / 2;
+          skewAngle = CLHEP::halfpi;
           mom.rotateZ(skewAngle);
 
           // calculate and apply kick
@@ -183,7 +187,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
                                      const G4double[] /*dydx[]*/,
                                      const G4double hstep,
                                      G4double yOut[],
-                                     G4double yErr[]) {
+                                     G4double yErr[])
+{
   AdvanceHelix(yInput, 0, hstep, yOut);
 
   // The two half-step method cannot be used as the
@@ -193,9 +198,8 @@ void BDSIntegratorMultipoleThin::Stepper(const G4double yInput[],
   // lead to an incorrectly large error, therefore the
   // error is set to 0 here.
 
-  for (G4int i = 0; i < nVariables; i++) {
-    yErr[i] = 0;
-  }
+  for (G4int i = 0; i < nVariables; i++)
+    {yErr[i] = 0;}
 }
 
 G4int BDSIntegratorMultipoleThin::Factorial(G4int n)

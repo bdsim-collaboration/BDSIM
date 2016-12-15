@@ -100,7 +100,7 @@ BDSGeometryExternal* BDSGeometryFactorySQL::Build(G4String fileName,
 						  G4double suggestedLength,
 						  G4double suggestedOuterDiameter)
 {
-  // strip of the file name effictively
+  // strip of the file name effectively
   G4String containingDir = BDS::GetFullPath(fileName, true);
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "loading SQL file:     " << fileName      << G4endl;
@@ -222,6 +222,30 @@ void BDSGeometryFactorySQL::BuildSQLObjects(G4String file)
     }
 }
 
+template<>
+void BDSGeometryFactorySQL::AssignVariable<G4double>(BDSMySQLTable* aSQLTable, G4int k, G4String variableName, G4double& variable)
+{
+  BDSMySQLVariable* sqlVariable = aSQLTable->GetVariable(variableName);
+  if(sqlVariable)
+    {variable = sqlVariable->GetDblValue(k);}
+}
+
+template<>
+void BDSGeometryFactorySQL::AssignVariable<G4int>(BDSMySQLTable* aSQLTable, G4int k, G4String variableName, G4int& variable)
+{
+  BDSMySQLVariable* sqlVariable = aSQLTable->GetVariable(variableName);
+  if(sqlVariable)
+    {variable = sqlVariable->GetIntValue(k);}
+}
+
+template<>
+void BDSGeometryFactorySQL::AssignVariable<G4String>(BDSMySQLTable* aSQLTable, G4int k, G4String variableName, G4String& variable)
+{
+  BDSMySQLVariable* sqlVariable = aSQLTable->GetVariable(variableName);
+  if(sqlVariable)
+    {variable = sqlVariable->GetStrValue(k);}
+}
+
 void BDSGeometryFactorySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k)
 {
   //Defaults
@@ -233,24 +257,16 @@ void BDSGeometryFactorySQL::SetCommonParams(BDSMySQLTable* aSQLTable, G4int k)
   PrecisionRegion=0;
   ApproximationRegion=0;
 
-  if(aSQLTable->GetVariable("RED")!=nullptr)
-    {VisRed = aSQLTable->GetVariable("RED")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("BLUE")!=nullptr)
-    {VisBlue = aSQLTable->GetVariable("BLUE")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("GREEN")!=nullptr)
-    {VisGreen = aSQLTable->GetVariable("GREEN")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ALPHA")!=nullptr)
-    {VisAlpha = aSQLTable->GetVariable("ALPHA")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("VISATT")!=nullptr)
-    {VisType = aSQLTable->GetVariable("VISATT")->GetStrValue(k);}
-  if(aSQLTable->GetVariable("MATERIAL")!=nullptr)
-    {Material = aSQLTable->GetVariable("MATERIAL")->GetStrValue(k);}
-  if(aSQLTable->GetVariable("PRECISIONREGION")!=nullptr)
-    PrecisionRegion = aSQLTable->GetVariable("PRECISIONREGION")->GetIntValue(k);
-  if(aSQLTable->GetVariable("APPROXIMATIONREGION")!=nullptr)
-    {ApproximationRegion = aSQLTable->GetVariable("APPROXIMATIONREGION")->GetIntValue(k);}
-  if(aSQLTable->GetVariable("NAME")!=nullptr)
-    {Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);}
+  AssignVariable(aSQLTable,k,"RED"   ,VisRed);
+  AssignVariable(aSQLTable,k,"BLUE"  ,VisBlue);
+  AssignVariable(aSQLTable,k,"GREEN" ,VisGreen);
+  AssignVariable(aSQLTable,k,"ALPHA" ,VisAlpha);
+  AssignVariable(aSQLTable,k,"VISATT",VisType);
+  AssignVariable(aSQLTable,k,"MATERIAL",Material);
+  AssignVariable(aSQLTable,k,"PRECISIONREGION",PrecisionRegion);
+  AssignVariable(aSQLTable,k,"APPROXIMATIONREGION",ApproximationRegion);
+
+  AssignVariable(aSQLTable,k,"NAME",Name);
   if(Name=="_SQL")
     {Name = TableName+std::to_string(k) + "_SQL";}
   if(Name=="")
@@ -276,46 +292,27 @@ void BDSGeometryFactorySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k
   MagType = "";
   FieldX = FieldY = FieldZ = 0.0;
   Name="";
-  if(aSQLTable->GetVariable("PARENTNAME")!=nullptr)
-    {PARENTNAME = aSQLTable->GetVariable("PARENTNAME")->GetStrValue(k);}
-  if(aSQLTable->GetVariable("POSX")!=nullptr)
-    {PosX = aSQLTable->GetVariable("POSX")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("POSY")!=nullptr)
-    {PosY = aSQLTable->GetVariable("POSY")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("POSZ")!=nullptr)
-    {PosZ = aSQLTable->GetVariable("POSZ")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROTPSI")!=nullptr)
-    {RotPsi = aSQLTable->GetVariable("ROTPSI")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROTTHETA")!=nullptr)
-    {RotTheta = aSQLTable->GetVariable("ROTTHETA")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROTPHI")!=nullptr)
-    {RotPhi = aSQLTable->GetVariable("ROTPHI")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("K1")!=nullptr)
-    {K1 = aSQLTable->GetVariable("K1")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("K2")!=nullptr)
-    {K2 = aSQLTable->GetVariable("K2")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("K3")!=nullptr)
-    {K3 = aSQLTable->GetVariable("K3")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("K4")!=nullptr)
-    {K4 = aSQLTable->GetVariable("K4")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("MAGTYPE")!=nullptr)
-    {MagType = aSQLTable->GetVariable("MAGTYPE")->GetStrValue(k);}
-  if(aSQLTable->GetVariable("FIELDX")!=nullptr)
-    {FieldX = aSQLTable->GetVariable("FIELDX")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("FIELDY")!=nullptr)
-    {FieldY = aSQLTable->GetVariable("FIELDY")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("FIELDZ")!=nullptr)
-    {FieldZ = aSQLTable->GetVariable("FIELDZ")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ALIGNIN")!=nullptr)
-    {align_in = aSQLTable->GetVariable("ALIGNIN")->GetIntValue(k);}
-  if(aSQLTable->GetVariable("ALIGNOUT")!=nullptr)
-    {align_out = aSQLTable->GetVariable("ALIGNOUT")->GetIntValue(k);}
-  if(aSQLTable->GetVariable("SETSENSITIVE")!=nullptr)
-    {SetSensitive = aSQLTable->GetVariable("SETSENSITIVE")->GetIntValue(k);}
-  if(aSQLTable->GetVariable("INHERITSTYLE")!=nullptr)
-    {InheritStyle = aSQLTable->GetVariable("INHERITSTYLE")->GetStrValue(k);}
-  if(aSQLTable->GetVariable("PARAMETERISATION")!=nullptr)
-    {Parameterisation = aSQLTable->GetVariable("PARAMETERISATION")->GetStrValue(k);}
+
+  AssignVariable(aSQLTable,k,"PARENTNAME",PARENTNAME);
+  AssignVariable(aSQLTable,k,"POSX",PosX);
+  AssignVariable(aSQLTable,k,"POSY",PosY);
+  AssignVariable(aSQLTable,k,"POSZ",PosZ);
+  AssignVariable(aSQLTable,k,"ROTPSI",RotPsi);
+  AssignVariable(aSQLTable,k,"ROTTHETA",RotTheta);
+  AssignVariable(aSQLTable,k,"ROTPHI",RotPhi);
+  AssignVariable(aSQLTable,k,"K1",K1);
+  AssignVariable(aSQLTable,k,"K2",K2);
+  AssignVariable(aSQLTable,k,"K3",K3);
+  AssignVariable(aSQLTable,k,"K4",K4);
+  AssignVariable(aSQLTable,k,"MAGTYPE",MagType);
+  AssignVariable(aSQLTable,k,"FIELDX",FieldX);
+  AssignVariable(aSQLTable,k,"FIELDY",FieldY);
+  AssignVariable(aSQLTable,k,"FIELDZ",FieldZ);
+  AssignVariable(aSQLTable,k,"ALIGNIN",align_in);
+  AssignVariable(aSQLTable,k,"ALIGNOUT",align_out);
+  AssignVariable(aSQLTable,k,"SETSENSITIVE",SetSensitive);
+  AssignVariable(aSQLTable,k,"INHERITSTYLE",InheritStyle);
+  AssignVariable(aSQLTable,k,"PARAMETERISATION",Parameterisation);
 
   // TBC
   //if(PARENTNAME=="")
@@ -323,8 +320,7 @@ void BDSGeometryFactorySQL::SetPlacementParams(BDSMySQLTable* aSQLTable, G4int k
 
   PARENTNAME= itsMarkerVol->GetName() + "_" + PARENTNAME;
 
-  if(aSQLTable->GetVariable("NAME")!=nullptr)
-    {Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);}
+  AssignVariable(aSQLTable,k,"NAME",Name);
   if(Name=="_SQL")
     {Name = TableName+std::to_string(k) + "_SQL";}
   if(Name=="")
@@ -357,6 +353,7 @@ G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double var)
   G4UserLimits* UserLimits = new G4UserLimits();
   UserLimits->SetMaxAllowedStep(var*0.5);
   UserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+  // note, this is different from all other geometry - TBC
   if(BDSGlobalConstants::Instance()->ThresholdCutCharged()>0)
     {UserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());}
   return UserLimits;
@@ -366,9 +363,7 @@ G4UserLimits* BDSGeometryFactorySQL::UserLimits(G4double var)
 void BDSGeometryFactorySQL::SetLogVolAtt(G4LogicalVolume* logVol, G4double k)
 {
   logVol->SetVisAttributes(VisAtt());
-#ifndef NOUSERLIMITS
   logVol->SetUserLimits(UserLimits(k));
-#endif
   SetLogVolRegion(logVol);
 }
 
@@ -408,21 +403,14 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildCone(BDSMySQLTable* aSQLTable, G4in
   length = rOuterStart = rOuterEnd = 10.*CLHEP::mm;
   rInnerStart = rInnerEnd = 0.0;
   
-  if(aSQLTable->GetVariable("LENGTH")!=nullptr)
-    {length = aSQLTable->GetVariable("LENGTH")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("RINNERSTART")!=nullptr)
-    {rInnerStart = aSQLTable->GetVariable("RINNERSTART")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("RINNEREND")!=nullptr)
-    {rInnerEnd = aSQLTable->GetVariable("RINNEREND")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROUTERSTART")!=nullptr)
-    {rOuterStart = aSQLTable->GetVariable("ROUTERSTART")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROUTEREND")!=nullptr)
-    {rOuterEnd = aSQLTable->GetVariable("ROUTEREND")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("STARTPHI")!=nullptr)
-    {sphi = aSQLTable->GetVariable("STARTPHI")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("DELTAPHI")!=nullptr)
-    {dphi = aSQLTable->GetVariable("DELTAPHI")->GetDblValue(k);}
-  
+  AssignVariable(aSQLTable,k,"LENGTH",length);
+  AssignVariable(aSQLTable,k,"RINNERSTART",rInnerStart);
+  AssignVariable(aSQLTable,k,"RINNEREND"  ,rInnerEnd);
+  AssignVariable(aSQLTable,k,"ROUTERSTART",rOuterStart);
+  AssignVariable(aSQLTable,k,"ROUTEREND"  ,rOuterEnd);
+  AssignVariable(aSQLTable,k,"STARTPHI",sphi);
+  AssignVariable(aSQLTable,k,"DELTAPHI",dphi);
+
   G4Cons* aCone = new G4Cons(Name+"_Cone",
 			     rInnerStart,
 			     rOuterStart,
@@ -454,14 +442,10 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildEllipticalCone(BDSMySQLTable* aSQLT
   //Defaults
   lengthZ = 10.*CLHEP::mm;
   
-  if(aSQLTable->GetVariable("LENGTHZ")!=nullptr)
-    {lengthZ = aSQLTable->GetVariable("LENGTHZ")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("XSEMIAXIS")!=nullptr)
-    {pxSemiAxis = aSQLTable->GetVariable("XSEMIAXIS")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("YSEMIAXIS")!=nullptr)
-    {pySemiAxis = aSQLTable->GetVariable("YSEMIAXIS")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ZCUT")!=nullptr)
-    {pzTopCut = aSQLTable->GetVariable("ZCUT")->GetDblValue(k);}
+  AssignVariable(aSQLTable,k,"LENGTHZ",lengthZ);
+  AssignVariable(aSQLTable,k,"XSEMIAXIS",pxSemiAxis);
+  AssignVariable(aSQLTable,k,"YSEMIAXIS",pySemiAxis);
+  AssignVariable(aSQLTable,k,"ZCUT",pzTopCut);
   
   G4EllipticalCone* aEllipticalCone = new G4EllipticalCone(Name+"_EllipticalCone",
 							   pxSemiAxis,
@@ -493,9 +477,8 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, 
   sphi = 0.0;
   dphi = CLHEP::twopi*CLHEP::radian;
   numZplanes = 0;
-  
-  if(aSQLTable->GetVariable("NZPLANES")!=nullptr)
-    {numZplanes = aSQLTable->GetVariable("NZPLANES")->GetIntValue(k);}
+
+  AssignVariable(aSQLTable,k,"NZPLANES",numZplanes);
 
   std::vector<G4double> rInner = std::vector<G4double>(numZplanes+1);
   std::vector<G4double> rOuter = std::vector<G4double>(numZplanes+1);
@@ -507,18 +490,13 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildPolyCone(BDSMySQLTable* aSQLTable, 
       G4String rOuter_ID = "ROUTER" + std::to_string(planenum+1);
       G4String zPos_ID = "PLANEPOS" + std::to_string(planenum+1);
       
-      if(aSQLTable->GetVariable(rInner_ID)!=nullptr)
-	{rInner[planenum] = aSQLTable->GetVariable(rInner_ID)->GetDblValue(k);}
-      if(aSQLTable->GetVariable(rOuter_ID)!=nullptr)
-	{rOuter[planenum] = aSQLTable->GetVariable(rOuter_ID)->GetDblValue(k);}
-      if(aSQLTable->GetVariable(zPos_ID)!=nullptr)
-	{zPos[planenum] = aSQLTable->GetVariable(zPos_ID)->GetDblValue(k);}
+      AssignVariable(aSQLTable,k,rInner_ID,rInner[planenum]);
+      AssignVariable(aSQLTable,k,rOuter_ID,rOuter[planenum]);
+      AssignVariable(aSQLTable,k,zPos_ID  ,zPos[planenum]);
     }
   
-  if(aSQLTable->GetVariable("STARTPHI")!=nullptr)
-    {sphi = aSQLTable->GetVariable("STARTPHI")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("DELTAPHI")!=nullptr)
-    {dphi = aSQLTable->GetVariable("DELTAPHI")->GetDblValue(k);}
+  AssignVariable(aSQLTable,k,"STARTPHI",sphi);
+  AssignVariable(aSQLTable,k,"DELTAPHI",dphi);
   
   G4Polycone* aPolyCone = new G4Polycone(Name+"_PolyCone",
 					 sphi,
@@ -555,13 +533,10 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildBox(BDSMySQLTable* aSQLTable, G4int
 
   lengthX = lengthY = lengthZ = 1.*CLHEP::mm;
   
-  if(aSQLTable->GetVariable("LENGTHX")!=nullptr)
-    {lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHY")!=nullptr)
-    {lengthY = aSQLTable->GetVariable("LENGTHY")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHZ")!=nullptr)
-    {lengthZ = aSQLTable->GetVariable("LENGTHZ")->GetDblValue(k);}
-  
+  AssignVariable(aSQLTable,k,"LENGTHX",lengthX);
+  AssignVariable(aSQLTable,k,"LENGTHY",lengthY);
+  AssignVariable(aSQLTable,k,"LENGTHZ",lengthZ);
+
   G4Box* aBox = new G4Box(Name+"_Box",
 			  lengthX/2,
 			  lengthY/2,
@@ -589,18 +564,12 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildTrap(BDSMySQLTable* aSQLTable, G4in
   G4double lengthYMinus = 0;
   G4double lengthZ = 0;
   
-  if(aSQLTable->GetVariable("TRAPTHETA")!=nullptr)
-    {trapTheta = aSQLTable->GetVariable("TRAPTHETA")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHXPLUS")!=nullptr)
-    {lengthXPlus = aSQLTable->GetVariable("LENGTHXPLUS")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHXMINUS")!=nullptr)
-    {lengthXMinus = aSQLTable->GetVariable("LENGTHXMINUS")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHYPLUS")!=nullptr)
-    {lengthYPlus = aSQLTable->GetVariable("LENGTHYPLUS")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHYMINUS")!=nullptr)
-    {lengthYMinus = aSQLTable->GetVariable("LENGTHYMINUS")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHZ")!=nullptr)
-    {lengthZ = aSQLTable->GetVariable("LENGTHZ")->GetDblValue(k);}
+  AssignVariable(aSQLTable,k,"TRAPTHETA",trapTheta);
+  AssignVariable(aSQLTable,k,"LENGTHXPLUS" ,lengthXPlus);
+  AssignVariable(aSQLTable,k,"LENGTHXMINUS",lengthXMinus);
+  AssignVariable(aSQLTable,k,"LENGTHYPLUS" ,lengthYPlus);
+  AssignVariable(aSQLTable,k,"LENGTHYMINUS",lengthYMinus);
+  AssignVariable(aSQLTable,k,"LENGTHZ",lengthZ);
   
   G4Trap* aTrap = new G4Trap(Name+"_Trd",
 			     lengthZ/2,
@@ -640,16 +609,12 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildTorus(BDSMySQLTable* aSQLTable, G4i
   sphi = 0.0;
   dphi=2*CLHEP::pi*CLHEP::radian;
   
-  if(aSQLTable->GetVariable("RINNER")!=nullptr)
-    {rInner = aSQLTable->GetVariable("RINNER")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROUTER")!=nullptr)
-    {rOuter = aSQLTable->GetVariable("ROUTER")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("RSWEPT")!=nullptr)
-    {rSwept = aSQLTable->GetVariable("RSWEPT")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("STARTPHI")!=nullptr)
-    {sphi = aSQLTable->GetVariable("STARTPHI")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("DELTAPHI")!=nullptr)
-    {dphi = aSQLTable->GetVariable("DELTAPHI")->GetDblValue(k);}
+  AssignVariable(aSQLTable,k,"RINNER",rInner);
+  AssignVariable(aSQLTable,k,"ROUTER",rOuter);
+  AssignVariable(aSQLTable,k,"RSWEPT",rSwept);
+  AssignVariable(aSQLTable,k,"ROUTER",rOuter);
+  AssignVariable(aSQLTable,k,"STARTPHI",sphi);
+  AssignVariable(aSQLTable,k,"DELTAPHI",dphi);
   
   G4Torus* aTorus = new G4Torus(Name+"_Torus",
 				rInner,
@@ -680,21 +645,18 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildSampler(BDSMySQLTable* aSQLTable, G
   length = rOuterStart = rOuterEnd = 10.*CLHEP::mm;
   rInnerStart = rInnerEnd = 0.0;
   
-  if(aSQLTable->GetVariable("LENGTH")!=nullptr)
-    {length = aSQLTable->GetVariable("LENGTH")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("RINNERSTART")!=nullptr)
-    {rInnerStart = aSQLTable->GetVariable("RINNERSTART")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("RINNEREND")!=nullptr)
-    {rInnerEnd = aSQLTable->GetVariable("RINNEREND")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROUTERSTART")!=nullptr)
-    {rOuterStart = aSQLTable->GetVariable("ROUTERSTART")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROUTEREND")!=nullptr)
-    {rOuterEnd = aSQLTable->GetVariable("ROUTEREND")->GetDblValue(k);}
+  AssignVariable(aSQLTable,k,"LENGTH",length);
+  AssignVariable(aSQLTable,k,"RINNERSTART",rInnerStart);
+  AssignVariable(aSQLTable,k,"RINNEREND"  ,rInnerEnd);
+  AssignVariable(aSQLTable,k,"ROUTERSTART",rOuterStart);
+  AssignVariable(aSQLTable,k,"ROUTEREND"  ,rOuterEnd);
+
   if(aSQLTable->GetVariable("NAME")!=nullptr)
     {
-      Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
-      aSQLTable->GetVariable("NAME")->SetStrValue(k,Name+"_SQL");
-      Name = aSQLTable->GetVariable("NAME")->GetStrValue(k);
+      BDSMySQLVariable* sqlName = aSQLTable->GetVariable("NAME");
+      Name = sqlName->GetStrValue(k);
+      sqlName->SetStrValue(k,Name+"_SQL");
+      Name = sqlName->GetStrValue(k);
     }
   if(Name=="_SQL")
     {Name = TableName+std::to_string(k)+"_SQL";}
@@ -740,18 +702,13 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildTube(BDSMySQLTable* aSQLTable, G4in
   rInner = 0.0;
   sphi = 0.0;
   dphi=2*CLHEP::pi*CLHEP::radian;
-  
-  if(aSQLTable->GetVariable("RINNER")!=nullptr)
-    {rInner = aSQLTable->GetVariable("RINNER")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("ROUTER")!=nullptr)
-    {rOuter = aSQLTable->GetVariable("ROUTER")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTH")!=nullptr)
-    {length = aSQLTable->GetVariable("LENGTH")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("STARTPHI")!=nullptr)
-    {sphi = aSQLTable->GetVariable("STARTPHI")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("DELTAPHI")!=nullptr)
-    {dphi = aSQLTable->GetVariable("DELTAPHI")->GetDblValue(k);}
-  
+
+  AssignVariable(aSQLTable,k,"RINNER",rInner);
+  AssignVariable(aSQLTable,k,"ROUTER",rOuter);
+  AssignVariable(aSQLTable,k,"LENGTH",length);
+  AssignVariable(aSQLTable,k,"STARTPHI",sphi);
+  AssignVariable(aSQLTable,k,"DELTAPHI",dphi);
+
   G4Tubs* aTubs = new G4Tubs(Name+"_Tubs",
 			     rInner,
 			     rOuter,
@@ -779,12 +736,9 @@ G4LogicalVolume* BDSGeometryFactorySQL::BuildEllipticalTube(BDSMySQLTable* aSQLT
   lengthY = 50.*CLHEP::mm;
   lengthZ = 200.*CLHEP::mm;
 
-  if(aSQLTable->GetVariable("LENGTHX")!=nullptr)
-    {lengthX = aSQLTable->GetVariable("LENGTHX")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHY")!=nullptr)
-    {lengthY = aSQLTable->GetVariable("LENGTHY")->GetDblValue(k);}
-  if(aSQLTable->GetVariable("LENGTHZ")!=nullptr)
-    {lengthZ = aSQLTable->GetVariable("LENGTHZ")->GetDblValue(k);}
+  AssignVariable(aSQLTable,k,"LENGTHX",lengthX);
+  AssignVariable(aSQLTable,k,"LENGTHY",lengthY);
+  AssignVariable(aSQLTable,k,"LENGTHZ",lengthZ);
   
   G4EllipticalTube* aEllipticalTube = new G4EllipticalTube(Name+"_EllipticalTube",
 							   lengthX/2,

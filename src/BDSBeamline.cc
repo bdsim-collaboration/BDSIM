@@ -219,7 +219,7 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
 	  G4bool willIntersect = BDS::WillIntersect(iFNormal, oFNormal, zSeparation, extIF, extOF);
 	  if (willIntersect)
 	    {
-	      G4cout << "Error - pole face rotations will cause overlap in beam line geometry" << G4endl;
+	      G4cout << "Error - angled faces of objects will cause overlap in beam line geometry" << G4endl;
 	      G4cout << "\"" << component->GetName() << "\" will overlap with \""
 		     << clasherName << "\"" << G4endl;
 	      exit(1);

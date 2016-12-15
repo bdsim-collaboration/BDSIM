@@ -10,7 +10,7 @@
  * @brief Interface for static magnetic fields that may or may not be local.
  * 
  * Defines abstract interface for all derived magnetic fields. More common
- * to use G4ThreeVectors than arrays so provides common functionality
+ * to use G4ThreeVectors than arrays so provides common functionality.
  * 
  * @author Laurie Nevay
  */

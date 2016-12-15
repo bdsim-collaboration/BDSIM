@@ -1,7 +1,6 @@
 #ifndef BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 #define BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 
-#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuterFactoryPolesBase.hh"
 #include "BDSBeamPipe.hh"
 
@@ -10,6 +9,7 @@
 #include <vector>
 
 class G4Colour;
+class G4LogicalVolume;
 class G4Material;
 
 /**
@@ -54,7 +54,6 @@ private:
   /// vector of unique poles that must all be built individually into logical volumes.
   /// It does however make use of BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumesCoil.
   virtual void CreateLogicalVolumes(G4String    name,
-				    G4double    length,
 				    G4Colour*   colour,
 				    G4Material* outerMaterial);
 
@@ -83,7 +82,6 @@ private:
   /// Need to pass order to CreateLogicalVolumes but should override for neatness and
   /// therefore can't change the signature of the function, so pass by internal variable.
   G4int order;
-  
 };
 
 #endif

@@ -15,6 +15,9 @@ endif()
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 #message(STATUS "ROOT DICTS : ${rebdsimLibLinkDefs}")
 
+# Add BDSIM label to original files
+set_source_files_properties(${rebdsimLibSources} ${rebdsimLibLinkDefs} PROPERTIES LABELS "BDSIM")
+
 foreach(header ${rebdsimLibLinkDefs})
     # remove LinkDef.hh
     string(FIND ${header} "LinkDef.h" pos REVERSE)
@@ -94,7 +97,7 @@ if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	# Installation
 	bdsim_install_targets(rebdsim edbdsim rebdsimLib)
 else()
-	# ROOT 5 - EVE parts are compatible with ROOT5 - turn off.
+	# ROOT 5 - EVE parts are not compatible with ROOT5 - turn off.
 	message(STATUS "ebdsim is not compatible with ROOT V5 - not compiling")
 	
 	# Installation

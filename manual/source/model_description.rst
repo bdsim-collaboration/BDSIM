@@ -1951,9 +1951,6 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | nperfile                         | number of events to record per output file            |
 +----------------------------------+-------------------------------------------------------+
-| nlinesIgnore                     | number of lines to ignore when reading user bunch     |
-|                                  | input files                                           |
-+----------------------------------+-------------------------------------------------------+
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | nSegmentsPerCircle               | the number of facets per 2 :math:`\pi` in the         |
@@ -2371,6 +2368,9 @@ that are tab-delimited. The column names and the units are specified in an input
 | `distrFile`                      | File path to ASCII data file                          |
 +----------------------------------+-------------------------------------------------------+
 | `distrFileFormat`                | A string that details the column names and units      |
++----------------------------------+-------------------------------------------------------+
+| `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
+|                                  | input files                                           |
 +----------------------------------+-------------------------------------------------------+
 
 Examples::

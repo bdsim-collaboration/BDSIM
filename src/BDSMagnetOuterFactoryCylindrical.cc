@@ -442,7 +442,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  CreateLogicalVolumes(name, length, colour, outerMaterial);
+  CreateLogicalVolumes(name, colour, outerMaterial);
   CreateMagnetContainerComponent();
 
   // PLACEMENT
@@ -476,9 +476,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryCylindrical::CommonFinalConstructor(G4Strin
   outer->RegisterPhysicalVolume(yokePV);
   outer->RegisterVisAttributes(outerVisAttributes);
   // no rotation matrices used in this factory
-#ifdef NOUSERLIMITS
-  RegisterUserLimit(outerUserLimits);
-#endif
   return outer;
 }
 
