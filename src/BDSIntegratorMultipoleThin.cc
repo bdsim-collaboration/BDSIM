@@ -42,31 +42,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag    = GlobalP.mag();
   G4ThreeVector InitMomDir = GlobalP.unit();
-
-<<<<<<< HEAD
-  /*
-  // this is excessive for debug - only uncomment if debugging this tracking code
-#ifdef BDSDEBUG
-  G4double charge = (eqOfM->FCof())/CLHEP::c_light;
-  G4cout << "BDSIntegratorQuadrupole: step = " << h/CLHEP::m << " m" << G4endl
-         << " x  = " << yIn[0]/CLHEP::m     << " m"     << G4endl
-         << " y  = " << yIn[1]/CLHEP::m     << " m"     << G4endl
-         << " z  = " << yIn[2]/CLHEP::m     << " m"     << G4endl
-         << " px = " << yIn[3]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " py = " << yIn[4]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " pz = " << yIn[5]/CLHEP::GeV   << " GeV/c" << G4endl
-         << " q  = " << charge/CLHEP::eplus << " e"     << G4endl
-         << " dBy/dx = " << bPrime/(CLHEP::tesla/CLHEP::m) << " T/m" << G4endl
-         << " k = " << k/(1./CLHEP::m2) << " m^-2" << G4endl
-         << G4endl;
-         #endif
-  */
-=======
-  //Factor for normalising to particle momentum
-  G4double normFactor = eqOfM->FCof()/InitMag;
-  // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
->>>>>>> 7c6b5d2751316ce1920f170ad89c14912cacbb2f
-
+  
   // global to local
   BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();
