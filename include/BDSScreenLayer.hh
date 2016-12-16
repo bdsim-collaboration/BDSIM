@@ -93,7 +93,7 @@ private:
   G4int nGrooves = 0;
   G4Colour colour;
 
-  G4int samplerID;
+  G4int samplerID = 0;
 
 };
 

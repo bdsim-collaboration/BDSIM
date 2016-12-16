@@ -10,7 +10,6 @@
 #include "BDSUtilities.hh"            // for calculateorientation
 
 #include "globals.hh"                 // geant4 globals / types
-#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"

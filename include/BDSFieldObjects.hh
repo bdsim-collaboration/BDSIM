@@ -5,18 +5,17 @@
 
 #include <vector>
 
-class BDSFieldEM;
 class BDSFieldInfo;
 
 class G4ChordFinder;
 class G4ElectroMagneticField;
 class G4EquationOfMotion;
+class G4Field;
 class G4FieldManager;
 class G4LogicalVolume;
 class G4MagInt_Driver;
 class G4MagIntegratorStepper;
 class G4MagneticField;
-class G4Field;
 
 /**
  * @brief A holder for all the Geant4 field related objects.

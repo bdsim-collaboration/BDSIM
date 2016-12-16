@@ -2,17 +2,15 @@
 #include "BDSFieldObjects.hh"
 
 #include "G4ChordFinder.hh"
+#include "G4ElectroMagneticField.hh"
+#include "G4Field.hh"
 #include "G4FieldManager.hh"
 #include "G4LogicalVolume.hh"
-#include "G4MagneticField.hh"
 #include "G4MagIntegratorDriver.hh" // for G4MagInt_Driver
+#include "G4MagIntegratorStepper.hh"
+#include "G4MagneticField.hh"
 
 #include <vector>
-
-class BDSFieldInfo;
-
-class G4EquationOfMotion;
-class G4MagIntegratorStepper;
 
 BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
 				 G4Field*                fieldIn,
