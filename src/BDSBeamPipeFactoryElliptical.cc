@@ -133,8 +133,7 @@ BDSBeamPipe* BDSBeamPipeFactoryElliptical::CommonFinalConstruction(G4String    n
 
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
 
   // record extents
   BDSExtent ext = BDSExtent(containerXHalfWidth, containerYHalfWidth, lengthIn*0.5);

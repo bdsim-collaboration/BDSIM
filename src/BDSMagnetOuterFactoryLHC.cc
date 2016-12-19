@@ -25,7 +25,6 @@
 #include "G4SubtractionSolid.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 #include <cmath>
@@ -875,17 +874,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
 
-  // USER LIMITS for all components
-#ifndef NOUSERLIMITS
-  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-  userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  allUserLimits.push_back(userLimits);
-  for (auto i : allLogicalVolumes)
-    {i->SetUserLimits(userLimits);} // apply to general vector of logical volumes
+  // user limits
+  auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  for (auto lv : allLogicalVolumes)
+    {lv->SetUserLimits(userLimits);}
   containerLV->SetUserLimits(userLimits);
   magnetContainerLV->SetUserLimits(userLimits);
-#endif
   
   // record extents
   // container radius is the same for all methods as all cylindrical
@@ -913,7 +907,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateSectorBend(G4String      name,
   outer->RegisterSensitiveVolume(allLogicalVolumes);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   // no rotation matrices used in this one
   // allLogicalVolumes is a local variable and goes out of scope so doesn't
   // need to be emptied or reset here
@@ -1494,17 +1487,12 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   magnetContainerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   
-  // USER LIMITS and SENSITIVITY for all components
-#ifndef NOUSERLIMITS
-  G4UserLimits* userLimits = new G4UserLimits("outer_cuts");
-  userLimits->SetMaxAllowedStep( length * maxStepFactor );
-  userLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  allUserLimits.push_back(userLimits);    
-  for (auto i : allLogicalVolumes)
-    {i->SetUserLimits(userLimits);}
+  // user limits
+  auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+  for (auto lv : allLogicalVolumes)
+    {lv->SetUserLimits(userLimits);}
   containerLV->SetUserLimits(userLimits);
   magnetContainerLV->SetUserLimits(userLimits);
-#endif
     
   // record extents
   // container radius is the same for all methods as all cylindrical
@@ -1532,7 +1520,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryLHC::CreateQuadrupole(G4String      name,
   outer->RegisterLogicalVolume(allLogicalVolumes);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   outer->RegisterRotationMatrix(allRotationMatrices);
   
   return outer;

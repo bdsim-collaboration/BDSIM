@@ -10,7 +10,6 @@
 #include "BDSUtilities.hh"            // for calculateorientation
 
 #include "globals.hh"                 // geant4 globals / types
-#include "G4CutTubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4PVPlacement.hh"
@@ -129,7 +128,7 @@ void BDSTunnelFactoryBase::CommonConstruction(G4String    name,
 {
   BuildLogicalVolumes(name, tunnelMaterial, tunnelSoilMaterial);
   SetVisAttributes(visible);
-  SetUserLimits(length);
+  SetUserLimits();
   PlaceComponents(name);
   PrepareGeometryComponent(containerXRadius, containerYRadius, 0.5*length);
   SetSensitiveVolumes();
@@ -215,7 +214,6 @@ void BDSTunnelFactoryBase::PrepareGeometryComponent(G4double containerXRadius,
   // register objects
   tunnelComponent->RegisterSolid(solidsToBeRegistered);
   tunnelComponent->RegisterVisAttributes(visAttributesToBeRegistered);
-  tunnelComponent->RegisterUserLimits(userLimitsToBeRegistered);
 
   // record extents
   // use the read out geometry for the limits as it's the maximum of x and y
@@ -250,14 +248,9 @@ void BDSTunnelFactoryBase::SetSensitiveVolumes()
     {tunnelComponent->RegisterSensitiveVolume(floorLV);}
 }
 
-void BDSTunnelFactoryBase::SetUserLimits(G4double length)
+void BDSTunnelFactoryBase::SetUserLimits()
 {
-  // USER LIMITS
-  // set user limits based on bdsim user specified parameters
-  G4UserLimits* tunnelUserLimits = new G4UserLimits("tunnel_cuts");
-  G4double maxStepFactor = 0.5; // fraction of length for maximum step size
-  tunnelUserLimits->SetMaxAllowedStep(length * maxStepFactor);
-  tunnelUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+  auto tunnelUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   //attach cuts to volumes
   tunnelLV->SetUserLimits(tunnelUserLimits);
   if (soilLV)
@@ -265,9 +258,6 @@ void BDSTunnelFactoryBase::SetUserLimits(G4double length)
   if (floorLV)
     {floorLV->SetUserLimits(tunnelUserLimits);}
   containerLV->SetUserLimits(tunnelUserLimits);
-
-  // store for registration in finished component
-  userLimitsToBeRegistered.push_back(tunnelUserLimits);
 }
 
 void BDSTunnelFactoryBase::PlaceComponents(G4String name)
@@ -323,5 +313,4 @@ void BDSTunnelFactoryBase::TidyUp()
   cumulativeAngle   = 0;
   solidsToBeRegistered.clear();
   visAttributesToBeRegistered.clear();
-  userLimitsToBeRegistered.clear();
 }

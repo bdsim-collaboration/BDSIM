@@ -8,7 +8,6 @@
 #include "G4LogicalVolume.hh"
 #include "G4ThreeVector.hh"
 #include "G4Tubs.hh"
-#include "G4UserLimits.hh"
 #include "G4VSolid.hh"
 
 #include <cmath>
@@ -115,11 +114,8 @@ BDSBeamPipe* BDSBeamPipeFactoryCircularVacuum::CommonFinalConstruction(G4String 
   containerLV->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
   vacuumLV = containerLV; // copy pointer for referencing in BuildBeamPipeAndRegisterVolumes.
 
-  // Don't force half step! Likely this will be used for thin volumes where one and only one
-  // step is required.
-  G4UserLimits* beamPipeUserLimits = new G4UserLimits("beampipe_cuts");
-  beamPipeUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
-  allUserLimits.push_back(beamPipeUserLimits);
+  // user limits
+  containerLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // record extents
   BDSExtent ext = BDSExtent(containerRadiusIn, containerRadiusIn, lengthIn*0.5);

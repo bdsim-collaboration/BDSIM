@@ -123,6 +123,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(src-external)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/src-external)
 
+# add label to original BDSIM files
+set_source_files_properties(${bdsim_sources} ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hh PROPERTIES LABELS "BDSIM")
+
 # BDSIM library and binaries
 add_library(bdsim ${root_dicts} ${bdsim_sources} )
 

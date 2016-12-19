@@ -6,23 +6,14 @@
 #define BDSSpectrVacChamb_h 
 
 #include "globals.hh"
-#include "G4LogicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
-#include "G4ThreeVector.hh"
-#include <vector>
-#include "globals.hh"
-#include "G4LogicalVolume.hh"
-#include "G4UserLimits.hh"
-#include "G4VisAttributes.hh"
-#include "G4VSolid.hh"
-#include <vector>
 #include "G4Box.hh"
 #include "G4GenericTrap.hh"
+#include "G4LogicalVolume.hh"
 #include "G4TwoVector.hh"
 #include "G4ThreeVector.hh"
-
+#include "G4VisAttributes.hh"
+#include "G4VSolid.hh"
+#include <vector>
 
 class BDSSpectrVacChamb 
 {
