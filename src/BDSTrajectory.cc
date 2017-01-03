@@ -75,12 +75,12 @@ void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
   G4Trajectory::MergeTrajectory(secondTrajectory);
 }
 
-BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(BDSTrajectory* trajectory)
+BDSTrajectoryPoint* BDSTrajectory::FirstInteraction()const
 {
   // loop over trajectory to find non transportation step
-  for (G4int i=0; i < trajectory->GetPointEntries(); ++i)
+  for (G4int i=0; i < GetPointEntries(); ++i)
     {
-      BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+      BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(GetPoint(i));
       auto processType    = point->GetPostProcessType();
       auto processSubType = point->GetPostProcessSubType();
 
@@ -105,15 +105,15 @@ BDSTrajectoryPoint* BDSTrajectory::FirstInteraction(BDSTrajectory* trajectory)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
 #endif
-  return static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(0));
+  return static_cast<BDSTrajectoryPoint*>(GetPoint(0));
 }
 
-BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
+BDSTrajectoryPoint* BDSTrajectory::LastInteraction()const
 {
   // loop over trajectory backwards to find non transportation step
-  for (G4int i = trajectory->GetPointEntries()-1; i >= 0; --i)
+  for (G4int i = GetPointEntries()-1; i >= 0; --i)
   {
-    BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(i));
+    BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(GetPoint(i));
     auto processType = point->GetPostProcessType();
     auto processSubType = point->GetPostProcessSubType();
 
@@ -138,7 +138,7 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction(BDSTrajectory* trajectory)
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
 #endif
-  return static_cast<BDSTrajectoryPoint*>(trajectory->GetPoint(trajectory->GetPointEntries()-1));
+  return static_cast<BDSTrajectoryPoint*>(GetPoint(GetPointEntries()-1));
 } 
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectory const& t)

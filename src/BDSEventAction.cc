@@ -175,8 +175,8 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
   // primary hits and losses from
   G4TrajectoryContainer* trajCont = evt->GetTrajectoryContainer();
   BDSTrajectory*         primary  = BDS::GetPrimaryTrajectory(trajCont);
-  BDSTrajectoryPoint* primaryFirstInt = BDSTrajectory::FirstInteraction(primary);
-  BDSTrajectoryPoint* primaryLastInt  = BDSTrajectory::LastInteraction(primary);
+  BDSTrajectoryPoint* primaryFirstInt = primary->FirstInteraction();
+  BDSTrajectoryPoint* primaryLastInt  = primary->LastInteraction();
   bdsOutput->WritePrimaryHit(primaryFirstInt);
   bdsOutput->WritePrimaryLoss(primaryLastInt);
 
