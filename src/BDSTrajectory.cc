@@ -1,7 +1,6 @@
 #include "BDSTrajectory.hh"
 
 #include "BDSDebug.hh"
-#include "BDSProcessMap.hh"
 #include "BDSTrajectoryPoint.hh"
 
 #include "globals.hh" // geant4 globals / types
@@ -10,7 +9,6 @@
 #include "G4Track.hh"
 #include "G4VProcess.hh"
 #include "G4TrajectoryContainer.hh"  // also provides TrajectoryVector type(def)
-#include "G4TransportationProcessType.hh"
 
 #include <map>
 #include <ostream>
@@ -81,24 +79,8 @@ BDSTrajectoryPoint* BDSTrajectory::FirstInteraction()const
   for (G4int i=0; i < GetPointEntries(); ++i)
     {
       BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(GetPoint(i));
-      auto processType    = point->GetPostProcessType();
-      auto processSubType = point->GetPostProcessSubType();
-
-      // test against things we want to exclude like tracking - these are not
-      // points of scattering
-      G4bool initialised       = processType != -1;
-      G4bool notTransportation = processType != fTransportation;
-      G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
-      G4bool notParallel       = processType != fParallel;
-
-      if (initialised && notTransportation && notGeneral && notParallel)
+      if (point->IsScatteringPoint())
 	{
-#ifdef BDSDEBUG
-	  G4cout << "First primary interaction point found at "
-		 << point->GetPreS()/CLHEP::m
-		 << " m - "
-		 << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
-#endif
 	  return point;
 	}
     }
@@ -114,26 +96,10 @@ BDSTrajectoryPoint* BDSTrajectory::LastInteraction()const
   for (G4int i = GetPointEntries()-1; i >= 0; --i)
   {
     BDSTrajectoryPoint* point = static_cast<BDSTrajectoryPoint*>(GetPoint(i));
-    auto processType = point->GetPostProcessType();
-    auto processSubType = point->GetPostProcessSubType();
-
-    // test against things we want to exclude like tracking - these are not
-    // points of scattering
-    G4bool initialised       = processType != -1;
-    G4bool notTransportation = processType != fTransportation;
-    G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
-    G4bool notParallel       = processType != fParallel;
-
-    if (initialised && notTransportation && notGeneral && notParallel)
-    {
-#ifdef BDSDEBUG
-      G4cout << "First primary interaction point found at "
-		 << point->GetPreS()/CLHEP::m
-		 << " m - "
-		 << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
-#endif
-      return point;
-    }
+    if (point->IsScatteringPoint())
+      {
+	return point;
+      }
   }
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "no interaction" << G4endl;
