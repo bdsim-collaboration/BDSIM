@@ -335,7 +335,8 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   // check parameters are valid
   if (outerDiameter*0.5 < bpRadius)
     {
-      G4cerr << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
+      G4cerr << __METHOD_NAME__
+	     << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
 	     << 2*bpRadius << ")" << G4endl;
       exit(1);
     }
