@@ -18,12 +18,15 @@ Array::Array(Symtab* array)
     }
 }
 
+Array::Array(unsigned int n)
+{
+  data.resize(n);
+}
+
 Array* Array::Add(Array* a1, Array* a2)
 {
-  Array* a = new Array();
-  unsigned int size = (a1->data.size() < a2->data.size() )? a1->data.size() : a2->data.size();
-
-  a->data.resize(size);
+  unsigned int size = std::min(a1->data.size(),a2->data.size());
+  Array* a = new Array(size);
   for(unsigned int i=0;i<size;i++)
     {
       a->data[i] = a1->data[i] + a2->data[i];
@@ -33,9 +36,8 @@ Array* Array::Add(Array* a1, Array* a2)
 
 Array* Array::Subtract(Array* a1, Array* a2)
 {
-  Array* a = new Array();
-  unsigned int size = (a1->data.size() < a2->data.size() )? a1->data.size() : a2->data.size();
-  a->data.resize(size);
+  unsigned int size = std::min(a1->data.size(),a2->data.size());
+  Array* a = new Array(size);
   for(unsigned int i=0;i<size;i++)
     {
       a->data[i] = a1->data[i] - a2->data[i];
@@ -45,9 +47,8 @@ Array* Array::Subtract(Array* a1, Array* a2)
 
 Array* Array::Add(Array* a1, double d2)
 {
-  Array* a = new Array();
   unsigned int size = a1->data.size();
-  a->data.resize(size);
+  Array* a = new Array(size);
   for(unsigned int i=0;i<size;i++)
     {
       a->data[i] = a1->data[i] + d2;
@@ -57,9 +58,8 @@ Array* Array::Add(Array* a1, double d2)
 
 Array* Array::Subtract(Array* a1, double d2)
 {
-  Array* a = new Array();
   unsigned int size = a1->data.size();
-  a->data.resize(size);
+  Array* a = new Array(size);
   for(unsigned int i=0;i<size;i++)
     {
       a->data[i] = a1->data[i] - d2;
@@ -69,9 +69,8 @@ Array* Array::Subtract(Array* a1, double d2)
 
 Array* Array::Multiply(Array* a1, double d2)
 {
-  Array* a = new Array();
   unsigned int size = a1->data.size();
-  a->data.resize(size);
+  Array* a = new Array(size);
   for(unsigned int i=0;i<size;i++)
     {
       a->data[i] = a1->data[i] * d2;
@@ -81,9 +80,8 @@ Array* Array::Multiply(Array* a1, double d2)
 
 Array* Array::Divide(Array* a1, double d2)
 {
-  Array* a = new Array();
   unsigned int size = a1->data.size();
-  a->data.resize(size);
+  Array* a = new Array(size);
   for(unsigned int i=0;i<size;i++)
     {
       a->data[i] = a1->data[i] / d2;
