@@ -283,7 +283,7 @@ void BDSExecOptions::Usage() const
 	<<"--gflashemin=N            : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
 	<<"--help                    : display this message"<<G4endl
 	<<"--materials               : list materials included in bdsim by default"<<G4endl
-	<<"--output=<fmt>            : output format (root|ascii|combined|none), default ascii"<<G4endl
+	<<"--output=<fmt>            : output format (rootevent|ascii|combined|none), default rootevent"<<G4endl
 	<<"--outfile=<file>          : output file name. Will be appended with _N"<<G4endl
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
