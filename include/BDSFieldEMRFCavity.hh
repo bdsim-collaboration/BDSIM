@@ -44,7 +44,7 @@ private:
   G4double phase;
 
   /// X coordinate of first 0 point for bessel J0.
-  static const G4double j0FirstZero;
+  static constexpr G4double j0FirstZero = 2.404825557695772768622;
 
   /// Precalculated normalised calulated radius w.r.t. bessel first 0.
   const G4double normalisedCavityRadius;
