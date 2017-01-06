@@ -46,10 +46,11 @@ The following functions are provided
 * cos
 * sin
 * tan
-* exp, e
+* exp
 * log
 * acos
 * asin
+* atan
 * abs
 
 Examples::
@@ -76,8 +77,8 @@ time                            [s] (seconds)
 angle                           [rad] (radians) 
 quadrupole coefficient          [m :math:`^{-2}` ]
 multipole coefficient 2n poles  [m :math:`^{-n}` ]
-electric voltage                [MV] (Megavolts)
-electric field strength         [MV/m]
+electric voltage                [V] (Volts)
+electric field strength         [V/m]
 particle energy                 [GeV]
 particle mass                   [GeV/c :math:`^2` ]
 particle momentum               [GeV/c :math:`^2` ]
@@ -103,7 +104,9 @@ eV          :math:`10^{-9}`
 keV         :math:`10^{-6}`
 MeV         :math:`10^{-3}`
 TeV         :math:`10^{3}`
-MV          1
+V           1
+kV          :math:`10^{3}`
+MV          :math:`10^{6}`
 Tesla       1
 rad         1
 mrad        :math:`10^{-3}`
@@ -114,6 +117,7 @@ m           1
 cm          :math:`10^{-2}`
 mm          :math:`10^{-3}`
 um          :math:`10^{-6}`
+mum         :math:`10^{-6}`
 nm          :math:`10^{-9}`
 pm          :math:`10^{-12}`
 s           1
@@ -573,7 +577,7 @@ parameter         description                  default     required
 
 Examples::
 
-   RF4f: rf, l=3*m, gradient=10*MV;
+   RF4f: rf, l=3*m, gradient=10*MV/m;
 
 rcol
 ^^^^
