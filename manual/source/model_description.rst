@@ -256,10 +256,10 @@ rbend
 	    :width: 30%
 	    :align: right
 
+.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam energy can be specified or the magnetic field, `B` in Tesla. If both are defined the magnet is under- or overpowered.
 
-`rbend` defines a rectangular bend magnet. Either the total bending angle, `angle`
-for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
-`B` overrides angle. The faces of the magnet are normal to the chord of the
+`rbend` defines a rectangular bend magnet. |angleFieldComment| 
+The faces of the magnet are normal to the chord of the 
 input and output point. Pole face rotations can be applied to both the input
 and output faces of the magnet, based upon the reference system shown in the above image.
 
@@ -318,9 +318,8 @@ sbend
 	    :align: right
 	    
 
-`sbend` defines a sector bend magnet. Either the total bending angle, `angle`
-for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
-`B` overrides angle. The faces of the magnet are normal to the curvilinear coordinate
+`sbend` defines a sector bend magnet. |angleFieldComment| 
+The faces of the magnet are normal to the curvilinear coordinate
 system. `sbend` magnets are made of a series of straight segments. If the specified
 (or calculated from `B` field) bending angle is large, the `sbend` is automatically
 split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
@@ -521,8 +520,8 @@ vkick
 
 .. TODO: add picture
 
-`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. Either angle
-or the field `B` may be specified.  Unlike MADX, this is not a fractional momentum kick, but the angle of
+`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
+Unlike MADX, this is not a fractional momentum kick, but the angle of
 deflection.
 
 .. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
@@ -541,8 +540,8 @@ hkick
 
 .. TODO: add picture
 
-`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. Either angle
-or the field `B` may be specified. Unlike MADX, this is not a fractional momentum kick, but the angle of
+`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
+Unlike MADX, this is not a fractional momentum kick, but the angle of
 deflection.
 
 .. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
