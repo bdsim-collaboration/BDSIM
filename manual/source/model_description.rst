@@ -746,7 +746,7 @@ Examples::
 transform3d
 ^^^^^^^^^^^
 
-`transform3d` defines an arbitrary 3-dimensional transformation of the the curvilinear coordinate
+`transform3d` defines an arbitrary 3-dimensional transformation of the curvilinear coordinate
 system at that point in the beam line sequence.  This is often used to rotate components by a large
 angle.
 
@@ -924,13 +924,13 @@ The magnet geometry is controlled by the following parameters.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
-+-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `cylindrical` | no        |
++=======================+==============================================================+===============+===========+
+| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `polessquare` | no        |
 |                       | | `cylindrical`, `polescircular`, `polessquare`,             |               |           |
 |                       | | `polesfacet`, `polesfacetcrop`, `lhcleft`, `lhcright`,     |               |           |
 |                       | | `none` and `format:path`.                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 1 m           | no        |
+| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 0.6 m         | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
@@ -973,20 +973,16 @@ in only a beam pipe with the correct fields being provided.
 	   :width: 60%
 	   :align: center
 
-Cylindrical (Default) - "`cylindrical`"
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Cylindrical - "`cylindrical`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The beam pipe is surrounded by a cylinder of material (the default is iron) whose outer diameter
 is controlled by the `outerDiameter` parameter. In the case of beam pipes that are not circular
 in cross-section, the cylinder fits directly against the outside of the beam pipe.
 
-This geometry is the default and useful when a specific geometry is not known. The surrounding
+This geometry is useful when a specific geometry is not known. The surrounding
 magnet volume acts to produce secondary radiation as well as act as material for energy deposition,
 therefore this geometry is best suited for the most general studies.
-
-This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
-another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
-can be used to override this on a per element basis.
 
 .. figure:: figures/cylindrical_quadrupole.png
 	    :width: 40%
@@ -1016,15 +1012,15 @@ used to create the circular aperture at the pole tips.
 	    :width: 40%
 
 
-Poles Square - "`polessquare`"
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Poles Square (Default) - "`polessquare`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This magnet geometry has again, individual poles according to the order of the magnet but the
 yoke is an upright square section to which the poles are attached. This geometry behaves in the
 same way as `polescircular` with regard to the beam pipe size.
 
-`outerDiameter` is the full width of the the magnet horizontally as shown in the figure below,
- **not** the diagonal width.
+`outerDiameter` is the full width of the magnet horizontally as shown in the figure below, 
+**not** the diagonal width.
 
 .. figure:: figures/polessquare_quadrupole.png
 	    :width: 40%
