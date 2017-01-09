@@ -13,6 +13,8 @@
 #include "G4Tubs.hh"
 #include "G4VisAttributes.hh"
 
+G4double const BDSMagnetOuterFactoryBase::lengthSafetyLarge = 1*CLHEP::um;
+
 BDSMagnetOuterFactoryBase::BDSMagnetOuterFactoryBase()
 {
   lengthSafety       = BDSGlobalConstants::Instance()->LengthSafety();

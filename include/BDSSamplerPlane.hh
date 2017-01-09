@@ -31,8 +31,7 @@ private:
   BDSSamplerPlane();
 
   /// The chord length for all is fixed and can be static.
-  /// Geometry tolerance is 1e-12 and dz of the box must be greater than this
-  static constexpr G4double chordLength = 0.01*CLHEP::nm;
+  static const G4double chordLength;
 };
 
 inline G4double BDSSamplerPlane::ChordLength()

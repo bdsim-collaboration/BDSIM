@@ -7,6 +7,9 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 
+// geometry tolerance is 1e-12 and dz of the box must be greater than this
+const G4double BDSSamplerPlane::chordLength = 0.01*CLHEP::nm;
+
 BDSSamplerPlane::BDSSamplerPlane(G4String name,
 				 G4double boxHalfWidth):
   BDSSampler(name)
