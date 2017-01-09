@@ -257,7 +257,9 @@ rbend
 	    :width: 30%
 	    :align: right
 
-.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam energy can be specified or the magnetic field, `B` in Tesla. If both are defined the magnet is under- or overpowered.
+.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam
+				 energy can be specified or the magnetic field, `B` in Tesla.
+				 If both are defined the magnet is under or over-powered.
 
 `rbend` defines a rectangular bend magnet. |angleFieldComment| 
 The faces of the magnet are normal to the chord of the 
@@ -525,7 +527,7 @@ vkicker
 Unlike MADX, this is not a fractional momentum kick, but the angle of deflection.
 
 .. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
-	  coordinate system, this corresponds to a deflection in positive x, which is the opposite
+	  coordinate system, this corresponds to a deflection in positive x, which is the **opposite**
 	  convention to that of an sector bend.
 
 * The `aperture parameters`_ may also be specified.
@@ -544,7 +546,7 @@ hkicker
 Unlike MADX, this is not a fractional momentum kick, but the angle of deflection.
 
 .. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
-	  coordinate system, this corresponds to a deflection in positive y, which is the opposite
+	  coordinate system, this corresponds to a deflection in positive y, which is the **opposite**
 	  convention to that of an sector bend that has been rotated.
 
 * The `aperture parameters`_ may also be specified.
