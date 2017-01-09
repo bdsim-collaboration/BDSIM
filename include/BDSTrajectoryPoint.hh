@@ -39,6 +39,9 @@ public:
   inline int operator==(const BDSTrajectoryPoint& right) const
   {return (this==&right);};
 
+  /// Check to see if point is a scattering point (from physics point of view)
+  G4bool IsScatteringPoint() const;
+
   /// @{ Accessor
   inline G4int    GetPreProcessType()     const {return preProcessType;}
   inline G4int    GetPreProcessSubType()  const {return preProcessSubType;}

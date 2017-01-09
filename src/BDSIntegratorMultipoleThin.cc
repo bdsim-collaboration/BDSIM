@@ -42,11 +42,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag    = GlobalP.mag();
   G4ThreeVector InitMomDir = GlobalP.unit();
-
-  //Factor for normalising to particle momentum
-  G4double normFactor = eqOfM->FCof()/InitMag;
-  // eqOfM->FCof() gives us conversion to MeV,mm and rigidity in Tm correctly
-
+  
   // global to local
   BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);
   G4ThreeVector LocalR  = localPosMom.PreStepPoint();
@@ -81,12 +77,9 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   //Components of complex vector
   G4double knReal = 0;
   G4double knImag = 0;
-  G4double vOverc = 1;
   G4double momx;
   G4double momy;
 
-  //G4double speedoflight = CLHEP::c_light / (CLHEP::m / CLHEP::second);
-  G4double dipoleTerm = b0l*normFactor *zp / vOverc;
   G4int n = 1;
   std::list<double>::iterator kn = bnl.begin();
 
@@ -107,8 +100,9 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 
   //apply kick
 
-  xp1 -= (kick.real() + dipoleTerm);
+  xp1 -= kick.real();
   yp1 += kick.imag();
+  zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
 
   //Reset n for skewed kicks.
   n=1;
@@ -152,6 +146,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
 
   xp1 = mom.x();
   yp1 = mom.y();
+  zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
 
   LocalR.setX(x1);
   LocalR.setY(y1);

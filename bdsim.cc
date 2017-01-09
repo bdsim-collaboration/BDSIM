@@ -97,7 +97,7 @@ int main(int argc,char** argv)
 
   /// Initialize random number generator
   BDSRandom::CreateRandomNumberGenerator();
-  BDSRandom::SetSeed(); // set the seed from options or from exec options
+  BDSRandom::SetSeed(); // set the seed from options
   
   /// Instantiate the specific type of bunch distribution (class),
   /// get the corresponding parameters from the gmad parser info
@@ -173,7 +173,7 @@ int main(int argc,char** argv)
   physList->RegisterPhysics(physBias);
   runManager->SetUserInitialization(physList);
   
-  /// Set the geometry tolerance
+  /// Print the geometry tolerance
   G4GeometryTolerance* theGeometryTolerance = G4GeometryTolerance::GetInstance();
   G4cout << __FUNCTION__ << "> Geometry Tolerances: "     << G4endl;
   G4cout << __FUNCTION__ << ">" << std::setw(22) << "Surface: " << std::setw(10) << theGeometryTolerance->GetSurfaceTolerance() << " mm"   << G4endl;

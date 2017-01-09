@@ -251,14 +251,9 @@ BDSBeamPipe* BDSBeamPipeFactoryPoints::CommonFinalConstruction(G4String    nameI
 							       G4Material* beamPipeMaterialIn,
 							       G4double    lengthIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
 
   // record extents
   BDSExtent ext = BDSExtent(extentX, extentY, lengthIn*0.5);

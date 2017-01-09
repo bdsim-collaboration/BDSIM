@@ -11,10 +11,9 @@
 #include "G4Box.hh"
 #include "G4LogicalBorderSurface.hh"
 #include "G4LogicalVolume.hh"
+#include "G4MaterialPropertiesTable.hh"
 #include "G4OpticalSurface.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4PVPlacement.hh"               
-#include "G4UserLimits.hh"
+#include "G4PVPlacement.hh"
 #include "G4VisAttributes.hh"
 #include "G4VSolid.hh"
 
@@ -34,7 +33,6 @@ BDSScreenLayer::BDSScreenLayer(G4ThreeVector sizeIn,
 {
   if (!BDS::IsFinite(size.z()))
     {G4cerr << __METHOD_NAME__ << "Insufficent length for screen layer \"" << name << "\"" << G4endl; exit(1);}
-  samplerID=0;
   colour=G4Colour(0.1,0.8,0.1,0.3);
   build();
 }
@@ -71,12 +69,7 @@ void BDSScreenLayer::buildScreen()
 			    (name+"_log").c_str());
   cutGrooves();
 
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(size.z()*maxStepFactor);
-  log->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSScreenLayer::cutGrooves()
@@ -230,13 +223,7 @@ void BDSScreenLayer::sampler()
   log->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   samplerID=BDSSamplerRegistry::Instance()->RegisterSampler(samplerName,nullptr);
   
-
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(size.z()*maxStepFactor);
-  log->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  log->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 BDSScreenLayer::~BDSScreenLayer()

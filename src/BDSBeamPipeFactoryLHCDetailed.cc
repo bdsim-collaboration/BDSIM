@@ -363,14 +363,9 @@ BDSBeamPipe* BDSBeamPipeFactoryLHCDetailed::CommonFinalConstruction(G4String    
 								    G4double    length,
 								    G4double    containerRadius)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBeamPipeFactoryBase::CommonConstruction(name,
 					     vacuumMaterial,
-					     beamPipeMaterial,
-					     length);
+					     beamPipeMaterial);
 		    
   // record extents
   BDSExtent ext = BDSExtent(containerRadius, containerRadius, length*0.5);
@@ -438,16 +433,14 @@ void BDSBeamPipeFactoryLHCDetailed::SetVisAttributes()
     {coolingPipeLV->SetVisAttributes(pipeVisAttr);}
 }
 
-G4UserLimits* BDSBeamPipeFactoryLHCDetailed::SetUserLimits(G4double length)
+void BDSBeamPipeFactoryLHCDetailed::SetUserLimits()
 {
-  G4UserLimits* beamPipeUserLimits = BDSBeamPipeFactoryBase::SetUserLimits(length);
+  BDSBeamPipeFactoryBase::SetUserLimits();
+  auto beamPipeUserLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   copperSkinLV->SetUserLimits(beamPipeUserLimits);
   screenLV->SetUserLimits(beamPipeUserLimits);
   if (buildCoolingPipe)
     {coolingPipeLV->SetUserLimits(beamPipeUserLimits);}
-  allUserLimits.push_back(beamPipeUserLimits);
-  
-  return beamPipeUserLimits;
 }
 
 void BDSBeamPipeFactoryLHCDetailed::PlaceComponents(G4String name)

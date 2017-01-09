@@ -1,12 +1,7 @@
 #ifndef BDSMAGNETOUTERFACTORYPOLESCIRCULAR_H
 #define BDSMAGNETOUTERFACTORYPOLESCIRCULAR_H
 
-#include "BDSGeometryComponent.hh"
 #include "BDSMagnetOuterFactoryPolesBase.hh"
-#include "BDSBeamPipe.hh"
-
-#include "globals.hh"           // geant4 globals / types
-#include "G4VSolid.hh"
 
 /**
  * @brief Factory class for outer volume of magnets. Produces magnets

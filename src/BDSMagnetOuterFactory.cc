@@ -188,7 +188,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
     case BDSMagnetType::dipolefringe:
       {break;} // leave as nullptr - no outer geometry for dipole fringe or thin multipole
     default:
-      G4cout << __METHOD_NAME__ << "unknown magnet type - no outer volume built" << G4endl;
+      G4cout << __METHOD_NAME__ << "unknown magnet type " << magnetType << " - no outer volume built" << G4endl;
       break;
     }
   return outer;

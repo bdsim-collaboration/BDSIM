@@ -578,12 +578,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
-  itsCameraScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 //void BDSAwakeSpectrometer::BuildFresnelLens(){
@@ -652,12 +647,8 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
-  itsScreenScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+
+  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSAwakeSpectrometer::Build()
@@ -821,14 +812,14 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
-#ifndef NOUSERLIMITS
+
+  // note, this is different from all other geometry - TBC
   G4double maxStepFactor=0.5;
   G4UserLimits* containerUserLimits =  new G4UserLimits();
   containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
   containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
   containerLogicalVolume->SetUserLimits(containerUserLimits);
   allUserLimits.push_back(containerUserLimits);
-#endif
 }
 
 BDSAwakeSpectrometer::~BDSAwakeSpectrometer()

@@ -284,7 +284,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   if (buildPole)
     {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
-  CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
+  CreateLogicalVolumes(name, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
   if (buildPole && buildEndPiece)
     {CreateEndPiece(name);}
@@ -305,7 +305,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   
   // Register logical volumes and set sensitivity
   // test if poleLV exists first as some derived classes use their own vector of
@@ -336,7 +335,8 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   // check parameters are valid
   if (outerDiameter*0.5 < bpRadius)
     {
-      G4cerr << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
+      G4cerr << __METHOD_NAME__
+	     << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
 	     << 2*bpRadius << ")" << G4endl;
       exit(1);
     }
@@ -582,11 +582,10 @@ void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
-							  G4double    length,
 							  G4Colour*   colour,
 							  G4Material* outerMaterial)
 {
-  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, colour, outerMaterial);
   CreateLogicalVolumesCoil(name);
 }
 
@@ -828,9 +827,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // Test faces
   if (BDS::WillIntersect(-angleIn, -angleOut, outerDiameter, length))
     {
-      G4cout << "Error: Faces of magnet (section) named \""
+      G4cout << __METHOD_NAME__ << "Error: Faces of magnet (section) named \""
 	     << name << "\" will overlap!" << G4endl;
-      G4cout << "Length of magnet is too short for the angle of the pole faces." << G4endl;
+      G4cout << "Length of magnet " << length << " mm"
+	     << " is too short for the angle of the pole faces: (" << angleIn << "," << angleOut << ")." << G4endl;
       exit(1);
     }
 
@@ -1154,7 +1154,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   
   // logical volumes
-  CreateLogicalVolumes(name, length, colour, material);
+  CreateLogicalVolumes(name, colour, material);
   // we only use one coil solid here so do that here
   G4LogicalVolume* coilLV = nullptr;
   if (buildPole)
@@ -1245,7 +1245,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   
   outer->RegisterSolid(yokeSolid);
   outer->RegisterLogicalVolume(yokeLV);
