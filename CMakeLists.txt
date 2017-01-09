@@ -54,6 +54,13 @@ if(USE_GDML)
     message(STATUS "GDML support ON")
 endif()
 
+# Field double precision (off by default)
+option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
+if(FIELDDOUBLEPRECISION)
+    add_definitions("-DFIELDDOUBLE")
+    message(STATUS "Field double precision ON")
+endif()
+
 # Find GEANT4
 include(cmake/Geant4.cmake)
 
