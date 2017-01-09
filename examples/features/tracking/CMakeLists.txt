@@ -1,0 +1,1 @@
+simple_testing(rbend_strong_single_e_neg_B "--file=rbend_strong_single_e_neg_B.gmad" ${OVERLAP_CHECK})
