@@ -521,9 +521,8 @@ vkicker
 
 .. TODO: add picture
 
-`vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. Either angle
-or the field `B` may be specified.  Unlike MADX, this is not a fractional momentum kick, but the angle of
-deflection.
+`vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
+Unlike MADX, this is not a fractional momentum kick, but the angle of deflection.
 
 .. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
 	  coordinate system, this corresponds to a deflection in positive x, which is the opposite
@@ -541,9 +540,8 @@ hkicker
 
 .. TODO: add picture
 
-`hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. Either angle
-or the field `B` may be specified. Unlike MADX, this is not a fractional momentum kick, but the angle of
-deflection.
+`hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
+Unlike MADX, this is not a fractional momentum kick, but the angle of deflection.
 
 .. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
 	  coordinate system, this corresponds to a deflection in positive y, which is the opposite
