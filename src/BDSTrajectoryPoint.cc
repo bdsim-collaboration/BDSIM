@@ -1,11 +1,13 @@
+#include "BDSTrajectoryPoint.hh"
+
 #include "G4Allocator.hh"
+#include "G4NavigationHistory.hh"
 #include "G4ProcessType.hh"
 #include "G4Step.hh"
-#include "G4Track.hh"
-#include "G4VProcess.hh"
-#include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
-#include "G4NavigationHistory.hh"
+#include "G4Track.hh"
+#include "G4TransportationProcessType.hh"
+#include "G4VProcess.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSDebug.hh"
@@ -13,7 +15,6 @@
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSProcessMap.hh"
-#include "BDSTrajectoryPoint.hh"
 
 #include <ostream>
 
@@ -121,6 +122,31 @@ void BDSTrajectoryPoint::InitialiseVariables()
   turnstaken         = 0;
   prePosLocal        = G4ThreeVector();
   postPosLocal       = G4ThreeVector();
+}
+
+G4bool BDSTrajectoryPoint::IsScatteringPoint()const
+{
+  auto processType    = GetPostProcessType();
+  auto processSubType = GetPostProcessSubType();
+  
+  // test against things we want to exclude like tracking - these are not
+  // points of scattering
+  G4bool initialised       = processType != -1;
+  G4bool notTransportation = processType != fTransportation;
+  G4bool notGeneral        = (processType != fGeneral) && (processSubType != STEP_LIMITER);
+  G4bool notParallel       = processType != fParallel;
+  
+  if (initialised && notTransportation && notGeneral && notParallel)
+    {
+#ifdef BDSDEBUG
+      G4cout << "Interaction point found at "
+	     << GetPreS()/CLHEP::m
+	     << " m - "
+	     << BDSProcessMap::Instance()->GetProcessName(processType, processSubType) << G4endl;
+#endif
+      return true;
+    }
+  return false;
 }
 
 std::ostream& operator<< (std::ostream& out, BDSTrajectoryPoint const &p)

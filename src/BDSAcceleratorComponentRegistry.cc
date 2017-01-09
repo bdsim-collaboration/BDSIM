@@ -4,8 +4,6 @@
 
 #include <ostream>
 #include <iomanip>
-#include <stdexcept>
-
 
 BDSAcceleratorComponentRegistry* BDSAcceleratorComponentRegistry::_instance = nullptr;
 
