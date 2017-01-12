@@ -110,7 +110,7 @@ private:
 
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.
-  BDSFieldObjects* CreateTeleporter(const G4ThreeVector teleporterDelta);
+  BDSFieldObjects* CreateTeleporter(const BDSFieldInfo& info);
   
   /// Private default constructor as singleton class.
   BDSFieldFactory();
