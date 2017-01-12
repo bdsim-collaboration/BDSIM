@@ -73,7 +73,7 @@ G4ThreeVector BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
   // calculate length of teleporter
   // beamline is built along z and sbend deflects in x
   // setting length here ensures that length is always the z difference
-  G4double teleporterLength       = fabs(delta.z());
+  G4double teleporterLength = fabs(delta.z());
 
   // ensure there's no overlaps by reducing teleporter length by a few microns
   // it's ok to adjust the teleporter length and not the delta used by the teleporter stepper

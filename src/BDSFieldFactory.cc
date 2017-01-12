@@ -208,9 +208,10 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
-
+  
   if (info.FieldType() == BDSFieldType::none)
     {return field;} // as nullptr
+
   BDSFieldClassType clas = BDS::DetermineFieldClassType(info.FieldType());
   switch (clas.underlying())
     {

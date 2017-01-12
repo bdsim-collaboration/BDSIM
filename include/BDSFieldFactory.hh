@@ -112,7 +112,6 @@ private:
   /// match up correctly.
   BDSFieldObjects* CreateTeleporter(const G4ThreeVector teleporterDelta);
   
-private:
   /// Private default constructor as singleton class.
   BDSFieldFactory();
 
