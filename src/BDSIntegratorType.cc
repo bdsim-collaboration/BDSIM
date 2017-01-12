@@ -11,6 +11,7 @@ template<>
 std::map<BDSIntegratorType, std::string>* BDSIntegratorType::dictionary =
   new std::map<BDSIntegratorType, std::string> ({
       {BDSIntegratorType::none,                 "none"},
+      {BDSIntegratorType::teleporter,           "teleporter"},
       {BDSIntegratorType::solenoid,             "solenoid"},
       {BDSIntegratorType::dipole,               "dipole"},
       {BDSIntegratorType::quadrupole,           "quadrupole"},
@@ -41,6 +42,7 @@ BDSIntegratorType BDS::DetermineIntegratorType(G4String integratorType)
 {
   std::map<G4String, BDSIntegratorType> types;
   types["none"]                 = BDSIntegratorType::none;
+  types["teleporter"]           = BDSIntegratorType::teleporter;
   types["solenoid"]             = BDSIntegratorType::solenoid;
   types["dipole"]               = BDSIntegratorType::dipole;
   types["quadrupole"]           = BDSIntegratorType::quadrupole;
