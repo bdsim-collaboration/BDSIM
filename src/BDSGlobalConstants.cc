@@ -126,10 +126,15 @@ void BDSGlobalConstants::InitVisAttributes()
 
 void BDSGlobalConstants::InitDefaultUserLimits()
 {
-  //these must be copied and not attached directly
   defaultUserLimits = new G4UserLimits("default_cuts");
-  defaultUserLimits->SetUserMaxTime(MaxTime());
-  //user must set step length manually
+  const G4double maxTime = MaxTime();
+  if (maxTime > 0)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Setting maximum tracking time to " << maxTime << " ns" << G4endl;
+#endif
+      defaultUserLimits->SetUserMaxTime(MaxTime());
+    }
 }
 
 void BDSGlobalConstants::InitRotationMatrices()
