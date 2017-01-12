@@ -4,7 +4,6 @@
 #include "BDSDebug.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
-#include "BDSFieldObjects.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSTeleporter.hh"
 
@@ -16,25 +15,15 @@
 #include <cmath>
 
 
-BDSTeleporter::BDSTeleporter(const G4String      name,
-			     const G4double      length,
-			     const G4ThreeVector teleporterDeltaIn):
-  BDSAcceleratorComponent(name, length, 0, "teleporter"),
-  vacuumField(nullptr),
-  teleporterDelta(teleporterDeltaIn)
-{
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " Constructing Teleporter of length: " 
-	 << length/CLHEP::m << " m" << G4endl;
-#endif
-}
+BDSTeleporter::BDSTeleporter(const G4double length,
+			     BDSFieldInfo*  vacuumFieldInfoIn):
+  BDSAcceleratorComponent("teleporter", length, 0, "teleporter"),
+  vacuumFieldInfo(vacuumFieldInfoIn)
+{;}
 
 void BDSTeleporter::Build()
 {
   BDSAcceleratorComponent::Build(); // create container
-
-  // TBC
-  BDSFieldInfo* vacuumFieldInfo = nullptr;
   
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(vacuumFieldInfo,
 							    containerLogicalVolume,
@@ -88,5 +77,5 @@ G4ThreeVector BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 
 BDSTeleporter::~BDSTeleporter()
 {
-  delete vacuumField;
+  delete vacuumFieldInfo;
 }
