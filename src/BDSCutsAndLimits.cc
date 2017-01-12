@@ -40,20 +40,18 @@ void BDSCutsAndLimits::ConstructProcess()
   auto aParticleIterator = GetParticleIterator();
 #endif
   aParticleIterator->reset();
-  while( (*aParticleIterator)() ){
-    G4ParticleDefinition* particle = aParticleIterator->value();
-
-    if((particle->GetParticleName()=="gamma")||
-       (particle->GetParticleName()=="e-")||
-       (particle->GetParticleName()=="e+")||
-       (particle->GetParticleName()=="proton")){
-      particle->SetApplyCutsFlag(true);
+  while( (*aParticleIterator)())
+    {
+      G4ParticleDefinition* particle = aParticleIterator->value();
+      
+      if((particle->GetParticleName()=="gamma")||
+	 (particle->GetParticleName()=="e-")||
+	 (particle->GetParticleName()=="e+")||
+	 (particle->GetParticleName()=="proton"))
+	{particle->SetApplyCutsFlag(true);}
+      ph->RegisterProcess(stepLimiter,particle); // this is for MaxAllowedStep
+      ph->RegisterProcess(specialCuts,particle); // this is for all other limits
     }
-    ph->RegisterProcess(stepLimiter,particle);
-#ifndef NOUSERSPECIALCUTS
-    ph->RegisterProcess(specialCuts,particle);
-#endif
-  }
   return;
 }
 
