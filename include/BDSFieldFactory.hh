@@ -74,6 +74,9 @@ private:
   /// Create an electric field.
   BDSFieldObjects* CreateFieldE(const BDSFieldInfo& info);
 
+  /// Create an irregular (special) field.
+  BDSFieldObjects* CreateFieldIrregular(const BDSFieldInfo& info);
+
   /// Create a purely magnetic integrator. As it's purely magnetic, this
   /// requires a G4Mag_EqRhs* equation of motion instance.
   G4MagIntegratorStepper* CreateIntegratorMag(const BDSFieldInfo&      info,

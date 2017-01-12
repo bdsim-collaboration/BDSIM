@@ -221,6 +221,8 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
       {field = CreateFieldEM(info); break;}
     case BDSFieldClassType::electric:
       {field = CreateFieldE(info); break;}
+    case BDSFieldClassType::irregular:
+      {field = CreateFieldIrregular(info); break;}
     default:
       {break;} // this will return nullptr
     }
@@ -359,6 +361,20 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
 
   BDSFieldObjects* completeField = new BDSFieldObjects(&info, resultantField, eqOfM, integrator);
   return completeField;
+}
+
+BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
+{
+  // special routine for each special / irregular field
+  BDSFieldObjects* result = nullptr;
+  switch (info.FieldType().underlying())
+    {
+    case BDSFieldType::teleporter:
+      {result = CreateTeleporter(info); break;}
+    default:
+      {break;}
+    }
+  return result;
 }
 
 G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&      info,
