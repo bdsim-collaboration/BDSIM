@@ -19,7 +19,8 @@ BDSCutsAndLimits::~BDSCutsAndLimits()
   delete specialCuts;
 }
 
-void BDSCutsAndLimits::ConstructParticle(){
+void BDSCutsAndLimits::ConstructParticle()
+{
   G4Gamma::Gamma();
   G4Electron::Electron();
   G4Positron::Positron();    
@@ -27,8 +28,10 @@ void BDSCutsAndLimits::ConstructParticle(){
   return;
 }
 
-void BDSCutsAndLimits::ConstructProcess(){
-  if(_wasActivated) return;
+void BDSCutsAndLimits::ConstructProcess()
+{
+  if(_wasActivated)
+    {return;}
   _wasActivated=true;
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
