@@ -73,7 +73,7 @@ G4ThreeVector BDS::CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline)
 	 << G4endl;
 #endif
   if (teleporterLength > 4*CLHEP::um)
-    {teleporterLength -= 3*CLHEP::um;}
+    {teleporterLength -= 0.1*CLHEP::um;}
   G4cout << "Calculated teleporter length: " << teleporterLength << " mm" << G4endl;
   BDSGlobalConstants::Instance()->SetTeleporterLength(teleporterLength);
 
