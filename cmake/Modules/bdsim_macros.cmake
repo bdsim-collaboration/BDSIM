@@ -48,7 +48,7 @@ ENDMACRO(COPY_DIRECTORY_IF_CHANGED)
 MACRO(COPY_EXAMPLES)
   message(STATUS "Copying example directory")
   execute_process(
-    COMMAND git ls-files --full-name ${CMAKE_SOURCE_DIR}/examples
+    COMMAND ${GIT_EXECUTABLE} ls-files --full-name ${CMAKE_SOURCE_DIR}/examples
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     OUTPUT_VARIABLE git_file_list)
   separate_arguments(in_file_list UNIX_COMMAND "${git_file_list}")
