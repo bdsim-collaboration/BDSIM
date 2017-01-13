@@ -123,7 +123,7 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
       if (BDS::IsFinite(*ks))
         {
           //Rotate momentum vector about z axis according to number of poles
-          //then apply each kick seperately and rotate back
+          //then apply each kick separately and rotate back
           //skewAngle = CLHEP::pi / (2 * n);
           skewAngle = CLHEP::halfpi;
           mom.rotateZ(skewAngle);

@@ -31,23 +31,23 @@ class BDSFieldInfo
 public:
   /// Default constructor for zero field effectively
   BDSFieldInfo();
-  BDSFieldInfo(BDSFieldType        fieldTypeIn,
-	       G4double            brhoIn,
-	       BDSIntegratorType   integratorTypeIn,
-	       const BDSMagnetStrength*  magnetStrengthIn           = nullptr,
-	       G4bool              provideGlobalTransformIn   = true,
-	       G4Transform3D       transformIn                = G4Transform3D(),
-	       const BDSCavityInfo*      cavityInfoIn               = nullptr,
-	       G4String            magneticFieldFilePathIn    = "",
-	       BDSFieldFormat      magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
-	       BDSInterpolatorType magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
-	       G4String            electricFieldFilePathIn    = "",
-	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim1d,
-	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
-	       G4bool              cacheTransformsIn          = false,
-	       G4double            eScalingIn                 = 1.0,
-	       G4double            bScalingIn                 = 1.0,
-	       G4double            timeOffsetIn               = 0);
+  BDSFieldInfo(BDSFieldType             fieldTypeIn,
+	       G4double                 brhoIn,
+	       BDSIntegratorType        integratorTypeIn,
+	       const BDSMagnetStrength* magnetStrengthIn           = nullptr,
+	       G4bool                   provideGlobalTransformIn   = true,
+	       G4Transform3D            transformIn                = G4Transform3D(),
+	       const BDSCavityInfo*     cavityInfoIn               = nullptr,
+	       G4String                 magneticFieldFilePathIn    = "",
+	       BDSFieldFormat           magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
+	       BDSInterpolatorType      magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
+	       G4String                 electricFieldFilePathIn    = "",
+	       BDSFieldFormat           electricFieldFormatIn      = BDSFieldFormat::bdsim1d,
+	       BDSInterpolatorType      electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
+	       G4bool                   cacheTransformsIn          = false,
+	       G4double                 eScalingIn                 = 1.0,
+	       G4double                 bScalingIn                 = 1.0,
+	       G4double                 timeOffsetIn               = 0);
   ~BDSFieldInfo();
 
   /// Copy constructor

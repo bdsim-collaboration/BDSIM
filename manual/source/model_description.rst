@@ -36,7 +36,7 @@ and very similar to MADX.
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
-* boolean operators <, >, <=, >=, <>, == are valid
+* boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
 
@@ -152,7 +152,7 @@ Useful Commands
 Lattice Elements
 ----------------
 
-BDSIM provides a variety of different elements each with their own funciton, geometry and
+BDSIM provides a variety of different elements each with their own function, geometry and
 potentially fields. Any element in BDSIM is described with the following pattern::
 
   name: type, parameter=value, parameter="string";
@@ -1339,7 +1339,7 @@ The following integrators are provided.  The majority are interfaces to Geant4 o
 Interpolators
 ^^^^^^^^^^^^^
 
-There are many algorithms which one can use to inteprolate the field map data. The field
+There are many algorithms which one can use to interpolate the field map data. The field
 may be queried at any point inside the volume, so an interpolator is required. A
 mathematical description as well as example plots are shown in :ref:`field-interpolators`.
 
@@ -1375,7 +1375,7 @@ mathematical description as well as example plots are shown in :ref:`field-inter
 
 .. _externally-provided-geometry:
 
-Externally Proivded Geometry
+Externally Provided Geometry
 ----------------------------
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
@@ -1397,7 +1397,7 @@ overlap with any other geometry.
 
 .. Note:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	  incorrect results and there may not always be warnings provided. For this reason
-	  BDSIM will **always** use the Geant4 overlap checker when placing external geoemtry
+	  BDSIM will **always** use the Geant4 overlap checker when placing external geometry
 	  into the world volume. This only ensures the container doesn't overlap with BDSIM
 	  geometry, not that the internal geometry is valid.
 
@@ -1432,7 +1432,7 @@ The following parameters may be specified.
 +----------------+--------------------------------------------------------------------+
 | axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
 +----------------+--------------------------------------------------------------------+
-| sensititve     | **unsupported** - in future whether geometry records hits.         |
+| sensitive      | **unsupported** - in future whether geometry records hits.         |
 +----------------+--------------------------------------------------------------------+
 
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
@@ -1527,7 +1527,7 @@ The misalignments can be controlled through the following parameters
 +--------------+------------------------------------------------------------------------------------+
 | Parameter    | Default value                                                                      | 
 +==============+====================================================================================+
-| `offsetX`    | hHorizontal displacement of the component [m].                                     |
+| `offsetX`    | Horizontal displacement of the component [m].                                      |
 +--------------+------------------------------------------------------------------------------------+
 | `offsetY`    | Vertical displacement of the component [m].                                        |
 +--------------+------------------------------------------------------------------------------------+
@@ -2437,7 +2437,7 @@ BDSIM can build a tunnel around the beamline. Currently, there are two main ways
 	     because of this. Problems would take the form of 'stuck particles' and
 	     Geant4 would terminate that event.
 
-Examples of tunnel geometry can be found with the bdsim source code in */examples/features/geometry/tunnel*
+Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
 and are described in :ref:`tunnel-examples`. 
 
 +----------------------------------+-------------------------------------------------------+

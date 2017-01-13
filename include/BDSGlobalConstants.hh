@@ -22,11 +22,6 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-namespace CLHEP {
-  class HepRotation;
-}
-typedef CLHEP::HepRotation G4RotationMatrix;
-
 class BDSBeamPipeInfo;
 class BDSTunnelInfo;
 
@@ -184,12 +179,6 @@ public:
   inline G4double SMax()                     const {return sMax;}
   inline G4double SMaxHistograms()           const {return sMaxHistograms;}
   inline G4int    NBins()                    const {return nBins;}
-  inline G4RotationMatrix*     RotY90()                  const {return rotY90;}
-  inline G4RotationMatrix*     RotYM90()                 const {return rotYM90;}
-  inline G4RotationMatrix*     RotX90()                  const {return rotX90;}
-  inline G4RotationMatrix*     RotXM90()                 const {return rotXM90;}
-  inline G4RotationMatrix*     RotYM90X90()              const {return rotYM90X90;}
-  inline G4RotationMatrix*     RotYM90XM90()             const {return rotYM90XM90;}
   inline G4ThreeVector         GetTeleporterDelta()      const {return teleporterdelta;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
@@ -281,15 +270,6 @@ private:
   G4bool        itsLaserwireTrackPhotons;
   G4bool        itsLaserwireTrackElectrons;
   
-  /// rotation
-  void InitRotationMatrices();
-  G4RotationMatrix* rotY90;
-  G4RotationMatrix* rotYM90;
-  G4RotationMatrix* rotX90;
-  G4RotationMatrix* rotXM90;
-  G4RotationMatrix* rotYM90X90;
-  G4RotationMatrix* rotYM90XM90;
-
   void InitVisAttributes();
   G4VisAttributes* invisibleVisAttr;
   G4VisAttributes* visibleDebugVisAttr;

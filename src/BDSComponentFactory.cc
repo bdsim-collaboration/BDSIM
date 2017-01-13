@@ -240,7 +240,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   }
 
   // note this test will only be reached (and therefore the component registered)
-  // if it both the component didn't exist and it has been constructed
+  // if both the component didn't exist and it has been constructed
   if (component)
     {
       component->SetBiasVacuumList(element->biasVacuumList);
@@ -259,25 +259,30 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVect
 {
   // This relies on things being added to the beamline immediately
   // after they've been created
-  G4double teleporterLength = BDSGlobalConstants::Instance()->TeleporterLength() - 1e-8;
+  G4double teleporterLength = std::abs(BDSGlobalConstants::Instance()->TeleporterLength() - 1e-8); // must be +ve
 
   if (teleporterLength < 10*G4GeometryTolerance::GetInstance()->GetSurfaceTolerance())
     {
       G4cout << G4endl << __METHOD_NAME__ << "WARNING - no space to put in teleporter - skipping it!" << G4endl << G4endl;
       return nullptr;
     }
+
+  G4Transform3D transform = G4Transform3D(G4RotationMatrix(), teleporterDelta);
   
-  G4String name = "teleporter";
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::teleporter,
+						   brho,
+						   BDSIntegratorType::teleporter,
+						   nullptr,    // magnet strength doesn't apply
+						   true,       // provide global translation
+						   transform);
+  
 #ifdef BDSDEBUG
   G4cout << "---->creating Teleporter,"
-	 << " name = " << name
 	 << ", l = " << teleporterLength/CLHEP::m << "m"
 	 << G4endl;
 #endif
 
-  return( new BDSTeleporter(name,
-			    teleporterLength,
-			    teleporterDelta));
+  return( new BDSTeleporter(teleporterLength, vacuumFieldInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
