@@ -49,7 +49,7 @@ ENDMACRO(COPY_DIRECTORY_IF_CHANGED)
 MACRO(COPY_EXAMPLES)
   message(STATUS "Copying example directory")
   execute_process(
-    COMMAND git ls-files --full-name ${CMAKE_SOURCE_DIR}/examples
+    COMMAND ${GIT_EXECUTABLE} ls-files --full-name ${CMAKE_SOURCE_DIR}/examples
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     OUTPUT_VARIABLE git_file_list)
   separate_arguments(in_file_list UNIX_COMMAND "${git_file_list}")
@@ -63,4 +63,11 @@ MACRO(COPY_EXAMPLES)
     COPY_FILE_IF_CHANGED(${in_file} ${out_file} bdsimexec)
   ENDFOREACH(file)
 ENDMACRO(COPY_EXAMPLES)
+
+# basic copy routine for examples in case we have no git support
+MACRO(COPY_EXAMPLES_NO_GIT)
+  message(STATUS "Copying example directory")
+  copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examples POST_BUILD)
+ENDMACRO(COPY_EXAMPLES_NO_GIT)
+
 
