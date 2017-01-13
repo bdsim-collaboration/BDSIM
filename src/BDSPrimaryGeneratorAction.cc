@@ -1,6 +1,7 @@
 #include "BDSBunch.hh"
 #include "BDSDebug.hh"
 #include "BDSEventInfo.hh"
+#include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSOutputLoader.hh"
 #include "BDSParticle.hh"
@@ -56,7 +57,7 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (recreate)
     {BDSRandom::SetSeedState(recreateFile->SeedState(anEvent->GetEventID() + eventOffset));}
   
-  // save the seed state in a file to recover potentially unrecoverable events
+  // Save the seed state in a file to recover potentially unrecoverable events
   if (writeASCIISeedState)
     {BDSRandom::WriteSeedState();}
 
@@ -71,11 +72,19 @@ void BDSPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   anEvent->SetUserInformation(eventInfo);
   eventInfo->SetSeedStateAtStart(BDSRandom::GetSeedState());
 
-  //this function is called at the begining of event
   G4double x0=0.0, y0=0.0, z0=0.0, xp=0.0, yp=0.0, zp=0.0, t=0.0, E=0.0;
-
   particleGun->SetParticleDefinition(BDSGlobalConstants::Instance()->GetParticleDefinition());
   bdsBunch->GetNextParticle(x0,y0,z0,xp,yp,zp,t,E,weight); // get next starting point
+
+  /// Check the coordinates are valid
+  if (!worldExtent.Encompasses(x0,y0,z0))
+    {
+      G4cerr << __METHOD_NAME__ << "point (" << x0 << ", " << y0 << ", " << z0
+	     << ") mm lies outside the world volume with extent ("
+	     << worldExtent << ") - event aborted!" << G4endl << G4endl;
+      anEvent->SetEventAborted();
+    }
+  
   G4double mass = particleGun->GetParticleDefinition()->GetPDGMass();
   G4double EK = E - mass;
   
