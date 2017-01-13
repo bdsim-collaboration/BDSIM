@@ -459,7 +459,11 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   G4int samplerID2 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName2,
 								     nullptr);
 
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),
+  G4RotationMatrix* rotY90 = new G4RotationMatrix();
+  rotY90->rotateY(CLHEP::halfpi);
+  RegisterRotationMatrix(rotY90);
+
+  new G4PVPlacement(rotY90,
 		    G4ThreeVector(dispX,dispY,dispZ),
 		    itsCameraScoringPlaneLog,
 		    _samplerName,
@@ -504,7 +508,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   G4int samplerID4 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName4,
 								     nullptr);
 
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),
+  new G4PVPlacement(rotY90,
 		    G4ThreeVector(dispX3,dispY3,dispZ3),
 		    itsCameraScoringPlaneLog3,
 		    _samplerName3,
@@ -549,7 +553,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   G4int samplerID6 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName6,
 								     nullptr);
 
-  new G4PVPlacement(BDSGlobalConstants::Instance()->RotY90(),
+  new G4PVPlacement(rotY90,
 		    G4ThreeVector(dispX5,dispY5,dispZ5),
 		    itsCameraScoringPlaneLog5,
 		    _samplerName5,

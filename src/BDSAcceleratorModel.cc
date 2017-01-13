@@ -34,7 +34,9 @@ BDSAcceleratorModel::BDSAcceleratorModel():
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Deleting model" << G4endl;
+#endif
   delete worldPV;
   delete flatBeamline;
   delete curvilinearBeamline;
@@ -49,7 +51,9 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   for (auto c : cuts)
     {delete c.second;}
 
+#ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "Deletion complete" << G4endl;
+#endif
   _instance = nullptr;
 }
 

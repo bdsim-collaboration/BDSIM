@@ -29,7 +29,7 @@ BDSIM may also be downloaded from pre-compiled sources. These are available on: 
 .. AFS
    ---
 
-   With AFS connection you can get the latest released bdsim version from::
+   With AFS connection you can get the latest released BDSIM version from::
    
    /afs/cern.ch/user/j/jsnuveri/public/bdsim
    
