@@ -183,8 +183,8 @@ private:
   void InitialiseTransform(const G4ThreeVector& globalPosition) const;
 
   /// This is used to foricibly initialise the transforms using a position,
-  /// momentum vector and step length.  The free drift of the particle is
-  /// calculated and the the average of the two points is used to locate
+  /// momentum vector and step length. The free drift of the particle is
+  /// calculated and the average of the two points is used to locate
   /// and initialise the transforms (in global coordinates).
   void InitialiseTransform(const G4ThreeVector& globalPosition,
 			   const G4ThreeVector& globalMomentum,

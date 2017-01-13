@@ -5,8 +5,6 @@
 
 #include "globals.hh"         // geant4 globals / types
 
-class BDSExtent;
-
 class G4LogicalVolume;
 class G4Material;
 class G4PVPlacement;

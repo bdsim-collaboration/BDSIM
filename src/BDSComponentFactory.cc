@@ -238,7 +238,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   }
 
   // note this test will only be reached (and therefore the component registered)
-  // if it both the component didn't exist and it has been constructed
+  // if both the component didn't exist and it has been constructed
   if (component)
     {
       component->SetBiasVacuumList(element->biasVacuumList);
