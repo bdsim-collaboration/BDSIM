@@ -63,3 +63,8 @@ MACRO(COPY_EXAMPLES)
   ENDFOREACH(file)
 ENDMACRO(COPY_EXAMPLES)
 
+# basic copy routine for examples in case we have no git support
+MACRO(COPY_EXAMPLES_NO_GIT)
+  message(STATUS "Copying example directory")
+  copy_directory_if_changed(${CMAKE_SOURCE_DIR}/examples ${CMAKE_BINARY_DIR}/examples POST_BUILD)
+ENDMACRO(COPY_EXAMPLES_NO_GIT)

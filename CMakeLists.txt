@@ -211,6 +211,7 @@ if (BUILD_MACOSX_APP AND APPLE)
 endif()
 
 # package source
+# uses git but only for developers
 add_custom_target(dist
     COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
         | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
@@ -231,7 +232,11 @@ add_subdirectory(utils)
 # For testing
 add_subdirectory(examples)
 # copy examples to build directory - macro defined in bdsim_macros.cmake
-copy_examples()
+if (GIT_FOUND)
+  copy_examples()
+else()
+  copy_examples_no_git()
+endif()
   
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
