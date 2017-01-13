@@ -1,0 +1,9 @@
+start: marker;
+d1: drift, l=0.05, offsetX=-50*cm;
+q1: quadrupole, l=0.1, k1=30.0, offsetX=50*cm, offsetY=-30*cm, tilt=0.1*rad;
+d2: drift, l=0.05;
+finish: marker;
+
+lat : line = (start,d1,q1,d2,finish);
+
+include optionsTest.gmad;

@@ -1,31 +1,33 @@
 #include "BDSBunchSquare.hh"
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+
+#include "parser/options.h"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchSquare::BDSBunchSquare() :
   BDSBunchInterface(), envelopeX(0.0), envelopeY(0.0), 
   envelopeXp(0.0), envelopeYp(0.0), envelopeT(0.0), envelopeE(0.0)
 {
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
 }
 
-BDSBunchSquare::BDSBunchSquare(G4double envelopeXIn,  G4double envelopeYIn,
-			       G4double envelopeXpIn, G4double envelopeYpIn,
-			       G4double envelopeTIn,  G4double envelopeEIn,
-			       G4double X0In,         G4double Y0In,         G4double Z0In,   G4double T0In, 
-			       G4double Xp0In,        G4double Yp0In,        G4double Zp0In) :  
-  BDSBunchInterface(X0In,Y0In,Z0In,T0In,Xp0In,Yp0In,Zp0In,0.0,0.0), 
-  envelopeX(envelopeXIn), envelopeY(envelopeYIn), 
-  envelopeXp(envelopeXpIn), envelopeYp(envelopeYpIn), 
-  envelopeT(envelopeTIn), envelopeE(envelopeEIn)
-{
-  FlatGen  = new CLHEP::RandFlat(*CLHEP::HepRandom::getTheEngine());
-}
-
-BDSBunchSquare::~BDSBunchSquare() 
+BDSBunchSquare::~BDSBunchSquare()
 {
   delete FlatGen;
 }
 
-void BDSBunchSquare::SetOptions(struct Options &opt) {
+void BDSBunchSquare::SetOptions(const GMAD::Options& opt)
+{
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   BDSBunchInterface::SetOptions(opt);
   SetEnvelopeX(opt.envelopeX); 
   SetEnvelopeY(opt.envelopeY);
@@ -38,7 +40,12 @@ void BDSBunchSquare::SetOptions(struct Options &opt) {
 
 void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0, 
 		     G4double& xp, G4double& yp, G4double& zp,
-		     G4double& t , G4double&  E, G4double& weight) {
+		     G4double& t , G4double&  E, G4double& weight)
+{
+#ifdef BDSDEBUG 
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+
   x0 = X0  * CLHEP::m;
   y0 = Y0  * CLHEP::m;
   z0 = Z0  * CLHEP::m;
@@ -53,7 +60,7 @@ void BDSBunchSquare::GetNextParticle(G4double& x0, G4double& y0, G4double& z0,
   
   zp = CalculateZp(xp,yp,Zp0);
   t = 0 * CLHEP::s;
-  E = BDSGlobalConstants::Instance()->GetParticleKineticEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
+  E = BDSGlobalConstants::Instance()->ParticleTotalEnergy() * (1 + envelopeE * (1-2*FlatGen->shoot()));
 
   weight = 1.0;
   return; 

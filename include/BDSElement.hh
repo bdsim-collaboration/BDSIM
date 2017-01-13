@@ -1,66 +1,37 @@
-/* BDSIM code.    Version 1.0
-   Author: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 02.12.2004
-   Copyright (c) 2004 by J.C.Carter.  ALL RIGHTS RESERVED. 
-*/
+#ifndef BDSELEMENT_H
+#define BDSELEMENT_H
 
-#ifndef BDSElement_h
-#define BDSElement_h 
+#include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh"
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMaterials.hh"
-#include "G4LogicalVolume.hh"
+#include "G4ThreeVector.hh"
 
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4Mag_EqRhs.hh"
-#include "G4UserLimits.hh"
-#include "G4MagneticField.hh"
-#include "G4UniformMagField.hh"
-#include "BDSMagField.hh"
-#include "G4CachedMagneticField.hh"
+/**
+ * @brief A class for a generic piece of external geometry.
+ * 
+ * Allows any arbritary geometry and magnetic field map to be used
+ * as an accelerator component in the beamline. Geometry and magnetic fields are imported
+ * from an external file (each) and can be specified in various formats.
+ */
 
-#include "G4EqMagElectricField.hh"
-
-class BDSElement :public BDSAcceleratorComponent
+class BDSElement: public BDSAcceleratorComponent
 {
 public:
-  BDSElement(G4String aName, G4String geometry, G4String bmap, G4double aBmapZOffset, G4double aLength, 
-             G4double bpRad, G4double outR, G4String aTunnelMaterial="", G4double tunnelRadius=0., G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(), G4String aTunnelCavityMaterial="Air");
-  ~BDSElement();
-
-  void AlignComponent(G4ThreeVector& TargetPos, 
-		      G4RotationMatrix *TargetRot,
-		      G4RotationMatrix& globalRotation,
-		      G4ThreeVector& rtot,
-		      G4ThreeVector& rlast,
-		      G4ThreeVector& localX,
-		      G4ThreeVector& localY,
-		      G4ThreeVector& localZ); 
+  BDSElement(G4String name,
+	     G4double length,
+	     G4double outerDiameterIn,
+	     G4String geometry,
+	     G4String fieldNameIn = "");
+  virtual ~BDSElement(){;}
    
 private:
+  /// This does the full construction.  Loads the external geometry and field if there is
+  /// one.
+  virtual void BuildContainerLogicalVolume();
 
-  void SetVisAttributes();  
-  void PlaceComponents();
-  void BuildMagField(G4bool forceToAllDaughters=false);
-  virtual void Build();
-  //  virtual void BuildFieldAndStepper();
-  G4String itsGeometry;
-  G4String itsFieldVolName;
-
-  G4CachedMagneticField *itsCachedMagField;
-  G4double itsOuterR;
-  // Volume to align incoming beamline on inside the marker volume
-  // (set during Geometery construction)
-  G4VPhysicalVolume* align_in_volume;
-  // Volume to align outgoing beamline on inside the marker volume
-  // (set during Geometery construction)
-  G4VPhysicalVolume* align_out_volume;
-
-  G4VisAttributes* _visAttDebug;
+  G4double outerDiameter;
+  G4String geometryFileName;
+  G4String fieldName;
 };
-
 
 #endif

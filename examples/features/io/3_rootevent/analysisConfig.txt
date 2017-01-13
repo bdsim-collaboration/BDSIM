@@ -1,0 +1,11 @@
+Debug						0
+InputFilePath					./output_event.root
+OutputFileName					./ana_1.root
+CalculateOpticalFunctions			1
+CalculateOpticalFunctionsFileName		./ana_1.dat
+# Object	treeName	Histogram Name           # Bins     Binning	        variable            selection
+Histogram	Event.		Primaryx                 {100}       {-0.1:0.1}     Primary.x           1
+Histogram	Event.		Primaryy                 {100}       {-0.1:0.1}     Primary.y           1
+Histogram	Options.	seedState                {200}        {0:200}        Options.GMAD::OptionsBase.seed 1
+Histogram       Model.          componentLength          {100}       {0.0:100}       Model.length       1
+Histogram       Run.            runDuration              {1000}      {0,1000}  Info.duration          1

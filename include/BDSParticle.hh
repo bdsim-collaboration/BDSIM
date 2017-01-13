@@ -1,9 +1,10 @@
-#ifndef BDSParticle_h
-#define BDSParticle_h 
+#ifndef BDSPARTICLE_H
+#define BDSPARTICLE_H 
 
-// GEANT4 types
 #include "G4ThreeVector.hh"
 #include "G4Types.hh"
+
+#include <ostream>
 
 /**
  * @brief a particle definition
@@ -11,57 +12,71 @@
  * This class keeps information about a particle's parameters.
  * It is mainly used for output
  * 
- *
- * @author Jochem Snuverink <Jochem.Snuverink@rhul.ac.uk>
+ * @author Jochem Snuverink
  */
 
-class BDSParticle {
-
+class BDSParticle
+{
 public:
   BDSParticle();
-  BDSParticle(G4double x,G4double y,G4double z,G4double xp,G4double yp,G4double zp,G4double E,G4double t=0.0,G4double weight=1.,G4int trackID=-1,G4int parentID=-1);
-  BDSParticle(G4ThreeVector pos,G4ThreeVector mom,G4double E,G4double t=0.0,G4double weight=1.,G4int trackID=-1,G4int parentID=-1);
+  BDSParticle(G4double x,
+	      G4double y,
+	      G4double z,
+	      G4double xp,
+	      G4double yp,
+	      G4double zp,
+	      G4double totalEnergyIn,
+	      G4double tIn        = 0.0,
+	      G4double weightIn   = 1.,
+	      G4int    trackIDIn  = -1,
+	      G4int    parentIDIn = -1);
+  BDSParticle(G4ThreeVector pos,
+	      G4ThreeVector mom,
+	      G4double      totalEnergyIn,
+	      G4double      tIn        = 0.0,
+	      G4double      weightIn   = 1.,
+	      G4int         trackIDIn  = -1,
+	      G4int         parentIDIn = -1);
+
+  /// Output stream
+  friend std::ostream& operator<< (std::ostream& out, BDSParticle const& p);
 
 private:
   /// position
-  G4ThreeVector itsPosition;
+  G4ThreeVector position;
+  
   /// momentum
-  G4ThreeVector itsMomentum;
+  G4ThreeVector momentum;
+  
   /// energy
-  G4double itsE;
+  G4double totalEnergy;
+  
   /// time since the particle was created
-  G4double itsT;
+  G4double t;
+  
   // optional
   /// weight
-  G4double itsWeight;
+  G4double weight;
+  
   /// track ID
-  G4int itsTrackID;
+  G4int trackID;
+  
   /// track ID of parent
-  G4int itsParentID;
-
-  //track length
-  G4double itsS;
+  G4int parentID;
 
 public:
-  G4double GetX()const{return itsPosition.x();}
-  G4double GetY()const{return itsPosition.y();}
-  G4double GetZ()const{return itsPosition.z();}
-  G4double GetXp()const{return itsMomentum.x();}
-  G4double GetYp()const{return itsMomentum.y();}
-  G4double GetZp()const{return itsMomentum.z();}
+  G4double GetX() const {return position.x();}
+  G4double GetY() const {return position.y();}
+  G4double GetZ() const {return position.z();}
+  G4double GetXp()const {return momentum.x();}
+  G4double GetYp()const {return momentum.y();}
+  G4double GetZp()const {return momentum.z();}
 
-  G4double GetS()const{return itsS;}
-  void SetS(G4double val){itsS = val;}
-
-  G4double GetEnergy()const{return itsE;}
-  G4double GetTime()const{return itsT;}
-  G4double GetWeight()const{return itsWeight;}
-  
-  G4int GetTrackID()const{return itsTrackID;}
-  G4int GetParentID()const{return itsParentID;}
-
-  G4ThreeVector GetPosition()const{return itsPosition;}
-  G4ThreeVector GetDirection()const{return itsMomentum;}
+  G4double GetTotalEnergy() const {return totalEnergy;}
+  G4double GetTime()        const {return t;}
+  G4double GetWeight()      const {return weight;}
+  G4int    GetTrackID()     const {return trackID;}
+  G4int    GetParentID()    const {return parentID;}
 };
 
 #endif

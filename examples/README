@@ -1,16 +1,7 @@
-3d              : 3d-transform example
-ATF2_old        : Old ATF2 
-ATF2            : New ATF2 with better conversion, started 05/2013
-Components_DB   : Component testing
-Fluka           : Fluka model descriptions
-gasPipe         : Define vacuum gas example
-GDML            : GDML description example
-ggmad           : Example of element with user-defined ggmad geometry 
-hadronicTarget  : Lead target with SQL  
-ILC             : International Linear Collider
-Laser-Wire      : Laserwire example
-LHC             : Large Hadron Collider
-Mokka           : International Linear Collider Detector 
-PCL             : CLIC post-collision line
-rbendTarget     : Carbon foil target with SQL
-simpleMachine   : Minimal machine with collimator for quick tests
+ATF2              : Accelerator Test Facility at KEK
+features          : Feature testing
+fodoRing          : Simple circular machine
+ILC               : International Linear Collider
+LHC               : Large Hadron Collider
+simpleMachine     : Minimal machine with collimator for quick tests
+simpleCollimation : X-Y collimation system in FODO lattice

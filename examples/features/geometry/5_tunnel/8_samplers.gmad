@@ -1,0 +1,71 @@
+d1: drift, l=2*m;
+d2: drift, l=2*m;
+d3: drift, l=2*m;
+d4: drift, l=2*m;
+d5: drift, l=2*m;
+d6: drift, l=2*m;
+s1: sbend, l=15*m, angle=0.08;
+s2: sbend, l=15*m, angle=0.08;
+s3: sbend, l=15*m, angle=0.08;
+s4: sbend, l=15*m, angle=0.08;
+s5: sbend, l=15*m, angle=0.08;
+s6: sbend, l=15*m, angle=0.08;
+endoftheline: marker;
+
+sector: line = (d1, s1, d2, s2, d3, s3, d4, s4, d5, s5, d6, s6);
+l1: line = (sector, endoftheline);
+use,period=l1;
+
+sample, range=d1;
+sample, range=d2;
+sample, range=d3;
+sample, range=d4;
+sample, range=d5;
+sample, range=d6;
+sample, range=s1;
+sample, range=s2;
+sample, range=s3;
+sample, range=s4;
+sample, range=s5;
+sample, range=s6;
+sample, range=endoftheline;
+
+option, ngenerate=1,
+!	physicsList="QGSP_BERT",
+	physicsList="em",
+	beampipeRadius=10.0*cm,
+	beampipeThickness=3*cm,
+	outerDiameter=0.5*m,
+	defaultRangeCut=1*m,	
+	prodCutPositrons=1*m,
+	prodCutElectrons=1*m,
+	prodCutPhotons=1*m,
+	checkOverlaps=1,
+	elossHistoBinWidth=10*cm;
+
+! note buildTunnelStraight=0 means it will follow the beam line
+
+option, buildTunnel=1,
+	buildTunnelStraight=0,
+	tunnelType="circular",
+	tunnelThickness=1*m,
+	tunnelSoilThickness=5*m,
+	tunnelMaterial="concrete",
+	soilMaterial="soil",
+	buildTunnelFloor=1,
+	tunnelFloorOffset=1.2*m,
+	tunnelAper1=3*m,
+	tunnelAper2=12*m,
+	tunnelSensitive=1,
+	tunnelVisible=1,
+	tunnelOffsetX=0.4*m,
+	tunnelOffsetY=-1.2*m;
+
+! note tunnelAper2 will be ignored by the circular tunnel model
+
+beam, particle="proton",
+      energy=100.0*GeV,
+      distrType="reference",
+      ngenerate=1,
+      X0=0.0,
+      Y0=0.0;

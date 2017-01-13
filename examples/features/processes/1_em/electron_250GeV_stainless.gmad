@@ -1,0 +1,7 @@
+include electronOptions.gmad 
+
+length = 7.5*cm;
+
+segment: rcol, l=length, xsize=0, ysize=0, material="StainlessSteel";
+
+include lattice.gmad;

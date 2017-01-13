@@ -1,247 +1,466 @@
 #include "element.h"
-#include "enums.h"
+#include "elementtype.h"
+#include "parameters.h"
+#include "parser.h"
 
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <iostream>
-#include <float.h>
+#include <sstream>
+#include <string>
 
-extern const char* current_line;
-// extern const int VERBOSE;
+using namespace GMAD;
 
 namespace {
   // helper method
-  void print(std::list<struct Element> l, int ident=0)
+  void print(std::list<Element> l, int ident=0)
   {
-    //  if(VERBOSE) 
-    if(ident == 0) printf("using line %s\n",current_line);
+    if(ident == 0) std::cout << "using line " << Parser::Instance()->current_line << std::endl;
   
-    for(std::list<struct Element>::iterator it=l.begin();it!=l.end();it++)
+    for(std::list<Element>::iterator it=l.begin();it!=l.end();it++)
       {
 	(*it).print(ident);
       }
   }
 }
 
-Element::Element():lst(NULL) {
+Element::Element():
+  lst(nullptr)
+{
   flush();
+
+  PublishMembers();
 }
 
-void Element::print(int & ident)const{
+void Element::PublishMembers()
+{
+  publish("l",    &Element::l);
+  publish("ks",   &Element::ks);
+  publish("k0",   &Element::k0);
+  publish("k1",   &Element::k1);
+  publish("k2",   &Element::k2);
+  publish("k3",   &Element::k3);
+  publish("k4",   &Element::k4);
+  publish("angle",&Element::angle);
+  publish("B",    &Element::B);
+  publish("e1",   &Element::e1);
+  publish("e2",   &Element::e2);
+  publish("fint", &Element::fint);
+  publish("fintx",&Element::fintx);
+  publish("hgap", &Element::hgap);
+  publish("hkick",&Element::hkick);
+  publish("vkick",&Element::vkick);
+  
+  publish("beampipeThickness",&Element::beampipeThickness);
+  publish("aper",&Element::aper1);
+  alternativeNames["aper"] = "aper1";
+  publish("aperture", &Element::aper1);
+  alternativeNames["aperture"] = "aper1";
+  publish("aper1",    &Element::aper1);
+  publish("aperture1",&Element::aper1);
+  alternativeNames["aperture1"] = "aper1";
+  publish("aper2",    &Element::aper2);
+  publish("aperture2",&Element::aper2);
+  alternativeNames["aperture2"] = "aper2";
+  publish("aper3",    &Element::aper3);
+  publish("aperture3",&Element::aper3);
+  alternativeNames["aperture3"] = "aper3";
+  publish("aper4",    &Element::aper4);
+  publish("aperture4",&Element::aper4);
+  alternativeNames["aperture4"] = "aper4";
+  publish("outerDiameter",&Element::outerDiameter);
+  //  publish("outR",2*&Element::outerDiameter);
+  publish("xsize",&Element::xsize);
+  publish("ysize",&Element::ysize);
+  publish("xsizeOut",&Element::xsizeOut);
+  publish("ysizeOut",&Element::ysizeOut);
+  publish("tilt",&Element::tilt);
+
+  publish("offsetX",&Element::offsetX);
+  publish("offsetY",&Element::offsetY);
+  publish("x",&Element::xdir);
+  alternativeNames["x"] = "xdir";
+  publish("y",&Element::ydir);
+  alternativeNames["y"] = "ydir";
+  publish("z",&Element::zdir);
+  alternativeNames["z"] = "zdir";
+  publish("xdir",&Element::xdir);
+  publish("ydir",&Element::ydir);
+  publish("zdir",&Element::zdir);
+  publish("phi",&Element::phi);
+  publish("theta",&Element::theta);
+  publish("psi",&Element::psi);
+  publish("gradient",&Element::gradient);
+  publish("region",&Element::region);
+  publish("fieldOuter",  &Element::fieldOuter);
+  publish("fieldVacuum", &Element::fieldVacuum);
+  publish("fieldAll",    &Element::fieldAll);
+  publish("waveLength",&Element::waveLength);
+  publish("tscint",&Element::tscint);
+  publish("twindow",&Element::twindow);
+  publish("tmount",&Element::tmount);
+  publish("windowScreenGap",&Element::windowScreenGap);
+  publish("screenXSize",&Element::screenXSize);
+  publish("screenYSize",&Element::screenYSize);
+  publish("screenPSize",&Element::screenPSize);
+  publish("screenEndZ",&Element::screenEndZ);
+  publish("poleStartZ",&Element::poleStartZ);
+  publish("screenWidth",&Element::screenWidth);
+  publish("layerThicknesses",&Element::layerThicknesses);
+  publish("layerMaterials",&Element::layerMaterials);
+  publish("layerIsSampler",&Element::layerIsSampler);
+  
+  publish("numberWedges",&Element::numberWedges);
+  publish("wedgeLength",&Element::wedgeLength);
+  publish("degraderHeight",&Element::degraderHeight);
+  publish("materialThickness",&Element::materialThickness);
+  publish("degraderOffset",&Element::degraderOffset);
+
+  publish("geometry",&Element::geometryFile);
+  publish("bmap",    &Element::fieldAll);
+  publish("outerMaterial",&Element::outerMaterial);
+  publish("material",&Element::material);
+  publish("yokeOnInside", &Element::yokeOnInside);
+  publish("apertureType",&Element::apertureType);
+  publish("magnetGeometryType",&Element::magnetGeometryType);
+  publish("beampipeMaterial",&Element::beampipeMaterial);
+  publish("vacuumMaterial",&Element::vacuumMaterial);
+  publish("scintmaterial",&Element::scintmaterial);
+  publish("windowmaterial",&Element::windowmaterial);
+  publish("mountmaterial",&Element::mountmaterial);
+  publish("airmaterial",&Element::airmaterial);
+  publish("spec",&Element::spec);
+  publish("cavityModel",&Element::cavityModel);
+  publish("bias",&Element::bias);
+  publish("biasMaterial",&Element::biasMaterial);
+  publish("biasVacuum",&Element::biasVacuum);
+  publish("samplerName",&Element::samplerName);
+  publish("samplerType",&Element::samplerType);
+  publish("r",&Element::samplerRadius); // historic
+  publish("samplerRadius",&Element::samplerRadius);
+  alternativeNames["samplerRadius"] ="r";
+
+  publish("knl",&Element::knl);
+  publish("ksl",&Element::ksl);
+  publish("blmLocZ",&Element::blmLocZ);
+  publish("blmLocTheta",&Element::blmLocTheta);
+
+  publish("colour", &Element::colour);
+}
+
+std::string Element::getPublishedName(std::string name)const
+{
+  auto it = alternativeNames.find(name);
+  if (it != alternativeNames.end()) {
+    return it->second;
+  }
+  // if not found return name
+  return name;
+}
+
+bool Element::isSpecial()const {
+  bool isSpecial = false;
+
+  if (type == ElementType::_TRANSFORM3D ||
+      type == ElementType::_MARKER ||
+      type == ElementType::_LINE ||
+      type == ElementType::_REV_LINE )
+    {isSpecial = true;}
+
+  return isSpecial;
+}
+
+void Element::print(int ident)const{
   for(int i=0;i<ident;i++)
     printf("--");
 
-  printf("->%s : %s",name.c_str(),typestr(type));
+  std::cout << name << " : " << type << std::endl;
+  if (l>0.0)
+    {std::cout << "l     = " << l << "m" << std::endl;}
+  if (samplerType != "none")
+    {std::cout << "samplerType = " << samplerType << std::endl;}
 
-  std::list<double>::const_iterator it;
   switch(type) {
-  case _DRIFT:
-  case _PCLDRIFT:
-  case _SBEND:
-  case _RBEND:
-  case _QUAD:
-  case _SEXTUPOLE:
-  case _OCTUPOLE:
-    printf(", l=%.10g, k0=%.10g, k1=%.10g, k2=%.10g, k3=%.10g, angle=%.10g,tilt=%.10g ",
-	   l,k0,k1,k2,k3,angle,tilt);
+  case ElementType::_DRIFT:
     break;
-    
-  case _SOLENOID:
-    printf(", l=%.10g, ks=%.10g ", l, ks);
+  case ElementType::_SBEND:
+  case ElementType::_RBEND:
+    std::cout << "B     = " << B     << std::endl
+	      << "angle = " << angle << std::endl
+	      << "k1    = " << k1    << std::endl;
     break;
-    
-  case _MULT:
+  case ElementType::_QUAD:
+    std::cout << "k1    = " << k1    << std::endl;
+    break;
+  case ElementType::_SEXTUPOLE:
+    std::cout << "k2    = " << k2    << std::endl;
+    break;
+  case ElementType::_OCTUPOLE:
+    std::cout << "k3    = " << k3    << std::endl;
+    break;
+  case ElementType::_DECAPOLE:
+    std::cout << "k4    = " << k4 << std::endl;
+    break;
+  case ElementType::_SOLENOID:
+    std::cout << "ks    = " << ks << std::endl;
+    break;
+
+  case ElementType::_MULT:
+  case ElementType::_THINMULT:
     printf(" , knl={");
-    for(it=knl.begin();it!=knl.end();++it)
+    for(auto it=knl.begin();it!=knl.end();++it)
       printf("%.10g, ",(*it));
     printf("},  ksl={");
-    for(it=ksl.begin();it!=ksl.end();++it)
+    for(auto it=ksl.begin();it!=ksl.end();++it)
       printf("%.10g, ",(*it));
     printf("}");
     break;
     
-  case _ELEMENT:
-    printf("\ngeometry file : %s\n",geometryFile.c_str());
-    printf("B map file : %s\n",bmapFile.c_str());
-    //printf("E map driver : %s\n",geometryFile);
-    //printf("E map file : %s\n",geometryFile);
+  case ElementType::_ECOL:
+  case ElementType::_RCOL:
+    std::cout << "x half aperture = " << xsize <<" m" << std::endl
+	      << "y half aperture = " << ysize <<" m" << std::endl
+	      << "material = \""      << material << "\"" << std::endl;
+    break;
+
+  case ElementType::_ELEMENT:
+    std::cout << "outerDiameter = "  << outerDiameter << "m" << std::endl
+	      << "precision region " << region << std::endl
+	      << "Geometry file : "  << geometryFile << std::endl
+	      << "Field object  : "  << fieldAll << std::endl;
     break;
     
-  case _SCREEN:
+  case ElementType::_AWAKESCREEN:
+    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+	      << "tscint          = " << tscint*1e6          << " um" << std::endl
+	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
+	      << "windowmaterial  = " << windowmaterial      << std::endl
+	      << "scintmaterial   = " << scintmaterial       << std::endl;
+      break;
+
+  case ElementType::_AWAKESPECTROMETER:
+    std::cout << "twindow         = " << twindow*1e6         << " um" << std::endl
+	      << "tscint          = " << tscint*1e6          << " um" << std::endl
+	      << "screenPSize     = " << screenPSize*1e6     << " um" << std::endl
+	      << "windowScreenGap = " << windowScreenGap*1e6 << " um" << std::endl
+	      << "windowmaterial  = " << windowmaterial      << std::endl
+	      << "tmount          = " << tmount*1e6          << " um" << std::endl
+	      << "mountmaterial   = " << mountmaterial       << std::endl
+	      << "scintmaterial   = " << scintmaterial       << std::endl;
+    break;
+
+  case ElementType::_LASER:
+    std::cout << "lambda = " << waveLength << "m" << std::endl
+	      << "xSigma = " << xsize << "m" << std::endl
+	      << "ySigma = " << ysize << "m" << std::endl
+	      << "xdir = "   << xdir << std::endl
+	      << "ydir = "   << ydir << std::endl
+	      << "zdir = "   << zdir << std::endl;
+    break;
+
+  case ElementType::_SCREEN:
+    std::cout << "angle=" << angle <<"rad" << std::endl
+	      << "precision region " << region << std::endl;
     break;
     
-  case _CSAMPLER:
-    printf(" length=%.10g, radius=%.10g",l, r);
-    break;
-    
-  case _TRANSFORM3D:
-    printf(" xdir=%.10g, ydir=%.10g, zdir=%.10g,  phi=%.10g, theta=%.10g,psi=%.10g",
-	   xdir, ydir, zdir, phi, theta, psi);
-    break;
-  case _MATERIAL:
-    printf(" A=%.10g, Z=%.10g, density=%.10g,  temper=%.10g, pressure=%.10g",
-	   A, Z, density, temper, pressure);
+  case ElementType::_TRANSFORM3D:
+    std::cout << "xdir= "  << xdir    << "m" << std::endl
+	      << "ydir= "  << ydir    << "m" << std::endl
+	      << "zdir= "  << zdir    << "m" << std::endl
+	      << "phi= "   << phi   << "rad" << std::endl
+	      << "theta= " << theta << "rad" << std::endl
+	      << "psi= "   << psi   << "rad" << std::endl;
     break;
   default:
     break;
   }
   
-  printf("\n");
-  
-  if(lst != NULL)
+  if(lst != nullptr)
     {
       ::print(*lst,++ident);
-      ident--;
     }
 }
 
-void Element::flush() {
+void Element::flush()
+{
+  type = ElementType::_NONE;
+  name = "";
   l = 0;
   magnetOffsetX = 0;
-  bmapZOffset = 0;
-  B = 0;
   ks = 0;
   k0 = 0;
   k1 = 0;
   k2 = 0;
   k3 = 0;
+  k4 = 0;
   angle = 0;
+  B = 0;
+  e1 = 0;
+  e2 = 0;
+  fint = 0;
+  fintx = 0;
+  hgap  = 0;
+  hkick = 0;
+  vkick = 0;
+  
+  // degrader
+  numberWedges = 1;
+  wedgeLength = 0;
+  degraderHeight = 0;
+  materialThickness = 0;
+  degraderOffset = 0;
+
+  // new aperture model
+  beampipeThickness = 0;
+  aper1 = 0;
+  aper2 = 0;
+  aper3 = 0;
+  aper4 = 0;
+  apertureType = "";
+  beampipeMaterial = "";
+  vacuumMaterial = "";
+
+  // magnet geometry
+  magnetGeometryType  = "";
+  outerMaterial = "";
+  outerDiameter = 0;
+  yokeOnInside  = true;
+  
+  tilt = 0;
   xsize = 0;
   ysize = 0;
-  screenXSize = 0;
-  screenYSize = 0;
-  r = 0;
-  phiAngleIn = 0;
-  phiAngleOut = 0;
-  tscint = 0;
-  screenPSize = 0;
-  windowScreenGap = 0;
+  xsizeOut = 0;
+  ysizeOut = 0;
+  offsetX = 0;
+  offsetY = 0;
+  tscint = 0.0003;
   twindow = 0;
   tmount = 0;
+  screenPSize = 0;
+  windowScreenGap = 0;
+  screenXSize = 0;
+  screenYSize = 0;
+
   screenEndZ = 0;
-  screenWidth = 0;
   poleStartZ = 0;
-  tilt = 0;
-  phi = 0;
-  psi = 0;
-  theta = 0;
-
-  gradient = 0;
-
-  flatlength = 0;
-  taperlength = 0;
-  hgap = 0;
-  beampipeThickness = 0;
-  aper = 0;
-  aperX = 0;
-  aperY = 0;
-  aperYUp = 0;
-  aperYDown = 0;
-  aperDy = 0;
-  inR = 0;
-  bpRad = 0;
-  outR = 0;
-  waveLength = 0;
-
+  screenWidth = 0;
+  layerThicknesses.clear();
+  layerMaterials.clear();
+  layerIsSampler.clear();
+  
   xdir = 0;
   ydir = 0;
   zdir = 0;
+  waveLength = 0;
+  gradient = 0;
+  phi = 0;
+  theta = 0;
+  psi = 0;
 
-  name = "";
-  type = _NONE;
-  precisionRegion = 0;
+  knl.clear();
+  ksl.clear();
+  blmLocZ.clear();
+  blmLocTheta.clear();
 
-  A = 0;
-  Z = 0;
-  density = 0;      //g*cm-3
-  temper = 300;     //kelvin
-  pressure = 0;     //atm
-  state = "";  //allowed values: "solid", "liquid", "gas"
+  bias = ""; biasMaterial=""; biasVacuum="";
+  biasMaterialList.clear();
+  biasVacuumList.clear();
 
-  /*  
-      knl = std::list<double>(0);
-      ksl = std::list<double>(0);
-      
-      geometryFile
-      bmapFile
-      material;
-  */
+  samplerName = "";
+  samplerType = "none"; // allowed "none", "plane", "cylinder"
+  samplerRadius = 0;
+  
+  region      = "";
+  fieldOuter  = "";
+  fieldVacuum = "";
+  fieldAll    = "";
 
-  //material = "";
-  spec = "";
-  material="";
-  scintmaterial="";
-  windowmaterial="";
+  geometryFile ="";
+  material="";  
+  windowmaterial = "vacuum";
   mountmaterial="";
-  vacuummaterial="";
+  scintmaterial = "";
   airmaterial="";
-  tunnelMaterial="";
-  tunnelCavityMaterial="Air";
-  tunnelRadius=DBL_MAX; 
-  tunnelOffsetX=DBL_MAX; 
-  floorBeamlineHeight=DBL_MAX; 
-  beamlineCeilingHeight=DBL_MAX; 
-  tunnelThickness=DBL_MAX; 
-  tunnelSoilThickness=DBL_MAX;
-  tunnelType=-1; 
+  spec = "";
+  cavityModel = "";
+
+  colour = "";
 }
 
-double Element::property_lookup(char* property_name)const{
-  if(!strcmp(property_name,"l")) return l;
-  if(!strcmp(property_name,"bmapZOffset")) return bmapZOffset;
-  if(!strcmp(property_name,"B")) return B;
-  if(!strcmp(property_name,"ks")) return ks;
-  if(!strcmp(property_name,"k0")) return k0;
-  if(!strcmp(property_name,"k1")) return k1;
-  if(!strcmp(property_name,"k2")) return k2;
-  if(!strcmp(property_name,"k3")) return k3;
-  if(!strcmp(property_name,"angle")) return angle;
-  if(!strcmp(property_name,"phiAngleIn")) return phiAngleIn;
-  if(!strcmp(property_name,"phiAngleOut")) return phiAngleOut;
-  if(!strcmp(property_name,"beampipeThickness")) return beampipeThickness;
-  if(!strcmp(property_name,"aper")) return aper;
-  if(!strcmp(property_name,"aperX")) return aperX;
-  if(!strcmp(property_name,"aperY")) return aperY;
-  if(!strcmp(property_name,"aperYUp")) return aperYUp;
-  if(!strcmp(property_name,"aperYDown")) return aperYDown;
-  if(!strcmp(property_name,"aperDy")) return aperDy;
-  if(!strcmp(property_name,"outR")) return outR;
-  if(!strcmp(property_name,"inR")) return inR;
-  if(!strcmp(property_name,"bpRad")) return bpRad;
-  if(!strcmp(property_name,"xsize")) return xsize;
-  if(!strcmp(property_name,"ysize")) return ysize;
-  if(!strcmp(property_name,"screenXSize")) return screenXSize;
-  if(!strcmp(property_name,"screenYSize")) return screenYSize;
-  if(!strcmp(property_name,"xdir")) return xdir;
-  if(!strcmp(property_name,"ydir")) return ydir;
-  if(!strcmp(property_name,"zdir")) return zdir;
-  if(!strcmp(property_name,"phi")) return phi;
-  if(!strcmp(property_name,"psi")) return psi;
-  if(!strcmp(property_name,"theta")) return theta;
-  if(!strcmp(property_name,"waveLength")) return waveLength;
-  if(!strcmp(property_name,"tilt")) return tilt;
-  if(!strcmp(property_name,"gradient")) return gradient;
-  if(!strcmp(property_name,"hgap")) return hgap;
-  if(!strcmp(property_name,"flatlength")) return flatlength;
-  if(!strcmp(property_name,"taperlength")) return taperlength;
+double Element::property_lookup(std::string property_name)const{
+  if(property_name == "outR") return 0.5*outerDiameter;
 
-  if(!strcmp(property_name,"A")) return A;
-  if(!strcmp(property_name,"Z")) return Z;
-  if(!strcmp(property_name,"density")) return density;
-  if(!strcmp(property_name,"T")) return temper;
-  if(!strcmp(property_name,"P")) return pressure;
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    std::cerr << "element.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl; 
+    exit(1);
+  }
+  return value;
+}
 
-  //Tunnel properties
-  if(!strcmp(property_name,"tunnelRadius")) return tunnelRadius;
-  if(!strcmp(property_name,"tunnelOffsetX")) return tunnelOffsetX;
-  if(!strcmp(property_name,"floorBeamlineHeight")) return floorBeamlineHeight;
-  if(!strcmp(property_name,"beamlineCeilingHeight")) return beamlineCeilingHeight;
-  if(!strcmp(property_name,"tunnelThickness")) return tunnelThickness;
-  if(!strcmp(property_name,"tunnelSoilThickness")) return tunnelSoilThickness;
-  if(!strcmp(property_name,"tunnelType")) return tunnelType;
+void Element::set(const Parameters& params,std::string nameIn, ElementType typeIn)
+{
+  // common parameters for all elements
+  type = typeIn;
+  name = nameIn;
+  
+  set(params);
+}
 
-  std::cerr << "element.cc> Error: unkown property \"" << property_name << "\". Returning 0." << std::endl; 
-  exit(1);
-  //what about property_lookup for attributes of type string, like material?
+void Element::set(const Parameters& params)
+{
+  for (auto& i : params.setMap)
+    {
+      if(i.second == true)
+	{
+	  std::string property = i.first;
+
+	  // method can in theory throw runtime_error (shouldn't happen), catch and exit gracefully
+	  try {
+	    Published<Element>::set(this,(Element*)&params,property);
+	  }
+	  catch(std::runtime_error) {
+	    std::cerr << "Error: parser> unknown property \"" << property << "\" for element " << name  << std::endl;
+	    exit(1);
+	  }
+
+	  // split bias into tokens and add to both material and vacuum
+	  if (property == "bias")
+	    {
+	      std::stringstream ss(bias);
+	      std::string tok;
+	      while(ss >> tok)
+		{
+		  biasMaterialList.push_back(tok);
+		  biasVacuumList.push_back(tok);
+		}
+	    }
+	  else if (property == "biasMaterial")
+	    {
+	      std::stringstream ss(biasMaterial);
+	      std::string tok;
+	      while(ss >> tok) {biasMaterialList.push_back(tok);}
+	    }
+	  else if (property == "biasVacuum")
+	    {
+	      std::stringstream ss(biasVacuum);
+	      std::string tok;
+	      while(ss >> tok) {biasVacuumList.push_back(tok);}
+	    }
+	}
+    }
+}
+
+void Element::setSamplerInfo(std::string samplerTypeIn, std::string samplerNameIn, double samplerRadiusIn)
+{
+  if (samplerType != "none") {
+    std::cout << "WARNING: overwriting already defined sampler info for element: " << name << std::endl;
+  }
+
+  samplerType   = samplerTypeIn;
+  samplerName   = samplerNameIn;
+  samplerRadius = samplerRadiusIn;
 }

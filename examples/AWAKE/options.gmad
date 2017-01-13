@@ -1,0 +1,64 @@
+! standard options for runing bdsim
+tunRad=0.5*9.1*m;
+tunOffX=(6.3*m-tunRad);
+floorOffset=1.6*m;
+beamCeilH = 3.8*m;
+tunThi=0.25*m;
+bpThi=2*mm;
+bpRad=35*mm;
+
+
+myDeltaOneStep=0.01*mm;
+myDeltaIntersection=0.1*myDeltaOneStep;
+myChordStepMinimum=myDeltaOneStep;
+myMinimumEpsilonStep=1e-9;
+myMaximumEpsilonStep=100*myMinimumEpsilonStep;
+
+tunOffY=-(tunRad-beamCeilH);
+tunFlOff=floorOffset-tunRad+beamCeilH;
+tunAp2=beamCeilH+tunOffY;
+
+!print, tunFlOff;
+!print, tunAp2;
+!print, tunOffY;
+
+option, beampipeRadius = bpRad,
+        boxSize = 50 * cm,
+	tunnelMaterial = "lhcconcrete",
+	buildTunnel=1,
+	tunnelType="rectangular",	
+	tunnelFloorOffset=tunFlOff,
+	tunnelAper2=tunRad,
+	tunnelAper1=tunRad,
+	tunnelThickness=tunThi,
+	tunnelSoilThickness=3*m,
+	tunnelOffsetX=tunOffX,
+	tunnelOffsetY=tunOffY,
+	showTunnel=1,
+        beampipeThickness   = bpThi,
+	beampipeMaterial   = "G4_STAINLESS-STEEL",
+!	beampipeMaterial   = "vacuum",
+        chordStepMinimum    =  myChordStepMinimum,
+	minimumEpsilonStep= myMinimumEpsilonStep,
+	maximumEpsilonStep= myMaximumEpsilonStep,
+	deltaOneStep= myDeltaOneStep,
+	deltaIntersection= myDeltaIntersection,
+        samplerDiameter = 4.0*m,
+	checkOverlaps=1,
+!	synchRadOn=0,
+!	srTrackPhotons=0,
+!	srLowX=0.5,
+!	srLowGamE=0*KeV,
+!	srMultiplicity=1,
+	elossHistoBinWidth=0.1*cm,
+        turnOnOpticalAbsorption=1,
+        turnOnRayleighScattering=0,
+        turnOnMieScattering=1,
+        turnOnOpticalSurface=1,
+        scintYieldFactor=1e-3;
+!	maximumTrackingTime=1e-3*s;
+
+
+
+
+

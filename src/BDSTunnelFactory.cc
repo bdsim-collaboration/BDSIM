@@ -1,71 +1,194 @@
-#include "BDSTunnelFactory.hh"
-#include "BDSTunnel.hh"
-#include "../parser/enums.h"
-#include "BDSRectangleTunnel.hh"
-#include "BDSRoundTunnel.hh"
 #include "BDSDebug.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSGeometryComponent.hh"
+#include "BDSTunnelFactory.hh"
+#include "BDSTunnelFactoryBase.hh"
+#include "BDSTunnelFactoryCircular.hh"
+#include "BDSTunnelFactoryElliptical.hh"
+#include "BDSTunnelFactoryRectangular.hh"
+#include "BDSTunnelFactoryRectAboveGround.hh"
+#include "BDSTunnelFactorySquare.hh"
+#include "BDSTunnelSection.hh"
+#include "BDSTunnelType.hh"
 
+#include "globals.hh"                        // geant4 globals / types
 
-BDSTunnelFactory::BDSTunnelFactory(){
+BDSTunnelFactory* BDSTunnelFactory::_instance = nullptr;
+
+BDSTunnelFactory* BDSTunnelFactory::Instance()
+{
+  if (_instance == nullptr)
+    {_instance = new BDSTunnelFactory();}
+  return _instance;
 }
 
-BDSTunnelFactory::~BDSTunnelFactory(){
+BDSTunnelFactory::BDSTunnelFactory()
+{;}
+
+BDSTunnelFactory::~BDSTunnelFactory()
+{
+  _instance = nullptr;
 }
 
-//Build a tunnel using data from an element.
-BDSTunnel* BDSTunnelFactory::makeTunnel(Element& val1, BDSAcceleratorComponent* val2){
-  _element = val1;
-  _component = val2;
-return  makeTunnel();
-}
-
-BDSTunnel* BDSTunnelFactory::makeTunnel(){
-
+BDSTunnelFactoryBase* BDSTunnelFactory::GetAppropriateFactory(BDSTunnelType tunnelType)
+{
+  switch(tunnelType.underlying()){
+  case BDSTunnelType::circular:
 #ifdef BDSDEBUG
-  G4cout << "BDSTunnelFactory::makeTunnel() element name = " << _element.name << G4endl;  
+    G4cout << __METHOD_NAME__ << "circular tunnel factory" << G4endl;
 #endif
-  
-  BDSTunnel* tunnel = NULL;
-  G4int tunnelType = 0;
-  if(_element.tunnelType>=0){ //Not set if less than zero (default = -1) ...
-    tunnelType=_element.tunnelType;
-  } else {
-    tunnelType = BDSGlobalConstants::Instance()->GetTunnelType(); //... in which case use the global option.
-  }
-  
-  switch(tunnelType){
-  case _RECT_TUNNEL:
+    return BDSTunnelFactoryCircular::Instance();
+    break;
+  case BDSTunnelType::elliptical:
 #ifdef BDSDEBUG
-    G4cout << "BDSTunnelFactory  - making rectangle tunnel" << G4endl;
+    G4cout << __METHOD_NAME__ << "elliptical tunnel factory" << G4endl;
 #endif
-    tunnel = makeRectangleTunnel(); break;
-  case _ROUND_TUNNEL:
+    return BDSTunnelFactoryElliptical::Instance();
+    break;
+  case BDSTunnelType::rectangular:
 #ifdef BDSDEBUG
-    G4cout << "BDSTunnelFactory  - making round tunnel" << G4endl;
+    G4cout << __METHOD_NAME__ << "rectangular tunnel factory" << G4endl;
 #endif
-    tunnel = makeRoundTunnel(); break; 
+    return BDSTunnelFactoryRectangular::Instance();
+    break;
+  case BDSTunnelType::square:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "square tunnel factory" << G4endl;
+#endif
+    return BDSTunnelFactorySquare::Instance();
+    break;
+  case BDSTunnelType::rectaboveground:
+#ifdef BDSDEBUG
+    G4cout << __METHOD_NAME__ << "rectangular above ground tunnel factory" << G4endl;
+#endif
+    return BDSTunnelFactoryRectAboveGround::Instance();
+    break;
   default:
 #ifdef BDSDEBUG
-    G4cout << "BDSTunnelFactory: tunnelType: " << _element.tunnelType << G4endl; 
+    G4cout << __METHOD_NAME__ << "unknown tunnel type \"" << tunnelType
+	   << "\" - using circular tunnel factory by default" << G4endl;
 #endif
-    G4Exception("Error: BDSTunnelFactory: tunnelType not found.", "-1", FatalErrorInArgument, "");   
-    exit(1);
+    return BDSTunnelFactoryCircular::Instance();
     break;
   }
+}
 
-#ifdef BDSDEBUG  
-  G4cout << __METHOD_END__ << G4endl;
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSection(BDSTunnelType tunnelType,
+							G4String      name,
+							G4double      length,
+							G4double      tunnelThickness,
+							G4double      tunnelSoilThickness,
+							G4Material*   tunnelMaterial,
+							G4Material*   tunnelSoilMaterial,
+							G4bool        tunnelFloor,
+							G4double      tunnelFloorOffset,
+							G4double      tunnel1,
+							G4double      tunnel2,
+							G4bool        visible)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return tunnel;
+  BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
+  return factory->CreateTunnelSection(name, length, tunnelThickness,
+				      tunnelSoilThickness, tunnelMaterial,
+				      tunnelSoilMaterial, tunnelFloor,
+				      tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-BDSTunnel* BDSTunnelFactory::makeRectangleTunnel(){
-  return new BDSRectangleTunnel(_element, _component->GetLength(), _component->GetAngle());
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngledIn(BDSTunnelType tunnelType,
+								G4String      name,
+								G4double      length,
+								G4double      angleIn,
+								G4double      tunnelThickness,
+								G4double      tunnelSoilThickness,
+								G4Material*   tunnelMaterial,
+								G4Material*   tunnelSoilMaterial,
+								G4bool        tunnelFloor,
+								G4double      tunnelFloorOffset,
+								G4double      tunnel1,
+								G4double      tunnel2,
+								G4bool        visible)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
+  return factory->CreateTunnelSectionAngledIn(name, length, angleIn, tunnelThickness,
+					      tunnelSoilThickness, tunnelMaterial,
+					      tunnelSoilMaterial, tunnelFloor,
+					      tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
-BDSTunnel* BDSTunnelFactory::makeRoundTunnel(){
-  return new BDSRoundTunnel(_element, _component->GetLength(), _component->GetAngle());
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngledOut(BDSTunnelType tunnelType,
+								 G4String      name,
+								 G4double      length,
+								 G4double      angleOut,
+								 G4double      tunnelThickness,
+								 G4double      tunnelSoilThickness,
+								 G4Material*   tunnelMaterial,
+								 G4Material*   tunnelSoilMaterial,
+								 G4bool        tunnelFloor,
+								 G4double      tunnelFloorOffset,
+								 G4double      tunnel1,
+								 G4double      tunnel2,
+								 G4bool        visible)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
+  return factory->CreateTunnelSectionAngledOut(name, length, angleOut, tunnelThickness,
+					       tunnelSoilThickness, tunnelMaterial,
+					       tunnelSoilMaterial, tunnelFloor,
+					       tunnelFloorOffset, tunnel1, tunnel2, visible);
 }
 
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngledInOut(BDSTunnelType tunnelType,
+								   G4String      name,
+								   G4double      length,
+								   G4double      angleIn,
+								   G4double      angleOut,
+								   G4double      tunnelThickness,
+								   G4double      tunnelSoilThickness,
+								   G4Material*   tunnelMaterial,
+								   G4Material*   tunnelSoilMaterial,
+								   G4bool        tunnelFloor,
+								   G4double      tunnelFloorOffset,
+								   G4double      tunnel1,
+								   G4double      tunnel2,
+								   G4bool        visible)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
+  return factory->CreateTunnelSectionAngledInOut(name, length, angleIn, angleOut,
+						 tunnelThickness, tunnelSoilThickness, tunnelMaterial,
+						 tunnelSoilMaterial, tunnelFloor,
+						 tunnelFloorOffset, tunnel1, tunnel2, visible);
+}
 
+BDSTunnelSection* BDSTunnelFactory::CreateTunnelSectionAngled(BDSTunnelType tunnelType,
+							      G4String      name,
+							      G4double      length,
+							      G4ThreeVector inputFace,
+							      G4ThreeVector outputFace,
+							      G4double      tunnelThickness,
+							      G4double      tunnelSoilThickness,
+							      G4Material*   tunnelMaterial,
+							      G4Material*   tunnelSoilMaterial,
+							      G4bool        tunnelFloor,
+							      G4double      tunnelFloorOffset,
+							      G4double      tunnel1,
+							      G4double      tunnel2,
+							      G4bool        visible)
+{
+#ifdef BDSDEBUG
+  G4cout << __METHOD_NAME__ << G4endl;
+#endif
+  BDSTunnelFactoryBase* factory = GetAppropriateFactory(tunnelType);
+  return factory->CreateTunnelSectionAngled(name, length, inputFace, outputFace,
+					    tunnelThickness, tunnelSoilThickness, tunnelMaterial,
+					    tunnelSoilMaterial, tunnelFloor,
+					    tunnelFloorOffset, tunnel1, tunnel2, visible);
+}

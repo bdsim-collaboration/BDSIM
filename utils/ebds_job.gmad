@@ -1,7 +1,0 @@
-include /home/agapov/work/ilc-collimation/ebds1.gmad
-
-option, randomSeed=-1;
-option, nperfile=4005;
-option, ngenerate=@NGENERATE;
-option, nlinesIgnore=@NIGNORE;
-

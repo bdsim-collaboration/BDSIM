@@ -2,24 +2,16 @@
 
 
 option, beampipeRadius = 6 * cm,
-        boxSize = 1.0 * m,
+        outerDiameter = 1.0 * m,
         tunnelRadius= 1.0 * m,
         beampipeThickness = 0.1 * cm,
-        chordStepMinimum = 0.0000000001 * m,
-        deltaIntersection = 0.00000001 * m,
-        deltaChord = 0.001 * m,
-        lengthSafety = 0.00001 * m,
         thresholdCutCharged = 1 * MeV,
         thresholdCutPhotons = 1 * MeV;
 
 
-!option,physicsList="hadronic_standard";
-!option,physicsList="em_muon";
-option,physicsList="em_standard";
+!option,physicsList="hadronic";
+option,physicsList="em";
 
-!option, storeNeutronTrajectory=1;
-!option,storeMuonTrajectory=1;
 !option,stopTracks=1;
 !option,storeTrajectory=1;
-option,ngenerate=50,nperfile=5000;
-!option,nlinesIgnore=2*4;
+option,ngenerate=50;

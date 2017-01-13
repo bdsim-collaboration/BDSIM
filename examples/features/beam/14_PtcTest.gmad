@@ -1,0 +1,5 @@
+include 14_Ptc.gmad
+include options.gmad
+include fodo.gmad;
+
+option, ngenerate=1000;

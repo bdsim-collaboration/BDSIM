@@ -1,48 +1,59 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Changed Samplers to account for plane and cylinder types (GABs code)
-*/
-
 #include "BDSSamplerHit.hh"
 #include "G4ios.hh"
 
 G4Allocator<BDSSamplerHit> BDSSamplerHitAllocator;
 
-BDSSamplerHit::BDSSamplerHit(G4String aName,
-		BDSParticle init,
-		BDSParticle prod,
-		BDSParticle last_scat,
-		BDSParticle local,
-		BDSParticle local_rel,
-		BDSParticle global,
-		G4double s,
-		G4double sReference,
-		G4double weight,
-		G4int PDGtype, G4int nEvent,
-		G4int ParentID, G4int TrackID,
-		G4int TurnsTaken,
-		G4String sampType):
+BDSSamplerHit::BDSSamplerHit(G4String    aName,
+			     G4int       samplerID,
+			     BDSParticle init,
+			     BDSParticle prod,
+			     BDSParticle last_scat,
+			     BDSParticle local,
+			     BDSParticle global,
+			     G4double    s,
+			     G4double    weight,
+			     G4int       PDGtype,
+			     G4int       nEvent,
+			     G4int       ParentID,
+			     G4int       TrackID,
+			     G4int       TurnsTaken,
+			     G4String    sampType,
+			     G4String    process,
+           G4int       beamlineIndex):
   itsName(aName),
+  itsSamplerID(samplerID),
   itsInit(init),
   itsProd(prod),
   itsLastScat(last_scat),
   itsLocal(local),
-  itsLocal_rel(local_rel),
   itsGlobal(global),
   itsS(s),
-  itsSReference(sReference),
   itsWeight(weight),
   itsPDGtype(PDGtype),
   itsEventNo(nEvent),
   itsParentID(ParentID),
   itsTrackID(TrackID),
   itsTurnsTaken(TurnsTaken),
-  itsSampType(sampType)
+  itsSampType(sampType),
+  itsProcess(process),
+	itsBeamlineIndex(beamlineIndex)
 {;}
 
 BDSSamplerHit::~BDSSamplerHit()
 {;}
+
+std::ostream& operator<< (std::ostream& out, BDSSamplerHit const& h)
+{
+  out << "Sampler: \"" << h.GetName() << "\", ID: " << h.GetSamplerID() << G4endl;
+  out << "Local point:  " << h.GetLocal();
+  out << "Global point: " << h.GetGlobal();
+  out << "S, weight, PDGID, Event#, ParentID, TrackID, Turns:" << G4endl;
+  out << h.GetS()          << ", "
+      << h.GetWeight()     << ", "
+      << h.GetPDGtype()    << ", "
+      << h.GetEventNo()    << ", "
+      << h.GetParentID()   << ", "
+      << h.GetTrackID()    << ", "
+      << h.GetTurnsTaken() << G4endl;
+  return out;
+}

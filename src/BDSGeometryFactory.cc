@@ -1,85 +1,92 @@
-#include "BDSGeometryFactory.hh"
-#include "BDSExecOptions.hh"
-#include "ggmad.hh"
-#ifdef USE_LCDD
-#include "BDSGeometryLCDD.hh"
-#endif
-#include "BDSGeometrySQL.hh"
-#ifdef USE_GDML
-#include "BDSGeometryGDML.hh"
-#endif
 #include "BDSDebug.hh"
-
-
-BDSGeometryFactory::BDSGeometryFactory(){
-  _gFormat=new BDSGeometryFormat();
-}
-BDSGeometryFactory::~BDSGeometryFactory(){}
-
-BDSGeometry* BDSGeometryFactory::buildGeometry(G4String geometry=""){
-  _geometry=geometry;
-  parseFormatAndFilename();
-  if (_gFormat->compare("gmad")) {
-    return buildGmad();
-  } 
-#ifdef USE_LCDD
-  else if (_gFormat->compare("lcdd")) {
-    return buildLCDD();
-  }
-#endif
-  else if (_gFormat->compare("mokka")) {
-    return buildMokka();
-  }
+#include "BDSGeometryExternal.hh"
+#include "BDSGeometryFactory.hh"
+#include "BDSGeometryFactoryBase.hh"
 #ifdef USE_GDML
-  else if (_gFormat->compare("gdml")) {
-    return buildGDML();
-  }
+#include "BDSGeometryFactoryGDML.hh"
 #endif
-  else if (_gFormat->compare("none")) {
-    return buildNone();
-  }
-  G4String exceptionString = (G4String)__METHOD_NAME__ + (G4String)" - error - reached end of method without building.";
-  G4Exception(exceptionString.c_str(), "-1", FatalException, "");
-  return NULL;
+#include "BDSGeometryFactoryGMAD.hh"
+#include "BDSGeometryFactorySQL.hh"
+#include "BDSGeometryType.hh"
+#include "BDSUtilities.hh"
+
+#include "globals.hh" // geant4 types / globals
+
+#include <string>
+#include <unordered_map>
+#include <utility>
+
+class BDSGeometry;
+
+BDSGeometryFactory* BDSGeometryFactory::instance = nullptr;
+
+BDSGeometryFactory* BDSGeometryFactory::Instance()
+{
+  if (!instance)
+    {instance = new BDSGeometryFactory();}
+  return instance;
 }
 
-void BDSGeometryFactory::parseFormatAndFilename(){
-  if(_geometry != ""){
-    G4int pos = _geometry.find(":");
-    if(pos<0) {
-      G4cerr<<"WARNING: invalid geometry reference format : "<<_geometry<<G4endl;
-    }
-    else {
-      G4String format = _geometry.substr(0,pos);
-      _gFormat->spec(format);
-      _gFile = BDSExecOptions::Instance()->GetBDSIMPATH() + _geometry.substr(pos+1,_geometry.length() - pos); 
-    }
-  }
+BDSGeometryFactory::BDSGeometryFactory()
+{;}
+
+BDSGeometryFactory::~BDSGeometryFactory()
+{
+  instance = nullptr;
+  for (auto& geom : storage)
+    {delete geom;}
 }
 
-BDSGeometry* BDSGeometryFactory::buildGmad(){
-  return new GGmadDriver(_gFile);
-}
-
-#ifdef USE_LCDD
-BDSGeometry* BDSGeometryFactory::buildLCDD(){
-  return new BDSGeometryLCDD(_gFile);
-}
-#endif
-
-BDSGeometry* BDSGeometryFactory::buildMokka(){
-  return new BDSGeometrySQL(_gFile);
-}
-
+BDSGeometryFactoryBase* BDSGeometryFactory::GetAppropriateFactory(BDSGeometryType type)
+{
+  switch(type.underlying())
+    {
 #ifdef USE_GDML
-BDSGeometry* BDSGeometryFactory::buildGDML(){
-  return new BDSGeometryGDML(_gFile);
-}
+    case BDSGeometryType::gdml:
+      {return BDSGeometryFactoryGDML::Instance(); break;}
 #endif
-
-BDSGeometry* BDSGeometryFactory::buildNone(){
-  return NULL;
+    case BDSGeometryType::gmad:
+      {return BDSGeometryFactoryGMAD::Instance(); break;}
+    case BDSGeometryType::mokka:
+      {return BDSGeometryFactorySQL::Instance(); break;}
+    default:
+      {
+	G4cout << "Unsupported factory type " << type;
+	return nullptr;
+	break;
+      }
+    }
 }
 
+BDSGeometryExternal* BDSGeometryFactory::BuildGeometry(G4String formatAndFileName,
+						       std::map<G4String, G4Colour*>* colourMapping,
+						       G4double suggestedLength,
+						       G4double suggestedOuterDiameter)
+{
+  std::pair<G4String, G4String> ff = BDS::SplitOnColon(formatAndFileName);
+  G4String fileName = BDS::GetFullPath(ff.second);
 
+  const auto search = registry.find(fileName);
+  if (search != registry.end())
+    {return search->second;}// it was found already in registry
+  // else wasn't found so continue
 
+  // Check the file exists.
+  if (!BDS::FileExists(fileName))
+    {G4cerr << "No such file \"" << fileName << "\"" << G4endl; exit(1);}
+  
+  BDSGeometryType format = BDS::DetermineGeometryType(ff.first);
+  BDSGeometryFactoryBase* factory = GetAppropriateFactory(format);
+  if (!factory)
+    {return nullptr;}
+  
+  BDSGeometryExternal* result = factory->Build(fileName, colourMapping,
+					       suggestedLength, suggestedOuterDiameter);
+  if (result)
+    {
+      registry[(std::string)fileName] = result;
+      storage.push_back(result);
+    }
+  
+  return result;
+}

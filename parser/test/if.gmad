@@ -1,0 +1,13 @@
+a = 1;
+b = 0;
+c = 2;
+d = -1;
+
+!b should print
+if (a) {print, b};
+! a should not print
+if (b) {print, a};
+!execute should be reset
+print, c;
+! a should not print (only larger than 0)
+if (d) {print, a};

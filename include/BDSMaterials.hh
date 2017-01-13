@@ -1,71 +1,101 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
+#ifndef BDSMATERIALS_H
+#define BDSMATERIALS_H
 
-   Added Get method to enable access to materials by passing a string
-*/
-#ifndef BDSMaterials_h
-#define BDSMaterials_h 1
-
-#include <map>
 #include <list>
+#include <map>
+#include <string>
 
 #include "globals.hh"
 #include "G4Material.hh"
-#include "G4NistManager.hh"
+
+class G4MaterialPropertiesTable;
+
+/**
+ * @brief A class for all material definitions known to BDSIM.
+ * Additional materials can be added in the parser as well.
+ */
 
 class BDSMaterials
 {
 public:
 
   static BDSMaterials* Instance();
-  ~BDSMaterials(); //SPM
+  ~BDSMaterials(); 
 
   /// converts parser material list
-  void PrepareRequiredMaterials();
+  void PrepareRequiredMaterials(G4bool verbose = false);
 
-  void AddMaterial(G4Material* aMaterial,G4String aName); //SPM
-  void AddMaterial(G4String aName, G4double itsZ, G4double itsA, G4double itsDensity); //SPM
+  /// Add G4Material
+  void AddMaterial(G4Material* aMaterial,G4String aName);
+  /** Add materials
+      @param[in] Z        atomic number
+      @param[in] A        mole mass in g/mole
+      @param[in] density  in g/cm3
+      @param[in] state    solid/gas
+      @param[in] temp     in kelvin
+      @param[in] pressure in atm
+  */
+  void AddMaterial(G4String aName,
+		   G4double Z,
+		   G4double A,
+		   G4double density,
+		   G4State  state, 
+		   G4double temp, 
+		   G4double pressure);
 
-  template <typename Type> void AddMaterial(
-			G4String aName, 
-			G4double itsDensity, 
-			G4State  itsState, 
-			G4double itsTemp, 
-			G4double itsPressure,
-			std::list<const char*> itsComponents,
-			std::list<Type> itsComponentsFractions);
+  /** Add materials
+      @param[in] density  in g/cm3
+      @param[in] state    solid/gas
+      @param[in] temp     in kelvin
+      @param[in] pressure in atm
+  */
+  template <typename Type>
+  void AddMaterial(G4String aName, 
+		   G4double density, 
+		   G4State  state, 
+		   G4double temp, 
+		   G4double pressure,
+		   std::list<G4String> components,
+		   std::list<Type> componentsFractions);
 
-  void AddElement(G4Element* aElement,G4String aName); //SPM
-  void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA); //SPM
+  void AddElement(G4Element* aElement,G4String aName);
+  void AddElement(G4String aName, G4String aSymbol, G4double itsZ, G4double itsA);
+  
+  /// output available materials
+  void ListMaterials();
 
-  static void ListMaterials();
-
-  G4Material* GetMaterial(G4String aMaterial); //SPM
-  G4Element*  GetElement(G4String aSymbol); //SPM
-  G4Element* GetElement(const char* aSymbol);
+  G4Material* GetMaterial(G4String aMaterial); 
+  G4Element*  GetElement(G4String aSymbol); 
 
   G4bool CheckMaterial(G4String aMaterial); 
   G4bool CheckElement(G4String aSymbol); 
 
 protected:
   BDSMaterials();
-  std::map<G4String,G4Material*> materials; //SPM
-  std::map<G4String,G4Element*>  elements; //SPM
+  // map of materials, convention name lowercase
+  std::map<G4String,G4Material*> materials; 
+  std::map<G4String,G4Element*>  elements; 
 private:
-  void Initialise(); //SPM
+  void Initialise(); 
 
   static BDSMaterials* _instance;
-  G4MaterialPropertiesTable* airMaterialPropertiesTable;
-  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable;
-  G4MaterialPropertiesTable* fsMaterialPropertiesTable;
-  G4MaterialPropertiesTable* petMaterialPropertiesTable;
-  G4MaterialPropertiesTable* vacMaterialPropertiesTable;
-  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable;
-  G4MaterialPropertiesTable* mpt_YAG;
-  G4MaterialPropertiesTable* ups923a_mt;
-  G4MaterialPropertiesTable* pet_opaqueMaterialPropertiesTable;
+  ///@{ Material tables
+  G4MaterialPropertiesTable* airMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* celluloseMaterialPropertiesTable = nullptr;
+  G4MaterialPropertiesTable* fsMaterialPropertiesTable        = nullptr;
+  G4MaterialPropertiesTable* nbk7MaterialPropertiesTable      = nullptr;
+  G4MaterialPropertiesTable* mptLanex                         = nullptr;
+  G4MaterialPropertiesTable* mptLanex2                        = nullptr;
+  G4MaterialPropertiesTable* mptGOSLanex                      = nullptr;
+  G4MaterialPropertiesTable* mptGOSLanexRi1                   = nullptr;
+  G4MaterialPropertiesTable* mptMedex                         = nullptr;
+  G4MaterialPropertiesTable* mptPETLanex                      = nullptr;
+  G4MaterialPropertiesTable* mpt_YAG                          = nullptr;
+  G4MaterialPropertiesTable* petMaterialPropertiesTable       = nullptr;
+  G4MaterialPropertiesTable* pet_opaqueMaterialPropertiesTable= nullptr;
+  G4MaterialPropertiesTable* ups923a_mt                       = nullptr;
+  G4MaterialPropertiesTable* vacMaterialPropertiesTable       = nullptr;
+  ///@}
 };
 
 #endif

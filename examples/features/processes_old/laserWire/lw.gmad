@@ -1,0 +1,28 @@
+option, beampipeRadius = 3.8 * cm,
+        beampipeThickness = 0.1 * cm;
+
+laser1 : laser, l=10*cm,
+		x=1, y=0, z=0, ! set direction of laser to {1,0,0} wrt beam axis
+		waveLength=532e-9*m; ! set wavelength of laser to 532nm
+
+!		spotsize=1e-6*m, intensity=10e6, position={0,0,0}; ! not yet implemented
+
+d1: drift,l=0.2*cm;
+
+l1: line = (d1,laser1,d1);
+
+use, l1;
+
+option, ngenerate=100,
+	physicsList="lw";
+
+beam,  particle="e-",
+       energy=250,
+       distrType="gauss",
+       sigmaE=1e-4,
+       sigmaX=0.00001,
+       sigmaXp=0.00001,
+       sigmaY=0.000001,
+       sigmaYp=0.00005;
+
+

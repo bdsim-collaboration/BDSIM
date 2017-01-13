@@ -1,0 +1,6 @@
+beam,  particle="e-",
+       energy=1.0 * GeV,
+       distrType="ring",
+       Rmin=0.2*mm,
+       Rmax=1*mm,
+       sigmaE=1e-5;

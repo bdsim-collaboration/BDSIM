@@ -1,173 +1,130 @@
-// This code implementation is the intellectual property of
-// the GEANT4 collaboration.
-//
-// By copying, distributing or modifying the Program (or any work
-// based on the Program) you indicate your acceptance of this statement,
-// and all its terms.
-//
-// $Id: BDSVisManager.cc,v 1.3 2007/10/05 11:40:26 malton Exp $
-// GEANT4 tag $Name:  $
-//
-// 
-// John Allison 24th January 1998.
+#include "BDSVisManager.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+#include "G4UIterminal.hh"
+#ifdef G4UI_USE_TCSH
+#include "G4UItcsh.hh"
+#endif
 
 #ifdef G4VIS_USE
-
-#include "BDSVisManager.hh"
-#include "G4HepRepFile.hh"
-
-// Supported drivers...
-
-#ifdef G4VIS_USE_DAWN
-#include "G4FukuiRenderer.hh"
+#include "G4VisExecutive.hh"
 #endif
 
-#ifdef G4VIS_USE_DAWNFILE
-#include "G4DAWNFILE.hh"
+#ifdef G4UI_USE
+#ifdef G4VIS_USE
+#include "G4UImanager.hh"        // G4 session managers
+#endif
+#include "G4UIExecutive.hh"
 #endif
 
-#ifdef G4VIS_USE_OPACS
-#include "G4Wo.hh"
-#include "G4Xo.hh"
+#include "G4TrajectoryDrawByCharge.hh"
+#include "G4Version.hh"
+
+#include "BDSDebug.hh"
+#include "BDSGlobalConstants.hh"
+#include "BDSUtilities.hh"
+
+BDSVisManager::BDSVisManager()
+{;}
+
+void BDSVisManager::StartSession(G4int argc, char** argv)
+{
+  G4UIsession* session=nullptr;
+#ifdef G4UI_USE_TCSH
+  session = new G4UIterminal(new G4UItcsh);
+#else
+  session = new G4UIterminal();
 #endif
 
-#ifdef G4VIS_USE_OPENGLX
-#include "G4OpenGLImmediateX.hh"
-#include "G4OpenGLStoredX.hh"
+#ifdef G4VIS_USE
+#ifdef BDSDEBUG 
+  G4cout<< __METHOD_NAME__ << "Initializing Visualisation Manager"<<G4endl;
 #endif
-
-#ifdef G4VIS_USE_OPENGLWIN32
-#include "G4OpenGLImmediateWin32.hh"
-#include "G4OpenGLStoredWin32.hh"
-#endif
-
-#ifdef G4VIS_USE_OPENGLQT
-#include "G4OpenGLImmediateQt.hh"
-#include "G4OpenGLStoredQt.hh"
-#endif
-
-#ifdef G4VIS_USE_OPENGLXM
-#include "G4OpenGLImmediateXm.hh"
-#include "G4OpenGLStoredXm.hh"
-#endif
-
-#ifdef G4VIS_USE_OIX
-#include "G4OpenInventorX.hh"
-#endif
-
-#ifdef G4VIS_USE_OIWIN32
-#include "G4OpenInventorWin32.hh"
-#endif
-
-#ifdef G4VIS_USE_VRML
-#include "G4VRML1.hh"
-#include "G4VRML2.hh"
-#endif
-
-#ifdef G4VIS_USE_VRMLFILE
-#include "G4VRML1File.hh"
-#include "G4VRML2File.hh"
-#endif
-
-#ifdef G4VIS_USE_RAYTRACER
-#include "G4RayTracer.hh"
-#endif
-
-#ifdef G4VIS_USE_RAYTRACERX
-#include "G4RayTracerX.hh"
-#endif
-
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-BDSVisManager::BDSVisManager () {}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-void BDSVisManager::RegisterGraphicsSystems () {
-
-  RegisterGraphicsSystem (new G4HepRepFile);
-
-
-#ifdef G4VIS_USE_DAWN
-  RegisterGraphicsSystem (new G4FukuiRenderer);
-#endif
-
-#ifdef G4VIS_USE_DAWNFILE
-  RegisterGraphicsSystem (new G4DAWNFILE);
-#endif
-
-#ifdef G4VIS_USE_OPACS
-  RegisterGraphicsSystem (new G4Wo);
-  RegisterGraphicsSystem (new G4Xo);
-#endif
-
- 
-#ifdef G4VIS_USE_OPENGLX
-  RegisterGraphicsSystem (new G4OpenGLImmediateX);
-  RegisterGraphicsSystem (new G4OpenGLStoredX);
+  // Initialize visualisation
+  G4VisManager* visManager = new G4VisExecutive;
+  // G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
+  // G4VisManager* visManager = new G4VisExecutive("Quiet");
+  visManager->Initialize();
+      
+  G4TrajectoryDrawByCharge* trajModel1 = new G4TrajectoryDrawByCharge("trajModel1");
+  visManager->RegisterModel(trajModel1);
+  visManager->SelectTrajectoryModel(trajModel1->Name());
 #endif
  
+#ifdef G4UI_USE
+  G4UIExecutive* session2 = new G4UIExecutive(argc, argv);
+#ifdef G4VIS_USE
 
-#ifdef G4VIS_USE_OPENGLWIN32
-  RegisterGraphicsSystem (new G4OpenGLImmediateWin32);
-  RegisterGraphicsSystem (new G4OpenGLStoredWin32);
-#endif
+  std::string bdsimPath = BDS::GetBDSIMExecPath();
+  // difference between local build and install build:
+  std::string visPath;
+  std::string localPath = bdsimPath + "vis/vis.mac";
+  std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
+      
+  if (FILE *file = fopen(localPath.c_str(), "r"))
+    {
+      fclose(file);
+      visPath = bdsimPath + "vis/";
+    }
+  else if (FILE *file = fopen(installPath.c_str(), "r"))
+    {
+      fclose(file);
+      visPath = bdsimPath + "../share/BDSIM/vis/";
+    }
+  else
+    {G4cout << __METHOD_NAME__ << "ERROR: default visualisation file could not be found!" << G4endl;}
 
+  // check if visualisation file is present and readable
+  G4String visMacroName = BDSGlobalConstants::Instance()->VisMacroFileName();
+  bool useDefault = false;
+  // if not set use default visualisation file
+  if (visMacroName.empty())
+    {useDefault = true;}
+  G4String visMacroFilename = BDS::GetFullPath(visMacroName);
+  if (!useDefault)
+    {
+      FILE* file = nullptr;
+      // first relative to main path:
+      file = fopen(visMacroFilename.c_str(), "r");
+      if (file)
+	{fclose(file);}
+      else
+	{
+	  // if not present use a default one (OGLSQt or DAWNFILE)
+	  G4cout << __METHOD_NAME__ << "WARNING: visualisation file "
+		 << visMacroFilename <<  " file not present, using default!" << G4endl;
+	  useDefault = true;
+	}
+    }
+  if (useDefault)
+    {
 #ifdef G4VIS_USE_OPENGLQT
-  RegisterGraphicsSystem (new G4OpenGLImmediateQt);
-  RegisterGraphicsSystem (new G4OpenGLStoredQt);
+      visMacroFilename = visPath + "vis.mac";
+#else
+      visMacroFilename = visPath + "dawnfile.mac";
 #endif
-
-#ifdef G4VIS_USE_OPENGLXM
-  RegisterGraphicsSystem (new G4OpenGLImmediateXm);
-  RegisterGraphicsSystem (new G4OpenGLStoredXm);
+    }
+  // execute visualisation file
+  G4UImanager* UIManager = G4UImanager::GetUIpointer();
+  UIManager->ApplyCommand("/control/execute " + visMacroFilename);
+  
+  // add default gui
+  if (session2->IsGUI())
+    {
+#if G4VERSION_NUMBER < 1030
+      // Add icons
+      std::string iconMacroFilename = visPath + "icons.mac";
+      UIManager->ApplyCommand("/control/execute " + iconMacroFilename);
 #endif
-
-#ifdef G4VIS_USE_OIX
-  RegisterGraphicsSystem (new G4OpenInventorX);
+      // add menus
+      std::string guiMacroFilename  = visPath + "gui.mac";
+      UIManager->ApplyCommand("/control/execute " + guiMacroFilename);
+      // add run icon:
+      std::string runButtonFilename = visPath + "run.png";
+      UIManager->ApplyCommand("/gui/addIcon \"Run beam on\" user_icon \"/run/beamOn 1\" " + runButtonFilename);
+    }
 #endif
-
-#ifdef G4VIS_USE_OIWIN32
-  RegisterGraphicsSystem (new G4OpenInventorWin32);
+  session2->SessionStart();
+  delete session2;
 #endif
-
-#ifdef G4VIS_USE_VRML
-  RegisterGraphicsSystem (new G4VRML1);
-  RegisterGraphicsSystem (new G4VRML2);
-#endif
-
-#ifdef G4VIS_USE_VRMLFILE
-  RegisterGraphicsSystem (new G4VRML1File);
-  RegisterGraphicsSystem (new G4VRML2File);
-#endif
-
-#ifdef G4VIS_USE_RAYTRACER
-  RegisterGraphicsSystem (new G4RayTracer);
-#endif
-
-#ifdef G4VIS_USE_RAYTRACERX
-  RegisterGraphicsSystem (new G4RayTracerX);
-#endif
-
-
-// Duplicate printout
-//  if (fVerbose > 0) {
-//    G4cout <<
-//      "\nYou have successfully chosen to use the following graphics systems."
-//	 << G4endl;
-//    PrintAvailableGraphicsSystems ();
-//  }
+  delete session;
 }
-
-#endif
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-void
-BDSVisManager::RegisterModelFactories() {}
-
-BDSVisManager::~BDSVisManager(){}

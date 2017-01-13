@@ -1,0 +1,14 @@
+option, beampipeRadius = 8*mm,
+        outerDiameter = 0.5*m,
+        beampipeThickness = 0.2*mm, 
+	prodCutPhotons   = 10*m,
+	prodCutElectrons = 10*m,
+	prodCutPositrons = 10*m,
+	checkOverlaps=1,
+	magnetGeometryType="cylindrical",
+	ngenerate=1e3,
+        physicsList="em em_extra hadronic_elastic QGSP_BERT muon";
+
+!        annihiToMuFe=1e1,
+!        gammaToMuFe=1e1,
+!        eeToHadronsFe=1e8,

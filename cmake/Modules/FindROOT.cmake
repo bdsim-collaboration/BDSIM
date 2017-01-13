@@ -4,22 +4,29 @@
 # ROOT_FOUND          If the ROOT is found
 # ROOT_INCLUDE_DIR    PATH to the include directory
 # ROOT_LIBRARIES      Most common libraries
-# ROOT_LIBRARY_DIR    PATH to the library directory 
+# ROOT_LIBRARY_DIR    PATH to the library directory
+# ROOT_EXECUTABLE     executable for root
 
 MESSAGE(STATUS "Looking for ROOT...")
 
-if(EXISTS "${ROOTSYS}/bin/root-config")
+# look for root-config
+if(ROOT_CONFIG_EXECUTABLE AND EXISTS ${ROOT_CONFIG_EXECUTABLE})
+  # do nothing
+elseif(EXISTS "${ROOTSYS}/bin/root-config")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config")
 elseif(EXISTS "${ROOTSYS}/bin/root-config5")
   set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config5")
+elseif(EXISTS "${ROOTSYS}/bin/root-config6")
+  set(ROOT_CONFIG_EXECUTABLE "${ROOTSYS}/bin/root-config6")
 else()
   if($ENV{VERBOSE})
-       message(STATUS "root-config not found in ROOTSYS, trying default PATHS")
+       message(STATUS "root-config not found in ROOTSYS ${ROOTSYS}, trying default PATHS")
   endif()
-  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5)
+  find_program(ROOT_CONFIG_EXECUTABLE NAMES root-config root-config5 root-config6)
 endif()
 
-if(NOT ROOT_CONFIG_EXECUTABLE)
+if(NOT ROOT_CONFIG_EXECUTABLE OR
+    NOT EXISTS ${ROOT_CONFIG_EXECUTABLE}) # for broken symlinks
   set(ROOT_FOUND FALSE)
   MESSAGE(STATUS "root-config not found in PATH")
 
@@ -34,6 +41,8 @@ else()
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --prefix 
     OUTPUT_VARIABLE ROOTSYS 
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  set(ROOT_EXECUTABLE ${ROOTSYS}/bin/root)
 
   execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --version 
@@ -51,34 +60,21 @@ else()
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
   execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --evelibs
+    OUTPUT_VARIABLE ROOT_EVELIBRARIES
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  # Hack to remove c++11 lib in favour of the one provided already
+  if (NOT "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+    SET(C11 "-stdlib=libc++")
+    STRING(REPLACE ${C11} "" ROOT_LIBRARIES_TEMP ${ROOT_LIBRARIES})
+    SET(ROOT_LIBRARIES ${ROOT_LIBRARIES_TEMP})
+  endif()
+
+  execute_process(
     COMMAND ${ROOT_CONFIG_EXECUTABLE} --libdir
     OUTPUT_VARIABLE ROOT_LIBRARY_DIR
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-  # hack to get correct libraries
-
-  if (APPLE)
-     file(GLOB ROOT_LIBRARIES_GLOB ${ROOT_LIBRARY_DIR}/lib*.dylib)
-  else()
-     set(ROOT_LIBRARY_NAMES libCore.so libCint.so libRIO.so libNet.so libHist.so libGraf.so libGraf3d.so libGpad.so libTree.so libRint.so libPostscript.so libMatrix.so libPhysics.so libMathCore.so libThread.so)
-     foreach (library_temp ${ROOT_LIBRARY_NAMES})
-	unset(ROOT_LIBRARY_temp)
-     	FIND_LIBRARY(ROOT_LIBRARY_temp NAMES ${library_temp} PATHS ${ROOT_LIBRARY_DIR})
-	# prevent trailing space character
-        if (ROOT_LIBRARIES_GLOB)
-           set(ROOT_LIBRARIES_GLOB "${ROOT_LIBRARIES_GLOB};${ROOT_LIBRARY_temp}")
-        else()
-           set(ROOT_LIBRARIES_GLOB "${ROOT_LIBRARY_temp}")
-     	endif()
-     	#message(STATUS "library_temp: ${library_temp} ${ROOT_LIBRARY_temp}")
-     endforeach()
-  endif()
-  # remove from CACHE
-  unset(ROOT_LIBRARY_temp CACHE)
-  if($ENV{VERBOSE})
-    message(STATUS "ROOT_LIBRARY_NAMES: ${ROOT_LIBRARY_NAMES}")
-    message(STATUS "ROOT_LIBRARIES_GLOB: ${ROOT_LIBRARIES_GLOB}")
-  endif()
 
   # Make variables changeble to the advanced user
   mark_as_advanced(ROOT_CONFIG_EXECUTABLE)
@@ -92,9 +88,17 @@ else()
 endif()
 
 #include(CMakeMacroParseArguments)
-find_program(ROOTCINT_EXECUTABLE rootcint PATHS $ENV{ROOTSYS}/bin)
-find_program(GENREFLEX_EXECUTABLE genreflex PATHS $ENV{ROOTSYS}/bin)
+find_program(ROOTCINT_EXECUTABLE rootcint rootcint5 rootcint6 HINTS ${ROOTSYS}/bin)
+if(NOT ROOTCINT_EXECUTABLE OR
+    NOT EXISTS ${ROOTCINT_EXECUTABLE}) # for broken symlinks
+  MESSAGE(FATAL_ERROR "rootcint not found")
+endif()
+
+find_program(GENREFLEX_EXECUTABLE genreflex PATHS ${ROOTSYS}/bin)
 find_package(GCCXML)
+# set as advanced variable
+mark_as_advanced(FORCE ROOTCINT_EXECUTABLE)
+mark_as_advanced(FORCE GENREFLEX_EXECUTABLE)
 
 #----------------------------------------------------------------------------
 # function ROOT_GENERATE_DICTIONARY( dictionary   

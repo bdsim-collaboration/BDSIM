@@ -1,0 +1,3 @@
+el: quadrupole, l=0.5*m;
+include size_variation.gmad;
+option, magnetGeometryType="polesfacetcrop";

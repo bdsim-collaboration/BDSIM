@@ -440,16 +440,16 @@
   bpm2b  : marker ;
   gv3    : marker ;
   rfbpm1 : marker ;
-!  cbpm1s : marker, type="slac" ;
-!  cbpm2s : marker, type="slac" ;
-!  cbpm3s : marker, type="slac" ;
-!  rfbpm2 : marker ;
-!  fkick  : marker, type="feather" ;
-!  fbpm   : marker, type="feather" ;
-!  odr    : marker ;
-!  cbpm1k : marker, type="kek" ;
-!  cbpm2k : marker, type="kek" ;
-!  cbpm3k : marker, type="kek" ;
+  cbpm1s : marker ; !, type="slac" ;
+  cbpm2s : marker ; !, type="slac" ;
+  cbpm3s : marker ; !, type="slac" ;
+  rfbpm2 : marker ;
+  fkick  : marker ; !, type="feather" ;
+  fbpm   : marker ; !, type="feather" ;
+  odr    : marker ;
+  cbpm1k : marker ; !, type="kek" ;
+  cbpm2k : marker ; !, type="kek" ;
+  cbpm3k : marker ; !, type="kek" ;
 
 startl: marker;
 endl : marker;
@@ -534,7 +534,7 @@ endl : marker;
                zv9x,  l519,  lqk4x, l520,  lqd8x, l521,  ml11x, l522,  mw2x,
                l523,  zh6x,  l524,  lqf7x, l525,  ml12x, l526,  mw3x,  l527,
                mt1x,  l528,  mc3x,  l529,  zv10x, l530,  lqd9x, l531,  ml13x,
-               l532,  mw4x,  l533a, ipff ) ;
+               l532,  mw4x,  l533a ) ;
   ex3 : line=( l533b, ip3,   lbh5x, l601,  ml14x, l602,  iex3 ) ;
   ext : line=( startl, ex0,   ex1,   ex2,   ex3, endl ) ;
 

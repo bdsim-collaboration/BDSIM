@@ -1,54 +1,49 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-   Modified 22.03.05 by J.C.Carter, Royal Holloway, Univ. of London.
-   Added GABs SynchGen code
-*/
-
-
-#ifndef BDSPrimaryGeneratorAction_h
-#define BDSPrimaryGeneratorAction_h 
+#ifndef BDSPRIMARYGENERATORACTION_H
+#define BDSPRIMARYGENERATORACTION_H 
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "globals.hh"
-//#include <fstream>
-//#include "BDSSynchrotronRadiation.hh"
-//#include "BDSSamplerHit.hh"
 
-class G4ParticleGun;
+class BDSBunch;
+class BDSOutputLoader;
 class G4Event;
+class G4ParticleGun;
 
-class BDSPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+/**
+ * @brief Generates primary particle vertices using BDSBunch.
+ *
+ */
+
+class BDSPrimaryGeneratorAction: public G4VUserPrimaryGeneratorAction
 {
 public:
-  BDSPrimaryGeneratorAction();    
-  ~BDSPrimaryGeneratorAction();
+  BDSPrimaryGeneratorAction(BDSBunch*);    
+  virtual ~BDSPrimaryGeneratorAction();
   
-public:
   virtual void GeneratePrimaries(G4Event*);
   
 private:
-  G4ParticleGun*              particleGun;	  //pointer a to G4 service class
-  
-  G4double weight;
- 
-  // beam data:
-  //  G4double beta_x,sig_z,KineticEnergy,
-  // gamma,beta_y,sig_dp,emit_x,emit_y,charge;
+  /// Pointer a to G4 service class.
+  G4ParticleGun*   particleGun;	  
+  /// Weight of the primaries (currently always 1 and not possible to change it).
+  G4double         weight;
+  /// Pointer to the particle distribution generator.
+  BDSBunch*        bdsBunch;
 
-  //  G4double sig_x,sig_xp,sig_y,sig_yp,sig_t;
-  
-  //  std::ifstream InputBunchFile;
-  //std::ifstream ExtractBunchFile;
+  /// Cache of whether to write seed state as ASCII per event.
+  G4bool writeASCIISeedState;
 
-  // G4double logXfactor;
-  // G4double logYfactor;
+  /// Optional output handler for restoring seed state.
+  BDSOutputLoader* recreateFile;
 
-  // BDSSynchrotronRadiation* itsBDSSynchrotronRadiation;
+  /// Whether to load seed state at start of event from rootevent file.
+  G4bool recreate;
 
-  //  BDSSamplerHitsCollection *itsSamplerHitsCollection;
+  /// The offset in the file to read events from when setting the seed.
+  G4int  eventOffset;
+
+  /// Whether to use the ascii seed state each time.
+  G4bool useASCIISeedState;
 };
 
 #endif

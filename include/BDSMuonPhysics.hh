@@ -1,28 +1,29 @@
-#ifndef __BDS_MUON_PHYSICS_HH_
-#define __BDS_MUON_PHYSICS_HH_
+#ifndef BDSMUONPHYSICS_H
+#define BDSMUONPHYSICS_H
 
+#include "BDSDebug.hh"
 
-#include "BDSXSBiasPhysics.hh"
-#include "G4Gamma.hh"
-#include "G4Electron.hh"
-#include "G4Positron.hh"
-#include "G4MuonPlus.hh"
-#include "G4MuonMinus.hh"
-#include "BDSVProcess.hh"
-#include "G4GammaConversionToMuons.hh"
-#include "G4AnnihiToMuPair.hh"
-#include "G4eeToHadrons.hh"
+#include "G4VPhysicsConstructor.hh"
 
-class BDSMuonPhysics: public BDSXSBiasPhysics{
+/**
+ * @brief High energy muon processes.
+ *
+ */
+
+class BDSMuonPhysics: public G4VPhysicsConstructor
+{
 public:
   BDSMuonPhysics();
-  ~BDSMuonPhysics();
-  void ConstructProcess();
-  void ConstructParticle();
+  virtual ~BDSMuonPhysics();
+  virtual void ConstructProcess();
+  virtual void ConstructParticle();
   
 private:
-  BDSXSBias* WrapXSBias(G4GammaConversionToMuons* proc, G4double efactor);
-  BDSXSBias* WrapXSBias(G4AnnihiToMuPair* proc, G4double efactor);
-  BDSXSBias* WrapXSBias(G4eeToHadrons* proc, G4double efactor);
+  G4bool verbose;
+#ifdef BDSDEBUG 
+  bool debug = true;
+#else 
+  bool debug = false;
+#endif
 };
 #endif

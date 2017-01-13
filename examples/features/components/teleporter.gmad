@@ -1,0 +1,16 @@
+d1: drift, l=20*m;
+sb1 : sbend, l=25*m, angle = 2*pi/10;
+! make drift10 slightly shorter so teleporter can do something
+d10: drift, l=19.9*m;
+
+lat : line = (sb1,d1,sb1,d1,sb1,d1,sb1,d1,sb1,d1,sb1,d1,sb1,d1,sb1,d1,sb1,d1,sb1,d10);
+
+include optionsTest.gmad;
+
+! reduce number of events (for coverage mode)
+option, ngenerate=1;
+! at least two turns to test teleporter
+option, nturns=2;
+
+! don't check overlaps (takes too long)
+option, checkOverlaps=0;

@@ -1,0 +1,3 @@
+! standard options for runing bdsim
+
+option, stopTracks = 1;

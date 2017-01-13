@@ -1,56 +1,25 @@
-// This code implementation is the intellectual property of
-// the GEANT4 collaboration.
-//
-// By copying, distributing or modifying the Program (or any work
-// based on the Program) you indicate your acceptance of this statement,
-// and all its terms.
-//
-// $Id: BDSVisManager.hh,v 1.3 2007/10/05 11:40:26 malton Exp $
-// GEANT4 tag $Name:  $
-//
-// 
+#ifndef BDSVISMANAGER_H
+#define BDSVISMANAGER_H 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
+#include "G4Types.hh"
 
-// Example Visualization Manager implementing virtual function
-//   RegisterGraphicsSystems.  Exploits C-pre-processor variables
-//   G4VIS_USE_DAWN, etc., which are set by the GNUmakefiles if
-//   environment variables of the same name are set.
+class G4VisManager;
 
-// So all you have to do is set environment variables and compile and
-//   instantiate this in your main().
+/**
+ * @brief The BDS Visualisation Manager
+ * 
+ * This class manages the visualisation.
+ * Chosen not to inherit from G4Manager, but instead a wrapper around it.
+ */
 
-// Alternatively, you can implement an empty function here and just
-//   register the systems you want in your main(), e.g.:
-//   G4VisManager* myVisManager = new MyVisManager;
-//   myVisManager -> RegisterGraphicsSystem (new MyGraphicsSystem);
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-#ifndef BDSVisManager_h
-#define BDSVisManager_h 1
-
-#ifdef G4VIS_USE
-
-#include "G4VisManager.hh"
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
-
-class BDSVisManager: public G4VisManager {
-
+class BDSVisManager
+{
 public:
+  BDSVisManager();
 
-  BDSVisManager ();
-  virtual ~BDSVisManager();
-
-private:
-
-  void RegisterGraphicsSystems();
-  void RegisterModelFactories();
-
+  /// start interactive mode
+  void StartSession(G4int argc, char** argv);
 };
 
 #endif
 
-#endif

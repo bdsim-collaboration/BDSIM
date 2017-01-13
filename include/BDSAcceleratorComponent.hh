@@ -1,578 +1,241 @@
-//  
-//   BDSIM, (C) 2001-2006 
-//   
-//   version 0.3
-//  
-//
-//
-//
-//
-//   Generic accelerator component class
-//
-//
-//   History
-//
-//     24 Nov 2006 by Agapov,  v.0.3
-//     x  x   2002 by Blair
-//
-//
+#ifndef BDSACCELERATORCOMPONENT_H
+#define BDSACCELERATORCOMPONENT_H
 
+#include "globals.hh"          // geant4 globals / types
 
+#include "BDSGeometryComponent.hh"
 
-
-#ifndef __BDSACCELERATORCOMPONENT_H
-#define __BDSACCELERATORCOMPONENT_H
-
-#include "BDSGlobalConstants.hh" 
-#include "BDSMagField.hh"
-#include "G4Mag_UsualEqRhs.hh"
-#include "G4FieldManager.hh"
-#include "G4ChordFinder.hh"
-
-#include <cstring>
 #include <list>
-#include <vector> 
-#include "boost/lexical_cast.hpp"
-#include "G4LogicalVolume.hh"
-#include "G4VisAttributes.hh"
-#include "globals.hh"
-//#include "BDSBeamPipe.hh"
-#include "BDSEnergyCounterSD.hh"
-#include "BDSTunnel.hh"
-#include "BDSGeometry.hh"
+#include <string>
+#include <vector>
 
-#include "G4MagneticField.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4FieldManager.hh"
-#include "G4UserLimits.hh"
-#include "G4CSGSolid.hh"
-#include "G4Tubs.hh"
+class BDSBeamPipeInfo;
+class BDSFieldInfo;
+class BDSSimpleComponent;
+class G4LogicalVolume;
 
+/**
+ * @brief Abstract class that represents a component of an accelerator.
+ *
+ * It must be constructed with a name, length (arc), angle it
+ * induces (x,z plane in the local coordinates of the component) in 
+ * the reference trajectory and a string
+ * representing its type. The class has no concept of its position
+ * in the beamline or in global coordinates. This information is contained
+ * in an instance of BDSBeamlineElement.
+ * 
+ * This is an abstract class as the derived class must provide the 
+ * implementation of BuildContainerLogicalVolume() that constructs
+ * the basic container. This is the minimum required so that an instance
+ * of the derived class will operate with the rest of the placement machinery in
+ * BDSIM. Typically, a derived class overrides the Build() function as well.
+ * 
+ * The class provides deferred construction through the Initialise() function
+ * to allow two stage construction if it's required.
+ * 
+ * Note, the geometry of any derived component should be nominally constructed
+ * along local z axis (beam direction) and x,y are transverse dimensions in a 
+ * right-handed coordinate system.
+ * 
+ * This was significantly reworked in version 0.7 from the original. The indicator
+ * author is the maintainer of the new version.
+ * 
+ * @author Laurie Nevay
+ */
 
-class BDSAcceleratorComponent 
+class BDSAcceleratorComponent: public BDSGeometryComponent
 {
 public:
-  //destructor
-  virtual ~BDSAcceleratorComponent ();
-
-  //name
-  const G4String GetName () const;
-
-  //type 
-  const G4String GetType () const;
-
-  /// 0 = no precision region, 1 = precision region 1, 2 = precision region 2.
-  G4int GetPrecisionRegion() const;
-
-  // angle - for bends etc.
-  G4double GetAngle ();
-
-  // geometry length of the component.
-  virtual G4double GetLength ();
-  virtual G4double GetZLength ();
-  virtual G4double GetXLength ();
-  virtual G4double GetYLength ();
-  virtual G4double GetArcLength ();
-
-  G4double GetPhiAngleIn (); //polar angle in
-  G4double GetPhiAngleOut (); //polar angle out
-
-  G4double GetPhi (); //polar angle with respect to original frame
-  G4double GetTheta (); //azimuthal angle with respect to original frame
-  G4double GetPsi (); //azimuthal angle with respect to original frame
-
-  G4double GetXOffset();  // frame offset 
-  G4double GetYOffset();
-  G4double GetZOffset();
-
-  G4double GetAperX();
-  G4double GetAperY();
-
-  G4double GetK1();
-  G4double GetK2();
-  G4double GetK3();
-
-  G4RotationMatrix* GetRotation();
-  G4ThreeVector GetPosition();
+  /// Constructor - this is the minimum information needed to create a
+  /// BDSAcceleratorComponent instance. Methods in the class will allow
+  /// the derived class to associate the appropriate volumes to the members
+  /// of BDSGeometryComponent - the base class. The developer of a derived
+  /// class should take care to set all members of BDSGeometryComponent in the
+  /// derived class, including extents.
+  /// Note, this class has arc length and chord length which are initially set
+  /// to be the same, unless angle is != 0 in which case, the chord length is
+  /// calculated from arc length. An associated beam pipe info instance can be
+  /// attached if the component has a beam pipe. The input and output face normals
+  /// should also be specified if non-zero. Additionally, a field info instance
+  /// that represents a 'global' field for this component may be specified.
+  BDSAcceleratorComponent(G4String         name,
+			  G4double         arcLength,
+			  G4double         angle,
+			  G4String         type,
+			  BDSBeamPipeInfo* beamPipeInfo    = nullptr,
+			  G4ThreeVector inputFaceNormalIn  = G4ThreeVector(0,0,-1),
+			  G4ThreeVector outputFaceNormalIn = G4ThreeVector(0,0, 1),
+			  BDSFieldInfo* fieldInfoIn        = nullptr);
   
-  G4double GetTilt();  // component tilt 
-  
-  G4LogicalVolume* GetMarkerLogicalVolume() const;
+  virtual ~BDSAcceleratorComponent();
 
-  BDSEnergyCounterSD* GetBDSEnergyCounter() const;
-  
-  void SetBDSEnergyCounter( BDSEnergyCounterSD* anBDSEnergyCounter);
-  G4int GetCopyNumber() const;
-  G4double GetSPos() const;
-  void SetSPos(G4double spos);
-  void AddSensitiveVolume(G4LogicalVolume* aLogVol);
-  std::vector<G4LogicalVolume*> GetSensitiveVolumes();
-  void SetGFlashVolumes(G4LogicalVolume* aLogVol);
-  std::vector<G4LogicalVolume*> GetGFlashVolumes();
-  void SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol);
-  void SetMultiplePhysicalVolumes(std::vector<G4VPhysicalVolume*> val);
-  std::vector<G4VPhysicalVolume*> GetMultiplePhysicalVolumes();
-  void SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol);
-  G4LogicalVolume* GetInnerMostLogicalVolume() const;
-  G4UserLimits* GetInnerBPUserLimits();
-  G4UserLimits* GetUserLimits();
-
-  //  void BuildOuterFieldManager();
-
-  // in case a mapped field is provided creates a field mesh in global coordinates
-  virtual void PrepareField(G4VPhysicalVolume *referenceVolume); 
-
-  // in case a component requires specific alignment (e.g. SQL/BDSElement)
-  virtual void AlignComponent(G4ThreeVector& TargetPos, 
-			      G4RotationMatrix *TargetRot,
-			      G4RotationMatrix& globalRotation,
-			      G4ThreeVector& rtot,
-			      G4ThreeVector& rlast,
-			      G4ThreeVector& localX,
-			      G4ThreeVector& localY,
-			      G4ThreeVector& localZ); 
-
-  
-  // get parameter value from the specification string
-
-  G4double getParameterValue(G4String spec, G4String name) const;
-  G4double getParameterValueDouble(G4String spec, G4String name) const;
-  G4String getParameterValueString(G4String spec, G4String name) const;
-  G4bool getParameterValueBool(G4String spec, G4String name) const;
-  G4int getParameterValueInt(G4String spec, G4String name) const;
-
-
-  /// BDSComponentFactory creates BDSAcceleratorComponents
-  friend class BDSComponentFactory;
-
-private:
-  /// private default constructor
-  BDSAcceleratorComponent();
-protected:
-  /// initialise method
-  /// checks if marker logical volume already exists and builds new one if not
-  // can't be in constructor as calls virtual methods
+  /// Two stage construction - first instantiate class, and then second, call this
+  /// method to run Build() which constructs geometry.  This allows common construction
+  /// tasks to be done in one place in BDSComponentFactory rather than pass as arguments
+  /// through the constructors of all derived classes. Also builds read out geometry.
   virtual void Initialise();
 
-  // field related objects, set by BuildBPFieldAndStepper or BuildBmapFieldAndStepper
-  G4MagIntegratorStepper* itsStepper;
-  BDSMagField* itsMagField;
-  G4Mag_UsualEqRhs* itsEqRhs;
-  G4String itsBmap;
-  G4double itsBmapZOffset;
-  G4double itsBmapXOffset;
-  G4ChordFinder* itsChordFinder;
-  BDSGeometry* _geom;
-  G4FieldManager* itsFieldMgr;
-
-
-  virtual void BuildFieldAndStepper(); 
-  virtual void BuildBPFieldAndStepper(); 
-  virtual void SetBPFieldMgr();
-  void BuildBmapFieldAndStepper();
-  /// build and set field manager and chord finder
-  void BuildFieldMgr();
-  void BuildFieldMgr(G4MagIntegratorStepper* aStepper,
-		       G4MagneticField* aField);
+  // Communal constructions tasks
   
+  /// @{ Copy the bias list to this element
+  virtual void SetBiasVacuumList(std::list<std::string> biasVacuumListIn)
+  {biasVacuumList = biasVacuumListIn;}
+  virtual void SetBiasMaterialList(std::list<std::string> biasMaterialListIn)
+  {biasMaterialList = biasMaterialListIn;}
+  /// @}
+  
+  /// Set the region name for this component.
+  virtual void SetRegion(G4String regionIn) {region = regionIn;}
 
-public:
-  BDSAcceleratorComponent (
-			  G4String& aName, 
-			  G4double aLength,
-			  G4double aBpRadius,
-			  G4double aXAper,
-			  G4double aYAper,
-                          std::list<G4double> blmLocZ, 
-			  std::list<G4double> blmLocTheta,
-                          G4String aTunnelMaterial = "",
-			  G4String aMaterial = "",
-			  G4double phi=0.,  // polar angle (used in hor. bends)
-			  G4double XOffset=0.,
-			  G4double YOffset=0.,
-			  G4double ZOffset=0.,
-			  G4double tunnelRadius=0.,
-			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-                          G4String aTunnelCavityMaterial = "Air",
-			  G4String bmap="",
-			  G4double bmapZOffset=0);
+  /// Set the field definition for the whole component.
+  void SetField(BDSFieldInfo* fieldInfoIn);
 
-  BDSAcceleratorComponent (
-			  G4String& aName, 
-			  G4double aLength,
-			  G4double aBpRadius,
-			  G4double aXAper,
-			  G4double aYAper,
-                          G4String aTunnelMaterial = "",
-			  G4String aMaterial = "",
-			  G4double phi=0.,  // polar angle (used in hor. bends)
-			  G4double XOffset=0.,
-			  G4double YOffset=0.,
-			  G4double ZOffset=0.,
-			  G4double tunnelRadius=0.,
-			  G4double tunnelOffsetX=BDSGlobalConstants::Instance()->GetTunnelOffsetX(),
-			  G4String aTunnelCavityMaterial = "Air",
-			  G4String bmap="",
-			  G4double bmapZOffset=0);
+  // Accessors
+  
+  /// The name of the component without modification
+  inline G4String GetName() const {return name;}
 
-  G4VisAttributes* GetVisAttributes()const; ///> get visual attributes
-  G4LogicalVolume* itsOuterLogicalVolume;
-  G4LogicalVolume* itsMarkerLogicalVolume;
+  /// @{ Access the length of the component. Note there is no z length - this is chord length.
+  /// Only chord OR arc makes it explicit.
+  virtual G4double GetArcLength()   const {return arcLength;} 
+  virtual G4double GetChordLength() const {return chordLength;}
+  /// @}
 
-  virtual void SetTunnel(BDSTunnel* val);
-  const BDSTunnel* GetTunnel();
+  /// Get the angle the component induces in the reference trajectory (rad). 
+  /// Note, this is 0 for h and v kickers.
+  inline G4double GetAngle() const {return angle;}
 
-private:
-  //
-  //    Geometry building
-  //
+  /// Get a string describing the type of the component
+  inline G4String GetType() const {return type;}
 
-  /// build marker logical volume
-  void BuildStraightMarkerSolid();
-  void BuildBendMarkerSolid();
-  /// set and return visual attributes
-  virtual void SetVisAttributes(); 
+  /// Get the region name for this component.
+  G4String GetRegion() const {return region;}
 
+  /// Access beam pipe information
+  inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
+  /// @{ Access face normal unit vector. This is w.r.t. the incoming / outgoing reference
+  /// trajectory and NOT the local geometry of the component. Ie for an SBend with no
+  /// pole face rotation this is incoming (0,0,-1). Does not account for tilt.
+  inline G4ThreeVector InputFaceNormal()  const {return inputFaceNormal;}
+  inline G4ThreeVector OutputFaceNormal() const {return outputFaceNormal;}
+  /// @}
+
+  /// Access the vacuum volume the main beam goes through in this component if any. Default is
+  /// nullptr.
+  inline G4LogicalVolume* GetAcceleratorVacuumLogicalVolume() const {return acceleratorVacuumLV;}
+
+  /// Increment (+1) the number of times this component has been copied.
+  inline void  IncrementCopyNumber() {copyNumber++;}
+
+  /// Get the number of times this component has been copied.
+  inline G4int GetCopyNumber() const {return copyNumber;}
+
+  /// @{ Access the bias list copied from parser
+  std::list<std::string> GetBiasVacuumList()   const {return biasVacuumList;}
+  std::list<std::string> GetBiasMaterialList() const {return biasMaterialList;}
+  /// @}
+  
+  /// Whether this component has an optional end piece that should be placed
+  /// independently or not depending on other items in the beamline.
+  BDSSimpleComponent* EndPieceBefore() const {return endPieceBefore;}
+  BDSSimpleComponent* EndPieceAfter()  const {return endPieceAfter;}
+
+  void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
+  void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
+
+  // Update the read out geometry volume given new face normals incase of a tilt.
+  void UpdateReadOutVolumeWithTilt(G4double tilt);
+
+  ///@{ This function should be revisited given recent changes (v0.7)
+  void SetGFlashVolumes(G4LogicalVolume* aLogVol)
+  {itsGFlashVolumes.push_back(aLogVol);}
+  std::vector<G4LogicalVolume*> GetGFlashVolumes() const
+  {return itsGFlashVolumes;}
+  ///@}
+  
 protected:
-  /// build logical volumes: marker, tunnel, field, blms etc.
+  /// Build the container only. Should be overridden by derived class to add more geometry
+  /// apart from the container volume. The overridden Build() function can however, call
+  /// make use of this function to call BuildContainerLogicalVolume() by calling
+  /// BDSAcceleratorComponent::Build() at the beginning.
   virtual void Build();
-  virtual void BuildMarkerLogicalVolume();
-  /// build tunnel
-  virtual void BuildTunnel();
-  /// build beam loss monitors
-  virtual void BuildBLMs();
 
-protected:
-  /// set methods, protected
-  void SetName(G4String aName);
-  void SetType(G4String aType);
+  /// Build the container solid and logical volume that all parts of the component will
+  /// contained within - must be provided by derived class.
+  virtual void BuildContainerLogicalVolume() = 0;
 
-  void SetPhi (G4double val);
-  void SetTheta(G4double val);
-  void SetPsi(G4double val);
-
-  void SetPrecisionRegion (G4int precisionRegionType);
-
-  ///Set is only for Outline readout purposes - doesn't change magnet strengths
-  void SetK1(G4double K1);
-  void SetK2(G4double K2);
-  void SetK3(G4double K3);
-
-  //Values related to BLM placement and geometry
-  G4double itsBlmLocationR;
-  //  G4double itsBlmRadius;
-
-  G4String itsName;
-  G4double itsLength;
-  G4double itsXLength;
-  G4double itsYLength;
-  G4double itsOuterR;
-  G4double itsBpRadius;
-  G4double itsXAper;
-  G4double itsYAper;
-  G4double itsXOffset;
-  G4double itsYOffset;
-  G4double itsZOffset;
-  G4double itsAngle;
-  G4String itsMaterial;
-  G4VisAttributes* itsVisAttributes;
-  std::list<G4double> itsBlmLocZ;
-  std::list<G4double> itsBlmLocTheta;
-  /// component type, same as from typestr from enums.cc
-  G4String itsType;
-  G4double itsTilt;
-  G4double itsPhiAngleIn;
-  G4double itsPhiAngleOut;
+  /// Assign the accelerator tracking volume - only callable by derived classes - ie not public.
+  /// This is just setting a reference to the accelerator volume and it is not deleted by
+  /// this class (BDSAcceleratorComponent) - therefore, the derived class should also deal with
+  /// memory management of this volume - whether this is by using the inherited
+  /// (from BDSGeometryComponent) RegisterLogicalVolume() or by manually deleting itself.
+  inline void SetAcceleratorVacuumLogicalVolume(G4LogicalVolume* accVacLVIn)
+  {acceleratorVacuumLV = accVacLVIn;}
   
-  G4double itsPhi;
-  G4double itsTheta;
-  G4double itsPsi;
-  G4double itsK1, itsK2, itsK3;
-  G4RotationMatrix* itsRotation; // rotation matrix (not used)
-  G4ThreeVector itsPosition;
-  //  BDSBeamPipe* itsBeamPipe;
-  G4MagIntegratorStepper*  itsOuterStepper;
-  /// generic user limits
-  G4UserLimits* itsUserLimits;
-  /// specific user limits
-  G4UserLimits* itsOuterUserLimits;
-  G4UserLimits* itsMarkerUserLimits;
-  G4UserLimits* itsInnerBeampipeUserLimits;
-  G4LogicalVolume* itsInnerMostLogicalVolume;
+  ///@{ Const protected member variable that may not be changed by derived classes
+  const G4String   name;
+  const G4double   arcLength;
+  const G4String   type;
+  ///@}
+  
+  ///@{ Protected member variable that can be modified by derived classes.
+  G4double         chordLength;
+  G4double         angle;
+  G4String         region;
+  BDSBeamPipeInfo* beamPipeInfo;
+  ///@}
 
-  G4int itsPrecisionRegion;
+  /// Useful variables often used in construction
+  static G4double    lengthSafety;
+  static G4Material* emptyMaterial;
+  static G4bool      checkOverlaps;
 
-  /// Marker solid
-  G4VSolid* itsMarkerSolidVolume;
+  /// The logical volume in this component that is the volume the beam passes through that
+  /// is typically vacuum. Discretised in this way for cuts / physics process to be assigned
+  /// differently from general component material.
+  G4LogicalVolume* acceleratorVacuumLV;
 
-  BDSTunnel* itsTunnel;
+  /// A larger length safety that can be used where tracking accuracy isn't required
+  /// or more tolerant geometry is required (1um).
+  static G4double const lengthSafetyLarge;
 
-  /// BLM logical volumes
-  G4LogicalVolume* itsBLMLogicalVolume;
-  G4LogicalVolume* itsBlmCaseLogicalVolume;
-  /// BLM physical volumes
-  std::vector<G4VPhysicalVolume*> itsBLMPhysiComp;
-
-
+  BDSSimpleComponent* endPieceBefore;
+  BDSSimpleComponent* endPieceAfter;
+  
 private:
-  /// assignment and copy constructor not implemented nor used
+  /// Private default constructor to force use of provided constructors, which
+  /// ensure an object meets the requirements for the rest of the construction
+  /// and placement machinery in BDSIM
+  BDSAcceleratorComponent();
+
+  /// Assignment and copy constructor not implemented nor used
   BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&);
   BDSAcceleratorComponent(BDSAcceleratorComponent&);
-  /// constructor initialisation
-  void ConstructorInit();
-  /// Calculate dimensions used for the marker volume etc.
 
+  /// Build readout geometry volume
+  G4LogicalVolume* BuildReadOutVolume(G4String name,
+				      G4double chordLength,
+				      G4double angle);
 
-  G4ThreeVector nullThreeVector;
-  G4VisAttributes* VisAtt;
-  G4VisAttributes* VisAtt1;
-  G4VisAttributes* VisAtt2;
-  G4Tubs* itsBLMSolid;
-  G4Tubs* itsBlmOuterSolid;
-  G4double itsSPos;
-  /// count of logical volumes shared with other instances; start at 0
-  G4int itsCopyNumber;
-  //  G4int itsCollectionID;
-  std::vector<G4LogicalVolume*> itsSensitiveVolumes;
   std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
-  std::vector<G4VPhysicalVolume*> itsMultiplePhysicalVolumes;
-  //  G4double itsZLower;
-  //  G4double itsZUpper;
-  //  G4double itsSynchEnergyLoss;
-protected:
-  G4RotationMatrix* nullRotationMatrix;
-  virtual void CalculateLengths();
+
+  /// Boolean record of whether this component has been already initialised.
+  /// This check protects against duplicate initialisation and therefore the potential
+  /// memory leaks that would ensue.
+  G4bool initialised;
+  /// Record of how many times this component has been copied.
+  G4int copyNumber;
+
+  /// Copy of bias list from parser for this particlar element
+  std::list<std::string> biasVacuumList;
+  std::list<std::string> biasMaterialList;
+
+  G4ThreeVector inputFaceNormal;
+  G4ThreeVector outputFaceNormal;
+  BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
+  G4double      readOutRadius;    ///< Radius of read out volume solid.
 };
-
-// Class BDSAcceleratorComponent 
-
-inline G4double BDSAcceleratorComponent::GetLength ()
-{return itsLength;}
-
-inline G4double BDSAcceleratorComponent::GetXLength ()
-{return itsXLength;}
-
-inline G4double BDSAcceleratorComponent::GetYLength ()
-{return itsYLength;}
-
-inline G4double BDSAcceleratorComponent::GetArcLength ()
-{return itsLength;}
-
-inline G4double BDSAcceleratorComponent::GetZLength ()
-{return itsLength;}
-
-inline G4double BDSAcceleratorComponent::GetAngle ()
-{return itsAngle;}
-
-inline G4double BDSAcceleratorComponent::GetPhiAngleIn ()
-{return itsPhiAngleIn;}
-
-inline G4double BDSAcceleratorComponent::GetPhiAngleOut ()
-{return itsPhiAngleOut;}
-
-inline G4double BDSAcceleratorComponent::GetPhi ()
-{return itsPhi;}
-
-inline void BDSAcceleratorComponent::SetPhi (G4double val)
-{itsPhi = val;}
-
-inline G4double BDSAcceleratorComponent::GetTheta ()
-{return itsTheta;}
-
-inline void BDSAcceleratorComponent::SetTheta (G4double val)
-{itsTheta = val;}
-
-inline G4double BDSAcceleratorComponent::GetPsi ()
-{return itsPsi;}
-
-inline void BDSAcceleratorComponent::SetPsi (G4double val)
-{itsPsi = val;}
-
-inline G4double BDSAcceleratorComponent::GetAperX()
-{
-  if(itsXAper==0) // i.e. it has not been set
-    return itsBpRadius;
-  else return itsXAper;
-}
-
-inline G4double BDSAcceleratorComponent::GetAperY()
-{
-  if(itsYAper==0) // i.e. it has not been set
-    return itsBpRadius;
-  else return itsYAper;
-}
-
-inline G4double BDSAcceleratorComponent::GetK1()
-{ return itsK1; }
-
-inline G4double BDSAcceleratorComponent::GetK2()
-{ return itsK2; }
-
-inline G4double BDSAcceleratorComponent::GetK3()
-{ return itsK3; }
-
-inline void BDSAcceleratorComponent::SetK1(G4double K1)
-{ itsK1 = K1; }
-
-inline void BDSAcceleratorComponent::SetK2(G4double K2)
-{ itsK2 = K2; }
-
-inline void BDSAcceleratorComponent::SetK3(G4double K3)
-{ itsK3 = K3; }
-
-inline G4RotationMatrix* BDSAcceleratorComponent::GetRotation()
-{ return itsRotation;}
-
-inline G4ThreeVector BDSAcceleratorComponent::GetPosition()
-{ return itsPosition;}
-
-inline const G4String BDSAcceleratorComponent::GetName () const
-{return itsName;}
-
-inline void BDSAcceleratorComponent::SetName (G4String aName)
-{itsName=aName;}
-
-inline const G4String BDSAcceleratorComponent::GetType () const
-{return itsType;}
-
-inline void BDSAcceleratorComponent::SetType (G4String aType)
-{itsType=aType;}
-
-inline G4int BDSAcceleratorComponent::GetPrecisionRegion () const
-{return itsPrecisionRegion;}
-
-inline void BDSAcceleratorComponent::SetPrecisionRegion (G4int precisionRegionType)
-{itsPrecisionRegion = precisionRegionType;}
-
-inline G4LogicalVolume* BDSAcceleratorComponent::GetMarkerLogicalVolume() const
-{return itsMarkerLogicalVolume;}
-
-inline G4LogicalVolume* BDSAcceleratorComponent::GetInnerMostLogicalVolume() const
-{return itsInnerMostLogicalVolume;}
-
-inline void BDSAcceleratorComponent::
-SetInnerMostLogicalVolume(G4LogicalVolume* aLogVol)
-{itsInnerMostLogicalVolume = aLogVol;}
-
-inline G4VisAttributes* BDSAcceleratorComponent::GetVisAttributes() const
-{return itsVisAttributes;}
-
-inline const BDSTunnel* BDSAcceleratorComponent::GetTunnel(){ return itsTunnel;}
-
-inline void BDSAcceleratorComponent::SetVisAttributes()
-{itsVisAttributes = new G4VisAttributes(true);
-}
-
-inline G4int BDSAcceleratorComponent::GetCopyNumber() const
-{return itsCopyNumber;}
-
-inline G4double BDSAcceleratorComponent::GetSPos() const
-{return itsSPos;}
-
-inline void BDSAcceleratorComponent::SetSPos(G4double spos)
-{itsSPos=spos;}
-
-inline  void BDSAcceleratorComponent::AddSensitiveVolume(G4LogicalVolume* aLogVol)
-{ itsSensitiveVolumes.push_back(aLogVol);}
-
-inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetSensitiveVolumes()
-{return itsSensitiveVolumes;}
-
-inline void BDSAcceleratorComponent::SetGFlashVolumes(G4LogicalVolume* aLogVol)
-{ itsGFlashVolumes.push_back(aLogVol);}
-
-inline  std::vector<G4LogicalVolume*> BDSAcceleratorComponent::GetGFlashVolumes()
-{return itsGFlashVolumes;}
-
-inline void BDSAcceleratorComponent::SetMultiplePhysicalVolumes(G4VPhysicalVolume* aPhysVol)
-{ itsMultiplePhysicalVolumes.push_back(aPhysVol);}
-
-inline  std::vector<G4VPhysicalVolume*> BDSAcceleratorComponent::GetMultiplePhysicalVolumes()
-{return itsMultiplePhysicalVolumes;}
-
-inline  G4UserLimits* BDSAcceleratorComponent::GetUserLimits(){
-  return itsUserLimits;
-}
-
-inline  G4UserLimits* BDSAcceleratorComponent::GetInnerBPUserLimits()
-  {return itsInnerBeampipeUserLimits;}
-
-inline  G4double BDSAcceleratorComponent::GetXOffset()
-{return itsXOffset;}
-
-inline G4double BDSAcceleratorComponent::GetYOffset() 
-{return itsYOffset;}
-
-inline G4double BDSAcceleratorComponent::GetZOffset()
-{return itsZOffset;}
-
-inline G4double BDSAcceleratorComponent::GetTilt()
-{return itsTilt;}
-
-//For backwards compatibility.
-inline  G4double BDSAcceleratorComponent::getParameterValue(G4String spec, G4String name) const
-{
-  return getParameterValueDouble(spec, name);
-}
-
-//Get a value of type double form the spec string.
-inline  G4double BDSAcceleratorComponent::getParameterValueDouble(G4String spec, G4String name) const
-{
-  try{
-    return  boost::lexical_cast<G4double>(getParameterValueString(spec,name).c_str());
-  }catch(boost::bad_lexical_cast& e){
-    throw e;
-  }
-  return 0;
-}
-
-//Get a value of type bool form the spec string.
-inline  G4bool BDSAcceleratorComponent::getParameterValueBool(G4String spec, G4String name) const
-{
-  try{
-    return  boost::lexical_cast<G4bool>(getParameterValueString(spec,name).c_str());
-  }catch(boost::bad_lexical_cast& e){
-    throw e;
-  }
-  return false;
-}
-
-//Get a value of type int form the spec string.
-inline  G4int BDSAcceleratorComponent::getParameterValueInt(G4String spec, G4String name) const
-{
-  try{
-    return  boost::lexical_cast<G4int>(getParameterValueString(spec,name).c_str());
-  }catch(boost::bad_lexical_cast& e){
-    throw e;
-  }
-  return 0;
-}
-
-
-//Get a value of type string from the spec string (all other types derived from this).
-inline  G4String BDSAcceleratorComponent::getParameterValueString(G4String spec, G4String name) const
-{
-  G4String value = "";
-
-  std::string delimiters = "&";
-  std::string param = name + "=";
-
-  int pos = spec.find(param);
-  if( pos >= 0 )
-    {
-      
-      int pos2 = spec.find("&",pos);
-      int pos3 = spec.length();
-      int tend = pos2 < 0 ? pos3 : pos2; 
-      int llen = tend - pos - param.length();
-      
-      value = spec.substr(pos + param.length(), llen);
-  }
-
-  return value;
-
-}
 
 #endif

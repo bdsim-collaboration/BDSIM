@@ -61,7 +61,7 @@ BDSMySQLVariable* BDSMySQLTable::GetVariable(G4String aVarName)
 	return itsVar[i];
       }
     }
-  return NULL; //if does not exist return null
+  return nullptr; //if does not exist return null
 }
 
 BDSMySQLVariable* BDSMySQLTable::GetVariable(G4int aVarN)

@@ -28,15 +28,16 @@ include options.gmad;
 
 
   ! standard quadrupole 
-  ilcquad: quadrupole, outR=18.8*cm;
-  ilcsbend: sbend, outR=20*cm;
+  ilcquad: quadrupole, outerDiameter=18.8*cm;
+  ilcsbend: sbend, outerDiameter=20*cm;
 
-  qbds1  : ilcquad, l=l50cm/2, aper=l12mm/2;
-  qfact1 := 1/(qbds1[aper]*brho);
-  qbds2  : ilcquad,l=l1m/2,   aper=l12mm/2;
-  qfact2 := 1/(qbds2[aper]*brho);
-  qbds3  : ilcquad,l=l2m/2, aper=l12mm/2;
-  qfact3 := 1/(qbds3[aper]*brho);
+  qbds1  : ilcquad, l=l50cm/2, aper1=l12mm/2;
+
+  qfact1 := 1/(qbds1["aper1"]*brho);
+  qbds2  : ilcquad,l=l1m/2,   aper1=l12mm/2;
+  qfact2 := 1/(qbds2["aper1"]*brho);
+  qbds3  : ilcquad,l=l2m/2, aper1=l12mm/2;
+  qfact3 := 1/(qbds3["aper1"]*brho);
 
   bpmq079  : marker;
   mmover   : marker;

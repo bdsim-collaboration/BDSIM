@@ -1,0 +1,11 @@
+d1: drift, l=0.5;
+
+!lhcbhcal: element, l=1.0, geometry="gdml:GDML/lhcbhcal.gdml";
+lhcbvelo: element, l=1.7, geometry="gdml:GDML/lhcbvelo.gdml", outerDiameter=2.1*m;
+
+d2: drift, l=0.5;
+
+lat : line = (d1,lhcbvelo,d2);
+com : line = (lhcbvelo);
+
+include optionsTest.gmad;

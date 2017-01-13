@@ -1,188 +1,107 @@
-#ifndef __OPTIONS_H
-#define __OPTIONS_H
+#ifndef OPTIONS_H
+#define OPTIONS_H
 
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
 #include <string>
+#include <vector>
 
-/**
- * @brief Options class
- * 
- * options passed with option and beam command
- *
- * @author I. Agapov
- */
+#include "published.h"
+#include "optionsBase.h"
 
-struct Options {
+namespace GMAD
+{
+  /**
+   * @brief Options class
+   * 
+   * Options passed with option and beam command. This inherits
+   * the OptionsBase class which contains all the members and 
+   * provides templated filling functions. This separation allows
+   * the OptionsBase class to be more easily written out to ROOT files
+   * or other formats for strong reproducibility in a BDSIM run.
+   *
+   * @author I. Agapov, J. Snuverink
+   */
+  class Options: public Published<OptionsBase>, public OptionsBase
+  {
+  public:
+    Options();
+    Options(const GMAD::OptionsBase& options);
+    
+    /// set methods by property name
+    template<typename T>
+    void set_value(std::string name, T value);
+    
+    /// Take another instance of options and copy the values that have
+    /// been set (through setKeys, which although private each instance
+    /// has access to as C++ treats encapsulation at the class level).
+    /// If override is true, the input option will override the existing
+    /// one in this instance.
+    void Amalgamate(const Options& optionsIn, bool override)
+    {
+      if (override)
+	{
+	  for (auto const key : optionsIn.setKeys)
+	    {
+	      try
+		{set(this, &optionsIn, key);}
+	      catch (std::runtime_error)
+		{
+		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  exit(1);
+		}
+	    }
+	}
+      else
+	{// don't override - ie give preference to ones set in this instance
+	  for (auto const key : optionsIn.setKeys)
+	    {
+	      auto const& ok = setKeys; // shortcut
+	      auto result = std::find(ok.begin(), ok.end(), key);
+	      if (result == ok.end())
+		{//it wasn't found so ok to copy
+		  try
+		    {set(this, &optionsIn, key);}
+		  catch (std::runtime_error)
+		    {
+		      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		      exit(1);
+		    }
+		}
+	    }
+	}
+    }
 
-  Options();
+    /// Whether a parameter has been set using the set_value method or not.
+    bool HasBeenSet(std::string name) const;
+    
+  private:
+    /// publish members so these can be looked up from parser
+    void PublishMembers();
 
-  /// list of pyhysics processes 
-  std::string physicsList;
+    /// A list of all the keys that have been set in this instance.
+    std::vector<std::string> setKeys;
+  };
 
-  /// beam parameters
-  std::string particleName;
-  std::string distribType;
-  std::string xDistribType; 
-  std::string yDistribType;
-  std::string distribFile;
-  std::string distribFileFormat;
-
-  int numberToGenerate;
-  int nlinesIgnore; /// ignore first lines in the input bunch file
-
-  double elossHistoBinWidth;
-  double elossHistoTransBinWidth;
-  double defaultRangeCut;
-  double ffact;
-  double beamEnergy;
-
-  /// initial beam centroid
-  double X0, Y0, Z0;
-  double Xp0, Yp0, Zp0;
-  double T0;
-  double E0;
-  
-  /// bunch length
-  double sigmaT;
-
-  /// initial twiss parameters
-  double betx, bety, alfx, alfy, emitx, emity; 
-
-  /// for the gaussian beam distribution
-  double sigmaX, sigmaXp, sigmaY, sigmaYp;
-
-  /// for the circle/square beam distribution
-  double envelopeX, envelopeXp, envelopeY, envelopeYp, envelopeT, envelopeE;
-
-  /// for the gaussian sigma matrix distribution
-  double sigma11, sigma12, sigma13, sigma14, sigma15, sigma16;
-  double          sigma22, sigma23, sigma24, sigma25, sigma26;
-  double                   sigma33, sigma34, sigma35, sigma36;
-  double                            sigma44, sigma45, sigma46;
-  double                                     sigma55, sigma56;
-  double                                              sigma66;
-  
-  /// for the elliptic shell distribution
-  double shellX, shellXp, shellY, shellYp;
-
-  /// for the ring beam distribution
-  double Rmin, Rmax;
-
-  /// for the gaussian, elliptic shell, ring distributions
-  double sigmaE;
-
-  /// bdsim options 
-  int       doPlanckScattering;
-  int       checkOverlaps;
-  int       numberOfEventsPerNtuple;
-  unsigned long int eventNumberOffset;
-  double    vacuumPressure;
-  double    planckScatterFe; 
-
-  /// for element specification
-  double xsize, ysize;
-
-  ///  int backgroundScaleFactor;
-
-  /// default geometry parameters
-  std::string magnetGeometry;
-  double    componentBoxSize;
-  double    beampipeRadius;
-  double    beampipeThickness;
-  std::string pipeMaterial;
-  std::string vacMaterial;
-  std::string tunnelMaterial;
-  std::string tunnelCavityMaterial;
-  std::string soilMaterial;
-
-  int      includeIronMagFields;
-
-  /// tunnel geometry parameters
-  int      buildTunnel, buildTunnelFloor, showTunnel, tunnelType;
-  double    tunnelRadius, tunnelOffsetX, floorBeamlineHeight, beamlineCeilingHeight, tunnelThickness, tunnelSoilThickness;
-  double   samplerDiameter;
-  
-  ///Geometry biasing
-  int      geometryBias;
-
-  ///BLM geometry
-  double   blmRad;
-  double   blmLength;
-
-  ///Cross section biasing parameters
-  double   gammaToMuFe;
-  double   annihiToMuFe;
-  double   eeToHadronsFe;
-
-  double scintYieldFactor;
- 
-  int      useEMLPB;
-  int      useHadLPB;
-
-  int      sensitiveBeamlineComponents;
-  int      sensitiveBeamPipe;
-  int      sensitiveBLMs;
- 
-  double   LPBFraction;
-
-  double   thresholdCutCharged;
-  double   thresholdCutPhotons;
-  
-  double   prodCutPhotons;
-  double   prodCutPhotonsP;
-  double   prodCutPhotonsA;
-  double   prodCutElectrons;
-  double   prodCutElectronsP;
-  double   prodCutElectronsA;
-  double   prodCutPositrons;
-  double   prodCutPositronsP;
-  double   prodCutPositronsA;
-
-
-  /// Tracking related parameters 
-  double   maximumTrackingTime; /// maximum tracking time per volume [s]
-  double   deltaChord;
-  double   chordStepMinimum;
-  double   deltaIntersection;
-  double   minimumEpsilonStep;
-  double   maximumEpsilonStep;
-  double   deltaOneStep;
-  int      turnOnCerenkov;
-  int turnOnOpticalAbsorption;
-  int turnOnMieScattering;
-  int turnOnRayleighScattering;
-  int turnOnOpticalSurface;
-  int turnOnBirksSaturation;
-  int      synchRadOn;
-  int      decayOn;
-  int      synchTrackPhotons;
-  double   synchLowX;
-  double   synchLowGamE;
-  int      synchPhotonMultiplicity;
-  int      synchMeanFreeFactor;
-  double   lengthSafety;
-  long int randomSeed;
-
-  int      useTimer;
-  int      storeMuonTrajectories;
-  double   trajCutGTZ;
-  double   trajCutLTR;
-  int      storeNeutronTrajectories;
-  int      storeTrajectory;
-  int      stopTracks;
-
-  std::string fifo; /// fifo for BDSIM-placet
-  std::string refvolume; ///initial starting volume
-  int refcopyno; ///initial starting volume copy number
-  
-  /// Ring parameters
-  int      nturns;
-
-  /// print some properties
-  void print()const;
-
-  /// set methods by property name
-  void set_value(std::string name, double value);
-  void set_value(std::string name, std::string value);
-};
+  template<typename T>
+  void Options::set_value(std::string name, T value)
+  {
+#ifdef BDSDEBUG
+    std::cout << "options> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+#endif
+    // member method can throw runtime_error, catch and exit gracefully
+    try
+      {
+	set(this, name, value);
+	setKeys.push_back(name);
+      }
+    catch (std::runtime_error)
+    {
+      std::cerr << "Error: options> unknown option \"" << name << "\" with value " << value << std::endl;
+      exit(1);
+    }
+  }
+}
 
 #endif

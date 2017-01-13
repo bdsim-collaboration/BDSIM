@@ -2,15 +2,23 @@
 #define BDSOutputFormat_h 
 
 #include "BDSTypeSafeEnum.hh"
+#include "globals.hh" // geant4 types / globals
 
-struct BDSOutputFormatDef {
-  enum type {
-    _ASCII = 0,
-    _ROOT = 1
-    //, _ASCII_ROOT = 2
-  };
+/**
+ * @brief Type definition for all output formats.
+ */
+
+struct outputformats_def {
+  enum type {none, ascii, root, rootdouble, rootdetailed,
+	     rootdetaileddouble, rootevent, combined, rootcombined};
 };
 
-typedef BDSTypeSafeEnum<BDSOutputFormatDef,int> BDSOutputFormat;
+typedef BDSTypeSafeEnum<outputformats_def, int> BDSOutputFormat;
+
+namespace BDS {
+  /// Determine the output format to be used from the input string.
+  BDSOutputFormat DetermineOutputFormat(G4String outputFormat);
+}
+
 
 #endif
