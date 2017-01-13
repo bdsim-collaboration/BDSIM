@@ -2,6 +2,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "globals.hh"
@@ -34,6 +35,7 @@ BDSAcceleratorModel::BDSAcceleratorModel():
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
+  // User feedback as deletion can take some time
   G4cout << "BDSAcceleratorModel> Deleting model" << G4endl;
   
   delete worldPV;
@@ -45,6 +47,8 @@ BDSAcceleratorModel::~BDSAcceleratorModel()
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
+  for (auto f : fields)
+    {delete f;}
   for (auto r : regions)
     {delete r.second;}
   for (auto c : cuts)
