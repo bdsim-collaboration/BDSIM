@@ -109,6 +109,21 @@ void BDSCollimatorBase::Build()
 				   chordLength * 0.5   - lengthSafety);
   RegisterSolid(outerSolid);
   
+  // Swap variables around if exit size is larger than entrance size
+  // Rotation for tapered collimator (needed for tapered elliptical collimator)
+  G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
+  G4RotationMatrix* colRotate;
+  if (tapered && isOutLarger)
+    {
+      std::swap(xAperture,xOutAperture);
+      std::swap(yAperture,yOutAperture);
+      colRotate = new G4RotationMatrix;
+      colRotate->rotateX(CLHEP::pi);
+      RegisterRotationMatrix(colRotate);
+    }
+  else
+    {colRotate = nullptr;}
+
   G4bool buildVacuumAndAperture = (BDS::IsFinite(xAperture) && BDS::IsFinite(yAperture));
 
   // only do subtraction if aperture actually set
@@ -132,21 +147,6 @@ void BDSCollimatorBase::Build()
   G4VisAttributes* collimatorVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour(colour));
   collimatorLV->SetVisAttributes(collimatorVisAttr);
   RegisterVisAttributes(collimatorVisAttr);
-
-  // Swap variables around if exit size is larger than entrance size
-  // Rotation for tapered collimator (needed for tapered elliptical collimator)
-  G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
-  G4RotationMatrix* colRotate;
-  if (tapered && isOutLarger)
-    {
-      std::swap(xAperture,xOutAperture);
-      std::swap(yAperture,yOutAperture);
-      colRotate = new G4RotationMatrix;
-      colRotate->rotateX(CLHEP::pi);
-      RegisterRotationMatrix(colRotate);
-    }
-  else
-    {colRotate = nullptr;}
   
   // user limits
   collimatorLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
