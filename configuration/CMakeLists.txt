@@ -1,5 +1,5 @@
 # record which git version is being built
-find_package(Git)
+
 if (GIT_FOUND)
   exec_program(
     ${GIT_EXECUTABLE}

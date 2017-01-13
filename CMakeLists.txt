@@ -41,6 +41,14 @@ include(cmake/SystemCheck.cmake)
 # Find Packages #
 #################
 
+# GIT - optional - for software version in output & copying only example source files
+find_package(Git QUIET)
+# turn off git support if there's no .git folder - ie it's a copy of the source
+# but not a repository
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
+  set(GIT_FOUND FALSE)
+endif()
+
 # CLHEP
 include(cmake/CLHEP.cmake)
 
