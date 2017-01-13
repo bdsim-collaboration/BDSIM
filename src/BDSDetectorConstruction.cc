@@ -12,6 +12,7 @@
 #include "BDSCurvilinearFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGeometryComponent.hh"
@@ -290,6 +291,7 @@ void BDSDetectorConstruction::BuildWorld()
 #endif
   
   G4String worldName   = "World";
+  worldExtent          = BDSExtent(worldR);
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
   G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
