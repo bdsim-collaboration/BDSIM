@@ -55,6 +55,8 @@ protected:
   G4double xOutAperture;
   /// Aperture at exit in y dimension
   G4double yOutAperture;
+  /// Flag for tapered collimator
+  G4bool tapered;
   /// Material
   G4String collimatorMaterial;
   /// Vacuum material
