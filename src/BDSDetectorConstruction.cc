@@ -195,17 +195,26 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
       G4ThreeVector teleporterDelta = BDS::CalculateAndSetTeleporterDelta(beamline);
-      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
-      if (terminator)
-        {
-	  terminator->Initialise();
-	  beamline->AddComponent(terminator);
-	}
-      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
-      if (teleporter)
+      if (teleporterDelta.mag() < 1*CLHEP::m)
 	{
-	  teleporter->Initialise();
-	  beamline->AddComponent(teleporter);
+	  BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
+	  if (terminator)
+	    {
+	      terminator->Initialise();
+	      beamline->AddComponent(terminator);
+	    }
+	  BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
+	  if (teleporter)
+	    {
+	      teleporter->Initialise();
+	      beamline->AddComponent(teleporter);
+	    }
+	}
+      else
+	{
+	  G4cout << G4endl
+	    << "Error - the calculated teleporter delta is above 1m! The teleporter was only" << G4endl
+	    << "intended for small shifts - the teleporter will not be built." << G4endl << G4endl;
 	}
     }
 
