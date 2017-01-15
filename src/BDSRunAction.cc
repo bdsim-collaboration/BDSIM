@@ -80,7 +80,8 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   G4float duration = difftime(stoptime,starttime);
 
   // Output feedback
-  G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
+  G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()
+	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
   // write histograms to output - do this before potentially closing / opening new files
