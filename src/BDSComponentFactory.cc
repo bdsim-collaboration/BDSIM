@@ -817,17 +817,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 {
-  G4String name   = "terminator";
-  G4double length = BDSSamplerPlane::ChordLength();
 #ifdef BDSDEBUG
-  G4cout << "---->creating Terminator,"
-	 << " name = " << name
-	 << " l = "    << length / CLHEP::m << "m"
-	 << G4endl;
+  G4cout << "---->creating Terminator" << G4endl;
 #endif
-  
-  return new BDSTerminator("terminator", 
-			   length);
+  return new BDSTerminator();
 }
 
 BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
