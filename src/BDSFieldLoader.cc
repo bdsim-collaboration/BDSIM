@@ -2,6 +2,7 @@
 #include "BDSArray2DCoords.hh"
 #include "BDSArray3DCoords.hh"
 #include "BDSArray4DCoords.hh"
+#include "BDSArray2DCoordsRDipole.hh"
 #include "BDSArray2DCoordsRQuad.hh"
 #include "BDSDebug.hh"
 #include "BDSFieldE.hh"
@@ -105,6 +106,8 @@ BDSFieldMag* BDSFieldLoader::LoadMagField(const BDSFieldInfo& info)
       {result = LoadPoissonSuperFishB(filePath, interpolatorType, transform, bScaling); break;}
     case BDSFieldFormat::poisson2dquad:
       {result = LoadPoissonSuperFishBQuad(filePath, interpolatorType, transform, bScaling); break;}
+    case BDSFieldFormat::poisson2ddipole:
+      {result = LoadPoissonSuperFishBDipole(filePath, interpolatorType, transform, bScaling); break;}
     default:
       break;
     }
@@ -505,6 +508,20 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
   BDSArray2DCoordsRQuad* rArray = new BDSArray2DCoordsRQuad(array);
   BDSInterpolator2D*         ar = CreateInterpolator2D(rArray, interpolatorType);
   BDSFieldMag*           result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
+  return result;
+}
+
+BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBDipole(G4String            filePath,
+							 BDSInterpolatorType interpolatorType,
+							 G4Transform3D       transform,
+							 G4double            bScaling)
+{
+  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
+  
+  BDSArray2DCoordsRDipole* rArray = new BDSArray2DCoordsRDipole(array);
+  BDSInterpolator2D*           ar = CreateInterpolator2D(rArray, interpolatorType);
+  BDSFieldMag*             result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
   return result;
 }
 
