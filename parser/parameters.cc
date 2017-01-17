@@ -10,7 +10,6 @@
 #include "element.h"
 
 using namespace GMAD;
-  magnetOffsetX = 0; magnetOffsetXset=0;
 
 Parameters::Parameters()
 {
@@ -50,6 +49,7 @@ Parameters::Parameters()
   setMap["ysize"] = false;
   setMap["xsizeOut"] = false;
   setMap["ysizeOut"] = false;
+  setMap["magnetOffsetX"] = false;
   setMap["offsetX"] = false;
   setMap["offsetY"] = false;
   setMap["tscint"] = false;

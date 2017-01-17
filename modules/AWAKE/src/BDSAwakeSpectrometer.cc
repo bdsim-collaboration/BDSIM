@@ -44,6 +44,7 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
 					    G4double screenWidth=1*CLHEP::m):
   BDSAcceleratorComponent(aName, length, 0, "awakespectrometer"),
   _fieldInfo(fieldInfo),
+  _magnetOffsetX(magnetOffsetX),
   _screenWidth(screenWidth),
   _mlScreen(nullptr),
   _camera(nullptr),

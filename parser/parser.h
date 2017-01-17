@@ -27,7 +27,6 @@ int yyerror(const char *);
 extern int yylex();
 
 namespace GMAD
-    e.magnetOffsetX = params.magnetOffsetX;
 {
   class Array;
   class Symtab;
