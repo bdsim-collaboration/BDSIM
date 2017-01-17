@@ -106,6 +106,9 @@ public:
 						      G4double       tunnel2,
 						      G4bool         visible) = 0;
 
+  /// Virtual base destructor
+  virtual ~BDSTunnelFactoryBase() {}
+
 protected:
   /// protected default constructor so only derived classes can use it
   BDSTunnelFactoryBase();

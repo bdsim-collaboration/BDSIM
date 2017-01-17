@@ -164,6 +164,8 @@ public:
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope
   virtual void CleanUp();
+  /// Virtual base destructor
+  virtual ~BDSMagnetOuterFactoryBase() {}
 
 protected:
   BDSMagnetOuterFactoryBase();

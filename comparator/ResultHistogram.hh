@@ -49,6 +49,8 @@ public:
     ss << "Chi^2    " << chi2 << " vs tolerance of " << tolerance;
     return ss.str();
   }
+
+  virtual ~ResultHistogram() {}
 };
 
 #endif
