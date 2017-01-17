@@ -2559,7 +2559,7 @@ Regions
 -------
 
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
-In BDSIM, there is one default region to which the options prodCutXXXX apple (see `Options`_) and then
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) and then
 the user may define additional regions and attach them to the objects desired.  For example::
 
   precisionRegion: cutsregion, prodCutProtons=1*m,
