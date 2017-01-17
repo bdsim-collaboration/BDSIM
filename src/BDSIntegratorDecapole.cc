@@ -33,7 +33,6 @@ void BDSIntegratorDecapole::AdvanceHelix(const G4double  yIn[],
 {
   const G4double *pIn = yIn+3;
   G4ThreeVector v0 = G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
-  G4ThreeVector InitMomDir = v0.unit();
 
   G4ThreeVector GlobalPosition = G4ThreeVector(yIn[0], yIn[1], yIn[2]);  
   G4double InitMag = v0.mag();
