@@ -1268,6 +1268,10 @@ Formats
 | poisson2dquad    | 2D Poisson Superfish SF7 file              |
 |                  | for 1/8th of quadrupole.                   |
 +------------------+--------------------------------------------+
+| poisson2ddipole  | 2D Poisson Superfish SF7 file for positive |
+|                  | quadrant that's reflected to produce a     |
+|                  | full windowed dipole field.                |
++------------------+--------------------------------------------+
 
 Field maps in the following formats are accepted:
 
