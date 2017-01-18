@@ -22,6 +22,8 @@ public:
   ~BDSCurvilinearFactory();
 
   /// Build a beam line of curvilinear geometry based on another beam line.
+  BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline);
+
   BDSBeamline* BuildCurvilinearBeamLine(BDSBeamline const* const beamline);
 
 private:
@@ -33,6 +35,9 @@ private:
 
   /// Build a single component.
   BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element);
+
+  /// Simple interrogation function to determine if an element has a finite angle or not.
+  G4bool IsStraight(BDSBeamlineElement const* const element);
 
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
   G4bool   checkOverlaps;     ///< Whether to check overlaps.

@@ -51,7 +51,7 @@ BDSCurvilinearFactory::~BDSCurvilinearFactory()
   instance = nullptr;
 }
 
-BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* const beamline)
+BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
 {
   BDSBeamline* result = new BDSBeamline();
   for (const auto& element : *beamline)
@@ -64,6 +64,58 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
 	}
     }
   return result;
+}
+
+BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* const beamline)
+{
+  BDSBeamline* result = new BDSBeamline();
+
+  G4double accumulatedArcLength = 0;
+  G4double accumulatedAngle     = 0;
+  G4bool   straightSoFar        = true;
+
+  auto startingElement  = beamline->begin();
+  auto finishingElement = beamline->begin();
+  auto nextElement      = beamline->begin() + 1;
+
+  for (auto currentElement = beamline->begin(); currentElement != beamline->end(); currentElement++)
+    {
+      const G4bool   isStraight = IsStraight(*currentElement);
+      const G4double arcLength  = (*currentElement)->GetArcLength();
+      if (arcLength < 1*CLHEP::cm) // short element - avoid by accumulating
+	{
+	  //Accumulate(currentElement);
+	}
+      else if (isStraight && straightSoFar) // keep adding straight sections while straight
+	{
+	  // Accumulate(currentElement);
+	}
+      else
+	{
+	  //Break();
+	}
+
+      if (!isStraight)
+	{straightSoFar = false;}
+
+    }
+  
+  for (const auto& element : *beamline)
+    {
+      const G4double arcLength = element->GetArcLength();
+      const G4double angle     = element->GetAngle();
+      // if too short
+
+
+
+    }
+  
+  return result;
+}
+
+G4bool BDSCurvilinearFactory::IsStraight(BDSBeamlineElement const* const element)
+{
+  return !BDS::IsFinite(element->GetAngle());
 }
 
 BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleComponent* component,
