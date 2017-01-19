@@ -27,7 +27,6 @@ namespace GMAD
 
     /// Map that holds booleans for every member of element
     std::map<std::string,bool> setMap;
-  double magnetOffsetX; int magnetOffsetXset; //x offset of the spectrometer magnet
 
     /// Reset the parameters to defaults and setMap
     void flush();

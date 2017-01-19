@@ -74,6 +74,7 @@ void Element::PublishMembers()
   publish("ysize",&Element::ysize);
   publish("xsizeOut",&Element::xsizeOut);
   publish("ysizeOut",&Element::ysizeOut);
+  publish("magnetOffsetX",&Element::magnetOffsetX);
   publish("tilt",&Element::tilt);
 
   publish("offsetX",&Element::offsetX);
