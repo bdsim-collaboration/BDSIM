@@ -661,7 +661,9 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	    if(execute) {
 	      Symtab *sp = Parser::Instance()->symlook(*($2));
 	      if (!sp) {
-		std::cout << "Variable " << *($2) << " not defined!" << std::endl;
+		// variable not defined, maybe an element? (will exit if not)
+		const Element& element = Parser::Instance()->find_element(*($2));
+		element.print();
 	      }
 	      else {
 		sp->Print();

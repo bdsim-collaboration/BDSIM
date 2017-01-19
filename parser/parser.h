@@ -88,8 +88,12 @@ namespace GMAD
     template <class C, class Container=std::vector<C>>
       Container& GetList();
 
+    /// find element
+    Element& find_element(std::string element_name);
+    /// find element (const) 
+    const Element& find_element(std::string element_name)const;
     /// access property of Element with element_name
-    double property_lookup(std::string element_name, std::string property_name);
+    double property_lookup(std::string element_name, std::string property_name)const;
     /// add element to temporary element sequence tmp_list
     void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
     /// copy properties from Element into params, returns element type as integer, returs _NONE if not found

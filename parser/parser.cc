@@ -228,15 +228,8 @@ void Parser::write_table(std::string* name, ElementType type, bool isLine)
 
 void Parser::expand_line(std::string name, std::string start, std::string end)
 {
-  std::list<Element>::const_iterator iterEnd = element_list.end();
-  
-  std::list<Element>::const_iterator itName = element_list.find(name);
-  
-  if (itName==iterEnd) {
-    std::cerr << "ERROR: line '" << name << "' not found" << std::endl;
-    exit(1);
-  }
-  if((*itName).type != ElementType::_LINE && (*itName).type != ElementType::_REV_LINE ) {
+  const Element& line = find_element(name);
+  if(line.type != ElementType::_LINE && line.type != ElementType::_REV_LINE ) {
     std::cerr << "'ERROR" << name << "' is not a line" << std::endl;
     exit(1);
   }
@@ -248,7 +241,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
   // expand the desired beamline
   
   Element e;
-  e.type = (*itName).type;
+  e.type = line.type;
   e.name = name;
   e.l = 0;
   e.lst = nullptr;
@@ -258,19 +251,19 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 #ifdef BDSDEBUG 
   std::cout << "expanding line " << name << ", range = " << start << end << std::endl;
 #endif
-  if(!(*itName).lst) return; //list empty
+  if(!line.lst) return; //list empty
     
   // first expand the whole range 
-  std::list<Element>::iterator sit = (*itName).lst->begin();
-  std::list<Element>::iterator eit = (*itName).lst->end();
+  std::list<Element>::iterator sit = line.lst->begin();
+  std::list<Element>::iterator eit = line.lst->end();
   
   // copy the list into the resulting list
-  switch((*itName).type){
+  switch(line.type){
   case ElementType::_LINE:
     beamline_list.insert(beamline_list.end(),sit,eit);
     break;
   case ElementType::_REV_LINE:
-    beamline_list.insert(beamline_list.end(),(*itName).lst->rbegin(),(*itName).lst->rend());
+    beamline_list.insert(beamline_list.end(),line.lst->rbegin(),line.lst->rend());
     break;
   default:
     beamline_list.insert(beamline_list.end(),sit,eit);
@@ -295,7 +288,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 	      is_expanded = false;
 	      // lookup the line in main list
 	      std::list<Element>::const_iterator tmpit = element_list.find((*it).name);
-	      
+	      std::list<Element>::const_iterator iterEnd = element_list.end();
 	      if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
 		
 #ifdef BDSDEBUG
@@ -384,7 +377,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
   // insert the tunnel if present
   
   std::list<Element>::iterator itTunnel = element_list.find("tunnel");
-  if(itTunnel!=iterEnd)
+  if(itTunnel!=element_list.end())
     beamline_list.push_back(*itTunnel);
 }
 
@@ -482,7 +475,19 @@ void Parser::add_csampler(std::string name, int count, ElementType type)
   set_sampler(name,count,type,"cylinder", params.samplerRadius);
 }
 
-double Parser::property_lookup(std::string element_name, std::string property_name)
+Element& Parser::find_element(std::string element_name)
+{
+  std::list<Element>::iterator it = element_list.find(element_name);
+  std::list<Element>::const_iterator iterEnd = element_list.end();
+
+  if(it == iterEnd) {
+    std::cerr << "parser.h> Error: element (type) \"" << element_name << "\" has not been defined." << std::endl;
+    exit(1);
+  }
+  return (*it);
+}
+
+const Element& Parser::find_element(std::string element_name)const
 {
   std::list<Element>::const_iterator it = element_list.find(element_name);
   std::list<Element>::const_iterator iterEnd = element_list.end();
@@ -491,8 +496,13 @@ double Parser::property_lookup(std::string element_name, std::string property_na
     std::cerr << "parser.h> Error: unknown element \"" << element_name << "\"." << std::endl; 
     exit(1);
   }
+  return (*it);
+}
 
-  return (*it).property_lookup(property_name);
+double Parser::property_lookup(std::string element_name, std::string property_name)const
+{
+  const Element& element = find_element(element_name);
+  return element.property_lookup(property_name);
 }
 
 void Parser::add_element_temp(std::string name, int number, bool pushfront, ElementType linetype)
@@ -525,20 +535,12 @@ int Parser::copy_element_to_params(std::string elementName)
 #ifdef BDSDEBUG
   std::cout << "newinstance : VARIABLE -- " << elementName << std::endl;
 #endif
-  std::list<Element>::iterator it = element_list.find(elementName);
-  std::list<Element>::iterator iterEnd = element_list.end();
-  if(it == iterEnd)
-    {
-      std::cout << "Error: type " << elementName << " has not been defined" << std::endl;
-      if (PEDANTIC) exit(1);
-      type = static_cast<int>(ElementType::_NONE);
-    }
-  else
-    {
-      // inherit properties from the base type
-      type = static_cast<int>((*it).type);
-      params.inherit_properties(*it);
-    }
+  const Element& element = find_element(elementName);
+
+  // inherit properties from the base type
+  type = static_cast<int>(element.type);
+  params.inherit_properties(element);
+
   return type;
 }
 
@@ -592,18 +594,9 @@ void Parser::ClearParams()
 
 void Parser::OverwriteElement(std::string elementName)
 {
-  std::list<Element>::iterator it = element_list.find(elementName);
-  std::list<Element>::const_iterator iterEnd = element_list.end();
-  if(it == iterEnd)
-    {
-      std::cout << "element " << elementName << " has not been defined" << std::endl;
-      if (PEDANTIC) exit(1);
-    }
-  else
-    {
-      // add and overwrite properties if set
-      (*it).set(params);
-    }
+  Element& element = find_element(elementName);
+  // add and overwrite properties if set
+  element.set(params);
   ClearParams();
 }
 
