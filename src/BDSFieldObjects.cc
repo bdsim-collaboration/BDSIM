@@ -79,7 +79,7 @@ BDSFieldObjects::~BDSFieldObjects()
   delete chordFinder;
   delete magIntegratorStepper;
   delete equationOfMotion;
-  delete magIntDriver;
+  //delete magIntDriver; // not needed since deleted by chordFinder
 }
 
 void BDSFieldObjects::AttachToVolume(G4LogicalVolume* volume,

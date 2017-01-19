@@ -29,6 +29,8 @@ public:
     ss << h1NYBins << " " << h2NYBins << " " << h1YMean << " " << h2YMean << " ";
     return ss.str();
   }
+
+  virtual ~ResultHistogram2D() {}
 };
 
 #endif

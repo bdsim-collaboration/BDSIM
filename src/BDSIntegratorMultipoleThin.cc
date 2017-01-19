@@ -41,7 +41,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalR    = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
   G4ThreeVector GlobalP    = G4ThreeVector(pIn[0], pIn[1], pIn[2]);
   G4double      InitMag    = GlobalP.mag();
-  G4ThreeVector InitMomDir = GlobalP.unit();
   
   // global to local
   BDSStep   localPosMom = ConvertToLocal(GlobalR, GlobalP, h, false);

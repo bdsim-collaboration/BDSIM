@@ -1,4 +1,4 @@
-#include "BDSArray2DCoordsRQuad.hh"
+#include "BDSArray2DCoordsRDipole.hh"
 #include "BDSFieldValue.hh"
 
 #include "globals.hh"
@@ -8,15 +8,15 @@
 #include <ostream>
 
 
-BDSArray2DCoordsRQuad::BDSArray2DCoordsRQuad(BDSArray2DCoords* arrayIn):
+BDSArray2DCoordsRDipole::BDSArray2DCoordsRDipole(BDSArray2DCoords* arrayIn):
   BDSArray2DCoords(*arrayIn),
   returnValue(BDSFieldValue())
 {;}
 
-G4bool BDSArray2DCoordsRQuad::OutsideCoords(const G4double x,
-					    const G4double y,
-					    const G4double z,
-					    const G4double t) const
+G4bool BDSArray2DCoordsRDipole::OutsideCoords(const G4double x,
+					      const G4double y,
+					      const G4double z,
+					      const G4double t) const
 {
   G4bool rx = x < -xMax || x > xMax;
   G4bool ry = y < -yMax || y > yMax;
@@ -25,31 +25,31 @@ G4bool BDSArray2DCoordsRQuad::OutsideCoords(const G4double x,
   return rx || ry || rz || rt;
 }
 
-G4double BDSArray2DCoordsRQuad::ArrayCoordsFromX(const G4double x) const
+G4double BDSArray2DCoordsRDipole::ArrayCoordsFromX(const G4double x) const
 {
   // xmin becomes -xmax
   return (x + xMax) / xStep;
 }
 
-G4double BDSArray2DCoordsRQuad::ArrayCoordsFromY(const G4double y) const
+G4double BDSArray2DCoordsRDipole::ArrayCoordsFromY(const G4double y) const
 {
   return (y + yMax) / yStep;
 }
 
-G4int BDSArray2DCoordsRQuad::NearestX(const G4double x) const
+G4int BDSArray2DCoordsRDipole::NearestX(const G4double x) const
 {
   return (G4int)round((x+xMax)/xStep);
 }
 
-G4int BDSArray2DCoordsRQuad::NearestY(const G4double y) const
+G4int BDSArray2DCoordsRDipole::NearestY(const G4double y) const
 {
   return (G4int)round((y+yMax)/yStep);
 }
 
-const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
-						     const G4int y,
-						     const G4int z,
-						     const G4int t) const
+const BDSFieldValue& BDSArray2DCoordsRDipole::GetConst(const G4int x,
+						       const G4int y,
+						       const G4int z,
+						       const G4int t) const
 {
   if (Outside(x,y,z,t))
     {return defaultValue;}
@@ -73,13 +73,13 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
     {
       if (y < nY)
 	{// C quadrant - coordinate flip is a subtraction in array coords
-	  xi = nX - 1 - x; xr = -1; // flip
-	  yi = nY - 1 - y; yr = -1; // flip
+	  xi = nX - 1 - x;
+	  yi = nY - 1 - y;
 	}
       else
 	{// B quadrant
-	  xi = nX - 1 - x; // flip
-	  yi = y - nY; yr = -1; // just offset index, but flip result
+	  xi = nX - 1 - x; xr = -1; // flip
+	  yi = y - nY;
 	}
     }
   else
@@ -96,21 +96,7 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
 	}
     }
 
-  G4bool swapResult = false;
-  if (yi > xi) //lies above y = x line (even in array coords)
-    {
-      std::swap(xi, yi);
-      swapResult = true;
-    }
-
   returnValue = BDSArray2DCoords::GetConst(xi,yi,z,t);
-
-  if (swapResult)
-    {
-      G4double xv = returnValue.x();
-      G4double yv = returnValue.y();
-      returnValue = BDSFieldValue(yv,xv,returnValue.z());
-    }
   
   returnValue[0] = returnValue.x() * xr;
   returnValue[1] = returnValue.y() * yr;
@@ -118,10 +104,10 @@ const BDSFieldValue& BDSArray2DCoordsRQuad::GetConst(const G4int x,
   return returnValue;
 }
 
-G4bool BDSArray2DCoordsRQuad::Outside(const G4int x,
-				      const G4int y,
-				      const G4int z,
-				      const G4int t) const
+G4bool BDSArray2DCoordsRDipole::Outside(const G4int x,
+					const G4int y,
+					const G4int z,
+					const G4int t) const
 {
   G4bool rx = x < 0 || x > 2*(nX-1);
   G4bool ry = y < 0 || y > 2*(nY-1);
@@ -130,7 +116,7 @@ G4bool BDSArray2DCoordsRQuad::Outside(const G4int x,
   return rx || ry || rz || rt;
 }
 
-std::ostream& BDSArray2DCoordsRQuad::Print(std::ostream& out) const
+std::ostream& BDSArray2DCoordsRDipole::Print(std::ostream& out) const
 {
   std::ostream& out2 = BDSArray2DCoords::Print(out);
 
@@ -150,7 +136,7 @@ std::ostream& BDSArray2DCoordsRQuad::Print(std::ostream& out) const
   return out2;
 }
 
-std::ostream& operator<< (std::ostream& out, BDSArray2DCoordsRQuad const &a)
+std::ostream& operator<< (std::ostream& out, BDSArray2DCoordsRDipole const &a)
 {
   return a.Print(out);
 }

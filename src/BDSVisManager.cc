@@ -65,7 +65,7 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
       fclose(file);
       visPath = bdsimPath + "vis/";
     }
-  else if (FILE *file = fopen(installPath.c_str(), "r"))
+  else if ( (file = fopen(installPath.c_str(), "r")) )
     {
       fclose(file);
       visPath = bdsimPath + "../share/BDSIM/vis/";

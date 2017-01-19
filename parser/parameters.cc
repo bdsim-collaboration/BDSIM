@@ -112,7 +112,7 @@ void Parameters::flush() {
     }
 }
 
-void Parameters::inherit_properties(Element& e)
+void Parameters::inherit_properties(const Element& e)
 {
   // copy parameters into temporary buffer params from element e
   // parameters already set in params have priority and are not overridden

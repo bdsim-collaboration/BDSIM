@@ -23,7 +23,7 @@ public:
 		 G4String material,
 		 G4double grooveWidth,
 		 G4double grooveSpatialFrequency);
-  ~BDSScreenLayer();
+  virtual ~BDSScreenLayer();
   /// @{ Accessor
   inline G4LogicalVolume* GetLog()  const {return log;}
   inline G4String         GetName() const {return name;}

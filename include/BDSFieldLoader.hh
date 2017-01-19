@@ -124,6 +124,13 @@ private:
 					 G4Transform3D       transform,
 					 G4double            bScaling);
 
+  /// Similar to LoadPoissonSuperFishB() but with appropriate reflections for
+  /// a map for the positive quadrant reflected to all quadrants.
+  BDSFieldMag* LoadPoissonSuperFishBDipole(G4String            filePath,
+					   BDSInterpolatorType interpolatorType,
+					   G4Transform3D       transform,
+					   G4double            bScaling);
+
   /// Load a 1D BDSIM format electric field.
   BDSFieldE* LoadBDSIM1DE(G4String            filePath,
 			  BDSInterpolatorType interpolatorType,

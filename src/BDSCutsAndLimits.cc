@@ -7,7 +7,9 @@
 #include "G4UserSpecialCuts.hh"
 #include "G4Version.hh"
 
-BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits"),_wasActivated(false)
+BDSCutsAndLimits::BDSCutsAndLimits():
+  G4VPhysicsConstructor("BDSCutsAndLimits"),
+  activated(false)
 {
   stepLimiter = new G4StepLimiter;
   specialCuts = new G4UserSpecialCuts;
@@ -30,9 +32,9 @@ void BDSCutsAndLimits::ConstructParticle()
 
 void BDSCutsAndLimits::ConstructProcess()
 {
-  if(_wasActivated)
+  if (activated)
     {return;}
-  _wasActivated=true;
+  activated = true;
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 

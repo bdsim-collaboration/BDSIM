@@ -1,5 +1,8 @@
 #include "BDSRunManager.hh"
 #include "BDSDebug.hh"
+#include "BDSDetectorConstruction.hh"
+#include "BDSExtent.hh"
+#include "BDSPrimaryGeneratorAction.hh"
 
 #include "CLHEP/Random/Random.h"
 
@@ -8,6 +11,17 @@ BDSRunManager::BDSRunManager()
 
 BDSRunManager::~BDSRunManager()
 {;}
+
+void BDSRunManager::Initialize()
+{
+  G4RunManager::Initialize();
+
+  BDSExtent worldExtent;
+  if (const auto detectorConstruction = dynamic_cast<BDSDetectorConstruction*>(userDetector))
+    {worldExtent = detectorConstruction->WorldExtent();}
+  if (const auto primaryGeneratorAction = dynamic_cast<BDSPrimaryGeneratorAction*>(userPrimaryGeneratorAction))
+    {primaryGeneratorAction->SetWorldExtent(worldExtent);}
+}
 
 void BDSRunManager::BeamOn(G4int n_event,const char* macroFile,G4int n_select)
 {

@@ -75,8 +75,7 @@
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
-%type <dval> aexpr
-%type <dval> expr
+%type <dval> aexpr expr
 %type <symp> assignment symdecl
 %type <array> vecexpr
 %type <array> vectnum vectstr
@@ -503,11 +502,12 @@ aexpr  : NUMBER               { $$ = $1;                         }
        | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; }
        | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; }
        | aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
+       // element attributes
        | VARIABLE '[' string ']'
          {
 	   if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl;
 	   $$ = Parser::Instance()->property_lookup(*($1),*($3));
-	 }// element attributes
+         }
        // undeclared variable
        | VARIABLE
          {
@@ -649,12 +649,21 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | print        { if(execute) Parser::Instance()->PrintElements(); }
         | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
+        | print VARIABLE '[' string ']'
+	  {
+	    if (execute) {
+	      double value = Parser::Instance()->property_lookup(*($2),*($4));
+	      std::cout << "property '" << *($4) << "' of element '" << *($2) << "' is: " << value << std::endl;
+	    }
+	  }
         | print VARIABLE
           {
 	    if(execute) {
 	      Symtab *sp = Parser::Instance()->symlook(*($2));
 	      if (!sp) {
-		std::cout << "Variable " << *($2) << " not defined!" << std::endl;
+		// variable not defined, maybe an element? (will exit if not)
+		const Element& element = Parser::Instance()->find_element(*($2));
+		element.print();
 	      }
 	      else {
 		sp->Print();
@@ -663,6 +672,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	  }
         | print NUMVAR { if(execute) $2->Print();}
         | print STRVAR { if(execute) $2->Print();}
+        | print STR    { if(execute) std::cout << *($2) << std::endl;}
         | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters

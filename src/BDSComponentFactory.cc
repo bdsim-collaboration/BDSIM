@@ -255,16 +255,6 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
 {
-  // This relies on things being added to the beamline immediately
-  // after they've been created
-  G4double teleporterLength = std::abs(BDSGlobalConstants::Instance()->TeleporterLength() - 1e-8); // must be +ve
-
-  if (teleporterLength < 10*G4GeometryTolerance::GetInstance()->GetSurfaceTolerance())
-    {
-      G4cout << G4endl << __METHOD_NAME__ << "WARNING - no space to put in teleporter - skipping it!" << G4endl << G4endl;
-      return nullptr;
-    }
-
   G4Transform3D transform = G4Transform3D(G4RotationMatrix(), teleporterDelta);
   
   BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::teleporter,
@@ -274,13 +264,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVect
 						   true,       // provide global translation
 						   transform);
   
-#ifdef BDSDEBUG
-  G4cout << "---->creating Teleporter,"
-	 << ", l = " << teleporterLength/CLHEP::m << "m"
+  G4cout << "---->creating Teleporter, "
+	 << "l = " << teleporterDelta.z()/CLHEP::m << "m"
 	 << G4endl;
-#endif
 
-  return( new BDSTeleporter(teleporterLength, vacuumFieldInfo));
+  return( new BDSTeleporter(teleporterDelta.z(), vacuumFieldInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
@@ -818,17 +806,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 {
-  G4String name   = "terminator";
-  G4double length = BDSSamplerPlane::ChordLength();
 #ifdef BDSDEBUG
-  G4cout << "---->creating Terminator,"
-	 << " name = " << name
-	 << " l = "    << length / CLHEP::m << "m"
-	 << G4endl;
+  G4cout << "---->creating Terminator" << G4endl;
 #endif
-  
-  return new BDSTerminator("terminator", 
-			   length);
+  return new BDSTerminator();
 }
 
 BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,

@@ -28,7 +28,6 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   G4ThreeVector GlobalR = G4ThreeVector(yIn[0], yIn[1], yIn[2]);
 
   G4double      InitMag    = GlobalP.mag();
-  G4ThreeVector InitMomDir = GlobalP.unit();
 
   if(bField==0 || eqOfM->FCof()==0)
     {

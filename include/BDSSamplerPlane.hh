@@ -24,7 +24,7 @@ public:
   virtual ~BDSSamplerPlane(){;}
 
   /// Access the sampler plane length in other classes.
-  inline static G4double ChordLength();
+  inline static G4double ChordLength() {return chordLength;}
 
 private:
   /// Private default constructor to ensure use of provided one.
@@ -33,8 +33,5 @@ private:
   /// The chord length for all is fixed and can be static.
   static const G4double chordLength;
 };
-
-inline G4double BDSSamplerPlane::ChordLength()
-{return chordLength;}
 
 #endif
