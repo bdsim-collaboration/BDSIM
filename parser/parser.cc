@@ -280,66 +280,58 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
       std::list<Element>::iterator it = ++beamline_list.begin();
       for(;it!=beamline_list.end();it++)
 	{
+	  Element& element = *it; // alias
+	  const ElementType& type = element.type;
 #ifdef BDSDEBUG 
-	  std::cout << (*it).name << " , " << (*it).type << std::endl;
+	  std::cout << element.name << " , " << type << std::endl;
 #endif
-	  if((*it).type == ElementType::_LINE || (*it).type == ElementType::_REV_LINE)  // list - expand further	  
-	    {
-	      is_expanded = false;
-	      // lookup the line in main list
-	      std::list<Element>::const_iterator tmpit = element_list.find((*it).name);
-	      std::list<Element>::const_iterator iterEnd = element_list.end();
-	      if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
-		
+	  // if list - expand further
+	  if(type != ElementType::_LINE && type != ElementType::_REV_LINE)
+	    {continue;}
+	  is_expanded = false;
+	  // lookup the line in main list
+	  std::list<Element>::const_iterator tmpit = element_list.find(element.name);
+	  std::list<Element>::const_iterator iterEnd = element_list.end();
+	  if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
+	    const Element& list = *tmpit; // alias
 #ifdef BDSDEBUG
-		printf("inserting sequence for %s - %s ...",(*it).name.c_str(),(*tmpit).name.c_str());
+	    printf("inserting sequence for %s - %s ...",element.name.c_str(),list.name.c_str());
 #endif
-		if((*it).type == ElementType::_LINE)
-		  beamline_list.insert(it,(*tmpit).lst->begin(),(*tmpit).lst->end());
-		else if((*it).type == ElementType::_REV_LINE){
-		  //iterate over list and invert any sublines contained within. SPM
-		  std::list<Element> tmpList;
-		  tmpList.insert(tmpList.end(),(*tmpit).lst->begin(),(*tmpit).lst->end());
-		  for(std::list<Element>::iterator itLineInverter = tmpList.begin();
-		      itLineInverter != tmpList.end(); itLineInverter++){
-		    if((*itLineInverter).type == ElementType::_LINE)
-		      (*itLineInverter).type = ElementType::_REV_LINE;
-		    else if ((*itLineInverter).type == ElementType::_REV_LINE)
-		      (*itLineInverter).type = ElementType::_LINE;
-		  }
-		  beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
-		}
-#ifdef BDSDEBUG
-		printf("inserted\n");
-#endif
-
-		// delete the list pointer
-		beamline_list.erase(it--);
-		
-	      } else if ( tmpit != iterEnd ) // entry points to a scalar element type -
-		//transfer properties from the main list
-		{ 
-#ifdef BDSDEBUG 
-		  printf("keeping element...%s\n",(*it).name.c_str());
-#endif
-		  // copy properties
-		  (*it) = (*tmpit);
-#ifdef BDSDEBUG 
-		  printf("done\n");
-#endif
-		  
-		} else  // element of undefined type
-		{
-		  std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << (*it).name << "\" has not been defined! " << std::endl;
-		  exit(1);
-		  // beamline_list.erase(it--);
-		}
-	      
-	    } else  // element - keep as it is 
-	    {
-	      // do nothing
+	    if(type == ElementType::_LINE)
+	      beamline_list.insert(it,list.lst->begin(),list.lst->end());
+	    else if(type == ElementType::_REV_LINE){
+	      //iterate over list and invert any sublines contained within. SPM
+	      std::list<Element> tmpList;
+	      tmpList.insert(tmpList.end(),list.lst->begin(),list.lst->end());
+	      for(std::list<Element>::iterator itLineInverter = tmpList.begin();
+		  itLineInverter != tmpList.end(); itLineInverter++){
+		if((*itLineInverter).type == ElementType::_LINE)
+		  (*itLineInverter).type = ElementType::_REV_LINE;
+		else if ((*itLineInverter).type == ElementType::_REV_LINE)
+		  (*itLineInverter).type = ElementType::_LINE;
+	      }
+	      beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
 	    }
-	  
+#ifdef BDSDEBUG
+	    printf("inserted\n");
+#endif
+	    // delete the list pointer
+	    beamline_list.erase(it--);
+	  } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
+	    //transfer properties from the main list
+#ifdef BDSDEBUG 
+	    printf("keeping element...%s\n",element.name.c_str());
+#endif
+	    // copy properties
+	    element = (*tmpit);
+
+#ifdef BDSDEBUG 
+	    printf("done\n");
+#endif
+	  } else { // element of undefined type
+	    std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << element.name << "\" has not been defined! " << std::endl;
+	    exit(1);
+	  }
 	}
       iteration++;
       if( iteration > MAX_EXPAND_ITERATIONS )
