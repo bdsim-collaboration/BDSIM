@@ -135,6 +135,14 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   yp1 += skewkick.real();
   zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
 
+  //for non paraxial, advance particle as if in a drift.
+  //xp1 or yp1 may be > 1, so isnan check also needed for zp1.
+  if (std::isnan(zp1) or (zp1 < 0.9))
+  {
+    AdvanceDrift(yIn,GlobalP,h,yOut);
+    return;
+  }
+
   LocalR.setX(x1);
   LocalR.setY(y1);
   LocalR.setZ(z1);
