@@ -36,8 +36,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   particleKineticEnergy(0.0),
   brho(0.0),
   sMax(0.0),
-  turnsTaken(0),
-  teleporterlength(0.0)
+  turnsTaken(0)
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
 
@@ -85,8 +84,6 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   zeroFieldManager=new G4FieldManager();
   zeroFieldManager->SetDetectorField(zeroMagField);
   zeroFieldManager->CreateChordFinder(zeroMagField);
-    
-  teleporterdelta     = G4ThreeVector(0.,0.,0.);
 
   cOverGeV = CLHEP::c_light /CLHEP::GeV;
 

@@ -168,8 +168,8 @@ void BDSModularPhysicsList::ParsePhysicsList(G4String physListName)
       else
 	{
 	  G4cout << "\"" << nameLower << "\" is not a valid physics list. Available ones are: " << G4endl;
-	  for (auto name : physicsLists)
-	    {G4cout << "\"" << name << "\"" << G4endl;}
+	  for (auto listName : physicsLists)
+	    {G4cout << "\"" << listName << "\"" << G4endl;}
 	  exit(1);
 	}
     }

@@ -19,6 +19,8 @@ public:
     Result(name, "Sampler")
   {;}
   
+  virtual ~ResultSampler() {}
+
   std::vector<std::string> offendingLeaves;
 
   virtual std::string print() const

@@ -1,6 +1,7 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSDManager.hh"
 #include "BDSTerminator.hh"
 #include "BDSTerminatorSD.hh"
@@ -9,9 +10,11 @@
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 
-BDSTerminator::BDSTerminator(G4String name, G4double length):
-  BDSAcceleratorComponent(name, length, 0, "terminator"),
-  userLimits(nullptr)
+BDSTerminator::BDSTerminator():
+  BDSAcceleratorComponent("terminator", BDSSamplerPlane::ChordLength(), 0, "terminator")
+{;}
+
+BDSTerminator::~BDSTerminator()
 {;}
 
 void BDSTerminator::Build()
@@ -21,7 +24,7 @@ void BDSTerminator::Build()
 
 void BDSTerminator::BuildContainerLogicalVolume()
 {
-  //Bascially a copy of BDSSampler but with different sensitive detector added
+  // Bascially a copy of BDSSampler but with different sensitive detector added
   G4double radius = BDSGlobalConstants::Instance()->SamplerDiameter() * 0.5;
   containerSolid = new G4Box(name + "_container_solid",
 			     radius,
@@ -31,15 +34,16 @@ void BDSTerminator::BuildContainerLogicalVolume()
 					       emptyMaterial,
 					       name + "_container_lv");
   
-  // SENSITIVE DETECTOR
+  // Make the terminator sensitive to count the turns of the primary particle
   containerLogicalVolume->SetSensitiveDetector(BDSSDManager::Instance()->GetTerminatorSD());
   
-  // USER LIMITS - the logic of killing particles on last turn
-  userLimits = new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.);
+  // Dynamic user limits - the logic of killing particles on last turn.
+  // The numerical values are the default G4UserLimit values so everything will
+  // normally be tracked. BDSTerminatorUserLimits has the logic inside it to
+  // respond to turn number.
+  BDSTerminatorUserLimits* userLimits = new BDSTerminatorUserLimits(DBL_MAX,DBL_MAX,DBL_MAX,0.,0.);
   RegisterUserLimits(userLimits);
   containerLogicalVolume->SetUserLimits(userLimits);
-  //these are default G4UserLimit values so everything will normally be tracked
-  //BDSTerminatorUserLimits has the logic inside it to respond to turn number
 
   // visual attributes
   containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
@@ -48,5 +52,3 @@ void BDSTerminator::BuildContainerLogicalVolume()
   SetExtent(BDSExtent(radius, radius, chordLength*0.5));
 }
 
-BDSTerminator::~BDSTerminator()
-{;}

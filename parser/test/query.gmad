@@ -1,4 +1,4 @@
-uniformfield: field, type="poisson",
+uniformfield: field, type="ebmap2d",
 		     bScaling = 3.0,
 		     integrator = "g4classicalrk4",
 		     magneticFile = "poisson2d:/Path/To/File.TXT",

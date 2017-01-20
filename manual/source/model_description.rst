@@ -1268,6 +1268,10 @@ Formats
 | poisson2dquad    | 2D Poisson Superfish SF7 file              |
 |                  | for 1/8th of quadrupole.                   |
 +------------------+--------------------------------------------+
+| poisson2ddipole  | 2D Poisson Superfish SF7 file for positive |
+|                  | quadrant that's reflected to produce a     |
+|                  | full windowed dipole field.                |
++------------------+--------------------------------------------+
 
 Field maps in the following formats are accepted:
 
@@ -2559,14 +2563,13 @@ Regions
 -------
 
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
-In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
-These are the default region, the precision region and the approximation region. Beamline elements 
-can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example::
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) and then
+the user may define additional regions and attach them to the objects desired.  For example::
 
-  precisionRegion: region, prodCutProtons=1*m,
-                           prodCutElectrons=10*m,
-			   prodCutPositrons=10*m,
-			   prodCutPhotons = 1*mm;
+  precisionRegion: cutsregion, prodCutProtons=1*m,
+                               prodCutElectrons=10*m,
+			       prodCutPositrons=10*m,
+			       prodCutPhotons = 1*mm;
 
   d1: drift, l=10*m, region="precisionRegion";
 

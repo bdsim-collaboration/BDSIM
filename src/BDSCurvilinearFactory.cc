@@ -99,6 +99,11 @@ BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamline
   if (!BDS::IsFinite(chordLength))
     {return nullptr;}
 
+  // don't build for certain types.
+  const G4String elementType = element->GetType();
+  if (elementType == "teleporter" || elementType == "terminator")
+    {return nullptr;}
+
   G4double arcLength = element->GetArcLength();
   G4double     angle = element->GetAngle();
   G4String      name = element->GetName();

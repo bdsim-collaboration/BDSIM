@@ -45,7 +45,8 @@ private:
 
 namespace BDS
 {
-  G4ThreeVector CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
+  /// Calculate the difference between the beginning and end of a beam line.
+  G4ThreeVector CalculateTeleporterDelta(BDSBeamline* thebeamline);
 }
 
 #endif

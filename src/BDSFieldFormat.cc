@@ -15,7 +15,8 @@ std::map<BDSFieldFormat, std::string>* BDSFieldFormat::dictionary =
       {BDSFieldFormat::bdsim3d,   "bdsim3d"},
       {BDSFieldFormat::bdsim4d,   "bdsim4d"},
       {BDSFieldFormat::poisson2d, "poisson2d"},
-      {BDSFieldFormat::poisson2dquad, "poisson2dquad"}
+      {BDSFieldFormat::poisson2dquad, "poisson2dquad"},
+      {BDSFieldFormat::poisson2ddipole, "poisson2ddipole"}
 });	
 
 BDSFieldFormat BDS::DetermineFieldFormat(G4String bFormat)
@@ -28,6 +29,7 @@ BDSFieldFormat BDS::DetermineFieldFormat(G4String bFormat)
   formats["bdsim4d"]       = BDSFieldFormat::bdsim4d;
   formats["poisson2d"]     = BDSFieldFormat::poisson2d;
   formats["poisson2dquad"] = BDSFieldFormat::poisson2dquad;
+  formats["poisson2ddipole"] = BDSFieldFormat::poisson2ddipole;
   
   bFormat.toLower();
 
