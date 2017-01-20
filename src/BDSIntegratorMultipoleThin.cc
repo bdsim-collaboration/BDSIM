@@ -98,7 +98,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
     }
 
   //apply kick
-
   xp1 -= kick.real();
   yp1 += kick.imag();
   zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
