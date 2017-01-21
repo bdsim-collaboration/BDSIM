@@ -9,7 +9,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSComponentFactory.hh"
-#include "BDSCurvilinearFactory.hh"
+#include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
 #include "BDSExtent.hh"
@@ -270,7 +270,9 @@ void BDSDetectorConstruction::BuildBeamline()
 #endif
 
   // Build curvilinear geometry w.r.t. beam line.
-  BDSBeamline* clBeamline = BDSCurvilinearFactory::Instance()->BuildCurvilinearBeamLine(beamline);
+  BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
+  BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine(beamline);
+  delete clBuilder;
   
   // register the beamline in the holder class for the full model
   BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);

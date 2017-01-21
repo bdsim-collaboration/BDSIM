@@ -3,7 +3,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
-#include "BDSCurvilinearFactory.hh"
+#include "BDSCurvilinearBuilder.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
@@ -22,16 +22,7 @@
 
 #include <cmath>
 
-BDSCurvilinearFactory* BDSCurvilinearFactory::instance = nullptr;
-
-BDSCurvilinearFactory* BDSCurvilinearFactory::Instance()
-{
-  if (!instance)
-    {instance = new BDSCurvilinearFactory();}
-  return instance;
-}
-
-BDSCurvilinearFactory::BDSCurvilinearFactory()
+BDSCurvilinearBuilder::BDSCurvilinearBuilder()
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
   curvilinearRadius = globals->SamplerDiameter()*0.5;
@@ -46,12 +37,10 @@ BDSCurvilinearFactory::BDSCurvilinearFactory()
   lengthSafety  = globals->LengthSafety();
 }
 
-BDSCurvilinearFactory::~BDSCurvilinearFactory()
-{
-  instance = nullptr;
-}
+BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
+{;}
 
-BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
+BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
 {
   BDSBeamline* result = new BDSBeamline();
   for (const auto& element : *beamline)
@@ -66,7 +55,7 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine1To1(BDSBeamline con
   return result;
 }
 
-BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* const beamline)
+BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* const beamline)
 {
   BDSBeamline* result = new BDSBeamline();
 
@@ -74,11 +63,12 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
   G4double accumulatedAngle     = 0;
   G4bool   straightSoFar        = true;
 
-  auto startingElement  = beamline->begin();
-  auto finishingElement = beamline->begin();
-  auto nextElement      = beamline->begin() + 1;
-
-  for (auto currentElement = beamline->begin(); currentElement != beamline->end(); currentElement++)
+  BDSBeamline::const_iterator startingElement  = beamline->begin();
+  BDSBeamline::const_iterator finishingElement = beamline->begin();
+  BDSBeamline::const_iterator nextElement      = beamline->begin() + 1;
+  BDSBeamline::const_iterator currentElement   = beamline->begin();
+  
+  for (; currentElement != beamline->end(); currentElement++)
     {
       const G4bool   isStraight = IsStraight(*currentElement);
       const G4double arcLength  = (*currentElement)->GetArcLength();
@@ -113,12 +103,12 @@ BDSBeamline* BDSCurvilinearFactory::BuildCurvilinearBeamLine(BDSBeamline const* 
   return result;
 }
 
-G4bool BDSCurvilinearFactory::IsStraight(BDSBeamlineElement const* const element)
+G4bool BDSCurvilinearBuilder::IsStraight(BDSBeamlineElement const* const element)
 {
   return !BDS::IsFinite(element->GetAngle());
 }
 
-BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleComponent* component,
+BDSBeamlineElement* BDSCurvilinearBuilder::BuildBeamLineElement(BDSSimpleComponent* component,
 								BDSBeamlineElement const* const element)
 {
   BDSTiltOffset* copyTiltOffset = nullptr;
@@ -145,7 +135,7 @@ BDSBeamlineElement* BDSCurvilinearFactory::BuildBeamLineElement(BDSSimpleCompone
   return result;
 }
 
-BDSSimpleComponent* BDSCurvilinearFactory::BuildCurvilinearComponent(BDSBeamlineElement const* const element)
+BDSSimpleComponent* BDSCurvilinearBuilder::BuildCurvilinearComponent(BDSBeamlineElement const* const element)
 {
   G4double chordLength = element->GetChordLength();
   if (!BDS::IsFinite(chordLength))

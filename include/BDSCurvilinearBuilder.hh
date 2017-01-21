@@ -14,12 +14,11 @@ class BDSSimpleComponent;
  * @author Laurie Nevay
  */
 
-class BDSCurvilinearFactory
+class BDSCurvilinearBuilder
 {
 public:
-  static BDSCurvilinearFactory* Instance(); ///< Singleton accessor.
-
-  ~BDSCurvilinearFactory();
+  BDSCurvilinearBuilder();
+  ~BDSCurvilinearBuilder();
 
   /// Build a beam line of curvilinear geometry based on another beam line.
   BDSBeamline* BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline);
@@ -27,9 +26,6 @@ public:
   BDSBeamline* BuildCurvilinearBeamLine(BDSBeamline const* const beamline);
 
 private:
-  BDSCurvilinearFactory(); ///< Private constructor as singleton pattern.
-  static BDSCurvilinearFactory* instance; ///< Singleton instance.
-
   BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
 					   BDSBeamlineElement const* const element);
 
