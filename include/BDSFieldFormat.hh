@@ -16,7 +16,7 @@ struct fieldformats_def
     {
       none,
       bdsim1d, bdsim2d, bdsim3d, bdsim4d,
-      poisson2d, poisson2dquad
+      poisson2d, poisson2dquad, poisson2ddipole
     };
 };
 

@@ -36,8 +36,6 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
 {
   // Momentum
   G4ThreeVector v0 = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
-  // Momentum magnitude
-  G4ThreeVector InitMomDir = v0.unit();
   
   // In case of zero field or neutral particles do a linear step:
   if(bField==0 || eqOfM->FCof()==0)

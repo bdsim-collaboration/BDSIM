@@ -316,9 +316,9 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
       t2->GetEntry(i);
 
       Compare::Sampler(evtLocal1->GetPrimaries(), evtLocal2->GetPrimaries(), re);
-      for (auto i = 0; i < (int)evtLocal1->samplers.size(); i++)
+      for (auto j = 0; j < (int)evtLocal1->samplers.size(); j++)
 	{
-	  Compare::Sampler(evtLocal1->samplers[i], evtLocal2->samplers[i], re);
+	  Compare::Sampler(evtLocal1->samplers[j], evtLocal2->samplers[j], re);
 	}
 
       ret->eventResults.push_back(*re);

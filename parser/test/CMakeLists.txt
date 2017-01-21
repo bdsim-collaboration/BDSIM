@@ -88,6 +88,9 @@ set_tests_properties(gmad-if PROPERTIES PASS_REGULAR_EXPRESSION 2)
 add_test(gmad-ifelse ${gmadBinary} ifelse.gmad)
 set_tests_properties(gmad-ifelse PROPERTIES PASS_REGULAR_EXPRESSION 2)
 
+# test special printing
+add_test(gmad-print ${gmadBinary} print.gmad)
+
 # test access attribute
 add_test(gmad-testAccessAttribute ${gmadBinary} accessattribute.gmad)
 set_tests_properties(gmad-testAccessAttribute PROPERTIES PASS_REGULAR_EXPRESSION 0.1)

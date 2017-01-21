@@ -54,10 +54,12 @@ public:
 					   GMAD::Element const* prevElementIn,
 					   GMAD::Element const* nextElementIn);
   
-  /// Public creation method for ring logic
+  /// Public creation for object that dynamically stops all particles once the primary
+  /// has completed a certain number of turns.
   BDSAcceleratorComponent* CreateTerminator();
 
-  /// Public creation method for ring logic
+  /// Public creation for object that accounts for slight offset between ends of a ring.
+  /// The z component of the delta three vector is used for the length of the teleporter.
   BDSAcceleratorComponent* CreateTeleporter(const G4ThreeVector teleporterDelta);
 
   /// Create the tilt and offset information object by inspecting the parser element

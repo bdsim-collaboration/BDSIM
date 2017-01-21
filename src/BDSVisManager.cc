@@ -58,17 +58,17 @@ void BDSVisManager::StartSession(G4int argc, char** argv)
   // difference between local build and install build:
   std::string visPath;
   std::string localPath = bdsimPath + "vis/vis.mac";
-  std::string installPath = bdsimPath + "../share/BDSIM/vis/vis.mac";
+  std::string installPath = bdsimPath + "../share/bdsim/vis/vis.mac";
       
   if (FILE *file = fopen(localPath.c_str(), "r"))
     {
       fclose(file);
       visPath = bdsimPath + "vis/";
     }
-  else if (FILE *file = fopen(installPath.c_str(), "r"))
+  else if ( (file = fopen(installPath.c_str(), "r")) )
     {
       fclose(file);
-      visPath = bdsimPath + "../share/BDSIM/vis/";
+      visPath = bdsimPath + "../share/bdsim/vis/";
     }
   else
     {G4cout << __METHOD_NAME__ << "ERROR: default visualisation file could not be found!" << G4endl;}

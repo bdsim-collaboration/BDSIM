@@ -39,6 +39,7 @@ and very similar to MADX.
 * boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
+* comments start with an exclamation mark!
 
 The following functions are provided
 
@@ -140,8 +141,8 @@ Useful Commands
 
 * :code:`print;` prints all elements
 * :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
-* :code:`print, option;` prints the value of option
-* :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
+* :code:`print, option;` prints the value of some options.
+* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
 * :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
@@ -233,7 +234,7 @@ drift
 	    :width: 30%
 	    :align: right
 
-:code:`drift` defines a straight beam pipe with no field.
+`drift` defines a straight beam pipe with no field.
 
 ================  ===================  ==========  =========
 parameter         description          default     required
@@ -1283,6 +1284,10 @@ Formats
 | poisson2dquad    | 2D Poisson Superfish SF7 file              |
 |                  | for 1/8th of quadrupole.                   |
 +------------------+--------------------------------------------+
+| poisson2ddipole  | 2D Poisson Superfish SF7 file for positive |
+|                  | quadrant that's reflected to produce a     |
+|                  | full windowed dipole field.                |
++------------------+--------------------------------------------+
 
 Field maps in the following formats are accepted:
 
@@ -2162,9 +2167,9 @@ the usual beam :math:`\sigma`-matrix is calculated, using the following equation
 +----------------------------------+-------------------------------------------------------+
 | `emity`                          | Vertical beam core emittance [m]                      |
 +----------------------------------+-------------------------------------------------------+
-| `betax`                          | Horizontal beta function [m]                          |
+| `betx`                           | Horizontal beta function [m]                          |
 +----------------------------------+-------------------------------------------------------+
-| `betay`                          | Vertical beta function [m]                            |
+| `bety`                           | Vertical beta function [m]                            |
 +----------------------------------+-------------------------------------------------------+
 | `alfx`                           | Horizontal alpha function                             |
 +----------------------------------+-------------------------------------------------------+
@@ -2300,9 +2305,9 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `emity`                          | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `betax`                          | Horizontal beta function [m]                                                |
+| `betx`                           | Horizontal beta function [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `betay`                          | Vertical beta function [m]                                                  |
+| `bety`                           | Vertical beta function [m]                                                  |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `alfx`                           | Horizontal alpha function                                                   |
 +----------------------------------+-----------------------------------------------------------------------------+
@@ -2574,14 +2579,13 @@ Regions
 -------
 
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
-In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
-These are the default region, the precision region and the approximation region. Beamline elements 
-can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example::
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) and then
+the user may define additional regions and attach them to the objects desired.  For example::
 
-  precisionRegion: region, prodCutProtons=1*m,
-                           prodCutElectrons=10*m,
-			   prodCutPositrons=10*m,
-			   prodCutPhotons = 1*mm;
+  precisionRegion: cutsregion, prodCutProtons=1*m,
+                               prodCutElectrons=10*m,
+			       prodCutPositrons=10*m,
+			       prodCutPhotons = 1*mm;
 
   d1: drift, l=10*m, region="precisionRegion";
 
