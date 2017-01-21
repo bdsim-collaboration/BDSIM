@@ -106,7 +106,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
-  G4double skewAngle=0;
 
   G4ThreeVector mom = G4ThreeVector(xp1,yp1,zp1);
   G4complex skewkick(0,0);
