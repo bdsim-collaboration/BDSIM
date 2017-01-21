@@ -1111,11 +1111,18 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   std::vector<G4String> skewKeys = st->SkewComponentKeys();
   auto nkey = normKeys.begin();
   auto skey = skewKeys.begin();
-  for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
+  //Separate loops for kn and ks. The length of knl and ksl is determined by the input in the gmad file.
+  //A single loop for both kn and ks using only one of their end iterators can end the loop
+  //prematurely for the other, potentially missing higher order components.
+  for (; kn != element->knl.end(); kn++, nkey++)
     {
       (*st)[*nkey] = (*kn) / length;
+    }
+  for (; ks != element->ksl.end(); ks++, skey++)
+    {
       (*st)[*skey] = (*ks) / length;
     }
+
   return st;
 }
 

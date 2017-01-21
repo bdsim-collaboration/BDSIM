@@ -187,7 +187,7 @@ csample { return CSAMPLE; }
   std::string mainfilepath    = "";
   if(bdsimpath.length()>0){
 #ifdef BDSDEBUG
-  printf("parser> using BDSIMPATH to build included filepaths\n");
+  std::cout << "parser> using BDSIMPATH to build included filepaths" << std::endl;
 #endif
   includefilename = bdsimpath + (std::string)yytext;
   } else {
@@ -209,7 +209,7 @@ csample { return CSAMPLE; }
     }
   }
 
-  printf("parser> reading file %s \n",includefilename.c_str());//yytext
+  std::cout << "parser> reading file " << includefilename << std::endl; //yytext
   if(include_stack_ptr >= max_include_depth - 1)
     {
       std::cerr << "Error : Include depth exceeds " << max_include_depth << std::endl;
@@ -220,7 +220,7 @@ csample { return CSAMPLE; }
       yyin = fopen(includefilename.c_str(), "r"); //yytext
       if(yyin)
         {
-          //printf("saving to stack buffer n %d, file %s\n",include_stack_ptr,yyfilename );
+          //std::cout << "saving to stack buffer n " << include_stack_ptr << ", file " << yyfilename << std::endl;
           // save info to the stack and load new buffer
           include_linenum_stack[include_stack_ptr] = line_num;
           line_num = 1;
@@ -229,11 +229,11 @@ csample { return CSAMPLE; }
           include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
           include_filename_stack[include_stack_ptr] = yyfilename;
           yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
-          //printf("done saving to stack\n");
+          //std::cout << "done saving to stack" << std::endl;
     	}
       else
         {
-          fprintf(stderr, "Error : can't open %s\n", includefilename.c_str()); //yytext
+          std::cerr << "Error : can't open " << includefilename << std::endl; //yytext
           exit(1);
         }
     }
@@ -248,7 +248,7 @@ csample { return CSAMPLE; }
   else
     {
       // restore the previous buffer info
-      //printf("switching to previous buffer with %s\n", include_filename_stack[include_stack_ptr]);
+      //std::cout << "switching to previous buffer with " << include_filename_stack[include_stack_ptr] << std::endl;
       yy_delete_buffer(YY_CURRENT_BUFFER);
       yy_switch_to_buffer(include_stack[include_stack_ptr]);
       yyfilename = include_filename_stack[include_stack_ptr];

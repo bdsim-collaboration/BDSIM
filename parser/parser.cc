@@ -1,6 +1,7 @@
 #include "parser.h"
 
 #include <cmath>
+#include <iostream>
 
 // for getpwuid: http://linux.die.net/man/3/getpwuid
 #include <unistd.h>
@@ -96,11 +97,13 @@ Parser::Parser(std::string name)
     std::cerr << "gmad_parser> Can't open input file " << name << std::endl;
     exit(1);
   }
-
+  // set global string for parser
   yyfilename = std::string(name);
 
   Initialise();
   
+  std::cout.precision(10); // set output precision to 10 decimals
+
   ParseFile(f);
 }
 
@@ -202,14 +205,14 @@ void Parser::Initialise()
 
 void Parser::quit()
 {
-  printf("parsing complete...\n");
+  std::cout << "parsing complete..." << std::endl;
   exit(0);
 }
 
 void Parser::write_table(std::string* name, ElementType type, bool isLine)
 {
 #ifdef BDSDEBUG 
-  printf("k1=%.10g, k2=%.10g, k3=%.10g, type=%s\n", params.k1, params.k2, params.k3, typestr(type).c_str());
+  std::cout << "k1=" << params.k1 << ", k2=" << params.k2 << ", k3=" << params.k3 << ",type=" << typestr(type) << std::endl;
 #endif
 
   Element e;
@@ -295,7 +298,7 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 	  if( (tmpit != iterEnd) && ( (*tmpit).lst != nullptr) ) { // sublist found and not empty
 	    const Element& list = *tmpit; // alias
 #ifdef BDSDEBUG
-	    printf("inserting sequence for %s - %s ...",element.name.c_str(),list.name.c_str());
+	    std::cout << "inserting sequence for " << element.name << " - " << list.name << " ...";
 #endif
 	    if(type == ElementType::_LINE)
 	      beamline_list.insert(it,list.lst->begin(),list.lst->end());
@@ -313,20 +316,20 @@ void Parser::expand_line(std::string name, std::string start, std::string end)
 	      beamline_list.insert(it,tmpList.rbegin(),tmpList.rend());
 	    }
 #ifdef BDSDEBUG
-	    printf("inserted\n");
+	    std::cout << "inserted" << std::endl;
 #endif
 	    // delete the list pointer
 	    beamline_list.erase(it--);
 	  } else if ( tmpit != iterEnd ) { // entry points to a scalar element type -
 	    //transfer properties from the main list
 #ifdef BDSDEBUG 
-	    printf("keeping element...%s\n",element.name.c_str());
+	    std::cout << "keeping element..." << element.name << std::endl;
 #endif
 	    // copy properties
 	    element = (*tmpit);
 
 #ifdef BDSDEBUG 
-	    printf("done\n");
+	    std::cout << "done" << std::endl;
 #endif
 	  } else { // element of undefined type
 	    std::cerr << "Error : Expanding line \"" << name << "\" : element \"" << element.name << "\" has not been defined! " << std::endl;
