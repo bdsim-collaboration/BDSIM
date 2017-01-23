@@ -35,6 +35,7 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder()
     }
   checkOverlaps = globals->CheckOverlaps();
   lengthSafety  = globals->LengthSafety();
+  minimumLength = 1*CLHEP::mm;
 }
 
 BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
@@ -70,42 +71,48 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   
   for (; currentElement != beamline->end(); currentElement++)
     {
-      const G4bool   isStraight = IsStraight(*currentElement);
-      const G4double arcLength  = (*currentElement)->GetArcLength();
-      if (arcLength < 1*CLHEP::cm) // short element - avoid by accumulating
+      const G4bool angled   = Angled(*currentElement);
+      const G4bool tooShort = TooShort(*currentElement);
+
+      if (angled)
 	{
-	  //Accumulate(currentElement);
-	}
-      else if (isStraight && straightSoFar) // keep adding straight sections while straight
-	{
-	  // Accumulate(currentElement);
+	  if (straightSoFar)
+	    {
+	      // make from startingElement to currentElement-1
+	    }
+	  if (tooShort)
+	    {
+	      // Accumulate
+	    }
+
 	}
       else
-	{
-	  //Break();
+	{// straight
+	  if (tooShort)
+	    {
+	      // Accumulate
+	    }
+
 	}
-
-      if (!isStraight)
-	{straightSoFar = false;}
-
-    }
-  
-  for (const auto& element : *beamline)
-    {
-      const G4double arcLength = element->GetArcLength();
-      const G4double angle     = element->GetAngle();
-      // if too short
-
-
 
     }
   
   return result;
 }
 
-G4bool BDSCurvilinearBuilder::IsStraight(BDSBeamlineElement const* const element)
+BDSBeamlineElement* BDSCurvilinearBuilder::BuildCurvilinearElement(BDSBeamlineElement const* const startElement,
+								   BDSBeamlineElement const* const finishElement) const
 {
-  return !BDS::IsFinite(element->GetAngle());
+  if (startElement == finishElement)
+    {// build 1:1
+      ;
+    }
+  else
+    {// cover a few components
+      ;
+    }
+  
+  return nullptr;
 }
 
 BDSBeamlineElement* BDSCurvilinearBuilder::BuildBeamLineElement(BDSSimpleComponent* component,

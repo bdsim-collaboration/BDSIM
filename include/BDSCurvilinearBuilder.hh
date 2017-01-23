@@ -1,3 +1,5 @@
+#include "BDSUtilities.hh"
+
 class BDSAcceleratorComponent;
 class BDSBeamline;
 class BDSBeamlineElement;
@@ -6,10 +8,8 @@ class BDSSimpleComponent;
 /**
  * @brief Factory for simple parallel geometry for curvilinear coordinates.
  *
- * This builds a beam line of geometry based on an existing beam line. It makes
- * simple shapes with the correct length and angle of each component. In the case
- * of a straight component (no angle) it's a box and in the case of an angled component
- * or one with face rotations, it's a G4CutTubs.
+ * This builds a beam line of geometry w.r.t. a beam line that can be used
+ * for curvilinear coordinates.
  *
  * @author Laurie Nevay
  */
@@ -26,16 +26,40 @@ public:
   BDSBeamline* BuildCurvilinearBeamLine(BDSBeamline const* const beamline);
 
 private:
-  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
-					   BDSBeamlineElement const* const element);
-
-  /// Build a single component.
-  BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element);
+  BDSBeamlineElement* BuildCurvilinearElement(BDSBeamlineElement const* const startElement,
+					      BDSBeamlineElement const* const finishElement) const;
 
   /// Simple interrogation function to determine if an element has a finite angle or not.
-  G4bool IsStraight(BDSBeamlineElement const* const element);
+  inline G4bool Angled(BDSBeamlineElement const* const element) const;
+
+  /// Whether an element is too short for its own curvilinear volume
+  inline G4bool TooShort(BDSBeamlineElement const* const element) const; 
 
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
   G4bool   checkOverlaps;     ///< Whether to check overlaps.
   G4double lengthSafety;      ///< Length safety.
+  G4double minimumLength;     ///< Minimum length of a curvilinear section.
+
+
+
+
+
+
+    /// OLD
+  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
+					   BDSBeamlineElement const* const element);
+
+  /// OLD
+  /// Build a single component.
+  BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element);
 };
+
+inline G4bool BDSCurvilinearBuilder::Angled(BDSBeamlineElement const* const element) const
+{
+  return BDS::IsFinite(element->GetAngle());
+}
+
+inline G4bool BDSCurvilinearBuilder::TooShort(BDSBeamlineElement const* const element) const
+{
+  return element->GetArcLength() < minimumLength;
+}
