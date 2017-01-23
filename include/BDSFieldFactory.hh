@@ -74,6 +74,9 @@ private:
   /// Create an electric field.
   BDSFieldObjects* CreateFieldE(const BDSFieldInfo& info);
 
+  /// Create an irregular (special) field.
+  BDSFieldObjects* CreateFieldIrregular(const BDSFieldInfo& info);
+
   /// Create a purely magnetic integrator. As it's purely magnetic, this
   /// requires a G4Mag_EqRhs* equation of motion instance.
   G4MagIntegratorStepper* CreateIntegratorMag(const BDSFieldInfo&      info,
@@ -110,9 +113,8 @@ private:
 
   /// Create a special teleporter 'field' that shifts particles at the end of rings to
   /// match up correctly.
-  BDSFieldObjects* CreateTeleporter(const G4ThreeVector teleporterDelta);
+  BDSFieldObjects* CreateTeleporter(const BDSFieldInfo& info);
   
-private:
   /// Private default constructor as singleton class.
   BDSFieldFactory();
 

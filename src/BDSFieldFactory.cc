@@ -208,9 +208,10 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
-
+  
   if (info.FieldType() == BDSFieldType::none)
     {return field;} // as nullptr
+
   BDSFieldClassType clas = BDS::DetermineFieldClassType(info.FieldType());
   switch (clas.underlying())
     {
@@ -220,6 +221,8 @@ BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
       {field = CreateFieldEM(info); break;}
     case BDSFieldClassType::electric:
       {field = CreateFieldE(info); break;}
+    case BDSFieldClassType::irregular:
+      {field = CreateFieldIrregular(info); break;}
     default:
       {break;} // this will return nullptr
     }
@@ -360,6 +363,20 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
   return completeField;
 }
 
+BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
+{
+  // special routine for each special / irregular field
+  BDSFieldObjects* result = nullptr;
+  switch (info.FieldType().underlying())
+    {
+    case BDSFieldType::teleporter:
+      {result = CreateTeleporter(info); break;}
+    default:
+      {break;}
+    }
+  return result;
+}
+
 G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&      info,
 							     G4Mag_EqRhs*             eqOfM,
 							     const BDSMagnetStrength* strength)
@@ -478,12 +495,13 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& i
   return CreateIntegratorEM(info,eqOfM);
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
+BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
-  G4MagneticField* bGlobalField      = new BDSFieldMagDummy(); //Zero magnetic field.
-  G4Mag_EqRhs*     bEqOfMotion       = new G4Mag_UsualEqRhs(bGlobalField);
-  G4MagIntegratorStepper* integrator = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  BDSFieldObjects* completeField     = new BDSFieldObjects(nullptr, bGlobalField,
-							   bEqOfMotion, integrator);
+  const G4ThreeVector teleporterDelta = info.Transform().getTranslation();
+  G4MagneticField* bGlobalField       = new BDSFieldMagDummy(); //Zero magnetic field.
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  BDSFieldObjects* completeField      = new BDSFieldObjects(nullptr, bGlobalField,
+							    bEqOfMotion, integrator);
   return completeField;
 }

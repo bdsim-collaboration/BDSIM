@@ -12,6 +12,7 @@
 #include "BDSCurvilinearFactory.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGeometryComponent.hh"
@@ -20,6 +21,7 @@
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
 #include "BDSShowerModel.hh"
 #include "BDSSDManager.hh"
@@ -193,18 +195,50 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      G4ThreeVector teleporterDelta = BDS::CalculateAndSetTeleporterDelta(beamline);
-      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
-      if (terminator)
-        {
-	  terminator->Initialise();
-	  beamline->AddComponent(terminator);
-	}
-      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
-      if (teleporter)
+      // minimum space for the circular mechanics are 3x L.S. + sampler width for terminator,
+      // plus some space for teleporter - assume the sampler width again.
+      const G4double lengthSafety   = BDSGlobalConstants::Instance()->LengthSafety();
+      G4double minimumRequiredSpace = 3 * lengthSafety;
+      minimumRequiredSpace         += 2*BDSSamplerPlane::ChordLength();
+      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(beamline);
+      
+      // note delta is from end to beginning, which will have correct transverse but opposite
+      // z component, hence -ve here.
+      G4double rawLength        = -teleporterDelta.z();
+      G4double teleporterLength =  rawLength - BDSSamplerPlane::ChordLength() - 3*lengthSafety;
+      
+      if (teleporterDelta.mag() > 1*CLHEP::m)
 	{
-	  teleporter->Initialise();
-	  beamline->AddComponent(teleporter);
+	  G4cout << G4endl
+		 << "Error - the calculated teleporter delta is above 1m! The teleporter"
+		 << G4endl
+		 << "was only intended for small shifts - the teleporter will not be built."
+		 << G4endl << G4endl;
+	}
+      else if (teleporterLength < minimumRequiredSpace)
+	{
+	  G4cout << G4endl
+		 << "Insufficient space between the first and last elements in the beam line"
+		 << G4endl
+		 << "to fit the terminator and teleporter - these will not be built."
+		 << G4endl << G4endl;
+	}
+      else
+	{ 
+	  BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
+	  if (terminator)
+	    {
+	      terminator->Initialise();
+	      beamline->AddComponent(terminator);
+	    }	  
+	  // update delta
+	  teleporterDelta.setZ(teleporterLength);
+	  BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
+	  if (teleporter)
+	    {
+	      teleporter->Initialise();
+	      beamline->AddComponent(teleporter);
+	    }
 	}
     }
 
@@ -290,6 +324,7 @@ void BDSDetectorConstruction::BuildWorld()
 #endif
   
   G4String worldName   = "World";
+  worldExtent          = BDSExtent(worldR);
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
   G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();

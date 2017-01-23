@@ -42,7 +42,7 @@ EventAnalysis::EventAnalysis(Event*  eventIn,
   // create sampler analyses
   for(auto i = event->samplers.begin(); i != event->samplers.end(); ++i)
   {
-    SamplerAnalysis *sa = new SamplerAnalysis(*i);
+    sa = new SamplerAnalysis(*i);
     this->samplerAnalyses.push_back(sa);
   }
   

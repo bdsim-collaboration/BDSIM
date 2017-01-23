@@ -10,6 +10,9 @@
 #include <cmath>
 #include <utility>
 
+const G4double BDSFieldEMRFCavity::j0FirstZero = 2.404825557695772768622;
+
+
 BDSFieldEMRFCavity::BDSFieldEMRFCavity(BDSCavityInfo const* info):
   normalisedCavityRadius(j0FirstZero/info->equatorRadius)
 {

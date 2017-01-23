@@ -18,9 +18,9 @@ information we refer to the GDML `website <http://gdml.web.cern.ch/GDML/>`_ and
 `manual <http://gdml.web.cern.ch/GDML/doc/GDMLmanual.pdf>`_.
 
 This format is widely supported and other geometry software may be able to export
-geoemtry in GDML format.
+geometry in GDML format.
 
-* A BDSIM provided python tool is also under development to allow simple programatic
+* A BDSIM provided python tool is also under development to allow simple programmatic
   construction of GDML geometry as well as visualisation and overlap checking.
 
 ggmad
@@ -259,7 +259,7 @@ The following is a list of table parameters that are common to all solid types e
 * | VISATT
   | Variable type: VARCHAR(32)
   | Optional parameter
-  | This is the visual state setting for the object. Setting this to “W” results in a wireframe displayment of the object. “S” produces a shaded solid and “I” leaves the object invisible. The default is set to be solid.
+  | This is the visual state setting for the object. Setting this to “W” results in a wireframe display of the object. “S” produces a shaded solid and “I” leaves the object invisible. The default is set to be solid.
 * | FIELDX, FIELDY, FIELDZ
   | Variable type: DOUBLE(10,3)
   | Optional parameters

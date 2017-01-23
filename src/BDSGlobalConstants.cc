@@ -11,11 +11,12 @@
 
 #include "G4Colour.hh"
 #include "G4FieldManager.hh"
-#include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4UniformMagField.hh"
 #include "G4UserLimits.hh"
 #include "G4VisAttributes.hh"
+
+#include "CLHEP/Units/PhysicalConstants.h"
 
 BDSGlobalConstants* BDSGlobalConstants::instance = nullptr;
 
@@ -35,8 +36,7 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   particleKineticEnergy(0.0),
   brho(0.0),
   sMax(0.0),
-  turnsTaken(0),
-  teleporterlength(0.0)
+  turnsTaken(0)
 {
   outputFormat = BDS::DetermineOutputFormat(options.outputFormat);
 
@@ -84,14 +84,10 @@ BDSGlobalConstants::BDSGlobalConstants(const GMAD::Options& opt):
   zeroFieldManager=new G4FieldManager();
   zeroFieldManager->SetDetectorField(zeroMagField);
   zeroFieldManager->CreateChordFinder(zeroMagField);
-    
-  teleporterdelta     = G4ThreeVector(0.,0.,0.);
 
   cOverGeV = CLHEP::c_light /CLHEP::GeV;
 
   CalculateHistogramParameters();
-  
-  InitRotationMatrices();
   
   // initialise the default vis attributes and user limits that
   // can be copied by various bits of geometry
@@ -126,29 +122,15 @@ void BDSGlobalConstants::InitVisAttributes()
 
 void BDSGlobalConstants::InitDefaultUserLimits()
 {
-  //these must be copied and not attached directly
   defaultUserLimits = new G4UserLimits("default_cuts");
-  defaultUserLimits->SetUserMaxTime(MaxTime());
-  //user must set step length manually
-}
-
-void BDSGlobalConstants::InitRotationMatrices()
-{
-  rotY90       = new G4RotationMatrix();
-  rotYM90      = new G4RotationMatrix();
-  rotX90       = new G4RotationMatrix();
-  rotXM90      = new G4RotationMatrix();
-  rotYM90X90   = new G4RotationMatrix();
-  rotYM90XM90  = new G4RotationMatrix();
-  G4double pi_ov_2 = asin(1.);
-  rotY90->rotateY(pi_ov_2);
-  rotYM90->rotateY(-pi_ov_2);
-  rotX90->rotateX(pi_ov_2);
-  rotXM90->rotateX(-pi_ov_2);
-  rotYM90X90->rotateY(-pi_ov_2);
-  rotYM90X90->rotateX( pi_ov_2);
-  rotYM90XM90->rotateY(-pi_ov_2);
-  rotYM90XM90->rotateX(-pi_ov_2);
+  const G4double maxTime = MaxTime();
+  if (maxTime > 0)
+    {
+#ifdef BDSDEBUG
+      G4cout << __METHOD_NAME__ << "Setting maximum tracking time to " << maxTime << " ns" << G4endl;
+#endif
+      defaultUserLimits->SetUserMaxTime(MaxTime());
+    }
 }
 
 G4int BDSGlobalConstants::PrintModulo()const
@@ -170,13 +152,6 @@ BDSGlobalConstants::~BDSGlobalConstants()
   delete defaultUserLimits;
   delete invisibleVisAttr;
   delete visibleDebugVisAttr;
-
-  delete rotY90;
-  delete rotYM90;
-  delete rotX90;
-  delete rotXM90;
-  delete rotYM90X90;
-  delete rotYM90XM90;
 
   instance = nullptr;
 }

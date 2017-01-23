@@ -15,6 +15,12 @@ endif()
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 #message(STATUS "ROOT DICTS : ${rebdsimLibLinkDefs}")
 
+if(ROOT_DOUBLE_OUTPUT)
+  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__;-D__ROOTDOUBLE__")
+else()
+  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
+endif()
+
 # Add BDSIM label to original files
 set_source_files_properties(${rebdsimLibSources} ${rebdsimLibLinkDefs} PROPERTIES LABELS "BDSIM")
 
@@ -35,7 +41,7 @@ foreach(header ${rebdsimLibLinkDefs})
                 ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -D__ROOTBUILD__
+                ${PREPROCESSOR_DEFS}
                 -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
@@ -64,7 +70,7 @@ foreach(header ${rebdsimLibLinkDefs})
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
-		-D__ROOTBUILD__
+                ${PREPROCESSOR_DEFS}
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}

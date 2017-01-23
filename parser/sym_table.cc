@@ -101,25 +101,22 @@ Symtab::function Symtab::GetFunction()const
 
 void Symtab::Print()
 {
-  printf("\t%s = ",name.c_str());
+  std::cout << "\t" << name << " = ";
   std::list<double>::iterator it;
   switch(type) {
   case Symtab::symtabtype::NUMBER:
-    printf ("%.10g\n", value);
+    std::cout << value << std::endl;
     break;
 
   case Symtab::symtabtype::STRING:
-    printf ("%s\n", str.c_str());
+    std::cout << str << std::endl;
     break;
 
   case Symtab::symtabtype::ARRAY:
-    
-    printf("\t%s = {",name.c_str());
+    std::cout << "{";
     for(it=array.begin();it!=array.end();it++)
-      {
-	printf(" %.10g ",(*it));
-      }
-    printf("} \n");
+      {std::cout << " " << (*it) << " ";}
+    std::cout << "}" << std::endl;
     break;
     
   default:

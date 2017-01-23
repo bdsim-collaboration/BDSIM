@@ -238,7 +238,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
   }
 
   // note this test will only be reached (and therefore the component registered)
-  // if it both the component didn't exist and it has been constructed
+  // if both the component didn't exist and it has been constructed
   if (component)
     {
       component->SetBiasVacuumList(element->biasVacuumList);
@@ -255,27 +255,20 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTeleporter(const G4ThreeVector teleporterDelta)
 {
-  // This relies on things being added to the beamline immediately
-  // after they've been created
-  G4double teleporterLength = BDSGlobalConstants::Instance()->TeleporterLength() - 1e-8;
-
-  if (teleporterLength < 10*G4GeometryTolerance::GetInstance()->GetSurfaceTolerance())
-    {
-      G4cout << G4endl << __METHOD_NAME__ << "WARNING - no space to put in teleporter - skipping it!" << G4endl << G4endl;
-      return nullptr;
-    }
+  G4Transform3D transform = G4Transform3D(G4RotationMatrix(), teleporterDelta);
   
-  G4String name = "teleporter";
-#ifdef BDSDEBUG
-  G4cout << "---->creating Teleporter,"
-	 << " name = " << name
-	 << ", l = " << teleporterLength/CLHEP::m << "m"
+  BDSFieldInfo* vacuumFieldInfo = new BDSFieldInfo(BDSFieldType::teleporter,
+						   brho,
+						   BDSIntegratorType::teleporter,
+						   nullptr,    // magnet strength doesn't apply
+						   true,       // provide global translation
+						   transform);
+  
+  G4cout << "---->creating Teleporter, "
+	 << "l = " << teleporterDelta.z()/CLHEP::m << "m"
 	 << G4endl;
-#endif
 
-  return( new BDSTeleporter(name,
-			    teleporterLength,
-			    teleporterDelta));
+  return( new BDSTeleporter(teleporterDelta.z(), vacuumFieldInfo));
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4double angleOut)
@@ -812,17 +805,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTerminator()
 {
-  G4String name   = "terminator";
-  G4double length = BDSSamplerPlane::ChordLength();
 #ifdef BDSDEBUG
-  G4cout << "---->creating Terminator,"
-	 << " name = " << name
-	 << " l = "    << length / CLHEP::m << "m"
-	 << G4endl;
+  G4cout << "---->creating Terminator" << G4endl;
 #endif
-  
-  return new BDSTerminator("terminator", 
-			   length);
+  return new BDSTerminator();
 }
 
 BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
@@ -1125,11 +1111,18 @@ BDSMagnetStrength* BDSComponentFactory::PrepareMagnetStrengthForMultipoles(Eleme
   std::vector<G4String> skewKeys = st->SkewComponentKeys();
   auto nkey = normKeys.begin();
   auto skey = skewKeys.begin();
-  for (; kn != element->knl.end(); kn++, ks++, nkey++, skey++)
+  //Separate loops for kn and ks. The length of knl and ksl is determined by the input in the gmad file.
+  //A single loop for both kn and ks using only one of their end iterators can end the loop
+  //prematurely for the other, potentially missing higher order components.
+  for (; kn != element->knl.end(); kn++, nkey++)
     {
       (*st)[*nkey] = (*kn) / length;
+    }
+  for (; ks != element->ksl.end(); ks++, skey++)
+    {
       (*st)[*skey] = (*ks) / length;
     }
+
   return st;
 }
 

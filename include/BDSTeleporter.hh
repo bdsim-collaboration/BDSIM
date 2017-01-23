@@ -27,9 +27,8 @@ class BDSFieldObjects;
 class BDSTeleporter: public BDSAcceleratorComponent
 {
 public:
-  BDSTeleporter(const G4String      name,
-		const G4double      length,
-		const G4ThreeVector teleporterDeltaIn);
+  BDSTeleporter(const G4double length,
+		BDSFieldInfo*  vacuumFieldInfoIn);
   virtual ~BDSTeleporter();
 
 private:
@@ -40,16 +39,14 @@ private:
   /// This is the only piece of geometry for the teleporter.
   virtual void BuildContainerLogicalVolume();
 
-  /// Teleporter 'field'
-  BDSFieldObjects* vacuumField;
-
-  /// Teleporter offset - the difference between the end and beginning of the beamline
-  G4ThreeVector teleporterDelta;
+  /// Recipe for teleporter 'field'.
+  BDSFieldInfo* vacuumFieldInfo;
 };
 
 namespace BDS
 {
-  G4ThreeVector CalculateAndSetTeleporterDelta(BDSBeamline* thebeamline);
+  /// Calculate the difference between the beginning and end of a beam line.
+  G4ThreeVector CalculateTeleporterDelta(BDSBeamline* thebeamline);
 }
 
 #endif

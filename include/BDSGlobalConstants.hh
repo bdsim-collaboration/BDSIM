@@ -22,11 +22,6 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-namespace CLHEP {
-  class HepRotation;
-}
-typedef CLHEP::HepRotation G4RotationMatrix;
-
 class BDSBeamPipeInfo;
 class BDSTunnelInfo;
 
@@ -180,17 +175,9 @@ public:
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return particleName;}
   inline G4double BRho()                     const {return brho;}
-  inline G4double TeleporterLength()         const {return teleporterlength;}
   inline G4double SMax()                     const {return sMax;}
   inline G4double SMaxHistograms()           const {return sMaxHistograms;}
   inline G4int    NBins()                    const {return nBins;}
-  inline G4RotationMatrix*     RotY90()                  const {return rotY90;}
-  inline G4RotationMatrix*     RotYM90()                 const {return rotYM90;}
-  inline G4RotationMatrix*     RotX90()                  const {return rotX90;}
-  inline G4RotationMatrix*     RotXM90()                 const {return rotXM90;}
-  inline G4RotationMatrix*     RotYM90X90()              const {return rotYM90X90;}
-  inline G4RotationMatrix*     RotYM90XM90()             const {return rotYM90XM90;}
-  inline G4ThreeVector         GetTeleporterDelta()      const {return teleporterdelta;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
@@ -212,8 +199,6 @@ public:
   inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
   inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
   inline void SetBRho(G4double value)                 {brho = value;}
-  inline void SetTeleporterDelta(G4ThreeVector newteleporterdelta);
-  inline void SetTeleporterLength(G4double newteleporterlength);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void SetSMax(G4double sMaxIn);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
@@ -281,15 +266,6 @@ private:
   G4bool        itsLaserwireTrackPhotons;
   G4bool        itsLaserwireTrackElectrons;
   
-  /// rotation
-  void InitRotationMatrices();
-  G4RotationMatrix* rotY90;
-  G4RotationMatrix* rotYM90;
-  G4RotationMatrix* rotX90;
-  G4RotationMatrix* rotXM90;
-  G4RotationMatrix* rotYM90X90;
-  G4RotationMatrix* rotYM90XM90;
-
   void InitVisAttributes();
   G4VisAttributes* invisibleVisAttr;
   G4VisAttributes* visibleDebugVisAttr;
@@ -298,11 +274,7 @@ private:
   G4UserLimits* defaultUserLimits;
   
   /// Turn Control
-  G4int    turnsTaken;
-  ///@{ Teleporter offset corrections
-  G4ThreeVector teleporterdelta;
-  G4double      teleporterlength;
-  ///@}
+  G4int turnsTaken;
 
   /// speed of light / 1 GeV, used for scaling in brho calculation
   G4double cOverGeV;
@@ -329,12 +301,6 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
-
-inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterdelta)
-{teleporterdelta = newteleporterdelta;}
-
-inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength)
-{teleporterlength = newteleporterlength;}
 
 inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
 {initialPoint = particle;}

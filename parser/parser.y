@@ -75,8 +75,7 @@
 %token BEAM OPTION PRINT RANGE STOP USE SAMPLE CSAMPLE
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
-%type <dval> aexpr
-%type <dval> expr
+%type <dval> aexpr expr
 %type <symp> assignment symdecl
 %type <array> vecexpr
 %type <array> vectnum vectstr
@@ -101,24 +100,24 @@
 // every statement ends in a semicolon 
 input : 
       | input stmt ';'
-       { 
-	 if(ECHO_GRAMMAR) printf("input -> input stmt ';' \n");
+       {
+	 if(ECHO_GRAMMAR) std::cout << "input -> input stmt ';' " << std::endl;
 	 if(willExit) yyerror("Error");
        }
 
 // deconstruct statements into atomic statements
 stmt :        if_clause '{' stmt '}'
               {
-		if(ECHO_GRAMMAR) printf("stmt -> IF '(' aexpr ')' stmt\n" );
+		if(ECHO_GRAMMAR) std::cout << "stmt -> IF '(' aexpr ')' stmt" << std::endl;
 		execute = true;
 	      }
               | if_clause '{' stmt '}' else_clause '{' stmt '}' 
 	      {
-		if(ECHO_GRAMMAR) printf("stmt -> IF '(' bool_expr ')' ELSE stmt \n" );
+		if(ECHO_GRAMMAR) std::cout << "stmt -> IF '(' bool_expr ')' ELSE stmt" << std::endl;
 		execute = true;
 	      }
-              | atomic_stmt { if(ECHO_GRAMMAR) printf("stmt -> atomic_stmt \n"); }
-              | BEGN input END { if(ECHO_GRAMMAR) printf("stmt -> '{' stmt ';' atomic_stmt '}' \n"); }
+              | atomic_stmt    { if(ECHO_GRAMMAR) std::cout << "stmt -> atomic_stmt" << std::endl; }
+              | BEGN input END { if(ECHO_GRAMMAR) std::cout << "stmt -> '{' stmt ';' atomic_stmt '}'" << std::endl;}
 
 if_clause: IF '(' aexpr ')' {if( ($3 > 0) && execute ) execute = true; else execute = false;}
 
@@ -130,9 +129,9 @@ else_clause: ELSE
 
 // atomic statements can be an mathematical expression, a declaration or a command
 atomic_stmt : 
-            | expr    { if(ECHO_GRAMMAR) printf("atomic_stmt -> expr\n"); }
-            | command { if(ECHO_GRAMMAR) printf("atomic_stmt -> command\n"); }
-            | decl    { if(ECHO_GRAMMAR) printf("atomic_stmt -> decl\n"); }
+            | expr    { if(ECHO_GRAMMAR) std::cout << "atomic_stmt -> expr" << std::endl; }
+            | command { if(ECHO_GRAMMAR) std::cout << "atomic_stmt -> command" << std::endl; }
+            | decl    { if(ECHO_GRAMMAR) std::cout << "atomic_stmt -> decl" << std::endl; }
 
 // instantiate an object
 decl : VARIABLE ':' component_with_params
@@ -453,25 +452,26 @@ rev_element_seq :
 
 expr : aexpr 
        {
-	 if(ECHO_GRAMMAR) printf("expr -> aexpr\n");
+	 if(ECHO_GRAMMAR) std::cout << "expr -> aexpr" << std::endl;
 	 if(execute) 
 	   {
-	     if(INTERACTIVE) printf ("\t%.10g\n", $1); $$=$1;
+	     if(INTERACTIVE) std::cout << "\t" << $1 << std::endl;
+	     $$=$1;
 	   }
        }
      | vecexpr 
        {
-	 if(ECHO_GRAMMAR) printf("expr -> vecexpr\n");
+	 if(ECHO_GRAMMAR) std::cout << "expr -> vecexpr" << std::endl;
 	 if(execute)
 	   {
 	     if(INTERACTIVE)
 	       {$1->Print();}
 	     $$ = 0;
-	   } 
+	   }
        }
      | assignment 
        { // check type
-	 if(ECHO_GRAMMAR) printf("expr -> assignment\n");
+	 if(ECHO_GRAMMAR) std::cout << "expr -> assignment" << std::endl;
 	 if(execute)
 	   {
 	     if(INTERACTIVE) {
@@ -503,11 +503,12 @@ aexpr  : NUMBER               { $$ = $1;                         }
        | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; }
        | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; }
        | aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
+       // element attributes
        | VARIABLE '[' string ']'
          {
 	   if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl;
 	   $$ = Parser::Instance()->property_lookup(*($1),*($3));
-	 }// element attributes
+         }
        // undeclared variable
        | VARIABLE
          {
@@ -649,12 +650,21 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | print        { if(execute) Parser::Instance()->PrintElements(); }
         | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
+        | print VARIABLE '[' string ']'
+	  {
+	    if (execute) {
+	      double value = Parser::Instance()->property_lookup(*($2),*($4));
+	      std::cout << "property '" << *($4) << "' of element '" << *($2) << "' is: " << value << std::endl;
+	    }
+	  }
         | print VARIABLE
           {
 	    if(execute) {
 	      Symtab *sp = Parser::Instance()->symlook(*($2));
 	      if (!sp) {
-		std::cout << "Variable " << *($2) << " not defined!" << std::endl;
+		// variable not defined, maybe an element? (will exit if not)
+		const Element& element = Parser::Instance()->find_element(*($2));
+		element.print();
 	      }
 	      else {
 		sp->Print();
@@ -663,14 +673,15 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	  }
         | print NUMVAR { if(execute) $2->Print();}
         | print STRVAR { if(execute) $2->Print();}
+        | print STR    { if(execute) std::cout << *($2) << std::endl;}
         | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
         | OPTION  ',' option_parameters
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> SAMPLE\n");
+	      {
+		if(ECHO_GRAMMAR) std::cout << "command -> SAMPLE" << std::endl;
 		Parser::Instance()->add_sampler(*($3), element_count, element_type);
 		element_count = -1;
 		Parser::Instance()->ClearParams();
@@ -679,8 +690,8 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | CSAMPLE ',' csample_options // cylindrical sampler
           {
 	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> CSAMPLE\n");
+	      {
+		if(ECHO_GRAMMAR) std::cout << "command -> CSAMPLE" << std::endl;
 		Parser::Instance()->add_csampler(*($3), element_count, element_type);
 		element_count = -1;
 		Parser::Instance()->ClearParams();
@@ -689,8 +700,8 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | ATOM ',' atom_options // atom
           {
 	    if(execute)
-	      {  
-		if(ECHO_GRAMMAR) printf("command -> ATOM\n");
+	      {
+		if(ECHO_GRAMMAR) std::cout << "command -> ATOM" << std::endl;
 		Parser::Instance()->Add<Atom>();
 	      }
           }
@@ -698,7 +709,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
           {
 	    if(execute)
 	      {  
-		if(ECHO_GRAMMAR) printf("command -> MATERIAL\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> MATERIAL" << std::endl;
 		Parser::Instance()->Add<Material>();
 	      }
           }
@@ -706,7 +717,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
           {
 	    if(execute)
 	      {  
-		if(ECHO_GRAMMAR) printf("command -> TUNNEL\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> TUNNEL" << std::endl;
 		Parser::Instance()->Add<Tunnel>();
 	      }
           }
@@ -714,7 +725,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
           {
 	    if(execute)
 	      {  
-		if(ECHO_GRAMMAR) printf("command -> REGION\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> REGION" << std::endl;
 		Parser::Instance()->Add<Region>();
 	      }
           }
@@ -722,7 +733,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
           {
 	    if(execute)
 	      {  
-		if(ECHO_GRAMMAR) printf("command -> PLACEMENT\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> PLACEMENT" << std::endl;
 		Parser::Instance()->Add<Placement>();
 	      }
           }
@@ -730,7 +741,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	  {
 	    if(execute)
 	      {
-		if(ECHO_GRAMMAR) printf("command -> FIELD\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> FIELD" << std::endl;
 		Parser::Instance()->Add<Field>();
 	      }
 	  }
@@ -738,7 +749,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
           {
 	    if(execute)
 	      {  
-		if(ECHO_GRAMMAR) printf("command -> CAVITYMODEL\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> CAVITYMODEL" << std::endl;
 		Parser::Instance()->Add<CavityModel>();
 	      }
           }
@@ -746,7 +757,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	  {
 	    if(execute)
 	      {
-		if(ECHO_GRAMMAR) printf("command -> QUERY\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> QUERY" << std::endl;
 		Parser::Instance()->Add<Query>();
 	      }
 	  }
@@ -754,7 +765,7 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
           {
 	    if(execute)
 	      {  
-		if(ECHO_GRAMMAR) printf("command -> XSECBIAS\n");
+		if(ECHO_GRAMMAR) std::cout << "command -> XSECBIAS" << std::endl;
 		Parser::Instance()->Add<PhysicsBiasing,FastList<PhysicsBiasing>>();
 	      }
           }
@@ -833,7 +844,7 @@ csample_options : paramassign '=' aexpr csample_options_extend
 		  }
                 | sample_options csample_options_extend
                   {
-		    if(ECHO_GRAMMAR) printf("csample_opt -> sopt, csopt\n");
+		    if(ECHO_GRAMMAR) std::cout << "csample_opt -> sopt, csopt" << std::endl;
 		    $$ = $1;
 		  }
 

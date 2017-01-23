@@ -33,7 +33,7 @@ namespace GMAD
 
     /// Copy parameters into temporary buffer params from element e
     /// Parameters already set in params have priority and are not overridden
-    void inherit_properties(Element& e);
+    void inherit_properties(const Element& e);
 
     /// Set method by property name and value
     template <typename T>

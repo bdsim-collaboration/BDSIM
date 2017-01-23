@@ -198,7 +198,7 @@ protected:
 
   /// A larger length safety that can be used where tracking accuracy isn't required
   /// or more tolerant geometry is required (1um).
-  static constexpr G4double lengthSafetyLarge = 1*CLHEP::um;
+  static G4double const lengthSafetyLarge;
 
   BDSSimpleComponent* endPieceBefore;
   BDSSimpleComponent* endPieceAfter;

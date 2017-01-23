@@ -2,6 +2,7 @@
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
 #include "BDSDebug.hh"
+#include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "globals.hh"
@@ -34,22 +35,28 @@ BDSAcceleratorModel::BDSAcceleratorModel():
 
 BDSAcceleratorModel::~BDSAcceleratorModel()
 {
-  G4cout << __METHOD_NAME__ << "Deleting model" << G4endl;
+  // User feedback as deletion can take some time
+  G4cout << "BDSAcceleratorModel> Deleting model" << G4endl;
+  
   delete worldPV;
   delete flatBeamline;
   delete curvilinearBeamline;
   delete supportsBeamline;
   delete tunnelBeamline;
   delete endPieceBeamline;
+  delete placementBeamline;
   delete BDSAcceleratorComponentRegistry::Instance();
   delete BDSPhysicalVolumeInfoRegistry::Instance();
 
+  for (auto f : fields)
+    {delete f;}
   for (auto r : regions)
     {delete r.second;}
   for (auto c : cuts)
     {delete c.second;}
 
-  G4cout << __METHOD_NAME__ << "Deletion complete" << G4endl;
+  G4cout << "BDSAcceleratorModel> Deletion complete" << G4endl;
+  
   _instance = nullptr;
 }
 

@@ -13,9 +13,9 @@ std::map<BDSFieldClassType, std::string>* BDSFieldClassType::dictionary =
   new std::map<BDSFieldClassType, std::string> ({
       {BDSFieldClassType::magnetic,        "magnetic"},
       {BDSFieldClassType::electric,        "electric"},
-      {BDSFieldClassType::electromagnetic, "electromagnetic"}
-      
-});	
+      {BDSFieldClassType::electromagnetic, "electromagnetic"},
+      {BDSFieldClassType::irregular,       "irregular"}
+    });	
 
 BDSFieldClassType BDS::DetermineFieldClassType(G4String bType)
 {
@@ -23,6 +23,7 @@ BDSFieldClassType BDS::DetermineFieldClassType(G4String bType)
   types["magnetic"]        = BDSFieldClassType::magnetic;
   types["electric"]        = BDSFieldClassType::electric;
   types["electromagnetic"] = BDSFieldClassType::electromagnetic;
+  types["irregular"]       = BDSFieldClassType::irregular;
   
   bType.toLower();
 
@@ -72,6 +73,8 @@ BDSFieldClassType BDS::DetermineFieldClassType(BDSFieldType fType)
     case BDSFieldType::ebmap4d:
     case BDSFieldType::rfcavity:
       {return BDSFieldClassType::electromagnetic;}
+    case BDSFieldType::teleporter:
+      {return BDSFieldClassType::irregular;}
     default:
       {return BDSFieldClassType::electromagnetic;}
     }

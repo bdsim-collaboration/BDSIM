@@ -201,8 +201,8 @@ OptionsBase::OptionsBase()
 
   // tracking options
   integratorSet            = "bdsim";
-  lengthSafety             = 1e-12; // be very careful adjusting this as it affects all the geometry
-  maximumTrackingTime      = 0.1;
+  lengthSafety             = 1e-12;   // be very careful adjusting this as it affects all the geometry
+  maximumTrackingTime      = -1;      // s, nonsensical - used for testing
   chordStepMinimum         = 0.000001;// m
   deltaIntersection        = 1e-10;   // m
   minimumEpsilonStep       = 5e-5;    // default value in Geant4, old value 0

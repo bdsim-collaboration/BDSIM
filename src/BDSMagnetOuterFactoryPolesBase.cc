@@ -936,8 +936,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   
   // points for container for magnet outer only
-  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));
-  if (buildPole)
+  if (buildPole == false) // redundant point when buildPole == true
+    {cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));}
+  else
     {
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight));
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 4*lsl + cDY));
@@ -953,7 +954,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 4*lsl - cDY));
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight));
     }
-  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));
+  else // redundant point when buildPole == true
+    {cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));}
   cPoints.push_back(G4TwoVector(yokeInsideX, -poleHalfHeight));
   cPoints.push_back(G4TwoVector(yokeInsideX,  poleHalfHeight));
 

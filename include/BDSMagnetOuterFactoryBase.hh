@@ -164,6 +164,8 @@ public:
 
   /// Empty containers for next use - factories are never deleted so can't rely on scope
   virtual void CleanUp();
+  /// Virtual base destructor
+  virtual ~BDSMagnetOuterFactoryBase() {}
 
 protected:
   BDSMagnetOuterFactoryBase();
@@ -226,7 +228,7 @@ protected:
 
   /// A larger length safety that can be used where tracking accuracy isn't required
   /// or more tolerant geometry is required (1um).
-  static G4double constexpr lengthSafetyLarge = 1*CLHEP::um;
+  static G4double const lengthSafetyLarge;
 };
 
 #endif

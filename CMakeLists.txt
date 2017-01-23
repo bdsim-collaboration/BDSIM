@@ -41,6 +41,14 @@ include(cmake/SystemCheck.cmake)
 # Find Packages #
 #################
 
+# GIT - optional - for software version in output & copying only example source files
+find_package(Git QUIET)
+# turn off git support if there's no .git folder - ie it's a copy of the source
+# but not a repository
+if (NOT EXISTS ${CMAKE_SOURCE_DIR}/.git)
+  set(GIT_FOUND FALSE)
+endif()
+
 # CLHEP
 include(cmake/CLHEP.cmake)
 
@@ -52,6 +60,13 @@ option( USE_GDML "Include GDML support."  ON )
 if(USE_GDML)
     add_definitions("-DUSE_GDML")
     message(STATUS "GDML support ON")
+endif()
+
+# Field double precision (off by default)
+option( FIELDDOUBLEPRECISION "Field values in double precision."  OFF )
+if(FIELDDOUBLEPRECISION)
+    add_definitions("-DFIELDDOUBLE")
+    message(STATUS "Field double precision ON")
 endif()
 
 # Find GEANT4
@@ -196,6 +211,7 @@ if (BUILD_MACOSX_APP AND APPLE)
 endif()
 
 # package source
+# uses git but only for developers
 add_custom_target(dist
     COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
         | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
@@ -216,7 +232,11 @@ add_subdirectory(utils)
 # For testing
 add_subdirectory(examples)
 # copy examples to build directory - macro defined in bdsim_macros.cmake
-copy_examples()
+if (GIT_FOUND)
+  copy_examples()
+else()
+  copy_examples_no_git()
+endif()
   
 # Include directory for tests
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)

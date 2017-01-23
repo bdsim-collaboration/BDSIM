@@ -1,6 +1,8 @@
 #ifndef BDSDETECTORCONSTRUCTION_H
 #define BDSDETECTORCONSTRUCTION_H 
 
+#include "BDSExtent.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
@@ -46,8 +48,11 @@ public:
 
   virtual void ConstructSDandField();
 
-  /// Create biasing operations 
+  /// Create biasing operations.
   void BuildPhysicsBias();
+
+  /// Public access to the world extent.
+  BDSExtent WorldExtent() const {return worldExtent;}
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -112,6 +117,9 @@ private:
 
   /// Whether or not to use the GFlash shower parameterisation.
   G4bool gflash;
+
+  /// Record of the world extent.
+  BDSExtent worldExtent;
 };
 
 #endif

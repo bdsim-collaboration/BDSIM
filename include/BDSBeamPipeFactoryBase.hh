@@ -65,6 +65,9 @@ public:
 				      G4double      beamPipeThicknessIn = 0,
 				      G4Material*   beamPipeMaterialIn  = nullptr) = 0;
 
+  /// Virtual base destructor
+  virtual ~BDSBeamPipeFactoryBase() {}
+
 protected:
   /// base constructor
   BDSBeamPipeFactoryBase();
@@ -100,11 +103,10 @@ protected:
   G4double         lengthSafety;
 
   /// 1um safety that can be used for larger transverse safety.
-  const G4double   lengthSafetyLarge = 1*CLHEP::um;
+  G4double         lengthSafetyLarge;
   
   G4bool           checkOverlaps;
-  /// Fraction of length for maximum step size
-  const G4double   maxStepFactor = 1.0;
+  G4double         maxStepFactor;
   G4double         nSegmentsPerCircle; ///< For visualisation improvement
   G4VSolid*        vacuumSolid;
   G4VSolid*        beamPipeSolid;

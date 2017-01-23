@@ -40,7 +40,7 @@ Example Applications
 General Simulation Procedure
 ============================
 
-1) Create an text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file.
+1) Create a text input **.gmad** lattice for BDSIM by converting a **MADX** or **MAD8** twiss file.
 2) Run BDSIM with core beam distribution for validation of optics and therefore model preparation.
 3) Run BDSIM with desired input distribution and physics processes with low statistics to verify desired application.
 4) Repeat 3) with greater statistics either as a single instance or on a farm.
@@ -62,7 +62,7 @@ locations to record output.
 BDSIM can then use the input file to simulate the passage of the desired number of
 particles and how they interact with the accelerator components themselves.
 Should a particle hit the beampipe, the physics processes of Geant4 will be used
-to calculate the interaction with the beampipe and and secondary particles that may
+to calculate the interaction with the beampipe and secondary particles that may
 be produced. Particles are recorded at user specified 'sampling' planes and energy
 deposition throughout the accelerator is recorded in both discrete 'hits' and a
 histogram as a function of distance along the accelerator.
