@@ -47,7 +47,7 @@ BDSColours::BDSColours()
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["quadrupole"]       = new G4Colour(1,     0,     0);     // red
+  colours["quadrupole"]       = new G4Colour(1,     0.15,  0.15);  // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
   colours["decapole"]         = new G4Colour(0.4,   0,     0.8);   // purple
