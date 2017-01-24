@@ -7,6 +7,8 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
+#include "G4RotationMatrix.hh"
+#include "G4ThreeVector.hh"
 
 #include <ostream>
 
@@ -115,4 +117,11 @@ std::ostream& operator<< (std::ostream& out, BDSFieldInfo const& info)
   if (info.magnetStrength)
     {out << "Magnet strength:   " << *(info.magnetStrength)      << G4endl;}
   return out;
+}
+
+void BDSFieldInfo::Translate(G4ThreeVector var) {
+    G4RotationMatrix rm = transform.getRotation();
+    G4ThreeVector translation = transform.getTranslation();
+    translation += var;
+    transform = G4Transform3D(rm, translation);
 }

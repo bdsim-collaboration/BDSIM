@@ -8,6 +8,7 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Transform3D.hh"
+#include "G4ThreeVector.hh"
 
 #include <ostream>
 
@@ -75,6 +76,9 @@ public:
 
   /// Set Transform - could be done afterwards once instance of this class is passed around.
   inline void SetTransform(G4Transform3D transformIn) {transform = transformIn;}
+
+	/// Translate - adds an additional translation to the transform member variable.
+	void Translate(G4ThreeVector translation);
 
   /// Turn on or off transform caching.
   inline void CacheTransforms(G4bool cacheTransformsIn) {cacheTransforms = cacheTransformsIn;}
