@@ -68,7 +68,7 @@ BDSColours::BDSColours()
   colours["LHCcoil"]          = new G4Colour(0.9,   0.75,  0);     // gold-ish
   colours["LHCcollar"]        = new G4Colour(0.9,   0.9,   0.9);   // gainsboro
   colours["LHCyoke"]          = new G4Colour(0,     0.5,   1.0);   // LHC blue
-  colours["LHCyokered"]       = new G4Colour(1,     0,     0);     // LHC red
+  colours["LHCyokered"]       = new G4Colour(*(colours["quadrupole"])); // quadrupole red
   colours["gdml"]             = new G4Colour(0.4  , 0.2,   0);     // poo brown
 
   // general
