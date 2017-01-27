@@ -505,6 +505,12 @@ aexpr  : NUMBER               { $$ = $1;                         }
        | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; }
        | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; }
        | aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
+       // option attributes
+       | OPTION '[' string ']'
+         {
+	   if(ECHO_GRAMMAR) std::cout << "aexpr-> OPTION [ " << *($3) << " ]" << std::endl;
+	   $$ = Parser::Instance()->GetValue<Options>(*($3));
+         }
        // element attributes
        | VARIABLE '[' string ']'
          {
@@ -652,6 +658,11 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | print        { if(execute) Parser::Instance()->PrintElements(); }
         | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
+        | print OPTION '[' string ']'
+          {
+	    double value = Parser::Instance()->GetValue<Options>(*($4));
+	    std::cout << "option '" << *($4) << "' is: " << value << std::endl;
+	  }
         | print VARIABLE '[' string ']'
 	  {
 	    if (execute) {
