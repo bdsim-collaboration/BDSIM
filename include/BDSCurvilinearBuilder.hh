@@ -3,6 +3,7 @@
 class BDSAcceleratorComponent;
 class BDSBeamline;
 class BDSBeamlineElement;
+class BDSCurvilinearFactory;
 class BDSSimpleComponent;
 
 /**
@@ -40,8 +41,8 @@ private:
   G4double lengthSafety;      ///< Length safety.
   G4double minimumLength;     ///< Minimum length of a curvilinear section.
 
-
-
+  /// Factory to build curvilinear geometry.
+  BDSCurvilinearFactory* factory;
 
 
 

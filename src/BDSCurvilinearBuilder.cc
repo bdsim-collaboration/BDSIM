@@ -4,6 +4,7 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSCurvilinearBuilder.hh"
+#include "BDSCurvilinearFactory.hh"
 #include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
@@ -36,10 +37,14 @@ BDSCurvilinearBuilder::BDSCurvilinearBuilder()
   checkOverlaps = globals->CheckOverlaps();
   lengthSafety  = globals->LengthSafety();
   minimumLength = 1*CLHEP::mm;
+
+  factory = new BDSCurvilinearFactory();
 }
 
 BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
-{;}
+{
+  delete factory;
+}
 
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
 {
@@ -157,78 +162,19 @@ BDSSimpleComponent* BDSCurvilinearBuilder::BuildCurvilinearComponent(BDSBeamline
   G4double     angle = element->GetAngle();
   G4String      name = element->GetName();
 
-  G4VSolid* solid = nullptr;
-  G4ThreeVector inputface  = G4ThreeVector(0, 0,-1);
-  G4ThreeVector outputface = G4ThreeVector(0, 0, 1);
-  G4double     radiusLocal = curvilinearRadius;
   if (!BDS::IsFinite(angle))
-    { // angle is zero
-      G4double halfLength = chordLength * 0.5 - lengthSafety;
-      solid = new G4Tubs(name + "_cl_solid", // name
-			 0,                  // inner radius
-			 radiusLocal,        // outer radius
-			 halfLength,         // z half width
-			 0,                  // start angle
-			 CLHEP::twopi);      // sweep angle
+    {// straight section
+      return factory->CreateCurvilinearVolume(name,
+					      chordLength,
+					      curvilinearRadius);
     }
   else
-    {
-      // angle is finite!
-      // factor of 0.8 here is arbitrary tolerance as g4 cut tubs seems to fail
-      // with cutting entranace / exit planes close to limit.
-      // s = r*theta -> r = s/theta
-      G4double radiusFromAngleLength =  std::abs(chordLength / angle) * 0.8;
-      radiusLocal = std::min(curvilinearRadius, radiusFromAngleLength);
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "taking smaller of: sampler radius: " << curvilinearRadius
-	     << " mm, max possible radius: " << radiusFromAngleLength << " mm" << G4endl;
-#endif
-      std::pair<G4ThreeVector,G4ThreeVector> faces = BDS::CalculateFaces(-0.5*angle, -0.5*angle);
-      inputface = faces.first;
-      outputface = faces.second;
-
-      BDSTiltOffset* to = element->GetTiltOffset();
-      if (to)
-	{// could be nullptr
-	  G4double tilt = to->GetTilt();
-	  if (BDS::IsFinite(tilt))
-	    {// rotate normal faces
-	      inputface = inputface.rotateZ(tilt);
-	      outputface = outputface.rotateZ(tilt);
-	    }
-	}
-      G4double halfLength = chordLength * 0.5 - lengthSafety;
-      solid = new G4CutTubs(name + "_cl_solid", // name
-			    0,                  // inner radius
-			    radiusLocal,        // outer radius
-			    halfLength,         // half length (z)
-			    0,                  // rotation start angle
-			    CLHEP::twopi,       // rotation sweep angle
-			    inputface,          // input face normal vector
-			    outputface);        // output face normal vector
+    {// angled section
+      return factory->CreateCurvilinearVolume(name,
+					      arcLength,
+					      chordLength,
+					      curvilinearRadius,
+					      angle,
+					      element->GetTiltOffset());
     }
-
-  // nullptr for material ONLY ok in parallel world!
-  G4LogicalVolume* lv =  new G4LogicalVolume(solid,            // solid
-					     nullptr,          // material
-					     name + "_cl_lv"); // name
-
-  // always debug visualisation for read out geometry - only viewed via explicit commands
-  lv->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
-
-  G4ThreeVector inputFaceLocal  = BDS::RotateToReferenceFrame(inputface, angle);
-  G4ThreeVector outputFaceLocal = BDS::RotateToReferenceFrame(outputface, -angle);
-  
-  BDSSimpleComponent* result = new BDSSimpleComponent(name + "_cl",
-						      arcLength,
-						      angle,
-						      solid,
-						      lv,
-						      inputFaceLocal,
-						      outputFaceLocal);
-
-  BDSExtent extent = BDSExtent(radiusLocal, radiusLocal, chordLength*0.5);
-  result->SetExtent(extent);
-  return result;
 }
-  
