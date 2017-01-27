@@ -19,8 +19,5 @@ BDSFieldMagSBend::BDSFieldMagSBend(BDSMagnetStrength const* strength,
 G4ThreeVector BDSFieldMagSBend::GetField(const G4ThreeVector& /*position*/,
 					 const G4double       /*t*/) const
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "Field: " << localField << G4endl;
-#endif
   return localField;
 }
