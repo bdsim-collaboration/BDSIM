@@ -34,7 +34,14 @@ private:
   inline G4bool Angled(BDSBeamlineElement const* const element) const;
 
   /// Whether an element is too short for its own curvilinear volume
-  inline G4bool TooShort(BDSBeamlineElement const* const element) const; 
+  inline G4bool TooShort(BDSBeamlineElement const* const element) const;
+
+  /// Accumulate an element's properties onto a set of variables which are passed by
+  /// reference.
+  void Accumulate(BDSBeamlineElement const* const element,
+		  G4double& accumualtedArcLength,
+		  G4double& accumulatedAngle,
+		  G4bool&   straightSoFar) const;
 
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
   G4bool   checkOverlaps;     ///< Whether to check overlaps.

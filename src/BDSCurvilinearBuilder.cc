@@ -67,11 +67,10 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 
   G4double accumulatedArcLength = 0;
   G4double accumulatedAngle     = 0;
-  G4bool   straightSoFar        = true;
+  G4bool   straightSoFar        = false;
 
   BDSBeamline::const_iterator startingElement  = beamline->begin();
   BDSBeamline::const_iterator finishingElement = beamline->begin();
-  BDSBeamline::const_iterator nextElement      = beamline->begin() + 1;
   BDSBeamline::const_iterator currentElement   = beamline->begin();
   
   for (; currentElement != beamline->end(); currentElement++)
@@ -81,28 +80,65 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 
       if (angled)
 	{
-	  if (straightSoFar)
-	    {
-	      // make from startingElement to currentElement-1
+	  if (*currentElement == beamline->back())
+	    {//build
+	      finishingElement = currentElement;
+	      BDSBeamlineElement* piece = BuildCurvilinearElement(*startingElement, *finishingElement);
+	      result->AddBeamlineElement(piece);
+	      // don't bother resetting stuff as it's the end of the beam line
 	    }
-	  if (tooShort)
-	    {
-	      // Accumulate
-	    }
+	  else if (straightSoFar)
+	    {// only occurs if we've passed a straight element and now hit an angled one
+	      // make from startingElement to currentElement-1 so only straight components
+	      // this means we keep the best accuracy for coordinates for the straight section
+	      finishingElement = currentElement;
+	      finishingElement--;
 
+	      BDSBeamlineElement* piece = BuildCurvilinearElement(*startingElement, *finishingElement);
+	      result->AddBeamlineElement(piece);
+
+	      // reset
+	      accumulatedArcLength = 0;
+	      accumulatedAngle     = 0;
+	      straightSoFar        = false;
+	      startingElement      = currentElement;
+	      startingElement++; // start from next element
+	    }
+	  else if (tooShort)
+	    {// Accumulate
+	      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+	    }
 	}
       else
 	{// straight
-	  if (tooShort)
+	  if (*currentElement == beamline->back())
 	    {
-	      // Accumulate
+	      finishingElement = currentElement;
+	      BDSBeamlineElement* piece = BuildCurvilinearElement(*startingElement, *finishingElement);
+	      result->AddBeamlineElement(piece);
 	    }
-
+	  else
+	    {// Accumulate all straight sections
+	      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+	    }
 	}
-
     }
   
   return result;
+}
+
+void BDSCurvilinearBuilder::Accumulate(BDSBeamlineElement const* const element,
+				       G4double& accumulatedArcLength,
+				       G4double& accumulatedAngle,
+				       G4bool&   straightSoFar) const
+{
+  G4double angle     = element->GetAngle();
+  accumulatedArcLength += element->GetArcLength();
+  accumulatedAngle     += angle;
+  if (BDS::IsFinite(angle))
+    {straightSoFar = false;}
+  else
+    {straightSoFar = true;}
 }
 
 BDSBeamlineElement* BDSCurvilinearBuilder::BuildCurvilinearElement(BDSBeamlineElement const* const startElement,
