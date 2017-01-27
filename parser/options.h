@@ -32,6 +32,9 @@ namespace GMAD
     template<typename T>
     void set_value(std::string name, T value);
     
+    /// get method (only for doubles)
+    double get_value(std::string name) const;
+
     /// Take another instance of options and copy the values that have
     /// been set (through setKeys, which although private each instance
     /// has access to as C++ treats encapsulation at the class level).

@@ -17,6 +17,24 @@ Options::Options(const GMAD::OptionsBase& options):
   PublishMembers();
 }
 
+double Options::get_value(std::string property_name)const{
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    try {
+      // try int and convert
+      value = (double)get<int>(this,property_name);
+    }
+    catch (std::runtime_error) {
+      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+      exit(1);
+    }
+  }
+  return value;
+}
+
 void Options::Amalgamate(const Options& optionsIn, bool override)
 {
   if (override)
