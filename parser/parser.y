@@ -517,7 +517,12 @@ symbol  : OPTION '[' string ']' // option attributes
 	  if (execute)
 	    {
 	      double value = Parser::Instance()->GetValue<Options>(*($3));
-	      Symtab* sp = Parser::Instance()->symcreate("option_" + *($3));
+	      // create symtable if not already defined
+	      std::string symname = "option_" + *($3);
+	      Symtab *sp = Parser::Instance()->symlook(symname);
+	      if (!sp) {
+		sp = Parser::Instance()->symcreate(symname);
+	      }
 	      sp->Set(value);
 	      $$ = sp;
 	    }
@@ -528,7 +533,12 @@ symbol  : OPTION '[' string ']' // option attributes
 	  if (execute)
 	    {
 	      double value = Parser::Instance()->property_lookup(*($1),*($3));
-	      Symtab* sp = Parser::Instance()->symcreate("element_" + *($1) + "_" + *($3));
+	      // create symtable if not already defined
+	      std::string symname = "element_" + *($1) + "_" + *($3);
+	      Symtab *sp = Parser::Instance()->symlook(symname);
+	      if (!sp) {
+		sp = Parser::Instance()->symcreate(symname);
+	      }
 	      sp->Set(value);
 	      $$ = sp;
 	    }
