@@ -23,7 +23,8 @@
 
 #include <cmath>
 
-BDSCurvilinearBuilder::BDSCurvilinearBuilder()
+BDSCurvilinearBuilder::BDSCurvilinearBuilder():
+  counter(0)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
   curvilinearRadius = globals->SamplerDiameter()*0.5;
@@ -48,6 +49,7 @@ BDSCurvilinearBuilder::~BDSCurvilinearBuilder()
 
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline const* const beamline)
 {
+  counter = 0;
   BDSBeamline* result = new BDSBeamline();
   for (const auto& element : *beamline)
     {
@@ -65,6 +67,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 {
   BDSBeamline* result = new BDSBeamline();
 
+  counter = 0;
   G4double accumulatedArcLength = 0;
   G4double accumulatedAngle     = 0;
   G4bool   straightSoFar        = false;
@@ -141,16 +144,35 @@ void BDSCurvilinearBuilder::Accumulate(BDSBeamlineElement const* const element,
     {straightSoFar = true;}
 }
 
-BDSBeamlineElement* BDSCurvilinearBuilder::BuildCurvilinearElement(BDSBeamlineElement const* const startElement,
-								   BDSBeamlineElement const* const finishElement) const
+BDSBeamlineElement* BDSCurvilinearBuilder::BuildCurvilinearElement(BDSBeamline::const_iterator startElement,
+								   BDSBeamline::const_iterator finishElement,
+								   BDSBeamline const* const beamline) const
 {
   if (startElement == finishElement)
     {// build 1:1
-      ;
+      BDSSimpleComponent* component = BuildCurvilinearComponent(*startElement);
+      return BuildBeamLineElement(component, *startElement);
     }
   else
     {// cover a few components
-      ;
+      G4double accumulatedArcLength = 0;
+      G4double accumulatedAngle     = 0;
+      G4bool   straightSoFar        = false; // dummy variable to use accumualte function
+      for (BDSBeamline::const_iterator currentElement = startElement; currentElement != finishElement; currentElement++)
+	{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
+      
+      if (!BDS::IsFinite(accumulatedAngle))
+	{
+	  BDSSimpleComponent* component = factory->CreateCurvilinearVolume(name,
+									   chordLength,
+									   curvilinearRadius);
+	  return BuildBeamlineElement(component, startElement, finishElement, true);
+	}
+      else
+	{// angled
+	  G4bool tilted = false;
+	  BDSTiltOffset* accumulatedTiltOffset = nullptr;
+	  BDSSimpleComponent* component = factory->CreateCurvilinearVolume(
     }
   
   return nullptr;

@@ -30,6 +30,9 @@ private:
   BDSBeamlineElement* BuildCurvilinearElement(BDSBeamlineElement const* const startElement,
 					      BDSBeamlineElement const* const finishElement) const;
 
+  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
+					   BDSBeamlineElement const* const element);
+
   /// Simple interrogation function to determine if an element has a finite angle or not.
   inline G4bool Angled(BDSBeamlineElement const* const element) const;
 
@@ -51,11 +54,10 @@ private:
   /// Factory to build curvilinear geometry.
   BDSCurvilinearFactory* factory;
 
+  /// Counter for number of components already constructed.
+  G4int counter;
 
 
-    /// OLD
-  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
-					   BDSBeamlineElement const* const element);
 
   /// OLD
   /// Build a single component.
