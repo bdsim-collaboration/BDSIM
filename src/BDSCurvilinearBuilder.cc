@@ -99,8 +99,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	    {// only occurs if we've passed a straight element and now hit an angled one
 	      // make from startingElement to currentElement-1 so only straight components
 	      // this means we keep the best accuracy for coordinates for the straight section
-	      finishingElement = currentElement;
-	      finishingElement--;
+	      finishingElement = currentElement - 1;
 	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 								   startingElement,
 								   finishingElement);
@@ -113,21 +112,18 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	      straightSoFar        = false;
 	      currentTilt          = 0;
 	      tiltedSoFar          = false;
-	      startingElement      = currentElement;
-	      startingElement++; // start from next element
+	      startingElement      = currentElement + 1; // start from next element
 	    }
 	  else if (tooShort)
 	    {// Accumulate
-	      if (tilted)
-		{// check tilt
-		  // should always be valid
+	      if (tilted) // have to be careful about accumulating if we have tilts involved
+		{// check tilt - should always have valid tilt instance in this case
 		  BDSTiltOffset* to = (*currentElement)->GetTiltOffset();
 		  G4double tilt = to->GetTilt();
 		  
 		  if (!tiltedSoFar || BDS::IsFinite(std::abs(tilt - currentTilt)))
 		    {// change in tilt - build up to this one
-		      finishingElement = currentElement;
-		      finishingElement--;
+		      finishingElement = currentElement - 1;
 		      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 									   startingElement,
 									   finishingElement);
@@ -139,14 +135,14 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		      accumulatedAngle     = 0;
 		      straightSoFar        = false;
 		      currentTilt          = 0;
-		      startingElement      = currentElement;
-		      startingElement++; // start from next element
+		      startingElement      = currentElement + 1; // start from next element
 		    }
 		  else
 		    {
 		      currentTilt = tilt;
 		      tiltedSoFar = true;
-		      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
+		      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+		    }
 		}
 	      else
 		{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
