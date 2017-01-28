@@ -5,6 +5,7 @@
 #include "G4Proton.hh"
 #include "G4StepLimiter.hh"
 #include "G4UserSpecialCuts.hh"
+#include "G4Version.hh"
 
 BDSCutsAndLimits::BDSCutsAndLimits():G4VPhysicsConstructor("BDSCutsAndLimits"),_wasActivated(false)
 {
@@ -32,6 +33,10 @@ void BDSCutsAndLimits::ConstructProcess(){
 
   G4PhysicsListHelper* ph = G4PhysicsListHelper::GetPhysicsListHelper();
 
+#if G4VERSION_NUMBER > 1029
+   auto aParticleIterator = GetParticleIterator();
+#endif
+  
   aParticleIterator->reset();
   while( (*aParticleIterator)() ){
     G4ParticleDefinition* particle = aParticleIterator->value();

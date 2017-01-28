@@ -20,6 +20,7 @@
 #include "G4PionMinus.hh"
 #include "G4ProcessManager.hh"
 #include "G4Scintillation.hh"
+#include "G4Version.hh"
 
 // TODO : use G4PhysicsListHelper to set ordering of these processes (just to be sure)
 
@@ -75,6 +76,10 @@ void BDSMuonPhysics::ConstructProcess()
     G4EmSaturation* emSaturation = G4LossTableManager::Instance()->EmSaturation();
     scint->AddSaturation(emSaturation);
   }
+
+#if G4VERSION_NUMBER > 1029
+   auto aParticleIterator = GetParticleIterator();
+#endif
   
   aParticleIterator->reset();
 
