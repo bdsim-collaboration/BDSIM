@@ -92,11 +92,16 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 							       finishingElement);
 	  result->AddBeamlineElement(piece);
 	  counter++; // increment name counter
+	  // don't bother resetting as it's the end of the line
 	}
       else if (angled)
 	{
-	  if (straightSoFar)
-	    {// only occurs if we've passed a straight element and now hit an angled one
+	  G4double currentAngle = (*currentElement)->GetAngle();
+	  G4bool signflip = std::signbit(accumulatedAngle) != std::signbit(currentAngle);
+	  if (straightSoFar || signflip)
+	    {
+	      // occurs if we've passed a straight element and now hit an angled one; or
+	      // if the we're going from bending one way to another.
 	      // make from startingElement to currentElement-1 so only straight components
 	      // this means we keep the best accuracy for coordinates for the straight section
 	      finishingElement = currentElement - 1;
@@ -146,6 +151,22 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		}
 	      else
 		{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
+	    }
+	  else
+	    {// we're building 1:1 the current angled element
+	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
+								   currentElement,
+								   currentElement);
+	      result->AddBeamlineElement(piece);
+	      counter++; // increment name counter
+
+	      // reset
+	      accumulatedArcLength = 0;
+	      accumulatedAngle     = 0;
+	      straightSoFar        = false;
+	      currentTilt          = 0;
+	      tiltedSoFar          = false;
+	      startingElement      = currentElement + 1; // start from next element
 	    }
 	}
       else
