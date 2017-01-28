@@ -83,20 +83,19 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
       const G4bool angled   = Angled(*currentElement);
       const G4bool tooShort = TooShort(*currentElement);
       const G4bool tilted   = Tilted(*currentElement);
-
-      if (angled)
+      
+      if (*currentElement == beamline->back())
 	{
-	  if (*currentElement == beamline->back())
-	    {//build
-	      finishingElement = currentElement;
-	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
-								   startingElement,
-								   finishingElement);
-	      result->AddBeamlineElement(piece);
-	      counter++; // increment name counter
-	      // don't bother resetting other stuff as it's the end of the beam line
-	    }
-	  else if (straightSoFar)
+	  finishingElement = currentElement;
+	  BDSBeamlineElement* piece = CreateCurvilinearElement(name,
+							       startingElement,
+							       finishingElement);
+	  result->AddBeamlineElement(piece);
+	  counter++; // increment name counter
+	}
+      else if (angled)
+	{
+	  if (straightSoFar)
 	    {// only occurs if we've passed a straight element and now hit an angled one
 	      // make from startingElement to currentElement-1 so only straight components
 	      // this means we keep the best accuracy for coordinates for the straight section
@@ -154,20 +153,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	    }
 	}
       else
-	{// straight
-	  if (*currentElement == beamline->back())
-	    {
-	      finishingElement = currentElement;
-	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
-								   startingElement,
-								   finishingElement);
-	      result->AddBeamlineElement(piece);
-	      counter++; // increment name counter
-	    }
-	  else
-	    {// Accumulate all straight sections
-	      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
-	    }
+	{// Accumulate all straight sections
+	  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
 	}
     }
   
