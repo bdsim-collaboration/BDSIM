@@ -15,6 +15,15 @@ endif()
 #message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}")
 #message(STATUS "ROOT DICTS : ${rebdsimLibLinkDefs}")
 
+if(ROOT_DOUBLE_OUTPUT)
+  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__;-D__ROOTDOUBLE__")
+else()
+  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
+endif()
+
+# Add BDSIM label to original files
+set_source_files_properties(${rebdsimLibSources} ${rebdsimLibLinkDefs} PROPERTIES LABELS "BDSIM")
+
 foreach(header ${rebdsimLibLinkDefs})
     # remove LinkDef.hh
     string(FIND ${header} "LinkDef.h" pos REVERSE)
@@ -32,11 +41,12 @@ foreach(header ${rebdsimLibLinkDefs})
                 ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict_rdict.pcm
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
-                -D__ROOTBUILD__
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
+                ${PREPROCESSOR_DEFS}
+                -noIncludePaths -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
         add_custom_command(
@@ -60,10 +70,11 @@ foreach(header ${rebdsimLibLinkDefs})
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
-		-D__ROOTBUILD__
+                ${PREPROCESSOR_DEFS}
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
+                IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 COMMENT "Generate ROOT Dictionary for ${className}"
         )
     endif()
@@ -81,6 +92,7 @@ target_link_libraries(rebdsim rebdsimLib bdsimRootEvent)
 add_executable(rebdsimOptics rebdsimOptics.cc)
 set_target_properties(rebdsimOptics PROPERTIES OUTPUT_NAME "rebdsimOptics" VERSION ${BDSIM_VERSION})
 target_link_libraries(rebdsimOptics rebdsimLib bdsimRootEvent)
+bdsim_install_targets(rebdsimOptics)
 
 if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	add_executable(edbdsim edbdsim.cc)
@@ -91,7 +103,7 @@ if (${ROOT_MAJOR_VERSION} STREQUAL "6")
 	# Installation
 	bdsim_install_targets(rebdsim edbdsim rebdsimLib)
 else()
-	# ROOT 5 - EVE parts are compatible with ROOT5 - turn off.
+	# ROOT 5 - EVE parts are not compatible with ROOT5 - turn off.
 	message(STATUS "ebdsim is not compatible with ROOT V5 - not compiling")
 	
 	# Installation
