@@ -6,12 +6,12 @@
 
 namespace GMAD
 {
-  /** 
-      @brief Common header for the lexer and the parser 
-      to share Symbol table for numeric variables and functions
-  */
   class Array;
   
+  /** 
+      @brief Common header for the lexer and the parser 
+      to share Symbol table for numeric variables, strings, arrays and functions
+  */
   class Symtab {
   public:
     /// Symtabs and arrays are kind of interchangeable

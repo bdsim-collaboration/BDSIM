@@ -25,6 +25,10 @@ set_tests_properties(gmad-reservedFunction PROPERTIES WILL_FAIL 1)
 add_test(gmad-nosemicolon ${gmadBinary} nosemicolon.gmad)
 set_tests_properties(gmad-nosemicolon PROPERTIES WILL_FAIL 1)
 
+# addition of string and number
+add_test(gmad-stringnumber ${gmadBinary} stringnumber.gmad)
+set_tests_properties(gmad-stringnumber PROPERTIES WILL_FAIL 1)
+
 # undefined element
 add_test(gmad-undefinedElement ${gmadBinary} undefinedelement.gmad)
 set_tests_properties(gmad-undefinedElement PROPERTIES WILL_FAIL 1)
@@ -103,9 +107,13 @@ set_tests_properties(gmad-testMissingAccessAttribute PROPERTIES WILL_FAIL 1)
 add_test(gmad-testAccessElement ${gmadBinary} accesselement.gmad)
 set_tests_properties(gmad-testAccessElement PROPERTIES PASS_REGULAR_EXPRESSION plane)
 
-# test access element
+# test access element outside range
 add_test(gmad-testAccessElementOutsiderange ${gmadBinary} accesselementoutsiderange.gmad)
 set_tests_properties(gmad-testAccessElementOutsiderange PROPERTIES WILL_FAIL 1)
+
+# test access option
+add_test(gmad-testAccessOption ${gmadBinary} accessoption.gmad)
+set_tests_properties(gmad-testAccessOption PROPERTIES PASS_REGULAR_EXPRESSION 123)
 
 # test add sampler
 add_test(gmad-testAddSampler ${gmadBinary} addsampler.gmad)

@@ -17,6 +17,59 @@ Options::Options(const GMAD::OptionsBase& options):
   PublishMembers();
 }
 
+double Options::get_value(std::string property_name)const{
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    try {
+      // try int and convert
+      value = (double)get<int>(this,property_name);
+    }
+    catch (std::runtime_error) {
+      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+      exit(1);
+    }
+  }
+  return value;
+}
+
+void Options::Amalgamate(const Options& optionsIn, bool override)
+{
+  if (override)
+    {
+      for (auto const key : optionsIn.setKeys)
+	{
+	  try
+	    {set(this, &optionsIn, key);}
+	  catch (std::runtime_error)
+	    {
+	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+	      exit(1);
+	    }
+	}
+    }
+  else
+    {// don't override - ie give preference to ones set in this instance
+      for (auto const key : optionsIn.setKeys)
+	{
+	  auto const& ok = setKeys; // shortcut
+	  auto result = std::find(ok.begin(), ok.end(), key);
+	  if (result == ok.end())
+	    {//it wasn't found so ok to copy
+	      try
+		{set(this, &optionsIn, key);}
+	      catch (std::runtime_error)
+		{
+		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  exit(1);
+		}
+	    }
+	}
+    }
+}
+
 bool Options::HasBeenSet(std::string name) const
 {
   auto result = std::find(setKeys.begin(), setKeys.end(), name);
