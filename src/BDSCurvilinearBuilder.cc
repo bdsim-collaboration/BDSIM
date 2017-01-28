@@ -191,21 +191,41 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 								    BDSBeamline::const_iterator finishElement)
 {
   BDSSimpleComponent* component = nullptr;
+
+  // we'll take the tilt from the first element - they should only ever be the same when used here
+  G4bool tilted = Tilted(*startElement);
   
   if (startElement == finishElement)
     {// build 1:1
-      G4double arcLength = (*startElement)->GetArcLength();
+      G4double chordLength = (*startElement)->GetChordLength();
       G4double angle     = (*startElement)->GetAngle();
-      component = factory->CreateCurvilinearVolume(elementName,
-						   arcLength,
-						   curvilinearRadius);
+      if (!BDS::IsFinite(angle))
+	{// straight
+	  component = factory->CreateCurvilinearVolume(elementName,
+						       chordLength,
+						       curvilinearRadius);
+	}
+      else
+	{//angled
+	  BDSTiltOffset* to = nullptr;
+	  if (tilted)
+	    {to = (*startElement)->GetTiltOffset();}
+	  
+	  G4double arcLength = (*startElement)->GetArcLength();
+	  component = factory->CreateCurvilinearVolume(elementName,
+						       arcLength,
+						       chordLength,
+						       curvilinearRadius,
+						       angle,
+						       to);
+	}
     }
   else
     {// cover a few components
       G4double accumulatedArcLength = 0;
       G4double accumulatedAngle     = 0;
       G4bool   straightSoFar        = false; // dummy variable to use accumualte function
-      for (BDSBeamline::const_iterator currentElement = startElement; currentElement != finishElement; currentElement++)
+      for (auto currentElement = startElement; currentElement != finishElement; currentElement++)
 	{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
       
       if (!BDS::IsFinite(accumulatedAngle))
@@ -216,10 +236,16 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 	}
       else
 	{// angled
-	  G4bool tilted = false;
-	  BDSTiltOffset* accumulatedTiltOffset = nullptr;
-	  //component = factory->CreateCurvilinearVolume(
+	  BDSTiltOffset* to = nullptr;
+	  if (tilted)
+	    {to = (*startElement)->GetTiltOffset();}
 	  
+	  component = factory->CreateCurvilinearVolume(elementName,
+						       accumulatedArcLength,
+						       accumulatedArcLength, // TBC
+						       curvilinearRadius,
+						       accumulatedAngle,
+						       to);	  
 	}
     }
 

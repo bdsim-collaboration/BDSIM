@@ -29,7 +29,9 @@ public:
 private:
   /// Create a curvilinear element for a beam line that represents the curvilinear
   /// coordinates between startElement and finishElement. This creates a BDSSimpleComponent
-  /// first then wraps it in a premade BDSBeamlineElement.
+  /// first then wraps it in a premade BDSBeamlineElement. This must ONLY be used for a range
+  /// of elements with the same tilt for the correct coordinate frame to be produced. The tilt
+  /// is taken from the first element and assumed to be the same for all.
   BDSBeamlineElement* CreateCurvilinearElement(G4String                    elementName,
 					       BDSBeamline::const_iterator startElement,
 					       BDSBeamline::const_iterator finishElement);
