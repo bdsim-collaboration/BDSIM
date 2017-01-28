@@ -773,7 +773,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
   else
     {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
   return (new BDSAwakeSpectrometer(element->name,
-                                   element->magnetOffsetX,
+                                   element->magnetOffsetX*CLHEP::m,
 				   element->l*CLHEP::m,
 				   awakeField,
 				   element->poleStartZ*CLHEP::m,
