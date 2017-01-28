@@ -67,6 +67,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   G4double accumulatedAngle     = 0;
   G4bool   straightSoFar        = false;
   G4int    counter              = 0; // counter for naming
+  G4double currentTilt          = 0;
   
   BDSBeamline::const_iterator startingElement  = beamline->begin();
   BDSBeamline::const_iterator finishingElement = beamline->begin();
@@ -79,6 +80,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
       
       const G4bool angled   = Angled(*currentElement);
       const G4bool tooShort = TooShort(*currentElement);
+      const G4bool tilted   = Tilted(*currentElement);
 
       if (angled)
 	{
@@ -108,12 +110,37 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	      accumulatedArcLength = 0;
 	      accumulatedAngle     = 0;
 	      straightSoFar        = false;
+	      currentTilt          = 0;
 	      startingElement      = currentElement;
 	      startingElement++; // start from next element
 	    }
 	  else if (tooShort)
 	    {// Accumulate
-	      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+	      if (tilted)
+		{// check tilt
+		  BDSTiltOffset* to = (*currentElement)->GetTiltOffset(); // should always be valid
+		  G4double tilt = to->GetTilt();
+		  if (BDS::IsFinite(std::abs(tilt - currentTilt)))
+		    {
+		      finishingElement = currentElement;
+		      finishingElement--;
+		      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
+									   startingElement,
+									   finishingElement);
+		      result->AddBeamlineElement(piece);
+		      counter++; // increment name counter
+		      
+		      // reset
+		      accumulatedArcLength = 0;
+		      accumulatedAngle     = 0;
+		      straightSoFar        = false;
+		      currentTilt          = 0;
+		      startingElement      = currentElement;
+		      startingElement++; // start from next element
+		    }
+		}
+	      else
+		{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
 	    }
 	}
       else
@@ -135,6 +162,21 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
     }
   
   return result;
+}
+
+G4bool BDSCurvilinearBuilder::Tilted(BDSBeamlineElement const* const element) const
+{
+  BDSTiltOffset* to = element->GetTiltOffset();
+  if (to)
+    {
+      G4double t = to->GetTilt();
+      if (BDS::IsFinite(t))
+	{return true;}
+      else
+	{return false;}
+    }
+  else
+    {return false;}
 }
 
 void BDSCurvilinearBuilder::Accumulate(BDSBeamlineElement const* const element,

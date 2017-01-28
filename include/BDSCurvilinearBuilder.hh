@@ -42,8 +42,11 @@ private:
   /// Simple interrogation function to determine if an element has a finite angle or not.
   inline G4bool Angled(BDSBeamlineElement const* const element) const;
 
-  /// Whether an element is too short for its own curvilinear volume
+  /// Whether an element is too short for its own curvilinear volume.
   inline G4bool TooShort(BDSBeamlineElement const* const element) const;
+
+  /// Whether an element is tilted at all.
+  G4bool Tilted(BDSBeamlineElement const* const element) const;
 
   /// Accumulate an element's properties onto a set of variables which are passed by
   /// reference.
