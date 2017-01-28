@@ -98,7 +98,6 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
     }
 
   //apply kick
-
   xp1 -= kick.real();
   yp1 += kick.imag();
   zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
@@ -107,13 +106,8 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
   n=1;
   G4double ksReal = 0;
   G4double ksImag = 0;
-  G4double skewAngle=0;
 
   G4ThreeVector mom = G4ThreeVector(xp1,yp1,zp1);
-  momx = mom.x();
-  momy = mom.y();
-
-  G4complex skewresult(0,0);
   G4complex skewkick(0,0);
 
   std::list<double>::iterator ks = bsl.begin();
@@ -121,31 +115,32 @@ void BDSIntegratorMultipoleThin::AdvanceHelix(const G4double yIn[],
     {
       if (BDS::IsFinite(*ks))
         {
-          //Rotate momentum vector about z axis according to number of poles
-          //then apply each kick separately and rotate back
-          //skewAngle = CLHEP::pi / (2 * n);
-          skewAngle = CLHEP::halfpi;
-          mom.rotateZ(skewAngle);
-
-          // calculate and apply kick
+          //reset to zero
+          momx = 0;
+          momy = 0;
           ksReal = (*ks) * pow(position, n).real() / nfact[n];
           ksImag = (*ks) * pow(position, n).imag() / nfact[n];
-          skewresult = {ksReal, ksImag};
-
-          // Rotate back
-          if (!std::isnan(skewresult.real()))
-            {momx = mom.x() - skewresult.real();}
-          if (!std::isnan(skewresult.imag()))
-            {momy = mom.y() + skewresult.imag();}
-
-          mom = {momx, momy, mom.z()};
-          mom.rotateZ(-skewAngle);
+          if (!std::isnan(ksReal))
+            {momx = ksReal;}
+          if (!std::isnan(ksImag))
+            {momy = ksImag;}
+          result = {momx,momy};
+          skewkick += result;
         }
     }
-
-  xp1 = mom.x();
-  yp1 = mom.y();
+  
+  //apply kick
+  xp1 -= skewkick.imag();
+  yp1 += skewkick.real();
   zp1 = sqrt(1 - pow(xp1,2) - pow(yp1,2));
+
+  //for non paraxial, advance particle as if in a drift.
+  //xp1 or yp1 may be > 1, so isnan check also needed for zp1.
+  if (std::isnan(zp1) or (zp1 < 0.9))
+  {
+    AdvanceDrift(yIn,GlobalP,h,yOut);
+    return;
+  }
 
   LocalR.setX(x1);
   LocalR.setY(y1);

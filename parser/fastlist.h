@@ -263,8 +263,6 @@ namespace GMAD
 
   template <typename T>
     void FastList<T>::print(int ident)const {
-    //  if(ident == 0) printf("using line %s\n",current_line.c_str());
-
     for(FastListConstIterator it=begin();it!=end();it++)
       {
 	(*it).print(ident);

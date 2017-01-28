@@ -39,6 +39,7 @@ and very similar to MADX.
 * boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
+* comments start with an exclamation mark!
 
 The following functions are provided
 
@@ -140,8 +141,8 @@ Useful Commands
 
 * :code:`print;` prints all elements
 * :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
-* :code:`print, option;` prints the value of option
-* :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
+* :code:`print, option;` prints the value of some options.
+* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
 * :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
@@ -232,7 +233,7 @@ drift
 	    :width: 30%
 	    :align: right
 
-:code:`drift` defines a straight beam pipe with no field.
+`drift` defines a straight beam pipe with no field.
 
 ================  ===================  ==========  =========
 parameter         description          default     required
