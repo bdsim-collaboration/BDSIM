@@ -27,11 +27,17 @@ public:
   BDSBeamline* BuildCurvilinearBeamLine(BDSBeamline const* const beamline);
 
 private:
-  BDSBeamlineElement* BuildCurvilinearElement(BDSBeamlineElement const* const startElement,
-					      BDSBeamlineElement const* const finishElement) const;
+  /// Create a curvilinear element for a beam line that represents the curvilinear
+  /// coordinates between startElement and finishElement. This creates a BDSSimpleComponent
+  /// first then wraps it in a premade BDSBeamlineElement.
+  BDSBeamlineElement* CreateCurvilinearElement(G4String                    elementName,
+					       BDSBeamline::const_iterator startElement,
+					       BDSBeamline::const_iterator finishElement);
 
-  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
-					   BDSBeamlineElement const* const element);
+  /// Create the BDSBeamlineElement by wrapping a BDSSimpleComponent.
+  BDSBeamlineElement* CreateElementFromComponent(BDSSimpleComponent* component,
+						 BDSBeamline::const_iterator startElement,
+						 BDSBeamline::const_iterator finishElement);
 
   /// Simple interrogation function to determine if an element has a finite angle or not.
   inline G4bool Angled(BDSBeamlineElement const* const element) const;
@@ -54,22 +60,17 @@ private:
   /// Factory to build curvilinear geometry.
   BDSCurvilinearFactory* factory;
 
-  /// Counter for number of components already constructed.
-  G4int counter;
-
-
-
   /// OLD
+
+  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
+					   BDSBeamlineElement const* const element);
+  
   /// Build a single component.
-  BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element);
+  BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element) const;
 };
 
 inline G4bool BDSCurvilinearBuilder::Angled(BDSBeamlineElement const* const element) const
-{
-  return BDS::IsFinite(element->GetAngle());
-}
+{return BDS::IsFinite(element->GetAngle());}
 
 inline G4bool BDSCurvilinearBuilder::TooShort(BDSBeamlineElement const* const element) const
-{
-  return element->GetArcLength() < minimumLength;
-}
+{return element->GetArcLength() < minimumLength;}
