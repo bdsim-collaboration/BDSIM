@@ -42,7 +42,7 @@ foreach(header ${rebdsimLibLinkDefs})
                 COMMAND ${ROOTCINT_EXECUTABLE}
                 ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/${className}Dict.cc
                 ${PREPROCESSOR_DEFS}
-                -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
+                -noIncludePaths -c -p -I${CMAKE_CURRENT_SOURCE_DIR} -I${CMAKE_CURRENT_SOURCE_DIR}/../include
                 -I${CMAKE_CURRENT_SOURCE_DIR}/../
                 ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}
                 DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${className}.hh ${header}

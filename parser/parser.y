@@ -76,7 +76,7 @@
 %token IF ELSE BEGN END LE GE NE EQ FOR
 
 %type <dval> aexpr expr
-%type <symp> assignment symdecl
+%type <symp> assignment symdecl symbol
 %type <array> vecexpr
 %type <array> vectnum vectstr
 %type <str> use_parameters
@@ -359,16 +359,15 @@ paramassign: VARIABLE
              {
                $$=$1;
              }
-           // allow defined variables to have the same name as parameters
-           | NUMVAR
+           | symbol
              {
                $$ = new std::string($1->GetName());
+	       // store to prevent leak
 	       Parser::Instance()->AddVariable($$);
              }
            | STRVAR
              {
                $$ = new std::string($1->GetName());
-	       // store to prevent leak
 	       Parser::Instance()->AddVariable($$);
              }
 
@@ -482,7 +481,7 @@ expr : aexpr
        }
 
 aexpr  : NUMBER               { $$ = $1;                         }
-       | NUMVAR               { $$ = $1->GetNumber();            }
+       | symbol               { $$ = $1->GetNumber();            }
        | FUNC '(' aexpr ')'   { $$ = $1->GetFunction()($3);      }
        | aexpr '+' aexpr      { $$ = $1 + $3;                    }
        | aexpr '-' aexpr      { $$ = $1 - $3;                    }  
@@ -503,18 +502,6 @@ aexpr  : NUMBER               { $$ = $1;                         }
        | aexpr GE aexpr { $$ = ($1 >= $3 )? 1 : 0; }
        | aexpr NE aexpr { $$ = ($1 != $3 )? 1 : 0; }
        | aexpr EQ aexpr { $$ = ($1 == $3 )? 1 : 0; }
-       // option attributes
-       | OPTION '[' string ']'
-         {
-	   if(ECHO_GRAMMAR) std::cout << "aexpr-> OPTION [ " << *($3) << " ]" << std::endl;
-	   $$ = Parser::Instance()->GetValue<Options>(*($3));
-         }
-       // element attributes
-       | VARIABLE '[' string ']'
-         {
-	   if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl;
-	   $$ = Parser::Instance()->property_lookup(*($1),*($3));
-         }
        // undeclared variable
        | VARIABLE
          {
@@ -522,6 +509,41 @@ aexpr  : NUMBER               { $$ = $1;                         }
 	     undeclaredVariable(*$1);
 	   }
 	 }
+
+// numerical symbol (could change to include string symbols (aka STRVAR))
+symbol  : OPTION '[' string ']' // option attributes
+        {
+	  if(ECHO_GRAMMAR) std::cout << "aexpr-> OPTION [ " << *($3) << " ]" << std::endl;
+	  if (execute)
+	    {
+	      double value = Parser::Instance()->GetValue<Options>(*($3));
+	      // create symtable if not already defined
+	      std::string symname = "option_" + *($3);
+	      Symtab *sp = Parser::Instance()->symlook(symname);
+	      if (!sp) {
+		sp = Parser::Instance()->symcreate(symname);
+	      }
+	      sp->Set(value);
+	      $$ = sp;
+	    }
+	}
+        | VARIABLE '[' string ']' // element attributes
+	{
+	  if(ECHO_GRAMMAR) std::cout << "aexpr-> " << *($1) << " [ " << *($3) << " ]" << std::endl;
+	  if (execute)
+	    {
+	      double value = Parser::Instance()->property_lookup(*($1),*($3));
+	      // create symtable if not already defined
+	      std::string symname = "element_" + *($1) + "_" + *($3);
+	      Symtab *sp = Parser::Instance()->symlook(symname);
+	      if (!sp) {
+		sp = Parser::Instance()->symcreate(symname);
+	      }
+	      sp->Set(value);
+	      $$ = sp;
+	    }
+	}
+        | NUMVAR {$$ = $1;}
 
 symdecl : VARIABLE '='
         {
@@ -531,7 +553,7 @@ symdecl : VARIABLE '='
 	      $$ = sp;
 	    }
 	}
-        | NUMVAR '='
+        | symbol '='
 	{
 	  if(execute)
 	    {
@@ -656,18 +678,6 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
         | print        { if(execute) Parser::Instance()->PrintElements(); }
         | print LINE   { if(execute) Parser::Instance()->PrintBeamline(); }
         | print OPTION { if(execute) Parser::Instance()->PrintOptions(); }
-        | print OPTION '[' string ']'
-          {
-	    double value = Parser::Instance()->GetValue<Options>(*($4));
-	    std::cout << "option '" << *($4) << "' is: " << value << std::endl;
-	  }
-        | print VARIABLE '[' string ']'
-	  {
-	    if (execute) {
-	      double value = Parser::Instance()->property_lookup(*($2),*($4));
-	      std::cout << "property '" << *($4) << "' of element '" << *($2) << "' is: " << value << std::endl;
-	    }
-	  }
         | print VARIABLE
           {
 	    if(execute) {
@@ -682,12 +692,12 @@ command : STOP             { if(execute) Parser::Instance()->quit(); }
 	      }
 	    }
 	  }
-        | print NUMVAR { if(execute) $2->Print();}
-        | print STRVAR { if(execute) $2->Print();}
         | print STR    { if(execute) std::cout << *($2) << std::endl;}
+        | print symbol { if(execute) $2->Print();}
+        | print STRVAR { if(execute) $2->Print();}
         | print VECVAR { if(execute) $2->Print();}
         | USE ',' use_parameters { if(execute) Parser::Instance()->expand_line(Parser::Instance()->current_line,Parser::Instance()->current_start, Parser::Instance()->current_end);}
-        | OPTION  ',' option_parameters
+        | OPTION ',' option_parameters
         | SAMPLE ',' sample_options 
           {
 	    if(execute)
