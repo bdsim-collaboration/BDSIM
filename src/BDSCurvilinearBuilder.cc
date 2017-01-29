@@ -75,6 +75,15 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   BDSBeamline::const_iterator finishingElement = beamline->begin();
   BDSBeamline::const_iterator currentElement   = beamline->begin();
 
+  // lambda function to reset counters - avoids repetition. '[&]' capture all by reference as required
+  auto Reset = [&](){
+    accumulatedArcLength = 0;
+    accumulatedAngle     = 0;
+    straightSoFar        = false;
+    currentTilt          = 0;
+    startingElement      = currentElement + 1;
+  };
+
   for (; currentElement != beamline->end(); currentElement++)
     {
       // update name in one place although not needed every loop iteration
@@ -91,8 +100,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 							       startingElement,
 							       finishingElement);
 	  result->AddBeamlineElement(piece);
-	  counter++; // increment name counter
-	  // don't bother resetting as it's the end of the line
+	  // don't bother incrementing or resetting as it's the end of the line
 	}
       else if (angled)
 	{
@@ -110,14 +118,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 								   finishingElement);
 	      result->AddBeamlineElement(piece);
 	      counter++; // increment name counter
-
-	      // reset
-	      accumulatedArcLength = 0;
-	      accumulatedAngle     = 0;
-	      straightSoFar        = false;
-	      currentTilt          = 0;
-	      tiltedSoFar          = false;
-	      startingElement      = currentElement + 1; // start from next element
+	      Reset();
 	    }
 	  else if (tooShort)
 	    {// Accumulate
@@ -134,13 +135,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 									   finishingElement);
 		      result->AddBeamlineElement(piece);
 		      counter++; // increment name counter
-		      
-		      // reset
-		      accumulatedArcLength = 0;
-		      accumulatedAngle     = 0;
-		      straightSoFar        = false;
-		      currentTilt          = 0;
-		      startingElement      = currentElement + 1; // start from next element
+		      Reset();
 		    }
 		  else
 		    {
@@ -159,14 +154,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 								   currentElement);
 	      result->AddBeamlineElement(piece);
 	      counter++; // increment name counter
-
-	      // reset
-	      accumulatedArcLength = 0;
-	      accumulatedAngle     = 0;
-	      straightSoFar        = false;
-	      currentTilt          = 0;
-	      tiltedSoFar          = false;
-	      startingElement      = currentElement + 1; // start from next element
+	      Reset();
 	    }
 	}
       else
