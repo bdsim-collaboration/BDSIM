@@ -243,16 +243,18 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
     }
   else
     {// cover a few components
-      G4double accumulatedArcLength = 0;
+      G4ThreeVector positionStart = (*startElement)->GetReferencePositionStart();
+      G4ThreeVector positionEnd   = (*finishElement)->GetReferencePositionEnd();
+      G4double chordLength = (positionEnd - positionStart).mag();
+      
       G4double accumulatedAngle     = 0;
-      G4bool   straightSoFar        = false; // dummy variable to use accumualte function
       for (auto currentElement = startElement; currentElement != finishElement; currentElement++)
-	{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
+	{accumulatedAngle += (*currentElement)->GetAngle();}
       
       if (!BDS::IsFinite(accumulatedAngle))
 	{
 	  component = factory->CreateCurvilinearVolume(elementName,
-						       accumulatedArcLength,
+						       chordLength,
 						       curvilinearRadius);
 	}
       else
@@ -260,10 +262,13 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 	  BDSTiltOffset* to = nullptr;
 	  if (tilted)
 	    {to = (*startElement)->GetTiltOffset();}
+
+	  G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*accumulatedAngle);
+	  G4double arcLength = meanBendingRadius * accumulatedAngle;
 	  
 	  component = factory->CreateCurvilinearVolume(elementName,
-						       accumulatedArcLength,
-						       accumulatedArcLength, // TBC
+						       arcLength,
+						       chordLength,
 						       curvilinearRadius,
 						       accumulatedAngle,
 						       to);	  
