@@ -5,7 +5,6 @@
 #include "BDSExtent.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSCurvilinearFactory.hh"
-#include "BDSGeometryComponent.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
@@ -13,13 +12,6 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Box.hh"
-#include "G4CutTubs.hh"
-#include "G4LogicalVolume.hh"
-#include "G4RotationMatrix.hh"
-#include "G4ThreeVector.hh"
-#include "G4Tubs.hh"
-#include "G4VSolid.hh"
 
 #include <cmath>
 
