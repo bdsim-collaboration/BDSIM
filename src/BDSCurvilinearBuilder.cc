@@ -160,6 +160,16 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	}
       else
 	{// Accumulate all straight sections
+	  if (!straightSoFar)
+	    {
+	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
+								   startingElement,
+								   finishingElement);
+	      result->AddBeamlineElement(piece);
+	      counter++; // increment name counter
+	      Reset();
+	      straightSoFar = true;
+	    }
 	  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
 	  finishingElement = currentElement;
 	}
