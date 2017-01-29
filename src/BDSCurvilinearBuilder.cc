@@ -83,10 +83,15 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
     straightSoFar        = false;
     currentTilt          = 0;
     startingElement      = currentElement + 1;
+    finishingElement     = startingElement;
   };
 
   for (; currentElement != beamline->end(); currentElement++)
     {
+      G4cout << "start:   " << (*startingElement)->GetPlacementName() << G4endl;
+      G4cout << "current: " << (*currentElement)->GetPlacementName() << G4endl;
+      G4cout << "finish:  " << (*finishingElement)->GetPlacementName() << G4endl << G4endl;
+      
       // update name in one place although not needed every loop iteration
       G4String name = "cl_" + std::to_string(counter);
       
@@ -113,7 +118,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	      // if the we're going from bending one way to another.
 	      // make from startingElement to currentElement-1 so only straight components
 	      // this means we keep the best accuracy for coordinates for the straight section
-	      finishingElement = currentElement - 1;
+	      //finishingElement = currentElement - 1;
 	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 								   startingElement,
 								   finishingElement);
@@ -130,7 +135,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		  
 		  if (!tiltedSoFar || BDS::IsFinite(std::abs(tilt - currentTilt)))
 		    {// change in tilt - build up to this one
-		      finishingElement = currentElement - 1;
+		      //finishingElement = currentElement - 1;
 		      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
 									   startingElement,
 									   finishingElement);
@@ -143,10 +148,14 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		      currentTilt = tilt;
 		      tiltedSoFar = true;
 		      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+		      finishingElement = currentElement;
 		    }
 		}
 	      else
-		{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
+		{
+		  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+		  finishingElement = currentElement;
+		}
 	    }
 	  else
 	    {// we're building 1:1 the current angled element
@@ -159,7 +168,10 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	    }
 	}
       else // Accumulate all straight sections
-	{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
+	{
+	  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+	  finishingElement = currentElement;
+	}
     }
   
   return result;
@@ -235,8 +247,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
       G4double      chordLength   = (positionEnd - positionStart).mag();
       
       G4double accumulatedAngle = 0;
-      for (auto currentElement = startElement; currentElement != finishElement; currentElement++)
-	{accumulatedAngle += (*currentElement)->GetAngle();}
+      for (auto it = startElement; it < finishElement; it++)
+	{accumulatedAngle += (*it)->GetAngle();}
       
       if (!BDS::IsFinite(accumulatedAngle))
 	{
@@ -300,7 +312,43 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
     }
   else
     {//must cover a few components
+      G4double      sStart      = (*startElement)->GetSPositionStart();
+      G4double      sEnd        = (*finishElement)->GetSPositionEnd();
+      G4double      sMid        = 0.5 * (sEnd + sStart);
+      G4ThreeVector posRefStart = (*startElement)->GetReferencePositionStart();
+      G4ThreeVector posRefEnd   = (*finishElement)->GetReferencePositionEnd();
+      G4ThreeVector posRefMid   = 0.5 * (posRefStart + posRefEnd);
+      G4RotationMatrix* rotRefStart = new G4RotationMatrix(*((*startElement)->GetReferenceRotationStart()));
+      G4RotationMatrix* rotRefEnd   = new G4RotationMatrix(*((*finishElement)->GetReferenceRotationEnd()));
 
+      G4ThreeVector delta = posRefMid - posRefStart;
+      G4ThreeVector newUnitZ      = delta.unit();
+      G4ThreeVector unitXPrevious = G4ThreeVector(1,0,0).transform(*rotRefStart);
+      G4ThreeVector newUnitY      = newUnitZ.cross(unitXPrevious).unit();
+      G4ThreeVector unitYPrevious = G4ThreeVector(0,1,0).transform(*rotRefStart);
+      G4ThreeVector newUnitX      = unitYPrevious.cross(newUnitZ).unit();
+
+      // create mid point rotation matrix from unit vectors at mid point
+      G4RotationMatrix rotRefMid = G4RotationMatrix(newUnitX, newUnitY, newUnitZ);
+
+      result = new BDSBeamlineElement(component,
+				      posRefStart,
+				      posRefMid,
+				      posRefEnd,
+				      new G4RotationMatrix(*rotRefStart),
+				      new G4RotationMatrix(rotRefMid),
+				      new G4RotationMatrix(*rotRefEnd),
+				      posRefStart,
+				      posRefMid,
+				      posRefEnd,
+				      new G4RotationMatrix(*rotRefStart),
+				      new G4RotationMatrix(rotRefMid),
+				      new G4RotationMatrix(*rotRefEnd),
+				      sStart,
+				      sMid,
+				      sEnd,
+				      copyTiltOffset);
+      
     }
   
   return result;
