@@ -64,14 +64,6 @@ private:
 
   /// Factory to build curvilinear geometry.
   BDSCurvilinearFactory* factory;
-
-  /// OLD
-
-  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
-					   BDSBeamlineElement const* const element);
-  
-  /// Build a single component.
-  BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element) const;
 };
 
 inline G4bool BDSCurvilinearBuilder::Angled(BDSBeamlineElement const* const element) const
