@@ -160,9 +160,28 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateComponent(Element const* ele
       return BDSAcceleratorComponentRegistry::Instance()->GetComponent(element->name);
     }
 
+  // Update name for this component
+  elementName = element->name;
+
+  if (differentFromDefinition)
+    {
+      G4int val;
+      if (modifiedElements.find(elementName) == modifiedElements.end())
+	{
+	  modifiedElements[elementName] = 0;
+	  val = 0;
+	}
+      else
+	{
+	  val = modifiedElements[elementName] + 1;
+	  modifiedElements[elementName] = val;
+	}
+      elementName += "_mod_" + std::to_string(val);
+    }
+
   BDSAcceleratorComponent* component = nullptr;
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << " - creating " << G4endl;
+  G4cout << __METHOD_NAME__ << " - creating \"" << elementName << "\"" << G4endl;
   element->print();
 #endif
   switch(element->type){
@@ -302,7 +321,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
 
   if (facesWillIntersect)
     {
-      G4cerr << __METHOD_NAME__ << "Drift \"" << element->name
+      G4cerr << __METHOD_NAME__ << "Drift \"" << elementName
 	     << "\" between \"";
       if (prevElement)
 	{G4cerr << prevElement->name;}
@@ -317,7 +336,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDrift(G4double angleIn, G4do
       exit(1);
     }
 
-  return (new BDSDrift( element->name,
+  return (new BDSDrift( elementName,
 			length,
 			beamPipeInfo));
 }
@@ -336,7 +355,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRF()
 					       G4Transform3D(),
 					       PrepareCavityModelInfo(element));
 
-  return new BDSCavityRF(element->name,
+  return new BDSCavityRF(elementName,
 			 element->l*CLHEP::m,
 			 vacuumField);
 }
@@ -391,7 +410,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 
   // Check the faces won't overlap due to too strong an angle with too short a magnet
   G4double outerDiameter = PrepareOuterDiameter(element);
-  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], outerDiameter, element->name);
+  CheckBendLengthAngleWidthCombo(arcLength, (*st)["angle"], outerDiameter, elementName);
 
   // Quadrupole component
   if (BDS::IsFinite(element->k1))
@@ -438,7 +457,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateKicker(G4bool isVertical)
   G4bool yokeOnLeft = YokeOnLeft(element, st);
   
   return new BDSMagnet(t,
-		       element->name,
+		       elementName,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element, 0, 0, yokeOnLeft),
@@ -516,7 +535,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateThinMultipole(G4double angle
 					       st);
   
   BDSMagnet* thinMultipole =  new BDSMagnet(BDSMagnetType::thinmultipole,
-					    element->name,
+					    elementName,
 					    thinElementLength,
 					    beamPipeInfo,
 					    magnetOuterInfo,
@@ -534,7 +553,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   if(!HasSufficientMinimumLength(element)) 
     {return nullptr;}
   
-  return (new BDSElement(element->name,
+  return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
 			 element->outerDiameter * CLHEP::m,
 			 element->geometryFile,
@@ -566,7 +585,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  return new BDSCollimatorRectangular(element->name,
+  return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
 				      element->outerDiameter*CLHEP::m,
 				      element->xsize*CLHEP::m,
@@ -583,7 +602,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
   if(!HasSufficientMinimumLength(element))
     {return nullptr;}
 
-  return new BDSCollimatorElliptical(element->name,
+  return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
 				     element->outerDiameter*CLHEP::m,
 				     element->xsize*CLHEP::m,
@@ -610,7 +629,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateMuSpoiler()
   BDSFieldInfo* vacuumField = new BDSFieldInfo();
 
   return new BDSMagnet(BDSMagnetType::muonspoiler,
-		       element->name,
+		       elementName,
 		       element->l*CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element, st),
@@ -627,7 +646,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
   G4Material* material = BDSMaterials::Instance()->GetMaterial(element->material);
-  BDSShield* shield = new BDSShield(element->name,
+  BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
 				    element->outerDiameter*CLHEP::m,
 				    element->xsize*CLHEP::m,
@@ -665,7 +684,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
       degraderOffset = overlap * -0.5;
     }
     
-  return (new BDSDegrader(element->name,
+  return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
 			  element->outerDiameter*CLHEP::m,
 			  element->numberWedges,
@@ -686,7 +705,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateLaser()
   G4ThreeVector direction = G4ThreeVector(element->xdir,element->ydir,element->zdir);
   G4ThreeVector position  = G4ThreeVector(0,0,0);
 	
-  return (new BDSLaserWire(element->name, length, lambda, direction) );       
+  return (new BDSLaserWire(elementName, length, lambda, direction) );       
 }
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
@@ -699,7 +718,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
   size.setY(element->screenYSize*CLHEP::m);
   G4cout << __METHOD_NAME__ << " - size = " << size << G4endl;
   
-  BDSScreen* theScreen = new BDSScreen( element->name,
+  BDSScreen* theScreen = new BDSScreen( elementName,
 					element->l*CLHEP::m,
 					PrepareBeamPipeInfo(element),
 					size,
@@ -748,7 +767,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 #ifdef USE_AWAKE
 BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeScreen()
 {
-  return (new BDSAwakeScintillatorScreen(element->name,
+  return (new BDSAwakeScintillatorScreen(elementName,
 					 element->scintmaterial,
 					 element->tscint*CLHEP::m,
 					 element->windowScreenGap*CLHEP::m,
@@ -772,7 +791,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
     }
   else
     {awakeField = BDSFieldFactory::Instance()->GetDefinition(element->fieldAll);}
-  return (new BDSAwakeSpectrometer(element->name,
+  return (new BDSAwakeSpectrometer(elementName,
 				   element->l*CLHEP::m,
 				   awakeField,
 				   element->poleStartZ*CLHEP::m,
@@ -793,7 +812,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateAwakeSpectrometer()
 
 BDSAcceleratorComponent* BDSComponentFactory::CreateTransform3D()
 {
-  return (new BDSTransform3D( element->name,
+  return (new BDSTransform3D( elementName,
 			      element->xdir *CLHEP::m,
 			      element->ydir *CLHEP::m,
 			      element->zdir *CLHEP::m,
@@ -823,7 +842,7 @@ BDSMagnet* BDSComponentFactory::CreateMagnet(BDSMagnetStrength* st,
 					       st);
 
   return new BDSMagnet(magnetType,
-		       element->name,
+		       elementName,
 		       element->l * CLHEP::m,
 		       PrepareBeamPipeInfo(element),
 		       PrepareMagnetOuterInfo(element, st),
@@ -836,7 +855,7 @@ G4bool BDSComponentFactory::HasSufficientMinimumLength(Element const* element)
   if(element->l*CLHEP::m < 1e-7)
     {
       G4cerr << "---->NOT creating element, "
-             << " name = " << element->name
+             << " name = " << elementName
              << ", LENGTH TOO SHORT:"
              << " l = " << element->l*CLHEP::um << "um"
              << G4endl;
@@ -1047,7 +1066,7 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
     {info->material       = BDSMaterials::Instance()->GetMaterial(element->material);}
   else
     {
-      G4cout << "ERROR: Cavity material is not defined for cavity \"" << element->name << "\" - please define it" << G4endl;
+      G4cout << "ERROR: Cavity material is not defined for cavity \"" << elementName << "\" - please define it" << G4endl;
       exit(1);
     }
   if(!element->vacuumMaterial.empty())
@@ -1081,7 +1100,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
     {
       if (!(element->fieldAll.empty()))
 	{
-	  G4cerr << "Error: Magnet named \"" << element->name
+	  G4cerr << "Error: Magnet named \"" << elementName
 		 << "\" is a magnet, but has fieldAll defined." << G4endl
 		 << "Can only have fieldOuter or fieldInner specified." << G4endl;
 	  exit(1);
