@@ -36,6 +36,7 @@ public:
 
   /// Build a straight section of curvilinear geometry, but with angled
   /// faces - typically used for a bend section.  Note this is straight though.
+  /// The normal vectors are w.r.t. the chord of the volume to be built.
   BDSSimpleComponent* CreateCurvilinearVolume(const G4String       name,
 					      const G4double       arcLength,
 					      const G4double       chordLength,

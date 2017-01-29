@@ -268,7 +268,41 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
 								      BDSBeamline::const_iterator startElement,
 								      BDSBeamline::const_iterator finishElement)
 {
-  return nullptr;
+  BDSTiltOffset* copyTiltOffset = nullptr;
+  BDSTiltOffset* existingTiltOffset = (*startElement)->GetTiltOffset();
+  if (existingTiltOffset)
+    {copyTiltOffset = new BDSTiltOffset(*existingTiltOffset);}
+
+  BDSBeamlineElement* result = nullptr;
+  
+  if (startElement == finishElement)
+    {// 1:1
+      BDSBeamlineElement* element = *startElement; // convenience
+      
+      result = new BDSBeamlineElement(component,
+				      element->GetReferencePositionStart(),
+				      element->GetReferencePositionMiddle(),
+				      element->GetReferencePositionEnd(),
+				      new G4RotationMatrix(*(element->GetRotationStart())),
+				      new G4RotationMatrix(*(element->GetRotationMiddle())),
+				      new G4RotationMatrix(*(element->GetRotationEnd())),
+				      element->GetReferencePositionStart(),
+				      element->GetReferencePositionMiddle(),
+				      element->GetReferencePositionEnd(),
+				      new G4RotationMatrix(*(element->GetReferenceRotationStart())),
+				      new G4RotationMatrix(*(element->GetReferenceRotationMiddle())),
+				      new G4RotationMatrix(*(element->GetReferenceRotationEnd())),
+				      element->GetSPositionStart(),
+				      element->GetSPositionMiddle(),
+				      element->GetSPositionEnd(),
+				      copyTiltOffset);
+    }
+  else
+    {//must cover a few components
+
+    }
+  
+  return result;
 }
 
 BDSBeamlineElement* BDSCurvilinearBuilder::BuildBeamLineElement(BDSSimpleComponent* component,

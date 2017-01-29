@@ -42,7 +42,6 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
 			    solid, inputFaceNormal, outputFaceNormal, 0);
 }
 
-
 BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4String       name,
 								   const G4double       arcLength,
 								   const G4double       chordLength,
