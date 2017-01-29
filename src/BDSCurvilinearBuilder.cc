@@ -82,7 +82,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
     accumulatedAngle     = 0;
     straightSoFar        = false;
     currentTilt          = 0;
-    startingElement      = currentElement + 1;
+    startingElement      = currentElement;
     finishingElement     = startingElement;
   };
 
