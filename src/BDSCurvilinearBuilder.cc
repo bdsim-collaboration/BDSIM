@@ -105,7 +105,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
       else if (angled)
 	{
 	  G4double currentAngle = (*currentElement)->GetAngle();
-	  G4bool signflip = std::signbit(accumulatedAngle) != std::signbit(currentAngle);
+	  G4bool   signflip     = std::signbit(accumulatedAngle) != std::signbit(currentAngle);
 	  if (straightSoFar || signflip)
 	    {
 	      // occurs if we've passed a straight element and now hit an angled one; or
@@ -157,10 +157,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	      Reset();
 	    }
 	}
-      else
-	{// Accumulate all straight sections
-	  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
-	}
+      else // Accumulate all straight sections
+	{Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);}
     }
   
   return result;
