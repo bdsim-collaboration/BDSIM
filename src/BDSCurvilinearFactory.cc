@@ -28,7 +28,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
 								   const G4double radius)
 {
   G4double halfLength = chordLength * 0.5 - lengthSafety;
-  G4Tubs* solid = new G4Tubs(name + "_cl_solid", // name
+  G4Tubs* solid = new G4Tubs(name + "_solid", // name
 			     0,                  // inner radius
 			     radius,             // outer radius
 			     halfLength,         // z half width
@@ -73,7 +73,7 @@ BDSSimpleComponent* BDSCurvilinearFactory::CreateCurvilinearVolume(const G4Strin
     }
   
   G4double halfLength = chordLength * 0.5 - lengthSafety;
-  G4CutTubs* solid = new G4CutTubs(name + "_cl_solid", // name
+  G4CutTubs* solid = new G4CutTubs(name + "_solid", // name
 				   0,                  // inner radius
 				   radiusLocal,        // outer radius
 				   halfLength,         // half length (z)
@@ -111,12 +111,12 @@ BDSSimpleComponent* BDSCurvilinearFactory::CommonConstruction(const G4String    
   // nullptr for material ONLY ok in parallel world!
   G4LogicalVolume* lv =  new G4LogicalVolume(solid,            // solid
 					     nullptr,          // material
-					     name + "_cl_lv"); // name
+					     name + "_lv"); // name
 
   // always debug visualisation for read out geometry - only viewed via explicit commands
   lv->SetVisAttributes(BDSGlobalConstants::Instance()->GetVisibleDebugVisAttr());
 
-  BDSSimpleComponent* result = new BDSSimpleComponent(name + "_cl",
+  BDSSimpleComponent* result = new BDSSimpleComponent(name,
 						      arcLength,
 						      angle,
 						      solid,
