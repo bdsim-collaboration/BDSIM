@@ -80,9 +80,6 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
     {
       if (currentElement == beamline->begin())
 	{straightSoFar = false;}
-      G4cout << "start:   " << (*startingElement)->GetPlacementName() << G4endl;
-      G4cout << "current: " << (*currentElement)->GetPlacementName() << G4endl;
-      G4cout << "finish:  " << (*finishingElement)->GetPlacementName() << G4endl << G4endl;
       
       // update name in one place although not needed every loop iteration
       G4String name = "cl_" + std::to_string(counter);
@@ -189,10 +186,7 @@ void BDSCurvilinearBuilder::Accumulate(BDSBeamlineElement const* const element,
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String                    elementName,
 								    BDSBeamline::const_iterator startElement,
 								    BDSBeamline::const_iterator finishElement)
-{
-  G4cout << "start:   " << (*startElement)->GetPlacementName() << G4endl;
-  G4cout << "finish:  " << (*finishElement)->GetPlacementName() << G4endl << G4endl;
-  
+{ 
   BDSSimpleComponent* component = nullptr;
 
   // we'll take the tilt from the first element - they should only ever be the same when used here
