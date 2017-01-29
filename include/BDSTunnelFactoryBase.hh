@@ -7,7 +7,6 @@
 
 #include <vector>
 
-class G4UserLimits;
 class G4Material;
 class G4VisAttributes;
 class G4VSolid;
@@ -23,7 +22,15 @@ class BDSTunnelInfo;
  * possibilities apart from the shape (each derived class will give
  * a different cross-section) and these dictate the angled faces.
  * 
- * Uses Geant4 default units by default, ie mm, rad (not metres)
+ * Uses Geant4 default units by default, ie mm, rad (not metres).
+ *
+ * NOTE - no derived classes record the 'angle' parameter for 
+ * BDSAcceleratorComponent correctly in the BDSTunnelSection instances.
+ * This is only acceptable as the tunnel beam line is manually made
+ * not using the internal accumulation of coordinates of BDSBeamline.
+ * It's also in part necessary as each tunnel segment doesn't obey
+ * the no double bending rule of accerlator components so can't be
+ * used with angle and arc length accurately.
  * 
  * @author Laurie Nevay
  */
@@ -107,6 +114,9 @@ public:
 						      G4double       tunnel2,
 						      G4bool         visible) = 0;
 
+  /// Virtual base destructor
+  virtual ~BDSTunnelFactoryBase() {}
+
 protected:
   /// protected default constructor so only derived classes can use it
   BDSTunnelFactoryBase();
@@ -137,7 +147,7 @@ protected:
   virtual void SetVisAttributes(G4bool visible);
   
   /// Set user limits for all logical volumes in the tunnel section
-  virtual void SetUserLimits(G4double length);
+  virtual void SetUserLimits();
   
   /// Prepare the assembled geometry component
   virtual void PrepareGeometryComponent(G4double containerXRadius,
@@ -184,7 +194,6 @@ protected:
   /// which then owns the objects, rather than the factory derived from this class.
   std::vector<G4VSolid*>        solidsToBeRegistered;
   std::vector<G4VisAttributes*> visAttributesToBeRegistered;
-  std::vector<G4UserLimits*>    userLimitsToBeRegistered;
 };
 
 #endif

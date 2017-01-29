@@ -42,11 +42,12 @@ public:
   BDSOutputROOTEventLoss*            GetTunnelHit()        {return tunnelHit;}
   BDSOutputROOTEventTrajectory*      GetTrajectory()       {return trajectory;}
   BDSOutputROOTEventHistograms*      GetHistograms()       {return histos;}
+  BDSOutputROOTEventInfo*            GetInfo()             {return info;}
   /// @}
 
   /// Set the branch addresses to address the contents of the file. The vector
   /// of sampler names is used to turn only the samplers required. 
-  void SetBranchAddress(TTree* t, std::vector<std::string>& samplerNames);
+  void SetBranchAddress(TTree* t, std::vector<std::string>* samplerNames = nullptr);
 
   /// @{ Local variable ROOT data is mapped to.
 #ifdef __ROOTDOUBLE__

@@ -32,6 +32,7 @@ public:
 		     G4double              angleInIn             = 0,
 		     G4double              angleOutIn            = 0,
 		     G4bool                yokeOnLeft            = false,
+		     G4bool                buildEndPiecesIn      = true,
 		     G4String              geometryTypeAndPathIn = "");
 
   G4String              name;
@@ -41,6 +42,7 @@ public:
   G4double              angleIn;
   G4double              angleOut;
   G4bool                yokeOnLeft;
+  G4bool                buildEndPieces;
   G4String              geometryTypeAndPath;
 
   /// Output stream operator implementation.

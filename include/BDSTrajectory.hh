@@ -65,8 +65,8 @@ public:
   /// Find the first point in a trajectory where the post step process isn't fTransportation
   /// AND the post step process isn't fGeneral in combination with the post step process subtype
   /// isn't step_limiter.
-  static BDSTrajectoryPoint* FirstInteraction(BDSTrajectory* trajectory);
-  static BDSTrajectoryPoint* LastInteraction(BDSTrajectory*  trajectory);
+  BDSTrajectoryPoint* FirstInteraction()const;
+  BDSTrajectoryPoint* LastInteraction() const;
 
 protected:
   G4int          creatorProcessType;

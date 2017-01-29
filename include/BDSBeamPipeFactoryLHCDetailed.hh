@@ -5,7 +5,7 @@
 #include "BDSBeamPipe.hh"
 
 /**
- * @brief Factory for detailed lhc aperture model beam pipes
+ * @brief Factory for detailed lhc aperture model beam pipes.
  * 
  * Singleton pattern.
  * 
@@ -49,7 +49,7 @@ public:
 
 private:
   BDSBeamPipeFactoryLHCDetailed(); ///< Private default constructor - singleton pattern.
-  static BDSBeamPipeFactoryLHCDetailed* _instance; ///< Singleton instance.
+  static BDSBeamPipeFactoryLHCDetailed* instance; ///< Singleton instance.
 
   //abstract common build features to one function
   //use member variables unique to this factory to pass them around
@@ -69,9 +69,9 @@ private:
   virtual void          BuildLogicalVolumes(G4String    nameIn,
 					    G4Material* vacuumMaterialIn,
 					    G4Material* beamPipeMaterialIn);
-  virtual void          SetVisAttributes();
-  virtual G4UserLimits* SetUserLimits(G4double lengthIn);
-  virtual void          PlaceComponents(G4String nameIn);
+  virtual void  SetVisAttributes();
+  virtual void  SetUserLimits();
+  virtual void  PlaceComponents(G4String nameIn);
 
   /// Utility function to initialise the geometry parameters
   void InitialiseGeometricalParameters();

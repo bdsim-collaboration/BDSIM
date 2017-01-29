@@ -60,7 +60,7 @@ public:
 
 private:
   BDSBeamPipeFactory(); ///< Private constructor as singleton pattern.
-  static BDSBeamPipeFactory* _instance; ///< Singleton instance pointer.
+  static BDSBeamPipeFactory* instance; ///< Singleton instance pointer.
 
   /// Return the appropriate factory singleton pointer given a type.
   BDSBeamPipeFactoryBase* GetAppropriateFactory(BDSBeamPipeType beamPipeTypeIn);

@@ -4,7 +4,6 @@
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSGlobalConstants.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"                      // geant4 globals / types
 #include "G4Box.hh"
@@ -19,13 +18,13 @@
 #include <cmath>
 #include <utility>                         // for std::pair
 
-BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::_instance = nullptr;
+BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::instance = nullptr;
 
 BDSBeamPipeFactoryRectEllipse* BDSBeamPipeFactoryRectEllipse::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactoryRectEllipse();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactoryRectEllipse();}
+  return instance;
 }
 
 BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
@@ -33,7 +32,7 @@ BDSBeamPipeFactoryRectEllipse::BDSBeamPipeFactoryRectEllipse()
 
 BDSBeamPipeFactoryRectEllipse::~BDSBeamPipeFactoryRectEllipse()
 {
-  _instance = nullptr;
+  instance = nullptr;
 }
 
 BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CreateBeamPipe(G4String    nameIn,
@@ -179,14 +178,9 @@ BDSBeamPipe* BDSBeamPipeFactoryRectEllipse::CommonFinalConstruction(G4String    
 								    G4double    containerWidthIn,
 								    G4double    containerHeightIn)
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-
   BDSBeamPipeFactoryBase::CommonConstruction(nameIn,
 					     vacuumMaterialIn,
-					     beamPipeMaterialIn,
-					     lengthIn);
+					     beamPipeMaterialIn);
   
   // record extents
   BDSExtent ext = BDSExtent(containerWidthIn, containerHeightIn, lengthIn*0.5);

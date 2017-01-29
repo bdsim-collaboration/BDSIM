@@ -31,22 +31,23 @@ class BDSFieldInfo
 public:
   /// Default constructor for zero field effectively
   BDSFieldInfo();
-  BDSFieldInfo(BDSFieldType        fieldTypeIn,
-	       G4double            brhoIn,
-	       BDSIntegratorType   integratorTypeIn,
-	       BDSMagnetStrength*  magnetStrengthIn           = nullptr,
-	       G4bool              provideGlobalTransformIn   = true,
-	       G4Transform3D       transformIn                = G4Transform3D(),
-	       BDSCavityInfo*      cavityInfoIn               = nullptr,
-	       G4String            magneticFieldFilePathIn    = "",
-	       BDSFieldFormat      magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
-	       BDSInterpolatorType magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
-	       G4String            electricFieldFilePathIn    = "",
-	       BDSFieldFormat      electricFieldFormatIn      = BDSFieldFormat::bdsim1d,
-	       BDSInterpolatorType electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
-	       G4bool              cacheTransformsIn          = false,
-	       G4double            scalingIn                  = 1.0,
-	       G4double            timeOffsetIn               = 0);
+  BDSFieldInfo(BDSFieldType             fieldTypeIn,
+	       G4double                 brhoIn,
+	       BDSIntegratorType        integratorTypeIn,
+	       const BDSMagnetStrength* magnetStrengthIn           = nullptr,
+	       G4bool                   provideGlobalTransformIn   = true,
+	       G4Transform3D            transformIn                = G4Transform3D(),
+	       const BDSCavityInfo*     cavityInfoIn               = nullptr,
+	       G4String                 magneticFieldFilePathIn    = "",
+	       BDSFieldFormat           magneticFieldFormatIn      = BDSFieldFormat::bdsim1d,
+	       BDSInterpolatorType      magneticInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
+	       G4String                 electricFieldFilePathIn    = "",
+	       BDSFieldFormat           electricFieldFormatIn      = BDSFieldFormat::bdsim1d,
+	       BDSInterpolatorType      electricInterpolatorTypeIn = BDSInterpolatorType::nearest3d,
+	       G4bool                   cacheTransformsIn          = false,
+	       G4double                 eScalingIn                 = 1.0,
+	       G4double                 bScalingIn                 = 1.0,
+	       G4double                 timeOffsetIn               = 0);
   ~BDSFieldInfo();
 
   /// Copy constructor
@@ -57,8 +58,8 @@ public:
   inline G4double            BRho()                     const {return brho;}
   inline BDSIntegratorType   IntegratorType()           const {return integratorType;}
   inline G4Transform3D       Transform()                const {return transform;}
-  inline BDSMagnetStrength*  MagnetStrength()           const {return magnetStrength;}
-  inline BDSCavityInfo*      CavityInfo()               const {return cavityInfo;}
+  inline const BDSMagnetStrength*  MagnetStrength()     const {return magnetStrength;}
+  inline const BDSCavityInfo*      CavityInfo()         const {return cavityInfo;}
   inline G4bool              ProvideGlobal()            const {return provideGlobalTransform;}
   inline G4String            MagneticFile()             const {return magneticFieldFilePath;}
   inline BDSFieldFormat      MagneticFormat()           const {return magneticFieldFormat;}
@@ -67,7 +68,8 @@ public:
   inline BDSFieldFormat      ElectricFormat()           const {return electricFieldFormat;}
   inline BDSInterpolatorType ElectricInterpolatorType() const {return electricInterpolatorType;}
   inline G4bool              CacheTransforms()          const {return cacheTransforms;}
-  inline G4double            Scaling()                  const {return scaling;}
+  inline G4double            EScaling()                 const {return eScaling;}
+  inline G4double            BScaling()                 const {return bScaling;}
   inline G4double            TimeOffset()               const {return timeOffset;}
   /// @}
 
@@ -82,22 +84,23 @@ public:
   
 private:
   
-  BDSFieldType        fieldType;
-  G4double            brho;
-  BDSIntegratorType   integratorType;
-  BDSMagnetStrength*  magnetStrength;
-  G4bool              provideGlobalTransform;
-  G4Transform3D       transform;  ///< Transform w.r.t. solid field will be attached to
-  BDSCavityInfo*      cavityInfo;
-  G4String            magneticFieldFilePath;
-  BDSFieldFormat      magneticFieldFormat;
-  BDSInterpolatorType magneticInterpolatorType;
-  G4String            electricFieldFilePath;
-  BDSFieldFormat      electricFieldFormat;
-  BDSInterpolatorType electricInterpolatorType;
-  G4bool              cacheTransforms;
-  G4double            scaling;
-  G4double            timeOffset;
+  BDSFieldType             fieldType;
+  G4double                 brho;
+  BDSIntegratorType        integratorType;
+  const BDSMagnetStrength* magnetStrength;
+  G4bool                   provideGlobalTransform;
+  G4Transform3D            transform;  ///< Transform w.r.t. solid field will be attached to
+  const BDSCavityInfo*     cavityInfo;
+  G4String                 magneticFieldFilePath;
+  BDSFieldFormat           magneticFieldFormat;
+  BDSInterpolatorType      magneticInterpolatorType;
+  G4String                 electricFieldFilePath;
+  BDSFieldFormat           electricFieldFormat;
+  BDSInterpolatorType      electricInterpolatorType;
+  G4bool                   cacheTransforms;
+  G4double                 eScaling;
+  G4double                 bScaling;
+  G4double                 timeOffset;
 };
 
 #endif

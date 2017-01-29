@@ -123,7 +123,7 @@ public:
 
   /// Get the global s position of each element all in one - used for histograms.
   /// For convenience, s positions are converted to metres in this function.
-  std::vector<G4double> GetSPositionEndOfEach();
+  std::vector<G4double> GetEdgeSPositions() const;
 
   ///@{ Iterator mechanics
   typedef BeamlineVector::iterator       iterator;
@@ -183,7 +183,9 @@ private:
   /// look up transforms by name.
   void RegisterElement(BDSBeamlineElement* element);
 
+  /// Sum of all chord lengths
   G4double totalChordLength;
+  /// Sum of all arc lengths
   G4double totalArcLength;
 
   G4ThreeVector maximumExtentPositive; ///< maximum extent in the positive coordinates in each dimension

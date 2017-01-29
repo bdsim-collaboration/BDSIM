@@ -3,7 +3,6 @@
 #include "BDSFieldMagOctupole.hh"
 #include "BDSMagnetStrength.hh"
 
-#include "G4AffineTransform.hh"
 #include "G4ThreeVector.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"

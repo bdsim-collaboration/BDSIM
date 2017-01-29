@@ -1,5 +1,4 @@
 #include "BDSFieldMagSkew.hh"
-#include "BDSUtilities.hh"
 
 #include "globals.hh"
 #include "G4RotationMatrix.hh"
@@ -11,7 +10,7 @@ BDSFieldMagSkew::BDSFieldMagSkew(BDSFieldMag* fieldIn,
   rotation = new G4RotationMatrix();
   antiRotation = new G4RotationMatrix();
   rotation->rotateZ(angle);
-  rotation->rotateZ(-angle);
+  antiRotation->rotateZ(-angle);
 }
 
 BDSFieldMagSkew::~BDSFieldMagSkew()

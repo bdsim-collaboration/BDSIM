@@ -7,8 +7,8 @@
 /**
  * @brief Transform in beam line that takes up no space.
  *
- * This applies a transformation to cumulative curvlinear
- * coordinates as the beam line is built allowing an aribtrary
+ * This applies a transformation to cumulative curvilinear
+ * coordinates as the beam line is built allowing an arbitrary
  * rotation or displacement of the reference coordinates from
  * that point on. A tilt or offset should be used instead of 
  * two of these in conjunction (sandwiching) to offset a particular
@@ -42,7 +42,7 @@ private:
   /// Contractual function overload from virtual base class
   /// BDSAcceleratorComponent. In this case has null implementation
   /// as the transform only inherits BDSAcceleratorComponent so that
-  /// is compatable with the beamline
+  /// is compatible with the beamline
   virtual void BuildContainerLogicalVolume(){;};
 
   G4double dx;

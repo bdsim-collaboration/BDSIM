@@ -17,6 +17,59 @@ Options::Options(const GMAD::OptionsBase& options):
   PublishMembers();
 }
 
+double Options::get_value(std::string property_name)const{
+  double value;
+  try {
+    value = get<double>(this,property_name);
+  }
+  catch (std::runtime_error) {
+    try {
+      // try int and convert
+      value = (double)get<int>(this,property_name);
+    }
+    catch (std::runtime_error) {
+      std::cerr << "options.cc> Error: unknown property \"" << property_name << "\" (only works on numerical properties)" << std::endl;
+      exit(1);
+    }
+  }
+  return value;
+}
+
+void Options::Amalgamate(const Options& optionsIn, bool override)
+{
+  if (override)
+    {
+      for (auto const key : optionsIn.setKeys)
+	{
+	  try
+	    {set(this, &optionsIn, key);}
+	  catch (std::runtime_error)
+	    {
+	      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+	      exit(1);
+	    }
+	}
+    }
+  else
+    {// don't override - ie give preference to ones set in this instance
+      for (auto const key : optionsIn.setKeys)
+	{
+	  auto const& ok = setKeys; // shortcut
+	  auto result = std::find(ok.begin(), ok.end(), key);
+	  if (result == ok.end())
+	    {//it wasn't found so ok to copy
+	      try
+		{set(this, &optionsIn, key);}
+	      catch (std::runtime_error)
+		{
+		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
+		  exit(1);
+		}
+	    }
+	}
+    }
+}
+
 bool Options::HasBeenSet(std::string name) const
 {
   auto result = std::find(setKeys.begin(), setKeys.end(), name);
@@ -80,7 +133,6 @@ void Options::PublishMembers()
   publish("recreateSeedState", &Options::recreateSeedState);
 
   publish("elossHistoBinWidth",&Options::elossHistoBinWidth);
-  publish("elossHistoTransBinWidth",&Options::elossHistoTransBinWidth);
   publish("defaultRangeCut",&Options::defaultRangeCut);
   publish("ffact",&Options::ffact);
   publish("bv",   &Options::ffact); // MadX naming
@@ -253,7 +305,6 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
-  publish("deltaChord",         &Options::deltaChord);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);
@@ -266,7 +317,6 @@ void Options::PublishMembers()
   publish("turnOnMieScattering",&Options::turnOnMieScattering);
   publish("turnOnRayleighScattering",&Options::turnOnRayleighScattering);
   publish("turnOnOpticalSurface",&Options::turnOnOpticalSurface);
-  publish("turnOnBirksSaturation",&Options::turnOnBirksSaturation);
 
   publish("lengthSafety",&Options::lengthSafety);
 
@@ -283,6 +333,7 @@ void Options::PublishMembers()
   publish("stopSecondaries",&Options::stopSecondaries);
   publish("stopTracks",     &Options::stopTracks);
   publish("killNeutrinos",  &Options::killNeutrinos);
+  publish("minimumRadiusOfCurvature", &Options::minimumRadiusOfCurvature);
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);

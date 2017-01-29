@@ -30,6 +30,8 @@ public:
     passed(true)
   {;}
   
+  virtual ~Result() {} ///< Virtual destructor
+
   std::string name;    ///< Name of object being compared in files.
   std::string objtype; ///< Name of class of object being compared in files.
   bool        passed;  ///< Whether it passed or not.

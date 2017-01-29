@@ -26,16 +26,6 @@ BDSCollimatorElliptical::BDSCollimatorElliptical(G4String name,
 
 void BDSCollimatorElliptical::BuildInnerCollimator()
 {
-  G4bool tapered = (BDS::IsFinite(xOutAperture) && BDS::IsFinite(yOutAperture));
-  G4bool isOutLarger = ((xOutAperture > xAperture) && (yOutAperture > yAperture));
-  
-  // Swap variables around if exit size is large than entrance size
-  if(tapered && isOutLarger)
-    {
-        std::swap(xAperture,xOutAperture);
-        std::swap(yAperture,yOutAperture);
-    }
-  
   if(tapered)
     {
       G4double zmax = chordLength * (xOutAperture + xAperture) / xAperture;

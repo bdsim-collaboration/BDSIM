@@ -61,6 +61,8 @@ std::string GMAD::typestr(ElementType type) {
     return "screen";
   case ElementType::_AWAKESCREEN :
     return "awakescreen";
+  case ElementType::_AWAKESPECTROMETER :
+    return "awakespectrometer";
   case ElementType::_DEGRADER :
     return "degrader";
   default:

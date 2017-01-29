@@ -5,18 +5,17 @@
 
 #include <vector>
 
-class BDSFieldEM;
 class BDSFieldInfo;
 
 class G4ChordFinder;
 class G4ElectroMagneticField;
 class G4EquationOfMotion;
+class G4Field;
 class G4FieldManager;
 class G4LogicalVolume;
 class G4MagInt_Driver;
 class G4MagIntegratorStepper;
 class G4MagneticField;
-class G4Field;
 
 /**
  * @brief A holder for all the Geant4 field related objects.
@@ -34,7 +33,7 @@ class BDSFieldObjects
 {
 public:
   /// A field is required to build the required objects to manage and use it.
-  BDSFieldObjects(BDSFieldInfo*           infoIn,
+  BDSFieldObjects(const BDSFieldInfo*     infoIn,
 		  G4Field*                fieldIn,
 		  G4EquationOfMotion*     equationOfMotionIn,
 		  G4MagIntegratorStepper* magIntegratorStepperIn,
@@ -45,14 +44,14 @@ public:
   /// for convenience. The field manager uses delta intersection, epsilon min / max,
   /// and delta one step from BDSGlobalConstants as defaults for field propagation
   /// accuracy.
-  BDSFieldObjects(BDSFieldInfo*           infoIn,
+  BDSFieldObjects(const BDSFieldInfo*     infoIn,
 		  G4MagneticField*        fieldIn,
 		  G4EquationOfMotion*     equationOfMotionIn,
 		  G4MagIntegratorStepper* magIntegratorStepperIn);
 
   /// Alternative constructor for the special case of an electro-magnetic field
   /// which doesn't follow the same hierarchy of classes as magnetic fields.
-  BDSFieldObjects(BDSFieldInfo*           infoIn,
+  BDSFieldObjects(const BDSFieldInfo*     infoIn,
 		  G4ElectroMagneticField* fieldIn,
 		  G4EquationOfMotion*     equationOfMotionIn,
 		  G4MagIntegratorStepper* magIntegratorStepperIn);
@@ -61,7 +60,7 @@ public:
   ~BDSFieldObjects();
 
   ///@{ Acessor.
-  inline BDSFieldInfo*           GetInfo()             const {return info;}
+  inline const BDSFieldInfo*     GetInfo()             const {return info;}
   inline G4Field*                GetField()            const {return field;}
   inline G4EquationOfMotion*     GetEquationOfMotion() const {return equationOfMotion;}
   inline G4MagIntegratorStepper* GetIntegrator()       const {return magIntegratorStepper;}
@@ -87,7 +86,7 @@ private:
   BDSFieldObjects(const BDSFieldObjects& other);
 
   /// The complete information required to build this field.
-  BDSFieldInfo* info;
+  const BDSFieldInfo* info;
   
   /// Reference to field this instance is based on.
   G4Field* field;

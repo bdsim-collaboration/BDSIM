@@ -60,11 +60,11 @@ private:
   T file;
   
   /// Number of columns to read.
-  unsigned long nColumns;                ///< Number of columns to read.
-  std::vector<G4float> lineData; ///< Vector to store line data during loading.
-  BDSFieldValue fv;              ///< Temporary field value.
-  std::map<G4String, double> header; ///< Header keys and values
-  BDSArray4DCoords* result;
+  unsigned long              nColumns;    ///< Number of columns to read.
+  std::vector<G4float>       lineData;    ///< Vector to store line data during loading.
+  BDSFieldValue              fv;          ///< Temporary field value.
+  std::map<G4String, double> header;      ///< Header keys and values
+  BDSArray4DCoords*          result;      ///< Resultant array from loading
 };
 
 #endif

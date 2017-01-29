@@ -1,6 +1,7 @@
 #include "BDSBeamPipeFactory.hh"
 #include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryCircular.hh"
+#include "BDSBeamPipeFactoryCircularVacuum.hh"
 #include "BDSBeamPipeFactoryElliptical.hh"
 #include "BDSBeamPipeFactoryRectangular.hh"
 #include "BDSBeamPipeFactoryLHC.hh"
@@ -14,13 +15,13 @@
 
 #include "globals.hh"                        // geant4 globals / types
 
-BDSBeamPipeFactory* BDSBeamPipeFactory::_instance = nullptr;
+BDSBeamPipeFactory* BDSBeamPipeFactory::instance = nullptr;
 
 BDSBeamPipeFactory* BDSBeamPipeFactory::Instance()
 {
-  if (_instance == nullptr)
-    {_instance = new BDSBeamPipeFactory();}
-  return _instance;
+  if (instance == nullptr)
+    {instance = new BDSBeamPipeFactory();}
+  return instance;
 }
 
 BDSBeamPipeFactory::BDSBeamPipeFactory()
@@ -28,7 +29,16 @@ BDSBeamPipeFactory::BDSBeamPipeFactory()
 
 BDSBeamPipeFactory::~BDSBeamPipeFactory()
 {
-  _instance = nullptr;
+  delete BDSBeamPipeFactoryCircular::Instance();
+  delete BDSBeamPipeFactoryElliptical::Instance();
+  delete BDSBeamPipeFactoryRectangular::Instance();
+  delete BDSBeamPipeFactoryLHC::Instance();
+  delete BDSBeamPipeFactoryLHCDetailed::Instance();
+  delete BDSBeamPipeFactoryRectEllipse::Instance();
+  delete BDSBeamPipeFactoryRaceTrack::Instance();
+  delete BDSBeamPipeFactoryOctagonal::Instance();
+  delete BDSBeamPipeFactoryCircularVacuum::Instance();
+  instance = nullptr;
 }
 
 BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeType type)
@@ -36,53 +46,23 @@ BDSBeamPipeFactoryBase* BDSBeamPipeFactory::GetAppropriateFactory(BDSBeamPipeTyp
   switch(type.underlying())
     {
     case BDSBeamPipeType::circular:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "circular beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryCircular::Instance();
-      break;
+      {return BDSBeamPipeFactoryCircular::Instance(); break;}
     case BDSBeamPipeType::elliptical:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "elliptical beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryElliptical::Instance();
-      break;
+      {return BDSBeamPipeFactoryElliptical::Instance(); break;}
     case BDSBeamPipeType::rectangular:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "rectangular beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryRectangular::Instance();
-      break;
+      {return BDSBeamPipeFactoryRectangular::Instance(); break;}
     case BDSBeamPipeType::lhc:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "lhc beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryLHC::Instance();
-      break;
+      {return BDSBeamPipeFactoryLHC::Instance(); break;}
     case BDSBeamPipeType::lhcdetailed:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "lhc detailed beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryLHCDetailed::Instance();
-      break;
+      {return BDSBeamPipeFactoryLHCDetailed::Instance(); break;}
     case BDSBeamPipeType::rectellipse:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "rectangular ellipse beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryRectEllipse::Instance();
-      break;
+      {return BDSBeamPipeFactoryRectEllipse::Instance(); break;}
     case BDSBeamPipeType::racetrack:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "racetrack beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryRaceTrack::Instance();
-      break;
+      {return BDSBeamPipeFactoryRaceTrack::Instance(); break;}
     case BDSBeamPipeType::octagonal:
-#ifdef BDSDEBUG
-      G4cout << __METHOD_NAME__ << "octagonal beampipe factory" << G4endl;
-#endif
-      return BDSBeamPipeFactoryOctagonal::Instance();
-      break;
+      {return BDSBeamPipeFactoryOctagonal::Instance(); break;}
+    case BDSBeamPipeType::circularvacuum:
+      {return BDSBeamPipeFactoryCircularVacuum::Instance(); break;}
     default:
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "unknown type \"" << type << "\" - circular beampipe factory by default" << G4endl;

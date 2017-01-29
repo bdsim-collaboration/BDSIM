@@ -2,7 +2,6 @@
 #define PARSER_H
 
 #include <list>
-#include <map>
 #include <string>
 #include <vector>
 
@@ -89,8 +88,12 @@ namespace GMAD
     template <class C, class Container=std::vector<C>>
       Container& GetList();
 
+    /// find element
+    Element& find_element(std::string element_name);
+    /// find element (const) 
+    const Element& find_element(std::string element_name)const;
     /// access property of Element with element_name
-    double property_lookup(std::string element_name, std::string property_name);
+    double property_lookup(std::string element_name, std::string property_name)const;
     /// add element to temporary element sequence tmp_list
     void add_element_temp(std::string name, int number, bool pushfront, ElementType linetype);
     /// copy properties from Element into params, returns element type as integer, returs _NONE if not found
@@ -114,6 +117,9 @@ namespace GMAD
     /// Set value for parser class
     template <class C, typename T>
       void SetValue(std::string property, T value);
+    /// Get value for parser class (only for doubles)
+    template <class C>
+      double GetValue(std::string property);
 
     /// Overwrite element with current parameters
     void OverwriteElement(std::string elementName);
@@ -150,7 +156,6 @@ namespace GMAD
     // *****************
     /// maximum number of nested lines
     const int MAX_EXPAND_ITERATIONS = 50;
-    const int PEDANTIC = 1; ///< strict checking, exits when element or parameter is not known
 
     ///@{ temporary list for reading of arrays in parser
     std::list<double> tmparray;
@@ -235,6 +240,12 @@ namespace GMAD
     void Parser::SetValue(std::string property, T value)
     {
       GetGlobal<C>().set_value(property, value);
+    }
+
+  template <class C>
+    double Parser::GetValue(std::string property)
+    {
+      return GetGlobal<C>().get_value(property);
     }
 }
 

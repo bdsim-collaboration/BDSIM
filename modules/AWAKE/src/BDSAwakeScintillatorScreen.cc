@@ -16,7 +16,6 @@ Work in progress.
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"               
-#include "G4UserLimits.hh"
 #include "BDSDebug.hh"
 
 #include "BDSAwakeMultilayerScreen.hh"
@@ -27,12 +26,24 @@ Work in progress.
 //#include "BDSOutputBase.hh"
 
 //============================================================
-BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName, G4String material, G4double thickness = 0.3 * CLHEP::mm, G4double windowScreenGap = 0, G4double angle = -45*CLHEP::pi/180.0, G4double windowThickness=0, G4String windowMaterial=""):
-  BDSAcceleratorComponent(aName, 1.0, 0, "awakescintillatorscreen"), _mlScreen(NULL), _camera(NULL), _material(material), _thickness(thickness), _windowScreenGap(windowScreenGap),_screenAngle(angle), _windowThickness(windowThickness), _windowMaterial(windowMaterial)
+BDSAwakeScintillatorScreen::BDSAwakeScintillatorScreen (G4String aName,
+							G4String material,
+							G4double thickness = 0.3 * CLHEP::mm,
+							G4double windowScreenGap = 0,
+							G4double angle = -45*CLHEP::pi/180.0,
+							G4double windowThickness=0,
+							G4String windowMaterial=""):
+  BDSAcceleratorComponent(aName, 1.0, 0, "awakescintillatorscreen"),
+  _mlScreen(nullptr),
+  _camera(nullptr),
+  _material(material),
+  _thickness(thickness),
+  _windowScreenGap(windowScreenGap),
+  _screenAngle(angle),
+  _windowThickness(windowThickness),
+  _windowMaterial(windowMaterial)
 {
   _vacChambType=2;
-  //Set as part of precision region (for energy loss monitoring)
-  precisionRegion=1;
 
   //Set the rotation of the screen
   _screenRotationMatrix = new G4RotationMatrix();
@@ -211,12 +222,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
 
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
-  itsCameraScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  itsCameraScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 //void BDSAwakeScintillatorScreen::BuildFresnelLens(){
@@ -292,12 +298,7 @@ void BDSAwakeScintillatorScreen::BuildScreenScoringPlane(){
   //-----------
   itsScreenScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsScoringPlaneUserLimits =  new G4UserLimits();
-  itsScoringPlaneUserLimits->SetMaxAllowedStep(_scoringPlaneThickness*maxStepFactor);
-  itsScreenScoringPlaneLog->SetUserLimits(itsScoringPlaneUserLimits);
-#endif
+  itsScreenScoringPlaneLog->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSAwakeScintillatorScreen::Build()
@@ -426,12 +427,7 @@ void BDSAwakeScintillatorScreen::BuildContainerLogicalVolume()
   visAtt->SetForceWireframe(true);
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
-#ifndef NOUSERLIMITS
-  G4double maxStepFactor=0.5;
-  G4UserLimits* itsMarkerUserLimits =  new G4UserLimits();
-  itsMarkerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  containerLogicalVolume->SetUserLimits(itsMarkerUserLimits);
-#endif
+  containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 }
 
 void BDSAwakeScintillatorScreen::BuildVacuumChamber1(){

@@ -3,7 +3,6 @@
 
 #include "globals.hh" // geant4 globals / types
 
-#include <vector>
 #include <utility>
 #include <ostream>
 

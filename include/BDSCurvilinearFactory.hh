@@ -1,39 +1,74 @@
-class BDSAcceleratorComponent;
-class BDSBeamline;
-class BDSBeamlineElement;
+#ifndef BDSCURVILINEARFACTORY_H
+#define BDSCURVILINEARFACTORY_H
+
+#include "globals.hh"
+#include "G4ThreeVector.hh"
+
 class BDSSimpleComponent;
+class BDSTiltOffset;
+
+class G4VSolid;
 
 /**
- * @brief Factory for simple parallel geometry for curvilinear coordinates.
- *
- * This builds a beam line of geometry based on an existing beam line. It makes
- * simple shapes with the correct length and angle of each component. In the case
- * of a straight component (no angle) it's a box and in the case of an angled component
- * or one with face rotations, it's a G4CutTubs.
- *
+ * @brief Factory to create curvilinear geometry for parallel world.
+ * 
+ * Creates cylinders for straight or angled sections that can be used
+ * in a parallel world (only!) for curvilinear coordinates. These have
+ * logical volumes with nullptr for material, so can therefore only be
+ * used in a parallel world.
+ * 
+ * The length supplied should be the full length desired. The length of the
+ * object returned will be this length - 2x length safety.
+ * 
  * @author Laurie Nevay
  */
 
 class BDSCurvilinearFactory
 {
 public:
-  static BDSCurvilinearFactory* Instance(); ///< Singleton accessor.
-
+  BDSCurvilinearFactory();
   ~BDSCurvilinearFactory();
 
-  /// Build a beam line of curvilinear geometry based on another beam line.
-  BDSBeamline* BuildCurvilinearBeamLine(BDSBeamline const* const beamline);
+  /// Build a straight curvilinear volume.
+  BDSSimpleComponent* CreateCurvilinearVolume(const G4String name,
+					      const G4double chordLength,
+					      const G4double radius);
+
+  /// Build a straight section of curvilinear geometry, but with angled
+  /// faces - typically used for a bend section.  Note this is straight though.
+  /// The normal vectors are w.r.t. the chord of the volume to be built.
+  BDSSimpleComponent* CreateCurvilinearVolume(const G4String       name,
+					      const G4double       arcLength,
+					      const G4double       chordLength,
+					      const G4double       radius,
+					      const G4double       angle,
+					      const G4ThreeVector  inputFaceNormal,
+					      const G4ThreeVector  outputFaceNormal,
+					      const BDSTiltOffset* tiltOffset = nullptr);
+
+  /// Convenience method to use the angled method above but with
+  /// the angle evently spit between each face.
+  BDSSimpleComponent* CreateCurvilinearVolume(const G4String       name,
+					      const G4double       arcLength,
+					      const G4double       chordLength,
+					      const G4double       radius,
+					      const G4double       angle,
+					      const BDSTiltOffset* tiltOffset = nullptr);
 
 private:
-  BDSCurvilinearFactory(); ///< Private constructor as singleton pattern.
-  static BDSCurvilinearFactory* instance; ///< Singleton instance.
-
-  BDSBeamlineElement* BuildBeamLineElement(BDSSimpleComponent* component,
-					   BDSBeamlineElement const* const element);
-
-  /// Build a single component.
-  BDSSimpleComponent* BuildCurvilinearComponent(BDSBeamlineElement const* const element);
-
-  G4double curvilinearRadius; ///< Radius for curvilinear geometry.
-  G4bool   checkOverlaps;     ///< Whether to check overlaps.
+  /// Common construction.  G4VSolid* can't be const as G4LogicalVolume won't take a
+  /// const solid.
+  BDSSimpleComponent* CommonConstruction(const G4String      name,
+					 const G4double      arcLength,
+					 const G4double      chordLength,
+					 const G4double      radius,
+					 G4VSolid*           solid,
+					 const G4ThreeVector inputFaceNormal,
+					 const G4ThreeVector outputFaceNormal,
+					 const G4double      angle);
+  
+  /// Cache of length safety from BDSGlobalConstants.
+  const G4double lengthSafety;
 };
+
+#endif

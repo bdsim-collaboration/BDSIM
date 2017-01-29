@@ -25,9 +25,9 @@ def PlotQueried(name):
 
     print 'Plotting: ' + name
     _plt.figure()
-    mag = _np.sqrt(d[:,2]**2 + d[:,3]**2)
+    mag = _np.sqrt(d[:,:,2]**2 + d[:,:,3]**2)
     #_plt.quiver(d[:,0],d[:,1],d[:,2],d[:,3],mag,cmap=_plt.cm.magma, scale=0.05, scale_units='xy')
-    _plt.quiver(d[:,0],d[:,1],d[:,2],d[:,3],mag,cmap=_plt.cm.magma, scale=None, pivot='mid')
+    _plt.quiver(d[:,:,0],d[:,:,1],d[:,:,2],d[:,:,3],mag,cmap=_plt.cm.magma, scale=None, pivot='mid')
     _plt.xlabel('X (mm)')
     _plt.ylabel('Y (mm)')
     _plt.title('Queried Field Object - ' + name)

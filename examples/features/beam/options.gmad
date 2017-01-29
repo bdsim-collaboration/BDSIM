@@ -1,12 +1,3 @@
 ! standard options for runing bdsim
 
-option, beampipeRadius = 10 * cm,
-        boxSize = 1.9 * m,
-        tunnelRadius= 2.0 * m,
-        beampipeThickness   = 0.5 * cm,
-        thresholdCutCharged = 10 * MeV,
-        thresholdCutPhotons = 10 * MeV,
-	samplerDiameter = 4.0*m,
-	stopTracks = 0;
-
-option,physicsList="em";
+option, stopTracks = 1;

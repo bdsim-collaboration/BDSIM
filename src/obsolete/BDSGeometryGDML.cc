@@ -34,6 +34,7 @@ void BDSGeometryGDML::Construct(G4LogicalVolume *marker)
 
   G4VisAttributes* visAtt2 = new G4VisAttributes(*BDSColours::Instance()->GetColour("gdml"));
   visAtt2->SetVisibility(true);
+  visAtt2->SetColor(0,0,1,0.5);
 
   for (int i=0; i<gdmlWorld->GetNoDaughters(); i++){
 

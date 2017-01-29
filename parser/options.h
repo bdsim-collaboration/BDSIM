@@ -1,7 +1,6 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -33,45 +32,15 @@ namespace GMAD
     template<typename T>
     void set_value(std::string name, T value);
     
+    /// get method (only for doubles)
+    double get_value(std::string name) const;
+
     /// Take another instance of options and copy the values that have
     /// been set (through setKeys, which although private each instance
     /// has access to as C++ treats encapsulation at the class level).
     /// If override is true, the input option will override the existing
     /// one in this instance.
-    void Amalgamate(const Options& optionsIn, bool override)
-    {
-      if (override)
-	{
-	  for (auto const key : optionsIn.setKeys)
-	    {
-	      try
-		{set(this, &optionsIn, key);}
-	      catch (std::runtime_error)
-		{
-		  std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
-		  exit(1);
-		}
-	    }
-	}
-      else
-	{// don't override - ie give preference to ones set in this instance
-	  for (auto const key : optionsIn.setKeys)
-	    {
-	      auto const& ok = setKeys; // shortcut
-	      auto result = std::find(ok.begin(), ok.end(), key);
-	      if (result == ok.end())
-		{//it wasn't found so ok to copy
-		  try
-		    {set(this, &optionsIn, key);}
-		  catch (std::runtime_error)
-		    {
-		      std::cerr << "Error: Amalgate unknown option \"" << key << "\"" << std::endl;
-		      exit(1);
-		    }
-		}
-	    }
-	}
-    }
+    void Amalgamate(const Options& optionsIn, bool override);
 
     /// Whether a parameter has been set using the set_value method or not.
     bool HasBeenSet(std::string name) const;
@@ -88,7 +57,7 @@ namespace GMAD
   void Options::set_value(std::string name, T value)
   {
 #ifdef BDSDEBUG
-    std::cout << "parser> Setting value " << std::setw(25) << std::left << name << value << std::endl;
+    std::cout << "options> Setting value " << std::setw(25) << std::left << name << value << std::endl;
 #endif
     // member method can throw runtime_error, catch and exit gracefully
     try
@@ -98,7 +67,7 @@ namespace GMAD
       }
     catch (std::runtime_error)
     {
-      std::cerr << "Error: parser> unknown option \"" << name << "\" with value " << value << std::endl;
+      std::cerr << "Error: options> unknown option \"" << name << "\" with value " << value << std::endl;
       exit(1);
     }
   }

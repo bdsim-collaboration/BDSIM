@@ -40,14 +40,18 @@ void Material::PublishMembers()
 
 void Material::print()const
 {
-  std::cout << "material: "
-	    << name     << " "
-	    << A        << " "
-	    << Z        << " "
-	    << density  << " "
-	    << temper   << " "
-	    << pressure << " "
-	    << state    << " "
+  std::cout << "material: " << name << " ";
+
+  if (components.empty()) {
+    std::cout << "A= " << A << "g/mole "
+	      << "Z= " << Z << " ";
+  } else {
+    std::cout << "ncomponents= " << components.size() << " ";
+  }
+  std::cout << "density= " << density  << "g/cm3 "
+	    << "state= "   << state    << " "
+	    << "T= "       << temper   << "K "
+	    << "P= "       << pressure << "atm "
 	    << std::endl;
 }
 

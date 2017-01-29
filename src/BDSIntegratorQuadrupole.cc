@@ -2,7 +2,6 @@
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSMagnetStrength.hh"
 #include "BDSStep.hh"
-#include "BDSUtilities.hh"
 
 #include "G4AffineTransform.hh"
 #include "G4Mag_EqRhs.hh"
@@ -65,19 +64,9 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   if(std::abs(kappa)<1.e-12)
     {
 #ifdef BDSDEBUG
-      G4cout << "Zero strenght quadrupole - advancing as a drift" << G4endl;
+      G4cout << "Zero strength quadrupole - advancing as a drift" << G4endl;
 #endif
-      G4ThreeVector positionMove = h * InitMomDir;
-
-      yOut[0] = yIn[0] + positionMove.x();
-      yOut[1] = yIn[1] + positionMove.y();
-      yOut[2] = yIn[2] + positionMove.z();
-				
-      yOut[3] = GlobalP.x();
-      yOut[4] = GlobalP.y();
-      yOut[5] = GlobalP.z();
-
-      distChord=0;
+      AdvanceDrift(yIn,GlobalP,h,yOut);
 
       for(G4int i = 0; i < nVariables; i++)
 	{yErr[i] = 0;}
@@ -195,18 +184,7 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   LocalRp.setY(yp1);
   LocalRp.setZ(zp1);
   
-  BDSStep globalPosDir = ConvertToGlobalStep(LocalR, LocalRp, false);
-  GlobalR = globalPosDir.PreStepPoint();
-  GlobalP = globalPosDir.PostStepPoint();	
-  GlobalP*=InitPMag; // multiply the unit direction by magnitude to get momentum
-
-  yOut[0] = GlobalR.x();
-  yOut[1] = GlobalR.y();
-  yOut[2] = GlobalR.z();
-
-  yOut[3] = GlobalP.x();
-  yOut[4] = GlobalP.y();
-  yOut[5] = GlobalP.z();
+  ConvertToGlobal(LocalR,LocalRp,InitPMag,yOut);
 }
 
 void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
@@ -230,7 +208,13 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
 
   // ok it's forwards pointing - proceed with our paraxial treatment
   if(std::abs(kappa) < 1e-9) //kappa is small - no error needed for paraxial treatment
-    {AdvanceHelix(yInput,dydx,h,yOut,yErr);}
+    {
+      AdvanceHelix(yInput,dydx,h,yOut,yErr);
+      for(G4int i = 0; i < nVariables; i++)
+      {
+        yErr[i] = 0;
+      }
+    }
   else
     {
       // Compute errors by making two half steps

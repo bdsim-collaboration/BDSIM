@@ -5,6 +5,7 @@
 #include "globals.hh"
 
 class BDSBunch;
+class BDSExtent;
 class BDSOutputLoader;
 class G4Event;
 class G4ParticleGun;
@@ -21,6 +22,9 @@ public:
   virtual ~BDSPrimaryGeneratorAction();
   
   virtual void GeneratePrimaries(G4Event*);
+
+  /// Set the world extent that particle coordinates will be checked against.
+  inline void SetWorldExtent(const BDSExtent worldExtentIn) {worldExtent = worldExtentIn;}
   
 private:
   /// Pointer a to G4 service class.
@@ -41,6 +45,12 @@ private:
 
   /// The offset in the file to read events from when setting the seed.
   G4int  eventOffset;
+
+  /// Whether to use the ascii seed state each time.
+  G4bool useASCIISeedState;
+
+  /// World extent that particle coordinates are checked against to ensure they're inside it.
+  BDSExtent worldExtent;
 };
 
 #endif

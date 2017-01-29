@@ -22,11 +22,6 @@ class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
 
-namespace CLHEP {
-  class HepRotation;
-}
-typedef CLHEP::HepRotation G4RotationMatrix;
-
 class BDSBeamPipeInfo;
 class BDSTunnelInfo;
 
@@ -73,12 +68,8 @@ public:
   static BDSGlobalConstants* Instance();
   ~BDSGlobalConstants();
 
-  /// Access the underlying parser options.
-  const GMAD::Options& Options() const {return options;}
-
   // Options that access GMAD::options instance
   // Executable options
-  inline G4String InputFileName()          const {return G4String(options.inputFileName);}
   inline G4String VisMacroFileName()       const {return G4String(options.visMacroFileName);}
   inline G4bool   VisDebug()               const {return G4bool  (options.visDebug);}
   inline G4String OutputFileName()         const {return G4String(options.outputFileName);}
@@ -137,7 +128,6 @@ public:
   inline G4double ProdCutElectrons()         const {return G4double(options.prodCutElectrons)*CLHEP::m;}
   inline G4double ProdCutPositrons()         const {return G4double(options.prodCutPositrons)*CLHEP::m;}
   inline G4double ProdCutProtons()           const {return G4double(options.prodCutProtons)*CLHEP::m;}
-  inline G4double DeltaChord()               const {return G4double(options.deltaChord)*CLHEP::m;}
   inline G4double DeltaIntersection()        const {return G4double(options.deltaIntersection)*CLHEP::m;}
   inline G4double ChordStepMinimum()         const {return G4double(options.chordStepMinimum)*CLHEP::m;}
   inline G4double DeltaOneStep()             const {return G4double(options.deltaOneStep)*CLHEP::m;}
@@ -161,6 +151,7 @@ public:
   inline G4bool   StopSecondaries()          const {return G4bool  (options.stopSecondaries);}
   inline G4bool   StopTracks()               const {return G4bool  (options.stopTracks);}
   inline G4bool   KillNeutrinos()            const {return G4bool  (options.killNeutrinos);}
+  inline G4double MinimumRadiusOfCurvature() const {return G4double(options.minimumRadiusOfCurvature*CLHEP::m);}
   inline G4double ScintYieldFactor()         const {return G4double(options.scintYieldFactor);}
   inline G4String VacuumMaterial()           const {return G4String(options.vacMaterial);}
   inline G4String EmptyMaterial()            const {return G4String(options.emptyMaterial);}
@@ -171,9 +162,7 @@ public:
   inline G4bool   TurnOnRayleighScattering() const {return G4bool  (options.turnOnRayleighScattering);}
   inline G4bool   TurnOnMieScattering()      const {return G4bool  (options.turnOnMieScattering);}
   inline G4bool   TurnOnOpticalSurface()     const {return G4bool  (options.turnOnOpticalSurface);}
-  inline G4bool   TurnOnBirksSaturation()    const {return G4bool  (options.turnOnBirksSaturation);}
   inline G4int    NumberOfEventsPerNtuple()  const {return G4int   (options.numberOfEventsPerNtuple);}
-  inline G4double ElossHistoTransBinWidth()  const {return G4double(options.elossHistoTransBinWidth)*CLHEP::m;}
   inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
   inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
@@ -186,17 +175,9 @@ public:
   inline G4double ParticleMomentum()         const {return particleMomentum;}
   inline G4String ParticleName()             const {return particleName;}
   inline G4double BRho()                     const {return brho;}
-  inline G4double TeleporterLength()         const {return teleporterlength;}
   inline G4double SMax()                     const {return sMax;}
   inline G4double SMaxHistograms()           const {return sMaxHistograms;}
   inline G4int    NBins()                    const {return nBins;}
-  inline G4RotationMatrix*     RotY90()                  const {return rotY90;}
-  inline G4RotationMatrix*     RotYM90()                 const {return rotYM90;}
-  inline G4RotationMatrix*     RotX90()                  const {return rotX90;}
-  inline G4RotationMatrix*     RotXM90()                 const {return rotXM90;}
-  inline G4RotationMatrix*     RotYM90X90()              const {return rotYM90X90;}
-  inline G4RotationMatrix*     RotYM90XM90()             const {return rotYM90XM90;}
-  inline G4ThreeVector         GetTeleporterDelta()      const {return teleporterdelta;}
   inline G4ParticleDefinition* GetParticleDefinition()   const {return beamParticleDefinition;}
   inline BDSBeamPipeInfo*      GetDefaultBeamPipeModel() const {return defaultBeamPipeModel;}
   inline BDSMagnetGeometryType GetMagnetGeometryType()   const {return magnetGeometryType;}
@@ -210,10 +191,6 @@ public:
   inline BDSIntegratorSetType  IntegratorSet()           const {return integratorSet;}
   inline G4double              COverGeV()                const {return cOverGeV;}
 
-  // refactor out of classes that use this
-  inline G4double MagnetPoleSize()     const {return itsMagnetPoleSize;}
-  inline G4double MagnetPoleRadius()   const {return itsMagnetPoleRadius;}
-
   /// @{ Setter
   inline void SetParticleDefinition(G4ParticleDefinition* aBeamParticleDefinition);
   inline void SetParticleName(G4String aParticleName) {particleName = aParticleName;}
@@ -222,8 +199,6 @@ public:
   inline void SetParticleKineticEnergy(G4double value){particleKineticEnergy = value;}
   inline void SetParticleMomentum(G4double value)     {particleMomentum = value;}
   inline void SetBRho(G4double value)                 {brho = value;}
-  inline void SetTeleporterDelta(G4ThreeVector newteleporterdelta);
-  inline void SetTeleporterLength(G4double newteleporterlength);
   inline void SetInitialPoint(BDSParticle& particle);
   inline void SetSMax(G4double sMaxIn);
   inline void IncrementTurnNumber()  {turnsTaken += 1;}
@@ -275,8 +250,6 @@ private:
   
   ///@{ Magnet geometry
   BDSMagnetGeometryType magnetGeometryType;
-  G4double itsMagnetPoleSize;
-  G4double itsMagnetPoleRadius;
   ///@}
 
   /// Default beam pipe model information
@@ -293,15 +266,6 @@ private:
   G4bool        itsLaserwireTrackPhotons;
   G4bool        itsLaserwireTrackElectrons;
   
-  /// rotation
-  void InitRotationMatrices();
-  G4RotationMatrix* rotY90;
-  G4RotationMatrix* rotYM90;
-  G4RotationMatrix* rotX90;
-  G4RotationMatrix* rotXM90;
-  G4RotationMatrix* rotYM90X90;
-  G4RotationMatrix* rotYM90XM90;
-
   void InitVisAttributes();
   G4VisAttributes* invisibleVisAttr;
   G4VisAttributes* visibleDebugVisAttr;
@@ -310,11 +274,7 @@ private:
   G4UserLimits* defaultUserLimits;
   
   /// Turn Control
-  G4int    turnsTaken;
-  ///@{ Teleporter offset corrections
-  G4ThreeVector teleporterdelta;
-  G4double      teleporterlength;
-  ///@}
+  G4int turnsTaken;
 
   /// speed of light / 1 GeV, used for scaling in brho calculation
   G4double cOverGeV;
@@ -341,12 +301,6 @@ inline void BDSGlobalConstants::SetLaserwireWavelength(G4String aName, G4double 
 
 inline void BDSGlobalConstants::SetLaserwireDir(G4String aName, G4ThreeVector aDirection)
 {lwDirection[aName]=aDirection;}
-
-inline void BDSGlobalConstants::SetTeleporterDelta(G4ThreeVector newteleporterdelta)
-{teleporterdelta = newteleporterdelta;}
-
-inline void BDSGlobalConstants::SetTeleporterLength(G4double newteleporterlength)
-{teleporterlength = newteleporterlength;}
 
 inline void BDSGlobalConstants::SetInitialPoint(BDSParticle& particle)
 {initialPoint = particle;}

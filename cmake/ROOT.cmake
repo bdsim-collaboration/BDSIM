@@ -22,6 +22,9 @@ include_directories(${ROOT_INCLUDE_DIR})
 option(ROOT_DOUBLE_OUTPUT "Double precision root output" OFF)
 if(ROOT_DOUBLE_OUTPUT)
   add_definitions("-D__ROOTDOUBLE__")
+  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__;-D__ROOTDOUBLE__")
+else()
+  set(PREPROCESSOR_DEFS "-D__ROOTBUILD__")
 endif()
 
 # Make Dictionaries
@@ -45,10 +48,11 @@ foreach(header ${linkHeaders})
       ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict_rdict.pcm
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
-      -D__ROOTBUILD__
+      ${PREPROCESSOR_DEFS}
       -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
       )
     add_custom_command(
@@ -71,9 +75,10 @@ foreach(header ${linkHeaders})
       COMMAND ${ROOTCINT_EXECUTABLE}
       ARGS -f ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.cc
       -c -p -I${CMAKE_CURRENT_SOURCE_DIR}
-      -D__ROOTBUILD__
+      ${PREPROCESSOR_DEFS}
       ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
+      IMPLICIT_DEPENDS CXX ${CMAKE_CURRENT_SOURCE_DIR}/include/${className}.hh ${header}
       COMMENT "Generate ROOT Dictionary for ${className}"
       )
     set(root_dicts_headers ${root_dicts_headers} ${CMAKE_CURRENT_BINARY_DIR}/root/${className}Dict.h)

@@ -12,7 +12,6 @@
 #include "G4Material.hh"
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
-#include "G4UserLimits.hh"
 
 #include <cmath>
 
@@ -55,6 +54,14 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   if (lengthSafety < 0)
     {lengthSafety = globals->LengthSafety();}
   checkOverlaps = globals->CheckOverlaps();
+
+  // Prevent negative length components.
+  if (arcLength < 0)
+    {
+      G4cerr << __METHOD_NAME__ << "Negative length for component named \""
+	     << name << "\" with length " << arcLength << G4endl;
+      exit(1);
+    }
   
   // calculate the chord length if the angle is finite
   if (BDS::IsFinite(angleIn))
@@ -93,21 +100,12 @@ void BDSAcceleratorComponent::Build()
 #endif
   BuildContainerLogicalVolume(); // pure virtual provided by derived class
 
-  // set user limits for container
-#ifndef NOUSERLIMITS
+  // set user limits for container & visual attributes
   if(containerLogicalVolume)
     {
-      G4double maxStepFactor=0.5;
-      G4UserLimits* containerUserLimits =  new G4UserLimits();
-      containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-      containerLogicalVolume->SetUserLimits(containerUserLimits);
-      RegisterUserLimits(containerUserLimits);
+      containerLogicalVolume->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
+      containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());
     }
-#endif
-
-  // visual attributes
-  if(containerLogicalVolume)
-    {containerLogicalVolume->SetVisAttributes(BDSGlobalConstants::Instance()->GetContainerVisAttr());}
 }
 
 void BDSAcceleratorComponent::SetField(BDSFieldInfo* fieldInfoIn)

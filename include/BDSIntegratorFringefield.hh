@@ -34,8 +34,8 @@ public:
 		       G4double       yErr[]);
 
 protected:
-  /// Calcaulte the new particle coordinates for a given step length h.
-  void AdvanceHelix(const G4double yIn[],
+  /// Calculate the new particle coordinates for a given step length h.
+  virtual void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
 		    const G4double h,
 		    G4double       yOut[],
@@ -44,10 +44,8 @@ private:
   /// Private default constructor to enforce use of supplied constructor
   BDSIntegratorFringefield();
   
-  /// B Field Gradient
-  G4double angle;
+  /// Poleface rotation angle
   G4double polefaceAngle;
-  G4double bField;
   /// Fringe field correction term
   G4double fringeCorr;
   /// Data stored in order to find the chord.

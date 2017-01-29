@@ -101,10 +101,10 @@ private:
   static BDSAcceleratorModel* _instance;
 
   G4VPhysicalVolume* worldPV;              ///< Physical volume of the mass world.
-  G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry.
-  G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry.
-  G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry.
-  G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry.
+  // G4VPhysicalVolume* readOutWorldPV;       ///< Physical volume for read out geometry.
+  // G4LogicalVolume*   readOutWorldLV;       ///< Logical volume for read out geometry.
+  // G4VPhysicalVolume* tunnelReadOutWorldPV; ///< Physical volume for tunnel read out geometry.
+  // G4LogicalVolume*   tunnelReadOutWorldLV; ///< Logical volume for tunnel read out geometry.
 
   BDSBeamline*       flatBeamline;         ///< Flat beam line.
   BDSBeamline*       curvilinearBeamline;  ///< Curvilinear geometry beamline.

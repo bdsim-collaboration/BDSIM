@@ -1,8 +1,7 @@
 #ifndef BDSDETECTORCONSTRUCTION_H
 #define BDSDETECTORCONSTRUCTION_H 
 
-#include "BDSFieldObjects.hh"
-#include "BDSGlobalConstants.hh"
+#include "BDSExtent.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4Version.hh"
@@ -10,20 +9,17 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
-//GFlash parameterisation
-#include "GFlashHomoShowerParameterisation.hh"
-#include "BDSShowerModel.hh"
-#include "GFlashHitMaker.hh"
-#include "GFlashParticleBounds.hh"
-
-class G4Box;
+class GFlashHomoShowerParameterisation;
+class GFlashHitMaker;
+class GFlashParticleBounds;
 class G4LogicalVolume;
 class G4Region;
 class G4VPhysicalVolume;
-class G4UniformMagField;
-class G4UserLimits;
-class G4VSensitiveDetector;
+
+class BDSFieldObjects;
+class BDSShowerModel;
 
 #if G4VERSION_NUMBER > 1009
 class BDSBOptrMultiParticleChangeCrossSection;
@@ -52,8 +48,11 @@ public:
 
   virtual void ConstructSDandField();
 
-  /// Create biasing operations 
+  /// Create biasing operations.
   void BuildPhysicsBias();
+
+  /// Public access to the world extent.
+  BDSExtent WorldExtent() const {return worldExtent;}
   
 private:
   /// assignment and copy constructor not implemented nor used
@@ -104,8 +103,6 @@ private:
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
-  /// World user limits  
-  G4UserLimits* worldUserLimits;
 
   // All fields
   std::vector<BDSFieldObjects*> fields;
@@ -120,6 +117,9 @@ private:
 
   /// Whether or not to use the GFlash shower parameterisation.
   G4bool gflash;
+
+  /// Record of the world extent.
+  BDSExtent worldExtent;
 };
 
 #endif

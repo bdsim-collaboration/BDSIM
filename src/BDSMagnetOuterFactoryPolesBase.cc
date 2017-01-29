@@ -94,14 +94,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSectorBend(G4String      n
 								 G4double      angleIn,
 								 G4double      angleOut,
 								 G4bool        yokeOnLeft,
-								 G4Material*   outerMaterial)
+								 G4Material*   outerMaterial,
+								 G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   auto colour = BDSColours::Instance()->GetColour("sectorbend");
   return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-		      angleOut, outerMaterial, yokeOnLeft, colour);
+		      angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String      name,
@@ -112,14 +113,15 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRectangularBend(G4String  
 								      G4double      angleIn,
 								      G4double      angleOut,
 								      G4bool        yokeOnLeft,
-								      G4Material*   outerMaterial)
+								      G4Material*   outerMaterial,
+								      G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   auto colour = BDSColours::Instance()->GetColour("rectangularbend");
   return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, angleIn,
-		      angleOut, outerMaterial, yokeOnLeft, colour); 
+		      angleOut, outerMaterial, yokeOnLeft, colour, false, buildEndPiece); 
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      name,
@@ -127,12 +129,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateQuadrupole(G4String      n
 								 BDSBeamPipe*  beamPipe,
 								 G4double      outerDiameter,
 								 G4double      containerLength,
-								 G4Material*   outerMaterial)
+								 G4Material*   outerMaterial,
+								 G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 2, outerDiameter, outerMaterial, containerLength);
+  return CommonConstructor(name, length, beamPipe, 2, outerDiameter, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      name,
@@ -140,12 +143,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSextupole(G4String      na
 								BDSBeamPipe*  beamPipe,
 								G4double      outerDiameter,
 								G4double      containerLength,
-								G4Material*   outerMaterial)
+								G4Material*   outerMaterial,
+								G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 3, outerDiameter, outerMaterial, containerLength);
+  return CommonConstructor(name, length, beamPipe, 3, outerDiameter, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      name,
@@ -153,12 +157,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateOctupole(G4String      nam
 							       BDSBeamPipe*  beamPipe,
 							       G4double      outerDiameter,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial)
+							       G4Material*   outerMaterial,
+							       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 4, outerDiameter, outerMaterial, containerLength);
+  return CommonConstructor(name, length, beamPipe, 4, outerDiameter, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      name,
@@ -166,12 +171,13 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDecapole(G4String      nam
 							       BDSBeamPipe*  beamPipe,
 							       G4double      outerDiameter,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial)
+							       G4Material*   outerMaterial,
+							       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
-  return CommonConstructor(name, length, beamPipe, 5, outerDiameter, outerMaterial, containerLength);
+  return CommonConstructor(name, length, beamPipe, 5, outerDiameter, outerMaterial, containerLength, buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      name,
@@ -179,13 +185,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateSolenoid(G4String      nam
 							       BDSBeamPipe*  beamPipe,
 							       G4double      outerDiameter,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial)
+							       G4Material*   outerMaterial,
+							       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateSolenoid(name,length,beamPipe,outerDiameter,
-								      containerLength,outerMaterial);
+								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      name,
@@ -193,13 +200,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMultipole(G4String      na
 								BDSBeamPipe*  beamPipe,
 								G4double      outerDiameter,
 								G4double      containerLength,
-								G4Material*   outerMaterial)
+								G4Material*   outerMaterial,
+								G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMultipole(name,length,beamPipe,outerDiameter,
-								       containerLength,outerMaterial);
+								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      name,
@@ -207,13 +215,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateRfCavity(G4String      nam
 							       BDSBeamPipe*  beamPipe,
 							       G4double      outerDiameter,
 							       G4double      containerLength,
-							       G4Material*   outerMaterial)
+							       G4Material*   outerMaterial,
+							       G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateRfCavity(name,length,beamPipe,outerDiameter,
-								      containerLength,outerMaterial);
+								      containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      name,
@@ -221,13 +230,14 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateMuSpoiler(G4String      na
 								BDSBeamPipe*  beamPipe,
 								G4double      outerDiameter,
 								G4double      containerLength,
-								G4Material*   outerMaterial)
+								G4Material*   outerMaterial,
+								G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   return BDSMagnetOuterFactoryCylindrical::Instance()->CreateMuSpoiler(name,length,beamPipe,outerDiameter,
-								       containerLength,outerMaterial);
+								       containerLength,outerMaterial,buildEndPiece);
 }
 
 BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
@@ -236,7 +246,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
 							     G4double      outerDiameter,
 							     G4double      containerLength,
 							     G4bool        vertical,
-							     G4Material*   outerMaterial)
+							     G4Material*   outerMaterial,
+							     G4bool        buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -244,7 +255,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateKicker(G4String      name,
   G4String colourName = (vertical) ? "vkicker" : "hkicker";
   auto colour = BDSColours::Instance()->GetColour(colourName);
   return CreateDipole(name, length, beamPipe, outerDiameter, containerLength, 0, 0,
-		      outerMaterial, true, colour, vertical);
+		      outerMaterial, true, colour, vertical, buildEndPiece);
 }
 
 /// functions below here are private to this particular factory
@@ -254,7 +265,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
 								  G4int        order,
 								  G4double     outerDiameter,
 								  G4Material*  outerMaterial,
-								  G4double     magnetContainerLength)
+								  G4double     magnetContainerLength,
+								  G4bool       buildEndPiece)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -272,9 +284,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   if (buildPole)
     {IntersectPoleWithYoke(name, length, order);}
   G4Colour* magnetColour = BDSColours::Instance()->GetMagnetColour(order);
-  CreateLogicalVolumes(name, length, magnetColour, outerMaterial);
+  CreateLogicalVolumes(name, magnetColour, outerMaterial);
   CreateMagnetContainerComponent();
-  if (buildPole)
+  if (buildPole && buildEndPiece)
     {CreateEndPiece(name);}
   PlaceComponents(name, order); //returns vector of PVs
   if (buildPole)
@@ -293,7 +305,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CommonConstructor(G4String     n
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   
   // Register logical volumes and set sensitivity
   // test if poleLV exists first as some derived classes use their own vector of
@@ -324,7 +335,8 @@ void BDSMagnetOuterFactoryPolesBase::CalculatePoleAndYoke(G4double     outerDiam
   // check parameters are valid
   if (outerDiameter*0.5 < bpRadius)
     {
-      G4cerr << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
+      G4cerr << __METHOD_NAME__
+	     << "outerDiameter (" << outerDiameter << ") must be greater than 2*beampipe radius ("
 	     << 2*bpRadius << ")" << G4endl;
       exit(1);
     }
@@ -570,11 +582,10 @@ void BDSMagnetOuterFactoryPolesBase::IntersectPoleWithYoke(G4String name,
 }
 
 void BDSMagnetOuterFactoryPolesBase::CreateLogicalVolumes(G4String    name,
-							  G4double    length,
 							  G4Colour*   colour,
 							  G4Material* outerMaterial)
 {
-  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, length, colour, outerMaterial);
+  BDSMagnetOuterFactoryBase::CreateLogicalVolumes(name, colour, outerMaterial);
   CreateLogicalVolumesCoil(name);
 }
 
@@ -805,7 +816,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
 							     G4Material*  material,
 							     G4bool       yokeOnLeft,
 							     G4Colour*    colour,
-							     G4bool       buildVertically)
+							     G4bool       buildVertically,
+							     G4bool       buildEndPiece)
 {
   CleanUp();
 
@@ -815,9 +827,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   // Test faces
   if (BDS::WillIntersect(-angleIn, -angleOut, outerDiameter, length))
     {
-      G4cout << "Error: Faces of magnet (section) named \""
+      G4cout << __METHOD_NAME__ << "Error: Faces of magnet (section) named \""
 	     << name << "\" will overlap!" << G4endl;
-      G4cout << "Length of magnet is too short for the angle of the pole faces." << G4endl;
+      G4cout << "Length of magnet " << length << " mm"
+	     << " is too short for the angle of the pole faces: (" << angleIn << "," << angleOut << ")." << G4endl;
       exit(1);
     }
 
@@ -923,8 +936,9 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   
   // points for container for magnet outer only
-  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));
-  if (buildPole)
+  if (buildPole == false) // redundant point when buildPole == true
+    {cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, poleHalfHeight));}
+  else
     {
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight));
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, poleHalfHeight + coilHeight + 4*lsl + cDY));
@@ -940,7 +954,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight - coilHeight - 4*lsl - cDY));
       cPoints.push_back(G4TwoVector(poleHalfWidth + coilWidth + 2*lsl, -poleHalfHeight));
     }
-  cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));
+  else // redundant point when buildPole == true
+    {cPoints.push_back(G4TwoVector(poleHalfWidth + lsl, -poleHalfHeight));}
   cPoints.push_back(G4TwoVector(yokeInsideX, -poleHalfHeight));
   cPoints.push_back(G4TwoVector(yokeInsideX,  poleHalfHeight));
 
@@ -971,7 +986,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   if (buildPole)
     {extXPos += coilWidth + lsl;}
 
-  if (!yokeOnLeft)
+  if (yokeOnLeft)
     {
       // flip x component so geometry is reflected horizontally
       for (auto& vec : yokePoints)
@@ -1141,7 +1156,7 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     }
   
   // logical volumes
-  CreateLogicalVolumes(name, length, colour, material);
+  CreateLogicalVolumes(name, colour, material);
   // we only use one coil solid here so do that here
   G4LogicalVolume* coilLV = nullptr;
   if (buildPole)
@@ -1232,7 +1247,6 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
   outer->RegisterRotationMatrix(allRotationMatrices);
   outer->RegisterPhysicalVolume(allPhysicalVolumes);
   outer->RegisterVisAttributes(allVisAttributes);
-  outer->RegisterUserLimits(allUserLimits);
   
   outer->RegisterSolid(yokeSolid);
   outer->RegisterLogicalVolume(yokeLV);
@@ -1248,6 +1262,10 @@ BDSMagnetOuter* BDSMagnetOuterFactoryPolesBase::CreateDipole(G4String     name,
     {outer->RegisterSensitiveVolume(coilLVs);}
   else
     {outer->RegisterSensitiveVolume(coilLV);}
+
+  // skip rest of this construction if no end pieces required
+  if (!buildEndPiece)
+    {return outer;}
   
   // end pieces - note with bends both are likely to be different so build independently here
 

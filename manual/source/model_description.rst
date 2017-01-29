@@ -36,9 +36,10 @@ and very similar to MADX.
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
-* boolean operators <, >, <=, >=, <>, == are valid
+* boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
+* comments start with an exclamation mark!
 
 The following functions are provided
 
@@ -46,10 +47,11 @@ The following functions are provided
 * cos
 * sin
 * tan
-* exp, e
+* exp
 * log
 * acos
 * asin
+* atan
 * abs
 
 Examples::
@@ -76,8 +78,8 @@ time                            [s] (seconds)
 angle                           [rad] (radians) 
 quadrupole coefficient          [m :math:`^{-2}` ]
 multipole coefficient 2n poles  [m :math:`^{-n}` ]
-electric voltage                [MV] (Megavolts)
-electric field strength         [MV/m]
+electric voltage                [V] (Volts)
+electric field strength         [V/m]
 particle energy                 [GeV]
 particle mass                   [GeV/c :math:`^2` ]
 particle momentum               [GeV/c :math:`^2` ]
@@ -97,12 +99,15 @@ Some useful predefined values / units are:
 Name        Value
 ==========  =================================
 pi          3.14159265358979
+degrees     :math:`\pi` / 180
 GeV         1
 eV          :math:`10^{-9}`
 keV         :math:`10^{-6}`
 MeV         :math:`10^{-3}`
 TeV         :math:`10^{3}`
-MV          1
+V           1
+kV          :math:`10^{3}`
+MV          :math:`10^{6}`
 Tesla       1
 rad         1
 mrad        :math:`10^{-3}`
@@ -113,6 +118,7 @@ m           1
 cm          :math:`10^{-2}`
 mm          :math:`10^{-3}`
 um          :math:`10^{-6}`
+mum         :math:`10^{-6}`
 nm          :math:`10^{-9}`
 pm          :math:`10^{-12}`
 s           1
@@ -135,8 +141,8 @@ Useful Commands
 
 * :code:`print;` prints all elements
 * :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
-* :code:`print, option;` prints the value of option
-* :code:`print, parameter;` prints the value of parameter, where parameter could be your own defined parameter
+* :code:`print, option;` prints the value of some options.
+* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
 * :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
 * :code:`stop;` or :code:`return;` exists parser
 * :code:`if () {};` if construct
@@ -147,7 +153,7 @@ Useful Commands
 Lattice Elements
 ----------------
 
-BDSIM provides a variety of different elements each with their own funciton, geometry and
+BDSIM provides a variety of different elements each with their own function, geometry and
 potentially fields. Any element in BDSIM is described with the following pattern::
 
   name: type, parameter=value, parameter="string";
@@ -227,7 +233,7 @@ drift
 	    :width: 30%
 	    :align: right
 
-:code:`drift` defines a straight beam pipe with no field.
+`drift` defines a straight beam pipe with no field.
 
 ================  ===================  ==========  =========
 parameter         description          default     required
@@ -251,10 +257,10 @@ rbend
 	    :width: 30%
 	    :align: right
 
+.. |angleFieldComment| replace:: Either the total bending angle, `angle` for the nominal beam energy can be specified or the magnetic field, `B` in Tesla. If both are defined the magnet is under- or overpowered.
 
-`rbend` defines a rectangular bend magnet. Either the total bending angle, `angle`
-for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
-`B` overrides angle. The faces of the magnet are normal to the chord of the
+`rbend` defines a rectangular bend magnet. |angleFieldComment| 
+The faces of the magnet are normal to the chord of the 
 input and output point. Pole face rotations can be applied to both the input
 and output faces of the magnet, based upon the reference system shown in the above image.
 
@@ -313,9 +319,8 @@ sbend
 	    :align: right
 	    
 
-`sbend` defines a sector bend magnet. Either the total bending angle, `angle`
-for the nominal beam energy can be specified or the magnetic field, `B` in Tesla.
-`B` overrides angle. The faces of the magnet are normal to the curvilinear coordinate
+`sbend` defines a sector bend magnet. |angleFieldComment| 
+The faces of the magnet are normal to the curvilinear coordinate
 system. `sbend` magnets are made of a series of straight segments. If the specified
 (or calculated from `B` field) bending angle is large, the `sbend` is automatically
 split such that the maximum tangential error in the aperture is 1 mm. Sbend magnets are
@@ -323,15 +328,18 @@ typically split into several co-joined `sbend` magnets, the number depending on 
 length and bending angle. Pole face rotations can be applied to both the input
 and output faces of the magnet, based upon the reference system shown in the above image.
 
-================  ===========================  ==========  ===========
-parameter         description                  default     required
-`l`               length [m]                   0           yes
-`angle`           angle [rad]                  0           yes, or `B`
-`B`               magnetic field [T]           0           yes
-`e1`              input poleface angle [rad]   0           no
-`e2`              output poleface angle [rad]  0           no
-`material`        magnet outer material        Iron        no
-================  ===========================  ==========  ===========
+================  ====================================  ==========  ===========
+parameter         description                           default     required
+`l`               length [m]                            0           yes
+`angle`           angle [rad]                           0           yes, or `B`
+`B`               magnetic field [T]                    0           yes
+`e1`              input poleface angle [rad]            0           no
+`e2`              output poleface angle [rad]           0           no
+`material`        magnet outer material                 Iron        no
+`fint`            fringe field integral for exit face   0           no
+`fintx`           fringe field integral for entrance    0           no
+`hgap`            vertical gap for fringe field [m]     0           no
+================  ====================================  ==========  ===========
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -344,7 +352,7 @@ parameter         description                  default     required
 	    :width: 75%
 	    :align: center
 
-.. note:: The poleface rotation angle is limited to :math:`\pm pi/4` radians.
+.. note:: The poleface rotation angle is limited to :math:`\pm \pi /4` radians.
 
 .. note:: If a non-zero poleface rotation angle is specified, the element preceding / succeeding
 	  the rotated magnet face must either be a drift or an rbend with opposite rotation (e.g. an sbend with
@@ -353,9 +361,12 @@ parameter         description                  default     required
 	  :math:`2 \tan(\mathrm{eX})`.
 
 .. note:: If an sbend has a poleface with non-zero rotation angle, and the option `includeFringeFields=1` is
-      specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
-      at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
-      fringefield element can be set by the option `thinElementLength` (see `options`_).
+	  specified (see `options`_), then a thin fringefield magnet (1 micron thick by default) is included
+	  at the beginning (for non-zero e1) or at the end (for non-zero e2) of the sbend. The length of the
+	  fringefield element can be set by the option `thinElementLength` (see `options`_).
+
+.. note:: Unlike MADX, `fint` is used exclusively for the input face fringe field integral and `fintx` for
+	  the exit face.  
 
 Examples::
 
@@ -510,7 +521,13 @@ vkick
 
 .. TODO: add picture
 
-`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`.
+`vkick` or `vkicker` defines a vertical dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
+Unlike MADX, this is not a fractional momentum kick, but the angle of
+deflection.
+
+.. note:: A positive *angle* corresponds to an increase in :math:`p_x`, and given the right-handed
+	  coordinate system, this corresponds to a deflection in positive x, which is the opposite
+	  convention to that of an sector bend.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -524,7 +541,13 @@ hkick
 
 .. TODO: add picture
 
-`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`.
+`hkick` or `hkicker` defines a horizontal dipole magnet and has the same parameters as `sbend`. |angleFieldComment|
+Unlike MADX, this is not a fractional momentum kick, but the angle of
+deflection.
+
+.. note:: A positive *angle* corresponds to an increase in :math:`p_y`, and given the right-handed
+	  coordinate system, this corresponds to a deflection in positive y, which is the opposite
+	  convention to that of an sector bend that has been rotated.
 
 * The `aperture parameters`_ may also be specified.
 * The `magnet geometry parameters`_ may also be specified.
@@ -554,7 +577,7 @@ parameter         description                  default     required
 
 Examples::
 
-   RF4f: rf, l=3*m, gradient=10*MV;
+   RF4f: rf, l=3*m, gradient=10*MV/m;
 
 rcol
 ^^^^
@@ -727,7 +750,7 @@ Examples::
 transform3d
 ^^^^^^^^^^^
 
-`transform3d` defines an arbitrary 3-dimensional transformation of the the curvilinear coordinate
+`transform3d` defines an arbitrary 3-dimensional transformation of the curvilinear coordinate
 system at that point in the beam line sequence.  This is often used to rotate components by a large
 angle.
 
@@ -787,7 +810,8 @@ Simple example::
 Example with field::
 
   somefield: field, type="ebmap2d",
-		    scaling = 3.0,
+		    eScaling = 3.1e3,
+		    bScaling = 0.5,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
 		    magneticInterpolator = "nearest2D",
@@ -904,13 +928,13 @@ The magnet geometry is controlled by the following parameters.
 
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | Parameter             | Description                                                  | Default       | Required  |
-+-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `cylindrical` | no        |
++=======================+==============================================================+===============+===========+
+| `magnetGeometryType`  | | The style of magnet geometry to use. One of:               | `polessquare` | no        |
 |                       | | `cylindrical`, `polescircular`, `polessquare`,             |               |           |
 |                       | | `polesfacet`, `polesfacetcrop`, `lhcleft`, `lhcright`,     |               |           |
 |                       | | `none` and `format:path`.                                  |               |           |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
-| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 1 m           | no        |
+| `outerDiameter`       | **Full** horizontal width of the magnet (m)                  | 0.6 m         | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
 | `outerMaterial`       | Material of the magnet                                       | "iron"        | no        |
 +-----------------------+--------------------------------------------------------------+---------------+-----------+
@@ -953,20 +977,16 @@ in only a beam pipe with the correct fields being provided.
 	   :width: 60%
 	   :align: center
 
-Cylindrical (Default) - "`cylindrical`"
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Cylindrical - "`cylindrical`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The beam pipe is surrounded by a cylinder of material (the default is iron) whose outer diameter
 is controlled by the `outerDiameter` parameter. In the case of beam pipes that are not circular
 in cross-section, the cylinder fits directly against the outside of the beam pipe.
 
-This geometry is the default and useful when a specific geometry is not known. The surrounding
+This geometry is useful when a specific geometry is not known. The surrounding
 magnet volume acts to produce secondary radiation as well as act as material for energy deposition,
 therefore this geometry is best suited for the most general studies.
-
-This geometry will be selected by **not** specifying any `option, magnetGeometryType`. If however,
-another magnet geometry is used as `option, magnetGeometryType`, the `magnetGeometryType` keyword
-can be used to override this on a per element basis.
 
 .. figure:: figures/cylindrical_quadrupole.png
 	    :width: 40%
@@ -996,15 +1016,15 @@ used to create the circular aperture at the pole tips.
 	    :width: 40%
 
 
-Poles Square - "`polessquare`"
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Poles Square (Default) - "`polessquare`"
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This magnet geometry has again, individual poles according to the order of the magnet but the
 yoke is an upright square section to which the poles are attached. This geometry behaves in the
 same way as `polescircular` with regard to the beam pipe size.
 
-`outerDiameter` is the full width of the the magnet horizontally as shown in the figure below,
- **not** the diagonal width.
+`outerDiameter` is the full width of the magnet horizontally as shown in the figure below, 
+**not** the diagonal width.
 
 .. figure:: figures/polessquare_quadrupole.png
 	    :width: 40%
@@ -1129,7 +1149,8 @@ Here is example syntax to define a field object named 'somefield' in the parser 
 a drift pipe where it covers the full volume of the drift (not outside it though)::
 
   somefield: field, type="ebmap2d",
-		    scaling = 3.0,
+		    eScaling = 3.0,
+		    bScaling = 0.4,
 		    integrator = "g4classicalrk4",
 		    magneticFile = "poisson2d:/Path/To/File.TXT",
 		    magneticInterpolator = "nearest2D",
@@ -1146,8 +1167,11 @@ When defining a field, the following parameters can be specified.
 +======================+=================================================================+
 | type                 | See type table below.                                           |
 +----------------------+-----------------------------------------------------------------+
-| scaling              | A numerical scaling factor that all field vectors in the data   |
-|                      | will be multiplied by. Ie. both E&M.                            |
+| eScaling             | A numerical scaling factor that all electric field vectors      |
+|                      | amplitudes will be multiplied by.                               |
++----------------------+-----------------------------------------------------------------+
+| bScaling             | A numerical scaling factor that all magnetic field vectors      |
+|                      | amplitudes will be multiplied by.                               |
 +----------------------+-----------------------------------------------------------------+
 | integrator           | The integrator used to calculate the motion of the particle     |
 |                      | in the field. See below for full list of supported integrators. |
@@ -1245,6 +1269,10 @@ Formats
 | poisson2dquad    | 2D Poisson Superfish SF7 file              |
 |                  | for 1/8th of quadrupole.                   |
 +------------------+--------------------------------------------+
+| poisson2ddipole  | 2D Poisson Superfish SF7 file for positive |
+|                  | quadrant that's reflected to produce a     |
+|                  | full windowed dipole field.                |
++------------------+--------------------------------------------+
 
 Field maps in the following formats are accepted:
 
@@ -1301,7 +1329,7 @@ The following integrators are provided.  The majority are interfaces to Geant4 o
 Interpolators
 ^^^^^^^^^^^^^
 
-There are many algorithms which one can use to inteprolate the field map data. The field
+There are many algorithms which one can use to interpolate the field map data. The field
 may be queried at any point inside the volume, so an interpolator is required. A
 mathematical description as well as example plots are shown in :ref:`field-interpolators`.
 
@@ -1337,7 +1365,7 @@ mathematical description as well as example plots are shown in :ref:`field-inter
 
 .. _externally-provided-geometry:
 
-Externally Proivded Geometry
+Externally Provided Geometry
 ----------------------------
 
 BDSIM provides the ability to use externally provided geometry in the Geant4 model constructed
@@ -1359,7 +1387,7 @@ overlap with any other geometry.
 
 .. Note:: If the geometry overlaps, tracking faults may occur from Geant4 as well as
 	  incorrect results and there may not always be warnings provided. For this reason
-	  BDSIM will **always** use the Geant4 overlap checker when placing external geoemtry
+	  BDSIM will **always** use the Geant4 overlap checker when placing external geometry
 	  into the world volume. This only ensures the container doesn't overlap with BDSIM
 	  geometry, not that the internal geometry is valid.
 
@@ -1394,7 +1422,7 @@ The following parameters may be specified.
 +----------------+--------------------------------------------------------------------+
 | axisAngle      | Boolean whether to use axis angle rotation scheme (default false). |
 +----------------+--------------------------------------------------------------------+
-| sensititve     | **unsupported** - in future whether geometry records hits.         |
+| sensitive      | **unsupported** - in future whether geometry records hits.         |
 +----------------+--------------------------------------------------------------------+
 
 * The file path provided in :code:`geometryFile` should either be relative to where bdsim
@@ -1489,7 +1517,7 @@ The misalignments can be controlled through the following parameters
 +--------------+------------------------------------------------------------------------------------+
 | Parameter    | Default value                                                                      | 
 +==============+====================================================================================+
-| `offsetX`    | hHorizontal displacement of the component [m].                                     |
+| `offsetX`    | Horizontal displacement of the component [m].                                      |
 +--------------+------------------------------------------------------------------------------------+
 | `offsetY`    | Vertical displacement of the component [m].                                        |
 +--------------+------------------------------------------------------------------------------------+
@@ -1872,12 +1900,18 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | lengthSafety                     | element overlap safety (caution!)                     |
 +----------------------------------+-------------------------------------------------------+
+| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
++----------------------------------+-------------------------------------------------------+
 | maximumTrackingTime              | the maximum time of flight allowed for any particle   |
 |                                  | before it is killed                                   |
 +----------------------------------+-------------------------------------------------------+
 | minimumEpsilonStep               | minimum relative error acceptable in stepping         |
 +----------------------------------+-------------------------------------------------------+
-| maximumEpsilonStep               | maximum relative error acceptable in stepping         |
+| minimumRadiusOfCurvature         | minimum tolerable radius of curvature of a particle   |
+|                                  | below which, the energy will be decreased by 2% on    |
+|                                  | each use of the integrator to prevent infinite        |
+|                                  | loops - should be just greater than width of beam     |
+|                                  | pipe.                                                 |
 +----------------------------------+-------------------------------------------------------+
 | deltaOneStep                     | set position error acceptable in an integration step  |
 +----------------------------------+-------------------------------------------------------+
@@ -1904,15 +1938,6 @@ as their value.
 | defaultRangeCut                  | the default predicted range at which a particle is    |
 |                                  | cut (default 1e-3) [m]                                |
 +----------------------------------+-------------------------------------------------------+
-| gammaToMuFe                      | the cross-section enhancement factor for the gamma to |
-|                                  | muon process                                          |
-+----------------------------------+-------------------------------------------------------+
-| annihiToMuFe                     | the cross-section enhancement factor for the          |
-|                                  | electron-positron annihilation to muon process        |
-+----------------------------------+-------------------------------------------------------+
-| eetoHadronsFe                    | the cross-section enhancement factor for the          |
-|                                  | electron-positron annihilation to hadrons process     |
-+----------------------------------+-------------------------------------------------------+
 | **Output Parameters**            |                                                       |
 +----------------------------------+-------------------------------------------------------+
 | storeTrajectories                | whether to store trajectories in the output           |
@@ -1930,14 +1955,12 @@ as their value.
 +----------------------------------+-------------------------------------------------------+
 | nperfile                         | number of events to record per output file            |
 +----------------------------------+-------------------------------------------------------+
-| nlinesIgnore                     | number of lines to ignore when reading user bunch     |
-|                                  | input files                                           |
-+----------------------------------+-------------------------------------------------------+
 | **Visualisation Parameters**     |                                                       |
 +----------------------------------+-------------------------------------------------------+
-| nSegmentsPerCircle               | the number of facets per 2$\pi$ in the visualiser.    |
-|                                  | Note, this does not affect the accuracy of the        |
-|                                  | geometry - only the visualisation (default : 50)      |
+| nSegmentsPerCircle               | the number of facets per 2 :math:`\pi` in the         |
+|                                  | visualiser. Note, this does not affect the accuracy   |
+|                                  | of the geometry - only the visualisation (default =   |
+|                                  | 50)                                                   |
 +----------------------------------+-------------------------------------------------------+
 
 * For **Tunnel** parameters, see, `Tunnel Geometry`_.
@@ -2129,9 +2152,9 @@ the usual beam :math:`\sigma`-matrix is calculated, using the following equation
 +----------------------------------+-------------------------------------------------------+
 | `emity`                          | Vertical beam core emittance [m]                      |
 +----------------------------------+-------------------------------------------------------+
-| `betax`                          | Horizontal beta function [m]                          |
+| `betx`                           | Horizontal beta function [m]                          |
 +----------------------------------+-------------------------------------------------------+
-| `betay`                          | Vertical beta function [m]                            |
+| `bety`                           | Vertical beta function [m]                            |
 +----------------------------------+-------------------------------------------------------+
 | `alfx`                           | Horizontal alpha function                             |
 +----------------------------------+-------------------------------------------------------+
@@ -2267,9 +2290,9 @@ weighting functions are either `flat`, one over emittance `oneoverr` or exponent
 +----------------------------------+-----------------------------------------------------------------------------+
 | `emity`                          | Vertical beam core emittance [m] :math:`\epsilon_{{\rm core},y}`            |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `betax`                          | Horizontal beta function [m]                                                |
+| `betx`                           | Horizontal beta function [m]                                                |
 +----------------------------------+-----------------------------------------------------------------------------+
-| `betay`                          | Vertical beta function [m]                                                  |
+| `bety`                           | Vertical beta function [m]                                                  |
 +----------------------------------+-----------------------------------------------------------------------------+
 | `alfx`                           | Horizontal alpha function                                                   |
 +----------------------------------+-----------------------------------------------------------------------------+
@@ -2350,6 +2373,9 @@ that are tab-delimited. The column names and the units are specified in an input
 +----------------------------------+-------------------------------------------------------+
 | `distrFileFormat`                | A string that details the column names and units      |
 +----------------------------------+-------------------------------------------------------+
+| `nlinesIgnore`                   | Number of lines to ignore when reading user bunch     |
+|                                  | input files                                           |
++----------------------------------+-------------------------------------------------------+
 
 Examples::
 
@@ -2401,7 +2427,7 @@ BDSIM can build a tunnel around the beamline. Currently, there are two main ways
 	     because of this. Problems would take the form of 'stuck particles' and
 	     Geant4 would terminate that event.
 
-Examples of tunnel geometry can be found with the bdsim source code in */examples/features/geometry/tunnel*
+Examples of tunnel geometry can be found with the BDSIM source code in */examples/features/geometry/tunnel*
 and are described in :ref:`tunnel-examples`. 
 
 +----------------------------------+-------------------------------------------------------+
@@ -2538,14 +2564,13 @@ Regions
 -------
 
 In Geant4 it is possible to drive different *regions* each with their own production cuts and user limits.
-In BDSIM three different regions exist, each with their own user defined production cuts (see *Physics*). 
-These are the default region, the precision region and the approximation region. Beamline elements 
-can be set to the precision region by setting the attribute *precisionRegion* equal to 1. For example::
+In BDSIM, there is one default region to which the options prodCutXXXX apply (see `Options`_) and then
+the user may define additional regions and attach them to the objects desired.  For example::
 
-  precisionRegion: region, prodCutProtons=1*m,
-                           prodCutElectrons=10*m,
-			   prodCutPositrons=10*m,
-			   prodCutPhotons = 1*mm;
+  precisionRegion: cutsregion, prodCutProtons=1*m,
+                               prodCutElectrons=10*m,
+			       prodCutPositrons=10*m,
+			       prodCutPhotons = 1*mm;
 
   d1: drift, l=10*m, region="precisionRegion";
 

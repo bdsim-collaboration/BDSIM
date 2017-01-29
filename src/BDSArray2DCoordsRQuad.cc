@@ -125,8 +125,8 @@ G4bool BDSArray2DCoordsRQuad::Outside(const G4int x,
 {
   G4bool rx = x < 0 || x > 2*(nX-1);
   G4bool ry = y < 0 || y > 2*(nY-1);
-  G4bool rz = z < 0 || z > 2*(nZ-1);
-  G4bool rt = t < 0 || t > 2*(nT-1);
+  G4bool rz = z < 0 || z > nZ-1;
+  G4bool rt = t < 0 || t > nT-1;
   return rx || ry || rz || rt;
 }
 

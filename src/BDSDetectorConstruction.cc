@@ -9,9 +9,10 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSBeamlinePlacementBuilder.hh"
 #include "BDSComponentFactory.hh"
-#include "BDSCurvilinearFactory.hh"
+#include "BDSCurvilinearBuilder.hh"
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterSD.hh"
+#include "BDSExtent.hh"
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSGeometryComponent.hh"
@@ -20,13 +21,14 @@
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 #include "BDSMaterials.hh"
+#include "BDSSamplerPlane.hh"
 #include "BDSSamplerType.hh"
+#include "BDSShowerModel.hh"
 #include "BDSSDManager.hh"
 #include "BDSSurvey.hh"
 #include "BDSTeleporter.hh"
 #include "BDSTunnelBuilder.hh"
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
-#include "BDSUtilities.hh"
 
 #include "parser/element.h"
 #include "parser/options.h"
@@ -34,6 +36,9 @@
 
 #include "G4Box.hh"
 #include "G4Electron.hh"
+#include "GFlashHomoShowerParameterisation.hh"
+#include "GFlashHitMaker.hh"
+#include "GFlashParticleBounds.hh"
 #include "G4LogicalVolume.hh"
 #include "G4Material.hh"
 #include "G4Navigator.hh"
@@ -41,7 +46,6 @@
 #include "G4ProductionCuts.hh"
 #include "G4PVPlacement.hh"
 #include "G4Region.hh"
-#include "G4UserLimits.hh"
 #include "G4Version.hh"
 #include "G4VisAttributes.hh"
 #include "G4VPhysicalVolume.hh"
@@ -54,8 +58,9 @@
 #include <vector>
 
 BDSDetectorConstruction::BDSDetectorConstruction():
-  worldPV(nullptr),worldUserLimits(nullptr),
-  theHitMaker(nullptr),theParticleBounds(nullptr)
+  worldPV(nullptr),
+  theHitMaker(nullptr),
+  theParticleBounds(nullptr)
 {  
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
@@ -108,7 +113,6 @@ BDSDetectorConstruction::~BDSDetectorConstruction()
   for (auto i : biasObjects)
     {delete i;}
 #endif
-  delete worldUserLimits;
   
   // gflash stuff
   gFlashRegion.clear();
@@ -148,50 +152,40 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << "BDSDetectorConstruction creating component " << elementIt->name << G4endl;
 #endif
-      // next and previous elements: vectors of pointers which contains any thin multipoles
-      // and the next non-thinmultipoles
-      std::vector<GMAD::Element *> prevElements;
-      std::vector<GMAD::Element *> nextElements;
-
-      // populate vectors if beamline has more than two elements (two is minimum, one is user defined and the other is a _Line)
-      // append the element to the vectors, if it's a thinmultipole, then continue iterating and appending
-      // until it's not a multipole.
-      if ((G4int)beamLine.size() > 2)
+      // find next and previous element, but ignore special elements or thin multipoles.
+      GMAD::Element* prevElement = nullptr;
+      auto prevIt = elementIt;
+      while (prevIt != beamLine.begin())
 	{
-          auto prevIt = elementIt;
-          while (prevIt != beamLine.begin())
-            {
-              prevIt--;
-              if (!(prevIt->isSpecial())) 
-		{
-                  prevElements.push_back(&(*prevIt));
-                  if (prevIt->type != GMAD::ElementType::_THINMULT)
-		    {break;}
-                }
-            }
-
-          auto nextIt = elementIt;
-          nextIt++;
-          while (nextIt != beamLine.end())
+	  --prevIt;
+	  if (prevIt->isSpecial() == false && prevIt->type != GMAD::ElementType::_THINMULT)
 	    {
-              if (!(nextIt->isSpecial())) 
-		{
-		  nextElements.push_back(&(*nextIt));
-                  if (nextIt->type != GMAD::ElementType::_THINMULT)
-		    {break;}
-		}
-	      nextIt++;
+	      prevElement = &(*prevIt);
+	      break;
 	    }
-    }
+	}
 
-      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElements, nextElements);
+      GMAD::Element* nextElement = nullptr;
+      auto nextIt = elementIt;
+      ++nextIt;
+      while (nextIt != beamLine.end())
+	{
+	  if (nextIt->isSpecial() == false && nextIt->type != GMAD::ElementType::_THINMULT)
+	    {
+	      nextElement = &(*nextIt);
+	      break;
+	    }
+	  ++nextIt;
+	}
+
+      BDSAcceleratorComponent* temp = theComponentFactory->CreateComponent(&(*elementIt), prevElement, nextElement);
       if(temp)
-      {
+	{
           BDSSamplerType sType = BDS::DetermineSamplerType((*elementIt).samplerType);
           BDSTiltOffset* tiltOffset = theComponentFactory->CreateTiltOffset(&(*elementIt));
           beamline->AddComponent(temp, tiltOffset, sType, elementIt->samplerName);
-      }
-  }
+	}
+    }
 
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
@@ -201,18 +195,50 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      G4ThreeVector teleporterDetla = BDS::CalculateAndSetTeleporterDelta(beamline);
-      BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
-      if (terminator)
-        {
-	  terminator->Initialise();
-	  beamline->AddComponent(terminator);
-	}
-      BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDetla);
-      if (teleporter)
+      // minimum space for the circular mechanics are 3x L.S. + sampler width for terminator,
+      // plus some space for teleporter - assume the sampler width again.
+      const G4double lengthSafety   = BDSGlobalConstants::Instance()->LengthSafety();
+      G4double minimumRequiredSpace = 3 * lengthSafety;
+      minimumRequiredSpace         += 2*BDSSamplerPlane::ChordLength();
+      G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(beamline);
+      
+      // note delta is from end to beginning, which will have correct transverse but opposite
+      // z component, hence -ve here.
+      G4double rawLength        = -teleporterDelta.z();
+      G4double teleporterLength =  rawLength - BDSSamplerPlane::ChordLength() - 3*lengthSafety;
+      
+      if (teleporterDelta.mag() > 1*CLHEP::m)
 	{
-	  teleporter->Initialise();
-	  beamline->AddComponent(teleporter);
+	  G4cout << G4endl
+		 << "Error - the calculated teleporter delta is above 1m! The teleporter"
+		 << G4endl
+		 << "was only intended for small shifts - the teleporter will not be built."
+		 << G4endl << G4endl;
+	}
+      else if (teleporterLength < minimumRequiredSpace)
+	{
+	  G4cout << G4endl
+		 << "Insufficient space between the first and last elements in the beam line"
+		 << G4endl
+		 << "to fit the terminator and teleporter - these will not be built."
+		 << G4endl << G4endl;
+	}
+      else
+	{ 
+	  BDSAcceleratorComponent* terminator = theComponentFactory->CreateTerminator();
+	  if (terminator)
+	    {
+	      terminator->Initialise();
+	      beamline->AddComponent(terminator);
+	    }	  
+	  // update delta
+	  teleporterDelta.setZ(teleporterLength);
+	  BDSAcceleratorComponent* teleporter = theComponentFactory->CreateTeleporter(teleporterDelta);
+	  if (teleporter)
+	    {
+	      teleporter->Initialise();
+	      beamline->AddComponent(teleporter);
+	    }
 	}
     }
 
@@ -223,15 +249,14 @@ void BDSDetectorConstruction::BuildBeamline()
       delete survey;
     }
   delete theComponentFactory;
-      
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< BDSParser::Instance()->GetBeamline().size() << G4endl;
-#endif
-  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
+
+  // print summary
+  G4cout << __METHOD_NAME__ << *beamline;
 
 #ifdef BDSDEBUG
   // print accelerator component registry
   G4cout << *BDSAcceleratorComponentRegistry::Instance();
+  beamline->PrintMemoryConsumption();
 #endif
  
   if (beamline->empty())
@@ -239,12 +264,11 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
       exit(1);
     }
-#ifdef BDSDEBUG
-  beamline->PrintMemoryConsumption();
-#endif
 
   // Build curvilinear geometry w.r.t. beam line.
-  BDSBeamline* clBeamline = BDSCurvilinearFactory::Instance()->BuildCurvilinearBeamLine(beamline);
+  BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
+  BDSBeamline* clBeamline = clBuilder->BuildCurvilinearBeamLine(beamline);
+  delete clBuilder;
   
   // register the beamline in the holder class for the full model
   BDSAcceleratorModel::Instance()->RegisterFlatBeamline(beamline);
@@ -298,6 +322,7 @@ void BDSDetectorConstruction::BuildWorld()
 #endif
   
   G4String worldName   = "World";
+  worldExtent          = BDSExtent(worldR);
   G4VSolid* worldSolid = new G4Box(worldName + "_solid", worldR.x(), worldR.y(), worldR.z());
 
   G4String    emptyMaterialName = BDSGlobalConstants::Instance()->EmptyMaterial();
@@ -313,11 +338,7 @@ void BDSDetectorConstruction::BuildWorld()
   worldLV->SetVisAttributes(debugWorldVis);
 	
   // set limits
-#ifndef NOUSERLIMITS
-  worldUserLimits = new G4UserLimits(*(BDSGlobalConstants::Instance()->GetDefaultUserLimits()));
-  worldUserLimits->SetMaxAllowedStep(worldR.z()*0.5);
-  worldLV->SetUserLimits(worldUserLimits);
-#endif
+  worldLV->SetUserLimits(BDSGlobalConstants::Instance()->GetDefaultUserLimits());
 
   // place the world
   worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
@@ -471,10 +492,10 @@ void BDSDetectorConstruction::ComponentPlacement()
 	  new G4PVPlacement(*element->GetPlacementTransform(),    // placement transform
 			    element->GetPlacementName() + "_pv",  // placement name
 			    element->GetContainerLogicalVolume(), // volume to be placed
-			    worldPV,                                  // volume to place it in
-			    false,                                    // no boolean operation
-			    0,                                        // copy number
-			    checkOverlaps);                           // overlap checking
+			    worldPV,                              // volume to place it in
+			    false,                                // no boolean operation
+			    0,                                    // copy number
+			    checkOverlaps);                       // overlap checking
 	}
     }
 
@@ -672,9 +693,6 @@ void BDSDetectorConstruction::SetGFlashOnVolume(G4LogicalVolume* volume)
   }
   volume->SetRegion(gFlashRegion.back());
   gFlashRegion.back()->AddRootLogicalVolume(volume);
-  //gFlashRegion.back()->SetUserLimits(new G4UserLimits(accComp->GetChordLength()/10.0));
-  //volume->SetUserLimits(new G4UserLimits(accComp->GetChordLength()/10.0));
-
 }
 
 void BDSDetectorConstruction::ConstructSDandField()

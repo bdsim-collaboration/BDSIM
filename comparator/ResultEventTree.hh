@@ -37,6 +37,8 @@ public:
     ss << "\n";
     return ss.str();
   }
+
+  virtual ~ResultEventTree(){}
 };
 
 #endif

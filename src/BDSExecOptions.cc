@@ -178,7 +178,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	}
       else if( !strcmp(optionName, "materials") )
 	{
-	  BDSMaterials::ListMaterials();
+	  BDSMaterials::Instance()->ListMaterials();
 	  exit(0);// return after printing material list
 	}
       else if( !strcmp(optionName, "circular") )
@@ -283,7 +283,7 @@ void BDSExecOptions::Usage() const
 	<<"--gflashemin=N            : minimum energy for gflash shower parameterisation in GeV. Default 0.1."<<G4endl
 	<<"--help                    : display this message"<<G4endl
 	<<"--materials               : list materials included in bdsim by default"<<G4endl
-	<<"--output=<fmt>            : output format (root|ascii|combined|none), default ascii"<<G4endl
+	<<"--output=<fmt>            : output format (rootevent|ascii|combined|none), default rootevent"<<G4endl
 	<<"--outfile=<file>          : output file name. Will be appended with _N"<<G4endl
         <<"                            where N = 0, 1, 2, 3... etc."<<G4endl
 	<<"--ngenerate=N             : the number of primary events to simulate - overrides the ngenerate " << G4endl
@@ -345,9 +345,8 @@ G4String BDSExecOptions::GetPath(G4String fileName)
   G4String fullPath = getEnv("BDSIMPATH");
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << "filename = " << fileName << G4endl;
-  G4cout << __METHOD_NAME__ << "fullpath = " << fullPath << G4endl;
 #endif
-  if(fullPath.length()<=0)
+  if(fullPath.empty())
     {
       G4String inputFilepath = "";
       // get the path part of the supplied path to the main input file
@@ -372,7 +371,7 @@ G4String BDSExecOptions::GetPath(G4String fileName)
   // add additional slash just to be safe
   fullPath += "/";
 #ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "fullpath :" << fullPath << ":" << G4endl;
+  G4cout << __METHOD_NAME__ << "fullpath = " << fullPath << G4endl;
 #endif
   return fullPath;
 }

@@ -26,10 +26,9 @@ void Atom::PublishMembers()
 
 void Atom::print()const
 {
-  std::cout << "atom: "
-	    << name   << " "
-	    << A      << " "
-	    << Z      << " "
-	    << symbol << " "
+  std::cout << "atom: "   << name   << " "
+	    << "A= "      << A      << "g/mole "
+	    << "Z= "      << Z      << " "
+	    << "symbol= " << symbol << " "
 	    << std::endl;
 }

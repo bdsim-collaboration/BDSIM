@@ -22,9 +22,9 @@ class G4VSolid;
 class BDSCavity: public BDSAcceleratorComponent
 {
 public:
-  BDSCavity(G4String      name,
-	    G4double      length,
-	    BDSFieldInfo* vacuumField);
+  BDSCavity(G4String            name,
+	    G4double            length,
+	    const BDSFieldInfo* vacuumField);
 
   virtual ~BDSCavity();
 
@@ -63,10 +63,10 @@ protected:
 
   /// Field information - also includes cavity info as cavity info contains both
   /// field information and geometrical information.
-  BDSFieldInfo* vacuumField = nullptr;
+  const BDSFieldInfo* vacuumField = nullptr;
 
   /// Convenience shortcut to cavity information inside field information object.
-  BDSCavityInfo* cavityInfo = nullptr;
+  const BDSCavityInfo* cavityInfo = nullptr;
   
 };
 

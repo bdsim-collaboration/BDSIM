@@ -10,7 +10,7 @@
  * @brief Interface for static magnetic fields that may or may not be local.
  * 
  * Defines abstract interface for all derived magnetic fields. More common
- * to use G4ThreeVectors than arrays so provides common functionality
+ * to use G4ThreeVectors than arrays so provides common functionality.
  * 
  * @author Laurie Nevay
  */
@@ -54,6 +54,9 @@ public:
 private:
   /// Transform to apply for the field relative to the local coordinates of the geometry.
   G4Transform3D transform;
+
+  /// The complimentary transform used to initially rotate the point of query.
+  G4Transform3D inverseTransform;
 };
 
 #endif

@@ -15,7 +15,7 @@
  * the motion based on the design rigidity and a strength parameter.
  * 
  * This also provides a general 4th order Runge Kutta integrator that can be used
- * by the derived class if the coordinates are non-parraxial for example.
+ * by the derived class if the coordinates are non-paraxial for example.
  *
  * The derived class must also satisfy G4MagIntegratorStepper.hh's virtual method
  * Stepper.
@@ -53,6 +53,24 @@ protected:
 
   /// Variable used to record the distance from the chord calculated during the step.
   G4double distChord;
+
+  /// Advance as drift (for when field strength is very low)
+  void AdvanceDrift(const G4double yIn[],
+		    const G4ThreeVector& GlobalP,
+		    const G4double h,
+		    G4double yOut[]);
+
+  /// Advance chord by quadratic approximation
+  void AdvanceChord(const G4double h,
+		    G4ThreeVector& LocalR,
+		    G4ThreeVector& LocalRp,
+		    const G4ThreeVector& LocalRpp);
+
+  /// Convert final local position and direction to global frame
+  void ConvertToGlobal(const G4ThreeVector& LocalR,
+		       const G4ThreeVector& LocalRp,
+		       const G4double InitMag,
+		       G4double yOut[]);
 
 private:
   /// Private default constructor to force use of specific constructor

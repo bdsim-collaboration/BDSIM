@@ -4,6 +4,7 @@
 #include "globals.hh" // geant4 globals / types
 
 #include <map>
+#include <ostream>
 #include <vector>
 
 /**

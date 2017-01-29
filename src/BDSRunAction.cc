@@ -56,7 +56,7 @@ void BDSRunAction::BeginOfRunAction(const G4Run* aRun)
   analMan->Create1DHistogram("ElossHisto","Energy Loss",
 			     nbins,smin,smax,slabel,"GeV"); //2
   // prepare bin edges for a by-element histogram
-  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetSPositionEndOfEach();
+  std::vector<G4double> binedges = BDSAcceleratorModel::Instance()->GetFlatBeamline()->GetEdgeSPositions();
   
   // create per element ("pe") bin width histograms
   analMan->Create1DHistogram("PhitsPEHisto","Primary Hits per Element",
@@ -80,7 +80,8 @@ void BDSRunAction::EndOfRunAction(const G4Run* aRun)
   G4float duration = difftime(stoptime,starttime);
 
   // Output feedback
-  G4cout << __METHOD_NAME__ << "Run " << aRun->GetRunID() << " end. Time is " << asctime(localtime(&stoptime)) << G4endl;
+  G4cout << G4endl << __METHOD_NAME__ << "Run " << aRun->GetRunID()
+	 << " end. Time is " << asctime(localtime(&stoptime));
   
   // Write output
   // write histograms to output - do this before potentially closing / opening new files

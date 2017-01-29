@@ -52,6 +52,7 @@ BDSEnergyCounterHit::BDSEnergyCounterHit(G4int    nCopyIn,
 BDSEnergyCounterHit::~BDSEnergyCounterHit()
 {;}
 
+/*
 BDSEnergyCounterHit* BDS::LowestSPosPrimaryHit(BDSEnergyCounterHitsCollection* hc)
 {
   G4double sposMin = 1e20; //stupidly large number - spos will always be less than
@@ -90,3 +91,4 @@ BDSEnergyCounterHit* BDS::HighestSPosPrimaryHit(BDSEnergyCounterHitsCollection* 
   else
     {return nullptr;}
 }
+*/

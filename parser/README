@@ -1,18 +1,12 @@
-                     gmad parser
-              (C) Ilya Agapov 2005-2006
-
+                   gmad parser
+              Written by Ilya Agapov
 
 directory structure:
 
 parser.y              -   bison grammar
 parser.l              -   flex lexical analyzer
-sym_table.h           -   symbol table 
-gmad.h, gmad.cc       -   interface 
-parser.h, parser.cc   -   usage examples
+sym_table.h           -   symbol table
+gmad.cc               -   main
+parser.h, parser.cc   -   main interface class
 
-
-to compile type  "make" which will produce shared library "libgmad.so"
-inlude "gmad.h" and link to "libgmad.so" to use the parser
-
-
-for reference see the bdsim documentation
+for reference see the BDSIM documentation

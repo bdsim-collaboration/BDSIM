@@ -36,7 +36,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSectorBend(G4String      /*name
 							    G4double      /*angleIn*/,
 							    G4double      /*angelOut*/,
 							    G4bool        /*yokeOnLeft*/,
-							    G4Material*   /*outerMaterial*/)
+							    G4Material*   /*outerMaterial*/,
+							    G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -52,7 +53,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRectangularBend(G4String      /
 								 G4double      /*angleIn*/,
 								 G4double      /*angleOut*/,
 								 G4bool        /*yokeOnLeft*/,
-								 G4Material*   /*outerMaterial*/)
+								 G4Material*   /*outerMaterial*/,
+								 G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -65,7 +67,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateQuadrupole(G4String      /*name
 							    BDSBeamPipe*  /*beamPipe*/,
 							    G4double      /*outerDiameter*/,
 							    G4double      /*containerLength*/,
-							    G4Material*   /*outerMaterial*/)
+							    G4Material*   /*outerMaterial*/,
+							    G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -78,7 +81,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSextupole(G4String      /*name*
 							   BDSBeamPipe*  /*beamPipe*/,
 							   G4double      /*outerDiameter*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/)
+							   G4Material*   /*outerMaterial*/,
+							   G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -91,7 +95,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateOctupole(G4String      /*name*/
 							  BDSBeamPipe*  /*beamPipe*/,
 							  G4double      /*outerDiameter*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/)
+							  G4Material*   /*outerMaterial*/,
+							  G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -104,7 +109,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateDecapole(G4String      /*name*/
 							  BDSBeamPipe*  /*beamPipe*/,
 							  G4double      /*outerDiameter*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/)
+							  G4Material*   /*outerMaterial*/,
+							  G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -117,7 +123,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateSolenoid(G4String      /*name*/
 							  BDSBeamPipe*  /*beamPipe*/,
 							  G4double      /*outerDiameter*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/)
+							  G4Material*   /*outerMaterial*/,
+							  G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -130,7 +137,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMultipole(G4String      /*name*
 							   BDSBeamPipe*  /*beamPipe*/,
 							   G4double      /*outerDiameter*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/)
+							   G4Material*   /*outerMaterial*/,
+							   G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -143,7 +151,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateRfCavity(G4String      /*name*/
 							  BDSBeamPipe*  /*beamPipe*/,
 							  G4double      /*outerDiameter*/,
 							  G4double      /*containerLength*/,
-							  G4Material*   /*outerMaterial*/)
+							  G4Material*   /*outerMaterial*/,
+							  G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -156,7 +165,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateMuSpoiler(G4String      /*name*
 							   BDSBeamPipe*  /*beamPipe*/,
 							   G4double      /*outerDiameter*/,
 							   G4double      /*containerLength*/,
-							   G4Material*   /*outerMaterial*/)
+							   G4Material*   /*outerMaterial*/,
+							   G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;
@@ -170,7 +180,8 @@ BDSMagnetOuter* BDSMagnetOuterFactoryNone::CreateKicker(G4String      /*name*/,
 							G4double      /*outerDiameter*/,
 							G4double      /*containerLength*/,
 							G4bool        /*vertical*/,
-							G4Material*   /*outerMaterial*/)
+							G4Material*   /*outerMaterial*/,
+							G4bool        /*buildEndPiece*/)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << G4endl;

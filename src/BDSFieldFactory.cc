@@ -51,7 +51,6 @@
 #include "G4RotationMatrix.hh"
 #include "G4ThreeVector.hh"
 #include "G4Transform3D.hh"
-#include "G4UniformMagField.hh"
 // geant4 integrators
 #include "G4CashKarpRKF45.hh"
 #include "G4ClassicalRK4.hh"
@@ -73,7 +72,6 @@
 #include "CLHEP/Vector/EulerAngles.h"
 
 #include <map>
-#include <typeinfo>
 #include <utility>
 #include <vector>
 
@@ -88,14 +86,6 @@ BDSFieldFactory* BDSFieldFactory::Instance()
 
 BDSFieldFactory::BDSFieldFactory()
 {
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << G4endl;
-#endif
-  offset            = G4ThreeVector(0,0,0);
-  format            = BDSFieldType::none;
-  fileName          = "";
-  cacheLength       = 1*CLHEP::um;
-
   PrepareFieldDefinitions(BDSParser::Instance()->GetFields(),
 			  BDSGlobalConstants::Instance()->BRho());
 }
@@ -118,13 +108,13 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					   definition.y*CLHEP::m,
 					   definition.z*CLHEP::m);
 
-      G4RotationMatrix* rm = nullptr;
+      G4RotationMatrix rm;
       if (definition.axisAngle)
 	{
 	  G4ThreeVector axis = G4ThreeVector(definition.axisX,
 					     definition.axisY,
 					     definition.axisZ);
-	  rm = new G4RotationMatrix(axis, definition.angle*CLHEP::rad);
+	  rm = G4RotationMatrix(axis, definition.angle*CLHEP::rad);
 	}
       else
 	{
@@ -135,13 +125,12 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 	      CLHEP::HepEulerAngles ang = CLHEP::HepEulerAngles(definition.phi*CLHEP::rad,
 								definition.theta*CLHEP::rad,
 								definition.psi*CLHEP::rad);
-	      rm = new G4RotationMatrix(ang);
+	      rm = G4RotationMatrix(ang);
 	    }
-	  else
-	    {rm = new G4RotationMatrix();}
+	  // else rm is default rotation matrix
 	}
       
-      G4Transform3D transform = G4Transform3D(*rm, offset);
+      G4Transform3D transform = G4Transform3D(rm, offset);
 
       BDSFieldFormat magFormat = BDSFieldFormat::none;
       G4String       magFile   = "";
@@ -173,7 +162,7 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
       BDSFieldInfo* info = new BDSFieldInfo(fieldType,
 					    defaultBRho,
 					    intType,
-					    nullptr, /*for now, no parameterised strenghts*/
+					    nullptr, /*for now, no parameterised strengths*/
 					    G4bool(definition.globalTransform),
 					    transform,
 					    nullptr, /* no cavity info*/
@@ -184,7 +173,8 @@ void BDSFieldFactory::PrepareFieldDefinitions(const std::vector<GMAD::Field>& de
 					    eleFormat,
 					    eleIntType,
 					    false,   /*don't cache transforms*/
-					    G4double(definition.scaling),
+					    G4double(definition.eScaling),
+					    G4double(definition.bScaling),
 					    G4double(definition.t*CLHEP::s));
 
       parserDefinitions[G4String(definition.name)] = info;
@@ -202,7 +192,7 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
   if (result == parserDefinitions.end())
     {// not a valid key
       G4cerr << __METHOD_NAME__ << "\"" << name << "\" is not a valid field specifier" << G4endl;
-      G4cout << "Defined field speicifiers are:" << G4endl;
+      G4cout << "Defined field specifiers are:" << G4endl;
       for (const auto& it : parserDefinitions)
 	{G4cout << "\"" << it.first << "\"" << G4endl;}
       exit(1);
@@ -210,7 +200,7 @@ BDSFieldInfo* BDSFieldFactory::GetDefinition(G4String name) const
   return result->second;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateField(const BDSFieldInfo& info)
 {
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ << info << G4endl;
@@ -218,9 +208,10 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
   // Forward on to delegate functions for the main types of field
   // such as E, EM and Magnetic
   BDSFieldObjects* field = nullptr;
-
+  
   if (info.FieldType() == BDSFieldType::none)
     {return field;} // as nullptr
+
   BDSFieldClassType clas = BDS::DetermineFieldClassType(info.FieldType());
   switch (clas.underlying())
     {
@@ -230,15 +221,17 @@ BDSFieldObjects* BDSFieldFactory::CreateField(BDSFieldInfo& info)
       {field = CreateFieldEM(info); break;}
     case BDSFieldClassType::electric:
       {field = CreateFieldE(info); break;}
+    case BDSFieldClassType::irregular:
+      {field = CreateFieldIrregular(info); break;}
     default:
       {break;} // this will return nullptr
     }
   return field;
 }
       
-BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldMag(const BDSFieldInfo& info)
 {
-  BDSMagnetStrength* strength = info.MagnetStrength();
+  const BDSMagnetStrength* strength = info.MagnetStrength();
   G4double brho               = info.BRho();
   BDSFieldMag* field          = nullptr;
   switch (info.FieldType().underlying())
@@ -268,7 +261,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
     case BDSFieldType::muonspoiler:
       {field = new BDSFieldMagMuonSpoiler(strength, brho); break;}
     case BDSFieldType::skewquadrupole:
-      {field = new BDSFieldMagSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::halfpi); break;}
+      {field = new BDSFieldMagSkew(new BDSFieldMagQuadrupole(strength, brho), CLHEP::pi/4.); break;}
     case BDSFieldType::skewsextupole:
       {field = new BDSFieldMagSkew(new BDSFieldMagSextupole(strength, brho), CLHEP::pi/6.); break;}
     case BDSFieldType::skewoctupole:
@@ -300,7 +293,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldMag(BDSFieldInfo& info)
   return completeField;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldEM(const BDSFieldInfo& info)
 {
   BDSFieldEM* field = nullptr;
   switch (info.FieldType().underlying())
@@ -335,7 +328,7 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldEM(BDSFieldInfo& info)
   return completeField;
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
+BDSFieldObjects* BDSFieldFactory::CreateFieldE(const BDSFieldInfo& info)
 {
   BDSFieldE* field = nullptr;
   switch (info.FieldType().underlying())
@@ -370,9 +363,23 @@ BDSFieldObjects* BDSFieldFactory::CreateFieldE(BDSFieldInfo& info)
   return completeField;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      info,
-							     G4Mag_EqRhs*       eqOfM,
-							     BDSMagnetStrength* strength)
+BDSFieldObjects* BDSFieldFactory::CreateFieldIrregular(const BDSFieldInfo& info)
+{
+  // special routine for each special / irregular field
+  BDSFieldObjects* result = nullptr;
+  switch (info.FieldType().underlying())
+    {
+    case BDSFieldType::teleporter:
+      {result = CreateTeleporter(info); break;}
+    default:
+      {break;}
+    }
+  return result;
+}
+
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&      info,
+							     G4Mag_EqRhs*             eqOfM,
+							     const BDSMagnetStrength* strength)
 {
   G4double                      brho = info.BRho();
   G4MagIntegratorStepper* integrator = nullptr;
@@ -427,7 +434,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(BDSFieldInfo&      
   return integrator;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       info,
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(const BDSFieldInfo& info,
 							    G4EquationOfMotion* eqOfM)
 {
   G4MagIntegratorStepper* integrator = nullptr;
@@ -435,17 +442,17 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
     {
       // do the EM ones first, then complain
     case BDSIntegratorType::g4cashkarprkf45:
-      integrator = new G4CashKarpRKF45(eqOfM); break;
+      integrator = new G4CashKarpRKF45(eqOfM, 8); break;
     case BDSIntegratorType::g4classicalrk4:
-      integrator = new G4ClassicalRK4(eqOfM); break;
+      integrator = new G4ClassicalRK4(eqOfM, 8); break;
     case BDSIntegratorType::g4expliciteuler:
-      integrator = new G4ExplicitEuler(eqOfM); break;
+      integrator = new G4ExplicitEuler(eqOfM, 8); break;
     case BDSIntegratorType::g4impliciteuler:
-      integrator = new G4ImplicitEuler(eqOfM); break;
+      integrator = new G4ImplicitEuler(eqOfM, 8); break;
     case BDSIntegratorType::g4simpleheum:
-      integrator = new G4SimpleHeum(eqOfM); break;
+      integrator = new G4SimpleHeum(eqOfM, 8); break;
     case BDSIntegratorType::g4simplerunge:
-      integrator = new G4SimpleRunge(eqOfM); break;
+      integrator = new G4SimpleRunge(eqOfM, 8); break;
     case BDSIntegratorType::solenoid:
     case BDSIntegratorType::dipole:
     case BDSIntegratorType::quadrupole:
@@ -482,46 +489,19 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorEM(BDSFieldInfo&       
   return integrator;
 }
 
-G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(BDSFieldInfo&       info,
+G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorE(const BDSFieldInfo& info,
 							   G4EquationOfMotion* eqOfM)
 {
   return CreateIntegratorEM(info,eqOfM);
 }
 
-BDSFieldObjects* BDSFieldFactory::CreateTeleporter(G4ThreeVector teleporterDelta)
+BDSFieldObjects* BDSFieldFactory::CreateTeleporter(const BDSFieldInfo& info)
 {
-  bGlobalField = new BDSFieldMagDummy(); //Zero magnetic field.
-  bEqOfMotion  = new G4Mag_UsualEqRhs(bGlobalField);
-  integrator   = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
-  BDSFieldObjects* completeField = new BDSFieldObjects(nullptr, bGlobalField,
-						       bEqOfMotion, integrator);
-  return completeField;
-}
-
-BDSFieldObjects* BDSFieldFactory::CreateFieldMagOuter(const BDSMagnetType      type,
-						      BDSMagnetStrength* const /*strength*/,
-						      const G4double           /*brho*/)
-{
-  // switch on the type and build correct field
-  switch (type.underlying())
-    {
-    case BDSMagnetType::sectorbend:
-    case BDSMagnetType::rectangularbend:
-    case BDSMagnetType::quadrupole:
-    case BDSMagnetType::sextupole:
-    case BDSMagnetType::octupole:
-    case BDSMagnetType::decapole:
-    case BDSMagnetType::multipole:
-      //CreateOuterMultipole(type, strength, brho); break;
-    case BDSMagnetType::solenoid:
-    case BDSMagnetType::vkicker:
-    case BDSMagnetType::hkicker:
-      break; // return a nullptr
-    case BDSMagnetType::muonspoiler:
-      //CreateMuonSpoiler(strength, brho); break;
-    default:
-      G4cerr << __METHOD_NAME__ << "no outer field defined for this type of magnet" << G4endl;
-      break; // return a nullptr
-    }
+  const G4ThreeVector teleporterDelta = info.Transform().getTranslation();
+  G4MagneticField* bGlobalField       = new BDSFieldMagDummy(); //Zero magnetic field.
+  G4Mag_EqRhs*     bEqOfMotion        = new G4Mag_UsualEqRhs(bGlobalField);
+  G4MagIntegratorStepper* integrator  = new BDSIntegratorTeleporter(bEqOfMotion, teleporterDelta);
+  BDSFieldObjects* completeField      = new BDSFieldObjects(nullptr, bGlobalField,
+							    bEqOfMotion, integrator);
   return completeField;
 }
