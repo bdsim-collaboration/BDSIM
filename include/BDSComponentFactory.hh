@@ -228,6 +228,16 @@ private:
   /// rotations the correct way depending on sign of angle. The angle is w.r.t.
   /// incoming curvilinear coordinates, so for an rbend with e1=0, the returned
   /// angle will be half the bend angle. For an sbend, with e1=0, it'll be 0.
-  G4double IncomingFaceAngle(const GMAD::Element* element) const; 
+  G4double IncomingFaceAngle(const GMAD::Element* element) const;
+
+  /// Registry of modified elements stored by original name and number of times
+  /// modified - 0 counting. This is so when we modify elements beyond their definition
+  /// they get a unique name as they're literally not the same object as the unmodified
+  /// one so they don't share the placement counter for unique naming. This allows
+  /// accurate geometry trees in the visualiser.
+  std::map<G4String, G4int> modifiedElements;
+
+  /// Variable used to pass around the possibly modified name of an element.
+  G4String elementName;
 };
 #endif

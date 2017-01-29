@@ -74,12 +74,9 @@ void BDSBeamline::PrintMemoryConsumption() const
 
 std::ostream& operator<< (std::ostream& out, BDSBeamline const &bl)
 {
-  out << "BDSBeamline with " << bl.size() << " elements"<< G4endl
-      << "Elements are: " << G4endl;
-  bl.PrintAllComponents(out);
-  out << G4endl;
-  out << "Total arc length:   " << bl.totalArcLength   << " mm" << G4endl;
-  out << "Total chord length: " << bl.totalChordLength << " mm" << G4endl;
+  out << "BDSBeamline with "    << bl.size()           << " elements" << G4endl;
+  out << "Total arc length:   " << bl.totalArcLength   << " mm"       << G4endl;
+  out << "Total chord length: " << bl.totalChordLength << " mm"       << G4endl;
 
   return out;
 }
