@@ -219,7 +219,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
   if (startElement == finishElement)
     {// build 1:1
       G4double chordLength = (*startElement)->GetChordLength();
-      G4double angle     = (*startElement)->GetAngle();
+      G4double angle       = (*startElement)->GetAngle();
       if (!BDS::IsFinite(angle))
 	{// straight
 	  component = factory->CreateCurvilinearVolume(elementName,
@@ -227,7 +227,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 						       curvilinearRadius);
 	}
       else
-	{//angled
+	{// angled - tilt matters
 	  BDSTiltOffset* to = nullptr;
 	  if (tilted)
 	    {to = (*startElement)->GetTiltOffset();}
@@ -256,7 +256,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 						       curvilinearRadius);
 	}
       else
-	{// angled
+	{// angled - tilt matters
 	  BDSTiltOffset* to = nullptr;
 	  if (tilted)
 	    {to = (*startElement)->GetTiltOffset();}
