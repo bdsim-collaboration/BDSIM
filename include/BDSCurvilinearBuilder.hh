@@ -49,13 +49,9 @@ private:
   /// Whether an element is too short for its own curvilinear volume.
   inline G4bool TooShort(BDSBeamlineElement const* const element) const;
 
-  /// Whether an element is tilted at all.
-  G4bool Tilted(BDSBeamlineElement const* const element) const;
-
   /// Accumulate an element's properties onto a set of variables which are passed by
   /// reference.
   void Accumulate(BDSBeamlineElement const* const element,
-		  G4double& accumualtedArcLength,
 		  G4double& accumulatedAngle,
 		  G4bool&   straightSoFar) const;
 

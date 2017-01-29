@@ -64,10 +64,9 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   BDSBeamline* result = new BDSBeamline();
 
   G4int    counter              = 0; // counter for naming
-  
-  G4double accumulatedArcLength = 0;
+
   G4double accumulatedAngle     = 0;
-  G4bool   straightSoFar        = false;
+  G4bool   straightSoFar        = true;
   G4double currentTilt          = 0;
   G4bool   tiltedSoFar          = false;
   
@@ -78,7 +77,6 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   // lambda function to reset counters - avoids repetition. '[&]'
   // captures all variables required, by reference.
   auto Reset = [&](){
-    accumulatedArcLength = 0;
     accumulatedAngle     = (*currentElement)->GetAngle();
     straightSoFar        = false;
     currentTilt          = (*currentElement)->GetTilt();
@@ -88,6 +86,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 
   for (; currentElement != beamline->end(); currentElement++)
     {
+      if (currentElement == beamline->begin())
+	{straightSoFar = false;}
       G4cout << "start:   " << (*startingElement)->GetPlacementName() << G4endl;
       G4cout << "current: " << (*currentElement)->GetPlacementName() << G4endl;
       G4cout << "finish:  " << (*finishingElement)->GetPlacementName() << G4endl << G4endl;
@@ -97,7 +97,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
       
       const G4bool angled   = Angled(*currentElement);
       const G4bool tooShort = TooShort(*currentElement);
-      const G4bool tilted   = Tilted(*currentElement);
+      const G4bool tilted   = BDS::IsFinite((*currentElement)->GetTilt());
       
       if (angled)
 	{
@@ -120,9 +120,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	  if (tooShort)
 	    {// Accumulate
 	      if (tilted) // have to be careful about accumulating if we have tilts involved
-		{// check tilt - should always have valid tilt instance in this case
-		  BDSTiltOffset* to = (*currentElement)->GetTiltOffset();
-		  G4double tilt = to->GetTilt();
+		{// check tilt
+		  G4double tilt = (*currentElement)->GetTilt();
 		  
 		  if (!tiltedSoFar || BDS::IsFinite(std::abs(tilt - currentTilt)))
 		    {// change in tilt - build up to this one
@@ -136,15 +135,16 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 		    }
 		  else
 		    {
-		      currentTilt = tilt;
-		      tiltedSoFar = true;
-		      Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+		      Accumulate(*currentElement, accumulatedAngle, straightSoFar);
 		      finishingElement = currentElement;
 		    }
+		  // update tilt knowledge in both cases - do after Reset()
+		  currentTilt = tilt;
+		  tiltedSoFar = true; // now tilted
 		}
 	      else
 		{
-		  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+		  Accumulate(*currentElement, accumulatedAngle, straightSoFar);
 		  finishingElement = currentElement;
 		}
 	    }
@@ -160,17 +160,9 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	}
       else
 	{// Accumulate all straight sections
-	  if (!straightSoFar)
-	    {
-	      BDSBeamlineElement* piece = CreateCurvilinearElement(name,
-								   startingElement,
-								   finishingElement);
-	      result->AddBeamlineElement(piece);
-	      counter++; // increment name counter
-	      Reset();
-	      straightSoFar = true;
-	    }
-	  Accumulate(*currentElement, accumulatedArcLength, accumulatedAngle, straightSoFar);
+	  if (!straightSoFar && (currentElement != beamline->begin()))
+	    {Reset();}
+	  Accumulate(*currentElement, accumulatedAngle, straightSoFar);
 	  finishingElement = currentElement;
 	}
     }
@@ -178,33 +170,13 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   return result;
 }
 
-G4bool BDSCurvilinearBuilder::Tilted(BDSBeamlineElement const* const element) const
-{
-  BDSTiltOffset* to = element->GetTiltOffset();
-  if (to)
-    {
-      G4double t = to->GetTilt();
-      if (BDS::IsFinite(t))
-	{return true;}
-      else
-	{return false;}
-    }
-  else
-    {return false;}
-}
-
 void BDSCurvilinearBuilder::Accumulate(BDSBeamlineElement const* const element,
-				       G4double& accumulatedArcLength,
 				       G4double& accumulatedAngle,
 				       G4bool&   straightSoFar) const
 {
-  G4double angle        = element->GetAngle();
-  accumulatedArcLength += element->GetArcLength();
-  accumulatedAngle     += angle;
-  if (BDS::IsFinite(angle))
-    {straightSoFar = false;}
-  else
-    {straightSoFar = true;}
+  G4double angle    = element->GetAngle();
+  accumulatedAngle += angle;
+  straightSoFar     = !BDS::IsFinite(angle);
 }
 
 BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String                    elementName,
@@ -217,7 +189,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
   BDSSimpleComponent* component = nullptr;
 
   // we'll take the tilt from the first element - they should only ever be the same when used here
-  G4bool tilted = Tilted(*startElement);
+  G4bool tilted = BDS::IsFinite((*startElement)->GetTilt());
   
   if (startElement == finishElement)
     {// build 1:1
