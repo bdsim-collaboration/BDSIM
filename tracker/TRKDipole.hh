@@ -6,18 +6,17 @@
 /**
  * @brief dipole/kicker
  */
-class TRKDipole : public TRKElement {
-private: 
-  /// strength in Tesla/meter
-  double strength;
-  /// magnetic field in Tesla - only used for hybrid tracking
-  double bField;
-  /// integrated strength MeV * urad
-  double intStrength;
 
+class TRKDipole: public TRKElement
+{
 public:
-  TRKDipole(double strength, double bField, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKDipole();
+  TRKDipole(double      strength,
+	    double      bField,
+	    std::string name,
+	    double      length,
+	    TRKAperture *aperture,
+	    TRKPlacement *placement);
+  virtual ~TRKDipole();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);  
 
@@ -30,6 +29,13 @@ protected:
 
 private:
   TRKDipole(); ///< not implemented
+
+  /// strength in Tesla/meter
+  double strength;
+  /// magnetic field in Tesla - only used for hybrid tracking
+  double bField;
+  /// integrated strength MeV * urad
+  double intStrength;
 };
 
 #endif

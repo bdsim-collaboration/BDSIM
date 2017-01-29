@@ -13,10 +13,11 @@ class TRKTiltOffset;
 /**
  * @brief Base class element, also used for Drift
  */
-class TRKElement { 
+class TRKElement
+{ 
 public :
   TRKElement(std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKElement();
+  virtual ~TRKElement();
 
   /// track method, visitor pattern
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);

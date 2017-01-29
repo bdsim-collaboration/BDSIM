@@ -6,18 +6,20 @@
 /**
  * @brief Sextupole
  */
-class TRKSextupole : public TRKElement {
-private:
-  /// Strength in Tesla/meter^2
-  double strength;
-  
+
+class TRKSextupole: public TRKElement
+{
 public:
-  TRKSextupole(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKSextupole();
+  TRKSextupole(double       strength,
+	       std::string  name,
+	       double       length,
+	       TRKAperture  *aperture,
+	       TRKPlacement *placement);
+  virtual ~TRKSextupole();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
-  double GetStrength()const{return strength;}
+  inline double GetStrength() const {return strength;}
 
 protected:
   /// output stream
@@ -25,6 +27,9 @@ protected:
 
 private:
   TRKSextupole(); ///< not implemented
+
+  /// Strength in Tesla/meter^2
+  double strength;
 };
 
 #endif

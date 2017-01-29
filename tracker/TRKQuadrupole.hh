@@ -6,22 +6,27 @@
 /**
  * @brief quadrupole
  */
-class TRKQuadrupole : public TRKElement {
-protected:
-  /// strength in Tesla/meter
-  double strength;
-  
+
+class TRKQuadrupole: public TRKElement
+{
 public:
-  TRKQuadrupole(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKQuadrupole();
+  TRKQuadrupole(double        strength,
+		std::string   name,
+		double        length,
+		TRKAperture  *aperture,
+		TRKPlacement *placement);
+  virtual ~TRKQuadrupole();
   
-  double GetStrength()const{return strength;}
+  inline double GetStrength() const {return strength;}
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
 protected:
   /// output stream
   virtual void Print(std::ostream& out) const;
+
+  /// strength in Tesla/meter
+  double strength;
 
 private:
   TRKQuadrupole(); ///< not implemented

@@ -6,18 +6,20 @@
 /**
  * @brief Octupole
  */
-class TRKOctupole : public TRKElement {
-private:
-  /// Strength in Tesla/meter^3
-  double strength;
-  
+
+class TRKOctupole: public TRKElement
+{  
 public:
-  TRKOctupole(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKOctupole();
+  TRKOctupole(double        strength,
+	      std::string   name,
+	      double        length,
+	      TRKAperture  *aperture,
+	      TRKPlacement *placement);
+  virtual ~TRKOctupole();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
-  double GetStrength()const{return strength;}
+  inline double GetStrength() const {return strength;}
 
 protected:
   /// output stream
@@ -25,6 +27,9 @@ protected:
 
 private:
   TRKOctupole(); ///< not implemented
+
+  /// Strength in Tesla/meter^3
+  double strength;
 };
 
 #endif
