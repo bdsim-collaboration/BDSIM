@@ -98,8 +98,17 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
       const G4bool angled   = Angled(*currentElement);
       const G4bool tooShort = TooShort(*currentElement);
       const G4bool tilted   = BDS::IsFinite((*currentElement)->GetTilt());
-      
-      if (angled)
+
+      if (*currentElement == beamline->back())
+	{
+	  finishingElement = currentElement;
+	  BDSBeamlineElement* piece = CreateCurvilinearElement(name,
+							       startingElement,
+							       finishingElement);
+	  result->AddBeamlineElement(piece);
+	  // don't bother incrementing or resetting as it's the end of the line
+	}   
+      else if (angled)
 	{
 	  G4double currentAngle = (*currentElement)->GetAngle();
 	  G4bool   signflip     = std::signbit(accumulatedAngle) != std::signbit(currentAngle);
