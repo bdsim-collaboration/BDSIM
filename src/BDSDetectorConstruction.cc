@@ -249,15 +249,14 @@ void BDSDetectorConstruction::BuildBeamline()
       delete survey;
     }
   delete theComponentFactory;
-      
-#ifdef BDSDEBUG
-  G4cout << __METHOD_NAME__ << "size of the parser beamline element list: "<< BDSParser::Instance()->GetBeamline().size() << G4endl;
-#endif
-  G4cout << __METHOD_NAME__ << "size of the constructed beamline: "<< beamline->size() << " with length " << beamline->GetTotalArcLength()/CLHEP::m << " m" << G4endl;
+
+  // print summary
+  G4cout << __METHOD_NAME__ << *beamline;
 
 #ifdef BDSDEBUG
   // print accelerator component registry
   G4cout << *BDSAcceleratorComponentRegistry::Instance();
+  beamline->PrintMemoryConsumption();
 #endif
  
   if (beamline->empty())
@@ -265,9 +264,6 @@ void BDSDetectorConstruction::BuildBeamline()
       G4cout << __METHOD_NAME__ << "beamline empty or no line selected! exiting" << G4endl;
       exit(1);
     }
-#ifdef BDSDEBUG
-  beamline->PrintMemoryConsumption();
-#endif
 
   // Build curvilinear geometry w.r.t. beam line.
   BDSCurvilinearBuilder* clBuilder = new BDSCurvilinearBuilder();
