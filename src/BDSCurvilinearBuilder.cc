@@ -75,7 +75,8 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
   BDSBeamline::const_iterator finishingElement = beamline->begin();
   BDSBeamline::const_iterator currentElement   = beamline->begin();
 
-  // lambda function to reset counters - avoids repetition. '[&]' capture all by reference as required
+  // lambda function to reset counters - avoids repetition. '[&]'
+  // captures all variables required, by reference.
   auto Reset = [&](){
     accumulatedArcLength = 0;
     accumulatedAngle     = 0;
@@ -231,9 +232,9 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
     {// cover a few components
       G4ThreeVector positionStart = (*startElement)->GetReferencePositionStart();
       G4ThreeVector positionEnd   = (*finishElement)->GetReferencePositionEnd();
-      G4double chordLength = (positionEnd - positionStart).mag();
+      G4double      chordLength   = (positionEnd - positionStart).mag();
       
-      G4double accumulatedAngle     = 0;
+      G4double accumulatedAngle = 0;
       for (auto currentElement = startElement; currentElement != finishElement; currentElement++)
 	{accumulatedAngle += (*currentElement)->GetAngle();}
       

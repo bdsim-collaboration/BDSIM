@@ -1,8 +1,10 @@
+#include "BDSBeamlineElement.hh"
 #include "BDSUtilities.hh"
+
+#include "globals.hh"
 
 class BDSAcceleratorComponent;
 class BDSBeamline;
-class BDSBeamlineElement;
 class BDSCurvilinearFactory;
 class BDSSimpleComponent;
 
