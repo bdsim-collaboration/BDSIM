@@ -682,10 +682,14 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
       
       degraderOffset = overlap * -0.5;
     }
-    
+  //check for outerDiameter
+  G4double outerDiameter = element->outerDiameter*CLHEP::m;
+  if (!BDS::IsFinite(outerDiameter))
+    {outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
+
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
-			  element->outerDiameter*CLHEP::m,
+			  outerDiameter,
 			  element->numberWedges,
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
