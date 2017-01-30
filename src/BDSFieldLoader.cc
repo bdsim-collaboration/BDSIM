@@ -484,7 +484,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishB(G4String            filePath,
 						   G4Transform3D       transform,
 						   G4double            bScaling)
 {
-  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   BDSInterpolator2D*   ar = CreateInterpolator2D(array, interpolatorType);
   BDSFieldMag*     result = new BDSFieldMagInterpolated2D(ar, transform, bScalingUnits);
