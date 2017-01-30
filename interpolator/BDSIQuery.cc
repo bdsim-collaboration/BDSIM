@@ -103,12 +103,6 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray1DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -171,12 +165,6 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray2DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -249,12 +237,6 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray3DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -336,12 +318,6 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray4DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
