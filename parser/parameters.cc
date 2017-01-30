@@ -67,7 +67,7 @@ Parameters::Parameters()
   setMap["xdir"] = false;
   setMap["ydir"] = false;
   setMap["zdir"] = false; 
-  setMap["waveLength"] = false; 
+  setMap["waveLength"] = false;
   setMap["gradient"] = false;
   setMap["phi"] = false;
   setMap["theta"] = false;
@@ -88,7 +88,6 @@ Parameters::Parameters()
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
   setMap["mountmaterial"] = false;
-  setMap["airmaterial"] = false;
   setMap["spec"] = false;
   setMap["cavityModel"] = false;
 

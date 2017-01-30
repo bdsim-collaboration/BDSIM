@@ -69,7 +69,6 @@ void Element::PublishMembers()
   publish("aperture4",&Element::aper4);
   alternativeNames["aperture4"] = "aper4";
   publish("outerDiameter",&Element::outerDiameter);
-  //  publish("outR",2*&Element::outerDiameter);
   publish("xsize",&Element::xsize);
   publish("ysize",&Element::ysize);
   publish("xsizeOut",&Element::xsizeOut);
@@ -128,7 +127,6 @@ void Element::PublishMembers()
   publish("scintmaterial",&Element::scintmaterial);
   publish("windowmaterial",&Element::windowmaterial);
   publish("mountmaterial",&Element::mountmaterial);
-  publish("airmaterial",&Element::airmaterial);
   publish("spec",&Element::spec);
   publish("cavityModel",&Element::cavityModel);
   publish("bias",&Element::bias);
@@ -172,7 +170,7 @@ bool Element::isSpecial()const {
 
 void Element::print(int ident)const{
   for(int i=0;i<ident;i++)
-    printf("--");
+    {std::cout << "--";}
 
   std::cout << name << " : " << type << std::endl;
   if (l>0.0)
@@ -207,13 +205,13 @@ void Element::print(int ident)const{
 
   case ElementType::_MULT:
   case ElementType::_THINMULT:
-    printf(" , knl={");
+    std::cout << " , knl={";
     for(auto it=knl.begin();it!=knl.end();++it)
-      printf("%.10g, ",(*it));
-    printf("},  ksl={");
+      {std::cout << (*it);}
+    std::cout << "},  ksl={";
     for(auto it=ksl.begin();it!=ksl.end();++it)
-      printf("%.10g, ",(*it));
-    printf("}");
+      {std::cout << (*it);}
+    std::cout << "}" << std::endl;
     break;
     
   case ElementType::_ECOL:
@@ -379,7 +377,6 @@ void Element::flush()
   windowmaterial = "vacuum";
   mountmaterial="";
   scintmaterial = "";
-  airmaterial="";
   spec = "";
   cavityModel = "";
 
@@ -387,8 +384,6 @@ void Element::flush()
 }
 
 double Element::property_lookup(std::string property_name)const{
-  if(property_name == "outR") return 0.5*outerDiameter;
-
   double value;
   try {
     value = get<double>(this,property_name);
