@@ -2,6 +2,7 @@
 #define BDSOUTPUTROOTEVENTRUN_H
 
 #include "TROOT.h"
+#include "TObject.h"
 
 #include <ctime>
 
@@ -11,7 +12,7 @@
  * @author Stewart Boogert
  */
 
-class BDSOutputROOTEventRunInfo
+class BDSOutputROOTEventRunInfo: public TObject
 {
 public:
   BDSOutputROOTEventRunInfo();
