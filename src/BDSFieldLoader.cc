@@ -311,7 +311,7 @@ BDSArray3DCoords* BDSFieldLoader::LoadBDSIM3D(G4String filePath)
   else
     {
       BDSFieldLoaderBDSIM<std::ifstream> loader;
-      result = loader.Load2D(filePath);
+      result = loader.Load3D(filePath);
 }
   arrays3d[filePath] = result;
   return result;
