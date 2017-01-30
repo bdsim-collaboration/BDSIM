@@ -67,9 +67,6 @@ private:
   /// Data stored in order to find the chord.
   G4ThreeVector yInitial, yMidPoint, yFinal;
 
-  /// Total beam energy
-  G4double nominalEnergy;
-
   /// Minimum tolerable radius of curvature - used to prevent spiraling particles.
   const G4double minimumRadiusOfCurvature;
 };
