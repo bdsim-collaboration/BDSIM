@@ -14,7 +14,6 @@
 #include <exception>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <regex>
 #include <sstream>
 #include <string>
@@ -197,7 +196,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  std::istringstream restOfLineSS(restOfLine);
 	  while (restOfLineSS >> columnName)
 	    {
-            nColumns++;
+	      nColumns++;
 	      if (columnName.find("Fx") != std::string::npos)
 		{xIndex = nColumns; continue;}
 	      if (columnName.find("Fy") != std::string::npos)

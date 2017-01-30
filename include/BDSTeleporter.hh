@@ -7,7 +7,7 @@
 #include "G4ThreeVector.hh"
 
 class BDSBeamline;
-class BDSFieldObjects;
+class BDSFieldInfo;
 
 /**
  * @brief An element that unnaturally shifts the beam across its length - a fudge volume.

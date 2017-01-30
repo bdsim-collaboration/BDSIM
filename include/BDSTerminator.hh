@@ -3,8 +3,6 @@
 
 #include "BDSAcceleratorComponent.hh"
 
-class G4String;
-
 /** 
  * @brief Class for small control volume for circular macines.
  * 

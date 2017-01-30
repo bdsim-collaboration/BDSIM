@@ -9,7 +9,6 @@
 
 class BDSBeamPipe;
 class BDSBeamPipeInfo;
-class BDSFieldObjects;
 class BDSMagnetOuter;
 class BDSMagnetOuterInfo;
 

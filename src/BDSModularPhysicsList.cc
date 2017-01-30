@@ -38,7 +38,6 @@
 #include "G4Proton.hh"
 #include "G4ShortLivedConstructor.hh"
 
-
 // general geant4
 #include "globals.hh"
 #include "G4ParticleTable.hh"
@@ -53,8 +52,6 @@
 #include <sstream>
 #include <utility>
 #include <vector>
-
-//#include "G4MesonConstructor.hh"
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   opticalPhysics(nullptr)
