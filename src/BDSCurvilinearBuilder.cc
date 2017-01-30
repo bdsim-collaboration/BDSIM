@@ -1,7 +1,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSCurvilinearFactory.hh"
@@ -295,8 +294,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
       G4ThreeVector posRefStart = (*startElement)->GetReferencePositionStart();
       G4ThreeVector posRefEnd   = (*finishElement)->GetReferencePositionEnd();
       G4ThreeVector posRefMid   = 0.5 * (posRefStart + posRefEnd);
-      G4RotationMatrix* rotRefStart = new G4RotationMatrix(*((*startElement)->GetReferenceRotationStart()));
-      G4RotationMatrix* rotRefEnd   = new G4RotationMatrix(*((*finishElement)->GetReferenceRotationEnd()));
+      G4RotationMatrix* rotRefStart = (*startElement)->GetReferenceRotationStart();
+      G4RotationMatrix* rotRefEnd   = (*finishElement)->GetReferenceRotationEnd();
 
       G4ThreeVector delta = posRefMid - posRefStart;
       G4ThreeVector newUnitZ      = delta.unit();
