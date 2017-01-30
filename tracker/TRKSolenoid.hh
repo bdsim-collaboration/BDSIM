@@ -4,16 +4,18 @@
 #include "TRKElement.hh"
 
 /**
- * @brief Solenoid
+ * @brief Solenoid. Strength in Tesla/metre.
  */
-class TRKSolenoid : public TRKElement {
-private: 
-  /// strength in Tesla/meter
-  double strength;
-  
-public :
-  TRKSolenoid(double strength, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKSolenoid();
+
+class TRKSolenoid: public TRKElement
+{
+public:
+  TRKSolenoid(double        strength,
+	      std::string   name,
+	      double        length,
+	      TRKAperture  *aperture,
+	      TRKPlacement *placement);
+  virtual ~TRKSolenoid();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   

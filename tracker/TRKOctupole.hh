@@ -4,7 +4,7 @@
 #include "TRKElement.hh"
 
 /**
- * @brief Octupole
+ * @brief Octupole. Strength in Tesla/meter^3.
  */
 
 class TRKOctupole: public TRKElement
@@ -19,17 +19,12 @@ public:
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 
-  inline double GetStrength() const {return strength;}
-
 protected:
   /// output stream
   virtual void Print(std::ostream& out) const;
 
 private:
   TRKOctupole(); ///< not implemented
-
-  /// Strength in Tesla/meter^3
-  double strength;
 };
 
 #endif

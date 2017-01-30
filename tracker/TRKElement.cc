@@ -5,13 +5,20 @@
 #include "TRKStrategy.hh"
 #include "TRKTiltOffset.hh"
 
-TRKElement::TRKElement(std::string nameIn, double lengthIn,
-		       TRKAperture *apertureIn, TRKPlacement *placementIn):
-  name(nameIn), length(lengthIn), aperture(apertureIn), placement(placementIn),
+TRKElement::TRKElement(std::string  nameIn,
+		       double       lengthIn,
+		       TRKAperture *apertureIn,
+		       TRKPlacement *placementIn,
+		       double        strengthIn):
+  name(nameIn),
+  length(lengthIn),
+  strength(strengthIn),
+  aperture(apertureIn),
+  placement(placementIn),
   sample(false)
 {
-  offsetIn  = NULL;
-  offsetOut = NULL;
+  offsetIn  = nullptr;
+  offsetOut = nullptr;
 } 
 
 TRKElement::~TRKElement()

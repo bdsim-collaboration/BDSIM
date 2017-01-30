@@ -4,7 +4,7 @@
 #include "TRKElement.hh"
 
 /**
- * @brief sextupole tracking
+ * @brief Sextupole tracking. Strength in Tesla/meter^3.
  */
 
 class TRKDecapole: public TRKElement
@@ -18,8 +18,6 @@ public:
   virtual ~TRKDecapole();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
-
-  inline double GetStrength() const {return strength;}
   
 protected:
   /// output stream
@@ -27,9 +25,6 @@ protected:
 
 private:
   TRKDecapole(); ///< not implemented
-
-  /// Strength in Tesla/meter^3
-  double strength;
 };
 
 #endif

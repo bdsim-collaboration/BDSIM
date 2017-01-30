@@ -13,10 +13,15 @@ class TRKTiltOffset;
 /**
  * @brief Base class element, also used for Drift
  */
+
 class TRKElement
 { 
-public :
-  TRKElement(std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
+public:
+  TRKElement(std::string   name,
+	     double        length,
+	     TRKAperture*  aperture,
+	     TRKPlacement* placement,
+	     double        strenght = 0);
   virtual ~TRKElement();
 
   /// track method, visitor pattern
@@ -25,16 +30,16 @@ public :
   // for when no aperture is used - we have to copy after state to before / confirm coordinates
   void ConfirmCoordinates(TRKBunch* bunch);
 
-  std::string  GetName()const {return name;}
-  double       GetLength()const {return length;}
-  TRKAperture* GetAperture()const {return aperture;}
-  bool         Sample()     const {return sample;}
+  inline std::string  GetName()     const {return name;}
+  inline double       GetLength()   const {return length;}
+  inline double       GetStrength() const {return strength;}
+  inline TRKAperture* GetAperture() const {return aperture;}
+  inline bool         Sample()      const {return sample;}
   
   /// output stream
   friend std::ostream& operator<< (std::ostream &out, const TRKElement &element);
 
-  /// set and add offsets
-  ///@{
+  /// @{ Set and add offsets.
   void SetOffset(double x, double y);
   void SetTilt(double phi, double theta, double psi);
   void AddOffset(double x, double y);
@@ -44,6 +49,7 @@ public :
 protected : 
   std::string    name;              ///< name of element -- do we need this? JS
   double         length;            ///< length of component [m]
+  double         strength;          ///< strength parameter used differently in each derived class
   TRKAperture*   aperture;          ///< aperture of element
   TRKPlacement*  placement;         ///< location of element
   TRKTiltOffset* offsetIn;          ///< tilt and offset entrance of element

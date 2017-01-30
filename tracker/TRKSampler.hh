@@ -8,10 +8,12 @@
 /**
  * @brief sampler class - output from tracker
  */
-class TRKSampler : public TRKElement {
+
+class TRKSampler: public TRKElement
+{
 public:
   TRKSampler(std::string nameIn);
-  ~TRKSampler();
+  virtual ~TRKSampler();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
 

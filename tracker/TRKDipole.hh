@@ -4,7 +4,7 @@
 #include "TRKElement.hh"
 
 /**
- * @brief dipole/kicker
+ * @brief dipole/kicker. Strength in Tesla/metre.
  */
 
 class TRKDipole: public TRKElement
@@ -19,8 +19,7 @@ public:
   virtual ~TRKDipole();
 
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);  
-
-  double GetStrength()const{return strength;}
+  
   double GetIntStrength()const{return intStrength;}
 
 protected:
@@ -30,8 +29,6 @@ protected:
 private:
   TRKDipole(); ///< not implemented
 
-  /// strength in Tesla/meter
-  double strength;
   /// magnetic field in Tesla - only used for hybrid tracking
   double bField;
   /// integrated strength MeV * urad

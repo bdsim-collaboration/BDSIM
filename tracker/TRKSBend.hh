@@ -8,16 +8,21 @@
  * 
  * dipole tracking but reference s-position is changed
  */
-class TRKSBend : public TRKElement {
+class TRKSBend: public TRKElement
+{
 private: 
   /// bending angle in rad
   double angle;
 
 public:
-  TRKSBend(double angle, std::string name, double length, TRKAperture *aperture, TRKPlacement *placement);
-  ~TRKSBend();
+  TRKSBend(double        angle,
+	   std::string   name,
+	   double        length,
+	   TRKAperture  *aperture,
+	   TRKPlacement *placement);
+  virtual ~TRKSBend();
   
-  double GetAngle()const{return angle;}
+  inline double GetAngle()const{return angle;}
   
   virtual void Track(TRKBunch* bunch, TRKStrategy* strategy);
   
