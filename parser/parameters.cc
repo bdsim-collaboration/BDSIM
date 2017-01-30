@@ -77,7 +77,7 @@ Parameters::Parameters()
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
-  setMap["r"] = false; // for samplerRadius
+  setMap["samplerRadius"] = false;
   setMap["region"] = false;
   setMap["fieldOuter"]  = false;
   setMap["fieldVacuum"] = false;

@@ -136,7 +136,7 @@ void Element::PublishMembers()
   publish("samplerType",&Element::samplerType);
   publish("r",&Element::samplerRadius); // historic
   publish("samplerRadius",&Element::samplerRadius);
-  alternativeNames["samplerRadius"] ="r";
+  alternativeNames["r"] ="samplerRadius";
 
   publish("knl",&Element::knl);
   publish("ksl",&Element::ksl);
