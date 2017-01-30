@@ -496,7 +496,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBQuad(G4String            fileP
 						       G4Transform3D       transform,
 						       G4double            bScaling)
 {
-  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   if (std::abs(array->XStep() - array->YStep()) > 1e-9)
     {
@@ -516,7 +516,7 @@ BDSFieldMag* BDSFieldLoader::LoadPoissonSuperFishBDipole(G4String            fil
 							 G4Transform3D       transform,
 							 G4double            bScaling)
 {
-  G4double  bScalingUnits = bScaling * CLHEP::tesla;
+  G4double  bScalingUnits = bScaling * CLHEP::gauss;
   BDSArray2DCoords* array = LoadPoissonMag2D(filePath);
   
   BDSArray2DCoordsRDipole* rArray = new BDSArray2DCoordsRDipole(array);
