@@ -128,8 +128,8 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -199,9 +199,9 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
-  double zStep = (ymax - ymin) / (G4double)nZ;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
+  double zStep = (ymax - ymin) / ((G4double)nZ - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -280,10 +280,10 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
-  double zStep = (ymax - ymin) / (G4double)nZ;
-  double tStep = (tmax - tmin) / (G4double)nT;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
+  double zStep = (ymax - ymin) / ((G4double)nZ - 1);
+  double tStep = (tmax - tmin) / ((G4double)nT - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
