@@ -217,6 +217,8 @@ OptionsBase::OptionsBase()
   numberOfEventsPerNtuple  = 0;
   trajCutGTZ               = 0.0;  // minimum z position
   trajCutLTR               = 1e12; // maximum radius in mm, so large default value
+  storeElossLocal          = false;
+  storeElossGlobal         = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1;
   storeTrajectoryParticle  = "";

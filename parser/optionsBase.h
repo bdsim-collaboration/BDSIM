@@ -266,6 +266,8 @@ namespace GMAD
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;
     double      trajCutLTR;
+    bool        storeElossLocal;
+    bool        storeElossGlobal;
     bool        storeTrajectory;
     int         storeTrajectoryDepth;
     std::string storeTrajectoryParticle;

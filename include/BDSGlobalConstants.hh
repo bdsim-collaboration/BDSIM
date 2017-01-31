@@ -144,6 +144,8 @@ public:
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
+  inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
+  inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}

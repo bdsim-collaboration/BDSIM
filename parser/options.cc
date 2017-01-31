@@ -321,6 +321,8 @@ void Options::PublishMembers()
   publish("lengthSafety",&Options::lengthSafety);
 
   // trajectory storage
+  publish("storeElossLocal",  &Options::storeElossLocal);
+  publish("storeElossGlobal", &Options::storeElossGlobal);
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);

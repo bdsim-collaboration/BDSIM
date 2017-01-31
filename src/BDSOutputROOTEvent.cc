@@ -28,7 +28,12 @@ BDSOutputROOTEvent::BDSOutputROOTEvent()
 #else
   primary = new BDSOutputROOTEventSampler<double>("Primary");
 #endif
-  eLoss     = new BDSOutputROOTEventLoss(false,false);
+
+  const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+  G4bool storeLocal  = g->StoreELossLocal();
+  G4bool storeGlobal = g->StoreELossGlobal();
+  
+  eLoss     = new BDSOutputROOTEventLoss(storeLocal, storeGlobal);
   pFirstHit = new BDSOutputROOTEventLoss(true,false);
   pLastHit  = new BDSOutputROOTEventLoss(true,false);
   tHit      = new BDSOutputROOTEventLoss(false,true);
