@@ -106,7 +106,7 @@ void EventAnalysis::Process()
       if(processSamplers)
 	{ProcessSamplers();}
     }
-  std::cout << "\rComplete                                       " << std::endl;
+  std::cout << "\rSampler analysis complete                           " << std::endl;
 }
 
 void EventAnalysis::Terminate()

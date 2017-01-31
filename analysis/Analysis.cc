@@ -23,9 +23,11 @@ Analysis::~Analysis()
 
 void Analysis::Execute()
 {
+  std::cout << "Analysis on \"" << treeName << "\" beginning" << std::endl;
   Process();
   SimpleHistograms();
   Terminate();
+  std::cout << "Analysis on \"" << treeName << "\" complete" << std::endl;
 }
 
 void Analysis::SimpleHistograms()
@@ -42,7 +44,9 @@ void Analysis::SimpleHistograms()
 	{
 	  if (i["treeName"] == treeName)
 	    {
-	      FillHistogram(i["treeName"].data(), i["histName"], i["nbins"], i["binning"], i["plot"], i["select"]);
+	      std::string histName = i["histName"];
+	      std::cout << "Filling histogram \"" << histName << "\"" << std::endl;
+	      FillHistogram(i["treeName"].data(), histName, i["nbins"], i["binning"], i["plot"], i["select"]);
 	    }
 	}
     }
@@ -159,6 +163,7 @@ void Analysis::Write(TFile* outputFile)
   // Merged Histograms for this analysis instance (could be run, event etc)
   if (histoSum)
     {
+      std::cout << "Merging histograms from \"" << treeName << "\" analysis" << std::endl;
       TDirectory* bdsimDir = outputFile->mkdir(mergedHistogramName.c_str());
       bdsimDir->cd();
       histoSum->Write(outputFile);
