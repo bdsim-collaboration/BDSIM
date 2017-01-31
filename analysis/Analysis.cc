@@ -60,13 +60,15 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
 {
   TH1::AddDirectory(kTRUE);
   TH2::AddDirectory(kTRUE);
+  TH3::AddDirectory(kTRUE);
   
   if(debug)
     {std::cout << __METHOD_NAME__ << std::endl;}
   double xlow=0.0, xhigh=0.0;
   double ylow=0.0, yhigh=0.0;
+  double zlow=0.0, zhigh=0.0;
   int ndim = Config::Dimension(nbins);
-  int nxbin=0, nybin=0;
+  int nxbin=0, nybin=0, nzbin=0;
 
   if(ndim == 1)
   {
@@ -80,14 +82,23 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
     Config::Binning(binning,1,xlow,xhigh);
     Config::Binning(binning,2,ylow,yhigh);
   }
+  else if(ndim == 3)
+    {
+      nxbin = Config::NBins(nbins,1);
+      nybin = Config::NBins(nbins,2);
+      nzbin = Config::NBins(nbins,3);
+      Config::Binning(binning,1,xlow,xhigh);
+      Config::Binning(binning,2,ylow,yhigh);
+      Config::Binning(binning,3,zlow,zhigh);
+    }
+  else
+    {std::cerr << "Invalid number of dimensions: \"" << ndim << "\"" << std::endl; exit(1);}
 
   if (!chain)
   {std::cout << __METHOD_NAME__ << "Error no tree found by name: " << treeName << std::endl; exit(1);}
 
   if(debug)
-  {
-    std::cout << __METHOD_NAME__ << treeName << " " << histoName << " " << plot << std::endl;
-  }
+    {std::cout << __METHOD_NAME__ << treeName << " " << histoName << " " << plot << std::endl;}
 
   auto pltSav = histoName;
   auto pltCmd = plot+" >> "+pltSav;
@@ -97,6 +108,8 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
     {new TH1D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh);}
   else if(ndim == 2)
     {new TH2D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh);}
+  else if(ndim == 3)
+    {new TH3D(pltSav.c_str(),pltSav.c_str(), nxbin, xlow, xhigh, nybin, ylow, yhigh, nzbin, zlow, zhigh);}
 
   chain->Draw(pltCmd.c_str(),selection.c_str(),"goff");
 
@@ -114,6 +127,12 @@ void Analysis::FillHistogram(std::string treeName, std::string histoName,
     this->histograms2D[pltSav] = h;
     // std::cout << h << std::endl;
   }
+  else if (ndim == 3)
+    {
+      auto h = (TH3*)gDirectory->Get(pltSav.c_str());
+      histogramNames.push_back(pltSav);
+      histograms3D[pltSav] = h;
+    }
 
 
   if(debug)
@@ -133,8 +152,10 @@ void Analysis::Write(TFile* outputFile)
     {h.second->Write();}
   for(auto h : histograms2D)
     {h.second->Write();}
+  for (auto h : histograms3D)
+    {h.second->Write();}
   outputFile->cd("/");
-
+  
   // Merged Histograms for this analysis instance (could be run, event etc)
   if (histoSum)
     {
