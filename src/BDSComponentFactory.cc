@@ -554,7 +554,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateElement()
   
   return (new BDSElement(elementName,
 			 element->l * CLHEP::m,
-			 element->outerDiameter * CLHEP::m,
+			 PrepareOuterDiameter(element),
 			 element->geometryFile,
 			 element->fieldAll));
 }
@@ -586,7 +586,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRectangularCollimator()
 
   return new BDSCollimatorRectangular(elementName,
 				      element->l*CLHEP::m,
-				      element->outerDiameter*CLHEP::m,
+				      PrepareOuterDiameter(element),
 				      element->xsize*CLHEP::m,
 				      element->ysize*CLHEP::m,
 				      element->xsizeOut*CLHEP::m,
@@ -603,7 +603,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateEllipticalCollimator()
 
   return new BDSCollimatorElliptical(elementName,
 				     element->l*CLHEP::m,
-				     element->outerDiameter*CLHEP::m,
+				     PrepareOuterDiameter(element),
 				     element->xsize*CLHEP::m,
 				     element->ysize*CLHEP::m,
 				     element->xsizeOut*CLHEP::m,
@@ -645,9 +645,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateShield()
   BDSBeamPipeInfo* bpInfo = PrepareBeamPipeInfo(element);
 
   G4Material* material = BDSMaterials::Instance()->GetMaterial(element->material);
+
   BDSShield* shield = new BDSShield(elementName,
 				    element->l*CLHEP::m,
-				    element->outerDiameter*CLHEP::m,
+				    PrepareOuterDiameter(element),
 				    element->xsize*CLHEP::m,
 				    element->ysize*CLHEP::m,
 				    material,
@@ -682,14 +683,10 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateDegrader()
       
       degraderOffset = overlap * -0.5;
     }
-  //check for outerDiameter
-  G4double outerDiameter = element->outerDiameter*CLHEP::m;
-  if (!BDS::IsFinite(outerDiameter))
-    {outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();}
 
   return (new BDSDegrader(elementName,
 			  element->l*CLHEP::m,
-			  outerDiameter,
+			  PrepareOuterDiameter(element),
 			  element->numberWedges,
 			  element->wedgeLength*CLHEP::m,
 			  element->degraderHeight*CLHEP::m,
@@ -930,12 +927,7 @@ BDSMagnetOuterInfo* BDSComponentFactory::PrepareMagnetOuterInfo(const Element* e
   info->angleOut = angleOut;
   
   // outer diameter
-  G4double outerDiameter = element->outerDiameter*CLHEP::m;
-  if (outerDiameter < 1e-6)
-    {//outerDiameter not set - use global option as default
-      outerDiameter = BDSGlobalConstants::Instance()->OuterDiameter();
-    }
-  info->outerDiameter = outerDiameter;
+  info->outerDiameter = PrepareOuterDiameter(element);
 
   // outer material
   G4Material* outerMaterial;
