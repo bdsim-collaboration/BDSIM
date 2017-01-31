@@ -90,6 +90,15 @@ void BDSOutputROOTEvent::CreateHistograms()
 	  runHistos->Create1DHistogram(name,title,binedges);
 	}
     }
+
+  if (useScoringMap)
+    {
+      const BDSGlobalConstants* g = BDSGlobalConstants::Instance();
+      evtHistos->Create3DHistogram("ScoringMap", "Energy Deposition",
+				   g->NBinsX(), g->XMin()/CLHEP::m, g->XMax()/CLHEP::m,
+				   g->NBinsY(), g->YMin()/CLHEP::m, g->YMax()/CLHEP::m,
+				   g->NBinsZ(), g->ZMin()/CLHEP::m, g->ZMax()/CLHEP::m);
+    }
 }
 
 void BDSOutputROOTEvent::Initialise() 
@@ -98,11 +107,13 @@ void BDSOutputROOTEvent::Initialise()
 #ifdef BDSDEBUG
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
-
-  CreateHistograms();
   
   const BDSGlobalConstants* globalConstants = BDSGlobalConstants::Instance();
 
+  useScoringMap = globalConstants->UseScoringMap();
+  
+  CreateHistograms();
+  
   // Base root file name 
   G4String basefilename = globalConstants->OutputFileName();
   basefilename = basefilename+std::string("_event");
@@ -232,7 +243,12 @@ void BDSOutputROOTEvent::WriteEnergyLoss(BDSEnergyCounterHitsCollection* hc)
     evtHistos->Fill1DHistogram(2, sHit, eW);
     runHistos->Fill1DHistogram(5, sHit, eW);
     evtHistos->Fill1DHistogram(5, sHit, eW);
-
+    if (useScoringMap)
+      {
+	G4double x = hit->Getx()/CLHEP::m;
+	G4double y = hit->Gety()/CLHEP::m;
+	evtHistos->Fill3DHistogram(0, x, y, sHit, eW);
+      }
   }
 }
 

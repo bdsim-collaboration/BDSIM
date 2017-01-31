@@ -145,6 +145,8 @@ private:
   BDSOutputROOTEventHistograms  *evtHistos   = nullptr;
   // event information
   BDSOutputROOTEventInfo        *evtInfo     = nullptr;
+
+  G4bool useScoringMap = false;
 };
 
 

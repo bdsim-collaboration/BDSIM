@@ -281,6 +281,18 @@ namespace GMAD
     /// Visualisation
     int nSegmentsPerCircle; ///< Number of facets per 2pi in visualisation
 
+    /// Scoring Map
+    int    nbinsx;
+    int    nbinsy;
+    int    nbinsz;
+    double xmin;
+    double xmax;
+    double ymin;
+    double ymax;
+    double zmin;
+    double zmax;
+    bool   useScoringMap;
+
     /// print some properties
     void print() const;
   };
