@@ -242,7 +242,7 @@ int main(int argc,char** argv)
   G4bool bCloseGeometry = G4GeometryManager::GetInstance()->CloseGeometry();
   if(!bCloseGeometry)
     { 
-      G4cerr << "bdsim.cc: error - geometry not closed." << G4endl;
+      G4cerr << __FUNCTION__ << "> error - geometry not closed." << G4endl;
       return 1;
     }
 
