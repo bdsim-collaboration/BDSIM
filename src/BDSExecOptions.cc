@@ -317,7 +317,7 @@ void BDSExecOptions::Print() const
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflash: "              << std::setw(15) << options.gflash              << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemin: "          << std::setw(15) << options.gflashemin          << G4endl;  
   G4cout << __METHOD_NAME__ << std::setw(23) << " gflashemax: "          << std::setw(15) << options.gflashemax          << G4endl;
-  G4cout << __METHOD_NAME__ << std::setw(23) << " ngnerate: "            << std::setw(15) << options.nGenerate           << G4endl;
+  G4cout << __METHOD_NAME__ << std::setw(23) << " ngenerate: "           << std::setw(15) << options.nGenerate           << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFileName: "      << std::setw(15) << options.outputFileName      << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " outputFormat: "        << std::setw(15) << options.outputFormat        << G4endl;
   G4cout << __METHOD_NAME__ << std::setw(23) << " seed: "                << std::setw(15) << options.seed                << G4endl;
