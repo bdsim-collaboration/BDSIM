@@ -168,7 +168,7 @@ void HistogramMerge::Terminate()
 	{
 	  for(int k = 0; k <= h1->GetNbinsY() + 1; ++k)
 	    {
-	      for (int l = 0; k <= h1->GetNbinsZ()+1; ++l)
+	      for (int l = 0; l <= h1->GetNbinsZ()+1; ++l)
 		{
 		  double mean = h1->GetBinContent(j,k)/entries;
 		  double std  = sqrt((h1e->GetBinContent(j,k)/entries-pow(mean,2))/entries);
