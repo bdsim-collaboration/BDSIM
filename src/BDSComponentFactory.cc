@@ -755,11 +755,11 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateScreen()
 #endif
       if(element->layerIsSampler.size()>0)
 	{
-	  theScreen->screenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
+	  theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm, *itIsSampler);
 	  itIsSampler++;
 	}
       else
-	{theScreen->screenLayer((*itt)*CLHEP::m, *itm);}
+	{theScreen->AddScreenLayer((*itt)*CLHEP::m, *itm);}
     }
   return theScreen;
 }
