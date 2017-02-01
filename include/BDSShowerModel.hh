@@ -17,8 +17,8 @@ class BDSShowerModel: public GFlashShowerModel
 public:
   BDSShowerModel(G4String, G4Region*);
   BDSShowerModel(G4String);
-  ~BDSShowerModel();
-private: 
+  virtual ~BDSShowerModel(){;}
+private:
   G4bool CheckContainment(const G4FastTrack& fastTrack);
 };
 #endif
