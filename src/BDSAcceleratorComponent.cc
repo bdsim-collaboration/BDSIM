@@ -2,6 +2,7 @@
 #include "BDSBeamPipeInfo.hh"
 #include "BDSDebug.hh"
 #include "BDSExtent.hh"
+#include "BDSFieldBuilder.hh"
 #include "BDSFieldInfo.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
@@ -89,6 +90,15 @@ void BDSAcceleratorComponent::Initialise()
   G4cout << __METHOD_NAME__ << G4endl;
 #endif
   Build();
+
+  // field construction must be done after all the geometry is constructed if the
+  // field is to propagate to the daughter volumes correctly.
+  if (fieldInfo)
+    {
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(fieldInfo,
+								containerLogicalVolume,
+								true);
+    }
   initialised = true; // record that this component has been initialised
 }
 
