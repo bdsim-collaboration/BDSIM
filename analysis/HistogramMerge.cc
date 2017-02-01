@@ -170,10 +170,10 @@ void HistogramMerge::Terminate()
 	    {
 	      for (int l = 0; l <= h1->GetNbinsZ()+1; ++l)
 		{
-		  double mean = h1->GetBinContent(j,k)/entries;
-		  double std  = sqrt((h1e->GetBinContent(j,k)/entries-pow(mean,2))/entries);
-		  h1->SetBinContent(j,k,mean);
-		  h1->SetBinError(j,k,std);
+		  double mean = h1->GetBinContent(j,k,l)/entries;
+		  double std  = sqrt((h1e->GetBinContent(j,k,l)/entries-pow(mean,2))/entries);
+		  h1->SetBinContent(j,k,l,mean);
+		  h1->SetBinError(j,k,l,std);
 		}
 	    }
 	}
