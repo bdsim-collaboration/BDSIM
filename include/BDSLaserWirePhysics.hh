@@ -11,7 +11,6 @@ public:
 
   virtual void ConstructProcess();
   virtual void ConstructParticle();
-
 };
 
 #endif

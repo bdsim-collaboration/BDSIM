@@ -3,16 +3,16 @@
 #include "G4ThreeVector.hh"
 #include "GVFlashShowerParameterisation.hh"
 
-BDSShowerModel::BDSShowerModel(G4String modelName, G4Region* envelope):GFlashShowerModel(modelName, envelope){
-}
+BDSShowerModel::BDSShowerModel(G4String modelName, G4Region* envelope):
+  GFlashShowerModel(modelName, envelope)
+{;}
 
-BDSShowerModel::BDSShowerModel(G4String modelName):GFlashShowerModel(modelName){
-}
+BDSShowerModel::BDSShowerModel(G4String modelName):
+  GFlashShowerModel(modelName)
+{;}
 
-BDSShowerModel::~BDSShowerModel(){
-}
-
-G4bool BDSShowerModel::CheckContainment(const G4FastTrack& fastTrack){
+G4bool BDSShowerModel::CheckContainment(const G4FastTrack& fastTrack)
+{
   G4bool filter=false;
   // track informations
   G4ThreeVector DirectionShower=fastTrack.GetPrimaryTrackLocalDirection();
@@ -36,17 +36,18 @@ G4bool BDSShowerModel::CheckContainment(const G4FastTrack& fastTrack){
   for(int i=0; i<4 ;i++)
     {
       // polar coordinates
-      Position = InitialPositionShower       + 
+      Position = InitialPositionShower + 
 	Z*DirectionShower           +
 	R*CosPhi[i]*OrthoShower     +
 	R*SinPhi[i]*CrossShower     ;
       
       if(SolidCalo->Inside(Position) != kOutside) 
-	NlateralInside++;
+	{NlateralInside++;}
     }
   
   // choose to parameterise or flag when all inetc...
-  if(NlateralInside==4) filter=true;
+  if(NlateralInside==4)
+    {filter=true;}
   // G4cout << " points =   " <<NlateralInside << G4endl;
   return filter;
 }
