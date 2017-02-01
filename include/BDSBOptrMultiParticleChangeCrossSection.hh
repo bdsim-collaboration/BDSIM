@@ -1,7 +1,6 @@
 #ifndef BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 #define BDSBOPTRMULTIPARTICLECHANGECROSSSECTION_H
 
-// this class uses classes from Geant4 10.0 and is dependent on BDSBOptChangeCrossSection which needs 10.1
 #include "G4Version.hh"
 #if G4VERSION_NUMBER > 1009
 
@@ -11,7 +10,19 @@ class G4ParticleDefinition;
 
 #include <map>
 
-class BDSBOptrMultiParticleChangeCrossSection : public G4VBiasingOperator {
+/**
+ * @brief Multi-particle cross-section changer.
+ *
+ * This class uses classes from Geant4 10.0 and is dependent on 
+ * BDSBOptChangeCrossSection which needs 10.1.
+ *
+ * Largely based on the Geant4 example of this feature.
+ *
+ * @author Stewar Boogert
+ */
+
+class BDSBOptrMultiParticleChangeCrossSection: public G4VBiasingOperator
+{
 public:
   BDSBOptrMultiParticleChangeCrossSection();
   virtual ~BDSBOptrMultiParticleChangeCrossSection();

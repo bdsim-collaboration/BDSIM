@@ -9,6 +9,12 @@
 #include "TVector3.h"
 #include "TRotation.h"
 
+/**
+ * @brief Information stored per model representing accelerator.
+ * 
+ * @author Stewart Booget
+ */
+
 class BDSOutputROOTEventModel: public TObject
 {
 public:

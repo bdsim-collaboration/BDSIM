@@ -12,6 +12,12 @@
 #include "TH2D.h"
 #include "TH3D.h"
 
+/**
+ * @brief Holder for a set of histograms to be stored.
+ *
+ * @author Stewart Boogert
+ */
+
 class BDSOutputROOTEventHistograms : public TObject
 {
 public:

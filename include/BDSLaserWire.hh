@@ -1,14 +1,17 @@
-/* BDSIM code.    Version 1.0
-   Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   Last modified 24.7.2002
-   Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-*/
-
 #ifndef BDSLASERWIRE_H
 #define BDSLASERWIRE_H
 
 #include "globals.hh"  // geant4 types / globals
 #include "BDSAcceleratorComponent.hh"
+
+/**
+ * @brief A laser wire scanner.
+ * 
+ * This builds a box with the default aperture in BDSGlobalConstants
+ * and with the desired length. The box is the sole piece of geometry
+ * and contains the special "LaserVac" material the provides the 'target'
+ * of photons from the laser that the beam will scatter from.
+ */
 
 class BDSLaserWire :public BDSAcceleratorComponent
 {

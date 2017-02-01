@@ -6,7 +6,13 @@
 
 #include  <vector>
 
-class BDSShowerModel:public GFlashShowerModel
+/**
+ * @brief Revised implementation of GFlash with different fraction of shower considered.
+ *
+ * Not currently maintained.
+ */
+
+class BDSShowerModel: public GFlashShowerModel
 {
 public:
   BDSShowerModel(G4String, G4Region*);
