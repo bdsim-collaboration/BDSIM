@@ -4,6 +4,8 @@
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSMySQLTable.hh"
+#include "BDSMySQLVariable.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
