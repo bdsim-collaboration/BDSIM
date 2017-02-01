@@ -727,7 +727,7 @@ void BDSAwakeSpectrometer::BuildScreen()
 }
 
 void BDSAwakeSpectrometer::PlaceScreen(){
-  _mlScreen->place(_screenRotationMatrix,
+  _mlScreen->Place(_screenRotationMatrix,
 		   G4ThreeVector(_screenCentreX,0,_screenCentreZ),
 		   containerLogicalVolume
 		   );

@@ -347,7 +347,7 @@ void BDSAwakeScintillatorScreen::BuildScreen()
 void BDSAwakeScintillatorScreen::PlaceScreen(){
   double zOffset = 0;//_totalThickness*cos(_screenAngle)/2.0;
   double xOffset = -_totalThickness*sin(_screenAngle)/2.0;
-  _mlScreen->place(_screenRotationMatrix,
+  _mlScreen->Place(_screenRotationMatrix,
 		   G4ThreeVector(xOffset,0,-_cameraScreenDist/2.0+zOffset),
 		   containerLogicalVolume
 		   );
