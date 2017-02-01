@@ -12,13 +12,13 @@ class BDSParameterisationPhysics: public G4VPhysicsConstructor
 {
 public:
   BDSParameterisationPhysics();
-  virtual ~BDSParameterisationPhysics();
+  virtual ~BDSParameterisationPhysics(){;}
   void ConstructProcess();
   void ConstructParticle();
   
 private:
-  G4bool _wasActivated;
-  G4FastSimulationManagerProcess* _fastSimulationManagerProcess;
+  G4bool activated;
+  G4FastSimulationManagerProcess* fastSimulationManagerProcess;
 };
 
 #endif
