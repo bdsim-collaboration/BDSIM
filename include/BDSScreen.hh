@@ -45,8 +45,6 @@ private:
   G4ThreeVector screenPos;
   G4RotationMatrix* screenRot;
   G4int nLayers;
-
-  //TODO  virtual void BuildFieldAndStepper(); 
 };
 
 #endif

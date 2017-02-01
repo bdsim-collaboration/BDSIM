@@ -15,6 +15,9 @@ BDSLaserWire::BDSLaserWire(G4String      name,
   itsLaserWavelength(wavelength)
 {;}
 
+BDSLaserWire::~BDSLaserWire()
+{;}
+
 void BDSLaserWire::BuildContainerLogicalVolume()
 {
   G4double beamPipeRadius = BDSGlobalConstants::Instance()->GetDefaultBeamPipeModel()->aper1;
@@ -30,6 +33,3 @@ void BDSLaserWire::BuildContainerLogicalVolume()
 
   SetAcceleratorVacuumLogicalVolume(containerLogicalVolume);
 }
-
-BDSLaserWire::~BDSLaserWire()
-{}
