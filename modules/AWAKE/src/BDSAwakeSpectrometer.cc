@@ -452,7 +452,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   G4double dispX=_cameraScreenDist-_scoringPlaneThickness/2.0;
   G4double dispY=0;
-  G4double dispZ=-_cameraScreenDist/2.0;;
+  G4double dispZ=-_cameraScreenDist/2.0;
 
   G4int samplerID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName,
 								     nullptr);
@@ -501,7 +501,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   G4double dispX3=_cameraScreenDist/2.0-_scoringPlaneThickness/2.0;
   G4double dispY3=0;
-  G4double dispZ3=-_cameraScreenDist/2.0;;
+  G4double dispZ3=-_cameraScreenDist/2.0;
 
   G4int samplerID3 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName3,
 								     nullptr);
@@ -546,7 +546,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   G4double dispX5=_cameraScreenDist/4.0-_scoringPlaneThickness/2.0;
   G4double dispY5=0;
-  G4double dispZ5=-_cameraScreenDist/2.0;;
+  G4double dispZ5=-_cameraScreenDist/2.0;
 
   G4int samplerID5 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName5,
 								     nullptr);

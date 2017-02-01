@@ -130,7 +130,7 @@ std::ostream& operator<< (std::ostream &out, BDSAcceleratorComponentRegistry con
   out << "Accelerator Component Registry:" << G4endl;
   BDSAcceleratorComponentRegistry::const_iterator it = r.registry.begin();
   for (; it != r.registry.end(); ++it)
-    {out << std::left << std::setw(15) << it->second->GetType() << " \"" << it->first << "\"" << G4endl;;}
+    {out << std::left << std::setw(15) << it->second->GetType() << " \"" << it->first << "\"" << G4endl;}
   // reset flags
   out.flags(ff);
   return out;

@@ -549,7 +549,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       }
       else if(i == 2 && k < 2)
       {
-	deriv = 1/centMoms[4][4][2][0];;
+	deriv = 1/centMoms[4][4][2][0];
       }
       else {deriv=0;}
       
@@ -568,7 +568,7 @@ double SamplerAnalysis::centMomToDerivative(fourDArray &centMoms, int k, int t, 
       }
       else if(i == 2 && k < 2)
       {
-	deriv = 1/centMoms[4][4][2][0];;
+	deriv = 1/centMoms[4][4][2][0];
       }
       else {deriv=0;}
       

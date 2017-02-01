@@ -90,7 +90,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
   G4double dispX=_cameraScreenDist-_scoringPlaneThickness/2.0;
   G4double dispY=0;
-  G4double dispZ=-_cameraScreenDist/2.0;;
+  G4double dispZ=-_cameraScreenDist/2.0;
 
   G4RotationMatrix* rotY90 = new G4RotationMatrix();
   rotY90->rotateY(CLHEP::halfpi);
@@ -141,7 +141,7 @@ void BDSAwakeScintillatorScreen::BuildCameraScoringPlane(){
 
   G4double dispX3=_cameraScreenDist/2.0-_scoringPlaneThickness/2.0;
   G4double dispY3=0;
-  G4double dispZ3=-_cameraScreenDist/2.0;;
+  G4double dispZ3=-_cameraScreenDist/2.0;
 
   new G4PVPlacement(rotY90,
 		    G4ThreeVector(dispX3,dispY3,dispZ3),
