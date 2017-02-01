@@ -58,7 +58,7 @@ public:
   /// @{ The difference in a dimension.
   inline G4double DX() const {return extXPos - extXNeg;}
   inline G4double DY() const {return extYPos - extYNeg;}
-  inline G4double DZ() const {return extZPos - extZPos;}
+  inline G4double DZ() const {return extZPos - extZNeg;}
   /// @}
 
   /// @{ Comparison operator.
