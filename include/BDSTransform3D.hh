@@ -27,15 +27,15 @@ public:
   virtual ~BDSTransform3D();
 
   ///@{ Access the change in reference coordinates this component should induce
-  inline G4double GetDX() const;
-  inline G4double GetDY() const;
-  inline G4double GetDZ() const;
+  inline G4double GetDX() const {return dx;}
+  inline G4double GetDY() const {return dy;}
+  inline G4double GetDZ() const {return dz;}
   ///@}
   
   ///@{ Access the change in Euler angle this component should induce
-  inline G4double GetDTheta() const;
-  inline G4double GetDPsi()   const;
-  inline G4double GetDPhi()   const;
+  inline G4double GetDTheta() const {return dTheta;}
+  inline G4double GetDPsi()   const {return dPsi;}
+  inline G4double GetDPhi()   const {return dPhi;}
   ///@}
   
 private:
@@ -52,24 +52,5 @@ private:
   G4double dPsi;
   G4double dPhi;
 };
-
-inline G4double BDSTransform3D::GetDX() const
-{return dx;}
-
-inline G4double BDSTransform3D::GetDY() const
-{return dy;}
-
-inline G4double BDSTransform3D::GetDZ() const
-{return dz;}
-
-inline G4double BDSTransform3D::GetDTheta() const
-{return dTheta;}
-
-inline G4double BDSTransform3D::GetDPsi() const
-{return dPsi;}
-
-inline G4double BDSTransform3D::GetDPhi() const
-{return dPhi;}
-
 
 #endif

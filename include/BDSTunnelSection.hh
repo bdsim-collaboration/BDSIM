@@ -35,6 +35,9 @@ public:
   /// be false even though it effectively 'is' initialised.
   virtual void Initialise();
 
+  G4VSolid* InnerIntersectionSolid() const {return innerIntersectionSolid;}
+
+protected:
   /// Have to provide implementation - does nothing
   virtual void BuildContainerLogicalVolume();
 

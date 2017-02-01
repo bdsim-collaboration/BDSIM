@@ -18,7 +18,7 @@ public:
   virtual ~BDSSampler(){;}
 
   /// Return the name of this sampler.
-  inline G4String GetName() const;
+  inline G4String GetName() const {return name;}
   
 protected:
   /// Common construction tasks such as creating a logical volume from the solid
@@ -29,8 +29,5 @@ private:
   /// Name of this sampler
   G4String name;
 };
-
-inline G4String BDSSampler::GetName() const
-{return name;}
 
 #endif
