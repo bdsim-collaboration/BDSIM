@@ -63,7 +63,7 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     auto h1e = this->histograms1DError[i];
     h1e->SetName((std::string(h1->GetName())+"Error").c_str());
     auto h2  = hIn->Get1DHistograms()[i];
-    // loop over bins
+    // loop over all bins (0=underflow nbins+1=overflow)
     for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
       h1->SetBinContent(j,h1->GetBinContent(j)+h2->GetBinContent(j));
@@ -81,9 +81,9 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     h1e->SetName((std::string(h1->GetName())+"Error").c_str());
     auto h2  = hIn->Get2DHistograms()[i];
 
-    for(int j=0;j<h1->GetNbinsX()+1;++j)
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
-      for(int k=0;k<h1->GetNbinsY()+1;++k)
+      for(int k=0;k<=h1->GetNbinsY()+1;++k)
       {
         h1->SetBinContent(j,k,h1->GetBinContent(j,k)+h2->GetBinContent(j,k));
         h1e->SetBinContent(j,k,h1e->GetBinContent(j,k)+pow(h2->GetBinContent(j,k),2));
@@ -101,11 +101,11 @@ void HistogramMerge::Add(BDSOutputROOTEventHistograms *hIn)
     h1e->SetName((std::string(h1->GetName())+"Error").c_str());
     auto h2  = hIn->Get3DHistograms()[i];
 
-    for(int j = 0; j < h1->GetNbinsX() + 1; ++j)
+    for(int j = 0; j <= h1->GetNbinsX() + 1; ++j)
       {
-	for(int k = 0; k < h1->GetNbinsY() + 1; ++k)
+	for(int k = 0; k <= h1->GetNbinsY() + 1; ++k)
 	  {
-	    for (int l = 0; l < h1->GetNbinsZ()+1; ++l)
+	    for (int l = 0; l <= h1->GetNbinsZ()+1; ++l)
 	      {
 		h1->SetBinContent(j,k,l,h1->GetBinContent(j,k,l)+h2->GetBinContent(j,k,l));
 		h1e->SetBinContent(j,k,l, h1e->GetBinContent(j,k,l)+pow(h2->GetBinContent(j,k,l),2));
@@ -129,7 +129,8 @@ void HistogramMerge::Terminate()
     auto h1e = histograms1DError[i];
     int entries = histograms1DN[i];
 
-    for(int j=0;j<=h1->GetNbinsX()+1;++j) //TBC - why <= and not <
+    // loop over all bins (0=underflow nbins+1=overflow)
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
       double mean = h1->GetBinContent(j)/entries;
       double std  = sqrt((h1e->GetBinContent(j)/entries-pow(mean,2))/entries);
@@ -145,7 +146,7 @@ void HistogramMerge::Terminate()
     auto h1  = histograms2D[i];
     auto h1e = histograms2DError[i];
     int entries = histograms2DN[i];
-    for(int j=0;j<=h1->GetNbinsX()+1;++j)//TBC - why <= and not <
+    for(int j=0;j<=h1->GetNbinsX()+1;++j)
     {
       for(int k=0;k<=h1->GetNbinsY()+1;++k)
       {
@@ -164,7 +165,7 @@ void HistogramMerge::Terminate()
       auto h1  = histograms3D[i];
       auto h1e = histograms3DError[i];
       int entries = histograms3DN[i];
-      for(int j = 0; j <= h1->GetNbinsX() + 1; ++j)//TBC - why <= and not <
+      for(int j = 0; j <= h1->GetNbinsX() + 1; ++j)
 	{
 	  for(int k = 0; k <= h1->GetNbinsY() + 1; ++k)
 	    {
