@@ -91,9 +91,6 @@ protected:
   
   /// Magnet type
   BDSMagnetType magnetType;
-  
-  /// Model information for the beam pipe
-  BDSBeamPipeInfo* beamPipeInfo;
 
   /// Model information for the outer volume construction
   BDSMagnetOuterInfo* magnetOuterInfo;

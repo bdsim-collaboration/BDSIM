@@ -25,7 +25,7 @@ class G4LogicalVolume;
  * 
  * This is an abstract class as the derived class must provide the 
  * implementation of BuildContainerLogicalVolume() that constructs at 
- * least a single volume which would be assumed to be a container if greater
+ * least a single volume, which would be assumed to be a container if greater
  * geometry hierarchy is constructed. This is the minimum required so that an 
  * instance of the derived class will operate with the rest of the placement 
  * machinery in BDSIM. The derived class should override Build() to add further 
@@ -69,7 +69,9 @@ public:
   /// should also be specified if non-zero. Additionally, a field info instance
   /// that represents a 'global' field for this component may be specified. Face
   /// normal (unit) vectors are w.r.t. the incoming / outgoing reference trajectory
-  /// and NOT the local geometry of the component. 
+  /// and NOT the local geometry of the component.
+  /// The BDSBeamPipeInfo instance is associated with this class so that the survey
+  /// output of BDSIM can query the aperture of any element.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
@@ -123,7 +125,9 @@ public:
   /// Get the region name for this component.
   G4String GetRegion() const {return region;}
 
-  /// Access beam pipe information
+  /// Access beam pipe information, which is stored in this class to provide
+  /// aperture information when making a survey of the beamline consisting of
+  /// accelerator components.
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
   /// @{ Access face normal unit vector. This is w.r.t. the incoming / outgoing reference
@@ -187,8 +191,10 @@ protected:
   G4double         chordLength;
   G4double         angle;
   G4String         region;
-  BDSBeamPipeInfo* beamPipeInfo;
   ///@}
+
+  /// Optional beam pipe recipe that is written out to the survey if it exists.
+  BDSBeamPipeInfo* beamPipeInfo;
 
   /// Useful variables often used in construction
   static G4double    lengthSafety;

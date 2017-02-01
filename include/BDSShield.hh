@@ -50,7 +50,6 @@ private:
   G4double         xAper;         ///< Inner horizontal full width of shield.
   G4double         yAper;         ///< Inner vertical full width of shield.
   G4Material*      material;      ///< Shield material.
-  BDSBeamPipeInfo* beamPipeInfo;  ///< Model for beam pipe.
 };
 
 #endif
