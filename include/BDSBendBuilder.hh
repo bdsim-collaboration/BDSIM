@@ -28,8 +28,7 @@ namespace BDS
   BDSAcceleratorComponent* BuildSBendLine(const GMAD::Element*    element,
 					  BDSMagnetStrength*      st,
 					  const G4double          brho,
-					  const BDSIntegratorSet* integratorSet,
-					  const G4double          charge);
+					  const BDSIntegratorSet* integratorSet);
   
   /// Construct beamline for an rbend.  A line is returned with a single
   /// magnet as the main dipole, but can have fringefield magnets placed
@@ -39,8 +38,7 @@ namespace BDS
 			  const GMAD::Element*    nextElement,
 			  const G4double          brho,
 			  BDSMagnetStrength*      st,
-			  const BDSIntegratorSet* integratorSet,
-			  const G4double          charge);
+			  const BDSIntegratorSet* integratorSet);
 
   /// Utility function to calculate the number of segments an sbend should be split into.
   /// Based on aperture error tolerance - default is 1mm.

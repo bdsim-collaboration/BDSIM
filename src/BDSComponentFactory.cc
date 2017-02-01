@@ -62,7 +62,6 @@ using namespace GMAD;
 BDSComponentFactory::BDSComponentFactory()
 {
   lengthSafety  = BDSGlobalConstants::Instance()->LengthSafety();
-  charge        = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();
   brho          = BDSGlobalConstants::Instance()->BRho();
   integratorSet = BDS::IntegratorSet(BDSGlobalConstants::Instance()->IntegratorSet());
 
@@ -384,7 +383,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateSBend()
   G4cout << "Field " << (*st)["field"] << G4endl;
 #endif
   
-  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet, charge);
+  auto sBendLine = BDS::BuildSBendLine(element, st, brho, integratorSet);
   
   return sBendLine;
 }
@@ -420,8 +419,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
 					   nextElement,
 					   brho,
 					   st,
-					   integratorSet,
-					   charge);
+					   integratorSet);
   return rbendline;
 }
 
@@ -1145,7 +1143,6 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-  G4double ffact  = BDSGlobalConstants::Instance()->FFact();
   
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
@@ -1155,12 +1152,12 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
-      angle = charge * ffact * field * length / brho ;
+      angle = field * length / brho ;
     }
   else
     {// only angle - calculate B field
       angle = element->angle * CLHEP::rad;
-      field = brho * angle / length / charge * ffact;
+      field = brho * angle / length;
     }
   
   return std::make_pair(angle,field);
@@ -1176,7 +1173,6 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
   // for the field calculation and the accelerator component.
   chordLength = element->l * CLHEP::m;
   G4double arcLengthLocal = chordLength;
-  G4double ffact = BDSGlobalConstants::Instance()->FFact();
   
   if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
     {// both are specified and should be used - under or overpowered dipole by design
@@ -1191,7 +1187,7 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
     {// only B field - calculate angle
       field = element->B * CLHEP::tesla;
       G4double bendingRadius = brho / field; // in mm as brho already in g4 units
-      angle = charge * ffact * 2.0*asin(chordLength*0.5 / bendingRadius);
+      angle = 2.0*asin(chordLength*0.5 / bendingRadius);
       arcLengthLocal = bendingRadius * angle;
     }
   else
@@ -1202,13 +1198,13 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
 	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
 	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
 	  arcLengthLocal = bendingRadius * angle;
-	  field = brho * angle / std::abs(arcLengthLocal) / charge * ffact;
+	  field = brho * angle / std::abs(arcLengthLocal);
         }
       else
 	{field = 0;} // 0 angle -> chord length and arc length the same; field 0
     }
 
-  // Ensure positive length despite sign of angle or charge.
+  // Ensure positive length despite sign of angle.
   arcLength = std::abs(arcLengthLocal);
 }
 
