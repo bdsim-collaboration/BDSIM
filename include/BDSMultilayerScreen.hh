@@ -1,6 +1,7 @@
 #ifndef BDSMULTILAYERSCREEN_H
 #define BDSMULTILAYERSCREEN_H 
 
+#include <map>
 #include <vector>
 
 #include "globals.hh"
@@ -28,46 +29,69 @@ public:
 		      G4String    name);
   virtual ~BDSMultilayerScreen();
 
+  /// Construct and add a screen layer.
+  void AddScreenLayer(G4double thickness,
+		      G4String material,
+		      G4String name,
+		      G4int    isSampler = 0,
+		      G4double grooveWidth = 0,
+		      G4double grooveSpatialFrequency = 0);
+  /// Add a premade screen layer - retains ownership of layer.
+  void AddScreenLayer(BDSScreenLayer* layer, G4int isSampler=0);
+
+  /// Full size of screen in x,y,z.
   inline const G4ThreeVector& GetSize() const {return size;}
+  /// Get a particular screen layer by index.
+  inline BDSScreenLayer* ScreenLayer(G4int layer) {return screenLayers[layer];}
+  /// Get a particular screen layer by name.
+  BDSScreenLayer* ScreenLayer(G4String layerName);
+  /// Get the last layer of the screen.
+  BDSScreenLayer* LastLayer() const {return screenLayers.back();}
+  /// Size of the screen.
+  inline G4int NLayers() const {return (G4int)screenLayers.size();}
 
-  void screenLayer(G4double thickness,
-		   G4String material,
-		   G4String name,
-		   G4int    isSampler=0,
-		   G4double grooveWidth=0,
-		   G4double grooveSpatialFrequency=0);
+  /// Set a physical placement to member variable.
+  inline void SetPhys(G4PVPlacement* physIn) {phys = physIn;}
 
-  void screenLayer(BDSScreenLayer* layer, G4int isSampler=0);
+  /// Construct container, compute dimensions then place layers.
+  void Build();
 
-  inline BDSScreenLayer* screenLayer(G4int layer){return screenLayers[layer];}
+  /// Place the member logical volume 'log' with a given transform in a given mother volume.
+  virtual void Place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
 
-  BDSScreenLayer* screenLayer(G4String layer);
-
-  BDSScreenLayer* lastLayer();
-
-  inline G4double nLayers()const{return screenLayers.size();}
-
-  void build();
-  inline void SetPhys(G4PVPlacement* physIn){phys = physIn;}
-  virtual void place(G4RotationMatrix* rot, G4ThreeVector pos, G4LogicalVolume* motherVol);
-  void reflectiveSurface(G4int layer1, G4int layer2);
-  void roughSurface(G4int layer1, G4int layer2);
+  /// Construct a reflective surface between two layers.
+  void ReflectiveSurface(G4int layer1, G4int layer2);
+  /// Construct a rough surface between two layers.
+  void RoughSurface(G4int layer1, G4int layer2);
 
 private:
-  G4TwoVector xysize;
-  G4String name;
-  G4ThreeVector size;
+  /// Private default constructor to force use of provided one.
+  BDSMultilayerScreen();
 
-  // Geometrical objects:
+  /// Calculate the extent of the multilayer screen given all the layers.
+  void ComputeDimensions();
+
+  /// Build a container volume
+  void BuildMotherVolume();
+
+  /// Place each layer in order in the container volume.
+  void PlaceLayers();
+  
+  G4TwoVector   xysize; ///< X,Y size of multilayer screen.
+  G4String      name;   ///< Name of multilayer screen.
+  G4ThreeVector size;   ///< Extent.
+
+  /// @{ Geometrical objects:
   G4LogicalVolume* log;
-  G4PVPlacement* phys;
-  G4VSolid* solid;
-  std::vector<BDSScreenLayer*> screenLayers;
-  std::vector<G4double> screenLayerZPos;
-  void computeDimensions();
-  void buildMotherVolume();
-  void placeLayers();
+  G4PVPlacement*   phys;
+  G4VSolid*        solid;
+  /// @}
+  std::vector<BDSScreenLayer*>        screenLayers;     ///< Main storage of all layers.
+  std::map<G4String, BDSScreenLayer*> screenLayerNames; ///< Map of names for looking up.
+  std::vector<G4double> screenLayerZPos;///< Cache of calculated z locations for layers.
 
+  /// Colour wheel that iterately supplies different colours - allows each layer to be
+  /// clearly visualised.
   BDSColourWheel* colourWheel;
 };
 
