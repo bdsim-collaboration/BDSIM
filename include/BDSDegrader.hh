@@ -24,12 +24,12 @@ public:
   virtual ~BDSDegrader();
   
 protected:
-  void Build();
+  virtual void Build();
   
-  void BuildContainerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   
   G4double outerDiameter;
-  G4int numberWedges;
+  G4int    numberWedges;
   G4double wedgeLength;
   G4double degraderHeight;
   G4double degraderOffset;
