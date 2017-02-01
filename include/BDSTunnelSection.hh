@@ -42,6 +42,15 @@ protected:
   virtual void BuildContainerLogicalVolume();
 
   G4VSolid* innerIntersectionSolid;
+
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSTunnelSection() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTunnelSection& operator=(const BDSTunnelSection&) = delete;
+  BDSTunnelSection(BDSTunnelSection&) = delete;
+  /// @}
 };
 
 #endif

@@ -54,6 +54,14 @@ public:
   /// @}
   
 protected:
+  /// Private default constructor to force the use of the supplied one.
+  BDSMagnet() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSMagnet& operator=(const BDSMagnet&) = delete;
+  BDSMagnet(BDSMagnet&) = delete;
+  /// @}
+  
   /// Overridden method of BDSAcceleratorComponent to not only build container, but
   /// first construct field objects. After using BDSAcceleratorComponent::Build() to
   /// build the container, the beam pipe and outer geometry are built.

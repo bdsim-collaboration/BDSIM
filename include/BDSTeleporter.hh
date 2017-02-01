@@ -32,6 +32,14 @@ public:
   virtual ~BDSTeleporter();
 
 private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSTeleporter() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTeleporter& operator=(const BDSTeleporter&) = delete;
+  BDSTeleporter(BDSTeleporter&) = delete;
+  /// @}
+  
   /// Overridden method from BDSAcceleratorComponent that dictates the construction.
   virtual void Build();
 

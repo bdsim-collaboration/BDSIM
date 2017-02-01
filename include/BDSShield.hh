@@ -38,7 +38,11 @@ protected:
   virtual void Build();
 
 private:
+  /// @{ Default constructor, assignment and copy constructor not used.
   BDSShield() = delete;
+  BDSShield& operator=(const BDSShield&) = delete;
+  BDSShield(BDSShield&) = delete;
+  /// @}
   
   /// Build the outer shield geoemtry.
   void BuildShield();

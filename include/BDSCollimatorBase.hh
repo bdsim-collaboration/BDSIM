@@ -63,6 +63,15 @@ protected:
   G4String vacuumMaterial;
   /// Colour of collimator
   G4String colour;
+
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSCollimatorBase() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCollimatorBase& operator=(const BDSCollimatorBase&) = delete;
+  BDSCollimatorBase(BDSCollimatorBase&) = delete;
+  /// @}
 };
 
 #endif

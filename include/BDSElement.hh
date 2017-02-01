@@ -25,6 +25,14 @@ public:
   virtual ~BDSElement(){;}
    
 private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSElement() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSElement& operator=(const BDSElement&) = delete;
+  BDSElement(BDSElement&) = delete;
+  /// @}
+  
   /// This does the full construction.  Loads the external geometry and field if there is
   /// one.
   virtual void BuildContainerLogicalVolume();

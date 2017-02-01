@@ -27,6 +27,11 @@ public:
 private:
   /// Private default constructor to ensure use of provided one.
   BDSSamplerCylinder();
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSSamplerCylinder& operator=(const BDSSamplerCylinder&) = delete;
+  BDSSamplerCylinder(BDSSamplerCylinder&) = delete;
+  /// @}
 };
 
 #endif

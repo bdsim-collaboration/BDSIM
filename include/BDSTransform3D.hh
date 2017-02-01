@@ -39,6 +39,14 @@ public:
   ///@}
   
 private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSTransform3D() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTransform3D& operator=(const BDSTransform3D&) = delete;
+  BDSTransform3D(BDSTransform3D&) = delete;
+  /// @}
+  
   /// Contractual function overload from virtual base class
   /// BDSAcceleratorComponent. In this case has null implementation
   /// as the transform only inherits BDSAcceleratorComponent so that

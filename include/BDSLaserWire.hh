@@ -22,29 +22,26 @@ public:
 	       G4ThreeVector aDirection);
   virtual ~BDSLaserWire();
 
-  inline void SetLaserDirection(G4ThreeVector aDirection);
-  inline G4ThreeVector GetLaserDirection();
+  inline void SetLaserDirection(G4ThreeVector aDirection) {itsLaserDirection=aDirection;}
+  inline G4ThreeVector GetLaserDirection() const {return itsLaserDirection;}
 
-  inline void SetLaserWavelength(G4double aWavelength);
-  inline G4double GetLaserWavelength();
+  inline void SetLaserWavelength(G4double aWavelength) {itsLaserWavelength=aWavelength;}
+  inline G4double GetLaserWavelength() const {return itsLaserWavelength;}
 
 private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSLaserWire() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSLaserWire& operator=(const BDSLaserWire&) = delete;
+  BDSLaserWire(BDSLaserWire&);
+  /// @}
+
+  /// Construct geometry and assign with special "LaserVac" material.
   virtual void BuildContainerLogicalVolume();
 
   G4ThreeVector itsLaserDirection;
   G4double itsLaserWavelength;
 };
-
-inline void BDSLaserWire::SetLaserDirection(G4ThreeVector aDirection)
-{itsLaserDirection=aDirection;}
-
-inline G4ThreeVector BDSLaserWire::GetLaserDirection()
-{return itsLaserDirection;}
-
-inline void BDSLaserWire::SetLaserWavelength(G4double aWavelength)
-{itsLaserWavelength=aWavelength;}
-
-inline G4double BDSLaserWire::GetLaserWavelength()
-{return itsLaserWavelength;}
 
 #endif
