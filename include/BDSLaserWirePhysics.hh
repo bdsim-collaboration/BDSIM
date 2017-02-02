@@ -3,6 +3,10 @@
 
 #include "G4VPhysicsConstructor.hh"
 
+/**
+ * @brief Constructor for BDSLaserCompton process.
+ */
+
 class BDSLaserWirePhysics: public G4VPhysicsConstructor
 {
 public:
@@ -11,7 +15,6 @@ public:
 
   virtual void ConstructProcess();
   virtual void ConstructParticle();
-
 };
 
 #endif

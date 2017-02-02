@@ -1,14 +1,3 @@
-/* * BDSIM code.    Version 1.0
-   * Author: Grahame A. Blair, Royal Holloway, Univ. of London.
-   * Last modified 24.7.2002
-   * Copyright (c) 2002 by G.A.Blair.  ALL RIGHTS RESERVED. 
-
-
-   Author of this code: John C. Carter, Royal Holloway, Univ. of London.
-   Last modified 12.10.2005
-*/
-
-
 #include <cstdlib>
 #include <string>
 #include <vector>
@@ -92,7 +81,7 @@ BDSMySQLTable::~BDSMySQLTable()
 void BDSMySQLVariable::Print(){
   G4cout << __METHOD_NAME__ << G4endl;
   std::string varType=GetVarType();
-  G4cout << GetName() << " " << GetVarType() << " " << G4endl;;
+  G4cout << GetName() << " " << GetVarType() << " " << G4endl;
   for(int i=0; i<GetNVariables(); i++){
     if(varType=="DOUBLE") G4cout << GetDblValue(i) << G4endl;
     if(varType=="INTEGER")G4cout << GetIntValue(i) << G4endl;

@@ -103,12 +103,6 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray1DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -128,8 +122,8 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -171,12 +165,6 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray2DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -199,9 +187,9 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
-  double zStep = (ymax - ymin) / (G4double)nZ;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
+  double zStep = (ymax - ymin) / ((G4double)nZ - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -249,12 +237,6 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray3DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -280,10 +262,10 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
-  double zStep = (ymax - ymin) / (G4double)nZ;
-  double tStep = (tmax - tmin) / (G4double)nT;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
+  double zStep = (ymax - ymin) / ((G4double)nZ - 1);
+  double tStep = (tmax - tmin) / ((G4double)nT - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -336,12 +318,6 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray4DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;

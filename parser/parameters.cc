@@ -67,7 +67,7 @@ Parameters::Parameters()
   setMap["xdir"] = false;
   setMap["ydir"] = false;
   setMap["zdir"] = false; 
-  setMap["waveLength"] = false; 
+  setMap["waveLength"] = false;
   setMap["gradient"] = false;
   setMap["phi"] = false;
   setMap["theta"] = false;
@@ -77,7 +77,7 @@ Parameters::Parameters()
   setMap["bias"] = false, setMap["biasMaterial"] = false, setMap["biasVacuum"] = false;
   setMap["samplerName"] = false;
   setMap["samplerType"] = false;
-  setMap["r"] = false; // for samplerRadius
+  setMap["samplerRadius"] = false;
   setMap["region"] = false;
   setMap["fieldOuter"]  = false;
   setMap["fieldVacuum"] = false;
@@ -88,7 +88,6 @@ Parameters::Parameters()
   setMap["scintmaterial"] = false;
   setMap["windowmaterial"] = false;
   setMap["mountmaterial"] = false;
-  setMap["airmaterial"] = false;
   setMap["spec"] = false;
   setMap["cavityModel"] = false;
 

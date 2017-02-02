@@ -1,7 +1,6 @@
 #include "BDSAcceleratorComponent.hh"
 #include "BDSBeamline.hh"
 #include "BDSBeamlineElement.hh"
-#include "BDSDebug.hh"
 #include "BDSExtent.hh"
 #include "BDSCurvilinearBuilder.hh"
 #include "BDSCurvilinearFactory.hh"
@@ -96,7 +95,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 	  if (straightSoFar || signflip)
 	    {
 	      // occurs if we've passed a straight element and now hit an angled one; or
-	      // if the we're going from bending one way to another.
+	      // if we're going from bending one way to another.
 	      // make from startingElement to currentElement-1 so only straight components
 	      // this means we keep the best accuracy for coordinates for the straight section
 	      //finishingElement = currentElement - 1;
@@ -239,8 +238,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 	  if (tilted)
 	    {to = (*startElement)->GetTiltOffset();}
 
-	  G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*accumulatedAngle);
-	  G4double arcLength = meanBendingRadius * accumulatedAngle;
+	  G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*std::abs(accumulatedAngle));
+	  G4double arcLength = meanBendingRadius * std::abs(accumulatedAngle);
 	  
 	  component = factory->CreateCurvilinearVolume(elementName,
 						       arcLength,
@@ -295,8 +294,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateElementFromComponent(BDSSimpleC
       G4ThreeVector posRefStart = (*startElement)->GetReferencePositionStart();
       G4ThreeVector posRefEnd   = (*finishElement)->GetReferencePositionEnd();
       G4ThreeVector posRefMid   = 0.5 * (posRefStart + posRefEnd);
-      G4RotationMatrix* rotRefStart = new G4RotationMatrix(*((*startElement)->GetReferenceRotationStart()));
-      G4RotationMatrix* rotRefEnd   = new G4RotationMatrix(*((*finishElement)->GetReferenceRotationEnd()));
+      G4RotationMatrix* rotRefStart = (*startElement)->GetReferenceRotationStart();
+      G4RotationMatrix* rotRefEnd   = (*finishElement)->GetReferenceRotationEnd();
 
       G4ThreeVector delta = posRefMid - posRefStart;
       G4ThreeVector newUnitZ      = delta.unit();

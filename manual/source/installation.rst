@@ -227,9 +227,9 @@ From any directory on your computer, ``bdsim`` should be available.
 	  well as the normal release build.
 
 From the build directory you can verify your installation using a series of tests
-included with BDSIM (excluding long tests)::
+included with BDSIM (excluding long running tests)::
 
-  > ctest -E LONG
+  > ctest -LE LONG
 
 
 Configuring the BDSIM Build with CMake

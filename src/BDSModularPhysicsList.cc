@@ -5,6 +5,7 @@
 #include "BDSModularPhysicsList.hh"
 #include "BDSMuonPhysics.hh"
 #include "BDSParameterisationPhysics.hh"
+#include "BDSUtilities.hh"
 #include "BDSSynchRadPhysics.hh"
 
 // physics processes / builders
@@ -38,7 +39,6 @@
 #include "G4Proton.hh"
 #include "G4ShortLivedConstructor.hh"
 
-
 // general geant4
 #include "globals.hh"
 #include "G4ParticleTable.hh"
@@ -53,8 +53,6 @@
 #include <sstream>
 #include <utility>
 #include <vector>
-
-//#include "G4MesonConstructor.hh"
 
 BDSModularPhysicsList::BDSModularPhysicsList(G4String physicsList):
   opticalPhysics(nullptr)
@@ -310,13 +308,18 @@ void BDSModularPhysicsList::SetParticleDefinition()
   globals->SetParticleMomentum(sqrt(pow(globals->ParticleTotalEnergy(),2)-pow(globals->GetParticleDefinition()->GetPDGMass(),2)));
   globals->SetParticleKineticEnergy(globals->ParticleTotalEnergy()-globals->GetParticleDefinition()->GetPDGMass());
 
-  // compute magnetic rigidity brho
-  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
+  // compute signed magnetic rigidity brho
+  // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * charge(e))
   // charge (in e units)
   // rigidity (in T*m)
-  G4double brho = globals->FFact()*(globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV());
-  // rigidity (in Geant4 units)
-  brho *= CLHEP::tesla*CLHEP::m;
+  G4double charge = globals->GetParticleDefinition()->GetPDGCharge();
+  G4double brho   = DBL_MAX; // if zero charge infinite magnetic rigidity
+  if (BDS::IsFinite(charge)) {
+    brho = globals->FFact() * globals->BeamMomentum() / CLHEP::GeV / globals->COverGeV() / charge;
+    // rigidity (in Geant4 units)
+    brho *= CLHEP::tesla*CLHEP::m;
+  }
+  // set in globals
   globals->SetBRho(brho);
   
   G4cout << __METHOD_NAME__ << "Beam properties:"<<G4endl;
@@ -324,8 +327,7 @@ void BDSModularPhysicsList::SetParticleDefinition()
 	 << globals->GetParticleDefinition()->GetParticleName()<<G4endl;
   G4cout << __METHOD_NAME__ << "Mass : " 
 	 << globals->GetParticleDefinition()->GetPDGMass()/CLHEP::GeV<< " GeV"<<G4endl;
-  G4cout << __METHOD_NAME__ << "Charge : " 
-	 << globals->GetParticleDefinition()->GetPDGCharge()<< " e"<<G4endl;
+  G4cout << __METHOD_NAME__ << "Charge : " << charge << " e" << G4endl;
   G4cout << __METHOD_NAME__ << "Total Energy : "
 	 << globals->BeamTotalEnergy()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Kinetic Energy : "
@@ -333,7 +335,7 @@ void BDSModularPhysicsList::SetParticleDefinition()
   G4cout << __METHOD_NAME__ << "Momentum : "
 	 << globals->BeamMomentum()/CLHEP::GeV<<" GeV"<<G4endl;
   G4cout << __METHOD_NAME__ << "Rigidity (Brho) : "
-	 << std::abs(brho)/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
+	 << brho/(CLHEP::tesla*CLHEP::m) << " T*m"<<G4endl;
 }
 
 void BDSModularPhysicsList::Em()
@@ -344,7 +346,6 @@ void BDSModularPhysicsList::Em()
       constructors.push_back(new G4EmStandardPhysics());
       physicsActivated["em"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::EmExtra()
@@ -367,7 +368,6 @@ void BDSModularPhysicsList::EmExtra()
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 							  
 void BDSModularPhysicsList::EmLow()
@@ -378,7 +378,6 @@ void BDSModularPhysicsList::EmLow()
       constructors.push_back(new G4EmPenelopePhysics());
       physicsActivated["em_low"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::HadronicElastic()

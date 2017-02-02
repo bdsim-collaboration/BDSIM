@@ -20,7 +20,6 @@ BDSIntegratorDipole::BDSIntegratorDipole(BDSMagnetStrength const*  strength,
   bField((*strength)["field"]),
   minimumRadiusOfCurvature(BDSGlobalConstants::Instance()->MinimumRadiusOfCurvature())
 {
-  nominalEnergy = BDSGlobalConstants::Instance()->BeamTotalEnergy();
   cOverGeV      = BDSGlobalConstants::Instance()->COverGeV();
 
 #ifdef BDSDEBUG

@@ -1,7 +1,6 @@
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
-#include "BDSDebug.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 

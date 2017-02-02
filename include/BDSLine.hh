@@ -64,9 +64,13 @@ private:
   /// define pure virtual method
   virtual void BuildContainerLogicalVolume(){};
 
-  /// assignment and copy constructor not implemented nor used
-  BDSLine& operator=(const BDSLine&);
-  BDSLine(BDSLine&);
+  /// Private default constructor to force the use of the supplied one.
+  BDSLine() = delete;
+  
+  /// @{ Assignment and copy constructor not implemented nor used.
+  BDSLine& operator=(const BDSLine&) = delete;
+  BDSLine(BDSLine&) = delete;
+  /// @}
 };
 
 #endif
