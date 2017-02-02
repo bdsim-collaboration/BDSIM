@@ -346,7 +346,6 @@ void BDSModularPhysicsList::Em()
       constructors.push_back(new G4EmStandardPhysics());
       physicsActivated["em"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::EmExtra()
@@ -369,7 +368,6 @@ void BDSModularPhysicsList::EmExtra()
       constructors.push_back(constructor);
       physicsActivated["em_extra"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 							  
 void BDSModularPhysicsList::EmLow()
@@ -380,7 +378,6 @@ void BDSModularPhysicsList::EmLow()
       constructors.push_back(new G4EmPenelopePhysics());
       physicsActivated["em_low"] = true;
     }
-  ParameterisationPhysics(); // requires parameterisation physics
 }
 
 void BDSModularPhysicsList::HadronicElastic()
