@@ -84,8 +84,8 @@ BDSScreenLayer* BDSMultilayerScreen::ScreenLayer(G4String layerName)
 
 void BDSMultilayerScreen::Build()
 {
-  BuildMotherVolume();
   ComputeDimensions();
+  BuildMotherVolume();
   PlaceLayers();
 }
 
