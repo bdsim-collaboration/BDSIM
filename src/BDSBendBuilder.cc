@@ -22,8 +22,7 @@ using namespace GMAD;
 BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
 					     BDSMagnetStrength*      st,
 					     const G4double          brho,
-					     const BDSIntegratorSet* integratorSet,
-					     const G4double          charge)
+					     const BDSIntegratorSet* integratorSet)
 {
   const G4String             baseName = element->name;
   const G4bool          includeFringe = BDSGlobalConstants::Instance()->IncludeFringeFields();
@@ -37,7 +36,7 @@ BDSAcceleratorComponent* BDS::BuildSBendLine(const Element*          element,
   // Avoid bad calculations for zero angle. Here we need bending radius to be in
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
-    {bendingRadius = - brho / (*st)["field"] / charge;}
+    {bendingRadius = - brho / (*st)["field"];}
 
   // face rotations
   // convention: +ve e1 / e2 reduces outside of bend
@@ -366,8 +365,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
 			     const Element*          nextElement,
 			     const G4double          brho,
 			     BDSMagnetStrength*      st,
-			     const BDSIntegratorSet* integratorSet,
-			     const G4double          charge)
+			     const BDSIntegratorSet* integratorSet)
 {
   const G4String name = element->name;
   BDSLine* rbendline  = new BDSLine(name); // line for resultant rbend
@@ -385,7 +383,7 @@ BDSLine* BDS::BuildRBendLine(const Element*          element,
   // Avoid bad calculations for zero angle. Here we need bending radius to be in
   // correct global cartesian convention, hence -ve.
   if (BDS::IsFinite(angle))
-    {bendingRadius = - brho / (*st)["field"] / charge;}
+    {bendingRadius = - brho / (*st)["field"];}
 
   // face rotations
   // convention - +ve e1 / e2 reduces outside of bend

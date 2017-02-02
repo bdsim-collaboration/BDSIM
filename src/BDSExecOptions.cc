@@ -227,7 +227,6 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    }
 	  else
 	    {
-	      // remember if you extend this to do it also in the usage print out
 	      G4cerr << __METHOD_NAME__ << "Unknown geometry format \""
 		     << fn.substr(fn.find_last_of(".") + 1) << "\"\n"
 		     << "Please specify a valid filename extension - options are: \"gdml\"" << G4endl;
@@ -235,6 +234,7 @@ void BDSExecOptions::Parse(int argc, char **argv)
 	    }
 	  options.set_value("exportGeometry", true);
 	}
+      // remember if you extend this to do it also in the usage print out
 	  
       if (conversion == false)
 	{

@@ -25,7 +25,7 @@ class G4LogicalVolume;
  * 
  * This is an abstract class as the derived class must provide the 
  * implementation of BuildContainerLogicalVolume() that constructs at 
- * least a single volume which would be assumed to be a container if greater
+ * least a single volume, which would be assumed to be a container if greater
  * geometry hierarchy is constructed. This is the minimum required so that an 
  * instance of the derived class will operate with the rest of the placement 
  * machinery in BDSIM. The derived class should override Build() to add further 
@@ -69,7 +69,9 @@ public:
   /// should also be specified if non-zero. Additionally, a field info instance
   /// that represents a 'global' field for this component may be specified. Face
   /// normal (unit) vectors are w.r.t. the incoming / outgoing reference trajectory
-  /// and NOT the local geometry of the component. 
+  /// and NOT the local geometry of the component.
+  /// The BDSBeamPipeInfo instance is associated with this class so that the survey
+  /// output of BDSIM can query the aperture of any element.
   BDSAcceleratorComponent(G4String         name,
 			  G4double         arcLength,
 			  G4double         angle,
@@ -123,7 +125,9 @@ public:
   /// Get the region name for this component.
   G4String GetRegion() const {return region;}
 
-  /// Access beam pipe information
+  /// Access beam pipe information, which is stored in this class to provide
+  /// aperture information when making a survey of the beamline consisting of
+  /// accelerator components.
   inline BDSBeamPipeInfo* GetBeamPipeInfo() const {return beamPipeInfo;}
 
   /// @{ Access face normal unit vector. This is w.r.t. the incoming / outgoing reference
@@ -156,19 +160,9 @@ public:
   void SetInputFaceNormal(const G4ThreeVector& input)   {inputFaceNormal  = input.unit();}
   void SetOutputFaceNormal(const G4ThreeVector& output) {outputFaceNormal = output.unit();}
 
-  // Update the read out geometry volume given new face normals incase of a tilt.
-  void UpdateReadOutVolumeWithTilt(G4double tilt);
-
-  ///@{ This function should be revisited given recent changes (v0.7)
-  void SetGFlashVolumes(G4LogicalVolume* aLogVol)
-  {itsGFlashVolumes.push_back(aLogVol);}
-  std::vector<G4LogicalVolume*> GetGFlashVolumes() const
-  {return itsGFlashVolumes;}
-  ///@}
-  
 protected:
   /// This calls BuildContainerLogicalVolume() and then sets the visual attributes
-  /// of the container logical volume. This Should be overridden by derived class
+  /// of the container logical volume. This should be overridden by derived class
   /// to add more geometry apart from the container volume. The overridden Build()
   /// function can however, call make use of this function to call
   /// BuildContainerLogicalVolume() by calling BDSAcceleratorComponent::Build()
@@ -197,8 +191,10 @@ protected:
   G4double         chordLength;
   G4double         angle;
   G4String         region;
-  BDSBeamPipeInfo* beamPipeInfo;
   ///@}
+
+  /// Optional beam pipe recipe that is written out to the survey if it exists.
+  BDSBeamPipeInfo* beamPipeInfo;
 
   /// Useful variables often used in construction
   static G4double    lengthSafety;
@@ -221,19 +217,13 @@ private:
   /// Private default constructor to force use of provided constructors, which
   /// ensure an object meets the requirements for the rest of the construction
   /// and placement machinery in BDSIM
-  BDSAcceleratorComponent();
+  BDSAcceleratorComponent() = delete;
 
   /// @{ Assignment and copy constructor not implemented nor used
-  BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&);
-  BDSAcceleratorComponent(BDSAcceleratorComponent&);
+  BDSAcceleratorComponent& operator=(const BDSAcceleratorComponent&) = delete;
+  BDSAcceleratorComponent(BDSAcceleratorComponent&) = delete;
   /// @}
 
-  /// Build readout geometry volume
-  G4LogicalVolume* BuildReadOutVolume(G4String name,
-				      G4double chordLength,
-				      G4double angle);
-
-  std::vector<G4LogicalVolume*> itsGFlashVolumes;
   //A vector containing the physical volumes in the accelerator component- to be used for geometric importance sampling etc.
 
   /// Boolean record of whether this component has been already initialised.
@@ -251,7 +241,6 @@ private:
   G4ThreeVector inputFaceNormal;  ///< Input face unit normal vector in incoming reference coordinate frame.
   G4ThreeVector outputFaceNormal; ///< Output face unit normal vector in outgoing reference coordinate frame.
   BDSFieldInfo* fieldInfo;        ///< Recipe for field that could overlay this whole component.
-  G4double      readOutRadius;    ///< Radius of read out volume solid.
 };
 
 #endif

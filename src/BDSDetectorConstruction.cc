@@ -344,7 +344,7 @@ void BDSDetectorConstruction::BuildWorld()
   worldPV = new G4PVPlacement((G4RotationMatrix*)0, // no rotation
 			      (G4ThreeVector)0,     // at (0,0,0)
 			      worldLV,	            // its logical volume
-			      worldName + "_pv",    // its name
+			      worldName,            // its name
 			      nullptr,		    // its mother  volume
 			      false,		    // no boolean operation
 			      0,                    // copy number

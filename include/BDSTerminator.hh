@@ -23,6 +23,11 @@ public:
   virtual ~BDSTerminator();
   
 private:
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSTerminator& operator=(const BDSTerminator&) = delete;
+  BDSTerminator(BDSTerminator&) = delete;
+  /// @}
+  
   /// Override this function in BDSAcceleratorComponent purely to avoid
   /// BDSAcceleratorComponent replacing the user limits on the terminator.
   virtual void Build();

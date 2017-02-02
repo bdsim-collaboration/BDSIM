@@ -26,6 +26,12 @@ int yyerror(const char *);
 /// declaration needed by bison
 extern int yylex();
 
+/** 
+ * @brief Parser namespace for GMAD language. Combination of Geant4 and MAD.
+ *
+ * @author Jochem Snuverink
+ */
+
 namespace GMAD
 {
   class Array;

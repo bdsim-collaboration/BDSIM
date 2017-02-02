@@ -321,6 +321,8 @@ void Options::PublishMembers()
   publish("lengthSafety",&Options::lengthSafety);
 
   // trajectory storage
+  publish("storeElossLocal",  &Options::storeElossLocal);
+  publish("storeElossGlobal", &Options::storeElossGlobal);
   publish("storeTrajectory",&Options::storeTrajectory);
   publish("storeTrajectories",&Options::storeTrajectory);
   publish("storeTrajectoryDepth",&Options::storeTrajectoryDepth);
@@ -337,4 +339,16 @@ void Options::PublishMembers()
   publish("nturns",         &Options::nturns);
   publish("printModuloFraction",&Options::printModuloFraction);
   publish("nSegmentsPerCircle", &Options::nSegmentsPerCircle);
+
+  // scoring map
+  publish("nbinsx", &Options::nbinsx);
+  publish("nbinsy", &Options::nbinsy);
+  publish("nbinsz", &Options::nbinsz);
+  publish("xmin",   &Options::xmin);
+  publish("xmax",   &Options::xmax);
+  publish("ymin",   &Options::ymin);
+  publish("ymax",   &Options::ymax);
+  publish("zmin",   &Options::zmin);
+  publish("zmax",   &Options::zmax);
+  publish("useScoringMap", &Options::useScoringMap);
 }

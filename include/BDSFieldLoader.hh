@@ -24,7 +24,7 @@ class BDSInterpolator4D;
  * @brief A loader for various field map formats.
  *
  * A factory to use the appropriate file loader for different field map formats
- * and constructo into required field including the correct interpolator and possilbe
+ * and construct into required field including the correct interpolator and possible
  * reflections.
  * 
  * @author Laurie Nevay

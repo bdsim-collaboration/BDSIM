@@ -24,12 +24,12 @@ public:
   virtual ~BDSDegrader();
   
 protected:
-  void Build();
+  virtual void Build();
   
-  void BuildContainerLogicalVolume();
+  virtual void BuildContainerLogicalVolume();
   
   G4double outerDiameter;
-  G4int numberWedges;
+  G4int    numberWedges;
   G4double wedgeLength;
   G4double degraderHeight;
   G4double degraderOffset;
@@ -51,6 +51,14 @@ protected:
     else
       return false;
   }
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSDegrader() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSDegrader& operator=(const BDSDegrader&) = delete;
+  BDSDegrader(BDSDegrader&) = delete;
+  ///@}
 };
 
 #endif

@@ -40,3 +40,14 @@ beam, particle="e-",
       X0=0.000,
       Y0=0.000;
 
+option, useScoringMap=1,
+	xmin=-5*m,
+	xmax= 5*m,
+	ymin = -5*m,
+	ymax = 5*m,
+	zmin = 0,
+	zmax = 5*m,
+	nbinsx = 50,
+	nbinsy = 50,
+	nbinsz = 500;
+

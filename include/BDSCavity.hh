@@ -29,8 +29,6 @@ public:
   virtual ~BDSCavity();
 
 protected:
-  BDSCavity();
-
   /// Creates container solid and logical volume
   virtual void BuildContainerLogicalVolume() override;
 
@@ -67,7 +65,15 @@ protected:
 
   /// Convenience shortcut to cavity information inside field information object.
   const BDSCavityInfo* cavityInfo = nullptr;
-  
+
+private:
+  /// Private constructor to force the use of the provided one.
+  BDSCavity() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSCavity& operator=(const BDSCavity&) = delete;
+  BDSCavity(BDSCavity&) = delete;
+  /// @}
 };
 
 #endif

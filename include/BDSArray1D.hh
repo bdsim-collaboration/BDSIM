@@ -9,7 +9,7 @@
 #include <ostream>
 
 /**
- * @brief 1D array for compleness in array system.
+ * @brief 1D array for completeness in array system.
  * 
  * @author Laurie Nevay
  */

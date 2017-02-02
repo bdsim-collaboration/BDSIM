@@ -4,6 +4,8 @@
 #include "BDSGeometryFactorySQL.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMaterials.hh"
+#include "BDSMySQLTable.hh"
+#include "BDSMySQLVariable.hh"
 #include "BDSMySQLWrapper.hh"
 #include "BDSSamplerSD.hh"
 #include "BDSSampler.hh"
@@ -967,21 +969,8 @@ void BDSGeometryFactorySQL::PlaceComponents(BDSMySQLTable* aSQLTable,
 	    {alignOutVolume = PhysiComp;}
 	}
 
-      //G4double P0 = BDSGlobalConstants::Instance()->BeamTotalEnergy();
-      //G4double brho=
-      //sqrt(pow(P0,2)- pow(electron_mass_c2,2))/(0.299792458 * (CLHEP::GeV/(CLHEP::tesla*CLHEP::m)));
-      
-      // compute magnetic rigidity brho
-      // formula: B(Tesla)*rho(m) = p(GeV)/(0.299792458 * |charge(e)|)
-      //
-      // charge (in |e| units)
-      G4double charge = BDSGlobalConstants::Instance()->GetParticleDefinition()->GetPDGCharge();  
-      // momentum (in GeV/c)   
-      G4double momentum = BDSGlobalConstants::Instance()->BeamMomentum();
-      // rigidity (in T*m)
-      G4double brho = ( (momentum/CLHEP::GeV) / (0.299792458 * charge));
-      // rigidity (in Geant4 units)
-      brho *= (CLHEP::tesla*CLHEP::m);
+      // magnetic rigidity brho
+      G4double brho = BDSGlobalConstants::Instance()->BRho();
 
       if(MagType.compareTo("QUAD",cmpmode)==0)
 	{

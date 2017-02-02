@@ -23,7 +23,7 @@ Useful ctest commands (can all be combined):
 
 * ctest -N : print tests without execution
 * ctest -R <regexp> : execute tests that match regexp
-* ctest -LE LONG : execute tests that don't have LONG in name (opposite of -R)
+* ctest -LE LONG : execute tests that are not LONG (more than about a minute)
 * ctest -I 5,5 : only execute test 5
 * ctest -VV : print output to screen
 

@@ -11,6 +11,12 @@ class BDSTrajectoryPoint;
 
 #include <vector>
 
+/**
+ * @brief Data stored for energy deposition hits per event.
+ * 
+ * @author Stewart Boogert
+ */
+
 class BDSOutputROOTEventLoss: public TObject
 {
 public:

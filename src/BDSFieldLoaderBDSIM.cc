@@ -128,7 +128,7 @@ void BDSFieldLoaderBDSIM<T>::Load(G4String fileName,
 	  ProcessData(line, xIndex, yIndex, zIndex); // changes member fv
 	    
 	  // Copy into array - we can always use 4d coords even for lower d arrays
-	  // as they all inherite 4d.
+	  // as they all inherit 4d.
 	  (*result)(indX,indY,indZ,indT) = fv;
 	  
 	  indX++; // increment counter

@@ -30,14 +30,13 @@
 BDSMagnet::BDSMagnet(BDSMagnetType       type,
 		     G4String            name,
 		     G4double            length,
-		     BDSBeamPipeInfo*    beamPipeInfoIn,
+		     BDSBeamPipeInfo*    beamPipeInfo,
 		     BDSMagnetOuterInfo* magnetOuterInfoIn,
 		     BDSFieldInfo*       vacuumFieldInfoIn,
 		     G4double            angle,
 		     BDSFieldInfo*       outerFieldInfoIn):
-  BDSAcceleratorComponent(name, length, angle, type.ToString()),
+  BDSAcceleratorComponent(name, length, angle, type.ToString(), beamPipeInfo),
   magnetType(type),
-  beamPipeInfo(beamPipeInfoIn),
   magnetOuterInfo(magnetOuterInfoIn),
   vacuumFieldInfo(vacuumFieldInfoIn),
   outerFieldInfo(outerFieldInfoIn),
@@ -211,7 +210,7 @@ void BDSMagnet::PlaceComponents()
 						    containerLogicalVolume,  // its mother  volume
 						    false,                   // no boolean operation
 						    0,                       // copy number
-                                                    BDSGlobalConstants::Instance()->CheckOverlaps());
+                                                    checkOverlaps);
       
       RegisterPhysicalVolume(beamPipePV);
     }
@@ -229,7 +228,7 @@ void BDSMagnet::PlaceComponents()
 						       containerLogicalVolume, // its mother  volume
 						       false,                  // no boolean operation
 						       0,                      // copy number
-                                                       BDSGlobalConstants::Instance()->CheckOverlaps());
+                                                       checkOverlaps);
 
       RegisterPhysicalVolume(magnetOuterPV);
     }
@@ -249,7 +248,6 @@ void BDSMagnet::SetVacuumField(BDSFieldInfo* vacuumFieldInfoIn)
 
 BDSMagnet::~BDSMagnet()
 {
-  delete beamPipeInfo;
   delete magnetOuterInfo;
   delete vacuumFieldInfo;
   delete outerFieldInfo;
