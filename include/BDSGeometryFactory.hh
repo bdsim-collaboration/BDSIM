@@ -8,9 +8,10 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
-class BDSGeometry;
 class BDSGeometryExternal;
+class G4Colour;
 
 /**
  * @brief Interface to external geometry construction.

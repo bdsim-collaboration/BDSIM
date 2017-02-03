@@ -1097,7 +1097,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 	{
 	  G4cerr << "Error: Magnet named \"" << elementName
 		 << "\" is a magnet, but has fieldAll defined." << G4endl
-		 << "Can only have fieldOuter or fieldInner specified." << G4endl;
+		 << "Can only have fieldOuter or fieldVacuum specified." << G4endl;
 	  exit(1);
 	}
       if (!(element->fieldOuter.empty())) // ie variable isn't ""
