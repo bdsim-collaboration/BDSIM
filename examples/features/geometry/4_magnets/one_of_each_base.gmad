@@ -4,7 +4,7 @@ q1: quadrupole, l=0.5*m, k1=1.31, outerDiameter=1*m;
 sex1: sextupole, l=0.5*m, k2=0.31,aper1=2*cm;
 oct1: octupole, l=0.5*m, k3=3.31, outerDiameter=0.876*m;
 dec1: decapole, l=0.5*m, k4=3.31, outerDiameter=0.876*m;
-sol1: solenoid, l=0.5*m, k0=1.31, outerDiameter=1.234*m;
+sol1: solenoid, l=0.5*m, ks=1.31, outerDiameter=1.234*m;
 sb1: sbend, l=0.5*m, angle=0.1, apertureType="elliptical", aper1=2*cm, aper2=3*cm, beampipeThickness=0.1*cm, outerDiameter=0.80*m;
 rb1: rbend, l=2.5*m, angle= 0.1, outerDiameter=0.5*m;
 endoftheline: marker;
