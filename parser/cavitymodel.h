@@ -39,8 +39,6 @@ namespace GMAD
     double frequency;
     /// phase in radians
     double phase;
-    /// Electric Field in Volts / m
-    double eField;
     /// number of points that will be used to make the cell shape
     /// more will be more accurate but will also increase tracking time
     int numberOfPoints;
