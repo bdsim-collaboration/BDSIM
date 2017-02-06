@@ -52,6 +52,7 @@ class params():
         
         self.elementParams = {'length'    : [0.2, 2.0, 20.0],
                               'angle'     : [-0.3, -0.003, 0, 0.003, 0.3],
+                              'kickangle' : [-0.003,0,0.003],
                               'field'     : [0, 0, 0, 0, 0],
                               'e1'        : [-0.3491, -0.003491, 0, 0.003491, 0.3491],
                               'e2'        : [-0.3491, -0.003491, 0, 0.003491, 0.3491],
@@ -62,22 +63,26 @@ class params():
                               'knl'       : [k1l,k2l,k3l,k4l,k5l],
                               'ksl'       : [k1l,k2l,k3l,k4l,k5l],
                               'gradient'  : [-20.0, -0.002, 0, 0.002, 20.0],
-                              'x(col)'    : [50],
-                              'y(col)'    : [50],
-                              'xOut(col)' : [50],
-                              'yOut(col)' : [50],
+                              'x(col)'    : [0.05],
+                              'y(col)'    : [0.05],
                               'numWedges' : [1, 5, 10],
                               'thickness' : [0.01, 0.1, 1.0], #fraction of element length
                               'ks'        : [-0.3, -0.003, 0, 0.003, 0.3],
-                              '**fint'    : [0, 1.0/6.0, 0.5],
-                              '**fintx'   : [0, 1.0/6.0, 0.5],
-                              '**hgap'    : [0.01, 0.1]}
+                              'fint'      : [0, 1.0/6.0, 0.5],
+                              'fintx'     : [0, 1.0/6.0, 0.5],
+                              'hgap'      : [0.01, 0.1]}
+        
+        self._fileNameScheme = {'1'  : [''],
+                                '2'  : ['small','large'],
+                                '3'  : ['small','med','large'],
+                                '3k' : ['neg','zero','pos'], #for kickangle and multipole strengths
+                                '5'  : ['negLarge','negSmall','zero','posSmall','posLarge']}
         
         self.hasParams = {  'drift'         : ['length'],
-                            'rbend'         : ['length','angle','field','e1','e2','**fint','**fintx','**hgap'],
-                            'sbend'         : ['length','angle','field','e1','e2','**fint','**fintx','**hgap'],
-                            'vkick'         : ['length','angle','field'],
-                            'hkick'         : ['length','angle','field'],
+                            'rbend'         : ['length','angle','field','e1','e2','fint','fintx','hgap'],
+                            'sbend'         : ['length','angle','field','e1','e2','fint','fintx','hgap'],
+                            'vkick'         : ['length','kickangle'],
+                            'hkick'         : ['length','kickangle'],
                             'quadrupole'    : ['length','k1'],
                             'sextupole'     : ['length','k2'],
                             'octopole'      : ['length','k3'],
@@ -85,8 +90,8 @@ class params():
                             'multipole'     : ['length','knl','ksl'],
                             'thinmultipole' : ['knl','ksl'],
                             'rfcavity'      : ['length','gradient'],
-                            'rcol'          : ['length','x(col)','y(col)', 'xOut(col)','yOut(col)'],
-                            'ecol'          : ['length','x(col)','y(col)', 'xOut(col)','yOut(col)'],
+                            'rcol'          : ['length'],
+                            'ecol'          : ['length'],
                             'degrader'      : ['length','numWedges','thickness'],
                             'muspoiler'     : ['length','field'],
                             'shield'        : ['length'],
