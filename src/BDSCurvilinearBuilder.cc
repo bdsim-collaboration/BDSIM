@@ -75,13 +75,16 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
     finishingElement     = startingElement;
   };
 
+  G4String name = "";
+  auto GenerateName = [&](){name = "cl_" + std::to_string(counter);};
+
   for (; currentElement != beamline->end(); currentElement++)
     {
       if (currentElement == beamline->begin())
 	{straightSoFar = false;}
       
       // update name in one place although not needed every loop iteration
-      G4String name = "cl_" + std::to_string(counter);
+      GenerateName();
       
       const G4bool angled   = Angled(*currentElement);
       const G4bool tooShort = TooShort(*currentElement);
@@ -104,6 +107,7 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 								   finishingElement);
 	      result->AddBeamlineElement(piece);
 	      counter++; // increment name counter
+	      GenerateName();
 	      Reset();
 	    }
 	  if (tooShort)
