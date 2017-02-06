@@ -121,36 +121,12 @@ class params():
                 #multiple by the number component strengths for multipole
                 if elementKey == 'knl' or elementKey == 'ksl':
                     numElementVariations *= (len(k1l)*len(self.elementParams[elementKey]))
-                elif elementKey == 'rcol' or elementKey == 'ecol':
-                    pass
-                elif elementKey == 'rbend' or elementKey == 'sbend':
-                    pass
                 else:
                     numElementVariations *= len(self.elementParams[elementKey])
 
             if key == 'rbend' or key == 'sbend':
-                numBendTests = 0
-                for length in self.elementParams['length']:
-                    for ang in self.elementParams['angle']:
-                        for e1 in self.elementParams['e1']:
-                            for e2 in self.elementParams['e2']:
-                                for fint in self.elementParams['**fint']:
-                                    for fintx in self.elementParams['**fintx']:
-                                        for hgap in self.elementParams['**hgap']:
-                                            numBendTests += 1
-
-                numElementVariations = numBendTests
-                numElementVariations *= 2 #angle or field
-
-            if key == 'hkick' or key == 'vkick':
-                #don't vary angle AND field, only vary angle OR field.
                 numElementVariations /= 5
-                numElementVariations *= 2
-
-            #set explicitly for collimator due to limited scenarios (eg can't have tapered with aperture 0 at just one end)
-            if key == 'rcol' or key == 'ecol':
-                numColVars = len(self.elementParams['length'])*5
-                numElementVariations = numColVars
+                numElementVariations *= 2 #angle or field
 
             numElementVariations *= self.numBeamVariations
 
