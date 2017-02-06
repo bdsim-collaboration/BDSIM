@@ -825,9 +825,10 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
 
   // note, this is different from all other geometry - TBC
   G4double maxStepFactor=0.5;
-  G4UserLimits* containerUserLimits =  new G4UserLimits();
-  containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
+  //  G4UserLimits* containerUserLimits =  new G4UserLimits();
+  //  containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+  //  containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
+  G4UserLimits* containerUserLimits =  BDSGlobalConstants::Instance()->GetDefaultUserLimits();
   containerLogicalVolume->SetUserLimits(containerUserLimits);
   allUserLimits.push_back(containerUserLimits);
 }
