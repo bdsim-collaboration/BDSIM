@@ -566,7 +566,7 @@ rf
 ================  ===========================  ==========  ===========
 parameter         description                  default     required
 `l`               length [m]                   0           yes
-`gradient`        field gradient [MV/m]        0           yes
+`gradient`        field gradient [V/m]         0           yes
 `material`        outer material               Iron        no
 ================  ===========================  ==========  ===========
 

@@ -4,22 +4,15 @@
 #include "BDSCavity.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4Material.hh"
 
-class BDSCavityInfo;
 class BDSFieldInfo;
-
-/**
- * @brief An RF cavity with different geometry types.
- *
- * @author Stuart Walker
- */
 
 /** 
  * @brief RF Cavity class
  *  
  * @author Stuart Walker
  */
+
 class BDSCavityRF: public BDSCavity
 {
 public:
