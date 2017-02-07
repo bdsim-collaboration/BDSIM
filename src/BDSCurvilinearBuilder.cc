@@ -14,7 +14,8 @@
 
 #include <cmath>
 
-BDSCurvilinearBuilder::BDSCurvilinearBuilder()
+BDSCurvilinearBuilder::BDSCurvilinearBuilder():
+  paddingLength(0)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
   curvilinearRadius = globals->SamplerDiameter()*0.5;
@@ -53,7 +54,16 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* const beamline)
 {
   BDSBeamline* result = new BDSBeamline();
+  // Get the padding length from the beam line class
+  // Although elements will be premanufactured here and added without this being
+  // used specifically here.
+  paddingLength = beamline->PaddingLength();
 
+  // don't pad the curvilinear world the same as the beam line. curvilinear world
+  // built by copying start and end coordinates for each section, so need to add
+  // bonus bit of length on to make the curvilinear volumes join exactly.
+  G4double clExtraHalfLength = 0.5*paddingLength;
+  
   G4int    counter              = 0; // counter for naming
 
   G4double accumulatedAngle     = 0;
@@ -197,7 +207,8 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
   
   if (startElement == finishElement)
     {// build 1:1
-      G4double chordLength = (*startElement)->GetChordLength();
+      // add on extra length to cover padded length in normal beam line
+      G4double chordLength = (*startElement)->GetChordLength() + paddingLength;
       G4double angle       = (*startElement)->GetAngle();
       if (!BDS::IsFinite(angle))
 	{// straight
@@ -210,8 +221,9 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 	  BDSTiltOffset* to = nullptr;
 	  if (tilted)
 	    {to = (*startElement)->GetTiltOffset();}
-	  
-	  G4double arcLength = (*startElement)->GetArcLength();
+
+	  // Not strictly accurate to add on paddingLength to arcLength, but close for now.
+	  G4double arcLength = (*startElement)->GetArcLength() + paddingLength;
 	  component = factory->CreateCurvilinearVolume(elementName,
 						       arcLength,
 						       chordLength,
@@ -224,7 +236,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
     {// cover a few components
       G4ThreeVector positionStart = (*startElement)->GetReferencePositionStart();
       G4ThreeVector positionEnd   = (*finishElement)->GetReferencePositionEnd();
-      G4double      chordLength   = (positionEnd - positionStart).mag();
+      G4double      chordLength   = (positionEnd - positionStart).mag() + paddingLength;
       
       G4double accumulatedAngle = 0;
       for (auto it = startElement; it < finishElement; it++)
@@ -244,6 +256,7 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
 
 	  G4double meanBendingRadius = 0.5 * chordLength / sin(0.5*std::abs(accumulatedAngle));
 	  G4double arcLength = meanBendingRadius * std::abs(accumulatedAngle);
+	  arcLength += paddingLength;
 	  
 	  component = factory->CreateCurvilinearVolume(elementName,
 						       arcLength,
