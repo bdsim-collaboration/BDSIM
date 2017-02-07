@@ -25,7 +25,7 @@ namespace GMAD
 
     double l; ///< length in metres
     double ks; ///< solenoid
-    double k0; ///< dipole
+    // double k0; // for dipole field B or angle is used
     double k1; ///< quadrupole
     double k2; ///< sextupole
     double k3; ///< octupole
@@ -84,7 +84,7 @@ namespace GMAD
     double zdir;
     ///@}
     double waveLength; ///< for laser wire and 3d transforms
-    double gradient; ///< for rf cavities
+    double gradient; ///< for rf cavities in V / m
     double phi, theta, psi; ///< for 3d transforms
     ///@{ for degrader
     int numberWedges;
