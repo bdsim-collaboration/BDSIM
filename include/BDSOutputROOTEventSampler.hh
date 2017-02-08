@@ -14,7 +14,7 @@ class BDSSamplerHit;
 /**
  * @brief Information stored per sampler per event.
  * 
- * @author Stewart Booget
+ * @author Stewart Boogert
  */
 
 template<class T> class BDSOutputROOTEventSampler: public TObject
