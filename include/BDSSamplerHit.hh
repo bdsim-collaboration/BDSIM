@@ -32,7 +32,6 @@ public:
 		G4int       ParentID,
 		G4int       TrackID,
 		G4int       TurnsTaken,
-		G4String    sampType,
 		G4String    process,
 		G4int       beamlineIndex);
 
@@ -77,7 +76,6 @@ private:
   G4int itsParentID;
   G4int itsTrackID;
   G4int itsTurnsTaken;
-  G4String itsSampType;
 
   /// creating process
   G4String itsProcess;
@@ -180,8 +178,6 @@ public:
   {return itsWeight;}
   inline G4String GetName() const
   {return itsName;}
-  inline G4String GetType() const
-  {return itsSampType;}
   inline G4int GetEventNo() const
   {return itsEventNo;}
   inline G4int GetPDGtype() const
