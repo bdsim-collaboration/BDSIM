@@ -55,14 +55,12 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* 
 {
   BDSBeamline* result = new BDSBeamline();
   // Get the padding length from the beam line class
-  // Although elements will be premanufactured here and added without this being
-  // used specifically here.
   paddingLength = beamline->PaddingLength();
 
-  // don't pad the curvilinear world the same as the beam line. curvilinear world
-  // built by copying start and end coordinates for each section, so need to add
-  // bonus bit of length on to make the curvilinear volumes join exactly.
-  G4double clExtraHalfLength = 0.5*paddingLength;
+  // Although elements will be premanufactured here and added to a beam line without
+  // using the AddElement method that calculates the coordinates. We want the curvilinear
+  // world to be slightly bigger than each element, hence the padding in the mass world,
+  // and so we expand the length of each curvilinear element.
   
   G4int    counter              = 0; // counter for naming
 
