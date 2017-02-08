@@ -156,7 +156,6 @@ G4bool BDSSamplerSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*readOutTH*
                                             ParentID,
                                             TrackID,
                                             turnstaken,
-                                            itsType,
                                             process,
                                             beamlineIndex);
   

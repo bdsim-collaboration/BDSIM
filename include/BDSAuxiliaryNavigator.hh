@@ -158,7 +158,7 @@ protected:
 
   /// Navigator object for safe navigation in the read out world providing curvilinear
   /// coordinates for various applications. Since this is not a 'parallel' world but
-  /// a 'read out geometry' in Geant4 terms, this is inherintly safe and won't affect
+  /// a 'read out geometry' in Geant4 terms, this is inherently safe and won't affect
   /// the tracking of the particle in question.
   static G4Navigator* auxNavigatorCL;
 

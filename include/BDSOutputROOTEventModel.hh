@@ -12,7 +12,7 @@
 /**
  * @brief Information stored per model representing accelerator.
  * 
- * @author Stewart Booget
+ * @author Stewart Boogert
  */
 
 class BDSOutputROOTEventModel: public TObject

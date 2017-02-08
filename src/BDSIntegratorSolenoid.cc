@@ -21,7 +21,6 @@ BDSIntegratorSolenoid::BDSIntegratorSolenoid(BDSMagnetStrength const* strength,
 
 void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 					 const G4double dydx[],
-					 G4ThreeVector  /*bField*/,
 					 G4double       h,
 					 G4double       yOut[],
 					 G4double       yErr[])
@@ -215,5 +214,5 @@ void BDSIntegratorSolenoid::Stepper(const G4double yInput[],
 				    G4double yErr[])
 {
   //simply perform one step here
-  AdvanceHelix(yInput,dydx,(G4ThreeVector)0,hstep,yOut,yErr);
+  AdvanceHelix(yInput,dydx,hstep,yOut,yErr);
 }
