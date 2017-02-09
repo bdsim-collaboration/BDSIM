@@ -37,6 +37,7 @@
 #include "BDSIntegratorSolenoid.hh"
 #include "BDSIntegratorTeleporter.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 #include "BDSParser.hh"
 #include "BDSUtilities.hh"
