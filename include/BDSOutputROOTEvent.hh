@@ -104,8 +104,8 @@ private:
   /// model tree
   TTree *theModelOutputTree = nullptr;
 
-  // output tree
-  TTree *theRootOutputTree = nullptr;
+  /// event tree
+  TTree *theEventOutputTree = nullptr;
 
   /// output histogram tree
   TTree *theRunOutputTree  = nullptr;
