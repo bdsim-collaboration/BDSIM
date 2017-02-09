@@ -15,7 +15,7 @@ The overall program structure should follow:
 3) Which sequence to use (see :ref:`the-use-command`).
 4) Where to record output (see :ref:`sampler-output`).
 5) Options, including which physics lists, number to simulate etc. (see :ref:`bdsim-options`).
-6) A beam distribution (see :ref:`beam-parameters`).
+6) A beam definition (see :ref:`beam-parameters`).
    
 These are described in the following sections. Aside from these standard parameters, more
 detail may be added to the model through:
@@ -30,18 +30,25 @@ detail may be added to the model through:
 GMAD Syntax
 -----------
 
-GMAD is a language specifically for BDSIM but is made to be human readable
-and very similar to MADX.
+GMAD is a language specifically for BDSIM that is made to be human readable.
+The name comes from the design intention of MADX syntax + extensions for Geant4.
+While GMAD is very similar to MADX, not all MADX commands are supported.
 
+* S.I. units are used except where explicitly specified
+* variables can be defined using :code:`name = value;` syntax
 * arithmetic expressions can be defined
 * binary operators +, -, \*, /, ^ are valid
 * unary operators +, -, are valid
 * boolean operators <, >, <=, >=, <> (not equal), == are valid
 * every expression **must** end with a semi-colon;
 * no variable name can begin with a number
-* comments start with an exclamation mark!
+* !comments start with an exclamation mark "!"
+* a variable may inherit values (via copy) from another variable using :code:`newvariable : existingvariable;`
 
-The following functions are provided
+Mathematical Functions
+^^^^^^^^^^^^^^^^^^^^^^
+  
+The following mathematical functions are provided:
 
 * sqrt
 * cos
@@ -54,6 +61,21 @@ The following functions are provided
 * atan
 * abs
 
+Other Commands
+^^^^^^^^^^^^^^
+
+* :code:`print;` prints all elements
+* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
+* :code:`print, option;` prints the value of some options.
+* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
+* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
+* :code:`stop;` or :code:`return;` exists parser
+* :code:`if () {};` if construct
+* :code:`if () {} else {};` if-else construct
+
+Examples
+^^^^^^^^
+  
 Examples::
 
    x = 1;
@@ -134,19 +156,6 @@ GHz         :math:`10^{9}`
 
 For example, one can write either :code:`100*eV` or :code:`0.1*keV` to specify an energy in GMAD
 and both are equivalent.
-
-
-Useful Commands
----------------
-
-* :code:`print;` prints all elements
-* :code:`print, line;` prints all elements that are in the beam line defined by :code:`use`, see also `use - Defining which Line to Use`_
-* :code:`print, option;` prints the value of some options.
-* :code:`print, variable;` prints the value of a numerical variable, which could be your own defined variable.
-* :code:`length = d1["l"];` way to access properties of elements, in this case length of element d1.
-* :code:`stop;` or :code:`return;` exists parser
-* :code:`if () {};` if construct
-* :code:`if () {} else {};` if-else construct
 
 .. _lattice-elements:
 
