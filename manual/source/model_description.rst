@@ -1597,34 +1597,45 @@ Examples::
 Samplers - Output
 -----------------
 
-Normally, the only output BDSIM would produce is the various particle loss histograms,
-as well as the coordinates of energy deposition hits. To observe the particles at a
-point in the beam lattice a `sampler` can be used. Samplers are attached to an already
-defined element and record all the particles passing through a plane at the *exit*
-to that element. They are defined using the following syntax::
+BDSIM provides a `sampler` as a means to observe the particle distribution at a
+point in the lattice. A sampler is 'attached' to an already defined element
+and records all the particles passing through a plane at the **exit** face of
+that element. They are defined using the following syntax::
 
   sample, range=<element_name>;
 
 where `element_name` is the name of the element you wish to sample. Depending on the
-output format chosen, the element name may be recorded in the output (ROOT output only).
+output format chosen, the element name may be recorded in the output ('rootevent' output only).
 
-To place a sampler before an item, attach it to the previous item. If however, you wish
-to record the coordinates with another name, you must define
-a marker, place it in the sequence and then define a sampler that uses that marker::
+.. note:: Samplers **can only** be defined **after** the main sequence has been defined
+	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
+	  so will result in an error and BDSIM will exit.
+
+.. note:: Samplers record **all** particles impinging on them - i.e. both forwards and
+	  backwards. Even secondary particles that may originate from further along the
+	  lattice. They have no material so they do not absorb or affect particles, only
+	  witness them.
+
+To place a sampler before an item, attach it to the previous item. If however,
+you wish to record the coordinates with another name rather than the name of the
+element before, you can define a marker; place it in the sequence; and then define
+a sampler that uses that marker::
 
   d1: drift, l=2.4*m;
-  endoftheline: marker;
-  l1: line=(d1,d1,d1,d1,endoftheline);
+  d2: drift, l=1*m;
+  interestingplane: marker;
+  l1: line=(d1,d1,interestingplane,d2,d1);
   use,period=l1;
 
-  sample, range=endoftheline;
+  sample, range = interestingplane;
 
-When an element is defined multiple times in the line, samplers will be attached to all instances.
-If you wish to sample only one specific instance, the following syntax can be used::
+When an element is defined multiple times in the line (such as "d1" in the above example),
+samplers will be attached to all instances. If you wish to sample only one specific
+instance, the following syntax can be used::
 
   sample, range=<element_name>[index];
 
-To attach samplers to all elements (except the first one)::
+To attach samplers after all elements::
 
   sample, all;
 
@@ -1636,9 +1647,40 @@ e.g.::
 
   sample, quadrupole;
   
-.. note:: Samplers **can only** be defined **after** the main sequence has been defined
-	  using the `use` command (see `use - Defining which Line to Use`_). Failure to do
-	  so will result in an error and BDSIM will exit.
+.. note:: If a sampler is placed at the very beginning of the lattice, it may appear
+	  that approximately half of the primary particles seem to pass through it. This
+	  is the correct behaviour as unlike an optics program such as MADX, the sampler
+	  represents a thin plane in 3D space in BDSIM. If the beam distribution has some
+	  finite extent in *z* or *t*, particles may start beyond this first sampler and
+	  never pass through it.
+
+Sampler Dimensions
+^^^^^^^^^^^^^^^^^^
+
+The sampler is represented by a cube solid that is 1 pm thin along z and 5m metres wide
+transversely in x and y. If a smaller or larger capture area for the samplers is required,
+the option *samplerDiameter* may be specified in the input gmad.::
+
+  option, samplerDiameter=3*m;
+
+This affects all samplers.
+
+.. note:: For a very low energy lattice with large angle bends, the default samplerDiameter
+	  may cause geometrical overlap warnings from Geant4. This situation is difficult to
+	  avoid automatically, but easy to remedy by setting the samplerDiameter to a lower
+	  value.
+
+Sampler Visualisation
+^^^^^^^^^^^^^^^^^^^^^
+
+The samplers are normally invisible and are built in a parallel world geometryin Geant4. To
+visualised them, the following command should be used in the visualiser::
+
+  /vis/drawVolume worlds
+
+The samplers will appear in semi-transparent green as well as the curvilinear geometry used
+for coordinate transforms (cylinders).
+
 
 Physics Processes
 -----------------
