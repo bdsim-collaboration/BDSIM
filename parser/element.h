@@ -153,6 +153,11 @@ namespace GMAD
 
     /// Override colour for certain items
     std::string colour;
+
+    /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
+    /// field. This allows us to distinguish later on.
+    /// NOTE: this is not used in Params.
+    bool   angleSet;
   
     /// constructor
     Element();
