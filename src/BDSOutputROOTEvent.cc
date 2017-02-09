@@ -205,7 +205,7 @@ void BDSOutputROOTEvent::Initialise()
       //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
       // set tree branches
-      theEventOutputTree->Branch((samplerName+".").c_str(),
+      theEventOutputTree->Branch((samplerName+".").c_str(), 
 				"BDSOutputROOTEventSampler",
 				res,32000,1);
     }
