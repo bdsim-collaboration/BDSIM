@@ -2,9 +2,7 @@
 #define BDSFIELDMAGGLOBAL_H
 
 #include "globals.hh" // geant4 types / globals
-#include "G4MagneticField.hh"
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSFieldMag.hh"

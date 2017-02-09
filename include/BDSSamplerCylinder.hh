@@ -4,9 +4,6 @@
 #include "BDSSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
-
-class BDSSamplerSD;
 
 /** 
  * @brief Cylindrical sampler around an object.

@@ -6,6 +6,7 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"

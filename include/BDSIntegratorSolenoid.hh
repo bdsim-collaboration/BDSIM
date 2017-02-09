@@ -4,10 +4,8 @@
 #include "BDSIntegratorBase.hh"
 
 #include "globals.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
-#include "G4ThreeVector.hh"
 
+class G4Mag_EqRhs;
 class BDSMagnetStrength;
 
 /**

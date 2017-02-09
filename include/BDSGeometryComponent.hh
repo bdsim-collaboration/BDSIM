@@ -13,7 +13,6 @@
 class G4UserLimits;
 class G4VisAttributes;
 class G4VPhysicalVolume;
-class G4VPlacement;
 class G4VSensitiveDetector;
 class G4VSolid;
 namespace CLHEP {

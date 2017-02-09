@@ -1,6 +1,7 @@
 #include "BDSParameterisationPhysics.hh"
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
+#include "G4FastSimulationManagerProcess.hh"
 #include "G4Positron.hh"
 #include "G4ProcessManager.hh"
 #include "G4Version.hh"

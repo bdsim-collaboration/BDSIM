@@ -5,6 +5,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals

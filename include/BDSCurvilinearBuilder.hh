@@ -3,7 +3,6 @@
 
 #include "globals.hh"
 
-class BDSAcceleratorComponent;
 class BDSBeamline;
 class BDSCurvilinearFactory;
 class BDSSimpleComponent;

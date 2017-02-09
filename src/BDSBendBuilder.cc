@@ -9,6 +9,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorSet.hh"
 #include "BDSIntegratorType.hh"
+#include "BDSMagnetStrength.hh"
 #include "BDSLine.hh"
 #include "BDSMagnet.hh"
 #include "BDSMagnetOuterInfo.hh"

@@ -1,10 +1,10 @@
 #ifndef BDSMYSQLTABLE_H
 #define BDSMYSQLTABLE_H
 
-#include "BDSMySQLVariable.hh"
-
 #include "globals.hh"
 #include <vector>
+
+class BDSMySQLVariable;
 
 /**
  * @brief Representation of a mysql table.

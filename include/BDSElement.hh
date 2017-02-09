@@ -4,7 +4,6 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh"
-#include "G4ThreeVector.hh"
 
 /**
  * @brief A class for a generic piece of external geometry.

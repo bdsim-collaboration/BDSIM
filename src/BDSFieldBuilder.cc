@@ -2,6 +2,7 @@
 #include "BDSFieldBuilder.hh"
 #include "BDSFieldFactory.hh"
 #include "BDSFieldInfo.hh"
+#include "BDSFieldObjects.hh"
 
 #include "G4LogicalVolume.hh"
 
