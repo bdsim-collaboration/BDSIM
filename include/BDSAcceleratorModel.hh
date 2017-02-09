@@ -8,7 +8,7 @@
 
 class BDSBeamline;
 class BDSFieldObjects;
-class G4LogicalVolume;
+//class G4LogicalVolume;
 class G4ProductionCuts;
 class G4Region;
 class G4VPhysicalVolume;

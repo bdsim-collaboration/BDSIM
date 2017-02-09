@@ -17,7 +17,6 @@ Parameters::Parameters()
   // usually same but some exceptions, those are commented
   setMap["l"]     = false;
   setMap["ks"]    = false;
-  setMap["k0"]    = false;
   setMap["k1"]    = false;
   setMap["k2"]    = false;
   setMap["k3"]    = false;

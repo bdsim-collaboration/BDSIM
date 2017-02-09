@@ -5,12 +5,14 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSPhysicalVolumeInfo.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
+#include "BDSStep.hh"
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
 #include "G4AffineTransform.hh"
 #include "G4Event.hh"
 #include "G4EventManager.hh"
+#include "G4GFlashSpot.hh"
 #include "G4LogicalVolume.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4SDManager.hh"

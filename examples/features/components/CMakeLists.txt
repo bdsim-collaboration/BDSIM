@@ -36,3 +36,5 @@ simple_testing(Component-VKicker       "--file=vkicker.gmad" ${OVERLAP_CHECK})
 if(USE_AWAKE)
   simple_testing(Component-AwakeSpectrometer "--file=awakespectrometer.gmad" ${OVERLAP_CHECK})
 endif()
+
+add_subdirectory(dipoles)

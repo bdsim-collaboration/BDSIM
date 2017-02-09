@@ -4,13 +4,10 @@
 #include "BDSAcceleratorComponent.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4LogicalVolume.hh"
-#include "G4Tubs.hh"
-#include "G4VSolid.hh"
 
 class BDSCavityInfo;
 class BDSFieldInfo;
-class G4Material;
+class G4LogicalVolume;
 class G4VSolid;
 
 /**

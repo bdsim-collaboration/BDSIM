@@ -6,6 +6,7 @@
 #include "BDSDebug.hh"
 #include "BDSEnergyCounterHit.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerRegistry.hh"
 #include "BDSTrajectoryPoint.hh"
@@ -149,7 +150,7 @@ void BDSOutputROOTEvent::Initialise()
   // run histogram tree
   theRunOutputTree       = new TTree("Run","BDSIM run histograms/information");
   // event data tree
-  theRootOutputTree      = new TTree("Event","BDSIM event");
+  theEventOutputTree     = new TTree("Event","BDSIM event");
   
   // Build options and write structure
   // Get options
@@ -172,25 +173,25 @@ void BDSOutputROOTEvent::Initialise()
   theRunOutputTree->Branch("Info.",            "BDSOutputROOTEventRunInfo",runInfo,32000,1);
 
   // Event info output
-  theRootOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
+  theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  theRootOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
+  theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
   //  samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
   // Build loss and hit structures
-  theRootOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
-  theRootOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
-  theRootOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
-  theRootOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
+  theEventOutputTree->Branch("Eloss.",          "BDSOutputROOTEventLoss",eLoss,4000,1);
+  theEventOutputTree->Branch("PrimaryFirstHit.","BDSOutputROOTEventLoss",pFirstHit,4000,2);
+  theEventOutputTree->Branch("PrimaryLastHit.", "BDSOutputROOTEventLoss",pLastHit, 4000,2);
+  theEventOutputTree->Branch("TunnelHit.",      "BDSOutputROOTEventLoss",tHit, 4000,2);
 
   // Build trajectory structures
-  theRootOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
+  theEventOutputTree->Branch("Trajectory.",     "BDSOutputROOTEventTrajectory",traj,4000,2);
 
 
   // Build event histograms
-  theRootOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
+  theEventOutputTree->Branch("Histos.",         "BDSOutputROOTEventHistograms",evtHistos,32000,1);
 
 
   // build sampler structures 
@@ -202,10 +203,9 @@ void BDSOutputROOTEvent::Initialise()
 #else 
       BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
 #endif
-      //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
       // set tree branches
-      theRootOutputTree->Branch((G4String("Sampler_")+samplerName+".").c_str(),
+      theEventOutputTree->Branch((samplerName+".").c_str(), 
 				"BDSOutputROOTEventSampler",
 				res,32000,1);
     }
@@ -337,7 +337,7 @@ void BDSOutputROOTEvent::FillEvent()
   G4cout << __METHOD_NAME__ <<G4endl;
 #endif
   theRootOutputFile->cd();
-  theRootOutputTree->Fill();
+  theEventOutputTree->Fill();
   Flush();
 }
 void BDSOutputROOTEvent::WriteEventInfo(const time_t&  startTime,

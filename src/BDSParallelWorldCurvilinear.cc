@@ -68,7 +68,7 @@ void BDSParallelWorldCurvilinear::Construct()
 						   nCopy,          // copy number
 						   checkOverlaps); // overlap checking
       
-      // Register the spos and other info of this elemnet.
+      // Register the spos and other info of this element.
       // Used by energy counter sd to get spos of that logical volume at histogram time.
       // If it has a readout volume, that'll be used for sensitivity so only need to register
       // that. Should only register what we need to as used for every energy hit (many many many)

@@ -163,6 +163,7 @@ std::pair<BDSExtent, BDSExtent> BDS::InspectCutTubs(const G4VSolid* solidIn)
   G4double zmin;
   G4double zmax;
   temp->GetMaxMinZ(zmin,zmax); // solid does calculation and updates variables
+  delete temp;
   
   G4double innerR = solid->GetInnerRadius();
   G4double outerR = solid->GetOuterRadius();

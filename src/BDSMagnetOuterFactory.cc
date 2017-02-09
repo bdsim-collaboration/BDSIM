@@ -17,6 +17,7 @@
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryNone.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMaterials.hh"
 
@@ -405,6 +406,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
 {
   std::map<G4String, G4Colour*> defaultMap = {
     {"coil", BDSColours::Instance()->GetColour("coil")},
+    {"bend", BDSColours::Instance()->GetColour("sectorbend")},
     {"yoke", BDSColours::Instance()->GetColour("quadrupole")},
     {"quad", BDSColours::Instance()->GetColour("quadrupole")},
     {"sext", BDSColours::Instance()->GetColour("sextupole")},

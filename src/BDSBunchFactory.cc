@@ -12,6 +12,7 @@
 #include "BDSBunchPtc.hh"
 #include "BDSBunchSixTrack.hh"
 #include "BDSBunchHalo.hh"
+#include "BDSDebug.hh"
 
 #ifdef USE_GZSTREAM
 #include "gzstream.h"

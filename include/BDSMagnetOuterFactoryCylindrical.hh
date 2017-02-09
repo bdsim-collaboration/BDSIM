@@ -2,11 +2,12 @@
 #define BDSMAGNETOUTERFACTORYCYLINDRICAL_H
 
 #include "BDSMagnetOuterFactoryBase.hh"
-#include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4Colour.hh"
-#include "G4Material.hh"
+
+class BDSBeamPipe;
+class G4Colour;
+class G4Material;
 
 /**
  * @brief Factory that produces cylindrical magnet geometry.

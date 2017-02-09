@@ -1,11 +1,7 @@
 #ifndef BDSBEAMPIPEFACTORYOCTAGONAL_H
 #define BDSBEAMPIPEFACTORYOCTAGONAL_H
 
-#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryPoints.hh"
-#include "BDSBeamPipe.hh"
-
-class G4Material;
 
 /**
  * @brief Factory for octagonal aperture model beampipes.

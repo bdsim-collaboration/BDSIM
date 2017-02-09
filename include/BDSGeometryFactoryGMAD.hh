@@ -4,7 +4,6 @@
 #include "BDSGeometryFactoryBase.hh"
 
 #include "globals.hh"
-#include "G4RotationMatrix.hh"
 
 #include <fstream>
 #include <map>
@@ -13,7 +12,6 @@
 class BDSGeometryExternal;
 class G4Colour;
 class G4LogicalVolume;
-class G4VPhysicalVolume;
 class G4VSolid;
 
 /**

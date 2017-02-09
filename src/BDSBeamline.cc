@@ -9,6 +9,7 @@
 #include "BDSBeamlineElement.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSLine.hh"
+#include "BDSOutputBase.hh"
 #include "BDSSimpleComponent.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTransform3D.hh"
@@ -89,6 +90,14 @@ void BDSBeamline::AddComponent(BDSAcceleratorComponent* component,
   if (!component)
     {G4cerr << __METHOD_NAME__ << "invalid accelerator component " << samplerName << G4endl; exit(1);}
 
+  // check the sampler name is allowed in the output
+  if (BDSOutputBase::InvalidSamplerName(samplerName))
+    {
+      G4cerr << __METHOD_NAME__ << "invalid sampler name \"" << samplerName << "\"" << G4endl;
+      BDSOutputBase::PrintProtectedNames(G4cerr);
+      exit(1);
+    }
+  
   if (BDSLine* line = dynamic_cast<BDSLine*>(component))
     {
       G4int size = (G4int)line->size();

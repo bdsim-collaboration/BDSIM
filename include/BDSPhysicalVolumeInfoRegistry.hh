@@ -2,12 +2,12 @@
 #define BDSPHYSICALVOLUMEINFOREGISTRY_H
 
 #include "globals.hh" // geant4 globals / types
-#include "G4VPhysicalVolume.hh"
 
 #include <iterator>
 #include <map>
 #include <set>
 
+class G4VPhysicalVolume;
 class BDSPhysicalVolumeInfo;
 
 typedef std::map<G4VPhysicalVolume*, BDSPhysicalVolumeInfo*>::iterator BDSPVInfoIterator;

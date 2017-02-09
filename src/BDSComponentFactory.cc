@@ -1060,9 +1060,9 @@ void BDSComponentFactory::PrepareCavityModels()
   for (auto model : BDSParser::Instance()->GetCavityModels())
     {
       auto info = new BDSCavityInfo(BDS::DetermineCavityType(model.type),
-				    nullptr, //construct without material as stored in element
-				    nullptr,
-				    model.eField*CLHEP::volt / CLHEP::m,
+				    nullptr, // construct without material as stored in element
+				    nullptr, // construct without vacuum material as stored in element
+				    0.0,     // construct without gradient as stored in element
 				    model.frequency*CLHEP::hertz,
 				    model.phase,
 				    model.irisRadius*CLHEP::m,
@@ -1091,8 +1091,6 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
       exit(1);
     }
 
-  // ok to use compiler provided copy constructor as doesn't own materials
-  // which are the only pointers in this class
   BDSCavityInfo* info = new BDSCavityInfo(*(result->second));
   // update materials in info with valid materials - only element has material info
   if (!element->material.empty())
@@ -1106,6 +1104,9 @@ BDSCavityInfo* BDSComponentFactory::PrepareCavityModelInfo(Element const* elemen
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(element->vacuumMaterial);}
   else
     {info->vacuumMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->VacuumMaterial());}
+
+  // set electric field
+  info->eField = element->gradient*CLHEP::volt / CLHEP::m;
 
   return info;
 }
@@ -1135,7 +1136,7 @@ void BDSComponentFactory::SetFieldDefinitions(Element const* element,
 	{
 	  G4cerr << "Error: Magnet named \"" << elementName
 		 << "\" is a magnet, but has fieldAll defined." << G4endl
-		 << "Can only have fieldOuter or fieldInner specified." << G4endl;
+		 << "Can only have fieldOuter or fieldVacuum specified." << G4endl;
 	  exit(1);
 	}
       if (!(element->fieldOuter.empty())) // ie variable isn't ""
@@ -1183,8 +1184,9 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-  
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+
+  const G4bool angleSet = element->angleSet;
+  if (BDS::IsFinite(element->B) && angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
       angle = element->angle * CLHEP::rad;

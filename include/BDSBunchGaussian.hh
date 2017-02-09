@@ -2,10 +2,12 @@
 #define BDSBUNCHGAUSSIAN_H 
 
 #include "BDSBunchInterface.hh"
-#include "Randomize.hh"
 #include "CLHEP/Matrix/Vector.h" 
 #include "CLHEP/Matrix/SymMatrix.h"
-#include "CLHEP/RandomObjects/RandMultiGauss.h"
+
+namespace CLHEP {
+  class RandMultiGauss;
+}
 
 /**
  * @brief A 6D Gaussian distribution.

@@ -36,7 +36,6 @@ void Element::PublishMembers()
 {
   publish("l",    &Element::l);
   publish("ks",   &Element::ks);
-  publish("k0",   &Element::k0);
   publish("k1",   &Element::k1);
   publish("k2",   &Element::k2);
   publish("k3",   &Element::k3);
@@ -117,6 +116,7 @@ void Element::PublishMembers()
 
   publish("geometry",&Element::geometryFile);
   publish("bmap",    &Element::fieldAll);
+  alternativeNames["bmap"] = "fieldAll";
   publish("outerMaterial",&Element::outerMaterial);
   publish("material",&Element::material);
   publish("yokeOnInside", &Element::yokeOnInside);
@@ -285,7 +285,6 @@ void Element::flush()
   name = "";
   l = 0;
   ks = 0;
-  k0 = 0;
   k1 = 0;
   k2 = 0;
   k3 = 0;
@@ -381,6 +380,8 @@ void Element::flush()
   cavityModel = "";
 
   colour = "";
+
+  angleSet = false;
 }
 
 double Element::property_lookup(std::string property_name)const{
@@ -402,6 +403,9 @@ void Element::set(const Parameters& params,std::string nameIn, ElementType typeI
   name = nameIn;
   
   set(params);
+
+  if (params.setMap.at("angle"))
+    {angleSet = true;}
 }
 
 void Element::set(const Parameters& params)

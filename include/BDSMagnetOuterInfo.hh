@@ -4,9 +4,10 @@
 #include "BDSMagnetGeometryType.hh"
 
 #include "globals.hh"         // geant4 types / globals
-#include "G4Material.hh"
 
 #include <ostream>
+
+class G4Material;
 
 /**
  * @brief Holder struct of all information required to

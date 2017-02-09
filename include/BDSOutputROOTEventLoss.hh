@@ -3,7 +3,6 @@
 
 #ifndef __ROOTBUILD__
 class BDSEnergyCounterHit;
-class BDSTunnelHit;
 class BDSTrajectoryPoint;
 #endif
 

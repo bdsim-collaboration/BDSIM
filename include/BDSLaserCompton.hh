@@ -1,18 +1,17 @@
 #ifndef BDSLASERCOMPTON_H
 #define BDSLASERCOMPTON_H
 
-#include "G4ios.hh" 
 #include "globals.hh"
 #include "G4VDiscreteProcess.hh"
-#include "G4VPhysicsConstructor.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
 #include "G4Electron.hh"
 #include "G4Positron.hh"
-#include "BDSComptonEngine.hh"
 #include "BDSMaterials.hh"
 
+class BDSComptonEngine;
 class BDSGlobalConstants;
+
+class G4Step;
+class G4Track;
 
 // flag initiated in BDSEventAction
 extern G4bool FireLaserCompton;

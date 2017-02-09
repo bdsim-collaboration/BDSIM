@@ -4,6 +4,7 @@
 
 #include "parser/options.h"
 
+#include "Randomize.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
 BDSBunchEShell::BDSBunchEShell(): 

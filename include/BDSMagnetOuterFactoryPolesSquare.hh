@@ -2,15 +2,15 @@
 #define BDSMAGNETOUTERFACTORYPOLESSQUARE_H
 
 #include "BDSMagnetOuterFactoryPolesBase.hh"
-#include "BDSBeamPipe.hh"
 
 #include "globals.hh"           // geant4 globals / types
-#include "G4VSolid.hh"
 #include <vector>
 
+class BDSBeamPipe;
 class G4Colour;
 class G4LogicalVolume;
 class G4Material;
+class G4VSolid;
 
 /**
  * @brief Factory class for outer volume of magnets. 

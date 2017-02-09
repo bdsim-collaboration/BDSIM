@@ -2,12 +2,13 @@
 #define BDSINTEGRATORMULTIPOLETHIN_H
 
 #include "BDSIntegratorBase.hh"
-#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 #include <list>
+
+class G4Mag_EqRhs;
+class BDSMagnetStrength;
 
 /**
  * @brief Integrator that ignores the field and uses the analytical solution to a multipole.
