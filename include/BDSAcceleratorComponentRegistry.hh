@@ -5,6 +5,7 @@
 
 #include <iterator>
 #include <map>
+#include <vector>
 
 class BDSAcceleratorComponent;
 
