@@ -12,7 +12,6 @@ class G4GFlashSpot;
 class G4HCofThisEvent;
 class G4Step;
 class G4TouchableHistory;
-class G4VProcess;
 
 /**
  * @brief Generates BDSEnergyCounterHits from step information - uses curvilinear coords.

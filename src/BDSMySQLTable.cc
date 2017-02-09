@@ -2,8 +2,9 @@
 #include <string>
 #include <vector>
 
-#include "BDSMySQLTable.hh"
 #include "BDSDebug.hh"
+#include "BDSMySQLTable.hh"
+#include "BDSMySQLVariable.hh"
 
 BDSMySQLTable::BDSMySQLTable (G4String aTableName)
 {

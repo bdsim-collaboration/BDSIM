@@ -1,5 +1,7 @@
 #include "BDSIntegratorBase.hh"
 
+#include "BDSStep.hh"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4ClassicalRK4.hh"
 

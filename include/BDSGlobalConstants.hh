@@ -15,12 +15,10 @@
 #include <map>
 
 class G4FieldManager;
-class G4LogicalVolume;
 class G4ParticleDefinition;
 class G4UniformMagField;
 class G4UserLimits;
 class G4VisAttributes;
-class G4VPhysicalVolume;
 
 class BDSBeamPipeInfo;
 class BDSTunnelInfo;

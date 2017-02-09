@@ -5,7 +5,8 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
+
+class G4Mag_EqRhs;
 
 /**
  * @brief Common functionality to BDSIM integrators.

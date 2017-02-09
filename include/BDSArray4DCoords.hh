@@ -2,7 +2,6 @@
 #define BDSARRAY4DCOORDS_H
 
 #include "BDSArray4D.hh"
-#include "BDSFieldValue.hh"
 #include "BDSFourVector.hh"
 
 #include "globals.hh"

@@ -1,3 +1,4 @@
+#include "BDSDebug.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSMuonPhysics.hh"
 

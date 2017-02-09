@@ -1,15 +1,10 @@
 #ifndef BDSFIELDFACTORY_H
 #define BDSFIELDFACTORY_H
 
-#include "BDSFieldInfo.hh"
-#include "BDSFieldObjects.hh"
 #include "BDSFieldType.hh"
-#include "BDSMagnetStrength.hh"
 #include "BDSMagnetType.hh"
 
 #include "globals.hh" // geant4 globals / types
-#include "G4AffineTransform.hh"
-#include "G4ThreeVector.hh"
 
 #include <map>
 #include <vector>
@@ -20,11 +15,11 @@ namespace GMAD
 }
 
 class BDSField;
-class BDSFieldMag;
+class BDSFieldInfo;
 class BDSFieldObjects;
+class BDSMagnetStrength;
 
 class G4EquationOfMotion;
-class G4Field;
 class G4MagIntegratorStepper;
 class G4Mag_EqRhs;
 

@@ -1,12 +1,12 @@
 #ifndef BDSACCELERATORCOMPONENTREGISTRY_H
 #define BDSACCELERATORCOMPONENTREGISTRY_H
 
-#include "BDSAcceleratorComponent.hh"
-
 #include "globals.hh" // geant4 globals / types
 
 #include <iterator>
 #include <map>
+
+class BDSAcceleratorComponent;
 
 /**
  * @brief A registry of constructed BDSAcceleratorComponent instances that
