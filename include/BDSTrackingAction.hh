@@ -2,8 +2,9 @@
 #define BDSTRACKINGACTION_H
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Track.hh"
 #include "G4UserTrackingAction.hh"
+
+class G4Track;
 
 /**
  * @brief Action to decide whether or not to store trajectory information.

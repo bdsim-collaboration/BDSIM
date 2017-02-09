@@ -6,8 +6,9 @@
 #include <string>
 
 #include "globals.hh"
-#include "G4Material.hh"
+#include "G4Material.hh" // for G4State
 
+class G4Element;
 class G4MaterialPropertiesTable;
 
 /**

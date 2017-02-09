@@ -1,8 +1,6 @@
 #ifndef BDSMUONPHYSICS_H
 #define BDSMUONPHYSICS_H
 
-#include "BDSDebug.hh"
-
 #include "G4VPhysicsConstructor.hh"
 
 /**

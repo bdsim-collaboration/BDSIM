@@ -1,13 +1,12 @@
 #ifndef BDSGEOMETTRYINSPECTOR_H
 #define BDSGEOMETTRYINSPECTOR_H
 
-#include "BDSExtent.hh"
-
 #include "globals.hh"
 #include "G4CutTubs.hh"
 
 #include <utility>
 
+class BDSExtent;
 class G4VSolid;
 
 namespace BDS

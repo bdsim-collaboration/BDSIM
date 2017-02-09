@@ -1,7 +1,6 @@
 #ifndef BDSGEOMETRYFACTORY_H
 #define BDSGEOMETRYFACTORY_H
 
-#include "BDSGeometryFactoryBase.hh"
 #include "BDSGeometryType.hh"
 
 #include "globals.hh"
@@ -11,6 +10,7 @@
 #include <vector>
 
 class BDSGeometryExternal;
+class BDSGeometryFactoryBase;
 class G4Colour;
 
 /**

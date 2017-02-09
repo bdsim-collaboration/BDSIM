@@ -2,9 +2,11 @@
 #define BDSSHOWERMODEL_H
 
 #include "GFlashShowerModel.hh"
-#include "G4FastTrack.hh"
 
 #include  <vector>
+
+class G4FastTrack;
+class G4Region;
 
 /**
  * @brief Revised implementation of GFlash with different fraction of shower considered.

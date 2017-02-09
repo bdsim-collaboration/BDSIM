@@ -1,11 +1,11 @@
 #ifndef BDSMYSQLWRAPPER_H
 #define BDSMYSQLWRAPPER_H
 
-#include "BDSAcceleratorComponent.hh"
-#include "BDSMySQLTable.hh"
 #include <fstream>
 #include <vector>
 #include <string>
+
+class BDSMySQLTable;
 
 #define  _NEXT if(!NextToken()) return;
 #define  _NEXTINPUT if(!NextInputToken()) return;

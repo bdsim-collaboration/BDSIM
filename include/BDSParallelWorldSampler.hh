@@ -1,12 +1,12 @@
 #ifndef BDSPARALLELWORLDSAMPER_H
 #define BDSPARALLELWORLDSAMPER_H
 
-#include "G4VPhysicalVolume.hh"
 #include "G4VUserParallelWorld.hh"
 
 #include <vector>
 
 class G4VisAttributes;
+class G4VPhysicalVolume;
 class BDSSampler;
 
 /**

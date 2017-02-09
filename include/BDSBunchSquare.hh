@@ -2,7 +2,6 @@
 #define BDSBUNCHSQUARE_H 
 
 #include "BDSBunchInterface.hh"
-#include "Randomize.hh"
 
 namespace CLHEP {
   class RandFlat;

@@ -4,7 +4,6 @@
 #include "BDSSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
 
 /** 
  * @brief Rectangular sampler with fixed thickness but variable x,y.

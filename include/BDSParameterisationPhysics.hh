@@ -2,7 +2,8 @@
 #define BDSPARAMETERISATIONPHYSICS_H
 
 #include "G4VPhysicsConstructor.hh"
-#include "G4FastSimulationManagerProcess.hh"
+
+class G4FastSimulationManagerProcess;
 
 /** 
  * @brief G4 fast simulation manager constructor to allowed parameterised showers.

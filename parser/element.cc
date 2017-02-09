@@ -380,6 +380,8 @@ void Element::flush()
   cavityModel = "";
 
   colour = "";
+
+  angleSet = false;
 }
 
 double Element::property_lookup(std::string property_name)const{
@@ -401,6 +403,9 @@ void Element::set(const Parameters& params,std::string nameIn, ElementType typeI
   name = nameIn;
   
   set(params);
+
+  if (params.setMap.at("angle"))
+    {angleSet = true;}
 }
 
 void Element::set(const Parameters& params)

@@ -69,8 +69,8 @@ void BDSMagnet::Build()
   BuildBeampipe();
   BuildVacuumField();
   BuildOuter();
-  BuildOuterField();
   BDSAcceleratorComponent::Build(); // build container
+  BuildOuterField(); // must be done when the containerLV exists
   PlaceComponents(); // place things (if needed) in container
 }
 
@@ -157,6 +157,11 @@ void BDSMagnet::BuildOuterField()
       BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
 								vol,
 								true);
+      // Attach to the container but don't propagate to daughter volumes. This ensures
+      // any gap between the beam pipe and the outer also has a field.
+      BDSFieldBuilder::Instance()->RegisterFieldForConstruction(outerFieldInfo,
+								containerLogicalVolume,
+								false);
     }
 }
 

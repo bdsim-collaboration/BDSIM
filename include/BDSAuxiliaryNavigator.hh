@@ -1,13 +1,12 @@
 #ifndef BDSAUXILIARYNAVIGATOR_H
 #define BDSAUXILIARYNAVIGATOR_H
 
-#include "BDSStep.hh"
-
 #include "globals.hh" // geant4 types / globals
+#include "G4AffineTransform.hh"
 #include "G4Navigator.hh"
 #include "G4ThreeVector.hh"
 
-class G4AffineTransform;
+class BDSStep;
 class G4Step;
 class G4VPhysicalVolume;
 

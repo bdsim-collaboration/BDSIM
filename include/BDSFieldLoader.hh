@@ -1,7 +1,6 @@
 #ifndef BDSFIELDLOADER_H
 #define BDSFIELDLOADER_H
 
-#include "BDSFieldFormat.hh"
 #include "BDSInterpolatorType.hh"
 
 #include "G4String.hh"

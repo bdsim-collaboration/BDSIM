@@ -13,7 +13,6 @@
 
 class BDSAcceleratorComponent;
 class BDSBeamlineElement;
-class BDSGeometryComponent;
 class BDSSimpleComponent;
 class BDSTiltOffset;
 class BDSTransform3D;

@@ -5,6 +5,7 @@
 #include "BDSEventAction.hh"
 #include "BDSEventInfo.hh"
 #include "BDSGlobalConstants.hh"
+#include "BDSHistogram.hh"
 #include "BDSOutputBase.hh"
 #include "BDSSamplerHit.hh"
 #include "BDSSamplerSD.hh"

@@ -7,6 +7,7 @@
 #include "globals.hh"
 #include "G4ProductionCuts.hh"
 #include "G4Region.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include <map>
 

@@ -17,6 +17,7 @@
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryNone.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMaterials.hh"
 

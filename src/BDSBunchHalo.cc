@@ -7,6 +7,7 @@
 
 #include "globals.hh" // geant4 types / globals
 
+#include "Randomize.hh"
 #include "CLHEP/Random/RandFlat.h"
 
 #include <cmath>

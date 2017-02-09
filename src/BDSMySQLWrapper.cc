@@ -3,6 +3,7 @@
 
 #include "BDSMySQLWrapper.hh"
 #include "BDSMySQLTable.hh"
+#include "BDSMySQLVariable.hh"
 
 #include "globals.hh"
 #include <cstdlib>

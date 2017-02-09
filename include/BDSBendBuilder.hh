@@ -1,8 +1,6 @@
 #ifndef BDSBENDBUILDER_H
 #define BDSBENDBUILDER_H
 
-#include "BDSMagnetType.hh"
-
 #include "globals.hh" // geant4 globals / types
 
 class BDSIntegratorSet;
