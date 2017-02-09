@@ -1,3 +1,43 @@
+V0.96 - 2017 / 02 / ??
+======================
+
+New Features
+------------
+
+ * Protection against invalid sampler names that would cause ROOT branching errors.
+ * Parser will expand values from structures when printing. Issue #167.
+ * Optical physics example and test. Issue #156.
+ * Improved parser error messages. Issue #170.
+
+Fields & Integrators
+^^^^^^^^^^^^^^^^^^^^
+ * Complete refactorisation of field classes and construction
+ * Centralised construction of fields.
+ * 1-4D field map loading.
+ * 2D Poisson SuperFish SF7 format field map loading.
+ * 1-4D nearest neighbour, linear and cubic interpolators for field maps.
+ * Support for compressed field maps using tar and gz.
+ * Ability to choose integrator sets for all elements via parser.
+ * Removal of all individual magnet classes - centralised construction in BDSMagnet.
+
+Bug Fixes
+---------
+
+ * ASCII seed state can be loaded properly. Issue #163.
+ * rfcavity can be created without a cavitymodel instance. Issue #165.
+ * Memory leak in comparator event tree comparison fixed. Issue #169.
+ * 0 angle bend with finite field can be created. Issue #176.
+ * Samplers are compared properly in comparator. Issue #177.
+ * Sampler names in Model tree now match exactly those in the Event tree.
+
+General
+-------
+
+ * ``Sampler_`` prefix was removed from all samplers in rootevent output.
+
+Utilities
+---------
+
 V0.95 - 2016 / 11 / 07
 ======================
 
