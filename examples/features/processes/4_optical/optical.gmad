@@ -1,0 +1,18 @@
+! Example based on http://geant4.web.cern.ch/geant4/UserDocumentation/Doxygen/examples_doc/html/ExampleOpNovice.html
+
+beam,  particle="gamma",
+       energy= 6*MeV,
+       distrType="reference";
+
+option, physicsList="em optical";
+
+d1: drift, l=10*cm;
+shape0: rcol, xsize=0, ysize=0, l=50*cm, colour="blue", material="G4_WATER";
+shape1: rcol, xsize=0, ysize=0, l=50*cm, colour="red",  material="G4_A-150_TISSUE";
+shape2: rcol, xsize=0, ysize=0, l=90*cm, colour="gray", material="G4_BONE_COMPACT_ICRU";
+
+beamline: line=(shape0, d1, shape1, d1, shape2);
+use, beamline;
+sample, all;
+
+option, ngenerate=10;
