@@ -29,10 +29,10 @@ BDSFieldBuilder::BDSFieldBuilder()
   lvs.reserve(defaultSize);
   propagators.reserve(defaultSize);
 }
-  
+
 void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
-						   G4LogicalVolume*    logicalVolume,
-						   G4bool              propagateToDaughters)
+						   const std::vector<G4LogicalVolume*>& logicalVolumes,
+						   const G4bool        propagateToDaughters)
 {
   if (info)
     {
@@ -41,9 +41,17 @@ void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
 	     << " to volume: " << logicalVolume->GetName() << G4endl;
 #endif
       infos.push_back(info);
-      lvs.push_back(logicalVolume);
+      lvs.push_back(logicalVolumes);
       propagators.push_back(propagateToDaughters);
     }
+}
+  
+void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
+						   G4LogicalVolume*    logicalVolume,
+						   const G4bool        propagateToDaughters)
+{
+  std::vector<G4LogicalVolume*> lvsForThisInfo = {logicalVolume};
+  RegisterFieldForConstruction(info, lvsForThisInfo, propagateToDaughters);
 }
 
 std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
@@ -56,7 +64,7 @@ std::vector<BDSFieldObjects*> BDSFieldBuilder::CreateAndAttachAll()
       if (field)
 	{
 	  fields.push_back(field);
-	  field->AttachToVolume(lvs[i], propagators[i]);
+	  field->AttachToVolume(lvs[i], propagators[i]); // works with vector of LVs*
 	}
     }
   return fields;
