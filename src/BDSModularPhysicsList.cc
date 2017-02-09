@@ -241,14 +241,17 @@ void BDSModularPhysicsList::ConfigureOptical()
     {G4cout << __METHOD_NAME__ << G4endl;}
   if (!opticalPhysics)
     {return;}
-  opticalPhysics->Configure(kCerenkov, globals->TurnOnCerenkov());           ///< Cerenkov process index
-  opticalPhysics->Configure(kScintillation, true);                                   ///< Scintillation process index                              
-  opticalPhysics->Configure(kAbsorption, globals->TurnOnOpticalAbsorption());  ///< Absorption process index
-  opticalPhysics->Configure(kRayleigh, globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
-  opticalPhysics->Configure(kMieHG, globals->TurnOnMieScattering());      ///< Mie scattering process index
-  opticalPhysics->Configure(kBoundary, globals->TurnOnOpticalSurface());     ///< Boundary process index
-  opticalPhysics->Configure(kWLS,           true);                                    ///< Wave Length Shifting process index                       
-// opticalPhysics->Configure(kNoProcess,      globals->GetTurnOn< Number of processes, no selected process
+  // Construct optical photon
+  G4OpticalPhoton::OpticalPhoton();
+
+  opticalPhysics->Configure(kCerenkov,      globals->TurnOnCerenkov());           ///< Cerenkov process index
+  opticalPhysics->Configure(kScintillation, true);                                ///< Scintillation process index
+  opticalPhysics->Configure(kAbsorption,    globals->TurnOnOpticalAbsorption());  ///< Absorption process index
+  opticalPhysics->Configure(kRayleigh,      globals->TurnOnRayleighScattering()); ///< Rayleigh scattering process index
+  opticalPhysics->Configure(kMieHG,         globals->TurnOnMieScattering());      ///< Mie scattering process index
+  opticalPhysics->Configure(kBoundary,      globals->TurnOnOpticalSurface());     ///< Boundary process index
+  opticalPhysics->Configure(kWLS,           true);                                ///< Wave Length Shifting process index
+// opticalPhysics->Configure(kNoProcess, globals->GetTurnOn< Number of processes, no selected process
   opticalPhysics->SetScintillationYieldFactor(globals->ScintYieldFactor());
 }
 

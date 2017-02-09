@@ -4,6 +4,8 @@
 #include "globals.hh"
 
 #include <ctime>
+#include <ostream>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -93,6 +95,15 @@ public:
 	      const time_t&  stopTime,
 	      const G4float& duration,
               const std::string& seedStateAtStart);
+
+  /// Invalid names for samplers - kept here as this is where the output structures are created.
+  const static std::set<G4String> protectedNames;
+  
+  /// Test whether a sampler name is invalid or not.
+  static bool InvalidSamplerName(const G4String& samplerName);
+  
+  /// Feedback for protected names
+  static void PrintProtectedNames(std::ostream& out);
   
 protected:
   /// current event number
