@@ -202,7 +202,6 @@ void BDSOutputROOTEvent::Initialise()
 #else 
       BDSOutputROOTEventSampler<double> *res = new BDSOutputROOTEventSampler<double>(samplerName);
 #endif
-      //samplerMap[samplerName] = res;
       samplerTrees.push_back(res);
       // set tree branches
       theEventOutputTree->Branch((samplerName+".").c_str(), 
