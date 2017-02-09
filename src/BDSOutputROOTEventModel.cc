@@ -39,7 +39,7 @@ int BDSOutputROOTEventModel::findNearestElement(TVector3 vPoint)
 void BDSOutputROOTEventModel::Fill()
 {
   for (const auto name : BDSSamplerRegistry::Instance()->GetUniqueNames())
-    {samplerNamesUnique.push_back(std::string(name));}
+    {samplerNamesUnique.push_back(std::string(name)+".");}
   
   // get accelerator model
   BDSBeamline* beamline = BDSAcceleratorModel::Instance()->GetFlatBeamline();
