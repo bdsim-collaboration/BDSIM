@@ -49,8 +49,8 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousSPositionEnd = 0;
 
   // gap between each element added to the beam line
-  //paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
-  paddingLength = 3*CLHEP::mm;
+  paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
+  //paddingLength = 3*CLHEP::mm;
 }
 
 BDSBeamline::~BDSBeamline()
