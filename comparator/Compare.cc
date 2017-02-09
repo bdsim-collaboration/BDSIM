@@ -300,8 +300,10 @@ void Compare::EventTree(TTree* t1, TTree* t2, std::vector<Result*>& results,
       return;
     }
 
-  Event* evtLocal1 = new Event();
-  Event* evtLocal2 = new Event();
+  // Need to tell Event to process samplers at construction time.
+  G4bool processSamplers = samplerNames.empty() ? false : true;
+  Event* evtLocal1 = new Event(/*debug=*/false, processSamplers);
+  Event* evtLocal2 = new Event(/*debug=*/false, processSamplers);
   evtLocal1->SetBranchAddress(t1, &samplerNames);
   evtLocal2->SetBranchAddress(t2, &samplerNames);
 
