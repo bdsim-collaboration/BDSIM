@@ -4,21 +4,45 @@ V0.96 - 2017 / 02 / ??
 New Features
 ------------
 
- * Protection against invalid sampler names that would cause ROOT branching errors.
  * Parser will expand values from structures when printing. Issue #167.
  * Optical physics example and test. Issue #156.
  * Improved parser error messages. Issue #170.
+ * Support for compressed input coordinate files for beam distributions using tar and gz.
+ * Switch entirely to CMake labels instead of naming convention for tests.
+ * AWAKE experiment code refactored into module.
+ * New *shield* element that is a drift surrounded by rectangle of material.
+ * New *placement* element that allows an object with geometry to be placed independent of the beam line.
 
 Fields & Integrators
 ^^^^^^^^^^^^^^^^^^^^
  * Complete refactorisation of field classes and construction
  * Centralised construction of fields.
- * 1-4D field map loading.
+ * 1-4D BDSIM format field map loading.
  * 2D Poisson SuperFish SF7 format field map loading.
  * 1-4D nearest neighbour, linear and cubic interpolators for field maps.
  * Support for compressed field maps using tar and gz.
  * Ability to choose integrator sets for all elements via parser.
  * Removal of all individual magnet classes - centralised construction in BDSMagnet.
+ * New executable - "bdsinterpolator" - allows loaded and interpolated field to be queried and written out.
+
+Geometry
+^^^^^^^^
+
+ * Rewritten geometry loading.
+ * Ability to overlay externally provided geometry on magnets (except sbend).
+ * Automatically generated tight-fitting containers for externally loaded GDML geometry.
+ * *circularvacuum* beam pipe geometry that allows no geometry for the beam pipe; only vacuum.
+ * Colour hue tweaked slightly.
+
+   
+Output & Analysis
+^^^^^^^^^^^^^^^^^
+
+ * Protection against invalid sampler names that would cause ROOT branching errors.
+ * 1x 3D histogram in default output that can be placed along the beam line.
+ * Support for 3D histograms in rebdsim.
+ * All magnet strength components written out to survey.
+
 
 Bug Fixes
 ---------
@@ -29,11 +53,20 @@ Bug Fixes
  * 0 angle bend with finite field can be created. Issue #176.
  * Samplers are compared properly in comparator. Issue #177.
  * Sampler names in Model tree now match exactly those in the Event tree.
+ * Missing virtual keyword from destructors fixed through to fix leaks at end of program.
+ * GFlash parameterisation is only loaded if specified in physics list.
+ * Fixed geometry construction errors that may occur due to dynamic tolerances for physically large models.
+ * Fix infinite loop events if the primary vertex starts outside the world volume.
+ * Regions and biases set correctly to components in BDSLine class.
 
 General
 -------
 
  * ``Sampler_`` prefix was removed from all samplers in rootevent output.
+ * Sampler thickness reduced from 40 nm to 10 pm.
+ * Removal of unnecessary step length limit to half the length of an element.
+ * Revised region construction allowing arbitrary number to be constructed.
+ * Revised bend construction with reduced volume count in some cases.
 
 Utilities
 ---------
