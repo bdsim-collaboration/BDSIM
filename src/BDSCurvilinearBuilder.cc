@@ -14,7 +14,8 @@
 
 #include <cmath>
 
-BDSCurvilinearBuilder::BDSCurvilinearBuilder()
+BDSCurvilinearBuilder::BDSCurvilinearBuilder():
+  paddingLength(0)
 {
   const BDSGlobalConstants* globals = BDSGlobalConstants::Instance(); // shortcut
   curvilinearRadius = globals->SamplerDiameter()*0.5;
@@ -53,7 +54,14 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
 BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine(BDSBeamline const* const beamline)
 {
   BDSBeamline* result = new BDSBeamline();
+  // Get the padding length from the beam line class
+  paddingLength = beamline->PaddingLength();
 
+  // Although elements will be premanufactured here and added to a beam line without
+  // using the AddElement method that calculates the coordinates. We want the curvilinear
+  // world to be slightly bigger than each element, hence the padding in the mass world,
+  // and so we expand the length of each curvilinear element.
+  
   G4int    counter              = 0; // counter for naming
 
   G4double accumulatedAngle     = 0;
@@ -196,17 +204,18 @@ BDSBeamlineElement* BDSCurvilinearBuilder::CreateCurvilinearElement(G4String    
   
   if (startElement == finishElement)
     {// build 1:1
-      chordLength = (*startElement)->GetChordLength();
+      chordLength = (*startElement)->GetChordLength() + paddingLength;
       angle       = (*startElement)->GetAngle();
       if (Angled(*startElement)) {
-	arcLength = (*startElement)->GetArcLength();
+        // Not strictly accurate to add on paddingLength to arcLength, but close for now.
+	arcLength = (*startElement)->GetArcLength() + paddingLength;
       }
     }
   else
     {// cover a few components
       G4ThreeVector positionStart = (*startElement)->GetReferencePositionStart();
       G4ThreeVector positionEnd   = (*finishElement)->GetReferencePositionEnd();
-      chordLength                 = (positionEnd - positionStart).mag();
+      chordLength                 = (positionEnd - positionStart).mag() + paddingLength;
       
       G4double accumulatedAngle = 0;
       for (auto it = startElement; it < finishElement; it++)

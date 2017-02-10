@@ -54,6 +54,9 @@ private:
 		  G4double& accumulatedAngle,
 		  G4bool&   straightSoFar) const;
 
+  /// Length that was used for padding on the beam line we're building with respesct to.
+  G4double paddingLength;
+
   G4double curvilinearRadius; ///< Radius for curvilinear geometry.
   G4bool   checkOverlaps;     ///< Whether to check overlaps.
   G4double lengthSafety;      ///< Length safety.

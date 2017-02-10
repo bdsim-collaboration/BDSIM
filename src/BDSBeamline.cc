@@ -46,7 +46,11 @@ BDSBeamline::BDSBeamline(G4ThreeVector     initialGlobalPosition,
   previousReferencePositionEnd = initialGlobalPosition;
 
   // initial s coordinate
-  previousSPositionEnd = 0; 
+  previousSPositionEnd = 0;
+
+  // gap between each element added to the beam line
+  paddingLength = 3 * BDSGlobalConstants::Instance()->LengthSafety();
+  //paddingLength = 3*CLHEP::mm;
 }
 
 BDSBeamline::~BDSBeamline()
@@ -294,7 +298,13 @@ void BDSBeamline::AddSingleComponent(BDSAcceleratorComponent* component,
   // if not the first item in the beamline, get the reference trajectory global position
   // at the end of the previous element
   if (!empty())
-    {previousReferencePositionEnd = back()->GetReferencePositionEnd();}
+    {
+      previousReferencePositionEnd = back()->GetReferencePositionEnd();
+      // leave a small gap for unambiguous geometry navigation. Transform that length
+      // to a unit z vector along the direction of the beam line before this component
+      G4ThreeVector componentGap = G4ThreeVector(0,0,paddingLength).transform(*referenceRotationStart);
+      previousReferencePositionEnd += componentGap;
+    }
   
   G4ThreeVector referencePositionStart, referencePositionMiddle, referencePositionEnd;
   if (hasFiniteLength)
