@@ -38,7 +38,10 @@ void BDSFieldBuilder::RegisterFieldForConstruction(const BDSFieldInfo* info,
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Registering info: " << info
-	     << " to volume: " << logicalVolume->GetName() << G4endl;
+	     << " to volume(s): ";
+      for (auto vol : logicalVolumes)
+	{G4cout << vol->GetName() << " ";}
+      G4cout << G4endl;
 #endif
       infos.push_back(info);
       lvs.push_back(logicalVolumes);
