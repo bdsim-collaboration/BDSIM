@@ -3,13 +3,13 @@ from scipy import constants as _con
 import os as _os
 import string as _string
 import glob as _glob
-import TestParameters
+import Globals
 import PhaseSpace
 import Writer
 from pybdsim import Writer as _pybdsimWriter
 from pybdsim import Options as _options
 
-TestParams = TestParameters.TestParameters()
+TestParams = Globals.TestParameters()
 
 multiEntryTypes = [tuple,list,_np.ndarray]
 
