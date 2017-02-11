@@ -201,8 +201,8 @@ class TestSuite():
             return outputevent
 
     def CompareOutput(self,file1,file2):
-        comparatorCommand = Globals.bdsimPath + ' ' + file1 + ' ' + file2
-        _os.system(Globals._comparatorExecutable + ' > tempComp.log')
+        comparatorCommand = Globals._comparatorExecutable + ' ' + file1 + ' ' + file2
+        _os.system(comparatorCommand + ' > tempComp.log')
         hasPassed = self.CheckComparison()
         if hasPassed:
             _os.system("rm "+file1)
