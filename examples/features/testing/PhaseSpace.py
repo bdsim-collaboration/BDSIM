@@ -79,4 +79,4 @@ class PhaseSpace(dict):
                             for pt in self['pt']:
                                 self.inrays.AddParticle(x,px,y,py,t,pt)
 
-        self.inrays.Write(filename + ' > /dev/null 2>&1')
+        self.inrays.Write(filename)
