@@ -3,6 +3,8 @@ from scipy import constants as _con
 import os as _os
 import string as _string
 import glob as _glob
+import subprocess as _sub
+
 import Globals
 import PhaseSpace
 import Writer
@@ -144,7 +146,10 @@ class Test(dict):
 
 class TestSuite():
     def __init__(self,directory=''):
-        self._tests = []
+        self._tests = [] #list of test objects
+        
+        self._testStatus = {} #dict of test statuses
+        
         if not isinstance(directory,_np.str):
             raise TypeError("Testing directory is not a string")
         else:
@@ -193,49 +198,68 @@ class TestSuite():
         files = _glob.glob('*.root')
         outputevent = outputfile+'_event.root'
         if not files.__contains__(outputevent):
-            self.UpdateBDSIMFailLog(file)
-            print("Output for file "+file+" was not generated.")
             return None
         else:
             _os.system("rm temp.log")
             return outputevent
 
-    def CompareOutput(self,file1,file2):
-        comparatorCommand = Globals._comparatorExecutable + ' ' + file1 + ' ' + file2
-        _os.system(comparatorCommand + ' > tempComp.log')
-        hasPassed = self.CheckComparison()
+    def CompareOutput(self,test,originalFile,newFile,isSelfComparison=False):
+
+        outputLog = open("tempComp.log",'w') #temp log file for the comparator output.
+        TestResult = _sub.call(args=[Globals._comparatorExecutable, originalFile,newFile],stdout=outputLog)
+        outputLog.close()
+        
+        self._testStatus[test] = TestResult #Set dict val to comparator return num.
+        #immediate pass/fail bool for decision on keeping root output
+        hasPassed = True
+        if TestResult != 0:
+            hasPassed = False
+        
         if hasPassed:
-            _os.system("rm "+file1)
-            _os.system("rm "+file2)
+            _os.system("rm "+newFile)
+            if isSelfComparison:
+                _os.system("rm "+originalFile)
             _os.system("rm tempComp.log")
-            f = open(self.bdsimPassLog,'a')
-            f.write("File "+file2+" has passed.\r\n")
+            f = open(self.bdsimPassLog,'a') #Update the pass log
+            f.write("File "+newFile+" has passed.\r\n")
             f.close()
         else:
-            _os.system("mv "+file2 + " FailedTests/"+file2)
-            self.UpdateComparatorLog(file2)
+            if isSelfComparison:
+                _os.system("rm "+originalFile)
+            _os.system("mv "+newFile + " FailedTests/"+newFile) #move the failed file
+            self._UpdateComparatorLog(newFile)
+            _os.system("rm tempComp.log")
 
-    def Main(self,quickTest=True):
+
+    def RunTestSuite(self,isSelfComparison=True):
         self.WriteGlobalOptions()
-        self.WriteGmadFiles()
+        self.WriteGmadFiles()   #Write all gmad files for all test objects.
         
         _os.chdir('BDSIMOutput')
         testfilesDir = '../Tests/*/'
-        componentDirs = _glob.glob(testfilesDir)
+        componentDirs = _glob.glob(testfilesDir) #get all component dirs in the Tests dir
+        
         for dir in componentDirs:
-            testfileStr = dir+'*.gmad'
+            testfileStr = dir+'*.gmad'  #get all gmad files in a components dir
             tests = _glob.glob(testfileStr)
             for test in tests:
                 outputEvent = self.GenerateRootFile(test)
-
-                if quickTest:
-                    copiedEvent = outputEvent.split('_event.root')[0] + '_event2.root'
-                    copyString = 'cp '+outputEvent+' '+copiedEvent
-                    _os.system(copyString)
-                    self.CompareOutput(outputEvent,copiedEvent)
-
-    def CheckComparison(self):
-        return True
+                
+                #Only compare if the output was generated.
+                if outputEvent != None:
+                    if isSelfComparison:
+                        originalEvent = outputEvent.split('_event.root')[0] + '_event2.root'
+                        copyString = 'cp '+outputEvent+' '+originalEvent
+                        _os.system(copyString)
+                    else:
+                        pass #This is where the comparison with the original file will occur.
+                            #TODO: figure out how to process original files that will be compared to.
+                
+                    self.CompareOutput(test,originalEvent,outputEvent)
+                else:
+                    self._UpdateBDSIMFailLog(test)
+                    print("Output for test "+test+" was not generated.")
+        _os.chdir('../')
 
     def WriteGlobalOptions(self):
         options = _options.Options()
@@ -243,7 +267,7 @@ class TestSuite():
         Writer = _pybdsimWriter.Writer()
         Writer.WriteOptions(options,'Tests/trackingTestOptions.gmad')
     
-    def UpdateBDSIMFailLog(self,testFileName):
+    def _UpdateBDSIMFailLog(self,testFileName):
         f = open('temp.log','r')
         g = open(self.bdsimFailLog,'a')
         g.write('\r\n')
@@ -253,7 +277,7 @@ class TestSuite():
             g.write(line)
         g.close()
         
-    def UpdateComparatorLog(self,testFileName):
+    def _UpdateComparatorLog(self,testFileName):
         f = open('tempComp.log','r')
         g = open(self._comparatorLog,'a')
         g.write('\r\n')
