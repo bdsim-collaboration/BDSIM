@@ -175,12 +175,16 @@ class TestSuite():
         self._comparatorLog = 'comparatorOutput.log'
 
     def AddTest(self,test):
+        ''' Add a bdsimtesting.pybdsimTest.Test instance to the test suite.
+            '''
         if not isinstance(test,Test):
             raise TypeError("Test is not a bdsimtesting.pybdsimTest.Test instance")
         else:
             self._tests.append(test)
 
     def WriteGmadFiles(self):
+        ''' Write the gmad files for all tests in the Tests directory.
+            '''
         _os.chdir('Tests')
         for test in self._tests:
             writer = Writer.Writer()
@@ -188,13 +192,22 @@ class TestSuite():
         _os.chdir('../')
     
     def GenerateRootFile(self,file):
+        ''' Generate the rootevent output for a given gmad file.
+            '''
+        #strip extension to leave test name, will be used as output name
         if (file[-5:] != '.gmad'):
             outputfile = file[:-5]
         else:
             outputfile = file
         outputfile = outputfile.split('/')[-1]
+        
+        #run bdsim and dump output to temporary log file.
+        #os.system used as subprocess.call has difficulty with the arguments for some reason.
         bdsimCommand = Globals._bdsimExecutable + " --file="+file+" --output=rootevent --outfile="+outputfile+" --batch"
         _os.system(bdsimCommand + ' > temp.log')
+
+        #quick check for output file. If it doesn't exist, update the main failure log and return None.
+        #If it does exist, delete the log and return the filename
         files = _glob.glob('*.root')
         outputevent = outputfile+'_event.root'
         if not files.__contains__(outputevent):
@@ -204,6 +217,15 @@ class TestSuite():
             return outputevent
 
     def CompareOutput(self,test,originalFile,newFile,isSelfComparison=False):
+        ''' Compare the output file against another file. This function uses BDSIM's comparator.
+            The test gmad file name is needed for updating the appropriate log files.
+            If the comparison is successful:
+                The generated root file is deleted.
+                The BDSIM pass log file is updated.
+            If the comparison is not successful:
+                The generated file is moved to the FailedTests directory.
+                The Comparator log is updated.
+            '''
 
         outputLog = open("tempComp.log",'w') #temp log file for the comparator output.
         TestResult = _sub.call(args=[Globals._comparatorExecutable, originalFile,newFile],stdout=outputLog)
@@ -232,6 +254,9 @@ class TestSuite():
 
 
     def RunTestSuite(self,isSelfComparison=True):
+        ''' Run all tests in the test suite. This will generate the tests rootevent 
+            output, compares to an original file, and processes the comparison results.
+            '''
         self.WriteGlobalOptions()
         self.WriteGmadFiles()   #Write all gmad files for all test objects.
         
@@ -262,12 +287,16 @@ class TestSuite():
         _os.chdir('../')
 
     def WriteGlobalOptions(self):
+        ''' Write the options file that will be used by all test files.
+            '''
         options = _options.Options()
         options.SetSamplerDiameter(3)
         Writer = _pybdsimWriter.Writer()
         Writer.WriteOptions(options,'Tests/trackingTestOptions.gmad')
     
     def _UpdateBDSIMFailLog(self,testFileName):
+        ''' Update the test failure log.
+            '''
         f = open('temp.log','r')
         g = open(self.bdsimFailLog,'a')
         g.write('\r\n')
@@ -278,6 +307,8 @@ class TestSuite():
         g.close()
         
     def _UpdateComparatorLog(self,testFileName):
+        ''' Update the test pass log.
+            '''
         f = open('tempComp.log','r')
         g = open(self._comparatorLog,'a')
         g.write('\r\n')
