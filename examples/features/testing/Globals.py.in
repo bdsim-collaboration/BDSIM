@@ -2,16 +2,31 @@
 
 import numpy as _np
 
-class TestParameters():
-    ''' Class containing lists and dictionaries of testing data.
+class Globals():
+    ''' Class containing global parameters for testing.
+        Includes:
+        - Paths to the BDSIM and comparator executables.
+        - Lists and dictionaries of testable variables:
+            - Elements
+            - All element parameters
+            - Parameters for an individual element
+        - Parameter values for:
+            - Magnet Coefficients (K1 to K5)
+            - Arrays of multipole component
+            - All element parameters
+            - Particles
+            - Example accelerators with particle and energy
+            - 6D beam phase space:
+                - Full
+                - Extremeties for robustness testing
 
         '''
     def __init__(self):
-        # convert madx tfs into gmad and ptc lattice, run the simulation for each
-        self.bdsimPath = "@CMAKE_BINARY_DIR@/bdsim"
+        # bdsim executable
+        self._bdsimExecutable = "@CMAKE_BINARY_DIR@/bdsim"
 
-        # load and compare the tracking output from both simualtions
-        self.comparatorPath="@CMAKE_BINARY_DIR@/comparator/comparator"
+        # comparator executable
+        self._comparatorExeutable = "@CMAKE_BINARY_DIR@/comparator/comparator"
 
 
         #components that can be varied
@@ -86,7 +101,7 @@ class TestParameters():
                             'k4'   : 6.0e5,
                             'k5'   : 3.0e8}
 
-        #tuples for multipole and thinMultipole (all K components for given component)
+        #tuples for multipole and thinMultipole (all K components for given element)
         self.k1l = [(-1.0 * self.magStrengths['k1']),             (0), (1.0 * self.magStrengths['k1'])]
         self.k2l = [(0, -1.0 * self.magStrengths['k1']),          (0), (0, 1.0 * self.magStrengths['k1'])]
         self.k3l = [(0, 0, -1.0 * self.magStrengths['k1']),       (0), (0, 0, 1.0 * self.magStrengths['k1'])]
@@ -134,7 +149,7 @@ class TestParameters():
                             'FCC'           : {'particle' : 'proton', 'energy' : 50000}
                             }
 
-
+        # Full phase space
         self.BeamPhaseSpace = {'X'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
                                'PX' : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
                                'Y'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
@@ -142,6 +157,7 @@ class TestParameters():
                                'T'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
                                'PT' : [0      ,  1.0e-6,  1.0e-4, 1.0e-2]}
 
+        # Phase space extremeties for robustness testing
         self.BeamPhaseSpaceExtremeties = {'X'  : [-1.0e-2, 0, 1.0e-2],
                                           'PX' : [-1.0e-2, 0, 1.0e-2],
                                           'Y'  : [-1.0e-2, 0, 1.0e-2],

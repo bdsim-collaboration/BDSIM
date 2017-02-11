@@ -9,7 +9,7 @@ import Writer
 from pybdsim import Writer as _pybdsimWriter
 from pybdsim import Options as _options
 
-TestParams = Globals.TestParameters()
+Globals = Globals.Globals()
 
 multiEntryTypes = [tuple,list,_np.ndarray]
 
@@ -22,20 +22,20 @@ class Test(dict):
         
         #Initialise parameters for the component as empty lists (or defaults) and dynamically
         #create setter functions for those component parameters.
-        if isinstance(component,_np.str) and (TestParams.components.__contains__(component)):
+        if isinstance(component,_np.str) and (Globals.components.__contains__(component)):
             self.Component = component
-            for param in TestParams.hasParams[component]:
+            for param in Globals.hasParams[component]:
                 if not useDefaults:
                     self[param] = []
                 else:
-                    self.__Update(param,TestParams.paramValues[param])
+                    self.__Update(param,Globals.paramValues[param])
                 funcName = "Set"+_string.capitalize(param)
                 setattr(self,funcName,self.__createSetterFunction(name=param))
             
             #set the parameter values to the kwarg values if defaults are not specified
             if not useDefaults:
                 for key,value in kwargs.iteritems():
-                    if TestParams.hasParams[component].__contains__(key):
+                    if Globals.hasParams[component].__contains__(key):
                         self.__Update(key,value)
         else:
             raise("Unknown component type.")
@@ -89,11 +89,11 @@ class Test(dict):
         numcomponentVariations = 1
         for key,values in self.iteritems():
             if key == 'knl' or key == 'ksl':
-                numcomponentVariations *= (len(TestParams.k1l)*len(values))
+                numcomponentVariations *= (len(Globals.k1l)*len(values))
             elif len(values) != 0:
                 numcomponentVariations *= len(values)
         if (self.Component == 'rbend' or self.Component == 'sbend') and self._useDefaults:
-            numcomponentVariations /= len(TestParams.paramValues['field'])
+            numcomponentVariations /= len(Globals.paramValues['field'])
             numcomponentVariations *= 2 #angle or field
         self._numFiles = numcomponentVariations
 
@@ -112,7 +112,7 @@ class Test(dict):
             raise ValueError("Unknown data type.")
 
     def SetParticleType(self,particle=''):
-        if TestParams.particles.__contains__(particle):
+        if Globals.particles.__contains__(particle):
             self.Particle = particle
         else:
             raise ValueError("Unknown particle type")
@@ -131,7 +131,7 @@ class Test(dict):
             raise ValueError("Parameter is already listed as a test parameter.")
         
         elif isinstance(parameter,_np.str):
-            if TestParams.parameters.__contains__(parameter):
+            if Globals.parameters.__contains__(parameter):
                 self[parameter] = []
                 funcName = "Set"+_string.capitalize(parameter)
                 setattr(self,funcName,self.createSetterFunction(name=parameter))
@@ -188,7 +188,7 @@ class TestSuite():
         else:
             outputfile = file
         outputfile = outputfile.split('/')[-1]
-        bdsimCommand = "~/bdsim/bdsim_builds/devel/bdsim --file="+file+" --output=rootevent --outfile="+outputfile+" --batch"
+        bdsimCommand = Globals._bdsimExecutable + " --file="+file+" --output=rootevent --outfile="+outputfile+" --batch"
         _os.system(bdsimCommand + ' > temp.log')
         files = _glob.glob('*.root')
         outputevent = outputfile+'_event.root'
@@ -201,8 +201,8 @@ class TestSuite():
             return outputevent
 
     def CompareOutput(self,file1,file2):
-        comparatorCommand = '~/bdsim/bdsim_builds/devel/comparator/comparator '+ file1 + ' ' + file2
-        _os.system(comparatorCommand + ' > tempComp.log')
+        comparatorCommand = Globals.bdsimPath + ' ' + file1 + ' ' + file2
+        _os.system(Globals._comparatorExecutable + ' > tempComp.log')
         hasPassed = self.CheckComparison()
         if hasPassed:
             _os.system("rm "+file1)
@@ -270,19 +270,19 @@ class TestSuite():
 
         self.numFiles =  {}
         self.componentTests = []
-        for component in TestParams.components:
+        for component in Globals.components:
             self.numFiles[component] = 0
         
-        TestPS = TestParams.BeamPhaseSpace
+        TestPS = Globals.BeamPhaseSpace
     
         BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'],TestPS['PX'],TestPS['Y'],TestPS['PY'],TestPS['T'],TestPS['PT'])
         BeamPhaseSpace.Write()
     
-        for machineInfo in TestParams.accelerators.values():
+        for machineInfo in Globals.accelerators.values():
             energy = machineInfo['energy']
             particle = machineInfo['particle']
         
-            for component in TestParams.components:
+            for component in Globals.components:
                 componentTest = Test(component,energy,particle,BeamPhaseSpace,useDefaults=True)
                 self.componentTests.append(componentTest)
                 self.numFiles[component] += componentTest._numFiles
