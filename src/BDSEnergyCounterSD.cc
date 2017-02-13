@@ -86,7 +86,10 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   if (!BDS::IsFinite(enrg))
     {return false;}
 
-  G4int nCopy = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetCopyNo();
+  // avoid double getting pv
+  auto hitMassWorldPV = aStep->GetPreStepPoint()->GetPhysicalVolume();
+  volName             = hitMassWorldPV->GetName();
+  G4int nCopy         = hitMassWorldPV->GetCopyNo();
   
   // attribute the energy deposition to a uniformly random position along the step - correct!
   // random distance - store to use twice to ensure global and local represent the same point
@@ -155,7 +158,6 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   ptype      = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
   trackID    = aStep->GetTrack()->GetTrackID();
   parentID   = aStep->GetTrack()->GetParentID();
-  volName    = aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName();  
   turnstaken = BDSGlobalConstants::Instance()->TurnsTaken();
   
   //create hits and put in hits collection of the event
