@@ -399,7 +399,7 @@ BDSAcceleratorComponent* BDSComponentFactory::CreateRBend()
   // pole face angles - let that be checked after element construction in the beamline
 
   BDSMagnetStrength* st = new BDSMagnetStrength();  
-  G4double arcLength   = 0, chordLength = 0, field = 0, angle = 0;
+  G4double arcLength = 0, chordLength = 0, field = 0, angle = 0;
   CalculateAngleAndFieldRBend(element, arcLength, chordLength, field, angle);
   
   (*st)["angle"]  = angle;
@@ -1146,9 +1146,8 @@ std::pair<G4double,G4double> BDSComponentFactory::CalculateAngleAndField(Element
   G4double angle  = 0;
   G4double field  = 0;  
   G4double length = element->l * CLHEP::m;
-
-  const G4bool angleSet = element->angleSet;
-  if (BDS::IsFinite(element->B) && angleSet)
+  
+  if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
       angle = element->angle * CLHEP::rad;
@@ -1176,9 +1175,9 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
   // 'l' in the element represents the chord length for an rbend - must calculate arc length
   // for the field calculation and the accelerator component.
   chordLength = element->l * CLHEP::m;
-  G4double arcLengthLocal = chordLength;
+  G4double arcLengthLocal = chordLength; // default for no angle
   
-  if (BDS::IsFinite(element->B) && BDS::IsFinite(element->angle))
+  if (BDS::IsFinite(element->B) && element->angleSet)
     {// both are specified and should be used - under or overpowered dipole by design
       field = element->B * CLHEP::tesla;
       // note, angle must be finite for this part to be used so we're protected against
@@ -1200,6 +1199,8 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
       if (BDS::IsFinite(angle))
 	{
 	  // sign for bending radius doesn't matter (from angle) as it's only used for arc length.
+	  // this is the inverse equation of that in BDSAcceleratorComponent to calculate
+	  // the chord length from the arclength and angle.
 	  G4double bendingRadius = chordLength * 0.5 / sin(std::abs(angle) * 0.5);
 	  arcLengthLocal = bendingRadius * angle;
 	  field = brho * angle / std::abs(arcLengthLocal);
