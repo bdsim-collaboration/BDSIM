@@ -69,7 +69,10 @@ void BDSEnergyCounterSD::Initialize(G4HCofThisEvent* HCE)
 
 G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 {
-  if(BDSGlobalConstants::Instance()->StopTracks())
+  /// TBC - if the vacuum is sensitive this will stop all tracks including primaries!
+  /// TBC - we can cache this stop tracks bool in the class for speed.
+  G4bool stopTracks = BDSGlobalConstants::Instance()->StopTracks();
+  if(stopTracks)
     {enrg = (aStep->GetTrack()->GetTotalEnergy() - aStep->GetTotalEnergyDeposit());} // Why subtract the energy deposit of the step? Why not add?
   //this looks like accounting for conservation of energy when you're killing a particle
   //which may normally break energy conservation for the whole event
@@ -176,9 +179,10 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   // don't worry, won't add 0 energy tracks as filtered at top by if statement
   energyCounterCollection->insert(ECHit);
 
-  // this will kill all particles - both primaries and secondaries, but if it's being
+  // TBC - this will kill all particles - both primaries and secondaries, but if it's being
   // recorded in an SD that means it's hit something, so ok
-  if(BDSGlobalConstants::Instance()->StopTracks())
+  // BUT, we can make the vacuum sensitive too for ionisation energy loss
+  if(stopTracks)
     {aStep->GetTrack()->SetTrackStatus(fStopAndKill);}
    
   return true;
