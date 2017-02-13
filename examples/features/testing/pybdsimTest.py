@@ -16,11 +16,15 @@ multiEntryTypes = [tuple,list,_np.ndarray]
 GlobalData = Globals.Globals()
 
 class Test(dict):
-    def __init__(self,component, energy, particle, phaseSpace=None, useDefaults=False, **kwargs):
+    def __init__(self, component, energy, particle, phaseSpace=None,
+                 useDefaults=False, testRobustNess=False, eFieldMap='',
+                 bFieldMap='', **kwargs):
+
         dict.__init__(self)
         self._numFiles = 0
         self._testFiles = []
         self._useDefaults = useDefaults
+        self._testRobustness = testRobustNess
         
         #Initialise parameters for the component as empty lists (or defaults) and dynamically
         #create setter functions for those component parameters.
@@ -136,13 +140,12 @@ class Test(dict):
             if GlobalData.parameters.__contains__(parameter):
                 self[parameter] = []
                 funcName = "Set"+_string.capitalize(parameter)
-                setattr(self,funcName,self.createSetterFunction(name=parameter))
+                setattr(self,funcName,self.__createSetterFunction(name=parameter))
                 self.__Update(parameter,values)
             else:
                 raise ValueError("Unknown parameter type: "+parameter+".")
         else:
             raise TypeError("Unknown data type for "+parameter)
-
 
 class TestSuite():
     def __init__(self,directory=''):
@@ -216,7 +219,7 @@ class TestSuite():
             _os.system("rm temp.log")
             return outputevent
 
-    def CompareOutput(self,test,originalFile,newFile,isSelfComparison=False):
+    def CompareOutput(self,test,originalFile='',newFile='',isSelfComparison=False):
         ''' Compare the output file against another file. This function uses BDSIM's comparator.
             The test gmad file name is needed for updating the appropriate log files.
             If the comparison is successful:
