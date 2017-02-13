@@ -1,10 +1,18 @@
 import numpy as _np
-from scipy import constants as _con
 from pymadx import Ptc
 
 allowedPhaseSpaceVars = ['x','px','y','py','t','pt']
 
 class PhaseSpace(dict):
+    ''' Class for representing the phase space co-ordinates of a test beam.
+        Co-ordinates can be entered upon instantiation or via setter functions.
+        Data types for the co-ordinates can be numerical (float, int, etc.),
+        string, arrays, lists, and tuples.
+
+        The writer function will write the beam to a madx file to be called by
+        a gmad ptc beam distribution. Upon writing, all permutations of particle
+        phase space co-ordinates will be written.
+        '''
     def __init__(self,x=0,px=0,y=0,py=0,t=0,pt=0):
         dict.__init__(self)
         for param in allowedPhaseSpaceVars:
@@ -63,8 +71,11 @@ class PhaseSpace(dict):
     def SetPT(self,value):
         self._checkInput('pt',value)
 
-
     def WriteToInrays(self,filename):
+        ''' Function to write the beam to a madx file to be called by
+            a gmad ptc beam distribution. Upon writing, all permutations of particle
+            phase space co-ordinates will be written.
+            '''
         self.inrays = Ptc.Inrays()
         #all dimensions must have at least one value
         for key,values in self.iteritems():
