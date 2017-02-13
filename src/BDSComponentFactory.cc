@@ -1184,7 +1184,12 @@ void BDSComponentFactory::CalculateAngleAndFieldRBend(const Element* element,
       // infinite bending radius and therefore nan arcLength.
       angle = element->angle * CLHEP::rad;
       G4double bendingRadius = brho / field;
-      arcLengthLocal = bendingRadius * angle;
+
+      // protect against bad calculation from 0 angle and finite field
+      if (BDS::IsFinite(angle))
+        {arcLengthLocal = bendingRadius * angle;}
+      else
+        {arcLengthLocal = chordLength;}
     }
   else if (BDS::IsFinite(element->B))
     {// only B field - calculate angle
