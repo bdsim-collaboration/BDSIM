@@ -234,8 +234,8 @@ OptionsBase::OptionsBase()
 
   // scoring map
   nbinsx = 1;
-  nbinsx = 1;
   nbinsy = 1;
+  nbinsz = 1;
   xmin   = 0;
   xmax   = 0;
   ymin   = 0;
