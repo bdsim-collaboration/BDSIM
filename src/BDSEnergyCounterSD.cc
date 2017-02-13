@@ -116,15 +116,16 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   y = eDepPosLocal.y();
   z = eDepPosLocal.z();
 
-  // get the s coordinate (central s + local z), and precision info
+  // get the s coordinate (central s + local z)
+  // volume is from curvilinear coordinate parallel geometry
   BDSPhysicalVolumeInfo* theInfo = BDSPhysicalVolumeInfoRegistry::Instance()->GetInfo(stepLocal.VolumeForTransform());
   G4int beamlineIndex = -1;
   if (theInfo)
     {
       G4double sCentre = theInfo->GetSPos();
-      sAfter  = sCentre + posafterlocal.z();
-      sBefore = sCentre + posbeforelocal.z();
-      beamlineIndex   = theInfo->GetBeamlineIndex();
+      sAfter           = sCentre + posafterlocal.z();
+      sBefore          = sCentre + posbeforelocal.z();
+      beamlineIndex    = theInfo->GetBeamlineIndex();
     }
   else
     {
@@ -143,7 +144,7 @@ G4bool BDSEnergyCounterSD::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   
   eventnumber = G4EventManager::GetEventManager()->GetConstCurrentEvent()->GetEventID();
   
-  if(verbose && BDSGlobalConstants::Instance()->StopTracks())
+  if(verbose)
     {
       G4cout << "BDSEnergyCounterSD: Current Volume: " 
 	     << aStep->GetPreStepPoint()->GetPhysicalVolume()->GetName() 
