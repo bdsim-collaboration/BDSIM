@@ -50,54 +50,54 @@ class Globals():
 
         # parameters that can be varied (across all components)
         self.parameters = ['length',
-                          'angle',
-                          'kickangle',
-                          'field',
-                          'e1',
-                          'e2',
-                          'k1',
-                          'k2',
-                          'k3',
-                          'k4',
-                          'knl',
-                          'ksl',
-                          'gradient',
-                          'x(col)',
-                          'y(col)',
-                          'numWedges',
-                          'thickness',
-                          'ks',
-                          'fint',
-                          'fintx',
-                          'hgap']
+                           'angle',
+                           'kickangle',
+                           'field',
+                           'e1',
+                           'e2',
+                           'k1',
+                           'k2',
+                           'k3',
+                           'k4',
+                           'knl',
+                           'ksl',
+                           'gradient',
+                           'x(col)',
+                           'y(col)',
+                           'numWedges',
+                           'thickness',
+                           'ks',
+                           'fint',
+                           'fintx',
+                           'hgap']
 
         #parameters that can be varied for each components type.
-        self.hasParams = {'drift'        : ['length'],
-                         'rbend'         : ['length','angle','field','e1','e2','fint','fintx','hgap'],
-                         'sbend'         : ['length','angle','field','e1','e2','fint','fintx','hgap'],
-                         'vkick'         : ['length','kickangle'],
-                         'hkick'         : ['length','kickangle'],
-                         'quadrupole'    : ['length','k1'],
-                         'sextupole'     : ['length','k2'],
-                         'octopole'      : ['length','k3'],
-                         'decapole'      : ['length','k4'],
-                         'multipole'     : ['length','knl','ksl'],
-                         'thinmultipole' : ['knl','ksl'],
-                         'rfcavity'      : ['length','gradient'],
-                         'rcol'          : ['length'],
-                         'ecol'          : ['length'],
-                         'degrader'      : ['length','numWedges','thickness'],
-                         'muspoiler'     : ['length','field'],
-                         'shield'        : ['length'],
-                         'solenoid'      : ['length','ks'],
-                         'laser'         : ['length']}
+        self.hasParams = {'drift'         : ['length'],
+                          'rbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap'],
+                          'sbend'         : ['length', 'angle', 'field', 'e1', 'e2', 'fint', 'fintx', 'hgap'],
+                          'vkick'         : ['length', 'kickangle'],
+                          'hkick'         : ['length', 'kickangle'],
+                          'quadrupole'    : ['length', 'k1'],
+                          'sextupole'     : ['length', 'k2'],
+                          'octopole'      : ['length', 'k3'],
+                          'decapole'      : ['length', 'k4'],
+                          'multipole'     : ['length', 'knl', 'ksl'],
+                          'thinmultipole' : ['knl', 'ksl'],
+                          'rfcavity'      : ['length', 'gradient'],
+                          'rcol'          : ['length'],
+                          'ecol'          : ['length'],
+                          'degrader'      : ['length', 'numWedges', 'thickness'],
+                          'muspoiler'     : ['length', 'field'],
+                          'shield'        : ['length'],
+                          'solenoid'      : ['length', 'ks'],
+                          'laser'         : ['length']}
 
         #use same magnet strengths for multipole and thinMultipole components
-        self.magStrengths = {'k1'   : 0.025,
-                            'k2'   : 5.0,
-                            'k3'   : 1.5e3,
-                            'k4'   : 6.0e5,
-                            'k5'   : 3.0e8}
+        self.magStrengths = {'k1': 0.025,
+                             'k2': 5.0,
+                             'k3': 1.5e3,
+                             'k4': 6.0e5,
+                             'k5': 3.0e8}
 
         #tuples for multipole and thinMultipole (all K components for given element)
         self.k1l = [(-1.0 * self.magStrengths['k1']),             (0), (1.0 * self.magStrengths['k1'])]
@@ -109,9 +109,9 @@ class Globals():
         #test values for the components parameters
         #field is not set, it will be calculated upon writing based on length, angle, and energy.
         #number of field values must equal the number of angle values.
-        self.paramValues = {'length'     : [0.2, 2.0, 20.0],
+        self.paramValues = {'length'    : [0.2, 2.0, 20.0],
                             'angle'     : [-0.3, -0.003, 0, 0.003, 0.3],
-                            'kickangle' : [-0.003,0,0.003],
+                            'kickangle' : [-0.003, 0, 0.003],
                             'field'     : [0, 0, 0, 0, 0],
                             'e1'        : [-0.3491, -0.003491, 0, 0.003491, 0.3491],
                             'e2'        : [-0.3491, -0.003491, 0, 0.003491, 0.3491],
@@ -119,8 +119,8 @@ class Globals():
                             'k2'        : [-1.0 * self.magStrengths['k2'], 0, self.magStrengths['k2']],
                             'k3'        : [-1.0 * self.magStrengths['k3'], 0, self.magStrengths['k3']],
                             'k4'        : [-1.0 * self.magStrengths['k4'], 0, self.magStrengths['k4']],
-                            'knl'       : [self.k1l,self.k2l,self.k3l,self.k4l,self.k5l],
-                            'ksl'       : [self.k1l,self.k2l,self.k3l,self.k4l,self.k5l],
+                            'knl'       : [self.k1l, self.k2l, self.k3l, self.k4l, self.k5l],
+                            'ksl'       : [self.k1l, self.k2l, self.k3l, self.k4l, self.k5l],
                             'gradient'  : [-20.0, -0.002, 0, 0.002, 20.0],
                             'x(col)'    : [0.05],
                             'y(col)'    : [0.05],
@@ -131,21 +131,21 @@ class Globals():
                             'fintx'     : [0, 1.0/6.0, 0.5],
                             'hgap'      : [0.01, 0.1]}
 
-        #test particles
-        self.particles = ['e-','proton']
+        # test particles
+        self.particles = ['e-', 'proton']
 
-        #Accelerator information of example machines. Full test ranges will test all these machines at their
-        #energies and for their given particles
-        self.accelerators = {'ATF2'         : {'particle' : 'e-', 'energy' : 1.282},
-                            'DLS'           : {'particle' : 'e-', 'energy' : 3.0},
-                            'ILC'           : {'particle' : 'e-', 'energy' : 250},
-                            'CLIC'          : {'particle' : 'e-', 'energy' : 1500},
-                            'PSI Gantry 2'  : {'particle' : 'proton', 'energy' : 1.188272},
-                            'J-PARC'        : {'particle' : 'proton', 'energy' : 50},
-                            'SPS'           : {'particle' : 'proton', 'energy' : 400},
-                            'LHC'           : {'particle' : 'proton', 'energy' : 4000},
-                            'FCC'           : {'particle' : 'proton', 'energy' : 50000}
-                            }
+        # Accelerator information of example machines. Full test ranges will test all these machines at their
+        # energies and for their given particles
+        self.accelerators = {'ATF2'         : {'particle': 'e-', 'energy': 1.282},
+                             'DLS'          : {'particle': 'e-', 'energy': 3.0},
+                             'ILC'          : {'particle': 'e-', 'energy': 250},
+                             'CLIC'         : {'particle': 'e-', 'energy': 1500},
+                             'PSI Gantry 2' : {'particle': 'proton', 'energy': 1.188272},
+                             'J-PARC'       : {'particle': 'proton', 'energy': 50},
+                             'SPS'          : {'particle': 'proton', 'energy': 400},
+                             'LHC'          : {'particle': 'proton', 'energy': 4000},
+                             'FCC'          : {'particle': 'proton', 'energy': 50000}
+                             }
 
         # Full phase space
         self.BeamPhaseSpace = {'X'  : [-1.0e-2, -1.0e-4, -1.0e-6, -1.0e-8, 0, 1.0e-8, 1.0e-6, 1.0e-4, 1.0e-2],
