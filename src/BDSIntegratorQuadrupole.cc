@@ -204,6 +204,7 @@ void BDSIntegratorQuadrupole::Stepper(const G4double yInput[],
   if (LocalRp.z() < 0.9) // not forwards - can't use our paraxial stepper - use backup one
     {
       backupStepper->Stepper(yInput, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
       return;
     }
 

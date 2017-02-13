@@ -90,4 +90,6 @@ void BDSIntegratorDecapole::Stepper(const G4double yInput[],
   AdvanceHelix(yInput, hstep, yOut);
   
   // TBC - we have not set DistChord here!
+
+  // TBC - no use of backup stepper here
 }

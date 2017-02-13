@@ -204,6 +204,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 #endif
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
     }  
 }
 

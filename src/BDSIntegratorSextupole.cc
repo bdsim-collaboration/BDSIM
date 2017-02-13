@@ -102,6 +102,7 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   if (localPDir.z() < 0.9 || GlobalP.mag() < 40.0 )
     {
       backupStepper->Stepper(yIn, dydx, hstep, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
       return;
     }
   

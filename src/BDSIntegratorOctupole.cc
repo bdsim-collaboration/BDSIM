@@ -96,7 +96,9 @@ void BDSIntegratorOctupole::Stepper(const G4double yInput[],
   for(G4int i = 0; i < nVariables; i++)
     {yIn[i] = yInput[i];}
   
-  G4double h = hstep * 0.5; 
+  G4double h = hstep * 0.5;
+
+  // TBC - no use of backup stepper here
   
   // Do two half steps
   AdvanceHelix(yIn, h, yTemp);

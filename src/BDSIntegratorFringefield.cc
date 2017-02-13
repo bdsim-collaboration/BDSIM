@@ -89,6 +89,7 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
       
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
     }
 }
 
