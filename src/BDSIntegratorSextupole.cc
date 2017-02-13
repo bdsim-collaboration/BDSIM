@@ -125,4 +125,6 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
       if (std::abs(yErr[i]) < 1e-7)
 	{yErr[i] = 0;}
     }
+
+  // TBC - we have not set DistChord here!
 }

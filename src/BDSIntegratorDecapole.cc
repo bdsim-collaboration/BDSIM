@@ -88,4 +88,6 @@ void BDSIntegratorDecapole::Stepper(const G4double yInput[],
   for(G4int i = 0; i < nVariables; i++)
     {yErr[i]=0;} // this is clearly wrong!
   AdvanceHelix(yInput, hstep, yOut);
+  
+  // TBC - we have not set DistChord here!
 }

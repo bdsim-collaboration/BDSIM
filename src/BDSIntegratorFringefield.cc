@@ -48,7 +48,8 @@ void BDSIntegratorFringefield::AdvanceHelix(const G4double yIn[],
   LocalR = RandRp.first;
   LocalP = RandRp.second;
   G4double CosT_ov_2 = cos(h/rho/2.0);
-  distChord = fabs(rho)*(1.-CosT_ov_2);
+  G4double dc = std::abs(rho)*(1.-CosT_ov_2);
+  SetDistChord(dc);
 
   G4double x0  = LocalR.x();
   G4double y0  = LocalR.y();

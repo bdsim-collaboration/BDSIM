@@ -111,7 +111,8 @@ void BDSIntegratorQuadrupole::AdvanceHelix(const G4double yIn[],
   G4double R=1./R_1;
       
   // chord distance (simple quadratic approx)
-  distChord= h2/(8*R);
+  G4double dc = h2/(8*R);
+  SetDistChord(dc);
   
   G4double rootK  = sqrt(std::abs(kappa*zp)); // direction independent
   G4double rootKh = rootK*h*zp;
