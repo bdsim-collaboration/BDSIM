@@ -163,3 +163,36 @@ class Globals():
                                           'T'  : [-1.0e-2, 0, 1.0e-2],
                                           'PT' : [0,1.0e-2]}
 
+        # integrator (mainly for use with field maps)
+        self.Integrators = {'g4cashkarprkf45'       : {'Field': 'EM', 'Dim': 4},
+                            'g4classicalrk4'        : {'Field': 'EM', 'Dim': 4},
+                            'g4constrk4'            : {'Field': 'B', 'Dim': 3},
+                            'g4expliciteuler'       : {'Field': 'EM', 'Dim': 4},
+                            'g4impliciteuler'       : {'Field': 'EM', 'Dim': 4},
+                            'g4simpleheum'          : {'Field': 'EM', 'Dim': 4},
+                            'g4simplerunge'         : {'Field': 'EM', 'Dim': 4},
+                            'g4exacthelixstepper'   : {'Field': 'B', 'Dim': 3},
+                            'g4helixexpliciteuler'  : {'Field': 'B', 'Dim': 3},
+                            'g4helixheum'           : {'Field': 'B', 'Dim': 3},
+                            'g4heliximpliciteuler'  : {'Field': 'B', 'Dim': 3},
+                            'g4helixmixedstepper'   : {'Field': 'B', 'Dim': 3},
+                            'g4helixsimplerunge'    : {'Field': 'B', 'Dim': 3},
+                            'g4nystromrk4'          : {'Field': 'B', 'Dim': 3},
+                            'g4rkg3stepper'         : {'Field': 'B', 'Dim': 3}
+                            }
+
+        self.FieldFormats = ['bdsim1d',
+                             'bdsim2d',
+                             'bdsim3d',
+                             'bdsim4d',
+                             'poisson2d',
+                             'poisson2dquad',
+                             'poisson2ddipole']
+
+        self.FieldTypes = ['bmap1d' , 'bmap2d' , 'bmap3d' , 'bmap4d',
+                           'emap1d' , 'emap2d' , 'emap3d' , 'emap4d',
+                           'ebmap1d', 'ebmap2d', 'ebmap3d', 'ebmap4d']
+
+        self.Interpolators = ['nearest1d', 'nearest2d', 'nearest3d', 'nearest4d',
+                              'linear1d' , 'linear2d' , 'linear3d' , 'linear4d',
+                              'cubic1d'  , 'cubic2d'  , 'cubic3d'  , 'cubic4d']
