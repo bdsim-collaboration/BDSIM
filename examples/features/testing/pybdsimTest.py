@@ -296,6 +296,7 @@ class TestSuite():
                     self.CompareOutput(test,originalEvent,outputEvent)
                 else:
                     self._UpdateBDSIMFailLog(test)
+                    _os.system("rm temp.log")
                     print("Output for test "+test+" was not generated.")
         _os.chdir('../')
 
@@ -344,9 +345,9 @@ class TestSuite():
         TestPS = GlobalData.BeamPhaseSpace
     
         BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'],TestPS['PX'],TestPS['Y'],TestPS['PY'],TestPS['T'],TestPS['PT'])
-        BeamPhaseSpace.Write()
-    
-        for machineInfo in Globals.accelerators.values():
+        BeamPhaseSpace.WriteToInrays('Tests/trackingTestBeam.madx')
+
+        for machineInfo in GlobalData.accelerators.values():
             energy = machineInfo['energy']
             particle = machineInfo['particle']
         
