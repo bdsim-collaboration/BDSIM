@@ -11,6 +11,7 @@ import Writer
 from pybdsim import Writer as _pybdsimWriter
 from pybdsim import Options as _options
 
+#data type with multiple entries that can be handled by the functions.
 multiEntryTypes = [tuple,list,_np.ndarray]
 
 GlobalData = Globals.Globals()
@@ -50,6 +51,8 @@ class Test(dict):
         self.SetParticleType(particle)
         
     def __createSetterFunction(self,name='',val=[]):
+        ''' Function to return function template for updating component parameters.
+            '''
         def function_template(val):
             self.__Update(name,val)
         return function_template
@@ -112,18 +115,25 @@ class Test(dict):
         return s
 
     def SetEnergy(self,energy):
+        ''' Set test beam energy.
+            '''
         try:
             self.Energy = _np.float(energy)
         except TypeError:
             raise ValueError("Unknown data type.")
 
     def SetParticleType(self,particle=''):
+        ''' Set test beam particle.
+            '''
         if GlobalData.particles.__contains__(particle):
             self.Particle = particle
         else:
             raise ValueError("Unknown particle type")
 
     def SetBeamPhaseSpace(self,phaseSpace=None, x=0, px=0, y=0, py=0, t=0, pt=0):
+        ''' Set beam phase space. optional phaseSpace arg must be
+            a PhaseSpace instance. Entry of particle co-ordinates instead
+            internally creates a PhaseSpace instance anyway.'''
         if phaseSpace != None:
             if(isinstance(phaseSpace,PhaseSpace.PhaseSpace)):
                 self.PhaseSpace = phaseSpace
