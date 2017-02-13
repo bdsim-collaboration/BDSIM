@@ -11,9 +11,9 @@ import Writer
 from pybdsim import Writer as _pybdsimWriter
 from pybdsim import Options as _options
 
-Globals = Globals.Globals()
-
 multiEntryTypes = [tuple,list,_np.ndarray]
+
+GlobalData = Globals.Globals()
 
 class Test(dict):
     def __init__(self,component, energy, particle, phaseSpace=None, useDefaults=False, **kwargs):
@@ -24,20 +24,20 @@ class Test(dict):
         
         #Initialise parameters for the component as empty lists (or defaults) and dynamically
         #create setter functions for those component parameters.
-        if isinstance(component,_np.str) and (Globals.components.__contains__(component)):
+        if isinstance(component,_np.str) and (GlobalData.components.__contains__(component)):
             self.Component = component
-            for param in Globals.hasParams[component]:
+            for param in GlobalData.hasParams[component]:
                 if not useDefaults:
                     self[param] = []
                 else:
-                    self.__Update(param,Globals.paramValues[param])
+                    self.__Update(param,GlobalData.paramValues[param])
                 funcName = "Set"+_string.capitalize(param)
                 setattr(self,funcName,self.__createSetterFunction(name=param))
             
             #set the parameter values to the kwarg values if defaults are not specified
             if not useDefaults:
                 for key,value in kwargs.iteritems():
-                    if Globals.hasParams[component].__contains__(key):
+                    if GlobalData.hasParams[component].__contains__(key):
                         self.__Update(key,value)
         else:
             raise("Unknown component type.")
@@ -91,11 +91,11 @@ class Test(dict):
         numcomponentVariations = 1
         for key,values in self.iteritems():
             if key == 'knl' or key == 'ksl':
-                numcomponentVariations *= (len(Globals.k1l)*len(values))
+                numcomponentVariations *= (len(GlobalData.k1l)*len(values))
             elif len(values) != 0:
                 numcomponentVariations *= len(values)
         if (self.Component == 'rbend' or self.Component == 'sbend') and self._useDefaults:
-            numcomponentVariations /= len(Globals.paramValues['field'])
+            numcomponentVariations /= len(GlobalData.paramValues['field'])
             numcomponentVariations *= 2 #angle or field
         self._numFiles = numcomponentVariations
 
@@ -114,7 +114,7 @@ class Test(dict):
             raise ValueError("Unknown data type.")
 
     def SetParticleType(self,particle=''):
-        if Globals.particles.__contains__(particle):
+        if GlobalData.particles.__contains__(particle):
             self.Particle = particle
         else:
             raise ValueError("Unknown particle type")
@@ -133,7 +133,7 @@ class Test(dict):
             raise ValueError("Parameter is already listed as a test parameter.")
         
         elif isinstance(parameter,_np.str):
-            if Globals.parameters.__contains__(parameter):
+            if GlobalData.parameters.__contains__(parameter):
                 self[parameter] = []
                 funcName = "Set"+_string.capitalize(parameter)
                 setattr(self,funcName,self.createSetterFunction(name=parameter))
@@ -203,7 +203,7 @@ class TestSuite():
         
         #run bdsim and dump output to temporary log file.
         #os.system used as subprocess.call has difficulty with the arguments for some reason.
-        bdsimCommand = Globals._bdsimExecutable + " --file="+file+" --output=rootevent --outfile="+outputfile+" --batch"
+        bdsimCommand = GlobalData._bdsimExecutable + " --file="+file+" --output=rootevent --outfile="+outputfile+" --batch"
         _os.system(bdsimCommand + ' > temp.log')
 
         #quick check for output file. If it doesn't exist, update the main failure log and return None.
@@ -228,7 +228,7 @@ class TestSuite():
             '''
 
         outputLog = open("tempComp.log",'w') #temp log file for the comparator output.
-        TestResult = _sub.call(args=[Globals._comparatorExecutable, originalFile,newFile],stdout=outputLog)
+        TestResult = _sub.call(args=[GlobalData._comparatorExecutable, originalFile,newFile],stdout=outputLog)
         outputLog.close()
         
         self._testStatus[test] = TestResult #Set dict val to comparator return num.
@@ -325,10 +325,10 @@ class TestSuite():
 
         self.numFiles =  {}
         self.componentTests = []
-        for component in Globals.components:
+        for component in GlobalData.components:
             self.numFiles[component] = 0
         
-        TestPS = Globals.BeamPhaseSpace
+        TestPS = GlobalData.BeamPhaseSpace
     
         BeamPhaseSpace = PhaseSpace.PhaseSpace(TestPS['X'],TestPS['PX'],TestPS['Y'],TestPS['PY'],TestPS['T'],TestPS['PT'])
         BeamPhaseSpace.Write()
@@ -337,7 +337,7 @@ class TestSuite():
             energy = machineInfo['energy']
             particle = machineInfo['particle']
         
-            for component in Globals.components:
+            for component in GlobalData.components:
                 componentTest = Test(component,energy,particle,BeamPhaseSpace,useDefaults=True)
                 self.componentTests.append(componentTest)
                 self.numFiles[component] += componentTest._numFiles
