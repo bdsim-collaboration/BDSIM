@@ -32,17 +32,16 @@ class PhaseSpace(dict):
                 for val in value:
                     try:
                         floatval = _np.float(val)
+                        variableValues.append(floatval)
                     except ValueError:
-                        print ("Cannot set "+variable+" to "+value+".")
-                    variableValues.append(floatval)
-                self[variable] = variableValues
+                        print ("Unknown data type for "+variable+".")
             else:
                 try:
                     val = _np.float(value)
                 except ValueError:
-                    raise TypeError("Unknown data type for "+variable)
+                    raise TypeError("Unknown data type for "+variable+".")
                 variableValues.append(val)
-                self[variable] = variableValues
+            self[variable] = variableValues
         else:
             raise ValueError("Unknown beam phase space parameter.")
 
