@@ -25,7 +25,6 @@ BDSIntegratorSextupole::BDSIntegratorSextupole(BDSMagnetStrength const* strength
 }
 
 void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
-					  G4ThreeVector /*bField*/,
 					  G4double        h,
 					  G4double        ySext[])
 {
@@ -114,7 +113,7 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   
   // Do a full Step
   h = hstep ;
-  AdvanceHelix(yIn, (G4ThreeVector)0, h, yTemp); 
+  AdvanceHelix(yIn, h, yTemp); 
   
   for(G4int i = 0; i < nVariables; i++)
     {
