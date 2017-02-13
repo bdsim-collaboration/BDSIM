@@ -62,9 +62,9 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
   
   chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
-				  globals->ChordStepMinimum(),
-				  magIntegratorStepper);
-
+  				  globals->ChordStepMinimum(),
+  				  magIntegratorStepper);
+  
   fieldManager = new G4FieldManager(field, chordFinder);
   fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
   fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());

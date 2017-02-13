@@ -31,7 +31,7 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
   const G4double *pIn = yIn+3;
   G4ThreeVector v0= G4ThreeVector( pIn[0], pIn[1], pIn[2]);  
 
-  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);  
+  G4ThreeVector GlobalPosition= G4ThreeVector( yIn[0], yIn[1], yIn[2]);
   G4double InitMag=v0.mag();
   G4double kappa=  (-eqOfM->FCof()*bDoublePrime) /InitMag;
 
@@ -66,8 +66,6 @@ void BDSIntegratorSextupole::AdvanceHelix(const G4double  yIn[],
       LocalRpp.setX(zp*x02My02);
       LocalRpp.setY(-2*zp*x0*y0);
       LocalRpp.setZ(xp*x02My02-2*yp*x0*y0);
-      
-      //G4cout << "LocalRpp: " <<LocalRpp<< G4endl;
       
       LocalRpp*=kappa/2; // 2 is actually a 2! factor.
 
