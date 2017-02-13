@@ -108,8 +108,8 @@ void BDSIntegratorSextupole::Stepper(const G4double yInput[],
   G4double h = hstep * 0.5;
   
   // Do two half steps
-  AdvanceHelix(yIn,   (G4ThreeVector)0,  h, yTemp);
-  AdvanceHelix(yTemp, (G4ThreeVector)0, h, yOut); 
+  AdvanceHelix(yIn, h, yTemp);
+  AdvanceHelix(yTemp, h, yOut); 
   
   // Do a full Step
   h = hstep ;
