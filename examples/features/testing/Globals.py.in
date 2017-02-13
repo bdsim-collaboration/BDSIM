@@ -19,36 +19,36 @@ class Globals():
                 - Extremeties for robustness testing
 
         '''
+
     def __init__(self):
         # bdsim executable
-        self._bdsimExecutable = "@CMAKE_BINARY_DIR@/bdsim"
+        self._bdsimExecutable = "/Users/williamshields/bdsim/bdsim_builds/devel/bdsim"
 
         # comparator executable
-        self._comparatorExeutable = "@CMAKE_BINARY_DIR@/comparator/comparator"
+        self._comparatorExecutable = "/Users/williamshields/bdsim/bdsim_builds/devel/comparator/comparator"
 
+        # components that can be varied
+        self.components = ['drift',
+                           'rbend',
+                           'sbend',
+                           'vkick',
+                           'hkick',
+                           'quadrupole',
+                           'sextupole',
+                           'octopole',
+                           'decapole',
+                           'multipole',
+                           'thinmultipole',
+                           'rfcavity',
+                           'rcol',
+                           'ecol',
+                           'degrader',
+                           'muspoiler',
+                           'shield',
+                           'solenoid',
+                           'laser']
 
-        #components that can be varied
-        self.components  = ['drift',
-                            'rbend',
-                            'sbend',
-                            'vkick',
-                            'hkick',
-                            'quadrupole',
-                            'sextupole',
-                            'octopole',
-                            'decapole',
-                            'multipole',
-                            'thinmultipole',
-                            'rfcavity',
-                            'rcol',
-                            'ecol',
-                            'degrader',
-                            'muspoiler',
-                            'shield',
-                            'solenoid',
-                            'laser']
-                        
-        #parameters that can be varied (across all components)
+        # parameters that can be varied (across all components)
         self.parameters = ['length',
                           'angle',
                           'kickangle',
