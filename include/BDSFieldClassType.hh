@@ -24,9 +24,6 @@ typedef BDSTypeSafeEnum<fieldclasstypes_def,int> BDSFieldClassType;
 
 namespace BDS
 {
-  /// Function that gives the corresponding enum value for string (case-insensitive).
-  BDSFieldClassType DetermineFieldClassType(G4String fieldType);
-
   /// Function that gives the corresponding enum value for a field type enum.
   BDSFieldClassType DetermineFieldClassType(BDSFieldType fieldType);
 }
