@@ -80,12 +80,12 @@ private:
   G4double energy;           ///< Total energy deposited during step
   G4double preS;             ///< Global curvilinear S coordinate of pre-step point
   G4double postS;            ///< Global curvilinear S coordinate of post step point
-  G4int    beamlineIndex;    ///< Index to beam line elment
+  G4int    beamlineIndex;    ///< Index to beam line element
   G4int    turnstaken;       ///< Number of turns taken
   G4ThreeVector prePosLocal; ///< Local coordinates of pre-step point
   G4ThreeVector postPosLocal;///< Local coordinates of post-step point
   
-  /// An auxilliary navigator to get curvilinear coordintes. Lots of points, but only
+  /// An auxilliary navigator to get curvilinear coordinates. Lots of points, but only
   /// need one navigator so make it static.
   static BDSAuxiliaryNavigator* auxNavigator;
 
