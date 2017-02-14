@@ -210,33 +210,31 @@ void BDSDetectorConstruction::BuildBeamline()
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
 #endif
-      // minimum space for the circular mechanics are 3x L.S. + sampler width for terminator,
-      // plus some space for teleporter - assume the sampler width again.
-      const G4double lengthSafety   = BDSGlobalConstants::Instance()->LengthSafety();
-      G4double minimumRequiredSpace = 3 * lengthSafety;
-      minimumRequiredSpace         += 2*BDSSamplerPlane::ChordLength();
+      // minimum space for the circular mechanics are:
+      // 1x terminator with sampler chord length
+      // 1x teleporter with (minimum) 1x sampler chord length
+      // 3x padding length
+      const G4double sL = BDSSamplerPlane::ChordLength();
+      const G4double pL = beamline->PaddingLength();
+      G4double minimumRequiredSpace = 2*sL + 3*pL;
       G4ThreeVector teleporterDelta = BDS::CalculateTeleporterDelta(beamline);
       
       // note delta is from end to beginning, which will have correct transverse but opposite
       // z component, hence -ve here.
       G4double rawLength        = -teleporterDelta.z();
-      G4double teleporterLength =  rawLength - BDSSamplerPlane::ChordLength() - 3*lengthSafety;
+      G4double teleporterLength =  rawLength - 3*pL - sL; // leaves at least 1x sL for teleporter
       
       if (teleporterDelta.mag() > 1*CLHEP::m)
 	{
-	  G4cout << G4endl
-		 << "Error - the calculated teleporter delta is above 1m! The teleporter"
-		 << G4endl
-		 << "was only intended for small shifts - the teleporter will not be built."
-		 << G4endl << G4endl;
+	  G4cout << G4endl << "Error - the calculated teleporter delta is above 1m! "
+		 << "The teleporter" << G4endl << "was only intended for small shifts "
+		 << "- the teleporter will not be built." << G4endl << G4endl;
 	}
       else if (teleporterLength < minimumRequiredSpace)
-	{
-	  G4cout << G4endl
-		 << "Insufficient space between the first and last elements in the beam line"
-		 << G4endl
-		 << "to fit the terminator and teleporter - these will not be built."
-		 << G4endl << G4endl;
+	{// should protect against -ve length teleporter
+	  G4cout << G4endl << "Insufficient space between the first and last elements "
+		 << "in the beam line" << G4endl << "to fit the terminator and teleporter "
+		 << "- these will not be built." << G4endl << G4endl;
 	}
       else
 	{ 
@@ -257,7 +255,7 @@ void BDSDetectorConstruction::BuildBeamline()
 	}
     }
 
-  if(BDSGlobalConstants::Instance()->Survey())
+  if (BDSGlobalConstants::Instance()->Survey())
     {
       BDSSurvey* survey = new BDSSurvey(BDSGlobalConstants::Instance()->SurveyFileName() + ".dat");
       survey->Write(beamline);
