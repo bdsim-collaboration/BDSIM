@@ -82,7 +82,7 @@ G4VPhysicalVolume* BDSDetectorConstruction::Construct()
   BuildBeamline();
 
   // construct beamline of end pieces
-  BDS::BuildEndPieceBeamline();
+  BDS::BuildEndPieceBeamline(circular);
 
   // construct placement geometry from parser
   BDS::BuildPlacementGeometry();
