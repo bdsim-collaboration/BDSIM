@@ -45,8 +45,6 @@ BDSBeamline* BDSCurvilinearBuilder::BuildCurvilinearBeamLine1To1(BDSBeamline con
   G4int i = 0;
   for (BDSBeamline::const_iterator element = beamline->begin(); element != beamline->end(); element++)
     {
-      if ((*element)->GetType() == "teleporter" || (*element)->GetType() == "terminator")
-	{continue;}
       G4String name = (*element)->GetName() + "_cl_" + std::to_string(i);
       i++;
       BDSBeamlineElement* temp = CreateCurvilinearElement(name, element, element, i);
