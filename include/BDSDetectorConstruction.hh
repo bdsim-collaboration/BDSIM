@@ -3,6 +3,9 @@
 
 #include "BDSExtent.hh"
 
+#include "parser/element.h"
+#include "parser/fastlist.h"
+
 #include "globals.hh" // geant4 types / globals
 #include "G4Version.hh"
 #include "G4VUserDetectorConstruction.hh"
@@ -87,6 +90,10 @@ private:
   BDSBOptrMultiParticleChangeCrossSection* BuildCrossSectionBias(const std::list<std::string>& biasList,
 								 G4String defaultBias,
 								 G4String elementName);
+
+  /// Detect whether the first element has an angled face such that it might overlap
+  /// with a previous element.  Only used in case of a circular machine.
+  G4bool UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element);
 
   /// List of bias objects - for memory management
   std::vector<BDSBOptrMultiParticleChangeCrossSection*> biasObjects;

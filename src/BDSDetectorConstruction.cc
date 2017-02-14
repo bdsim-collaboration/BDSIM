@@ -146,8 +146,22 @@ void BDSDetectorConstruction::BuildBeamline()
   
   if (verbose || debug)
     {G4cout << "parsing the beamline element list..."<< G4endl;}
-  
+
   auto beamLine = BDSParser::Instance()->GetBeamline();
+  
+  if (circular)
+    {
+      G4bool unsuitable = UnsuitableFirstElement(beamLine.begin());
+      if (unsuitable)
+	{
+	  G4cerr << "The first element in the beam line is unsuitable for a circular "
+		 << "model as the first element will " << G4endl << "overlap with the "
+		 << "teleporter and terminator - the necessary mechanics for a circular "
+		 << "model in Geant4" << G4endl;
+	  exit(1);
+	}
+    }  
+
   for(auto elementIt = beamLine.begin(); elementIt != beamLine.end(); ++elementIt)
     {
 #ifdef BDSDEBUG
@@ -700,4 +714,18 @@ void BDSDetectorConstruction::ConstructSDandField()
 {
   auto fields = BDSFieldBuilder::Instance()->CreateAndAttachAll();
   BDSAcceleratorModel::Instance()->RegisterFields(fields);
+}
+
+G4bool BDSDetectorConstruction::UnsuitableFirstElement(GMAD::FastList<GMAD::Element>::FastListConstIterator element)
+{
+  // skip past any line elements in parser to find first non-line element
+  while ((*element).type == GMAD::ElementType::_LINE)
+    {element++;}
+  
+  if ((*element).type == GMAD::ElementType::_RBEND)
+    {return true;}  // unsuitable
+  else if (BDS::IsFinite((*element).e1))
+    {return true;}  // unsuitable
+  else
+    {return false;} // suitable
 }
