@@ -2,9 +2,12 @@
 #define SYMBOLMAP_H
 
 #include <map>
-#include "sym_table.h"
+#include <string>
 
 namespace GMAD {
+
+  class Symtab;
+
   /** 
       @brief Class that hold the symbol table
   */

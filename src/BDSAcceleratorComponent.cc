@@ -48,12 +48,13 @@ BDSAcceleratorComponent::BDSAcceleratorComponent(G4String         nameIn,
   G4cout << __METHOD_NAME__ << "(" << name << ")" << G4endl;
 #endif
   // initialise static members
-  const auto globals = BDSGlobalConstants::Instance(); // shortcut
   if (!emptyMaterial)
-    {emptyMaterial = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());}
-  if (lengthSafety < 0)
-    {lengthSafety = globals->LengthSafety();}
-  checkOverlaps = globals->CheckOverlaps();
+    {
+      const auto globals = BDSGlobalConstants::Instance(); // shortcut
+      emptyMaterial      = BDSMaterials::Instance()->GetMaterial(globals->EmptyMaterial());
+      lengthSafety       = globals->LengthSafety();
+      checkOverlaps      = globals->CheckOverlaps();
+    }
 
   // Prevent negative length components.
   if (arcLength < 0)
