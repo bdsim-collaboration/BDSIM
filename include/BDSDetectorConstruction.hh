@@ -118,6 +118,9 @@ private:
   /// Whether or not to use the GFlash shower parameterisation.
   G4bool gflash;
 
+  /// Whether or not we're building a circular machine.
+  G4bool circular;
+
   /// Record of the world extent.
   BDSExtent worldExtent;
 };

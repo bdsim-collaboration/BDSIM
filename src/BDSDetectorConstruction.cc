@@ -65,6 +65,7 @@ BDSDetectorConstruction::BDSDetectorConstruction():
   verbose       = BDSGlobalConstants::Instance()->Verbose();
   checkOverlaps = BDSGlobalConstants::Instance()->CheckOverlaps();
   gflash        = BDSGlobalConstants::Instance()->GFlash();
+  circular      = BDSGlobalConstants::Instance()->Circular();
   if (gflash)
     {InitialiseGFlash();}
   BDSAcceleratorModel::Instance(); // instantiate the accelerator model holding class
@@ -190,7 +191,7 @@ void BDSDetectorConstruction::BuildBeamline()
   // Special circular machine bits
   // Add terminator to do ring turn counting logic
   // Add teleporter to account for slight ring offset
-  if (BDSGlobalConstants::Instance()->Circular())
+  if (circular)
     {
 #ifdef BDSDEBUG
       G4cout << __METHOD_NAME__ << "Circular machine - creating terminator & teleporter" << G4endl;
