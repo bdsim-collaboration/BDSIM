@@ -6,6 +6,7 @@
 #include "BDSCurvilinearFactory.hh"
 #include "BDSGlobalConstants.hh"
 #include "BDSSimpleComponent.hh"
+#include "BDSSamplerType.hh"
 #include "BDSTiltOffset.hh"
 #include "BDSTunnelInfo.hh"
 #include "BDSUtilities.hh"
