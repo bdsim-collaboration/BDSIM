@@ -31,8 +31,7 @@ public:
   void AdvanceHelixForSpiralling(const G4double yIn[],
 				 G4ThreeVector  field,
 				 G4double       stepLength,
-				 G4double       yOut[],
-				 G4double       yErr[]);
+				 G4double       yOut[]);
 
 private:
 
