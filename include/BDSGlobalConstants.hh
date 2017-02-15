@@ -15,12 +15,10 @@
 #include <map>
 
 class G4FieldManager;
-class G4LogicalVolume;
 class G4ParticleDefinition;
 class G4UniformMagField;
 class G4UserLimits;
 class G4VisAttributes;
-class G4VPhysicalVolume;
 
 class BDSBeamPipeInfo;
 class BDSTunnelInfo;
@@ -144,6 +142,8 @@ public:
   inline G4int    EventNumberOffset()        const {return G4int   (options.eventNumberOffset);}
   inline G4double TrajCutGTZ()               const {return G4double(options.trajCutGTZ);}
   inline G4double TrajCutLTR()               const {return G4double(options.trajCutLTR);}
+  inline G4bool   StoreELossLocal()          const {return G4bool  (options.storeElossLocal);}
+  inline G4bool   StoreELossGlobal()         const {return G4bool  (options.storeElossGlobal);}
   inline G4bool   StoreTrajectory()          const {return G4bool  (options.storeTrajectory);}
   inline G4int    StoreTrajectoryDepth()     const {return G4int   (options.storeTrajectoryDepth);}
   inline G4String StoreTrajectoryParticle()  const {return G4String(options.storeTrajectoryParticle);}
@@ -166,6 +166,16 @@ public:
   inline G4bool   IncludeFringeFields()      const {return G4bool  (options.includeFringeFields);}
   inline G4int    NSegmentsPerCircle()       const {return G4int   (options.nSegmentsPerCircle);}
   inline G4double ThinElementLength()        const {return G4double(options.thinElementLength*CLHEP::m);}
+  inline G4int    NBinsX()                   const {return G4int   (options.nbinsx);}
+  inline G4int    NBinsY()                   const {return G4int   (options.nbinsy);}
+  inline G4int    NBinsZ()                   const {return G4int   (options.nbinsz);}
+  inline G4double XMin()                     const {return G4double(options.xmin) * CLHEP::m;}
+  inline G4double YMin()                     const {return G4double(options.ymin) * CLHEP::m;}
+  inline G4double ZMin()                     const {return G4double(options.zmin) * CLHEP::m;}
+  inline G4double XMax()                     const {return G4double(options.xmax) * CLHEP::m;}
+  inline G4double YMax()                     const {return G4double(options.ymax) * CLHEP::m;}
+  inline G4double ZMax()                     const {return G4double(options.zmax) * CLHEP::m;}
+  inline G4bool   UseScoringMap()            const {return G4bool  (options.useScoringMap);}
 
   // options that require members in this class (for value checking or because they're from another class)
   inline G4int    TurnsTaken()               const {return turnsTaken;}

@@ -46,9 +46,6 @@ private:
   /// The hits collection for this sensitive detector class that's owned
   BDSSamplerHitsCollection* SamplerCollection;
 
-  /// A string describing whether it's a plane or cylindrical sampler.
-  G4String itsType;
-
   /// The name of the hits collection that's created and registered.
   G4String itsCollectionName;
 

@@ -16,8 +16,6 @@
 #include <unordered_map>
 #include <utility>
 
-class BDSGeometry;
-
 BDSGeometryFactory* BDSGeometryFactory::instance = nullptr;
 
 BDSGeometryFactory* BDSGeometryFactory::Instance()

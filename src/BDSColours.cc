@@ -3,6 +3,7 @@
 #include "BDSUtilities.hh"
 
 #include "globals.hh" // geant4 types / globals
+#include "G4Colour.hh"
 
 #include <map>
 #include <sstream>
@@ -47,10 +48,10 @@ BDSColours::BDSColours()
   colours["beampipe"]         = new G4Colour(0.4,   0.4,   0.4);   // dark gray
   colours["sectorbend"]       = new G4Colour(0,     0.4,   0.8);   // blue
   colours["rectangularbend"]  = new G4Colour(0,     0.4,   0.8);   // blue
-  colours["quadrupole"]       = new G4Colour(1,     0,     0);     // red
+  colours["quadrupole"]       = new G4Colour(0.82,  0,     0);     // red
   colours["sextupole"]        = new G4Colour(1,     0.8,   0);     // yellow
   colours["octupole"]         = new G4Colour(0,     0.6,   0.3);   // green
-  colours["decapole"]         = new G4Colour(0.4,   0,     0.8);   // purple
+  colours["decapole"]         = new G4Colour(0.3,   0.2,   0.7);   // purple
   colours["solenoid"]         = new G4Colour(1,     0.549, 0);     // orange
   colours["multipole"]        = new G4Colour(0.466, 0.533, 0.6);   // slate gray
   colours["rfcavity"]         = new G4Colour(0.466, 0.533, 0.6);   // slate gray
@@ -68,7 +69,7 @@ BDSColours::BDSColours()
   colours["LHCcoil"]          = new G4Colour(0.9,   0.75,  0);     // gold-ish
   colours["LHCcollar"]        = new G4Colour(0.9,   0.9,   0.9);   // gainsboro
   colours["LHCyoke"]          = new G4Colour(0,     0.5,   1.0);   // LHC blue
-  colours["LHCyokered"]       = new G4Colour(1,     0,     0);     // LHC red
+  colours["LHCyokered"]       = new G4Colour(*(colours["quadrupole"])); // quadrupole red
   colours["gdml"]             = new G4Colour(0.4  , 0.2,   0);     // poo brown
 
   // general

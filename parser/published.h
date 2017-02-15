@@ -48,6 +48,7 @@ namespace GMAD
       template <typename T>
        	AttributeMap<T>& attribute_map() const;
 
+      /// Get method for class C
       template <typename T>
 	T get(const C* instance, const std::string& name) const;
       

@@ -6,6 +6,13 @@
 #  Tests a script and looks for the expression in standard out. Expression
 #  can be set to "" if you do not want to require anything in the output.
 #
+# simple_testing_long:
+#  The same as simple_testing but with the ctest label "LONG".
+#
+# simple_fail:
+#  BDSIM test that expects bdsim to exit with a return of 1. Success of the
+#  test is bdsim failing with exit(1).
+#
 # compare_test: 
 #  Run a script and afterwards require that file1 and file2 have equal output.
 #  The file comparison is done using the python script cmake/compare_files.py
@@ -41,6 +48,11 @@ macro(simple_testing_long test_name args expression)
         set_tests_properties(${test_name} PROPERTIES FAIL_REGULAR_EXPRESSION "${expression}")
     endif()
     set_tests_properties(${test_name} PROPERTIES LABELS LONG)
+endmacro()
+
+macro(simple_fail test_name args)
+    _run_test(${test_name} ${args})
+    set_tests_properties(${test_name} PROPERTIES WILL_FAIL 1)
 endmacro()
 
 # a macro that adds a simple test

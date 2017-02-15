@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "BDSBunchInterface.hh"
-#include "BDSDebug.hh"
 
 /**
  * @brief A bunch distribution that reads a PTC inrays file.

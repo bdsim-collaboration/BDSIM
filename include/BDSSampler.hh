@@ -14,23 +14,28 @@
 class BDSSampler: public BDSGeometryComponent
 {
 public:
-  BDSSampler(G4String      nameIn);
+  BDSSampler(G4String nameIn);
   virtual ~BDSSampler(){;}
 
   /// Return the name of this sampler.
-  inline G4String GetName() const;
+  inline G4String GetName() const {return name;}
   
 protected:
   /// Common construction tasks such as creating a logical volume from the solid
   /// and visualisation options.
   void CommonConstruction();
 
-private:  
+private:
+  /// Private default constructor to force the use of the supplied one.
+  BDSSampler() = delete;
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSSampler& operator=(const BDSSampler&) = delete;
+  BDSSampler(BDSSampler&) = delete;
+  /// @}
+  
   /// Name of this sampler
   G4String name;
 };
-
-inline G4String BDSSampler::GetName() const
-{return name;}
 
 #endif

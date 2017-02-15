@@ -4,10 +4,8 @@
 #include "BDSIntegratorBase.hh"
 
 #include "globals.hh"
-#include "G4MagIntegratorStepper.hh"
-#include "G4Mag_EqRhs.hh"
-#include "G4ThreeVector.hh"
 
+class G4Mag_EqRhs;
 class BDSMagnetStrength;
 
 /**
@@ -44,7 +42,6 @@ protected:
   /// Calculate the new particle coordinates. A first order Step along a solenoid inside the field.
   void AdvanceHelix(const G4double yIn[],
 		    const G4double dydx[],
-		    G4ThreeVector  Bfld,
 		    G4double       h,
 		    G4double       yOut[],
 		    G4double       yErr[]);    

@@ -2,11 +2,12 @@
 #define BDSINTEGRATORDECAPOLE_H
 
 #include "BDSIntegratorBase.hh"
-#include "BDSMagnetStrength.hh"
 
 #include "globals.hh"
-#include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
+
+class G4Mag_EqRhs;
+class BDSMagnetStrength;
 
 /**
  * @brief Integrator for Decapolar field.

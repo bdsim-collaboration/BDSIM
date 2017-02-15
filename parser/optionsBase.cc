@@ -217,6 +217,8 @@ OptionsBase::OptionsBase()
   numberOfEventsPerNtuple  = 0;
   trajCutGTZ               = 0.0;  // minimum z position
   trajCutLTR               = 1e12; // maximum radius in mm, so large default value
+  storeElossLocal          = false;
+  storeElossGlobal         = false;
   storeTrajectory          = false;
   storeTrajectoryDepth     = 1;
   storeTrajectoryParticle  = "";
@@ -229,6 +231,18 @@ OptionsBase::OptionsBase()
 
   // visualisation
   nSegmentsPerCircle       = 50;
+
+  // scoring map
+  nbinsx = 1;
+  nbinsy = 1;
+  nbinsz = 1;
+  xmin   = 0;
+  xmax   = 0;
+  ymin   = 0;
+  ymax   = 0;
+  zmin   = 0;
+  zmax   = 0;
+  useScoringMap = false;
 }
 
 

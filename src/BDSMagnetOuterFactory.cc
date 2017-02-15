@@ -17,6 +17,7 @@
 #include "BDSMagnetOuterFactoryLHCLeft.hh"
 #include "BDSMagnetOuterFactoryLHCRight.hh"
 #include "BDSMagnetOuterFactoryNone.hh"
+#include "BDSMagnetOuterInfo.hh"
 #include "BDSMagnetGeometryType.hh"
 #include "BDSMaterials.hh"
 
@@ -103,6 +104,14 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateMagnetOuter(BDSMagnetType       mag
   if (geometryType == BDSMagnetGeometryType::external)
     {
       outer = CreateExternal(name, outerInfo, outerLength, beampipe);
+      G4double loadedLength = outer->GetExtent().DZ();
+      if (loadedLength > outerLength)
+	{
+	  G4cerr << "External geometry of length " << loadedLength/CLHEP::m
+		 << "m too long for magnet of length " << outerLength/CLHEP::m
+		 << "m. Geometry Specification:" << G4endl << *outerInfo;
+	  exit(1);
+	}
       return outer;
     }
   
@@ -397,6 +406,7 @@ BDSMagnetOuter* BDSMagnetOuterFactory::CreateExternal(G4String            name,
 {
   std::map<G4String, G4Colour*> defaultMap = {
     {"coil", BDSColours::Instance()->GetColour("coil")},
+    {"bend", BDSColours::Instance()->GetColour("sectorbend")},
     {"yoke", BDSColours::Instance()->GetColour("quadrupole")},
     {"quad", BDSColours::Instance()->GetColour("quadrupole")},
     {"sext", BDSColours::Instance()->GetColour("sextupole")},

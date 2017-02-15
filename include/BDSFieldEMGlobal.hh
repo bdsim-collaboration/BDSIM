@@ -3,7 +3,6 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4ThreeVector.hh"
-#include "G4Transform3D.hh"
 
 #include "BDSAuxiliaryNavigator.hh"
 #include "BDSFieldEM.hh"

@@ -86,9 +86,9 @@ std::ostream& BDSArray2DCoordsExtendY::Print(std::ostream& out) const
     {
       for (G4int z = 0; z < nZ; z++)
 	{
-	  for (G4int y = 0; y < 2*nY; y++)
+	  for (G4int y = 0; y < nY; y++)
 	    {
-	      for (G4int x = 0; x < nX; x++)
+	      for (G4int x = 0; x < 2*nX; x++)
 		{out2 << GetConst(x,y,z,t) << G4endl;}
 	    }
 	}

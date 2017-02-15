@@ -1,13 +1,13 @@
 #include "BDSAcceleratorComponentRegistry.hh"
 #include "BDSAcceleratorModel.hh"
 #include "BDSBeamline.hh"
-#include "BDSDebug.hh"
 #include "BDSFieldObjects.hh"
 #include "BDSPhysicalVolumeInfoRegistry.hh"
 
 #include "globals.hh"
 #include "G4ProductionCuts.hh"
 #include "G4Region.hh"
+#include "G4VPhysicalVolume.hh"
 
 #include <map>
 

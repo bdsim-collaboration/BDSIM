@@ -1,7 +1,7 @@
 #ifndef BDSPCLTUBE_H
 #define BDSPCLTUBE_H
 
-#include "G4VSolid.hh"
+class G4VSolid;
 
 /** 
  * @brief PostCollisionLine Tube

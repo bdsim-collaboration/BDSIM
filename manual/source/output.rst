@@ -9,8 +9,8 @@ section only describes the structure. Loading and analysis instructions can be f
 in :ref:`output-analysis-section`.
 
 The default and recommended format 'rootevent' is written to a ROOT file. This format
-is preferred as it lends itself nicely to particle physics information, is compressed
-binary internally, and can store and load complex structures.
+is preferred as it lends itself nicely to particle physics information; is stored as compressed
+binary internally; and can store and load complex custom structures.
 
 Units, unless specified, are SI (ie m, rad), plus energy in GeV and time in nanoseconds.
 Small letters denote local (to that object) coordinates whereas capitals represent

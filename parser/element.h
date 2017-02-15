@@ -25,7 +25,7 @@ namespace GMAD
 
     double l; ///< length in metres
     double ks; ///< solenoid
-    double k0; ///< dipole
+    // double k0; // for dipole field B or angle is used
     double k1; ///< quadrupole
     double k2; ///< sextupole
     double k3; ///< octupole
@@ -67,26 +67,33 @@ namespace GMAD
     double twindow; ///<thickness of window
     double tmount; ///<thickness of the screen mount
     double windowScreenGap; ///< air gap between window and screen
-    double screenXSize, screenYSize;
-    double screenPSize; //Phosphor particle size in screen
+    double screenXSize, screenYSize; ///< for screen
+    ///@{ for AWAKE spectrometer
+    double screenPSize; ///<Phosphor particle size in screen
     double screenEndZ;
     double poleStartZ;
     double screenWidth;
+    ///@}
+    ///@{ for screen
     std::list<double> layerThicknesses;
     std::list<std::string> layerMaterials;
     std::list<int> layerIsSampler;
+    ///@}
+    ///@{ for 3d transform and laser
     double xdir;
     double ydir;
     double zdir;
+    ///@}
     double waveLength; ///< for laser wire and 3d transforms
-    double gradient; ///< for rf cavities
+    double gradient; ///< for rf cavities in V / m
     double phi, theta, psi; ///< for 3d transforms
-    int numberWedges; ///< for degrader
-    double wedgeLength; ///< for degrader
-    double degraderHeight; ///< for degrader
-    double materialThickness; ///< for degrader
-    double degraderOffset; ///< for degrader
-
+    ///@{ for degrader
+    int numberWedges;
+    double wedgeLength;
+    double degraderHeight;
+    double materialThickness;
+    double degraderOffset;
+    ///@}
     std::list<double> knl; ///< multipole expansion coefficients
     std::list<double> ksl; ///< skew multipole expansion
 
@@ -114,12 +121,11 @@ namespace GMAD
     std::string fieldVacuum; ///< Vacuum field.
     std::string fieldAll;    ///< Field for everything.
     
-    std::string geometryFile;
+    std::string geometryFile; ///< for Element, file for external geometry
     std::string material;
-    std::string windowmaterial;
-    std::string scintmaterial;
-    std::string mountmaterial;
-    std::string airmaterial;
+    std::string windowmaterial; ///< for AWAKE
+    std::string scintmaterial;  ///< for AWAKE
+    std::string mountmaterial;  ///< for AWAKE spectrometer
     std::string spec;  ///< arbitrary specification to pass to beamline builder
     std::string cavityModel; ///< model for rf cavities
   
@@ -148,6 +154,11 @@ namespace GMAD
 
     /// Override colour for certain items
     std::string colour;
+
+    /// Whether the angle was set. Unique as we may technically have 0 angle but a finite
+    /// field. This allows us to distinguish later on.
+    /// NOTE: this is not used in Params.
+    bool   angleSet;
   
     /// constructor
     Element();
