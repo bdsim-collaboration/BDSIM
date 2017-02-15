@@ -58,53 +58,65 @@ BDSAwakeSpectrometer::BDSAwakeSpectrometer (G4String aName,
   _mountThickness(mountThickness), 
   _mountMaterial(mountMaterial),
   _screenEndZ(screenEndZ),
-  _poleStartZ(poleStartZ)
-{
-  //Change sign of angle
-  _screenAngle*=-1;
+  _poleStartZ(poleStartZ) {
+    //Change sign of angle
+    _screenAngle *= -1;
 
-  try{
-    _vacuumChamberType=BDS::GetParameterValueInt(spec,"vacuumChamberType");
-  } catch(std::invalid_argument&){
-    //If the cast fails, set vacuum chamber type to 1
-    _vacuumChamberType=1;
-  }
+    try {
+        _vacuumChamberType = BDS::GetParameterValueInt(spec, "vacuumChamberType");
+    } catch (std::invalid_argument &) {
+        //If the cast fails, set vacuum chamber type to 1
+        _vacuumChamberType = 1;
+    }
 
-  try{
-    _magnetGeometryType=BDS::GetParameterValueInt(spec,"magnetGeometryType");
-  } catch(std::invalid_argument&){
-    //If the cast fails, set magnet geometry type to 1
-    _magnetGeometryType=1;
-  }
+    try {
+        _magnetGeometryType = BDS::GetParameterValueInt(spec, "magnetGeometryType");
+    } catch (std::invalid_argument &) {
+        //If the cast fails, set magnet geometry type to 1
+        _magnetGeometryType = 1;
+    }
 
-  try{
-    _strutSizeX=BDS::GetParameterValueDouble(spec,"strutSizeX");
-  } catch(std::invalid_argument&){
-    _strutSizeX=0;
-  }
+    try {
+        _strutSizeX = BDS::GetParameterValueDouble(spec, "strutSizeX");
+    } catch (std::invalid_argument &) {
+        _strutSizeX = 0;
+    }
 
-  try{
-    _strutSizeZ=BDS::GetParameterValueDouble(spec,"strutSizeZ");
-  } catch(std::invalid_argument&){
-    _strutSizeZ=0;
-  }
+    try {
+        _strutSizeZ = BDS::GetParameterValueDouble(spec, "strutSizeZ");
+    } catch (std::invalid_argument &) {
+        _strutSizeZ = 0;
+    }
 
-  try{
-    _strutMaterial=BDS::GetParameterValueString(spec,"strutMaterial");
-  } catch(std::invalid_argument&){
-    _strutMaterial="G4_STAINLESS-STEEL";
-  }
+    try {
+        _strutMaterial = BDS::GetParameterValueString(spec, "strutMaterial");
+    } catch (std::invalid_argument &) {
+        _strutMaterial = "G4_STAINLESS-STEEL";
+    }
 
-  //Screen width 1m by default.
-  if(_screenWidth<=0) _screenWidth = 1*CLHEP::m;
 
-  //Set the rotation of the screen
-  _screenRotationMatrix = new G4RotationMatrix();
-  _screenRotationMatrix->rotateY(-CLHEP::pi/2.0+_screenAngle);
 
-  _vacRotationMatrix = new G4RotationMatrix();
+    //Screen width 1m by default.
+    if (_screenWidth <= 0) _screenWidth = 1 * CLHEP::m;
 
-  _magRotationMatrix = new G4RotationMatrix();
+    //Set the rotation of the screen
+    _screenRotationMatrix = new G4RotationMatrix();
+    _screenRotationMatrix->rotateY(-CLHEP::pi / 2.0 + _screenAngle);
+
+    _vacRotationMatrix = new G4RotationMatrix();
+
+    _magRotationMatrix = new G4RotationMatrix();
+
+    //User limits.
+    // note, this is different from all other geometry - TBC
+    //G4double maxStepFactor=1e-3;
+    //G4UserLimits* itsUserLimits =  new G4UserLimits();
+    itsUserLimits =  new G4UserLimits();
+    //itsUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+    itsUserLimits->SetMaxAllowedStep(0.1*CLHEP::mm);
+    //itsUserLimits->SetUserMaxTrackLength(0.1*CLHEP::mm);
+    //itsUserLimits->SetUserMaxTime(BDSGlobalConstants::Instance()->MaxTime());
+    allUserLimits.push_back(itsUserLimits);
 }
 
 void BDSAwakeSpectrometer::MagnetDefaults(){
@@ -304,7 +316,8 @@ void BDSAwakeSpectrometer::BuildField()
 {
     //The position of the field is relative to the pole position of the magnet. The field is translated accordingly.
     G4ThreeVector poleTranslation = G4ThreeVector(itsBmapXOffset,0,itsBmapZOffset);
-    _fieldInfo->Translate(poleTranslation);
+    G4cout << "field translation (not applied): " << poleTranslation << G4endl;
+    //_fieldInfo->Translate(poleTranslation);
 
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
 							    containerLogicalVolume,
@@ -333,9 +346,9 @@ void BDSAwakeSpectrometer::BuildCoils(){
   */
   
   itsCoilLog = new G4LogicalVolume(coilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsCoilLog",0,0,0);
-
+itsCoilLog->SetUserLimits(itsUserLimits);
   itsMiddleCoilLog = new G4LogicalVolume(middleCoilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsMiddleCoilLog",0,0,0);
-  
+  itsMiddleCoilLog->SetUserLimits(itsUserLimits);
   G4VisAttributes* CoilVisAtt = new G4VisAttributes(G4Color(0.0,0.5,0.5,0.5));
   CoilVisAtt->SetForceSolid(true);
   CoilVisAtt->SetVisibility(true);
@@ -393,6 +406,9 @@ void BDSAwakeSpectrometer::BuildYoke(){
   itsYokeUpperLog->SetVisAttributes(YokeVisAtt);
   itsYokeMiddleLog->SetVisAttributes(YokeVisAtt);
   itsYokeLowerLog->SetVisAttributes(YokeVisAtt);
+    itsYokeUpperLog->SetUserLimits(itsUserLimits);
+    itsYokeMiddleLog->SetUserLimits(itsUserLimits);
+    itsYokeLowerLog->SetUserLimits(itsUserLimits);
 }
 
 void BDSAwakeSpectrometer::PlaceYoke(){
@@ -425,6 +441,10 @@ void BDSAwakeSpectrometer::BuildVacuumChamber(){
 				      _strutSizeX,
 				      _strutSizeZ,
 				      _strutMaterial);
+          //Set the user limits for all the logical volumes in the vacuum chamber.
+          for(unsigned int i=0; i<_vacChamb->logVols().size();i++){
+              _vacChamb->logVols().at(i)->SetUserLimits(itsUserLimits);
+          }
     break;
   default:
     G4String exceptionString = (G4String)"vacuumChamberType: " + _vacuumChamberType + (G4String)" unknown.";
@@ -823,13 +843,7 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
 
-  // note, this is different from all other geometry - TBC
-  G4double maxStepFactor=0.5;
-  G4UserLimits* containerUserLimits =  new G4UserLimits();
-  containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
-  containerLogicalVolume->SetUserLimits(containerUserLimits);
-  allUserLimits.push_back(containerUserLimits);
+
 }
 
 BDSAwakeSpectrometer::~BDSAwakeSpectrometer()
