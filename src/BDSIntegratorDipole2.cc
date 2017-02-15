@@ -5,6 +5,8 @@
 #include "G4Mag_EqRhs.hh"
 #include "G4ThreeVector.hh"
 
+#include "CLHEP/Units/SystemOfUnits.h"
+
 BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
