@@ -13,7 +13,7 @@ public:
   BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 		       G4double     minimumRadiusOfCurvature);
 
-  virtual ~BDSIntegratorDipole2(){;}
+  virtual ~BDSIntegratorDipole2();
 
   virtual void DumbStepper(const G4double yIn[],
 			   G4ThreeVector  field,
@@ -36,6 +36,11 @@ public:
 private:
 
   G4double minimumRadiusOfCurvature;
+
+  /// General integrator that can be used as a backup if the particle momentum is
+  /// outside the (transverse) momentum range applicable for the integration scheme
+  /// used by the derived integrator.
+  G4MagIntegratorStepper* backupStepper;
   
 };
 
