@@ -3,7 +3,6 @@
 
 #include "globals.hh" // geant4 types / globals
 #include "G4MagneticField.hh"
-#include "G4ThreeVector.hh"
 
 /**
  * @brief Null B field - for special cases where we need a valid object.

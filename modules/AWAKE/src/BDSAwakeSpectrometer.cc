@@ -348,28 +348,28 @@ void BDSAwakeSpectrometer::PlaceCoils(){
     BuildCoils();
   }
   new G4PVPlacement(_magRotationMatrix,itsUpperCoilPos,itsCoilLog,"CoilUpper",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   new G4PVPlacement(_magRotationMatrix,itsLowerCoilPos,itsCoilLog,"CoilLower",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   new G4PVPlacement(_magRotationMatrix,itsUpperLeftCoilPos,itsCoilLog,"CoilUpperLeft",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   new G4PVPlacement(_magRotationMatrix,itsLowerLeftCoilPos,itsCoilLog,"CoilLowerLeft",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
 
   new G4PVPlacement(_magRotationMatrix,itsUpperFrontCoilPos,itsMiddleCoilLog,"CoilUpperFront",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   new G4PVPlacement(_magRotationMatrix,itsLowerFrontCoilPos,itsMiddleCoilLog,"CoilLowerFront",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
 
   new G4PVPlacement(_magRotationMatrix,itsUpperRearCoilPos,itsMiddleCoilLog,"CoilUpperRear",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   
   new G4PVPlacement(_magRotationMatrix,itsLowerRearCoilPos,itsMiddleCoilLog,"CoilLowerRear",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
 }
 
 
@@ -400,11 +400,11 @@ void BDSAwakeSpectrometer::PlaceYoke(){
     BuildYoke();
   }
   new G4PVPlacement(_magRotationMatrix,itsYokeUpperPos,itsYokeUpperLog,"YokeUpper",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   new G4PVPlacement(_magRotationMatrix,itsYokeMiddlePos,itsYokeMiddleLog,"YokeMiddle",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
   new G4PVPlacement(_magRotationMatrix,itsYokeLowerPos,itsYokeLowerLog,"YokeLower",
-		    containerLogicalVolume,false,0,BDSGlobalConstants::Instance()->CheckOverlaps());
+		    containerLogicalVolume,false,0,checkOverlaps);
 }
 
 void BDSAwakeSpectrometer::BuildVacuumChamber(){
@@ -458,7 +458,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   G4double dispX=_cameraScreenDist-_scoringPlaneThickness/2.0;
   G4double dispY=0;
-  G4double dispZ=-_cameraScreenDist/2.0;;
+  G4double dispZ=-_cameraScreenDist/2.0;
 
   G4int samplerID1 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName,
 								     nullptr);
@@ -476,7 +476,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID1,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog2 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog2",0,0,0);
   itsCameraScoringPlaneLog2->SetVisAttributes(_visAttSampler);
@@ -493,7 +493,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID2,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
     
   itsCameraScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog2->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
@@ -507,7 +507,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   G4double dispX3=_cameraScreenDist/2.0-_scoringPlaneThickness/2.0;
   G4double dispY3=0;
-  G4double dispZ3=-_cameraScreenDist/2.0;;
+  G4double dispZ3=-_cameraScreenDist/2.0;
 
   G4int samplerID3 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName3,
 								     nullptr);
@@ -521,7 +521,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID3,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog4 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog4",0,0,0);
   itsCameraScoringPlaneLog4->SetVisAttributes(_visAttSampler);
@@ -538,7 +538,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID4,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
     
   itsCameraScoringPlaneLog3->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog4->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
@@ -552,7 +552,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   G4double dispX5=_cameraScreenDist/4.0-_scoringPlaneThickness/2.0;
   G4double dispY5=0;
-  G4double dispZ5=-_cameraScreenDist/2.0;;
+  G4double dispZ5=-_cameraScreenDist/2.0;
 
   G4int samplerID5 = BDSSamplerRegistry::Instance()->RegisterSampler(_samplerName5,
 								     nullptr);
@@ -566,7 +566,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID5,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
   
   itsCameraScoringPlaneLog6 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog6",0,0,0);
   itsCameraScoringPlaneLog6->SetVisAttributes(_visAttSampler);
@@ -583,7 +583,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID6,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
     
   itsCameraScoringPlaneLog5->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
   itsCameraScoringPlaneLog6->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
@@ -642,7 +642,7 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID1,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
 
   new G4PVPlacement(_screenRotationMatrix,
 		    G4ThreeVector(dispX,dispY,dispZ2),
@@ -651,7 +651,7 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
 		    containerLogicalVolume,
 		    false,
 		    samplerID2,
-		    BDSGlobalConstants::Instance()->CheckOverlaps());
+		    checkOverlaps);
   
   //--
   itsScreenScoringPlaneLog->SetSensitiveDetector(BDSSDManager::Instance()->GetSamplerPlaneSD());
@@ -733,7 +733,7 @@ void BDSAwakeSpectrometer::BuildScreen()
 }
 
 void BDSAwakeSpectrometer::PlaceScreen(){
-  _mlScreen->place(_screenRotationMatrix,
+  _mlScreen->Place(_screenRotationMatrix,
 		   G4ThreeVector(_screenCentreX,0,_screenCentreZ),
 		   containerLogicalVolume
 		   );

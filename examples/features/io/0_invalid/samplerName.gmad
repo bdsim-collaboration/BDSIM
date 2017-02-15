@@ -1,0 +1,10 @@
+Event: drift, l=1*m;
+
+l1: line = (Event);
+
+use, l1;
+
+sample, all;
+
+beam, energy=1*GeV,
+      particle="e-";

@@ -22,7 +22,15 @@ class BDSTunnelInfo;
  * possibilities apart from the shape (each derived class will give
  * a different cross-section) and these dictate the angled faces.
  * 
- * Uses Geant4 default units by default, ie mm, rad (not metres)
+ * Uses Geant4 default units by default, ie mm, rad (not metres).
+ *
+ * NOTE - no derived classes record the 'angle' parameter for 
+ * BDSAcceleratorComponent correctly in the BDSTunnelSection instances.
+ * This is only acceptable as the tunnel beam line is manually made
+ * not using the internal accumulation of coordinates of BDSBeamline.
+ * It's also in part necessary as each tunnel segment doesn't obey
+ * the no double bending rule of accerlator components so can't be
+ * used with angle and arc length accurately.
  * 
  * @author Laurie Nevay
  */

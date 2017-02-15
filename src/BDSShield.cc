@@ -19,19 +19,16 @@ BDSShield::BDSShield(G4String         name,
 		     G4double         xAperIn,
 		     G4double         yAperIn,
 		     G4Material*      materialIn,
-		     BDSBeamPipeInfo* beamPipeInfoIn):
-  BDSAcceleratorComponent(name, length, 0, "shield"),
+		     BDSBeamPipeInfo* beamPipeInfo):
+  BDSAcceleratorComponent(name, length, 0, "shield", beamPipeInfo),
   outerDiameter(outerDiameterIn),
   xAper(xAperIn),
   yAper(yAperIn),
-  material(materialIn),
-  beamPipeInfo(beamPipeInfoIn)
+  material(materialIn)
 {;}
 
 BDSShield::~BDSShield()
-{
-  delete beamPipeInfo;
-}
+{;}
 
 void BDSShield::Build()
 {

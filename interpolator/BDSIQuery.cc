@@ -85,7 +85,7 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4double totalN = (G4double)nX;
 
   G4double i = 0;
-  for (G4double x = xmin; x < xmax+1e-9; x += xStep)
+  for (G4double x = xmin; x < xmax + margin; x += xStep)
     {
       G4double result[6] = {0,0,0,0,0,0};
       G4double coords[4] = {x,0,0,0};
@@ -103,12 +103,6 @@ void BDSI::Query1D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray1DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -128,8 +122,8 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -151,11 +145,11 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4double totalN = (G4double)nX * (G4double)nY;
 
   G4int i = 0;
-  for (G4double y = ymin; y < ymax; y += yStep)
+  for (G4double y = ymin; y < ymax + margin; y += yStep)
     {
       G4double percentage = ((G4double)i / totalN) *100;
       std::cout << "\r" << floor(percentage) << "%" << std::flush;
-      for (G4double x = xmin; x < xmax; x += xStep)
+      for (G4double x = xmin; x < xmax + margin; x += xStep)
 	{
 	  G4double result[6] = {0,0,0,0,0,0};
 	  G4double coords[4] = {x,y,0,0};
@@ -171,12 +165,6 @@ void BDSI::Query2D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray2DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -199,9 +187,9 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
-  double zStep = (ymax - ymin) / (G4double)nZ;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
+  double zStep = (ymax - ymin) / ((G4double)nZ - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -226,13 +214,13 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4double totalN = (G4double)nX * (G4double)nY * (G4double)nZ;
 
   G4int i = 0;
-  for (G4double z = zmin; z < zmax; z += zStep)
+  for (G4double z = zmin; z < zmax + margin; z += zStep)
     {
       G4double percentage = ((G4double)i / totalN) *100;
       std::cout << "\r" << floor(percentage) << "%" << std::flush;
-      for (G4double y = ymin; y < ymax; y += yStep)
+      for (G4double y = ymin; y < ymax + margin; y += yStep)
 	{
-	  for (G4double x = xmin; x < xmax; x += xStep)
+	  for (G4double x = xmin; x < xmax + margin; x += xStep)
 	    {
 	      G4double result[6] = {0,0,0,0,0,0};
 	      G4double coords[4] = {x,y,z,0};
@@ -249,12 +237,6 @@ void BDSI::Query3D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray3DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;
@@ -280,10 +262,10 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   
   G4cout << "Querying " << outputName << G4endl;
   
-  double xStep = (xmax - xmin) / (G4double)nX;
-  double yStep = (ymax - ymin) / (G4double)nY;
-  double zStep = (ymax - ymin) / (G4double)nZ;
-  double tStep = (tmax - tmin) / (G4double)nT;
+  double xStep = (xmax - xmin) / ((G4double)nX - 1);
+  double yStep = (ymax - ymin) / ((G4double)nY - 1);
+  double zStep = (ymax - ymin) / ((G4double)nZ - 1);
+  double tStep = (tmax - tmin) / ((G4double)nT - 1);
   
 #ifdef USE_GZSTREAM
   //ogzstream ofile;
@@ -310,15 +292,15 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   G4double totalN = (G4double)nX * (G4double)nY * (G4double)nZ * (G4double)nT;
 
   G4int i = 0;
-  for (G4double t = tmin; t < tmax; t += tStep)
+  for (G4double t = tmin; t < tmax + margin; t += tStep)
     {
       G4double percentage = ((G4double)i / totalN) * 100;
       std::cout << "\r" << floor(percentage) << "%" << std::flush;
-      for (G4double z = zmin; z < zmax; z += zStep)
+      for (G4double z = zmin; z < zmax + margin; z += zStep)
 	{
-	  for (G4double y = ymin; y < ymax; y += yStep)
+	  for (G4double y = ymin; y < ymax + margin; y += yStep)
 	    {
-	      for (G4double x = xmin; x < xmax; x += xStep)
+	      for (G4double x = xmin; x < xmax + margin; x += xStep)
 		{
 		  G4double result[6] = {0,0,0,0,0,0};
 		  G4double coords[4] = {x,y,z,t};
@@ -336,12 +318,6 @@ void BDSI::Query4D(G4Field* field, const GMAD::Query& params, const BDSFieldClas
   if (magInt)
     {
       const BDSArray4DCoords* data = magInt->Interpolator()->Array();
-#ifdef USE_GZSTREAM
-      //ogzstream ofile;
-      std::ofstream ofile;
-#else
-      std::ofstream ofile;
-#endif
       G4String name = "raw_" + outputName;
       ofile.open(name);
       ofile << *data;

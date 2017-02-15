@@ -2,7 +2,7 @@ d1: drift, l=1*m;
 q1: quadrupole, l=0.5*m, k1=1.31;
 sex1: sextupole, l=0.5*m, k2=0.31;
 oct1: octupole, l=0.5*m, k3=3.31;
-sol1: solenoid, l=0.5*m, k0=1.31;
+sol1: solenoid, l=0.5*m, ks=1.31;
 c1: rcol, l=1*m, ysize=5*mm, xsize=5*mm, material="Copper";
 sb1: sbend, l=4*m, angle=0.3;
 rb1: rbend, l=10*m, angle= -0.4;

@@ -103,8 +103,8 @@ protected:
   /// Fill members so that trees can be written
   void FillHit(BDSEnergyCounterHit* hit);
 
-	/// Fill members so that tree can be written but based on Trajectory Point
-	void FillHit(BDSTrajectoryPoint* hit);
+  /// Fill members so that tree can be written but based on Trajectory Point
+  void FillHit(BDSTrajectoryPoint* hit);
 
   /// Members for writing to TTrees
   /// Local parameters

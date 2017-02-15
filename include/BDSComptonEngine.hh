@@ -1,11 +1,9 @@
 #ifndef BDSCOMPTONENGINE_H
 #define BDSCOMPTONENGINE_H
 
-#include "G4ios.hh" 
 #include "globals.hh"
 
 #include "G4LorentzVector.hh"
-#include "G4ThreeVector.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 
 /**

@@ -42,59 +42,54 @@ void BDSDegrader::BuildContainerLogicalVolume()
   //Input Checks
   if (outerDiameter <= 0)
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
-        exit(1);
+      G4cerr << __METHOD_NAME__ << "Error: option \"outerDiameter\" is not defined or must be greater than 0" <<  G4endl;
+      exit(1);
     }
-    
+  
   if (numberWedges < 1)
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"numberWedges\" is not defined or must be greater than 0" <<  G4endl;
-        exit(1);
+      G4cerr << __METHOD_NAME__ << "Error: option \"numberWedges\" is not defined or must be greater than 0" <<  G4endl;
+      exit(1);
     }
-    
+  
   if (wedgeLength <= 0)
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"wedgeLength\" is not defined or must be greater than 0" <<  G4endl;
-        exit(1);
+      G4cerr << __METHOD_NAME__ << "Error: option \"wedgeLength\" is not defined or must be greater than 0" <<  G4endl;
+      exit(1);
     }
-    
+  
   if (degraderHeight <= 0)
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" is not defined or must be greater than 0" <<  G4endl;
-        exit(1);
+      G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" is not defined or must be greater than 0" <<  G4endl;
+      exit(1);
     }
-
+  
   if (degraderHeight > (0.5*outerDiameter))
     {
-        G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be less than 0.5 times \"outerDiameter\"" <<  G4endl;
-        exit(1);
+      G4cerr << __METHOD_NAME__ << "Error: option \"degraderHeight\" must be less than 0.5 times \"outerDiameter\"" <<  G4endl;
+      exit(1);
     }
-    
+  
   if (degraderMaterial == "")
     {
-        degraderMaterial = "carbon";
+      degraderMaterial = "carbon";
     }
-    
-    
-    
+  
   containerSolid = new G4Box(name + "_container_solid",
-                                outerDiameter*0.5,
-                                outerDiameter*0.5,
-                                chordLength*0.5);
+			     outerDiameter*0.5,
+			     outerDiameter*0.5,
+			     chordLength*0.5);
     
   G4Material* emptyMaterial = BDSMaterials::Instance()->GetMaterial(BDSGlobalConstants::Instance()->EmptyMaterial());
-    
+  
   containerLogicalVolume = new G4LogicalVolume(containerSolid,
-                                emptyMaterial,
-                                name + "_container_lv");
+					       emptyMaterial,
+					       name + "_container_lv");
 }
-
 
 void BDSDegrader::Build()
 {
   BDSAcceleratorComponent::Build();
-    
-//    std::cout << "BDSDegrader offset" << degraderOffset << std::endl;
     
   G4Material* material = BDSMaterials::Instance()->GetMaterial(degraderMaterial);
     
@@ -177,25 +172,21 @@ void BDSDegrader::Build()
       //Vertices of base part of LHS component for connecting all LHS wedges
       leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, maxzoffset) );
       leftWedgeSide.push_back( G4TwoVector(-0.1*wedgeLength, -1.0*maxzoffset) );
-      leftWedgeSide.push_back( G4TwoVector(0, -1.0*maxzoffset));
-      
-
+      leftWedgeSide.push_back( G4TwoVector(0, -1.0*maxzoffset));    
   }
-
   
   // Left wedge Solid and logical Volume
   G4ExtrudedSolid* leftWedge = new G4ExtrudedSolid(name + "_leftwedge_solid",
-                                                    leftWedgeSide,
-                                                    degraderHeight*0.5,
-                                                    G4TwoVector(),1, G4TwoVector(), 1);
-    
-  RegisterSolid(leftWedge);
-    
-  G4LogicalVolume* leftWedgeLV = new G4LogicalVolume(leftWedge,               // solid
-                                                    material,                 // material
-                                                    name + "_leftwedge_lv");  // name
-  RegisterLogicalVolume(leftWedgeLV);
+						   leftWedgeSide,
+						   degraderHeight*0.5,
+						   G4TwoVector(),1, G4TwoVector(), 1);
   
+  RegisterSolid(leftWedge);
+  
+  G4LogicalVolume* leftWedgeLV = new G4LogicalVolume(leftWedge,               // solid
+						     material,                 // material
+						     name + "_leftwedge_lv");  // name
+  RegisterLogicalVolume(leftWedgeLV); 
     
   // Right wedge Solid and logical Volume
   G4ExtrudedSolid* rightWedge = new G4ExtrudedSolid(name + "_rightwedge_solid",
@@ -206,8 +197,8 @@ void BDSDegrader::Build()
   RegisterSolid(rightWedge);
       
   G4LogicalVolume* rightWedgeLV = new G4LogicalVolume(rightWedge,             // solid
-                                                    material,                 // material
-                                                    name + "_rightwedge_lv"); // name
+						      material,                 // material
+						      name + "_rightwedge_lv"); // name
   RegisterLogicalVolume(rightWedgeLV);
   
   //Offsets for wedge overlap
@@ -223,16 +214,13 @@ void BDSDegrader::Build()
   leftRot->rotateX(CLHEP::pi/-2.0);
   leftRot->rotateZ(CLHEP::pi);
   RegisterRotationMatrix(leftRot);
-
     
   //Wedge color
   G4VisAttributes* degraderVisAttr = new G4VisAttributes(*BDSColours::Instance()->GetColour("degrader"));
   leftWedgeLV->SetVisAttributes(degraderVisAttr);
   rightWedgeLV->SetVisAttributes(degraderVisAttr);
 
-  RegisterVisAttributes(degraderVisAttr);
-    
-    
+  RegisterVisAttributes(degraderVisAttr);    
 
   //Translation of individual wedge components
   G4ThreeVector rightwedgepos(xoffsetLeft, 0, 0);
@@ -261,10 +249,6 @@ void BDSDegrader::Build()
                                             0,                      // copy number
                                             checkOverlaps);
     
-
-    
   RegisterPhysicalVolume(leftwedgePV);
-    
   RegisterPhysicalVolume(rightwedgePV);
-
 }

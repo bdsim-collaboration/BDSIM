@@ -4,7 +4,6 @@
 #include "BDSSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
 
 /** 
  * @brief Rectangular sampler with fixed thickness but variable x,y.
@@ -29,6 +28,11 @@ public:
 private:
   /// Private default constructor to ensure use of provided one.
   BDSSamplerPlane();
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSSamplerPlane& operator=(const BDSSamplerPlane&) = delete;
+  BDSSamplerPlane(BDSSamplerPlane&) = delete;
+  /// @}
 
   /// The chord length for all is fixed and can be static.
   static const G4double chordLength;

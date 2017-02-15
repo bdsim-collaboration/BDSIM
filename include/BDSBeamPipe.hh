@@ -25,12 +25,12 @@ class BDSBeamPipe: public BDSGeometryComponent
 public:
   /// constructor has BDSGeometryComponent members first,
   /// then everything extra for this derived class
-  BDSBeamPipe(G4VSolid*                 containerSolidIn,
-	      G4LogicalVolume*          containerLVIn,
+  BDSBeamPipe(G4VSolid*                 containerSolidIn, ///< Container solid.
+	      G4LogicalVolume*          containerLVIn,    ///< Container logical volume.
 	      BDSExtent                 extentIn,
 	      G4VSolid*                 containerSubtractionSolidIn,
 	      G4LogicalVolume*          vacuumLVIn,
-	      G4bool                    containerIsCircularIn = false,
+	      G4bool                    containerIsCircularIn = false, ///< Whether the container is circular.
 	      G4double                  containerRadiusIn     = 0.0,
 	      G4ThreeVector             inputFaceNormalIn  = G4ThreeVector(0,0,-1),
 	      G4ThreeVector             outputFaceNormalIn = G4ThreeVector(0,0, 1));

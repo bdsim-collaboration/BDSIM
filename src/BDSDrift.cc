@@ -19,7 +19,7 @@ void BDSDrift::Build()
   BDSBeamPipeFactory* factory = BDSBeamPipeFactory::Instance();
   BDSBeamPipe* pipe = factory->CreateBeamPipe(name,
 					      chordLength,
-					      beamPipeInfo);;
+					      beamPipeInfo);
 
   RegisterDaughter(pipe);
   

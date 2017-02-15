@@ -4,9 +4,6 @@
 #include "BDSSampler.hh"
 
 #include "globals.hh" // geant4 types / globals
-#include "G4Transform3D.hh"
-
-class BDSSamplerSD;
 
 /** 
  * @brief Cylindrical sampler around an object.
@@ -27,6 +24,11 @@ public:
 private:
   /// Private default constructor to ensure use of provided one.
   BDSSamplerCylinder();
+
+  /// @{ Assignment and copy constructor not implemented nor used
+  BDSSamplerCylinder& operator=(const BDSSamplerCylinder&) = delete;
+  BDSSamplerCylinder(BDSSamplerCylinder&) = delete;
+  /// @}
 };
 
 #endif

@@ -5,9 +5,9 @@
 
 #include "globals.hh" // geant4 globals / types
 #include "G4ThreeVector.hh"
-#include "G4VSolid.hh"
 
 class BDSTunnelSection;
+class G4VSolid;
 
 /**
  * @brief Factory for rectangular tunnel segments above ground.

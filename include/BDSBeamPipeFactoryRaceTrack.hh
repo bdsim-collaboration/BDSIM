@@ -1,11 +1,7 @@
 #ifndef BDSBEAMPIPEFACTORYRACETRACK_H
 #define BDSBEAMPIPEFACTORYRACETRACK_H
 
-#include "BDSBeamPipeFactoryBase.hh"
 #include "BDSBeamPipeFactoryPoints.hh"
-#include "BDSBeamPipe.hh"
-
-class G4Material;
 
 /**
  * @brief Factory for racetrack aperture model beampipes.
