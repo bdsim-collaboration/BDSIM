@@ -50,6 +50,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   G4double rho = InitMag/CLHEP::GeV/(cOverGeV * bField/CLHEP::tesla * charge) * CLHEP::m;
 
   // global to local
+  // false = use the mass world for the transform
   BDSStep        localPosMom = ConvertToLocal(GlobalPosition, v0, h, false);
   G4ThreeVector      LocalR  = localPosMom.PreStepPoint();
   G4ThreeVector      Localv0 = localPosMom.PostStepPoint();
@@ -69,6 +70,7 @@ void BDSIntegratorDipole::AdvanceHelix(const G4double  yIn[],
   // check for paraxial approximation:
   if(LocalRp.z() > 0.9)
     {
+      // This uses the mass world volume for the transform!
       ConvertToGlobal(itsFinalPoint,itsFinalDir,InitMag,yOut);
 
       // If the radius of curvature is too small, reduce the momentum by 2%. This will
