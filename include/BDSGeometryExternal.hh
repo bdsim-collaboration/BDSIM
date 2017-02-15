@@ -1,17 +1,7 @@
 #ifndef BDSGEOMETRYEXTERNAL_H
 #define BDSGEOMETRYEXTERNAL_H
 
-#include "BDSExtent.hh"
 #include "BDSGeometryComponent.hh"
-
-#include "G4ThreeVector.hh"
-
-class G4LogicalVolume;
-class G4VSolid;
-namespace CLHEP {
-  class HepRotation;
-}
-typedef CLHEP::HepRotation G4RotationMatrix;
 
 /**
  * @brief A loaded piece of externally provided geometry.
@@ -27,23 +17,14 @@ typedef CLHEP::HepRotation G4RotationMatrix;
 class BDSGeometryExternal: public BDSGeometryComponent
 {
 public:
-  /// Constructor to mirror that of BDSGeometryComponent
-  BDSGeometryExternal(G4VSolid*        containerSolidIn,
-		      G4LogicalVolume* containerLVIn);
-  /// Constructor to mirror that of BDSGeometryComponent
-  BDSGeometryExternal(G4VSolid*         containerSolidIn,
-		      G4LogicalVolume*  containerLVIn,
-		      BDSExtent         extentIn,
-		      BDSExtent         innerExtentIn       = BDSExtent(),
-		      G4ThreeVector     placementOffsetIn   = G4ThreeVector(0,0,0),
-		      G4RotationMatrix* placementRotationIn = nullptr);
-  
-  virtual ~BDSGeometryExternal();
+  /// Use constructors of BDSGeometryComponent
+  using BDSGeometryComponent::BDSGeometryComponent;
+
+  virtual ~BDSGeometryExternal(){;}
 
 private:
   /// No default constructor
   BDSGeometryExternal() = delete;
-
 };
 
 #endif
