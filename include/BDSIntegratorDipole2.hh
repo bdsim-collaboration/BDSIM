@@ -60,6 +60,8 @@ public:
 				 G4double       yOut[]);
 
 private:
+  /// Private default constructor to force use of provided one.
+  BDSIntegratorDipole2() = delete;
 
   /// The minimum tolerable radius of curvature before we decide the particle is
   /// spiralling and should be treated differently.
