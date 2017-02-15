@@ -1,12 +1,22 @@
 #include "BDSIntegratorDipole2.hh"
 
 #include "globals.hh"
+#include "G4ClassicalRK4.hh"
+#include "G4Mag_EqRhs.hh"
+#include "G4ThreeVector.hh"
 
 BDSIntegratorDipole2::BDSIntegratorDipole2(G4Mag_EqRhs* eqOfMIn,
 					   G4double     minimumRadiusOfCurvatureIn):
   G4MagHelicalStepper(eqOfMIn),
   minimumRadiusOfCurvature(minimumRadiusOfCurvatureIn)
-{;}
+{
+  backupStepper = new G4ClassicalRK4(eqOfMIn, 6);
+}
+
+BDSIntegratorDipole2::~BDSIntegratorDipole2()
+{
+  delete backupStepper;
+}
 
 void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
 				       G4ThreeVector  field,
@@ -16,14 +26,25 @@ void BDSIntegratorDipole2::DumbStepper(const G4double yIn[],
   AdvanceHelix(yIn, field, stepLength, yOut);
 }
 
-void BDSIntegratorDipole2::Stepper(const G4double   yIn[],
-				   const G4double[] /*dydx*/,
-				   G4double         stepLength,
-				   G4double         yOut[],
-				   G4double         yErr[])
+void BDSIntegratorDipole2::Stepper(const G4double yIn[],
+				   const G4double dydx[],
+				   G4double       stepLength,
+				   G4double       yOut[],
+				   G4double       yErr[])
 {
   // Extra storage arrays.
   G4double yTemp[7], yTemp2[7];
+
+  G4ThreeVector momentum = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
+  if (momentum.mag() < 40*CLHEP::MeV)
+    {
+      backupStepper->Stepper(yIn, dydx, stepLength, yOut, yErr);
+      // G4MagHelicaStepper provides no way to overload DistChord,
+      // so exploit the logic in it. 7rad forces return 2*GetRadHelix()
+      SetAngCurve(7);
+      SetRadHelix(backupStepper->DistChord()*0.5);
+      return;
+    }
   
   // Arrays for field querying (g4 interface)
   G4double bO[4], bM[4]; // original and mid point
@@ -41,8 +62,10 @@ void BDSIntegratorDipole2::Stepper(const G4double   yIn[],
   if (radiusOfCurvature < minimumRadiusOfCurvature)
     {
       AdvanceHelixForSpiralling(yIn, bOriginal, stepLength, yOut);
-      for(G4int i = 0; i < 6; i++)
-	{yErr[i] = 1e-15;}
+      for(G4int i = 0; i < 3; i++)
+	{yErr[i] = 1e-20;}
+      for(G4int i = 3; i < 6; i++)
+	{yErr[i] = 1e-40;}
       return;
     }
 
@@ -57,10 +80,18 @@ void BDSIntegratorDipole2::Stepper(const G4double   yIn[],
   // Error estimation
   for(G4int i = 0; i < 6; i++)
     {yErr[i] = yOut[i] - yTemp2[i];}
+
+  /*
+  for(G4int i = 0; i < 6; i++)
+    {G4cout << yOut[i] << " ";}
+  G4cout << G4endl;
+  for(G4int i = 0; i < 6; i++)
+    {G4cout << yTemp2[i] << " ";}
+  G4cout << G4endl; 
   
   for(G4int i = 0; i < 6; i++)
     {G4cout << yErr[i] << " ";}
-  G4cout << G4endl; 
+    G4cout << G4endl; */
   return;
 }
 
