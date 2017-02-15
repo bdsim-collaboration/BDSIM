@@ -39,7 +39,12 @@ void BDSIntegratorDipole2::Stepper(const G4double   yIn[],
   // and finish in a timely manner.
   const G4double radiusOfCurvature = GetRadHelix();
   if (radiusOfCurvature < minimumRadiusOfCurvature)
-    {AdvanceHelixForSpiralling(yIn, bOriginal, stepLength, yOut);}
+    {
+      AdvanceHelixForSpiralling(yIn, bOriginal, stepLength, yOut);
+      for(G4int i = 0; i < 6; i++)
+	{yErr[i] = 1e-15;}
+      return;
+    }
 
   // Do two half steps - for error estimation
   AdvanceHelix(yIn, bOriginal, stepLength*0.5, yTemp); // first step
@@ -52,7 +57,10 @@ void BDSIntegratorDipole2::Stepper(const G4double   yIn[],
   // Error estimation
   for(G4int i = 0; i < 6; i++)
     {yErr[i] = yOut[i] - yTemp2[i];}
-   
+  
+  for(G4int i = 0; i < 6; i++)
+    {G4cout << yErr[i] << " ";}
+  G4cout << G4endl; 
   return;
 }
 
@@ -63,9 +71,17 @@ void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
 {
   AdvanceHelix(yIn, field, stepLength, yOut);
 
+  G4ThreeVector unitMomentum    = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   G4ThreeVector unitField       = field.unit();
+  G4ThreeVector unitSideways    = unitField.cross(unitMomentum.unit());
   G4ThreeVector correctPosition = G4ThreeVector(yOut[0], yOut[1], yOut[2]);
-  G4ThreeVector newPosition     = correctPosition + 1*CLHEP::mm * unitField;
+  G4ThreeVector delta2 = 1*CLHEP::mm * unitField;// + 1*CLHEP::um * unitMomentum;
+  G4ThreeVector delta1 = std::max(stepLength, 1*CLHEP::mm)*unitField;
+  G4ThreeVector delta = stepLength*unitSideways;
+  G4ThreeVector newPosition     = correctPosition + delta;
+  //G4cout << newPosition << delta << G4endl;
+  //SetAngCurve(7);
+  //SetRadHelix(0);
   yOut[0] = newPosition[0];
   yOut[1] = newPosition[1];
   yOut[2] = newPosition[2];
