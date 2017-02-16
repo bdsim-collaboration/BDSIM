@@ -229,6 +229,10 @@ private:
 
   // added by JS
   G4double itsBmapXOffset, itsBmapZOffset;
+
+    //Containter to hold pointers to all the logical volumes in the class
+    std::vector<G4LogicalVolume*> _logVols;
+    void SetUserLimits();
 };
 
 #endif

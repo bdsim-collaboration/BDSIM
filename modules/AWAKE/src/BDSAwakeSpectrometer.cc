@@ -304,7 +304,7 @@ void BDSAwakeSpectrometer::BuildField()
 {
     //The position of the field is relative to the pole position of the magnet. The field is translated accordingly.
     G4ThreeVector poleTranslation = G4ThreeVector(itsBmapXOffset,0,itsBmapZOffset);
-    _fieldInfo->Translate(poleTranslation);
+    //_fieldInfo->Translate(poleTranslation);
 
   BDSFieldBuilder::Instance()->RegisterFieldForConstruction(_fieldInfo,
 							    containerLogicalVolume,
@@ -333,9 +333,9 @@ void BDSAwakeSpectrometer::BuildCoils(){
   */
   
   itsCoilLog = new G4LogicalVolume(coilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsCoilLog",0,0,0);
-
+_logVols.push_back(itsCoilLog);
   itsMiddleCoilLog = new G4LogicalVolume(middleCoilSolid, BDSMaterials::Instance()->GetMaterial("G4_Cu"),"itsMiddleCoilLog",0,0,0);
-  
+    _logVols.push_back(itsMiddleCoilLog);
   G4VisAttributes* CoilVisAtt = new G4VisAttributes(G4Color(0.0,0.5,0.5,0.5));
   CoilVisAtt->SetForceSolid(true);
   CoilVisAtt->SetVisibility(true);
@@ -378,15 +378,15 @@ void BDSAwakeSpectrometer::BuildYoke(){
   G4VSolid* YokeUpperSolid = new G4Box("YokeSolid1",itsYokeUpperSize.x()/2.0,itsYokeUpperSize.y()/2.0,itsYokeUpperSize.z()/2.0);
 
   itsYokeUpperLog = new G4LogicalVolume(YokeUpperSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeUpperLog",0,0,0);
-
+    _logVols.push_back(itsYokeUpperLog);
   G4VSolid* YokeMiddleSolid = new G4Box("YokeSolid1",itsYokeMiddleSize.x()/2.0,itsYokeMiddleSize.y()/2.0,itsYokeMiddleSize.z()/2.0);
 
   itsYokeMiddleLog = new G4LogicalVolume(YokeMiddleSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeMiddleLog",0,0,0);
-
+    _logVols.push_back(itsYokeMiddleLog);
   G4VSolid* YokeLowerSolid = new G4Box("YokeSolid1",itsYokeLowerSize.x()/2.0,itsYokeLowerSize.y()/2.0,itsYokeLowerSize.z()/2.0);
 
   itsYokeLowerLog = new G4LogicalVolume(YokeLowerSolid, BDSMaterials::Instance()->GetMaterial("G4_Fe"),"itsYokeLowerLog",0,0,0);
-
+    _logVols.push_back(itsYokeLowerLog);
   G4VisAttributes* YokeVisAtt = new G4VisAttributes(G4Color(0,1,0,0.5));
   YokeVisAtt->SetForceSolid(true);
   YokeVisAtt->SetVisibility(true);
@@ -455,7 +455,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
 
   itsCameraScoringPlaneLog = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog",0,0,0);
   itsCameraScoringPlaneLog->SetVisAttributes(_visAttSampler);
-
+    _logVols.push_back(itsCameraScoringPlaneLog);
   G4double dispX=_cameraScreenDist-_scoringPlaneThickness/2.0;
   G4double dispY=0;
   G4double dispZ=-_cameraScreenDist/2.0;;
@@ -480,7 +480,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   
   itsCameraScoringPlaneLog2 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog2",0,0,0);
   itsCameraScoringPlaneLog2->SetVisAttributes(_visAttSampler);
-
+    _logVols.push_back(itsCameraScoringPlaneLog2);
   G4double dispX2=-sin(_screenAngle)*_cameraScreenDist;
   G4double dispY2=0;
   G4double dispZ2=cos(_screenAngle)*_cameraScreenDist-_cameraScreenDist/2.0;
@@ -504,6 +504,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   //Build and place the volume...
   itsCameraScoringPlaneLog3 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog3",0,0,0);
   itsCameraScoringPlaneLog3->SetVisAttributes(_visAttSampler);
+    _logVols.push_back(itsCameraScoringPlaneLog3);
 
   G4double dispX3=_cameraScreenDist/2.0-_scoringPlaneThickness/2.0;
   G4double dispY3=0;
@@ -525,7 +526,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   
   itsCameraScoringPlaneLog4 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog4",0,0,0);
   itsCameraScoringPlaneLog4->SetVisAttributes(_visAttSampler);
-
+    _logVols.push_back(itsCameraScoringPlaneLog4);
   G4double dispX4=-sin(_screenAngle)*_cameraScreenDist/2.0;
   G4double dispY4=0;
   G4double dispZ4=cos(_screenAngle)*_cameraScreenDist/2.0-_cameraScreenDist/2.0;
@@ -550,6 +551,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   itsCameraScoringPlaneLog5 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog5",0,0,0);
   itsCameraScoringPlaneLog5->SetVisAttributes(_visAttSampler);
 
+    _logVols.push_back(itsCameraScoringPlaneLog5);
   G4double dispX5=_cameraScreenDist/4.0-_scoringPlaneThickness/2.0;
   G4double dispY5=0;
   G4double dispZ5=-_cameraScreenDist/2.0;;
@@ -570,7 +572,7 @@ void BDSAwakeSpectrometer::BuildCameraScoringPlane(){
   
   itsCameraScoringPlaneLog6 = new G4LogicalVolume(itsCameraScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"CameraScoringPlaneLog6",0,0,0);
   itsCameraScoringPlaneLog6->SetVisAttributes(_visAttSampler);
-
+    _logVols.push_back(itsCameraScoringPlaneLog6);
   G4double dispX6=-sin(_screenAngle)*_cameraScreenDist/4.0;
   G4double dispY6=0;
   G4double dispZ6=cos(_screenAngle)*_cameraScreenDist/4.0-_cameraScreenDist/2.0;
@@ -625,8 +627,10 @@ void BDSAwakeSpectrometer::BuildScreenScoringPlane(){
   itsScreenScoringPlaneSolid = new G4Box("ScreenScoringPlaneSolid",_screenWidth/2.0,_screenHeight/2.0,_scoringPlaneThickness/2.0);
   itsScreenScoringPlaneLog = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"ScreenScoringPlaneLog",0,0,0);
   itsScreenScoringPlaneLog->SetVisAttributes(_visAttSampler);
+    _logVols.push_back(itsScreenScoringPlaneLog);
   itsScreenScoringPlaneLog2 = new G4LogicalVolume(itsScreenScoringPlaneSolid,BDSMaterials::Instance()->GetMaterial("vacuum"),"ScreenScoringPlaneLog2",0,0,0);
   itsScreenScoringPlaneLog2->SetVisAttributes(_visAttSampler);
+    _logVols.push_back(itsScreenScoringPlaneLog2);
   G4double dispX=0;
   G4double dispY=0;
   G4double dispZ=2*std::cos(std::abs(_screenAngle))*(_screenThickness/2.0+_scoringPlaneThickness/2.0)-_cameraScreenDist/2.0;
@@ -665,7 +669,7 @@ void BDSAwakeSpectrometer::Build()
 {
   SetVisAttributes(); 
   BuildScreen();
-  BuildCamera();	
+  BuildCamera();
   CalculateLengths();
   BuildContainerLogicalVolume();
   //      BuildScreenScoringPlane();
@@ -688,6 +692,7 @@ void BDSAwakeSpectrometer::Build()
   BuildVacuumChamber();
   PlaceVacuumChamber();
   BuildField();
+    SetUserLimits();
 }
 
 void BDSAwakeSpectrometer::PlaceMagnet(){
@@ -823,13 +828,24 @@ void BDSAwakeSpectrometer::BuildContainerLogicalVolume()
   visAtt->SetVisibility(true);
   containerLogicalVolume->SetVisAttributes(visAtt);
 
+    _logVols.push_back(containerLogicalVolume);
+
   // note, this is different from all other geometry - TBC
-  G4double maxStepFactor=0.5;
-  G4UserLimits* containerUserLimits =  new G4UserLimits();
-  containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
-  containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
-  containerLogicalVolume->SetUserLimits(containerUserLimits);
-  allUserLimits.push_back(containerUserLimits);
+  //G4double maxStepFactor=0.5*0.0001;
+  //G4UserLimits* containerUserLimits =  new G4UserLimits();
+  //containerUserLimits->SetMaxAllowedStep(chordLength*maxStepFactor);
+  //containerUserLimits->SetUserMinEkine(BDSGlobalConstants::Instance()->ThresholdCutCharged());
+  //containerLogicalVolume->SetUserLimits(containerUserLimits);
+  //allUserLimits.push_back(containerUserLimits);
+}
+
+
+void BDSAwakeSpectrometer::SetUserLimits()
+{
+    auto userLimits = BDSGlobalConstants::Instance()->GetDefaultUserLimits();
+    for(unsigned long i=0; i<_logVols.size(); i++) {
+        _logVols.at(i)->SetUserLimits(userLimits);
+    }
 }
 
 BDSAwakeSpectrometer::~BDSAwakeSpectrometer()

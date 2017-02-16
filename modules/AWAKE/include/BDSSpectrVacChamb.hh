@@ -91,6 +91,7 @@ private:
   void BuildBox2Inner(); 
   void BuildBox3Inner(); 
   void CalculateGeometry();
+    void SetUserLimits();
   void printGeom();
   void printTrapVertices(std::vector<G4TwoVector> vertices, const G4String& name);
 
@@ -133,6 +134,9 @@ private:
   G4ThreeVector _box3Translation;
 
   // G4double _screenAngle2;
+
+    //A container of pointers to all the log vols.
+    std::vector<G4LogicalVolume*> _logVols;
 };
 
 #endif
