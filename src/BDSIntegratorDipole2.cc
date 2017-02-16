@@ -37,6 +37,7 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   // Extra storage arrays.
   G4double yTemp[7], yTemp2[7];
 
+  // If a low momentum particle, use the backup stepper as more robust
   G4ThreeVector momentum = G4ThreeVector(yIn[3], yIn[4], yIn[5]);
   if (momentum.mag() < 40*CLHEP::MeV)
     {
@@ -64,6 +65,8 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   if (radiusOfCurvature < minimumRadiusOfCurvature)
     {
       AdvanceHelixForSpiralling(yIn, bOriginal, stepLength, yOut);
+      // empirically chosen error values that give the fewest warnings
+      // for spiralling particles in showers in strong dipole fields
       for(G4int i = 0; i < 3; i++)
 	{yErr[i] = 1e-20;}
       for(G4int i = 3; i < 6; i++)
@@ -71,9 +74,12 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
       return;
     }
 
-  // Do two half steps - for error estimation
+  // error estimation - do two half steps and compare difference to
+  // the result from one full step
   AdvanceHelix(yIn, bOriginal, stepLength*0.5, yTemp); // first step
 
+  // resample field at midway point (although if pure dipole, this is
+  // unnecessary) - could go outside the range of the field though
   GetEquationOfMotion()->GetFieldValue(yTemp, bM);
   G4ThreeVector bMid = G4ThreeVector(bM[0],bM[1],bM[2]);
 
@@ -82,19 +88,6 @@ void BDSIntegratorDipole2::Stepper(const G4double yIn[],
   // Error estimation
   for(G4int i = 0; i < 6; i++)
     {yErr[i] = yOut[i] - yTemp2[i];}
-
-  /*
-  for(G4int i = 0; i < 6; i++)
-    {G4cout << yOut[i] << " ";}
-  G4cout << G4endl;
-  for(G4int i = 0; i < 6; i++)
-    {G4cout << yTemp2[i] << " ";}
-  G4cout << G4endl; 
-  
-  for(G4int i = 0; i < 6; i++)
-    {G4cout << yErr[i] << " ";}
-    G4cout << G4endl; */
-  return;
 }
 
 void BDSIntegratorDipole2::AdvanceHelixForSpiralling(const G4double yIn[],
