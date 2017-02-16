@@ -190,6 +190,7 @@ class Writer():
             machine = _Builder.Machine()
             machine.AddDrift(name='dr',length=length)
             machine.AddSampler('all')
+            machine.AddBeam(self._getBeam(test))
             self._writeToDisk(component,lenFileName,machine,test)
 
     def WriteDipoleTests(self,test):
