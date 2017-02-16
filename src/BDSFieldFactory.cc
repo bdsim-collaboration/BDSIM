@@ -30,6 +30,7 @@
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipole.hh"
 #include "BDSIntegratorDipole2.hh"
+#include "BDSIntegratorDipoleFringe.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorFringefield.hh"
@@ -382,6 +383,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
 							     G4Mag_EqRhs*             eqOfM,
 							     const BDSMagnetStrength* strength)
 {
+  const G4double minimumRadiusOfCurvature = 10*CLHEP::cm;
   G4double                      brho = info.BRho();
   G4MagIntegratorStepper* integrator = nullptr;
   // these ones can only be used for magnetic field
@@ -390,7 +392,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::solenoid:
       integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipole:
-      integrator = new BDSIntegratorDipole2(eqOfM,10*CLHEP::cm); break;
+      integrator = new BDSIntegratorDipole2(eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::quadrupole:
       integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM); break;
     case BDSIntegratorType::sextupole:
@@ -402,7 +404,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::multipolethin:
       integrator = new BDSIntegratorMultipoleThin(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipolefringe:
-      integrator = new BDSIntegratorFringefield(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorDipoleFringe(strength, eqOfM, minimumRadiusOfCurvature); break;
     case BDSIntegratorType::g4constrk4:
       integrator = new G4ConstRK4(eqOfM); break;
     case BDSIntegratorType::g4exacthelixstepper:
