@@ -33,7 +33,6 @@
 #include "BDSIntegratorDipoleFringe.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
-#include "BDSIntegratorFringefield.hh"
 #include "BDSIntegratorMultipoleThin.hh"
 #include "BDSIntegratorSextupole.hh"
 #include "BDSIntegratorSolenoid.hh"
