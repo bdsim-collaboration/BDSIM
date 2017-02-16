@@ -21,6 +21,7 @@ class G4LogicalVolume;
 class G4Region;
 class G4VPhysicalVolume;
 
+class BDSAcceleratorModel;
 class BDSFieldObjects;
 class BDSShowerModel;
 
@@ -105,22 +106,28 @@ private:
   bool debug = false;
 #endif
 
+  ///@{ Variable copied from global constants
   G4bool verbose;
   G4bool checkOverlaps;
+  ///@}
+
+  /// Accelerator model pointer
+  BDSAcceleratorModel* acceleratorModel;
 
   /// World physical volume
   G4VPhysicalVolume* worldPV;
 
-  // All fields
+  /// All fields
   std::vector<BDSFieldObjects*> fields;
   
-  // Gflash members
+  ///@{ Gflash members
   std::vector<GFlashHomoShowerParameterisation*> theParameterisation;
   GFlashHitMaker *theHitMaker;
   GFlashParticleBounds *theParticleBounds;
   //  GFlashParticleBounds *theParticleBoundsVac;
   std::vector<BDSShowerModel*> theFastShowerModel;
   std::vector<G4Region*> gFlashRegion;
+  ///@}
 
   /// Whether or not to use the GFlash shower parameterisation.
   G4bool gflash;
