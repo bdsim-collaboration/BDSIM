@@ -253,6 +253,7 @@ namespace GMAD
     std::string integratorSet;
     double   lengthSafety;
     double   maximumTrackingTime; ///< maximum tracking time per track [s]
+    double   maximumStepLength;   ///< maximum permitted step length in any volume
     double   chordStepMinimum;
     double   deltaIntersection;
     double   minimumEpsilonStep;

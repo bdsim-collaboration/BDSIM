@@ -113,7 +113,8 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
   G4double R=1./R_1;
   
   // chord distance (simple quadratic approx)
-  distChord= h2/(8*R);
+  G4double dc = h2/(8*R);
+  SetDistChord(dc);
 
   // check for paraxial approximation:
   if(fabs(zp0)>0.9)
@@ -203,6 +204,7 @@ void BDSIntegratorSolenoid::AdvanceHelix(const G4double yIn[],
 #endif
       // use a classical Runge Kutta stepper here
       backupStepper->Stepper(yIn, dydx, h, yOut, yErr);
+      SetDistChord(backupStepper->DistChord());
     }  
 }
 

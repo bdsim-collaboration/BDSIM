@@ -26,7 +26,7 @@ public:
 
 private:
   G4bool killNeutrinos; ///< Local copy of whether to kill neutrinos for tracking efficiency.
-  G4bool stopSecondaries; ///< Whether partilces with parentID > 0 will be killed.
+  G4bool stopSecondaries; ///< Whether particles with parentID > 0 will be killed.
   G4bool stopTracks;
  };
 

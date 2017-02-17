@@ -1,5 +1,7 @@
 #include "symbolmap.h"
 
+#include "sym_table.h"
+
 #include <cstdlib>
 #include <iostream>
 

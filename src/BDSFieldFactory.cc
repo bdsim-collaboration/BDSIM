@@ -29,6 +29,7 @@
 #include "BDSGlobalConstants.hh"
 #include "BDSIntegratorDecapole.hh"
 #include "BDSIntegratorDipole.hh"
+#include "BDSIntegratorDipole2.hh"
 #include "BDSIntegratorOctupole.hh"
 #include "BDSIntegratorQuadrupole.hh"
 #include "BDSIntegratorFringefield.hh"
@@ -389,7 +390,7 @@ G4MagIntegratorStepper* BDSFieldFactory::CreateIntegratorMag(const BDSFieldInfo&
     case BDSIntegratorType::solenoid:
       integrator = new BDSIntegratorSolenoid(strength, brho, eqOfM); break;
     case BDSIntegratorType::dipole:
-      integrator = new BDSIntegratorDipole(strength, brho, eqOfM); break;
+      integrator = new BDSIntegratorDipole2(eqOfM,10*CLHEP::cm); break;
     case BDSIntegratorType::quadrupole:
       integrator = new BDSIntegratorQuadrupole(strength, brho, eqOfM); break;
     case BDSIntegratorType::sextupole:

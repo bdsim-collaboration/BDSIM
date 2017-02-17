@@ -232,7 +232,7 @@
 			<materialref ref="G4_CONCRETE"/>
 			<solidref ref="box_floor9"/>
 		</volume>
-		<volume name="world_volume_lv">
+		<volume name="World">
 			<materialref ref="G4_Galactic"/>
 			<physvol name="wall_0_0_pv">
 				<volumeref ref="wall_0_0_lv"/>
@@ -508,6 +508,6 @@
 		</volume>
 	</structure>
 	<setup name="Default" version="1.0">
-		<world ref="world_volume_lv"/>
+		<world ref="World"/>
 	</setup>
 </gdml>

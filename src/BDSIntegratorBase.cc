@@ -10,7 +10,7 @@ BDSIntegratorBase::BDSIntegratorBase(G4Mag_EqRhs* eqOfMIn,
   G4MagIntegratorStepper(eqOfMIn, nVariablesIn),
   eqOfM(eqOfMIn),
   nVariables(6),
-  distChord(0)
+  distChordPrivate(0)
 {
   backupStepper = new G4ClassicalRK4(eqOfM, 6);
 }
@@ -36,7 +36,7 @@ void BDSIntegratorBase::AdvanceDrift(const G4double yIn[],
   yOut[4] = GlobalP.y();
   yOut[5] = GlobalP.z();
 
-  distChord=0;
+  SetDistChord(0);
 }
 
 void BDSIntegratorBase::AdvanceChord(const G4double h,
@@ -50,10 +50,15 @@ void BDSIntegratorBase::AdvanceChord(const G4double h,
     {
       // chord distance (simple quadratic approx)
       G4double h2 = h*h;
-      distChord = h2*R_1/8;
+      G4double dc = h2*R_1/8;
+      SetDistChord(dc);
       
       G4double dx = LocalRp.x()*h + LocalRpp.x()*h2/2;
       G4double dy = LocalRp.y()*h + LocalRpp.y()*h2/2;
+
+      // TBC - this can go negative for very long step queries that
+      // presumably cause a very large deflection. This results in nan
+      // and bad tracking from Geant4 / a crash.
       G4double dz = sqrt(h2*(1.-h2*R_1*R_1/12)-dx*dx-dy*dy);
       // check for precision problems
       G4double ScaleFac=(dx*dx+dy*dy+dz*dz)/h2;

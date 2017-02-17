@@ -305,6 +305,7 @@ void Options::PublishMembers()
   // options which influence tracking
   publish("integratorSet",      &Options::integratorSet);
   publish("maximumTrackingTime",&Options::maximumTrackingTime);
+  publish("maximumStepLength",  &Options::maximumStepLength);
   publish("chordStepMinimum",   &Options::chordStepMinimum);
   publish("deltaIntersection",  &Options::deltaIntersection);
   publish("minimumEpsilonStep", &Options::minimumEpsilonStep);

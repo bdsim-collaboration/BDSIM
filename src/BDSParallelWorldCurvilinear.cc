@@ -49,7 +49,7 @@ void BDSParallelWorldCurvilinear::Construct()
   for (const auto element : *beamline)
     {
       G4String name        = element->GetName(); 
-      G4String clPVName    = element->GetPlacementName() + "_cl_pv";
+      G4String clPVName    = element->GetPlacementName() + "_pv";
       G4int    nCopy       = element->GetCopyNo();
       G4Transform3D*  clpt = element->GetReadOutPlacementTransform();
       BDSAcceleratorComponent* accComp = element->GetAcceleratorComponent();

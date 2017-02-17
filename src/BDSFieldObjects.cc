@@ -60,11 +60,19 @@ BDSFieldObjects::BDSFieldObjects(const BDSFieldInfo*     infoIn,
   magIntDriver(nullptr)
 {
   BDSGlobalConstants* globals = BDSGlobalConstants::Instance();
-  
-  chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
-				  globals->ChordStepMinimum(),
-				  magIntegratorStepper);
 
+  // G4ChordFinder seems to create another G4Mag_UsualEqRhs and use that.
+  // Break their recipe to avoid this and it proves to be more reliable too.
+  //chordFinder = new G4ChordFinder(fieldIn, // note using higher pointer in inheritance
+  //				  globals->ChordStepMinimum(),
+  //				  magIntegratorStepper);
+
+  magIntDriver = new G4MagInt_Driver(globals->ChordStepMinimum(),
+				     magIntegratorStepper,
+				     magIntegratorStepper->GetNumberOfVariables());
+
+  chordFinder  = new G4ChordFinder(magIntDriver);
+  
   fieldManager = new G4FieldManager(field, chordFinder);
   fieldManager->SetDeltaIntersection(globals->DeltaIntersection());
   fieldManager->SetMinimumEpsilonStep(globals->MinimumEpsilonStep());
