@@ -98,17 +98,24 @@ class Writer():
             self._optionsFilename = 'trackingTestOptions.gmad'
         
         #set beam and options path depending on file location.
+        #only write files to disk if they don't already exist,
+        #pybdsim adds a -1 to the name which means the written file
+        #won't be used in the testing.
         if test._numFiles > 1000:
             dir = _np.str(_np.int(self._numFilesWritten - _np.mod(self._numFilesWritten,1000)))
             _os.chdir(dir)
-            machine.beam._SetDistribFileName('../../'+self._beamFilename)
-            writer.Options.CallExternalFile('../../'+self._optionsFilename)
-            writer.WriteMachine(machine, filename,verbose = False)
+            files = _glob.glob('*')
+            if not files.__contains__(filename+'.gmad'):
+                machine.beam._SetDistribFileName('../../'+self._beamFilename)
+                writer.Options.CallExternalFile('../../'+self._optionsFilename)
+                writer.WriteMachine(machine, filename,verbose = False)
             _os.chdir('../')
         else:
-            machine.beam._SetDistribFileName('../'+self._beamFilename)
-            writer.Options.CallExternalFile('../'+self._optionsFilename)
-            writer.WriteMachine(machine, filename,verbose = False)
+            files = _glob.glob('*')
+            if not files.__contains__(filename+'.gmad'):
+                machine.beam._SetDistribFileName('../'+self._beamFilename)
+                writer.Options.CallExternalFile('../'+self._optionsFilename)
+                writer.WriteMachine(machine, filename,verbose = False)
         _os.chdir('../')
 
     def SetBeamFilename(self,beamFilename=''):
