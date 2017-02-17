@@ -230,18 +230,18 @@ class Test(dict):
 class TestSuite():
     def __init__(self,directory=''):
         self._tests = [] #list of test objects
-        
-        self._testStatus = {} #dict of test statuses
-        
+
         if not isinstance(directory,_np.str):
             raise TypeError("Testing directory is not a string")
         else:
             if directory == '':
-                directory = 'Test1'
+                pass
             #check for directory and make it if not:
-            if not _os.path.exists(directory):
+            elif _os.path.exists(directory):
+                _os.chdir(directory)
+            elif not _os.path.exists(directory):
                 _os.system("mkdir " + directory)
-            _os.chdir(directory)
+                _os.chdir(directory)
 
         #make dirs for gmad files, bdsimoutput, and failed outputs
         if not _os.path.exists('Tests'):
