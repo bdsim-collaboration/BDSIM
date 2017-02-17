@@ -31,6 +31,7 @@
 #include "BDSBOptrMultiParticleChangeCrossSection.hh"
 
 #include "parser/element.h"
+#include "parser/fastlist.h"
 #include "parser/options.h"
 #include "parser/physicsbiasing.h"
 
