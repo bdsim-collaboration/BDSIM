@@ -17,9 +17,19 @@ multiEntryTypes = [tuple,list,_np.ndarray]
 
 GlobalData = Globals.Globals()
 
-def Run(file,isSelfComparison=True):
+returnCode = {'SUCCESS'         : 0,
+              'FAILED'          : 1,
+              'INCORRECT_ARGS'  : 2,
+              'FILE_NOT_FOUND'  : 3}
+
+def Run(inputDict):
     ''' Generate the rootevent output for a given gmad file.
         '''
+
+    file = inputDict['file']
+    isSelfComparison = inputDict['isSelfComparison']
+    originalFile = inputDict['originalFile']
+
     # strip extension to leave test name, will be used as output name
     if (file[-5:] != '.gmad'):
         outputfile = file[:-5]
@@ -43,7 +53,7 @@ def Run(file,isSelfComparison=True):
         outputLog.write('\r\n')
         outputLog.write('Output from '+file+' was not written.')
         outputLog.close()
-        return False
+        return returnCode['FILE_NOT_FOUND']#False
     else:
         #Only compare if the output was generated.
         if isSelfComparison:
@@ -68,12 +78,12 @@ def Run(file,isSelfComparison=True):
             _os.system("rm " + testOutputFile)
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            return True
+            return returnCode['SUCCESS']#True
         else:
             _os.system("mv " + testOutputFile + " FailedTests/" + testOutputFile)  # move the failed file
             if isSelfComparison:
                 _os.system("rm " + originalFile)
-            return False
+            return returnCode['FAILED']#False
 
 
 class Test(dict):
@@ -336,16 +346,26 @@ class TestSuite():
         _os.chdir('BDSIMOutput')
         testfilesDir = '../Tests/*/'
         componentDirs = _glob.glob(testfilesDir) #get all component dirs in the Tests dir
-        
+
+        self.testResults = []
+
         for dir in componentDirs:
             testfileStr = dir+'*.gmad'  #get all gmad files in a components dir
             tests = _glob.glob(testfileStr)
 
+            testlist = []
+
+            for test in tests:
+                testDict = {'file'              : test,
+                            'originalFile'      : '',
+                            'isSelfComparison'  : isSelfComparison}
+                testlist.append(testDict)
+
             p = multiprocessing.Pool(4)
-            p.map(Run,tests)
+            results = p.map(Run,testlist)
+            self.testResults.append(results)
 
 #            for test in tests:
-#                _sub.Popen(args=("python",GlobalData._threadScript,"--file="+test,"--selfComparison=True"))
 
 #                outputEvent = self.GenerateRootFile(test)
 
