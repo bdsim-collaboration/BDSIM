@@ -33,7 +33,7 @@ namespace BDS
 class BDSTrajectory: public G4Trajectory
 {
 public:
-  BDSTrajectory(const G4Track* aTrack);
+  BDSTrajectory(const G4Track* aTrack, G4bool interactive);
   /// copy constructor is not needed
   BDSTrajectory(BDSTrajectory &) = delete;
   virtual ~BDSTrajectory();
@@ -72,6 +72,7 @@ protected:
   G4int          creatorProcessType;
   G4int          creatorProcessSubType;
   G4double       weight;
+  G4bool         interactive;
 
   /// Container of all points. This is really a vector so all memory is dynamically
   /// allocated and there's no need to make this dynamically allocated itself a la

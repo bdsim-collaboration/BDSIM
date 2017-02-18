@@ -29,20 +29,20 @@ BDSTrajectory* BDS::GetPrimaryTrajectory(G4TrajectoryContainer* trajCont)
   return primary;
 }
 
-BDSTrajectory::BDSTrajectory(const G4Track* aTrack):
-  G4Trajectory(aTrack)
+BDSTrajectory::BDSTrajectory(const G4Track* aTrack, G4bool interactiveIn):
+  G4Trajectory(aTrack), interactive(interactiveIn)
 {
   const G4VProcess *proc = aTrack->GetCreatorProcess();
   if(proc)
-    {
-      creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
-      creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
-    }
+  {
+    creatorProcessType    = aTrack->GetCreatorProcess()->GetProcessType();
+    creatorProcessSubType = aTrack->GetCreatorProcess()->GetProcessSubType();
+  }
   else
-    {
-      creatorProcessType    = -1;
-      creatorProcessSubType = -1;
-    }
+  {
+    creatorProcessType    = -1;
+    creatorProcessSubType = -1;
+  }
   weight = aTrack->GetWeight();
 
   fpBDSPointsContainer = BDSTrajectoryPointsContainer();
@@ -65,7 +65,7 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
 
   // TODO filter transportation steps if storing trajectory and batch
 
-  if(BDSGlobalConstants::Instance()->TrajNoTransportation()) {
+  if(BDSGlobalConstants::Instance()->TrajNoTransportation() && !interactive ) {
     // decode aStep and if on storage.
     auto preStepPoint  = aStep->GetPreStepPoint();
     auto postStepPoint = aStep->GetPostStepPoint();
