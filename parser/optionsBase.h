@@ -268,6 +268,7 @@ namespace GMAD
     double      trajCutGTZ;
     double      trajCutLTR;
     bool        trajConnect;
+    bool        trajNoTransportation;
     bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;

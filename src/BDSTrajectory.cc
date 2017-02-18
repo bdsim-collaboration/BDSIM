@@ -12,6 +12,7 @@
 
 #include <map>
 #include <ostream>
+#include <include/BDSGlobalConstants.hh>
 
 G4Allocator<BDSTrajectory> bdsTrajectoryAllocator;
 
@@ -63,12 +64,31 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
   // which we prevent access to be overrideing GetPoint
 
   // TODO filter transportation steps if storing trajectory and batch
-  // decode aStep and if on storage.
-  auto preStepPoint = aStep->GetPreStepPoint();
-  auto postStepPoint = aStep->GetPostStepPoint();
 
-  // add step
-  fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
+  if(BDSGlobalConstants::Instance()->TrajNoTransportation()) {
+    // decode aStep and if on storage.
+    auto preStepPoint  = aStep->GetPreStepPoint();
+    auto postStepPoint = aStep->GetPostStepPoint();
+
+    // add step
+    const G4VProcess *preProcess = preStepPoint->GetProcessDefinedStep();
+    const G4VProcess *postProcess = postStepPoint->GetProcessDefinedStep();
+
+    if (preProcess && postProcess) {
+      G4int preProcessType = preProcess->GetProcessType();
+      G4int postProcessType = postProcess->GetProcessType();
+      if((preProcessType  != 1   /* transportation */ &&
+         preProcessType  != 10 /* parallel world */) ||
+         (postProcessType != 1   /* transportation */ &&
+         postProcessType != 10 /* parallel world */) ) {
+        fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
+      }
+    }
+  }
+  else
+  {
+    fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
+  }
 }
 
 void BDSTrajectory::MergeTrajectory(G4VTrajectory* secondTrajectory)
