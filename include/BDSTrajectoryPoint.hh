@@ -78,6 +78,8 @@ private:
   G4double postWeight;            ///< Weight associtaed with post step point
   G4double preEnergy;             ///< Kinetic energy of pre-step point
   G4double postEnergy;            ///< Kinetic energy of post step point
+  G4ThreeVector preMomentum;      ///< Momentum of pre-step point
+  G4ThreeVector postMomentum;     ///< Momentum of post-step point
   G4double energy;                ///< Total energy deposited during step
   G4double preS;                  ///< Global curvilinear S coordinate of pre-step point
   G4double postS;                 ///< Global curvilinear S coordinate of post step point

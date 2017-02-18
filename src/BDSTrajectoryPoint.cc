@@ -71,11 +71,13 @@ BDSTrajectoryPoint::BDSTrajectoryPoint(const G4Step* step):
       postProcessSubType = postProcess->GetProcessSubType();
     }
 
-  preWeight  = prePoint->GetWeight();
-  postWeight = postPoint->GetWeight();
-  energy     = step->GetTotalEnergyDeposit();
-  preEnergy  = prePoint->GetKineticEnergy();
-  postEnergy = postPoint->GetKineticEnergy();
+  preWeight    = prePoint->GetWeight();
+  postWeight   = postPoint->GetWeight();
+  energy       = step->GetTotalEnergyDeposit();
+  preEnergy    = prePoint->GetKineticEnergy();
+  postEnergy   = postPoint->GetKineticEnergy();
+  preMomentum  = prePoint->GetMomentum();
+  postMomentum = postPoint->GetMomentum();
 
   // s position for pre and post step point
   G4VPhysicalVolume* curvilinearVol = auxNavigator->LocateGlobalPointAndSetup(step);
