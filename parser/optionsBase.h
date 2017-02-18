@@ -267,6 +267,8 @@ namespace GMAD
     int         numberOfEventsPerNtuple;
     double      trajCutGTZ;
     double      trajCutLTR;
+    bool        trajConnect;
+    bool        storeElossLinks;
     bool        storeElossLocal;
     bool        storeElossGlobal;
     bool        storeTrajectory;

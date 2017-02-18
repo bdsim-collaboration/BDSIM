@@ -61,6 +61,13 @@ void BDSTrajectory::AppendStep(const G4Step* aStep)
   // we do not use G4Trajectory::AppendStep here as that would
   // duplicate position information in its own vector of positions
   // which we prevent access to be overrideing GetPoint
+
+  // TODO filter transportation steps if storing trajectory and batch
+  // decode aStep and if on storage.
+  auto preStepPoint = aStep->GetPreStepPoint();
+  auto postStepPoint = aStep->GetPostStepPoint();
+
+  // add step
   fpBDSPointsContainer.push_back(new BDSTrajectoryPoint(aStep));
 }
 
