@@ -176,7 +176,9 @@ void BDSOutputROOTEvent::Initialise()
   theEventOutputTree->Branch("Info.",           "BDSOutputROOTEventInfo",evtInfo,32000,1);
 
   // Build primary structures
-  theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);
+  G4bool writePrimaries = o.writePrimaries;
+  if (writePrimaries)
+    {theEventOutputTree->Branch("Primary.",        "BDSOutputROOTEventSampler",primary,32000,1);}
   //  samplerMap["Primary"] = primary;
   samplerTrees.push_back(primary);
 
