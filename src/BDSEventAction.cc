@@ -331,8 +331,14 @@ void BDSEventAction::EndOfEventAction(const G4Event* evt)
     // TODO sort accordings to trackID
     for (auto i : trackIDMap)
     {
-      if(interestingTraj.at(i.second)) {
-        interestingTrajVec.push_back(i.second);
+      try {
+        if (interestingTraj.at(i.second)) {
+          interestingTrajVec.push_back(i.second);
+        }
+      }
+      catch(const std::exception& ex)
+      {
+        continue;
       }
     }
     bdsOutput->WriteTrajectory(interestingTrajVec);
